@@ -202,24 +202,8 @@ public:
     // methods.
     enum MarginSign { PositiveMargin, NegativeMargin };
     virtual bool isSelfCollapsingBlock() const { return false; }
-    int collapsedMarginBefore() const
-    {
-        return maxMarginBefore(PositiveMargin) - maxMarginBefore(NegativeMargin);
-    }
-    int collapsedMarginAfter() const
-    { 
-        return maxMarginAfter(PositiveMargin) - maxMarginAfter(NegativeMargin);
-}
-    virtual int maxMarginBefore(MarginSign sign) const
-    { 
-        int beforeMargin = marginBefore();
-        return (sign == PositiveMargin) ? std::max(0, beforeMargin) : -std::min(0, beforeMargin);
-    }
-    virtual int maxMarginAfter(MarginSign sign) const
-    {
-        int afterMargin = marginAfter();
-        return (sign == PositiveMargin) ? std::max(0, afterMargin) : -std::min(0, afterMargin);
-    }
+    virtual int collapsedMarginBefore() const { return marginBefore(); }
+    virtual int collapsedMarginAfter() const { return marginAfter(); }
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);

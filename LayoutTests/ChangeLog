@@ -1,3 +1,25 @@
+2010-09-30  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46938
+        
+        Rewrite margin collapsing to be block-flow-aware.  Eliminate a bunch of the margin functions on RenderBox in favor of a single
+        master function for grabbing all the margin values for a child: marginValuesForChild on RenderBlock.  Introduce a new
+        MarginValues struct to make returning the collection of 4 margin values easy.
+    
+        fast/blockflow/inline-direction-positioning.html progresses to have the correct results.
+        Added fast/blockflow/margin-collapse.html
+
+
+        * fast/blockflow/margin-collapse.html: Added.
+        * platform/mac/fast/blockflow/inline-direction-positioning-expected.checksum:
+        * platform/mac/fast/blockflow/inline-direction-positioning-expected.png:
+        * platform/mac/fast/blockflow/inline-direction-positioning-expected.txt:
+        * platform/mac/fast/blockflow/margin-collapse-expected.checksum: Added.
+        * platform/mac/fast/blockflow/margin-collapse-expected.png: Added.
+        * platform/mac/fast/blockflow/margin-collapse-expected.txt: Added.
+
 2010-09-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed rebaseline for Qt and Windows platforms required by r68830.

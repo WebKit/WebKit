@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 604x154 [border: (2px solid #000000)]
-        RenderBlock {DIV} at (52,52) size 100x100 [bgcolor=#008000]
-      RenderBlock {DIV} at (0,154) size 604x154 [border: (2px solid #000000)]
+      RenderBlock {DIV} at (0,0) size 604x104 [border: (2px solid #000000)]
+        RenderBlock {DIV} at (52,2) size 100x100 [bgcolor=#008000]
+      RenderBlock {DIV} at (0,104) size 604x104 [border: (2px solid #000000)]
         RenderBlock {DIV} at (452,2) size 100x100 [bgcolor=#008000]

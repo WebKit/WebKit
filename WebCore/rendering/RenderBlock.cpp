@@ -104,8 +104,8 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int beforeBorderPadding,
     m_quirkContainer = block->isTableCell() || block->isBody() || block->style()->marginBeforeCollapse() == MDISCARD || 
         block->style()->marginAfterCollapse() == MDISCARD;
 
-    m_posMargin = m_canCollapseMarginBeforeWithChildren ? block->maxMarginBefore(RenderBox::PositiveMargin) : 0;
-    m_negMargin = m_canCollapseMarginBeforeWithChildren ? block->maxMarginBefore(RenderBox::NegativeMargin) : 0;
+    m_positiveMargin = m_canCollapseMarginBeforeWithChildren ? block->maxPositiveMarginBefore() : 0;
+    m_negativeMargin = m_canCollapseMarginBeforeWithChildren ? block->maxNegativeMarginBefore() : 0;
 }
 
 // -------------------------------------------------------------------------------------------------------
@@ -1335,8 +1335,8 @@ void RenderBlock::adjustPositionedBlock(RenderBox* child, const MarginInfo& marg
         if (!marginInfo.canCollapseWithMarginBefore()) {
             child->computeBlockDirectionMargins(this);
             int marginTop = child->marginTop();
-            int collapsedTopPos = marginInfo.posMargin();
-            int collapsedTopNeg = marginInfo.negMargin();
+            int collapsedTopPos = marginInfo.positiveMargin();
+            int collapsedTopNeg = marginInfo.negativeMargin();
             if (marginTop > 0) {
                 if (marginTop > collapsedTopPos)
                     collapsedTopPos = marginTop;
@@ -1466,15 +1466,18 @@ bool RenderBlock::handleRunInChild(RenderBox* child)
 
 int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
 {
+    // Get the four margin values for the child and cache them.
+    const MarginValues childMargins = marginValuesForChild(child);
+
     // Get our max pos and neg top margins.
-    int posTop = child->maxMarginBefore(PositiveMargin);
-    int negTop = child->maxMarginBefore(NegativeMargin);
+    int posTop = childMargins.positiveMarginBefore();
+    int negTop = childMargins.negativeMarginBefore();
 
     // For self-collapsing blocks, collapse our bottom margins into our
     // top to get new posTop and negTop values.
     if (child->isSelfCollapsingBlock()) {
-        posTop = max(posTop, child->maxMarginAfter(PositiveMargin));
-        negTop = max(negTop, child->maxMarginAfter(NegativeMargin));
+        posTop = max(posTop, childMargins.positiveMarginAfter());
+        negTop = max(negTop, childMargins.negativeMarginAfter());
     }
     
     // See if the top margin is quirky. We only care if this child has
@@ -1486,18 +1489,18 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
         // block.  If it has larger margin values, then we need to update
         // our own maximal values.
         if (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !topQuirk)
-            setMaxMarginBeforeValues(max(posTop, maxPosMarginBefore()), max(negTop, maxNegMarginBefore()));
+            setMaxMarginBeforeValues(max(posTop, maxPositiveMarginBefore()), max(negTop, maxNegativeMarginBefore()));
 
         // The minute any of the margins involved isn't a quirk, don't
         // collapse it away, even if the margin is smaller (www.webreference.com
         // has an example of this, a <dt> with 0.8em author-specified inside
         // a <dl> inside a <td>.
-        if (!marginInfo.determinedMarginBeforeQuirk() && !topQuirk && (posTop-negTop)) {
+        if (!marginInfo.determinedMarginBeforeQuirk() && !topQuirk && (posTop - negTop)) {
             setMarginBeforeQuirk(false);
             marginInfo.setDeterminedMarginBeforeQuirk(true);
         }
 
-        if (!marginInfo.determinedMarginBeforeQuirk() && topQuirk && marginTop() == 0)
+        if (!marginInfo.determinedMarginBeforeQuirk() && topQuirk && !marginBefore())
             // We have no top margin and our top child has a quirky margin.
             // We will pick up this quirky margin and pass it through.
             // This deals with the <td><div><p> case.
@@ -1509,44 +1512,44 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
     if (marginInfo.quirkContainer() && marginInfo.atBeforeSideOfBlock() && (posTop - negTop))
         marginInfo.setMarginBeforeQuirk(topQuirk);
 
-    int beforeCollapseY = logicalHeight();
-    int ypos = beforeCollapseY;
+    int beforeCollapseLogicalTop = logicalHeight();
+    int logicalTop = beforeCollapseLogicalTop;
     if (child->isSelfCollapsingBlock()) {
         // This child has no height.  We need to compute our
         // position before we collapse the child's margins together,
         // so that we can get an accurate position for the zero-height block.
-        int collapsedTopPos = max(marginInfo.posMargin(), child->maxMarginBefore(PositiveMargin));
-        int collapsedTopNeg = max(marginInfo.negMargin(), child->maxMarginBefore(NegativeMargin));
-        marginInfo.setMargin(collapsedTopPos, collapsedTopNeg);
+        int collapsedBeforePos = max(marginInfo.positiveMargin(), childMargins.positiveMarginBefore());
+        int collapsedBeforeNeg = max(marginInfo.negativeMargin(), childMargins.negativeMarginBefore());
+        marginInfo.setMargin(collapsedBeforePos, collapsedBeforeNeg);
         
         // Now collapse the child's margins together, which means examining our
         // bottom margin values as well. 
-        marginInfo.setPosMarginIfLarger(child->maxMarginAfter(PositiveMargin));
-        marginInfo.setNegMarginIfLarger(child->maxMarginAfter(NegativeMargin));
+        marginInfo.setPositiveMarginIfLarger(childMargins.positiveMarginAfter());
+        marginInfo.setNegativeMarginIfLarger(childMargins.negativeMarginAfter());
 
         if (!marginInfo.canCollapseWithMarginBefore())
             // We need to make sure that the position of the self-collapsing block
             // is correct, since it could have overflowing content
             // that needs to be positioned correctly (e.g., a block that
             // had a specified height of 0 but that actually had subcontent).
-            ypos = logicalHeight() + collapsedTopPos - collapsedTopNeg;
+            logicalTop = logicalHeight() + collapsedBeforePos - collapsedBeforeNeg;
     }
     else {
         if (child->style()->marginBeforeCollapse() == MSEPARATE) {
-            setLogicalHeight(logicalHeight() + marginInfo.margin() + child->marginTop());
-            ypos = logicalHeight();
+            setLogicalHeight(logicalHeight() + marginInfo.margin() + marginBeforeForChild(child));
+            logicalTop = logicalHeight();
         }
         else if (!marginInfo.atBeforeSideOfBlock() ||
             (!marginInfo.canCollapseMarginBeforeWithChildren()
              && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginBeforeQuirk()))) {
             // We're collapsing with a previous sibling's margins and not
             // with the top of the block.
-            setLogicalHeight(logicalHeight() + max(marginInfo.posMargin(), posTop) - max(marginInfo.negMargin(), negTop));
-            ypos = logicalHeight();
+            setLogicalHeight(logicalHeight() + max(marginInfo.positiveMargin(), posTop) - max(marginInfo.negativeMargin(), negTop));
+            logicalTop = logicalHeight();
         }
 
-        marginInfo.setPosMargin(child->maxMarginAfter(PositiveMargin));
-        marginInfo.setNegMargin(child->maxMarginAfter(NegativeMargin));
+        marginInfo.setPositiveMargin(childMargins.positiveMarginAfter());
+        marginInfo.setNegativeMargin(childMargins.negativeMarginAfter());
 
         if (marginInfo.margin())
             marginInfo.setMarginAfterQuirk(child->isMarginAfterQuirk() || style()->marginAfterCollapse() == MDISCARD);
@@ -1555,12 +1558,12 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
     // If margins would pull us past the top of the next page, then we need to pull back and pretend like the margins
     // collapsed into the page edge.
     bool paginated = view()->layoutState()->isPaginated();
-    if (paginated && ypos > beforeCollapseY) {
-        int oldY = ypos;
-        ypos = min(ypos, nextPageTop(beforeCollapseY));
-        setLogicalHeight(logicalHeight() + (ypos - oldY));
+    if (paginated && logicalTop > beforeCollapseLogicalTop) {
+        int oldLogicalTop = logicalTop;
+        logicalTop = min(logicalTop, nextPageTop(beforeCollapseLogicalTop));
+        setLogicalHeight(logicalHeight() + (logicalTop - oldLogicalTop));
     }
-    return ypos;
+    return logicalTop;
 }
 
 int RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, int oldTopPosMargin, int oldTopNegMargin, int yPos)
@@ -1582,12 +1585,14 @@ int RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& marginInfo, i
             if (!curr->isFloatingOrPositioned())
                 atBottomOfBlock = false;
         }
+        
+        MarginValues childMargins = marginValuesForChild(child);
         if (atBottomOfBlock) {
-            marginInfo.setPosMargin(child->maxMarginAfter(PositiveMargin));
-            marginInfo.setNegMargin(child->maxMarginAfter(NegativeMargin));
+            marginInfo.setPositiveMargin(childMargins.positiveMarginAfter());
+            marginInfo.setNegativeMargin(childMargins.negativeMarginAfter());
         } else {
-            marginInfo.setPosMargin(max(child->maxMarginBefore(PositiveMargin), child->maxMarginAfter(PositiveMargin)));
-            marginInfo.setNegMargin(max(child->maxMarginBefore(NegativeMargin), child->maxMarginAfter(NegativeMargin)));
+            marginInfo.setPositiveMargin(max(childMargins.positiveMarginBefore(), childMargins.positiveMarginAfter()));
+            marginInfo.setNegativeMargin(max(childMargins.negativeMarginBefore(), childMargins.negativeMarginAfter()));
         }
         
         // Adjust our height such that we are ready to be collapsed with subsequent siblings (or the bottom
@@ -1679,7 +1684,7 @@ void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
     if (marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()) {
         // Update our max pos/neg bottom margins, since we collapsed our bottom margins
         // with our children.
-        setMaxMarginAfterValues(max(maxPosMarginAfter(), marginInfo.posMargin()), max(maxNegMarginAfter(), marginInfo.negMargin()));
+        setMaxMarginAfterValues(max(maxPositiveMarginAfter(), marginInfo.positiveMargin()), max(maxNegativeMarginAfter(), marginInfo.negativeMargin()));
 
         if (!marginInfo.marginAfterQuirk())
             setMarginAfterQuirk(false);
@@ -1806,8 +1811,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom
 
 void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int& previousFloatBottom, int& maxFloatBottom)
 {
-    int oldPosMarginBefore = maxPosMarginBefore();
-    int oldNegMarginBefore = maxNegMarginBefore();
+    int oldPosMarginBefore = maxPositiveMarginBefore();
+    int oldNegMarginBefore = maxNegativeMarginBefore();
 
     // The child is a normal flow object.  Compute the margins we will use for collapsing now.
     child->computeBlockDirectionMargins(this);
@@ -5584,23 +5589,23 @@ void RenderBlock::clearTruncation()
 void RenderBlock::setMaxMarginBeforeValues(int pos, int neg)
 {
     if (!m_rareData) {
-        if (pos == RenderBlockRareData::beforePosDefault(this) && neg == RenderBlockRareData::beforeNegDefault(this))
+        if (pos == RenderBlockRareData::positiveMarginBeforeDefault(this) && neg == RenderBlockRareData::negativeMarginBeforeDefault(this))
             return;
         m_rareData = new RenderBlockRareData(this);
     }
-    m_rareData->m_beforePos = pos;
-    m_rareData->m_beforeNeg = neg;
+    m_rareData->m_margins.setPositiveMarginBefore(pos);
+    m_rareData->m_margins.setNegativeMarginBefore(neg);
 }
 
 void RenderBlock::setMaxMarginAfterValues(int pos, int neg)
 {
     if (!m_rareData) {
-        if (pos == RenderBlockRareData::afterPosDefault(this) && neg == RenderBlockRareData::afterNegDefault(this))
+        if (pos == RenderBlockRareData::positiveMarginAfterDefault(this) && neg == RenderBlockRareData::negativeMarginAfterDefault(this))
             return;
         m_rareData = new RenderBlockRareData(this);
     }
-    m_rareData->m_afterPos = pos;
-    m_rareData->m_afterNeg = neg;
+    m_rareData->m_margins.setPositiveMarginAfter(pos);
+    m_rareData->m_margins.setNegativeMarginAfter(neg);
 }
 
 void RenderBlock::setPaginationStrut(int strut)
@@ -6144,6 +6149,66 @@ void RenderBlock::setMarginAfterForChild(RenderBox* child, int margin)
         child->setMarginLeft(margin);
         break;
     }
+}
+
+RenderBlock::MarginValues RenderBlock::marginValuesForChild(RenderBox* child)
+{
+    int childBeforePositive = 0;
+    int childBeforeNegative = 0;
+    int childAfterPositive = 0;
+    int childAfterNegative = 0;
+
+    int beforeMargin = 0;
+    int afterMargin = 0;
+
+    RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
+    
+    // If the child has the same directionality as we do, then we can just return its
+    // margins in the same direction.
+    if (!child->isBlockFlowRoot()) {
+        if (childRenderBlock) {
+            childBeforePositive = childRenderBlock->maxPositiveMarginBefore();
+            childBeforeNegative = childRenderBlock->maxNegativeMarginBefore();
+            childAfterPositive = childRenderBlock->maxPositiveMarginAfter();
+            childAfterNegative = childRenderBlock->maxNegativeMarginAfter();
+        } else {
+            beforeMargin = child->marginBefore();
+            afterMargin = child->marginAfter();
+        }
+    } else if (child->style()->isVerticalBlockFlow() == style()->isVerticalBlockFlow()) {
+        // The child has a different directionality.  If the child is parallel, then it's just
+        // flipped relative to us.  We can use the margins for the opposite edges.
+        if (childRenderBlock) {
+            childBeforePositive = childRenderBlock->maxPositiveMarginAfter();
+            childBeforeNegative = childRenderBlock->maxNegativeMarginAfter();
+            childAfterPositive = childRenderBlock->maxPositiveMarginBefore();
+            childAfterNegative = childRenderBlock->maxNegativeMarginBefore();
+        } else {
+            beforeMargin = child->marginAfter();
+            afterMargin = child->marginBefore();
+        }
+    } else {
+        // The child is perpendicular to us, which means its margins don't collapse but are on the
+        // "logical left/right" sides of the child box.  We can just return the raw margin in this case.
+        beforeMargin = marginBeforeForChild(child);
+        afterMargin = marginAfterForChild(child);
+    }
+
+    // Resolve uncollapsing margins into their positive/negative buckets.
+    if (beforeMargin) {
+        if (beforeMargin > 0)
+            childBeforePositive = beforeMargin;
+        else
+            childBeforeNegative = -beforeMargin;
+    }
+    if (afterMargin) {
+        if (afterMargin > 0)
+            childAfterPositive = afterMargin;
+        else
+            childAfterNegative = -afterMargin;
+    }
+
+    return MarginValues(childBeforePositive, childBeforeNegative, childAfterPositive, childAfterNegative);
 }
 
 const char* RenderBlock::renderName() const

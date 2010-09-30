@@ -1,3 +1,63 @@
+2010-09-30  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46938
+        
+        Rewrite margin collapsing to be block-flow-aware.  Eliminate a bunch of the margin functions on RenderBox in favor of a single
+        master function for grabbing all the margin values for a child: marginValuesForChild on RenderBlock.  Introduce a new
+        MarginValues struct to make returning the collection of 4 margin values easy.
+    
+        fast/blockflow/inline-direction-positioning.html progresses to have the correct results.
+        Added fast/blockflow/margin-collapse.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::setCollapsedBottomMargin):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::setMaxMarginBeforeValues):
+        (WebCore::RenderBlock::setMaxMarginAfterValues):
+        (WebCore::RenderBlock::marginValuesForChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::MarginValues::MarginValues):
+        (WebCore::RenderBlock::MarginValues::positiveMarginBefore):
+        (WebCore::RenderBlock::MarginValues::negativeMarginBefore):
+        (WebCore::RenderBlock::MarginValues::positiveMarginAfter):
+        (WebCore::RenderBlock::MarginValues::negativeMarginAfter):
+        (WebCore::RenderBlock::MarginValues::setPositiveMarginBefore):
+        (WebCore::RenderBlock::MarginValues::setNegativeMarginBefore):
+        (WebCore::RenderBlock::MarginValues::setPositiveMarginAfter):
+        (WebCore::RenderBlock::MarginValues::setNegativeMarginAfter):
+        (WebCore::RenderBlock::maxPositiveMarginBefore):
+        (WebCore::RenderBlock::maxNegativeMarginBefore):
+        (WebCore::RenderBlock::maxPositiveMarginAfter):
+        (WebCore::RenderBlock::maxNegativeMarginAfter):
+        (WebCore::RenderBlock::initMaxMarginValues):
+        (WebCore::RenderBlock::collapsedMarginBefore):
+        (WebCore::RenderBlock::collapsedMarginAfter):
+        (WebCore::RenderBlock::MarginInfo::clearMargin):
+        (WebCore::RenderBlock::MarginInfo::setPositiveMargin):
+        (WebCore::RenderBlock::MarginInfo::setNegativeMargin):
+        (WebCore::RenderBlock::MarginInfo::setPositiveMarginIfLarger):
+        (WebCore::RenderBlock::MarginInfo::setNegativeMarginIfLarger):
+        (WebCore::RenderBlock::MarginInfo::setMargin):
+        (WebCore::RenderBlock::MarginInfo::positiveMargin):
+        (WebCore::RenderBlock::MarginInfo::negativeMargin):
+        (WebCore::RenderBlock::MarginInfo::margin):
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData):
+        (WebCore::RenderBlock::RenderBlockRareData::positiveMarginBeforeDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::negativeMarginBeforeDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::positiveMarginAfterDefault):
+        (WebCore::RenderBlock::RenderBlockRareData::negativeMarginAfterDefault):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::collapsedMarginBefore):
+        (WebCore::RenderBox::collapsedMarginAfter):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+
 2010-09-30  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.
