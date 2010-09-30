@@ -490,9 +490,26 @@ void HistoryItem::clearChildren()
     m_children.clear();
 }
 
+// We do same-document navigation if going to a different item and if either of the following is true:
+// - The other item corresponds to the same document (for history entries created via pushState or fragment changes).
+// - The other item corresponds to the same set of documents, including frames (for history entries created via regular navigation)
+bool HistoryItem::shouldDoSameDocumentNavigationTo(HistoryItem* otherItem) const
+{
+    if (this == otherItem)
+        return false;
+
+    if (stateObject() || otherItem->stateObject())
+        return documentSequenceNumber() == otherItem->documentSequenceNumber();
+    
+    if ((url().hasFragmentIdentifier() || otherItem->url().hasFragmentIdentifier()) && equalIgnoringFragmentIdentifier(url(), otherItem->url()))
+        return documentSequenceNumber() == otherItem->documentSequenceNumber();        
+    
+    return hasSameDocumentTree(otherItem);
+}
+
 // Does a recursive check that this item and its descendants have the same
 // document sequence numbers as the other item.
-bool HistoryItem::hasSameDocuments(HistoryItem* otherItem)
+bool HistoryItem::hasSameDocumentTree(HistoryItem* otherItem) const
 {
     if (documentSequenceNumber() != otherItem->documentSequenceNumber())
         return false;
@@ -503,7 +520,7 @@ bool HistoryItem::hasSameDocuments(HistoryItem* otherItem)
     for (size_t i = 0; i < children().size(); i++) {
         HistoryItem* child = children()[i].get();
         HistoryItem* otherChild = otherItem->childItemWithDocumentSequenceNumber(child->documentSequenceNumber());
-        if (!otherChild || !child->hasSameDocuments(otherChild))
+        if (!otherChild || !child->hasSameDocumentTree(otherChild))
             return false;
     }
 
@@ -512,7 +529,7 @@ bool HistoryItem::hasSameDocuments(HistoryItem* otherItem)
 
 // Does a non-recursive check that this item and its immediate children have the
 // same frames as the other item.
-bool HistoryItem::hasSameFrames(HistoryItem* otherItem)
+bool HistoryItem::hasSameFrames(HistoryItem* otherItem) const
 {
     if (target() != otherItem->target())
         return false;

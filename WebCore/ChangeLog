@@ -1,3 +1,28 @@
+2010-09-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        REGRESSION: page reload on back button after history.pushState with appearing/disappearing iframes
+        https://bugs.webkit.org/show_bug.cgi?id=46324
+        
+        Revert same document check to the way it was before r66238 for history
+        entries created by pushState or fragment changes. Logic fror determining
+        if same document navigation should be used is moved to HistoryItem.
+
+        Tests: fast/history/same-document-iframes-changing-fragment.html
+               fast/history/same-document-iframes-changing-pushstate.html
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::shouldDoSameDocumentNavigationTo):
+        (WebCore::HistoryItem::hasSameDocumentTree):
+        (WebCore::HistoryItem::hasSameFrames):
+        * history/HistoryItem.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem):
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadItem):
+
 2010-09-29  MORITA Hajime  <morrita@google.com>
 
         Unreviewed build fix.

@@ -1,3 +1,19 @@
+2010-09-29  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        REGRESSION: page reload on back button after history.pushState with appearing/disappearing iframes
+        https://bugs.webkit.org/show_bug.cgi?id=46324
+        
+        Add test which uses pushState to generate history entries while also 
+        changing the frames that are present in the document between history
+        states. Add a similar test that uses fragment changes.
+
+        * fast/history/same-document-iframes-changing-fragment-expected.txt: Added.
+        * fast/history/same-document-iframes-changing-fragment.html: Added.
+        * fast/history/same-document-iframes-changing-pushstate-expected.txt: Added.
+        * fast/history/same-document-iframes-changing-pushstate.html: Added.
+
 2010-09-29  Adam Barth  <abarth@webkit.org>
 
         This test result seems to be platform specific.
