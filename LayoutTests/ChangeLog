@@ -1,3 +1,95 @@
+2010-09-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        glsl-conformance.html on khronos will crash chromium --in-process-webgl
+        https://bugs.webkit.org/show_bug.cgi?id=46863
+
+        * fast/canvas/webgl/glsl-conformance-expected.txt: Added.
+        * fast/canvas/webgl/glsl-conformance.html: Added.
+        * fast/canvas/webgl/resources/webgl-test-utils.js: Add a function to turn off console output.
+        (WebGLTestUtils.):
+        (WebGLTestUtils):
+        * fast/canvas/webgl/shaders: Added.
+        * fast/canvas/webgl/shaders/00_shaders.txt: Added.
+        * fast/canvas/webgl/shaders/implicit: Added.
+        * fast/canvas/webgl/shaders/implicit/00_shaders.txt: Added.
+        * fast/canvas/webgl/shaders/implicit/add_int_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_int_mat2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_int_mat3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_int_mat4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_int_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_int_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_int_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_ivec2_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_ivec3_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/add_ivec4_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/assign_int_to_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/assign_ivec2_to_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/assign_ivec3_to_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/assign_ivec4_to_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/construct_struct.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_int_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_int_mat2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_int_mat3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_int_mat4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_int_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_int_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_int_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_ivec2_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_ivec3_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/divide_ivec4_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/equal_int_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/equal_ivec2_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/equal_ivec3_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/equal_ivec4_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/function_int_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/function_ivec2_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/function_ivec3_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/function_ivec4_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/greater_than.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/greater_than_equal.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/less_than.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/less_than_equal.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_int_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_int_mat2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_int_mat3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_int_mat4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_int_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_int_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_int_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_ivec2_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_ivec3_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/multiply_ivec4_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/not_equal_int_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/not_equal_ivec2_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/not_equal_ivec3_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/not_equal_ivec4_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_int_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_int_mat2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_int_mat3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_int_mat4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_int_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_int_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_int_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_ivec2_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_ivec3_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/subtract_ivec4_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/ternary_int_float.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/ternary_ivec2_vec2.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/ternary_ivec3_vec3.vert: Added.
+        * fast/canvas/webgl/shaders/implicit/ternary_ivec4_vec4.vert: Added.
+        * fast/canvas/webgl/shaders/reserved: Added.
+        * fast/canvas/webgl/shaders/reserved/00_shaders.txt: Added.
+        * fast/canvas/webgl/shaders/reserved/_webgl_field.vert: Added.
+        * fast/canvas/webgl/shaders/reserved/_webgl_function.vert: Added.
+        * fast/canvas/webgl/shaders/reserved/_webgl_struct.vert: Added.
+        * fast/canvas/webgl/shaders/reserved/_webgl_variable.vert: Added.
+        * fast/canvas/webgl/shaders/reserved/webgl_field.vert: Added.
+        * fast/canvas/webgl/shaders/reserved/webgl_function.vert: Added.
+        * fast/canvas/webgl/shaders/reserved/webgl_struct.vert: Added.
+        * fast/canvas/webgl/shaders/reserved/webgl_variable.vert: Added.
+
 2010-09-30  Adam Roben  <aroben@apple.com>
 
         Add some tests to the Windows Skipped list

@@ -1,0 +1,537 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>WebGL GLSL Conformance Tests</title>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script id="vshader" type="text/something-not-javascript">
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+}
+</script>
+<script id="fshader" type="text/something-not-javascript">
+precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+}
+</script>
+<script id="fshaderWithPrecision" type="text/something-not-javascript">
+void main()
+{
+    gl_FragColor = mediump vec4(1.0,0.0,0.0,1.0);
+}
+</script>
+<script id="vshaderWithDefaultPrecision" type="text/something-not-javascript">
+precision mediump float;
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+}
+</script>
+<script id="fshaderWithDefaultPrecision" type="text/something-not-javascript">
+precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(1.0,0.0,0.0,1.0);
+}
+</script>
+<script id="fshaderWithOutPrecision" type="text/something-not-javascript">
+uniform vec4 color;
+void main()
+{
+    gl_FragColor = color;
+}
+</script>
+<script id="fshaderWithInvalidIdentifier" type="text/something-not-javascript">
+precision mediump float;
+uniform float gl_foo;
+void main()
+{
+    gl_FragColor = vec4(gl_foo,0.0,0.0,1.0);
+}
+</script>
+<script id="fshaderWithGL_ESeq1" type="text/something-not-javascript">
+#if GL_ES == 1
+  precision mediump float;
+  void main()
+  {
+      gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+  }
+#else
+  foo
+#endif
+</script>
+<script id="fshaderWithGLSLPreprocessorSymbol" type="text/something-not-javascript">
+#if defined(GL_ES)
+  precision mediump float;
+  void main()
+  {
+      gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+  }
+#else
+  foo
+#endif
+</script>
+<script id="fshaderWithVERSION100PreprocessorSymbol" type="text/something-not-javascript">
+#if __VERSION__ == 100
+  precision mediump float;
+  void main()
+  {
+      gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+  }
+#else
+  foo
+#endif
+</script>
+<script id="fshaderWithFragDepth" type="text/something-not-javascript">
+precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+    gl_FragDepth = 1.0;
+}
+</script>
+<script id="vshaderWithClipVertex" type="text/something-not-javascript">
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+    gl_ClipVertex = vPosition;
+}
+</script>
+<script id="fshaderWith__Define" type="text/something-not-javascript">
+#define __foo 1
+precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+}
+</script>
+<script id="fshaderWithGL_Define" type="text/something-not-javascript">
+#define GL_FOO 1
+precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+}
+</script>
+<script id="fshaderWithDefineLineContinuation" type="text/something-not-javascript">
+#define foo this \
+  is a test
+precision mediump float;
+void main()
+{
+    gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+}
+</script>
+<script id="vshaderWithgl_Color" type="text/something-not-javascript">
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = gl_Color;
+}
+</script>
+<script id="vshaderWithgl_ProjectionMatrix" type="text/something-not-javascript">
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition * gl_ProjectionMatrix;
+}
+</script>
+<script id="vshaderWithAttributeArray" type="text/something-not-javascript">
+attribute vec4 vPosition[2];
+void main()
+{
+    gl_Position = vPosition[0] + vPosition[1];
+}
+</script>
+<script id="vshaderWithwebgl_" type="text/something-not-javascript">
+attribute vec4 webgl_vPosition;
+void main()
+{
+    gl_Position = webgl_vPosition;
+}
+</script>
+<script id="vshaderWith_webgl_" type="text/something-not-javascript">
+attribute vec4 _webgl_vPosition;
+void main()
+{
+    gl_Position = _webgl_vPosition;
+}
+</script>
+<script id="vshaderWithImplicitVec3Cast" type="text/something-not-javascript">
+attribute vec4 vPosition;
+void main()
+{
+    highp vec3 k = vec3(1, 2, 3);
+    gl_Position = k;
+}
+</script>
+<script id="vshaderWithExplicitIntCast" type="text/something-not-javascript">
+attribute vec4 vPosition;
+void main()
+{
+    int k = 123;
+    gl_Position = vec4(vPosition.x, vPosition.y, vPosition.z, float(k));
+}
+</script>
+<script id="vshaderWithVersion130" type="text/something-not-javascript">
+#version 130
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+}
+</script>
+<script id="vshaderWithVersion120" type="text/something-not-javascript">
+#version 120
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+}
+</script>
+<script id="vshaderWithVersion100" type="text/something-not-javascript">
+#version 100
+attribute vec4 vPosition;
+void main()
+{
+    gl_Position = vPosition;
+}
+</script>
+<script id="vshaderWithLineDirective" type="text/something-not-javascript">
+#line 123
+foo
+</script>
+<script id="vshaderWith__FILE__" type="text/something-not-javascript">
+__FILE__
+</script>
+<canvas id="canvas" width="2" height="2"> </canvas>
+<script>
+description("This test ensures WebGL implementations allow proper GLES2 shaders compile and improper ones fail.");
+
+debug("");
+debug("Canvas.getContext");
+
+var wtu = WebGLTestUtils;
+wtu.loggingOff();
+var gl = wtu.create3DContext(document.getElementById("canvas"));
+if (!gl) {
+  testFailed("context does not exist");
+} else {
+  testPassed("context exists");
+
+  debug("");
+  debug("Checking various GLSL programs.");
+
+  function log(msg) {
+    if (window.console && window.console.log) {
+      //window.console.log(msg);
+    }
+  }
+
+  var shaderInfo = [
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithPrecision',
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: 'frament shader with precision compiled and linked'
+    },
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithDefaultPrecision',
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: 'fragment shader with default precision compiled and linked'
+    },
+    { vShaderId: 'vshaderWithDefaultPrecision',
+      vShaderSuccess: true,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: 'vertex shader with default precision compiled and linked'
+    },
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithOutPrecision',
+      fShaderSuccess: false,
+      linkSuccess: false,
+      passMsg: 'fragment shader without precision should fail',
+    },
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithInvalidIdentifier',
+      fShaderSuccess: false,
+      linkSuccess: false,
+      passMsg: 'fragment shader with gl_ identifier should fail',
+    },
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithGL_ESeq1',
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: 'fragment shader that expects GL_ES == 1 should succeed',
+    },
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithGLSLPreprocessorSymbol',
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: 'fragment shader that uses GL_ES preprocessor symbol should succeed',
+    },
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithVERSION100PreprocessorSymbol',
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: 'fragment shader that uses __VERSION__==100 should succeed',
+    },
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithFragDepth',
+      fShaderSuccess: false,
+      linkSuccess: false,
+      passMsg: 'fragment shader that uses gl_FragDepth should fail',
+    },
+    { vShaderId: 'vshaderWithClipVertex',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader that uses gl_ClipVertex should fail',
+    },
+    //{ vShaderId: 'vshader',
+    //  vShaderSuccess: true,
+    //  fShaderId: 'fshaderWith__Define',
+    //  fShaderSuccess: false,
+    //  linkSuccess: false,
+    //  passMsg: 'fragment shader that uses __ define should fail',
+    //},
+    //{ vShaderId: 'vshader',
+    //  vShaderSuccess: true,
+    //  fShaderId: 'fshaderWithGL_Define',
+    //  fShaderSuccess: false,
+    //  linkSuccess: false,
+    //  passMsg: 'fragment shader that uses GL_ define should fail',
+    //},
+    { vShaderId: 'vshader',
+      vShaderSuccess: true,
+      fShaderId: 'fshaderWithDefineLineContinuation',
+      fShaderSuccess: false,
+      linkSuccess: false,
+      passMsg: 'fragment shader that uses has line continuation macro should fail',
+    },
+    { vShaderId: 'vshaderWithgl_Color',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader that uses gl_Color should fail',
+    },
+    { vShaderId: 'vshaderWithgl_ProjectionMatrix',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader that uses gl_ProjectionMatrix should fail',
+    },
+    { vShaderId: 'vshaderWithAttributeArray',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader that uses attribute array should fail as per GLSL page 110, appendix A, section 5',
+    },
+    { vShaderId: 'vshaderWithwebgl_',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader that uses _webgl identifier should fail',
+    },
+    { vShaderId: 'vshaderWith_webgl_',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader that uses _webgl_ identifier should fail',
+    },
+    { vShaderId: 'vshaderWithExplicitIntCast',
+      vShaderSuccess: true,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: 'vertex shader that explicit int to float cast should succeed',
+    },
+    { vShaderId: 'vshaderWithImplicitVec3Cast',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader that implicit vec3 to vec4 cast should fail',
+    },
+    { vShaderId: 'vshaderWithVersion130',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader uses the #version not 100 directive should fail',
+    },
+    { vShaderId: 'vshaderWithVersion120',
+      vShaderSuccess: false,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader uses the #version not 100 directive should fail',
+    },
+    { vShaderId: 'vshaderWithVersion100',
+      vShaderSuccess: true,
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: true,
+      passMsg: 'vertex shader uses the #version 100 directive should succeed',
+    },
+    { vShaderId: 'vshaderWithLineDirective',
+      vShaderSuccess: false,
+      vShaderTest: (function() { return wtu.getLastError().indexOf("124") >= 0; }),
+      fShaderId: 'fshader',
+      fShaderSuccess: true,
+      linkSuccess: false,
+      passMsg: 'vertex shader uses #line directive should report correct line',
+    }
+  ];
+
+  // Read in all the shader source.
+  for (var ii = 0; ii < shaderInfo.length; ++ii) {
+    var si = shaderInfo[ii];
+    si.vShaderSource = document.getElementById(si.vShaderId).text;
+    si.fShaderSource = document.getElementById(si.fShaderId).text;
+  }
+
+  // Add more tests from external file
+  var simpleVertShader = document.getElementById('vshader').text;
+  var simpleFragShader = document.getElementById('fshader').text;
+
+  addExternalShaders('shaders/00_shaders.txt');
+
+  function addExternalShaders(filename, passMsg) {
+    var files = wtu.readFileList(filename);
+    for (var ii = 0; ii < files.length; ++ii) {
+      var file = files[ii];
+      var shaderSource = wtu.readFile(file);
+      var firstLine = shaderSource.split("\n")[0];
+      var success = undefined;
+      if (wtu.endsWith(firstLine, " fail") ||
+          wtu.endsWith(firstLine, " fail.")) {
+        success = false;
+      } else if (wtu.endsWith(firstLine, " succeed") ||
+                 wtu.endsWith(firstLine, " succeed.")) {
+        success = true;
+      }
+      if (success === undefined) {
+        testFailed("bad first line in " + file);
+        continue;
+      }
+      if (!wtu.startsWith(firstLine, "// ")) {
+        testFailed("bad first line in " + file);
+        continue;
+      }
+      var passMsg = firstLine.substr(3);
+      if (wtu.endsWith(file, ".vert")) {
+        shaderInfo.push({
+            vShaderId: file,
+            vShaderSource: shaderSource,
+            vShaderSuccess: success,
+            fShaderId: 'fshader',
+            fShaderSource: simpleFragShader,
+            fShaderSuccess: true,
+            linkSuccess: success,
+            passMsg: passMsg,
+          });
+      } else if (wtu.endsWith(file, ".frag")) {
+        shaderInfo.push({
+            vShaderId: 'vshader',
+            vShaderSource: simpleVertShader,
+            vShaderSuccess: true,
+            fShaderId: file,
+            fShaderSource: shaderSource,
+            fShaderSuccess: success,
+            linkSuccess: success,
+            passMsg: passMsg,
+          });
+      }
+    }
+  }
+
+  for (var ii = 0; ii < shaderInfo.length; ++ii) {
+    var info = shaderInfo[ii];
+    var passMsg = '[' + info.vShaderId + '/' + info.fShaderId + ']: ' +
+                  info.passMsg
+    log(passMsg);
+    //debug(info.fShaderId);
+    var vShader = wtu.loadShader(gl, info.vShaderSource, gl.VERTEX_SHADER);
+    if (info.vShaderTest) {
+      if (!info.vShaderTest(vShader)) {
+        testFailed(passMsg);
+        continue;
+      }
+    }
+    if ((vShader != null) != info.vShaderSuccess) {
+      testFailed(passMsg);
+      continue;
+    }
+    var fShader = wtu.loadShader(gl, info.fShaderSource, gl.FRAGMENT_SHADER);
+    //debug(fShader == null ? "fail" : "succeed");
+    if ((fShader != null) != info.fShaderSuccess) {
+      testFailed(passMsg);
+      continue;
+    }
+
+    if (vShader && fShader) {
+      var program = gl.createProgram();
+      gl.attachShader(program, vShader);
+      gl.attachShader(program, fShader);
+      gl.linkProgram(program);
+      var linked = (gl.getProgramParameter(program, gl.LINK_STATUS) != 0);
+      if (!linked) {
+        var error = gl.getProgramInfoLog(shader);
+        log("*** Error linking program '"+program+"':"+error);
+      }
+      if (linked != info.linkSuccess) {
+        testFailed(passMsg);
+        continue;
+      }
+    } else {
+      if (info.linkSuccess) {
+        testFailed(passMsg);
+        continue;
+      }
+    }
+    testPassed(passMsg);
+  }
+}
+
+debug("");
+successfullyParsed = true;
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+
+<script>
+</script>
+
+</body>
+</html>

@@ -1,3 +1,22 @@
+2010-09-29  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        glsl-conformance.html on khronos will crash chromium --in-process-webgl
+        https://bugs.webkit.org/show_bug.cgi?id=46863
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Make ShaderSourceMap as <ShaderID, ShaderSourceEntry*>, so map resizing will be efficient and we don't need to worry about pointer copying.
+        (WebKit::WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::compileShader):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getShaderiv):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getShaderInfoLog):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getShaderSource):
+        (WebKit::WebGraphicsContext3DDefaultImpl::shaderSource):
+        (WebKit::WebGraphicsContext3DDefaultImpl::createShader):
+        (WebKit::WebGraphicsContext3DDefaultImpl::deleteShader):
+        * src/WebGraphicsContext3DDefaultImpl.h: Ditto.
+        (WebKit::WebGraphicsContext3DDefaultImpl::ShaderSourceEntry::ShaderSourceEntry):
+
 2010-09-30  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

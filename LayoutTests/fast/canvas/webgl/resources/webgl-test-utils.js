@@ -30,6 +30,14 @@ var error = function(msg) {
 };
 
 /**
+ * Turn off all logging.
+ */
+var loggingOff = function() {
+  log = function() {};
+  error = function() {};
+};
+
+/**
  * Converts a WebGL enum to a string
  * @param {!WebGLContext} gl The WebGLContext to use.
  * @param {number} value The enum value.
@@ -845,6 +853,7 @@ return {
   loadStandardFragmentShader: loadStandardFragmentShader,
   loadTexture: loadTexture,
   log: log,
+  loggingOff: loggingOff,
   error: error,
   setupProgram: setupProgram,
   setupSimpleTextureFragmentShader: setupSimpleTextureFragmentShader,

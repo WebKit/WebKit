@@ -332,8 +332,8 @@ private:
 
     // ANGLE related.
     struct ShaderSourceEntry {
-        ShaderSourceEntry()
-                : type(0)
+        ShaderSourceEntry(unsigned long shaderType)
+                : type(shaderType)
                 , source(0)
                 , log(0)
                 , translatedSource(0)
@@ -362,7 +362,7 @@ private:
     void angleDestroyCompilers();
     bool angleValidateShaderSource(ShaderSourceEntry& entry);
 
-    typedef HashMap<WebGLId, ShaderSourceEntry> ShaderSourceMap;
+    typedef HashMap<WebGLId, ShaderSourceEntry*> ShaderSourceMap;
     ShaderSourceMap m_shaderSourceMap;
 
     ShHandle m_fragmentCompiler;
