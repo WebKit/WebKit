@@ -1509,7 +1509,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
     if (marginInfo.quirkContainer() && marginInfo.atBeforeSideOfBlock() && (posTop - negTop))
         marginInfo.setMarginBeforeQuirk(topQuirk);
 
-    int beforeCollapseY = height();
+    int beforeCollapseY = logicalHeight();
     int ypos = beforeCollapseY;
     if (child->isSelfCollapsingBlock()) {
         // This child has no height.  We need to compute our
@@ -1529,20 +1529,20 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
             // is correct, since it could have overflowing content
             // that needs to be positioned correctly (e.g., a block that
             // had a specified height of 0 but that actually had subcontent).
-            ypos = height() + collapsedTopPos - collapsedTopNeg;
+            ypos = logicalHeight() + collapsedTopPos - collapsedTopNeg;
     }
     else {
         if (child->style()->marginBeforeCollapse() == MSEPARATE) {
-            setLogicalHeight(height() + marginInfo.margin() + child->marginTop());
-            ypos = height();
+            setLogicalHeight(logicalHeight() + marginInfo.margin() + child->marginTop());
+            ypos = logicalHeight();
         }
         else if (!marginInfo.atBeforeSideOfBlock() ||
             (!marginInfo.canCollapseMarginBeforeWithChildren()
              && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginBeforeQuirk()))) {
             // We're collapsing with a previous sibling's margins and not
             // with the top of the block.
-            setLogicalHeight(height() + max(marginInfo.posMargin(), posTop) - max(marginInfo.negMargin(), negTop));
-            ypos = height();
+            setLogicalHeight(logicalHeight() + max(marginInfo.posMargin(), posTop) - max(marginInfo.negMargin(), negTop));
+            ypos = logicalHeight();
         }
 
         marginInfo.setPosMargin(child->maxMarginAfter(PositiveMargin));
@@ -1558,7 +1558,7 @@ int RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
     if (paginated && ypos > beforeCollapseY) {
         int oldY = ypos;
         ypos = min(ypos, nextPageTop(beforeCollapseY));
-        setLogicalHeight(height() + (ypos - oldY));
+        setLogicalHeight(logicalHeight() + (ypos - oldY));
     }
     return ypos;
 }
@@ -1699,14 +1699,14 @@ void RenderBlock::handleAfterSideOfBlock(int top, int bottom, MarginInfo& margin
     // If we can't collapse with children then go ahead and add in the bottom margin.
     if (!marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()
         && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginAfterQuirk()))
-        setLogicalHeight(height() + marginInfo.margin());
+        setLogicalHeight(logicalHeight() + marginInfo.margin());
         
     // Now add in our bottom border/padding.
-    setLogicalHeight(height() + bottom);
+    setLogicalHeight(logicalHeight() + bottom);
 
     // Negative margins can cause our height to shrink below our minimal height (border/padding).
     // If this happens, ensure that the computed height is increased to the minimal height.
-    setLogicalHeight(max(height(), top + bottom));
+    setLogicalHeight(max(logicalHeight(), top + bottom));
 
     // Update our bottom collapsed margin info.
     setCollapsedBottomMargin(marginInfo);
