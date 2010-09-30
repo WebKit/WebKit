@@ -1,5 +1,12 @@
 2010-09-30  Adam Roben  <aroben@apple.com>
 
+        Skip a test that fails on Windows due to lack of SSL support
+
+        * platform/win/Skipped: Added
+        http/tests/navigation/ping-cross-origin-from-https.html.
+
+2010-09-30  Adam Roben  <aroben@apple.com>
+
         Rebaseline fast/layers/video-layer.html on Windows
 
         Fixes <http://webkit.org/b/46903> <rdar://problem/8496933> REGRESSION

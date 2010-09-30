@@ -38,6 +38,7 @@ svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/svg-disallowed-in-dashboard-object.html
 
 # Apache 1.3 doesn't support SSL <rdar://problem/5345985>
+http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/ssl
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
