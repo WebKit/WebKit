@@ -4,7 +4,7 @@ CONSOLE MESSAGE: line 1: Uncaught Error: plugin object testThrowExceptionPropert
 SUCCESS: Exception caught: Error: plugin object testThrowExceptionProperty SUCCESS
 SUCCESS: Exception caught: Error: plugin object testThrowExceptionProperty SUCCESS
 One could expect exceptions to be raised in the below cases, too - but Firefox doesn't do that in most of these (I do get an exception in the first case, but that's inconsistent with not getting it in the seconfd one).
-Exception caught: Error: Error calling method on NPObject!
-Exception caught: Error: Error calling method on NPObject!
+Exception caught: Error: Error calling method on NPObject.
+Exception caught: Error: Error calling method on NPObject.
 Exception caught: Error: plugin object testThrowExceptionProperty SUCCESS
 Exception caught: Error: plugin object testThrowExceptionProperty SUCCESS

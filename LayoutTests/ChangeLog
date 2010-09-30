@@ -1,3 +1,10 @@
+2010-09-29  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, updated expectations.
+
+        * platform/chromium-mac/plugins/netscape-plugin-property-access-exception-expected.txt:
+        * platform/chromium-win/plugins/netscape-plugin-property-access-exception-expected.txt:
+
 2010-09-29  Chris Fleizach  <cfleizach@apple.com>
 
         No review. Update layout tests after new CSS property.
