@@ -1,3 +1,23 @@
+2010-09-30  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Added check to test for removed counter node when calling findPlaceForCounter() in updateCounters().
+        Added refcounting to counternodes in countermaps.
+        https://bugs.webkit.org/show_bug.cgi?id=46387
+
+        Test: fast/css/counters/counter-traverse-table-cell.html
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::create):
+        * rendering/CounterNode.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::makeCounterNode):
+        (WebCore::destroyCounterNodeWithoutMapRemoval):
+        (WebCore::RenderCounter::destroyCounterNodes):
+        (WebCore::RenderCounter::destroyCounterNode):
+        (WebCore::updateCounters):
+
 2010-09-30  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Beth Dakin.

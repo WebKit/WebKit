@@ -24,6 +24,7 @@
 
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 // This implements a counter tree that is used for finding parents in counters() lookup,
 // and for propagating count changes when nodes are added or removed.
@@ -38,9 +39,9 @@ namespace WebCore {
 
 class RenderObject;
 
-class CounterNode : public Noncopyable {
+class CounterNode : public RefCounted<CounterNode> {
 public:
-    CounterNode(RenderObject*, bool isReset, int value);
+    static PassRefPtr<CounterNode> create(RenderObject*, bool isReset, int value);
 
     bool actsAsReset() const { return m_hasResetType || !m_parent; }
     bool hasResetType() const { return m_hasResetType; }
@@ -64,6 +65,7 @@ public:
     void removeChild(CounterNode*, const AtomicString& identifier);
 
 private:
+    CounterNode(RenderObject*, bool isReset, int value);
     int computeCountInParent() const;
     void recount(const AtomicString& identifier);
 

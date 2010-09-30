@@ -1,3 +1,13 @@
+2010-09-30  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Tests for crash in counter nodes when traversing table cells.
+        https://bugs.webkit.org/show_bug.cgi?id=46387
+
+        * fast/css/counters/counter-traverse-table-cell-expected.txt: Added.
+        * fast/css/counters/counter-traverse-table-cell.html: Added.
+
 2010-09-30  Alpha Lam  <hclam@chromium.org>
 
         Unreviewed. Build fix.
