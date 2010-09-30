@@ -1,3 +1,15 @@
+2010-09-30  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Build fix: Add ENABLE(INSPECTOR) guard
+        https://bugs.webkit.org/show_bug.cgi?id=46852
+
+        Page does not have inspectorController() when ENABLE(INSPECTOR) is 0.
+
+        * inspector/InspectorController.h:
+        (WebCore::InspectorController::inspectorControllerForDocument):
+
 2010-09-30  Michael Nordman  <michaeln@google.com>
 
         Reviewed by David Levin.
