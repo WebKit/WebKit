@@ -1,3 +1,10 @@
+2010-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed rebaseline for Qt and Windows platforms required by r68830.
+
+        * platform/qt/editing/execCommand/toggle-compound-styles-expected.txt: Merged b elements.
+        * platform/win/editing/execCommand/toggle-compound-styles-expected.txt: Ditto.
+
 2010-09-30  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.
