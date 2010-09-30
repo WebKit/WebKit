@@ -1,3 +1,19 @@
+2010-09-30  Adam Roben  <aroben@apple.com>
+
+        Make Windows match the Mac fallback font for the hyphen character in
+        two tests
+
+        Fixes <http://webkit.org/b/46909> <rdar://problem/8497214> REGRESSION
+        (r68551): fast/text/midword-break-after-breakable-char.html and
+        fast/text/basic/014.html are failing on Windows
+
+        Rubber-stamped by Dan Bernstein.
+
+        * fast/text/basic/014.html:
+        * fast/text/midword-break-after-breakable-char.html:
+        Added a little @font-face magic to force the font for the hyphen
+        character.
+
 2010-09-30  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Dirk Schulze.
