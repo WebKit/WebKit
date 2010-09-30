@@ -1,3 +1,19 @@
+2010-09-30  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46923
+        
+        Make determineLogicalLeftPositionForChild block-flow-aware.  Rewrite the function so that there aren't
+        completely separate LTR/RTL cases.
+
+        Added fast/blockflow/inline-direction-positioning.html
+
+        * fast/blockflow/inline-direction-positioning.html: Added.
+        * platform/mac/fast/blockflow/inline-direction-positioning-expected.checksum: Added.
+        * platform/mac/fast/blockflow/inline-direction-positioning-expected.png: Added.
+        * platform/mac/fast/blockflow/inline-direction-positioning-expected.txt: Added.
+
 2010-09-29  Adam Roben  <aroben@apple.com>
 
         Add test for color:8 media queries

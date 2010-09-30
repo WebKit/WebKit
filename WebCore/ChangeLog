@@ -1,3 +1,22 @@
+2010-09-30  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46923
+        
+        Make determineLogicalLeftPositionForChild block-flow-aware.  Rewrite the function so that there aren't
+        completely separate LTR/RTL cases.
+
+        Added fast/blockflow/inline-direction-positioning.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::determineLogicalLeftPositionForChild):
+        (WebCore::RenderBlock::setLogicalLeftForChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalWidthForChild):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+
 2010-09-29  Adam Roben  <aroben@apple.com>
 
         Fix color media queries on Windows

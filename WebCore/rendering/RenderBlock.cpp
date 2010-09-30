@@ -1645,54 +1645,33 @@ int RenderBlock::estimateLogicalTopPosition(RenderBox* child, const MarginInfo& 
 
 void RenderBlock::determineLogicalLeftPositionForChild(RenderBox* child)
 {
-    int xPos = borderLeft() + paddingLeft();
-    if (style()->direction() == LTR) {
-        // Add in our left margin.
-        int chPos = xPos + child->marginLeft();
+    int startPosition = borderStart() + paddingStart();
+    int totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
+
+    // Add in our start margin.
+    int childMarginStart = marginStartForChild(child);
+    int newPosition = startPosition + childMarginStart;
         
-        // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats.  They need
-        // to shift over as necessary to dodge any floats that might get in the way.
-        if (child->avoidsFloats()) {
-            int leftOff = logicalLeftOffsetForLine(height(), false);
-            if (style()->textAlign() != WEBKIT_CENTER && child->style()->marginLeft().type() != Auto) {
-                if (child->marginLeft() < 0)
-                    leftOff += child->marginLeft();
-                chPos = max(chPos, leftOff); // Let the float sit in the child's margin if it can fit.
-            }
-            else if (leftOff != xPos) {
-                // The object is shifting right. The object might be centered, so we need to
-                // recalculate our horizontal margins. Note that the containing block content
-                // width computation will take into account the delta between |leftOff| and |xPos|
-                // so that we can just pass the content width in directly to the |computeMarginsInContainingBlockInlineDirection|
-                // function.
-                child->computeInlineDirectionMargins(this, availableLogicalWidthForLine(child->y(), false), child->width());
-                chPos = leftOff + child->marginLeft();
-            }
+    // Some objects (e.g., tables, horizontal rules, overflow:auto blocks) avoid floats.  They need
+    // to shift over as necessary to dodge any floats that might get in the way.
+    if (child->avoidsFloats()) {
+        int startOff = style()->direction() == LTR ? logicalLeftOffsetForLine(logicalHeight(), false) : totalAvailableLogicalWidth - logicalRightOffsetForLine(logicalHeight(), false);
+        if (style()->textAlign() != WEBKIT_CENTER && !child->style()->marginStartUsing(style()).isAuto()) {
+            if (childMarginStart < 0)
+                startOff += childMarginStart;
+            newPosition = max(newPosition, startOff); // Let the float sit in the child's margin if it can fit.
+        } else if (startOff != startPosition) {
+            // The object is shifting to the "end" side of the block. The object might be centered, so we need to
+            // recalculate our inline direction margins. Note that the containing block content
+            // width computation will take into account the delta between |startOff| and |startPosition|
+            // so that we can just pass the content width in directly to the |computeMarginsInContainingBlockInlineDirection|
+            // function.
+            child->computeInlineDirectionMargins(this, availableLogicalWidthForLine(logicalTopForChild(child), false), logicalWidthForChild(child));
+            newPosition = startOff + marginStartForChild(child);
         }
-        view()->addLayoutDelta(IntSize(child->x() - chPos, 0));
-        child->setLocation(chPos, child->y());
-    } else {
-        xPos += availableLogicalWidth();
-        int chPos = xPos - (child->width() + child->marginRight());
-        if (child->avoidsFloats()) {
-            int rightOff = logicalRightOffsetForLine(height(), false);
-            if (style()->textAlign() != WEBKIT_CENTER && child->style()->marginRight().type() != Auto) {
-                if (child->marginRight() < 0)
-                    rightOff -= child->marginRight();
-                chPos = min(chPos, rightOff - child->width()); // Let the float sit in the child's margin if it can fit.
-            } else if (rightOff != xPos) {
-                // The object is shifting left. The object might be centered, so we need to
-                // recalculate our horizontal margins. Note that the containing block content
-                // width computation will take into account the delta between |rightOff| and |xPos|
-                // so that we can just pass the content width in directly to the |computeInlineDirectionMargins|
-                // function.
-                child->computeInlineDirectionMargins(this, availableLogicalWidthForLine(child->y(), false), child->width());
-                chPos = rightOff - child->marginRight() - child->width();
-            }
-        }
-        view()->addLayoutDelta(IntSize(child->x() - chPos, 0));
-        child->setLocation(chPos, child->y());
     }
+
+    setLogicalLeftForChild(child, style()->direction() == LTR ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child));
 }
 
 void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
@@ -1731,6 +1710,17 @@ void RenderBlock::handleAfterSideOfBlock(int top, int bottom, MarginInfo& margin
 
     // Update our bottom collapsed margin info.
     setCollapsedBottomMargin(marginInfo);
+}
+
+void RenderBlock::setLogicalLeftForChild(RenderBox* child, int logicalLeft)
+{
+    if (style()->isVerticalBlockFlow()) {
+        view()->addLayoutDelta(IntSize(child->x() - logicalLeft, 0));
+        child->setLocation(logicalLeft, child->y());
+    } else {
+        view()->addLayoutDelta(IntSize(0, child->y() - logicalLeft));
+        child->setLocation(child->x(), logicalLeft);
+    }
 }
 
 void RenderBlock::setLogicalTopForChild(RenderBox* child, int logicalTop)
@@ -3219,11 +3209,6 @@ HashSet<RenderBox*>* RenderBlock::percentHeightDescendants() const
     return gPercentHeightDescendantsMap ? gPercentHeightDescendantsMap->get(this) : 0;
 }
 
-int RenderBlock::logicalLeftOffsetForContent() const
-{
-    return borderLeft() + paddingLeft();
-}
-
 int RenderBlock::logicalLeftOffsetForLine(int y, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
 {
     int left = fixedOffset;
@@ -3250,11 +3235,6 @@ int RenderBlock::logicalLeftOffsetForLine(int y, int fixedOffset, bool applyText
     }
 
     return left;
-}
-
-int RenderBlock::logicalRightOffsetForContent() const
-{
-    return borderLeft() + paddingLeft() + availableLogicalWidth();
 }
 
 int RenderBlock::logicalRightOffsetForLine(int y, int fixedOffset, bool applyTextIndent, int* heightRemaining) const
