@@ -2,6 +2,18 @@
 
         Reviewed by Adam Barth.
 
+        webkit-patch upload warns that I'm using Xcode when I'm not
+        https://bugs.webkit.org/show_bug.cgi?id=46869
+
+        String.find returns -1 when not found, so switched to "in".
+
+        * Scripts/webkitpy/common/system/user.py:
+        * Scripts/webkitpy/common/system/user_unittest.py:
+
+2010-09-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         webkit-patch failure-reason dies if non-trunk commits are in the blame range
         https://bugs.webkit.org/show_bug.cgi?id=46866
 

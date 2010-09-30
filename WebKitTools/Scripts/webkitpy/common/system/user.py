@@ -96,6 +96,10 @@ class User(object):
         # Note: Not thread safe: http://bugs.python.org/issue2320
         subprocess.call(args + files)
 
+    def _warn_if_application_is_xcode(self, edit_application):
+        if "Xcode" in edit_application:
+            print "Instead of using Xcode.app, consider using EDITOR=\"xed --wait\"."
+
     def edit_changelog(self, files):
         edit_application = os.environ.get("CHANGE_LOG_EDIT_APPLICATION")
         if edit_application and sys.platform == "darwin":
@@ -103,8 +107,7 @@ class User(object):
             args = shlex.split(edit_application)
             print "Using editor in the CHANGE_LOG_EDIT_APPLICATION environment variable."
             print "Please quit the editor application when done editing."
-            if edit_application.find("Xcode.app"):
-                print "Instead of using Xcode.app, consider using EDITOR=\"xed --wait\"."
+            self._warn_if_application_is_xcode(edit_application)
             subprocess.call(["open", "-W", "-n", "-a"] + args + files)
             return
         self.edit(files)
