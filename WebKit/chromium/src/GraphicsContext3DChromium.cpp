@@ -1047,6 +1047,11 @@ bool GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses() const
     return m_internal->isErrorGeneratedOnOutOfBoundsAccesses();
 }
 
+int GraphicsContext3D::getGraphicsResetStatusARB()
+{
+    return NO_ERROR;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(3D_CANVAS)

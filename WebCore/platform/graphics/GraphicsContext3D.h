@@ -409,7 +409,13 @@ public:
 
         // GL_CHROMIUM_map_sub (enums inherited from GL_ARB_vertex_buffer_object)
         READ_ONLY = 0x88B8,
-        WRITE_ONLY = 0x88B9
+        WRITE_ONLY = 0x88B9,
+
+        // GL_ARB_robustness enums
+        GUILTY_CONTEXT_RESET_ARB = 0x8253,
+        INNOCENT_CONTEXT_RESET_ARB = 0x8254,
+        UNKNOWN_CONTEXT_RESET_ARB = 0x8255
+
     };
 
     // Context creation attributes.
@@ -776,6 +782,9 @@ public:
     // GL_CHROMIUM_copy_texture_to_parent_texture
     bool supportsCopyTextureToParentTextureCHROMIUM();
     void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
+
+    // GL_ARB_robustness
+    int getGraphicsResetStatusARB();
 
   private:
     GraphicsContext3D(Attributes attrs, HostWindow* hostWindow, bool renderDirectlyToHostWindow);

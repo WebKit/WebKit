@@ -1,3 +1,16 @@
+2010-09-30  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Chris Marrin.
+
+        Add GetGraphicsResetStatusARB entry point from ARB_robustness
+        extension to GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=46850
+
+        Added a stub for GraphicsContext3D::getGraphicsResetStatusARB.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::getGraphicsResetStatusARB):
+
 2010-09-30  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by Darin Fisher.

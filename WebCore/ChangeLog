@@ -1,3 +1,20 @@
+2010-09-30  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Chris Marrin.
+
+        Add GetGraphicsResetStatusARB entry point from ARB_robustness
+        extension to GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=46850
+
+        Added stubs for GraphicsContext3D::getGraphicsResetStatusARB for
+        Mac and QT.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getGraphicsResetStatusARB):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::getGraphicsResetStatusARB):
+
 2010-09-30  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
