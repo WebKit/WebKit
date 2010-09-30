@@ -15,7 +15,7 @@ PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.requestEnd is >= timing.requestStart
-PASS timing.responseStart is >= timing.requestEnd
+PASS timing.responseStart is timing.requestEnd
 PASS timing.loadEventStart is 0
 PASS timing.loadEventEnd is 0
 PASS timing.navigationStart is >= oneHourAgoUTC
@@ -30,7 +30,7 @@ PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.requestEnd is >= timing.requestStart
-PASS timing.responseStart is >= timing.requestEnd
+PASS timing.responseStart is timing.requestEnd
 PASS timing.responseEnd is >= timing.responseStart
 PASS timing.loadEventStart is >= timing.responseEnd
 PASS timing.loadEventEnd is 0
@@ -46,7 +46,7 @@ PASS timing.connectStart is >= timing.domainLookupEnd
 PASS timing.connectEnd is >= timing.connectStart
 PASS timing.requestStart is >= timing.connectEnd
 PASS timing.requestEnd is >= timing.requestStart
-PASS timing.responseStart is >= timing.requestEnd
+PASS timing.responseStart is timing.requestEnd
 PASS timing.responseEnd is >= timing.responseStart
 PASS timing.loadEventStart is >= timing.responseEnd
 PASS timing.loadEventEnd is >= timing.loadEventStart + 50

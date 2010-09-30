@@ -1,3 +1,16 @@
+2010-09-30  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Web Timing] Make requestEnd equal to start of response
+        https://bugs.webkit.org/show_bug.cgi?id=46302
+
+        * fast/dom/script-tests/webtiming.js:
+        (checkTimingBeforeLoad):
+        (checkWebTimingOnLoad):
+        (checkWebTimingAfterLoad):
+        * fast/dom/webtiming-expected.txt:
+
 2010-09-30  Xiaomei Ji  <xji@chromium.org>
 
         Unreviewed, updated test_expectations.txt

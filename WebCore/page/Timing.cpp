@@ -100,7 +100,7 @@ unsigned long long Timing::unloadEventEnd() const
 
     return toIntegerMilliseconds(timing->unloadEventEnd);
 }
-    
+
 unsigned long long Timing::redirectStart() const
 {
     DocumentLoadTiming* timing = documentLoadTiming();
@@ -109,7 +109,7 @@ unsigned long long Timing::redirectStart() const
 
     return toIntegerMilliseconds(timing->redirectStart);
 }
-    
+
 unsigned long long Timing::redirectEnd() const
 {
     DocumentLoadTiming* timing = documentLoadTiming();
@@ -218,12 +218,7 @@ unsigned long long Timing::requestStart() const
 
 unsigned long long Timing::requestEnd() const
 {
-    ResourceLoadTiming* timing = resourceLoadTiming();
-    if (!timing)
-        return 0;
-
-    ASSERT(timing->sendEnd >= 0);
-    return resourceLoadTimeRelativeToAbsolute(timing->sendEnd);
+    return responseStart();
 }
 
 unsigned long long Timing::responseStart() const

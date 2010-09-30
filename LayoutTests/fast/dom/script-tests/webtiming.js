@@ -36,7 +36,7 @@ function checkTimingBeforeLoad()
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
     shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
 
-    shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");
+    shouldBe("timing.responseStart", "timing.requestEnd");
 
     shouldBe("timing.loadEventStart", "0");
     shouldBe("timing.loadEventEnd", "0");
@@ -65,7 +65,7 @@ function checkWebTimingOnLoad()
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
     shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
 
-    shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");
+    shouldBe("timing.responseStart", "timing.requestEnd");
     shouldBeGreaterThanOrEqual("timing.responseEnd", "timing.responseStart");
 
     shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.responseEnd");
@@ -95,7 +95,7 @@ function checkWebTimingAfterLoad()
     shouldBeGreaterThanOrEqual("timing.requestStart", "timing.connectEnd");
     shouldBeGreaterThanOrEqual("timing.requestEnd", "timing.requestStart");
 
-    shouldBeGreaterThanOrEqual("timing.responseStart", "timing.requestEnd");
+    shouldBe("timing.responseStart", "timing.requestEnd");
     shouldBeGreaterThanOrEqual("timing.responseEnd", "timing.responseStart");
 
     shouldBeGreaterThanOrEqual("timing.loadEventStart", "timing.responseEnd");
