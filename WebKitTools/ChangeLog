@@ -1,3 +1,13 @@
+2010-09-30  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        The same bots shouldn't run both Windows Debug Tests and Windows Release Tests.
+        https://bugs.webkit.org/show_bug.cgi?id=46926
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Have two bots running Windows 
+            Release Tests, and two bots running Windows Debug Tests, instead of four running both.
+
 2010-09-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

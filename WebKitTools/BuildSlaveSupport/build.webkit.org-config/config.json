@@ -95,7 +95,7 @@
                     {
                       "name": "Windows Release (Tests)", "type": "Test", "builddir": "win-release-tests",
                       "platform": "win", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-4", "apple-windows-3", "apple-windows-5", "apple-windows-6", "test-slave"]
+                      "slavenames": ["apple-windows-3", "apple-windows-5", "test-slave"]
                     },
                     {
                       "name": "Windows Debug (Build)", "type": "Build", "builddir": "win-debug",
@@ -106,7 +106,7 @@
                     {
                       "name": "Windows Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-4", "apple-windows-3", "apple-windows-5", "apple-windows-6", "test-slave"]
+                      "slavenames": ["apple-windows-4", "apple-windows-6", "test-slave"]
                     },
                     { "name": "Windows Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "win-debug-tests-wk2",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
