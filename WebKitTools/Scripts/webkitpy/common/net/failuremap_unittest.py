@@ -59,19 +59,14 @@ class FailureMapTest(unittest.TestCase):
     def test_new_failures(self):
         failure_map = self._make_failure_map()
         failure_map.filter_out_old_failures(lambda revision: False)
-        self.assertEquals(failure_map.revisions_causing_failures(), {
-            1234: [self.builder1, self.builder2],
-            1235: [self.builder2],
-        })
+        self.assertEquals(failure_map.failing_revisions(), [1234, 1235])
 
     def test_new_failures_with_old_revisions(self):
         failure_map = self._make_failure_map()
         failure_map.filter_out_old_failures(lambda revision: revision == 1234)
-        self.assertEquals(failure_map.revisions_causing_failures(), {})
+        self.assertEquals(failure_map.failing_revisions(), [])
 
     def test_new_failures_with_more_old_revisions(self):
         failure_map = self._make_failure_map()
         failure_map.filter_out_old_failures(lambda revision: revision == 1235)
-        self.assertEquals(failure_map.revisions_causing_failures(), {
-            1234: [self.builder1],
-        })
+        self.assertEquals(failure_map.failing_revisions(), [1234])

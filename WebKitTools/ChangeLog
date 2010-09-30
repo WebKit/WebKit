@@ -2,6 +2,19 @@
 
         Reviewed by Eric Seidel.
 
+        Remove revisions_casuing_failures
+        https://bugs.webkit.org/show_bug.cgi?id=46872
+
+        This function exists only to be unit tested.
+
+        * Scripts/webkitpy/common/net/failuremap.py:
+        * Scripts/webkitpy/common/net/failuremap_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-09-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         SheriffBot should post the list of failing tests to bugs
         https://bugs.webkit.org/show_bug.cgi?id=46871
 

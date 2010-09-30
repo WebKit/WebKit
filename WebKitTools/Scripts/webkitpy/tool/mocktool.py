@@ -357,11 +357,6 @@ class MockFailureMap(object):
     def is_empty(self):
         return False
 
-    def revisions_causing_failures(self):
-        return {
-            "29837": [self._buildbot.builder_with_name("Builder1")],
-        }
-
     def filter_out_old_failures(self, is_old_revision):
         pass
 

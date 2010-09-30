@@ -54,18 +54,6 @@ class FailureMap(object):
                  if revision in failure_info['regression_window'].revisions()]
         return sorted(set(sum(failing_tests, [])))
 
-    # FIXME: Consider removing this method.  It might now exist only for
-    #        unit testing!
-    def revisions_causing_failures(self):
-        revision_to_failing_bots = {}
-        for failure_info in self._failures:
-            revisions = failure_info['regression_window'].revisions()
-            for revision in revisions:
-                failing_bots = revision_to_failing_bots.get(revision, [])
-                failing_bots.append(failure_info['builder'])
-                revision_to_failing_bots[revision] = failing_bots
-        return revision_to_failing_bots
-
     def _old_failures(self, is_old_failure):
         return filter(lambda revision: is_old_failure(revision),
                       self.failing_revisions())
