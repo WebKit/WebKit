@@ -1,3 +1,22 @@
+2010-09-30  Adam Roben  <aroben@apple.com>
+
+        Teach WindowGeometryInitializedBeforeSetWindow that NPP_SetWindow can
+        be called more than once
+
+        The NPP_SetWindow call made when the plugin is torn down was confusing
+        us, and was causing us to spew an error into the next test.
+
+        Fixes <http://webkit.org/b/46900> <rdar://problem/8496888> REGRESSION
+        (r68520): plugins/access-after-page-destroyed.html failing on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/WindowGeometryInitializedBeforeSetWindow.cpp:
+        (WindowGeometryInitializedBeforeSetWindow::WindowGeometryInitializedBeforeSetWindow):
+        Initialize member.
+        (WindowGeometryInitializedBeforeSetWindow::NPP_SetWindow): Bail if
+        this isn't the first time this is called.
+
 2010-09-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

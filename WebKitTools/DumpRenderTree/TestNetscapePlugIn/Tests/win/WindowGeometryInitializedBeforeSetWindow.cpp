@@ -35,12 +35,17 @@ class WindowGeometryInitializedBeforeSetWindow : public PluginTest {
 public:
     WindowGeometryInitializedBeforeSetWindow(NPP npp, const string& identifier)
         : PluginTest(npp, identifier)
+        , m_didReceiveInitialSetWindowCall(false)
     {
     }
 
 private:
     virtual NPError NPP_SetWindow(NPP instance, NPWindow* window)
     {
+        if (m_didReceiveInitialSetWindowCall)
+            return NPERR_NO_ERROR;
+        m_didReceiveInitialSetWindowCall = true;
+
         if (window->type != NPWindowTypeWindow) {
             pluginLog(instance, "window->type should be NPWindowTypeWindow but was %d", window->type);
             return NPERR_GENERIC_ERROR;
@@ -77,7 +82,9 @@ private:
 
         pluginLog(instance, "Plugin's HWND has been sized and positioned before NPP_SetWindow was called");
         return NPERR_NO_ERROR;
-    }        
+    }
+
+    bool m_didReceiveInitialSetWindowCall;
 };
 
 static PluginTest::Register<WindowGeometryInitializedBeforeSetWindow> windowGeometryInitializedBeforeSetWindow("window-geometry-initialized-before-set-window");
