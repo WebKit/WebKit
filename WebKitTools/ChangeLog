@@ -1,3 +1,11 @@
+2010-09-30  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        This patch should stop the sheriffbot from throwing an exception.
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+
 2010-09-30  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

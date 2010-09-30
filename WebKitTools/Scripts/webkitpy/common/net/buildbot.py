@@ -166,12 +166,13 @@ class Builder(object):
                 failures = set(results.failing_tests())
                 if common_failures == None:
                     common_failures = failures
-                common_failures = common_failures.intersection(failures)
-                if not common_failures:
-                    # current_build doesn't have any failures in common with
-                    # the red build we're worried about.  We assume that any
-                    # failures in current_build were due to flakiness.
-                    break
+                else:
+                    common_failures = common_failures.intersection(failures)
+                    if not common_failures:
+                        # current_build doesn't have any failures in common with
+                        # the red build we're worried about.  We assume that any
+                        # failures in current_build were due to flakiness.
+                        break
             look_back_count += 1
             if look_back_count > look_back_limit:
                 return RegressionWindow(None, current_build, failing_tests=common_failures)
