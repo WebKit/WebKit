@@ -1,3 +1,16 @@
+2010-09-30  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Port PlatformRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=46370
+
+        Implement refPlatformPtr and derefPlatformPtr to use PlatformRefPtr in Brew MP.
+
+        * wtf/brew/RefPtrBrew.h: Added.
+        (WTF::refPlatformPtr):
+        (WTF::derefPlatformPtr):
+
 2010-09-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
