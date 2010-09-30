@@ -1,3 +1,25 @@
+2010-09-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Use OwnPtr for HBRUSH and HPEN in GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=46881
+
+        Also add some missing SelectObject calls.
+
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::createPen):
+        (WebCore::createBrush):
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+
 2010-09-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein and Darin Adler.
