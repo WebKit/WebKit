@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,51 +26,131 @@
 #import "config.h"
 #import "SharedTimer.h"
 
+#import <IOKit/IOMessage.h>
+#import <IOKit/pwr_mgt/IOPMLib.h>
 #import <wtf/Assertions.h>
+#import <wtf/Noncopyable.h>
+#import <wtf/PassOwnPtr.h>
 #import <wtf/UnusedParam.h>
 
-@class WebCorePowerNotifier;
+#include <stdio.h>
+
+// On Snow Leopard and newer we'll ask IOKit to deliver notifications on a queue.
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+#define IOKIT_WITHOUT_LIBDISPATCH 1
+#endif
 
 namespace WebCore {
 
-static WebCorePowerNotifier *powerNotifier;
 static CFRunLoopTimerRef sharedTimer;
 static void (*sharedTimerFiredFunction)();
 static void timerFired(CFRunLoopTimerRef, void*);
 
-}
+#if !defined(IOKIT_WITHOUT_LIBDISPATCH) && defined(BUILDING_ON_SNOW_LEOPARD)
+extern "C" void IONotificationPortSetDispatchQueue(IONotificationPortRef notify, dispatch_queue_t queue);
+#endif
 
-@interface WebCorePowerNotifier : NSObject
-@end
-
-@implementation WebCorePowerNotifier
-
-- (id)init
-{
-    self = [super init];
+class PowerObserver {
+    WTF_MAKE_NONCOPYABLE(PowerObserver);
     
-    if (self)
-        [[[NSWorkspace sharedWorkspace] notificationCenter] addObserver:self
-                                                               selector:@selector(didWake:)
-                                                                   name:NSWorkspaceDidWakeNotification 
-                                                                 object:nil];
-    
-    return self;
-}
-
-- (void)didWake:(NSNotification *)unusedNotification
-{
-    UNUSED_PARAM(unusedNotification);
-
-    if (WebCore::sharedTimer) {
-        WebCore::stopSharedTimer();
-        WebCore::timerFired(0, 0);
+public:
+    static PassOwnPtr<PowerObserver> create()
+    {
+        return adoptPtr(new PowerObserver);
     }
+    ~PowerObserver();
+
+private:
+    PowerObserver();
+
+    static void didReceiveSystemPowerNotification(void* context, io_service_t, uint32_t messageType, void* messageArgument);
+    void didReceiveSystemPowerNotification(io_service_t, uint32_t messageType, void* messageArgument);
+
+    void restartSharedTimer();
+
+    io_connect_t m_powerConnection;
+    IONotificationPortRef m_notificationPort;
+    io_object_t m_notifierReference;
+#ifdef IOKIT_WITHOUT_LIBDISPATCH
+    CFRunLoopSourceRef m_runLoopSource;
+#else
+    dispatch_queue_t m_dispatchQueue;
+#endif
+};
+
+PowerObserver::PowerObserver()
+    : m_powerConnection(0)
+    , m_notificationPort(0)
+    , m_notifierReference(0)
+#ifdef IOKIT_WITHOUT_LIBDISPATCH
+    , m_runLoopSource(0)    
+#else
+    , m_dispatchQueue(dispatch_queue_create("com.apple.WebKit.PowerObserver", 0))
+#endif
+{
+    m_powerConnection = IORegisterForSystemPower(this, &m_notificationPort, didReceiveSystemPowerNotification, &m_notifierReference);
+    if (!m_powerConnection)
+        return;
+
+#ifdef IOKIT_WITHOUT_LIBDISPATCH
+    m_runLoopSource = IONotificationPortGetRunLoopSource(m_notificationPort);
+    CFRunLoopAddSource(CFRunLoopGetMain(), m_runLoopSource, kCFRunLoopCommonModes);
+#else
+    IONotificationPortSetDispatchQueue(m_notificationPort, m_dispatchQueue);
+#endif
 }
 
-@end
+PowerObserver::~PowerObserver()
+{
+    if (!m_powerConnection)
+        return;
 
-namespace WebCore {
+#ifdef IOKIT_WITHOUT_LIBDISPATCH
+    CFRunLoopRemoveSource(CFRunLoopGetMain(), m_runLoopSource, kCFRunLoopCommonModes);
+#else
+    dispatch_release(m_dispatchQueue);
+#endif
+
+    IODeregisterForSystemPower(&m_notifierReference);
+    IOServiceClose(m_powerConnection);
+    IONotificationPortDestroy(m_notificationPort);
+}
+
+void PowerObserver::didReceiveSystemPowerNotification(void* context, io_service_t service, uint32_t messageType, void* messageArgument)
+{
+    static_cast<PowerObserver*>(context)->didReceiveSystemPowerNotification(service, messageType, messageArgument);
+}
+
+void PowerObserver::didReceiveSystemPowerNotification(io_service_t, uint32_t messageType, void* messageArgument)
+{
+    IOAllowPowerChange(m_powerConnection, reinterpret_cast<long>(messageArgument));
+
+    // We only care about the "wake from sleep" message.
+    if (messageType != kIOMessageSystemWillPowerOn)
+        return;
+
+#ifdef IOKIT_WITHOUT_LIBDISPATCH
+    restartSharedTimer();
+#else
+    // We need to restart the timer on the main thread.
+    CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopCommonModes, ^() {
+        restartSharedTimer();
+    });
+#endif
+}
+
+void PowerObserver::restartSharedTimer()
+{
+    ASSERT(CFRunLoopGetCurrent() == CFRunLoopGetMain());
+
+    if (!sharedTimer)
+        return;
+
+    stopSharedTimer();
+    timerFired(0, 0);
+}
+
+static PowerObserver* PowerObserver;
 
 void setSharedTimerFiredFunction(void (*f)())
 {
@@ -100,11 +180,8 @@ void setSharedTimerFireTime(double fireTime)
     sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
     CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
     
-    if (!powerNotifier) {
-        powerNotifier = [[WebCorePowerNotifier alloc] init];
-        CFRetain(powerNotifier);
-        [powerNotifier release];
-    }
+    if (!PowerObserver)
+        PowerObserver = PowerObserver::create().leakPtr();
 }
 
 void stopSharedTimer()
@@ -116,4 +193,4 @@ void stopSharedTimer()
     }
 }
 
-}
+} // namespace WebCore

@@ -1,3 +1,31 @@
+2010-09-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein and Darin Adler.
+
+        WebCore uses the main thread to process sleep notifications
+        https://bugs.webkit.org/show_bug.cgi?id=46935
+
+        Rewrite the old WebCorePowerNotifier to use IOKit directly. 
+        
+        On Snow Leopard, set up power notifications to arrive on a dispatch queue,
+        so that we can handle them quickly even if the main thread is hung.
+
+        (Tiger and Leopard will still get the old behavior).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        Link with IOKit.
+
+        * platform/mac/SharedTimerMac.mm:
+        (WebCore::PowerObserver::PowerObserver):
+        Initialize the IOKit machinery.
+
+        (WebCore::PowerObserver::~PowerObserver):
+        Tear down the IOKit notifications.
+
+        (WebCore::PowerObserver::didReceiveSystemPowerNotification):
+        Acknowledge the event immediately and then call the shared timer functions. On Snow Leopard, we
+        make sure to call the shared timer functions on the main thread.
+    
 2010-09-30  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.

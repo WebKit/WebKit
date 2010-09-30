@@ -467,6 +467,7 @@
 		1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA8798F11CBE846003C664F /* PluginStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE780C051FDE00139F4F /* zoomInCursor.png */; };
 		1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */; };
+		1AB33DA512551E320024457A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AB33DA412551E320024457A /* IOKit.framework */; };
 		1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */; };
 		1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */; };
 		1AB7FC6B0A8B92EC00D9D37B /* XPathExpression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7FC4A0A8B92EC00D9D37B /* XPathExpression.cpp */; };
@@ -6421,6 +6422,7 @@
 		1AA8798F11CBE846003C664F /* PluginStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginStrategy.h; sourceTree = "<group>"; };
 		1AB1AE780C051FDE00139F4F /* zoomInCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomInCursor.png; sourceTree = "<group>"; };
 		1AB1AE790C051FDE00139F4F /* zoomOutCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = zoomOutCursor.png; sourceTree = "<group>"; };
+		1AB33DA412551E320024457A /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		1AB7FC470A8B92EC00D9D37B /* XPathEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathEvaluator.cpp; sourceTree = "<group>"; };
 		1AB7FC480A8B92EC00D9D37B /* XPathEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathEvaluator.h; sourceTree = "<group>"; };
 		1AB7FC490A8B92EC00D9D37B /* XPathEvaluator.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XPathEvaluator.idl; sourceTree = "<group>"; };
@@ -11546,6 +11548,7 @@
 				49C7BA791042EFAE0009D447 /* OpenGL.framework in Frameworks */,
 				A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */,
 				1A7FA7CC0DDA4B770028F8A5 /* SystemConfiguration.framework in Frameworks */,
+				1AB33DA512551E320024457A /* IOKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11609,6 +11612,7 @@
 				F5C2869302846DCD018635CA /* ApplicationServices.framework */,
 				F5C2869402846DCD018635CA /* Carbon.framework */,
 				F5C2869502846DCD018635CA /* Cocoa.framework */,
+				1AB33DA412551E320024457A /* IOKit.framework */,
 				F8216299029F4FB501000131 /* JavaScriptCore.framework */,
 				93F1D31A0558CC5C00821BC0 /* libicucore.dylib */,
 				1CFAE3220A6D6A3F0032593D /* libobjc.dylib */,
