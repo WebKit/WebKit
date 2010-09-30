@@ -41,33 +41,6 @@ class VisibleSelection;
 
 class HTMLInputElement : public HTMLTextFormControlElement, public InputElement {
 public:
-    enum DeprecatedInputType {
-        TEXT = 0, // TEXT must be 0.
-        PASSWORD,
-        ISINDEX,
-        CHECKBOX,
-        RADIO,
-        SUBMIT,
-        RESET,
-        FILE,
-        HIDDEN,
-        IMAGE,
-        BUTTON,
-        SEARCH,
-        RANGE,
-        EMAIL,
-        NUMBER,
-        TELEPHONE,
-        URL,
-        COLOR,
-        DATE,
-        DATETIME,
-        DATETIMELOCAL,
-        MONTH,
-        TIME,
-        WEEK,
-    };
-
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLInputElement();
 
@@ -175,8 +148,6 @@ public:
     virtual bool isActivatedSubmit() const;
     virtual void setActivatedSubmit(bool flag);
 
-    DeprecatedInputType deprecatedInputType() const { return static_cast<DeprecatedInputType>(m_deprecatedTypeNumber); }
-
     String altText() const;
 
     int maxResults() const { return m_maxResults; }
@@ -212,11 +183,6 @@ public:
     void addSearchResult();
     void onSearch();
 
-    // Parses the specified string as the DeprecatedInputType, and returns true if it is successfully parsed.
-    // An instance pointed by the DateComponents* parameter will have parsed values and be
-    // modified even if the parsing fails.  The DateComponents* parameter may be 0.
-    static bool parseToDateComponents(DeprecatedInputType, const String&, DateComponents*);
-
 #if ENABLE(DATALIST)
     HTMLElement* list() const;
     HTMLOptionElement* selectedOption() const;
@@ -232,7 +198,38 @@ protected:
     virtual void defaultEventHandler(Event*);
 
 private:
+    enum DeprecatedInputType {
+        TEXT = 0, // TEXT must be 0.
+        PASSWORD,
+        ISINDEX,
+        CHECKBOX,
+        RADIO,
+        SUBMIT,
+        RESET,
+        FILE,
+        HIDDEN,
+        IMAGE,
+        BUTTON,
+        SEARCH,
+        RANGE,
+        EMAIL,
+        NUMBER,
+        TELEPHONE,
+        URL,
+        COLOR,
+        DATE,
+        DATETIME,
+        DATETIMELOCAL,
+        MONTH,
+        TIME,
+        WEEK,
+    };
+
     enum AutoCompleteSetting { Uninitialized, On, Off };
+
+    typedef HashMap<String, HTMLInputElement::DeprecatedInputType, CaseFoldingHash> InputTypeMap;
+    static PassOwnPtr<InputTypeMap> createTypeMap();
+    DeprecatedInputType deprecatedInputType() const { return static_cast<DeprecatedInputType>(m_deprecatedTypeNumber); }
 
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
@@ -332,6 +329,11 @@ private:
     void applyStep(double count, ExceptionCode&);
     // Helper for applyStepForNumberOrRange().
     double stepBase() const;
+
+    // Parses the specified string as the DeprecatedInputType, and returns true if it is successfully parsed.
+    // An instance pointed by the DateComponents* parameter will have parsed values and be
+    // modified even if the parsing fails.  The DateComponents* parameter may be 0.
+    static bool parseToDateComponents(DeprecatedInputType, const String&, DateComponents*);
 
     // Parses the specified string for the current type, and return
     // the double value for the parsing result if the parsing

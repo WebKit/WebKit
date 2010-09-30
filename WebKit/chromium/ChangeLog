@@ -1,3 +1,17 @@
+2010-09-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactor HTMLInputElement: Make DeprecatedInputType private.
+        https://bugs.webkit.org/show_bug.cgi?id=46791
+
+        * src/WebPasswordFormUtils.cpp:
+        (WebKit::findPasswordFormFields):
+         Accept any text field types as a username field.
+        * src/WebSearchableFormData.cpp:
+        (WebCore::HasSuitableTextElement):
+         Accept any text field types as a search query field.
+
 2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Dumitru Daniliuc.

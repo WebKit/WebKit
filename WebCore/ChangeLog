@@ -1,3 +1,20 @@
+2010-09-29  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactor HTMLInputElement: Make DeprecatedInputType private.
+        https://bugs.webkit.org/show_bug.cgi?id=46791
+
+        No new tests because this doesn't change any behavior.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::createTypeMap):
+        * html/HTMLInputElement.h:
+         Move DeprecatedInputType, deprecatedInputType() and
+         parseToDateComponents() to the private section, make
+         createTypeMap() a member function of HTMLInputElement.
+        (WebCore::HTMLInputElement::deprecatedInputType):
+
 2010-09-29  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -844,33 +844,32 @@ void HTMLInputElement::setType(const String& t)
         setAttribute(typeAttr, t);
 }
 
-typedef HashMap<String, HTMLInputElement::DeprecatedInputType, CaseFoldingHash> InputTypeMap;
-static PassOwnPtr<InputTypeMap> createTypeMap()
+PassOwnPtr<HTMLInputElement::InputTypeMap> HTMLInputElement::createTypeMap()
 {
     OwnPtr<InputTypeMap> map = adoptPtr(new InputTypeMap);
-    map->add("button", HTMLInputElement::BUTTON);
-    map->add("checkbox", HTMLInputElement::CHECKBOX);
-    map->add("color", HTMLInputElement::COLOR);
-    map->add("date", HTMLInputElement::DATE);
-    map->add("datetime", HTMLInputElement::DATETIME);
-    map->add("datetime-local", HTMLInputElement::DATETIMELOCAL);
-    map->add("email", HTMLInputElement::EMAIL);
-    map->add("file", HTMLInputElement::FILE);
-    map->add("hidden", HTMLInputElement::HIDDEN);
-    map->add("image", HTMLInputElement::IMAGE);
-    map->add("khtml_isindex", HTMLInputElement::ISINDEX);
-    map->add("month", HTMLInputElement::MONTH);
-    map->add("number", HTMLInputElement::NUMBER);
-    map->add("password", HTMLInputElement::PASSWORD);
-    map->add("radio", HTMLInputElement::RADIO);
-    map->add("range", HTMLInputElement::RANGE);
-    map->add("reset", HTMLInputElement::RESET);
-    map->add("search", HTMLInputElement::SEARCH);
-    map->add("submit", HTMLInputElement::SUBMIT);
-    map->add("tel", HTMLInputElement::TELEPHONE);
-    map->add("time", HTMLInputElement::TIME);
-    map->add("url", HTMLInputElement::URL);
-    map->add("week", HTMLInputElement::WEEK);
+    map->add("button", BUTTON);
+    map->add("checkbox", CHECKBOX);
+    map->add("color", COLOR);
+    map->add("date", DATE);
+    map->add("datetime", DATETIME);
+    map->add("datetime-local", DATETIMELOCAL);
+    map->add("email", EMAIL);
+    map->add("file", FILE);
+    map->add("hidden", HIDDEN);
+    map->add("image", IMAGE);
+    map->add("khtml_isindex", ISINDEX);
+    map->add("month", MONTH);
+    map->add("number", NUMBER);
+    map->add("password", PASSWORD);
+    map->add("radio", RADIO);
+    map->add("range", RANGE);
+    map->add("reset", RESET);
+    map->add("search", SEARCH);
+    map->add("submit", SUBMIT);
+    map->add("tel", TELEPHONE);
+    map->add("time", TIME);
+    map->add("url", URL);
+    map->add("week", WEEK);
     // No need to register "text" because it is the default type.
     return map.release();
 }

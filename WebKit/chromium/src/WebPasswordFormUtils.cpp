@@ -98,9 +98,8 @@ void findPasswordFormFields(HTMLFormElement* form, PasswordFormFields* fields)
             if (!inputElement->isEnabledFormControl())
                 continue;
 
-            // FIXME: This needs to use a function other than deprecatedInputType.
-            // Does this really want to special-case TEXT, and not other text-field-like input elements?
-            if ((inputElement->deprecatedInputType() == HTMLInputElement::TEXT)
+            // Various input types such as text, url, email can be a username field.
+            if ((inputElement->isTextField() && !inputElement->isPasswordField())
                 && (inputElement->autoComplete())) {
                 fields->userName = inputElement;
                 break;
