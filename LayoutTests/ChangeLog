@@ -1,3 +1,14 @@
+2010-09-29  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Skipping crashing test to green the tree.
+        This crash started when I skipped some canvas tests
+        as part of rolling out r68568.
+
+        fast/canvas/webgl/draw-elements-out-of-bounds.html is crashing on Snow Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=46870
+
+        * platform/mac-snowleopard/Skipped:
+
 2010-09-29  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, updated test_expectations.txt
