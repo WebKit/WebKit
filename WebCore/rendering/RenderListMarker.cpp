@@ -1257,7 +1257,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     const Font& font = style()->font();
     const UChar suffix = listMarkerSuffix(type, m_listItem->value());
-    if (style()->direction() == LTR) {
+    if (style()->isLeftToRightDirection()) {
         int width = font.width(textRun);
         context->drawText(style()->font(), textRun, marker.location());
         UChar suffixSpace[2] = { suffix, ' ' };
@@ -1444,7 +1444,7 @@ void RenderListMarker::updateMargins()
 
     if (isInside()) {
         if (isImage()) {
-            if (style()->direction() == LTR)
+            if (style()->isLeftToRightDirection())
                 marginRight = cMarkerPadding;
             else
                 marginLeft = cMarkerPadding;
@@ -1452,7 +1452,7 @@ void RenderListMarker::updateMargins()
             case Disc:
             case Circle:
             case Square:
-                if (style()->direction() == LTR) {
+                if (style()->isLeftToRightDirection()) {
                     marginLeft = -1;
                     marginRight = font.ascent() - minPreferredLogicalWidth() + 1;
                 } else {
@@ -1464,7 +1464,7 @@ void RenderListMarker::updateMargins()
                 break;
         }
     } else {
-        if (style()->direction() == LTR) {
+        if (style()->isLeftToRightDirection()) {
             if (isImage())
                 marginLeft = -minPreferredLogicalWidth() - cMarkerPadding;
             else {
@@ -1532,7 +1532,7 @@ String RenderListMarker::suffix() const
 
     // If the suffix is not ' ', an extra space is needed
     if (suffix != ' ') {
-        if (style()->direction() == LTR)
+        if (style()->isLeftToRightDirection())
             resultVector.append(' ');
         else
             resultVector.prepend(' ');

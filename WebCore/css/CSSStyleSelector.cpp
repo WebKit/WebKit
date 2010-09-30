@@ -3012,7 +3012,7 @@ void CSSStyleSelector::matchPageRulesForList(CSSRuleDataList* rules, bool isLeft
 bool CSSStyleSelector::isLeftPage(int pageIndex) const
 {
     bool isFirstPageLeft = false;
-    if (m_rootElementStyle->direction() == RTL)
+    if (!m_rootElementStyle->isLeftToRightDirection())
         isFirstPageLeft = true;
 
     return (pageIndex + (isFirstPageLeft ? 1 : 0)) % 2;
@@ -4190,9 +4190,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         int id = primitiveValue->getIdent();
         if (id == CSSValueStart)
-            m_style->setTextAlign(m_style->direction() == LTR ? LEFT : RIGHT);
+            m_style->setTextAlign(m_style->isLeftToRightDirection() ? LEFT : RIGHT);
         else if (id == CSSValueEnd)
-            m_style->setTextAlign(m_style->direction() == LTR ? RIGHT : LEFT);
+            m_style->setTextAlign(m_style->isLeftToRightDirection() ? RIGHT : LEFT);
         else
             m_style->setTextAlign(*primitiveValue);
         return;

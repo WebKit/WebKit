@@ -231,7 +231,7 @@ void WMLTableElement::alignCells(Vector<WMLElement*>& columnElements, WMLElement
     bool rtl = false;
     if (RenderObject* renderer = rowElement->renderer()) {
         if (RenderStyle* style = renderer->style())
-            rtl = style->direction() == RTL;
+            rtl = !style->isLeftToRightDirection();
     }
 
     rowElement->setAttribute(HTMLNames::alignAttr, rtl ? "right" : "left");

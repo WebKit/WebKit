@@ -1,5 +1,156 @@
 2010-09-30  David Hyatt  <hyatt@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46928
+        
+        Add isLeftToRightDirection() to RenderStyle and change callers that did direction() == LTR and direction() == RTL to use this instead.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::isLeftPage):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * editing/Editor.cpp:
+        (WebCore::Editor::hasBidiSelection):
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::leftVisuallyDistinctCandidate):
+        (WebCore::VisiblePosition::rightVisuallyDistinctCandidate):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::isLeftToRightDirection):
+        (WebCore::InlineBox::caretLeftmostOffset):
+        (WebCore::InlineBox::caretRightmostOffset):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::determineSpacingForFlowBoxes):
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection):
+        (WebCore::InlineFlowBox::paintTextDecorations):
+        * rendering/InlineIterator.h:
+        (WebCore::InlineIterator::direction):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintDecoration):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::textPos):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::determineLogicalLeftPositionForChild):
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::getHorizontalSelectionGapInfo):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::columnRectAt):
+        (WebCore::RenderBlock::layoutColumns):
+        (WebCore::getBorderPaddingMargin):
+        (WebCore::RenderBlock::localCaretRect):
+        (WebCore::RenderBlock::marginStartForChild):
+        (WebCore::RenderBlock::marginEndForChild):
+        (WebCore::RenderBlock::setMarginStartForChild):
+        (WebCore::RenderBlock::setMarginEndForChild):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::getBorderPaddingMargin):
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        (WebCore::RenderBlock::findNextLineBreak):
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::marginStart):
+        (WebCore::RenderBox::marginEnd):
+        (WebCore::RenderBox::setMarginStart):
+        (WebCore::RenderBox::setMarginEnd):
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::containingBlockWidthForPositioned):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::localCaretRect):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::relativePositionOffsetX):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::layoutLegend):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::FlexBoxIterator):
+        (WebCore::RenderFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderFlexibleBox::layoutVerticalBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::computeScrollDimensions):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemForeground):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        (WebCore::RenderListItem::markerTextWithSuffix):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::updateMargins):
+        (WebCore::RenderListMarker::suffix):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::computePosition):
+        * rendering/RenderMeter.cpp:
+        (WebCore::RenderMeter::valuePartRect):
+        * rendering/RenderProgress.cpp:
+        (WebCore::RenderProgress::valuePartRect):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::calcBorderLeft):
+        (WebCore::RenderTable::calcBorderRight):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        (WebCore::RenderTableCell::borderHalfLeft):
+        (WebCore::RenderTableCell::borderHalfRight):
+        (WebCore::RenderTableCell::collectBorderStyles):
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::recalcOuterBorder):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::localCaretRect):
+        (WebCore::RenderText::positionLineBox):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::levelIndicatorFor):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeTextRun):
+        * rendering/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::measureCharacter):
+        (WebCore::SVGInlineTextBox::buildLayoutInformation):
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeSVGInlineTextBox):
+        * rendering/SVGTextLayoutUtilities.cpp:
+        (WebCore::svgTextRunForInlineTextBox):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::borderStartWidth):
+        (WebCore::RenderStyle::borderEndWidth):
+        (WebCore::RenderStyle::marginStart):
+        (WebCore::RenderStyle::marginEnd):
+        (WebCore::RenderStyle::marginStartUsing):
+        (WebCore::RenderStyle::marginEndUsing):
+        (WebCore::RenderStyle::paddingStart):
+        (WebCore::RenderStyle::paddingEnd):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::isLeftToRightDirection):
+        * wml/WMLTableElement.cpp:
+        (WebCore::WMLTableElement::alignCells):
+
+2010-09-30  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Simon Fraser.
 
         https://bugs.webkit.org/show_bug.cgi?id=46923

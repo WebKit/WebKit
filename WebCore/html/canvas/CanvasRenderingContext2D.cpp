@@ -1749,7 +1749,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
     // FIXME: Need to turn off font smoothing.
 
     RenderStyle* computedStyle = canvas()->computedStyle();
-    bool rtl = computedStyle ? computedStyle->direction() == RTL : false;
+    bool rtl = computedStyle ? !computedStyle->isLeftToRightDirection() : false;
     bool override = computedStyle ? computedStyle->unicodeBidi() == Override : false;
 
     unsigned length = text.length();

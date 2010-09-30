@@ -300,7 +300,7 @@ TextRun svgTextRunForInlineTextBox(const UChar* characters, int length, const Re
                 , false /* allowTabs */
                 , 0 /* xPos, only relevant with allowTabs=true */
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
-                , textBox->direction() == RTL
+                , !textBox->isLeftToRightDirection()
                 , textBox->m_dirOverride || style->visuallyOrdered() /* directionalOverride */);
 
 #if ENABLE(SVG_FONTS)

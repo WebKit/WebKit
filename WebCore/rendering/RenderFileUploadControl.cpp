@@ -213,14 +213,14 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         const String& displayedFilename = fileTextValue();
         unsigned length = displayedFilename.length();
         const UChar* string = displayedFilename.characters();
-        TextRun textRun(string, length, false, 0, 0, style()->direction() == RTL, style()->unicodeBidi() == Override);
+        TextRun textRun(string, length, false, 0, 0, !style()->isLeftToRightDirection(), style()->unicodeBidi() == Override);
         
         // Determine where the filename should be placed
         int contentLeft = tx + borderLeft() + paddingLeft();
         int buttonAndIconWidth = m_button->renderBox()->width() + afterButtonSpacing
             + (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0);
         int textX;
-        if (style()->direction() == LTR)
+        if (style()->isLeftToRightDirection())
             textX = contentLeft + buttonAndIconWidth;
         else
             textX = contentLeft + contentWidth() - buttonAndIconWidth - style()->font().width(textRun);
@@ -239,7 +239,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
             // Determine where the icon should be placed
             int iconY = ty + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
             int iconX;
-            if (style()->direction() == LTR)
+            if (style()->isLeftToRightDirection())
                 iconX = contentLeft + m_button->renderBox()->width() + afterButtonSpacing;
             else
                 iconX = contentLeft + contentWidth() - m_button->renderBox()->width() - afterButtonSpacing - iconWidth;

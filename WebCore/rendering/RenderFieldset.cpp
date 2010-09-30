@@ -72,7 +72,7 @@ RenderObject* RenderFieldset::layoutLegend(bool relayoutChildren)
         legend->layoutIfNeeded();
 
         int xPos;
-        if (style()->direction() == RTL) {
+        if (!style()->isLeftToRightDirection()) {
             switch (legend->style()->textAlign()) {
                 case LEFT:
                     xPos = borderLeft() + paddingLeft();

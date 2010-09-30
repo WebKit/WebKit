@@ -1960,7 +1960,7 @@ void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
     
     m_scrollDimensionsDirty = false;
     
-    bool ltr = renderer()->style()->direction() == LTR;
+    bool ltr = renderer()->style()->isLeftToRightDirection();
 
     int clientWidth = box->clientWidth();
     int clientHeight = box->clientHeight();

@@ -105,7 +105,7 @@ IntRect RenderMeter::valuePartRect() const
     
     if (rect.height() <= rect.width()) {
         int width = static_cast<int>(rect.width()*valueRatio());
-        if (style()->direction() == RTL) {
+        if (!style()->isLeftToRightDirection()) {
             rect.setX(rect.x() + (rect.width() - width));
             rect.setWidth(width);
         } else

@@ -251,8 +251,9 @@ public:
     unsigned char bidiLevel() const { return m_bidiEmbeddingLevel; }
     void setBidiLevel(unsigned char level) { m_bidiEmbeddingLevel = level; }
     TextDirection direction() const { return m_bidiEmbeddingLevel % 2 ? RTL : LTR; }
-    int caretLeftmostOffset() const { return direction() == LTR ? caretMinOffset() : caretMaxOffset(); }
-    int caretRightmostOffset() const { return direction() == LTR ? caretMaxOffset() : caretMinOffset(); }
+    bool isLeftToRightDirection() const { return direction() == LTR; }
+    int caretLeftmostOffset() const { return isLeftToRightDirection() ? caretMinOffset() : caretMaxOffset(); }
+    int caretRightmostOffset() const { return isLeftToRightDirection() ? caretMaxOffset() : caretMinOffset(); }
 
     virtual void clearTruncation() { }
 

@@ -220,7 +220,7 @@ ALWAYS_INLINE WTF::Unicode::Direction InlineIterator::direction() const
         return WTF::Unicode::direction(c);
 
     if (obj && obj->isListMarker())
-        return obj->style()->direction() == LTR ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
+        return obj->style()->isLeftToRightDirection() ? WTF::Unicode::LeftToRight : WTF::Unicode::RightToLeft;
 
     return WTF::Unicode::OtherNeutral;
 }

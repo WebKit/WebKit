@@ -1141,15 +1141,15 @@ unsigned short RenderStyle::borderAfterWidth() const
 unsigned short RenderStyle::borderStartWidth() const
 {
     if (isVerticalBlockFlow())
-        return direction() == LTR ? borderLeftWidth() : borderRightWidth();
-    return direction() == LTR ? borderTopWidth() : borderBottomWidth();
+        return isLeftToRightDirection() ? borderLeftWidth() : borderRightWidth();
+    return isLeftToRightDirection() ? borderTopWidth() : borderBottomWidth();
 }
 
 unsigned short RenderStyle::borderEndWidth() const
 {
     if (isVerticalBlockFlow())
-        return direction() == LTR ? borderRightWidth() : borderLeftWidth();
-    return direction() == LTR ? borderBottomWidth() : borderTopWidth();
+        return isLeftToRightDirection() ? borderRightWidth() : borderLeftWidth();
+    return isLeftToRightDirection() ? borderBottomWidth() : borderTopWidth();
 }
     
 Length RenderStyle::marginBefore() const
@@ -1219,29 +1219,29 @@ Length RenderStyle::marginAfterUsing(const RenderStyle* otherStyle) const
 Length RenderStyle::marginStart() const
 {
     if (isVerticalBlockFlow())
-        return direction() == LTR ? marginLeft() : marginRight();
-    return direction() == LTR ? marginTop() : marginBottom();
+        return isLeftToRightDirection() ? marginLeft() : marginRight();
+    return isLeftToRightDirection() ? marginTop() : marginBottom();
 }
 
 Length RenderStyle::marginEnd() const
 {
     if (isVerticalBlockFlow())
-        return direction() == LTR ? marginRight() : marginLeft();
-    return direction() == LTR ? marginBottom() : marginTop();
+        return isLeftToRightDirection() ? marginRight() : marginLeft();
+    return isLeftToRightDirection() ? marginBottom() : marginTop();
 }
     
 Length RenderStyle::marginStartUsing(const RenderStyle* otherStyle) const
 {
     if (otherStyle->isVerticalBlockFlow())
-        return otherStyle->direction() == LTR ? marginLeft() : marginRight();
-    return otherStyle->direction() == LTR ? marginTop() : marginBottom();
+        return otherStyle->isLeftToRightDirection() ? marginLeft() : marginRight();
+    return otherStyle->isLeftToRightDirection() ? marginTop() : marginBottom();
 }
 
 Length RenderStyle::marginEndUsing(const RenderStyle* otherStyle) const
 {
     if (otherStyle->isVerticalBlockFlow())
-        return otherStyle->direction() == LTR ? marginRight() : marginLeft();
-    return otherStyle->direction() == LTR ? marginBottom() : marginTop();
+        return otherStyle->isLeftToRightDirection() ? marginRight() : marginLeft();
+    return otherStyle->isLeftToRightDirection() ? marginBottom() : marginTop();
 }
 
 Length RenderStyle::paddingBefore() const
@@ -1279,15 +1279,15 @@ Length RenderStyle::paddingAfter() const
 Length RenderStyle::paddingStart() const
 {
     if (isVerticalBlockFlow())
-        return direction() == LTR ? paddingLeft() : paddingRight();
-    return direction() == LTR ? paddingTop() : paddingBottom();
+        return isLeftToRightDirection() ? paddingLeft() : paddingRight();
+    return isLeftToRightDirection() ? paddingTop() : paddingBottom();
 }
 
 Length RenderStyle::paddingEnd() const
 {
     if (isVerticalBlockFlow())
-        return direction() == LTR ? paddingRight() : paddingLeft();
-    return direction() == LTR ? paddingBottom() : paddingTop();
+        return isLeftToRightDirection() ? paddingRight() : paddingLeft();
+    return isLeftToRightDirection() ? paddingBottom() : paddingTop();
 }
 
 } // namespace WebCore

@@ -137,7 +137,7 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
         ePos = len;
     }
 
-    IntRect r = enclosingIntRect(f.selectionRectForText(TextRun(characters, len, textObj->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride),
+    IntRect r = enclosingIntRect(f.selectionRectForText(TextRun(characters, len, textObj->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride),
                                                         IntPoint(tx + m_x, ty + selTop), selHeight, sPos, ePos));
     if (r.x() > tx + m_x + m_logicalWidth)
         r.setWidth(0);
@@ -198,7 +198,7 @@ int InlineTextBox::placeEllipsisBox(bool flowIsLTR, int visibleLeftEdge, int vis
         // The inline box may have different directionality than it's parent.  Since truncation
         // behavior depends both on both the parent and the inline block's directionality, we
         // must keep track of these separately.
-        bool ltr = direction() == LTR;
+        bool ltr = isLeftToRightDirection();
         if (ltr != flowIsLTR) {
           // Width in pixels of the visible portion of the box, excluding the ellipsis.
           int visibleBoxWidth = visibleRightEdge - visibleLeftEdge  - ellipsisWidth;
@@ -382,8 +382,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     if (m_truncation != cNoTruncation) {
-        TextDirection flowDirection = renderer()->containingBlock()->style()->direction();
-        if (flowDirection != direction()) {
+        if (renderer()->containingBlock()->style()->isLeftToRightDirection() != isLeftToRightDirection()) {
             // Make the visible fragment of text hug the edge closest to the rest of the run by moving the origin
             // at which we start drawing text.
             // e.g. In the case of LTR text truncated in an RTL Context, the correct behavior is:
@@ -395,7 +394,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
             int widthOfVisibleText = toRenderText(renderer())->width(m_start, m_truncation, textPos(), m_firstLine);
             int widthOfHiddenText = m_logicalWidth - widthOfVisibleText;
             // FIXME: The hit testing logic also needs to take this translation int account.
-            tx += direction() == LTR ? widthOfHiddenText : -widthOfHiddenText;
+            tx += isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText;
         }
     }
 
@@ -504,7 +503,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
 
     int baseline = renderer()->style(m_firstLine)->font().ascent();
     IntPoint textOrigin(m_x + tx, m_y + ty + baseline);
-    TextRun textRun(characters, length, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || styleToUse->visuallyOrdered());
+    TextRun textRun(characters, length, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || styleToUse->visuallyOrdered());
 
     int sPos = 0;
     int ePos = 0;
@@ -635,7 +634,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, int tx, int ty, Ren
 
     context->clip(IntRect(m_x + tx, y + ty, m_logicalWidth, h));
     context->drawHighlightForText(font, TextRun(characters, length, textRenderer()->allowTabs(), textPos(), m_toAdd, 
-                                  direction() == RTL, m_dirOverride || style->visuallyOrdered()),
+                                  !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
                                   IntPoint(m_x + tx, y + ty), h, c, style->colorSpace(), sPos, ePos);
     context->restore();
 }
@@ -658,7 +657,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, int tx,
     int y = selectionTop();
     int h = selectionHeight();
     context->drawHighlightForText(font, TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd,
-                                  direction() == RTL, m_dirOverride || style->visuallyOrdered()),
+                                  !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
                                   IntPoint(m_x + tx, y + ty), h, c, style->colorSpace(), sPos, ePos);
     context->restore();
 }
@@ -694,7 +693,7 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, int tx, int ty, in
     int width = m_logicalWidth;
     if (m_truncation != cNoTruncation) {
         width = toRenderText(renderer())->width(m_start, m_truncation, textPos(), m_firstLine);
-        if (direction() == RTL)
+        if (!isLeftToRightDirection())
             tx += (m_logicalWidth - width);
     }
     
@@ -813,7 +812,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, int tx, in
 
         // Calculate start & width
         IntPoint startPoint(tx + m_x, ty + selectionTop());
-        TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered());
+        TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
         int h = selectionHeight();
         
         IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, startPosition, endPosition));
@@ -858,7 +857,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, int tx, int ty, co
     
     int sPos = max(marker.startOffset - m_start, (unsigned)0);
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
-    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered());
+    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
     
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, y), h, sPos, ePos));
@@ -886,7 +885,7 @@ void InlineTextBox::computeRectForReplacementMarker(int /*tx*/, int /*ty*/, cons
     
     int sPos = max(marker.startOffset - m_start, (unsigned)0);
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
-    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered());
+    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered());
     IntPoint startPoint = IntPoint(m_x, y);
     
     // Compute and store the rect associated with this marker.
@@ -1031,7 +1030,7 @@ int InlineTextBox::textPos() const
         return 0;
         
     RenderBlock* blockElement = renderer()->containingBlock();
-    return direction() == RTL ? x() - blockElement->borderRight() - blockElement->paddingRight()
+    return !isLeftToRightDirection() ? x() - blockElement->borderRight() - blockElement->paddingRight()
                       : x() - blockElement->borderLeft() - blockElement->paddingLeft();
 }
 
@@ -1043,7 +1042,7 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
     RenderText* text = toRenderText(renderer());
     RenderStyle* style = text->style(m_firstLine);
     const Font* f = &style->font();
-    return f->offsetForPosition(TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride || style->visuallyOrdered()),
+    return f->offsetForPosition(TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
                                 _x - m_x, includePartialGlyphs);
 }
 
@@ -1057,10 +1056,10 @@ int InlineTextBox::positionForOffset(int offset) const
 
     RenderText* text = toRenderText(renderer());
     const Font& f = text->style(m_firstLine)->font();
-    int from = direction() == RTL ? offset - m_start : 0;
-    int to = direction() == RTL ? m_len : offset - m_start;
+    int from = !isLeftToRightDirection() ? offset - m_start : 0;
+    int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
-    return enclosingIntRect(f.selectionRectForText(TextRun(text->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, direction() == RTL, m_dirOverride),
+    return enclosingIntRect(f.selectionRectForText(TextRun(text->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride),
                                                    IntPoint(m_x, 0), 0, from, to)).right();
 }
 

@@ -905,7 +905,7 @@ NSLevelIndicatorCell* RenderThemeMac::levelIndicatorFor(const RenderMeter* rende
     }
 
     [cell setLevelIndicatorStyle:levelIndicatorStyleFor(style->appearance())];
-    [cell setBaseWritingDirection:style->direction() == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft];
+    [cell setBaseWritingDirection:style->isLeftToRightDirection() ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft];
     [cell setMinValue:element->min()];
     [cell setMaxValue:element->max()];
     RetainPtr<NSNumber> valueObject = [NSNumber numberWithDouble:value];
@@ -959,7 +959,7 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
 
     paintInfo.context->save();
 
-    if (renderProgress->style()->direction() == RTL) {
+    if (!renderProgress->style()->isLeftToRightDirection()) {
         paintInfo.context->translate(2 * rect.x() + rect.width(), 0);
         paintInfo.context->scale(FloatSize(-1, 1));
     }

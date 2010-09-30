@@ -39,7 +39,7 @@ public:
     FlexBoxIterator(RenderFlexibleBox* parent)
     {
         box = parent;
-        if (box->style()->boxOrient() == HORIZONTAL && box->style()->direction() == RTL)
+        if (box->style()->boxOrient() == HORIZONTAL && !box->style()->isLeftToRightDirection())
             forward = box->style()->boxDirection() != BNORMAL;
         else
             forward = box->style()->boxDirection() == BNORMAL;
@@ -417,7 +417,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             if (child->isPositioned()) {
                 child->containingBlock()->insertPositionedObject(child);
                 if (child->style()->hasStaticX()) {
-                    if (style()->direction() == LTR)
+                    if (style()->isLeftToRightDirection())
                         child->layer()->setStaticX(xPos);
                     else child->layer()->setStaticX(width() - xPos);
                 }
@@ -575,8 +575,8 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 
     RenderBlock::finishDelayUpdateScrollInfo();
 
-    if (remainingSpace > 0 && ((style()->direction() == LTR && style()->boxPack() != BSTART) ||
-                               (style()->direction() == RTL && style()->boxPack() != BEND))) {
+    if (remainingSpace > 0 && ((style()->isLeftToRightDirection() && style()->boxPack() != BSTART)
+        || (!style()->isLeftToRightDirection() && style()->boxPack() != BEND))) {
         // Children must be repositioned.
         int offset = 0;
         if (style()->boxPack() == BJUSTIFY) {
@@ -645,7 +645,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
 {
     int xPos = borderLeft() + paddingLeft();
     int yPos = borderTop() + paddingTop();
-    if (style()->direction() == RTL)
+    if (!style()->isLeftToRightDirection())
         xPos = width() - paddingRight() - borderRight();
     int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
     bool heightSpecified = false;
@@ -688,7 +688,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             if (child->isPositioned()) {
                 child->containingBlock()->insertPositionedObject(child);
                 if (child->style()->hasStaticX()) {
-                    if (style()->direction() == LTR)
+                    if (style()->isLeftToRightDirection())
                         child->layer()->setStaticX(borderLeft()+paddingLeft());
                     else
                         child->layer()->setStaticX(borderRight()+paddingRight());
@@ -727,13 +727,13 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     childX += child->marginLeft() + max(0, (contentWidth() - (child->width() + child->marginLeft() + child->marginRight()))/2);
                     break;
                 case BEND:
-                    if (style()->direction() == RTL)
+                    if (!style()->isLeftToRightDirection())
                         childX += child->marginLeft();
                     else
                         childX += contentWidth() - child->marginRight() - child->width();
                     break;
                 default: // BSTART/BSTRETCH
-                    if (style()->direction() == LTR)
+                    if (style()->isLeftToRightDirection())
                         childX += child->marginLeft();
                     else
                         childX += contentWidth() - child->marginRight() - child->width();

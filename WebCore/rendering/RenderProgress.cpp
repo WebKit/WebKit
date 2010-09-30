@@ -137,7 +137,7 @@ void RenderProgress::updateAnimationState()
 IntRect RenderProgress::valuePartRect() const
 {
     IntRect rect(borderLeft() + paddingLeft(), borderTop() + paddingTop(), lround((width() - borderLeft() - paddingLeft() - borderRight() - paddingRight()) * position()), height()  - borderTop() - paddingTop() - borderBottom() - paddingBottom());
-    if (style()->direction() == RTL)
+    if (!style()->isLeftToRightDirection())
         rect.setX(width() - borderRight() - paddingRight() - rect.width());
     return rect;
 }

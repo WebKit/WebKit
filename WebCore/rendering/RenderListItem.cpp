@@ -261,7 +261,7 @@ void RenderListItem::positionListMarker()
         // FIXME: Inline flows in the line box hierarchy that have self-painting layers should act as cutoff points
         // and really shouldn't keep propagating overflow up.  This won't really break anything other than repainting
         // not being as tight as it could be though.
-        if (style()->direction() == LTR) {
+        if (style()->isLeftToRightDirection()) {
             int leftLineOffset = logicalLeftOffsetForLine(yOffset, logicalLeftOffsetForLine(yOffset, false), false);
             markerXPos = leftLineOffset - xOffset - paddingLeft() - borderLeft() + m_marker->marginLeft();
             m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
@@ -326,12 +326,12 @@ String RenderListItem::markerTextWithSuffix() const
     const String markerSuffix = m_marker->suffix();
     Vector<UChar> resultVector;
 
-    if (m_marker->style()->direction() == RTL)
+    if (!m_marker->style()->isLeftToRightDirection())
         resultVector.append(markerSuffix.characters(), markerSuffix.length());
 
     resultVector.append(markerText.characters(), markerText.length());
 
-    if (m_marker->style()->direction() == LTR)
+    if (m_marker->style()->isLeftToRightDirection())
         resultVector.append(markerSuffix.characters(), markerSuffix.length());
 
     return String::adopt(resultVector);

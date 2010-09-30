@@ -511,7 +511,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     switch (cbStyle->textAlign()) {
     case TAAUTO:
     case JUSTIFY:
-        rightAligned = cbStyle->direction() == RTL;
+        rightAligned = !cbStyle->isLeftToRightDirection();
         break;
     case RIGHT:
     case WEBKIT_RIGHT:
@@ -1224,7 +1224,7 @@ void RenderText::positionLineBox(InlineBox* box)
         return;
     }
 
-    m_containsReversedText |= s->direction() == RTL;
+    m_containsReversedText |= !s->isLeftToRightDirection();
 }
 
 unsigned RenderText::width(unsigned from, unsigned len, int xPos, bool firstLine, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

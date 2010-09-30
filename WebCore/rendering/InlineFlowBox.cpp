@@ -209,7 +209,7 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
 
     // The root inline box never has borders/margins/padding.
     if (parent()) {
-        bool ltr = renderer()->style()->direction() == LTR;
+        bool ltr = renderer()->style()->isLeftToRightDirection();
 
         // Check to see if all initial lines are unconstructed.  If so, then
         // we know the inline began on this line (unless we are a continuation).
@@ -309,7 +309,7 @@ int InlineFlowBox::placeBoxesInInlineDirection(int xPos, bool& needsWordSpacing,
             xPos += text->logicalWidth();
         } else {
             if (curr->renderer()->isPositioned()) {
-                if (curr->renderer()->parent()->style()->direction() == LTR)
+                if (curr->renderer()->parent()->style()->isLeftToRightDirection())
                     curr->setX(xPos);
                 else
                     // Our offset that we cache needs to be from the edge of the right border box and
@@ -945,7 +945,7 @@ void InlineFlowBox::paintTextDecorations(PaintInfo& paintInfo, int tx, int ty, b
         if (rootLine->ellipsisBox()) {
             int ellipsisX = m_x + rootLine->ellipsisBox()->x();
             int ellipsisWidth = rootLine->ellipsisBox()->logicalWidth();
-            bool ltr = renderer()->style()->direction() == LTR;
+            bool ltr = renderer()->style()->isLeftToRightDirection();
             if (rootLine == this) {
                 // Trim w and x so that the underline isn't drawn underneath the ellipsis.
                 // ltr: is our right edge farther right than the right edge of the ellipsis.

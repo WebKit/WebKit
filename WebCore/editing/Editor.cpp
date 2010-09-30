@@ -643,7 +643,7 @@ bool Editor::hasBidiSelection() const
         return false;
 
     RenderStyle* style = renderer->style();
-    if (style->direction() == RTL)
+    if (!style->isLeftToRightDirection())
         return true;
 
     return toRenderBlock(renderer)->containsNonZeroBidiLevel();
