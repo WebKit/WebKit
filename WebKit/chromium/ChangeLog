@@ -1,3 +1,13 @@
+2010-09-30  Avi Drissman  <avi@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        [Chromium] Tabbing into page doesn't always select the first element
+        https://bugs.webkit.org/show_bug.cgi?id=46856
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setInitialFocus):
+
 2010-09-30  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.

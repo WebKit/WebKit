@@ -1481,6 +1481,10 @@ void WebViewImpl::setInitialFocus(bool reverse)
     keyboardEvent.windowsKeyCode = 0x09;
     PlatformKeyboardEventBuilder platformEvent(keyboardEvent);
     RefPtr<KeyboardEvent> webkitEvent = KeyboardEvent::create(platformEvent, 0);
+
+    Frame* frame = page()->focusController()->focusedOrMainFrame();
+    if (Document* document = frame->document())
+        document->setFocusedNode(0);
     page()->focusController()->setInitialFocus(
         reverse ? FocusDirectionBackward : FocusDirectionForward,
         webkitEvent.get());
