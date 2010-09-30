@@ -37,6 +37,7 @@
 #include "app/gfx/gl/gl_bindings.h"
 #include "app/gfx/gl/gl_context.h"
 #include "NotImplemented.h"
+#include "WebView.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 
@@ -67,6 +68,7 @@ WebGraphicsContext3DDefaultImpl::VertexAttribPointerState::VertexAttribPointerSt
 
 WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl()
     : m_initialized(false)
+    , m_renderDirectlyToWebView(false)
     , m_texture(0)
     , m_fbo(0)
     , m_depthStencilBuffer(0)
@@ -112,19 +114,49 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
 
 bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attributes attributes, WebView* webView, bool renderDirectlyToWebView)
 {
-    if (renderDirectlyToWebView) {
-        // This mode isn't supported with the in-process implementation yet. (FIXME)
-        return false;
-    }
-
     if (!gfx::GLContext::InitializeOneOff())
         return false;
 
-    m_glContext = WTF::adoptPtr(gfx::GLContext::CreateOffscreenGLContext(0));
+    m_renderDirectlyToWebView = renderDirectlyToWebView;
+    gfx::GLContext* shareContext = 0;
+
+    if (!renderDirectlyToWebView) {
+        // Pick up the compositor's context to share resources with.
+        WebGraphicsContext3D* viewContext = webView->graphicsContext3D();
+        if (viewContext) {
+            WebGraphicsContext3DDefaultImpl* contextImpl = static_cast<WebGraphicsContext3DDefaultImpl*>(viewContext);
+            shareContext = contextImpl->m_glContext.get();
+        } else {
+            // The compositor's context didn't get created
+            // successfully, so conceptually there is no way we can
+            // render successfully to the WebView.
+            m_renderDirectlyToWebView = false;
+        }
+    }
+
+    // This implementation always renders offscreen regardless of
+    // whether renderDirectlyToWebView is true. Both DumpRenderTree
+    // and test_shell paint first to an intermediate offscreen buffer
+    // and from there to the window, and WebViewImpl::paint already
+    // correctly handles the case where the compositor is active but
+    // the output needs to go to a WebCanvas.
+    m_glContext = WTF::adoptPtr(gfx::GLContext::CreateOffscreenGLContext(shareContext));
     if (!m_glContext)
         return false;
 
     m_attributes = attributes;
+
+    // FIXME: for the moment we disable multisampling for the compositor.
+    // It actually works in this implementation, but there are a few
+    // considerations. First, we likely want to reduce the fuzziness in
+    // these tests as much as possible because we want to run pixel tests.
+    // Second, Mesa's multisampling doesn't seem to antialias straight
+    // edges in some CSS 3D samples. Third, we don't have multisampling
+    // support for the compositor in the normal case at the time of this
+    // writing.
+    if (renderDirectlyToWebView)
+        m_attributes.antialias = false;
+
     validateAttributes();
 
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
@@ -163,6 +195,18 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
     // FIXME: instead of enforcing premultipliedAlpha = true, implement the
     // correct behavior when premultipliedAlpha = false is requested.
     m_attributes.premultipliedAlpha = true;
+}
+
+void WebGraphicsContext3DDefaultImpl::resolveMultisampledFramebuffer(unsigned x, unsigned y, unsigned width, unsigned height)
+{
+    if (m_attributes.antialias) {
+        bool mustRestoreFBO = (m_boundFBO != m_multisampleFBO);
+        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
+        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
+        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+        if (mustRestoreFBO)
+            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+    }
 }
 
 bool WebGraphicsContext3DDefaultImpl::makeContextCurrent()
@@ -218,13 +262,15 @@ bool WebGraphicsContext3DDefaultImpl::isErrorGeneratedOnOutOfBoundsAccesses()
 
 unsigned int WebGraphicsContext3DDefaultImpl::getPlatformTextureId()
 {
-    ASSERT_NOT_REACHED();
-    return 0;
+    return m_texture;
 }
 
 void WebGraphicsContext3DDefaultImpl::prepareTexture()
 {
-    ASSERT_NOT_REACHED();
+    if (!m_renderDirectlyToWebView) {
+        // We need to prepare our rendering results for the compositor.
+        resolveMultisampledFramebuffer(0, 0, m_cachedWidth, m_cachedHeight);
+    }
 }
 
 static int createTextureObject(GLenum target)
@@ -434,19 +480,8 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
     // vertical flip is only a temporary solution anyway until Chrome
     // is fully GPU composited, it wasn't worth the complexity.
 
-    bool mustRestoreFBO = false;
-    if (m_attributes.antialias) {
-        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        glBlitFramebufferEXT(0, 0, m_cachedWidth, m_cachedHeight, 0, 0, m_cachedWidth, m_cachedHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        mustRestoreFBO = true;
-    } else {
-        if (m_boundFBO != m_fbo) {
-            mustRestoreFBO = true;
-            glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-        }
-    }
+    resolveMultisampledFramebuffer(0, 0, m_cachedWidth, m_cachedHeight);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
 
     GLint packAlignment = 4;
     bool mustRestorePackAlignment = false;
@@ -463,8 +498,7 @@ bool WebGraphicsContext3DDefaultImpl::readBackFramebuffer(unsigned char* pixels,
     if (mustRestorePackAlignment)
         glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
-    if (mustRestoreFBO)
-        glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     if (pixels)
@@ -704,16 +738,15 @@ void WebGraphicsContext3DDefaultImpl::copyTexImage2D(unsigned long target, long 
 {
     makeContextCurrent();
 
-    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
-        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    bool needsResolve = (m_attributes.antialias && m_boundFBO == m_multisampleFBO);
+    if (needsResolve) {
+        resolveMultisampledFramebuffer(x, y, width, height);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     }
 
     glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
 
-    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
+    if (needsResolve)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 }
 
@@ -722,16 +755,15 @@ void WebGraphicsContext3DDefaultImpl::copyTexSubImage2D(unsigned long target, lo
 {
     makeContextCurrent();
 
-    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
-        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    bool needsResolve = (m_attributes.antialias && m_boundFBO == m_multisampleFBO);
+    if (needsResolve) {
+        resolveMultisampledFramebuffer(x, y, width, height);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     }
 
     glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 
-    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
+    if (needsResolve)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 }
 
@@ -1105,17 +1137,16 @@ void WebGraphicsContext3DDefaultImpl::readPixels(long x, long y, unsigned long w
     // FIXME: remove the two glFlush calls when the driver bug is fixed, i.e.,
     // all previous rendering calls should be done before reading pixels.
     glFlush();
-    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO) {
-        glBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, m_multisampleFBO);
-        glBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, m_fbo);
-        glBlitFramebufferEXT(x, y, x + width, y + height, x, y, x + width, y + height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    bool needsResolve = (m_attributes.antialias && m_boundFBO == m_multisampleFBO);
+    if (needsResolve) {
+        resolveMultisampledFramebuffer(x, y, width, height);
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
         glFlush();
     }
 
     glReadPixels(x, y, width, height, format, type, pixels);
 
-    if (m_attributes.antialias && m_boundFBO == m_multisampleFBO)
+    if (needsResolve)
         glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 }
 

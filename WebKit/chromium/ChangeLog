@@ -1,3 +1,32 @@
+2010-09-29  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Add accelerated compositing support to DumpRenderTree and test_shell
+        https://bugs.webkit.org/show_bug.cgi?id=46849
+
+        Added offscreen code path for WebGraphicsContext3DDefaultImpl which
+        works with the compositor integration in both DumpRenderTree and
+        test_shell, since both pass a non-null WebCanvas* to WebViewImpl::paint
+        and thereby trigger the compositor's readback code path. Added support
+        for --enable-accelerated-compositing to DumpRenderTree.
+
+        Tested in both test_shell and DumpRenderTree on Linux, the latter by
+        modifying a compositing layout test, dumping the pixels and verifying
+        that they matched the output when the compositor was active.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        (WebKit::WebGraphicsContext3DDefaultImpl::resolveMultisampledFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getPlatformTextureId):
+        (WebKit::WebGraphicsContext3DDefaultImpl::prepareTexture):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readBackFramebuffer):
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTexImage2D):
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTexSubImage2D):
+        (WebKit::WebGraphicsContext3DDefaultImpl::readPixels):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+
 2010-09-29  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.

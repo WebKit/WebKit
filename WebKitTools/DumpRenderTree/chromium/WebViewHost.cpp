@@ -594,6 +594,13 @@ void WebViewHost::didScrollRect(int, int, const WebRect& clipRect)
     didInvalidateRect(clipRect);
 }
 
+void WebViewHost::scheduleComposite()
+{
+    WebSize widgetSize = webWidget()->size();
+    WebRect clientRect(0, 0, widgetSize.width, widgetSize.height);
+    didInvalidateRect(clientRect);
+}
+
 void WebViewHost::didFocus()
 {
     m_shell->setFocus(webWidget(), true);

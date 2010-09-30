@@ -137,6 +137,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     // WebKit::WebWidgetClient
     virtual void didInvalidateRect(const WebKit::WebRect&);
     virtual void didScrollRect(int dx, int dy, const WebKit::WebRect&);
+    virtual void scheduleComposite();
     virtual void didFocus();
     virtual void didBlur();
     virtual void didChangeCursor(const WebKit::WebCursorInfo&);
