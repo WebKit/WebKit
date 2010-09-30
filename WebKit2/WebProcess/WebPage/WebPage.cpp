@@ -252,8 +252,11 @@ void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
                                                 CoreIPC::Connection::NoTimeout);
     
     if (newDrawingAreaInfo.type != drawingArea()->info().type) {
-        m_drawingArea = DrawingArea::create(newDrawingAreaInfo.type, newDrawingAreaInfo.id, this);
-        m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+        m_drawingArea = 0;
+        if (newDrawingAreaInfo.type != DrawingArea::None) {
+            m_drawingArea = DrawingArea::create(newDrawingAreaInfo.type, newDrawingAreaInfo.id, this);
+            m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+        }
     }
 }
 
@@ -801,8 +804,8 @@ bool WebPage::windowIsFocused() const
 void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassDrawingArea>()) {
-        ASSERT(m_drawingArea);
-        m_drawingArea->didReceiveMessage(connection, messageID, arguments);
+        if (m_drawingArea)
+            m_drawingArea->didReceiveMessage(connection, messageID, arguments);
         return;
     }
 

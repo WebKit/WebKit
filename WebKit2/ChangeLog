@@ -1,3 +1,27 @@
+2010-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Assertion then crash closing WebKit2 window with accelerated compositing in
+        https://bugs.webkit.org/show_bug.cgi?id=46857
+        
+        Fix two issues when closing a WebKit2 window using accelerated
+        compositing.
+        
+        The first is that the response to the sync DidChangeAcceleratedCompositing message
+        sent by changeAcceleratedCompositingMode() may be empty, because the corresponding
+        page may have been destroyed already in the UI process. In that case newDrawingAreaInfo
+        is not filled in, so we get a DrawingArea::Type of None. Don't attempt to make a new
+        drawing area in that case.
+        
+        We then have to null-check the drawing area in WebPage::didReceiveMessage(),
+        in the case where the UI process is calling back with a SuspendPainting message,
+        before our page has gone away.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+        (WebKit::WebPage::didReceiveMessage):
+
 2010-09-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
