@@ -31,6 +31,7 @@ import os
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.commands.sheriffbot import SheriffBot
 from webkitpy.tool.mocktool import MockBuilder
+from webkitpy.thirdparty.mock import Mock
 
 
 class SheriffBotTest(QueuesTest):
@@ -38,7 +39,8 @@ class SheriffBotTest(QueuesTest):
     builder2 = MockBuilder("Builder2")
 
     def test_sheriff_bot(self):
-        mock_work_item = {
+        mock_work_item = Mock()
+        mock_work_item.revisions_causing_failures = lambda: {
             29837: [self.builder1],
         }
         expected_stderr = {
@@ -48,26 +50,3 @@ class SheriffBotTest(QueuesTest):
             "handle_unexpected_error": "Mock error message\n"
         }
         self.assert_queue_outputs(SheriffBot(), work_item=mock_work_item, expected_stderr=expected_stderr)
-
-    revisions_causing_failures = {
-        1234: [builder1],
-        1235: [builder1, builder2],
-    }
-
-    def test_new_failures(self):
-        old_failing_svn_revisions = []
-        self.assertEquals(SheriffBot()._new_failures(self.revisions_causing_failures,
-                                                     old_failing_svn_revisions),
-                          self.revisions_causing_failures)
-
-    def test_new_failures_with_old_revisions(self):
-        old_failing_svn_revisions = [1234]
-        self.assertEquals(SheriffBot()._new_failures(self.revisions_causing_failures,
-                                                     old_failing_svn_revisions),
-                          {1235: [builder2]})
-
-    def test_new_failures_with_old_revisions(self):
-        old_failing_svn_revisions = [1235]
-        self.assertEquals(SheriffBot()._new_failures(self.revisions_causing_failures,
-                                                     old_failing_svn_revisions),
-                          {})

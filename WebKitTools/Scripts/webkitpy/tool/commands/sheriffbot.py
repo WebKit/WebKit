@@ -54,57 +54,30 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         self._irc_bot = SheriffIRCBot(self._tool, self._sheriff)
         self._tool.ensure_irc_connected(self._irc_bot.irc_delegate())
 
-    def work_item_log_path(self, new_failures):
-        return os.path.join("%s-logs" % self.name, "%s.log" % new_failures.keys()[0])
+    def work_item_log_path(self, failure_map):
+        return None
 
-    def _new_failures(self, revisions_causing_failures, old_failing_svn_revisions):
-        # We ignore failures that might have been caused by svn_revisions that
-        # we've already complained about.  This is conservative in the sense
-        # that we might be ignoring some new failures, but our experience has
-        # been that skipping this check causes a lot of spam for builders that
-        # take a long time to cycle.
-        old_failing_builder_names = []
-        for svn_revision in old_failing_svn_revisions:
-            old_failing_builder_names.extend(
-                [builder.name() for builder in revisions_causing_failures[svn_revision]])
-
-        new_failures = {}
-        for svn_revision, builders in revisions_causing_failures.items():
-            if svn_revision in old_failing_svn_revisions:
-                # FIXME: We should re-process the work item after some time delay.
-                # https://bugs.webkit.org/show_bug.cgi?id=36581
-                continue
-            new_builders = [builder for builder in builders
-                            if builder.name() not in old_failing_builder_names]
-            if new_builders:
-                new_failures[svn_revision] = new_builders
-
-        return new_failures
+    def _is_old_failure(self, svn_revision):
+        return self._tool.status_server.svn_revision(svn_revision)
 
     def next_work_item(self):
         self._irc_bot.process_pending_messages()
         self._update()
 
-        # We do one read from buildbot to ensure a consistent view.
-        revisions_causing_failures = self._tool.buildbot.failure_map().revisions_causing_failures()
+        # FIXME: We need to figure out how to provoke_flaky_builders.
 
-        # Similarly, we read once from our the status_server.
-        old_failing_svn_revisions = []
-        for svn_revision in revisions_causing_failures.keys():
-            if self._tool.status_server.svn_revision(svn_revision):
-                old_failing_svn_revisions.append(svn_revision)
+        failure_map = self._tool.buildbot.failure_map()
+        failure_map.filter_out_old_failures(self._is_old_failure)
+        if failure_map.is_empty():
+            return None
+        return failure_map
 
-        new_failures = self._new_failures(revisions_causing_failures,
-                                          old_failing_svn_revisions)
-
-        self._sheriff.provoke_flaky_builders(revisions_causing_failures)
-        return new_failures
-
-    def should_proceed_with_work_item(self, new_failures):
+    def should_proceed_with_work_item(self, failure_map):
         # Currently, we don't have any reasons not to proceed with work items.
         return True
 
-    def process_work_item(self, new_failures):
+    def process_work_item(self, failure_map):
+        new_failures = failure_map.revisions_causing_failures()
         blame_list = new_failures.keys()
         for svn_revision, builders in new_failures.items():
             try:
@@ -124,7 +97,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
                                                                 builder.name())
         return True
 
-    def handle_unexpected_error(self, new_failures, message):
+    def handle_unexpected_error(self, failure_map, message):
         log(message)
 
     # StepSequenceErrorHandler methods

@@ -162,15 +162,6 @@ class WhatBroke(AbstractDeclarativeCommand):
             print "All builders are passing!"
 
 
-class WhoBrokeIt(AbstractDeclarativeCommand):
-    name = "who-broke-it"
-    help_text = "Print a list of revisions causing failures on %s" % BuildBot.default_host
-
-    def execute(self, options, args, tool):
-        for revision, builders in self._tool.buildbot.failure_map(False).revisions_causing_failures().items():
-            print "r%s appears to have broken %s" % (revision, [builder.name() for builder in builders])
-
-
 class ResultsFor(AbstractDeclarativeCommand):
     name = "results-for"
     help_text = "Print a list of failures for the passed revision from bots on %s" % BuildBot.default_host

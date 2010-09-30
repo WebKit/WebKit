@@ -37,6 +37,14 @@ class FailureMap(object):
             'regression_window': regression_window,
         })
 
+    def is_empty(self):
+        return not self._failures
+
+    def failing_revisions(self):
+        failing_revisions = [failure_info['regression_window'].revisions()
+                             for failure_info in self._failures]
+        return sorted(set(sum(failing_revisions, [])))
+
     def revisions_causing_failures(self):
         revision_to_failing_bots = {}
         for failure_info in self._failures:
@@ -46,3 +54,28 @@ class FailureMap(object):
                 failing_bots.append(failure_info['builder'])
                 revision_to_failing_bots[revision] = failing_bots
         return revision_to_failing_bots
+
+    def _old_failures(self, is_old_failure):
+        return filter(lambda revision: is_old_failure(revision),
+                      self.failing_revisions())
+
+    def _builders_failing_because_of(self, revisions):
+        revision_set = set(revisions)
+        return [failure_info['builder'] for failure_info in self._failures
+                if revision_set.intersection(
+                    failure_info['regression_window'].revisions())]
+
+    # FIXME: We should re-process old failures after some time delay.
+    # https://bugs.webkit.org/show_bug.cgi?id=36581
+    def filter_out_old_failures(self, is_old_failure):
+        old_failures = self._old_failures(is_old_failure)
+        old_failing_builder_names = set([builder.name()
+            for builder in self._builders_failing_because_of(old_failures)])
+
+        # We filter out all the failing builders that could have been caused
+        # by old_failures.  We could miss some new failures this way, but
+        # emperically, this reduces the amount of spam we generate.
+        failures = self._failures
+        self._failures = [failure_info for failure_info in failures
+            if failure_info['builder'].name() not in old_failing_builder_names]
+        self._cache = {}
