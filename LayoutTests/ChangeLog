@@ -1,3 +1,14 @@
+2010-09-29  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Rebaseline image-rescale.svg results for chromium-win
+        https://bugs.webkit.org/show_bug.cgi?id=46818
+
+        * platform/chromium-win/svg/custom/image-rescale-expected.checksum: Copied from LayoutTests/platform/chromium-linux/svg/custom/image-rescale-expected.checksum.
+        * platform/chromium-win/svg/custom/image-rescale-expected.png: Copied from LayoutTests/platform/chromium-linux/svg/custom/image-rescale-expected.png.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-29  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  See comments in the Skipped file.
