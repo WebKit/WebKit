@@ -1,5 +1,22 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r67288.
+
+    2010-09-10  Jer Noble  <jer.noble@apple.com>
+
+        No review; build fix only.
+
+        <CoreGraphics/CGAffineTransform.h> isn't on the build bots either.  Wrap
+        all references to m_movieTransform in #if USE(ACCELERATED_COMPOSITING) guards.
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::MediaPlayerPrivateQuickTimeVisualContext):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::naturalSize):
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::retrieveAndResetMovieTransform):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.h:
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r67286.
 
     2010-09-10  Jer Noble  <jer.noble@apple.com>
