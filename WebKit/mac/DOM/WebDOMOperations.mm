@@ -136,17 +136,14 @@ using namespace JSC;
 
 @implementation DOMDocument (WebDOMDocumentOperationsInternal)
 
-/* This doesn't appear to be used by anyone.  We should consider removing this. */
-- (DOMRange *)_createRangeWithNode:(DOMNode *)node
-{
-    DOMRange *range = [self createRange];
-    [range selectNode:node];
-    return range;
-}
-
 - (DOMRange *)_documentRange
 {
-    return [self _createRangeWithNode:[self documentElement]];
+    DOMRange *range = [self createRange];
+
+    if (DOMNode* documentElement = [self documentElement])
+        [range selectNode:documentElement];
+
+    return range;
 }
 
 @end

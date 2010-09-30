@@ -1,3 +1,17 @@
+2010-09-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        -[DOMDocument _documentRange] throws an exception if there is no document element
+        https://bugs.webkit.org/show_bug.cgi?id=46934
+        <rdar://problem/8169260>
+
+        If there is no document element, just return an empty range. Otherwise we'll try to call
+        Range::selectNode with a null Node which will throw a NOT_FOUND exception.
+
+        * DOM/WebDOMOperations.mm:
+        (-[DOMDocument _documentRange]):
+
 2010-09-30  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.
