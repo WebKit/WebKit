@@ -313,10 +313,24 @@ public:
         if (!input.checkInput(matchSize))
             return false;
 
-        for (int i = 0; i < matchSize; ++i) {
-            if (!checkCharacter(input.reread(matchBegin + i), inputOffset - matchSize + i)) {
-                input.uncheckInput(matchSize);
-                return false;
+        if (pattern->m_ignoreCase) {
+            for (int i = 0; i < matchSize; ++i) {
+                int ch = input.reread(matchBegin + i);
+
+                int lo = Unicode::toLower(ch);
+                int hi = Unicode::toUpper(ch);
+
+                if ((lo != hi) ? (!checkCasedCharacter(lo, hi, inputOffset - matchSize + i)) : (!checkCharacter(ch, inputOffset - matchSize + i))) {
+                    input.uncheckInput(matchSize);
+                    return false;
+                }
+            }
+        } else {
+            for (int i = 0; i < matchSize; ++i) {
+                if (!checkCharacter(input.reread(matchBegin + i), inputOffset - matchSize + i)) {
+                    input.uncheckInput(matchSize);
+                    return false;
+                }
             }
         }
 

@@ -1,3 +1,16 @@
+2010-09-30  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        The case-insensitivity backreference checking isn't working with YARR
+        Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=46882
+
+        Add ignorecase checking to the Interpreter::tryConsumeBackReference() function.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::tryConsumeBackReference):
+
 2010-09-30  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Andreas Kling.
