@@ -92,6 +92,12 @@
     {
       gTestSuite.exportResults(document.getElementById('results-popup').selectedIndex);
     }
+    
+    function printTestIframe()
+    {
+      var testFrame = document.getElementById('test-frame');
+      testFrame.contentWindow.print();
+    }
 
     /*
     This conflicts badly with key handling in selects.
@@ -153,12 +159,12 @@
   
   <div class="actions">
     <span>Skip reason:</span> <input type="text" id="skip-reason" size="50">
-    <button onclick="skipTest()" accesskey="s">Skip</button>
-    <span class="note">Use <i>Control-Option-letter</i> to trigger buttons via the keyboard.</span>
+    <button onclick="skipTest()" accesskey="s"><strong>S</strong>kip</button>
+    <div class="note">Use <i>Control-Option-letter</i> to<br> trigger buttons via the keyboard.</div>
     <div class="action-buttons">
       <button onclick="invalidTest()" accesskey="i">Invalid</button>
-      <button onclick="failTest()" accesskey="f">Fail</button>
-      <button onclick="passTest()" accesskey="p">Pass</button>
+      <button onclick="failTest()" accesskey="f"><strong>F</strong>ail</button>
+      <button onclick="passTest()" accesskey="p"><strong>P</strong>ass</button>
     </div>
   </div>
   <div id="test-content">
@@ -166,7 +172,10 @@
       <div class="title">Title: <span id="test-title"></span></div>
       <div class="url">URL: <span id="test-url"></span></div>
       <div class="assertion">Assertion: <span id="test-assertion"></span></div>
-      <div class="flags">Flags: <span id="test-flags"></span></div>
+      <div class="flags">Flags: <span id="test-flags"></span>
+        <span id="warning">This test must be run over HTTP.</span>
+        <button id="print-button" onclick="printTestIframe()">Print Preview</button>
+      </div>
     </div>
     
     <div id="test-wrapper" class="frame-wrapper">

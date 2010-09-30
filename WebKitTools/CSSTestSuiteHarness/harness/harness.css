@@ -64,7 +64,9 @@ body {
 }
 
 .note {
+  display: inline-block;
   font-size: 10px;
+  margin-left: 5px;
   color: gray;
 }
 .action-buttons {
@@ -94,6 +96,28 @@ body {
 
 .info .assertion, .info .flags {
   font-size: smaller;
+}
+
+#warning {
+  padding-left: 1em;
+  color: red;
+  display: none;
+}
+
+#print-button {
+  float: right;
+  display: none;
+}
+
+#test-content.print {
+}
+
+#test-content.print #print-button {
+  display: inline;
+}
+
+#test-content.warn #warning {
+  display: inline;
 }
 
 #test-content iframe {

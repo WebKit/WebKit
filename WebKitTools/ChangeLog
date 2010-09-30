@@ -1,3 +1,16 @@
+2010-09-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a warning when a test requires special steps.
+        Add a Print Preview button for 'paged' tests that
+        brings up the print dialog, allowing the user to 
+        judge paged media tests.
+
+        * CSSTestSuiteHarness/harness/harness.css:
+        * CSSTestSuiteHarness/harness/harness.html:
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite.prototype.loadTest):
+        (TestSuite.prototype.processFlags):
+
 2010-09-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -582,6 +582,42 @@ TestSuite.prototype.loadTest = function(test)
   document.getElementById('test-url').innerText = this.pathForTest(test.id);
   document.getElementById('test-assertion').innerText = test.assertion;
   document.getElementById('test-flags').innerText = test.flags;
+  
+  this.processFlags(test);
+}
+
+TestSuite.prototype.processFlags = function(test)
+{ 
+  var isPaged = test.flags.indexOf('paged') != -1;
+  if (isPaged)
+    $('#test-content').addClass('print');
+  else
+    $('#test-content').removeClass('print');
+
+  var showWarning = false;
+  var warning = '';
+  if (test.flags.indexOf('font') != -1)
+    warning = 'Requires a specific font to be installed.';
+  
+  if (test.flags.indexOf('http') != -1) {
+    if (warning != '')
+      warning += ' ';
+    warning += 'Must be tested over HTTP, with custom HTTP headers.';
+  }
+  
+  if (isPaged) {
+    if (warning != '')
+      warning += ' ';
+    warning += 'Test via the browser\'s Print Preview.';
+  }
+
+  document.getElementById('warning').innerText = warning;
+
+  if (warning.length > 0)
+    $('#test-content').addClass('warn');
+  else
+    $('#test-content').removeClass('warn');
+
 }
 
 TestSuite.prototype.clearTest = function()
@@ -593,6 +629,10 @@ TestSuite.prototype.clearTest = function()
   document.getElementById('test-url').innerText = '';
   document.getElementById('test-assertion').innerText = '';
   document.getElementById('test-flags').innerText = '';
+
+  $('#test-content').removeClass('print');
+  $('#test-content').removeClass('warn');
+  document.getElementById('warning').innerText = '';
 }
 
 TestSuite.prototype.loadRef = function(test)
