@@ -1,5 +1,13 @@
 2010-09-30  Adam Roben  <aroben@apple.com>
 
+        Skip a crashing test on Windows
+
+        * platform/win/Skipped: Skip
+        fast/frames/iframe-reparenting-adopt-node.html. There's already a bug
+        filed about the issue.
+
+2010-09-30  Adam Roben  <aroben@apple.com>
+
         Skip a test that fails on Windows due to lack of SSL support
 
         * platform/win/Skipped: Added

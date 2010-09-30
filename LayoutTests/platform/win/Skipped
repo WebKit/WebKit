@@ -299,6 +299,9 @@ editing/selection/context-menu-on-text.html
 # and https://bugs.webkit.org/show_bug.cgi?id=45021
 media/context-menu-actions.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=44713
+fast/frames/iframe-reparenting-adopt-node.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
