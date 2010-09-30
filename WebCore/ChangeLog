@@ -1,3 +1,17 @@
+2010-09-29  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Put default initialize() and uninitialize() methods in AudioNode
+        https://bugs.webkit.org/show_bug.cgi?id=46767
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::initialize):
+        (WebCore::AudioNode::uninitialize):
+        * webaudio/AudioNode.h:
+
 2010-09-29  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

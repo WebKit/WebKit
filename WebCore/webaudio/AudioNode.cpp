@@ -67,6 +67,16 @@ AudioNode::~AudioNode()
 #endif
 }
 
+void AudioNode::initialize()
+{
+    m_isInitialized = true;
+}
+
+void AudioNode::uninitialize()
+{
+    m_isInitialized = false;
+}
+
 void AudioNode::setType(NodeType type)
 {
     m_type = type;
