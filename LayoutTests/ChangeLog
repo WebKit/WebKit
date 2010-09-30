@@ -2,6 +2,14 @@
 
         Build fix. Not reviewed.
 
+        Remove a test expectation since the problem was fixed.
+
+        * platform/chromium-win/editing/execCommand/toggle-compound-styles-expected.txt: Removed.
+
+2010-09-30  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         Add test expectations for Chromium.
 
         * platform/chromium-win/editing/execCommand/toggle-compound-styles-expected.txt: Added.
