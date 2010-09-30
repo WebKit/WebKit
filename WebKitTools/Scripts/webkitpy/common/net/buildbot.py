@@ -462,7 +462,8 @@ class BuildBot(object):
                 continue
             builder = self.builder_with_name(builder_status["name"])
             regression_window = builder.find_blameworthy_regression_window(builder_status["build_number"])
-            failure_map.add_regression_window(builder, regression_window)
+            if regression_window:
+                failure_map.add_regression_window(builder, regression_window)
         return failure_map
 
     # This makes fewer requests than calling Builder.latest_build would.  It grabs all builder
