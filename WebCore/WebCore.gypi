@@ -2997,6 +2997,7 @@
             'platform/network/ResourceRequestBase.h',
             'platform/network/ResourceResponseBase.cpp',
             'platform/network/ResourceResponseBase.h',
+            'platform/network/ResourceRawHeaders.h',
             'platform/network/SocketStreamErrorBase.cpp',
             'platform/network/SocketStreamErrorBase.h',
             'platform/network/SocketStreamHandleBase.cpp',

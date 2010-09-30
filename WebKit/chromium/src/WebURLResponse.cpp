@@ -129,6 +129,16 @@ void WebURLResponse::setLoadTiming(const WebURLLoadTiming& timing)
     m_private->m_resourceResponse->setResourceLoadTiming(loadTiming.release());
 }
 
+WebResourceRawHeaders WebURLResponse::resourceRawHeaders()
+{
+    return WebResourceRawHeaders(m_private->m_resourceResponse->resourceRawHeaders());
+}
+
+void WebURLResponse::setResourceRawHeaders(const WebResourceRawHeaders& value)
+{
+    m_private->m_resourceResponse->setResourceRawHeaders(value);
+}
+
 double WebURLResponse::responseTime() const
 {
     return m_private->m_resourceResponse->responseTime();

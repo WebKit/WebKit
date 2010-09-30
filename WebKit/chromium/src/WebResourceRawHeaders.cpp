@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,29 +28,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebURLResponsePrivate_h
-#define WebURLResponsePrivate_h
-
+#include "config.h"
 #include "WebResourceRawHeaders.h"
+
+#include "ResourceRawHeaders.h"
+#include "ResourceResponse.h"
+#include "WebHTTPHeaderVisitor.h"
 #include "WebString.h"
 
-namespace WebCore { class ResourceResponse; }
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebURLResponsePrivate {
-public:
-    WebURLResponsePrivate() : m_resourceResponse(0) { }
+WebResourceRawHeaders::WebResourceRawHeaders()
+{
+    m_private = adoptRef(new ResourceRawHeaders());
+}
 
-    // Called by WebURLResponse when it no longer needs this object.
-    virtual void dispose() = 0;
+WebResourceRawHeaders::~WebResourceRawHeaders()
+{
+    m_private.reset();
+}
 
-    WebCore::ResourceResponse* m_resourceResponse;
+WebResourceRawHeaders::WebResourceRawHeaders(WTF::PassRefPtr<WebCore::ResourceRawHeaders> value)
+{
+    m_private = value;
+}
 
-    // FIXME: Move this to ResourceResponse once we have an internal consumer.
-    WebString m_downloadFilePath;
-};
+WebResourceRawHeaders::operator WTF::PassRefPtr<WebCore::ResourceRawHeaders>() const
+{
+    return m_private.get();
+}
+
+static void addHeader(HTTPHeaderMap* map, const WebString& name, const WebString& value)
+{
+    pair<HTTPHeaderMap::iterator, bool> result = map->add(name, value);
+    if (!result.second)
+        result.first->second += String(", ") + value;
+}
+
+void WebResourceRawHeaders::addRequestHeader(const WebString& name, const WebString& value)
+{
+    ASSERT(!m_private.isNull());
+    addHeader(&m_private->requestHeaders, name, value);
+}
+
+void WebResourceRawHeaders::addResponseHeader(const WebString& name, const WebString& value)
+{
+    ASSERT(!m_private.isNull());
+    addHeader(&m_private->responseHeaders, name, value);
+}
 
 } // namespace WebKit
-
-#endif

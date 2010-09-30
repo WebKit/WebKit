@@ -2361,6 +2361,7 @@ webcore_sources += \
 	WebCore/platform/network/ResourceRequestBase.h \
 	WebCore/platform/network/ResourceResponseBase.cpp \
 	WebCore/platform/network/ResourceResponseBase.h \
+	WebCore/platform/network/ResourceRawHeaders.h \
 	WebCore/platform/network/SocketStreamErrorBase.cpp \
 	WebCore/platform/network/SocketStreamErrorBase.h \
 	WebCore/platform/network/SocketStreamHandleBase.cpp \

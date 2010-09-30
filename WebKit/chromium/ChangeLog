@@ -1,3 +1,32 @@
+2010-09-29  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: display headers actually used by network stack in Resources tab
+        Added plumbing for raw headers flag and response field between chromium and WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=46092
+
+        * WebKit.gyp:
+        * public/WebResourceRawHeaders.h: Added.
+        * public/WebURLRequest.h:
+        * public/WebURLResponse.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::willSendRequest):
+        * src/WebResourceRawHeaders.cpp: Added.
+        (WebKit::WebResourceRawHeaders::WebResourceRawHeaders):
+        (WebKit::WebResourceRawHeaders::~WebResourceRawHeaders):
+        (WebKit::WebResourceRawHeaders::operator WTF::PassRefPtr<WebCore::ResourceRawHeaders>):
+        (WebKit::addHeader):
+        (WebKit::WebResourceRawHeaders::addRequestHeader):
+        (WebKit::WebResourceRawHeaders::addResponseHeader):
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequest::setReportRawHeaders):
+        (WebKit::WebURLRequest::reportRawHeaders):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::resourceRawHeaders):
+        (WebKit::WebURLResponse::setResourceRawHeaders):
+        * src/WebURLResponsePrivate.h:
+
 2010-09-30  Avi Drissman  <avi@google.com>
 
         Reviewed by Kenneth Russell.

@@ -27428,6 +27428,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\ResourceRawHeaders.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\SocketStreamErrorBase.cpp"
 					>
 				</File>

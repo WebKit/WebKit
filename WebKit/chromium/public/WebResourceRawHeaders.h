@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,27 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebURLResponsePrivate_h
-#define WebURLResponsePrivate_h
+#ifndef WebResourceRawHeaders_h
+#define WebResourceRawHeaders_h
 
-#include "WebResourceRawHeaders.h"
-#include "WebString.h"
+#include "WebCommon.h"
+#include "WebPrivatePtr.h"
 
-namespace WebCore { class ResourceResponse; }
+namespace WebCore {
+struct ResourceRawHeaders;
+}
 
 namespace WebKit {
+class WebHTTPHeaderVisitor;
+class WebResourceRawHeadersMapPrivate;
+class WebString;
 
-class WebURLResponsePrivate {
+class WebResourceRawHeaders {
 public:
-    WebURLResponsePrivate() : m_resourceResponse(0) { }
+    WebResourceRawHeaders();
+    ~WebResourceRawHeaders();
 
-    // Called by WebURLResponse when it no longer needs this object.
-    virtual void dispose() = 0;
+    void addRequestHeader(const WebString& name, const WebString& value);
+    void addResponseHeader(const WebString& name, const WebString& value);
 
-    WebCore::ResourceResponse* m_resourceResponse;
+#if WEBKIT_IMPLEMENTATION
+    WebResourceRawHeaders(WTF::PassRefPtr<WebCore::ResourceRawHeaders>);
+    operator WTF::PassRefPtr<WebCore::ResourceRawHeaders>() const;
+#endif
 
-    // FIXME: Move this to ResourceResponse once we have an internal consumer.
-    WebString m_downloadFilePath;
+private:
+    WebPrivatePtr<WebCore::ResourceRawHeaders> m_private;
 };
 
 } // namespace WebKit

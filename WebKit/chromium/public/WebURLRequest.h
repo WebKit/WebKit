@@ -134,6 +134,11 @@ public:
     WEBKIT_API bool reportLoadTiming() const;
     WEBKIT_API void setReportLoadTiming(bool);
 
+    // Controls whether actual headers sent and received for request are
+    // collected and reported.
+    WEBKIT_API bool reportRawHeaders() const;
+    WEBKIT_API void setReportRawHeaders(bool);
+
     WEBKIT_API TargetType targetType() const;
     WEBKIT_API void setTargetType(TargetType);
 

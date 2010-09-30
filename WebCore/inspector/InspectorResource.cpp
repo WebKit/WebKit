@@ -175,7 +175,12 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
         if (cachedResource)
             m_mimeType = cachedResource->response().mimeType();
     }
-    m_responseHeaderFields = response.httpHeaderFields();
+    if (ResourceRawHeaders* headers = response.resourceRawHeaders().get()) {
+        m_requestHeaderFields = headers->requestHeaders;
+        m_responseHeaderFields = headers->responseHeaders;
+        m_changes.set(RequestChange);
+    } else
+        m_responseHeaderFields = response.httpHeaderFields();
     m_responseStatusCode = response.httpStatusCode();
     m_responseStatusText = response.httpStatusText();
     m_suggestedFilename = response.suggestedFilename();

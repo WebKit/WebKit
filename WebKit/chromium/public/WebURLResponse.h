@@ -32,6 +32,7 @@
 #define WebURLResponse_h
 
 #include "WebCommon.h"
+#include "WebPrivateOwnPtr.h"
 
 #if defined(WEBKIT_IMPLEMENTATION)
 namespace WebCore { class ResourceResponse; }
@@ -41,6 +42,7 @@ namespace WebKit {
 
 class WebCString;
 class WebHTTPHeaderVisitor;
+class WebResourceRawHeaders;
 class WebString;
 class WebURL;
 class WebURLLoadTiming;
@@ -81,6 +83,9 @@ public:
 
     WEBKIT_API WebURLLoadTiming loadTiming();
     WEBKIT_API void setLoadTiming(const WebURLLoadTiming&);
+
+    WEBKIT_API WebResourceRawHeaders resourceRawHeaders();
+    WEBKIT_API void setResourceRawHeaders(const WebResourceRawHeaders&);
 
     WEBKIT_API double responseTime() const;
     WEBKIT_API void setResponseTime(double);

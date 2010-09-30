@@ -317,8 +317,11 @@ void WebDevToolsAgentImpl::identifierForInitialRequest(
 
 void WebDevToolsAgentImpl::willSendRequest(unsigned long resourceId, WebURLRequest& request)
 {
-    if (InspectorController* ic = inspectorController())
+    if (InspectorController* ic = inspectorController()) {
         ic->willSendRequest(resourceId, request.toMutableResourceRequest(), ResourceResponse());
+        if (ic->hasFrontend() && request.reportLoadTiming())
+            request.setReportRawHeaders(true);
+    }
 }
 
 void WebDevToolsAgentImpl::didReceiveData(unsigned long resourceId, int length)

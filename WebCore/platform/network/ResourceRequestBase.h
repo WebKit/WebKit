@@ -136,6 +136,10 @@ namespace WebCore {
         bool reportLoadTiming() const { return m_reportLoadTiming; }
         void setReportLoadTiming(bool reportLoadTiming) { m_reportLoadTiming = reportLoadTiming; }
 
+        // Whether actual headers being sent/received should be collected and reported for the request.
+        bool reportRawHeaders() const { return m_reportRawHeaders; }
+        void setReportRawHeaders(bool reportRawHeaders) { m_reportRawHeaders = reportRawHeaders; }
+
         // What this request is for.
         TargetType targetType() const { return m_targetType; }
         void setTargetType(TargetType type) { m_targetType = type; }
@@ -149,6 +153,7 @@ namespace WebCore {
             , m_platformRequestUpdated(true)
             , m_reportUploadProgress(false)
             , m_reportLoadTiming(false)
+            , m_reportRawHeaders(false)
             , m_targetType(TargetIsSubresource)
         {
         }
@@ -163,6 +168,7 @@ namespace WebCore {
             , m_platformRequestUpdated(false)
             , m_reportUploadProgress(false)
             , m_reportLoadTiming(false)
+            , m_reportRawHeaders(false)
             , m_targetType(TargetIsSubresource)
         {
         }
@@ -187,6 +193,7 @@ namespace WebCore {
         mutable bool m_platformRequestUpdated;
         bool m_reportUploadProgress;
         bool m_reportLoadTiming;
+        bool m_reportRawHeaders;
         TargetType m_targetType;
 
     private:
