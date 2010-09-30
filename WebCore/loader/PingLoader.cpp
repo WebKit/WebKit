@@ -38,6 +38,7 @@
 #include "SecurityOrigin.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

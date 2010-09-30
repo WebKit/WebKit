@@ -37,6 +37,7 @@
 #include <QUrl>
 #include <QWidget>
 #include <qendian.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
