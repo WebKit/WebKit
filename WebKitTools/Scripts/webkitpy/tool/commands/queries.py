@@ -265,6 +265,72 @@ class FailureReason(AbstractDeclarativeCommand):
         return self._explain_failures_for_builder(builder, start_revision=int(start_revision))
 
 
+class FindFlakyTests(AbstractDeclarativeCommand):
+    name = "find-flaky-tests"
+    help_text = "Lists tests that often fail for a single build at %s" % BuildBot.default_host
+
+    def _find_failures(self, builder, revision):
+        build = builder.build_for_revision(revision, allow_failed_lookups=True)
+        if not build:
+            print "No build for %s" % revision
+            return None
+        results = build.layout_test_results()
+        if not results:
+            print "No results build %s (r%s)" % (build._number, build.revision())
+            return None
+        failures = set(results.failing_tests())
+        if len(failures) >= 20:
+            # FIXME: We may need to move this logic into the LayoutTestResults class.
+            # The buildbot stops runs after 20 failures so we don't have full results to work with here.
+            print "Too many failures in build %s (r%s), ignoring." % (build._number, build.revision())
+            return None
+        return failures
+
+    def _increment_statistics(self, flaky_tests, flaky_test_statistics):
+        for test in flaky_tests:
+            count = flaky_test_statistics.get(test, 0)
+            flaky_test_statistics[test] = count + 1
+
+    def _print_statistics(self, statistics):
+        print "=== Results ==="
+        print "Occurances Test name"
+        for value, key in sorted([(value, key) for key, value in statistics.items()]):
+            print "%10d %s" % (value, key)
+
+    def _walk_backwards_from(self, builder, start_revision, limit):
+        flaky_test_statistics = {}
+        all_previous_failures = set([])
+        one_time_previous_failures = set([])
+        for i in range(limit):
+            revision = start_revision - i
+            print "Analyzing %s ... " % revision,
+            failures = self._find_failures(builder, revision)
+            if failures == None:
+                # Notice that we don't loop on the empty set!
+                continue
+            print "has %s failures" % len(failures)
+            flaky_tests = one_time_previous_failures - failures
+            if flaky_tests:
+                print "Flaky tests: %s" % sorted(flaky_tests)
+            self._increment_statistics(flaky_tests, flaky_test_statistics)
+            one_time_previous_failures = failures - all_previous_failures
+            all_previous_failures = failures
+        self._print_statistics(flaky_test_statistics)
+
+    def _builder_to_analyze(self):
+        statuses = self._tool.buildbot.builder_statuses()
+        choices = [status["name"] for status in statuses]
+        chosen_name = User.prompt_with_list("Which builder to analyze:", choices)
+        for status in statuses:
+            if status["name"] == chosen_name:
+                return (self._tool.buildbot.builder_with_name(chosen_name), status["built_revision"])
+
+    def execute(self, options, args, tool):
+        (builder, latest_revision) = self._builder_to_analyze()
+        limit = self._tool.user.prompt("How many revisions to look through? [10000] ") or 10000
+        return self._walk_backwards_from(builder, latest_revision, limit=int(limit))
+
+
 class TreeStatus(AbstractDeclarativeCommand):
     name = "tree-status"
     help_text = "Print the status of the %s buildbots" % BuildBot.default_host

@@ -1,3 +1,14 @@
+2010-09-29  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch find-flaky-tests
+        https://bugs.webkit.org/show_bug.cgi?id=46876
+
+        This command helps us find flaky tests so we can squash them.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+
 2010-09-29  Simon Fraser  <simon.fraser@apple.com>
 
         Fix export to use '?' instead of 'null' for
