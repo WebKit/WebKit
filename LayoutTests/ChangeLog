@@ -1,3 +1,15 @@
+2010-09-30  Adam Roben  <aroben@apple.com>
+
+        Rebaseline Windows results for recent-ish changes
+
+        * platform/win/fast/css/getComputedStyle/computed-style-expected.txt:
+        * platform/win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/win/fast/dom/prototype-inheritance-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+        * platform/win/html5lib/runner-expected.txt:
+
 2010-09-29  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by James Robinson.

@@ -72,6 +72,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     position: static
     resize: none
     right: auto
+    speak: normal
     table-layout: auto
     text-align: -webkit-auto
     text-decoration: none
@@ -137,8 +138,8 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-highlight: none
     -webkit-line-break: normal
     -webkit-line-clamp: none
-    -webkit-margin-bottom-collapse: collapse
-    -webkit-margin-top-collapse: collapse
+    -webkit-margin-before-collapse: collapse
+    -webkit-margin-after-collapse: collapse
     -webkit-marquee-direction: auto
     -webkit-marquee-increment: 6px
     -webkit-marquee-repetition: infinite
