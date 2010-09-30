@@ -1,3 +1,10 @@
+2010-09-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] wxMSW build fix. Make sure we copy the compiler flags and remove exception handling from
+        the copy so as not to alter global settings.
+
+        * wscript:
+
 2010-09-30  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
