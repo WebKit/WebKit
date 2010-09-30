@@ -30,9 +30,10 @@
 
 #include "config.h"
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+
 #include "DrawingBuffer.h"
 
-#include "GraphicsContext3D.h"
 #include "SharedGraphicsContext3D.h"
 
 namespace WebCore {
@@ -52,9 +53,6 @@ void DrawingBuffer::bind()
     m_context->setViewport(m_size);
 }
 
-void DrawingBuffer::setWillPublishCallback(PassOwnPtr<WillPublishCallback> callback)
-{
-    m_callback = callback;
-}
-
 } // namespace WebCore
+
+#endif

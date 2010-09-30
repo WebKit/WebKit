@@ -29,6 +29,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+
 #include "TexShader.h"
 
 #include "GraphicsContext3D.h"
@@ -93,3 +96,5 @@ void TexShader::use(const AffineTransform& transform, const AffineTransform& tex
 }
 
 }
+
+#endif

@@ -29,6 +29,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+
 #include "TilingData.h"
 
 #include "FloatRect.h"
@@ -220,3 +223,5 @@ void TilingData::intersectDrawQuad(const FloatRect& srcRect, const FloatRect& ds
 }
 
 }
+
+#endif

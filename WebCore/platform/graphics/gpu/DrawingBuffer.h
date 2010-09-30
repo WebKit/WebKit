@@ -31,18 +31,24 @@
 #ifndef DrawingBuffer_h
 #define DrawingBuffer_h
 
+#include "GraphicsContext3D.h"
 #include "GraphicsLayer.h"
 #include "IntSize.h"
 
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#endif
 
 namespace WebCore {
 
 class SharedGraphicsContext3D;
 
+#if PLATFORM(CHROMIUM)
 struct DrawingBufferInternal;
+#endif
 
 // Manages a rendering target (framebuffer + attachment) for a canvas.  Can publish its rendering
 // results to a PlatformLayer for compositing.
@@ -62,12 +68,17 @@ public:
 
     unsigned getRenderingResultsAsTexture();
 
+#if PLATFORM(CHROMIUM)
     class WillPublishCallback : public Noncopyable {
     public:
+        virtual ~WillPublishCallback() { }
+        
         virtual void willPublish() = 0;
     };
 
-    void setWillPublishCallback(PassOwnPtr<WillPublishCallback>);
+    void setWillPublishCallback(PassOwnPtr<WillPublishCallback>) { m_callback = callback; }
+#endif
+
 private:
     DrawingBuffer(SharedGraphicsContext3D*, const IntSize&, unsigned framebuffer);
 
@@ -75,8 +86,14 @@ private:
     IntSize m_size;
     unsigned m_framebuffer;
 
+#if PLATFORM(CHROMIUM)
     OwnPtr<WillPublishCallback> m_callback;
     OwnPtr<DrawingBufferInternal> m_internal;
+#endif
+
+#if PLATFORM(MAC)
+    RetainPtr<WebGLLayer> m_platformLayer;
+#endif
 };
 
 } // namespace WebCore

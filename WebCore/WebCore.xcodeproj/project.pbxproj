@@ -939,6 +939,32 @@
 		498391520F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983914F0F1E76B400C23782 /* DOMWebKitCSSMatrixInternal.h */; };
 		498391580F1E776900C23782 /* WebKitCSSMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498391550F1E776900C23782 /* WebKitCSSMatrix.cpp */; };
 		498391590F1E776900C23782 /* WebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 498391560F1E776900C23782 /* WebKitCSSMatrix.h */; };
+		498770DB1242C535002226BA /* DrawingBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770C21242C535002226BA /* DrawingBuffer.cpp */; };
+		498770DC1242C535002226BA /* DrawingBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770C31242C535002226BA /* DrawingBuffer.h */; };
+		498770E41242C535002226BA /* PODArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770CB1242C535002226BA /* PODArena.h */; };
+		498770E51242C535002226BA /* PODInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770CC1242C535002226BA /* PODInterval.h */; };
+		498770E61242C535002226BA /* PODIntervalTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770CD1242C535002226BA /* PODIntervalTree.h */; };
+		498770E71242C535002226BA /* PODRedBlackTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770CE1242C535002226BA /* PODRedBlackTree.h */; };
+		498770E81242C535002226BA /* Shader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770CF1242C535002226BA /* Shader.cpp */; };
+		498770E91242C535002226BA /* Shader.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D01242C535002226BA /* Shader.h */; };
+		498770EA1242C535002226BA /* SharedGraphicsContext3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D11242C535002226BA /* SharedGraphicsContext3D.cpp */; };
+		498770EB1242C535002226BA /* SharedGraphicsContext3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D21242C535002226BA /* SharedGraphicsContext3D.h */; };
+		498770EC1242C535002226BA /* SolidFillShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D31242C535002226BA /* SolidFillShader.cpp */; };
+		498770ED1242C535002226BA /* SolidFillShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D41242C535002226BA /* SolidFillShader.h */; };
+		498770EE1242C535002226BA /* TexShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D51242C535002226BA /* TexShader.cpp */; };
+		498770EF1242C535002226BA /* TexShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D61242C535002226BA /* TexShader.h */; };
+		498770F01242C535002226BA /* Texture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D71242C535002226BA /* Texture.cpp */; };
+		498770F11242C535002226BA /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770D81242C535002226BA /* Texture.h */; };
+		498770F21242C535002226BA /* TilingData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 498770D91242C535002226BA /* TilingData.cpp */; };
+		498770F31242C535002226BA /* TilingData.h in Headers */ = {isa = PBXBuildFile; fileRef = 498770DA1242C535002226BA /* TilingData.h */; };
+		498771531243F9FA002226BA /* DrawingBufferMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 498771521243F9FA002226BA /* DrawingBufferMac.mm */; };
+		49B69E5E1254FEED007D57EB /* LoopBlinnClassifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */; };
+		49B69E5F1254FEED007D57EB /* LoopBlinnClassifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */; };
+		49B69E601254FEED007D57EB /* LoopBlinnConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E571254FEED007D57EB /* LoopBlinnConstants.h */; };
+		49B69E631254FEED007D57EB /* LoopBlinnMathUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B69E5A1254FEED007D57EB /* LoopBlinnMathUtils.cpp */; };
+		49B69E641254FEED007D57EB /* LoopBlinnMathUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E5B1254FEED007D57EB /* LoopBlinnMathUtils.h */; };
+		49B69E651254FEED007D57EB /* LoopBlinnTextureCoords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49B69E5C1254FEED007D57EB /* LoopBlinnTextureCoords.cpp */; };
+		49B69E661254FEED007D57EB /* LoopBlinnTextureCoords.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B69E5D1254FEED007D57EB /* LoopBlinnTextureCoords.h */; };
 		49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */; };
 		49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */; };
 		49C7B9951042D2D30009D447 /* JSInt8Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9821042D2D30009D447 /* JSInt8Array.cpp */; };
@@ -6903,6 +6929,32 @@
 		498391550F1E776900C23782 /* WebKitCSSMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSMatrix.cpp; sourceTree = "<group>"; };
 		498391560F1E776900C23782 /* WebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSMatrix.h; sourceTree = "<group>"; };
 		498391570F1E776900C23782 /* WebKitCSSMatrix.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSMatrix.idl; sourceTree = "<group>"; };
+		498770C21242C535002226BA /* DrawingBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DrawingBuffer.cpp; path = gpu/DrawingBuffer.cpp; sourceTree = "<group>"; };
+		498770C31242C535002226BA /* DrawingBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DrawingBuffer.h; path = gpu/DrawingBuffer.h; sourceTree = "<group>"; };
+		498770CB1242C535002226BA /* PODArena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PODArena.h; path = gpu/PODArena.h; sourceTree = "<group>"; };
+		498770CC1242C535002226BA /* PODInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PODInterval.h; path = gpu/PODInterval.h; sourceTree = "<group>"; };
+		498770CD1242C535002226BA /* PODIntervalTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PODIntervalTree.h; path = gpu/PODIntervalTree.h; sourceTree = "<group>"; };
+		498770CE1242C535002226BA /* PODRedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PODRedBlackTree.h; path = gpu/PODRedBlackTree.h; sourceTree = "<group>"; };
+		498770CF1242C535002226BA /* Shader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Shader.cpp; path = gpu/Shader.cpp; sourceTree = "<group>"; };
+		498770D01242C535002226BA /* Shader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Shader.h; path = gpu/Shader.h; sourceTree = "<group>"; };
+		498770D11242C535002226BA /* SharedGraphicsContext3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedGraphicsContext3D.cpp; path = gpu/SharedGraphicsContext3D.cpp; sourceTree = "<group>"; };
+		498770D21242C535002226BA /* SharedGraphicsContext3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedGraphicsContext3D.h; path = gpu/SharedGraphicsContext3D.h; sourceTree = "<group>"; };
+		498770D31242C535002226BA /* SolidFillShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SolidFillShader.cpp; path = gpu/SolidFillShader.cpp; sourceTree = "<group>"; };
+		498770D41242C535002226BA /* SolidFillShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SolidFillShader.h; path = gpu/SolidFillShader.h; sourceTree = "<group>"; };
+		498770D51242C535002226BA /* TexShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TexShader.cpp; path = gpu/TexShader.cpp; sourceTree = "<group>"; };
+		498770D61242C535002226BA /* TexShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TexShader.h; path = gpu/TexShader.h; sourceTree = "<group>"; };
+		498770D71242C535002226BA /* Texture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Texture.cpp; path = gpu/Texture.cpp; sourceTree = "<group>"; };
+		498770D81242C535002226BA /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Texture.h; path = gpu/Texture.h; sourceTree = "<group>"; };
+		498770D91242C535002226BA /* TilingData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TilingData.cpp; path = gpu/TilingData.cpp; sourceTree = "<group>"; };
+		498770DA1242C535002226BA /* TilingData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TilingData.h; path = gpu/TilingData.h; sourceTree = "<group>"; };
+		498771521243F9FA002226BA /* DrawingBufferMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DrawingBufferMac.mm; path = gpu/mac/DrawingBufferMac.mm; sourceTree = "<group>"; };
+		49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoopBlinnClassifier.cpp; path = gpu/LoopBlinnClassifier.cpp; sourceTree = "<group>"; };
+		49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnClassifier.h; path = gpu/LoopBlinnClassifier.h; sourceTree = "<group>"; };
+		49B69E571254FEED007D57EB /* LoopBlinnConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnConstants.h; path = gpu/LoopBlinnConstants.h; sourceTree = "<group>"; };
+		49B69E5A1254FEED007D57EB /* LoopBlinnMathUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoopBlinnMathUtils.cpp; path = gpu/LoopBlinnMathUtils.cpp; sourceTree = "<group>"; };
+		49B69E5B1254FEED007D57EB /* LoopBlinnMathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnMathUtils.h; path = gpu/LoopBlinnMathUtils.h; sourceTree = "<group>"; };
+		49B69E5C1254FEED007D57EB /* LoopBlinnTextureCoords.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoopBlinnTextureCoords.cpp; path = gpu/LoopBlinnTextureCoords.cpp; sourceTree = "<group>"; };
+		49B69E5D1254FEED007D57EB /* LoopBlinnTextureCoords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoopBlinnTextureCoords.h; path = gpu/LoopBlinnTextureCoords.h; sourceTree = "<group>"; };
 		49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLBuffer.cpp; sourceTree = "<group>"; };
 		49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLBuffer.h; sourceTree = "<group>"; };
 		49C7B9821042D2D30009D447 /* JSInt8Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt8Array.cpp; sourceTree = "<group>"; };
@@ -12306,6 +12358,47 @@
 			name = canvas;
 			sourceTree = "<group>";
 		};
+		498770C11242C50D002226BA /* gpu */ = {
+			isa = PBXGroup;
+			children = (
+				498771161242CD7F002226BA /* mac */,
+				498770C21242C535002226BA /* DrawingBuffer.cpp */,
+				498770C31242C535002226BA /* DrawingBuffer.h */,
+				49B69E551254FEED007D57EB /* LoopBlinnClassifier.cpp */,
+				49B69E561254FEED007D57EB /* LoopBlinnClassifier.h */,
+				49B69E571254FEED007D57EB /* LoopBlinnConstants.h */,
+				49B69E5A1254FEED007D57EB /* LoopBlinnMathUtils.cpp */,
+				49B69E5B1254FEED007D57EB /* LoopBlinnMathUtils.h */,
+				49B69E5C1254FEED007D57EB /* LoopBlinnTextureCoords.cpp */,
+				49B69E5D1254FEED007D57EB /* LoopBlinnTextureCoords.h */,
+				498770CB1242C535002226BA /* PODArena.h */,
+				498770CC1242C535002226BA /* PODInterval.h */,
+				498770CD1242C535002226BA /* PODIntervalTree.h */,
+				498770CE1242C535002226BA /* PODRedBlackTree.h */,
+				498770CF1242C535002226BA /* Shader.cpp */,
+				498770D01242C535002226BA /* Shader.h */,
+				498770D11242C535002226BA /* SharedGraphicsContext3D.cpp */,
+				498770D21242C535002226BA /* SharedGraphicsContext3D.h */,
+				498770D31242C535002226BA /* SolidFillShader.cpp */,
+				498770D41242C535002226BA /* SolidFillShader.h */,
+				498770D51242C535002226BA /* TexShader.cpp */,
+				498770D61242C535002226BA /* TexShader.h */,
+				498770D71242C535002226BA /* Texture.cpp */,
+				498770D81242C535002226BA /* Texture.h */,
+				498770D91242C535002226BA /* TilingData.cpp */,
+				498770DA1242C535002226BA /* TilingData.h */,
+			);
+			name = gpu;
+			sourceTree = "<group>";
+		};
+		498771161242CD7F002226BA /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				498771521243F9FA002226BA /* DrawingBufferMac.mm */,
+			);
+			name = mac;
+			sourceTree = "<group>";
+		};
 		49E911B20EF86D27009D0CAF /* transforms */ = {
 			isa = PBXGroup;
 			children = (
@@ -14758,6 +14851,7 @@
 		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
 			isa = PBXGroup;
 			children = (
+				498770C11242C50D002226BA /* gpu */,
 				84730D5A1248F0B300D3A9C9 /* DistantLightSource.h */,
 				A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */,
 				A75E8B810E1DE2D6007F2481 /* FEBlend.h */,
@@ -20807,8 +20901,23 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
+				498770DC1242C535002226BA /* DrawingBuffer.h in Headers */,
+				498770E41242C535002226BA /* PODArena.h in Headers */,
+				498770E51242C535002226BA /* PODInterval.h in Headers */,
+				498770E61242C535002226BA /* PODIntervalTree.h in Headers */,
+				498770E71242C535002226BA /* PODRedBlackTree.h in Headers */,
+				498770E91242C535002226BA /* Shader.h in Headers */,
+				498770EB1242C535002226BA /* SharedGraphicsContext3D.h in Headers */,
+				498770ED1242C535002226BA /* SolidFillShader.h in Headers */,
+				498770EF1242C535002226BA /* TexShader.h in Headers */,
+				498770F11242C535002226BA /* Texture.h in Headers */,
+				498770F31242C535002226BA /* TilingData.h in Headers */,
 				20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */,
 				492863991253B8FC00F792D6 /* ResourceRawHeaders.h in Headers */,
+				49B69E5F1254FEED007D57EB /* LoopBlinnClassifier.h in Headers */,
+				49B69E601254FEED007D57EB /* LoopBlinnConstants.h in Headers */,
+				49B69E641254FEED007D57EB /* LoopBlinnMathUtils.h in Headers */,
+				49B69E661254FEED007D57EB /* LoopBlinnTextureCoords.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -20868,6 +20977,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -23322,7 +23432,18 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
+				498770DB1242C535002226BA /* DrawingBuffer.cpp in Sources */,
+				498770E81242C535002226BA /* Shader.cpp in Sources */,
+				498770EA1242C535002226BA /* SharedGraphicsContext3D.cpp in Sources */,
+				498770EC1242C535002226BA /* SolidFillShader.cpp in Sources */,
+				498770EE1242C535002226BA /* TexShader.cpp in Sources */,
+				498770F01242C535002226BA /* Texture.cpp in Sources */,
+				498770F21242C535002226BA /* TilingData.cpp in Sources */,
+				498771531243F9FA002226BA /* DrawingBufferMac.mm in Sources */,
 				20D629261253690B00081543 /* InspectorInstrumentation.cpp in Sources */,
+				49B69E5E1254FEED007D57EB /* LoopBlinnClassifier.cpp in Sources */,
+				49B69E631254FEED007D57EB /* LoopBlinnMathUtils.cpp in Sources */,
+				49B69E651254FEED007D57EB /* LoopBlinnTextureCoords.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

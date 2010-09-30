@@ -29,6 +29,9 @@
  */
 
 #include "config.h"
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+
 #include "SolidFillShader.h"
 
 #include "Color.h"
@@ -86,3 +89,5 @@ void SolidFillShader::use(const AffineTransform& transform, const Color& color)
 }
 
 }
+
+#endif
