@@ -1,3 +1,12 @@
+2010-09-30  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        Update test expectations for Chromium.
+
+        * platform/chromium-linux/fast/text/international/thai-baht-space-expected.checksum:
+        * platform/chromium-linux/fast/text/international/thai-baht-space-expected.png:
+
 2010-09-30  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
