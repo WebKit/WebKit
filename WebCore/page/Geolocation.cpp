@@ -703,7 +703,7 @@ void Geolocation::handlePendingPermissionNotifiers()
 
 namespace WebCore {
 
-void Geolocation::clearWatch(int watchId) {}
+void Geolocation::clearWatch(int) {}
 
 void Geolocation::disconnectFrame() {}
 

@@ -1,3 +1,14 @@
+2010-09-30  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Mark unused parameters as such.
+        https://bugs.webkit.org/show_bug.cgi?id=46880
+
+        * inspector/InspectorDOMAgent.cpp:
+        * page/Geolocation.cpp:
+        (WebCore::Geolocation::clearWatch):
+
 2010-09-29  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
