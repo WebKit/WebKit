@@ -32,6 +32,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 
     this._headerTable = document.createElement("table");
     this._headerTable.className = "header";
+    this._headerTableHeaders = {};
 
     this._dataTable = document.createElement("table");
     this._dataTable.className = "data";
@@ -77,9 +78,13 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
         var cell = document.createElement("th");
         cell.className = columnIdentifier + "-column";
         cell.columnIdentifier = columnIdentifier;
+        this._headerTableHeaders[columnIdentifier] = cell;
 
         var div = document.createElement("div");
-        div.textContent = column.title;
+        if (column.titleDOMFragment)
+            div.appendChild(column.titleDOMFragment);
+        else
+            div.textContent = column.title;
         cell.appendChild(div);
 
         if (column.sort) {
@@ -113,11 +118,13 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     var fillerRow = document.createElement("tr");
     fillerRow.className = "filler";
 
-    for (var i = 0; i < this._columnCount; ++i) {
+    for (var columnIdentifier in columns) {
+        var column = columns[columnIdentifier];
         var cell = document.createElement("td");
+        cell.className = columnIdentifier + "-column";
         fillerRow.appendChild(cell);
     }
-    
+
     this._dataTableColumnGroup = columnGroup.cloneNode(true);
     this._dataTable.appendChild(this._dataTableColumnGroup);
     this.dataTableBody.appendChild(fillerRow);
@@ -679,7 +686,7 @@ WebInspector.DataGrid.prototype = {
         }
 
         if (cell == this._sortColumnCell) {
-            if (sortOrder == "ascending")
+            if (sortOrder === "ascending")
                 sortOrder = "descending";
             else
                 sortOrder = "ascending";
@@ -690,6 +697,21 @@ WebInspector.DataGrid.prototype = {
         cell.addStyleClass("sort-" + sortOrder);
 
         this.dispatchEventToListeners("sorting changed");
+    },
+
+    markColumnAsSortedBy: function(columnIdentifier, sortOrder)
+    {
+        if (this._sortColumnCell) {
+            this._sortColumnCell.removeStyleClass("sort-ascending");
+            this._sortColumnCell.removeStyleClass("sort-descending");
+        }
+        this._sortColumnCell = this._headerTableHeaders[columnIdentifier];
+        this._sortColumnCell.addStyleClass("sort-" + sortOrder);
+    },
+
+    headerTableHeader: function(columnIdentifier)
+    {
+        return this._headerTableHeaders[columnIdentifier];
     },
 
     _mouseDownInDataTable: function(event)

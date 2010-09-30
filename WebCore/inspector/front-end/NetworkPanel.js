@@ -46,11 +46,12 @@ WebInspector.NetworkPanel = function()
     this._createTimelineGrid();
     this._createTable();
     this._createStatusbarButtons();
+    this._createFilterPanel();
 
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
 
     this.calculator = new WebInspector.NetworkTransferTimeCalculator();
-    this.filter(this.filterAllElement, false);
+    this._filter(this._filterAllElement, false);
 }
 
 WebInspector.NetworkPanel.prototype = {
@@ -61,7 +62,7 @@ WebInspector.NetworkPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this._largerResourcesButton.element, this._clearButton.element];
+        return [this._largerResourcesButton.element, this._clearButton.element, this._filterBarElement];
     },
 
     isCategoryVisible: function(categoryName)
@@ -93,17 +94,17 @@ WebInspector.NetworkPanel.prototype = {
         this.containerElement.id = "network-container";
         this.element.appendChild(this.containerElement);
 
-        var columns = {url: {}, method: {}, status: {}, type: {}, size: {}, time: {}, timeline: {}};
-        columns.url.title = WebInspector.UIString("URL");
-        columns.url.sortable = true;
-        columns.url.width = "20%";
-        columns.url.disclosure = true;
+        var columns = {name: {}, method: {}, status: {}, type: {}, size: {}, time: {}, timeline: {}};
+        columns.name.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Name"), WebInspector.UIString("Path"));
+        columns.name.sortable = true;
+        columns.name.width = "20%";
+        columns.name.disclosure = true;
         
         columns.method.title = WebInspector.UIString("Method");
         columns.method.sortable = true;
         columns.method.width = "7%";
 
-        columns.status.title = WebInspector.UIString("Status");
+        columns.status.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Status"), WebInspector.UIString("Text"));
         columns.status.sortable = true;
         columns.status.width = "8%";
 
@@ -111,41 +112,170 @@ WebInspector.NetworkPanel.prototype = {
         columns.type.sortable = true;
         columns.type.width = "7%";
 
-        columns.size.title = WebInspector.UIString("Size");
+        columns.size.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Size"), WebInspector.UIString("Transfer"));
         columns.size.sortable = true;
         columns.size.width = "10%";
         columns.size.aligned = "right";
 
-        columns.time.title = WebInspector.UIString("Time");
+        columns.time.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Time"), WebInspector.UIString("Duration"));
         columns.time.sortable = true;
         columns.time.width = "10%";
         columns.time.aligned = "right";
 
         columns.timeline.title = "";
-        columns.timeline.sortable = true;
+        columns.timeline.sortable = false;
         columns.timeline.width = "40%";
-        columns.timeline.sort = true;
+        columns.timeline.sort = "ascending";
 
         this._dataGrid = new WebInspector.DataGrid(columns);
         this.element.appendChild(this._dataGrid.element);
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);
         this._dataGrid.addEventListener("width changed", this._updateDividersIfNeeded, this);
+
+        this._patchTimelineHeader();
+    },
+
+    _makeHeaderFragment: function(title, subtitle)
+    {
+        var fragment = document.createDocumentFragment();
+        fragment.appendChild(document.createTextNode(title));
+        var subtitleDiv = document.createElement("div");
+        subtitleDiv.className = "network-header-subtitle";
+        subtitleDiv.textContent = subtitle;
+        fragment.appendChild(subtitleDiv);
+        return fragment;
+    },
+
+    _patchTimelineHeader: function()
+    {
+        var timelineSorting = document.createElement("select");
+
+        var option = document.createElement("option");
+        option.value = "startTime";
+        option.label = WebInspector.UIString("Start Time");
+        timelineSorting.appendChild(option);
+
+        var option = document.createElement("option");
+        option.value = "responseTime";
+        option.label = WebInspector.UIString("Response Time");
+        timelineSorting.appendChild(option);
+
+        var option = document.createElement("option");
+        option.value = "endTime";
+        option.label = WebInspector.UIString("End Time");
+        timelineSorting.appendChild(option);
+
+        var option = document.createElement("option");
+        option.value = "duration";
+        option.label = WebInspector.UIString("Duration");
+        timelineSorting.appendChild(option);
+
+        var option = document.createElement("option");
+        option.value = "latency";
+        option.label = WebInspector.UIString("Latency");
+        timelineSorting.appendChild(option);
+
+        var header = this._dataGrid.headerTableHeader("timeline");
+        header.firstChild.appendChild(timelineSorting);
+
+        timelineSorting.addEventListener("click", function(event) { event.stopPropagation() }, false);
+        timelineSorting.addEventListener("change", this._sortByTimeline.bind(this), false);
     },
 
     _createSortingFunctions: function()
     {
         this._sortingFunctions = {};
-        this._sortingFunctions.url = WebInspector.NetworkDataGridNode.URLComparator;
-        this._sortingFunctions.method = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "method");
-        this._sortingFunctions.status = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "statusCode");
-        this._sortingFunctions.type = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "mimeType");
-        this._sortingFunctions.size = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "resourceSize");
-        this._sortingFunctions.time = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "duration");
-        this._sortingFunctions.timeline = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "startTime");
+        this._sortingFunctions.name = WebInspector.NetworkDataGridNode.NameComparator;
+        this._sortingFunctions.method = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "method", true);
+        this._sortingFunctions.status = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "statusCode", true);
+        this._sortingFunctions.type = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "mimeType", true);
+        this._sortingFunctions.size = WebInspector.NetworkDataGridNode.SizeComparator;
+        this._sortingFunctions.time = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "duration", true);
+        this._sortingFunctions.timeline = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "startTime", true);
+        this._sortingFunctions.startTime = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "startTime", true);
+        this._sortingFunctions.endTime = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "endTime", true);
+        this._sortingFunctions.responseTime = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "responseReceivedTime", true);
+        this._sortingFunctions.duration = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "duration", false);
+        this._sortingFunctions.latency = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "latency", false);
+
+        var timeCalculator = new WebInspector.NetworkTransferTimeCalculator();
+        var durationCalculator = new WebInspector.NetworkTransferDurationCalculator();
+        this._calculators = {};
+        this._calculators.startTime = timeCalculator;
+        this._calculators.endTime = timeCalculator;
+        this._calculators.responseTime = timeCalculator;
+        this._calculators.duration = durationCalculator;
+        this._calculators.latency = durationCalculator;
     },
 
-    filter: function(target, selectMultiple)
+    _sortByTimeline: function(e)
     {
+        var options = e.target.options;
+        var selectedOption = options[e.target.selectedIndex];
+        var value = selectedOption.value;
+
+        var sortingFunction = this._sortingFunctions[value];
+        this._dataGrid.sortNodes(sortingFunction);
+        this.calculator = this._calculators[value];
+        this._dataGrid.markColumnAsSortedBy("timeline", "ascending");
+    },
+
+    _sortItems: function()
+    {
+        var columnIdentifier = this._dataGrid.sortColumnIdentifier;
+        var sortingFunction = this._sortingFunctions[columnIdentifier];
+        if (!sortingFunction)
+            return;
+        this._dataGrid.sortNodes(sortingFunction, this._dataGrid.sortOrder === "descending");
+    },
+
+    _createFilterPanel: function()
+    {
+        var filterBarElement = document.createElement("div");
+        filterBarElement.className = "scope-bar status-bar-item";
+        filterBarElement.id = "network-filter";
+
+        function createFilterElement(category, label)
+        {
+            var categoryElement = document.createElement("li");
+            categoryElement.category = category;
+            categoryElement.className = category;
+            categoryElement.appendChild(document.createTextNode(label));
+            categoryElement.addEventListener("click", this._updateFilter.bind(this), false);
+            filterBarElement.appendChild(categoryElement);
+
+            return categoryElement;
+        }
+
+        this._filterAllElement = createFilterElement.call(this, "all", WebInspector.UIString("All"));
+
+        // Add a divider
+        var dividerElement = document.createElement("div");
+        dividerElement.addStyleClass("divider");
+        filterBarElement.appendChild(dividerElement);
+
+        var categories = {
+            documents: WebInspector.UIString("Documents"),
+            stylesheets: WebInspector.UIString("Stylesheets"),
+            images: WebInspector.UIString("Images"),
+            scripts: WebInspector.UIString("Scripts"),
+            xhr: WebInspector.UIString("XHR"),
+            fonts: WebInspector.UIString("Fonts"),
+            other: WebInspector.UIString("Other")
+        };
+        for (var category in categories)
+            createFilterElement.call(this, category, categories[category]);
+        this._filterBarElement = filterBarElement;
+    },
+
+    _showCategory: function(category)
+    {
+        this._dataGrid.element.addStyleClass("filter-" + category);
+    },
+
+    _hideCategory: function(category)
+    {
+        this._dataGrid.element.removeStyleClass("filter-" + category);
     },
 
     _updateFilter: function(e)
@@ -157,7 +287,7 @@ WebInspector.NetworkPanel.prototype = {
         if (!isMac && e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey)
             selectMultiple = true;
 
-        this.filter(e.target, selectMultiple);
+        this._filter(e.target, selectMultiple);
 
         // When we are updating our filtering, scroll to the top so we don't end up
         // in blank graph under all the resources.
@@ -165,6 +295,59 @@ WebInspector.NetworkPanel.prototype = {
 
         var searchField = document.getElementById("search");
         WebInspector.doPerformSearch(searchField.value, WebInspector.shortSearchWasForcedByKeyEvent, false, true);
+    },
+
+    _filter: function(target, selectMultiple)
+    {
+        function unselectAll()
+        {
+            for (var i = 0; i < this._filterBarElement.childNodes.length; ++i) {
+                var child = this._filterBarElement.childNodes[i];
+                if (!child.category)
+                    continue;
+
+                child.removeStyleClass("selected");
+                this._hideCategory(child.category);
+            }
+        }
+
+        if (target.category === this._filterAllElement) {
+            if (target.hasStyleClass("selected")) {
+                // We can't unselect All, so we break early here
+                return;
+            }
+
+            // If All wasn't selected, and now is, unselect everything else.
+            unselectAll.call(this);
+        } else {
+            // Something other than All is being selected, so we want to unselect All.
+            if (this._filterAllElement.hasStyleClass("selected")) {
+                this._filterAllElement.removeStyleClass("selected");
+                this._hideCategory("all");
+            }
+        }
+
+        if (!selectMultiple) {
+            // If multiple selection is off, we want to unselect everything else
+            // and just select ourselves.
+            unselectAll.call(this);
+
+            target.addStyleClass("selected");
+            this._showCategory(target.category);
+            return;
+        }
+
+        if (target.hasStyleClass("selected")) {
+            // If selectMultiple is turned on, and we were selected, we just
+            // want to unselect ourselves.
+            target.removeStyleClass("selected");
+            this._hideCategory(target.category);
+        } else {
+            // If selectMultiple is turned on, and we weren't selected, we just
+            // want to select ourselves.
+            target.addStyleClass("selected");
+            this._showCategory(target.category);
+        }
     },
 
     _scheduleRefresh: function()
@@ -178,18 +361,10 @@ WebInspector.NetworkPanel.prototype = {
             this._refreshTimeout = setTimeout(this.refresh.bind(this), 500);
     },
 
-    _sortItems: function()
-    {
-        var columnIdentifier = this._dataGrid.sortColumnIdentifier;
-        var sortingFunction = this._sortingFunctions[columnIdentifier];
-        if (!sortingFunction)
-            return;
-        this._dataGrid.sortNodes(sortingFunction, this._dataGrid.sortOrder === "descending");
-    },
-
     _updateDividersIfNeeded: function(force)
     {
         this._timelineGrid.element.style.left = this._dataGrid.resizers[this._dataGrid.resizers.length - 1].style.left;
+        this._timelineGrid.element.style.right = "18px";
 
         var proceed = true;
         if (!this.visible) {
@@ -484,7 +659,7 @@ WebInspector.NetworkPanel.prototype = {
         this._dataGrid.removeChildren();
         this._updateDividersIfNeeded(true);
         // End reset timeline.
-        
+
         this._mainResourceLoadTime = -1;
         this._mainResourceDOMContentTime = -1;
  
@@ -631,9 +806,11 @@ WebInspector.NetworkPanel.prototype = {
         if (!enabled) {
             this._largerResourcesButton.title = WebInspector.UIString("Use large resource rows.");
             this._dataGrid.element.addStyleClass("small");
+            this._timelineGrid.element.addStyleClass("small");
         } else {
             this._largerResourcesButton.title = WebInspector.UIString("Use small resource rows.");
             this._dataGrid.element.removeStyleClass("small");
+            this._timelineGrid.element.removeStyleClass("small");
         }
     },
 
@@ -1047,56 +1224,6 @@ WebInspector.NetworkTransferDurationCalculator.prototype = {
 
 WebInspector.NetworkTransferDurationCalculator.prototype.__proto__ = WebInspector.NetworkTimeCalculator.prototype;
 
-WebInspector.NetworkTransferSizeCalculator = function()
-{
-    WebInspector.NetworkBaseCalculator.call(this);
-}
-
-WebInspector.NetworkTransferSizeCalculator.prototype = {
-    computeBarGraphLabels: function(resource)
-    {
-        var networkBytes = this._networkBytes(resource);
-        var resourceBytes = this._value(resource);
-        if (networkBytes && networkBytes !== resourceBytes) {
-            // Transferred size is not the same as reported resource length.
-            var networkBytesString = this.formatValue(networkBytes);
-            var left = networkBytesString;
-            var right = this.formatValue(resourceBytes);
-            var tooltip = right ? WebInspector.UIString("%s (%s transferred)", right, networkBytesString) : right;
-        } else {
-            var left = this.formatValue(resourceBytes);
-            var right = left;
-            var tooltip = left;
-        }
-        if (resource.cached)
-            tooltip = WebInspector.UIString("%s (from cache)", tooltip);
-        return {left: left, right: right, tooltip: tooltip};
-    },
-
-    computeBarGraphPercentages: function(item)
-    {
-        const resourceBytesAsPercent = (this._value(item) / this.boundarySpan) * 100;
-        const networkBytesAsPercent = this._networkBytes(item) ? (this._networkBytes(item) / this.boundarySpan) * 100 : resourceBytesAsPercent;
-        return {start: 0, middle: networkBytesAsPercent, end: resourceBytesAsPercent};
-    },
-
-    _value: function(resource)
-    {
-        return resource.resourceSize;
-    },
-
-    _networkBytes: function(resource)
-    {
-        return resource.transferSize;
-    },
-
-    formatValue: function(value)
-    {
-        return Number.bytesToString(value, WebInspector.UIString);
-    }
-}
-
-WebInspector.NetworkTransferSizeCalculator.prototype.__proto__ = WebInspector.NetworkBaseCalculator.prototype;
 
 WebInspector.NetworkDataGridNode = function(resource)
 {
@@ -1107,19 +1234,18 @@ WebInspector.NetworkDataGridNode = function(resource)
 WebInspector.NetworkDataGridNode.prototype = {
     createCells: function()
     {
-        this._urlCell = this._createDivInTD("url-column");
-        this._methodCell = this._createDivInTD("optional-column");
-        this._statusCell = this._createDivInTD("optional-column");
-        this._typeCell = this._createDivInTD("optional-column");
-        this._sizeCell = this._createDivInTD("optional-column right");
-        this._timeCell = this._createDivInTD("optional-column right");
+        this._nameCell = this._createDivInTD("name");
+        this._methodCell = this._createDivInTD("method");
+        this._statusCell = this._createDivInTD("status");
+        this._typeCell = this._createDivInTD("type");
+        this._sizeCell = this._createDivInTD("size");
+        this._timeCell = this._createDivInTD("time");
         this._createTimelineCell();
     },
 
-    _createDivInTD: function(className) {
+    _createDivInTD: function(columnIdentifier) {
         var td = document.createElement("td");
-        if (className)
-            td.className = className;
+        td.className = columnIdentifier + "-column";
         var div = document.createElement("div");
         td.appendChild(div);
         this._element.appendChild(td);
@@ -1162,7 +1288,7 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     refreshResource: function()
     {
-        this._refreshURLCell();
+        this._refreshNameCell();
 
         this._methodCell.textContent = this._resource.requestMethod;
 
@@ -1188,9 +1314,9 @@ WebInspector.NetworkDataGridNode.prototype = {
         }
     },
 
-    _refreshURLCell: function()
+    _refreshNameCell: function()
     {
-        this._urlCell.removeChildren();
+        this._nameCell.removeChildren();
 
         if (this._resource.category === WebInspector.resourceCategories.images) {
             var previewImage = document.createElement("img");
@@ -1204,8 +1330,8 @@ WebInspector.NetworkDataGridNode.prototype = {
             var iconElement = document.createElement("img");
             iconElement.className = "icon";
         }
-        this._urlCell.appendChild(iconElement);
-        this._urlCell.appendChild(document.createTextNode(this._fileName()));
+        this._nameCell.appendChild(iconElement);
+        this._nameCell.appendChild(document.createTextNode(this._fileName()));
 
 
         var subtitle = this._resource.displayDomain;
@@ -1216,13 +1342,8 @@ WebInspector.NetworkDataGridNode.prototype = {
                 subtitle += this._resource.path.substring(0, lastPathComponentIndex);
         }
 
-        var subtitleElement = document.createElement("div");
-        subtitleElement.className = "network-grid-subtitle";
-        subtitleElement.textContent = subtitle;
-        this._urlCell.appendChild(subtitleElement);
-
-
-        this._urlCell.title = this._resource.url;
+        this._appendSubtitle(this._nameCell, subtitle);
+        this._nameCell.title = this._resource.url;
     },
 
     _fileName: function()
@@ -1238,16 +1359,6 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._statusCell.removeChildren();
 
         if (this._resource.statusCode) {
-            var img = document.createElement("img");
-            if (this._resource.statusCode < 300)
-                img.src = "Images/successGreenDot.png";
-            else if (this._resource.statusCode < 400)
-                img.src = "Images/warningOrangeDot.png";
-            else
-                img.src = "Images/errorRedDot.png";
-
-            img.className = "resource-status-image";
-            this._statusCell.appendChild(img);
             this._statusCell.appendChild(document.createTextNode(this._resource.statusCode));
             this._statusCell.removeStyleClass("network-dim-cell");
             this._appendSubtitle(this._statusCell, this._resource.statusText);
@@ -1287,7 +1398,7 @@ WebInspector.NetworkDataGridNode.prototype = {
     _appendSubtitle: function(cellElement, subtitleText)
     {
         var subtitleElement = document.createElement("div");
-        subtitleElement.className = "network-grid-subtitle";
+        subtitleElement.className = "network-cell-subtitle";
         subtitleElement.textContent = subtitleText;
         cellElement.appendChild(subtitleElement);
     },
@@ -1389,7 +1500,7 @@ WebInspector.NetworkDataGridNode.prototype = {
     }
 }
 
-WebInspector.NetworkDataGridNode.URLComparator = function(a, b)
+WebInspector.NetworkDataGridNode.NameComparator = function(a, b)
 {
     var aFileName = a._resource.displayName + (a._resource.queryString ? a._resource.queryString : "");
     var bFileName = b._resource.displayName + (b._resource.queryString ? b._resource.queryString : "");
@@ -1400,14 +1511,30 @@ WebInspector.NetworkDataGridNode.URLComparator = function(a, b)
     return 0;
 }
 
-WebInspector.NetworkDataGridNode.ResourcePropertyComparator = function(propertyName, a, b)
+WebInspector.NetworkDataGridNode.SizeComparator = function(a, b)
+{
+    if (a._resource.cached === b._resource.cached)
+        return 0;
+    if (b._resource.cached)
+        return 1;
+    if (a._resource.cached)
+        return -1;
+
+    if (a._resource.resourceSize === b._resource.resourceSize)
+        return 0;
+
+    return a._resource.resourceSize > b._resource.resourceSize ? 1 : -1;
+}
+
+WebInspector.NetworkDataGridNode.ResourcePropertyComparator = function(propertyName, ascending, a, b)
 {
     var aValue = a._resource[propertyName];
     var bValue = b._resource[propertyName];
+
     if (aValue > bValue)
-        return 1;
+        return ascending ? 1 : -1;
     if (bValue > aValue)
-        return -1;
+        return ascending ? -1 : 1;
     return 0;
 }
 

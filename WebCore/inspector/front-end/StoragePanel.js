@@ -59,7 +59,7 @@ WebInspector.StoragePanel = function(database)
     this.element.appendChild(this.storageViews);
 
     this.storageViewStatusBarItemsContainer = document.createElement("div");
-    this.storageViewStatusBarItemsContainer.id = "storage-view-status-bar-items";
+    this.storageViewStatusBarItemsContainer.className = "status-bar-items";
 
     this.reset();
 }

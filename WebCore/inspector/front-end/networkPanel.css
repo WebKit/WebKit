@@ -26,10 +26,17 @@
     line-height: 17px;
     border-right: 1px solid rgb(210, 210, 210);
     -webkit-user-select: none;
+    vertical-align: middle;
 }
 
 .network.panel .data-grid th {
     border-bottom: 1px solid rgb(64%, 64%, 64%);
+    height: 30px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.network.panel .data-grid.small th {
     height: 22px;
 }
 
@@ -38,15 +45,36 @@
 }
 
 .network.panel .data-grid .data-container {
+    top: 31px;
+}
+
+.network.panel .data-grid.small .data-container {
     top: 23px;
 }
 
-.network.panel .data-grid td.url-column {
+.network.panel .data-grid select {
+    -webkit-appearance: none;
+    background-color: transparent;
+    border: none;
+    width: 100%;
+    font-size: 11px;
+    font-weight: bold;
+}
+.network.panel .data-grid td.name-column {
     font-weight: bold;
 }
 
-.network.panel .data-grid td.optional-column {
+.network.panel .data-grid td.method-column,
+.network.panel .data-grid td.status-column,
+.network.panel .data-grid td.type-column,
+.network.panel .data-grid td.size-column,
+.network.panel .data-grid td.time-column {
     background-color: rgba(0, 0, 0, 0.07);
+}
+
+.network.panel .data-grid td.size-column,
+.network.panel .data-grid td.time-column {
+    text-align: right;
 }
 
 .network.panel .small .network-graph-side {
@@ -57,12 +85,18 @@
     background-image: none;
 }
 
-.network-grid-subtitle {
+.network-cell-subtitle {
     font-weight: normal;
     color: grey;
 }
 
-.network.panel .data-grid.small .network-grid-subtitle {
+.network-header-subtitle {
+    color: grey;
+}
+
+.network.panel .data-grid.small .network-cell-subtitle,
+.network.panel .data-grid.small .network-header-subtitle
+{
     display: none;
 }
 
@@ -357,9 +391,13 @@
 .network-event-divider {
     position: absolute;
     width: 2px;
-    top: 0;
+    top: 31px;
     bottom: 0;
     z-index: 300;
+}
+
+.network.panel .network-timeline-grid.small .network-event-divider {
+    top: 23px;
 }
 
 .network-red-divider {
@@ -373,11 +411,55 @@
 .network.panel .resources-dividers-label-bar {
     background-color: transparent;
     border: none;
-    height: 23px;
+    height: 30px;
     pointer-events: none;
 }
 
+.network.panel .network-timeline-grid.small .resources-dividers-label-bar {
+    height: 23px;
+}
+
 .network.panel .resources-divider-label {
-    top: 6px;
+    top: 0px;
+    margin-top: -4px;
     color: black;
+}
+
+.network.panel .resources-dividers-label-bar .resources-divider {
+    top: 23px;
+}
+
+.network.panel .network-timeline-grid.small .resources-dividers-label-bar .resources-divider {
+    top: 15px;
+}
+
+.network.panel .resources-divider.first .resources-divider-label {
+    display: none;
+}
+
+.network.panel .resources-dividers-label-bar .resources-divider.first {
+    background-color: transparent;
+}
+
+/* Filters */
+#network-filter {
+    margin-top: 1px;
+}
+
+.data-grid table.data tr.revealed.network-category-documents, .data-grid table.data tr.revealed.network-category-stylesheets,
+.data-grid table.data tr.revealed.network-category-images, .data-grid table.data tr.revealed.network-category-scripts,
+.data-grid table.data tr.revealed.network-category-xhr, .data-grid table.data tr.revealed.network-category-fonts,
+.data-grid table.data tr.revealed.network-category-websockets, .data-grid table.data tr.revealed.network-category-other {
+    display: none;
+}
+
+.data-grid.filter-all table.data tr.revealed.network-category-documents, .data-grid.filter-documents table.data tr.revealed.network-category-documents,
+.data-grid.filter-all table.data tr.revealed.network-category-stylesheets, .data-grid.filter-stylesheets table.data tr.revealed.network-category-stylesheets,
+.data-grid.filter-all table.data tr.revealed.network-category-images, .data-grid.filter-images table.data tr.revealed.network-category-images,
+.data-grid.filter-all table.data tr.revealed.network-category-scripts, .data-grid.filter-scripts table.data tr.revealed.network-category-scripts,
+.data-grid.filter-all table.data tr.revealed.network-category-xhr, .data-grid.filter-xhr table.data tr.revealed.network-category-xhr,
+.data-grid.filter-all table.data tr.revealed.network-category-fonts, .data-grid.filter-fonts table.data tr.revealed.network-category-fonts,
+.data-grid.filter-all table.data tr.revealed.network-category-websockets, .data-grid.filter-websockets table.data tr.revealed.network-category-websockets,
+.data-grid.filter-all table.data tr.revealed.network-category-other, .data-grid.filter-other table.data tr.revealed.network-category-other {
+    display: table-row;
 }

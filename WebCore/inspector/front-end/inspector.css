@@ -2086,22 +2086,27 @@ body.inactive .sidebar {
     background-image: url(Images/glossyHeaderSelectedPressed.png);
 }
 
-.data-grid th.sort-ascending div::after {
+.data-grid th.sort-ascending > div::after {
     position: absolute;
     top: 0;
+    bottom: 0;
     right: 0;
+    height: 12px;
+    margin-bottom: auto;
+    margin-top: auto;
     width: 8px;
-    height: 8px;
     content: url(Images/treeUpTriangleBlack.png);
 }
 
-.data-grid th.sort-descending div::after {
+.data-grid th.sort-descending > div::after {
     position: absolute;
     top: 0;
+    bottom: 0;
     right: 0;
-    margin-top: 1px;
-    width: 8px;
     height: 8px;
+    margin-bottom: auto;
+    margin-top: auto;
+    width: 8px;
     content: url(Images/treeDownTriangleBlack.png);
 }
 
@@ -3837,8 +3842,7 @@ body.inactive .sidebar-tree-item.selected .bubble.search-matches {
     bottom: 0;
 }
 
-#timeline-view-status-bar-items,
-#profile-view-status-bar-items {
+.status-bar-items {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -3962,28 +3966,8 @@ button.enable-toggle-status-bar-item .glyph {
     -webkit-mask-image: url(Images/excludeButtonGlyph.png);
 }
 
-#storage-view-status-bar-items {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 200px;
-    overflow: hidden;
-    border-left: 1px solid rgb(184, 184, 184);
-    margin-left: -1px;
-}
-
 .refresh-storage-status-bar-item .glyph {
     -webkit-mask-image: url(Images/reloadButtonGlyph.png);
-}
-
-#storage-view-status-bar-items {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 200px;
-    overflow: hidden;
-    border-left: 1px solid rgb(184, 184, 184);
-    margin-left: -1px;
 }
 
 ol.breakpoint-list {

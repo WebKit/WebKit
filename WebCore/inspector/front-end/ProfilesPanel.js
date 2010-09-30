@@ -116,7 +116,7 @@ WebInspector.ProfilesPanel = function()
     this.clearResultsButton.addEventListener("click", this._clearProfiles.bind(this), false);
 
     this.profileViewStatusBarItemsContainer = document.createElement("div");
-    this.profileViewStatusBarItemsContainer.id = "profile-view-status-bar-items";
+    this.profileViewStatusBarItemsContainer.className = "status-bar-items";
 
     this.welcomeView = new WebInspector.WelcomeView("profiles", WebInspector.UIString("Welcome to the Profiles panel"));
     this.element.appendChild(this.welcomeView.element);
@@ -550,7 +550,7 @@ WebInspector.ProfilesPanel.prototype = {
     {
         this.welcomeView.element.style.left = width + "px";
         this.profileViews.style.left = width + "px";
-        this.profileViewStatusBarItemsContainer.style.left = width + "px";
+        this.profileViewStatusBarItemsContainer.style.left = Math.max(155, width) + "px";
         this.resize();
     }
 }

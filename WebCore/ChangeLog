@@ -1,3 +1,79 @@
+2010-09-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: implement sorting by timeline in network panel + filtering.
+        https://bugs.webkit.org/show_bug.cgi?id=45657
+
+        A number of drive-by fixes, sorting by timeline added,
+        0-based timeline for duration added, filters added,
+        more love for detailed view + nice headers.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid):
+        (WebInspector.DataGrid.prototype.markColumnAsSortedBy):
+        (WebInspector.DataGrid.prototype.headerTableHeader):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype.get statusBarItems):
+        (WebInspector.NetworkPanel.prototype._createTable):
+        (WebInspector.NetworkPanel.prototype._makeHeaderInnerHTML):
+        (WebInspector.NetworkPanel.prototype._createSortingFunctions):
+        (WebInspector.NetworkPanel.prototype._sortByTimeline):
+        (WebInspector.NetworkPanel.prototype._sortItems):
+        (WebInspector.NetworkPanel.prototype._createFilterPanel):
+        (WebInspector.NetworkPanel.prototype._showCategory):
+        (WebInspector.NetworkPanel.prototype._hideCategory):
+        (WebInspector.NetworkPanel.prototype._updateFilter):
+        (WebInspector.NetworkPanel.prototype._filter):
+        (WebInspector.NetworkPanel.prototype._updateDividersIfNeeded):
+        (WebInspector.NetworkPanel.prototype.reset):
+        (WebInspector.NetworkPanel.prototype._setLargerResources):
+        (WebInspector.NetworkDataGridNode.prototype.createCells):
+        (WebInspector.NetworkDataGridNode.prototype._createDivInTD):
+        (WebInspector.NetworkDataGridNode.prototype._refreshURLCell):
+        (WebInspector.NetworkDataGridNode.prototype._refreshStatusCell):
+        (WebInspector.NetworkDataGridNode.prototype._appendSubtitle):
+        (WebInspector.NetworkDataGridNode.SizeComparator):
+        (WebInspector.NetworkDataGridNode.ResourcePropertyComparator):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel):
+        (WebInspector.ProfilesPanel.prototype.updateMainViewWidth):
+        * inspector/front-end/StoragePanel.js:
+        (WebInspector.StoragePanel):
+        * inspector/front-end/TimelineGrid.js:
+        (WebInspector.TimelineGrid.prototype.updateDividers):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype.updateMainViewWidth):
+        * inspector/front-end/inspector.css:
+        (.data-grid th.sort-ascending > div::after):
+        (.data-grid th.sort-descending > div::after):
+        (.status-bar-items):
+        * inspector/front-end/networkPanel.css:
+        (.network.panel .data-grid td):
+        (.network.panel .data-grid th):
+        (.network.panel .data-grid.small th):
+        (.network.panel .data-grid .data-container):
+        (.network.panel .data-grid.small .data-container):
+        (.network.panel .data-grid select):
+        (.network.panel .data-grid td.time-column):
+        (.network-cell-subtitle):
+        (.network-header-subtitle):
+        (.network-event-divider):
+        (.network.panel .network-timeline-grid.small .network-event-divider):
+        (.network.panel .resources-dividers-label-bar):
+        (.network.panel .network-timeline-grid.small .resources-dividers-label-bar):
+        (.network.panel .resources-divider-label):
+        (.network.panel .resources-dividers-label-bar .resources-divider):
+        (.network.panel .network-timeline-grid.small .resources-dividers-label-bar .resources-divider):
+        (.network.panel .resources-divider.first .resources-divider-label):
+        (.network.panel .resources-dividers-label-bar .resources-divider.first):
+        (#network-filter):
+        (.data-grid table.data tr.revealed.network-category-websockets, .data-grid table.data tr.revealed.network-category-other):
+        (.data-grid.filter-all table.data tr.revealed.network-category-other, .data-grid.filter-other table.data tr.revealed.network-category-other):
+
 2010-09-30  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Simon Hausmann.
