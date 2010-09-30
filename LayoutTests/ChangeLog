@@ -1,3 +1,10 @@
+2010-09-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Unskip websocket tests for GTK+, as the bots should be running
+        a version of the Linux kernel which has support for SOCK_CLOEXEC.
+
+        * platform/gtk/Skipped: Unskip websocket tests.
+
 2010-09-30  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Darin Adler.
