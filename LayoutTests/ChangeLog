@@ -1,5 +1,21 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r66028.
+
+    2010-08-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Flash content draws in front of site's drop down menu at http://www.monster.com/
+        https://bugs.webkit.org/show_bug.cgi?id=41330
+        
+        Testcase with a non-layered iframe that gets overlapped dynamically.
+
+        * compositing/iframes/become-overlapped-iframe-expected.txt: Added.
+        * compositing/iframes/become-overlapped-iframe.html: Added.
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r68158.
 
     2010-09-23  Abhishek Arya  <inferno@chromium.org>

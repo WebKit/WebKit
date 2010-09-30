@@ -88,7 +88,11 @@ public:
     
     // Rebuild the tree of compositing layers
     void updateCompositingLayers(CompositingUpdateType = CompositingUpdateAfterLayoutOrStyleChange, RenderLayer* updateRoot = 0);
-
+    // This is only used when state changes and we do not exepect a style update or layout to happen soon (e.g. when
+    // we discover that an iframe is overlapped during painting).
+    void scheduleCompositingLayerUpdate();
+    bool compositingLayerUpdatePending() const;
+    
     // Update the compositing state of the given layer. Returns true if that state changed.
     enum CompositingChangeRepaint { CompositingChangeRepaintNow, CompositingChangeWillRepaintLater };
     bool updateLayerCompositingState(RenderLayer*, CompositingChangeRepaint = CompositingChangeRepaintNow);
@@ -179,6 +183,8 @@ private:
     static void addToOverlapMap(OverlapMap&, RenderLayer*, IntRect& layerBounds, bool& boundsComputed);
     static bool overlapsCompositedLayers(OverlapMap&, const IntRect& layerBounds);
 
+    void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*);
+
     // Returns true if any layer's compositing changed
     void computeCompositingRequirements(RenderLayer*, OverlapMap*, struct CompositingState&, bool& layersChanged);
     
@@ -217,6 +223,8 @@ private:
 private:
     RenderView* m_renderView;
     OwnPtr<GraphicsLayer> m_rootPlatformLayer;
+    Timer<RenderLayerCompositor> m_updateCompositingLayersTimer;
+
     bool m_hasAcceleratedCompositing;
     bool m_showDebugBorders;
     bool m_showRepaintCounter;
