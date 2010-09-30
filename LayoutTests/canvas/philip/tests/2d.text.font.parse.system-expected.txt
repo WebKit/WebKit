@@ -3,4 +3,4 @@
 System fonts must be computed to explicit values
 References: 2d.text.font.parse 2d.text.font.get 2d.text.font.systemfonts
 Actual output:
-Failed assertion ctx.font !== 'message-box' (got message-box[string], expected not message-box[string])
+Passed

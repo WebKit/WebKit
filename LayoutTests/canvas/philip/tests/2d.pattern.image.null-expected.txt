@@ -2,4 +2,4 @@
 2d.pattern.image.null
 References: 2d.pattern.wrongtype
 Actual output:
-Failed assertion: expected exception of type TYPE_MISMATCH_ERR, got: Type error
+Passed

@@ -3,78 +3,78 @@
 Missing arguments cause NOT_SUPPORTED_ERR
 References:
 Actual output:
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.scale()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.scale(1)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.rotate()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.translate()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.translate(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.transform()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.transform(1)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.transform(1, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.transform(1, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.transform(1, 0, 0, 1)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.transform(1, 0, 0, 1, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.setTransform()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.setTransform(1)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.setTransform(1, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.setTransform(1, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.setTransform(1, 0, 0, 1)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.setTransform(1, 0, 0, 1, 0)
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: SYNTAX_ERR: DOM Exception 12
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.clearRect()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.clearRect(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.clearRect(0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.clearRect(0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.fillRect()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.fillRect(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.fillRect(0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.fillRect(0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.strokeRect()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.strokeRect(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.strokeRect(0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.strokeRect(0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.moveTo()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.moveTo(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.lineTo()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.lineTo(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.quadraticCurveTo()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.quadraticCurveTo(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.quadraticCurveTo(0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.quadraticCurveTo(0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.bezierCurveTo()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.bezierCurveTo(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.bezierCurveTo(0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.bezierCurveTo(0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.bezierCurveTo(0, 0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.bezierCurveTo(0, 0, 0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arcTo()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arcTo(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arcTo(0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arcTo(0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arcTo(0, 0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.rect()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.rect(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.rect(0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.rect(0, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arc()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arc(0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arc(0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arc(0, 0, 1)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arc(0, 0, 1, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.arc(0, 0, 1, 0, 0)
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.isPointInPath()
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.isPointInPath(0)
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Syntax error
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Syntax error
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Syntax error
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Syntax error
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Syntax error
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Syntax error
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.measureText()
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Type error
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Syntax error
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: Syntax error
-Failed assertion: should throw exception of type NOT_SUPPORTED_ERR: ctx.createImageData()
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: TYPE_MISMATCH_ERR: DOM Exception 17
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: INDEX_SIZE_ERR: DOM Exception 1
-Failed assertion: expected exception of type NOT_SUPPORTED_ERR, got: SYNTAX_ERR: DOM Exception 12
+Passed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

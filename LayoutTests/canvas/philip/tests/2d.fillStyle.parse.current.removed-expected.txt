@@ -5,4 +5,4 @@ References: 2d.colours.parse 2d.currentColor.outofdoc
 Actual output:
 Expected output:
 
-Failed assertion: got pixel [0,0,0,0] at (50,25), expected [0,0,0,255]
+Passed

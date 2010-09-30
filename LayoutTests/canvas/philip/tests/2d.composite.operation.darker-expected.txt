@@ -2,4 +2,4 @@
 2d.composite.operation.darker
 References: 2d.composite.operation.unrecognised
 Actual output:
-Failed assertion ctx.globalCompositeOperation == 'xor' (got darker[string], expected xor[string])
+Passed

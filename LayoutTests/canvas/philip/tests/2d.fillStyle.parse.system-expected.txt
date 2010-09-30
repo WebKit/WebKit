@@ -2,4 +2,4 @@
 2d.fillStyle.parse.system
 References: 2d.colours.parse
 Actual output:
-Failed assertion ctx.fillStyle matches /^#(?!(FF0000|ff0000|f00)$)/ (got rgba(0, 0, 0, 0.0)[string])
+Passed

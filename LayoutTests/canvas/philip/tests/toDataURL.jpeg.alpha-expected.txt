@@ -5,4 +5,4 @@ References: toDataURL.jpeg toDataURL.noalpha
 Actual output:
 Expected output:
 
-Failed assertion: got pixel [193,255,192,255] at (50,25), expected [63,127,63,255] +/- 8
+Passed

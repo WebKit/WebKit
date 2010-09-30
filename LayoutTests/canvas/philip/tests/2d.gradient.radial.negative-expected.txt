@@ -3,6 +3,6 @@
 createRadialGradient() throws INDEX_SIZE_ERR if either radius is negative
 References: 2d.gradient.radial.negative
 Actual output:
-Failed assertion: should throw exception of type INDEX_SIZE_ERR: ctx.createRadialGradient(0, 0, -0.1, 0, 0, 1)
-Failed assertion: should throw exception of type INDEX_SIZE_ERR: ctx.createRadialGradient(0, 0, 1, 0, 0, -0.1)
-Failed assertion: should throw exception of type INDEX_SIZE_ERR: ctx.createRadialGradient(0, 0, -0.1, 0, 0, -0.1)
+Passed
+
+

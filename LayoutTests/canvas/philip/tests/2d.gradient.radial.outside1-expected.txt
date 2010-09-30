@@ -4,12 +4,4 @@ References: 2d.gradient.radial.rendering
 Actual output:
 Expected output:
 
-Failed assertion: got pixel [9,246,0,255] at (1,1), expected [0,255,0,255]
-Failed assertion: got pixel [9,246,0,255] at (50,1), expected [0,255,0,255]
-Failed assertion: got pixel [9,246,0,255] at (98,1), expected [0,255,0,255]
-Failed assertion: got pixel [9,246,0,255] at (1,25), expected [0,255,0,255]
-Failed assertion: got pixel [9,246,0,255] at (50,25), expected [0,255,0,255]
-Failed assertion: got pixel [9,246,0,255] at (98,25), expected [0,255,0,255]
-Failed assertion: got pixel [9,246,0,255] at (1,48), expected [0,255,0,255]
-Failed assertion: got pixel [9,245,0,255] at (50,48), expected [0,255,0,255]
-Failed assertion: got pixel [9,245,0,255] at (98,48), expected [0,255,0,255]
+Passed

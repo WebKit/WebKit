@@ -1,3 +1,82 @@
+2010-09-29  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed, rolling out r68568.
+        http://trac.webkit.org/changeset/68568
+        https://bugs.webkit.org/show_bug.cgi?id=46439
+
+        Failing tests on both Leopard and Snow Leopard
+
+        * canvas/philip/tests/2d.composite.operation.darker-expected.txt:
+        * canvas/philip/tests/2d.composite.operation.highlight-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.fill.copy-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.fill.destination-atop-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.fill.destination-in-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.fill.source-in-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.fill.source-out-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.image.copy-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.image.destination-atop-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.image.destination-in-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.image.source-in-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.image.source-out-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.pattern.copy-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.pattern.destination-in-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.pattern.source-in-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.pattern.source-out-expected.txt:
+        * canvas/philip/tests/2d.drawImage.incomplete-expected.txt:
+        * canvas/philip/tests/2d.drawImage.null-expected.txt:
+        * canvas/philip/tests/2d.fillStyle.parse.current.basic-expected.txt:
+        * canvas/philip/tests/2d.fillStyle.parse.current.changed-expected.txt:
+        * canvas/philip/tests/2d.fillStyle.parse.current.removed-expected.txt:
+        * canvas/philip/tests/2d.fillStyle.parse.system-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.cone.front-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.cone.top-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.inside2-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.inside3-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.negative-expected.txt:
+        * canvas/philip/tests/2d.gradient.radial.outside1-expected.txt:
+        * canvas/philip/tests/2d.imageData.create1.type-expected.txt:
+        * canvas/philip/tests/2d.imageData.create2.type-expected.txt:
+        * canvas/philip/tests/2d.imageData.get.source.negative-expected.txt:
+        * canvas/philip/tests/2d.imageData.get.type-expected.txt:
+        * canvas/philip/tests/2d.line.cap.closed-expected.txt:
+        * canvas/philip/tests/2d.line.join.parallel-expected.txt:
+        * canvas/philip/tests/2d.line.miter.lineedge-expected.txt:
+        * canvas/philip/tests/2d.missingargs-expected.txt:
+        * canvas/philip/tests/2d.path.rect.winding-expected.txt:
+        * canvas/philip/tests/2d.pattern.image.broken-expected.txt:
+        * canvas/philip/tests/2d.pattern.image.incomplete-expected.txt:
+        * canvas/philip/tests/2d.pattern.image.null-expected.txt:
+        * canvas/philip/tests/2d.pattern.image.undefined-expected.txt:
+        * canvas/philip/tests/2d.shadow.enable.blur-expected.txt:
+        * canvas/philip/tests/2d.shadow.enable.x-expected.txt:
+        * canvas/philip/tests/2d.shadow.enable.y-expected.txt:
+        * canvas/philip/tests/2d.shadow.gradient.alpha-expected.txt:
+        * canvas/philip/tests/2d.shadow.gradient.basic-expected.txt:
+        * canvas/philip/tests/2d.shadow.gradient.transparent.2-expected.txt:
+        * canvas/philip/tests/2d.strokeRect.zero.4-expected.txt:
+        * canvas/philip/tests/2d.text.draw.baseline.bottom-expected.txt:
+        * canvas/philip/tests/2d.text.draw.baseline.hanging-expected.txt:
+        * canvas/philip/tests/2d.text.draw.baseline.ideographic-expected.txt:
+        * canvas/philip/tests/2d.text.draw.baseline.middle-expected.txt:
+        * canvas/philip/tests/2d.text.draw.baseline.top-expected.txt:
+        * canvas/philip/tests/2d.text.draw.fill.maxWidth.fontface-expected.txt:
+        * canvas/philip/tests/2d.text.draw.space.collapse.end-expected.txt:
+        * canvas/philip/tests/2d.text.draw.space.collapse.nonspace-expected.txt:
+        * canvas/philip/tests/2d.text.draw.space.collapse.other-expected.txt:
+        * canvas/philip/tests/2d.text.draw.space.collapse.space-expected.txt:
+        * canvas/philip/tests/2d.text.draw.space.collapse.start-expected.txt:
+        * canvas/philip/tests/2d.text.font.parse.basic-expected.txt:
+        * canvas/philip/tests/2d.text.font.parse.complex-expected.txt:
+        * canvas/philip/tests/2d.text.font.parse.invalid-expected.txt:
+        * canvas/philip/tests/2d.text.font.parse.size.percentage-expected.txt:
+        * canvas/philip/tests/2d.text.font.parse.size.percentage.default-expected.txt:
+        * canvas/philip/tests/2d.text.font.parse.system-expected.txt:
+        * canvas/philip/tests/2d.text.measure.width.space-expected.txt:
+        * canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt:
+        * canvas/philip/tests/type.prototype-expected.txt:
+        * platform/mac/Skipped:
+
 2010-09-29  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.

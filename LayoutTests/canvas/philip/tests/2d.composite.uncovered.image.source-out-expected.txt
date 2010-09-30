@@ -5,6 +5,6 @@ References: 2d.composite.source-out
 Actual output:
 Expected output:
 
-Failed assertion: got pixel [0,255,255,127] at (15,15), expected [0,0,0,0] +/- 5
-Failed assertion: got pixel [0,255,255,127] at (50,25), expected [0,0,0,0] +/- 5
+Passed
+
 
