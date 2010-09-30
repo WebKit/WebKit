@@ -1,3 +1,15 @@
+2010-09-30  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove unnecessary cacheFlush calls from Thumb-2
+        https://bugs.webkit.org/show_bug.cgi?id=46702
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::relinkCall):
+        (JSC::ARMv7Assembler::repatchInt32):
+        (JSC::ARMv7Assembler::repatchPointer):
+
 2010-09-29  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed.

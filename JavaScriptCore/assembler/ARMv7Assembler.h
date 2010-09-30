@@ -1792,8 +1792,6 @@ public:
         ASSERT(reinterpret_cast<intptr_t>(to) & 1);
 
         setPointer(reinterpret_cast<uint16_t*>(from) - 1, to);
-
-        ExecutableAllocator::cacheFlush(reinterpret_cast<uint16_t*>(from) - 5, 4 * sizeof(uint16_t));
     }
 
     static void repatchInt32(void* where, int32_t value)
@@ -1801,8 +1799,6 @@ public:
         ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
         
         setInt32(where, value);
-
-        ExecutableAllocator::cacheFlush(reinterpret_cast<uint16_t*>(where) - 4, 4 * sizeof(uint16_t));
     }
 
     static void repatchPointer(void* where, void* value)
@@ -1810,8 +1806,6 @@ public:
         ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
         
         setPointer(where, value);
-
-        ExecutableAllocator::cacheFlush(reinterpret_cast<uint16_t*>(where) - 4, 4 * sizeof(uint16_t));
     }
 
     static void repatchLoadPtrToLEA(void* where)
