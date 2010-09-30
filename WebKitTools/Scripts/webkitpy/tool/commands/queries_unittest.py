@@ -26,11 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import unittest
+
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queries import *
 from webkitpy.tool.mocktool import MockTool
+
 
 class QueryCommandsTest(CommandsTest):
     def test_bugs_to_commit(self):
@@ -71,3 +74,17 @@ class QueryCommandsTest(CommandsTest):
 
         expected_stdout = "Test 'media' is not skipped by any port.\n"
         self.assert_execute_outputs(SkippedPorts(), ("media",), expected_stdout)
+
+
+class FailureReasonTest(unittest.TestCase):
+    def test_blame_line_for_revision(self):
+        tool = MockTool()
+        command = FailureReason()
+        command.bind_to_tool(tool)
+        # This is an artificial example, mostly to test the CommitInfo lookup failure case.
+        self.assertEquals(command._blame_line_for_revision(None), "FAILED to fetch CommitInfo for rNone, likely missing ChangeLog")
+
+        def raising_mock(self):
+            raise Exception("MESSAGE")
+        tool.checkout().commit_info_for_revision = raising_mock
+        self.assertEquals(command._blame_line_for_revision(None), "FAILED to fetch CommitInfo for rNone, exception: MESSAGE")

@@ -457,6 +457,9 @@ class MockCheckout(object):
     _committer_list = CommitterList()
 
     def commit_info_for_revision(self, svn_revision):
+        # The real Checkout would probably throw an exception, but this is the only way tests have to get None back at the moment.
+        if not svn_revision:
+            return None
         return CommitInfo(svn_revision, "eric@webkit.org", {
             "bug_id": 42,
             "author_name": "Adam Barth",

@@ -1,3 +1,14 @@
+2010-09-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch failure-reason dies if non-trunk commits are in the blame range
+        https://bugs.webkit.org/show_bug.cgi?id=46866
+
+        I also made failure-reason use RegressionWindow in a cleaner way.
+
+        * Scripts/webkitpy/tool/commands/queries.py:
+
 2010-09-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

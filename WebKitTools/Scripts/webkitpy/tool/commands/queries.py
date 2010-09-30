@@ -188,17 +188,21 @@ class FailureReason(AbstractDeclarativeCommand):
     name = "failure-reason"
     help_text = "Lists revisions where individual test failures started at %s" % BuildBot.default_host
 
-    def _print_blame_information_for_transition(self, green_build, red_build, failing_tests):
-        regression_window = RegressionWindow(green_build, red_build)
-        revisions = regression_window.revisions()
+    def _blame_line_for_revision(self, revision):
+        try:
+            commit_info = self._tool.checkout().commit_info_for_revision(revision)
+        except Exception, e:
+            return "FAILED to fetch CommitInfo for r%s, exception: %s" % (revision, e)
+        if not commit_info:
+            return "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
+        return commit_info.blame_string(self._tool.bugs)
+
+    def _print_blame_information_for_transition(self, regression_window, failing_tests):
+        red_build = regression_window.failing_build()
         print "SUCCESS: Build %s (r%s) was the first to show failures: %s" % (red_build._number, red_build.revision(), failing_tests)
         print "Suspect revisions:"
-        for revision in revisions:
-            commit_info = self._tool.checkout().commit_info_for_revision(revision)
-            if commit_info:
-                print commit_info.blame_string(self._tool.bugs)
-            else:
-                print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
+        for revision in regression_window.revisions():
+            print self._blame_line_for_revision(revision)
 
     def _explain_failures_for_builder(self, builder, start_revision):
         print "Examining failures for \"%s\", starting at r%s" % (builder.name(), start_revision)
@@ -235,7 +239,8 @@ class FailureReason(AbstractDeclarativeCommand):
                 print "No change in build %s (r%s), %s unexplained failures (%s in this build)" % (build._number, build.revision(), len(results_to_explain), len(failures))
                 last_build_with_results = build
                 continue
-            self._print_blame_information_for_transition(build, last_build_with_results, fixed_results)
+            regression_window = RegressionWindow(build, last_build_with_results)
+            self._print_blame_information_for_transition(regression_window, fixed_results)
             last_build_with_results = build
             results_to_explain -= fixed_results
         if results_to_explain:
