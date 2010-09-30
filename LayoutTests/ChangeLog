@@ -1,3 +1,9 @@
+2010-09-29  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, updated test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-29  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Fisher.
