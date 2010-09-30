@@ -2,6 +2,20 @@
 
         Reviewed by Adam Roben.
 
+        [WINCE] Fix InternetGetCookie in CookieJarWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=46929
+
+        If the InternetGetCookie fails the output size won't be set.
+        Set the default size to 0, so we always get the correct size
+        and check the return value of InternetGetCookie.
+
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::cookies):
+
+2010-09-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
         [WINCE] Use OwnPtr for HBRUSH and HPEN in GraphicsContext
         https://bugs.webkit.org/show_bug.cgi?id=46881
 
