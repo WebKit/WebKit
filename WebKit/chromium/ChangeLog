@@ -1,3 +1,13 @@
+2010-09-30  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Remove WebHTTPBody::appendFileRange(..., const WebFileInfo&).
+
+        * public/WebHTTPBody.h:
+        * src/WebHTTPBody.cpp:
+        (WebKit::WebHTTPBody::elementAt):
+
 2010-09-30  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Adam Barth.

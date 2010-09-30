@@ -32,7 +32,6 @@
 #include "WebHTTPBody.h"
 
 #include "FormData.h"
-#include "WebFileInfo.h"
 
 using namespace WebCore;
 
@@ -78,8 +77,6 @@ bool WebHTTPBody::elementAt(size_t index, Element& result) const
     result.filePath.reset();
     result.fileStart = 0;
     result.fileLength = 0;
-    // FIXME: remove this line once all users of Element have been switched to use 'modificationTime'.
-    result.fileInfo.modificationTime = 0.0;
     result.modificationTime = 0.0;
     result.blobURL = KURL();
 
@@ -94,8 +91,6 @@ bool WebHTTPBody::elementAt(size_t index, Element& result) const
 #if ENABLE(BLOB)
         result.fileStart = element.m_fileStart;
         result.fileLength = element.m_fileLength;
-        // FIXME: remove this line once all users of Element have been switched to use 'modificationTime'.
-        result.fileInfo.modificationTime = element.m_expectedFileModificationTime;
         result.modificationTime = element.m_expectedFileModificationTime;
 #endif
         break;
@@ -133,12 +128,6 @@ void WebHTTPBody::appendFileRange(const WebString& filePath, long long fileStart
     ensureMutable();
     m_private->appendFileRange(filePath, fileStart, fileLength, modificationTime);
 #endif
-}
-
-// FIXME: Remove this method once all callers have been switched to use the method above.
-void WebHTTPBody::appendFileRange(const WebString& filePath, long long fileStart, long long fileLength, const WebFileInfo& fileInfo)
-{
-    return appendFileRange(filePath, fileStart, fileLength, fileInfo.modificationTime);
 }
 
 void WebHTTPBody::appendBlob(const WebURL& blobURL)
