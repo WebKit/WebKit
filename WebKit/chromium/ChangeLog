@@ -1,3 +1,13 @@
+2010-09-30  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] Fix clang error in KURLTest.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=46861
+
+        * tests/KURLTest.cpp:
+        (WTF::operator<<):
+
 2010-09-30  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
