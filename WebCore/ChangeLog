@@ -1,5 +1,19 @@
 2010-09-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r67286.
+
+    2010-09-10  Jer Noble  <jer.noble@apple.com>
+
+        No review; build fix only.
+
+        <CoreGraphics/CGFloat.h> does not exist on the build bots.  Replace
+        instances of CGFAbs() with abs().
+
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+        (WebCore::MediaPlayerPrivateQuickTimeVisualContext::naturalSize):
+
+2010-09-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r67285.
 
     2010-09-10  Jer Noble  <jer.noble@apple.com>
