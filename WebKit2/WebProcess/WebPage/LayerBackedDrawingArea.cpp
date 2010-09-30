@@ -53,8 +53,7 @@ LayerBackedDrawingArea::LayerBackedDrawingArea(DrawingAreaID identifier, WebPage
 #ifndef NDEBUG
     m_backingLayer->setName("DrawingArea backing layer");
 #endif
-    m_backingLayer->syncCompositingStateForThisLayerOnly();
-    
+    m_backingLayer->setSize(webPage->size());
     platformInit();
 }
 
@@ -87,11 +86,7 @@ void LayerBackedDrawingArea::scroll(const IntSize& scrollDelta, const IntRect& r
 void LayerBackedDrawingArea::setNeedsDisplay(const IntRect& rect)
 {
     m_backingLayer->setNeedsDisplayInRect(rect);
-    m_backingLayer->syncCompositingStateForThisLayerOnly();
-
-#if PLATFORM(MAC)
-    scheduleUpdateLayoutRunLoopObserver();
-#endif
+    scheduleCompositingLayerSync();
 }
 
 void LayerBackedDrawingArea::display()
@@ -110,7 +105,7 @@ void LayerBackedDrawingArea::setSize(const IntSize& viewSize)
     ASSERT_ARG(viewSize, !viewSize.isEmpty());
 
     m_backingLayer->setSize(viewSize);
-    m_backingLayer->syncCompositingStateForThisLayerOnly();
+    scheduleCompositingLayerSync();
     
     m_webPage->setSize(viewSize);
 

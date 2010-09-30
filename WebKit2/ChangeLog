@@ -1,3 +1,36 @@
+2010-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Background doesn't draw when entering accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=45848
+        
+        LayerBackedDrawingArea::setSize() is normally called in response
+        to a message from the UI process, so this can come some time after
+        LayerBackedDrawingArea creation. Depending on the timing, we could
+        end up being at size 0x0 for the first invalidate and paint, resulting
+        in missing content.
+        
+        The fix is to size the backing layer on creation, using the WebView's size.
+        
+        Also changed various calls to syncCompositingStateForThisLayerOnly()
+        to do lazy updates via scheduleCompositingLayerSync().
+        
+        Also add the fix for https://bugs.webkit.org/show_bug.cgi?id=46226 (r68028)
+        to the WebKit2 code, in scheduleUpdateLayoutRunLoopObserver().
+
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        (WebKit::LayerBackedDrawingArea::setNeedsDisplay):
+        (WebKit::LayerBackedDrawingArea::setSize):
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::platformInit):
+        (WebKit::LayerBackedDrawingArea::attachCompositingContext):
+        (WebKit::LayerBackedDrawingArea::detachCompositingContext):
+        (WebKit::LayerBackedDrawingArea::setRootCompositingLayer):
+        (WebKit::LayerBackedDrawingArea::syncCompositingLayers):
+        (WebKit::LayerBackedDrawingArea::scheduleUpdateLayoutRunLoopObserver):
+
 2010-09-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebKit2 on Windows should use Windows fonts for the various standard
