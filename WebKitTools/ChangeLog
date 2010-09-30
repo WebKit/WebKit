@@ -1,3 +1,17 @@
+2010-09-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Martin Robinson, Eric Seidel, and Mark Rowe.
+
+        [WinCairo] Adds a build slave.
+        https://bugs.webkit.org/show_bug.cgi?id=46360
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add
+        entries for a debug build of the WinCairo port.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Add
+        platform flag to configuration for wincairo (like gtk, chromium, etc.)
+        * Scripts/build-webkit: Change 'cairo-win32' labeling to 'wincairo'
+        * Scripts/webkitdirs.pm: Change 'cairo-win32' labeling to 'wincairo'
+
 2010-09-29  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

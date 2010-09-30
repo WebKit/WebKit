@@ -45,7 +45,9 @@
                     { "name": "google-windows-2", "platform": "chromium-win" },
                     { "name": "google-mac-2", "platform": "chromium-mac" },
                     { "name": "google-linux-2", "platform": "chromium-linux" },
-                    { "name": "google-new-tests", "platform": "mac-leopard" }
+                    { "name": "google-new-tests", "platform": "mac-leopard" },
+
+                    { "name": "wincairo-1", "platform": "wincairo" }
                   ],
 
     "builders":   [ { "name": "Leopard Intel Release (Build)", "type": "Build", "builddir": "leopard-intel-release",
@@ -194,7 +196,12 @@
                       "name": "New run-webkit-tests", "type": "NewBuildAndTest", "builddir": "google-new-tests",
                       "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-new-tests"]
-                    }
+                    },
+                    {
+                      "name": "WinCairo Debug (Build)", "type": "Build", "builddir": "win-cairo-debug",
+                      "platform": "wincairo", "configuration": "debug", "architectures": ["i386"],
+                      "slavenames": ["wincairo-1"]
+                    },
                   ],
 
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
@@ -205,7 +212,8 @@
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv5 Release", "Qt Linux ARMv7 Release", 
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
-                                       "Chromium Win Release (Tests)", "Chromium Mac Release (Tests)", "Chromium Linux Release (Tests)"]
+                                       "Chromium Win Release (Tests)", "Chromium Mac Release (Tests)", "Chromium Linux Release (Tests)",
+                                       "WinCairo Debug (Build)"]
                     },
                     { "type": "Triggerable", "name": "leopard-intel-release-tests",
                       "builderNames": ["Leopard Intel Release (Tests)"]

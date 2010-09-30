@@ -241,7 +241,7 @@ Usage: $programName [options] [options to pass to build system]
   --help                            Show this help message
   --clean                           Cleanup the build directory
   --debug                           Compile in debug mode
-  --cairo-win32                     Build using Cairo (rather than CoreGraphics) on Windows
+  --wincairo                        Build using Cairo (rather than CoreGraphics) on Windows
   --chromium                        Build the Chromium port on Mac/Win/Linux
   --gtk                             Build the GTK+ port
   --qt                              Build the Qt port

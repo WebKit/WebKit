@@ -415,7 +415,7 @@ sub determinePassedConfiguration
     return if $searchedForPassedConfiguration;
     $searchedForPassedConfiguration = 1;
 
-    my $isWinCairo = checkForArgumentAndRemoveFromARGV("--cairo-win32");
+    my $isWinCairo = checkForArgumentAndRemoveFromARGV("--wincairo");
 
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
