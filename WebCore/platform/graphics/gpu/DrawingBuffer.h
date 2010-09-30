@@ -76,7 +76,7 @@ public:
         virtual void willPublish() = 0;
     };
 
-    void setWillPublishCallback(PassOwnPtr<WillPublishCallback>) { m_callback = callback; }
+    void setWillPublishCallback(PassOwnPtr<WillPublishCallback> callback) { m_callback = callback; }
 #endif
 
 private:
