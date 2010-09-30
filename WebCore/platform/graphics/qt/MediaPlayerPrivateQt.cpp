@@ -27,6 +27,7 @@
 #include "HTMLVideoElement.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
+#include "RenderVideo.h"
 #include "TimeRanges.h"
 #include "Widget.h"
 #include "qwebframe.h"
@@ -93,6 +94,8 @@ MediaPlayerPrivateQt::MediaPlayerPrivateQt(MediaPlayer* player)
     , m_videoScene(new QGraphicsScene)
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
+    , m_currentSize(0, 0)
+    , m_naturalSize(RenderVideo::defaultSize())
     , m_isVisible(false)
     , m_isSeeking(false)
     , m_composited(false)
@@ -438,8 +441,15 @@ void MediaPlayerPrivateQt::stateChanged(QMediaPlayer::State state)
     }
 }
 
-void MediaPlayerPrivateQt::nativeSizeChanged(const QSizeF&)
+void MediaPlayerPrivateQt::nativeSizeChanged(const QSizeF& size)
 {
+    LOG(Media, "MediaPlayerPrivateQt::naturalSizeChanged(%dx%d)",
+            size.toSize().width(), size.toSize().height());
+
+    if (!size.isValid())
+        return;
+
+    m_naturalSize = size.toSize();
     m_webCorePlayer->sizeChanged();
 }
 
@@ -547,6 +557,9 @@ void MediaPlayerPrivateQt::updateStates()
 
 void MediaPlayerPrivateQt::setSize(const IntSize& size)
 {
+    LOG(Media, "MediaPlayerPrivateQt::setSize(%dx%d)",
+            size.width(), size.height());
+
     if (size == m_currentSize)
         return;
 
@@ -556,10 +569,15 @@ void MediaPlayerPrivateQt::setSize(const IntSize& size)
 
 IntSize MediaPlayerPrivateQt::naturalSize() const
 {
-    if (!hasVideo() || m_readyState < MediaPlayer::HaveMetadata)
+    if (!hasVideo() ||  m_readyState < MediaPlayer::HaveMetadata) {
+        LOG(Media, "MediaPlayerPrivateQt::naturalSize() -> 0x0 (!hasVideo || !haveMetaData)");
         return IntSize();
+    }
 
-    return IntSize(m_videoItem->nativeSize().toSize());
+    LOG(Media, "MediaPlayerPrivateQt::naturalSize() -> %dx%d (m_naturalSize)",
+            m_naturalSize.width(), m_naturalSize.height());
+
+    return m_naturalSize;
 }
 
 void MediaPlayerPrivateQt::paint(GraphicsContext* context, const IntRect& rect)

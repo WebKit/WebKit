@@ -130,6 +130,7 @@ private:
     mutable MediaPlayer::ReadyState m_readyState;
 
     IntSize m_currentSize;
+    IntSize m_naturalSize;
     bool m_isVisible;
     bool m_isSeeking;
     bool m_composited;
