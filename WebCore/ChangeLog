@@ -2,6 +2,25 @@
 
         Reviewed by Kenneth Russell.
 
+        Add AudioGainNode files
+        https://bugs.webkit.org/show_bug.cgi?id=46286
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioGainNode.cpp: Added.
+        (WebCore::AudioGainNode::AudioGainNode):
+        (WebCore::AudioGainNode::process):
+        (WebCore::AudioGainNode::reset):
+        (WebCore::AudioGainNode::checkNumberOfChannelsForInput):
+        * webaudio/AudioGainNode.h: Added.
+        (WebCore::AudioGainNode::create):
+        (WebCore::AudioGainNode::gain):
+        * webaudio/AudioGainNode.idl: Added.
+
+2010-09-29  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Add AudioChannelMerger files
         https://bugs.webkit.org/show_bug.cgi?id=46291
 
