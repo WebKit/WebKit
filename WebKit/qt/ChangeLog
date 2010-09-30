@@ -1,3 +1,16 @@
+2010-09-30  Benjamin Poulain  <benjamin.poulain@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix tst_QWebPage::geolocationRequestJS()
+        https://bugs.webkit.org/show_bug.cgi?id=46814
+
+        Disable the test. This test cannot pass with a
+        standard build of WebKit, it is disabled until the API is finilized.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::geolocationRequestJS):
+
 2010-09-29  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Ariya Hidayat.
