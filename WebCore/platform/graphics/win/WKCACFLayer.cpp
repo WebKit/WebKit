@@ -341,6 +341,9 @@ void WKCACFLayer::setBounds(const CGRect& rect)
 
     if (m_needsDisplayOnBoundsChange)
         setNeedsDisplay();
+
+    if (m_layoutClient)
+        setNeedsLayout();
 }
 
 void WKCACFLayer::setFrame(const CGRect& rect)
@@ -354,6 +357,9 @@ void WKCACFLayer::setFrame(const CGRect& rect)
 
     if (m_needsDisplayOnBoundsChange && !CGSizeEqualToSize(rect.size, oldFrame.size))
         setNeedsDisplay();
+
+    if (m_layoutClient)
+        setNeedsLayout();
 }
 
 void WKCACFLayer::setContentsGravity(ContentsGravityType type)

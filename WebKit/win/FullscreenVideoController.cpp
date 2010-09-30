@@ -273,9 +273,10 @@ void FullscreenVideoController::enterFullscreen()
 #if USE(ACCELERATED_COMPOSITING)
     m_fullscreenWindow->setRootChildLayer(m_rootChild);
 
-    WKCACFLayer* videoLayer = m_mediaElement->player()->platformLayer();
+    WKCACFLayer* videoLayer = m_mediaElement->platformLayer();
     m_rootChild->addSublayer(videoLayer);
     m_rootChild->setNeedsLayout();
+    m_rootChild->setGeometryFlipped(1);
 #endif
 
     RECT windowRect;

@@ -28,6 +28,7 @@
 
 #include "QTMovieTask.h"
 #include "QTMovieWinTimer.h"
+#include <FixMath.h>
 #include <GXMath.h>
 #include <Movies.h>
 #include <QTML.h>
@@ -693,6 +694,16 @@ bool QTMovie::hasAudio() const
     return (GetMovieIndTrackType(m_private->m_movie, 1, AudioMediaCharacteristic, movieTrackCharacteristic | movieTrackEnabledOnly));
 }
 
+QTTrackArray QTMovie::videoTracks() const
+{
+    QTTrackArray tracks;
+    long trackIndex = 1;
+
+    while (Track theTrack = GetMovieIndTrackType(m_private->m_movie, trackIndex++, VisualMediaCharacteristic, movieTrackCharacteristic | movieTrackEnabledOnly))
+        tracks.append(QTTrack::create(theTrack));
+
+    return tracks;
+}
 
 bool QTMovie::hasClosedCaptions() const 
 {
@@ -826,6 +837,45 @@ void QTMovie::getSupportedType(unsigned index, const UChar*& str, unsigned& len)
     str = reinterpret_cast<const UChar*>(staticBuffer);
     
 }
+
+CGAffineTransform QTMovie::getTransform() const
+{
+    ASSERT(m_private->m_movie);
+    MatrixRecord m = {0};
+    GetMovieMatrix(m_private->m_movie, &m);
+
+    ASSERT(!m.matrix[0][2]);
+    ASSERT(!m.matrix[1][2]);
+    CGAffineTransform transform = CGAffineTransformMake(
+        Fix2X(m.matrix[0][0]),
+        Fix2X(m.matrix[0][1]),
+        Fix2X(m.matrix[1][0]),
+        Fix2X(m.matrix[1][1]),
+        Fix2X(m.matrix[2][0]),
+        Fix2X(m.matrix[2][1]));
+    return transform;
+}
+
+void QTMovie::setTransform(CGAffineTransform t)
+{
+    ASSERT(m_private->m_movie);
+    MatrixRecord m = {{
+        {X2Fix(t.a), X2Fix(t.b), 0},
+        {X2Fix(t.c), X2Fix(t.d), 0},
+        {X2Fix(t.tx), X2Fix(t.ty), fract1},
+    }};
+
+    SetMovieMatrix(m_private->m_movie, &m);
+    m_private->cacheMovieScale();
+}
+
+void QTMovie::resetTransform()
+{
+    ASSERT(m_private->m_movie);
+    SetMovieMatrix(m_private->m_movie, 0);
+    m_private->cacheMovieScale();
+}
+
 
 bool QTMovie::initializeQuickTime() 
 {
