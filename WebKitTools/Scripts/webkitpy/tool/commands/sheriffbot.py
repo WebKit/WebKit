@@ -57,8 +57,8 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
     def work_item_log_path(self, failure_map):
         return None
 
-    def _is_old_failure(self, svn_revision):
-        return self._tool.status_server.svn_revision(svn_revision)
+    def _is_old_failure(self, revision):
+        return self._tool.status_server.svn_revision(revision)
 
     def next_work_item(self):
         self._irc_bot.process_pending_messages()
@@ -77,24 +77,21 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         return True
 
     def process_work_item(self, failure_map):
-        new_failures = failure_map.revisions_causing_failures()
-        blame_list = new_failures.keys()
-        for svn_revision, builders in new_failures.items():
+        failing_revisions = failure_map.failing_revisions()
+        for revision in failing_revisions:
+            builders = failure_map.builders_failing_for(revision)
+            tests = failure_map.tests_failing_for(revision)
             try:
-                commit_info = self._tool.checkout().commit_info_for_revision(svn_revision)
+                commit_info = self._tool.checkout().commit_info_for_revision(revision)
                 if not commit_info:
                     print "FAILED to fetch CommitInfo for r%s, likely missing ChangeLog" % revision
                     continue
                 self._sheriff.post_irc_warning(commit_info, builders)
-                self._sheriff.post_blame_comment_on_bug(commit_info,
-                                                        builders,
-                                                        blame_list)
-                self._sheriff.post_automatic_rollout_patch(commit_info,
-                                                           builders)
+                self._sheriff.post_blame_comment_on_bug(commit_info, builders, tests)
+
             finally:
                 for builder in builders:
-                    self._tool.status_server.update_svn_revision(svn_revision,
-                                                                builder.name())
+                    self._tool.status_server.update_svn_revision(revision, builder.name())
         return True
 
     def handle_unexpected_error(self, failure_map, message):

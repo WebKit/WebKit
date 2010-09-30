@@ -77,55 +77,15 @@ class Sheriff(object):
         ])
         return parse_bug_id(output)
 
-    def _rollout_reason(self, builders):
-        # FIXME: This should explain which layout tests failed
-        # however, that would require Build objects here, either passed
-        # in through failure_info, or through Builder.latest_build.
-        names = [builder.name() for builder in builders]
-        return "Caused builders %s to fail." % join_with_separators(names)
-
-    def post_automatic_rollout_patch(self, commit_info, builders):
-        # For now we're only posting rollout patches for commit-queue patches.
-        commit_bot_email = "eseidel@chromium.org"
-        if commit_bot_email == commit_info.committer_email():
-            try:
-                self.post_rollout_patch(commit_info.revision(),
-                                        self._rollout_reason(builders))
-            except ScriptError, e:
-                log("Failed to create-rollout.")
-
-    def post_blame_comment_on_bug(self, commit_info, builders, blame_list):
+    def post_blame_comment_on_bug(self, commit_info, builders, tests):
         if not commit_info.bug_id():
             return
         comment = "%s might have broken %s" % (
             view_source_url(commit_info.revision()),
             join_with_separators([builder.name() for builder in builders]))
-        if len(blame_list) > 1:
-            comment += "\nThe following changes are on the blame list:\n"
-            comment += "\n".join(map(view_source_url, blame_list))
+        if tests:
+            comment += "\nThe following tests are not passing:\n"
+            comment += "\n".join(tests)
         self._tool.bugs.post_comment_to_bug(commit_info.bug_id(),
                                             comment,
                                             cc=self._sheriffbot.watchers)
-
-    # FIXME: Should some of this logic be on BuildBot?
-    def provoke_flaky_builders(self, revisions_causing_failures):
-        # We force_build builders that are red but have not "failed" (i.e.,
-        # been red twice). We do this to avoid a deadlock situation where a
-        # flaky test blocks the commit-queue and there aren't any other
-        # patches being landed to re-spin the builder.
-        failed_builders = sum([revisions_causing_failures[key] for
-                               key in revisions_causing_failures.keys()], [])
-        failed_builder_names = \
-            set([builder.name() for builder in failed_builders])
-        idle_red_builder_names = \
-            set([builder["name"]
-                 for builder in self._tool.buildbot.idle_red_core_builders()])
-
-        # We only want to provoke these builders if they are idle and have not
-        # yet "failed" (i.e., been red twice) to avoid overloading the bots.
-        flaky_builder_names = idle_red_builder_names - failed_builder_names
-
-        for name in flaky_builder_names:
-            flaky_builder = self._tool.buildbot.builder_with_name(name)
-            flaky_builder.force_build(username=self._sheriffbot.name,
-                                      comments="Probe for flakiness.")

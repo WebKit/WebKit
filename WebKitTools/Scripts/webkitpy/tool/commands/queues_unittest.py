@@ -320,7 +320,7 @@ class StyleQueueTest(QueuesTest):
             "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
             "process_work_item": "MOCK: update_status: style-queue Pass\n",
             "handle_unexpected_error": "Mock error message\n",
-            "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=142, cc=[]\n--- Begin comment ---\\Attachment 197 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
+            "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=142, cc=[]\n--- Begin comment ---\nAttachment 197 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
         }
         expected_exceptions = {
             "handle_script_error": SystemExit,

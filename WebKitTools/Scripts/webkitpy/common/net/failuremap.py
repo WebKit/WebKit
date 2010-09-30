@@ -45,6 +45,17 @@ class FailureMap(object):
                              for failure_info in self._failures]
         return sorted(set(sum(failing_revisions, [])))
 
+    def builders_failing_for(self, revision):
+        return self._builders_failing_because_of([revision])
+
+    def tests_failing_for(self, revision):
+        tests = [failure_info['regression_window'].failing_tests()
+                 for failure_info in self._failures
+                 if revision in failure_info['regression_window'].revisions()]
+        return sorted(set(sum(failing_tests, [])))
+
+    # FIXME: Consider removing this method.  It might now exist only for
+    #        unit testing!
     def revisions_causing_failures(self):
         revision_to_failing_bots = {}
         for failure_info in self._failures:

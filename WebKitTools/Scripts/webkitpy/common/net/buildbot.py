@@ -174,14 +174,14 @@ class Builder(object):
                     break
             look_back_count += 1
             if look_back_count > look_back_limit:
-                return RegressionWindow(None, current_build, common_failures=common_failures)
+                return RegressionWindow(None, current_build, failing_tests=common_failures)
             build_after_current_build = current_build
             current_build = current_build.previous_build()
         # We must iterate at least once because red_build is red.
         assert(build_after_current_build)
         # Current build must either be green or have no failures in common
         # with red build, so we've found our failure transition.
-        return RegressionWindow(current_build, build_after_current_build, common_failures=common_failures)
+        return RegressionWindow(current_build, build_after_current_build, failing_tests=common_failures)
 
     def find_blameworthy_regression_window(self, red_build_number, look_back_limit=30, avoid_flakey_tests=True):
         red_build = self.build(red_build_number)

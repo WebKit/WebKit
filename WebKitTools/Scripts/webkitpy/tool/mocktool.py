@@ -317,7 +317,7 @@ class MockBugzilla(Mock):
             flag_name, flag_value, attachment_id, comment_text, additional_comment_text))
 
     def post_comment_to_bug(self, bug_id, comment_text, cc=None):
-        log("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\%s\n--- End comment ---\n" % (
+        log("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
             bug_id, cc, comment_text))
 
     def add_patch_to_bug(self,
@@ -350,7 +350,7 @@ class MockBuilder(object):
             self._name, username, comments))
 
 
-class MockFailureMap():
+class MockFailureMap(object):
     def __init__(self, buildbot):
         self._buildbot = buildbot
 
@@ -364,6 +364,15 @@ class MockFailureMap():
 
     def filter_out_old_failures(self, is_old_revision):
         pass
+
+    def failing_revisions(self):
+        return [29837]
+
+    def builders_failing_for(self, revision):
+        return [self._buildbot.builder_with_name("Builder1")]
+
+    def tests_failing_for(self, revision):
+        return ["mock-test-1"]
 
 
 class MockBuildBot(object):
