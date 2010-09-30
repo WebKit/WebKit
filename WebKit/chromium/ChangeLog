@@ -1,3 +1,19 @@
+2010-09-30  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        [Chromium] WebIDBDatabase and WebIDBObjectStore are missing methods called from Chromium land.
+        https://bugs.webkit.org/show_bug.cgi?id=46922
+        
+        The missing functions were removed in r68795.
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createObjectStore):
+        (WebKit::WebIDBDatabase::removeObjectStore):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::createIndex):
+        (WebKit::WebIDBObjectStore::removeIndex):
+
 2010-09-29  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
