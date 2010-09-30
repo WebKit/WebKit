@@ -1,3 +1,9 @@
+2010-09-30  Xiaomei Ji  <xji@chromium.org>
+
+        Unreviewed, updated test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2010-09-30  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
