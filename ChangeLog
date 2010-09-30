@@ -1,3 +1,9 @@
+2010-09-30  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Fix typo in build script.
+
+        * wscript:
+
 2010-09-29  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
