@@ -1,0 +1,36 @@
+Test to make sure WebKit adds style to the appropriate container.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+styleWithCSS = false
+PASS fontSize(3) on all of "<font size="3">hello <font size="4">world</font></font>" yields "<font size="3">hello world</font>"
+PASS fontSize(4) on all of "<font face="Arial">hello</font>" yields "<font face="Arial" size="4">hello</font>"
+PASS fontSize(4) on all of "<font color="blue"><font face="Arial">hello</font></font>" yields "<font color="blue"><font face="Arial" size="4">hello</font></font>"
+PASS fontSize(4) on all of "<b><font face="Arial">hello</font></b>" yields "<b><font face="Arial" size="4">hello</font></b>"
+PASS fontSize(4) on all of "<font face="Arial"><i>hello</i></font>" yields "<font face="Arial" size="4"><i>hello</i></font>"
+PASS fontName(Arial) on all of "<b><font face="Arial">hello</font></b> world" yields "<font class="Apple-style-span" face="Arial"><b>hello</b> world</font>"
+PASS fontName(Arial) on all of "<font color="blue">hello</font> world" yields "<font class="Apple-style-span" face="Arial"><font color="blue">hello</font> world</font>"
+PASS fontName(Arial) on all of "<b><u>hello</u> world</b>" yields "<b><font class="Apple-style-span" face="Arial"><u>hello</u> world</font></b>"
+PASS foreColor(blue) on all of "<font><u style="color:red;">hello</u></font>" yields "<font color="#0000FF"><u>hello</u></font>"
+PASS bold(null) on all of "<u><s>hello</s> <s>world</s></u>" yields "<u><b><s>hello</s> <s>world</s></b></u>"
+PASS bold(null) on all of "<i>hello</i> <b>world</b>" yields "<b><i>hello</i> world</b>"
+PASS bold(null) on all of "<s><i><u>hello <b>world</b></u></i> webkit</s>" yields "<s><b><i><u>hello world</u></i> webkit</b></s>"
+PASS bold(null) on all of "<b contenteditable="false"><span style="font-weight: normal;">hello</span> world</b> world" yields "<b contenteditable="false"><span style="font-weight: normal;">hello</span> world</b><b> world</b>"
+PASS bold(null) on all of "<i>hello</i> <b contenteditable="false">world</b>" yields "<b><i>hello</i> </b><b contenteditable="false">world</b>"
+PASS strikeThrough(null) on all of "<i>hello</i> <b><s>world</s></b> WebKit" yields "<s><i>hello</i> <b>world</b> WebKit</s>"
+PASS strikeThrough(null) on all of "<b><i>hello <s>world</s></i> WebKit</b>" yields "<b><s><i>hello world</i> WebKit</s></b>"
+
+styleWithCSS = true
+PASS fontSize(4) on all of "<font face="Arial">hello</font>" yields "<font face="Arial" style="font-size: large;">hello</font>"
+PASS fontSize(4) on all of "<font face="Arial"><b>hello</b></font>" yields "<font face="Arial"><b style="font-size: large;">hello</b></font>"
+PASS fontSize(4) on all of "<i><b>hello</b></i>" yields "<i><b style="font-size: large;">hello</b></i>"
+PASS fontSize(4) on all of "<i><b>hello</b> world</i>" yields "<i style="font-size: large;"><b>hello</b> world</i>"
+PASS fontSize(4) on all of "<font color="blue"><b>hello</b></font>" yields "<font color="blue"><b style="font-size: large;">hello</b></font>"
+PASS bold(null) on all of "<span style="font-style: italic;">hello</span>" yields "<span style="font-style: italic; font-weight: bold;">hello</span>"
+PASS underline(null) on all of "<span style="font-style: italic;"><b>hello</b></span>" yields "<span style="font-style: italic; text-decoration: underline;"><b>hello</b></span>"
+PASS underline(null) on all of "<span style="color: blue;"><i><span style="font-size: large;"><b>hello</b> world</span></i></span>" yields "<span style="color: blue;"><i><span style="font-size: large; text-decoration: underline;"><b>hello</b> world</span></i></span>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -37,7 +37,7 @@ testSingleToggle("strikethrough", "<u><b><s>test</s></b></u>", "<u><b>test</b></
 testDoubleToggle("strikethrough", "test", "test");
 
 testSingleToggle("strikethrough", "<u>test</u>", "<u><s>test</s></u>");
-testSingleToggle("underline", "<s>test</s>", "<s><u>test</u></s>");
+testSingleToggle("underline", "<s>test</s>", "<u><s>test</s></u>");
 
 testSingleToggle("strikethrough", '<span style="text-decoration: overline;">test</span>', '<span style="text-decoration: overline;"><s>test</s></span>');
 testSingleToggle("underline", '<span style="text-decoration: overline;">test</span>', '<span style="text-decoration: overline;"><u>test</u></span>');

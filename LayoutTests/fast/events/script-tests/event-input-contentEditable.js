@@ -74,7 +74,7 @@ var target6start = document.getElementById("target6start");
 var target6middle = document.getElementById("target6middle");
 var target6end = document.getElementById("target6end");
 
-var expectedText6 = "<span id=\"target6start\"><a href=\"http://www.example.com/\">Start,</a></span><a href=\"http://www.example.com/\"><span id=\"target6middle\">Middle,</span><span id=\"target6end\">End.</span></a>";
+var expectedText6 = "<a href=\"http://www.example.com/\"><span id=\"target6start\">Start,</span><span id=\"target6middle\">Middle,</span><span id=\"target6end\">End.</span></a>";
 target6parent.addEventListener("input", function(evt) { fired(evt, "target6parent", expectedText6); });
 expectedInputEventCount++;
 target6start.addEventListener("input", function(evt) { testFailed("should not be reached"); });

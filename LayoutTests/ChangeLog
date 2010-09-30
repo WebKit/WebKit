@@ -1,3 +1,27 @@
+2010-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        WebKit nests font element when applying different font styles
+        https://bugs.webkit.org/show_bug.cgi?id=45568
+
+        Added a test to ensure WebKit does not add extra font elements when the content already has an enclosing font element.
+        The test also ensures WebKit tries to add style attribute to the inner most span.
+
+        * editing/execCommand/createLink-expected.txt: The ordering of anchor and span changed.
+        * editing/execCommand/unlink-expected.txt: Ditto.
+        * editing/execCommand/query-font-size-expected.txt: Merged font elements.
+        * editing/execCommand/script-tests/toggle-style-2.js: The ordering of s and u elements changed.
+        * editing/execCommand/toggle-style-2-expected.txt:  Ditto.
+        * editing/style/inline-style-container-expected.txt: Added.
+        * editing/style/inline-style-container.html: Added.
+        * editing/style/make-text-writing-direction-inline-expected.txt: Removed some extraneous spans added by the bug 44359.
+        * editing/style/script-tests/inline-style-container.js: Added.
+        (testSingleToggle):
+        * editing/style/style-3690704-fix-expected.txt: Merged two b elements.
+        * fast/events/event-input-contentEditable-expected.txt: Merged anchor elements.
+        * fast/events/script-tests/event-input-contentEditable-expected.txt: Ditto.
+
 2010-09-30  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.

@@ -10,7 +10,7 @@ PASS one strikethrough command converted test to <s>test</s>
 PASS one strikethrough command converted <u><b><s>test</s></b></u> to <u><b>test</b></u>
 PASS two strikethrough commands converted test to test
 PASS one strikethrough command converted <u>test</u> to <u><s>test</s></u>
-PASS one underline command converted <s>test</s> to <s><u>test</u></s>
+PASS one underline command converted <s>test</s> to <u><s>test</s></u>
 FAIL one strikethrough command converted <span style="text-decoration: overline;">test</span> to <span class="Apple-style-span" style="text-decoration: overline;"><s>test</s></span>, expected <span style="text-decoration: overline;"><s>test</s></span>
 FAIL one underline command converted <span style="text-decoration: overline;">test</span> to <span class="Apple-style-span" style="text-decoration: overline;"><u>test</u></span>, expected <span style="text-decoration: overline;"><u>test</u></span>
 PASS successfullyParsed is true

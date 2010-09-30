@@ -1,3 +1,30 @@
+2010-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        WebKit nests font element when applying different font styles
+        https://bugs.webkit.org/show_bug.cgi?id=45568
+
+        The bug was caused by fixRangeAndApplyInlineStyle's not including fully selected ancestors,
+        and addInlineStyleIfNeeded's always surrounding the contents by new elements as supposed to
+        adding font attributes or style attribute.
+
+        Fixed the bug by extending the node range in fixRangeAndApplyInlineStyle and finding
+        the appropriate container node to add attributes in addInlineStyleIfNeeded.
+        addInlineStyleIfNeeded now tires to add font and style attributes to the inner most font and
+        span elements respectively.
+
+        Also added an early exit check to removeStyleFromRunBeforeApplyingStyle so that WebKit does not
+        modify the contents when the entire contents already have the desired style.
+
+        Test: editing/style/inline-style-container.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::fixRangeAndApplyInlineStyle):
+        (WebCore::ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle):
+        (WebCore::ApplyStyleCommand::removeInlineStyleFromElement):
+        (WebCore::ApplyStyleCommand::addInlineStyleIfNeeded):
+
 2010-09-30  Jarred Nicholls  <jarred@sencha.com>
 
         Reviewed by Darin Adler.
