@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google, Inc.
+ * Copyright (C) 2010 Google, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,32 +24,35 @@
  */
 
 #include "config.h"
-#include "ResourceRequest.h"
+#include "ResourceResponse.h"
 
 namespace WebCore {
 
-// This is used by the loader to control the number of issued parallel load requests. 
-unsigned initializeMaximumHTTPConnectionCountPerHost()
+PassOwnPtr<CrossThreadResourceResponseData> ResourceResponse::doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const
 {
-    // The chromium network stack already handles limiting the number of
-    // parallel requests per host, so there's no need to do it here.  Therefore,
-    // this is set to a high value that should never be hit in practice.
-    return 10000;
-}
-
-PassOwnPtr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const
-{
-    data->m_requestorID = m_requestorID;
-    data->m_requestorProcessID = m_requestorProcessID;
-    data->m_appCacheHostID = m_appCacheHostID;
+    data->m_appCacheID = m_appCacheID;
+    data->m_appCacheManifestURL = m_appCacheManifestURL.copy();
+    data->m_isContentFiltered = m_isContentFiltered;
+    data->m_isMultipartPayload = m_isMultipartPayload;
+    data->m_wasFetchedViaSPDY = m_wasFetchedViaSPDY;
+    data->m_wasNpnNegotiated = m_wasNpnNegotiated;
+    data->m_wasAlternateProtocolAvailable = m_wasAlternateProtocolAvailable;
+    data->m_wasFetchedViaProxy = m_wasFetchedViaProxy;
+    data->m_responseTime = m_responseTime;
     return data;
 }
 
-void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData> data)
+void ResourceResponse::doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData> data)
 {
-    m_requestorID = data->m_requestorID;
-    m_requestorProcessID = data->m_requestorProcessID;
-    m_appCacheHostID = data->m_appCacheHostID;
+    m_appCacheID = data->m_appCacheID;
+    m_appCacheManifestURL = data->m_appCacheManifestURL.copy();
+    m_isContentFiltered = data->m_isContentFiltered;
+    m_isMultipartPayload = data->m_isMultipartPayload;
+    m_wasFetchedViaSPDY = data->m_wasFetchedViaSPDY;
+    m_wasNpnNegotiated = data->m_wasNpnNegotiated;
+    m_wasAlternateProtocolAvailable = data->m_wasAlternateProtocolAvailable;
+    m_wasFetchedViaProxy = data->m_wasFetchedViaProxy;
+    m_responseTime = data->m_responseTime;
 }
 
 } // namespace WebCore

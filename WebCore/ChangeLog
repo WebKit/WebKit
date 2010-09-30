@@ -1,3 +1,81 @@
+2010-09-30  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by David Levin.
+
+        Make it possible to copy platform specific data members of ResourceRequest and ResourceResponse
+        across threads and to compare platform specific data members of ResourceRequest.
+        - Added two instance methods to the platform specific subclasses: doPlatformAdopt and doPlatformCopyData.
+        - Also added a "shadowable" static method for platformCompare to ResourceRequestBase, a similar method
+          is already present on ResourceResponseBase.
+        - Converted the cross thread structs defined in ResourceRequest/ResponseBase.h to base
+          classes and extended those base classes in the platform specific headers to provide a place
+          to hold additional fields.
+        - Used this mechanism to have the chromium port's data members make the hop.
+        https://bugs.webkit.org/show_bug.cgi?id=46430
+
+        No new tests. Just plumbing.
+
+        * WebCore.exp.in: removed the symbol for the now inlined == operator
+        * WebCore.gypi: added chromium/ResourceResponse.cpp
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        (WebCore::ResourceRequestBase::compare):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::platformCompare):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::asResourceResponse):
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::copyData):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/android/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/android/ResourceResponse.h:
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+        * platform/network/chromium/ResourceRequest.cpp:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/chromium/ResourceRequest.h:
+        * platform/network/chromium/ResourceResponse.cpp: Added.
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+        * platform/network/chromium/ResourceResponse.h:
+        * platform/network/curl/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+        * platform/network/mac/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/mac/ResourceResponse.h:
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+        * platform/network/qt/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/qt/ResourceResponse.h:
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+        * platform/network/soup/ResourceRequest.h:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/soup/ResourceResponse.h:
+        (WebCore::ResourceResponse::doUpdateResourceResponse):
+        (WebCore::ResourceResponse::doPlatformCopyData):
+        (WebCore::ResourceResponse::doPlatformAdopt):
+
 2010-09-29  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

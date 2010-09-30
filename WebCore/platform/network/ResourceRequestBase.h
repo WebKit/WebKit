@@ -140,6 +140,8 @@ namespace WebCore {
         TargetType targetType() const { return m_targetType; }
         void setTargetType(TargetType type) { m_targetType = type; }
 
+        static bool compare(const ResourceRequest&, const ResourceRequest&);
+
     protected:
         // Used when ResourceRequest is initialized from a platform representation of the request
         ResourceRequestBase()
@@ -168,6 +170,9 @@ namespace WebCore {
         void updatePlatformRequest() const; 
         void updateResourceRequest() const; 
 
+        // The ResourceRequest subclass may "shadow" this method to compare platform specific fields
+        static bool platformCompare(const ResourceRequest&, const ResourceRequest&) { return true; }
+
         KURL m_url;
 
         ResourceRequestCachePolicy m_cachePolicy;
@@ -190,10 +195,10 @@ namespace WebCore {
 
     bool equalIgnoringHeaderFields(const ResourceRequestBase&, const ResourceRequestBase&);
 
-    bool operator==(const ResourceRequestBase&, const ResourceRequestBase&);
-    inline bool operator!=(ResourceRequestBase& a, const ResourceRequestBase& b) { return !(a == b); }
+    inline bool operator==(const ResourceRequest& a, const ResourceRequest& b) { return ResourceRequestBase::compare(a, b); }
+    inline bool operator!=(ResourceRequest& a, const ResourceRequest& b) { return !(a == b); }
 
-    struct CrossThreadResourceRequestData : Noncopyable {
+    struct CrossThreadResourceRequestDataBase : Noncopyable {
         KURL m_url;
 
         ResourceRequestCachePolicy m_cachePolicy;

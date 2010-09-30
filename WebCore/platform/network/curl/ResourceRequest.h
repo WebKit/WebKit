@@ -69,6 +69,12 @@ namespace WebCore {
 
         void doUpdatePlatformRequest() {}
         void doUpdateResourceRequest() {}
+
+        PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const { return data; }
+        void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>) { }
+    };
+
+    struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
     };
 
 } // namespace WebCore

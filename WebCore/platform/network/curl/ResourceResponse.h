@@ -52,7 +52,15 @@ public:
     CFURLResponseRef cfURLResponse() const { return 0; }
 
 private:
+    friend class ResourceResponseBase;
+
+    PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
+    void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
+
     bool m_responseFired;
+};
+
+struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
 };
 
 } // namespace WebCore

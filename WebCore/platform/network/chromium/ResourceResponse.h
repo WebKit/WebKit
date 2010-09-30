@@ -109,6 +109,9 @@ namespace WebCore {
             notImplemented();
         }
 
+        PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData>) const;
+        void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>);
+
         // The id of the appcache this response was retrieved from, or zero if
         // the response was not retrieved from an appcache.
         long long m_appCacheID;
@@ -139,6 +142,18 @@ namespace WebCore {
 
         // The time at which the response headers were received.  For cached
         // responses, this time could be "far" in the past.
+        double m_responseTime;
+    };
+
+    struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
+        long long m_appCacheID;
+        KURL m_appCacheManifestURL;
+        bool m_isContentFiltered;
+        bool m_isMultipartPayload;
+        bool m_wasFetchedViaSPDY;
+        bool m_wasNpnNegotiated;
+        bool m_wasAlternateProtocolAvailable;
+        bool m_wasFetchedViaProxy;
         double m_responseTime;
     };
 

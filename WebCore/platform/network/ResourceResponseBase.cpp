@@ -39,6 +39,11 @@ namespace WebCore {
 
 static void parseCacheHeader(const String& header, Vector<pair<String, String> >& result);
 
+inline const ResourceResponse& ResourceResponseBase::asResourceResponse() const
+{
+    return *static_cast<const ResourceResponse*>(this);
+}
+
 ResourceResponseBase::ResourceResponseBase()  
     : m_expectedContentLength(0)
     , m_httpStatusCode(0)
@@ -107,7 +112,7 @@ PassOwnPtr<ResourceResponse> ResourceResponseBase::adopt(PassOwnPtr<CrossThreadR
     response->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
     response->setLastModifiedDate(data->m_lastModifiedDate);
     response->setResourceLoadTiming(data->m_resourceLoadTiming.release());
-
+    response->doPlatformAdopt(data);
     return response.release();
 }
 
@@ -125,7 +130,7 @@ PassOwnPtr<CrossThreadResourceResponseData> ResourceResponseBase::copyData() con
     data->m_lastModifiedDate = lastModifiedDate();
     if (m_resourceLoadTiming)
         data->m_resourceLoadTiming = m_resourceLoadTiming->deepCopy();
-    return data.release();
+    return asResourceResponse().doPlatformCopyData(data.release());
 }
 
 bool ResourceResponseBase::isHTTP() const

@@ -70,10 +70,16 @@ private:
     friend class ResourceResponseBase;
 
     void platformLazyInit();
+    PassOwnPtr<CrossThreadResourceResponseData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceResponseData> data) const { return data; }
+    void doPlatformAdopt(PassOwnPtr<CrossThreadResourceResponseData>) { }
+
     static bool platformCompare(const ResourceResponse& a, const ResourceResponse& b);
 
     RetainPtr<CFURLResponseRef> m_cfResponse;
     bool m_isUpToDate;
+};
+
+struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {
 };
 
 } // namespace WebCore

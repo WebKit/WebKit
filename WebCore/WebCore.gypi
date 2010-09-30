@@ -2905,6 +2905,7 @@
             'platform/network/chromium/ResourceError.h',
             'platform/network/chromium/ResourceRequest.cpp',
             'platform/network/chromium/ResourceRequest.h',
+            'platform/network/chromium/ResourceResponse.cpp',
             'platform/network/chromium/ResourceResponse.h',
             'platform/network/chromium/SocketStreamError.h',
             'platform/network/chromium/SocketStreamHandle.h',
