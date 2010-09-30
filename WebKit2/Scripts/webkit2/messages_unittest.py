@@ -57,6 +57,7 @@ messages -> WebPage {
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
     Close()
 
+    PreferencesDidChange(WebKit::WebPreferencesStore store)
     SendDoubleAndFloat(double d, float f)
     SendInts(Vector<uint64_t> ints, Vector<Vector<uint64_t> > intVectors)
 
@@ -81,7 +82,6 @@ _expected_results = {
                 ('WTF::String', 'url'),
             ),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments1<const WTF::String&>',
         },
         {
             'name': 'TouchEvent',
@@ -89,7 +89,6 @@ _expected_results = {
                 ('WebKit::WebTouchEvent', 'event'),
             ),
             'condition': 'ENABLE(TOUCH_EVENTS)',
-            'base_class': 'CoreIPC::Arguments1<const WebKit::WebTouchEvent&>',
         },
         {
             'name': 'DidReceivePolicyDecision',
@@ -99,13 +98,18 @@ _expected_results = {
                 ('uint32_t', 'policyAction'),
             ),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t>',
         },
         {
             'name': 'Close',
             'parameters': (),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments0',
+        },
+        {
+            'name': 'PreferencesDidChange',
+            'parameters': (
+                ('WebKit::WebPreferencesStore', 'store'),
+            ),
+            'condition': None,
         },
         {
             'name': 'SendDoubleAndFloat',
@@ -114,7 +118,6 @@ _expected_results = {
                 ('float', 'f'),
             ),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments2<double, float>',
         },
         {
             'name': 'SendInts',
@@ -123,7 +126,6 @@ _expected_results = {
                 ('Vector<Vector<uint64_t> >', 'intVectors')
             ),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments1<const Vector<uint64_t>&>',
         },
         {
             'name': 'CreatePlugin',
@@ -135,8 +137,6 @@ _expected_results = {
                 ('bool', 'result'),
             ),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&>',
-            'reply_base_class': 'CoreIPC::Arguments1<bool>',
         },
         {
             'name': 'RunJavaScriptAlert',
@@ -146,8 +146,6 @@ _expected_results = {
             ),
             'reply_parameters': (),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments2<uint64_t, const WTF::String&>',
-            'reply_base_class': 'CoreIPC::Arguments0',
         },
         {
             'name': 'GetPlugins',
@@ -158,8 +156,6 @@ _expected_results = {
                 ('Vector<WebCore::PluginInfo>', 'plugins'),
             ),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments1<bool>',
-            'reply_base_class': 'CoreIPC::Arguments1<Vector<WebCore::PluginInfo>&>',
         },
         {
             'name': 'GetPluginProcessConnection',
@@ -170,9 +166,6 @@ _expected_results = {
                 ('CoreIPC::Connection::Handle', 'connectionHandle'),
             ),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments1<const WTF::String&>',
-            'reply_base_class': 'CoreIPC::Arguments1<CoreIPC::Connection::Handle&>',
-            'delayed_reply_base_class': 'CoreIPC::Arguments1<const CoreIPC::Connection::Handle&>',
         },
         {
             'name': 'DidCreateWebProcessConnection',
@@ -180,7 +173,6 @@ _expected_results = {
                 ('CoreIPC::MachPort', 'connectionIdentifier'),
             ),
             'condition': None,
-            'base_class': 'CoreIPC::Arguments2<double, float>',
         },
     ),
 }
@@ -256,6 +248,7 @@ namespace WTF {
 }
 
 namespace WebKit {
+    struct WebPreferencesStore;
     class WebTouchEvent;
 }
 
@@ -270,6 +263,7 @@ enum Kind {
 #endif
     DidReceivePolicyDecisionID,
     CloseID,
+    PreferencesDidChangeID,
     SendDoubleAndFloatID,
     SendIntsID,
     CreatePluginID,
@@ -307,6 +301,14 @@ struct DidReceivePolicyDecision : CoreIPC::Arguments3<uint64_t, uint64_t, uint32
 
 struct Close : CoreIPC::Arguments0 {
     static const Kind messageID = CloseID;
+};
+
+struct PreferencesDidChange : CoreIPC::Arguments1<const WebKit::WebPreferencesStore&> {
+    static const Kind messageID = PreferencesDidChangeID;
+    explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
+        : CoreIPC::Arguments1<const WebKit::WebPreferencesStore&>(store)
+    {
+    }
 };
 
 struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
@@ -421,6 +423,7 @@ _expected_receiver_implementation = """/*
 #include "Plugin.h"
 #include "WebEvent.h"
 #include "WebPageMessages.h"
+#include "WebPreferencesStore.h"
 
 namespace WebKit {
 
@@ -440,6 +443,9 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
         return;
     case Messages::WebPage::CloseID:
         CoreIPC::handleMessage<Messages::WebPage::Close>(arguments, this, &WebPage::close);
+        return;
+    case Messages::WebPage::PreferencesDidChangeID:
+        CoreIPC::handleMessage<Messages::WebPage::PreferencesDidChange>(arguments, this, &WebPage::preferencesDidChange);
         return;
     case Messages::WebPage::SendDoubleAndFloatID:
         CoreIPC::handleMessage<Messages::WebPage::SendDoubleAndFloat>(arguments, this, &WebPage::sendDoubleAndFloat);

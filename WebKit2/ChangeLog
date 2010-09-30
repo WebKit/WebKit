@@ -1,3 +1,18 @@
+2010-09-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Forward declare structs with 'struct' in the message headers
+        https://bugs.webkit.org/show_bug.cgi?id=46925
+        <rdar://problem/8497940>
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class): New function which given a type and a namespace returns the correct
+        forward declaration syntax (struct or class).
+
+        * Scripts/webkit2/messages_unittest.py:
+        Update expected results.
+
 2010-09-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Antti Koivisto.

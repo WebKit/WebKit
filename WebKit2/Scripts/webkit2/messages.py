@@ -198,10 +198,21 @@ def message_to_struct_declaration(message):
     return surround_in_condition(''.join(result), message.condition)
 
 
+def struct_or_class(namespace, type):
+    structs = frozenset([
+        'WebKit::WebPreferencesStore',
+    ])
+
+    qualified_name = '%s::%s' % (namespace, type)
+    if qualified_name in structs:
+        return 'struct %s' % type
+
+    return 'class %s' % type
+
 def forward_declarations_for_namespace(namespace, types):
     result = []
     result.append('namespace %s {\n' % namespace)
-    result += ['    class %s;\n' % x for x in types]
+    result += ['    %s;\n' % struct_or_class(namespace, x) for x in types]
     result.append('}\n')
     return ''.join(result)
 
