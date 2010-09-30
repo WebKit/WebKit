@@ -881,8 +881,8 @@ TestSuite.prototype.exportResultsForAllTests = function()
   var _self = this;
   this.queryDatabaseForAllTests('test',
       function(item) {
-        var htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus, item.hcomment);
-        var xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus, item.xcomment);
+        var htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus ? item.hstatus : '?', item.hcomment);
+        var xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus ? item.xstatus : '?', item.xcomment);
         exportTests.push({
           'test' : item.test,
           'html4' : htmlLine,
@@ -1011,8 +1011,8 @@ TestSuite.prototype.exportResultsForTestsWithMismatchedResults = function()
   var _self = this;
   this.queryDatabaseForTestsWithMixedStatus(
       function(item) {
-        var htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus, item.hcomment);
-        var xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus, item.xcomment);
+        var htmlLine= _self.createExportLine(kHTML4Data, item.test, item.hstatus ? item.hstatus : '?', item.hcomment);
+        var xhtmlLine = _self.createExportLine(kXHTML1Data, item.test, item.xstatus ? item.xstatus : '?', item.xcomment);
         exportTests.push({
           'test' : item.test,
           'html4' : htmlLine,

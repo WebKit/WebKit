@@ -1,5 +1,12 @@
 2010-09-29  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix export to use '?' instead of 'null' for
+        tests with no results.
+        
+        * CSSTestSuiteHarness/harness/harness.js:
+
+2010-09-29  Simon Fraser  <simon.fraser@apple.com>
+
         Add a warning when a test requires special steps.
         Add a Print Preview button for 'paged' tests that
         brings up the print dialog, allowing the user to 
