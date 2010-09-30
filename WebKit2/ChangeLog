@@ -1,3 +1,16 @@
+2010-09-30  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Original patch by Zalan Bujtas.
+
+        The m_readBuffer might be smaller than the incoming message size and
+        thus result in memory corruption. Do a similar fix as the win port,
+        resizing the m_readBuffer to have room for the message.
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::readyReadHandler):
+
 2010-09-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Simon Fraser.

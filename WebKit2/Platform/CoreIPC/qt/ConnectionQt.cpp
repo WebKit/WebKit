@@ -66,6 +66,9 @@ void Connection::readyReadHandler()
         if (m_socket->bytesAvailable() < m_currentMessageSize)
             return;
 
+        if (m_readBuffer.size() < m_currentMessageSize)
+            m_readBuffer.grow(m_currentMessageSize);
+
         size_t numberOfBytesRead = m_socket->read(reinterpret_cast<char*>(m_readBuffer.data()), m_currentMessageSize);
         ASSERT_UNUSED(numberOfBytesRead, numberOfBytesRead);
 
