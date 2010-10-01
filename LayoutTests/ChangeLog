@@ -1,3 +1,11 @@
+2010-10-01  Adam Barth  <abarth@webkit.org>
+
+        Add a Gtk-specific baseline for a WebSocket test.
+
+        * platform/gtk/http/tests/websocket: Added.
+        * platform/gtk/http/tests/websocket/tests: Added.
+        * platform/gtk/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt: Added.
+
 2010-10-01  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.
