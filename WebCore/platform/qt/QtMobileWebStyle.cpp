@@ -18,7 +18,7 @@
  *
  */
 #include "config.h"
-#include "Maemo5Webstyle.h"
+#include "QtMobileWebStyle.h"
 
 #include "QtStyleOptionWebComboBox.h"
 
@@ -26,7 +26,7 @@
 #include <QPixmapCache>
 #include <QStyleOption>
 
-Maemo5WebStyle::Maemo5WebStyle()
+QtMobileWebStyle::QtMobileWebStyle()
 {
 }
 
@@ -44,7 +44,7 @@ static inline void drawRectangularControlBackground(QPainter* painter, const QPe
     painter->setBrush(oldBrush);
 }
 
-void Maemo5WebStyle::drawChecker(QPainter* painter, int size, QColor color) const
+void QtMobileWebStyle::drawChecker(QPainter* painter, int size, QColor color) const
 {
     int border = qMin(qMax(1, int(0.2 * size)), 6);
     int checkerSize = size - 2 * border;
@@ -67,7 +67,7 @@ void Maemo5WebStyle::drawChecker(QPainter* painter, int size, QColor color) cons
     painter->drawLines(lines.constData(), lines.size());
 }
 
-QPixmap Maemo5WebStyle::findChecker(const QRect& rect, bool disabled) const
+QPixmap QtMobileWebStyle::findChecker(const QRect& rect, bool disabled) const
 {
     int size = qMin(rect.width(), rect.height());
     QPixmap result;
@@ -77,24 +77,31 @@ QPixmap Maemo5WebStyle::findChecker(const QRect& rect, bool disabled) const
         result = QPixmap(size, size);
         result.fill(Qt::transparent);
         QPainter painter(&result);
-        drawChecker(&painter, size, disabled ? Qt::gray : Qt::black);
+        drawChecker(&painter, size, disabled ? Qt::lightGray : Qt::darkGray);
         QPixmapCache::insert(key, result);
     }
     return result;
 }
 
-void Maemo5WebStyle::drawRadio(QPainter* painter, const QSize& size, bool checked, QColor color) const
+void QtMobileWebStyle::drawRadio(QPainter* painter, const QSize& size, bool checked, QColor color) const
 {
     painter->setRenderHint(QPainter::Antialiasing, true);
 
     // deflate one pixel
     QRect rect = QRect(QPoint(1, 1), QSize(size.width() - 2, size.height() - 2));
+    const QPoint centerGradient(rect.bottomRight() * 0.7);
 
-    QPen pen(Qt::black);
-    pen.setWidth(1);
+    QRadialGradient radialGradient(centerGradient, centerGradient.x() - 1);
+    radialGradient.setColorAt(0.0, Qt::white);
+    radialGradient.setColorAt(0.6, Qt::white);
+    radialGradient.setColorAt(1.0, color);
+
     painter->setPen(color);
-    painter->setBrush(Qt::white);
+    painter->setBrush(color);
     painter->drawEllipse(rect);
+    painter->setBrush(radialGradient);
+    painter->drawEllipse(rect);
+
     int border = 0.1 * (rect.width() + rect.height());
     border = qMin(qMax(2, border), 10);
     rect.adjust(border, border, -border, -border);
@@ -105,7 +112,7 @@ void Maemo5WebStyle::drawRadio(QPainter* painter, const QSize& size, bool checke
     }
 }
 
-QPixmap Maemo5WebStyle::findRadio(const QSize& size, bool checked, bool disabled) const
+QPixmap QtMobileWebStyle::findRadio(const QSize& size, bool checked, bool disabled) const
 {
     QPixmap result;
     static const QString prefix = "$qt-maemo5-" + QLatin1String(metaObject()->className()) + "-radio-";
@@ -115,19 +122,29 @@ QPixmap Maemo5WebStyle::findRadio(const QSize& size, bool checked, bool disabled
         result = QPixmap(size);
         result.fill(Qt::transparent);
         QPainter painter(&result);
-        drawRadio(&painter, size, checked, disabled ? Qt::gray : Qt::black);
+        drawRadio(&painter, size, checked, disabled ? Qt::lightGray : Qt::darkGray);
         QPixmapCache::insert(key, result);
     }
     return result;
 }
 
-void Maemo5WebStyle::drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
+void QtMobileWebStyle::drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const
 {
     switch (element) {
     case CE_CheckBox: {
         QRect rect = option->rect;
         const bool disabled = !(option->state & State_Enabled);
-        drawRectangularControlBackground(painter, QPen(disabled ? Qt::gray : Qt::black), rect, option->palette.base());
+
+        QLinearGradient linearGradient(rect.topLeft(), rect.bottomLeft());
+        if (disabled) {
+            linearGradient.setColorAt(0.0, Qt::lightGray);
+            linearGradient.setColorAt(0.5, Qt::white);
+        } else {
+            linearGradient.setColorAt(0.0, Qt::darkGray);
+            linearGradient.setColorAt(0.5, Qt::white);
+        }
+
+        drawRectangularControlBackground(painter, QPen(disabled ? Qt::lightGray : Qt::darkGray), rect, linearGradient);
         rect.adjust(1, 1, -1, -1);
 
         if (option->state & State_Off)
@@ -155,7 +172,7 @@ void Maemo5WebStyle::drawControl(ControlElement element, const QStyleOption* opt
     }
 }
 
-void Maemo5WebStyle::drawMultipleComboButton(QPainter* painter, const QSize& size, QColor color) const
+void QtMobileWebStyle::drawMultipleComboButton(QPainter* painter, const QSize& size, QColor color) const
 {
     int rectWidth = size.width() - 1;
     int width = qMax(2, rectWidth >> 3);
@@ -170,17 +187,25 @@ void Maemo5WebStyle::drawMultipleComboButton(QPainter* painter, const QSize& siz
     painter->drawRect(2 * (width + distance), top, width, width);
 }
 
-void Maemo5WebStyle::drawSimpleComboButton(QPainter* painter, const QSize& size, QColor color) const
+void QtMobileWebStyle::drawSimpleComboButton(QPainter* painter, const QSize& size, QColor color) const
 {
-    QPolygon polygon;
     int width = size.width();
-    polygon.setPoints(3, 0, 0,  width - 1, 0,  width >> 1, size.height());
+    int midle = width >> 1;
+    QVector<QLine> lines(width + 1);
+
+    for (int x = 0, y = 0;  x < midle; x++, y++) {
+        lines[x] = QLine(x, y, x, y + 2);
+        lines[x + midle] = QLine(width - x - 1, y, width - x - 1, y + 2);
+    }
+    // Just to ensure the lines' intersection.
+    lines[width] = QLine(midle, midle, midle, midle + 2);
+
     painter->setPen(color);
     painter->setBrush(color);
-    painter->drawPolygon(polygon);
+    painter->drawLines(lines);
 }
 
-QSize Maemo5WebStyle::getButtonImageSize(const QSize& buttonSize) const
+QSize QtMobileWebStyle::getButtonImageSize(const QSize& buttonSize) const
 {
     const int border = qMax(3, buttonSize.width() >> 3) << 1;
 
@@ -195,10 +220,10 @@ QSize Maemo5WebStyle::getButtonImageSize(const QSize& buttonSize) const
     else
         width = height << 1;
 
-    return QSize(width + 1, width >> 1);
+    return QSize(width + 1, width);
 }
 
-QPixmap Maemo5WebStyle::findComboButton(const QSize& size, bool multiple, bool disabled) const
+QPixmap QtMobileWebStyle::findComboButton(const QSize& size, bool multiple, bool disabled) const
 {
     QPixmap result;
     QSize imageSize = getButtonImageSize(size);
@@ -214,15 +239,15 @@ QPixmap Maemo5WebStyle::findComboButton(const QSize& size, bool multiple, bool d
         result.fill(Qt::transparent);
         QPainter painter(&result);
         if (multiple)
-            drawMultipleComboButton(&painter, imageSize, disabled ? Qt::gray : Qt::black);
+            drawMultipleComboButton(&painter, imageSize, disabled ? Qt::lightGray : Qt::darkGray);
         else
-            drawSimpleComboButton(&painter, imageSize, disabled ? Qt::gray : Qt::black);
+            drawSimpleComboButton(&painter, imageSize, disabled ? Qt::lightGray : Qt::darkGray);
         QPixmapCache::insert(key, result);
     }
     return result;
 }
 
-void Maemo5WebStyle::drawComplexControl(ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget) const
+void QtMobileWebStyle::drawComplexControl(ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget) const
 {
     switch (control) {
     case CC_ComboBox: {

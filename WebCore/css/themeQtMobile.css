@@ -31,9 +31,10 @@ input[type="reset"],
 input[type="file"]::-webkit-file-upload-button, button,
 select {
     padding: 2px 18px 3px 18px;
-    border: 1px solid black;
+    border: 1px solid gray;
     -webkit-border-radius:5px;
-    background-color: ButtonFace;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0.0, #e5e5e5), color-stop(0.4, #ffffff));
+    color: #3e3e3e;
 }
 
 input[type="button"]:disabled,
@@ -50,8 +51,8 @@ input[type="submit"]:active,
 input[type="reset"]:active,
 input[type="file"]:active::-webkit-file-upload-button,
 button:active,
-select:active{
-    background-color: ButtonShadow;
+select:active {
+    background: ButtonShadow;
 }
 
 input[type="button"]:active:disabled,

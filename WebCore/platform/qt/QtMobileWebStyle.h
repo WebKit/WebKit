@@ -18,14 +18,14 @@
  *
  */
 
-#ifndef Maemo5Webstyle_h
-#define Maemo5Webstyle_h
+#ifndef QtMobileWebStyle_h
+#define QtMobileWebStyle_h
 
 #include <QWindowsStyle>
 
-class Maemo5WebStyle : public QWindowsStyle {
+class QtMobileWebStyle : public QWindowsStyle {
 public:
-    Maemo5WebStyle();
+    QtMobileWebStyle();
 
     void drawControl(ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget = 0) const;
     void drawComplexControl(ComplexControl cc, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget = 0) const;
@@ -44,4 +44,4 @@ private:
 
 };
 
-#endif // Maemo5WebStyle_h
+#endif // QtMobileWebStyle_h

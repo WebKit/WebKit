@@ -43,7 +43,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #if USE(QT_MOBILE_THEME)
-#include "Maemo5Webstyle.h"
+#include "QtMobileWebStyle.h"
 #endif
 #include "NotImplemented.h"
 #include "Page.h"
@@ -152,7 +152,7 @@ RenderThemeQt::RenderThemeQt(Page* page)
 #endif
 
 #if USE(QT_MOBILE_THEME)
-    m_fallbackStyle = new Maemo5WebStyle;
+    m_fallbackStyle = new QtMobileWebStyle;
 #else
     m_fallbackStyle = QStyleFactory::create(QLatin1String("windows"));
 #endif

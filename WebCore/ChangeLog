@@ -1,3 +1,34 @@
+2010-10-01  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] New buttons style for Qt Mobile theme
+        https://bugs.webkit.org/show_bug.cgi?id=46920
+
+        Rename Maemo5Webstyle to QtMobileWebStyle since it implements the style for all Qt mobile platform.
+        Adjust new Qt mobile style for buttons, radios, checks and combos.
+
+        * WebCore.pro:
+        * css/themeQtMobile.css: Adjust gradient color for buttons and combos.
+        (select):
+        (select:active):
+        * platform/qt/QtMobileWebStyle.cpp: Renamed from platform/qt/Maemo5Webstyle.cpp to match name scheme.
+        (QtMobileWebStyle::QtMobileWebStyle):
+        (drawRectangularControlBackground):
+        (QtMobileWebStyle::drawChecker):
+        (QtMobileWebStyle::findChecker):
+        (QtMobileWebStyle::drawRadio): Adjust gradient color for RadioButton.
+        (QtMobileWebStyle::findRadio):
+        (QtMobileWebStyle::drawControl): Adjust gradient color for CheckBox.
+        (QtMobileWebStyle::drawMultipleComboButton):
+        (QtMobileWebStyle::drawSimpleComboButton): Adjust ComboBox arrow.
+        (QtMobileWebStyle::getButtonImageSize):
+        (QtMobileWebStyle::findComboButton):
+        (QtMobileWebStyle::drawComplexControl):
+        * platform/qt/QtMobileWebStyle.h: Renamed from platform/qt/Maemo5Webstyle.h to match name scheme.
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::RenderThemeQt):
+
 2010-10-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

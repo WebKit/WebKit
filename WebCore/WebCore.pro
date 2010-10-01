@@ -2671,8 +2671,8 @@ SOURCES += \
 
 
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
-    HEADERS += platform/qt/Maemo5Webstyle.h
-    SOURCES += platform/qt/Maemo5Webstyle.cpp
+    HEADERS += platform/qt/QtMobileWebStyle.h
+    SOURCES += platform/qt/QtMobileWebStyle.cpp
 }
 
 maemo5 {
