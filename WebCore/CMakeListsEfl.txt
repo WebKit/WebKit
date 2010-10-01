@@ -59,7 +59,6 @@ LIST(APPEND WebCore_SOURCES
   platform/posix/FileSystemPOSIX.cpp
   platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
   plugins/PluginDataNone.cpp
-  plugins/PluginViewNone.cpp
 )
 
 IF (WTF_PLATFORM_CAIRO)

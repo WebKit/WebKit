@@ -1374,6 +1374,7 @@ SET(WebCore_SOURCES
     plugins/DOMPlugin.cpp
     plugins/PluginData.cpp
     plugins/PluginMainThreadScheduler.cpp
+    plugins/PluginPackage.cpp
 
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp
@@ -1609,6 +1610,20 @@ IF (ENABLE_MATHML)
         mathml/RenderMathMLSquareRoot.cpp
         mathml/RenderMathMLSubSup.cpp
         mathml/RenderMathMLUnderOver.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_NETSCAPE_PLUGIN_API)
+    LIST(APPEND WebCore_SOURCES
+        plugins/PluginDebug.cpp
+        plugins/PluginStream.cpp
+        plugins/PluginView.cpp
+        plugins/npapi.cpp
+    )
+ELSE ()
+    LIST(APPEND WebCore_SOURCES
+        plugins/PluginPackageNone.cpp
+        plugins/PluginViewNone.cpp
     )
 ENDIF ()
 

@@ -1,3 +1,13 @@
+2010-10-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        [CMake] Add handling for ENABLE(NETSCAPE_PLUGIN_API)
+        https://bugs.webkit.org/show_bug.cgi?id=46309
+
+        * CMakeLists.txt:
+        * CMakeListsEfl.txt:
+
 2010-10-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.
