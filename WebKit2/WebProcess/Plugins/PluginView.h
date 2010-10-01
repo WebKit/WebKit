@@ -127,7 +127,10 @@ private:
 #if PLATFORM(WIN)
     virtual HWND nativeParentWindow();
 #endif
-
+    virtual String proxiesForURL(const String&);
+    virtual String cookiesForURL(const String&);
+    virtual void setCookiesForURL(const String& urlString, const String& cookieString);
+    
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);
     virtual void didFailLoad(WebFrame*, bool wasCancelled);

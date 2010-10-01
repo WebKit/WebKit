@@ -70,7 +70,7 @@ public:
     virtual NPObject* pluginElementNPObject() = 0;
 
     // Evaluates the given script string in the context of the given NPObject.
-    virtual bool evaluate(NPObject*, const String&scriptString, NPVariant* result, bool allowPopups) = 0;
+    virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) = 0;
 
     // Set the statusbar text.
     virtual void setStatusbarText(const String&) = 0;
@@ -88,6 +88,15 @@ public:
     virtual HWND nativeParentWindow() = 0;
 #endif
 
+    // Returns the proxies for the given URL or null on failure.
+    virtual String proxiesForURL(const String&) = 0;
+
+    // Returns the cookies for the given URL or null on failure.
+    virtual String cookiesForURL(const String&) = 0;
+
+    // Sets the cookies for the given URL.
+    virtual void setCookiesForURL(const String& urlString, const String& cookieString) = 0;
+    
 protected:
     virtual ~PluginController() { }
 };

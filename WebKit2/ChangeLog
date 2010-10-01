@@ -1,3 +1,37 @@
+2010-10-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Implement NPN_GetValueForURL/NPN_SetValueForURL and stub out PluginController functions
+        https://bugs.webkit.org/show_bug.cgi?id=46992
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::copyCString):
+        Helper function for allocating a string using NPN_MemAlloc.
+
+        (WebKit::NPN_GetValueForURL):
+        Ask the plug-in for either the proxy or the cookies given an URL.
+
+        (WebKit::NPN_SetValueForURL):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        Tell the plug-in to set the cookies for the given URL.
+
+        (WebKit::NetscapePlugin::proxiesForURL):
+        (WebKit::NetscapePlugin::cookiesForURL):
+        (WebKit::NetscapePlugin::setCookiesForURL):
+        Call the corresponding PluginController functions.
+
+        * WebProcess/Plugins/PluginController.h:
+        Add new pure virtual member functions.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::proxiesForURL):
+        (WebKit::PluginView::cookiesForURL):
+        (WebKit::PluginView::setCookiesForURL):
+        Add stubbed out implementations of the new PluginController functions.
+
+        * WebProcess/Plugins/PluginView.h:
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Implement NPN_GetValue(NPNVnetscapeWindow)

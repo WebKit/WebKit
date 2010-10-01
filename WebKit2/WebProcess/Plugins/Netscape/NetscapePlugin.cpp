@@ -206,6 +206,21 @@ bool NetscapePlugin::isAcceleratedCompositingEnabled()
 #endif
 }
 
+String NetscapePlugin::proxiesForURL(const String& urlString)
+{
+    return m_pluginController->proxiesForURL(urlString);
+}
+    
+String NetscapePlugin::cookiesForURL(const String& urlString)
+{
+    return m_pluginController->cookiesForURL(urlString);
+}
+
+void NetscapePlugin::setCookiesForURL(const String& urlString, const String& cookieString)
+{
+    m_pluginController->setCookiesForURL(urlString, cookieString);
+}
+
 NPError NetscapePlugin::NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData* savedData)
 {
     return m_pluginModule->pluginFuncs().newp(pluginType, &m_npp, mode, argc, argn, argv, savedData);

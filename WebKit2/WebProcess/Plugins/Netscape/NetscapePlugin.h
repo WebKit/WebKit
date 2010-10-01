@@ -78,6 +78,10 @@ public:
 
     bool isAcceleratedCompositingEnabled();
 
+    String proxiesForURL(const String& urlString);
+    String cookiesForURL(const String& urlString);
+    void setCookiesForURL(const String& urlString, const String& cookieString);
+
     // Member functions for calling into the plug-in.
     NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData*);
     NPError NPP_Destroy(NPSavedData**);
