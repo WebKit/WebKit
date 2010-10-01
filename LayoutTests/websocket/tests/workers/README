@@ -1,0 +1,3 @@
+LayoutTests/websocket/tests/workers and this file is temporarily created to fix build breaks in Chromium.
+
+Remove this file and the directory once the build break is fixed.

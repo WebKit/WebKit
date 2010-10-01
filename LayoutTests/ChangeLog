@@ -1,3 +1,12 @@
+2010-10-01  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        Add the dummy README file to solve build breakages in Chromium.
+        It should be removed once the breakage is resolved.
+
+        * websocket/tests/workers/README: Added.
+
 2010-10-01  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.
