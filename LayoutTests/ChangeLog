@@ -1,3 +1,14 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Land post-XP results for fast/text/backslash-to-yen-sign-euc.html
+
+        The fonts this test uses must have changed after Windows XP
+
+        * platform/win-xp/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        Copied from LayoutTests/platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt.
+        * platform/win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        Updated for post-XP.
+
 2010-10-01  Adam Barth  <abarth@webkit.org>
 
         Add a Gtk-specific baseline for a WebSocket test.
