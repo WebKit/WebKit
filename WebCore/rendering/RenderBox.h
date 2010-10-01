@@ -276,6 +276,8 @@ public:
     }
 
     virtual IntSize intrinsicSize() const { return IntSize(); }
+    int intrinsicLogicalWidth() const { return style()->isVerticalBlockFlow() ? intrinsicSize().width() : intrinsicSize().height(); }
+    int intrinsicLogicalHeight() const { return style()->isVerticalBlockFlow() ? intrinsicSize().height() : intrinsicSize().width(); }
 
     // Whether or not the element shrinks to its intrinsic width (rather than filling the width
     // of a containing block).  HTML4 buttons, <select>s, <input>s, legends, and floating/compact elements do this.
@@ -284,11 +286,11 @@ public:
 
     int computeLogicalWidthUsing(LogicalWidthType, int availableLogicalWidth);
     int computeLogicalHeightUsing(const Length& height);
-    int computeReplacedWidthUsing(Length width) const;
-    int computeReplacedHeightUsing(Length height) const;
+    int computeReplacedLogicalWidthUsing(Length width) const;
+    int computeReplacedLogicalHeightUsing(Length height) const;
 
-    virtual int computeReplacedWidth(bool includeMaxWidth = true) const;
-    virtual int computeReplacedHeight() const;
+    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual int computeReplacedLogicalHeight() const;
 
     int computePercentageLogicalHeight(const Length& height);
 

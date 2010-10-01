@@ -54,8 +54,8 @@ private:
     virtual int lineHeight(bool b, bool isRootLineBox = false) const;
     virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void computePreferredLogicalWidths();
-    virtual int computeReplacedWidth(bool includeMaxWidth = true) const;
-    virtual int computeReplacedHeight() const;
+    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual int computeReplacedLogicalHeight() const;
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 

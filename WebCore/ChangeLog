@@ -1,3 +1,51 @@
+2010-10-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46642, make replaced elements work with block-flow.  This patch changes
+        all of the computeReplacedLogicalWidth and comuteReplacedLogicalHeight functions (and their helpers) to use logical width
+        and logical height instead.
+
+        Added fast/blockflow/block-level-images.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalWidth):
+        (WebCore::RenderBox::computeReplacedLogicalWidthUsing):
+        (WebCore::RenderBox::computeReplacedLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::intrinsicLogicalWidth):
+        (WebCore::RenderBox::intrinsicLogicalHeight):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::isLogicalWidthSpecified):
+        (WebCore::RenderImage::isLogicalHeightSpecified):
+        (WebCore::RenderImage::computeReplacedLogicalWidth):
+        (WebCore::RenderImage::computeReplacedLogicalHeight):
+        (WebCore::RenderImage::calcAspectRatioLogicalWidth):
+        (WebCore::RenderImage::calcAspectRatioLogicalHeight):
+        * rendering/RenderImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::layout):
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        (WebCore::RenderReplaced::calcAspectRatioLogicalWidth):
+        (WebCore::RenderReplaced::calcAspectRatioLogicalHeight):
+        (WebCore::RenderReplaced::computePreferredLogicalWidths):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computePreferredLogicalWidths):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::computeReplacedLogicalWidth):
+        (WebCore::RenderVideo::computeReplacedLogicalHeight):
+        * rendering/RenderVideo.h:
+
 2010-10-01  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Adler.

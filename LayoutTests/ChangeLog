@@ -1,3 +1,21 @@
+2010-10-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46642, make replaced elements work with block-flow.  This patch changes
+        all of the computeReplacedLogicalWidth and comuteReplacedLogicalHeight functions (and their helpers) to use logical width
+        and logical height instead.
+
+        Added fast/blockflow/block-level-images.html
+
+        * fast/blockflow/block-level-images.html: Added.
+        * fast/blockflow/resources: Added.
+        * fast/blockflow/resources/circle.svg: Added.
+        * fast/blockflow/resources/oval.png: Added.
+        * platform/mac/fast/blockflow/block-level-images-expected.checksum: Added.
+        * platform/mac/fast/blockflow/block-level-images-expected.png: Added.
+        * platform/mac/fast/blockflow/block-level-images-expected.txt: Added.
+
 2010-09-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

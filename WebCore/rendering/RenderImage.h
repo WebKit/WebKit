@@ -58,8 +58,8 @@ protected:
     void paintFocusRings(PaintInfo&, const RenderStyle*);
     virtual void paint(PaintInfo&, int tx, int ty);
 
-    bool isWidthSpecified() const;
-    bool isHeightSpecified() const;
+    bool isLogicalWidthSpecified() const;
+    bool isLogicalHeightSpecified() const;
 
     virtual void intrinsicSizeChanged()
     {
@@ -80,11 +80,11 @@ private:
     virtual void notifyFinished(CachedResource*);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual int computeReplacedWidth(bool includeMaxWidth = true) const;
-    virtual int computeReplacedHeight() const;
+    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual int computeReplacedLogicalHeight() const;
 
-    int calcAspectRatioWidth() const;
-    int calcAspectRatioHeight() const;
+    int calcAspectRatioLogicalWidth() const;
+    int calcAspectRatioLogicalHeight() const;
 
 private:
     // Text to display as long as the image isn't available.

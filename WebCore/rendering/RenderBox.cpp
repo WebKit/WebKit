@@ -1439,7 +1439,7 @@ void RenderBox::computeLogicalWidth()
     bool stretching = (parent()->style()->boxAlign() == BSTRETCH);
     bool treatAsReplaced = shouldComputeSizeAsReplaced() && (!inVerticalBox || !stretching);
 
-    Length logicalWidthLength = (treatAsReplaced) ? Length(computeReplacedWidth(), Fixed) : style()->logicalWidth();
+    Length logicalWidthLength = (treatAsReplaced) ? Length(computeReplacedLogicalWidth(), Fixed) : style()->logicalWidth();
 
     RenderBlock* cb = containingBlock();
     int containerLogicalWidth = max(0, containingBlockLogicalWidthForContent());
@@ -1645,7 +1645,7 @@ void RenderBox::computeLogicalHeight()
                 && parent()->isFlexingChildren())
             h = Length(overrideSize() - borderAndPaddingLogicalHeight(), Fixed);
         else if (treatAsReplaced)
-            h = Length(computeReplacedHeight(), Fixed);
+            h = Length(computeReplacedLogicalHeight(), Fixed);
         else {
             h = style()->logicalHeight();
             checkMinMaxHeight = true;
@@ -1810,48 +1810,48 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
     return result;
 }
 
-int RenderBox::computeReplacedWidth(bool includeMaxWidth) const
+int RenderBox::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
-    int width = computeReplacedWidthUsing(style()->width());
-    int minW = computeReplacedWidthUsing(style()->minWidth());
-    int maxW = !includeMaxWidth || style()->maxWidth().isUndefined() ? width : computeReplacedWidthUsing(style()->maxWidth());
+    int logicalWidth = computeReplacedLogicalWidthUsing(style()->logicalWidth());
+    int minLogicalWidth = computeReplacedLogicalWidthUsing(style()->logicalMinWidth());
+    int maxLogicalWidth = !includeMaxWidth || style()->logicalMaxWidth().isUndefined() ? logicalWidth : computeReplacedLogicalWidthUsing(style()->logicalMaxWidth());
 
-    return max(minW, min(width, maxW));
+    return max(minLogicalWidth, min(logicalWidth, maxLogicalWidth));
 }
 
-int RenderBox::computeReplacedWidthUsing(Length width) const
+int RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) const
 {
-    switch (width.type()) {
+    switch (logicalWidth.type()) {
         case Fixed:
-            return computeContentBoxLogicalWidth(width.value());
+            return computeContentBoxLogicalWidth(logicalWidth.value());
         case Percent: {
             // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the
             // containing block's block-flow.
             // https://bugs.webkit.org/show_bug.cgi?id=46496
             const int cw = isPositioned() ? containingBlockWidthForPositioned(toRenderBoxModelObject(container())) : containingBlockLogicalWidthForContent();
             if (cw > 0)
-                return computeContentBoxLogicalWidth(width.calcMinValue(cw));
+                return computeContentBoxLogicalWidth(logicalWidth.calcMinValue(cw));
         }
         // fall through
         default:
-            return intrinsicSize().width();
+            return intrinsicLogicalWidth();
      }
 }
 
-int RenderBox::computeReplacedHeight() const
+int RenderBox::computeReplacedLogicalHeight() const
 {
-    int height = computeReplacedHeightUsing(style()->height());
-    int minH = computeReplacedHeightUsing(style()->minHeight());
-    int maxH = style()->maxHeight().isUndefined() ? height : computeReplacedHeightUsing(style()->maxHeight());
+    int logicalHeight = computeReplacedLogicalHeightUsing(style()->logicalHeight());
+    int minLogicalHeight = computeReplacedLogicalHeightUsing(style()->logicalMinHeight());
+    int maxLogicalHeight = style()->logicalMaxHeight().isUndefined() ? logicalHeight : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
 
-    return max(minH, min(height, maxH));
+    return max(minLogicalHeight, min(logicalHeight, maxLogicalHeight));
 }
 
-int RenderBox::computeReplacedHeightUsing(Length height) const
+int RenderBox::computeReplacedLogicalHeightUsing(Length logicalHeight) const
 {
-    switch (height.type()) {
+    switch (logicalHeight.type()) {
         case Fixed:
-            return computeContentBoxLogicalHeight(height.value());
+            return computeContentBoxLogicalHeight(logicalHeight.value());
         case Percent:
         {
             RenderObject* cb = isPositioned() ? container() : containingBlock();
@@ -1860,6 +1860,8 @@ int RenderBox::computeReplacedHeightUsing(Length height) const
                 toRenderBlock(cb)->addPercentHeightDescendant(const_cast<RenderBox*>(this));
             }
 
+            // FIXME: This calculation is not patched for block-flow yet.
+            // https://bugs.webkit.org/show_bug.cgi?id=46500
             if (cb->isPositioned() && cb->style()->height().isAuto() && !(cb->style()->top().isAuto() || cb->style()->bottom().isAuto())) {
                 ASSERT(cb->isRenderBlock());
                 RenderBlock* block = toRenderBlock(cb);
@@ -1867,25 +1869,30 @@ int RenderBox::computeReplacedHeightUsing(Length height) const
                 block->computeLogicalHeight();
                 int newHeight = block->computeContentBoxLogicalHeight(block->contentHeight());
                 block->setHeight(oldHeight);
-                return computeContentBoxLogicalHeight(height.calcValue(newHeight));
+                return computeContentBoxLogicalHeight(logicalHeight.calcValue(newHeight));
             }
             
+            // FIXME: availableLogicalHeight() is wrong if the replaced element's block-flow is perpendicular to the
+            // containing block's block-flow.
+            // https://bugs.webkit.org/show_bug.cgi?id=46496
             int availableHeight = isPositioned() ? containingBlockHeightForPositioned(toRenderBoxModelObject(cb)) : toRenderBox(cb)->availableLogicalHeight();
 
             // It is necessary to use the border-box to match WinIE's broken
             // box model.  This is essential for sizing inside
             // table cells using percentage heights.
-            if (cb->isTableCell() && (cb->style()->height().isAuto() || cb->style()->height().isPercent())) {
+            // FIXME: This needs to be made block-flow-aware.  If the cell and image are perpendicular block-flows, this isn't right.
+            // https://bugs.webkit.org/show_bug.cgi?id=46997
+            if (cb->isTableCell() && (cb->style()->logicalHeight().isAuto() || cb->style()->logicalHeight().isPercent())) {
                 // Don't let table cells squeeze percent-height replaced elements
                 // <http://bugs.webkit.org/show_bug.cgi?id=15359>
-                availableHeight = max(availableHeight, intrinsicSize().height());
-                return height.calcValue(availableHeight - borderAndPaddingHeight());
+                availableHeight = max(availableHeight, intrinsicLogicalHeight());
+                return logicalHeight.calcValue(availableHeight - borderAndPaddingLogicalHeight());
             }
 
-            return computeContentBoxLogicalHeight(height.calcValue(availableHeight));
+            return computeContentBoxLogicalHeight(logicalHeight.calcValue(availableHeight));
         }
         default:
-            return intrinsicSize().height();
+            return intrinsicLogicalHeight();
     }
 }
 
@@ -2578,7 +2585,7 @@ void RenderBox::computePositionedLogicalWidthReplaced()
     // NOTE: This value of width is FINAL in that the min/max width calculations
     // are dealt with in computeReplacedWidth().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    setWidth(computeReplacedWidth() + borderAndPaddingWidth());
+    setWidth(computeReplacedLogicalWidth() + borderAndPaddingWidth());
     const int availableSpace = containerWidth - width();
 
     /*-----------------------------------------------------------------------*\
@@ -2751,7 +2758,7 @@ void RenderBox::computePositionedLogicalHeightReplaced()
     // NOTE: This value of height is FINAL in that the min/max height calculations
     // are dealt with in computeReplacedHeight().  This means that the steps to produce
     // correct max/min in the non-replaced version, are not necessary.
-    setHeight(computeReplacedHeight() + borderAndPaddingHeight());
+    setHeight(computeReplacedLogicalHeight() + borderAndPaddingHeight());
     const int availableSpace = containerHeight - height();
 
     /*-----------------------------------------------------------------------*\

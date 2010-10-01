@@ -70,8 +70,8 @@ private:
 
     virtual void layout();
 
-    virtual int computeReplacedWidth(bool includeMaxWidth = true) const;
-    virtual int computeReplacedHeight() const;
+    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual int computeReplacedLogicalHeight() const;
     virtual int minimumReplacedHeight() const;
 
     void updatePlayer();
