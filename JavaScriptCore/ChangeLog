@@ -1,3 +1,18 @@
+2010-10-01  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Stack overflow on symbian platform.
+        https://bugs.webkit.org/show_bug.cgi?id=40598
+        
+        Move big allocation in arrayProtoFuncToString from stack to heap.
+        JSC::arrayProtoFuncToString function can be called recursivly and
+        1K allocation on stack cahse stack overflow.
+        Can be useful for other platforms with limited stack size.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncToString):
+
 2010-09-30  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

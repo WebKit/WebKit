@@ -180,7 +180,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length).toUInt32(exec);
     unsigned totalSize = length ? length - 1 : 0;
+#if OS(SYMBIAN)
+    // Symbian has very limited stack size available.
+    // This function could be called recursively and allocating 1K on stack here cause
+    // stack overflow on Symbian devices.
+    Vector<RefPtr<StringImpl> > strBuffer(length);
+#else
     Vector<RefPtr<StringImpl>, 256> strBuffer(length);
+#endif    
     for (unsigned k = 0; k < length; k++) {
         JSValue element;
         if (isRealArray && thisObj->canGetIndex(k))
