@@ -1,3 +1,13 @@
+2010-10-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/7563219> Null dereference when dragging an element with generated content
+        https://bugs.webkit.org/show_bug.cgi?id=47005
+
+        * fast/css-generated-content/drag-state-expected.txt: Added.
+        * fast/css-generated-content/drag-state.html: Added.
+
 2010-10-01  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

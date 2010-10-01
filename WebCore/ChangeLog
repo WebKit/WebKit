@@ -1,3 +1,15 @@
+2010-10-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/7563219> Null dereference when dragging an element with generated content
+        https://bugs.webkit.org/show_bug.cgi?id=47005
+
+        Test: fast/css-generated-content/drag-state.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::updateDragState): Null-check node().
+
 2010-10-01  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.
