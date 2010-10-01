@@ -96,7 +96,9 @@ public:
     RenderObject* caretRenderer() const;
 
     // Caret rect local to the caret's renderer
-    IntRect localCaretRect() const;
+    IntRect localCaretRect();
+    IntRect localCaretRectForPainting() const { return m_caretRect; }
+
     // Bounds of (possibly transformed) caret in absolute coords
     IntRect absoluteCaretBounds();
     void setNeedsLayout(bool flag = true);

@@ -67,19 +67,19 @@ SVGElement* SVGTextElement::farthestViewportElement() const
     return SVGTransformable::farthestViewportElement(this);
 }
 
-FloatRect SVGTextElement::getBBox() const
+FloatRect SVGTextElement::getBBox(StyleUpdateStrategy styleUpdateStrategy) const
 {
-    return SVGTransformable::getBBox(this);
+    return SVGTransformable::getBBox(this, styleUpdateStrategy);
 }
 
-AffineTransform SVGTextElement::getCTM() const
+AffineTransform SVGTextElement::getCTM(StyleUpdateStrategy styleUpdateStrategy) const
 {
-    return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope);
+    return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope, styleUpdateStrategy);
 }
 
-AffineTransform SVGTextElement::getScreenCTM() const
+AffineTransform SVGTextElement::getScreenCTM(StyleUpdateStrategy styleUpdateStrategy) const
 {
-    return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope);
+    return SVGLocatable::computeCTM(this, SVGLocatable::ScreenScope, styleUpdateStrategy);
 }
 
 AffineTransform SVGTextElement::animatedLocalTransform() const

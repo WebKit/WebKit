@@ -1412,6 +1412,8 @@ bail_out:
 
 void Document::updateStyleIfNeeded()
 {
+    ASSERT(!view() || (!view()->isInLayout() && !view()->isPainting()));
+    
     if (!childNeedsStyleRecalc() || inPageCache())
         return;
         
@@ -3632,6 +3634,9 @@ static Editor::Command command(Document* document, const String& commandName, bo
     Frame* frame = document->frame();
     if (!frame || frame->document() != document)
         return Editor::Command();
+
+    document->updateStyleIfNeeded();
+
     return frame->editor()->command(commandName,
         userInterface ? CommandFromDOMWithUserInterface : CommandFromDOM);
 }

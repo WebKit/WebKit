@@ -40,9 +40,9 @@ namespace WebCore {
         virtual SVGElement* nearestViewportElement() const;
         virtual SVGElement* farthestViewportElement() const;
 
-        virtual FloatRect getBBox() const;
-        virtual AffineTransform getCTM() const;
-        virtual AffineTransform getScreenCTM() const;
+        virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
+        virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
+        virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
 
         virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope mode) const { return SVGLocatable::localCoordinateSpaceTransform(mode); }
     };

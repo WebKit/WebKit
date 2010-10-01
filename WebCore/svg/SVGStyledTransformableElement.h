@@ -38,8 +38,8 @@ public:
     
     virtual bool isStyledTransformable() const { return true; }
 
-    virtual AffineTransform getCTM() const;
-    virtual AffineTransform getScreenCTM() const;
+    virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
+    virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
     virtual SVGElement* nearestViewportElement() const;
     virtual SVGElement* farthestViewportElement() const;
 
@@ -47,7 +47,7 @@ public:
     virtual AffineTransform animatedLocalTransform() const;
     virtual AffineTransform* supplementalTransform();
 
-    virtual FloatRect getBBox() const;
+    virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
 
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual void synchronizeProperty(const QualifiedName&);

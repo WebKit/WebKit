@@ -945,10 +945,10 @@ RenderObject* SelectionController::caretRenderer() const
     return paintedByBlock ? renderer : renderer->containingBlock();
 }
 
-IntRect SelectionController::localCaretRect() const
+IntRect SelectionController::localCaretRect()
 {
     if (m_needsLayout)
-        const_cast<SelectionController*>(this)->layout();
+        layout();
     
     return m_caretRect;
 }
@@ -980,7 +980,7 @@ static IntRect repaintRectForCaret(IntRect caret)
 
 IntRect SelectionController::caretRepaintRect() const
 {
-    return absoluteBoundsForLocalRect(repaintRectForCaret(localCaretRect()));
+    return absoluteBoundsForLocalRect(repaintRectForCaret(localCaretRectForPainting()));
 }
 
 bool SelectionController::recomputeCaretRect()
@@ -1072,7 +1072,7 @@ void SelectionController::paintCaret(GraphicsContext* context, int tx, int ty, c
     if (!m_selection.isCaret())
         return;
 
-    IntRect drawingRect = localCaretRect();
+    IntRect drawingRect = localCaretRectForPainting();
     drawingRect.move(tx, ty);
     IntRect caret = intersection(drawingRect, clipRect);
     if (caret.isEmpty())
