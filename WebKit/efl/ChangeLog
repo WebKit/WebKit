@@ -2,6 +2,19 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EFL] Remove check for InitLayoutCompleted on fixed_layout_size_set.
+        https://bugs.webkit.org/show_bug.cgi?id=47006
+
+        This check isn't needed and isn't done on the other ports. The fixed
+        layout property can be set before we have the first layout.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_fixed_layout_size_set):
+
+2010-10-01  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL] Call contents_resize when the main frame gets resized.
         https://bugs.webkit.org/show_bug.cgi?id=47004
 

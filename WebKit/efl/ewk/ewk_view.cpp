@@ -1048,10 +1048,6 @@ void ewk_view_fixed_layout_size_set(Evas_Object* o, Evas_Coord w, Evas_Coord h)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv);
 
-    WebCore::FrameLoaderClientEfl* client = static_cast<WebCore::FrameLoaderClientEfl*>(priv->main_frame->loader()->client());
-    if (!client->getInitLayoutCompleted())
-        return;
-
     WebCore::FrameView* view = sd->_priv->main_frame->view();
     if (w <= 0 && h <= 0) {
         if (!priv->fixed_layout.use)
