@@ -266,7 +266,7 @@ bool WebSocketChannel::processBuffer()
             LOG(Network, "WebSocketChannel %p connected", this);
             skipBuffer(headerLength);
             m_client->didConnect();
-            LOG(Network, "remaining in read buf %ul", m_bufferSize);
+            LOG(Network, "remaining in read buf %lu", m_bufferSize);
             return m_buffer;
         }
         LOG(Network, "WebSocketChannel %p connection failed", this);

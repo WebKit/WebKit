@@ -700,7 +700,7 @@ PassRefPtr<StringImpl> StringImpl::replace(UChar pattern, StringImpl* replacemen
         
     int repStrLength = replacement->length();
     int srcSegmentStart = 0;
-    int matchCount = 0;
+    unsigned matchCount = 0;
     
     // Count the matches
     while ((srcSegmentStart = find(pattern, srcSegmentStart)) >= 0) {
@@ -759,7 +759,7 @@ PassRefPtr<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* repl
         
     int repStrLength = replacement->length();
     int srcSegmentStart = 0;
-    int matchCount = 0;
+    unsigned matchCount = 0;
     
     // Count the matches
     while ((srcSegmentStart = find(pattern, srcSegmentStart)) >= 0) {

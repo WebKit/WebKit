@@ -128,7 +128,7 @@ void Attr::setValue(const AtomicString& value)
 
 void Attr::setValue(const AtomicString& value, ExceptionCode&)
 {
-    if (m_element && m_element->isIdAttributeName(m_attribute->name()))
+    if (m_element && m_element->idAttributeName() == m_attribute->name())
         m_element->updateId(m_element->fastGetAttribute(m_element->idAttributeName()), value);
 
     setValue(value);
@@ -176,7 +176,7 @@ void Attr::childrenChanged(bool changedByParser, Node* beforeChange, Node* after
             val += static_cast<Text *>(n)->data();
     }
 
-    if (m_element && m_element->isIdAttributeName(m_attribute->name()))
+    if (m_element && m_element->idAttributeName() == m_attribute->name())
         m_element->updateId(m_attribute->value(), val);
 
     m_attribute->setValue(val.impl());
