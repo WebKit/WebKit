@@ -1,3 +1,12 @@
+2010-10-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed.
+
+        [Qt] fast/media/color-does-not-include-alpha.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=46966
+
+        * platform/qt/Skipped: fast/media/color-does-not-include-alpha.html added until fix.
+
 2010-10-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
