@@ -1,3 +1,13 @@
+2010-10-01  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        DOMFocusIn/DOMFocusOut return focusin/focusout Event.type
+        https://bugs.webkit.org/show_bug.cgi?id=42580
+        <rdar://problem/8107311>
+        
+        * fast/events/focusinout.html: Modified to check the event type.
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Land new Windows results for

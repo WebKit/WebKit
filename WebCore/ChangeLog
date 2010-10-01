@@ -1,3 +1,24 @@
+2010-10-01  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        DOMFocusIn/DOMFocusOut return focusin/focusout Event.type
+        https://bugs.webkit.org/show_bug.cgi?id=42580
+        <rdar://problem/8107311>
+        
+        This change removes the aliased type machinery from the Event class.
+        We now fire the event with the new name and the oldname.
+        
+        Tests: Modified fast/events/focusinout.html to check the event
+        type.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Event.cpp: Removed aliasedType and hasAliasedType.
+        * dom/Event.h: Removed aliasedType and hasAliasedType.
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners): Removed aliasedType related code.
+
 2010-10-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.
