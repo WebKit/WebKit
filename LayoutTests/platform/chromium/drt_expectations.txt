@@ -48,12 +48,14 @@ BUG_DRT MAC : fast/canvas/webgl/gl-bind-attrib-location-test.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/gl-enable-enum-test.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/gl-enum-tests.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/gl-get-calls.html = TEXT PASS
+BUG_DRT MAC : fast/canvas/webgl/gl-getstring.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/gl-pixelstorei.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/gl-uniform-arrays.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/gl-uniformmatrix4fv.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/gl-vertex-attrib.html = TEXT PASS
+BUG_DRT MAC : fast/canvas/webgl/glsl-conformance.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/incorrect-context-object-behaviour.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/index-validation-copies-indices.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/index-validation-crash-with-buffer-sub-data.html = TEXT PASS
@@ -64,6 +66,7 @@ BUG_DRT MAC : fast/canvas/webgl/invalid-UTF-16.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/invalid-passed-params.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/null-object-behaviour.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/null-uniform-location.html = TEXT PASS
+BUG_DRT MAC : fast/canvas/webgl/object-deletion-behaviour.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/point-size.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/program-test.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/read-pixels-pack-alignment.html = TEXT PASS
@@ -84,6 +87,7 @@ BUG_DRT MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TE
 BUG_DRT MAC : fast/canvas/webgl/triangle.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/uniform-location.html = TEXT PASS
 BUG_DRT MAC : fast/canvas/webgl/viewport-unchanged-upon-resize.html = TEXT PASS
+BUG_DRT MAC : http/tests/canvas/webgl/origin-clean-conformance.html = TEXT
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
@@ -105,12 +109,16 @@ BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 BUG_DRT WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
 BUG_DRT WIN : fast/harness/show-modal-dialog.html = TEXT
 
+// This is an error which test_shell can't find.
+BUGWK43960 WIN MAC LINUX : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
+
 // Not investigated.
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT
-BUG_DRT WIN MAC LINUX : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
+BUG_DRT MAC LINUX : fast/filesystem/read-directory.html = TEXT
 BUG_DRT MAC LINUX : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE PASS
 BUG_DRT MAC LINUX : http/tests/plugins/post-url-file.html = TIMEOUT
+BUG_DRT MAC LINUX : media/audio-only-video-intrinsic-size.html = TIMEOUT
 BUG_DRT LINUX : fast/events/select-onchange-crash.html = CRASH
 BUG_DRT LINUX : fast/forms/implicit-submission.html = CRASH
 BUG_DRT LINUX : fast/forms/select-double-onchange.html = CRASH
@@ -120,6 +128,8 @@ BUG_DRT LINUX : fast/text/international/thai-line-breaks.html = IMAGE
 BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT LINUX : http/tests/multipart/invalid-image-data.html = IMAGE
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
+BUG_DRT LINUX : userscripts/user-script-audio-document.html = TEXT
+BUG_DRT MAC : fast/filesystem/flags-passing.html = TEXT
 BUG_DRT MAC : media/video-aspect-ratio.html = TIMEOUT
 BUG_DRT MAC : media/video-controls-transformed.html = TEXT
 BUG_DRT MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
