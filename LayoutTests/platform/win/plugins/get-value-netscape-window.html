@@ -1,0 +1,19 @@
+<html>
+<head>
+<body>
+<embed id="testPlugin" 
+       type="application/x-webkit-test-netscape"
+       src="data:text/plain,"
+       test="get-value-netscape-window">
+</embed>
+
+<div>
+    This tests that the browser supports NPN_GetValue(NPNVnetscapeWindow).
+</div>
+<script>
+  if (window.layoutTestController)
+      layoutTestController.dumpAsText();
+</script>
+</body>
+</html>
+

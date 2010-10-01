@@ -1,3 +1,28 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Implement NPN_GetValue(NPNVnetscapeWindow)
+
+        Fixes <http://webkit.org/b/46726> <rdar://problem/8486319>
+        Right-clicking on windowless Flash plugin in WebKit2 makes a context
+        menu appear in the bottom-right corner of the screen
+
+        Test: platform/win/plugins/get-value-netscape-window.html
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue): Added case for NPNVnetscapeWindow that calls
+        through to NetscapePlugin::containingWindow.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Added containingWindow
+        on Windows.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::containingWindow): Added. Calls through to
+        the PluginController.
+        (WebKit::NetscapePlugin::platformPostInitialize): Changed to use
+        containingWindow.
+
 2010-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

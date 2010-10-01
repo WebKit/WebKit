@@ -390,6 +390,10 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\Tests\win\GetValueNetscapeWindow.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\win\WindowGeometryInitializedBeforeSetWindow.cpp"
 					>
 				</File>

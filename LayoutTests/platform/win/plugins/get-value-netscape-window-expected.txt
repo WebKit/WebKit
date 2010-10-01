@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 0: PLUGIN: NPN_GetValue(NPNVnetscapeWindow) succeeded
+
+This tests that the browser supports NPN_GetValue(NPNVnetscapeWindow).

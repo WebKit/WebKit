@@ -62,6 +62,7 @@ public:
     // NPN functions.
     NPIdentifier NPN_GetStringIdentifier(const NPUTF8* name);
     NPIdentifier NPN_GetIntIdentifier(int32_t intid);
+    NPError NPN_GetValue(NPNVariable, void* value);
     NPObject* NPN_CreateObject(NPClass*);
     bool NPN_RemoveProperty(NPObject*, NPIdentifier propertyName);
     

@@ -75,6 +75,11 @@ NPIdentifier PluginTest::NPN_GetIntIdentifier(int32_t intid)
     return browser->getintidentifier(intid);
 }
 
+NPError PluginTest::NPN_GetValue(NPNVariable variable, void* value)
+{
+    return browser->getvalue(m_npp, variable, value);
+}
+
 NPObject* PluginTest::NPN_CreateObject(NPClass* npClass)
 {
     return browser->createobject(m_npp, npClass);

@@ -1,3 +1,27 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Test NPN_GetValue(NPNVnetscapeWindow)
+
+        Test for <http://webkit.org/b/46726> <rdar://problem/8486319>
+        Right-clicking on windowless Flash plugin in WebKit2 makes a context
+        menu appear in the bottom-right corner of the screen
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPN_GetValue): Added. Calls through to the browser.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h: Added NPN_GetValue.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/GetValueNetscapeWindow.cpp: Added.
+        (GetValueNetscapeWindow::GetValueNetscapeWindow): Initialize members.
+        (GetValueNetscapeWindow::NPP_SetWindow): Test that
+        NPN_GetValue(NPNVnetscapeWindow) returns a valid HWND and that it
+        isn't our HWND.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        Added GetValueNetscapeWindow.
+
 2010-10-01  Andreas Kling  <andreas.kling@nokia.com>
 
         Unreviewed, adding my webkit.org identity to reviewer list.

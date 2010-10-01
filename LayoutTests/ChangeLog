@@ -1,5 +1,18 @@
 2010-10-01  Adam Roben  <aroben@apple.com>
 
+        Support for testing NPN_GetValue(NPNVnetscapeWindow)
+
+        Test for <http://webkit.org/b/46726> <rdar://problem/8486319>
+        Right-clicking on windowless Flash plugin in WebKit2 makes a context
+        menu appear in the bottom-right corner of the screen
+
+        Reviewed by Anders Carlsson.
+
+        * platform/win/plugins/get-value-netscape-window-expected.txt: Added.
+        * platform/win/plugins/get-value-netscape-window.html: Added.
+
+2010-10-01  Adam Roben  <aroben@apple.com>
+
         Add expected Windows results for
         scrollbars/custom-scrollbar-with-incomplete-style.html
 
