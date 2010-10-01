@@ -1,5 +1,16 @@
 2010-10-01  Adam Roben  <aroben@apple.com>
 
+        Remove bogus Windows results for clip-path-referencing-use2.svg
+
+        Fixes <http://webkit.org/b/46919> <rdar://problem/8497626> REGRESSION?
+        (r65617?): svg/custom/clip-path-referencing-use2.svg fails on Windows
+
+        Rubber-stamped by Nikolas Zimmermann.
+
+        * platform/win/svg/custom/clip-path-referencing-use2-expected.txt: Removed.
+
+2010-10-01  Adam Roben  <aroben@apple.com>
+
         Make regression tests pass on machines with 16-bit displays
 
         I made these tests require 24-bit displays in r68808 and r68809,
