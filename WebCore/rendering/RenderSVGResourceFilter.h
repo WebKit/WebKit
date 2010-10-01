@@ -68,7 +68,7 @@ public:
     virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode);
     virtual void postApplyResource(RenderObject*, GraphicsContext*&, unsigned short resourceMode);
 
-    virtual FloatRect resourceBoundingBox(const FloatRect&);
+    virtual FloatRect resourceBoundingBox(RenderObject*);
 
     PassOwnPtr<SVGFilterBuilder> buildPrimitives();
 

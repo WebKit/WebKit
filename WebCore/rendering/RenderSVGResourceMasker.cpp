@@ -209,12 +209,22 @@ void RenderSVGResourceMasker::calculateMaskContentRepaintRect()
     }
 }
 
-FloatRect RenderSVGResourceMasker::resourceBoundingBox(const FloatRect& objectBoundingBox)
+FloatRect RenderSVGResourceMasker::resourceBoundingBox(RenderObject* object)
 {
+    // Save the reference to the calling object for relayouting it on changing resource properties.
+    if (!m_masker.contains(object))
+        m_masker.set(object, new MaskerData);
+
+    // Resource was not layouted yet. Give back clipping rect of the mask.
+    SVGMaskElement* maskElement = static_cast<SVGMaskElement*>(node());
+    FloatRect objectBoundingBox = object->objectBoundingBox();
+    FloatRect maskBoundaries = maskElement->maskBoundingBox(objectBoundingBox);
+    if (selfNeedsLayout())
+        return maskBoundaries;
+
     if (m_maskBoundaries.isEmpty())
         calculateMaskContentRepaintRect();
 
-    SVGMaskElement* maskElement = static_cast<SVGMaskElement*>(node());
     if (!maskElement)
         return FloatRect();
 
@@ -226,7 +236,7 @@ FloatRect RenderSVGResourceMasker::resourceBoundingBox(const FloatRect& objectBo
         maskRect =  transform.mapRect(maskRect);
     }
 
-    maskRect.intersect(maskElement->maskBoundingBox(objectBoundingBox));
+    maskRect.intersect(maskBoundaries);
     return maskRect;
 }
 

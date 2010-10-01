@@ -1,5 +1,66 @@
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r60541.
+
+    2010-06-01  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG repaintRect should be empty if content got clipped away
+        https://bugs.webkit.org/show_bug.cgi?id=39965
+        
+        The SVG repaintRect of the renderer was not empty, if the content got clipped away.
+        The MaskerData/ClipperData <-> RenderObject mapping is set up during the layout phase now, to be able to
+        relayout a RenderObject, if it's repaintRect is empty. This has the following reason:
+        We apply the object to the resource on painting at the moment.
+        With an empty repaintRect, paint() quits earlier and therefore the object doesn't get applied to the resource.
+        This can cause problems, if the resource get changed by animations or scripts.
+        On a change, the resource tells all it's callers to relayout.
+        If the reference to the caller (our RenderObject) is missing, the object won't ever update
+        and therefore won't get drawn.
+        We already have LayoutTests that cover this problem. The complete repaintRect calculation
+        (including the smallest clipping area and shadow size calculation) moved from the renderers to SVGRenderSupport.
+        This eliminates redundant code.
+
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::updateCachedBoundaries):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::repaintRectInLocalCoordinates):
+        * rendering/RenderSVGResource.h:
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox):
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::resourceBoundingBox):
+        * rendering/RenderSVGResourceFilter.h:
+        * rendering/RenderSVGResourceGradient.h:
+        (WebCore::RenderSVGResourceGradient::resourceBoundingBox):
+        * rendering/RenderSVGResourceMarker.h:
+        (WebCore::RenderSVGResourceMarker::resourceBoundingBox):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::resourceBoundingBox):
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGResourcePattern.h:
+        (WebCore::RenderSVGResourcePattern::resourceBoundingBox):
+        * rendering/RenderSVGResourceSolidColor.h:
+        (WebCore::RenderSVGResourceSolidColor::resourceBoundingBox):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::strokeBoundingBox):
+        (WebCore::RenderSVGText::repaintRectInLocalCoordinates):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderBase::intersectRepaintRectWithResources):
+        * rendering/SVGRenderSupport.h:
+        * rendering/SVGRenderTreeAsText.cpp:
+        (WebCore::writeResources):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::hasClipper):
+        (WebCore::SVGRenderStyle::hasMasker):
+        (WebCore::SVGRenderStyle::hasFilter):
+
+2010-10-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r59081.
 
     2010-05-10  Dirk Schulze  <krit@webkit.org>

@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceMasker {mask} [id="mask"] [maskUnits=objectBoundingBox] [maskContentUnits=userSpaceOnUse]
         RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-0.50,-0.50 L-0.40,-0.50 L-0.40,-0.40 L-0.50,-0.40 Z"]
-    RenderPath {rect} at (20,20) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M20.00,20.00 L120.00,20.00 L120.00,120.00 L20.00,120.00 Z"]
+    RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#008000]}] [data="M20.00,20.00 L120.00,20.00 L120.00,120.00 L20.00,120.00 Z"]
       [masker="mask"] RenderSVGResourceMasker {mask} at (0,0) size 0x0
     RenderSVGText {text} at (60,60) size 21x18 contains 1 chunk(s)
       [masker="mask"] RenderSVGResourceMasker {mask} at (0,0) size 0x0

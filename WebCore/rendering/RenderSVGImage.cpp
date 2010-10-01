@@ -153,22 +153,7 @@ FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
         return m_cachedLocalRepaintRect;
 
     m_cachedLocalRepaintRect = m_localBounds;
-
-    // FIXME: We need to be careful here. We assume that there is no filter,
-    // clipper or masker if the rects are empty.
-    FloatRect rect = filterBoundingBoxForRenderer(this);
-    if (!rect.isEmpty())
-        m_cachedLocalRepaintRect = rect;
-
-    rect = clipperBoundingBoxForRenderer(this);
-    if (!rect.isEmpty())
-        m_cachedLocalRepaintRect.intersect(rect);
-
-    rect = maskerBoundingBoxForRenderer(this);
-    if (!rect.isEmpty())
-        m_cachedLocalRepaintRect.intersect(rect);
-
-    style()->svgStyle()->inflateForShadow(m_cachedLocalRepaintRect);
+    intersectRepaintRectWithResources(this, m_cachedLocalRepaintRect);
 
     return m_cachedLocalRepaintRect;
 }

@@ -280,31 +280,33 @@ bool SVGRenderBase::isOverflowHidden(const RenderObject* object)
     return object->style()->overflowX() == OHIDDEN;
 }
 
-FloatRect SVGRenderBase::filterBoundingBoxForRenderer(const RenderObject* object) const
+void SVGRenderBase::intersectRepaintRectWithResources(const RenderObject* object, FloatRect& repaintRect) const
 {
+    ASSERT(object);
+    ASSERT(object->style());
+    const SVGRenderStyle* svgStyle = object->style()->svgStyle();
+    if (!svgStyle)
+        return;
+        
+    RenderObject* renderer = const_cast<RenderObject*>(object);
 #if ENABLE(FILTERS)
-    if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(object->document(), object->style()->svgStyle()->filterResource()))
-        return filter->resourceBoundingBox(object->objectBoundingBox());
-#else
-    UNUSED_PARAM(object);
+    if (svgStyle->hasFilter()) {
+        if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(object->document(), svgStyle->filterResource()))
+            repaintRect = filter->resourceBoundingBox(renderer);
+    }
 #endif
-    return FloatRect();
-}
 
-FloatRect SVGRenderBase::clipperBoundingBoxForRenderer(const RenderObject* object) const
-{
-    if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), object->style()->svgStyle()->clipperResource()))
-        return clipper->resourceBoundingBox(object->objectBoundingBox());
-
-    return FloatRect();
-}
-
-FloatRect SVGRenderBase::maskerBoundingBoxForRenderer(const RenderObject* object) const
-{
-    if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), object->style()->svgStyle()->maskerResource()))
-        return masker->resourceBoundingBox(object->objectBoundingBox());
-
-    return FloatRect();
+    if (svgStyle->hasClipper()) {
+        if (RenderSVGResourceClipper* clipper = getRenderSVGResourceById<RenderSVGResourceClipper>(object->document(), svgStyle->clipperResource()))
+            repaintRect.intersect(clipper->resourceBoundingBox(renderer));
+    }
+    
+    if (svgStyle->hasMasker()) {
+        if (RenderSVGResourceMasker* masker = getRenderSVGResourceById<RenderSVGResourceMasker>(object->document(), svgStyle->maskerResource()))
+            repaintRect.intersect(masker->resourceBoundingBox(renderer));
+    }
+    
+    svgStyle->inflateForShadow(repaintRect);
 }
 
 static inline void invalidatePaintingResource(SVGPaint* paint, RenderObject* object)
