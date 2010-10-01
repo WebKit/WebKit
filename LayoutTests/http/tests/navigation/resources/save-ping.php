@@ -1,5 +1,5 @@
 <?php
-$pingFile = fopen("ping.txt", 'w');
+$pingFile = fopen("ping.txt.tmp", 'w');
 $httpHeaders = $_SERVER;
 ksort($httpHeaders, SORT_STRING);
 foreach ($httpHeaders as $name => $value) {
@@ -7,4 +7,5 @@ foreach ($httpHeaders as $name => $value) {
         fwrite($pingFile, "$name: $value\n");
 }
 fclose($pingFile);
+rename("ping.txt.tmp", "ping.txt");
 ?>

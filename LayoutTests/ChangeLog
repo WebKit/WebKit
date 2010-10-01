@@ -1,3 +1,24 @@
+2010-10-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        http/tests/navigation/ping-same-origin.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=46961
+
+        This test fails by forgetting to print out the REQUEST_METHOD:
+
+        http://build.webkit.org/results/SnowLeopard%20Intel%20Release%20(Tests)/r68727%20(18470)/http/tests/navigation/ping-same-origin-pretty-diff.html
+
+        The only way this makes sense is if the file isn't finished writing by
+        the time it gets read.  This can happen because the reader is polling
+        the file for existence (!) to decide whether to read it.
+
+        This patch writes to a temporary location and then moves the finished
+        bytes into the well-known location atomically.  I haven't verified that
+        it fixes the flakiness, but it seems like a good bet.
+
+        * http/tests/navigation/resources/save-ping.php:
+
 2010-10-01  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by James Robinson.
