@@ -53,7 +53,7 @@ public:
     bool atEnd() const;
 
     UChar current() const;
-    WTF::Unicode::Direction direction() const;
+    ALWAYS_INLINE WTF::Unicode::Direction direction() const;
 
     RenderBlock* block;
     RenderObject* obj;

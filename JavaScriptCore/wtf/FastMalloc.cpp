@@ -2185,10 +2185,10 @@ class TCMalloc_ThreadCache {
   // Total byte size in cache
   size_t Size() const { return size_; }
 
-  void* Allocate(size_t size);
+  ALWAYS_INLINE void* Allocate(size_t size);
   void Deallocate(void* ptr, size_t size_class);
 
-  void FetchFromCentralCache(size_t cl, size_t allocationSize);
+  ALWAYS_INLINE void FetchFromCentralCache(size_t cl, size_t allocationSize);
   void ReleaseToCentralCache(size_t cl, int N);
   void Scavenge();
   void Print() const;
@@ -2289,12 +2289,12 @@ class TCMalloc_Central_FreeList {
   // REQUIRES: lock_ is held
   // Release an object to spans.
   // May temporarily release lock_.
-  void ReleaseToSpans(void* object);
+  ALWAYS_INLINE void ReleaseToSpans(void* object);
 
   // REQUIRES: lock_ is held
   // Populate cache by fetching from the page heap.
   // May temporarily release lock_.
-  void Populate();
+  ALWAYS_INLINE void Populate();
 
   // REQUIRES: lock is held.
   // Tries to make room for a TCEntry.  If the cache is full it will try to
@@ -2307,7 +2307,7 @@ class TCMalloc_Central_FreeList {
   // just iterates over the sizeclasses but does so without taking a lock.
   // Returns true on success.
   // May temporarily lock a "random" size class.
-  static bool EvictRandomSizeClass(size_t locked_size_class, bool force);
+  static ALWAYS_INLINE bool EvictRandomSizeClass(size_t locked_size_class, bool force);
 
   // REQUIRES: lock_ is *not* held.
   // Tries to shrink the Cache.  If force is true it will relase objects to
@@ -3705,7 +3705,7 @@ extern "C"
 #define do_malloc do_malloc<crashOnFailure>
 
 template <bool crashOnFailure>
-void* malloc(size_t);
+ALWAYS_INLINE void* malloc(size_t);
 
 void* fastMalloc(size_t size)
 {
@@ -3766,7 +3766,7 @@ void free(void* ptr) {
 extern "C" 
 #else
 template <bool crashOnFailure>
-void* calloc(size_t, size_t);
+ALWAYS_INLINE void* calloc(size_t, size_t);
 
 void* fastCalloc(size_t n, size_t elem_size)
 {
@@ -3830,7 +3830,7 @@ void cfree(void* ptr) {
 extern "C" 
 #else
 template <bool crashOnFailure>
-void* realloc(void*, size_t);
+ALWAYS_INLINE void* realloc(void*, size_t);
 
 void* fastRealloc(void* old_ptr, size_t new_size)
 {

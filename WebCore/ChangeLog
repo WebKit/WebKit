@@ -1,3 +1,15 @@
+2010-10-01  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Geoffrey Garen.
+        Specify ALWAYS_INLINE at function declaration not function definition
+        https://bugs.webkit.org/show_bug.cgi?id=46960
+
+        For functions defined with ALWAYS_INLINE, add the attribute to the declaration as well.
+
+        * css/CSSStyleSelector.h:
+        * rendering/InlineIterator.h:
+        * rendering/style/RenderStyle.h:
+
 2010-10-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
