@@ -1,3 +1,10 @@
+2010-10-01  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed build fix.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+
 2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Andreas Kling.
