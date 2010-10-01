@@ -315,6 +315,18 @@ accessibility/aria-hidden-update.html
 # http://webkit.org/b/46919
 svg/custom/clip-path-referencing-use2.svg
 
+# Assertion/crash in notificationListenerProc http://webkit.org/b/44136
+plugins/access-after-page-destroyed.html
+
+# Timing out http://webkit.org/b/46975
+http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html
+
+# Failing in Release builds http://webkit.org/b/46976
+fast/js/sputnik/Conformance/11_Expressions/11.7_Bitwise_Shift_Operators/11.7.3_The_Unsigned_Right_Shift_Operator/S11.7.3_A2.3_T1.html
+
+# Timing out http://webkit.org/b/46977
+inspector/debugger-pause-on-breakpoint.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################

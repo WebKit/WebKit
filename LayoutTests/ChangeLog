@@ -1,3 +1,9 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Add some more failing tests to the Windows Skipped file
+
+        * platform/win/Skipped:
+
 2010-10-01  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, added a expectation.
