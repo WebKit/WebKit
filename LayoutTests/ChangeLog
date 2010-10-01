@@ -1,3 +1,11 @@
+2010-10-01  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Change test expectations for Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Remove a test I just fixed from the Skipped file

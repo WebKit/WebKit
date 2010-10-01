@@ -3156,3 +3156,6 @@ BUGWK46941 WIN : fast/media/color-does-not-include-alpha.html = TEXT
 // New failures introduced in 68854.
 BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
+
+// New failure introduced in 68896.
+BUGWK44406 : http/tests/appcache/foreign-fallback.html = TEXT
