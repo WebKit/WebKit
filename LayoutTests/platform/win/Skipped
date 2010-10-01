@@ -312,12 +312,6 @@ websocket/tests/workers/worker-handshake-challenge-randomness.html
 # http://webkit.org/b/46911
 accessibility/aria-hidden-update.html
 
-# Crash in AccessibilityUIElement::addSelection http://webkit.org/b/46913
-platform/win/accessibility/selection-and-focus.html
-
-# http://webkit.org/b/46914
-platform/win/accessibility/img-alt-attribute.html
-
 # http://webkit.org/b/46919
 svg/custom/clip-path-referencing-use2.svg
 

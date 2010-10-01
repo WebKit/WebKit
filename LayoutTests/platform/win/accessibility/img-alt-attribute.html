@@ -8,7 +8,7 @@
                 layoutTestController.dumpAsText();
         </script>
     </head>
-    <body id="body">
+    <body>
         <img aria-labeledby="desc" alt="alternate text" title="title">
         <img alt="alternate text" title="title">
 
@@ -24,12 +24,14 @@
 
         <script>
             if (window.accessibilityController) {
-                document.getElementById("body").focus();
+                document.body.focus();
 
-                var e = accessibilityController.focusedElement.childAtIndex(0);
+                var anonymousBlock = accessibilityController.focusedElement.childAtIndex(0);
+                var e = anonymousBlock.childAtIndex(0);
+                
                 shouldBe('e.title', '"ARIA labeled-by name"');
 
-                e = accessibilityController.focusedElement.childAtIndex(1);
+                e = anonymousBlock.childAtIndex(1);
                 shouldBe('e.title', '"alternate text"');
             }
         </script>

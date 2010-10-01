@@ -1,3 +1,22 @@
+2010-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        REGRESSION (r65681): Crash in AccessibilityUIElement::addSelection when running platform/win/accessibility/selection-and-focus.html
+        https://bugs.webkit.org/show_bug.cgi?id=46913
+
+        REGRESSION (r65681): platform/win/accessibility/img-alt-attribute.html failing on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=46914
+
+        <rdar://problem/8497332&8497393>
+
+        Fix two layout tests that made incorrect assumptions about the structure of the
+        accessibility tree.
+
+        * platform/win/Skipped:
+        * platform/win/accessibility/img-alt-attribute.html:
+        * platform/win/accessibility/selection-and-focus.html:
+
 2010-09-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -4,7 +4,7 @@
     <script src="../../../fast/js/resources/js-test-pre.js"></script>
 </head>
 
-<body id="body">
+<body>
 
 <select id="selectElement" multiple title="selectElement">
     <option SELECTED>Option 0</option>
@@ -39,12 +39,15 @@
         document.getElementById("notDRT").style.visibility = "hidden";
 
         layoutTestController.dumpAsText();
-
-        document.getElementById("body").focus();
+        
+        document.body.focus();
         shouldBe('accessibilityController.focusedElement.role', '"document"');
 
+        var anonymousBlock = accessibilityController.focusedElement.childAtIndex(0);
+        
         // Focus the select element.
-        accessibilityController.focusedElement.childAtIndex(0).takeFocus();
+        var select = anonymousBlock.childAtIndex(0);
+        select.takeFocus();
         shouldBe('accessibilityController.focusedElement.role', '"list"');
 
         debug("");
