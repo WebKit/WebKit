@@ -109,6 +109,9 @@ public:
     // frame name unique within the hierarchy.
     virtual void setName(const WebString&) = 0;
 
+    // A globally unique identifier for this frame.
+    virtual long long identifier() const = 0;
+
     // The url of the document loaded in this frame.  This is equivalent to
     // dataSource()->request().url().
     virtual WebURL url() const = 0;
