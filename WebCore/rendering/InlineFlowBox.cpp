@@ -643,11 +643,24 @@ void InlineFlowBox::paint(RenderObject::PaintInfo& paintInfo, int tx, int ty)
             // outlines.
             if (renderer()->style()->visibility() == VISIBLE && renderer()->hasOutline() && !isRootInlineBox()) {
                 RenderInline* inlineFlow = toRenderInline(renderer());
-                if ((inlineFlow->continuation() || inlineFlow->isInlineContinuation()) && !boxModelObject()->hasSelfPaintingLayer()) {
+
+                RenderBlock* cb = 0;
+                bool containingBlockPaintsContinuationOutline = inlineFlow->continuation() || inlineFlow->isInlineContinuation();
+                if (containingBlockPaintsContinuationOutline) {
+                    cb = renderer()->containingBlock()->containingBlock();
+
+                    for (RenderBoxModelObject* box = boxModelObject(); box != cb; box = box->parent()->enclosingBoxModelObject()) {
+                        if (box->hasSelfPaintingLayer()) {
+                            containingBlockPaintsContinuationOutline = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (containingBlockPaintsContinuationOutline) {
                     // Add ourselves to the containing block of the entire continuation so that it can
                     // paint us atomically.
-                    RenderBlock* block = renderer()->containingBlock()->containingBlock();
-                    block->addContinuationWithOutline(toRenderInline(renderer()->node()->renderer()));
+                    cb->addContinuationWithOutline(toRenderInline(renderer()->node()->renderer()));
                 } else if (!inlineFlow->isInlineContinuation())
                     paintInfo.outlineObjects->add(inlineFlow);
             }

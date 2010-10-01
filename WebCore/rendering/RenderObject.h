@@ -192,7 +192,8 @@ public:
 
     // Convenience function for getting to the nearest enclosing box of a RenderObject.
     RenderBox* enclosingBox() const;
-    
+    RenderBoxModelObject* enclosingBoxModelObject() const;
+
     virtual bool isEmpty() const { return firstChild() == 0; }
 
 #ifndef NDEBUG
