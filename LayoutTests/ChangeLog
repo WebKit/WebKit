@@ -1,3 +1,50 @@
+2010-09-30  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Adjust test expectations for Chromium.
+
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode-expected.txt: Added.
+        * platform/chromium-linux/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode-expected.txt: Added.
+        * platform/chromium-mac/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele Peterson.
