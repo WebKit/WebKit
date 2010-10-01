@@ -17,38 +17,33 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTextFragment_h
-#define SVGTextFragment_h
+#ifndef SVGTextLayoutEngineSpacing_h
+#define SVGTextLayoutEngineSpacing_h
 
 #if ENABLE(SVG)
-#include "AffineTransform.h"
+#include "SVGTextMetrics.h"
 
 namespace WebCore {
 
-// A SVGTextFragment describes a text fragment of a RenderSVGInlineText which can be rendered at once.
-struct SVGTextFragment {
-    SVGTextFragment()
-        : positionListOffset(0)
-        , length(0)
-        , x(0)
-        , y(0)
-        , width(0)
-        , height(0)
-    {
-    }
+class Font;
+class SVGRenderStyle;
+class SVGElement;
 
-    // The first rendered character starts at RenderSVGInlineText::characters() + positionListOffset.
-    unsigned positionListOffset;
-    unsigned length;
+// Helper class used by SVGTextLayoutEngine to handle 'kerning' / 'letter-spacing' and 'word-spacing'.
+class SVGTextLayoutEngineSpacing : public Noncopyable {
+public:
+    SVGTextLayoutEngineSpacing(const Font&);
 
-    float x;
-    float y;
-    float width;
-    float height;
+    float calculateSVGKerning(bool isVerticalText, const SVGTextMetrics::Glyph& currentGlyph);
+    float calculateCSSKerningAndSpacing(const SVGRenderStyle*, SVGElement* lengthContext, const UChar* currentCharacter);
 
-    // Includes rotation/glyph-orientation-(horizontal|vertical) transforms, lengthAdjust="spacingAndGlyphs" (for textPath only),
-    // as well as orientation related shifts (see SVGTextLayoutEngine, which builds this transformation).
-    AffineTransform transform;
+private:
+    const Font& m_font;
+    const UChar* m_lastCharacter;
+
+#if ENABLE(SVG_FONTS)
+    SVGTextMetrics::Glyph m_lastGlyph;
+#endif
 };
 
 } // namespace WebCore

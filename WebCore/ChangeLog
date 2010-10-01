@@ -1,5 +1,39 @@
 2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Dirk Schulze.
+
+        Add two new helper files for the new SVGTextLayoutEngine
+        https://bugs.webkit.org/show_bug.cgi?id=46972
+
+        Refactor code from SVGTextLayoutUtilities into two seperated classes.
+        SVGTextLayoutUtilities will be removed, as soon as the main clss SVGTextLayoutEngine lands and gets used.
+
+        Doesn't affect any functionality yet, as the new classes are not used so far.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/svg/SVGTextFragment.h:
+        * rendering/svg/SVGTextLayoutEngineBaseline.cpp: Added.
+        (WebCore::SVGTextLayoutEngineBaseline::SVGTextLayoutEngineBaseline):
+        (WebCore::SVGTextLayoutEngineBaseline::calculateBaselineShift):
+        (WebCore::SVGTextLayoutEngineBaseline::dominantBaselineToAlignmentBaseline):
+        (WebCore::SVGTextLayoutEngineBaseline::calculateAlignmentBaselineShift):
+        (WebCore::SVGTextLayoutEngineBaseline::calculateGlyphOrientationAngle):
+        (WebCore::glyphOrientationIsMultiplyOf180Degrees):
+        (WebCore::SVGTextLayoutEngineBaseline::calculateGlyphAdvanceAndOrientation):
+        * rendering/svg/SVGTextLayoutEngineBaseline.h: Added.
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp: Added.
+        (WebCore::SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing):
+        (WebCore::SVGTextLayoutEngineSpacing::calculateSVGKerning):
+        (WebCore::SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing):
+        * rendering/svg/SVGTextLayoutEngineSpacing.h: Added.
+
+2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Andreas Kling.
 
         Rename SVGTextLayoutBuilder to SVGTextLayoutAttributesBuilder

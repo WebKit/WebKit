@@ -718,6 +718,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/svg/SVGTextChunk.cpp \
 	rendering/svg/SVGTextLayoutAttributes.cpp \
 	rendering/svg/SVGTextLayoutAttributesBuilder.cpp \
+	rendering/svg/SVGTextLayoutEngineBaseline.cpp \
+	rendering/svg/SVGTextLayoutEngineSpacing.cpp \
 	rendering/svg/SVGTextMetrics.cpp \
 	rendering/svg/SVGTextQuery.cpp
 endif

@@ -2816,6 +2816,10 @@ webcore_sources += \
 	WebCore/rendering/svg/SVGTextLayoutAttributes.h \
 	WebCore/rendering/svg/SVGTextLayoutAttributesBuilder.cpp \
 	WebCore/rendering/svg/SVGTextLayoutAttributesBuilder.h \
+	WebCore/rendering/svg/SVGTextLayoutEngineBaseline.cpp \
+	WebCore/rendering/svg/SVGTextLayoutEngineBaseline.h \
+	WebCore/rendering/svg/SVGTextLayoutEngineSpacing.cpp \
+	WebCore/rendering/svg/SVGTextLayoutEngineSpacing.h \
 	WebCore/rendering/svg/SVGTextMetrics.cpp \
 	WebCore/rendering/svg/SVGTextMetrics.h \
 	WebCore/rendering/svg/SVGTextQuery.cpp \

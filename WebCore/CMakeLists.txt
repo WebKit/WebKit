@@ -1708,6 +1708,8 @@ IF (ENABLE_SVG)
         rendering/svg/SVGTextChunk.cpp
         rendering/svg/SVGTextLayoutAttributes.cpp
         rendering/svg/SVGTextLayoutAttributesBuilder.cpp
+        rendering/svg/SVGTextLayoutBaseline.cpp
+        rendering/svg/SVGTextLayoutSpacing.cpp
         rendering/svg/SVGTextMetrics.cpp
         rendering/svg/SVGTextQuery.cpp
         svg/ColorDistance.cpp

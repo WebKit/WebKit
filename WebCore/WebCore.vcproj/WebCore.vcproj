@@ -33486,6 +33486,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\rendering\svg\SVGTextLayoutEngineBaseline.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextLayoutEngineBaseline.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextLayoutEngineSpacing.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextLayoutEngineSpacing.h"
+					>
+				</File>
+				<File
 					RelativePath="..\rendering\svg\SVGTextMetrics.cpp"
 					>
 				</File>

@@ -64,6 +64,10 @@
 		080AEC820ED8708B00DF4CCE /* WMLIntrinsicEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */; };
 		080AEC830ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */; };
 		080AEC840ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 080AEC800ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h */; };
+		080E49251255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080E49211255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.cpp */; };
+		080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */ = {isa = PBXBuildFile; fileRef = 080E49221255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h */; };
+		080E49271255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080E49231255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.cpp */; };
+		080E49281255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h in Headers */ = {isa = PBXBuildFile; fileRef = 080E49241255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h */; };
 		080FAE1A0EEEBDA800AACDE9 /* WMLTemplateElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 080FAE180EEEBDA800AACDE9 /* WMLTemplateElement.cpp */; };
 		080FAE1B0EEEBDA800AACDE9 /* WMLTemplateElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 080FAE190EEEBDA800AACDE9 /* WMLTemplateElement.h */; };
 		081093DB1255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 081093D91255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.cpp */; };
@@ -6007,6 +6011,10 @@
 		080AEC7E0ED8708B00DF4CCE /* WMLIntrinsicEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLIntrinsicEvent.h; sourceTree = "<group>"; };
 		080AEC7F0ED8708B00DF4CCE /* WMLIntrinsicEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLIntrinsicEventHandler.cpp; sourceTree = "<group>"; };
 		080AEC800ED8708B00DF4CCE /* WMLIntrinsicEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLIntrinsicEventHandler.h; sourceTree = "<group>"; };
+		080E49211255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutEngineBaseline.cpp; sourceTree = "<group>"; };
+		080E49221255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextLayoutEngineBaseline.h; sourceTree = "<group>"; };
+		080E49231255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutEngineSpacing.cpp; sourceTree = "<group>"; };
+		080E49241255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextLayoutEngineSpacing.h; sourceTree = "<group>"; };
 		080FAE180EEEBDA800AACDE9 /* WMLTemplateElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLTemplateElement.cpp; sourceTree = "<group>"; };
 		080FAE190EEEBDA800AACDE9 /* WMLTemplateElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLTemplateElement.h; sourceTree = "<group>"; };
 		081093D91255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutAttributesBuilder.cpp; sourceTree = "<group>"; };
@@ -11661,6 +11669,10 @@
 				088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */,
 				081093D91255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.cpp */,
 				081093DA1255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.h */,
+				080E49211255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.cpp */,
+				080E49221255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h */,
+				080E49231255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.cpp */,
+				080E49241255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h */,
 				08F0BFC01255C53C00075185 /* SVGTextMetrics.cpp */,
 				08F0BFC11255C53C00075185 /* SVGTextMetrics.h */,
 				0854B0121255E4E600B9CDD0 /* SVGTextQuery.cpp */,
@@ -20937,6 +20949,8 @@
 				0854B0231255E4E600B9CDD0 /* SVGRootInlineBox.h in Headers */,
 				0854B0251255E4E600B9CDD0 /* SVGTextQuery.h in Headers */,
 				081093DC1255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.h in Headers */,
+				080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */,
+				080E49281255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23463,6 +23477,8 @@
 				0854B0221255E4E600B9CDD0 /* SVGRootInlineBox.cpp in Sources */,
 				0854B0241255E4E600B9CDD0 /* SVGTextQuery.cpp in Sources */,
 				081093DB1255F0E700ED9D29 /* SVGTextLayoutAttributesBuilder.cpp in Sources */,
+				080E49251255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.cpp in Sources */,
+				080E49271255F3BD00EFCA27 /* SVGTextLayoutEngineSpacing.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
