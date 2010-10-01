@@ -15,6 +15,37 @@
 
         Add test expectations for Chromium.
 
+        * platform/chromium-linux/fast/blockflow/block-level-images-expected.checksum: Added.
+        * platform/chromium-linux/fast/blockflow/block-level-images-expected.png: Added.
+        * platform/chromium-linux/fast/css/rtl-to-viewport-expected.checksum: Added.
+        * platform/chromium-linux/fast/css/rtl-to-viewport-expected.png: Added.
+        * platform/chromium-linux/fast/css/rtl-to-viewport-expected.txt: Added.
+        * platform/chromium-linux/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt: Copied from LayoutTests/platform/chromium-linux/websocket/tests/bad-sub-protocol-control-chars-expected.txt.
+        * platform/chromium-linux/http/tests/websocket/tests/url-parsing-expected.txt: Added.
+        * platform/chromium-mac/fast/blockflow/block-level-images-expected.checksum: Added.
+        * platform/chromium-mac/fast/blockflow/block-level-images-expected.png: Added.
+        * platform/chromium-mac/fast/css/rtl-to-viewport-expected.checksum: Added.
+        * platform/chromium-mac/fast/css/rtl-to-viewport-expected.png: Added.
+        * platform/chromium-mac/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt: Copied from LayoutTests/platform/chromium-linux/websocket/tests/bad-sub-protocol-control-chars-expected.txt.
+        * platform/chromium-mac/http/tests/websocket/tests/url-parsing-expected.txt: Added.
+        * platform/chromium-win-xp/fast/blockflow/block-level-images-expected.png: Added.
+        * platform/chromium-win-xp/fast/css/rtl-to-viewport-expected.png: Added.
+        * platform/chromium-win/fast/blockflow/block-level-images-expected.checksum: Added.
+        * platform/chromium-win/fast/blockflow/block-level-images-expected.png: Added.
+        * platform/chromium-win/fast/css/rtl-to-viewport-expected.checksum: Added.
+        * platform/chromium-win/fast/css/rtl-to-viewport-expected.png: Added.
+        * platform/chromium-win/fast/css/rtl-to-viewport-expected.txt: Added.
+        * platform/chromium-win/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt: Copied from LayoutTests/platform/chromium-win/websocket/tests/bad-sub-protocol-control-chars-expected.txt.
+        * platform/chromium-win/http/tests/websocket/tests/url-parsing-expected.txt: Added.
+        * platform/chromium-win/platform/win/plugins/get-value-netscape-window-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2010-10-01  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        Add test expectations for Chromium.
+
         * platform/chromium/test_expectations.txt:
 
 2010-10-01  Adam Roben  <aroben@apple.com>

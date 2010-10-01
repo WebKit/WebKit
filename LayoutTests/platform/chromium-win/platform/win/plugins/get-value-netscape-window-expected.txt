@@ -1,0 +1,1 @@
+This tests that the browser supports NPN_GetValue(NPNVnetscapeWindow).
