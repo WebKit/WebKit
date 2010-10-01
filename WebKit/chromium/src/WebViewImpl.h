@@ -538,8 +538,9 @@ private:
     // early. This member holds on to the GC3D in this case.
     OwnPtr<WebCore::GraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
     RefPtr<WebCore::SharedGraphicsContext3D> m_sharedContext3D;
-
+#endif
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
 };
 

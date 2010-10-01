@@ -1,3 +1,16 @@
+2010-09-30  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by James Robinson.
+
+        [Chromium] build fails unless ACCELERATED_2D_CANVAS defined
+        https://bugs.webkit.org/show_bug.cgi?id=46955
+        
+        Added ifdef guard around SharedGraphicsContext3D.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::getSharedGraphicsContext3D):
+        * src/WebViewImpl.h:
+
 2010-09-30  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Chris Marrin.

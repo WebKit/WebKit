@@ -183,8 +183,11 @@ public:
     bool canvasClipApplied() const;
     bool useGPU() { return m_useGPU; }
     void setSharedGraphicsContext3D(SharedGraphicsContext3D*, DrawingBuffer*, const IntSize&);
+#if ENABLE(ACCELERATED_2D_CANVAS)
     GLES2Canvas* gpuCanvas() const { return m_gpuCanvas.get(); }
-
+#else
+    GLES2Canvas* gpuCanvas() const { return 0; }
+#endif
     // Call these before making a call that manipulates the underlying
     // skia::PlatformCanvas or WebCore::GLES2Canvas
     void prepareForSoftwareDraw() const;
@@ -224,7 +227,9 @@ private:
     FloatSize m_imageResamplingHintDstSize;
     bool m_drawingToImageBuffer;
     bool m_useGPU;
+#if ENABLE(ACCELERATED_2D_CANVAS)
     OwnPtr<GLES2Canvas> m_gpuCanvas;
+#endif
     mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
     mutable RefPtr<Texture> m_uploadTexture;
     mutable IntRect m_softwareDirtyRect;

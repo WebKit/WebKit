@@ -34,12 +34,10 @@
 
 #include "AffineTransform.h"
 #include "DrawingBuffer.h"
-#include "GLES2Canvas.h"
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
 #include "NativeImageSkia.h"
-#include "SharedGraphicsContext3D.h"
 #include "SkiaUtils.h"
 #include "Texture.h"
 #include "TilingData.h"
@@ -55,6 +53,11 @@
 #include <wtf/MathExtras.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+#include "GLES2Canvas.h"
+#include "SharedGraphicsContext3D.h"
+#endif
 
 namespace WebCore {
 
@@ -216,8 +219,10 @@ PlatformContextSkia::PlatformContextSkia(skia::PlatformCanvas* canvas)
 
 PlatformContextSkia::~PlatformContextSkia()
 {
+#if ENABLE(ACCELERATED_2D_CANVAS)
     if (m_gpuCanvas)
         m_gpuCanvas->drawingBuffer()->setWillPublishCallback(0);
+#endif
 }
 
 void PlatformContextSkia::setCanvas(skia::PlatformCanvas* canvas)
@@ -705,6 +710,7 @@ private:
 
 void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* context, DrawingBuffer* drawingBuffer, const WebCore::IntSize& size)
 {
+#if ENABLE(ACCELERATED_2D_CANVAS)
     if (context && drawingBuffer) {
         m_useGPU = true;
         m_gpuCanvas = new GLES2Canvas(context, drawingBuffer, size);
@@ -716,6 +722,7 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
         m_gpuCanvas.clear();
         m_useGPU = false;
     }
+#endif
 }
 
 void PlatformContextSkia::prepareForSoftwareDraw() const
@@ -808,6 +815,7 @@ void PlatformContextSkia::markDirtyRect(const IntRect& rect)
 
 void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
 {
+#if ENABLE(ACCELERATED_2D_CANVAS)
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(false);
     SkAutoLockPixels lock(bitmap);
     SharedGraphicsContext3D* context = m_gpuCanvas->context();
@@ -825,10 +833,12 @@ void PlatformContextSkia::uploadSoftwareToHardware(CompositeOperator op) const
     m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
     m_canvas->restore();
     m_softwareDirtyRect.setWidth(0); // Clear dirty rect.
+#endif
 }
 
 void PlatformContextSkia::readbackHardwareToSoftware() const
 {
+#if ENABLE(ACCELERATED_2D_CANVAS)
     const SkBitmap& bitmap = m_canvas->getDevice()->accessBitmap(true);
     SkAutoLockPixels lock(bitmap);
     int width = bitmap.width(), height = bitmap.height();
@@ -850,6 +860,7 @@ void PlatformContextSkia::readbackHardwareToSoftware() const
         }
     }
     m_softwareDirtyRect.unite(IntRect(0, 0, width, height)); // Mark everything as dirty.
+#endif
 }
 
 } // namespace WebCore
