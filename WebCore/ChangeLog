@@ -1,5 +1,19 @@
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r68705.
+
+    2010-09-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add additional check to Text::wholeText.
+        <rdar://problem/8304795>
+
+        * dom/Text.cpp:
+        (WebCore::Text::wholeText):
+
+2010-10-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r68727.
 
     2010-09-29  Enrica Casucci  <enrica@apple.com>

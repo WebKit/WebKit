@@ -123,6 +123,8 @@ String Text::wholeText() const
             continue;
         const Text* t = static_cast<const Text*>(n);
         const String& data = t->data();
+        if (std::numeric_limits<unsigned>::max() - data.length() < resultLength)
+            CRASH();
         resultLength += data.length();
     }
     UChar* resultData;
