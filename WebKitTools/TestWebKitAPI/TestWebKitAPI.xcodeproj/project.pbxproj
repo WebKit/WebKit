@@ -15,6 +15,7 @@
 		BC90964E1255620C00083756 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
 		BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC909779125571AB00083756 /* PageLoadBasic.cpp */; };
 		BC909784125571CF00083756 /* basic-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC909778125571AB00083756 /* basic-1.html */; };
+		BC90995E12567BC100083756 /* WKString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90995D12567BC100083756 /* WKString.cpp */; };
 		BCA61DB511700EFD00460D1E /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCA61DB411700EFD00460D1E /* WebKit2.framework */; };
 		BCB9E9F111235BDE00A137E0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -58,6 +59,7 @@
 		BC90964D1255620C00083756 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = ../../WebKitBuild/Debug/JavaScriptCore.framework; sourceTree = SOURCE_ROOT; };
 		BC909778125571AB00083756 /* basic-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "basic-1.html"; sourceTree = "<group>"; };
 		BC909779125571AB00083756 /* PageLoadBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageLoadBasic.cpp; sourceTree = "<group>"; };
+		BC90995D12567BC100083756 /* WKString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKString.cpp; sourceTree = "<group>"; };
 		BCA61DB411700EFD00460D1E /* WebKit2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCB9E7C711234E3A00A137E0 /* TestsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestsController.h; sourceTree = "<group>"; };
 		BCB9E7FA112359A300A137E0 /* Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
@@ -137,6 +139,7 @@
 			children = (
 				BC90977B125571AE00083756 /* Resources */,
 				BC909779125571AB00083756 /* PageLoadBasic.cpp */,
+				BC90995D12567BC100083756 /* WKString.cpp */,
 			);
 			path = WebKit2;
 			sourceTree = "<group>";
@@ -226,6 +229,7 @@
 				BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */,
 				BC90964C125561BF00083756 /* VectorBasic.cpp in Sources */,
 				BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */,
+				BC90995E12567BC100083756 /* WKString.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -34,17 +34,33 @@ WKTypeID WKStringGetTypeID()
     return toRef(WebString::APIType);
 }
 
+WKStringRef WKStringCreateWithUTF8CString(const char* string)
+{
+    RefPtr<WebString> webString = WebString::createFromUTF8String(string);
+    return toRef(webString.release().leakRef());
+}
+
 bool WKStringIsEmpty(WKStringRef stringRef)
 {
     return toWK(stringRef)->isEmpty();
 }
 
-bool WKStringIsEqual(WKStringRef firstString, WKStringRef secondString)
+size_t WKStringGetMaximumUTF8CStringSize(WKStringRef stringRef)
 {
-    if (firstString == secondString)
-        return true;
-    if (!firstString || !secondString)
-        return false;
-        
-    return toWK(firstString)->string() == toWK(secondString)->string();
+    return toWK(stringRef)->maximumUTF8CStringSize();
+}
+
+size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t bufferSize)
+{
+    return toWK(stringRef)->getUTF8CString(buffer, bufferSize);
+}
+
+bool WKStringIsEqual(WKStringRef aRef, WKStringRef bRef)
+{
+    return toWK(aRef)->equal(toWK(bRef));
+}
+
+bool WKStringIsEqualToUTF8CString(WKStringRef aRef, const char* b)
+{
+    return toWK(aRef)->equalToUTF8String(b);
 }

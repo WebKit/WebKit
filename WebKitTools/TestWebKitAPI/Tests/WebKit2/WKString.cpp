@@ -23,33 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKString_h
-#define WKString_h
+#include "Test.h"
 
-#include <WebKit2/WKBase.h>
+#include <WebKit2/WKString.h>
 
-#ifndef __cplusplus
-#include <stdbool.h>
-#endif
+namespace TestWebKitAPI {
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+TEST(WKString)
+{
+    WKStringRef string = WKStringCreateWithUTF8CString("hello");
+    TEST_ASSERT(!WKStringIsEmpty(string));
+    TEST_ASSERT(WKStringIsEqual(string, string));
+    TEST_ASSERT(WKStringIsEqualToUTF8CString(string, "hello"));
+    TEST_ASSERT(WKStringGetMaximumUTF8CStringSize(string) == 16);
 
-WK_EXPORT WKTypeID WKStringGetTypeID();
+    size_t maxSize = WKStringGetMaximumUTF8CStringSize(string);
+    char* buffer = (char*)malloc(maxSize);
+    
+    size_t actualSize = WKStringGetUTF8CString(string, buffer, maxSize);
+    TEST_ASSERT(actualSize == 6);
+    TEST_ASSERT(strcmp(buffer, "hello") == 0);
 
-WK_EXPORT WKStringRef WKStringCreateWithUTF8CString(const char* string);
-
-WK_EXPORT bool WKStringIsEmpty(WKStringRef string);
-
-WK_EXPORT size_t WKStringGetMaximumUTF8CStringSize(WKStringRef string);
-WK_EXPORT size_t WKStringGetUTF8CString(WKStringRef string, char* buffer, size_t bufferSize);
-
-WK_EXPORT bool WKStringIsEqual(WKStringRef a, WKStringRef b);
-WK_EXPORT bool WKStringIsEqualToUTF8CString(WKStringRef a, const char* b);
-
-#ifdef __cplusplus
+    free(buffer);
 }
-#endif
 
-#endif /* WKString_h */
+} // namespace TestWebKitAPI

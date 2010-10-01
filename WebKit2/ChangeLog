@@ -1,3 +1,26 @@
+2010-10-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add additional WKString API
+        https://bugs.webkit.org/show_bug.cgi?id=46958
+
+        API Test: WebKit2/WKString
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringCreateWithUTF8CString):
+        (WKStringGetMaximumUTF8CStringSize):
+        (WKStringGetUTF8CString):
+        (WKStringIsEqual):
+        (WKStringIsEqualToUTF8CString):
+        * Shared/API/c/WKString.h:
+        * Shared/WebString.h:
+        (WebKit::WebString::createFromUTF8String):
+        (WebKit::WebString::maximumUTF8CStringSize):
+        (WebKit::WebString::getUTF8CString):
+        (WebKit::WebString::equal):
+        (WebKit::WebString::equalToUTF8String):
+
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
