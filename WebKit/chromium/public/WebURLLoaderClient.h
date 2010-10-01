@@ -66,9 +66,6 @@ public:
     // Called when the load completes successfully.
     virtual void didFinishLoading(WebURLLoader*, double finishTime) { }
 
-    // FIXME: remove this once clients are updated.
-    virtual void didFinishLoading(WebURLLoader* loader) { didFinishLoading(loader, 0); }
-
     // Called when the load completes with an error.
     virtual void didFail(WebURLLoader*, const WebURLError&) { }
 
