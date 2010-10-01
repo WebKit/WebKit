@@ -2,6 +2,23 @@
 
         Reviewed by Adam Roben.
 
+        [WIN] Add GDIExtras
+        https://bugs.webkit.org/show_bug.cgi?id=46974
+
+        Some, but not all WinCE environments have support for AlphaBlend().
+        Add this files to check for AlphaBlend (and SoftLink) on WinCE.
+        On WinNT alphaBlendIfSupported() inlines AlphaBlend and returns true.
+
+        * platform/graphics/win/GDIExtras.cpp: Added.
+        (WebCore::AlphaBlendPointer):
+        * platform/graphics/win/GDIExtras.h: Added.
+        (WebCore::hasAlphaBlendSupport):
+        (WebCore::alphaBlendIfSupported):
+
+2010-10-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
         [WINCE] Use alphaBlendIfSupported in GraphicsContext
         https://bugs.webkit.org/show_bug.cgi?id=46979
 
