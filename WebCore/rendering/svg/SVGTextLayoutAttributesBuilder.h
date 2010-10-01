@@ -17,8 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGTextLayoutBuilder_h
-#define SVGTextLayoutBuilder_h
+#ifndef SVGTextLayoutAttributesBuilder_h
+#define SVGTextLayoutAttributesBuilder_h
 
 #if ENABLE(SVG)
 #include "SVGTextLayoutAttributes.h"
@@ -30,9 +30,9 @@ class RenderObject;
 class RenderSVGInlineText;
 class RenderSVGText;
 
-class SVGTextLayoutBuilder : public Noncopyable {
+class SVGTextLayoutAttributesBuilder : public Noncopyable {
 public:
-    SVGTextLayoutBuilder();
+    SVGTextLayoutAttributesBuilder();
     void buildLayoutAttributesForTextSubtree(RenderSVGText*);
 
 private:

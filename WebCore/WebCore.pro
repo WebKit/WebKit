@@ -2300,7 +2300,7 @@ HEADERS += \
     rendering/svg/SVGTextChunk.h \
     rendering/svg/SVGTextFragment.h \
     rendering/svg/SVGTextLayoutAttributes.h \
-    rendering/svg/SVGTextLayoutBuilder.h \
+    rendering/svg/SVGTextLayoutAttributesBuilder.h \
     rendering/svg/SVGTextMetrics.h \
     rendering/svg/SVGTextQuery.h \
     rendering/SVGCharacterData.h \
@@ -3288,7 +3288,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/svg/SVGRootInlineBox.cpp \
         rendering/svg/SVGTextChunk.cpp \
         rendering/svg/SVGTextLayoutAttributes.cpp \
-        rendering/svg/SVGTextLayoutBuilder.cpp \
+        rendering/svg/SVGTextLayoutAttributesBuilder.cpp \
         rendering/svg/SVGTextMetrics.cpp \
         rendering/svg/SVGTextQuery.cpp \
         rendering/PointerEventsHitRules.cpp \

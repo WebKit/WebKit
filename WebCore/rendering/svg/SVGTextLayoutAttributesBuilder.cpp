@@ -20,7 +20,7 @@
 #include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGTextLayoutBuilder.h"
+#include "SVGTextLayoutAttributesBuilder.h"
 
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
@@ -32,11 +32,11 @@
 
 namespace WebCore {
 
-SVGTextLayoutBuilder::SVGTextLayoutBuilder()
+SVGTextLayoutAttributesBuilder::SVGTextLayoutAttributesBuilder()
 {
 }
 
-void SVGTextLayoutBuilder::buildLayoutAttributesForTextSubtree(RenderSVGText* textRoot)
+void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree(RenderSVGText* textRoot)
 {
     ASSERT(textRoot);
     m_scopes.clear();
@@ -87,7 +87,7 @@ static inline void copyToDestinationVectorIfSourceRangeIsNotEmpty(Vector<float>&
     copyToDestinationVector(destination, destinationStartOffset, source, sourceStartOffset, length);
 }
 
-void SVGTextLayoutBuilder::propagateLayoutAttributes(RenderObject* start, unsigned& atCharacter)
+void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* start, unsigned& atCharacter)
 {
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) { 
         if (!child->isSVGInlineText()) {
@@ -130,7 +130,7 @@ void SVGTextLayoutBuilder::propagateLayoutAttributes(RenderObject* start, unsign
     }
 }
 
-void SVGTextLayoutBuilder::buildLayoutScopes(RenderObject* start, unsigned& atCharacter)
+void SVGTextLayoutAttributesBuilder::buildLayoutScopes(RenderObject* start, unsigned& atCharacter)
 {
     for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) { 
         if (child->isSVGInlineText()) {
@@ -164,7 +164,7 @@ static inline void fillDestinationVectorWithLastSourceValue(Vector<float>& desti
     }
 }
 
-void SVGTextLayoutBuilder::buildLayoutAttributesFromScopes()
+void SVGTextLayoutAttributesBuilder::buildLayoutAttributesFromScopes()
 {
     ASSERT(!m_scopes.isEmpty());
 
@@ -196,7 +196,7 @@ void SVGTextLayoutBuilder::buildLayoutAttributesFromScopes()
     }
 }
 
-void SVGTextLayoutBuilder::measureCharacters(RenderSVGInlineText* text, SVGTextLayoutAttributes& attributes)
+void SVGTextLayoutAttributesBuilder::measureCharacters(RenderSVGInlineText* text, SVGTextLayoutAttributes& attributes)
 {
     ASSERT(text);
     ASSERT(text->style());
@@ -278,7 +278,7 @@ static inline SVGTextPositioningElement* svgTextPositioningElementForInlineRende
     return static_cast<SVGTextPositioningElement*>(node);
 }
 
-void SVGTextLayoutBuilder::buildLayoutScope(LayoutScope& scope, RenderObject* renderer, unsigned textContentStart, unsigned textContentLength)
+void SVGTextLayoutAttributesBuilder::buildLayoutScope(LayoutScope& scope, RenderObject* renderer, unsigned textContentStart, unsigned textContentLength)
 {
     ASSERT(renderer);
     ASSERT(renderer->style());

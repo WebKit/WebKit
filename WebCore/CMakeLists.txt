@@ -1707,7 +1707,7 @@ IF (ENABLE_SVG)
         rendering/svg/SVGRootInlineBox.cpp
         rendering/svg/SVGTextChunk.cpp
         rendering/svg/SVGTextLayoutAttributes.cpp
-        rendering/svg/SVGTextLayoutBuilder.cpp
+        rendering/svg/SVGTextLayoutAttributesBuilder.cpp
         rendering/svg/SVGTextMetrics.cpp
         rendering/svg/SVGTextQuery.cpp
         svg/ColorDistance.cpp

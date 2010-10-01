@@ -1,3 +1,26 @@
+2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        Rename SVGTextLayoutBuilder to SVGTextLayoutAttributesBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=46971
+
+        Doesn't affect any functionality, just moves files around.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout): Adopt to renaming.
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp: Copied from rendering/svg/SVGTextLayoutBuilder.cpp.
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h: Copied from rendering/svg/SVGTextLayoutBuilder.h.
+        * rendering/svg/SVGTextLayoutBuilder.cpp: Removed.
+        * rendering/svg/SVGTextLayoutBuilder.h: Removed.
+
 2010-10-01  MORITA Hajime  <morrita@google.com>
 
         Unreviewed build fix.

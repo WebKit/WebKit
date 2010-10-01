@@ -33478,11 +33478,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\rendering\svg\SVGTextLayoutBuilder.cpp"
+					RelativePath="..\rendering\svg\SVGTextLayoutAttributesBuilder.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\rendering\svg\SVGTextLayoutBuilder.h"
+					RelativePath="..\rendering\svg\SVGTextLayoutAttributesBuilder.h"
 					>
 				</File>
 				<File
