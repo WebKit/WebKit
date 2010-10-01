@@ -1,3 +1,15 @@
+2010-10-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Remove unnecessary ForwardingHeaders from test runners.
+        https://bugs.webkit.org/show_bug.cgi?id=47010
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        * TestWebKitAPI/ForwardingHeaders: Removed.
+        * WebKitTestRunner/Configurations/Base.xcconfig:
+        * WebKitTestRunner/ForwardingHeaders: Removed.
+
 2010-09-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
