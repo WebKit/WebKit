@@ -103,6 +103,13 @@ class Executive(object):
 
     def _run_command_with_teed_output(self, args, teed_output):
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
+        if sys.platform == 'cygwin':
+            # Cygwin's Python's os.execv doesn't support unicode command
+            # arguments, and neither does Cygwin's execv itself.
+            # FIXME: Using UTF-8 here will confuse Windows-native commands
+            # which will expect arguments to be encoded using the current code
+            # page.
+            args = [arg.encode('utf-8') for arg in args]
         child_process = subprocess.Popen(args,
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.STDOUT,
@@ -281,6 +288,13 @@ class Executive(object):
         assert(isinstance(args, list) or isinstance(args, tuple))
         start_time = time.time()
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
+        if sys.platform == 'cygwin':
+            # Cygwin's Python's os.execv doesn't support unicode command
+            # arguments, and neither does Cygwin's execv itself.
+            # FIXME: Using UTF-8 here will confuse Windows-native commands
+            # which will expect arguments to be encoded using the current code
+            # page.
+            args = [arg.encode('utf-8') for arg in args]
         stdin, string_to_communicate = self._compute_stdin(input)
         stderr = subprocess.STDOUT if return_stderr else None
 

@@ -1,3 +1,27 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Encode Executive command arguments using UTF-8 on Cygwin
+
+        Cygwin's Python's os.execv doesn't support unicode command arguments.
+        Cygwin's execv expects arguments to be encoded using the current code
+        page. But code pages are limited in what characters they can handle,
+        and our tests include characters that the English code page can't
+        handle.  So for now we'll just encode everything in UTF-8 on Cygwin,
+        which can handle all characters but might confuse some commands, for
+        expediency's sake. I'm sure we'll run into cases where UTF-8 isn't
+        good enough, but we can deal with that when the problem arises.
+
+        Reviewed by Adam Barth.
+
+        Fixes <http://webkit.org/b/46892> <rdar://problem/8496639>
+        webkitpy.common.system.executive_unittest.ExecutiveTest.test_run_command_with_unicode
+        fails on Windows
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive._run_command_with_teed_output):
+        (Executive.run_command):
+        On Cygwin, encode arguments using UTF-8.
+
 2010-10-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
