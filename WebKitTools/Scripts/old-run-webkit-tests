@@ -693,7 +693,34 @@ for my $test (@tests) {
 
     if ($test =~ /^http\//) {
         configureAndOpenHTTPDIfNeeded();
-        if ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/wml\// && $test !~ /^http\/tests\/media\//) {
+        if ($test =~ /^http\/tests\/websocket\//) {
+            if ($test =~ /^websocket\/tests\/local\//) {
+                my $testPath = "$testDirectory/$test";
+                if (isCygwin()) {
+                    $testPath = toWindowsPath($testPath);
+                } else {
+                    $testPath = canonpath($testPath);
+                }
+                print OUT "$testPath\n";
+            } else {
+                if (openWebSocketServerIfNeeded()) {
+                    my $path = canonpath($test);
+                    if ($test =~ /^http\/tests\/websocket\/tests\/ssl\//) {
+                        # wss is disabled until all platforms support pyOpenSSL.
+                        print STDERR "Error: wss is disabled until all platforms support pyOpenSSL.";
+                    } else {
+                        $path =~ s/^http\/tests\///;
+                        print OUT "http://127.0.0.1:$httpdPort/$path\n";
+                    }
+                } else {
+                    # We failed to launch the WebSocket server.  Display a useful error message rather than attempting
+                    # to run tests that expect the server to be available.
+                    my $errorMessagePath = "$testDirectory/http/tests/websocket/resources/server-failed-to-start.html";
+                    $errorMessagePath = isCygwin() ? toWindowsPath($errorMessagePath) : canonpath($errorMessagePath);
+                    print OUT "$errorMessagePath\n";
+                }
+            }
+        } elsif ($test !~ /^http\/tests\/local\// && $test !~ /^http\/tests\/ssl\// && $test !~ /^http\/tests\/wml\// && $test !~ /^http\/tests\/media\//) {
             my $path = canonpath($test);
             $path =~ s/^http\/tests\///;
             print OUT "http://127.0.0.1:$httpdPort/$path$suffixExpectedHash\n";
@@ -709,33 +736,6 @@ for my $test (@tests) {
                 $testPath = canonpath($testPath);
             }
             print OUT "$testPath$suffixExpectedHash\n";
-        }
-    } elsif ($test =~ /^websocket\//) {
-        if ($test =~ /^websocket\/tests\/local\//) {
-            my $testPath = "$testDirectory/$test";
-            if (isCygwin()) {
-                $testPath = toWindowsPath($testPath);
-            } else {
-                $testPath = canonpath($testPath);
-            }
-            print OUT "$testPath\n";
-        } else {
-            if (openWebSocketServerIfNeeded()) {
-                my $path = canonpath($test);
-                if ($test =~ /^websocket\/tests\/ssl\//) {
-                    # wss is disabled until all platforms support pyOpenSSL.
-                    print STDERR "Error: wss is disabled until all platforms support pyOpenSSL.";
-                    # print OUT "https://127.0.0.1:$webSocketSecurePort/$path\n";
-                } else {
-                    print OUT "http://127.0.0.1:$webSocketPort/$path\n";
-                }
-            } else {
-                # We failed to launch the WebSocket server.  Display a useful error message rather than attempting
-                # to run tests that expect the server to be available.
-                my $errorMessagePath = "$testDirectory/websocket/resources/server-failed-to-start.html";
-                $errorMessagePath = isCygwin() ? toWindowsPath($errorMessagePath) : canonpath($errorMessagePath);
-                print OUT "$errorMessagePath\n";
-            }
         }
     } else {
         my $testPath = "$testDirectory/$test";

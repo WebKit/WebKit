@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
+<script src="../../../js-test-resources/js-test-pre.js"></script>
+<script src="../../../js-test-resources/js-test-post-function.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Test if it doesn't crash when reloading while Web Socket is busy");
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+var frameDiv;
+var reloadCount = 0;
+
+function endTest()
+{
+    isSuccessfullyParsed();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+};
+
+document.iframeReady = function ()
+{
+    if (reloadCount == 0)
+       debug("PASS iframe is ready.");
+    if (reloadCount == 1) {
+       debug("PASS reloaded iframe while WebSocket is busy");
+       endTest();
+       return;
+    }
+    reloadCount += 1;
+};
+
+frameDiv = document.createElement("iframe");
+frameDiv.src = "resources/reload-crash-iframe.html";
+document.body.appendChild(frameDiv);
+debug("PASS insert a iframe");
+
+var successfullyParsed = true;
+</script>
+
+</body>
+</html>

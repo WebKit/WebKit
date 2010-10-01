@@ -161,7 +161,7 @@ WONTFIX SKIP : fast/files/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/xmlhttprequest/workers = PASS TIMEOUT FAIL
 WONTFIX SKIP : http/tests/eventsource/workers = PASS TIMEOUT FAIL
-WONTFIX SKIP : websocket/tests/workers/ = PASS TIMEOUT FAIL
+WONTFIX SKIP : http/tests/websocket/tests/workers/ = PASS TIMEOUT FAIL
 
 // Page Cache - based tests. Chromium disables page cache because the WebKit page cache keeps previously
 // loaded pages alive in memory to be able to quickly substitute them when user clicks History buttons.
@@ -2267,8 +2267,8 @@ BUG31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 BUG31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 
 // WebKit roll 52852 -> 52867
-BUG32018 : websocket/tests/frame-lengths.html = PASS TIMEOUT
-BUG32018 DEBUG : websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
+BUG32018 : http/tests/websocket/tests/frame-lengths.html = PASS TIMEOUT
+BUG32018 DEBUG : http/tests/websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
 
 // Flaky
 BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
@@ -2645,7 +2645,7 @@ BUGWK39655 : fast/dom/prototype-property.html = FAIL
 BUG45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
 BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
-BUG45720 WIN LINUX : websocket/tests/reload-crash.html = PASS CRASH
+BUG45720 WIN LINUX : http/tests/websocket/tests/reload-crash.html = PASS CRASH
 
 // Chromium does not use the icon loader in WebCore for loading notifications.
 WONTFIX SKIP : http/tests/notifications = FAIL
@@ -2957,7 +2957,7 @@ BUG51571 WIN : http/tests/misc/bad-charset-alias.html = TIMEOUT PASS
 // Probably rebaseline, but want to make sure before doing so
 BUGJAPHET WIN : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 
-BUG51869 : websocket/tests/frame-length-overflow.html = TEXT PASS
+BUG51869 : http/tests/websocket/tests/frame-length-overflow.html = TEXT PASS
 
 BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 

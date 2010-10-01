@@ -1,3 +1,18 @@
+2010-09-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebSocket tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=46956
+
+        Update these tools to understand how to run the WebSocket tests off the
+        Apache server.
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Encode Executive command arguments using UTF-8 on Cygwin

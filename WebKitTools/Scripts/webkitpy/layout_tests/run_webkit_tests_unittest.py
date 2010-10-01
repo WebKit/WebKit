@@ -71,7 +71,7 @@ def passing_run(args=[], port_obj=None, record_results=False,
         # We use the glob to test that globbing works.
         new_args.extend(['passes',
                          'http/tests',
-                         'websocket/tests',
+                         'http/tests/websocket/tests',
                          'failures/expected/*'])
     options, parsed_args = run_webkit_tests.parse_args(new_args)
     if port_obj is None:
@@ -89,7 +89,7 @@ def logging_run(args=[], tests_included=False):
     if not tests_included:
         new_args.extend(['passes',
                          'http/tests',
-                         'websocket/tests',
+                         'http/tests/websocket/tests',
                          'failures/expected/*'])
     options, parsed_args = run_webkit_tests.parse_args(new_args)
     user = MockUser()

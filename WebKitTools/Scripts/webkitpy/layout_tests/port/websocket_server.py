@@ -124,12 +124,13 @@ class PyWebSocket(http_server.Lighttpd):
         if self._root:
             self._layout_tests = os.path.abspath(self._root)
             self._web_socket_tests = os.path.abspath(
-                os.path.join(self._root, 'websocket', 'tests'))
+                os.path.join(self._root, 'http', 'tests',
+                             'websocket', 'tests'))
         else:
             try:
                 self._layout_tests = self._port_obj.layout_tests_dir()
                 self._web_socket_tests = os.path.join(self._layout_tests,
-                     'websocket', 'tests')
+                     'http', 'tests', 'websocket', 'tests')
             except:
                 self._web_socket_tests = None
 
@@ -167,7 +168,7 @@ class PyWebSocket(http_server.Lighttpd):
             python_interp, '-u', pywebsocket_script,
             '--server-host', '127.0.0.1',
             '--port', str(self._port),
-            '--document-root', self._layout_tests,
+            '--document-root', os.path.join(self._layout_tests, 'http', 'tests'),
             '--scan-dir', self._web_socket_tests,
             '--cgi-paths', '/websocket/tests',
             '--log-file', error_log,

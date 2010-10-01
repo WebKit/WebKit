@@ -1,3 +1,246 @@
+2010-09-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        WebSocket tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=46956
+
+        Hosting the WebSocket tests using the Python HTTP server causes the
+        tests to time out occationally.  This patch moves the tests to be
+        hosted by the usual Apache server.
+
+        This patch doesn't completely eliminate the flakiness.  However,
+        testing on my local machine shows that it reduces it by a large factor.
+        I suspect there's more flakiness hiding in the Python server, but this
+        patch makes some amount of progress on the issue.
+
+        * http/tests/websocket: Copied from LayoutTests/websocket.
+        * http/tests/websocket/tests/alert-in-event-handler.html:
+        * http/tests/websocket/tests/bad-handshake-crash.html:
+        * http/tests/websocket/tests/bad-sub-protocol-control-chars.html:
+        * http/tests/websocket/tests/bad-sub-protocol-empty.html:
+        * http/tests/websocket/tests/bad-sub-protocol-non-ascii.html:
+        * http/tests/websocket/tests/bufferedAmount-after-close.html:
+        * http/tests/websocket/tests/close-on-navigate-new-location.html:
+        * http/tests/websocket/tests/close-on-unload-and-force-gc.html:
+        * http/tests/websocket/tests/close-on-unload-reference-in-parent.html:
+        * http/tests/websocket/tests/close-on-unload.html:
+        * http/tests/websocket/tests/cross-origin-expected.txt:
+        * http/tests/websocket/tests/cross-origin.html:
+        * http/tests/websocket/tests/error-detect.html:
+        * http/tests/websocket/tests/frame-length-longer-than-buffer.html:
+        * http/tests/websocket/tests/frame-length-overflow.html:
+        * http/tests/websocket/tests/frame-length-skip.html:
+        * http/tests/websocket/tests/handshake-challenge-randomness.html:
+        * http/tests/websocket/tests/handshake-error.html:
+        * http/tests/websocket/tests/handshake-fail-by-cross-origin-expected.txt:
+        * http/tests/websocket/tests/handshake-fail-by-cross-origin.html:
+        * http/tests/websocket/tests/handshake-fail-by-no-cr.html:
+        * http/tests/websocket/tests/handshake-fail-by-sub-protocol-mismatch.html:
+        * http/tests/websocket/tests/httponly-cookie.pl:
+        * http/tests/websocket/tests/long-invalid-header.html:
+        * http/tests/websocket/tests/null-character.html:
+        * http/tests/websocket/tests/reload-crash.html:
+        * http/tests/websocket/tests/resources/close-on-unload-iframe-reference-in-parent.html:
+        * http/tests/websocket/tests/resources/close-on-unload-iframe.html:
+        * http/tests/websocket/tests/resources/js-test-post-function.js: Copied from LayoutTests/fast/js/resources/js-test-post-function.js.
+        * http/tests/websocket/tests/resources/js-test-pre.js: Copied from LayoutTests/fast/js/resources/js-test-pre.js.
+        * http/tests/websocket/tests/resources/js-test-style.css: Copied from LayoutTests/fast/js/resources/js-test-style.css.
+        * http/tests/websocket/tests/resources/reload-crash-iframe.html:
+        * http/tests/websocket/tests/script-tests/TEMPLATE.html:
+        * http/tests/websocket/tests/script-tests/cross-origin.js:
+        (endTest):
+        * http/tests/websocket/tests/send-after-close-on-unload.html:
+        * http/tests/websocket/tests/send-throw.html:
+        * http/tests/websocket/tests/send.html:
+        * http/tests/websocket/tests/simple.html:
+        * http/tests/websocket/tests/sub-protocol-with-space.html:
+        * http/tests/websocket/tests/sub-protocol.html:
+        * http/tests/websocket/tests/unicode.html:
+        * http/tests/websocket/tests/url-no-trailing-slash.html:
+        * http/tests/websocket/tests/url-parsing-expected.txt:
+        * http/tests/websocket/tests/url-parsing.html:
+        * http/tests/websocket/tests/url-with-credential.html:
+        * http/tests/websocket/tests/url-with-empty-query.html:
+        * http/tests/websocket/tests/url-with-query-for-no-query.html:
+        * http/tests/websocket/tests/url-with-query.html:
+        * http/tests/websocket/tests/websocket-event-target.html:
+        * http/tests/websocket/tests/websocket-protocol-ignored.html:
+        * platform/chromium-gpu/test_expectations.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/test_expectations.txt:
+        * platform/win/Skipped:
+        * websocket: Removed.
+        * websocket/resources: Removed.
+        * websocket/resources/server-failed-to-start.html: Removed.
+        * websocket/tests: Removed.
+        * websocket/tests/alert-in-event-handler-expected.txt: Removed.
+        * websocket/tests/alert-in-event-handler.html: Removed.
+        * websocket/tests/bad-handshake-crash-expected.txt: Removed.
+        * websocket/tests/bad-handshake-crash.html: Removed.
+        * websocket/tests/bad-handshake-crash_wsh.py: Removed.
+        * websocket/tests/bad-sub-protocol-control-chars-expected.txt: Removed.
+        * websocket/tests/bad-sub-protocol-control-chars.html: Removed.
+        * websocket/tests/bad-sub-protocol-empty-expected.txt: Removed.
+        * websocket/tests/bad-sub-protocol-empty.html: Removed.
+        * websocket/tests/bad-sub-protocol-non-ascii-expected.txt: Removed.
+        * websocket/tests/bad-sub-protocol-non-ascii.html: Removed.
+        * websocket/tests/bufferedAmount-after-close-expected.txt: Removed.
+        * websocket/tests/bufferedAmount-after-close.html: Removed.
+        * websocket/tests/close-on-navigate-new-location-expected.txt: Removed.
+        * websocket/tests/close-on-navigate-new-location.html: Removed.
+        * websocket/tests/close-on-unload-and-force-gc-expected.txt: Removed.
+        * websocket/tests/close-on-unload-and-force-gc.html: Removed.
+        * websocket/tests/close-on-unload-expected.txt: Removed.
+        * websocket/tests/close-on-unload-reference-in-parent-expected.txt: Removed.
+        * websocket/tests/close-on-unload-reference-in-parent.html: Removed.
+        * websocket/tests/close-on-unload.html: Removed.
+        * websocket/tests/close-on-unload_wsh.py: Removed.
+        * websocket/tests/cross-origin-expected.txt: Removed.
+        * websocket/tests/cross-origin.html: Removed.
+        * websocket/tests/echo-challenge_wsh.py: Removed.
+        * websocket/tests/echo-cookie_wsh.py: Removed.
+        * websocket/tests/echo-location_wsh.py: Removed.
+        * websocket/tests/echo_wsh.py: Removed.
+        * websocket/tests/error-detect-expected.txt: Removed.
+        * websocket/tests/error-detect.html: Removed.
+        * websocket/tests/fixed-origin_wsh.py: Removed.
+        * websocket/tests/frame-length-longer-than-buffer-expected.txt: Removed.
+        * websocket/tests/frame-length-longer-than-buffer.html: Removed.
+        * websocket/tests/frame-length-longer-than-buffer_wsh.py: Removed.
+        * websocket/tests/frame-length-overflow-expected.txt: Removed.
+        * websocket/tests/frame-length-overflow.html: Removed.
+        * websocket/tests/frame-length-overflow_wsh.py: Removed.
+        * websocket/tests/frame-length-skip-expected.txt: Removed.
+        * websocket/tests/frame-length-skip.html: Removed.
+        * websocket/tests/frame-length-skip_wsh.py: Removed.
+        * websocket/tests/frame-lengths-expected.txt: Removed.
+        * websocket/tests/frame-lengths.html: Removed.
+        * websocket/tests/handler_map.txt: Removed.
+        * websocket/tests/handshake-challenge-randomness-expected.txt: Removed.
+        * websocket/tests/handshake-challenge-randomness.html: Removed.
+        * websocket/tests/handshake-error-expected.txt: Removed.
+        * websocket/tests/handshake-error.html: Removed.
+        * websocket/tests/handshake-error_wsh.py: Removed.
+        * websocket/tests/handshake-fail-by-cross-origin-expected.txt: Removed.
+        * websocket/tests/handshake-fail-by-cross-origin.html: Removed.
+        * websocket/tests/handshake-fail-by-no-cr-expected.txt: Removed.
+        * websocket/tests/handshake-fail-by-no-cr.html: Removed.
+        * websocket/tests/handshake-fail-by-no-cr_wsh.py: Removed.
+        * websocket/tests/handshake-fail-by-sub-protocol-mismatch-expected.txt: Removed.
+        * websocket/tests/handshake-fail-by-sub-protocol-mismatch.html: Removed.
+        * websocket/tests/httponly-cookie-expected.txt: Removed.
+        * websocket/tests/httponly-cookie.pl: Removed.
+        * websocket/tests/long-invalid-header-expected.txt: Removed.
+        * websocket/tests/long-invalid-header.html: Removed.
+        * websocket/tests/long-invalid-header_wsh.py: Removed.
+        * websocket/tests/multiple-connections-expected.txt: Removed.
+        * websocket/tests/multiple-connections.html: Removed.
+        * websocket/tests/no-query_wsh.py: Removed.
+        * websocket/tests/null-character-expected.txt: Removed.
+        * websocket/tests/null-character.html: Removed.
+        * websocket/tests/origin-test_wsh.py: Removed.
+        * websocket/tests/protocol-test_wsh.py: Removed.
+        * websocket/tests/reload-crash-expected.txt: Removed.
+        * websocket/tests/reload-crash.html: Removed.
+        * websocket/tests/resources: Removed.
+        * websocket/tests/resources/close-on-unload-iframe-reference-in-parent.html: Removed.
+        * websocket/tests/resources/close-on-unload-iframe.html: Removed.
+        * websocket/tests/resources/reload-crash-iframe.html: Removed.
+        * websocket/tests/script-tests: Removed.
+        * websocket/tests/script-tests/TEMPLATE.html: Removed.
+        * websocket/tests/script-tests/alert-in-event-handler.js: Removed.
+        * websocket/tests/script-tests/bad-handshake-crash.js: Removed.
+        * websocket/tests/script-tests/bad-sub-protocol-control-chars.js: Removed.
+        * websocket/tests/script-tests/bad-sub-protocol-empty.js: Removed.
+        * websocket/tests/script-tests/bad-sub-protocol-non-ascii.js: Removed.
+        * websocket/tests/script-tests/bufferedAmount-after-close.js: Removed.
+        * websocket/tests/script-tests/cross-origin.js: Removed.
+        * websocket/tests/script-tests/error-detect.js: Removed.
+        * websocket/tests/script-tests/frame-length-longer-than-buffer.js: Removed.
+        * websocket/tests/script-tests/frame-length-skip.js: Removed.
+        * websocket/tests/script-tests/handshake-challenge-randomness.js: Removed.
+        * websocket/tests/script-tests/handshake-error.js: Removed.
+        * websocket/tests/script-tests/handshake-fail-by-cross-origin.js: Removed.
+        * websocket/tests/script-tests/handshake-fail-by-no-cr.js: Removed.
+        * websocket/tests/script-tests/handshake-fail-by-sub-protocol-mismatch.js: Removed.
+        * websocket/tests/script-tests/long-invalid-header.js: Removed.
+        * websocket/tests/script-tests/null-character.js: Removed.
+        * websocket/tests/script-tests/send-throw.js: Removed.
+        * websocket/tests/script-tests/send.js: Removed.
+        * websocket/tests/script-tests/simple.js: Removed.
+        * websocket/tests/script-tests/sub-protocol-with-space.js: Removed.
+        * websocket/tests/script-tests/sub-protocol.js: Removed.
+        * websocket/tests/script-tests/unicode.js: Removed.
+        * websocket/tests/script-tests/url-no-trailing-slash.js: Removed.
+        * websocket/tests/script-tests/url-parsing.js: Removed.
+        * websocket/tests/script-tests/url-with-credential.js: Removed.
+        * websocket/tests/script-tests/url-with-empty-query.js: Removed.
+        * websocket/tests/script-tests/url-with-query-for-no-query.js: Removed.
+        * websocket/tests/script-tests/url-with-query.js: Removed.
+        * websocket/tests/script-tests/websocket-event-target.js: Removed.
+        * websocket/tests/script-tests/websocket-protocol-ignored.js: Removed.
+        * websocket/tests/send-after-close-on-unload-expected.txt: Removed.
+        * websocket/tests/send-after-close-on-unload.html: Removed.
+        * websocket/tests/send-expected.txt: Removed.
+        * websocket/tests/send-throw-expected.txt: Removed.
+        * websocket/tests/send-throw.html: Removed.
+        * websocket/tests/send.html: Removed.
+        * websocket/tests/send2_wsh.py: Removed.
+        * websocket/tests/send_wsh.py: Removed.
+        * websocket/tests/simple-expected.txt: Removed.
+        * websocket/tests/simple-stress-expected.txt: Removed.
+        * websocket/tests/simple-stress.html: Removed.
+        * websocket/tests/simple.html: Removed.
+        * websocket/tests/simple_wsh.py: Removed.
+        * websocket/tests/sub-protocol-expected.txt: Removed.
+        * websocket/tests/sub-protocol-with-space-expected.txt: Removed.
+        * websocket/tests/sub-protocol-with-space.html: Removed.
+        * websocket/tests/sub-protocol.html: Removed.
+        * websocket/tests/unicode-expected.txt: Removed.
+        * websocket/tests/unicode.html: Removed.
+        * websocket/tests/unicode_wsh.py: Removed.
+        * websocket/tests/unknown-frame-type_wsh.py: Removed.
+        * websocket/tests/url-no-trailing-slash-expected.txt: Removed.
+        * websocket/tests/url-no-trailing-slash.html: Removed.
+        * websocket/tests/url-parsing-expected.txt: Removed.
+        * websocket/tests/url-parsing.html: Removed.
+        * websocket/tests/url-with-credential-expected.txt: Removed.
+        * websocket/tests/url-with-credential.html: Removed.
+        * websocket/tests/url-with-empty-query-expected.txt: Removed.
+        * websocket/tests/url-with-empty-query.html: Removed.
+        * websocket/tests/url-with-query-expected.txt: Removed.
+        * websocket/tests/url-with-query-for-no-query-expected.txt: Removed.
+        * websocket/tests/url-with-query-for-no-query.html: Removed.
+        * websocket/tests/url-with-query.html: Removed.
+        * websocket/tests/websocket-event-target-expected.txt: Removed.
+        * websocket/tests/websocket-event-target.html: Removed.
+        * websocket/tests/websocket-pending-activity-expected.txt: Removed.
+        * websocket/tests/websocket-pending-activity.html: Removed.
+        * websocket/tests/websocket-protocol-ignored-expected.txt: Removed.
+        * websocket/tests/websocket-protocol-ignored.html: Removed.
+        * websocket/tests/workers: Removed.
+        * websocket/tests/workers/close-in-onmessage-crash-expected.txt: Removed.
+        * websocket/tests/workers/close-in-onmessage-crash.html: Removed.
+        * websocket/tests/workers/close-in-shared-worker-expected.txt: Removed.
+        * websocket/tests/workers/close-in-shared-worker.html: Removed.
+        * websocket/tests/workers/close-in-worker-expected.txt: Removed.
+        * websocket/tests/workers/close-in-worker.html: Removed.
+        * websocket/tests/workers/resources: Removed.
+        * websocket/tests/workers/resources/close-in-onmessage-crash.js: Removed.
+        * websocket/tests/workers/resources/close-in-worker.js: Removed.
+        * websocket/tests/workers/resources/echo-challenge_wsh.py: Removed.
+        * websocket/tests/workers/resources/echo_wsh.py: Removed.
+        * websocket/tests/workers/resources/simple_wsh.py: Removed.
+        * websocket/tests/workers/resources/worker-handshake-challenge-randomness.js: Removed.
+        * websocket/tests/workers/resources/worker-simple.js: Removed.
+        * websocket/tests/workers/shared-worker-simple-expected.txt: Removed.
+        * websocket/tests/workers/shared-worker-simple.html: Removed.
+        * websocket/tests/workers/worker-handshake-challenge-randomness-expected.txt: Removed.
+        * websocket/tests/workers/worker-handshake-challenge-randomness.html: Removed.
+        * websocket/tests/workers/worker-simple-expected.txt: Removed.
+        * websocket/tests/workers/worker-simple.html: Removed.
+
 2010-10-01  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

@@ -40,7 +40,7 @@ WONTFIX SKIP : transitions = PASS FAIL
 WONTFIX SKIP : traversal = PASS FAIL
 WONTFIX SKIP : userscripts = PASS FAIL
 WONTFIX SKIP : webarchive = PASS FAIL
-WONTFIX SKIP : websocket = PASS FAIL
+WONTFIX SKIP : http/tests/websocket = PASS FAIL
 WONTFIX SKIP : wml = PASS FAIL
 
 // (These are the tests we actually run and expect to pass)

@@ -307,7 +307,7 @@ editing/selection/drag-in-iframe.html
 fast/events/dragging-mouse-moves.html
 
 # Crash beneath SocketStream::readStreamCallback http://webkit.org/b/44138
-websocket/tests/workers/worker-handshake-challenge-randomness.html
+http/tests/websocket/tests/workers/worker-handshake-challenge-randomness.html
 
 # http://webkit.org/b/46911
 accessibility/aria-hidden-update.html
@@ -812,8 +812,8 @@ media/video-display-aspect-ratio.html
 http/tests/misc/image-checks-for-accept.html
 
 # Tests timeout: https://bugs.webkit.org/show_bug.cgi?id=35041
-websocket/tests/frame-lengths.html
-websocket/tests/simple-stress.html
+http/tests/websocket/tests/frame-lengths.html
+http/tests/websocket/tests/simple-stress.html
 
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 fast/loader/api-test-new-window-data-load-base-url.html

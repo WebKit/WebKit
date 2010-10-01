@@ -59,7 +59,7 @@
 // Our slow tests, in alphabetical order.
 SLOW BUGXXX : http/tests/cache/subresource-expiration.html = PASS
 SLOW BUGXXX : tables/mozilla/other/slashlogo.html = PASS
-SLOW BUGXXX : websocket/tests/frame-lengths.html = PASS
+SLOW BUGXXX : http/tests/websocket/tests/frame-lengths.html = PASS
 
 BUG36620 : compositing/color-matching/image-color-matching.html = IMAGE
 BUG36620 : compositing/direct-image-compositing.html = IMAGE

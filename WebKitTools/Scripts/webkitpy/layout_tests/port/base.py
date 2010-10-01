@@ -283,20 +283,16 @@ class Port(object):
     def filename_to_uri(self, filename):
         """Convert a test file to a URI."""
         LAYOUTTEST_HTTP_DIR = "http/tests/"
-        LAYOUTTEST_WEBSOCKET_DIR = "websocket/tests/"
+        LAYOUTTEST_WEBSOCKET_DIR = "http/tests/websocket/tests/"
 
         relative_path = self.relative_test_filename(filename)
         port = None
         use_ssl = False
 
-        if relative_path.startswith(LAYOUTTEST_HTTP_DIR):
-            # http/tests/ run off port 8000 and ssl/ off 8443
+        if (relative_path.startswith(LAYOUTTEST_WEBSOCKET_DIR)
+            or relative_path.startswith(LAYOUTTEST_HTTP_DIR)):
             relative_path = relative_path[len(LAYOUTTEST_HTTP_DIR):]
             port = 8000
-        elif relative_path.startswith(LAYOUTTEST_WEBSOCKET_DIR):
-            # websocket/tests/ run off port 8880 and 9323
-            # Note: the root is /, not websocket/tests/
-            port = 8880
 
         # Make http/tests/local run as local files. This is to mimic the
         # logic in run-webkit-tests.
