@@ -504,7 +504,6 @@ static UChar listMarkerSuffix(EListStyleType type, int value)
     case Footnotes:
     case NoneListStyle:
     case Square:
-        ASSERT_NOT_REACHED();
         return ' ';
     case Afar:
     case Amharic:

@@ -1,3 +1,28 @@
+2010-09-30  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Daniel Bates.
+
+        [GTK] Crash on testatk.c unittest because of a call to ASSERT_NOT_REACHED
+        https://bugs.webkit.org/show_bug.cgi?id=46886
+
+        Removed call to ASSERT_NOT_REACHED() from listMarkerSuffix().
+
+        So far, this assertion made sense because it was not possible that
+        a call to listMarkerSuffix() happened when the style of the list
+        item was one of the following: Asterisks, Circle, Discm Footnotes,
+        NoneListStyle or Square (it's easy to figure this out by checking
+        the functions where listMarkerSuffix() was called).
+
+        However, since revision 68415 (about bug 45381), there's a new
+        place where listMarkerSuffix() is being called (the suffix()
+        public method), regardless of the style of the item being or not
+        one of those pointed out, so the aforementioned assertion in
+        listMarkerSuffix() would no longer be correct, as now it's ok to
+        reach those cases in the switch statement.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::listMarkerSuffix): Removed call to ASSERT_NOT_REACHED().
+
 2010-09-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele Peterson.
