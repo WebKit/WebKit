@@ -1,3 +1,56 @@
+2010-10-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47015
+        
+        Change FloatingObject to store its dimensions as a rect.
+        This will make it easier for logical access for block-flow later on if
+        top/bottom is no different from left/width.  This change also simplifies
+        calling code a bit in places.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::fillSelectionGaps):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::nextFloatBottomBelow):
+        (WebCore::RenderBlock::floatBottom):
+        (WebCore::RenderBlock::lowestPosition):
+        (WebCore::RenderBlock::rightmostPosition):
+        (WebCore::RenderBlock::leftmostPosition):
+        (WebCore::RenderBlock::leftBottom):
+        (WebCore::RenderBlock::rightBottom):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        (WebCore::RenderBlock::FloatingObject::left):
+        (WebCore::RenderBlock::FloatingObject::right):
+        (WebCore::RenderBlock::FloatingObject::top):
+        (WebCore::RenderBlock::FloatingObject::bottom):
+        (WebCore::RenderBlock::FloatingObject::width):
+        (WebCore::RenderBlock::FloatingObject::height):
+        (WebCore::RenderBlock::FloatingObject::setLeft):
+        (WebCore::RenderBlock::FloatingObject::setTop):
+        (WebCore::RenderBlock::FloatingObject::setWidth):
+        (WebCore::RenderBlock::FloatingObject::setHeight):
+        (WebCore::RenderBlock::FloatingObject::frameRect):
+        (WebCore::RenderBlock::FloatingObject::setFrameRect):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::matchedEndLine):
+
 2010-10-01  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

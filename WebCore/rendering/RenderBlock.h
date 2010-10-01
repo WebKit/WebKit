@@ -364,12 +364,9 @@ private:
             FloatRight
         };
 
-        FloatingObject(Type type)
+        FloatingObject(Type type, const IntRect& frameRect = IntRect())
             : m_renderer(0)
-            , m_top(0)
-            , m_bottom(0)
-            , m_left(0)
-            , m_width(0)
+            , m_frameRect(frameRect)
             , m_paginationStrut(0)
             , m_type(type)
             , m_shouldPaint(true)
@@ -379,11 +376,23 @@ private:
 
         Type type() { return static_cast<Type>(m_type); }
 
+        int left() const { return m_frameRect.x(); }
+        int right() const { return m_frameRect.right(); }
+        int top() const { return m_frameRect.y(); }
+        int bottom() const { return m_frameRect.bottom(); }
+        int width() const { return m_frameRect.width(); }
+        int height() const { return m_frameRect.height(); }
+    
+        void setLeft(int left) { m_frameRect.setX(left); }
+        void setTop(int top) { m_frameRect.setY(top); }
+        void setWidth(int width) { m_frameRect.setWidth(width); }
+        void setHeight(int height) { m_frameRect.setHeight(height); }
+
+        const IntRect& frameRect() const { return m_frameRect; }
+        void setFrameRect(const IntRect& frameRect) { m_frameRect = frameRect; }
+
         RenderBox* m_renderer;
-        int m_top;
-        int m_bottom;
-        int m_left;
-        int m_width;
+        IntRect m_frameRect;
         int m_paginationStrut;
         unsigned m_type : 1; // Type (left or right aligned)
         bool m_shouldPaint : 1;
