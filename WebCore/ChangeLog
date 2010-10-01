@@ -1,5 +1,16 @@
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r65683.
+
+    2010-08-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Chromium build.
+        
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged):
+
+2010-10-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r65681.
 
     2010-08-19  Simon Fraser  <simon.fraser@apple.com>
