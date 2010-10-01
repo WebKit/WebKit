@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="cmd /C copyForwardingHeaders.cmd cg cf&#x0D;&#x0A;cmd /C copyInspectorFiles.cmd&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -123,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="cmd /C copyForwardingHeaders.cmd cg cf&#x0D;&#x0A;cmd /C copyInspectorFiles.cmd&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -178,7 +178,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="cmd /C copyForwardingHeaders.cmd cg cf&#x0D;&#x0A;cmd /C copyInspectorFiles.cmd&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -233,7 +233,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="cmd /C copyForwardingHeaders.cmd cairo curl&#x0D;&#x0A;cmd /C copyInspectorFiles.cmd&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -289,7 +289,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="cmd /C copyForwardingHeaders.cmd cairo curl&#x0D;&#x0A;cmd /C copyInspectorFiles.cmd&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -344,7 +344,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="cmd /C copyForwardingHeaders.cmd cg cf&#x0D;&#x0A;cmd /C copyInspectorFiles.cmd&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -354,6 +354,10 @@
 		<Filter
 			Name="DerivedSources"
 			>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\ColorData.cpp"
+				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.cpp"
 				>
@@ -423,6 +427,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSPropertyNames.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSValueKeywords.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\DerivedSources.cpp"
 				>
 				<FileConfiguration
@@ -479,6 +491,14 @@
 						DisableSpecificWarnings="4819"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DocTypeStrings.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\HashTools.h"
+				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\HTMLElementFactory.cpp"
@@ -542,26 +562,6 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\HTMLNames.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\HashTools.h"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DocTypeStrings.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSValueKeywords.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\CSSPropertyNames.cpp"
-				>
-			</File>
-			<File
-				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\ColorData.cpp"
 				>
 			</File>
 			<File
@@ -27412,6 +27412,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\ResourceRawHeaders.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\ResourceRequestBase.cpp"
 					>
 				</File>
@@ -27425,10 +27429,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\network\ResourceResponseBase.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\network\ResourceRawHeaders.h"
 					>
 				</File>
 				<File
@@ -33122,62 +33122,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\rendering\svg\RenderSVGTSpan.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Internal|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\rendering\svg\RenderSVGTSpan.h"
-					>
-				</File>
-				<File
 					RelativePath="..\rendering\svg\RenderSVGText.cpp"
 					>
 					<FileConfiguration
@@ -33287,6 +33231,62 @@
 				</File>
 				<File
 					RelativePath="..\rendering\svg\RenderSVGTextPath.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\RenderSVGTSpan.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Internal|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\RenderSVGTSpan.h"
 					>
 				</File>
 				<File
@@ -37821,6 +37821,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\DOMTokenList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMTokenList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\EmailInputType.cpp"
 				>
 			</File>
@@ -37973,6 +37981,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\FormDataList.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\html\FormDataList.h"
 				>
 			</File>
@@ -37981,19 +37993,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\DOMTokenList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\DOMTokenList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\FormDataList.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\html\FTPDirectoryDocument.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HiddenInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HiddenInputType.h"
 				>
 			</File>
 			<File
@@ -42342,14 +42350,6 @@
 			</File>
 			<File
 				RelativePath="..\html\HTMLViewSourceDocument.h"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HiddenInputType.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HiddenInputType.h"
 				>
 			</File>
 			<File
@@ -52996,11 +52996,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\GoToLineDialog.js"
+					RelativePath="..\inspector\front-end\goToLineDialog.css"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\goToLineDialog.css"
+					RelativePath="..\inspector\front-end\GoToLineDialog.js"
 					>
 				</File>
 				<File
@@ -53060,11 +53060,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\NetworkPanel.js"
+					RelativePath="..\inspector\front-end\networkPanel.css"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\networkPanel.css"
+					RelativePath="..\inspector\front-end\NetworkPanel.js"
 					>
 				</File>
 				<File

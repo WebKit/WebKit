@@ -1,3 +1,23 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Copy forwarding headers and Inspector JS files as part of
+        WebCoreGenerated.vcproj
+
+        WebCoreGenerated.vcproj runs on every build, while WebCore.vcproj only
+        runs when a .h or .cpp file changes. By moving the copying to
+        WebCoreGenerated, it will happen even when someone only changes a JS
+        file (as happened in r68887).
+
+        Fixes <http://webkit.org/b/46988> <rdar://problem/8502489> REGRESSION
+        (r68887): Web Inspector: inspector/extensions*.html are failing on
+        Windows
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.vcproj/WebCore.vcproj: Moved invocation of
+        copyForwardingHeaders and copyInspectorFiles from here...
+        * WebCore.vcproj/WebCoreGenerated.vcproj: ...to here.
+
 2010-09-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
