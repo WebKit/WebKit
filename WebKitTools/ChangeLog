@@ -1,3 +1,9 @@
+2010-10-01  Fady Samuel  <fsamuel@chromium.org>
+
+        Unreviewed, adding myself to the committer list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Test NPN_GetValue(NPNVnetscapeWindow)
