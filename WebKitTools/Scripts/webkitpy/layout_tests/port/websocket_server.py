@@ -164,7 +164,7 @@ class PyWebSocket(http_server.Lighttpd):
         pywebsocket_script = os.path.join(pywebsocket_base, 'mod_pywebsocket',
             'standalone.py')
         start_cmd = [
-            python_interp, pywebsocket_script,
+            python_interp, '-u', pywebsocket_script,
             '--server-host', '127.0.0.1',
             '--port', str(self._port),
             '--document-root', self._layout_tests,

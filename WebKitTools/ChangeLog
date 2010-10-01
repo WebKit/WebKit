@@ -1,3 +1,16 @@
+2010-09-30  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        The WebSocket server should flush its logs
+        https://bugs.webkit.org/show_bug.cgi?id=46946
+
+        The WebSocket server logs are truncated because the driver just
+        terminates the child.  It should run Python without buffering so we can
+        see the end of the log.
+
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
 2010-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Add a button to jump to the next untested test.
