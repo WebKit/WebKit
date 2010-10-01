@@ -1,3 +1,29 @@
+2010-10-01  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Minor naming cleanup in WebDragData
+        https://bugs.webkit.org/show_bug.cgi?id=46937
+
+        This is a two-part patch--one to add the new methods with normalized
+        names that follow general WebKit convention, and a followup patch to
+        remove the original methods once Chromium is updated.
+
+        * public/WebDragData.h:
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::hasFileNames): renamed to containsFilenames
+        (WebKit::WebDragData::fileNames): renamed to filenames
+        (WebKit::WebDragData::setFileNames): renamed to setFilenames
+        (WebKit::WebDragData::appendToFileNames): renamed to appendToFilenames
+        (WebKit::WebDragData::containsFilenames):
+        (WebKit::WebDragData::filenames):
+        (WebKit::WebDragData::setFilenames):
+        (WebKit::WebDragData::appendToFilenames):
+        (WebKit::WebDragData::fileContentFileName): renamed to fileContentFilename
+        (WebKit::WebDragData::setFileContentFileName): renamed to setFileContentFilename
+        (WebKit::WebDragData::fileContentFilename):
+        (WebKit::WebDragData::setFileContentFilename):
+
 2010-10-01  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Darin Fisher.

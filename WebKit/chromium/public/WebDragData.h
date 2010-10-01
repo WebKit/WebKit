@@ -78,10 +78,16 @@ public:
     WEBKIT_API WebString fileExtension() const;
     WEBKIT_API void setFileExtension(const WebString&);
 
+    // These methods are deprecated in favor of the ones in the next block.
     WEBKIT_API bool hasFileNames() const;
     WEBKIT_API void fileNames(WebVector<WebString>&) const;
     WEBKIT_API void setFileNames(const WebVector<WebString>&);
     WEBKIT_API void appendToFileNames(const WebString&);
+
+    WEBKIT_API bool containsFilenames() const;
+    WEBKIT_API void filenames(WebVector<WebString>&) const;
+    WEBKIT_API void setFilenames(const WebVector<WebString>&);
+    WEBKIT_API void appendToFilenames(const WebString&);
 
     WEBKIT_API WebString plainText() const;
     WEBKIT_API void setPlainText(const WebString&);
@@ -92,8 +98,12 @@ public:
     WEBKIT_API WebURL htmlBaseURL() const;
     WEBKIT_API void setHTMLBaseURL(const WebURL&);
 
+    // These methods are deprecated in favor of the ones in the next block.
     WEBKIT_API WebString fileContentFileName() const;
     WEBKIT_API void setFileContentFileName(const WebString&);
+
+    WEBKIT_API WebString fileContentFilename() const;
+    WEBKIT_API void setFileContentFilename(const WebString&);
 
     WEBKIT_API WebData fileContent() const;
     WEBKIT_API void setFileContent(const WebData&);
