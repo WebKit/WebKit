@@ -1,5 +1,20 @@
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r67281.
+
+    2010-09-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/8414282> Can’t dynamically change first-letter to/from floating
+
+        * fast/dynamic/first-letter-display-change-expected.checksum: Added.
+        * fast/dynamic/first-letter-display-change-expected.png: Added.
+        * fast/dynamic/first-letter-display-change-expected.txt: Added.
+        * fast/dynamic/first-letter-display-change.html: Added.
+
+2010-10-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r63048.
 
     2010-07-10  Dan Bernstein  <mitz@apple.com>
