@@ -29,6 +29,9 @@
 namespace WebCore {
 
     class SVGTextPositioningElement : public SVGTextContentElement {
+    public:
+        static SVGTextPositioningElement* elementFromRenderer(RenderObject*);
+
     protected:
         SVGTextPositioningElement(const QualifiedName&, Document*);
 

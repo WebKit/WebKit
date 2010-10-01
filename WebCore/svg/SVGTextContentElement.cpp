@@ -26,6 +26,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Frame.h"
+#include "RenderObject.h"
 #include "SVGTextQuery.h"
 #include "SelectionController.h"
 #include "XMLNames.h"
@@ -213,6 +214,30 @@ bool SVGTextContentElement::isKnownAttribute(const QualifiedName& attrName)
 bool SVGTextContentElement::selfHasRelativeLengths() const
 {
     return textLength().isRelative();
+}
+
+SVGTextContentElement* SVGTextContentElement::elementFromRenderer(RenderObject* renderer)
+{
+    if (!renderer)
+        return 0;
+
+    if (!renderer->isSVGText() && !renderer->isSVGInline())
+        return 0;
+
+    Node* node = renderer->node();
+    ASSERT(node);
+    ASSERT(node->isSVGElement());
+
+    if (!node->hasTagName(SVGNames::textTag)
+        && !node->hasTagName(SVGNames::tspanTag)
+#if ENABLE(SVG_FONTS)
+        && !node->hasTagName(SVGNames::altGlyphTag)
+#endif
+        && !node->hasTagName(SVGNames::trefTag)
+        && !node->hasTagName(SVGNames::textPathTag))
+        return 0;
+
+    return static_cast<SVGTextContentElement*>(node);
 }
 
 }

@@ -54,6 +54,8 @@ namespace WebCore {
 
         bool isKnownAttribute(const QualifiedName&);
 
+        static SVGTextContentElement* elementFromRenderer(RenderObject*);
+
     protected:
         SVGTextContentElement(const QualifiedName&, Document*);
 

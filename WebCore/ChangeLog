@@ -1,3 +1,19 @@
+2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add helper methods to cast between renderers & SVGTextContent/PositioningElement
+        https://bugs.webkit.org/show_bug.cgi?id=46963
+
+        Doesn't affect any tests.
+
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::elementFromRenderer):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::elementFromRenderer):
+        * svg/SVGTextPositioningElement.h:
+
 2010-09-30  MORITA Hajime  <morrita@google.com>
 
         Reviewed by James Robinson.

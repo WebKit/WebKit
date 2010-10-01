@@ -143,6 +143,30 @@ bool SVGTextPositioningElement::selfHasRelativeLengths() const
     return false;
 }
 
+SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(RenderObject* renderer)
+{
+    if (!renderer)
+        return 0;
+
+    if (!renderer->isSVGText() && !renderer->isSVGInline())
+        return 0;
+
+    Node* node = renderer->node();
+    ASSERT(node);
+    ASSERT(node->isSVGElement());
+
+    if (!node->hasTagName(SVGNames::textTag)
+        && !node->hasTagName(SVGNames::tspanTag)
+#if ENABLE(SVG_FONTS)
+        && !node->hasTagName(SVGNames::altGlyphTag)
+#endif
+        && !node->hasTagName(SVGNames::trefTag))
+        return 0;
+
+    return static_cast<SVGTextPositioningElement*>(node);
+}
+
+
 }
 
 #endif // ENABLE(SVG)
