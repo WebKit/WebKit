@@ -1,3 +1,14 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Add expected Windows results for
+        scrollbars/custom-scrollbar-with-incomplete-style.html
+
+        This test was added in r66372 without any expected results.
+
+        * platform/win/scrollbars/custom-scrollbar-with-incomplete-style-expected.checksum: Added.
+        * platform/win/scrollbars/custom-scrollbar-with-incomplete-style-expected.png: Added.
+        * platform/win/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt: Added.
+
 2010-10-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
