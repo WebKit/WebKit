@@ -1,3 +1,35 @@
+2010-10-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add proxy server query function proxyServersForURL and change the Mac plug-in code to use it
+        https://bugs.webkit.org/show_bug.cgi?id=47022
+        <rdar://problem/8504712>
+
+        * WebCore.exp.in:
+        Export proxyServersForURL and toString.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * platform/network/ProxyServer.cpp: Added.
+        (WebCore::appendProxyServerString):
+        (WebCore::toString):
+        New function that converts a vector of ProxyServers into a PAC style string.
+
+        * platform/network/ProxyServer.h: Added.
+        (WebCore::ProxyServer::ProxyServer):
+        (WebCore::ProxyServer::type):
+        (WebCore::ProxyServer::hostName):
+        (WebCore::ProxyServer::port):
+        Add ProxyServer class.
+
+        * platform/network/cf/ProxyServerCFNet.cpp: Added.
+        (WebCore::proxyServersForURL):
+        (WebCore::addProxyServersForURL):
+        Query CFNetwork for the proxy servers given a URL.
+
 2010-09-30  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

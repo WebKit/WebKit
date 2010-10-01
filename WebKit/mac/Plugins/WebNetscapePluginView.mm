@@ -66,6 +66,7 @@
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/Page.h> 
 #import <WebCore/PluginMainThreadScheduler.h>
+#import <WebCore/ProxyServer.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SoftLinking.h> 
@@ -2239,7 +2240,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             if (!URL)
                 break;
 
-            CString proxiesUTF8 = proxiesForURL(URL);
+            Vector<ProxyServer> proxyServers = proxyServersForURL(URL);
+            CString proxiesUTF8 = toString(proxyServers).utf8();
             
             *value = static_cast<char*>(NPN_MemAlloc(proxiesUTF8.length()));
             memcpy(*value, proxiesUTF8.data(), proxiesUTF8.length());

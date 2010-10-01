@@ -145,10 +145,6 @@ class WebHaltablePlugin;
 
 
 namespace WebKit {
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-WTF::CString proxiesForURL(NSURL *);
-#endif
-    
 bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t port, const char* schemeStr, const char* realmStr,
                            WTF::CString& username, WTF::CString& password);
 } 

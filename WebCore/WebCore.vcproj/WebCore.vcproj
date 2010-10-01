@@ -27384,6 +27384,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\ProxyServer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\ProxyServer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\ResourceErrorBase.cpp"
 					>
 				</File>
@@ -27601,6 +27609,26 @@
 					<File
 						RelativePath="..\platform\network\cf\LoaderRunLoopCF.h"
 						>
+					</File>
+					<File
+						RelativePath="..\platform\network\cf\ProxyServerCFNet.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="..\platform\network\cf\ResourceError.h"

@@ -960,66 +960,6 @@ String WebHaltablePlugin::pluginName() const
 
 namespace WebKit {
 
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-CString proxiesForURL(NSURL *url)
-{
-    RetainPtr<CFDictionaryRef> systemProxies(AdoptCF, CFNetworkCopySystemProxySettings());
-    if (!systemProxies)
-        return "DIRECT";
-    
-    RetainPtr<CFArrayRef> proxiesForURL(AdoptCF, CFNetworkCopyProxiesForURL((CFURLRef)url, systemProxies.get()));
-    CFIndex proxyCount = proxiesForURL ? CFArrayGetCount(proxiesForURL.get()) : 0;
-    if (!proxyCount)
-        return "DIRECT";
- 
-    // proxiesForURL is a CFArray of CFDictionaries. Each dictionary represents a proxy.
-    // The format of the result should be:
-    // "PROXY host[:port]" (for HTTP proxy) or
-    // "SOCKS host[:port]" (for SOCKS proxy) or
-    // A combination of the above, separated by semicolon, in the order that they should be tried.
-    String proxies;
-    for (CFIndex i = 0; i < proxyCount; ++i) {
-        CFDictionaryRef proxy = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(proxiesForURL.get(), i));
-        if (!proxy)
-            continue;
-
-        CFStringRef type = static_cast<CFStringRef>(CFDictionaryGetValue(proxy, kCFProxyTypeKey));
-        bool isHTTP = type == kCFProxyTypeHTTP || type == kCFProxyTypeHTTPS;
-        bool isSOCKS = type == kCFProxyTypeSOCKS;
-        
-        // We can only report HTTP and SOCKS proxies.
-        if (!isHTTP && !isSOCKS)
-            continue;
-        
-        CFStringRef host = static_cast<CFStringRef>(CFDictionaryGetValue(proxy, kCFProxyHostNameKey));
-        CFNumberRef port = static_cast<CFNumberRef>(CFDictionaryGetValue(proxy, kCFProxyPortNumberKey));
-        
-        // If we are inserting multiple entries, add a separator
-        if (!proxies.isEmpty())
-            proxies += ";";
-        
-        if (isHTTP)
-            proxies += "PROXY ";
-        else if (isSOCKS)
-            proxies += "SOCKS ";
-        
-        proxies += host;
-
-        if (port) {
-            SInt32 intPort;
-            CFNumberGetValue(port, kCFNumberSInt32Type, &intPort);
-            
-            proxies += ":" + String::number(intPort);
-        }
-    }
-    
-    if (proxies.isEmpty())
-        return "DIRECT";
-    
-    return proxies.utf8();
-}
-#endif
-
 bool getAuthenticationInfo(const char* protocolStr, const char* hostStr, int32_t port, const char* schemeStr, const char* realmStr,
                            CString& username, CString& password)
 {

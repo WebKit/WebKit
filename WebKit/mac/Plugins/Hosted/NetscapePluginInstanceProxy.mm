@@ -50,6 +50,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
 #import <WebCore/KURL.h>
+#import <WebCore/ProxyServer.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
@@ -1557,7 +1558,8 @@ bool NetscapePluginInstanceProxy::getProxy(data_t urlData, mach_msg_type_number_
     if (!url)
         return false;
 
-    WTF::CString proxyStringUTF8 = proxiesForURL(url);
+    Vector<ProxyServer> proxyServers = proxyServersForURL(URL);
+    WTF::CString proxyStringUTF8 = toString(proxyServers).utf8();
 
     proxyLength = proxyStringUTF8.length();
     mig_allocate(reinterpret_cast<vm_address_t*>(&proxyData), proxyLength);
