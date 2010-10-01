@@ -61062,7 +61062,7 @@
         Continuation outlines are normally painted by the containing block. However, when the
         block and the inline are not enclosed by the same self-painting layer, the inline has to
         paint its own outlines. This was handled correctly only for the case where the inline had
-        its own self-painting layer, but now when an ancestor inline had the self-painting layer.
+        its own self-painting layer, but not when an ancestor inline had the self-painting layer.
 
         * rendering/InlineFlowBox.cpp:
         (WebCore::InlineFlowBox::paint): Instead of testing for having a self-painting layer, test
