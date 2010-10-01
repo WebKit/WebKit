@@ -3159,3 +3159,6 @@ BUGWK46951 : fast/url/segments.html = TEXT
 
 // New failure introduced in 68896.
 BUGWK44406 : http/tests/appcache/foreign-fallback.html = TEXT
+
+// This test need rebaseline. Will do that after Chromium Canary Windows is back running.
+BUG_HCLAM WIN LINUX : fast/css/rtl-to-viewport.html = IMAGE+TEXT

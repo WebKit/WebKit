@@ -1,3 +1,11 @@
+2010-10-01  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Adjust test expectations for Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-10-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.
