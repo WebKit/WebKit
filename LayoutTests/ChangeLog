@@ -1,3 +1,24 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Make regression tests pass on machines with 16-bit displays
+
+        I made these tests require 24-bit displays in r68808 and r68809,
+        thinking that we didn't have any testers that had 16-bit displays. But
+        apparently I was wrong; at least one Windows tester has a 16-bit
+        display.
+
+        Fixes <http://webkit.org/b/46980>
+        fast/media/color-does-not-include-alpha.html failing on Windows
+
+        Reviewed by Nikolas Zimmermann.
+
+        * fast/dom/Window/window-screen-properties-expected.txt: Updated
+        results.
+        * fast/dom/Window/window-screen-properties.html: Changed to allow
+        either 16 or 24 bits.
+        * fast/media/color-does-not-include-alpha.html: Changed to allow
+        either 5 or 8 bits per channel.
+
 2010-10-01  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rolling out r68633, because we don't need Qt specific expected results any more.

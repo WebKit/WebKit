@@ -2,16 +2,16 @@
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
 depth = window.screen.pixelDepth;
-if (depth == 24) {
-  document.write("PASS: window.screen.pixelDepth is 24");
+if (depth == 16 || depth == 24) {
+  document.write("PASS: window.screen.pixelDepth is either 16 or 24");
 }  else {
-  document.write("FAIL: window.screen.pixelDepth is " + depth + ", expected 24");
+  document.write("FAIL: window.screen.pixelDepth is " + depth + ", expected 16 or 24");
 }
 document.write("<br />");
 depth = window.screen.colorDepth;
-if (depth == 24) {
-  document.write("PASS: window.screen.colorDepth is 24");
+if (depth == 16 || depth == 24) {
+  document.write("PASS: window.screen.colorDepth is either 16 or 24");
 }  else {
-  document.write("FAIL: window.screen.colorDepth is " + depth + ", expected 24");
+  document.write("FAIL: window.screen.colorDepth is " + depth + ", expected 16 or 24");
 }
 </script>
