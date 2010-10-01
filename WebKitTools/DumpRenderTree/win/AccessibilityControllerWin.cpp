@@ -232,7 +232,8 @@ static void CALLBACK notificationListenerProc(HWINEVENTHOOK, DWORD event, HWND h
     VariantInit(&vChild);
 
     HRESULT hr = AccessibleObjectFromEvent(hwnd, idObject, idChild, &parentObject, &vChild);
-    ASSERT(SUCCEEDED(hr));
+    if (FAILED(hr) || !parentObject)
+        return;
 
     COMPtr<IDispatch> childDispatch;
     if (FAILED(parentObject->get_accChild(vChild, &childDispatch))) {

@@ -1,3 +1,18 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Don't assume AccessibleObjectFromEvent succeeds
+
+        Fixes <http://webkit.org/b/44136> <rdar://problem/8321684> Crash in
+        DumpRenderTree!notificationListenerProc when running
+        plugins/access-after-page-destroyed.html
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp:
+        (notificationListenerProc): Check both the return value of
+        AccessibleObjectFromEvent and the object it returns, as MSDN
+        recommends.
+
 2010-10-01  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Tony Chang.
