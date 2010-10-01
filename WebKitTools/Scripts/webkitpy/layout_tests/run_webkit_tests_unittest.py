@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -294,6 +295,11 @@ class RebaselineTest(unittest.TestCase):
             codecs.open = original_open
 
 
+class TestRunnerWrapper(run_webkit_tests.TestRunner):
+    def _get_test_info_for_file(self, test_file):
+        return test_file
+
+
 class TestRunnerTest(unittest.TestCase):
     def test_results_html(self):
         mock_port = Mock()
@@ -314,6 +320,52 @@ class TestRunnerTest(unittest.TestCase):
         html = runner._results_html(["test_path"], {}, "Title", override_time="time")
         self.assertEqual(html, expected_html)
 
+    def queue_to_list(self, queue):
+        queue_list = []
+        while(True):
+            try:
+                queue_list.append(queue.get_nowait())
+            except Queue.Empty:
+                break
+        return queue_list
+
+    def test_get_test_file_queue(self):
+        # Test that _get_test_file_queue in run_webkit_tests.TestRunner really
+        # put the http tests first in the queue.
+        runner = TestRunnerWrapper(port=Mock(), options=Mock(), printer=Mock())
+        runner._options.experimental_fully_parallel = False
+
+        test_list = [
+          "LayoutTests/websocket/tests/unicode.htm",
+          "LayoutTests/animations/keyframes.html",
+          "LayoutTests/http/tests/security/view-source-no-refresh.html",
+          "LayoutTests/websocket/tests/websocket-protocol-ignored.html",
+          "LayoutTests/fast/css/display-none-inline-style-change-crash.html",
+          "LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html",
+          "LayoutTests/dom/html/level2/html/HTMLAnchorElement03.html",
+          "LayoutTests/ietestcenter/Javascript/11.1.5_4-4-c-1.html",
+          "LayoutTests/dom/html/level2/html/HTMLAnchorElement06.html",
+        ]
+
+        expected_tests_to_http_lock = set([
+          'LayoutTests/websocket/tests/unicode.htm',
+          'LayoutTests/http/tests/security/view-source-no-refresh.html',
+          'LayoutTests/websocket/tests/websocket-protocol-ignored.html',
+          'LayoutTests/http/tests/xmlhttprequest/supported-xml-content-types.html',
+        ])
+
+        runner._options.child_processes = 1
+        test_queue_for_single_thread = runner._get_test_file_queue(test_list)
+        runner._options.child_processes = 2
+        test_queue_for_multi_thread = runner._get_test_file_queue(test_list)
+
+        single_thread_results = self.queue_to_list(test_queue_for_single_thread)
+        multi_thread_results = self.queue_to_list(test_queue_for_multi_thread)
+
+        self.assertEqual("tests_to_http_lock", single_thread_results[0][0])
+        self.assertEqual(expected_tests_to_http_lock, set(single_thread_results[0][1]))
+        self.assertEqual("tests_to_http_lock", multi_thread_results[0][0])
+        self.assertEqual(expected_tests_to_http_lock, set(multi_thread_results[0][1]))
 
 class DryrunTest(unittest.TestCase):
     # FIXME: it's hard to know which platforms are safe to test; the

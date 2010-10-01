@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -498,6 +499,12 @@ class TestRunner:
                             self._options.slow_time_out_ms)
         return TestInfo(self._port, test_file, self._options.time_out_ms)
 
+    def _test_requires_lock(self, test_file):
+        """Return True if the test needs to be locked when
+        running multiple copies of NRWTs."""
+        split_path = test_file.split(os.sep)
+        return 'http' in split_path or 'websocket' in split_path
+
     def _get_test_file_queue(self, test_files):
         """Create the thread safe queue of lists of (test filenames, test URIs)
         tuples. Each TestShellThread pulls a list from this queue and runs
@@ -511,46 +518,46 @@ class TestRunner:
           The Queue of lists of TestInfo objects.
         """
 
+        test_lists = []
+        tests_to_http_lock = []
         if (self._options.experimental_fully_parallel or
             self._is_single_threaded()):
-            filename_queue = Queue.Queue()
             for test_file in test_files:
-                filename_queue.put(
-                    ('.', [self._get_test_info_for_file(test_file)]))
-            return filename_queue
-
-        tests_by_dir = {}
-        for test_file in test_files:
-            directory = self._get_dir_for_test_file(test_file)
-            tests_by_dir.setdefault(directory, [])
-            tests_by_dir[directory].append(
-                self._get_test_info_for_file(test_file))
-
-        # Sort by the number of tests in the dir so that the ones with the
-        # most tests get run first in order to maximize parallelization.
-        # Number of tests is a good enough, but not perfect, approximation
-        # of how long that set of tests will take to run. We can't just use
-        # a PriorityQueue until we move # to Python 2.6.
-        test_lists = []
-        http_tests = None
-        for directory in tests_by_dir:
-            test_list = tests_by_dir[directory]
-            # Keep the tests in alphabetical order.
-            # TODO: Remove once tests are fixed so they can be run in any
-            # order.
-            test_list.reverse()
-            test_list_tuple = (directory, test_list)
-            if directory == 'LayoutTests' + os.sep + 'http':
-                http_tests = test_list_tuple
-            else:
+                test_info = self._get_test_info_for_file(test_file)
+                if self._test_requires_lock(test_file):
+                    tests_to_http_lock.append(test_info)
+                else:
+                    test_lists.append((".", [test_info]))
+        else:
+            tests_by_dir = {}
+            for test_file in test_files:
+                directory = self._get_dir_for_test_file(test_file)
+                test_info = self._get_test_info_for_file(test_file)
+                if self._test_requires_lock(test_file):
+                    tests_to_http_lock.append(test_info)
+                else:
+                    tests_by_dir.setdefault(directory, [])
+                    tests_by_dir[directory].append(test_info)
+            # Sort by the number of tests in the dir so that the ones with the
+            # most tests get run first in order to maximize parallelization.
+            # Number of tests is a good enough, but not perfect, approximation
+            # of how long that set of tests will take to run. We can't just use
+            # a PriorityQueue until we move to Python 2.6.
+            for directory in tests_by_dir:
+                test_list = tests_by_dir[directory]
+                # Keep the tests in alphabetical order.
+                # FIXME: Remove once tests are fixed so they can be run in any
+                # order.
+                test_list.reverse()
+                test_list_tuple = (directory, test_list)
                 test_lists.append(test_list_tuple)
-        test_lists.sort(lambda a, b: cmp(len(b[1]), len(a[1])))
+            test_lists.sort(lambda a, b: cmp(len(b[1]), len(a[1])))
 
         # Put the http tests first. There are only a couple hundred of them,
         # but each http test takes a very long time to run, so sorting by the
         # number of tests doesn't accurately capture how long they take to run.
-        if http_tests:
-            test_lists.insert(0, http_tests)
+        if tests_to_http_lock:
+            test_lists.insert(0, ("tests_to_http_lock", tests_to_http_lock))
 
         filename_queue = Queue.Queue()
         for item in test_lists:

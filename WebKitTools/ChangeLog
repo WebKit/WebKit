@@ -1,3 +1,13 @@
+2010-10-01  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Tony Chang.
+
+        [NRWT] Put the http and websocket tests first in the test list.
+        https://bugs.webkit.org/show_bug.cgi?id=46453
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-10-01  Fady Samuel  <fsamuel@chromium.org>
 
         Unreviewed, adding myself to the committer list.
