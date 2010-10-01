@@ -1,5 +1,14 @@
 2010-10-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        Add makefile for TestWebKitAPI and call it from the base makefile.
+
+        * Makefile:
+        * TestWebKitAPI/Makefile: Added.
+
+2010-10-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben.
 
         Remove unnecessary ForwardingHeaders from test runners.
