@@ -1,3 +1,59 @@
+2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add SVGTextMetrics/SVGTextFragment/SVGTextChunk primitives used by the new layout engine
+        https://bugs.webkit.org/show_bug.cgi?id=46964
+
+        The new SVG text layout engine will use these new classes.
+        1) SVGTextMetrics is used to measure either single glyphs (which may span multiple characters, when ligatures are defined) or a range of characters.
+           
+           -> In "single glyph" mode, it returns the width/height of the glyph, the length of the glyph (> 1, when ligatures are used) and a "Glyph" object
+              describing the glyph (name of glyph, when used together with SVG Fonts and the unicode string the glyph describes).
+           -> In "range of characters" mode, it returns the width/height of the range, and its length.
+
+           All measurements are done using the regular Font::floatWidth() methods, this class just encapsulates its usage for the SVG text layout engine.
+
+        2) SVGTextFragment describes a fragment of text, living in a SVGInlineTextBox, which can be measured/rendered in one shot.
+           It contains all necessary information to render the fragment (x/y/width/height, offset into characters() buffer for the first char of the fragment,
+           length, and an arbitary transformation, holding information about rotations/scale/glyph-orientation etc.)
+
+           In future the SVGTextLayoutEngine will generate SVGTextFragment objects for each SVGInlineTextBox. When painting no more measurements have to
+           be performed as SVGTextFragment contains all necessary information to render text / select text etc.
+
+        3) SVGTextChunk describes a SVG text chunk, which may span multiple text boxes (and in turn text fragments).
+
+           Quotes from SVG spec:
+           Each absolute position adjustment defines a new "text chunk". Absolute position adjustments impact text layout in the following ways:
+            * Ligatures only occur when a set of characters which might map to a ligature are all in the same text chunk.
+            * Each text chunk represents a separate block of text for alignment due to "text-anchor" property values.
+            * Reordering of characters due to bidirectionality only occurs within a text chunk. Reordering does not happen across text chunks.
+
+            An absolute position adjustment occurs in the following circumstances:
+            * At the start of a <text> element
+            * At the start of each <textPath> element
+            * For each character within a <text>, <tspan>, <tref> and <altGlyph> element which has an "x" or "y" attribute value assigned to it explicitly
+
+            After the line-layout finishes, each "text chunk" is altered according to the textLength and text-anchor processing rules
+            (eg. for text-anchor="middle" moving the whole text chunk by -fragmentWidth/2, for horizontal text).
+
+            SVGTextChunk is just a simple helper class, that encapsulates measuring/altering a text chunk.
+
+        Doesn't affect any tests, as these classes aren't used so far.
+
+        * Android.mk: Add SVGTextMetrics.*, SVGTextFragment.h, SVGTextChunk.* to build.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/svg/SVGTextChunk.cpp: Added.
+        * rendering/svg/SVGTextChunk.h: Added.
+        * rendering/svg/SVGTextFragment.h: Added.
+        * rendering/svg/SVGTextMetrics.cpp: Added.
+        * rendering/svg/SVGTextMetrics.h: Added.
+
 2010-10-01  Vincent Scheib  <scheib@chromium.org>
 
         Reviewed by James Robinson.

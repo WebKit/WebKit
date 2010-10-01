@@ -712,8 +712,10 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderSVGTextPath.cpp \
 	rendering/RenderSVGTransformableContainer.cpp \
 	rendering/RenderSVGViewportContainer.cpp \
+	rendering/svg/SVGTextChunk.cpp \
 	rendering/svg/SVGTextLayoutAttributes.cpp \
-	rendering/svg/SVGTextLayoutBuilder.cpp
+	rendering/svg/SVGTextLayoutBuilder.cpp \
+	rendering/svg/SVGTextMetrics.cpp
 endif
 
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \

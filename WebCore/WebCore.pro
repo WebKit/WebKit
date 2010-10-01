@@ -2294,8 +2294,11 @@ HEADERS += \
     rendering/style/StyleVisualData.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \
+    rendering/svg/SVGTextChunk.h \
+    rendering/svg/SVGTextFragment.h \
     rendering/svg/SVGTextLayoutAttributes.h \
     rendering/svg/SVGTextLayoutBuilder.h \
+    rendering/svg/SVGTextMetrics.h \
     rendering/SVGCharacterData.h \
     rendering/SVGCharacterLayoutInfo.h \
     rendering/SVGImageBufferTools.h \
@@ -3275,8 +3278,10 @@ contains(DEFINES, ENABLE_SVG=1) {
         css/SVGCSSStyleSelector.cpp \
         rendering/style/SVGRenderStyle.cpp \
         rendering/style/SVGRenderStyleDefs.cpp \
+        rendering/svg/SVGTextChunk.cpp \
         rendering/svg/SVGTextLayoutAttributes.cpp \
         rendering/svg/SVGTextLayoutBuilder.cpp \
+        rendering/svg/SVGTextMetrics.cpp \
         rendering/PointerEventsHitRules.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/SVGImageLoader.cpp \

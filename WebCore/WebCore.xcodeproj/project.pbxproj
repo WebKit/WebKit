@@ -209,6 +209,11 @@
 		08E6A2E90EEE035200AC1206 /* WMLPostfieldElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E6A2E70EEE035200AC1206 /* WMLPostfieldElement.h */; };
 		08E6E0F10EFF42BA00029FBF /* WMLFieldSetElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E6E0EF0EFF42BA00029FBF /* WMLFieldSetElement.cpp */; };
 		08E6E0F20EFF42BA00029FBF /* WMLFieldSetElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E6E0F00EFF42BA00029FBF /* WMLFieldSetElement.h */; };
+		08F0BFC21255C53C00075185 /* SVGTextChunk.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F0BFBD1255C53C00075185 /* SVGTextChunk.cpp */; };
+		08F0BFC31255C53C00075185 /* SVGTextChunk.h in Headers */ = {isa = PBXBuildFile; fileRef = 08F0BFBE1255C53C00075185 /* SVGTextChunk.h */; };
+		08F0BFC41255C53C00075185 /* SVGTextFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 08F0BFBF1255C53C00075185 /* SVGTextFragment.h */; };
+		08F0BFC51255C53C00075185 /* SVGTextMetrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F0BFC01255C53C00075185 /* SVGTextMetrics.cpp */; };
+		08F0BFC61255C53C00075185 /* SVGTextMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = 08F0BFC11255C53C00075185 /* SVGTextMetrics.h */; };
 		08F2F0091213E61700DCEC48 /* RenderImageResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08F2F0071213E61700DCEC48 /* RenderImageResource.cpp */; };
 		08F2F00A1213E61700DCEC48 /* RenderImageResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 08F2F0081213E61700DCEC48 /* RenderImageResource.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4844980CA44CB200B7BD48 /* SoftLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6132,6 +6137,11 @@
 		08E6A2E70EEE035200AC1206 /* WMLPostfieldElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPostfieldElement.h; sourceTree = "<group>"; };
 		08E6E0EF0EFF42BA00029FBF /* WMLFieldSetElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLFieldSetElement.cpp; sourceTree = "<group>"; };
 		08E6E0F00EFF42BA00029FBF /* WMLFieldSetElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLFieldSetElement.h; sourceTree = "<group>"; };
+		08F0BFBD1255C53C00075185 /* SVGTextChunk.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextChunk.cpp; sourceTree = "<group>"; };
+		08F0BFBE1255C53C00075185 /* SVGTextChunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextChunk.h; sourceTree = "<group>"; };
+		08F0BFBF1255C53C00075185 /* SVGTextFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextFragment.h; sourceTree = "<group>"; };
+		08F0BFC01255C53C00075185 /* SVGTextMetrics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextMetrics.cpp; sourceTree = "<group>"; };
+		08F0BFC11255C53C00075185 /* SVGTextMetrics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextMetrics.h; sourceTree = "<group>"; };
 		08F2F0071213E61700DCEC48 /* RenderImageResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderImageResource.cpp; sourceTree = "<group>"; };
 		08F2F0081213E61700DCEC48 /* RenderImageResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderImageResource.h; sourceTree = "<group>"; };
 		08FB84B00ECE373300DC064E /* WMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLElementFactory.cpp; sourceTree = "<group>"; };
@@ -11628,10 +11638,15 @@
 		088C2F7412390080003D65CE /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				08F0BFBD1255C53C00075185 /* SVGTextChunk.cpp */,
+				08F0BFBE1255C53C00075185 /* SVGTextChunk.h */,
+				08F0BFBF1255C53C00075185 /* SVGTextFragment.h */,
 				088C2F7512390080003D65CE /* SVGTextLayoutAttributes.cpp */,
 				088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */,
 				088C2F7712390081003D65CE /* SVGTextLayoutBuilder.cpp */,
 				088C2F7812390081003D65CE /* SVGTextLayoutBuilder.h */,
+				08F0BFC01255C53C00075185 /* SVGTextMetrics.cpp */,
+				08F0BFC11255C53C00075185 /* SVGTextMetrics.h */,
 			);
 			path = svg;
 			sourceTree = "<group>";
@@ -20919,6 +20934,9 @@
 				49B69E601254FEED007D57EB /* LoopBlinnConstants.h in Headers */,
 				49B69E641254FEED007D57EB /* LoopBlinnMathUtils.h in Headers */,
 				49B69E661254FEED007D57EB /* LoopBlinnTextureCoords.h in Headers */,
+				08F0BFC31255C53C00075185 /* SVGTextChunk.h in Headers */,
+				08F0BFC41255C53C00075185 /* SVGTextFragment.h in Headers */,
+				08F0BFC61255C53C00075185 /* SVGTextMetrics.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23443,6 +23461,8 @@
 				49B69E5E1254FEED007D57EB /* LoopBlinnClassifier.cpp in Sources */,
 				49B69E631254FEED007D57EB /* LoopBlinnMathUtils.cpp in Sources */,
 				49B69E651254FEED007D57EB /* LoopBlinnTextureCoords.cpp in Sources */,
+				08F0BFC21255C53C00075185 /* SVGTextChunk.cpp in Sources */,
+				08F0BFC51255C53C00075185 /* SVGTextMetrics.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2809,10 +2809,15 @@ webcore_sources += \
 	WebCore/rendering/SVGRootInlineBox.h \
 	WebCore/rendering/SVGShadowTreeElements.cpp \
 	WebCore/rendering/SVGShadowTreeElements.h \
+	WebCore/rendering/svg/SVGTextChunk.cpp \
+	WebCore/rendering/svg/SVGTextChunk.h \
+	WebCore/rendering/svg/SVGTextFragment.h \
 	WebCore/rendering/svg/SVGTextLayoutAttributes.cpp \
 	WebCore/rendering/svg/SVGTextLayoutAttributes.h \
 	WebCore/rendering/svg/SVGTextLayoutBuilder.cpp \
 	WebCore/rendering/svg/SVGTextLayoutBuilder.h \
+	WebCore/rendering/svg/SVGTextMetrics.cpp \
+	WebCore/rendering/svg/SVGTextMetrics.h \
 	WebCore/rendering/SVGTextChunkLayoutInfo.cpp \
 	WebCore/rendering/SVGTextChunkLayoutInfo.h \
 	WebCore/rendering/SVGTextLayoutUtilities.cpp \

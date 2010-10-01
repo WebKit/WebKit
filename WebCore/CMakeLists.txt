@@ -1706,8 +1706,10 @@ IF (ENABLE_SVG)
         rendering/SVGTextQuery.cpp
         rendering/style/SVGRenderStyle.cpp
         rendering/style/SVGRenderStyleDefs.cpp
+        rendering/svg/SVGTextChunk.cpp
         rendering/svg/SVGTextLayoutAttributes.cpp
         rendering/svg/SVGTextLayoutBuilder.cpp
+        rendering/svg/SVGTextMetrics.cpp
         svg/ColorDistance.cpp
         svg/SVGAElement.cpp
         svg/SVGAltGlyphElement.cpp

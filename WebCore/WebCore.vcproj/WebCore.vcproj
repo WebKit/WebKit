@@ -33514,6 +33514,18 @@
 				Name="svg"
 				>
 				<File
+					RelativePath="..\rendering\svg\SVGTextChunk.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextChunk.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextFragment.h"
+					>
+				</File>
+				<File
 					RelativePath="..\rendering\svg\SVGTextLayoutAttributes.cpp"
 					>
 				</File>
@@ -33527,6 +33539,14 @@
 				</File>
 				<File
 					RelativePath="..\rendering\svg\SVGTextLayoutBuilder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextMetrics.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\SVGTextMetrics.h"
 					>
 				</File>
 			</Filter>
