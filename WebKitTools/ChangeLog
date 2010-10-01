@@ -1,3 +1,9 @@
+2010-10-01  Andreas Kling  <andreas.kling@nokia.com>
+
+        Unreviewed, adding my webkit.org identity to reviewer list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-09-30  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
