@@ -840,9 +840,6 @@ BUGWK44514 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 // End SVG Regressions
 // -----------------------------------------------------------------
 
-// Selection wrong.
-BUG10292 MAC LINUX : editing/selection/5354455-1.html = FAIL
-
 // Compact support was removed from WebKit by Hyatt and layout tests rebaselined in r40259.
 
 BUG10295 MAC : fast/dom/prototype-chain.html = FAIL

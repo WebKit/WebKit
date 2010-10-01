@@ -1,3 +1,33 @@
+2010-10-01  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        editing/selection/5354455-1 has incorrect description text
+        https://bugs.webkit.org/show_bug.cgi?id=44990
+
+        This test includes descriptive text that describes an OS X-specific behavior.
+        I almost checked in an incorrect baseline because I believed the text.
+        This change amends the text to describe expected behavior on Mac/Win/Linux.
+
+        Rather than requiring new baselines on all platforms, I took this opportunity
+        to also convert the test to a markup dump.  We'll then end up with just one
+        Mac baseline and one non-Mac baseline.
+
+        * editing/selection/5354455-1.html:
+        * platform/chromium-linux/editing/selection/5354455-1-expected.checksum: Removed.
+        * platform/chromium-linux/editing/selection/5354455-1-expected.png: Removed.
+        * platform/chromium-win/editing/selection/5354455-1-expected.checksum: Removed.
+        * platform/chromium-win/editing/selection/5354455-1-expected.png: Removed.
+        * platform/chromium-win/editing/selection/5354455-1-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/editing/selection/5354455-1-expected.txt: Removed.
+        * platform/mac-leopard/editing/selection/5354455-1-expected.checksum: Removed.
+        * platform/mac-leopard/editing/selection/5354455-1-expected.png: Removed.
+        * platform/mac/editing/selection/5354455-1-expected.checksum: Removed.
+        * platform/mac/editing/selection/5354455-1-expected.png: Removed.
+        * platform/mac/editing/selection/5354455-1-expected.txt: Updated.
+        * platform/win/editing/selection/5354455-1-expected.txt: Added.
+
 2010-09-30  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

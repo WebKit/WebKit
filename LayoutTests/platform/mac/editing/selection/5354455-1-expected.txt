@@ -1,19 +1,19 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 766x36
-          text run at (0,0) width 578: "This tests to make sure that right clicking on a paragraph break in editable content selects it. "
-          text run at (578,0) width 188: "To run it manually, right click"
-          text run at (0,18) width 342: "on the paragraph break after the first paragraph below."
-      RenderBlock {DIV} at (0,52) size 784x36
-        RenderBlock {DIV} at (0,0) size 784x18
-          RenderInline {SPAN} at (0,0) size 254x18
-            RenderText {#text} at (0,0) size 254x18
-              text run at (0,0) width 254: "The paragraph break should be selected."
-        RenderBlock (anonymous) at (0,18) size 784x18
-          RenderBR {BR} at (0,0) size 0x18
-selection start: position 39 of child 0 {#text} of child 0 {SPAN} of child 1 {DIV} of child 2 {DIV} of body
-selection end:   position 0 of child 3 {BR} of child 2 {DIV} of body
+| "
+"
+| <div>
+|   contenteditable="true"
+|   id="div"
+|   "
+"
+|   <div>
+|     <span>
+|       id="text"
+|       "The following paragraph break should be selected on OS X.<#selection-anchor>"
+|   "
+"
+|   <#selection-focus>
+|   <br>
+|   "
+"
+| "
+"

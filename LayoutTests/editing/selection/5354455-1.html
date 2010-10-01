@@ -1,7 +1,11 @@
-<p>This tests to make sure that right clicking on a paragraph break in editable content selects it.  To run it manually, right click on the paragraph break after the first paragraph below.</p>
+<script src="../../resources/dump-as-markup.js"></script>
+
+<p>This tests whether right clicking on a paragraph break in editable content selects it.  The break should be selected on OS X, but not on Windows or Linux.  To run it manually, right click on the paragraph break after the first paragraph below.</p>
+<div id="dump">
 <div id="div" contenteditable="true">
-<div><span id="text">The paragraph break should be selected.</span></div>
+<div><span id="text">The following paragraph break should be selected on OS X.</span></div>
 <br>
+</div>
 </div>
 
 <script>
@@ -14,7 +18,8 @@ if (window.layoutTestController) {
     eventSender.mouseDown();
     eventSender.mouseUp();
     // Right click on the paragraph break to select it.
-    eventSender.contextClick();   
+    eventSender.contextClick();
 }
+Markup.dump(document.getElementById("dump"));
 </script>
 
