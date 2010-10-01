@@ -1,5 +1,13 @@
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
+        Add Qt ProxyServer stub.
+
+        * WebCore.pro:
+        * platform/network/qt/ProxyServerQt.cpp: Added.
+        (WebCore::proxyServersForURL):
+
+2010-10-01  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Add proxy server query function proxyServersForURL and change the Mac plug-in code to use it
