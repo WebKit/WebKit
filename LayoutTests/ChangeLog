@@ -1,3 +1,9 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Remove a test I just fixed from the Skipped file
+
+        * platform/win/Skipped:
+
 2010-10-01  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Barth.
