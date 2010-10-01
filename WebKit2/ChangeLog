@@ -1,3 +1,15 @@
+2010-10-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement proxiesForURL, cookiesForURL and setCookiesForURL
+        https://bugs.webkit.org/show_bug.cgi?id=47029
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::proxiesForURL):
+        (WebKit::PluginView::cookiesForURL):
+        (WebKit::PluginView::setCookiesForURL):
+
 2010-10-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

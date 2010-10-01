@@ -30,6 +30,7 @@
 #include "WebEvent.h"
 #include "WebPage.h"
 #include <WebCore/Chrome.h>
+#include <WebCore/CookieJar.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Event.h>
 #include <WebCore/FocusController.h>
@@ -40,6 +41,7 @@
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HostWindow.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/ProxyServer.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/ScrollView.h>
@@ -826,19 +828,18 @@ HWND PluginView::nativeParentWindow()
 
 String PluginView::proxiesForURL(const String& urlString)
 {
-    // FIXME: Implement.
-    return String();
+    Vector<ProxyServer> proxyServers = proxyServersForURL(KURL(KURL(), urlString));
+    return toString(proxyServers);
 }
 
 String PluginView::cookiesForURL(const String& urlString)
 {
-    // FIXME: Implement.
-    return String();
+    return cookies(m_pluginElement->document(), KURL(KURL(), urlString));
 }
 
 void PluginView::setCookiesForURL(const String& urlString, const String& cookieString)
 {
-    // FIXME: Implement.
+    setCookies(m_pluginElement->document(), KURL(KURL(), urlString), cookieString);
 }
     
 void PluginView::didFinishLoad(WebFrame* webFrame)
