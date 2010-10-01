@@ -1,3 +1,25 @@
+2010-10-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rolling out r68633, because we don't need Qt specific expected results any more.
+
+        * platform/qt/canvas: Removed.
+        * platform/qt/canvas/philip: Removed.
+        * platform/qt/canvas/philip/tests: Removed.
+        * platform/qt/canvas/philip/tests/2d.gradient.radial.cone.front-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.gradient.radial.inside2-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.gradient.radial.inside3-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.gradient.radial.outside1-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.line.cap.closed-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.line.join.parallel-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.shadow.enable.blur-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.shadow.enable.x-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.shadow.enable.y-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.shadow.gradient.alpha-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.shadow.gradient.basic-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.shadow.gradient.transparent.2-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/2d.strokeRect.zero.4-expected.txt: Removed.
+        * platform/qt/canvas/philip/tests/toDataURL.jpeg.alpha-expected.txt: Removed.
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Add some more failing tests to the Windows Skipped file

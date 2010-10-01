@@ -1,8 +1,0 @@
-< [index] >
-2d.shadow.gradient.transparent.2
-Shadows are not drawn for transparent parts of gradient fills
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
-Passed
