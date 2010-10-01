@@ -1,3 +1,10 @@
+2010-09-30  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, Windows build fix for r68854
+
+        * WebCore.vcproj/copyForwardingHeaders.cmd:
+          Copy WebCore/html/parser/*.h.
+
 2010-09-30  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dan Bernstein.
