@@ -42,7 +42,7 @@ PassRefPtr<Clipboard> Clipboard::create(ClipboardAccessPolicy, DragData*, Frame*
 }
 
 ClipboardBrew::ClipboardBrew(ClipboardAccessPolicy policy, ClipboardType clipboardType)
-    : Clipboard(clipboardType, isForDragging)
+    : Clipboard(policy, clipboardType)
 {
 }
 

@@ -1,3 +1,10 @@
+2010-10-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed, Brew MP build fix.
+
+        * platform/brew/ClipboardBrew.cpp:
+        (WebCore::ClipboardBrew::ClipboardBrew):
+
 2010-10-01  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Unreviewed build fix.
