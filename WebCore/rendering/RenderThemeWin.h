@@ -77,6 +77,9 @@ public:
 
     virtual bool paintButton(RenderObject*, const PaintInfo&, const IntRect&);
 
+    virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&);
+
     virtual bool paintTextField(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual bool paintTextArea(RenderObject* o, const PaintInfo& i, const IntRect& r)
@@ -139,6 +142,12 @@ public:
 #endif
 
 private:
+    enum ControlSubPart {
+        None,
+        SpinButtonDown,
+        SpinButtonUp,
+    };
+
     RenderThemeWin();
     ~RenderThemeWin();
 
@@ -146,24 +155,27 @@ private:
     void close();
 
     unsigned determineState(RenderObject*);
-    unsigned determineClassicState(RenderObject*);
+    unsigned determineClassicState(RenderObject*, ControlSubPart = None);
     unsigned determineSliderThumbState(RenderObject*);
     unsigned determineButtonState(RenderObject*);
+    unsigned determineSpinButtonState(RenderObject*, ControlSubPart = None);
 
     bool supportsFocus(ControlPart) const;
 
-    ThemeData getThemeData(RenderObject*);
-    ThemeData getClassicThemeData(RenderObject* o);
+    ThemeData getThemeData(RenderObject*, ControlSubPart = None);
+    ThemeData getClassicThemeData(RenderObject* o, ControlSubPart = None);
 
     HANDLE buttonTheme() const;
     HANDLE textFieldTheme() const;
     HANDLE menuListTheme() const;
     HANDLE sliderTheme() const;
+    HANDLE spinButtonTheme() const;
 
     mutable HANDLE m_buttonTheme;
     mutable HANDLE m_textFieldTheme;
     mutable HANDLE m_menuListTheme;
     mutable HANDLE m_sliderTheme;
+    mutable HANDLE m_spinButtonTheme;
 };
 
 };

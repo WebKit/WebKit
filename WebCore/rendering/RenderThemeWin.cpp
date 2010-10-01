@@ -92,6 +92,21 @@
 #define PBS_DISABLED    4
 #define PBS_DEFAULTED   5
 
+// Spin button parts
+#define SPNP_UP         1
+#define SPNP_DOWN       2
+
+// Spin button states
+#define DNS_NORMAL      1
+#define DNS_HOT         2
+#define DNS_PRESSED     3
+#define DNS_DISABLED    4
+#define UPS_NORMAL      1
+#define UPS_HOT         2
+#define UPS_PRESSED     3
+#define UPS_DISABLED    4
+
+
 SOFT_LINK_LIBRARY(uxtheme)
 SOFT_LINK(uxtheme, OpenThemeData, HANDLE, WINAPI, (HWND hwnd, LPCWSTR pszClassList), (hwnd, pszClassList))
 SOFT_LINK(uxtheme, CloseThemeData, HRESULT, WINAPI, (HANDLE hTheme), (hTheme))
@@ -154,6 +169,7 @@ RenderThemeWin::RenderThemeWin()
     , m_textFieldTheme(0)
     , m_menuListTheme(0)
     , m_sliderTheme(0)
+    , m_spinButtonTheme(0)
 {
     haveTheme = uxthemeLibrary() && IsThemeActive();
 }
@@ -194,6 +210,13 @@ HANDLE RenderThemeWin::sliderTheme() const
     return m_sliderTheme;
 }
 
+HANDLE RenderThemeWin::spinButtonTheme() const
+{
+    if (haveTheme && !m_spinButtonTheme)
+        m_spinButtonTheme = OpenThemeData(0, L"Spin");
+    return m_spinButtonTheme;
+}
+
 void RenderThemeWin::close()
 {
     // This method will need to be called when the OS theme changes to flush our cached themes.
@@ -205,7 +228,9 @@ void RenderThemeWin::close()
         CloseThemeData(m_menuListTheme);
     if (m_sliderTheme)
         CloseThemeData(m_sliderTheme);
-    m_buttonTheme = m_textFieldTheme = m_menuListTheme = m_sliderTheme = 0;
+    if (m_spinButtonTheme)
+        CloseThemeData(m_spinButtonTheme);
+    m_buttonTheme = m_textFieldTheme = m_menuListTheme = m_sliderTheme = m_spinButtonTheme = 0;
 
     haveTheme = uxthemeLibrary() && IsThemeActive();
 }
@@ -368,7 +393,7 @@ bool RenderThemeWin::supportsFocusRing(const RenderStyle* style) const
     return supportsFocus(style->appearance());
 }
 
-unsigned RenderThemeWin::determineClassicState(RenderObject* o)
+unsigned RenderThemeWin::determineClassicState(RenderObject* o, ControlSubPart subPart)
 {
     unsigned state = 0;
     switch (o->style()->appearance()) {
@@ -397,6 +422,18 @@ unsigned RenderThemeWin::determineClassicState(RenderObject* o)
                 state |= DFCS_INACTIVE;
             else if (isPressed(o))
                 state |= DFCS_PUSHED;
+            break;
+        case InnerSpinButtonPart: {
+            bool isUpButton = subPart == SpinButtonUp;
+            state = isUpButton ? DFCS_SCROLLUP : DFCS_SCROLLDOWN;
+            if (!isEnabled(o) || isReadOnlyControl(o))
+                state |= DFCS_INACTIVE;
+            else if (isPressed(o) && isUpButton == isSpinUpButtonPartPressed(o))
+                state |= DFCS_PUSHED;
+            else if (isHovered(o) && isUpButton == isSpinUpButtonPartHovered(o))
+                state |= DFCS_HOT;
+            break;
+        }
         default:
             break;
     }
@@ -452,7 +489,20 @@ unsigned RenderThemeWin::determineButtonState(RenderObject* o)
     return result;
 }
 
-ThemeData RenderThemeWin::getClassicThemeData(RenderObject* o)
+unsigned RenderThemeWin::determineSpinButtonState(RenderObject* o, ControlSubPart subPart)
+{
+    bool isUpButton = subPart == SpinButtonUp;
+    unsigned result = isUpButton ? UPS_NORMAL : DNS_NORMAL;
+    if (!isEnabled(o) || isReadOnlyControl(o))
+        result = isUpButton ? UPS_DISABLED : DNS_DISABLED;
+    else if (isPressed(o) && isUpButton == isSpinUpButtonPartPressed(o))
+        result = isUpButton ? UPS_PRESSED : DNS_PRESSED;
+    else if (isHovered(o) && isUpButton == isSpinUpButtonPartHovered(o))
+        result = isUpButton ? UPS_HOT : DNS_HOT;
+    return result;
+}
+
+ThemeData RenderThemeWin::getClassicThemeData(RenderObject* o, ControlSubPart subPart)
 {
     ThemeData result;
     switch (o->style()->appearance()) {
@@ -490,16 +540,20 @@ ThemeData RenderThemeWin::getClassicThemeData(RenderObject* o)
             result.m_part = TKP_THUMBRIGHT;
             result.m_state = determineSliderThumbState(o);
             break;
+        case InnerSpinButtonPart:
+            result.m_part = DFC_SCROLL;
+            result.m_state = determineClassicState(o, subPart);
+            break;
         default:
             break;
     }
     return result;
 }
 
-ThemeData RenderThemeWin::getThemeData(RenderObject* o)
+ThemeData RenderThemeWin::getThemeData(RenderObject* o, ControlSubPart subPart)
 {
     if (!haveTheme)
-        return getClassicThemeData(o);
+        return getClassicThemeData(o, subPart);
 
     ThemeData result;
     switch (o->style()->appearance()) {
@@ -548,6 +602,10 @@ ThemeData RenderThemeWin::getThemeData(RenderObject* o)
         case SliderThumbVerticalPart:
             result.m_part = TKP_THUMBRIGHT;
             result.m_state = determineSliderThumbState(o);
+            break;
+        case InnerSpinButtonPart:
+            result.m_part = subPart == SpinButtonUp ? SPNP_UP : SPNP_DOWN;
+            result.m_state = determineSpinButtonState(o, subPart);
             break;
     }
 
@@ -615,6 +673,31 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
 bool RenderThemeWin::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
 {  
     drawControl(i.context,  o, buttonTheme(), getThemeData(o), r);
+    return false;
+}
+
+void RenderThemeWin::adjustInnerSpinButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    int width = ::GetSystemMetrics(SM_CXVSCROLL);
+    if (width <= 0)
+        width = 17; // Vista's default.
+    style->setWidth(Length(width, Fixed));
+    style->setMinWidth(Length(width, Fixed));
+}
+
+bool RenderThemeWin::paintInnerSpinButton(RenderObject* o, const PaintInfo& i, const IntRect& r)
+{
+    // We split the specified rectangle into two vertically. We can't draw a
+    // spin button of which height is less than 2px.
+    if (r.height() < 2)
+        return false;
+    IntRect upRect(r);
+    upRect.setHeight(r.height() / 2);
+    IntRect downRect(r);
+    downRect.setY(upRect.bottom());
+    downRect.setHeight(r.height() - upRect.height());
+    drawControl(i.context, o, spinButtonTheme(), getThemeData(o, SpinButtonUp), upRect);
+    drawControl(i.context, o, spinButtonTheme(), getThemeData(o, SpinButtonDown), downRect);
     return false;
 }
 

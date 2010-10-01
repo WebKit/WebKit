@@ -1,5 +1,32 @@
 2010-09-30  Kent Tamura  <tkent@chromium.org>
 
+        Reviewed by Chris Fleizach.
+
+        [Windows] Implement <input type=number> UI
+        https://bugs.webkit.org/show_bug.cgi?id=38381
+
+        Implement theme drawing for inner-spin-button.
+        No new tests. Existing tests for type=number will cover this change.
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::RenderThemeWin):
+         Handle m_spinButtonTheme.
+        (WebCore::RenderThemeWin::spinButtonTheme): ditto.
+        (WebCore::RenderThemeWin::close): ditto.
+        (WebCore::RenderThemeWin::determineClassicState):
+         Add ControlSubPart parameter, and add support for InnerSpinButtonPart.
+        (WebCore::RenderThemeWin::determineSpinButtonState): Added.
+        (WebCore::RenderThemeWin::getClassicThemeData):
+         Add ControlSubPart parameter, and handle InnerSpinButtonPart.
+        (WebCore::RenderThemeWin::getThemeData): ditto.
+        (WebCore::RenderThemeWin::adjustInnerSpinButtonStyle):
+         Set SM_CXVSCROLL value to the width.
+        (WebCore::RenderThemeWin::paintInnerSpinButton):
+         Call drawControl() for the upper part and the lower part.
+        * rendering/RenderThemeWin.h:
+
+2010-09-30  Kent Tamura  <tkent@chromium.org>
+
         Unreviewed, Windows build fix for r68854
 
         * WebCore.vcproj/copyForwardingHeaders.cmd:
