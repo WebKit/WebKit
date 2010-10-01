@@ -395,6 +395,8 @@ static int getTextAlignment(CSSStyleDeclaration* style)
     case CSSValueCenter:
     case CSSValueWebkitCenter:
         return CSSValueCenter;
+    case CSSValueJustify:
+        return CSSValueJustify;
     case CSSValueLeft:
     case CSSValueWebkitLeft:
         return CSSValueLeft;

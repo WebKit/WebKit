@@ -1304,6 +1304,11 @@ static TriState stateJustifyCenter(Frame* frame, Event*)
     return stateStyle(frame, CSSPropertyTextAlign, "center");
 }
 
+static TriState stateJustifyFull(Frame* frame, Event*)
+{
+    return stateStyle(frame, CSSPropertyTextAlign, "justify");
+}
+
 static TriState stateJustifyLeft(Frame* frame, Event*)
 {
     return stateStyle(frame, CSSPropertyTextAlign, "left");
@@ -1409,7 +1414,7 @@ static const CommandMap& createCommandMap()
         { "InsertUnorderedList", { executeInsertUnorderedList, supported, enabledInRichlyEditableText, stateUnorderedList, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Italic", { executeToggleItalic, supported, enabledInRichlyEditableText, stateItalic, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "JustifyCenter", { executeJustifyCenter, supported, enabledInRichlyEditableText, stateJustifyCenter, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-        { "JustifyFull", { executeJustifyFull, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "JustifyFull", { executeJustifyFull, supported, enabledInRichlyEditableText, stateJustifyFull, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "JustifyLeft", { executeJustifyLeft, supported, enabledInRichlyEditableText, stateJustifyLeft, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "JustifyNone", { executeJustifyLeft, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "JustifyRight", { executeJustifyRight, supported, enabledInRichlyEditableText, stateJustifyRight, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },

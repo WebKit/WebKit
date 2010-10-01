@@ -1,3 +1,19 @@
+2010-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Implement queryCommandState('justifyFull')
+        https://bugs.webkit.org/show_bug.cgi?id=46954
+
+        Implemented queryCommandState('justifyFull').
+        New tests are added to editing/style/inline-style-container.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::getTextAlignment): Added support for CSSValueJustify.
+        * editing/EditorCommand.cpp:
+        (WebCore::stateJustifyFull): Added.
+        (WebCore::createCommandMap): Added stateJustifyFull.
+
 2010-10-01  Jia Pu  <jpu@apple.com>
 
         Reviewed by Darin Adler.
