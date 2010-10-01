@@ -541,16 +541,24 @@ public:
     // by non-member functions.
     enum SourceDataFormat {
         kSourceFormatRGBA8,
+        kSourceFormatRGBA16,
         kSourceFormatRGB8,
+        kSourceFormatRGB16,
         kSourceFormatBGRA8,
+        kSourceFormatBGRA16,
         kSourceFormatARGB8,
+        kSourceFormatARGB16,
         kSourceFormatRGBA5551,
         kSourceFormatRGBA4444,
         kSourceFormatRGB565,
         kSourceFormatR8,
+        kSourceFormatR16,
         kSourceFormatRA8,
+        kSourceFormatRA16,
         kSourceFormatAR8,
-        kSourceFormatA8
+        kSourceFormatAR16,
+        kSourceFormatA8,
+        kSourceFormatA16
     };
 
     //----------------------------------------------------------------------

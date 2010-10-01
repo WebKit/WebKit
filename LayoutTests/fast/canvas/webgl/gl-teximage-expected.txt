@@ -68,6 +68,11 @@ PASS getError was expected value: NO_ERROR : Should be no errors from setup
 PASS pixel 128, 8 should be within 10 units of 0, 0, 255, 255 was 0, 0, 254, 255
 PASS getError was expected value: NO_ERROR : Should be no errors
 
+check uploading of 16-bit images
+PASS getError was expected value: NO_ERROR : Should be no errors from setup
+PASS pixel 128, 8 should be within 10 units of 15, 121, 0, 255 was 15, 121, 0, 255
+PASS getError was expected value: NO_ERROR : Should be no errors
+
 PASS successfullyParsed is true
 
 TEST COMPLETE
