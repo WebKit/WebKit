@@ -2641,10 +2641,6 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGHiddenContainer.h \
 	WebCore/rendering/RenderSVGImage.cpp \
 	WebCore/rendering/RenderSVGImage.h \
-	WebCore/rendering/RenderSVGInline.cpp \
-	WebCore/rendering/RenderSVGInline.h \
-	WebCore/rendering/RenderSVGInlineText.cpp \
-	WebCore/rendering/RenderSVGInlineText.h \
 	WebCore/rendering/RenderSVGModelObject.cpp \
 	WebCore/rendering/RenderSVGModelObject.h \
 	WebCore/rendering/RenderSVGResourceClipper.cpp \
@@ -2675,14 +2671,8 @@ webcore_sources += \
 	WebCore/rendering/RenderSVGRoot.h \
 	WebCore/rendering/RenderSVGShadowTreeRootContainer.cpp \
 	WebCore/rendering/RenderSVGShadowTreeRootContainer.h \
-	WebCore/rendering/RenderSVGText.cpp \
-	WebCore/rendering/RenderSVGText.h \
-	WebCore/rendering/RenderSVGTextPath.cpp \
-	WebCore/rendering/RenderSVGTextPath.h \
 	WebCore/rendering/RenderSVGTransformableContainer.cpp \
 	WebCore/rendering/RenderSVGTransformableContainer.h \
-	WebCore/rendering/RenderSVGTSpan.cpp \
-	WebCore/rendering/RenderSVGTSpan.h \
 	WebCore/rendering/RenderSVGViewportContainer.cpp \
 	WebCore/rendering/RenderSVGViewportContainer.h \
 	WebCore/rendering/RenderTableCell.cpp \
@@ -2788,10 +2778,6 @@ webcore_sources += \
 	WebCore/rendering/SVGCharacterLayoutInfo.h \
 	WebCore/rendering/SVGImageBufferTools.cpp \
 	WebCore/rendering/SVGImageBufferTools.h \
-	WebCore/rendering/SVGInlineFlowBox.cpp \
-	WebCore/rendering/SVGInlineFlowBox.h \
-	WebCore/rendering/SVGInlineTextBox.cpp \
-	WebCore/rendering/SVGInlineTextBox.h \
 	WebCore/rendering/SVGMarkerData.h \
 	WebCore/rendering/SVGMarkerLayoutInfo.cpp \
 	WebCore/rendering/SVGMarkerLayoutInfo.h \
@@ -2805,10 +2791,24 @@ webcore_sources += \
 	WebCore/rendering/SVGResourcesCycleSolver.cpp \
 	WebCore/rendering/SVGResourcesCycleSolver.h \
 	WebCore/rendering/SVGResources.h \
-	WebCore/rendering/SVGRootInlineBox.cpp \
-	WebCore/rendering/SVGRootInlineBox.h \
 	WebCore/rendering/SVGShadowTreeElements.cpp \
 	WebCore/rendering/SVGShadowTreeElements.h \
+	WebCore/rendering/svg/RenderSVGInline.cpp \
+	WebCore/rendering/svg/RenderSVGInline.h \
+	WebCore/rendering/svg/RenderSVGInlineText.cpp \
+	WebCore/rendering/svg/RenderSVGInlineText.h \
+	WebCore/rendering/svg/RenderSVGTSpan.cpp \
+	WebCore/rendering/svg/RenderSVGTSpan.h \
+	WebCore/rendering/svg/RenderSVGText.cpp \
+	WebCore/rendering/svg/RenderSVGText.h \
+	WebCore/rendering/svg/RenderSVGTextPath.cpp \
+	WebCore/rendering/svg/RenderSVGTextPath.h \
+	WebCore/rendering/svg/SVGInlineFlowBox.cpp \
+	WebCore/rendering/svg/SVGInlineFlowBox.h \
+	WebCore/rendering/svg/SVGInlineTextBox.cpp \
+	WebCore/rendering/svg/SVGInlineTextBox.h \
+	WebCore/rendering/svg/SVGRootInlineBox.cpp \
+	WebCore/rendering/svg/SVGRootInlineBox.h \
 	WebCore/rendering/svg/SVGTextChunk.cpp \
 	WebCore/rendering/svg/SVGTextChunk.h \
 	WebCore/rendering/svg/SVGTextFragment.h \
@@ -2818,12 +2818,12 @@ webcore_sources += \
 	WebCore/rendering/svg/SVGTextLayoutBuilder.h \
 	WebCore/rendering/svg/SVGTextMetrics.cpp \
 	WebCore/rendering/svg/SVGTextMetrics.h \
+	WebCore/rendering/svg/SVGTextQuery.cpp \
+	WebCore/rendering/svg/SVGTextQuery.h \
 	WebCore/rendering/SVGTextChunkLayoutInfo.cpp \
 	WebCore/rendering/SVGTextChunkLayoutInfo.h \
 	WebCore/rendering/SVGTextLayoutUtilities.cpp \
 	WebCore/rendering/SVGTextLayoutUtilities.h \
-	WebCore/rendering/SVGTextQuery.cpp \
-	WebCore/rendering/SVGTextQuery.h \
 	WebCore/rendering/TableLayout.h \
 	WebCore/rendering/TextControlInnerElements.cpp \
 	WebCore/rendering/TextControlInnerElements.h \

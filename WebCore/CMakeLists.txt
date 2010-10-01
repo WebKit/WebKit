@@ -1666,8 +1666,6 @@ IF (ENABLE_SVG)
         rendering/RenderSVGGradientStop.cpp
         rendering/RenderSVGHiddenContainer.cpp
         rendering/RenderSVGImage.cpp
-        rendering/RenderSVGInline.cpp
-        rendering/RenderSVGInlineText.cpp
         rendering/RenderSVGModelObject.cpp
         rendering/RenderSVGResource.cpp
         rendering/RenderSVGResourceClipper.cpp
@@ -1683,33 +1681,35 @@ IF (ENABLE_SVG)
         rendering/RenderSVGResourceSolidColor.cpp
         rendering/RenderSVGRoot.cpp
         rendering/RenderSVGShadowTreeRootContainer.cpp
-        rendering/RenderSVGTSpan.cpp
-        rendering/RenderSVGText.cpp
-        rendering/RenderSVGTextPath.cpp
         rendering/RenderSVGTransformableContainer.cpp
         rendering/RenderSVGViewportContainer.cpp
         rendering/SVGCharacterData.cpp
         rendering/SVGCharacterLayoutInfo.cpp
         rendering/SVGImageBufferTools.cpp
-        rendering/SVGInlineFlowBox.cpp
-        rendering/SVGInlineTextBox.cpp
         rendering/SVGMarkerLayoutInfo.cpp
         rendering/SVGRenderSupport.cpp
         rendering/SVGRenderTreeAsText.cpp
         rendering/SVGResources.cpp
         rendering/SVGResourcesCache.cpp
         rendering/SVGResourcesCycleSolver.cpp
-        rendering/SVGRootInlineBox.cpp
         rendering/SVGShadowTreeElements.cpp
         rendering/SVGTextChunkLayoutInfo.cpp
         rendering/SVGTextLayoutUtilities.cpp
-        rendering/SVGTextQuery.cpp
         rendering/style/SVGRenderStyle.cpp
         rendering/style/SVGRenderStyleDefs.cpp
+        rendering/svg/RenderSVGInline.cpp
+        rendering/svg/RenderSVGInlineText.cpp
+        rendering/svg/RenderSVGTSpan.cpp
+        rendering/svg/RenderSVGText.cpp
+        rendering/svg/RenderSVGTextPath.cpp
+        rendering/svg/SVGInlineFlowBox.cpp
+        rendering/svg/SVGInlineTextBox.cpp
+        rendering/svg/SVGRootInlineBox.cpp
         rendering/svg/SVGTextChunk.cpp
         rendering/svg/SVGTextLayoutAttributes.cpp
         rendering/svg/SVGTextLayoutBuilder.cpp
         rendering/svg/SVGTextMetrics.cpp
+        rendering/svg/SVGTextQuery.cpp
         svg/ColorDistance.cpp
         svg/SVGAElement.cpp
         svg/SVGAltGlyphElement.cpp

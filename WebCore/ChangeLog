@@ -1,5 +1,59 @@
 2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Andreas Kling.
+
+        Move SVG text related renderers into rendering/svg/
+        https://bugs.webkit.org/show_bug.cgi?id=46969
+
+        Doesn't affect any functionality, just moves files around.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderSVGAllInOne.cpp:
+        * rendering/RenderSVGInline.cpp: Removed.
+        * rendering/RenderSVGInline.h: Removed.
+        * rendering/RenderSVGInlineText.cpp: Removed.
+        * rendering/RenderSVGInlineText.h: Removed.
+        * rendering/RenderSVGTSpan.cpp: Removed.
+        * rendering/RenderSVGTSpan.h: Removed.
+        * rendering/RenderSVGText.cpp: Removed.
+        * rendering/RenderSVGText.h: Removed.
+        * rendering/RenderSVGTextPath.cpp: Removed.
+        * rendering/RenderSVGTextPath.h: Removed.
+        * rendering/SVGInlineFlowBox.cpp: Removed.
+        * rendering/SVGInlineFlowBox.h: Removed.
+        * rendering/SVGInlineTextBox.cpp: Removed.
+        * rendering/SVGInlineTextBox.h: Removed.
+        * rendering/SVGRootInlineBox.cpp: Removed.
+        * rendering/SVGRootInlineBox.h: Removed.
+        * rendering/SVGTextQuery.cpp: Removed.
+        * rendering/SVGTextQuery.h: Removed.
+        * rendering/svg/RenderSVGInline.cpp: Copied from rendering/RenderSVGInline.cpp.
+        * rendering/svg/RenderSVGInline.h: Copied from rendering/RenderSVGInline.h.
+        * rendering/svg/RenderSVGInlineText.cpp: Copied from rendering/RenderSVGInlineText.cpp.
+        * rendering/svg/RenderSVGInlineText.h: Copied from rendering/RenderSVGInlineText.h.
+        * rendering/svg/RenderSVGTSpan.cpp: Copied from rendering/RenderSVGTSpan.cpp.
+        * rendering/svg/RenderSVGTSpan.h: Copied from rendering/RenderSVGTSpan.h.
+        * rendering/svg/RenderSVGText.cpp: Copied from rendering/RenderSVGText.cpp.
+        * rendering/svg/RenderSVGText.h: Copied from rendering/RenderSVGText.h.
+        * rendering/svg/RenderSVGTextPath.cpp: Copied from rendering/RenderSVGTextPath.cpp.
+        * rendering/svg/RenderSVGTextPath.h: Copied from rendering/RenderSVGTextPath.h.
+        * rendering/svg/SVGInlineFlowBox.cpp: Copied from rendering/SVGInlineFlowBox.cpp.
+        * rendering/svg/SVGInlineFlowBox.h: Copied from rendering/SVGInlineFlowBox.h.
+        * rendering/svg/SVGInlineTextBox.cpp: Copied from rendering/SVGInlineTextBox.cpp.
+        * rendering/svg/SVGInlineTextBox.h: Copied from rendering/SVGInlineTextBox.h.
+        * rendering/svg/SVGRootInlineBox.cpp: Copied from rendering/SVGRootInlineBox.cpp.
+        * rendering/svg/SVGRootInlineBox.h: Copied from rendering/SVGRootInlineBox.h.
+        * rendering/svg/SVGTextQuery.cpp: Copied from rendering/SVGTextQuery.cpp.
+        * rendering/svg/SVGTextQuery.h: Copied from rendering/SVGTextQuery.h.
+
+2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Dirk Schulze.
 
         Add SVGTextMetrics/SVGTextFragment/SVGTextChunk primitives used by the new layout engine
