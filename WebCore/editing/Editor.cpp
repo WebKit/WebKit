@@ -3600,7 +3600,7 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, boo
         // Perhaps peculiar, but it matches AppKit.
         if (RefPtr<Range> wordRange = newAdjacentWords.toNormalizedRange()) {
             m_frame->document()->markers()->removeMarkers(wordRange.get(), DocumentMarker::Spelling);
-            m_frame->document()->markers()->removeMarkers(wordRange.get(), DocumentMarker::Replacement);
+            m_frame->document()->markers()->removeMarkers(wordRange.get(), DocumentMarker::CorrectionIndicator);
         }
         if (RefPtr<Range> sentenceRange = newSelectedSentence.toNormalizedRange())
             m_frame->document()->markers()->removeMarkers(sentenceRange.get(), DocumentMarker::Grammar);

@@ -1,3 +1,17 @@
+2010-10-01  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Autocorrection shouldn't prompt the same correction after user has edited previous correction.
+        https://bugs.webkit.org/show_bug.cgi?id=46839
+        <rdar://problem/8476963>
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::respondToChangedSelection): Remove "CorrectionIndicator" marker instead of
+          "Replacement" marker. Since the former controls whether we draw autocorrection underline,
+          and the latter is used to prevent autocorrection from being applied again on already auto-
+          corrected word. So the "Replacement" shouldn't be removed.
+
 2010-10-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Anders Carlsson.
