@@ -1,3 +1,12 @@
+2010-10-01  Alex Mathews  <possessedpenguinbob@gmail.com>
+
+        Reviewed by Simon Fraser.
+
+        Bug 47013 - Main Web Inspector link on webkit.org links to old wiki page
+        https://bugs.webkit.org/show_bug.cgi?id=47013
+
+        * nav.inc: Removed the space from the web inspector wiki link.
+
 2010-09-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed HTML syntax fix for my recent change in the coding-style.
