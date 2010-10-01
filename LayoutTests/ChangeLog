@@ -1,3 +1,14 @@
+2010-10-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46995, make direction propagate up to the viewport from the root element.
+
+        * fast/css/rtl-to-viewport.html: Added.
+        * platform/mac/fast/css/rtl-to-viewport-expected.checksum: Added.
+        * platform/mac/fast/css/rtl-to-viewport-expected.png: Added.
+        * platform/mac/fast/css/rtl-to-viewport-expected.txt: Added.
+
 2010-10-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

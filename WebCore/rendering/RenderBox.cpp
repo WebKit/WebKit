@@ -300,11 +300,16 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     // Set the text color if we're the body.
     if (isBody())
         document()->setTextColor(style()->visitedDependentColor(CSSPropertyColor));
-    else if (oldStyle && isRoot() && oldStyle->blockFlow() != style()->blockFlow()) {
-        // Propagate the new block flow up to the RenderView.
+    else if (isRoot() && (!oldStyle || oldStyle->blockFlow() != style()->blockFlow() || oldStyle->direction() != style()->direction())) {
+        // Propagate the new block flow and direction up to the RenderView.
+        // FIXME: WinIE seems to propagate from the <body> as well.  We may want to consider doing that at some point.
         RenderView* viewRenderer = view();
-        viewRenderer->style()->setBlockFlow(style()->blockFlow());
-        viewRenderer->setNeedsLayoutAndPrefWidthsRecalc();
+        RenderStyle* viewStyle = viewRenderer->style();
+        if (viewStyle->blockFlow() != style()->blockFlow() || viewStyle->direction() != style()->direction()) {
+            viewStyle->setBlockFlow(style()->blockFlow());
+            viewStyle->setDirection(style()->direction());
+            viewRenderer->setNeedsLayoutAndPrefWidthsRecalc();
+        }
     }
 }
 

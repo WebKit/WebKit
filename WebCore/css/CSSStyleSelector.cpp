@@ -1107,8 +1107,12 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
     documentStyle->setZoom(frame ? frame->pageZoomFactor() : 1);
     
     Element* docElement = document->documentElement();
-    if (docElement && docElement->renderer())
+    if (docElement && docElement->renderer()) {
+        // Use the direction and block-flow of the document element to set the
+        // viewport's direction and block-flow.
         documentStyle->setBlockFlow(docElement->renderer()->style()->blockFlow());
+        documentStyle->setDirection(docElement->renderer()->style()->direction());
+    }
 
     FontDescription fontDescription;
     fontDescription.setUsePrinterFont(document->printing());

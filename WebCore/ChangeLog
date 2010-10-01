@@ -1,3 +1,16 @@
+2010-10-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46995, make direction propagate up to the viewport from the root element.
+
+        Added fast/css/rtl-to-viewport.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::styleDidChange):
+
 2010-10-01  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.
