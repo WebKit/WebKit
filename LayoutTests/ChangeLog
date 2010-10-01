@@ -1,3 +1,13 @@
+2010-09-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46948 Crash with all-
+        whitespace separators for mfenced
+
+        * mathml/fenced-whitespace-separators-crash-expected.txt: Added.
+        * mathml/fenced-whitespace-separators-crash.html: Added.
+
 2010-09-30  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Jon Honeycutt.
