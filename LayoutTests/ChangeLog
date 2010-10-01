@@ -1,3 +1,16 @@
+2010-10-01  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by James Robinson.
+
+        REGRESSION: Lots of fast canvas updates fail to completely render
+        https://bugs.webkit.org/show_bug.cgi?id=46319
+
+        * fast/repaint/canvas-putImageData-expected.txt: Added.
+        * fast/repaint/canvas-putImageData.html: Added.
+        * platform/chromium-win/fast/repaint/canvas-putImageData-expected.checksum: Added.
+        * platform/chromium-win/fast/repaint/canvas-putImageData-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-09-30  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

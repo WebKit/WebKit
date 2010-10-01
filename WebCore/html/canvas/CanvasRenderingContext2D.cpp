@@ -1614,16 +1614,16 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy,
     FloatRect clipRect(dirtyX, dirtyY, dirtyWidth, dirtyHeight);
     clipRect.intersect(IntRect(0, 0, data->width(), data->height()));
     IntSize destOffset(static_cast<int>(dx), static_cast<int>(dy));
-    IntRect sourceRect = enclosingIntRect(clipRect);
-    sourceRect.move(destOffset);
-    sourceRect.intersect(IntRect(IntPoint(), buffer->size()));
-    if (sourceRect.isEmpty())
+    IntRect destRect = enclosingIntRect(clipRect);
+    destRect.move(destOffset);
+    destRect.intersect(IntRect(IntPoint(), buffer->size()));
+    if (destRect.isEmpty())
         return;
+    IntRect sourceRect(destRect);
     sourceRect.move(-destOffset);
-    IntPoint destPoint(destOffset.width(), destOffset.height());
 
-    buffer->putUnmultipliedImageData(data, sourceRect, destPoint);
-    didDraw(sourceRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
+    buffer->putUnmultipliedImageData(data, sourceRect, IntPoint(destOffset));
+    didDraw(destRect, CanvasDidDrawApplyNone); // ignore transform, shadow and clip
 }
 
 String CanvasRenderingContext2D::font() const

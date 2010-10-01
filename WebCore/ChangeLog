@@ -1,3 +1,15 @@
+2010-10-01  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by James Robinson.
+
+        REGRESSION: Lots of fast canvas updates fail to completely render
+        https://bugs.webkit.org/show_bug.cgi?id=46319
+
+        Test: fast/repaint/canvas-putImageData.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::putImageData):
+
 2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

@@ -3074,6 +3074,8 @@ BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 
 BUGWK45737 DEBUG SLOW : fast/frames/frame-limit.html = PASS
 
+BUG57230 MAC : fast/repaint/canvas-putImageData.html = IMAGE
+
 // Regressions from webkit roll r67178:t67358
 BUGDPRANKE WIN LINUX DEBUG : fast/forms/select-set-length-with-mutation-remove.html = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
