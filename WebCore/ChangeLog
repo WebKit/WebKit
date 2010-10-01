@@ -1,3 +1,18 @@
+2010-10-01  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [CMAKE] Build fix for r68878
+        https://bugs.webkit.org/show_bug.cgi?id=46985
+
+        Fix name of files added to CMakeLists.txt:
+        SVGTextLayoutBaseline.cpp -> SVGTextLayoutEngineBaseline.cpp
+        SVGTextLayoutSpacing.cpp -> SVGTextLayoutEngineSpacing.cpp
+
+        No features added, so no new tests.
+
+        * CMakeLists.txt:
+
 2010-10-01  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
