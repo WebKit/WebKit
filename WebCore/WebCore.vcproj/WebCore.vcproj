@@ -29617,10 +29617,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSHelper.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSHelper.h"
 				>
 			</File>

@@ -2738,7 +2738,7 @@
 		93E241FF0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E241FE0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E2425F0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E2425E0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp */; };
 		93E2A306123E9DC0009FE12A /* HTMLParserIdioms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E2A304123E9DC0009FE12A /* HTMLParserIdioms.cpp */; };
-		93E2A307123E9DC0009FE12A /* HTMLParserIdioms.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E2A305123E9DC0009FE12A /* HTMLParserIdioms.h */; };
+		93E2A307123E9DC0009FE12A /* HTMLParserIdioms.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E2A305123E9DC0009FE12A /* HTMLParserIdioms.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E62D9B0985F41600E1B5E3 /* SystemTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E62D990985F41600E1B5E3 /* SystemTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93EB169409F880B00091F8FF /* WebCoreSystemInterface.mm */; };
 		93EB169709F880C00091F8FF /* WebCoreSystemInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 93EB169609F880C00091F8FF /* WebCoreSystemInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4828,7 +4828,6 @@
 		BC74DA481013F468007987AD /* JSRGBColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC74DA461013F468007987AD /* JSRGBColor.cpp */; };
 		BC74DA491013F468007987AD /* JSRGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC74DA471013F468007987AD /* JSRGBColor.h */; };
 		BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */; };
-		BC772B3B0C4EA91E0083285F /* CSSHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772B350C4EA91E0083285F /* CSSHelper.cpp */; };
 		BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B360C4EA91E0083285F /* CSSHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772B3D0C4EA91E0083285F /* CSSParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772B370C4EA91E0083285F /* CSSParser.cpp */; };
 		BC772B3E0C4EA91E0083285F /* CSSParser.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B380C4EA91E0083285F /* CSSParser.h */; };
@@ -10741,7 +10740,6 @@
 		BC74DA461013F468007987AD /* JSRGBColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSRGBColor.cpp; sourceTree = "<group>"; };
 		BC74DA471013F468007987AD /* JSRGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRGBColor.h; sourceTree = "<group>"; };
 		BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserUtilities.h; sourceTree = "<group>"; };
-		BC772B350C4EA91E0083285F /* CSSHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSHelper.cpp; sourceTree = "<group>"; };
 		BC772B360C4EA91E0083285F /* CSSHelper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSHelper.h; sourceTree = "<group>"; };
 		BC772B370C4EA91E0083285F /* CSSParser.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSParser.cpp; sourceTree = "<group>"; };
 		BC772B380C4EA91E0083285F /* CSSParser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSParser.h; sourceTree = "<group>"; };
@@ -17332,7 +17330,6 @@
 				BC23E4E00DAACE0F009FDC91 /* CSSGradientValue.cpp */,
 				BC53C6910DA591140021EB5D /* CSSGradientValue.h */,
 				BCEA477E097CAAC80094C9E4 /* CSSGrammar.y */,
-				BC772B350C4EA91E0083285F /* CSSHelper.cpp */,
 				BC772B360C4EA91E0083285F /* CSSHelper.h */,
 				BC23E76B0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp */,
 				BC23EE910DAED2BC009FDC91 /* CSSImageGeneratorValue.h */,
@@ -21388,7 +21385,6 @@
 				BC02A6460E09AAE9004B6D2B /* CSSFunctionValue.cpp in Sources */,
 				BC23E4E10DAACE0F009FDC91 /* CSSGradientValue.cpp in Sources */,
 				650F53DD09D15DDF00C9B0C8 /* CSSGrammar.cpp in Sources */,
-				BC772B3B0C4EA91E0083285F /* CSSHelper.cpp in Sources */,
 				BC23E76C0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp in Sources */,
 				A80E6CFE0A1989CA007FB8C5 /* CSSImageValue.cpp in Sources */,
 				A80E6CEB0A1989CA007FB8C5 /* CSSImportRule.cpp in Sources */,

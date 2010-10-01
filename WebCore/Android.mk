@@ -38,7 +38,6 @@ LOCAL_SRC_FILES := \
 	css/CSSFontSelector.cpp \
 	css/CSSFunctionValue.cpp \
 	css/CSSGradientValue.cpp \
-	css/CSSHelper.cpp \
 	css/CSSImageGeneratorValue.cpp \
 	css/CSSImageValue.cpp \
 	css/CSSImportRule.cpp \

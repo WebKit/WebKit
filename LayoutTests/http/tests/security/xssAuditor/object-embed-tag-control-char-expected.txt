@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: line 1: Refused to load an object. URL found within request: "http://127.0.0.1:8000/security/xssAuditor/resources/dummy.swf".
+CONSOLE MESSAGE: line 1: Refused to load an object. URL found within request: "http://127.0.0.1:8000/security/xssAuditor/resources/dummy.swf".
 
-CONSOLE MESSAGE: line 1: Refused to load an object. URL found within request: "http://127.0.0.1:8000/security/xssAuditor/resources/dummy.swf".
+CONSOLE MESSAGE: line 1: Refused to load an object. URL found within request: "http://127.0.0.1:8000/security/xssAuditor/resources/dummy.swf".
 
 

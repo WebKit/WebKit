@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8Location.h"
 
-#include "CSSHelper.h"
 #include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"

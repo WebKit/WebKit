@@ -30,7 +30,6 @@
 #include "config.h"
 #include "JSElement.h"
 
-#include "CSSHelper.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "HTMLFrameElementBase.h"

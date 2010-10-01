@@ -29,7 +29,6 @@
 #include "HTMLVideoElement.h"
 
 #include "Attribute.h"
-#include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Chrome.h"
 #include "ChromeClient.h"

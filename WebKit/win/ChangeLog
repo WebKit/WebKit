@@ -1,3 +1,14 @@
+2010-09-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove remaining calls to deprecatedParseURL
+        https://bugs.webkit.org/show_bug.cgi?id=26599
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDidFailToStartPlugin):
+        Call stripLeadingAndTrailingHTMLSpaces instead of deprecatedParseURL.
+
 2010-09-28  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

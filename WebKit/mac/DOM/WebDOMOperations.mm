@@ -38,8 +38,8 @@
 #import "WebFramePrivate.h"
 #import "WebKitNSStringExtras.h"
 #import <JavaScriptCore/APICast.h>
-#import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
+#import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/JSElement.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/markup.h>
@@ -129,7 +129,7 @@ using namespace JSC;
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    return core(self)->completeURL(deprecatedParseURL(string));
+    return core(self)->completeURL(stripLeadingAndTrailingHTMLSpaces(string));
 }
 
 @end

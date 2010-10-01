@@ -29,7 +29,6 @@
 #include "config.h"
 #include "JSAttr.h"
 
-#include "CSSHelper.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"

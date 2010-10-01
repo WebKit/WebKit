@@ -22,7 +22,6 @@
 #include "config.h"
 #include "ImageLoader.h"
 
-#include "CSSHelper.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"

@@ -1,3 +1,121 @@
+2010-09-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove remaining calls to deprecatedParseURL
+        https://bugs.webkit.org/show_bug.cgi?id=26599
+
+        Test: fast/replaced/object-param-spaces.html
+
+        * css/CSSHelper.cpp: Removed.
+        * css/CSSHelper.h: Removed deprecatedParseURL.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::stripLeadingAndTrailingHTMLSpaces):
+        Fixed bug where the function would turn the null string into the empty string.
+        Fixed bug where the function would not strip all trailing spaces.
+
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::CSSPreloadScanner): Initialize m_state
+        instead of calling the reset function.
+        (WebCore::CSSPreloadScanner::scan): Tweaked coding style.
+        (WebCore::CSSPreloadScanner::tokenize): Use isHTMLSpace instead of
+        an identical local function named isWhitespace.
+        (WebCore::parseCSSStringOrURL): Added. This function does what
+        deprecatedParseURL did before, and this is the only place in WebKit
+        that needs it. The code implements the rules for a string or URL
+        token. The real CSS parser does this with flex and the code to hook
+        flex up to yacc, so the function is not needed there.
+        (WebCore::CSSPreloadScanner::emitRule): Streamlined the code a bit
+        and mae it call parseCSSStringOrURL.
+
+        * bindings/generic/BindingSecurity.h:
+        (WebCore::::allowSettingFrameSrcToJavascriptUrl):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::allowSettingSrcToJavascriptURL):
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        (WebCore::allowSettingJavascriptURL):
+        * bindings/objc/DOM.mm:
+        (-[DOMElement _getURLAttribute:]):
+        * bindings/objc/DOMHTML.mm:
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:]):
+        * dom/Document.cpp:
+        (WebCore::Document::processBaseElement):
+        * dom/Element.cpp:
+        (WebCore::isAttributeToRemove):
+        (WebCore::Element::getURLAttribute):
+        (WebCore::Element::getNonEmptyURLAttribute):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        (WebCore::HTMLAnchorElement::href):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseMappedAttribute):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseMappedAttribute):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::sourceURI):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        (WebCore::HTMLObjectElement::parametersForPlugin):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseMappedAttribute):
+        * html/HTMLTablePartElement.cpp:
+        (WebCore::HTMLTablePartElement::parseMappedAttribute):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLNames::PreloadTask::setUrlToLoad):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::Attributes::parseAction):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::declareAndWriteDragImage):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::declareAndWriteDragImage):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteImageURL):
+        (WebCore::HitTestResult::absoluteMediaURL):
+        (WebCore::HitTestResult::absoluteLinkURL):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGImageLoader.cpp:
+        (WebCore::SVGImageLoader::sourceURI):
+        * wml/WMLAElement.cpp:
+        (WebCore::WMLAElement::defaultEventHandler):
+        * wml/WMLImageLoader.cpp:
+        (WebCore::WMLImageLoader::sourceURI):
+        Call stripLeadingAndTrailingHTMLSpaces instead of deprecatedParseURL.
+
+        * WebCore.exp.in: Updated.
+
+        * Android.mk: Removed CSSHelper.cpp.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * bindings/js/JSAttrCustom.cpp:
+        * bindings/js/JSElementCustom.cpp:
+        * bindings/v8/custom/V8ElementCustom.cpp:
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        * css/CSSParser.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLVideoElement.cpp:
+        * loader/ImageLoader.cpp:
+        * rendering/style/RenderStyle.h:
+        Removed unneeded include of CSSHelper.h.
+
 2010-09-30  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Chris Marrin.

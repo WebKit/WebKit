@@ -1,3 +1,50 @@
+2010-09-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove remaining calls to deprecatedParseURL
+        https://bugs.webkit.org/show_bug.cgi?id=26599
+
+        * fast/replaced/object-param-spaces-expected.txt: Copied from
+        LayoutTests/fast/replaced/object-param-url-control-char-expected.txt.
+        * fast/replaced/object-param-spaces.html: Copied from
+        LayoutTests/fast/replaced/object-param-url-control-char.html.
+        * fast/replaced/object-param-url-control-char-expected.txt: Removed.
+        * fast/replaced/object-param-url-control-char.html: Removed.
+        Changed this test to expect HTML standard space trimming, but not the WebKit-only
+        control character stripping we had historically.
+
+        * fast/url/query-expected.txt: Updated to expect the test to pass.
+
+        * fast/url/script-tests/segments-from-data-url.js: Changed expected result to not
+        expect stripping of newline characters.
+        * fast/url/script-tests/segments.js: Ditto.
+        * fast/url/segments-expected.txt: Updated results.
+        * fast/url/segments-from-data-url-expected.txt: Ditto.
+
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-location-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-getAttribute-value-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttribute-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNode-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-frame-src-setAttributeNodeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-getAttribute-value-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-htmldom-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttribute-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNS-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNode-expected.txt:
+        * http/tests/security/javascriptURL/javascriptURL-execution-context-iframe-src-setAttributeNodeNS-expected.txt:
+        These tests had multiple test cases with embedded control characters. These URLs no
+        longer qualify as javascript URLs, so there are no longer any unsafe JavaScript log
+        messages for them. The test cases themselves need not be changed at this time.
+
+        * http/tests/security/xssAuditor/embed-tag-control-char-expected.txt:
+        * http/tests/security/xssAuditor/object-embed-tag-control-char-expected.txt:
+        Updated expected results to reflect the fact that the control character is no longer
+        stripped from the URL in these cases. The test is still valid, but these are not as
+        interesting test cases any more since control characters do not have special handling.
+
 2010-09-30  Martin Robinson  <mrobinson@igalia.com>
 
         Unskip some tests that are passing and rebaseline a couple others.

@@ -1,4 +1,0 @@
-
-This test verifies that a URL specified in a <param> of an <object> is parsed the same as if it was specified as the data attribute of the <object>. Specifically, this verifies that control characters and leading/trailing whitespace are stripped, and that a resource surrounded with url('') is understood.
-
-PASS

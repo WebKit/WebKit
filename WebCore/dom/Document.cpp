@@ -32,7 +32,6 @@
 #include "Attr.h"
 #include "Attribute.h"
 #include "CDATASection.h"
-#include "CSSHelper.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -81,6 +80,7 @@
 #include "HTMLMapElement.h"
 #include "HTMLNameCollection.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTitleElement.h"
 #include "HTTPParsers.h"
@@ -2240,7 +2240,7 @@ void Document::processBaseElement()
     // FIXME: Since this doesn't share code with completeURL it may not handle encodings correctly.
     KURL baseElementURL;
     if (href) {
-        String strippedHref = deprecatedParseURL(*href);
+        String strippedHref = stripLeadingAndTrailingHTMLSpaces(*href);
         if (!strippedHref.isEmpty() && (!frame() || frame()->script()->xssAuditor()->canSetBaseElementURL(*href)))
             baseElementURL = KURL(url(), strippedHref);
     }

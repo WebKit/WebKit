@@ -29,7 +29,6 @@
 #include "AnimationList.h"
 #include "BorderData.h"
 #include "BorderValue.h"
-#include "CSSHelper.h"
 #include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"

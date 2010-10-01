@@ -31,7 +31,6 @@
 #include "config.h"
 #include "FormSubmission.h"
 
-#include "CSSHelper.h"
 #include "DOMFormData.h"
 #include "Document.h"
 #include "Event.h"
@@ -45,6 +44,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "TextEncoding.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RandomNumber.h>
@@ -85,7 +85,7 @@ static void appendMailtoPostFormDataToURL(KURL& url, const FormData& data, const
 void FormSubmission::Attributes::parseAction(const String& action)
 {
     // FIXME: Can we parse into a KURL?
-    m_action = deprecatedParseURL(action);
+    m_action = stripLeadingAndTrailingHTMLSpaces(action);
 }
 
 void FormSubmission::Attributes::parseEncodingType(const String& type)

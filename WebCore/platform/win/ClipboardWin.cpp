@@ -38,6 +38,7 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "Image.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
@@ -50,7 +51,6 @@
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "WCDataObject.h"
-#include "csshelper.h"
 #include "markup.h"
 #include <shlwapi.h>
 #include <wininet.h>
@@ -723,7 +723,7 @@ void ClipboardWin::declareAndWriteDragImage(Element* element, const KURL& url, c
     if (imageURL.isEmpty()) 
         return;
 
-    String fullURL = frame->document()->completeURL(deprecatedParseURL(imageURL)).string();
+    String fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL)).string();
     if (fullURL.isEmpty()) 
         return;
     STGMEDIUM medium = {0};

@@ -26,11 +26,11 @@
 #include "HTMLTablePartElement.h"
 
 #include "Attribute.h"
-#include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 
 namespace WebCore {
 
@@ -64,7 +64,7 @@ void HTMLTablePartElement::parseMappedAttribute(Attribute* attr)
     if (attr->name() == bgcolorAttr)
         addCSSColor(attr, CSSPropertyBackgroundColor, attr->value());
     else if (attr->name() == backgroundAttr) {
-        String url = deprecatedParseURL(attr->value());
+        String url = stripLeadingAndTrailingHTMLSpaces(attr->value());
         if (!url.isEmpty())
             addCSSImageProperty(attr, CSSPropertyBackgroundImage, document()->completeURL(url).string());
     } else if (attr->name() == bordercolorAttr) {

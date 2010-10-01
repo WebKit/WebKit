@@ -28,7 +28,6 @@
 #include "config.h"
 #include "ClipboardQt.h"
 
-#include "CSSHelper.h"
 #include "CachedImage.h"
 #include "Document.h"
 #include "DragData.h"
@@ -36,6 +35,7 @@
 #include "FileList.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "Image.h"
 #include "IntPoint.h"
 #include "KURL.h"
@@ -276,7 +276,7 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
     if (imageURL.isEmpty())
         return;
 
-    KURL fullURL = frame->document()->completeURL(deprecatedParseURL(imageURL));
+    KURL fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL));
     if (fullURL.isEmpty())
         return;
 

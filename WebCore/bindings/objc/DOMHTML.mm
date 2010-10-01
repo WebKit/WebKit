@@ -40,6 +40,7 @@
 #import "HTMLCollection.h"
 #import "HTMLDocument.h"
 #import "HTMLInputElement.h"
+#import "HTMLParserIdioms.h"
 #import "HTMLSelectElement.h"
 #import "HTMLTextAreaElement.h"
 #import "Page.h"
@@ -70,7 +71,7 @@
 
 - (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
 {
-    NSURL *baseURL = core(self)->completeURL(WebCore::deprecatedParseURL(baseURLString));
+    NSURL *baseURL = core(self)->completeURL(WebCore::stripLeadingAndTrailingHTMLSpaces(baseURLString));
     return [self createDocumentFragmentWithMarkupString:markupString baseURL:baseURL];
 }
 

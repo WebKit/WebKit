@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. http://www.torchmobile.com/
  * Copyright (C) 2010 Google Inc. All Rights Reserved.
  *
@@ -28,23 +28,18 @@
 #include "config.h"
 #include "CSSPreloadScanner.h"
 
-#include "CSSHelper.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLToken.h"
 
 namespace WebCore {
 
-static inline bool isWhitespace(UChar c)
-{
-    return c == ' ' || c == '\n' || c == '\r' || c == '\t';
-}
-
 CSSPreloadScanner::CSSPreloadScanner(Document* document)
-    : m_document(document)
+    : m_state(Initial)
+    , m_document(document)
 {
-    reset();
 }
 
 void CSSPreloadScanner::reset()
@@ -59,10 +54,8 @@ void CSSPreloadScanner::scan(const HTMLToken& token, bool scanningBody)
     m_scanningBody = scanningBody;
 
     const HTMLToken::DataVector& characters = token.characters();
-    for (HTMLToken::DataVector::const_iterator iter = characters.begin();
-         iter != characters.end(); ++iter) {
+    for (HTMLToken::DataVector::const_iterator iter = characters.begin(); iter != characters.end(); ++iter)
         tokenize(*iter);
-    }
 }
 
 inline void CSSPreloadScanner::tokenize(UChar c)
@@ -104,7 +97,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
             m_state = Initial;
         break;
     case Rule:
-        if (isWhitespace(c))
+        if (isHTMLSpace(c))
             m_state = AfterRule;
         else if (c == ';')
             m_state = Initial;
@@ -112,7 +105,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
             m_rule.append(c);
         break;
     case AfterRule:
-        if (isWhitespace(c))
+        if (isHTMLSpace(c))
             ;
         else if (c == ';')
             m_state = Initial;
@@ -122,7 +115,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
         }
         break;
     case RuleValue:
-        if (isWhitespace(c))
+        if (isHTMLSpace(c))
             m_state = AfterRuleValue;
         else if (c == ';') {
             emitRule();
@@ -131,7 +124,7 @@ inline void CSSPreloadScanner::tokenize(UChar c)
             m_ruleValue.append(c);
         break;
     case AfterRuleValue:
-        if (isWhitespace(c))
+        if (isHTMLSpace(c))
             ;
         else if (c == ';') {
             emitRule();
@@ -144,14 +137,56 @@ inline void CSSPreloadScanner::tokenize(UChar c)
     }
 }
 
+static String parseCSSStringOrURL(const UChar* characters, size_t length)
+{
+    size_t offset = 0;
+    size_t reducedLength = length;
+
+    while (reducedLength && isHTMLSpace(characters[offset])) {
+        ++offset;
+        --reducedLength;
+    }
+    while (reducedLength && isHTMLSpace(characters[offset + reducedLength - 1]))
+        --reducedLength;
+
+    if (reducedLength >= 5
+            && (characters[offset] == 'u' || characters[offset] == 'U')
+            && (characters[offset + 1] == 'r' || characters[offset + 1] == 'R')
+            && (characters[offset + 2] == 'l' || characters[offset + 2] == 'L')
+            && characters[offset + 3] == '('
+            && characters[offset + reducedLength - 1] == ')') {
+        offset += 4;
+        reducedLength -= 5;
+    }
+
+    while (reducedLength && isHTMLSpace(characters[offset])) {
+        ++offset;
+        --reducedLength;
+    }
+    while (reducedLength && isHTMLSpace(characters[offset + reducedLength - 1]))
+        --reducedLength;
+
+    if (reducedLength < 2 || characters[offset] != characters[offset + reducedLength - 1] || !(characters[offset] == '\'' || characters[offset] == '"'))
+        return String();
+    offset++;
+    reducedLength -= 2;
+
+    while (reducedLength && isHTMLSpace(characters[offset])) {
+        ++offset;
+        --reducedLength;
+    }
+    while (reducedLength && isHTMLSpace(characters[offset + reducedLength - 1]))
+        --reducedLength;
+
+    return String(characters + offset, reducedLength);
+}
+
 void CSSPreloadScanner::emitRule()
 {
-    String rule(m_rule.data(), m_rule.size());
-    if (equalIgnoringCase(rule, "import") && !m_ruleValue.isEmpty()) {
-        String value(m_ruleValue.data(), m_ruleValue.size());
-        String url = deprecatedParseURL(value);
-        if (!url.isEmpty())
-            m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, url, String(), m_scanningBody);
+    if (equalIgnoringCase("import", m_rule.data(), m_rule.size())) {
+        String value = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
+        if (!value.isEmpty())
+            m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, value, String(), m_scanningBody);
     }
     m_rule.clear();
     m_ruleValue.clear();

@@ -34,7 +34,6 @@
 #include "ClientRect.h"
 #include "ClientRectList.h"
 #include "ContentType.h"
-#include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Event.h"

@@ -94,10 +94,8 @@
 #import <WebCore/HTMLFrameElement.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/HTMLHeadElement.h>
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#import <WebCore/HTMLMediaElement.h>
-#endif
 #import <WebCore/HTMLNames.h>
+#import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLPlugInElement.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
@@ -123,6 +121,10 @@
 #import <runtime/InitializeThreading.h>
 #import <wtf/PassRefPtr.h>
 #import <wtf/Threading.h>
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#import <WebCore/HTMLMediaElement.h>
+#endif
 
 #if ENABLE(JAVA_BRIDGE)
 #import "WebJavaPlugIn.h"
@@ -1668,7 +1670,7 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
     if (errorCode && m_webFrame) {
         WebResourceDelegateImplementationCache* implementations = WebViewGetResourceLoadDelegateImplementations(webView);
         if (implementations->plugInFailedWithErrorFunc) {
-            KURL pluginPageURL = document->completeURL(deprecatedParseURL(parameterValue(paramNames, paramValues, "pluginspage")));
+            KURL pluginPageURL = document->completeURL(stripLeadingAndTrailingHTMLSpaces(parameterValue(paramNames, paramValues, "pluginspage")));
             if (!pluginPageURL.protocolInHTTPFamily())
                 pluginPageURL = KURL();
             NSString *pluginName = pluginPackage ? (NSString *)[pluginPackage pluginInfo].name : nil;

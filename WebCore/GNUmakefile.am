@@ -912,7 +912,6 @@ webcore_sources += \
 	WebCore/css/CSSFunctionValue.h \
 	WebCore/css/CSSGradientValue.cpp \
 	WebCore/css/CSSGradientValue.h \
-	WebCore/css/CSSHelper.cpp \
 	WebCore/css/CSSHelper.h \
 	WebCore/css/CSSImageGeneratorValue.cpp \
 	WebCore/css/CSSImageGeneratorValue.h \

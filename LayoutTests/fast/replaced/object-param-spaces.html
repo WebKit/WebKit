@@ -8,7 +8,7 @@
             document.addEventListener("beforeload", function(event) {
                 var console = document.getElementById("console");
 
-                if (event.url == "scheme://url-with-control-char/")
+                if (event.url == "scheme://url-with-leading-and-trailing-space/")
                     console.innerHTML = "PASS";
                 else
                     console.innerHTML = "FAIL";
@@ -22,9 +22,9 @@
     </head>
     <body>
         <object width="0" height="0" type="application/x-webkit-test-netscape">
-            <param name="movie" value="   uRl('scheme://url-with-control-char/')  ">
+            <param name="movie" value="  scheme://url-with-leading-and-trailing-space/     ">
         </object>
-        <p>This test verifies that a URL specified in a &lt;param&gt; of an &lt;object&gt; is parsed the same as if it was specified as the data attribute of the &lt;object&gt;. Specifically, this verifies that control characters and leading/trailing whitespace are stripped, and that a resource surrounded with url('') is understood.</p>
+        <p>This test verifies that a URL specified in a &lt;param&gt; of an &lt;object&gt; is parsed the same as if it was specified as the data attribute of the &lt;object&gt;. Specifically, this verifies that leading/trailing whitespace are stripped.</p>
         <div id="console"></div>
     </body>
 </html>

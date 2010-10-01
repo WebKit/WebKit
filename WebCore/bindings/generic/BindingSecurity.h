@@ -32,12 +32,12 @@
 #define BindingSecurity_h
 
 #include "BindingSecurityBase.h"
-#include "CSSHelper.h"
 #include "Element.h"
 #include "Frame.h"
 #include "GenericBinding.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -128,7 +128,7 @@ bool BindingSecurity<Binding>::allowPopUp(State<Binding>* state)
 template <class Binding>
 bool BindingSecurity<Binding>::allowSettingFrameSrcToJavascriptUrl(State<Binding>* state, HTMLFrameElementBase* frame, String value)
 {
-    if (protocolIsJavaScript(deprecatedParseURL(value))) {
+    if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
         Node* contentDoc = frame->contentDocument();
         if (contentDoc && !checkNodeSecurity(state, contentDoc))
             return false;

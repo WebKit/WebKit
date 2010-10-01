@@ -59,6 +59,7 @@
 #include <WebCore/HTMLFrameElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
 #include <WebCore/HTMLNames.h>
+#include <WebCore/HTMLParserIdioms.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/Page.h>
@@ -768,7 +769,7 @@ void WebFrameLoaderClient::dispatchDidFailToStartPlugin(const PluginView* plugin
     ASSERT(frame == pluginView->parentFrame());
 
     if (!pluginView->pluginsPage().isNull()) {
-        KURL pluginPageURL = frame->document()->completeURL(deprecatedParseURL(pluginView->pluginsPage()));
+        KURL pluginPageURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginView->pluginsPage()));
         if (pluginPageURL.protocolInHTTPFamily()) {
             static CFStringRef key = MarshallingHelpers::LPCOLESTRToCFStringRef(WebKitErrorPlugInPageURLStringKey);
             RetainPtr<CFStringRef> str(AdoptCF, pluginPageURL.string().createCFString());

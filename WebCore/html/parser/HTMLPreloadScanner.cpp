@@ -28,13 +28,13 @@
 #include "config.h"
 #include "HTMLPreloadScanner.h"
 
-#include "CSSHelper.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLTokenizer.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 
 namespace WebCore {
 
@@ -90,7 +90,7 @@ public:
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#attribute-name-state
         if (!m_urlToLoad.isEmpty())
             return;
-        m_urlToLoad = deprecatedParseURL(attributeValue);
+        m_urlToLoad = stripLeadingAndTrailingHTMLSpaces(attributeValue);
     }
 
     void preload(Document* document, bool scanningBody)

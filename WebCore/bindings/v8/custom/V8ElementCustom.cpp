@@ -32,7 +32,6 @@
 #include "V8Element.h"
 
 #include "Attr.h"
-#include "CSSHelper.h"
 #include "Document.h"
 #include "Element.h"
 #include "ExceptionCode.h"

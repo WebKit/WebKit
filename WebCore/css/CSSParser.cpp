@@ -30,7 +30,6 @@
 #include "CSSCanvasValue.h"
 #include "CSSCharsetRule.h"
 #include "CSSCursorImageValue.h"
-#include "CSSHelper.h"
 #include "CSSImageValue.h"
 #include "CSSFontFaceRule.h"
 #include "CSSFontFaceSrcValue.h"
@@ -3760,6 +3759,8 @@ bool CSSParser::parseFontFaceUnicodeRange()
     return true;
 }
 
+// FIXME: This is the same as isHTMLSpace, so I think we should eliminate this function
+// and use that instead. Pedants who say CSS is not HTML need not apply.
 static inline bool isCSSWhitespace(UChar c)
 {
     return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\f';

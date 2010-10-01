@@ -44,6 +44,7 @@
 #include "FrameView.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
 #include "NodeList.h"
 #include "NodeRenderStyle.h"
@@ -680,7 +681,7 @@ static bool isEventHandlerAttribute(const QualifiedName& name)
 
 static bool isAttributeToRemove(const QualifiedName& name, const AtomicString& value)
 {    
-    return (name.localName().endsWith(hrefAttr.localName()) || name == srcAttr || name == actionAttr) && protocolIsJavaScript(deprecatedParseURL(value));       
+    return (name.localName().endsWith(hrefAttr.localName()) || name == srcAttr || name == actionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));       
 }
 
 void Element::setAttributeMap(PassRefPtr<NamedNodeMap> list, FragmentScriptingPermission scriptingPermission)
@@ -1612,7 +1613,7 @@ KURL Element::getURLAttribute(const QualifiedName& name) const
             ASSERT(isURLAttribute(attribute));
     }
 #endif
-    return document()->completeURL(deprecatedParseURL(getAttribute(name)));
+    return document()->completeURL(stripLeadingAndTrailingHTMLSpaces(getAttribute(name)));
 }
 
 KURL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
@@ -1623,7 +1624,7 @@ KURL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
             ASSERT(isURLAttribute(attribute));
     }
 #endif
-    String value = deprecatedParseURL(getAttribute(name));
+    String value = stripLeadingAndTrailingHTMLSpaces(getAttribute(name));
     if (value.isEmpty())
         return KURL();
     return document()->completeURL(value);

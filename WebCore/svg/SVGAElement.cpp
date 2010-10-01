@@ -27,7 +27,6 @@
 
 #include "Attr.h"
 #include "Attribute.h"
-#include "CSSHelper.h"
 #include "Document.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -35,6 +34,7 @@
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
 #include "HTMLAnchorElement.h"
+#include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
@@ -137,7 +137,7 @@ void SVGAElement::defaultEventHandler(Event* event)
         }
 
         if (isLinkClick(event)) {
-            String url = deprecatedParseURL(href());
+            String url = stripLeadingAndTrailingHTMLSpaces(href());
 
 #if ENABLE(SVG_ANIMATION)
             if (url[0] == '#') {

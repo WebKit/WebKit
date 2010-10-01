@@ -29,10 +29,10 @@
 #include "config.h"
 #include "JSHTMLFrameElement.h"
 
-#include "CSSHelper.h"
 #include "Document.h"
 #include "HTMLFrameElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "JSDOMBinding.h"
 
 using namespace JSC;
@@ -43,7 +43,7 @@ using namespace HTMLNames;
 
 static inline bool allowSettingJavascriptURL(ExecState* exec, HTMLFrameElement* imp, const String& value)
 {
-    if (protocolIsJavaScript(deprecatedParseURL(value))) {
+    if (protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
         Document* contentDocument = imp->contentDocument();
         if (contentDocument && !checkNodeSecurity(exec, contentDocument))
             return false;

@@ -25,7 +25,6 @@
 #include "HTMLFrameElementBase.h"
 
 #include "Attribute.h"
-#include "CSSHelper.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "FocusController.h"
@@ -35,6 +34,7 @@
 #include "FrameView.h"
 #include "HTMLFrameSetElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "KURL.h"
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
@@ -112,7 +112,7 @@ void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
 void HTMLFrameElementBase::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == srcAttr)
-        setLocation(deprecatedParseURL(attr->value()));
+        setLocation(stripLeadingAndTrailingHTMLSpaces(attr->value()));
     else if (isIdAttributeName(attr->name())) {
         // Important to call through to base for the id attribute so the hasID bit gets set.
         HTMLFrameOwnerElement::parseMappedAttribute(attr);

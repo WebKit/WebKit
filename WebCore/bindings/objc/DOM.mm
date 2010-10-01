@@ -37,6 +37,7 @@
 #import "Frame.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
+#import "HTMLParserIdioms.h"
 #import "Image.h"
 #import "NodeFilter.h"
 #import "RenderImage.h"
@@ -469,7 +470,7 @@ id <DOMEventTarget> kit(WebCore::EventTarget* eventTarget)
     ASSERT(name);
     WebCore::Element* element = core(self);
     ASSERT(element);
-    return element->document()->completeURL(deprecatedParseURL(element->getAttribute(name)));
+    return element->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(element->getAttribute(name)));
 }
 
 - (BOOL)isFocused

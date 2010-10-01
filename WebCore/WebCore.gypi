@@ -981,7 +981,6 @@
             'css/CSSFunctionValue.h',
             'css/CSSGradientValue.cpp',
             'css/CSSGradientValue.h',
-            'css/CSSHelper.cpp',
             'css/CSSHelper.h',
             'css/CSSImageGeneratorValue.cpp',
             'css/CSSImageGeneratorValue.h',

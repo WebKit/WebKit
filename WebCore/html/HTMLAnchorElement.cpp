@@ -30,6 +30,7 @@
 #include "FrameLoaderTypes.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "Page.h"
@@ -145,7 +146,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* event)
         }
 
         if (isLinkClick(event) && treatLinkAsLiveForEventType(eventType(event))) {
-            String url = deprecatedParseURL(getAttribute(hrefAttr));
+            String url = stripLeadingAndTrailingHTMLSpaces(getAttribute(hrefAttr));
             appendServerMapMousePosition(url, event);
             handleLinkClick(event, document(), url, getAttribute(targetAttr), hasRel(RelationNoReferrer));
             sendPings(document()->completeURL(url));
@@ -210,7 +211,7 @@ void HTMLAnchorElement::parseMappedAttribute(Attribute* attr)
         if (wasLink != isLink())
             setNeedsStyleRecalc();
         if (isLink()) {
-            String parsedURL = deprecatedParseURL(attr->value());
+            String parsedURL = stripLeadingAndTrailingHTMLSpaces(attr->value());
             if (document()->isDNSPrefetchEnabled()) {
                 if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
                     ResourceHandle::prepareForURL(document()->completeURL(parsedURL));
@@ -261,7 +262,7 @@ bool HTMLAnchorElement::draggable() const
 
 KURL HTMLAnchorElement::href() const
 {
-    return document()->completeURL(deprecatedParseURL(getAttribute(hrefAttr)));
+    return document()->completeURL(stripLeadingAndTrailingHTMLSpaces(getAttribute(hrefAttr)));
 }
 
 void HTMLAnchorElement::setHref(const AtomicString& value)

@@ -22,13 +22,13 @@
 #include "config.h"
 #include "HTMLImageLoader.h"
 
-#include "CSSHelper.h"
 #include "CachedImage.h"
 #include "Element.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "HTMLParserIdioms.h"
 
 #if USE(JSC)
 #include "JSDOMWindowBase.h"
@@ -55,7 +55,7 @@ void HTMLImageLoader::dispatchLoadEvent()
 
 String HTMLImageLoader::sourceURI(const AtomicString& attr) const
 {
-    return deprecatedParseURL(attr);
+    return stripLeadingAndTrailingHTMLSpaces(attr);
 }
 
 void HTMLImageLoader::notifyFinished(CachedResource*)

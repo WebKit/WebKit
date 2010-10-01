@@ -615,7 +615,6 @@ SOURCES += \
     css/CSSFontFaceSource.cpp \
     css/CSSFunctionValue.cpp \
     css/CSSGradientValue.cpp \
-    css/CSSHelper.cpp \
     css/CSSImageValue.cpp \
     css/CSSImageGeneratorValue.cpp \
     css/CSSImportRule.cpp \

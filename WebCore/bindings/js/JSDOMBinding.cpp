@@ -24,7 +24,6 @@
 #include "debugger/DebuggerCallFrame.h"
 
 #include "ActiveDOMObject.h"
-#include "CSSHelper.h"
 #include "DOMCoreException.h"
 #include "DOMObjectHashTableMap.h"
 #include "Document.h"
@@ -648,7 +647,7 @@ bool shouldAllowNavigation(ExecState* exec, Frame* frame)
 
 bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* element, const String& name, const String& value)
 {
-    if ((element->hasTagName(iframeTag) || element->hasTagName(frameTag)) && equalIgnoringCase(name, "src") && protocolIsJavaScript(deprecatedParseURL(value))) {
+    if ((element->hasTagName(iframeTag) || element->hasTagName(frameTag)) && equalIgnoringCase(name, "src") && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value))) {
           Document* contentDocument = static_cast<HTMLFrameElementBase*>(element)->contentDocument();
           if (contentDocument && !checkNodeSecurity(exec, contentDocument))
               return false;
