@@ -38,6 +38,7 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("subscribe", this._onSubscribe.bind(this));
     this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
     this._registerHandler("getResources", this._onGetResources.bind(this));
+    this._registerHandler("getPageTimings", this._onGetPageTimings.bind(this));
     this._registerHandler("createPanel", this._onCreatePanel.bind(this));
     this._registerHandler("createSidebarPane", this._onCreateSidebar.bind(this));
     this._registerHandler("log", this._onLog.bind(this));
@@ -263,6 +264,11 @@ WebInspector.ExtensionServer.prototype = {
         else
             response = Object.properties(WebInspector.resources).map(resourceWrapper);
         return response;
+    },
+
+    _onGetPageTimings: function()
+    {
+        return (new WebInspector.HARLog()).buildMainResourceTimings();
     },
 
     _onAddAuditCategory: function(request)

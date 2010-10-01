@@ -123,6 +123,11 @@ Resources.prototype = {
     get: function(id, callback)
     {
         return extensionServer.sendRequest({ command: "getResources", id: id }, callback);
+    },
+
+    getPageTimings: function(callback)
+    {
+        return extensionServer.sendRequest({ command: "getPageTimings" }, callback);
     }
 }
 

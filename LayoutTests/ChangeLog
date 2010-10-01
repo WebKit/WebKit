@@ -1,3 +1,15 @@
+2010-10-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Extensions API] expose page load events timings
+        Added webInspector.resources.getPageTimings()
+        https://bugs.webkit.org/show_bug.cgi?id=45954
+
+        * inspector/extensions-api-expected.txt:
+        * inspector/extensions-resources-expected.txt:
+        * inspector/extensions-resources.html:
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Remove the fixed test from the Skipped file, too

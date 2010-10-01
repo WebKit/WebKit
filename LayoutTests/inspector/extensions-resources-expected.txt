@@ -15,6 +15,12 @@ resource: .../inspector/resources/audits-style1.css, type: stylesheet
 resource: .../inspector/resources/missing-image.png, type: other
 RUNNING TEST: extension_testGetInvalidResource
 Attempted to retrieve invalid resource: {"code":"E_NOTFOUND","description":"Object not found: %s","details":[2128506],"isError":true}
+RUNNING TEST: extension_testGetPageTimings
+Got callback from getPageTimings, pageTimings dump follows
+{
+    onContentLoad : <number>
+    onLoad : <number>
+}
 RUNNING TEST: extension_testResourceNotification
 Resource finished: .../LayoutTests/inspector/extensions-resources.html
 All tests done.

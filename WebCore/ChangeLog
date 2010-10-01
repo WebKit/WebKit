@@ -1,3 +1,24 @@
+2010-10-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Extensions API] expose page load events timings
+        Added webInspector.resources.getPageTimings()
+        
+        https://bugs.webkit.org/show_bug.cgi?id=45954
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.Resources.prototype):
+        (WebInspector.injectedExtensionAPI.Resources.prototype.getPageTimings):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._onGetPageTimings):
+        * inspector/front-end/HAREntry.js: Return page event timings as -1 if start or event time unknown.
+        (WebInspector.HARLog.prototype._buildPages):
+        (WebInspector.HARLog.prototype.buildMainResourceTimings):
+        (WebInspector.HARLog.prototype._convertResource):
+        (WebInspector.HARLog.prototype._pageEventTime):
+
 2010-10-01  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Adam Roben.

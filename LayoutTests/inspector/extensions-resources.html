@@ -42,6 +42,16 @@ function extension_testGetInvalidResource(nextTest)
     webInspector.resources.get(2128506, callbackAndNextTest(onResource, nextTest));
 }
 
+function extension_testGetPageTimings(nextTest)
+{
+    function onTimings(result)
+    {
+        output("Got callback from getPageTimings, pageTimings dump follows");
+        dumpObject(result, { onContentLoad: 1, onLoad: 1 });
+    }
+    webInspector.resources.getPageTimings(callbackAndNextTest(onTimings, nextTest));
+}
+
 function doXHR()
 {
     var xhr = new XMLHttpRequest();

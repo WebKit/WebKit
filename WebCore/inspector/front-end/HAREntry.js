@@ -192,23 +192,31 @@ WebInspector.HARLog.prototype = {
                 startedDateTime: new Date(WebInspector.mainResource.startTime * 1000),
                 id: WebInspector.mainResource.documentURL,
                 title: "",
-                pageTimings: this._buildMainResourceTimings()
+                pageTimings: this.buildMainResourceTimings()
             }
         ];
     },
 
-    _buildMainResourceTimings: function()
+    buildMainResourceTimings: function()
     {
         var resourcesPanel = WebInspector.panels.resources;
         var startTime = WebInspector.mainResource.startTime;
         return {
-             onContentLoad: WebInspector.HAREntry._toMilliseconds(resourcesPanel.mainResourceDOMContentTime - startTime),
-             onLoad: WebInspector.HAREntry._toMilliseconds(resourcesPanel.mainResourceLoadTime - startTime),
+             onContentLoad: this._pageEventTime(resourcesPanel.mainResourceDOMContentTime),
+             onLoad: this._pageEventTime(resourcesPanel.mainResourceLoadTime),
         }
     },
 
     _convertResource: function(id)
     {
         return (new WebInspector.HAREntry(WebInspector.resources[id])).build();
+    },
+
+    _pageEventTime: function(time)
+    {
+        var startTime = WebInspector.mainResource.startTime;
+        if (time === -1 || startTime === -1)
+            return -1;
+        return WebInspector.HAREntry._toMilliseconds(time - startTime);
     }
 };
