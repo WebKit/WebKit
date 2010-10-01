@@ -1,3 +1,14 @@
+2010-10-01  Kwang Yul Seo  <skyul@company100.net>
+
+        Unreviewed.
+
+        [BREWMP] Change Collector BLOCK_SIZE to 64KB
+        https://bugs.webkit.org/show_bug.cgi?id=46436
+
+        Lower BLOCK_SIZE to 64KB because Brew MP runs on low end devices.
+
+        * runtime/Collector.h:
+
 2010-10-01  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Andreas Kling.

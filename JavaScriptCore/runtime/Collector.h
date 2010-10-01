@@ -57,7 +57,7 @@ namespace JSC {
 
     class LiveObjectIterator;
 
-#if OS(WINCE) || OS(SYMBIAN)
+#if OS(WINCE) || OS(SYMBIAN) || PLATFORM(BREWMP)
     const size_t BLOCK_SIZE = 64 * 1024; // 64k
 #else
     const size_t BLOCK_SIZE = 256 * 1024; // 256k
