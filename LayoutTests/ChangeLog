@@ -1,5 +1,33 @@
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59081.
+
+    2010-05-10  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Further optimization for SVG's repaintRect calculation
+        https://bugs.webkit.org/show_bug.cgi?id=38820
+        
+        The repaintRect of SVG objects with masks got smaller. This made
+        updates of some results necessary.
+
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.txt:
+        * platform/mac/svg/batik/masking/maskRegions-expected.txt:
+        * platform/mac/svg/clip-path/clip-path-with-invisibile-child-expected.txt:
+        * platform/mac/svg/css/circle-in-mask-with-shadow-expected.txt:
+        * platform/mac/svg/css/mask-with-shadow-expected.txt:
+        * platform/mac/svg/custom/empty-mask-expected.txt:
+        * platform/mac/svg/custom/mask-excessive-malloc-expected.txt:
+        * platform/mac/svg/custom/mask-inside-defs-expected.txt:
+        * platform/mac/svg/custom/mask-invalidation-expected.txt:
+        * platform/mac/svg/custom/mask-with-all-units-expected.txt:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.txt:
+        * platform/mac/svg/custom/visibility-override-mask-expected.txt:
+        * svg/custom/transformedMaskFails-expected.txt:
+
+2010-10-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r67281.
 
     2010-09-10  Dan Bernstein  <mitz@apple.com>

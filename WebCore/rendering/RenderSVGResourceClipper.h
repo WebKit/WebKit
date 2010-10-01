@@ -51,7 +51,7 @@ public:
     virtual void invalidateClient(RenderObject*);
 
     virtual bool applyResource(RenderObject*, RenderStyle*, GraphicsContext*&, unsigned short resourceMode);
-    virtual FloatRect resourceBoundingBox(const FloatRect&) const;
+    virtual FloatRect resourceBoundingBox(const FloatRect&);
 
     virtual RenderSVGResourceType resourceType() const { return ClipperResourceType; }
 
@@ -64,7 +64,9 @@ private:
     bool applyClippingToContext(RenderObject*, const FloatRect&, const FloatRect&, GraphicsContext*);
     bool pathOnlyClipping(GraphicsContext*, const FloatRect&);
     bool createClipData(ClipperData*, const FloatRect&, const FloatRect&);
+    void calculateClipContentRepaintRect();
 
+    FloatRect m_clipBoundaries;
     HashMap<RenderObject*, ClipperData*> m_clipper;
 };
 

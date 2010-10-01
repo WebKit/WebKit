@@ -1,5 +1,51 @@
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
+        Merge r59081.
+
+    2010-05-10  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Further optimization for SVG's repaintRect calculation
+        https://bugs.webkit.org/show_bug.cgi?id=38820
+        
+        This is a further optimization to get smaller repaintRects on SVG objects
+        in combination with masker or clipper resources.
+        Masker takes the unite of all stroke boundaries of it's childs.
+        Both, clipper and masker, store this union to avoid multiple calls of the childs
+        and the unite calculations now.
+        The unite rect can be transformed to any targets objectBoundingBox, if the content
+        unit of the resource is set to objectBoundingBoxMode.
+        This speeds up the use of resources with multiple target objects.
+        
+        No behavior changes, the smaller repaintRects cause updates for DRT results.
+
+        * rendering/RenderSVGResource.h:
+        * rendering/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::invalidateClients):
+        (WebCore::RenderSVGResourceClipper::calculateClipContentRepaintRect):
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox):
+        * rendering/RenderSVGResourceClipper.h:
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::resourceBoundingBox):
+        * rendering/RenderSVGResourceFilter.h:
+        * rendering/RenderSVGResourceGradient.h:
+        (WebCore::RenderSVGResourceGradient::resourceBoundingBox):
+        * rendering/RenderSVGResourceMarker.h:
+        (WebCore::RenderSVGResourceMarker::resourceBoundingBox):
+        * rendering/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::invalidateClients):
+        (WebCore::RenderSVGResourceMasker::createMaskImage):
+        (WebCore::RenderSVGResourceMasker::calculateMaskContentRepaintRect):
+        (WebCore::RenderSVGResourceMasker::resourceBoundingBox):
+        * rendering/RenderSVGResourceMasker.h:
+        * rendering/RenderSVGResourcePattern.h:
+        (WebCore::RenderSVGResourcePattern::resourceBoundingBox):
+        * rendering/RenderSVGResourceSolidColor.h:
+        (WebCore::RenderSVGResourceSolidColor::resourceBoundingBox):
+
+2010-10-01  Mark Rowe  <mrowe@apple.com>
+
         Merge r66269.
 
     2010-08-27  Simon Fraser  <simon.fraser@apple.com>

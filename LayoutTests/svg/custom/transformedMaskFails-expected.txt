@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
           RenderPath {rect} at (100,100) size 150x150 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
     RenderPath {rect} at (100,100) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 Z"]
     RenderPath {rect} at (100,100) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 Z"]
-      [masker="mask"] RenderSVGResourceMasker {mask} at (90,90) size 120x120
+      [masker="mask"] RenderSVGResourceMasker {mask} at (100,100) size 110x110
