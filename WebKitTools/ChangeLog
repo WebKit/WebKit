@@ -1,3 +1,22 @@
+2010-09-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Add a button to jump to the next untested test.
+        
+        * CSSTestSuiteHarness/harness/harness.css:
+        (.test-type):
+        (.name > button):
+        * CSSTestSuiteHarness/harness/harness.html:
+        * CSSTestSuiteHarness/harness/harness.js:
+        (Chapter.prototype.description):
+        (Chapter.prototype.untestedCount):
+        (TestSuite.prototype.testInfoDataLoaded):
+        (TestSuite.prototype.fillChapterPopup):
+        (TestSuite.prototype.updateChapterPopup):
+        (TestSuite.prototype.buildTestListForChapter):
+        (TestSuite.prototype.goToNextIncompleteTest):
+        (TestSuite.prototype.firstIncompleteTestIndex):
+        (TestSuite.prototype.testCompletionStateChanged):
+
 2010-09-29  Jon Honeycutt  <jhoneycutt@apple.com>
 
         WebKit2 on Windows should use Windows fonts for the various standard

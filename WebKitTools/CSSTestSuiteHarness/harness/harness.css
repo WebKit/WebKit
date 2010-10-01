@@ -49,6 +49,15 @@ body {
   margin: 4px 0;
 }
 
+.test-type {
+  float: left;
+}
+
+.name > button {
+  margin-top: 20px;
+  float: right;
+}
+
 .actions {
   margin-left: 320px;
   border: 1px solid black;

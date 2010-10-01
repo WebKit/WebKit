@@ -229,7 +229,20 @@ function Chapter(chapterInfo)
 
 Chapter.prototype.description = function()
 {
-  return this.title + ' (' + this.testCount + ' tests)';
+  return this.title + ' (' + this.testCount + ' tests, ' + this.untestedCount() + ' untested)';
+}
+
+Chapter.prototype.untestedCount = function()
+{
+  var count = 0;
+  for (var i = 0; i < this.sections.length; ++i) {
+    var currSection = this.sections[i];
+    for (var j = 0; j < currSection.tests.length; ++j) {
+      count += currSection.tests[j].completed ? 0 : 1;
+    }
+    
+  }
+  return count;
 }
 
 // Utils
@@ -277,7 +290,7 @@ TestSuite.prototype.testInfoDataLoaded = function(data, status)
 
   this.testInfoLoaded = true;
   
-  this.fillChapterPopup(document.getElementById('chapters'));
+  this.fillChapterPopup();
 
   this.initializeControls();
 
@@ -363,8 +376,9 @@ TestSuite.prototype.chapterAtIndex = function(index)
   return this.chapters[kChapterData[index].file];
 }
 
-TestSuite.prototype.fillChapterPopup = function(select)
+TestSuite.prototype.fillChapterPopup = function()
 {
+  var select = document.getElementById('chapters')
   select.innerHTML = ''; // Remove all children.
   
   for (var i = 0; i < kChapterData.length; ++i) {
@@ -379,20 +393,41 @@ TestSuite.prototype.fillChapterPopup = function(select)
   }
 }
 
+TestSuite.prototype.updateChapterPopup = function()
+{
+  var select = document.getElementById('chapters')
+  var currOption = select.firstChild;
+  
+  for (var i = 0; i < kChapterData.length; ++i) {
+    var chapterData = kChapterData[i];
+    var chapter = this.chapters[chapterData.file];
+
+    currOption.innerText = chapter.description();
+    currOption = currOption.nextSibling;
+  }
+}
+
 TestSuite.prototype.buildTestListForChapter = function(chapter)
 {
-  this.currentChapterTests = [];
+  this.currentChapterTests = this.testListForChapter(chapter);
+}
+
+TestSuite.prototype.testListForChapter = function(chapter)
+{
+  var testList = [];
   
   for (var i in chapter.sections) {
     var currSection = chapter.sections[i];
     // FIXME: why do I need the assignment?
-    this.currentChapterTests = this.currentChapterTests.concat(currSection.tests);
+    testList = testList.concat(currSection.tests);
   }
   
   // FIXME: test may occur more than once.
-  this.currentChapterTests.sort(function(a, b) {
+  testList.sort(function(a, b) {
     return a.id.localeCompare(b.id);
   });
+  
+  return testList;
 }
 
 TestSuite.prototype.initializeControls = function()
@@ -511,6 +546,41 @@ TestSuite.prototype.previousTest = function()
     if (currChapterIndex > 0)
       this.goToChapterIndex(currChapterIndex - 1);
   }
+}
+
+TestSuite.prototype.goToNextIncompleteTest = function()
+{
+  // Look to the end of this chapter.
+  for (var i = this.currChapterTestIndex + 1; i < this.currentChapterTests.length; ++i) {
+    if (!this.currentChapterTests[i].completed) {
+      this.goToTestIndex(i);
+      return;
+    }
+  }
+
+  // Start looking through later chapter
+  var currChapterIndex = this.indexOfChapter(this.currentChapter);
+  for (var c = currChapterIndex + 1; c < kChapterData.length; ++c) {
+    var chapterData = this.chapterAtIndex(c);
+    
+    var testIndex = this.firstIncompleteTestIndex(chapterData);
+    if (testIndex != -1) {
+      this.goToChapterIndex(c);
+      this.goToTestIndex(testIndex);
+      break;
+    }
+  }
+}
+
+TestSuite.prototype.firstIncompleteTestIndex = function(chapter)
+{
+  var chapterTests = this.testListForChapter(chapter);
+  for (var i = 0; i < chapterTests.length; ++i) {
+    if (!chapterTests[i].completed)
+      return i;
+  }
+  
+  return -1;
 }
 
 /* ------------------------------------------------------- */
@@ -1039,8 +1109,8 @@ TestSuite.prototype.markTestCompleted = function(testID)
 
 TestSuite.prototype.testCompletionStateChanged = function()
 {
-  // update the test list
   this.updateTestList();
+  this.updateChapterPopup();
 }
 
 TestSuite.prototype.loadTestStatus = function()
@@ -1054,6 +1124,8 @@ TestSuite.prototype.loadTestStatus = function()
         _self.testCompletionStateChanged();
       }
     );
+    
+    this.updateChapterPopup();
 }
 
 /* -------------------------------------------------------- */

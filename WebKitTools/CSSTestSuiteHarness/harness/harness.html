@@ -63,6 +63,11 @@
     {
       gTestSuite.passTest();
     }
+    
+    function goToNextUntested()
+    {
+      gTestSuite.goToNextIncompleteTest();
+    }
 
     function formatChanged()
     {
@@ -143,11 +148,12 @@
       <div><span id="test-index">1</span> of <span id="chapter-test-count">200</span> unique tests</div>
     </div>
     <div class="details">
-      <div class="name">        
+      <div class="name">
         <div class="test-type">
           <input type="radio" name="format" id="html4" onchange="formatChanged()" checked><label for="html4">HTML4</label><br>
           <input type="radio" name="format" id="xhtml1" onchange="formatChanged()"><label for="xhtml1">XHTML1</label>
         </div>
+        <button onclick="goToNextUntested()" accesskey="n"><strong>N</strong>ext Untested</button>
       </div>
     </div>
     
