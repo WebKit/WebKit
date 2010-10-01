@@ -1,3 +1,15 @@
+2010-10-01  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Add v8 binding helpers to make FileWriter be an EventTarget.
+        https://bugs.webkit.org/show_bug.cgi?id=46910
+
+        No new tests; still waiting for the first complete implementation.
+
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+
 2010-10-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.

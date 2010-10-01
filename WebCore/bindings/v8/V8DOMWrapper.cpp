@@ -48,6 +48,7 @@
 #include "V8EventListenerList.h"
 #include "V8EventSource.h"
 #include "V8FileReader.h"
+#include "V8FileWriter.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8IDBRequest.h"
@@ -426,6 +427,11 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 #if ENABLE(BLOB)
     if (FileReader* fileReader = target->toFileReader())
         return toV8(fileReader);
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+    if (FileWriter* fileWriter = target->toFileWriter())
+        return toV8(fileWriter);
 #endif
 
     ASSERT(0);
