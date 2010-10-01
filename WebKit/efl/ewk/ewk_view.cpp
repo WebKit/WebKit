@@ -805,10 +805,6 @@ static void _ewk_view_smart_calculate(Evas_Object* o)
             view->resize(w, h);
             view->forceLayout();
             view->adjustViewSize();
-            IntSize size = view->contentsSize();
-            if (!sd->api->contents_resize(sd, size.width(), size.height()))
-                ERR("failed to resize contents to %dx%d",
-                    size.width(), size.height());
         }
         evas_object_resize(sd->main_frame, w, h);
         sd->changed.frame_rect = EINA_TRUE;
@@ -4212,4 +4208,23 @@ Eina_Bool ewk_view_navigation_policy_decision(Evas_Object* o, Ewk_Frame_Resource
         return EINA_TRUE;
 
     return sd->api->navigation_policy_decision(sd, request);
+}
+
+/**
+ * @internal
+ * Reports that the contents have resized. The ewk_view calls contents_resize,
+ * which can be reimplemented as needed.
+ *
+ * @param o view.
+ * @param w new content width.
+ * @param h new content height.
+ */
+void ewk_view_contents_size_changed(Evas_Object *o, int w, int h)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
+    EINA_SAFETY_ON_NULL_RETURN(sd->api);
+    EINA_SAFETY_ON_NULL_RETURN(sd->api->contents_resize);
+
+    if (!sd->api->contents_resize(sd, w, h))
+        ERR("failed to resize contents to %dx%d", w, h);
 }

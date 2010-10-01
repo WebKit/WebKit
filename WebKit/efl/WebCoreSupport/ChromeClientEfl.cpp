@@ -319,6 +319,8 @@ IntRect ChromeClientEfl::windowResizerRect() const
 void ChromeClientEfl::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
     ewk_frame_contents_size_changed(kit(frame), size.width(), size.height());
+    if (ewk_view_frame_main_get(m_view) == kit(frame))
+        ewk_view_contents_size_changed(m_view, size.width(), size.height());
 }
 
 IntRect ChromeClientEfl::windowToScreen(const IntRect& rect) const

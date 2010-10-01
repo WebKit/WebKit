@@ -1,3 +1,25 @@
+2010-10-01  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Call contents_resize when the main frame gets resized.
+        https://bugs.webkit.org/show_bug.cgi?id=47004
+
+        The previous implementation was just calling contents_resize when the
+        viewport size had changed. That's not enough, and contents_resize
+        shouldn't be called if the contents size didn't change.
+
+        Now the contents_size_changed function is called directly from the
+        ChromeClientEfl.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::contentsSizeChanged):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+        (ewk_view_fixed_layout_size_set):
+        (ewk_view_contents_size_changed):
+
 2010-09-29  João Paulo Rechi Vita  <jprvita@profusion.mobi>
 
         Reviewed by Antonio Gomes.
