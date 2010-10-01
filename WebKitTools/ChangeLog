@@ -1,3 +1,75 @@
+2010-10-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add simple API tester for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=46953
+
+        This adds a very simple testing infrastructure for testing APIs exposed
+        through the WebKit project. It consists of two parts: 1) a project that
+        builds the all the tests 2) a script that searches the tests directory and
+        calls the tester once for each test.
+
+        This adds the infrastructure and two tests:
+        - Tests/WTF/Vector1.cpp - A proof of concept test of WTF data-structures.
+        - Tests/WebKit2/BasicTest1.cpp - A proof of concept test of WebKit2 API.
+
+        This currently only works on the mac, but is designed to be easily ported 
+        to any platform.
+
+        * Scripts/run-api-tests: Added.
+        * Scripts/build-api-tests: Added.
+        Scripts to build/run the tests.
+
+        * TestWebKitAPI: Added.
+        * TestWebKitAPI/Configurations: Added.
+        * TestWebKitAPI/Configurations/Base.xcconfig: Added.
+        * TestWebKitAPI/Configurations/DebugRelease.xcconfig: Added.
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig: Added.
+        * TestWebKitAPI/ForwardingHeaders: Added.
+        * TestWebKitAPI/ForwardingHeaders/wtf: Added.
+        * TestWebKitAPI/PlatformUtilities.h: Added.
+        * TestWebKitAPI/PlatformWebView.h: Added.
+        (TestWebKitAPI::PlatformWebView::platformView):
+        * TestWebKitAPI/StringFunctions.h: Added.
+        * TestWebKitAPI/Test.h: Added.
+        (TestWebKitAPI::Test::~Test):
+        (TestWebKitAPI::Test::name):
+        (TestWebKitAPI::Test::Register::Register):
+        (TestWebKitAPI::Test::Register::create):
+        (TestWebKitAPI::Test::Test):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj: Added.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added.
+        * TestWebKitAPI/TestWebKitAPIPrefix.h: Added.
+        * TestWebKitAPI/TestsController.cpp: Added.
+        (TestWebKitAPI::TestsController::shared):
+        (TestWebKitAPI::TestsController::TestsController):
+        (TestWebKitAPI::TestsController::runTestNamed):
+        (TestWebKitAPI::TestsController::testFailed):
+        (TestWebKitAPI::TestsController::registerCreateTestFunction):
+        * TestWebKitAPI/TestsController.h: Added.
+        * TestWebKitAPI/mac: Added.
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm: Added.
+        (TestWebKitAPI::Util::run):
+        (TestWebKitAPI::Util::createURLForResource):
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm: Added.
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::resizeTo):
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::page):
+        (TestWebKitAPI::PlatformWebView::focus):
+        * TestWebKitAPI/mac/main.mm: Added.
+        Infrastructure.
+
+        * TestWebKitAPI/Tests: Added.
+        * TestWebKitAPI/Tests/WTF: Added.
+        * TestWebKitAPI/Tests/WTF/Vector1.cpp: Added.
+        * TestWebKitAPI/Tests/WebKit2: Added.
+        * TestWebKitAPI/Tests/WebKit2/BasicTest1.cpp: Added.
+        (TestWebKitAPI::State::State):
+        * TestWebKitAPI/Tests/WebKit2/basic-1.html: Added.
+        Proof of concept tests.
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Don't assume AccessibleObjectFromEvent succeeds

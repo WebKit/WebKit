@@ -1,0 +1,216 @@
+#!/usr/bin/perl -w
+
+# Copyright (C) 2010 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+# Features to add:
+#   - Ability to run a single test.
+#   - Ability to run all tests under one directory.
+
+use strict;
+use warnings;
+
+use File::Basename;
+use File::Find;
+use File::Spec::Functions;
+use File::Spec;
+use FindBin;
+use Getopt::Long qw(:config pass_through);
+use IPC::Open3;
+use lib $FindBin::Bin;
+use webkitdirs;
+
+sub splitpath($);
+sub numericcmp($$);
+sub pathcmp($$);
+sub findTestsToRun();
+sub runTest($);
+sub buildTestTool();
+
+my $showHelp = 0;
+my $quiet = 0;
+
+my $programName = basename($0);
+my $usage = <<EOF;
+Usage: $programName [options]
+  --help                Show this help message
+  -q|--quite            Less verbose output
+EOF
+
+GetOptions(
+    'help' => \$showHelp,
+    'quiet|q' => \$quiet,
+);
+
+if ($showHelp) {
+   print STDERR $usage;
+   exit 1;
+}
+
+setConfiguration();
+buildTestTool();
+my @testsToRun = findTestsToRun();
+
+my $anyFailures = 0;
+for my $testPath (@testsToRun) {
+    my $failed = runTest($testPath);
+    if ($failed) {
+        $anyFailures = 1;
+    }
+}
+exit $anyFailures;
+
+
+sub splitpath($)
+{
+    my ($path) = @_;
+
+    my $pathSeparator = "/";
+    my $dirname = dirname($path) . $pathSeparator;
+    $dirname = "" if $dirname eq "." . $pathSeparator;
+
+    return ($dirname, basename($path));
+}
+
+sub numericcmp($$)
+{
+    my ($aa, $bb) = @_;
+
+    my @a = split /(\d+)/, $aa;
+    my @b = split /(\d+)/, $bb;
+
+    # Compare one chunk at a time.
+    # Each chunk is either all numeric digits, or all not numeric digits.
+    while (@a && @b) {
+        my $a = shift @a;
+        my $b = shift @b;
+        
+        # Use numeric comparison if chunks are non-equal numbers.
+        return $a <=> $b if $a =~ /^\d/ && $b =~ /^\d/ && $a != $b;
+
+        # Use string comparison if chunks are any other kind of non-equal string.
+        return $a cmp $b if $a ne $b;
+    }
+    
+    # One of the two is now empty; compare lengths for result in this case.
+    return @a <=> @b;
+}
+
+sub pathcmp($$)
+{
+    my ($patha, $pathb) = @_;
+
+    my ($dira, $namea) = splitpath($patha);
+    my ($dirb, $nameb) = splitpath($pathb);
+
+    return numericcmp($dira, $dirb) if $dira ne $dirb;
+    return numericcmp($namea, $nameb);
+}
+
+sub findTestsToRun()
+{
+    our %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn);
+    our %supportedFileExtensions = map { $_ => 1 } qw(cpp);
+    our $testsDirectory = File::Spec->catfile(sourceDir(), qw(WebKitTools TestWebKitAPI Tests));
+    our @testsFound = ();
+
+    sub directoryFilter
+    {
+        return () if exists $ignoredLocalDirectories{basename($File::Find::dir)};
+        return @_;
+    }
+
+    sub fileFilter
+    {
+        my $filename = $_;
+        if ($filename =~ /\.([^.]+)$/) {
+            
+            if (exists $supportedFileExtensions{$1}) {
+                my $path = File::Spec->abs2rel(catfile($File::Find::dir, $filename), $testsDirectory);
+                push @testsFound, $path;
+            }
+        }
+    }
+
+    chdirWebKit();
+
+    find({ preprocess => \&directoryFilter, wanted => \&fileFilter }, $testsDirectory);
+    return sort pathcmp @testsFound;
+}
+
+sub runTest($)
+{
+    my ($testPath) = @_;
+
+    my ($dir, $testFile) = splitpath($testPath);
+    my $test = substr($testFile, 0, rindex($testFile, "."));
+
+    print "Running " . $dir . $test . "\n";
+
+    if (isAppleMacWebKit()) {
+        my $productDir = productDir();
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+        my $apiTesterPath = "$productDir/TestWebKitAPI";
+        if (!isTiger() && architecture()) {
+            return system "arch", "-" . architecture(), $apiTesterPath, $test, @ARGV;
+        } else {
+            return system $apiTesterPath, $test, @ARGV;
+        }
+    }
+}
+
+sub buildTestTool()
+{
+    chdirWebKit();
+
+    my $buildTestTool =  "build-api-tests";
+    print STDERR "Running $buildTestTool\n";
+
+    local *DEVNULL;
+    my ($childIn, $childOut, $childErr);
+    if ($quiet) {
+        open(DEVNULL, ">", File::Spec->devnull()) or die "Failed to open /dev/null";
+        $childOut = ">&DEVNULL";
+        $childErr = ">&DEVNULL";
+    } else {
+        # When not quiet, let the child use our stdout/stderr.
+        $childOut = ">&STDOUT";
+        $childErr = ">&STDERR";
+    }
+
+    my @args = argumentsForConfiguration();
+    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/$buildTestTool", @args) or die "Failed to run " . $buildTestTool;
+    close($childIn);
+    waitpid $buildProcess, 0;
+    my $buildResult = $?;
+    close($childOut);
+    close($childErr);
+
+    close DEVNULL if ($quiet);
+
+    if ($buildResult) {
+        print STDERR "Compiling TestWebKitAPI failed!\n";
+        exit exitStatus($buildResult);
+    }
+}
