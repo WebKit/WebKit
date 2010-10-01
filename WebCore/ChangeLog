@@ -1,5 +1,12 @@
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
+        Fix typo.
+
+        * platform/network/qt/ProxyServerQt.cpp:
+        (WebCore::proxyServersForURL):
+
+2010-10-01  Anders Carlsson  <andersca@apple.com>
+
         Add Qt ProxyServer stub.
 
         * WebCore.pro:

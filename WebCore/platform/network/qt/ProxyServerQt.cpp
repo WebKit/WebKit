@@ -33,7 +33,7 @@ namespace WebCore {
 
 Vector<ProxyServer> proxyServersForURL(const KURL&)
 {
-    NotImplemented();
+    notImplemented();
     return Vector<ProxyServer>();
 }
 
