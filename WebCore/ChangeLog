@@ -1,3 +1,18 @@
+2010-10-01  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Fix http/tests/loading/redirect-methods.html
+
+        Document our redirection behaviour too.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41571
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        * platform/network/qt/QNetworkReplyHandler.h:
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Copy forwarding headers and Inspector JS files as part of

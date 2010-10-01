@@ -137,6 +137,30 @@ bool FormDataIODevice::isSequential() const
     return true;
 }
 
+static QString httpMethodString(QNetworkAccessManager::Operation method)
+{
+    switch (method) {
+    case QNetworkAccessManager::GetOperation:
+        return "GET";
+    case QNetworkAccessManager::HeadOperation:
+        return "HEAD";
+    case QNetworkAccessManager::PostOperation:
+        return "POST";
+    case QNetworkAccessManager::PutOperation:
+        return "PUT";
+#if QT_VERSION >= QT_VERSION_CHECK(4, 6, 0)
+    case QNetworkAccessManager::DeleteOperation:
+        return "DELETE";
+#endif
+#if QT_VERSION >= QT_VERSION_CHECK(4, 7, 0)
+    case QNetworkAccessManager::CustomOperation:
+        return "OPTIONS";
+#endif
+    default:
+        return "GET";
+    }
+}
+
 QNetworkReplyHandler::QNetworkReplyHandler(ResourceHandle* handle, LoadMode loadMode)
     : QObject(0)
     , m_reply(0)
@@ -359,13 +383,17 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
         }
         m_redirected = true;
 
-        ResourceRequest newRequest = m_resourceHandle->firstRequest();
-        newRequest.setURL(newUrl);
 
-        if (((statusCode >= 301 && statusCode <= 303) || statusCode == 307) && newRequest.httpMethod() == "POST") {
+        //  Status Code 301 (Moved Permanently), 302 (Moved Temporarily), 303 (See Other):
+        //    - If original request is POST convert to GET and redirect automatically
+        //  Status Code 307 (Temporary Redirect) and all other redirect status codes:
+        //    - Use the HTTP method from the previous request
+        if ((statusCode >= 301 && statusCode <= 303) && m_resourceHandle->firstRequest().httpMethod() == "POST")
             m_method = QNetworkAccessManager::GetOperation;
-            newRequest.setHTTPMethod("GET");
-        }
+
+        ResourceRequest newRequest = m_resourceHandle->firstRequest();
+        newRequest.setHTTPMethod(httpMethodString(m_method));
+        newRequest.setURL(newUrl);
 
         // Should not set Referer after a redirect from a secure resource to non-secure one.
         if (!newRequest.url().protocolIs("https") && protocolIs(newRequest.httpReferrer(), "https"))

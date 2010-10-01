@@ -1,3 +1,15 @@
+2010-10-01  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        [Qt] Fix http/tests/loading/redirect-methods.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=41571
+
+        Unskip http/tests/loading/redirect-methods.html
+ 
+        * platform/qt/Skipped:
+
 2010-09-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

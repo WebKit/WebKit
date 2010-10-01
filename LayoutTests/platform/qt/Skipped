@@ -182,9 +182,6 @@ http/tests/wml
 # https://bugs.webkit.org/show_bug.cgi?id=44282
 http/tests/incremental/slow-utf8-text.pl
 
-# webkit.org/b/41571
-http/tests/loading/redirect-methods.html
-
 # expected results need updating
 http/tests/loading/simple-subframe.html
 
