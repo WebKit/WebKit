@@ -1,3 +1,15 @@
+2010-10-01  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44406
+        <rdar://problem/8310921> Application Cache crash when a fallback document has a manifest URL
+
+        * http/tests/appcache/foreign-fallback-expected.txt: Added.
+        * http/tests/appcache/foreign-fallback.html: Added.
+        * http/tests/appcache/resources/foreign-fallback-fallback.html: Added.
+        * http/tests/appcache/resources/foreign-fallback.manifest: Added.
+
 2010-10-01  Adam Roben  <aroben@apple.com>
 
         Support for testing NPN_GetValue(NPNVnetscapeWindow)
