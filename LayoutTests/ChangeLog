@@ -1,3 +1,17 @@
+2010-10-01  Adam Roben  <aroben@apple.com>
+
+        Land new Windows results for
+        fast/text/international/bidi-mirror-he-ar.html
+
+        Fixes <http://webkit.org/b/47001> <rdar://problem/8503550>
+        fast/text/international/bidi-mirror-he-ar.html fails on Windows
+
+        Recommended by Dan Bernstein.
+
+        * platform/win/fast/text/international/bidi-mirror-he-ar-expected.checksum: Added.
+        * platform/win/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/win/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+
 2010-10-01  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Darin Adler.
