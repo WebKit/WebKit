@@ -312,9 +312,6 @@ websocket/tests/workers/worker-handshake-challenge-randomness.html
 # http://webkit.org/b/46911
 accessibility/aria-hidden-update.html
 
-# http://webkit.org/b/46919
-svg/custom/clip-path-referencing-use2.svg
-
 # Assertion/crash in notificationListenerProc http://webkit.org/b/44136
 plugins/access-after-page-destroyed.html
 

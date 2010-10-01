@@ -1,5 +1,11 @@
 2010-10-01  Adam Roben  <aroben@apple.com>
 
+        Remove the fixed test from the Skipped file, too
+
+        * platform/win/Skipped:
+
+2010-10-01  Adam Roben  <aroben@apple.com>
+
         Remove bogus Windows results for clip-path-referencing-use2.svg
 
         Fixes <http://webkit.org/b/46919> <rdar://problem/8497626> REGRESSION?
