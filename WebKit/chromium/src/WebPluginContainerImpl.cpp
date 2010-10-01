@@ -48,6 +48,7 @@
 #include "WebURLError.h"
 #include "WebURLRequest.h"
 #include "WebVector.h"
+#include "WebViewImpl.h"
 #include "WrappedResourceResponse.h"
 
 #include "EventNames.h"
@@ -346,6 +347,12 @@ void WebPluginContainerImpl::loadFrameRequest(
         0,      // event
         0,     // form state
         SendReferrer);
+}
+
+void WebPluginContainerImpl::zoomLevelChanged(double zoomLevel)
+{
+    WebViewImpl* view = WebViewImpl::fromPage(m_element->document()->frame()->page());
+    view->fullFramePluginZoomLevelChanged(zoomLevel);
 }
 
 void WebPluginContainerImpl::didReceiveResponse(const ResourceResponse& response)

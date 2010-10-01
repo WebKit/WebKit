@@ -1411,14 +1411,6 @@ PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
     if (!webPlugin->initialize(container.get()))
         return 0;
 
-    bool zoomTextOnly = m_webFrame->viewImpl()->zoomTextOnly();
-    float zoomFactor = zoomTextOnly ? m_webFrame->frame()->textZoomFactor() : m_webFrame->frame()->pageZoomFactor();
-    if (zoomFactor != 1) {
-        // There's a saved zoom level, so tell the plugin about it since
-        // WebViewImpl::setZoomLevel was called before the plugin was created.
-        webPlugin->setZoomFactor(zoomFactor, zoomTextOnly);
-    }
-
     // The element might have been removed during plugin initialization!
     if (!element->renderer())
         return 0;

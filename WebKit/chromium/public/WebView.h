@@ -36,6 +36,9 @@
 #include "WebVector.h"
 #include "WebWidget.h"
 
+// FIXME(jam): take this out after Chrome is updated
+#define ZOOM_LEVEL_IS_DOUBLE
+
 namespace WebKit {
 
 class WebAccessibilityObject;
@@ -54,6 +57,10 @@ struct WebPoint;
 
 class WebView : public WebWidget {
 public:
+    WEBKIT_API static const double textSizeMultiplierRatio;
+    WEBKIT_API static const double minTextSizeMultiplier;
+    WEBKIT_API static const double maxTextSizeMultiplier;
+
     // Controls the time that user scripts injected into the document run.
     enum UserScriptInjectAt {
         UserScriptInjectAtDocumentStart,
@@ -161,9 +168,11 @@ public:
     // Zoom ----------------------------------------------------------------
 
     // Returns the current zoom level.  0 is "original size", and each increment
-    // above or below represents zooming 20% larger or smaller to limits of 300%
-    // and 50% of original size, respectively.
-    virtual int zoomLevel() = 0;
+    // above or below represents zooming 20% larger or smaller to default limits
+    // of 300% and 50% of original size, respectively.  Only plugins use
+    // non whole-numbers, since they might choose to have specific zoom level so
+    // that fixed-width content is fit-to-page-width, for example.
+    virtual double zoomLevel() = 0;
 
     // Changes the zoom level to the specified level, clamping at the limits
     // noted above, and returns the current zoom level after applying the
@@ -173,7 +182,16 @@ public:
     // page will be zoomed. You can only have either text zoom or full page zoom
     // at one time.  Changing the mode while the page is zoomed will have odd
     // effects.
-    virtual int setZoomLevel(bool textOnly, int zoomLevel) = 0;
+    virtual double setZoomLevel(bool textOnly, double zoomLevel) = 0;
+
+    // Updates the zoom limits for this view.
+    virtual void zoomLimitsChanged(double minimumZoomLevel,
+                                   double maximumZoomLevel) = 0;
+
+    // Helper functions to convert between zoom level and zoom factor.  zoom
+    // factor is zoom percent / 100, so 300% = 3.0.
+    WEBKIT_API static double zoomLevelToZoomFactor(double zoomLevel);
+    WEBKIT_API static double zoomFactorToZoomLevel(double factor);
 
 
     // Media ---------------------------------------------------------------

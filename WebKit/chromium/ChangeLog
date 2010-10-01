@@ -1,3 +1,34 @@
+2010-09-29  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Changes to consolidate plugin zoom
+        https://bugs.webkit.org/show_bug.cgi?id=46550
+
+        * public/WebPlugin.h:
+        (WebKit::WebPlugin::setZoomLevel):
+        * public/WebPluginContainer.h:
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::zoomLimitsChanged):
+        (WebKit::WebViewClient::zoomLevelChanged):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::createPlugin):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::loadFrameRequest):
+        (WebKit::WebPluginContainerImpl::zoomChanged):
+        (WebKit::WebPluginContainerImpl::zoomLimitsChanged):
+        * src/WebPluginContainerImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::zoomLevel):
+        (WebKit::WebViewImpl::setZoomLevel):
+        (WebKit::WebViewImpl::zoomLimitsChanged):
+        (WebKit::WebViewImpl::fullFramePluginZoomLevelChanged):
+        (WebKit::WebView::zoomLevelToZoomFactor):
+        (WebKit::WebView::zoomFactorToZoomLevel):
+        * src/WebViewImpl.h:
+
 2010-09-30  MORITA Hajime  <morrita@google.com>
 
         Reviewed by James Robinson.

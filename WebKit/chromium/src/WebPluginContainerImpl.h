@@ -83,6 +83,7 @@ public:
     virtual NPObject* scriptableObjectForElement();
     virtual WebString executeScriptURL(const WebURL&, bool popupsAllowed);
     virtual void loadFrameRequest(const WebURLRequest&, const WebString& target, bool notifyNeeded, void* notifyData);
+    virtual void zoomLevelChanged(double zoomLevel);
 
     // This cannot be null.
     WebPlugin* plugin() { return m_webPlugin; }
