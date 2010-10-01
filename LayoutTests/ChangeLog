@@ -1,3 +1,14 @@
+2010-09-30  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests that adding text to a :before container that is styled as a
+        table column group does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=46106
+
+        * fast/css-generated-content/text-before-table-col-crash-expected.txt: Added.
+        * fast/css-generated-content/text-before-table-col-crash.html: Added.
+
 2010-09-30  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

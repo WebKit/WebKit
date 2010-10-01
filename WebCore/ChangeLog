@@ -1,3 +1,16 @@
+2010-09-30  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dan Bernstein.
+
+        While updating :before and :after content, make sure that the generated
+        container is allowed to add the child type.
+        https://bugs.webkit.org/show_bug.cgi?id=46106
+
+        Test: fast/css-generated-content/text-before-table-col-crash.html
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+
 2010-09-30  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Daniel Bates.
