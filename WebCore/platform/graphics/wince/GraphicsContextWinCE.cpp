@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 2007-2009 Torch Mobile Inc.
+ *  Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,6 +25,7 @@
 #include "AffineTransform.h"
 #include "CharacterNames.h"
 #include "Font.h"
+#include "GDIExtras.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContextPrivate.h"
@@ -322,8 +324,7 @@ public:
         if (hdc == m_dc)
             return;
 
-#if !defined(NO_ALPHABLEND)
-        if (alphaPaint == AlphaPaintOther) {
+        if (alphaPaint == AlphaPaintOther && hasAlphaBlendSupport()) {
             ASSERT(bmp && bmp->bytes() && bmp->is32bit());
             unsigned* pixels = (unsigned*)bmp->bytes();
             const unsigned* const pixelsEnd = pixels + bmp->bitmapInfo().numPixels();
@@ -332,13 +333,13 @@ public:
                 ++pixels;
             }
         }
-        if (m_opacity < 1. || alphaPaint == AlphaPaintOther) {
+        if ((m_opacity < 1. || alphaPaint == AlphaPaintOther) && hasAlphaBlendSupport()) {
             const BLENDFUNCTION blend = { AC_SRC_OVER, 0
                 , m_opacity >= 1. ? 255 : (BYTE)(m_opacity * 255)
                 , alphaPaint == AlphaPaintNone ? 0 : AC_SRC_ALPHA };
-            AlphaBlend(m_dc, origRect.x(), origRect.y(), origRect.width(), origRect.height(), hdc, 0, 0, bmpRect.right, bmpRect.bottom, blend);
+            bool success = alphaBlendIfSupported(m_dc, origRect.x(), origRect.y(), origRect.width(), origRect.height(), hdc, 0, 0, bmpRect.right, bmpRect.bottom, blend);
+            ASSERT_UNUSED(success, success);
         } else
-#endif
             StretchBlt(m_dc, origRect.x(), origRect.y(), origRect.width(), origRect.height(), hdc, 0, 0, bmpRect.right, bmpRect.bottom, SRCCOPY);
     }
 

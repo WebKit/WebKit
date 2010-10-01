@@ -1,3 +1,13 @@
+2010-10-01  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Use alphaBlendIfSupported in GraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=46979
+
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContextPlatformPrivate::paintBackTransparentLayerBitmap):
+
 2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
