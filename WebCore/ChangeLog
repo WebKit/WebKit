@@ -1,3 +1,13 @@
+2010-10-01  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unused Request::buffer() and Request::m_buffer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47003
+
+        * loader/Request.h:
+
 2010-10-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

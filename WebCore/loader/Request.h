@@ -36,7 +36,6 @@ namespace WebCore {
         Request(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
         ~Request();
         
-        Vector<char>& buffer() { return m_buffer; }
         CachedResource* cachedResource() { return m_object; }
         CachedResourceLoader* cachedResourceLoader() { return m_cachedResourceLoader; }
 
@@ -50,7 +49,6 @@ namespace WebCore {
         bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
         
     private:
-        Vector<char> m_buffer;
         CachedResource* m_object;
         CachedResourceLoader* m_cachedResourceLoader;
         bool m_incremental;
