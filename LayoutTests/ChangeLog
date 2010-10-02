@@ -1,3 +1,11 @@
+2010-10-02  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        Add test expectations because of the massive SVG change in r68976.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-10-02  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

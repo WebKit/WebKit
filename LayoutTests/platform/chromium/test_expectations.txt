@@ -77,7 +77,8 @@ BUG24182 WIN RELEASE SLOW : http/tests/loading/redirect-methods.html = PASS
 BUG24182 WIN SLOW : svg/hixie/perf/007.xml = PASS
 BUG24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
 BUG24182 SLOW WIN RELEASE : http/tests/local/file-url-sent-as-referer.html = PASS
-BUG24182 SLOW WIN DEBUG : svg/carto.net/window.svg = PASS
+// TODO(hclam): Expectation removed because of 68976.
+// BUG24182 SLOW WIN DEBUG : svg/carto.net/window.svg = PASS
 BUG24182 SLOW LINUX DEBUG : fast/xpath/4XPath/Borrowed/cz_20030217.html = PASS
 BUG24182 SLOW WIN MAC DEBUG : tables/mozilla/bugs/45621.html = PASS
 //BUG24852 started failing since webkit 49583
@@ -1365,9 +1366,11 @@ BUG23498 MAC : fonts/monospace.html = IMAGE
 BUG23498 MAC : fonts/sans-serif.html = IMAGE
 BUG23498 MAC : fonts/serif.html = IMAGE
 BUG23498 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
-BUG23498 MAC : svg/custom/altglyph.svg = IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUG23498 MAC : svg/custom/altglyph.svg = IMAGE
 BUG23498 MAC : svg/hixie/links/003-broken.xml = IMAGE
-BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug101674.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug10269-2.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug10296-1.html = IMAGE
@@ -1721,7 +1724,8 @@ BUG20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
 BUG10397 LINUX : fast/transforms/transformed-document-element.html = FAIL
 
 // might need to be rebaselined in win, 'DRAFT' rendering incorrect before
-BUG10405 WIN : svg/custom/struct-use-09-b.svg = FAIL
+// TODO(hclam): Expectation removed because of 68976.
+// BUG10405 WIN : svg/custom/struct-use-09-b.svg = FAIL
 
 // New test. We should fix it, but it doesn't need to block the current release
 BUG10418 SLOW MAC RELEASE : fast/events/click-count.html = PASS
@@ -1745,7 +1749,8 @@ BUG10426 LINUX : fast/lists/drag-into-marker.html = FAIL
 BUG10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 
 // New failures from Merge 41078:41149
-BUG10430 LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = FAIL
+// TODO(hclam): Expectation removed because of 68976.
+// BUG10430 LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = FAIL
 
 // Regression from merge 41268:41286
 // See above comment about this test on linux/win.
@@ -2199,7 +2204,8 @@ BUG29748 LINUX : fast/frames/onlyCommentInIFrame.html = IMAGE
 // Some of these went from IMAGE+TEXT to just IMAGE at r57886
 BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
-BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
 // New tests courtesy of: http://trac.webkit.org/changeset/51936:
 BUG30048 : svg/css/composite-shadow-example.html = IMAGE
@@ -2318,7 +2324,8 @@ BUG33538 : fast/dom/Window/anonymous-slot-with-changes.html = TEXT
 BUG35064 WIN : fast/forms/restore-selection-after-layout.html = TEXT PASS
 
 // WebKit roll 54482 to 54493.
-BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT TEXT
+// TODO(hclam): Expectation removed because of 68976.
+// BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT TEXT
 
 // WebKit roll 54493 to 54530: new tests.
 BUG35114 : fast/js/parser-syntax-check.html = TEXT
@@ -2425,7 +2432,8 @@ BUG33812 SKIP : fast/dom/icon-url-property.html = FAIL
 // Failing with webkit roll 57659 -> 57677.
 BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE PASS
 BUG41817 WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE PASS
-BUG41817 MAC : svg/text/text-intro-05-t.svg = IMAGE PASS
+// TODO(hclam): Expectation removed because of 68976.
+// BUG41817 MAC : svg/text/text-intro-05-t.svg = IMAGE PASS
 
 BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
@@ -2470,7 +2478,8 @@ BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
 BUG39855 LINUX RELEASE : editing/selection/extend-selection.html = PASS TIMEOUT
 
 // Failing a few times, flak dashboard seems to agree.
-BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE PASS
+// TODO(hclam): Expectation removed because of 68976.
+// BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE PASS
 
 // WebKit roll 58626:58719
 BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
@@ -2640,7 +2649,8 @@ BUGWK39655 : fast/dom/prototype-property.html = FAIL
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
 BUG45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
-BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
+// TODO(hclam): Expectation removed because of 68976.
+// BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUG45720 WIN LINUX : http/tests/websocket/tests/reload-crash.html = PASS CRASH
 
@@ -2938,8 +2948,9 @@ BUG50910 : plugins/npruntime/remove-property.html = TEXT
 // Application Cache Quotas
 BUGWK43459 : http/tests/appcache/origin-quota.html = TEXT MISSING
 
-BUG51161 LINUX DEBUG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = CRASH
-BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
+// TODO(hclam): Expectation removed because of 68976.
+// BUG51161 LINUX DEBUG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = CRASH
+// BUG51161 LINUX DEBUG : svg/clip-path/clip-path-text.svg = CRASH
 
 // Fixed only on Mac
 // This test has not landed yet, though the fix has.
@@ -2959,7 +2970,8 @@ BUG51869 : http/tests/websocket/tests/frame-length-overflow.html = TEXT PASS
 BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 
 // Regressions from r65229
-BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/batik/masking/maskRegions.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
@@ -2985,7 +2997,8 @@ BUGWK44278 WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IM
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
-BUGWK44341 WIN LINUX : svg/batik/text/textProperties.svg = IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUGWK44341 WIN LINUX : svg/batik/text/textProperties.svg = IMAGE
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 
 // Flaky on Linux
@@ -3002,7 +3015,8 @@ BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT PASS
 BUG53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
 // These tests are flaky on Mac and Linux.
-BUG53554 MAC LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = PASS IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUG53554 MAC LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = PASS IMAGE
 BUG53554 MAC LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
 
 // New test, need to verify if it's safe to rebaseline.
@@ -3112,7 +3126,8 @@ BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
-BUG_SENORBLANCO WIN LINUX : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
+// TODO(hclam): Expectation removed because of 68976.
+// BUG_SENORBLANCO WIN LINUX : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
 
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
@@ -3131,9 +3146,12 @@ BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
 
 // Broken somewhere in the range 68574:68591.
-BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
-BUG_SENORBLANCO WIN LINUX : svg/custom/image-small-width-height.svg = CRASH IMAGE
-BUG_SENORBLANCO WIN LINUX : svg/carto.net/selectionlist.svg = IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUG_SENORBLANCO WIN LINUX : svg/custom/image-small-width-height.svg = CRASH IMAGE
+// TODO(hclam): Expectation removed because of 68976.
+// BUG_SENORBLANCO WIN LINUX : svg/carto.net/selectionlist.svg = IMAGE
 // thai-baht-space needs to run to rebaseline.
 //BUG_SENORBLANCO LINUX : fast/text/international/thai-baht-space.html = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
@@ -3165,3 +3183,384 @@ BUG10292 MAC : editing/selection/5354455-1.html = FAIL
 
 // This test fails due to 68940.
 BUG_HCLAM MAC : fast/canvas/webgl/gl-teximage.html = TEXT
+
+// SVG test failures introduced by 68976.
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-08-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-09-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-10-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-11-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-12-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-13-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-14-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-15-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-16-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-17-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-18-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-19-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-20-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-21-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-22-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-23-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-24-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-25-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-26-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-27-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-28-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-29-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-31-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-32-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-33-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-34-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-36-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-37-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-39-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-40-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-41-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-44-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-46-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-52-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-60-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-61-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-62-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-63-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-64-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-65-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-66-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-67-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-68-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-69-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-70-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-77-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-78-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-81-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-82-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-83-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-84-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-85-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/color-prof-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/color-prop-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/color-prop-02-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/color-prop-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-coord-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-coord-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-trans-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-trans-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-trans-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-trans-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-trans-05-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-trans-06-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-units-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-units-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-units-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-viewattr-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/coords-viewattr-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/extend-namespace-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-color-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-composite-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-comptran-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-diffuse-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-displace-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-example-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-felem-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-gauss-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-image-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-light-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-morph-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-offset-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-specular-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-tile-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/filters-turb-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-desc-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-elem-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-elem-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-elem-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-elem-04-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-elem-05-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-elem-06-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = TEXT IMAGE
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-glyph-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/fonts-kern-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/interact-cursor-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/interact-dom-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/interact-events-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/interact-order-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/interact-order-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/interact-order-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/interact-zoom-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-a-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-a-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-a-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-a-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-a-05-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-a-07-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-uri-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-uri-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/linking-uri-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/masking-mask-01-b.svg = TEXT CRASH
+BUG_HCLAM : svg/W3C-SVG-1.1/masking-path-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/masking-path-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/masking-path-04-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/metadata-example-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-fill-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-fill-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-fill-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-fill-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-fill-05-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-marker-01-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-marker-02-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-marker-03-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-render-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-stroke-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-stroke-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-stroke-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-stroke-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/painting-stroke-07-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-03-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-05-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-06-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-07-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-08-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-09-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-10-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-12-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-13-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-14-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/paths-data-15-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-04-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-05-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-06-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-07-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-09-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-10-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-11-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-12-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-15-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-16-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-18-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-grad-19-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/pservers-pattern-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/render-elems-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/render-elems-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/render-elems-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/render-elems-06-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/render-elems-07-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/render-elems-08-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/render-groups-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/render-groups-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/script-handle-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/script-handle-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/script-handle-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/script-handle-04-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-circle-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-circle-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-ellipse-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-ellipse-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-intro-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-line-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-polygon-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-polyline-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-rect-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/shapes-rect-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-cond-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-cond-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-cond-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-defs-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-frag-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-frag-05-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-frag-06-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-group-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-group-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-group-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-05-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-06-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-07-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-08-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-09-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-image-10-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-use-03-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/struct-use-05-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/styling-css-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/styling-css-02-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/styling-css-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/styling-css-05-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/styling-css-06-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/styling-inherit-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/styling-pres-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-align-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-align-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-align-04-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-deco-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-fonts-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-fonts-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-path-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-spacing-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-text-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-text-03-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-text-04-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-text-06-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-text-07-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-text-08-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-tref-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-tselect-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-tselect-02-f.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-tspan-01-b.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-ws-01-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-ws-02-t.svg = TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/types-basicDOM-01-b.svg = TEXT
+BUG_HCLAM : svg/batik/text/longTextOnPath.svg = TEXT
+BUG_HCLAM : svg/batik/text/textAnchor.svg = TEXT
+BUG_HCLAM : svg/batik/text/textAnchor3.svg = TEXT
+BUG_HCLAM : svg/batik/text/textEffect2.svg = TEXT
+BUG_HCLAM : svg/batik/text/textFeatures.svg = TEXT
+BUG_HCLAM : svg/batik/text/textLayout.svg = TEXT
+BUG_HCLAM : svg/batik/text/textOnPath2.svg = TEXT
+BUG_HCLAM : svg/batik/text/textOnPath3.svg = TEXT
+BUG_HCLAM : svg/batik/text/textOnPathSpaces.svg = TEXT
+BUG_HCLAM : svg/batik/text/textPCDATA.svg = TEXT
+BUG_HCLAM : svg/batik/text/textPosition.svg = TEXT
+BUG_HCLAM : svg/batik/text/textPosition2.svg = TEXT
+BUG_HCLAM : svg/batik/text/textProperties2.svg = TEXT
+BUG_HCLAM : svg/carto.net/textbox.svg = TEXT
+BUG_HCLAM SLOW : svg/carto.net/window.svg = TEXT
+BUG_HCLAM : svg/clip-path/clip-path-text-and-shape.svg = TEXT
+BUG_HCLAM : svg/clip-path/clip-path-text-and-stroke.svg = TEXT CRASH
+BUG_HCLAM : svg/clip-path/clip-path-text.svg = TEXT CRASH
+BUG_HCLAM : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
+BUG_HCLAM : svg/css/composite-shadow-text.svg = TEXT
+BUG_HCLAM : svg/css/shadow-changes.svg = TEXT
+BUG_HCLAM : svg/css/text-shadow-multiple.xhtml = TEXT
+BUG_HCLAM : svg/custom/broken-internal-references.svg = TEXT
+BUG_HCLAM : svg/custom/container-opacity-clip-viewBox.svg = TEXT
+BUG_HCLAM : svg/custom/invalid-fill-hex.svg = TEXT
+BUG_HCLAM : svg/custom/invalid-fill.svg = TEXT
+BUG_HCLAM : svg/custom/js-late-clipPath-and-object-creation.svg = TEXT
+BUG_HCLAM : svg/custom/js-late-clipPath-creation.svg = TEXT
+BUG_HCLAM : svg/custom/js-late-gradient-and-object-creation.svg = TEXT
+BUG_HCLAM : svg/custom/js-late-gradient-creation.svg = TEXT
+BUG_HCLAM : svg/custom/js-late-pattern-and-object-creation.svg = TEXT
+BUG_HCLAM : svg/custom/js-late-pattern-creation.svg = TEXT
+BUG_HCLAM : svg/custom/pattern-rotate.svg = TEXT
+BUG_HCLAM : svg/custom/pattern-with-transformation.svg = TEXT
+BUG_HCLAM : svg/custom/pointer-events-text.svg = TEXT
+BUG_HCLAM : svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html = TEXT
+BUG_HCLAM : svg/custom/stroke-width-large.svg = TEXT
+BUG_HCLAM : svg/custom/struct-use-09-b.svg = FAIL
+BUG_HCLAM : svg/custom/style-attribute-font-size.svg = TEXT
+BUG_HCLAM : svg/custom/text-clip.svg = TEXT
+BUG_HCLAM : svg/custom/text-dom-01-f.svg = TEXT
+BUG_HCLAM : svg/custom/text-letter-spacing.svg = TEXT
+BUG_HCLAM : svg/custom/text-linking.svg = TEXT
+BUG_HCLAM : svg/custom/text-repaint-including-stroke.svg = TEXT
+BUG_HCLAM : svg/custom/text-whitespace-handling.svg = TEXT
+BUG_HCLAM : svg/custom/text-x-dx-lists.svg = TEXT
+BUG_HCLAM : svg/custom/use-on-text.svg = TEXT
+BUG_HCLAM : svg/custom/use-referencing-nonexisting-symbol.svg = TEXT
+BUG_HCLAM : svg/filters/filter-on-filter-for-text.svg = TEXT
+BUG_HCLAM : svg/filters/filter-on-tspan.svg = TEXT
+BUG_HCLAM : svg/hixie/error/017.xml = TEXT
+BUG_HCLAM : svg/hixie/text/002.xml = TEXT
+BUG_HCLAM : svg/hixie/text/003b.xml = TEXT
+BUG_HCLAM : svg/text/kerning.svg = TEXT
+BUG_HCLAM : svg/text/text-align-01-b.svg = TEXT
+BUG_HCLAM : svg/text/text-align-03-b.svg = TEXT
+BUG_HCLAM : svg/text/text-altglyph-01-b.svg = TEXT
+BUG_HCLAM : svg/text/text-fonts-01-t.svg = TEXT
+BUG_HCLAM : svg/text/text-fonts-02-t.svg = TEXT
+BUG_HCLAM : svg/text/text-gradient-positioning.svg = TEXT
+BUG_HCLAM : svg/text/text-intro-05-t.svg = FAIL
+BUG_HCLAM : svg/text/text-repaint-rects.xhtml = TEXT
+BUG_HCLAM : svg/text/text-text-03-b.svg = TEXT
+BUG_HCLAM : svg/text/text-text-06-t.svg = TEXT
+BUG_HCLAM : svg/text/text-tref-01-b.svg = TEXT
+BUG_HCLAM : svg/text/text-tselect-01-b.svg = TEXT
+BUG_HCLAM : svg/text/text-tselect-02-f.svg = TEXT
+BUG_HCLAM : svg/text/text-tspan-01-b.svg = TEXT
+BUG_HCLAM : svg/text/text-ws-01-t.svg = TEXT
+BUG_HCLAM : svg/text/text-ws-02-t.svg = TEXT
+BUG_HCLAM : svg/text/textPathBoundsBug.svg = TEXT
+BUG_HCLAM : svg/zoom/page/zoom-coords-viewattr-01-b.svg = TEXT
+BUG_HCLAM : svg/zoom/text/zoom-coords-viewattr-01-b.svg = TEXT
+BUG_HCLAM : transitions/svg-text-shadow-transition.html = TEXT
+BUG_HCLAM : svg/custom/glyph-transformation-with-hkern.svg = IMAGE
+BUG_HCLAM : svg/text/text-hkern.svg = IMAGE
+BUG_HCLAM : svg/text/text-vkern.svg = IMAGE
+BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE+TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE+TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-align-02-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-align-05-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-align-06-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textAnchor2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textDecoration.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textDecoration2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textEffect.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textEffect3.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textGlyphOrientationHorizontal.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textLayout2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textOnPath.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/textProperties.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/verticalText.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/verticalTextOnPath.svg = IMAGE+TEXT
+BUG_HCLAM : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
+BUG_HCLAM : svg/carto.net/selectionlist.svg = IMAGE+TEXT
+BUG_HCLAM : svg/custom/alignment-baseline-modes.svg = IMAGE+TEXT
+BUG_HCLAM : svg/custom/altglyph.svg = IMAGE+TEXT
+BUG_HCLAM : svg/custom/dominant-baseline-modes.svg = IMAGE+TEXT
+BUG_HCLAM : svg/custom/image-small-width-height.svg = IMAGE+TEXT CRASH
+BUG_HCLAM : svg/custom/text-filter.svg = IMAGE+TEXT
+BUG_HCLAM : svg/custom/text-rotation.svg = IMAGE+TEXT
+BUG_HCLAM : svg/custom/text-x-dy-lists.svg = IMAGE+TEXT
+BUG_HCLAM : svg/custom/text-x-override-in-tspan-child.svg = IMAGE+TEXT
+BUG_HCLAM : svg/filters/sourceAlpha.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/multichar-glyph.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacing-squeeze-1.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacing-squeeze-3.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacing-squeeze-4.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacing-stretch-1.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacing-stretch-2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacing-stretch-3.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacing-stretch-4.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacingAndGlyphs-squeeze-1.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacingAndGlyphs-squeeze-2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacingAndGlyphs-squeeze-3.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacingAndGlyphs-squeeze-4.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacingAndGlyphs-stretch-1.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacingAndGlyphs-stretch-2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacingAndGlyphs-stretch-3.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-textLength-spacingAndGlyphs-stretch-4.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-x-list-1.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-x-list-2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-x-list-3.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-x-list-4.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-x-list-with-tspans-1.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-x-list-with-tspans-2.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-x-list-with-tspans-3.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/select-x-list-with-tspans-4.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-align-02-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-align-04-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-align-05-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-align-06-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-deco-01-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-path-01-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-spacing-01-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-text-01-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-text-04-t.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-text-05-t.svg = IMAGE+TEXT CRASH
+BUG_HCLAM : svg/text/text-text-07-t.svg = IMAGE+TEXT
+BUG_HCLAM : svg/text/text-text-08-b.svg = IMAGE+TEXT
+BUG_HCLAM : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE+TEXT
+BUG_HCLAM : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE+TEXT
