@@ -8,6 +8,18 @@
 
 2010-10-01  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Add SPI to convert a WKStringRef to a JSStringRef and vice-versa.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/WKString.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/WKStringJSString.cpp: Added.
+        (TestWebKitAPI::TEST):
+
+2010-10-01  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Add additional WKString API

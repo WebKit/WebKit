@@ -632,6 +632,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\WKStringPrivate.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\WKType.cpp"
 					>
 				</File>

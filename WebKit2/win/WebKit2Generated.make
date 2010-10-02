@@ -18,6 +18,7 @@ all:
     xcopy /y /d "..\Shared\API\c\WKMutableDictionary.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKNumber.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKString.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\Shared\API\c\WKStringPrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKType.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKURL.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\Shared\API\c\WKURLRequest.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"

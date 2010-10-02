@@ -1,3 +1,23 @@
+2010-10-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add SPI to convert a WKStringRef to a JSStringRef and vice-versa.
+
+        API Test: WebKit2/WKStringJSString
+
+        * Shared/API/c/WKString.cpp:
+        (WKStringCreateWithJSString):
+        (WKStringCopyJSString):
+        * Shared/API/c/WKStringPrivate.h: Added.
+        * Shared/WebString.h:
+        (WebKit::WebString::create):
+        (WebKit::WebString::createJSString):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

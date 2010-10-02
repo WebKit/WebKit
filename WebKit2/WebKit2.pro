@@ -167,6 +167,7 @@ HEADERS += \
     Shared/API/c/WKSerializedScriptValue.h \
     Shared/API/c/WKSharedAPICast.h \
     Shared/API/c/WKString.h \
+    Shared/API/c/WKStringPrivate.h \
     Shared/API/c/WKType.h \
     Shared/API/c/WKURL.h \
     Shared/API/c/WKURLRequest.h \

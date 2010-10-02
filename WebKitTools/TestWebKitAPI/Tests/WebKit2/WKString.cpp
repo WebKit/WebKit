@@ -45,6 +45,8 @@ TEST(WKString)
     TEST_ASSERT(strcmp(buffer, "hello") == 0);
 
     free(buffer);
+    
+    WKRelease(string);
 }
 
 } // namespace TestWebKitAPI

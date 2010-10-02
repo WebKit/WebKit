@@ -302,6 +302,7 @@
 		BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */; };
 		BC87DFAA1018101400564216 /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BC87DFA91018101400564216 /* libicucore.dylib */; };
 		BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8A501411765F5600757573 /* WKRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9099801256A98200083756 /* WKStringPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90997F1256A98200083756 /* WKStringPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC90A1D2122DD55E00CC8C50 /* WebURLResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */; };
 		BC90A1D3122DD55E00CC8C50 /* WebURLResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */; };
 		BC90A1D7122DD66A00CC8C50 /* WebURLResponseMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */; };
@@ -748,6 +749,7 @@
 		BC87DFA91018101400564216 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		BC8A501011765AF700757573 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = WebProcess/Info.plist; sourceTree = "<group>"; };
 		BC8A501411765F5600757573 /* WKRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRetainPtr.h; sourceTree = "<group>"; };
+		BC90997F1256A98200083756 /* WKStringPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKStringPrivate.h; sourceTree = "<group>"; };
 		BC90A1D0122DD55E00CC8C50 /* WebURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebURLResponse.h; sourceTree = "<group>"; };
 		BC90A1D1122DD55E00CC8C50 /* WebURLResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebURLResponse.cpp; sourceTree = "<group>"; };
 		BC90A1D5122DD66A00CC8C50 /* WebURLResponseMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebURLResponseMac.mm; sourceTree = "<group>"; };
@@ -1659,6 +1661,7 @@
 				BCDDB32A124EC2AB0048D13C /* WKSharedAPICast.h */,
 				BC4075E9124FF0270068F20A /* WKString.cpp */,
 				BC4075EA124FF0270068F20A /* WKString.h */,
+				BC90997F1256A98200083756 /* WKStringPrivate.h */,
 				BC4075EB124FF0270068F20A /* WKType.cpp */,
 				BC4075EC124FF0270068F20A /* WKType.h */,
 				BC4075ED124FF0270068F20A /* WKURL.cpp */,
@@ -1914,6 +1917,7 @@
 				1A8EF96F1252AF6B00F7067F /* PluginControllerProxyMessages.h in Headers */,
 				1A8EFA711252B84100F7067F /* PluginProxyMessages.h in Headers */,
 				1A8EFDFA1253CAA200F7067F /* DataReference.h in Headers */,
+				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

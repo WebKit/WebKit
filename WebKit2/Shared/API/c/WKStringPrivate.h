@@ -23,56 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKString.h"
-#include "WKStringPrivate.h"
+#ifndef WKStringPrivate_h
+#define WKStringPrivate_h
 
-#include "WKAPICast.h"
+#include <JavaScriptCore/JavaScript.h>
+#include <WebKit2/WKBase.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-WKTypeID WKStringGetTypeID()
-{
-    return toRef(WebString::APIType);
+WK_EXPORT WKStringRef WKStringCreateWithJSString(JSStringRef jsString);
+WK_EXPORT JSStringRef WKStringCopyJSString(WKStringRef string);
+
+#ifdef __cplusplus
 }
+#endif
 
-WKStringRef WKStringCreateWithUTF8CString(const char* string)
-{
-    RefPtr<WebString> webString = WebString::createFromUTF8String(string);
-    return toRef(webString.release().leakRef());
-}
-
-bool WKStringIsEmpty(WKStringRef stringRef)
-{
-    return toWK(stringRef)->isEmpty();
-}
-
-size_t WKStringGetMaximumUTF8CStringSize(WKStringRef stringRef)
-{
-    return toWK(stringRef)->maximumUTF8CStringSize();
-}
-
-size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t bufferSize)
-{
-    return toWK(stringRef)->getUTF8CString(buffer, bufferSize);
-}
-
-bool WKStringIsEqual(WKStringRef aRef, WKStringRef bRef)
-{
-    return toWK(aRef)->equal(toWK(bRef));
-}
-
-bool WKStringIsEqualToUTF8CString(WKStringRef aRef, const char* b)
-{
-    return toWK(aRef)->equalToUTF8String(b);
-}
-
-WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
-{
-    RefPtr<WebString> webString = WebString::create(jsStringRef);
-    return toRef(webString.release().leakRef());
-}
-
-JSStringRef WKStringCopyJSString(WKStringRef stringRef)
-{
-    return toWK(stringRef)->createJSString();
-}
+#endif /* WKStringPrivate_h */
