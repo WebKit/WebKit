@@ -47,7 +47,7 @@ static inline void drawRectangularControlBackground(QPainter* painter, const QPe
 void QtMobileWebStyle::drawChecker(QPainter* painter, int size, QColor color) const
 {
     int border = qMin(qMax(1, int(0.2 * size)), 6);
-    int checkerSize = size - 2 * border;
+    int checkerSize = qMax(size - 2 * border, 3);
     int width = checkerSize / 3;
     int middle = qMax(3 * checkerSize / 7, 3);
     int x = ((size - checkerSize) >> 1);
