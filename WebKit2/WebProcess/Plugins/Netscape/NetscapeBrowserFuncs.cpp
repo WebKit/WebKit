@@ -416,6 +416,12 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPObject**)value = pluginElementNPObject;
             break;
         }
+        case NPNVprivateModeBool: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+            *(NPBool*)value = plugin->isPrivateBrowsingEnabled();
+            break;
+        }
 #if PLATFORM(MAC)
         case NPNVsupportsCoreGraphicsBool:
             // Always claim to support the Core Graphics drawing model.

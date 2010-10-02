@@ -148,6 +148,9 @@ public:
     virtual void windowVisibilityChanged(bool) = 0;
 #endif
 
+    // Called when the private browsing state for this plug-in changes.
+    virtual void privateBrowsingStateChanged(bool) = 0;
+
     // Returns the plug-in controller for this plug-in.
     // FIXME: We could just have the controller be a member variable of Plugin.
     virtual PluginController* controller() = 0;

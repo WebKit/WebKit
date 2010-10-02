@@ -45,6 +45,7 @@ public:
 #endif
 
     virtual JSC::JSObject* scriptObject(JSC::JSGlobalObject*) { return 0; }
+    virtual void privateBrowsingStateChanged(bool) { }
 
 protected:
     PluginViewBase(PlatformWidget widget) : Widget(widget) { }

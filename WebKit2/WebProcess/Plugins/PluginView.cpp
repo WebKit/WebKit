@@ -417,6 +417,15 @@ JSObject* PluginView::scriptObject(JSGlobalObject* globalObject)
     return jsObject;
 }
 
+void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
+{
+    // The plug-in can be null here if it failed to initialize.
+    if (!m_plugin)
+        return;
+
+    m_plugin->privateBrowsingStateChanged(privateBrowsingEnabled);
+}
+
 void PluginView::setFrameRect(const WebCore::IntRect& rect)
 {
     Widget::setFrameRect(rect);
@@ -841,7 +850,20 @@ void PluginView::setCookiesForURL(const String& urlString, const String& cookieS
 {
     setCookies(m_pluginElement->document(), KURL(KURL(), urlString), cookieString);
 }
-    
+
+bool PluginView::isPrivateBrowsingEnabled()
+{
+    // If we can't get the real setting, we'll assume that private browsing is enabled.
+    if (!frame())
+        return true;
+
+    Settings* settings = frame()->settings();
+    if (!settings)
+        return true;
+
+    return settings->privateBrowsingEnabled();
+}
+
 void PluginView::didFinishLoad(WebFrame* webFrame)
 {
     RefPtr<URLRequest> request = m_pendingFrameLoads.take(webFrame);
