@@ -1,3 +1,13 @@
+2010-10-02  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
+        An adhoc fix for a crash found by reliability bot. This will make the
+        reliability bot happy. A proper fix is pending commit.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+
 2010-10-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
