@@ -1,5 +1,13 @@
 2010-10-01  Tony Chang  <tony@chromium.org>
 
+        Unreviewed.  Turns out Safari Win matches Safari Mac so move the
+        expectation to chromium-win.
+
+        * platform/chromium-win/editing/selection/5354455-1-expected.txt: Renamed from LayoutTests/platform/win/editing/selection/5354455-1-expected.txt.
+        * platform/win/Skipped:
+
+2010-10-01  Tony Chang  <tony@chromium.org>
+
         Unreviewed.  Updating layout test (editing/selection/5354455-1.html) after r68948.
         Will fix soon.
 
