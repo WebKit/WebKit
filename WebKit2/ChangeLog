@@ -1,3 +1,11 @@
+2010-10-01  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        Clear the executable bit from a number of source files.
+
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.h:
+
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
