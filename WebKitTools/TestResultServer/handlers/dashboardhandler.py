@@ -89,7 +89,9 @@ class UpdateDashboardFile(webapp.RequestHandler):
         if not files:
             files = ["flakiness_dashboard.html",
                      "dashboard_base.js",
-                     "aggregate_results.html"]
+                     "aggregate_results.html",
+                     "dygraph-combined.js",
+                     "timeline_explorer.html"]
 
         errors = []
         for file in files:
