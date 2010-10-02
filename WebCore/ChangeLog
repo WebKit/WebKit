@@ -1,3 +1,30 @@
+2010-10-01  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47021
+        
+        Patch the floatBottom function and its friends.  Rename them and consolidate them to be block-flow-aware.
+
+        Nothing testable yet, since most of the float code is still unpatched.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::newLine):
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlock::lowestFloatLogicalBottom):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::getClearDelta):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalBottomForFloat):
+        (WebCore::RenderBlock::hasOverhangingFloats):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::fitBelowFloats):
+
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
         Fix typo.

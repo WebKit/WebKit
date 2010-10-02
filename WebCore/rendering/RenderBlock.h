@@ -185,7 +185,7 @@ public:
     void setMarginAfterForChild(RenderBox* child, int);
     int collapsedMarginBeforeForChild(RenderBox* child) const;
     int collapsedMarginAfterForChild(RenderBox* child) const;
-    
+
     class MarginValues {
     public:
         MarginValues(int beforePos, int beforeNeg, int afterPos, int afterNeg)
@@ -331,7 +331,7 @@ private:
 
     virtual void repaintOverhangingFloats(bool paintAllDescendants);
 
-    void layoutBlockChildren(bool relayoutChildren, int& maxFloatBottom);
+    void layoutBlockChildren(bool relayoutChildren, int& maxFloatLogicalBottom);
     void layoutInlineChildren(bool relayoutChildren, int& repaintTop, int& repaintBottom);
 
     virtual void positionListMarker() { }
@@ -359,11 +359,9 @@ private:
     };
 
     struct FloatingObject : Noncopyable {
-        enum Type {
-            FloatLeft,
-            FloatRight
-        };
-
+        // Note that Type uses bits so you can use FloatBoth as a mask to query for both left and right.
+        enum Type { FloatLeft = 1, FloatRight = 2, FloatBoth = 3 };
+    
         FloatingObject(Type type, const IntRect& frameRect = IntRect())
             : m_renderer(0)
             , m_frameRect(frameRect)
@@ -394,11 +392,13 @@ private:
         RenderBox* m_renderer;
         IntRect m_frameRect;
         int m_paginationStrut;
-        unsigned m_type : 1; // Type (left or right aligned)
+        unsigned m_type : 2; // Type (left or right aligned)
         bool m_shouldPaint : 1;
         bool m_isDescendant : 1;
     };
 
+    int logicalBottomForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->bottom() : child->right(); }
+    
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
     RootInlineBox* determineStartPosition(bool& firstLine, bool& fullLayout, bool& previousLineBrokeCleanly,
                                           InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
@@ -451,15 +451,13 @@ private:
 
     virtual bool avoidsFloats() const;
 
-    bool hasOverhangingFloats() { return parent() && !hasColumns() && floatBottom() > height(); }
+    bool hasOverhangingFloats() { return parent() && !hasColumns() && lowestFloatLogicalBottom() > logicalHeight(); }
     void addIntrudingFloats(RenderBlock* prev, int xoffset, int yoffset);
     int addOverhangingFloats(RenderBlock* child, int xoffset, int yoffset, bool makeChildPaintOtherFloats);
 
-    int nextFloatBottomBelow(int) const;
-    int floatBottom() const;
-    inline int leftBottom();
-    inline int rightBottom();
-
+    int lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatBoth) const;
+    int nextFloatLogicalBottomBelow(int) const;
+    
     virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     bool hitTestFloats(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
@@ -602,7 +600,7 @@ private:
         int margin() const { return m_positiveMargin - m_negativeMargin; }
     };
 
-    void layoutBlockChild(RenderBox* child, MarginInfo&, int& previousFloatBottom, int& maxFloatBottom);
+    void layoutBlockChild(RenderBox* child, MarginInfo&, int& previousFloatLogicalBottom, int& maxFloatLogicalBottom);
     void adjustPositionedBlock(RenderBox* child, const MarginInfo&);
     void adjustFloatingBlock(const MarginInfo&);
     bool handleSpecialChild(RenderBox* child, const MarginInfo&);

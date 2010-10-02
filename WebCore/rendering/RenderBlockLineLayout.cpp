@@ -1330,22 +1330,22 @@ void RenderBlock::fitBelowFloats(int widthToFit, bool firstLine, int& availableW
 {
     ASSERT(widthToFit > availableWidth);
 
-    int floatBottom;
-    int lastFloatBottom = height();
+    int floatLogicalBottom;
+    int lastFloatLogicalBottom = height();
     int newLineWidth = availableWidth;
     while (true) {
-        floatBottom = nextFloatBottomBelow(lastFloatBottom);
-        if (!floatBottom)
+        floatLogicalBottom = nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
+        if (!floatLogicalBottom)
             break;
 
-        newLineWidth = availableLogicalWidthForLine(floatBottom, firstLine);
-        lastFloatBottom = floatBottom;
+        newLineWidth = availableLogicalWidthForLine(floatLogicalBottom, firstLine);
+        lastFloatLogicalBottom = floatLogicalBottom;
         if (newLineWidth >= widthToFit)
             break;
     }
 
     if (newLineWidth > availableWidth) {
-        setLogicalHeight(lastFloatBottom);
+        setLogicalHeight(lastFloatLogicalBottom);
         availableWidth = newLineWidth;
     }
 }
