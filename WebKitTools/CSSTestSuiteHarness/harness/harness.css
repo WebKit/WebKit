@@ -251,3 +251,51 @@ body {
   text-align: right;
   padding: 4px;
 }
+
+.custom button {
+  display: block;
+  margin: 12px 0;
+}
+
+/* Overlay */
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: none;
+}
+
+#overlay.visible {
+  display: block;
+}
+
+.overlay-contents {
+  position: relative;
+  background-color: white;
+  margin: 50px auto;
+  width: 1000px;
+  padding: 20px;
+}
+
+.overlay-contents textarea {
+  width: 90em;
+  height: 50em;
+}
+.overlay-contents .buttons {
+  text-align: right;
+}
+
+.overlay-contents .note {
+  float: left;
+}
+
+.overlay-contents .buttons button {
+  font-size: 13px;
+  width: 6em;
+  margin: 12px 8px;
+}
+

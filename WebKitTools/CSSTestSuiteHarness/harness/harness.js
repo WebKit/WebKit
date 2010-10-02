@@ -857,6 +857,93 @@ TestSuite.prototype.resultsPopupChanged = function(index)
   document.getElementById('export-button').disabled = !enableExport;
 }
 
+/* ------------------------- Import ------------------------------- */
+/*
+  Import format is the same as the export format, namely:
+  
+  testname<tab>result
+
+  with optional trailing <tab>comment.
+
+html4/absolute-non-replaced-height-002<tab>pass
+xhtml1/absolute-non-replaced-height-002<tab>?
+  
+  Lines starting with # are ignored.
+  The "testname<tab>result" line is ignored.
+*/
+TestSuite.prototype.importResults = function(data)
+{
+  var testsToImport = [];
+
+  var lines = data.split('\n');
+  for (var i = 0; i < lines.length; ++i) {
+    var currLine = lines[i];
+    if (currLine.length == 0 || currLine.charAt(0) == '#')
+      continue;
+
+    var match = currLine.match(/^(html4|xhtml1)\/([\w-_]+)\t([\w?]+)\t?(.+)?$/);
+    if (match) {
+      var test = { 'id' : match[2] };
+      test.format =  match[1];
+      test.result = match[3];
+      test.comment = match[4];
+      
+      if (test.result != '?')
+        testsToImport.push(test);
+    } else {
+      window.console.log('failed to match line \'' + currLine + '\'');
+    }
+  }
+
+  this.importTestResults(testsToImport);
+  
+  this.resetTestStatus();
+  this.updateSummaryData();
+}
+
+
+
+/* --------------------- Clear Results --------------------------- */
+/*
+  Clear results format is either same as the export format, or
+  a list of bare test IDs (e.g. absolute-non-replaced-height-001)
+  in which case both HTML4 and XHTML1 results are cleared.
+*/
+TestSuite.prototype.clearResults = function(data)
+{
+  var testsToClear = [];
+
+  var lines = data.split('\n');
+  for (var i = 0; i < lines.length; ++i) {
+    var currLine = lines[i];
+    if (currLine.length == 0 || currLine.charAt(0) == '#')
+      continue;
+
+    // Look for format/test with possible extension
+    var result = currLine.match(/^((html4|xhtml1)?)\/?([\w-_]+)/);
+    if (result) {
+      var testId = result[3];
+      var format = result[1];
+      
+      var clearHTML = format.length == 0 || format == 'html4';
+      var clearXHTML = format.length == 0 || format == 'xhtml1';
+      
+      var result = { 'id' : testId };
+      result.clearHTML = clearHTML;
+      result.clearXHTML = clearXHTML;
+
+      testsToClear.push(result);
+    } else {
+      window.console.log('failed to match line ' + currLine);
+    }
+  }
+  
+  this.clearTestResults(testsToClear);
+  
+  this.resetTestStatus();
+  this.updateSummaryData();
+}
+
 /* -------------------------------------------------------- */
 
 TestSuite.prototype.exportResultsCompletion = function(exportTests)
@@ -1100,7 +1187,7 @@ TestSuite.prototype.markTestCompleted = function(testID)
 {
   var test = this.tests[testID];
   if (!test) {
-    window.console.log('markTestCompleted to find test ' + testID);
+    window.console.log('markTestCompleted failed to find test ' + testID);
     return;
   }
   
@@ -1126,6 +1213,15 @@ TestSuite.prototype.loadTestStatus = function()
     );
     
     this.updateChapterPopup();
+}
+
+TestSuite.prototype.resetTestStatus = function()
+{
+  for (var testID in this.tests) {
+    var currTest = this.tests[testID];
+    currTest.completed = false;
+  }
+  this.loadTestStatus();
 }
 
 /* -------------------------------------------------------- */
@@ -1210,7 +1306,48 @@ TestSuite.prototype.storeTestResult = function(test, format, result, comment, us
       tx.executeSql('UPDATE tests SET hstatus=?, hcomment=? WHERE test=?\n', [result, comment, test], null, errorHandler);
     else if (format == 'xhtml1')
       tx.executeSql('UPDATE tests SET xstatus=?, xcomment=? WHERE test=?\n', [result, comment, test], null, errorHandler);
-  });  
+  });
+}
+
+TestSuite.prototype.importTestResults = function(results)
+{
+  if (!this.db)
+    return;
+
+  this.db.transaction(function (tx) {
+
+    for (var i = 0; i < results.length; ++i) {
+      var currResult = results[i];
+
+      var query;
+      if (currResult.format == 'html4')
+        query = 'UPDATE tests SET hstatus=?, hcomment=? WHERE test=?\n';
+      else if (currResult.format == 'xhtml1')
+        query = 'UPDATE tests SET xstatus=?, xcomment=? WHERE test=?\n';
+
+      tx.executeSql(query, [currResult.result, currResult.comment, currResult.id], null, errorHandler);
+    }
+  });
+}
+
+TestSuite.prototype.clearTestResults = function(results)
+{
+  if (!this.db)
+    return;
+
+  this.db.transaction(function (tx) {
+    
+    for (var i = 0; i < results.length; ++i) {
+      var currResult = results[i];
+
+      if (currResult.clearHTML)
+        tx.executeSql('UPDATE tests SET hstatus=NULL, hcomment=NULL WHERE test=?\n', [currResult.id], null, errorHandler);
+
+      if (currResult.clearXHTML)
+        tx.executeSql('UPDATE tests SET xstatus=NULL, xcomment=NULL WHERE test=?\n', [currResult.id], null, errorHandler);
+      
+    }
+  });
 }
 
 TestSuite.prototype.populateDatabaseFromTestInfoData = function(testInfoURL)

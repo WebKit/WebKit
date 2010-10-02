@@ -1,3 +1,27 @@
+2010-10-01  Simon Fraser  <simon.fraser@apple.com>
+
+        Add the ability to remove results for re-testing, and
+        to import results.
+
+        * CSSTestSuiteHarness/harness/harness.css:
+        (.custom button):
+        (#overlay):
+        (#overlay.visible):
+        (.overlay-contents):
+        (.overlay-contents textarea):
+        (.overlay-contents .buttons):
+        (.overlay-contents .note):
+        (.overlay-contents .buttons button):
+        * CSSTestSuiteHarness/harness/harness.html:
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite.prototype.importResults):
+        (TestSuite.prototype.clearResults):
+        (TestSuite.prototype.markTestCompleted):
+        (TestSuite.prototype.resetTestStatus):
+        (TestSuite.prototype.storeTestResult):
+        (TestSuite.prototype.importTestResults):
+        (TestSuite.prototype.clearTestResults):
+
 2010-10-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.

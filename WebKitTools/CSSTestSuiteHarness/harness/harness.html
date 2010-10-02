@@ -104,36 +104,41 @@
       testFrame.contentWindow.print();
     }
 
-    /*
-    This conflicts badly with key handling in selects.
-    function keyHandler(event)
+    var gOverlayConfirmCallback;
+    function showOverlay(overlayConfirmCallback)
     {
-      var charCode = String.fromCharCode(event.keyCode);
-      window.console.log('keyHandler')
-      switch (charCode) {
-        case 'P':
-          passTest();
-          break;
+      document.getElementById('overlay-data').value = '';
+      gOverlayConfirmCallback = overlayConfirmCallback;
+      $('#overlay').addClass('visible');
+    }
 
-        case 'F':
-          failTest();
-          break;
-
-        case 'I':
-          invalidTest();
-          break;
-          
-        case 'S':
-          skipTest();
-          break;
-      }
-      
-      event.stopPropagation();
-      event.preventDefault();
+    function overlayCancel()
+    {
+      $('#overlay').removeClass('visible');
     }
     
-    document.addEventListener('keyup', keyHandler, false);
-    */
+    function overlayConfirm()
+    {
+      var data = document.getElementById('overlay-data').value;
+      gOverlayConfirmCallback(data);
+      $('#overlay').removeClass('visible');
+    }
+    
+    function doImport()
+    {
+      document.getElementById('overlay-action').innerText = 'Enter results to import (in the same format as the exported results):';
+      showOverlay(function(data) {
+        gTestSuite.importResults(data);
+      });
+    }
+    
+    function doClear()
+    {
+      document.getElementById('overlay-action').innerText = 'Enter list of tests for which to clear results (so they can be re-tested):';
+      showOverlay(function(data) {
+        gTestSuite.clearResults(data);
+      });
+    }
   </script>
 
 </head>
@@ -195,12 +200,21 @@
   </div>
 
   <div class="results">
+
     <div class="output-options">
       <p>Show results for:</p>
       <select id="results-popup" onchange="resultsPopupChanged(this)">
       </select>
-      <button id="export-button" onclick="doExport()">Export...</button>
+      <div>
+        <button id="export-button" onclick="doExport()">Export...</button>
+      </div>
+
+      <div class="custom">
+        <button id="import-button" onclick="doImport()">Import...</button>
+        <button id="import-button" onclick="doClear()">Clear Results...</button>
+      </div>
     </div>
+
     <div id="output"></div>
     <div class="summary">
       <table>
@@ -217,5 +231,17 @@
     </div>
   </div>
 
+  <div id="overlay">
+    
+    <div class="overlay-contents">
+      <p id="overlay-action"></p>
+      <textarea id="overlay-data"></textarea>
+      <p class="note">Pasting many lines of text here can be very slow in Safari 5. You can quit Safari and use a <a href="http://nightly.webkit.org/" title="WebKit Nightly Builds">WebKit nightly build</a> for importing or clearing.</p>
+      <div class="buttons">
+        <button onclick="overlayCancel()">Cancel</button><button onclick="overlayConfirm()">OK</button>
+      </div>
+    </div>
+    
+  </div>
 </body>
 </html>
