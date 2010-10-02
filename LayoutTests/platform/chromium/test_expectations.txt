@@ -3159,3 +3159,6 @@ BUGWK44406 : http/tests/appcache/foreign-fallback.html = TEXT
 
 // This test starts to timeout during build bots were down between 68880:68920
 BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
+
+// Selection is wrong.
+BUG10292 MAC : editing/selection/5354455-1.html = FAIL

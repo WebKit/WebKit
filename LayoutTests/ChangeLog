@@ -1,3 +1,11 @@
+2010-10-01  Tony Chang  <tony@chromium.org>
+
+        Unreviewed.  Updating layout test (editing/selection/5354455-1.html) after r68948.
+        Will fix soon.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/win/Skipped:
+
 2010-10-01  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.
