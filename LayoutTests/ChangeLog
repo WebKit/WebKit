@@ -1,3 +1,13 @@
+2010-10-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Removed an expected result for a previously skipped test. This test
+        is skipped because it fails on 1 (out of 4) GTK+ bots. It had
+        started failing again after the WebSocket tests were relocated and
+        the skipped list was no longer up to date.
+
+        * platform/gtk/Skipped: Update skipped list to reflect new test location.
+        * platform/gtk/http/tests/websocket/tests/bad-sub-protocol-control-chars-expected.txt: Removed.
+
 2010-10-01  Tony Chang  <tony@chromium.org>
 
         Unreviewed.  Turns out Safari Win matches Safari Mac so move the

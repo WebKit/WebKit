@@ -5911,5 +5911,5 @@ fast/text/large-text-composed-char-dos.html
 plugins/plugin-document-load-prevented-userscript.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=46942
-websocket/tests/bad-sub-protocol-control-chars.html
+http/tests/websocket/tests/bad-sub-protocol-control-chars.html
 
