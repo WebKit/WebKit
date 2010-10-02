@@ -434,7 +434,14 @@ static bool executeFormatBlock(Frame* frame, Event*, EditorCommandSource, const 
         tagName = tagName.substring(1, tagName.length() - 2);
     if (!validBlockTag(tagName))
         return false;
-    applyCommand(FormatBlockCommand::create(frame->document(), tagName));
+
+    ExceptionCode ec;
+    String localName, prefix;
+    if (!Document::parseQualifiedName(tagName, prefix, localName, ec))
+        return false;
+    QualifiedName qualifiedTagName(prefix, localName, xhtmlNamespaceURI);
+
+    applyCommand(FormatBlockCommand::create(frame->document(), qualifiedTagName));
     return true;
 }
 

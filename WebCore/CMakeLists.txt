@@ -882,6 +882,7 @@ SET(WebCore_SOURCES
     dom/default/PlatformMessagePortChannel.cpp
 
     editing/AppendNodeCommand.cpp
+    editing/ApplyBlockElementCommand.cpp
     editing/ApplyStyleCommand.cpp
     editing/BreakBlockquoteCommand.cpp
     editing/CompositeEditCommand.cpp

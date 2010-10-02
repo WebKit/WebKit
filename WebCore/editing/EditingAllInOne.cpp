@@ -26,6 +26,7 @@
 // This all-in-one cpp file cuts down on template bloat to allow us to build our Windows release build.
 
 #include <AppendNodeCommand.cpp>
+#include <ApplyBlockElementCommand.cpp>
 #include <ApplyStyleCommand.cpp>
 #include <BreakBlockquoteCommand.cpp>
 #include <CompositeEditCommand.cpp>

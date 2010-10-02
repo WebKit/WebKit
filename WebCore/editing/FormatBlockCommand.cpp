@@ -36,66 +36,16 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-FormatBlockCommand::FormatBlockCommand(Document* document, const AtomicString& tagName) 
-    : CompositeEditCommand(document), m_tagName(tagName)
+FormatBlockCommand::FormatBlockCommand(Document* document, const QualifiedName& tagName) 
+    : ApplyBlockElementCommand(document, tagName)
 {
 }
 
-void FormatBlockCommand::doApply()
+void FormatBlockCommand::formatParagraph(const VisiblePosition& endOfCurrentParagraph, RefPtr<Element>&)
 {
-    if (!endingSelection().isNonOrphanedCaretOrRange())
-        return;
-    
-    if (!endingSelection().rootEditableElement())
-        return;
-
-    VisiblePosition visibleEnd = endingSelection().visibleEnd();
-    VisiblePosition visibleStart = endingSelection().visibleStart();
-    // When a selection ends at the start of a paragraph, we rarely paint 
-    // the selection gap before that paragraph, because there often is no gap.  
-    // In a case like this, it's not obvious to the user that the selection 
-    // ends "inside" that paragraph, so it would be confusing if FormatBlock
-    // operated on that paragraph.
-    // FIXME: We paint the gap before some paragraphs that are indented with left 
-    // margin/padding, but not others.  We should make the gap painting more consistent and 
-    // then use a left margin/padding rule here.
-    if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd)) {
-        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(true)));
-        visibleEnd = endingSelection().visibleEnd();
-    }
-
-    VisiblePosition startOfLastParagraph = startOfParagraph(visibleEnd);
-    if (endingSelection().isCaret() || startOfParagraph(visibleStart) == startOfLastParagraph) {
-        doApplyForSingleParagraph();
-        return;
-    }
-
-    setEndingSelection(visibleStart);
-    doApplyForSingleParagraph();
-    visibleStart = endingSelection().visibleStart();
-    VisiblePosition nextParagraph = endOfParagraph(visibleStart).next();
-    while (nextParagraph.isNotNull() && nextParagraph != startOfLastParagraph) {
-        setEndingSelection(nextParagraph);
-        doApplyForSingleParagraph();
-        nextParagraph = endOfParagraph(endingSelection().visibleStart()).next();
-    }
-    setEndingSelection(visibleEnd);
-    doApplyForSingleParagraph();
-    visibleEnd = endingSelection().visibleEnd();
-
-    setEndingSelection(VisibleSelection(visibleStart.deepEquivalent(), visibleEnd.deepEquivalent(), DOWNSTREAM));
-}
-
-void FormatBlockCommand::doApplyForSingleParagraph()
-{
-    ExceptionCode ec;
-    String localName, prefix;
-    if (!Document::parseQualifiedName(m_tagName, prefix, localName, ec))
-        return;
-    QualifiedName qTypeOfBlock(prefix, localName, xhtmlNamespaceURI);
-
+    setEndingSelection(endOfCurrentParagraph);
     Node* refNode = enclosingBlockFlowElement(endingSelection().visibleStart());
-    if (refNode->hasTagName(qTypeOfBlock))
+    if (refNode->hasTagName(tagName()))
         // We're already in a block with the format we want, so we don't have to do anything
         return;
 
@@ -103,7 +53,7 @@ void FormatBlockCommand::doApplyForSingleParagraph()
     VisiblePosition paragraphEnd = endOfParagraph(endingSelection().visibleStart());
     VisiblePosition blockStart = startOfBlock(endingSelection().visibleStart());
     VisiblePosition blockEnd = endOfBlock(endingSelection().visibleStart());
-    RefPtr<Element> blockNode = createHTMLElement(document(), m_tagName);
+    RefPtr<Element> blockNode = createBlockElement();
     RefPtr<Element> placeholder = createBreakElement(document());
 
     Node* root = endingSelection().start().node()->rootEditableElement();

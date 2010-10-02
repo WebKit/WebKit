@@ -198,6 +198,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/default/PlatformMessagePortChannel.cpp \
 	\
 	editing/AppendNodeCommand.cpp \
+	editing/ApplyBlockElementCommand.cpp \
 	editing/ApplyStyleCommand.cpp \
 	editing/BreakBlockquoteCommand.cpp \
 	editing/CompositeEditCommand.cpp \

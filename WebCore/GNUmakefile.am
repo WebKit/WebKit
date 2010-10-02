@@ -1256,6 +1256,8 @@ webcore_sources += \
 	WebCore/dom/XMLDocumentParserScope.h \
 	WebCore/editing/AppendNodeCommand.cpp \
 	WebCore/editing/AppendNodeCommand.h \
+	WebCore/editing/ApplyBlockElementCommand.cpp \
+	WebCore/editing/ApplyBlockElementCommand.h \
 	WebCore/editing/ApplyStyleCommand.cpp \
 	WebCore/editing/ApplyStyleCommand.h \
 	WebCore/editing/BreakBlockquoteCommand.cpp \

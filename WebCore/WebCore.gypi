@@ -1341,6 +1341,8 @@
             'editing/wx/EditorWx.cpp',
             'editing/AppendNodeCommand.cpp',
             'editing/AppendNodeCommand.h',
+            'editing/ApplyBlockElementCommand.cpp',
+            'editing/ApplyBlockElementCommand.h',
             'editing/ApplyStyleCommand.cpp',
             'editing/ApplyStyleCommand.h',
             'editing/BreakBlockquoteCommand.cpp',

@@ -1,3 +1,51 @@
+2010-10-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        FormatBlockCommand and IndentOutdentCommand should use the same code to iterate paragraphs
+        https://bugs.webkit.org/show_bug.cgi?id=46840
+
+        Added ApplyBlockElementCommand, which is an abstract class inherited by FormatBlockCommand
+        and IndentOutdentCommand.  It is intended to be inherited by InsertListCommand as well.
+
+        ApplyBlockElementCommand's doApply verifies the current selection and exits early
+        if it's invalid or orphaned or if the current selection is outside editable region.
+        It then calls formatSelection to apply the block element after which doApply restores the selection.
+        formatSelection iterates through paragraphs and calls formatParagraph, a pure virtual function
+        implemented by FormatBlockCommand and IndentOutdentCommand, on each paragraph.
+
+        No new tests are added since this is a refactoring.
+
+        * Android.mk: Added ApplyBlockElementCommand.cpp.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Added ApplyBlockElementCommand.cpp and ApplyBlockElementCommand.h.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * editing/ApplyBlockElementCommand.cpp: Added.
+        (WebCore::countParagraphs): Moved from IndentOutdentCommand.cpp
+        (WebCore::ApplyBlockElementCommand::ApplyBlockElementCommand): Added.
+        (WebCore::ApplyBlockElementCommand::doApply): Moved from IndentOutdentCommand::doApply.
+        (WebCore::ApplyBlockElementCommand::formatSelection): Moved from IndentOutdentCommand::indentRegion.
+        (WebCore::ApplyBlockElementCommand::createBlockElement): Added.
+        (WebCore::ApplyBlockElementCommand::splitTextNodes): Moved from IndentOutdentCommand::splitTextNodes.
+        * editing/ApplyBlockElementCommand.h: Added.
+        * editing/EditingAllInOne.cpp:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeFormatBlock):
+        * editing/FormatBlockCommand.cpp: Removed doApply.
+        (WebCore::FormatBlockCommand::FormatBlockCommand): Calls ApplyBlockElementCommand's constructor.
+        (WebCore::FormatBlockCommand::formatParagraph): Renamed from doApplyForSingleParagraph.
+        * editing/FormatBlockCommand.h: FormatBlockCommand inherits from ApplyBlockElementCommand.
+        (WebCore::FormatBlockCommand::create): Uses QualifiedName for the tag name instead of AtomicString.
+        * editing/IndentOutdentCommand.cpp: Removed doApply, indentIntoBlockquote, and splitTextNodes.
+        (WebCore::IndentOutdentCommand::IndentOutdentCommand): Calls ApplyBlockElementCommand's constructor.
+        (WebCore::IndentOutdentCommand::indentIntoBlockquote): The code to nullify targetBlockquote
+        when the next paragraph is in a different table cell is moved to ApplyBlockElementCommand::formatSelection.
+        (WebCore::IndentOutdentCommand::formatSelection): Added. Calls outdentRegion when outdenting.
+        (WebCore::IndentOutdentCommand::formatParagraph): Added. Calls tryIndentingAsListItem and indentIntoBlockquote.
+        * editing/IndentOutdentCommand.h: IndentOutdentCommand inherits from ApplyBlockElementCommand.
+
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

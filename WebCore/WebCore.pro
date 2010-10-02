@@ -772,6 +772,7 @@ SOURCES += \
     dom/XMLDocumentParserQt.cpp \
     dom/default/PlatformMessagePortChannel.cpp \
     editing/AppendNodeCommand.cpp \
+    editing/ApplyBlockElementCommand.cpp \
     editing/ApplyStyleCommand.cpp \
     editing/BreakBlockquoteCommand.cpp \
     editing/CompositeEditCommand.cpp \
@@ -1668,6 +1669,7 @@ HEADERS += \
     dom/WheelEvent.h \
     dom/XMLDocumentParser.h \
     editing/AppendNodeCommand.h \
+    editing/ApplyBlockElementCommand.h \
     editing/ApplyStyleCommand.h \
     editing/BreakBlockquoteCommand.h \
     editing/CompositeEditCommand.h \
