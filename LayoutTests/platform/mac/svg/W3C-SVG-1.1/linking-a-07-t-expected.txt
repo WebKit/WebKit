@@ -6,7 +6,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (90,5) size 167x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 167x14
           chunk 1 text run 1 at (90.00,16.00) startOffset 0 endOffset 26 width 116.00: "xlink 'show' attribute on "
-          chunk 1 text run 2 at (206.00,16.00) startOffset 0 endOffset 12 width 51.00: "'a' element."
+          chunk 1 text run 1 at (206.00,16.00) startOffset 0 endOffset 12 width 51.00: "'a' element."
       RenderSVGContainer {g} at (44,26) size 147x256 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-120.00,0.00)}]
         RenderSVGContainer {a} at (44,26) size 147x76
           RenderPath {path} at (44,26) size 147x76 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M165.00,40.00 L265.00,40.00 L265.00,28.00 L310.00,64.00 L265.00,100.00 L265.00,88.00 L165.00,88.00 Z"]

@@ -24,11 +24,10 @@
 
 #include "RenderSVGInlineText.h"
 #include "RenderSVGText.h"
-#include "SVGTextLayoutUtilities.h"
 #include "SVGTextPositioningElement.h"
 
-// Set to a value > 0 to dump the layout vectors
-#define DUMP_LAYOUT_VECTORS 0
+// Set to a value > 0 to dump the text layout attributes
+#define DUMP_TEXT_LAYOUT_ATTRIBUTES 0
 
 namespace WebCore {
 
@@ -41,253 +40,67 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree(RenderS
     ASSERT(textRoot);
     m_scopes.clear();
 
-    // Build layout scopes.
+    // Build list of x/y/dx/dy/rotate values for each subtree element that may define these values (tspan/textPath etc).
     unsigned atCharacter = 0;
-    buildLayoutScopes(textRoot, atCharacter);
+    UChar lastCharacter = '\0';
+    buildLayoutScopes(textRoot, atCharacter, lastCharacter);
 
     if (!atCharacter)
         return;
 
-    // Add outermost scope, after text length is known.
-    LayoutScope scope;
-    buildLayoutScope(scope, textRoot, 0, atCharacter);
-    m_scopes.prepend(scope);
+    // Build list of x/y/dx/dy/rotate values for the outermost <text> element.
+    buildOutermostLayoutScope(textRoot, atCharacter);
 
-    // Build layout information respecting scope of attribute values.
-    buildLayoutAttributesFromScopes();
-
+    // Propagate layout attributes to each RenderSVGInlineText object.
     atCharacter = 0;
-    propagateLayoutAttributes(textRoot, atCharacter);
+    lastCharacter = '\0';
+    propagateLayoutAttributes(textRoot, atCharacter, lastCharacter);
 }
 
-static inline void copyToDestinationVector(Vector<float>& destination, unsigned destinationStartOffset, Vector<float>& source, unsigned sourceStartOffset, unsigned length)
-{
-    ASSERT(destinationStartOffset + length <= destination.size());
-
-    Vector<float>::iterator sourceBegin = source.begin() + sourceStartOffset;
-    std::copy(sourceBegin, sourceBegin + length, destination.begin() + destinationStartOffset);
-}
-
-static inline void copyToDestinationVectorIfSourceRangeIsNotEmpty(Vector<float>& destination, unsigned destinationStartOffset, Vector<float>& source, unsigned sourceStartOffset, unsigned length)
-{
-    bool rangeEmpty = true;
-
-    unsigned size = sourceStartOffset + length;
-    for (unsigned i = sourceStartOffset; i < size; ++i) {
-        if (source.at(i) == SVGTextLayoutAttributes::emptyValue())
-            continue;
-        rangeEmpty = false;
-        break;
-    }
-
-    if (rangeEmpty)
-        return;
-
-    destination.resize(length);
-    copyToDestinationVector(destination, destinationStartOffset, source, sourceStartOffset, length);
-}
-
-void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* start, unsigned& atCharacter)
-{
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) { 
-        if (!child->isSVGInlineText()) {
-            if (child->isSVGInline())
-                propagateLayoutAttributes(child, atCharacter);
-            continue;
-        }
-
-        RenderSVGInlineText* text = static_cast<RenderSVGInlineText*>(child);
-        unsigned textLength = text->textLength();
-
-        // Build layout attributes for a single RenderSVGInlineText renderer.
-        SVGTextLayoutAttributes attributes;
-
-        // The x value list should always be as large as the text length.
-        // Any values that are empty will be filled in by the actual text layout process later,
-        // as we need to be able to query the x/y position for every character through SVG DOM.
-        attributes.xValues().resize(textLength);
-        copyToDestinationVector(attributes.xValues(), 0, m_attributes.xValues(), atCharacter, textLength);
-
-        // Same for the y value list.
-        attributes.yValues().resize(textLength);
-        copyToDestinationVector(attributes.yValues(), 0, m_attributes.yValues(), atCharacter, textLength);
-
-        // The dx/dy/rotate value lists may be empty.
-        copyToDestinationVectorIfSourceRangeIsNotEmpty(attributes.dxValues(), 0, m_attributes.dxValues(), atCharacter, textLength);
-        copyToDestinationVectorIfSourceRangeIsNotEmpty(attributes.dyValues(), 0, m_attributes.dyValues(), atCharacter, textLength);
-        copyToDestinationVectorIfSourceRangeIsNotEmpty(attributes.rotateValues(), 0, m_attributes.rotateValues(), atCharacter, textLength);
-
-        // Build CharacterData, which will be used to detect ligatures, holds kerning pairs (glyph name, unicode string) and character metrics.
-        measureCharacters(text, attributes);
-
-#if DUMP_LAYOUT_VECTORS > 0
-        fprintf(stderr, "Dumping layout vector for RenderSVGInlineText, renderer=%p, node=%p\n", text, text->node());
-        attributes.dump();
-#endif
-
-        text->storeLayoutAttributes(attributes);
-        atCharacter += text->textLength();
-    }
-}
-
-void SVGTextLayoutAttributesBuilder::buildLayoutScopes(RenderObject* start, unsigned& atCharacter)
-{
-    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) { 
-        if (child->isSVGInlineText()) {
-            atCharacter += toRenderText(child)->textLength();
-            continue;
-        }
-
-        if (!child->isSVGInline())
-            continue;
-
-        unsigned textContentStart = atCharacter;
-        buildLayoutScopes(child, atCharacter);
-
-        LayoutScope scope;
-        buildLayoutScope(scope, child, textContentStart, atCharacter - textContentStart);
-        m_scopes.append(scope);
-    }
-}
-
-static inline void fillDestinationVectorWithLastSourceValue(Vector<float>& destination, unsigned destinationStartOffset, Vector<float>& source, unsigned length)
-{
-    if (source.isEmpty())
-        return;
-
-    float lastValue = source.last();
-
-    unsigned rotateValuesSize = source.size();
-    for (unsigned i = rotateValuesSize; i < length; ++i) {
-        ASSERT(i + destinationStartOffset < destination.size());
-        destination.at(i + destinationStartOffset) = lastValue;
-    }
-}
-
-void SVGTextLayoutAttributesBuilder::buildLayoutAttributesFromScopes()
-{
-    ASSERT(!m_scopes.isEmpty());
-
-    unsigned totalLength = m_scopes.first().textContentLength;
-    if (!totalLength)
-        return;
-
-    m_attributes.fillWithEmptyValues(totalLength);
-
-    // Build final list of x/y/dx/dy/rotate values for each character stores in the <text> subtree.
-    for (unsigned atScope = 0; atScope < m_scopes.size(); ++atScope) {
-        LayoutScope& scope = m_scopes.at(atScope);
-        SVGTextLayoutAttributes& attributes = scope.attributes;
-
-        copyToDestinationVector(m_attributes.xValues(), scope.textContentStart, attributes.xValues(), 0, attributes.xValues().size());
-        copyToDestinationVector(m_attributes.yValues(), scope.textContentStart, attributes.yValues(), 0, attributes.yValues().size());
-        copyToDestinationVector(m_attributes.dxValues(), scope.textContentStart, attributes.dxValues(), 0, attributes.dxValues().size());
-        copyToDestinationVector(m_attributes.dyValues(), scope.textContentStart, attributes.dyValues(), 0, attributes.dyValues().size());
-        copyToDestinationVector(m_attributes.rotateValues(), scope.textContentStart, attributes.rotateValues(), 0, attributes.rotateValues().size());
-
-        // In horizontal (vertical) writing modes, the last y (x) value in the scope is the default y (x) value for all following characters, unless explicitely overriden.
-        if (scope.isVerticalWritingMode)
-            fillDestinationVectorWithLastSourceValue(m_attributes.xValues(), scope.textContentStart, attributes.xValues(), scope.textContentLength);
-        else
-            fillDestinationVectorWithLastSourceValue(m_attributes.yValues(), scope.textContentStart, attributes.yValues(), scope.textContentLength);
-
-        // The last rotation value in the scope is the default rotation for all following character, unless explicitely overriden.
-        fillDestinationVectorWithLastSourceValue(m_attributes.rotateValues(), scope.textContentStart, attributes.rotateValues(), scope.textContentLength);
-    }
-}
-
-void SVGTextLayoutAttributesBuilder::measureCharacters(RenderSVGInlineText* text, SVGTextLayoutAttributes& attributes)
-{
-    ASSERT(text);
-    ASSERT(text->style());
-    const Font& font = text->style()->font();
-    const UChar* characters = text->characters();
-    int length = text->textLength();
-
-    TextRun run(0, 0);
-    run.disableSpacing();
-    run.disableRoundingHacks();
-
-    int charsConsumed = 0;
-    for (int position = 0; position < length; position += charsConsumed) {
-        run.setText(characters + position, 1);
-        int extraCharsAvailable = length - position - 1;
-
-        SVGTextLayoutAttributes::CharacterData characterData;
-        characterData.width = font.floatWidth(run, extraCharsAvailable, characterData.spansCharacters, characterData.glyphName);
-        characterData.height = font.height();
-        characterData.unicodeString = String(characters + position, characterData.spansCharacters);
-        attributes.characterDataValues().append(characterData);
-
-        charsConsumed = characterData.spansCharacters;
-    }
-}
-
-static inline void extractFloatValuesFromSVGLengthList(SVGElement* lengthContext, SVGLengthList* list, Vector<float>& floatValues, int textContentLength)
+static inline void extractFloatValuesFromSVGLengthList(SVGElement* lengthContext, SVGLengthList* list, Vector<float>& floatValues, unsigned textContentLength)
 {
     ASSERT(lengthContext);
     ASSERT(list);
-    ASSERT(textContentLength >= 0);
 
-    ExceptionCode ec = 0;
-    int length = list->numberOfItems();
+    unsigned length = list->numberOfItems();
     if (length > textContentLength)
         length = textContentLength;
+    floatValues.reserveCapacity(length);
 
-    for (int i = 0; i < length; ++i) {
-        SVGLength length(list->getItem(i, ec));
+    ExceptionCode ec = 0;
+    for (unsigned i = 0; i < length; ++i) {
+        SVGLength length = list->getItem(i, ec);
         ASSERT(!ec);
         floatValues.append(length.value(lengthContext));
     }
 }
 
-static inline void extractFloatValuesFromSVGNumberList(SVGNumberList* list, Vector<float>& floatValues, int textContentLength)
+static inline void extractFloatValuesFromSVGNumberList(SVGNumberList* list, Vector<float>& floatValues, unsigned textContentLength)
 {
     ASSERT(list);
-    ASSERT(textContentLength >= 0);
 
-    ExceptionCode ec = 0;
-    int length = list->numberOfItems();
+    unsigned length = list->numberOfItems();
     if (length > textContentLength)
         length = textContentLength;
+    floatValues.reserveCapacity(length);
 
-    for (int i = 0; i < length; ++i) {
-        float length(list->getItem(i, ec));
+    ExceptionCode ec = 0;
+    for (unsigned i = 0; i < length; ++i) {
+        float length = list->getItem(i, ec);
         ASSERT(!ec);
         floatValues.append(length);
     }
 }
 
-static inline SVGTextPositioningElement* svgTextPositioningElementForInlineRenderer(RenderObject* renderer)
-{
-    ASSERT(renderer);
-    ASSERT(renderer->isSVGText() || renderer->isSVGInline());
-
-    Node* node = renderer->node();
-    ASSERT(node);
-    ASSERT(node->isSVGElement());
-
-    if (!node->hasTagName(SVGNames::textTag)
-     && !node->hasTagName(SVGNames::tspanTag)
-#if ENABLE(SVG_FONTS)
-     && !node->hasTagName(SVGNames::altGlyphTag)
-#endif
-     && !node->hasTagName(SVGNames::trefTag))
-        return 0;
-
-    return static_cast<SVGTextPositioningElement*>(node);
-}
-
-void SVGTextLayoutAttributesBuilder::buildLayoutScope(LayoutScope& scope, RenderObject* renderer, unsigned textContentStart, unsigned textContentLength)
+void SVGTextLayoutAttributesBuilder::buildLayoutScope(LayoutScope& scope, RenderObject* renderer, unsigned textContentStart, unsigned textContentLength) const
 {
     ASSERT(renderer);
     ASSERT(renderer->style());
 
-    scope.isVerticalWritingMode = isVerticalWritingMode(renderer->style()->svgStyle());
     scope.textContentStart = textContentStart;
     scope.textContentLength = textContentLength;
 
-    SVGTextPositioningElement* element = svgTextPositioningElementForInlineRenderer(renderer);
+    SVGTextPositioningElement* element = SVGTextPositioningElement::elementFromRenderer(renderer);
     if (!element)
         return;
 
@@ -297,6 +110,206 @@ void SVGTextLayoutAttributesBuilder::buildLayoutScope(LayoutScope& scope, Render
     extractFloatValuesFromSVGLengthList(element, element->dx(), attributes.dxValues(), textContentLength);
     extractFloatValuesFromSVGLengthList(element, element->dy(), attributes.dyValues(), textContentLength);
     extractFloatValuesFromSVGNumberList(element->rotate(), attributes.rotateValues(), textContentLength);
+
+    // The last rotation value spans the whole scope.
+    Vector<float>& rotateValues = attributes.rotateValues();
+    if (rotateValues.isEmpty())
+        return;
+
+    unsigned rotateValuesSize = rotateValues.size();
+    if (rotateValuesSize == textContentLength)
+        return;
+
+    float lastRotation = rotateValues.last();
+
+    rotateValues.resize(textContentLength);
+    for (unsigned i = rotateValuesSize; i < textContentLength; ++i)
+        rotateValues.at(i) = lastRotation;
+}
+
+static inline bool characterIsSpace(const UChar& character)
+{
+    return character == ' ';
+}
+
+static inline bool characterIsSpaceOrNull(const UChar& character)
+{
+    return character == ' ' || character == '\0';
+}
+
+static inline bool shouldPreserveAllWhiteSpace(RenderStyle* style)
+{
+    ASSERT(style);
+    return style->whiteSpace() == PRE;
+}
+ 
+void SVGTextLayoutAttributesBuilder::buildLayoutScopes(RenderObject* start, unsigned& atCharacter, UChar& lastCharacter)
+{
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) { 
+        if (child->isSVGInlineText()) {
+            RenderSVGInlineText* text = toRenderSVGInlineText(child);
+
+            if (!shouldPreserveAllWhiteSpace(text->style())) {
+                const UChar* characters = text->characters();
+                unsigned textLength = text->textLength();    
+                for (unsigned textPosition = 0; textPosition < textLength; ++textPosition) {
+                    const UChar& currentCharacter = characters[textPosition];
+                    if (characterIsSpace(currentCharacter) && characterIsSpaceOrNull(lastCharacter))
+                        continue;
+
+                    lastCharacter = currentCharacter;
+                    ++atCharacter;
+                }
+            } else
+                atCharacter += text->textLength();
+
+            continue;
+        }
+
+        if (!child->isSVGInline())
+            continue;
+
+        unsigned textContentStart = atCharacter;
+        buildLayoutScopes(child, atCharacter, lastCharacter);
+
+        LayoutScope scope;
+        buildLayoutScope(scope, child, textContentStart, atCharacter - textContentStart);
+        m_scopes.append(scope);
+    }
+}
+
+void SVGTextLayoutAttributesBuilder::buildOutermostLayoutScope(RenderSVGText* textRoot, unsigned textLength)
+{
+    LayoutScope scope;
+    buildLayoutScope(scope, textRoot, 0, textLength);
+
+    // Handle <text> x/y default attributes.
+    Vector<float>& xValues = scope.attributes.xValues();
+    if (xValues.isEmpty())
+        xValues.append(0);
+
+    Vector<float>& yValues = scope.attributes.yValues();
+    if (yValues.isEmpty())
+        yValues.append(0);
+
+    m_scopes.prepend(scope);
+}
+
+void SVGTextLayoutAttributesBuilder::propagateLayoutAttributes(RenderObject* start, unsigned& atCharacter, UChar& lastCharacter) const
+{
+    for (RenderObject* child = start->firstChild(); child; child = child->nextSibling()) { 
+        if (child->isSVGInlineText()) {
+            RenderSVGInlineText* text = toRenderSVGInlineText(child);
+            const UChar* characters = text->characters();
+            unsigned textLength = text->textLength();
+            bool preserveWhiteSpace = shouldPreserveAllWhiteSpace(text->style());
+
+            SVGTextLayoutAttributes attributes;
+            attributes.reserveCapacity(textLength);
+    
+            unsigned valueListPosition = atCharacter;
+            unsigned metricsLength = 1;
+            for (unsigned textPosition = 0; textPosition < textLength; textPosition += metricsLength) {
+                const UChar& currentCharacter = characters[textPosition];
+
+                SVGTextMetrics metrics = SVGTextMetrics::measureCharacterRange(text, textPosition, 1);
+                metricsLength = metrics.length();
+
+                if (!preserveWhiteSpace && characterIsSpace(currentCharacter) && characterIsSpaceOrNull(lastCharacter)) {
+                    assignEmptyLayoutAttributesForCharacter(attributes);
+                    attributes.textMetricsValues().append(SVGTextMetrics::emptyMetrics());
+                    continue;
+                }
+
+                assignLayoutAttributesForCharacter(attributes, metrics, valueListPosition);
+
+                if (metricsLength > 1) {
+                    for (unsigned i = 0; i < metricsLength - 1; ++i)
+                        assignEmptyLayoutAttributesForCharacter(attributes);
+                }
+
+                lastCharacter = currentCharacter;
+                valueListPosition += metricsLength;
+            }
+
+#if DUMP_TEXT_LAYOUT_ATTRIBUTES > 0
+            fprintf(stderr, "\nDumping layout attributes for RenderSVGInlineText, renderer=%p, node=%p (atCharacter: %i)\n", text, text->node(), atCharacter);
+            attributes.dump();
+#endif
+
+            text->storeLayoutAttributes(attributes);
+            atCharacter = valueListPosition;
+            continue;
+        }
+
+        if (!child->isSVGInline())
+            continue;
+
+        propagateLayoutAttributes(child, atCharacter, lastCharacter);
+    }
+}
+
+float SVGTextLayoutAttributesBuilder::nextLayoutValue(LayoutValueType type, unsigned atCharacter) const
+{
+    for (int i = m_scopes.size() - 1; i >= 0; --i) {
+        const LayoutScope& scope = m_scopes.at(i);
+        if (scope.textContentStart > atCharacter || scope.textContentStart + scope.textContentLength < atCharacter)
+            continue;
+
+        const Vector<float>* valuesPointer = 0;
+        switch (type) {
+        case XValue:
+            valuesPointer = &scope.attributes.xValues();
+            break;
+        case YValue:
+            valuesPointer = &scope.attributes.yValues();
+            break;
+        case DxValue:
+            valuesPointer = &scope.attributes.dxValues();
+            break;
+        case DyValue:
+            valuesPointer = &scope.attributes.dyValues();
+            break;
+        case RotateValue:
+            valuesPointer = &scope.attributes.rotateValues();
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+
+        ASSERT(valuesPointer);
+        const Vector<float>& values = *valuesPointer;
+        if (values.isEmpty())
+            continue;
+
+        unsigned position = atCharacter - scope.textContentStart;
+        if (position >= values.size())
+            continue;
+
+        return values.at(position);
+    }
+
+    return SVGTextLayoutAttributes::emptyValue();
+}
+
+void SVGTextLayoutAttributesBuilder::assignLayoutAttributesForCharacter(SVGTextLayoutAttributes& attributes, SVGTextMetrics& metrics, unsigned valueListPosition) const
+{
+    attributes.xValues().append(nextLayoutValue(XValue, valueListPosition));
+    attributes.yValues().append(nextLayoutValue(YValue, valueListPosition));
+    attributes.dxValues().append(nextLayoutValue(DxValue, valueListPosition));
+    attributes.dyValues().append(nextLayoutValue(DyValue, valueListPosition));
+    attributes.rotateValues().append(nextLayoutValue(RotateValue, valueListPosition));
+    attributes.textMetricsValues().append(metrics);
+}
+
+void SVGTextLayoutAttributesBuilder::assignEmptyLayoutAttributesForCharacter(SVGTextLayoutAttributes& attributes) const
+{
+    attributes.xValues().append(SVGTextLayoutAttributes::emptyValue());
+    attributes.yValues().append(SVGTextLayoutAttributes::emptyValue());
+    attributes.dxValues().append(SVGTextLayoutAttributes::emptyValue());
+    attributes.dyValues().append(SVGTextLayoutAttributes::emptyValue());
+    attributes.rotateValues().append(SVGTextLayoutAttributes::emptyValue());
+    // This doesn't add an empty value to textMetricsValues() on purpose!
 }
 
 }

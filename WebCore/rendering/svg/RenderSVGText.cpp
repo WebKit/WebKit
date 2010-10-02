@@ -47,6 +47,7 @@
 #include "SVGURIReference.h"
 #include "SimpleFontData.h"
 #include "TransformState.h"
+#include "VisiblePosition.h"
 
 namespace WebCore {
 
@@ -84,6 +85,7 @@ void RenderSVGText::layout()
         updateCachedBoundariesInParents = true;
     }
 
+    // Perform SVG text layout phase one (see SVGTextLayoutAttributesBuilder for details).
     SVGTextLayoutAttributesBuilder layoutAttributesBuilder;
     layoutAttributesBuilder.buildLayoutAttributesForTextSubtree(this);
 
@@ -151,6 +153,23 @@ bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int,
 {
     ASSERT_NOT_REACHED();
     return false;
+}
+
+VisiblePosition RenderSVGText::positionForPoint(const IntPoint& pointInContents)
+{
+    RootInlineBox* rootBox = firstRootBox();
+    if (!rootBox)
+        return createVisiblePosition(0, DOWNSTREAM);
+
+    ASSERT(rootBox->isSVGRootInlineBox());
+    ASSERT(!rootBox->nextRootBox());
+    ASSERT(childrenInline());
+
+    InlineBox* closestBox = static_cast<SVGRootInlineBox*>(rootBox)->closestLeafChildForPosition(pointInContents);
+    if (!closestBox)
+        return createVisiblePosition(0, DOWNSTREAM);
+
+    return closestBox->renderer()->positionForPoint(IntPoint(pointInContents.x(), closestBox->m_y));
 }
 
 void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads)

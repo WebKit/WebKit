@@ -28,11 +28,9 @@
 #include "GraphicsContext.h"
 #include "InlineFlowBox.h"
 #include "RenderBlock.h"
+#include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
 #include "SVGRootInlineBox.h"
-#include "SVGTextLayoutUtilities.h"
-
-#include <float.h>
 
 using namespace std;
 
@@ -41,94 +39,36 @@ namespace WebCore {
 SVGInlineTextBox::SVGInlineTextBox(RenderObject* object)
     : InlineTextBox(object)
     , m_logicalHeight(0)
-    , m_paintingResource(0)
     , m_paintingResourceMode(ApplyToDefaultMode)
+    , m_startsNewTextChunk(false)
+    , m_paintingResource(0)
 {
 }
 
-SVGRootInlineBox* SVGInlineTextBox::svgRootInlineBox() const
+int SVGInlineTextBox::offsetForPosition(int, bool) const
 {
-    // Find associated root inline box
-    InlineFlowBox* parentBox = parent();
-
-    while (parentBox && !parentBox->isRootInlineBox())
-        parentBox = parentBox->parent();
-
-    ASSERT(parentBox);
-    ASSERT(parentBox->isRootInlineBox());
-
-    if (!parentBox->isSVGRootInlineBox())
-        return 0;
-
-    return static_cast<SVGRootInlineBox*>(parentBox);
+    // SVG doesn't use the standard offset <-> position selection system, as it's not suitable for SVGs complex needs.
+    // vertical text selection, inline boxes spanning multiple lines (contrary to HTML, etc.)
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
-void SVGInlineTextBox::measureCharacter(RenderStyle* style, int position, int& charsConsumed, String& glyphName, String& unicodeString, float& glyphWidth, float& glyphHeight) const
+int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragment, float position, bool includePartialGlyphs) const
 {
-    ASSERT(style);
-
-    int offset = !isLeftToRightDirection() ? end() - position : start() + position;
-    int extraCharsAvailable = len() - position - 1;
-    const UChar* characters = textRenderer()->characters();
-
-    const Font& font = style->font();
-    glyphWidth = font.floatWidth(svgTextRunForInlineTextBox(characters + offset, 1, style, this), extraCharsAvailable, charsConsumed, glyphName);
-    glyphHeight = font.height();
-
-    // The unicodeString / glyphName pair is needed for kerning calculations.
-    unicodeString = String(characters + offset, charsConsumed);
-}
-
-int SVGInlineTextBox::offsetForPosition(int xCoordinate, bool includePartialGlyphs) const
-{
-    ASSERT(!m_currentChunkPart.isValid());
-    float x = xCoordinate;
-
     RenderText* textRenderer = this->textRenderer();
     ASSERT(textRenderer);
 
     RenderStyle* style = textRenderer->style();
     ASSERT(style);
 
-    RenderBlock* containingBlock = textRenderer->containingBlock();
-    ASSERT(containingBlock);
-
-    // Move incoming relative x position to absolute position, as the character origins stored in the chunk parts use absolute coordinates
-    x += containingBlock->x();
-
-    // Figure out which text chunk part is hit
-    SVGTextChunkPart hitPart;
-
-    const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
-    for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it) {
-        const SVGTextChunkPart& part = *it;
-
-        // Check whether we're past the hit part.
-        if (x < part.firstCharacter->x)
-            break;
-
-        hitPart = part;
-    }
-
-    // If we did not hit anything, just exit.
-    if (!hitPart.isValid())
-        return 0;
-
-    // Before calling Font::offsetForPosition(), subtract the start position of the first character
-    // in the hit text chunk part, to pass in coordinates, which are relative to the text chunk part, as
-    // constructTextRun() only builds a TextRun for the current chunk part, not the whole inline text box.
-    x -= hitPart.firstCharacter->x;
-
-    m_currentChunkPart = hitPart;
-    TextRun textRun(constructTextRun(style));
-    m_currentChunkPart = SVGTextChunkPart();
+    TextRun textRun(constructTextRun(style, fragment));
 
     // Eventually handle lengthAdjust="spacingAndGlyphs".
-    // FIXME: Need to revisit the whole offsetForPosition concept for vertical text selection.
-    if (!m_chunkTransformation.isIdentity())
-        textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(m_chunkTransformation.a()));
+    // FIXME: Handle vertical text.
+    if (!fragment.transform.isIdentity())
+        textRun.setHorizontalGlyphStretch(narrowPrecisionToFloat(fragment.transform.xScale()));
 
-    return hitPart.offset + style->font().offsetForPosition(textRun, x, includePartialGlyphs);
+    return fragment.positionListOffset - start() + style->font().offsetForPosition(textRun, position, includePartialGlyphs);
 }
 
 int SVGInlineTextBox::positionForOffset(int) const
@@ -138,36 +78,21 @@ int SVGInlineTextBox::positionForOffset(int) const
     return 0;
 }
 
-FloatRect SVGInlineTextBox::selectionRectForTextChunkPart(const SVGTextChunkPart& part, int partStartPos, int partEndPos, RenderStyle* style)
+FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& fragment, int startPosition, int endPosition, RenderStyle* style)
 {
-    // Map startPos/endPos positions into chunk part
-    mapStartEndPositionsIntoChunkPartCoordinates(partStartPos, partEndPos, part);
-
-    if (partStartPos >= partEndPos)
-        return FloatRect();
-
-    // Set current chunk part, so constructTextRun() works properly.
-    m_currentChunkPart = part;
+    ASSERT(startPosition < endPosition);
 
     const Font& font = style->font();
-    Vector<SVGChar>::const_iterator character = part.firstCharacter;
-    FloatPoint textOrigin(character->x, character->y - font.ascent());
-
-    FloatRect partRect(font.selectionRectForText(constructTextRun(style), textOrigin, part.height, partStartPos, partEndPos));
-    m_currentChunkPart = SVGTextChunkPart();
-
-    return character->characterTransform().mapRect(partRect);
+    FloatPoint textOrigin(fragment.x, fragment.y - font.ascent());
+    return font.selectionRectForText(constructTextRun(style, fragment), textOrigin, fragment.height, startPosition, endPosition);
 }
 
-IntRect SVGInlineTextBox::selectionRect(int, int, int startPos, int endPos)
+IntRect SVGInlineTextBox::selectionRect(int, int, int startPosition, int endPosition)
 {
-    ASSERT(!m_currentChunkPart.isValid());
-
     int boxStart = start();
-    startPos = max(startPos - boxStart, 0);
-    endPos = min(endPos - boxStart, static_cast<int>(len()));
-
-    if (startPos >= endPos)
+    startPosition = max(startPosition - boxStart, 0);
+    endPosition = min(endPosition - boxStart, static_cast<int>(len()));
+    if (startPosition >= endPosition)
         return IntRect();
 
     RenderText* text = textRenderer();
@@ -177,17 +102,103 @@ IntRect SVGInlineTextBox::selectionRect(int, int, int startPos, int endPos)
     ASSERT(style);
 
     FloatRect selectionRect;
+    int fragmentStartPosition = 0;
+    int fragmentEndPosition = 0;
 
-    // Figure out which text chunk part is hit
-    const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
-    for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it)
-        selectionRect.unite(selectionRectForTextChunkPart(*it, startPos, endPos, style));
+    unsigned textFragmentsSize = m_textFragments.size();
+    for (unsigned i = 0; i < textFragmentsSize; ++i) {
+        const SVGTextFragment& fragment = m_textFragments.at(i);
 
-    // Resepect possible chunk transformation
-    if (m_chunkTransformation.isIdentity())
-        return enclosingIntRect(selectionRect);
+        fragmentStartPosition = startPosition;
+        fragmentEndPosition = endPosition;
+        if (!mapStartEndPositionsIntoFragmentCoordinates(fragment, fragmentStartPosition, fragmentEndPosition))
+            continue;
 
-    return enclosingIntRect(m_chunkTransformation.mapRect(selectionRect));
+        FloatRect fragmentRect = selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, style);
+        if (!fragment.transform.isIdentity())
+            fragmentRect = fragment.transform.mapRect(fragmentRect);
+
+        selectionRect.unite(fragmentRect);
+    }
+
+    return enclosingIntRect(selectionRect);
+}
+
+void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
+{
+    ASSERT(paintInfo.shouldPaintWithinRoot(renderer()));
+    ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
+    ASSERT(truncation() == cNoTruncation);
+
+    if (renderer()->style()->visibility() != VISIBLE)
+        return;
+
+    RenderObject* parentRenderer = parent()->renderer();
+    ASSERT(parentRenderer);
+    ASSERT(!parentRenderer->document()->printing());
+
+    // Determine whether or not we're selected.
+    bool paintSelectedTextOnly = paintInfo.phase == PaintPhaseSelection;
+    bool hasSelection = selectionState() != RenderObject::SelectionNone;
+    if (!hasSelection || paintSelectedTextOnly)
+        return;
+
+    Color backgroundColor = renderer()->selectionBackgroundColor();
+    if (!backgroundColor.isValid() || !backgroundColor.alpha())
+        return;
+
+    RenderStyle* style = parentRenderer->style();
+    ASSERT(style);
+
+    const SVGRenderStyle* svgStyle = style->svgStyle();
+    ASSERT(svgStyle);
+
+    bool hasFill = svgStyle->hasFill();
+    bool hasStroke = svgStyle->hasStroke();
+
+    RenderStyle* selectionStyle = style;
+    if (hasSelection) {
+        selectionStyle = parentRenderer->getCachedPseudoStyle(SELECTION);
+        if (selectionStyle) {
+            const SVGRenderStyle* svgSelectionStyle = selectionStyle->svgStyle();
+            ASSERT(svgSelectionStyle);
+
+            if (!hasFill)
+                hasFill = svgSelectionStyle->hasFill();
+            if (!hasStroke)
+                hasStroke = svgSelectionStyle->hasStroke();
+        } else
+            selectionStyle = style;
+    }
+
+    int startPosition, endPosition;
+    selectionStartEnd(startPosition, endPosition);
+
+    int fragmentStartPosition = 0;
+    int fragmentEndPosition = 0;
+    unsigned textFragmentsSize = m_textFragments.size();
+    for (unsigned i = 0; i < textFragmentsSize; ++i) {
+        SVGTextFragment& fragment = m_textFragments.at(i);
+        ASSERT(!m_paintingResource);
+
+        fragmentStartPosition = startPosition;
+        fragmentEndPosition = endPosition;
+        if (!mapStartEndPositionsIntoFragmentCoordinates(fragment, fragmentStartPosition, fragmentEndPosition))
+            continue;
+
+        paintInfo.context->save();
+
+        if (!fragment.transform.isIdentity())
+            paintInfo.context->concatCTM(fragment.transform);
+
+        paintInfo.context->setFillColor(backgroundColor, style->colorSpace());
+        paintInfo.context->fillRect(selectionRectForTextFragment(fragment, fragmentStartPosition, fragmentEndPosition, style), backgroundColor, style->colorSpace());
+
+        m_paintingResourceMode = ApplyToDefaultMode;
+        paintInfo.context->restore();
+    }
+
+    ASSERT(!m_paintingResource);
 }
 
 void SVGInlineTextBox::paint(PaintInfo& paintInfo, int, int)
@@ -205,6 +216,11 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, int, int)
     RenderObject* parentRenderer = parent()->renderer();
     ASSERT(parentRenderer);
 
+    bool paintSelectedTextOnly = paintInfo.phase == PaintPhaseSelection;
+    bool hasSelection = !parentRenderer->document()->printing() && selectionState() != RenderObject::SelectionNone;
+    if (!hasSelection && paintSelectedTextOnly)
+        return;
+
     RenderStyle* style = parentRenderer->style();
     ASSERT(style);
 
@@ -213,13 +229,6 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, int, int)
 
     bool hasFill = svgStyle->hasFill();
     bool hasStroke = svgStyle->hasStroke();
-    bool paintSelectedTextOnly = paintInfo.phase == PaintPhaseSelection;
-
-    // Determine whether or not we're selected.
-    bool isPrinting = parentRenderer->document()->printing();
-    bool hasSelection = !isPrinting && selectionState() != RenderObject::SelectionNone;
-    if (!hasSelection && paintSelectedTextOnly)
-        return;
 
     RenderStyle* selectionStyle = style;
     if (hasSelection) {
@@ -236,62 +245,43 @@ void SVGInlineTextBox::paint(PaintInfo& paintInfo, int, int)
             selectionStyle = style;
     }
 
-    // Compute text match marker rects. It needs to traverse all text chunk parts to figure
-    // out the union selection rect of all text chunk parts that contribute to the selection.
-    computeTextMatchMarkerRect(style);
-    ASSERT(!m_currentChunkPart.isValid());
-
-    const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
-    for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it) {
+    unsigned textFragmentsSize = m_textFragments.size();
+    for (unsigned i = 0; i < textFragmentsSize; ++i) {
+        SVGTextFragment& fragment = m_textFragments.at(i);
         ASSERT(!m_paintingResource);
 
-        // constructTextRun() uses the current chunk part to figure out what text to render.
-        m_currentChunkPart = *it;
         paintInfo.context->save();
 
-        // Prepare context and draw text
-        if (!m_chunkTransformation.isIdentity())
-            paintInfo.context->concatCTM(m_chunkTransformation);
-
-        Vector<SVGChar>::const_iterator firstCharacter = m_currentChunkPart.firstCharacter;
-        AffineTransform characterTransform = firstCharacter->characterTransform();
-        if (!characterTransform.isIdentity())
-            paintInfo.context->concatCTM(characterTransform);
-
-        FloatPoint textOrigin(firstCharacter->x, firstCharacter->y);
-
-        // Draw background once (not in both fill/stroke phases)
-        if (!isPrinting && !paintSelectedTextOnly && hasSelection)
-            paintSelection(paintInfo.context, textOrigin, style);
+        if (!fragment.transform.isIdentity())
+            paintInfo.context->concatCTM(fragment.transform);
 
         // Spec: All text decorations except line-through should be drawn before the text is filled and stroked; thus, the text is rendered on top of these decorations.
         int decorations = style->textDecorationsInEffect();
         if (decorations & UNDERLINE)
-            paintDecoration(paintInfo.context, textOrigin, UNDERLINE, hasSelection);
+            paintDecoration(paintInfo.context, UNDERLINE, fragment);
         if (decorations & OVERLINE)
-            paintDecoration(paintInfo.context, textOrigin, OVERLINE, hasSelection);
+            paintDecoration(paintInfo.context, OVERLINE, fragment);
 
         // Fill text
         if (hasFill) {
             m_paintingResourceMode = ApplyToFillMode | ApplyToTextMode;
-            paintText(paintInfo.context, textOrigin, style, selectionStyle, hasSelection, paintSelectedTextOnly);
+            paintText(paintInfo.context, style, selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
         }
 
         // Stroke text
         if (hasStroke) {
             m_paintingResourceMode = ApplyToStrokeMode | ApplyToTextMode;
-            paintText(paintInfo.context, textOrigin, style, selectionStyle, hasSelection, paintSelectedTextOnly);
+            paintText(paintInfo.context, style, selectionStyle, fragment, hasSelection, paintSelectedTextOnly);
         }
 
         // Spec: Line-through should be drawn after the text is filled and stroked; thus, the line-through is rendered on top of the text.
         if (decorations & LINE_THROUGH)
-            paintDecoration(paintInfo.context, textOrigin, LINE_THROUGH, hasSelection);
+            paintDecoration(paintInfo.context, LINE_THROUGH, fragment);
 
         m_paintingResourceMode = ApplyToDefaultMode;
         paintInfo.context->restore();
     }
 
-    m_currentChunkPart = SVGTextChunkPart();
     ASSERT(!m_paintingResource);
 }
 
@@ -350,88 +340,62 @@ void SVGInlineTextBox::restoreGraphicsContextAfterTextPainting(GraphicsContext*&
 #endif
 }
 
-TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style) const
+TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFragment& fragment) const
 {
-    ASSERT(m_currentChunkPart.isValid());
-    return svgTextRunForInlineTextBox(textRenderer()->text()->characters() + start() + m_currentChunkPart.offset, m_currentChunkPart.length, style, this);
+    ASSERT(style);
+    ASSERT(textRenderer());
+
+    RenderText* text = textRenderer();
+    ASSERT(text);
+
+    TextRun run(text->characters() + fragment.positionListOffset
+                , fragment.length
+                , false /* allowTabs */
+                , 0 /* xPos, only relevant with allowTabs=true */
+                , 0 /* padding, only relevant for justified text, not relevant for SVG */
+                , direction() == RTL
+                , m_dirOverride || style->visuallyOrdered() /* directionalOverride */);
+
+#if ENABLE(SVG_FONTS)
+    RenderObject* parentRenderer = parent()->renderer();
+    ASSERT(parentRenderer);
+
+    run.setReferencingRenderObject(parentRenderer);
+#endif
+
+    // Disable any word/character rounding.
+    run.disableRoundingHacks();
+
+    // We handle letter & word spacing ourselves.
+    run.disableSpacing();
+    return run;
 }
 
-void SVGInlineTextBox::mapStartEndPositionsIntoChunkPartCoordinates(int& startPos, int& endPos, const SVGTextChunkPart& part) const
+bool SVGInlineTextBox::mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment& fragment, int& startPosition, int& endPosition) const
 {
-    if (startPos >= endPos)
-        return;
+    if (startPosition >= endPosition)
+        return false;
 
-    // Take <text x="10 50 100">ABC</text> as example. We're called three times from paint(), because all absolute positioned
-    // characters are drawn on their own. For each of them we want to find out whehter it's selected. startPos=0, endPos=1
-    // could mean A, B or C is hit, depending on which chunk part is processed at the moment. With the offset & length values
-    // of each chunk part we can easily find out which one is meant to be selected. Bail out for the other chunk parts.
-    // If starPos is behind the current chunk or the endPos ends before this text chunk part, we're not meant to be selected.
-    if (startPos >= part.offset + part.length || endPos <= part.offset) {
-        startPos = 0;
-        endPos = -1;
-        return;
-    }
+    int offset = static_cast<int>(fragment.positionListOffset) - start();
+    int length = static_cast<int>(fragment.length);
 
-    // The current processed chunk part is hit. When painting the selection, constructTextRun() builds
-    // a TextRun object whose startPos is 0 and endPos is chunk part length. The code below maps the incoming
-    // startPos/endPos range into a [0, part length] coordinate system, relative to the current chunk part.
-    if (startPos < part.offset)
-        startPos = 0;
+    if (startPosition >= offset + length || endPosition <= offset)
+        return false;
+
+    if (startPosition < offset)
+        startPosition = 0;
     else
-        startPos -= part.offset;
+        startPosition -= offset;
 
-    if (endPos > part.offset + part.length)
-        endPos = part.length;
+    if (endPosition > offset + length)
+        endPosition = length;
     else {
-        ASSERT(endPos >= part.offset);
-        endPos -= part.offset;
+        ASSERT(endPosition >= offset);
+        endPosition -= offset;
     }
 
-    ASSERT(startPos < endPos);
-}
-
-void SVGInlineTextBox::selectionStartEnd(int& startPos, int& endPos)
-{
-    InlineTextBox::selectionStartEnd(startPos, endPos);
-
-    if (!m_currentChunkPart.isValid())
-        return;
-
-    mapStartEndPositionsIntoChunkPartCoordinates(startPos, endPos, m_currentChunkPart);
-}
-
-void SVGInlineTextBox::computeTextMatchMarkerRect(RenderStyle* style)
-{
-    ASSERT(!m_currentChunkPart.isValid());
-    Node* node = renderer()->node();
-    if (!node || !node->inDocument())
-        return;
-
-    Document* document = renderer()->document();
-    Vector<DocumentMarker> markers = document->markers()->markersForNode(renderer()->node());
-
-    Vector<DocumentMarker>::iterator markerEnd = markers.end();
-    for (Vector<DocumentMarker>::iterator markerIt = markers.begin(); markerIt != markerEnd; ++markerIt) {
-        const DocumentMarker& marker = *markerIt;
-
-        // SVG is only interessted in the TextMatch marker, for now.
-        if (marker.type != DocumentMarker::TextMatch)
-            continue;
-
-        FloatRect markerRect;
-        int partStartPos = max(marker.startOffset - start(), static_cast<unsigned>(0));
-        int partEndPos = min(marker.endOffset - start(), static_cast<unsigned>(len()));
-
-        // Iterate over all text chunk parts, to see which ones have to be highlighted
-        const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
-        for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it)
-            markerRect.unite(selectionRectForTextChunkPart(*it, partStartPos, partEndPos, style));
-
-        if (!m_chunkTransformation.isIdentity())
-            markerRect = m_chunkTransformation.mapRect(markerRect);
-
-        document->markers()->setRenderedRectForMarker(node, marker, renderer()->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
-    }
+    ASSERT(startPosition < endPosition);
+    return true;
 }
 
 static inline float positionOffsetForDecoration(ETextDecoration decoration, const Font& font, float thickness)
@@ -455,17 +419,15 @@ static inline float thicknessForDecoration(ETextDecoration, const Font& font)
     // Compatible with Batik/Opera
     return font.size() / 20.0f;
 }
- 
-static inline RenderObject* findRenderObjectDefininingTextDecoration(InlineFlowBox* parentBox, ETextDecoration decoration)
+
+static inline RenderObject* findRenderObjectDefininingTextDecoration(InlineFlowBox* parentBox)
 {
-    // Lookup render object which has text-decoration set.
+    // Lookup first render object in parent hierarchy which has text-decoration set.
     RenderObject* renderer = 0;
     while (parentBox) {
         renderer = parentBox->renderer();
 
-        // Explicitely check textDecoration() not textDecorationsInEffect(), which is inherited to
-        // children, as we want to lookup the render object whose style defined the text-decoration.
-        if (renderer->style() && renderer->style()->textDecoration() & decoration)
+        if (renderer->style() && renderer->style()->textDecoration() != TDNONE)
             break;
 
         parentBox = parentBox->parent();
@@ -475,12 +437,18 @@ static inline RenderObject* findRenderObjectDefininingTextDecoration(InlineFlowB
     return renderer;
 }
 
-void SVGInlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& textOrigin, ETextDecoration decoration, bool hasSelection)
+void SVGInlineTextBox::paintDecoration(GraphicsContext* context, ETextDecoration decoration, const SVGTextFragment& fragment)
 {
+    if (textRenderer()->style()->textDecorationsInEffect() == TDNONE)
+        return;
+
     // Find out which render style defined the text-decoration, as its fill/stroke properties have to be used for drawing instead of ours.
-    RenderObject* decorationRenderer = findRenderObjectDefininingTextDecoration(parent(), decoration);
+    RenderObject* decorationRenderer = findRenderObjectDefininingTextDecoration(parent());
     RenderStyle* decorationStyle = decorationRenderer->style();
     ASSERT(decorationStyle);
+
+    if (decorationStyle->visibility() == HIDDEN)
+        return;
 
     const SVGRenderStyle* svgDecorationStyle = decorationStyle->svgStyle();
     ASSERT(svgDecorationStyle);
@@ -488,39 +456,21 @@ void SVGInlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoin
     bool hasDecorationFill = svgDecorationStyle->hasFill();
     bool hasDecorationStroke = svgDecorationStyle->hasStroke();
 
-    if (hasSelection) {
-        if (RenderStyle* pseudoStyle = decorationRenderer->getCachedPseudoStyle(SELECTION)) {
-            decorationStyle = pseudoStyle;
-
-            svgDecorationStyle = decorationStyle->svgStyle();
-            ASSERT(svgDecorationStyle);
-
-            if (!hasDecorationFill)
-                hasDecorationFill = svgDecorationStyle->hasFill();
-            if (!hasDecorationStroke)
-                hasDecorationStroke = svgDecorationStyle->hasStroke();
-        }
-    }
-
-    if (decorationStyle->visibility() == HIDDEN)
-        return;
-
     if (hasDecorationFill) {
         m_paintingResourceMode = ApplyToFillMode;
-        paintDecorationWithStyle(context, textOrigin, decorationRenderer, decoration);
+        paintDecorationWithStyle(context, decoration, fragment, decorationRenderer);
     }
 
     if (hasDecorationStroke) {
         m_paintingResourceMode = ApplyToStrokeMode;
-        paintDecorationWithStyle(context, textOrigin, decorationRenderer, decoration);
+        paintDecorationWithStyle(context, decoration, fragment, decorationRenderer);
     }
 }
 
-void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, const FloatPoint& textOrigin, RenderObject* decorationRenderer, ETextDecoration decoration)
+void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, ETextDecoration decoration, const SVGTextFragment& fragment, RenderObject* decorationRenderer)
 {
     ASSERT(!m_paintingResource);
     ASSERT(m_paintingResourceMode != ApplyToDefaultMode);
-    ASSERT(m_currentChunkPart.isValid());
 
     RenderStyle* decorationStyle = decorationRenderer->style();
     ASSERT(decorationStyle);
@@ -529,12 +479,11 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, const 
 
     // The initial y value refers to overline position.
     float thickness = thicknessForDecoration(decoration, font);
-    float x = textOrigin.x();
-    float y = textOrigin.y() - font.ascent() + positionOffsetForDecoration(decoration, font, thickness);
+    float y = fragment.y - font.ascent() + positionOffsetForDecoration(decoration, font, thickness);
 
     context->save();
     context->beginPath();
-    context->addPath(Path::createRectangle(FloatRect(x, y, m_currentChunkPart.width, thickness)));
+    context->addPath(Path::createRectangle(FloatRect(fragment.x, y, fragment.width, thickness)));
 
     if (acquirePaintingResource(context, decorationRenderer, decorationStyle))
         releasePaintingResource(context);
@@ -542,35 +491,14 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, const 
     context->restore();
 }
 
-void SVGInlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& textOrigin, RenderStyle* style)
-{
-    // See if we have a selection to paint at all.
-    int startPos, endPos;
-    selectionStartEnd(startPos, endPos);
-    if (startPos >= endPos)
-        return;
-
-    Color backgroundColor = renderer()->selectionBackgroundColor();
-    if (!backgroundColor.isValid() || !backgroundColor.alpha())
-        return;
-
-    const Font& font = style->font();
-
-    FloatPoint selectionOrigin = textOrigin;
-    selectionOrigin.move(0, -font.ascent());
-
-    context->save();
-    context->setFillColor(backgroundColor, style->colorSpace());
-    context->fillRect(font.selectionRectForText(constructTextRun(style), selectionOrigin, m_currentChunkPart.height, startPos, endPos), backgroundColor, style->colorSpace());
-    context->restore();
-}
-
-void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, const FloatPoint& textOrigin, RenderStyle* style, TextRun& textRun, int startPos, int endPos)
+void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, RenderStyle* style, TextRun& textRun, const SVGTextFragment& fragment, int startPosition, int endPosition)
 {
     const Font& font = style->font();
     const ShadowData* shadow = style->textShadow();
 
-    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - font.ascent()), FloatSize(m_currentChunkPart.width, m_currentChunkPart.height));
+    FloatPoint textOrigin(fragment.x, fragment.y);
+    FloatRect shadowRect(FloatPoint(textOrigin.x(), textOrigin.y() - font.ascent()), FloatSize(fragment.width, fragment.height));
+
     do {
         if (!prepareGraphicsContextForTextPainting(context, textRun, style))
             break;
@@ -579,7 +507,7 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, const Floa
         if (shadow)
             extraOffset = applyShadowToGraphicsContext(context, shadow, shadowRect, false /* stroked */, true /* opaque */);
 
-        font.drawText(context, textRun, textOrigin + extraOffset, startPos, endPos);
+        font.drawText(context, textRun, textOrigin + extraOffset, startPosition, endPosition);
         restoreGraphicsContextAfterTextPainting(context, textRun);
 
         if (!shadow)
@@ -594,293 +522,69 @@ void SVGInlineTextBox::paintTextWithShadows(GraphicsContext* context, const Floa
     } while (shadow);
 }
 
-void SVGInlineTextBox::paintText(GraphicsContext* context, const FloatPoint& textOrigin, RenderStyle* style, RenderStyle* selectionStyle, bool hasSelection, bool paintSelectedTextOnly)
+void SVGInlineTextBox::paintText(GraphicsContext* context, RenderStyle* style, RenderStyle* selectionStyle, const SVGTextFragment& fragment, bool hasSelection, bool paintSelectedTextOnly)
 {
     ASSERT(style);
     ASSERT(selectionStyle);
-    ASSERT(m_currentChunkPart.isValid());
 
-    int startPos = 0;
-    int endPos = 0;
-    selectionStartEnd(startPos, endPos);
+    int startPosition = 0;
+    int endPosition = 0;
+    if (hasSelection) {
+        selectionStartEnd(startPosition, endPosition);
+        hasSelection = mapStartEndPositionsIntoFragmentCoordinates(fragment, startPosition, endPosition);
+    }
 
     // Fast path if there is no selection, just draw the whole chunk part using the regular style
-    TextRun textRun(constructTextRun(style));
-    if (!hasSelection || startPos >= endPos) {
-        paintTextWithShadows(context, textOrigin, style, textRun, 0, m_currentChunkPart.length);
+    TextRun textRun(constructTextRun(style, fragment));
+    if (!hasSelection || startPosition >= endPosition) {
+        paintTextWithShadows(context, style, textRun, fragment, 0, fragment.length);
         return;
     }
 
     // Eventually draw text using regular style until the start position of the selection
-    if (startPos > 0 && !paintSelectedTextOnly)
-        paintTextWithShadows(context, textOrigin, style, textRun, 0, startPos);
+    if (startPosition > 0 && !paintSelectedTextOnly)
+        paintTextWithShadows(context, style, textRun, fragment, 0, startPosition);
 
     // Draw text using selection style from the start to the end position of the selection
     if (style != selectionStyle)
         SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifferenceRepaint, selectionStyle);
 
-    TextRun selectionTextRun(constructTextRun(selectionStyle));
-    paintTextWithShadows(context, textOrigin, selectionStyle, textRun, startPos, endPos);
+    TextRun selectionTextRun(constructTextRun(selectionStyle, fragment));
+    paintTextWithShadows(context, selectionStyle, textRun, fragment, startPosition, endPosition);
 
     if (style != selectionStyle)
         SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifferenceRepaint, style);
 
     // Eventually draw text using regular style from the end position of the selection to the end of the current chunk part
-    if (endPos < m_currentChunkPart.length && !paintSelectedTextOnly)
-        paintTextWithShadows(context, textOrigin, style, textRun, endPos, m_currentChunkPart.length);
+    if (endPosition < static_cast<int>(fragment.length) && !paintSelectedTextOnly)
+        paintTextWithShadows(context, style, textRun, fragment, endPosition, fragment.length);
 }
 
-void SVGInlineTextBox::buildLayoutInformation(SVGCharacterLayoutInfo& info, SVGLastGlyphInfo& lastGlyph)
+IntRect SVGInlineTextBox::calculateBoundaries() const
 {
+    FloatRect textRect;
+
     RenderText* textRenderer = this->textRenderer();
     ASSERT(textRenderer);
 
     RenderStyle* style = textRenderer->style();
     ASSERT(style);
 
-    RenderObject* parentRenderer = parent()->renderer();
-    ASSERT(parentRenderer);
-    ASSERT(parentRenderer->node());
-    ASSERT(parentRenderer->node()->isSVGElement());
-    SVGElement* lengthContext = static_cast<SVGElement*>(parentRenderer->node());
-
-    const Font& font = style->font();
-    const UChar* characters = textRenderer->characters();
-
-    unsigned startPosition = start();
-    unsigned endPosition = end();
-    unsigned length = len();
-
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    bool isVerticalText = isVerticalWritingMode(svgStyle);
-
-    int charsConsumed = 0;
-    for (unsigned i = 0; i < length; i += charsConsumed) {
-        SVGChar svgChar;
-
-        if (info.inPathLayout())
-            svgChar.pathData = SVGCharOnPath::create();
-
-        float glyphWidth = 0.0f;
-        float glyphHeight = 0.0f;
-        String glyphName;
-        String unicodeString;
-        measureCharacter(style, i, charsConsumed, glyphName, unicodeString, glyphWidth, glyphHeight);
-
-        bool assignedX = false;
-        bool assignedY = false;
-
-        if (info.xValueAvailable() && (!info.inPathLayout() || (info.inPathLayout() && !isVerticalText))) {
-            if (!isVerticalText)
-                svgChar.newTextChunk = true;
-
-            assignedX = true;
-            svgChar.drawnSeperated = true;
-            info.curx = info.xValueNext();
-        }
-
-        if (info.yValueAvailable() && (!info.inPathLayout() || (info.inPathLayout() && isVerticalText))) {
-            if (isVerticalText)
-                svgChar.newTextChunk = true;
-
-            assignedY = true;
-            svgChar.drawnSeperated = true;
-            info.cury = info.yValueNext();
-        }
-
-        float dx = 0.0f;
-        float dy = 0.0f;
-
-        // Apply x-axis shift
-        if (info.dxValueAvailable()) {
-            svgChar.drawnSeperated = true;
-
-            dx = info.dxValueNext();
-            info.dx += dx;
-
-            if (!info.inPathLayout())
-                info.curx += dx;
-        }
-
-        // Apply y-axis shift
-        if (info.dyValueAvailable()) {
-            svgChar.drawnSeperated = true;
-
-            dy = info.dyValueNext();
-            info.dy += dy;
-
-            if (!info.inPathLayout())
-                info.cury += dy;
-        }
-
-        // Take letter & word spacing and kerning into account
-        float spacing = font.letterSpacing() + calculateCSSKerning(lengthContext, style);
-
-        const UChar* currentCharacter = characters + (!isLeftToRightDirection() ? endPosition - i : startPosition + i);
-        const UChar* lastCharacter = 0;
-
-        if (!isLeftToRightDirection()) {
-            if (i < endPosition)
-                lastCharacter = characters + endPosition - i +  1;
-        } else {
-            if (i > 0)
-                lastCharacter = characters + startPosition + i - 1;
-        }
-
-        // FIXME: SVG Kerning doesn't get applied on texts on path.
-        bool appliedSVGKerning = applySVGKerning(info, style, lastGlyph, unicodeString, glyphName, isVerticalText);
-        if (info.nextDrawnSeperated || spacing != 0.0f || appliedSVGKerning) {
-            info.nextDrawnSeperated = false;
-            svgChar.drawnSeperated = true;
-        }
-
-        if (currentCharacter && Font::treatAsSpace(*currentCharacter) && lastCharacter && !Font::treatAsSpace(*lastCharacter)) {
-            spacing += font.wordSpacing();
-
-            if (spacing != 0.0f && !info.inPathLayout())
-                info.nextDrawnSeperated = true;
-        }
-
-        float orientationAngle = glyphOrientationToAngle(svgStyle, isVerticalText, *currentCharacter);
-
-        float xOrientationShift = 0.0f;
-        float yOrientationShift = 0.0f;
-        float glyphAdvance = applyGlyphAdvanceAndShiftRespectingOrientation(isVerticalText, orientationAngle, glyphWidth, glyphHeight,
-                                                                            font, svgChar, xOrientationShift, yOrientationShift);
-
-        // Handle textPath layout mode
-        if (info.inPathLayout()) {
-            float extraAdvance = isVerticalText ? dy : dx;
-            float newOffset = FLT_MIN;
-
-            if (assignedX && !isVerticalText)
-                newOffset = info.curx;
-            else if (assignedY && isVerticalText)
-                newOffset = info.cury;
-
-            float correctedGlyphAdvance = glyphAdvance;
-
-            // Handle lengthAdjust="spacingAndGlyphs" by specifying per-character scale operations
-            if (info.pathTextLength && info.pathChunkLength) { 
-                if (isVerticalText) {
-                    svgChar.pathData->yScale = info.pathChunkLength / info.pathTextLength;
-                    spacing *= svgChar.pathData->yScale;
-                    correctedGlyphAdvance *= svgChar.pathData->yScale;
-                } else {
-                    svgChar.pathData->xScale = info.pathChunkLength / info.pathTextLength;
-                    spacing *= svgChar.pathData->xScale;
-                    correctedGlyphAdvance *= svgChar.pathData->xScale;
-                }
-            }
-
-            // Handle letter & word spacing on text path
-            float pathExtraAdvance = info.pathExtraAdvance;
-            info.pathExtraAdvance += spacing;
-
-            svgChar.pathData->hidden = !info.nextPathLayoutPointAndAngle(correctedGlyphAdvance, extraAdvance, newOffset);
-            svgChar.drawnSeperated = true;
-
-            info.pathExtraAdvance = pathExtraAdvance;
-        }
-
-        // Apply rotation
-        if (info.angleValueAvailable())
-            info.angle = info.angleValueNext();
-
-        // Apply baseline-shift
-        if (info.baselineShiftValueAvailable()) {
-            svgChar.drawnSeperated = true;
-            float shift = info.baselineShiftValueNext();
-
-            if (isVerticalText)
-                info.shiftx += shift;
-            else
-                info.shifty -= shift;
-        }
-
-        // Take dominant-baseline / alignment-baseline into account
-        yOrientationShift += alignmentBaselineToShift(isVerticalText, textRenderer, font);
-
-        svgChar.x = info.curx;
-        svgChar.y = info.cury;
-        svgChar.angle = info.angle;
-
-        // For text paths any shift (dx/dy/baseline-shift) has to be applied after the rotation
-        if (!info.inPathLayout()) {
-            svgChar.x += info.shiftx + xOrientationShift;
-            svgChar.y += info.shifty + yOrientationShift;
-
-            if (orientationAngle != 0.0f)
-                svgChar.angle += orientationAngle;
-
-            if (svgChar.angle != 0.0f)
-                svgChar.drawnSeperated = true;
-        } else {
-            svgChar.pathData->orientationAngle = orientationAngle;
-
-            if (isVerticalText)
-                svgChar.angle -= 90.0f;
-
-            svgChar.pathData->xShift = info.shiftx + xOrientationShift;
-            svgChar.pathData->yShift = info.shifty + yOrientationShift;
-
-            // Translate to glyph midpoint
-            if (isVerticalText) {
-                svgChar.pathData->xShift += info.dx;
-                svgChar.pathData->yShift -= glyphAdvance / 2.0f;
-            } else {
-                svgChar.pathData->xShift -= glyphAdvance / 2.0f;
-                svgChar.pathData->yShift += info.dy;
-            }
-        }
-
-        // Advance to new position
-        if (isVerticalText) {
-            svgChar.drawnSeperated = true;
-            info.cury += glyphAdvance + spacing;
-        } else
-            info.curx += glyphAdvance + spacing;
-
-        // Advance to next character group
-        for (int k = 0; k < charsConsumed; ++k) {
-            info.svgChars.append(svgChar);
-            info.processedSingleCharacter();
-            svgChar.drawnSeperated = false;
-            svgChar.newTextChunk = false;
-        }
-    }
-}
-
-FloatRect SVGInlineTextBox::calculateGlyphBoundaries(RenderStyle* style, int position, const SVGChar& character) const
-{
-    int charsConsumed = 0;
-    String glyphName;
-    String unicodeString;
-    float glyphWidth = 0.0f;
-    float glyphHeight = 0.0f;
-    measureCharacter(style, position, charsConsumed, glyphName, unicodeString, glyphWidth, glyphHeight);
-
-    FloatRect glyphRect(character.x, character.y - style->font().ascent(), glyphWidth, glyphHeight);
-    glyphRect = character.characterTransform().mapRect(glyphRect);
-    if (m_chunkTransformation.isIdentity())
-        return glyphRect;
-
-    return m_chunkTransformation.mapRect(glyphRect);
-}
-
-IntRect SVGInlineTextBox::calculateBoundaries() const
-{
-    FloatRect textRect;
     int baseline = baselinePosition(true);
+    int heightDifference = baseline - style->font().ascent();
 
-    const Vector<SVGTextChunkPart>::const_iterator end = m_svgTextChunkParts.end();
-    for (Vector<SVGTextChunkPart>::const_iterator it = m_svgTextChunkParts.begin(); it != end; ++it)
-        textRect.unite(it->firstCharacter->characterTransform().mapRect(FloatRect(it->firstCharacter->x, it->firstCharacter->y - baseline, it->width, it->height)));
+    unsigned textFragmentsSize = m_textFragments.size();
+    for (unsigned i = 0; i < textFragmentsSize; ++i) {
+        const SVGTextFragment& fragment = m_textFragments.at(i);
+        FloatRect fragmentRect(fragment.x, fragment.y - baseline, fragment.width, fragment.height + heightDifference);
 
-    if (m_chunkTransformation.isIdentity())
-        return enclosingIntRect(textRect);
+        if (!fragment.transform.isIdentity())
+            fragmentRect = fragment.transform.mapRect(fragmentRect);
 
-    return enclosingIntRect(m_chunkTransformation.mapRect(textRect));
+        textRect.unite(fragmentRect);
+    }
+
+    return enclosingIntRect(textRect);
 }
 
 } // namespace WebCore

@@ -1699,8 +1699,6 @@ IF (ENABLE_SVG)
         rendering/RenderSVGShadowTreeRootContainer.cpp
         rendering/RenderSVGTransformableContainer.cpp
         rendering/RenderSVGViewportContainer.cpp
-        rendering/SVGCharacterData.cpp
-        rendering/SVGCharacterLayoutInfo.cpp
         rendering/SVGImageBufferTools.cpp
         rendering/SVGMarkerLayoutInfo.cpp
         rendering/SVGRenderSupport.cpp
@@ -1709,8 +1707,6 @@ IF (ENABLE_SVG)
         rendering/SVGResourcesCache.cpp
         rendering/SVGResourcesCycleSolver.cpp
         rendering/SVGShadowTreeElements.cpp
-        rendering/SVGTextChunkLayoutInfo.cpp
-        rendering/SVGTextLayoutUtilities.cpp
         rendering/style/SVGRenderStyle.cpp
         rendering/style/SVGRenderStyleDefs.cpp
         rendering/svg/RenderSVGInline.cpp
@@ -1722,8 +1718,10 @@ IF (ENABLE_SVG)
         rendering/svg/SVGInlineTextBox.cpp
         rendering/svg/SVGRootInlineBox.cpp
         rendering/svg/SVGTextChunk.cpp
+        rendering/svg/SVGTextChunkBuilder.cpp
         rendering/svg/SVGTextLayoutAttributes.cpp
         rendering/svg/SVGTextLayoutAttributesBuilder.cpp
+        rendering/svg/SVGTextLayoutEngine.cpp
         rendering/svg/SVGTextLayoutEngineBaseline.cpp
         rendering/svg/SVGTextLayoutEngineSpacing.cpp
         rendering/svg/SVGTextMetrics.cpp

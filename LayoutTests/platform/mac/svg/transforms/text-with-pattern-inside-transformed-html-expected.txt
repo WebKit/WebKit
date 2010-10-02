@@ -29,8 +29,8 @@ layer at (58,84) size 402x405
       RenderSVGResourcePattern {pattern} [id="pat3"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (149,105) size 12x13 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
         RenderPath {rect} at (146,113) size 13x12 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00 Z"]
-      RenderSVGText {text} at (25,174) size 293x56 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 293x56
+      RenderSVGText {text} at (25,174) size 293x57 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 293x57
           chunk 1 text run 1 at (25.00,220.00) startOffset 0 endOffset 15 width 293.00: "Pattern on fill"
       RenderSVGText {text} at (25,224) size 208x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 208x14

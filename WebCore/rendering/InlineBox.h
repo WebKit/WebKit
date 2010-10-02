@@ -139,6 +139,7 @@ public:
     virtual bool isRootInlineBox() const { return false; }
 #if ENABLE(SVG)
     virtual bool isSVGInlineTextBox() const { return false; }
+    virtual bool isSVGInlineFlowBox() const { return false; }
     virtual bool isSVGRootInlineBox() const { return false; }
 #endif
 

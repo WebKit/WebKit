@@ -21,6 +21,7 @@
 #define SVGTextLayoutAttributes_h
 
 #if ENABLE(SVG)
+#include "SVGTextMetrics.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -30,8 +31,10 @@ class SVGTextLayoutAttributes {
 public:
     SVGTextLayoutAttributes();
 
-    void fillWithEmptyValues(unsigned length);
-    void dump();
+    void reserveCapacity(unsigned length);
+    void dump() const;
+
+    static float emptyValue();
 
     Vector<float>& xValues() { return m_xValues; }
     const Vector<float>& xValues() const { return m_xValues; }
@@ -48,31 +51,8 @@ public:
     Vector<float>& rotateValues() { return m_rotateValues; }
     const Vector<float>& rotateValues() const { return m_rotateValues; }
 
-    static float emptyValue();
-
-    struct CharacterData {
-        CharacterData()
-            : spansCharacters(0)
-            , width(0)
-            , height(0)
-        {
-        }
-
-        // When multiple unicode characters map to a single glyph (eg. 'ffi' ligature)
-        // 'spansCharacters' contains the number of characters this glyph spans.
-        int spansCharacters;
-        
-        // The 'glyphName' / 'unicodeString' pair is needed for kerning calculations.
-        String glyphName;
-        String unicodeString;
-
-        // 'width' and 'height' hold the size of this glyph/character.
-        float width;
-        float height;
-    };
-
-    Vector<CharacterData>& characterDataValues() { return m_characterDataValues; }
-    const Vector<CharacterData>& characterDataValues() const { return m_characterDataValues; }
+    Vector<SVGTextMetrics>& textMetricsValues() { return m_textMetricsValues; }
+    const Vector<SVGTextMetrics>& textMetricsValues() const { return m_textMetricsValues; }
 
 private:
     Vector<float> m_xValues;
@@ -80,7 +60,7 @@ private:
     Vector<float> m_dxValues;
     Vector<float> m_dyValues;
     Vector<float> m_rotateValues;
-    Vector<CharacterData> m_characterDataValues;
+    Vector<SVGTextMetrics> m_textMetricsValues;
 };
 
 } // namespace WebCore

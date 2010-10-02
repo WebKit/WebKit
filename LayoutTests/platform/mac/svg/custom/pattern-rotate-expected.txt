@@ -17,17 +17,17 @@ layer at (0,0) size 800x600
           RenderSVGContainer {g} at (36,18) size 136x137
             RenderPath {rect} at (36,18) size 136x137 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="simpledots"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
     RenderSVGContainer {g} at (10,189) size 287x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,200.00)}]
-      RenderSVGText {text} at (0,-11) size 287x44 contains 3 chunk(s)
+      RenderSVGText {text} at (0,-11) size 287x44 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 280x14
           RenderSVGInlineText {#text} at (0,0) size 280x14
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 280.00: "For this test case to be successful, the"
         RenderSVGInlineText {#text} at (280,0) size 7x14
-          chunk 1 text run 2 at (280.00,0.00) startOffset 0 endOffset 1 width 7.00: " "
+          chunk 1 text run 1 at (280.00,0.00) startOffset 0 endOffset 1 width 7.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 273x14
           RenderSVGInlineText {#text} at (0,15) size 273x14
-            chunk 2 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 273.00: "five dots should fit in the rectangle. "
+            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 273.00: "five dots should fit in the rectangle. "
         RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGTSpan {tspan} at (0,0) size 63x14
           RenderSVGInlineText {#text} at (0,30) size 63x14
-            chunk 3 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 63.00: "Bug 14924"
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 63.00: "Bug 14924"
         RenderSVGInlineText {#text} at (0,0) size 0x0

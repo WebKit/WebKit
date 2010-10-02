@@ -198,12 +198,12 @@ layer at (0,0) size 800x600
             chunk 1 text run 1 at (712.00,614.00) startOffset 0 endOffset 39 width 236.00: "RGBA: 120,120,120,100; HSVA: 0,0,47,100"
     RenderSVGContainer {g} at (80,62) size 263x263 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,-400.00)}]
       RenderPath {rect} at (104,62) size 239x239 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [data="M490.00,190.00 L810.00,190.00 L810.00,300.00 L490.00,300.00 Z"]
-      RenderSVGText {text} at (500,306) size 309x37 contains 2 chunk(s)
+      RenderSVGText {text} at (500,306) size 309x37 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 292x17
           chunk 1 text run 1 at (500.00,320.00) startOffset 0 endOffset 41 width 292.00: "This colourPicker has a callBack function"
         RenderSVGTSpan {tspan} at (0,0) size 309x18
           RenderSVGInlineText {#text} at (0,19) size 309x18
-            chunk 2 text run 1 at (500.00,339.20) startOffset 0 endOffset 42 width 309.00: "attached that changes the background color"
+            chunk 1 text run 1 at (500.00,339.20) startOffset 0 endOffset 42 width 309.00: "attached that changes the background color"
       RenderSVGContainer {g} at (115,73) size 218x217
         RenderPath {rect} at (115,73) size 218x217 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M500.00,200.00 L800.00,200.00 L800.00,290.00 L500.00,290.00 Z"]
         RenderPath {rect} at (163,84) size 116x116 [fill={[type=LINEAR-GRADIENT] [id="colourPicker2_hueGradient"]}] [data="M512.00,207.95 L710.00,207.95 L710.00,215.45 L512.00,215.45 Z"]

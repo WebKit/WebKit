@@ -15,20 +15,20 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.50] [color=#FFA500]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#DC143C]
         RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
-          RenderSVGText {text} at (100,151) size 152x59 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 152x59
+          RenderSVGText {text} at (100,151) size 152x60 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 152x60
               chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 5 width 152.00: "BATIK"
         RenderSVGResourceClipper {clipPath} [id="svgClip"] [clipPathUnits=userSpaceOnUse]
-          RenderSVGText {text} at (100,251) size 152x59 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 152x59
+          RenderSVGText {text} at (100,251) size 152x60 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 152x60
               chunk 1 text run 1 at (100.00,300.00) startOffset 0 endOffset 5 width 152.00: "BATIK"
       RenderPath {rect} at (100,160) size 152x45 [fill={[type=LINEAR-GRADIENT] [id="grad"]}] [data="M100.00,160.00 L300.00,160.00 L300.00,205.00 L100.00,205.00 Z"]
-        [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (100,151) size 152x59
+        [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (100,151) size 152x60
       RenderSVGText {text} at (300,189) size 65x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 65x14
           chunk 1 text run 1 at (300.00,200.00) startOffset 0 endOffset 13 width 65.00: "(System font)"
       RenderPath {rect} at (100,260) size 152x45 [fill={[type=LINEAR-GRADIENT] [id="grad"]}] [data="M100.00,260.00 L300.00,260.00 L300.00,305.00 L100.00,305.00 Z"]
-        [clipPath="svgClip"] RenderSVGResourceClipper {clipPath} at (100,251) size 152x59
+        [clipPath="svgClip"] RenderSVGResourceClipper {clipPath} at (100,251) size 152x60
       RenderSVGText {text} at (300,289) size 55x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 55x14
           chunk 1 text run 1 at (300.00,300.00) startOffset 0 endOffset 10 width 55.00: "(SVG font)"

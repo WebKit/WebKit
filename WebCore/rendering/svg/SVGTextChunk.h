@@ -29,10 +29,9 @@ namespace WebCore {
 class SVGInlineTextBox;
 
 // A SVGTextChunk describes a range of SVGTextFragments, see the SVG spec definition of a "text chunk".
-// FIXME: Rename to SVGTextChunk, once the new layout engine has landed.
-class SVGTextChunkNew {
+class SVGTextChunk {
 public:
-    SVGTextChunkNew(bool isVerticalText, ETextAnchor, SVGTextContentElement::SVGLengthAdjustType, float desiredTextLength);
+    SVGTextChunk(bool isVerticalText, ETextAnchor, SVGTextContentElement::SVGLengthAdjustType, float desiredTextLength);
 
     void calculateLength(float& length, unsigned& characters) const;
     float calculateTextAnchorShift(float length) const;

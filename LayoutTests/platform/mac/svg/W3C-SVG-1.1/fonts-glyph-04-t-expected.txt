@@ -2,13 +2,13 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (100,58) size 64x150
+    RenderSVGContainer {g} at (100,58) size 64x152
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGText {text} at (100,58) size 64x50 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 64x50
+      RenderSVGText {text} at (100,58) size 64x52 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 64x52
           chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 3 width 64.00: "ffl"
-      RenderSVGText {text} at (100,158) size 25x50 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 25x50
+      RenderSVGText {text} at (100,158) size 25x52 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 25x52
           chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 3 width 25.00: "ffl"
     RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 284x46

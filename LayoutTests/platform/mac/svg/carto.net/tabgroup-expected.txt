@@ -11,9 +11,9 @@ layer at (0,0) size 800x600
       RenderPath {rect} at (30,147) size 174x96 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#000000]}] [data="M40.00,190.00 L260.00,190.00 L260.00,310.00 L40.00,310.00 Z"]
       RenderPath {rect} at (31,146) size 173x97 [fill={[type=SOLID] [color=#F0F8FF]}] [data="M40.50,188.00 L259.50,188.00 L259.50,309.50 L40.50,309.50 Z"]
       RenderPath {rect} at (23,146) size 188x11 [fill={[type=SOLID] [color=#F0F8FF]}] [data="M30.00,188.00 L270.00,188.00 L270.00,199.50 L30.00,199.50 Z"]
-      RenderSVGText {text} at (10,44) size 190x29 contains 2 chunk(s)
+      RenderSVGText {text} at (10,44) size 190x29 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 190x14
           chunk 1 text run 1 at (10.00,55.00) startOffset 0 endOffset 36 width 190.00: "This is oversize content that can be"
         RenderSVGTSpan {tspan} at (0,0) size 120x14
           RenderSVGInlineText {#text} at (0,15) size 120x14
-            chunk 2 text run 1 at (10.00,70.00) startOffset 0 endOffset 20 width 120.00: "hidden on tab-change"
+            chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 20 width 120.00: "hidden on tab-change"

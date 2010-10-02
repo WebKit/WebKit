@@ -7,18 +7,18 @@ layer at (0,0) size 800x600
         RenderSVGViewportContainer {svg} at (59,38) size 167x149
           RenderPath {rect} at (59,38) size 167x149 [fill={[type=SOLID] [color=#008000]}] [data="M-83.00,-84.00 L83.00,-84.00 L83.00,64.00 L-83.00,64.00 Z"]
     RenderSVGContainer {g} at (50,216) size 363x48 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,230.00)}]
-      RenderSVGText {text} at (0,-14) size 363x48 contains 3 chunk(s)
+      RenderSVGText {text} at (0,-14) size 363x48 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 261x18
           RenderSVGInlineText {#text} at (0,0) size 261x18
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 45 width 261.00: "For this test case to be successful, the rect"
         RenderSVGInlineText {#text} at (261,0) size 4x18
-          chunk 1 text run 2 at (261.00,0.00) startOffset 0 endOffset 1 width 4.00: " "
+          chunk 1 text run 1 at (261.00,0.00) startOffset 0 endOffset 1 width 4.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 359x18
           RenderSVGInlineText {#text} at (0,15) size 359x18
-            chunk 2 text run 1 at (0.00,15.00) startOffset 0 endOffset 55 width 359.00: "above should be .9 transparant green and 200x200 pixels"
+            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 55 width 359.00: "above should be .9 transparant green and 200x200 pixels"
         RenderSVGInlineText {#text} at (359,15) size 4x18
-          chunk 2 text run 2 at (359.00,15.00) startOffset 0 endOffset 1 width 4.00: " "
+          chunk 1 text run 1 at (359.00,15.00) startOffset 0 endOffset 1 width 4.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 71x18
           RenderSVGInlineText {#text} at (0,30) size 71x18
-            chunk 3 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 71.00: "Bug 11909"
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 71.00: "Bug 11909"
         RenderSVGInlineText {#text} at (0,0) size 0x0

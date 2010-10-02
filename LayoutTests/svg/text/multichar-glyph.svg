@@ -112,6 +112,18 @@ shouldBe("t.getStartPositionOfChar(6).x", '0 + 70 + 100 + 70');
 shouldBe("t.getStartPositionOfChar(7).x", '0 + 70 + 100 + 70 + 70');
 shouldBe("t.getStartPositionOfChar(8).x", '0 + 70 + 100 + 70 + 70');
 shouldBe("t.getStartPositionOfChar(9).x", '0 + 70 + 100 + 70 + 70 + 80');
+
+// The end positions of char n must map to the start position of char n-1.
+shouldBe("t.getEndPositionOfChar(0).x", '70');
+shouldBe("t.getEndPositionOfChar(1).x", '70');
+shouldBe("t.getEndPositionOfChar(2).x", '70 + 100');
+shouldBe("t.getEndPositionOfChar(3).x", '70 + 100 + 70');
+shouldBe("t.getEndPositionOfChar(4).x", '70 + 100 + 70');
+shouldBe("t.getEndPositionOfChar(5).x", '70 + 100 + 70 + 70');
+shouldBe("t.getEndPositionOfChar(6).x", '70 + 100 + 70 + 70');
+shouldBe("t.getEndPositionOfChar(7).x", '70 + 100 + 70 + 70 + 80');
+shouldBe("t.getEndPositionOfChar(8).x", '70 + 100 + 70 + 70 + 80');
+shouldBe("t.getEndPositionOfChar(9).x", '70 + 100 + 70 + 70 + 80 + 60');
 ]]>
 </script>
 </body>

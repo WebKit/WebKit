@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (10,176) size 546x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 546x18
             chunk 1 text run 1 at (10.00,190.00) startOffset 0 endOffset 81 width 471.00: "Opera falls back to 'black' (default), Firefox to 'none', and Safari to 'black'. "
-            chunk 1 text run 2 at (481.00,190.00) startOffset 0 endOffset 10 width 75.00: "Bug 11017."
+            chunk 1 text run 1 at (481.00,190.00) startOffset 0 endOffset 10 width 75.00: "Bug 11017."

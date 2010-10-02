@@ -9,7 +9,7 @@ layer at (0,0) size 480x360
           chunk 1 (middle anchor) text run 1 at (97.00,25.00) startOffset 0 endOffset 12 width 133.00: "Text Cursor "
         RenderSVGInline {a} at (0,0) size 153x31
           RenderSVGInlineText {#text} at (133,0) size 153x31
-            chunk 1 (middle anchor) text run 2 at (230.00,25.00) startOffset 0 endOffset 14 width 153.00: "Pointer Cursor"
+            chunk 1 (middle anchor) text run 1 at (230.00,25.00) startOffset 0 endOffset 14 width 153.00: "Pointer Cursor"
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderPath {rect} at (118,38) size 244x240 [stroke={[type=SOLID] [color=#666666] [stroke width=3.00]}] [data="M120.00,40.00 L360.00,40.00 L360.00,276.00 L120.00,276.00 Z"]
       RenderSVGContainer {g} at (148,70) size 184x176

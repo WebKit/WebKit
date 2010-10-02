@@ -1084,35 +1084,6 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
     }
     ASSERT(m_text);
 
-#if ENABLE(SVG)
-    if (isSVGInlineText()) {
-        if (style() && style()->whiteSpace() == PRE) {
-            // Spec: When xml:space="preserve", the SVG user agent will do the following using a
-            // copy of the original character data content. It will convert all newline and tab
-            // characters into space characters. Then, it will draw all space characters, including
-            // leading, trailing and multiple contiguous space characters.
-
-            m_text.replace('\n', ' ');
-
-            // If xml:space="preserve" is set, white-space is set to "pre", which
-            // preserves leading, trailing & contiguous space character for us.
-       } else {
-            // Spec: When xml:space="default", the SVG user agent will do the following using a
-            // copy of the original character data content. First, it will remove all newline
-            // characters. Then it will convert all tab characters into space characters.
-            // Then, it will strip off all leading and trailing space characters.
-            // Then, all contiguous space characters will be consolidated.    
-
-           m_text.replace('\n', StringImpl::empty());
-
-           // If xml:space="default" is set, white-space is set to "nowrap", which handles
-           // leading, trailing & contiguous space character removal for us.
-        }
-
-        m_text.replace('\t', ' ');
-    }
-#endif
-
     if (style()) {
         transformText(m_text);
 

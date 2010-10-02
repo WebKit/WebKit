@@ -50,13 +50,13 @@
                 d="M20 0 V800 H520 V0 z M 50 30 H490 V770 H50 z"/>
       </font>
       <style type="text/css"><![CDATA[
-        .cap { font: normal normal 8 monospaced;
+        .cap { font-size: 8px; font-family: monospace;
                stroke: none; stroke-width: 0; 
                    fill: black } ]]>
       </style>
 
-      <g font="20 BlockSpace">
-         <text x="10" y=" 75">  X  X  </text>
+      <g font-size="20" font-family="BlockSpace">
+         <text x="10" y="75">  X  X  </text>
             <text class="cap" x="120" y="75">no xml:space attr</text>
 
          <text x="10" y="100" xml:space="default">  X  X  </text>

@@ -38,11 +38,12 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (60,225) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.20]}] [data="M60.00,225.00 L260.00,225.00 L260.00,250.00 L60.00,250.00 Z"]
         RenderPath {rect} at (60,250) size 200x25 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M60.00,250.00 L260.00,250.00 L260.00,275.00 L60.00,275.00 Z"]
         RenderPath {rect} at (60,275) size 200x25 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [data="M60.00,275.00 L260.00,275.00 L260.00,300.00 L60.00,300.00 Z"]
-      RenderSVGText {text} at (60,198) size 126x110 contains 1 chunk(s)
+      RenderSVGText {text} at (60,198) size 126x115 contains 1 chunk(s)
         [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
-        RenderSVGInlineText {#text} at (0,0) size 126x110
+        RenderSVGInlineText {#text} at (0,0) size 126x115
           [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
-          chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 3 width 121.33: "SVG"
+          chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 2 width 80.96: "SV"
+          chunk 1 text run 2 at (145.36,280.00) startOffset 2 endOffset 3 width 40.37: "G"
       RenderSVGText {text} at (200,214) size 200x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 200x14
           chunk 1 text run 1 at (200.00,225.00) startOffset 0 endOffset 36 width 200.00: "Text with mask containing rectangles"

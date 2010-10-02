@@ -27,8 +27,16 @@
 namespace WebCore {
 
 class RenderObject;
-class RenderSVGInlineText;
 class RenderSVGText;
+
+// SVGTextLayoutAttributesBuilder performs the first layout phase for SVG text.
+//
+// It extracts the x/y/dx/dy/rotate values from the SVGTextPositioningElements in the DOM,
+// measures all characters in the RenderSVGText subtree and extracts kerning/ligature information.
+// These values are propagated to the corresponding RenderSVGInlineText renderers.
+// The first layout phase only extracts the relevant information needed in RenderBlockLineLayout
+// to create the InlineBox tree based on text chunk boundaries & BiDi information.
+// The second layout phase is carried out by SVGTextLayoutEngine.
 
 class SVGTextLayoutAttributesBuilder : public Noncopyable {
 public:
@@ -38,27 +46,35 @@ public:
 private:
     struct LayoutScope {
         LayoutScope()
-            : isVerticalWritingMode(false)
-            , textContentStart(0)
+            : textContentStart(0)
             , textContentLength(0)
         {
         }
 
-        bool isVerticalWritingMode;
         unsigned textContentStart;
         unsigned textContentLength;
         SVGTextLayoutAttributes attributes;
     };
 
-    void buildLayoutScopes(RenderObject*, unsigned& atCharacter);
-    void buildLayoutScope(LayoutScope&, RenderObject*, unsigned textContentStart, unsigned textContentLength);
-    void buildLayoutAttributesFromScopes();
-    void propagateLayoutAttributes(RenderObject*, unsigned& atCharacter);
-    void measureCharacters(RenderSVGInlineText*, SVGTextLayoutAttributes&);
+    void buildLayoutScope(LayoutScope&, RenderObject*, unsigned textContentStart, unsigned textContentLength) const;
+    void buildLayoutScopes(RenderObject*, unsigned& atCharacter, UChar& lastCharacter);
+    void buildOutermostLayoutScope(RenderSVGText*, unsigned textLength);
+    void propagateLayoutAttributes(RenderObject*, unsigned& atCharacter, UChar& lastCharacter) const;
+
+    enum LayoutValueType {
+        XValue,
+        YValue,
+        DxValue,
+        DyValue,
+        RotateValue
+    };
+
+    float nextLayoutValue(LayoutValueType, unsigned atCharacter) const;
+    void assignLayoutAttributesForCharacter(SVGTextLayoutAttributes&, SVGTextMetrics&, unsigned valueListPosition) const;
+    void assignEmptyLayoutAttributesForCharacter(SVGTextLayoutAttributes&) const;
 
 private:
     Vector<LayoutScope> m_scopes;
-    SVGTextLayoutAttributes m_attributes;
 };
 
 } // namespace WebCore

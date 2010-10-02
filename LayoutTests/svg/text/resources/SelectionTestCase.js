@@ -13,11 +13,12 @@ function selectRange(id, start, end, expectedText) {
     var startExtent = element.getExtentOfChar(start);
     var endExtent = element.getExtentOfChar(end);
 
-    if (window.eventSender) {
-        var startPos = element.getStartPositionOfChar(start);
-        var endPos = element.getEndPositionOfChar(end);
+    var startPos = element.getStartPositionOfChar(start);
+    var endPos = element.getEndPositionOfChar(end);
 
+    if (window.eventSender) {
         // Trigger 'partial glyph selection' code, by adjusting the end x position by half glyph width
+        var xOld = endPos.x;
         endPos.x -= endExtent.width / 2 - 1;
 
         var absStartPos = toAbsoluteCoordinates(startPos, element);
@@ -33,9 +34,29 @@ function selectRange(id, start, end, expectedText) {
         // Move to end location and release mouse
         eventSender.mouseMoveTo(absEndPos.x, absEndPos.y);
         eventSender.mouseUp();
+
+        endPos.x = xOld;
     }
 
-    // Highlight rect that we've selected
+    // Mark start position using a green line
+    var startLineElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:line");
+    startLineElement.setAttribute("x1", startPos.x);
+    startLineElement.setAttribute("y1", startExtent.y);
+    startLineElement.setAttribute("x2", startPos.x);
+    startLineElement.setAttribute("y2", startExtent.height + 1);
+    startLineElement.setAttribute("stroke", "green");
+    document.getElementById("container").appendChild(startLineElement);
+
+    // Mark end position using a green line
+    var endLineElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:line");
+    endLineElement.setAttribute("x1", endPos.x);
+    endLineElement.setAttribute("y1", endExtent.y);
+    endLineElement.setAttribute("x2", endPos.x);
+    endLineElement.setAttribute("y2", endExtent.height + 1);
+    endLineElement.setAttribute("stroke", "green");
+    document.getElementById("container").appendChild(endLineElement);
+
+    // Highlight rect that we've selected using the extent information
     var rectElement = document.createElementNS("http://www.w3.org/2000/svg", "svg:rect");
     rectElement.setAttribute("x", startExtent.x);
     rectElement.setAttribute("y", endExtent.y);

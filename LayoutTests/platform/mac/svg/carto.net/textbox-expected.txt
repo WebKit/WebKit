@@ -38,12 +38,12 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (310,107) size 390x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 390x17
           chunk 1 text run 1 at (310.00,120.00) startOffset 0 endOffset 63 width 390.00: "This textbox (textbox 1) accepts up to 25 characters [a-zA-Z ]."
-      RenderSVGText {text} at (350,302) size 244x40 contains 2 chunk(s)
+      RenderSVGText {text} at (350,302) size 244x40 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 244x17
           chunk 1 text run 1 at (350.00,315.00) startOffset 0 endOffset 39 width 244.00: "This textbox (textbox 3) is transformed"
         RenderSVGTSpan {tspan} at (0,0) size 233x17
           RenderSVGInlineText {#text} at (0,23) size 233x17
-            chunk 2 text run 1 at (350.00,338.00) startOffset 0 endOffset 38 width 233.00: "and accepts all characters (up to 300)"
+            chunk 1 text run 1 at (350.00,338.00) startOffset 0 endOffset 38 width 233.00: "and accepts all characters (up to 300)"
       RenderSVGText {text} at (620,302) size 302x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 302x17
           chunk 1 text run 1 at (620.00,315.00) startOffset 0 endOffset 51 width 302.00: "Click on this text to reset content of textbox nr 3"

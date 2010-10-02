@@ -297,8 +297,12 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     changedContextSensitiveProperties = ContextSensitivePropertyNone;
 
 #if ENABLE(SVG)
-    if (m_svgStyle != other->m_svgStyle)
-        return m_svgStyle->diff(other->m_svgStyle.get());
+    StyleDifference svgChange = StyleDifferenceEqual;
+    if (m_svgStyle != other->m_svgStyle) {
+        svgChange = m_svgStyle->diff(other->m_svgStyle.get());
+        if (svgChange == StyleDifferenceLayout)
+            return svgChange;
+    }
 #endif
 
     if (m_box->width() != other->m_box->width() ||
@@ -475,6 +479,15 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
 
     if ((visibility() == COLLAPSE) != (other->visibility() == COLLAPSE))
         return StyleDifferenceLayout;
+                    
+#if ENABLE(SVG)
+    // SVGRenderStyle::diff() might have returned StyleDifferenceRepaint, eg. if fill changes.
+    // If eg. the font-size changed at the same time, we're not allowed to return StyleDifferenceRepaint,
+    // but have to return StyleDifferenceLayout, that's why  this if branch comes after all branches
+    // that are relevant for SVG and might return StyleDifferenceLayout.
+    if (svgChange != StyleDifferenceEqual)
+        return svgChange;
+#endif
 
     // Make sure these left/top/right/bottom checks stay below all layout checks and above
     // all visible checks.

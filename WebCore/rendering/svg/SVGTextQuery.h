@@ -22,15 +22,14 @@
 
 #if ENABLE(SVG)
 #include "FloatRect.h"
+#include "SVGTextFragment.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class InlineFlowBox;
 class RenderObject;
-class RenderStyle;
 class SVGInlineTextBox;
-struct SVGTextChunkPart;
 
 class SVGTextQuery {
 public:
@@ -49,22 +48,22 @@ public:
     struct Data;
 
 private:
-    typedef bool (SVGTextQuery::*ProcessTextChunkPartCallback)(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
-    bool executeQuery(Data*, ProcessTextChunkPartCallback) const;
+    typedef bool (SVGTextQuery::*ProcessTextFragmentCallback)(Data*, const SVGTextFragment&) const;
+    bool executeQuery(Data*, ProcessTextFragmentCallback) const;
 
     void collectTextBoxesInFlowBox(InlineFlowBox*);
-    float measureCharacterRange(const SVGInlineTextBox*, RenderStyle*, bool isVerticalText, int startPosition, int length) const;
-    bool mapStartAndLengthIntoChunkPartCoordinates(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&, int& startPosition, int& endPosition) const;
+    bool mapStartEndPositionsIntoFragmentCoordinates(Data*, const SVGTextFragment&, int& startPosition, int& endPosition) const;
+    void modifyStartEndPositionsRespectingLigatures(Data*, int& startPosition, int& endPosition) const;
 
 private:
-    bool numberOfCharactersCallback(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
-    bool textLengthCallback(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
-    bool subStringLengthCallback(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
-    bool startPositionOfCharacterCallback(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
-    bool endPositionOfCharacterCallback(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
-    bool rotationOfCharacterCallback(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
-    bool extentOfCharacterCallback(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
-    bool characterNumberAtPositionCallback(Data*, const SVGInlineTextBox*, const SVGTextChunkPart&) const;
+    bool numberOfCharactersCallback(Data*, const SVGTextFragment&) const;
+    bool textLengthCallback(Data*, const SVGTextFragment&) const;
+    bool subStringLengthCallback(Data*, const SVGTextFragment&) const;
+    bool startPositionOfCharacterCallback(Data*, const SVGTextFragment&) const;
+    bool endPositionOfCharacterCallback(Data*, const SVGTextFragment&) const;
+    bool rotationOfCharacterCallback(Data*, const SVGTextFragment&) const;
+    bool extentOfCharacterCallback(Data*, const SVGTextFragment&) const;
+    bool characterNumberAtPositionCallback(Data*, const SVGTextFragment&) const;
 
 private:
     Vector<SVGInlineTextBox*> m_textBoxes;

@@ -31,13 +31,13 @@ SVGTextLayoutAttributes::SVGTextLayoutAttributes()
 {
 }
 
-void SVGTextLayoutAttributes::fillWithEmptyValues(unsigned length)
+void SVGTextLayoutAttributes::reserveCapacity(unsigned length)
 {
-    m_xValues.fill(emptyValue(), length);
-    m_yValues.fill(emptyValue(), length);
-    m_dxValues.fill(emptyValue(), length);
-    m_dyValues.fill(emptyValue(), length);
-    m_rotateValues.fill(emptyValue(), length);
+    m_xValues.reserveCapacity(length);
+    m_yValues.reserveCapacity(length);
+    m_dxValues.reserveCapacity(length);
+    m_dyValues.reserveCapacity(length);
+    m_rotateValues.reserveCapacity(length);
 }
 
 float SVGTextLayoutAttributes::emptyValue()
@@ -46,7 +46,7 @@ float SVGTextLayoutAttributes::emptyValue()
     return s_emptyValue;
 }
 
-static inline void dumpLayoutVector(Vector<float>& values)
+static inline void dumpLayoutVector(const Vector<float>& values)
 {
     if (values.isEmpty()) {
         fprintf(stderr, "empty");
@@ -63,7 +63,7 @@ static inline void dumpLayoutVector(Vector<float>& values)
     }
 }
 
-void SVGTextLayoutAttributes::dump()
+void SVGTextLayoutAttributes::dump() const
 {
     fprintf(stderr, "x values: ");
     dumpLayoutVector(m_xValues);
@@ -86,11 +86,11 @@ void SVGTextLayoutAttributes::dump()
     fprintf(stderr, "\n");
 
     fprintf(stderr, "character data values:\n");
-    Vector<CharacterData>::iterator end = m_characterDataValues.end();
-    for (Vector<CharacterData>::iterator it = m_characterDataValues.begin(); it != end; ++it) {
-        CharacterData& data = *it;
-        fprintf(stderr, "| {spansCharacters=%i, glyphName='%s', unicodeString='%s', width=%lf, height=%lf}\n",
-                data.spansCharacters, data.glyphName.utf8().data(), data.unicodeString.utf8().data(), data.width, data.height);
+    unsigned textMetricsSize = m_textMetricsValues.size();
+    for (unsigned i = 0; i < textMetricsSize; ++i) {
+        const SVGTextMetrics& metrics = m_textMetricsValues.at(i);
+        fprintf(stderr, "| {length=%i, glyphName='%s', unicodeString='%s', width=%lf, height=%lf}\n",
+                metrics.length(), metrics.glyph().name.utf8().data(), metrics.glyph().unicodeString.utf8().data(), metrics.width(), metrics.height());
     }
     fprintf(stderr, "\n");
 }

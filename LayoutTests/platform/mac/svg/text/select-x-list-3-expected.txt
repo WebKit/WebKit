@@ -2,12 +2,14 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (50,5) size 380x55
-    RenderSVGContainer {g} at (300,5) size 30x55
+    RenderSVGContainer {g} at (295,5) size 40x55
+      RenderPath {svg:line} at (295,5) size 10x55 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M60.00,1.00 L60.00,12.00"]
+      RenderPath {svg:line} at (325,5) size 10x55 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M66.00,1.00 L66.00,12.00"]
       RenderPath {svg:rect} at (300,5) size 30x55 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M60.00,1.00 L66.00,1.00 L66.00,12.00 L60.00,12.00 Z"]
-    RenderSVGText {text} at (10,1) size 76x11 contains 3 chunk(s)
+    RenderSVGText {text} at (10,1) size 76x11 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 76x11
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.00: "T"
-        chunk 2 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 6.00: "h"
-        chunk 3 text run 1 at (40.00,10.00) startOffset 0 endOffset 12 width 46.00: "is is a test"
+        chunk 1 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 6.00: "h"
+        chunk 1 text run 1 at (40.00,10.00) startOffset 0 endOffset 12 width 46.00: "is is a test"
 selection start: position 8 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
 selection end:   position 9 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

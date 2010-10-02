@@ -31,11 +31,16 @@
 
 namespace WebCore {
 
+class SVGInlineTextBox;
+
 class RenderSVGInlineText : public RenderText {
 public:
     RenderSVGInlineText(Node*, PassRefPtr<StringImpl>);
 
     bool characterStartsNewTextChunk(int position) const;
+
+    SVGTextLayoutAttributes& layoutAttributes() { return m_attributes; }
+    const SVGTextLayoutAttributes& layoutAttributes() const { return m_attributes; }
     void storeLayoutAttributes(const SVGTextLayoutAttributes& attributes) { m_attributes = attributes; }
 
 private:
@@ -50,6 +55,7 @@ private:
     virtual bool requiresLayer() const { return false; }
     virtual bool isSVGInlineText() const { return true; }
 
+    virtual VisiblePosition positionForPoint(const IntPoint&);
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
     virtual IntRect linesBoundingBox() const;
     virtual InlineTextBox* createTextBox();
@@ -57,8 +63,22 @@ private:
     SVGTextLayoutAttributes m_attributes;
 };
 
+inline RenderSVGInlineText* toRenderSVGInlineText(RenderObject* object)
+{
+    ASSERT(!object || object->isSVGInlineText());
+    return static_cast<RenderSVGInlineText*>(object);
+}
+
+inline const RenderSVGInlineText* toRenderSVGInlineText(const RenderObject* object)
+{
+    ASSERT(!object || object->isSVGInlineText());
+    return static_cast<const RenderSVGInlineText*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderSVGInlineText(const RenderSVGInlineText*);
+
 }
 
 #endif // ENABLE(SVG)
-
-#endif // !RenderSVGInlineText_h
+#endif // RenderSVGInlineText_h

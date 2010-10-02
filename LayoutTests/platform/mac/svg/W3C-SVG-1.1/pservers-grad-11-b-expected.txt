@@ -20,8 +20,8 @@ layer at (0,0) size 480x360
       RenderSVGResourceRadialGradient {radialGradient} [id="Grad3"] [gradientUnits=userSpaceOnUse] [center=(225,180)] [focal=(225,180)] [radius=90.00]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
-      RenderSVGText {text} at (10,164) size 419x56 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 419x56
+      RenderSVGText {text} at (10,164) size 419x57 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 419x57
           chunk 1 text run 1 at (10.00,210.00) startOffset 0 endOffset 21 width 419.00: "Gradient on text fill"
       RenderSVGText {text} at (10,214) size 209x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 209x14

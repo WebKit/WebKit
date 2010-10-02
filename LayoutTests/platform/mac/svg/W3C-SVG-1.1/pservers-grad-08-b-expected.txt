@@ -3,15 +3,15 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (17,30) size 450x221 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+    RenderSVGContainer {g} at (17,30) size 450x224 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
       RenderSVGResourceLinearGradient {linearGradient} [id="Gradient"] [gradientUnits=userSpaceOnUse] [start=(10,10)] [end=(440,10)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
-      RenderSVGText {text} at (20,20) size 447x55 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 447x55
+      RenderSVGText {text} at (20,20) size 447x58 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 447x58
           chunk 1 text run 1 at (20.00,70.00) startOffset 0 endOffset 16 width 446.28: "Gradient on fill"
-      RenderSVGText {text} at (20,120) size 430x44 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 430x44
+      RenderSVGText {text} at (20,120) size 430x46 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 430x46
           chunk 1 text run 1 at (20.00,160.00) startOffset 0 endOffset 18 width 429.88: "Gradient on stroke"
     RenderSVGText {text} at (40,117) size 342x36 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 342x36

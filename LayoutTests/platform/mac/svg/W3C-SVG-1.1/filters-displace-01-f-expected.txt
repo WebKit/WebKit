@@ -28,32 +28,32 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (158,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [data="M158.00,15.00 L286.00,15.00 L286.00,143.00 L158.00,143.00 Z"]
           [filter="RotateMap"] RenderSVGResourceFilter {filter} at (158,15) size 128x128
         RenderPath {rect} at (163,112) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M163.00,112.00 L281.00,112.00 L281.00,142.00 L163.00,142.00 Z"]
-        RenderSVGText {text} at (169,114) size 106x27 contains 2 chunk(s)
+        RenderSVGText {text} at (169,114) size 106x27 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 103x14
             RenderSVGInlineText {#text} at (0,0) size 103x14
               chunk 1 (middle anchor) text run 1 at (169.50,125.00) startOffset 0 endOffset 16 width 102.00: "Displacement Map"
           RenderSVGInlineText {#text} at (102,0) size 4x14
-            chunk 1 (middle anchor) text run 2 at (271.50,125.00) startOffset 0 endOffset 1 width 3.00: " "
+            chunk 1 (middle anchor) text run 1 at (271.50,125.00) startOffset 0 endOffset 1 width 3.00: " "
           RenderSVGTSpan {tspan} at (0,0) size 94x14
             RenderSVGInlineText {#text} at (6,13) size 94x14
-              chunk 2 (middle anchor) text run 1 at (175.50,138.00) startOffset 0 endOffset 18 width 93.00: "(20 deg. rotation)"
+              chunk 1 (middle anchor) text run 1 at (175.50,138.00) startOffset 0 endOffset 18 width 93.00: "(20 deg. rotation)"
         RenderPath {rect} at (301,15) size 128x128 [fill={[type=SOLID] [color=#000000]}] [data="M301.00,15.00 L429.00,15.00 L429.00,143.00 L301.00,143.00 Z"]
           [filter="RotateMapTest"] RenderSVGResourceFilter {filter} at (301,15) size 128x128
         RenderPath {rect} at (323,37) size 84x84 [transform={m=((30.07,10.94)(-10.94,30.07)) t=(365.00,79.00)}] [fill={[type=SOLID] [color=#0000FF] [opacity=0.50]}] [data="M-1.00,-1.00 L1.00,-1.00 L1.00,1.00 L-1.00,1.00 Z"]
-        RenderSVGText {text} at (300,149) size 130x38 contains 3 chunk(s)
+        RenderSVGText {text} at (300,149) size 130x38 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 35x14
             RenderSVGInlineText {#text} at (46,0) size 35x14
               chunk 1 (middle anchor) text run 1 at (346.00,160.00) startOffset 0 endOffset 6 width 35.00: "Result"
           RenderSVGInlineText {#text} at (81,0) size 3x14
-            chunk 1 (middle anchor) text run 2 at (381.00,160.00) startOffset 0 endOffset 1 width 3.00: " "
+            chunk 1 (middle anchor) text run 1 at (381.00,160.00) startOffset 0 endOffset 1 width 3.00: " "
           RenderSVGTSpan {tspan} at (0,0) size 127x14
             RenderSVGInlineText {#text} at (0,12) size 127x14
-              chunk 2 (middle anchor) text run 1 at (300.00,172.00) startOffset 0 endOffset 23 width 127.00: "(overlayed with 20 deg."
+              chunk 1 (middle anchor) text run 1 at (300.00,172.00) startOffset 0 endOffset 23 width 127.00: "(overlayed with 20 deg."
           RenderSVGInlineText {#text} at (127,12) size 3x14
-            chunk 2 (middle anchor) text run 2 at (427.00,172.00) startOffset 0 endOffset 1 width 3.00: " "
+            chunk 1 (middle anchor) text run 1 at (427.00,172.00) startOffset 0 endOffset 1 width 3.00: " "
           RenderSVGTSpan {tspan} at (0,0) size 124x14
             RenderSVGInlineText {#text} at (3,24) size 124x14
-              chunk 3 (middle anchor) text run 1 at (303.50,184.00) startOffset 0 endOffset 23 width 123.00: "rotated blue rectangle)"
+              chunk 1 (middle anchor) text run 1 at (303.50,184.00) startOffset 0 endOffset 23 width 123.00: "rotated blue rectangle)"
         RenderPath {rect} at (15,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [data="M15.00,158.00 L143.00,158.00 L143.00,286.00 L15.00,286.00 Z"]
           [filter="DispMapChecker"] RenderSVGResourceFilter {filter} at (15,158) size 128x128
         RenderPath {rect} at (20,258) size 118x20 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M20.00,258.00 L138.00,258.00 L138.00,278.00 L20.00,278.00 Z"]
@@ -63,15 +63,15 @@ layer at (0,0) size 480x360
         RenderPath {rect} at (158,158) size 128x128 [fill={[type=SOLID] [color=#000000]}] [data="M158.00,158.00 L286.00,158.00 L286.00,286.00 L158.00,286.00 Z"]
           [filter="SphereMap"] RenderSVGResourceFilter {filter} at (158,158) size 128x128
         RenderPath {rect} at (163,255) size 118x30 [fill={[type=SOLID] [color=#DDDDDD]}] [data="M163.00,255.00 L281.00,255.00 L281.00,285.00 L163.00,285.00 Z"]
-        RenderSVGText {text} at (166,257) size 112x29 contains 2 chunk(s)
+        RenderSVGText {text} at (166,257) size 112x29 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 103x14
             RenderSVGInlineText {#text} at (3,0) size 103x14
               chunk 1 (middle anchor) text run 1 at (169.50,268.00) startOffset 0 endOffset 16 width 102.00: "Displacement Map"
           RenderSVGInlineText {#text} at (105,0) size 4x14
-            chunk 1 (middle anchor) text run 2 at (271.50,268.00) startOffset 0 endOffset 1 width 3.00: " "
+            chunk 1 (middle anchor) text run 1 at (271.50,268.00) startOffset 0 endOffset 1 width 3.00: " "
           RenderSVGTSpan {tspan} at (0,0) size 112x14
             RenderSVGInlineText {#text} at (0,15) size 112x14
-              chunk 2 (middle anchor) text run 1 at (166.50,283.00) startOffset 0 endOffset 22 width 111.00: "(spherical distortion)"
+              chunk 1 (middle anchor) text run 1 at (166.50,283.00) startOffset 0 endOffset 22 width 111.00: "(spherical distortion)"
         RenderPath {rect} at (301,200) size 128x128 [fill={[type=SOLID] [color=#000000]}] [data="M301.00,200.00 L429.00,200.00 L429.00,328.00 L301.00,328.00 Z"]
           [filter="SphereMapTest"] RenderSVGResourceFilter {filter} at (301,200) size 128x128
         RenderSVGText {text} at (347,334) size 36x14 contains 1 chunk(s)

@@ -25,16 +25,12 @@
 
 #if ENABLE(SVG)
 #include "InlineTextBox.h"
-#include "SVGTextChunkLayoutInfo.h"
-#include "SVGTextLayoutUtilities.h"
+#include "SVGTextLayoutEngine.h"
 
 namespace WebCore {
 
 class RenderSVGResource;
 class SVGRootInlineBox;
-
-struct SVGCharacterLayoutInfo;
-struct SVGLastGlyphInfo;
 
 class SVGInlineTextBox : public InlineTextBox {
 public:
@@ -50,30 +46,26 @@ public:
     virtual int offsetForPosition(int x, bool includePartialGlyphs = true) const;
     virtual int positionForOffset(int offset) const;
 
+    void paintSelectionBackground(PaintInfo&);
     virtual void paint(PaintInfo&, int tx, int ty);
-    virtual IntRect selectionRect(int absx, int absy, int startPos, int endPos);
+    virtual IntRect selectionRect(int absx, int absy, int startPosition, int endPosition);
 
-    virtual void selectionStartEnd(int& startPos, int& endPos);
-    void mapStartEndPositionsIntoChunkPartCoordinates(int& startPos, int& endPos, const SVGTextChunkPart&) const;
-
-    SVGRootInlineBox* svgRootInlineBox() const;
-
-    // Helper functions shared with SVGRootInlineBox     
-    void measureCharacter(RenderStyle*, int position, int& charsConsumed, String& glyphName, String& unicodeString, float& glyphWidth, float& glyphHeight) const;
-    FloatRect calculateGlyphBoundaries(RenderStyle*, int position, const SVGChar&) const;
-
-    void buildLayoutInformation(SVGCharacterLayoutInfo&, SVGLastGlyphInfo&);
-
-    const AffineTransform& chunkTransformation() const { return m_chunkTransformation; }
-    void setChunkTransformation(const AffineTransform& transform) { m_chunkTransformation = transform; }
-    void addChunkPartInformation(const SVGTextChunkPart& part) { m_svgTextChunkParts.append(part); }
-    const Vector<SVGTextChunkPart>& svgTextChunkParts() const { return m_svgTextChunkParts; }
+    bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;
 
     virtual IntRect calculateBoundaries() const;
 
+    void clearTextFragments() { m_textFragments.clear(); }
+    Vector<SVGTextFragment>& textFragments() { return m_textFragments; }
+    const Vector<SVGTextFragment>& textFragments() const { return m_textFragments; }
+
+    bool startsNewTextChunk() const { return m_startsNewTextChunk; }
+    void setStartsNewTextChunk(bool newTextChunk) { m_startsNewTextChunk = newTextChunk; }
+
+    int offsetForPositionInFragment(const SVGTextFragment&, float position, bool includePartialGlyphs) const;
+    FloatRect selectionRectForTextFragment(const SVGTextFragment&, int fragmentStartPosition, int fragmentEndPosition, RenderStyle*);
+
 private:
-    TextRun constructTextRun(RenderStyle*) const;
-    AffineTransform buildChunkTransformation(SVGChar& firstCharacter) const;
+    TextRun constructTextRun(RenderStyle*, const SVGTextFragment&) const;
 
     bool acquirePaintingResource(GraphicsContext*&, RenderObject*, RenderStyle*);
     void releasePaintingResource(GraphicsContext*&);
@@ -81,22 +73,17 @@ private:
     bool prepareGraphicsContextForTextPainting(GraphicsContext*&, TextRun&, RenderStyle*);
     void restoreGraphicsContextAfterTextPainting(GraphicsContext*&, TextRun&);
 
-    void computeTextMatchMarkerRect(RenderStyle*);
-    void paintDecoration(GraphicsContext*, const FloatPoint& textOrigin, ETextDecoration, bool hasSelection);
-    void paintDecorationWithStyle(GraphicsContext*, const FloatPoint& textOrigin, RenderObject*, ETextDecoration);
-    void paintSelection(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*);
-    void paintText(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, RenderStyle* selectionStyle, bool hasSelection, bool paintSelectedTextOnly);
-    void paintTextWithShadows(GraphicsContext*, const FloatPoint& textOrigin, RenderStyle*, TextRun&, int startPos, int endPos);
-
-    FloatRect selectionRectForTextChunkPart(const SVGTextChunkPart&, int partStartPos, int partEndPos, RenderStyle*);
+    void paintDecoration(GraphicsContext*, ETextDecoration, const SVGTextFragment&);
+    void paintDecorationWithStyle(GraphicsContext*, ETextDecoration, const SVGTextFragment&, RenderObject* decorationRenderer);
+    void paintTextWithShadows(GraphicsContext*, RenderStyle*, TextRun&, const SVGTextFragment&, int startPosition, int endPosition);
+    void paintText(GraphicsContext*, RenderStyle*, RenderStyle* selectionStyle, const SVGTextFragment&, bool hasSelection, bool paintSelectedTextOnly);
 
 private:
     int m_logicalHeight;
-    AffineTransform m_chunkTransformation;
-    Vector<SVGTextChunkPart> m_svgTextChunkParts;
-    mutable SVGTextChunkPart m_currentChunkPart;
-    RenderSVGResource* m_paintingResource;
     int m_paintingResourceMode;
+    bool m_startsNewTextChunk : 1;
+    RenderSVGResource* m_paintingResource;
+    Vector<SVGTextFragment> m_textFragments;
 };
 
 } // namespace WebCore

@@ -78,7 +78,7 @@ public:
 
     virtual IntRect selectionRect(int absx, int absy, int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;
-    virtual void selectionStartEnd(int& sPos, int& ePos);
+    void selectionStartEnd(int& sPos, int& ePos);
 
 protected:
     virtual void paint(PaintInfo&, int tx, int ty);

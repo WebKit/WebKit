@@ -2774,10 +2774,6 @@ webcore_sources += \
 	WebCore/rendering/style/SVGRenderStyleDefs.cpp \
 	WebCore/rendering/style/SVGRenderStyleDefs.h \
 	WebCore/rendering/style/SVGRenderStyle.h \
-	WebCore/rendering/SVGCharacterData.cpp \
-	WebCore/rendering/SVGCharacterData.h \
-	WebCore/rendering/SVGCharacterLayoutInfo.cpp \
-	WebCore/rendering/SVGCharacterLayoutInfo.h \
 	WebCore/rendering/SVGImageBufferTools.cpp \
 	WebCore/rendering/SVGImageBufferTools.h \
 	WebCore/rendering/SVGMarkerData.h \
@@ -2813,11 +2809,15 @@ webcore_sources += \
 	WebCore/rendering/svg/SVGRootInlineBox.h \
 	WebCore/rendering/svg/SVGTextChunk.cpp \
 	WebCore/rendering/svg/SVGTextChunk.h \
+	WebCore/rendering/svg/SVGTextChunkBuilder.cpp \
+	WebCore/rendering/svg/SVGTextChunkBuilder.h \
 	WebCore/rendering/svg/SVGTextFragment.h \
 	WebCore/rendering/svg/SVGTextLayoutAttributes.cpp \
 	WebCore/rendering/svg/SVGTextLayoutAttributes.h \
 	WebCore/rendering/svg/SVGTextLayoutAttributesBuilder.cpp \
 	WebCore/rendering/svg/SVGTextLayoutAttributesBuilder.h \
+	WebCore/rendering/svg/SVGTextLayoutEngine.cpp \
+	WebCore/rendering/svg/SVGTextLayoutEngine.h \
 	WebCore/rendering/svg/SVGTextLayoutEngineBaseline.cpp \
 	WebCore/rendering/svg/SVGTextLayoutEngineBaseline.h \
 	WebCore/rendering/svg/SVGTextLayoutEngineSpacing.cpp \
@@ -2826,10 +2826,6 @@ webcore_sources += \
 	WebCore/rendering/svg/SVGTextMetrics.h \
 	WebCore/rendering/svg/SVGTextQuery.cpp \
 	WebCore/rendering/svg/SVGTextQuery.h \
-	WebCore/rendering/SVGTextChunkLayoutInfo.cpp \
-	WebCore/rendering/SVGTextChunkLayoutInfo.h \
-	WebCore/rendering/SVGTextLayoutUtilities.cpp \
-	WebCore/rendering/SVGTextLayoutUtilities.h \
 	WebCore/rendering/TableLayout.h \
 	WebCore/rendering/TextControlInnerElements.cpp \
 	WebCore/rendering/TextControlInnerElements.h \

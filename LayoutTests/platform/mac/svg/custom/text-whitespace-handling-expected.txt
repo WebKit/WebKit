@@ -21,8 +21,8 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (10,106) size 153x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 153x18
           chunk 1 text run 1 at (10.00,120.00) startOffset 0 endOffset 11 width 77.00: "Whitespace "
-          chunk 1 text run 2 at (87.00,120.00) startOffset 0 endOffset 3 width 14.00: "is "
-          chunk 1 text run 3 at (101.00,120.00) startOffset 0 endOffset 10 width 62.00: "simplified"
+          chunk 1 text run 1 at (87.00,120.00) startOffset 0 endOffset 3 width 14.00: "is "
+          chunk 1 text run 1 at (101.00,120.00) startOffset 0 endOffset 10 width 62.00: "simplified"
       RenderSVGText {text} at (10,146) size 245x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 245x18
           chunk 1 text run 1 at (10.00,160.00) startOffset 0 endOffset 37 width 245.00: "Testing xml:space=\"preserve\" support:"

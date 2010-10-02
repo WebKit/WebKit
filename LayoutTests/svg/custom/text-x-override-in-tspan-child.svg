@@ -17,7 +17,7 @@
 
 <g transform="translate(-10,0)">
 <text dx="10,1000,10" x="10,100,70" y="140">A<tspan dx="10" x="40">B</tspan>C</text>
-<text dx="10" x="0,0,70" y="160"><tspan x="10,40,170">AB</tspan>C</text>
+<text dx="10" x="0,0,80" y="160"><tspan x="10,50,170">AB</tspan>C</text>
 </g>
 
 </svg>

@@ -11,7 +11,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (40,25) size 332x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 332x14
           chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 11 width 54.00: "This tests "
-          chunk 1 text run 2 at (94.00,36.00) startOffset 0 endOffset 54 width 278.00: "element (GI) selectors: <rect /> and the selector rect"
+          chunk 1 text run 1 at (94.00,36.00) startOffset 0 endOffset 54 width 278.00: "element (GI) selectors: <rect /> and the selector rect"
       RenderSVGContainer {g} at (130,70) size 260x60
         RenderPath {circle} at (130,70) size 60x60 [fill={[type=SOLID] [color=#008000]}] [data="M190.00,100.00 L189.94,101.88 L189.76,103.76 L189.47,105.62 L189.06,107.46 L188.53,109.27 L187.89,111.04 L187.14,112.77 L186.29,114.45 L185.33,116.07 L184.27,117.63 L183.12,119.12 L181.87,120.54 L180.54,121.87 L179.12,123.12 L177.63,124.27 L176.07,125.33 L174.45,126.29 L172.77,127.14 L171.04,127.89 L169.27,128.53 L167.46,129.06 L165.62,129.47 L163.76,129.76 L161.88,129.94 L160.00,130.00 L158.12,129.94 L156.24,129.76 L154.38,129.47 L152.54,129.06 L150.73,128.53 L148.96,127.89 L147.23,127.14 L145.55,126.29 L143.93,125.33 L142.37,124.27 L140.88,123.12 L139.46,121.87 L138.13,120.54 L136.88,119.12 L135.73,117.63 L134.67,116.07 L133.71,114.45 L132.86,112.77 L132.11,111.04 L131.47,109.27 L130.94,107.46 L130.53,105.62 L130.24,103.76 L130.06,101.88 L130.00,100.00 L130.06,98.12 L130.24,96.24 L130.53,94.38 L130.94,92.54 L131.47,90.73 L132.11,88.96 L132.86,87.23 L133.71,85.55 L134.67,83.93 L135.73,82.37 L136.88,80.88 L138.13,79.46 L139.46,78.13 L140.88,76.88 L142.37,75.73 L143.93,74.67 L145.55,73.71 L147.23,72.86 L148.96,72.11 L150.73,71.47 L152.54,70.94 L154.38,70.53 L156.24,70.24 L158.12,70.06 L160.00,70.00 L161.88,70.06 L163.76,70.24 L165.62,70.53 L167.46,70.94 L169.27,71.47 L171.04,72.11 L172.77,72.86 L174.45,73.71 L176.07,74.67 L177.63,75.73 L179.12,76.88 L180.54,78.13 L181.87,79.46 L183.12,80.88 L184.27,82.37 L185.33,83.93 L186.29,85.55 L187.14,87.23 L187.89,88.96 L188.53,90.73 L189.06,92.54 L189.47,94.38 L189.76,96.24 L189.94,98.12 Z"]
         RenderPath {rect} at (220,80) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M220.00,80.00 L280.00,80.00 L280.00,120.00 L220.00,120.00 Z"]
@@ -23,7 +23,7 @@ layer at (0,0) size 480x360
         RenderSVGText {text} at (40,25) size 279x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 279x14
             chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 11 width 54.00: "This tests "
-            chunk 1 text run 2 at (94.00,36.00) startOffset 0 endOffset 43 width 225.00: "class selectors: <circle class=\"warning\" />"
+            chunk 1 text run 1 at (94.00,36.00) startOffset 0 endOffset 43 width 225.00: "class selectors: <circle class=\"warning\" />"
         RenderSVGText {text} at (40,47) size 137x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 137x14
             chunk 1 text run 1 at (40.00,58.00) startOffset 0 endOffset 25 width 137.00: "and the selector .warning"

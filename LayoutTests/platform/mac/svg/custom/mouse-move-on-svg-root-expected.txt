@@ -10,4 +10,4 @@ layer at (0,0) size 800x410
             chunk 1 (middle anchor) text run 1 at (93.00,50.00) startOffset 0 endOffset 34 width 214.00: "The circle should be in the middle"
       RenderText {#text} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-caret: position 34 of child 0 {#text} of child 3 {text} of child 1 {svg} of body
+caret: position 16 of child 0 {#text} of child 3 {text} of child 1 {svg} of body

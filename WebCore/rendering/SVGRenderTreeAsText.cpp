@@ -57,7 +57,6 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTreeAsText.h"
-#include "SVGCharacterLayoutInfo.h"
 #include "SVGInlineTextBox.h"
 #include "SVGLinearGradientElement.h"
 #include "SVGPatternElement.h"
@@ -65,7 +64,6 @@
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
 #include "SVGStyledElement.h"
-#include "SVGTextLayoutUtilities.h"
 
 #include <math.h>
 
@@ -387,116 +385,72 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGRoot& root)
 static void writeRenderSVGTextBox(TextStream& ts, const RenderBlock& text)
 {
     SVGRootInlineBox* box = static_cast<SVGRootInlineBox*>(text.firstRootBox());
-
     if (!box)
         return;
 
-    Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(box->svgTextChunks());
-    ts << " at (" << text.x() << "," << text.y() << ") size " << box->logicalWidth() << "x" << box->logicalHeight() << " contains " << chunks.size() << " chunk(s)";
+    ts << " at (" << text.x() << "," << text.y() << ") size " << box->logicalWidth() << "x" << box->logicalHeight();
+    
+    // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
+    ts << " contains 1 chunk(s)";
 
     if (text.parent() && (text.parent()->style()->visitedDependentColor(CSSPropertyColor) != text.style()->visitedDependentColor(CSSPropertyColor)))
         writeNameValuePair(ts, "color", text.style()->visitedDependentColor(CSSPropertyColor).name());
 }
 
-static inline bool containsInlineTextBox(SVGTextChunk& chunk, SVGInlineTextBox* box)
-{
-    Vector<SVGInlineBoxCharacterRange>::iterator boxIt = chunk.boxes.begin();
-    Vector<SVGInlineBoxCharacterRange>::iterator boxEnd = chunk.boxes.end();
-
-    bool found = false;
-    for (; boxIt != boxEnd; ++boxIt) {
-        SVGInlineBoxCharacterRange& range = *boxIt;
-
-        if (box == static_cast<SVGInlineTextBox*>(range.box)) {
-            found = true;
-            break;
-        }
-    }
-
-    return found;
-}
-
 static inline void writeSVGInlineTextBox(TextStream& ts, SVGInlineTextBox* textBox, int indent)
 {
-    SVGRootInlineBox* rootBox = textBox->svgRootInlineBox();
-    if (!rootBox)
+    Vector<SVGTextFragment>& fragments = textBox->textFragments();
+    if (fragments.isEmpty())
         return;
 
-    Vector<SVGTextChunk>& chunks = const_cast<Vector<SVGTextChunk>& >(rootBox->svgTextChunks());
+    RenderSVGInlineText* textRenderer = toRenderSVGInlineText(textBox->textRenderer());
+    ASSERT(textRenderer);
 
-    Vector<SVGTextChunk>::iterator it = chunks.begin();
-    Vector<SVGTextChunk>::iterator end = chunks.end();
+    const SVGRenderStyle* svgStyle = textRenderer->style()->svgStyle();
+    String text = textBox->textRenderer()->text();
 
-    // Write text chunks
-    unsigned int i = 1;
-    for (; it != end; ++it) {
-        SVGTextChunk& cur = *it;
-
-        // Write inline box character ranges
-        Vector<SVGInlineBoxCharacterRange>::iterator boxIt = cur.boxes.begin();
-        Vector<SVGInlineBoxCharacterRange>::iterator boxEnd = cur.boxes.end();
-
-        if (!containsInlineTextBox(cur, textBox)) {
-            i++;
-            continue;
-        }
-
+    unsigned fragmentsSize = fragments.size();
+    for (unsigned i = 0; i < fragmentsSize; ++i) {
+        SVGTextFragment& fragment = fragments.at(i);
         writeIndent(ts, indent + 1);
 
-        unsigned int j = 1;
-        ts << "chunk " << i << " ";
+        unsigned startOffset = fragment.positionListOffset;
+        unsigned endOffset = fragment.positionListOffset + fragment.length;
 
-        if (cur.anchor == TA_MIDDLE) {
+        // FIXME: Remove this hack, once the new text layout engine is completly landed. We want to preserve the old layout test results for now.
+        ts << "chunk 1 ";
+        ETextAnchor anchor = svgStyle->textAnchor();
+        bool isVerticalText = svgStyle->isVerticalWritingMode();
+        if (anchor == TA_MIDDLE) {
             ts << "(middle anchor";
-            if (cur.isVerticalText)
+            if (isVerticalText)
                 ts << ", vertical";
             ts << ") ";
-        } else if (cur.anchor == TA_END) {
+        } else if (anchor == TA_END) {
             ts << "(end anchor";
-            if (cur.isVerticalText)
+            if (isVerticalText)
                 ts << ", vertical";
             ts << ") ";
-        } else if (cur.isVerticalText)
+        } else if (isVerticalText)
             ts << "(vertical) ";
+        startOffset -= textBox->start();
+        endOffset -= textBox->start();
+        // </hack>
 
-        unsigned int totalOffset = 0;
+        ts << "text run " << i + 1 << " at (" << fragment.x << "," << fragment.y << ")";
+        ts << " startOffset " << startOffset << " endOffset " << endOffset;
+        if (isVerticalText)
+            ts << " height " << fragment.height;
+        else
+            ts << " width " << fragment.width;
 
-        for (; boxIt != boxEnd; ++boxIt) {
-            SVGInlineBoxCharacterRange& range = *boxIt;
-
-            unsigned int offset = range.endOffset - range.startOffset;
-            ASSERT(cur.start + totalOffset <= cur.end);
-    
-            totalOffset += offset;
-      
-            if (textBox != static_cast<SVGInlineTextBox*>(range.box)) {
-                j++;
-                continue;
-            }
-  
-            FloatPoint topLeft = topLeftPositionOfCharacterRange(cur.start + totalOffset - offset, cur.start + totalOffset);
-
-            ts << "text run " << j << " at (" << topLeft.x() << "," << topLeft.y() << ") ";
-            ts << "startOffset " << range.startOffset << " endOffset " << range.endOffset;
-
-            if (cur.isVerticalText)
-                ts << " height " << cummulatedHeightOfInlineBoxCharacterRange(range);
-            else
-                ts << " width " << cummulatedWidthOfInlineBoxCharacterRange(range);
-
-            if (!textBox->isLeftToRightDirection() || textBox->m_dirOverride) {
-                ts << (!textBox->isLeftToRightDirection() ? " RTL" : " LTR");
-
-                if (textBox->m_dirOverride)
-                    ts << " override";
-            }
-
-            ts << ": " << quoteAndEscapeNonPrintables(String(textBox->textRenderer()->text()).substring(textBox->start() + range.startOffset, offset)) << "\n";
-
-            j++;
+        if (!textBox->isLeftToRightDirection() || textBox->m_dirOverride) {
+            ts << (textBox->isLeftToRightDirection() ? " LTR" : " RTL");
+            if (textBox->m_dirOverride)
+                ts << " override";
         }
 
-        i++;
+        ts << ": " << quoteAndEscapeNonPrintables(text.substring(fragment.positionListOffset, fragment.length)) << "\n";
     }
 }
 

@@ -1,3 +1,321 @@
+2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Rewrite SVG text layout code
+        https://bugs.webkit.org/show_bug.cgi?id=45532
+
+        Rebaseline most SVGs containing text. The underlying concept has changed, I tried hard to maintain
+        a somewhat compatible DRT output, so it doesn't require rebaselines of _all_ tests.
+        The dump looks awkward now, it will always report "chunk 1", as it's hardcoded in SVGRenderTreeAsText.
+        Follow up patches will change the output of text dumps completly.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-05-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-05-t-expected.png:
+        * platform/mac-leopard/svg/batik/text/textOnPath-expected.checksum:
+        * platform/mac-leopard/svg/batik/text/textOnPath-expected.png: baseline-shift adjustments now match Opera.
+        * platform/mac-leopard/svg/batik/text/verticalTextOnPath-expected.checksum:
+        * platform/mac-leopard/svg/batik/text/verticalTextOnPath-expected.png: Ditto.
+        * platform/mac-leopard/svg/batik/text/xmlSpace-expected.checksum:
+        * platform/mac-leopard/svg/batik/text/xmlSpace-expected.png:
+        * platform/mac-leopard/svg/custom/altglyph-expected.checksum:
+        * platform/mac-leopard/svg/custom/altglyph-expected.png:
+        * platform/mac-leopard/svg/text/multichar-glyph-expected.checksum:
+        * platform/mac-leopard/svg/text/multichar-glyph-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/animate-elem-44-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/interact-cursor-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/linking-a-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/masking-path-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png: No more blurry edges, size calculations fixed.
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/struct-frag-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-02-b-expected.png: baseline-shift looks slightly different, now matches Opera.
+        * platform/mac/svg/W3C-SVG-1.1/text-align-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.png: Vertical text now starts at correct origin, and is centered correctly.
+        * platform/mac/svg/W3C-SVG-1.1/text-align-05-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.png: Ditto + baseline-shift differences.
+        * platform/mac/svg/W3C-SVG-1.1/text-align-06-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-deco-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-06-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-text-07-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt:
+        * platform/mac/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor2-expected.checksum:
+        * platform/mac/svg/batik/text/textAnchor2-expected.png: y-position adjustments start new text chunks since SVG 1.1 2nd edition (in contrary to SVG 1.2 Tiny). Left the test as is.
+        * platform/mac/svg/batik/text/textAnchor2-expected.txt:
+        * platform/mac/svg/batik/text/textAnchor3-expected.txt:
+        * platform/mac/svg/batik/text/textDecoration-expected.checksum:
+        * platform/mac/svg/batik/text/textDecoration-expected.png: text-decoration defined on <text> paints with the paint sever defined on the <tspan>, test finally works!
+        * platform/mac/svg/batik/text/textDecoration-expected.txt:
+        * platform/mac/svg/batik/text/textDecoration2-expected.checksum:
+        * platform/mac/svg/batik/text/textDecoration2-expected.png: Ditto.
+        * platform/mac/svg/batik/text/textDecoration2-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect-expected.png: Just like pservers-grad-08-b.svg, no more blurry edges.
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect2-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png: Ditto.
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/textFeatures-expected.checksum:
+        * platform/mac/svg/batik/text/textFeatures-expected.png: baseline-shift differences.
+        * platform/mac/svg/batik/text/textFeatures-expected.txt:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.checksum:
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.png: Completly fixed, now aligns properly with path, matches Opera & Batik.
+        * platform/mac/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/mac/svg/batik/text/textLayout-expected.txt:
+        * platform/mac/svg/batik/text/textLayout2-expected.checksum:
+        * platform/mac/svg/batik/text/textLayout2-expected.png: baseline-shift differences.
+        * platform/mac/svg/batik/text/textLayout2-expected.txt:
+        * platform/mac/svg/batik/text/textLength-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath2-expected.txt:
+        * platform/mac/svg/batik/text/textOnPath3-expected.txt:
+        * platform/mac/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/mac/svg/batik/text/textPCDATA-expected.txt:
+        * platform/mac/svg/batik/text/textPosition-expected.txt:
+        * platform/mac/svg/batik/text/textPosition2-expected.txt:
+        * platform/mac/svg/batik/text/textProperties-expected.txt:
+        * platform/mac/svg/batik/text/textProperties2-expected.txt:
+        * platform/mac/svg/batik/text/verticalText-expected.checksum:
+        * platform/mac/svg/batik/text/verticalText-expected.png:
+        * platform/mac/svg/batik/text/verticalText-expected.txt:
+        * platform/mac/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/carto.net/button-expected.txt:
+        * platform/mac/svg/carto.net/colourpicker-expected.txt:
+        * platform/mac/svg/carto.net/combobox-expected.txt:
+        * platform/mac/svg/carto.net/selectionlist-expected.txt:
+        * platform/mac/svg/carto.net/tabgroup-expected.txt:
+        * platform/mac/svg/carto.net/textbox-expected.txt:
+        * platform/mac/svg/carto.net/window-expected.txt:
+        * platform/mac/svg/clip-path/deep-nested-clip-in-mask-panning-expected.txt:
+        * platform/mac/svg/css/text-shadow-multiple-expected.txt:
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.checksum:
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.png: central baseline now works as expected.
+        * platform/mac/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/mac/svg/custom/altglyph-expected.txt:
+        * platform/mac/svg/custom/broken-internal-references-expected.txt:
+        * platform/mac/svg/custom/container-opacity-clip-viewBox-expected.txt:
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.checksum:
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.png: ditto.
+        * platform/mac/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/mac/svg/custom/glyph-transformation-with-hkern-expected.checksum:
+        * platform/mac/svg/custom/glyph-transformation-with-hkern-expected.png: Kerning is now properly respected.
+        * platform/mac/svg/custom/image-small-width-height-expected.txt:
+        * platform/mac/svg/custom/invalid-fill-expected.txt:
+        * platform/mac/svg/custom/invalid-fill-hex-expected.txt:
+        * platform/mac/svg/custom/mouse-move-on-svg-container-expected.txt:
+        * platform/mac/svg/custom/mouse-move-on-svg-container-standalone-expected.txt:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-expected.txt:
+        * platform/mac/svg/custom/mouse-move-on-svg-root-standalone-expected.txt:
+        * platform/mac/svg/custom/pattern-rotate-expected.txt:
+        * platform/mac/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/mac/svg/custom/style-attribute-font-size-expected.txt:
+        * platform/mac/svg/custom/text-dom-01-f-expected.txt:
+        * platform/mac/svg/custom/text-letter-spacing-expected.txt:
+        * platform/mac/svg/custom/text-linking-expected.txt:
+        * platform/mac/svg/custom/text-rotation-expected.checksum: Added.
+        * platform/mac/svg/custom/text-rotation-expected.png: Added.
+        * platform/mac/svg/custom/text-rotation-expected.txt: Added.
+        * platform/mac/svg/custom/text-whitespace-handling-expected.txt:
+        * platform/mac/svg/custom/text-x-dx-lists-expected.txt:
+        * platform/mac/svg/custom/text-x-dy-lists-expected.checksum: Added.
+        * platform/mac/svg/custom/text-x-dy-lists-expected.png: Added.
+        * platform/mac/svg/custom/text-x-dy-lists-expected.txt: Added.
+        * platform/mac/svg/custom/text-x-override-in-tspan-child-expected.checksum:
+        * platform/mac/svg/custom/text-x-override-in-tspan-child-expected.png:
+        * platform/mac/svg/custom/text-x-override-in-tspan-child-expected.txt:
+        * platform/mac/svg/custom/use-detach-expected.txt:
+        * platform/mac/svg/filters/filter-on-filter-for-text-expected.txt:
+        * platform/mac/svg/filters/filter-on-tspan-expected.txt:
+        * platform/mac/svg/text/kerning-expected.txt:
+        * platform/mac/svg/text/multichar-glyph-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-1-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-1-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-2-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-2-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-3-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-3-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-3-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-4-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-4-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-squeeze-4-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-1-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-1-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-2-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-2-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-3-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-3-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-4-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-4-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.png:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.png:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.png:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.png:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.png:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.png:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.png:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.checksum:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.png:
+        * platform/mac/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt:
+        * platform/mac/svg/text/select-x-list-1-expected.checksum:
+        * platform/mac/svg/text/select-x-list-1-expected.png:
+        * platform/mac/svg/text/select-x-list-1-expected.txt:
+        * platform/mac/svg/text/select-x-list-2-expected.checksum:
+        * platform/mac/svg/text/select-x-list-2-expected.png:
+        * platform/mac/svg/text/select-x-list-2-expected.txt:
+        * platform/mac/svg/text/select-x-list-3-expected.checksum:
+        * platform/mac/svg/text/select-x-list-3-expected.png:
+        * platform/mac/svg/text/select-x-list-3-expected.txt:
+        * platform/mac/svg/text/select-x-list-4-expected.checksum:
+        * platform/mac/svg/text/select-x-list-4-expected.png:
+        * platform/mac/svg/text/select-x-list-4-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-1-expected.checksum:
+        * platform/mac/svg/text/select-x-list-with-tspans-1-expected.png:
+        * platform/mac/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-2-expected.checksum:
+        * platform/mac/svg/text/select-x-list-with-tspans-2-expected.png:
+        * platform/mac/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-3-expected.checksum:
+        * platform/mac/svg/text/select-x-list-with-tspans-3-expected.png:
+        * platform/mac/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/mac/svg/text/select-x-list-with-tspans-4-expected.checksum:
+        * platform/mac/svg/text/select-x-list-with-tspans-4-expected.png:
+        * platform/mac/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/mac/svg/text/text-align-02-b-expected.checksum:
+        * platform/mac/svg/text/text-align-02-b-expected.png:
+        * platform/mac/svg/text/text-align-02-b-expected.txt:
+        * platform/mac/svg/text/text-align-03-b-expected.txt:
+        * platform/mac/svg/text/text-align-04-b-expected.checksum:
+        * platform/mac/svg/text/text-align-04-b-expected.png:
+        * platform/mac/svg/text/text-align-04-b-expected.txt:
+        * platform/mac/svg/text/text-align-05-b-expected.checksum:
+        * platform/mac/svg/text/text-align-05-b-expected.png:
+        * platform/mac/svg/text/text-align-05-b-expected.txt:
+        * platform/mac/svg/text/text-align-06-b-expected.checksum:
+        * platform/mac/svg/text/text-align-06-b-expected.png:
+        * platform/mac/svg/text/text-align-06-b-expected.txt:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/text/text-deco-01-b-expected.checksum:
+        * platform/mac/svg/text/text-deco-01-b-expected.png:
+        * platform/mac/svg/text/text-deco-01-b-expected.txt:
+        * platform/mac/svg/text/text-hkern-expected.checksum:
+        * platform/mac/svg/text/text-hkern-expected.png: Kerning now respects text chunk boundaries.
+        * platform/mac/svg/text/text-hkern-expected.txt:
+        * platform/mac/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/mac/svg/text/text-path-01-b-expected.checksum:
+        * platform/mac/svg/text/text-path-01-b-expected.png:
+        * platform/mac/svg/text/text-path-01-b-expected.txt:
+        * platform/mac/svg/text/text-spacing-01-b-expected.checksum:
+        * platform/mac/svg/text/text-spacing-01-b-expected.png:
+        * platform/mac/svg/text/text-spacing-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-01-b-expected.checksum:
+        * platform/mac/svg/text/text-text-01-b-expected.png:
+        * platform/mac/svg/text/text-text-01-b-expected.txt:
+        * platform/mac/svg/text/text-text-04-t-expected.checksum:
+        * platform/mac/svg/text/text-text-04-t-expected.png:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.checksum:
+        * platform/mac/svg/text/text-text-05-t-expected.png: y positions now also start text chunks, finally a progression on this test!
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-06-t-expected.txt:
+        * platform/mac/svg/text/text-text-07-t-expected.checksum:
+        * platform/mac/svg/text/text-text-07-t-expected.png:
+        * platform/mac/svg/text/text-text-07-t-expected.txt:
+        * platform/mac/svg/text/text-text-08-b-expected.checksum:
+        * platform/mac/svg/text/text-text-08-b-expected.png: Opacity doesn't affect selection anymore, matches all other browsers.
+        * platform/mac/svg/text/text-tselect-01-b-expected.txt:
+        * platform/mac/svg/text/text-tselect-02-f-expected.txt:
+        * platform/mac/svg/text/text-tspan-01-b-expected.txt:
+        * platform/mac/svg/text/text-vkern-expected.checksum:
+        * platform/mac/svg/text/text-vkern-expected.png: Kerning now respects text chunk boundaries.
+        * platform/mac/svg/text/text-vkern-expected.txt:
+        * platform/mac/svg/text/textPathBoundsBug-expected.txt:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.checksum:
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.checksum:
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/mac/svg/transforms/text-with-pattern-with-svg-transform-expected.txt:
+        * svg/batik/text/xmlSpace.svg: Fixed wrong test, now the embedded SVG Font is actually used.
+        * svg/custom/altglyph.svg: Fixed wrong test, xlink namespace was wrong, xlink:href for altGlyph had no effect.
+        * svg/custom/glyph-setting-d-attribute-expected.txt:
+        * svg/custom/glyph-transformation-with-hkern-expected.txt:
+        * svg/custom/text-rotation.svg: Added.
+        * svg/custom/text-x-dy-lists.svg: Added.
+        * svg/custom/text-x-override-in-tspan-child.svg: Fixed wrong test, depending on a previous bug - now matches Opera.
+        * svg/text/multichar-glyph.svg: Also dump end positions of characters.
+        * svg/text/resources/SelectionTestCase.js: Modify the selection test cases, to draw green lines marking the computed start & end postions of the selected characters.
+        (selectRange):
+
 2010-10-02  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix.

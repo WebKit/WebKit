@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (30,1) size 138x151
+  RenderSVGRoot {svg} at (30,1) size 138x152
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGText {text} at (30,1) size 138x151 contains 6 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 138x151
+    RenderSVGText {text} at (30,1) size 138x152 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 138x152
         chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 1 width 25.27: "R"
-        chunk 2 text run 1 at (49.54,50.00) startOffset 0 endOffset 1 width 27.23: "O"
-        chunk 3 text run 1 at (68.53,70.00) startOffset 0 endOffset 1 width 21.39: "T"
-        chunk 4 text run 1 at (86.68,90.00) startOffset 0 endOffset 1 width 23.34: "A"
-        chunk 5 text run 1 at (106.75,110.00) startOffset 0 endOffset 1 width 21.39: "T"
-        chunk 6 text run 1 at (130.00,130.00) startOffset 0 endOffset 1 width 23.34: "E"
+        chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 27.23: "O"
+        chunk 1 text run 1 at (70.00,70.00) startOffset 0 endOffset 1 width 21.39: "T"
+        chunk 1 text run 1 at (90.00,90.00) startOffset 0 endOffset 1 width 23.34: "A"
+        chunk 1 text run 1 at (110.00,110.00) startOffset 0 endOffset 1 width 21.39: "T"
+        chunk 1 text run 1 at (130.00,130.00) startOffset 0 endOffset 1 width 23.34: "E"

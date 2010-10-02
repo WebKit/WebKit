@@ -2302,13 +2302,15 @@ HEADERS += \
     rendering/svg/SVGInlineTextBox.h \
     rendering/svg/SVGRootInlineBox.h \
     rendering/svg/SVGTextChunk.h \
+    rendering/svg/SVGTextChunkBuilder.h \
     rendering/svg/SVGTextFragment.h \
     rendering/svg/SVGTextLayoutAttributes.h \
     rendering/svg/SVGTextLayoutAttributesBuilder.h \
+    rendering/svg/SVGTextLayoutEngine.h \
+    rendering/svg/SVGTextLayoutEngineBaseline.h \
+    rendering/svg/SVGTextLayoutEngineSpacing.h \
     rendering/svg/SVGTextMetrics.h \
     rendering/svg/SVGTextQuery.h \
-    rendering/SVGCharacterData.h \
-    rendering/SVGCharacterLayoutInfo.h \
     rendering/SVGImageBufferTools.h \
     rendering/SVGMarkerData.h \
     rendering/SVGMarkerLayoutInfo.h \
@@ -2318,8 +2320,6 @@ HEADERS += \
     rendering/SVGResourcesCache.h \
     rendering/SVGResourcesCycleSolver.h \
     rendering/SVGShadowTreeElements.h \
-    rendering/SVGTextChunkLayoutInfo.h \
-    rendering/SVGTextLayoutUtilities.h \
     rendering/TextControlInnerElements.h \
     rendering/TransformState.h \
     svg/animation/SMILTimeContainer.h \
@@ -3292,8 +3292,12 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/svg/SVGInlineTextBox.cpp \
         rendering/svg/SVGRootInlineBox.cpp \
         rendering/svg/SVGTextChunk.cpp \
+        rendering/svg/SVGTextChunkBuilder.cpp \
         rendering/svg/SVGTextLayoutAttributes.cpp \
         rendering/svg/SVGTextLayoutAttributesBuilder.cpp \
+        rendering/svg/SVGTextLayoutEngine.cpp \
+        rendering/svg/SVGTextLayoutEngineBaseline.cpp \
+        rendering/svg/SVGTextLayoutEngineSpacing.cpp \
         rendering/svg/SVGTextMetrics.cpp \
         rendering/svg/SVGTextQuery.cpp \
         rendering/PointerEventsHitRules.cpp \
@@ -3473,17 +3477,13 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/RenderSVGShadowTreeRootContainer.cpp \
         rendering/RenderSVGTransformableContainer.cpp \
         rendering/RenderSVGViewportContainer.cpp \
-        rendering/SVGCharacterData.cpp \
-        rendering/SVGCharacterLayoutInfo.cpp \
         rendering/SVGImageBufferTools.cpp \
         rendering/SVGMarkerLayoutInfo.cpp \
         rendering/SVGRenderSupport.cpp \
         rendering/SVGResources.cpp \
         rendering/SVGResourcesCache.cpp \
         rendering/SVGResourcesCycleSolver.cpp \
-        rendering/SVGShadowTreeElements.cpp \
-        rendering/SVGTextChunkLayoutInfo.cpp \
-        rendering/SVGTextLayoutUtilities.cpp
+        rendering/SVGShadowTreeElements.cpp
 }
 
 contains(DEFINES, ENABLE_JAVASCRIPT_DEBUGGER=1) {

@@ -717,8 +717,10 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/svg/SVGInlineTextBox.cpp \
 	rendering/svg/SVGRootInlineBox.cpp \
 	rendering/svg/SVGTextChunk.cpp \
+	rendering/svg/SVGTextChunkBuilder.cpp \
 	rendering/svg/SVGTextLayoutAttributes.cpp \
 	rendering/svg/SVGTextLayoutAttributesBuilder.cpp \
+	rendering/svg/SVGTextLayoutEngine.cpp \
 	rendering/svg/SVGTextLayoutEngineBaseline.cpp \
 	rendering/svg/SVGTextLayoutEngineSpacing.cpp \
 	rendering/svg/SVGTextMetrics.cpp \
@@ -750,8 +752,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 
 ifeq ($(ENABLE_SVG), true)
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
-	rendering/SVGCharacterData.cpp \
-	rendering/SVGCharacterLayoutInfo.cpp \
 	rendering/SVGImageBufferTools.cpp \
 	rendering/SVGMarkerLayoutInfo.cpp \
 	rendering/SVGRenderSupport.cpp \
@@ -759,9 +759,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/SVGResources.cpp \
 	rendering/SVGResourcesCache.cpp \
 	rendering/SVGResourcesCycleSolver.cpp \
-	rendering/SVGShadowTreeElements.cpp \
-	rendering/SVGTextChunkLayoutInfo.cpp \
-	rendering/SVGTextLayoutUtilities.cpp
+	rendering/SVGShadowTreeElements.cpp
 endif
 
 LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \

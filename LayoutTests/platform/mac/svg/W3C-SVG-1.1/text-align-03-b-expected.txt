@@ -8,15 +8,15 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 21 width 346.00: "Test of 'text-anchor'"
       RenderPath {line} at (224,75) size 2x150 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,75.00 L225.00,225.00"]
       RenderSVGContainer {g} at (0,83) size 469x133
-        RenderSVGText {text} at (-4,83) size 473x133 contains 3 chunk(s)
+        RenderSVGText {text} at (-4,83) size 473x133 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 229x33
             chunk 1 (end anchor) text run 1 at (-4.00,110.00) startOffset 0 endOffset 17 width 229.00: "Begin with \"end\","
           RenderSVGTSpan {tspan} at (0,0) size 400x33
             RenderSVGInlineText {#text} at (29,50) size 400x33
-              chunk 2 (middle anchor) text run 1 at (25.00,160.00) startOffset 0 endOffset 32 width 400.00: " switch to \"middle\" in a tspan, "
+              chunk 1 (middle anchor) text run 1 at (25.00,160.00) startOffset 0 endOffset 32 width 400.00: " switch to \"middle\" in a tspan, "
           RenderSVGTSpan {tspan} at (0,0) size 244x33
             RenderSVGInlineText {#text} at (229,100) size 244x33
-              chunk 3 text run 1 at (225.00,210.00) startOffset 0 endOffset 20 width 244.00: "and \"start\" ends it."
+              chunk 1 text run 1 at (225.00,210.00) startOffset 0 endOffset 20 width 244.00: "and \"start\" ends it."
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.5 $"

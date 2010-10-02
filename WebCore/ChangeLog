@@ -1,3 +1,168 @@
+2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Rewrite SVG text layout code
+        https://bugs.webkit.org/show_bug.cgi?id=45532
+
+        Modernize SVG text layout engine, split the layout process into three phases, so that each results can be cached (which will be done in a follow-up patch).
+
+        Phase #1) - SVGTextLayoutAttributesBuilder
+        ------------------------------------------
+
+        Parse x/y/dx/dy/rotate values of the <text> subtree (<text x="30 40">A<tspan>B<tspan x="50">C</tspan></tspan></text>)
+        This is done by SVGTextLayoutAttributesBuilder. It builds a SVGTextLayoutAttributes object for each RenderSVGInlineText renderer, and stores it there.
+        Phase #1 is started from RenderSVGText::layout(), before RenderBlockLineLayout is laying out the inline children, and thus before the InlineBox tree is created.
+
+        Now we know which character has an associated absolute x or y position, denoting the start of a new text chunk. Whenever we encounter a new text chunk
+        RenderBlockLineLayout should create a new SVGInlineTextBox. This is very important, as BiDi reordering shouldn't happen across text chunks, as well as ligature detection.
+
+        The text chunk concept is now merged right into the InlineBox tree, so we don't need to hack around the lack of that, as done for the previous years.
+
+        Phase #2) - SVGTextLayoutEngine
+        ------------------------------------------
+
+        RenderSVGText::layout() calls RenderBlock::layoutInlineChildren() right after phase #1 ends. The InlineBox tree is created. During that process findNextLineBreak()
+        decides how to split up the text into InlineTextBoxes. It has already been patched, to ask RenderSVGInlineText::characterStartsNewTextChunk(int position), whether the
+        current character should go in a new SVGInlineTextBox or not. This requires that phase #1 already stored these information in the RenderSVGInlineText objects.
+
+        For each <text> object a SVGRootInlineBox is created (in constructLine()) and all child boxes are added. After that SVGRootInlineBox::computePerCharacterLayoutInformation()
+        is called (unlike HTML text, which splits the vertical & horizontal layout in two phases, it's just one single phase for SVG). This function invokes SVGTextLayoutEngine
+        and starts phase #2 of the layout process.
+
+        SVGTextLayoutEngine lays out the content of each SVGInlineTextBox either on a line or a path. It contains all the logic handling, alignment-baseline, dominant-baseline,
+        letter-spacing, word-spacing, kerning, glyph-orientation-(horizontal|vertical), rotation, etc. etc.
+
+        As result it generates a set of SVGTextFragment objects which are stored in each SVGInlineTextBox. Each SVGTextFragment is a portion of text that can be rendered/measured
+        at once. Some examples to illustrate what's going on:
+
+        <text x="20">ABCD</text>:
+        - SVGInlineTextBox
+          - SVGTextFragment, start 0 length 4, "ABCD" (x=20)
+
+        <text x="20 100">ABCD</text>:
+        - SVGInlineTextBox
+          - SVGTextFragment, start 0 length 1, "A" (x=20)
+        - SVGInlineTextBox
+          - SVGTextFragment, start 0 length 1, "B" (x=100)
+          - SVGTextFragment, start 1 length 2, "CD" (x=100 + advance_of_last)
+
+        <text><textPath xlink:href="#somePath">ABCD</textPath></text>:
+        - SVGInlineTextBox
+          - SVGTextFragment, start 0 length 1, "A" (rotated!)
+          - SVGTextFragment, start 1 length 1, "B" (rotated!)
+          - SVGTextFragment, start 2 length 1, "C" (rotated!)
+          - SVGTextFragment, start 3 length 1, "D" (rotated!)
+
+        <text x="0 50 100">A<tspan>B</tspan>C</text>
+        - SVGInlineTextBox
+          - SVGTextFragment, start 0 length 1, "A" (x=0)
+        - SVGInlineFlowBox
+          - SVGInlineTextBox
+            - SVGTextFragment, start 0 length 1, "B" (x=50)
+        - SVGInlineTextBox
+          - SVGTextFragment, start 0 length 1, "C" (x=100)
+
+        When painting text SVGInlineTextBox just walks its fragments and paints them. Text selection works the same.
+        All text measurements (width/height etc.) have already been done in phase #2 and aren't required anymore while painting/selecting.
+        This is one of the main benefits of the new text layout engine, painting & selection is cheap now, compared to the layout process.
+
+        We're now doing phase #1 everytime RenderSVGText::layout() is called. This is not necessary, we only have to recompute these information
+        if the x/y/dx/dy or rotate list of an element in the <text> subtree changes or the text content itself -> this will be done in a follow-up patch.
+        It's likely that we'll also find ways to skip phase #2 in certain situations.
+
+        Phase #3) - SVGTextChunkBuilder
+        ------------------------------------------
+
+        After phase #2 finished, we can post-process the text fragments. Certain operations have to be applied on a "per chunk" basis.
+        text-anchor should be applied to individual text chunks, as well as textLength corrections (lengthAdjust="spacing" / lengthAdjust="spacingAndGlyphs").
+
+        SVGTextChunkBuilder just walks the SVGInlineTextBox, and collects all boxes belonging to a certain chunk. For each of the chunks all fragments
+        are post-processed. For instance for text-anchor="middle", all x positions of all fragments are shifted by -fragmentWidth/2 (for horizonal text).
+
+        After phase #1 - #3 finished, SVGRootInlineBox::computePerCharacterLayoutInformation() utilizies the stored SVGTextFragments to lay out all child
+        boxes in the InlineBox tree (setWidth/Height, etc.), the size and position of the SVGRootInlineBox and it's parent RenderSVGText object.
+
+        This should give interessted readers a good summary of how the new text layout engine works.
+        See LayoutTests/ChangeLog for more details on test progression.
+
+        Tests: svg/custom/text-rotation.svg
+               svg/custom/text-x-dy-lists.svg
+
+        * Android.mk: Add SVGTextLayoutEngine.* / SVGTextChunkBuilder.* to build. Remove SVGCharacterData.* / SVGTextChunkLayoutInfo.* / SVGTextLayoutUtilities.* from build.
+        * CMakeLists.txt: Ditto.
+        * GNUmakefile.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::isSVGInlineFlowBox): Add helper function to identify SVGInlineFlowBoxes. The variants for SVGInlineTextBox etc. already exist.
+        * rendering/InlineTextBox.h: Devirtualize selectionStartEnd, SVG is no longer overriding it.
+        * rendering/RenderSVGAllInOne.cpp: removes
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::setTextInternal): Remove SVG specific hacks, moved to RenderSVGInlineText.
+        * rendering/SVGCharacterData.cpp: Removed.
+        * rendering/SVGCharacterData.h: Removed.
+        * rendering/SVGCharacterLayoutInfo.cpp: Removed.
+        * rendering/SVGCharacterLayoutInfo.h: Removed.
+        * rendering/SVGRenderTreeAsText.cpp: Hack DRT output to be somewhat compatible with the current output, the plan is to change it completly after this patch.
+        (WebCore::writeRenderSVGTextBox):
+        (WebCore::writeSVGInlineTextBox):
+        * rendering/SVGTextChunkLayoutInfo.cpp: Removed.
+        * rendering/SVGTextChunkLayoutInfo.h: Removed.
+        * rendering/SVGTextLayoutUtilities.cpp: Removed.
+        * rendering/SVGTextLayoutUtilities.h: Removed.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): Only return immediately if SVGRenderStyle::diff produced StyleDifferenceLayout, it it's sth. else be sure to ask RenderStyle itself what to do.
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::isVerticalWritingMode): New helper method, moved from SVGTextLayoutUtilities.
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::applySVGWhitespaceRules): Moved from RenderText into a SVG specific place.
+        (WebCore::RenderSVGInlineText::RenderSVGInlineText): Use applySVGWhitespaceRules on the incoming text.
+        (WebCore::RenderSVGInlineText::styleDidChange): Only apply SVG white space rules, when using xml:space="preserve", otherwhise the constructor already handled it.
+        (WebCore::RenderSVGInlineText::characterStartsNewTextChunk): Create text chunks for absolute y values as well, SVG 1.1 2nd Edition demands that.
+        (WebCore::RenderSVGInlineText::positionForPoint): New function operating on all SVGInlineTextBoxes and their SVGTextFragments.
+        * rendering/svg/RenderSVGInlineText.h:
+        (WebCore::RenderSVGInlineText::layoutAttributes): Stores the layout attributes generated by SVGTextLayoutAttributesBuilder.
+        (WebCore::toRenderSVGInlineText): New helper methods for casting.
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout): Add comment, that SVGTextLayoutAttributesBuilder is just phase one of the layout process.
+        (WebCore::RenderSVGText::positionForPoint): Simplified implementation for SVGs needs.
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paintSelectionBackground): Seperated selection background drawing from actual text rendering, to make sure selection is always in background for SVG.
+        (WebCore::SVGInlineFlowBox::paint): Call computetextMatchMarkerRectForRenderer, before painting.
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer): New method.
+        * rendering/svg/SVGInlineFlowBox.h:
+        (WebCore::SVGInlineFlowBox::isSVGInlineFlowBox):
+        * rendering/svg/SVGInlineTextBox.cpp: Completly rewritten, operates on SVGTextFragments, produced by the SVGTextLayoutEngine. Whole new concept, compared to the old hack.
+        * rendering/svg/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::clearTextFragments): Only used by SVGTextLayoutEngine, to clean up previously computed fragments.
+        (WebCore::SVGInlineTextBox::textFragments): Offers access to the fragments in the box.
+        (WebCore::SVGInlineTextBox::startsNewTextChunk): Does this box start a new text chunk?
+        (WebCore::SVGInlineTextBox::setStartsNewTextChunk): SVGTextLayoutEngine marks this box, if it starts a new text chunk.
+        * rendering/svg/SVGRootInlineBox.cpp: Remove old code regarding text chunk parts.
+        (WebCore::SVGRootInlineBox::paint): Selection is now painted before text, to assure it's really in the background.
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation): Use new SVGTextLayoutEngine.
+        (WebCore::SVGRootInlineBox::layoutCharactersInTextBoxes): Feed SVGTextLayoutEngine with SVGInlineTextBoxes, detect the begin/end of path layouts.
+        (WebCore::SVGRootInlineBox::layoutChildBoxes): Use new isSVGInlineTextBox() helper method.
+        (WebCore::SVGRootInlineBox::closestLeafChildForPosition): Simplified version for SVG.
+        * rendering/svg/SVGRootInlineBox.h: Remove access to text chunks, they're now longer stored in the SVGRootInlineBox.
+        * rendering/svg/SVGTextChunk.cpp: s/SVGTextChunkNew/SVGTextChunk/
+        * rendering/svg/SVGTextChunk.h:
+        * rendering/svg/SVGTextChunkBuilder.cpp: Added.
+        * rendering/svg/SVGTextChunkBuilder.h: Added.
+        * rendering/svg/SVGTextLayoutAttributes.cpp: Constify dump() method.
+        * rendering/svg/SVGTextLayoutAttributes.h:
+        (WebCore::SVGTextLayoutAttributes::textMetricsValues):
+        * rendering/svg/SVGTextLayoutAttributesBuilder.cpp: Rewritten, consume less memory, while building the layout attributes.
+        * rendering/svg/SVGTextLayoutAttributesBuilder.h:
+        * rendering/svg/SVGTextLayoutEngine.cpp: Added.
+        * rendering/svg/SVGTextLayoutEngine.h: Added.
+        * rendering/svg/SVGTextQuery.cpp: Rewritten to deal with the new SVGTextFragment/SVGTextLayoutAttributes logic.
+        * rendering/svg/SVGTextQuery.h:
+
 2010-10-02  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.

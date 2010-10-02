@@ -25,12 +25,9 @@
 #include "SVGInlineTextBox.h"
 #include "SVGTextFragment.h"
 
-#include <wtf/UnusedParam.h>
-
 namespace WebCore {
 
-// FIXME: Rename to SVGTextChunk, once the new layout engine has landed.
-SVGTextChunkNew::SVGTextChunkNew(bool isVerticalText, ETextAnchor textAnchor, SVGTextContentElement::SVGLengthAdjustType lengthAdjust, float desiredTextLength)
+SVGTextChunk::SVGTextChunk(bool isVerticalText, ETextAnchor textAnchor, SVGTextContentElement::SVGLengthAdjustType lengthAdjust, float desiredTextLength)
     : m_isVerticalText(isVerticalText)
     , m_textAnchor(textAnchor)
     , m_lengthAdjust(lengthAdjust)
@@ -38,18 +35,14 @@ SVGTextChunkNew::SVGTextChunkNew(bool isVerticalText, ETextAnchor textAnchor, SV
 {
 }
 
-void SVGTextChunkNew::calculateLength(float& length, unsigned& characters) const
+void SVGTextChunk::calculateLength(float& length, unsigned& characters) const
 {
     SVGTextFragment* lastFragment = 0;
 
     unsigned boxCount = m_boxes.size();
     for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
         SVGInlineTextBox* textBox = m_boxes.at(boxPosition);
-
-        // FIXME: Enable this code, once the new layout engine has landed! This is nonfunctional for now.
-        // Vector<SVGTextFragment>& fragments = textBox->textFragments();
-        Vector<SVGTextFragment> fragments;
-        UNUSED_PARAM(textBox);
+        Vector<SVGTextFragment>& fragments = textBox->textFragments();
 
         unsigned size = fragments.size();
         if (!size)
@@ -80,7 +73,7 @@ void SVGTextChunkNew::calculateLength(float& length, unsigned& characters) const
     }
 }
 
-float SVGTextChunkNew::calculateTextAnchorShift(float length) const
+float SVGTextChunk::calculateTextAnchorShift(float length) const
 {
     switch (m_textAnchor) {
     case TA_START:

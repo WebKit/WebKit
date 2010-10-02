@@ -26,10 +26,8 @@
 
 #if ENABLE(SVG)
 #include "RootInlineBox.h"
-#include "SVGCharacterData.h"
-#include "SVGCharacterLayoutInfo.h"
 #include "SVGRenderSupport.h"
-#include "SVGTextChunkLayoutInfo.h"
+#include "SVGTextLayoutEngine.h"
 
 namespace WebCore {
 
@@ -55,20 +53,15 @@ public:
     virtual FloatRect objectBoundingBox() const { return FloatRect(); }
     virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
 
-    // Used by SVGRenderTreeAsText
-    const Vector<SVGTextChunk>& svgTextChunks() const { return m_svgTextChunks; }
+    InlineBox* closestLeafChildForPosition(const IntPoint&);
 
 private:
-    void propagateTextChunkPartInformation();
-    void buildLayoutInformation(InlineFlowBox* start, SVGCharacterLayoutInfo&);
-
+    void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
+    void layoutChildBoxes(InlineFlowBox*);
     void layoutRootBox();
-    void layoutChildBoxes(InlineFlowBox* start);
 
 private:
     int m_logicalHeight;
-    Vector<SVGChar> m_svgChars;
-    Vector<SVGTextChunk> m_svgTextChunks;
 };
 
 } // namespace WebCore

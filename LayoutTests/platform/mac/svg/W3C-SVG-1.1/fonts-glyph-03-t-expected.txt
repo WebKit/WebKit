@@ -2,20 +2,20 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (50,8) size 25x260
+    RenderSVGContainer {g} at (50,8) size 25x262
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (50,8) size 25x260
-        RenderSVGText {text} at (50,8) size 25x50 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 25x50
+      RenderSVGContainer {g} at (50,8) size 25x262
+        RenderSVGText {text} at (50,8) size 25x52 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x52
             chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 1 width 25.00: "a"
-        RenderSVGText {text} at (50,78) size 25x50 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 25x50
+        RenderSVGText {text} at (50,78) size 25x52 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x52
             chunk 1 text run 1 at (50.00,120.00) startOffset 0 endOffset 1 width 25.00: "a"
-        RenderSVGText {text} at (50,148) size 25x50 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 25x50
+        RenderSVGText {text} at (50,148) size 25x52 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x52
             chunk 1 text run 1 at (50.00,190.00) startOffset 0 endOffset 1 width 25.00: "a"
-        RenderSVGText {text} at (50,218) size 25x50 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 25x50
+        RenderSVGText {text} at (50,218) size 25x52 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x52
             chunk 1 text run 1 at (50.00,260.00) startOffset 0 endOffset 1 width 25.00: "a"
     RenderSVGText {text} at (10,304) size 284x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 284x46

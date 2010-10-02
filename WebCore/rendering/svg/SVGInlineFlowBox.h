@@ -29,6 +29,8 @@
 
 namespace WebCore {
 
+class RenderSVGInlineText;
+
 class SVGInlineFlowBox : public InlineFlowBox {
 public:
     SVGInlineFlowBox(RenderObject* obj)
@@ -37,13 +39,16 @@ public:
     {
     }
 
+    virtual bool isSVGInlineFlowBox() const { return true; }
     virtual int virtualLogicalHeight() const { return m_logicalHeight; }
     void setLogicalHeight(int h) { m_logicalHeight = h; }
 
+    void paintSelectionBackground(PaintInfo&);
     virtual void paint(PaintInfo&, int tx, int ty);
 
     virtual IntRect calculateBoundaries() const;
-    void layoutFlowBox();
+
+    static void computeTextMatchMarkerRectForRenderer(RenderSVGInlineText*);
 
 private:
     int m_logicalHeight;

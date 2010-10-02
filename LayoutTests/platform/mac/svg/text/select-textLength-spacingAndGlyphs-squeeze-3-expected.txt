@@ -3,6 +3,8 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (50,5) size 250x55
     RenderSVGContainer {g} at (160,5) size 70x55
+      RenderPath {svg:line} at (160,5) size 10x55 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M32.73,1.00 L32.73,12.00"]
+      RenderPath {svg:line} at (220,5) size 10x55 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M45.06,1.00 L45.06,12.00"]
       RenderPath {svg:rect} at (160,5) size 70x55 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M32.73,1.00 L45.06,1.00 L45.06,12.00 L32.73,12.00 Z"]
     RenderSVGText {text} at (10,1) size 50x11 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 50x11

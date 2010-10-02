@@ -16,7 +16,7 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (5,200) size 419x32 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 419x32
         chunk 1 text run 1 at (5.00,225.00) startOffset 0 endOffset 21 width 234.00: "Animation on the 'd' "
-        chunk 1 text run 2 at (239.00,225.00) startOffset 0 endOffset 18 width 185.00: "attribute of path."
+        chunk 1 text run 1 at (239.00,225.00) startOffset 0 endOffset 18 width 185.00: "attribute of path."
     RenderSVGText {text} at (5,238) size 325x22 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 325x22
         chunk 1 text run 1 at (5.00,255.00) startOffset 0 endOffset 45 width 325.00: "Digit should match outline at indicated time."
