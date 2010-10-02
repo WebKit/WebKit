@@ -1180,6 +1180,7 @@ SOURCES += \
     platform/network/HTTPParsers.cpp \
     platform/network/NetworkStateNotifier.cpp \
     platform/network/ProtectionSpace.cpp \
+    platform/network/ProxyServer.cpp \
     platform/network/ResourceErrorBase.cpp \
     platform/network/ResourceHandle.cpp \
     platform/network/ResourceRequestBase.cpp \
