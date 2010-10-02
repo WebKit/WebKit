@@ -1,5 +1,12 @@
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
+        Fix Snow Leopard build.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::getProxy):
+
+2010-10-01  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Add proxy server query function proxyServersForURL and change the Mac plug-in code to use it
