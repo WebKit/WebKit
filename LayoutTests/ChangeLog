@@ -2,6 +2,14 @@
 
         Build fix. Not reviewed.
 
+        Remove LayoutTests/websocket and the dummy file.
+
+        * websocket/tests/workers/README: Removed.
+
+2010-10-02  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         Add test expectations because of the massive SVG change in r68976.
 
         * platform/chromium/test_expectations.txt:
