@@ -1,3 +1,11 @@
+2010-10-02  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Add test expectations for Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-10-01  Martin Robinson  <mrobinson@igalia.com>
 
         Removed an expected result for a previously skipped test. This test
