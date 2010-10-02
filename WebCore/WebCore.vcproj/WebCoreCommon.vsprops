@@ -16,7 +16,7 @@
 	/>
 	<Tool
 		Name="VCPostBuildEventTool"
-		CommandLine=""
+		CommandLine="if exist &quot;$(WebKitOutputDir)\buildfailed&quot; del &quot;$(WebKitOutputDir)\buildfailed&quot;&#x0D;&#x0A;"
 	/>
 	<Tool
 		Name="VCPreBuildEventTool"

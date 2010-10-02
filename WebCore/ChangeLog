@@ -1,3 +1,12 @@
+2010-10-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Build Fix for Windows.
+
+        * WebCore.vcproj/WebCore.vcproj: Don't have an empty post-build step, use
+            WebCoreCommon.vsprops to handle post-build step.
+        * WebCore.vcproj/WebCoreCommon.vsprops: Set the post-build step to delete 
+             $(WebKitOutputDir)/buildfailed.
+
 2010-10-01  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

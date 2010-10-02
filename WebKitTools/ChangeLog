@@ -1,3 +1,11 @@
+2010-10-01  Brian Weinstein  <bweinstein@apple.com>
+
+        Build Fix for Windows.
+
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj: Don't copy ForwardingHeaders from
+            WebKitTestRunner/ForwardingHeaders, instead, add $(WebKitOutputDir)/include/WebCore/
+            ForwardingHeaders to the include path.
+
 2010-10-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
