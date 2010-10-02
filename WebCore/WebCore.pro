@@ -3266,6 +3266,17 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
     }
 }
 
+contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
+    HEADERS += \
+        ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.h \
+        ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.h \
+        bindings/generic/RuntimeEnabledFeatures.h
+    SOURCES += \
+        ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.cpp \
+        ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.cpp \
+        bindings/generic/RuntimeEnabledFeatures.cpp
+}
+
 contains(DEFINES, ENABLE_SVG=1) {
     !v8 {
         SOURCES += \

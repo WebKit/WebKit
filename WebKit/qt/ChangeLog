@@ -1,3 +1,35 @@
+2010-10-02  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Provide Qt support for DeviceMotion/Orientation clients
+        https://bugs.webkit.org/show_bug.cgi?id=47051
+
+        Dummy implementation of DeviceMotion/Orientation client classes
+        to make possible to hook up motion/orientation data
+        in further implementations.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * WebCoreSupport/DeviceMotionClientQt.cpp: Added.
+        (WebCore::DeviceMotionClientQt::DeviceMotionClientQt):
+        (WebCore::DeviceMotionClientQt::setController):
+        (WebCore::DeviceMotionClientQt::startUpdating):
+        (WebCore::DeviceMotionClientQt::stopUpdating):
+        (WebCore::DeviceMotionClientQt::currentDeviceMotion):
+        (WebCore::DeviceMotionClientQt::deviceMotionControllerDestroyed):
+        * WebCoreSupport/DeviceMotionClientQt.h: Added.
+        (WebCore::DeviceMotionClientQt::~DeviceMotionClientQt):
+        * WebCoreSupport/DeviceOrientationClientQt.cpp: Added.
+        (WebCore::DeviceOrientationClientQt::DeviceOrientationClientQt):
+        (WebCore::DeviceOrientationClientQt::setController):
+        (WebCore::DeviceOrientationClientQt::startUpdating):
+        (WebCore::DeviceOrientationClientQt::stopUpdating):
+        (WebCore::DeviceOrientationClientQt::lastOrientation):
+        (WebCore::DeviceOrientationClientQt::deviceOrientationControllerDestroyed):
+        * WebCoreSupport/DeviceOrientationClientQt.h: Added.
+        (WebCore::DeviceOrientationClientQt::~DeviceOrientationClientQt):
+
 2010-09-30  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -45,6 +45,8 @@
 #include "ChromeClientQt.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
+#include "DeviceMotionClientQt.h"
+#include "DeviceOrientationClientQt.h"
 #include "DocumentLoader.h"
 #include "DragClientQt.h"
 #include "DragController.h"
@@ -298,6 +300,10 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     pageClients.editorClient = new EditorClientQt(q);
     pageClients.dragClient = new DragClientQt(q);
     pageClients.inspectorClient = new InspectorClientQt(q);
+#if ENABLE(DEVICE_ORIENTATION)
+    pageClients.deviceOrientationClient = new DeviceOrientationClientQt(q);
+    pageClients.deviceMotionClient = new DeviceMotionClientQt(q);
+#endif
     page = new Page(pageClients);
 
     settings = new QWebSettings(page->settings());
