@@ -1,3 +1,26 @@
+2010-10-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Deploy the new WKString functions to remove most uses of CF from
+        the WebKitTestRunner.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessage):
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::toWK):
+        (WTR::toJS):
+        (WTR::toSTD):
+        (WTR::operator<<):
+        (WTR::copyURLString):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didFinishLoadForFrame):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke):
+        (WTR::TestInvocation::didReceiveMessageFromInjectedBundle):
+
 2010-10-01  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed TestResultsServer change.

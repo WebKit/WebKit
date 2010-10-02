@@ -208,12 +208,12 @@ void TestController::resetStateToConsistentValues()
     WKPreferencesSetFontSmoothingLevel(preferences, kWKFontSmoothingLevelNoSubpixelAntiAliasing);
     WKPreferencesSetXSSAuditorEnabled(preferences, false);
 
-    static WKStringRef standardFontFamily = WKStringCreateWithCFString(CFSTR("Times"));
-    static WKStringRef cursiveFontFamily = WKStringCreateWithCFString(CFSTR("Apple Chancery"));
-    static WKStringRef fantasyFontFamily = WKStringCreateWithCFString(CFSTR("Papyrus"));
-    static WKStringRef fixedFontFamily = WKStringCreateWithCFString(CFSTR("Courier"));
-    static WKStringRef sansSerifFontFamily = WKStringCreateWithCFString(CFSTR("Helvetica"));
-    static WKStringRef serifFontFamily = WKStringCreateWithCFString(CFSTR("Times"));
+    static WKStringRef standardFontFamily = WKStringCreateWithUTF8CString("Times");
+    static WKStringRef cursiveFontFamily = WKStringCreateWithUTF8CString("Apple Chancery");
+    static WKStringRef fantasyFontFamily = WKStringCreateWithUTF8CString("Papyrus");
+    static WKStringRef fixedFontFamily = WKStringCreateWithUTF8CString("Courier");
+    static WKStringRef sansSerifFontFamily = WKStringCreateWithUTF8CString("Helvetica");
+    static WKStringRef serifFontFamily = WKStringCreateWithUTF8CString("Times");
 
     WKPreferencesSetStandardFontFamily(preferences, standardFontFamily);
     WKPreferencesSetCursiveFontFamily(preferences, cursiveFontFamily);
@@ -295,9 +295,8 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
         return;
 
     WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKFrameCopyURL(frame));
-    RetainPtr<CFURLRef> cfURL= toCF(wkURL);
-    CFStringRef cfURLString = CFURLGetString(cfURL.get());
-    if (!CFEqual(cfURLString, CFSTR("about:blank")))
+    WKRetainPtr<WKStringRef> wkURLString(AdoptWK, copyURLString(wkURL.get()));
+    if (!WKStringIsEqualToUTF8CString(wkURLString.get(), "about:blank"))
         return;
 
     m_doneResetting = true;

@@ -32,7 +32,6 @@
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKStringCF.h>
 #include <WebKit2/WebKit2.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RetainPtr.h>
@@ -105,18 +104,19 @@ void InjectedBundle::willDestroyPage(WKBundlePageRef page)
 
 void InjectedBundle::didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody)
 {
-    CFStringRef cfMessage = WKStringCopyCFString(0, messageName);
-    if (CFEqual(cfMessage, CFSTR("BeginTest"))) {
-        WKRetainPtr<WKStringRef> ackMessageName(AdoptWK, WKStringCreateWithCFString(CFSTR("Ack")));
-        WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithCFString(CFSTR("BeginTest")));
+    if (WKStringIsEqualToUTF8CString(messageName, "BeginTest")) {
+        ASSERT(!messageBody);
+
+        WKRetainPtr<WKStringRef> ackMessageName(AdoptWK, WKStringCreateWithUTF8CString("Ack"));
+        WKRetainPtr<WKStringRef> ackMessageBody(AdoptWK, WKStringCreateWithUTF8CString("BeginTest"));
         WKBundlePostMessage(m_bundle, ackMessageName.get(), ackMessageBody.get());
 
         beginTesting();
         return;
     }
 
-    WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithCFString(CFSTR("Error")));
-    WKRetainPtr<WKStringRef> errorMessageBody(AdoptWK, WKStringCreateWithCFString(CFSTR("Unknown")));
+    WKRetainPtr<WKStringRef> errorMessageName(AdoptWK, WKStringCreateWithUTF8CString("Error"));
+    WKRetainPtr<WKStringRef> errorMessageBody(AdoptWK, WKStringCreateWithUTF8CString("Unknown"));
     WKBundlePostMessage(m_bundle, errorMessageName.get(), errorMessageBody.get());
 }
 
@@ -142,11 +142,8 @@ void InjectedBundle::done()
 {
     m_mainPage->stopLoading();
 
-    WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithCFString(CFSTR("Done")));
-
-    std::string output = m_outputStream.str();
-    RetainPtr<CFStringRef> outputCFString(AdoptCF, CFStringCreateWithCString(0, output.c_str(), kCFStringEncodingUTF8));
-    WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithCFString(outputCFString.get()));
+    WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("Done"));
+    WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithUTF8CString(m_outputStream.str().c_str()));
 
     WKBundlePostMessage(m_bundle, doneMessageName.get(), doneMessageBody.get());
 
