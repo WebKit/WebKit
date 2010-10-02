@@ -1,3 +1,20 @@
+2010-10-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        [GTK] r68923 broke some plugin tests
+        https://bugs.webkit.org/show_bug.cgi?id=47040
+
+        No longer pass focus and blur events to plugins when the "old" DOM Level
+        2 DOMFocusIn/DOMFocusOut events occur. r68923 made a change which means
+        that the DOM Level 3 version is always fired for this event. 
+
+        No new tests, as this should cause the failing tests to pass.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::handleEvent): No longer pass focus and blur events to
+        plugins when DOMFocusIn / DOMFocusOut events occur.
+
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

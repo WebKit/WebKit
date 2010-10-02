@@ -170,9 +170,9 @@ void PluginView::handleEvent(Event* event)
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
-    else if (event->type() == eventNames().DOMFocusOutEvent || event->type() == eventNames().focusoutEvent)
+    else if (event->type() == eventNames().focusoutEvent)
         handleFocusOutEvent();
-    else if (event->type() == eventNames().DOMFocusInEvent || event->type() == eventNames().focusinEvent)
+    else if (event->type() == eventNames().focusinEvent)
         handleFocusInEvent();
 #endif
 }
