@@ -7,4 +7,4 @@ layer at (0,0) size 406x406
     RenderSVGText {text} at (56,35) size 288x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 288x19
         chunk 1 (middle anchor) text run 1 at (56.00,50.00) startOffset 0 endOffset 49 width 288.00: "The circle should stay in the bottom-right corner"
-caret: position 49 of child 0 {#text} of child 3 {text} of child 0 {svg} of document
+caret: position 25 of child 0 {#text} of child 3 {text} of child 0 {svg} of document

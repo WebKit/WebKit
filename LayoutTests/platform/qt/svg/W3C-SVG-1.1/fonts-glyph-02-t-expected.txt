@@ -2,15 +2,15 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (100,32) size 224x195
+    RenderSVGContainer {g} at (100,32) size 224x199
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (100,32) size 184x80
-        RenderSVGText {text} at (100,32) size 184x80 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 184x80
+      RenderSVGContainer {g} at (100,32) size 184x84
+        RenderSVGText {text} at (100,32) size 184x84 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 184x84
             chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 5 width 184.00 RTL: "\x{69A} \x{69A}\x{69A}\x{69A}"
-      RenderSVGContainer {g} at (100,114) size 224x113
-        RenderSVGText {text} at (100,114) size 224x113 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 224x113
+      RenderSVGContainer {g} at (100,114) size 224x117
+        RenderSVGText {text} at (100,114) size 224x117 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 224x117
             chunk 1 text run 1 at (100.00,200.00) startOffset 0 endOffset 5 width 223.92 RTL: "\x{62E} \x{62E}\x{62E}\x{62E}"
     RenderSVGText {text} at (10,301) size 270x52 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 270x52

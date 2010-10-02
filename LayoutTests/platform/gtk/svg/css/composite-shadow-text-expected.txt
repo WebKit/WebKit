@@ -9,15 +9,15 @@ layer at (0,0) size 800x600
       RenderSVGResourcePattern {pattern} [id="pattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
         RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00 Z"]
-    RenderSVGContainer {g} at (9,8) size 245x424
-      RenderSVGText {text} at (10,9) size 183x112 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 183x112
+    RenderSVGContainer {g} at (9,8) size 245x425
+      RenderSVGText {text} at (10,9) size 183x113 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x113
           chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 4 width 183.00: "Test"
-      RenderSVGText {text} at (10,134) size 183x112 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 183x112
+      RenderSVGText {text} at (10,134) size 183x113 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x113
           chunk 1 text run 1 at (10.00,225.00) startOffset 0 endOffset 4 width 183.00: "Test"
-      RenderSVGText {text} at (10,259) size 183x112 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 183x112
+      RenderSVGText {text} at (10,259) size 183x113 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x113
           chunk 1 text run 1 at (10.00,350.00) startOffset 0 endOffset 4 width 183.00: "Test"
     RenderSVGText {text} at (38,435) size 324x19 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 324x19

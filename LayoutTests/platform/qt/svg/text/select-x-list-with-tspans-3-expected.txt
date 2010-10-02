@@ -1,28 +1,30 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (50,0) size 380x60
-    RenderSVGContainer {g} at (300,0) size 30x60
+  RenderSVGRoot {svg} at (50,0) size 380x65
+    RenderSVGContainer {g} at (295,0) size 40x65
+      RenderPath {svg:line} at (295,0) size 10x65 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M60.00,0.00 L60.00,13.00"]
+      RenderPath {svg:line} at (325,0) size 10x65 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M66.00,0.00 L66.00,13.00"]
       RenderPath {svg:rect} at (300,0) size 30x60 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M60.00,0.00 L66.00,0.00 L66.00,12.00 L60.00,12.00 L60.00,0.00"]
-    RenderSVGText {text} at (10,0) size 76x12 contains 3 chunk(s)
+    RenderSVGText {text} at (10,0) size 76x12 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 16x12
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.00: "T"
-        chunk 2 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 6.00: "h"
+        chunk 1 text run 1 at (20.00,10.00) startOffset 0 endOffset 1 width 6.00: "h"
       RenderSVGTSpan {tspan} at (0,0) size 2x12
         RenderSVGInlineText {#text} at (30,0) size 2x12
-          chunk 3 text run 1 at (40.00,10.00) startOffset 0 endOffset 1 width 2.00: "i"
+          chunk 1 text run 1 at (40.00,10.00) startOffset 0 endOffset 1 width 2.00: "i"
       RenderSVGTSpan {tspan} at (0,0) size 10x12
         RenderSVGInlineText {#text} at (32,0) size 10x12
-          chunk 3 text run 2 at (42.00,10.00) startOffset 0 endOffset 3 width 10.00: "s i"
+          chunk 1 text run 1 at (42.00,10.00) startOffset 0 endOffset 3 width 10.00: "s i"
       RenderSVGInlineText {#text} at (42,0) size 5x12
-        chunk 3 text run 3 at (52.00,10.00) startOffset 0 endOffset 1 width 5.00: "s"
+        chunk 1 text run 1 at (52.00,10.00) startOffset 0 endOffset 1 width 5.00: "s"
       RenderSVGTSpan {tspan} at (0,0) size 12x12
         RenderSVGInlineText {#text} at (47,0) size 12x12
-          chunk 3 text run 4 at (57.00,10.00) startOffset 0 endOffset 3 width 12.00: " a "
+          chunk 1 text run 1 at (57.00,10.00) startOffset 0 endOffset 3 width 12.00: " a "
       RenderSVGTSpan {tspan} at (0,0) size 3x12
         RenderSVGInlineText {#text} at (59,0) size 3x12
-          chunk 3 text run 5 at (69.00,10.00) startOffset 0 endOffset 1 width 3.00: "t"
+          chunk 1 text run 1 at (69.00,10.00) startOffset 0 endOffset 1 width 3.00: "t"
       RenderSVGInlineText {#text} at (62,0) size 14x12
-        chunk 3 text run 6 at (72.00,10.00) startOffset 0 endOffset 3 width 14.00: "est"
+        chunk 1 text run 1 at (72.00,10.00) startOffset 0 endOffset 3 width 14.00: "est"
 selection start: position 1 of child 0 {#text} of child 4 {tspan} of child 7 {text} of child 0 {svg} of document
 selection end:   position 2 of child 0 {#text} of child 4 {tspan} of child 7 {text} of child 0 {svg} of document

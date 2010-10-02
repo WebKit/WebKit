@@ -1,3 +1,79 @@
+2010-10-02  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Rewrite SVG text layout code
+        https://bugs.webkit.org/show_bug.cgi?id=45532
+
+        Rebaseline gtk / qt / win specific SVG text results.
+
+        * platform/gtk/svg/batik/text/textDecoration-expected.txt:
+        * platform/gtk/svg/css/composite-shadow-text-expected.txt:
+        * platform/gtk/svg/css/shadow-changes-expected.txt:
+        * platform/gtk/svg/css/text-shadow-multiple-expected.txt:
+        * platform/gtk/svg/custom/broken-internal-references-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-container-standalone-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-expected.txt:
+        * platform/gtk/svg/custom/mouse-move-on-svg-root-standalone-expected.txt:
+        * platform/gtk/svg/custom/stroke-width-large-expected.txt:
+        * platform/gtk/svg/filters/filter-on-filter-for-text-expected.txt:
+        * platform/gtk/svg/filters/filter-on-tspan-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-3-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-squeeze-4-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-1-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-2-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-3-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-squeeze-4-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-1-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-2-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-3-expected.txt:
+        * platform/gtk/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt:
+        * platform/gtk/svg/text/select-x-list-1-expected.txt:
+        * platform/gtk/svg/text/select-x-list-2-expected.txt:
+        * platform/gtk/svg/text/select-x-list-3-expected.txt:
+        * platform/gtk/svg/text/select-x-list-4-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/gtk/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/gtk/svg/text/text-hkern-expected.txt:
+        * platform/gtk/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/gtk/svg/text/text-vkern-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/qt/svg/batik/text/textDecoration-expected.txt:
+        * platform/qt/svg/custom/broken-internal-references-expected.txt:
+        * platform/qt/svg/filters/filter-on-filter-for-text-expected.txt:
+        * platform/qt/svg/filters/filter-on-tspan-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-1-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-2-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-3-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-squeeze-4-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-1-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-2-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-3-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacing-stretch-4-expected.txt:
+        * platform/qt/svg/text/select-textLength-spacingAndGlyphs-stretch-4-expected.txt:
+        * platform/qt/svg/text/select-x-list-1-expected.txt:
+        * platform/qt/svg/text/select-x-list-2-expected.txt:
+        * platform/qt/svg/text/select-x-list-3-expected.txt:
+        * platform/qt/svg/text/select-x-list-4-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-1-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-2-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-3-expected.txt:
+        * platform/qt/svg/text/select-x-list-with-tspans-4-expected.txt:
+        * platform/qt/svg/text/text-hkern-expected.txt:
+        * platform/qt/svg/text/text-hkern-on-vertical-text-expected.txt:
+        * platform/qt/svg/text/text-vkern-expected.txt:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/win/svg/custom/broken-internal-references-expected.txt:
+
 2010-10-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
