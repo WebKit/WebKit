@@ -1,3 +1,9 @@
+2010-10-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Add Chromium depot_tools to files that git should ignore.
+
+        * .gitignore: Added WebKit/chromium/depot_tools.
+
 2010-09-30  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Fix typo in build script.

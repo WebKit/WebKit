@@ -56,6 +56,7 @@ WebKit/chromium/gpu/
 WebKit/chromium/media/
 WebKit/chromium/webkit/
 WebKit/chromium/printing/
+WebKit/chromium/depot_tools/
 
 # Ignore compiled java tests:
 LayoutTests/java/*.class
