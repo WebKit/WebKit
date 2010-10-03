@@ -202,7 +202,8 @@ function Test(testInfoLine)
   this.links = fields[4];
   this.assertion = fields[5];
   
-  this.completed = false; // true if this test has a result (pass, fail or skip)
+  this.completedHTML = false; // true if this test has a result (pass, fail or skip)
+  this.completedXHTML = false; // true if this test has a result (pass, fail or skip)
   
   if (!this.links)
     this.links = "other.html"
@@ -227,22 +228,24 @@ function Chapter(chapterInfo)
   this.sections = []; // array of ChapterSection
 }
 
-Chapter.prototype.description = function()
+Chapter.prototype.description = function(format)
 {
-  return this.title + ' (' + this.testCount + ' tests, ' + this.untestedCount() + ' untested)';
+  return this.title + ' (' + this.testCount + ' tests, ' + this.untestedCount(format) + ' untested)';
 }
 
-Chapter.prototype.untestedCount = function()
+Chapter.prototype.untestedCount = function(format)
 {
+  var completedProperty = format == 'html4' ? 'completedHTML' : 'completedXHTML';
+  
   var count = 0;
   for (var i = 0; i < this.sections.length; ++i) {
     var currSection = this.sections[i];
     for (var j = 0; j < currSection.tests.length; ++j) {
-      count += currSection.tests[j].completed ? 0 : 1;
+      count += currSection.tests[j][completedProperty] ? 0 : 1;
     }
-    
   }
   return count;
+  
 }
 
 // Utils
@@ -386,7 +389,7 @@ TestSuite.prototype.fillChapterPopup = function()
     var chapter = this.chapters[chapterData.file];
     
     var option = document.createElement('option');
-    option.innerText = chapter.description();
+    option.innerText = chapter.description(this.format);
     option._chapter = chapter;
     
     select.appendChild(option);
@@ -401,8 +404,9 @@ TestSuite.prototype.updateChapterPopup = function()
   for (var i = 0; i < kChapterData.length; ++i) {
     var chapterData = kChapterData[i];
     var chapter = this.chapters[chapterData.file];
-
-    currOption.innerText = chapter.description();
+    if (!chapter)
+      continue;
+    currOption.innerText = chapter.description(this.format);
     currOption = currOption.nextSibling;
   }
 }
@@ -463,6 +467,8 @@ TestSuite.prototype.chapterPopupChanged = function()
 
 TestSuite.prototype.fillTestList = function()
 {
+  var completedProperty = this.format == 'html4' ? 'completedHTML' : 'completedXHTML';
+
   var testList = document.getElementById('test-list');
   testList.innerHTML = '';
   
@@ -471,7 +477,7 @@ TestSuite.prototype.fillTestList = function()
 
     var option = document.createElement('option');
     option.innerText = currTest.id;
-    option.className = currTest.completed ? 'completed' : 'untested';
+    option.className = currTest[completedProperty] ? 'completed' : 'untested';
     option._test = currTest;
     testList.appendChild(option);
   }
@@ -479,12 +485,13 @@ TestSuite.prototype.fillTestList = function()
 
 TestSuite.prototype.updateTestList = function()
 {
+  var completedProperty = this.format == 'html4' ? 'completedHTML' : 'completedXHTML';
   var testList = document.getElementById('test-list');
   
   var options = testList.getElementsByTagName('option');
   for (var i = 0; i < options.length; ++i) {
     var currOption = options[i];
-    currOption.className = currOption._test.completed ? 'completed' : 'untested';
+    currOption.className = currOption._test[completedProperty] ? 'completed' : 'untested';
   }
 }
 
@@ -550,9 +557,11 @@ TestSuite.prototype.previousTest = function()
 
 TestSuite.prototype.goToNextIncompleteTest = function()
 {
+  var completedProperty = this.format == 'html4' ? 'completedHTML' : 'completedXHTML';
+
   // Look to the end of this chapter.
   for (var i = this.currChapterTestIndex + 1; i < this.currentChapterTests.length; ++i) {
-    if (!this.currentChapterTests[i].completed) {
+    if (!this.currentChapterTests[i][completedProperty]) {
       this.goToTestIndex(i);
       return;
     }
@@ -574,9 +583,11 @@ TestSuite.prototype.goToNextIncompleteTest = function()
 
 TestSuite.prototype.firstIncompleteTestIndex = function(chapter)
 {
+  var completedProperty = this.format == 'html4' ? 'completedHTML' : 'completedXHTML';
+
   var chapterTests = this.testListForChapter(chapter);
   for (var i = 0; i < chapterTests.length; ++i) {
-    if (!chapterTests[i].completed)
+    if (!chapterTests[i][completedProperty])
       return i;
   }
   
@@ -751,10 +762,11 @@ TestSuite.prototype.recordResult = function(testName, resolution, comment)
     comment = '';
   
   this.storeTestResult(testName, this.format, resolution, comment, navigator.userAgent);
-  this.markTestCompleted(testName);
+  this.markTestCompleted(testName, this.format == 'html4', this.format == 'xhtml1');
   this.updateTestList();
 
   this.updateSummaryData();
+  this.updateChapterPopup();
 }
 
 TestSuite.prototype.beginAppendingOutput = function()
@@ -800,7 +812,9 @@ TestSuite.prototype.formatChanged = function(formatString)
   else
     this.formatInfo = kXHTML1Data;
 
-    this.loadCurrentTest();
+  this.loadCurrentTest();
+  this.updateChapterPopup();
+  this.updateTestList();
 }
 
 /* ------------------------------------------------------- */
@@ -1183,15 +1197,18 @@ TestSuite.prototype.exportResultsForTestsWithMismatchedResults = function()
 
 /* -------------------------------------------------------- */
 
-TestSuite.prototype.markTestCompleted = function(testID)
+TestSuite.prototype.markTestCompleted = function(testID, completedHTML, completedXHTML)
 {
   var test = this.tests[testID];
   if (!test) {
     window.console.log('markTestCompleted failed to find test ' + testID);
     return;
   }
-  
-  test.completed = true;
+
+  if (completedHTML)
+    test.completedHTML = true;
+  if (completedXHTML)
+    test.completedXHTML = true;
 }
 
 TestSuite.prototype.testCompletionStateChanged = function()
@@ -1205,7 +1222,7 @@ TestSuite.prototype.loadTestStatus = function()
   var _self = this;
   this.queryDatabaseForCompletedTests(
       function(item) {
-        _self.markTestCompleted(item.test);
+      _self.markTestCompleted(item.test, item.hstatus != null, item.xstatus != null);
       },
       function() {
         _self.testCompletionStateChanged();
@@ -1219,7 +1236,8 @@ TestSuite.prototype.resetTestStatus = function()
 {
   for (var testID in this.tests) {
     var currTest = this.tests[testID];
-    currTest.completed = false;
+    currTest.completedHTML = false;
+    currTest.completedXHTML = false;
   }
   this.loadTestStatus();
 }

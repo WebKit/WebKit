@@ -1,3 +1,23 @@
+2010-10-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Update the UI to reflect the fact that each test needs to be tested
+        in both HTML4 and XHTML1 format.
+        
+        * CSSTestSuiteHarness/harness/harness.js:
+        (Test):
+        (Chapter.prototype.description):
+        (Chapter.prototype.untestedCount):
+        (TestSuite.prototype.fillChapterPopup):
+        (TestSuite.prototype.updateChapterPopup):
+        (TestSuite.prototype.fillTestList):
+        (TestSuite.prototype.updateTestList):
+        (TestSuite.prototype.goToNextIncompleteTest):
+        (TestSuite.prototype.firstIncompleteTestIndex):
+        (TestSuite.prototype.recordResult):
+        (TestSuite.prototype.formatChanged):
+        (TestSuite.prototype.markTestCompleted):
+        (TestSuite.prototype.resetTestStatus):
+
 2010-10-01  Simon Fraser  <simon.fraser@apple.com>
 
         Add the ability to remove results for re-testing, and
