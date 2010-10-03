@@ -1,5 +1,13 @@
 2010-10-02  Simon Fraser  <simon.fraser@apple.com>
 
+        For a ref test, load the ref in the same format (HTML4 vs XHTML1)
+        as the test.
+
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite.prototype.loadRef):
+
+2010-10-02  Simon Fraser  <simon.fraser@apple.com>
+
         Update the UI to reflect the fact that each test needs to be tested
         in both HTML4 and XHTML1 format.
         

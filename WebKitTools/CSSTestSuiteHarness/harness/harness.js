@@ -718,11 +718,12 @@ TestSuite.prototype.clearTest = function()
 
 TestSuite.prototype.loadRef = function(test)
 {
-  // Refs are always .xht files
-  var refURL = kTestSuiteHome + kXHTML1Data.path + '/' + test.reference;
+  // Suites 20101001 and earlier used .xht refs, even for HTML tests, so strip off
+  // the extension and use the same format as the test.
+  var ref = test.reference.replace(/(\.xht)?$/, '');
   
   var iframe = document.getElementById('ref-frame');
-  iframe.src = refURL;
+  iframe.src = this.urlForTest(ref);
 }
 
 TestSuite.prototype.loadTestByName = function(testName)
