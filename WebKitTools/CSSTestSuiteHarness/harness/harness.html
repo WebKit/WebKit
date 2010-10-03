@@ -69,6 +69,20 @@
       gTestSuite.goToNextIncompleteTest();
     }
 
+    function goToTest()
+    {
+      var testName = prompt('Go to test:', '');
+      
+      // This accepts any of the following:
+      // at-charset-010
+      // at-charset-010.xht
+      // xhtml1/at-charset-010
+      // xhtml1/at-charset-010.xht
+      // and will choose the format if specified.
+      if (!gTestSuite.goToTestByName(testName))
+        alert('Failed to find test ' + testName);
+    }
+    
     function formatChanged()
     {
       var newFormat;
@@ -159,6 +173,7 @@
           <input type="radio" name="format" id="xhtml1" onchange="formatChanged()"><label for="xhtml1">XHTML1</label>
         </div>
         <button onclick="goToNextUntested()" accesskey="n"><strong>N</strong>ext Untested</button>
+        <button onclick="goToTest()" accesskey="g">Go to Test...</button>
       </div>
     </div>
     

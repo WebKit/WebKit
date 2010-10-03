@@ -1,5 +1,14 @@
 2010-10-02  Simon Fraser  <simon.fraser@apple.com>
 
+        Add the ability to jump to a specific test.
+
+        * CSSTestSuiteHarness/harness/harness.html:
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite.prototype.goToTestByName):
+        (TestSuite.prototype.switchToFormat):
+
+2010-10-02  Simon Fraser  <simon.fraser@apple.com>
+
         For a ref test, load the ref in the same format (HTML4 vs XHTML1)
         as the test.
 

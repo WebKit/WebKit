@@ -596,6 +596,64 @@ TestSuite.prototype.firstIncompleteTestIndex = function(chapter)
 
 /* ------------------------------------------------------- */
 
+TestSuite.prototype.goToTestByName = function(testName)
+{
+  var match = testName.match(/^(?:(html4|xhtml1)\/)?([\w-_]+)(\.xht|\.htm)?/);
+  if (!match)
+    return false;
+
+  var prefix = match[1];
+  var testId = match[2];
+  var extension = match[3];
+  
+  var format = this.format;
+  if (prefix)
+    format = prefix;
+  else if (extension) {
+    if (extension == kXHTML1Data.suffix)
+      format = kXHTML1Data.path;
+    else if (extension == kHTML4Data.suffix)
+      format = kHTML4Data.path;
+  }
+  
+  this.switchToFormat(format);
+  
+  var test = this.tests[testId];
+  if (!test)
+    return false;
+
+  // Find the first chapter.
+  var links = test.links.split(',');
+  if (links.length == 0) {
+    window.console.log('test ' + test.id + 'had no links.');
+    return false;
+  }
+
+  var firstLink = links[0];
+  var result = firstLink.match(/^([.\w]+)(#.+)?$/);
+  if (result)
+    firstLink = result[1];
+
+  // Find the chapter and index of the test.
+  for (var i = 0; i < kChapterData.length; ++i) {
+    var chapterData = kChapterData[i];
+    if (chapterData.file == firstLink) {
+
+      this.goToChapterIndex(i);
+      
+      for (var j = 0; j < this.currentChapterTests.length; ++j) {
+        var currTest = this.currentChapterTests[j];
+        if (currTest.id == testId) {
+          this.goToTestIndex(j);
+          return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
 TestSuite.prototype.goToTestIndex = function(index)
 {
   if (index >= 0 && index < this.currentChapterTests.length) {
@@ -726,15 +784,6 @@ TestSuite.prototype.loadRef = function(test)
   iframe.src = this.urlForTest(ref);
 }
 
-TestSuite.prototype.loadTestByName = function(testName)
-{
-  var currChapterInfo = this.chapterInfoMap[this.currChapterName];
-
-  var testIndex = currChapterInfo.testNames.indexOf(testName);
-  if (testIndex >= 0 && testIndex < currChapterInfo.testNames.length)
-    this.goToTestIndex(testIndex);
-}
-
 TestSuite.prototype.pathForTest = function(testName)
 {
   var prefix = this.formatInfo.path;
@@ -800,6 +849,16 @@ TestSuite.prototype.clearOutput = function()
 }
 
 /* ------------------------------------------------------- */
+
+TestSuite.prototype.switchToFormat = function(formatString)
+{
+  if (formatString == 'html4')
+    document.harness.format.html4.checked = true;
+  else
+    document.harness.format.xhtml1.checked = true;
+
+  this.formatChanged(formatString);
+}
 
 TestSuite.prototype.formatChanged = function(formatString)
 {
