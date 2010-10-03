@@ -54,16 +54,16 @@ EncodedJSValue JSC_HOST_CALL JSWebSocketConstructor::constructJSWebSocket(ExecSt
     if (!exec->argumentCount())
         return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
 
-    const String& urlString = ustringToString(exec->argument(0).toString(exec));
+    String urlString = ustringToString(exec->argument(0).toString(exec));
     if (exec->hadException())
         return throwVMError(exec, createSyntaxError(exec, "wrong URL"));
-    const KURL& url = context->completeURL(urlString);
+    KURL url = context->completeURL(urlString);
     RefPtr<WebSocket> webSocket = WebSocket::create(context);
     ExceptionCode ec = 0;
     if (exec->argumentCount() < 2)
         webSocket->connect(url, ec);
     else {
-        const String& protocol = ustringToString(exec->argument(1).toString(exec));
+        String protocol = ustringToString(exec->argument(1).toString(exec));
         if (exec->hadException())
             return JSValue::encode(JSValue());
         webSocket->connect(url, protocol, ec);
