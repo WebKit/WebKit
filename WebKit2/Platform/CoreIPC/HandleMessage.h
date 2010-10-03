@@ -141,6 +141,30 @@ void handleMessage(ArgumentDecoder* arguments, ArgumentEncoder* reply, C* object
     reply->encode(firstReplyArgument);
 }
 
+template<typename T, typename C, typename P1, typename P2, typename P3, typename P4, typename R1>
+void handleMessage(ArgumentDecoder* arguments, ArgumentEncoder* reply, C* object, void (C::*function)(P1, P2, P3, P4, R1&))
+{
+    typename RemoveReference<typename T::FirstArgumentType>::Type firstArgument;
+    if (!arguments->decode(firstArgument))
+        return;
+
+    typename RemoveReference<typename T::SecondArgumentType>::Type secondArgument;
+    if (!arguments->decode(secondArgument))
+        return;
+    
+    typename RemoveReference<typename T::ThirdArgumentType>::Type thirdArgument;
+    if (!arguments->decode(thirdArgument))
+        return;
+
+    typename RemoveReference<typename T::FourthArgumentType>::Type fourthArgument;
+    if (!arguments->decode(fourthArgument))
+        return;
+
+    typename RemoveReference<typename T::Reply::FirstArgumentType>::Type firstReplyArgument;
+    (object->*function)(firstArgument, secondArgument, thirdArgument, fourthArgument, firstReplyArgument);
+    reply->encode(firstReplyArgument);
+}
+
 template<typename T, typename C, typename P1, typename P2, typename R1>
 void handleMessage(ArgumentDecoder* arguments, ArgumentEncoder* reply, C* object, void (C::*function)(P1, P2, R1&))
 {

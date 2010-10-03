@@ -28,6 +28,15 @@ messages -> PluginProxy {
 
     # Called when the plug-in has painted into its backing store.
     Update(WebCore::IntRect paintedRect)
+
+    # Returns a PAC style string with proxies for the given URL.
+    ProxiesForURL(WTF::String urlString) -> (WTF::String proxiesString)
+
+    # Returns the cookies for the given URL.
+    CookiesForURL(WTF::String urlString) -> (WTF::String cookieString)
+
+    # Sets the cookies for the given URL.
+    SetCookiesForURL(WTF::String urlString, WTF::String cookieString)
 }
 
 #endif

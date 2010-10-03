@@ -42,15 +42,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent)
+PassOwnPtr<PluginControllerProxy> PluginControllerProxy::create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled)
 {
-    return adoptPtr(new PluginControllerProxy(connection, pluginInstanceID, userAgent));
+    return adoptPtr(new PluginControllerProxy(connection, pluginInstanceID, userAgent, isPrivateBrowsingEnabled));
 }
 
-PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent)
+PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled)
     : m_connection(connection)
     , m_pluginInstanceID(pluginInstanceID)
     , m_userAgent(userAgent)
+    , m_isPrivateBrowsingEnabled(isPrivateBrowsingEnabled)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
 {
 }
@@ -180,6 +181,40 @@ void PluginControllerProxy::pluginProcessCrashed()
     notImplemented();
 }
 
+String PluginControllerProxy::proxiesForURL(const String& urlString)
+{
+    String proxyString;
+    
+    if (!m_connection->connection()->sendSync(Messages::PluginProxy::CookiesForURL(urlString),
+                                              Messages::PluginProxy::CookiesForURL::Reply(proxyString),
+                                              m_pluginInstanceID, 0))
+        return String();
+    
+    return proxyString;
+}
+
+String PluginControllerProxy::cookiesForURL(const String& urlString)
+{
+    String cookieString;
+
+    if (!m_connection->connection()->sendSync(Messages::PluginProxy::CookiesForURL(urlString),
+                                              Messages::PluginProxy::CookiesForURL::Reply(cookieString),
+                                              m_pluginInstanceID, 0))
+        return String();
+
+    return cookieString;
+}
+
+void PluginControllerProxy::setCookiesForURL(const String& urlString, const String& cookieString)
+{
+    m_connection->connection()->send(Messages::PluginProxy::SetCookiesForURL(urlString, cookieString), m_pluginInstanceID);
+}
+
+bool PluginControllerProxy::isPrivateBrowsingEnabled()
+{
+    return m_isPrivateBrowsingEnabled;
+}
+    
 void PluginControllerProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle)
 {
     m_frameRect = frameRect;
@@ -239,7 +274,12 @@ void PluginControllerProxy::handleMouseLeaveEvent(const WebMouseEvent& mouseLeav
 {
     handled = m_plugin->handleMouseLeaveEvent(mouseLeaveEvent);
 }
-    
+
+void PluginControllerProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent, bool& handled)
+{
+    handled = m_plugin->handleKeyboardEvent(keyboardEvent);
+}
+
 void PluginControllerProxy::setFocus(bool hasFocus)
 {
     m_plugin->setFocus(hasFocus);
@@ -261,6 +301,11 @@ void PluginControllerProxy::windowVisibilityChanged(bool isVisible)
     m_plugin->windowVisibilityChanged(isVisible);
 }
 #endif
+
+void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
+{
+    m_plugin->privateBrowsingStateChanged(isPrivateBrowsingEnabled);
+}
 
 } // namespace WebKit
 

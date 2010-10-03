@@ -48,7 +48,7 @@ class PluginControllerProxy : PluginController {
     WTF_MAKE_NONCOPYABLE(PluginControllerProxy);
 
 public:
-    static PassOwnPtr<PluginControllerProxy> create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent);
+    static PassOwnPtr<PluginControllerProxy> create(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled);
     ~PluginControllerProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
@@ -60,7 +60,7 @@ public:
     CoreIPC::SyncReplyMode didReceiveSyncPluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
 private:
-    PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent);
+    PluginControllerProxy(WebProcessConnection* connection, uint64_t pluginInstanceID, const String& userAgent, bool isPrivateBrowsingEnabled);
 
     void paint();
 
@@ -76,7 +76,11 @@ private:
     virtual void setStatusbarText(const String&);
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
-
+    virtual String proxiesForURL(const String&);
+    virtual String cookiesForURL(const String&);
+    virtual void setCookiesForURL(const String& urlString, const String& cookieString);
+    virtual bool isPrivateBrowsingEnabled();
+    
     // Message handlers.
     void geometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, const SharedMemory::Handle& backingStoreHandle);
     void didEvaluateJavaScript(uint64_t requestID, const String& requestURLString, const String& result);
@@ -88,17 +92,20 @@ private:
     void handleWheelEvent(const WebWheelEvent&, bool& handled);
     void handleMouseEnterEvent(const WebMouseEvent&, bool& handled);
     void handleMouseLeaveEvent(const WebMouseEvent&, bool& handled);
+    void handleKeyboardEvent(const WebKeyboardEvent&, bool& handled);
     void setFocus(bool);
 #if PLATFORM(MAC)
     void windowFocusChanged(bool);
     void windowFrameChanged(const WebCore::IntRect&);
     void windowVisibilityChanged(bool);
 #endif
+    void privateBrowsingStateChanged(bool);
 
     WebProcessConnection* m_connection;
     uint64_t m_pluginInstanceID;
 
     String m_userAgent;
+    bool m_isPrivateBrowsingEnabled;
 
     RefPtr<Plugin> m_plugin;
 

@@ -53,6 +53,9 @@ messages -> PluginControllerProxy {
     # Sent when a mouse leave event should be processed.
     HandleMouseLeaveEvent(WebKit::WebMouseEvent mouseEvent) -> (bool handled)
 
+    # Sent when a keyboard should be processed.
+    HandleKeyboardEvent(WebKit::WebKeyboardEvent keyboardEvent) -> (bool handled)
+
     # Sent when the plug-in focus changes.
     SetFocus(bool isFocused)
 
@@ -66,6 +69,9 @@ messages -> PluginControllerProxy {
     # Sent when the containing NSWindow's visibility changes
     WindowVisibilityChanged(bool isVisible)
 #endif
+
+    # Set when private browsing is enabled or disabled
+    PrivateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 }
 
 #endif

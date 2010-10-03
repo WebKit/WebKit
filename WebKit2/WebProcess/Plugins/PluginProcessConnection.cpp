@@ -70,8 +70,22 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
 
 void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID());
-    pluginProxy->didReceivePluginProxyMessage(connection, messageID, arguments);
+    if (arguments->destinationID()) {
+        if (PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID()))
+            pluginProxy->didReceivePluginProxyMessage(connection, messageID, arguments);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+CoreIPC::SyncReplyMode PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+{
+    if (PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID()))
+        return pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, arguments, reply);
+    
+    ASSERT_NOT_REACHED();
+    return CoreIPC::AutomaticReply;
 }
 
 void PluginProcessConnection::didClose(CoreIPC::Connection*)

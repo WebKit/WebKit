@@ -82,7 +82,7 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
     // Ask the plug-in process to create a plug-in.
     bool result = false;
 
-    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent()),
+    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled()),
                                               Messages::WebProcessConnection::CreatePlugin::Reply(result),
                                               0, CoreIPC::Connection::NoTimeout))
         return false;
@@ -267,6 +267,17 @@ bool PluginProxy::handleMouseLeaveEvent(const WebMouseEvent& mouseLeaveEvent)
     return handled;
 }
 
+bool PluginProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
+{
+    bool handled = false;
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleKeyboardEvent(keyboardEvent),
+                                              Messages::PluginControllerProxy::HandleKeyboardEvent::Reply(handled),
+                                              m_pluginInstanceID, CoreIPC::Connection::NoTimeout))
+        return false;
+    
+    return handled;
+}
+
 void PluginProxy::setFocus(bool hasFocus)
 {
     m_connection->connection()->send(Messages::PluginControllerProxy::SetFocus(hasFocus), m_pluginInstanceID);
@@ -296,6 +307,11 @@ void PluginProxy::windowVisibilityChanged(bool isVisible)
 }
 #endif
 
+void PluginProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
+{
+    m_connection->connection()->send(Messages::PluginControllerProxy::PrivateBrowsingStateChanged(isPrivateBrowsingEnabled), m_pluginInstanceID);
+}
+
 PluginController* PluginProxy::controller()
 {
     return m_pluginController;
@@ -306,6 +322,21 @@ void PluginProxy::loadURL(uint64_t requestID, const String& method, const String
     m_pluginController->loadURL(requestID, method, urlString, target, headerFields, httpBody, allowPopups);
 }
 
+void PluginProxy::proxiesForURL(const String& urlString, String& proxyString)
+{
+    proxyString = m_pluginController->proxiesForURL(urlString);
+}
+
+void PluginProxy::cookiesForURL(const String& urlString, String& cookieString)
+{
+    cookieString = m_pluginController->cookiesForURL(urlString);
+}
+
+void PluginProxy::setCookiesForURL(const String& urlString, const String& cookieString)
+{
+    m_pluginController->setCookiesForURL(urlString, cookieString);
+}
+    
 void PluginProxy::update(const IntRect& paintedRect)
 {
     IntRect paintedRectPluginCoordinates = paintedRect;

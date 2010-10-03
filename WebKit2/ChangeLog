@@ -2,6 +2,72 @@
 
         Reviewed by Sam Weinig.
 
+        Implement newly added Plugin/PluginController member functions for out of process plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=47065
+        <rdar://problem/8507194>
+
+        * Platform/CoreIPC/Arguments.h:
+        Add typedefs.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        Add new handleMessage overload.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::create):
+        Add an isPrivateBrowsingEnabled boolean.
+        
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        Add an isPrivateBrowsingEnabled boolean.
+
+        (WebKit::PluginControllerProxy::proxiesForURL):
+        (WebKit::PluginControllerProxy::cookiesForURL):
+        (WebKit::PluginControllerProxy::setCookiesForURL):
+        Send messages to the web process.
+
+        (WebKit::PluginControllerProxy::isPrivateBrowsingEnabled):
+        Return whether private browsing is enabled or not.
+
+        (WebKit::PluginControllerProxy::handleKeyboardEvent):
+        Call Plugin::handleKeyboardEvent.
+
+        (WebKit::PluginControllerProxy::privateBrowsingStateChanged):
+        Call Plugin::privateBrowsingStateChanged.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add new messages.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin):
+        Pass the isPrivateBrowsingEnabled flag.
+
+        * PluginProcess/WebProcessConnection.h:
+        * PluginProcess/WebProcessConnection.messages.in:
+        Update CreatePlugin message parameters.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didReceiveMessage):
+        (WebKit::PluginProcessConnection::didReceiveSyncMessage):
+        It's OK for a plug-in to not get a sync message.
+
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::handleKeyboardEvent):
+        (WebKit::PluginProxy::privateBrowsingStateChanged):
+        Send messages.
+
+        (WebKit::PluginProxy::proxiesForURL):
+        (WebKit::PluginProxy::cookiesForURL):
+        (WebKit::PluginProxy::setCookiesForURL):
+        Call the plug-in controller.
+
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Add new messages.
+
+2010-10-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Send keyboard events to plug-ins
         https://bugs.webkit.org/show_bug.cgi?id=47064
         <rdar://problem/8507148>
