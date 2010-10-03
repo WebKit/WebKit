@@ -298,7 +298,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& mouseEve
 
     return false;
 }
-        
+
 bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& mouseEvent)
 {
     switch (m_eventModel) {
@@ -306,6 +306,63 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& mouseEve
             NPCocoaEvent event = initializeEvent(NPCocoaEventMouseExited);
             
             fillInCocoaEventFromMouseEvent(event, mouseEvent, m_frameRect.location());
+            return NPP_HandleEvent(&event);
+        }
+
+        default:
+            ASSERT_NOT_REACHED();
+    }
+
+    return false;
+}
+
+static unsigned modifierFlags(const WebKeyboardEvent& keyboardEvent)
+{
+    unsigned modifierFlags = 0;
+
+    if (keyboardEvent.shiftKey())
+        modifierFlags |= NSShiftKeyMask;
+    if (keyboardEvent.controlKey())
+        modifierFlags |= NSControlKeyMask;
+    if (keyboardEvent.altKey())
+        modifierFlags |= NSAlternateKeyMask;
+    if (keyboardEvent.metaKey())
+        modifierFlags |= NSCommandKeyMask;
+
+    return modifierFlags;
+}
+
+static NPCocoaEvent initializeKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
+{
+    NPCocoaEventType eventType;
+    
+    switch (keyboardEvent.type()) {
+        case WebEvent::KeyDown:
+            eventType = NPCocoaEventKeyDown;
+            break;
+        case WebEvent::KeyUp:
+            eventType = NPCocoaEventKeyUp;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            return NPCocoaEvent();
+    }
+
+    NPCocoaEvent event = initializeEvent(eventType);
+    event.data.key.modifierFlags = modifierFlags(keyboardEvent);
+    event.data.key.characters = reinterpret_cast<NPNSString*>(static_cast<NSString*>(keyboardEvent.text()));
+    event.data.key.charactersIgnoringModifiers = reinterpret_cast<NPNSString*>(static_cast<NSString*>(keyboardEvent.unmodifiedText()));
+    event.data.key.isARepeat = keyboardEvent.isAutoRepeat();
+    event.data.key.keyCode = keyboardEvent.nativeVirtualKeyCode();
+
+    return event;
+}
+
+bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
+{
+    switch (m_eventModel) {
+        case NPEventModelCocoa: {
+            NPCocoaEvent event  = initializeKeyboardEvent(keyboardEvent);
             return NPP_HandleEvent(&event);
         }
 

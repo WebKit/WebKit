@@ -537,6 +537,11 @@ bool NetscapePlugin::handleMouseLeaveEvent(const WebMouseEvent& mouseEvent)
     return platformHandleMouseLeaveEvent(mouseEvent);
 }
 
+bool NetscapePlugin::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
+{
+    return platformHandleKeyboardEvent(keyboardEvent);
+}
+
 void NetscapePlugin::setFocus(bool hasFocus)
 {
     platformSetFocus(hasFocus);
