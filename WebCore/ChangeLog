@@ -2,6 +2,20 @@
 
         Reviewed by Holger Freyther.
 
+        ASSERT(m_state = Open); is bad news bears
+        https://bugs.webkit.org/show_bug.cgi?id=47057
+
+        Added by ap (review by darin) in http://trac.webkit.org/changeset/50951
+        Too bad the compiler doesn't catch these errors.  I don't believe this
+        is possible to test.
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+
+2010-10-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Holger Freyther.
+
         All the WebSocket tests crash
         https://bugs.webkit.org/show_bug.cgi?id=47056
 
