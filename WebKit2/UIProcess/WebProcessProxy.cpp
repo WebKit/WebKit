@@ -129,12 +129,6 @@ void WebProcessProxy::terminate()
         m_processLauncher->terminateProcess();
 }
 
-#if USE(ACCELERATED_COMPOSITING) && !PLATFORM(MAC)
-void WebProcessProxy::setUpAcceleratedCompositing()
-{
-}
-#endif
-
 WebPageProxy* WebProcessProxy::webPage(uint64_t pageID) const
 {
     return m_pageMap.get(pageID).get();

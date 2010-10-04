@@ -1,5 +1,15 @@
 2010-10-04  Andras Becsi  <abecsi@webkit.org>
 
+        Reviewed Csaba Osztrogonác.
+
+        [Qt] Build fix after r69037.
+        Also remove dummy setUpAcceleratedCompositing() from the source file,
+        since it has been removed from the header.
+
+        * UIProcess/WebProcessProxy.cpp:
+
+2010-10-04  Andras Becsi  <abecsi@webkit.org>
+
         Rubber-stamped by Csaba Osztrogonác.
 
         [Qt] Fix the WebKit2 build after r69029.
