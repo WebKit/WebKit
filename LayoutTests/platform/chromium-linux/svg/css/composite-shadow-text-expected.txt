@@ -1,0 +1,24 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (9,5) size 353x449
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceLinearGradient {linearGradient} [id="gradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderSVGResourcePattern {pattern} [id="pattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+        RenderPath {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
+        RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00 Z"]
+    RenderSVGContainer {g} at (9,5) size 245x428
+      RenderSVGText {text} at (10,6) size 183x116 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x116
+          chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 4 width 183.00: "Test"
+      RenderSVGText {text} at (10,131) size 183x116 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x116
+          chunk 1 text run 1 at (10.00,225.00) startOffset 0 endOffset 4 width 183.00: "Test"
+      RenderSVGText {text} at (10,256) size 183x116 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 183x116
+          chunk 1 text run 1 at (10.00,350.00) startOffset 0 endOffset 4 width 183.00: "Test"
+    RenderSVGText {text} at (38,435) size 324x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 324x19
+        chunk 1 (middle anchor) text run 1 at (38.00,450.00) startOffset 0 endOffset 51 width 324.00: "The word Test should only be shadowd once, per line"

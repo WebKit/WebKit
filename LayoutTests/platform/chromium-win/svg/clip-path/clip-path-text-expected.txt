@@ -1,11 +1,11 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (100,74) size 143x68
+  RenderSVGRoot {svg} at (100,74) size 143x69
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=userSpaceOnUse]
-        RenderSVGText {text} at (100,74) size 143x68 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 143x68
+        RenderSVGText {text} at (100,74) size 143x69 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 143x69
             chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 4 width 143.00: "CLIP"
-    RenderPath {rect} at (100,74) size 143x68 [fill={[type=SOLID] [color=#008000]}] [data="M40.00,40.00 L340.00,40.00 L340.00,340.00 L40.00,340.00 Z"]
-      [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (100,74) size 143x68
+    RenderPath {rect} at (100,74) size 143x69 [fill={[type=SOLID] [color=#008000]}] [data="M40.00,40.00 L340.00,40.00 L340.00,340.00 L40.00,340.00 Z"]
+      [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (100,74) size 143x69

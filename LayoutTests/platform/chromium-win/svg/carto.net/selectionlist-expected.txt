@@ -23,13 +23,13 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (150,389) size 187x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 187x14
           chunk 1 text run 1 at (150.00,400.00) startOffset 0 endOffset 38 width 187.00: "Loading Rose Image, Please be patient!"
-      RenderSVGText {text} at (240,736) size 238x29 contains 2 chunk(s)
+      RenderSVGText {text} at (240,736) size 238x29 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 238x14
           chunk 1 text run 1 at (240.00,747.00) startOffset 0 endOffset 38 width 178.00: "Click this text to remove the Flowers "
-          chunk 1 text run 2 at (418.00,747.00) startOffset 0 endOffset 13 width 60.00: "selectionList"
+          chunk 1 text run 1 at (418.00,747.00) startOffset 0 endOffset 13 width 60.00: "selectionList"
         RenderSVGTSpan {tspan} at (0,0) size 175x14
           RenderSVGInlineText {#text} at (0,15) size 175x14
-            chunk 2 text run 1 at (240.00,762.00) startOffset 0 endOffset 38 width 175.00: "This list does not react on user input"
+            chunk 1 text run 1 at (240.00,762.00) startOffset 0 endOffset 38 width 175.00: "This list does not react on user input"
       RenderSVGText {text} at (240,51) size 27x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 27x14
           chunk 1 text run 1 at (240.00,62.00) startOffset 0 endOffset 6 width 27.00: "Fruits"
@@ -39,34 +39,34 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (240,721) size 231x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 231x14
           chunk 1 text run 1 at (240.00,732.00) startOffset 0 endOffset 47 width 231.00: "Flowers, this selectionList opens above the box"
-      RenderSVGText {text} at (765,49) size 153x29 contains 2 chunk(s)
+      RenderSVGText {text} at (765,49) size 153x29 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 153x14
           chunk 1 text run 1 at (765.00,60.00) startOffset 0 endOffset 31 width 153.00: "Select a base value to generate"
         RenderSVGTSpan {tspan} at (0,0) size 131x14
           RenderSVGInlineText {#text} at (0,15) size 131x14
-            chunk 2 text run 1 at (765.00,75.00) startOffset 0 endOffset 25 width 131.00: "random nrs for selnumber2"
+            chunk 1 text run 1 at (765.00,75.00) startOffset 0 endOffset 25 width 131.00: "random nrs for selnumber2"
       RenderSVGText {text} at (765,101) size 90x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 90x14
           chunk 1 text run 1 at (765.00,112.00) startOffset 0 endOffset 18 width 90.00: "This is selnumber2"
     RenderSVGImage {image} at (39,117) size 321x241
     RenderSVGContainer {g} at (471,237) size 313x215 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(550.00,20.00)}]
-      RenderSVGText {text} at (220,201) size 419x74 contains 4 chunk(s)
+      RenderSVGText {text} at (220,201) size 419x74 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 197x14
           chunk 1 text run 1 at (220.00,212.00) startOffset 0 endOffset 39 width 197.00: "Communities of Kt. Aargau (Switzerland)"
         RenderSVGTSpan {tspan} at (0,0) size 339x14
           RenderSVGInlineText {#text} at (0,20) size 339x14
-            chunk 2 text run 1 at (220.00,232.00) startOffset 0 endOffset 23 width 111.00: "Note that one can also "
-            chunk 2 text run 2 at (331.00,232.00) startOffset 0 endOffset 49 width 228.00: "transform the group containing the selection list"
+            chunk 1 text run 1 at (220.00,232.00) startOffset 0 endOffset 23 width 111.00: "Note that one can also "
+            chunk 1 text run 1 at (331.00,232.00) startOffset 0 endOffset 49 width 228.00: "transform the group containing the selection list"
         RenderSVGTSpan {tspan} at (0,0) size 397x14
           RenderSVGInlineText {#text} at (0,40) size 397x14
-            chunk 3 text run 1 at (220.00,252.00) startOffset 0 endOffset 5 width 23.00: "This "
-            chunk 3 text run 2 at (243.00,252.00) startOffset 0 endOffset 74 width 344.00: "selectionlist does not react on user input (functionToCall is a undefined "
-            chunk 3 text run 3 at (587.00,252.00) startOffset 0 endOffset 6 width 30.00: "value)"
+            chunk 1 text run 1 at (220.00,252.00) startOffset 0 endOffset 5 width 23.00: "This "
+            chunk 1 text run 1 at (243.00,252.00) startOffset 0 endOffset 74 width 344.00: "selectionlist does not react on user input (functionToCall is a undefined "
+            chunk 1 text run 1 at (587.00,252.00) startOffset 0 endOffset 6 width 30.00: "value)"
         RenderSVGTSpan {tspan} at (0,0) size 419x14
           RenderSVGInlineText {#text} at (0,60) size 419x14
-            chunk 4 text run 1 at (220.00,272.00) startOffset 0 endOffset 14 width 60.00: "Click on this "
-            chunk 4 text run 2 at (280.00,272.00) startOffset 0 endOffset 69 width 327.00: "text to toggle \"above\"/\"below\" mode to open the box either to top or "
-            chunk 4 text run 3 at (607.00,272.00) startOffset 0 endOffset 6 width 32.00: "bottom"
+            chunk 1 text run 1 at (220.00,272.00) startOffset 0 endOffset 14 width 60.00: "Click on this "
+            chunk 1 text run 1 at (280.00,272.00) startOffset 0 endOffset 69 width 327.00: "text to toggle \"above\"/\"below\" mode to open the box either to top or "
+            chunk 1 text run 1 at (607.00,272.00) startOffset 0 endOffset 6 width 32.00: "bottom"
     RenderSVGContainer {g} at (38,38) size 549x538
       RenderSVGContainer {g} at (377,168) size 112x74 [transform={m=((0.87,0.50)(-0.50,0.87)) t=(550.00,20.00)}]
         RenderPath {rect} at (377,168) size 112x74 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M50.00,200.00 L200.00,200.00 L200.00,216.00 L50.00,216.00 Z"]

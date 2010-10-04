@@ -57,16 +57,16 @@ layer at (0,0) size 800x600
         RenderPath {rect} at (155,233) size 118x48 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M209.00,299.00 L339.00,299.00 C344.52,299.00,349.00,303.48,349.00,309.00 L349.00,349.00 C349.00,354.52,344.52,359.00,339.00,359.00 L209.00,359.00 C203.48,359.00,199.00,354.52,199.00,349.00 L199.00,309.00 C199.00,303.48,203.48,299.00,209.00,299.00 Z"]
         RenderPath {rect} at (157,235) size 118x48 [fill={[type=SOLID] [color=#000080]}] [data="M211.00,301.00 L341.00,301.00 C346.52,301.00,351.00,305.48,351.00,311.00 L351.00,351.00 C351.00,356.52,346.52,361.00,341.00,361.00 L211.00,361.00 C205.48,361.00,201.00,356.52,201.00,351.00 L201.00,311.00 C201.00,305.48,205.48,301.00,211.00,301.00 Z"]
         RenderPath {rect} at (156,234) size 118x48 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M210.00,300.00 L340.00,300.00 C345.52,300.00,350.00,304.48,350.00,310.00 L350.00,350.00 C350.00,355.52,345.52,360.00,340.00,360.00 L210.00,360.00 C204.48,360.00,200.00,355.52,200.00,350.00 L200.00,310.00 C200.00,304.48,204.48,300.00,210.00,300.00 Z"]
-        RenderSVGText {text} at (226,310) size 98x42 contains 3 chunk(s)
+        RenderSVGText {text} at (226,310) size 98x42 contains 1 chunk(s)
           RenderSVGTSpan {tspan} at (0,0) size 98x16
             RenderSVGInlineText {#text} at (0,0) size 98x16
               chunk 1 (middle anchor) text run 1 at (226.50,322.20) startOffset 0 endOffset 19 width 97.00: "This is a multiline"
           RenderSVGTSpan {tspan} at (0,0) size 78x16
             RenderSVGInlineText {#text} at (10,13) size 78x16
-              chunk 2 (middle anchor) text run 1 at (236.50,335.40) startOffset 0 endOffset 15 width 77.00: "textbutton with"
+              chunk 1 (middle anchor) text run 1 at (236.50,335.40) startOffset 0 endOffset 15 width 77.00: "textbutton with"
           RenderSVGTSpan {tspan} at (0,0) size 78x16
             RenderSVGInlineText {#text} at (10,26) size 78x16
-              chunk 3 (middle anchor) text run 1 at (236.50,348.60) startOffset 0 endOffset 13 width 77.00: "round corners"
+              chunk 1 (middle anchor) text run 1 at (236.50,348.60) startOffset 0 endOffset 13 width 77.00: "round corners"
     RenderSVGContainer {g} at (233,112) size 61x22
       RenderSVGContainer {g} at (233,116) size 18x18
         RenderPath {rect} at (233,116) size 17x17 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M299.00,149.00 L319.00,149.00 L319.00,169.00 L299.00,169.00 Z"]

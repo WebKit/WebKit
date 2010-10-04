@@ -1,0 +1,291 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker1_hueGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=0.17] [color=#FFFF00]
+        RenderSVGGradientStop {stop} [offset=0.33] [color=#00FF00]
+        RenderSVGGradientStop {stop} [offset=0.50] [color=#00FFFF]
+        RenderSVGGradientStop {stop} [offset=0.67] [color=#0000FF]
+        RenderSVGGradientStop {stop} [offset=0.83] [color=#FF00FF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker1_satGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker1_valGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker1_alphaGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#00FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00FF00]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker2_hueGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#80FF00]
+        RenderSVGGradientStop {stop} [offset=0.20] [color=#00FF00]
+        RenderSVGGradientStop {stop} [offset=0.40] [color=#00FF80]
+        RenderSVGGradientStop {stop} [offset=0.60] [color=#00FFFF]
+        RenderSVGGradientStop {stop} [offset=0.80] [color=#0080FF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker2_satGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00FFFF]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker2_alphaGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#00FFFF00]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00FFFF]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker3_hueGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=0.17] [color=#FF8000]
+        RenderSVGGradientStop {stop} [offset=0.33] [color=#FFFF00]
+        RenderSVGGradientStop {stop} [offset=0.50] [color=#80FF00]
+        RenderSVGGradientStop {stop} [offset=0.67] [color=#00FF00]
+        RenderSVGGradientStop {stop} [offset=0.83] [color=#00FF80]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#00FFFF]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker3_satGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker3_valGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker4_hueGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=0.17] [color=#FFFF00]
+        RenderSVGGradientStop {stop} [offset=0.33] [color=#00FF00]
+        RenderSVGGradientStop {stop} [offset=0.50] [color=#00FFFF]
+        RenderSVGGradientStop {stop} [offset=0.67] [color=#0000FF]
+        RenderSVGGradientStop {stop} [offset=0.83] [color=#FF00FF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker4_satGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#787878]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#780000]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker4_valGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
+      RenderSVGResourceLinearGradient {linearGradient} [id="colourPicker4_alphaGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#78787800]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#787878]
+    RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-2000.00,-2000.00 L4000.00,-2000.00 L4000.00,4000.00 L-2000.00,4000.00 Z"]
+    RenderSVGContainer {g} at (156,156) size 626x329
+      RenderSVGContainer {g} at (156,312) size 235x95
+        RenderPath {rect} at (156,312) size 235x95 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M200.00,400.00 L500.00,400.00 L500.00,520.00 L200.00,520.00 Z"]
+        RenderPath {rect} at (165,321) size 156x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker1_hueGradient"]}] [data="M212.00,411.85 L410.00,411.85 L410.00,419.35 L212.00,419.35 Z"]
+        RenderPath {line} at (159,318) size 168x14 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M212.00,415.60 L410.00,415.60"]
+        RenderPath {line} at (165,324) size 156x1 [data="M212.00,415.60 L410.00,415.60"]
+        RenderSVGContainer {use} at (214,316) size 6x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(278.00,415.60)}]
+          RenderSVGContainer {g} at (214,316) size 6x17
+            RenderSVGViewportContainer {svg} at (214,316) size 6x17
+              RenderPath {line} at (214,316) size 6x17 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (416,408) size 76x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x16
+            chunk 1 text run 1 at (416.00,420.10) startOffset 0 endOffset 13 width 76.00: "Hue (0\x{B0}-360\x{B0})"
+        RenderPath {rect} at (185,351) size 43x35 [stroke={[type=SOLID] [color=#000000] [opacity=0.70] [stroke width=7.50]}] [data="M242.00,454.00 L287.00,454.00 L287.00,490.00 L242.00,490.00 Z"]
+        RenderPath {rect} at (165,340) size 36x29 [fill={[type=SOLID] [color=#00FF00]}] [data="M212.00,436.00 L257.00,436.00 L257.00,472.00 L212.00,472.00 Z"]
+        RenderPath {rect} at (235,339) size 86x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker1_satGradient"]}] [data="M302.00,435.85 L410.00,435.85 L410.00,443.35 L302.00,443.35 Z"]
+        RenderPath {line} at (229,337) size 98x13 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M302.00,439.60 L410.00,439.60"]
+        RenderPath {line} at (235,342) size 86x2 [data="M302.00,439.60 L410.00,439.60"]
+        RenderSVGContainer {use} at (317,335) size 6x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(410.00,439.60)}]
+          RenderSVGContainer {g} at (317,335) size 6x17
+            RenderSVGViewportContainer {svg} at (317,335) size 6x17
+              RenderPath {line} at (317,335) size 6x17 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (416,432) size 78x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x16
+            chunk 1 text run 1 at (416.00,444.10) startOffset 0 endOffset 14 width 78.00: "Saturation (%)"
+        RenderPath {rect} at (235,358) size 86x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker1_valGradient"]}] [data="M302.00,459.85 L410.00,459.85 L410.00,467.35 L302.00,467.35 Z"]
+        RenderPath {line} at (229,356) size 98x13 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M302.00,463.60 L410.00,463.60"]
+        RenderPath {line} at (235,361) size 86x2 [data="M302.00,463.60 L410.00,463.60"]
+        RenderSVGContainer {use} at (317,353) size 6x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(410.00,463.60)}]
+          RenderSVGContainer {g} at (317,353) size 6x18
+            RenderSVGViewportContainer {svg} at (317,353) size 6x18
+              RenderPath {line} at (317,353) size 6x18 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (416,456) size 53x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 53x16
+            chunk 1 text run 1 at (416.00,468.10) startOffset 0 endOffset 9 width 53.00: "Value (%)"
+        RenderPath {rect} at (235,377) size 86x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker1_alphaGradient"]}] [data="M302.00,483.85 L410.00,483.85 L410.00,491.35 L302.00,491.35 Z"]
+        RenderPath {line} at (229,375) size 98x13 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M302.00,487.60 L410.00,487.60"]
+        RenderPath {line} at (235,380) size 86x2 [data="M302.00,487.60 L410.00,487.60"]
+        RenderSVGContainer {use} at (317,372) size 6x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(410.00,487.60)}]
+          RenderSVGContainer {g} at (317,372) size 6x18
+            RenderSVGViewportContainer {svg} at (317,372) size 6x18
+              RenderPath {line} at (317,372) size 6x18 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (416,480) size 62x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 62x16
+            chunk 1 text run 1 at (416.00,492.10) startOffset 0 endOffset 11 width 62.00: "Opacity (%)"
+        RenderSVGText {text} at (212,502) size 240x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 240x15
+            chunk 1 text run 1 at (212.00,514.00) startOffset 0 endOffset 40 width 240.00: "RGBA: 0,255,0,100; HSVA: 120,100,100,100"
+      RenderSVGContainer {g} at (390,156) size 235x79
+        RenderPath {rect} at (390,156) size 235x79 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M500.00,200.00 L800.00,200.00 L800.00,300.00 L500.00,300.00 Z"]
+        RenderPath {rect} at (400,163) size 155x7 [fill={[type=LINEAR-GRADIENT] [id="colourPicker3_hueGradient"]}] [data="M512.00,209.25 L710.00,209.25 L710.00,216.75 L512.00,216.75 Z"]
+        RenderPath {line} at (393,160) size 168x13 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M512.00,213.00 L710.00,213.00"]
+        RenderPath {line} at (400,166) size 155x1 [data="M512.00,213.00 L710.00,213.00"]
+        RenderSVGContainer {use} at (397,158) size 6x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(512.00,213.00)}]
+          RenderSVGContainer {g} at (397,158) size 6x17
+            RenderSVGViewportContainer {svg} at (397,158) size 6x17
+              RenderPath {line} at (397,158) size 6x17 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (716,205) size 76x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x16
+            chunk 1 text run 1 at (716.00,217.50) startOffset 0 endOffset 13 width 76.00: "Hue (0\x{B0}-180\x{B0})"
+        RenderPath {rect} at (420,188) size 42x30 [stroke={[type=SOLID] [color=#787878] [stroke width=7.50]}] [data="M542.00,245.00 L587.00,245.00 L587.00,275.00 L542.00,275.00 Z"]
+        RenderPath {rect} at (400,179) size 36x25 [fill={[type=SOLID] [color=#FF0000]}] [data="M512.00,230.00 L557.00,230.00 L557.00,260.00 L512.00,260.00 Z"]
+        RenderPath {rect} at (470,183) size 85x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker3_satGradient"]}] [data="M602.00,235.92 L710.00,235.92 L710.00,243.42 L602.00,243.42 Z"]
+        RenderPath {line} at (464,181) size 97x13 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M602.00,239.67 L710.00,239.67"]
+        RenderPath {line} at (470,186) size 85x2 [data="M602.00,239.67 L710.00,239.67"]
+        RenderSVGContainer {use} at (552,178) size 6x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(710.00,239.67)}]
+          RenderSVGContainer {g} at (552,178) size 6x18
+            RenderSVGViewportContainer {svg} at (552,178) size 6x18
+              RenderPath {line} at (552,178) size 6x18 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (716,232) size 78x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x16
+            chunk 1 text run 1 at (716.00,244.17) startOffset 0 endOffset 14 width 78.00: "Saturation (%)"
+        RenderPath {rect} at (470,204) size 85x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker3_valGradient"]}] [data="M602.00,262.58 L710.00,262.58 L710.00,270.08 L602.00,270.08 Z"]
+        RenderPath {line} at (464,201) size 97x14 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M602.00,266.33 L710.00,266.33"]
+        RenderPath {line} at (470,207) size 85x2 [data="M602.00,266.33 L710.00,266.33"]
+        RenderSVGContainer {use} at (552,200) size 6x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(710.00,266.33)}]
+          RenderSVGContainer {g} at (552,200) size 6x17
+            RenderSVGViewportContainer {svg} at (552,200) size 6x17
+              RenderPath {line} at (552,200) size 6x17 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (716,258) size 53x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 53x16
+            chunk 1 text run 1 at (716.00,270.83) startOffset 0 endOffset 9 width 53.00: "Value (%)"
+        RenderSVGText {text} at (512,283) size 226x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 226x15
+            chunk 1 text run 1 at (512.00,295.00) startOffset 0 endOffset 38 width 226.00: "RGBA: 255,0,0,100; HSVA: 0,100,100,100"
+      RenderSVGContainer {g} at (546,390) size 236x95
+        RenderPath {rect} at (546,390) size 236x95 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M700.00,500.00 L1000.00,500.00 L1000.00,620.00 L700.00,620.00 Z"]
+        RenderPath {rect} at (556,399) size 155x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker4_hueGradient"]}] [data="M712.00,511.85 L910.00,511.85 L910.00,519.35 L712.00,519.35 Z"]
+        RenderPath {line} at (550,396) size 168x14 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M712.00,515.60 L910.00,515.60"]
+        RenderPath {line} at (556,402) size 155x2 [data="M712.00,515.60 L910.00,515.60"]
+        RenderSVGContainer {use} at (553,394) size 6x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(712.00,515.60)}]
+          RenderSVGContainer {g} at (553,394) size 6x17
+            RenderSVGViewportContainer {svg} at (553,394) size 6x17
+              RenderPath {line} at (553,394) size 6x17 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (916,508) size 76x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 76x16
+            chunk 1 text run 1 at (916.00,520.10) startOffset 0 endOffset 13 width 76.00: "Hue (0\x{B0}-360\x{B0})"
+        RenderPath {rect} at (553,415) size 42x35 [stroke={[type=SOLID] [color=#787878] [stroke width=7.50]}] [data="M712.00,536.00 L757.00,536.00 L757.00,572.00 L712.00,572.00 Z"]
+        RenderPath {rect} at (603,417) size 108x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker4_satGradient"]}] [data="M772.00,535.85 L910.00,535.85 L910.00,543.35 L772.00,543.35 Z"]
+        RenderPath {line} at (596,415) size 122x14 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M772.00,539.60 L910.00,539.60"]
+        RenderPath {line} at (603,421) size 108x1 [data="M772.00,539.60 L910.00,539.60"]
+        RenderSVGContainer {use} at (600,413) size 6x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(772.00,539.60)}]
+          RenderSVGContainer {g} at (600,413) size 6x17
+            RenderSVGViewportContainer {svg} at (600,413) size 6x17
+              RenderPath {line} at (600,413) size 6x17 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (916,532) size 78x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x16
+            chunk 1 text run 1 at (916.00,544.10) startOffset 0 endOffset 14 width 78.00: "Saturation (%)"
+        RenderPath {rect} at (603,436) size 108x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker4_valGradient"]}] [data="M772.00,559.85 L910.00,559.85 L910.00,567.35 L772.00,567.35 Z"]
+        RenderPath {line} at (596,434) size 122x13 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M772.00,563.60 L910.00,563.60"]
+        RenderPath {line} at (603,439) size 108x2 [data="M772.00,563.60 L910.00,563.60"]
+        RenderSVGContainer {use} at (650,432) size 7x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(836.86,563.60)}]
+          RenderSVGContainer {g} at (650,432) size 7x17
+            RenderSVGViewportContainer {svg} at (650,432) size 7x17
+              RenderPath {line} at (650,432) size 7x17 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (916,556) size 53x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 53x16
+            chunk 1 text run 1 at (916.00,568.10) startOffset 0 endOffset 9 width 53.00: "Value (%)"
+        RenderPath {rect} at (603,455) size 108x8 [fill={[type=LINEAR-GRADIENT] [id="colourPicker4_alphaGradient"]}] [data="M772.00,583.85 L910.00,583.85 L910.00,591.35 L772.00,591.35 Z"]
+        RenderPath {line} at (596,453) size 122x13 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M772.00,587.60 L910.00,587.60"]
+        RenderPath {line} at (603,458) size 108x2 [data="M772.00,587.60 L910.00,587.60"]
+        RenderSVGContainer {use} at (708,450) size 6x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(910.00,587.60)}]
+          RenderSVGContainer {g} at (708,450) size 6x18
+            RenderSVGViewportContainer {svg} at (708,450) size 6x18
+              RenderPath {line} at (708,450) size 6x18 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (916,580) size 62x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 62x16
+            chunk 1 text run 1 at (916.00,592.10) startOffset 0 endOffset 11 width 62.00: "Opacity (%)"
+        RenderSVGText {text} at (712,602) size 233x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 233x15
+            chunk 1 text run 1 at (712.00,614.00) startOffset 0 endOffset 39 width 233.00: "RGBA: 120,120,120,100; HSVA: 0,0,47,100"
+    RenderSVGContainer {g} at (80,62) size 263x263 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.00,-400.00)}]
+      RenderPath {rect} at (104,62) size 239x239 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [data="M490.00,190.00 L810.00,190.00 L810.00,300.00 L490.00,300.00 Z"]
+      RenderSVGText {text} at (500,305) size 301x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 282x18
+          chunk 1 text run 1 at (500.00,320.00) startOffset 0 endOffset 41 width 282.00: "This colourPicker has a callBack function"
+        RenderSVGTSpan {tspan} at (0,0) size 301x19
+          RenderSVGInlineText {#text} at (0,19) size 301x19
+            chunk 1 text run 1 at (500.00,339.20) startOffset 0 endOffset 42 width 301.00: "attached that changes the background color"
+      RenderSVGContainer {g} at (115,73) size 218x217
+        RenderPath {rect} at (115,73) size 218x217 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M500.00,200.00 L800.00,200.00 L800.00,290.00 L500.00,290.00 Z"]
+        RenderPath {rect} at (163,84) size 116x116 [fill={[type=LINEAR-GRADIENT] [id="colourPicker2_hueGradient"]}] [data="M512.00,207.95 L710.00,207.95 L710.00,215.45 L512.00,215.45 Z"]
+        RenderPath {line} at (156,78) size 129x129 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M512.00,211.70 L710.00,211.70"]
+        RenderPath {line} at (165,86) size 111x111 [data="M512.00,211.70 L710.00,211.70"]
+        RenderSVGContainer {use} at (223,144) size 17x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(630.80,211.70)}]
+          RenderSVGContainer {g} at (223,144) size 17x17
+            RenderSVGViewportContainer {svg} at (223,144) size 17x17
+              RenderPath {line} at (223,144) size 17x17 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (716,204) size 83x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 83x16
+            chunk 1 text run 1 at (716.00,216.20) startOffset 0 endOffset 14 width 83.00: "Hue (90\x{B0}-240\x{B0})"
+        RenderPath {rect} at (142,95) size 41x41 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [data="M512.00,227.00 L557.00,227.00 L557.00,254.00 L512.00,254.00 Z"]
+        RenderPath {rect} at (182,130) size 83x83 [fill={[type=LINEAR-GRADIENT] [id="colourPicker2_satGradient"]}] [data="M572.00,231.95 L710.00,231.95 L710.00,239.45 L572.00,239.45 Z"]
+        RenderPath {line} at (176,125) size 96x95 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M572.00,235.70 L710.00,235.70"]
+        RenderPath {line} at (185,132) size 78x79 [data="M572.00,235.70 L710.00,235.70"]
+        RenderSVGContainer {use} at (253,202) size 18x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(710.00,235.70)}]
+          RenderSVGContainer {g} at (253,202) size 18x16
+            RenderSVGViewportContainer {svg} at (253,202) size 18x16
+              RenderPath {line} at (253,202) size 18x16 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (716,228) size 78x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x16
+            chunk 1 text run 1 at (716.00,240.20) startOffset 0 endOffset 14 width 78.00: "Saturation (%)"
+        RenderPath {rect} at (169,143) size 83x83 [fill={[type=LINEAR-GRADIENT] [id="colourPicker2_alphaGradient"]}] [data="M572.00,255.95 L710.00,255.95 L710.00,263.45 L572.00,263.45 Z"]
+        RenderPath {line} at (163,137) size 95x96 [stroke={[type=SOLID] [color=#000000] [opacity=0.00] [stroke width=15.00] [line cap=SQUARE]}] [fill={[type=SOLID] [color=#000000] [opacity=0.00]}] [data="M572.00,259.70 L710.00,259.70"]
+        RenderPath {line} at (171,146) size 79x78 [data="M572.00,259.70 L710.00,259.70"]
+        RenderSVGContainer {use} at (203,177) size 16x16 [transform={m=((1.00,0.00)(0.00,1.00)) t=(641.00,259.70)}]
+          RenderSVGContainer {g} at (203,177) size 16x16
+            RenderSVGViewportContainer {svg} at (203,177) size 16x16
+              RenderPath {line} at (203,177) size 16x16 [stroke={[type=SOLID] [color=#696969] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-10.00 L0.00,10.00"]
+        RenderSVGText {text} at (716,252) size 62x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 62x16
+            chunk 1 text run 1 at (716.00,264.20) startOffset 0 endOffset 11 width 62.00: "Opacity (%)"
+        RenderSVGText {text} at (512,273) size 240x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 240x16
+            chunk 1 text run 1 at (512.00,285.50) startOffset 0 endOffset 40 width 240.00: "RGBA: 0,255,255,50; HSVA: 180,100,100,50"
+    RenderSVGContainer {g} at (389,132) size 288x274
+      RenderSVGContainer {g} at (397,344) size 89x18
+        RenderPath {rect} at (397,344) size 87x17 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,441.00 L619.00,441.00 L619.00,461.00 L509.00,461.00 Z"]
+        RenderPath {rect} at (399,346) size 87x16 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,443.00 L621.00,443.00 L621.00,463.00 L511.00,463.00 Z"]
+        RenderPath {rect} at (398,345) size 87x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,442.00 L620.00,442.00 L620.00,462.00 L510.00,462.00 Z"]
+        RenderSVGText {text} at (515,445) size 100x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 100x16
+            RenderSVGInlineText {#text} at (0,0) size 100x16
+              chunk 1 (middle anchor) text run 1 at (515.00,457.40) startOffset 0 endOffset 17 width 100.00: "Hide ColourPicker"
+      RenderSVGContainer {g} at (397,366) size 89x18
+        RenderPath {rect} at (397,366) size 87x17 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,469.00 L619.00,469.00 L619.00,489.00 L509.00,489.00 Z"]
+        RenderPath {rect} at (399,367) size 87x17 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,471.00 L621.00,471.00 L621.00,491.00 L511.00,491.00 Z"]
+        RenderPath {rect} at (398,367) size 87x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,470.00 L620.00,470.00 L620.00,490.00 L510.00,490.00 Z"]
+        RenderSVGText {text} at (521,473) size 88x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 88x16
+            RenderSVGInlineText {#text} at (0,0) size 88x16
+              chunk 1 (middle anchor) text run 1 at (521.00,485.40) startOffset 0 endOffset 15 width 88.00: "Set Random Fill"
+      RenderSVGContainer {g} at (397,388) size 89x18
+        RenderPath {rect} at (397,388) size 87x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M509.00,497.00 L619.00,497.00 L619.00,517.00 L509.00,517.00 Z"]
+        RenderPath {rect} at (399,389) size 87x17 [fill={[type=SOLID] [color=#696969]}] [data="M511.00,499.00 L621.00,499.00 L621.00,519.00 L511.00,519.00 Z"]
+        RenderPath {rect} at (398,389) size 87x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M510.00,498.00 L620.00,498.00 L620.00,518.00 L510.00,518.00 Z"]
+        RenderSVGText {text} at (511,501) size 108x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 108x16
+            RenderSVGInlineText {#text} at (0,0) size 108x16
+              chunk 1 (middle anchor) text run 1 at (511.50,513.40) startOffset 0 endOffset 17 width 107.00: "Set Random Stroke"
+      RenderSVGContainer {g} at (389,132) size 144x18
+        RenderPath {rect} at (389,132) size 142x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M499.00,169.00 L679.00,169.00 L679.00,189.00 L499.00,189.00 Z"]
+        RenderPath {rect} at (391,133) size 142x17 [fill={[type=SOLID] [color=#696969]}] [data="M501.00,171.00 L681.00,171.00 L681.00,191.00 L501.00,191.00 Z"]
+        RenderPath {rect} at (390,132) size 142x17 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M500.00,170.00 L680.00,170.00 L680.00,190.00 L500.00,190.00 Z"]
+        RenderSVGText {text} at (503,173) size 174x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 174x16
+            RenderSVGInlineText {#text} at (0,0) size 174x16
+              chunk 1 (middle anchor) text run 1 at (503.00,185.40) startOffset 0 endOffset 29 width 174.00: "Randomly Resize Colour Picker"
+      RenderSVGContainer {g} at (534,132) size 143x18
+        RenderPath {rect} at (534,132) size 141x16 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M684.00,169.00 L864.00,169.00 L864.00,189.00 L684.00,189.00 Z"]
+        RenderPath {rect} at (535,133) size 142x17 [fill={[type=SOLID] [color=#696969]}] [data="M686.00,171.00 L866.00,171.00 L866.00,191.00 L686.00,191.00 Z"]
+        RenderPath {rect} at (535,132) size 141x17 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M685.00,170.00 L865.00,170.00 L865.00,190.00 L685.00,190.00 Z"]
+        RenderSVGText {text} at (693,173) size 164x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 164x16
+            RenderSVGInlineText {#text} at (0,0) size 164x16
+              chunk 1 (middle anchor) text run 1 at (693.00,185.40) startOffset 0 endOffset 27 width 164.00: "Randomly Move Colour Picker"
+    RenderSVGContainer {g} at (358,389) size 22x15
+      RenderPath {rect} at (358,389) size 21x13 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M459.00,498.00 L484.00,498.00 L484.00,514.00 L459.00,514.00 Z"]
+      RenderPath {rect} at (360,390) size 20x14 [fill={[type=SOLID] [color=#696969]}] [data="M461.00,500.00 L486.00,500.00 L486.00,516.00 L461.00,516.00 Z"]
+      RenderPath {rect} at (359,389) size 20x14 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M460.00,499.00 L485.00,499.00 L485.00,515.00 L460.00,515.00 Z"]
+      RenderSVGText {text} at (464,500) size 17x16 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 17x16
+          RenderSVGInlineText {#text} at (0,0) size 17x16
+            chunk 1 (middle anchor) text run 1 at (464.00,512.40) startOffset 0 endOffset 2 width 17.00: "OK"

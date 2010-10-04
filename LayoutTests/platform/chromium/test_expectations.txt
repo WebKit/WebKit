@@ -3179,23 +3179,6 @@ BUG10292 MAC : editing/selection/5354455-1.html = FAIL
 BUG_HCLAM MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 
 // SVG test failures introduced by 68976.
-BUG_HCLAM WIN LINUX : svg/carto.net/selectionlist.svg = IMAGE+TEXT
-BUG_HCLAM WIN LINUX : svg/carto.net/textbox.svg = TEXT
-BUG_HCLAM WIN LINUX SLOW : svg/carto.net/window.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/clip-path/clip-path-text-and-shape.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/clip-path/clip-path-text-and-stroke.svg = TEXT CRASH
-BUG_HCLAM WIN LINUX : svg/clip-path/clip-path-text.svg = TEXT CRASH
-BUG_HCLAM WIN LINUX : svg/clip-path/clip-path-with-text-clipped.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/css/composite-shadow-text.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/css/shadow-changes.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/css/text-shadow-multiple.xhtml = TEXT
-BUG_HCLAM WIN LINUX : svg/custom/use-detach.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/filters/filter-on-filter-for-text.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/filters/filter-on-tspan.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/filters/sourceAlpha.svg = IMAGE+TEXT
-BUG_HCLAM WIN LINUX : svg/hixie/error/017.xml = TEXT
-BUG_HCLAM WIN LINUX : svg/hixie/text/002.xml = TEXT
-BUG_HCLAM WIN LINUX : svg/hixie/text/003b.xml = TEXT
 BUG_HCLAM WIN LINUX : svg/text/kerning.svg = TEXT
 BUG_HCLAM WIN LINUX : svg/text/multichar-glyph.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/text/select-textLength-spacing-squeeze-1.svg = IMAGE+TEXT
@@ -3265,24 +3248,12 @@ BUG_HCLAM WIN LINUX : svg/text/text-vkern.svg = IMAGE
 BUG_HCLAM WIN LINUX : svg/text/text-ws-01-t.svg = TEXT
 BUG_HCLAM WIN LINUX : svg/text/text-ws-02-t.svg = TEXT
 BUG_HCLAM WIN LINUX : svg/text/textPathBoundsBug.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE+TEXT
-BUG_HCLAM WIN LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE+TEXT
-BUG_HCLAM WIN LINUX : svg/zoom/page/zoom-coords-viewattr-01-b.svg = TEXT
-BUG_HCLAM WIN LINUX : svg/zoom/text/zoom-coords-viewattr-01-b.svg = TEXT
-BUG_HCLAM WIN LINUX : transitions/svg-text-shadow-transition.html = TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/text-align-02-b.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/text-align-05-b.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/text-align-06-b.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT
-// As for the following 6 tests, Linux results were changed from IMAGE to IMAGE+TEXT by r68976.
-BUG_HCLAM WIN : svg/W3C-SVG-1.1/animate-elem-03-t.svg = TEXT
-BUG_HCLAM WIN : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = TEXT
-BUG_HCLAM WIN : svg/batik/text/textLength.svg = TEXT
-BUG_HCLAM WIN : svg/carto.net/button.svg = TEXT
-BUG_HCLAM WIN : svg/carto.net/colourpicker.svg = TEXT
-BUG_HCLAM WIN : svg/carto.net/combobox.svg = TEXT
 
 // Started to fail at WebKit r68975 Chromium r61295-61296.
 BUG9798 DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT

@@ -2,6 +2,86 @@
 
         Unreviewed, test expectation update.
 
+        Update SVG baseline for Chromium.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-opacity-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textLength-expected.txt: Added.
+        * platform/chromium-linux/svg/carto.net/button-expected.txt: Added.
+        * platform/chromium-linux/svg/carto.net/colourpicker-expected.txt: Added.
+        * platform/chromium-linux/svg/carto.net/combobox-expected.txt: Added.
+        * platform/chromium-linux/svg/carto.net/selectionlist-expected.checksum:
+        * platform/chromium-linux/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-linux/svg/carto.net/selectionlist-expected.txt: Added.
+        * platform/chromium-linux/svg/carto.net/textbox-expected.txt: Added.
+        * platform/chromium-linux/svg/carto.net/window-expected.txt:
+        * platform/chromium-linux/svg/clip-path/clip-path-text-and-shape-expected.txt: Added.
+        * platform/chromium-linux/svg/clip-path/clip-path-text-and-stroke-expected.txt: Added.
+        * platform/chromium-linux/svg/clip-path/clip-path-text-expected.txt: Added.
+        * platform/chromium-linux/svg/clip-path/clip-path-with-text-clipped-expected.txt: Added.
+        * platform/chromium-linux/svg/css/composite-shadow-text-expected.txt: Added.
+        * platform/chromium-linux/svg/css/shadow-changes-expected.txt: Added.
+        * platform/chromium-linux/svg/css/text-shadow-multiple-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/use-detach-expected.txt: Added.
+        * platform/chromium-linux/svg/filters/filter-on-filter-for-text-expected.txt: Added.
+        * platform/chromium-linux/svg/filters/filter-on-tspan-expected.txt: Copied from LayoutTests/platform/gtk/svg/filters/filter-on-tspan-expected.txt.
+        * platform/chromium-linux/svg/filters/sourceAlpha-expected.checksum:
+        * platform/chromium-linux/svg/filters/sourceAlpha-expected.png: Removed.
+        * platform/chromium-linux/svg/filters/sourceAlpha-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/error/017-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/text/002-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/text/003b-expected.txt:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-inside-transformed-html-expected.checksum:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt: Added.
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.checksum:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt: Added.
+        * platform/chromium-linux/transitions/svg-text-shadow-transition-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-opacity-01-b-expected.txt:
+        * platform/chromium-win/svg/batik/text/textLength-expected.txt:
+        * platform/chromium-win/svg/carto.net/button-expected.txt:
+        * platform/chromium-win/svg/carto.net/colourpicker-expected.txt:
+        * platform/chromium-win/svg/carto.net/combobox-expected.txt:
+        * platform/chromium-win/svg/carto.net/selectionlist-expected.checksum:
+        * platform/chromium-win/svg/carto.net/selectionlist-expected.png:
+        * platform/chromium-win/svg/carto.net/selectionlist-expected.txt:
+        * platform/chromium-win/svg/carto.net/textbox-expected.txt:
+        * platform/chromium-win/svg/carto.net/window-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-text-and-shape-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-text-and-stroke-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-text-expected.txt:
+        * platform/chromium-win/svg/clip-path/clip-path-with-text-clipped-expected.txt:
+        * platform/chromium-win/svg/css/composite-shadow-text-expected.txt:
+        * platform/chromium-win/svg/css/shadow-changes-expected.txt:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.txt:
+        * platform/chromium-win/svg/custom/use-detach-expected.txt:
+        * platform/chromium-win/svg/filters/filter-on-filter-for-text-expected.txt:
+        * platform/chromium-win/svg/filters/filter-on-tspan-expected.txt:
+        * platform/chromium-win/svg/filters/sourceAlpha-expected.checksum:
+        * platform/chromium-win/svg/filters/sourceAlpha-expected.png:
+        * platform/chromium-win/svg/filters/sourceAlpha-expected.txt:
+        * platform/chromium-win/svg/hixie/error/017-expected.txt:
+        * platform/chromium-win/svg/hixie/text/002-expected.txt:
+        * platform/chromium-win/svg/hixie/text/003b-expected.txt:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.checksum:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.txt:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.checksum:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/chromium-win/svg/zoom/text/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2010-10-04  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         Update svg/batik results for Chromium.
 
         * platform/chromium-linux/svg/batik/text/longTextOnPath-expected.txt: Added.

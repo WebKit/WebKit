@@ -1,13 +1,13 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (42,8) size 95x56
+  RenderSVGRoot {svg} at (42,8) size 95x57
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
         [feOffset dx="0.00" dy="0.00"]
           [SourceAlpha]
-    RenderSVGContainer {g} at (42,8) size 95x56
-      [filter="filter"] RenderSVGResourceFilter {filter} at (42.10,8.40) size 94.80x55.20
-      RenderSVGText {text} at (50,13) size 79x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 79x46
+    RenderSVGContainer {g} at (42,8) size 95x57
+      [filter="filter"] RenderSVGResourceFilter {filter} at (42.10,8.30) size 94.80x56.40
+      RenderSVGText {text} at (50,13) size 79x47 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 79x47
           chunk 1 text run 1 at (50.00,50.00) startOffset 0 endOffset 3 width 79.00: "SVG"

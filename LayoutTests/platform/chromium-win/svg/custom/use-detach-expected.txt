@@ -19,17 +19,17 @@ layer at (0,0) size 800x600
             RenderPath {circle} at (217,93) size 30x30 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M55.00,40.00 L54.99,40.31 L54.96,40.63 L54.91,40.94 L54.84,41.24 L54.76,41.55 L54.65,41.84 L54.52,42.13 L54.38,42.41 L54.22,42.68 L54.05,42.94 L53.85,43.19 L53.64,43.42 L53.42,43.64 L53.19,43.85 L52.94,44.05 L52.68,44.22 L52.41,44.38 L52.13,44.52 L51.84,44.65 L51.55,44.76 L51.24,44.84 L50.94,44.91 L50.63,44.96 L50.31,44.99 L50.00,45.00 L49.69,44.99 L49.37,44.96 L49.06,44.91 L48.76,44.84 L48.45,44.76 L48.16,44.65 L47.87,44.52 L47.59,44.38 L47.32,44.22 L47.06,44.05 L46.81,43.85 L46.58,43.64 L46.36,43.42 L46.15,43.19 L45.95,42.94 L45.78,42.68 L45.62,42.41 L45.48,42.13 L45.35,41.84 L45.24,41.55 L45.16,41.24 L45.09,40.94 L45.04,40.63 L45.01,40.31 L45.00,40.00 L45.01,39.69 L45.04,39.37 L45.09,39.06 L45.16,38.76 L45.24,38.45 L45.35,38.16 L45.48,37.87 L45.62,37.59 L45.78,37.32 L45.95,37.06 L46.15,36.81 L46.36,36.58 L46.58,36.36 L46.81,36.15 L47.06,35.95 L47.32,35.78 L47.59,35.62 L47.87,35.48 L48.16,35.35 L48.45,35.24 L48.76,35.16 L49.06,35.09 L49.37,35.04 L49.69,35.01 L50.00,35.00 L50.31,35.01 L50.63,35.04 L50.94,35.09 L51.24,35.16 L51.55,35.24 L51.84,35.35 L52.13,35.48 L52.41,35.62 L52.68,35.78 L52.94,35.95 L53.19,36.15 L53.42,36.36 L53.64,36.58 L53.85,36.81 L54.05,37.06 L54.22,37.32 L54.38,37.59 L54.52,37.87 L54.65,38.16 L54.76,38.45 L54.84,38.76 L54.91,39.06 L54.96,39.37 L54.99,39.69 Z"]
       RenderPath {rect} at (112,12) size 240x120 [opacity=0.20] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,50.00 L0.00,50.00 Z"]
     RenderSVGContainer {g} at (124,139) size 676x109 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,70.00)}]
-      RenderSVGText {text} at (0,-12) size 287x45 contains 3 chunk(s)
+      RenderSVGText {text} at (0,-12) size 287x45 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 280x15
           RenderSVGInlineText {#text} at (0,0) size 280x15
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 40 width 280.00: "For this test case to be successful, the"
         RenderSVGInlineText {#text} at (280,0) size 7x15
-          chunk 1 text run 2 at (280.00,0.00) startOffset 0 endOffset 1 width 7.00: " "
+          chunk 1 text run 1 at (280.00,0.00) startOffset 0 endOffset 1 width 7.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 273x15
           RenderSVGInlineText {#text} at (0,15) size 273x15
-            chunk 2 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 273.00: "box above must show text and a circle. "
+            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 39 width 273.00: "box above must show text and a circle. "
         RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGTSpan {tspan} at (0,0) size 63x15
           RenderSVGInlineText {#text} at (0,30) size 63x15
-            chunk 3 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 63.00: "Bug 14927"
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 9 width 63.00: "Bug 14927"
         RenderSVGInlineText {#text} at (0,0) size 0x0

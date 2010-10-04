@@ -1,0 +1,99 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+    RenderPath {rect} at (0,0) size 800x600 [fill={[type=SOLID] [color=#DEB887]}] [data="M-1000.00,-1000.00 L2000.00,-1000.00 L2000.00,2000.00 L-1000.00,2000.00 Z"]
+    RenderSVGContainer {g} at (77,77) size 635x206
+      RenderSVGContainer {g} at (77,77) size 81x26
+        RenderPath {rect} at (77,77) size 79x24 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M99.00,99.00 L199.00,99.00 L199.00,129.00 L99.00,129.00 Z"]
+        RenderPath {rect} at (78,78) size 80x25 [fill={[type=SOLID] [color=#000080]}] [data="M101.00,101.00 L201.00,101.00 L201.00,131.00 L101.00,131.00 Z"]
+        RenderPath {rect} at (78,78) size 79x24 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M100.00,100.00 L200.00,100.00 L200.00,130.00 L100.00,130.00 Z"]
+        RenderSVGText {text} at (126,108) size 48x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 48x16
+            RenderSVGInlineText {#text} at (0,0) size 48x16
+              chunk 1 (middle anchor) text run 1 at (126.00,120.40) startOffset 0 endOffset 8 width 48.00: "Click me"
+      RenderSVGContainer {g} at (171,77) size 80x26
+        RenderPath {rect} at (171,77) size 79x24 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M219.00,99.00 L319.00,99.00 L319.00,129.00 L219.00,129.00 Z"]
+        RenderPath {rect} at (172,78) size 79x25 [fill={[type=SOLID] [color=#000080]}] [data="M221.00,101.00 L321.00,101.00 L321.00,131.00 L221.00,131.00 Z"]
+        RenderPath {rect} at (171,78) size 79x24 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M220.00,100.00 L320.00,100.00 L320.00,130.00 L220.00,130.00 Z"]
+        RenderSVGText {text} at (241,108) size 58x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 58x16
+            RenderSVGInlineText {#text} at (0,0) size 58x16
+              chunk 1 (middle anchor) text run 1 at (241.00,120.40) startOffset 0 endOffset 10 width 58.00: "Click me 2"
+      RenderSVGContainer {g} at (264,77) size 104x26
+        RenderPath {rect} at (264,77) size 103x24 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M339.00,99.00 L469.00,99.00 L469.00,129.00 L339.00,129.00 Z"]
+        RenderPath {rect} at (266,78) size 102x25 [fill={[type=SOLID] [color=#000080]}] [data="M341.00,101.00 L471.00,101.00 L471.00,131.00 L341.00,131.00 Z"]
+        RenderPath {rect} at (265,78) size 103x24 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M340.00,100.00 L470.00,100.00 L470.00,130.00 L340.00,130.00 Z"]
+        RenderSVGText {text} at (352,108) size 106x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 106x16
+            RenderSVGInlineText {#text} at (0,0) size 106x16
+              chunk 1 (middle anchor) text run 1 at (352.50,120.40) startOffset 0 endOffset 19 width 105.00: "Deactivate Button 2"
+      RenderSVGContainer {g} at (382,77) size 96x26
+        RenderPath {rect} at (382,77) size 94x24 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M489.00,99.00 L609.00,99.00 L609.00,129.00 L489.00,129.00 Z"]
+        RenderPath {rect} at (383,78) size 95x25 [fill={[type=SOLID] [color=#000080]}] [data="M491.00,101.00 L611.00,101.00 L611.00,131.00 L491.00,131.00 Z"]
+        RenderPath {rect} at (382,78) size 95x24 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M490.00,100.00 L610.00,100.00 L610.00,130.00 L490.00,130.00 Z"]
+        RenderSVGText {text} at (504,108) size 92x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 92x16
+            RenderSVGInlineText {#text} at (0,0) size 92x16
+              chunk 1 (middle anchor) text run 1 at (504.50,120.40) startOffset 0 endOffset 16 width 91.00: "Switch Button on"
+      RenderSVGContainer {g} at (491,77) size 104x26
+        RenderPath {rect} at (491,77) size 102x24 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M629.00,99.00 L759.00,99.00 L759.00,129.00 L629.00,129.00 Z"]
+        RenderPath {rect} at (492,78) size 103x25 [fill={[type=SOLID] [color=#000080]}] [data="M631.00,101.00 L761.00,101.00 L761.00,131.00 L631.00,131.00 Z"]
+        RenderPath {rect} at (492,78) size 102x24 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M630.00,100.00 L760.00,100.00 L760.00,130.00 L630.00,130.00 Z"]
+        RenderSVGText {text} at (648,108) size 94x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 94x16
+            RenderSVGInlineText {#text} at (0,0) size 94x16
+              chunk 1 (middle anchor) text run 1 at (648.00,120.40) startOffset 0 endOffset 15 width 94.00: "Remove Button 1"
+      RenderSVGContainer {g} at (608,77) size 104x26
+        RenderPath {rect} at (608,77) size 103x24 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M779.00,99.00 L909.00,99.00 L909.00,129.00 L779.00,129.00 Z"]
+        RenderPath {rect} at (610,78) size 102x25 [fill={[type=SOLID] [color=#000080]}] [data="M781.00,101.00 L911.00,101.00 L911.00,131.00 L781.00,131.00 Z"]
+        RenderPath {rect} at (609,78) size 102x24 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M780.00,100.00 L910.00,100.00 L910.00,130.00 L780.00,130.00 Z"]
+        RenderSVGText {text} at (794,108) size 102x16 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 102x16
+            RenderSVGInlineText {#text} at (0,0) size 102x16
+              chunk 1 (middle anchor) text run 1 at (794.50,120.40) startOffset 0 endOffset 18 width 101.00: "Switch Button 4 on"
+      RenderSVGContainer {g} at (155,233) size 120x50
+        RenderPath {rect} at (155,233) size 118x48 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M209.00,299.00 L339.00,299.00 C344.52,299.00,349.00,303.48,349.00,309.00 L349.00,349.00 C349.00,354.52,344.52,359.00,339.00,359.00 L209.00,359.00 C203.48,359.00,199.00,354.52,199.00,349.00 L199.00,309.00 C199.00,303.48,203.48,299.00,209.00,299.00 Z"]
+        RenderPath {rect} at (157,235) size 118x48 [fill={[type=SOLID] [color=#000080]}] [data="M211.00,301.00 L341.00,301.00 C346.52,301.00,351.00,305.48,351.00,311.00 L351.00,351.00 C351.00,356.52,346.52,361.00,341.00,361.00 L211.00,361.00 C205.48,361.00,201.00,356.52,201.00,351.00 L201.00,311.00 C201.00,305.48,205.48,301.00,211.00,301.00 Z"]
+        RenderPath {rect} at (156,234) size 118x48 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M210.00,300.00 L340.00,300.00 C345.52,300.00,350.00,304.48,350.00,310.00 L350.00,350.00 C350.00,355.52,345.52,360.00,340.00,360.00 L210.00,360.00 C204.48,360.00,200.00,355.52,200.00,350.00 L200.00,310.00 C200.00,304.48,204.48,300.00,210.00,300.00 Z"]
+        RenderSVGText {text} at (226,310) size 98x42 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 98x16
+            RenderSVGInlineText {#text} at (0,0) size 98x16
+              chunk 1 (middle anchor) text run 1 at (226.50,322.20) startOffset 0 endOffset 19 width 97.00: "This is a multiline"
+          RenderSVGTSpan {tspan} at (0,0) size 78x16
+            RenderSVGInlineText {#text} at (10,13) size 78x16
+              chunk 1 (middle anchor) text run 1 at (236.50,335.40) startOffset 0 endOffset 15 width 77.00: "textbutton with"
+          RenderSVGTSpan {tspan} at (0,0) size 78x16
+            RenderSVGInlineText {#text} at (10,26) size 78x16
+              chunk 1 (middle anchor) text run 1 at (236.50,348.60) startOffset 0 endOffset 13 width 77.00: "round corners"
+    RenderSVGContainer {g} at (233,112) size 61x22
+      RenderSVGContainer {g} at (233,116) size 18x18
+        RenderPath {rect} at (233,116) size 17x17 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M299.00,149.00 L319.00,149.00 L319.00,169.00 L299.00,169.00 Z"]
+        RenderPath {rect} at (235,117) size 16x17 [fill={[type=SOLID] [color=#000080]}] [data="M301.00,151.00 L321.00,151.00 L321.00,171.00 L301.00,171.00 Z"]
+        RenderPath {rect} at (234,117) size 16x16 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M300.00,150.00 L320.00,150.00 L320.00,170.00 L300.00,170.00 Z"]
+        RenderSVGContainer {use} at (238,116) size 10x17
+          RenderSVGContainer {g} at (238,116) size 10x17 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,160.00)}]
+            RenderSVGViewportContainer {svg} at (238,116) size 10x17
+              RenderSVGContainer {g} at (238,115) size 11x18 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,0.00)}]
+                RenderPath {line} at (240,123) size 7x10 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L3.00,7.00"]
+                RenderPath {path} at (238,115) size 11x16 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M-3.00,-7.00 L-3.00,3.00 L0.00,0.00 L4.25,-0.50 Z"]
+      RenderSVGContainer {g} at (272,112) size 22x22
+        RenderPath {ellipse} at (272,112) size 21x21 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M374.00,156.50 L373.98,157.28 L373.90,158.07 L373.78,158.84 L373.61,159.61 L373.39,160.36 L373.12,161.10 L372.81,161.82 L372.45,162.52 L372.05,163.20 L371.61,163.85 L371.13,164.47 L370.61,165.06 L370.06,165.61 L369.47,166.13 L368.85,166.61 L368.20,167.05 L367.52,167.45 L366.82,167.81 L366.10,168.12 L365.36,168.39 L364.61,168.61 L363.84,168.78 L363.07,168.90 L362.28,168.98 L361.50,169.00 L360.72,168.98 L359.93,168.90 L359.16,168.78 L358.39,168.61 L357.64,168.39 L356.90,168.12 L356.18,167.81 L355.48,167.45 L354.80,167.05 L354.15,166.61 L353.53,166.13 L352.94,165.61 L352.39,165.06 L351.87,164.47 L351.39,163.85 L350.95,163.20 L350.55,162.52 L350.19,161.82 L349.88,161.10 L349.61,160.36 L349.39,159.61 L349.22,158.84 L349.10,158.07 L349.02,157.28 L349.00,156.50 L349.02,155.72 L349.10,154.93 L349.22,154.16 L349.39,153.39 L349.61,152.64 L349.88,151.90 L350.19,151.18 L350.55,150.48 L350.95,149.80 L351.39,149.15 L351.87,148.53 L352.39,147.94 L352.94,147.39 L353.53,146.87 L354.15,146.39 L354.80,145.95 L355.48,145.55 L356.18,145.19 L356.90,144.88 L357.64,144.61 L358.39,144.39 L359.16,144.22 L359.93,144.10 L360.72,144.02 L361.50,144.00 L362.28,144.02 L363.07,144.10 L363.84,144.22 L364.61,144.39 L365.36,144.61 L366.10,144.88 L366.82,145.19 L367.52,145.55 L368.20,145.95 L368.85,146.39 L369.47,146.87 L370.06,147.39 L370.61,147.94 L371.13,148.53 L371.61,149.15 L372.05,149.80 L372.45,150.48 L372.81,151.18 L373.12,151.90 L373.39,152.64 L373.61,153.39 L373.78,154.16 L373.90,154.93 L373.98,155.72 Z"]
+        RenderPath {ellipse} at (274,114) size 20x20 [fill={[type=SOLID] [color=#000080]}] [data="M376.00,158.50 L375.98,159.28 L375.90,160.07 L375.78,160.84 L375.61,161.61 L375.39,162.36 L375.12,163.10 L374.81,163.82 L374.45,164.52 L374.05,165.20 L373.61,165.85 L373.13,166.47 L372.61,167.06 L372.06,167.61 L371.47,168.13 L370.85,168.61 L370.20,169.05 L369.52,169.45 L368.82,169.81 L368.10,170.12 L367.36,170.39 L366.61,170.61 L365.84,170.78 L365.07,170.90 L364.28,170.98 L363.50,171.00 L362.72,170.98 L361.93,170.90 L361.16,170.78 L360.39,170.61 L359.64,170.39 L358.90,170.12 L358.18,169.81 L357.48,169.45 L356.80,169.05 L356.15,168.61 L355.53,168.13 L354.94,167.61 L354.39,167.06 L353.87,166.47 L353.39,165.85 L352.95,165.20 L352.55,164.52 L352.19,163.82 L351.88,163.10 L351.61,162.36 L351.39,161.61 L351.22,160.84 L351.10,160.07 L351.02,159.28 L351.00,158.50 L351.02,157.72 L351.10,156.93 L351.22,156.16 L351.39,155.39 L351.61,154.64 L351.88,153.90 L352.19,153.18 L352.55,152.48 L352.95,151.80 L353.39,151.15 L353.87,150.53 L354.39,149.94 L354.94,149.39 L355.53,148.87 L356.15,148.39 L356.80,147.95 L357.48,147.55 L358.18,147.19 L358.90,146.88 L359.64,146.61 L360.39,146.39 L361.16,146.22 L361.93,146.10 L362.72,146.02 L363.50,146.00 L364.28,146.02 L365.07,146.10 L365.84,146.22 L366.61,146.39 L367.36,146.61 L368.10,146.88 L368.82,147.19 L369.52,147.55 L370.20,147.95 L370.85,148.39 L371.47,148.87 L372.06,149.39 L372.61,149.94 L373.13,150.53 L373.61,151.15 L374.05,151.80 L374.45,152.48 L374.81,153.18 L375.12,153.90 L375.39,154.64 L375.61,155.39 L375.78,156.16 L375.90,156.93 L375.98,157.72 Z"]
+        RenderPath {ellipse} at (273,113) size 20x20 [fill={[type=SOLID] [color=#B0C4DE]}] [data="M375.00,157.50 L374.98,158.28 L374.90,159.07 L374.78,159.84 L374.61,160.61 L374.39,161.36 L374.12,162.10 L373.81,162.82 L373.45,163.52 L373.05,164.20 L372.61,164.85 L372.13,165.47 L371.61,166.06 L371.06,166.61 L370.47,167.13 L369.85,167.61 L369.20,168.05 L368.52,168.45 L367.82,168.81 L367.10,169.12 L366.36,169.39 L365.61,169.61 L364.84,169.78 L364.07,169.90 L363.28,169.98 L362.50,170.00 L361.72,169.98 L360.93,169.90 L360.16,169.78 L359.39,169.61 L358.64,169.39 L357.90,169.12 L357.18,168.81 L356.48,168.45 L355.80,168.05 L355.15,167.61 L354.53,167.13 L353.94,166.61 L353.39,166.06 L352.87,165.47 L352.39,164.85 L351.95,164.20 L351.55,163.52 L351.19,162.82 L350.88,162.10 L350.61,161.36 L350.39,160.61 L350.22,159.84 L350.10,159.07 L350.02,158.28 L350.00,157.50 L350.02,156.72 L350.10,155.93 L350.22,155.16 L350.39,154.39 L350.61,153.64 L350.88,152.90 L351.19,152.18 L351.55,151.48 L351.95,150.80 L352.39,150.15 L352.87,149.53 L353.39,148.94 L353.94,148.39 L354.53,147.87 L355.15,147.39 L355.80,146.95 L356.48,146.55 L357.18,146.19 L357.90,145.88 L358.64,145.61 L359.39,145.39 L360.16,145.22 L360.93,145.10 L361.72,145.02 L362.50,145.00 L363.28,145.02 L364.07,145.10 L364.84,145.22 L365.61,145.39 L366.36,145.61 L367.10,145.88 L367.82,146.19 L368.52,146.55 L369.20,146.95 L369.85,147.39 L370.47,147.87 L371.06,148.39 L371.61,148.94 L372.13,149.53 L372.61,150.15 L373.05,150.80 L373.45,151.48 L373.81,152.18 L374.12,152.90 L374.39,153.64 L374.61,154.39 L374.78,155.16 L374.90,155.93 L374.98,156.72 Z"]
+        RenderSVGContainer {use} at (279,114) size 11x17
+          RenderSVGContainer {g} at (278,114) size 12x18 [transform={m=((1.00,0.00)(0.00,1.00)) t=(362.50,157.50)}]
+            RenderSVGViewportContainer {svg} at (278,114) size 12x18
+              RenderSVGContainer {g} at (278,113) size 12x19 [transform={m=((1.25,0.00)(0.00,1.25)) t=(0.00,0.00)}]
+                RenderPath {line} at (281,121) size 7x11 [stroke={[type=SOLID] [color=#000000] [stroke width=1.75]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L3.00,7.00"]
+                RenderPath {path} at (278,113) size 12x16 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF] [fill rule=EVEN-ODD]}] [data="M-3.00,-7.00 L-3.00,3.00 L0.00,0.00 L4.25,-0.50 Z"]
+    RenderSVGText {text} at (100,195) size 64x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 64x19
+        chunk 1 text run 1 at (100.00,210.00) startOffset 0 endOffset 10 width 64.00: "StatusText"
+    RenderSVGText {text} at (430,305) size 416x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 416x19
+        chunk 1 text run 1 at (430.00,320.00) startOffset 0 endOffset 73 width 416.00: "Click this text to randomly resize the multiline textbutton (textbutton7)"
+    RenderSVGText {text} at (430,325) size 441x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 441x19
+        chunk 1 text run 1 at (430.00,340.00) startOffset 0 endOffset 77 width 441.00: "Click this text to randomly reposition the multiline textbutton (textbutton7)"
