@@ -1,3 +1,12 @@
+2010-10-03  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix.
+
+        WinCairo also needs access to the <inttypes.h> header requirement
+        introduced by Bug 46357.
+
+        * win/tools/vsprops/WinCairo.vsprops:
+
 2010-09-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed, tweaked, and landed by Anders Carlsson.

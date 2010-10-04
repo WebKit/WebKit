@@ -4,10 +4,10 @@
 	Version="8.00"
 	Name="WinCairo"
 	>
-  <Tool
+	<Tool
 		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\include\cairo&quot;;&quot;$(SolutionDir)\..\..\..\JavaScriptCore\os-win32&quot;"
 		PreprocessorDefinitions="WIN_CAIRO=1"
-		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\include\cairo&quot;"
 	/>
 	<Tool
 		Name="VCLinkerTool"
