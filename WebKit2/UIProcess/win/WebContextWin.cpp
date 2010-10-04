@@ -25,6 +25,7 @@
 
 #include "WebContext.h"
 
+#include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include <WebCore/FileSystem.h>
 
@@ -46,9 +47,9 @@ void WebContext::setShouldPaintNativeControls(bool b)
     m_process->send(Messages::WebProcess::SetShouldPaintNativeControls(m_shouldPaintNativeControls), 0);
 }
 
-void WebContext::platformSetUpWebProcess()
+void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    m_process->send(Messages::WebProcess::SetShouldPaintNativeControls(m_shouldPaintNativeControls), 0);
+    parameters.shouldPaintNativeControls = m_shouldPaintNativeControls;
 }
 
 } // namespace WebKit

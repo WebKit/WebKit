@@ -26,6 +26,8 @@
 #ifndef MachPort_h
 #define MachPort_h
 
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 #include "Attachment.h"
 
 namespace CoreIPC {

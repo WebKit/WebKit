@@ -23,25 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebProcessProxy.h"
+#ifndef WebProcessCreationParameters_h
+#define WebProcessCreationParameters_h
 
+#include "CacheModel.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
+
+#if PLATFORM(MAC)
 #include "MachPort.h"
-#include "WebKitSystemInterface.h"
-#include "WebProcessMessages.h"
+#endif
 
-using namespace WebCore;
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-#if USE(ACCELERATED_COMPOSITING)
-void WebProcessProxy::setUpAcceleratedCompositing()
-{
-#if HAVE(HOSTED_CORE_ANIMATION)
-    mach_port_t renderServerPort = WKInitializeRenderServer();
-    if (renderServerPort != MACH_PORT_NULL)
-        send(Messages::WebProcess::SetUpAcceleratedCompositingPort(CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND)), 0);
-#endif
-}
+struct WebProcessCreationParameters {
+    WebProcessCreationParameters();
+
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, WebProcessCreationParameters&);
+
+    String injectedBundlePath;
+#if ENABLE(WEB_PROCESS_SANDBOX)
+    String injectedBundlePathToken;
 #endif
 
+    String applicationCacheDirectory;
+    Vector<String> urlSchemesRegistererdAsEmptyDocument;
+
+    CacheModel cacheModel;
+    bool shouldTrackVisitedLinks;
+
+#if PLATFORM(MAC)
+    CoreIPC::MachPort acceleratedCompositingPort;
+#elif PLATFORM(WIN)
+    bool shouldPaintNativeControls;
+#endif
+};
+
 } // namespace WebKit
+
+#endif // WebProcessCreationParameters_h

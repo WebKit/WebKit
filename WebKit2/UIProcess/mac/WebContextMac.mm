@@ -25,6 +25,8 @@
 
 #include "WebContext.h"
 
+#include "WebKitSystemInterface.h"
+#include "WebProcessCreationParameters.h"
 #include <sys/param.h>
 
 using namespace WebCore;
@@ -59,8 +61,14 @@ String WebContext::applicationCacheDirectory()
     return [cacheDir stringByAppendingPathComponent:appName];
 }
 
-void WebContext::platformSetUpWebProcess()
+
+void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
+#if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
+    mach_port_t renderServerPort = WKInitializeRenderServer();
+    if (renderServerPort != MACH_PORT_NULL)
+        parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
+#endif
 }
 
 } // namespace WebKit

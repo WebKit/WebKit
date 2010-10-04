@@ -34,6 +34,7 @@
 #include "WebPageCreationParameters.h"
 #include "WebPlatformStrategies.h"
 #include "WebPreferencesStore.h"
+#include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <WebCore/ApplicationCacheStorage.h>
@@ -111,29 +112,34 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     startRandomCrashThreadIfRequested();
 }
 
-#if ENABLE(WEB_PROCESS_SANDBOX)
-void WebProcess::loadInjectedBundle(const String& path, const String& token)
-#else
-void WebProcess::loadInjectedBundle(const String& path)
-#endif
+void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters)
 {
     ASSERT(m_pageMap.isEmpty());
-    ASSERT(!path.isEmpty());
 
-    m_injectedBundle = InjectedBundle::create(path);
+    cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
+
+    if (!parameters.injectedBundlePath.isEmpty()) {
+        m_injectedBundle = InjectedBundle::create(parameters.injectedBundlePath);
 #if ENABLE(WEB_PROCESS_SANDBOX)
-    m_injectedBundle->setSandboxToken(token);
+        m_injectedBundle->setSandboxToken(parameters.injectedBundlePathToken);
 #endif
-
-    if (!m_injectedBundle->load()) {
-        // Don't keep around the InjectedBundle reference if the load fails.
-        m_injectedBundle.clear();
+        if (!m_injectedBundle->load()) {
+            // Don't keep around the InjectedBundle reference if the load fails.
+            m_injectedBundle.clear();
+        }
     }
-}
 
-void WebProcess::setApplicationCacheDirectory(const String& directory)
-{
-    cacheStorage().setCacheDirectory(directory);
+    setShouldTrackVisitedLinks(parameters.shouldTrackVisitedLinks);
+    setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
+    for (size_t i = 0; i < parameters.urlSchemesRegistererdAsEmptyDocument.size(); ++i)
+        registerURLSchemeAsEmptyDocument(parameters.urlSchemesRegistererdAsEmptyDocument[i]);
+
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
+    m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
+#endif
+#if PLATFORM(WIN)
+    setShouldPaintNativeControls(parameters.shouldPaintNativeControls);
+#endif
 }
 
 void WebProcess::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
@@ -194,13 +200,6 @@ void WebProcess::setCacheModel(uint32_t cm)
         platformSetCacheModel(cacheModel);
     }
 }
-
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
-void WebProcess::setUpAcceleratedCompositingPort(CoreIPC::MachPort port)
-{
-    m_compositingRenderServerPort = port.port();
-}
-#endif
 
 #if PLATFORM(WIN)
 void WebProcess::setShouldPaintNativeControls(bool shouldPaintNativeControls)

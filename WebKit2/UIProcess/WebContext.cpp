@@ -34,6 +34,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPageNamespace.h"
 #include "WebPreferences.h"
+#include "WebProcessCreationParameters.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
@@ -124,19 +125,40 @@ void WebContext::ensureWebProcess()
 
     m_process = WebProcessManager::shared().getWebProcess(this);
 
-    m_process->send(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()), 0);
-    m_process->send(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)), 0);
+    WebProcessCreationParameters parameters;
 
-    for (HashSet<String>::iterator it = m_schemesToRegisterAsEmptyDocument.begin(), end = m_schemesToRegisterAsEmptyDocument.end(); it != end; ++it)
-        m_process->send(Messages::WebProcess::RegisterURLSchemeAsEmptyDocument(*it), 0);
+    parameters.applicationCacheDirectory = applicationCacheDirectory();
+
+    if (!injectedBundlePath().isEmpty()) {
+        parameters.injectedBundlePath = injectedBundlePath();
+
+#if ENABLE(WEB_PROCESS_SANDBOX)
+        char* sandboxBundleTokenUTF8 = 0;
+        CString injectedBundlePath = context->injectedBundlePath().utf8();
+        sandbox_issue_extension(injectedBundlePath.data(), &sandboxBundleToken);
+        String sandboxBundleToken = String::fromUTF8(sandboxBundleTokenUTF8)
+        if (sandboxBundleToken)
+            free(sandboxBundleToken);
+
+        parameters.injectedBundlePathToken = sandboxBundleToken;
+#endif
+    }
+
+    parameters.shouldTrackVisitedLinks = m_historyClient.shouldTrackVisitedLinks();
+    parameters.cacheModel = m_cacheModel;
+    
+    copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
+
+    // Add any platform specific parameters
+    platformInitializeWebProcess(parameters);
+
+    m_process->send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
 
     for (size_t i = 0; i != m_pendingMessagesToPostToInjectedBundle.size(); ++i) {
         pair<String, RefPtr<APIObject> >* message = &m_pendingMessagesToPostToInjectedBundle[i];
         m_process->send(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(message->first, WebContextUserMessageEncoder(message->second.get())));
     }
     m_pendingMessagesToPostToInjectedBundle.clear();
-
-    platformSetUpWebProcess();
 }
 
 void WebContext::processDidFinishLaunching(WebProcessProxy* process)

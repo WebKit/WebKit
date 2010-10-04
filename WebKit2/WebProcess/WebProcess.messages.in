@@ -21,23 +21,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebProcess {
+    # Initialize the WebProcess. 
+    InitializeWebProcess(WebKit::WebProcessCreationParameters processCreationParameters)
+
+    # Create a new page.
+    CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)
+
     # Visited link tracking.
     SetVisitedLinkTable(WebKit::SharedMemory::Handle handle)
     VisitedLinkStateChanged(Vector<WebCore::LinkHash> linkHashes)
     AllVisitedLinkStateChanged()
 
-    # Create a new page.
-    CreateWebPage(uint64_t newPageID, WebKit::WebPageCreationParameters pageCreationParameters)
-
-    # Process initialization.
-    LoadInjectedBundle(WTF::String bundlePath, WTF::String token)
-    SetApplicationCacheDirectory(WTF::String applicationCacheDirectory)
+    # Global preferences.
     SetShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
     SetCacheModel(uint32_t cacheModel)
     RegisterURLSchemeAsEmptyDocument(WTF::String scheme)
-#if PLATFORM(MAC)
-    SetUpAcceleratedCompositingPort(CoreIPC::MachPort port)
-#endif
 #if PLATFORM(WIN)
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)
 #endif

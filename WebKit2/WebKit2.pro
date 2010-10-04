@@ -197,6 +197,7 @@ HEADERS += \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebPageCreationParameters.h \
+    Shared/WebProcessCreationParameters.h \
     Shared/WebPreferencesStore.h \
     Shared/WebURLRequest.h \
     Shared/WebURLResponse.h \
@@ -326,6 +327,7 @@ SOURCES += \
     Shared/VisitedLinkTable.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebPageCreationParameters.cpp \
+    Shared/WebProcessCreationParameters.cpp \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \

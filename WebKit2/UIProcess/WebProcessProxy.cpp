@@ -63,32 +63,6 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
     , m_context(context)
 {
     connect();
-
-    // FIXME: Instead of sending three separate initialization related messages here, we should just send a
-    // single "Initialize" messages with a struct that has all the needed information.
-    String applicationCacheDirectory = m_context->applicationCacheDirectory();
-    if (!applicationCacheDirectory.isEmpty())
-        send(Messages::WebProcess::SetApplicationCacheDirectory(applicationCacheDirectory), 0);
-
-    // FIXME: We could instead send the bundle path as part of the arguments to process creation?
-    // Would that be better than sending a connection?
-    if (!context->injectedBundlePath().isEmpty()) {
-#if ENABLE(WEB_PROCESS_SANDBOX)
-        char *sandboxBundleToken = NULL;
-        CString injectedBundlePath = context->injectedBundlePath().utf8();
-        sandbox_issue_extension(injectedBundlePath.data(), &sandboxBundleToken);
-        send(Messages::WebProcess::LoadInjectedBundle(context->injectedBundlePath(), String::fromUTF8(sandboxBundleToken)), 0);
-        if (sandboxBundleToken)
-            free(sandboxBundleToken);
-#else
-        send(Messages::WebProcess::LoadInjectedBundle(context->injectedBundlePath(), String()), 0);
-#endif
-    }
-
-#if USE(ACCELERATED_COMPOSITING)
-    setUpAcceleratedCompositing();
-#endif
-
 }
 
 WebProcessProxy::~WebProcessProxy()

@@ -101,9 +101,6 @@ private:
     explicit WebProcessProxy(WebContext*);
 
     void connect();
-#if USE(ACCELERATED_COMPOSITING)
-    void setUpAcceleratedCompositing();
-#endif
 
     bool sendMessage(CoreIPC::MessageID, PassOwnPtr<CoreIPC::ArgumentEncoder>);
 
