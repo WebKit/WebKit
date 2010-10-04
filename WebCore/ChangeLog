@@ -1,3 +1,32 @@
+2010-09-28  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport data change notifications
+        https://bugs.webkit.org/show_bug.cgi?id=46755
+
+        Regarding viewport meta tags, what matters for browser developers is to know when the viewport data has
+        changed and its current value. Viewport data belongs to the document, but it is useful to keep the current
+        viewport data in Page as a reference, to be able to send notifications only when the current viewport
+        has changed.
+
+        * dom/Document.cpp:
+        (WebCore::Document::processViewport):
+        (WebCore::Document::setInPageCache):
+        * dom/ViewportArguments.h:
+        (WebCore::ViewportArguments::operator==):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::HTMLBodyElement):
+        * page/Chrome.cpp:
+        (WebCore::Chrome::viewportDataChanged):
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::viewportDataChanged):
+        * page/Page.cpp:
+        (WebCore::Page::updateViewportArguments):
+        * page/Page.h:
+        (WebCore::Page::viewportArguments):
+
 2010-10-03  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, build fix for r68996.

@@ -177,7 +177,7 @@ namespace WebCore {
 
         QWebSelectMethod* createSelectPopup() const;
 
-        virtual void didReceiveViewportArguments(Frame*, const ViewportArguments&) const;
+        virtual void dispatchViewportDataDidChange(const ViewportArguments&) const;
 
         QWebPage* m_webPage;
         WebCore::KURL lastHoverURL;

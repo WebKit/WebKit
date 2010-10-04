@@ -417,6 +417,15 @@ void Page::scheduleForcedStyleRecalcForAllPages()
             frame->document()->scheduleForcedStyleRecalc();
 }
 
+void Page::updateViewportArguments()
+{
+    if (!mainFrame() || !mainFrame()->document() || mainFrame()->document()->viewportArguments() == m_viewportArguments)
+        return;
+
+    m_viewportArguments = mainFrame()->document()->viewportArguments();
+    chrome()->dispatchViewportDataDidChange(m_viewportArguments);
+}
+
 void Page::refreshPlugins(bool reload)
 {
     if (!allPages)

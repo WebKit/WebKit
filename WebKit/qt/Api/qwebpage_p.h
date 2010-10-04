@@ -36,6 +36,8 @@
 
 #include <wtf/RefPtr.h>
 
+#include "ViewportArguments.h"
+
 namespace WebCore {
     class ChromeClientQt;
     class ContextMenuClientQt;
@@ -138,6 +140,8 @@ public:
     QWebInspector* getOrCreateInspector();
     WebCore::InspectorController* inspectorController();
     quint16 inspectorServerPort();
+
+    WebCore::ViewportArguments viewportArguments();
 
 #ifndef QT_NO_SHORTCUT
     static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event);

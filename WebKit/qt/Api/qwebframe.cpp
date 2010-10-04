@@ -230,14 +230,6 @@ void QWebFramePrivate::init(QWebFrame *qframe, QWebFrameData *frameData)
     frame->init();
 }
 
-WebCore::ViewportArguments QWebFramePrivate::viewportArguments()
-{
-    if (!frame || !frame->document())
-        return WebCore::ViewportArguments();
-
-    return frame->document()->viewportArguments();
-}
-
 void QWebFramePrivate::setPage(QWebPage* newPage)
 {
     if (page == newPage)

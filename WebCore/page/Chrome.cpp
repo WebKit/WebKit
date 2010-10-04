@@ -426,6 +426,11 @@ void Chrome::chooseIconForFiles(const Vector<String>& filenames, FileChooser* fi
     m_client->chooseIconForFiles(filenames, fileChooser);
 }
 
+void Chrome::dispatchViewportDataDidChange(const ViewportArguments& arguments) const
+{
+    m_client->dispatchViewportDataDidChange(arguments);
+}
+
 void Chrome::setCursor(const Cursor& cursor)
 {
     m_client->setCursor(cursor);

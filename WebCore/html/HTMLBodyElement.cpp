@@ -196,6 +196,9 @@ void HTMLBodyElement::insertedIntoDocument()
     // But without it we hang during WebKit tests; need to fix that and remove this.
     if (FrameView* view = document()->view())
         view->scheduleRelayout();
+
+    if (document() && document()->page())
+        document()->page()->updateViewportArguments();
 }
 
 bool HTMLBodyElement::isURLAttribute(Attribute *attr) const

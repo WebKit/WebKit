@@ -642,7 +642,7 @@ QWebSelectMethod* ChromeClientQt::createSelectPopup() const
 #endif
 }
 
-void ChromeClientQt::didReceiveViewportArguments(Frame* frame, const ViewportArguments& arguments) const
+void ChromeClientQt::dispatchViewportDataDidChange(const ViewportArguments&) const
 {
     emit m_webPage->viewportChangeRequested();
 }

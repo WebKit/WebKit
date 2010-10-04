@@ -288,6 +288,9 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
 
     // Update the cached 'document' property, which is now stale.
     m_script.updateDocument();
+
+    if (m_page)
+        m_page->updateViewportArguments();
 }
 
 #if ENABLE(ORIENTATION_EVENTS)

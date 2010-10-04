@@ -1,3 +1,27 @@
+2010-09-28  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Viewport data change notifications
+        https://bugs.webkit.org/show_bug.cgi?id=46755
+
+        Regarding viewport meta tags, what matters for browser developers is to know when the viewport data has
+        changed and its current value. Viewport data belongs to the document, but it is useful to keep the current
+        viewport data in Page as a reference, to be able to send notifications only when the current viewport
+        has changed.
+
+        * Api/qwebframe.cpp:
+        * Api/qwebframe_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::viewportArguments):
+        (QWebPage::viewportConfigurationForSize):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::viewportDataChanged):
+        * WebCoreSupport/ChromeClientQt.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::viewportAsText):
+
 2010-10-04  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Rubber-stamped by Tor Arne Vestbø.

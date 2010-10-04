@@ -146,6 +146,8 @@ namespace WebCore {
         virtual void setCursor(const Cursor&) = 0;
         // End methods used by HostWindow.
 
+        virtual void dispatchViewportDataDidChange(const ViewportArguments&) const { }
+
         virtual void contentsSizeChanged(Frame*, const IntSize&) const = 0;
         virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const = 0; // Currently only Mac has a non empty implementation.
        
@@ -154,8 +156,6 @@ namespace WebCore {
         virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags) = 0;
 
         virtual void setToolTip(const String&, TextDirection) = 0;
-
-        virtual void didReceiveViewportArguments(Frame*, const ViewportArguments&) const { }
 
         virtual void print(Frame*) = 0;
 

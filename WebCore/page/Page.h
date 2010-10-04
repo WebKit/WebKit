@@ -23,6 +23,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
+#include "ViewportArguments.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -126,6 +127,9 @@ namespace WebCore {
         ~Page();
 
         RenderTheme* theme() const { return m_theme.get(); };
+
+        ViewportArguments viewportArguments() const { return m_viewportArguments; }
+        void updateViewportArguments();
 
         static void refreshPlugins(bool reload);
         PluginData* pluginData() const;
@@ -383,6 +387,8 @@ namespace WebCore {
 #endif
 
         ViewMode m_viewMode;
+
+        ViewportArguments m_viewportArguments;
     };
 
 } // namespace WebCore

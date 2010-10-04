@@ -85,9 +85,15 @@ struct ViewportArguments {
 
     float userScalable;
 
-    bool hasCustomArgument() const
+    bool operator==(const ViewportArguments& other) const
     {
-        return initialScale != ValueAuto || minimumScale != ValueAuto || maximumScale != ValueAuto || width != ValueAuto || height != ValueAuto || userScalable != ValueAuto || targetDensityDpi != ValueAuto;
+        return initialScale == other.initialScale
+            && minimumScale == other.minimumScale
+            && maximumScale == other.maximumScale
+            && width == other.width
+            && height == other.height
+            && targetDensityDpi == other.targetDensityDpi
+            && userScalable == other.userScalable;
     }
 };
 

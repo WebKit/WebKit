@@ -2607,7 +2607,7 @@ void Document::processViewport(const String& features)
     if (!frame || !frame->page())
         return;
 
-    frame->page()->chrome()->client()->didReceiveViewportArguments(frame, m_viewportArguments);
+    frame->page()->updateViewportArguments();
 }
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const IntPoint& documentPoint, const PlatformMouseEvent& event)
@@ -3831,7 +3831,7 @@ void Document::setInPageCache(bool flag)
         m_savedRenderer = 0;
 
         if (frame() && frame()->page())
-            frame()->page()->chrome()->client()->didReceiveViewportArguments(frame(), m_viewportArguments);
+            frame()->page()->updateViewportArguments();
 
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
