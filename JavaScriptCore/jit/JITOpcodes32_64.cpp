@@ -610,6 +610,15 @@ void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
     int skip = currentInstruction[3].u.operand;
 
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branch32(Equal, tagFor(m_codeBlock->activationRegister()), Imm32(JSValue::EmptyValueTag));
+        loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
+        activationNotCreated.link(this);
+    }
     while (skip--)
         loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
 
@@ -631,6 +640,15 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
     emitLoad(value, regT1, regT0);
 
     emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branch32(Equal, tagFor(m_codeBlock->activationRegister()), Imm32(JSValue::EmptyValueTag));
+        loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
+        activationNotCreated.link(this);
+    }
     while (skip--)
         loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
 
@@ -644,10 +662,16 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
 
 void JIT::emit_op_tear_off_activation(Instruction* currentInstruction)
 {
+    unsigned activation = currentInstruction[1].u.operand;
+    unsigned arguments = currentInstruction[2].u.operand;
+    Jump activationCreated = branch32(NotEqual, tagFor(activation), Imm32(JSValue::EmptyValueTag));
+    Jump argumentsNotCreated = branch32(Equal, tagFor(arguments), Imm32(JSValue::EmptyValueTag));
+    activationCreated.link(this);
     JITStubCall stubCall(this, cti_op_tear_off_activation);
     stubCall.addArgument(currentInstruction[1].u.operand);
     stubCall.addArgument(unmodifiedArgumentsRegister(currentInstruction[2].u.operand));
     stubCall.call();
+    argumentsNotCreated.link(this);
 }
 
 void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
@@ -1467,11 +1491,13 @@ void JIT::emit_op_enter(Instruction*)
         emitStore(i, jsUndefined());
 }
 
-void JIT::emit_op_enter_with_activation(Instruction* currentInstruction)
+void JIT::emit_op_create_activation(Instruction* currentInstruction)
 {
-    emit_op_enter(currentInstruction);
-
-    JITStubCall(this, cti_op_push_activation).call(currentInstruction[1].u.operand);
+    unsigned activation = currentInstruction[1].u.operand;
+    
+    Jump activationCreated = branch32(NotEqual, tagFor(activation), Imm32(JSValue::EmptyValueTag));
+    JITStubCall(this, cti_op_push_activation).call(activation);
+    activationCreated.link(this);
 }
 
 void JIT::emit_op_create_arguments(Instruction* currentInstruction)

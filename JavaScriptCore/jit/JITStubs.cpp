@@ -1906,7 +1906,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_mul)
 DEFINE_STUB_FUNCTION(JSObject*, op_new_func)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
-
+    
+    ASSERT(stackFrame.callFrame->codeBlock()->codeType() != FunctionCode || !stackFrame.callFrame->codeBlock()->needsFullScopeChain() || stackFrame.callFrame->r(stackFrame.callFrame->codeBlock()->activationRegister()).jsValue());
     return stackFrame.args[0].function()->make(stackFrame.callFrame, stackFrame.callFrame->scopeChain());
 }
 
@@ -2213,6 +2214,12 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
     STUB_INIT_STACK_FRAME(stackFrame);
 
     ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
+    JSValue activationValue = stackFrame.args[0].jsValue();
+    if (!activationValue) {
+        if (JSValue v = stackFrame.args[1].jsValue())
+            asArguments(v)->copyRegisters();
+        return;
+    }
     JSActivation* activation = asActivation(stackFrame.args[0].jsValue());
     activation->copyRegisters();
     if (JSValue v = stackFrame.args[1].jsValue())
@@ -2685,6 +2692,13 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_skip)
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
     ASSERT(iter != end);
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        if (callFrame->r(codeBlock->activationRegister()).jsValue())
+            ++iter;
+    }
     while (skip--) {
         ++iter;
         ASSERT(iter != end);
@@ -2700,7 +2714,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_skip)
         }
     } while (++iter != end);
 
-    CodeBlock* codeBlock = callFrame->codeBlock();
     unsigned vPCIndex = codeBlock->bytecodeOffset(callFrame, STUB_RETURN_ADDRESS);
     stackFrame.globalData->exception = createUndefinedVariableError(callFrame, ident, vPCIndex, codeBlock);
     VM_THROW_EXCEPTION();
@@ -3049,6 +3062,7 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_func_exp)
 
     FunctionExecutable* function = stackFrame.args[0].function();
     JSFunction* func = function->make(callFrame, callFrame->scopeChain());
+    ASSERT(callFrame->codeBlock()->codeType() != FunctionCode || !callFrame->codeBlock()->needsFullScopeChain() || callFrame->r(callFrame->codeBlock()->activationRegister()).jsValue());
 
     /* 
         The Identifier in a FunctionExpression can be referenced from inside
@@ -3155,6 +3169,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_bitor)
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_call_eval)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
+    ASSERT(stackFrame.callFrame->codeBlock()->codeType() != FunctionCode || !stackFrame.callFrame->codeBlock()->needsFullScopeChain() || stackFrame.callFrame->r(stackFrame.callFrame->codeBlock()->activationRegister()).jsValue());
 
     CallFrame* callFrame = stackFrame.callFrame;
     RegisterFile* registerFile = stackFrame.registerFile;

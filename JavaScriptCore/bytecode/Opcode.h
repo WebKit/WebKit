@@ -39,7 +39,7 @@ namespace JSC {
 
     #define FOR_EACH_OPCODE_ID(macro) \
         macro(op_enter, 1) \
-        macro(op_enter_with_activation, 2) \
+        macro(op_create_activation, 2) \
         macro(op_init_lazy_reg, 2) \
         macro(op_create_arguments, 2) \
         macro(op_create_this, 3) \

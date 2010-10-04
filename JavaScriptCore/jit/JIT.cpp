@@ -234,7 +234,7 @@ void JIT::privateCompileMainPass()
 #endif
         DEFINE_OP(op_end)
         DEFINE_OP(op_enter)
-        DEFINE_OP(op_enter_with_activation)
+        DEFINE_OP(op_create_activation)
         DEFINE_OP(op_eq)
         DEFINE_OP(op_eq_null)
         DEFINE_OP(op_get_by_id)

@@ -1,3 +1,70 @@
+2010-10-04  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Lazily create activation objects
+        https://bugs.webkit.org/show_bug.cgi?id=47107
+
+        Make it possible to lazily create the activation object
+        for a function that needs one.  This allows us to reduce
+        the overhead of entering a function that may require
+        an activation in some cases, but not always.
+
+        This does make exception handling a little more complex as
+        it's now necessary to verify that a callframes activation
+        has been created, and create it if not, in all of the
+        paths used in exception handling.
+
+        We also need to add logic to check for the existence of
+        the activation in the scoped_var opcodes, as well as
+        op_ret, op_ret_object_or_this and op_tearoff_activation
+        so that we can avoid creating an activation unnecesarily
+        on function exit. 
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        (JSC::CodeBlock::createActivation):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setActivationRegister):
+        (JSC::CodeBlock::activationRegister):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewFunctionInternal):
+        (JSC::BytecodeGenerator::emitNewFunctionExpression):
+        (JSC::BytecodeGenerator::createActivationIfNecessary):
+        * bytecompiler/BytecodeGenerator.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveSkip):
+        (JSC::Interpreter::resolveGlobalDynamic):
+        (JSC::Interpreter::resolveBase):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_end):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_ret):
+        (JSC::JIT::emit_op_ret_object_or_this):
+        (JSC::JIT::emit_op_create_activation):
+        (JSC::JIT::emit_op_resolve_global_dynamic):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_tear_off_activation):
+        (JSC::JIT::emit_op_create_activation):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2010-10-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

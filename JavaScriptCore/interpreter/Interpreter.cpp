@@ -127,6 +127,12 @@ NEVER_INLINE bool Interpreter::resolveSkip(CallFrame* callFrame, Instruction* vP
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
     ASSERT(iter != end);
+    bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        if (callFrame->r(codeBlock->activationRegister()).jsValue())
+            ++iter;
+    }
     while (skip--) {
         ++iter;
         ASSERT(iter != end);
@@ -140,6 +146,7 @@ NEVER_INLINE bool Interpreter::resolveSkip(CallFrame* callFrame, Instruction* vP
             exceptionValue = callFrame->globalData().exception;
             if (exceptionValue)
                 return false;
+            ASSERT(result);
             callFrame->r(dst) = JSValue(result);
             return true;
         }
@@ -203,6 +210,12 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
     ASSERT(iter != end);
+    bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        if (callFrame->r(codeBlock->activationRegister()).jsValue())
+            ++iter;
+    }
     while (skip--) {
         JSObject* o = *iter;
         if (o->hasCustomProperties()) {
@@ -214,6 +227,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
                     exceptionValue = callFrame->globalData().exception;
                     if (exceptionValue)
                         return false;
+                    ASSERT(result);
                     callFrame->r(dst) = JSValue(result);
                     return true;
                 }
@@ -230,6 +244,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
     
     if (structure == globalObject->structure()) {
         callFrame->r(dst) = JSValue(globalObject->getDirectOffset(offset));
+        ASSERT(callFrame->r(dst).jsValue());
         return true;
     }
 
@@ -243,6 +258,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
             globalObject->structure()->ref();
             vPC[3] = globalObject->structure();
             vPC[4] = slot.cachedOffset();
+            ASSERT(result);
             callFrame->r(dst) = JSValue(result);
             return true;
         }
@@ -250,6 +266,7 @@ NEVER_INLINE bool Interpreter::resolveGlobalDynamic(CallFrame* callFrame, Instru
         exceptionValue = callFrame->globalData().exception;
         if (exceptionValue)
             return false;
+        ASSERT(result);
         callFrame->r(dst) = JSValue(result);
         return true;
     }
@@ -263,6 +280,7 @@ NEVER_INLINE void Interpreter::resolveBase(CallFrame* callFrame, Instruction* vP
     int dst = vPC[1].u.operand;
     int property = vPC[2].u.operand;
     callFrame->r(dst) = JSValue(JSC::resolveBase(callFrame, callFrame->codeBlock()->identifier(property), callFrame->scopeChain()));
+    ASSERT(callFrame->r(dst).jsValue());
 }
 
 NEVER_INLINE bool Interpreter::resolveBaseAndProperty(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
@@ -535,6 +553,10 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
 
     // If this call frame created an activation or an 'arguments' object, tear it off.
     if (oldCodeBlock->codeType() == FunctionCode && oldCodeBlock->needsFullScopeChain()) {
+        if (!callFrame->r(oldCodeBlock->activationRegister()).jsValue()) {
+            oldCodeBlock->createActivation(callFrame);
+            scopeChain = callFrame->scopeChain();
+        }
         while (!scopeChain->object->inherits(&JSActivation::info))
             scopeChain = scopeChain->pop();
         JSActivation* activation = asActivation(scopeChain->object);
@@ -646,7 +668,10 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     // Unwind the scope chain within the exception handler's call frame.
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     ScopeChain sc(scopeChain);
-    int scopeDelta = depth(codeBlock, sc) - handler->scopeDepth;
+    int scopeDelta = 0;
+    if (!codeBlock->needsFullScopeChain() || codeBlock->codeType() != FunctionCode 
+        || callFrame->r(codeBlock->activationRegister()).jsValue())
+        scopeDelta = depth(codeBlock, sc) - handler->scopeDepth;
     ASSERT(scopeDelta >= 0);
     while (scopeDelta--)
         scopeChain = scopeChain->pop();
@@ -1518,6 +1543,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         */
         int dst = vPC[1].u.operand;
         int src = vPC[2].u.operand;
+        
         callFrame->r(dst) = callFrame->r(src);
 
         vPC += OPCODE_LENGTH(op_mov);
@@ -2327,6 +2353,13 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ScopeChainIterator iter = scopeChain->begin();
         ScopeChainIterator end = scopeChain->end();
         ASSERT(iter != end);
+        ASSERT(codeBlock == callFrame->codeBlock());
+        bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
+        ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+            if (callFrame->r(codeBlock->activationRegister()).jsValue())
+                ++iter;
+        }
         while (skip--) {
             ++iter;
             ASSERT(iter != end);
@@ -2334,6 +2367,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
         callFrame->r(dst) = scope->registerAt(index);
+        ASSERT(callFrame->r(dst).jsValue());
         vPC += OPCODE_LENGTH(op_get_scoped_var);
         NEXT_INSTRUCTION();
     }
@@ -2348,7 +2382,14 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         ScopeChainNode* scopeChain = callFrame->scopeChain();
         ScopeChainIterator iter = scopeChain->begin();
         ScopeChainIterator end = scopeChain->end();
+        ASSERT(codeBlock == callFrame->codeBlock());
         ASSERT(iter != end);
+        bool checkTopLevel = codeBlock->codeType() == FunctionCode && codeBlock->needsFullScopeChain();
+        ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+            if (callFrame->r(codeBlock->activationRegister()).jsValue())
+                ++iter;
+        }
         while (skip--) {
             ++iter;
             ASSERT(iter != end);
@@ -2356,6 +2397,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
+        ASSERT(callFrame->r(value).jsValue());
         scope->registerAt(index) = JSValue(callFrame->r(value).jsValue());
         vPC += OPCODE_LENGTH(op_put_scoped_var);
         NEXT_INSTRUCTION();
@@ -3658,7 +3700,7 @@ skip_id_custom_self:
         int dst = vPC[1].u.operand;
         int func = vPC[2].u.operand;
         int shouldCheck = vPC[3].u.operand;
-
+        ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsFullScopeChain() || callFrame->r(codeBlock->activationRegister()).jsValue());
         if (!shouldCheck || !callFrame->r(dst).jsValue())
             callFrame->r(dst) = JSValue(codeBlock->functionDecl(func)->make(callFrame, callFrame->scopeChain()));
 
@@ -3675,7 +3717,8 @@ skip_id_custom_self:
         */
         int dst = vPC[1].u.operand;
         int funcIndex = vPC[2].u.operand;
-
+        
+        ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsFullScopeChain() || callFrame->r(codeBlock->activationRegister()).jsValue());
         FunctionExecutable* function = codeBlock->functionExpr(funcIndex);
         JSFunction* func = function->make(callFrame, callFrame->scopeChain());
 
@@ -3711,7 +3754,8 @@ skip_id_custom_self:
         int func = vPC[1].u.operand;
         int argCount = vPC[2].u.operand;
         int registerOffset = vPC[3].u.operand;
-
+        
+        ASSERT(codeBlock->codeType() != FunctionCode || !codeBlock->needsFullScopeChain() || callFrame->r(codeBlock->activationRegister()).jsValue());
         JSValue funcVal = callFrame->r(func).jsValue();
 
         Register* newCallFrame = callFrame->registers() + registerOffset;
@@ -3980,15 +4024,17 @@ skip_id_custom_self:
            This opcode appears before op_ret in functions that require full scope chains.
         */
 
-        int src1 = vPC[1].u.operand;
-        int src2 = vPC[2].u.operand;
+        int activation = vPC[1].u.operand;
+        int arguments = vPC[2].u.operand;
         ASSERT(codeBlock->needsFullScopeChain());
+        JSValue activationValue = callFrame->r(activation).jsValue();
+        if (activationValue) {
+            asActivation(activationValue)->copyRegisters();
 
-        JSActivation* activation = asActivation(callFrame->r(src1).jsValue());
-        activation->copyRegisters();
-
-        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(src2)).jsValue())
-            asArguments(arguments)->setActivation(activation);
+            if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue())
+                asArguments(argumentsValue)->setActivation(asActivation(activationValue));
+        } else if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue())
+            asArguments(argumentsValue)->copyRegisters();
 
         vPC += OPCODE_LENGTH(op_tear_off_activation);
         NEXT_INSTRUCTION();
@@ -4026,7 +4072,7 @@ skip_id_custom_self:
 
         int result = vPC[1].u.operand;
 
-        if (callFrame->codeBlock()->needsFullScopeChain())
+        if (callFrame->codeBlock()->needsFullScopeChain() && callFrame->r(codeBlock->activationRegister()).jsValue())
             callFrame->scopeChain()->deref();
 
         JSValue returnValue = callFrame->r(result).jsValue();
@@ -4067,7 +4113,7 @@ skip_id_custom_self:
 
         int result = vPC[1].u.operand;
 
-        if (codeBlock->needsFullScopeChain())
+        if (codeBlock->needsFullScopeChain() && callFrame->r(codeBlock->activationRegister()).jsValue())
             callFrame->scopeChain()->deref();
 
         JSValue returnValue = callFrame->r(result).jsValue();
@@ -4103,25 +4149,20 @@ skip_id_custom_self:
         vPC += OPCODE_LENGTH(op_enter);
         NEXT_INSTRUCTION();
     }
-    DEFINE_OPCODE(op_enter_with_activation) {
-        /* enter_with_activation dst(r)
+    DEFINE_OPCODE(op_create_activation) {
+        /* create_activation dst(r)
 
-           Initializes local variables to undefined, creates an activation object,
-           places it in dst, and pushes it onto the scope chain.
-
-           This opcode appears only at the beginning of a code block.
+           If the activation object for this callframe has not yet been created,
+           this creates it and writes it back to dst.
         */
 
-        size_t i = 0;
-        for (size_t count = codeBlock->m_numVars; i < count; ++i)
-            callFrame->r(i) = jsUndefined();
-
-        int dst = vPC[1].u.operand;
-        JSActivation* activation = new (globalData) JSActivation(callFrame, static_cast<FunctionExecutable*>(codeBlock->ownerExecutable()));
-        callFrame->r(dst) = JSValue(activation);
-        callFrame->setScopeChain(callFrame->scopeChain()->copy()->push(activation));
-
-        vPC += OPCODE_LENGTH(op_enter_with_activation);
+        int activationReg = vPC[1].u.operand;
+        if (!callFrame->r(activationReg).jsValue()) {
+            JSActivation* activation = new (globalData) JSActivation(callFrame, static_cast<FunctionExecutable*>(codeBlock->ownerExecutable()));
+            callFrame->r(activationReg) = JSValue(activation);
+            callFrame->setScopeChain(callFrame->scopeChain()->copy()->push(activation));
+        }
+        vPC += OPCODE_LENGTH(op_create_activation);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_get_callee) {
