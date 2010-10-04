@@ -225,10 +225,14 @@ void ScriptDebugServer::setPauseOnExceptionsState(PauseOnExceptionsState pauseOn
     setPauseOnExceptionsFunction->Call(m_debuggerScript.get(), 1, argv);
 }
 
-void ScriptDebugServer::pause()
+void ScriptDebugServer::setPauseOnNextStatement(bool pause)
 {
-    if (!m_pausedPage)
+    if (m_pausedPage)
+        return;
+    if (pause)
         v8::Debug::DebugBreak();
+    else
+        v8::Debug::CancelDebugBreak();
 }
 
 void ScriptDebugServer::breakProgram()

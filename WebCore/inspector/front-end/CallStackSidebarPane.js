@@ -29,8 +29,9 @@ WebInspector.CallStackSidebarPane = function()
 }
 
 WebInspector.CallStackSidebarPane.DebuggerEventType = {
-    DOMBreakpoint: 0,
-    NativeBreakpoint: 1
+    JavaScriptPause: 0,
+    DOMBreakpoint: 1,
+    NativeBreakpoint: 2
 };
 
 WebInspector.CallStackSidebarPane.prototype = {

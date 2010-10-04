@@ -40,7 +40,6 @@ namespace WebCore {
 class CharacterData;
 class Element;
 class InspectorController;
-class KURL;
 class Node;
 
 class InspectorInstrumentation {
@@ -52,7 +51,10 @@ public:
     static void didModifyDOMAttr(Document*, Element*);
     static void characterDataModified(Document*, CharacterData*);
 
-    static void instrumentWillSendXMLHttpRequest(ScriptExecutionContext*, const KURL&);
+    static int instrumentWillDispatchEvent(Document*, const Event&, DOMWindow*, Node*, const Vector<RefPtr<ContainerNode> >& ancestors);
+    static void instrumentDidDispatchEvent(Document*, int instrumentationCookie);
+
+    static void instrumentWillSendXMLHttpRequest(ScriptExecutionContext*, const String&);
 
 #if ENABLE(INSPECTOR)
     static void frontendCreated() { s_frontendCounter += 1; }
@@ -70,7 +72,10 @@ private:
     static void didModifyDOMAttrImpl(InspectorController*, Element*);
     static void characterDataModifiedImpl(InspectorController*, CharacterData*);
 
-    static void instrumentWillSendXMLHttpRequestImpl(InspectorController*, const KURL&);
+    static int instrumentWillDispatchEventImpl(InspectorController*, const Event&, DOMWindow*, Node*, const Vector<RefPtr<ContainerNode> >& ancestors);
+    static void instrumentDidDispatchEventImpl(InspectorController*, int instrumentationCookie);
+
+    static void instrumentWillSendXMLHttpRequestImpl(InspectorController*, const String&);
 
     static InspectorController* inspectorControllerForScriptExecutionContext(ScriptExecutionContext*);
     static InspectorController* inspectorControllerForDocument(Document*);
@@ -130,7 +135,24 @@ inline void InspectorInstrumentation::characterDataModified(Document* document, 
 #endif
 }
 
-inline void InspectorInstrumentation::instrumentWillSendXMLHttpRequest(ScriptExecutionContext* context, const KURL& url)
+inline int InspectorInstrumentation::instrumentWillDispatchEvent(Document* document, const Event& event, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = inspectorControllerForDocument(document))
+        return instrumentWillDispatchEventImpl(inspectorController, event, window, node, ancestors);
+#endif
+    return 0;
+}
+
+inline void InspectorInstrumentation::instrumentDidDispatchEvent(Document* document, int instrumentationCookie)
+{
+#if ENABLE(INSPECTOR)
+    if (InspectorController* inspectorController = inspectorControllerForDocument(document))
+        instrumentDidDispatchEventImpl(inspectorController, instrumentationCookie);
+#endif
+}
+
+inline void InspectorInstrumentation::instrumentWillSendXMLHttpRequest(ScriptExecutionContext* context, const String& url)
 {
 #if ENABLE(INSPECTOR)
     if (InspectorController* inspectorController = inspectorControllerForScriptExecutionContext(context))

@@ -1,3 +1,48 @@
+2010-10-04  podivilov@chromium.org  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: implement pausing on event listeners (back-end part)
+        https://bugs.webkit.org/show_bug.cgi?id=46624
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setPauseOnNextStatement):
+        * bindings/js/ScriptDebugServer.h:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setPauseOnNextStatement):
+        * bindings/v8/ScriptDebugServer.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchGenericEvent):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+        (WebCore::InspectorController::setNativeBreakpoint):
+        (WebCore::InspectorController::removeNativeBreakpoint):
+        (WebCore::InspectorController::shouldBreakOnEvent):
+        (WebCore::InspectorController::shouldBreakOnXMLHttpRequest):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::~InspectorDebuggerAgent):
+        (WebCore::InspectorDebuggerAgent::schedulePauseOnNextStatement):
+        (WebCore::InspectorDebuggerAgent::cancelPauseOnNextStatement):
+        (WebCore::InspectorDebuggerAgent::pause):
+        (WebCore::InspectorDebuggerAgent::didContinue):
+        (WebCore::InspectorDebuggerAgent::breakProgram):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::eventHasListeners):
+        (WebCore::InspectorInstrumentation::instrumentWillDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::instrumentDidDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::instrumentWillSendXMLHttpRequestImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::instrumentWillDispatchEvent):
+        (WebCore::InspectorInstrumentation::instrumentDidDispatchEvent):
+        (WebCore::InspectorInstrumentation::instrumentWillSendXMLHttpRequest):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        * inspector/InspectorTimelineAgent.h:
+        (WebCore::InspectorTimelineAgent::id):
+        * inspector/front-end/CallStackSidebarPane.js:
+
 2010-10-04  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -78,7 +78,7 @@ public:
     PauseOnExceptionsState pauseOnExceptionsState() const { return m_pauseOnExceptionsState; }
     void setPauseOnExceptionsState(PauseOnExceptionsState);
 
-    void pause();
+    void setPauseOnNextStatement(bool pause);
     void breakProgram();
     void continueProgram();
     void stepIntoStatement();

@@ -132,6 +132,9 @@ static const char* const pauseOnExceptionsStateStateName = "pauseOnExceptionsSta
 
 static const char* const inspectorAttachedHeightName = "inspectorAttachedHeight";
 
+static const char* const xhrNativeBreakpointType = "XHR";
+static const char* const eventListenerNativeBreakpointType = "EventListener";
+
 const char* const InspectorController::ElementsPanel = "elements";
 const char* const InspectorController::ConsolePanel = "console";
 const char* const InspectorController::ScriptsPanel = "scripts";
@@ -778,15 +781,22 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 
         m_times.clear();
         m_counts.clear();
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (m_debuggerAgent)
             m_debuggerAgent->clearForPageNavigation();
 
+        m_nativeBreakpoints.clear();
+        m_eventListenerBreakpoints.clear();
+        m_eventNameToBreakpointCount.clear();
         m_XHRBreakpoints.clear();
+        m_lastBreakpointId = 0;
 #endif
+
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
         m_profilerAgent->resetState();
 #endif
+
         // unbindAllResources should be called before database and DOM storage
         // resources are cleared so that it has a chance to unbind them.
         unbindAllResources();
@@ -1675,21 +1685,57 @@ void InspectorController::setNativeBreakpoint(PassRefPtr<InspectorObject> breakp
     String type;
     if (!breakpoint->getString("type", &type))
         return;
-    if (type == "XHR") {
-        RefPtr<InspectorObject> condition = breakpoint->getObject("condition");
-        if (!condition)
-            return;
+    RefPtr<InspectorObject> condition = breakpoint->getObject("condition");
+    if (!condition)
+        return;
+    if (type == xhrNativeBreakpointType) {
         String url;
         if (!condition->getString("url", &url))
             return;
         *breakpointId = ++m_lastBreakpointId;
+        m_nativeBreakpoints.set(*breakpointId, "XHR");
         m_XHRBreakpoints.set(*breakpointId, url);
+    } else if (type == eventListenerNativeBreakpointType) {
+        String eventName;
+        if (!condition->getString("eventName", &eventName))
+            return;
+        *breakpointId = ++m_lastBreakpointId;
+        m_nativeBreakpoints.set(*breakpointId, "EventListener");
+        m_eventListenerBreakpoints.set(*breakpointId, eventName);
+        HashMap<String, unsigned int>::iterator it = m_eventNameToBreakpointCount.find(eventName);
+        if (it == m_eventNameToBreakpointCount.end())
+            m_eventNameToBreakpointCount.set(eventName, 1);
+        else
+            it->second += 1;
     }
 }
 
 void InspectorController::removeNativeBreakpoint(unsigned int breakpointId)
 {
-    m_XHRBreakpoints.remove(breakpointId);
+    String type = m_nativeBreakpoints.take(breakpointId);
+    if (type == xhrNativeBreakpointType)
+        m_XHRBreakpoints.remove(breakpointId);
+    else if (type == eventListenerNativeBreakpointType) {
+        String eventName = m_eventListenerBreakpoints.take(breakpointId);
+        HashMap<String, unsigned int>::iterator it = m_eventNameToBreakpointCount.find(eventName);
+        it->second -= 1;
+        if (!it->second)
+            m_eventNameToBreakpointCount.remove(it);
+    }
+}
+
+bool InspectorController::shouldBreakOnEvent(const String& eventName)
+{
+    return m_eventNameToBreakpointCount.contains(eventName);
+}
+
+bool InspectorController::shouldBreakOnXMLHttpRequest(const String& url)
+{
+    for (HashMap<unsigned int, String>::iterator it = m_XHRBreakpoints.begin(); it != m_XHRBreakpoints.end(); ++it) {
+        if (url.contains(it->second))
+            return true;
+    }
+    return false;
 }
 
 #endif
@@ -2099,26 +2145,6 @@ void InspectorController::reloadPage()
 {
     m_inspectedPage->mainFrame()->redirectScheduler()->scheduleRefresh(true);
 }
-
-void InspectorController::instrumentWillSendXMLHttpRequest(const KURL& url)
-{
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (m_debuggerAgent) {
-        if (!m_XHRBreakpoints.size())
-            return;
-        for (HashMap<unsigned int, String>::iterator it = m_XHRBreakpoints.begin(); it != m_XHRBreakpoints.end(); ++it) {
-            if (!url.string().contains(it->second))
-                continue;
-            RefPtr<InspectorObject> eventData = InspectorObject::create();
-            eventData->setString("type", "XHR");
-            eventData->setString("url", url);
-            m_debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
-            break;
-        }
-    }
-#endif
-}
-
 
 } // namespace WebCore
 

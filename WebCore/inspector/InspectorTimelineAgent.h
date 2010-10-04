@@ -77,6 +77,8 @@ public:
     InspectorTimelineAgent(InspectorFrontend* frontend);
     ~InspectorTimelineAgent();
 
+    int id() const { return m_id; }
+
     void reset();
     void resetFrontendProxyObject(InspectorFrontend*);
 
@@ -156,6 +158,8 @@ private:
 
     Vector<TimelineRecordEntry> m_recordStack;
     static int s_instanceCount;
+    static int s_id;
+    const int m_id;
     struct GCEvent {
         GCEvent(double startTime, double endTime, size_t collectedBytes)
             : startTime(startTime), endTime(endTime), collectedBytes(collectedBytes)

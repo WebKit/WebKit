@@ -33,13 +33,33 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "DOMWindow.h"
+#include "Event.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorTimelineAgent.h"
 
 namespace WebCore {
 
 int InspectorInstrumentation::s_frontendCounter = 0;
+
+static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors)
+{
+    if (window && window->hasEventListeners(eventType))
+        return true;
+
+    if (node->hasEventListeners(eventType))
+        return true;
+
+    for (size_t i = 0; i < ancestors.size(); i++) {
+        ContainerNode* ancestor = ancestors[i].get();
+        if (ancestor->hasEventListeners(eventType))
+            return true;
+    }
+
+    return false;
+}
 
 void InspectorInstrumentation::willInsertDOMNodeImpl(InspectorController* inspectorController, Node* node, Node* parent)
 {
@@ -124,11 +144,65 @@ void InspectorInstrumentation::characterDataModifiedImpl(InspectorController* in
         domAgent->characterDataModified(characterData);
 }
 
-void InspectorInstrumentation::instrumentWillSendXMLHttpRequestImpl(InspectorController* inspectorController, const KURL& url)
+int InspectorInstrumentation::instrumentWillDispatchEventImpl(InspectorController* inspectorController, const Event& event, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors)
+{
+    int instrumentationCookie = 0;
+
+    if (!inspectorController->hasFrontend())
+        return instrumentationCookie;
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get()) {
+        if (inspectorController->shouldBreakOnEvent(event.type())) {
+            RefPtr<InspectorObject> eventData = InspectorObject::create();
+            eventData->setString("type", "EventListener");
+            eventData->setString("eventName", event.type());
+            debuggerAgent->schedulePauseOnNextStatement(NativeBreakpointDebuggerEventType, eventData);
+        }
+    }
+#endif
+
+    InspectorTimelineAgent* timelineAgent = inspectorController->m_timelineAgent.get();
+    if (timelineAgent && eventHasListeners(event.type(), window, node, ancestors)) {
+        timelineAgent->willDispatchEvent(event);
+        instrumentationCookie = timelineAgent->id();
+    }
+    return instrumentationCookie;
+}
+
+void InspectorInstrumentation::instrumentDidDispatchEventImpl(InspectorController* inspectorController, int instrumentationCookie)
 {
     if (!inspectorController->hasFrontend())
         return;
-    inspectorController->instrumentWillSendXMLHttpRequest(url);
+
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get())
+        debuggerAgent->cancelPauseOnNextStatement();
+#endif
+
+    InspectorTimelineAgent* timelineAgent = inspectorController->m_timelineAgent.get();
+    if (timelineAgent && timelineAgent->id() == instrumentationCookie)
+        timelineAgent->didDispatchEvent();
+}
+
+void InspectorInstrumentation::instrumentWillSendXMLHttpRequestImpl(InspectorController* inspectorController, const String& url)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (!inspectorController->hasFrontend())
+        return;
+
+    InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get();
+    if (!debuggerAgent)
+        return;
+
+    if (!inspectorController->shouldBreakOnXMLHttpRequest(url))
+        return;
+
+    RefPtr<InspectorObject> eventData = InspectorObject::create();
+    eventData->setString("type", "XHR");
+    eventData->setString("url", url);
+    debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
+#endif
 }
 
 } // namespace WebCore

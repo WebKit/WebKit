@@ -53,7 +53,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
-#include "InspectorTimelineAgent.h"
+#include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "LabelsNodeList.h"
 #include "Logging.h"
@@ -2577,23 +2577,6 @@ bool Node::dispatchEvent(PassRefPtr<Event> prpEvent)
     return dispatchGenericEvent(event.release());
 }
 
-static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, Vector<RefPtr<ContainerNode> >& ancestors)
-{
-    if (window && window->hasEventListeners(eventType))
-        return true;
-
-    if (node->hasEventListeners(eventType))
-        return true;
-
-    for (size_t i = 0; i < ancestors.size(); i++) {
-        ContainerNode* ancestor = ancestors[i].get();
-        if (ancestor->hasEventListeners(eventType))
-            return true;
-    }
-
-   return false;    
-}
-
 bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
 {
     RefPtr<Event> event(prpEvent);
@@ -2619,15 +2602,7 @@ bool Node::dispatchGenericEvent(PassRefPtr<Event> prpEvent)
             targetForWindowEvents = static_cast<Document*>(topLevelContainer)->domWindow();
     }
 
-#if ENABLE(INSPECTOR)
-    Page* inspectedPage = InspectorTimelineAgent::instanceCount() ? document()->page() : 0;
-    if (inspectedPage) {
-        if (InspectorTimelineAgent* timelineAgent = eventHasListeners(event->type(), targetForWindowEvents, this, ancestors) ? inspectedPage->inspectorTimelineAgent() : 0)
-            timelineAgent->willDispatchEvent(*event);
-        else
-            inspectedPage = 0;
-    }
-#endif
+    int instrumentationCookie = InspectorInstrumentation::instrumentWillDispatchEvent(document(), *event, targetForWindowEvents, this, ancestors);
 
     // Give the target node a chance to do some work before DOM event handlers get a crack.
     void* data = preDispatchEventHandler(event.get());
@@ -2709,11 +2684,8 @@ doneDispatching:
     }
 
 doneWithDefault:
-#if ENABLE(INSPECTOR)
-    if (inspectedPage)
-        if (InspectorTimelineAgent* timelineAgent = inspectedPage->inspectorTimelineAgent())
-            timelineAgent->didDispatchEvent();
-#endif
+
+    InspectorInstrumentation::instrumentDidDispatchEvent(document(), instrumentationCookie);
 
     return !event->defaultPrevented();
 }
