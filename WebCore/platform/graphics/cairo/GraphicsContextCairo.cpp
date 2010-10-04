@@ -132,26 +132,6 @@ static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const 
     cairo_fill(cr);
 }
 
-static void appendPathToCairoContext(cairo_t* to, cairo_t* from)
-{
-    OwnPtr<cairo_path_t> cairoPath(cairo_copy_path(from));
-    cairo_append_path(to, cairoPath.get());
-}
-
-// We apply the pending path built via addPath to the Cairo context
-// lazily. This prevents interaction between the path and other routines
-// such as fillRect.
-static void setPathOnCairoContext(cairo_t* to, cairo_t* from)
-{
-    cairo_new_path(to);
-    appendPathToCairoContext(to, from);
-}
-
-static void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
-{
-    appendPathToCairoContext(context, path.platformPath()->context());
-}
-
 static void addConvexPolygonToContext(cairo_t* context, size_t numPoints, const FloatPoint* points)
 {
     cairo_move_to(context, points[0].x(), points[0].y());
@@ -1093,43 +1073,6 @@ void GraphicsContext::setAlpha(float alpha)
 float GraphicsContext::getAlpha()
 {
     return m_common->state.globalAlpha;
-}
-
-static inline cairo_operator_t toCairoOperator(CompositeOperator op)
-{
-    switch (op) {
-    case CompositeClear:
-        return CAIRO_OPERATOR_CLEAR;
-    case CompositeCopy:
-        return CAIRO_OPERATOR_SOURCE;
-    case CompositeSourceOver:
-        return CAIRO_OPERATOR_OVER;
-    case CompositeSourceIn:
-        return CAIRO_OPERATOR_IN;
-    case CompositeSourceOut:
-        return CAIRO_OPERATOR_OUT;
-    case CompositeSourceAtop:
-        return CAIRO_OPERATOR_ATOP;
-    case CompositeDestinationOver:
-        return CAIRO_OPERATOR_DEST_OVER;
-    case CompositeDestinationIn:
-        return CAIRO_OPERATOR_DEST_IN;
-    case CompositeDestinationOut:
-        return CAIRO_OPERATOR_DEST_OUT;
-    case CompositeDestinationAtop:
-        return CAIRO_OPERATOR_DEST_ATOP;
-    case CompositeXOR:
-        return CAIRO_OPERATOR_XOR;
-    case CompositePlusDarker:
-        return CAIRO_OPERATOR_SATURATE;
-    case CompositeHighlight:
-        // There is no Cairo equivalent for CompositeHighlight.
-        return CAIRO_OPERATOR_OVER;
-    case CompositePlusLighter:
-        return CAIRO_OPERATOR_ADD;
-    default:
-        return CAIRO_OPERATOR_SOURCE;
-    }
 }
 
 void GraphicsContext::setCompositeOperation(CompositeOperator op)

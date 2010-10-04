@@ -26,13 +26,25 @@
 #ifndef CairoUtilities_h
 #define CairoUtilities_h
 
-typedef struct _cairo cairo_t;
+#include <GraphicsTypes.h>
+#include <cairo.h>
 
 namespace WebCore {
+class AffineTransform;
 class Color;
+class FloatRect;
+class FloatPoint;
+class IntSize;
+class Path;
 
 void copyContextProperties(cairo_t* srcCr, cairo_t* dstCr);
 void setSourceRGBAFromColor(cairo_t*, const Color&);
+void appendPathToCairoContext(cairo_t* to, cairo_t* from);
+void setPathOnCairoContext(cairo_t* to, cairo_t* from);
+void appendWebCorePathToCairoContext(cairo_t* context, const Path& path);
+cairo_operator_t toCairoOperator(CompositeOperator op);
+void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSize& imageSize, const FloatRect& tileRect,
+                               const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t op, const FloatRect& destRect);
 
 } // namespace WebCore
 

@@ -1,3 +1,24 @@
+2010-10-04  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [cairo] Move some cairo functions to the CairoUtilities
+        https://bugs.webkit.org/show_bug.cgi?id=47076
+
+        Moved some cairo functions to the CairoUtilities so we can use
+        them outside GraphicsContextCairo.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::appendPathToCairoContext):
+        (WebCore::setPathOnCairoContext):
+        (WebCore::appendWebCorePathToCairoContext):
+        (WebCore::toCairoOperator):
+        (WebCore::drawPatternToCairoContext):
+        * platform/graphics/cairo/CairoUtilities.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::Image::drawPattern):
+
 2010-10-04  podivilov@chromium.org  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

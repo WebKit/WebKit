@@ -26,8 +26,14 @@
 #include "config.h"
 #include "CairoUtilities.h"
 
+#include "AffineTransform.h"
+#include "CairoPath.h"
 #include "Color.h"
-#include <cairo.h>
+#include "FloatPoint.h"
+#include "FloatRect.h"
+#include "IntRect.h"
+#include "Path.h"
+#include "PlatformRefPtrCairo.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -54,6 +60,98 @@ void setSourceRGBAFromColor(cairo_t* context, const Color& color)
     float red, green, blue, alpha;
     color.getRGBA(red, green, blue, alpha);
     cairo_set_source_rgba(context, red, green, blue, alpha);
+}
+
+void appendPathToCairoContext(cairo_t* to, cairo_t* from)
+{
+    OwnPtr<cairo_path_t> cairoPath(cairo_copy_path(from));
+    cairo_append_path(to, cairoPath.get());
+}
+
+void setPathOnCairoContext(cairo_t* to, cairo_t* from)
+{
+    cairo_new_path(to);
+    appendPathToCairoContext(to, from);
+}
+
+void appendWebCorePathToCairoContext(cairo_t* context, const Path& path)
+{
+    appendPathToCairoContext(context, path.platformPath()->context());
+}
+
+cairo_operator_t toCairoOperator(CompositeOperator op)
+{
+    switch (op) {
+    case CompositeClear:
+        return CAIRO_OPERATOR_CLEAR;
+    case CompositeCopy:
+        return CAIRO_OPERATOR_SOURCE;
+    case CompositeSourceOver:
+        return CAIRO_OPERATOR_OVER;
+    case CompositeSourceIn:
+        return CAIRO_OPERATOR_IN;
+    case CompositeSourceOut:
+        return CAIRO_OPERATOR_OUT;
+    case CompositeSourceAtop:
+        return CAIRO_OPERATOR_ATOP;
+    case CompositeDestinationOver:
+        return CAIRO_OPERATOR_DEST_OVER;
+    case CompositeDestinationIn:
+        return CAIRO_OPERATOR_DEST_IN;
+    case CompositeDestinationOut:
+        return CAIRO_OPERATOR_DEST_OUT;
+    case CompositeDestinationAtop:
+        return CAIRO_OPERATOR_DEST_ATOP;
+    case CompositeXOR:
+        return CAIRO_OPERATOR_XOR;
+    case CompositePlusDarker:
+        return CAIRO_OPERATOR_SATURATE;
+    case CompositeHighlight:
+        // There is no Cairo equivalent for CompositeHighlight.
+        return CAIRO_OPERATOR_OVER;
+    case CompositePlusLighter:
+        return CAIRO_OPERATOR_ADD;
+    default:
+        return CAIRO_OPERATOR_SOURCE;
+    }
+}
+
+void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSize& imageSize, const FloatRect& tileRect,
+                               const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t op, const FloatRect& destRect)
+{
+    // Avoid NaN
+    if (!isfinite(phase.x()) || !isfinite(phase.y()))
+       return;
+
+    cairo_save(cr);
+
+    PlatformRefPtr<cairo_surface_t> clippedImageSurface = 0;
+    if (tileRect.size() != imageSize) {
+        IntRect imageRect = enclosingIntRect(tileRect);
+        clippedImageSurface = adoptPlatformRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, imageRect.width(), imageRect.height()));
+        PlatformRefPtr<cairo_t> clippedImageContext(cairo_create(clippedImageSurface.get()));
+        cairo_set_source_surface(clippedImageContext.get(), image, -tileRect.x(), -tileRect.y());
+        cairo_paint(clippedImageContext.get());
+        image = clippedImageSurface.get();
+    }
+
+    cairo_pattern_t* pattern = cairo_pattern_create_for_surface(image);
+    cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
+
+    cairo_matrix_t patternMatrix = cairo_matrix_t(patternTransform);
+    cairo_matrix_t phaseMatrix = {1, 0, 0, 1, phase.x() + tileRect.x() * patternTransform.a(), phase.y() + tileRect.y() * patternTransform.d()};
+    cairo_matrix_t combined;
+    cairo_matrix_multiply(&combined, &patternMatrix, &phaseMatrix);
+    cairo_matrix_invert(&combined);
+    cairo_pattern_set_matrix(pattern, &combined);
+
+    cairo_set_operator(cr, op);
+    cairo_set_source(cr, pattern);
+    cairo_pattern_destroy(pattern);
+    cairo_rectangle(cr, destRect.x(), destRect.y(), destRect.width(), destRect.height());
+    cairo_fill(cr);
+
+    cairo_restore(cr);
 }
 
 } // namespace WebCore
