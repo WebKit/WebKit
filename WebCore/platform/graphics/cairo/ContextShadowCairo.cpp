@@ -105,10 +105,13 @@ void ContextShadow::endShadowLayer(cairo_t* cr)
     cairo_destroy(m_layerContext);
     m_layerContext = 0;
 
-    if (m_type == BlurShadow)
+    if (m_type == BlurShadow) {
+        cairo_surface_flush(m_layerImage);
         blurLayerImage(cairo_image_surface_get_data(m_layerImage),
                        IntSize(cairo_image_surface_get_width(m_layerImage), cairo_image_surface_get_height(m_layerImage)),
                        cairo_image_surface_get_stride(m_layerImage));
+        cairo_surface_mark_dirty(m_layerImage);
+    }
 
     cairo_save(cr);
     setSourceRGBAFromColor(cr, m_color);

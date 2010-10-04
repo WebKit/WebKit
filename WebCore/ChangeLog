@@ -1,5 +1,19 @@
 2010-10-04  Alejandro G. Castro  <alex@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        [cairo] Context shadow modifies the data of the surface without
+        flushing and marking as dirty
+        https://bugs.webkit.org/show_bug.cgi?id=47079
+
+        Added the cairo_surface_flush and cairo_surface_mark_dirty before
+        and after modifying the image pixels directly.
+
+        * platform/graphics/cairo/ContextShadowCairo.cpp:
+        (WebCore::ContextShadow::endShadowLayer):
+
+2010-10-04  Alejandro G. Castro  <alex@igalia.com>
+
         Reviewed by Xan Lopez.
 
         Crashed caused by missing OwnPtrCairo include, for more
