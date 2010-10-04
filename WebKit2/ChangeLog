@@ -1,3 +1,11 @@
+2010-10-04  Andras Becsi  <abecsi@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt] Fix the WebKit2 build after r69029.
+
+        * DerivedSources.pro:
+
 2010-10-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
