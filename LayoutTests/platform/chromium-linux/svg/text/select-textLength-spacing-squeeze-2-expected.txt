@@ -1,0 +1,27 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (50,0) size 260x70
+    RenderSVGContainer {g} at (120,0) size 45x70
+      RenderPath {svg:line} at (120,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M24.67,0.00 L24.67,14.00"]
+      RenderPath {svg:line} at (155,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M31.80,0.00 L31.80,14.00"]
+      RenderPath {svg:rect} at (120,0) size 40x65 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M24.67,0.00 L31.80,0.00 L31.80,13.00 L24.67,13.00 Z"]
+    RenderSVGText {text} at (10,0) size 52x13 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 52x13
+        chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 7.00: "T"
+        chunk 1 text run 2 at (15.13,10.00) startOffset 1 endOffset 2 width 6.00: "e"
+        chunk 1 text run 3 at (19.27,10.00) startOffset 2 endOffset 3 width 5.00: "x"
+        chunk 1 text run 4 at (22.40,10.00) startOffset 3 endOffset 4 width 3.00: "t"
+        chunk 1 text run 5 at (23.53,10.00) startOffset 4 endOffset 5 width 3.00: " "
+        chunk 1 text run 6 at (24.67,10.00) startOffset 5 endOffset 6 width 3.00: "t"
+        chunk 1 text run 7 at (25.80,10.00) startOffset 6 endOffset 7 width 6.00: "o"
+        chunk 1 text run 8 at (29.93,10.00) startOffset 7 endOffset 8 width 3.00: " "
+        chunk 1 text run 9 at (31.07,10.00) startOffset 8 endOffset 9 width 7.00: "S"
+        chunk 1 text run 10 at (36.20,10.00) startOffset 9 endOffset 10 width 6.00: "q"
+        chunk 1 text run 11 at (40.33,10.00) startOffset 10 endOffset 11 width 6.00: "u"
+        chunk 1 text run 12 at (44.47,10.00) startOffset 11 endOffset 12 width 6.00: "e"
+        chunk 1 text run 13 at (48.60,10.00) startOffset 12 endOffset 13 width 6.00: "e"
+        chunk 1 text run 14 at (52.73,10.00) startOffset 13 endOffset 14 width 5.00: "z"
+        chunk 1 text run 15 at (55.87,10.00) startOffset 14 endOffset 15 width 6.00: "e"
+selection start: position 5 of child 0 {#text} of child 5 {text} of child 0 {svg} of document
+selection end:   position 7 of child 0 {#text} of child 5 {text} of child 0 {svg} of document

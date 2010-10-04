@@ -31,8 +31,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-205,-28) size 205x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 205x35
               chunk 1 (end anchor) text run 1 at (-205.00,0.00) startOffset 0 endOffset 15 width 205.00: "text-anchor:end"
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.5 $"
     RenderPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
 selection start: position 0 of child 0 {#text} of child 1 {text} of child 13 {g} of child 27 {svg} of document

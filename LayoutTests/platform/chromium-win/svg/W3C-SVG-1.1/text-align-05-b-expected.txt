@@ -8,22 +8,33 @@ layer at (0,0) size 480x360
           chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 457.00: "Test 'text-anchor' (vertical)"
       RenderSVGContainer {g} at (152,45) size 117x280
         RenderSVGContainer {g} at (152,45) size 117x280 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,150.00)}]
-          RenderSVGContainer {g} at (152,147) size 16x178
+          RenderSVGContainer {g} at (152,147) size 17x178
             RenderPath {circle} at (157,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [data="M3.00,0.00 L2.99,0.19 L2.98,0.38 L2.95,0.56 L2.91,0.75 L2.85,0.93 L2.79,1.10 L2.71,1.28 L2.63,1.45 L2.53,1.61 L2.43,1.76 L2.31,1.91 L2.19,2.05 L2.05,2.19 L1.91,2.31 L1.76,2.43 L1.61,2.53 L1.45,2.63 L1.28,2.71 L1.10,2.79 L0.93,2.85 L0.75,2.91 L0.56,2.95 L0.38,2.98 L0.19,2.99 L-0.00,3.00 L-0.19,2.99 L-0.38,2.98 L-0.56,2.95 L-0.75,2.91 L-0.93,2.85 L-1.10,2.79 L-1.28,2.71 L-1.45,2.63 L-1.61,2.53 L-1.76,2.43 L-1.91,2.31 L-2.05,2.19 L-2.19,2.05 L-2.31,1.91 L-2.43,1.76 L-2.53,1.61 L-2.63,1.45 L-2.71,1.28 L-2.79,1.10 L-2.85,0.93 L-2.91,0.75 L-2.95,0.56 L-2.98,0.38 L-2.99,0.19 L-3.00,-0.00 L-2.99,-0.19 L-2.98,-0.38 L-2.95,-0.56 L-2.91,-0.75 L-2.85,-0.93 L-2.79,-1.10 L-2.71,-1.28 L-2.63,-1.45 L-2.53,-1.61 L-2.43,-1.76 L-2.31,-1.91 L-2.19,-2.05 L-2.05,-2.19 L-1.91,-2.31 L-1.76,-2.43 L-1.61,-2.53 L-1.45,-2.63 L-1.28,-2.71 L-1.10,-2.79 L-0.93,-2.85 L-0.75,-2.91 L-0.56,-2.95 L-0.38,-2.98 L-0.19,-2.99 L0.00,-3.00 L0.19,-2.99 L0.38,-2.98 L0.56,-2.95 L0.75,-2.91 L0.93,-2.85 L1.10,-2.79 L1.28,-2.71 L1.45,-2.63 L1.61,-2.53 L1.76,-2.43 L1.91,-2.31 L2.05,-2.19 L2.19,-2.05 L2.31,-1.91 L2.43,-1.76 L2.53,-1.61 L2.63,-1.45 L2.71,-1.28 L2.79,-1.10 L2.85,-0.93 L2.91,-0.75 L2.95,-0.56 L2.98,-0.38 L2.99,-0.19 Z"]
-            RenderSVGText {text} at (-8,0) size 16x175 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 16x175
-                chunk 1 (vertical) text run 1 at (-8.00,28.00) startOffset 0 endOffset 5 height 175.00: "start"
-          RenderSVGContainer {g} at (197,45) size 26x210 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
+            RenderSVGText {text} at (-8,0) size 17x175 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 17x175
+                chunk 1 (vertical) text run 1 at (-10.00,0.00) startOffset 0 endOffset 1 height 35.00: "s"
+                chunk 1 (vertical) text run 2 at (-10.00,35.00) startOffset 1 endOffset 2 height 35.00: "t"
+                chunk 1 (vertical) text run 3 at (-10.00,70.00) startOffset 2 endOffset 3 height 35.00: "a"
+                chunk 1 (vertical) text run 4 at (-10.00,105.00) startOffset 3 endOffset 4 height 35.00: "r"
+                chunk 1 (vertical) text run 5 at (-10.00,140.00) startOffset 4 endOffset 5 height 35.00: "t"
+          RenderSVGContainer {g} at (198,45) size 25x210 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,0.00)}]
             RenderPath {circle} at (207,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [data="M3.00,0.00 L2.99,0.19 L2.98,0.38 L2.95,0.56 L2.91,0.75 L2.85,0.93 L2.79,1.10 L2.71,1.28 L2.63,1.45 L2.53,1.61 L2.43,1.76 L2.31,1.91 L2.19,2.05 L2.05,2.19 L1.91,2.31 L1.76,2.43 L1.61,2.53 L1.45,2.63 L1.28,2.71 L1.10,2.79 L0.93,2.85 L0.75,2.91 L0.56,2.95 L0.38,2.98 L0.19,2.99 L-0.00,3.00 L-0.19,2.99 L-0.38,2.98 L-0.56,2.95 L-0.75,2.91 L-0.93,2.85 L-1.10,2.79 L-1.28,2.71 L-1.45,2.63 L-1.61,2.53 L-1.76,2.43 L-1.91,2.31 L-2.05,2.19 L-2.19,2.05 L-2.31,1.91 L-2.43,1.76 L-2.53,1.61 L-2.63,1.45 L-2.71,1.28 L-2.79,1.10 L-2.85,0.93 L-2.91,0.75 L-2.95,0.56 L-2.98,0.38 L-2.99,0.19 L-3.00,-0.00 L-2.99,-0.19 L-2.98,-0.38 L-2.95,-0.56 L-2.91,-0.75 L-2.85,-0.93 L-2.79,-1.10 L-2.71,-1.28 L-2.63,-1.45 L-2.53,-1.61 L-2.43,-1.76 L-2.31,-1.91 L-2.19,-2.05 L-2.05,-2.19 L-1.91,-2.31 L-1.76,-2.43 L-1.61,-2.53 L-1.45,-2.63 L-1.28,-2.71 L-1.10,-2.79 L-0.93,-2.85 L-0.75,-2.91 L-0.56,-2.95 L-0.38,-2.98 L-0.19,-2.99 L0.00,-3.00 L0.19,-2.99 L0.38,-2.98 L0.56,-2.95 L0.75,-2.91 L0.93,-2.85 L1.10,-2.79 L1.28,-2.71 L1.45,-2.63 L1.61,-2.53 L1.76,-2.43 L1.91,-2.31 L2.05,-2.19 L2.19,-2.05 L2.31,-1.91 L2.43,-1.76 L2.53,-1.61 L2.63,-1.45 L2.71,-1.28 L2.79,-1.10 L2.85,-0.93 L2.91,-0.75 L2.95,-0.56 L2.98,-0.38 L2.99,-0.19 Z"]
-            RenderSVGText {text} at (-13,-105) size 26x210 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 26x210
-                chunk 1 (middle anchor, vertical) text run 1 at (-12.50,-77.00) startOffset 0 endOffset 6 height 210.00: "middle"
-          RenderSVGContainer {g} at (251,45) size 18x108 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
+            RenderSVGText {text} at (-12,-105) size 25x210 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 25x210
+                chunk 1 (middle anchor, vertical) text run 1 at (-10.00,-105.00) startOffset 0 endOffset 1 height 35.00: "m"
+                chunk 1 (middle anchor, vertical) text run 2 at (-10.00,-70.00) startOffset 1 endOffset 2 height 35.00: "i"
+                chunk 1 (middle anchor, vertical) text run 3 at (-10.00,-35.00) startOffset 2 endOffset 3 height 35.00: "d"
+                chunk 1 (middle anchor, vertical) text run 4 at (-10.00,0.00) startOffset 3 endOffset 4 height 35.00: "d"
+                chunk 1 (middle anchor, vertical) text run 5 at (-10.00,35.00) startOffset 4 endOffset 5 height 35.00: "l"
+                chunk 1 (middle anchor, vertical) text run 6 at (-10.00,70.00) startOffset 5 endOffset 6 height 35.00: "e"
+          RenderSVGContainer {g} at (252,45) size 17x108 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,0.00)}]
             RenderPath {circle} at (257,147) size 6x6 [fill={[type=SOLID] [color=#000000]}] [data="M3.00,0.00 L2.99,0.19 L2.98,0.38 L2.95,0.56 L2.91,0.75 L2.85,0.93 L2.79,1.10 L2.71,1.28 L2.63,1.45 L2.53,1.61 L2.43,1.76 L2.31,1.91 L2.19,2.05 L2.05,2.19 L1.91,2.31 L1.76,2.43 L1.61,2.53 L1.45,2.63 L1.28,2.71 L1.10,2.79 L0.93,2.85 L0.75,2.91 L0.56,2.95 L0.38,2.98 L0.19,2.99 L-0.00,3.00 L-0.19,2.99 L-0.38,2.98 L-0.56,2.95 L-0.75,2.91 L-0.93,2.85 L-1.10,2.79 L-1.28,2.71 L-1.45,2.63 L-1.61,2.53 L-1.76,2.43 L-1.91,2.31 L-2.05,2.19 L-2.19,2.05 L-2.31,1.91 L-2.43,1.76 L-2.53,1.61 L-2.63,1.45 L-2.71,1.28 L-2.79,1.10 L-2.85,0.93 L-2.91,0.75 L-2.95,0.56 L-2.98,0.38 L-2.99,0.19 L-3.00,-0.00 L-2.99,-0.19 L-2.98,-0.38 L-2.95,-0.56 L-2.91,-0.75 L-2.85,-0.93 L-2.79,-1.10 L-2.71,-1.28 L-2.63,-1.45 L-2.53,-1.61 L-2.43,-1.76 L-2.31,-1.91 L-2.19,-2.05 L-2.05,-2.19 L-1.91,-2.31 L-1.76,-2.43 L-1.61,-2.53 L-1.45,-2.63 L-1.28,-2.71 L-1.10,-2.79 L-0.93,-2.85 L-0.75,-2.91 L-0.56,-2.95 L-0.38,-2.98 L-0.19,-2.99 L0.00,-3.00 L0.19,-2.99 L0.38,-2.98 L0.56,-2.95 L0.75,-2.91 L0.93,-2.85 L1.10,-2.79 L1.28,-2.71 L1.45,-2.63 L1.61,-2.53 L1.76,-2.43 L1.91,-2.31 L2.05,-2.19 L2.19,-2.05 L2.31,-1.91 L2.43,-1.76 L2.53,-1.61 L2.63,-1.45 L2.71,-1.28 L2.79,-1.10 L2.85,-0.93 L2.91,-0.75 L2.95,-0.56 L2.98,-0.38 L2.99,-0.19 Z"]
-            RenderSVGText {text} at (-9,-105) size 18x105 contains 1 chunk(s)
-              RenderSVGInlineText {#text} at (0,0) size 18x105
-                chunk 1 (end anchor, vertical) text run 1 at (-8.50,-77.00) startOffset 0 endOffset 3 height 105.00: "end"
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+            RenderSVGText {text} at (-8,-105) size 17x105 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 17x105
+                chunk 1 (end anchor, vertical) text run 1 at (-10.00,-105.00) startOffset 0 endOffset 1 height 35.00: "e"
+                chunk 1 (end anchor, vertical) text run 2 at (-10.00,-70.00) startOffset 1 endOffset 2 height 35.00: "n"
+                chunk 1 (end anchor, vertical) text run 3 at (-10.00,-35.00) startOffset 2 endOffset 3 height 35.00: "d"
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.5 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

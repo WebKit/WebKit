@@ -1,12 +1,12 @@
-layer at (0,0) size 808x585
-  RenderView at (0,0) size 800x585
-layer at (0,0) size 808x585
-  RenderBlock {html} at (0,0) size 800x585
-    RenderBody {body} at (8,16) size 784x429
-      RenderBlock {p} at (0,0) size 784x40
-        RenderText {#text} at (0,0) size 781x39
-          text run at (0,0) width 781: "The left edges of the black boxes below should line up with the left edges of their containing red or green boxes. In addition, all the"
-          text run at (0,20) width 178: "assertions below should pass."
+layer at (0,0) size 808x605
+  RenderView at (0,0) size 785x585
+layer at (0,0) size 808x605
+  RenderBlock {html} at (0,0) size 785x585
+    RenderBody {body} at (8,16) size 769x589
+      RenderBlock {p} at (0,0) size 769x40
+        RenderText {#text} at (0,0) size 759x39
+          text run at (0,0) width 759: "The left edges of the black boxes below should line up with the left edges of their containing red or green boxes. In addition, all"
+          text run at (0,20) width 200: "the assertions below should pass."
       RenderBlock {div} at (0,56) size 800x200
         RenderSVGRoot {svg} at (8,72) size 450x200
           RenderPath {rect} at (8,82) size 70x160 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,10.00 L70.00,10.00 L70.00,170.00 L0.00,170.00 Z"]
@@ -15,11 +15,11 @@ layer at (0,0) size 808x585
           RenderPath {rect} at (248,82) size 70x130 [fill={[type=SOLID] [color=#008000]}] [data="M240.00,10.00 L310.00,10.00 L310.00,140.00 L240.00,140.00 Z"]
           RenderPath {rect} at (318,82) size 80x120 [fill={[type=SOLID] [color=#FF0000]}] [data="M310.00,10.00 L390.00,10.00 L390.00,130.00 L310.00,130.00 Z"]
           RenderPath {rect} at (398,82) size 60x110 [fill={[type=SOLID] [color=#008000]}] [data="M390.00,10.00 L450.00,10.00 L450.00,120.00 L390.00,120.00 Z"]
-          RenderSVGText {text} at (0,-95) size 450x600 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 450x600
+          RenderSVGText {text} at (0,-95) size 450x605 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 450x605
               chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 450.00: "GGDGGBBBDB"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {pre} at (0,269) size 784x160
+      RenderBlock {pre} at (0,269) size 769x320
         RenderInline {span} at (0,0) size 312x16
           RenderInline {span} at (0,0) size 312x16
             RenderInline {span} at (0,0) size 32x16
@@ -100,3 +100,83 @@ layer at (0,0) size 808x585
             RenderText {#text} at (32,144) size 488x16
               text run at (32,144) width 488: " t.getStartPositionOfChar(9).x is 0 + 70 + 100 + 70 + 70 + 80"
           RenderBR {br} at (520,144) size 0x16
+        RenderInline {span} at (0,0) size 304x16
+          RenderInline {span} at (0,0) size 304x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,160) size 32x16
+                text run at (0,160) width 32: "PASS"
+            RenderText {#text} at (32,160) size 272x16
+              text run at (32,160) width 272: " t.getEndPositionOfChar(0).x is 70"
+          RenderBR {br} at (304,160) size 0x16
+        RenderInline {span} at (0,0) size 304x16
+          RenderInline {span} at (0,0) size 304x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,176) size 32x16
+                text run at (0,176) width 32: "PASS"
+            RenderText {#text} at (32,176) size 272x16
+              text run at (32,176) width 272: " t.getEndPositionOfChar(1).x is 70"
+          RenderBR {br} at (304,176) size 0x16
+        RenderInline {span} at (0,0) size 352x16
+          RenderInline {span} at (0,0) size 352x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,192) size 32x16
+                text run at (0,192) width 32: "PASS"
+            RenderText {#text} at (32,192) size 320x16
+              text run at (32,192) width 320: " t.getEndPositionOfChar(2).x is 70 + 100"
+          RenderBR {br} at (352,192) size 0x16
+        RenderInline {span} at (0,0) size 392x16
+          RenderInline {span} at (0,0) size 392x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,208) size 32x16
+                text run at (0,208) width 32: "PASS"
+            RenderText {#text} at (32,208) size 360x16
+              text run at (32,208) width 360: " t.getEndPositionOfChar(3).x is 70 + 100 + 70"
+          RenderBR {br} at (392,208) size 0x16
+        RenderInline {span} at (0,0) size 392x16
+          RenderInline {span} at (0,0) size 392x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,224) size 32x16
+                text run at (0,224) width 32: "PASS"
+            RenderText {#text} at (32,224) size 360x16
+              text run at (32,224) width 360: " t.getEndPositionOfChar(4).x is 70 + 100 + 70"
+          RenderBR {br} at (392,224) size 0x16
+        RenderInline {span} at (0,0) size 432x16
+          RenderInline {span} at (0,0) size 432x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,240) size 32x16
+                text run at (0,240) width 32: "PASS"
+            RenderText {#text} at (32,240) size 400x16
+              text run at (32,240) width 400: " t.getEndPositionOfChar(5).x is 70 + 100 + 70 + 70"
+          RenderBR {br} at (432,240) size 0x16
+        RenderInline {span} at (0,0) size 432x16
+          RenderInline {span} at (0,0) size 432x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,256) size 32x16
+                text run at (0,256) width 32: "PASS"
+            RenderText {#text} at (32,256) size 400x16
+              text run at (32,256) width 400: " t.getEndPositionOfChar(6).x is 70 + 100 + 70 + 70"
+          RenderBR {br} at (432,256) size 0x16
+        RenderInline {span} at (0,0) size 472x16
+          RenderInline {span} at (0,0) size 472x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,272) size 32x16
+                text run at (0,272) width 32: "PASS"
+            RenderText {#text} at (32,272) size 440x16
+              text run at (32,272) width 440: " t.getEndPositionOfChar(7).x is 70 + 100 + 70 + 70 + 80"
+          RenderBR {br} at (472,272) size 0x16
+        RenderInline {span} at (0,0) size 472x16
+          RenderInline {span} at (0,0) size 472x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,288) size 32x16
+                text run at (0,288) width 32: "PASS"
+            RenderText {#text} at (32,288) size 440x16
+              text run at (32,288) width 440: " t.getEndPositionOfChar(8).x is 70 + 100 + 70 + 70 + 80"
+          RenderBR {br} at (472,288) size 0x16
+        RenderInline {span} at (0,0) size 512x16
+          RenderInline {span} at (0,0) size 512x16
+            RenderInline {span} at (0,0) size 32x16
+              RenderText {#text} at (0,304) size 32x16
+                text run at (0,304) width 32: "PASS"
+            RenderText {#text} at (32,304) size 480x16
+              text run at (32,304) width 480: " t.getEndPositionOfChar(9).x is 70 + 100 + 70 + 70 + 80 + 60"
+          RenderBR {br} at (512,304) size 0x16

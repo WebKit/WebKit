@@ -1,17 +1,17 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x200
-  RenderSVGRoot {svg} at (0,63) size 652x46
+  RenderSVGRoot {svg} at (0,63) size 652x47
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceLinearGradient {linearGradient} [id="gradient"] [gradientUnits=userSpaceOnUse] [gradientTransform={m=((1.23,0.00)(0.00,1.26)) t=(-38.87,-39.26)}] [start=(120.03,161.07)] [end=(497.52,184.77)]
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
-    RenderSVGContainer {g} at (0,63) size 652x46
-      RenderSVGText {text} at (0,63) size 652x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 652x46
+    RenderSVGContainer {g} at (0,63) size 652x47
+      RenderSVGText {text} at (0,63) size 652x47 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 652x47
           chunk 1 text run 1 at (0.00,100.00) startOffset 0 endOffset 37 width 652.00: "This should be GREEN and appear once."
-    RenderSVGContainer {use} at (0,63) size 652x46
-      RenderSVGContainer {g} at (0,63) size 652x46
-        RenderSVGText {text} at (0,63) size 652x46 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 652x46
+    RenderSVGContainer {use} at (0,63) size 652x47
+      RenderSVGContainer {g} at (0,63) size 652x47
+        RenderSVGText {text} at (0,63) size 652x47 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 652x47
             chunk 1 text run 1 at (0.00,100.00) startOffset 0 endOffset 37 width 652.00: "This should be GREEN and appear once."

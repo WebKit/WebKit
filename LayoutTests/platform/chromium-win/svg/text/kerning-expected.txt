@@ -15,9 +15,10 @@ layer at (0,0) size 808x585
           RenderPath {rect} at (248,82) size 70x130 [fill={[type=SOLID] [color=#008000]}] [data="M240.00,10.00 L310.00,10.00 L310.00,140.00 L240.00,140.00 Z"]
           RenderPath {rect} at (318,82) size 80x120 [fill={[type=SOLID] [color=#FF0000]}] [data="M310.00,10.00 L390.00,10.00 L390.00,130.00 L310.00,130.00 Z"]
           RenderPath {rect} at (398,82) size 60x110 [fill={[type=SOLID] [color=#008000]}] [data="M390.00,10.00 L450.00,10.00 L450.00,120.00 L390.00,120.00 Z"]
-          RenderSVGText {text} at (0,-95) size 570x600 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 570x600
-              chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 590.00: "GGDGGBBBFB"
+          RenderSVGText {text} at (0,-95) size 570x605 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 570x605
+              chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 9 width 510.00: "GGDGGBBBF"
+              chunk 1 text run 2 at (490.00,10.00) startOffset 9 endOffset 10 width 80.00: "B"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {pre} at (0,269) size 784x160
         RenderInline {span} at (0,0) size 312x16
