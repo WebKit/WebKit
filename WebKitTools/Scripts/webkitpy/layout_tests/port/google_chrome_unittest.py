@@ -24,8 +24,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import codecs
 import os
 import unittest
+
+import base_unittest
+import factory
 import google_chrome
 
 
@@ -35,6 +39,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
             'google-chrome-mac', 'google-chrome-win')
         for port in test_ports:
             self._verify_baseline_path(port, port)
+            self._verify_expectations_overrides(port)
 
         self._verify_baseline_path('google-chrome-mac', 'google-chrome-mac-leopard')
         self._verify_baseline_path('google-chrome-win', 'google-chrome-win-xp')
@@ -45,3 +50,50 @@ class GetGoogleChromePortTest(unittest.TestCase):
                                                  options=None)
         path = port.baseline_search_path()[0]
         self.assertEqual(expected_path, os.path.split(path)[1])
+
+    def _verify_expectations_overrides(self, port_name):
+        # FIXME: make this more robust when we have the Tree() abstraction.
+        # we should be able to test for the files existing or not, and
+        # be able to control the contents better.
+
+        chromium_port = factory.get("chromium-mac")
+        chromium_overrides = chromium_port.test_expectations_overrides()
+        port = google_chrome.GetGoogleChromePort(port_name=port_name,
+                                                 options=None)
+
+        orig_exists = os.path.exists
+        orig_open = codecs.open
+        expected_string = "// hello, world\n"
+
+        def mock_exists_chrome_not_found(path):
+            if 'test_expectations_chrome.txt' in path:
+                return False
+            return orig_exists(path)
+
+        def mock_exists_chrome_found(path):
+            if 'test_expectations_chrome.txt' in path:
+                return True
+            return orig_exists(path)
+
+        def mock_open(path, mode, encoding):
+            if 'test_expectations_chrome.txt' in path:
+                return base_unittest.NewStringIO(expected_string)
+            return orig_open(path, mode, encoding)
+
+        try:
+            os.path.exists = mock_exists_chrome_not_found
+            chrome_overrides = port.test_expectations_overrides()
+            self.assertEqual(chromium_overrides, chrome_overrides)
+
+            os.path.exists = mock_exists_chrome_found
+            codecs.open = mock_open
+            chrome_overrides = port.test_expectations_overrides()
+            self.assertEqual(chrome_overrides,
+                             chromium_overrides + expected_string)
+        finally:
+            os.path.exists = orig_exists
+            codecs.open = orig_open
+
+
+if __name__ == '__main__':
+    unittest.main()

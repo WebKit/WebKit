@@ -24,6 +24,28 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import codecs
+import os
+
+
+def _test_expectations_overrides(port, super):
+    # The chrome ports use the regular overrides plus anything in the
+    # official test_expectations as well. Hopefully we don't get collisions.
+    chromium_overrides = super.test_expectations_overrides(port)
+
+    # FIXME: It used to be that AssertionError would get raised by
+    # path_from_chromium_base() if we weren't in a Chromium checkout, but
+    # this changed in r60427. This should probably be changed back.
+    overrides_path = port.path_from_chromium_base('webkit', 'tools',
+            'layout_tests', 'test_expectations_chrome.txt')
+    if not os.path.exists(overrides_path):
+        return chromium_overrides
+
+    with codecs.open(overrides_path, "r", "utf-8") as file:
+        if chromium_overrides:
+            return chromium_overrides + file.read()
+        else:
+            return file.read()
 
 def GetGoogleChromePort(**kwargs):
     """Some tests have slightly different results when compiled as Google
@@ -41,6 +63,11 @@ def GetGoogleChromePort(**kwargs):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-linux32'))
                 return paths
+
+            def test_expectations_overrides(self):
+                return _test_expectations_overrides(self,
+                    chromium_linux.ChromiumLinuxPort)
+
         return GoogleChromeLinux32Port(**kwargs)
     elif port_name == 'google-chrome-linux64':
         import chromium_linux
@@ -52,6 +79,11 @@ def GetGoogleChromePort(**kwargs):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-linux64'))
                 return paths
+
+            def test_expectations_overrides(self):
+                return _test_expectations_overrides(self,
+                    chromium_linux.ChromiumLinuxPort)
+
         return GoogleChromeLinux64Port(**kwargs)
     elif port_name.startswith('google-chrome-mac'):
         import chromium_mac
@@ -63,6 +95,11 @@ def GetGoogleChromePort(**kwargs):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-mac'))
                 return paths
+
+            def test_expectations_overrides(self):
+                return _test_expectations_overrides(self,
+                    chromium_mac.ChromiumMacPort)
+
         return GoogleChromeMacPort(**kwargs)
     elif port_name.startswith('google-chrome-win'):
         import chromium_win
@@ -74,5 +111,10 @@ def GetGoogleChromePort(**kwargs):
                 paths.insert(0, self._webkit_baseline_path(
                     'google-chrome-win'))
                 return paths
+
+            def test_expectations_overrides(self):
+                return _test_expectations_overrides(self,
+                    chromium_win.ChromiumWinPort)
+
         return GoogleChromeWinPort(**kwargs)
     raise NotImplementedError('unsupported port: %s' % port_name)

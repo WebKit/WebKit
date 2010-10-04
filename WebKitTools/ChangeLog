@@ -1,3 +1,19 @@
+2010-10-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Add a way for us to have test expectations that are specific to the
+        official builds of Google Chrome (as opposed to Chromium). This change
+        looks for an additional "test_expectations_chrome.txt" file in
+        Chromium's repository (webkit/tools/layout_tests), and uses the
+        concatenation of that file and the regular test_expectations.txt
+        file for test overrides.
+
+        https://bugs.webkit.org/show_bug.cgi?id=46854
+
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+
 2010-10-04  Simon Fraser  <simon.fraser@apple.com>
 
         Color tests in the list based on existing pass/fail result.
