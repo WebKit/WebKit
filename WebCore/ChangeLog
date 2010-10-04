@@ -1,3 +1,18 @@
+2010-10-04  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47100
+
+        Convert clearFloats() to be block-flow-aware.  Helpers that it calls have not been patched though.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clearFloats):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalTopForFloat):
+        (WebCore::RenderBlock::logicalLeftForFloat):
+        (WebCore::RenderBlock::logicalWidthForFloat):
+
 2010-10-04  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
