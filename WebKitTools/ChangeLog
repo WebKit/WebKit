@@ -1,3 +1,23 @@
+2010-10-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Update test suite version 20101001.
+        
+        Handle database migration, and delete tests from the db that are
+        not present in testinfo.data.
+        
+        Load about:blank into the test frame before the test url, to make
+        missing tests more obvious.
+        
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite.prototype.loadTest):
+        (TestSuite.prototype.openDatabase.creation):
+        (TestSuite.prototype.openDatabase.migration1_0To1_1):
+        (TestSuite.prototype.openDatabase.if.return):
+        (TestSuite.prototype.databaseReady):
+        (TestSuite.prototype.populateDatabaseFromTestInfoData):
+        (TestSuite.prototype.syncDatabaseWithTestInfoData.this.db.transaction):
+        (TestSuite.prototype.syncDatabaseWithTestInfoData):
+
 2010-10-02  Simon Fraser  <simon.fraser@apple.com>
 
         Add the ability to jump to a specific test.

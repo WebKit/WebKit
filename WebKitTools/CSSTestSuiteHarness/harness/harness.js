@@ -25,7 +25,7 @@
 
 // requires jQuery
 
-const kTestSuiteVersion = '20100917';
+const kTestSuiteVersion = '20101001';
 const kTestSuiteHome = '../' + kTestSuiteVersion + '/';
 const kTestInfoDataFile = 'testinfo.data';
 
@@ -715,7 +715,12 @@ TestSuite.prototype.configureForManualTest = function()
 TestSuite.prototype.loadTest = function(test)
 {
   var iframe = document.getElementById('test-frame');
-  iframe.src = this.urlForTest(test.id);
+  iframe.src = 'about:blank';
+  
+  var url = this.urlForTest(test.id);
+  window.setTimeout(function() {
+    iframe.src = url;
+  }, 0);
   
   document.getElementById('test-title').innerText = test.title;
   document.getElementById('test-url').innerText = this.pathForTest(test.id);
@@ -1351,12 +1356,42 @@ TestSuite.prototype.openDatabase = function()
   }
   
   var _self = this;
-  this.db = window.openDatabase('css21testsuite', '1.0', 'CSS 2.1 test suite results', 10 * 1024 * 1024, function() {
-    _self.databaseCreated();
-  }, errorHandler);
+  this.db = window.openDatabase('css21testsuite', '', 'CSS 2.1 test suite results', 10 * 1024 * 1024);
 
-  this.updateSummaryData();
-  this.loadTestStatus();
+  // Migration handling. we assume migration will happen whenever the suite version changes,
+  // so that we can check for new or obsoleted tests.
+  function creation(tx) {
+    window.console.log('creating table');
+    tx.executeSql('CREATE TABLE tests (test PRIMARY KEY UNIQUE, ref, title, flags, links, assertion, hstatus, hcomment, xstatus, xcomment)', null, null, errorHandler);
+  }
+
+  function migration1_0To1_1(tx) {
+    window.console.log('updating 1.0 to 1.1');
+    // We'll use the 'seen' column to cross-check with testinfo.data.
+    tx.executeSql('ALTER TABLE tests ADD COLUMN seen BOOLEAN DEFAULT \"FALSE\"', null, function() {
+      _self.syncDatabaseWithTestInfoData();
+    }, errorHandler);
+  }
+
+  if (this.db.version == '') {
+    _self.db.changeVersion('', '1.0', creation, null, function() {
+      _self.db.changeVersion('1.0', '1.1', migration1_0To1_1, null, function() {
+        _self.databaseReady();
+      }, errorHandler);
+    }, errorHandler);
+
+    return;
+  }
+
+  if (this.db.version == '1.0') {
+    _self.db.changeVersion('1.0', '1.1', migration1_0To1_1, null, function() {
+      window.console.log('ready')
+      _self.databaseReady();
+    }, errorHandler);
+    return;
+  }
+
+  this.databaseReady();
 }
 
 TestSuite.prototype.databaseCreated = function(db)
@@ -1372,6 +1407,12 @@ TestSuite.prototype.databaseCreated = function(db)
         _self.populateDatabaseFromTestInfoData();
       }, errorHandler);
   });
+}
+
+TestSuite.prototype.databaseReady = function()
+{
+  this.updateSummaryData();
+  this.loadTestStatus();
 }
 
 TestSuite.prototype.storeTestResult = function(test, format, result, comment, useragent)
@@ -1428,7 +1469,7 @@ TestSuite.prototype.clearTestResults = function(results)
   });
 }
 
-TestSuite.prototype.populateDatabaseFromTestInfoData = function(testInfoURL)
+TestSuite.prototype.populateDatabaseFromTestInfoData = function()
 {
   if (!this.testInfoLoaded) {
     window.console.log('Tring to populate database before testinfo.data has been loaded');
@@ -1445,6 +1486,36 @@ TestSuite.prototype.populateDatabaseFromTestInfoData = function(testInfoURL)
     _self.populatingDatabase = false;
   });
 
+}
+
+// Deal with removed/renamed tests in a new version of the suite.
+// self.tests is canonical; the database may contain stale entries.
+TestSuite.prototype.syncDatabaseWithTestInfoData = function()
+{
+  if (!this.testInfoLoaded) {
+    window.console.log('Tring to sync database before testinfo.data has been loaded');
+    return;
+  }
+  
+  var _self = this;
+  this.db.transaction(function (tx) {
+    for (var testID in _self.tests)
+      tx.executeSql('UPDATE tests SET seen=\"TRUE\" WHERE test=?\n', [testID], null, errorHandler);
+
+      tx.executeSql('SELECT * FROM tests WHERE seen=\"FALSE\"', [], function(tx, results) {
+        var len = results.rows.length;
+        for (var i = 0; i < len; ++i) {
+          var item = results.rows.item(i);
+          window.console.log('Test ' + item.test + ' was in the database but is no longer in the suite; deleting.');
+        }
+      }, errorHandler);
+
+    // Delete rows for disappeared tests.
+    tx.executeSql('DELETE FROM tests WHERE seen=\"FALSE\"', [], function(tx, results) {
+      _self.populatingDatabase = false;
+      _self.databaseReady();
+    }, errorHandler);
+  });
 }
 
 TestSuite.prototype.queryDatabaseForAllTests = function(sortKey, perRowHandler, completionHandler)
