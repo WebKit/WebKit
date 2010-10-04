@@ -1456,11 +1456,10 @@ TestSuite.prototype.openDatabase = function()
   var _self = this;
   this.db = window.openDatabase('css21testsuite', '', 'CSS 2.1 test suite results', 10 * 1024 * 1024);
 
-  // Migration handling. we assume migration will happen whenever the suite version changes,
+  // Migration handling. We assume migration will happen whenever the suite version changes,
   // so that we can check for new or obsoleted tests.
   function creation(tx) {
-    window.console.log('creating table');
-    tx.executeSql('CREATE TABLE tests (test PRIMARY KEY UNIQUE, ref, title, flags, links, assertion, hstatus, hcomment, xstatus, xcomment)', null, null, errorHandler);
+    _self.databaseCreated(tx);
   }
 
   function migration1_0To1_1(tx) {
@@ -1492,19 +1491,18 @@ TestSuite.prototype.openDatabase = function()
   this.databaseReady();
 }
 
-TestSuite.prototype.databaseCreated = function(db)
+TestSuite.prototype.databaseCreated = function(tx)
 {
+  window.console.log('databaseCreated');
   this.populatingDatabase = true;
 
+  // hstatus: HTML4 result
+  // xstatus: XHTML1 result
   var _self = this;
-  this.db.transaction(function (tx) {
-    // hstatus: HTML4 result
-    // xstatus: XHTML1 result
-    tx.executeSql('CREATE TABLE tests (test PRIMARY KEY UNIQUE, ref, title, flags, links, assertion, hstatus, hcomment, xstatus, xcomment)', null,
-      function(tx, results) {
-        _self.populateDatabaseFromTestInfoData();
-      }, errorHandler);
-  });
+  tx.executeSql('CREATE TABLE tests (test PRIMARY KEY UNIQUE, ref, title, flags, links, assertion, hstatus, hcomment, xstatus, xcomment)', null,
+    function(tx, results) {
+      _self.populateDatabaseFromTestInfoData();
+    }, errorHandler);
 }
 
 TestSuite.prototype.databaseReady = function()
@@ -1574,16 +1572,24 @@ TestSuite.prototype.populateDatabaseFromTestInfoData = function()
     return;
   }
   
+  window.console.log('populateDatabaseFromTestInfoData')
   var _self = this;
   this.db.transaction(function (tx) {
     for (var testID in _self.tests) {
-      var currTest = _self.tests[testID];
-      tx.executeSql('INSERT INTO tests (test, ref, title, flags, links, assertion) VALUES (?, ?, ?, ?, ?, ?)', [currTest.id, currTest.reference, currTest.title, currTest.flags, currTest.links, currTest.assertion], null, errorHandler);
+      var test = _self.tests[testID];
+      // Version 1.0, so no 'seen' column.
+      tx.executeSql('INSERT INTO tests (test, ref, title, flags, links, assertion) VALUES (?, ?, ?, ?, ?, ?)',
+        [test.id, test.reference, test.title, test.flags, test.links, test.assertion], null, errorHandler);
     }
-
     _self.populatingDatabase = false;
   });
 
+}
+
+TestSuite.prototype.insertTest = function(tx, test)
+{
+  tx.executeSql('INSERT INTO tests (test, ref, title, flags, links, assertion, seen) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [test.id, test.reference, test.title, test.flags, test.links, test.assertion, 'TRUE'], null, errorHandler);
 }
 
 // Deal with removed/renamed tests in a new version of the suite.
@@ -1591,22 +1597,49 @@ TestSuite.prototype.populateDatabaseFromTestInfoData = function()
 TestSuite.prototype.syncDatabaseWithTestInfoData = function()
 {
   if (!this.testInfoLoaded) {
-    window.console.log('Tring to sync database before testinfo.data has been loaded');
+    window.console.log('Trying to sync database before testinfo.data has been loaded');
     return;
+  }
+
+  // Make an object with all tests that we'll use to track new tests.
+  var testsToInsert = {};
+  for (var testId in this.tests) {
+    var currTest = this.tests[testId];
+    testsToInsert[currTest.id] = currTest;
   }
   
   var _self = this;
   this.db.transaction(function (tx) {
+    // Find tests that are not in the database yet.
+    // (Wasn't able to get INSERT ... IF NOT working.)
+    tx.executeSql('SELECT * FROM tests', [], function(tx, results) {
+      var len = results.rows.length;
+      for (var i = 0; i < len; ++i) {
+        var item = results.rows.item(i);
+        delete testsToInsert[item.test];
+      }
+    }, errorHandler);
+  });
+
+  this.db.transaction(function (tx) {
+    for (var testId in testsToInsert) {
+      var currTest = testsToInsert[testId];
+      window.console.log(currTest.id + ' is new; inserting');
+      _self.insertTest(tx, currTest);
+    }
+  });
+    
+  this.db.transaction(function (tx) {
     for (var testID in _self.tests)
       tx.executeSql('UPDATE tests SET seen=\"TRUE\" WHERE test=?\n', [testID], null, errorHandler);
 
-      tx.executeSql('SELECT * FROM tests WHERE seen=\"FALSE\"', [], function(tx, results) {
-        var len = results.rows.length;
-        for (var i = 0; i < len; ++i) {
-          var item = results.rows.item(i);
-          window.console.log('Test ' + item.test + ' was in the database but is no longer in the suite; deleting.');
-        }
-      }, errorHandler);
+    tx.executeSql('SELECT * FROM tests WHERE seen=\"FALSE\"', [], function(tx, results) {
+      var len = results.rows.length;
+      for (var i = 0; i < len; ++i) {
+        var item = results.rows.item(i);
+        window.console.log('Test ' + item.test + ' was in the database but is no longer in the suite; deleting.');
+      }
+    }, errorHandler);
 
     // Delete rows for disappeared tests.
     tx.executeSql('DELETE FROM tests WHERE seen=\"FALSE\"', [], function(tx, results) {

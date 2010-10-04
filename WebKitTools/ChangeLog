@@ -1,5 +1,20 @@
 2010-10-03  Simon Fraser  <simon.fraser@apple.com>
 
+        Make sure to enter all tests when creating the database
+        for the first time.
+        
+        When migrating to a new version of the suite, be sure to
+        sync up the database and testinfo.data by removing old
+        tests, and inserting new ones.
+
+        * CSSTestSuiteHarness/harness/harness.js:
+        (TestSuite.prototype.openDatabase.creation):
+        (TestSuite.prototype.databaseCreated):
+        (TestSuite.prototype.populateDatabaseFromTestInfoData):
+        (TestSuite.prototype.insertTest):
+
+2010-10-03  Simon Fraser  <simon.fraser@apple.com>
+
         More work on treating HTML4 and XHTML1 independently; when 
         changing the format, rebuild the test list, and update the 
         numbers in the chapter popup.
