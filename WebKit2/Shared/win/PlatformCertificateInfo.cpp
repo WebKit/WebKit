@@ -28,7 +28,10 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include <WebCore/ResourceResponse.h>
+
+#if PLATFORM(CG)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 using namespace WebCore;
 
@@ -46,6 +49,7 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& respons
     if (!cfResponse)
         return;
 
+#if PLATFORM(CG)
     CFDictionaryRef certificateInfo = wkGetSSLCertificateInfo(cfResponse);
     if (!certificateInfo)
         return;
@@ -55,6 +59,9 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& respons
         return;
 
     m_certificateContext = ::CertDuplicateCertificateContext(static_cast<PCCERT_CONTEXT>(data));
+#else
+    // FIXME: WinCairo implementation
+#endif
 }
 
 PlatformCertificateInfo::~PlatformCertificateInfo()

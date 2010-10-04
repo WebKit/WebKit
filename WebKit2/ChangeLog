@@ -1,3 +1,14 @@
+2010-10-04  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fixes after r68260 and r68686.
+
+        * Platform/CoreIPC/DataReference.h: Add include directive for
+        <inttypes.h>, needed for WinCairo build.
+        * Shared/win/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo):
+        Conditionalize logic specific to WebKitSystemInterface and
+        add a stub implementation for WinCairo.
+
 2010-10-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

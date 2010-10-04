@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Brent Fulgham <bfulgham@webkit.org>. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,48 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DataReference_h
-#define DataReference_h
+#include "config.h"
+#include "ProxyServer.h"
 
-#include <inttypes.h>
+#include "KURL.h"
+#include <wtf/RetainPtr.h>
 
-namespace CoreIPC {
+namespace WebCore {
 
-class ArgumentDecoder;
-class ArgumentEncoder;
-    
-class DataReference {
-public:
-    DataReference()
-        : m_data(0)
-        , m_size(0)
-    {
-    }
+Vector<ProxyServer> proxyServersForURL(const KURL&)
+{
+    // FIXME: Implement.
+    return Vector<ProxyServer>();
+}
 
-    DataReference(const uint8_t* data, size_t size)
-        : m_data(data)
-        , m_size(size)
-    {
-    }
-
-    bool isEmpty() const { return size() == 0; }
-
-    size_t size() const { return m_size; }
-    const uint8_t* data() const 
-    { 
-        ASSERT(!isEmpty());
-        
-        return m_data; 
-    }
-
-    void encode(ArgumentEncoder* encoder) const;
-    static bool decode(ArgumentDecoder* decoder, DataReference& dataReference);
-
-private:
-    const uint8_t* m_data;
-    size_t m_size;
-};
-
-} // namespace CoreIPC
-
-#endif // DataReference_h
+} // namespace WebCore

@@ -1,3 +1,12 @@
+2010-10-04  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed, build fix for r68951.
+
+        Add stub implementation for ProxyServer logic.
+
+        * WebCore.vcproj/WebCore.vcproj: Add new WinCairo file.
+        * WebCore/platform/network/curl/ProxyServerCurl.cpp: Added
+
 2010-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
