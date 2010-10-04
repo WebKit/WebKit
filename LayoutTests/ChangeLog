@@ -1,5 +1,14 @@
 2010-10-04  Adam Roben  <aroben@apple.com>
 
+        Land XP-specific results for fast/text/international/bidi-mirror-he-ar.html
+
+        In r69008 I updated the post-XP results, but forgot to check in the
+        XP-specific results.
+
+        * platform/win-xp/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+
+2010-10-04  Adam Roben  <aroben@apple.com>
+
         Land correct post-XP results for
         fast/text/international/bidi-mirror-he-ar.html
 
