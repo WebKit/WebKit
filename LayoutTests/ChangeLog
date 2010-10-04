@@ -1,5 +1,16 @@
 2010-10-04  Adam Roben  <aroben@apple.com>
 
+        Skip
+        http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html
+        on Windows
+
+        It seems to be causing other tests to time out, like
+        http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html.
+
+        * platform/win/Skipped:
+
+2010-10-04  Adam Roben  <aroben@apple.com>
+
         Land XP-specific results for fast/text/international/bidi-mirror-he-ar.html
 
         In r69008 I updated the post-XP results, but forgot to check in the

@@ -312,8 +312,8 @@ http/tests/websocket/tests/workers/worker-handshake-challenge-randomness.html
 # http://webkit.org/b/46911
 accessibility/aria-hidden-update.html
 
-# Timing out http://webkit.org/b/46975
-http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html
+# Causes next test to time out http://webkit.org/b/46975
+http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html
 
 # Failing in Release builds http://webkit.org/b/46976
 fast/js/sputnik/Conformance/11_Expressions/11.7_Bitwise_Shift_Operators/11.7.3_The_Unsigned_Right_Shift_Operator/S11.7.3_A2.3_T1.html
