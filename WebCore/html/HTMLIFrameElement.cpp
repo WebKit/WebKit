@@ -67,7 +67,6 @@ bool HTMLIFrameElement::mapToEntry(const QualifiedName& attrName, MappedAttribut
     return HTMLFrameElementBase::mapToEntry(attrName, result);
 }
 
-#if ENABLE(SANDBOX)
 static SandboxFlags parseSandboxAttribute(Attribute* attribute)
 {
     if (attribute->isNull())
@@ -103,7 +102,6 @@ static SandboxFlags parseSandboxAttribute(Attribute* attribute)
 
     return flags;
 }
-#endif
 
 void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
 {
@@ -127,11 +125,8 @@ void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
         if (!attr->isNull() && !attr->value().toInt())
             // Add a rule that nulls out our border width.
             addCSSLength(attr, CSSPropertyBorderWidth, "0");
-    }
-#if ENABLE(SANDBOX)
-    else if (attr->name() == sandboxAttr)
+    } else if (attr->name() == sandboxAttr)
         setSandboxFlags(parseSandboxAttribute(attr));
-#endif
     else
         HTMLFrameElementBase::parseMappedAttribute(attr);
 }

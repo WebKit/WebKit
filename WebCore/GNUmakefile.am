@@ -3908,14 +3908,6 @@ webcore_cppflags += -DENABLE_XHTMLMP=1
 endif # END ENABLE_XHTMLMP
 
 # ----
-# Sandboxed IFrame Support
-# ----
-if ENABLE_SANDBOX
-HTML_FEATURES += ENABLE_SANDBOX=1
-webcore_cppflags += -DENABLE_SANDBOX=1
-endif # END ENABLE_SANDBOX
-
-# ----
 # Ruby Support
 # ----
 if ENABLE_RUBY
