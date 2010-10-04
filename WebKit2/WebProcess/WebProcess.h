@@ -35,6 +35,10 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
+#if PLATFORM(MAC)
+#include "MachPort.h"
+#endif
+
 namespace WebCore {
     class IntSize;
     class PageGroup;
@@ -58,7 +62,7 @@ public:
     RunLoop* runLoop() const { return m_runLoop; }
 
     WebPage* webPage(uint64_t pageID) const;
-    WebPage* createWebPage(uint64_t pageID, const WebPageCreationParameters&);
+    void createWebPage(uint64_t pageID, const WebPageCreationParameters&);
     void removeWebPage(uint64_t pageID);
 
     InjectedBundle* injectedBundle() const { return m_injectedBundle.get(); }
@@ -88,13 +92,22 @@ private:
     void loadInjectedBundle(const String&);
 #endif
     void setApplicationCacheDirectory(const String&);
+    void setShouldTrackVisitedLinks(bool);
     void registerURLSchemeAsEmptyDocument(const String&);
+
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
+    void setUpAcceleratedCompositingPort(CoreIPC::MachPort);
+#endif
+#if PLATFORM(WIN)
+    void setShouldPaintNativeControls(bool);
+#endif
+
 
     void setVisitedLinkTable(const SharedMemory::Handle&);
     void visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes);
     void allVisitedLinkStateChanged();
 
-    void setCacheModel(CacheModel cacheModel);
+    void setCacheModel(uint32_t);
     void platformSetCacheModel(CacheModel);
 
     // CoreIPC::Connection::Client
@@ -102,6 +115,9 @@ private:
     void didClose(CoreIPC::Connection*);
     void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
 
+    // Implemented in generated WebProcessMessageReceiver.cpp
+    void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    
     RefPtr<CoreIPC::Connection> m_connection;
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;
     RefPtr<InjectedBundle> m_injectedBundle;

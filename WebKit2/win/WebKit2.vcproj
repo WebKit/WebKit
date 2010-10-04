@@ -760,10 +760,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\CoreIPCSupport\WebProcessMessageKinds.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Shared\CoreIPCSupport\WebProcessProxyMessageKinds.h"
 					>
 				</File>
@@ -2022,6 +2018,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebProcessMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebProcessMessages.h"
 				>
 			</File>
 		</Filter>

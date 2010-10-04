@@ -140,10 +140,12 @@ QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 DEFINES += BUILDING_QT__
 
 WEBKIT2_GENERATED_HEADERS = \
-    $$OUTPUT_DIR/WebKit2/generated/WebPageMessages.h
+    $$OUTPUT_DIR/WebKit2/generated/WebPageMessages.h \
+    $$OUTPUT_DIR/WebKit2/generated/WebProcessMessages.h
 
 WEBKIT2_GENERATED_SOURCES = \
-    $$OUTPUT_DIR/WebKit2/generated/WebPageMessageReceiver.cpp
+    $$OUTPUT_DIR/WebKit2/generated/WebPageMessageReceiver.cpp \
+    $$OUTPUT_DIR/WebKit2/generated/WebProcessMessageReceiver.cpp
 
 HEADERS += \
     Platform/CoreIPC/ArgumentDecoder.h \
@@ -175,7 +177,6 @@ HEADERS += \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
-    Shared/CoreIPCSupport/WebProcessMessageKinds.h \
     Shared/CacheModel.h \
     Shared/DrawingAreaBase.h \
     Shared/ImmutableArray.h \

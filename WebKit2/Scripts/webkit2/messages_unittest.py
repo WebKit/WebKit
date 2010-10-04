@@ -238,6 +238,7 @@ _expected_header = """/*
 #include "Arguments.h"
 #include "MessageID.h"
 #include "Plugin.h"
+#include <wtf/Vector.h>
 
 namespace CoreIPC {
     class MachPort;

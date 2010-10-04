@@ -33,7 +33,7 @@
 #include "WebPageNamespace.h"
 #include "WebPageProxy.h"
 #include "WebProcessManager.h"
-#include "WebProcessMessageKinds.h"
+#include "WebProcessMessages.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <WebCore/KURL.h>
 #include <wtf/text/CString.h>
@@ -68,7 +68,7 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
     // single "Initialize" messages with a struct that has all the needed information.
     String applicationCacheDirectory = m_context->applicationCacheDirectory();
     if (!applicationCacheDirectory.isEmpty())
-        send(WebProcessMessage::SetApplicationCacheDirectory, 0, CoreIPC::In(applicationCacheDirectory));
+        send(Messages::WebProcess::SetApplicationCacheDirectory(applicationCacheDirectory), 0);
 
     // FIXME: We could instead send the bundle path as part of the arguments to process creation?
     // Would that be better than sending a connection?
@@ -77,11 +77,11 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
         char *sandboxBundleToken = NULL;
         CString injectedBundlePath = context->injectedBundlePath().utf8();
         sandbox_issue_extension(injectedBundlePath.data(), &sandboxBundleToken);
-        send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(context->injectedBundlePath(), String::fromUTF8(sandboxBundleToken)));
+        send(Messages::WebProcess::LoadInjectedBundle(context->injectedBundlePath(), String::fromUTF8(sandboxBundleToken)), 0);
         if (sandboxBundleToken)
             free(sandboxBundleToken);
 #else
-        send(WebProcessMessage::LoadInjectedBundle, 0, CoreIPC::In(context->injectedBundlePath()));
+        send(Messages::WebProcess::LoadInjectedBundle(context->injectedBundlePath(), String()), 0);
 #endif
     }
 

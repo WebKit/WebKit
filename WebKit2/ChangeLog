@@ -1,5 +1,60 @@
 2010-10-04  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Generate messages sent to the WebProcess class.
+        https://bugs.webkit.org/show_bug.cgi?id=47097
+
+        * DerivedSources.make:
+        Add new file to generate and new directory to search.
+
+        * Scripts/webkit2/messages.py:
+        (forward_declarations_and_headers): Special case class templates.
+        (headers_for_type): Special case Vector.
+        * Scripts/webkit2/messages_unittest.py:
+        Make this script work for passing a templated type.
+
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h: Removed.
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::pendingVisitedLinksTimerFired):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::initializeHistoryClient):
+        (WebKit::WebContext::ensureWebProcess):
+        (WebKit::WebContext::registerURLSchemeAsEmptyDocument):
+        (WebKit::WebContext::setCacheModel):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::reinitializeWebPage):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy): Always pass both
+        the bundle path and a key, even if the key is null, which it will be for
+        all non-mac builds for now.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::setUpAcceleratedCompositing):
+        * UIProcess/win/WebContextWin.cpp:
+        (WebKit::WebContext::setShouldPaintNativeControls):
+        (WebKit::WebContext::platformSetUpWebProcess):
+        Use the new syntax for sending the messages.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::setShouldTrackVisitedLinks):
+        (WebKit::WebProcess::setCacheModel):
+        (WebKit::WebProcess::setupAcceleratedCompositingPort):
+        (WebKit::WebProcess::setShouldPaintNativeControls):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        Convert to using generated didReceiveWebProcessMessage.
+
+        * WebProcess/WebProcess.messages.in: Added.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Update projects.
+
+2010-10-04  Sam Weinig  <sam@webkit.org>
+
         Fix the Mac build.
 
         * WebProcess/mac/WebProcessMac.mm:

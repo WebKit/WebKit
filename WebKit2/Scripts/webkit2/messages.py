@@ -227,6 +227,12 @@ def forward_declarations_and_headers(receiver):
 
     for parameter in receiver.iterparameters():
         type = parameter.type
+
+        if type.find('<') != -1:
+            # Don't forward declare class templates.
+            headers.update(headers_for_type(type))
+            continue
+
         split = type.split('::')
 
         if len(split) == 2:
@@ -331,6 +337,12 @@ def argument_coder_headers_for_type(type):
 
 
 def headers_for_type(type):
+    # Check for Vector.
+    match = re.search(r'Vector<(.+)>', type)
+    if match:
+        element_type = match.groups()[0].strip()
+        return ['<wtf/Vector.h>'] + headers_for_type(element_type)
+
     special_cases = {
         'WTF::String': '<wtf/text/WTFString.h>',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',

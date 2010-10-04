@@ -28,20 +28,18 @@
 #include "ImmutableArray.h"
 #include "InjectedBundleMessageKinds.h"
 #include "RunLoop.h"
+#include "WKContextPrivate.h"
 #include "WebContextMessageKinds.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageNamespace.h"
 #include "WebPreferences.h"
 #include "WebProcessManager.h"
-#include "WebProcessMessageKinds.h"
+#include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
+#include <WebCore/LinkHash.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
-
-#include "WKContextPrivate.h"
-
-#include <WebCore/LinkHash.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
@@ -116,7 +114,7 @@ void WebContext::initializeHistoryClient(const WKContextHistoryClient* client)
     if (!hasValidProcess())
         return;
         
-    m_process->send(WebProcessMessage::SetShouldTrackVisitedLinks, 0, CoreIPC::In(m_historyClient.shouldTrackVisitedLinks()));
+    m_process->send(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()), 0);
 }
 
 void WebContext::ensureWebProcess()
@@ -126,11 +124,11 @@ void WebContext::ensureWebProcess()
 
     m_process = WebProcessManager::shared().getWebProcess(this);
 
-    m_process->send(WebProcessMessage::SetShouldTrackVisitedLinks, 0, CoreIPC::In(m_historyClient.shouldTrackVisitedLinks()));
-    m_process->send(WebProcessMessage::SetCacheModel, 0, CoreIPC::In(static_cast<uint32_t>(m_cacheModel)));
+    m_process->send(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()), 0);
+    m_process->send(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)), 0);
 
     for (HashSet<String>::iterator it = m_schemesToRegisterAsEmptyDocument.begin(), end = m_schemesToRegisterAsEmptyDocument.end(); it != end; ++it)
-        m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(*it));
+        m_process->send(Messages::WebProcess::RegisterURLSchemeAsEmptyDocument(*it), 0);
 
     for (size_t i = 0; i != m_pendingMessagesToPostToInjectedBundle.size(); ++i) {
         pair<String, RefPtr<APIObject> >* message = &m_pendingMessagesToPostToInjectedBundle[i];
@@ -283,7 +281,7 @@ void WebContext::registerURLSchemeAsEmptyDocument(const String& urlScheme)
     if (!hasValidProcess())
         return;
 
-    m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(urlScheme));
+    m_process->send(Messages::WebProcess::RegisterURLSchemeAsEmptyDocument(urlScheme), 0);
 }
 
 void WebContext::addVisitedLink(const String& visitedURL)
@@ -306,7 +304,7 @@ void WebContext::setCacheModel(CacheModel cacheModel)
 
     if (!hasValidProcess())
         return;
-    m_process->send(WebProcessMessage::SetCacheModel, 0, CoreIPC::In(static_cast<uint32_t>(m_cacheModel)));
+    m_process->send(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)), 0);
 }
 
 void WebContext::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

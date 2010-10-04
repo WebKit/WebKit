@@ -225,6 +225,8 @@
 		BC2E6E8E1141971500A63B1E /* WorkQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2E6E7E1141970C00A63B1E /* WorkQueue.h */; };
 		BC3065C412592F8900E71278 /* WebProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC3065C312592F8900E71278 /* WebProcessMac.mm */; };
 		BC3065FA1259344E00E71278 /* CacheModel.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3065F91259344E00E71278 /* CacheModel.h */; };
+		BC3066BE125A442100E71278 /* WebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3066BC125A442100E71278 /* WebProcessMessageReceiver.cpp */; };
+		BC3066BF125A442100E71278 /* WebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3066BD125A442100E71278 /* WebProcessMessages.h */; };
 		BC33DD681238464600360F3F /* WebNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33DD671238464600360F3F /* WebNumber.h */; };
 		BC33E0D112408E8600360F3F /* InjectedBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */; };
 		BC33E0D212408E8600360F3F /* InjectedBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */; };
@@ -674,6 +676,9 @@
 		BC2E6E7E1141970C00A63B1E /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
 		BC3065C312592F8900E71278 /* WebProcessMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessMac.mm; sourceTree = "<group>"; };
 		BC3065F91259344E00E71278 /* CacheModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheModel.h; sourceTree = "<group>"; };
+		BC3066B9125A436300E71278 /* WebProcess.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebProcess.messages.in; sourceTree = "<group>"; };
+		BC3066BC125A442100E71278 /* WebProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessMessageReceiver.cpp; sourceTree = "<group>"; };
+		BC3066BD125A442100E71278 /* WebProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebProcessMessages.h; sourceTree = "<group>"; };
 		BC33DD671238464600360F3F /* WebNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNumber.h; sourceTree = "<group>"; };
 		BC33E0CF12408E8600360F3F /* InjectedBundleRangeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleRangeHandle.h; sourceTree = "<group>"; };
 		BC33E0D012408E8600360F3F /* InjectedBundleRangeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleRangeHandle.cpp; sourceTree = "<group>"; };
@@ -1213,6 +1218,7 @@
 				BC111AE3112F5C2600337BAB /* WebProcess.cpp */,
 				BC032D9110F437AF0058C15A /* WebProcess.h */,
 				1A6FA01F11E1528700DB1371 /* WebProcessMain.h */,
+				BC3066B9125A436300E71278 /* WebProcess.messages.in */,
 			);
 			path = WebProcess;
 			sourceTree = "<group>";
@@ -1695,6 +1701,8 @@
 				C0CE729F1247E71D00BC0EC4 /* WebPageMessages.h */,
 				1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */,
 				1A043F6812514D8B00FFBFB5 /* WebProcessConnectionMessages.h */,
+				BC3066BC125A442100E71278 /* WebProcessMessageReceiver.cpp */,
+				BC3066BD125A442100E71278 /* WebProcessMessages.h */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebKit2;
@@ -1925,6 +1933,7 @@
 				1A8EFDFA1253CAA200F7067F /* DataReference.h in Headers */,
 				BC9099801256A98200083756 /* WKStringPrivate.h in Headers */,
 				BC3065FA1259344E00E71278 /* CacheModel.h in Headers */,
+				BC3066BF125A442100E71278 /* WebProcessMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2220,6 +2229,7 @@
 				1A8EFA701252B84100F7067F /* PluginProxyMessageReceiver.cpp in Sources */,
 				1A8EFDFE1253CB6E00F7067F /* DataReference.cpp in Sources */,
 				BC3065C412592F8900E71278 /* WebProcessMac.mm in Sources */,
+				BC3066BE125A442100E71278 /* WebProcessMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

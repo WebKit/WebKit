@@ -121,8 +121,8 @@ Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const Windo
     if (!newPageID)
         return 0;
 
-    WebPage* newWebPage = WebProcess::shared().createWebPage(newPageID, parameters);
-    return newWebPage->corePage();
+    WebProcess::shared().createWebPage(newPageID, parameters);
+    return WebProcess::shared().webPage(newPageID)->corePage();
 }
 
 void WebChromeClient::show()

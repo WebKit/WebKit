@@ -28,7 +28,7 @@
 #include "SharedMemory.h"
 #include "VisitedLinkTable.h"
 #include "WebContext.h"
-#include "WebProcessMessageKinds.h"
+#include "WebProcessMessages.h"
 
 using namespace WebCore;
 
@@ -151,18 +151,17 @@ void VisitedLinkProvider::pendingVisitedLinksTimerFired()
         if (!m_table.sharedMemory()->createHandle(handle, SharedMemory::ReadOnly))
             return;
 
-        m_context->process()->send(WebProcessMessage::SetVisitedLinkTable, 0, CoreIPC::In(handle));
+        m_context->process()->send(Messages::WebProcess::SetVisitedLinkTable(handle), 0);
     }
     
     // We now need to let the web process know that we've added links.
     if (addedVisitedLinks.size() <= 20) {
-        m_context->process()->send(WebProcessMessage::VisitedLinkStateChanged, 0, CoreIPC::In(addedVisitedLinks));
+        m_context->process()->send(Messages::WebProcess::VisitedLinkStateChanged(addedVisitedLinks), 0);
         return;
     }
     
     // Just recalculate all the visited links.
-    m_context->process()->send(WebProcessMessage::AllVisitedLinkStateChanged, 0, CoreIPC::In());
-    return;
+    m_context->process()->send(Messages::WebProcess::AllVisitedLinkStateChanged(), 0);
 }
 
 } // namespace WebKit

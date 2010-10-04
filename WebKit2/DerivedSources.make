@@ -2,6 +2,7 @@ VPATH = \
     $(WebKit2)/PluginProcess \
     $(WebKit2)/WebProcess/Plugins \
     $(WebKit2)/WebProcess/WebPage \
+    $(WebKit2)/WebProcess \
     $(WebKit2)/UIProcess/Plugins \
 #
 
@@ -11,6 +12,7 @@ MESSAGE_RECEIVERS = \
     PluginProcessProxy \
     PluginProxy \
     WebPage \
+    WebProcess \
     WebProcessConnection \
 #
 

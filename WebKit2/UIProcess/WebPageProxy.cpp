@@ -46,7 +46,7 @@
 #include "WebPageProxyMessageKinds.h"
 #include "WebPreferences.h"
 #include "WebProcessManager.h"
-#include "WebProcessMessageKinds.h"
+#include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebURLRequest.h"
 
@@ -155,8 +155,7 @@ void WebPageProxy::initializeWebPage(const IntSize& size)
     }
 
     ASSERT(m_drawingArea);
-
-    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(creationParameters(size)));
+    process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(size)), 0);
 }
 
 void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
@@ -165,8 +164,7 @@ void WebPageProxy::reinitializeWebPage(const WebCore::IntSize& size)
         return;
 
     ASSERT(m_drawingArea);
-
-    process()->send(WebProcessMessage::Create, m_pageID, CoreIPC::In(creationParameters(size)));
+    process()->send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters(size)), 0);
 }
 
 void WebPageProxy::close()

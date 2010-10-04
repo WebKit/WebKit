@@ -27,7 +27,7 @@
 
 #include "MachPort.h"
 #include "WebKitSystemInterface.h"
-#include "WebProcessMessageKinds.h"
+#include "WebProcessMessages.h"
 
 using namespace WebCore;
 
@@ -39,7 +39,7 @@ void WebProcessProxy::setUpAcceleratedCompositing()
 #if HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t renderServerPort = WKInitializeRenderServer();
     if (renderServerPort != MACH_PORT_NULL)
-        send(WebProcessMessage::SetupAcceleratedCompositingPort, 0, CoreIPC::In(CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND)));
+        send(Messages::WebProcess::SetUpAcceleratedCompositingPort(CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND)), 0);
 #endif
 }
 #endif
