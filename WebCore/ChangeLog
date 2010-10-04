@@ -1,3 +1,22 @@
+2010-10-04  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash at WebCore::nextCandidate + 27
+        https://bugs.webkit.org/show_bug.cgi?id=47118
+        <rdar://problem/7282934>
+
+        When we canonicalize a Position to create a VisiblePosition, the position
+        is passed by reference. In canonicalPosition we call updateLayoutIgnorePendingStylesheets
+        that can produce a lot of side effects, including changing the selection.
+        This becomes a serious problem whne the position passed as reference is one of
+        the selection endpoints.
+        
+        Test: editing/selection/focus-crash.html
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::canonicalPosition):
+
 2010-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.

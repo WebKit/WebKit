@@ -439,8 +439,13 @@ static Position canonicalizeCandidate(const Position& candidate)
     return candidate;
 }
 
-Position VisiblePosition::canonicalPosition(const Position& position)
+Position VisiblePosition::canonicalPosition(const Position& passedPosition)
 {
+    // The updateLayout call below can do so much that even the position passed
+    // in to us might get changed as a side effect. Specifically, there are code
+    // paths that pass selection endpoints, and updateLayout can change the selection.
+    Position position = passedPosition;
+
     // FIXME (9535):  Canonicalizing to the leftmost candidate means that if we're at a line wrap, we will 
     // ask renderers to paint downstream carets for other renderers.
     // To fix this, we need to either a) add code to all paintCarets to pass the responsibility off to

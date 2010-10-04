@@ -1,3 +1,15 @@
+2010-10-04  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash at WebCore::nextCandidate + 27
+        https://bugs.webkit.org/show_bug.cgi?id=47118
+        <rdar://problem/7282934>
+
+        * editing/resources/iframebody.html: Added.
+        * editing/selection/focus-crash-expected.txt: Added.
+        * editing/selection/focus-crash.html: Added.
+
 2010-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
