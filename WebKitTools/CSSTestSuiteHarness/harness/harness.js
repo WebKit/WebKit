@@ -201,12 +201,48 @@ function Test(testInfoLine)
   this.flags = fields[3];
   this.links = fields[4];
   this.assertion = fields[5];
+
+  this.paged = false;
+  this.testHTML = true;
+  this.testXHTML = true;
+
+  if (this.flags) {
+    this.paged = this.flags.indexOf('paged') != -1;
+  
+    if (this.flags.indexOf('nonHTML') != -1)
+      this.testHTML = false;
+
+    if (this.flags.indexOf('HTMLonly') != -1)
+      this.testXHTML = false;
+  }
   
   this.completedHTML = false; // true if this test has a result (pass, fail or skip)
   this.completedXHTML = false; // true if this test has a result (pass, fail or skip)
   
   if (!this.links)
     this.links = "other.html"
+}
+
+Test.prototype.runForFormat = function(format)
+{
+  if (format == 'html4')
+    return this.testHTML;
+
+  if (format == 'xhtml1')
+    return this.testXHTML;
+
+  return true;
+}
+
+Test.prototype.completedForFormat = function(format)
+{
+  if (format == 'html4')
+    return this.completedHTML;
+
+  if (format == 'xhtml1')
+    return this.completedXHTML;
+
+  return true;
 }
 
 function ChapterSection(link)
@@ -216,21 +252,69 @@ function ChapterSection(link)
     this.file = result[1];
     this.anchor = result[2];
   }
-  
+
+  this.testCountHTML = 0;
+  this.testCountXHTML = 0;
+
   this.tests = [];
+}
+
+ChapterSection.prototype.countTests = function()
+{
+  this.testCountHTML = 0;
+  this.testCountXHTML = 0;
+
+  for (var i = 0; i < this.tests.length; ++i) {
+    var currTest = this.tests[i];
+
+    if (currTest.testHTML)
+      ++this.testCountHTML;
+
+    if (currTest.testXHTML)
+      ++this.testCountXHTML;
+  }
 }
 
 function Chapter(chapterInfo)
 {
   this.file = chapterInfo.file;
   this.title = chapterInfo.title;
-  this.testCount = 0;
+  this.testCountHTML = 0;
+  this.testCountXHTML = 0;
   this.sections = []; // array of ChapterSection
 }
 
 Chapter.prototype.description = function(format)
 {
-  return this.title + ' (' + this.testCount + ' tests, ' + this.untestedCount(format) + ' untested)';
+  
+  
+  return this.title + ' (' + this.testCount(format) + ' tests, ' + this.untestedCount(format) + ' untested)';
+}
+
+Chapter.prototype.countTests = function()
+{
+  this.testCountHTML = 0;
+  this.testCountXHTML = 0;
+
+  for (var i = 0; i < this.sections.length; ++i) {
+    var currSection = this.sections[i];
+
+    currSection.countTests();
+
+    this.testCountHTML += currSection.testCountHTML;
+    this.testCountXHTML += currSection.testCountXHTML;
+  }
+}
+
+Chapter.prototype.testCount = function(format)
+{
+  if (format == 'html4')
+    return this.testCountHTML;
+
+  if (format == 'xhtml1')
+    return this.testCountXHTML;
+
+  return 0;
 }
 
 Chapter.prototype.untestedCount = function(format)
@@ -241,7 +325,7 @@ Chapter.prototype.untestedCount = function(format)
   for (var i = 0; i < this.sections.length; ++i) {
     var currSection = this.sections[i];
     for (var j = 0; j < currSection.tests.length; ++j) {
-      count += currSection.tests[j][completedProperty] ? 0 : 1;
+      count += currSection.tests[j].completedForFormat(format) ? 0 : 1;
     }
   }
   return count;
@@ -351,12 +435,7 @@ TestSuite.prototype.buildChapters = function()
   for (var chapterName in this.chapters) {
     var currChapter = this.chapters[chapterName];
     currChapter.sections.sort();
-    
-    var testCount = 0;
-    for (var s = 0; s < currChapter.sections.length; ++s)
-      testCount += currChapter.sections[s].tests.length;
-      
-    currChapter.testCount = testCount;
+    currChapter.countTests();
   }
 }
 
@@ -422,8 +501,12 @@ TestSuite.prototype.testListForChapter = function(chapter)
   
   for (var i in chapter.sections) {
     var currSection = chapter.sections[i];
-    // FIXME: why do I need the assignment?
-    testList = testList.concat(currSection.tests);
+    
+    for (var j = 0; j < currSection.tests.length; ++j) {
+      var currTest = currSection.tests[j];
+      if (currTest.runForFormat(this.format))
+        testList.push(currTest);
+    }
   }
   
   // FIXME: test may occur more than once.
@@ -696,10 +779,15 @@ TestSuite.prototype.loadCurrentTest = function()
 
   this.loadTest(theTest);
 
-  document.getElementById('test-index').innerText = this.currChapterTestIndex + 1;
-  document.getElementById('chapter-test-count').innerText = this.currentChapterTests.length;
+  this.updateProgressLabel();
   
   document.getElementById('test-list').selectedIndex = this.currChapterTestIndex;
+}
+
+TestSuite.prototype.updateProgressLabel = function()
+{
+  document.getElementById('test-index').innerText = this.currChapterTestIndex + 1;
+  document.getElementById('chapter-test-count').innerText = this.currentChapterTests.length;
 }
 
 TestSuite.prototype.configureForRefTest = function()
@@ -732,8 +820,7 @@ TestSuite.prototype.loadTest = function(test)
 
 TestSuite.prototype.processFlags = function(test)
 { 
-  var isPaged = test.flags.indexOf('paged') != -1;
-  if (isPaged)
+  if (test.paged)
     $('#test-content').addClass('print');
   else
     $('#test-content').removeClass('print');
@@ -749,7 +836,7 @@ TestSuite.prototype.processFlags = function(test)
     warning += 'Must be tested over HTTP, with custom HTTP headers.';
   }
   
-  if (isPaged) {
+  if (test.paged) {
     if (warning != '')
       warning += ' ';
     warning += 'Test via the browser\'s Print Preview.';
@@ -877,9 +964,20 @@ TestSuite.prototype.formatChanged = function(formatString)
   else
     this.formatInfo = kXHTML1Data;
 
-  this.loadCurrentTest();
+  // try to keep the current test selected
+  var selectedTestName;
+  if (this.currChapterTestIndex >= 0 && this.currChapterTestIndex < this.currentChapterTests.length)
+    selectedTestName = this.currentChapterTests[this.currChapterTestIndex].id;
+  
+  if (this.currentChapter) {
+    this.buildTestListForChapter(this.currentChapter);
+    this.fillTestList();
+    this.goToTestByName(selectedTestName);
+  }
+
   this.updateChapterPopup();
   this.updateTestList();
+  this.updateProgressLabel();
 }
 
 /* ------------------------------------------------------- */

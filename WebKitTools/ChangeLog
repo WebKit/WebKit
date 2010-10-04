@@ -1,5 +1,28 @@
 2010-10-03  Simon Fraser  <simon.fraser@apple.com>
 
+        More work on treating HTML4 and XHTML1 independently; when 
+        changing the format, rebuild the test list, and update the 
+        numbers in the chapter popup.
+
+        * CSSTestSuiteHarness/harness/harness.js:
+        (Test):
+        (Test.prototype.runForFormat):
+        (Test.prototype.completedForFormat):
+        (ChapterSection):
+        (ChapterSection.prototype.countTests):
+        (Chapter):
+        (Chapter.prototype.description):
+        (Chapter.prototype.countTests):
+        (Chapter.prototype.testCount):
+        (Chapter.prototype.untestedCount):
+        (TestSuite.prototype.buildChapters):
+        (TestSuite.prototype.loadCurrentTest):
+        (TestSuite.prototype.updateProgressLabel):
+        (TestSuite.prototype.processFlags):
+        (TestSuite.prototype.formatChanged):
+
+2010-10-03  Simon Fraser  <simon.fraser@apple.com>
+
         Update test suite version 20101001.
         
         Handle database migration, and delete tests from the db that are
