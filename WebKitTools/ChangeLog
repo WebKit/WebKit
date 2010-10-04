@@ -1,3 +1,9 @@
+2010-10-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Adding myself to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-10-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
