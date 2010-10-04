@@ -1,5 +1,14 @@
 2010-10-04  Alejandro G. Castro  <alex@igalia.com>
 
+        Reviewed by Xan Lopez.
+
+        Crashed caused by missing OwnPtrCairo include, for more
+        information check the issue in the bug 46268.
+
+        * platform/graphics/cairo/CairoUtilities.cpp:
+
+2010-10-04  Alejandro G. Castro  <alex@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [cairo] Move some cairo functions to the CairoUtilities

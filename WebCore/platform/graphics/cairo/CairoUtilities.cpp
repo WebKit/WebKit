@@ -32,6 +32,7 @@
 #include "FloatPoint.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "OwnPtrCairo.h"
 #include "Path.h"
 #include "PlatformRefPtrCairo.h"
 #include <wtf/Vector.h>
