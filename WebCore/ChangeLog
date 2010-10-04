@@ -1,5 +1,14 @@
 2010-10-03  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, build fix for r68996.
+
+        * html/BaseDateAndTimeInputType.cpp: Includes <wtf/MathExtras.h> for isfinite().
+        * html/MonthInputType.cpp: ditto.
+        * html/NumberInputType.cpp: ditto.
+        * html/RangeInputType.cpp: ditto.
+
+2010-10-03  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Refactor HTMLInputElement: Move parseToDouble() and

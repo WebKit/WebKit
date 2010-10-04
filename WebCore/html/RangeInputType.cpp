@@ -32,6 +32,7 @@
 #include "RangeInputType.h"
 
 #include "HTMLParserIdioms.h"
+#include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {

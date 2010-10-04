@@ -32,6 +32,7 @@
 #include "MonthInputType.h"
 
 #include "DateComponents.h"
+#include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
