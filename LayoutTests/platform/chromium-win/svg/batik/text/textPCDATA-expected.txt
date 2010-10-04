@@ -21,9 +21,9 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 90x19
             chunk 1 (middle anchor) text run 1 at (-156.00,20.00) startOffset 0 endOffset 17 width 90.00: "Text first, then "
           RenderSVGInlineText {#cdata-section} at (90,0) size 157x19
-            chunk 1 (middle anchor) text run 2 at (-66.00,20.00) startOffset 0 endOffset 23 width 157.00: "CDATA section in <text>"
+            chunk 1 (middle anchor) text run 1 at (-66.00,20.00) startOffset 0 endOffset 23 width 157.00: "CDATA section in <text>"
           RenderSVGInlineText {#text} at (247,0) size 65x19
-            chunk 1 (middle anchor) text run 3 at (91.00,20.00) startOffset 0 endOffset 12 width 65.00: ", text again"
+            chunk 1 (middle anchor) text run 1 at (91.00,20.00) startOffset 0 endOffset 12 width 65.00: ", text again"
       RenderSVGContainer {g} at (0,225) size 450x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(225.00,240.00)}]
         RenderSVGText {text} at (-107,-15) size 214x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 214x19
@@ -32,13 +32,13 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 30x19
             chunk 1 (middle anchor) text run 1 at (-239.00,20.00) startOffset 0 endOffset 6 width 30.00: "text, "
           RenderSVGInlineText {#cdata-section} at (30,0) size 157x19
-            chunk 1 (middle anchor) text run 2 at (-209.00,20.00) startOffset 0 endOffset 23 width 157.00: "CDATA section in <text>"
+            chunk 1 (middle anchor) text run 1 at (-209.00,20.00) startOffset 0 endOffset 23 width 157.00: "CDATA section in <text>"
           RenderSVGInlineText {#text} at (187,0) size 8x19
-            chunk 1 (middle anchor) text run 3 at (-52.00,20.00) startOffset 0 endOffset 2 width 8.00: ", "
+            chunk 1 (middle anchor) text run 1 at (-52.00,20.00) startOffset 0 endOffset 2 width 8.00: ", "
           RenderSVGTSpan {tspan} at (0,0) size 218x19
             RenderSVGInlineText {#text} at (195,0) size 51x19
-              chunk 1 (middle anchor) text run 4 at (-44.00,20.00) startOffset 0 endOffset 8 width 51.00: "tspan w/"
+              chunk 1 (middle anchor) text run 1 at (-44.00,20.00) startOffset 0 endOffset 8 width 51.00: "tspan w/"
             RenderSVGInlineText {#cdata-section} at (246,0) size 167x19
-              chunk 1 (middle anchor) text run 5 at (7.00,20.00) startOffset 0 endOffset 24 width 167.00: "CDATA section in <tspan>"
+              chunk 1 (middle anchor) text run 1 at (7.00,20.00) startOffset 0 endOffset 24 width 167.00: "CDATA section in <tspan>"
           RenderSVGInlineText {#text} at (413,0) size 65x19
-            chunk 1 (middle anchor) text run 6 at (174.00,20.00) startOffset 0 endOffset 12 width 65.00: ", text again"
+            chunk 1 (middle anchor) text run 1 at (174.00,20.00) startOffset 0 endOffset 12 width 65.00: ", text again"

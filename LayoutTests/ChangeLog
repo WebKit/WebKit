@@ -2,6 +2,112 @@
 
         Unreviewed, test expectation update.
 
+        Update svg/batik results for Chromium.
+
+        * platform/chromium-linux/svg/batik/text/longTextOnPath-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textAnchor-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textAnchor2-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textAnchor2-expected.png:
+        * platform/chromium-linux/svg/batik/text/textAnchor2-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textAnchor3-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textDecoration-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textDecoration-expected.png:
+        * platform/chromium-linux/svg/batik/text/textDecoration-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textDecoration2-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textDecoration2-expected.png:
+        * platform/chromium-linux/svg/batik/text/textDecoration2-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-linux/svg/batik/text/textEffect-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textEffect2-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-linux/svg/batik/text/textEffect3-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textFeatures-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textGlyphOrientationHorizontal-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/chromium-linux/svg/batik/text/textGlyphOrientationHorizontal-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textLayout-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textLayout2-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textLayout2-expected.png:
+        * platform/chromium-linux/svg/batik/text/textLayout2-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textOnPath-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textOnPath-expected.png:
+        * platform/chromium-linux/svg/batik/text/textOnPath-expected.txt:
+        * platform/chromium-linux/svg/batik/text/textOnPath2-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textOnPath3-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textOnPathSpaces-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textPCDATA-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textPosition-expected.txt:
+        * platform/chromium-linux/svg/batik/text/textPosition2-expected.txt:
+        * platform/chromium-linux/svg/batik/text/textProperties-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/textProperties-expected.png:
+        * platform/chromium-linux/svg/batik/text/textProperties-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/textProperties2-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/verticalText-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-linux/svg/batik/text/verticalText-expected.txt: Added.
+        * platform/chromium-linux/svg/batik/text/verticalTextOnPath-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/chromium-linux/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/chromium-linux/svg/batik/text/xmlSpace-expected.checksum:
+        * platform/chromium-linux/svg/batik/text/xmlSpace-expected.png:
+        * platform/chromium-linux/svg/batik/text/xmlSpace-expected.txt: Added.
+        * platform/chromium-win/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/chromium-win/svg/batik/text/textAnchor-expected.txt:
+        * platform/chromium-win/svg/batik/text/textAnchor2-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textAnchor2-expected.png:
+        * platform/chromium-win/svg/batik/text/textAnchor2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textAnchor3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textDecoration-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textDecoration-expected.png:
+        * platform/chromium-win/svg/batik/text/textDecoration-expected.txt:
+        * platform/chromium-win/svg/batik/text/textDecoration2-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textDecoration2-expected.png:
+        * platform/chromium-win/svg/batik/text/textDecoration2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.png:
+        * platform/chromium-win/svg/batik/text/textEffect3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.txt:
+        * platform/chromium-win/svg/batik/text/textGlyphOrientationHorizontal-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/chromium-win/svg/batik/text/textGlyphOrientationHorizontal-expected.txt:
+        * platform/chromium-win/svg/batik/text/textLayout-expected.txt:
+        * platform/chromium-win/svg/batik/text/textLayout2-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textLayout2-expected.png:
+        * platform/chromium-win/svg/batik/text/textLayout2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPath-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textOnPath-expected.png:
+        * platform/chromium-win/svg/batik/text/textOnPath-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPath2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPath3-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/chromium-win/svg/batik/text/textPCDATA-expected.txt:
+        * platform/chromium-win/svg/batik/text/textPosition-expected.txt:
+        * platform/chromium-win/svg/batik/text/textPosition2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.checksum:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.png:
+        * platform/chromium-win/svg/batik/text/textProperties-expected.txt:
+        * platform/chromium-win/svg/batik/text/textProperties2-expected.txt:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.checksum:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.txt:
+        * platform/chromium-win/svg/batik/text/verticalTextOnPath-expected.checksum:
+        * platform/chromium-win/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/chromium-win/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/chromium-win/svg/batik/text/xmlSpace-expected.checksum:
+        * platform/chromium-win/svg/batik/text/xmlSpace-expected.png:
+        * platform/chromium-win/svg/batik/text/xmlSpace-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2010-10-04  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         * platform/chromium/test_expectations.txt:
 
 2010-10-03  Kent Tamura  <tkent@chromium.org>

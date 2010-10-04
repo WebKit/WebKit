@@ -56,43 +56,43 @@ layer at (0,0) size 450x500
             chunk 1 text run 1 at (50.00,300.00) startOffset 0 endOffset 12 width 101.00: "Decorations "
           RenderSVGTSpan {tspan} at (0,0) size 35x22
             RenderSVGInlineText {#text} at (101,0) size 35x22
-              chunk 1 text run 2 at (151.00,290.00) startOffset 0 endOffset 4 width 35.00: "with"
+              chunk 1 text run 1 at (151.00,290.00) startOffset 0 endOffset 4 width 35.00: "with"
           RenderSVGTSpan {tspan} at (0,0) size 46x22
             RenderSVGInlineText {#text} at (136,10) size 46x22
-              chunk 1 text run 3 at (186.00,300.00) startOffset 0 endOffset 6 width 46.00: " tspan"
+              chunk 1 text run 1 at (186.00,300.00) startOffset 0 endOffset 6 width 46.00: " tspan"
         RenderSVGText {text} at (50,323) size 213x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 132x22
             chunk 1 text run 1 at (50.00,340.00) startOffset 0 endOffset 17 width 132.00: "Transparent text "
           RenderSVGTSpan {tspan} at (0,0) size 35x22
             RenderSVGInlineText {#text} at (132,0) size 35x22
-              chunk 1 text run 2 at (182.00,340.00) startOffset 0 endOffset 4 width 35.00: "with"
+              chunk 1 text run 1 at (182.00,340.00) startOffset 0 endOffset 4 width 35.00: "with"
           RenderSVGInlineText {#text} at (167,0) size 46x22
-            chunk 1 text run 3 at (217.00,340.00) startOffset 0 endOffset 6 width 46.00: " tspan"
+            chunk 1 text run 1 at (217.00,340.00) startOffset 0 endOffset 6 width 46.00: " tspan"
         RenderSVGText {text} at (50,363) size 216x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 53x22
             chunk 1 text run 1 at (50.00,380.00) startOffset 0 endOffset 6 width 53.00: "Tspan "
           RenderSVGTSpan {tspan} at (0,0) size 74x22
             RenderSVGInlineText {#text} at (53,0) size 74x22
-              chunk 1 text run 2 at (103.00,380.00) startOffset 0 endOffset 8 width 74.00: "with own"
+              chunk 1 text run 1 at (103.00,380.00) startOffset 0 endOffset 8 width 74.00: "with own"
           RenderSVGInlineText {#text} at (127,0) size 89x22
-            chunk 1 text run 3 at (177.00,380.00) startOffset 0 endOffset 11 width 89.00: " decoration"
+            chunk 1 text run 1 at (177.00,380.00) startOffset 0 endOffset 11 width 89.00: " decoration"
         RenderSVGText {text} at (50,403) size 201x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 53x22
             chunk 1 text run 1 at (50.00,420.00) startOffset 0 endOffset 6 width 53.00: "Tspan "
           RenderSVGTSpan {tspan} at (0,0) size 59x22
             RenderSVGInlineText {#text} at (53,0) size 59x22
-              chunk 1 text run 2 at (103.00,420.00) startOffset 0 endOffset 7 width 59.00: "with no"
+              chunk 1 text run 1 at (103.00,420.00) startOffset 0 endOffset 7 width 59.00: "with no"
           RenderSVGInlineText {#text} at (112,0) size 89x22
-            chunk 1 text run 3 at (162.00,420.00) startOffset 0 endOffset 11 width 89.00: " decoration"
+            chunk 1 text run 1 at (162.00,420.00) startOffset 0 endOffset 11 width 89.00: " decoration"
         RenderSVGText {text} at (50,443) size 198x22 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 60x22
             chunk 1 text run 1 at (50.00,460.00) startOffset 0 endOffset 7 width 60.00: "Nested "
           RenderSVGTSpan {tspan} at (0,0) size 138x22
             RenderSVGInlineText {#text} at (60,0) size 46x22
-              chunk 1 text run 2 at (110.00,460.00) startOffset 0 endOffset 6 width 46.00: "tspan "
+              chunk 1 text run 1 at (110.00,460.00) startOffset 0 endOffset 6 width 46.00: "tspan "
             RenderSVGTSpan {tspan} at (0,0) size 45x22
               RenderSVGInlineText {#text} at (106,0) size 45x22
-                chunk 1 text run 3 at (156.00,460.00) startOffset 0 endOffset 5 width 45.00: "decor"
+                chunk 1 text run 1 at (156.00,460.00) startOffset 0 endOffset 5 width 45.00: "decor"
             RenderSVGInlineText {#text} at (151,0) size 47x22
-              chunk 1 text run 4 at (201.00,460.00) startOffset 0 endOffset 6 width 47.00: "ations"
+              chunk 1 text run 1 at (201.00,460.00) startOffset 0 endOffset 6 width 47.00: "ations"
     RenderSVGContainer {use} at (0,0) size 0x0
