@@ -1,3 +1,9 @@
+2010-10-03  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update for r68976.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-10-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Move chromium-win-xp-specific result to its proper place.

@@ -614,7 +614,6 @@ BUG8630 WIN LINUX : fast/overflow/hidden-scrollbar-resize.html = FAIL
 BUG8630 WIN LINUX RELEASE : fast/reflections/inline-crash.html = FAIL
 BUG8630 LINUX WIN DEBUG : fast/reflections/inline-crash.html = FAIL
 BUG8630 WIN LINUX : fast/text/font-initial.html = FAIL
-BUG8630 LINUX : svg/custom/use-detach.svg = FAIL PASS
 
 // Need a setAuthorAndUserStylesEnabled method in
 // layoutTestController. Now we have preference to enable/disable user
@@ -1367,10 +1366,10 @@ BUG23498 MAC : fonts/sans-serif.html = IMAGE
 BUG23498 MAC : fonts/serif.html = IMAGE
 BUG23498 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 // TODO(hclam): Expectation removed because of 68976.
-// BUG23498 MAC : svg/custom/altglyph.svg = IMAGE
+BUG23498 MAC : svg/custom/altglyph.svg = IMAGE
 BUG23498 MAC : svg/hixie/links/003-broken.xml = IMAGE
 // TODO(hclam): Expectation removed because of 68976.
-// BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
+BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug101674.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug10269-2.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug10296-1.html = IMAGE
@@ -1750,7 +1749,7 @@ BUG10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 
 // New failures from Merge 41078:41149
 // TODO(hclam): Expectation removed because of 68976.
-// BUG10430 LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = FAIL
+BUG10430 LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // Regression from merge 41268:41286
 // See above comment about this test on linux/win.
@@ -2205,7 +2204,7 @@ BUG29748 LINUX : fast/frames/onlyCommentInIFrame.html = IMAGE
 BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 // TODO(hclam): Expectation removed because of 68976.
-// BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
+BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
 // New tests courtesy of: http://trac.webkit.org/changeset/51936:
 BUG30048 : svg/css/composite-shadow-example.html = IMAGE
@@ -2325,7 +2324,7 @@ BUG35064 WIN : fast/forms/restore-selection-after-layout.html = TEXT PASS
 
 // WebKit roll 54482 to 54493.
 // TODO(hclam): Expectation removed because of 68976.
-// BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT TEXT
+BUG35242 WIN : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // WebKit roll 54493 to 54530: new tests.
 BUG35114 : fast/js/parser-syntax-check.html = TEXT
@@ -2479,7 +2478,7 @@ BUG39855 LINUX RELEASE : editing/selection/extend-selection.html = PASS TIMEOUT
 
 // Failing a few times, flak dashboard seems to agree.
 // TODO(hclam): Expectation removed because of 68976.
-// BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE PASS
+BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE
 
 // WebKit roll 58626:58719
 BUG43963 WIN : fast/forms/searchfield-heights.html = IMAGE
@@ -3183,6 +3182,7 @@ BUG10292 MAC : editing/selection/5354455-1.html = FAIL
 BUG_HCLAM MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 
 // SVG test failures introduced by 68976.
+// 68976 affected some old failing tests.  Search above for "68976".
 BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-08-t.svg = TEXT
 BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-09-t.svg = TEXT
 BUG_HCLAM : svg/W3C-SVG-1.1/animate-elem-10-t.svg = TEXT
@@ -3487,8 +3487,8 @@ BUG_HCLAM : svg/batik/text/verticalText.svg = IMAGE+TEXT
 BUG_HCLAM : svg/batik/text/verticalTextOnPath.svg = IMAGE+TEXT
 BUG_HCLAM : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
 BUG_HCLAM : svg/carto.net/selectionlist.svg = IMAGE+TEXT
-BUG_HCLAM : svg/filters/sourceAlpha.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/multichar-glyph.svg = IMAGE+TEXT
+BUG_HCLAM WIN LINUX : svg/filters/sourceAlpha.svg = IMAGE+TEXT
+BUG_HCLAM WIN LINUX : svg/text/multichar-glyph.svg = IMAGE+TEXT
 BUG_HCLAM : svg/text/select-textLength-spacing-squeeze-1.svg = IMAGE+TEXT
 BUG_HCLAM : svg/text/select-textLength-spacing-squeeze-2.svg = IMAGE+TEXT
 BUG_HCLAM : svg/text/select-textLength-spacing-squeeze-3.svg = IMAGE+TEXT
@@ -3513,17 +3513,36 @@ BUG_HCLAM : svg/text/select-x-list-with-tspans-1.svg = IMAGE+TEXT
 BUG_HCLAM : svg/text/select-x-list-with-tspans-2.svg = IMAGE+TEXT
 BUG_HCLAM : svg/text/select-x-list-with-tspans-3.svg = IMAGE+TEXT
 BUG_HCLAM : svg/text/select-x-list-with-tspans-4.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-align-02-b.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-align-04-b.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-align-05-b.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-align-06-b.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-deco-01-b.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-path-01-b.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-spacing-01-b.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-text-01-b.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-text-04-t.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-text-05-t.svg = IMAGE+TEXT CRASH
-BUG_HCLAM : svg/text/text-text-07-t.svg = IMAGE+TEXT
-BUG_HCLAM : svg/text/text-text-08-b.svg = IMAGE+TEXT
+BUG_HCLAM WIN LINUX : svg/text/text-align-02-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-align-02-b.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-align-04-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-align-04-b.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-align-05-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-align-05-b.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-align-06-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-align-06-b.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-deco-01-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-deco-01-b.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-path-01-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-path-01-b.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-spacing-01-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-spacing-01-b.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-text-01-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-text-01-b.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-text-04-t.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-text-04-t.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-text-05-t.svg = IMAGE+TEXT CRASH
+BUG_HCLAM WIN LINUX : svg/text/text-text-07-t.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-text-07-t.svg = IMAGE
+BUG_HCLAM WIN LINUX : svg/text/text-text-08-b.svg = IMAGE+TEXT
+BUG_HCLAM MAC : svg/text/text-text-08-b.svg = IMAGE
 BUG_HCLAM : svg/transforms/text-with-pattern-inside-transformed-html.xhtml = IMAGE+TEXT
 BUG_HCLAM : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE+TEXT
+BUG_HCLAM WIN LINUX : svg/custom/use-detach.svg = TEXT
+// As for the following 6 tests, Linux results were changed from IMAGE to IMAGE+TEXT by r68976.
+BUG_HCLAM WIN : svg/W3C-SVG-1.1/animate-elem-03-t.svg = TEXT
+BUG_HCLAM WIN : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = TEXT
+BUG_HCLAM WIN : svg/batik/text/textLength.svg = TEXT
+BUG_HCLAM WIN : svg/carto.net/button.svg = TEXT
+BUG_HCLAM WIN : svg/carto.net/colourpicker.svg = TEXT
+BUG_HCLAM WIN : svg/carto.net/combobox.svg = TEXT
