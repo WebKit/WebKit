@@ -29,6 +29,10 @@
 #include <WebCore/PageCache.h>
 #include <WebKitSystemInterface.h>
 #include <algorithm>
+#include <dispatch/dispatch.h>
+#include <mach/host_info.h>
+#include <mach/mach.h>
+#include <mach/mach_error.h>
 
 using namespace WebCore;
 using namespace std;

@@ -1,5 +1,11 @@
 2010-10-04  Sam Weinig  <sam@webkit.org>
 
+        Fix the Mac build.
+
+        * WebProcess/mac/WebProcessMac.mm:
+
+2010-10-04  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Add ability to set the CacheModel in Webkit2
