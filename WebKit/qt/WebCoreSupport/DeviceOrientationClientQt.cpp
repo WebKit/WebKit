@@ -20,6 +20,8 @@
 #include "config.h"
 #include "DeviceOrientationClientQt.h"
 
+#include "DeviceOrientationController.h"
+#include "DeviceOrientationProviderQt.h"
 #include "qwebpage.h"
 
 namespace WebCore {
@@ -27,7 +29,15 @@ namespace WebCore {
 DeviceOrientationClientQt::DeviceOrientationClientQt(QWebPage* page)
     : m_page(page)
     , m_controller(0)
+    , m_provider(new DeviceOrientationProviderQt())
 {
+    connect(m_provider, SIGNAL(deviceOrientationChanged(DeviceOrientation*)), SLOT(changeDeviceOrientation(DeviceOrientation*)));
+}
+
+DeviceOrientationClientQt::~DeviceOrientationClientQt()
+{
+    disconnect();
+    delete m_provider;
 }
 
 void DeviceOrientationClientQt::setController(DeviceOrientationController* controller)
@@ -37,22 +47,30 @@ void DeviceOrientationClientQt::setController(DeviceOrientationController* contr
 
 void DeviceOrientationClientQt::startUpdating()
 {
-    // call start method from a orientation provider.
+    m_provider->start();
 }
 
 void DeviceOrientationClientQt::stopUpdating()
 {
-    // call stop method from a orientation provider.
+    m_provider->stop();
 }
 
 DeviceOrientation* DeviceOrientationClientQt::lastOrientation() const
 {
-    return 0;
+    return m_provider->orientation();
 }
 
 void DeviceOrientationClientQt::deviceOrientationControllerDestroyed()
 {
     delete this;
+}
+
+void DeviceOrientationClientQt::changeDeviceOrientation(DeviceOrientation* orientation)
+{
+    if (!m_controller)
+        return;
+
+    m_controller->didChangeDeviceOrientation(orientation);
 }
 
 } // namespace WebCore

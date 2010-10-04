@@ -1,3 +1,32 @@
+2010-10-04  Diego Gonzalez  <diegohcg@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Hook up DeviceOrientation data for Qt support
+        https://bugs.webkit.org/show_bug.cgi?id=47052
+
+        Get DeviceOrientation necessary data via Qt mobility library
+        using a provider class.
+
+        * WebCoreSupport/DeviceOrientationClientQt.cpp:
+        (WebCore::DeviceOrientationClientQt::DeviceOrientationClientQt):
+        (WebCore::DeviceOrientationClientQt::~DeviceOrientationClientQt):
+        (WebCore::DeviceOrientationClientQt::startUpdating):
+        (WebCore::DeviceOrientationClientQt::stopUpdating):
+        (WebCore::DeviceOrientationClientQt::lastOrientation):
+        (WebCore::DeviceOrientationClientQt::changeDeviceOrientation):
+        * WebCoreSupport/DeviceOrientationClientQt.h:
+        * WebCoreSupport/DeviceOrientationProviderQt.cpp: Added.
+        (WebCore::DeviceOrientationProviderQt::DeviceOrientationProviderQt):
+        (WebCore::DeviceOrientationProviderQt::~DeviceOrientationProviderQt):
+        (WebCore::DeviceOrientationProviderQt::start):
+        (WebCore::DeviceOrientationProviderQt::stop):
+        (WebCore::DeviceOrientationProviderQt::filter):
+        * WebCoreSupport/DeviceOrientationProviderQt.h: Added.
+        (WebCore::DeviceOrientationProviderQt::isActive):
+        (WebCore::DeviceOrientationProviderQt::orientation):
+        (WebCore::DeviceOrientationProviderQt::hasAlpha):
+
 2010-09-28  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

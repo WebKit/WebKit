@@ -17,41 +17,42 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef DeviceOrientationClientQt_h
-#define DeviceOrientationClientQt_h
+#ifndef DeviceOrientationProviderQt_h
+#define DeviceOrientationProviderQt_h
 
 #include "DeviceOrientation.h"
-#include "DeviceOrientationClient.h"
+#include "RefPtr.h"
 
 #include <QObject>
+#include <QRotationFilter>
 
-class QWebPage;
+QTM_USE_NAMESPACE
 
 namespace WebCore {
 
-class DeviceOrientationProviderQt;
+class DeviceOrientationClientQt;
 
-class DeviceOrientationClientQt : public QObject, public DeviceOrientationClient {
+class DeviceOrientationProviderQt : public QObject, public QRotationFilter {
     Q_OBJECT
 public:
-    DeviceOrientationClientQt(QWebPage*);
-    virtual ~DeviceOrientationClientQt();
+    DeviceOrientationProviderQt();
+    ~DeviceOrientationProviderQt();
 
-    virtual void setController(DeviceOrientationController*);
-    virtual void startUpdating();
-    virtual void stopUpdating();
-    virtual DeviceOrientation* lastOrientation() const;
-    virtual void deviceOrientationControllerDestroyed();
+    bool filter(QRotationReading*);
+    void start();
+    void stop();
+    bool isActive() const { return m_rotation.isActive(); }
+    DeviceOrientation* orientation() const { return m_orientation.get(); }
+    bool hasAlpha() const { return m_rotation.property("hasZ").toBool(); }
 
-public Q_SLOTS:
-    void changeDeviceOrientation(DeviceOrientation*);
+Q_SIGNALS:
+    void deviceOrientationChanged(DeviceOrientation*);
 
 private:
-    QWebPage* m_page;
-    DeviceOrientationController* m_controller;
-    DeviceOrientationProviderQt* m_provider;
+    RefPtr<DeviceOrientation> m_orientation;
+    QRotationSensor m_rotation;
 };
 
-} // namespace WebCore
+}
 
-#endif // DeviceOrientationClientQt_h
+#endif // DeviceOrientationProviderQt_h

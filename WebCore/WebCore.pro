@@ -3271,11 +3271,16 @@ contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
     HEADERS += \
         ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.h \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.h \
+        ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.h \
         bindings/generic/RuntimeEnabledFeatures.h
     SOURCES += \
         ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.cpp \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.cpp \
+        ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.cpp \
         bindings/generic/RuntimeEnabledFeatures.cpp
+
+    CONFIG += mobility
+    MOBILITY += sensors
 }
 
 contains(DEFINES, ENABLE_SVG=1) {
