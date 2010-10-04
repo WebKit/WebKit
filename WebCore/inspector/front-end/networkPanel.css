@@ -378,6 +378,7 @@
     bottom: 0;
     left: 0;
     right: 0;
+    pointer-events: none;
 }
 
 .network-event-divider-padding {
@@ -462,4 +463,34 @@
 .data-grid.filter-all table.data tr.revealed.network-category-websockets, .data-grid.filter-websockets table.data tr.revealed.network-category-websockets,
 .data-grid.filter-all table.data tr.revealed.network-category-other, .data-grid.filter-other table.data tr.revealed.network-category-other {
     display: table-row;
+}
+
+/* Summary */
+
+.network-summary-bar {
+    background-color: rgb(101, 111, 130);
+    color: white;
+    height: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    padding-top: 1px;
+    padding-left: 10px;
+    z-index: 2000;
+    white-space: pre;
+}
+
+.network-summary-bar-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-top: 3px;
+}
+
+.data-grid td .network-summary-bar {
+    white-space: pre;
+}
+
+.network.panel .data-grid td.network-summary {
+    padding: 0;
 }

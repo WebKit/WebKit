@@ -2585,7 +2585,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     vertical-align: middle;
 }
 
-.scope-bar .divider {
+.scope-bar-divider {
     margin: 1px 9px 0 8px;
     background-color: rgba(0, 0, 0, 0.4);
     height: 16px;

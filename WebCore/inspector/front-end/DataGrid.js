@@ -481,6 +481,7 @@ WebInspector.DataGrid.prototype = {
             throw("removeChild: Node is not a child of this node.");
 
         child.deselect();
+        child._detach();
 
         this.children.remove(child, true);
 
@@ -541,17 +542,18 @@ WebInspector.DataGrid.prototype = {
         this.children = [];
     },
 
-    sortNodes: function(comparator, descending)
+    sortNodes: function(comparator, reverseMode)
     {
         function comparatorWrapper(a, b)
         {
+            if (a._dataGridNode._data.summaryRow)
+                return 1;
+            if (b._dataGridNode._data.summaryRow)
+                return -1;
+
             var aDataGirdNode = a._dataGridNode;
             var bDataGirdNode = b._dataGridNode;
-            if (!aDataGirdNode)
-                return 1; // Filler row.
-            if (!bDataGirdNode)
-                return -1; // Filler row.
-            return descending ? comparator(bDataGirdNode, aDataGirdNode) : comparator(aDataGirdNode, bDataGirdNode);
+            return reverseMode ? comparator(bDataGirdNode, aDataGirdNode) : comparator(aDataGirdNode, bDataGirdNode);
         }
 
         var tbody = this.dataTableBody;
@@ -559,15 +561,27 @@ WebInspector.DataGrid.prototype = {
         tbodyParent.removeChild(tbody);
 
         var childNodes = tbody.childNodes;
-        var sortedNodes = Array.prototype.slice.call(childNodes);
-        sortedNodes.sort(comparatorWrapper.bind(this));
+        var fillerRow = childNodes[childNodes.length - 1];
 
-        var sortedNodesLength = sortedNodes.length;
+        var sortedRows = Array.prototype.slice.call(childNodes, 0, childNodes.length - 1);
+        sortedRows.sort(comparatorWrapper.bind(this));
+        var sortedRowsLength = sortedRows.length;
+
         tbody.removeChildren();
-        for (var i = 0; i < sortedNodesLength; ++i) {
-            var node = sortedNodes[i];
-            tbody.appendChild(node);
+        var previousSiblingNode = null;
+        for (var i = 0; i < sortedRowsLength; ++i) {
+            var row = sortedRows[i];
+            var node = row._dataGridNode;
+            node.previousSibling = previousSiblingNode;
+            if (previousSiblingNode)
+                previousSiblingNode.nextSibling = node;
+            tbody.appendChild(row);
+            previousSiblingNode = node;
         }
+        if (previousSiblingNode)
+            previousSiblingNode.nextSibling = null;
+
+        tbody.appendChild(fillerRow);
         tbodyParent.appendChild(tbody);
     },
 
@@ -680,10 +694,8 @@ WebInspector.DataGrid.prototype = {
 
         var sortOrder = this.sortOrder;
 
-        if (this._sortColumnCell) {
-            this._sortColumnCell.removeStyleClass("sort-ascending");
-            this._sortColumnCell.removeStyleClass("sort-descending");
-        }
+        if (this._sortColumnCell)
+            this._sortColumnCell.removeMatchingStyleClasses("sort-\\w+");
 
         if (cell == this._sortColumnCell) {
             if (sortOrder === "ascending")
@@ -701,10 +713,8 @@ WebInspector.DataGrid.prototype = {
 
     markColumnAsSortedBy: function(columnIdentifier, sortOrder)
     {
-        if (this._sortColumnCell) {
-            this._sortColumnCell.removeStyleClass("sort-ascending");
-            this._sortColumnCell.removeStyleClass("sort-descending");
-        }
+        if (this._sortColumnCell)
+            this._sortColumnCell.removeMatchingStyleClasses("sort-\\w+");
         this._sortColumnCell = this._headerTableHeaders[columnIdentifier];
         this._sortColumnCell.addStyleClass("sort-" + sortOrder);
     },

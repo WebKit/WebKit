@@ -1,3 +1,47 @@
+2010-10-04  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add total bar to the network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=47081
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.createDividerElement):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype.removeChild):
+        (WebInspector.DataGrid.prototype.sortNodes):
+        (WebInspector.DataGrid.prototype._clickInHeaderCell):
+        (WebInspector.DataGrid.prototype.markColumnAsSortedBy):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype.resize):
+        (WebInspector.NetworkPanel.prototype._positionSummaryBar):
+        (WebInspector.NetworkPanel.prototype._createTimelineGrid):
+        (WebInspector.NetworkPanel.prototype._createSortingFunctions):
+        (WebInspector.NetworkPanel.prototype._sortItems):
+        (WebInspector.NetworkPanel.prototype._sortByTimeline):
+        (WebInspector.NetworkPanel.prototype._createFilterStatusBarItems):
+        (WebInspector.NetworkPanel.prototype._createSummaryBar):
+        (WebInspector.NetworkPanel.prototype._updateSummaryBar):
+        (WebInspector.NetworkPanel.prototype._updateFilter):
+        (WebInspector.NetworkPanel.prototype.show):
+        (WebInspector.NetworkPanel.prototype.refresh):
+        (WebInspector.NetworkPanel.prototype.reset):
+        (WebInspector.NetworkDataGridNode.SizeComparator):
+        (WebInspector.NetworkDataGridNode.ResourcePropertyComparator):
+        (WebInspector.NetworkTotalGridNode):
+        (WebInspector.NetworkTotalGridNode.prototype.createCells):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.createFilterPanel):
+        * inspector/front-end/inspector.css:
+        (.scope-bar-divider):
+        * inspector/front-end/networkPanel.css:
+        (.network-timeline-grid):
+        (.network-summary-bar):
+        (.network-summary-bar-bottom):
+        (.data-grid td .network-summary-bar):
+
 2010-09-28  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -64,7 +64,7 @@ WebInspector.ConsoleView = function(drawer)
 
     function createDividerElement() {
         var dividerElement = document.createElement("div");
-        dividerElement.addStyleClass("divider");
+        dividerElement.addStyleClass("scope-bar-divider");
         this.filterBarElement.appendChild(dividerElement);
     }
 

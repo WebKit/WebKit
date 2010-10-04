@@ -142,7 +142,7 @@ WebInspector.ResourcesPanel.prototype = {
 
         // Add a divider
         var dividerElement = document.createElement("div");
-        dividerElement.addStyleClass("divider");
+        dividerElement.addStyleClass("scope-bar-divider");
         this.filterBarElement.appendChild(dividerElement);
 
         for (var category in this.categories)
