@@ -77,6 +77,21 @@ createElement(' x y  x ');
 element.classList.remove('x');
 shouldBeEqualToString('element.className', 'y');
 
+
+debug('Ensure that we can handle empty class name correctly');
+element = document.createElement('span');
+element.classList.toggle('x');
+shouldBeEqualToString('element.className', 'x');
+element.classList.toggle('x');
+shouldBeEqualToString('element.className', '');
+
+element = document.createElement('span');
+shouldBeFalse('element.classList.contains(\'x\')');
+shouldBeNull('element.classList[1]');
+element.classList.remove('x');
+element.classList.add('x')
+
+
 debug('Testing add in presence of trailing white spaces.');
 
 createElement('x ');

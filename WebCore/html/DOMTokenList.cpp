@@ -72,7 +72,7 @@ void DOMTokenList::deref()
 
 unsigned DOMTokenList::length() const
 {
-    return classNames().size();
+    return m_element->hasClass() ? classNames().size() : 0;
 }
 
 const AtomicString DOMTokenList::item(unsigned index) const
@@ -91,7 +91,7 @@ bool DOMTokenList::contains(const AtomicString& token, ExceptionCode& ec) const
 
 bool DOMTokenList::containsInternal(const AtomicString& token) const
 {
-    return classNames().contains(token);
+    return m_element->hasClass() && classNames().contains(token);
 }
 
 void DOMTokenList::add(const AtomicString& token, ExceptionCode& ec)
@@ -199,6 +199,7 @@ void DOMTokenList::reset(const String& newClassName)
 
 const SpaceSplitString& DOMTokenList::classNames() const
 {
+    ASSERT(m_element->hasClass());
     if (!m_classNamesForQuirksMode.isNull())
         return m_classNamesForQuirksMode;
     return m_element->attributeMap()->classNames();

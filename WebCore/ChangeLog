@@ -1,3 +1,17 @@
+2010-10-04  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by James Robinson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47122
+        Crash in classList when class attribute is empty.
+
+        Tests: fast/dom/HTMLElement/class-list.html
+
+        * html/DOMTokenList.cpp:
+        (WebCore::DOMTokenList::length):
+        (WebCore::DOMTokenList::containsInternal):
+        (WebCore::DOMTokenList::classNames):
+
 2010-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

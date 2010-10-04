@@ -17,6 +17,11 @@ PASS element.className is ""
 PASS element.className is ""
 PASS element.className is " y y "
 PASS element.className is "y"
+Ensure that we can handle empty class name correctly
+PASS element.className is "x"
+PASS element.className is ""
+PASS element.classList.contains('x') is false
+PASS element.classList[1] is null
 Testing add in presence of trailing white spaces.
 PASS element.className is "x y"
 PASS element.className is "x	 y"

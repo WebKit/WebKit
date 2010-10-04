@@ -1,3 +1,14 @@
+2010-10-04  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by James Robinson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47122
+        Crash in classList when class attribute is empty.
+
+        * fast/dom/HTMLElement/class-list-expected.txt:
+        * fast/dom/HTMLElement/class-list-quirks-expected.txt:
+        * fast/dom/HTMLElement/script-tests/class-list.js:
+
 2010-10-04  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by James Robinson.
