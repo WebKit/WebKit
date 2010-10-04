@@ -98,7 +98,9 @@ DebuggerScript.setBreakpoint = function(execState, args)
         Debug.disableScriptBreakPoint(breakId);
 
     var locations = Debug.findBreakPointActualLocations(breakId);
-    var actualLineNumber = locations.length ? locations[0].line : args.lineNumber;
+    if (!locations.length)
+        return undefined;
+    var actualLineNumber = locations[0].line;
 
     var key = args.scriptId + ":" + actualLineNumber;
     if (key in DebuggerScript._breakpoints) {

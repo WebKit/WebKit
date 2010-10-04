@@ -1,3 +1,13 @@
+2010-10-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: do not show breakpoint in front-end if it was not set in v8
+        https://bugs.webkit.org/show_bug.cgi?id=46749
+
+        * bindings/v8/DebuggerScript.js:
+        ():
+
 2010-10-04  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
