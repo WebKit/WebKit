@@ -9,45 +9,45 @@ layer at (0,0) size 800x600
       RenderPath {rect} at (80,0) size 720x420 [stroke={[type=SOLID] [color=#000000] [stroke width=0.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L0.50,0.00 L0.50,0.50 L0.00,0.50 Z"]
       RenderSVGImage {image} at (480,20) size 320x400
     RenderSVGContainer {g} at (120,222) size 460x204 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
-      RenderSVGText {text} at (0,-9) size 230x102 contains 7 chunk(s)
+      RenderSVGText {text} at (0,-9) size 230x102 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 205x12
           RenderSVGInlineText {#text} at (0,0) size 205x12
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 41 width 205.00: "For this test case to be successful, both"
         RenderSVGInlineText {#text} at (205,0) size 5x12
-          chunk 1 text run 2 at (205.00,0.00) startOffset 0 endOffset 1 width 5.00: " "
+          chunk 1 text run 1 at (205.00,0.00) startOffset 0 endOffset 1 width 5.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 230x12
           RenderSVGInlineText {#text} at (0,15) size 230x12
-            chunk 2 text run 1 at (0.00,15.00) startOffset 0 endOffset 46 width 230.00: "square must include the same image. In Safari "
+            chunk 1 text run 1 at (0.00,15.00) startOffset 0 endOffset 46 width 230.00: "square must include the same image. In Safari "
         RenderSVGInlineText {#text} at (0,0) size 0x0
         RenderSVGTSpan {tspan} at (0,0) size 165x12
           RenderSVGInlineText {#text} at (0,30) size 55x12
-            chunk 3 text run 1 at (0.00,30.00) startOffset 0 endOffset 11 width 55.00: "Beta 3, an "
+            chunk 1 text run 1 at (0.00,30.00) startOffset 0 endOffset 11 width 55.00: "Beta 3, an "
           RenderSVGInlineText {#cdata-section} at (55,30) size 35x12
-            chunk 3 text run 2 at (55.00,30.00) startOffset 0 endOffset 7 width 35.00: "<image>"
+            chunk 1 text run 1 at (55.00,30.00) startOffset 0 endOffset 7 width 35.00: "<image>"
           RenderSVGInlineText {#text} at (90,30) size 75x12
-            chunk 3 text run 3 at (90.00,30.00) startOffset 0 endOffset 15 width 75.00: " tag with width"
+            chunk 1 text run 1 at (90.00,30.00) startOffset 0 endOffset 15 width 75.00: " tag with width"
         RenderSVGInlineText {#text} at (165,30) size 5x12
-          chunk 3 text run 4 at (165.00,30.00) startOffset 0 endOffset 1 width 5.00: " "
+          chunk 1 text run 1 at (165.00,30.00) startOffset 0 endOffset 1 width 5.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 225x12
           RenderSVGInlineText {#text} at (0,45) size 225x12
-            chunk 4 text run 1 at (0.00,45.00) startOffset 0 endOffset 45 width 225.00: "or height less than one fails to paint image."
+            chunk 1 text run 1 at (0.00,45.00) startOffset 0 endOffset 45 width 225.00: "or height less than one fails to paint image."
         RenderSVGInlineText {#text} at (225,45) size 5x12
-          chunk 4 text run 2 at (225.00,45.00) startOffset 0 endOffset 1 width 5.00: " "
+          chunk 1 text run 1 at (225.00,45.00) startOffset 0 endOffset 1 width 5.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 160x12
           RenderSVGInlineText {#text} at (0,60) size 20x12
-            chunk 5 text run 1 at (0.00,60.00) startOffset 0 endOffset 4 width 20.00: "The "
+            chunk 1 text run 1 at (0.00,60.00) startOffset 0 endOffset 4 width 20.00: "The "
           RenderSVGInlineText {#cdata-section} at (20,60) size 35x12
-            chunk 5 text run 2 at (20.00,60.00) startOffset 0 endOffset 7 width 35.00: "<image>"
+            chunk 1 text run 1 at (20.00,60.00) startOffset 0 endOffset 7 width 35.00: "<image>"
           RenderSVGInlineText {#text} at (55,60) size 105x12
-            chunk 5 text run 3 at (55.00,60.00) startOffset 0 endOffset 21 width 105.00: " tag on the right has"
+            chunk 1 text run 1 at (55.00,60.00) startOffset 0 endOffset 21 width 105.00: " tag on the right has"
         RenderSVGInlineText {#text} at (160,60) size 5x12
-          chunk 5 text run 4 at (160.00,60.00) startOffset 0 endOffset 1 width 5.00: " "
+          chunk 1 text run 1 at (160.00,60.00) startOffset 0 endOffset 1 width 5.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 130x12
           RenderSVGInlineText {#text} at (0,75) size 130x12
-            chunk 6 text run 1 at (0.00,75.00) startOffset 0 endOffset 26 width 130.00: "a width and height of 0.5."
+            chunk 1 text run 1 at (0.00,75.00) startOffset 0 endOffset 26 width 130.00: "a width and height of 0.5."
         RenderSVGInlineText {#text} at (130,75) size 5x12
-          chunk 6 text run 2 at (130.00,75.00) startOffset 0 endOffset 1 width 5.00: " "
+          chunk 1 text run 1 at (130.00,75.00) startOffset 0 endOffset 1 width 5.00: " "
         RenderSVGTSpan {tspan} at (0,0) size 45x12
           RenderSVGInlineText {#text} at (0,90) size 45x12
-            chunk 7 text run 1 at (0.00,90.00) startOffset 0 endOffset 9 width 45.00: "Bug 14241"
+            chunk 1 text run 1 at (0.00,90.00) startOffset 0 endOffset 9 width 45.00: "Bug 14241"
         RenderSVGInlineText {#text} at (0,0) size 0x0

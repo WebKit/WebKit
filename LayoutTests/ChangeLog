@@ -1,3 +1,120 @@
+2010-10-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        [Chromium] Rebaseline svg/custom tests due to http://trac.webkit.org/changeset/68976.
+        https://bugs.webkit.org/show_bug.cgi?id=47061
+
+        * platform/chromium-linux/svg/custom/alignment-baseline-modes-expected.checksum:
+        * platform/chromium-linux/svg/custom/alignment-baseline-modes-expected.png:
+        * platform/chromium-linux/svg/custom/alignment-baseline-modes-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/altglyph-expected.checksum:
+        * platform/chromium-linux/svg/custom/altglyph-expected.png:
+        * platform/chromium-linux/svg/custom/altglyph-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/broken-internal-references-expected.txt:
+        * platform/chromium-linux/svg/custom/container-opacity-clip-viewBox-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/dominant-baseline-modes-expected.checksum:
+        * platform/chromium-linux/svg/custom/dominant-baseline-modes-expected.png:
+        * platform/chromium-linux/svg/custom/dominant-baseline-modes-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/glyph-transformation-with-hkern-expected.checksum:
+        * platform/chromium-linux/svg/custom/glyph-transformation-with-hkern-expected.png:
+        * platform/chromium-linux/svg/custom/image-small-width-height-expected.checksum:
+        * platform/chromium-linux/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-linux/svg/custom/image-small-width-height-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/invalid-fill-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/invalid-fill-hex-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/js-late-clipPath-and-object-creation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/js-late-clipPath-creation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/js-late-gradient-and-object-creation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/js-late-gradient-creation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/js-late-pattern-and-object-creation-expected.txt:
+        * platform/chromium-linux/svg/custom/js-late-pattern-creation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/pattern-rotate-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/pattern-with-transformation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/pointer-events-text-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/stroke-width-large-expected.txt:
+        * platform/chromium-linux/svg/custom/struct-use-09-b-expected.txt:
+        * platform/chromium-linux/svg/custom/style-attribute-font-size-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-clip-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-dom-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-filter-expected.checksum:
+        * platform/chromium-linux/svg/custom/text-filter-expected.png:
+        * platform/chromium-linux/svg/custom/text-filter-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-letter-spacing-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-linking-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-repaint-including-stroke-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-rotation-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/text-rotation-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-rotation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-whitespace-handling-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-x-dx-lists-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-x-dy-lists-expected.checksum: Added.
+        * platform/chromium-linux/svg/custom/text-x-dy-lists-expected.png: Added.
+        * platform/chromium-linux/svg/custom/text-x-dy-lists-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/text-x-override-in-tspan-child-expected.checksum:
+        * platform/chromium-linux/svg/custom/text-x-override-in-tspan-child-expected.png:
+        * platform/chromium-linux/svg/custom/text-x-override-in-tspan-child-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/use-on-text-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/use-referencing-nonexisting-symbol-expected.txt: Added.
+        * platform/chromium-mac/svg/custom/altglyph-expected.checksum: Added.
+        * platform/chromium-mac/svg/custom/altglyph-expected.png: Added.
+        * platform/chromium-win/svg/custom/alignment-baseline-modes-expected.checksum:
+        * platform/chromium-win/svg/custom/alignment-baseline-modes-expected.png:
+        * platform/chromium-win/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/chromium-win/svg/custom/altglyph-expected.checksum:
+        * platform/chromium-win/svg/custom/altglyph-expected.png:
+        * platform/chromium-win/svg/custom/altglyph-expected.txt:
+        * platform/chromium-win/svg/custom/broken-internal-references-expected.txt:
+        * platform/chromium-win/svg/custom/container-opacity-clip-viewBox-expected.txt:
+        * platform/chromium-win/svg/custom/dominant-baseline-modes-expected.checksum:
+        * platform/chromium-win/svg/custom/dominant-baseline-modes-expected.png:
+        * platform/chromium-win/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/chromium-win/svg/custom/glyph-transformation-with-hkern-expected.checksum:
+        * platform/chromium-win/svg/custom/glyph-transformation-with-hkern-expected.png:
+        * platform/chromium-win/svg/custom/image-small-width-height-expected.checksum:
+        * platform/chromium-win/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-win/svg/custom/image-small-width-height-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-fill-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-fill-hex-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-clipPath-and-object-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-clipPath-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-gradient-and-object-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-gradient-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.txt: Added.
+        * platform/chromium-win/svg/custom/js-late-pattern-creation-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-rotate-expected.txt:
+        * platform/chromium-win/svg/custom/pattern-with-transformation-expected.txt:
+        * platform/chromium-win/svg/custom/pointer-events-text-expected.txt:
+        * platform/chromium-win/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/chromium-win/svg/custom/stroke-width-large-expected.txt:
+        * platform/chromium-win/svg/custom/struct-use-09-b-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/struct-use-09-b-expected.png: Added.
+        * platform/chromium-win/svg/custom/struct-use-09-b-expected.txt: Added.
+        * platform/chromium-win/svg/custom/style-attribute-font-size-expected.txt:
+        * platform/chromium-win/svg/custom/text-clip-expected.txt:
+        * platform/chromium-win/svg/custom/text-dom-01-f-expected.txt:
+        * platform/chromium-win/svg/custom/text-filter-expected.checksum:
+        * platform/chromium-win/svg/custom/text-filter-expected.png:
+        * platform/chromium-win/svg/custom/text-filter-expected.txt:
+        * platform/chromium-win/svg/custom/text-letter-spacing-expected.txt:
+        * platform/chromium-win/svg/custom/text-linking-expected.txt:
+        * platform/chromium-win/svg/custom/text-repaint-including-stroke-expected.txt:
+        * platform/chromium-win/svg/custom/text-rotation-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/text-rotation-expected.png: Added.
+        * platform/chromium-win/svg/custom/text-rotation-expected.txt: Added.
+        * platform/chromium-win/svg/custom/text-whitespace-handling-expected.txt:
+        * platform/chromium-win/svg/custom/text-x-dx-lists-expected.txt:
+        * platform/chromium-win/svg/custom/text-x-dy-lists-expected.checksum: Added.
+        * platform/chromium-win/svg/custom/text-x-dy-lists-expected.png: Added.
+        * platform/chromium-win/svg/custom/text-x-dy-lists-expected.txt: Added.
+        * platform/chromium-win/svg/custom/text-x-override-in-tspan-child-expected.checksum:
+        * platform/chromium-win/svg/custom/text-x-override-in-tspan-child-expected.png:
+        * platform/chromium-win/svg/custom/text-x-override-in-tspan-child-expected.txt:
+        * platform/chromium-win/svg/custom/use-on-text-expected.txt:
+        * platform/chromium-win/svg/custom/use-referencing-nonexisting-symbol-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-10-02  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.

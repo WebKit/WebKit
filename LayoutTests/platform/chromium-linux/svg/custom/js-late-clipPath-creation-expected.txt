@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (16,36) size 318x174
+    RenderSVGContainer {g} at (16,36) size 318x174 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+      RenderSVGText {text} at (10,15) size 522x69 contains 1 chunk(s)
+        [clipPath="dynClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 200x200
+        RenderSVGInlineText {#text} at (0,0) size 522x69
+          [clipPath="dynClip"] RenderSVGResourceClipper {clipPath} at (0,0) size 200x200
+          chunk 1 text run 1 at (10.00,70.00) startOffset 0 endOffset 19 width 522.00: "Clipped. INVISIBLE."
+      RenderSVGResourceClipper {clipPath} [id="dynClip"] [clipPathUnits=userSpaceOnUse]
+        RenderPath {path} at (0,0) size 334x500 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00 Z"]

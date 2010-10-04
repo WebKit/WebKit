@@ -1,16 +1,16 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (0,75) size 130x62
+  RenderSVGRoot {svg} at (0,75) size 130x63
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceClipper {clipPath} [id="myclip"] [clipPathUnits=userSpaceOnUse]
         RenderPath {path} at (200,200) size 100x200 [fill={[type=SOLID] [color=#000000]}] [data="M200.00,200.00 L300.00,200.00 L300.00,400.00 L200.00,400.00 Z"]
-    RenderSVGContainer {g} at (0,75) size 130x62
-      RenderSVGText {text} at (0,75) size 130x62 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 130x62
+    RenderSVGContainer {g} at (0,75) size 130x63
+      RenderSVGText {text} at (0,75) size 130x63 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 130x63
           chunk 1 text run 1 at (0.00,125.00) startOffset 0 endOffset 4 width 130.00: "PASS"
-      RenderSVGText {text} at (0,75) size 641x62 contains 1 chunk(s)
+      RenderSVGText {text} at (0,75) size 641x63 contains 1 chunk(s)
         [clipPath="myclip"] RenderSVGResourceClipper {clipPath} at (200,200) size 100x200
-        RenderSVGInlineText {#text} at (0,0) size 641x62
+        RenderSVGInlineText {#text} at (0,0) size 641x63
           [clipPath="myclip"] RenderSVGResourceClipper {clipPath} at (200,200) size 100x200
           chunk 1 text run 1 at (0.00,125.00) startOffset 0 endOffset 28 width 641.00: "FAIL (should be clipped out)"

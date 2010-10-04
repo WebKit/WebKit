@@ -8,9 +8,9 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,0) size 32x22
-          chunk 1 text run 3 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,14) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,28) size 100x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
       RenderSVGText {text} at (10,-2) size 100x22 contains 1 chunk(s)
@@ -18,9 +18,9 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,0) size 32x22
-          chunk 1 text run 3 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,44) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,58) size 100x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,60.00)}]
       RenderSVGText {text} at (10,-2) size 100x22 contains 1 chunk(s)
@@ -28,9 +28,9 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,0) size 32x22
-          chunk 1 text run 3 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,74) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,88) size 100x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
       RenderSVGText {text} at (10,-2) size 100x22 contains 1 chunk(s)
@@ -38,9 +38,9 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,0) size 32x22
-          chunk 1 text run 3 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,104) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,118) size 100x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,120.00)}]
       RenderSVGText {text} at (10,-2) size 100x27 contains 1 chunk(s)
@@ -48,9 +48,9 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,5) size 32x22
-          chunk 1 text run 3 at (78.00,20.00) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,20.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,134) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,148) size 100x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
       RenderSVGText {text} at (10,-2) size 100x22 contains 1 chunk(s)
@@ -58,9 +58,9 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,0) size 32x22
-          chunk 1 text run 3 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,164) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,178) size 100x36 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
       RenderSVGText {text} at (10,-2) size 100x36 contains 1 chunk(s)
@@ -68,29 +68,29 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,28.60) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,13) size 32x23
-          chunk 1 text run 3 at (78.00,28.60) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,28.60) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,194) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
-    RenderSVGContainer {g} at (10,208) size 100x31 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
-      RenderSVGText {text} at (10,-2) size 100x31 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,8) size 40x23
-          chunk 1 text run 1 at (10.00,23.50) startOffset 0 endOffset 5 width 40.00: "This "
+    RenderSVGContainer {g} at (10,208) size 100x30 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,210.00)}]
+      RenderSVGText {text} at (10,-2) size 100x30 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,8) size 40x22
+          chunk 1 text run 1 at (10.00,23.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
-        RenderSVGInlineText {#text} at (68,8) size 32x23
-          chunk 1 text run 3 at (78.00,23.50) startOffset 0 endOffset 5 width 32.00: " test"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+        RenderSVGInlineText {#text} at (68,8) size 32x22
+          chunk 1 text run 1 at (78.00,23.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,224) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
-    RenderSVGContainer {g} at (10,238) size 100x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
-      RenderSVGText {text} at (10,-2) size 100x22 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 40x22
-          chunk 1 text run 1 at (10.00,15.00) startOffset 0 endOffset 5 width 40.00: "This "
+    RenderSVGContainer {g} at (10,238) size 100x28 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,240.00)}]
+      RenderSVGText {text} at (10,-2) size 100x28 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,6) size 40x22
+          chunk 1 text run 1 at (10.00,21.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
-        RenderSVGInlineText {#text} at (68,0) size 32x22
-          chunk 1 text run 3 at (78.00,15.00) startOffset 0 endOffset 5 width 32.00: " test"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+        RenderSVGInlineText {#text} at (68,6) size 32x22
+          chunk 1 text run 1 at (78.00,21.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,254) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,268) size 100x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,270.00)}]
       RenderSVGText {text} at (10,-2) size 100x27 contains 1 chunk(s)
@@ -98,9 +98,9 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,19.50) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,4) size 32x23
-          chunk 1 text run 3 at (78.00,19.50) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,19.50) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,284) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,298) size 100x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
       RenderSVGText {text} at (10,-2) size 100x27 contains 1 chunk(s)
@@ -108,9 +108,9 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,5) size 32x22
-          chunk 1 text run 3 at (78.00,20.00) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,20.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,314) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]
     RenderSVGContainer {g} at (10,328) size 100x39 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,330.00)}]
       RenderSVGText {text} at (10,-2) size 100x39 contains 1 chunk(s)
@@ -118,7 +118,7 @@ layer at (0,0) size 400x400
           chunk 1 text run 1 at (10.00,32.00) startOffset 0 endOffset 5 width 40.00: "This "
         RenderSVGTSpan {tspan} at (0,0) size 28x22
           RenderSVGInlineText {#text} at (40,0) size 28x22
-            chunk 1 text run 2 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
+            chunk 1 text run 1 at (50.00,15.00) startOffset 0 endOffset 4 width 28.00: "is a"
         RenderSVGInlineText {#text} at (68,17) size 32x22
-          chunk 1 text run 3 at (78.00,32.00) startOffset 0 endOffset 5 width 32.00: " test"
+          chunk 1 text run 1 at (78.00,32.00) startOffset 0 endOffset 5 width 32.00: " test"
       RenderPath {line} at (10,344) size 100x2 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,15.00 L110.00,15.00"]

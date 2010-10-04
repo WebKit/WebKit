@@ -4,6 +4,6 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (88,50) size 538x504
     RenderPath {path} at (316,209) size 150x133 [stroke={[type=SOLID] [color=#FF0000] [stroke width=256.00] [line join=ROUND]}] [data="M28600.00,19000.00 L41800.00,19000.00 L41800.00,30600.00 L28600.00,30600.00 Z"]
     RenderPath {path} at (156,50) size 470x452 [stroke={[type=SOLID] [color=#000000] [stroke width=15000.00] [line join=ROUND]}] [data="M21600.00,12000.00 L48800.00,12000.00 L48800.00,37600.00 L21600.00,37600.00 Z"]
-    RenderSVGText {text} at (8000,48040) size 16044x1772 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 16044x1772
+    RenderSVGText {text} at (8000,48040) size 16044x1806 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 16044x1806
         chunk 1 text run 1 at (8000.00,49500.00) startOffset 0 endOffset 25 width 16044.00: "No red should be visible."

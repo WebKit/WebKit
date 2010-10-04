@@ -18,7 +18,6 @@ layer at (0,0) size 800x600
     RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
       RenderSVGTextPath {textPath} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0
-          chunk 1 text run 1 at (340282346638528860000000000000000000000.00,340282346638528860000000000000000000000.00) startOffset 0 endOffset 18 width 322.00: "Shoud not be shown"
       RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGText {text}
       RenderSVGInline {tref} at (0,0) size 0x0

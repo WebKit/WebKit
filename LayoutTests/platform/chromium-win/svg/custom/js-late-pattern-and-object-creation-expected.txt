@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,13) size 679x366
+    RenderSVGContainer {g} at (0,13) size 679x366
+      RenderSVGResourcePattern {pattern} [id="fillPattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+        RenderPath {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
+        RenderPath {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
+      RenderSVGResourcePattern {pattern} [id="strokePattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+        RenderPath {rect} at (8,8) size 17x17 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
+        RenderPath {rect} at (16,16) size 18x18 [fill={[type=SOLID] [color=#0000FF]}] [data="M10.00,10.00 L20.00,10.00 L20.00,20.00 L10.00,20.00 Z"]
+      RenderSVGText {text} at (-150,8) size 373x78 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 373x78
+          chunk 1 text run 1 at (-150.00,70.00) startOffset 0 endOffset 15 width 373.00: "Pattern on fill"
+      RenderSVGText {text} at (-150,78) size 458x78 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 458x78
+          chunk 1 text run 1 at (-150.00,140.00) startOffset 0 endOffset 17 width 458.00: "Pattern on stroke"
+      RenderSVGText {text} at (-150,148) size 556x78 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 556x78
+          chunk 1 text run 1 at (-150.00,210.00) startOffset 0 endOffset 22 width 556.00: "Pattern on fill/stroke"

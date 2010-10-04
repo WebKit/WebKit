@@ -20,8 +20,8 @@ layer at (0,0) size 800x600
                     RenderPath {rect} at (306,206) size 188x188 [stroke={[type=SOLID] [color=#FF0000]}] [data="M-55.00,-55.00 L55.00,-55.00 L55.00,55.00 L-55.00,55.00 Z"]
                 RenderPath {rect} at (303,203) size 194x194 [stroke={[type=SOLID] [color=#FF0000]}] [data="M-57.50,-57.50 L57.50,-57.50 L57.50,57.50 L-57.50,57.50 Z"]
             RenderPath {rect} at (298,198) size 204x204 [stroke={[type=SOLID] [color=#FF0000]}] [data="M-60.00,-60.00 L60.00,-60.00 L60.00,60.00 L-60.00,60.00 Z"]
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.1 $"
     RenderPath {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
     RenderSVGContainer {g} at (0,0) size 800x40

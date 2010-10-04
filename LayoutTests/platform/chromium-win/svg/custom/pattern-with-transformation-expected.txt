@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
         RenderPath {rect} at (5,5) size 5x5 [fill={[type=SOLID] [color=#FFFF00]}] [data="M5.00,5.00 L10.00,5.00 L10.00,10.00 L5.00,10.00 Z"]
     RenderSVGContainer {g} at (9,9) size 122x102
       RenderPath {rect} at (9,9) size 122x102 [stroke={[type=PATTERN] [id="pat"]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M10.00,10.00 L130.00,10.00 L130.00,110.00 L10.00,110.00 Z"]
-      RenderSVGText {text} at (15,24) size 87x57 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 87x57
+      RenderSVGText {text} at (15,24) size 87x58 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 87x58
           chunk 1 text run 1 at (15.00,70.00) startOffset 0 endOffset 4 width 87.00: "Test"

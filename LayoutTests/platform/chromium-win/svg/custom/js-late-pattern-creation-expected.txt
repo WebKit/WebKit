@@ -1,10 +1,10 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (33,20) size 622x194
-    RenderSVGContainer {g} at (33,20) size 622x194 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
-      RenderSVGText {text} at (20,8) size 373x77 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 373x77
+  RenderSVGRoot {svg} at (33,20) size 622x195
+    RenderSVGContainer {g} at (33,20) size 622x195 [transform={m=((1.00,0.00)(0.00,1.50)) t=(0.00,0.00)}]
+      RenderSVGText {text} at (20,8) size 373x78 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 373x78
           chunk 1 text run 1 at (20.00,70.00) startOffset 0 endOffset 15 width 373.00: "Pattern on fill"
       RenderSVGResourcePattern {pattern} [id="dynPattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (8,11) size 17x28 [fill={[type=SOLID] [color=#FF0000]}] [data="M5.00,5.00 L15.00,5.00 L15.00,15.00 L5.00,15.00 Z"]
