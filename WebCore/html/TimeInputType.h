@@ -31,17 +31,18 @@
 #ifndef TimeInputType_h
 #define TimeInputType_h
 
-#include "TextFieldInputType.h"
+#include "BaseDateAndTimeInputType.h"
 
 namespace WebCore {
 
-class TimeInputType : public TextFieldInputType {
+class TimeInputType : public BaseDateAndTimeInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    TimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
+    TimeInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const;
 };
 
 } // namespace WebCore

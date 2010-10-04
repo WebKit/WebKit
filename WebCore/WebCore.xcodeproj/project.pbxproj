@@ -5468,6 +5468,8 @@
 		F55B3DDE1251F12D003EF269 /* URLInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3DAA1251F12D003EF269 /* URLInputType.h */; };
 		F55B3DDF1251F12D003EF269 /* WeekInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F55B3DAB1251F12D003EF269 /* WeekInputType.cpp */; };
 		F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3DAC1251F12D003EF269 /* WeekInputType.h */; };
+		F59C95FF1255B23F000623C0 /* BaseDateAndTimeInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */; };
+		F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */; };
 		F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */; };
 		F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */; };
 		F5C041E30FFCA96D00839D4A /* DOMHTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041DE0FFCA96D00839D4A /* DOMHTMLDataListElement.h */; };
@@ -11466,6 +11468,8 @@
 		F587866202DE3B1101EA4122 /* SSLKeyGenerator.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = SSLKeyGenerator.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587868402DE3B8601EA4122 /* Cursor.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Cursor.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseDateAndTimeInputType.cpp; sourceTree = "<group>"; };
+		F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseDateAndTimeInputType.h; sourceTree = "<group>"; };
 		F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataListElement.cpp; sourceTree = "<group>"; };
 		F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataListElement.h; sourceTree = "<group>"; };
 		F5C041D90FFCA7CE00839D4A /* HTMLDataListElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataListElement.idl; sourceTree = "<group>"; };
@@ -14412,6 +14416,8 @@
 				97C1F5511228558800EDE616 /* parser */,
 				B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */,
 				B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */,
+				F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */,
+				F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */,
 				F55B3D791251F12D003EF269 /* BaseTextInputType.cpp */,
 				F55B3D7A1251F12D003EF269 /* BaseTextInputType.h */,
 				F55B3D7B1251F12D003EF269 /* ButtonInputType.cpp */,
@@ -18216,6 +18222,7 @@
 				BCA8CA6011E4E6D100812FB7 /* BackForwardListImpl.h in Headers */,
 				BC124EE80C2641CD009E2349 /* BarInfo.h in Headers */,
 				B2C3DA220D006C1D00EF6F26 /* Base64.h in Headers */,
+				F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */,
 				F55B3DAE1251F12D003EF269 /* BaseTextInputType.h in Headers */,
 				BC9462D8107A7B4C00857193 /* BeforeLoadEvent.h in Headers */,
 				51721FBB11D2790700638B42 /* BeforeProcessEvent.h in Headers */,
@@ -21317,6 +21324,7 @@
 				BCA8CA5F11E4E6D100812FB7 /* BackForwardListImpl.cpp in Sources */,
 				BC124EE70C2641CD009E2349 /* BarInfo.cpp in Sources */,
 				B2C3DA210D006C1D00EF6F26 /* Base64.cpp in Sources */,
+				F59C95FF1255B23F000623C0 /* BaseDateAndTimeInputType.cpp in Sources */,
 				F55B3DAD1251F12D003EF269 /* BaseTextInputType.cpp in Sources */,
 				5172204B11D2960500638B42 /* BeforeProcessEvent.cpp in Sources */,
 				AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp in Sources */,

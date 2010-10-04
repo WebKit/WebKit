@@ -31,6 +31,7 @@
 #include "config.h"
 #include "DateTimeLocalInputType.h"
 
+#include "DateComponents.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -43,6 +44,13 @@ PassOwnPtr<InputType> DateTimeLocalInputType::create(HTMLInputElement* element)
 const AtomicString& DateTimeLocalInputType::formControlType() const
 {
     return InputTypeNames::datetimelocal();
+}
+
+bool DateTimeLocalInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
+{
+    ASSERT(out);
+    unsigned end;
+    return out->parseDateTimeLocal(characters, length, 0, end) && end == length;
 }
 
 } // namespace WebCore

@@ -122,6 +122,18 @@ bool InputType::patternMismatch(const String&) const
     return false;
 }
 
+double InputType::parseToDouble(const String&, double defaultValue) const
+{
+    return defaultValue;
+}
+
+bool InputType::parseToDateComponents(const String&, DateComponents*) const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+
 namespace InputTypeNames {
 
 // The type names must be lowercased because they will be the return values of

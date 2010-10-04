@@ -1513,6 +1513,8 @@
             'history/PageCache.h',
             'html/AsyncImageResizer.cpp',
             'html/AsyncImageResizer.h',
+            'html/BaseDateAndTimeInputType.cpp',
+            'html/BaseDateAndTimeInputType.h',
             'html/BaseTextInputType.cpp',
             'html/BaseTextInputType.h',
             'html/ButtonInputType.cpp',

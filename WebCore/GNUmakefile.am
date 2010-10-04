@@ -1427,6 +1427,8 @@ webcore_sources += \
 	WebCore/history/PageCache.h \
 	WebCore/html/AsyncImageResizer.cpp \
 	WebCore/html/AsyncImageResizer.h \
+	WebCore/html/BaseDateAndTimeInputType.cpp \
+	WebCore/html/BaseDateAndTimeInputType.h \
 	WebCore/html/BaseTextInputType.cpp \
 	WebCore/html/BaseTextInputType.h \
 	WebCore/html/ButtonInputType.cpp \

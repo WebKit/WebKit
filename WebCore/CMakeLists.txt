@@ -944,6 +944,7 @@ SET(WebCore_SOURCES
     history/PageCache.cpp
 
     html/AsyncImageResizer.cpp
+    html/BaseDateAndTimeInputType.cpp
     html/BaseTextInputType.cpp
     html/ButtonInputType.cpp
     html/CheckboxInputType.cpp

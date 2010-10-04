@@ -330,16 +330,6 @@ private:
     // Helper for applyStepForNumberOrRange().
     double stepBase() const;
 
-    // Parses the specified string as the DeprecatedInputType, and returns true if it is successfully parsed.
-    // An instance pointed by the DateComponents* parameter will have parsed values and be
-    // modified even if the parsing fails.  The DateComponents* parameter may be 0.
-    static bool parseToDateComponents(DeprecatedInputType, const String&, DateComponents*);
-
-    // Parses the specified string for the current type, and return
-    // the double value for the parsing result if the parsing
-    // succeeds; Returns defaultValue otherwise. This function can
-    // return NaN or Infinity only if defaultValue is NaN or Infinity.
-    double parseToDouble(const String&, double defaultValue) const;
     // Create a string representation of the specified double value for the
     // current input type. If NaN or Infinity is specified, this returns an
     // emtpy string. This should not be called for types without valueAsNumber.

@@ -283,7 +283,7 @@ bool HTMLInputElement::typeMismatch(const String& value) const
     case MONTH:
     case TIME:
     case WEEK:
-        return !parseToDateComponents(deprecatedInputType(), value, 0);
+        return !m_inputType->parseToDateComponents(value, 0);
     case BUTTON:
     case CHECKBOX:
     case FILE:
@@ -379,11 +379,11 @@ bool HTMLInputElement::rangeUnderflow(const String& value) const
     case NUMBER:
     case TIME:
     case WEEK: {
-        double doubleValue = parseToDouble(value, nan);
+        double doubleValue = m_inputType->parseToDouble(value, nan);
         return isfinite(doubleValue) && doubleValue < minimum();
     }
     case RANGE: // Guaranteed by sanitization.
-        ASSERT(parseToDouble(value, nan) >= minimum());
+        ASSERT(m_inputType->parseToDouble(value, nan) >= minimum());
     case BUTTON:
     case CHECKBOX:
     case COLOR:
@@ -416,11 +416,11 @@ bool HTMLInputElement::rangeOverflow(const String& value) const
     case NUMBER:
     case TIME:
     case WEEK: {
-        double doubleValue = parseToDouble(value, nan);
+        double doubleValue = m_inputType->parseToDouble(value, nan);
         return isfinite(doubleValue) && doubleValue > maximum();
     }
     case RANGE: // Guaranteed by sanitization.
-        ASSERT(parseToDouble(value, nan) <= maximum());
+        ASSERT(m_inputType->parseToDouble(value, nan) <= maximum());
     case BUTTON:
     case CHECKBOX:
     case COLOR:
@@ -446,20 +446,20 @@ double HTMLInputElement::minimum() const
 {
     switch (deprecatedInputType()) {
     case DATE:
-        return parseToDouble(getAttribute(minAttr), DateComponents::minimumDate());
+        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumDate());
     case DATETIME:
     case DATETIMELOCAL:
-        return parseToDouble(getAttribute(minAttr), DateComponents::minimumDateTime());
+        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumDateTime());
     case MONTH:
-        return parseToDouble(getAttribute(minAttr), DateComponents::minimumMonth());
+        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumMonth());
     case NUMBER:
-        return parseToDouble(getAttribute(minAttr), numberDefaultMinimum);
+        return m_inputType->parseToDouble(getAttribute(minAttr), numberDefaultMinimum);
     case RANGE:
-        return parseToDouble(getAttribute(minAttr), rangeDefaultMinimum);
+        return m_inputType->parseToDouble(getAttribute(minAttr), rangeDefaultMinimum);
     case TIME:
-        return parseToDouble(getAttribute(minAttr), DateComponents::minimumTime());
+        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumTime());
     case WEEK:
-        return parseToDouble(getAttribute(minAttr), DateComponents::minimumWeek());
+        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumWeek());
     case BUTTON:
     case CHECKBOX:
     case COLOR:
@@ -486,16 +486,16 @@ double HTMLInputElement::maximum() const
 {
     switch (deprecatedInputType()) {
     case DATE:
-        return parseToDouble(getAttribute(maxAttr), DateComponents::maximumDate());
+        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumDate());
     case DATETIME:
     case DATETIMELOCAL:
-        return parseToDouble(getAttribute(maxAttr), DateComponents::maximumDateTime());
+        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumDateTime());
     case MONTH:
-        return parseToDouble(getAttribute(maxAttr), DateComponents::maximumMonth());
+        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumMonth());
     case NUMBER:
-        return parseToDouble(getAttribute(maxAttr), numberDefaultMaximum);
+        return m_inputType->parseToDouble(getAttribute(maxAttr), numberDefaultMaximum);
     case RANGE: {
-        double max = parseToDouble(getAttribute(maxAttr), rangeDefaultMaximum);
+        double max = m_inputType->parseToDouble(getAttribute(maxAttr), rangeDefaultMaximum);
         // A remedy for the inconsistent min/max values for RANGE.
         // Sets the maximum to the default or the minimum value.
         double min = minimum();
@@ -504,9 +504,9 @@ double HTMLInputElement::maximum() const
         return max;
     }
     case TIME:
-        return parseToDouble(getAttribute(maxAttr), DateComponents::maximumTime());
+        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumTime());
     case WEEK:
-        return parseToDouble(getAttribute(maxAttr), DateComponents::maximumWeek());
+        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumWeek());
     case BUTTON:
     case CHECKBOX:
     case COLOR:
@@ -540,9 +540,9 @@ double HTMLInputElement::stepBase() const
     case MONTH:
     case NUMBER:
     case TIME:
-        return parseToDouble(getAttribute(minAttr), defaultStepBase);
+        return m_inputType->parseToDouble(getAttribute(minAttr), defaultStepBase);
     case WEEK:
-        return parseToDouble(getAttribute(minAttr), weekDefaultStepBase);
+        return m_inputType->parseToDouble(getAttribute(minAttr), weekDefaultStepBase);
     case BUTTON:
     case CHECKBOX:
     case COLOR:
@@ -600,7 +600,7 @@ bool HTMLInputElement::stepMismatch(const String& value) const
     case TIME:
     case WEEK: {
         const double nan = numeric_limits<double>::quiet_NaN();
-        double doubleValue = parseToDouble(value, nan);
+        double doubleValue = m_inputType->parseToDouble(value, nan);
         doubleValue = fabs(doubleValue - stepBase());
         if (!isfinite(doubleValue))
             return false;
@@ -723,7 +723,7 @@ void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
         return;
     }
     const double nan = numeric_limits<double>::quiet_NaN();
-    double current = parseToDouble(value(), nan);
+    double current = m_inputType->parseToDouble(value(), nan);
     if (!isfinite(current)) {
         ec = INVALID_STATE_ERR;
         return;
@@ -1643,60 +1643,6 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     InputElement::notifyFormStateChanged(this);
 }
 
-double HTMLInputElement::parseToDouble(const String& src, double defaultValue) const
-{
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case TIME:
-    case WEEK: {
-        DateComponents date;
-        if (!parseToDateComponents(deprecatedInputType(), src, &date))
-            return defaultValue;
-        double msec = date.millisecondsSinceEpoch();
-        ASSERT(isfinite(msec));
-        return msec;
-    }
-    case MONTH: {
-        DateComponents date;
-        if (!parseToDateComponents(deprecatedInputType(), src, &date))
-            return defaultValue;
-        double months = date.monthsSinceEpoch();
-        ASSERT(isfinite(months));
-        return months;
-    }
-    case NUMBER:
-    case RANGE: {
-        double numberValue;
-        if (!parseToDoubleForNumberType(src, &numberValue))
-            return defaultValue;
-        ASSERT(isfinite(numberValue));
-        return numberValue;
-    }
-
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        return defaultValue;
-    }
-    ASSERT_NOT_REACHED();
-    return defaultValue;
-}
-
 double HTMLInputElement::valueAsDate() const
 {
     switch (deprecatedInputType()) {
@@ -1704,10 +1650,10 @@ double HTMLInputElement::valueAsDate() const
     case DATETIME:
     case TIME:
     case WEEK:
-        return parseToDouble(value(), DateComponents::invalidMilliseconds());
+        return m_inputType->parseToDouble(value(), DateComponents::invalidMilliseconds());
     case MONTH: {
         DateComponents date;
-        if (!parseToDateComponents(deprecatedInputType(), value(), &date))
+        if (!m_inputType->parseToDateComponents(value(), &date))
             return DateComponents::invalidMilliseconds();
         double msec = date.millisecondsSinceEpoch();
         ASSERT(isfinite(msec));
@@ -1794,7 +1740,7 @@ double HTMLInputElement::valueAsNumber() const
     case RANGE:
     case TIME:
     case WEEK:
-        return parseToDouble(value(), nan);
+        return m_inputType->parseToDouble(value(), nan);
 
     case BUTTON:
     case CHECKBOX:
@@ -2492,7 +2438,7 @@ void HTMLInputElement::handleKeyEventForRange(KeyboardEvent* event)
         double max = maximum();
         // FIXME: Is 1/100 reasonable?
         double step = (max - min) / 100;
-        double current = parseToDouble(value(), numeric_limits<double>::quiet_NaN());
+        double current = m_inputType->parseToDouble(value(), numeric_limits<double>::quiet_NaN());
         ASSERT(isfinite(current));
         double newValue;
         if (key == "Up" || key == "Right") {
@@ -2791,36 +2737,6 @@ bool HTMLInputElement::recalcWillValidate() const
     return false;
 }
 
-bool HTMLInputElement::parseToDateComponents(DeprecatedInputType type, const String& formString, DateComponents* out)
-{
-    if (formString.isEmpty())
-        return false;
-    DateComponents ignoredResult;
-    if (!out)
-        out = &ignoredResult;
-    const UChar* characters = formString.characters();
-    unsigned length = formString.length();
-    unsigned end;
-
-    switch (type) {
-    case DATE:
-        return out->parseDate(characters, length, 0, end) && end == length;
-    case DATETIME:
-        return out->parseDateTime(characters, length, 0, end) && end == length;
-    case DATETIMELOCAL:
-        return out->parseDateTimeLocal(characters, length, 0, end) && end == length;
-    case MONTH:
-        return out->parseMonth(characters, length, 0, end) && end == length;
-    case WEEK:
-        return out->parseWeek(characters, length, 0, end) && end == length;
-    case TIME:
-        return out->parseTime(characters, length, 0, end) && end == length;
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-}
-
 #if ENABLE(DATALIST)
 
 HTMLElement* HTMLInputElement::list() const
@@ -2912,7 +2828,7 @@ void HTMLInputElement::stepUpFromRenderer(int n)
 
     const double nan = numeric_limits<double>::quiet_NaN();
     String currentStringValue = value();
-    double current = parseToDouble(currentStringValue, nan);
+    double current = m_inputType->parseToDouble(currentStringValue, nan);
     if (!isfinite(current) || (n > 0 && current < minimum()) || (n < 0 && current > maximum()))
         setValue(serialize(n > 0 ? minimum() : maximum()));
     else {

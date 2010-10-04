@@ -36,6 +36,7 @@
 
 namespace WebCore {
 
+class DateComponents;
 class HTMLInputElement;
 
 class InputType : public Noncopyable {
@@ -49,6 +50,17 @@ public:
     virtual const AtomicString& formControlType() const = 0;
 
     virtual bool patternMismatch(const String&) const;
+
+    // Parses the specified string for the type, and return
+    // the double value for the parsing result if the parsing
+    // succeeds; Returns defaultValue otherwise. This function can
+    // return NaN or Infinity only if defaultValue is NaN or Infinity.
+    virtual double parseToDouble(const String&, double defaultValue) const;
+    // Parses the specified string for this InputType, and returns true if it
+    // is successfully parsed. An instance pointed by the DateComponents*
+    // parameter will have parsed values and be modified even if the parsing
+    // fails. The DateComponents* parameter may be 0.
+    virtual bool parseToDateComponents(const String&, DateComponents*) const;
 
 protected:
     InputType(HTMLInputElement* element) : m_element(element) { }

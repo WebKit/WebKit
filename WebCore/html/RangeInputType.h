@@ -42,6 +42,7 @@ public:
 private:
     RangeInputType(HTMLInputElement* element) : InputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual double parseToDouble(const String&, double) const;
 };
 
 } // namespace WebCore

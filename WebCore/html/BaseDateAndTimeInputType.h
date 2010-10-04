@@ -28,31 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "RangeInputType.h"
+#ifndef BaseDateAndTimeInputType_h
+#define BaseDateAndTimeInputType_h
 
-#include "HTMLParserIdioms.h"
-#include <wtf/PassOwnPtr.h>
+#include "TextFieldInputType.h"
+#include <wtf/unicode/Unicode.h>
 
 namespace WebCore {
 
-PassOwnPtr<InputType> RangeInputType::create(HTMLInputElement* element)
-{
-    return adoptPtr(new RangeInputType(element));
-}
-
-const AtomicString& RangeInputType::formControlType() const
-{
-    return InputTypeNames::range();
-}
-
-double RangeInputType::parseToDouble(const String& src, double defaultValue) const
-{
-    double numberValue;
-    if (!parseToDoubleForNumberType(src, &numberValue))
-        return defaultValue;
-    ASSERT(isfinite(numberValue));
-    return numberValue;
-}
+// A super class of date, datetime, datetime-local, month, time, and week types.
+class BaseDateAndTimeInputType : public TextFieldInputType {
+protected:
+    BaseDateAndTimeInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
+    virtual bool parseToDateComponents(const String&, DateComponents*) const;
+    // A helper for parseToDateComponents().
+    virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
+private:
+    virtual double parseToDouble(const String&, double) const;
+};
 
 } // namespace WebCore
+
+#endif // BaseDateAndTimeInputType_h

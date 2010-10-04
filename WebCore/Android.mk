@@ -261,6 +261,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	history/android/HistoryItemAndroid.cpp \
 	\
 	html/AsyncImageResizer.cpp \
+	html/BaseDateAndTimeInputType.cpp \
 	html/BaseTextInputType.cpp \
 	html/ButtonInputType.cpp \
 	html/CheckboxInputType.cpp \

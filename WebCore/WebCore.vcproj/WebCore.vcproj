@@ -37411,6 +37411,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\BaseDateAndTimeInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\BaseDateAndTimeInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\BaseTextInputType.cpp"
 				>
 			</File>

@@ -836,6 +836,7 @@ SOURCES += \
     history/qt/HistoryItemQt.cpp \
     history/PageCache.cpp \
     html/AsyncImageResizer.cpp \
+    html/BaseDateAndTimeInputType.cpp \
     html/BaseTextInputType.cpp \
     html/ButtonInputType.cpp \
     html/CheckboxInputType.cpp \

@@ -42,6 +42,7 @@ public:
 private:
     NumberInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual double parseToDouble(const String&, double) const;
 };
 
 } // namespace WebCore

@@ -1,3 +1,78 @@
+2010-10-03  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Refactor HTMLInputElement: Move parseToDouble() and
+        parseToDateComponents() to InputType.
+        https://bugs.webkit.org/show_bug.cgi?id=46965
+
+        Introduce BaseDateAndTimeInputType, which is a super class of
+        date, datetime, datetime-local, month, time, and week types.
+
+        No new tests. Just a refactoring.
+
+        * Android.mk: Add BaseDateAndTimeInputType.
+        * CMakeLists.txt: ditto.
+        * GNUmakefile.am: ditto.
+        * WebCore.gypi: ditto.
+        * WebCore.pro: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCore.xcodeproj/project.pbxproj: ditto.
+        * html/BaseDateAndTimeInputType.cpp: Added.
+        (WebCore::BaseDateAndTimeInputType::parseToDouble):
+        (WebCore::BaseDateAndTimeInputType::parseToDateComponents):
+        * html/BaseDateAndTimeInputType.h: Added.
+        (WebCore::BaseDateAndTimeInputType::BaseDateAndTimeInputType):
+        * html/DateInputType.cpp:
+        (WebCore::DateInputType::parseToDateComponentsInternal):
+        * html/DateInputType.h:
+        (WebCore::DateInputType::DateInputType):
+        * html/DateTimeInputType.cpp:
+        (WebCore::DateTimeInputType::parseToDateComponentsInternal):
+        * html/DateTimeInputType.h:
+        (WebCore::DateTimeInputType::DateTimeInputType):
+        * html/DateTimeLocalInputType.cpp:
+        (WebCore::DateTimeLocalInputType::parseToDateComponentsInternal):
+        * html/DateTimeLocalInputType.h:
+        (WebCore::DateTimeLocalInputType::DateTimeLocalInputType):
+        * html/HTMLInputElement.cpp: Replace parseToD* calls with m_inputType->parseToD*.
+        (WebCore::HTMLInputElement::typeMismatch):
+        (WebCore::HTMLInputElement::rangeUnderflow):
+        (WebCore::HTMLInputElement::rangeOverflow):
+        (WebCore::HTMLInputElement::minimum):
+        (WebCore::HTMLInputElement::maximum):
+        (WebCore::HTMLInputElement::stepBase):
+        (WebCore::HTMLInputElement::stepMismatch):
+        (WebCore::HTMLInputElement::applyStep):
+        (WebCore::HTMLInputElement::valueAsDate):
+        (WebCore::HTMLInputElement::valueAsNumber):
+        (WebCore::HTMLInputElement::handleKeyEventForRange):
+        (WebCore::HTMLInputElement::stepUpFromRenderer):
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::parseToDouble):
+        (WebCore::InputType::parseToDateComponents):
+        * html/InputType.h:
+        * html/MonthInputType.cpp:
+        (WebCore::MonthInputType::parseToDouble):
+        (WebCore::MonthInputType::parseToDateComponentsInternal):
+        * html/MonthInputType.h:
+        (WebCore::MonthInputType::MonthInputType):
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::parseToDouble):
+        * html/NumberInputType.h:
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::parseToDouble):
+        * html/RangeInputType.h:
+        * html/TimeInputType.cpp:
+        (WebCore::TimeInputType::parseToDateComponentsInternal):
+        * html/TimeInputType.h:
+        (WebCore::TimeInputType::TimeInputType):
+        * html/WeekInputType.cpp:
+        (WebCore::WeekInputType::parseToDateComponentsInternal):
+        * html/WeekInputType.h:
+        (WebCore::WeekInputType::WeekInputType):
+
 2010-10-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Holger Freyther.

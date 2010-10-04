@@ -29,30 +29,32 @@
  */
 
 #include "config.h"
-#include "RangeInputType.h"
+#include "BaseDateAndTimeInputType.h"
 
-#include "HTMLParserIdioms.h"
+#include "DateComponents.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-PassOwnPtr<InputType> RangeInputType::create(HTMLInputElement* element)
+double BaseDateAndTimeInputType::parseToDouble(const String& src, double defaultValue) const
 {
-    return adoptPtr(new RangeInputType(element));
-}
-
-const AtomicString& RangeInputType::formControlType() const
-{
-    return InputTypeNames::range();
-}
-
-double RangeInputType::parseToDouble(const String& src, double defaultValue) const
-{
-    double numberValue;
-    if (!parseToDoubleForNumberType(src, &numberValue))
+    DateComponents date;
+    if (!parseToDateComponents(src, &date))
         return defaultValue;
-    ASSERT(isfinite(numberValue));
-    return numberValue;
+    double msec = date.millisecondsSinceEpoch();
+    ASSERT(isfinite(msec));
+    return msec;
+}
+
+bool BaseDateAndTimeInputType::parseToDateComponents(const String& source, DateComponents* out) const
+{
+    if (source.isEmpty())
+        return false;
+    DateComponents ignoredResult;
+    if (!out)
+        out = &ignoredResult;
+    return parseToDateComponentsInternal(source.characters(), source.length(), out);
 }
 
 } // namespace WebCore

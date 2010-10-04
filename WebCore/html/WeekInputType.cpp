@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WeekInputType.h"
 
+#include "DateComponents.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -43,6 +44,13 @@ PassOwnPtr<InputType> WeekInputType::create(HTMLInputElement* element)
 const AtomicString& WeekInputType::formControlType() const
 {
     return InputTypeNames::week();
+}
+
+bool WeekInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const
+{
+    ASSERT(out);
+    unsigned end;
+    return out->parseWeek(characters, length, 0, end) && end == length;
 }
 
 } // namespace WebCore
