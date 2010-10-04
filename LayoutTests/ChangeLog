@@ -1,5 +1,12 @@
 2010-10-04  Adam Roben  <aroben@apple.com>
 
+        Skip a flaky SVG test on Windows
+
+        * platform/win/Skipped: Added
+        svg/dom/SVGScriptElement/script-load-and-error-events.svg
+
+2010-10-04  Adam Roben  <aroben@apple.com>
+
         Skip
         http/tests/xmlhttprequest/xmlhttprequest-sync-vs-async-assertion-failure.html
         on Windows

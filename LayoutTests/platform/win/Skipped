@@ -321,6 +321,9 @@ fast/js/sputnik/Conformance/11_Expressions/11.7_Bitwise_Shift_Operators/11.7.3_T
 # Timing out http://webkit.org/b/46977
 inspector/debugger-pause-on-breakpoint.html
 
+# Sometimes fails http://webkit.org/b/46998
+svg/dom/SVGScriptElement/script-load-and-error-events.svg
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
