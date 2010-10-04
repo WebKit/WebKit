@@ -44,8 +44,16 @@ function setVersionSuccess()
     window.trans = evalAndLog("trans = event.result");
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = completeCallback;
+    window.completeEventFired = false;
 
     deleteAllObjectStores(db, finishedDeleting);
+}
+
+function completeCallback()
+{
+    verifyCompleteEvent(event);
+    window.completeEventFired = true;
 }
 
 function finishedDeleting()
@@ -68,12 +76,21 @@ function createSuccess()
 function abortCallback()
 {
     verifyAbortEvent(event);
-    done();
+    checkForCompleteEvent();
 }
 
-test();
+function checkForCompleteEvent()
+{
+    if (completeEventFired) {
+        testPassed("oncomplete event had fired");
+        done();
+    } else
+        setTimeout(checkForCompleteEvent, 1);
+}
 
 var successfullyParsed = true;
+
+test();
 
 </script>
 </body>

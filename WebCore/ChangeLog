@@ -1,3 +1,33 @@
+2010-10-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Implement IndexedDB's oncomplete and ontimeout.
+        https://bugs.webkit.org/show_bug.cgi?id=47106
+
+        Add ontimeout and oncomplete to IDBTransaction and plumb
+        them.  Test this behavior in the existing IDBTransaction-basics
+        test.
+
+        * WebCore.gypi:
+        * storage/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::mode):
+        (WebCore::IDBTransaction::objectStore):
+        (WebCore::IDBTransaction::abort):
+        (WebCore::IDBTransaction::onAbort):
+        (WebCore::IDBTransaction::onComplete):
+        (WebCore::IDBTransaction::onTimeout):
+        (WebCore::IDBTransaction::stop):
+        (WebCore::IDBTransaction::onAbortTimerFired):
+        (WebCore::IDBTransaction::onCompleteTimerFired):
+        (WebCore::IDBTransaction::onTimeoutTimerFired):
+        * storage/IDBTransaction.h:
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        * storage/IDBTransactionCallbacks.h:
+
 2010-10-04  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Darin Adler.

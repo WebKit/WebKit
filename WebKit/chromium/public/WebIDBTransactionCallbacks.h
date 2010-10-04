@@ -33,12 +33,16 @@ class WebIDBTransactionCallbacks {
 public:
     virtual ~WebIDBTransactionCallbacks() { }
 
-    virtual void onAbort() { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual int id() const
-    { 
+    // FIXME: Remove.
+    virtual int id()
+    {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
+
+    virtual void onAbort() { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onComplete() { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void onTimeout() { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 
 } // namespace WebKit

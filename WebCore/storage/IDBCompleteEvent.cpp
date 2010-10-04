@@ -26,27 +26,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionCallbacks_h
-#define IDBTransactionCallbacks_h
+#include "config.h"
+#include "IDBCompleteEvent.h"
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "SerializedScriptValue.h"
-#include <wtf/RefCounted.h>
+#include "EventNames.h"
+#include "IDBAny.h"
 
 namespace WebCore {
 
-class IDBTransactionCallbacks : public RefCounted<IDBTransactionCallbacks> {
-public:
-    virtual ~IDBTransactionCallbacks() { }
+PassRefPtr<IDBCompleteEvent> IDBCompleteEvent::create()
+{
+    return adoptRef(new IDBCompleteEvent());
+}
 
-    virtual void onAbort() = 0;
-    virtual void onComplete() = 0;
-    virtual void onTimeout() = 0;
-};
+IDBCompleteEvent::IDBCompleteEvent()
+    : IDBEvent(eventNames().completeEvent, 0) // FIXME: set the source to the transaction
+{
+}
+
+IDBCompleteEvent::~IDBCompleteEvent()
+{
+}
 
 } // namespace WebCore
 
 #endif
-
-#endif // IDBTransactionCallbacks_h

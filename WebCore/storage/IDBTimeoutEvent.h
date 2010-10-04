@@ -26,27 +26,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBTransactionCallbacks_h
-#define IDBTransactionCallbacks_h
+#ifndef IDBTimeoutEvent_h
+#define IDBTimeoutEvent_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "SerializedScriptValue.h"
-#include <wtf/RefCounted.h>
+#include "IDBEvent.h"
+#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class IDBTransactionCallbacks : public RefCounted<IDBTransactionCallbacks> {
+class IDBTimeoutEvent : public IDBEvent {
 public:
-    virtual ~IDBTransactionCallbacks() { }
+    static PassRefPtr<IDBTimeoutEvent> create();
+    // FIXME: Need to allow creation of these events from JS.
+    virtual ~IDBTimeoutEvent();
 
-    virtual void onAbort() = 0;
-    virtual void onComplete() = 0;
-    virtual void onTimeout() = 0;
+    virtual bool isIDBTimeoutEvent() const { return true; }
+
+private:
+    IDBTimeoutEvent();
 };
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(INDEXED_DATABASE)
 
-#endif // IDBTransactionCallbacks_h
+#endif // IDBTimeoutEvent_h

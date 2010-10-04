@@ -66,6 +66,9 @@ store = transaction.objectStore('storeName')
 PASS store.name is "storeName"
 Abort event fired:
 PASS event.type is "abort"
+Complete event fired:
+PASS event.type is "complete"
+PASS oncomplete event had fired
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -42,7 +42,7 @@ PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(DOMStrin
 IDBTransactionBackendImpl::IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl* database)
     : m_objectStoreNames(objectStores)
     , m_mode(mode)
-    , m_timeout(timeout)
+    , m_timeout(timeout) // FIXME: Implement timeout.
     , m_id(id)
     , m_state(Unused)
     , m_database(database)
@@ -129,6 +129,7 @@ void IDBTransactionBackendImpl::commit()
 
     m_state = Finished;
     m_transaction->commit();
+    m_callbacks->onComplete();
     m_database->transactionCoordinator()->didFinishTransaction(this);
 }
 

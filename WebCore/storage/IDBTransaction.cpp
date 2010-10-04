@@ -31,11 +31,13 @@
 #include "Event.h"
 #include "EventException.h"
 #include "IDBAbortEvent.h"
+#include "IDBCompleteEvent.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBObjectStore.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
+#include "IDBTimeoutEvent.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -44,8 +46,10 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
     : ActiveDOMObject(context, this)
     , m_backend(backend)
     , m_database(db)
-    , m_stopped(false)
-    , m_timer(this, &IDBTransaction::timerFired)
+    , m_mode(m_backend->mode())
+    , m_onAbortTimer(this, &IDBTransaction::onAbortTimerFired)
+    , m_onCompleteTimer(this, &IDBTransaction::onCompleteTimerFired)
+    , m_onTimeoutTimer(this, &IDBTransaction::onTimeoutTimerFired)
 {
     IDBPendingTransactionMonitor::addPendingTransaction(m_backend.get());
 }
@@ -56,7 +60,7 @@ IDBTransaction::~IDBTransaction()
 
 unsigned short IDBTransaction::mode() const
 {
-    return m_backend->mode();
+    return m_mode;
 }
 
 IDBDatabase* IDBTransaction::db()
@@ -66,6 +70,10 @@ IDBDatabase* IDBTransaction::db()
 
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, const ExceptionCode&)
 {
+    if (!m_backend) {
+        // FIXME: throw IDBDatabaseException::NOT_ALLOWED_ERR.
+        return 0;
+    }
     RefPtr<IDBObjectStoreBackendInterface> objectStoreBackend = m_backend->objectStore(name);
     if (!objectStoreBackend) {
         // FIXME: throw IDBDatabaseException::NOT_ALLOWED_ERR.
@@ -77,7 +85,8 @@ PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, const
 
 void IDBTransaction::abort()
 {
-    m_backend->abort();
+    if (m_backend)
+        m_backend->abort();
 }
 
 ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
@@ -87,18 +96,32 @@ ScriptExecutionContext* IDBTransaction::scriptExecutionContext() const
 
 void IDBTransaction::onAbort()
 {
-    if (!m_stopped) {
-        m_selfRef = this;
-        m_stopped = true;
-        m_timer.startOneShot(0);
-    }
-    // Release the backend as it holds a (circular) reference back to us.
-    m_backend.clear();
+    ASSERT(!m_onAbortTimer.isActive());
+    ASSERT(!m_onCompleteTimer.isActive());
+    ASSERT(!m_onTimeoutTimer.isActive());
+    m_selfRef = this;
+    m_onAbortTimer.startOneShot(0);
+    m_backend.clear(); // Release the backend as it holds a (circular) reference back to us.
 }
 
-int IDBTransaction::id() const
+void IDBTransaction::onComplete()
 {
-    return m_backend->id();
+    ASSERT(!m_onAbortTimer.isActive());
+    ASSERT(!m_onCompleteTimer.isActive());
+    ASSERT(!m_onTimeoutTimer.isActive());
+    m_selfRef = this;
+    m_onCompleteTimer.startOneShot(0);
+    m_backend.clear(); // Release the backend as it holds a (circular) reference back to us.
+}
+
+void IDBTransaction::onTimeout()
+{
+    ASSERT(!m_onAbortTimer.isActive());
+    ASSERT(!m_onCompleteTimer.isActive());
+    ASSERT(!m_onTimeoutTimer.isActive());
+    m_selfRef = this;
+    m_onTimeoutTimer.startOneShot(0);
+    m_backend.clear(); // Release the backend as it holds a (circular) reference back to us.
 }
 
 bool IDBTransaction::canSuspend() const
@@ -110,11 +133,8 @@ bool IDBTransaction::canSuspend() const
 
 void IDBTransaction::stop()
 {
-    if (!m_stopped) {
-        // The document is getting detached. Abort!
-        m_stopped = true;
+    if (m_backend)
         m_backend->abort();
-    }
 }
 
 EventTargetData* IDBTransaction::eventTargetData()
@@ -127,12 +147,26 @@ EventTargetData* IDBTransaction::ensureEventTargetData()
     return &m_eventTargetData;
 }
 
-void IDBTransaction::timerFired(Timer<IDBTransaction>* transaction)
+void IDBTransaction::onAbortTimerFired(Timer<IDBTransaction>* transaction)
 {
     ASSERT(m_selfRef);
-
     RefPtr<IDBTransaction> selfRef = m_selfRef.release();
     dispatchEvent(IDBAbortEvent::create());
+}
+
+void IDBTransaction::onCompleteTimerFired(Timer<IDBTransaction>* transaction)
+{
+    ASSERT(m_selfRef);
+    RefPtr<IDBTransaction> selfRef = m_selfRef.release();
+    dispatchEvent(IDBCompleteEvent::create());
+}
+
+
+void IDBTransaction::onTimeoutTimerFired(Timer<IDBTransaction>* transaction)
+{
+    ASSERT(m_selfRef);
+    RefPtr<IDBTransaction> selfRef = m_selfRef.release();
+    dispatchEvent(IDBTimeoutEvent::create());
 }
 
 }

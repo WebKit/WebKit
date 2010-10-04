@@ -55,9 +55,16 @@ void IDBTransactionCallbacksProxy::onAbort()
     m_callbacks.clear();
 }
 
-int IDBTransactionCallbacksProxy::id() const
+void IDBTransactionCallbacksProxy::onComplete()
 {
-    return m_callbacks->id();
+    m_callbacks->onComplete();
+    m_callbacks.clear();
+}
+
+void IDBTransactionCallbacksProxy::onTimeout()
+{
+    m_callbacks->onTimeout();
+    m_callbacks.clear();
 }
 
 } // namespace WebCore

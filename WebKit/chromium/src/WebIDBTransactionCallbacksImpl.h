@@ -42,7 +42,8 @@ public:
     virtual ~WebIDBTransactionCallbacksImpl();
 
     virtual void onAbort();
-    virtual int id() const;
+    virtual void onComplete();
+    virtual void onTimeout();
 
 private:
     RefPtr<IDBTransactionCallbacks> m_callbacks;

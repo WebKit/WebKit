@@ -1,3 +1,24 @@
+2010-10-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Implement IndexedDB's oncomplete and ontimeout.
+        https://bugs.webkit.org/show_bug.cgi?id=47106
+
+        * public/WebIDBTransactionCallbacks.h:
+        (WebKit::WebIDBTransactionCallbacks::id):
+        (WebKit::WebIDBTransactionCallbacks::onAbort):
+        (WebKit::WebIDBTransactionCallbacks::onComplete):
+        (WebKit::WebIDBTransactionCallbacks::onTimeout):
+        * src/IDBTransactionCallbacksProxy.cpp:
+        (WebCore::IDBTransactionCallbacksProxy::onComplete):
+        (WebCore::IDBTransactionCallbacksProxy::onTimeout):
+        * src/IDBTransactionCallbacksProxy.h:
+        * src/WebIDBTransactionCallbacksImpl.cpp:
+        (WebCore::WebIDBTransactionCallbacksImpl::onComplete):
+        (WebCore::WebIDBTransactionCallbacksImpl::onTimeout):
+        * src/WebIDBTransactionCallbacksImpl.h:
+
 2010-10-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

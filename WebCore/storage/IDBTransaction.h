@@ -69,7 +69,8 @@ public:
 
     // IDBTransactionCallbacks
     virtual void onAbort();
-    virtual int id() const;
+    virtual void onComplete();
+    virtual void onTimeout();
 
     // EventTarget
     virtual IDBTransaction* toIDBTransaction() { return this; }
@@ -91,14 +92,18 @@ private:
     virtual EventTargetData* eventTargetData();
     virtual EventTargetData* ensureEventTargetData();
 
-    void timerFired(Timer<IDBTransaction>*);
+    void onAbortTimerFired(Timer<IDBTransaction>*);
+    void onCompleteTimerFired(Timer<IDBTransaction>*);
+    void onTimeoutTimerFired(Timer<IDBTransaction>*);
 
     EventTargetData m_eventTargetData;
     RefPtr<IDBTransactionBackendInterface> m_backend;
     RefPtr<IDBDatabase> m_database;
+    unsigned short m_mode;
 
-    bool m_stopped;
-    Timer<IDBTransaction> m_timer;
+    Timer<IDBTransaction> m_onAbortTimer;
+    Timer<IDBTransaction> m_onCompleteTimer;
+    Timer<IDBTransaction> m_onTimeoutTimer;
     RefPtr<IDBTransaction> m_selfRef; // This is set to us iff there's an event pending.
 };
 

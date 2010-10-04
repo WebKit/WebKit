@@ -40,6 +40,12 @@ function verifyAbortEvent(event)
     shouldBeEqualToString("event.type", "abort");
 }
 
+function verifyCompleteEvent(event)
+{
+    debug("Complete event fired:");
+    shouldBeEqualToString("event.type", "complete");
+}
+
 function verifyResult(result)
 {
     shouldBeTrue("'onsuccess' in result");
