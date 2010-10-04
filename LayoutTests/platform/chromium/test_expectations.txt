@@ -3043,6 +3043,7 @@ BUGWK45193 LINUX : fast/text/decomposed-after-stacked-diacritics.html = TEXT
 
 // Debugger tests are slow on win debug bots
 BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html = PASS
+BUGWK45209 WIN DEBUG SLOW : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
 
 BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT

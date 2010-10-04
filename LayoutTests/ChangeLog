@@ -1,3 +1,11 @@
+2010-10-04  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        [Chromium] Mark debugger-breakpoints-not-activated-on-reload.html as slow on win debug
+
+        * platform/chromium/test_expectations.txt:
+
 2010-10-04  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
