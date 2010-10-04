@@ -128,7 +128,10 @@ void ApplicationCacheHost::failedLoadingMainResource()
 {
     ApplicationCacheGroup* group = m_candidateApplicationCacheGroup;
     if (!group && m_applicationCache) {
-        ASSERT(!mainResourceApplicationCache()); // If the main resource were loaded from a cache, it wouldn't fail.
+        if (mainResourceApplicationCache()) {
+            // Even when the main resource is being loaded from an application cache, loading can fail if aborted.
+            return;
+        }
         group = m_applicationCache->group();
     }
     

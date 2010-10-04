@@ -1,3 +1,24 @@
+2010-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=37812
+        Assertion failure when appcache/fail-on-update.html is run twice in a row
+
+        Test: http/tests/appcache/fail-on-update-2.html
+
+        For some reason, I can't reproduce this assertion failure with ToT, but the fixes I made
+        previously are still good, and covered by the new test.
+
+        * loader/appcache/ApplicationCacheGroup.cpp: (WebCore::ApplicationCacheGroup::selectCache):
+        Handle the case when the cache is already obsolete by the time cache selection occurs.
+
+        * loader/appcache/ApplicationCacheHost.cpp: (WebCore::ApplicationCacheHost::failedLoadingMainResource):
+        It's not true that loading from appcache always succeeds - it can be aborted.
+
+        * loader/appcache/ApplicationCacheStorage.cpp: (WebCore::ApplicationCacheStorage::store):
+        Calling ensureOriginRecord(group->origin()) can change lastInsertRowID!
+
 2010-10-04  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by James Robinson.

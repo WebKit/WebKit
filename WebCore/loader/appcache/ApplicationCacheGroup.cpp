@@ -159,6 +159,9 @@ void ApplicationCacheGroup::selectCache(Frame* frame, const KURL& passedManifest
     
     if (mainResourceCache) {
         if (manifestURL == mainResourceCache->group()->m_manifestURL) {
+            // The cache may have gotten obsoleted after we've loaded from it, but before we parsed the document and saw cache manifest.
+            if (mainResourceCache->group()->isObsolete())
+                return;
             mainResourceCache->group()->associateDocumentLoaderWithCache(documentLoader, mainResourceCache);
             mainResourceCache->group()->update(frame, ApplicationCacheUpdateWithBrowsingContext);
         } else {
