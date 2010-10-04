@@ -43,7 +43,7 @@ PlatformTouchEvent::PlatformTouchEvent(const Vector<IntPoint>& windowPoints, Tou
 {
     m_touchPoints.reserveCapacity(windowPoints.size());
     for (unsigned c = 0; c < windowPoints.size(); c++)
-        m_touchPoints.append(PlatformTouchPoint(windowPos, state));
+        m_touchPoints.append(PlatformTouchPoint(c, windowPoints[c], state));
 
     m_altKey = metaState & META_ALT_ON;
     m_shiftKey = metaState & META_SHIFT_ON;

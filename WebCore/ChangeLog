@@ -1,3 +1,15 @@
+2010-10-04  Huahui Wu  <mediadependent@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Fix a compiler error for ANDROID introduced by bug 45221.
+        https://bugs.webkit.org/show_bug.cgi?id=47095
+
+        It's a small fix for a compiler error, so there is no new test.
+
+        * platform/android/PlatformTouchEventAndroid.cpp:
+        (WebCore::PlatformTouchEvent::PlatformTouchEvent):
+
 2010-10-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
