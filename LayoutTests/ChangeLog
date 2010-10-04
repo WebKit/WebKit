@@ -2,6 +2,20 @@
 
         Unreviewed, test expectation update.
 
+        Fix incorrect rebaseline of verticalText.svg by r69004.
+        - move chromium-win image baseline to chromium-win-xp
+        - revert chromium-win image baseline
+
+        * platform/chromium-win-xp/svg/batik/text/verticalText-expected.checksum:
+        * platform/chromium-win-xp/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.checksum:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2010-10-04  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
         Update SVG baseline for Chromium.
 
         * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-03-t-expected.txt:

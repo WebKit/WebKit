@@ -3254,6 +3254,7 @@ BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/text-align-02-b.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/text-align-05-b.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/text-align-06-b.svg = IMAGE+TEXT
 BUG_HCLAM WIN LINUX : svg/W3C-SVG-1.1/text-text-05-t.svg = IMAGE+TEXT
+BUG_HCLAM WIN-VISTA : svg/batik/text/verticalText.svg = IMAGE
 
 // Started to fail at WebKit r68975 Chromium r61295-61296.
 BUG9798 DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT
