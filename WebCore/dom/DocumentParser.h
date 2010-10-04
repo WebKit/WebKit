@@ -88,6 +88,9 @@ public:
     // detach is called.
     virtual void detach();
 
+    void setDocumentWasLoadedAsPartOfNavigation() { m_documentWasLoadedAsPartOfNavigation = true; }
+    bool documentWasLoadedAsPartOfNavigation() const { return m_documentWasLoadedAsPartOfNavigation; }
+
 protected:
     DocumentParser(Document*);
 
@@ -99,6 +102,7 @@ private:
         DetachedState
     };
     ParserState m_state;
+    bool m_documentWasLoadedAsPartOfNavigation;
 
     // Every DocumentParser needs a pointer back to the document.
     // m_document will be 0 after the parser is stopped.

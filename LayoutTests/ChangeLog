@@ -1,3 +1,31 @@
+2010-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47035
+        Application cache selection algorithm should only be invoked after navigation
+
+        * http/tests/appcache/document-write-html-element-expected.txt: Added.
+        * http/tests/appcache/document-write-html-element.html: Added.
+        After onload, document.write <html> with manifest. It shouldn't be used for cache selection.
+
+        * http/tests/appcache/document-write-html-element-2-expected.txt: Added.
+        * http/tests/appcache/document-write-html-element-2.html: Added.
+        After onload, document.write some text into a document that already has a manifest. The original
+        cache should stay associated with the document. We used to fail on an assertion here.
+
+        * http/tests/appcache/insert-html-element-with-manifest-expected.txt: Added.
+        * http/tests/appcache/insert-html-element-with-manifest.html: Added.
+        Replace <html> element with another one while parsing. Manifest shouldn't be taken from
+        the new one.
+
+        * http/tests/appcache/insert-html-element-with-manifest-2-expected.txt: Added.
+        * http/tests/appcache/insert-html-element-with-manifest-2.html: Added.
+        Parse a fragment with <html manifest=..> while parsing a document.
+
+        * http/tests/appcache/resources/document-write-html-element.manifest: Added.
+        * http/tests/appcache/resources/insert-html-element-with-manifest.manifest: Added.
+
 2010-10-04  Adam Roben  <aroben@apple.com>
 
         Skip a timing-out test on Windows

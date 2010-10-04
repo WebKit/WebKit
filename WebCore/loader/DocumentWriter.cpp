@@ -248,4 +248,9 @@ String DocumentWriter::deprecatedFrameEncoding() const
     return m_frame->loader()->url().isEmpty() ? m_encoding : encoding();
 }
 
+void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()
+{
+    m_frame->document()->parser()->setDocumentWasLoadedAsPartOfNavigation();
+}
+
 } // namespace WebCore

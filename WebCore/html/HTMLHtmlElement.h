@@ -33,14 +33,14 @@ public:
     static PassRefPtr<HTMLHtmlElement> create(Document*);
     static PassRefPtr<HTMLHtmlElement> create(const QualifiedName&, Document*);
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    void insertedByParser();
+#endif
+
 private:
     HTMLHtmlElement(const QualifiedName&, Document*);
 
     virtual bool isURLAttribute(Attribute*) const;
-
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    virtual void insertedIntoDocument();
-#endif
 };
 
 } // namespace

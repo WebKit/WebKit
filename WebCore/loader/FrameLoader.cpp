@@ -611,6 +611,7 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
 void FrameLoader::receivedFirstData()
 {
     writer()->begin(m_workingURL, false);
+    writer()->setDocumentWasLoadedAsPartOfNavigation();
 
     dispatchDidCommitLoad();
     dispatchDidClearWindowObjectsInAllWorlds();

@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
@@ -194,6 +195,9 @@ void ImageDocument::createDocumentStructure()
     
     RefPtr<Element> rootElement = Document::createElement(htmlTag, false);
     appendChild(rootElement, ec);
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
+#endif
 
     if (frame() && frame()->loader())
         frame()->loader()->dispatchDocumentElementAvailable();

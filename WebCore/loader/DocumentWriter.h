@@ -71,6 +71,8 @@ public:
     TextResourceDecoder* createDecoderIfNeeded();
     void reportDataReceived();
 
+    void setDocumentWasLoadedAsPartOfNavigation();
+
 private:
     PassRefPtr<Document> createDocument(const KURL&);
 

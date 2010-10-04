@@ -37,7 +37,9 @@
 #include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLEntityParser.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLLinkElement.h"
+#include "HTMLNames.h"
 #include "HTMLStyleElement.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
@@ -523,6 +525,11 @@ void XMLDocumentParser::parseStartElement()
     pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
         newElement->attach();
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    if (newElement->hasTagName(HTMLNames::htmlTag))
+        static_cast<HTMLHtmlElement*>(newElement.get())->insertedByParser();
+#endif
 
     if (isFirstElement && document()->frame())
         document()->frame()->loader()->dispatchDocumentElementAvailable();

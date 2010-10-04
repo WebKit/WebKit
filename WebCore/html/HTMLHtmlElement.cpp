@@ -27,6 +27,7 @@
 #include "ApplicationCacheHost.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentParser.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 
@@ -56,11 +57,10 @@ bool HTMLHtmlElement::isURLAttribute(Attribute* attribute) const
 }
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-void HTMLHtmlElement::insertedIntoDocument()
+void HTMLHtmlElement::insertedByParser()
 {
-    HTMLElement::insertedIntoDocument();
-    
-    if (!document()->parsing())
+    // When parsing a fragment, its dummy document has a null parser.
+    if (!document()->parser() || !document()->parser()->documentWasLoadedAsPartOfNavigation())
         return;
 
     if (!document()->frame())
@@ -70,12 +70,8 @@ void HTMLHtmlElement::insertedIntoDocument()
     if (!documentLoader)
         return;
 
-    // Check the manifest attribute
-    // FIXME: Revisit this when we get a clarification from whatwg on how to handle empty
-    // manifest attributes. As spec'd, and coded here, the system will initiate an update
-    // passing in the document URL as the manifest URL. That's not a good thing.
     const AtomicString& manifest = getAttribute(manifestAttr);
-    if (manifest.isNull())
+    if (manifest.isEmpty())
         documentLoader->applicationCacheHost()->selectCacheWithoutManifest();
     else
         documentLoader->applicationCacheHost()->selectCacheWithManifest(document()->completeURL(manifest));

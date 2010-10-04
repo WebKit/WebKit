@@ -168,9 +168,12 @@ void HTMLConstructionSite::dispatchDocumentElementAvailableIfNeeded()
 
 void HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML(AtomicHTMLToken& token)
 {
-    RefPtr<Element> element = HTMLHtmlElement::create(m_document);
+    RefPtr<HTMLHtmlElement> element = HTMLHtmlElement::create(m_document);
     element->setAttributeMap(token.takeAtributes(), m_fragmentScriptingPermission);
-    m_openElements.pushHTMLHtmlElement(attach(m_document, element.release()));
+    m_openElements.pushHTMLHtmlElement(attach<Element>(m_document, element.get()));
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    element->insertedByParser();
+#endif
     dispatchDocumentElementAvailableIfNeeded();
 }
 
@@ -232,13 +235,6 @@ void HTMLConstructionSite::insertCommentOnHTMLHtmlElement(AtomicHTMLToken& token
 PassRefPtr<Element> HTMLConstructionSite::attachToCurrent(PassRefPtr<Element> child)
 {
     return attach(currentElement(), child);
-}
-
-void HTMLConstructionSite::insertHTMLHtmlElement(AtomicHTMLToken& token)
-{
-    ASSERT(!shouldFosterParent());
-    m_openElements.pushHTMLHtmlElement(attachToCurrent(createHTMLElement(token)));
-    dispatchDocumentElementAvailableIfNeeded();
 }
 
 void HTMLConstructionSite::insertHTMLHeadElement(AtomicHTMLToken& token)

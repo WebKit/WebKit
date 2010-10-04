@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "HTMLEmbedElement.h"
+#include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "MainResourceLoader.h"
 #include "Page.h"
@@ -83,6 +84,9 @@ void PluginDocumentParser::createDocumentStructure()
     ExceptionCode ec;
     RefPtr<Element> rootElement = document()->createElement(htmlTag, false);
     document()->appendChild(rootElement, ec);
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
+#endif
 
     if (document()->frame() && document()->frame()->loader())
         document()->frame()->loader()->dispatchDocumentElementAvailable();

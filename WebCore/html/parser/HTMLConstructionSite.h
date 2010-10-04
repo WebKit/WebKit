@@ -54,7 +54,6 @@ public:
     void insertHTMLElement(AtomicHTMLToken&);
     void insertSelfClosingHTMLElement(AtomicHTMLToken&);
     void insertFormattingElement(AtomicHTMLToken&);
-    void insertHTMLHtmlElement(AtomicHTMLToken&);
     void insertHTMLHeadElement(AtomicHTMLToken&);
     void insertHTMLBodyElement(AtomicHTMLToken&);
     void insertHTMLFormElement(AtomicHTMLToken&, bool isDemoted = false);

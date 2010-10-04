@@ -1,3 +1,46 @@
+2010-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47035
+        Application cache selection algorithm should only be invoked after navigation
+
+        Tests: http/tests/appcache/document-write-html-element-2.html
+               http/tests/appcache/document-write-html-element.html
+               http/tests/appcache/insert-html-element-with-manifest-2.html
+               http/tests/appcache/insert-html-element-with-manifest.html
+
+        * dom/DocumentParser.cpp: (WebCore::DocumentParser::DocumentParser):
+        * dom/DocumentParser.h:
+        (WebCore::DocumentParser::setDocumentWasLoadedAsPartOfNavigation):
+        (WebCore::DocumentParser::documentWasLoadedAsPartOfNavigation):
+        Track whether the document being parsed is being loaded as part of navigation.
+
+        * html/HTMLHtmlElement.cpp: (WebCore::HTMLHtmlElement::insertedByParser): Only run the
+        cache selection algorithm if the document is being loaded as part of navigation. We don't 
+        want to switch associated appcache is someone document.writes <html manifest=...>.
+
+        * html/HTMLHtmlElement.h: We need to differentiate between parsing and DOM manipulation, so
+        this code can't be in HTMLHtmlElement::insertedIntoDocument().
+
+        * dom/XMLDocumentParserLibxml2.cpp: (WebCore::XMLDocumentParser::startElementNs):
+        * dom/XMLDocumentParserQt.cpp: (WebCore::XMLDocumentParser::parseStartElement):
+        * html/ImageDocument.cpp: (WebCore::ImageDocument::createDocumentStructure):
+        * html/MediaDocument.cpp: (WebCore::MediaDocumentParser::createDocumentStructure):
+        * html/PluginDocument.cpp: (WebCore::PluginDocumentParser::createDocumentStructure):
+        * html/parser/HTMLConstructionSite.cpp: (WebCore::HTMLConstructionSite::insertHTMLHtmlStartTagBeforeHTML):
+        Check for manifest attribute in cases specified by HTML5.
+
+        * html/parser/HTMLConstructionSite.h: Removed unused insertHTMLHtmlElement().
+
+        * loader/DocumentWriter.cpp: (WebCore::DocumentWriter::setDocumentWasLoadedAsPartOfNavigation):
+        * loader/DocumentWriter.h:
+        Forward this call to DocumentParser, since DocumentWriter is supposed to encapsulate it.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::receivedFirstData): Receiving data from
+        loader means being loaded as part of navigation. This notion is used in HTML5 without a rigorous
+        definition that I could find - this seems to be a meaningful formalization.
+
 2010-10-04  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
