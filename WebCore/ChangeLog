@@ -1,3 +1,23 @@
+2010-10-04  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by James Robinson.
+
+        HTMLMediaElement delayed load should fire asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=45765
+
+        Test: media/remove-from-document-before-load.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::decrementLoadEventDelayCount):
+        (WebCore::Document::loadEventDelayTimerFired):
+        * dom/Document.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        (WebCore::HTMLMediaElement::asyncEventTimerFired):
+        (WebCore::HTMLMediaElement::setShouldDelayLoadEvent):
+        * html/HTMLMediaElement.h:
+
 2010-10-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

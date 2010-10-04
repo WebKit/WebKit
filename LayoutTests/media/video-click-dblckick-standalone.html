@@ -16,7 +16,10 @@
         function test()
         {
             video = document.getElementById('fr').contentDocument.getElementsByTagName('video')[0];
-            video.addEventListener('canplaythrough', test2);
+            if (video.readyState >= 4)
+                test2();
+            else
+                video.addEventListener('canplaythrough', test2);
         }
         function test2()
         {

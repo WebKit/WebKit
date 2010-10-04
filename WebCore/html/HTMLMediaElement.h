@@ -350,7 +350,6 @@ private:
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;
     bool m_shouldDelayLoadEvent : 1;
-    bool m_isWaitingToDecrementLoadEventDelayCount : 1;
     bool m_haveFiredLoadedData : 1;
     bool m_inActiveDocument : 1;
     bool m_autoplaying : 1;

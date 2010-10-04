@@ -1,6 +1,6 @@
 <script src="media-file.js"></script>
 <script src="video-paint-test.js"></script>
-<body onload="init()">
+<body>
 <style>
 video { width:200px; border: 3px solid red; }
 </style>
@@ -8,5 +8,8 @@ video { width:200px; border: 3px solid red; }
 &nbsp;<video style="-webkit-transform:rotate(20deg)"></video><br>
 &nbsp;<video style="-webkit-transform:scale(0.5)"></video><br>
 &nbsp;<video style="-webkit-transform:skew(20deg)"></video><br>
-<script>setSrcByTagName('video', findMediaFile('video', 'content/test'))</script>
+<script>
+init();
+setSrcByTagName('video', findMediaFile('video', 'content/test'));
+</script>
 </body>

@@ -136,7 +136,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
     , m_shouldDelayLoadEvent(false)
-    , m_isWaitingToDecrementLoadEventDelayCount(false)
     , m_haveFiredLoadedData(false)
     , m_inActiveDocument(true)
     , m_autoplaying(true)
@@ -399,15 +398,6 @@ void HTMLMediaElement::scheduleEvent(const AtomicString& eventName)
 
 void HTMLMediaElement::asyncEventTimerFired(Timer<HTMLMediaElement>*)
 {
-    // If we are waiting to release our delay on the load event, do that first and post
-    // the pending events on the next go around.
-    if (m_isWaitingToDecrementLoadEventDelayCount) {
-        setShouldDelayLoadEvent(false);
-        if (!m_asyncEventTimer.isActive())
-            m_asyncEventTimer.startOneShot(0);
-        return;
-    }
-
     Vector<RefPtr<Event> > pendingEvents;
     ExceptionCode ec = 0;
 
@@ -2332,24 +2322,9 @@ void HTMLMediaElement::setShouldDelayLoadEvent(bool shouldDelay)
     if (m_shouldDelayLoadEvent == shouldDelay)
         return;
 
-    // Don't decrement the load event delay if we are in the middle of a callback from
-    // the media engine. The load event is sent synchronously and may trigger a script that
-    // causes the document to be come inactive and that will clear the media engine, causing 
-    // the return to be a rough one.
-    if (!shouldDelay && processingMediaPlayerCallback()) {
-        m_isWaitingToDecrementLoadEventDelayCount = true;
-
-        // Instead of creating yet-another-timer, reuse the async event timer which is always
-        // used as a one-shot.
-        if (!m_asyncEventTimer.isActive())
-            m_asyncEventTimer.startOneShot(0);
-        return;
-    }
-
     LOG(Media, "HTMLMediaElement::setShouldDelayLoadEvent(%s)", boolString(shouldDelay));
 
     m_shouldDelayLoadEvent = shouldDelay;
-    m_isWaitingToDecrementLoadEventDelayCount = false;
     if (shouldDelay)
         document()->incrementLoadEventDelayCount();
     else

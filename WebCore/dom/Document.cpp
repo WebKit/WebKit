@@ -407,6 +407,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
     , m_areKeysEnabledInFullScreen(0)
 #endif
     , m_loadEventDelayCount(0)
+    , m_loadEventDelayTimer(this, &Document::loadEventDelayTimerFired)
 {
     m_document = this;
 
@@ -4765,7 +4766,13 @@ void Document::decrementLoadEventDelayCount()
     ASSERT(m_loadEventDelayCount);
     --m_loadEventDelayCount;
 
-    if (frame() && !m_loadEventDelayCount)
+    if (frame() && !m_loadEventDelayCount && !m_loadEventDelayTimer.isActive())
+        m_loadEventDelayTimer.startOneShot(0);
+}
+
+void Document::loadEventDelayTimerFired(Timer<Document>*)
+{
+    if (frame())
         frame()->loader()->checkCompleted();
 }
 

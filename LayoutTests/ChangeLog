@@ -1,3 +1,16 @@
+2010-10-04  Justin Schuh  <jschuh@chromium.org>
+
+        Reviewed by James Robinson.
+
+        HTMLMediaElement delayed load should fire asynchronously
+        https://bugs.webkit.org/show_bug.cgi?id=45765
+
+        * media/remove-from-document-before-load-expected.txt: Added.
+        * media/remove-from-document-before-load.html: Added.
+        * media/video-click-dblckick-standalone.html:
+        * media/video-controls-rendering.html:
+        * media/video-transformed.html:
+
 2010-10-04  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.

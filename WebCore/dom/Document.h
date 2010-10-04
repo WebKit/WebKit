@@ -1077,6 +1077,8 @@ private:
 
     PassRefPtr<NodeList> handleZeroPadding(const HitTestRequest&, HitTestResult&) const;
 
+    void loadEventDelayTimerFired(Timer<Document>*);
+
     OwnPtr<CSSStyleSelector> m_styleSelector;
     bool m_didCalculateStyleSelector;
 
@@ -1319,6 +1321,7 @@ private:
 #endif
 
     int m_loadEventDelayCount;
+    Timer<Document> m_loadEventDelayTimer;
 
     ViewportArguments m_viewportArguments;
 };
