@@ -94,16 +94,6 @@ class ResourceHandle : public RefCounted<ResourceHandle>
     , public AuthenticationClient
 #endif
     {
-protected:
-    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
-
-private:
-    enum FailureType {
-        NoFailure,
-        BlockedFailure,
-        InvalidURLFailure
-    };
-
 public:
     static PassRefPtr<ResourceHandle> create(NetworkingContext*, const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
     static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
@@ -199,7 +189,16 @@ public:
     using RefCounted<ResourceHandle>::ref;
     using RefCounted<ResourceHandle>::deref;
 
+protected:
+    ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);
+
 private:
+    enum FailureType {
+        NoFailure,
+        BlockedFailure,
+        InvalidURLFailure
+    };
+
     void platformSetDefersLoading(bool);
 
     void scheduleFailure(FailureType);

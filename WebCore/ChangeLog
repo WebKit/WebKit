@@ -1,3 +1,14 @@
+2010-10-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        ResourceHandle's public/protected/private sections are fragmented
+        https://bugs.webkit.org/show_bug.cgi?id=47038
+
+        Minor cleanup.
+
+        * platform/network/ResourceHandle.h:
+
 2010-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
