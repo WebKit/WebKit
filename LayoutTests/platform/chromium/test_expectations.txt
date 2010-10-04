@@ -1834,7 +1834,6 @@ BUG10479 MAC : svg/hixie/perf/002.xml = FAIL
 BUG9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 
 // Was flaky. Became a consistent failure.
-BUG9798 WIN : http/tests/loading/preload-img-test.html = TIMEOUT PASS
 BUG9798 WIN DEBUG : http/tests/local/style-access-before-stylesheet-loaded.html = FAIL PASS
 BUG9798 WIN DEBUG : http/tests/misc/redirect-with-quotes.php = TIMEOUT PASS
 BUG9798 WIN SLOW : http/tests/misc/refresh-headers.php = PASS
@@ -3546,3 +3545,18 @@ BUG_HCLAM WIN : svg/batik/text/textLength.svg = TEXT
 BUG_HCLAM WIN : svg/carto.net/button.svg = TEXT
 BUG_HCLAM WIN : svg/carto.net/colourpicker.svg = TEXT
 BUG_HCLAM WIN : svg/carto.net/combobox.svg = TEXT
+
+// Started to fail at WebKit r68975 Chromium r61295-61296.
+BUG9798 DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT
+
+BUGJOHNNYG WIN : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
+BUGJOHNNYG LINUX : plugins/embed-attributes-style.html = IMAGE
+
+// Started failing in WebKit r68388:68412.
+BUGSENORBLANCO WIN DEBUG : media/video-size.html = CRASH
+
+// Unexpected timeout in these tests.
+BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
+BUG_HCLAM : http/tests/css/css-image-loading.html = TEXT TIMEOUT PASS
+BUG_HCLAM : http/tests/css/mask-image-loading.html = TEXT TIMEOUT PASS
+BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = TEXT TIMEOUT PASS
