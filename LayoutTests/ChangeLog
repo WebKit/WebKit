@@ -1,3 +1,9 @@
+2010-10-03  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, remove redundant expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2010-10-03  MORITA Hajime  <morrita@google.com>
 
         Unrevied, added test expectations for because of the massive SVG change in r68976.
