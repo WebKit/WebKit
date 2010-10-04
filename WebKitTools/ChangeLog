@@ -1,3 +1,20 @@
+2010-10-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: doAXRangeForLine does not work
+        https://bugs.webkit.org/show_bug.cgi?id=47101
+
+        DRT support to handle NSAccessibilityRangeForLineParameterizedAttribute.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (rangeForLineCallback):
+        (AccessibilityUIElement::rangeForLine):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::rangeForLine):
+
 2010-10-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Adding myself to the committers list.

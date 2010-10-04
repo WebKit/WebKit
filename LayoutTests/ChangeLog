@@ -1,3 +1,13 @@
+2010-10-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        AX: doAXRangeForLine does not work
+        https://bugs.webkit.org/show_bug.cgi?id=47101
+
+        * platform/mac/accessibility/range-for-line-textarea-expected.txt: Added.
+        * platform/mac/accessibility/range-for-line-textarea.html: Added.
+
 2010-10-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Adam Barth.
