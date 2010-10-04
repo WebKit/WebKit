@@ -2283,12 +2283,12 @@ void QWebPage::triggerAction(WebAction action, bool)
         }
         case StopScheduledPageRefresh: {
             QWebFrame* topFrame = mainFrame();
-            topFrame->d->frame->redirectScheduler()->cancel();
+            topFrame->d->frame->navigationScheduler()->cancel();
             QList<QWebFrame*> childFrames;
             collectChildFrames(topFrame, childFrames);
             QListIterator<QWebFrame*> it(childFrames);
             while (it.hasNext())
-                it.next()->d->frame->redirectScheduler()->cancel();
+                it.next()->d->frame->navigationScheduler()->cancel();
             break;
         }
         default:

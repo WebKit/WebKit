@@ -239,7 +239,7 @@ Frame* SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerElement* ownerElemen
 {
     Frame* frame = ownerElement->contentFrame();
     if (frame)
-        frame->redirectScheduler()->scheduleLocationChange(url.string(), m_frame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, m_frame->loader()->isProcessingUserGesture());
+        frame->navigationScheduler()->scheduleLocationChange(url.string(), m_frame->loader()->outgoingReferrer(), lockHistory, lockBackForwardList, m_frame->loader()->isProcessingUserGesture());
     else
         frame = loadSubframe(ownerElement, url, frameName, m_frame->loader()->outgoingReferrer());
     return frame;

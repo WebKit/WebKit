@@ -93,7 +93,7 @@ namespace WebCore {
         Editor* editor() const;
         EventHandler* eventHandler() const;
         FrameLoader* loader() const;
-        RedirectScheduler* redirectScheduler() const;
+        NavigationScheduler* navigationScheduler() const;
         SelectionController* selection() const;
         FrameTree* tree() const;
         AnimationController* animation() const;
@@ -194,7 +194,7 @@ namespace WebCore {
         Page* m_page;
         mutable FrameTree m_treeNode;
         mutable FrameLoader m_loader;
-        mutable RedirectScheduler m_redirectScheduler;
+        mutable NavigationScheduler m_navigationScheduler;
 
         mutable RefPtr<DOMWindow> m_domWindow;
         HashSet<DOMWindow*> m_liveFormerWindows;
@@ -252,9 +252,9 @@ namespace WebCore {
         return &m_loader;
     }
 
-    inline RedirectScheduler* Frame::redirectScheduler() const
+    inline NavigationScheduler* Frame::navigationScheduler() const
     {
-        return &m_redirectScheduler;
+        return &m_navigationScheduler;
     }
 
     inline FrameView* Frame::view() const

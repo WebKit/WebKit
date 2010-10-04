@@ -340,7 +340,7 @@ bool XSSAuditor::findInRequest(const FindTask& task) const
     case XSSProtectionBlockEnabled:
         if (blockFrame) {
             blockFrame->loader()->stopAllLoaders();
-            blockFrame->redirectScheduler()->scheduleLocationChange(blankURL(), String());
+            blockFrame->navigationScheduler()->scheduleLocationChange(blankURL(), String());
         }
         break;
     default:

@@ -1,3 +1,15 @@
+2010-10-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename RedirectScheduler to NavigationScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=47037
+
+        Update for name change.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+
 2010-10-04  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -1146,7 +1146,7 @@ SET(WebCore_SOURCES
     loader/PolicyCallback.cpp
     loader/PolicyChecker.cpp
     loader/ProgressTracker.cpp
-    loader/RedirectScheduler.cpp
+    loader/NavigationScheduler.cpp
     loader/Request.cpp
     loader/ResourceLoadNotifier.cpp
     loader/ResourceLoader.cpp

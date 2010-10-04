@@ -1,5 +1,119 @@
 2010-10-04  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Rename RedirectScheduler to NavigationScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=47037
+
+        This class schedules more than just redirects.  In fact, it schedules
+        most kinds of navigations.
+
+        * Android.mk:
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/BindingDOMWindow.h:
+        (WebCore::::createWindow):
+        (WebCore::::open):
+        * bindings/generic/BindingFrame.h:
+        (WebCore::::navigateIfAllowed):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        (WebCore::createWindow):
+        (WebCore::JSDOMWindow::open):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::setLocation):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::reload):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::reloadCallback):
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::processHttpEquiv):
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::setResourceTrackingEnabled):
+        (WebCore::InspectorController::reloadPage):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setDefersLoading):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::stopLoading):
+        (WebCore::FrameLoader::didOpenURL):
+        (WebCore::FrameLoader::didExplicitOpen):
+        (WebCore::FrameLoader::cancelAndClear):
+        (WebCore::FrameLoader::clear):
+        (WebCore::FrameLoader::receivedFirstData):
+        (WebCore::FrameLoader::checkCompleted):
+        (WebCore::FrameLoader::provisionalLoadStarted):
+        (WebCore::FrameLoader::completed):
+        (WebCore::FrameLoader::prepareForCachedPageRestore):
+        * loader/FrameLoader.h:
+        * loader/NavigationScheduler.cpp: Added.
+        (WebCore::ScheduledNavigation::ScheduledNavigation):
+        (WebCore::ScheduledNavigation::~ScheduledNavigation):
+        (WebCore::ScheduledNavigation::shouldStartTimer):
+        (WebCore::ScheduledNavigation::didStartTimer):
+        (WebCore::ScheduledNavigation::didStopTimer):
+        (WebCore::ScheduledNavigation::delay):
+        (WebCore::ScheduledNavigation::lockHistory):
+        (WebCore::ScheduledNavigation::lockBackForwardList):
+        (WebCore::ScheduledNavigation::wasDuringLoad):
+        (WebCore::ScheduledNavigation::isLocationChange):
+        (WebCore::ScheduledNavigation::wasUserGesture):
+        (WebCore::ScheduledURLNavigation::ScheduledURLNavigation):
+        (WebCore::ScheduledURLNavigation::fire):
+        (WebCore::ScheduledURLNavigation::didStartTimer):
+        (WebCore::ScheduledURLNavigation::didStopTimer):
+        (WebCore::ScheduledURLNavigation::url):
+        (WebCore::ScheduledURLNavigation::referrer):
+        (WebCore::ScheduledRedirect::ScheduledRedirect):
+        (WebCore::ScheduledRedirect::shouldStartTimer):
+        (WebCore::ScheduledLocationChange::ScheduledLocationChange):
+        (WebCore::ScheduledRefresh::ScheduledRefresh):
+        (WebCore::ScheduledRefresh::fire):
+        (WebCore::ScheduledHistoryNavigation::ScheduledHistoryNavigation):
+        (WebCore::ScheduledHistoryNavigation::fire):
+        (WebCore::ScheduledFormSubmission::ScheduledFormSubmission):
+        (WebCore::ScheduledFormSubmission::fire):
+        (WebCore::ScheduledFormSubmission::didStartTimer):
+        (WebCore::ScheduledFormSubmission::didStopTimer):
+        (WebCore::NavigationScheduler::NavigationScheduler):
+        (WebCore::NavigationScheduler::~NavigationScheduler):
+        (WebCore::NavigationScheduler::redirectScheduledDuringLoad):
+        (WebCore::NavigationScheduler::locationChangePending):
+        (WebCore::NavigationScheduler::clear):
+        (WebCore::NavigationScheduler::scheduleRedirect):
+        (WebCore::NavigationScheduler::mustLockBackForwardList):
+        (WebCore::NavigationScheduler::scheduleLocationChange):
+        (WebCore::NavigationScheduler::scheduleFormSubmission):
+        (WebCore::NavigationScheduler::scheduleRefresh):
+        (WebCore::NavigationScheduler::scheduleHistoryNavigation):
+        (WebCore::NavigationScheduler::timerFired):
+        (WebCore::NavigationScheduler::schedule):
+        (WebCore::NavigationScheduler::startTimer):
+        (WebCore::NavigationScheduler::cancel):
+        * loader/NavigationScheduler.h: Added.
+        * loader/RedirectScheduler.cpp: Removed.
+        * loader/RedirectScheduler.h: Removed.
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadOrRedirectSubframe):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+        (WebCore::Frame::navigationScheduler):
+        * page/History.cpp:
+        (WebCore::History::back):
+        (WebCore::History::forward):
+        (WebCore::History::go):
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::findInRequest):
+
+2010-10-04  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Sam Weinig.
 
         Remove ENABLE_SANDBOX

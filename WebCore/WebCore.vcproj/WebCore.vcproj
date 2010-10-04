@@ -23767,11 +23767,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\RedirectScheduler.cpp"
+				RelativePath="..\loader\NavigationScheduler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\loader\RedirectScheduler.h"
+				RelativePath="..\loader\NavigationScheduler.h"
 				>
 			</File>
 			<File

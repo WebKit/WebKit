@@ -2254,7 +2254,7 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
     if (!result.getString(scriptResult))
         return;
 
-    if (!m_frame->redirectScheduler()->locationChangePending())
+    if (!m_frame->navigationScheduler()->locationChangePending())
         m_frame->loader()->writer()->replaceDocument(scriptResult);
 }
 

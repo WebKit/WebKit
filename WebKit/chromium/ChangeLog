@@ -1,3 +1,17 @@
+2010-10-04  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Rename RedirectScheduler to NavigationScheduler
+        https://bugs.webkit.org/show_bug.cgi?id=47037
+
+        Update for name change.
+
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::selectCacheWithManifest):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::loadJavaScriptURL):
+
 2010-10-01  Victoria Kirst  <vrk@google.com>
 
         Reviewed by James Robinson.

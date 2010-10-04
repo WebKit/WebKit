@@ -1041,7 +1041,7 @@ SOURCES += \
     loader/PolicyCallback.cpp \
     loader/PolicyChecker.cpp \
     loader/ProgressTracker.cpp \
-    loader/RedirectScheduler.cpp \
+    loader/NavigationScheduler.cpp \
     loader/Request.cpp \
     loader/ResourceLoader.cpp \
     loader/ResourceLoadNotifier.cpp \

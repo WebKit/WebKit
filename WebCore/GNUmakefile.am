@@ -1925,8 +1925,8 @@ webcore_sources += \
 	WebCore/loader/PolicyChecker.h \
 	WebCore/loader/ProgressTracker.cpp \
 	WebCore/loader/ProgressTracker.h \
-	WebCore/loader/RedirectScheduler.cpp \
-	WebCore/loader/RedirectScheduler.h \
+	WebCore/loader/NavigationScheduler.cpp \
+	WebCore/loader/NavigationScheduler.h \
 	WebCore/loader/Request.cpp \
 	WebCore/loader/Request.h \
 	WebCore/loader/ResourceLoader.cpp \

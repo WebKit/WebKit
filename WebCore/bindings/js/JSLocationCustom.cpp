@@ -313,7 +313,7 @@ JSValue JSLocation::reload(ExecState* exec)
         return jsUndefined();
 
     if (!protocolIsJavaScript(frame->loader()->url()))
-        frame->redirectScheduler()->scheduleRefresh(processingUserGesture());
+        frame->navigationScheduler()->scheduleRefresh(processingUserGesture());
     return jsUndefined();
 }
 

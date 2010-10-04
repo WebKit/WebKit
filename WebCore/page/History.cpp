@@ -63,21 +63,21 @@ void History::back()
 {
     if (!m_frame)
         return;
-    m_frame->redirectScheduler()->scheduleHistoryNavigation(-1);
+    m_frame->navigationScheduler()->scheduleHistoryNavigation(-1);
 }
 
 void History::forward()
 {
     if (!m_frame)
         return;
-    m_frame->redirectScheduler()->scheduleHistoryNavigation(1);
+    m_frame->navigationScheduler()->scheduleHistoryNavigation(1);
 }
 
 void History::go(int distance)
 {
     if (!m_frame)
         return;
-    m_frame->redirectScheduler()->scheduleHistoryNavigation(distance);
+    m_frame->navigationScheduler()->scheduleHistoryNavigation(distance);
 }
 
 KURL History::urlForState(const String& urlString)

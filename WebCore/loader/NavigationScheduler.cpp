@@ -30,7 +30,7 @@
  */
 
 #include "config.h"
-#include "RedirectScheduler.h"
+#include "NavigationScheduler.h"
 
 #include "BackForwardList.h"
 #include "DOMWindow.h"
@@ -67,7 +67,7 @@ public:
     virtual void fire(Frame*) = 0;
 
     virtual bool shouldStartTimer(Frame*) { return true; }
-    virtual void didStartTimer(Frame*, Timer<RedirectScheduler>*) { }
+    virtual void didStartTimer(Frame*, Timer<NavigationScheduler>*) { }
     virtual void didStopTimer(Frame*, bool /* newLoadInProgress */) { }
 
     double delay() const { return m_delay; }
@@ -101,7 +101,7 @@ public:
         frame->loader()->changeLocation(KURL(ParsedURLString, m_url), m_referrer, lockHistory(), lockBackForwardList(), wasUserGesture(), false);
     }
 
-    virtual void didStartTimer(Frame* frame, Timer<RedirectScheduler>* timer)
+    virtual void didStartTimer(Frame* frame, Timer<NavigationScheduler>* timer)
     {
         if (m_haveToldClient)
             return;
@@ -199,7 +199,7 @@ public:
         frame->loader()->loadFrameRequest(frameRequest, lockHistory(), lockBackForwardList(), m_submission->event(), m_submission->state(), SendReferrer);
     }
     
-    virtual void didStartTimer(Frame* frame, Timer<RedirectScheduler>* timer)
+    virtual void didStartTimer(Frame* frame, Timer<NavigationScheduler>* timer)
     {
         if (m_haveToldClient)
             return;
@@ -219,33 +219,33 @@ private:
     bool m_haveToldClient;
 };
 
-RedirectScheduler::RedirectScheduler(Frame* frame)
+NavigationScheduler::NavigationScheduler(Frame* frame)
     : m_frame(frame)
-    , m_timer(this, &RedirectScheduler::timerFired)
+    , m_timer(this, &NavigationScheduler::timerFired)
 {
 }
 
-RedirectScheduler::~RedirectScheduler()
+NavigationScheduler::~NavigationScheduler()
 {
 }
 
-bool RedirectScheduler::redirectScheduledDuringLoad()
+bool NavigationScheduler::redirectScheduledDuringLoad()
 {
     return m_redirect && m_redirect->wasDuringLoad();
 }
 
-bool RedirectScheduler::locationChangePending()
+bool NavigationScheduler::locationChangePending()
 {
     return m_redirect && m_redirect->isLocationChange();
 }
 
-void RedirectScheduler::clear()
+void NavigationScheduler::clear()
 {
     m_timer.stop();
     m_redirect.clear();
 }
 
-void RedirectScheduler::scheduleRedirect(double delay, const String& url)
+void NavigationScheduler::scheduleRedirect(double delay, const String& url)
 {
     if (!m_frame->page())
         return;
@@ -259,7 +259,7 @@ void RedirectScheduler::scheduleRedirect(double delay, const String& url)
         schedule(adoptPtr(new ScheduledRedirect(delay, url, true, delay <= 1, false)));
 }
 
-bool RedirectScheduler::mustLockBackForwardList(Frame* targetFrame, bool wasUserGesture)
+bool NavigationScheduler::mustLockBackForwardList(Frame* targetFrame, bool wasUserGesture)
 {
     // Non-user navigation before the page has finished firing onload should not create a new back/forward item.
     // See https://webkit.org/b/42861 for the original motivation for this.    
@@ -277,7 +277,7 @@ bool RedirectScheduler::mustLockBackForwardList(Frame* targetFrame, bool wasUser
     return false;
 }
 
-void RedirectScheduler::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture)
+void NavigationScheduler::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture)
 {
     if (!m_frame->page())
         return;
@@ -303,7 +303,7 @@ void RedirectScheduler::scheduleLocationChange(const String& url, const String& 
     schedule(adoptPtr(new ScheduledLocationChange(url, referrer, lockHistory, lockBackForwardList, wasUserGesture, duringLoad)));
 }
 
-void RedirectScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> submission)
+void NavigationScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> submission)
 {
     ASSERT(m_frame->page());
 
@@ -323,7 +323,7 @@ void RedirectScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> submis
     schedule(adoptPtr(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad, isUserGesture)));
 }
 
-void RedirectScheduler::scheduleRefresh(bool wasUserGesture)
+void NavigationScheduler::scheduleRefresh(bool wasUserGesture)
 {
     if (!m_frame->page())
         return;
@@ -334,7 +334,7 @@ void RedirectScheduler::scheduleRefresh(bool wasUserGesture)
     schedule(adoptPtr(new ScheduledRefresh(url.string(), m_frame->loader()->outgoingReferrer(), wasUserGesture)));
 }
 
-void RedirectScheduler::scheduleHistoryNavigation(int steps)
+void NavigationScheduler::scheduleHistoryNavigation(int steps)
 {
     if (!m_frame->page())
         return;
@@ -351,7 +351,7 @@ void RedirectScheduler::scheduleHistoryNavigation(int steps)
     schedule(adoptPtr(new ScheduledHistoryNavigation(steps, m_frame->loader()->isProcessingUserGesture())));
 }
 
-void RedirectScheduler::timerFired(Timer<RedirectScheduler>*)
+void NavigationScheduler::timerFired(Timer<NavigationScheduler>*)
 {
     if (!m_frame->page())
         return;
@@ -362,7 +362,7 @@ void RedirectScheduler::timerFired(Timer<RedirectScheduler>*)
     redirect->fire(m_frame);
 }
 
-void RedirectScheduler::schedule(PassOwnPtr<ScheduledNavigation> redirect)
+void NavigationScheduler::schedule(PassOwnPtr<ScheduledNavigation> redirect)
 {
     ASSERT(m_frame->page());
 
@@ -384,7 +384,7 @@ void RedirectScheduler::schedule(PassOwnPtr<ScheduledNavigation> redirect)
     startTimer();
 }
 
-void RedirectScheduler::startTimer()
+void NavigationScheduler::startTimer()
 {
     if (!m_redirect)
         return;
@@ -399,7 +399,7 @@ void RedirectScheduler::startTimer()
     m_redirect->didStartTimer(m_frame, &m_timer);
 }
 
-void RedirectScheduler::cancel(bool newLoadInProgress)
+void NavigationScheduler::cancel(bool newLoadInProgress)
 {
     m_timer.stop();
 

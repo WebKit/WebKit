@@ -282,7 +282,7 @@ v8::Handle<v8::Value> V8Location::reloadCallback(const v8::Arguments& args)
         return v8::Undefined();
 
     if (!protocolIsJavaScript(frame->loader()->url()))
-        frame->redirectScheduler()->scheduleRefresh(processingUserGesture());
+        frame->navigationScheduler()->scheduleRefresh(processingUserGesture());
     return v8::Undefined();
 }
 
