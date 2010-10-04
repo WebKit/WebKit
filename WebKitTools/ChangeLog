@@ -1,5 +1,14 @@
 2010-10-04  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, build fix.
+
+        Handle crash introduced in r69040 if we are not running in a
+        Chromium checkout.
+
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+
+2010-10-04  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Tony Chang.
 
         Add a way for us to have test expectations that are specific to the

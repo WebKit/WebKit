@@ -88,8 +88,11 @@ class GetGoogleChromePortTest(unittest.TestCase):
             os.path.exists = mock_exists_chrome_found
             codecs.open = mock_open
             chrome_overrides = port.test_expectations_overrides()
-            self.assertEqual(chrome_overrides,
-                             chromium_overrides + expected_string)
+            if chromium_overrides:
+                self.assertEqual(chrome_overrides,
+                                 chromium_overrides + expected_string)
+            else:
+                self.assertEqual(chrome_overrides, expected_string)
         finally:
             os.path.exists = orig_exists
             codecs.open = orig_open
