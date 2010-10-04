@@ -1,3 +1,27 @@
+2010-10-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43506
+        <rdar://problem/8289284> foreign-iframe-main.html occasionally crashes (during the next test,
+        idempotent-update.html)
+
+        Application cache doesn't use ResourceLoader machinery (for better or worse), so we need to
+        abort update process explicitly.
+
+        Note that in principle, update could piggyback on any other existing frame - or even run
+        frameless - but currently, it's tied to the first frame that requested update.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::stopLoading):
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::stopLoadingInFrame):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::~ApplicationCacheHost):
+        (WebCore::ApplicationCacheHost::stopLoadingInFrame):
+        * loader/appcache/ApplicationCacheHost.h:
+
 2010-10-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

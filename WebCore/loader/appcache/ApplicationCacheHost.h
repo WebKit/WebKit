@@ -43,6 +43,7 @@
 namespace WebCore {
     class DOMApplicationCache;
     class DocumentLoader;
+    class Frame;
     class ResourceLoader;
     class ResourceError;
     class ResourceRequest;
@@ -143,6 +144,8 @@ namespace WebCore {
 
         void setDOMApplicationCache(DOMApplicationCache*);
         void notifyDOMApplicationCache(EventID, int progressTotal, int progressDone);
+
+        void stopLoadingInFrame(Frame*);
 
         void stopDeferringEvents(); // Also raises the events that have been queued up.
 

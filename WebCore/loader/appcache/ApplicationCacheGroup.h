@@ -80,6 +80,8 @@ public:
 
     bool cacheIsBeingUpdated(const ApplicationCache* cache) const { return cache == m_cacheBeingUpdated; }
 
+    void stopLoadingInFrame(Frame*);
+
     ApplicationCache* newestCache() const { return m_newestCache.get(); }
     void setNewestCache(PassRefPtr<ApplicationCache>);
 

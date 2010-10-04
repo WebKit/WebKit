@@ -220,6 +220,11 @@ void DocumentLoader::stopLoading(DatabasePolicy databasePolicy)
     // Always cancel multipart loaders
     cancelAll(m_multipartSubresourceLoaders);
 
+    // Appcache uses ResourceHandle directly, DocumentLoader doesn't count these loads.
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    m_applicationCacheHost->stopLoadingInFrame(m_frame);
+#endif
+
     if (!loading)
         return;
     

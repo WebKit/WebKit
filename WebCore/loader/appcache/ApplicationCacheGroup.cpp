@@ -384,6 +384,14 @@ void ApplicationCacheGroup::cacheDestroyed(ApplicationCache* cache)
     }
 }
 
+void ApplicationCacheGroup::stopLoadingInFrame(Frame* frame)
+{
+    if (frame != m_frame)
+        return;
+
+    stopLoading();
+}
+
 #if ENABLE(INSPECTOR)
 static void inspectorUpdateApplicationCacheStatus(Frame* frame)
 {
