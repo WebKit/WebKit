@@ -1,3 +1,15 @@
+2010-10-01  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by James Robinson.
+
+        Fixing crash when audio media player is destructed
+        https://bugs.webkit.org/show_bug.cgi?id=47020
+
+        Adds assert for LayerRenderer in destructor.
+
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+
 2010-10-04  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

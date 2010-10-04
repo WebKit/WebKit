@@ -105,6 +105,8 @@ void WebMediaPlayerClientImpl::readyStateChanged()
 {
     ASSERT(m_mediaPlayer);
     m_mediaPlayer->readyStateChanged();
+    if (hasVideo() && supportsAcceleratedRendering() && !m_videoLayer.get())
+        m_videoLayer = VideoLayerChromium::create(0, this);
 }
 
 void WebMediaPlayerClientImpl::volumeChanged(float newVolume)
@@ -455,9 +457,6 @@ MediaPlayerPrivateInterface* WebMediaPlayerClientImpl::create(MediaPlayer* playe
     // if necessary.
     client->m_supportsAcceleratedCompositing =
         frame->contentRenderer()->compositor()->hasAcceleratedCompositing();
-
-    if (client->m_supportsAcceleratedCompositing)
-        client->m_videoLayer = VideoLayerChromium::create(0, client);
 #endif
 
     return client;

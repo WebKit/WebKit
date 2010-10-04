@@ -1,10 +1,24 @@
+2010-10-01  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by James Robinson.
+
+        Fixing crash when audio media player is destructed
+        https://bugs.webkit.org/show_bug.cgi?id=47020
+
+        Creates the VideoLayerChromium layer only if the media player contains
+        a video.
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        (WebKit::WebMediaPlayerClientImpl::create):
+
 2010-10-01  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Nate Chapin.
 
         [Chromium] Remove WebURLLoaderClient::didFinishLoading(WebURLLoader*)
         https://bugs.webkit.org/show_bug.cgi?id=47008
-        
+
         Now that WebURLLoaderClient::didFinishLoading(WebURLLoader*) has no
         more callers, it can be removed (requires a Chromium roll to
         http://crrev.com/61206, which actually removed the last usage).
