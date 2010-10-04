@@ -1,3 +1,24 @@
+2010-10-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Color tests in the list based on existing pass/fail result.
+        
+        Fix the summary data to account for htmlOnly and nonHTML tests.
+
+        * CSSTestSuiteHarness/harness/harness.css:
+        (#test-list > option.pass):
+        (#test-list > option.fail):
+        (#test-list > option.skipped):
+        * CSSTestSuiteHarness/harness/harness.js:
+        (Test):
+        (Test.prototype.statusForFormat):
+        (TestSuite.prototype.fillTestList):
+        (TestSuite.prototype.updateTestList):
+        (TestSuite.prototype.recordResult):
+        (TestSuite.prototype.markTestCompleted):
+        (TestSuite.prototype.countTestsWithFlag):
+        (TestSuite.prototype.queryDatabaseForSummary.this.db.transaction):
+        (TestSuite.prototype.queryDatabaseForSummary):
+
 2010-10-04  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

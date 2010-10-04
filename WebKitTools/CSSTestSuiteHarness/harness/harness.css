@@ -141,11 +141,18 @@ body {
 }
 
 #test-list > option.untested {
-  
 }
 
-#test-list > option.completed {
-  color: gray;
+#test-list > option.pass {
+  color: rgba(0, 128, 0, 0.6);
+}
+
+#test-list > option.fail {
+  color: rgba(255, 0, 0, 0.6);
+}
+
+#test-list > option.skipped {
+  color: rgba(255, 128, 0, 0.6);
 }
 
 #test-content.with-ref {

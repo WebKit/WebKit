@@ -218,6 +218,9 @@ function Test(testInfoLine)
   
   this.completedHTML = false; // true if this test has a result (pass, fail or skip)
   this.completedXHTML = false; // true if this test has a result (pass, fail or skip)
+
+  this.statusHTML = '';
+  this.statusXHTML = '';
   
   if (!this.links)
     this.links = "other.html"
@@ -241,6 +244,17 @@ Test.prototype.completedForFormat = function(format)
 
   if (format == 'xhtml1')
     return this.completedXHTML;
+
+  return true;
+}
+
+Test.prototype.statusForFormat = function(format)
+{
+  if (format == 'html4')
+    return this.statusHTML;
+
+  if (format == 'xhtml1')
+    return this.statusXHTML;
 
   return true;
 }
@@ -550,7 +564,7 @@ TestSuite.prototype.chapterPopupChanged = function()
 
 TestSuite.prototype.fillTestList = function()
 {
-  var completedProperty = this.format == 'html4' ? 'completedHTML' : 'completedXHTML';
+  var statusProperty = this.format == 'html4' ? 'statusHTML' : 'statusXHTML';
 
   var testList = document.getElementById('test-list');
   testList.innerHTML = '';
@@ -560,7 +574,7 @@ TestSuite.prototype.fillTestList = function()
 
     var option = document.createElement('option');
     option.innerText = currTest.id;
-    option.className = currTest[completedProperty] ? 'completed' : 'untested';
+    option.className = currTest[statusProperty];
     option._test = currTest;
     testList.appendChild(option);
   }
@@ -568,13 +582,13 @@ TestSuite.prototype.fillTestList = function()
 
 TestSuite.prototype.updateTestList = function()
 {
-  var completedProperty = this.format == 'html4' ? 'completedHTML' : 'completedXHTML';
+  var statusProperty = this.format == 'html4' ? 'statusHTML' : 'statusXHTML';
   var testList = document.getElementById('test-list');
   
   var options = testList.getElementsByTagName('option');
   for (var i = 0; i < options.length; ++i) {
     var currOption = options[i];
-    currOption.className = currOption._test[completedProperty] ? 'completed' : 'untested';
+    currOption.className = currOption._test[statusProperty];
   }
 }
 
@@ -904,7 +918,15 @@ TestSuite.prototype.recordResult = function(testName, resolution, comment)
     comment = '';
   
   this.storeTestResult(testName, this.format, resolution, comment, navigator.userAgent);
-  this.markTestCompleted(testName, this.format == 'html4', this.format == 'xhtml1');
+  
+  var htmlStatus = null;
+  var xhtmlStatus = null;
+  if (this.format == 'html4')
+    htmlStatus = resolution;
+  if (this.format == 'xhtml1')
+    xhtmlStatus = resolution;
+
+  this.markTestCompleted(testName, htmlStatus, xhtmlStatus);
   this.updateTestList();
 
   this.updateSummaryData();
@@ -1360,7 +1382,7 @@ TestSuite.prototype.exportResultsForTestsWithMismatchedResults = function()
 
 /* -------------------------------------------------------- */
 
-TestSuite.prototype.markTestCompleted = function(testID, completedHTML, completedXHTML)
+TestSuite.prototype.markTestCompleted = function(testID, htmlStatus, xhtmlStatus)
 {
   var test = this.tests[testID];
   if (!test) {
@@ -1368,10 +1390,14 @@ TestSuite.prototype.markTestCompleted = function(testID, completedHTML, complete
     return;
   }
 
-  if (completedHTML)
+  if (htmlStatus) {
     test.completedHTML = true;
-  if (completedXHTML)
+    test.statusHTML = htmlStatus;
+  }
+  if (xhtmlStatus) {
     test.completedXHTML = true;
+    test.statusXHTML = xhtmlStatus;
+  }
 }
 
 TestSuite.prototype.testCompletionStateChanged = function()
@@ -1385,7 +1411,7 @@ TestSuite.prototype.loadTestStatus = function()
   var _self = this;
   this.queryDatabaseForCompletedTests(
       function(item) {
-      _self.markTestCompleted(item.test, item.hstatus != null, item.xstatus != null);
+      _self.markTestCompleted(item.test, item.hstatus, item.xstatus);
       },
       function() {
         _self.testCompletionStateChanged();
@@ -1800,34 +1826,65 @@ TestSuite.prototype.countTestsWithColumnValue = function(tx, completionHandler, 
   }, errorHandler);
 }
 
+TestSuite.prototype.countTestsWithFlag = function(tx, completionHandler, flag)
+{  
+  var allRowsCount = 'COUNT(*)';
+
+  tx.executeSql('SELECT COUNT(*) FROM tests WHERE flags LIKE \"%' + flag + '%\"', [], function(tx, results) {
+    var rowCount = 0;
+    if (results.rows.length > 0)
+      rowCount = results.rows.item(0)[allRowsCount];
+    completionHandler(rowCount);
+  }, errorHandler);
+}
+
 TestSuite.prototype.queryDatabaseForSummary = function(completionHandler)
 {
   if (!this.db || this.populatingDatabase)
     return;
 
   var _self = this;
-  this.db.transaction(function (tx) {
 
+  var htmlOnlyTestCount = 0;
+  var xHtmlOnlyTestCount = 0;
+
+  this.db.transaction(function (tx) {
+    if (_self.populatingDatabase)
+      return;
+
+    var allRowsCount = 'COUNT(*)';
+      
+    _self.countTestsWithFlag(tx, function(count) {
+      htmlOnlyTestCount = count;
+    }, 'htmlOnly');
+
+    _self.countTestsWithFlag(tx, function(count) {
+      xHtmlOnlyTestCount = count;
+    }, 'nonHTML');
+  });
+  
+  this.db.transaction(function (tx) {
     if (_self.populatingDatabase)
       return;
 
     var allRowsCount = 'COUNT(*)';
     var html4RowsCount = 'COUNT(hstatus)';
     var xhtml1RowsCount = 'COUNT(xstatus)';
-
+    
     tx.executeSql('SELECT COUNT(*), COUNT(hstatus), COUNT(xstatus) FROM tests', [], function(tx, results) {
 
       var data = [];
       if (results.rows.length > 0) {
         var rowItem = results.rows.item(0);
-        data.push({ 'name' : 'h-total' , 'count' : rowItem[allRowsCount] })
-        data.push({ 'name' : 'x-total' , 'count' : rowItem[allRowsCount] })
+        data.push({ 'name' : 'h-total' , 'count' : rowItem[allRowsCount] - xHtmlOnlyTestCount })
+        data.push({ 'name' : 'x-total' , 'count' : rowItem[allRowsCount] - htmlOnlyTestCount })
         data.push({ 'name' : 'h-tested', 'count' : rowItem[html4RowsCount] })
         data.push({ 'name' : 'x-tested', 'count' : rowItem[xhtml1RowsCount] })
       }
       completionHandler(data);
       
     }, errorHandler);
+
 
     _self.countTestsWithColumnValue(tx, completionHandler, 'hstatus', 'pass', 'h-passed');
     _self.countTestsWithColumnValue(tx, completionHandler, 'xstatus', 'pass', 'x-passed');
