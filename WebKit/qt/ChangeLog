@@ -1,3 +1,24 @@
+2010-10-04  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] Fix platform plugin support after r68128
+
+        Replaced the qobject_cast from the QObject derived extension to a
+        static_cast. qobject_cast works by comparing pointers to meta-object
+        instances, of which there are two each: one compiled into WebKit and
+        one compiled into the plugin.
+
+        The platform plugin ensures the validity of the interface contract
+        through its version and the initial safe qobject_cast from QObject
+        to QWebKitPlatformPlugin. After that it is safe to use static_cast,
+        and with the recent changes even required.
+
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        (WebCore::QtPlatformPlugin::createSelectInputMethod):
+        (WebCore::QtPlatformPlugin::createNotificationPresenter):
+        (WebCore::QtPlatformPlugin::createHapticFeedbackPlayer):
+
 2010-10-02  Diego Gonzalez  <diegohcg@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
