@@ -108,6 +108,9 @@ public:
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
+    void setCacheModel(CacheModel);
+    CacheModel cacheModel() const { return m_cacheModel; }
+
 #if PLATFORM(WIN)
     void setShouldPaintNativeControls(bool);
 #endif
@@ -139,6 +142,8 @@ private:
         
     HashSet<String> m_schemesToRegisterAsEmptyDocument;
     Vector<pair<String, RefPtr<APIObject> > > m_pendingMessagesToPostToInjectedBundle;
+
+    CacheModel m_cacheModel;
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;

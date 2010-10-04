@@ -1,3 +1,14 @@
+2010-10-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add ability to set the CacheModel in Webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=47066
+
+        * MiniBrowser/mac/AppDelegate.m:
+        (-[BrowserAppDelegate init]): Opt minibrowser into
+        a PrimaryWebBrowser cache model.
+
 2010-10-03  Simon Fraser  <simon.fraser@apple.com>
 
         Make sure to enter all tests when creating the database

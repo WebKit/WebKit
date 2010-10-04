@@ -32,6 +32,13 @@
 extern "C" {
 #endif
 
+enum {
+    kWKCacheModelDocumentViewer = 0,
+    kWKCacheModelDocumentBrowser = 1,
+    kWKCacheModelPrimaryWebBrowser = 2
+};
+typedef uint32_t WKCacheModel;
+
 // Injected Bundle Client
 typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
@@ -77,6 +84,9 @@ WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKCo
 WK_EXPORT void WKContextPostMessageToInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody);
 
 WK_EXPORT void WKContextAddVisitedLink(WKContextRef context, WKStringRef visitedURL);
+
+WK_EXPORT void WKContextSetCacheModel(WKContextRef context, WKCacheModel cacheModel);
+WK_EXPORT WKCacheModel WKContextGetCacheModel(WKContextRef context);
 
 #ifdef __cplusplus
 }

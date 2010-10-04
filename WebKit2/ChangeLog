@@ -1,3 +1,44 @@
+2010-10-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add ability to set the CacheModel in Webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=47066
+
+        Add WKContext function to set the cache model for the context.
+
+        * Shared/CacheModel.h: Added.
+        * Shared/CoreIPCSupport/WebProcessMessageKinds.h:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toCacheModel):
+        (WebKit::toRef):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetCacheModel):
+        (WKContextGetCacheModel):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::ensureWebProcess):
+        (WebKit::WebContext::setCacheModel):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::cacheModel):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::setCacheModel):
+        (WebKit::WebProcess::didReceiveMessage):
+        * WebProcess/WebProcess.h:
+        * WebProcess/mac/WebProcessMac.mm: Added.
+        (WebKit::memorySize):
+        (WebKit::volumeFreeSize):
+        (WebKit::WebProcess::platformSetCacheModel):
+        * WebProcess/qt/WebProcessQt.cpp: Added.
+        (WebKit::WebProcess::platformSetCacheModel):
+        * WebProcess/win/WebProcessWin.cpp: Added.
+        (WebKit::WebProcess::platformSetCacheModel):
+        * win/WebKit2.vcproj:
+
 2010-10-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

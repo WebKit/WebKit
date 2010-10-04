@@ -79,6 +79,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     : m_processModel(processModel)
     , m_injectedBundlePath(injectedBundlePath)
     , m_visitedLinkProvider(this)
+    , m_cacheModel(CacheModelDocumentViewer)
 #if PLATFORM(WIN)
     , m_shouldPaintNativeControls(true)
 #endif
@@ -126,6 +127,7 @@ void WebContext::ensureWebProcess()
     m_process = WebProcessManager::shared().getWebProcess(this);
 
     m_process->send(WebProcessMessage::SetShouldTrackVisitedLinks, 0, CoreIPC::In(m_historyClient.shouldTrackVisitedLinks()));
+    m_process->send(WebProcessMessage::SetCacheModel, 0, CoreIPC::In(static_cast<uint32_t>(m_cacheModel)));
 
     for (HashSet<String>::iterator it = m_schemesToRegisterAsEmptyDocument.begin(), end = m_schemesToRegisterAsEmptyDocument.end(); it != end; ++it)
         m_process->send(WebProcessMessage::RegisterURLSchemeAsEmptyDocument, 0, CoreIPC::In(*it));
@@ -297,7 +299,16 @@ void WebContext::addVisitedLink(LinkHash linkHash)
 {
     m_visitedLinkProvider.addVisitedLink(linkHash);
 }
-        
+
+void WebContext::setCacheModel(CacheModel cacheModel)
+{
+    m_cacheModel = cacheModel;
+
+    if (!hasValidProcess())
+        return;
+    m_process->send(WebProcessMessage::SetCacheModel, 0, CoreIPC::In(static_cast<uint32_t>(m_cacheModel)));
+}
+
 void WebContext::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<WebContextMessage::Kind>()) {

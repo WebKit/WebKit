@@ -23,42 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessMessageKinds_h
-#define WebProcessMessageKinds_h
+#include "WebProcess.h"
 
-// Messages sent from WebKit to the web process.
+namespace WebKit {
 
-#include "MessageID.h"
-
-namespace WebProcessMessage {
-
-enum Kind {
-    SetVisitedLinkTable,
-    VisitedLinkStateChanged,
-    AllVisitedLinkStateChanged,
-    
-    LoadInjectedBundle,
-    SetApplicationCacheDirectory,
-    SetShouldTrackVisitedLinks,
-    SetCacheModel,
-    Create,
-    RegisterURLSchemeAsEmptyDocument,
-#if PLATFORM(MAC)
-    SetupAcceleratedCompositingPort,
-#endif
-#if PLATFORM(WIN)
-    SetShouldPaintNativeControls,
-#endif
-};
-
+void WebProcess::platformSetCacheModel(CacheModel cacheModel)
+{
+    // FIXME: Implement.
 }
 
-namespace CoreIPC {
-
-template<> struct MessageKindTraits<WebProcessMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcess;
-};
-
-}
-
-#endif // WebProcessMessageKinds_h
+} // namespace WebKit

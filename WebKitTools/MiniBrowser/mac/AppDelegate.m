@@ -118,7 +118,6 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         else
             currentProcessModel = kProcessModelSharedSecondaryProcess;
 
-        WKContextRef threadContext = WKContextGetSharedThreadContext();
         WKContextHistoryClient historyClient = {
             0,
             self,
@@ -128,8 +127,11 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
             didUpdateHistoryTitle,
             populateVisitedLinks
         };
+
+        WKContextRef threadContext = WKContextGetSharedThreadContext();
         WKContextSetHistoryClient(threadContext, &historyClient);
-    
+        WKContextSetCacheModel(threadContext, kWKCacheModelPrimaryWebBrowser);
+
         threadPageNamespace = WKPageNamespaceCreate(threadContext);
         WKRelease(threadContext);
 
@@ -146,7 +148,8 @@ static void populateVisitedLinks(WKContextRef context, const void *clientInfo)
         };
         WKContextSetInjectedBundleClient(processContext, &bundleClient);
         WKContextSetHistoryClient(processContext, &historyClient);
-        
+        WKContextSetCacheModel(processContext, kWKCacheModelPrimaryWebBrowser);
+
         processPageNamespace = WKPageNamespaceCreate(processContext);
         WKRelease(processContext);
 

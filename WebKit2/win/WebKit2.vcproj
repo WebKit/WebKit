@@ -397,6 +397,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\CacheModel.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\DrawingAreaBase.h"
 				>
 			</File>
@@ -1037,6 +1041,10 @@
 				>
 				<File
 					RelativePath="..\WebProcess\win\WebProcessMainWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\win\WebProcessWin.cpp"
 					>
 				</File>
 			</Filter>

@@ -176,6 +176,7 @@ HEADERS += \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
     Shared/CoreIPCSupport/WebProcessMessageKinds.h \
+    Shared/CacheModel.h \
     Shared/DrawingAreaBase.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
@@ -417,4 +418,5 @@ SOURCES += \
     UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
+    WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES

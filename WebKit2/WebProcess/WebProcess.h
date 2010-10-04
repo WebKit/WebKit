@@ -26,6 +26,7 @@
 #ifndef WebProcess_h
 #define WebProcess_h
 
+#include "CacheModel.h"
 #include "Connection.h"
 #include "DrawingArea.h"
 #include "SharedMemory.h"
@@ -92,7 +93,10 @@ private:
     void setVisitedLinkTable(const SharedMemory::Handle&);
     void visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes);
     void allVisitedLinkStateChanged();
-    
+
+    void setCacheModel(CacheModel cacheModel);
+    void platformSetCacheModel(CacheModel);
+
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didClose(CoreIPC::Connection*);
@@ -108,6 +112,9 @@ private:
 
     // FIXME: The visited link table should not be per process.
     VisitedLinkTable m_visitedLinkTable;
+
+    bool m_hasSetCacheModel;
+    CacheModel m_cacheModel;
 
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     mach_port_t m_compositingRenderServerPort;

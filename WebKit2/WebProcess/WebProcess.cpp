@@ -91,6 +91,8 @@ WebProcess& WebProcess::shared()
 
 WebProcess::WebProcess()
     : m_inDidClose(false)
+    , m_hasSetCacheModel(false)
+    , m_cacheModel(CacheModelDocumentViewer)
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     , m_compositingRenderServerPort(MACH_PORT_NULL)
 #endif
@@ -181,6 +183,15 @@ void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
     m_connection->send(WebProcessProxyMessage::AddVisitedLink, 0, CoreIPC::In(linkHash));
 }
 
+void WebProcess::setCacheModel(CacheModel cacheModel)
+{
+    if (!m_hasSetCacheModel || cacheModel != m_cacheModel) {
+        m_hasSetCacheModel = true;
+        m_cacheModel = cacheModel;
+        platformSetCacheModel(cacheModel);
+    }
+}
+
 WebPage* WebProcess::webPage(uint64_t pageID) const
 {
     return m_pageMap.get(pageID).get();
@@ -250,6 +261,7 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                 if (!arguments->decode(CoreIPC::Out(linkHashes)))
                     return;
                 visitedLinkStateChanged(linkHashes);
+                return;
             }
             case WebProcessMessage::AllVisitedLinkStateChanged:
                 allVisitedLinkStateChanged();
@@ -289,7 +301,14 @@ void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
                 PageGroup::setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
                 return;
             }
-            
+            case WebProcessMessage::SetCacheModel: {
+                uint32_t cacheModel;
+                if (!arguments->decode(CoreIPC::Out(cacheModel)))
+                    return;
+                
+                setCacheModel(static_cast<CacheModel>(cacheModel));
+                return;
+            }
             case WebProcessMessage::Create: {
                 uint64_t pageID = arguments->destinationID();
                 WebPageCreationParameters parameters;

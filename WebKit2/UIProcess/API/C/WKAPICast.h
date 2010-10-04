@@ -26,8 +26,10 @@
 #ifndef WKAPICast_h
 #define WKAPICast_h
 
-#include "WKSharedAPICast.h"
+#include "CacheModel.h"
+#include "WKContext.h"
 #include "WKPage.h"
+#include "WKSharedAPICast.h"
 #include <WebCore/FrameLoaderTypes.h>
 
 namespace WebKit {
@@ -82,6 +84,35 @@ inline WKFrameNavigationType toRef(WebCore::NavigationType type)
     }
     
     return wkType;
+}
+
+inline CacheModel toCacheModel(WKCacheModel wkCacheModel)
+{
+    switch (wkCacheModel) {
+    case kWKCacheModelDocumentViewer:
+        return CacheModelDocumentViewer;
+    case kWKCacheModelDocumentBrowser:
+        return CacheModelDocumentBrowser;
+    case kWKCacheModelPrimaryWebBrowser:
+        return CacheModelPrimaryWebBrowser;
+    }
+
+    ASSERT_NOT_REACHED();
+    return CacheModelDocumentViewer;
+}
+
+inline WKCacheModel toRef(CacheModel cacheModel)
+{
+    switch (cacheModel) {
+    case CacheModelDocumentViewer:
+        return kWKCacheModelDocumentViewer;
+    case CacheModelDocumentBrowser:
+        return kWKCacheModelDocumentBrowser;
+    case CacheModelPrimaryWebBrowser:
+        return kWKCacheModelPrimaryWebBrowser;
+    }
+    
+    return kWKCacheModelDocumentViewer;
 }
 
 } // namespace WebKit
