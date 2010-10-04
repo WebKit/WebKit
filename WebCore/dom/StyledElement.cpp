@@ -31,6 +31,7 @@
 #include "DOMTokenList.h"
 #include "Document.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include <wtf/HashFunctions.h>
 
 using namespace std;
@@ -213,7 +214,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     unsigned length = newClassString.length();
     unsigned i;
     for (i = 0; i < length; ++i) {
-        if (!isClassWhitespace(characters[i]))
+        if (isNotHTMLSpace(characters[i]))
             break;
     }
     bool hasClass = i < length;

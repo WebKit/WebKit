@@ -21,6 +21,7 @@
 #include "config.h"
 #include "SpaceSplitString.h"
 
+#include "HTMLParserIdioms.h"
 #include <wtf/ASCIICType.h>
 
 using namespace WTF;
@@ -53,12 +54,12 @@ void SpaceSplitStringData::createVector()
     unsigned length = m_string.length();
     unsigned start = 0;
     while (true) {
-        while (start < length && isClassWhitespace(characters[start]))
+        while (start < length && isHTMLSpace(characters[start]))
             ++start;
         if (start >= length)
             break;
         unsigned end = start + 1;
-        while (end < length && !isClassWhitespace(characters[end]))
+        while (end < length && isNotHTMLSpace(characters[end]))
             ++end;
 
         m_vector.append(AtomicString(characters + start, end - start));

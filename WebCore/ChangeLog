@@ -1,3 +1,28 @@
+2010-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Use isHTMLSpace in more places, and optimize it
+        https://bugs.webkit.org/show_bug.cgi?id=47103
+
+        * css/CSSParser.cpp:
+        (WebCore::parseColorInt): Use isHTMLSpace instead of a separate isCSSWhitespace function.
+        (WebCore::parseAlphaValue): Ditto.
+        (WebCore::CSSParser::text): Ditto.
+
+        * dom/SpaceSplitString.h: Removed isClassWhitespace.
+
+        * dom/SpaceSplitString.cpp:
+        (WebCore::SpaceSplitStringData::createVector): Use isHTMLSpace instead of isClassWhitespace.
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::classAttributeChanged): Ditto.
+        * html/DOMTokenList.cpp:
+        (WebCore::validateToken): Ditto.
+        (WebCore::DOMTokenList::removeInternal): Ditto.
+
+        * html/parser/HTMLParserIdioms.h: Added histogram data an changed so that non-spaces take
+        only a single branch and plain old spaces take only two branches.
+
 2010-10-04  Justin Schuh  <jschuh@chromium.org>
 
         Reviewed by James Robinson.

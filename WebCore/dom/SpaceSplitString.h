@@ -81,11 +81,6 @@ namespace WebCore {
         OwnPtr<SpaceSplitStringData> m_data;
     };
 
-    inline bool isClassWhitespace(UChar c)
-    {
-        return c == ' ' || c == '\r' || c == '\n' || c == '\t' || c == '\f';
-    }
-
 } // namespace WebCore
 
 #endif // SpaceSplitString_h

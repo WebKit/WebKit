@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "Element.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "SpaceSplitString.h"
 #include "StringBuilder.h"
 
@@ -43,7 +44,7 @@ static bool validateToken(const AtomicString& token, ExceptionCode& ec)
 
     unsigned length = token.length();
     for (unsigned i = 0; i < length; ++i) {
-        if (isClassWhitespace(token[i])) {
+        if (isHTMLSpace(token[i])) {
             ec = INVALID_CHARACTER_ERR;
             return false;
         }
@@ -139,25 +140,25 @@ void DOMTokenList::removeInternal(const AtomicString& token) const
 
     // Step 5
     while (position < inputLength) {
-        if (isClassWhitespace(input[position])) { // 6
+        if (isHTMLSpace(input[position])) { // 6
             output.append(input[position++]); // 6.1, 6.2
             continue; // 6.3
         }
 
         // Step 7
         Vector<UChar> s;
-        while (position < inputLength && !isClassWhitespace(input[position]))
+        while (position < inputLength && isNotHTMLSpace(input[position]))
             s.append(input[position++]);
 
         // Step 8
         if (s == token) {
             // Step 8.1
-            while (position < inputLength && isClassWhitespace(input[position]))
+            while (position < inputLength && isHTMLSpace(input[position]))
                 ++position;
 
             // Step 8.2
             size_t j = output.size();
-            while (j > 0 && isClassWhitespace(output[j - 1]))
+            while (j > 0 && isHTMLSpace(output[j - 1]))
                 --j;
             output.resize(j);
 
