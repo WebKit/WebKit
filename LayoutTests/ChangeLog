@@ -1,5 +1,12 @@
 2010-10-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Move chromium-win-xp-specific result to its proper place.
+
+        * platform/chromium-win-xp/svg/custom/js-late-pattern-and-object-creation-expected.txt:
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.txt: Removed.
+
+2010-10-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Reviewed by Nikolas Zimmermann.
 
         [Chromium] Rebaseline svg/custom tests due to http://trac.webkit.org/changeset/68976.
