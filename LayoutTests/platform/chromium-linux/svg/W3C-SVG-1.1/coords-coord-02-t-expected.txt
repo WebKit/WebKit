@@ -1,0 +1,20 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,0) size 165x165
+      RenderSVGContainer {g} at (0,0) size 150x150
+        RenderPath {line} at (0,0) size 150x3 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00"]
+        RenderPath {line} at (0,0) size 3x150 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L0.00,150.00"]
+      RenderSVGContainer {g} at (0,0) size 165x165
+        RenderPath {rect} at (0,0) size 15x15 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L15.00,0.00 L15.00,15.00 L0.00,15.00 Z"]
+        RenderPath {rect} at (150,0) size 15x15 [fill={[type=SOLID] [color=#FF0000]}] [data="M150.00,0.00 L165.00,0.00 L165.00,15.00 L150.00,15.00 Z"]
+        RenderPath {rect} at (0,150) size 15x15 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,150.00 L15.00,150.00 L15.00,165.00 L0.00,165.00 Z"]
+      RenderSVGContainer {g} at (0,0) size 160x160
+        RenderPath {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
+        RenderPath {rect} at (150,0) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M150.00,0.00 L160.00,0.00 L160.00,10.00 L150.00,10.00 Z"]
+        RenderPath {rect} at (0,150) size 10x10 [fill={[type=SOLID] [color=#FFFF00]}] [data="M0.00,150.00 L10.00,150.00 L10.00,160.00 L0.00,160.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.4 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

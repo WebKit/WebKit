@@ -18,7 +18,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (90,145) size 135x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 135x19
           chunk 1 text run 1 at (90.00,160.00) startOffset 0 endOffset 10 width 65.00: "A decimal "
-          chunk 1 text run 2 at (155.00,160.00) startOffset 0 endOffset 9 width 70.00: "(&#65)= A"
+          chunk 1 text run 1 at (155.00,160.00) startOffset 0 endOffset 9 width 70.00: "(&#65)= A"
       RenderSVGText {text} at (30,185) size 103x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 103x19
           chunk 1 text run 1 at (30.00,200.00) startOffset 0 endOffset 18 width 103.00: "Entity references:"
@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
           chunk 1 (middle anchor) text run 1 at (181.50,228.00) startOffset 0 endOffset 8 width 47.00: "outlined"
       RenderSVGContainer {g} at (189,234) size 38x38 [transform={m=((0.20,0.00)(0.00,0.20)) t=(190.00,235.00)}]
         RenderPath {path} at (189,234) size 38x38 [stroke={[type=SOLID] [color=#808080] [stroke width=5.00]}] [data="M60.00,0.00 L120.00,0.00 L180.00,60.00 L180.00,120.00 L120.00,180.00 L60.00,180.00 L0.00,120.00 L0.00,60.00 Z"]
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.9 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

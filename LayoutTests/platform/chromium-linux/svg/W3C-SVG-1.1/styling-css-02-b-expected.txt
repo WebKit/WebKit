@@ -1,0 +1,34 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (40,2) size 350x278
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGText {text} at (40,2) size 190x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 190x15
+          chunk 1 text run 1 at (40.00,14.00) startOffset 0 endOffset 33 width 190.00: "Rectangle should be red not green"
+      RenderSVGText {text} at (40,24) size 338x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 338x15
+          chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 64 width 338.00: "This tests id selectors: <rect id=\"one\" /> and the selector #one"
+      RenderSVGContainer {g} at (130,70) size 260x60
+        RenderPath {circle} at (130,70) size 60x60 [fill={[type=SOLID] [color=#008000]}] [data="M190.00,100.00 L189.94,101.88 L189.76,103.76 L189.47,105.62 L189.06,107.46 L188.53,109.27 L187.89,111.04 L187.14,112.77 L186.29,114.45 L185.33,116.07 L184.27,117.63 L183.12,119.12 L181.87,120.54 L180.54,121.87 L179.12,123.12 L177.63,124.27 L176.07,125.33 L174.45,126.29 L172.77,127.14 L171.04,127.89 L169.27,128.53 L167.46,129.06 L165.62,129.47 L163.76,129.76 L161.88,129.94 L160.00,130.00 L158.12,129.94 L156.24,129.76 L154.38,129.47 L152.54,129.06 L150.73,128.53 L148.96,127.89 L147.23,127.14 L145.55,126.29 L143.93,125.33 L142.37,124.27 L140.88,123.12 L139.46,121.87 L138.13,120.54 L136.88,119.12 L135.73,117.63 L134.67,116.07 L133.71,114.45 L132.86,112.77 L132.11,111.04 L131.47,109.27 L130.94,107.46 L130.53,105.62 L130.24,103.76 L130.06,101.88 L130.00,100.00 L130.06,98.12 L130.24,96.24 L130.53,94.38 L130.94,92.54 L131.47,90.73 L132.11,88.96 L132.86,87.23 L133.71,85.55 L134.67,83.93 L135.73,82.37 L136.88,80.88 L138.13,79.46 L139.46,78.13 L140.88,76.88 L142.37,75.73 L143.93,74.67 L145.55,73.71 L147.23,72.86 L148.96,72.11 L150.73,71.47 L152.54,70.94 L154.38,70.53 L156.24,70.24 L158.12,70.06 L160.00,70.00 L161.88,70.06 L163.76,70.24 L165.62,70.53 L167.46,70.94 L169.27,71.47 L171.04,72.11 L172.77,72.86 L174.45,73.71 L176.07,74.67 L177.63,75.73 L179.12,76.88 L180.54,78.13 L181.87,79.46 L183.12,80.88 L184.27,82.37 L185.33,83.93 L186.29,85.55 L187.14,87.23 L187.89,88.96 L188.53,90.73 L189.06,92.54 L189.47,94.38 L189.76,96.24 L189.94,98.12 Z"]
+        RenderPath {rect} at (220,80) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M220.00,80.00 L280.00,80.00 L280.00,120.00 L220.00,120.00 Z"]
+        RenderPath {polygon} at (300,70) size 90x50 [fill={[type=SOLID] [color=#008000]}] [data="M300.00,100.00 L320.00,120.00 L340.00,110.00 L360.00,120.00 L390.00,90.00 L340.00,70.00 Z"]
+      RenderSVGContainer {g} at (40,152) size 350x128 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
+        RenderSVGText {text} at (40,2) size 266x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 266x15
+            chunk 1 text run 1 at (40.00,14.00) startOffset 0 endOffset 51 width 266.00: "Circle should be red not green; rectangle still red"
+        RenderSVGText {text} at (40,24) size 326x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 326x15
+            chunk 1 text run 1 at (40.00,36.00) startOffset 0 endOffset 63 width 326.00: "This tests attribute selectors: <circle transform=\"scale(2)\" />"
+        RenderSVGText {text} at (40,46) size 210x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 210x15
+            chunk 1 text run 1 at (40.00,58.00) startOffset 0 endOffset 39 width 210.00: "and the selector [transform=\"scale(2)\"]"
+        RenderSVGContainer {g} at (130,220) size 260x60
+          RenderPath {circle} at (130,220) size 60x60 [transform={m=((2.00,0.00)(0.00,2.00)) t=(0.00,0.00)}] [fill={[type=SOLID] [color=#FF0000]}] [data="M95.00,50.00 L94.97,50.94 L94.88,51.88 L94.73,52.81 L94.53,53.73 L94.27,54.64 L93.95,55.52 L93.57,56.39 L93.14,57.23 L92.66,58.04 L92.14,58.82 L91.56,59.56 L90.93,60.27 L90.27,60.93 L89.56,61.56 L88.82,62.14 L88.04,62.66 L87.23,63.14 L86.39,63.57 L85.52,63.95 L84.64,64.27 L83.73,64.53 L82.81,64.73 L81.88,64.88 L80.94,64.97 L80.00,65.00 L79.06,64.97 L78.12,64.88 L77.19,64.73 L76.27,64.53 L75.36,64.27 L74.48,63.95 L73.61,63.57 L72.77,63.14 L71.96,62.66 L71.18,62.14 L70.44,61.56 L69.73,60.93 L69.07,60.27 L68.44,59.56 L67.86,58.82 L67.34,58.04 L66.86,57.23 L66.43,56.39 L66.05,55.52 L65.73,54.64 L65.47,53.73 L65.27,52.81 L65.12,51.88 L65.03,50.94 L65.00,50.00 L65.03,49.06 L65.12,48.12 L65.27,47.19 L65.47,46.27 L65.73,45.36 L66.05,44.48 L66.43,43.61 L66.86,42.77 L67.34,41.96 L67.86,41.18 L68.44,40.44 L69.07,39.73 L69.73,39.07 L70.44,38.44 L71.18,37.86 L71.96,37.34 L72.77,36.86 L73.61,36.43 L74.48,36.05 L75.36,35.73 L76.27,35.47 L77.19,35.27 L78.12,35.12 L79.06,35.03 L80.00,35.00 L80.94,35.03 L81.88,35.12 L82.81,35.27 L83.73,35.47 L84.64,35.73 L85.52,36.05 L86.39,36.43 L87.23,36.86 L88.04,37.34 L88.82,37.86 L89.56,38.44 L90.27,39.07 L90.93,39.73 L91.56,40.44 L92.14,41.18 L92.66,41.96 L93.14,42.77 L93.57,43.61 L93.95,44.48 L94.27,45.36 L94.53,46.27 L94.73,47.19 L94.88,48.12 L94.97,49.06 Z"]
+          RenderPath {rect} at (220,230) size 60x40 [fill={[type=SOLID] [color=#FF0000]}] [data="M220.00,80.00 L280.00,80.00 L280.00,120.00 L220.00,120.00 Z"]
+          RenderPath {polygon} at (300,220) size 90x50 [fill={[type=SOLID] [color=#008000]}] [data="M300.00,100.00 L320.00,120.00 L340.00,110.00 L360.00,120.00 L390.00,90.00 L340.00,70.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.4 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

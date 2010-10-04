@@ -1,0 +1,22 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (40,20) size 381x260
+      RenderSVGContainer {g} at (239,79) size 182x122
+        RenderSVGContainer {g} at (239,79) size 182x122
+          RenderPath {ellipse} at (239,79) size 182x122 [stroke={[type=SOLID] [color=#555555]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M420.00,140.00 L419.82,143.77 L419.29,147.52 L418.41,151.24 L417.17,154.92 L415.60,158.54 L413.68,162.09 L411.43,165.55 L408.87,168.91 L405.99,172.15 L402.81,175.27 L399.35,178.25 L395.61,181.07 L391.61,183.74 L387.37,186.23 L382.90,188.54 L378.22,190.66 L373.36,192.58 L368.32,194.29 L363.13,195.79 L357.81,197.06 L352.38,198.11 L346.86,198.94 L341.28,199.53 L335.65,199.88 L330.00,200.00 L324.35,199.88 L318.72,199.53 L313.14,198.94 L307.62,198.11 L302.19,197.06 L296.87,195.79 L291.68,194.29 L286.64,192.58 L281.78,190.66 L277.10,188.54 L272.63,186.23 L268.39,183.74 L264.39,181.07 L260.65,178.25 L257.19,175.27 L254.01,172.15 L251.13,168.91 L248.57,165.55 L246.32,162.09 L244.40,158.54 L242.83,154.92 L241.59,151.24 L240.71,147.52 L240.18,143.77 L240.00,140.00 L240.18,136.23 L240.71,132.48 L241.59,128.76 L242.83,125.08 L244.40,121.46 L246.32,117.91 L248.57,114.45 L251.13,111.09 L254.01,107.85 L257.19,104.73 L260.65,101.75 L264.39,98.93 L268.39,96.26 L272.63,93.77 L277.10,91.46 L281.78,89.34 L286.64,87.42 L291.68,85.71 L296.87,84.21 L302.19,82.94 L307.62,81.89 L313.14,81.06 L318.72,80.47 L324.35,80.12 L330.00,80.00 L335.65,80.12 L341.28,80.47 L346.86,81.06 L352.38,81.89 L357.81,82.94 L363.13,84.21 L368.32,85.71 L373.36,87.42 L378.22,89.34 L382.90,91.46 L387.37,93.77 L391.61,96.26 L395.61,98.93 L399.35,101.75 L402.81,104.73 L405.99,107.85 L408.87,111.09 L411.43,114.45 L413.68,117.91 L415.60,121.46 L417.17,125.08 L418.41,128.76 L419.29,132.48 L419.82,136.23 Z"]
+      RenderSVGResourceRadialGradient {radialGradient} [id="ygw"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFF00]
+        RenderSVGGradientStop {stop} [offset=0.50] [color=#008000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
+      RenderPath {rect} at (40,20) size 180x120 [fill={[type=RADIAL-GRADIENT] [id="ygw"]}] [data="M40.00,20.00 L220.00,20.00 L220.00,140.00 L40.00,140.00 Z"]
+      RenderSVGResourceRadialGradient {radialGradient} [id="yrw"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFF00]
+        RenderSVGGradientStop {stop} [offset=0.50] [color=#770000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFFFF]
+      RenderPath {rect} at (40,160) size 180x120 [fill={[type=RADIAL-GRADIENT] [id="yrw"]}] [data="M40.00,160.00 L220.00,160.00 L220.00,280.00 L40.00,280.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.2 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

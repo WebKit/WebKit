@@ -1,0 +1,51 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,0) size 459x349
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGContainer {g} at (0,0) size 135x135
+          RenderPath {rect} at (0,0) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L90.00,0.00 L90.00,90.00 L0.00,90.00 Z"]
+          RenderPath {rect} at (45,45) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M45.00,45.00 L135.00,45.00 L135.00,135.00 L45.00,135.00 Z"]
+        RenderSVGContainer {g} at (0,0) size 149x149
+          RenderPath {rect} at (0,0) size 136x136 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M0.00,0.00 L135.00,0.00 L135.00,135.00 L0.00,135.00 Z"]
+          RenderPath {rect} at (0,0) size 149x149 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M-13.50,-13.50 L148.50,-13.50 L148.50,148.50 L-13.50,148.50 Z"]
+        RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feGaussianBlur stdDeviation="10.00, 10.00"]
+            [SourceGraphic]
+        RenderSVGResourceFilter {filter} [id="blurxy"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feGaussianBlur stdDeviation="20.00, 1.00"]
+            [SourceGraphic]
+      RenderSVGContainer {use} at (0,0) size 135x135
+        RenderSVGContainer {g} at (0,0) size 135x135
+          RenderSVGContainer {g} at (0,0) size 135x135
+            RenderPath {rect} at (0,0) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L90.00,0.00 L90.00,90.00 L0.00,90.00 Z"]
+            RenderPath {rect} at (45,45) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M45.00,45.00 L135.00,45.00 L135.00,135.00 L45.00,135.00 Z"]
+      RenderSVGContainer {g} at (296,1) size 163x163 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,15.00)}]
+        RenderSVGContainer {use} at (296,1) size 163x163
+          [filter="blur"] RenderSVGResourceFilter {filter} at (-13.50,-13.50) size 162x162
+          RenderSVGContainer {g} at (310,15) size 135x135
+            RenderSVGContainer {g} at (310,15) size 135x135
+              RenderPath {rect} at (310,15) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L90.00,0.00 L90.00,90.00 L0.00,90.00 Z"]
+              RenderPath {rect} at (355,60) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M45.00,45.00 L135.00,45.00 L135.00,135.00 L45.00,135.00 Z"]
+        RenderSVGContainer {use} at (296,1) size 163x163
+          RenderSVGContainer {g} at (296,1) size 163x163
+            RenderSVGContainer {g} at (296,1) size 163x163
+              RenderPath {rect} at (309,14) size 137x137 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M0.00,0.00 L135.00,0.00 L135.00,135.00 L0.00,135.00 Z"]
+              RenderPath {rect} at (296,1) size 163x163 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M-13.50,-13.50 L148.50,-13.50 L148.50,148.50 L-13.50,148.50 Z"]
+      RenderSVGContainer {g} at (296,186) size 163x163 [transform={m=((1.00,0.00)(0.00,1.00)) t=(310.00,200.00)}]
+        RenderSVGContainer {use} at (296,186) size 163x163
+          [filter="blurxy"] RenderSVGResourceFilter {filter} at (-13.50,-13.50) size 162x162
+          RenderSVGContainer {g} at (310,200) size 135x135
+            RenderSVGContainer {g} at (310,200) size 135x135
+              RenderPath {rect} at (310,200) size 90x90 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L90.00,0.00 L90.00,90.00 L0.00,90.00 Z"]
+              RenderPath {rect} at (355,245) size 90x90 [fill={[type=SOLID] [color=#FFFF00]}] [data="M45.00,45.00 L135.00,45.00 L135.00,135.00 L45.00,135.00 Z"]
+        RenderSVGContainer {use} at (296,186) size 163x163
+          RenderSVGContainer {g} at (296,186) size 163x163
+            RenderSVGContainer {g} at (296,186) size 163x163
+              RenderPath {rect} at (309,199) size 137x137 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M0.00,0.00 L135.00,0.00 L135.00,135.00 L0.00,135.00 Z"]
+              RenderPath {rect} at (296,186) size 163x163 [stroke={[type=SOLID] [color=#0000FF] [stroke width=0.50]}] [data="M-13.50,-13.50 L148.50,-13.50 L148.50,148.50 L-13.50,148.50 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

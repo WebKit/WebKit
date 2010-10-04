@@ -1,0 +1,17 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (30,0) size 431x280
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGContainer {g} at (30,0) size 190x190
+        RenderSVGImage {image} at (30,0) size 190x190
+      RenderSVGContainer {g} at (260,90) size 190x190
+        RenderSVGImage {image} at (260,90) size 190x190
+      RenderSVGText {text} at (250,8) size 211x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 211x15
+          chunk 1 text run 1 at (250.00,20.00) startOffset 0 endOffset 40 width 211.00: "Basic test of ICC profile with an image."
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

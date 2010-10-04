@@ -1,0 +1,53 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGText {text} at (65,23) size 21x34 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 21x34
+        chunk 1 text run 1 at (65.00,50.00) startOffset 0 endOffset 1 width 21.00: "A"
+    RenderSVGText {text} at (165,23) size 20x34 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 20x34
+        chunk 1 text run 1 at (165.00,50.00) startOffset 0 endOffset 1 width 20.00: "B"
+    RenderSVGText {text} at (265,23) size 20x34 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 20x34
+        chunk 1 text run 1 at (265.00,50.00) startOffset 0 endOffset 1 width 20.00: "C"
+    RenderSVGText {text} at (365,23) size 22x34 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 22x34
+        chunk 1 text run 1 at (365.00,50.00) startOffset 0 endOffset 1 width 22.00: "D"
+    RenderSVGContainer {g} at (29,59) size 392x42 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,45.00)}]
+      RenderSVGContainer {g} at (29,59) size 92x42
+        RenderPath {rect} at (29,59) size 92x42 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [data="M35.00,15.00 L115.00,15.00 C117.76,15.00,120.00,17.24,120.00,20.00 L120.00,50.00 C120.00,52.76,117.76,55.00,115.00,55.00 L35.00,55.00 C32.24,55.00,30.00,52.76,30.00,50.00 L30.00,20.00 C30.00,17.24,32.24,15.00,35.00,15.00 Z"]
+        RenderSVGText {text} at (50,23) size 58x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 58x22
+            chunk 1 text run 1 at (50.00,40.00) startOffset 0 endOffset 7 width 58.00: "click A"
+      RenderSVGContainer {g} at (129,59) size 92x42
+        RenderPath {rect} at (129,59) size 92x42 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [data="M135.00,15.00 L215.00,15.00 C217.76,15.00,220.00,17.24,220.00,20.00 L220.00,50.00 C220.00,52.76,217.76,55.00,215.00,55.00 L135.00,55.00 C132.24,55.00,130.00,52.76,130.00,50.00 L130.00,20.00 C130.00,17.24,132.24,15.00,135.00,15.00 Z"]
+        RenderSVGText {text} at (135,23) size 78x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x22
+            chunk 1 text run 1 at (135.00,40.00) startOffset 0 endOffset 9 width 78.00: "click B+2"
+      RenderSVGContainer {g} at (229,59) size 92x42
+        RenderPath {rect} at (229,59) size 92x42 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [data="M235.00,15.00 L315.00,15.00 C317.76,15.00,320.00,17.24,320.00,20.00 L320.00,50.00 C320.00,52.76,317.76,55.00,315.00,55.00 L235.00,55.00 C232.24,55.00,230.00,52.76,230.00,50.00 L230.00,20.00 C230.00,17.24,232.24,15.00,235.00,15.00 Z"]
+        RenderSVGText {text} at (235,23) size 78x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 78x22
+            chunk 1 text run 1 at (235.00,40.00) startOffset 0 endOffset 9 width 78.00: "click C+4"
+      RenderSVGContainer {g} at (329,59) size 92x42
+        RenderPath {rect} at (329,59) size 92x42 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#7E8FFA]}] [data="M335.00,15.00 L415.00,15.00 C417.76,15.00,420.00,17.24,420.00,20.00 L420.00,50.00 C420.00,52.76,417.76,55.00,415.00,55.00 L335.00,55.00 C332.24,55.00,330.00,52.76,330.00,50.00 L330.00,20.00 C330.00,17.24,332.24,15.00,335.00,15.00 Z"]
+        RenderSVGText {text} at (350,23) size 44x22 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 44x22
+            chunk 1 text run 1 at (350.00,40.00) startOffset 0 endOffset 5 width 44.00: "never"
+    RenderSVGText {text} at (15,149) size 283x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 283x33
+        chunk 1 text run 1 at (15.00,175.00) startOffset 0 endOffset 26 width 283.00: "Test of Eventbase targets."
+    RenderSVGText {text} at (15,229) size 334x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 334x20
+        chunk 1 text run 1 at (15.00,245.00) startOffset 0 endOffset 48 width 334.00: "Note that clicking rect D should give no result."
+    RenderSVGText {text} at (15,189) size 354x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 354x20
+        chunk 1 text run 1 at (15.00,205.00) startOffset 0 endOffset 51 width 354.00: "Clicking a rectangle should change its color at the"
+    RenderSVGText {text} at (15,209) size 362x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 362x20
+        chunk 1 text run 1 at (15.00,225.00) startOffset 0 endOffset 53 width 362.00: "time for the click + delay as indicated in each rect."
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

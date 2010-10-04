@@ -1,0 +1,24 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (60,5) size 293x175
+      RenderSVGText {text} at (140,5) size 179x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 179x19
+          chunk 1 text run 1 at (140.00,20.00) startOffset 0 endOffset 25 width 179.00: "Event and DOM Access Test"
+      RenderSVGContainer {g} at (60,135) size 293x45
+        RenderSVGContainer {g} at (60,135) size 99x45
+          RenderSVGText {text} at (70,135) size 89x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 89x19
+              chunk 1 text run 1 at (70.00,150.00) startOffset 0 endOffset 15 width 89.00: "Click on target"
+          RenderPath {rect} at (60,160) size 20x20 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M60.00,160.00 L80.00,160.00 L80.00,180.00 L60.00,180.00 Z"]
+          RenderPath {line} at (60,169) size 20x2 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M60.00,170.00 L80.00,170.00"]
+          RenderPath {line} at (69,160) size 2x20 [stroke={[type=SOLID] [color=#000000] [stroke width=0.50]}] [fill={[type=SOLID] [color=#000000]}] [data="M70.00,160.00 L70.00,180.00"]
+        RenderSVGContainer {g} at (70,142) size 283x35
+          RenderSVGText {text} at (70,142) size 283x35 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 283x35
+              chunk 1 text run 1 at (70.00,170.00) startOffset 0 endOffset 22 width 283.00: "Scripting Test Passed!"
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.1 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

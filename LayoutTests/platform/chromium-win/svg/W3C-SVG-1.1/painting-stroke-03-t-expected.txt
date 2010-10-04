@@ -14,7 +14,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (130,244) size 281x45 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 281x45
           chunk 1 text run 1 at (130.00,280.00) startOffset 0 endOffset 16 width 281.00: "stroke-miter=\"1\""
-    RenderSVGText {text} at (10,303) size 281x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 281x46
+    RenderSVGText {text} at (10,303) size 281x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 281x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 281.00: "$Revision: 1.10 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

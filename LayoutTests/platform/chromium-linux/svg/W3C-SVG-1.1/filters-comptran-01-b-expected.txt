@@ -1,0 +1,67 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (15,5) size 450x300
+      RenderSVGViewportContainer {svg} at (15,5) size 450x300
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceLinearGradient {linearGradient} [id="MyGradient"] [gradientUnits=userSpaceOnUse] [start=(10,0)] [end=(590,0)]
+            RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+            RenderSVGGradientStop {stop} [offset=0.33] [color=#00FF00]
+            RenderSVGGradientStop {stop} [offset=0.67] [color=#0000FF]
+            RenderSVGGradientStop {stop} [offset=1.00] [color=#000000]
+          RenderSVGResourceFilter {filter} [id="Identity"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feComponentTransfer 
+                {red: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {green: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {blue: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {alpha: type="IDENTITY" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="Table"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feComponentTransfer 
+                {red: type="TABLE" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {green: type="TABLE" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {blue: type="TABLE" slope="1.00" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="Linear"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feComponentTransfer 
+                {red: type="LINEAR" slope="0.50" intercept="0.25" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {green: type="LINEAR" slope="0.50" intercept="0.00" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {blue: type="LINEAR" slope="0.50" intercept="0.50" amplitude="1.00" exponent="1.00" offset="0.00"}
+                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="Gamma"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feComponentTransfer 
+                {red: type="GAMMA" slope="1.00" intercept="0.00" amplitude="2.00" exponent="5.00" offset="0.00"}
+                {green: type="GAMMA" slope="1.00" intercept="0.00" amplitude="2.00" exponent="3.00" offset="0.00"}
+                {blue: type="GAMMA" slope="1.00" intercept="0.00" amplitude="2.00" exponent="1.00" offset="0.00"}
+                {alpha: type="UNKNOWN" slope="0.00" intercept="0.00" amplitude="0.00" exponent="0.00" offset="0.00"}]
+              [SourceGraphic]
+        RenderPath {rect} at (15,5) size 450x300 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00 L629.00,1.00 L629.00,419.00 L1.00,419.00 Z"]
+        RenderSVGContainer {g} at (15,5) size 450x300
+          RenderPath {rect} at (15,5) size 450x300 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00 L629.00,1.00 L629.00,419.00 L1.00,419.00 Z"]
+          RenderPath {rect} at (22,12) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M10.00,10.00 L590.00,10.00 L590.00,50.00 L10.00,50.00 Z"]
+            [filter="Identity"] RenderSVGResourceFilter {filter} at (10,10) size 580x40
+          RenderSVGText {text} at (10,50) size 208x36 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 208x36
+              chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 14 width 208.00: "type: identity"
+          RenderPath {rect} at (22,83) size 415x30 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M10.00,110.00 L590.00,110.00 L590.00,150.00 L10.00,150.00 Z"]
+            [filter="Table"] RenderSVGResourceFilter {filter} at (10,110) size 580x40
+          RenderSVGText {text} at (10,150) size 168x36 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 168x36
+              chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 11 width 168.00: "type: table"
+          RenderPath {rect} at (22,155) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M10.00,210.00 L590.00,210.00 L590.00,250.00 L10.00,250.00 Z"]
+            [filter="Linear"] RenderSVGResourceFilter {filter} at (10,210) size 580x40
+          RenderSVGText {text} at (10,250) size 605x36 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 605x36
+              chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 40 width 605.00: "type:linear slope:.5 intercepts:.25/0/.5"
+          RenderPath {rect} at (22,226) size 415x29 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M10.00,310.00 L590.00,310.00 L590.00,350.00 L10.00,350.00 Z"]
+            [filter="Gamma"] RenderSVGResourceFilter {filter} at (10,310) size 580x40
+          RenderSVGText {text} at (10,350) size 591x36 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 591x36
+              chunk 1 text run 1 at (10.00,380.00) startOffset 0 endOffset 34 width 591.00: "type: gamma ampl:2 exponents:5/3/1"
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -1,0 +1,45 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,0) size 480x360
+      RenderSVGText {text} at (10,5) size 291x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 291x18
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 46 width 291.00: "Test single line and multiline text selection."
+      RenderSVGContainer {g} at (25,50) size 347x218
+        RenderSVGText {text} at (25,50) size 245x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 245x18
+            chunk 1 text run 1 at (25.00,65.00) startOffset 0 endOffset 37 width 245.00: "Here is a stand-alone 'text' element."
+        RenderSVGText {text} at (25,75) size 287x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 287x18
+            chunk 1 text run 1 at (25.00,90.00) startOffset 0 endOffset 43 width 287.00: "Here is a second 'text' element just below."
+        RenderSVGText {text} at (25,100) size 332x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 332x18
+            chunk 1 text run 1 at (25.00,115.00) startOffset 0 endOffset 48 width 332.00: "Because these are four separate 'text' elements,"
+        RenderSVGText {text} at (25,125) size 312x18 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 312x18
+            chunk 1 text run 1 at (25.00,140.00) startOffset 0 endOffset 47 width 312.00: "text selection should not go across lines here."
+        RenderSVGText {text} at (25,175) size 347x93 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 343x18
+            RenderSVGInlineText {#text} at (0,0) size 343x18
+              chunk 1 text run 1 at (25.00,190.00) startOffset 0 endOffset 50 width 343.00: "However, these lines of text are achieved by using"
+          RenderSVGInlineText {#text} at (343,0) size 4x18
+            chunk 1 text run 1 at (368.00,190.00) startOffset 0 endOffset 1 width 4.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 335x18
+            RenderSVGInlineText {#text} at (0,25) size 335x18
+              chunk 1 text run 1 at (25.00,215.00) startOffset 0 endOffset 51 width 335.00: "one 'tspan' per line, all contained within the same"
+          RenderSVGInlineText {#text} at (335,25) size 4x18
+            chunk 1 text run 1 at (360.00,215.00) startOffset 0 endOffset 1 width 4.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 328x18
+            RenderSVGInlineText {#text} at (0,50) size 328x18
+              chunk 1 text run 1 at (25.00,240.00) startOffset 0 endOffset 51 width 328.00: "'text' element, so you should be able to select all"
+          RenderSVGInlineText {#text} at (328,50) size 4x18
+            chunk 1 text run 1 at (353.00,240.00) startOffset 0 endOffset 1 width 4.00: " "
+          RenderSVGTSpan {tspan} at (0,0) size 185x18
+            RenderSVGInlineText {#text} at (0,75) size 185x18
+              chunk 1 text run 1 at (25.00,265.00) startOffset 0 endOffset 28 width 185.00: "four lines at the same time."
+          RenderSVGInlineText {#text} at (0,0) size 0x0
+      RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 261x47
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
+      RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

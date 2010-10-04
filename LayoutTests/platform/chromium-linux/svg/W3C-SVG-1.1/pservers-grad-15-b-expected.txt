@@ -1,0 +1,17 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (20,20) size 440x210
+      RenderSVGResourceLinearGradient {linearGradient} [id="defs1"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderSVGResourceRadialGradient {radialGradient} [id="defs2"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#000000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
+      RenderPath {rect} at (20,20) size 440x80 [fill={[type=LINEAR-GRADIENT] [id="defs1"]}] [data="M20.00,20.00 L460.00,20.00 L460.00,100.00 L20.00,100.00 Z"]
+      RenderPath {rect} at (20,150) size 440x80 [fill={[type=RADIAL-GRADIENT] [id="defs2"]}] [data="M20.00,150.00 L460.00,150.00 L460.00,230.00 L20.00,230.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.3 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -1,0 +1,31 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (109,10) size 211x320
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="FOMTest"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feMerge mergeNodes="4"]
+            [feComposite operation="IN"]
+              [feFlood flood-color="#408000" flood-opacity="0.40"]
+              [feOffset dx="120.00" dy="90.00"]
+                [SourceGraphic]
+            [feComposite operation="IN"]
+              [feFlood flood-color="#408000" flood-opacity="0.60"]
+              [feOffset dx="80.00" dy="60.00"]
+                [SourceGraphic]
+            [feComposite operation="IN"]
+              [feFlood flood-color="#408000" flood-opacity="0.80"]
+              [feOffset dx="40.00" dy="30.00"]
+                [SourceGraphic]
+            [SourceGraphic]
+      RenderPath {circle} at (120,10) size 200x320 [fill={[type=SOLID] [color=#000000]}] [data="M200.00,50.00 L199.92,52.51 L199.68,55.01 L199.29,57.50 L198.74,59.95 L198.04,62.36 L197.19,64.72 L196.19,67.03 L195.05,69.27 L193.77,71.43 L192.36,73.51 L190.82,75.50 L189.16,77.38 L187.38,79.16 L185.50,80.82 L183.51,82.36 L181.43,83.77 L179.27,85.05 L177.03,86.19 L174.72,87.19 L172.36,88.04 L169.95,88.74 L167.50,89.29 L165.01,89.68 L162.51,89.92 L160.00,90.00 L157.49,89.92 L154.99,89.68 L152.50,89.29 L150.05,88.74 L147.64,88.04 L145.28,87.19 L142.97,86.19 L140.73,85.05 L138.57,83.77 L136.49,82.36 L134.50,80.82 L132.62,79.16 L130.84,77.38 L129.18,75.50 L127.64,73.51 L126.23,71.43 L124.95,69.27 L123.81,67.03 L122.81,64.72 L121.96,62.36 L121.26,59.95 L120.71,57.50 L120.32,55.01 L120.08,52.51 L120.00,50.00 L120.08,47.49 L120.32,44.99 L120.71,42.50 L121.26,40.05 L121.96,37.64 L122.81,35.28 L123.81,32.97 L124.95,30.73 L126.23,28.57 L127.64,26.49 L129.18,24.50 L130.84,22.62 L132.62,20.84 L134.50,19.18 L136.49,17.64 L138.57,16.23 L140.73,14.95 L142.97,13.81 L145.28,12.81 L147.64,11.96 L150.05,11.26 L152.50,10.71 L154.99,10.32 L157.49,10.08 L160.00,10.00 L162.51,10.08 L165.01,10.32 L167.50,10.71 L169.95,11.26 L172.36,11.96 L174.72,12.81 L177.03,13.81 L179.27,14.95 L181.43,16.23 L183.51,17.64 L185.50,19.18 L187.38,20.84 L189.16,22.62 L190.82,24.50 L192.36,26.49 L193.77,28.57 L195.05,30.73 L196.19,32.97 L197.19,35.28 L198.04,37.64 L198.74,40.05 L199.29,42.50 L199.68,44.99 L199.92,47.49 Z"]
+        [filter="FOMTest"] RenderSVGResourceFilter {filter} at (120,10) size 200x320
+      RenderPath {path} at (109,79) size 22x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(120.00,90.00)}] [fill={[type=SOLID] [color=#000000]}] [data="M-1.00,-11.00 L1.00,-11.00 L1.00,-1.00 L11.00,-1.00 L11.00,1.00 L1.00,1.00 L1.00,11.00 L-1.00,11.00 L-1.00,1.00 L-11.00,1.00 L-11.00,-1.00 L-1.00,-1.00 L-1.00,-11.00"]
+      RenderPath {path} at (149,109) size 22x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,120.00)}] [fill={[type=SOLID] [color=#408000] [opacity=0.80]}] [data="M-1.00,-11.00 L1.00,-11.00 L1.00,-1.00 L11.00,-1.00 L11.00,1.00 L1.00,1.00 L1.00,11.00 L-1.00,11.00 L-1.00,1.00 L-11.00,1.00 L-11.00,-1.00 L-1.00,-1.00 L-1.00,-11.00"]
+      RenderPath {path} at (189,139) size 22x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,150.00)}] [fill={[type=SOLID] [color=#408000] [opacity=0.60]}] [data="M-1.00,-11.00 L1.00,-11.00 L1.00,-1.00 L11.00,-1.00 L11.00,1.00 L1.00,1.00 L1.00,11.00 L-1.00,11.00 L-1.00,1.00 L-11.00,1.00 L-11.00,-1.00 L-1.00,-1.00 L-1.00,-11.00"]
+      RenderPath {path} at (229,169) size 22x22 [transform={m=((1.00,0.00)(0.00,1.00)) t=(240.00,180.00)}] [fill={[type=SOLID] [color=#408000] [opacity=0.40]}] [data="M-1.00,-11.00 L1.00,-11.00 L1.00,-1.00 L11.00,-1.00 L11.00,1.00 L1.00,1.00 L1.00,11.00 L-1.00,11.00 L-1.00,1.00 L-11.00,1.00 L-11.00,-1.00 L-1.00,-1.00 L-1.00,-11.00"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.3 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

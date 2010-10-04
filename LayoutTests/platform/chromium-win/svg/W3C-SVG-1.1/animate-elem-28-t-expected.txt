@@ -8,7 +8,7 @@ layer at (0,0) size 480x360
         RenderPath {path} at (257,100) size 61x62 [stroke={[type=SOLID] [color=#000077] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M260.00,131.00 C260.00,116.00,272.00,103.00,288.00,103.00 C303.00,103.00,315.00,116.00,315.00,131.00 C315.00,146.00,303.00,159.00,288.00,159.00 C272.00,159.00,260.00,146.00,260.00,131.00 Z"]
         RenderPath {path} at (162,100) size 61x62 [stroke={[type=SOLID] [color=#000077] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M165.00,131.00 C165.00,116.00,177.00,103.00,193.00,103.00 C208.00,103.00,220.00,116.00,220.00,131.00 C220.00,146.00,208.00,159.00,193.00,159.00 C177.00,159.00,165.00,146.00,165.00,131.00 Z"]
       RenderPath {path} at (149,225) size 188x54 [stroke={[type=SOLID] [color=#F1E900] [stroke width=5.00]}] [fill={[type=SOLID] [color=#F1E900]}] [data="M151.00,227.00 C197.00,279.00,289.00,279.00,335.00,227.00"]
-      RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 261x46
+      RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 261x47
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
       RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -9,7 +9,7 @@ layer at (0,0) size 480x360
       RenderSVGImage {image} at (0,60) size 162x150
       RenderSVGImage {image} at (160,60) size 162x150
       RenderSVGImage {image} at (320,60) size 160x150
-    RenderSVGText {text} at (10,303) size 281x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 281x46
+    RenderSVGText {text} at (10,303) size 281x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 281x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 281.00: "$Revision: 1.12 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

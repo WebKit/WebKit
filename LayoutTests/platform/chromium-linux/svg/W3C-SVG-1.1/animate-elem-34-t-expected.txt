@@ -1,0 +1,31 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (52,11) size 363x182 [transform={m=((0.80,0.00)(0.00,0.80)) t=(40.00,0.00)}]
+      RenderPath {polygon} at (237,14) size 71x107 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M248.50,38.50 L276.50,22.50 L298.50,19.50 L316.50,26.50 L332.50,40.50 L331.50,57.50 L322.50,70.50 L307.50,76.50 L314.50,80.50 L324.50,86.50 L333.50,99.50 L333.50,121.50 L327.50,130.50 L312.50,143.50 L292.50,149.50 L270.50,148.50 L248.50,142.50 L252.50,114.50 L267.50,119.50 L282.50,119.50 L297.50,115.50 L304.50,109.50 L295.50,99.50 L284.50,92.50 L277.50,84.50 L270.50,74.50 L281.50,66.50 L293.50,60.50 L297.50,50.50 L292.50,45.50 L281.50,45.50 L274.50,49.50 L266.50,53.50 Z"]
+      RenderPath {polygon} at (125,12) size 96x109 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M108.50,38.50 L123.50,26.50 L148.50,16.50 L172.50,17.50 L188.50,19.50 L202.50,23.50 L206.50,26.50 L210.50,37.50 L213.50,44.50 L215.50,57.50 L209.50,68.50 L203.50,81.50 L187.50,98.50 L164.50,120.50 L206.50,121.50 L224.50,121.50 L220.50,149.50 L194.50,147.50 L181.50,147.50 L167.50,146.50 L150.50,147.50 L133.50,149.50 L117.50,148.50 L117.50,136.50 L118.50,124.50 L133.50,115.50 L151.50,97.50 L170.50,78.50 L186.50,59.50 L179.50,43.50 L159.50,35.50 L139.50,40.50 L125.50,49.50 Z"]
+      RenderPath {polygon} at (57,12) size 57x111 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M26.50,32.50 L33.50,32.50 L40.50,29.50 L47.50,23.50 L61.50,17.50 L73.50,16.50 L74.50,33.50 L73.50,50.50 L73.50,64.50 L72.50,77.50 L72.50,90.50 L72.50,105.50 L71.50,126.50 L89.50,128.50 L90.50,138.50 L89.50,151.50 L72.50,151.50 L54.50,152.50 L38.50,152.50 L27.50,152.50 L28.50,139.50 L30.50,127.50 L44.50,125.50 L46.50,112.50 L47.50,99.50 L46.50,87.50 L48.50,73.50 L48.50,53.50 L34.50,52.50 L22.50,52.50 L22.50,51.50 L22.50,41.50 L22.50,33.50 Z"]
+      RenderPath {polygon} at (332,12) size 83x113 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M427.50,17.50 L439.50,15.50 L449.50,15.50 L449.50,29.50 L447.50,44.50 L447.50,59.50 L465.50,60.50 L466.50,74.50 L465.50,89.50 L450.50,87.50 L449.50,102.50 L449.50,123.50 L449.50,140.50 L449.50,153.50 L420.50,154.50 L421.50,137.50 L420.50,123.50 L420.50,111.50 L419.50,99.50 L392.50,97.50 L367.50,99.50 L366.50,79.50 L367.50,69.50 L376.50,43.50 L381.50,27.50 L384.50,17.50 L412.50,16.50 L406.50,36.50 L400.50,49.50 L394.50,70.50 L419.50,71.50 L423.50,49.50 L424.50,33.50 Z"]
+      RenderPath {polygon} at (56,11) size 59x113 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#CC0066]}] [data="M26.50,32.50 L33.50,32.50 L40.50,29.50 L47.50,23.50 L61.50,17.50 L73.50,16.50 L74.50,33.50 L73.50,50.50 L73.50,64.50 L72.50,77.50 L72.50,90.50 L72.50,105.50 L71.50,126.50 L89.50,128.50 L90.50,138.50 L89.50,151.50 L72.50,151.50 L54.50,152.50 L38.50,152.50 L27.50,152.50 L28.50,139.50 L30.50,127.50 L44.50,125.50 L46.50,112.50 L47.50,99.50 L46.50,87.50 L48.50,73.50 L48.50,53.50 L34.50,52.50 L22.50,52.50 L22.50,51.50 L22.50,41.50 L22.50,33.50 Z"]
+      RenderSVGContainer {g} at (52,144) size 48x49 [transform={m=((0.30,0.00)(0.00,0.30)) t=(-135.00,150.00)}]
+        RenderPath {path} at (52,144) size 48x49 [fill={[type=SOLID] [color=#CC0066]}] [data="M500.00,100.00 L500.00,300.00 L700.00,300.00 L700.00,100.00 L550.00,100.00 L550.00,250.00 L650.00,250.00 L650.00,100.00 L500.00,100.00 Z"]
+      RenderSVGContainer {g} at (152,144) size 50x49 [transform={m=((0.30,0.00)(0.00,0.30)) t=(-9.00,150.00)}]
+        RenderPath {path} at (152,144) size 50x49 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [data="M500.00,100.00 L500.00,300.00 L700.00,300.00 L700.00,100.00 L550.00,100.00 L550.00,250.00 L650.00,250.00 L650.00,100.00 L500.00,100.00 Z"]
+      RenderSVGContainer {g} at (253,144) size 49x49 [transform={m=((0.30,0.00)(0.00,0.30)) t=(117.00,150.00)}]
+        RenderPath {path} at (253,144) size 49x49 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [data="M500.00,100.00 L500.00,300.00 L700.00,300.00 L700.00,100.00 L550.00,100.00 L550.00,250.00 L650.00,250.00 L650.00,100.00 L500.00,100.00 Z"]
+      RenderSVGContainer {g} at (354,144) size 50x49 [transform={m=((0.30,0.00)(0.00,0.30)) t=(243.00,150.00)}]
+        RenderPath {path} at (354,144) size 50x49 [fill={[type=SOLID] [color=#CCCCCC] [fill rule=EVEN-ODD]}] [data="M500.00,100.00 L500.00,300.00 L700.00,300.00 L700.00,100.00 L550.00,100.00 L550.00,250.00 L650.00,250.00 L650.00,100.00 L500.00,100.00 Z"]
+    RenderSVGText {text} at (5,199) size 398x33 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 398x33
+        chunk 1 text run 1 at (5.00,225.00) startOffset 0 endOffset 39 width 398.00: "Animation on: 'points' and 'fill-rule'."
+    RenderSVGText {text} at (5,239) size 316x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 316x20
+        chunk 1 text run 1 at (5.00,255.00) startOffset 0 endOffset 45 width 316.00: "Digit should match outline at indicated time."
+    RenderSVGText {text} at (5,259) size 379x20 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 379x20
+        chunk 1 text run 1 at (5.00,275.00) startOffset 0 endOffset 54 width 379.00: "Filled square should follow morphing digit discretely."
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

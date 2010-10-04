@@ -1,3 +1,480 @@
+2010-10-03  MORITA Hajime  <morrita@google.com>
+
+        Unrevied, added test expectations for because of the massive SVG change in r68976.
+        This chanage is for svg/W3C-SVG-1.1/*.
+        
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-09-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-10-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-11-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-12-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-13-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-14-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-15-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-16-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-17-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-18-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-19-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-20-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-21-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-22-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-23-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-25-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-26-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-27-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-28-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-29-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-34-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-37-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-39-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-41-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-44-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-52-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-60-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-61-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-62-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-63-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-64-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-65-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-66-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-67-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-68-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-69-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-70-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-77-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-78-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-81-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-84-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-85-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/color-prof-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/color-prop-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/color-prop-02-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/color-prop-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-coord-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-coord-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-trans-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-trans-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-trans-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-trans-05-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-trans-06-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-units-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-units-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-units-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-cursor-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-dom-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-events-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-order-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-order-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-order-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/interact-zoom-01-t-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-a-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-a-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-a-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-a-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-a-05-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-a-07-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-uri-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-uri-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/linking-uri-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-path-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-path-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-fill-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-fill-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-fill-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-fill-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-fill-05-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-marker-01-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-render-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-stroke-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-stroke-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-stroke-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-stroke-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/painting-stroke-07-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-05-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-06-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-07-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-08-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-09-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-10-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-13-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-14-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/paths-data-15-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-16-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-18-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/render-elems-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/render-elems-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/render-elems-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/script-handle-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/script-handle-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/script-handle-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/script-handle-04-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-circle-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-line-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-polygon-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-polyline-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-cond-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-cond-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-cond-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-defs-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-frag-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-frag-05-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-frag-06-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-group-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-group-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-group-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-05-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-06-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-07-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-08-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-09-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-image-10-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-use-03-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/styling-css-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/styling-css-02-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/styling-css-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/styling-css-05-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/styling-css-06-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/styling-pres-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-align-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-align-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-align-04-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-deco-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-fonts-01-t-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-fonts-02-t-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-path-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-01-b-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-03-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-04-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-06-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-07-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-08-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-tref-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-tselect-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-ws-01-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-ws-02-t-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-08-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-09-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-10-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-11-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-12-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-13-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-14-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-15-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-16-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-17-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-18-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-19-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-20-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-21-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-22-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-23-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-24-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-25-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-26-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-27-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-28-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-29-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-31-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-32-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-33-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-34-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-36-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-37-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-39-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-40-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-41-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-44-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-46-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-52-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-60-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-61-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-62-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-63-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-64-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-65-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-66-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-67-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-68-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-69-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-70-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-77-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-78-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-81-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-82-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-83-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-84-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-85-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/color-prof-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/color-prop-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/color-prop-02-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/color-prop-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-coord-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-coord-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-trans-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-trans-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-trans-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-trans-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-trans-05-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-trans-06-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-units-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-units-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-units-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/coords-viewattr-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/extend-namespace-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-composite-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-diffuse-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-displace-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-example-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-felem-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-image-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-light-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-morph-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-offset-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-specular-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-tile-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-turb-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-desc-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-05-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-06-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-elem-07-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-kern-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/interact-cursor-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/interact-dom-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/interact-events-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/interact-order-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/interact-order-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/interact-order-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/interact-zoom-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-a-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-a-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-a-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-a-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-a-05-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-a-07-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-uri-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-uri-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/linking-uri-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-mask-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-path-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-path-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/metadata-example-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-fill-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-fill-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-fill-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-fill-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-fill-05-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-marker-01-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-marker-02-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-marker-03-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-render-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-stroke-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-stroke-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-stroke-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-stroke-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-stroke-07-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-05-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-06-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-07-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-08-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-09-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-10-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-13-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-14-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/paths-data-15-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-04-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-05-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-06-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-07-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-09-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-10-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-12-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-15-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-16-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-17-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-18-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-grad-19-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-elems-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-elems-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-elems-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/script-handle-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/script-handle-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/script-handle-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/script-handle-04-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-circle-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-circle-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-ellipse-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-ellipse-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-intro-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-line-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-polygon-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-polyline-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-cond-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-cond-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-cond-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-defs-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-frag-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-frag-05-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-frag-06-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-group-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-group-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-group-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-05-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-06-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-07-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-08-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-09-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-image-10-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-use-03-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-css-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-css-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-css-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-css-05-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-css-06-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-inherit-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-pres-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-align-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-align-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-align-04-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-deco-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-fonts-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-fonts-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-path-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-spacing-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-03-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-04-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-06-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-07-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-text-08-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-tref-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-tselect-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-tselect-02-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-tspan-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-ws-01-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/text-ws-02-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2010-10-03  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, upstreaming test expectations in Chromium tree.

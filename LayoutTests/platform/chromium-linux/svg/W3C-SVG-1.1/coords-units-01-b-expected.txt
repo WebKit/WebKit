@@ -1,0 +1,87 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,0) size 480x360
+      RenderSVGResourceLinearGradient {linearGradient} [id="linearBoundingBoxPercentage"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGResourceLinearGradient {linearGradient} [id="linearBoundingBoxFraction"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGResourceLinearGradient {linearGradient} [id="linearUserSpace"] [gradientUnits=userSpaceOnUse] [start=(0,0)] [end=(50,0)]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGText {text} at (30,15) size 360x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 360x19
+          chunk 1 text run 1 at (30.00,30.00) startOffset 0 endOffset 59 width 360.00: "Bounding box relative coordinates (percentage and fraction)"
+      RenderSVGContainer {g} at (30,40) size 131x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,40.00)}]
+        RenderPath {rect} at (30,40) size 50x20 [fill={[type=LINEAR-GRADIENT] [id="linearBoundingBoxPercentage"]}] [data="M0.00,0.00 L50.00,0.00 L50.00,20.00 L0.00,20.00 Z"]
+        RenderPath {rect} at (30,60) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,20.00)}] [fill={[type=LINEAR-GRADIENT] [id="linearBoundingBoxFraction"]}] [data="M0.00,0.00 L50.00,0.00 L50.00,20.00 L0.00,20.00 Z"]
+        RenderPath {rect} at (30,80) size 50x20 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,40.00)}] [fill={[type=LINEAR-GRADIENT] [id="linearUserSpace"]}] [data="M0.00,0.00 L50.00,0.00 L50.00,20.00 L0.00,20.00 Z"]
+        RenderPath {line} at (30,59) size 50x2 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,20.00 L50.00,20.00"]
+        RenderPath {line} at (30,79) size 50x2 [stroke={[type=SOLID] [color=#CCCCCC]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,40.00 L50.00,40.00"]
+        RenderSVGText {text} at (60,0) size 67x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 67x19
+            chunk 1 text run 1 at (60.00,15.00) startOffset 0 endOffset 10 width 67.00: "Percentage"
+        RenderSVGText {text} at (60,20) size 50x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 50x19
+            chunk 1 text run 1 at (60.00,35.00) startOffset 0 endOffset 8 width 50.00: "Fraction"
+        RenderSVGText {text} at (60,40) size 71x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 71x19
+            chunk 1 text run 1 at (60.00,55.00) startOffset 0 endOffset 10 width 71.00: "User Space"
+      RenderSVGResourceRadialGradient {radialGradient} [id="radialBoundingBoxPercentage"] [gradientUnits=objectBoundingBox] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGResourceRadialGradient {radialGradient} [id="radialBoundingBoxFraction"] [gradientUnits=objectBoundingBox] [center=(0.25,0.25)] [focal=(0.25,0.25)] [radius=0.25]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGResourceRadialGradient {radialGradient} [id="radialUserSpace"] [gradientUnits=userSpaceOnUse] [center=(15,15)] [focal=(15,15)] [radius=15.00]
+        RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
+        RenderSVGGradientStop {stop} [offset=1.00] [color=#0000FF]
+      RenderSVGText {text} at (30,115) size 325x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 325x19
+          chunk 1 text run 1 at (30.00,130.00) startOffset 0 endOffset 54 width 325.00: "Bounding box relative length (percentage and fraction)"
+      RenderSVGContainer {g} at (30,140) size 193x74 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,140.00)}]
+        RenderPath {rect} at (30,140) size 60x60 [fill={[type=RADIAL-GRADIENT] [id="radialBoundingBoxPercentage"]}] [data="M0.00,0.00 L60.00,0.00 L60.00,60.00 L0.00,60.00 Z"]
+        RenderPath {rect} at (91,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(61.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [id="radialBoundingBoxFraction"]}] [data="M0.00,0.00 L60.00,0.00 L60.00,60.00 L0.00,60.00 Z"]
+        RenderPath {rect} at (152,140) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(122.00,0.00)}] [fill={[type=RADIAL-GRADIENT] [id="radialUserSpace"]}] [data="M0.00,0.00 L60.00,0.00 L60.00,60.00 L0.00,60.00 Z"]
+        RenderSVGText {text} at (0,55) size 50x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 50x19
+            chunk 1 text run 1 at (0.00,70.00) startOffset 0 endOffset 8 width 50.00: "Percent."
+        RenderSVGText {text} at (61,55) size 50x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 50x19
+            chunk 1 text run 1 at (61.00,70.00) startOffset 0 endOffset 8 width 50.00: "Fraction"
+        RenderSVGText {text} at (122,55) size 71x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 71x19
+            chunk 1 text run 1 at (122.00,70.00) startOffset 0 endOffset 10 width 71.00: "User Space"
+      RenderSVGResourcePattern {pattern} [id="patternBoundingBoxPercentage"] [patternUnits=objectBoundingBox] [patternContentUnits=objectBoundingBox]
+        RenderPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.75,0.50 L0.75,0.52 L0.75,0.53 L0.75,0.55 L0.74,0.56 L0.74,0.58 L0.73,0.59 L0.73,0.61 L0.72,0.62 L0.71,0.63 L0.70,0.65 L0.69,0.66 L0.68,0.67 L0.67,0.68 L0.66,0.69 L0.65,0.70 L0.63,0.71 L0.62,0.72 L0.61,0.73 L0.59,0.73 L0.58,0.74 L0.56,0.74 L0.55,0.75 L0.53,0.75 L0.52,0.75 L0.50,0.75 L0.48,0.75 L0.47,0.75 L0.45,0.75 L0.44,0.74 L0.42,0.74 L0.41,0.73 L0.39,0.73 L0.38,0.72 L0.37,0.71 L0.35,0.70 L0.34,0.69 L0.33,0.68 L0.32,0.67 L0.31,0.66 L0.30,0.65 L0.29,0.63 L0.28,0.62 L0.27,0.61 L0.27,0.59 L0.26,0.58 L0.26,0.56 L0.25,0.55 L0.25,0.53 L0.25,0.52 L0.25,0.50 L0.25,0.48 L0.25,0.47 L0.25,0.45 L0.26,0.44 L0.26,0.42 L0.27,0.41 L0.27,0.39 L0.28,0.38 L0.29,0.37 L0.30,0.35 L0.31,0.34 L0.32,0.33 L0.33,0.32 L0.34,0.31 L0.35,0.30 L0.37,0.29 L0.38,0.28 L0.39,0.27 L0.41,0.27 L0.42,0.26 L0.44,0.26 L0.45,0.25 L0.47,0.25 L0.48,0.25 L0.50,0.25 L0.52,0.25 L0.53,0.25 L0.55,0.25 L0.56,0.26 L0.58,0.26 L0.59,0.27 L0.61,0.27 L0.62,0.28 L0.63,0.29 L0.65,0.30 L0.66,0.31 L0.67,0.32 L0.68,0.33 L0.69,0.34 L0.70,0.35 L0.71,0.37 L0.72,0.38 L0.73,0.39 L0.73,0.41 L0.74,0.42 L0.74,0.44 L0.75,0.45 L0.75,0.47 L0.75,0.48 Z"]
+        RenderPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.40,0.40 L0.60,0.40 L0.60,0.60 L0.40,0.60 Z"]
+      RenderSVGResourcePattern {pattern} [id="patternBoundingBoxFraction"] [patternUnits=objectBoundingBox] [patternContentUnits=objectBoundingBox]
+        RenderPath {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.75,0.50 L0.75,0.52 L0.75,0.53 L0.75,0.55 L0.74,0.56 L0.74,0.58 L0.73,0.59 L0.73,0.61 L0.72,0.62 L0.71,0.63 L0.70,0.65 L0.69,0.66 L0.68,0.67 L0.67,0.68 L0.66,0.69 L0.65,0.70 L0.63,0.71 L0.62,0.72 L0.61,0.73 L0.59,0.73 L0.58,0.74 L0.56,0.74 L0.55,0.75 L0.53,0.75 L0.52,0.75 L0.50,0.75 L0.48,0.75 L0.47,0.75 L0.45,0.75 L0.44,0.74 L0.42,0.74 L0.41,0.73 L0.39,0.73 L0.38,0.72 L0.37,0.71 L0.35,0.70 L0.34,0.69 L0.33,0.68 L0.32,0.67 L0.31,0.66 L0.30,0.65 L0.29,0.63 L0.28,0.62 L0.27,0.61 L0.27,0.59 L0.26,0.58 L0.26,0.56 L0.25,0.55 L0.25,0.53 L0.25,0.52 L0.25,0.50 L0.25,0.48 L0.25,0.47 L0.25,0.45 L0.26,0.44 L0.26,0.42 L0.27,0.41 L0.27,0.39 L0.28,0.38 L0.29,0.37 L0.30,0.35 L0.31,0.34 L0.32,0.33 L0.33,0.32 L0.34,0.31 L0.35,0.30 L0.37,0.29 L0.38,0.28 L0.39,0.27 L0.41,0.27 L0.42,0.26 L0.44,0.26 L0.45,0.25 L0.47,0.25 L0.48,0.25 L0.50,0.25 L0.52,0.25 L0.53,0.25 L0.55,0.25 L0.56,0.26 L0.58,0.26 L0.59,0.27 L0.61,0.27 L0.62,0.28 L0.63,0.29 L0.65,0.30 L0.66,0.31 L0.67,0.32 L0.68,0.33 L0.69,0.34 L0.70,0.35 L0.71,0.37 L0.72,0.38 L0.73,0.39 L0.73,0.41 L0.74,0.42 L0.74,0.44 L0.75,0.45 L0.75,0.47 L0.75,0.48 Z"]
+        RenderPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.40,0.40 L0.60,0.40 L0.60,0.60 L0.40,0.60 Z"]
+      RenderSVGResourcePattern {pattern} [id="patternUserSpace"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+        RenderPath {circle} at (15,5) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M35.00,15.00 L34.98,15.63 L34.92,16.25 L34.82,16.87 L34.69,17.49 L34.51,18.09 L34.30,18.68 L34.05,19.26 L33.76,19.82 L33.44,20.36 L33.09,20.88 L32.71,21.37 L32.29,21.85 L31.85,22.29 L31.37,22.71 L30.88,23.09 L30.36,23.44 L29.82,23.76 L29.26,24.05 L28.68,24.30 L28.09,24.51 L27.49,24.69 L26.87,24.82 L26.25,24.92 L25.63,24.98 L25.00,25.00 L24.37,24.98 L23.75,24.92 L23.13,24.82 L22.51,24.69 L21.91,24.51 L21.32,24.30 L20.74,24.05 L20.18,23.76 L19.64,23.44 L19.12,23.09 L18.63,22.71 L18.15,22.29 L17.71,21.85 L17.29,21.37 L16.91,20.88 L16.56,20.36 L16.24,19.82 L15.95,19.26 L15.70,18.68 L15.49,18.09 L15.31,17.49 L15.18,16.87 L15.08,16.25 L15.02,15.63 L15.00,15.00 L15.02,14.37 L15.08,13.75 L15.18,13.13 L15.31,12.51 L15.49,11.91 L15.70,11.32 L15.95,10.74 L16.24,10.18 L16.56,9.64 L16.91,9.12 L17.29,8.63 L17.71,8.15 L18.15,7.71 L18.63,7.29 L19.12,6.91 L19.64,6.56 L20.18,6.24 L20.74,5.95 L21.32,5.70 L21.91,5.49 L22.51,5.31 L23.13,5.18 L23.75,5.08 L24.37,5.02 L25.00,5.00 L25.63,5.02 L26.25,5.08 L26.87,5.18 L27.49,5.31 L28.09,5.49 L28.68,5.70 L29.26,5.95 L29.82,6.24 L30.36,6.56 L30.88,6.91 L31.37,7.29 L31.85,7.71 L32.29,8.15 L32.71,8.63 L33.09,9.12 L33.44,9.64 L33.76,10.18 L34.05,10.74 L34.30,11.32 L34.51,11.91 L34.69,12.51 L34.82,13.13 L34.92,13.75 L34.98,14.37 Z"]
+        RenderPath {rect} at (20,12) size 10x6 [fill={[type=SOLID] [color=#0000FF]}] [data="M20.00,12.00 L30.00,12.00 L30.00,18.00 L20.00,18.00 Z"]
+      RenderSVGText {text} at (30,225) size 362x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 362x19
+          chunk 1 text run 1 at (30.00,240.00) startOffset 0 endOffset 60 width 362.00: "Bounding box relative width/height (percentage and fraction)"
+      RenderSVGContainer {g} at (29,249) size 432x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,250.00)}]
+        RenderPath {rect} at (29,249) size 52x32 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternBoundingBoxPercentage"]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
+        RenderPath {rect} at (179,249) size 52x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(150.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternBoundingBoxFraction"]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
+        RenderPath {rect} at (329,249) size 52x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(300.00,0.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="patternUserSpace"]}] [data="M0.00,0.00 L50.00,0.00 L50.00,30.00 L0.00,30.00 Z"]
+        RenderSVGText {text} at (60,5) size 67x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 67x19
+            chunk 1 text run 1 at (60.00,20.00) startOffset 0 endOffset 10 width 67.00: "Percentage"
+        RenderSVGText {text} at (210,5) size 50x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 50x19
+            chunk 1 text run 1 at (210.00,20.00) startOffset 0 endOffset 8 width 50.00: "Fraction"
+        RenderSVGText {text} at (360,5) size 71x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 71x19
+            chunk 1 text run 1 at (360.00,20.00) startOffset 0 endOffset 10 width 71.00: "User Space"
+      RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.5 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -1,0 +1,90 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (38,1) size 394x293
+      RenderSVGText {text} at (158,1) size 164x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 164x19
+          chunk 1 (middle anchor) text run 1 at (158.50,16.00) startOffset 0 endOffset 27 width 163.00: "Filter Effect: feMorphology"
+      RenderSVGContainer {g} at (38,22) size 394x272 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,-6.00)}]
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceFilter {filter} [id="erode1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feMorphology operator="ERODE" radius="1.00, 1.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="erode2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feMorphology operator="ERODE" radius="2.00, 2.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="dilate1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feMorphology operator="DILATE" radius="1.00, 1.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="dilate2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feMorphology operator="DILATE" radius="3.00, 3.00"]
+              [SourceGraphic]
+          RenderSVGContainer {g} at (0,0) size 149x118
+            RenderSVGContainer {g} at (0,0) size 149x118
+              RenderSVGContainer {g} at (0,0) size 149x118
+                RenderPath {path} at (0,3) size 85x73 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29 L3.59,78.29 L3.59,13.54 L81.40,13.54 L81.40,78.29 Z"]
+                RenderPath {path} at (6,25) size 91x93 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54 C93.26,100.82,74.68,119.70,51.76,119.70 C28.84,119.70,10.26,100.82,10.26,77.54 C10.26,54.25,28.84,35.37,51.76,35.37 C74.68,35.37,93.26,54.25,93.26,77.54 Z"]
+                RenderPath {path} at (47,14) size 102x99 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44 L111.60,55.80 L141.31,60.18 L119.81,81.48 L124.89,111.54 L98.31,97.35 L71.73,111.54 L76.81,81.48 L55.31,60.18 L85.02,55.80 L98.31,28.44 Z"]
+                RenderPath {path} at (36,0) size 100x76 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34 C131.56,54.90,108.77,78.05,80.66,78.05 C58.17,78.05,39.94,59.53,39.94,36.68 C39.94,18.40,54.53,3.58,72.52,3.58 C86.91,3.58,98.58,15.44,98.58,30.06 C98.58,41.76,89.25,51.24,77.73,51.24 C68.52,51.24,61.05,43.65,61.05,34.30 C61.05,26.81,67.03,20.74,74.39,20.74 C80.29,20.74,85.07,25.60,85.07,31.59 C85.07,36.38,81.25,40.26,76.53,40.26 C72.76,40.26,69.70,37.15,69.70,33.32"]
+        RenderSVGContainer {g} at (38,22) size 394x272
+          RenderSVGContainer {g} at (38,22) size 139x132
+            RenderSVGContainer {use} at (38,22) size 139x117
+              [filter="erode1"] RenderSVGResourceFilter {filter} at (38.58,28.58) size 137.73x116.11
+              RenderSVGContainer {g} at (34,18) size 150x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                RenderSVGContainer {g} at (34,18) size 150x125
+                  RenderSVGContainer {g} at (34,18) size 150x125
+                    RenderSVGContainer {g} at (34,18) size 150x125
+                      RenderPath {path} at (34,28) size 86x73 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29 L3.59,78.29 L3.59,13.54 L81.40,13.54 L81.40,78.29 Z"]
+                      RenderPath {path} at (41,50) size 91x93 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54 C93.26,100.82,74.68,119.70,51.76,119.70 C28.84,119.70,10.26,100.82,10.26,77.54 C10.26,54.25,28.84,35.37,51.76,35.37 C74.68,35.37,93.26,54.25,93.26,77.54 Z"]
+                      RenderPath {path} at (82,39) size 102x99 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44 L111.60,55.80 L141.31,60.18 L119.81,81.48 L124.89,111.54 L98.31,97.35 L71.73,111.54 L76.81,81.48 L55.31,60.18 L85.02,55.80 L98.31,28.44 Z"]
+                      RenderPath {path} at (71,18) size 100x83 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34 C131.56,54.90,108.77,78.05,80.66,78.05 C58.17,78.05,39.94,59.53,39.94,36.68 C39.94,18.40,54.53,3.58,72.52,3.58 C86.91,3.58,98.58,15.44,98.58,30.06 C98.58,41.76,89.25,51.24,77.73,51.24 C68.52,51.24,61.05,43.65,61.05,34.30 C61.05,26.81,67.03,20.74,74.39,20.74 C80.29,20.74,85.07,25.60,85.07,31.59 C85.07,36.38,81.25,40.26,76.53,40.26 C72.76,40.26,69.70,37.15,69.70,33.32"]
+            RenderSVGText {text} at (46,141) size 128x19 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 128x19
+                chunk 1 (middle anchor) text run 1 at (46.50,156.00) startOffset 0 endOffset 19 width 127.00: "type=erode radius=1"
+          RenderSVGContainer {g} at (293,22) size 139x132 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,0.00)}]
+            RenderSVGContainer {use} at (293,22) size 139x117
+              [filter="erode2"] RenderSVGResourceFilter {filter} at (38.58,28.58) size 137.73x116.11
+              RenderSVGContainer {g} at (289,18) size 150x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                RenderSVGContainer {g} at (289,18) size 150x125
+                  RenderSVGContainer {g} at (289,18) size 150x125
+                    RenderSVGContainer {g} at (289,18) size 150x125
+                      RenderPath {path} at (289,28) size 86x73 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29 L3.59,78.29 L3.59,13.54 L81.40,13.54 L81.40,78.29 Z"]
+                      RenderPath {path} at (296,50) size 91x93 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54 C93.26,100.82,74.68,119.70,51.76,119.70 C28.84,119.70,10.26,100.82,10.26,77.54 C10.26,54.25,28.84,35.37,51.76,35.37 C74.68,35.37,93.26,54.25,93.26,77.54 Z"]
+                      RenderPath {path} at (337,39) size 102x99 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44 L111.60,55.80 L141.31,60.18 L119.81,81.48 L124.89,111.54 L98.31,97.35 L71.73,111.54 L76.81,81.48 L55.31,60.18 L85.02,55.80 L98.31,28.44 Z"]
+                      RenderPath {path} at (326,18) size 100x83 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34 C131.56,54.90,108.77,78.05,80.66,78.05 C58.17,78.05,39.94,59.53,39.94,36.68 C39.94,18.40,54.53,3.58,72.52,3.58 C86.91,3.58,98.58,15.44,98.58,30.06 C98.58,41.76,89.25,51.24,77.73,51.24 C68.52,51.24,61.05,43.65,61.05,34.30 C61.05,26.81,67.03,20.74,74.39,20.74 C80.29,20.74,85.07,25.60,85.07,31.59 C85.07,36.38,81.25,40.26,76.53,40.26 C72.76,40.26,69.70,37.15,69.70,33.32"]
+            RenderSVGText {text} at (46,141) size 128x19 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 128x19
+                chunk 1 (middle anchor) text run 1 at (46.50,156.00) startOffset 0 endOffset 19 width 127.00: "type=erode radius=2"
+          RenderSVGContainer {g} at (38,162) size 139x132 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,140.00)}]
+            RenderSVGContainer {use} at (38,162) size 139x117
+              [filter="dilate1"] RenderSVGResourceFilter {filter} at (38.58,28.58) size 137.73x116.11
+              RenderSVGContainer {g} at (34,158) size 150x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                RenderSVGContainer {g} at (34,158) size 150x125
+                  RenderSVGContainer {g} at (34,158) size 150x125
+                    RenderSVGContainer {g} at (34,158) size 150x125
+                      RenderPath {path} at (34,168) size 86x73 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29 L3.59,78.29 L3.59,13.54 L81.40,13.54 L81.40,78.29 Z"]
+                      RenderPath {path} at (41,190) size 91x93 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54 C93.26,100.82,74.68,119.70,51.76,119.70 C28.84,119.70,10.26,100.82,10.26,77.54 C10.26,54.25,28.84,35.37,51.76,35.37 C74.68,35.37,93.26,54.25,93.26,77.54 Z"]
+                      RenderPath {path} at (82,179) size 102x99 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44 L111.60,55.80 L141.31,60.18 L119.81,81.48 L124.89,111.54 L98.31,97.35 L71.73,111.54 L76.81,81.48 L55.31,60.18 L85.02,55.80 L98.31,28.44 Z"]
+                      RenderPath {path} at (71,158) size 100x83 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34 C131.56,54.90,108.77,78.05,80.66,78.05 C58.17,78.05,39.94,59.53,39.94,36.68 C39.94,18.40,54.53,3.58,72.52,3.58 C86.91,3.58,98.58,15.44,98.58,30.06 C98.58,41.76,89.25,51.24,77.73,51.24 C68.52,51.24,61.05,43.65,61.05,34.30 C61.05,26.81,67.03,20.74,74.39,20.74 C80.29,20.74,85.07,25.60,85.07,31.59 C85.07,36.38,81.25,40.26,76.53,40.26 C72.76,40.26,69.70,37.15,69.70,33.32"]
+            RenderSVGText {text} at (48,141) size 124x19 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 124x19
+                chunk 1 (middle anchor) text run 1 at (48.00,156.00) startOffset 0 endOffset 20 width 124.00: "type=dilate radius=1"
+          RenderSVGContainer {g} at (293,162) size 139x132 [transform={m=((1.00,0.00)(0.00,1.00)) t=(255.00,140.00)}]
+            RenderSVGContainer {use} at (293,162) size 139x117
+              [filter="dilate2"] RenderSVGResourceFilter {filter} at (38.58,28.58) size 137.73x116.11
+              RenderSVGContainer {g} at (289,158) size 150x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(35.00,25.00)}]
+                RenderSVGContainer {g} at (289,158) size 150x125
+                  RenderSVGContainer {g} at (289,158) size 150x125
+                    RenderSVGContainer {g} at (289,158) size 150x125
+                      RenderPath {path} at (289,168) size 86x73 [stroke={[type=SOLID] [color=#6666FF] [stroke width=7.17]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M81.40,78.29 L3.59,78.29 L3.59,13.54 L81.40,13.54 L81.40,78.29 Z"]
+                      RenderPath {path} at (296,190) size 91x93 [stroke={[type=SOLID] [color=#00FF00] [stroke width=7.17]}] [data="M93.26,77.54 C93.26,100.82,74.68,119.70,51.76,119.70 C28.84,119.70,10.26,100.82,10.26,77.54 C10.26,54.25,28.84,35.37,51.76,35.37 C74.68,35.37,93.26,54.25,93.26,77.54 Z"]
+                      RenderPath {path} at (337,179) size 102x99 [stroke={[type=SOLID] [color=#FF0000] [stroke width=7.17]}] [data="M98.31,28.44 L111.60,55.80 L141.31,60.18 L119.81,81.48 L124.89,111.54 L98.31,97.35 L71.73,111.54 L76.81,81.48 L55.31,60.18 L85.02,55.80 L98.31,28.44 Z"]
+                      RenderPath {path} at (326,158) size 100x83 [stroke={[type=SOLID] [color=#FFFF00] [stroke width=7.17]}] [data="M131.56,26.34 C131.56,54.90,108.77,78.05,80.66,78.05 C58.17,78.05,39.94,59.53,39.94,36.68 C39.94,18.40,54.53,3.58,72.52,3.58 C86.91,3.58,98.58,15.44,98.58,30.06 C98.58,41.76,89.25,51.24,77.73,51.24 C68.52,51.24,61.05,43.65,61.05,34.30 C61.05,26.81,67.03,20.74,74.39,20.74 C80.29,20.74,85.07,25.60,85.07,31.59 C85.07,36.38,81.25,40.26,76.53,40.26 C72.76,40.26,69.70,37.15,69.70,33.32"]
+            RenderSVGText {text} at (48,141) size 124x19 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 124x19
+                chunk 1 (middle anchor) text run 1 at (48.00,156.00) startOffset 0 endOffset 20 width 124.00: "type=dilate radius=3"
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -1,0 +1,42 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (20,19) size 394x259
+      RenderSVGText {text} at (100,19) size 257x27 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 257x27
+          chunk 1 text run 1 at (100.00,40.00) startOffset 0 endOffset 26 width 257.00: "Mouse event handlers test."
+      RenderSVGContainer {g} at (20,62) size 394x109 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,140.00)}]
+        RenderSVGText {text} at (-40,-78) size 82x36 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 82x36
+            chunk 1 text run 1 at (-40.00,-50.00) startOffset 0 endOffset 6 width 82.00: "Target"
+        RenderSVGText {text} at (60,-14) size 294x27 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 294x27
+            chunk 1 text run 1 at (60.00,7.00) startOffset 0 endOffset 32 width 294.00: "Use the target to trigger events"
+        RenderSVGContainer {g} at (29,109) size 62x62
+          RenderPath {circle} at (29,109) size 62x62 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M30.00,0.00 L29.94,1.88 L29.76,3.76 L29.47,5.62 L29.06,7.46 L28.53,9.27 L27.89,11.04 L27.14,12.77 L26.29,14.45 L25.33,16.07 L24.27,17.63 L23.12,19.12 L21.87,20.54 L20.54,21.87 L19.12,23.12 L17.63,24.27 L16.07,25.33 L14.45,26.29 L12.77,27.14 L11.04,27.89 L9.27,28.53 L7.46,29.06 L5.62,29.47 L3.76,29.76 L1.88,29.94 L-0.00,30.00 L-1.88,29.94 L-3.76,29.76 L-5.62,29.47 L-7.46,29.06 L-9.27,28.53 L-11.04,27.89 L-12.77,27.14 L-14.45,26.29 L-16.07,25.33 L-17.63,24.27 L-19.12,23.12 L-20.54,21.87 L-21.87,20.54 L-23.12,19.12 L-24.27,17.63 L-25.33,16.07 L-26.29,14.45 L-27.14,12.77 L-27.89,11.04 L-28.53,9.27 L-29.06,7.46 L-29.47,5.62 L-29.76,3.76 L-29.94,1.88 L-30.00,-0.00 L-29.94,-1.88 L-29.76,-3.76 L-29.47,-5.62 L-29.06,-7.46 L-28.53,-9.27 L-27.89,-11.04 L-27.14,-12.77 L-26.29,-14.45 L-25.33,-16.07 L-24.27,-17.63 L-23.12,-19.12 L-21.87,-20.54 L-20.54,-21.87 L-19.12,-23.12 L-17.63,-24.27 L-16.07,-25.33 L-14.45,-26.29 L-12.77,-27.14 L-11.04,-27.89 L-9.27,-28.53 L-7.46,-29.06 L-5.62,-29.47 L-3.76,-29.76 L-1.88,-29.94 L0.00,-30.00 L1.88,-29.94 L3.76,-29.76 L5.62,-29.47 L7.46,-29.06 L9.27,-28.53 L11.04,-27.89 L12.77,-27.14 L14.45,-26.29 L16.07,-25.33 L17.63,-24.27 L19.12,-23.12 L20.54,-21.87 L21.87,-20.54 L23.12,-19.12 L24.27,-17.63 L25.33,-16.07 L26.29,-14.45 L27.14,-12.77 L27.89,-11.04 L28.53,-9.27 L29.06,-7.46 L29.47,-5.62 L29.76,-3.76 L29.94,-1.88 Z"]
+          RenderPath {line} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M-30.00,0.00 L30.00,0.00"]
+          RenderPath {line} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,-30.00 L0.00,30.00"]
+      RenderSVGContainer {g} at (50,182) size 162x96
+        RenderSVGContainer {g} at (50,182) size 162x96 [transform={m=((1.00,0.00)(0.00,1.00)) t=(65.00,190.00)}]
+          RenderSVGContainer {g} at (75,182) size 137x96
+            RenderSVGText {text} at (10,-8) size 121x36 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 121x36
+                chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 9 width 121.00: "onfocusin"
+            RenderSVGText {text} at (10,22) size 137x36 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 137x36
+                chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 10 width 137.00: "onfocusout"
+            RenderSVGText {text} at (10,52) size 129x36 contains 1 chunk(s)
+              RenderSVGInlineText {#text} at (0,0) size 129x36
+                chunk 1 text run 1 at (10.00,80.00) startOffset 0 endOffset 10 width 129.00: "onactivate"
+          RenderSVGContainer {g} at (50,192) size 20x80
+            RenderPath {rect} at (50,192) size 20x20 [fill={[type=SOLID] [color=#008000]}] [data="M-15.00,2.00 L5.00,2.00 L5.00,22.00 L-15.00,22.00 Z"]
+            RenderPath {rect} at (50,192) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M-15.00,2.00 L5.00,2.00 L5.00,22.00 L-15.00,22.00 Z"]
+            RenderPath {rect} at (50,222) size 20x20 [fill={[type=SOLID] [color=#008000]}] [data="M-15.00,32.00 L5.00,32.00 L5.00,52.00 L-15.00,52.00 Z"]
+            RenderPath {rect} at (50,222) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M-15.00,32.00 L5.00,32.00 L5.00,52.00 L-15.00,52.00 Z"]
+            RenderPath {rect} at (50,252) size 20x20 [fill={[type=SOLID] [color=#008000]}] [data="M-15.00,62.00 L5.00,62.00 L5.00,82.00 L-15.00,82.00 Z"]
+            RenderPath {rect} at (50,252) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [data="M-15.00,62.00 L5.00,62.00 L5.00,82.00 L-15.00,82.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.1 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -1,0 +1,15 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (6,40) size 421x245
+      RenderPath {polygon} at (10,44) size 99x97 [stroke={[type=SOLID] [color=#000000]}] [data="M59.00,45.00 L95.00,63.00 L108.00,105.00 L82.00,139.00 L39.00,140.00 L11.00,107.00 L19.00,65.00 Z"]
+      RenderPath {polygon} at (131,45) size 97x95 [fill={[type=SOLID] [color=#FF0000]}] [data="M179.00,45.00 L218.00,63.00 L228.00,105.00 L202.00,139.00 L159.00,140.00 L131.00,107.00 L139.00,65.00 L179.00,45.00 Z"]
+      RenderPath {polygon} at (284,40) size 134x110 [stroke={[type=SOLID] [color=#000000] [stroke width=6.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M350.00,45.00 L375.00,80.00 L410.00,95.00 L375.00,110.00 L350.00,145.00 L325.00,120.00 L290.00,95.00 L325.00,70.00 L350.00,45.00 Z"]
+      RenderPath {polygon} at (6,180) size 107x105 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [data="M59.00,185.00 L98.00,203.00 L108.00,245.00 L82.00,279.00 L39.00,280.00 L11.00,247.00 L19.00,205.00 L59.00,185.00 Z"]
+      RenderPath {polygon} at (126,180) size 107x105 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M179.00,185.00 L218.00,203.00 L228.00,245.00 L202.00,279.00 L159.00,280.00 L131.00,247.00 L139.00,205.00 Z"]
+      RenderPath {polygon} at (265,179) size 162x105 [stroke={[type=SOLID] [color=#00FF00] [stroke width=8.00]}] [data="M270.00,225.00 L300.00,245.00 L320.00,225.00 L340.00,245.00 L280.00,280.00 L390.00,280.00 L420.00,240.00 L280.00,185.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

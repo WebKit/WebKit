@@ -51,7 +51,7 @@ layer at (0,0) size 480x360
       RenderPath {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data=""]
       RenderPath {ellipse} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
       RenderPath {line} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M240.00,265.00 L240.00,265.00"]
-    RenderSVGText {text} at (10,303) size 281x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 281x46
+    RenderSVGText {text} at (10,303) size 281x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 281x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 17 width 281.00: "$Revision: 1.16 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

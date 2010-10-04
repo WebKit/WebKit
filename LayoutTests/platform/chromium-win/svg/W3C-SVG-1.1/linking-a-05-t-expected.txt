@@ -30,7 +30,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (350,179) size 76x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 76x12
           chunk 1 text run 1 at (350.00,189.00) startOffset 0 endOffset 20 width 76.00: "id=\"internal-circle\""
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

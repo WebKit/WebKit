@@ -22,8 +22,8 @@ layer at (0,0) size 480x360
       RenderSVGResourcePattern {pattern} [id="pat3"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderPath {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L10.00,0.00 L10.00,10.00 L0.00,10.00 Z"]
         RenderPath {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,10.00 L10.00,10.00 L10.00,20.00 L0.00,20.00 Z"]
-      RenderSVGText {text} at (25,173) size 296x57 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 296x57
+      RenderSVGText {text} at (25,173) size 296x58 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 296x58
           chunk 1 text run 1 at (25.00,220.00) startOffset 0 endOffset 15 width 296.00: "Pattern on fill"
       RenderSVGText {text} at (25,223) size 212x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 212x15
@@ -37,7 +37,7 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (25,278) size 225x15 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 225x15
           chunk 1 text run 1 at (25.00,290.00) startOffset 0 endOffset 40 width 225.00: "Pattern consists of red and blue columns"
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

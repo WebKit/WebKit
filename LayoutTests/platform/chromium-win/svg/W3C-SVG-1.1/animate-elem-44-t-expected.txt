@@ -16,14 +16,14 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (5,199) size 414x33 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 414x33
         chunk 1 text run 1 at (5.00,225.00) startOffset 0 endOffset 21 width 229.00: "Animation on the 'd' "
-        chunk 1 text run 2 at (234.00,225.00) startOffset 0 endOffset 18 width 185.00: "attribute of path."
+        chunk 1 text run 1 at (234.00,225.00) startOffset 0 endOffset 18 width 185.00: "attribute of path."
     RenderSVGText {text} at (5,239) size 316x20 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 316x20
         chunk 1 text run 1 at (5.00,255.00) startOffset 0 endOffset 45 width 316.00: "Digit should match outline at indicated time."
     RenderSVGText {text} at (5,259) size 370x20 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 370x20
         chunk 1 text run 1 at (5.00,275.00) startOffset 0 endOffset 54 width 370.00: "Filled circle should follow morphing digit discretely."
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

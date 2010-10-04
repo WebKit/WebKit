@@ -121,7 +121,7 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (386,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(915.00,430.00)}]
           RenderPath {rect} at (386,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
             [filter="arithmetic50"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.5 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

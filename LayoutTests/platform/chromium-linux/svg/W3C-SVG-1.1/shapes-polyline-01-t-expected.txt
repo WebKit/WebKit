@@ -1,0 +1,15 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (6,46) size 431x239
+      RenderPath {polyline} at (9,49) size 127x102 [stroke={[type=SOLID] [color=#000000]}] [data="M10.00,50.00 L35.00,150.00 L60.00,50.00 L85.00,150.00 L110.00,50.00 L135.00,150.00"]
+      RenderPath {polyline} at (167,46) size 105x98 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [data="M220.00,50.00 L267.00,84.00 L249.00,140.00 L190.00,140.00 L172.00,84.00 L220.00,50.00"]
+      RenderPath {polyline} at (308,49) size 129x102 [stroke={[type=SOLID] [color=#00FF00] [stroke width=4.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M310.00,50.00 L335.00,150.00 L360.00,50.00 L385.00,150.00 L410.00,50.00 L435.00,150.00"]
+      RenderPath {polyline} at (6,181) size 107x104 [stroke={[type=SOLID] [color=#FF0000] [stroke width=8.00]}] [data="M59.00,185.00 L98.00,203.00 L108.00,245.00 L82.00,279.00 L39.00,280.00 L11.00,247.00 L19.00,205.00"]
+      RenderPath {polyline} at (136,181) size 107x104 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M189.00,185.00 L228.00,203.00 L238.00,245.00 L212.00,279.00 L169.00,280.00 L141.00,247.00 L149.00,205.00"]
+      RenderPath {polyline} at (270,185) size 150x95 [fill={[type=SOLID] [color=#FF00FF]}] [data="M270.00,225.00 L300.00,245.00 L320.00,225.00 L340.00,245.00 L280.00,280.00 L390.00,280.00 L420.00,240.00 L280.00,185.00"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

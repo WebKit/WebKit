@@ -1,0 +1,24 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (90,4) size 336x278
+      RenderSVGText {text} at (90,4) size 198x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 198x15
+          chunk 1 text run 1 at (90.00,16.00) startOffset 0 endOffset 42 width 198.00: "Basic out-bound links and the 'a' element."
+      RenderSVGContainer {a} at (164,26) size 147x76
+        RenderPath {path} at (164,26) size 147x76 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M165.00,40.00 L265.00,40.00 L265.00,28.00 L310.00,64.00 L265.00,100.00 L265.00,88.00 L165.00,88.00 Z"]
+      RenderSVGContainer {g} at (164,116) size 147x76 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,90.00)}]
+        RenderSVGContainer {a} at (164,116) size 147x76
+          RenderPath {path} at (164,116) size 147x76 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data="M165.00,40.00 L265.00,40.00 L265.00,28.00 L310.00,64.00 L265.00,100.00 L265.00,88.00 L165.00,88.00 Z"]
+      RenderSVGContainer {g} at (164,206) size 147x76 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,180.00)}]
+        RenderSVGContainer {a} at (164,206) size 147x76
+          RenderPath {path} at (164,206) size 147x76 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FFFF]}] [data="M165.00,40.00 L265.00,40.00 L265.00,28.00 L310.00,64.00 L265.00,100.00 L265.00,88.00 L165.00,88.00 Z"]
+      RenderPath {circle} at (367,130) size 46x46 [stroke={[type=SOLID] [color=#00FF00] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M410.00,153.00 L409.96,154.26 L409.84,155.51 L409.65,156.75 L409.37,157.97 L409.02,159.18 L408.60,160.36 L408.10,161.52 L407.53,162.64 L406.89,163.72 L406.18,164.76 L405.41,165.75 L404.58,166.69 L403.69,167.58 L402.75,168.41 L401.76,169.18 L400.72,169.89 L399.64,170.53 L398.52,171.10 L397.36,171.60 L396.18,172.02 L394.97,172.37 L393.75,172.65 L392.51,172.84 L391.26,172.96 L390.00,173.00 L388.74,172.96 L387.49,172.84 L386.25,172.65 L385.03,172.37 L383.82,172.02 L382.64,171.60 L381.48,171.10 L380.36,170.53 L379.28,169.89 L378.24,169.18 L377.25,168.41 L376.31,167.58 L375.42,166.69 L374.59,165.75 L373.82,164.76 L373.11,163.72 L372.47,162.64 L371.90,161.52 L371.40,160.36 L370.98,159.18 L370.63,157.97 L370.35,156.75 L370.16,155.51 L370.04,154.26 L370.00,153.00 L370.04,151.74 L370.16,150.49 L370.35,149.25 L370.63,148.03 L370.98,146.82 L371.40,145.64 L371.90,144.48 L372.47,143.36 L373.11,142.28 L373.82,141.24 L374.59,140.25 L375.42,139.31 L376.31,138.42 L377.25,137.59 L378.24,136.82 L379.28,136.11 L380.36,135.47 L381.48,134.90 L382.64,134.40 L383.82,133.98 L385.03,133.63 L386.25,133.35 L387.49,133.16 L388.74,133.04 L390.00,133.00 L391.26,133.04 L392.51,133.16 L393.75,133.35 L394.97,133.63 L396.18,133.98 L397.36,134.40 L398.52,134.90 L399.64,135.47 L400.72,136.11 L401.76,136.82 L402.75,137.59 L403.69,138.42 L404.58,139.31 L405.41,140.25 L406.18,141.24 L406.89,142.28 L407.53,143.36 L408.10,144.48 L408.60,145.64 L409.02,146.82 L409.37,148.03 L409.65,149.25 L409.84,150.49 L409.96,151.74 Z"]
+      RenderSVGText {text} at (350,179) size 76x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 76x12
+          chunk 1 text run 1 at (350.00,189.00) startOffset 0 endOffset 20 width 76.00: "id=\"internal-circle\""
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.9 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -1,0 +1,57 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (5,49) size 457x243
+      RenderSVGContainer {g} at (49,49) size 381x222
+        RenderPath {rect} at (49,49) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [data="M50.00,50.00 L85.00,50.00 L85.00,110.00 L50.00,110.00 Z"]
+        RenderPath {rect} at (49,154) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [data="M50.00,155.00 L85.00,155.00 L85.00,215.00 L50.00,215.00 Z"]
+        RenderPath {rect} at (129,49) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [data="M130.00,50.00 L165.00,50.00 L165.00,110.00 L130.00,110.00 Z"]
+        RenderPath {rect} at (129,154) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [data="M130.00,155.00 L165.00,155.00 L165.00,215.00 L130.00,215.00 Z"]
+        RenderPath {rect} at (209,49) size 62x62 [stroke={[type=SOLID] [color=#000000]}] [data="M210.00,50.00 L270.00,50.00 L270.00,110.00 L210.00,110.00 Z"]
+        RenderPath {rect} at (209,154) size 62x62 [stroke={[type=SOLID] [color=#000000]}] [data="M210.00,155.00 L270.00,155.00 L270.00,215.00 L210.00,215.00 Z"]
+        RenderPath {rect} at (314,49) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [data="M315.00,50.00 L350.00,50.00 L350.00,110.00 L315.00,110.00 Z"]
+        RenderPath {rect} at (314,154) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [data="M315.00,155.00 L350.00,155.00 L350.00,215.00 L315.00,215.00 Z"]
+        RenderPath {rect} at (393,49) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [data="M394.00,50.00 L429.00,50.00 L429.00,110.00 L394.00,110.00 Z"]
+        RenderPath {rect} at (393,154) size 37x62 [stroke={[type=SOLID] [color=#000000]}] [data="M394.00,155.00 L429.00,155.00 L429.00,215.00 L394.00,215.00 Z"]
+        RenderPath {rect} at (234,259) size 12x12 [stroke={[type=SOLID] [color=#000000]}] [data="M235.00,260.00 L245.00,260.00 L245.00,270.00 L235.00,270.00 Z"]
+      RenderSVGContainer {g} at (5,82) size 457x210
+        RenderSVGText {text} at (5,82) size 25x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 25x10
+            chunk 1 text run 1 at (5.00,90.00) startOffset 0 endOffset 7 width 25.00: "Stroked"
+        RenderSVGText {text} at (5,187) size 34x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 34x10
+            chunk 1 text run 1 at (5.00,195.00) startOffset 0 endOffset 9 width 34.00: "Unstroked"
+        RenderSVGText {text} at (50,127) size 50x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 50x10
+            chunk 1 text run 1 at (50.00,135.00) startOffset 0 endOffset 15 width 50.00: "Zero width rect"
+        RenderSVGText {text} at (130,127) size 54x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 54x10
+            chunk 1 text run 1 at (130.00,135.00) startOffset 0 endOffset 16 width 54.00: "Zero height rect"
+        RenderSVGText {text} at (210,127) size 60x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 60x10
+            chunk 1 text run 1 at (210.00,135.00) startOffset 0 endOffset 18 width 60.00: "Zero radius circle"
+        RenderSVGText {text} at (315,127) size 68x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 68x10
+            chunk 1 text run 1 at (315.00,135.00) startOffset 0 endOffset 21 width 68.00: "Zero x radius ellipse"
+        RenderSVGText {text} at (394,127) size 68x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 68x10
+            chunk 1 text run 1 at (394.00,135.00) startOffset 0 endOffset 21 width 68.00: "Zero y radius ellipse"
+        RenderSVGText {text} at (235,282) size 53x10 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 53x10
+            chunk 1 text run 1 at (235.00,290.00) startOffset 0 endOffset 16 width 53.00: "Zero length line"
+      RenderPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [data=""]
+      RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+      RenderPath {rect} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data=""]
+      RenderPath {rect} at (0,0) size 0x0 [fill={[type=SOLID] [color=#00FF00]}] [data=""]
+      RenderPath {circle} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [data=""]
+      RenderPath {circle} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+      RenderPath {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#00FF00]}] [data=""]
+      RenderPath {ellipse} at (0,0) size 0x0 [fill={[type=SOLID] [color=#00FF00]}] [data=""]
+      RenderPath {ellipse} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#000000]}] [data=""]
+      RenderPath {ellipse} at (0,0) size 0x0 [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+      RenderPath {line} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#000000]}] [data="M240.00,265.00 L240.00,265.00"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.9 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -1,0 +1,33 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (14,32) size 402x206
+      RenderSVGContainer {g} at (14,32) size 402x206 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,-270.00)}]
+        RenderSVGText {text} at (96,168) size 52x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 52x15
+            chunk 1 text run 1 at (96.00,180.00) startOffset 0 endOffset 14 width 52.00: "m, l, l, l, z,"
+        RenderSVGText {text} at (100,182) size 45x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 45x15
+            chunk 1 text run 1 at (100.00,194.00) startOffset 0 endOffset 7 width 45.00: "subpath"
+        RenderSVGText {text} at (97,196) size 49x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 49x15
+            chunk 1 text run 1 at (97.00,208.00) startOffset 0 endOffset 13 width 49.00: "m, l, l, l, z"
+        RenderPath {path} at (16,70) size 191x166 [stroke={[type=SOLID] [color=#000000]}] [data="M62.00,190.00 L113.96,280.00 L10.04,280.00 L62.00,190.00 Z M62.00,205.00 L100.97,272.50 L23.06,272.50 L62.03,205.00 Z"]
+        RenderPath {rect} at (108,68) size 8x8 [fill={[type=SOLID] [color=#FF0000]}] [data="M60.00,188.00 L64.00,188.00 L64.00,192.00 L60.00,192.00 Z"]
+        RenderPath {rect} at (199,230) size 10x8 [fill={[type=SOLID] [color=#FF0000]}] [data="M111.96,278.00 L115.96,278.00 L115.96,282.00 L111.96,282.00 Z"]
+        RenderPath {rect} at (14,230) size 10x8 [fill={[type=SOLID] [color=#FF0000]}] [data="M8.04,278.00 L12.04,278.00 L12.04,282.00 L8.04,282.00 Z"]
+        RenderPath {rect} at (108,95) size 8x8 [fill={[type=SOLID] [color=#FF0000]}] [data="M60.00,203.00 L64.00,203.00 L64.00,207.00 L60.00,207.00 Z"]
+        RenderPath {rect} at (176,216) size 10x9 [fill={[type=SOLID] [color=#FF0000]}] [data="M98.97,270.50 L102.97,270.50 L102.97,274.50 L98.97,274.50 Z"]
+        RenderPath {rect} at (37,216) size 10x9 [fill={[type=SOLID] [color=#FF0000]}] [data="M21.03,270.50 L25.03,270.50 L25.03,274.50 L21.03,274.50 Z"]
+        RenderPath {path} at (225,72) size 188x162 [fill={[type=SOLID] [color=#00C000] [fill rule=EVEN-ODD]}] [data="M177.00,190.00 L228.96,280.00 L125.04,280.00 L177.00,190.00 Z M177.00,205.00 L215.97,272.50 L138.06,272.50 L177.03,205.00 Z"]
+        RenderPath {rect} at (315,68) size 8x8 [fill={[type=SOLID] [color=#FF0000]}] [data="M175.00,188.00 L179.00,188.00 L179.00,192.00 L175.00,192.00 Z"]
+        RenderPath {rect} at (406,230) size 10x8 [fill={[type=SOLID] [color=#FF0000]}] [data="M226.96,278.00 L230.96,278.00 L230.96,282.00 L226.96,282.00 Z"]
+        RenderPath {rect} at (221,230) size 10x8 [fill={[type=SOLID] [color=#FF0000]}] [data="M123.04,278.00 L127.04,278.00 L127.04,282.00 L123.04,282.00 Z"]
+        RenderPath {rect} at (315,95) size 8x8 [fill={[type=SOLID] [color=#FF0000]}] [data="M175.00,203.00 L179.00,203.00 L179.00,207.00 L175.00,207.00 Z"]
+        RenderPath {rect} at (383,216) size 10x9 [fill={[type=SOLID] [color=#FF0000]}] [data="M213.97,270.50 L217.97,270.50 L217.97,274.50 L213.97,274.50 Z"]
+        RenderPath {rect} at (244,216) size 10x9 [fill={[type=SOLID] [color=#FF0000]}] [data="M136.03,270.50 L140.03,270.50 L140.03,274.50 L136.03,274.50 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

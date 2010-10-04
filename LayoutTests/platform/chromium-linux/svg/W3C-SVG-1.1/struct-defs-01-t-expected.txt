@@ -1,0 +1,14 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (140,80) size 200x200
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderPath {rect} at (0,0) size 480x360 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L480.00,0.00 L480.00,360.00 L0.00,360.00 Z"]
+      RenderPath {rect} at (140,80) size 200x200 [fill={[type=SOLID] [color=#FF0000]}] [data="M140.00,80.00 L340.00,80.00 L340.00,280.00 L140.00,280.00 Z"]
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderPath {rect} at (160,100) size 160x160 [fill={[type=SOLID] [color=#008000]}] [data="M160.00,100.00 L320.00,100.00 L320.00,260.00 L160.00,260.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

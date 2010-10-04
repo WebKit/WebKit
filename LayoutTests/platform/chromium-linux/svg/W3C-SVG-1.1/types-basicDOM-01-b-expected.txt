@@ -1,0 +1,37 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (10,8) size 365x295
+      RenderSVGContainer {g} at (10,8) size 365x295
+        RenderSVGContainer {g} at (17,8) size 358x156 [transform={m=((1.00,0.00)(0.00,1.00)) t=(70.00,-60.00)}]
+          RenderSVGText {text} at (30,131) size 342x23 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 342x23
+              chunk 1 text run 1 at (30.00,150.00) startOffset 0 endOffset 37 width 342.00: "Rotated Text for testing SVGLocatable"
+          RenderSVGText {text} at (100,111) size 299x23 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 299x23
+              chunk 1 text run 1 at (100.00,130.00) startOffset 0 endOffset 35 width 299.00: "Some other text with id 'otherText'"
+          RenderSVGViewportContainer {svg} at (275,45) size 100x100
+            RenderPath {circle} at (275,45) size 100x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M50.00,0.00 L49.90,3.14 L49.61,6.27 L49.11,9.37 L48.43,12.43 L47.55,15.45 L46.49,18.41 L45.24,21.29 L43.82,24.09 L42.22,26.79 L40.45,29.39 L38.53,31.87 L36.45,34.23 L34.23,36.45 L31.87,38.53 L29.39,40.45 L26.79,42.22 L24.09,43.82 L21.29,45.24 L18.41,46.49 L15.45,47.55 L12.43,48.43 L9.37,49.11 L6.27,49.61 L3.14,49.90 L-0.00,50.00 L-3.14,49.90 L-6.27,49.61 L-9.37,49.11 L-12.43,48.43 L-15.45,47.55 L-18.41,46.49 L-21.29,45.24 L-24.09,43.82 L-26.79,42.22 L-29.39,40.45 L-31.87,38.53 L-34.23,36.45 L-36.45,34.23 L-38.53,31.87 L-40.45,29.39 L-42.22,26.79 L-43.82,24.09 L-45.24,21.29 L-46.49,18.41 L-47.55,15.45 L-48.43,12.43 L-49.11,9.37 L-49.61,6.27 L-49.90,3.14 L-50.00,-0.00 L-49.90,-3.14 L-49.61,-6.27 L-49.11,-9.37 L-48.43,-12.43 L-47.55,-15.45 L-46.49,-18.41 L-45.24,-21.29 L-43.82,-24.09 L-42.22,-26.79 L-40.45,-29.39 L-38.53,-31.87 L-36.45,-34.23 L-34.23,-36.45 L-31.87,-38.53 L-29.39,-40.45 L-26.79,-42.22 L-24.09,-43.82 L-21.29,-45.24 L-18.41,-46.49 L-15.45,-47.55 L-12.43,-48.43 L-9.37,-49.11 L-6.27,-49.61 L-3.14,-49.90 L0.00,-50.00 L3.14,-49.90 L6.27,-49.61 L9.37,-49.11 L12.43,-48.43 L15.45,-47.55 L18.41,-46.49 L21.29,-45.24 L24.09,-43.82 L26.79,-42.22 L29.39,-40.45 L31.87,-38.53 L34.23,-36.45 L36.45,-34.23 L38.53,-31.87 L40.45,-29.39 L42.22,-26.79 L43.82,-24.09 L45.24,-21.29 L46.49,-18.41 L47.55,-15.45 L48.43,-12.43 L49.11,-9.37 L49.61,-6.27 L49.90,-3.14 Z"]
+        RenderSVGText {text} at (10,188) size 279x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 279x15
+            chunk 1 text run 1 at (10.00,200.00) startOffset 0 endOffset 50 width 279.00: ".getScreenCTM(): 0.42,0.42,-0.42,0.42,70.00,-60.00"
+        RenderSVGText {text} at (10,208) size 240x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 240x15
+            chunk 1 text run 1 at (10.00,220.00) startOffset 0 endOffset 44 width 240.00: ".getCTM(): 0.42,0.42,-0.42,0.42,70.00,-60.00"
+        RenderSVGText {text} at (10,228) size 314x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 314x15
+            chunk 1 text run 1 at (10.00,240.00) startOffset 0 endOffset 56 width 314.00: ".getTransformToElement(): 0.42,0.42,-0.42,0.42,0.00,0.00"
+        RenderSVGText {text} at (10,248) size 336x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 336x15
+            chunk 1 text run 1 at (10.00,260.00) startOffset 0 endOffset 64 width 336.00: ".getBBox() for 'redCircle': .x=-50,.y=-50,.width=100,.height=100"
+        RenderSVGText {text} at (10,268) size 254x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 254x15
+            chunk 1 text run 1 at (10.00,280.00) startOffset 0 endOffset 46 width 254.00: ".farthestViewportElement of redCircle=svg-root"
+        RenderSVGText {text} at (10,288) size 273x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 273x15
+            chunk 1 text run 1 at (10.00,300.00) startOffset 0 endOffset 46 width 273.00: ".nearestViewportElement of redCircle=nestedSVG"
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.1 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

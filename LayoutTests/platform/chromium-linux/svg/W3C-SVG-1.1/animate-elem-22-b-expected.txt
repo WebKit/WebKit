@@ -1,0 +1,23 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (24,34) size 402x257
+      RenderSVGContainer {g} at (24,34) size 402x257
+        RenderSVGText {text} at (200,119) size 135x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 135x14
+            chunk 1 text run 1 at (200.00,131.00) startOffset 0 endOffset 22 width 135.00: "Yellow rect at time 0s"
+        RenderPath {rect} at (199,134) size 52x52 [stroke={[type=SOLID] [color=#000000]}] [data="M200.00,135.00 L250.00,135.00 L250.00,185.00 L200.00,185.00 Z"]
+        RenderSVGText {text} at (141,90) size 136x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 136x15
+            chunk 1 text run 1 at (141.67,102.67) startOffset 0 endOffset 22 width 135.00: "Yellow rect at time 3s"
+        RenderPath {rect} at (141,106) size 168x113 [stroke={[type=SOLID] [color=#0000FF]}] [data="M141.67,106.67 L308.33,106.67 L308.33,218.33 L141.67,218.33 Z"]
+        RenderSVGText {text} at (25,34) size 135x14 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 135x14
+            chunk 1 text run 1 at (25.00,46.00) startOffset 0 endOffset 22 width 135.00: "Yellow rect at time 9s"
+        RenderPath {rect} at (24,49) size 402x242 [stroke={[type=SOLID] [color=#0000FF]}] [data="M25.00,50.00 L425.00,50.00 L425.00,290.00 L25.00,290.00 Z"]
+      RenderPath {rect} at (200,135) size 50x50 [opacity=0.50] [fill={[type=SOLID] [color=#FFFF00]}] [data="M200.00,135.00 L250.00,135.00 L250.00,185.00 L200.00,185.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

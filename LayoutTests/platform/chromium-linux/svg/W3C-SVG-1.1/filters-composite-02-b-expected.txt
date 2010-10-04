@@ -1,0 +1,127 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (20,10) size 440x290 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,-60.00)}]
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderPath {path} at (15,0) size 150x90 [fill={[type=SOLID] [color=#00FFFF]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 Z"]
+        RenderPath {path} at (15,0) size 150x90 [fill={[type=SOLID] [color=#FF00FF]}] [data="M0.00,0.00 L0.00,150.00 L150.00,0.00 Z"]
+        RenderPath {path} at (15,0) size 150x90 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 Z"]
+        RenderPath {path} at (15,0) size 150x90 [fill={[type=SOLID] [color=#FF00FF] [opacity=0.50]}] [data="M0.00,0.00 L0.00,150.00 L150.00,0.00 Z"]
+        RenderSVGResourceFilter {filter} [id="over"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="OVER"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="over50"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="OVER"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="in"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="IN"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="in50"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="IN"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="out"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="OUT"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="out50"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="OUT"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="atop"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="ATOP"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="atop50"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="ATOP"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="xor"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="XOR"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="xor50"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="XOR"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="arithmetic"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="ARITHMETIC" k1="0.50" k2="0.50" k3="0.50" k4="0.50"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+        RenderSVGResourceFilter {filter} [id="arithmetic50"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feComposite operation="ARITHMETIC" k1="0.50" k2="0.50" k3="0.50" k4="0.50"]
+            [feImage image-size="150x150"]
+            [feImage image-size="150x150"]
+      RenderSVGContainer {g} at (20,10) size 440x290 [transform={m=((0.40,0.00)(0.00,0.40)) t=(5.00,70.00)}]
+        RenderPath {rect} at (20,10) size 440x290 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00 L1099.00,1.00 L1099.00,724.00 L1.00,724.00 Z"]
+        RenderSVGText {text} at (100,14) size 765x73 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 765x73
+            chunk 1 text run 1 at (100.00,75.00) startOffset 0 endOffset 26 width 765.00: "on first Row : opacity 1.0"
+        RenderSVGText {text} at (100,119) size 792x73 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 792x73
+            chunk 1 text run 1 at (100.00,180.00) startOffset 0 endOffset 25 width 792.00: "on second row opacity 0.5"
+        RenderSVGContainer {g} at (26,102) size 60x165 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,230.00)}]
+          RenderPath {rect} at (26,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="over"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+          RenderSVGText {text} at (10,339) size 134x73 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 134x73
+              chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 4 width 134.00: "over"
+        RenderSVGContainer {g} at (26,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(15.00,430.00)}]
+          RenderPath {rect} at (26,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="over50"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+        RenderSVGContainer {g} at (98,102) size 60x165 [transform={m=((1.00,0.00)(0.00,1.00)) t=(195.00,230.00)}]
+          RenderPath {rect} at (98,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="in"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+          RenderSVGText {text} at (10,339) size 54x73 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 54x73
+              chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 2 width 54.00: "in"
+        RenderSVGContainer {g} at (98,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(195.00,430.00)}]
+          RenderPath {rect} at (98,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="in50"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+        RenderSVGContainer {g} at (170,102) size 60x165 [transform={m=((1.00,0.00)(0.00,1.00)) t=(375.00,230.00)}]
+          RenderPath {rect} at (170,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="out"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+          RenderSVGText {text} at (10,339) size 98x73 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 98x73
+              chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 3 width 98.00: "out"
+        RenderSVGContainer {g} at (170,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(375.00,430.00)}]
+          RenderPath {rect} at (170,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="out50"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+        RenderSVGContainer {g} at (242,102) size 60x165 [transform={m=((1.00,0.00)(0.00,1.00)) t=(555.00,230.00)}]
+          RenderPath {rect} at (242,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="atop"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+          RenderSVGText {text} at (10,339) size 133x73 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 133x73
+              chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 4 width 133.00: "atop"
+        RenderSVGContainer {g} at (242,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(555.00,430.00)}]
+          RenderPath {rect} at (242,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="atop50"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+        RenderSVGContainer {g} at (314,102) size 60x165 [transform={m=((1.00,0.00)(0.00,1.00)) t=(735.00,230.00)}]
+          RenderPath {rect} at (314,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="xor"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+          RenderSVGText {text} at (10,339) size 98x73 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 98x73
+              chunk 1 text run 1 at (10.00,400.00) startOffset 0 endOffset 3 width 98.00: "xor"
+        RenderSVGContainer {g} at (314,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(735.00,430.00)}]
+          RenderPath {rect} at (314,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="xor50"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+        RenderSVGContainer {g} at (376,102) size 70x193 [transform={m=((1.00,0.00)(0.00,1.00)) t=(915.00,230.00)}]
+          RenderPath {rect} at (386,102) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="arithmetic"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+          RenderSVGText {text} at (-25,339) size 167x73 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 167x73
+              chunk 1 text run 1 at (-25.00,400.00) startOffset 0 endOffset 6 width 167.00: "arith-"
+          RenderSVGText {text} at (-25,409) size 165x73 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 165x73
+              chunk 1 text run 1 at (-25.00,470.00) startOffset 0 endOffset 5 width 165.00: "metic"
+        RenderSVGContainer {g} at (386,182) size 60x60 [transform={m=((1.00,0.00)(0.00,1.00)) t=(915.00,430.00)}]
+          RenderPath {rect} at (386,182) size 60x60 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,150.00 L0.00,150.00 Z"]
+            [filter="arithmetic50"] RenderSVGResourceFilter {filter} at (0,0) size 150x150
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.5 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

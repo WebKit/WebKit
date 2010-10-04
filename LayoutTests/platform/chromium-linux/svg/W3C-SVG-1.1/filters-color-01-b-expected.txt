@@ -1,0 +1,56 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,5) size 480x292
+      RenderSVGViewportContainer {svg} at (0,5) size 480x292
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceLinearGradient {linearGradient} [id="MyGradient"] [gradientUnits=userSpaceOnUse] [start=(20,0)] [end=(760,0)]
+            RenderSVGGradientStop {stop} [offset=0.00] [color=#DD00DD]
+            RenderSVGGradientStop {stop} [offset=0.33] [color=#22CC22]
+            RenderSVGGradientStop {stop} [offset=0.67] [color=#400000]
+            RenderSVGGradientStop {stop} [offset=1.00] [color=#A0A0FF]
+          RenderSVGResourceFilter {filter} [id="Matrix"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feColorMatrix type="MATRIX" values="0.33 0.33 0.33 0.00 0.00 0.33 0.33 0.33 0.00 0.00 0.33 0.33 0.33 0.00 0.00 0.33 0.33 0.33 0.00 0.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="Saturate40"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feColorMatrix type="SATURATE" values="0.25"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="HueRotate90"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feColorMatrix type="HUEROTATE" values="90.00"]
+              [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="LuminanceToAlpha"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feComposite operation="IN"]
+              [SourceGraphic]
+              [feColorMatrix type="LUMINANCETOALPHA"]
+                [SourceGraphic]
+        RenderSVGContainer {g} at (0,5) size 480x292
+          RenderPath {rect} at (8,5) size 464x290 [stroke={[type=SOLID] [color=#0000FF]}] [data="M1.00,1.00 L799.00,1.00 L799.00,499.00 L1.00,499.00 Z"]
+          RenderPath {rect} at (19,16) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M20.00,20.00 L780.00,20.00 L780.00,60.00 L20.00,60.00 Z"]
+          RenderSVGText {text} at (20,55) size 198x48 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 198x48
+              chunk 1 text run 1 at (20.00,95.00) startOffset 0 endOffset 10 width 198.00: "Unfiltered"
+          RenderPath {rect} at (19,74) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M20.00,120.00 L780.00,120.00 L780.00,160.00 L20.00,160.00 Z"]
+            [filter="Matrix"] RenderSVGResourceFilter {filter} at (20,120) size 760x40
+          RenderSVGText {text} at (20,155) size 678x48 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 678x48
+              chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 678.00: "type=\"matrix\" (grayscale matrix)"
+          RenderPath {rect} at (0,131) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M20.00,220.00 L780.00,220.00 L780.00,260.00 L20.00,260.00 Z"]
+            [filter="Saturate40"] RenderSVGResourceFilter {filter} at (-18,218) size 836x44
+          RenderSVGText {text} at (20,255) size 578x48 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 578x48
+              chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 578.00: "type=\"saturate\" values=\".4\""
+          RenderPath {rect} at (0,189) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M20.00,320.00 L780.00,320.00 L780.00,360.00 L20.00,360.00 Z"]
+            [filter="HueRotate90"] RenderSVGResourceFilter {filter} at (-18,318) size 836x44
+          RenderSVGText {text} at (20,355) size 627x48 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 627x48
+              chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 627.00: "type=\"hueRotate\" values=\"90\""
+          RenderPath {rect} at (0,247) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [data="M20.00,420.00 L780.00,420.00 L780.00,460.00 L20.00,460.00 Z"]
+            [filter="LuminanceToAlpha"] RenderSVGResourceFilter {filter} at (-18,418) size 836x44
+          RenderSVGText {text} at (20,455) size 527x48 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 527x48
+              chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 527.00: "type=\"luminanceToAlpha\""
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

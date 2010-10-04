@@ -1,0 +1,23 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (0,42) size 480x171 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
+      RenderSVGContainer {g} at (0,42) size 480x171
+        RenderSVGContainer {g} at (23,105) size 150x100
+          RenderSVGContainer {g} at (23,105) size 150x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-102.00,-450.00)}]
+            RenderSVGContainer {g} at (18,105) size 158x100 [transform={m=((7.50,0.00)(0.00,5.00)) t=(0.00,0.00)}]
+              RenderSVGContainer {g} at (18,105) size 158x100 [transform={m=((1.00,0.00)(0.00,1.00)) t=(16.67,105.00)}]
+                RenderPath {rect} at (18,105) size 158x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L20.00,0.00 L20.00,1.00 L0.00,1.00 Z"]
+                RenderPath {rect} at (18,105) size 15x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L0.67,0.00 L0.67,20.00 L0.00,20.00 Z"]
+        RenderSVGContainer {g} at (0,42) size 480x171 [transform={m=((2.50,0.00)(0.00,2.50)) t=(-600.00,-450.00)}]
+          RenderSVGText {text} at (240,185) size 197x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 197x19
+              chunk 1 text run 1 at (240.00,200.00) startOffset 0 endOffset 34 width 197.00: "scale(25, 95) then translate(2, 2)"
+          RenderPath {rect} at (20,100) size 13x13 [fill={[type=SOLID] [color=#000000]}] [data="M248.00,208.00 L253.00,208.00 L253.00,213.00 L248.00,213.00 Z"]
+          RenderPath {rect} at (170,100) size 13x13 [fill={[type=SOLID] [color=#0000FF]}] [data="M308.00,208.00 L313.00,208.00 L313.00,213.00 L308.00,213.00 Z"]
+          RenderPath {rect} at (20,200) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [data="M248.00,248.00 L253.00,248.00 L253.00,253.00 L248.00,253.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

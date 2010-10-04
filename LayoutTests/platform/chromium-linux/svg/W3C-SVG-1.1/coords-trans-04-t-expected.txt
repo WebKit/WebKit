@@ -1,0 +1,21 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (136,37) size 133x171 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
+      RenderSVGContainer {g} at (136,37) size 133x171
+        RenderSVGContainer {g} at (160,100) size 100x100 [transform={m=((2.50,0.00)(0.00,2.50)) t=(60.00,45.00)}]
+          RenderSVGContainer {g} at (160,100) size 100x100 [transform={m=((2.00,0.00)(0.00,2.00)) t=(40.00,10.00)}]
+            RenderPath {rect} at (160,100) size 100x5 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L20.00,0.00 L20.00,1.00 L0.00,1.00 Z"]
+            RenderPath {rect} at (160,100) size 5x100 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L1.00,0.00 L1.00,20.00 L0.00,20.00 Z"]
+        RenderSVGContainer {g} at (136,37) size 133x171 [transform={m=((2.50,0.00)(0.00,2.50)) t=(-364.00,-230.00)}]
+          RenderSVGText {text} at (200,95) size 52x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 52x19
+              chunk 1 text run 1 at (200.00,110.00) startOffset 0 endOffset 9 width 52.00: "scale (2)"
+          RenderPath {rect} at (156,95) size 13x13 [fill={[type=SOLID] [color=#000000]}] [data="M208.00,118.00 L213.00,118.00 L213.00,123.00 L208.00,123.00 Z"]
+          RenderPath {rect} at (256,95) size 13x13 [fill={[type=SOLID] [color=#0000FF]}] [data="M248.00,118.00 L253.00,118.00 L253.00,123.00 L248.00,123.00 Z"]
+          RenderPath {rect} at (156,195) size 13x13 [fill={[type=SOLID] [color=#FF0000]}] [data="M208.00,158.00 L213.00,158.00 L213.00,163.00 L208.00,163.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

@@ -1,0 +1,27 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (80,110) size 300x180
+      RenderSVGViewportContainer {svg} at (80,110) size 300x180
+        RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+          RenderSVGResourceFilter {filter} [id="MyFilter"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
+            [feComposite operation="OVER"]
+              [SourceGraphic]
+              [feOffset dx="4.00" dy="4.00"]
+                [feGaussianBlur stdDeviation="4.00, 4.00"]
+                  [SourceAlpha]
+        RenderPath {rect} at (80,110) size 300x180 [stroke={[type=SOLID] [color=#0000FF]}] [fill={[type=SOLID] [color=#888888]}] [data="M1.00,1.00 L199.00,1.00 L199.00,119.00 L1.00,119.00 Z"]
+        RenderSVGContainer {g} at (80,110) size 300x180
+          [filter="MyFilter"] RenderSVGResourceFilter {filter} at (0,0) size 200x120
+          RenderSVGContainer {g} at (80,147) size 300x106
+            RenderPath {path} at (80,147) size 300x106 [stroke={[type=SOLID] [color=#D90000] [stroke width=10.00]}] [data="M50.00,90.00 C0.00,90.00,0.00,30.00,50.00,30.00 L150.00,30.00 C200.00,30.00,200.00,90.00,150.00,90.00 Z"]
+            RenderPath {path} at (125,170) size 210x60 [fill={[type=SOLID] [color=#D90000]}] [data="M60.00,80.00 C30.00,80.00,30.00,40.00,60.00,40.00 L140.00,40.00 C170.00,40.00,170.00,80.00,140.00,80.00 Z"]
+            RenderSVGContainer {g} at (156,155) size 149x84
+              RenderSVGText {text} at (52,31) size 97x54 contains 1 chunk(s)
+                RenderSVGInlineText {#text} at (0,0) size 97x54
+                  chunk 1 text run 1 at (52.00,76.00) startOffset 0 endOffset 3 width 97.00: "SVG"
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

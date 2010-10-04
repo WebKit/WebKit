@@ -1,0 +1,31 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (20,27) size 423x190
+      RenderSVGText {text} at (30,27) size 413x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 413x16
+          chunk 1 text run 1 at (30.00,40.00) startOffset 0 endOffset 68 width 413.00: "Test animation options for specifying the target attribute/property."
+      RenderSVGContainer {g} at (20,128) size 407x89 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+        RenderSVGText {text} at (20,151) size 51x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 51x16
+            chunk 1 text run 1 at (20.00,164.00) startOffset 0 endOffset 8 width 51.00: "0-3 sec."
+        RenderPath {line} at (80,208) size 120x4 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M80.00,160.00 L200.00,160.00"]
+        RenderSVGText {text} at (20,111) size 54x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 54x16
+            chunk 1 text run 1 at (20.00,124.00) startOffset 0 endOffset 9 width 54.00: "at 6 sec."
+        RenderPath {line} at (80,168) size 120x4 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M80.00,120.00 L200.00,120.00"]
+        RenderPath {rect} at (98,128) size 104x84 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M100.00,80.00 L200.00,80.00 L200.00,160.00 L100.00,160.00 Z"]
+        RenderSVGText {text} at (240,151) size 51x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 51x16
+            chunk 1 text run 1 at (240.00,164.00) startOffset 0 endOffset 8 width 51.00: "0-6 sec."
+        RenderPath {line} at (305,208) size 120x4 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M305.00,160.00 L425.00,160.00"]
+        RenderSVGText {text} at (240,111) size 54x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 54x16
+            chunk 1 text run 1 at (240.00,124.00) startOffset 0 endOffset 9 width 54.00: "at 9 sec."
+        RenderPath {line} at (305,168) size 120x4 [stroke={[type=SOLID] [color=#008000] [stroke width=3.00]}] [data="M305.00,120.00 L425.00,120.00"]
+        RenderPath {rect} at (323,128) size 104x84 [stroke={[type=SOLID] [color=#FF00FF] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFFF00]}] [data="M325.00,80.00 L425.00,80.00 L425.00,160.00 L325.00,160.00 Z"]
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.7 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

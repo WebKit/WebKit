@@ -1,0 +1,39 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (8,12) size 437x251
+      RenderSVGText {text} at (87,12) size 276x16 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 276x16
+          chunk 1 (middle anchor) text run 1 at (87.50,25.00) startOffset 0 endOffset 44 width 275.00: "Test rotate='auto' and rotate='auto-reverse'"
+      RenderSVGContainer {g} at (8,150) size 437x113
+        RenderPath {path} at (24,150) size 152x75 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M25.00,225.00 C25.00,175.00,125.00,150.00,175.00,200.00"]
+        RenderPath {rect} at (8,193) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [data="M10.00,195.00 L40.00,195.00 L40.00,225.00 L10.00,225.00 Z"]
+        RenderSVGText {text} at (8,228) size 34x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 34x15
+            chunk 1 (middle anchor) text run 1 at (8.50,240.00) startOffset 0 endOffset 6 width 33.00: "0 sec."
+        RenderPath {rect} at (158,168) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [data="M160.00,170.00 L190.00,170.00 L190.00,200.00 L160.00,200.00 Z"]
+        RenderSVGText {text} at (155,203) size 40x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 40x15
+            chunk 1 (middle anchor) text run 1 at (155.00,215.00) startOffset 0 endOffset 7 width 40.00: "6+ sec."
+        RenderPath {path} at (22,204) size 38x39 [transform={m=((0.11,0.99)(-0.99,0.11)) t=(25.00,225.00)}] [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M-15.00,0.00 L0.00,-30.00 L15.00,0.00 Z"]
+        RenderSVGText {text} at (60,247) size 80x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 80x16
+            chunk 1 (middle anchor) text run 1 at (60.50,260.00) startOffset 0 endOffset 13 width 79.00: "rotate='auto'"
+        RenderPath {path} at (274,150) size 152x75 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [data="M275.00,225.00 C275.00,175.00,375.00,150.00,425.00,200.00"]
+        RenderPath {rect} at (258,193) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [data="M260.00,195.00 L290.00,195.00 L290.00,225.00 L260.00,225.00 Z"]
+        RenderSVGText {text} at (258,228) size 34x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 34x15
+            chunk 1 (middle anchor) text run 1 at (258.50,240.00) startOffset 0 endOffset 6 width 33.00: "0 sec."
+        RenderPath {rect} at (408,168) size 34x34 [stroke={[type=SOLID] [color=#000000] [stroke width=4.00]}] [fill={[type=SOLID] [color=#FFCCCC]}] [data="M410.00,170.00 L440.00,170.00 L440.00,200.00 L410.00,200.00 Z"]
+        RenderSVGText {text} at (405,203) size 40x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 40x15
+            chunk 1 (middle anchor) text run 1 at (405.00,215.00) startOffset 0 endOffset 7 width 40.00: "6+ sec."
+        RenderPath {path} at (240,213) size 49x49 [transform={m=((-0.77,-0.63)(0.63,-0.77)) t=(275.00,225.00)}] [stroke={[type=SOLID] [color=#FF0000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#0000FF]}] [data="M-15.00,0.00 L0.00,-30.00 L15.00,0.00 Z"]
+        RenderSVGText {text} at (284,247) size 132x16 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 132x16
+            chunk 1 (middle anchor) text run 1 at (284.00,260.00) startOffset 0 endOffset 21 width 132.00: "rotate='auto-reverse'"
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

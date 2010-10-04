@@ -1,0 +1,22 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (30,20) size 410x271
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceClipper {clipPath} [id="sample"] [clipPathUnits=userSpaceOnUse]
+          RenderSVGText {text} at (45,169) size 353x122 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 353x122
+              chunk 1 text run 1 at (45.00,270.00) startOffset 0 endOffset 9 width 353.00: "Clip Test"
+      RenderSVGContainer {g} at (30,20) size 410x140
+        RenderSVGImage {image} at (30,20) size 410x140
+        RenderSVGText {text} at (55,29) size 353x122 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 353x122
+            chunk 1 text run 1 at (55.00,130.00) startOffset 0 endOffset 9 width 353.00: "Clip Test"
+      RenderSVGContainer {g} at (45,170) size 353x121
+        RenderSVGImage {image} at (45,170) size 353x121
+          [clipPath="sample"] RenderSVGResourceClipper {clipPath} at (45,169) size 353x122
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.8 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

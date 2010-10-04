@@ -2,17 +2,17 @@ layer at (0,0) size 480x360
   RenderView at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
-    RenderSVGContainer {g} at (23,13) size 434x281
+    RenderSVGContainer {g} at (23,13) size 434x282
       RenderPath {rect} at (23,13) size 434x224 [fill={[type=SOLID] [color=#000000]}] [data="M23.00,13.00 L457.00,13.00 L457.00,237.00 L23.00,237.00 Z"]
       RenderSVGImage {image} at (25,15) size 430x48
       RenderSVGImage {image} at (25,43) size 430x48
       RenderSVGImage {image} at (25,91) size 430x48
       RenderSVGImage {image} at (25,139) size 430x48
       RenderSVGImage {image} at (25,187) size 430x48
-      RenderSVGText {text} at (25,248) size 293x46 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 293x46
+      RenderSVGText {text} at (25,248) size 293x47 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 293x47
           chunk 1 text run 1 at (25.00,285.00) startOffset 0 endOffset 16 width 293.00: "Gamma correction"
-    RenderSVGText {text} at (10,303) size 261x46 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 261x46
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
     RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]

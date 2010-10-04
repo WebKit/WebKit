@@ -1,0 +1,74 @@
+layer at (0,0) size 480x360
+  RenderView at (0,0) size 480x360
+layer at (0,0) size 480x360
+  RenderSVGRoot {svg} at (0,0) size 480x360
+    RenderSVGContainer {g} at (35,4) size 411x295
+      RenderSVGText {text} at (65,4) size 307x15 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 307x15
+          chunk 1 text run 1 at (65.00,16.00) startOffset 0 endOffset 69 width 307.00: "Link test of the 'view' element and its attributes, 1 of 2, internal."
+      RenderSVGContainer {g} at (150,130) size 125x110 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-150.00,75.00)}]
+        RenderPath {rect} at (150,130) size 125x85 [fill={[type=SOLID] [color=#AAAAAA]}] [data="M300.00,55.00 L425.00,55.00 L425.00,140.00 L300.00,140.00 Z"]
+        RenderSVGContainer {a} at (170,130) size 98x19
+          RenderSVGText {text} at (320,55) size 98x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 98x19
+              chunk 1 text run 1 at (320.00,70.00) startOffset 0 endOffset 15 width 98.00: "Go to Rectangle"
+        RenderSVGContainer {a} at (170,150) size 78x19
+          RenderSVGText {text} at (320,75) size 78x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 78x19
+              chunk 1 text run 1 at (320.00,90.00) startOffset 0 endOffset 13 width 78.00: "Go to Ellipse"
+        RenderSVGContainer {a} at (170,170) size 75x19
+          RenderSVGText {text} at (320,95) size 75x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 75x19
+              chunk 1 text run 1 at (320.00,110.00) startOffset 0 endOffset 12 width 75.00: "Go to Circle"
+        RenderSVGContainer {a} at (170,190) size 88x19
+          RenderSVGText {text} at (320,115) size 88x19 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 88x19
+              chunk 1 text run 1 at (320.00,130.00) startOffset 0 endOffset 13 width 88.00: "Go to Polygon"
+        RenderSVGText {text} at (315,138) size 92x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 92x15
+            chunk 1 text run 1 at (315.00,150.00) startOffset 0 endOffset 20 width 92.00: "Click element's line"
+        RenderSVGText {text} at (315,150) size 85x15 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 85x15
+            chunk 1 text run 1 at (315.00,162.00) startOffset 0 endOffset 19 width 85.00: "to link to its view"
+      RenderPath {rect} at (295,36) size 135x68 [fill={[type=SOLID] [color=#FF0000]}] [data="M295.00,36.00 L430.00,36.00 L430.00,104.00 L295.00,104.00 Z"]
+      RenderSVGText {text} at (340,101) size 59x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 59x19
+          chunk 1 text run 1 at (340.00,116.00) startOffset 0 endOffset 9 width 59.00: "Rectangle"
+      RenderPath {rect} at (291,28) size 143x93 [stroke={[type=SOLID] [color=#000000]}] [data="M292.00,29.00 L433.00,29.00 L433.00,120.00 L292.00,120.00 Z"]
+      RenderSVGText {text} at (302,120) size 116x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 116x12
+          chunk 1 text run 1 at (302.00,130.00) startOffset 0 endOffset 29 width 116.00: "No view attributes except id."
+      RenderPath {ellipse} at (298,219) size 144x64 [fill={[type=SOLID] [color=#0000FF]}] [data="M442.00,251.00 L441.86,253.01 L441.43,255.01 L440.72,257.00 L439.74,258.96 L438.48,260.89 L436.94,262.78 L435.15,264.62 L433.09,266.42 L430.79,268.15 L428.25,269.81 L425.48,271.40 L422.49,272.91 L419.29,274.33 L415.89,275.66 L412.32,276.89 L408.58,278.02 L404.69,279.04 L400.66,279.95 L396.50,280.75 L392.25,281.43 L387.91,281.99 L383.49,282.43 L379.02,282.75 L374.52,282.94 L370.00,283.00 L365.48,282.94 L360.98,282.75 L356.51,282.43 L352.09,281.99 L347.75,281.43 L343.50,280.75 L339.34,279.95 L335.31,279.04 L331.42,278.02 L327.68,276.89 L324.11,275.66 L320.71,274.33 L317.51,272.91 L314.52,271.40 L311.75,269.81 L309.21,268.15 L306.91,266.42 L304.85,264.62 L303.06,262.78 L301.52,260.89 L300.26,258.96 L299.28,257.00 L298.57,255.01 L298.14,253.01 L298.00,251.00 L298.14,248.99 L298.57,246.99 L299.28,245.00 L300.26,243.04 L301.52,241.11 L303.06,239.22 L304.85,237.38 L306.91,235.58 L309.21,233.85 L311.75,232.19 L314.52,230.60 L317.51,229.09 L320.71,227.67 L324.11,226.34 L327.68,225.11 L331.42,223.98 L335.31,222.96 L339.34,222.05 L343.50,221.25 L347.75,220.57 L352.09,220.01 L356.51,219.57 L360.98,219.25 L365.48,219.06 L370.00,219.00 L374.52,219.06 L379.02,219.25 L383.49,219.57 L387.91,220.01 L392.25,220.57 L396.50,221.25 L400.66,222.05 L404.69,222.96 L408.58,223.98 L412.32,225.11 L415.89,226.34 L419.29,227.67 L422.49,229.09 L425.48,230.60 L428.25,232.19 L430.79,233.85 L433.09,235.58 L435.15,237.38 L436.94,239.22 L438.48,241.11 L439.74,243.04 L440.72,245.00 L441.43,246.99 L441.86,248.99 Z"]
+      RenderSVGText {text} at (355,280) size 39x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 39x19
+          chunk 1 text run 1 at (355.00,295.00) startOffset 0 endOffset 7 width 39.00: "Ellipse"
+      RenderPath {rect} at (294,215) size 152x84 [stroke={[type=SOLID] [color=#000000]}] [data="M295.00,216.00 L445.00,216.00 L445.00,298.00 L295.00,298.00 Z"]
+      RenderSVGText {text} at (315,204) size 110x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 110x12
+          chunk 1 text run 1 at (315.00,214.00) startOffset 0 endOffset 27 width 110.00: "viewBox, should fill frame."
+      RenderPath {circle} at (49,32) size 72x72 [fill={[type=SOLID] [color=#FFFF00]}] [data="M121.00,68.00 L120.93,70.26 L120.72,72.51 L120.36,74.75 L119.87,76.95 L119.24,79.12 L118.47,81.25 L117.57,83.33 L116.55,85.34 L115.40,87.29 L114.12,89.16 L112.74,90.95 L111.24,92.64 L109.64,94.24 L107.95,95.74 L106.16,97.12 L104.29,98.40 L102.34,99.55 L100.33,100.57 L98.25,101.47 L96.12,102.24 L93.95,102.87 L91.75,103.36 L89.51,103.72 L87.26,103.93 L85.00,104.00 L82.74,103.93 L80.49,103.72 L78.25,103.36 L76.05,102.87 L73.88,102.24 L71.75,101.47 L69.67,100.57 L67.66,99.55 L65.71,98.40 L63.84,97.12 L62.05,95.74 L60.36,94.24 L58.76,92.64 L57.26,90.95 L55.88,89.16 L54.60,87.29 L53.45,85.34 L52.43,83.33 L51.53,81.25 L50.76,79.12 L50.13,76.95 L49.64,74.75 L49.28,72.51 L49.07,70.26 L49.00,68.00 L49.07,65.74 L49.28,63.49 L49.64,61.25 L50.13,59.05 L50.76,56.88 L51.53,54.75 L52.43,52.67 L53.45,50.66 L54.60,48.71 L55.88,46.84 L57.26,45.05 L58.76,43.36 L60.36,41.76 L62.05,40.26 L63.84,38.88 L65.71,37.60 L67.66,36.45 L69.67,35.43 L71.75,34.53 L73.88,33.76 L76.05,33.13 L78.25,32.64 L80.49,32.28 L82.74,32.07 L85.00,32.00 L87.26,32.07 L89.51,32.28 L91.75,32.64 L93.95,33.13 L96.12,33.76 L98.25,34.53 L100.33,35.43 L102.34,36.45 L104.29,37.60 L106.16,38.88 L107.95,40.26 L109.64,41.76 L111.24,43.36 L112.74,45.05 L114.12,46.84 L115.40,48.71 L116.55,50.66 L117.57,52.67 L118.47,54.75 L119.24,56.88 L119.87,59.05 L120.36,61.25 L120.72,63.49 L120.93,65.74 Z"]
+      RenderSVGText {text} at (70,101) size 36x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 36x19
+          chunk 1 text run 1 at (70.00,116.00) startOffset 0 endOffset 6 width 36.00: "Circle"
+      RenderPath {rect} at (35,28) size 100x93 [stroke={[type=SOLID] [color=#000000]}] [data="M36.00,29.00 L134.00,29.00 L134.00,120.00 L36.00,120.00 Z"]
+      RenderSVGText {text} at (36,118) size 99x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 99x12
+          chunk 1 text run 1 at (36.00,128.00) startOffset 0 endOffset 21 width 99.00: "viewBox & non-uniform"
+      RenderSVGText {text} at (36,127) size 81x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 81x12
+          chunk 1 text run 1 at (36.00,137.00) startOffset 0 endOffset 19 width 81.00: "preserveAspectRatio"
+      RenderPath {polygon} at (39,211) size 95x72 [fill={[type=SOLID] [color=#008000]}] [data="M87.00,211.00 L134.00,238.00 L116.00,283.00 L57.00,283.00 L39.00,238.00 L87.00,211.00 Z"]
+      RenderSVGText {text} at (65,280) size 49x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 49x19
+          chunk 1 text run 1 at (65.00,295.00) startOffset 0 endOffset 7 width 49.00: "Polygon"
+      RenderPath {rect} at (35,207) size 102x91 [stroke={[type=SOLID] [color=#000000]}] [data="M36.00,208.00 L136.00,208.00 L136.00,297.00 L36.00,297.00 Z"]
+      RenderSVGText {text} at (46,187) size 78x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 78x12
+          chunk 1 text run 1 at (46.00,197.00) startOffset 0 endOffset 18 width 78.00: "viewTarget, should"
+      RenderSVGText {text} at (46,196) size 73x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 73x12
+          chunk 1 text run 1 at (46.00,206.00) startOffset 0 endOffset 17 width 73.00: "highlight polygon"
+    RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 261x47
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.6 $"
+    RenderPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
