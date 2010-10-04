@@ -1,5 +1,12 @@
 2010-10-04  Adam Roben  <aroben@apple.com>
 
+        Skip a timing-out test on Windows
+
+        * platform/win/Skipped: Added http/tests/misc/copy-resolves-urls.html,
+        which times out in Release builds.
+
+2010-10-04  Adam Roben  <aroben@apple.com>
+
         Skip a flaky SVG test on Windows
 
         * platform/win/Skipped: Added

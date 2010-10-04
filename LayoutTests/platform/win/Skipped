@@ -324,6 +324,9 @@ inspector/debugger-pause-on-breakpoint.html
 # Sometimes fails http://webkit.org/b/46998
 svg/dom/SVGScriptElement/script-load-and-error-events.svg
 
+# Times out in Release builds http://webkit.org/b/47091
+http/tests/misc/copy-resolves-urls.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
