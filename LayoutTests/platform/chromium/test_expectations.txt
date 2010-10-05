@@ -3177,7 +3177,6 @@ BUG_HCLAM : http/tests/css/css-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/mask-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = TEXT TIMEOUT PASS
 
-BUG_HCLAM : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
 BUG_HCLAM WIN : svg/text/text-intro-05-t.svg = IMAGE+TEXT CRASH TEXT
 BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 
