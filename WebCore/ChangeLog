@@ -1,3 +1,21 @@
+2010-10-04  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [Cairo] Port drawTiledShadow to the new ContextShadow
+        https://bugs.webkit.org/show_bug.cgi?id=45902
+
+        Ported the drawTiledShadow function to the ContextShadow, it
+        renders shadows for rects faster than the simple blurring using
+        tiling of a smaller rect. We will remove the old function in a
+        next patch when starting to use ContextShadows for cairo
+        rendering.
+
+        * platform/graphics/ContextShadow.h:
+        * platform/graphics/cairo/ContextShadowCairo.cpp:
+        (WebCore::ContextShadow::drawRectShadowWithoutTiling):
+        (WebCore::ContextShadow::drawRectShadow):
+
 2010-10-05  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
