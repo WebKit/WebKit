@@ -1,3 +1,15 @@
+2010-10-05  Jakob Petsovits  <jpetsovits@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Make build work with QT_NO_CURSOR
+        https://bugs.webkit.org/show_bug.cgi?id=46097
+
+        Add a missing semicolon.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::setCursor):
+
 2010-10-05  Simon Hausmann  <simon.hausmann@nokia.com>
 
         Unreviewed build fix.

@@ -30,6 +30,7 @@
 #include <QCursor>
 #endif
 
+#include <QPalette>
 #include <QRect>
 
 QT_BEGIN_NAMESPACE
