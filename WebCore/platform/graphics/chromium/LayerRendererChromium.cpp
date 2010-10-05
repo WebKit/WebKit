@@ -127,7 +127,6 @@ void LayerRendererChromium::setRootLayerCanvasSize(const IntSize& size)
     // the old ones.
     m_rootLayerCanvas = new skia::PlatformCanvas(size.width(), size.height(), false);
     m_rootLayerSkiaContext = new PlatformContextSkia(m_rootLayerCanvas.get());
-    m_rootLayerSkiaContext->setDrawingToImageBuffer(true);
     m_rootLayerGraphicsContext = new GraphicsContext(reinterpret_cast<PlatformGraphicsContext*>(m_rootLayerSkiaContext.get()));
 #elif PLATFORM(CG)
     // Release the previous CGBitmapContext before reallocating the backing store as a precaution.
@@ -204,6 +203,8 @@ void LayerRendererChromium::prepareToDrawLayers(const IntRect& visibleRect, cons
     GLC(m_context, m_context->disable(GraphicsContext3D::CULL_FACE));
     GLC(m_context, m_context->depthFunc(GraphicsContext3D::LEQUAL));
     GLC(m_context, m_context->clearStencil(0));
+    // Blending disabled by default. Root layer alpha channel on Windows is incorrect when Skia uses ClearType. 
+    GLC(m_context, m_context->disable(GraphicsContext3D::BLEND)); 
 
     if (m_scrollPosition == IntPoint(-1, -1)) {
         m_scrollPosition = scrollPosition;
@@ -331,6 +332,7 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
         drawLayersRecursive(sublayers[i].get(), scissorRect);
 
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
+    GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
 }
 
 void LayerRendererChromium::finish()
