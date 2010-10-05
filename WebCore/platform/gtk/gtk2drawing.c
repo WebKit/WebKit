@@ -1098,8 +1098,6 @@ static gint
 moz_gtk_scrolled_window_paint(GdkDrawable* drawable, GdkRectangle* rect,
                               GdkRectangle* cliprect, GtkWidgetState* state)
 {
-    GtkStateType state_type = ConvertGtkState(state);
-    GtkShadowType shadow_type = (state->active) ?  GTK_SHADOW_IN : GTK_SHADOW_OUT;
     GtkStyle* style;
     GtkAllocation allocation;
     GtkWidget* widget;
@@ -1116,9 +1114,9 @@ moz_gtk_scrolled_window_paint(GdkDrawable* drawable, GdkRectangle* rect,
 
     style = gtk_widget_get_style(widget);
     TSOffsetStyleGCs(style, rect->x - 1, rect->y - 1);
-    gtk_paint_box(style, drawable, state_type, shadow_type, cliprect,
-                  widget, "scrolled_window", rect->x - 1, rect->y - 1,
-                  rect->width + 2, rect->height + 2);
+    gtk_paint_shadow(style, drawable, GTK_STATE_NORMAL, GTK_SHADOW_IN,
+                     cliprect, gParts->scrolledWindowWidget, "scrolled_window",
+                     rect->x, rect->y, rect->width, rect->height);
     return MOZ_GTK_SUCCESS;
 }
 

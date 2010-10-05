@@ -221,14 +221,8 @@ void ScrollbarThemeGtk::paintTrackBackground(GraphicsContext* context, Scrollbar
 
 void ScrollbarThemeGtk::paintScrollbarBackground(GraphicsContext* context, Scrollbar* scrollbar)
 {
+    // This is unused by the moz_gtk_scrollecd_window_paint.
     GtkWidgetState state;
-    state.focused = FALSE;
-    state.isDefault = FALSE;
-    state.canDefault = FALSE;
-    state.disabled = FALSE;
-    state.active = TRUE;
-    state.inHover = FALSE;
-
     IntRect fullScrollbarRect = IntRect(scrollbar->x(), scrollbar->y(), scrollbar->width(), scrollbar->height());
     static_cast<RenderThemeGtk*>(RenderTheme::defaultTheme().get())->paintMozillaGtkWidget(MOZ_GTK_SCROLLED_WINDOW, context, fullScrollbarRect, &state, 0);
 }
@@ -303,7 +297,6 @@ bool ScrollbarThemeGtk::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCon
             scrollMask |= ThumbPart;
     }
 
-    // Paint the scrollbar background (only used by custom CSS scrollbars).
     paintScrollbarBackground(graphicsContext, scrollbar);
 
     if (scrollMask & TrackBGPart)

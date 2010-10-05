@@ -1,3 +1,26 @@
+2010-10-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Interior scrollbars do not draw their background properly
+        https://bugs.webkit.org/show_bug.cgi?id=47096
+
+        Correct the method that the GTK+ theme drawing code uses to
+        draw scrolled window backgrounds. Now it uses gtk_paint_shadow,
+        the same as the actual code from GTK+.
+
+        No new tests as this is very hard to write tests for. The bug only
+        manifests on some GTK+ themes and we have no test harness mechanism
+        for testing rendering with non-default GTK+ themes.
+
+        * platform/gtk/ScrollbarThemeGtk.cpp:
+        (WebCore::ScrollbarThemeGtk::paintScrollbarBackground): No longer
+        initialize the widget state, as it's unused by the callee.
+        (WebCore::ScrollbarThemeGtk::paint): Remove an inaccurate comment.
+        * platform/gtk/gtk2drawing.c:
+        (moz_gtk_scrolled_window_paint): Paint scrolled window backgrounds
+        with gtk_paint_shadow instead of gtk_paint_box.
+
 2010-10-05  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
