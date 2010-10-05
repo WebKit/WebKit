@@ -1,3 +1,21 @@
+2010-10-04  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QNetworkReplyHandler forces buffered output for FormData with files
+        https://bugs.webkit.org/show_bug.cgi?id=46259
+
+        No new tests. Existing form submit tests should cover this change.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::FormDataIODevice::FormDataIODevice):
+        (WebCore::FormDataIODevice::computeSize):
+         Add computeSize() for computing form device size
+        (WebCore::QNetworkReplyHandler::start):
+         Call computeSize(), fill Content-Length and prevent UploadData buffering
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (WebCore::FormDataIODevice::getFormDataSize):
+
 2010-10-04  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Antonio Gomes.
