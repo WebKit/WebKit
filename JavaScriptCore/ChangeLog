@@ -1,3 +1,16 @@
+2010-10-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r68338): JavaScript error on PowerPC only (crashes on Interpreter built for x86_64)
+        https://bugs.webkit.org/show_bug.cgi?id=46690
+
+        Use the correct register value when initialising the arguments
+        object in the interpreter.  This is covered by existing tests.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2010-10-04  David Goodwin  <david_goodwin@apple.com>
 
         Reviewed by Oliver Hunt.
