@@ -385,13 +385,12 @@ void setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
     // case just populate the XEvent's keycode with the Qt platform-independent keycode. The only
     // place this keycode will be used is in webkit_test_plugin_handle_event().
     if (QWebPagePrivate::drtRun && !xEvent->xkey.keycode) {
-        if (!keyEvent->text().isEmpty())
-            xEvent->xkey.keycode = int(QString(keyEvent->text()).at(0).unicode() + keyEvent->nativeModifiers());
-        else {
-            QKeyEvent* qKeyEvent = keyEvent->qtEvent();
-            if (qKeyEvent && qKeyEvent->key() && (qKeyEvent->key() != Qt::Key_unknown))
-                xEvent->xkey.keycode = int(qKeyEvent->key() + qKeyEvent->modifiers());
-        }
+        QKeyEvent* qKeyEvent = keyEvent->qtEvent();
+        ASSERT(qKeyEvent);
+        if (!qKeyEvent->text().isEmpty())
+            xEvent->xkey.keycode = int(qKeyEvent->text().at(0).unicode() + qKeyEvent->modifiers());
+        else if (qKeyEvent->key() && (qKeyEvent->key() != Qt::Key_unknown))
+            xEvent->xkey.keycode = int(qKeyEvent->key() + qKeyEvent->modifiers());
     }
 
     xEvent->xkey.same_screen = true;

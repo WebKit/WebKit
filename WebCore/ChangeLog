@@ -1,3 +1,18 @@
+2010-10-05  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Web process crash when pressing modifiers in input field
+        https://bugs.webkit.org/show_bug.cgi?id=44935
+
+        Revert part of the http://trac.webkit.org/changeset/69105 due to a
+        test regression.  Unix: Add ASSERTs to plugin related code. These
+        will fail if Qt WebKit2 is used with plugins, unless code is not
+        fixed before.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::setXKeyEventSpecificFields): Use qKeyEvent, Use ASSERT as a reminder.
+
 2010-10-05  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
