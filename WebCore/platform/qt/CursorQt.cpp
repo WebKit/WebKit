@@ -72,15 +72,13 @@ Cursor& Cursor::operator=(const Cursor& other)
     return *this;
 }
 
+#ifndef QT_NO_CURSOR
 static QCursor* createCustomCursor(Image* image, const IntPoint& hotSpot)
 {
-#ifndef QT_NO_CURSOR
     IntPoint effectiveHotSpot = determineHotSpot(image, hotSpot);
     return new QCursor(*(image->nativeImageForCurrentFrame()), effectiveHotSpot.x(), effectiveHotSpot.y());
-#else
-    return 0;
-#endif
 }
+#endif
 
 void Cursor::ensurePlatformCursor() const
 {
