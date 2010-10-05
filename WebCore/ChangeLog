@@ -1,3 +1,16 @@
+2010-10-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Unreviewed build fix.
+
+        [CMAKE] Build fix for r68901
+        https://bugs.webkit.org/show_bug.cgi?id=47042
+
+        Move plugins/PluginPackage.cpp
+
+        No features added, so no new tests.
+
+        * CMakeLists.txt:
+
 2010-10-04  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.

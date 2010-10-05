@@ -1376,7 +1376,6 @@ SET(WebCore_SOURCES
     plugins/DOMPlugin.cpp
     plugins/PluginData.cpp
     plugins/PluginMainThreadScheduler.cpp
-    plugins/PluginPackage.cpp
 
     rendering/AutoTableLayout.cpp
     rendering/BidiRun.cpp
@@ -1619,6 +1618,7 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
     LIST(APPEND WebCore_SOURCES
         plugins/PluginDebug.cpp
         plugins/PluginStream.cpp
+        plugins/PluginPackage.cpp
         plugins/PluginView.cpp
         plugins/npapi.cpp
     )
