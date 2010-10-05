@@ -4049,6 +4049,54 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMTokenList.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMTokenList.h"
@@ -23719,6 +23767,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\NavigationScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\NavigationScheduler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\NetscapePlugInStreamLoader.cpp"
 				>
 			</File>
@@ -23764,14 +23820,6 @@
 			</File>
 			<File
 				RelativePath="..\loader\ProgressTracker.h"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\NavigationScheduler.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\NavigationScheduler.h"
 				>
 			</File>
 			<File

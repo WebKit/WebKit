@@ -1,3 +1,11 @@
+2010-10-05  Adam Roben  <aroben@apple.com>
+
+        Windows linker warning fix
+
+        * WebCore.vcproj/WebCore.vcproj: Exclude JSDOMTokenList.cpp from the
+        build, since it is already being compiled via DerivedSources.cpp. Also
+        let VS reorder some files.
+
 2010-10-05  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
