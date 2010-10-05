@@ -37,8 +37,10 @@ class Int32Array : public IntegralTypedArrayBase<int> {
     static PassRefPtr<Int32Array> create(int* array, unsigned length);
     static PassRefPtr<Int32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
+#if !COMPILER(RVCT)
     using TypedArrayBase<int>::set;
     using IntegralTypedArrayBase<int>::set;
+#endif
 
   private:
     Int32Array(PassRefPtr<ArrayBuffer> buffer,

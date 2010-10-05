@@ -39,8 +39,10 @@ class Uint8Array : public IntegralTypedArrayBase<unsigned char> {
     static PassRefPtr<Uint8Array> create(unsigned char* array, unsigned length);
     static PassRefPtr<Uint8Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
+#if !COMPILER(RVCT)
     using TypedArrayBase<unsigned char>::set;
     using IntegralTypedArrayBase<unsigned char>::set;
+#endif
 
   private:
     Uint8Array(PassRefPtr<ArrayBuffer> buffer,

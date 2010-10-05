@@ -1,3 +1,19 @@
+2010-10-05  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix breakage in RVCT 2.2 compile
+        https://bugs.webkit.org/show_bug.cgi?id=47187
+
+        Fix bug in RVCT 2.2 compile for Symbian^3 in html/canvas/Int32Array.h and 
+        html/canvas/Uin8Array.h
+        For RVCT2.2, the using clause is unneeded, and can be omitted.
+
+        A Test case cannot be made for this since this is a build-related issue.
+
+        * html/canvas/Int32Array.h:
+        * html/canvas/Uint8Array.h:
+
 2010-10-04  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.
