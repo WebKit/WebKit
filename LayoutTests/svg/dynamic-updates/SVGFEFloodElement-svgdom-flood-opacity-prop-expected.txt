@@ -1,0 +1,13 @@
+SVG 1.1 dynamic update tests
+
+Tests dynamic updates of the 'flood-opacity' property of the SVGFEFloodElement object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.defaultView.getComputedStyle(floodElement).getPropertyValue('flood-opacity') is "0.1"
+PASS document.defaultView.getComputedStyle(floodElement).getPropertyValue('flood-opacity') is "0.8"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
