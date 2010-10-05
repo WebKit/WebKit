@@ -1,3 +1,21 @@
+2010-10-04  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Andreas Kling.
+
+        SVGFEGaussianBlurElement doesn't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=47074
+        The patch also implements the simple setStdDeviation method.
+
+        Tests: svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr.html
+               svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr.html
+               svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call.html
+               svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop.html
+
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::setStdDeviation):
+        (WebCore::SVGFEGaussianBlurElement::svgAttributeChanged):
+        * svg/SVGFEGaussianBlurElement.h:
+
 2010-10-04  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.
