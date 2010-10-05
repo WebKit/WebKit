@@ -1,3 +1,11 @@
+2010-10-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        * WebKit.vcproj/WebKit.sln: Turn the QTMovieWin project
+        off for WinCairo release builds.  Somehow this was
+        incorrectly turned on.
+
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
