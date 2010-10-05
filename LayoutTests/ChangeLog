@@ -1,3 +1,13 @@
+2010-10-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WAI-ARIA 'marquee' role live region uses aria-live="polite", should use aria-live="off"
+        https://bugs.webkit.org/show_bug.cgi?id=47185
+
+        * platform/mac/accessibility/aria-liveregion-marquee-default-expected.txt: Added.
+        * platform/mac/accessibility/aria-liveregion-marquee-default.html: Added.
+
 2010-10-05  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

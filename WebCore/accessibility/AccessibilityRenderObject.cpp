@@ -3387,6 +3387,7 @@ const AtomicString& AccessibilityRenderObject::ariaLiveRegionStatus() const
         case ApplicationStatusRole:
             return liveRegionStatusPolite;
         case ApplicationTimerRole:
+        case ApplicationMarqueeRole:
             return liveRegionStatusOff;
         default:
             break;

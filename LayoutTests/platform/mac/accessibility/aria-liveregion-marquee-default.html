@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div tabindex="0" id="marquee1" role="marquee">marquee1</div>
+<div tabindex="0" id="marquee2" role="marquee" aria-live="assertive">marquee2</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the marquee role has the correct default aria-live status (off).");
+
+    if (window.accessibilityController) {
+  
+          // Make sure that regular elements are not exposing ARIA live attributes.
+          document.getElementById("marquee1").focus();
+          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'off'");
+
+          document.getElementById("marquee2").focus();
+          shouldBe("accessibilityController.focusedElement.stringAttributeValue('AXARIALive')", "'assertive'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
