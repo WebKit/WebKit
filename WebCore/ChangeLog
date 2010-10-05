@@ -1,3 +1,13 @@
+2010-10-05  Sanjeev Radhakrishnan  <sanjeevr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Fixed implementation of pluginWidgetFromDocument to search for the "embed" element rather than just use the first child.
+        https://bugs.webkit.org/show_bug.cgi?id=47129
+
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::pluginWidgetFromDocument):
+
 2010-10-05  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

@@ -32,6 +32,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "MainResourceLoader.h"
+#include "NodeList.h"
 #include "Page.h"
 #include "RawDataDocumentParser.h"
 #include "RenderEmbeddedObject.h"
@@ -70,7 +71,9 @@ Widget* PluginDocumentParser::pluginWidgetFromDocument(Document* doc)
     ASSERT(doc);
     RefPtr<Element> body = doc->body();
     if (body) {
-        RefPtr<Node> node = body->firstChild();
+        RefPtr<NodeList> embedNodes = body->getElementsByTagName("embed");
+        ASSERT(embedNodes && embedNodes->length());
+        Node* node = embedNodes->item(0);
         if (node && node->renderer()) {
             ASSERT(node->renderer()->isEmbeddedObject());
             return toRenderEmbeddedObject(node->renderer())->widget();
