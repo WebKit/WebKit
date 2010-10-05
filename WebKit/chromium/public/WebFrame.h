@@ -554,6 +554,7 @@ public:
     // Dumps the layer tree, used by the accelerated compositor, in
     // text form. This is used only by layout tests.
     virtual WebString layerTreeAsText() const = 0;
+
 protected:
     ~WebFrame() { }
 };

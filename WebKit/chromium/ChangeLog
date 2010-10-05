@@ -1,5 +1,11 @@
 2010-10-05  Kenneth Russell  <kbr@google.com>
 
+        Unreviewed, follow up to 47216. Add newline above "protected:".
+
+        * public/WebFrame.h:
+
+2010-10-05  Kenneth Russell  <kbr@google.com>
+
         Reviewed by Tony Chang.
 
         [chromium] Implement layerTreeAsText in DumpRenderTree
