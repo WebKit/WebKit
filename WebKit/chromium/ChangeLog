@@ -1,3 +1,14 @@
+2010-10-04  Matt Mueller  <mattm@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        When building under chromium, build libwebkit as the same type (shared
+        or static) as chromium.  Fixes problems with multiple calls to global
+        initializers/finalizers in shared chromium build.
+        https://bugs.webkit.org/show_bug.cgi?id=46762
+
+        * WebKit.gyp:
+
 2010-10-04  Alpha Lam  <hclam@chromium.org>
 
         Build fix. Not reviewed.

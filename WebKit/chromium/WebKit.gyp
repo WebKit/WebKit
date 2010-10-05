@@ -36,7 +36,6 @@
         'features.gypi',
     ],
     'variables': {
-        'webkit_target_type': 'static_library',
         'conditions': [
             # Location of the chromium src directory and target type is different
             # if webkit is built inside chromium or as standalone project.
@@ -44,6 +43,7 @@
                 # Webkit is being built outside of the full chromium project.
                 # e.g. via build-webkit --chromium
                 'chromium_src_dir': '../../WebKit/chromium',
+                'webkit_target_type': 'static_library',
 
                 # List of DevTools source files, ordered by dependencies. It is used both
                 # for copying them to resource dir, and for generating 'devtools.html' file.
@@ -54,6 +54,7 @@
             },{
                 # WebKit is checked out in src/chromium/third_party/WebKit
                 'chromium_src_dir': '../../../..',
+                'webkit_target_type': '<(library)',
 
                 'devtools_files': [
                     '<@(devtools_css_files)',
