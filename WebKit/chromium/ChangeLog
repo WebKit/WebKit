@@ -1,3 +1,20 @@
+2010-10-05  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Implement layerTreeAsText in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=47216
+
+        Plumbed Frame::layerTreeAsText through Chromium's WebKit API to
+        make it callable from DumpRenderTree.
+
+        No new tests; verified with existing compositor layout tests.
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::layerTreeAsText):
+        * src/WebFrameImpl.h:
+
 2010-10-05  Andrew Wilson  <atwilson@chromium.org>
 
         Reviewed by Andreas Kling.

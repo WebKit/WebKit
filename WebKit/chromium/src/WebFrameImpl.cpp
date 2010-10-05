@@ -1770,6 +1770,13 @@ bool WebFrameImpl::pauseSVGAnimation(const WebString& animationId, double time, 
 #endif
 }
 
+WebString WebFrameImpl::layerTreeAsText() const
+{
+    if (!m_frame)
+        return WebString();
+    return WebString(m_frame->layerTreeAsText());
+}
+
 // WebFrameImpl public ---------------------------------------------------------
 
 PassRefPtr<WebFrameImpl> WebFrameImpl::create(WebFrameClient* client)

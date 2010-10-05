@@ -325,6 +325,8 @@ public:
     // Speech input related functions.
     void setMockSpeechInputResult(const CppArgumentList&, CppVariant*);
 
+    void layerTreeAsText(const CppArgumentList& args, CppVariant* result);
+
     void markerTextForListItem(const CppArgumentList&, CppVariant*);
 
 public:

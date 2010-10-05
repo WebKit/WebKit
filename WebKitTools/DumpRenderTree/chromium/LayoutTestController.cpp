@@ -106,6 +106,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("forceRedSelectionColors", &LayoutTestController::forceRedSelectionColors);
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
+    bindMethod("layerTreeAsText", &LayoutTestController::layerTreeAsText);
     bindMethod("markerTextForListItem", &LayoutTestController::markerTextForListItem);
     bindMethod("notifyDone", &LayoutTestController::notifyDone);
     bindMethod("numberOfActiveAnimations", &LayoutTestController::numberOfActiveAnimations);
@@ -1535,6 +1536,11 @@ WebKit::WebSpeechInputController* LayoutTestController::speechInputController(We
     if (!m_speechInputControllerMock.get())
         m_speechInputControllerMock.set(WebSpeechInputControllerMock::create(listener));
     return m_speechInputControllerMock.get();
+}
+
+void LayoutTestController::layerTreeAsText(const CppArgumentList& args, CppVariant* result)
+{
+    result->set(m_shell->webView()->mainFrame()->layerTreeAsText().utf8());
 }
 
 void LayoutTestController::markerTextForListItem(const CppArgumentList& args, CppVariant* result)

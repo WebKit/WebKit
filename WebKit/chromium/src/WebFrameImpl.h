@@ -190,6 +190,7 @@ public:
     virtual bool pauseSVGAnimation(const WebString& animationId,
                                    double time,
                                    const WebString& elementId);
+    virtual WebString layerTreeAsText() const;
 
     static PassRefPtr<WebFrameImpl> create(WebFrameClient* client);
     ~WebFrameImpl();
