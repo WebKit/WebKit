@@ -1032,9 +1032,9 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
         if (startrow == m_rowPos.size() || (startrow > 0 && (m_rowPos[startrow] >  top)))
           --startrow;
 
-        int bottom = relativeY + h + os - 1;
+        int bottom = relativeY + h + os;
         endrow = std::lower_bound(m_rowPos.begin(), m_rowPos.end(), bottom) - m_rowPos.begin();
-        if ((endrow == m_rowPos.size()) || (endrow > 0 && m_rowPos[endrow - 1] == bottom))
+        if (endrow == m_rowPos.size())
           --endrow;
 
         if (!endrow && ty + m_rowPos[0] - table()->outerBorderTop() <= y + h + os)
@@ -1051,9 +1051,9 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
         if ((startcol == columnPos.size()) || (startcol > 0 && (columnPos[startcol] > left)))
             --startcol;
 
-        int right = relativeX + w + os - 1;
+        int right = relativeX + w + os;
         endcol = std::lower_bound(columnPos.begin(), columnPos.end(), right) - columnPos.begin();
-        if (endcol == columnPos.size() || (endcol > 0 && (columnPos[endcol - 1] == right)))
+        if (endcol == columnPos.size())
             --endcol;
 
         if (!endcol && tx + table()->columnPositions()[0] - table()->outerBorderLeft() <= y + w + os)

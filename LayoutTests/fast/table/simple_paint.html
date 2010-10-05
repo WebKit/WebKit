@@ -1,18 +1,27 @@
 <html>
 <head>
 <title>Simple Table Painting</title>
-  <style>
-    table.testtable { border: 1px solid black; border-collapse:collapse; background-color: green; }
-    table.testtable td { border: 1px solid black;  font-size: 20px; background-color: green; width:60px; height:60px; direction:rtl;}
-    body { margin: 0px 0px 0px 0px; }
-  </style>
-  <script>
-      if (window.layoutTestController) {
-          window.layoutTestController.waitUntilDone();
-      }
-  </script>
+    <style>
+      table.testtable { border: 1px solid black; border-collapse:collapse; background-color: green; }
+      table.testtable td { border: 1px solid black;  font-size: 20px; background-color: green; width:60px; height:60px; direction:rtl;}
+      body { margin: 0px; }
+    </style>
+    <script>
+        if (window.layoutTestController) {
+            window.layoutTestController.waitUntilDone();
+        }
+        function repaintTest() {
+            var testCell = document.getElementById("testcell");
+            var offset = document.body.offsetTop;
+            testCell.style.backgroundColor = "green";
+            if (window.layoutTestController) {
+                window.layoutTestController.notifyDone();
+            }
+        }
+    </script>
+    <script type="text/javascript" src="../repaint/resources/repaint.js"></script>
 </head>
-  <body>
+    <body onload="runRepaintTest()">
     <table class="testtable">
       <tr>
         <td></td>
@@ -51,12 +60,7 @@
       </tr>
     </table>
     <script>
-      var testCell = document.getElementById("testcell");
-      var offset = document.body.offsetTop;
-      testCell.style.backgroundColor = "green";
-      if (window.layoutTestController) {
-          window.layoutTestController.notifyDone();
-      }
+
     </script>
   </body>
 </html>

@@ -1,3 +1,20 @@
+2010-10-05  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r65539): One pixel white gaps when scrolling Trac changeset pages
+        https://bugs.webkit.org/show_bug.cgi?id=45131
+
+        Added a layout test to check for paint rects that touch the border of an adjacent sell,
+        when border-collapse: separate is set for the table. 
+
+        * fast/table/simple_paint.html: 
+            Don't do rtl as it doesn't exercise some of the new  paint code.
+        * fast/table/simple_paint_separate_borders-expected.checksum: Added.
+        * fast/table/simple_paint_separate_borders-expected.png: Added.
+        * fast/table/simple_paint_separate_borders-expected.txt: Added.
+        * fast/table/simple_paint_separate_borders.html: Added.
+
 2010-10-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

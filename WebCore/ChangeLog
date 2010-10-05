@@ -1,3 +1,19 @@
+2010-10-05  Fady Samuel  <fsamuel@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r65539): One pixel white gaps when scrolling Trac changeset pages
+        https://bugs.webkit.org/show_bug.cgi?id=45131
+
+        When border-collapse: separate property is set on the table, paintObject
+        may skip repainting cells, if the dirty region only touches one row/col of pixels.
+
+        Test: fast/table/simple_paint_separate_borders.html
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintObject):  
+            Don't subtract one from the right and bottom of the dirty paint rect.
+
 2010-10-05  Sanjeev Radhakrishnan  <sanjeevr@chromium.org>
 
         Reviewed by Darin Fisher.
