@@ -1,3 +1,17 @@
+2010-10-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix url conversion in QWebHistory
+
+        Converting from KURL to WFT::String to QUrl does not
+        permit proper percent encoding later.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47048
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::dumpHistoryItem):
+
 2010-10-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

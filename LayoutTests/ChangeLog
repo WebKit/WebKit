@@ -1,3 +1,34 @@
+2010-10-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix url conversion in QWebHistory
+
+        Converting from KURL to WFT::String to QUrl does not
+        permit proper percent encoding later.
+
+        Unskp tests that now pass:
+         http/tests/navigation/postredirect-goback2.html
+         http/tests/navigation/error404-frames.html
+         http/tests/navigation/post-basic.html
+         http/tests/navigation/post-frames.html
+         http/tests/navigation/post-goback1.html
+         http/tests/navigation/anchor-frames.html
+
+        These produce only rendertree differences with '--platform mac'.
+        Unskipping so we can get Qt-specific results from bot:
+         http/tests/navigation/error404-basic.html
+         http/tests/navigation/error404-goback.html
+         http/tests/navigation/error404-subframeload.html
+         http/tests/navigation/javascriptlink-frames.html
+         http/tests/navigation/postredirect-basic.html
+         http/tests/navigation/postredirect-frames.html
+         http/tests/navigation/postredirect-goback1.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=47048
+
+        * platform/qt/Skipped:
+
 2010-10-05  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating chromium linux baselines after landing r69126

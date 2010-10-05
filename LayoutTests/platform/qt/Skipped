@@ -214,23 +214,6 @@ http/tests/navigation/target-frame-from-window.html
 http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-target-blank.html
 
-# requires correct URL encoding - webkit.org/b/47048
-http/tests/navigation/postredirect-goback2.html
-
-#new - no expected results
-http/tests/navigation/anchor-frames.html
-http/tests/navigation/error404-basic.html
-http/tests/navigation/error404-frames.html
-http/tests/navigation/error404-goback.html
-http/tests/navigation/error404-subframeload.html
-http/tests/navigation/javascriptlink-frames.html
-http/tests/navigation/post-basic.html
-http/tests/navigation/post-frames.html
-http/tests/navigation/post-goback1.html
-http/tests/navigation/postredirect-basic.html
-http/tests/navigation/postredirect-frames.html
-http/tests/navigation/postredirect-goback1.html
-
 # time out
 http/tests/multipart/invalid-image-data.html
 http/tests/multipart/invalid-image-data-standalone.html
