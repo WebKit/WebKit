@@ -1,3 +1,20 @@
+2010-10-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Rename get* and open*Cursor per the spec on IDBIndex
+        https://bugs.webkit.org/show_bug.cgi?id=46906
+
+        The spec changed so that:
+        IDBIndex.get -> getKey
+        IDBIndex.getObject -> get
+        IDBIndex.openCursor -> openKeyCursor
+        IDBIndex.openObjectCursor -> openCursor
+
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics.html:
+        * storage/indexeddb/index-cursor.html:
+
 2010-10-04  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

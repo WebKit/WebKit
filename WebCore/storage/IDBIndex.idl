@@ -34,10 +34,10 @@ module storage {
         readonly attribute boolean unique;
 
         // FIXME: All of these should raise on certain errors.
-        [CallWith=ScriptExecutionContext] IDBRequest openObjectCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction);
         [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction);
-        [CallWith=ScriptExecutionContext] IDBRequest getObject(in IDBKey key);
+        [CallWith=ScriptExecutionContext] IDBRequest openKeyCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction);
         [CallWith=ScriptExecutionContext] IDBRequest get(in IDBKey key);
+        [CallWith=ScriptExecutionContext] IDBRequest getKey(in IDBKey key);
     };
 
 }

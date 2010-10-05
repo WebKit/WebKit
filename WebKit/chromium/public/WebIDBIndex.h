@@ -61,10 +61,25 @@ public:
         return false;
     }
 
+    // FIXME: openObjectCursor -> openCursor and getObject -> get.
     virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void openCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+    {
+        openKeyCursor(range, direction, callbacks, transaction);
+    }
+    virtual void openKeyCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+    {
+        openCursor(range, direction, callbacks, transaction);
+    }
     virtual void getObject(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void get(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void get(const WebIDBKey& range, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+    {
+        getKey(range, callbacks, transaction);
+    }
+    virtual void getKey(const WebIDBKey& range, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+    {
+        get(range, callbacks, transaction);
+    }
 };
 
 } // namespace WebKit

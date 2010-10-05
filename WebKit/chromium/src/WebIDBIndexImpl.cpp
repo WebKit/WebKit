@@ -68,24 +68,24 @@ bool WebIDBIndexImpl::unique() const
     return m_backend->unique();
 }
 
-void WebIDBIndexImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+void WebIDBIndexImpl::openObjectCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
     m_backend->openCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
-void WebIDBIndexImpl::openObjectCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+void WebIDBIndexImpl::openKeyCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
-    m_backend->openObjectCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
+    m_backend->openKeyCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
 void WebIDBIndexImpl::getObject(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
-    m_backend->getObject(keyRange, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
+    m_backend->get(keyRange, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
-void WebIDBIndexImpl::get(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+void WebIDBIndexImpl::getKey(const WebIDBKey& keyRange, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
 {
-    m_backend->get(keyRange, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
+    m_backend->getKey(keyRange, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
 }
 
 } // namespace WebCore

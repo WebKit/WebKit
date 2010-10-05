@@ -186,7 +186,7 @@ function runNextTest()
     else
         keyRange = IDBKeyRange.rightBound(testData[upper], upperIsOpen);
  
-    var request = indexObject.openCursor(keyRange, ascending ? IDBCursor.NEXT : IDBCursor.PREV);
+    var request = indexObject.openKeyCursor(keyRange, ascending ? IDBCursor.NEXT : IDBCursor.PREV);
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }

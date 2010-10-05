@@ -1,3 +1,34 @@
+2010-10-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Rename get* and open*Cursor per the spec on IDBIndex
+        https://bugs.webkit.org/show_bug.cgi?id=46906
+
+        The spec changed so that:
+        IDBIndex.get -> getKey
+        IDBIndex.getObject -> get
+        IDBIndex.openCursor -> openKeyCursor
+        IDBIndex.openObjectCursor -> openCursor
+
+        * public/WebIDBIndex.h:
+        (WebKit::WebIDBIndex::openCursor):
+        (WebKit::WebIDBIndex::openKeyCursor):
+        (WebKit::WebIDBIndex::get):
+        (WebKit::WebIDBIndex::getKey):
+        * src/IDBIndexBackendProxy.cpp:
+        (WebCore::IDBIndexBackendProxy::openCursor):
+        (WebCore::IDBIndexBackendProxy::openKeyCursor):
+        (WebCore::IDBIndexBackendProxy::get):
+        (WebCore::IDBIndexBackendProxy::getKey):
+        * src/IDBIndexBackendProxy.h:
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::openObjectCursor):
+        (WebKit::WebIDBIndexImpl::openKeyCursor):
+        (WebKit::WebIDBIndexImpl::getObject):
+        (WebKit::WebIDBIndexImpl::getKey):
+        * src/WebIDBIndexImpl.h:
+
 2010-10-04  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

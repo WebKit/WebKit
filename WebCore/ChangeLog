@@ -1,3 +1,33 @@
+2010-10-04  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        Rename get* and open*Cursor per the spec on IDBIndex
+        https://bugs.webkit.org/show_bug.cgi?id=46906
+
+        The spec changed so that:
+        IDBIndex.get -> getKey
+        IDBIndex.getObject -> get
+        IDBIndex.openCursor -> openKeyCursor
+        IDBIndex.openObjectCursor -> openCursor
+
+        Existing tests cover since this is just renaming stuff.
+
+        * storage/IDBIndex.cpp:
+        (WebCore::IDBIndex::openCursor):
+        (WebCore::IDBIndex::openKeyCursor):
+        (WebCore::IDBIndex::get):
+        (WebCore::IDBIndex::getKey):
+        * storage/IDBIndex.h:
+        * storage/IDBIndex.idl:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::IDBIndexBackendImpl::openKeyCursor):
+        (WebCore::IDBIndexBackendImpl::get):
+        (WebCore::IDBIndexBackendImpl::getKey):
+        * storage/IDBIndexBackendImpl.h:
+        * storage/IDBIndexBackendInterface.h:
+
 2010-10-05  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Simon Hausmann.

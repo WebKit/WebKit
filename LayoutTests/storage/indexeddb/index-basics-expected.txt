@@ -52,9 +52,9 @@ PASS 'keyPath' in indexObject is true
 PASS indexObject.keyPath is "x"
 PASS 'unique' in indexObject is true
 PASS indexObject.unique is false
-PASS 'openObjectCursor' in indexObject is true
+PASS 'openKeyCursor' in indexObject is true
 PASS 'openCursor' in indexObject is true
-PASS 'getObject' in indexObject is true
+PASS 'getKey' in indexObject is true
 PASS 'get' in indexObject is true
 store.add({x: 'value', y: 'zzz'}, 'key')
 PASS 'onsuccess' in result is true
@@ -90,7 +90,7 @@ PASS 'onerror' in event.target is true
 PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
-indexObject.get('value')
+indexObject.getKey('value')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true
@@ -108,7 +108,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.result is "key"
-indexObject.getObject('value')
+indexObject.get('value')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true
@@ -127,6 +127,24 @@ PASS event.target.readyState is event.target.DONE
 
 PASS event.result.x is "value"
 PASS event.result.y is "zzz"
+indexObject.getKey('does not exist')
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+Error event fired:
+PASS 'result' in event is false
+PASS 'code' in event is true
+PASS 'message' in event is true
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS event.code is IDBDatabaseException.NOT_FOUND_ERR
 indexObject.get('does not exist')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -145,25 +163,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.code is IDBDatabaseException.NOT_FOUND_ERR
-indexObject.getObject('does not exist')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Error event fired:
-PASS 'result' in event is false
-PASS 'code' in event is true
-PASS 'message' in event is true
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.code is IDBDatabaseException.NOT_FOUND_ERR
-indexObject.openCursor()
+indexObject.openKeyCursor()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true
@@ -221,7 +221,7 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.result === null is true
-indexObject.openObjectCursor()
+indexObject.openCursor()
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true

@@ -61,9 +61,9 @@ function addData()
     shouldBeEqualToString("indexObject.keyPath", "x");
     shouldBeTrue("'unique' in indexObject");
     shouldBeFalse("indexObject.unique");
-    shouldBeTrue("'openObjectCursor' in indexObject");
+    shouldBeTrue("'openKeyCursor' in indexObject");
     shouldBeTrue("'openCursor' in indexObject");
-    shouldBeTrue("'getObject' in indexObject");
+    shouldBeTrue("'getKey' in indexObject");
     shouldBeTrue("'get' in indexObject");
 
     result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
@@ -86,7 +86,7 @@ function getData()
 {
     verifySuccessEvent(event);
 
-    result = evalAndLog("indexObject.get('value')");
+    result = evalAndLog("indexObject.getKey('value')");
     verifyResult(result);
     result.onsuccess = getObjectData;
     result.onerror = unexpectedErrorCallback;
@@ -97,7 +97,7 @@ function getObjectData()
     verifySuccessEvent(event);
     shouldBeEqualToString("event.result", "key");
 
-    result = evalAndLog("indexObject.getObject('value')");
+    result = evalAndLog("indexObject.get('value')");
     verifyResult(result);
     result.onsuccess = getDataFail;
     result.onerror = unexpectedErrorCallback;
@@ -109,7 +109,7 @@ function getDataFail()
     shouldBeEqualToString("event.result.x", "value");
     shouldBeEqualToString("event.result.y", "zzz");
 
-    result = evalAndLog("indexObject.get('does not exist')");
+    result = evalAndLog("indexObject.getKey('does not exist')");
     verifyResult(result);
     result.onsuccess = unexpectedSuccessCallback;
     result.onerror = getObjectDataFail;
@@ -120,18 +120,18 @@ function getObjectDataFail()
     verifyErrorEvent(event);
     shouldBe("event.code", "IDBDatabaseException.NOT_FOUND_ERR");
 
-    result = evalAndLog("indexObject.getObject('does not exist')");
+    result = evalAndLog("indexObject.get('does not exist')");
     verifyResult(result);
     result.onsuccess = unexpectedSuccessCallback;
-    result.onerror = openCursor;
+    result.onerror = openKeyCursor;
 }
 
-function openCursor()
+function openKeyCursor()
 {
     verifyErrorEvent(event);
     shouldBe("event.code", "IDBDatabaseException.NOT_FOUND_ERR");
 
-    window.result = evalAndLog("indexObject.openCursor()");
+    window.result = evalAndLog("indexObject.openKeyCursor()");
     verifyResult(result);
     result.onsuccess = cursor1Continue;
     result.onerror = unexpectedErrorCallback;
@@ -168,7 +168,7 @@ function openObjectCursor()
     verifySuccessEvent(event);
     shouldBeTrue("event.result === null");
 
-    window.result = evalAndLog("indexObject.openObjectCursor()");
+    window.result = evalAndLog("indexObject.openCursor()");
     verifyResult(result);
     result.onsuccess = cursor2Continue;
     result.onerror = unexpectedErrorCallback;
