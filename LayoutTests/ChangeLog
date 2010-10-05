@@ -1,3 +1,9 @@
+2010-10-04  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        * platform/chromium/test_expectations.txt: fail-on-update-2.html is TIMEOUT on Windows.
+
 2010-10-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

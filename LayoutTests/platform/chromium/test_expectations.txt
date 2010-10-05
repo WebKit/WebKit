@@ -3163,8 +3163,6 @@ BUG10292 MAC : editing/selection/5354455-1.html = FAIL
 // This test fails due to 68940.
 BUG_HCLAM MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 
-// SVG test failures introduced by 68976.
-
 // Started to fail at WebKit r68975 Chromium r61295-61296.
 BUG9798 DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT
 
@@ -3178,3 +3176,11 @@ BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/css-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/mask-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = TEXT TIMEOUT PASS
+
+BUG_HCLAM : svg/clip-path/clip-path-text-and-stroke.svg = CRASH PASS
+BUG_HCLAM WIN : svg/text/text-intro-05-t.svg = IMAGE+TEXT CRASH TEXT
+BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
+
+// Added by r69084
+BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT
+
