@@ -53,6 +53,12 @@
 extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLength, DWORD dwFlags);
 #endif
 
+#if PLATFORM(BREWMP)
+#include <AEEIMemCache1.h>
+#include <AEEMemCache1.bid>
+#include <wtf/brew/RefPtrBrew.h>
+#endif
+
 #define JIT_ALLOCATOR_PAGE_SIZE (ExecutableAllocator::pageSize)
 #define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (ExecutableAllocator::pageSize * 4)
 
@@ -293,6 +299,13 @@ public:
     static void cacheFlush(void* code, size_t size)
     {
         CacheRangeFlush(code, size, CACHE_SYNC_ALL);
+    }
+#elif PLATFORM(BREWMP)
+    static void cacheFlush(void* code, size_t size)
+    {
+        PlatformRefPtr<IMemCache1> memCache = createRefPtrInstance<IMemCache1>(AEECLSID_MemCache1);
+        IMemCache1_ClearCache(memCache.get(), reinterpret_cast<uint32>(code), size, MEMSPACE_CACHE_FLUSH, MEMSPACE_DATACACHE);
+        IMemCache1_ClearCache(memCache.get(), reinterpret_cast<uint32>(code), size, MEMSPACE_CACHE_INVALIDATE, MEMSPACE_INSTCACHE);
     }
 #else
     #error "The cacheFlush support is missing on this platform."

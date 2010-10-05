@@ -1,3 +1,15 @@
+2010-10-05  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Gavin Barraclough.
+
+        [BREWMP] Port ExecutableAllocator::cacheFlush to enable ARM JIT
+        https://bugs.webkit.org/show_bug.cgi?id=47117
+
+        Use IMemCache1 to flush data cache and invalidate instruction cache.
+
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutableAllocator::cacheFlush):
+
 2010-10-05  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed. Build fix.
