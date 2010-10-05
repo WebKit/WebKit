@@ -1,3 +1,21 @@
+2010-10-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove strdup in ewk_setting.cpp using eina_stringshare
+        https://bugs.webkit.org/show_bug.cgi?id=46613
+
+        Add variables shared by eina_stringshare and remove strdup.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_web_database_path_set):
+        (ewk_settings_web_database_path_get):
+        (ewk_settings_icon_database_path_set):
+        (ewk_settings_icon_database_path_get):
+        * ewk/ewk_settings.h:
+
 2010-10-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

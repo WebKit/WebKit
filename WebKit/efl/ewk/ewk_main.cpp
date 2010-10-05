@@ -175,6 +175,7 @@ Eina_Bool _ewk_init_body(void)
 
     WTF::String wkdir = WTF::String(home) + "/.webkit";
     ewk_settings_web_database_path_set(wkdir.utf8().data());
+    ewk_settings_icon_database_path_set(wkdir.utf8().data());
 
     WebCore::cacheStorage().setCacheDirectory(wkdir);
 

@@ -42,7 +42,7 @@ EAPI void             ewk_settings_web_database_path_set(const char *path);
 EAPI const char      *ewk_settings_web_database_path_get();
 
 EAPI Eina_Bool        ewk_settings_icon_database_path_set(const char *path);
-EAPI char            *ewk_settings_icon_database_path_get(void);
+EAPI const char      *ewk_settings_icon_database_path_get(void);
 EAPI Eina_Bool        ewk_settings_icon_database_clear(void);
 
 EAPI cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *url);

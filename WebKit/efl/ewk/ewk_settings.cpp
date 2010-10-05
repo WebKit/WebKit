@@ -44,6 +44,8 @@
 #include <libsoup/soup.h>
 #endif
 
+static const char* _ewk_default_web_database_path = 0;
+static const char* _ewk_icon_database_path = 0;
 static uint64_t _ewk_default_web_database_quota = 1 * 1024 * 1024;
 
 /**
@@ -69,21 +71,27 @@ void ewk_settings_web_database_path_set(const char *path)
 #if ENABLE(DATABASE)
     WTF::String corePath = WTF::String::fromUTF8(path);
     WebCore::DatabaseTracker::tracker().setDatabaseDirectoryPath(corePath);
+    if (!_ewk_default_web_database_path)
+        _ewk_default_web_database_path = eina_stringshare_add(corePath.utf8().data());
+    else
+        eina_stringshare_replace(&_ewk_default_web_database_path, corePath.utf8().data());
+
 #endif
 }
 
 /**
  * Return directory path where web database is stored.
  *
- * @return newly allocated string with database path. Note that return must be
- * freed with free() as it's a strdup()ed copy of the string due reference
- * counting.
+ * @return database path or NULL if none or web database is not supported.
+ *         This is guaranteed to be eina_stringshare, so whenever possible
+ *         save yourself some cpu cycles and use
+ *         eina_stringshare_ref() instead of eina_stringshare_add() or
+ *         strdup().
  */
 const char *ewk_settings_web_database_path_get()
 {
 #if ENABLE(DATABASE)
-    WTF::String path = WebCore::DatabaseTracker::tracker().databaseDirectoryPath();
-    return strdup(path.utf8().data());
+    return _ewk_default_web_database_path;
 #else
     return 0;
 #endif
@@ -122,9 +130,17 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
 
         WebCore::iconDatabase()->setEnabled(true);
         WebCore::iconDatabase()->open(WTF::String::fromUTF8(directory));
+        if (!_ewk_icon_database_path)
+            _ewk_icon_database_path = eina_stringshare_add(directory);
+        else
+            eina_stringshare_replace(&_ewk_icon_database_path, directory);
     } else {
         WebCore::iconDatabase()->setEnabled(false);
         WebCore::iconDatabase()->close();
+        if (_ewk_icon_database_path) {
+            eina_stringshare_del(_ewk_icon_database_path);
+            _ewk_icon_database_path = 0;
+        }
     }
     return EINA_TRUE;
 }
@@ -132,22 +148,20 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
 /**
  * Return directory path where icon database is stored.
  *
- * @return newly allocated string with database path or @c NULL if
- *         none is set or database is closed. Note that return must be
- *         freed with free() as it's a strdup()ed copy of the string
- *         due reference counting.
+ * @return database path or @c NULL if none is set or database is closed.
+ *         This is guaranteed to be eina_stringshare, so whenever possible
+ *         save yourself some cpu cycles and use
+ *         eina_stringshare_ref() instead of eina_stringshare_add() or
+ *         strdup().
  */
-char* ewk_settings_icon_database_path_get(void)
+const char* ewk_settings_icon_database_path_get(void)
 {
     if (!WebCore::iconDatabase()->isEnabled())
         return 0;
     if (!WebCore::iconDatabase()->isOpen())
         return 0;
 
-    WTF::String path = WebCore::iconDatabase()->databasePath();
-    if (path.isEmpty())
-        return 0;
-    return strdup(path.utf8().data());
+    return _ewk_icon_database_path;
 }
 
 /**
