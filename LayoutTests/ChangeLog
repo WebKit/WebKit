@@ -1,3 +1,15 @@
+2010-10-04  Chang Shu  <chang.shu@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Fixed the typo that searches the wrong direction in the no-focus-node case.
+        As a result, after page is loaded, pressing key "arrowdown" will bring the
+        focus to the 1st element instead of the last element.
+        https://bugs.webkit.org/show_bug.cgi?id=46901
+
+        * fast/events/spatial-navigation/snav-1st-stop-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-1st-stop.html: Added.
+
 2010-10-04  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

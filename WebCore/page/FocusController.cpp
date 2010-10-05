@@ -298,7 +298,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
     if (!focusedNode) {
         // Just move to the first focusable node.
         FocusDirection tabDirection = (direction == FocusDirectionUp || direction == FocusDirectionLeft) ?
-                                       FocusDirectionForward : FocusDirectionBackward;
+                                       FocusDirectionBackward : FocusDirectionForward;
         // 'initialFocus' is set to true so the chrome is not focused.
         return advanceFocusInDocumentOrder(tabDirection, event, true);
     }
