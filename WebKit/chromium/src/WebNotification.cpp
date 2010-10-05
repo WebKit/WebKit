@@ -34,6 +34,7 @@
 #if ENABLE(NOTIFICATIONS)
 
 #include "Notification.h"
+#include "UserGestureIndicator.h"
 
 #include "WebString.h"
 #include "WebTextDirection.h"
@@ -140,6 +141,8 @@ void WebNotification::dispatchCloseEvent(bool /* byUser */)
 
 void WebNotification::dispatchClickEvent()
 {
+    // Make sure clicks on notifications are treated as user gestures.
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     RefPtr<Event> event = Event::create(eventNames().clickEvent, false, true);
     m_private->dispatchEvent(event.release());
 }

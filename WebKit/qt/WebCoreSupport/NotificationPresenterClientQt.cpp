@@ -40,6 +40,7 @@
 #include "QtPlatformPlugin.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "UserGestureIndicator.h"
 
 #include "qwebframe_p.h"
 #include "qwebkitglobal.h"
@@ -262,8 +263,11 @@ void NotificationPresenterClientQt::cancel(NotificationWrapper* wrapper)
 void NotificationPresenterClientQt::notificationClicked(NotificationWrapper* wrapper)
 {
     Notification* notification =  notificationForWrapper(wrapper);
-    if (notification)
+    if (notification) {
+        // Make sure clicks on notifications are treated as user gestures.
+        UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
         sendEvent(notification, eventNames().clickEvent);
+    }
 }
 
 void NotificationPresenterClientQt::notificationClicked(const QString& title)
