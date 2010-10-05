@@ -179,6 +179,8 @@ namespace WebCore {
 #if PLATFORM(QT)
         PlatformKeyboardEvent(QKeyEvent*);
         QKeyEvent* qtEvent() const { return m_qtEvent; }
+        uint32_t nativeModifiers() const;
+        uint32_t nativeScanCode() const;
 #endif
 
 #if PLATFORM(WX)

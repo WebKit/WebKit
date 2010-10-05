@@ -180,6 +180,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
     if (m_isWindowed)
         return;
 
+    ASSERT(event->keyEvent()->qtEvent());
     QEvent& npEvent = *(event->keyEvent()->qtEvent());
     if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();

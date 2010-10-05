@@ -505,6 +505,79 @@ int windowsKeyCodeForKeyEvent(unsigned int keycode, bool isKeypad)
     }
 }
 
+static bool isVirtualKeyCodeRepresentingCharacter(int code)
+{
+    switch (code) {
+    case VK_SPACE:
+    case VK_0:
+    case VK_1:
+    case VK_2:
+    case VK_3:
+    case VK_4:
+    case VK_5:
+    case VK_6:
+    case VK_7:
+    case VK_8:
+    case VK_9:
+    case VK_A:
+    case VK_B:
+    case VK_C:
+    case VK_D:
+    case VK_E:
+    case VK_F:
+    case VK_G:
+    case VK_H:
+    case VK_I:
+    case VK_J:
+    case VK_K:
+    case VK_L:
+    case VK_M:
+    case VK_N:
+    case VK_O:
+    case VK_P:
+    case VK_Q:
+    case VK_R:
+    case VK_S:
+    case VK_T:
+    case VK_U:
+    case VK_V:
+    case VK_W:
+    case VK_X:
+    case VK_Y:
+    case VK_Z:
+    case VK_NUMPAD0:
+    case VK_NUMPAD1:
+    case VK_NUMPAD2:
+    case VK_NUMPAD3:
+    case VK_NUMPAD4:
+    case VK_NUMPAD5:
+    case VK_NUMPAD6:
+    case VK_NUMPAD7:
+    case VK_NUMPAD8:
+    case VK_NUMPAD9:
+    case VK_MULTIPLY:
+    case VK_ADD:
+    case VK_SEPARATOR:
+    case VK_SUBTRACT:
+    case VK_DECIMAL:
+    case VK_DIVIDE:
+    case VK_OEM_1:
+    case VK_OEM_PLUS:
+    case VK_OEM_COMMA:
+    case VK_OEM_MINUS:
+    case VK_OEM_PERIOD:
+    case VK_OEM_2:
+    case VK_OEM_3:
+    case VK_OEM_4:
+    case VK_OEM_5:
+    case VK_OEM_6:
+    case VK_OEM_7:
+        return true;
+    default:
+        return false;
+    }
+}
+
 PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
 {
     const int state = event->modifiers();
@@ -539,7 +612,7 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
             we try to detect this situation and still set the text, to ensure that the
             general event handling sends a key press event after this disambiguation.
         */
-        if (m_text.isEmpty() && m_windowsVirtualKeyCode && m_qtEvent->key() < Qt::Key_Escape)
+        if (m_text.isEmpty() && m_windowsVirtualKeyCode && isVirtualKeyCodeRepresentingCharacter(m_windowsVirtualKeyCode))
             m_text.append(UChar(m_windowsVirtualKeyCode));
 
         m_keyIdentifier = String();
@@ -560,6 +633,18 @@ void PlatformKeyboardEvent::getCurrentModifierState(bool& shiftKey, bool& ctrlKe
     ctrlKey = false;
     altKey = false;
     metaKey = false;
+}
+
+uint32_t PlatformKeyboardEvent::nativeModifiers() const
+{
+    ASSERT(m_qtEvent);
+    return m_qtEvent->nativeModifiers();
+}
+
+uint32_t PlatformKeyboardEvent::nativeScanCode() const
+{
+    ASSERT(m_qtEvent);
+    return m_qtEvent->nativeScanCode();
 }
 
 }

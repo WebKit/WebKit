@@ -372,23 +372,26 @@ void PluginView::initXEvent(XEvent* xEvent)
 
 void setXKeyEventSpecificFields(XEvent* xEvent, KeyboardEvent* event)
 {
-    QKeyEvent* qKeyEvent = event->keyEvent()->qtEvent();
+    const PlatformKeyboardEvent* keyEvent = event->keyEvent();
 
     xEvent->type = (event->type() == eventNames().keydownEvent) ? 2 : 3; // ints as Qt unsets KeyPress and KeyRelease
     xEvent->xkey.root = QX11Info::appRootWindow();
     xEvent->xkey.subwindow = 0; // we have no child window
     xEvent->xkey.time = event->timeStamp();
-    xEvent->xkey.state = qKeyEvent->nativeModifiers();
-    xEvent->xkey.keycode = qKeyEvent->nativeScanCode();
+    xEvent->xkey.state = keyEvent->nativeModifiers();
+    xEvent->xkey.keycode = keyEvent->nativeScanCode();
 
     // We may not have a nativeScanCode() if the key event is from DRT's eventsender. In that
     // case just populate the XEvent's keycode with the Qt platform-independent keycode. The only
     // place this keycode will be used is in webkit_test_plugin_handle_event().
     if (QWebPagePrivate::drtRun && !xEvent->xkey.keycode) {
-        if (!qKeyEvent->text().isEmpty())
-            xEvent->xkey.keycode = int(qKeyEvent->text().at(0).unicode() + qKeyEvent->modifiers());
-        else if (qKeyEvent->key() && (qKeyEvent->key() != Qt::Key_unknown))
-            xEvent->xkey.keycode = int(qKeyEvent->key() + qKeyEvent->modifiers());
+        if (!keyEvent->text().isEmpty())
+            xEvent->xkey.keycode = int(QString(keyEvent->text()).at(0).unicode() + keyEvent->nativeModifiers());
+        else {
+            QKeyEvent* qKeyEvent = keyEvent->qtEvent();
+            if (qKeyEvent && qKeyEvent->key() && (qKeyEvent->key() != Qt::Key_unknown))
+                xEvent->xkey.keycode = int(qKeyEvent->key() + qKeyEvent->modifiers());
+        }
     }
 
     xEvent->xkey.same_screen = true;

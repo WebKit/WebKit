@@ -1,3 +1,29 @@
+2010-10-05  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Web process crash when pressing modifiers in input field
+        https://bugs.webkit.org/show_bug.cgi?id=44935
+
+        Fix null pointer dereference by not using
+        PlatformKeyboardEvent::m_qtEvent. This member is not set when
+        event comes from WebKit2.  Unix: Add ASSERTs to plugin related
+        code. These will fail if WebKit2 is used with plugins, unless code
+        is not fixed before.  Symbian: Add ASSERT to code which uses
+        qtEvent(). It will fail when WebKit2 is enabled for Symbian, if
+        code is not fixed before.
+
+        * platform/PlatformKeyboardEvent.h:
+        * platform/qt/PlatformKeyboardEventQt.cpp:
+        (WebCore::isVirtualKeyCodeRepresentingCharacter): Added.
+        (WebCore::PlatformKeyboardEvent::disambiguateKeyDownEvent): Avoid using m_qtEvent.
+        (WebCore::PlatformKeyboardEvent::nativeModifiers): Added. Use ASSERT as a reminder.
+        (WebCore::PlatformKeyboardEvent::nativeScanCode): Added. Use ASSERT as a reminder.
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::setXKeyEventSpecificFields):
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginView::handleKeyboardEvent): Add ASSERT as a reminder.
+
 2010-10-05  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Csaba Osztrogonác.
