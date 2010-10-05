@@ -1,5 +1,20 @@
 2010-10-05  Chris Rogers  <crogers@google.com>
 
+        Reviewed by James Robinson.
+
+        Fix AudioContext to use new HRTFDatabaseLoader API
+        https://bugs.webkit.org/show_bug.cgi?id=46858
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::isRunnable):
+        * webaudio/AudioContext.h:
+        * webaudio/AudioContext.idl:
+
+2010-10-05  Chris Rogers  <crogers@google.com>
+
         Reviewed by Kenneth Russell.
 
         Add AudioPannerNode files
