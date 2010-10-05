@@ -1,3 +1,17 @@
+2010-10-05  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed. Build fix.
+
+        Moved "jsc" directory to "shell", so that the name does not clash with the
+        JavaScriptCore shell in some build systems.
+        http://webkit.org/b/47049
+
+        * CMakeLists.txt: Changed reference from "jsc" to "shell".
+        * jsc: Removed.
+        * jsc/CMakeLists.txt: Removed.
+        * jsc/CMakeListsEfl.txt: Removed.
+        * shell: Copied from JavaScriptCore/jsc.
+
 2010-10-05  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
