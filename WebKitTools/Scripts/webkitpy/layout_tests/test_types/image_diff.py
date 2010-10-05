@@ -104,7 +104,7 @@ class ImageDiff(test_type_base.TestTypeBase):
           self.FILENAME_SUFFIX_EXPECTED + '.png')
 
         expected_image = port.expected_image(filename)
-        with codecs.open(actual_filename, 'r', None) as file:
+        with codecs.open(actual_filename, 'r+b', None) as file:
             actual_image = file.read()
 
         result = port.diff_image(expected_image, actual_image,

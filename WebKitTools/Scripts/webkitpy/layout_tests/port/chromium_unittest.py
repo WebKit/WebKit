@@ -156,5 +156,47 @@ DEFER LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
         self.assertEquals(options.configuration, 'default')
         self.assertTrue(port.default_configuration_called)
 
+    def test_diff_image(self):
+        class TestPort(ChromiumPortTest.TestLinuxPort):
+            def _path_to_image_diff(self):
+                return "/path/to/image_diff"
+
+        class EmptyOptions:
+            use_drt = False
+
+        class MockExecute:
+            def __init__(self, result):
+                self._result = result
+
+            def run_command(self,
+                            args,
+                            cwd=None,
+                            input=None,
+                            error_handler=None,
+                            return_exit_code=False,
+                            return_stderr=True,
+                            decode_output=False):
+                return self._result
+
+        options = EmptyOptions()
+        port = ChromiumPortTest.TestLinuxPort(options)
+
+        # Images are different.
+        port._executive = MockExecute(0)
+        self.assertEquals(False, port.diff_image("EXPECTED", "ACTUAL"))
+
+        # Images are the same.
+        port._executive = MockExecute(1)
+        self.assertEquals(True, port.diff_image("EXPECTED", "ACTUAL"))
+
+        # There was some error running image_diff.
+        port._executive = MockExecute(2)
+        exception_raised = False
+        try:
+            port.diff_image("EXPECTED", "ACTUAL")
+        except ValueError, e:
+            exception_raised = True
+        self.assertTrue(exception_raised)
+
 if __name__ == '__main__':
     unittest.main()

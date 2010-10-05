@@ -134,28 +134,38 @@ class ChromiumPort(base.Port):
     def diff_image(self, expected_contents, actual_contents,
                    diff_filename=None, tolerance=0):
         executable = self._path_to_image_diff()
-        expected_tmpfile = tempfile.NamedTemporaryFile()
-        expected_tmpfile.write(expected_contents)
-        actual_tmpfile = tempfile.NamedTemporaryFile()
-        actual_tmpfile.write(actual_contents)
+
+        tempdir = tempfile.mkdtemp()
+        expected_filename = os.path.join(tempdir, "expected.png")
+        with open(expected_filename, 'w+b') as file:
+            file.write(expected_contents)
+        actual_filename = os.path.join(tempdir, "actual.png")
+        with open(actual_filename, 'w+b') as file:
+            file.write(actual_contents)
+
         if diff_filename:
-            cmd = [executable, '--diff', expected_tmpfile.name,
-                   actual_tmpfile.name, diff_filename]
+            cmd = [executable, '--diff', expected_filename,
+                   actual_filename, diff_filename]
         else:
-            cmd = [executable, expected_tmpfile.name, actual_tmpfile.name]
+            cmd = [executable, expected_filename, actual_filename]
 
         result = True
         try:
-            if self._executive.run_command(cmd, return_exit_code=True) == 0:
-                return False
+            exit_code = self._executive.run_command(cmd, return_exit_code=True)
+            if exit_code == 0:
+                # The images are the same.
+                result = False
+            elif exit_code != 1:
+                # Some other error occurred.
+                raise ValueError("image diff returned an exit code of " +
+                                 str(exit_code))
         except OSError, e:
             if e.errno == errno.ENOENT or e.errno == errno.EACCES:
                 _compare_available = False
             else:
                 raise e
         finally:
-            expected_tmpfile.close()
-            actual_tmpfile.close()
+            shutil.rmtree(tempdir)
         return result
 
     def driver_name(self):

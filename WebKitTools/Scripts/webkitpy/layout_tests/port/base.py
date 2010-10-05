@@ -259,7 +259,10 @@ class Port(object):
         path = self.expected_filename(test, extension)
         if not os.path.exists(path):
             return None
-        with codecs.open(path, 'r', encoding) as file:
+        open_mode = 'r'
+        if encoding is None:
+            open_mode = 'r+b'
+        with codecs.open(path, open_mode, encoding) as file:
             return file.read()
 
     def expected_checksum(self, test):
