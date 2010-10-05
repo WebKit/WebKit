@@ -1,5 +1,13 @@
 2010-10-05  Tony Chang  <tony@chromium.org>
 
+        Reviewed by Ojan Vafai (over the shoulder).
+
+        Paper over errors in image_diff so we don't crash the whole test run.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
+2010-10-05  Tony Chang  <tony@chromium.org>
+
         Unreviewed, make shutil.rmtree more resiliant to errors
         since windows was raising WindowsError: The process cannot access the file because it
         is being used by another process.

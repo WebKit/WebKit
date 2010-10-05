@@ -156,9 +156,14 @@ class ChromiumPort(base.Port):
                 # The images are the same.
                 result = False
             elif exit_code != 1:
-                # Some other error occurred.
-                raise ValueError("image diff returned an exit code of " +
-                                 str(exit_code))
+                _log.error("image diff returned an exit code of "
+                           + str(exit_code))
+                # Returning False here causes the script to think that we
+                # successfully created the diff even though we didn't.  If
+                # we return True, we think that the images match but the hashes
+                # don't match.
+                # FIXME: Figure out why image_diff returns other values.
+                result = False
         except OSError, e:
             if e.errno == errno.ENOENT or e.errno == errno.EACCES:
                 _compare_available = False
