@@ -37,9 +37,8 @@
 #include <AEEFile.h>
 #include <AEEStdLib.h>
 
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RandomNumber.h>
+#include <wtf/brew/RefPtrBrew.h>
 #include <wtf/brew/ShellBrew.h>
 #include <wtf/text/CString.h>
 
@@ -47,7 +46,7 @@ namespace WebCore {
 
 bool getFileSize(const String& path, long long& result)
 {
-    OwnPtr<IFileMgr> fileMgr = createInstance<IFileMgr>(AEECLSID_FILEMGR);
+    PlatformRefPtr<IFileMgr> fileMgr = createRefPtrInstance<IFileMgr>(AEECLSID_FILEMGR);
     FileInfo info;
 
     if (IFILEMGR_GetInfo(fileMgr.get(), path.utf8().data(), &info) == SUCCESS) {
@@ -67,21 +66,21 @@ bool getFileModificationTime(const String& path, time_t& result)
 
 bool fileExists(const String& path)
 {
-    OwnPtr<IFileMgr> fileMgr = createInstance<IFileMgr>(AEECLSID_FILEMGR);
+    PlatformRefPtr<IFileMgr> fileMgr = createRefPtrInstance<IFileMgr>(AEECLSID_FILEMGR);
 
     return (IFILEMGR_Test(fileMgr.get(), path.utf8().data()) == SUCCESS);
 }
 
 bool deleteFile(const String& path)
 {
-    OwnPtr<IFileMgr> fileMgr = createInstance<IFileMgr>(AEECLSID_FILEMGR);
+    PlatformRefPtr<IFileMgr> fileMgr = createRefPtrInstance<IFileMgr>(AEECLSID_FILEMGR);
 
     return (IFILEMGR_Remove(fileMgr.get(), path.utf8().data()) == SUCCESS);
 }
 
 bool deleteEmptyDirectory(const String& path)
 {
-    OwnPtr<IFileMgr> fileMgr = createInstance<IFileMgr>(AEECLSID_FILEMGR);
+    PlatformRefPtr<IFileMgr> fileMgr = createRefPtrInstance<IFileMgr>(AEECLSID_FILEMGR);
 
     return (IFILEMGR_RmDir(fileMgr.get(), path.utf8().data()) == SUCCESS);
 }
@@ -110,7 +109,7 @@ CString fileSystemRepresentation(const String& path)
 
 static String canonicalPath(const String& path)
 {
-    OwnPtr<IFileMgr> fileMgr = createInstance<IFileMgr>(AEECLSID_FILEMGR);
+    PlatformRefPtr<IFileMgr> fileMgr = createRefPtrInstance<IFileMgr>(AEECLSID_FILEMGR);
 
     // Get the buffer size required to resolve the path.
     int canonPathLen;
@@ -163,7 +162,7 @@ static bool makeAllDirectories(IFileMgr* fileManager, const String& path)
 
 bool makeAllDirectories(const String& path)
 {
-    OwnPtr<IFileMgr> fileMgr = createInstance<IFileMgr>(AEECLSID_FILEMGR);
+    PlatformRefPtr<IFileMgr> fileMgr = createRefPtrInstance<IFileMgr>(AEECLSID_FILEMGR);
 
     return makeAllDirectories(fileMgr.get(), canonicalPath(path));
 }
@@ -193,7 +192,7 @@ CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
     // use "fs:/~/tmp" as our temporary directory.
     String tempPath("fs:/~/tmp");
 
-    OwnPtr<IFileMgr> fileMgr = createInstance<IFileMgr>(AEECLSID_FILEMGR);
+    PlatformRefPtr<IFileMgr> fileMgr = createRefPtrInstance<IFileMgr>(AEECLSID_FILEMGR);
 
     // Create the temporary directory if it does not exist.
     IFILEMGR_MkDir(fileMgr.get(), tempPath.utf8().data());

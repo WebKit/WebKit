@@ -1,3 +1,22 @@
+2010-10-05  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Use PlatformRefPtr instead of OwnPtr in FileSystem
+        https://bugs.webkit.org/show_bug.cgi?id=47025
+
+        PlatformRefPtr is a better choice here because all Brew MP instances are
+        reference counted.
+
+        * platform/brew/FileSystemBrew.cpp:
+        (WebCore::getFileSize):
+        (WebCore::fileExists):
+        (WebCore::deleteFile):
+        (WebCore::deleteEmptyDirectory):
+        (WebCore::canonicalPath):
+        (WebCore::makeAllDirectories):
+        (WebCore::openTemporaryFile):
+
 2010-10-05  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
