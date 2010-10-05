@@ -1,3 +1,17 @@
+2010-10-05  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Handle composited root layer invalidations in screenspace,
+        fixing the disappearing scrollbar problem.
+        https://bugs.webkit.org/show_bug.cgi?id=46864
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::WebViewImpl::doComposite):
+
 2010-10-05  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, follow up to 47216. Add newline above "protected:".

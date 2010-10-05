@@ -2257,10 +2257,11 @@ void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect&
         return;
 
     IntRect contentRect = view->visibleContentRect(false);
+    IntRect screenRect = view->contentsToWindow(contentRect);
 
     // We support fast scrolling in one direction at a time.
     if (scrollDelta.width() && scrollDelta.height()) {
-        invalidateRootLayerRect(WebRect(contentRect));
+        invalidateRootLayerRect(WebRect(screenRect));
         return;
     }
 
@@ -2270,29 +2271,43 @@ void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect&
     IntRect damagedContentsRect;
     if (scrollDelta.width()) {
         int dx = scrollDelta.width();
-        damagedContentsRect.setY(contentRect.y());
-        damagedContentsRect.setHeight(contentRect.height());
+        damagedContentsRect.setY(screenRect.y());
+        damagedContentsRect.setHeight(screenRect.height());
         if (dx > 0) {
-            damagedContentsRect.setX(contentRect.x());
+            damagedContentsRect.setX(screenRect.x());
             damagedContentsRect.setWidth(dx);
         } else {
-            damagedContentsRect.setX(contentRect.right() + dx);
+            damagedContentsRect.setX(screenRect.right() + dx);
             damagedContentsRect.setWidth(-dx);
         }
     } else {
         int dy = scrollDelta.height();
-        damagedContentsRect.setX(contentRect.x());
-        damagedContentsRect.setWidth(contentRect.width());
+        damagedContentsRect.setX(screenRect.x());
+        damagedContentsRect.setWidth(screenRect.width());
         if (dy > 0) {
-            damagedContentsRect.setY(contentRect.y());
+            damagedContentsRect.setY(screenRect.y());
             damagedContentsRect.setHeight(dy);
         } else {
-            damagedContentsRect.setY(contentRect.bottom() + dy);
+            damagedContentsRect.setY(screenRect.bottom() + dy);
             damagedContentsRect.setHeight(-dy);
         }
     }
 
     m_rootLayerScrollDamage.unite(damagedContentsRect);
+
+    // Scroll any existing damage that intersects with clip rect
+    if (clipRect.intersects(m_rootLayerDirtyRect)) {
+        // Find the inner damage
+        IntRect innerDamage(clipRect);
+        innerDamage.intersect(m_rootLayerDirtyRect);
+
+        // Move the damage
+        innerDamage.move(scrollDelta.width(), scrollDelta.height());
+        
+        // Merge it back into the damaged rect
+        m_rootLayerDirtyRect.unite(innerDamage);
+    }
+
     setRootLayerNeedsDisplay();
 }
 
@@ -2307,15 +2322,10 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
 
     if (!page())
         return;
-    FrameView* view = page()->mainFrame()->view();
-
-    // rect is in viewport space. Convert to content space
-    // so that invalidations and scroll invalidations play well with one-another.
-    IntRect contentRect = view->windowToContents(rect);
 
     // FIXME: add a smarter damage aggregation logic and/or unify with 
     // LayerChromium's damage logic
-    m_rootLayerDirtyRect.unite(contentRect);
+    m_rootLayerDirtyRect.unite(rect);
     setRootLayerNeedsDisplay();
 }
 
@@ -2425,10 +2435,7 @@ void WebViewImpl::doComposite()
     damageRects.append(m_rootLayerScrollDamage);
     damageRects.append(m_rootLayerDirtyRect);
     for (size_t i = 0; i < damageRects.size(); ++i) {
-        // The damage rect for the root layer is in content space [e.g. unscrolled].
-        // Convert from content space to viewPort space.
-        const IntRect damagedContentRect = damageRects[i];
-        IntRect damagedRect = view->contentsToWindow(damagedContentRect);
+        IntRect damagedRect = damageRects[i];
 
         // Intersect this rectangle with the viewPort.
         damagedRect.intersect(viewPort);
