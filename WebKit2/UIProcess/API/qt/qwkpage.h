@@ -8,8 +8,6 @@
 #include <QRect>
 #include <QSize>
 #include <QUrl>
-#include <WebKit2/WKBase.h>
-#include <WebKit2/WKPage.h>
 #include <WebKit2/WKPageNamespace.h>
 
 class QCursor;
