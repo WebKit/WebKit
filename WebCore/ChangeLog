@@ -1,3 +1,31 @@
+2010-10-05  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47199
+        
+        Make float positioning work in block layout with block children.
+        It doesn't work yet from inside line layout, since line layout is unpatched.
+
+        Added fast/blockflow/floats-in-block-layout.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustFloatingBlock):
+        (WebCore::RenderBlock::setLogicalLeftForChild):
+        (WebCore::RenderBlock::setLogicalTopForChild):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::type):
+        (WebCore::RenderBlock::FloatingObject::renderer):
+        (WebCore::RenderBlock::logicalRightForFloat):
+        (WebCore::RenderBlock::setLogicalTopForFloat):
+        (WebCore::RenderBlock::setLogicalLeftForFloat):
+        (WebCore::RenderBlock::setLogicalHeightForFloat):
+        (WebCore::RenderBlock::setLogicalWidthForFloat):
+
 2010-10-05  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

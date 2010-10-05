@@ -1,3 +1,19 @@
+2010-10-05  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47199
+        
+        Make float positioning work in block layout with block children.
+        It doesn't work yet from inside line layout, since line layout is unpatched.
+
+        Added fast/blockflow/floats-in-block-layout.html
+
+        * fast/blockflow/floats-in-block-layout.html: Added.
+        * platform/mac/fast/blockflow/floats-in-block-layout-expected.checksum: Added.
+        * platform/mac/fast/blockflow/floats-in-block-layout-expected.png: Added.
+        * platform/mac/fast/blockflow/floats-in-block-layout-expected.txt: Added.
+
 2010-10-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

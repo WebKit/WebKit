@@ -383,8 +383,9 @@ private:
         {
         }
 
-        Type type() { return static_cast<Type>(m_type); }
-
+        Type type() const { return static_cast<Type>(m_type); }
+        RenderBox* renderer() const { return m_renderer; }
+        
         bool isPlaced() const { return m_isPlaced; }
         void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
 
@@ -415,8 +416,37 @@ private:
     int logicalTopForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->top() : child->left(); }
     int logicalBottomForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->bottom() : child->right(); }
     int logicalLeftForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->left() : child->top(); }
+    int logicalRightForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->right() : child->bottom(); }
     int logicalWidthForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->width() : child->height(); }
-    
+    void setLogicalTopForFloat(FloatingObject* child, int logicalTop)
+    {
+        if (style()->isVerticalBlockFlow())
+            child->setTop(logicalTop);
+        else
+            child->setLeft(logicalTop);
+    }
+    void setLogicalLeftForFloat(FloatingObject* child, int logicalLeft)
+    {
+        if (style()->isVerticalBlockFlow())
+            child->setLeft(logicalLeft);
+        else
+            child->setTop(logicalLeft);
+    }
+    void setLogicalHeightForFloat(FloatingObject* child, int logicalHeight)
+    {
+        if (style()->isVerticalBlockFlow())
+            child->setHeight(logicalHeight);
+        else
+            child->setWidth(logicalHeight);
+    }
+    void setLogicalWidthForFloat(FloatingObject* child, int logicalWidth)
+    {
+        if (style()->isVerticalBlockFlow())
+            child->setWidth(logicalWidth);
+        else
+            child->setHeight(logicalWidth);
+    }
+
     // The following functions' implementations are in RenderBlockLineLayout.cpp.
     RootInlineBox* determineStartPosition(bool& firstLine, bool& fullLayout, bool& previousLineBrokeCleanly,
                                           InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
