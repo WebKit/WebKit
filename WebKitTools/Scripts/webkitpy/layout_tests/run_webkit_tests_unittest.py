@@ -34,6 +34,7 @@ import codecs
 import logging
 import os
 import Queue
+import shutil
 import sys
 import tempfile
 import thread
@@ -237,9 +238,11 @@ class MainTest(unittest.TestCase):
         # We run a configuration that should fail, to generate output, then
         # look for what the output results url was.
 
-        res, out, err, user = logging_run(['--results-directory=/tmp-results'],
+        tmpdir = tempfile.mkdtemp()
+        res, out, err, user = logging_run(['--results-directory=' + tmpdir],
                                           tests_included=True)
-        self.assertEqual(user.url, '/tmp-results/results.html')
+        self.assertEqual(user.url, os.path.join(tmpdir, 'results.html'))
+        shutil.rmtree(tmpdir, ignore_errors=True)
 
     def test_results_directory_default(self):
         # We run a configuration that should fail, to generate output, then
