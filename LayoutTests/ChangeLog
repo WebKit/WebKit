@@ -1,3 +1,10 @@
+2010-10-05  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        * platform/chromium/test_expectations.txt:
+          Add expectations for tests added by r69076 and r69077.
+
 2010-10-04  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.

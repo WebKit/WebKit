@@ -3183,3 +3183,12 @@ BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 // Added by r69084
 BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT
 
+// New tests introduced by r69076 and r69077. Need to add baseline files.
+BUG_TKENT WIN LINUX : svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr.html = IMAGE
+BUG_TKENT WIN LINUX : svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr.html = IMAGE
+BUG_TKENT WIN LINUX : svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop.html = IMAGE
+BUG_TKENT WIN LINUX : svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop.html = IMAGE
+BUG_TKENT WIN LINUX : svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr.html = IMAGE
+BUG_TKENT WIN LINUX : svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr.html = IMAGE
+BUG_TKENT WIN LINUX : svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call.html = IMAGE
+BUG_TKENT WIN LINUX : svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop.html = IMAGE
