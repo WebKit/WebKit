@@ -1,3 +1,16 @@
+2010-10-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r69103.
+        http://trac.webkit.org/changeset/69103
+        https://bugs.webkit.org/show_bug.cgi?id=47177
+
+        Breaking Windows and Mac build. (Requested by lca on #webkit).
+
+        * UIProcess/API/C/WKNativeEvent.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/API/qt/qwkpage.h:
+        * WebKit2.pri:
+
 2010-10-05  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antti Koivisto.

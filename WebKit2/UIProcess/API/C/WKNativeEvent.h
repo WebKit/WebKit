@@ -30,10 +30,6 @@
 extern "C" {
 #endif
 
-#if PLATFORM(QT)
-class QEvent;
-typedef const QEvent* WKNativeEventPtr;
-#else
 #ifdef __APPLE__
 #ifdef __OBJC__
 @class NSEvent;
@@ -45,7 +41,6 @@ typedef NSEvent *WKNativeEventPtr;
 typedef const struct tagMSG* WKNativeEventPtr;
 #else
 typedef const void* WKNativeEventPtr;
-#endif
 #endif
 
 #ifdef __cplusplus

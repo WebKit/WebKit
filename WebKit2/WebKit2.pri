@@ -14,8 +14,7 @@ defineTest(addWebKit2Lib) {
     QMAKE_LIBDIR += $$pathToWebKit2Output
 
     # Make symbols visible
-    mac:QMAKE_LFLAGS += -Wl,-all_load -l$$WEBKIT2_TARGET
-    else:QMAKE_LFLAGS += -Wl,-whole-archive -l$$WEBKIT2_TARGET -Wl,-no-whole-archive
+    QMAKE_LFLAGS += -Wl,-whole-archive -l$$WEBKIT2_TARGET -Wl,-no-whole-archive
 
     POST_TARGETDEPS += $${pathToWebKit2Output}$${QMAKE_DIR_SEP}lib$${WEBKIT2_TARGET}.a
 

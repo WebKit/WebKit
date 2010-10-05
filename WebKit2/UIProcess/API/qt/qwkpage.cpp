@@ -38,10 +38,9 @@
 #include <QStyle>
 #include <QTouchEvent>
 #include <QtDebug>
-#include <WebKit2/WKBase.h>
 #include <WebKit2/WKFrame.h>
-#include <WebKit2/WKPage.h>
 #include <WebKit2/WKRetainPtr.h>
+
 
 using namespace WebKit;
 using namespace WebCore;
