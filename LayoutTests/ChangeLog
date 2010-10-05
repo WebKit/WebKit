@@ -1,3 +1,43 @@
+2010-10-05  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Add baselines for tests added by r69076 and r69077.
+
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.checksum: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-10-05  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.
