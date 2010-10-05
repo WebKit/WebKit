@@ -1,3 +1,15 @@
+2010-10-05  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add ENABLE(ACCELERATED_2D_CANVAS) guard to LoopBlinnLocalTriangulator.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=47115
+
+        LoopBlinnLocalTriangulator.cpp depends on LoopBlinnMathUtils.cpp which is guarded by
+        ENABLE(ACCELERATED_2D_CANVAS).
+
+        * platform/graphics/gpu/LoopBlinnLocalTriangulator.cpp:
+
 2010-10-05  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -25,6 +25,8 @@
 
 #include "config.h"
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+
 #include "LoopBlinnLocalTriangulator.h"
 
 #include "LoopBlinnMathUtils.h"
@@ -273,3 +275,5 @@ bool LoopBlinnLocalTriangulator::isSharedEdge(Vertex* v0, Vertex* v1)
 }
 
 } // namespace WebCore
+
+#endif
