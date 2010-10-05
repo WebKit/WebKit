@@ -1,3 +1,35 @@
+2010-10-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        dump-as-markup conversion: editing/execCommand/format-block-with-braces.html and format-block.html
+        https://bugs.webkit.org/show_bug.cgi?id=47098
+
+        Converted editing/execCommand/format-block-with-braces.html and format-block.html to dump-as-text tests.
+
+        * editing/execCommand/format-block-expected.txt: Added.
+        * editing/execCommand/format-block-with-braces-expected.txt: Added.
+        * editing/execCommand/format-block-with-braces.html:
+        * editing/execCommand/format-block.html:
+        * platform/chromium-linux/editing/execCommand/format-block-expected.checksum: Removed.
+        * platform/chromium-linux/editing/execCommand/format-block-expected.png: Removed.
+        * platform/chromium-linux/editing/execCommand/format-block-with-braces-expected.checksum: Removed.
+        * platform/chromium-linux/editing/execCommand/format-block-with-braces-expected.png: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-expected.checksum: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-expected.png: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-expected.txt: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-with-braces-expected.checksum: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-with-braces-expected.png: Removed.
+        * platform/chromium-win/editing/execCommand/format-block-with-braces-expected.txt: Removed.
+        * platform/mac/editing/execCommand/format-block-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/format-block-expected.png: Removed.
+        * platform/mac/editing/execCommand/format-block-expected.txt: Removed.
+        * platform/mac/editing/execCommand/format-block-with-braces-expected.checksum: Removed.
+        * platform/mac/editing/execCommand/format-block-with-braces-expected.png: Removed.
+        * platform/mac/editing/execCommand/format-block-with-braces-expected.txt: Removed.
+        * platform/qt/editing/execCommand/format-block-expected.txt: Removed.
+        * platform/qt/editing/execCommand/format-block-with-braces-expected.txt: Removed.
+
 2010-10-05  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
