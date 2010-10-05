@@ -1,3 +1,18 @@
+2010-10-04  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add AudioUtilities files
+        https://bugs.webkit.org/show_bug.cgi?id=47011
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/AudioUtilities.cpp: Added.
+        (WebCore::AudioUtilities::decibelsToLinear):
+        (WebCore::AudioUtilities::linearToDecibels):
+        (WebCore::AudioUtilities::discreteTimeConstantForSampleRate):
+        * platform/audio/AudioUtilities.h: Added.
+
 2010-10-04  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
