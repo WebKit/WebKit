@@ -1,3 +1,17 @@
+2010-10-04  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix timeout on http/tests/navigation/post-goback2.html and postredirect-goback2.html
+
+        We need to queue back and forward navigations in the DRT from the
+        LayoutTestController so that maybeDump() knows about them.
+
+        Unskip:
+         http/tests/navigation/post-goback2.html
+
+        * platform/qt/Skipped:
+
 2010-10-04  Patrick Gansterer  <paroga@paroga.com>
 
         Reviewed by Darin Adler.

@@ -284,13 +284,15 @@ void LayoutTestController::setDeferMainResourceDataLoad(bool defer)
 void LayoutTestController::queueBackNavigation(int howFarBackward)
 {
     //qDebug() << ">>>queueBackNavigation" << howFarBackward;
-    WorkQueue::shared()->queue(new BackItem(howFarBackward, m_drt->webPage()));
+    for (int i = 0; i != howFarBackward; ++i)
+        WorkQueue::shared()->queue(new BackItem(1, m_drt->webPage()));
 }
 
 void LayoutTestController::queueForwardNavigation(int howFarForward)
 {
     //qDebug() << ">>>queueForwardNavigation" << howFarForward;
-    WorkQueue::shared()->queue(new ForwardItem(howFarForward, m_drt->webPage()));
+    for (int i = 0; i != howFarForward; ++i)
+        WorkQueue::shared()->queue(new ForwardItem(1, m_drt->webPage()));
 }
 
 void LayoutTestController::queueLoad(const QString& url, const QString& target)

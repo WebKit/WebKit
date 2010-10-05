@@ -214,8 +214,7 @@ http/tests/navigation/target-frame-from-window.html
 http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-target-blank.html
 
-#timeout
-http/tests/navigation/post-goback2.html
+# requires correct URL encoding - webkit.org/b/47048
 http/tests/navigation/postredirect-goback2.html
 
 #new - no expected results
