@@ -1,3 +1,54 @@
+2010-10-05  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Add AudioPannerNode files
+        https://bugs.webkit.org/show_bug.cgi?id=46505
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioPannerNode.cpp: Added.
+        (WebCore::fixNANs):
+        (WebCore::AudioPannerNode::AudioPannerNode):
+        (WebCore::AudioPannerNode::~AudioPannerNode):
+        (WebCore::AudioPannerNode::pullInputs):
+        (WebCore::AudioPannerNode::process):
+        (WebCore::AudioPannerNode::reset):
+        (WebCore::AudioPannerNode::initialize):
+        (WebCore::AudioPannerNode::uninitialize):
+        (WebCore::AudioPannerNode::listener):
+        (WebCore::AudioPannerNode::setPanningModel):
+        (WebCore::AudioPannerNode::getAzimuthElevation):
+        (WebCore::AudioPannerNode::dopplerRate):
+        (WebCore::AudioPannerNode::distanceConeGain):
+        (WebCore::AudioPannerNode::notifyAudioSourcesConnectedToNode):
+        * webaudio/AudioPannerNode.h: Added.
+        (WebCore::AudioPannerNode::create):
+        (WebCore::AudioPannerNode::panningModel):
+        (WebCore::AudioPannerNode::position):
+        (WebCore::AudioPannerNode::setPosition):
+        (WebCore::AudioPannerNode::orientation):
+        (WebCore::AudioPannerNode::setOrientation):
+        (WebCore::AudioPannerNode::velocity):
+        (WebCore::AudioPannerNode::setVelocity):
+        (WebCore::AudioPannerNode::distanceModel):
+        (WebCore::AudioPannerNode::setDistanceModel):
+        (WebCore::AudioPannerNode::refDistance):
+        (WebCore::AudioPannerNode::setRefDistance):
+        (WebCore::AudioPannerNode::maxDistance):
+        (WebCore::AudioPannerNode::setMaxDistance):
+        (WebCore::AudioPannerNode::rolloffFactor):
+        (WebCore::AudioPannerNode::setRolloffFactor):
+        (WebCore::AudioPannerNode::coneInnerAngle):
+        (WebCore::AudioPannerNode::setConeInnerAngle):
+        (WebCore::AudioPannerNode::coneOuterAngle):
+        (WebCore::AudioPannerNode::setConeOuterAngle):
+        (WebCore::AudioPannerNode::coneOuterGain):
+        (WebCore::AudioPannerNode::setConeOuterGain):
+        (WebCore::AudioPannerNode::distanceGain):
+        (WebCore::AudioPannerNode::coneGain):
+        * webaudio/AudioPannerNode.idl: Added.
+
 2010-10-04  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.
