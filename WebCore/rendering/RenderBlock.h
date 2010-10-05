@@ -529,7 +529,7 @@ private:
     void adjustPointToColumnContents(IntPoint&) const;
     void adjustForBorderFit(int x, int& left, int& right) const; // Helper function for borderFitAdjust
 
-    void markLinesDirtyInBlockRange(int logicalTop, int logicalTop, RootInlineBox* highest = 0);
+    void markLinesDirtyInBlockRange(int logicalTop, int logicalBottom, RootInlineBox* highest = 0);
 
     void newLine(EClear);
 

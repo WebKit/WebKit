@@ -1,3 +1,12 @@
+2010-10-04  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Kent Tamura.
+
+        Fixed compilation problem added in commit 69082. The interface of
+        the function has two parameters with the same name.
+
+        * rendering/RenderBlock.h:
+
 2010-10-04  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
