@@ -2,6 +2,14 @@
 
         Build fix. Not reviewed.
 
+        Remove a function declaration.
+
+        * src/ChromeClientImpl.h:
+
+2010-10-04  Alpha Lam  <hclam@chromium.org>
+
+        Build fix. Not reviewed.
+
         https://bugs.webkit.org/show_bug.cgi?id=47135
         Add a stub method to make the build happy.
 

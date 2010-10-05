@@ -155,8 +155,6 @@ public:
     virtual bool allowsAcceleratedCompositing() const;
 #endif
 
-    virtual WebCore::SharedGraphicsContext3D* getSharedGraphicsContext3D();
-
     virtual bool supportsFullscreenForNode(const WebCore::Node*);
     virtual void enterFullscreenForNode(WebCore::Node*);
     virtual void exitFullscreenForNode(WebCore::Node*);
