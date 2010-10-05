@@ -1,3 +1,13 @@
+2010-10-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix the build when sandboxing is enabled.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        * UIProcess/WebProcessProxy.cpp:
+
 2010-10-04  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed Csaba Osztrogonác.

@@ -42,6 +42,10 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
+#if ENABLE(WEB_PROCESS_SANDBOX)
+#include <sandbox.h>
+#endif
+
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>
 #endif
@@ -134,11 +138,11 @@ void WebContext::ensureWebProcess()
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
         char* sandboxBundleTokenUTF8 = 0;
-        CString injectedBundlePath = context->injectedBundlePath().utf8();
-        sandbox_issue_extension(injectedBundlePath.data(), &sandboxBundleToken);
-        String sandboxBundleToken = String::fromUTF8(sandboxBundleTokenUTF8)
-        if (sandboxBundleToken)
-            free(sandboxBundleToken);
+        CString injectedBundlePathUTF8 = injectedBundlePath().utf8();
+        sandbox_issue_extension(injectedBundlePathUTF8.data(), &sandboxBundleTokenUTF8);
+        String sandboxBundleToken = String::fromUTF8(sandboxBundleTokenUTF8);
+        if (sandboxBundleTokenUTF8)
+            free(sandboxBundleTokenUTF8);
 
         parameters.injectedBundlePathToken = sandboxBundleToken;
 #endif
