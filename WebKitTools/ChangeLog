@@ -1,3 +1,10 @@
+2010-10-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        * DumpRenderTree/win/ImageDiff.vcproj: Use WinCairo debug
+        property sheet so proper libraries are linked.
+
 2010-10-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
