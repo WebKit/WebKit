@@ -1,3 +1,34 @@
+2010-10-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start sending Carbon plug-in events in th Carbon event model
+        https://bugs.webkit.org/show_bug.cgi?id=47209
+        <rdar://problem/8515677>
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize the NP_CGContext struct.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        Create a fake Carbon window.
+
+        (WebKit::NetscapePlugin::platformDestroy):
+        Destroy the Carbon window.
+
+        (WebKit::modifiersForEvent):
+        Given a WebEvent, return the EventRecord modifiers.
+
+        (WebKit::NetscapePlugin::platformPaint):
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        (WebKit::NetscapePlugin::platformHandleWheelEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+        (WebKit::NetscapePlugin::platformSetFocus):
+        (WebKit::NetscapePlugin::windowFocusChanged):
+        Create Carbon EventRecords and call NPP_HandleEvent.
+
 2010-10-05  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
