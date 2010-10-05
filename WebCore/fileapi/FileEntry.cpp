@@ -44,9 +44,9 @@ FileEntry::FileEntry(DOMFileSystem* fileSystem, const String& fullPath)
 {
 }
 
-void FileEntry::createWriter(PassRefPtr<FileWriterCallback>, PassRefPtr<ErrorCallback>)
+void FileEntry::createWriter(PassRefPtr<FileWriterCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    // FIXME: to be implemented.
+    m_fileSystem->createWriter(this, successCallback, errorCallback);
 }
 
 void FileEntry::file(PassRefPtr<FileCallback>, PassRefPtr<ErrorCallback>)

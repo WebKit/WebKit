@@ -1,3 +1,15 @@
+2010-10-04  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Hook FileEntry::createWriter to DOMFileSystem::createWriter
+        https://bugs.webkit.org/show_bug.cgi?id=46908
+
+        No new tests--still waiting for the first complete implementation.
+
+        * fileapi/FileEntry.cpp:
+        (WebCore::FileEntry::createWriter):
+
 2010-10-04  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.
