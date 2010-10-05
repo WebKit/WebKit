@@ -136,8 +136,10 @@ class ChromiumPort(base.Port):
         executable = self._path_to_image_diff()
         expected_tmpfile = tempfile.NamedTemporaryFile()
         expected_tmpfile.write(expected_contents)
+        expected_tmpfile.flush()
         actual_tmpfile = tempfile.NamedTemporaryFile()
         actual_tmpfile.write(actual_contents)
+        actual_tmpfile.flush()
         if diff_filename:
             cmd = [executable, '--diff', expected_tmpfile.name,
                    actual_tmpfile.name, diff_filename]
@@ -146,8 +148,14 @@ class ChromiumPort(base.Port):
 
         result = True
         try:
-            if self._executive.run_command(cmd, return_exit_code=True) == 0:
-                return False
+            exit_code = self._executive.run_command(cmd, return_exit_code=True)
+            if exit_code == 0:
+                # The images are the same.
+                result = False
+            elif exit_code != 1:
+                # Some other error occurred.
+                raise ValueError("image diff returned an exit code of " +
+                                 str(exit_code))
         except OSError, e:
             if e.errno == errno.ENOENT or e.errno == errno.EACCES:
                 _compare_available = False

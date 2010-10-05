@@ -1,3 +1,14 @@
+2010-10-04  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] fix image diffing in NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=47128
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Flush data to the
+              temp file and check the image_diff error code more carefully
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
 2010-10-04  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.
