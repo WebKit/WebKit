@@ -162,3 +162,25 @@ WebInspector.resetToolbarColors = function()
 
 }
 
+////////////////////////////////////////////////////////
+// Platform-specific WebInspector extensions support. //
+////////////////////////////////////////////////////////
+
+WebInspector.platformExtensionAPI = function(tabId)
+{
+    function getTabId()
+    {
+        return tabId;
+    }
+    webInspector.inspectedWindow.__proto__.__defineGetter__("tabId", getTabId);
+}
+
+WebInspector.buildPlatformExtensionAPI = function()
+{
+    return "(" + WebInspector.platformExtensionAPI + ")(" + WebInspector._inspectedTabId + ");";
+}
+
+WebInspector.setInspectedTabId = function(tabId)
+{
+    WebInspector._inspectedTabId = tabId;
+}

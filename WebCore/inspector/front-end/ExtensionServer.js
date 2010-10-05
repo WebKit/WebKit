@@ -335,12 +335,13 @@ WebInspector.ExtensionServer.prototype = {
              if (typeof propValue === "number")
                  resourceTypes[propName] = WebInspector.Resource.Type.toString(propValue);
         }
-
+        var platformAPI = WebInspector.buildPlatformExtensionAPI ? WebInspector.buildPlatformExtensionAPI() : "";
         return "(function(){ " +
             "var private = {};" +
             "(" + WebInspector.commonExtensionSymbols.toString() + ")(private);" +
             "(" + WebInspector.injectedExtensionAPI.toString() + ").apply(this, arguments);" +
             "webInspector.resources.Types = " + JSON.stringify(resourceTypes) + ";" +
+            platformAPI +
             "})";
     },
 

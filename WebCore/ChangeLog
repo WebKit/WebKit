@@ -1,3 +1,13 @@
+2010-10-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium][Extension API] provide tab id of inspected tab in extension API
+        https://bugs.webkit.org/show_bug.cgi?id=47080
+
+        * inspector/front-end/ExtensionServer.js: Added support for platform-specific extensions API.
+        (WebInspector.ExtensionServer.prototype._buildExtensionAPIInjectedScript):
+
 2010-10-05  Sanjeev Radhakrishnan  <sanjeevr@chromium.org>
 
         Reviewed by Darin Fisher.

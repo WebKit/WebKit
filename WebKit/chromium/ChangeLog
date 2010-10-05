@@ -1,3 +1,15 @@
+2010-10-04  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium][Extension API] provide tab id of inspected tab in extension API
+        https://bugs.webkit.org/show_bug.cgi?id=47080
+
+        * src/js/DevTools.js: Added a way for extension to get tabId of inspected window.
+        (WebInspector.platformExtensionAPI):
+        (WebInspector.buildPlatformExtensionAPI):
+        (WebInspector.setInspectedTabId):
+
 2010-10-04  Tony Gentilcore  <tonyg@chromium.org>
 
         Reviewed by Darin Fisher.
