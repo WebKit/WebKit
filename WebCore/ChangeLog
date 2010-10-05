@@ -1,3 +1,16 @@
+2010-10-05  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by David Levin.
+
+        Remove unused CachedResource::Status values (New and NotCached).
+        https://bugs.webkit.org/show_bug.cgi?id=47132
+
+        Refactor only, no new tests.
+
+        * loader/CachedResource.h:
+        * loader/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::checkCacheObjectStatus):
+
 2010-10-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.
