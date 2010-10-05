@@ -2186,12 +2186,6 @@ BUG31997 DEBUG WIN : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE+TEXT
 // Regression from Webkit merge 51772 -> 51784
 BUG35329 WIN : http/tests/appcache/resource-redirect-2.html = TIMEOUT PASS
 
-// Webkit Roll to r51875
-BUG29748 WIN DEBUG : fast/forms/input-align-image.html = IMAGE+TEXT PASS
-
-// The scrollbar arrows exceed the height of the iframe.
-BUG29748 LINUX : fast/frames/onlyCommentInIFrame.html = IMAGE
-
 // More Webkit Roll to r51875
 // Some of these went from IMAGE+TEXT to just IMAGE at r57886
 BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
