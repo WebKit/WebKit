@@ -67,15 +67,8 @@ void WebCache::clear()
 {
     Cache* cache = WebCore::cache();
     if (cache && !cache->disabled()) {
-        // NOTE: I think using setDisabled() instead of setCapacities() will
-        // remove from the cache items that won't actually be freed from memory
-        // (due to other live references to them), so it just results in wasting
-        // time later and not saving memory compared to the below technique.
-        unsigned minDeadCapacity = cache->m_minDeadCapacity;
-        unsigned maxDeadCapacity = cache->m_maxDeadCapacity;
-        unsigned capacity = cache->m_capacity;
-        cache->setCapacities(0, 0, 0);  // Will prune the cache.
-        cache->setCapacities(minDeadCapacity, maxDeadCapacity, capacity);
+        cache->setDisabled(true);
+        cache->setDisabled(false);
     }
 }
 

@@ -1,3 +1,17 @@
+2010-10-04  Tony Gentilcore  <tonyg@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Properly clear WebKit cache when chromium cache is cleared
+        https://bugs.webkit.org/show_bug.cgi?id=47119
+
+        Contributed by Ricardo Vargas.
+
+        See: http://code.google.com/p/chromium/issues/detail?id=54336
+
+        * src/WebCache.cpp:
+        (WebKit::WebCache::clear):
+
 2010-10-04  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Kenneth Russell.
