@@ -55,6 +55,7 @@
 #include "NotificationPresenterImpl.h"
 #include "Page.h"
 #include "PopupMenuChromium.h"
+#include "RenderWidget.h"
 #include "ScriptController.h"
 #include "SearchPopupMenuChromium.h"
 #include "SecurityOrigin.h"
@@ -71,6 +72,8 @@
 #include "WebInputEvent.h"
 #include "WebKit.h"
 #include "WebNode.h"
+#include "WebPlugin.h"
+#include "WebPluginContainerImpl.h"
 #include "WebPopupMenuImpl.h"
 #include "WebPopupMenuInfo.h"
 #include "WebPopupType.h"
@@ -603,11 +606,24 @@ void ChromeClientImpl::mouseDidMoveOverElement(
 {
     if (!m_webView->client())
         return;
+
+    WebURL url;
     // Find out if the mouse is over a link, and if so, let our UI know...
     if (result.isLiveLink() && !result.absoluteLinkURL().string().isEmpty())
-        m_webView->client()->setMouseOverURL(result.absoluteLinkURL());
-    else
-        m_webView->client()->setMouseOverURL(WebURL());
+        url = result.absoluteLinkURL();
+    else if (result.innerNonSharedNode()->hasTagName(HTMLNames::objectTag)
+             || result.innerNonSharedNode()->hasTagName(HTMLNames::embedTag)) {
+        RenderObject* object = result.innerNonSharedNode()->renderer();
+        if (object && object->isWidget()) {
+            Widget* widget = toRenderWidget(object)->widget();
+            if (widget) {
+                WebPluginContainerImpl* plugin = static_cast<WebPluginContainerImpl*>(widget);
+                url = plugin->plugin()->linkAtPosition(result.point());
+            }
+        }
+    }
+
+    m_webView->client()->setMouseOverURL(url);
 }
 
 void ChromeClientImpl::setToolTip(const String& tooltipText, TextDirection dir)

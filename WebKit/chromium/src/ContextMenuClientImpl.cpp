@@ -216,6 +216,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
                     data.editFlags |= WebContextMenuData::CanCopy;
                 }
                 data.editFlags &= ~WebContextMenuData::CanTranslate;
+                data.linkURL = plugin->plugin()->linkAtPosition(data.mousePosition);
             }
         }
     }

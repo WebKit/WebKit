@@ -36,9 +36,6 @@
 #include "WebVector.h"
 #include "WebWidget.h"
 
-// FIXME(jam): take this out after Chrome is updated
-#define ZOOM_LEVEL_IS_DOUBLE
-
 namespace WebKit {
 
 class WebAccessibilityObject;
