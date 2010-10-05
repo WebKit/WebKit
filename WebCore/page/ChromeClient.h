@@ -233,8 +233,6 @@ namespace WebCore {
         virtual bool allowsAcceleratedCompositing() const { return true; }
 #endif
 
-        virtual SharedGraphicsContext3D* getSharedGraphicsContext3D() { return 0; }
-
         virtual bool supportsFullscreenForNode(const Node*) { return false; }
         virtual void enterFullscreenForNode(Node*) { }
         virtual void exitFullscreenForNode(Node*) { }

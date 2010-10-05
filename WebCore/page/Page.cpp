@@ -73,6 +73,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+#include "SharedGraphicsContext3D.h"
+#endif
+
 #if ENABLE(DOM_STORAGE)
 #include "StorageArea.h"
 #include "StorageNamespace.h"
@@ -763,6 +767,18 @@ void Page::setDebugger(JSC::Debugger* debugger)
 
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
         frame->script()->attachDebugger(m_debugger);
+}
+
+SharedGraphicsContext3D* Page::sharedGraphicsContext3D()
+{
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    if (!m_sharedGraphicsContext3D)
+        m_sharedGraphicsContext3D = SharedGraphicsContext3D::create(chrome());
+
+    return m_sharedGraphicsContext3D.get();
+#else
+    return 0;
+#endif
 }
 
 #if ENABLE(DOM_STORAGE)

@@ -1,3 +1,20 @@
+2010-10-04  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by James Robinson.
+
+        Move SharedGraphicsContext3D from ChromeClient to Page
+        https://bugs.webkit.org/show_bug.cgi?id=47113
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        * page/ChromeClient.h:
+        * page/Page.cpp:
+        (WebCore::Page::sharedGraphicsContext3D):
+        * page/Page.h:
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+
 2010-10-04  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

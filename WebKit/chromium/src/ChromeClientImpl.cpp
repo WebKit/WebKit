@@ -58,7 +58,6 @@
 #include "ScriptController.h"
 #include "SearchPopupMenuChromium.h"
 #include "SecurityOrigin.h"
-#include "SharedGraphicsContext3D.h"
 #if USE(V8)
 #include "V8Proxy.h"
 #endif
@@ -804,11 +803,6 @@ bool ChromeClientImpl::allowsAcceleratedCompositing() const
     return m_webView->allowsAcceleratedCompositing();
 }
 #endif
-
-WebCore::SharedGraphicsContext3D* ChromeClientImpl::getSharedGraphicsContext3D()
-{
-    return m_webView->getSharedGraphicsContext3D();
-}
 
 bool ChromeClientImpl::supportsFullscreenForNode(const WebCore::Node* node)
 {

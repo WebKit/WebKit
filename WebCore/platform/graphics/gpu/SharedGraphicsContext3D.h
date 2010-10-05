@@ -47,6 +47,7 @@ class AffineTransform;
 class Color;
 class GraphicsContext3D;
 class FloatRect;
+class HostWindow;
 class IntSize;
 class SolidFillShader;
 class TexShader;
@@ -55,7 +56,7 @@ typedef HashMap<NativeImagePtr, RefPtr<Texture> > TextureHashMap;
 
 class SharedGraphicsContext3D : public RefCounted<SharedGraphicsContext3D> {
 public:
-    static PassRefPtr<SharedGraphicsContext3D> create(PassOwnPtr<GraphicsContext3D>);
+    static PassRefPtr<SharedGraphicsContext3D> create(HostWindow*);
     ~SharedGraphicsContext3D();
 
     // Functions that delegate directly to GraphicsContext3D, with caching

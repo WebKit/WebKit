@@ -340,8 +340,6 @@ public:
     // WebGL. Returns 0 if compositing support is not compiled in.
     virtual WebGraphicsContext3D* graphicsContext3D();
 
-    virtual WebCore::SharedGraphicsContext3D* getSharedGraphicsContext3D();
-
     WebCore::PopupContainer* selectPopup() const { return m_selectPopup.get(); }
 
     // Returns true if the event leads to scrolling.
@@ -545,10 +543,6 @@ private:
     // the compositor has been turned on, we need to instantiate it
     // early. This member holds on to the GC3D in this case.
     OwnPtr<WebCore::GraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
-
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    RefPtr<WebCore::SharedGraphicsContext3D> m_sharedContext3D;
-#endif
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
 };
 

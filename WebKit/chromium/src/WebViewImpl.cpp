@@ -130,10 +130,6 @@
 #include "RenderTheme.h"
 #endif
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-#include "SharedGraphicsContext3D.h"
-#endif
-
 // Get rid of WTF's pow define so we can use std::pow.
 #undef pow
 #include <cmath> // for std::pow
@@ -2451,23 +2447,6 @@ void WebViewImpl::doComposite()
 }
 #endif
 
-
-SharedGraphicsContext3D* WebViewImpl::getSharedGraphicsContext3D()
-{
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (!m_sharedContext3D) {
-        GraphicsContext3D::Attributes attr;
-        OwnPtr<GraphicsContext3D> context = GraphicsContext3D::create(attr, m_page->chrome());
-        if (!context)
-            return 0;
-        m_sharedContext3D = SharedGraphicsContext3D::create(context.release());
-    }
-
-    return m_sharedContext3D.get();
-#else
-    return 0;
-#endif
-}
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 {
