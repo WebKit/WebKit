@@ -44,6 +44,8 @@ extern "C" {
 #include <AEEAppGen.h>
 #include <AEESource.h>
 #include <AEEStdLib.h>
+#include <wtf/brew/RefPtrBrew.h>
+#include <wtf/brew/ShellBrew.h>
 #endif
 
 namespace WTF {
@@ -97,12 +99,8 @@ double randomNumber()
     return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
 #elif PLATFORM(BREWMP)
     uint32_t bits;
-    ISource* randomSource;
-
-    IShell* shell = reinterpret_cast<AEEApplet*>(GETAPPINSTANCE())->m_pIShell;
-    ISHELL_CreateInstance(shell, AEECLSID_RANDOM, reinterpret_cast<void**>(&randomSource));
-    ISOURCE_Read(randomSource, reinterpret_cast<char*>(&bits), 4);
-    ISOURCE_Release(randomSource);
+    PlatformRefPtr<ISource> randomSource = createRefPtrInstance<ISource>(AEECLSID_RANDOM);
+    ISOURCE_Read(randomSource.get(), reinterpret_cast<char*>(&bits), 4);
 
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
 #else
