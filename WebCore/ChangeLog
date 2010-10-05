@@ -2,6 +2,27 @@
 
         Reviewed by Kenneth Russell.
 
+        Add BiquadProcessor files
+        https://bugs.webkit.org/show_bug.cgi?id=46527
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/BiquadProcessor.cpp: Added.
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        (WebCore::BiquadProcessor::~BiquadProcessor):
+        (WebCore::BiquadProcessor::createKernel):
+        (WebCore::BiquadProcessor::process):
+        * webaudio/BiquadProcessor.h: Added.
+        (WebCore::BiquadProcessor::filterCoefficientsDirty):
+        (WebCore::BiquadProcessor::parameter1):
+        (WebCore::BiquadProcessor::parameter2):
+        (WebCore::BiquadProcessor::parameter3):
+        (WebCore::BiquadProcessor::type):
+
+2010-10-05  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Add EqualPowerPanner files
         https://bugs.webkit.org/show_bug.cgi?id=45077
 
