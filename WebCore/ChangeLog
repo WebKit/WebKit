@@ -1,3 +1,27 @@
+2010-10-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Spatial Navigation: select element does not release focus with Spatial Navigation
+        https://bugs.webkit.org/show_bug.cgi?id=46896
+
+        When using Spatial Navigation, once a select element is focused, you cannot use arrow keys
+        to navigate out of the select element. That is because select element currently uses the
+        arrow keys to change the selected element.
+        Change the behavior of select element so it does not change selection, if Spatial Navigation
+        is on.
+
+        This patch is addressing the case where Spatial Navigation is used 
+        in a mobile device, and the flag ENABLE_NO_LISTBOX_RENDERING is on.
+        In the future we can add support for the case where the flag is off, and
+        the user needs to traverse the select element inline.
+
+        Tests: fast/events/spatial-navigation/snav-multiple-select.html
+               fast/events/spatial-navigation/snav-single-select.html
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElement::menuListDefaultEventHandler):
+
 2010-10-04  Sriram Neelakandan  <sriram.neelakandan@gmail.com>
 
         Reviewed by Andreas Kling.

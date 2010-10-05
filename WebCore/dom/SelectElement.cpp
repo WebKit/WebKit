@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
+#include "Settings.h"
 #include <wtf/Assertions.h>
 
 #if ENABLE(WML)
@@ -554,6 +555,13 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
             handled = true;
         }
 #else
+        // When using spatial navigation, we want to be able to navigate away from the select element
+        // when the user hits any of the arrow keys, instead of changing the selection.
+        if (Frame* frame = element->document()->frame()) {
+            if (frame->settings() && frame->settings()->isSpatialNavigationEnabled())
+                return;
+        }
+
         UNUSED_PARAM(htmlForm);
         const Vector<Element*>& listItems = data.listItems(element);
 

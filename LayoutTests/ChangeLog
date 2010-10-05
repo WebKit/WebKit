@@ -1,3 +1,15 @@
+2010-10-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Spatial Navigation: select element does not release focus with Spatial Navigation
+        https://bugs.webkit.org/show_bug.cgi?id=46896
+
+        * fast/events/spatial-navigation/snav-multiple-select-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-multiple-select.html: Added.
+        * fast/events/spatial-navigation/snav-single-select-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-single-select.html: Added.
+
 2010-10-04  Chang Shu  <chang.shu@nokia.com>
 
         Reviewed by Antonio Gomes.
