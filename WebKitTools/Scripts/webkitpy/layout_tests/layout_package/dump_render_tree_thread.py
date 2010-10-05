@@ -271,23 +271,23 @@ class TestShellThread(WatchableThread):
         self._test_types = test_types
         self._test_args = test_args
         self._driver = None
-        self._directory_timing_stats = {}
+        self._test_group_timing_stats = {}
         self._test_results = []
         self._num_tests = 0
         self._start_time = 0
         self._stop_time = 0
 
-        # Current directory of tests we're running.
-        self._current_dir = None
-        # Number of tests in self._current_dir.
-        self._num_tests_in_current_dir = None
-        # Time at which we started running tests from self._current_dir.
-        self._current_dir_start_time = None
+        # Current group of tests we're running.
+        self._current_group = None
+        # Number of tests in self._current_group.
+        self._num_tests_in_current_group = None
+        # Time at which we started running tests from self._current_group.
+        self._current_group_start_time = None
 
-    def get_directory_timing_stats(self):
-        """Returns a dictionary mapping test directory to a tuple of
-        (number of tests in that directory, time to run the tests)"""
-        return self._directory_timing_stats
+    def get_test_group_timing_stats(self):
+        """Returns a dictionary mapping test group to a tuple of
+        (number of tests in that group, time to run the tests)"""
+        return self._test_group_timing_stats
 
     def get_test_results(self):
         """Return the list of all tests run on this thread.
@@ -359,21 +359,21 @@ class TestShellThread(WatchableThread):
                 return
 
             if len(self._filename_list) is 0:
-                if self._current_dir is not None:
-                    self._directory_timing_stats[self._current_dir] = \
-                        (self._num_tests_in_current_dir,
-                         time.time() - self._current_dir_start_time)
+                if self._current_group is not None:
+                    self._test_group_timing_stats[self._current_group] = \
+                        (self._num_tests_in_current_group,
+                         time.time() - self._current_group_start_time)
 
                 try:
-                    self._current_dir, self._filename_list = \
+                    self._current_group, self._filename_list = \
                         self._filename_list_queue.get_nowait()
                 except Queue.Empty:
                     self._kill_dump_render_tree()
                     tests_run_file.close()
                     return
 
-                self._num_tests_in_current_dir = len(self._filename_list)
-                self._current_dir_start_time = time.time()
+                self._num_tests_in_current_group = len(self._filename_list)
+                self._current_group_start_time = time.time()
 
             test_info = self._filename_list.pop()
 

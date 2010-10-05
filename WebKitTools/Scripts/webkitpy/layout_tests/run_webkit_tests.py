@@ -695,7 +695,7 @@ class TestRunner:
             thread_timings.append({'name': thread.getName(),
                                    'num_tests': thread.get_num_tests(),
                                    'total_time': thread.get_total_time()})
-            test_timings.update(thread.get_directory_timing_stats())
+            test_timings.update(thread.get_test_group_timing_stats())
             individual_test_timings.extend(thread.get_test_results())
 
         return (thread_timings, test_timings, individual_test_timings)
