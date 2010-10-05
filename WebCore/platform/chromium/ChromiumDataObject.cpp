@@ -48,7 +48,7 @@ void ChromiumDataObject::clearData(const String& type)
     }
 
     if (type == mimeTypeURL || type == mimeTypeTextURIList) {
-        m_uriList.clear();
+        m_uriList = "";
         m_url = KURL();
         m_urlTitle = "";
         return;
@@ -76,7 +76,7 @@ void ChromiumDataObject::clearAllExceptFiles()
 {
     m_urlTitle = "";
     m_url = KURL();
-    m_uriList.clear();
+    m_uriList = "";
     m_downloadMetadata = "";
     m_fileExtension = "";
     m_plainText = "";
@@ -109,10 +109,11 @@ HashSet<String> ChromiumDataObject::types() const
         results.add(mimeTypeTextPlain);
     }
 
-    if (!m_url.isEmpty()) {
+    if (m_url.isValid())
         results.add(mimeTypeURL);
+
+    if (!m_uriList.isEmpty())
         results.add(mimeTypeTextURIList);
-    }
 
     if (!m_textHtml.isEmpty())
         results.add(mimeTypeTextHTML);
@@ -140,24 +141,13 @@ String ChromiumDataObject::getData(const String& type, bool& success)
     }
 
     if (type == mimeTypeURL) {
-        ASSERT(m_url.isEmpty() == m_uriList.isEmpty());
         success = !m_url.isEmpty();
         return m_url.string();
     }
 
     if (type == mimeTypeTextURIList) {
-        ASSERT(m_url.isEmpty() == m_uriList.isEmpty());
-        if (m_uriList.isEmpty()) {
-            success = false;
-            return "";
-        }
-        String uriListString(m_uriList[0]);
-        for (size_t i = 1; i < m_uriList.size(); i++) {
-            uriListString.append(textMIMETypeLineSeparator);
-            uriListString.append(m_uriList[i]);
-        }
-        success = true;
-        return uriListString;
+        success = !m_uriList.isEmpty();
+        return m_uriList;
     }
 
     if (type == mimeTypeTextHTML) {
@@ -194,34 +184,29 @@ bool ChromiumDataObject::setData(const String& type, const String& data)
 
     if (type == mimeTypeURL || type == mimeTypeTextURIList) {
         m_url = KURL();
-        // Line separator is \r\n per RFC 2483 - however, for compatibility reasons
-        // we also allow just \n here.
-        data.split('\n', m_uriList);
-        // Strip white space on all lines, including trailing \r from above split.
-        // If this leaves a line empty, remove it completely.
-        //
-        // Also, copy the first valid URL into the 'url' member as well.
-        // In case no entry is a valid URL (i.e., remarks only), then we leave 'url' empty.
-        // I.e., in that case subsequent calls to getData("URL") will get an empty string.
-        // This is in line with the HTML5 spec (see "The DragEvent and DataTransfer interfaces").
-        for (size_t i = 0; i < m_uriList.size(); /**/) {
-            String& line = m_uriList[i];
+        Vector<String> uriList;
+        // Line separator is \r\n per RFC 2483 - however, for compatibility
+        // reasons we also allow just \n here.
+        data.split('\n', uriList);
+        // Process the input and copy the first valid URL into the url member.
+        // In case no URLs can be found, subsequent calls to getData("URL")
+        // will get an empty string. This is in line with the HTML5 spec (see
+        // "The DragEvent and DataTransfer interfaces").
+        for (size_t i = 0; i < uriList.size(); ++i) {
+            String& line = uriList[i];
             line = line.stripWhiteSpace();
             if (line.isEmpty()) {
-                m_uriList.remove(i);
                 continue;
             }
-            ++i;
-            // Only copy the first valid URL.
-            if (m_url.isValid())
-                continue;
             if (line[0] == '#')
                 continue;
             KURL url = KURL(ParsedURLString, line);
-            if (url.isValid())
+            if (url.isValid()) {
                 m_url = url;
+                break;
+            }
         }
-        ASSERT(m_url.isEmpty() == m_uriList.isEmpty());
+        m_uriList = data;
         return true;
     }
 

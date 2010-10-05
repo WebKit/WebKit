@@ -111,7 +111,7 @@ namespace WebCore {
         // string value; setting m_uriList will cause its contents to be parsed
         // according to RFC 2483 and the first URL found will be set in m_url.
         KURL m_url;
-        Vector<String> m_uriList;
+        String m_uriList;
     };
 
 } // namespace WebCore

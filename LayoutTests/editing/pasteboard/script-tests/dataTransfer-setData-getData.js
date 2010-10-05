@@ -12,17 +12,15 @@ dragTarget.style.height = "100px";
 document.body.insertBefore(dragTarget, dragMe);
 
 var setDataType;
-var setDataValues;
+var setDataValue;
 var getDataType;
-var getDataValues;
+var getDataValue;
 var getDataResult;
 var getDataResultType;
 var getDataLines;
 
-var CRLF = "\r\n";
-
 dragMe.addEventListener("dragstart", function() {
-    event.dataTransfer.setData(setDataType, setDataValues.join(CRLF));
+    event.dataTransfer.setData(setDataType, setDataValue);
 }, false);
 
 dragTarget.addEventListener("dragenter", function() {
@@ -62,51 +60,63 @@ function dragOntoDragTarget() {
 function doDrop() {
     getDataResult = event.dataTransfer.getData(getDataType);
     getDataResultType = typeof getDataResult;
-    shouldBeEqualToString("getDataResultType", "string");
-    getDataLines = getDataResult.split(CRLF);    
-    // remove potential comments
-    getDataLines = getDataLines.filter(function(line) {
-      return line[0] !== '#';
-    });
-    shouldEvaluateTo("getDataLines.length", getDataValues.length);
-    for (i = 0; i < getDataLines.length && i < getDataValues.length; ++i) {
-        shouldBeEqualToString("getDataLines[" + i + "].replace(/\\/$/, '')", getDataValues[i]);
-    }
+    shouldBeEqualToString("getDataResultType", typeof getDataValue);
+    shouldBeEqualToString("getDataResult", getDataValue);
 }
 
 function test(setType, setValues, getType, getValues) {
     setDataType = setType;
-    setDataValues = setValues;
+    setDataValue = setValues;
     getDataType = getType;
-    getDataValues = getValues;
+    getDataValue = getValues;
     dragOntoDragTarget();
 }
 
 function runTest()
 {
     debug("--- Test set/get 'URL':");
-    test("URL", ["http://test.com"], 
-         "URL", ["http://test.com"]);
+    test("URL", "http://test.com", 
+         "URL", "http://test.com/");
+
+    debug("--- Test set/get 'URL' with multiple URLs:");
+    test("URL", "http://test.com\r\nhttp://check.com", 
+         "URL", "http://test.com/");
 
     debug("--- Test set/get 'text/uri-list':");
-    test("text/uri-list", ["http://test.com", "http://check.com"], 
-         "text/uri-list", ["http://test.com", "http://check.com"]);
+    test("text/uri-list", "http://test.com\r\nhttp://check.com", 
+         "text/uri-list", "http://test.com\r\nhttp://check.com");
+
+    debug("--- Test set/get 'text/uri-list' using '\\n':");
+    test("text/uri-list", "http://test.com\nhttp://check.com", 
+         "text/uri-list", "http://test.com\nhttp://check.com");
 
     debug("--- Test set 'text/uri-list', get 'URL':");
-    test("text/uri-list", ["http://test.com", "http://check.com"], 
-         "URL", ["http://test.com"]);
+    test("text/uri-list", "http://test.com\r\nhttp://check.com", 
+         "URL", "http://test.com/");
+
+    debug("--- Test set 'URL', get 'text/uri-list':");
+    test("URL", "http://test.com\r\nhttp://check.com", 
+         "text/uri-list", "http://test.com\r\nhttp://check.com");
 
     debug("--- Test set 'text/uri-list', get 'URL', using only '\\n':");
-    test("text/uri-list", ["http://test.com\nhttp://check.com"], 
-         "URL", ["http://test.com"]);
+    test("text/uri-list", "http://test.com\nhttp://check.com",
+         "URL", "http://test.com/");
 
     debug("--- Test set/get 'text/uri-list' with comments:");
-    test("text/uri-list", ["# comment", "http://test.com", "http://check.com"], 
-         "text/uri-list", ["http://test.com", "http://check.com"]);
+    test("text/uri-list", "# comment\r\nhttp://test.com\r\nhttp://check.com", 
+         "text/uri-list", "# comment\r\nhttp://test.com\r\nhttp://check.com");
+
+    debug("--- Test set 'text/uri-list', get 'URL' with comments:");
+    test("text/uri-list", "# comment\r\nhttp://test.com\r\nhttp://check.com", 
+         "URL", "http://test.com/");
+
+    debug("--- Test set 'text/uri-list', get 'URL' with only comments:");
+    test("text/uri-list", "# comment\r\n# comment 2\r\n# comment 3", 
+         "URL", "");
 
     debug("--- Test set/get 'text/plain':");
-    test("text/plain", ["Lorem ipsum dolor sit amet."], 
-         "text/plain", ["Lorem ipsum dolor sit amet."]);
+    test("text/plain", "Lorem ipsum dolor sit amet.", 
+         "text/plain", "Lorem ipsum dolor sit amet.");
 }
 
 if (window.eventSender) {

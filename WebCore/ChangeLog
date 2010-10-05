@@ -1,3 +1,23 @@
+2010-10-05  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] getData('text/uri-list') should return the same thing that was passed to setData('text/uri-list')
+        https://bugs.webkit.org/show_bug.cgi?id=46943
+
+        We no longer parse the input of setData('text/uri-list') and only store
+        the valid URLs that were parsed out.
+
+        Test: editing/pasteboard/dataTransfer-setData-getData.html
+
+        * platform/chromium/ChromiumDataObject.cpp:
+        (WebCore::ChromiumDataObject::clearData):
+        (WebCore::ChromiumDataObject::clearAllExceptFiles):
+        (WebCore::ChromiumDataObject::types):
+        (WebCore::ChromiumDataObject::getData):
+        (WebCore::ChromiumDataObject::setData):
+        * platform/chromium/ChromiumDataObject.h:
+
 2010-10-05  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

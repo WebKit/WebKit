@@ -1,3 +1,21 @@
+2010-10-05  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] getData('text/uri-list') should return the same thing that was passed to setData('text/uri-list')
+        https://bugs.webkit.org/show_bug.cgi?id=46943
+
+        Update the layout test to check that getData('text/uri-list') returns
+        the same thing that was passed to setData('text/uri-list').
+
+        * editing/pasteboard/dataTransfer-setData-getData-expected.txt:
+        * editing/pasteboard/script-tests/dataTransfer-setData-getData.js:
+        (doDrop):
+        (test):
+        (runTest):
+        * fast/js/resources/js-test-pre.js:
+        (shouldBeEqualToString): Updated to allow '\n' and '\r' in expected argument.
+
 2010-10-05  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.
