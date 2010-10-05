@@ -115,6 +115,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8EventCustom.cpp \
 	bindings/v8/custom/V8EventSourceConstructor.cpp \
 	bindings/v8/custom/V8FileListCustom.cpp \
+    bindings/v8/custom/V8FileReaderCustom.cpp \
 	bindings/v8/custom/V8GeolocationCustom.cpp \
 	bindings/v8/custom/V8IDBAny.cpp \
 	bindings/v8/custom/V8IDBKey.cpp \

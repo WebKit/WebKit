@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc.  All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,38 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=BLOB,
-        CanBeConstructed,
-        CallWith=ScriptExecutionContext,
-        EventTarget,
-        NoStaticTables,
-        V8CustomConstructor
-    ] FileReader {
-        // ready states
-        const unsigned short EMPTY = 0;
-        const unsigned short LOADING = 1;
-        const unsigned short DONE = 2;
-        readonly attribute unsigned short readyState;
+#include "config.h"
+#include "V8FileReader.h"
 
-        // async read methods
-        void readAsBinaryString(in Blob fileBlob);
-        void readAsText(in Blob fileBlob, in [Optional] DOMString encoding);
-        void readAsDataURL(in File file);
+#include "ScriptExecutionContext.h"
+#include "V8Binding.h"
 
-        void abort();
+namespace WebCore {
 
-        // file data
-        readonly attribute [ConvertScriptString] DOMString result;
+v8::Handle<v8::Value> V8FileReader::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.FileReader.Constructor");
 
-        readonly attribute FileError error;
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::TypeError);
 
-        attribute EventListener onloadstart;
-        attribute EventListener onprogress;
-        attribute EventListener onload;
-        attribute EventListener onabort;
-        attribute EventListener onerror;
-        attribute EventListener onloadend;
-    };
+    // Expect no parameters.
+    // Allocate a FileReader object as its internal field.
+    ScriptExecutionContext* context = getScriptExecutionContext();
+    if (!context)
+        return throwError("FileReader constructor's associated context is not available", V8Proxy::ReferenceError);
+    RefPtr<FileReader> fileReader = FileReader::create(context);
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, fileReader.get());
+
+    // Add object to the wrapper map.
+    fileReader->ref();
+    V8DOMWrapper::setJSWrapperForActiveDOMObject(fileReader.get(), v8::Persistent<v8::Object>::New(args.Holder()));
+    return args.Holder();
 }
+
+} // namespace WebCore

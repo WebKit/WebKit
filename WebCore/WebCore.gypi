@@ -733,6 +733,7 @@
             'bindings/v8/custom/V8ArrayBufferCustom.cpp',
             'bindings/v8/custom/V8Int8ArrayCustom.cpp',
             'bindings/v8/custom/V8Int32ArrayCustom.cpp',
+            'bindings/v8/custom/V8FileReaderCustom.cpp',
             'bindings/v8/custom/V8Float32ArrayCustom.cpp',
             'bindings/v8/custom/V8Int16ArrayCustom.cpp',
             'bindings/v8/custom/V8Uint8ArrayCustom.cpp',
