@@ -959,7 +959,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
                     if (floats[floatIndex].rect.size() != newSize) {
                         int floatTop = floats[floatIndex].rect.y();
                         curr->markDirty();
-                        markLinesDirtyInVerticalRange(curr->blockHeight(), floatTop + max(floats[floatIndex].rect.height(), newSize.height()), curr);
+                        markLinesDirtyInBlockRange(curr->blockHeight(), floatTop + max(floats[floatIndex].rect.height(), newSize.height()), curr);
                         floats[floatIndex].rect.setSize(newSize);
                         dirtiedByFloat = true;
                     }

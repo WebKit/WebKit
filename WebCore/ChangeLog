@@ -1,3 +1,31 @@
+2010-10-04  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47112
+
+        Convert addOverhangingFloats and addIntrudingFloats to be block-flow-aware.
+        
+        Also clean up how floats are placed to use a bit instead of the magic -1 value on top().
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::markLinesDirtyInBlockRange):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        (WebCore::RenderBlock::FloatingObject::isPlaced):
+        (WebCore::RenderBlock::FloatingObject::setIsPlaced):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::determineStartPosition):
+
 2010-10-04  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Kenneth Russell.

@@ -1225,7 +1225,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
                 if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
                     RenderBlock* block = toRenderBlock(child);
                     if (block->lowestFloatLogicalBottom() + block->logicalTop() > newHeight)
-                        addOverhangingFloats(block, -block->x(), -block->y(), false);
+                        addOverhangingFloats(block, -block->logicalLeft(), -block->logicalTop(), false);
                 }
             }
         }
@@ -1950,7 +1950,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     // If the child has overhanging floats that intrude into following siblings (or possibly out
     // of this block), then the parent gets notified of the floats now.
     if (childRenderBlock && childRenderBlock->containsFloats())
-        maxFloatLogicalBottom = max(maxFloatLogicalBottom, addOverhangingFloats(toRenderBlock(child), -child->x(), -child->y(), !childNeededLayout));
+        maxFloatLogicalBottom = max(maxFloatLogicalBottom, addOverhangingFloats(toRenderBlock(child), -child->logicalLeft(), -child->logicalTop(), !childNeededLayout));
 
     IntSize childOffset(child->x() - oldRect.x(), child->y() - oldRect.y());
     if (childOffset.width() || childOffset.height()) {
@@ -2927,8 +2927,6 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     // Create the special object entry & append it to the list
 
     FloatingObject* newObj = new FloatingObject(o->style()->floating() == FLEFT ? FloatingObject::FloatLeft : FloatingObject::FloatRight);
-
-    newObj->setTop(-1);
     
     // Our location is irrelevant if we're unsplittable or no pagination is in effect.
     // Just go ahead and lay out the float.
@@ -2957,12 +2955,14 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
         while (it.current()) {
             if (it.current()->m_renderer == o) {
                 if (childrenInline()) {
-                    int bottom = it.current()->bottom();
+                    int logicalTop = logicalTopForFloat(it.current());
+                    int logicalBottom = logicalBottomForFloat(it.current());
+                    
                     // Special-case zero- and less-than-zero-height floats: those don't touch
                     // the line that they're on, but it still needs to be dirtied. This is
                     // accomplished by pretending they have a height of 1.
-                    bottom = max(bottom, it.current()->top() + 1);
-                    markLinesDirtyInVerticalRange(0, bottom);
+                    logicalBottom = max(logicalBottom, logicalTop + 1);
+                    markLinesDirtyInBlockRange(0, logicalBottom);
                 }
                 m_floatingObjects->removeRef(it.current());
             }
@@ -2977,7 +2977,7 @@ void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int y)
         return;
     
     FloatingObject* curr = m_floatingObjects->last();
-    while (curr != lastFloat && (curr->top() == -1 || curr->top() >= y)) {
+    while (curr != lastFloat && (!curr->isPlaced() || curr->top() >= y)) {
         m_floatingObjects->removeLast();
         curr = m_floatingObjects->last();
     }
@@ -2991,14 +2991,14 @@ bool RenderBlock::positionNewFloats()
     FloatingObject* f = m_floatingObjects->last();
 
     // If all floats have already been positioned, then we have no work to do.
-    if (!f || f->top() != -1)
+    if (!f || f->isPlaced())
         return false;
 
     // Move backwards through our floating object list until we find a float that has
     // already been positioned.  Then we'll be able to move forward, positioning all of
     // the new floats that need it.
     FloatingObject* lastFloat = m_floatingObjects->getPrev();
-    while (lastFloat && lastFloat->top() == -1) {
+    while (lastFloat && !lastFloat->isPlaced()) {
         f = m_floatingObjects->prev();
         lastFloat = m_floatingObjects->getPrev();
     }
@@ -3087,6 +3087,8 @@ bool RenderBlock::positionNewFloats()
 
         f->setTop(y);
         f->setHeight(o->marginTop() + o->height() + o->marginBottom());
+
+        f->setIsPlaced();
 
         // If the child moved, we have to repaint it.
         if (o->checkForRepaintDuringLayout())
@@ -3216,11 +3218,12 @@ int RenderBlock::logicalLeftOffsetForLine(int y, int fixedOffset, bool applyText
 {
     int left = fixedOffset;
     if (m_floatingObjects) {
-        if ( heightRemaining ) *heightRemaining = 1;
+        if (heightRemaining)
+            *heightRemaining = 1;
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it) {
-            if (r->top() <= y && r->bottom() > y
+            if (r->isPlaced() && r->top() <= y && r->bottom() > y
                 && r->type() == FloatingObject::FloatLeft
                 && r->right() > left) {
                 left = r->right();
@@ -3245,11 +3248,12 @@ int RenderBlock::logicalRightOffsetForLine(int y, int fixedOffset, bool applyTex
     int right = fixedOffset;
 
     if (m_floatingObjects) {
-        if (heightRemaining) *heightRemaining = 1;
+        if (heightRemaining)
+            *heightRemaining = 1;
         FloatingObject* r;
         DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it) {
-            if (r->top() <= y && r->bottom() > y
+            if (r->isPlaced() && r->top() <= y && r->bottom() > y
                 && r->type() == FloatingObject::FloatRight
                 && r->left() < right) {
                 right = r->left();
@@ -3301,7 +3305,7 @@ int RenderBlock::lowestFloatLogicalBottom(FloatingObject::Type floatType) const
     FloatingObject* r;
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for ( ; (r = it.current()); ++it) {
-        if (r->type() & floatType)
+        if (r->isPlaced() && r->type() & floatType)
             lowestFloatBottom = max(lowestFloatBottom, logicalBottomForFloat(r));
     }
     return lowestFloatBottom;
@@ -3585,19 +3589,19 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
     return left;
 }
 
-void RenderBlock::markLinesDirtyInVerticalRange(int top, int bottom, RootInlineBox* highest)
+void RenderBlock::markLinesDirtyInBlockRange(int logicalTop, int logicalBottom, RootInlineBox* highest)
 {
-    if (top >= bottom)
+    if (logicalTop >= logicalBottom)
         return;
 
     RootInlineBox* lowestDirtyLine = lastRootBox();
     RootInlineBox* afterLowest = lowestDirtyLine;
-    while (lowestDirtyLine && lowestDirtyLine->blockHeight() >= bottom) {
+    while (lowestDirtyLine && lowestDirtyLine->blockHeight() >= logicalBottom) {
         afterLowest = lowestDirtyLine;
         lowestDirtyLine = lowestDirtyLine->prevRootBox();
     }
 
-    while (afterLowest && afterLowest != highest && afterLowest->blockHeight() >= top) {
+    while (afterLowest && afterLowest != highest && afterLowest->blockHeight() >= logicalTop) {
         afterLowest->markDirty();
         afterLowest = afterLowest->prevRootBox();
     }
@@ -3699,11 +3703,11 @@ void RenderBlock::clearFloats()
         }
         deleteAllValues(floatMap);
 
-        markLinesDirtyInVerticalRange(changeLogicalTop, changeLogicalBottom);
+        markLinesDirtyInBlockRange(changeLogicalTop, changeLogicalBottom);
     }
 }
 
-int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bool makeChildPaintOtherFloats)
+int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset, int logicalTopOffset, bool makeChildPaintOtherFloats)
 {
     // Prevent floats from being added to the canvas by the root element, e.g., <html>.
     if (child->hasOverflowClip() || !child->containsFloats() || child->isRoot() || child->hasColumns() || child->isBlockFlowRoot())
@@ -3715,13 +3719,15 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
     // overflow.
     DeprecatedPtrListIterator<FloatingObject> it(*child->m_floatingObjects);
     for (FloatingObject* r; (r = it.current()); ++it) {
-        int bottom = child->y() + r->bottom();
-        lowestFloatLogicalBottom = max(lowestFloatLogicalBottom, bottom);
+        int logicalBottom = child->logicalTop() + logicalBottomForFloat(r);
+        lowestFloatLogicalBottom = max(lowestFloatLogicalBottom, logicalBottom);
 
-        if (bottom > height()) {
+        if (logicalBottom > logicalHeight()) {
             // If the object is not in the list, we add it now.
             if (!containsFloat(r->m_renderer)) {
-                FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->left() - xoff, r->top() - yoff, r->width(), r->height()));
+                int leftOffset = style()->isVerticalBlockFlow() ? logicalLeftOffset : logicalTopOffset;
+                int topOffset = style()->isVerticalBlockFlow() ? logicalTopOffset : logicalLeftOffset;
+                FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->left() - leftOffset, r->top() - topOffset, r->width(), r->height()));
                 floatingObj->m_renderer = r->m_renderer;
 
                 // The nearest enclosing layer always paints the float (so that zindex and stacking
@@ -3755,36 +3761,42 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff, bo
     return lowestFloatLogicalBottom;
 }
 
-void RenderBlock::addIntrudingFloats(RenderBlock* prev, int xoff, int yoff)
+void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, int logicalTopOffset)
 {
     // If the parent or previous sibling doesn't have any floats to add, don't bother.
     if (!prev->m_floatingObjects)
         return;
 
+    logicalLeftOffset += (style()->isVerticalBlockFlow() ? marginLeft() : marginTop());
+                
     DeprecatedPtrListIterator<FloatingObject> it(*prev->m_floatingObjects);
     for (FloatingObject *r; (r = it.current()); ++it) {
-        if (r->bottom() > yoff) {
+        if (logicalBottomForFloat(r) > logicalTopOffset) {
             // The object may already be in our list. Check for it up front to avoid
             // creating duplicate entries.
             FloatingObject* f = 0;
             if (m_floatingObjects) {
                 DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
                 while ((f = it.current())) {
-                    if (f->m_renderer == r->m_renderer) break;
+                    if (f->m_renderer == r->m_renderer)
+                        break;
                     ++it;
                 }
             }
             if (!f) {
-                FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->left() - xoff - marginLeft(), r->top() - yoff, r->width(), r->height()));
+                int leftOffset = style()->isVerticalBlockFlow() ? logicalLeftOffset : logicalTopOffset;
+                int topOffset = style()->isVerticalBlockFlow() ? logicalTopOffset : logicalLeftOffset;
+                
+                FloatingObject* floatingObj = new FloatingObject(r->type(), IntRect(r->left() - leftOffset, r->top() - topOffset, r->width(), r->height()));
 
                 // Applying the child's margin makes no sense in the case where the child was passed in.
-                // since his own margin was added already through the subtraction of the |xoff| variable
-                // above.  |xoff| will equal -flow->marginLeft() in this case, so it's already been taken
-                // into account.  Only apply this code if |child| is false, since otherwise the left margin
+                // since this margin was added already through the modification of the |logicalLeftOffset| variable
+                // above.  |logicalLeftOffset| will equal the margin in this case, so it's already been taken
+                // into account.  Only apply this code if prev is the parent, since otherwise the left margin
                 // will get applied twice.
                 if (prev != parent())
-                    floatingObj->setLeft(floatingObj->left() + prev->marginLeft());
-                
+                    floatingObj->setLeft(floatingObj->left() + (style()->isVerticalBlockFlow() ? prev->marginLeft() : prev->marginTop()));
+               
                 floatingObj->m_shouldPaint = false;  // We are not in the direct inheritance chain for this float. We will never paint it.
                 floatingObj->m_renderer = r->m_renderer;
                 

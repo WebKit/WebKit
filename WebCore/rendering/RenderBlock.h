@@ -361,23 +361,37 @@ private:
     struct FloatingObject : Noncopyable {
         // Note that Type uses bits so you can use FloatBoth as a mask to query for both left and right.
         enum Type { FloatLeft = 1, FloatRight = 2, FloatBoth = 3 };
-    
-        FloatingObject(Type type, const IntRect& frameRect = IntRect())
+
+        FloatingObject(Type type)
+            : m_renderer(0)
+            , m_paginationStrut(0)
+            , m_type(type)
+            , m_shouldPaint(true)
+            , m_isDescendant(false)
+            , m_isPlaced(false)
+        {
+        }
+
+        FloatingObject(Type type, const IntRect& frameRect)
             : m_renderer(0)
             , m_frameRect(frameRect)
             , m_paginationStrut(0)
             , m_type(type)
             , m_shouldPaint(true)
             , m_isDescendant(false)
+            , m_isPlaced(true)
         {
         }
 
         Type type() { return static_cast<Type>(m_type); }
 
-        int left() const { return m_frameRect.x(); }
-        int right() const { return m_frameRect.right(); }
-        int top() const { return m_frameRect.y(); }
-        int bottom() const { return m_frameRect.bottom(); }
+        bool isPlaced() const { return m_isPlaced; }
+        void setIsPlaced(bool placed = true) { m_isPlaced = placed; }
+
+        int left() const { ASSERT(isPlaced()); return m_frameRect.x(); }
+        int right() const { ASSERT(isPlaced()); return m_frameRect.right(); }
+        int top() const { ASSERT(isPlaced()); return m_frameRect.y(); }
+        int bottom() const { ASSERT(isPlaced()); return m_frameRect.bottom(); }
         int width() const { return m_frameRect.width(); }
         int height() const { return m_frameRect.height(); }
     
@@ -386,7 +400,7 @@ private:
         void setWidth(int width) { m_frameRect.setWidth(width); }
         void setHeight(int height) { m_frameRect.setHeight(height); }
 
-        const IntRect& frameRect() const { return m_frameRect; }
+        const IntRect& frameRect() const { ASSERT(isPlaced()); return m_frameRect; }
         void setFrameRect(const IntRect& frameRect) { m_frameRect = frameRect; }
 
         RenderBox* m_renderer;
@@ -395,6 +409,7 @@ private:
         unsigned m_type : 2; // Type (left or right aligned)
         bool m_shouldPaint : 1;
         bool m_isDescendant : 1;
+        bool m_isPlaced : 1;
     };
 
     int logicalTopForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->top() : child->left(); }
@@ -514,7 +529,7 @@ private:
     void adjustPointToColumnContents(IntPoint&) const;
     void adjustForBorderFit(int x, int& left, int& right) const; // Helper function for borderFitAdjust
 
-    void markLinesDirtyInVerticalRange(int top, int bottom, RootInlineBox* highest = 0);
+    void markLinesDirtyInBlockRange(int logicalTop, int logicalTop, RootInlineBox* highest = 0);
 
     void newLine(EClear);
 
