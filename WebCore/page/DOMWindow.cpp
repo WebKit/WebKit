@@ -993,11 +993,8 @@ String DOMWindow::atob(const String& encodedString, ExceptionCode& ec)
         return String();
     }
 
-    Vector<char> in;
-    in.append(encodedString.characters(), encodedString.length());
     Vector<char> out;
-
-    if (!base64Decode(in, out)) {
+    if (!base64Decode(encodedString, out, FailOnInvalidCharacter)) {
         ec = INVALID_CHARACTER_ERR;
         return String();
     }

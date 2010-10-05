@@ -6,6 +6,9 @@
 <script>
     var testObjects = [
         {result:true,  size:"100px", url:"data:text/css;charset=utf-8;base64,Ym9keSB7Zm9udC1zaXplOiAxMDBweH0="},
+        {result:true,  size:"110px", url:encodeURI("data:text/css;charset=utf-8;base64,                       Ym9keSB7Zm9udC1zaXplOiAxMTBweH0=                  ")},
+        {result:true,  size:"120px", url:encodeURI("data:text/css;charset=utf-8;base64,\n \r \t Ym9k \t eSB7 \r Zm9ud \n \n C1zaXp \r lOiAxM \t jBweH0= \t \r \n")},
+        {result:true,  size:"130px", url:encodeURI("data:text/css;charset=utf-8;base64,\u0059 \u006D \u0039 \u006B eSB7Zm9ud C1zaXplOiAxMzBwe \u0048 \u0030 \u003D")},
         {result:false, size:"140px", url:"data:text/css;charset=utf-8;base64,Ym9k$#eSB7Zm#9ud(C1zaXp)lOiAxNDBweH0="},
         {result:false, size:"150px", url:"data:text/css;charset=utf-8;base64,Ym9ke%00SB7Z%20m9udC1z\n\taXplO#iAx%03NTBw%eH0="},
         {result:false, size:"160px", url:"%50%30%10%00%20%40"}

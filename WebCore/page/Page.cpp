@@ -635,22 +635,17 @@ void Page::userStyleSheetLocationChanged()
     m_didLoadUserStyleSheet = false;
     m_userStyleSheet = String();
     m_userStyleSheetModificationTime = 0;
-    
+
     // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
     // synchronously and avoid using a loader. 
     if (url.protocolIs("data") && url.string().startsWith("data:text/css;charset=utf-8;base64,")) {
         m_didLoadUserStyleSheet = true;
-        
-        const unsigned prefixLength = 35;
-        Vector<char> encodedData(url.string().length() - prefixLength);
-        for (unsigned i = prefixLength; i < url.string().length(); ++i)
-            encodedData[i - prefixLength] = static_cast<char>(url.string()[i]);
 
         Vector<char> styleSheetAsUTF8;
-        if (base64Decode(encodedData, styleSheetAsUTF8))
+        if (base64Decode(decodeURLEscapeSequences(url.string().substring(35)), styleSheetAsUTF8, IgnoreWhitespace))
             m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8.data(), styleSheetAsUTF8.size());
     }
-    
+
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
             frame->document()->updatePageUserSheet();

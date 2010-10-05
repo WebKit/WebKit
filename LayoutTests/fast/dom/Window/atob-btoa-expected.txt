@@ -35,8 +35,13 @@ PASS window.atob("тест") threw exception Error: INVALID_CHARACTER_ERR: DOM E
 PASS window.atob("z") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
 PASS window.atob("zz") is "Ï"
 PASS window.atob("zzz") is "Ï<"
+PASS window.atob("zzz=") is "Ï<"
+PASS window.atob("zzz==") is "Ï<"
+PASS window.atob("zzz===") is "Ï<"
+PASS window.atob("zzz====") is "Ï<"
 PASS window.atob("zzzz") is "Ï<ó"
 PASS window.atob("zzzzz") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
+PASS window.atob("z=zz") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
 PASS window.atob("=") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
 PASS window.atob("==") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.
 PASS window.atob("===") threw exception Error: INVALID_CHARACTER_ERR: DOM Exception 5.

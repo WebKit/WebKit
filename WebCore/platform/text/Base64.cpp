@@ -2,6 +2,7 @@
    Copyright (C) 2000-2001 Dawit Alemayehu <adawit@kde.org>
    Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
    Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+   Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License (LGPL)
@@ -25,6 +26,7 @@
 
 #include <limits.h>
 #include <wtf/StringExtras.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -70,7 +72,7 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, bool insert
         return;
 
     // If the input string is pathologically large, just return nothing.
-    // Note: Keep this in sync with the "out_len" computation below.
+    // Note: Keep this in sync with the "outLength" computation below.
     // Rather than being perfectly precise, this is a bit conservative.
     const unsigned maxInputBufferSize = UINT_MAX / 77 * 76 / 4 * 3 - 2;
     if (len > maxInputBufferSize)
@@ -79,21 +81,21 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, bool insert
     unsigned sidx = 0;
     unsigned didx = 0;
 
-    unsigned out_len = ((len + 2) / 3) * 4;
+    unsigned outLength = ((len + 2) / 3) * 4;
 
     // Deal with the 76 character per line limit specified in RFC 2045.
-    insertLFs = (insertLFs && out_len > 76);
+    insertLFs = (insertLFs && outLength > 76);
     if (insertLFs)
-        out_len += ((out_len - 1) / 76);
+        outLength += ((outLength - 1) / 76);
 
     int count = 0;
-    out.grow(out_len);
+    out.grow(outLength);
 
     // 3-byte to 4-byte conversion + 0-63 to ascii printable conversion
     if (len > 1) {
         while (sidx < len - 2) {
             if (insertLFs) {
-                if (count && (count % 76) == 0)
+                if (count && !(count % 76))
                     out[didx++] = '\n';
                 count += 4;
             }
@@ -106,7 +108,7 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, bool insert
     }
 
     if (sidx < len) {
-        if (insertLFs && (count > 0) && (count % 76) == 0)
+        if (insertLFs && (count > 0) && !(count % 76))
            out[didx++] = '\n';
 
         out[didx++] = base64EncMap[(data[sidx] >> 2) & 077];
@@ -124,7 +126,7 @@ void base64Encode(const char* data, unsigned len, Vector<char>& out, bool insert
     }
 }
 
-bool base64Decode(const Vector<char>& in, Vector<char>& out)
+bool base64Decode(const Vector<char>& in, Vector<char>& out, Base64DecodePolicy policy)
 {
     out.clear();
 
@@ -132,36 +134,49 @@ bool base64Decode(const Vector<char>& in, Vector<char>& out)
     if (in.size() > UINT_MAX)
         return false;
 
-    return base64Decode(in.data(), in.size(), out);
+    return base64Decode(in.data(), in.size(), out, policy);
 }
 
-bool base64Decode(const char* data, unsigned len, Vector<char>& out)
+template<typename T>
+static inline bool base64DecodeInternal(const T* data, unsigned len, Vector<char>& out, Base64DecodePolicy policy)
 {
     out.clear();
-    if (len == 0)
+    if (!len)
         return true;
 
-    while (len && data[len-1] == '=')
-        --len;
-
     out.grow(len);
+
+    bool sawEqualsSign = false;
+    unsigned outLength = 0;
     for (unsigned idx = 0; idx < len; idx++) {
-        unsigned char ch = data[idx];
-        if ((ch > 47 && ch < 58) || (ch > 64 && ch < 91) || (ch > 96 && ch < 123) || ch == '+' || ch == '/' || ch == '=')
-            out[idx] = base64DecMap[ch];
-        else
+        unsigned ch = data[idx];
+        if (ch == '=')
+            sawEqualsSign = true;
+        else if (('0' <= ch && ch <= '9') || ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z') || ch == '+' || ch == '/') {
+            if (sawEqualsSign)
+                return false;
+            out[outLength] = base64DecMap[ch];
+            outLength++;
+        } else if (policy == FailOnInvalidCharacter || (policy == IgnoreWhitespace && !isSpaceOrNewline(ch)))
             return false;
     }
 
+    if (!outLength)
+        return !sawEqualsSign;
+
+    // Valid data is (n * 4 + [0,2,3]) characters long.
+    if ((outLength % 4) == 1)
+        return false;
+    
     // 4-byte to 3-byte conversion
-    unsigned outLen = len - ((len + 3) / 4);
-    if (!outLen || ((outLen + 2) / 3) * 4 < len)
+    outLength -= (outLength + 3) / 4;
+    if (!outLength)
         return false;
 
     unsigned sidx = 0;
     unsigned didx = 0;
-    if (outLen > 1) {
-        while (didx < outLen - 2) {
+    if (outLength > 1) {
+        while (didx < outLength - 2) {
             out[didx] = (((out[sidx] << 2) & 255) | ((out[sidx + 1] >> 4) & 003));
             out[didx + 1] = (((out[sidx + 1] << 4) & 255) | ((out[sidx + 2] >> 2) & 017));
             out[didx + 2] = (((out[sidx + 2] << 6) & 255) | (out[sidx + 3] & 077));
@@ -170,16 +185,26 @@ bool base64Decode(const char* data, unsigned len, Vector<char>& out)
         }
     }
 
-    if (didx < outLen)
+    if (didx < outLength)
         out[didx] = (((out[sidx] << 2) & 255) | ((out[sidx + 1] >> 4) & 003));
 
-    if (++didx < outLen)
+    if (++didx < outLength)
         out[didx] = (((out[sidx + 1] << 4) & 255) | ((out[sidx + 2] >> 2) & 017));
 
-    if (outLen < out.size())
-        out.shrink(outLen);
+    if (outLength < out.size())
+        out.shrink(outLength);
 
     return true;
 }
 
+bool base64Decode(const char* data, unsigned len, Vector<char>& out, Base64DecodePolicy policy)
+{
+    return base64DecodeInternal<char>(data, len, out, policy);
 }
+
+bool base64Decode(const String& in, Vector<char>& out, Base64DecodePolicy policy)
+{
+    return base64DecodeInternal<UChar>(in.characters(), in.length(), out, policy);
+}
+
+} // namespace WebCore
