@@ -1,3 +1,17 @@
+2010-10-04  Ryuan Choi  <bunhere@gmail.com>
+
+        Unreviewed build fix.
+
+        [WML] Build fix for r68854
+        https://bugs.webkit.org/show_bug.cgi?id=47043
+
+        Include HTMLParserIdioms.h.
+
+        No features added, so no new tests.
+
+        * wml/WMLAElement.cpp:
+        * wml/WMLImageLoader.cpp:
+
 2010-10-04  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed build fix.

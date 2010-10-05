@@ -37,6 +37,7 @@
 #include "FrameLoader.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "RenderBox.h"
