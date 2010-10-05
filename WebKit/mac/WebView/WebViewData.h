@@ -172,7 +172,7 @@ extern int pluginDatabaseClientCount;
     WebVideoFullscreenController *fullscreenController;
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(GLIB_SUPPORT)
     CFRunLoopObserverRef glibRunLoopObserver;
 #endif
     id<WebGeolocationProvider> _geolocationProvider;

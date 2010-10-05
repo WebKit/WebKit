@@ -88,7 +88,7 @@ namespace WebCore {
 - (void)_scheduleCompositingLayerSync;
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(GLIB_SUPPORT)
 - (void)_scheduleGlibContextIterations;
 #endif
 

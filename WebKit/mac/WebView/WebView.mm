@@ -190,7 +190,7 @@
 #import <WebCore/GeolocationError.h>
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(GLIB_SUPPORT)
 #import <glib.h>
 #endif
 
@@ -385,7 +385,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 #if USE(ACCELERATED_COMPOSITING)
 - (void)_clearLayerSyncLoopObserver;
 #endif
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(GLIB_SUPPORT)
 - (void)_clearGlibLoopObserver;
 #endif
 @end
@@ -750,7 +750,7 @@ static bool shouldEnableLoadDeferring()
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_CONTENT_SNIFFING_FOR_FILE_URLS))
         ResourceHandle::forceContentSniffing();
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(GLIB_SUPPORT)
     [self _scheduleGlibContextIterations];
 #endif
 
@@ -1151,7 +1151,7 @@ static bool fastDocumentTeardownEnabled()
     [self _clearLayerSyncLoopObserver];
 #endif
     
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(GLIB_SUPPORT)
     [self _clearGlibLoopObserver];
 #endif
 
@@ -5632,7 +5632,7 @@ static WebFrameView *containingFrameView(NSView *view)
 }
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(GLIB_SUPPORT)
 - (void)_clearGlibLoopObserver
 {
     if (!_private->glibRunLoopObserver)
@@ -5955,7 +5955,7 @@ static void layerSyncRunLoopObserverCallBack(CFRunLoopObserverRef, CFRunLoopActi
 
 #endif
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
+#if ENABLE(GLIB_SUPPORT)
 
 static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity, void*)
 {

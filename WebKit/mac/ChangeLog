@@ -1,3 +1,18 @@
+2010-10-05  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        check for ENABLE(GLIB_SUPPORT) in WebView
+        https://bugs.webkit.org/show_bug.cgi?id=46788
+
+        Use ENABLE(GLIB_SUPPORT) in WebView to guard the glib runloop observer.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _close]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewInternal.h:
+
 2010-10-01  Anders Carlsson  <andersca@apple.com>
 
         Fix Snow Leopard build.
