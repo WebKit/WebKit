@@ -2,6 +2,21 @@
 
         Reviewed by Kenneth Russell.
 
+        Add EqualPowerPanner files
+        https://bugs.webkit.org/show_bug.cgi?id=45077
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/EqualPowerPanner.cpp: Added.
+        (WebCore::EqualPowerPanner::EqualPowerPanner):
+        (WebCore::EqualPowerPanner::pan):
+        * platform/audio/EqualPowerPanner.h: Added.
+        (WebCore::EqualPowerPanner::reset):
+
+2010-10-05  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Add HighPass2FilterNode files
         https://bugs.webkit.org/show_bug.cgi?id=46533
 
