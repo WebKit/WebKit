@@ -38,6 +38,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+#if !PLATFORM(QT)
+#error This should only be built on Qt
+#endif
+
 namespace WebCore {
 
     class AuthenticationChallenge;
