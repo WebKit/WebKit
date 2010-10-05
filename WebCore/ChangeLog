@@ -1,3 +1,18 @@
+2010-10-05  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        Relax restrictions on FileWriter::didWrite calls
+        https://bugs.webkit.org/show_bug.cgi?id=47139
+
+        No new tests; they're still waiting on the first implementation.
+
+        * fileapi/FileWriter.cpp:
+        (WebCore::FileWriter::FileWriter):
+        (WebCore::FileWriter::write):
+        (WebCore::FileWriter::didWrite):
+        * fileapi/FileWriter.h:
+
 2010-10-05  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.

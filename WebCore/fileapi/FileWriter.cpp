@@ -46,6 +46,7 @@ FileWriter::FileWriter(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_readyState(INIT)
     , m_position(0)
+    , m_startedWriting(false)
     , m_bytesWritten(0)
     , m_bytesToWrite(0)
     , m_truncateLength(-1)
@@ -92,8 +93,14 @@ void FileWriter::write(Blob* data, ExceptionCode& ec)
         m_error = FileError::create(ec);
         return;
     }
+    if (!data) {
+        ec = TYPE_MISMATCH_ERR;
+        m_error = FileError::create(ec);
+        return;
+    }
 
     m_readyState = WRITING;
+    m_startedWriting = false;
     m_bytesWritten = 0;
     m_bytesToWrite = data->size();
     m_writer->write(m_position, data);
@@ -149,13 +156,14 @@ void FileWriter::abort(ExceptionCode& ec)
 
 void FileWriter::didWrite(long long bytes, bool complete)
 {
-    ASSERT(bytes > 0);
     ASSERT(bytes + m_bytesWritten > 0);
     ASSERT(bytes + m_bytesWritten <= m_bytesToWrite);
-    if (!m_bytesWritten)
+    if (!m_startedWriting) {
         fireEvent(eventNames().writestartEvent);
+        m_startedWriting = true;
+    }
     m_bytesWritten += bytes;
-    ASSERT((m_bytesWritten == m_bytesToWrite) == complete);
+    ASSERT((m_bytesWritten == m_bytesToWrite) || !complete);
     m_position += bytes;
     if (m_position > m_length)
         m_length = m_position;
