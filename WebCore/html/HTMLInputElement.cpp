@@ -65,6 +65,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
+#include "Settings.h"
 #include "StepRange.h"
 #include "TextEvent.h"
 #include "WheelEvent.h"
@@ -767,6 +768,9 @@ bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
         return false;
 
     if (deprecatedInputType() == RADIO) {
+        // When using Spatial Navigation, every radio button should be focusable.
+        if (document()->frame() && document()->frame()->settings() && document()->frame()->settings()->isSpatialNavigationEnabled())
+            return true;
 
         // Never allow keyboard tabbing to leave you in the same radio group.  Always
         // skip any other elements in the group.
@@ -2260,29 +2264,32 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
             // Right and down mean "next radio button".
             // Tested in WinIE, and even for RTL, left still means previous radio button (and so moves
             // to the right).  Seems strange, but we'll match it.
-            bool forward = (key == "Down" || key == "Right");
-            
-            // We can only stay within the form's children if the form hasn't been demoted to a leaf because
-            // of malformed HTML.
-            Node* n = this;
-            while ((n = (forward ? n->traverseNextNode() : n->traversePreviousNode()))) {
-                // Once we encounter a form element, we know we're through.
-                if (n->hasTagName(formTag))
-                    break;
-                    
-                // Look for more radio buttons.
-                if (n->hasTagName(inputTag)) {
-                    HTMLInputElement* elt = static_cast<HTMLInputElement*>(n);
-                    if (elt->form() != form())
+            // However, when using Spatial Navigation, we need to be able to navigate without changing the selection.
+            if (!document()->frame() || !document()->frame()->settings() || !document()->frame()->settings()->isSpatialNavigationEnabled()) {
+                bool forward = (key == "Down" || key == "Right");
+
+                // We can only stay within the form's children if the form hasn't been demoted to a leaf because
+                // of malformed HTML.
+                Node* n = this;
+                while ((n = (forward ? n->traverseNextNode() : n->traversePreviousNode()))) {
+                    // Once we encounter a form element, we know we're through.
+                    if (n->hasTagName(formTag))
                         break;
+
+                    // Look for more radio buttons.
                     if (n->hasTagName(inputTag)) {
-                        HTMLInputElement* inputElt = static_cast<HTMLInputElement*>(n);
-                        if (inputElt->deprecatedInputType() == RADIO && inputElt->name() == name() && inputElt->isFocusable()) {
-                            inputElt->setChecked(true);
-                            document()->setFocusedNode(inputElt);
-                            inputElt->dispatchSimulatedClick(evt, false, false);
-                            evt->setDefaultHandled();
+                        HTMLInputElement* elt = static_cast<HTMLInputElement*>(n);
+                        if (elt->form() != form())
                             break;
+                        if (n->hasTagName(inputTag)) {
+                            HTMLInputElement* inputElt = static_cast<HTMLInputElement*>(n);
+                            if (inputElt->deprecatedInputType() == RADIO && inputElt->name() == name() && inputElt->isFocusable()) {
+                                inputElt->setChecked(true);
+                                document()->setFocusedNode(inputElt);
+                                inputElt->dispatchSimulatedClick(evt, false, false);
+                                evt->setDefaultHandled();
+                                break;
+                            }
                         }
                     }
                 }

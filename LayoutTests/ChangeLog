@@ -1,3 +1,15 @@
+2010-10-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Spatial Navigation: Add support for <input type="radio">
+        https://bugs.webkit.org/show_bug.cgi?id=46993
+
+        * fast/events/spatial-navigation/snav-radio-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-radio-group-expected.txt: Added.
+        * fast/events/spatial-navigation/snav-radio-group.html: Added.
+        * fast/events/spatial-navigation/snav-radio.html: Added.
+
 2010-10-04  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Andreas Kling.

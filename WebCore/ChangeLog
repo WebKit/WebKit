@@ -1,3 +1,22 @@
+2010-10-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        Spatial Navigation: Add support for <input type="radio">
+        https://bugs.webkit.org/show_bug.cgi?id=46993
+
+        When using Spatial Navigation, every radio button should be focusable and 
+        users should be able to navigate from one button to the next without moving the selection. 
+
+        Tests: fast/events/spatial-navigation/snav-radio-group.html
+               fast/events/spatial-navigation/snav-radio.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isKeyboardFocusable):
+        Every radio button should be keyboard focusable, if using Spatial Navigation.
+        (WebCore::HTMLInputElement::defaultEventHandler):
+        Disable the algorithm for selecting the next radio button within a group, if using Spatial Navigation.
+
 2010-10-04  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Reviewed by Andreas Kling.
