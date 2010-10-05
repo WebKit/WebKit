@@ -57,6 +57,7 @@ NetscapePlugin::NetscapePlugin(PassRefPtr<NetscapePluginModule> pluginModule)
     , m_drawingModel(static_cast<NPDrawingModel>(-1))
     , m_eventModel(static_cast<NPEventModel>(-1))
 #ifndef NP_NO_CARBON
+    , m_nullEventTimer(RunLoop::main(), this, &NetscapePlugin::nullEventTimerFired)
     , m_npCGContext()
 #endif    
 #endif

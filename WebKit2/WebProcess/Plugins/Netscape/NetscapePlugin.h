@@ -28,6 +28,7 @@
 
 #include "NetscapePluginModule.h"
 #include "Plugin.h"
+#include "RunLoop.h"
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/IntRect.h>
 #include <wtf/HashMap.h>
@@ -190,6 +191,11 @@ private:
     NPEventModel m_eventModel;
     RetainPtr<PlatformLayer> m_pluginLayer;
 #ifndef NP_NO_CARBON
+    void nullEventTimerFired();
+
+    // FIXME: It's a bit wasteful to have one null event timer per plug-in.
+    // We should investigate having one per window.
+    RunLoop::Timer<NetscapePlugin> m_nullEventTimer;
     NP_CGContext m_npCGContext;
 #endif
 #elif PLATFORM(WIN)

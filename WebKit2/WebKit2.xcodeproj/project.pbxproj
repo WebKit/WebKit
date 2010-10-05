@@ -130,7 +130,7 @@
 		1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE4987711FF7FAA0048B464 /* JSNPObject.cpp */; };
 		1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE49A4711FFA8CE0048B464 /* JSNPMethod.h */; };
 		1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE49A4811FFA8CE0048B464 /* JSNPMethod.cpp */; };
-		1AE5B7FB11E7AED200BA6767 /* NetscapePluginMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AE5B7F911E7AED200BA6767 /* NetscapePluginMac.mm */; };
+		1AE5B7FB11E7AED200BA6767 /* NetscapePluginMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AE5B7F911E7AED200BA6767 /* NetscapePluginMac.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		1AEFCC1211D01F96008219D3 /* PluginInfoStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEFCC1011D01F96008219D3 /* PluginInfoStore.h */; };
 		1AEFCC1311D01F96008219D3 /* PluginInfoStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFCC1111D01F96008219D3 /* PluginInfoStore.cpp */; };
 		1AEFCCBD11D02C5E008219D3 /* PluginInfoStoreMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */; };
@@ -1987,6 +1987,7 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "WebKit2" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

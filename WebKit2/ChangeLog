@@ -2,6 +2,34 @@
 
         Reviewed by Sam Weinig.
 
+        Send null events and mouse events
+        https://bugs.webkit.org/show_bug.cgi?id=47223
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add "-Wno-deprecated-declarations" to the COMPILER_FLAGS for NetscapePluginMac.mm since
+        we call Button() which is deprecated.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize the null event timer.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        Start the null event timer.
+
+        (WebKit::NetscapePlugin::platformDestroy):
+        Stop the null event timer.
+
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+        Initialize the event record and call NPP_HandleEvent.
+
+        (WebKit::NetscapePlugin::nullEventTimerFired):
+        Send a null event with the current mouse position.
+
+2010-10-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Start sending Carbon plug-in events in th Carbon event model
         https://bugs.webkit.org/show_bug.cgi?id=47209
         <rdar://problem/8515677>

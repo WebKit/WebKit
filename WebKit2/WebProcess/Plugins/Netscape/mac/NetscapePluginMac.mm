@@ -33,6 +33,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#ifndef NP_NO_QUICKDRAW
+static const double nullEventIntervalActive = 0.02;
+static const double nullEventIntervalNotActive = 0.25;
+#endif
+
 NPError NetscapePlugin::setDrawingModel(NPDrawingModel drawingModel)
 {
     // The drawing model can only be set from NPP_New.
@@ -131,6 +136,10 @@ bool NetscapePlugin::platformPostInitialize()
         // FIXME: Disable the backing store.
         
         m_npWindow.window = &m_npCGContext;
+
+        // Start the null event timer.
+        // FIXME: Throttle null events when the plug-in isn't visible on screen.
+        m_nullEventTimer.startRepeating(nullEventIntervalActive);        
     }
 #endif
 
@@ -144,6 +153,9 @@ void NetscapePlugin::platformDestroy()
         // Destroy the fake Carbon window.
         ASSERT(m_npCGContext.window);
         DisposeWindow(static_cast<WindowRef>(m_npCGContext.window));
+
+        // Stop the null event timer.
+        m_nullEventTimer.stop();
     }
 #endif
 }
@@ -205,7 +217,6 @@ static bool rightMouseButtonIsDown(const WebEvent& event)
     return false;
 }
 
-    
 static EventModifiers modifiersForEvent(const WebEvent& event)
 {
     EventModifiers modifiers = 0;
@@ -359,8 +370,26 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
 
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
-            notImplemented();
-            return false;
+            EventKind eventKind = nullEvent;
+
+            switch (mouseEvent.type()) {
+            case WebEvent::MouseDown:
+                eventKind = mouseDown;
+                break;
+            case WebEvent::MouseUp:
+                eventKind = mouseUp;
+                break;
+            case WebEvent::MouseMove:
+                eventKind = nullEvent;
+                break;
+            default:
+                ASSERT_NOT_REACHED();
+            }
+
+            EventRecord event = initializeEventRecord(eventKind);
+            event.where.h = mouseEvent.globalPositionX();
+            event.where.v = mouseEvent.globalPositionY();
+            return NPP_HandleEvent(&event);
         }
 #endif
 
@@ -535,7 +564,6 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
     }
 }
 
-#if PLATFORM(MAC)
 void NetscapePlugin::windowFocusChanged(bool hasFocus)
 {
     switch (m_eventModel) {
@@ -578,11 +606,28 @@ void NetscapePlugin::windowVisibilityChanged(bool)
     // FIXME: Implement.
 }
     
-#endif
-
 PlatformLayer* NetscapePlugin::pluginLayer()
 {
     return static_cast<PlatformLayer*>(m_pluginLayer.get());
 }
+
+#ifndef NP_NO_CARBON
+void NetscapePlugin::nullEventTimerFired()
+{
+    EventRecord event = initializeEventRecord(nullEvent);
+
+    event.message = 0;
+    CGPoint mousePosition;
+    HIGetMousePosition(kHICoordSpaceScreenPixel, 0, &mousePosition);
+    event.where.h = mousePosition.x;
+    event.where.v = mousePosition.y;
+
+    event.modifiers = GetCurrentKeyModifiers();
+    if (!Button())
+        event.modifiers |= btnState;
+
+    NPP_HandleEvent(&event);
+}
+#endif
 
 } // namespace WebKit
