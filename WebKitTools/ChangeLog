@@ -1,3 +1,32 @@
+2010-10-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add MIMEType accessor to WKFrame
+        <rdar://problem/8347683>
+        https://bugs.webkit.org/show_bug.cgi?id=47138
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        (TestWebKitAPI::Util::toSTD):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypeHTML.cpp: Added.
+        (TestWebKitAPI::didStartProvisionalLoadForFrame):
+        (TestWebKitAPI::didCommitLoadForFrame):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypePNG.cpp: Added.
+        (TestWebKitAPI::didStartProvisionalLoadForFrame):
+        (TestWebKitAPI::didCommitLoadForFrame):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/basic-1.html: Removed.
+        * TestWebKitAPI/Tests/WebKit2/icon.png: Added.
+        * TestWebKitAPI/Tests/WebKit2/simple.html: Added.
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::createURLForResource):
+
 2010-10-05  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Ojan Vafai.

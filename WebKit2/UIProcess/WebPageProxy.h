@@ -216,7 +216,7 @@ private:
     void didStartProvisionalLoadForFrame(WebFrameProxy*, const String&, APIObject*);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebFrameProxy*, const String&, APIObject*);
     void didFailProvisionalLoadForFrame(WebFrameProxy*, APIObject*);
-    void didCommitLoadForFrame(WebFrameProxy*, const PlatformCertificateInfo&, APIObject*);
+    void didCommitLoadForFrame(WebFrameProxy*, const String& mimeType, const PlatformCertificateInfo&, APIObject*);
     void didFinishDocumentLoadForFrame(WebFrameProxy*, APIObject*);
     void didFinishLoadForFrame(WebFrameProxy*, APIObject*);
     void didFailLoadForFrame(WebFrameProxy*, APIObject*);

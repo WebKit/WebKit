@@ -37,9 +37,9 @@ void run(bool* done)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
 }
 
-WKURLRef createURLForResource(const char* file)
+WKURLRef createURLForResource(const char* resource, const char* extension)
 {
-    NSURL* nsURL = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:file] withExtension:@"html"];
+    NSURL* nsURL = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:resource] withExtension:[NSString stringWithUTF8String:extension]];
     return WKURLCreateWithCFURL((CFURLRef)nsURL);
 }
 

@@ -1,3 +1,27 @@
+2010-10-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Add MIMEType accessor to WKFrame
+        <rdar://problem/8347683>
+        https://bugs.webkit.org/show_bug.cgi?id=47138
+
+        Tests: WebKit2/FrameMIMETypePNG
+               WebKit2/FrameMIMETypeHTML
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCopyMIMEType):
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::setMIMEType):
+        (WebKit::WebFrameProxy::mimeType):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+
 2010-10-05  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

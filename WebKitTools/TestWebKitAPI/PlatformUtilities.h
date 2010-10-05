@@ -26,13 +26,27 @@
 #ifndef PlatformUtilities_h
 #define PlatformUtilities_h
 
+#include <WebKit2/WKString.h>
+#include <string>
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/PassOwnArrayPtr.h>
+
 namespace TestWebKitAPI {
 namespace Util {
 
 // Runs a platform runloop until the 'done' is true. 
 void run(bool* done);
 
-WKURLRef createURLForResource(const char* file);
+WKURLRef createURLForResource(const char* resource, const char* extension);
+
+inline std::string toSTD(WKStringRef string)
+{
+    size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
+    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
+    WKStringGetUTF8CString(string, buffer.get(), bufferSize);
+
+    return std::string(buffer.get(), bufferSize);
+}
 
 } // namespace Util
 } // namespace TestWebKitAPI

@@ -126,7 +126,7 @@ TEST(PageLoadBasic)
     policyClient.decidePolicyForMIMEType = decidePolicyForMIMEType;
     WKPageSetPagePolicyClient(webView.page(), &policyClient);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("basic-1"));
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
     WKPageLoadURL(webView.page(), url.get());
 
     Util::run(&test1Done);

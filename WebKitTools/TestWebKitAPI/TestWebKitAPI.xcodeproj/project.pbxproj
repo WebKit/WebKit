@@ -14,11 +14,14 @@
 		BC90964C125561BF00083756 /* VectorBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90964B125561BF00083756 /* VectorBasic.cpp */; };
 		BC90964E1255620C00083756 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
 		BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC909779125571AB00083756 /* PageLoadBasic.cpp */; };
-		BC909784125571CF00083756 /* basic-1.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC909778125571AB00083756 /* basic-1.html */; };
+		BC909784125571CF00083756 /* simple.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = BC909778125571AB00083756 /* simple.html */; };
 		BC90995E12567BC100083756 /* WKString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90995D12567BC100083756 /* WKString.cpp */; };
 		BC9099941256ACF100083756 /* WKStringJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9099931256ACF100083756 /* WKStringJSString.cpp */; };
 		BCA61DB511700EFD00460D1E /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCA61DB411700EFD00460D1E /* WebKit2.framework */; };
 		BCB9E9F111235BDE00A137E0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; };
+		BCBD3710125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */; };
+		BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = BCBD372E125ABBE600D2C29F /* icon.png */; };
+		BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,7 +40,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				BC909784125571CF00083756 /* basic-1.html in Copy Resources */,
+				BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */,
+				BC909784125571CF00083756 /* simple.html in Copy Resources */,
 			);
 			name = "Copy Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,7 +62,7 @@
 		BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestWebKitAPI.xcconfig; sourceTree = "<group>"; };
 		BC90964B125561BF00083756 /* VectorBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VectorBasic.cpp; path = WTF/VectorBasic.cpp; sourceTree = "<group>"; };
 		BC90964D1255620C00083756 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = ../../WebKitBuild/Debug/JavaScriptCore.framework; sourceTree = SOURCE_ROOT; };
-		BC909778125571AB00083756 /* basic-1.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "basic-1.html"; sourceTree = "<group>"; };
+		BC909778125571AB00083756 /* simple.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple.html; sourceTree = "<group>"; };
 		BC909779125571AB00083756 /* PageLoadBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageLoadBasic.cpp; sourceTree = "<group>"; };
 		BC90995D12567BC100083756 /* WKString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKString.cpp; sourceTree = "<group>"; };
 		BC9099931256ACF100083756 /* WKStringJSString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKStringJSString.cpp; sourceTree = "<group>"; };
@@ -66,6 +70,9 @@
 		BCB9E7C711234E3A00A137E0 /* TestsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestsController.h; sourceTree = "<group>"; };
 		BCB9E7FA112359A300A137E0 /* Test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
 		BCB9E9F011235BDE00A137E0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypeHTML.cpp; sourceTree = "<group>"; };
+		BCBD372E125ABBE600D2C29F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypePNG.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +147,8 @@
 			isa = PBXGroup;
 			children = (
 				BC90977B125571AE00083756 /* Resources */,
+				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
+				BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */,
 				BC909779125571AB00083756 /* PageLoadBasic.cpp */,
 				BC90995D12567BC100083756 /* WKString.cpp */,
 				BC9099931256ACF100083756 /* WKStringJSString.cpp */,
@@ -158,7 +167,8 @@
 		BC90977B125571AE00083756 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				BC909778125571AB00083756 /* basic-1.html */,
+				BCBD372E125ABBE600D2C29F /* icon.png */,
+				BC909778125571AB00083756 /* simple.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -211,7 +221,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "TestWebKitAPI" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* TestWebKitAPI */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -234,6 +251,8 @@
 				BC90977A125571AB00083756 /* PageLoadBasic.cpp in Sources */,
 				BC90995E12567BC100083756 /* WKString.cpp in Sources */,
 				BC9099941256ACF100083756 /* WKStringJSString.cpp in Sources */,
+				BCBD3710125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp in Sources */,
+				BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

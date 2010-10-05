@@ -74,6 +74,9 @@ public:
     const String& url() const { return m_url; }
     const String& provisionalURL() const { return m_provisionalURL; }
 
+    void setMIMEType(const String& mimeType) { m_MIMEType = mimeType; }
+    const String& mimeType() const { return m_MIMEType; }
+
     void setCertificateInfo(PassRefPtr<WebCertificateInfo>);
     WebCertificateInfo* certificateInfo() const { return m_certificateInfo.get(); }
 
@@ -96,6 +99,7 @@ private:
     LoadState m_loadState;
     String m_url;
     String m_provisionalURL;
+    String m_MIMEType;
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFrameListenerProxy> m_activeListener;
     uint64_t m_frameID;
