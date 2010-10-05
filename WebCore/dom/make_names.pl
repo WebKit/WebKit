@@ -54,6 +54,7 @@ my %allTags = ();
 my %allAttrs = ();
 my %parameters = ();
 my $extraDefines = 0;
+my %extensionAttrs = ();
 
 require Config;
 
@@ -180,7 +181,14 @@ sub tagsHandler
 sub attrsHandler
 {
     my ($attr, $property, $value) = @_;
-
+    # Translate HTML5 extension attributes of the form 'x-webkit-feature' to 'webkitfeature'.
+    # We don't just check for the 'x-' prefix because there are attributes such as x-height
+    # which should follow the default path below.
+    if ($attr =~ m/^x-webkit-(.*)/) {
+        my $newAttr = "webkit$1";
+        $extensionAttrs{$newAttr} = $attr;
+        $attr = $newAttr;
+    }
     $attr =~ s/-/_/g;
 
     # Initialize default properties' values.
@@ -620,8 +628,11 @@ sub printDefinitions
     print F "    // " . ucfirst($type) . "\n";
 
     for my $name (sort keys %$namesRef) {
-        my $realName = $name;
-        $realName =~ s/_/-/g;
+        my $realName = $extensionAttrs{$name};
+        if (!$realName) {
+            $realName = $name;
+            $realName =~ s/_/-/g;
+        }
         print F "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, \"$realName\", $namespaceURI);\n";
     }
 }

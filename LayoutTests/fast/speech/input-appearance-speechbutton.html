@@ -19,7 +19,7 @@ var cellCount = 0;
 var index = 0;
 for (var size = 8; size < 24; size++) {
     cells[index] += '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog"><br>'
-        + '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog" webkitspeech><br>';
+        + '<input style="font-size:' + size + 'px" value="A quick brown fox jumps over the lazy dog" x-webkit-speech><br>';
     if (++cellCount >= maxCellCount[index]) {
         ++index;
         cellCount = 0;

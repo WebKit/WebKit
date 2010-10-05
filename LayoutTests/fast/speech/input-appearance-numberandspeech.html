@@ -19,7 +19,7 @@ var cellCount = 0;
 var index = 0;
 for (var size = 8; size < 24; size++) {
     cells[index] += '<input type="number" style="font-size:' + size + 'px" value="012345678901234567890123456789"><br>'
-        + '<input type="number" style="font-size:' + size + 'px" value="012345678901234567890123456789" webkitspeech><br>';
+        + '<input type="number" style="font-size:' + size + 'px" value="012345678901234567890123456789" x-webkit-speech><br>';
     if (++cellCount >= maxCellCount[index]) {
         ++index;
         cellCount = 0;

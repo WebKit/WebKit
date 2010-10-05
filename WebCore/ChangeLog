@@ -1,3 +1,23 @@
+2010-10-05  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Rename @webkitspeech to @x-webkit-speech to follow HTML5 convention
+        https://bugs.webkit.org/show_bug.cgi?id=46873
+
+        The @webkitspeech attribute is renamed to @x-webkit-speech per the HTML5 spec for extension
+        attributes. The DOM attribute in IDL was renamed to 'webkitSpeech' as well. But the generated
+        code for the attribute did not match the generated code for the IDL, so I modified
+        dom/make_names.pl to generate the appropriate name for such extension attributes.
+
+        * bindings/generic/RuntimeEnabledFeatures.h: Rename flag accessor to match IDL attribute name.
+        (WebCore::RuntimeEnabledFeatures::webkitSpeechEnabled):
+        * dom/make_names.pl: Additions to generate names for x-webkit-xxxx attributes that match the
+        generated code from IDL and remember the original names including the x- prefix when writing
+        out the cpp files.
+        * html/HTMLAttributeNames.in: Rename @webkitspeech to @x-webkit-speech
+        * html/HTMLInputElement.idl: Rename @webkitspeech to @webkitSpeech
+
 2010-10-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
