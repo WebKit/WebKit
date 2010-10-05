@@ -50,8 +50,6 @@ public:
         return adoptRef(new PluginDocumentParser(document));
     }
 
-    static Widget* pluginWidgetFromDocument(Document*);
-    
 private:
     PluginDocumentParser(Document* document)
         : RawDataDocumentParser(document)
@@ -65,22 +63,6 @@ private:
 
     HTMLEmbedElement* m_embedElement;
 };
-
-Widget* PluginDocumentParser::pluginWidgetFromDocument(Document* doc)
-{
-    ASSERT(doc);
-    RefPtr<Element> body = doc->body();
-    if (body) {
-        RefPtr<NodeList> embedNodes = body->getElementsByTagName("embed");
-        ASSERT(embedNodes && embedNodes->length());
-        Node* node = embedNodes->item(0);
-        if (node && node->renderer()) {
-            ASSERT(node->renderer()->isEmbeddedObject());
-            return toRenderEmbeddedObject(node->renderer())->widget();
-        }
-    }
-    return 0;
-}
 
 void PluginDocumentParser::createDocumentStructure()
 {
@@ -110,7 +92,9 @@ void PluginDocumentParser::createDocumentStructure()
     m_embedElement->setAttribute(nameAttr, "plugin");
     m_embedElement->setAttribute(srcAttr, document()->url().string());
     m_embedElement->setAttribute(typeAttr, document()->frame()->loader()->writer()->mimeType());
-    
+
+    static_cast<PluginDocument*>(document())->setPluginNode(m_embedElement);
+
     body->appendChild(embedElement, ec);    
 }
 
@@ -159,16 +143,16 @@ PassRefPtr<DocumentParser> PluginDocument::createParser()
 
 Widget* PluginDocument::pluginWidget()
 {
-    return PluginDocumentParser::pluginWidgetFromDocument(this);
+    if (m_pluginNode && m_pluginNode->renderer()) {
+        ASSERT(m_pluginNode->renderer()->isEmbeddedObject());
+        return toRenderEmbeddedObject(m_pluginNode->renderer())->widget();
+    }
+    return 0;
 }
 
 Node* PluginDocument::pluginNode()
 {
-    RefPtr<Element> body_element = body();
-    if (body_element)
-        return body_element->firstChild();
-
-    return 0;
+    return m_pluginNode.get();
 }
 
 void PluginDocument::cancelManualPluginLoad()

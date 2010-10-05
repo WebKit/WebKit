@@ -1,3 +1,17 @@
+2010-10-05  Sanjeev Radhakrishnan  <sanjeevr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        PluginDocument now holds on to the created plugin node so that the pluginNode() and pluginWidget() methods can return the correct node.
+        https://bugs.webkit.org/show_bug.cgi?id=47129
+
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        (WebCore::PluginDocument::pluginWidget):
+        (WebCore::PluginDocument::pluginNode):
+        * html/PluginDocument.h:
+        (WebCore::PluginDocument::setPluginNode):
+
 2010-10-05  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Tor Arne Vestbø.

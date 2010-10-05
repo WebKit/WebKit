@@ -38,6 +38,8 @@ public:
         return adoptRef(new PluginDocument(frame, url));
     }
 
+    void setPluginNode(Node* pluginNode) { m_pluginNode = pluginNode; }
+
     Widget* pluginWidget();
     Node* pluginNode();
 
@@ -55,6 +57,7 @@ private:
     void setShouldLoadPluginManually(bool loadManually) { m_shouldLoadPluginManually = loadManually; }
 
     bool m_shouldLoadPluginManually;
+    RefPtr<Node> m_pluginNode;
 };
 
 inline PluginDocument* toPluginDocument(Document* document)
