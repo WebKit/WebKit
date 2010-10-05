@@ -1,3 +1,12 @@
+2010-10-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
+        Add missing "from __future__ import with_statement" that was
+        breaking test-webkitpy on the Leopard bots (broke in r69040).
+
+        * Scripts/webkitpy/layout_tests/port/google_chrome.py:
+
 2010-10-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r69066.
