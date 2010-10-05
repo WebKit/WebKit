@@ -1,3 +1,17 @@
+2010-10-05  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Unreviewed build fix.
+
+        [Symbian] Fix build issue due to gaps in ordinals in the def file
+
+        Restore previously removed symbols and mark them absent instead. We must
+        not remove symbols from this file, because it breaks binary compatibility
+        (when re-assigning the ordinals of the following symbols) or it causes build
+        breakage when instead having a gap in the ordinal sequence. Instead removing
+        a symbol is done by marking it as absent.
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-10-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
