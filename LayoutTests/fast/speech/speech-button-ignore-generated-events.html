@@ -29,7 +29,7 @@ function sendClick(useEventSender) {
 }
 
 function setupDispatchEventTest() {
-    document.getElementById('speechInput').onchange = function() {
+    document.getElementById('speechInput').onwebkitspeechchange = function() {
         testFailed('speech button accepted a programmatic click and fired onChange event.');
         finishJSTest();
     };
@@ -50,7 +50,7 @@ function run() {
     if (window.layoutTestController && window.eventSender) {
         // Running in DRT, test the eventSender case.
         layoutTestController.setMockSpeechInputResult('Pictures of the moon');
-        document.getElementById('speechInput').onchange = function() {
+        document.getElementById('speechInput').onwebkitspeechchange = function() {
             shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of the moon');
 
             // The speech button is still in the processing state and does not accept clicks. So ask for

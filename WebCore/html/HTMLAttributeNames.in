@@ -206,6 +206,7 @@ onseeked
 onseeking
 onselect
 onselectstart
+onwebkitspeechchange
 onstalled
 onstorage
 onsuspend

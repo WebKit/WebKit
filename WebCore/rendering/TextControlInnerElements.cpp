@@ -479,7 +479,7 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const String& resu
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> holdRef(input);
     input->setValue(result);
-    input->dispatchFormControlChangeEvent();
+    input->dispatchWebkitSpeechChangeEvent();
     renderer()->repaint();
 }
 

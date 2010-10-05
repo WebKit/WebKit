@@ -10,13 +10,13 @@
 <script type="text/javascript">
 description('Tests for speech button click with &lt;input type="text" speech>.');
 
-function onChange() {
+function onWebkitSpeechChange() {
     shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of the moon');
     setTimeout(function() {
         var input = document.getElementById('speechInput');
         input.dir = 'rtl';
         input.value = '';
-        input.onchange = function() {
+        input.onwebkitspeechchange = function() {
             shouldBeEqualToString('document.getElementById("speechInput").value',
                                   'Pictures of the moon');
             finishJSTest();
@@ -49,6 +49,6 @@ window.jsTestIsAsync = true;
 window.successfullyParsed = true;
 </script>
 <script src="../js/resources/js-test-post.js"></script>
-<input id='speechInput' x-webkit-speech onchange="onChange()">
+<input id='speechInput' x-webkit-speech onwebkitspeechchange="onWebkitSpeechChange()">
 </body>
 </html>

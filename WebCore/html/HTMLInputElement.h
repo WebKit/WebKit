@@ -44,6 +44,8 @@ public:
     static PassRefPtr<HTMLInputElement> create(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLInputElement();
 
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitspeechchange);
+
     bool autoComplete() const;
 
     // For ValidityState
@@ -98,7 +100,8 @@ public:
 
 #if ENABLE(INPUT_SPEECH)
     virtual bool isSpeechEnabled() const;
-#endif    
+    void dispatchWebkitSpeechChangeEvent();
+#endif
 
     bool checked() const { return m_checked; }
     void setChecked(bool, bool sendChangeEvent = false);

@@ -1,5 +1,17 @@
 2010-10-05  Satish Sampath  <satish@chromium.org>
 
+        Reviewed by Kent Tamura.
+
+        Added event onwebkitspeechchange to invoke on new speech input results.
+        https://bugs.webkit.org/show_bug.cgi?id=47127
+
+        Updated to use onwebkitspeechchange instead of onchange.
+
+        * fast/speech/input-text-speechbutton.html:
+        * fast/speech/speech-button-ignore-generated-events.html:
+
+2010-10-05  Satish Sampath  <satish@chromium.org>
+
         Reviewed by Jeremy Orlow.
 
         Rename @webkitspeech to @x-webkit-speech to follow HTML5 convention.

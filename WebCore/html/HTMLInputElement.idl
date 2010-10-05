@@ -101,6 +101,7 @@ module html {
 
 #if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
         attribute [Reflect, EnabledAtRuntime] boolean webkitSpeech;
+        attribute [DontEnum] EventListener onwebkitspeechchange;
 #endif
     };
 
