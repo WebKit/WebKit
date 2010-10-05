@@ -1,3 +1,17 @@
+2010-10-05  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement API call for setting custom user agent
+        (QWKPage::setCustomUserAgent)
+
+        [Qt] Ability to set custom userAgent for WebKit2/WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=44265
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::setCustomUserAgent): Added.
+        * UIProcess/API/qt/qwkpage.h: Add setCustomUserAgent.
+
 2010-10-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r69103.
