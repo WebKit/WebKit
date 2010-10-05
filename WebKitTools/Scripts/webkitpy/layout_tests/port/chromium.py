@@ -165,7 +165,7 @@ class ChromiumPort(base.Port):
             else:
                 raise e
         finally:
-            shutil.rmtree(tempdir)
+            shutil.rmtree(tempdir, ignore_errors=True)
         return result
 
     def driver_name(self):
