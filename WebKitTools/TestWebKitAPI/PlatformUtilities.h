@@ -43,9 +43,8 @@ inline std::string toSTD(WKStringRef string)
 {
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
     OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
-    WKStringGetUTF8CString(string, buffer.get(), bufferSize);
-
-    return std::string(buffer.get(), bufferSize);
+    size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
+    return std::string(buffer.get(), stringLength - 1);
 }
 
 } // namespace Util

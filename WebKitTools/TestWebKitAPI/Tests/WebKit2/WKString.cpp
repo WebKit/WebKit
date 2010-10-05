@@ -38,13 +38,13 @@ TEST(WKString)
     TEST_ASSERT(WKStringGetMaximumUTF8CStringSize(string) == 16);
 
     size_t maxSize = WKStringGetMaximumUTF8CStringSize(string);
-    char* buffer = (char*)malloc(maxSize);
-    
+    char* buffer = new char[maxSize];
+
     size_t actualSize = WKStringGetUTF8CString(string, buffer, maxSize);
     TEST_ASSERT(actualSize == 6);
     TEST_ASSERT(strcmp(buffer, "hello") == 0);
 
-    free(buffer);
+    delete[] buffer;
     
     WKRelease(string);
 }

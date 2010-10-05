@@ -1,3 +1,18 @@
+2010-10-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (r68966?): All dumpAsText test fail on WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=47188
+        <rdar://problem/8514104>
+
+        When constructing the std::string, use the real string length instead of the maximum buffer size.
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        (TestWebKitAPI::Util::toSTD):
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::toSTD):
+
 2010-10-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
