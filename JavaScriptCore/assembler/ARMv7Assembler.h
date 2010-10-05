@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -479,7 +479,8 @@ public:
     } Condition;
 
     enum JumpType { JumpNoCondition, JumpCondition, JumpFullSize };
-    enum JumpLinkType { LinkInvalid, LinkShortJump, LinkConditionalShortJump, LinkLongJump, JumpTypeCount };
+    enum JumpLinkType { LinkInvalid, LinkJumpT2, LinkConditionalJumpT2, 
+        LinkJumpT4, LinkConditionalJumpT4, LinkBX, JumpTypeCount };
     static const int JumpSizes[JumpTypeCount];
     enum { JumpPaddingSize = 5 * sizeof(uint16_t) };
     class LinkRecord {
@@ -628,6 +629,7 @@ private:
     } OpcodeID;
 
     typedef enum {
+        OP_B_T2         = 0xE000,
         OP_AND_reg_T2   = 0xEA00,
         OP_TST_reg_T2   = 0xEA10,
         OP_ORR_reg_T2   = 0xEA40,
@@ -1679,25 +1681,34 @@ public:
     JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to)
     {
         if (record.type() >= JumpFullSize) {
-            record.setLinkType(LinkLongJump);
-            return LinkLongJump;
+            record.setLinkType(LinkBX);
+            return LinkBX;
+        }
+        const uint16_t* jumpT2Location = reinterpret_cast<const uint16_t*>(from  - (JumpPaddingSize - JumpSizes[LinkJumpT2]));
+        if (canBeJumpT2(jumpT2Location, to)) {
+            if (record.type() == JumpCondition) {
+                record.setLinkType(LinkConditionalJumpT2);
+                return LinkConditionalJumpT2;
+            }
+            record.setLinkType(LinkJumpT2);
+            return LinkJumpT2;
         }
         bool mayTriggerErrata = false;
-        const uint16_t* shortJumpLocation = reinterpret_cast<const uint16_t*>(from  - (JumpPaddingSize - JumpSizes[LinkShortJump]));
-        if (!canBeShortJump(shortJumpLocation, to, mayTriggerErrata)) {
-            record.setLinkType(LinkLongJump);
-            return LinkLongJump;
+        const uint16_t* jumpT4Location = reinterpret_cast<const uint16_t*>(from  - (JumpPaddingSize - JumpSizes[LinkJumpT4]));
+        if (!canBeJumpT4(jumpT4Location, to, mayTriggerErrata)) {
+            record.setLinkType(LinkBX);
+            return LinkBX;
         }
         if (mayTriggerErrata) {
-            record.setLinkType(LinkLongJump);
-            return LinkLongJump;
+            record.setLinkType(LinkBX);
+            return LinkBX;
         }
         if (record.type() == JumpCondition) {
-            record.setLinkType(LinkConditionalShortJump);
-            return LinkConditionalShortJump;
+            record.setLinkType(LinkConditionalJumpT4);
+            return LinkConditionalJumpT4;
         }
-        record.setLinkType(LinkShortJump);
-        return LinkShortJump;
+        record.setLinkType(LinkJumpT4);
+        return LinkJumpT4;
     }
 
     void recordLinkOffsets(int32_t regionStart, int32_t regionEnd, int32_t offset)
@@ -1717,16 +1728,28 @@ public:
 
     void link(LinkRecord& record, uint8_t* from, uint8_t* to)
     {
-        uint16_t* itttLocation;
-        if (record.linkType() == LinkConditionalShortJump) {
-            itttLocation = reinterpret_cast<uint16_t*>(from - JumpSizes[LinkConditionalShortJump] - 2);
+        JumpLinkType linkType = record.linkType();
+        ASSERT(linkType != LinkInvalid);
+        if ((linkType == LinkConditionalJumpT2) || (linkType == LinkConditionalJumpT4)) {
+            uint16_t* itttLocation = reinterpret_cast<uint16_t*>(from - JumpSizes[linkType] - 2);
             itttLocation[0] = ifThenElse(record.condition()) | OP_IT;
         }
-        ASSERT(record.linkType() != LinkInvalid);
-        if (record.linkType() != LinkLongJump)
-            linkShortJump(reinterpret_cast<uint16_t*>(from), to);
-        else
-            linkLongJump(reinterpret_cast<uint16_t*>(from), to);
+        switch (linkType) {
+        case LinkJumpT2:
+        case LinkConditionalJumpT2:
+            linkJumpT2(reinterpret_cast<uint16_t*>(from), to);
+            break;
+        case LinkJumpT4:
+        case LinkConditionalJumpT4:
+            linkJumpT4(reinterpret_cast<uint16_t*>(from), to);
+            break;
+        case LinkBX:
+            linkBX(reinterpret_cast<uint16_t*>(from), to);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
     }
 
     void* unlinkedCode() { return m_formatter.data(); }
@@ -1946,7 +1969,20 @@ private:
         return (instruction[0] == OP_NOP_T2a) && (instruction[1] == OP_NOP_T2b);
     }
 
-    static bool canBeShortJump(const uint16_t* instruction, const void* target, bool& mayTriggerErrata)
+    static bool canBeJumpT2(const uint16_t* instruction, const void* target)
+    {
+        ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
+        ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
+        
+        intptr_t relative = reinterpret_cast<intptr_t>(target) - (reinterpret_cast<intptr_t>(instruction));
+        // It does not appear to be documented in the ARM ARM (big surprise), but
+        // for OP_B_T2 the branch displacement encoded in the instruction is 2 
+        // less than the actual displacement.
+        relative -= 2;
+        return ((relative << 20) >> 20) == relative;
+    }
+    
+    static bool canBeJumpT4(const uint16_t* instruction, const void* target, bool& mayTriggerErrata)
     {
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
         ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
@@ -1967,12 +2003,12 @@ private:
         return ((relative << 7) >> 7) == relative && !wouldTriggerA8Errata;
     }
 
-    static void linkLongJump(uint16_t* instruction, void* target)
+    static void linkBX(uint16_t* instruction, void* target)
     {
         linkJumpAbsolute(instruction, target);
     }
     
-    static void linkShortJump(uint16_t* instruction, void* target)
+    static void linkJumpT4(uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(        
         ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
@@ -1981,7 +2017,7 @@ private:
         intptr_t relative = reinterpret_cast<intptr_t>(target) - (reinterpret_cast<intptr_t>(instruction));
         bool scratch;
         UNUSED_PARAM(scratch);
-        ASSERT(canBeShortJump(instruction, target, scratch));
+        ASSERT(canBeJumpT4(instruction, target, scratch));
         // ARM encoding for the top two bits below the sign bit is 'peculiar'.
         if (relative >= 0)
             relative ^= 0xC00000;
@@ -1992,6 +2028,24 @@ private:
         instruction[-1] = OP_B_T4b | ((relative & 0x800000) >> 10) | ((relative & 0x400000) >> 11) | ((relative & 0xffe) >> 1);
     }
 
+    static void linkJumpT2(uint16_t* instruction, void* target)
+    {
+        // FIMXE: this should be up in the MacroAssembler layer. :-(        
+        ASSERT(!(reinterpret_cast<intptr_t>(instruction) & 1));
+        ASSERT(!(reinterpret_cast<intptr_t>(target) & 1));
+        ASSERT(canBeJumpT2(instruction, target));
+        
+        intptr_t relative = reinterpret_cast<intptr_t>(target) - (reinterpret_cast<intptr_t>(instruction));
+        // It does not appear to be documented in the ARM ARM (big surprise), but
+        // for OP_B_T2 the branch displacement encoded in the instruction is 2 
+        // less than the actual displacement.
+        relative -= 2;
+        
+        // All branch offsets should be an even distance.
+        ASSERT(!(relative & 1));
+        instruction[-1] = OP_B_T2 | ((relative & 0xffe) >> 1);
+    }
+    
     static void linkJumpAbsolute(uint16_t* instruction, void* target)
     {
         // FIMXE: this should be up in the MacroAssembler layer. :-(
@@ -2003,7 +2057,7 @@ private:
 
         intptr_t relative = reinterpret_cast<intptr_t>(target) - (reinterpret_cast<intptr_t>(instruction));
         bool scratch;
-        if (canBeShortJump(instruction, target, scratch)) {
+        if (canBeJumpT4(instruction, target, scratch)) {
             // ARM encoding for the top two bits below the sign bit is 'peculiar'.
             if (relative >= 0)
                 relative ^= 0xC00000;

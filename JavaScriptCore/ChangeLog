@@ -1,3 +1,21 @@
+2010-10-04  David Goodwin  <david_goodwin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        ARMv7 JIT should take advantage of 2-byte branches to reduce code size
+        https://bugs.webkit.org/show_bug.cgi?id=47007
+
+        * assembler/ARMv7Assembler.cpp:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::computeJumpType):
+        (JSC::ARMv7Assembler::link):
+        (JSC::ARMv7Assembler::canBeJumpT2):
+        (JSC::ARMv7Assembler::canBeJumpT4):
+        (JSC::ARMv7Assembler::linkBX):
+        (JSC::ARMv7Assembler::linkJumpT4):
+        (JSC::ARMv7Assembler::linkJumpT2):
+        (JSC::ARMv7Assembler::linkJumpAbsolute):
+
 2010-10-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.
