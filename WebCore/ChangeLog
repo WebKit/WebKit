@@ -1,5 +1,14 @@
 2010-10-05  Chris Marrin  <cmarrin@apple.com>
 
+        Unreviewed.
+
+        The platform/graphics/gpu folder was mistakenly inside the filters folder.
+        I moved it to the right place in the Group Tree.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2010-10-05  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Adam Roben.
 
         Fix ownership of GraphicsContext3D in SharedGraphicsContext3D to prevent early deallocation and crash
