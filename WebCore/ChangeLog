@@ -1,3 +1,16 @@
+2010-10-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix ownership of GraphicsContext3D in SharedGraphicsContext3D to prevent early deallocation and crash
+        https://bugs.webkit.org/show_bug.cgi?id=47197
+
+        This is work in progress and the crash only happens with ACCELERATED_2D_CANVAS turned on (which is off
+        by default). Many existing test cases will crash before and after this patch.
+
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+
 2010-10-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

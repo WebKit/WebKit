@@ -55,7 +55,7 @@ PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* 
     OwnPtr<GraphicsContext3D> context = GraphicsContext3D::create(attr, hostWindow);
     if (!context)
         return 0;
-    return adoptRef(new SharedGraphicsContext3D(context.get()));
+    return adoptRef(new SharedGraphicsContext3D(context.release()));
 }
 
 SharedGraphicsContext3D::SharedGraphicsContext3D(PassOwnPtr<GraphicsContext3D> context)
