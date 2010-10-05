@@ -1,5 +1,21 @@
 2010-10-05  Chris Rogers  <crogers@google.com>
 
+        Reviewed by Kenneth Russell.
+
+        Add BiquadDSPKernel files
+        https://bugs.webkit.org/show_bug.cgi?id=46528
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/BiquadDSPKernel.cpp: Added.
+        (WebCore::BiquadDSPKernel::process):
+        * webaudio/BiquadDSPKernel.h: Added.
+        (WebCore::BiquadDSPKernel::BiquadDSPKernel):
+        (WebCore::BiquadDSPKernel::reset):
+        (WebCore::BiquadDSPKernel::biquadProcessor):
+
+2010-10-05  Chris Rogers  <crogers@google.com>
+
         Reviewed by James Robinson.
 
         Fix AudioContext to use new HRTFDatabaseLoader API
