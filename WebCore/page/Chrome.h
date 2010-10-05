@@ -51,9 +51,9 @@ namespace WebCore {
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
 #endif
-    class ViewportArguments;
 
     struct FrameLoadRequest;
+    struct ViewportArguments;
     struct WindowFeatures;
     
     class Chrome : public HostWindow {

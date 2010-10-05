@@ -1,3 +1,13 @@
+2010-10-05  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix clang build
+        https://bugs.webkit.org/show_bug.cgi?id=47198
+
+        * page/Chrome.h:
+        Declare ViewportArguments as struct, not as class.
+
 2010-10-05  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Sam Weinig.
