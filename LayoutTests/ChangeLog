@@ -1,5 +1,19 @@
 2010-10-05  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, updating chromium linux baselines after landing r69126
+        which changed how really short scrollbars are painted.
+
+        * platform/chromium-linux/fast/frames/invalid-expected.checksum:
+        * platform/chromium-linux/fast/frames/invalid-expected.png:
+        * platform/chromium-linux/fast/frames/valid-expected.checksum:
+        * platform/chromium-linux/fast/frames/valid-expected.png:
+        * platform/chromium-linux/fast/replaced/width100percent-textarea-expected.checksum:
+        * platform/chromium-linux/fast/replaced/width100percent-textarea-expected.png:
+        * platform/chromium-linux/fast/text/drawBidiText-expected.checksum:
+        * platform/chromium-linux/fast/text/drawBidiText-expected.png:
+
+2010-10-05  Tony Chang  <tony@chromium.org>
+
         Reviewed by Kent Tamura.
 
         [chromium] properly paint really small scrollbar arrows on linux
