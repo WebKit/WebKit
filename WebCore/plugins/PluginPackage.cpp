@@ -206,8 +206,8 @@ void PluginPackage::determineQuirks(const String& mimeType)
             m_quirks.add(PluginQuirkWantsMozillaUserAgent);
         }
 
-#if PLATFORM(QT) && CPU(X86)
-        // 32-bit Flash will crash on repeated calls to SetWindow in windowed mode
+#if PLATFORM(QT)
+        // Flash will crash on repeated calls to SetWindow in windowed mode
         m_quirks.add(PluginQuirkDontCallSetWindowMoreThanOnce);
 #endif
 
