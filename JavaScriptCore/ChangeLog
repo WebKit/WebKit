@@ -1,3 +1,15 @@
+2010-10-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Use fast malloc for WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=46691
+
+        Use fast malloc for WebKit EFL because the fast malloc is to allocate
+        memory quickly.
+
+        * wtf/CMakeListsEfl.txt:
+
 2010-10-04  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
