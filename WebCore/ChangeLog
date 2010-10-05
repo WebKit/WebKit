@@ -1,3 +1,16 @@
+2010-10-05  Kristian Monsen  <kristianm@google.com>
+
+        Reviewed by Steve Block.
+
+        Including JavaScriptCore/config.h from WebCore/config.h
+        instead of from WebCorePrefix.h.
+        https://bugs.webkit.org/show_bug.cgi?id=47179
+
+        No new tests, just changing where files are included.
+
+        * WebCorePrefix.h:
+        * config.h:
+
 2010-10-05  Jakob Petsovits  <jpetsovits@rim.com>
 
         Reviewed by Andreas Kling.

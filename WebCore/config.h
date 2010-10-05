@@ -80,6 +80,12 @@
 #endif /* OS(WINDOWS) */
 
 #if PLATFORM(ANDROID)
+// Android uses a single set of include directories when building WebKit and
+// JavaScriptCore. Since WebCore/ is included before JavaScriptCore/, Android
+// includes JavaScriptCore/config.h explicitly here to make sure it gets picked
+// up.
+#include <JavaScriptCore/config.h>
+
 #define WEBCORE_NAVIGATOR_VENDOR "Google Inc."
 // This must be defined before we include FastMalloc.h, below.
 #define USE_SYSTEM_MALLOC 1
