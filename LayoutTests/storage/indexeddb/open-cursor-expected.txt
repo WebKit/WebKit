@@ -41,24 +41,8 @@ PASS event.target.readyState is event.target.DONE
 
 trans = event.result
 PASS trans !== null is true
-db.createObjectStore('test')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-objectStore = event.result
+Deleted all object stores.
+objectStore = db.createObjectStore('test')
 objectStore.add('myValue', 'myKey')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -66,7 +50,7 @@ PASS 'readyState' in result is true
 An event should fire shortly...
 
 Opening cursor
-objectStore.openCursor(keyRange)
+event.source.openCursor(keyRange)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true

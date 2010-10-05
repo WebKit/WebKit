@@ -50,6 +50,15 @@ IDBIndexBackendImpl::IDBIndexBackendImpl(IDBObjectStoreBackendImpl* objectStore,
 {
 }
 
+IDBIndexBackendImpl::IDBIndexBackendImpl(IDBObjectStoreBackendImpl* objectStore, const String& name, const String& keyPath, bool unique)
+    : m_objectStore(objectStore)
+    , m_id(InvalidId)
+    , m_name(name)
+    , m_keyPath(keyPath)
+    , m_unique(unique)
+{
+}
+
 IDBIndexBackendImpl::~IDBIndexBackendImpl()
 {
 }

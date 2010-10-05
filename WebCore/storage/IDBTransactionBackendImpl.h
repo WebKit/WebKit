@@ -54,7 +54,6 @@ public:
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
 
     void run();
-    bool isFinished() const { return m_state == Finished; }
 
 private:
     IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
@@ -69,7 +68,8 @@ private:
     void start();
     void commit();
 
-    void timerFired(Timer<IDBTransactionBackendImpl>*);
+    void taskTimerFired(Timer<IDBTransactionBackendImpl>*);
+    void taskEventTimerFired(Timer<IDBTransactionBackendImpl>*);
 
     RefPtr<DOMStringList> m_objectStoreNames;
     unsigned short m_mode;
@@ -86,7 +86,8 @@ private:
     OwnPtr<SQLiteTransaction> m_transaction;
 
     // FIXME: delete the timer once we have threads instead.
-    Timer<IDBTransactionBackendImpl> m_timer;
+    Timer<IDBTransactionBackendImpl> m_taskTimer;
+    Timer<IDBTransactionBackendImpl> m_taskEventTimer;
     int m_pendingEvents;
 };
 

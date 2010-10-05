@@ -41,33 +41,18 @@ function deleteExisting()
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    deleteAllObjectStores(db, createObjectStore);
-}
-
-function createObjectStore()
-{
-    result = evalAndLog("db.createObjectStore('storeName', null)");
-    verifyResult(result);
-    result.onsuccess = createIndex;
-    result.onerror = unexpectedErrorCallback;
+    deleteAllObjectStores(db, createIndex);
 }
 
 function createIndex()
 {
-    verifySuccessEvent(event);
-    window.store = evalAndLog("store = event.result");
-
-    result = evalAndLog("event.result.createIndex('indexName', 'x')");
-    verifyResult(result);
-    result.onsuccess = addData;
-    result.onerror = unexpectedErrorCallback;
+    window.store = evalAndLog("db.createObjectStore('storeName', null)");
+    window.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
+    addData();
 }
 
 function addData()
 {
-    verifySuccessEvent(event);
-    shouldBeFalse("event.result === null");
-    window.indexObject = evalAndLog("indexObject = event.result");
     shouldBeTrue("'name' in indexObject");
     shouldBeEqualToString("indexObject.name", "indexName");
     shouldBeTrue("'storeName' in indexObject");
@@ -81,7 +66,7 @@ function addData()
     shouldBeTrue("'getObject' in indexObject");
     shouldBeTrue("'get' in indexObject");
 
-    result = evalAndLog("event.source.add({x: 'value', y: 'zzz'}, 'key')");
+    result = evalAndLog("store.add({x: 'value', y: 'zzz'}, 'key')");
     verifyResult(result);
     result.onsuccess = addMore;
     result.onerror = unexpectedErrorCallback;

@@ -37,9 +37,12 @@ module storage {
         [CallWith=ScriptExecutionContext] IDBRequest add(in SerializedScriptValue value, in [Optional] IDBKey key);
         [CallWith=ScriptExecutionContext] IDBRequest put(in SerializedScriptValue value, in [Optional] IDBKey key);
         [CallWith=ScriptExecutionContext] IDBRequest remove(in IDBKey key);
-        [CallWith=ScriptExecutionContext] IDBRequest createIndex(in DOMString name, in [ConvertNullToNullString] DOMString keyPath, in [Optional] boolean unique);
+        // FIXME: write openCursor
+        IDBIndex createIndex(in DOMString name, in [ConvertNullToNullString] DOMString keyPath, in [Optional] boolean unique);
+        // FIXME: This needs to raise an IDBDatabaseException on errors.
         IDBIndex index(in DOMString name);
-        [CallWith=ScriptExecutionContext] IDBRequest removeIndex(in DOMString name);
+        void removeIndex(in DOMString name);
+
         [CallWith=ScriptExecutionContext] IDBRequest openCursor(in [Optional] IDBKeyRange range, in [Optional] unsigned short direction);
     };
 }

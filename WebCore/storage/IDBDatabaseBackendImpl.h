@@ -55,9 +55,9 @@ public:
     virtual String version() const { return m_version; }
     virtual PassRefPtr<DOMStringList> objectStores() const;
 
-    virtual void createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface*);
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, unsigned short mode);
-    virtual void removeObjectStore(const String& name, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual void removeObjectStore(const String& name, IDBTransactionBackendInterface*);
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>);
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout);
     virtual void close();
@@ -69,8 +69,8 @@ private:
 
     void loadObjectStores();
 
-    static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks>);
-    static void removeObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& name, PassRefPtr<IDBCallbacks>);
+    static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
+    static void removeObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
     static void setVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
 
     OwnPtr<SQLiteDatabase> m_sqliteDatabase;

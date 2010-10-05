@@ -1,3 +1,60 @@
+2010-10-04  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBDatabase::createObjectStore/removeObjectStore and IDBObjectStore::createIndex/removeIndex should be synchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=46883
+
+        Makes the schema manipulation methods synchronous. Modifies the transaction
+        logic to support tasks that may have pending events as well as tasks that
+        don't have such events.
+
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::removeObjectStore):
+        * storage/IDBDatabase.h:
+        * storage/IDBDatabase.idl:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStoreInternal):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStoreInternal):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBDatabaseBackendInterface.h:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::IDBIndexBackendImpl):
+        * storage/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::create):
+        (WebCore::IDBIndexBackendImpl::id):
+        (WebCore::IDBIndexBackendImpl::setId):
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex):
+        (WebCore::IDBObjectStore::removeIndex):
+        * storage/IDBObjectStore.h:
+        * storage/IDBObjectStore.idl:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndex):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndexInternal):
+        * storage/IDBObjectStoreBackendImpl.h:
+        (WebCore::IDBObjectStoreBackendImpl::create):
+        (WebCore::IDBObjectStoreBackendImpl::id):
+        (WebCore::IDBObjectStoreBackendImpl::setId):
+        (WebCore::IDBObjectStoreBackendImpl::autoIncrement):
+        * storage/IDBObjectStoreBackendInterface.h:
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::objectStore):
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::didCompleteTaskEvents):
+        (WebCore::IDBTransactionBackendImpl::run):
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired):
+        (WebCore::IDBTransactionBackendImpl::taskEventTimerFired):
+        * storage/IDBTransactionBackendImpl.h:
+
 2010-10-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

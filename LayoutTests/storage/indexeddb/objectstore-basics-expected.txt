@@ -42,25 +42,9 @@ PASS event.target.readyState is event.target.DONE
 
 trans = event.result
 PASS trans !== null is true
-db.createObjectStore('storeName', null)
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-createSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-store = event.result
+Deleted all object stores.
+creatObjectStore():
+store = db.createObjectStore('storeName', null)
 storeNames = db.objectStores
 PASS store.name is "storeName"
 PASS store.keyPath is null
@@ -69,34 +53,18 @@ PASS storeNames.length is 1
 Ask for a store that doesn't exist:
 index = store.index('asdf')
 PASS index is null
-FAIL Asking for a store that doesn't exist should have thrown.
-event.result.createIndex('indexName', 'x', true)
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-addIndexSuccess():
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-PASS event.result !== null is true
-PASS event.source.indexNames.contains('indexName') is true
-index = event.source.index('indexName')
+PASS index is null
+createIndex():
+store.createIndex('indexName', 'x', true)
+PASS index !== null is true
+PASS store.indexNames.contains('indexName') is true
+index = store.index('indexName')
 PASS index !== null is true
 Ask for a store that doesn't exist:
 index = store.index('asdf')
 PASS index is null
-FAIL Asking for a store that doesn't exist should have thrown.
-event.source.add({x: 'value'}, 'key')
+PASS index is null.
+store.add({x: 'value'}, 'key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true

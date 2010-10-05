@@ -51,9 +51,9 @@ public:
     void put(const WebSerializedScriptValue&, const WebIDBKey& key, bool addOnly, WebIDBCallbacks*, const WebIDBTransaction&);
     void remove(const WebIDBKey& key, WebIDBCallbacks*, const WebIDBTransaction&);
 
-    void createIndex(const WebString& name, const WebString& keyPath, bool unique, WebIDBCallbacks*, const WebIDBTransaction&);
+    WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction&);
     WebIDBIndex* index(const WebString& name);
-    void removeIndex(const WebString& name, WebIDBCallbacks*, const WebIDBTransaction&);
+    void removeIndex(const WebString& name, const WebIDBTransaction&);
 
     void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&);
 

@@ -55,26 +55,18 @@ void IDBDatabase::setSetVersionTransaction(IDBTransactionBackendInterface* trans
     m_setVersionTransaction = transaction;
 }
 
-// FIXME: Should be synchronous.
-PassRefPtr<IDBRequest> IDBDatabase::createObjectStore(ScriptExecutionContext* context, const String& name, const String& keyPath, bool autoIncrement)
+PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const String& keyPath, bool autoIncrement)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_setVersionTransaction.get());
-    if (!m_setVersionTransaction)
-        request->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "createObjectStore must be called from within a setVersion transaction."));
-    else
-        m_backend->createObjectStore(name, keyPath, autoIncrement, request, m_setVersionTransaction.get());
-    return request;
+    // FIXME: Raise a NOT_ALLOWED_ERR if m_setVersionTransaction is 0.
+    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_setVersionTransaction.get());
+    if (!objectStore)
+        return 0;
+    return IDBObjectStore::create(objectStore.release(), m_setVersionTransaction.get());
 }
 
-// FIXME: Should be synchronous.
-PassRefPtr<IDBRequest> IDBDatabase::removeObjectStore(ScriptExecutionContext* context, const String& name)
+void IDBDatabase::removeObjectStore(const String& name)
 {
-    RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_setVersionTransaction.get());
-    if (!m_setVersionTransaction)
-        request->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "removeObjectStore must be called from within a setVersion transaction."));
-    else
-        m_backend->removeObjectStore(name, request, m_setVersionTransaction.get());
-    return request;
+    m_backend->removeObjectStore(name, m_setVersionTransaction.get());
 }
 
 PassRefPtr<IDBRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version)

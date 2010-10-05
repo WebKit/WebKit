@@ -40,53 +40,9 @@ PASS event.target.readyState is event.target.DONE
 
 trans = event.result
 PASS trans !== null is true
+Deleted all object stores.
 db.createObjectStore('someObjectStore')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-objectStore = event.result
 objectStore.createIndex('someIndex', 'x')
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
-indexObject = event.result
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
 objectStore.add({'x': testData[nextToAdd]}, nextToAdd)
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

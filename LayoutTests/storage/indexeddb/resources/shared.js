@@ -79,15 +79,12 @@ function unexpectedAbortCallback()
     done();
 }
 
+// FIXME: remove the onfinished parameter.
 function deleteAllObjectStores(db, onfinished)
 {
-    objectStores = db.objectStores;
-    if (!objectStores.length) {
-        onfinished();
-        return;
-    }
+    for (i = 0; i < db.objectStores.length; ++i)
+        db.removeObjectStore(db.objectStores.item(i));
 
-    var request = db.removeObjectStore(objectStores[0]);
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() { deleteAllObjectStores(db, onfinished); };
+    debug("Deleted all object stores.");
+    onfinished();
 }

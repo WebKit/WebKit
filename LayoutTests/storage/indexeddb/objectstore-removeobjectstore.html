@@ -39,22 +39,13 @@ function deleteExisting()
     window.trans = evalAndLog("trans = event.result");
     shouldBeTrue("trans !== null");
 
-    deleteAllObjectStores(db, createObjectStore);
+    deleteAllObjectStores(db, createObjectStoreAndAddValue);
 }
 
-function createObjectStore()
+function createObjectStoreAndAddValue()
 {
-    result = evalAndLog("db.createObjectStore('storeName', null)");
-    verifyResult(result);
-    result.onsuccess = addValue;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function addValue()
-{
-    verifySuccessEvent(event);
-
-    result = evalAndLog("event.result.add('value', 'key')");
+    var store = evalAndLog("store = db.createObjectStore('storeName', null)");
+    result = evalAndLog("store.add('value', 'key')");
     verifyResult(result);
     result.onsuccess = getValue;
     result.onerror = unexpectedErrorCallback;
@@ -79,15 +70,7 @@ function addIndex()
     verifySuccessEvent(event);
     shouldBeEqualToString("event.result", "value");
 
-    result = evalAndLog("event.source.createIndex('indexName', '')");
-    verifyResult(result);
-    result.onsuccess = commitTransaction;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function commitTransaction()
-{
-    verifySuccessEvent(event);
+    window.index = evalAndLog("event.source.createIndex('indexName', '')");
     shouldBeTrue("event.source.indexNames.contains('indexName')");
     // Let the transaction commit.
     window.setTimeout('secondSetVersion()', 0);
@@ -108,26 +91,18 @@ function removeObjectStore()
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    result = evalAndLog("db.removeObjectStore('storeName')");
-    verifyResult(result);
-    result.onsuccess = createObjectStoreAgain;
-    result.onerror = unexpectedErrorCallback;
+    evalAndLog("db.removeObjectStore('storeName')");
+    createObjectStoreAgain();
 }
 
 function createObjectStoreAgain()
 {
-    verifySuccessEvent(event);
-
-    result = evalAndLog("db.createObjectStore('storeName', null)");
-    verifyResult(result);
-    result.onsuccess = getValueAgain;
-    result.onerror = unexpectedErrorCallback;
+    evalAndLog("db.createObjectStore('storeName', null)");
+    getValueAgain();
 }
 
 function getValueAgain()
 {
-    verifySuccessEvent(event);
-
     transaction = evalAndLog("db.transaction()");
     transaction.onabort = unexpectedErrorCallback;
     var store = evalAndLog("store = transaction.objectStore('storeName')");

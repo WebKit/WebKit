@@ -50,7 +50,7 @@ function testSetVersion()
     result = evalAndLog('db.setVersion("version a")');
     verifyResult(result);
     result.onsuccess = setVersionAgain;
-    result.onError = unexpectedErrorCallback;
+    result.onerror = unexpectedErrorCallback;
 }
 
 function setVersionAgain()
@@ -60,7 +60,7 @@ function setVersionAgain()
     result = evalAndLog('db.setVersion("version b")');
     verifyResult(result);
     result.onsuccess = createObjectStore;
-    result.onError = unexpectedErrorCallback;
+    result.onerror = unexpectedErrorCallback;
 }
 
 function createObjectStore()
@@ -72,15 +72,12 @@ function createObjectStore()
     shouldBe("db.objectStores.length", "0");
     shouldBe("db.objectStores.contains('')", "false");
 
-    result = evalAndLog('db.createObjectStore("test123")');
-    verifyResult(result);
-    result.onsuccess = checkObjectStore;
-    result.onError = unexpectedErrorCallback;
+    objectStore = evalAndLog('db.createObjectStore("test123")');
+    checkObjectStore(objectStore);
 }
 
-function checkObjectStore()
+function checkObjectStore(objectStore)
 {
-    verifySuccessEvent(event);
     shouldBe("db.objectStores", "['test123']");
     shouldBe("db.objectStores.length", "1");
     shouldBe("db.objectStores.contains('')", "false");

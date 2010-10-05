@@ -41,6 +41,7 @@ PASS event.target.readyState is event.target.DONE
 
 trans = event.result
 PASS trans !== null is true
+Deleted all object stores.
 Testing setVersion.
 db.setVersion("version a")
 PASS 'onsuccess' in result is true
@@ -82,22 +83,6 @@ PASS db.objectStores is []
 PASS db.objectStores.length is 0
 PASS db.objectStores.contains('') is false
 db.createObjectStore("test123")
-PASS 'onsuccess' in result is true
-PASS 'onerror' in result is true
-PASS 'readyState' in result is true
-An event should fire shortly...
-
-Success event fired:
-PASS 'result' in event is true
-PASS 'code' in event is false
-PASS 'message' in event is false
-PASS 'source' in event is true
-PASS event.source != null is true
-PASS 'onsuccess' in event.target is true
-PASS 'onerror' in event.target is true
-PASS 'readyState' in event.target is true
-PASS event.target.readyState is event.target.DONE
-
 PASS db.objectStores is ['test123']
 PASS db.objectStores.length is 1
 PASS db.objectStores.contains('') is false

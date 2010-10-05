@@ -1,3 +1,33 @@
+2010-10-04  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBDatabase::createObjectStore/removeObjectStore and IDBObjectStore::createIndex/removeIndex should be synchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=46883
+
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createObjectStore):
+        (WebKit::WebIDBDatabase::removeObjectStore):
+        * public/WebIDBObjectStore.h:
+        (WebKit::WebIDBObjectStore::createIndex):
+        (WebKit::WebIDBObjectStore::removeIndex):
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::createObjectStore):
+        (WebCore::IDBDatabaseProxy::removeObjectStore):
+        * src/IDBDatabaseProxy.h:
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::createIndex):
+        (WebCore::IDBObjectStoreProxy::removeIndex):
+        * src/IDBObjectStoreProxy.h:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::createObjectStore):
+        (WebKit::WebIDBDatabaseImpl::removeObjectStore):
+        * src/WebIDBDatabaseImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::createIndex):
+        (WebKit::WebIDBObjectStoreImpl::removeIndex):
+        * src/WebIDBObjectStoreImpl.h:
+
 2010-10-04  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

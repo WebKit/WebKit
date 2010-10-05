@@ -47,30 +47,22 @@ function setVersionSuccess()
     trans.oncomplete = completeCallback;
     window.completeEventFired = false;
 
-    deleteAllObjectStores(db, finishedDeleting);
+    deleteAllObjectStores(db, createObjectStoreAndStartTransaction);
+}
+
+function createObjectStoreAndStartTransaction()
+{
+    evalAndLog("db.createObjectStore('storeName', null)");
+    transaction = evalAndLog("db.transaction()");
+    transaction.onabort = abortCallback;
+    var store = evalAndLog("store = transaction.objectStore('storeName')");
+    shouldBeEqualToString("store.name", "storeName");
 }
 
 function completeCallback()
 {
     verifyCompleteEvent(event);
     window.completeEventFired = true;
-}
-
-function finishedDeleting()
-{
-    result = evalAndLog("db.createObjectStore('storeName', null)");
-    verifyResult(result);
-    result.onsuccess = createSuccess;
-    result.onerror = unexpectedErrorCallback;
-}
-
-function createSuccess()
-{
-    verifySuccessEvent(event);
-    transaction = evalAndLog("db.transaction()");
-    transaction.onabort = abortCallback;
-    var store = evalAndLog("store = transaction.objectStore('storeName')");
-    shouldBeEqualToString("store.name", "storeName");
 }
 
 function abortCallback()

@@ -63,9 +63,9 @@ public:
     PassRefPtr<IDBRequest> put(ScriptExecutionContext*, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key = 0);
     PassRefPtr<IDBRequest> remove(ScriptExecutionContext*, PassRefPtr<IDBKey> key);
 
-    PassRefPtr<IDBRequest> createIndex(ScriptExecutionContext*, const String& name, const String& keyPath, bool unique = false);
+    PassRefPtr<IDBIndex> createIndex(const String& name, const String& keyPath, bool unique = false);
     PassRefPtr<IDBIndex> index(const String& name);
-    PassRefPtr<IDBRequest> removeIndex(ScriptExecutionContext*, const String& name);
+    void removeIndex(const String& name);
 
     PassRefPtr<IDBRequest> openCursor(ScriptExecutionContext*, PassRefPtr<IDBKeyRange> = 0, unsigned short direction = IDBCursor::NEXT);
 

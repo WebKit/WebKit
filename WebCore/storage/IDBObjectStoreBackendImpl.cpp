@@ -62,6 +62,15 @@ IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl* dat
     loadIndexes();
 }
 
+IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl* database, const String& name, const String& keyPath, bool autoIncrement)
+    : m_database(database)
+    , m_id(InvalidId)
+    , m_name(name)
+    , m_keyPath(keyPath)
+    , m_autoIncrement(autoIncrement)
+{
+}
+
 PassRefPtr<DOMStringList> IDBObjectStoreBackendImpl::indexNames() const
 {
     RefPtr<DOMStringList> indexNames = DOMStringList::create();
@@ -254,36 +263,39 @@ void IDBObjectStoreBackendImpl::removeInternal(ScriptExecutionContext*, PassRefP
     callbacks->onSuccess();
 }
 
-void IDBObjectStoreBackendImpl::createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction)
+PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface* transaction)
 {
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::createIndexInternal, objectStore, name, keyPath, unique, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "createIndex must be called in the context of a transaction."));
-}
-
-void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks> callbacks)
-{
-    if (objectStore->m_indexes.contains(name)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Index name already exists."));
-        return;
+    if (m_indexes.contains(name)) {
+        // FIXME: Raise CONSTRAINT_ERR.
+        return 0;
     }
 
+    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(this, name, keyPath, unique);
+    ASSERT(index->name() == name);
+    m_indexes.set(name, index);
+
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
+    RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
+    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::createIndexInternal, objectStore, index, transaction)))
+        return 0;
+
+    return index.release();
+}
+
+void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendInterface> transaction)
+{
     SQLiteStatement insert(objectStore->sqliteDatabase(), "INSERT INTO Indexes (objectStoreId, name, keyPath, isUnique) VALUES (?, ?, ?, ?)");
     bool ok = insert.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
     insert.bindInt64(1, objectStore->m_id);
-    insert.bindText(2, name);
-    insert.bindText(3, keyPath);
-    insert.bindInt(4, static_cast<int>(unique));
+    insert.bindText(2, index->name());
+    insert.bindText(3, index->keyPath());
+    insert.bindInt(4, static_cast<int>(index->unique()));
     ok = insert.step() == SQLResultDone;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
     int64_t id = objectStore->sqliteDatabase().lastInsertRowID();
-
-    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(objectStore.get(), id, name, keyPath, unique);
-    ASSERT(index->name() == name);
-    objectStore->m_indexes.set(name, index);
-    callbacks->onSuccess(index.get());
+    index->setId(id);
+    transaction->didCompleteTaskEvents();
 }
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::index(const String& name)
@@ -301,27 +313,26 @@ static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
 }
 
-void IDBObjectStoreBackendImpl::removeIndex(const String& name, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction)
+void IDBObjectStoreBackendImpl::removeIndex(const String& name, IDBTransactionBackendInterface* transaction)
 {
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::removeIndexInternal, objectStore, name, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "createIndex must be called in the context of a transaction."));
-}
-
-void IDBObjectStoreBackendImpl::removeIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, const String& name, PassRefPtr<IDBCallbacks> callbacks)
-{
-    RefPtr<IDBIndexBackendImpl> index = objectStore->m_indexes.get(name);
+    RefPtr<IDBIndexBackendImpl> index = m_indexes.get(name);
     if (!index) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "Index name does not exist."));
+        // FIXME: Raise NOT_FOUND_ERR.
         return;
     }
+    m_indexes.remove(name);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
+    RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
+    transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::removeIndexInternal, objectStore, index, transactionPtr));
+    // FIXME: Raise NOT_ALLOWED_ERR if the above statement fails.
+}
 
+void IDBObjectStoreBackendImpl::removeIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendInterface> transaction)
+{
     doDelete(objectStore->sqliteDatabase(), "DELETE FROM Indexes WHERE id = ?", index->id());
     doDelete(objectStore->sqliteDatabase(), "DELETE FROM IndexData WHERE indexId = ?", index->id());
 
-    objectStore->m_indexes.remove(name);
-    callbacks->onSuccess();
+    transaction->didCompleteTaskEvents();
 }
 
 void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr)

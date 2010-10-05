@@ -1,3 +1,29 @@
+2010-10-04  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBDatabase::createObjectStore/removeObjectStore and IDBObjectStore::createIndex/removeIndex should be synchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=46883
+
+        * storage/indexeddb/database-basics-expected.txt:
+        * storage/indexeddb/database-basics.html:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics.html:
+        * storage/indexeddb/index-cursor-expected.txt:
+        * storage/indexeddb/index-cursor.html:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics.html:
+        * storage/indexeddb/objectstore-cursor-expected.txt:
+        * storage/indexeddb/objectstore-cursor.html:
+        * storage/indexeddb/objectstore-removeobjectstore-expected.txt:
+        * storage/indexeddb/objectstore-removeobjectstore.html:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/open-cursor.html:
+        * storage/indexeddb/resources/shared.js:
+        (deleteAllObjectStores):
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-basics.html:
+
 2010-10-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

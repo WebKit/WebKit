@@ -46,20 +46,30 @@ public:
     {
         return adoptRef(new IDBObjectStoreBackendImpl(database, id, name, keyPath, autoIncrement));
     }
+    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBDatabaseBackendImpl* database, const String& name, const String& keyPath, bool autoIncrement)
+    {
+        return adoptRef(new IDBObjectStoreBackendImpl(database, name, keyPath, autoIncrement));
+    }
     ~IDBObjectStoreBackendImpl();
 
-    int64_t id() const { return m_id; }
+    int64_t id() const
+    {
+        ASSERT(m_id != InvalidId);
+        return m_id;
+    }
+    void setId(int64_t id) { m_id = id; }
     String name() const { return m_name; }
     String keyPath() const { return m_keyPath; }
     PassRefPtr<DOMStringList> indexNames() const;
+    bool autoIncrement() const { return m_autoIncrement; }
 
     void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
     void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
     void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
-    void createIndex(const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface*);
     PassRefPtr<IDBIndexBackendInterface> index(const String& name);
-    void removeIndex(const String& name, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    void removeIndex(const String& name, IDBTransactionBackendInterface*);
 
     void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
 
@@ -67,6 +77,7 @@ public:
 
 private:
     IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl*, int64_t id, const String& name, const String& keyPath, bool autoIncrement);
+    IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl*, const String& name, const String& keyPath, bool autoIncrement);
 
     void loadIndexes();
     SQLiteDatabase& sqliteDatabase() const;
@@ -74,9 +85,11 @@ private:
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
     static void putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>);
     static void removeInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>);
-    static void createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, const String& name, const String& keyPath, bool unique, PassRefPtr<IDBCallbacks>);
-    static void removeIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, const String& name, PassRefPtr<IDBCallbacks>);
+    static void createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
+    static void removeIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBTransactionBackendInterface>);
     static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendInterface>);
+
+    static const int64_t InvalidId = 0;
 
     RefPtr<IDBDatabaseBackendImpl> m_database;
 

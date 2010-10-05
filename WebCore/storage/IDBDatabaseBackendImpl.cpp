@@ -127,35 +127,38 @@ PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStores() const
     return objectStoreNames.release();
 }
 
-void IDBDatabaseBackendImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction)
+PassRefPtr<IDBObjectStoreBackendInterface>  IDBDatabaseBackendImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction)
 {
-    RefPtr<IDBDatabaseBackendImpl> database = this;
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::createObjectStoreInternal, database, name, keyPath, autoIncrement, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "createObjectStore must be called from within a setVersion transaction."));
-}
-
-void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& name, const String& keyPath, bool autoIncrement, PassRefPtr<IDBCallbacks> callbacks)
-{
-    if (database->m_objectStores.contains(name)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "An objectStore with that name already exists."));
-        return;
+    if (m_objectStores.contains(name)) {
+        // FIXME: Throw CONSTRAINT_ERR in this case.
+        return 0;
     }
 
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, name, keyPath, autoIncrement);
+    ASSERT(objectStore->name() == name);
+    m_objectStores.set(name, objectStore);
+
+    RefPtr<IDBDatabaseBackendImpl> database = this;
+    RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
+    if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::createObjectStoreInternal, database, objectStore, transactionPtr)))
+        return 0;
+
+    return objectStore.release();
+}
+
+void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore,  PassRefPtr<IDBTransactionBackendInterface> transaction)
+{
     SQLiteStatement insert(database->sqliteDatabase(), "INSERT INTO ObjectStores (name, keyPath, doAutoIncrement) VALUES (?, ?, ?)");
     bool ok = insert.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
-    insert.bindText(1, name);
-    insert.bindText(2, keyPath);
-    insert.bindInt(3, static_cast<int>(autoIncrement));
+    insert.bindText(1, objectStore->name());
+    insert.bindText(2, objectStore->keyPath());
+    insert.bindInt(3, static_cast<int>(objectStore->autoIncrement()));
     ok = insert.step() == SQLResultDone;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
     int64_t id = database->sqliteDatabase().lastInsertRowID();
-
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(database.get(), id, name, keyPath, autoIncrement);
-    ASSERT(objectStore->name() == name);
-    database->m_objectStores.set(name, objectStore);
-    callbacks->onSuccess(objectStore.get());
+    objectStore->setId(id);
+    transaction->didCompleteTaskEvents();
 }
 
 // FIXME: Do not expose this method via IDL.
@@ -176,29 +179,28 @@ static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
 }
 
-void IDBDatabaseBackendImpl::removeObjectStore(const String& name, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction)
+void IDBDatabaseBackendImpl::removeObjectStore(const String& name, IDBTransactionBackendInterface* transaction)
 {
-    RefPtr<IDBDatabaseBackendImpl> database = this;
-    RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::removeObjectStoreInternal, database, name, callbacks)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "removeObjectStore must be called from within a setVersion transaction."));
-}
-
-void IDBDatabaseBackendImpl::removeObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& name, PassRefPtr<IDBCallbacks> callbacks)
-{
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = database->m_objectStores.get(name);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
     if (!objectStore) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_FOUND_ERR, "No objectStore with that name exists."));
+        // FIXME: Raise NOT_FOUND_ERR.
         return;
     }
+    m_objectStores.remove(name);
+    RefPtr<IDBDatabaseBackendImpl> database = this;
+    RefPtr<IDBTransactionBackendInterface> transactionPtr = transaction;
+    transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::removeObjectStoreInternal, database, objectStore, transactionPtr));
+    // FIXME: Raise NOT_ALLOWED_ERR if the above fails.    
+}
 
+void IDBDatabaseBackendImpl::removeObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendInterface> transaction)
+{
     doDelete(database->sqliteDatabase(), "DELETE FROM ObjectStores WHERE id = ?", objectStore->id());
     doDelete(database->sqliteDatabase(), "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStore->id());
     doDelete(database->sqliteDatabase(), "DELETE FROM IndexData WHERE indexId IN (SELECT id FROM Indexes WHERE objectStoreId = ?)", objectStore->id());
     doDelete(database->sqliteDatabase(), "DELETE FROM Indexes WHERE objectStoreId = ?", objectStore->id());
 
-    database->m_objectStores.remove(name);
-    callbacks->onSuccess();
+    transaction->didCompleteTaskEvents();
 }
 
 void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCallbacks> prpCallbacks)

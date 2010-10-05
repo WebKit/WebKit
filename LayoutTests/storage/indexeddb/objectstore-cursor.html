@@ -52,30 +52,20 @@ function deleteExisting()
     shouldBeTrue("trans !== null");
     trans.onabort = unexpectedAbortCallback;
 
-    deleteAllObjectStores(db, openObjectStore);
-}
-
-function openObjectStore()
-{
-    result = evalAndLog("db.createObjectStore('someObjectStore')");
-    verifyResult(result);
-    result.onsuccess = startAddingData;
-    result.onerror = unexpectedErrorCallback;
+    deleteAllObjectStores(db, startAddingData);
 }
  
 function startAddingData()
 {
-    verifySuccessEvent(event);
-    window.objectStore = evalAndLog("objectStore = event.result");
-
+    window.objectStore = evalAndLog("db.createObjectStore('someObjectStore')");
     window.nextToAdd = 0;
     addData();
 }
 
 function addData()
 {
-    // We cheat when called for the first time; we're in the context of the objectStore success event.
-    verifySuccessEvent(event);
+    if (window.nextToAdd > 0)
+        verifySuccessEvent(event);
 
     result = evalAndLog("objectStore.add('', testData[nextToAdd])");
     verifyResult(result);
