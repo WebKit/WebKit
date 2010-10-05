@@ -1,3 +1,14 @@
+2010-10-04  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Prevent an assertion failure when trying to create a protection space
+        for file/data URLs.
+
+        Reviewed by Sam Weinig.
+
+        * WebURLProtectionSpace.cpp:
+        (WebURLProtectionSpace::initWithHost):
+        Remove the ASSERT_NOT_REACHED().
+
 2010-10-05  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.
