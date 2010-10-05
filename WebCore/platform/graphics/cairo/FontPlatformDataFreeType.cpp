@@ -98,6 +98,7 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     , m_size(fontDescription.computedPixelSize())
     , m_syntheticBold(false)
     , m_syntheticOblique(false)
+    , m_fixedWidth(false)
 {
     cairo_font_options_t* options = cairo_font_options_create();
     setCairoFontOptionsFromFontConfigPattern(options, pattern);
@@ -109,6 +110,10 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
 
     PlatformRefPtr<cairo_font_face_t> fontFace = adoptPlatformRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
     m_scaledFont = adoptPlatformRef(cairo_scaled_font_create(fontFace.get(), &fontMatrix, &ctm, options));
+
+    int spacing;
+    if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
+        m_fixedWidth = true;
 }
 
 FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
@@ -116,6 +121,7 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
     , m_size(size)
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
+    , m_fixedWidth(false)
 {
 }
 
@@ -143,6 +149,12 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
         options = defaultOptions;
 
     m_scaledFont = adoptPlatformRef(cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options));
+
+    FT_Face fontConfigFace = cairo_ft_scaled_font_lock_face(m_scaledFont.get());
+    if (fontConfigFace) {
+        m_fixedWidth = fontConfigFace->face_flags && FT_FACE_FLAG_FIXED_WIDTH;
+        cairo_ft_scaled_font_unlock_face(m_scaledFont.get());
+    }
 }
 
 FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
@@ -154,6 +166,7 @@ FontPlatformData& FontPlatformData::operator=(const FontPlatformData& other)
     m_size = other.m_size;
     m_syntheticBold = other.m_syntheticBold;
     m_syntheticOblique = other.m_syntheticOblique;
+    m_fixedWidth = other.m_fixedWidth;
     m_scaledFont = other.m_scaledFont;
     m_pattern = other.m_pattern;
 
@@ -182,14 +195,7 @@ FontPlatformData::~FontPlatformData()
 
 bool FontPlatformData::isFixedPitch()
 {
-    // TODO: Support isFixedPitch() for custom fonts.
-    if (!m_pattern)
-        return false;
-
-    int spacing;
-    if (FcPatternGetInteger(m_pattern.get(), FC_SPACING, 0, &spacing) == FcResultMatch)
-        return spacing == FC_MONO;
-    return false;
+    return m_fixedWidth;
 }
 
 bool FontPlatformData::operator==(const FontPlatformData& other) const

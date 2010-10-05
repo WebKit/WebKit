@@ -1,3 +1,24 @@
+2010-10-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Support FontPlatformData::isFixedPitch for custom fonts
+        https://bugs.webkit.org/show_bug.cgi?id=47124
+
+        Instead of determining whether or not a font is a fixed-width font
+        lazily, do it up front. For fonts not backed by Fontconfig patterns,
+        fetch information about whether or not the font is fixed-width from
+        the FreeType face.
+
+        No new tests as this should not change functionality.
+
+        * platform/graphics/cairo/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Initialize the m_fixedWidth member
+        from the Fontconfig pattern or the FreeType face.
+        (WebCore::FontPlatformData::operator=): Copy over the m_fixedWidth member.
+        (WebCore::FontPlatformData::isFixedPitch): Just return the value of the m_fixedWidth member.
+        * platform/graphics/cairo/FontPlatformDataFreeType.h: Added an m_fixedWidth member.
+
 2010-10-05  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Anders Carlsson.
