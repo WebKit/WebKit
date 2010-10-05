@@ -515,12 +515,8 @@ void ChromeClientEfl::chooseIconForFiles(const Vector<String>&, FileChooser*)
     notImplemented();
 }
 
-void ChromeClientEfl::didReceiveViewportArguments(Frame* frame, const ViewportArguments& arguments) const
+void ChromeClientEfl::dispatchViewportDataDidChange(const ViewportArguments& arguments) const
 {
-    FrameLoaderClientEfl* client = static_cast<FrameLoaderClientEfl*>(frame->loader()->client());
-    if (client->getInitLayoutCompleted())
-        return;
-
     ewk_view_viewport_set(m_view, arguments.width, arguments.height, arguments.initialScale, arguments.minimumScale, arguments.maximumScale, arguments.userScalable);
 }
 

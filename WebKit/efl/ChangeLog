@@ -1,3 +1,25 @@
+2010-10-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Viewport data change notification by Bug 46755
+        https://bugs.webkit.org/show_bug.cgi?id=46772
+
+        Bug 46755 changes virtual function regarding to viewport metatag. Thus, EFL port 
+        should change the function as well in order to get viewport arguments.
+
+        And, setInitLayoutCompleted / getInitLayoutCompleted() are removed because these functions
+        aren't needed anymore.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::dispatchViewportDataDidChange):
+        * WebCoreSupport/ChromeClientEfl.h:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::FrameLoaderClientEfl):
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientEfl::dispatchDidFirstLayout):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
 2010-10-01  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
