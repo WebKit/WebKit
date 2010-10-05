@@ -41,15 +41,20 @@ using TreeTestHelpers::generateSeed;
 using TreeTestHelpers::initRandom;
 using TreeTestHelpers::nextRandom;
 
-inline String valueToString(const float& value)
-{
-    return String::number(value);
-}
+#ifndef NDEBUG
+template<>
+struct ValueToString<float> {
+    static String string(const float& value) { return String::number(value); }
+};
 
-inline String valueToString(void* const& value)
-{
-    return String::format("0x%p", value);
-}
+template<>
+struct ValueToString<void*> {
+    static String string(void* const& value)
+    {
+        return String::format("0x%p", value);
+    }
+};
+#endif
 
 TEST(PODIntervalTreeTest, TestInsertion)
 {
@@ -82,6 +87,16 @@ TEST(PODIntervalTreeTest, TestQueryAgainstZeroSizeInterval)
     EXPECT_EQ(4, result[0].high());
 }
 
+#ifndef NDEBUG
+template<>
+struct ValueToString<int*> {
+    static String string(int* const& value)
+    {
+        return String::format("0x%p", value);
+    }
+};
+#endif
+
 TEST(PODIntervalTreeTest, TestDuplicateElementInsertion)
 {
     PODIntervalTree<float, int*> tree;
@@ -113,12 +128,17 @@ public:
     int b;
 };
 
-inline String valueToString(const UserData1& value)
-{
-    return String("[UserData1 a=") + String::number(value.a) + " b=" + String::number(value.b) + "]";
-}
-
 } // anonymous namespace
+
+#ifndef NDEBUG
+template<>
+struct ValueToString<UserData1> {
+    static String string(const UserData1& value)
+    {
+        return String("[UserData1 a=") + String::number(value.a) + " b=" + String::number(value.b) + "]";
+    }
+};
+#endif
 
 TEST(PODIntervalTreeTest, TestInsertionOfComplexUserData)
 {
@@ -165,12 +185,17 @@ private:
     bool operator!=(const EndpointType1& other);
 };
 
-inline String valueToString(const EndpointType1& value)
-{
-    return String("[EndpointType1 value=") + String::number(value.value()) + "]";
-}
-
 } // anonymous namespace
+
+#ifndef NDEBUG
+template<>
+struct ValueToString<EndpointType1> {
+    static String string(const EndpointType1& value)
+    {
+        return String("[EndpointType1 value=") + String::number(value.value()) + "]";
+    }
+};
+#endif
 
 TEST(PODIntervalTreeTest, TestTreeDoesNotRequireMostOperators)
 {
@@ -179,8 +204,16 @@ TEST(PODIntervalTreeTest, TestTreeDoesNotRequireMostOperators)
     ASSERT_TRUE(tree.checkInvariants());
 }
 
-// Uncomment to debug a failure of the insertion and deletion test.
+// Uncomment to debug a failure of the insertion and deletion test. Won't work
+// in release builds.
 // #define DEBUG_INSERTION_AND_DELETION_TEST
+
+#ifndef NDEBUG
+template<>
+struct ValueToString<int> {
+    static String string(const int& value) { return String::number(value); }
+};
+#endif
 
 namespace {
 
@@ -198,7 +231,7 @@ void InsertionAndDeletionTest(int32_t seed, int treeSize)
         PODInterval<int> interval(left, left + length);
         tree.add(interval);
 #ifdef DEBUG_INSERTION_AND_DELETION_TEST
-        LOG_ERROR("*** Adding element %s", valueToString(interval).ascii().data());
+        LOG_ERROR("*** Adding element %s", ValueToString<PODInterval<int> >::string(interval).ascii().data());
 #endif
         addedElements.append(interval);
     }
@@ -207,7 +240,7 @@ void InsertionAndDeletionTest(int32_t seed, int treeSize)
     for (int i = 0; i < treeSize / 2; i++) {
         int index = nextRandom(addedElements.size());
 #ifdef DEBUG_INSERTION_AND_DELETION_TEST
-        LOG_ERROR("*** Removing element %s", valueToString(addedElements[index]).ascii().data());
+        LOG_ERROR("*** Removing element %s", ValueToString<PODInterval<int> >::string(addedElements[index]).ascii().data());
 #endif
         ASSERT_TRUE(tree.contains(addedElements[index])) << "Test failed for seed " << seed;
         tree.remove(addedElements[index]);
@@ -227,7 +260,7 @@ void InsertionAndDeletionTest(int32_t seed, int treeSize)
         if (add) {
             int index = nextRandom(removedElements.size());
 #ifdef DEBUG_INSERTION_AND_DELETION_TEST
-            LOG_ERROR("*** Adding element %s", valueToString(removedElements[index]).ascii().data());
+            LOG_ERROR("*** Adding element %s", ValueToString<PODInterval<int> >::string(removedElements[index]).ascii().data());
 #endif
             tree.add(removedElements[index]);
             addedElements.append(removedElements[index]);
@@ -235,7 +268,7 @@ void InsertionAndDeletionTest(int32_t seed, int treeSize)
         } else {
             int index = nextRandom(addedElements.size());
 #ifdef DEBUG_INSERTION_AND_DELETION_TEST
-            LOG_ERROR("*** Removing element %s", valueToString(addedElements[index]).ascii().data());
+            LOG_ERROR("*** Removing element %s", ValueToString<PODInterval<int> >::string(addedElements[index]).ascii().data());
 #endif
             ASSERT_TRUE(tree.contains(addedElements[index])) << "Test failed for seed " << seed;
             ASSERT_TRUE(tree.remove(addedElements[index])) << "Test failed for seed " << seed;

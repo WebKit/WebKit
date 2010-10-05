@@ -35,6 +35,11 @@
 
 namespace WebCore {
 
+#ifndef NDEBUG
+template<class T>
+struct ValueToString;
+#endif
+
 // An interval tree, which is a form of augmented red-black tree. It
 // supports efficient (O(lg n)) insertion, removal and querying of
 // intervals in the tree.
@@ -191,7 +196,7 @@ private:
             localMaxValue = node->data().high();
         if (!(localMaxValue == node->data().maxHigh())) {
 #ifndef NDEBUG
-            String localMaxValueString = valueToString(localMaxValue);
+            String localMaxValueString = ValueToString<T>::string(localMaxValue);
             LOG_ERROR("PODIntervalTree verification failed at node 0x%p: localMaxValue=%s and data=%s",
                       node, localMaxValueString.utf8().data(), node->data().toString().utf8().data());
 #endif
@@ -206,10 +211,12 @@ private:
 #ifndef NDEBUG
 // Support for printing PODIntervals at the PODRedBlackTree level.
 template<class T, class UserData>
-String valueToString(const PODInterval<T, UserData>& interval)
-{
-    return interval.toString();
-}
+struct ValueToString<PODInterval<T, UserData> > {
+    static String string(const PODInterval<T, UserData>& interval)
+    {
+        return interval.toString();
+    }
+};
 #endif
 
 } // namespace WebCore

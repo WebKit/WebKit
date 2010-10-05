@@ -1,3 +1,25 @@
+2010-10-04  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Fix broken C++ in PODInterval and PODIntervalTree
+        https://bugs.webkit.org/show_bug.cgi?id=47063
+
+        See http://clang.llvm.org/compatibility.html#dep_lookup . Since
+        valueToString needs to work with non-class types, it needs to be
+        declared before it's used. And since it needs to handle many types, it
+        needs to be a template function, for which clients will need to
+        provide specializations for the types they care about. Partial template
+        specialization is only supported for structs, so wrap the function in
+        a struct, too.
+
+        * platform/graphics/gpu/PODInterval.h:
+        (WebCore::PODInterval::toString):
+        * platform/graphics/gpu/PODIntervalTree.h:
+        (WebCore::PODIntervalTree::checkInvariantsFromNode):
+        * platform/graphics/gpu/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::dumpFromNode):
+
 2010-10-04  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.

@@ -1,3 +1,15 @@
+2010-10-04  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Fix broken C++ in PODInterval and PODIntervalTree
+        https://bugs.webkit.org/show_bug.cgi?id=47063
+
+        Change functions to be template specializations, like it's now required
+        by PODIntervalTree and friends.
+
+        * tests/PODIntervalTreeTest.cpp:
+
 2010-10-04  Matt Mueller  <mattm@chromium.org>
 
         Reviewed by Darin Fisher.

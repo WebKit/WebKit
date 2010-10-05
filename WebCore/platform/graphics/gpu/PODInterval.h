@@ -57,13 +57,23 @@ namespace WebCore {
 // constructor and assignment operator.
 //
 // In debug mode, printing of intervals and the data they contain is
-// enabled. This requires the following functions to be available:
+// enabled. This requires the following template specializations to be
+// available:
 //
-//   String valueToString(const T&);
-//   String valueToString(const UserData&);
+//   template<> struct WebCore::ValueToString<T> {
+//       static String string(const T& t);
+//   };
+//   template<> struct WebCore::ValueToString<UserData> {
+//       static String string(const UserData& t);
+//   };
 //
 // Note that this class requires a copy constructor and assignment
 // operator in order to be stored in the red-black tree.
+
+#ifndef NDEBUG
+template<class T>
+struct ValueToString;
+#endif
 
 template<class T, class UserData = void*>
 class PODInterval {
@@ -131,13 +141,13 @@ public:
     {
         StringBuilder builder;
         builder.append("[PODInterval (");
-        builder.append(valueToString(low()));
+        builder.append(ValueToString<T>::string(low()));
         builder.append(", ");
-        builder.append(valueToString(high()));
+        builder.append(ValueToString<T>::string(high()));
         builder.append("), data=");
-        builder.append(valueToString(data()));
+        builder.append(ValueToString<UserData>::string(data()));
         builder.append(", maxHigh=");
-        builder.append(valueToString(maxHigh()));
+        builder.append(ValueToString<T>::string(maxHigh()));
         builder.append("]");
         return builder.toString();
     }
