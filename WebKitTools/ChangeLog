@@ -1,5 +1,30 @@
 2010-10-04  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        aroben's change in r68792 actually broke new-run-webkit-tests when
+        running the DRT code path. His change was intended to fix the
+        way we were converting windows paths to URIs when running under
+        Cygwin (the paths were getting one too many "/" on the front).
+        However, the change ended up breaking the chromium_win port, which
+        had slightly different logic.
+
+        This patch removes the port-specific code and adds tests to make
+        sure we're getting the behavior we expect. The Port object no longer
+        exposes a get_absolute_path() method that can be used outside of
+        of converting test filenames, because it's unreliable otherwise
+        (we don't have the right context to know which conversion is intended).
+
+        https://bugs.webkit.org/show_bug.cgi?id=47140
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2010-10-04  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, build fix.
 
         Handle crash introduced in r69040 if we are not running in a

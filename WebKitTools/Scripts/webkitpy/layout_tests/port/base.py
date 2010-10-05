@@ -281,7 +281,7 @@ class Port(object):
         return text.strip("\r\n").replace("\r\n", "\n") + "\n"
 
     def filename_to_uri(self, filename):
-        """Convert a test file to a URI."""
+        """Convert a test file (which is an absolute path) to a URI."""
         LAYOUTTEST_HTTP_DIR = "http/tests/"
         LAYOUTTEST_WEBSOCKET_DIR = "http/tests/websocket/tests/"
 
@@ -307,9 +307,17 @@ class Port(object):
                 protocol = "http"
             return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
 
-        if sys.platform is 'win32':
-            return "file:///" + self.get_absolute_path(filename)
-        return "file://" + self.get_absolute_path(filename)
+        abspath = os.path.abspath(filename)
+
+        # On Windows, absolute paths are of the form "c:\foo.txt". However,
+        # all current browsers (except for Opera) normalize file URLs by
+        # prepending an additional "/" as if the absolute path was
+        # "/c:/foo.txt". This means that all file URLs end up with "file:///"
+        # at the beginning.
+        if sys.platform == 'win32':
+            abspath = '/' + abspath.replace('\\', '/')
+
+        return "file://" + abspath
 
     def tests(self, paths):
         """Return the list of tests found (relative to layout_tests_dir()."""
@@ -377,13 +385,6 @@ class Port(object):
             return test.replace('https://127.0.0.1:8443/', 'http/tests/')
 
         raise NotImplementedError('unknown url type: %s' % uri)
-
-    def get_absolute_path(self, filename):
-        """Return the absolute path in unix format for the given filename.
-
-        This routine exists so that platforms that don't use unix filenames
-        can convert accordingly."""
-        return os.path.abspath(filename)
 
     def layout_tests_dir(self):
         """Return the absolute path to the top of the LayoutTests directory."""

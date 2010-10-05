@@ -84,11 +84,6 @@ class ChromiumWinPort(chromium.ChromiumPort):
                        'build-instructions-windows')
         return result
 
-    def get_absolute_path(self, filename):
-        """Return the absolute path in unix format for the given filename."""
-        abspath = os.path.abspath(filename)
-        return abspath.replace('\\', '/')
-
     def relative_test_filename(self, filename):
         path = filename[len(self.layout_tests_dir()) + 1:]
         return path.replace('\\', '/')

@@ -226,6 +226,29 @@ class PortTest(unittest.TestCase):
         self.assertTrue('canvas' in dirs)
         self.assertTrue('css2.1' in dirs)
 
+    def test_filename_to_uri(self):
+
+        port = base.Port()
+        layout_test_dir = port.layout_tests_dir()
+        test_file = os.path.join(layout_test_dir, "foo", "bar.html")
+
+        # On Windows, absolute paths are of the form "c:\foo.txt". However,
+        # all current browsers (except for Opera) normalize file URLs by
+        # prepending an additional "/" as if the absolute path was
+        # "/c:/foo.txt". This means that all file URLs end up with "file:///"
+        # at the beginning.
+        if sys.platform == 'win32':
+            prefix = "file:///"
+            path = test_file.replace("\\", "/")
+        else:
+            prefix = "file://"
+            path = test_file
+
+        self.assertEqual(port.filename_to_uri(test_file),
+                         prefix + path)
+
+
+
 class VirtualTest(unittest.TestCase):
     """Tests that various methods expected to be virtual are."""
     def assertVirtual(self, method, *args, **kwargs):

@@ -1439,13 +1439,10 @@ def _set_up_derived_options(port_obj, options):
     if not options.use_apache:
         options.use_apache = sys.platform in ('darwin', 'linux2')
 
-    if options.results_directory.startswith("/"):
-        # Assume it's an absolute path and normalize.
-        options.results_directory = port_obj.get_absolute_path(
-            options.results_directory)
-    else:
-        # If it's a relative path, make the output directory relative to
-        # Debug or Release.
+    if not os.path.isabs(options.results_directory):
+        # This normalizes the path to the build dir.
+        # FIXME: how this happens is not at all obvious; this is a dumb
+        # interface and should be cleaned up.
         options.results_directory = port_obj.results_directory()
 
     if not options.time_out_ms:

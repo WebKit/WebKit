@@ -233,6 +233,31 @@ class MainTest(unittest.TestCase):
         self.assertFalse(err.empty())
         self.assertEqual(user.url, '/tmp/layout-test-results/results.html')
 
+    def test_results_directory_absolute(self):
+        # We run a configuration that should fail, to generate output, then
+        # look for what the output results url was.
+
+        res, out, err, user = logging_run(['--results-directory=/tmp-results'],
+                                          tests_included=True)
+        self.assertEqual(user.url, '/tmp-results/results.html')
+
+    def test_results_directory_default(self):
+        # We run a configuration that should fail, to generate output, then
+        # look for what the output results url was.
+
+        # This is the default location.
+        res, out, err, user = logging_run(tests_included=True)
+        self.assertEqual(user.url, '/tmp/layout-test-results/results.html')
+
+    def test_results_directory_relative(self):
+        # We run a configuration that should fail, to generate output, then
+        # look for what the output results url was.
+
+        res, out, err, user = logging_run(['--results-directory=foo'],
+                                          tests_included=True)
+        self.assertEqual(user.url, '/tmp/foo/results.html')
+
+
 
 def _mocked_open(original_open, file_list):
     def _wrapper(name, mode, encoding):
