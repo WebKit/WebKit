@@ -1,3 +1,15 @@
+2010-10-05  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Use PlatformRefPtr in getDisplayInfo
+        https://bugs.webkit.org/show_bug.cgi?id=47023
+
+        Use PlatformRefPtr to release IBitmap* automatically.
+
+        * platform/brew/ScreenBrew.cpp:
+        (WebCore::getDisplayInfo):
+
 2010-10-05  Kristian Monsen  <kristianm@google.com>
 
         Reviewed by Steve Block.

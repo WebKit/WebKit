@@ -36,6 +36,7 @@
 
 #include <AEEAppGen.h>
 #include <AEEStdLib.h>
+#include <wtf/brew/RefPtrBrew.h>
 
 namespace WebCore {
 
@@ -48,17 +49,14 @@ struct DisplayInfo {
 static void getDisplayInfo(DisplayInfo& info)
 {
     IDisplay* display = reinterpret_cast<AEEApplet*>(GETAPPINSTANCE())->m_pIDisplay;
-    IBitmap* bitmap = IDisplay_GetDestination(display);
-    ASSERT(bitmap);
+    PlatformRefPtr<IBitmap> bitmap = adoptPlatformRef(IDisplay_GetDestination(display));
 
     AEEBitmapInfo bitmapInfo;
-    IBitmap_GetInfo(bitmap, &bitmapInfo, sizeof(AEEBitmapInfo));
+    IBitmap_GetInfo(bitmap.get(), &bitmapInfo, sizeof(AEEBitmapInfo));
 
     info.width  = bitmapInfo.cx;
     info.height = bitmapInfo.cy;
     info.depth  = bitmapInfo.nDepth;
-
-    IBitmap_Release(bitmap);
 }
 
 FloatRect screenRect(Widget*)
