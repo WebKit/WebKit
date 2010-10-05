@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 296x19
+          text run at (0,0) width 296: "This text should be rendered with the default font:"
+      RenderBlock {P} at (0,35) size 784x19
+        RenderText {#text} at (0,0) size 351x19
+          text run at (0,0) width 351: "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"
+      RenderBlock {P} at (0,70) size 784x19
+        RenderText {#text} at (0,0) size 269x19
+          text run at (0,0) width 269: "This text should appear as a series of blocks:"
+      RenderBlock {P} at (0,105) size 784x17
+        RenderText {#text} at (0,0) size 784x17
+          text run at (0,0) width 784: "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"

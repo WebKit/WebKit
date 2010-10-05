@@ -206,6 +206,13 @@ static void cairo_region_shrink(cairo_region_t* region, int dx, int dy)
 
 void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
+#if defined(USE_FREETYPE)
+    if (!primaryFont()->platformData().m_pattern) {
+        drawSimpleText(context, run, point, from, to);
+        return;
+    }
+#endif
+
     cairo_t* cr = context->platformContext();
     cairo_save(cr);
     cairo_translate(cr, point.x(), point.y());
@@ -323,8 +330,13 @@ static PangoLayout* getDefaultPangoLayout(const TextRun& run)
     return layout;
 }
 
-float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* /* fallbackFonts */, GlyphOverflow*) const
+float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* overflow) const
 {
+#if defined(USE_FREETYPE)
+    if (!primaryFont()->platformData().m_pattern)
+        return floatWidthForSimpleText(run, 0, fallbackFonts, overflow);
+#endif
+
     if (run.length() == 0)
         return 0.0f;
 
@@ -345,6 +357,10 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 
 int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool includePartialGlyphs) const
 {
+#if defined(USE_FREETYPE)
+    if (!primaryFont()->platformData().m_pattern)
+        return offsetForPositionForSimpleText(run, xFloat, includePartialGlyphs);
+#endif
     // FIXME: This truncation is not a problem for HTML, but only affects SVG, which passes floating-point numbers
     // to Font::offsetForPosition(). Bug http://webkit.org/b/40673 tracks fixing this problem.
     int x = static_cast<int>(xFloat);
@@ -369,6 +385,11 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float xFloat, bool
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
+#if defined(USE_FREETYPE)
+    if (!primaryFont()->platformData().m_pattern)
+        return selectionRectForSimpleText(run, point, h, from, to);
+#endif
+
     PangoLayout* layout = getDefaultPangoLayout(run);
     setPangoAttributes(this, run, layout);
 

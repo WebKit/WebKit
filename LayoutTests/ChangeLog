@@ -1,3 +1,19 @@
+2010-10-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Complex text rendering does not render custom fonts
+        https://bugs.webkit.org/show_bug.cgi?id=41091
+
+        Added a layout test that verifies that custom fonts are rendered with
+        the correct font when hitting the complex text code path.
+
+        * platform/gtk/fonts/font-face-with-complex-text-expected.checksum: Added.
+        * platform/gtk/fonts/font-face-with-complex-text-expected.png: Added.
+        * platform/gtk/fonts/font-face-with-complex-text-expected.txt: Added.
+        * platform/gtk/fonts/font-face-with-complex-text.html: Added.
+        * platform/gtk/fonts/resources/Ahem.ttf: Copied from LayoutTests/fast/css/resources/Ahem.ttf.
+
 2010-10-05  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

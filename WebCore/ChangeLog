@@ -1,3 +1,22 @@
+2010-10-05  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Complex text rendering does not render custom fonts
+        https://bugs.webkit.org/show_bug.cgi?id=41091
+
+        For fonts that do not have a FontConfig pattern (including custom
+        fonts), fall back to the simple text rendering path. This is a work-
+        -around for not supporting Pango rendering with non-FontConfig fonts.
+
+        Test: platform/gtk/fonts/font-face-with-complex-text.html
+
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::Font::drawComplexText): Fall back to the simple path for custom fonts.
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+        (WebCore::Font::offsetForPositionForComplexText): Ditto.
+        (WebCore::Font::selectionRectForComplexText): Ditto.
+
 2010-10-05  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
