@@ -41,7 +41,10 @@ void WebIDBKeyRange::assign(const WebIDBKeyRange& other)
 
 void WebIDBKeyRange::assign(const WebIDBKey& left, const WebIDBKey& right, unsigned short flags)
 {
-    m_private = IDBKeyRange::create(left, right, flags);
+    if (left.type() == WebIDBKey::InvalidType && right.type() == WebIDBKey::InvalidType)
+        m_private = 0;
+    else
+        m_private = IDBKeyRange::create(left, right, flags);
 }
 
 void WebIDBKeyRange::reset()
@@ -51,16 +54,22 @@ void WebIDBKeyRange::reset()
 
 WebIDBKey WebIDBKeyRange::left() const
 {
+    if (!m_private.get())
+        return WebIDBKey::createInvalid();
     return m_private->left();
 }
 
 WebIDBKey WebIDBKeyRange::right() const
 {
+    if (!m_private.get())
+        return WebIDBKey::createInvalid();
     return m_private->right();
 }
 
 unsigned short WebIDBKeyRange::flags() const
 {
+    if (!m_private.get())
+        return 0;
     return m_private->flags();
 }
 
