@@ -1,3 +1,28 @@
+2010-10-06  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed fix of Cairo ports.
+
+        SVGs with filters look grainy when scaled
+        https://bugs.webkit.org/show_bug.cgi?id=5526
+
+        Fixed issues on Cairos shadow implementation after the changes to FilterEffects.
+        Cairo calculates the inflation of the effect rect itself. Respect this for FEGaussianBlur.
+        This is just a temporary solution, since Cairo and Qt will use ContextShadow soon.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::drawBorderlessRectShadow):
+        (WebCore::GraphicsContext::applyPlatformShadow):
+        (WebCore::GraphicsContext::createShadowMask):
+        (WebCore::GraphicsContext::drawTiledShadow):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        * platform/graphics/filters/ImageBufferFilter.cpp:
+        (WebCore::ImageBufferFilter::ImageBufferFilter):
+        (WebCore::ImageBufferFilter::create):
+        * platform/graphics/filters/ImageBufferFilter.h:
+        (WebCore::ImageBufferFilter::filterRegion):
+        (WebCore::ImageBufferFilter::sourceImageRect):
+
 2010-10-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

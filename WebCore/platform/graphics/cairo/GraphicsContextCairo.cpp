@@ -610,20 +610,6 @@ static void drawBorderlessRectShadow(GraphicsContext* context, const FloatRect& 
     if (!context->getShadow(shadowOffset, shadowBlur, shadowColor))
         return;
 
-    AffineTransform transform = context->getCTM();
-    // drawTiledShadow still does not work with rotations.
-    if ((transform.isIdentityOrTranslationOrFlipped())) {
-        cairo_t* cr = context->platformContext();
-        cairo_save(cr);
-        appendWebCorePathToCairoContext(cr, Path::createRectangle(rect));
-        FloatSize corner;
-        IntRect shadowRect(rect);
-        context->drawTiledShadow(shadowRect, corner, corner, corner, corner, DeviceColorSpace);
-        cairo_restore(cr);
-
-        return;
-    }
-
     IntSize shadowBufferSize;
     FloatRect shadowRect;
     float radius = 0;
@@ -920,7 +906,7 @@ void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color cons
     }
 }
 
-void GraphicsContext::applyPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, const FloatRect& shadowRect, float radius)
+void GraphicsContext::applyPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, FloatRect& shadowRect, float radius)
 {
 #if ENABLE(FILTERS)
     setColor(m_data->cr, shadowColor);
@@ -929,7 +915,7 @@ void GraphicsContext::applyPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const 
 #endif
 }
 
-PlatformRefPtr<cairo_surface_t> GraphicsContext::createShadowMask(PassOwnPtr<ImageBuffer> buffer, const FloatRect& shadowRect, float radius)
+PlatformRefPtr<cairo_surface_t> GraphicsContext::createShadowMask(PassOwnPtr<ImageBuffer> buffer, FloatRect& shadowRect, float radius)
 {
 #if ENABLE(FILTERS)
     if (!radius)
@@ -941,16 +927,20 @@ PlatformRefPtr<cairo_surface_t> GraphicsContext::createShadowMask(PassOwnPtr<Ima
         return buffer->m_data.m_surface;
 
     // create filter
-    RefPtr<Filter> filter = ImageBufferFilter::create();
+    IntRect filterRegion = IntRect(IntPoint(), roundedIntSize(shadowRect.size()));
+    RefPtr<Filter> filter = ImageBufferFilter::create(filterRegion);
     filter->setSourceImage(buffer);
     RefPtr<FilterEffect> source = SourceGraphic::create();
-    source->setAbsolutePaintRect(IntRect(IntPoint(), roundedIntSize(shadowRect.size())));
     source->setIsAlphaImage(true);
     RefPtr<FilterEffect> blur = FEGaussianBlur::create(stdDeviation, stdDeviation);
+    blur->setMaxEffectRect(filterRegion);
     FilterEffectVector& inputEffects = blur->inputEffects();
     inputEffects.append(source.get());
-    blur->setAbsolutePaintRect(IntRect(IntPoint(), roundedIntSize(shadowRect.size())));
     blur->apply(filter.get());
+
+    // Calculate shadow region for context
+    shadowRect.move(blur->absolutePaintRect().location().x(), blur->absolutePaintRect().location().y());
+    shadowRect.setSize(blur->absolutePaintRect().size());
     return blur->resultImage()->m_data.m_surface;
 #endif
 }
@@ -1280,7 +1270,7 @@ void GraphicsContext::drawTiledShadow(const IntRect& rect, const FloatSize& topL
     if (!smallBuffer)
         return;
 
-    IntRect smallRect = IntRect(blurRadius, blurRadius, smallBufferSize.width() - radiusTwice, smallBufferSize.height() - radiusTwice);
+    FloatRect smallRect = FloatRect(blurRadius, blurRadius, smallBufferSize.width() - radiusTwice, smallBufferSize.height() - radiusTwice);
 
     // Draw shadow into a new ImageBuffer.
     cairo_t* smallBufferContext = smallBuffer->context()->platformContext();
@@ -1385,12 +1375,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
     cairo_save(cr);
     appendWebCorePathToCairoContext(cr, Path::createRoundedRectangle(r, topLeft, topRight, bottomLeft, bottomRight));
     setColor(cr, color);
-    AffineTransform transform = this->getCTM();
-    // drawTiledShadow still does not work with rotations.
-    if (transform.isIdentityOrTranslationOrFlipped())
-        drawTiledShadow(r, topLeft, topRight, bottomLeft, bottomRight, colorSpace);
-    else
-        drawPathShadow(this, m_common, true, false);
+    drawPathShadow(this, m_common, true, false);
     cairo_fill(cr);
     cairo_restore(cr);
 }

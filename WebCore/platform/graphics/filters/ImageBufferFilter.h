@@ -35,10 +35,10 @@ namespace WebCore {
 
 class ImageBufferFilter : public Filter {
 public:
-    static PassRefPtr<ImageBufferFilter> create();
+    static PassRefPtr<ImageBufferFilter> create(const FloatRect&);
 
-    virtual FloatRect filterRegion() const { return FloatRect(); }
-    virtual FloatRect sourceImageRect() const { return FloatRect(); }
+    virtual FloatRect filterRegion() const { return m_sourceImageRect; }
+    virtual FloatRect sourceImageRect() const { return m_sourceImageRect; }
 
     // SVG specific
     virtual bool effectBoundingBoxMode() const { return false; }
@@ -47,7 +47,9 @@ public:
     virtual void calculateEffectSubRegion(FilterEffect*) { }
 
 private:
-    ImageBufferFilter();
+    ImageBufferFilter(const FloatRect&);
+
+    FloatRect m_sourceImageRect;
 };
 
 } // namespace WebCore
