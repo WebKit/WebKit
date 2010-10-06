@@ -59,7 +59,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
 {
     if (!m_setVersionTransaction) {
         // FIXME: Raise a NOT_ALLOWED_ERR if m_setVersionTransaction is 0.
-        return 0
+        return 0;
     }
 
     RefPtr<IDBObjectStoreBackendInterface> objectStore = m_backend->createObjectStore(name, keyPath, autoIncrement, m_setVersionTransaction.get());
