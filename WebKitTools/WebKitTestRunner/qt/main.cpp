@@ -26,9 +26,44 @@
 
 #include "TestController.h"
 
-int main(int argc, const char* argv[])
-{
-    WTR::TestController controller(argc, argv);
+#include <QApplication>
+#include <QObject>
+#include <QTimer>
 
-    return 0;
+class Launcher : public QObject {
+    Q_OBJECT
+
+public:
+    Launcher(int argc, char** argv)
+        : m_argc(argc)
+        , m_argv(argv)
+    {
+    }
+
+    ~Launcher()
+    {
+        delete m_controller;
+    }
+
+public slots:
+    void launch()
+    {
+        m_controller = new WTR::TestController(m_argc, const_cast<const char**>(m_argv));
+        QApplication::exit();
+    }
+
+private:
+    WTR::TestController* m_controller;
+    int m_argc;
+    char** m_argv;
+};
+
+int main(int argc, char** argv)
+{
+    QApplication app(argc, argv);
+    Launcher launcher(argc, argv);
+    QTimer::singleShot(0, &launcher, SLOT(launch()));
+    return app.exec();;
 }
+
+#include "main.moc"
