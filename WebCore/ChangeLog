@@ -1,3 +1,16 @@
+2010-10-05  Kyusun Kim  <maniagoon@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Translate key code in PlatformKeyboardEvent with IKeysMapping
+        https://bugs.webkit.org/show_bug.cgi?id=47234
+
+        Brew MP devices have a variey of key configurations and use modifiers to
+        input capital letters, symbols and special characters. Use IKeysMapping to translate key code.
+
+        * platform/brew/PlatformKeyboardEventBrew.cpp:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2010-10-05  W. James MacLean  <wjmaclean@chromium.org>
 
         Reviewed by James Robinson.
