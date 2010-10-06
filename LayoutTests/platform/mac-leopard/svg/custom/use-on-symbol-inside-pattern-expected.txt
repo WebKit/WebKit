@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 225x425
+  RenderSVGRoot {svg} at (8,6) size 205x196
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourcePattern {pattern} [id="pat00"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+        RenderSVGContainer {use} at (2,3) size 16x24 [transform={m=((0.75,0.00)(0.00,0.75)) t=(10.00,15.00)}]
+          RenderSVGContainer {g} at (2,3) size 16x24
+            RenderSVGViewportContainer {svg} at (2,3) size 16x24
+              RenderPath {path} at (9,3) size 2x24 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-15.00 L0.00,15.00"]
+              RenderPath {path} at (9,3) size 5x5 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-15.00 C0.00,-12.67,1.67,-11.50,5.00,-11.50"]
+              RenderPath {path} at (6,3) size 5x5 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-15.00 C0.00,-12.67,-1.67,-11.50,-5.00,-11.50"]
+              RenderPath {path} at (9,8) size 7x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-9.00 C0.00,-5.00,2.67,-3.00,8.00,-3.00"]
+              RenderPath {path} at (4,8) size 7x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,-9.00 C0.00,-5.00,-2.67,-3.00,-8.00,-3.00"]
+              RenderPath {path} at (9,15) size 9x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,0.00 C0.00,4.67,3.33,7.00,10.00,7.00"]
+              RenderPath {path} at (2,15) size 9x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,0.00 C0.00,4.67,-3.33,7.00,-10.00,7.00"]
+      RenderSVGResourcePattern {pattern} [id="pat01"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
+        RenderSVGContainer {use} at (8,11) size 14x17 [transform={m=((0.50,0.00)(0.00,0.50)) t=(15.00,20.00)}]
+          RenderSVGContainer {g} at (8,11) size 14x17
+            RenderSVGViewportContainer {svg} at (8,11) size 14x17
+              RenderPath {path} at (14,22) size 2x6 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,15.00 L0.00,5.00"]
+              RenderPath {path} at (8,11) size 14x14 [stroke={[type=SOLID] [color=#008000] [stroke width=2.00]}] [data="M0.00,5.00 C-1.94,7.10,-5.09,7.54,-7.53,6.05 C-9.97,4.56,-11.03,1.56,-10.05,-1.13 C-9.07,-3.81,-6.33,-5.43,-3.50,-5.00 C-5.62,-6.52,-6.51,-9.23,-5.71,-11.71 C-4.91,-14.19,-2.61,-15.87,0.00,-15.87 C2.61,-15.87,4.91,-14.19,5.71,-11.71 C6.51,-9.23,5.62,-6.52,3.50,-5.00 C6.33,-5.43,9.07,-3.81,10.05,-1.13 C11.03,1.56,9.97,4.56,7.53,6.05 C5.09,7.54,1.94,7.10,0.00,5.00 Z"]
+      RenderPath {path} at (0,0) size 203x92 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M0.00,50.00 L100.00,0.00 L200.00,20.00 L150.00,70.00 L50.00,90.00 Z"]
+    RenderSVGContainer {g} at (8,6) size 205x96 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}]
+      RenderSVGText {text} at (0,-4) size 66x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 66x18
+          chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 66.00: "coniferous"
+      RenderSVGContainer {use} at (8,8) size 205x94
+        RenderSVGContainer {g} at (8,8) size 205x94
+          RenderPath {path} at (8,8) size 205x94 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=PATTERN] [id="pat00"]}] [data="M0.00,50.00 L100.00,0.00 L200.00,20.00 L150.00,70.00 L50.00,90.00 Z"]
+    RenderSVGContainer {g} at (8,106) size 205x96 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,110.00)}]
+      RenderSVGText {text} at (0,-4) size 75x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 75x18
+          chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 10 width 75.00: "broadLeave"
+      RenderSVGContainer {use} at (8,108) size 205x94
+        RenderSVGContainer {g} at (8,108) size 205x94
+          RenderPath {path} at (8,108) size 205x94 [stroke={[type=SOLID] [color=#B42D25] [stroke width=2.00]}] [fill={[type=PATTERN] [id="pat01"]}] [data="M0.00,50.00 L100.00,0.00 L200.00,20.00 L150.00,70.00 L50.00,90.00 Z"]
