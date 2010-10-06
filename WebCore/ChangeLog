@@ -1,3 +1,19 @@
+2010-10-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVG feMorphology - big radii cause huge ImageBuffer sizes
+        https://bugs.webkit.org/show_bug.cgi?id=47263
+
+        The current code in FEMorphology::determineAbsolutePaintRect calculates the smallest paint rect by inflate the paint rect
+        of a previous effect with the radius. This was meant as an optimization, but I forgot to clip the calculated image size
+        by the maximal effect size. This caused huge image sizes for big radii.
+
+        This is covered by svg/filters/feMorphology-invalid-radius.svg and fixes the crashes on Windows and Snow Leopard bots.
+
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::determineAbsolutePaintRect):
+
 2010-10-06  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Dirk Schulze.
