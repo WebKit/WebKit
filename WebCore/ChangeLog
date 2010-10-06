@@ -1,3 +1,37 @@
+2010-10-06  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        IDBDatabase and IDBObjectStore metadata is not recovered correctly when the setVersion transactions aborts.
+        https://bugs.webkit.org/show_bug.cgi?id=47245
+
+        Recover metadata properly by adding abort tasks that
+        are run when a transaction aborts.
+ 
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore):
+        (WebCore::IDBDatabase::removeObjectStore):
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::setVersion):
+        (WebCore::IDBDatabaseBackendImpl::removeObjectStoreFromMap):
+        (WebCore::IDBDatabaseBackendImpl::addObjectStoreToMap):
+        (WebCore::IDBDatabaseBackendImpl::resetVersion):
+        * storage/IDBDatabaseBackendImpl.h:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndex):
+        (WebCore::IDBObjectStoreBackendImpl::removeIndexFromMap):
+        (WebCore::IDBObjectStoreBackendImpl::addIndexToMap):
+        * storage/IDBObjectStoreBackendImpl.h:
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        (WebCore::IDBTransactionBackendImpl::abort):
+        * storage/IDBTransactionBackendImpl.h:
+        * storage/IDBTransactionBackendInterface.h:
+        * storage/IDBTransactionCoordinator.h:
+
 2010-10-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

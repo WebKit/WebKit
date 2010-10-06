@@ -48,7 +48,7 @@ function setVersionSuccess()
 function createObjectStore()
 {
     debug("creatObjectStore():");
-    var store = evalAndLog("store = db.createObjectStore('storeName', null)");
+    window.store = evalAndLog("store = db.createObjectStore('storeName', null)");
     var storeNames = evalAndLog("storeNames = db.objectStores");
 
     shouldBeEqualToString("store.name", "storeName");
@@ -57,7 +57,7 @@ function createObjectStore()
     shouldBe("storeNames.length", "1");
     // FIXME: test all of object store's methods.
 
-    debug("Ask for a store that doesn't exist:");
+    debug("Ask for an index that doesn't exist:");
     try {
         index = evalAndLog("index = store.index('asdf')");
         shouldBeNull("index"); // Returning null is wrong, but less wrong than returning an actual object!
@@ -73,13 +73,13 @@ function createObjectStore()
 function createIndex()
 {
     debug("createIndex():");
-    window.index = evalAndLog("store.createIndex('indexName', 'x', true)"); // true == unique requirement.
+    var index = evalAndLog("index = store.createIndex('indexName', 'x', true)"); // true == unique requirement.
     shouldBeTrue("index !== null");
     shouldBeTrue("store.indexNames.contains('indexName')");
     index = evalAndLog("index = store.index('indexName')");
     shouldBeTrue("index !== null");
 
-    debug("Ask for a store that doesn't exist:");
+    debug("Ask for an index that doesn't exist:");
     try {
         index = evalAndLog("index = store.index('asdf')");
         shouldBeNull("index"); // Returning null is wrong, but less wrong than returning an actual object!
@@ -88,7 +88,54 @@ function createIndex()
     } catch (err) {
         // FIXME: Verify the correct exception thrown.
     }
+    commitAndContinue();    
+}
 
+function commitAndContinue()
+{
+    window.setTimeout(testSetVersionAbort, 0);
+}
+
+function testSetVersionAbort()
+{
+    result = evalAndLog('db.setVersion("version fail")');
+    verifyResult(result);
+    result.onsuccess = createAnotherIndex;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function createAnotherIndex()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("db.version", "version fail");
+
+    var setVersionTrans = evalAndLog("setVersionTrans = event.result");
+    shouldBeTrue("setVersionTrans !== null");
+    setVersionTrans.oncomplete = unexpectedCompleteCallback;
+    setVersionTrans.onabort = checkMetadata;
+    window.store = evalAndLog("store = setVersionTrans.objectStore('storeName')");
+    var index = evalAndLog("index = store.createIndex('indexFail', 'x')");
+
+    setVersionTrans.abort();
+}
+
+function checkMetadata()
+{
+    shouldBeEqualToString("db.version", "new version");
+    shouldBe("store.indexNames", "['indexName']");
+    shouldBe("store.indexNames.length", "1");
+    shouldBe("store.indexNames.contains('')", "false");
+    shouldBe("store.indexNames.contains('indexFail')", "false");
+    shouldBe("store.indexNames.contains('indexName')", "true");
+    addData();
+}
+
+
+function addData()
+{
+    var transaction = evalAndLog("transaction = db.transaction()");
+    transaction.onabort = unexpectedAbortCallback;
+    window.store = evalAndLog("store = transaction.objectStore('storeName')");
     result = evalAndLog("store.add({x: 'value'}, 'key')");
     verifyResult(result);
     result.onsuccess = addSuccess;

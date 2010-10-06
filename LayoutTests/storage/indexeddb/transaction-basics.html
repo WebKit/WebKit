@@ -27,10 +27,175 @@ function test()
 
 function openSuccess()
 {
-    debug("createObjectStoreCallback():");
+    debug("openSuccess():");
     verifySuccessEvent(event);
-    db = evalAndLog("db = event.result");
+    window.db = evalAndLog("db = event.result");
+    result = evalAndLog("result = db.setVersion('version 1')");
+    result.onsuccess = cleanDatabase;
+    result.onerror = unexpectedErrorCallback;
+}
 
+function cleanDatabase()
+{
+    verifySuccessEvent(event);
+    deleteAllObjectStores(db, checkMetadataEmpty);
+    commitAndContinue(testSetVersionAbort1);
+}
+
+function testSetVersionAbort1()
+{
+    checkMetadataEmpty();
+    result = evalAndLog("result = startSetVersion('version fail')");
+    result.onsuccess = addRemoveIDBObjects;
+}
+
+function addRemoveIDBObjects()
+{
+    debug("addRemoveIDBObjects():");
+    verifySuccessEvent(event);
+    var trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = testSetVersionAbort2;
+    trans.oncomplete = unexpectedCompleteCallback;
+
+    var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
+    var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
+
+    evalAndLog("db.removeObjectStore('storeFail')");
+    evalAndLog("store.removeIndex('indexFail')");
+
+    trans.abort();
+}
+
+function testSetVersionAbort2()
+{
+    checkMetadataEmpty();
+    result = evalAndLog("result = startSetVersion('version fail')");
+    result.onsuccess = addRemoveAddIDBObjects;
+}
+
+function addRemoveAddIDBObjects()
+{
+    debug("addRemoveAddIDBObjects():");
+    verifySuccessEvent(event);
+    var trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = testSetVersionAbort3;
+    trans.oncomplete = unexpectedCompleteCallback;
+
+    var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
+    var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
+
+    evalAndLog("db.removeObjectStore('storeFail')");
+    evalAndLog("store.removeIndex('indexFail')");
+
+    var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
+    var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
+
+    trans.abort();
+}
+
+function testSetVersionAbort3()
+{
+    checkMetadataEmpty();
+    result = evalAndLog("result = startSetVersion('version fail')");
+    result.onsuccess = addIDBObjects;
+}
+
+function addIDBObjects()
+{
+    debug("addIDBObjects():");
+    verifySuccessEvent(event);
+    var trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = testSetVersionAbort4;
+    trans.oncomplete = unexpectedCompleteCallback;
+
+    var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
+    var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
+
+    trans.abort();
+}
+
+function testSetVersionAbort4()
+{
+    checkMetadataEmpty();
+    result = evalAndLog("result = startSetVersion('version fail')");
+    result.onsuccess = addIDBObjectsAndCommit;
+}
+
+function addIDBObjects()
+{
+    debug("addIDBObjects():");
+    verifySuccessEvent(event);
+    var trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    var store = evalAndLog("store = db.createObjectStore('storeFail', null)");
+    var index = evalAndLog("index = store.createIndex('indexFail', 'x', false)");
+
+    commitAndContinue(testSetVersionAbort5);
+}
+
+function commitAndContinue(continueFunction)
+{
+    window.setTimeout(continueFunction, 0);
+}
+
+function testSetVersionAbort5()
+{
+    checkMetadataExistingObjectStore();
+    result = evalAndLog("result = startSetVersion('version fail')");
+    result.onsuccess = removeIDBObjects;
+}
+
+function removeIDBObjects()
+{
+    debug("removeIDBObjects():");
+    verifySuccessEvent(event);
+    var trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = testSetVersionAbort6;
+    trans.oncomplete = unexpectedCompleteCallback;
+
+    var store = evalAndLog("store = trans.objectStore('storeFail')");
+    evalAndLog("store.removeIndex('indexFail')");
+    evalAndLog("db.removeObjectStore('storeFail')");
+
+    trans.abort();
+}
+
+function testSetVersionAbort6()
+{
+    checkMetadataExistingObjectStore();
+    setNewVersion();
+}
+
+function startSetVersion(versionName)
+{
+    result = db.setVersion(versionName);
+    verifyResult(result);
+    result.onerror = unexpectedErrorCallback;
+    return result;
+}
+
+function checkMetadataEmpty()
+{
+    shouldBe("window.db.objectStores", "[]");
+    shouldBe("window.db.objectStores.length", "0");
+    shouldBe("window.db.objectStores.contains('storeFail')", "false");
+}
+
+function checkMetadataExistingObjectStore()
+{
+    shouldBe("db.objectStores", "['storeFail']");
+    shouldBe("db.objectStores.length", "1");
+    shouldBe("db.objectStores.contains('storeFail')", "true");
+}
+
+function setNewVersion()
+{
     result = evalAndLog("db.setVersion('new version')");
     verifyResult(result);
     result.onsuccess = setVersionSuccess;

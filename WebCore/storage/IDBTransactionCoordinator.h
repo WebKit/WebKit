@@ -69,8 +69,8 @@ private:
     // This map owns all transactions known to the coordinator.
     HashMap<int, RefPtr<IDBTransactionBackendImpl> > m_transactions;
     // Transactions in different states are grouped below.
-    ListHashSet<IDBTransactionBackendImpl* > m_startedTransactions;
-    HashSet<IDBTransactionBackendImpl* > m_runningTransactions;
+    ListHashSet<IDBTransactionBackendImpl*> m_startedTransactions;
+    HashSet<IDBTransactionBackendImpl*> m_runningTransactions;
     int m_nextID;
 };
 

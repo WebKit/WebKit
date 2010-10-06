@@ -73,17 +73,51 @@ function createObjectStore()
     shouldBe("db.objectStores.contains('')", "false");
 
     objectStore = evalAndLog('db.createObjectStore("test123")');
-    checkObjectStore(objectStore);
+    checkObjectStore();
+    commitAndContinue();
 }
 
-function checkObjectStore(objectStore)
+function checkObjectStore()
 {
     shouldBe("db.objectStores", "['test123']");
     shouldBe("db.objectStores.length", "1");
     shouldBe("db.objectStores.contains('')", "false");
     shouldBe("db.objectStores.contains('test456')", "false");
     shouldBe("db.objectStores.contains('test123')", "true");
+}
 
+function commitAndContinue()
+{
+    window.setTimeout(testSetVersionAbort, 0);
+}
+
+function testSetVersionAbort()
+{
+    result = evalAndLog('db.setVersion("version c")');
+    verifyResult(result);
+    result.onsuccess = createAnotherObjectStore;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function createAnotherObjectStore()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("db.version", "version c");
+    shouldBeEqualToString("db.name", "name");
+    checkObjectStore();
+
+    objectStore = evalAndLog('db.createObjectStore("test456")');
+    var setVersionTrans = evalAndLog("setVersionTrans = event.result");
+    shouldBeTrue("setVersionTrans !== null");
+    setVersionTrans.oncomplete = unexpectedCompleteCallback;
+    setVersionTrans.onabort = checkMetadata;
+    setVersionTrans.abort();
+}
+
+function checkMetadata()
+{
+    shouldBeEqualToString("db.version", "version b");
+    checkObjectStore();
     done();
 }
 

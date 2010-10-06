@@ -88,6 +88,39 @@ PASS db.objectStores.length is 1
 PASS db.objectStores.contains('') is false
 PASS db.objectStores.contains('test456') is false
 PASS db.objectStores.contains('test123') is true
+db.setVersion("version c")
+PASS 'onsuccess' in result is true
+PASS 'onerror' in result is true
+PASS 'readyState' in result is true
+An event should fire shortly...
+
+Success event fired:
+PASS 'result' in event is true
+PASS 'code' in event is false
+PASS 'message' in event is false
+PASS 'source' in event is true
+PASS event.source != null is true
+PASS 'onsuccess' in event.target is true
+PASS 'onerror' in event.target is true
+PASS 'readyState' in event.target is true
+PASS event.target.readyState is event.target.DONE
+
+PASS db.version is "version c"
+PASS db.name is "name"
+PASS db.objectStores is ['test123']
+PASS db.objectStores.length is 1
+PASS db.objectStores.contains('') is false
+PASS db.objectStores.contains('test456') is false
+PASS db.objectStores.contains('test123') is true
+db.createObjectStore("test456")
+setVersionTrans = event.result
+PASS setVersionTrans !== null is true
+PASS db.version is "version b"
+PASS db.objectStores is ['test123']
+PASS db.objectStores.length is 1
+PASS db.objectStores.contains('') is false
+PASS db.objectStores.contains('test456') is false
+PASS db.objectStores.contains('test123') is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
