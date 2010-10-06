@@ -1,3 +1,13 @@
+2010-10-06  Jessie Berlin  <jberlin@apple.com>
+
+        Rubber-stamped by Dan Bernstein.
+
+        WKSerializedScriptValue.h needs to be copied over into the WEBKITOUTPUTDIR on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=47287
+
+        * win/WebKit2Generated.make:
+        Copy WKSerializedScriptValue.h into $(WEBKITOUTPUTDIR)\include\WebKit2.
+
 2010-10-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
