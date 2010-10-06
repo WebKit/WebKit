@@ -500,14 +500,13 @@ static inline bool isCollapsibleSpace(UChar character, RenderText* renderer)
     return false;
 }
 
-void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, int& repaintBottom)
+void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom)
 {
     bool useRepaintBounds = false;
     
     m_overflow.clear();
         
-    setLogicalHeight(borderTop() + paddingTop());
-    int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
+    setLogicalHeight(borderBefore() + paddingBefore());
 
     // Figure out if we should clear out our line boxes.
     // FIXME: Handle resize eventually!
@@ -543,7 +542,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                     o->setChildNeedsLayout(true, false);
                     
                 // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
-                if (relayoutChildren && (o->style()->paddingLeft().isPercent() || o->style()->paddingRight().isPercent()))
+                if (relayoutChildren && (o->style()->paddingStart().isPercent() || o->style()->paddingEnd().isPercent()))
                     o->setPreferredLogicalWidthsDirty(true, false);
             
                 if (o->isPositioned())
@@ -571,7 +570,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         bool firstLine = true;
         bool previousLineBrokeCleanly = true;
         RootInlineBox* startLine = determineStartPosition(firstLine, fullLayout, previousLineBrokeCleanly, resolver, floats, floatIndex,
-                                                          useRepaintBounds, repaintTop, repaintBottom);
+                                                          useRepaintBounds, repaintLogicalTop, repaintLogicalBottom);
 
         if (fullLayout && hasInlineChild && !selfNeedsLayout()) {
             setNeedsLayout(true, false);  // Mark ourselves as needing a full layout. This way we'll repaint like
@@ -594,21 +593,21 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         // if we determine that we're able to synchronize after handling all our dirty lines.
         InlineIterator cleanLineStart;
         BidiStatus cleanLineBidiStatus;
-        int endLineYPos = 0;
+        int endLineLogicalTop = 0;
         RootInlineBox* endLine = (fullLayout || !startLine) ? 
-                                 0 : determineEndPosition(startLine, cleanLineStart, cleanLineBidiStatus, endLineYPos);
+                                 0 : determineEndPosition(startLine, cleanLineStart, cleanLineBidiStatus, endLineLogicalTop);
 
         if (startLine) {
             if (!useRepaintBounds) {
                 useRepaintBounds = true;
-                repaintTop = height();
-                repaintBottom = height();
+                repaintLogicalTop = logicalHeight();
+                repaintLogicalBottom = logicalHeight();
             }
             RenderArena* arena = renderArena();
             RootInlineBox* box = startLine;
             while (box) {
-                repaintTop = min(repaintTop, box->topVisibleOverflow());
-                repaintBottom = max(repaintBottom, box->bottomVisibleOverflow());
+                repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(box));
+                repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(box));
                 RootInlineBox* next = box->nextRootBox();
                 box->deleteLine(arena);
                 box = next;
@@ -642,7 +641,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
 
         while (!end.atEnd()) {
             // FIXME: Is this check necessary before the first iteration or can it be moved to the end?
-            if (checkForEndLineMatch && (endLineMatched = matchedEndLine(resolver, cleanLineStart, cleanLineBidiStatus, endLine, endLineYPos, repaintBottom, repaintTop)))
+            if (checkForEndLineMatch && (endLineMatched = matchedEndLine(resolver, cleanLineStart, cleanLineBidiStatus, endLine, endLineLogicalTop, repaintLogicalBottom, repaintLogicalTop)))
                 break;
 
             lineMidpointState.reset();
@@ -719,7 +718,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 // inline flow boxes.
 
                 RootInlineBox* lineBox = 0;
-                int oldHeight = height();
+                int oldLogicalHeight = logicalHeight();
                 if (resolver.runCount()) {
                     if (hyphenated)
                         resolver.logicallyLastRun()->m_hasHyphen = true;
@@ -767,24 +766,24 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 if (lineBox) {
                     lineBox->setLineBreakInfo(end.obj, end.pos, resolver.status());
                     if (useRepaintBounds) {
-                        repaintTop = min(repaintTop, lineBox->topVisibleOverflow());
-                        repaintBottom = max(repaintBottom, lineBox->bottomVisibleOverflow());
+                        repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(lineBox));
+                        repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(lineBox));
                     }
                     
                     if (paginated) {
                         int adjustment = 0;
                         adjustLinePositionForPagination(lineBox, adjustment);
                         if (adjustment) {
-                            int oldLineWidth = availableLogicalWidthForLine(oldHeight, firstLine);
+                            int oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, firstLine);
                             lineBox->adjustPosition(0, adjustment);
                             if (useRepaintBounds) // This can only be a positive adjustment, so no need to update repaintTop.
-                                repaintBottom = max(repaintBottom, lineBox->bottomVisibleOverflow());
+                                repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(lineBox));
                                 
-                            if (availableLogicalWidthForLine(oldHeight + adjustment, firstLine) != oldLineWidth) {
+                            if (availableLogicalWidthForLine(oldLogicalHeight + adjustment, firstLine) != oldLineWidth) {
                                 // We have to delete this line, remove all floats that got added, and let line layout re-run.
                                 lineBox->deleteLine(renderArena());
-                                removeFloatingObjectsBelow(lastFloatFromPreviousLine, oldHeight);
-                                setLogicalHeight(oldHeight + adjustment);
+                                removeFloatingObjectsBelow(lastFloatFromPreviousLine, oldLogicalHeight);
+                                setLogicalHeight(oldLogicalHeight + adjustment);
                                 resolver.setPosition(oldEnd);
                                 end = oldEnd;
                                 continue;
@@ -824,7 +823,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
         if (endLine) {
             if (endLineMatched) {
                 // Attach all the remaining lines, and then adjust their y-positions as needed.
-                int delta = height() - endLineYPos;
+                int delta = logicalHeight() - endLineLogicalTop;
                 for (RootInlineBox* line = endLine; line; line = line->nextRootBox()) {
                     line->attachLine();
                     if (paginated) {
@@ -832,16 +831,15 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                         adjustLinePositionForPagination(line, delta);
                     }
                     if (delta) {
-                        repaintTop = min(repaintTop, line->topVisibleOverflow() + min(delta, 0));
-                        repaintBottom = max(repaintBottom, line->bottomVisibleOverflow() + max(delta, 0));
+                        repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(line) + min(delta, 0));
+                        repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(line) + max(delta, 0));
                         line->adjustPosition(0, delta);
                     }
                     if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
                         Vector<RenderBox*>::iterator end = cleanLineFloats->end();
                         for (Vector<RenderBox*>::iterator f = cleanLineFloats->begin(); f != end; ++f) {
-                            int floatTop = (*f)->y() - (*f)->marginTop();
                             insertFloatingObject(*f);
-                            setLogicalHeight(floatTop + delta);
+                            setLogicalHeight(logicalTopForChild(*f) - marginBeforeForChild(*f) + delta);
                             positionNewFloats();
                         }
                     }
@@ -852,8 +850,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 RootInlineBox* line = endLine;
                 RenderArena* arena = renderArena();
                 while (line) {
-                    repaintTop = min(repaintTop, line->topVisibleOverflow());
-                    repaintBottom = max(repaintBottom, line->bottomVisibleOverflow());
+                    repaintLogicalTop = min(repaintLogicalTop, beforeSideVisibleOverflowForLine(line));
+                    repaintLogicalBottom = max(repaintLogicalBottom, afterSideVisibleOverflowForLine(line));
                     RootInlineBox* next = line->nextRootBox();
                     line->deleteLine(arena);
                     line = next;
@@ -865,15 +863,15 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
             // This has to be done before adding in the bottom border/padding, or the float will
             // include the padding incorrectly. -dwh
             if (checkForFloatsFromLastLine) {
-                int bottomVisualOverflow = lastRootBox()->bottomVisualOverflow();
-                int bottomLayoutOverflow = lastRootBox()->bottomLayoutOverflow();
+                int bottomVisualOverflow = afterSideVisibleOverflowForLine(lastRootBox());
+                int bottomLayoutOverflow = afterSideLayoutOverflowForLine(lastRootBox());
                 TrailingFloatsRootInlineBox* trailingFloatsLineBox = new (renderArena()) TrailingFloatsRootInlineBox(this);
                 m_lineBoxes.appendLineBox(trailingFloatsLineBox);
                 trailingFloatsLineBox->setConstructed();
                 GlyphOverflowAndFallbackFontsMap textBoxDataMap;
-                trailingFloatsLineBox->alignBoxesInBlockDirection(height(), textBoxDataMap);
-                trailingFloatsLineBox->setBlockDirectionOverflowPositions(height(), bottomLayoutOverflow, height(), bottomVisualOverflow, 0);
-                trailingFloatsLineBox->setBlockLogicalHeight(height());
+                trailingFloatsLineBox->alignBoxesInBlockDirection(logicalHeight(), textBoxDataMap);
+                trailingFloatsLineBox->setBlockDirectionOverflowPositions(logicalHeight(), bottomLayoutOverflow, logicalHeight(), bottomVisualOverflow, 0);
+                trailingFloatsLineBox->setBlockLogicalHeight(logicalHeight());
             }
             if (lastFloat) {
                 for (FloatingObject* f = m_floatingObjects->last(); f != lastFloat; f = m_floatingObjects->prev()) {
@@ -899,7 +897,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
     }
 
     // Now add in the bottom border/padding.
-    setLogicalHeight(logicalHeight() + toAdd);
+    setLogicalHeight(logicalHeight() + borderAfter() + paddingAfter() + scrollbarLogicalHeight());
 
     if (!firstLineBox() && hasLineIfEmpty())
         setLogicalHeight(logicalHeight() + lineHeight(true, true));
@@ -2012,6 +2010,70 @@ void RenderBlock::addOverflowFromInlineChildren()
         if (!hasOverflowClip())
             addVisualOverflow(curr->visualOverflowRect());
     }
+}
+
+int RenderBlock::beforeSideVisibleOverflowForLine(RootInlineBox* line) const
+{
+    switch (style()->writingMode()) {
+    case TopToBottomWritingMode:
+        return line->topVisibleOverflow();
+    case LeftToRightWritingMode:
+        return line->leftVisibleOverflow();
+    case RightToLeftWritingMode:
+        return line->rightVisibleOverflow();
+    case BottomToTopWritingMode:
+        return line->bottomVisibleOverflow();
+    }
+    ASSERT_NOT_REACHED();
+    return line->topVisibleOverflow();
+}
+
+int RenderBlock::afterSideVisibleOverflowForLine(RootInlineBox* line) const
+{
+    switch (style()->writingMode()) {
+    case TopToBottomWritingMode:
+        return line->bottomVisibleOverflow();
+    case LeftToRightWritingMode:
+        return line->rightVisibleOverflow();
+    case RightToLeftWritingMode:
+        return line->leftVisibleOverflow();
+    case BottomToTopWritingMode:
+        return line->topVisibleOverflow();
+    }
+    ASSERT_NOT_REACHED();
+    return line->bottomVisibleOverflow();
+}
+
+int RenderBlock::beforeSideLayoutOverflowForLine(RootInlineBox* line) const
+{
+    switch (style()->writingMode()) {
+    case TopToBottomWritingMode:
+        return line->topLayoutOverflow();
+    case LeftToRightWritingMode:
+        return line->leftLayoutOverflow();
+    case RightToLeftWritingMode:
+        return line->rightLayoutOverflow();
+    case BottomToTopWritingMode:
+        return line->bottomLayoutOverflow();
+    }
+    ASSERT_NOT_REACHED();
+    return line->topLayoutOverflow();
+}
+
+int RenderBlock::afterSideLayoutOverflowForLine(RootInlineBox* line) const
+{
+    switch (style()->writingMode()) {
+    case TopToBottomWritingMode:
+        return line->bottomLayoutOverflow();
+    case LeftToRightWritingMode:
+        return line->rightLayoutOverflow();
+    case RightToLeftWritingMode:
+        return line->leftLayoutOverflow();
+    case BottomToTopWritingMode:
+        return line->topLayoutOverflow();
+    }
+    ASSERT_NOT_REACHED();
+    return line->bottomLayoutOverflow();
 }
 
 void RenderBlock::deleteEllipsisLineBoxes()

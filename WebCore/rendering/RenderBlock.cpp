@@ -1197,13 +1197,13 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
             layer()->setHasVerticalScrollbar(true);
     }
 
-    int repaintTop = 0;
-    int repaintBottom = 0;
+    int repaintLogicalTop = 0;
+    int repaintLogicalBottom = 0;
     int maxFloatLogicalBottom = 0;
     if (!firstChild() && !isAnonymousBlock())
         setChildrenInline(true);
     if (childrenInline())
-        layoutInlineChildren(relayoutChildren, repaintTop, repaintBottom);
+        layoutInlineChildren(relayoutChildren, repaintLogicalTop, repaintLogicalBottom);
     else
         layoutBlockChildren(relayoutChildren, maxFloatLogicalBottom);
 
@@ -1266,10 +1266,15 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageHeight)
 
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
-    if (!didFullRepaint && repaintTop != repaintBottom && (style()->visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {
-        int repaintLeft = min(leftVisualOverflow(), leftLayoutOverflow());
-        int repaintRight = max(rightVisualOverflow(), rightLayoutOverflow());
-        IntRect repaintRect(repaintLeft, repaintTop, repaintRight - repaintLeft, repaintBottom - repaintTop);
+    if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (style()->visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {
+        int repaintLogicalLeft = min(logicalLeftVisualOverflow(), logicalLeftLayoutOverflow());
+        int repaintLogicalRight = max(logicalRightVisualOverflow(), logicalRightLayoutOverflow());
+        
+        IntRect repaintRect;
+        if (style()->isHorizontalWritingMode())
+            repaintRect = IntRect(repaintLogicalLeft, repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop);
+        else
+            repaintRect = IntRect(repaintLogicalTop, repaintLogicalLeft, repaintLogicalBottom - repaintLogicalTop, repaintLogicalRight - repaintLogicalLeft);
 
         // The repaint rect may be split across columns, in which case adjustRectForColumns() will return the union.
         adjustRectForColumns(repaintRect);

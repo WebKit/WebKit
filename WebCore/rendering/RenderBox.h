@@ -127,19 +127,23 @@ public:
     int bottomVisibleOverflow() const { return hasOverflowClip() ? bottomVisualOverflow() : std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
     int leftVisibleOverflow() const { return hasOverflowClip() ? leftVisualOverflow() : std::min(leftLayoutOverflow(), leftVisualOverflow()); }
     int rightVisibleOverflow() const { return hasOverflowClip() ? rightVisualOverflow() :  std::max(rightLayoutOverflow(), rightVisualOverflow()); }
-    
+
     IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : borderBoxRect(); }
     int topLayoutOverflow() const { return m_overflow? m_overflow->topLayoutOverflow() : 0; }
     int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : height(); }
     int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : 0; }
     int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : width(); }
+    int logicalLeftLayoutOverflow() const { return style()->isHorizontalWritingMode() ? leftLayoutOverflow() : topLayoutOverflow(); }
+    int logicalRightLayoutOverflow() const { return style()->isHorizontalWritingMode() ? rightLayoutOverflow() : bottomLayoutOverflow(); }
     
     IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : borderBoxRect(); }
     int topVisualOverflow() const { return m_overflow? m_overflow->topVisualOverflow() : 0; }
     int bottomVisualOverflow() const { return m_overflow ? m_overflow->bottomVisualOverflow() : height(); }
     int leftVisualOverflow() const { return m_overflow ? m_overflow->leftVisualOverflow() : 0; }
     int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : width(); }
-
+    int logicalLeftVisualOverflow() const { return style()->isHorizontalWritingMode() ? leftVisualOverflow() : topVisualOverflow(); }
+    int logicalRightVisualOverflow() const { return style()->isHorizontalWritingMode() ? rightVisualOverflow() : bottomVisualOverflow(); }
+    
     void addLayoutOverflow(const IntRect&);
     void addVisualOverflow(const IntRect&);
     

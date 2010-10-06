@@ -2,6 +2,30 @@
 
         Reviewed by Dan Bernstein.
 
+        https://bugs.webkit.org/show_bug.cgi?id=47303
+
+        Convert layoutInlineChildren to be block-flow-aware.  None of the functions it calls are patched yet.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::forceLayoutInlineChildren):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::beforeSideVisibleOverflowForLine):
+        (WebCore::RenderBlock::afterSideVisibleOverflowForLine):
+        (WebCore::RenderBlock::beforeSideLayoutOverflowForLine):
+        (WebCore::RenderBlock::afterSideLayoutOverflowForLine):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::logicalLeftLayoutOverflow):
+        (WebCore::RenderBox::logicalRightLayoutOverflow):
+        (WebCore::RenderBox::logicalLeftVisualOverflow):
+        (WebCore::RenderBox::logicalRightVisualOverflow):
+
+2010-10-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
         https://bugs.webkit.org/show_bug.cgi?id=47298
         
         Rename blockHeight to blockLogicalHeight.
