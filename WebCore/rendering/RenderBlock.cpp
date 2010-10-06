@@ -3971,7 +3971,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         // Check if we need to do anything at all.
         IntRect overflowBox = visibleOverflowRect();
         overflowBox.move(tx, ty);
-        if (!overflowBox.intersects(result.rectFromPoint(_x, _y)))
+        if (!overflowBox.intersects(result.rectForPoint(_x, _y)))
             return false;
     }
 
@@ -3985,7 +3985,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // If we have clipping, then we can't have any spillout.
     bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
     bool useClip = (hasControlClip() || useOverflowClip);
-    IntRect hitTestArea(result.rectFromPoint(_x, _y));
+    IntRect hitTestArea(result.rectForPoint(_x, _y));
     bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(tx, ty).intersects(hitTestArea) : overflowClipRect(tx, ty).intersects(hitTestArea));
     if (checkChildren) {
         // Hit test descendants first.
@@ -4014,7 +4014,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // Now hit test our background
     if (hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) {
         IntRect boundsRect(tx, ty, width(), height());
-        if (visibleToHitTesting() && boundsRect.intersects(result.rectFromPoint(_x, _y))) {
+        if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(_x, _y))) {
             updateHitTestResult(result, IntPoint(_x - tx, _y - ty));
             if (!result.addNodeToRectBasedTestResult(node(), _x, _y, boundsRect))
                 return true;
@@ -4068,13 +4068,13 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
         currYOffset += colRect.height();
         colRect.move(tx, ty);
         
-        if (colRect.intersects(result.rectFromPoint(x, y))) {
+        if (colRect.intersects(result.rectForPoint(x, y))) {
             // The point is inside this column.
             // Adjust tx and ty to change where we hit test.
         
             int finalX = tx + currXOffset;
             int finalY = ty + currYOffset;
-            if (result.isRectBasedTest() && !colRect.contains(result.rectFromPoint(x, y)))
+            if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(x, y)))
                 hitTestContents(request, result, x, y, finalX, finalY, hitTestAction);
             else
                 return hitTestContents(request, result, x, y, finalX, finalY, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, x, y, finalX, finalY));

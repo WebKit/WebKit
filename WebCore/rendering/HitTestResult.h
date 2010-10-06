@@ -98,9 +98,9 @@ public:
 
     // Rect-based hit test related methods.
     bool isRectBasedTest() const { return m_isRectBased; }
-    IntRect rectFromPoint(int x, int y) const;
-    IntRect rectFromPoint(const IntPoint&) const;
-    static IntRect rectFromPoint(const IntPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+    IntRect rectForPoint(int x, int y) const;
+    IntRect rectForPoint(const IntPoint&) const;
+    static IntRect rectForPoint(const IntPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     int topPadding() const { return m_topPadding; }
     int rightPadding() const { return m_rightPadding; }
     int bottomPadding() const { return m_bottomPadding; }
@@ -134,9 +134,9 @@ private:
     ListHashSet<RefPtr<Node> > m_rectBasedTestResult;
 };
 
-inline IntRect HitTestResult::rectFromPoint(int x, int y) const
+inline IntRect HitTestResult::rectForPoint(int x, int y) const
 {
-    return rectFromPoint(IntPoint(x, y), m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding);
+    return rectForPoint(IntPoint(x, y), m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding);
 }
 
 // Formula:
@@ -144,9 +144,9 @@ inline IntRect HitTestResult::rectFromPoint(int x, int y) const
 // y = p.y() - topPadding
 // width = leftPadding + rightPadding + 1
 // height = topPadding + bottomPadding + 1
-inline IntRect HitTestResult::rectFromPoint(const IntPoint& point) const
+inline IntRect HitTestResult::rectForPoint(const IntPoint& point) const
 {
-    return rectFromPoint(point, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding);
+    return rectForPoint(point, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding);
 }
 
 String displayString(const String&, const Node*);

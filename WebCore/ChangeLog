@@ -1,3 +1,39 @@
+2010-10-06  Antonio Gomes  <agomes@rim.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Rename HitTestResult::rectFromPoint to rectForPoint
+        https://bugs.webkit.org/show_bug.cgi?id=47261
+
+        As per Kenneth Christiansen request inhttps://bugs.webkit.org/show_bug.cgi?id=46336#c20.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::nodesFromRect):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        (WebCore::HitTestResult::rectForPoint):
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::rectForPoint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestColumns):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+
 2010-10-06  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed fix of Cairo ports.

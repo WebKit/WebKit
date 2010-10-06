@@ -612,7 +612,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 {
     IntRect overflowRect(visibleOverflowRect());
     overflowRect.move(tx, ty);
-    if (!overflowRect.intersects(result.rectFromPoint(x, y)))
+    if (!overflowRect.intersects(result.rectForPoint(x, y)))
         return false;
 
     // Check children first.
@@ -625,7 +625,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     // Now check ourselves.
     IntRect rect(tx + m_x, ty + m_y, m_logicalWidth, logicalHeight());
-    if (visibleToHitTesting() && rect.intersects(result.rectFromPoint(x, y))) {
+    if (visibleToHitTesting() && rect.intersects(result.rectForPoint(x, y))) {
         renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty)); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), x, y, rect))
             return true;

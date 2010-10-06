@@ -2778,7 +2778,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     useTemporaryClipRects = compositor()->inCompositingMode();
 #endif
 
-    IntRect hitTestArea = result.rectFromPoint(hitTestPoint);
+    IntRect hitTestArea = result.rectForPoint(hitTestPoint);
 
     // Apply a transform if we have one.
     if (transform() && !appliedTransform) {
@@ -3061,7 +3061,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
         IntRect localClipRect(hitTestRect);
         localClipRect.intersect(colRect);
         
-        if (!localClipRect.isEmpty() && localClipRect.intersects(result.rectFromPoint(hitTestPoint))) {
+        if (!localClipRect.isEmpty() && localClipRect.intersects(result.rectForPoint(hitTestPoint))) {
             RenderLayer* hitLayer = 0;
             if (!columnIndex) {
                 // Apply a translation transform to change where the layer paints.

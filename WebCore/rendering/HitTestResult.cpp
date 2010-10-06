@@ -531,7 +531,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const
     node = node->shadowAncestorNode();
     m_rectBasedTestResult.add(node);
 
-    return !rect.contains(rectFromPoint(x, y));
+    return !rect.contains(rectForPoint(x, y));
 }
 
 void HitTestResult::append(const HitTestResult& other)
@@ -553,7 +553,7 @@ void HitTestResult::append(const HitTestResult& other)
         m_rectBasedTestResult.add(it->get());
 }
 
-IntRect HitTestResult::rectFromPoint(const IntPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
+IntRect HitTestResult::rectForPoint(const IntPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
 {
     IntPoint actualPoint(point);
     actualPoint -= IntSize(leftPadding, topPadding);

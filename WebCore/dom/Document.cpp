@@ -1069,7 +1069,7 @@ PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned 
     // When ignoreClipping is false, this method returns null for coordinates outside of the viewport.
     if (ignoreClipping)
         type |= HitTestRequest::IgnoreClipping;
-    else if (!frameView->visibleContentRect().intersects(HitTestResult::rectFromPoint(point, topPadding, rightPadding, bottomPadding, leftPadding)))
+    else if (!frameView->visibleContentRect().intersects(HitTestResult::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding)))
         return 0;
 
     HitTestRequest request(type);
