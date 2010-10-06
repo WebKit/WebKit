@@ -1,3 +1,8 @@
+if (this.importScripts) {
+    importScripts('../resources/fs-worker-common.js');
+    importScripts('../resources/fs-test-util.js');
+}
+
 description("requestFileSystem PERSISTENT test.");
 
 var fileSystem = null;

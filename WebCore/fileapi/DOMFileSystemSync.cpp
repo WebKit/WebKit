@@ -38,6 +38,11 @@
 
 namespace WebCore {
 
+PassRefPtr<DOMFileSystemSync> DOMFileSystemSync::create(DOMFileSystemBase* fileSystem)
+{
+    return adoptRef(new DOMFileSystemSync(fileSystem->m_name, fileSystem->m_asyncFileSystem.release()));
+}
+
 DOMFileSystemSync::DOMFileSystemSync(const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     : DOMFileSystemBase(name, asyncFileSystem)
 {

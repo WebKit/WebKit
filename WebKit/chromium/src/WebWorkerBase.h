@@ -93,7 +93,7 @@ public:
 
 #if ENABLE(FILE_SYSTEM)
     // Requests to open a file system for this worker. (Note that this is not the implementation for WebFrameClient::openFileSystem.)
-    void openFileSystem(WebFileSystem::Type, long long size, WebFileSystemCallbacks*);
+    void openFileSystem(WebFileSystem::Type, long long size, WebFileSystemCallbacks*, bool synchronous);
 #endif
 
     // Executes the given task on the main thread.

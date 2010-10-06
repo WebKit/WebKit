@@ -40,27 +40,27 @@
 
 namespace WebCore {
 
+class DirectoryEntry;
 class EntryCallback;
+class EntrySync;
 class ErrorCallback;
 class MetadataCallback;
 class VoidCallback;
 
 class Entry : public EntryBase {
 public:
-    virtual ~Entry() { }
-
     DOMFileSystem* filesystem() const { return static_cast<DOMFileSystem*>(m_fileSystem); }
 
     virtual void getMetadata(PassRefPtr<MetadataCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
-    virtual void moveTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
-    virtual void copyTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
+    virtual void moveTo(PassRefPtr<DirectoryEntry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
+    virtual void copyTo(PassRefPtr<DirectoryEntry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
     virtual void remove(PassRefPtr<VoidCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
     virtual void getParent(PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
 
     virtual String toURI(const String& mimeType = String());
 
 protected:
-    Entry(DOMFileSystem* fileSystem, const String& fullPath);
+    Entry(DOMFileSystemBase*, const String& fullPath);
 };
 
 } // namespace WebCore

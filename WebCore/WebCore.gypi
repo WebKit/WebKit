@@ -1520,6 +1520,7 @@
             'fileapi/LocalFileSystem.h',
             'fileapi/Metadata.h',
             'fileapi/MetadataCallback.h',
+            'fileapi/SyncCallbackHelper.h',
             'fileapi/ThreadableBlobRegistry.cpp',
             'fileapi/ThreadableBlobRegistry.h',
             'history/mac/HistoryItemMac.mm',

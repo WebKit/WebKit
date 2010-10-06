@@ -36,19 +36,13 @@
 #include "AsyncFileSystem.h"
 #include "DOMFilePath.h"
 #include "DirectoryEntry.h"
-#include "EntriesCallback.h"
-#include "Entry.h"
-#include "EntryArray.h"
-#include "EntryCallback.h"
 #include "ErrorCallback.h"
 #include "FileEntry.h"
-#include "FileError.h"
 #include "FileSystemCallbacks.h"
 #include "FileWriter.h"
 #include "FileWriterCallback.h"
 #include "MetadataCallback.h"
 #include "ScriptExecutionContext.h"
-#include "VoidCallback.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -80,124 +74,6 @@ void DOMFileSystem::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
-void DOMFileSystem::getMetadata(const Entry* entry, PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(entry->fullPath());
-    m_asyncFileSystem->readMetadata(platformPath, MetadataCallbacks::create(successCallback, errorCallback));
-}
-
-static bool checkValidityForForCopyOrMove(const Entry* src, Entry* parent, const String& newName)
-{
-    ASSERT(src);
-
-    if (!parent || !parent->isDirectory())
-        return false;
-
-    if (!newName.isEmpty() && !DOMFilePath::isValidName(newName))
-        return false;
-
-    // It is an error to try to copy or move an entry inside itself at any depth if it is a directory.
-    if (src->isDirectory() && DOMFilePath::isParentOf(src->fullPath(), parent->fullPath()))
-        return false;
-
-    // It is an error to copy or move an entry into its parent if a name different from its current one isn't provided.
-    if ((newName.isEmpty() || src->name() == newName) && DOMFilePath::getDirectory(src->fullPath()) == parent->fullPath())
-        return false;
-
-    return true;
-}
-
-void DOMFileSystem::move(const Entry* src, PassRefPtr<Entry> parent, const String& newName, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    if (!checkValidityForForCopyOrMove(src, parent.get(), newName)) {
-        scheduleCallback(scriptExecutionContext(), errorCallback, FileError::create(INVALID_MODIFICATION_ERR));
-        return;
-    }
-
-    String destPath = parent->fullPath();
-    if (!newName.isEmpty())
-        destPath = DOMFilePath::append(destPath, newName);
-    else
-        destPath = DOMFilePath::append(destPath, src->name());
-
-    String srcPlatformPath = m_asyncFileSystem->virtualToPlatformPath(src->fullPath());
-    String destPlatformPath = parent->filesystem()->asyncFileSystem()->virtualToPlatformPath(destPath);
-    m_asyncFileSystem->move(srcPlatformPath, destPlatformPath, EntryCallbacks::create(successCallback, errorCallback, this, destPath, src->isDirectory()));
-}
-
-void DOMFileSystem::copy(const Entry* src, PassRefPtr<Entry> parent, const String& newName, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    if (!checkValidityForForCopyOrMove(src, parent.get(), newName)) {
-        scheduleCallback(scriptExecutionContext(), errorCallback, FileError::create(INVALID_MODIFICATION_ERR));
-        return;
-    }
-
-    String destPath = parent->fullPath();
-    if (!newName.isEmpty())
-        destPath = DOMFilePath::append(destPath, newName);
-    else
-        destPath = DOMFilePath::append(destPath, src->name());
-
-    String srcPlatformPath = m_asyncFileSystem->virtualToPlatformPath(src->fullPath());
-    String destPlatformPath = parent->filesystem()->asyncFileSystem()->virtualToPlatformPath(destPath);
-    m_asyncFileSystem->copy(srcPlatformPath, destPlatformPath, EntryCallbacks::create(successCallback, errorCallback, this, destPath, src->isDirectory()));
-}
-
-void DOMFileSystem::remove(const Entry* entry, PassRefPtr<VoidCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    ASSERT(entry);
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(entry->fullPath());
-    m_asyncFileSystem->remove(platformPath, VoidCallbacks::create(successCallback, errorCallback));
-}
-
-void DOMFileSystem::getParent(const Entry* entry, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    ASSERT(entry);
-    String path = DOMFilePath::getDirectory(entry->fullPath());
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(path);
-    m_asyncFileSystem->directoryExists(platformPath, EntryCallbacks::create(successCallback, errorCallback, this, path, true));
-}
-
-void DOMFileSystem::getFile(const Entry* base, const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    ASSERT(base);
-    if (!DOMFilePath::isValidPath(path)) {
-        scheduleCallback(scriptExecutionContext(), errorCallback, FileError::create(INVALID_MODIFICATION_ERR));
-        return;
-    }
-
-    String absolutePath = path;
-    if (!DOMFilePath::isAbsolute(path))
-        absolutePath = DOMFilePath::removeExtraParentReferences(DOMFilePath::append(base->fullPath(), path));
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(absolutePath);
-
-    OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, false);
-    if (flags && flags->isCreate())
-        m_asyncFileSystem->createFile(platformPath, flags->isExclusive(), callbacks.release());
-    else
-        m_asyncFileSystem->fileExists(platformPath, callbacks.release());
-}
-
-void DOMFileSystem::getDirectory(const Entry* base, const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    ASSERT(base);
-    if (!DOMFilePath::isValidPath(path)) {
-        scheduleCallback(scriptExecutionContext(), errorCallback, FileError::create(INVALID_MODIFICATION_ERR));
-        return;
-    }
-
-    String absolutePath = path;
-    if (!DOMFilePath::isAbsolute(path))
-        absolutePath = DOMFilePath::removeExtraParentReferences(DOMFilePath::append(base->fullPath(), path));
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(absolutePath);
-
-    OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, true);
-    if (flags && flags->isCreate())
-        m_asyncFileSystem->createDirectory(platformPath, flags->isExclusive(), callbacks.release());
-    else
-        m_asyncFileSystem->directoryExists(platformPath, callbacks.release());
-}
-
 void DOMFileSystem::createWriter(const FileEntry* file, PassRefPtr<FileWriterCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     ASSERT(file);
@@ -207,13 +83,6 @@ void DOMFileSystem::createWriter(const FileEntry* file, PassRefPtr<FileWriterCal
     RefPtr<FileWriter> fileWriter = FileWriter::create(scriptExecutionContext());
     OwnPtr<FileWriterCallbacks> callbacks = FileWriterCallbacks::create(fileWriter, successCallback, errorCallback);
     m_asyncFileSystem->createWriter(fileWriter.get(), platformPath, callbacks.release());
-}
-
-void DOMFileSystem::readDirectory(DirectoryReader* reader, const String& path, PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
-{
-    ASSERT(DOMFilePath::isAbsolute(path));
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(path);
-    m_asyncFileSystem->readDirectory(platformPath, EntriesCallbacks::create(successCallback, errorCallback, reader, path));
 }
 
 } // namespace

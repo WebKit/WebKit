@@ -33,7 +33,19 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "EntryArray.h"
+
 namespace WebCore {
+
+PassRefPtr<EntryArraySync> EntryArraySync::create(EntryArray* entries)
+{
+    RefPtr<EntryArraySync> entriesSync = adoptRef(new EntryArraySync());
+    if (entries) {
+        for (unsigned i = 0; i < entries->length(); ++i)
+            entriesSync->append(EntrySync::create(entries->item(i)));
+    }
+    return entriesSync.release();
+}
 
 EntryArraySync::EntryArraySync()
 {

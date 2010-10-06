@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-FileEntry::FileEntry(DOMFileSystem* fileSystem, const String& fullPath)
+FileEntry::FileEntry(DOMFileSystemBase* fileSystem, const String& fullPath)
     : Entry(fileSystem, fullPath)
 {
 }

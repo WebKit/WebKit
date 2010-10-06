@@ -1,3 +1,8 @@
+if (this.importScripts) {
+    importScripts('../resources/fs-worker-common.js');
+    importScripts('../resources/fs-test-util.js');
+}
+
 description("requestFileSystemSync PERSISTENT test.");
 
 var fileSystem = requestFileSystemSync(PERSISTENT, 100);

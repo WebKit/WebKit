@@ -41,8 +41,8 @@
 namespace WebCore {
 
 class AsyncFileWriter;
-class DOMFileSystem;
-class DirectoryReader;
+class DOMFileSystemBase;
+class DirectoryReaderBase;
 class ErrorCallback;
 class EntriesCallback;
 class EntryArray;
@@ -86,27 +86,27 @@ protected:
 
 class EntryCallbacks : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<EntryCallbacks> create(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, DOMFileSystem*, const String& expectedPath, bool isDirectory);
+    static PassOwnPtr<EntryCallbacks> create(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, DOMFileSystemBase*, const String& expectedPath, bool isDirectory);
     virtual void didSucceed();
 
 private:
-    EntryCallbacks(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, DOMFileSystem*, const String& expectedPath, bool isDirectory);
+    EntryCallbacks(PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>, DOMFileSystemBase*, const String& expectedPath, bool isDirectory);
     RefPtr<EntryCallback> m_successCallback;
-    DOMFileSystem* m_fileSystem;
+    DOMFileSystemBase* m_fileSystem;
     String m_expectedPath;
     bool m_isDirectory;
 };
 
 class EntriesCallbacks : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<EntriesCallbacks> create(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>, DirectoryReader*, const String& basePath);
+    static PassOwnPtr<EntriesCallbacks> create(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>, DirectoryReaderBase*, const String& basePath);
     virtual void didReadDirectoryEntry(const String& name, bool isDirectory);
     virtual void didReadDirectoryEntries(bool hasMore);
 
 private:
-    EntriesCallbacks(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>, DirectoryReader*, const String& basePath);
+    EntriesCallbacks(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>, DirectoryReaderBase*, const String& basePath);
     RefPtr<EntriesCallback> m_successCallback;
-    DirectoryReader* m_directoryReader;
+    DirectoryReaderBase* m_directoryReader;
     String m_basePath;
     RefPtr<EntryArray> m_entries;
 };

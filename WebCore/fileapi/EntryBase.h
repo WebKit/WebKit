@@ -48,6 +48,8 @@ class EntryBase : public RefCounted<EntryBase> {
 public:
     virtual ~EntryBase() { }
 
+    DOMFileSystemBase* filesystem() const { return m_fileSystem; }
+
     virtual bool isFile() const { return false; }
     virtual bool isDirectory() const { return false; }
 

@@ -2,7 +2,10 @@ This tests requesting TEMPORARY FileSystemSync in Worker.
 
 Starting worker: ../resources/simple-temporary-sync.js
 Description: requestFileSystemSync TEMPORARY test.
-Got error from worker: Uncaught ReferenceError: requestFileSystemSync is not defined
+Successfully obtained TEMPORARY FileSystem:file__0:Temporary
+PASS: fileSystem.name.length > 0 is true
+PASS: fileSystem.root.fullPath is "/"
+DONE
 
 TEST COMPLETE
 

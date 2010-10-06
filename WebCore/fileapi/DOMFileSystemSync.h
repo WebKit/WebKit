@@ -48,6 +48,8 @@ public:
         return adoptRef(new DOMFileSystemSync(name, asyncFileSystem));
     }
 
+    static PassRefPtr<DOMFileSystemSync> create(DOMFileSystemBase*);
+
     virtual ~DOMFileSystemSync();
 
     PassRefPtr<DirectoryEntrySync> root();

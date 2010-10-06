@@ -49,7 +49,7 @@ class WebString;
 
 class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
 public:
-    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::ScriptExecutionContext* = 0);
+    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::ScriptExecutionContext* = 0, bool synchronous = false);
     virtual ~WebFileSystemCallbacksImpl();
 
     virtual void didSucceed();
@@ -63,6 +63,7 @@ private:
 
     // Used for worker's openFileSystem callbacks.
     WebCore::ScriptExecutionContext* m_context;
+    bool m_synchronous;
 };
 
 } // namespace WebKit

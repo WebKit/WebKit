@@ -150,7 +150,6 @@ public:
 #if ENABLE(FILE_SYSTEM)
     static bool fileSystemEnabled();
     static void setFileSystemEnabled(bool isEnabled) { isFileSystemEnabled = isEnabled; }
-    static bool requestFileSystemEnabled() { return isFileSystemEnabled; }
 #endif
 
 private:

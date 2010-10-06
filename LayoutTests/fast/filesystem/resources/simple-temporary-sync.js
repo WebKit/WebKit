@@ -1,3 +1,8 @@
+if (this.importScripts) {
+    importScripts('../resources/fs-worker-common.js');
+    importScripts('../resources/fs-test-util.js');
+}
+
 description("requestFileSystemSync TEMPORARY test.");
 
 var fileSystem = requestFileSystemSync(TEMPORARY, 100);

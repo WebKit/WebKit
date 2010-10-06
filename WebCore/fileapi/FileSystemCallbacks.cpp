@@ -36,7 +36,7 @@
 #include "AsyncFileSystem.h"
 #include "AsyncFileWriter.h"
 #include "DOMFilePath.h"
-#include "DOMFileSystem.h"
+#include "DOMFileSystemBase.h"
 #include "DirectoryEntry.h"
 #include "DirectoryReader.h"
 #include "EntriesCallback.h"
@@ -111,12 +111,12 @@ void FileSystemCallbacksBase::didFail(int code)
 
 // EntryCallbacks -------------------------------------------------------------
 
-PassOwnPtr<EntryCallbacks> EntryCallbacks::create(PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, DOMFileSystem* fileSystem, const String& expectedPath, bool isDirectory)
+PassOwnPtr<EntryCallbacks> EntryCallbacks::create(PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, DOMFileSystemBase* fileSystem, const String& expectedPath, bool isDirectory)
 {
     return adoptPtr(new EntryCallbacks(successCallback, errorCallback, fileSystem, expectedPath, isDirectory));
 }
 
-EntryCallbacks::EntryCallbacks(PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, DOMFileSystem* fileSystem, const String& expectedPath, bool isDirectory)
+EntryCallbacks::EntryCallbacks(PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, DOMFileSystemBase* fileSystem, const String& expectedPath, bool isDirectory)
     : FileSystemCallbacksBase(errorCallback)
     , m_successCallback(successCallback)
     , m_fileSystem(fileSystem)
@@ -138,12 +138,12 @@ void EntryCallbacks::didSucceed()
 
 // EntriesCallbacks -----------------------------------------------------------
 
-PassOwnPtr<EntriesCallbacks> EntriesCallbacks::create(PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, DirectoryReader* directoryReader, const String& basePath)
+PassOwnPtr<EntriesCallbacks> EntriesCallbacks::create(PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, DirectoryReaderBase* directoryReader, const String& basePath)
 {
     return adoptPtr(new EntriesCallbacks(successCallback, errorCallback, directoryReader, basePath));
 }
 
-EntriesCallbacks::EntriesCallbacks(PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, DirectoryReader* directoryReader, const String& basePath)
+EntriesCallbacks::EntriesCallbacks(PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback, DirectoryReaderBase* directoryReader, const String& basePath)
     : FileSystemCallbacksBase(errorCallback)
     , m_successCallback(successCallback)
     , m_directoryReader(directoryReader)

@@ -2,7 +2,10 @@ This tests requesting PERSISTENT FileSystemSync in Worker.
 
 Starting worker: ../resources/simple-persistent-sync.js
 Description: requestFileSystemSync PERSISTENT test.
-Got error from worker: Uncaught ReferenceError: requestFileSystemSync is not defined
+Successfully obtained PERSISTENT FileSystem:file__0:Persistent
+PASS: fileSystem.name.length > 0 is true
+PASS: fileSystem.root.fullPath is "/"
+DONE
 
 TEST COMPLETE
 

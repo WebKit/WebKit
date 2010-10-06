@@ -59,6 +59,10 @@ public:
 
     static bool isAvailable();
 
+    // Subclass must implement this if it supports synchronous operations.
+    // This should return false if there are no pending operations.
+    virtual bool waitForOperationToComplete() { return false; }
+
     // Creates and returns a new platform-specific AsyncFileSystem instance if the platform has its own implementation.
     static PassOwnPtr<AsyncFileSystem> create(const String& rootPath);
 

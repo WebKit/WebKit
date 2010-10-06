@@ -48,15 +48,19 @@ namespace WebCore {
 
 class AsyncFileSystemCallbacks;
 class ScriptExecutionContext;
+class WorkerContext;
 
 class WorkerAsyncFileSystemChromium : public AsyncFileSystem {
 public:
-    static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, const String& rootPath)
+    static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, const String& rootPath, bool synchronous)
     {
-        return adoptPtr(new WorkerAsyncFileSystemChromium(context, rootPath));
+        return adoptPtr(new WorkerAsyncFileSystemChromium(context, rootPath, synchronous));
     }
 
     virtual ~WorkerAsyncFileSystemChromium();
+
+    // Runs one pending operation (to wait for completion in the sync-mode).
+    virtual bool waitForOperationToComplete();
 
     virtual void move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
@@ -70,13 +74,17 @@ public:
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
-    WorkerAsyncFileSystemChromium(ScriptExecutionContext*, const String& rootPath);
+    WorkerAsyncFileSystemChromium(ScriptExecutionContext*, const String& rootPath, bool synchronous);
+
     PassRefPtr<WebKit::WorkerFileSystemCallbacksBridge> createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks>);
 
     ScriptExecutionContext* m_scriptExecutionContext;
     WebKit::WebFileSystem* m_webFileSystem;
     WebKit::WebWorkerBase* m_worker;
-    String m_mode;
+    WorkerContext* m_workerContext;
+    RefPtr<WebKit::WorkerFileSystemCallbacksBridge> m_bridgeForCurrentOperation;
+    String m_modeForCurrentOperation;
+    bool m_synchronous;
 };
 
 } // namespace WebCore

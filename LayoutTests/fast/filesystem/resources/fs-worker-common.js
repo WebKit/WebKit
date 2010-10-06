@@ -27,11 +27,24 @@ function shouldBe(_a, _b)
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
 
+function removeRecursivelySync(directory) {
+    if (!directory)
+        return;
+    var reader = directory.createReader();
+    do {
+        var entries = reader.readEntries();
+        for (var i = 0; i < entries.length; ++i) {
+            if (entries[i].isDirectory)
+                removeRecursivelySync(entries[i]);
+            else
+                entries[i].remove();
+        }
+    } while (entries.length);
+    if (directory.fullPath != '/')
+        directory.remove();
+}
+
 if (this.importScripts && !this.requestFileSystem) {
     debug('This test requires FileSystem API.');
     finishJSTest();
-}
-
-onmessage = function(event) {
-    importScripts(event.data);
 }

@@ -1,0 +1,10 @@
+This tests running multiple sync filesystem operations in Worker.
+
+Starting worker: ../resources/sync-operations.js
+Description: Test making multiple synchronous FileSystem operations.
+PASS: "/a,/b,/c,/d2,/e,/f" is "/a,/b,/c,/d2,/e,/f"
+PASS: dirsCount is 3
+DONE
+
+TEST COMPLETE
+

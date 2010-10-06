@@ -94,8 +94,8 @@ function fileSystemCallback(fs) {
 }
 
 if (window.requestFileSystem) {
-    requestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
     window.jsTestIsAsync = true;
+    requestFileSystem(window.TEMPORARY, 100, fileSystemCallback, errorCallback);
 } else
     debug("This test requires FileSystem API support.");
 

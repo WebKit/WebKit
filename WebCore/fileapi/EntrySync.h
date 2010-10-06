@@ -47,6 +47,8 @@ class Metadata;
 
 class EntrySync : public EntryBase {
 public:
+    static PassRefPtr<EntrySync> create(EntryBase*);
+
     DOMFileSystemSync* filesystem() const { return static_cast<DOMFileSystemSync*>(m_fileSystem); }
 
     virtual PassRefPtr<Metadata> getMetadata(ExceptionCode&);

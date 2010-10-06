@@ -1,3 +1,43 @@
+2010-10-06  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add FileSystemSync implementation for Worker
+        https://bugs.webkit.org/show_bug.cgi?id=47044
+
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::LocalFileSystem::requestFileSystem): Added a new parameter
+        for synchronous mode.
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::WebFileSystemCallbacksImpl): Added
+        a parameter for synchronous mode.
+        (WebKit::WebFileSystemCallbacksImpl::didOpenFileSystem): Changed to
+        creates WorkerAsyncFileSystemChromium with synchronous flag.
+        * src/WebFileSystemCallbacksImpl.h:
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::openFileSystem): Added a parameter for
+        synchronous mode.
+        * src/WebWorkerBase.h:
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::WorkerAsyncFileSystemChromium):
+        (WebCore::WorkerAsyncFileSystemChromium::waitForOperationToComplete):
+        Added.
+        (WebCore::WorkerAsyncFileSystemChromium::move):
+        (WebCore::WorkerAsyncFileSystemChromium::copy):
+        (WebCore::WorkerAsyncFileSystemChromium::remove):
+        (WebCore::WorkerAsyncFileSystemChromium::readMetadata):
+        (WebCore::WorkerAsyncFileSystemChromium::createFile):
+        (WebCore::WorkerAsyncFileSystemChromium::createDirectory):
+        (WebCore::WorkerAsyncFileSystemChromium::fileExists):
+        (WebCore::WorkerAsyncFileSystemChromium::directoryExists):
+        (WebCore::WorkerAsyncFileSystemChromium::readDirectory):
+        (WebCore::WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge):
+        Updated to store the created bridge in a member variable so that
+        we can call bridge->stop() later when the RunLoop is terminating.
+        * src/WorkerAsyncFileSystemChromium.h:
+        (WebCore::WorkerAsyncFileSystemChromium::create): Added a new
+        parameter for synchronous mode.
+
 2010-10-06  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

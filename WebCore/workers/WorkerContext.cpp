@@ -66,11 +66,13 @@
 #if ENABLE(FILE_SYSTEM)
 #include "AsyncFileSystem.h"
 #include "DOMFileSystem.h"
+#include "DOMFileSystemSync.h"
 #include "ErrorCallback.h"
 #include "FileError.h"
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "LocalFileSystem.h"
+#include "SyncCallbackHelper.h"
 #endif
 
 namespace WebCore {
@@ -364,6 +366,25 @@ void WorkerContext::requestFileSystem(int type, long long size, PassRefPtr<FileS
     }
 
     LocalFileSystem::localFileSystem().requestFileSystem(this, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, this));
+}
+
+PassRefPtr<DOMFileSystemSync> WorkerContext::requestFileSystemSync(int type, long long size, ExceptionCode& ec)
+{
+    ec = 0;
+    if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem()) {
+        ec = SECURITY_ERR;
+        return 0;
+    }
+
+    AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
+    if (fileSystemType != AsyncFileSystem::Temporary && fileSystemType != AsyncFileSystem::Persistent) {
+        ec = INVALID_MODIFICATION_ERR;
+        return 0;
+    }
+
+    FileSystemSyncCallbackHelper helper;
+    LocalFileSystem::localFileSystem().requestFileSystem(this, fileSystemType, size, FileSystemCallbacks::create(helper.successCallback(), helper.errorCallback(), this), true);
+    return helper.getResult(ec);
 }
 
 COMPILE_ASSERT(static_cast<int>(WorkerContext::TEMPORARY) == static_cast<int>(AsyncFileSystem::Temporary), enum_mismatch);

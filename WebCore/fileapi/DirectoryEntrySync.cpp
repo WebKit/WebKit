@@ -36,7 +36,7 @@
 #include "DirectoryReaderSync.h"
 #include "EntrySync.h"
 #include "FileEntrySync.h"
-#include "NotImplemented.h"
+#include "SyncCallbackHelper.h"
 
 namespace WebCore {
 
@@ -50,18 +50,26 @@ PassRefPtr<DirectoryReaderSync> DirectoryEntrySync::createReader(ExceptionCode&)
     return DirectoryReaderSync::create(m_fileSystem, m_fullPath);
 }
 
-PassRefPtr<FileEntrySync> DirectoryEntrySync::getFile(const String&, PassRefPtr<Flags>, ExceptionCode&)
+PassRefPtr<FileEntrySync> DirectoryEntrySync::getFile(const String& path, PassRefPtr<Flags> flags, ExceptionCode& ec)
 {
-    // FIXME: to be implemented.
-    notImplemented();
-    return 0;
+    ec = 0;
+    EntrySyncCallbackHelper helper(m_fileSystem->asyncFileSystem());
+    if (!m_fileSystem->getFile(this, path, flags, helper.successCallback(), helper.errorCallback())) {
+        ec = INVALID_MODIFICATION_ERR;
+        return 0;
+    }
+    return static_pointer_cast<FileEntrySync>(helper.getResult(ec));
 }
 
-PassRefPtr<DirectoryEntrySync> DirectoryEntrySync::getDirectory(const String&, PassRefPtr<Flags>, ExceptionCode&)
+PassRefPtr<DirectoryEntrySync> DirectoryEntrySync::getDirectory(const String& path, PassRefPtr<Flags> flags, ExceptionCode& ec)
 {
-    // FIXME: to be implemented.
-    notImplemented();
-    return 0;
+    ec = 0;
+    EntrySyncCallbackHelper helper(m_fileSystem->asyncFileSystem());
+    if (!m_fileSystem->getDirectory(this, path, flags, helper.successCallback(), helper.errorCallback())) {
+        ec = INVALID_MODIFICATION_ERR;
+        return 0;
+    }
+    return static_pointer_cast<DirectoryEntrySync>(helper.getResult(ec));
 }
 
 }

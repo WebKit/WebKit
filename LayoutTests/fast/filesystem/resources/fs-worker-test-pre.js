@@ -9,8 +9,7 @@ function debug(message)
 function startWorker(testScriptURL)
 {
     debug('Starting worker: ' + testScriptURL);
-    var worker = new Worker('../resources/fs-worker-common.js');
-    worker.postMessage(testScriptURL);
+    var worker = new Worker(testScriptURL);
     worker.onmessage = function(event)
     {
         debug(event.data);
