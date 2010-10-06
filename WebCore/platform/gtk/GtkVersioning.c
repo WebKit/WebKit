@@ -98,3 +98,166 @@ const gchar* gtk_menu_item_get_label(GtkMenuItem* menuItem)
     return 0;
 }
 #endif // GTK_CHECK_VERSION(2, 16, 0)
+
+#ifdef GTK_API_VERSION_2
+static cairo_format_t
+gdk_cairo_format_for_content(cairo_content_t content)
+{
+    switch (content) {
+    case CAIRO_CONTENT_COLOR:
+        return CAIRO_FORMAT_RGB24;
+    case CAIRO_CONTENT_ALPHA:
+        return CAIRO_FORMAT_A8;
+    case CAIRO_CONTENT_COLOR_ALPHA:
+    default:
+        return CAIRO_FORMAT_ARGB32;
+    }
+}
+
+static cairo_surface_t*
+gdk_cairo_surface_coerce_to_image(cairo_surface_t* surface,
+                                  cairo_content_t content,
+                                  int width,
+                                  int height)
+{
+    cairo_surface_t * copy;
+    cairo_t * cr;
+
+    if (cairo_surface_get_type(surface) == CAIRO_SURFACE_TYPE_IMAGE
+        && cairo_surface_get_content(surface) == content
+        && cairo_image_surface_get_width(surface) >= width
+        && cairo_image_surface_get_height(surface) >= height)
+        return cairo_surface_reference(surface);
+
+    copy = cairo_image_surface_create(gdk_cairo_format_for_content(content),
+                                      width,
+                                      height);
+
+    cr = cairo_create(copy);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_surface(cr, surface, 0, 0);
+    cairo_paint(cr);
+    cairo_destroy(cr);
+
+    return copy;
+}
+
+static void
+convert_alpha(guchar * destData, int destStride,
+              guchar * srcData, int srcStride,
+              int srcX, int srcY, int width, int height)
+{
+    int x, y;
+
+    srcData += srcStride * srcY + srcY * 4;
+
+    for (y = 0; y < height; y++) {
+        guint32 * src = (guint32 *) srcData;
+
+        for (x = 0; x < width; x++) {
+            guint alpha = src[x] >> 24;
+
+            if (!alpha) {
+                destData[x * 4 + 0] = 0;
+                destData[x * 4 + 1] = 0;
+                destData[x * 4 + 2] = 0;
+            } else {
+                destData[x * 4 + 0] = (((src[x] & 0xff0000) >> 16) * 255 + alpha / 2) / alpha;
+                destData[x * 4 + 1] = (((src[x] & 0x00ff00) >>  8) * 255 + alpha / 2) / alpha;
+                destData[x * 4 + 2] = (((src[x] & 0x0000ff) >>  0) * 255 + alpha / 2) / alpha;
+            }
+            destData[x * 4 + 3] = alpha;
+        }
+
+        srcData += srcStride;
+        destData += destStride;
+    }
+}
+
+static void
+convert_no_alpha(guchar * destData, int destStride, guchar * srcData,
+                 int srcStride, int srcX, int srcY,
+                 int width, int height)
+{
+    int x, y;
+
+    srcData += srcStride * srcY + srcX * 4;
+
+    for (y = 0; y < height; y++) {
+        guint32 * src = (guint32 *) srcData;
+
+        for (x = 0; x < width; x++) {
+            destData[x * 3 + 0] = src[x] >> 16;
+            destData[x * 3 + 1] = src[x] >>  8;
+            destData[x * 3 + 2] = src[x];
+        }
+
+        srcData += srcStride;
+        destData += destStride;
+    }
+}
+
+/**
+ * gdk_pixbuf_get_from_surface:
+ * @surface: surface to copy from
+ * @src_x: Source X coordinate within @surface
+ * @src_y: Source Y coordinate within @surface
+ * @width: Width in pixels of region to get
+ * @height: Height in pixels of region to get
+ *
+ * Transfers image data from a #cairo_surface_t and converts it to an RGB(A)
+ * representation inside a #GdkPixbuf. This allows you to efficiently read
+ * individual pixels from cairo surfaces. For #GdkWindows, use
+ * gdk_pixbuf_get_from_window() instead.
+ *
+ * This function will create an RGB pixbuf with 8 bits per channel. The pixbuf
+ * will contain an alpha channel if the @surface contains one.
+ *
+ * Return value: (transfer full): A newly-created pixbuf with a reference count
+ * of 1, or %NULL on error
+ **/
+GdkPixbuf*
+gdk_pixbuf_get_from_surface(cairo_surface_t * surface,
+                            int srcX, int srcY,
+                            int width, int height)
+{
+    cairo_content_t content;
+    GdkPixbuf * dest;
+
+    /* General sanity checks */
+    g_return_val_if_fail(!surface, NULL);
+    g_return_val_if_fail(srcX >= 0 && srcY >= 0, NULL);
+    g_return_val_if_fail(width > 0 && height > 0, NULL);
+
+    content = cairo_surface_get_content(surface) | CAIRO_CONTENT_COLOR;
+    dest = gdk_pixbuf_new(GDK_COLORSPACE_RGB,
+                          !!(content & CAIRO_CONTENT_ALPHA),
+                          8,
+                          width, height);
+
+    surface = gdk_cairo_surface_coerce_to_image(surface, content, srcX + width, srcY + height);
+    cairo_surface_flush(surface);
+    if (cairo_surface_status(surface) || !dest) {
+        cairo_surface_destroy(surface);
+        return NULL;
+    }
+
+    if (gdk_pixbuf_get_has_alpha(dest))
+        convert_alpha(gdk_pixbuf_get_pixels(dest),
+                       gdk_pixbuf_get_rowstride(dest),
+                       cairo_image_surface_get_data(surface),
+                       cairo_image_surface_get_stride(surface),
+                       srcX, srcY,
+                       width, height);
+    else
+        convert_no_alpha(gdk_pixbuf_get_pixels(dest),
+                          gdk_pixbuf_get_rowstride(dest),
+                          cairo_image_surface_get_data(surface),
+                          cairo_image_surface_get_stride(surface),
+                          srcX, srcY,
+                          width, height);
+
+    cairo_surface_destroy(surface);
+    return dest;
+}
+#endif // GTK_API_VERSION_2

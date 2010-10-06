@@ -28,27 +28,16 @@
 
 #include "config.h"
 #include "CursorGtk.h"
+#include "GtkVersioning.h"
 
 #include "Image.h"
 #include "IntPoint.h"
+#include "PlatformRefPtrCairo.h"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
-
-static GdkPixmap* createPixmapFromBits(const unsigned char* bits, const IntSize& size)
-{
-    cairo_surface_t* dataSurface = cairo_image_surface_create_for_data(const_cast<unsigned char*>(bits), CAIRO_FORMAT_A1, size.width(), size.height(), size.width() / 8);
-    GdkPixmap* pixmap = gdk_pixmap_new(0, size.width(), size.height(), 1);
-    cairo_t* cr = gdk_cairo_create(pixmap);
-    cairo_set_source_surface(cr, dataSurface, 0, 0);
-    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
-    cairo_paint(cr);
-    cairo_destroy(cr);
-    cairo_surface_destroy(dataSurface);
-    return pixmap;
-}
 
 static PlatformRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
 {
@@ -57,12 +46,17 @@ static PlatformRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
     if (c)
         return c;
 
-    const GdkColor fg = { 0, 0, 0, 0 };
-    const GdkColor bg = { 65535, 65535, 65535, 65535 };
     IntSize cursorSize = IntSize(32, 32);
-    PlatformRefPtr<GdkPixmap> source = adoptPlatformRef(createPixmapFromBits(cursor.bits, cursorSize));
-    PlatformRefPtr<GdkPixmap> mask = adoptPlatformRef(createPixmapFromBits(cursor.mask_bits, cursorSize));
-    return adoptPlatformRef(gdk_cursor_new_from_pixmap(source.get(), mask.get(), &fg, &bg, cursor.hot_x, cursor.hot_y));
+    PlatformRefPtr<cairo_surface_t> source = adoptPlatformRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.bits), CAIRO_FORMAT_A1, 32, 32, 4));
+    PlatformRefPtr<cairo_surface_t> mask = adoptPlatformRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.mask_bits), CAIRO_FORMAT_A1, 32, 32, 4));
+    PlatformRefPtr<cairo_surface_t> surface = adoptPlatformRef(cairo_image_surface_create(CAIRO_FORMAT_A1, 32, 32));
+    PlatformRefPtr<cairo_t> cr = adoptPlatformRef(cairo_create(surface.get()));
+
+    cairo_set_source_surface(cr.get(), source.get(), cursor.hot_x, cursor.hot_y);
+    cairo_mask_surface(cr.get(), mask.get(), cursor.hot_x, cursor.hot_y);
+
+    PlatformRefPtr<GdkPixbuf> pixbuf = adoptPlatformRef(gdk_pixbuf_get_from_surface(surface.get(), 0, 0, 32, 32));
+    return adoptPlatformRef(gdk_cursor_new_from_pixbuf(gdk_display_get_default(), pixbuf.get(), 0, 0));
 }
 
 static PlatformRefPtr<GdkCursor> createCustomCursor(Image* image, const IntPoint& hotSpot)

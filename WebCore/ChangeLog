@@ -1,3 +1,24 @@
+2010-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use pixbufs instead of pixmaps when creating platform cursors
+        https://bugs.webkit.org/show_bug.cgi?id=47087
+
+        gdk_cursor_new_from_pixmap() has been removed in gtk3. We can use a
+        pixbuf instead of a pixman and use gdk_cursor_new_from_pixbuf() instead
+        for both gtk2 and gtk3.
+
+        * platform/gtk/CursorGtk.cpp:
+        (WebCore::createNamedCursor):
+        * platform/gtk/GtkVersioning.c:
+        (gdk_cairo_format_for_content):
+        (gdk_cairo_surface_coerce_to_image):
+        (convert_alpha):
+        (convert_no_alpha):
+        (gdk_pixbuf_get_from_surface):
+        * platform/gtk/GtkVersioning.h:
+
 2010-10-06  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
