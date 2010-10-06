@@ -1,3 +1,17 @@
+2010-10-06  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: test that uncaught exceptions have stack trace when inspector is open
+        https://bugs.webkit.org/show_bug.cgi?id=47250
+
+        * http/tests/inspector/console-tests2.js: Added.
+        (initialize_ConsoleTest.InspectorTest.dumpConsoleMessages):
+        (initialize_ConsoleTest.InspectorTest.expandConsoleMessages):
+        (initialize_ConsoleTest):
+        * inspector/console-uncaught-exception.html: Added.
+        * platform/chromium/inspector/console-uncaught-exception-expected.txt: Added.
+
 2010-10-06  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Rebased test expectations after r69185.
