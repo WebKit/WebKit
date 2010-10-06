@@ -1,3 +1,15 @@
+2010-10-06  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Unreviewed build fix.
+
+        [EFL] Build fix for glib support.
+        https://bugs.webkit.org/show_bug.cgi?id=47221
+
+        If compiling with GLib support enabled, we also need to link wtf against
+        glib library.
+
+        * wtf/CMakeListsEfl.txt:
+
 2010-10-05  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Gavin Barraclough.
