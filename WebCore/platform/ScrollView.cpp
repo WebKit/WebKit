@@ -688,27 +688,27 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         return;
     }
 
-    // Determine how much we want to scroll.  If we can move at all, we will accept the event.
+    // Accept the event if we have a scrollbar in that direction and can still
+    // scroll any further.
+    float deltaX = m_horizontalScrollbar ? e.deltaX() : 0;
+    float deltaY = m_verticalScrollbar ? e.deltaY() : 0;
     IntSize maxScrollDelta = maximumScrollPosition() - scrollPosition();
-    if ((e.deltaX() < 0 && maxScrollDelta.width() > 0) ||
-        (e.deltaX() > 0 && scrollOffset().width() > 0) ||
-        (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
-        (e.deltaY() > 0 && scrollOffset().height() > 0)) {
+    if ((deltaX < 0 && maxScrollDelta.width() > 0)
+        || (deltaX > 0 && scrollOffset().width() > 0)
+        || (deltaY < 0 && maxScrollDelta.height() > 0)
+        || (deltaY > 0 && scrollOffset().height() > 0)) {
         e.accept();
-        float deltaX = e.deltaX();
-        float deltaY = e.deltaY();
         if (e.granularity() == ScrollByPageWheelEvent) {
-            ASSERT(deltaX == 0);
+            ASSERT(!e.deltaX());
             bool negative = deltaY < 0;
             deltaY = max(max(static_cast<float>(visibleHeight()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(visibleHeight() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
             if (negative)
                 deltaY = -deltaY;
         }
 
-        // Should we fall back on scrollBy() if there is no scrollbar for a non-zero delta?
-        if (deltaY && m_verticalScrollbar)
+        if (deltaY)
             m_verticalScrollbar->scroll(ScrollUp, ScrollByPixel, deltaY);
-        if (deltaX && m_horizontalScrollbar)
+        if (deltaX)
             m_horizontalScrollbar->scroll(ScrollLeft, ScrollByPixel, deltaX);
     }
 }
