@@ -1,4 +1,17 @@
-2010-10-06  Chris Fleizach  <cfleizach@apple.com>
+2010-10-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47306
+        
+        Convert determineStart/EndPosition and matchedEndLine to be writing-mode-aware.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+
+22010-10-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
 
@@ -14,7 +27,7 @@
         (WebCore::HTMLAreaElement::updateFocusAppearance):
         * html/HTMLAreaElement.h:
 
-2010-10-06  David Hyatt  <hyatt@apple.com>
+010-10-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
 
