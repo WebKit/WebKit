@@ -724,9 +724,13 @@ BUG13907 LINUX MAC : media/video-layer-crash.html = IMAGE PASS
 
 // These two tests started timing out after r66110.
 BUG13907 : media/video-controls-rendering.html = PASS FAIL TIMEOUT
-BUG13907 RELEASE : media/video-transformed.html = IMAGE PASS TIMEOUT
+BUG13907 WIN RELEASE : media/video-transformed.html = IMAGE PASS TIMEOUT
 // Started failing in roll 66079:66240.
-BUG53660 DEBUG : media/video-transformed.html = IMAGE+TEXT TIMEOUT
+BUG53660 WIN DEBUG : media/video-transformed.html = IMAGE+TEXT TIMEOUT
+// Behavior was changed by WebKit roll 69035:69062.
+BUG53660 MAC : media/video-transformed.html = IMAGE
+BUG53660 LINUX : media/video-transformed.html = IMAGE PASS
+
 
 // This is flaky with a subtle pixel difference in the bottom right corner,
 // which I believe is due to new video scaling algorithm.
@@ -3176,3 +3180,11 @@ BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 
 // Added by r69084
 BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT
+
+// r69161 updated the test.  Not sure what's wrong in the actual image.
+BUG58096 MAC : fast/table/simple_paint.html = IMAGE
+
+// Flaky since 2010-09-17?
+BUG57950 WIN LINUX : svg/batik/text/verticalText.svg = CRASH PASS
+
+BUG57957 LINUX DEBUG : fast/blockflow/block-level-images.html = IMAGE PASS
