@@ -48,7 +48,7 @@ namespace WebKit {
 class WebPageNamespace;
 class WebPageProxy;
 class WebPreferences;
-class WebProcessCreationParameters;
+struct WebProcessCreationParameters;
 
 class WebContext : public APIObject {
 public:

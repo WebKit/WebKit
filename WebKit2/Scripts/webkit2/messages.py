@@ -200,7 +200,9 @@ def message_to_struct_declaration(message):
 
 def struct_or_class(namespace, type):
     structs = frozenset([
+        'WebKit::WebPageCreationParameters',
         'WebKit::WebPreferencesStore',
+        'WebKit::WebProcessCreationParameters',
     ])
 
     qualified_name = '%s::%s' % (namespace, type)
