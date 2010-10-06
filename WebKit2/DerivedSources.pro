@@ -64,8 +64,8 @@ processmessagereceiver_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/Web
 generated_files.depends                   += processmessagereceiver_generator
 QMAKE_EXTRA_TARGETS                       += processmessagereceiver_generator
 
-fwheader_generator.commands = perl $${SRC_ROOT_DIR}/WebKit2/generate-forwarding-headers.pl $${OUTPUT_DIR}/include qt
-fwheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/generate-forwarding-headers.pl
+fwheader_generator.commands = perl $${SRC_ROOT_DIR}/WebKitTools/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/WebKit2 $${OUTPUT_DIR}/include qt
+fwheader_generator.depends  = $${SRC_ROOT_DIR}/WebKitTools/Scripts/generate-forwarding-headers.pl
 generated_files.depends     += fwheader_generator
 QMAKE_EXTRA_TARGETS         += fwheader_generator
 

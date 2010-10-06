@@ -1530,6 +1530,7 @@ sub buildQMakeProject($@)
     my @subdirs = ("JavaScriptCore", "WebCore", "WebKit/qt/Api");
     if (grep { $_ eq "CONFIG+=webkit2"} @buildArgs) {
         push @subdirs, "WebKit2";
+        push @subdirs, "WebKitTools/WebKitTestRunner/qt";
     }
 
     for my $subdir (@subdirs) {

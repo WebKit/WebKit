@@ -1,3 +1,14 @@
+2010-10-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Add WebKitTestRunner's build files
+        https://bugs.webkit.org/show_bug.cgi?id=44155
+
+        Add the new subdirs.
+        * DerivedSources.pro:
+        * WebKit.pro:
+
 2010-10-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

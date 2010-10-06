@@ -213,6 +213,7 @@ HEADERS += \
     UIProcess/API/C/WKPageNamespace.h \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
+    UIProcess/API/C/WKPreferencesPrivate.h \
     UIProcess/API/cpp/qt/WKStringQt.h \
     UIProcess/API/cpp/qt/WKURLQt.h \
     UIProcess/API/cpp/WKRetainPtr.h \
@@ -338,6 +339,7 @@ SOURCES += \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageNamespace.cpp \
     UIProcess/API/C/WKPreferences.cpp \
+    UIProcess/API/C/WKPreferencesPrivate.cpp \
     UIProcess/API/qt/ClientImpl.cpp \
     UIProcess/API/qt/qgraphicswkview.cpp \
     UIProcess/API/qt/qwkpage.cpp \

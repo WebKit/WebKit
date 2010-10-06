@@ -1,3 +1,38 @@
+2010-10-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Add WebKitTestRunner's build files
+        https://bugs.webkit.org/show_bug.cgi?id=44155
+
+        Parts was taken by Zoltan Horvath's patch.
+
+        * Scripts/generate-forwarding-headers.pl: Moved from WebKit2.
+        * Scripts/webkitdirs.pm: Make the generated files needed by WTR.
+        * WebKitTestRunner/PlatformWebView.h: Addeed typedefs for
+        PlatformWKView and PlatformWindow (void* for now).
+        Buildfix the case when __APPLE__ is not defined.
+        * WebKitTestRunner/qt/DerivedSources.pro: Added.
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp: Added.
+        Empty stub implementation.
+        (WTR::registerWindowClass):
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::page):
+        (WTR::PlatformWebView::focus):
+        * WebKitTestRunner/qt/TestControllerQt.cpp: Added.
+        Empty stub implementation.
+        (WTR::registerWindowClass):
+        (WTR::TestController::runUntil):
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::initializeInjectedBundlePath):
+        (WTR::TestController::initializeTestPluginDirectory):
+        (WTR::TestController::platformInitializeContext):
+        * WebKitTestRunner/qt/WebKitTestRunner.pro: Added.
+        * WebKitTestRunner/qt/main.cpp: Added.
+        (main):
+
 2010-10-06  Tony Chang  <tony@chromium.org>
 
         Unreviewed, rolling out r69202.
