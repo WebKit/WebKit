@@ -2281,7 +2281,7 @@ BUG32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.ht
 
 // Expectations from roll to 53171:53194
 
-BUG32308 DEBUG : fast/frames/cached-frame-counter.html = TIMEOUT
+BUG32308 DEBUG WIN MAC : fast/frames/cached-frame-counter.html = TIMEOUT
 
 // WebKit roll 53341:53451
 BUG32670 LINUX : fast/css/zoom-body-scroll.html = TEXT
@@ -3190,4 +3190,7 @@ BUG57957 LINUX DEBUG : fast/blockflow/block-level-images.html = IMAGE PASS
 // Failing since r69181. Verified as legitimate by looking at the results
 // of the SVG rendering.
 BUG58194 LINUX : svg/filters/sourceAlpha.svg = IMAGE
-BUG58195 WIN : svg/filters/feDisplacementMap.svg = IMAGE
+BUG58195 WIN LINUX : svg/filters/feDisplacementMap.svg = IMAGE
+
+// Test added in Webkit r69226 timesout on all platforms.
+BUG58212 : http/tests/appcache/main-resource-redirect.html = TIMEOUT
