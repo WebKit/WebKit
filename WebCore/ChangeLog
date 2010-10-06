@@ -1,5 +1,22 @@
 2010-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        [GTK] Remove unused code from gtk2drawing.c
+        https://bugs.webkit.org/show_bug.cgi?id=47086
+
+        gtk2drawing.c was copied from mozilla and contains a lot of code that is not
+        used by WebKit. Most of that unused code is uncompatible with gtk3, so
+        removing it will make easier porting to gtk3.
+
+        * platform/gtk/gtk2drawing.c:
+        (moz_gtk_get_widget_border):
+        (moz_gtk_widget_paint):
+        (moz_gtk_destroy_theme_parts_widgets):
+        * platform/gtk/gtkdrawing.h:
+
+2010-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] Use pixbufs instead of pixmaps when creating platform cursors
