@@ -161,7 +161,10 @@ class TestTypeBase(object):
     def _write_into_file_at_path(self, file_path, contents, encoding):
         """This method assumes that byte_array is already encoded
         into the right format."""
-        with codecs.open(file_path, "w", encoding=encoding) as file:
+        open_mode = 'w'
+        if encoding is None:
+            open_mode = 'w+b'
+        with codecs.open(file_path, open_mode, encoding=encoding) as file:
             file.write(contents)
 
     def write_output_files(self, filename, file_type,

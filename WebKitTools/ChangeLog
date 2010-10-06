@@ -1,3 +1,14 @@
+2010-10-05  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        fix the link to the expected image on windows
+        https://bugs.webkit.org/show_bug.cgi?id=47228
+
+        * Scripts/webkitpy/layout_tests/test_types/test_type_base.py: On
+            windows, the file must be opened in binary mode when writing
+            binary data.
+
 2010-10-05  Adam Barth  <abarth@webkit.org>
 
         Update expected result of unittest to match Tony's change below.
