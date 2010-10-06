@@ -40,3 +40,55 @@
 | <html>
 |   <head>
 |   <body>
+
+#data
+<table><td></tbody>A
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     "A"
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+
+#data
+<table><td></thead>A
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "A"
+
+#data
+<table><td></tfoot>A
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             "A"
+
+#data
+<table><thead><td></tbody>A
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <thead>
+|         <tr>
+|           <td>
+|             "A"

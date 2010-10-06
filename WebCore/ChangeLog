@@ -1,3 +1,15 @@
+2010-10-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Issue in treebuilder parsing related to table tags
+        https://bugs.webkit.org/show_bug.cgi?id=47190
+
+        Update ASSERT to match the spec and our behavior.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+
 2010-10-05  Victoria Kirst  <vrk@google.com>
 
         Reviewed by James Robinson.

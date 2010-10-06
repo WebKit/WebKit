@@ -1,3 +1,14 @@
+2010-10-05  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Issue in treebuilder parsing related to table tags
+        https://bugs.webkit.org/show_bug.cgi?id=47190
+
+        Add test coverage.
+
+        * html5lib/resources/webkit02.dat:
+
 2010-10-05  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, test expectations update.
