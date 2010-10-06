@@ -701,7 +701,7 @@ BUG13907 : media/video-source-error.html = PASS FAIL TIMEOUT
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test may need to be rewritten or only log the first timeupdate event.
-BUG13907 : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
+BUG13907 LINUX MAC : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
 
 // Failing because we sometimes emit additional timeupdate events.
 // Test might be WONTFIX because we don't export a step button in the first place.
@@ -3193,4 +3193,18 @@ BUG58194 LINUX : svg/filters/sourceAlpha.svg = IMAGE
 BUG58195 WIN LINUX : svg/filters/feDisplacementMap.svg = IMAGE
 
 // Test added in Webkit r69226 timesout on all platforms.
-BUG58212 : http/tests/appcache/main-resource-redirect.html = TIMEOUT
+BUG58212 LINUX MAC : http/tests/appcache/main-resource-redirect.html = TIMEOUT
+
+// First seen
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40007
+BUG_AJWONG LINUX : fast/events/mouse-focus-imagemap.html = TEXT
+
+// Issues starting from
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35997
+BUG_AJWONG WIN : media/audio-delete-while-slider-thumb-clicked.html = TEXT
+BUG_AJWONG WIN : fast/css/font-face-download-error.html = TEXT PASS
+
+// Flakiness first seen
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35995
+BUG_AJWONG WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
+BUG58212 WIN : http/tests/appcache/main-resource-redirect.html = TEXT TIMEOUT PASS
