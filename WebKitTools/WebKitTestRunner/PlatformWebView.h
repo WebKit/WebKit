@@ -40,8 +40,12 @@ typedef NSWindow* PlatformWindow;
 typedef WKViewRef PlatformWKView;
 typedef HWND PlatformWindow;
 #elif defined(BUILDING_QT__)
-typedef void* PlatformWKView;
-typedef void* PlatformWindow;
+namespace WTR {
+class WebView;
+}
+typedef WTR::WebView* PlatformWKView;
+class QMainWindow;
+typedef QMainWindow* PlatformWindow;
 #endif
 
 namespace WTR {

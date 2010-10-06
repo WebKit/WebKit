@@ -19,6 +19,7 @@ INCLUDEPATH += \
     $$BASEDIR/../../JavaScriptCore \
     $$BASEDIR/../../WebKit2 \
     $$BASEDIR/../../WebKit2/Shared \
+    $$BASEDIR/../../WebKit2/UIProcess/API/qt \
 
 INCLUDEPATH += \
     $$OUTPUT_DIR/include \
