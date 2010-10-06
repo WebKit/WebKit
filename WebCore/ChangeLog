@@ -1,3 +1,25 @@
+2010-10-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Move parseDataUrl() from CURL into own file
+        https://bugs.webkit.org/show_bug.cgi?id=41462
+
+        Move the data URL parsing algorithm into a new file to use it in ResourceHandleWin too.
+
+        * CMakeLists.txt:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/network/DataURL.cpp: Added.
+        (WebCore::handleDataURL):
+        * platform/network/DataURL.h: Added.
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::dispatchSynchronousJob):
+        (WebCore::ResourceHandleManager::startJob):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::fileLoadTimer):
+
 2010-10-06  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

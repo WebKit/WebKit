@@ -3006,6 +3006,8 @@
             'platform/network/Credential.cpp',
             'platform/network/Credential.h',
             'platform/network/DNS.h',
+            'platform/network/DataURL.cpp',
+            'platform/network/DataURL.h',
             'platform/network/FormData.cpp',
             'platform/network/FormData.h',
             'platform/network/FormDataBuilder.cpp',

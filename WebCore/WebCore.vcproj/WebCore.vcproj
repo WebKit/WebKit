@@ -27426,6 +27426,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\DataURL.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\DataURL.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\FormData.cpp"
 					>
 				</File>

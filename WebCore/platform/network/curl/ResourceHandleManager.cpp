@@ -34,14 +34,13 @@
 #include "config.h"
 #include "ResourceHandleManager.h"
 
-#include "Base64.h"
+#include "DataURL.h"
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
-#include "TextEncoding.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -573,67 +572,12 @@ bool ResourceHandleManager::startScheduledJobs()
     return started;
 }
 
-static void parseDataUrl(ResourceHandle* handle)
-{
-    ResourceHandleClient* client = handle->client();
-
-    ASSERT(client);
-    if (!client)
-        return;
-
-    String url = handle->firstRequest().url().string();
-    ASSERT(url.startsWith("data:", false));
-
-    int index = url.find(',');
-    if (index == -1) {
-        client->cannotShowURL(handle);
-        return;
-    }
-
-    String mediaType = url.substring(5, index - 5);
-    String data = url.substring(index + 1);
-
-    bool base64 = mediaType.endsWith(";base64", false);
-    if (base64)
-        mediaType = mediaType.left(mediaType.length() - 7);
-
-    if (mediaType.isEmpty())
-        mediaType = "text/plain;charset=US-ASCII";
-
-    String mimeType = extractMIMETypeFromMediaType(mediaType);
-    String charset = extractCharsetFromMediaType(mediaType);
-
-    ResourceResponse response;
-    response.setMimeType(mimeType);
-
-    if (base64) {
-        data = decodeURLEscapeSequences(data);
-        response.setTextEncodingName(charset);
-        client->didReceiveResponse(handle, response);
-
-        // WebCore's decoder fails on Acid3 test 97 (whitespace).
-        Vector<char> out;
-        CString latin1 = data.latin1();
-        if (base64Decode(latin1.data(), latin1.length(), out) && out.size() > 0)
-            client->didReceiveData(handle, out.data(), out.size(), 0);
-    } else {
-        // We have to convert to UTF-16 early due to limitations in KURL
-        data = decodeURLEscapeSequences(data, TextEncoding(charset));
-        response.setTextEncodingName("UTF-16");
-        client->didReceiveResponse(handle, response);
-        if (data.length() > 0)
-            client->didReceiveData(handle, reinterpret_cast<const char*>(data.characters()), data.length() * sizeof(UChar), 0);
-    }
-
-    client->didFinishLoading(handle, 0);
-}
-
 void ResourceHandleManager::dispatchSynchronousJob(ResourceHandle* job)
 {
     KURL kurl = job->firstRequest().url();
 
     if (kurl.protocolIs("data")) {
-        parseDataUrl(job);
+        handleDataURL(job);
         return;
     }
 
@@ -664,7 +608,7 @@ void ResourceHandleManager::startJob(ResourceHandle* job)
     KURL kurl = job->firstRequest().url();
 
     if (kurl.protocolIs("data")) {
-        parseDataUrl(job);
+        handleDataURL(job);
         return;
     }
 
