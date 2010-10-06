@@ -1,3 +1,20 @@
+2010-10-06  David Kilzer  <ddkilzer@apple.com>
+
+        Move WebArchive serialization code into its own file
+
+        Reviewed by Adam Roben.
+
+        This is the first step in making webarchive tests work on
+        Windows.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added
+        new files to the project.
+        * DumpRenderTree/mac/DumpRenderTree.mm: Removed code that moved
+        to WebArchiveDumpSupport.mm.
+        * DumpRenderTree/mac/WebArchiveDumpSupport.h: Added.
+        * DumpRenderTree/mac/WebArchiveDumpSupport.mm: Copied from WebKitTools/DumpRenderTree/mac/DumpRenderTree.mm.
+        (serializeWebArchiveToXML):
+
 2010-10-05  Daniel Bates  <dbates@rim.com>
 
         Reviewed by David Kilzer.
