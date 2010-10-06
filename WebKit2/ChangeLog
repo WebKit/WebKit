@@ -19,6 +19,18 @@
 
         Reviewed by Sam Weinig.
 
+        Separate actually calling the member function from decoding/encoding arguments
+        and remove any ambiguities when calling the function.
+
+        * Platform/CoreIPC/Arguments.h:
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        (CoreIPC::handleMessage):
+
+2010-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         More Arguments.h cleanup.
 
         * Platform/CoreIPC/Arguments.h:

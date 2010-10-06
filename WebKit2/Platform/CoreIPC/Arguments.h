@@ -32,8 +32,9 @@
 
 namespace CoreIPC {
     
-class Arguments0 {
-public:
+struct Arguments0 {
+    typedef Arguments0 ValueType;
+
     void encode(ArgumentEncoder*) const 
     {
     }
