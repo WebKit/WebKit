@@ -51,6 +51,8 @@ FloatRect FETile::determineFilterPrimitiveSubregion(Filter* filter)
 
 void FETile::apply(Filter* filter)
 {
+// FIXME: See bug 47315. This is a hack to work around a compile failure, but is incorrect behavior otherwise.
+#if ENABLE(SVG)
     FilterEffect* in = inputEffect(0);
     in->apply(filter);
     if (!in->resultImage())
@@ -87,6 +89,7 @@ void FETile::apply(Filter* filter)
     pattern->setPatternSpaceTransform(patternTransform);
     filterContext->setFillPattern(pattern);
     filterContext->fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()));
+#endif
 }
 
 void FETile::dump()
@@ -107,4 +110,3 @@ TextStream& FETile::externalRepresentation(TextStream& ts, int indent) const
 } // namespace WebCore
 
 #endif // ENABLE(FILTERS)
-
