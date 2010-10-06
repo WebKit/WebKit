@@ -1,3 +1,23 @@
+2010-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start cleaning up Arguments.h
+        https://bugs.webkit.org/show_bug.cgi?id=47304
+
+        This is a first step towards simplifying all the handleMessage overloads we have.
+
+        * Platform/CoreIPC/Arguments.h:
+        (CoreIPC::Arguments1):
+        Make Arguments1 a struct and get rid of the FirstArgumentType typedef. Instead, add a
+        ValueType typedef which is defined to an Arguments1 type whose type parameter is not
+        a reference type.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        Update for the Arguments1 change. Rename "arguments" to "argumentDecoder" and "reply" to
+        "replyEncoder".
+
 2010-10-06  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

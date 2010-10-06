@@ -28,6 +28,7 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
+#include <wtf/TypeTraits.h>
 
 namespace CoreIPC {
     
@@ -53,27 +54,29 @@ inline Arguments0 Out()
     return Arguments0();
 }
 
-template<typename T1> class Arguments1 {
-public:
-    typedef T1 FirstArgumentType;
+template<typename T1> struct Arguments1 {
+    typedef Arguments1<typename WTF::RemoveReference<T1>::Type> ValueType;
+
+    Arguments1()
+    {
+    }
 
     Arguments1(T1 t1) 
-        : m_value(t1)
+        : argument1(t1)
     {
     }
 
     void encode(ArgumentEncoder* encoder) const 
     {
-        encoder->encode(m_value);
+        encoder->encode(argument1);
     }
 
     static bool decode(ArgumentDecoder* decoder, Arguments1& result)
     {
-        return decoder->decode(result.m_value);
+        return decoder->decode(result.argument1);
     }
     
-private:
-    T1 m_value;
+    T1 argument1;
 };
     
 template<typename T1> Arguments1<const T1&> In(const T1& t1) 

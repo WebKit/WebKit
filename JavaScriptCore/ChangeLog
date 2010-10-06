@@ -1,3 +1,14 @@
+2010-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start cleaning up Arguments.h
+        https://bugs.webkit.org/show_bug.cgi?id=47304
+
+        * wtf/TypeTraits.h:
+        * wtf/TypeTraits.cpp:
+        Add RemoveReference type trait.
+
 2010-10-06  Rafael Antognolli  <antognolli@profusion.mobi>
 
         Unreviewed build fix.
