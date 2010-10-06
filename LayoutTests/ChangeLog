@@ -1,3 +1,111 @@
+2010-10-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Rubber stamped by Dirk Schulze.
+
+        SVGs with filters look grainy when scaled
+        https://bugs.webkit.org/show_bug.cgi?id=5526
+
+        Land new mac pixel test baseline after the filter patch.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-composite-02-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-composite-02-b-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-gauss-01-b-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/mac-leopard/svg/batik/filters/feTile-expected.checksum:
+        * platform/mac-leopard/svg/batik/filters/feTile-expected.png:
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Discrete-expected.checksum:
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Gamma-expected.checksum:
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Linear-expected.checksum:
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Table-expected.checksum:
+        * platform/mac-leopard/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/mac-leopard/svg/filters/feGaussianBlur-expected.checksum:
+        * platform/mac-leopard/svg/filters/feGaussianBlur-expected.png:
+        * platform/mac-leopard/svg/filters/shadow-on-filter-expected.checksum:
+        * platform/mac-leopard/svg/filters/shadow-on-filter-expected.png:
+        * platform/mac-leopard/svg/filters/shadow-on-rect-with-filter-expected.checksum:
+        * platform/mac-leopard/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-blend-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/filters-example-01-b-expected.png:
+        * platform/mac/svg/batik/filters/filterRegions-expected.checksum:
+        * platform/mac/svg/batik/filters/filterRegions-expected.png:
+        * platform/mac/svg/batik/text/textEffect-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.checksum:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/batik/text/textFeatures-expected.checksum:
+        * platform/mac/svg/batik/text/textFeatures-expected.png:
+        * platform/mac/svg/custom/convolution-crash-expected.checksum:
+        * platform/mac/svg/custom/convolution-crash-expected.png:
+        * platform/mac/svg/custom/empty-merge-expected.checksum:
+        * platform/mac/svg/custom/empty-merge-expected.png:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.checksum:
+        * platform/mac/svg/custom/image-with-transform-clip-filter-expected.png:
+        * platform/mac/svg/custom/non-opaque-filters-expected.checksum:
+        * platform/mac/svg/custom/non-opaque-filters-expected.png:
+        * platform/mac/svg/custom/recursive-filter-expected.checksum:
+        * platform/mac/svg/custom/recursive-filter-expected.png:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.checksum:
+        * platform/mac/svg/custom/resource-invalidate-on-target-update-expected.png:
+        * platform/mac/svg/custom/text-filter-expected.checksum:
+        * platform/mac/svg/custom/text-filter-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop-expected.png:
+        * platform/mac/svg/filters/big-sized-filter-expected.checksum:
+        * platform/mac/svg/filters/big-sized-filter-expected.png:
+        * platform/mac/svg/filters/feColorMatrix-values-expected.checksum:
+        * platform/mac/svg/filters/feColorMatrix-values-expected.png:
+        * platform/mac/svg/filters/feComposite-expected.checksum:
+        * platform/mac/svg/filters/feComposite-expected.png:
+        * platform/mac/svg/filters/feDisplacementMap-expected.checksum:
+        * platform/mac/svg/filters/feDisplacementMap-expected.png:
+        * platform/mac/svg/filters/feOffset-expected.checksum:
+        * platform/mac/svg/filters/feOffset-expected.png:
+        * platform/mac/svg/filters/feTile-expected.checksum:
+        * platform/mac/svg/filters/feTile-expected.png:
+        * platform/mac/svg/filters/filter-on-filter-for-text-expected.checksum:
+        * platform/mac/svg/filters/filter-on-filter-for-text-expected.png:
+        * platform/mac/svg/filters/filter-on-tspan-expected.checksum:
+        * platform/mac/svg/filters/filter-on-tspan-expected.png:
+        * platform/mac/svg/filters/filterRes-expected.checksum:
+        * platform/mac/svg/filters/filterRes-expected.png:
+        * platform/mac/svg/filters/filterRes1-expected.checksum:
+        * platform/mac/svg/filters/filterRes1-expected.png:
+        * platform/mac/svg/filters/filterRes3-expected.checksum:
+        * platform/mac/svg/filters/filterRes3-expected.png:
+        * platform/mac/svg/filters/filteredImage-expected.checksum:
+        * platform/mac/svg/filters/filteredImage-expected.png:
+        * platform/mac/svg/filters/parent-children-with-same-filter-expected.checksum:
+        * platform/mac/svg/filters/parent-children-with-same-filter-expected.png:
+        * platform/mac/svg/filters/sourceAlpha-expected.checksum:
+        * platform/mac/svg/filters/sourceAlpha-expected.png:
+        * platform/mac/svg/filters/subRegion-in-userSpace-expected.checksum:
+        * platform/mac/svg/filters/subRegion-in-userSpace-expected.png:
+        * platform/mac/svg/filters/subRegion-one-effect-expected.checksum:
+        * platform/mac/svg/filters/subRegion-one-effect-expected.png:
+        * platform/mac/svg/filters/subRegion-two-effects-expected.checksum:
+        * platform/mac/svg/filters/subRegion-two-effects-expected.png:
+        * platform/mac/svg/repaint/filter-repaint-expected.checksum:
+        * platform/mac/svg/repaint/filter-repaint-expected.png:
+        * platform/mac/svg/webarchive/svg-feimage-subresources-expected.checksum:
+        * platform/mac/svg/webarchive/svg-feimage-subresources-expected.png:
+
 2010-10-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
