@@ -51,3 +51,28 @@ BUGNONE : canvas/philip = PASS FAIL
 //
 // Actual failure suppressions should go below this line
 //
+
+// All (?) video-related compositor tests are failing in
+// DumpRenderTree right now.
+BUGWK47231 SKIP : compositing/geometry/clipped-video-controller.html = TIMEOUT
+BUGWK47231 SKIP : compositing/geometry/video-fixed-scrolling.html = TIMEOUT
+BUGWK47231 SKIP : compositing/geometry/video-opacity-overlay.html = TIMEOUT
+BUGWK47231 SKIP : compositing/layers-inside-overflow-scroll.html = TIMEOUT
+BUGWK47231 SKIP : compositing/overflow/overflow-compositing-descendant.html = TIMEOUT
+BUGWK47231 SKIP : compositing/overflow/scroll-ancestor-update.html = TIMEOUT
+BUGWK47231 SKIP : compositing/reflections/load-video-in-reflection.html = TIMEOUT
+BUGWK47231 SKIP : compositing/self-painting-layers.html = TIMEOUT
+BUGWK47231 SKIP : compositing/self-painting-layers2.html = TIMEOUT
+BUGWK47231 SKIP : compositing/video/video-background-color.html = TIMEOUT
+BUGWK47231 SKIP : compositing/video/video-poster.html = TIMEOUT
+
+BUGWK47241 SKIP : fast/canvas/access-zero-sized-canvas.html = CRASH
+BUGWK47241 SKIP : fast/canvas/canvas-skia-excessive-size.html = CRASH
+BUGWK47241 SKIP : fast/canvas/toDataURL-noData.html = CRASH
+
+BUGWK47242 SKIP : fast/canvas/canvas-putImageData.html = CRASH
+
+// Need to investigate WebGL support in DRT.
+BUGWK47243 SKIP : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT
+BUGWK47243 SKIP : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT
+BUGWK47243 SKIP : fast/canvas/webgl/uniform-location.html = TIMEOUT

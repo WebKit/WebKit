@@ -1,3 +1,13 @@
+2010-10-05  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, test expectations update.
+
+        Added initial skip list for Chromium GPU testing. With this list,
+        runs are clean with:
+        new-run-webkit-tests --chromium --platform chromium-gpu --use-drt --debug
+
+        * platform/chromium-gpu/test_expectations.txt:
+
 2010-10-05  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.
