@@ -30,7 +30,7 @@ using namespace WebKit;
 WKStringRef WKStringCreateWithQString(const QString& qString)
 {
     WTF::String string(qString);
-    return toCopiedRef(string);
+    return toCopiedAPI(string);
 }
 
 QString WKStringCopyQString(WKStringRef stringRef)

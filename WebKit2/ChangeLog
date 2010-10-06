@@ -1,3 +1,14 @@
+2010-10-06  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix the build after API changes introduced in r69214.
+
+        * UIProcess/API/cpp/qt/WKStringQt.cpp:
+        (WKStringCreateWithQString):
+        * UIProcess/API/cpp/qt/WKURLQt.cpp:
+        (WKURLCreateWithQUrl):
+
 2010-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r69210.

@@ -30,7 +30,7 @@ using namespace WebKit;
 WKURLRef WKURLCreateWithQUrl(const QUrl& qURL)
 {
     WTF::String urlString(qURL.toString());
-    return toCopiedURLRef(urlString);
+    return toCopiedURLAPI(urlString);
 }
 
 QUrl WKURLCopyQUrl(WKURLRef urlRef)
