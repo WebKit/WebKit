@@ -1,3 +1,14 @@
+2010-10-05  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        FileEntry::file needs to be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=47192
+
+        * fast/filesystem/file-from-file-entry-expected.txt: Added.
+        * fast/filesystem/file-from-file-entry.html: Added.
+        * fast/filesystem/script-tests/file-from-file-entry.js: Added.
+
 2010-10-05  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by Darin Adler.

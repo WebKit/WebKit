@@ -33,7 +33,9 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "DOMFileSystem.h"
 #include "ErrorCallback.h"
+#include "File.h"
 #include "FileCallback.h"
 #include "FileWriterCallback.h"
 
@@ -49,9 +51,9 @@ void FileEntry::createWriter(PassRefPtr<FileWriterCallback> successCallback, Pas
     m_fileSystem->createWriter(this, successCallback, errorCallback);
 }
 
-void FileEntry::file(PassRefPtr<FileCallback>, PassRefPtr<ErrorCallback>)
+void FileEntry::file(PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback>)
 {
-    // FIXME: to be implemented.
+    m_fileSystem->scheduleCallback(successCallback, File::create(m_fullPath));
 }
 
 } // namespace
