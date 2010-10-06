@@ -641,7 +641,7 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
 
     gint doubleClickDistance = 250;
     gint doubleClickTime = 5;
-    GtkSettings* settings = gtk_settings_get_for_screen(gdk_drawable_get_screen(gtk_widget_get_window(widget)));
+    GtkSettings* settings = gtk_settings_get_for_screen(gtk_widget_get_screen(widget));
     g_object_get(settings, 
         "gtk-double-click-distance", &doubleClickDistance,
         "gtk-double-click-time", &doubleClickTime, NULL);
