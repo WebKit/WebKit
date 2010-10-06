@@ -79,7 +79,7 @@ namespace WebCore {
         bool loadNow(ResourceRequest&);
 
         void handleEmptyLoad(const KURL&, bool forURLScheme);
-        void handleDataLoadSoon(ResourceRequest& r);
+        void handleDataLoadSoon(const ResourceRequest& r);
 
         void startDataLoadTimer();
         void handleDataLoad(ResourceRequest&);

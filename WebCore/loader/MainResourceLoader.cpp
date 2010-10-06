@@ -123,10 +123,17 @@ void MainResourceLoader::callContinueAfterNavigationPolicy(void* argument, const
     static_cast<MainResourceLoader*>(argument)->continueAfterNavigationPolicy(request, shouldContinue);
 }
 
-void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue)
+void MainResourceLoader::continueAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
 {
     if (!shouldContinue)
         stopLoadingForPolicyChange();
+    else if (m_substituteData.isValid()) {
+        // A redirect resulted in loading substitute data.
+        ASSERT(documentLoader()->timing()->redirectCount);
+        handle()->cancel();
+        handleDataLoadSoon(request);
+    }
+
     deref(); // balances ref in willSendRequest
 }
 
@@ -191,6 +198,15 @@ void MainResourceLoader::willSendRequest(ResourceRequest& newRequest, const Reso
     Frame* top = m_frame->tree()->top();
     if (top != m_frame)
         frameLoader()->checkIfDisplayInsecureContent(top->document()->securityOrigin(), newRequest.url());
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    if (!redirectResponse.isNull()) {
+        // We checked application cache for initial URL, now we need to check it for redirected one.
+        ASSERT(documentLoader()->applicationCacheHost()->status() == ApplicationCacheHost::UNCACHED);
+        ASSERT(!m_substituteData.isValid());
+        documentLoader()->applicationCacheHost()->maybeLoadMainResource(newRequest, m_substituteData);
+    }
+#endif
 
     // FIXME: Ideally we'd stop the I/O until we hear back from the navigation policy delegate
     // listener. But there's no way to do that in practice. So instead we cancel later if the
@@ -500,7 +516,7 @@ void MainResourceLoader::startDataLoadTimer()
 #endif
 }
 
-void MainResourceLoader::handleDataLoadSoon(ResourceRequest& r)
+void MainResourceLoader::handleDataLoadSoon(const ResourceRequest& r)
 {
     m_initialRequest = r;
     
