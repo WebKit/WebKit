@@ -1,3 +1,22 @@
+2010-10-06  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        ContextShadow should not use the blur radius as kernel size of the
+        box blurs
+        https://bugs.webkit.org/show_bug.cgi?id=46918
+
+        Calculate the size of the kernel in the blur algorithm using the radius instead
+        of using the blur distance directly. Change the name of the variables to match the
+        terminology in the spec.
+
+        * platform/graphics/ContextShadow.cpp:
+        (WebCore::ContextShadow::ContextShadow):
+        (WebCore::ContextShadow::clear):
+        (WebCore::ContextShadow::blurLayerImage):
+        (WebCore::ContextShadow::calculateLayerBoundingRect):
+        * platform/graphics/ContextShadow.h:
+
 2010-10-06  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

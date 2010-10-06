@@ -187,7 +187,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
 
     // drawShadowedRect still does not work with rotations.
     // https://bugs.webkit.org/show_bug.cgi?id=45042
-    float radiusTwice = m_blurRadius * 2;
+    float radiusTwice = m_blurDistance * 2;
     cairo_t* cr = context->platformContext();
     if ((!context->getCTM().isIdentityOrTranslationOrFlipped()) || (radiusTwice > rect.width())
         || (radiusTwice > rect.height()) || (m_type != BlurShadow)) {
@@ -200,7 +200,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
 
     // Determine dimensions of shadow rect.
     FloatRect shadowRect = FloatRect(rect.location(), shadowBufferSize);
-    shadowRect.move(- m_blurRadius, - m_blurRadius);
+    shadowRect.move(- m_blurDistance, - m_blurDistance);
 
     // Size of the tiling side.
     int sideTileWidth = 1;
@@ -239,7 +239,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     cairo_set_operator(m_layerContext, CAIRO_OPERATOR_OVER);
 
     // Draw the rectangle.
-    IntRect templateRect = IntRect(m_blurRadius, m_blurRadius, shadowTemplateSize.width() - radiusTwice, shadowTemplateSize.height() - radiusTwice);
+    IntRect templateRect = IntRect(m_blurDistance, m_blurDistance, shadowTemplateSize.width() - radiusTwice, shadowTemplateSize.height() - radiusTwice);
     appendWebCorePathToCairoContext(m_layerContext, Path::createRoundedRectangle(templateRect, topLeftRadius, topRightRadius,
                                                                                  bottomLeftRadius, bottomRightRadius));
 
@@ -275,7 +275,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     FloatRect tileRect = FloatRect(radiusTwice + topLeftRadius.width(), 0, sideTileWidth, radiusTwice);
     FloatRect destRect = tileRect;
     destRect.move(shadowRect.x(), shadowRect.y());
-    destRect.setWidth(shadowRect.width() - topLeftRadius.width() - topRightRadius.width() - m_blurRadius * 4);
+    destRect.setWidth(shadowRect.width() - topLeftRadius.width() - topRightRadius.width() - m_blurDistance * 4);
     FloatPoint phase = getPhase(destRect, tileRect);
     AffineTransform patternTransform;
     patternTransform.makeIdentity();
@@ -285,7 +285,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     tileRect = FloatRect(radiusTwice + bottomLeftRadius.width(), shadowTemplateSize.height() - radiusTwice, sideTileWidth, radiusTwice);
     destRect = tileRect;
     destRect.move(shadowRect.x(), shadowRect.y() + radiusTwice + rect.height() - shadowTemplateSize.height());
-    destRect.setWidth(shadowRect.width() - bottomLeftRadius.width() - bottomRightRadius.width() - m_blurRadius * 4);
+    destRect.setWidth(shadowRect.width() - bottomLeftRadius.width() - bottomRightRadius.width() - m_blurDistance * 4);
     phase = getPhase(destRect, tileRect);
     drawPatternToCairoContext(cr, m_layerImage, shadowTemplateSize, tileRect, patternTransform, phase, CAIRO_OPERATOR_OVER, destRect);
 
@@ -293,7 +293,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     tileRect = FloatRect(shadowTemplateSize.width() - radiusTwice, radiusTwice + topRightRadius.height(), radiusTwice, sideTileWidth);
     destRect = tileRect;
     destRect.move(shadowRect.x() + radiusTwice + rect.width() - shadowTemplateSize.width(), shadowRect.y());
-    destRect.setHeight(shadowRect.height() - topRightRadius.height() - bottomRightRadius.height() - m_blurRadius * 4);
+    destRect.setHeight(shadowRect.height() - topRightRadius.height() - bottomRightRadius.height() - m_blurDistance * 4);
     phase = getPhase(destRect, tileRect);
     drawPatternToCairoContext(cr, m_layerImage, shadowTemplateSize, tileRect, patternTransform, phase, CAIRO_OPERATOR_OVER, destRect);
 
@@ -301,7 +301,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     tileRect = FloatRect(0, radiusTwice + topLeftRadius.height(), radiusTwice, sideTileWidth);
     destRect = tileRect;
     destRect.move(shadowRect.x(), shadowRect.y());
-    destRect.setHeight(shadowRect.height() - topLeftRadius.height() - bottomLeftRadius.height() - m_blurRadius * 4);
+    destRect.setHeight(shadowRect.height() - topLeftRadius.height() - bottomLeftRadius.height() - m_blurDistance * 4);
     phase = FloatPoint(destRect.x() - tileRect.x(), destRect.y() - tileRect.y());
     drawPatternToCairoContext(cr, m_layerImage, shadowTemplateSize, tileRect, patternTransform, phase, CAIRO_OPERATOR_OVER, destRect);
 
