@@ -28,32 +28,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Avoid this source dependency on Chromium's base module.
-#include <base/test/test_suite.h>
+#ifndef WebUnitTests_h
+#define WebUnitTests_h
 
-#include "WebKit.h"
-#include "WebKitClient.h"
-#include <webkit/support/webkit_support.h>
+#include "WebCommon.h"
 
-#if defined(WIN32) && defined(WEBKIT_DLL_UNITTEST)
-#include "WebUnitTests.h"
+namespace WebKit {
+
+// In chromium multi-dll build, webkit unittest code are compiled in webkit.dll.
+// This is the API to run all unittests inside webkit.dll.
+WEBKIT_API int RunAllUnitTests(int argc, char** argv);
+
+} // namespace WebKit
+
 #endif
-
-int main(int argc, char** argv)
-{
-    TestSuite testSuite(argc, argv);
-    // TestSuite must be created before SetUpTestEnvironment so it performs
-    // initializations needed by WebKit support.
-    webkit_support::SetUpTestEnvironmentForUnitTests();
-
-#if defined(WIN32) && defined(WEBKIT_DLL_UNITTEST)
-    // For chromium multi-dll build, need to call webkit api to create a
-    // TestSuite instance in webkit.dll and run all tests from there.
-    int result = WebKit::RunAllUnitTests(argc, argv);
-#else
-    int result = testSuite.Run();
-#endif
-
-    webkit_support::TearDownTestEnvironment();
-    return result;
-}

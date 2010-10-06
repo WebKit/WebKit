@@ -556,7 +556,9 @@
                             ],
                             'dependencies': [
                                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_bindings',
+                                '<(chromium_src_dir)/base/base.gyp:test_support_base',
                                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+                                '<(chromium_src_dir)/testing/gtest.gyp:gtest',
                                 '<(chromium_src_dir)/third_party/icu/icu.gyp:*',
                                 '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
                                 '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
@@ -577,6 +579,13 @@
                                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
                             ],
+                            'sources': [
+                                '<@(webkit_unittest_files)',
+                                'tests/PopupMenuTest.cpp',
+                                'tests/TransparencyWinTest.cpp',
+                                'tests/UniscribeHelperTest.cpp',
+                                'tests/WebUnitTests.cpp'
+                            ]
                         }],
                     ],
                 }, {
@@ -721,40 +730,32 @@
 
         {
             'target_name': 'webkit_unit_tests',
+            'type': 'executable',
+            'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
+            'dependencies': [
+                'webkit',
+                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
+                '<(chromium_src_dir)/testing/gtest.gyp:gtest',
+                '<(chromium_src_dir)/base/base.gyp:base',
+                '<(chromium_src_dir)/base/base.gyp:base_i18n',
+                '<(chromium_src_dir)/base/base.gyp:test_support_base',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
+            ],
+            'sources': [
+                'tests/RunAllTests.cpp',
+            ],
+            'include_dirs': [
+                'public',
+                'src',
+            ],
             'conditions': [
-                # FIXME: make webkit unit tests working for multi dll build.
                 ['inside_chromium_build==1 and OS=="win" and component=="shared_library"', {
-                    'type': 'none',
+                    'defines': [
+                        'WEBKIT_DLL_UNITTEST',
+                    ],
                 }, {
-                    'type': 'executable',
-                    'msvs_guid': '7CEFE800-8403-418A-AD6A-2D52C6FC3EAD',
-                    'dependencies': [
-                        'webkit',
-                        '../../WebCore/WebCore.gyp/WebCore.gyp:webcore',
-                        '<(chromium_src_dir)/testing/gtest.gyp:gtest',
-                        '<(chromium_src_dir)/base/base.gyp:base',
-                        '<(chromium_src_dir)/base/base.gyp:base_i18n',
-                        '<(chromium_src_dir)/base/base.gyp:test_support_base',
-                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
-                    ],
-                    'include_dirs': [
-                        'public',
-                        'src',
-                    ],
                     'sources': [
-                        'tests/ArenaTestHelpers.h',
-                        'tests/DragImageTest.cpp',
-                        'tests/IDBBindingUtilitiesTest.cpp',
-                        'tests/IDBKeyPathTest.cpp',
-                        'tests/KeyboardTest.cpp',
-                        'tests/KURLTest.cpp',
-                        'tests/PODArenaTest.cpp',
-                        'tests/PODIntervalTreeTest.cpp',
-                        'tests/PODRedBlackTreeTest.cpp',
-                        'tests/RunAllTests.cpp',
-                        'tests/TilingDataTest.cpp',
-                        'tests/TreeTestHelpers.cpp',
-                        'tests/TreeTestHelpers.h',
+                        '<@(webkit_unittest_files)',
                     ],
                     'conditions': [
                         ['OS=="win"', {

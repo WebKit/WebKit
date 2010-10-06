@@ -51,6 +51,20 @@
             'src/js/Images/statusbarMenuButtonChromium.png',
             'src/js/Images/statusbarMenuButtonSelectedChromium.png',
         ],
+        'webkit_unittest_files': [
+            'tests/ArenaTestHelpers.h',
+            'tests/DragImageTest.cpp',
+            'tests/IDBBindingUtilitiesTest.cpp',
+            'tests/IDBKeyPathTest.cpp',
+            'tests/KeyboardTest.cpp',
+            'tests/KURLTest.cpp',
+            'tests/PODArenaTest.cpp',
+            'tests/PODIntervalTreeTest.cpp',
+            'tests/PODRedBlackTreeTest.cpp',
+            'tests/TilingDataTest.cpp',
+            'tests/TreeTestHelpers.cpp',
+            'tests/TreeTestHelpers.h',
+        ],
     },
 }
 
