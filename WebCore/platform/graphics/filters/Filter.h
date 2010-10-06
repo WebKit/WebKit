@@ -44,11 +44,18 @@ namespace WebCore {
         FloatSize filterResolution() const { return m_filterResolution; }
         void setFilterResolution(const FloatSize& filterResolution) { m_filterResolution = filterResolution; }
 
+        virtual float applyHorizontalScale(float value) const { return value * m_filterResolution.width(); }
+        virtual float applyVerticalScale(float value) const { return value * m_filterResolution.height(); }
+        
         virtual FloatRect sourceImageRect() const = 0;
         virtual FloatRect filterRegion() const = 0;
+        
+        virtual FloatPoint mapAbsolutePointToLocalPoint(const FloatPoint&) const { return FloatPoint(); }
 
         // SVG specific
         virtual void determineFilterPrimitiveSubregion(FilterEffect*, const FloatRect&) { }
+        
+        virtual FloatRect filterRegionInUserSpace() const { return FloatRect(); }
 
         virtual FloatSize maxImageSize() const = 0;
         virtual bool effectBoundingBoxMode() const = 0;

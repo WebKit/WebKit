@@ -321,7 +321,7 @@ unsigned char FETurbulence::calculateTurbulenceValueForPoint(PaintingData& paint
 
 void FETurbulence::apply(Filter* filter)
 {
-    if (!effectContext())
+    if (!effectContext(filter))
         return;
 
     IntRect imageRect(IntPoint(), resultImage()->size());
@@ -329,10 +329,10 @@ void FETurbulence::apply(Filter* filter)
         return;
 
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
-    PaintingData paintingData(m_seed, imageRect.size());
+    PaintingData paintingData(m_seed, roundedIntSize(filterPrimitiveSubregion().size()));
     initPaint(paintingData);
 
-    FloatRect filterRegion = filter->filterRegion();
+    FloatRect filterRegion = absolutePaintRect();
     FloatPoint point;
     point.setY(filterRegion.y());
     int indexOfPixelChannel = 0;
@@ -342,7 +342,7 @@ void FETurbulence::apply(Filter* filter)
         for (int x = 0; x < imageRect.width(); ++x) {
             point.setX(point.x() + 1);
             for (paintingData.channel = 0; paintingData.channel < 4; ++paintingData.channel, ++indexOfPixelChannel)
-                imageData->data()->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(paintingData, point));
+                imageData->data()->set(indexOfPixelChannel, calculateTurbulenceValueForPoint(paintingData, filter->mapAbsolutePointToLocalPoint(point)));
         }
     }
     resultImage()->putUnmultipliedImageData(imageData.get(), imageRect, IntPoint());

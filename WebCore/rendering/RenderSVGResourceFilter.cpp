@@ -39,6 +39,7 @@
 #include "SVGFilter.h"
 #include "SVGFilterElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
+#include "SVGImageBufferTools.h"
 #include "SVGStyledElement.h"
 #include "SVGUnitTypes.h"
 #include <wtf/Vector.h>
@@ -150,70 +151,93 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     }
 
     OwnPtr<FilterData> filterData(new FilterData);
+    FloatRect targetBoundingBox = object->objectBoundingBox();
+
+    SVGFilterElement* filterElement = static_cast<SVGFilterElement*>(node());
+    filterData->boundaries = filterElement->filterBoundingBox(targetBoundingBox);
+    if (filterData->boundaries.isEmpty())
+        return false;
+
+    // Determine absolute transformation matrix for filter. 
+    AffineTransform absoluteTransform;
+    SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
+    if (!absoluteTransform.isInvertible())
+        return false;
+
+    // Eliminate shear of the absolute transformation matrix, to be able to produce unsheared tile images for feTile.
+    filterData->shearFreeAbsoluteTransform = AffineTransform(absoluteTransform.xScale(), 0, 0, absoluteTransform.yScale(), absoluteTransform.e(), absoluteTransform.f());
+
+    // Determine absolute boundaries of the filter and the drawing region.
+    FloatRect absoluteFilterBoundaries = filterData->shearFreeAbsoluteTransform.mapRect(filterData->boundaries);
+    FloatRect drawingRegion = object->strokeBoundingBox();
+    drawingRegion.intersect(filterData->boundaries);
+    FloatRect absoluteDrawingRegion = filterData->shearFreeAbsoluteTransform.mapRect(drawingRegion);
+
+    // Create the SVGFilter object.
+    bool primitiveBoundingBoxMode = filterElement->primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
+    filterData->filter = SVGFilter::create(filterData->shearFreeAbsoluteTransform, absoluteDrawingRegion, targetBoundingBox, filterData->boundaries, primitiveBoundingBoxMode);
+
+    // Create all relevant filter primitives.
     filterData->builder = buildPrimitives();
     if (!filterData->builder)
         return false;
 
-    FloatRect paintRect = object->strokeBoundingBox();
-
     // Calculate the scale factor for the use of filterRes.
     // Also see http://www.w3.org/TR/SVG/filters.html#FilterEffectsRegion
-    SVGFilterElement* filterElement = static_cast<SVGFilterElement*>(node());
-    filterData->boundaries = filterElement->filterBoundingBox(object->objectBoundingBox());
-    if (filterData->boundaries.isEmpty())
-        return false;
-
-    FloatSize scale(1.0f, 1.0f);
+    FloatSize scale(1, 1);
     if (filterElement->hasAttribute(SVGNames::filterResAttr)) {
-        scale.setWidth(filterElement->filterResX() / filterData->boundaries.width());
-        scale.setHeight(filterElement->filterResY() / filterData->boundaries.height());
+        scale.setWidth(filterElement->filterResX() / absoluteFilterBoundaries.width());
+        scale.setHeight(filterElement->filterResY() / absoluteFilterBoundaries.height());
     }
 
     if (scale.isEmpty())
         return false;
 
-    // clip sourceImage to filterRegion
-    FloatRect clippedSourceRect = paintRect;
-    clippedSourceRect.intersect(filterData->boundaries);
-
-    // scale filter size to filterRes
-    FloatRect tempSourceRect = clippedSourceRect;
-
-    // scale to big sourceImage size to kMaxFilterSize
+    // Determine scale factor for filter. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
+    FloatRect tempSourceRect = absoluteDrawingRegion;
     tempSourceRect.scale(scale.width(), scale.height());
     fitsInMaximumImageSize(tempSourceRect.size(), scale);
 
-    // prepare Filters
-    bool primitiveBoundingBoxMode = filterElement->primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX;
-    filterData->filter = SVGFilter::create(paintRect, filterData->boundaries, primitiveBoundingBoxMode);
+    // Set the scale level in SVGFilter.
     filterData->filter->setFilterResolution(scale);
 
     FilterEffect* lastEffect = filterData->builder->lastEffect();
     if (!lastEffect)
         return false;
-    
+
+    // Determine the filter primitive subregions of every effect.
     lastEffect->determineFilterPrimitiveSubregion(filterData->filter.get());
-    // At least one FilterEffect has a too big image size,
-    // recalculate the effect sizes with new scale factors.
     if (!fitsInMaximumImageSize(filterData->filter->maxImageSize(), scale)) {
+        // At least one FilterEffect has a too big image size,
+        // recalculate the effect sizes with new scale factor.
         filterData->filter->setFilterResolution(scale);
         lastEffect->determineFilterPrimitiveSubregion(filterData->filter.get());
     }
 
-    clippedSourceRect.scale(scale.width(), scale.height());
-
-    // Draw the content of the current element and it's childs to a imageBuffer to get the SourceGraphic.
-    // The size of the SourceGraphic is clipped to the size of the filterRegion.
-    IntRect bufferRect = enclosingIntRect(clippedSourceRect);
-    OwnPtr<ImageBuffer> sourceGraphic(ImageBuffer::create(bufferRect.size(), LinearRGB));
-    
-    if (!sourceGraphic.get())
+    // If the drawingRegion is empty, we have something like <g filter=".."/>.
+    // Even if the target objectBoundingBox() is empty, we still have to draw the last effect result image in postApplyResource.
+    if (drawingRegion.isEmpty()) {
+        ASSERT(!m_filter.contains(object));
+        filterData->savedContext = context;
+        m_filter.set(object, filterData.leakPtr());
         return false;
+    }
 
+    absoluteDrawingRegion.scale(scale.width(), scale.height());
+
+    OwnPtr<ImageBuffer> sourceGraphic;
+    if (!SVGImageBufferTools::createImageBuffer(absoluteDrawingRegion, absoluteDrawingRegion, sourceGraphic, LinearRGB))
+        return false;
+    
     GraphicsContext* sourceGraphicContext = sourceGraphic->context();
-    sourceGraphicContext->translate(-clippedSourceRect.x(), -clippedSourceRect.y());
-    sourceGraphicContext->scale(scale);
-    sourceGraphicContext->clearRect(FloatRect(FloatPoint(), paintRect.size()));
+    ASSERT(sourceGraphicContext);
+  
+    sourceGraphicContext->translate(-absoluteDrawingRegion.x(), -absoluteDrawingRegion.y());
+    if (scale.width() != 1 || scale.height() != 1)
+        sourceGraphicContext->scale(scale);
+
+    sourceGraphicContext->concatCTM(filterData->shearFreeAbsoluteTransform);
+    sourceGraphicContext->clearRect(FloatRect(FloatPoint(), absoluteDrawingRegion.size()));
     filterData->sourceGraphicBuffer = sourceGraphic.release();
     filterData->savedContext = context;
 
@@ -270,10 +294,17 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         }
 
         ImageBuffer* resultImage = lastEffect->resultImage();
-        if (resultImage)
-            context->drawImageBuffer(resultImage, object->style()->colorSpace(), lastEffect->filterPrimitiveSubregion());
-    }
+        if (resultImage) {
+            context->concatCTM(filterData->shearFreeAbsoluteTransform.inverse());
 
+            context->scale(FloatSize(1 / filterData->filter->filterResolution().width(), 1 / filterData->filter->filterResolution().height()));
+            context->clip(lastEffect->maxEffectRect());
+            context->drawImageBuffer(resultImage, object->style()->colorSpace(), lastEffect->absolutePaintRect());
+            context->scale(filterData->filter->filterResolution());
+
+            context->concatCTM(filterData->shearFreeAbsoluteTransform);
+        }
+    }
     filterData->sourceGraphicBuffer.clear();
 }
 

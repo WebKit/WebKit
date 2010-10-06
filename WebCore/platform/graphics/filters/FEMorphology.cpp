@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -74,6 +75,14 @@ float FEMorphology::radiusY() const
     return m_radiusY;
 }
 
+void FEMorphology::determineAbsolutePaintRect(Filter* filter)
+{
+    FloatRect paintRect = inputEffect(0)->absolutePaintRect();
+    paintRect.inflateX(filter->applyHorizontalScale(m_radiusX));
+    paintRect.inflateY(filter->applyVerticalScale(m_radiusY));
+    setAbsolutePaintRect(enclosingIntRect(paintRect));
+}
+
 void FEMorphology::setRadiusY(float radiusY)
 {
     m_radiusY = radiusY;
@@ -86,18 +95,18 @@ void FEMorphology::apply(Filter* filter)
     if (!in->resultImage())
         return;
 
-    if (!effectContext())
+    if (!effectContext(filter))
         return;
 
     setIsAlphaImage(in->isAlphaImage());
-
-    int radiusX = static_cast<int>(m_radiusX * filter->filterResolution().width());
-    int radiusY = static_cast<int>(m_radiusY * filter->filterResolution().height());
-    if (radiusX <= 0 || radiusY <= 0)
+    if (m_radiusX <= 0 || m_radiusY <= 0)
         return;
 
+    int radiusX = static_cast<int>(floorf(filter->applyHorizontalScale(m_radiusX)));
+    int radiusY = static_cast<int>(floorf(filter->applyVerticalScale(m_radiusY)));
+
     IntRect imageRect(IntPoint(), resultImage()->size());
-    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->repaintRectInLocalCoordinates());
+    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     RefPtr<CanvasPixelArray> srcPixelArray(in->resultImage()->getPremultipliedImageData(effectDrawingRect)->data());
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
 

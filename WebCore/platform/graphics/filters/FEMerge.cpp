@@ -50,13 +50,13 @@ void FEMerge::apply(Filter* filter)
             return;
     }
 
-    GraphicsContext* filterContext = effectContext();
+    GraphicsContext* filterContext = effectContext(filter);
     if (!filterContext)
         return;
 
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->absolutePaintRect()));
     }
 }
 

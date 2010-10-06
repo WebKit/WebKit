@@ -44,6 +44,8 @@ class FELighting : public FilterEffect {
 public:
     virtual void apply(Filter*);
 
+    virtual void determineAbsolutePaintRect(Filter*) { setAbsolutePaintRect(maxEffectRect()); }
+
 protected:
     enum LightingType {
         DiffuseLighting,

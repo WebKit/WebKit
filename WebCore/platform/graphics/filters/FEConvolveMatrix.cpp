@@ -377,11 +377,11 @@ void FEConvolveMatrix::apply(Filter* filter)
     if (!in->resultImage())
         return;
 
-    if (!effectContext())
+    if (!effectContext(filter))
         return;
 
     IntRect imageRect(IntPoint(), resultImage()->size());
-    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->filterPrimitiveSubregion());
+    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
 
     RefPtr<CanvasPixelArray> srcPixelArray;
     if (m_preserveAlpha)

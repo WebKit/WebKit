@@ -44,17 +44,17 @@ PassRefPtr<FEImage> FEImage::create(RefPtr<Image> image, const SVGPreserveAspect
     return adoptRef(new FEImage(image, preserveAspectRatio));
 }
 
-void FEImage::apply(Filter*)
+void FEImage::apply(Filter* filter)
 {
     if (!m_image.get())
         return;
 
-    GraphicsContext* filterContext = effectContext();
+    GraphicsContext* filterContext = effectContext(filter);
     if (!filterContext)
         return;
 
     FloatRect srcRect(FloatPoint(), m_image->size());
-    FloatRect destRect(FloatPoint(), filterPrimitiveSubregion().size());
+    FloatRect destRect(FloatPoint(), absolutePaintRect().size());
 
     m_preserveAspectRatio.transformRect(destRect, srcRect);
 

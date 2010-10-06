@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (10,10) size 400x120
+    RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+      RenderSVGResourceFilter {filter} [id="f1"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="f2"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
+      RenderSVGResourceFilter {filter} [id="f3"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+        [feOffset dx="0.00" dy="0.00"]
+          [SourceGraphic]
+    RenderPath {rect} at (10,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [data="M20.00,20.00 L120.00,20.00 L120.00,120.00 L20.00,120.00 Z"]
+      [filter="f1"] RenderSVGResourceFilter {filter} at (10,10) size 120x120
+    RenderPath {rect} at (150,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [data="M160.00,20.00 L260.00,20.00 L260.00,120.00 L160.00,120.00 Z"]
+      [filter="f2"] RenderSVGResourceFilter {filter} at (150,10) size 120x120
+    RenderPath {rect} at (290,10) size 120x120 [fill={[type=SOLID] [color=#008000]}] [data="M300.00,20.00 L400.00,20.00 L400.00,120.00 L300.00,120.00 Z"]
+      [filter="f3"] RenderSVGResourceFilter {filter} at (290,10) size 120x120

@@ -1,3 +1,31 @@
+2010-10-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGs with filters look grainy when scaled
+        https://bugs.webkit.org/show_bug.cgi?id=5526
+
+        Added three new tests for SVGs filterRes.
+        Shadow tests for SVG Filter needed an update. Current tests didn't respect
+        primitiveUnits "objectBoundingBox" for stdDeviation on feGaussianBlur correctly.
+
+        * platform/mac/svg/filters/filterRes1-expected.checksum: Added.
+        * platform/mac/svg/filters/filterRes1-expected.png: Added.
+        * platform/mac/svg/filters/filterRes1-expected.txt: Added.
+        * platform/mac/svg/filters/filterRes2-expected.checksum: Added.
+        * platform/mac/svg/filters/filterRes2-expected.png: Added.
+        * platform/mac/svg/filters/filterRes2-expected.txt: Added.
+        * platform/mac/svg/filters/filterRes3-expected.checksum: Added.
+        * platform/mac/svg/filters/filterRes3-expected.png: Added.
+        * platform/mac/svg/filters/filterRes3-expected.txt: Added.
+        * platform/mac/svg/filters/shadow-on-filter-expected.txt:
+        * platform/mac/svg/filters/shadow-on-rect-with-filter-expected.txt:
+        * svg/filters/filterRes1.svg: Added.
+        * svg/filters/filterRes2.svg: Added.
+        * svg/filters/filterRes3.svg: Added.
+        * svg/filters/shadow-on-filter.svg:
+        * svg/filters/shadow-on-rect-with-filter.svg:
+
 2010-10-06  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, test expectation update.

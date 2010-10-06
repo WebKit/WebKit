@@ -944,12 +944,12 @@ PlatformRefPtr<cairo_surface_t> GraphicsContext::createShadowMask(PassOwnPtr<Ima
     RefPtr<Filter> filter = ImageBufferFilter::create();
     filter->setSourceImage(buffer);
     RefPtr<FilterEffect> source = SourceGraphic::create();
-    source->setRepaintRectInLocalCoordinates(FloatRect(FloatPoint(), shadowRect.size()));
+    source->setAbsolutePaintRect(IntRect(IntPoint(), roundedIntSize(shadowRect.size())));
     source->setIsAlphaImage(true);
     RefPtr<FilterEffect> blur = FEGaussianBlur::create(stdDeviation, stdDeviation);
     FilterEffectVector& inputEffects = blur->inputEffects();
     inputEffects.append(source.get());
-    blur->setRepaintRectInLocalCoordinates(FloatRect(FloatPoint(), shadowRect.size()));
+    blur->setAbsolutePaintRect(IntRect(IntPoint(), roundedIntSize(shadowRect.size())));
     blur->apply(filter.get());
     return blur->resultImage()->m_data.m_surface;
 #endif

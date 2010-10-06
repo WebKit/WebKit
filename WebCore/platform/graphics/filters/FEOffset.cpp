@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -62,6 +63,14 @@ void FEOffset::setDy(float dy)
     m_dy = dy;
 }
 
+void FEOffset::determineAbsolutePaintRect(Filter* filter)
+{
+    FloatRect paintRect = inputEffect(0)->absolutePaintRect();
+    paintRect.move(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
+    paintRect.intersect(maxEffectRect());
+    setAbsolutePaintRect(enclosingIntRect(paintRect));
+}
+
 void FEOffset::apply(Filter* filter)
 {
     FilterEffect* in = inputEffect(0);
@@ -69,28 +78,15 @@ void FEOffset::apply(Filter* filter)
     if (!in->resultImage())
         return;
 
-    GraphicsContext* filterContext = effectContext();
+    GraphicsContext* filterContext = effectContext(filter);
     if (!filterContext)
         return;
 
     setIsAlphaImage(in->isAlphaImage());
 
-    FloatRect sourceImageRect = filter->sourceImageRect();
-    sourceImageRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
-
-    if (filter->effectBoundingBoxMode()) {
-        m_dx *= sourceImageRect.width();
-        m_dy *= sourceImageRect.height();
-    }
-    m_dx *= filter->filterResolution().width();
-    m_dy *= filter->filterResolution().height();
-
-    FloatRect dstRect = FloatRect(m_dx + in->repaintRectInLocalCoordinates().x() - repaintRectInLocalCoordinates().x(),
-                                  m_dy + in->repaintRectInLocalCoordinates().y() - repaintRectInLocalCoordinates().y(),
-                                  in->repaintRectInLocalCoordinates().width(),
-                                  in->repaintRectInLocalCoordinates().height());
-
-    filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, dstRect);
+    FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
+    drawingRegion.move(filter->applyHorizontalScale(m_dx), filter->applyVerticalScale(m_dy));
+    filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegion);
 }
 
 void FEOffset::dump()

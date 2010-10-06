@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<defs>
+<filter id="f1" filterRes="60">
+    <feFlood flood-color="green"/>
+</filter>
+<filter id="f2" filterRes="120">
+    <feFlood flood-color="green"/>
+</filter>
+<filter id="f3">
+    <feFlood flood-color="green"/>
+</filter>
+</defs>
+<rect x="20" y="20" width="100" height="100" filter="url(#f1)"/>
+<rect x="160" y="20" width="100" height="100" filter="url(#f2)"/>
+<rect x="300" y="20" width="100" height="100" filter="url(#f3)"/>
+</svg>
+

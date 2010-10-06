@@ -35,6 +35,8 @@ public:
     virtual void apply(Filter*);
     virtual void dump();
 
+    virtual void determineAbsolutePaintRect(Filter*) { setAbsolutePaintRect(maxEffectRect()); }
+
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
     virtual FloatRect determineFilterPrimitiveSubregion(Filter*);

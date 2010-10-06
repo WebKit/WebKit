@@ -4,6 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2010 Igalia, S.L.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,7 +35,8 @@
 
 using std::max;
 
-static const float gGaussianKernelFactor = (3 * sqrtf(2 * piFloat) / 4.f);
+static const float gGaussianKernelFactor = 3 / 4.f * sqrtf(2 * piFloat);
+static const unsigned gMaxKernelSize = 1000;
 
 namespace WebCore {
 
@@ -125,6 +127,41 @@ void FEGaussianBlur::kernelPosition(int boxBlur, unsigned& std, int& dLeft, int&
     }
 }
 
+inline void calculateKernelSize(Filter* filter, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY)
+{
+    stdX = filter->applyHorizontalScale(stdX);
+    stdY = filter->applyVerticalScale(stdY);
+    
+    kernelSizeX = 0;
+    if (stdX)
+        kernelSizeX = max<unsigned>(2, static_cast<unsigned>(floorf(stdX * gGaussianKernelFactor + 0.5f)));
+    kernelSizeY = 0;
+    if (stdY)
+        kernelSizeY = max<unsigned>(2, static_cast<unsigned>(floorf(stdY * gGaussianKernelFactor + 0.5f)));
+    
+    // Limit the kernel size to 1000. A bigger radius won't make a big difference for the result image but
+    // inflates the absolute paint rect to much. This is compatible with Firefox' behavior.
+    if (kernelSizeX > gMaxKernelSize)
+        kernelSizeX = gMaxKernelSize;
+    if (kernelSizeY > gMaxKernelSize)
+        kernelSizeY = gMaxKernelSize;
+}
+
+void FEGaussianBlur::determineAbsolutePaintRect(Filter* filter)
+{
+    FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
+    absolutePaintRect.intersect(maxEffectRect());
+
+    unsigned kernelSizeX = 0;
+    unsigned kernelSizeY = 0;
+    calculateKernelSize(filter, kernelSizeX, kernelSizeY, m_stdX, m_stdY);
+
+    // We take the half kernel size and multiply it with three, because we run box blur three times.
+    absolutePaintRect.inflateX(3 * kernelSizeX * 0.5f);
+    absolutePaintRect.inflateY(3 * kernelSizeY * 0.5f);
+    setAbsolutePaintRect(enclosingIntRect(absolutePaintRect));
+}
+
 void FEGaussianBlur::apply(Filter* filter)
 {
     FilterEffect* in = inputEffect(0);
@@ -132,12 +169,12 @@ void FEGaussianBlur::apply(Filter* filter)
     if (!in->resultImage())
         return;
 
-    if (!effectContext())
+    if (!effectContext(filter))
         return;
 
     setIsAlphaImage(in->isAlphaImage());
 
-    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->repaintRectInLocalCoordinates());
+    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     RefPtr<ImageData> srcImageData(in->resultImage()->getPremultipliedImageData(effectDrawingRect));
     IntRect imageRect(IntPoint(), resultImage()->size());
 
@@ -147,12 +184,8 @@ void FEGaussianBlur::apply(Filter* filter)
     }
 
     unsigned kernelSizeX = 0;
-    if (m_stdX)
-        kernelSizeX = max(2U, static_cast<unsigned>(floor(m_stdX * filter->filterResolution().width() * gGaussianKernelFactor + 0.5f)));
-
     unsigned kernelSizeY = 0;
-    if (m_stdY)
-        kernelSizeY = max(2U, static_cast<unsigned>(floor(m_stdY * filter->filterResolution().height() * gGaussianKernelFactor + 0.5f)));
+    calculateKernelSize(filter, kernelSizeX, kernelSizeY, m_stdX, m_stdY);
 
     CanvasPixelArray* srcPixelArray(srcImageData->data());
     RefPtr<ImageData> tmpImageData = ImageData::create(imageRect.width(), imageRect.height());

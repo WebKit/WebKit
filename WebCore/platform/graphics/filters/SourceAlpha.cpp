@@ -42,28 +42,22 @@ const AtomicString& SourceAlpha::effectName()
     return s_effectName;
 }
 
-FloatRect SourceAlpha::determineFilterPrimitiveSubregion(Filter* filter)
+void SourceAlpha::determineAbsolutePaintRect(Filter* filter)
 {
-    FloatRect clippedSourceRect = filter->sourceImageRect();
-    if (filter->sourceImageRect().x() < filter->filterRegion().x())
-        clippedSourceRect.setX(filter->filterRegion().x());
-    if (filter->sourceImageRect().y() < filter->filterRegion().y())
-        clippedSourceRect.setY(filter->filterRegion().y());
-    setFilterPrimitiveSubregion(clippedSourceRect);
-    clippedSourceRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
-    setRepaintRectInLocalCoordinates(clippedSourceRect);
-    return filter->filterRegion();
+    FloatRect paintRect = filter->sourceImageRect();
+    paintRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
+    setAbsolutePaintRect(enclosingIntRect(paintRect));
 }
 
 void SourceAlpha::apply(Filter* filter)
 {
-    GraphicsContext* filterContext = effectContext();
-    if (!filterContext)
+    GraphicsContext* filterContext = effectContext(filter);
+    if (!filterContext || !filter->sourceImage())
         return;
 
     setIsAlphaImage(true);
 
-    FloatRect imageRect(FloatPoint(), filter->sourceImage()->size());
+    FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
     filterContext->save();
     filterContext->clipToImageBuffer(filter->sourceImage(), imageRect);
     filterContext->fillRect(imageRect, Color::black, DeviceColorSpace);

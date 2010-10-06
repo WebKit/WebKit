@@ -35,10 +35,10 @@ public:
 
     static const AtomicString& effectName();
 
-    virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
-
     virtual void apply(Filter*);
     virtual void dump();
+
+    virtual void determineAbsolutePaintRect(Filter*);
 
     virtual bool isSourceInput() const { return true; }
 

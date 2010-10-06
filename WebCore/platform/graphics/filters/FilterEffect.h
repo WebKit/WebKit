@@ -49,25 +49,30 @@ public:
 
     // Creates the ImageBuffer for the current filter primitive result in the size of the
     // repaintRect. Gives back the GraphicsContext of the own ImageBuffer.
-    GraphicsContext* effectContext();
+    GraphicsContext* effectContext(Filter*);
 
     FilterEffectVector& inputEffects() { return m_inputEffects; }
     FilterEffect* inputEffect(unsigned) const;
     unsigned numberOfEffectInputs() const { return m_inputEffects.size(); }
 
-    FloatRect drawingRegionOfInputImage(const FloatRect&) const;
-    IntRect requestedRegionOfInputImageData(const FloatRect&) const;
+    IntRect drawingRegionOfInputImage(const IntRect&) const;
+    IntRect requestedRegionOfInputImageData(const IntRect&) const;
 
     // Solid black image with different alpha values.
     bool isAlphaImage() const { return m_alphaImage; }
     void setIsAlphaImage(bool alphaImage) { m_alphaImage = alphaImage; }
 
-    FloatRect repaintRectInLocalCoordinates() const { return m_repaintRectInLocalCoordinates; }
-    void setRepaintRectInLocalCoordinates(const FloatRect& repaintRectInLocalCoordinates) { m_repaintRectInLocalCoordinates = repaintRectInLocalCoordinates; }
+    IntRect absolutePaintRect() const { return m_absolutePaintRect; }
+    void setAbsolutePaintRect(const IntRect& absolutePaintRect) { m_absolutePaintRect = absolutePaintRect; }
+    
+    IntRect maxEffectRect() const { return m_maxEffectRect; }
+    void setMaxEffectRect(const IntRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; } 
 
     virtual void apply(Filter*) = 0;
     virtual void dump() = 0;
 
+    virtual void determineAbsolutePaintRect(Filter*);
+    
     virtual bool isSourceInput() const { return false; }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention = 0) const;
@@ -87,7 +92,7 @@ public:
     bool hasHeight() const { return m_hasHeight; }
     void setHasHeight(bool value) { m_hasHeight = value; }
 
-    // FIXME: Pseudo primitives like SourceGraphic and SourceAlpha as well as FETile still need special handling.
+    // FIXME: FETile still needs special handling.
     virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
 
     FloatRect filterPrimitiveSubregion() const { return m_filterPrimitiveSubregion; }
@@ -105,8 +110,11 @@ private:
 
     bool m_alphaImage;
 
-    // FIXME: Should be the paint region of the filter primitive, instead of the scaled subregion on use of filterRes.
-    FloatRect m_repaintRectInLocalCoordinates;
+    IntRect m_absolutePaintRect;
+    
+    // The maximum size of a filter primitive. In SVG this is the primitive subregion in absolute coordinate space.
+    // The absolute paint rect should never be bigger than m_maxEffectRect.
+    IntRect m_maxEffectRect;
 
 private:
     // The following member variables are SVG specific and will move to RenderSVGResourceFilterPrimitive.

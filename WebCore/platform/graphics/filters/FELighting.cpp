@@ -247,12 +247,12 @@ void FELighting::apply(Filter* filter)
     if (!in->resultImage())
         return;
 
-    if (!effectContext())
+    if (!effectContext(filter))
         return;
 
     setIsAlphaImage(false);
 
-    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->repaintRectInLocalCoordinates());
+    IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
     RefPtr<ImageData> srcImageData(in->resultImage()->getUnmultipliedImageData(effectDrawingRect));
     CanvasPixelArray* srcPixelArray(srcImageData->data());
 
@@ -261,8 +261,9 @@ void FELighting::apply(Filter* filter)
     // output for various kernelUnitLengths, and I am not sure they are reliable.
     // Anyway, feConvolveMatrix should also use the implementation
 
-    if (drawLighting(srcPixelArray, effectDrawingRect.width(), effectDrawingRect.height()))
-        resultImage()->putUnmultipliedImageData(srcImageData.get(), IntRect(IntPoint(), resultImage()->size()), IntPoint());
+    IntSize absolutePaintSize = absolutePaintRect().size();
+    if (drawLighting(srcPixelArray, absolutePaintSize.width(), absolutePaintSize.height()))
+        resultImage()->putUnmultipliedImageData(srcImageData.get(), IntRect(IntPoint(), absolutePaintSize), IntPoint());
 }
 
 } // namespace WebCore

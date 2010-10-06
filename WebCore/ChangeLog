@@ -1,3 +1,136 @@
+2010-10-06  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGs with filters look grainy when scaled
+        https://bugs.webkit.org/show_bug.cgi?id=5526
+
+        SVG filter effects need smarter size calculation
+        https://bugs.webkit.org/show_bug.cgi?id=31370
+
+        SVG elements use Filters before own transformations
+        https://bugs.webkit.org/show_bug.cgi?id=32486
+
+        Calculate all filter results in device space instead of the filtered objects user space. This change is similar to
+        the patches for SVG Pattern and SVG Masker before. It avoids pixelation and guarantees smooth filter results for
+        every scale level and is independent of any transformation to the target element or any ancester of the target.
+        The second part of this patch reduces the size of every effect to the smallest affected region instead of the complete
+        filter primitive subregion (http://www.w3.org/TR/SVG/filters.html#FilterPrimitiveSubRegion). We just use the subregion
+        as clipping region, like mentioned in the SVG specification, to make the affected region even smaller now.
+
+        This is a huge speed up. The ECMA cloud (http://ejohn.org/files/ecma-cloud.svg) is more than 100 times faster on Gtk and
+        renders in less than a second.
+        Some examples on svg-wow.org can be viewed the first time now, since the subregions were much bigger than the affected
+        region.
+        There's still more potential to speed up filters, by further reducing the ImageBuffer sizes.
+        Renamed repaintRectInLocalCoordinates to absolutePaintRect, since all coordinates are in device space instead of the
+        user space now.
+        The absolute paint rect is calculated by determineAbsolutePaintRect() and gets called by FilterEffect::effectContext() on
+        applying the effect.
+        Partly rewrote filter resolution (http://www.w3.org/TR/SVG/filters.html#FilterElementFilterResAttribute) to work with the
+        new concept. This also corrects the old behavior to match the SVG specification.
+
+        Tests: svg/filters/filterRes1.svg
+               svg/filters/filterRes2.svg
+               svg/filters/filterRes3.svg
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: Call setAbsolutePaintRect instead of setRepaintRectInLocalCoordinates.
+        (WebCore::GraphicsContext::createShadowMask):
+        * platform/graphics/filters/FEBlend.cpp: Renamed repaintRectInLocalCoordinates to absolutePaintRect.
+        (WebCore::FEBlend::apply):
+        * platform/graphics/filters/FEColorMatrix.cpp: Ditto.
+        (WebCore::FEColorMatrix::apply):
+        * platform/graphics/filters/FEComponentTransfer.cpp: Ditto.
+        (WebCore::FEComponentTransfer::apply):
+        * platform/graphics/filters/FEComposite.cpp: Ditto.
+        (WebCore::FEComposite::determineAbsolutePaintRect):
+        (WebCore::FEComposite::apply):
+        * platform/graphics/filters/FEComposite.h:
+        * platform/graphics/filters/FEConvolveMatrix.cpp: Ditto.
+        (WebCore::FEConvolveMatrix::apply):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+        (WebCore::FEConvolveMatrix::determineAbsolutePaintRect):
+        * platform/graphics/filters/FEDisplacementMap.cpp: Ditto.
+        (WebCore::FEDisplacementMap::apply):
+        * platform/graphics/filters/FEDisplacementMap.h:
+        (WebCore::FEDisplacementMap::determineAbsolutePaintRect):
+        * platform/graphics/filters/FEFlood.cpp: Ditto.
+        (WebCore::FEFlood::apply):
+        * platform/graphics/filters/FEFlood.h:
+        (WebCore::FEFlood::determineAbsolutePaintRect):
+        * platform/graphics/filters/FEGaussianBlur.cpp: Ditto.
+        (WebCore::calculateKernelSize):
+        (WebCore::FEGaussianBlur::determineAbsolutePaintRect):
+        (WebCore::FEGaussianBlur::apply):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FELighting.cpp: Ditto.
+        (WebCore::FELighting::apply):
+        * platform/graphics/filters/FEMerge.cpp: Ditto.
+        (WebCore::FEMerge::apply):
+        * platform/graphics/filters/FEMorphology.cpp: Ditto.
+        (WebCore::FEMorphology::determineAbsolutePaintRect):
+        (WebCore::FEMorphology::apply):
+        * platform/graphics/filters/FEMorphology.h:
+        * platform/graphics/filters/FEOffset.cpp: Ditto.
+        (WebCore::FEOffset::determineAbsolutePaintRect):
+        (WebCore::FEOffset::apply):
+        * platform/graphics/filters/FEOffset.h:
+        * platform/graphics/filters/FETile.cpp: Ditto.
+        (WebCore::FETile::determineFilterPrimitiveSubregion):
+        (WebCore::FETile::apply):
+        * platform/graphics/filters/FETile.h:
+        (WebCore::FETile::determineAbsolutePaintRect):
+        * platform/graphics/filters/FETurbulence.cpp: Ditto.
+        (WebCore::FETurbulence::apply):
+        * platform/graphics/filters/FETurbulence.h:
+        (WebCore::FETurbulence::determineAbsolutePaintRect):
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::applyHorizontalScale): Map horizontal effect values to absolute coordinates.
+        (WebCore::Filter::applyVerticalScale): Map vertical effect values to absolute coordinates.
+        (WebCore::Filter::mapAbsolutePointToLocalPoint):
+        (WebCore::Filter::filterRegionInUserSpace):
+        * platform/graphics/filters/FilterEffect.cpp: Ditto.
+        (WebCore::FilterEffect::determineFilterPrimitiveSubregion):
+        (WebCore::FilterEffect::determineAbsolutePaintRect):
+        (WebCore::FilterEffect::requestedRegionOfInputImageData):
+        (WebCore::FilterEffect::drawingRegionOfInputImage):
+        (WebCore::FilterEffect::effectContext):
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::absolutePaintRect):
+        (WebCore::FilterEffect::setAbsolutePaintRect):
+        (WebCore::FilterEffect::maxEffectRect): The subregion in absolute coordinates for SVG.
+        (WebCore::FilterEffect::setMaxEffectRect):
+        * platform/graphics/filters/SourceAlpha.cpp: Ditto.
+        (WebCore::SourceAlpha::determineAbsolutePaintRect):
+        (WebCore::SourceAlpha::apply):
+        * platform/graphics/filters/SourceAlpha.h:
+        * platform/graphics/filters/SourceGraphic.cpp: Ditto.
+        (WebCore::SourceGraphic::determineAbsolutePaintRect):
+        (WebCore::SourceGraphic::apply):
+        * platform/graphics/filters/SourceGraphic.h:
+        * rendering/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::applyResource):
+        (WebCore::RenderSVGResourceFilter::postApplyResource):
+        * rendering/RenderSVGResourceFilter.h:
+        (WebCore::FilterData::FilterData):
+        * svg/graphics/filters/SVGFEImage.cpp: Ditto.
+        (WebCore::FEImage::apply):
+        * svg/graphics/filters/SVGFEImage.h:
+        (WebCore::FEImage::determineAbsolutePaintRect):
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::SVGFilter):
+        (WebCore::SVGFilter::determineFilterPrimitiveSubregion):
+        (WebCore::SVGFilter::applyHorizontalScale):
+        (WebCore::SVGFilter::applyVerticalScale):
+        (WebCore::SVGFilter::create):
+        * svg/graphics/filters/SVGFilter.h:
+        (WebCore::SVGFilter::effectBoundingBoxMode):
+        (WebCore::SVGFilter::filterRegionInUserSpace):
+        (WebCore::SVGFilter::filterRegion):
+        (WebCore::SVGFilter::mapAbsolutePointToLocalPoint): Map absolute point to local point in userspace.
+        (WebCore::SVGFilter::sourceImageRect):
+        (WebCore::SVGFilter::maxImageSize):
+
 2010-10-06  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

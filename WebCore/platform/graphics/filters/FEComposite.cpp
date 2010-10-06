@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -112,6 +113,27 @@ inline void arithmetic(const RefPtr<CanvasPixelArray>& srcPixelArrayA, CanvasPix
         }
     }
 }
+    
+void FEComposite::determineAbsolutePaintRect(Filter* filter)
+{
+    switch (m_type) {
+    case FECOMPOSITE_OPERATOR_IN:
+    case FECOMPOSITE_OPERATOR_ATOP:
+        // For In and Atop the first effect just influences the result of
+        // the second effect. So just use the absolute paint rect of the second effect here.
+        setAbsolutePaintRect(inputEffect(1)->absolutePaintRect());
+        return;
+    case FECOMPOSITE_OPERATOR_ARITHMETIC:
+        // Arithmetic may influnce the compele filter primitive region. So we can't
+        // optimize the paint region here.
+        setAbsolutePaintRect(maxEffectRect());
+        return;
+    default:
+        // Take the union of both input effects.
+        FilterEffect::determineAbsolutePaintRect(filter);
+        return;
+    }
+}
 
 void FEComposite::apply(Filter* filter)
 {
@@ -122,39 +144,39 @@ void FEComposite::apply(Filter* filter)
     if (!in->resultImage() || !in2->resultImage())
         return;
 
-    GraphicsContext* filterContext = effectContext();
+    GraphicsContext* filterContext = effectContext(filter);
     if (!filterContext)
         return;
 
     FloatRect srcRect = FloatRect(0, 0, -1, -1);
     switch (m_type) {
     case FECOMPOSITE_OPERATOR_OVER:
-        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()));
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->absolutePaintRect()));
         break;
     case FECOMPOSITE_OPERATOR_IN:
         filterContext->save();
-        filterContext->clipToImageBuffer(in2->resultImage(), drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()));
+        filterContext->clipToImageBuffer(in2->resultImage(), drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->absolutePaintRect()));
         filterContext->restore();
         break;
     case FECOMPOSITE_OPERATOR_OUT:
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()), srcRect, CompositeDestinationOut);
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->absolutePaintRect()), srcRect, CompositeDestinationOut);
         break;
     case FECOMPOSITE_OPERATOR_ATOP:
-        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()), srcRect, CompositeSourceAtop);
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->absolutePaintRect()), srcRect, CompositeSourceAtop);
         break;
     case FECOMPOSITE_OPERATOR_XOR:
-        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->repaintRectInLocalCoordinates()));
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->repaintRectInLocalCoordinates()), srcRect, CompositeXOR);
+        filterContext->drawImageBuffer(in2->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in2->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->absolutePaintRect()), srcRect, CompositeXOR);
         break;
     case FECOMPOSITE_OPERATOR_ARITHMETIC: {
-        IntRect effectADrawingRect = requestedRegionOfInputImageData(in->repaintRectInLocalCoordinates());
+        IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
         RefPtr<CanvasPixelArray> srcPixelArrayA(in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
 
-        IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->repaintRectInLocalCoordinates());
+        IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
         RefPtr<ImageData> imageData(in2->resultImage()->getPremultipliedImageData(effectBDrawingRect));
         CanvasPixelArray* srcPixelArrayB(imageData->data());
 
