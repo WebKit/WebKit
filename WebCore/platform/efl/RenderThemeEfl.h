@@ -45,6 +45,9 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     TextField,
     CheckBox,
     ComboBox,
+#if ENABLE(PROGRESS_TAG)
+    ProgressBar,
+#endif
     SearchField,
     SearchFieldDecoration,
     SearchFieldResultsButton,
@@ -144,6 +147,11 @@ public:
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
     static void setDefaultFontSize(int size);
+
+#if ENABLE(PROGRESS_TAG)
+    virtual void adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
+#endif
 
 protected:
     static float defaultFontSize;

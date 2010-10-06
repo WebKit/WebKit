@@ -92,10 +92,15 @@ SET(BUILD_DATA_DIR ${CMAKE_BINARY_DIR}/WebKit/efl/DefaultTheme)
 SET(BUILD_DATA_DIR ${BUILD_DATA_DIR} PARENT_SCOPE)
 FILE(MAKE_DIRECTORY ${BUILD_DATA_DIR})
 
+SET(WebKit_THEME_DEFINITION "")
+IF (ENABLE_PROGRESS_TAG)
+  LIST(APPEND WebKit_THEME_DEFINITION "-DENABLE_PROGRESS_TAG")
+ENDIF ()
+
 SET(WebKit_THEME ${BUILD_DATA_DIR}/default.edj)
 ADD_CUSTOM_COMMAND(
   OUTPUT ${WebKit_THEME}
-  COMMAND ${EDJE_CC_EXECUTABLE} -v -id ${WEBKIT_DIR}/efl/DefaultTheme ${WEBKIT_DIR}/efl/DefaultTheme/default.edc ${WebKit_THEME}
+  COMMAND ${EDJE_CC_EXECUTABLE} -v -id ${WEBKIT_DIR}/efl/DefaultTheme ${WebKit_THEME_DEFINITION} ${WEBKIT_DIR}/efl/DefaultTheme/default.edc ${WebKit_THEME}
   DEPENDS
     ${WEBKIT_DIR}/efl/DefaultTheme/default.edc
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/slider/slider_knob_v.png
@@ -159,6 +164,9 @@ ADD_CUSTOM_COMMAND(
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_hover.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file_focus.png
     ${WEBKIT_DIR}/efl/DefaultTheme/widget/file/file.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/progressbar.edc
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/shelf_inset.png
+    ${WEBKIT_DIR}/efl/DefaultTheme/widget/progressbar/bt_base.png
   VERBATIM
 )
 

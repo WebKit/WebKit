@@ -1,3 +1,19 @@
+2010-10-06  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Support Progress Tag
+        https://bugs.webkit.org/show_bug.cgi?id=45951
+
+        Implement progressbar.edc to support progress tag
+
+        * CMakeListsEfl.txt:
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/progressbar: Added.
+        * DefaultTheme/widget/progressbar/bt_base.png: Added.
+        * DefaultTheme/widget/progressbar/progressbar.edc: Added.
+        * DefaultTheme/widget/progressbar/shelf_inset.png: Added.
+
 2010-10-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

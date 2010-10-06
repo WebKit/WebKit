@@ -68,6 +68,9 @@ collections {
 #include "widget/check/check.edc"
 #include "widget/entry/entry.edc"
 #include "widget/combo/combo.edc"
+#ifdef ENABLE_PROGRESS_TAG
+#include "widget/progressbar/progressbar.edc"
+#endif
 #include "widget/file/file.edc"
 #include "widget/search/field/search_field.edc"
 #include "widget/search/cancel/search_cancel.edc"
