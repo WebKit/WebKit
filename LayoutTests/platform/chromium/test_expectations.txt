@@ -3231,3 +3231,36 @@ BUG_AJWONG : svg/filters/shadow-on-filter.svg = IMAGE
 BUG_AJWONG WIN LINUX : svg/filters/sourceAlpha.svg = IMAGE
 BUG_AJWONG : svg/filters/subRegion-one-effect.svg = IMAGE
 BUG_AJWONG : svg/filters/subRegion-two-effects.svg = IMAGE
+
+// Crashing since r69181.
+BUG_AJWONG WIN : svg/W3C-SVG-1.1/filters-tile-01-b.svg = CRASH
+BUG_AJWONG WIN : svg/batik/filters/filterRegions.svg = CRASH
+BUG_AJWONG WIN : svg/filters/filter-empty-g.svg = CRASH
+BUG_AJWONG WIN : svg/filters/subRegion-in-userSpace.svg = CRASH
+
+// Started failing in build
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20(webkit.org)/builds/35981
+BUG_AJWONG WIN : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
+BUG_AJWONG WIN : fast/forms/006.html = IMAGE
+BUG_AJWONG WIN : fast/forms/007.html = IMAGE
+BUG_AJWONG WIN : fast/forms/fieldset-align.html = IMAGE
+BUG_AJWONG WIN : fast/forms/float-before-fieldset.html = IMAGE
+
+// Started failing in build
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20(webkit.org)/builds/35984
+BUG_AJWONG WIN : inspector/console-uncaught-exception.html = TEXT
+
+// Regressions since r61980
+BUG_AJWONG : fast/blockflow/fieldsets.html = IMAGE+TEXT
+BUG_AJWONG MAC : svg/filters/filterRes.svg = IMAGE
+BUG_AJWONG LINUX : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
+BUG_AJWONG LINUX : fast/forms/006.html = IMAGE
+BUG_AJWONG LINUX : fast/forms/007.html = IMAGE
+BUG_AJWONG LINUX : fast/forms/fieldset-align.html = IMAGE
+BUG_AJWONG LINUX : fast/forms/float-before-fieldset.html = IMAGE
+BUG_AJWONG LINUX : svg/batik/filters/filterRegions.svg = IMAGE
+BUG_AJWONG LINUX : svg/custom/inline-svg-in-xhtml.xml = IMAGE
+BUG_AJWONG LINUX : svg/dynamic-updates/SVGFEMergeNodeElement-dom-in-attr.html = IMAGE
+BUG_AJWONG LINUX : svg/dynamic-updates/SVGFEMergeNodeElement-svgdom-in-prop.html = IMAGE
+BUG_AJWONG LINUX : svg/filters/feOffset.svg = IMAGE
+BUG_AJWONG LINUX : svg/filters/subRegion-in-userSpace.svg = IMAGE
