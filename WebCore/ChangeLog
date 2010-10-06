@@ -1,3 +1,19 @@
+2010-10-06  Renata Hodovan  <reni@inf.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGFEMergeNodeElement doesn't support dynamic invalidation, when attributes change.
+        https://bugs.webkit.org/show_bug.cgi?id=47181
+
+        Since feMergeNode doesn't have own renderer, we have to call the invalidation via its parent.
+
+        Tests: svg/dynamic-updates/SVGFEMergeNodeElement-dom-in-attr.html
+               svg/dynamic-updates/SVGFEMergeNodeElement-svgdom-in-prop.html
+
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::svgAttributeChanged):
+        * svg/SVGFEMergeNodeElement.h:
+
 2010-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

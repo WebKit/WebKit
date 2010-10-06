@@ -24,6 +24,8 @@
 #include "SVGFEMergeNodeElement.h"
 
 #include "Attribute.h"
+#include "RenderSVGResource.h"
+#include "SVGFilterElement.h"
 
 namespace WebCore {
 
@@ -44,6 +46,24 @@ void SVGFEMergeNodeElement::parseMappedAttribute(Attribute* attr)
         setIn1BaseValue(value);
     else
         SVGElement::parseMappedAttribute(attr);
+}
+
+void SVGFEMergeNodeElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGElement::svgAttributeChanged(attrName);
+
+    if (attrName != SVGNames::inAttr)
+        return;
+
+    Node* parentNode = parent();
+    if (!parentNode)
+        return;
+
+    RenderObject* renderer = parentNode->renderer();
+    if (!renderer || !renderer->isSVGResourceFilterPrimitive())
+        return;
+    
+    RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGFEMergeNodeElement::synchronizeProperty(const QualifiedName& attrName)
