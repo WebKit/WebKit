@@ -1,3 +1,18 @@
+2010-10-06  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, test expectation update.
+
+        Add Chromium results for r69176.
+
+        * platform/chromium-linux/fast/forms/input-placeholder-focus-twice-expected.checksum: Added.
+        * platform/chromium-linux/fast/forms/input-placeholder-focus-twice-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-placeholder-focus-twice-expected.checksum: Added.
+        * platform/chromium-mac/fast/forms/input-placeholder-focus-twice-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-focus-twice-expected.checksum: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-focus-twice-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-focus-twice-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2010-10-05  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
