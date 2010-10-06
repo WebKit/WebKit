@@ -3181,7 +3181,6 @@ BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT
 
 // r69161 updated the test.  Not sure what's wrong in the actual image.
-BUG58096 MAC : fast/table/simple_paint.html = IMAGE
 
 // Flaky since 2010-09-17?
 BUG57950 WIN LINUX : svg/batik/text/verticalText.svg = CRASH PASS
