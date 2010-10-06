@@ -1,6 +1,6 @@
 2010-10-06  David Kilzer  <ddkilzer@apple.com>
 
-        Move WebArchive serialization code into its own file
+        <http://webkit.org/b/47270> Move WebArchive serialization code into its own file
 
         Reviewed by Adam Roben.
 
