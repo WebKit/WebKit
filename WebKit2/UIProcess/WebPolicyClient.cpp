@@ -50,7 +50,7 @@ bool WebPolicyClient::decidePolicyForNavigationAction(WebPageProxy* page, Naviga
     if (!m_pagePolicyClient.decidePolicyForNavigationAction)
         return false;
 
-    m_pagePolicyClient.decidePolicyForNavigationAction(toRef(page), toRef(type), toRef(modifiers), toRef(mouseButton), toURLRef(url.impl()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
+    m_pagePolicyClient.decidePolicyForNavigationAction(toAPI(page), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toURLRef(url.impl()), toAPI(frame), toAPI(listener), m_pagePolicyClient.clientInfo);
     return true;
 }
 
@@ -59,7 +59,7 @@ bool WebPolicyClient::decidePolicyForNewWindowAction(WebPageProxy* page, Navigat
     if (!m_pagePolicyClient.decidePolicyForNewWindowAction)
         return false;
 
-    m_pagePolicyClient.decidePolicyForNewWindowAction(toRef(page), toRef(type), toRef(modifiers), toRef(mouseButton), toURLRef(url.impl()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
+    m_pagePolicyClient.decidePolicyForNewWindowAction(toAPI(page), toAPI(type), toAPI(modifiers), toAPI(mouseButton), toURLRef(url.impl()), toAPI(frame), toAPI(listener), m_pagePolicyClient.clientInfo);
     return true;
 }
 
@@ -68,7 +68,7 @@ bool WebPolicyClient::decidePolicyForMIMEType(WebPageProxy* page, const String& 
     if (!m_pagePolicyClient.decidePolicyForMIMEType)
         return false;
 
-    m_pagePolicyClient.decidePolicyForMIMEType(toRef(page), toRef(MIMEType.impl()), toURLRef(url.impl()), toRef(frame), toRef(listener), m_pagePolicyClient.clientInfo);
+    m_pagePolicyClient.decidePolicyForMIMEType(toAPI(page), toAPI(MIMEType.impl()), toURLRef(url.impl()), toAPI(frame), toAPI(listener), m_pagePolicyClient.clientInfo);
     return true;
 }
 

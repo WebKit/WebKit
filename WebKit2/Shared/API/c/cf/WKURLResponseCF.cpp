@@ -34,10 +34,10 @@ WKURLResponseRef WKURLResponseCreateWithCFURLResponse(CFURLResponseRef urlRespon
 {
     CFURLResponseRef copiedURLResponse = CFURLResponseCreateCopy(kCFAllocatorDefault, urlResponse);
     RefPtr<WebURLResponse> response = WebURLResponse::create(copiedURLResponse);
-    return toRef(response.release().releaseRef());
+    return toAPI(response.release().releaseRef());
 }
 
 CFURLResponseRef WKURLResponseCopyCFURLResponse(CFAllocatorRef alloc, WKURLResponseRef urlResponse)
 {
-    return CFURLResponseCreateCopy(alloc, toWK(urlResponse)->platformResponse());
+    return CFURLResponseCreateCopy(alloc, toImpl(urlResponse)->platformResponse());
 }

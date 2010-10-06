@@ -34,88 +34,88 @@ using namespace WebKit;
 
 WKTypeID WKBundlePageGetTypeID()
 {
-    return toRef(WebPage::APIType);
+    return toAPI(WebPage::APIType);
 }
 
 void WKBundlePageSetEditorClient(WKBundlePageRef pageRef, WKBundlePageEditorClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
-    toWK(pageRef)->initializeInjectedBundleEditorClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleEditorClient(wkClient);
 }
 
 void WKBundlePageSetFormClient(WKBundlePageRef pageRef, WKBundlePageFormClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
-    toWK(pageRef)->initializeInjectedBundleFormClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleFormClient(wkClient);
 }
 
 void WKBundlePageSetLoaderClient(WKBundlePageRef pageRef, WKBundlePageLoaderClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
-    toWK(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleLoaderClient(wkClient);
 }
 
 void WKBundlePageSetUIClient(WKBundlePageRef pageRef, WKBundlePageUIClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
-    toWK(pageRef)->initializeInjectedBundleUIClient(wkClient);
+    toImpl(pageRef)->initializeInjectedBundleUIClient(wkClient);
 }
 
 WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 {
-    return toRef(toWK(pageRef)->mainFrame());
+    return toAPI(toImpl(pageRef)->mainFrame());
 }
 
 void WKBundlePageStopLoading(WKBundlePageRef pageRef)
 {
-    toWK(pageRef)->stopLoading();
+    toImpl(pageRef)->stopLoading();
 }
 
 WKStringRef WKBundlePageCopyRenderTreeExternalRepresentation(WKBundlePageRef pageRef)
 {
-    return toCopiedRef(toWK(pageRef)->renderTreeExternalRepresentation());
+    return toCopiedAPI(toImpl(pageRef)->renderTreeExternalRepresentation());
 }
 
 void WKBundlePageExecuteEditingCommand(WKBundlePageRef pageRef, WKStringRef name, WKStringRef argument)
 {
-    toWK(pageRef)->executeEditingCommand(toWK(name)->string(), toWK(argument)->string());
+    toImpl(pageRef)->executeEditingCommand(toImpl(name)->string(), toImpl(argument)->string());
 }
 
 bool WKBundlePageIsEditingCommandEnabled(WKBundlePageRef pageRef, WKStringRef name)
 {
-    return toWK(pageRef)->isEditingCommandEnabled(toWK(name)->string());
+    return toImpl(pageRef)->isEditingCommandEnabled(toImpl(name)->string());
 }
 
 void WKBundlePageClearMainFrameName(WKBundlePageRef pageRef)
 {
-    toWK(pageRef)->clearMainFrameName();
+    toImpl(pageRef)->clearMainFrameName();
 }
 
 void WKBundlePageClose(WKBundlePageRef pageRef)
 {
-    toWK(pageRef)->sendClose();
+    toImpl(pageRef)->sendClose();
 }
 
 double WKBundlePageGetTextZoomFactor(WKBundlePageRef pageRef)
 {
-    return toWK(pageRef)->textZoomFactor();
+    return toImpl(pageRef)->textZoomFactor();
 }
 
 void WKBundlePageSetTextZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
 {
-    toWK(pageRef)->setTextZoomFactor(zoomFactor);
+    toImpl(pageRef)->setTextZoomFactor(zoomFactor);
 }
 
 double WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
 {
-    return toWK(pageRef)->pageZoomFactor();
+    return toImpl(pageRef)->pageZoomFactor();
 }
 
 void WKBundlePageSetPageZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
 {
-    toWK(pageRef)->setPageZoomFactor(zoomFactor);
+    toImpl(pageRef)->setPageZoomFactor(zoomFactor);
 }

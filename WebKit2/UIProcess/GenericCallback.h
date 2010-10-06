@@ -53,7 +53,7 @@ public:
     {
         ASSERT(m_callback);
 
-        m_callback(toRef(returnValue), 0, m_context);
+        m_callback(toAPI(returnValue), 0, m_context);
 
         m_callback = 0;
     }
@@ -63,7 +63,7 @@ public:
         ASSERT(m_callback);
 
         RefPtr<WebError> error = WebError::create();
-        m_callback(0, toRef(error.get()), m_context);
+        m_callback(0, toAPI(error.get()), m_context);
         
         m_callback = 0;
     }

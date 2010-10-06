@@ -1,3 +1,80 @@
+2010-10-06  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename toRef/toWK to toAPI/toImpl
+        https://bugs.webkit.org/show_bug.cgi?id=47281
+
+        * Shared/API/c/WKArray.cpp:
+        * Shared/API/c/WKCertificateInfo.cpp:
+        * Shared/API/c/WKData.cpp:
+        * Shared/API/c/WKDictionary.cpp:
+        * Shared/API/c/WKError.cpp:
+        * Shared/API/c/WKMutableArray.cpp:
+        * Shared/API/c/WKMutableDictionary.cpp:
+        * Shared/API/c/WKNumber.cpp:
+        * Shared/API/c/WKSerializedScriptValue.cpp:
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/API/c/WKString.cpp:
+        * Shared/API/c/WKType.cpp:
+        * Shared/API/c/WKURL.cpp:
+        * Shared/API/c/WKURLRequest.cpp:
+        * Shared/API/c/WKURLResponse.cpp:
+        * Shared/API/c/cf/WKStringCF.cpp:
+        * Shared/API/c/cf/WKURLCF.cpp:
+        * Shared/API/c/cf/WKURLRequestCF.cpp:
+        * Shared/API/c/cf/WKURLResponseCF.cpp:
+        * Shared/API/c/mac/WKCertificateInfoMac.mm:
+        * Shared/API/c/mac/WKURLRequestNS.mm:
+        * Shared/API/c/mac/WKURLResponseNS.mm:
+        * Shared/API/c/win/WKCertificateInfoWin.cpp:
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKBackForwardList.cpp:
+        * UIProcess/API/C/WKBackForwardListItem.cpp:
+        * UIProcess/API/C/WKContext.cpp:
+        * UIProcess/API/C/WKFormSubmissionListener.cpp:
+        * UIProcess/API/C/WKFrame.cpp:
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        * UIProcess/API/C/WKNavigationData.cpp:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/C/WKPageNamespace.cpp:
+        * UIProcess/API/C/WKPreferences.cpp:
+        * UIProcess/API/C/WKPreferencesPrivate.cpp:
+        * UIProcess/API/C/win/WKContextWin.cpp:
+        * UIProcess/API/C/win/WKView.cpp:
+        * UIProcess/API/cpp/qt/WKStringQt.cpp:
+        * UIProcess/API/cpp/qt/WKURLQt.cpp:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/mac/WKView.mm:
+        * UIProcess/API/qt/ClientImpl.cpp:
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/GenericCallback.h:
+        * UIProcess/WebContextInjectedBundleClient.cpp:
+        * UIProcess/WebFormClient.cpp:
+        * UIProcess/WebHistoryClient.cpp:
+        * UIProcess/WebLoaderClient.cpp:
+        * UIProcess/WebPolicyClient.cpp:
+        * UIProcess/WebUIClient.cpp:
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm:
+        * UIProcess/mac/LayerBackedDrawingAreaProxyMac.mm:
+        * UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        * WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp:
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp:
+
 2010-10-06  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

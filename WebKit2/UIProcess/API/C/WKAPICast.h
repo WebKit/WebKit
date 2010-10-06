@@ -58,7 +58,7 @@ WK_ADD_API_MAPPING(WKPreferencesRef, WebPreferences)
 
 /* Enum conversions */
 
-inline WKFrameNavigationType toRef(WebCore::NavigationType type)
+inline WKFrameNavigationType toAPI(WebCore::NavigationType type)
 {
     WKFrameNavigationType wkType = kWKFrameNavigationTypeOther;
 
@@ -101,7 +101,7 @@ inline CacheModel toCacheModel(WKCacheModel wkCacheModel)
     return CacheModelDocumentViewer;
 }
 
-inline WKCacheModel toRef(CacheModel cacheModel)
+inline WKCacheModel toAPI(CacheModel cacheModel)
 {
     switch (cacheModel) {
     case CacheModelDocumentViewer:

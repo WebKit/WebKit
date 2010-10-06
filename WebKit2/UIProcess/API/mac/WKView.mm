@@ -106,7 +106,7 @@ struct EditCommandState {
     _data = [[WKViewData alloc] init];
 
     _data->_pageClient = PageClientImpl::create(self);
-    _data->_page = toWK(pageNamespaceRef)->createWebPage();
+    _data->_page = toImpl(pageNamespaceRef)->createWebPage();
     _data->_page->setPageClient(_data->_pageClient.get());
     _data->_page->setDrawingArea(ChunkedUpdateDrawingAreaProxy::create(self));
     _data->_page->initializeWebPage(IntSize(frame.size));
@@ -121,7 +121,7 @@ struct EditCommandState {
 - (id)initWithFrame:(NSRect)frame
 {
     WebContext* context = WebContext::sharedProcessContext();
-    self = [self initWithFrame:frame pageNamespaceRef:toRef(context->createPageNamespace())];
+    self = [self initWithFrame:frame pageNamespaceRef:toAPI(context->createPageNamespace())];
     if (!self)
         return nil;
 
@@ -138,7 +138,7 @@ struct EditCommandState {
 
 - (WKPageRef)pageRef
 {
-    return toRef(_data->_page.get());
+    return toAPI(_data->_page.get());
 }
 
 - (BOOL)acceptsFirstResponder

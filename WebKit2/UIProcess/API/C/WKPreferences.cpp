@@ -34,147 +34,147 @@ using namespace WebKit;
 
 WKTypeID WKPreferencesGetTypeID()
 {
-    return toRef(WebPreferences::APIType);
+    return toAPI(WebPreferences::APIType);
 }
 
 WKPreferencesRef WKPreferencesCreate()
 {
     RefPtr<WebPreferences> preferences = WebPreferences::create();
-    return toRef(preferences.release().leakRef());
+    return toAPI(preferences.release().leakRef());
 }
 
 WKPreferencesRef WKPreferencesCreateCopy(WKPreferencesRef preferencesRef)
 {
-    RefPtr<WebPreferences> preferences = WebPreferences::copy(toWK(preferencesRef));
-    return toRef(preferences.release().releaseRef());
+    RefPtr<WebPreferences> preferences = WebPreferences::copy(toImpl(preferencesRef));
+    return toAPI(preferences.release().releaseRef());
 }
 
 void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferencesRef, bool javaScriptEnabled)
 {
-    toWK(preferencesRef)->setJavaScriptEnabled(javaScriptEnabled);
+    toImpl(preferencesRef)->setJavaScriptEnabled(javaScriptEnabled);
 }
 
 bool WKPreferencesGetJavaScriptEnabled(WKPreferencesRef preferencesRef)
 {
-    return toWK(preferencesRef)->javaScriptEnabled();
+    return toImpl(preferencesRef)->javaScriptEnabled();
 }
 
 void WKPreferencesSetLoadsImagesAutomatically(WKPreferencesRef preferencesRef, bool loadsImagesAutomatically)
 {
-    toWK(preferencesRef)->setLoadsImagesAutomatically(loadsImagesAutomatically);
+    toImpl(preferencesRef)->setLoadsImagesAutomatically(loadsImagesAutomatically);
 }
 
 bool WKPreferencesGetLoadsImagesAutomatically(WKPreferencesRef preferencesRef)
 {
-    return toWK(preferencesRef)->loadsImagesAutomatically();
+    return toImpl(preferencesRef)->loadsImagesAutomatically();
 }
 
 void WKPreferencesSetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferencesRef, bool offlineWebApplicationCacheEnabled)
 {
-    toWK(preferencesRef)->setOfflineWebApplicationCacheEnabled(offlineWebApplicationCacheEnabled);
+    toImpl(preferencesRef)->setOfflineWebApplicationCacheEnabled(offlineWebApplicationCacheEnabled);
 }
 
 bool WKPreferencesGetOfflineWebApplicationCacheEnabled(WKPreferencesRef preferencesRef)
 {
-    return toWK(preferencesRef)->offlineWebApplicationCacheEnabled();
+    return toImpl(preferencesRef)->offlineWebApplicationCacheEnabled();
 }
 
 void WKPreferencesSetLocalStorageEnabled(WKPreferencesRef preferencesRef, bool localStorageEnabled)
 {
-    toWK(preferencesRef)->setLocalStorageEnabled(localStorageEnabled);
+    toImpl(preferencesRef)->setLocalStorageEnabled(localStorageEnabled);
 }
 
 bool WKPreferencesGetLocalStorageEnabled(WKPreferencesRef preferencesRef)
 {
-    return toWK(preferencesRef)->localStorageEnabled();
+    return toImpl(preferencesRef)->localStorageEnabled();
 }
 
 void WKPreferencesSetXSSAuditorEnabled(WKPreferencesRef preferencesRef, bool xssAuditorEnabled)
 {
-    toWK(preferencesRef)->setXSSAuditorEnabled(xssAuditorEnabled);
+    toImpl(preferencesRef)->setXSSAuditorEnabled(xssAuditorEnabled);
 }
 
 bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferencesRef)
 {
-    return toWK(preferencesRef)->xssAuditorEnabled();
+    return toImpl(preferencesRef)->xssAuditorEnabled();
 }
 
 void WKPreferencesSetFrameFlatteningEnabled(WKPreferencesRef preferencesRef, bool frameFlatteningEnabled)
 {
-    toWK(preferencesRef)->setFrameFlatteningEnabled(frameFlatteningEnabled);
+    toImpl(preferencesRef)->setFrameFlatteningEnabled(frameFlatteningEnabled);
 }
 
 bool WKPreferencesGetFrameFlatteningEnabled(WKPreferencesRef preferencesRef)
 {
-    return toWK(preferencesRef)->frameFlatteningEnabled();
+    return toImpl(preferencesRef)->frameFlatteningEnabled();
 }
 
 void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferencesRef, bool pluginsEnabled)
 {
-    toWK(preferencesRef)->setPluginsEnabled(pluginsEnabled);
+    toImpl(preferencesRef)->setPluginsEnabled(pluginsEnabled);
 }
 
 bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferencesRef)
 {
-    return toWK(preferencesRef)->pluginsEnabled();
+    return toImpl(preferencesRef)->pluginsEnabled();
 }
 
 void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
-    toWK(preferencesRef)->setStandardFontFamily(toWTFString(family));
+    toImpl(preferencesRef)->setStandardFontFamily(toWTFString(family));
 }
 
 WKStringRef WKPreferencesCopyStandardFontFamily(WKPreferencesRef preferencesRef)
 {
-    return toCopiedRef(toWK(preferencesRef)->standardFontFamily());
+    return toCopiedAPI(toImpl(preferencesRef)->standardFontFamily());
 }
 
 void WKPreferencesSetFixedFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
-    toWK(preferencesRef)->setFixedFontFamily(toWTFString(family));
+    toImpl(preferencesRef)->setFixedFontFamily(toWTFString(family));
 }
 
 WKStringRef WKPreferencesCopyFixedFontFamily(WKPreferencesRef preferencesRef)
 {
-    return toCopiedRef(toWK(preferencesRef)->fixedFontFamily());
+    return toCopiedAPI(toImpl(preferencesRef)->fixedFontFamily());
 }
 
 void WKPreferencesSetSerifFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
-    toWK(preferencesRef)->setSerifFontFamily(toWTFString(family));
+    toImpl(preferencesRef)->setSerifFontFamily(toWTFString(family));
 }
 
 WKStringRef WKPreferencesCopySerifFontFamily(WKPreferencesRef preferencesRef)
 {
-    return toCopiedRef(toWK(preferencesRef)->serifFontFamily());
+    return toCopiedAPI(toImpl(preferencesRef)->serifFontFamily());
 }
 
 void WKPreferencesSetSansSerifFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
-    toWK(preferencesRef)->setSansSerifFontFamily(toWTFString(family));
+    toImpl(preferencesRef)->setSansSerifFontFamily(toWTFString(family));
 }
 
 WKStringRef WKPreferencesCopySansSerifFontFamily(WKPreferencesRef preferencesRef)
 {
-    return toCopiedRef(toWK(preferencesRef)->sansSerifFontFamily());
+    return toCopiedAPI(toImpl(preferencesRef)->sansSerifFontFamily());
 }
 
 void WKPreferencesSetCursiveFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
-    toWK(preferencesRef)->setCursiveFontFamily(toWTFString(family));
+    toImpl(preferencesRef)->setCursiveFontFamily(toWTFString(family));
 }
 
 WKStringRef WKPreferencesCopyCursiveFontFamily(WKPreferencesRef preferencesRef)
 {
-    return toCopiedRef(toWK(preferencesRef)->cursiveFontFamily());
+    return toCopiedAPI(toImpl(preferencesRef)->cursiveFontFamily());
 }
 
 void WKPreferencesSetFantasyFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
-    toWK(preferencesRef)->setFantasyFontFamily(toWTFString(family));
+    toImpl(preferencesRef)->setFantasyFontFamily(toWTFString(family));
 }
 
 WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef)
 {
-    return toCopiedRef(toWK(preferencesRef)->fantasyFontFamily());
+    return toCopiedAPI(toImpl(preferencesRef)->fantasyFontFamily());
 }

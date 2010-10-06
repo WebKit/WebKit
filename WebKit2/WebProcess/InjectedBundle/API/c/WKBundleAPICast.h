@@ -58,7 +58,7 @@ WK_ADD_API_MAPPING(WKBundleRangeHandleRef, InjectedBundleRangeHandle)
 WK_ADD_API_MAPPING(WKBundleRef, InjectedBundle)
 WK_ADD_API_MAPPING(WKBundleScriptWorldRef, InjectedBundleScriptWorld)
 
-inline WKInsertActionType toWK(WebCore::EditorInsertAction action)
+inline WKInsertActionType toAPI(WebCore::EditorInsertAction action)
 {
     switch (action) {
     case WebCore::EditorInsertActionTyped:
@@ -75,7 +75,7 @@ inline WKInsertActionType toWK(WebCore::EditorInsertAction action)
     return kWKInsertActionTyped;
 }
 
-inline WKAffinityType toWK(WebCore::EAffinity affinity)
+inline WKAffinityType toAPI(WebCore::EAffinity affinity)
 {
     switch (affinity) {
     case WebCore::UPSTREAM:

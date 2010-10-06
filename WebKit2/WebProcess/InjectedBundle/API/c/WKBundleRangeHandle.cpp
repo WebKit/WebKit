@@ -33,5 +33,5 @@ using namespace WebKit;
 
 WKTypeID WKBundleRangeHandleGetTypeID()
 {
-    return toRef(InjectedBundleRangeHandle::APIType);
+    return toAPI(InjectedBundleRangeHandle::APIType);
 }

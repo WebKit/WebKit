@@ -33,16 +33,16 @@ using namespace WebKit;
 
 WKTypeID WKBundleScriptWorldGetTypeID()
 {
-    return toRef(InjectedBundleScriptWorld::APIType);
+    return toAPI(InjectedBundleScriptWorld::APIType);
 }
 
 WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld()
 {
     RefPtr<InjectedBundleScriptWorld> world = InjectedBundleScriptWorld::create();
-    return toRef(world.release().releaseRef());
+    return toAPI(world.release().releaseRef());
 }
 
 WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld()
 {
-    return toRef(InjectedBundleScriptWorld::normalWorld());
+    return toAPI(InjectedBundleScriptWorld::normalWorld());
 }

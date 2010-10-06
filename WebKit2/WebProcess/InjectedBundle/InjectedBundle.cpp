@@ -187,19 +187,19 @@ size_t InjectedBundle::javaScriptObjectsCount()
 void InjectedBundle::didCreatePage(WebPage* page)
 {
     if (m_client.didCreatePage)
-        m_client.didCreatePage(toRef(this), toRef(page), m_client.clientInfo);
+        m_client.didCreatePage(toAPI(this), toAPI(page), m_client.clientInfo);
 }
 
 void InjectedBundle::willDestroyPage(WebPage* page)
 {
     if (m_client.willDestroyPage)
-        m_client.willDestroyPage(toRef(this), toRef(page), m_client.clientInfo);
+        m_client.willDestroyPage(toAPI(this), toAPI(page), m_client.clientInfo);
 }
 
 void InjectedBundle::didReceiveMessage(const String& messageName, APIObject* messageBody)
 {
     if (m_client.didReceiveMessage)
-        m_client.didReceiveMessage(toRef(this), toRef(messageName.impl()), toRef(messageBody), m_client.clientInfo);
+        m_client.didReceiveMessage(toAPI(this), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
 }
 
 void InjectedBundle::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

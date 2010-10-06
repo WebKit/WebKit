@@ -37,6 +37,6 @@ QUrl WKURLCopyQUrl(WKURLRef urlRef)
 {
     if (!urlRef)
         return QUrl();
-    const WTF::String& string = toWK(urlRef)->string();
+    const WTF::String& string = toImpl(urlRef)->string();
     return QUrl(QString(reinterpret_cast<const QChar*>(string.characters()), string.length()));
 }

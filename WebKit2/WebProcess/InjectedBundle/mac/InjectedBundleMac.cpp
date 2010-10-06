@@ -82,7 +82,7 @@ bool InjectedBundle::load()
         return false;
     }
 
-    initializeFunction(toRef(this));
+    initializeFunction(toAPI(this));
     return true;
 }
 

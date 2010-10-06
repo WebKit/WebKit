@@ -37,6 +37,6 @@ QString WKStringCopyQString(WKStringRef stringRef)
 {
     if (!stringRef)
         return QString();
-    const WTF::String& string = toWK(stringRef)->string();
+    const WTF::String& string = toImpl(stringRef)->string();
     return QString(reinterpret_cast<const QChar*>(string.characters()), string.length());
 }

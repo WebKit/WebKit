@@ -34,10 +34,10 @@ WKURLRequestRef WKURLRequestCreateWithNSURLRequest(NSURLRequest* urlRequest)
 {
     RetainPtr<NSURLRequest> copiedURLRequest(AdoptNS, [urlRequest copy]);
     RefPtr<WebURLRequest> request = WebURLRequest::create(copiedURLRequest.get());
-    return toRef(request.release().releaseRef());
+    return toAPI(request.release().releaseRef());
 }
 
 NSURLRequest* WKURLRequestCopyNSURLRequest(CFAllocatorRef alloc, WKURLRequestRef urlRequest)
 {
-    return [toWK(urlRequest)->platformRequest() copy];
+    return [toImpl(urlRequest)->platformRequest() copy];
 }

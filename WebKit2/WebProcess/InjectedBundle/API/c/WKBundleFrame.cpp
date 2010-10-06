@@ -36,85 +36,85 @@ using namespace WebKit;
 
 WKTypeID WKBundleFrameGetTypeID()
 {
-    return toRef(WebFrame::APIType);
+    return toAPI(WebFrame::APIType);
 }
 
 bool WKBundleFrameIsMainFrame(WKBundleFrameRef frameRef)
 {
-    return toWK(frameRef)->isMainFrame();
+    return toImpl(frameRef)->isMainFrame();
 }
 
 WKURLRef WKBundleFrameCopyURL(WKBundleFrameRef frameRef)
 {
-    return toCopiedURLRef(toWK(frameRef)->url());
+    return toCopiedURLAPI(toImpl(frameRef)->url());
 }
 
 WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frameRef)
 {
-    return toRef(toWK(frameRef)->childFrames().releaseRef());    
+    return toAPI(toImpl(frameRef)->childFrames().releaseRef());    
 }
 
 unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frameRef)
 {
-    return toWK(frameRef)->numberOfActiveAnimations();
+    return toImpl(frameRef)->numberOfActiveAnimations();
 }
 
 bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStringRef name, WKStringRef elementID, double time)
 {
-    return toWK(frameRef)->pauseAnimationOnElementWithId(toWK(name)->string(), toWK(elementID)->string(), time);
+    return toImpl(frameRef)->pauseAnimationOnElementWithId(toImpl(name)->string(), toImpl(elementID)->string(), time);
 }
 
 JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)
 {
-    return toWK(frameRef)->jsContext();
+    return toImpl(frameRef)->jsContext();
 }
 
 JSGlobalContextRef WKBundleFrameGetJavaScriptContextForWorld(WKBundleFrameRef frameRef, WKBundleScriptWorldRef worldRef)
 {
-    return toWK(frameRef)->jsContextForWorld(toWK(worldRef));
+    return toImpl(frameRef)->jsContextForWorld(toImpl(worldRef));
 }
 
 JSValueRef WKBundleFrameGetJavaScriptWrapperForNodeForWorld(WKBundleFrameRef frameRef, WKBundleNodeHandleRef nodeHandleRef, WKBundleScriptWorldRef worldRef)
 {
-    return toWK(frameRef)->jsWrapperForWorld(toWK(nodeHandleRef), toWK(worldRef));
+    return toImpl(frameRef)->jsWrapperForWorld(toImpl(nodeHandleRef), toImpl(worldRef));
 }
 
 JSValueRef WKBundleFrameGetJavaScriptWrapperForRangeForWorld(WKBundleFrameRef frameRef, WKBundleRangeHandleRef rangeHandleRef, WKBundleScriptWorldRef worldRef)
 {
-    return toWK(frameRef)->jsWrapperForWorld(toWK(rangeHandleRef), toWK(worldRef));
+    return toImpl(frameRef)->jsWrapperForWorld(toImpl(rangeHandleRef), toImpl(worldRef));
 }
 
 WKStringRef WKBundleFrameCopyName(WKBundleFrameRef frameRef)
 {
-    return toCopiedRef(toWK(frameRef)->name());
+    return toCopiedAPI(toImpl(frameRef)->name());
 }
 
 JSValueRef WKBundleFrameGetComputedStyleIncludingVisitedInfo(WKBundleFrameRef frameRef, JSObjectRef element)
 {
-    return toWK(frameRef)->computedStyleIncludingVisitedInfo(element);
+    return toImpl(frameRef)->computedStyleIncludingVisitedInfo(element);
 }
 
 WKStringRef WKBundleFrameCopyCounterValue(WKBundleFrameRef frameRef, JSObjectRef element)
 {
-    return toCopiedRef(toWK(frameRef)->counterValue(element));
+    return toCopiedAPI(toImpl(frameRef)->counterValue(element));
 }
 
 WKStringRef WKBundleFrameCopyMarkerText(WKBundleFrameRef frameRef, JSObjectRef element)
 {
-    return toCopiedRef(toWK(frameRef)->markerText(element));
+    return toCopiedAPI(toImpl(frameRef)->markerText(element));
 }
 
 WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frameRef)
 {
-    return toCopiedRef(toWK(frameRef)->innerText());
+    return toCopiedAPI(toImpl(frameRef)->innerText());
 }
 
 unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frameRef)
 {
-    return toWK(frameRef)->pendingUnloadCount();
+    return toImpl(frameRef)->pendingUnloadCount();
 }
 
 WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
 {
-    return toRef(toWK(frameRef)->page());
+    return toAPI(toImpl(frameRef)->page());
 }

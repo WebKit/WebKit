@@ -54,7 +54,7 @@ PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page)
     if (!m_pageUIClient.createNewPage)
         return 0;
     
-    return adoptRef(toWK(m_pageUIClient.createNewPage(toRef(page), m_pageUIClient.clientInfo)));
+    return adoptRef(toImpl(m_pageUIClient.createNewPage(toAPI(page), m_pageUIClient.clientInfo)));
 } 
 
 void WebUIClient::showPage(WebPageProxy* page)
@@ -62,7 +62,7 @@ void WebUIClient::showPage(WebPageProxy* page)
     if (!m_pageUIClient.showPage)
         return;
     
-    m_pageUIClient.showPage(toRef(page), m_pageUIClient.clientInfo);
+    m_pageUIClient.showPage(toAPI(page), m_pageUIClient.clientInfo);
 }
 
 void WebUIClient::close(WebPageProxy* page)
@@ -70,7 +70,7 @@ void WebUIClient::close(WebPageProxy* page)
     if (!m_pageUIClient.close)
         return;
     
-    m_pageUIClient.close(toRef(page), m_pageUIClient.clientInfo);
+    m_pageUIClient.close(toAPI(page), m_pageUIClient.clientInfo);
 }
 
 void WebUIClient::runJavaScriptAlert(WebPageProxy* page, const String& message, WebFrameProxy* frame)
@@ -78,7 +78,7 @@ void WebUIClient::runJavaScriptAlert(WebPageProxy* page, const String& message, 
     if (!m_pageUIClient.runJavaScriptAlert)
         return;
     
-    m_pageUIClient.runJavaScriptAlert(toRef(page), toRef(message.impl()), toRef(frame), m_pageUIClient.clientInfo);
+    m_pageUIClient.runJavaScriptAlert(toAPI(page), toAPI(message.impl()), toAPI(frame), m_pageUIClient.clientInfo);
 }
 
 bool WebUIClient::runJavaScriptConfirm(WebPageProxy* page, const String& message, WebFrameProxy* frame)
@@ -86,7 +86,7 @@ bool WebUIClient::runJavaScriptConfirm(WebPageProxy* page, const String& message
     if (!m_pageUIClient.runJavaScriptConfirm)
         return false;
 
-    return m_pageUIClient.runJavaScriptConfirm(toRef(page), toRef(message.impl()), toRef(frame), m_pageUIClient.clientInfo);
+    return m_pageUIClient.runJavaScriptConfirm(toAPI(page), toAPI(message.impl()), toAPI(frame), m_pageUIClient.clientInfo);
 }
 
 String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& message, const String& defaultValue, WebFrameProxy* frame)
@@ -94,7 +94,7 @@ String WebUIClient::runJavaScriptPrompt(WebPageProxy* page, const String& messag
     if (!m_pageUIClient.runJavaScriptPrompt)
         return String();
 
-    WebString* string = toWK(m_pageUIClient.runJavaScriptPrompt(toRef(page), toRef(message.impl()), toRef(defaultValue.impl()), toRef(frame), m_pageUIClient.clientInfo));
+    WebString* string = toImpl(m_pageUIClient.runJavaScriptPrompt(toAPI(page), toAPI(message.impl()), toAPI(defaultValue.impl()), toAPI(frame), m_pageUIClient.clientInfo));
     if (!string)
         return String();
 
@@ -109,7 +109,7 @@ void WebUIClient::setStatusText(WebPageProxy* page, const String& text)
     if (!m_pageUIClient.setStatusText)
         return;
 
-    m_pageUIClient.setStatusText(toRef(page), toRef(text.impl()), m_pageUIClient.clientInfo);
+    m_pageUIClient.setStatusText(toAPI(page), toAPI(text.impl()), m_pageUIClient.clientInfo);
 }
 
 void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, WebEvent::Modifiers modifiers, APIObject* userData)
@@ -117,7 +117,7 @@ void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, WebEvent::Modifier
     if (!m_pageUIClient.mouseDidMoveOverElement)
         return;
 
-    m_pageUIClient.mouseDidMoveOverElement(toRef(page), toRef(modifiers), toRef(userData), m_pageUIClient.clientInfo);
+    m_pageUIClient.mouseDidMoveOverElement(toAPI(page), toAPI(modifiers), toAPI(userData), m_pageUIClient.clientInfo);
 }
 
 
@@ -126,14 +126,14 @@ void WebUIClient::contentsSizeChanged(WebPageProxy* page, const IntSize& size, W
     if (!m_pageUIClient.contentsSizeChanged)
         return;
 
-    m_pageUIClient.contentsSizeChanged(toRef(page), size.width(), size.height(), toRef(frame), m_pageUIClient.clientInfo);
+    m_pageUIClient.contentsSizeChanged(toAPI(page), size.width(), size.height(), toAPI(frame), m_pageUIClient.clientInfo);
 }
 
 void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboardEvent& event)
 {
     if (!m_pageUIClient.didNotHandleKeyEvent)
         return;
-    m_pageUIClient.didNotHandleKeyEvent(toRef(page), event.nativeEvent(), m_pageUIClient.clientInfo);
+    m_pageUIClient.didNotHandleKeyEvent(toAPI(page), event.nativeEvent(), m_pageUIClient.clientInfo);
 }
 
 } // namespace WebKit

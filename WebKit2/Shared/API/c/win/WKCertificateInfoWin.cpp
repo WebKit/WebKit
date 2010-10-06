@@ -32,5 +32,5 @@ using namespace WebKit;
 
 PCCERT_CONTEXT WKCertificateInfoGetCertificateContext(WKCertificateInfoRef certificateInfoRef)
 {
-    return toWK(certificateInfoRef)->platformCertificateInfo().certificateContext();
+    return toImpl(certificateInfoRef)->platformCertificateInfo().certificateContext();
 }

@@ -58,12 +58,12 @@ void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef preferencesRef, WKFontS
             level = FontSmoothingLevelMedium;
             break;
     }
-    toWK(preferencesRef)->setFontSmoothingLevel(level);
+    toImpl(preferencesRef)->setFontSmoothingLevel(level);
 }
 
 WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef preferencesRef)
 {
-    FontSmoothingLevel level = toWK(preferencesRef)->fontSmoothingLevel();
+    FontSmoothingLevel level = toImpl(preferencesRef)->fontSmoothingLevel();
     switch (level) {
         case FontSmoothingLevelNoSubpixelAntiAliasing:
             return kWKFontSmoothingLevelNoSubpixelAntiAliasing;

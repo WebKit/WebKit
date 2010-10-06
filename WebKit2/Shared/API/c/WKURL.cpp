@@ -31,5 +31,5 @@ using namespace WebKit;
 
 WKTypeID WKURLGetTypeID()
 {
-    return toRef(WebURL::APIType);
+    return toAPI(WebURL::APIType);
 }

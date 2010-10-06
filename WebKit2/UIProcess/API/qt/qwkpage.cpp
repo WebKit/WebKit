@@ -55,7 +55,7 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, WKPageNamespaceRef namespaceRef)
     WebPlatformStrategies::initialize();
 
     memset(actions, 0, sizeof(actions));
-    page = toWK(namespaceRef)->createWebPage();
+    page = toImpl(namespaceRef)->createWebPage();
     page->setPageClient(this);
     pageNamespaceRef = namespaceRef;
 }
@@ -364,7 +364,7 @@ void QWKPage::timerEvent(QTimerEvent* ev)
 
 WKPageRef QWKPage::pageRef() const
 {
-    return toRef(d->page.get());
+    return toAPI(d->page.get());
 }
 
 QWKPreferences* QWKPage::preferences() const

@@ -32,21 +32,21 @@ using namespace WebKit;
 
 WKTypeID WKDataGetTypeID()
 {
-    return toRef(WebData::APIType);
+    return toAPI(WebData::APIType);
 }
 
 WKDataRef WKDataCreate(const unsigned char* bytes, size_t size)
 {
     RefPtr<WebData> data = WebData::create(bytes, size);
-    return toRef(data.release().releaseRef());
+    return toAPI(data.release().releaseRef());
 }
 
 const unsigned char* WKDataGetBytes(WKDataRef dataRef)
 {
-    return toWK(dataRef)->bytes();
+    return toImpl(dataRef)->bytes();
 }
 
 size_t WKDataGetSize(WKDataRef dataRef)
 {
-    return toWK(dataRef)->size();
+    return toImpl(dataRef)->size();
 }

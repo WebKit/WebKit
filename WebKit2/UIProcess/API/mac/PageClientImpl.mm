@@ -93,7 +93,7 @@ namespace WebKit {
 
 NSString* nsStringFromWebCoreString(const String& string)
 {
-    return string.impl() ? HardAutorelease(WKStringCopyCFString(0, toRef(string.impl()))) : @"";
+    return string.impl() ? HardAutorelease(WKStringCopyCFString(0, toAPI(string.impl()))) : @"";
 }
 
 PassOwnPtr<PageClientImpl> PageClientImpl::create(WKView* wkView)

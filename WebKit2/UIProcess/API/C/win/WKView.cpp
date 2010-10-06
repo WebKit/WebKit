@@ -32,36 +32,36 @@ using namespace WebKit;
 
 WKTypeID WKViewGetTypeID()
 {
-    return toRef(APIObject::TypeView);
+    return toAPI(APIObject::TypeView);
 }
 
 WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespaceRef, HWND hostWindow)
 {
-    RefPtr<WebView> view = WebView::create(rect, toWK(pageNamespaceRef), hostWindow);
-    return toRef(view.release().releaseRef());
+    RefPtr<WebView> view = WebView::create(rect, toImpl(pageNamespaceRef), hostWindow);
+    return toAPI(view.release().releaseRef());
 }
 
 HWND WKViewGetWindow(WKViewRef viewRef)
 {
-    return toWK(viewRef)->window();
+    return toImpl(viewRef)->window();
 }
 
 HWND WKViewGetHostWindow(WKViewRef viewRef)
 {
-    return toWK(viewRef)->hostWindow();
+    return toImpl(viewRef)->hostWindow();
 }
 
 WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
-    return toRef(toWK(viewRef)->page());
+    return toAPI(toImpl(viewRef)->page());
 }
 
 void WKViewSetHostWindow(WKViewRef viewRef, HWND hostWindow)
 {
-    toWK(viewRef)->setHostWindow(hostWindow);
+    toImpl(viewRef)->setHostWindow(hostWindow);
 }
 
 void WKViewWindowAncestryDidChange(WKViewRef viewRef)
 {
-    toWK(viewRef)->windowAncestryDidChange();
+    toImpl(viewRef)->windowAncestryDidChange();
 }

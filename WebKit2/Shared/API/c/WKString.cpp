@@ -32,47 +32,47 @@ using namespace WebKit;
 
 WKTypeID WKStringGetTypeID()
 {
-    return toRef(WebString::APIType);
+    return toAPI(WebString::APIType);
 }
 
 WKStringRef WKStringCreateWithUTF8CString(const char* string)
 {
     RefPtr<WebString> webString = WebString::createFromUTF8String(string);
-    return toRef(webString.release().leakRef());
+    return toAPI(webString.release().leakRef());
 }
 
 bool WKStringIsEmpty(WKStringRef stringRef)
 {
-    return toWK(stringRef)->isEmpty();
+    return toImpl(stringRef)->isEmpty();
 }
 
 size_t WKStringGetMaximumUTF8CStringSize(WKStringRef stringRef)
 {
-    return toWK(stringRef)->maximumUTF8CStringSize();
+    return toImpl(stringRef)->maximumUTF8CStringSize();
 }
 
 size_t WKStringGetUTF8CString(WKStringRef stringRef, char* buffer, size_t bufferSize)
 {
-    return toWK(stringRef)->getUTF8CString(buffer, bufferSize);
+    return toImpl(stringRef)->getUTF8CString(buffer, bufferSize);
 }
 
 bool WKStringIsEqual(WKStringRef aRef, WKStringRef bRef)
 {
-    return toWK(aRef)->equal(toWK(bRef));
+    return toImpl(aRef)->equal(toImpl(bRef));
 }
 
 bool WKStringIsEqualToUTF8CString(WKStringRef aRef, const char* b)
 {
-    return toWK(aRef)->equalToUTF8String(b);
+    return toImpl(aRef)->equalToUTF8String(b);
 }
 
 WKStringRef WKStringCreateWithJSString(JSStringRef jsStringRef)
 {
     RefPtr<WebString> webString = WebString::create(jsStringRef);
-    return toRef(webString.release().leakRef());
+    return toAPI(webString.release().leakRef());
 }
 
 JSStringRef WKStringCopyJSString(WKStringRef stringRef)
 {
-    return toWK(stringRef)->createJSString();
+    return toImpl(stringRef)->createJSString();
 }

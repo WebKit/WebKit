@@ -33,5 +33,5 @@ using namespace WebKit;
 
 void WKContextSetShouldPaintNativeControls(WKContextRef contextRef, bool b)
 {
-    toWK(contextRef)->setShouldPaintNativeControls(b);
+    toImpl(contextRef)->setShouldPaintNativeControls(b);
 }

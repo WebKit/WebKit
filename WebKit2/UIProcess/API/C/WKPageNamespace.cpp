@@ -34,15 +34,15 @@ using namespace WebKit;
 
 WKTypeID WKPageNamespaceGetTypeID()
 {
-    return toRef(WebPageNamespace::APIType);
+    return toAPI(WebPageNamespace::APIType);
 }
 
 WKPageNamespaceRef WKPageNamespaceCreate(WKContextRef ownerContextRef)
 {
-    return toRef(toWK(ownerContextRef)->createPageNamespace());
+    return toAPI(toImpl(ownerContextRef)->createPageNamespace());
 }
 
 WKContextRef WKPageNamespaceGetContext(WKPageNamespaceRef pageNamespaceRef)
 {
-    return toRef(toWK(pageNamespaceRef)->context());
+    return toAPI(toImpl(pageNamespaceRef)->context());
 }

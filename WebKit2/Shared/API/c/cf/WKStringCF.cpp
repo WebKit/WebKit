@@ -34,14 +34,14 @@ using namespace WebKit;
 WKStringRef WKStringCreateWithCFString(CFStringRef cfString)
 {
     String string(cfString);
-    return toCopiedRef(string);
+    return toCopiedAPI(string);
 }
 
 CFStringRef WKStringCopyCFString(CFAllocatorRef allocatorRef, WKStringRef stringRef)
 {
-    ASSERT(!toWK(stringRef)->string().isNull());
+    ASSERT(!toImpl(stringRef)->string().isNull());
 
     // NOTE: This does not use StringImpl::createCFString() since that function
     // expects to be called on the thread running WebCore.
-    return CFStringCreateWithCharacters(allocatorRef, reinterpret_cast<const UniChar*>(toWK(stringRef)->string().characters()), toWK(stringRef)->string().length());
+    return CFStringCreateWithCharacters(allocatorRef, reinterpret_cast<const UniChar*>(toImpl(stringRef)->string().characters()), toImpl(stringRef)->string().length());
 }

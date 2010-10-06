@@ -32,17 +32,17 @@ using namespace WebKit;
 
 WKTypeID WKFrameGetTypeID()
 {
-    return toRef(WebFrameProxy::APIType);
+    return toAPI(WebFrameProxy::APIType);
 }
 
 bool WKFrameIsMainFrame(WKFrameRef frameRef)
 {
-    return toWK(frameRef)->isMainFrame();
+    return toImpl(frameRef)->isMainFrame();
 }
 
 WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frameRef)
 {
-    WebFrameProxy* frame = toWK(frameRef);
+    WebFrameProxy* frame = toImpl(frameRef);
     switch (frame->loadState()) {
         case WebFrameProxy::LoadStateProvisional:
             return kWKFrameLoadStateProvisional;
@@ -58,25 +58,25 @@ WKFrameLoadState WKFrameGetFrameLoadState(WKFrameRef frameRef)
 
 WKURLRef WKFrameCopyProvisionalURL(WKFrameRef frameRef)
 {
-    return toCopiedURLRef(toWK(frameRef)->provisionalURL());
+    return toCopiedURLAPI(toImpl(frameRef)->provisionalURL());
 }
 
 WKURLRef WKFrameCopyURL(WKFrameRef frameRef)
 {
-    return toCopiedURLRef(toWK(frameRef)->url());
+    return toCopiedURLAPI(toImpl(frameRef)->url());
 }
 
 WKStringRef WKFrameCopyMIMEType(WKFrameRef frameRef)
 {
-    return toCopiedRef(toWK(frameRef)->mimeType());
+    return toCopiedAPI(toImpl(frameRef)->mimeType());
 }
 
 WKPageRef WKFrameGetPage(WKFrameRef frameRef)
 {
-    return toRef(toWK(frameRef)->page());
+    return toAPI(toImpl(frameRef)->page());
 }
 
 WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
 {
-    return toRef(toWK(frameRef)->certificateInfo());
+    return toAPI(toImpl(frameRef)->certificateInfo());
 }

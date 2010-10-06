@@ -33,20 +33,20 @@ using namespace WebKit;
 
 WKTypeID WKFramePolicyListenerGetTypeID()
 {
-    return toRef(WebFramePolicyListenerProxy::APIType);
+    return toAPI(WebFramePolicyListenerProxy::APIType);
 }
 
 void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
 {
-    toWK(policyListenerRef)->use();
+    toImpl(policyListenerRef)->use();
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)
 {
-    toWK(policyListenerRef)->download();
+    toImpl(policyListenerRef)->download();
 }
 
 void WKFramePolicyListenerIgnore(WKFramePolicyListenerRef policyListenerRef)
 {
-    toWK(policyListenerRef)->ignore();
+    toImpl(policyListenerRef)->ignore();
 }

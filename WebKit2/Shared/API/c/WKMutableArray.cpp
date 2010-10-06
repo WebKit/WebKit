@@ -33,15 +33,15 @@ using namespace WebKit;
 WKMutableArrayRef WKMutableArrayCreate()
 {
     RefPtr<MutableArray> array = MutableArray::create();
-    return toRef(array.release().releaseRef());
+    return toAPI(array.release().releaseRef());
 }
 
 bool WKArrayIsMutable(WKArrayRef arrayRef)
 {
-    return toWK(arrayRef)->isMutable();
+    return toImpl(arrayRef)->isMutable();
 }
 
 void WKArrayAppendItem(WKMutableArrayRef arrayRef, WKTypeRef itemRef)
 {
-    toWK(arrayRef)->append(toWK(itemRef));
+    toImpl(arrayRef)->append(toImpl(itemRef));
 }

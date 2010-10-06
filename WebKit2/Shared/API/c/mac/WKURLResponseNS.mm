@@ -34,10 +34,10 @@ WKURLResponseRef WKURLResponseCreateWithNSURLResponse(NSURLResponse* urlResponse
 {
     RetainPtr<NSURLResponse> copiedURLResponse(AdoptNS, [urlResponse copy]);
     RefPtr<WebURLResponse> response = WebURLResponse::create(copiedURLResponse.get());
-    return toRef(response.release().releaseRef());
+    return toAPI(response.release().releaseRef());
 }
 
 NSURLResponse* WKURLResponseCopyNSURLResponse(CFAllocatorRef alloc, WKURLResponseRef urlResponse)
 {
-    return [toWK(urlResponse)->platformResponse() copy];
+    return [toImpl(urlResponse)->platformResponse() copy];
 }

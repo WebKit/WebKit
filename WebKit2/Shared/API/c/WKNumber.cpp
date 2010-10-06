@@ -32,48 +32,48 @@ using namespace WebKit;
 
 WKTypeID WKBooleanGetTypeID()
 {
-    return toRef(WebBoolean::APIType);
+    return toAPI(WebBoolean::APIType);
 }
 
 WKBooleanRef WKBooleanCreate(bool value)
 {
     RefPtr<WebBoolean> booleanObject = WebBoolean::create(value);
-    return toRef(booleanObject.release().releaseRef());
+    return toAPI(booleanObject.release().releaseRef());
 }
 
 bool WKBooleanGetValue(WKBooleanRef booleanRef)
 {
-    return toWK(booleanRef)->value();
+    return toImpl(booleanRef)->value();
 }
 
 WKTypeID WKDoubleGetTypeID()
 {
-    return toRef(WebDouble::APIType);
+    return toAPI(WebDouble::APIType);
 }
 
 WKDoubleRef WKDoubleCreate(double value)
 {
     RefPtr<WebDouble> doubleObject = WebDouble::create(value);
-    return toRef(doubleObject.release().releaseRef());
+    return toAPI(doubleObject.release().releaseRef());
 }
 
 double WKDoubleGetValue(WKDoubleRef doubleRef)
 {
-    return toWK(doubleRef)->value();
+    return toImpl(doubleRef)->value();
 }
 
 WKTypeID WKUInt64GetTypeID()
 {
-    return toRef(WebUInt64::APIType);
+    return toAPI(WebUInt64::APIType);
 }
 
 WKUInt64Ref WKUInt64Create(uint64_t value)
 {
     RefPtr<WebUInt64> uint64Object = WebUInt64::create(value);
-    return toRef(uint64Object.release().releaseRef());
+    return toAPI(uint64Object.release().releaseRef());
 }
 
 uint64_t WKUInt64GetValue(WKUInt64Ref uint64Ref)
 {
-    return toWK(uint64Ref)->value();
+    return toImpl(uint64Ref)->value();
 }

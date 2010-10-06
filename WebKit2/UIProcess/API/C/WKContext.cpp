@@ -37,86 +37,86 @@ using namespace WebKit;
 
 WKTypeID WKContextGetTypeID()
 {
-    return toRef(WebContext::APIType);
+    return toAPI(WebContext::APIType);
 }
 
 WKContextRef WKContextCreate()
 {
     RefPtr<WebContext> context = WebContext::create(String());
-    return toRef(context.release().releaseRef());
+    return toAPI(context.release().releaseRef());
 }
 
 WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef pathRef)
 {
-    RefPtr<WebContext> context = WebContext::create(toWK(pathRef)->string());
-    return toRef(context.release().releaseRef());
+    RefPtr<WebContext> context = WebContext::create(toImpl(pathRef)->string());
+    return toAPI(context.release().releaseRef());
 }
 
 WKContextRef WKContextGetSharedProcessContext()
 {
-    return toRef(WebContext::sharedProcessContext());
+    return toAPI(WebContext::sharedProcessContext());
 }
 
 WKContextRef WKContextGetSharedThreadContext()
 {
-    return toRef(WebContext::sharedThreadContext());
+    return toAPI(WebContext::sharedThreadContext());
 }
 
 void WKContextSetPreferences(WKContextRef contextRef, WKPreferencesRef preferencesRef)
 {
-    toWK(contextRef)->setPreferences(toWK(preferencesRef));
+    toImpl(contextRef)->setPreferences(toImpl(preferencesRef));
 }
 
 WKPreferencesRef WKContextGetPreferences(WKContextRef contextRef)
 {
-    return toRef(toWK(contextRef)->preferences());
+    return toAPI(toImpl(contextRef)->preferences());
 }
 
 void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
-    toWK(contextRef)->initializeInjectedBundleClient(wkClient);
+    toImpl(contextRef)->initializeInjectedBundleClient(wkClient);
 }
 
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
-    toWK(contextRef)->initializeHistoryClient(wkClient);
+    toImpl(contextRef)->initializeHistoryClient(wkClient);
 }
 
 void WKContextPostMessageToInjectedBundle(WKContextRef contextRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
-    toWK(contextRef)->postMessageToInjectedBundle(toWK(messageNameRef)->string(), toWK(messageBodyRef));
+    toImpl(contextRef)->postMessageToInjectedBundle(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));
 }
 
 void WKContextGetStatistics(WKContextRef contextRef, WKContextStatistics* statistics)
 {
-    toWK(contextRef)->getStatistics(statistics);
+    toImpl(contextRef)->getStatistics(statistics);
 }
 
 void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
 {
-    toWK(contextRef)->addVisitedLink(toWK(visitedURL)->string());
+    toImpl(contextRef)->addVisitedLink(toImpl(visitedURL)->string());
 }
 
 void WKContextSetCacheModel(WKContextRef contextRef, WKCacheModel cacheModel)
 {
-    toWK(contextRef)->setCacheModel(toCacheModel(cacheModel));
+    toImpl(contextRef)->setCacheModel(toCacheModel(cacheModel));
 }
 
 WKCacheModel WKContextGetCacheModel(WKContextRef contextRef)
 {
-    return toRef(toWK(contextRef)->cacheModel());
+    return toAPI(toImpl(contextRef)->cacheModel());
 }
 
 void _WKContextSetAdditionalPluginsDirectory(WKContextRef contextRef, WKStringRef pluginsDirectory)
 {
-    toWK(contextRef)->setAdditionalPluginsDirectory(toWK(pluginsDirectory)->string());
+    toImpl(contextRef)->setAdditionalPluginsDirectory(toImpl(pluginsDirectory)->string());
 }
 
 void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef contextRef, WKStringRef urlScheme)
 {
-    toWK(contextRef)->registerURLSchemeAsEmptyDocument(toWK(urlScheme)->string());
+    toImpl(contextRef)->registerURLSchemeAsEmptyDocument(toImpl(urlScheme)->string());
 }

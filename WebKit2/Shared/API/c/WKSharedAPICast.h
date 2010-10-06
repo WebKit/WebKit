@@ -79,7 +79,7 @@ public:
     {
     }
 
-    operator APIType() { return toRef(m_impl.get()); }
+    operator APIType() { return toAPI(m_impl.get()); }
 
 private:
     RefPtr<ImplType> m_impl;
@@ -88,7 +88,7 @@ private:
 /* Opaque typing convenience methods */
 
 template<typename T>
-inline typename APITypeInfo<T>::ImplType toWK(T t)
+inline typename APITypeInfo<T>::ImplType toImpl(T t)
 {
     // An example of the conversions that take place:
     // const struct OpaqueWKArray* -> const struct OpaqueWKArray -> struct OpaqueWKArray -> struct OpaqueWKArray* -> ImmutableArray*
@@ -100,14 +100,14 @@ inline typename APITypeInfo<T>::ImplType toWK(T t)
 }
 
 template<typename T>
-inline typename ImplTypeInfo<T>::APIType toRef(T t)
+inline typename ImplTypeInfo<T>::APIType toAPI(T t)
 {
     return reinterpret_cast<typename ImplTypeInfo<T>::APIType>(t);
 }
 
 /* Special cases. */
 
-inline ProxyingRefPtr<WebString> toRef(StringImpl* string)
+inline ProxyingRefPtr<WebString> toAPI(StringImpl* string)
 {
     StringImpl* impl = string ? string : StringImpl::empty();
     return ProxyingRefPtr<WebString>(WebString::create(String(impl)));
@@ -119,42 +119,42 @@ inline ProxyingRefPtr<WebURL> toURLRef(StringImpl* string)
     return ProxyingRefPtr<WebURL>(WebURL::create(String(impl)));
 }
 
-inline WKStringRef toCopiedRef(const String& string)
+inline WKStringRef toCopiedAPI(const String& string)
 {
     StringImpl* impl = string.impl() ? string.impl() : StringImpl::empty();
     RefPtr<WebString> webString = WebString::create(String(impl));
-    return toRef(webString.release().releaseRef());
+    return toAPI(webString.release().releaseRef());
 }
 
-inline WKURLRef toCopiedURLRef(const String& string)
+inline WKURLRef toCopiedURLAPI(const String& string)
 {
     StringImpl* impl = string.impl() ? string.impl() : StringImpl::empty();
     RefPtr<WebURL> webURL = WebURL::create(String(impl));
-    return toRef(webURL.release().releaseRef());
+    return toAPI(webURL.release().releaseRef());
 }
 
 inline String toWTFString(WKStringRef stringRef)
 {
     if (!stringRef)
         return String();
-    return toWK(stringRef)->string();
+    return toImpl(stringRef)->string();
 }
 
 inline String toWTFString(WKURLRef urlRef)
 {
     if (!urlRef)
         return String();
-    return toWK(urlRef)->string();
+    return toImpl(urlRef)->string();
 }
 
 /* Enum conversions */
 
-inline WKTypeID toRef(APIObject::Type type)
+inline WKTypeID toAPI(APIObject::Type type)
 {
     return static_cast<WKTypeID>(type);
 }
 
-inline WKEventModifiers toRef(WebEvent::Modifiers modifiers)
+inline WKEventModifiers toAPI(WebEvent::Modifiers modifiers)
 {
     WKEventModifiers wkModifiers = 0;
     if (modifiers & WebEvent::ShiftKey)
@@ -168,7 +168,7 @@ inline WKEventModifiers toRef(WebEvent::Modifiers modifiers)
     return wkModifiers;
 }
 
-inline WKEventMouseButton toRef(WebMouseEvent::Button mouseButton)
+inline WKEventMouseButton toAPI(WebMouseEvent::Button mouseButton)
 {
     WKEventMouseButton wkMouseButton = kWKEventMouseButtonNoButton;
 

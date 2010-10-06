@@ -38,7 +38,7 @@ namespace WebKit {
 
 WebPageProxy* ChunkedUpdateDrawingAreaProxy::page()
 {
-    return toWK([m_webView pageRef]);
+    return toImpl([m_webView pageRef]);
 }
 
 void ChunkedUpdateDrawingAreaProxy::ensureBackingStore()

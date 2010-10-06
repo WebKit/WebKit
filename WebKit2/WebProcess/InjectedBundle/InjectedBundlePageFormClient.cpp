@@ -56,7 +56,7 @@ void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLI
         return;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
-    m_client.textFieldDidBeginEditing(toRef(page), toRef(nodeHandle.get()), toRef(frame), m_client.clientInfo);
+    m_client.textFieldDidBeginEditing(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.clientInfo);
 }
 
 void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
@@ -65,7 +65,7 @@ void InjectedBundlePageFormClient::textFieldDidEndEditing(WebPage* page, HTMLInp
         return;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
-    m_client.textFieldDidEndEditing(toRef(page), toRef(nodeHandle.get()), toRef(frame), m_client.clientInfo);
+    m_client.textFieldDidEndEditing(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.clientInfo);
 }
 
 void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
@@ -74,7 +74,7 @@ void InjectedBundlePageFormClient::textDidChangeInTextField(WebPage* page, HTMLI
         return;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
-    m_client.textDidChangeInTextField(toRef(page), toRef(nodeHandle.get()), toRef(frame), m_client.clientInfo);
+    m_client.textDidChangeInTextField(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.clientInfo);
 }
 
 void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTextAreaElement* textAreaElement, WebFrame* frame)
@@ -83,7 +83,7 @@ void InjectedBundlePageFormClient::textDidChangeInTextArea(WebPage* page, HTMLTe
         return;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(textAreaElement);
-    m_client.textDidChangeInTextArea(toRef(page), toRef(nodeHandle.get()), toRef(frame), m_client.clientInfo);
+    m_client.textDidChangeInTextArea(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.clientInfo);
 }
 
 bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page, HTMLInputElement* inputElement, WKInputFieldActionType actionType, WebFrame* frame)
@@ -92,7 +92,7 @@ bool InjectedBundlePageFormClient::shouldPerformActionInTextField(WebPage* page,
         return false;
 
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
-    return m_client.shouldPerformActionInTextField(toRef(page), toRef(nodeHandle.get()), actionType, toRef(frame), m_client.clientInfo);
+    return m_client.shouldPerformActionInTextField(toAPI(page), toAPI(nodeHandle.get()), actionType, toAPI(frame), m_client.clientInfo);
 }
 
 void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String> >& values, RefPtr<APIObject>& userData)
@@ -108,8 +108,8 @@ void InjectedBundlePageFormClient::willSubmitForm(WebPage* page, HTMLFormElement
     RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::adopt(map);
 
     WKTypeRef userDataToPass = 0;
-    m_client.willSubmitForm(toRef(page), toRef(nodeHandle.get()), toRef(frame), toRef(sourceFrame), toRef(textFieldsMap.get()), &userDataToPass, m_client.clientInfo);
-    userData = adoptRef(toWK(userDataToPass));
+    m_client.willSubmitForm(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
 }
 
 } // namespace WebKit

@@ -33,20 +33,20 @@ using namespace WebKit;
 WKMutableDictionaryRef WKMutableDictionaryCreate()
 {
     RefPtr<MutableDictionary> dictionary = MutableDictionary::create();
-    return toRef(dictionary.release().releaseRef());
+    return toAPI(dictionary.release().releaseRef());
 }
 
 bool WKDictionaryIsMutable(WKDictionaryRef dictionaryRef)
 {
-    return toWK(dictionaryRef)->isMutable();
+    return toImpl(dictionaryRef)->isMutable();
 }
 
 bool WKDictionaryAddItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
 {
-    return toWK(dictionaryRef)->add(toWK(keyRef)->string(), toWK(itemRef));
+    return toImpl(dictionaryRef)->add(toImpl(keyRef)->string(), toImpl(itemRef));
 }
 
 bool WKDictionarySetItem(WKMutableDictionaryRef dictionaryRef, WKStringRef keyRef, WKTypeRef itemRef)
 {
-    return toWK(dictionaryRef)->set(toWK(keyRef)->string(), toWK(itemRef));
+    return toImpl(dictionaryRef)->set(toImpl(keyRef)->string(), toImpl(itemRef));
 }

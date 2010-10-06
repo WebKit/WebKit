@@ -34,95 +34,95 @@ using namespace WebKit;
 
 WKTypeID WKBundleGetTypeID()
 {
-    return toRef(InjectedBundle::APIType);
+    return toAPI(InjectedBundle::APIType);
 }
 
 void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClient * wkClient)
 {
     if (wkClient && wkClient->version)
         return;
-    toWK(bundleRef)->initializeClient(wkClient);
+    toImpl(bundleRef)->initializeClient(wkClient);
 }
 
 void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
-    toWK(bundleRef)->postMessage(toWK(messageNameRef)->string(), toWK(messageBodyRef));
+    toImpl(bundleRef)->postMessage(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));
 }
 
 void WKBundlePostSynchronousMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef, WKTypeRef* returnDataRef)
 {
     RefPtr<APIObject> returnData;
-    toWK(bundleRef)->postSynchronousMessage(toWK(messageNameRef)->string(), toWK(messageBodyRef), returnData);
+    toImpl(bundleRef)->postSynchronousMessage(toImpl(messageNameRef)->string(), toImpl(messageBodyRef), returnData);
     if (returnDataRef)
-        *returnDataRef = toRef(returnData.release().leakRef());
+        *returnDataRef = toAPI(returnData.release().leakRef());
 }
 
 void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundleRef, bool shouldTrackVisitedLinks)
 {
-    toWK(bundleRef)->setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
+    toImpl(bundleRef)->setShouldTrackVisitedLinks(shouldTrackVisitedLinks);
 }
 
 void WKBundleRemoveAllVisitedLinks(WKBundleRef bundleRef)
 {
-    toWK(bundleRef)->removeAllVisitedLinks();
+    toImpl(bundleRef)->removeAllVisitedLinks();
 }
 
 void WKBundleActivateMacFontAscentHack(WKBundleRef bundleRef)
 {
-    toWK(bundleRef)->activateMacFontAscentHack();
+    toImpl(bundleRef)->activateMacFontAscentHack();
 }
 
 void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundleRef)
 {
-    toWK(bundleRef)->garbageCollectJavaScriptObjects();
+    toImpl(bundleRef)->garbageCollectJavaScriptObjects();
 }
 
 void WKBundleGarbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(WKBundleRef bundleRef, bool waitUntilDone)
 {
-    toWK(bundleRef)->garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(waitUntilDone);
+    toImpl(bundleRef)->garbageCollectJavaScriptObjectsOnAlternateThreadForDebugging(waitUntilDone);
 }
 
 size_t WKBundleGetJavaScriptObjectsCount(WKBundleRef bundleRef)
 {
-    return toWK(bundleRef)->javaScriptObjectsCount();
+    return toImpl(bundleRef)->javaScriptObjectsCount();
 }
 
 void WKBundleAddUserScript(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserScriptInjectionTime injectionTimeRef, WKUserContentInjectedFrames injectedFramesRef)
 {
-    toWK(bundleRef)->addUserScript(toWK(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toWK(whitelistRef), toWK(blacklistRef), toUserScriptInjectionTime(injectionTimeRef), toUserContentInjectedFrames(injectedFramesRef));
+    toImpl(bundleRef)->addUserScript(toImpl(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toImpl(whitelistRef), toImpl(blacklistRef), toUserScriptInjectionTime(injectionTimeRef), toUserContentInjectedFrames(injectedFramesRef));
 }
 
 void WKBundleAddUserStyleSheet(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKStringRef sourceRef, WKURLRef urlRef, WKArrayRef whitelistRef, WKArrayRef blacklistRef, WKUserContentInjectedFrames injectedFramesRef)
 {
-    toWK(bundleRef)->addUserStyleSheet(toWK(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toWK(whitelistRef), toWK(blacklistRef), toUserContentInjectedFrames(injectedFramesRef));
+    toImpl(bundleRef)->addUserStyleSheet(toImpl(scriptWorldRef), toWTFString(sourceRef), toWTFString(urlRef), toImpl(whitelistRef), toImpl(blacklistRef), toUserContentInjectedFrames(injectedFramesRef));
 }
 
 void WKBundleRemoveUserScript(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
 {
-    toWK(bundleRef)->removeUserScript(toWK(scriptWorldRef), toWTFString(urlRef));
+    toImpl(bundleRef)->removeUserScript(toImpl(scriptWorldRef), toWTFString(urlRef));
 }
 
 void WKBundleRemoveUserStyleSheet(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef, WKURLRef urlRef)
 {
-    toWK(bundleRef)->removeUserStyleSheet(toWK(scriptWorldRef), toWTFString(urlRef));
+    toImpl(bundleRef)->removeUserStyleSheet(toImpl(scriptWorldRef), toWTFString(urlRef));
 }
 
 void WKBundleRemoveUserScripts(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef)
 {
-    toWK(bundleRef)->removeUserScripts(toWK(scriptWorldRef));
+    toImpl(bundleRef)->removeUserScripts(toImpl(scriptWorldRef));
 }
 
 void WKBundleRemoveUserStyleSheets(WKBundleRef bundleRef, WKBundleScriptWorldRef scriptWorldRef)
 {
-    toWK(bundleRef)->removeUserStyleSheets(toWK(scriptWorldRef));
+    toImpl(bundleRef)->removeUserStyleSheets(toImpl(scriptWorldRef));
 }
 
 void WKBundleRemoveAllUserContent(WKBundleRef bundleRef)
 {
-    toWK(bundleRef)->removeAllUserContent();
+    toImpl(bundleRef)->removeAllUserContent();
 }
 
 void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundleRef, bool enabled)
 {
-    toWK(bundleRef)->overrideXSSAuditorEnabledForTestRunner(enabled);
+    toImpl(bundleRef)->overrideXSSAuditorEnabledForTestRunner(enabled);
 }

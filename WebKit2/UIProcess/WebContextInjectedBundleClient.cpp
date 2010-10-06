@@ -50,7 +50,7 @@ void WebContextInjectedBundleClient::didReceiveMessageFromInjectedBundle(WebCont
     if (!m_client.didReceiveMessageFromInjectedBundle)
         return;
 
-    m_client.didReceiveMessageFromInjectedBundle(toRef(context), toRef(messageName.impl()), toRef(messageBody), m_client.clientInfo);
+    m_client.didReceiveMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), m_client.clientInfo);
 }
 
 void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBundle(WebContext* context, const String& messageName, APIObject* messageBody, RefPtr<APIObject>& returnData)
@@ -59,8 +59,8 @@ void WebContextInjectedBundleClient::didReceiveSynchronousMessageFromInjectedBun
         return;
 
     WKTypeRef returnDataRef = 0;
-    m_client.didReceiveSynchronousMessageFromInjectedBundle(toRef(context), toRef(messageName.impl()), toRef(messageBody), &returnDataRef, m_client.clientInfo);
-    returnData = adoptRef(toWK(returnDataRef));
+    m_client.didReceiveSynchronousMessageFromInjectedBundle(toAPI(context), toAPI(messageName.impl()), toAPI(messageBody), &returnDataRef, m_client.clientInfo);
+    returnData = adoptRef(toImpl(returnDataRef));
 }
 
 } // namespace WebKit

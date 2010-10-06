@@ -40,7 +40,7 @@ namespace WebKit {
 
 WebPageProxy* LayerBackedDrawingAreaProxy::page()
 {
-    return toWK([m_webView pageRef]);
+    return toImpl([m_webView pageRef]);
 }
 
 void LayerBackedDrawingAreaProxy::platformSetSize()

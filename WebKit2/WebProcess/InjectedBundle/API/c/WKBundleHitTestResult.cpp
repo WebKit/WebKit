@@ -34,21 +34,21 @@ using namespace WebKit;
 
 WKTypeID WKBundleHitTestResultGetTypeID()
 {
-    return toRef(InjectedBundleHitTestResult::APIType);
+    return toAPI(InjectedBundleHitTestResult::APIType);
 }
 
 WKBundleNodeHandleRef WKBundleHitTestResultGetNodeHandle(WKBundleHitTestResultRef hitTestResultRef)
 {
-    RefPtr<InjectedBundleNodeHandle> nodeHandle = toWK(hitTestResultRef)->nodeHandle();
-    return toRef(nodeHandle.get());
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = toImpl(hitTestResultRef)->nodeHandle();
+    return toAPI(nodeHandle.get());
 }
 
 WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return toRef(toWK(hitTestResultRef)->webFrame());
+    return toAPI(toImpl(hitTestResultRef)->webFrame());
 }
 
 WKURLRef WKBundleHitTestResultCopyAbsoluteLinkURL(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return toCopiedURLRef(toWK(hitTestResultRef)->absoluteLinkURL());
+    return toCopiedURLAPI(toImpl(hitTestResultRef)->absoluteLinkURL());
 }
