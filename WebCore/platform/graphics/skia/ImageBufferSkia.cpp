@@ -290,6 +290,7 @@ void putImageData(ImageData*& source, const IntRect& sourceRect, const IntPoint&
 
 void ImageBuffer::putUnmultipliedImageData(ImageData* source, const IntRect& sourceRect, const IntPoint& destPoint)
 {
+    context()->platformContext()->prepareForSoftwareDraw();
     putImageData<Unmultiplied>(source, sourceRect, destPoint, *context()->platformContext()->bitmap(), m_size);
 }
 

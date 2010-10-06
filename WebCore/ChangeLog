@@ -1,3 +1,18 @@
+2010-10-05  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] DRT assertion w/accel 2D canvas in PlatformContextSkia
+        https://bugs.webkit.org/show_bug.cgi?id=47242
+
+        Call PlatformContextSkia::prepareForSoftwareDraw before doing putImageData
+        since that call mutates the software backing store.
+
+        Test: fast/canvas/canvas-putImageData.html
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::putUnmultipliedImageData):
+
 2010-10-06  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Brady Eidson.
