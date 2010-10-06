@@ -129,16 +129,6 @@ ContentLayerChromium::~ContentLayerChromium()
     cleanupResources();
 }
 
-void ContentLayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
-{
-    // If we're changing layer renderers then we need to free up any resources
-    // allocated by the old renderer.
-    if (layerRenderer() && layerRenderer() != renderer)
-        cleanupResources();
-
-    LayerChromium::setLayerRenderer(renderer);
-}
-
 void ContentLayerChromium::cleanupResources()
 {
     if (layerRenderer()) {

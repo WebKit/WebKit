@@ -1,3 +1,26 @@
+2010-10-05  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by James Robinson.
+
+        VideoLayerChromium releases old resources if the LayerRenderer changes.
+        https://bugs.webkit.org/show_bug.cgi?id=47030
+
+        Refactored LayerChromium to have a virtual cleanupResources() method
+        that will release textures/other context-dependent resources when a
+        LayerRenderer changes. ContentLayerChromium and VideoLayerChromium now
+        override this method to perform cleanup.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setLayerRenderer):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::cleanupResources):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+        (WebCore::VideoLayerChromium::cleanupResources):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+
 2010-10-05  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.

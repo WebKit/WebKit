@@ -174,6 +174,11 @@ LayerChromium::~LayerChromium()
 
 void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
 {
+    // If we're changing layer renderers then we need to free up any resources
+    // allocated by the old renderer.
+    if (layerRenderer() && layerRenderer() != renderer)
+        cleanupResources();
+
     m_layerRenderer = renderer;
 }
 

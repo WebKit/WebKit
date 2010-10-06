@@ -182,8 +182,12 @@ VideoLayerChromium::VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameP
 
 VideoLayerChromium::~VideoLayerChromium()
 {
-    releaseCurrentFrame();
+    cleanupResources();
+}
 
+void VideoLayerChromium::cleanupResources()
+{
+    releaseCurrentFrame();
     ASSERT(layerRenderer());
     GraphicsContext3D* context = layerRendererContext();
     for (unsigned plane = 0; plane < VideoFrameChromium::maxPlanes; plane++) {

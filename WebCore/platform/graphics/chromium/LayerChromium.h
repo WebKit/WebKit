@@ -202,6 +202,11 @@ protected:
     GraphicsLayerChromium* m_owner;
     LayerChromium(GraphicsLayerChromium* owner);
 
+    // This is called to clean up resources being held in the same context as
+    // layerRendererContext(). Subclasses should override this method if they
+    // hold context-dependent resources such as textures.
+    virtual void cleanupResources() { }
+
     LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
     GraphicsContext3D* layerRendererContext() const;
 
