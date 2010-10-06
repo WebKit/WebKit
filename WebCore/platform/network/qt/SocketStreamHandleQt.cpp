@@ -110,7 +110,7 @@ void SocketStreamHandlePrivate::close()
         m_socket->close();
 }
 
-void SocketStreamHandlePrivate::socketSentdata()
+void SocketStreamHandlePrivate::socketSentData()
 {
     if (m_streamHandle)
         m_streamHandle->sendPendingData();

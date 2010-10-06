@@ -1,3 +1,17 @@
+2010-10-06  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Correct CamelCase of socketSentdata() in SocketStreamHandlePrivate 
+        to fix "QMetaObject::invokeMethod: No such method" warnings in layout tests.
+        https://bugs.webkit.org/show_bug.cgi?id=47284
+
+        No new tests needed.
+
+        * platform/network/qt/SocketStreamHandlePrivate.h:
+        * platform/network/qt/SocketStreamHandleQt.cpp:
+        (WebCore::SocketStreamHandlePrivate::socketSentData):
+
 2010-10-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
