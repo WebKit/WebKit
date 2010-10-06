@@ -214,8 +214,6 @@ rect: style.getPropertyValue(-webkit-background-origin) : padding-box
 rect: style.getPropertyCSSValue(-webkit-background-origin) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-background-size) : auto auto
 rect: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
-rect: style.getPropertyValue(-webkit-block-flow) : tb
-rect: style.getPropertyCSSValue(-webkit-block-flow) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-fit) : border
 rect: style.getPropertyCSSValue(-webkit-border-fit) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
@@ -344,6 +342,8 @@ rect: style.getPropertyValue(-webkit-user-modify) : read-only
 rect: style.getPropertyCSSValue(-webkit-user-modify) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-user-select) : text
 rect: style.getPropertyCSSValue(-webkit-user-select) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-writing-mode) : horizontal-tb
+rect: style.getPropertyCSSValue(-webkit-writing-mode) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-path) : none
 rect: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-rule) : nonzero
@@ -636,8 +636,6 @@ g: style.getPropertyValue(-webkit-background-origin) : padding-box
 g: style.getPropertyCSSValue(-webkit-background-origin) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-background-size) : auto auto
 g: style.getPropertyCSSValue(-webkit-background-size) : [object CSSValueList]
-g: style.getPropertyValue(-webkit-block-flow) : tb
-g: style.getPropertyCSSValue(-webkit-block-flow) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-fit) : border
 g: style.getPropertyCSSValue(-webkit-border-fit) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-border-horizontal-spacing) : 0px
@@ -766,6 +764,8 @@ g: style.getPropertyValue(-webkit-user-modify) : read-only
 g: style.getPropertyCSSValue(-webkit-user-modify) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-user-select) : text
 g: style.getPropertyCSSValue(-webkit-user-select) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-writing-mode) : horizontal-tb
+g: style.getPropertyCSSValue(-webkit-writing-mode) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-path) : none
 g: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-rule) : nonzero
