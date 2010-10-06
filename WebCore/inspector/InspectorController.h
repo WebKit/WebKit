@@ -321,7 +321,7 @@ private:
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);
     InspectorResource* getTrackedResource(unsigned long identifier);
-    void getResourceContent(unsigned long identifier, String* content);
+    void getResourceContent(unsigned long identifier, bool encode, String* content);
 
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }

@@ -1011,7 +1011,7 @@ WebInspector.NetworkPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 WebInspector.getResourceContent = function(identifier, callback)
 {
-    InspectorBackend.getResourceContent(identifier, callback);
+    InspectorBackend.getResourceContent(identifier, false, callback);
 }
 
 WebInspector.NetworkBaseCalculator = function()

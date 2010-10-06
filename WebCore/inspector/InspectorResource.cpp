@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "Base64.h"
 #include "Cache.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
@@ -431,6 +432,24 @@ String InspectorResource::sourceString() const
     if (!encoding.isValid())
         encoding = WindowsLatin1Encoding();
     return encoding.decode(buffer->data(), buffer->size());
+}
+
+String InspectorResource::sourceBytes() const
+{
+    Vector<char> out;
+    if (!m_overrideContent.isNull()) {
+        Vector<char> data;
+        String overrideContent = m_overrideContent;
+        data.append(overrideContent.characters(), overrideContent.length());
+        base64Encode(data, out);
+    } else {
+        String textEncodingName;
+        RefPtr<SharedBuffer> data = resourceData(&textEncodingName);
+        if (!data)
+            return String();
+        base64Encode(data->buffer(), out);
+    }
+    return String(out.data(), out.size());
 }
 
 PassRefPtr<SharedBuffer> InspectorResource::resourceData(String* textEncodingName) const

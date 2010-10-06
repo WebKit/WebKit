@@ -2092,10 +2092,14 @@ void InspectorController::setInspectorExtensionAPI(const String& source)
     m_inspectorExtensionAPI = source;
 }
 
-void InspectorController::getResourceContent(unsigned long identifier, String* content)
+void InspectorController::getResourceContent(unsigned long identifier, bool encode, String* content)
 {
     RefPtr<InspectorResource> resource = m_resources.get(identifier);
-    *content = resource ? resource->sourceString() : String();
+    if (!resource) {
+        *content = String();
+        return;
+    }
+    *content = encode ? resource->sourceBytes() : resource->sourceString();
 }
 
 bool InspectorController::resourceContentForURL(const KURL& url, Document* frameDocument, String* result)

@@ -1,3 +1,14 @@
+2010-10-05  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Extensions API] Expose access to resource bodies
+        https://bugs.webkit.org/show_bug.cgi?id=45953
+
+        * inspector/extensions-api-expected.txt:
+        * inspector/extensions-resources-expected.txt:
+        * inspector/extensions-resources.html:
+
 2010-10-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.
