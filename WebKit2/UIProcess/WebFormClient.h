@@ -43,7 +43,7 @@ public:
     WebFormClient();
     void initialize(const WKPageFormClient*);
 
-    bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, WebFormSubmissionListenerProxy*); 
+    bool willSubmitForm(WebPageProxy*, WebFrameProxy*, WebFrameProxy*, const Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, WebFormSubmissionListenerProxy*); 
 
 private:
     WKPageFormClient m_pageFormClient;

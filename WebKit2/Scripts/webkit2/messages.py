@@ -144,12 +144,16 @@ def function_parameter_type(type):
     # Don't use references for built-in types.
     builtin_types = frozenset([
         'bool',
-        'float',
         'double',
-        'uint8_t',
+        'float',
+        'int16_t',
+        'int32_t',
+        'int64_t',
+        'int8_t',
         'uint16_t',
         'uint32_t',
         'uint64_t',
+        'uint8_t',
     ])
 
     if type in builtin_types:
@@ -322,6 +326,7 @@ def argument_coder_headers_for_type(type):
 
     special_cases = {
         'WTF::String': '"ArgumentCoders.h"',
+        'WebKit::InjectedBundleUserMessageEncoder': '"InjectedBundleUserMessageCoders.h"',
     }
 
     if type in special_cases:
@@ -380,6 +385,18 @@ def generate_message_handler(file):
 
         type_headers = headers_for_type(type)
         headers.update(type_headers)
+
+    for message in receiver.messages:
+        if message.reply_parameters is not None:
+            for reply_parameter in message.reply_parameters:
+                type = reply_parameter.type
+                argument_encoder_headers = argument_coder_headers_for_type(type)
+                if argument_encoder_headers:
+                    headers.update(argument_encoder_headers)
+                    continue
+
+                type_headers = headers_for_type(type)
+                headers.update(type_headers)
 
     result = []
 

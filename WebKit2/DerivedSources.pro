@@ -52,6 +52,18 @@ messagereceiver_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/WebPageMes
 generated_files.depends            += messagereceiver_generator
 QMAKE_EXTRA_TARGETS                += messagereceiver_generator
 
+processmessageheader_generator.commands = python $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py  $${SRC_ROOT_DIR}/WebKit2/UIProcess/WebPageProxy.messages.in > $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessages.h
+processmessageheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py $${SRC_ROOT_DIR}/UIProcess/WebPageProxy/WebProcess.messages.in
+processmessageheader_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/WebPageProxyMessages.h
+generated_files.depends                 += processmessageheader_generator
+QMAKE_EXTRA_TARGETS                     += processmessageheader_generator
+
+processmessagereceiver_generator.commands = python $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-message-receiver.py  $${SRC_ROOT_DIR}/WebKit2/UIProcess/WebPageProxy.messages.in > $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessageReceiver.cpp
+processmessagereceiver_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-message-receiver.py $${SRC_ROOT_DIR}/WebKit2/UIProcess/WebPageProxy.messages.in
+processmessagereceiver_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/WebPageProxyMessageReceiver.cpp
+generated_files.depends                   += processmessagereceiver_generator
+QMAKE_EXTRA_TARGETS                       += processmessagereceiver_generator
+
 processmessageheader_generator.commands = python $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py  $${SRC_ROOT_DIR}/WebKit2/WebProcess/WebProcess.messages.in > $$OUTPUT_DIR/WebKit2/generated/WebProcessMessages.h
 processmessageheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py $${SRC_ROOT_DIR}/WebKit2/WebProcess/WebProcess.messages.in
 processmessageheader_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/WebProcessMessages.h

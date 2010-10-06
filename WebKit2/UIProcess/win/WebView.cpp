@@ -572,7 +572,7 @@ void WebView::setCursor(const WebCore::Cursor& cursor)
     ::SetCursor(platformCursor);
 }
 
-void WebView::registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo)
+void WebView::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
 {
 }
 

@@ -26,6 +26,7 @@
 #ifndef PageClient_h
 #define PageClient_h
 
+#include "WebPageProxy.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -48,8 +49,7 @@ public:
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
 
-    enum UndoOrRedo { Undo, Redo };
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo) = 0;
+    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) = 0;
     virtual void clearAllEditCommands() = 0;
     virtual void setEditCommandState(const String& commandName, bool isEnabled, int state) = 0;
 

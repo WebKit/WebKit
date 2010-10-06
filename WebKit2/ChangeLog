@@ -1,3 +1,54 @@
+2010-10-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Generate the messages sent to the WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=47239
+
+        * Platform/CoreIPC/Arguments.h:
+        Add additional typedefs.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        Add more handleMessage implementations.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+        Add headers for reply argument types.
+
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h: Removed.
+
+        * Shared/StringPairVector.h: Added.
+        This file is a hack to work around a deficiency in the generator
+        which can't deal with class templates with more than one argument.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebEditCommandProxy.cpp:
+        * UIProcess/WebFormClient.cpp:
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        Migrate to generated calls.
+
+        * UIProcess/WebPageProxy.messages.in: Added.
+        New messages definitions file.
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * win/WebKit2.vcproj:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2010-10-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

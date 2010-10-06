@@ -449,6 +449,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\StringPairVector.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\UserMessageCoders.h"
 				>
 			</File>
@@ -761,10 +765,6 @@
 				</File>
 				<File
 					RelativePath="..\Shared\CoreIPCSupport\InjectedBundleMessageKinds.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\CoreIPCSupport\WebPageProxyMessageKinds.h"
 					>
 				</File>
 				<File
@@ -2026,6 +2026,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessages.h"
 				>
 			</File>
 			<File
