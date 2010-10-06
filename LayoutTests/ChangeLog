@@ -1,3 +1,17 @@
+2010-10-05  Julie Parent  <jparent@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Rebaseline svg/W3C-SVG-1.1/fonts-glyph-02-t.svg
+        https://bugs.webkit.org/show_bug.cgi?id=47229
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.checksum: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.checksum:
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png: Old baseline had invalid character. 
+        * platform/chromium-win/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:Link to bug about crashing. 
+
 2010-10-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

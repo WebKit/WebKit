@@ -2650,9 +2650,7 @@ BUG46276 WIN : fast/text/international/khmer-selection.html = IMAGE+TEXT
 // HTML5 Geolocation API does not use window.clientInformation.
 BUG11246 DEFER SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
-// Re-enabled in http://trac.webkit.org/changeset/60983
-// Maybe we just need rebaseline.
-BUG_HAMAJI WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = IMAGE+TEXT
+BUGWK40740 : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
 
 // WebKit r60999 updated acid3.html, doesn't match expected on Chromium Mac.
 BUG46375 MAC : http/tests/misc/acid3.html = IMAGE
