@@ -41,9 +41,9 @@ using namespace std;
 
 namespace WebCore {
 
-ViewportConfiguration findConfigurationForViewportData(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport)
+ViewportAttributes findConfigurationForViewportData(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport)
 {
-    ViewportConfiguration result;
+    ViewportAttributes result;
 
     float availableWidth = visibleViewport.width();
     float availableHeight = visibleViewport.height();

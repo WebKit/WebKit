@@ -1,3 +1,15 @@
+2010-10-06  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Renaming WebCore::ViewportConfiguration to WebCore::ViewportAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=47268
+
+        Renaming WebCore::ViewportConfiguration to WebCore::ViewportAttributes
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::viewportConfigurationForSize):
+
 2010-10-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
