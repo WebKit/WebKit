@@ -1677,7 +1677,7 @@ void RenderBlock::determineLogicalLeftPositionForChild(RenderBox* child)
         }
     }
 
-    setLogicalLeftForChild(child, style()->isLeftToRightDirection() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child));
+    setLogicalLeftForChild(child, style()->isLeftToRightDirection() ? newPosition : totalAvailableLogicalWidth - newPosition - logicalWidthForChild(child), ApplyLayoutDelta);
 }
 
 void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
@@ -1718,27 +1718,27 @@ void RenderBlock::handleAfterSideOfBlock(int beforeSide, int afterSide, MarginIn
     setCollapsedBottomMargin(marginInfo);
 }
 
-void RenderBlock::setLogicalLeftForChild(RenderBox* child, int logicalLeft)
+void RenderBlock::setLogicalLeftForChild(RenderBox* child, int logicalLeft, ApplyLayoutDeltaMode applyDelta)
 {
     if (style()->isVerticalBlockFlow()) {
-        if (!child->isFloatingOrPositioned())
+        if (applyDelta == ApplyLayoutDelta)
             view()->addLayoutDelta(IntSize(child->x() - logicalLeft, 0));
         child->setX(logicalLeft);
     } else {
-        if (!child->isFloatingOrPositioned())
+        if (applyDelta == ApplyLayoutDelta)
             view()->addLayoutDelta(IntSize(0, child->y() - logicalLeft));
         child->setY(logicalLeft);
     }
 }
 
-void RenderBlock::setLogicalTopForChild(RenderBox* child, int logicalTop)
+void RenderBlock::setLogicalTopForChild(RenderBox* child, int logicalTop, ApplyLayoutDeltaMode applyDelta)
 {
     if (style()->isVerticalBlockFlow()) {
-        if (!child->isFloatingOrPositioned())
+        if (applyDelta == ApplyLayoutDelta)
             view()->addLayoutDelta(IntSize(0, child->y() - logicalTop));
         child->setY(logicalTop);
     } else {
-        if (!child->isFloatingOrPositioned())
+        if (applyDelta == ApplyLayoutDelta)
             view()->addLayoutDelta(IntSize(child->x() - logicalTop, 0));
         child->setX(logicalTop);
     }
@@ -1841,7 +1841,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     IntSize oldLayoutDelta = view()->layoutDelta();
 #endif
     // Go ahead and position the child as though it didn't collapse with the top.
-    setLogicalTopForChild(child, logicalTopEstimate);
+    setLogicalTopForChild(child, logicalTopEstimate, ApplyLayoutDelta);
 
     RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
     bool markDescendantsWithFloats = false;
@@ -1916,7 +1916,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
         setLogicalHeight(logicalHeight() + (logicalTopAfterClear - oldTop));
     }
 
-    setLogicalTopForChild(child, logicalTopAfterClear);
+    setLogicalTopForChild(child, logicalTopAfterClear, ApplyLayoutDelta);
 
     // Now we have a final top position.  See if it really does end up being different from our estimate.
     if (logicalTopAfterClear != logicalTopEstimate) {
@@ -4579,8 +4579,8 @@ void RenderBlock::computePreferredLogicalWidths()
 
     updateFirstLetter();
 
-    if (!isTableCell() && style()->width().isFixed() && style()->width().value() > 0)
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeContentBoxLogicalWidth(style()->width().value());
+    if (!isTableCell() && style()->logicalWidth().isFixed() && style()->logicalWidth().value() > 0)
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeContentBoxLogicalWidth(style()->logicalWidth().value());
     else {
         m_minPreferredLogicalWidth = 0;
         m_maxPreferredLogicalWidth = 0;
@@ -4607,18 +4607,18 @@ void RenderBlock::computePreferredLogicalWidths()
         }
     }
     
-    if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
-        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->minWidth().value()));
-        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->minWidth().value()));
+    if (style()->logicalMinWidth().isFixed() && style()->logicalMinWidth().value() > 0) {
+        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMinWidth().value()));
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMinWidth().value()));
     }
     
-    if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength) {
-        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
-        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->maxWidth().value()));
+    if (style()->logicalMaxWidth().isFixed() && style()->logicalMaxWidth().value() != undefinedLength) {
+        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMaxWidth().value()));
+        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, computeContentBoxLogicalWidth(style()->logicalMaxWidth().value()));
     }
 
     int toAdd = 0;
-    toAdd = borderAndPaddingWidth();
+    toAdd = borderAndPaddingLogicalWidth();
 
     if (hasOverflowClip() && style()->overflowY() == OSCROLL)
         toAdd += verticalScrollbarWidth();

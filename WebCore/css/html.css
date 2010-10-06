@@ -284,16 +284,19 @@ label {
 
 legend {
     display: block;
-    padding-left: 2px;
-    padding-right: 2px;
+    -webkit-padding-start: 2px;
+    -webkit-padding-end: 2px;
     border: none
 }
 
 fieldset {
     display: block;
-    margin-left: 2px;
-    margin-right: 2px;
-    padding: 0.35em 0.75em 0.625em;
+    -webkit-margin-start: 2px;
+    -webkit-margin-end: 2px;
+    -webkit-padding-before: 0.35em;
+    -webkit-padding-start: 0.75em;
+    -webkit-padding-end: 0.75em;
+    -webkit-padding-after: 0.625em;
     border: 2px groove ThreeDFace
 }
 

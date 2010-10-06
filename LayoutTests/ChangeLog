@@ -1,3 +1,29 @@
+2010-10-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47235
+        
+        Make "lr" block-flow fieldsets work.
+        
+        (1) Patched html.css rules for legends and fieldsets to use logical margins and padding.
+        (2) Converted just enough of computePreferredLogicalWidths to make basic examples work.
+        (3) Removed the extra border drawing code from fieldsets so that the "clip out the legend" approach
+        is now just always used.  It's silly to keep the old border drawing code in (which has already gotten out
+        of sync with the base class) just to avoid a save/restore and some clipping.
+        (4) Modified the layout/painting routines to place the legend properly and to be able to draw it in
+        both the top and the left borders.
+
+        Added fast/blockflow/fieldsets.html
+
+        * fast/blockflow/fieldsets.html: Added.
+        * platform/mac/fast/blockflow/fieldsets-expected.checksum: Added.
+        * platform/mac/fast/blockflow/fieldsets-expected.png: Added.
+        * platform/mac/fast/blockflow/fieldsets-expected.txt: Added.
+        * platform/mac/fast/forms/fieldset-align-expected.checksum:
+        * platform/mac/fast/forms/fieldset-align-expected.png:
+        * platform/mac/fast/forms/fieldset-align-expected.txt:
+
 2010-10-06  Dirk Schulze  <krit@webkit.org>
 
         Unreviewed new baseline for Qt.

@@ -50,7 +50,7 @@ layer at (0,0) size 785x1382
             RenderTextControl {INPUT} at (610,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderText {#text} at (0,0) size 0x0
         RenderFieldSet {FIELDSET} at (2,58) size 765x58 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (322,0) size 120x18
+          RenderBlock {LEGEND} at (323,0) size 120x18
             RenderText {#text} at (2,0) size 116x18
               text run at (2,0) width 116: "My Legend center"
           RenderBlock (anonymous) at (14,23) size 737x23
@@ -121,7 +121,7 @@ layer at (0,0) size 785x1382
             RenderTextControl {INPUT} at (578,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
             RenderText {#text} at (0,0) size 0x0
         RenderFieldSet {FIELDSET} at (15,88) size 739x73 [border: (2px groove #C0C0C0)]
-          RenderBlock {LEGEND} at (309,0) size 120x18
+          RenderBlock {LEGEND} at (310,0) size 120x18
             RenderText {#text} at (2,0) size 116x18
               text run at (2,0) width 116: "My Legend center"
           RenderBlock (anonymous) at (17,33) size 705x23
