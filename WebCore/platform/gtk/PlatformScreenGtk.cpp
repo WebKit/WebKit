@@ -64,7 +64,7 @@ static GdkVisual* getVisual(Widget* widget)
     }
 
 
-    return gdk_window_get_visual(gtk_widget_get_window(container));
+    return gdk_drawable_get_visual(GDK_DRAWABLE(gtk_widget_get_window(container)));
 }
 
 int screenDepth(Widget* widget)
@@ -123,7 +123,7 @@ FloatRect screenAvailableRect(Widget* widget)
         return screenRect(widget);
 
     GdkDrawable* rootWindow = GDK_DRAWABLE(gtk_widget_get_root_window(container));
-    GdkDisplay* display = gdk_window_get_display(rootWindow);
+    GdkDisplay* display = gdk_drawable_get_display(rootWindow);
     Atom xproperty = gdk_x11_get_xatom_by_name_for_display(display, "_NET_WORKAREA");
 
     Atom retType;

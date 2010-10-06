@@ -133,7 +133,7 @@ static JSValueRef runPasteTestCallback(JSContextRef context, JSObjectRef functio
     event->key.window = gtk_widget_get_window(GTK_WIDGET(currentFixture->webView));
     g_object_ref(event->key.window);
 #ifndef GTK_API_VERSION_2
-    GdkDeviceManager* manager =  gdk_display_get_device_manager(gdk_window_get_display(event->key.window));
+    GdkDeviceManager* manager =  gdk_display_get_device_manager(gdk_drawable_get_display(event->key.window));
     gdk_event_set_device(event, gdk_device_manager_get_client_pointer(manager));
 #endif
 
