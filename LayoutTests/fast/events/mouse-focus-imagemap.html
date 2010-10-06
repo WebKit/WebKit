@@ -33,7 +33,9 @@ var successfullyParsed = false;
     eventSender.mouseMoveTo(700, 700);
     eventSender.mouseDown();
     eventSender.mouseUp();
-    shouldBe("document.activeElement.id", "'focusable-area'");
+
+    // Some platforms (QT) set focus to the body if clicking on a non-focusable area.
+    shouldBe("document.activeElement.id", "'focusable-area' || 'body'");
 
     successfullyParsed = true;
 </script>
