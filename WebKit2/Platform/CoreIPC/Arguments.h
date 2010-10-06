@@ -208,12 +208,6 @@ template<typename T1, typename T2, typename T3, typename T4> Arguments4<T1&, T2&
 
 template<typename T1, typename T2, typename T3, typename T4, typename T5> class Arguments5 : Arguments4<T1, T2, T3, T4> {
 public:
-    typedef T1 FirstArgumentType;
-    typedef T2 SecondArgumentType;
-    typedef T3 ThirdArgumentType;
-    typedef T4 FourthArgumentType;
-    typedef T5 FifthArgumentType;
-
     Arguments5(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5)
         : Arguments4<T1, T2, T3, T4>(t1, t2, t3, t4)
         , m_value(t5)

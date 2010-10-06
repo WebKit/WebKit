@@ -1,3 +1,130 @@
+2010-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r69210.
+        http://trac.webkit.org/changeset/69210
+        https://bugs.webkit.org/show_bug.cgi?id=47297
+
+        This patch broke Windows (Requested by andersca on #webkit).
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * Platform/CoreIPC/Arguments.h:
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h: Added.
+        * Shared/StringPairVector.h: Removed.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::registerEditCommand):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::unapply):
+        (WebKit::WebEditCommandProxy::reapply):
+        * UIProcess/WebFormClient.cpp:
+        (WebKit::WebFormClient::willSubmitForm):
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didReceiveSyncMessage):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::didFinishDocumentLoadForFrame):
+        (WebKit::WebPageProxy::didFinishLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveTitleForFrame):
+        (WebKit::WebPageProxy::didFirstLayoutForFrame):
+        (WebKit::WebPageProxy::didFirstVisuallyNonEmptyLayoutForFrame):
+        (WebKit::WebPageProxy::didRemoveFrameFromHierarchy):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForMIMEType):
+        (WebKit::WebPageProxy::willSubmitForm):
+        (WebKit::WebPageProxy::createNewPage):
+        (WebKit::WebPageProxy::runJavaScriptAlert):
+        (WebKit::WebPageProxy::runJavaScriptConfirm):
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        (WebKit::WebPageProxy::contentsSizeChanged):
+        (WebKit::WebPageProxy::addItemToBackForwardList):
+        (WebKit::WebPageProxy::goToItemInBackForwardList):
+        (WebKit::WebPageProxy::registerEditCommandForUndo):
+        (WebKit::WebPageProxy::registerEditCommandForRedo):
+        (WebKit::WebPageProxy::didReceiveEvent):
+        (WebKit::WebPageProxy::didChangeAcceleratedCompositing):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Removed.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::registerEditCommand):
+        * UIProcess/win/WebView.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setWindowRect):
+        (WebKit::WebChromeClient::takeFocus):
+        (WebKit::WebChromeClient::createWindow):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        (WebKit::WebChromeClient::setStatusbarText):
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        (WebKit::WebChromeClient::setToolTip):
+        (WebKit::WebChromeClient::setCursor):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerCommandForUndo):
+        (WebKit::WebEditorClient::clearUndoRedoOperations):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstLayout):
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebKit::WebFrameLoaderClient::postProgressStartedNotification):
+        (WebKit::WebFrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebKit::WebFrameLoaderClient::postProgressFinishedNotification):
+        (WebKit::WebFrameLoaderClient::createFrame):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItem):
+        (WebKit::WebBackForwardListProxy::goToItem):
+        (WebKit::WebBackForwardListProxy::backItem):
+        (WebKit::WebBackForwardListProxy::currentItem):
+        (WebKit::WebBackForwardListProxy::forwardItem):
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        (WebKit::WebBackForwardListProxy::backListCount):
+        (WebKit::WebBackForwardListProxy::forwardListCount):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+        (WebKit::WebPage::enterAcceleratedCompositingMode):
+        (WebKit::WebPage::sendClose):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::WebPage::keyEvent):
+        (WebKit::WebPage::validateMenuItem):
+        (WebKit::WebPage::touchEvent):
+        (WebKit::WebPage::show):
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+        (WebKit::WebPage::getRenderTreeExternalRepresentation):
+        (WebKit::WebPage::getSourceForFrame):
+        * win/WebKit2.vcproj:
+
 2010-10-06  Jessie Berlin  <jberlin@apple.com>
 
         Rubber-stamped by Dan Bernstein.

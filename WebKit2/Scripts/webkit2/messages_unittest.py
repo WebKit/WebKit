@@ -419,11 +419,9 @@ _expected_receiver_implementation = """/*
 
 #include "ArgumentCoders.h"
 #include "ArgumentDecoder.h"
-#include "Connection.h"
 #include "HandleMessage.h"
 #include "MachPort.h"
 #include "Plugin.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebPageMessages.h"
 #include "WebPreferencesStore.h"

@@ -95,7 +95,7 @@ private:
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void setCursor(const WebCore::Cursor&);
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
+    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
     virtual void clearAllEditCommands();
     virtual void setEditCommandState(const WTF::String&, bool, int);
 

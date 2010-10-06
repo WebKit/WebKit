@@ -141,12 +141,10 @@ DEFINES += BUILDING_QT__
 
 WEBKIT2_GENERATED_HEADERS = \
     $$OUTPUT_DIR/WebKit2/generated/WebPageMessages.h \
-    $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebProcessMessages.h
 
 WEBKIT2_GENERATED_SOURCES = \
     $$OUTPUT_DIR/WebKit2/generated/WebPageMessageReceiver.cpp \
-    $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebProcessMessageReceiver.cpp
 
 HEADERS += \
@@ -178,6 +176,7 @@ HEADERS += \
     Shared/API/c/WKURLResponse.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
+    Shared/CoreIPCSupport/WebPageProxyMessageKinds.h \
     Shared/CacheModel.h \
     Shared/DrawingAreaBase.h \
     Shared/ImmutableArray.h \
@@ -186,7 +185,6 @@ HEADERS += \
     Shared/MutableDictionary.h \
     Shared/NativeWebKeyboardEvent.h \
     Shared/NotImplemented.h \
-    Shared/StringPairVector.h \
     Shared/qt/MappedMemory.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \

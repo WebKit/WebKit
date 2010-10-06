@@ -183,7 +183,7 @@ static NSString* nameForEditAction(EditAction editAction)
     return nil;
 }
 
-void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, WebPageProxy::UndoOrRedo undoOrRedo)
+void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpCommand, UndoOrRedo undoOrRedo)
 {
     RefPtr<WebEditCommandProxy> command = prpCommand;
 
@@ -191,7 +191,7 @@ void PageClientImpl::registerEditCommand(PassRefPtr<WebEditCommandProxy> prpComm
     NSString *actionName = nameForEditAction(command->editAction());
 
     NSUndoManager *undoManager = [m_wkView undoManager];
-    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == WebPageProxy::Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
+    [undoManager registerUndoWithTarget:m_undoTarget.get() selector:((undoOrRedo == Undo) ? @selector(undoEditing:) : @selector(redoEditing:)) object:commandObjC.get()];
     if (actionName)
         [undoManager setActionName:actionName];
 }

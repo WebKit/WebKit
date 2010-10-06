@@ -45,7 +45,7 @@ void WebFormClient::initialize(const WKPageFormClient* client)
         memset(&m_pageFormClient, 0, sizeof(m_pageFormClient));
 }
 
-bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, WebFrameProxy* sourceFrame, const Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, WebFormSubmissionListenerProxy* listener)
+bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, WebFrameProxy* sourceFrame, Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, WebFormSubmissionListenerProxy* listener)
 {
     if (!m_pageFormClient.willSubmitForm)
         return false;

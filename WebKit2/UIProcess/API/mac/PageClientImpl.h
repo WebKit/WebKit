@@ -52,7 +52,7 @@ private:
     virtual void toolTipChanged(const String& oldToolTip, const String& newToolTip);
     virtual void setCursor(const WebCore::Cursor&);
 
-    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
+    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
     void clearAllEditCommands();
     void setEditCommandState(const String& commandName, bool isEnabled, int state);
 
