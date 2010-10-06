@@ -66,7 +66,7 @@ def get(**kwargs):
 def _set_gpu_options(options):
     if options:
         if options.accelerated_compositing is None:
-            options.accelerated_composting = True
+            options.accelerated_compositing = True
         if options.accelerated_2d_canvas is None:
             options.accelerated_2d_canvas = True
 

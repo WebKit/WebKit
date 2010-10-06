@@ -44,6 +44,10 @@ WONTFIX SKIP : http/tests/websocket = PASS FAIL
 WONTFIX SKIP : wml = PASS FAIL
 
 // (These are the tests we actually run and expect to pass)
+// We need to explicitly list fast/canvas and canvas/philip because the
+// parent directories are otherwise SKIPPed. We list compositing for completeness.
+//
+// FIXME: remove the FAILs from the following three lines.
 BUGNONE : compositing = PASS FAIL
 BUGNONE : fast/canvas = PASS FAIL
 BUGNONE : canvas/philip = PASS FAIL

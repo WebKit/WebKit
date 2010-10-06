@@ -29,6 +29,12 @@ import unittest
 import chromium_gpu
 
 
+class MockOptions(object):
+    def __init__(self):
+        self.accelerated_compositing = None
+        self.accelerated_2d_canvas = None
+
+
 class ChromiumGpuTest(unittest.TestCase):
     def test_get_chromium_gpu_linux(self):
         self.assertOverridesWorked('chromium-gpu-linux')
@@ -41,7 +47,9 @@ class ChromiumGpuTest(unittest.TestCase):
 
     def assertOverridesWorked(self, port_name):
         # test that we got the right port
-        port = chromium_gpu.get(port_name=port_name, options=None)
+        port = chromium_gpu.get(port_name=port_name, options=MockOptions())
+        self.assertTrue(port._options.accelerated_compositing)
+        self.assertTrue(port._options.accelerated_2d_canvas)
 
         # we use startswith() instead of Equal to gloss over platform versions.
         self.assertTrue(port.name().startswith(port_name))
