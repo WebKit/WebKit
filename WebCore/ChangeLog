@@ -1,3 +1,23 @@
+2010-10-05  W. James MacLean  <wjmaclean@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Add mipmap support for ImageLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=46493
+
+        Mipmap behaviour can be tested with existing tests.
+        Tests in LayoutTests/compositing/images/ will detect if
+        mipmaps fail.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::SharedValues::SharedValues):
+        (WebCore::isPowerOfTwo):
+        (WebCore::ContentLayerChromium::updateTextureRect):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerChromium::SharedValues::npotSupported):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::updateContents):
+
 2010-10-05  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

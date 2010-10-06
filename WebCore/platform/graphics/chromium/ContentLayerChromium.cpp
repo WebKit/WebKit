@@ -57,6 +57,7 @@ ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     , m_shaderMatrixLocation(-1)
     , m_shaderAlphaLocation(-1)
     , m_initialized(false)
+    , m_npotSupported(false)
 {
     // Shaders for drawing the layer contents.
     char vertexShaderString[] =
@@ -102,6 +103,8 @@ ContentLayerChromium::SharedValues::SharedValues(GraphicsContext3D* context)
     ASSERT(m_shaderSamplerLocation != -1);
     ASSERT(m_shaderMatrixLocation != -1);
     ASSERT(m_shaderAlphaLocation != -1);
+
+    m_npotSupported = GLC(context, context->getString(GraphicsContext3D::EXTENSIONS).contains("GL_OES_texture_npot"));
 
     m_initialized = true;
 }
@@ -239,7 +242,14 @@ void ContentLayerChromium::updateContents()
         updateTextureRect(pixels, bitmapSize, requiredTextureSize,  dirtyRect, textureId);
 }
 
-void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& bitmapSize, const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId)
+static inline bool isPowerOfTwo(int x)
+{
+    ASSERT(x >= 0);
+    return !(x & (x-1));
+}
+
+void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& bitmapSize,
+    const IntSize& requiredTextureSize, const IntRect& updateRect, unsigned textureId, MipmapUse requestMipmap)
 {
     if (!pixels)
         return;
@@ -247,11 +257,26 @@ void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& bitmap
     GraphicsContext3D* context = layerRendererContext();
     context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId);
 
+    bool generateMipmap = (requestMipmap == useMipmap)
+                          && (layerRenderer()->contentLayerSharedValues()->npotSupported()
+                              || (isPowerOfTwo(updateRect.width()) && isPowerOfTwo(updateRect.height())));
+
     // If the texture id or size changed since last time then we need to tell GL
     // to re-allocate a texture.
     if (m_contentsTexture != textureId || requiredTextureSize != m_allocatedTextureSize) {
         ASSERT(bitmapSize == requiredTextureSize);
         GLC(context, context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, requiredTextureSize.width(), requiredTextureSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
+        if (generateMipmap) {
+            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER,
+                GraphicsContext3D::LINEAR_MIPMAP_LINEAR));
+            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER,
+                GraphicsContext3D::LINEAR));
+        } else {
+            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER,
+                 GraphicsContext3D::LINEAR));
+            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER,
+                GraphicsContext3D::LINEAR));
+        }
 
         m_contentsTexture = textureId;
         m_allocatedTextureSize = requiredTextureSize;
@@ -260,6 +285,9 @@ void ContentLayerChromium::updateTextureRect(void* pixels, const IntSize& bitmap
         ASSERT(updateRect.width() == bitmapSize.width() && updateRect.height() == bitmapSize.height());
         GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, updateRect.x(), updateRect.y(), updateRect.width(), updateRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixels));
     }
+
+    if (generateMipmap)
+        GLC(context, context->generateMipmap(GraphicsContext3D::TEXTURE_2D));
 
     m_dirtyRect.setSize(FloatSize());
     m_contentsDirty = false;
