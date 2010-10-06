@@ -1,3 +1,30 @@
+2010-09-29  Alpha Lam  <hclam@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Render textures in video frame directly.
+        https://bugs.webkit.org/show_bug.cgi?id=46765
+
+        Render textures in VideoLayerChromium directly if the video frame type
+        is GL texture. In the future VideoLayerChromium will not allocate
+        textures and perform textures upload as those operations will be done
+        in Chromium to minimize memory copy. This patch will help moving toward
+        this direction and facilitate hardware video decoding.
+
+        * platform/graphics/chromium/VideoFrameChromium.h:
+        * platform/graphics/chromium/VideoFrameProvider.h:
+        (WebCore::VideoFrameProvider::~VideoFrameProvider):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+        (WebCore::VideoLayerChromium::updateContents):
+        (WebCore::VideoLayerChromium::draw):
+        (WebCore::VideoLayerChromium::releaseCurrentFrame):
+        (WebCore::VideoLayerChromium::resetFrameParameters):
+        (WebCore::VideoLayerChromium::saveCurrentFrame):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        (WebCore::VideoLayerChromium::SharedValues::initialized):
+
 2010-10-05  Fady Samuel  <fsamuel@chromium.org>
 
         Reviewed by Darin Adler.

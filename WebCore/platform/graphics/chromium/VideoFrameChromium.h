@@ -63,10 +63,7 @@ public:
 
     enum SurfaceType {
         TypeSystemMemory,
-        TypeOMXBufferHead,
-        TypeEGLImage,
-        TypeMFBuffer,
-        TypeDirect3DSurface
+        TypeTexture,
     };
 
     virtual SurfaceType surfaceType() const = 0;
@@ -76,6 +73,7 @@ public:
     virtual unsigned planes() const = 0;
     virtual int stride(unsigned plane) const = 0;
     virtual const void* data(unsigned plane) const = 0;
+    virtual unsigned texture(unsigned plane) const = 0;
     virtual const IntSize requiredTextureSize(unsigned plane) const = 0;
 };
 

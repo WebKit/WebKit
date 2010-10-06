@@ -53,10 +53,7 @@ public:
 
     enum SurfaceType {
         SurfaceTypeSystemMemory,
-        SurfaceTypeOMXBufferHead,
-        SurfaceTypeEGLImage,
-        SurfaceTypeMFBuffer,
-        SurfaceTypeDirect3DSurface
+        SurfaceTypeTexture,
     };
 
     virtual SurfaceType surfaceType() const = 0;
@@ -66,6 +63,7 @@ public:
     virtual unsigned planes() const = 0;
     virtual int stride(unsigned plane) const = 0;
     virtual const void* data(unsigned plane) const = 0;
+    virtual unsigned texture(unsigned plane) const = 0;
 };
 
 } // namespace WebKit

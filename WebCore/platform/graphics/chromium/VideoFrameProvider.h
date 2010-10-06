@@ -37,6 +37,8 @@ namespace WebCore {
 
 class VideoFrameProvider {
 public:
+    virtual ~VideoFrameProvider() { }
+
     // This function returns a pointer to a VideoFrameChromium, which is
     // the WebCore wrapper for a video frame in Chromium. getCurrentFrame()
     // places a lock on the frame in Chromium. Calls to this method should

@@ -321,10 +321,7 @@ COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatEmpty, VideoFrameChromium::Emp
 COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatASCII, VideoFrameChromium::ASCII);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeSystemMemory, VideoFrameChromium::TypeSystemMemory);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeOMXBufferHead, VideoFrameChromium::TypeOMXBufferHead);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeEGLImage, VideoFrameChromium::TypeEGLImage);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeMFBuffer, VideoFrameChromium::TypeMFBuffer);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeDirect3DSurface, VideoFrameChromium::TypeDirect3DSurface);
+COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeTexture, VideoFrameChromium::TypeTexture);
 #endif
 
 #if ENABLE(NOTIFICATIONS)

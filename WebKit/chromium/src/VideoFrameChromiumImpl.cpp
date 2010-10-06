@@ -100,6 +100,13 @@ const void* VideoFrameChromiumImpl::data(unsigned plane) const
     return 0;
 }
 
+unsigned VideoFrameChromiumImpl::texture(unsigned plane) const
+{
+    if (m_webVideoFrame)
+        return m_webVideoFrame->texture(plane);
+    return 0;
+}
+
 const IntSize VideoFrameChromiumImpl::requiredTextureSize(unsigned plane) const
 {
     switch (format()) {

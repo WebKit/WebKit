@@ -49,6 +49,10 @@ public:
     virtual bool drawsContent() { return true; }
     virtual void draw();
 
+    // This function is called by VideoFrameProvider. When this method is called
+    // putCurrentFrame() must be called to return the frame currently held.
+    void releaseCurrentFrame();
+
     class SharedValues {
     public:
         explicit SharedValues(GraphicsContext3D*);
@@ -66,7 +70,7 @@ public:
         int rgbaAlphaLocation() const { return m_rgbaAlphaLocation; }
         int rgbaTextureLocation() const { return m_rgbaTextureLocation; }
         int ccMatrixLocation() const { return m_ccMatrixLocation; }
-        bool initialized() const { return m_initialized; };
+        bool initialized() const { return m_initialized; }
     private:
         GraphicsContext3D* m_context;
         unsigned m_yuvShaderProgram;
@@ -95,12 +99,16 @@ private:
     void updateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat, const void* data);
     void drawYUV(const SharedValues*);
     void drawRGBA(const SharedValues*);
+    void resetFrameParameters();
+    void saveCurrentFrame(VideoFrameChromium*);
 
     static const float yuv2RGB[9];
 
     bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;
-    OwnPtr<VideoFrameProvider> m_provider;
+    VideoFrameProvider* m_provider;
+    VideoFrameChromium* m_currentFrame;
+
     unsigned m_textures[3];
     IntSize m_textureSizes[3];
     IntSize m_frameSizes[3];
