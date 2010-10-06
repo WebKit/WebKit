@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- *               2008 Eric Seidel <eric@webkit.org>
- *               2008 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
+#include "RenderSVGText.h"
 #include "SVGImageBufferTools.h"
 #include "SVGRenderSupport.h"
 #include <wtf/UnusedParam.h>
@@ -75,9 +76,9 @@ void RenderSVGResourceGradient::removeClientFromCache(RenderObject* client, bool
 static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context,
                                                            GraphicsContext*& savedContext,
                                                            OwnPtr<ImageBuffer>& imageBuffer,
-                                                           const RenderObject* object)
+                                                           RenderObject* object)
 {
-    const RenderObject* textRootBlock = SVGRenderSupport::findTextRootObject(object);
+    RenderObject* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(object);
     ASSERT(textRootBlock);
 
     AffineTransform absoluteTransform;
@@ -108,10 +109,10 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
 static inline AffineTransform clipToTextMask(GraphicsContext* context,
                                              OwnPtr<ImageBuffer>& imageBuffer,
                                              FloatRect& targetRect,
-                                             const RenderObject* object,
+                                             RenderObject* object,
                                              GradientData* gradientData)
 {
-    const RenderObject* textRootBlock = SVGRenderSupport::findTextRootObject(object);
+    RenderObject* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(object);
     ASSERT(textRootBlock);
 
     targetRect = textRootBlock->repaintRectInLocalCoordinates();

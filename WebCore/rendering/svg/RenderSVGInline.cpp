@@ -1,8 +1,7 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +26,7 @@
 #include "RenderSVGInline.h"
 
 #include "RenderSVGResource.h"
+#include "RenderSVGText.h"
 #include "SVGInlineFlowBox.h"
 
 namespace WebCore {
@@ -45,7 +45,7 @@ InlineFlowBox* RenderSVGInline::createInlineFlowBox()
 
 FloatRect RenderSVGInline::objectBoundingBox() const
 {
-    if (const RenderObject* object = SVGRenderSupport::findTextRootObject(this))
+    if (const RenderObject* object = RenderSVGText::locateRenderSVGTextAncestor(this))
         return object->objectBoundingBox();
 
     return FloatRect();
@@ -53,7 +53,7 @@ FloatRect RenderSVGInline::objectBoundingBox() const
 
 FloatRect RenderSVGInline::strokeBoundingBox() const
 {
-    if (const RenderObject* object = SVGRenderSupport::findTextRootObject(this))
+    if (const RenderObject* object = RenderSVGText::locateRenderSVGTextAncestor(this))
         return object->strokeBoundingBox();
 
     return FloatRect();
@@ -61,7 +61,7 @@ FloatRect RenderSVGInline::strokeBoundingBox() const
 
 FloatRect RenderSVGInline::repaintRectInLocalCoordinates() const
 {
-    if (const RenderObject* object = SVGRenderSupport::findTextRootObject(this))
+    if (const RenderObject* object = RenderSVGText::locateRenderSVGTextAncestor(this))
         return object->repaintRectInLocalCoordinates();
 
     return FloatRect();
@@ -84,7 +84,7 @@ void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer
 
 void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
 {
-    const RenderObject* object = SVGRenderSupport::findTextRootObject(this);
+    RenderObject* object = RenderSVGText::locateRenderSVGTextAncestor(this);
     if (!object)
         return;
 

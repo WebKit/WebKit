@@ -1,8 +1,7 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Apple Computer, Inc.
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -37,8 +36,12 @@ class RenderSVGText : public RenderSVGBlock {
 public:
     RenderSVGText(SVGTextElement* node);
 
+    void setNeedsPositioningValuesUpdate() { m_needsPositioningValuesUpdate = true; }
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
     virtual FloatRect repaintRectInLocalCoordinates() const;
+
+    static RenderSVGText* locateRenderSVGTextAncestor(RenderObject*);
+    static const RenderSVGText* locateRenderSVGTextAncestor(const RenderObject*);
 
 private:
     virtual const char* renderName() const { return "RenderSVGText"; }
@@ -69,9 +72,25 @@ private:
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
 
+    bool m_needsPositioningValuesUpdate : 1;
     bool m_needsTransformUpdate : 1;
     AffineTransform m_localTransform;
 };
+
+inline RenderSVGText* toRenderSVGText(RenderObject* object)
+{
+    ASSERT(!object || object->isSVGText());
+    return static_cast<RenderSVGText*>(object);
+}
+
+inline const RenderSVGText* toRenderSVGText(const RenderObject* object)
+{
+    ASSERT(!object || object->isSVGText());
+    return static_cast<const RenderSVGText*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderSVGText(const RenderSVGText*);
 
 }
 

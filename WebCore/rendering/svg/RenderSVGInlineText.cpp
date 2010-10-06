@@ -1,10 +1,9 @@
 /*
- * This file is part of the WebKit project.
- *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
- *           (C) 2006 Apple Computer Inc.
- *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
- *           (C) 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) 2006 Apple Computer Inc.
+ * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2008 Rob Buis <buis@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +31,7 @@
 #include "FloatQuad.h"
 #include "RenderBlock.h"
 #include "RenderSVGRoot.h"
+#include "RenderSVGText.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRootInlineBox.h"
 #include "VisiblePosition.h"
@@ -70,6 +70,12 @@ RenderSVGInlineText::RenderSVGInlineText(Node* n, PassRefPtr<StringImpl> string)
 void RenderSVGInlineText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);
+
+    if (diff == StyleDifferenceLayout) {
+        // The text metrics may be influenced by style changes.
+        if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(this))
+            textRenderer->setNeedsPositioningValuesUpdate();
+    }
 
     const RenderStyle* newStyle = style();
     if (!newStyle || newStyle->whiteSpace() != PRE)

@@ -1,3 +1,45 @@
+2010-10-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Only execute first SVG text layout phase if needed
+        https://bugs.webkit.org/show_bug.cgi?id=47254
+
+        The first SVG text layout phase which computes the per-character metrics and extracts
+        the x/y/dx/dy/rotate values from the SVG DOM is currently executed upon every RenderSVGText::layout() call.
+
+        Optimize this, by only calling it:
+        - if x/y/dx/dy/rotate value lists change
+        - the style of a RenderSVGInlineText changes (eg. font-size changes influence metrics)
+        - the text content of any of the children in the <text> subtree change
+
+        No change in layout tests, a pure performance change - covered by existing tests.
+
+        * rendering/RenderSVGResourceGradient.cpp:
+        (WebCore::createMaskAndSwapContextForTextGradient): Adapt to renames, use RenderSVGText::locateRenderSVGTextAncestor().
+        (WebCore::clipToTextMask): Ditto.
+        * rendering/SVGRenderSupport.cpp:
+        * rendering/SVGRenderSupport.h: Move findTreeRootObject to RenderSVGText::locateRenderSVGTextAncestor().
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::objectBoundingBox): adapt to renames, use RenderSVGText::locateRenderSVGTextAncestor().
+        (WebCore::RenderSVGInline::strokeBoundingBox): Ditto.
+        (WebCore::RenderSVGInline::repaintRectInLocalCoordinates): Ditto.
+        (WebCore::RenderSVGInline::absoluteQuads): Ditto.
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::styleDidChange): Call setNeedsPositioningValuesUpdate() on the RenderSVGText root object, if diff == StyleDifferenceLayout.
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::RenderSVGText): Initialize m_needsPositioningValuesUpdate.
+        (WebCore::RenderSVGText::locateRenderSVGTextAncestor): New helper function, moved from SVGRenderSupport, to a more sensible place.
+        (WebCore::RenderSVGText::layout): Only execute the first SVG text layout phase, if m_needsPositioningValuesUpdate=true.
+        * rendering/svg/RenderSVGText.h:
+        (WebCore::RenderSVGText::setNeedsPositioningValuesUpdate):
+        (WebCore::toRenderSVGText): Add new helper casting methods, like most other renderers have.
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::updatePositioningValuesInRenderer):
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged): If x/y/dx/dy/rotate changes, call setNeedsPositioningValuesUpdate on the RenderSVGText root object.
+        (WebCore::SVGTextPositioningElement::childrenChanged): If any children changes (addition, removal), do the same.
+        * svg/SVGTextPositioningElement.h:
+
 2010-10-05  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
