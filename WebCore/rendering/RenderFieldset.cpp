@@ -141,7 +141,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
-    if (style()->isVerticalBlockFlow()) {
+    if (style()->isHorizontalWritingMode()) {
         int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
         h -= yOff;
         ty += yOff;
@@ -166,7 +166,7 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
-    if (style()->isVerticalBlockFlow()) {
+    if (style()->isHorizontalWritingMode()) {
         int clipTop = ty;
         int clipHeight = max(static_cast<int>(style()->borderTopWidth()), legend->height());
         graphicsContext->clipOut(IntRect(tx + legend->x(), clipTop, legend->width(), clipHeight));
@@ -195,7 +195,7 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, int tx, int ty)
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
-    if (style()->isVerticalBlockFlow()) {
+    if (style()->isHorizontalWritingMode()) {
         int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
         h -= yOff;
         ty += yOff;

@@ -28,7 +28,8 @@
             if (!properties) {
                 for (var i = 0; i != style.length; ++i) {
                     var name = style.item(i);
-                    log("    " + name + ": " + style.getPropertyValue(name));
+                    if (name != "-webkit-dashboard-region")
+                        log("    " + name + ": " + style.getPropertyValue(name));
                 }
                 properties = others;
             }

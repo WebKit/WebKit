@@ -1,3 +1,159 @@
+2010-10-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47285
+
+        Update to the latest writing-mode draft. The block-flow property is gone and has been replaced with writing-mode.
+        Change all the code to use writingMode() instead of blockFlow() and rename all functions that referred to block flow
+        as appropriate.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator WritingMode):
+        (WebCore::CSSPrimitiveValue::operator SVGWritingMode):
+        * css/CSSProperty.cpp:
+        (WebCore::resolveToPhysicalProperty):
+        (WebCore::CSSProperty::resolveDirectionAwareProperty):
+        * css/CSSProperty.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::expandsToEncloseOverhangingFloats):
+        (WebCore::RenderBlock::setLogicalLeftForChild):
+        (WebCore::RenderBlock::setLogicalTopForChild):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::collapsedMarginBeforeForChild):
+        (WebCore::RenderBlock::collapsedMarginAfterForChild):
+        (WebCore::RenderBlock::marginBeforeForChild):
+        (WebCore::RenderBlock::marginAfterForChild):
+        (WebCore::RenderBlock::marginStartForChild):
+        (WebCore::RenderBlock::marginEndForChild):
+        (WebCore::RenderBlock::setMarginStartForChild):
+        (WebCore::RenderBlock::setMarginEndForChild):
+        (WebCore::RenderBlock::setMarginBeforeForChild):
+        (WebCore::RenderBlock::setMarginAfterForChild):
+        (WebCore::RenderBlock::marginValuesForChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalWidthForChild):
+        (WebCore::RenderBlock::logicalHeightForChild):
+        (WebCore::RenderBlock::logicalTopForChild):
+        (WebCore::RenderBlock::logicalRightOffsetForContent):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent):
+        (WebCore::RenderBlock::logicalTopForFloat):
+        (WebCore::RenderBlock::logicalBottomForFloat):
+        (WebCore::RenderBlock::logicalLeftForFloat):
+        (WebCore::RenderBlock::logicalRightForFloat):
+        (WebCore::RenderBlock::logicalWidthForFloat):
+        (WebCore::RenderBlock::setLogicalTopForFloat):
+        (WebCore::RenderBlock::setLogicalLeftForFloat):
+        (WebCore::RenderBlock::setLogicalHeightForFloat):
+        (WebCore::RenderBlock::setLogicalWidthForFloat):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::marginBefore):
+        (WebCore::RenderBox::marginAfter):
+        (WebCore::RenderBox::marginStart):
+        (WebCore::RenderBox::marginEnd):
+        (WebCore::RenderBox::setMarginStart):
+        (WebCore::RenderBox::setMarginEnd):
+        (WebCore::RenderBox::setMarginBefore):
+        (WebCore::RenderBox::setMarginAfter):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        (WebCore::RenderBox::avoidsFloats):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::logicalLeft):
+        (WebCore::RenderBox::logicalTop):
+        (WebCore::RenderBox::logicalWidth):
+        (WebCore::RenderBox::logicalHeight):
+        (WebCore::RenderBox::setLogicalLeft):
+        (WebCore::RenderBox::setLogicalTop):
+        (WebCore::RenderBox::setLogicalWidth):
+        (WebCore::RenderBox::setLogicalHeight):
+        (WebCore::RenderBox::setLogicalLocation):
+        (WebCore::RenderBox::contentLogicalWidth):
+        (WebCore::RenderBox::contentLogicalHeight):
+        (WebCore::RenderBox::stretchesToViewport):
+        (WebCore::RenderBox::intrinsicLogicalWidth):
+        (WebCore::RenderBox::intrinsicLogicalHeight):
+        (WebCore::RenderBox::availableWidth):
+        (WebCore::RenderBox::availableHeight):
+        (WebCore::RenderBox::scrollbarLogicalHeight):
+        (WebCore::RenderBox::isWritingModeRoot):
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        (WebCore::RenderFieldset::paintMask):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeReplacedLogicalWidth):
+        (WebCore::RenderImage::computeReplacedLogicalHeight):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::marginLeft):
+        (WebCore::RenderInline::marginRight):
+        (WebCore::RenderInline::marginTop):
+        (WebCore::RenderInline::marginBottom):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paddingTop):
+        (WebCore::RenderTableCell::paddingBottom):
+        (WebCore::RenderTableCell::paddingLeft):
+        (WebCore::RenderTableCell::paddingRight):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::viewLogicalWidth):
+        (WebCore::RenderView::viewLogicalHeight):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::logicalWidth):
+        (WebCore::RenderStyle::logicalHeight):
+        (WebCore::RenderStyle::logicalMinWidth):
+        (WebCore::RenderStyle::logicalMaxWidth):
+        (WebCore::RenderStyle::logicalMinHeight):
+        (WebCore::RenderStyle::logicalMaxHeight):
+        (WebCore::RenderStyle::borderBeforeWidth):
+        (WebCore::RenderStyle::borderAfterWidth):
+        (WebCore::RenderStyle::borderStartWidth):
+        (WebCore::RenderStyle::borderEndWidth):
+        (WebCore::RenderStyle::marginBefore):
+        (WebCore::RenderStyle::marginAfter):
+        (WebCore::RenderStyle::marginBeforeUsing):
+        (WebCore::RenderStyle::marginAfterUsing):
+        (WebCore::RenderStyle::marginStart):
+        (WebCore::RenderStyle::marginEnd):
+        (WebCore::RenderStyle::marginStartUsing):
+        (WebCore::RenderStyle::marginEndUsing):
+        (WebCore::RenderStyle::paddingBefore):
+        (WebCore::RenderStyle::paddingAfter):
+        (WebCore::RenderStyle::paddingStart):
+        (WebCore::RenderStyle::paddingEnd):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setBitDefaults):
+        (WebCore::InheritedFlags::writingMode):
+        (WebCore::InheritedFlags::isHorizontalWritingMode):
+        (WebCore::InheritedFlags::setWritingMode):
+        (WebCore::InheritedFlags::initialWritingMode):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialWritingMode):
+        (WebCore::SVGRenderStyle::setWritingMode):
+        (WebCore::SVGRenderStyle::writingMode):
+        * rendering/style/SVGRenderStyleDefs.h:
+
 2010-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r69201.

@@ -47,7 +47,7 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_lineBottom(0)
     , m_paginationStrut(0)
 {
-    setIsVertical(!block->style()->isVerticalBlockFlow());
+    setIsVertical(!block->style()->isHorizontalWritingMode());
 }
 
 

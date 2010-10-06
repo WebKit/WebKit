@@ -1781,15 +1781,8 @@ bool CSSParser::parseValue(int propId, bool important)
 #endif
 
     // CSS Text Layout Module Level 3: Vertical writing support
-    case CSSPropertyWebkitBlockFlow:
-        // [ "tb" | "rl" | "lr" | "bt" ]
-        if (id == CSSValueTb || id == CSSValueRl || id == CSSValueLr || id == CSSValueBt)
-            validPrimitive = true;
-        break;
-
     case CSSPropertyWebkitWritingMode:
-        // [ "lr-tb" | "rl-tb" | "tb-rl" | "bt-rl" | "tb-lr" | "bt-lr" ]
-        if (id == CSSValueLrTb || id == CSSValueRlTb || id == CSSValueTbRl || id == CSSValueBtRl || id == CSSValueTbLr || id == CSSValueBtLr)
+        if (id >= CSSValueHorizontalTb && id <= CSSValueHorizontalBt)
             validPrimitive = true;
         break;
 

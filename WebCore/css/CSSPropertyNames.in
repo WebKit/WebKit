@@ -20,7 +20,6 @@ font-style
 font-variant
 font-weight
 text-rendering
--webkit-block-flow
 -webkit-font-smoothing
 -webkit-text-size-adjust
 -webkit-writing-mode

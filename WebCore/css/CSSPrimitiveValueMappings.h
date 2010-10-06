@@ -2003,40 +2003,40 @@ template<> inline CSSPrimitiveValue::operator TextDirection() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBlockFlowDirection e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(WritingMode e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
-    case TopToBottomBlockFlow:
-        m_value.ident = CSSValueTb;
+    case TopToBottomWritingMode:
+        m_value.ident = CSSValueHorizontalTb;
         break;
-    case RightToLeftBlockFlow:
-        m_value.ident = CSSValueRl;
+    case RightToLeftWritingMode:
+        m_value.ident = CSSValueVerticalRl;
         break;
-    case LeftToRightBlockFlow:
-        m_value.ident = CSSValueLr;
+    case LeftToRightWritingMode:
+        m_value.ident = CSSValueVerticalLr;
         break;
-    case BottomToTopBlockFlow:
-        m_value.ident = CSSValueBt;
+    case BottomToTopWritingMode:
+        m_value.ident = CSSValueHorizontalBt;
         break;
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EBlockFlowDirection() const
+template<> inline CSSPrimitiveValue::operator WritingMode() const
 {
     switch (m_value.ident) {
-    case CSSValueTb:
-        return TopToBottomBlockFlow;
-    case CSSValueRl:
-        return RightToLeftBlockFlow;
-    case CSSValueLr:
-        return LeftToRightBlockFlow;
-    case CSSValueBt:
-        return BottomToTopBlockFlow;
+    case CSSValueHorizontalTb:
+        return TopToBottomWritingMode;
+    case CSSValueVerticalRl:
+        return RightToLeftWritingMode;
+    case CSSValueVerticalLr:
+        return LeftToRightWritingMode;
+    case CSSValueHorizontalBt:
+        return BottomToTopWritingMode;
     default:
         ASSERT_NOT_REACHED();
-        return TopToBottomBlockFlow;
+        return TopToBottomWritingMode;
     }
 }
 
@@ -2703,7 +2703,7 @@ template<> inline CSSPrimitiveValue::operator ETextAnchor() const
     }
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWritingMode e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(SVGWritingMode e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
 {
@@ -2729,7 +2729,7 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EWritingMode e)
     }
 }
 
-template<> inline CSSPrimitiveValue::operator EWritingMode() const
+template<> inline CSSPrimitiveValue::operator SVGWritingMode() const
 {
     switch (m_value.ident) {
     case CSSValueLrTb:

@@ -171,9 +171,9 @@ public:
 
     // Accessors for logical width/height and margins in the containing block's block-flow direction.
     enum ApplyLayoutDeltaMode { ApplyLayoutDelta, DoNotApplyLayoutDelta };
-    int logicalWidthForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->width() : child->height(); }
-    int logicalHeightForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->height() : child->width(); }
-    int logicalTopForChild(RenderBox* child) { return style()->isVerticalBlockFlow() ? child->y() : child->x(); }
+    int logicalWidthForChild(RenderBox* child) { return style()->isHorizontalWritingMode() ? child->width() : child->height(); }
+    int logicalHeightForChild(RenderBox* child) { return style()->isHorizontalWritingMode() ? child->height() : child->width(); }
+    int logicalTopForChild(RenderBox* child) { return style()->isHorizontalWritingMode() ? child->y() : child->x(); }
     void setLogicalLeftForChild(RenderBox* child, int logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     void setLogicalTopForChild(RenderBox* child, int logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     int marginBeforeForChild(RenderBoxModelObject* child) const;
@@ -263,8 +263,8 @@ protected:
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintObject(PaintInfo&, int tx, int ty);
 
-    int logicalRightOffsetForContent() const { return style()->isVerticalBlockFlow() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
-    int logicalLeftOffsetForContent() const { return style()->isVerticalBlockFlow() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
+    int logicalRightOffsetForContent() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() + availableLogicalWidth() : borderTop() + paddingTop() + availableLogicalWidth(); }
+    int logicalLeftOffsetForContent() const { return style()->isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop(); }
     int logicalRightOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
     int logicalLeftOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;
 
@@ -414,35 +414,35 @@ private:
         bool m_isPlaced : 1;
     };
 
-    int logicalTopForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->top() : child->left(); }
-    int logicalBottomForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->bottom() : child->right(); }
-    int logicalLeftForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->left() : child->top(); }
-    int logicalRightForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->right() : child->bottom(); }
-    int logicalWidthForFloat(FloatingObject* child) const { return style()->isVerticalBlockFlow() ? child->width() : child->height(); }
+    int logicalTopForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->top() : child->left(); }
+    int logicalBottomForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->bottom() : child->right(); }
+    int logicalLeftForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->left() : child->top(); }
+    int logicalRightForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->right() : child->bottom(); }
+    int logicalWidthForFloat(FloatingObject* child) const { return style()->isHorizontalWritingMode() ? child->width() : child->height(); }
     void setLogicalTopForFloat(FloatingObject* child, int logicalTop)
     {
-        if (style()->isVerticalBlockFlow())
+        if (style()->isHorizontalWritingMode())
             child->setTop(logicalTop);
         else
             child->setLeft(logicalTop);
     }
     void setLogicalLeftForFloat(FloatingObject* child, int logicalLeft)
     {
-        if (style()->isVerticalBlockFlow())
+        if (style()->isHorizontalWritingMode())
             child->setLeft(logicalLeft);
         else
             child->setTop(logicalLeft);
     }
     void setLogicalHeightForFloat(FloatingObject* child, int logicalHeight)
     {
-        if (style()->isVerticalBlockFlow())
+        if (style()->isHorizontalWritingMode())
             child->setHeight(logicalHeight);
         else
             child->setWidth(logicalHeight);
     }
     void setLogicalWidthForFloat(FloatingObject* child, int logicalWidth)
     {
-        if (style()->isVerticalBlockFlow())
+        if (style()->isHorizontalWritingMode())
             child->setWidth(logicalWidth);
         else
             child->setHeight(logicalWidth);

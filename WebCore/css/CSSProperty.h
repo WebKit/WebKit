@@ -60,7 +60,7 @@ public:
     
     String cssText() const;
 
-    static int resolveDirectionAwareProperty(int propertyID, TextDirection, EBlockFlowDirection);
+    static int resolveDirectionAwareProperty(int propertyID, TextDirection, WritingMode);
 
     friend bool operator==(const CSSProperty&, const CSSProperty&);
 

@@ -129,8 +129,8 @@ enum EUnicodeBidi {
 };
 
 // CSS Text Layout Module Level 3: Vertical writing support
-enum EBlockFlowDirection {
-    TopToBottomBlockFlow, RightToLeftBlockFlow, LeftToRightBlockFlow, BottomToTopBlockFlow
+enum WritingMode {
+    TopToBottomWritingMode, RightToLeftWritingMode, LeftToRightWritingMode, BottomToTopWritingMode
 };
 
 enum EFillAttachment {

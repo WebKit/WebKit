@@ -1110,7 +1110,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
     if (docElement && docElement->renderer()) {
         // Use the direction and block-flow of the document element to set the
         // viewport's direction and block-flow.
-        documentStyle->setBlockFlow(docElement->renderer()->style()->blockFlow());
+        documentStyle->setWritingMode(docElement->renderer()->style()->writingMode());
         documentStyle->setDirection(docElement->renderer()->style()->direction());
     }
 
@@ -1726,7 +1726,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
         
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
-        if (style->display() == INLINE && style->styleType() == NOPSEUDO && parentStyle && style->blockFlow() != parentStyle->blockFlow())
+        if (style->display() == INLINE && style->styleType() == NOPSEUDO && parentStyle && style->writingMode() != parentStyle->writingMode())
             style->setDisplay(INLINE_BLOCK);
         
         // After performing the display mutation, check table rows.  We do not honor position:relative on
@@ -1738,14 +1738,14 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
             style->setPosition(StaticPosition);
         
         // FIXME: Since we don't support block-flow on either tables or flexible boxes yet, disallow setting
-        // of block-flow to anything other than TopToBottomBlockFlow.
+        // of block-flow to anything other than TopToBottomWritingMode.
         // https://bugs.webkit.org/show_bug.cgi?id=46417 - Tables support
         // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
-        if (style->blockFlow() != TopToBottomBlockFlow && (style->display() == TABLE || style->display() == INLINE_TABLE
+        if (style->writingMode() != TopToBottomWritingMode && (style->display() == TABLE || style->display() == INLINE_TABLE
             || style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_ROW_GROUP
             || style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW || style->display() == TABLE_CELL
             || style->display() == BOX || style->display() == INLINE_BOX))
-            style->setBlockFlow(TopToBottomBlockFlow);
+            style->setWritingMode(TopToBottomWritingMode);
     }
 
     // Make sure our z-index value is only applied if the object is positioned.
@@ -2946,7 +2946,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
 
                 if (applyFirst) {
                     COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
-                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 14, CSS_zoom_is_end_of_first_prop_range);
+                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 13, CSS_zoom_is_end_of_first_prop_range);
                     COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
 
                     // give special priority to font-xxx, color properties, etc
@@ -3134,7 +3134,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     bool isInherit = m_parentNode && valueType == CSSValue::CSS_INHERIT;
     bool isInitial = valueType == CSSValue::CSS_INITIAL || (!m_parentNode && valueType == CSSValue::CSS_INHERIT);
     
-    id = CSSProperty::resolveDirectionAwareProperty(id, m_style->direction(), m_style->blockFlow());
+    id = CSSProperty::resolveDirectionAwareProperty(id, m_style->direction(), m_style->writingMode());
 
     if (m_checker.m_matchVisitedPseudoClass && !isValidVisitedLinkProperty(id)) {
         // Limit the properties that can be applied to only the ones honored by :visited.
@@ -5571,50 +5571,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 #endif 
 
     // CSS Text Layout Module Level 3: Vertical writing support
-    case CSSPropertyWebkitBlockFlow:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(blockFlow, BlockFlow)
-        return;
-
     case CSSPropertyWebkitWritingMode:
-        // The 'writing-mode' property is a shorthand property for the 'direction' property and the 'block-flow' property. 
-        if (isInherit) {
-            m_style->setDirection(m_parentStyle->direction());
-            m_style->setBlockFlow(m_parentStyle->blockFlow());
-        } else if (isInitial) {
-            m_style->setDirection(m_style->initialDirection());
-            m_style->setBlockFlow(m_style->initialBlockFlow());
-        } else {
-            if (!primitiveValue)
-                return;
-            switch (primitiveValue->getIdent()) {
-            case CSSValueLrTb:
-                m_style->setDirection(LTR);
-                m_style->setBlockFlow(TopToBottomBlockFlow);
-                break;
-            case CSSValueRlTb:
-                m_style->setDirection(RTL);
-                m_style->setBlockFlow(TopToBottomBlockFlow);
-                break;
-            case CSSValueTbRl:
-                m_style->setDirection(LTR);
-                m_style->setBlockFlow(RightToLeftBlockFlow);
-                break;
-            case CSSValueBtRl:
-                m_style->setDirection(RTL);
-                m_style->setBlockFlow(RightToLeftBlockFlow);
-                break;
-            case CSSValueTbLr:
-                m_style->setDirection(LTR);
-                m_style->setBlockFlow(LeftToRightBlockFlow);
-                break;
-            case CSSValueBtLr:
-                m_style->setDirection(RTL);
-                m_style->setBlockFlow(LeftToRightBlockFlow);
-                break;
-            default:
-                break;
-            }
-        }
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(writingMode, WritingMode)
         return;
 
 #if ENABLE(SVG)

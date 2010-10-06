@@ -165,34 +165,34 @@ void RenderTableCell::layout()
 int RenderTableCell::paddingTop(bool includeIntrinsicPadding) const
 {
     int result = RenderBlock::paddingTop();
-    if (!includeIntrinsicPadding || !style()->isVerticalBlockFlow())
+    if (!includeIntrinsicPadding || !style()->isHorizontalWritingMode())
         return result;
-    return result + (style()->blockFlow() == TopToBottomBlockFlow ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
+    return result + (style()->writingMode() == TopToBottomWritingMode ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
 }
 
 int RenderTableCell::paddingBottom(bool includeIntrinsicPadding) const
 {
     int result = RenderBlock::paddingBottom();
-    if (!includeIntrinsicPadding || !style()->isVerticalBlockFlow())
+    if (!includeIntrinsicPadding || !style()->isHorizontalWritingMode())
         return result;
-    return result + (style()->blockFlow() == TopToBottomBlockFlow ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
+    return result + (style()->writingMode() == TopToBottomWritingMode ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
 int RenderTableCell::paddingLeft(bool includeIntrinsicPadding) const
 {
     int result = RenderBlock::paddingLeft();
-    if (!includeIntrinsicPadding || style()->isVerticalBlockFlow())
+    if (!includeIntrinsicPadding || style()->isHorizontalWritingMode())
         return result;
-    return result + (style()->blockFlow() == LeftToRightBlockFlow ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
+    return result + (style()->writingMode() == LeftToRightWritingMode ? intrinsicPaddingBefore() : intrinsicPaddingAfter());
     
 }
 
 int RenderTableCell::paddingRight(bool includeIntrinsicPadding) const
 {   
     int result = RenderBlock::paddingRight();
-    if (!includeIntrinsicPadding || style()->isVerticalBlockFlow())
+    if (!includeIntrinsicPadding || style()->isHorizontalWritingMode())
         return result;
-    return result + (style()->blockFlow() == LeftToRightBlockFlow ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
+    return result + (style()->writingMode() == LeftToRightWritingMode ? intrinsicPaddingAfter() : intrinsicPaddingBefore());
 }
 
 int RenderTableCell::paddingBefore(bool includeIntrinsicPadding) const

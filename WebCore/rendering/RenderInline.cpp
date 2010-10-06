@@ -471,28 +471,28 @@ static int computeMargin(const RenderInline* renderer, const Length& margin)
 
 int RenderInline::marginLeft() const
 {
-    if (!style()->isVerticalBlockFlow())
+    if (!style()->isHorizontalWritingMode())
         return 0;
     return computeMargin(this, style()->marginLeft());
 }
 
 int RenderInline::marginRight() const
 {
-    if (!style()->isVerticalBlockFlow())
+    if (!style()->isHorizontalWritingMode())
         return 0;
     return computeMargin(this, style()->marginRight());
 }
 
 int RenderInline::marginTop() const
 {
-    if (style()->isVerticalBlockFlow())
+    if (style()->isHorizontalWritingMode())
         return 0;
     return computeMargin(this, style()->marginTop());
 }
 
 int RenderInline::marginBottom() const
 {
-    if (style()->isVerticalBlockFlow())
+    if (style()->isHorizontalWritingMode())
         return 0;
     return computeMargin(this, style()->marginBottom());
 }

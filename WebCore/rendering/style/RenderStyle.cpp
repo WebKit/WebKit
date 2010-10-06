@@ -446,7 +446,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         return StyleDifferenceLayout;
 
     // Check block flow direction.
-    if (inherited_flags._blockFlow != other->inherited_flags._blockFlow)
+    if (inherited_flags.m_writingMode != other->inherited_flags.m_writingMode)
         return StyleDifferenceLayout;
 
     // Overflow returns a layout hint.
@@ -1079,56 +1079,56 @@ const Color RenderStyle::visitedDependentColor(int colorProperty) const
 
 Length RenderStyle::logicalWidth() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return width();
     return height();
 }
 
 Length RenderStyle::logicalHeight() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return height();
     return width();
 }
 
 Length RenderStyle::logicalMinWidth() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return minWidth();
     return minHeight();
 }
 
 Length RenderStyle::logicalMaxWidth() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return maxWidth();
     return maxHeight();
 }
 
 Length RenderStyle::logicalMinHeight() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return minHeight();
     return minWidth();
 }
 
 Length RenderStyle::logicalMaxHeight() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return maxHeight();
     return maxWidth();
 }
 
 unsigned short RenderStyle::borderBeforeWidth() const
 {
-    switch (blockFlow()) {
-    case TopToBottomBlockFlow:
+    switch (writingMode()) {
+    case TopToBottomWritingMode:
         return borderTopWidth();
-    case BottomToTopBlockFlow:
+    case BottomToTopWritingMode:
         return borderBottomWidth();
-    case LeftToRightBlockFlow:
+    case LeftToRightWritingMode:
         return borderLeftWidth();
-    case RightToLeftBlockFlow:
+    case RightToLeftWritingMode:
         return borderRightWidth();
     }
     ASSERT_NOT_REACHED();
@@ -1137,14 +1137,14 @@ unsigned short RenderStyle::borderBeforeWidth() const
 
 unsigned short RenderStyle::borderAfterWidth() const
 {
-    switch (blockFlow()) {
-    case TopToBottomBlockFlow:
+    switch (writingMode()) {
+    case TopToBottomWritingMode:
         return borderBottomWidth();
-    case BottomToTopBlockFlow:
+    case BottomToTopWritingMode:
         return borderTopWidth();
-    case LeftToRightBlockFlow:
+    case LeftToRightWritingMode:
         return borderRightWidth();
-    case RightToLeftBlockFlow:
+    case RightToLeftWritingMode:
         return borderLeftWidth();
     }
     ASSERT_NOT_REACHED();
@@ -1153,28 +1153,28 @@ unsigned short RenderStyle::borderAfterWidth() const
 
 unsigned short RenderStyle::borderStartWidth() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? borderLeftWidth() : borderRightWidth();
     return isLeftToRightDirection() ? borderTopWidth() : borderBottomWidth();
 }
 
 unsigned short RenderStyle::borderEndWidth() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? borderRightWidth() : borderLeftWidth();
     return isLeftToRightDirection() ? borderBottomWidth() : borderTopWidth();
 }
     
 Length RenderStyle::marginBefore() const
 {
-    switch (blockFlow()) {
-    case TopToBottomBlockFlow:
+    switch (writingMode()) {
+    case TopToBottomWritingMode:
         return marginTop();
-    case BottomToTopBlockFlow:
+    case BottomToTopWritingMode:
         return marginBottom();
-    case LeftToRightBlockFlow:
+    case LeftToRightWritingMode:
         return marginLeft();
-    case RightToLeftBlockFlow:
+    case RightToLeftWritingMode:
         return marginRight();
     }
     ASSERT_NOT_REACHED();
@@ -1183,14 +1183,14 @@ Length RenderStyle::marginBefore() const
 
 Length RenderStyle::marginAfter() const
 {
-    switch (blockFlow()) {
-    case TopToBottomBlockFlow:
+    switch (writingMode()) {
+    case TopToBottomWritingMode:
         return marginBottom();
-    case BottomToTopBlockFlow:
+    case BottomToTopWritingMode:
         return marginTop();
-    case LeftToRightBlockFlow:
+    case LeftToRightWritingMode:
         return marginRight();
-    case RightToLeftBlockFlow:
+    case RightToLeftWritingMode:
         return marginLeft();
     }
     ASSERT_NOT_REACHED();
@@ -1199,14 +1199,14 @@ Length RenderStyle::marginAfter() const
 
 Length RenderStyle::marginBeforeUsing(const RenderStyle* otherStyle) const
 {
-    switch (otherStyle->blockFlow()) {
-    case TopToBottomBlockFlow:
+    switch (otherStyle->writingMode()) {
+    case TopToBottomWritingMode:
         return marginTop();
-    case BottomToTopBlockFlow:
+    case BottomToTopWritingMode:
         return marginBottom();
-    case LeftToRightBlockFlow:
+    case LeftToRightWritingMode:
         return marginLeft();
-    case RightToLeftBlockFlow:
+    case RightToLeftWritingMode:
         return marginRight();
     }
     ASSERT_NOT_REACHED();
@@ -1215,14 +1215,14 @@ Length RenderStyle::marginBeforeUsing(const RenderStyle* otherStyle) const
 
 Length RenderStyle::marginAfterUsing(const RenderStyle* otherStyle) const
 {
-    switch (otherStyle->blockFlow()) {
-    case TopToBottomBlockFlow:
+    switch (otherStyle->writingMode()) {
+    case TopToBottomWritingMode:
         return marginBottom();
-    case BottomToTopBlockFlow:
+    case BottomToTopWritingMode:
         return marginTop();
-    case LeftToRightBlockFlow:
+    case LeftToRightWritingMode:
         return marginRight();
-    case RightToLeftBlockFlow:
+    case RightToLeftWritingMode:
         return marginLeft();
     }
     ASSERT_NOT_REACHED();
@@ -1231,42 +1231,42 @@ Length RenderStyle::marginAfterUsing(const RenderStyle* otherStyle) const
 
 Length RenderStyle::marginStart() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? marginLeft() : marginRight();
     return isLeftToRightDirection() ? marginTop() : marginBottom();
 }
 
 Length RenderStyle::marginEnd() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? marginRight() : marginLeft();
     return isLeftToRightDirection() ? marginBottom() : marginTop();
 }
     
 Length RenderStyle::marginStartUsing(const RenderStyle* otherStyle) const
 {
-    if (otherStyle->isVerticalBlockFlow())
+    if (otherStyle->isHorizontalWritingMode())
         return otherStyle->isLeftToRightDirection() ? marginLeft() : marginRight();
     return otherStyle->isLeftToRightDirection() ? marginTop() : marginBottom();
 }
 
 Length RenderStyle::marginEndUsing(const RenderStyle* otherStyle) const
 {
-    if (otherStyle->isVerticalBlockFlow())
+    if (otherStyle->isHorizontalWritingMode())
         return otherStyle->isLeftToRightDirection() ? marginRight() : marginLeft();
     return otherStyle->isLeftToRightDirection() ? marginBottom() : marginTop();
 }
 
 Length RenderStyle::paddingBefore() const
 {
-    switch (blockFlow()) {
-    case TopToBottomBlockFlow:
+    switch (writingMode()) {
+    case TopToBottomWritingMode:
         return paddingTop();
-    case BottomToTopBlockFlow:
+    case BottomToTopWritingMode:
         return paddingBottom();
-    case LeftToRightBlockFlow:
+    case LeftToRightWritingMode:
         return paddingLeft();
-    case RightToLeftBlockFlow:
+    case RightToLeftWritingMode:
         return paddingRight();
     }
     ASSERT_NOT_REACHED();
@@ -1275,14 +1275,14 @@ Length RenderStyle::paddingBefore() const
 
 Length RenderStyle::paddingAfter() const
 {
-    switch (blockFlow()) {
-    case TopToBottomBlockFlow:
+    switch (writingMode()) {
+    case TopToBottomWritingMode:
         return paddingBottom();
-    case BottomToTopBlockFlow:
+    case BottomToTopWritingMode:
         return paddingTop();
-    case LeftToRightBlockFlow:
+    case LeftToRightWritingMode:
         return paddingRight();
-    case RightToLeftBlockFlow:
+    case RightToLeftWritingMode:
         return paddingLeft();
     }
     ASSERT_NOT_REACHED();
@@ -1291,14 +1291,14 @@ Length RenderStyle::paddingAfter() const
 
 Length RenderStyle::paddingStart() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? paddingLeft() : paddingRight();
     return isLeftToRightDirection() ? paddingTop() : paddingBottom();
 }
 
 Length RenderStyle::paddingEnd() const
 {
-    if (isVerticalBlockFlow())
+    if (isHorizontalWritingMode())
         return isLeftToRightDirection() ? paddingRight() : paddingLeft();
     return isLeftToRightDirection() ? paddingBottom() : paddingTop();
 }

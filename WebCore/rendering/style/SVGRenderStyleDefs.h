@@ -64,7 +64,7 @@ namespace WebCore {
         SR_AUTO, SR_OPTIMIZESPEED, SR_CRISPEDGES, SR_GEOMETRICPRECISION
     };
 
-    enum EWritingMode {
+    enum SVGWritingMode {
         WM_LRTB, WM_LR, WM_RLTB, WM_RL, WM_TBRL, WM_TB
     };
 

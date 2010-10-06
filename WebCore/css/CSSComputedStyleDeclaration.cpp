@@ -159,7 +159,6 @@ static const int computedProperties[] = {
     CSSPropertyWebkitBackgroundComposite,
     CSSPropertyWebkitBackgroundOrigin,
     CSSPropertyWebkitBackgroundSize,
-    CSSPropertyWebkitBlockFlow,
     CSSPropertyWebkitBorderFit,
     CSSPropertyWebkitBorderHorizontalSpacing,
     CSSPropertyWebkitBorderImage,
@@ -226,7 +225,8 @@ static const int computedProperties[] = {
     CSSPropertyWebkitTransitionTimingFunction,
     CSSPropertyWebkitUserDrag,
     CSSPropertyWebkitUserModify,
-    CSSPropertyWebkitUserSelect
+    CSSPropertyWebkitUserSelect,
+    CSSPropertyWebkitWritingMode
 
 #if ENABLE(SVG)
     ,
@@ -734,7 +734,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
     if (!style)
         return 0;
 
-    propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->blockFlow());
+    propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
 
     switch (static_cast<CSSPropertyID>(propertyID)) {
         case CSSPropertyInvalid:
@@ -1354,8 +1354,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->appearance());
         case CSSPropertyWebkitBackfaceVisibility:
             return CSSPrimitiveValue::createIdentifier((style->backfaceVisibility() == BackfaceVisibilityHidden) ? CSSValueHidden : CSSValueVisible);
-        case CSSPropertyWebkitBlockFlow:
-            return CSSPrimitiveValue::create(style->blockFlow());
         case CSSPropertyWebkitBorderImage:
             return valueForNinePieceImage(style->borderImage());
         case CSSPropertyWebkitMaskBoxImage:
@@ -1463,7 +1461,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->pointerEvents());
         case CSSPropertyWebkitColorCorrection:
             return CSSPrimitiveValue::create(style->colorSpace());
-
+        case CSSPropertyWebkitWritingMode:
+            return CSSPrimitiveValue::create(style->writingMode());
+        
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:
         case CSSPropertyBorder:
@@ -1479,7 +1479,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyListStyle:
         case CSSPropertyMargin:
         case CSSPropertyPadding:
-        case CSSPropertyWebkitWritingMode:
             break;
 
         /* Unimplemented CSS 3 properties (including CSS3 shorthand properties) */

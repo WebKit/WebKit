@@ -178,7 +178,7 @@ protected:
                    (_force_backgrounds_to_white == other._force_backgrounds_to_white) &&
                    (_pointerEvents == other._pointerEvents) &&
                    (_insideLink == other._insideLink) &&
-                   (_blockFlow == other._blockFlow);
+                   (m_writingMode == other.m_writingMode);
         }
 
         bool operator!=(const InheritedFlags& other) const { return !(*this == other); }
@@ -206,7 +206,7 @@ protected:
         // 43 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
-        unsigned _blockFlow : 2; // EBlockFlowDirection
+        unsigned m_writingMode : 2; // WritingMode
         // 45 bits
     } inherited_flags;
 
@@ -283,7 +283,7 @@ protected:
         inherited_flags._force_backgrounds_to_white = false;
         inherited_flags._pointerEvents = initialPointerEvents();
         inherited_flags._insideLink = NotInsideLink;
-        inherited_flags._blockFlow = initialBlockFlow();
+        inherited_flags.m_writingMode = initialWritingMode();
 
         noninherited_flags._effectiveDisplay = noninherited_flags._originalDisplay = initialDisplay();
         noninherited_flags._overflowX = initialOverflowX();
@@ -743,8 +743,8 @@ public:
     bool textSizeAdjust() const { return rareInheritedData->textSizeAdjust; }
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
 
-    EBlockFlowDirection blockFlow() const { return static_cast<EBlockFlowDirection>(inherited_flags._blockFlow); }
-    bool isVerticalBlockFlow() const { return blockFlow() == TopToBottomBlockFlow || blockFlow() == BottomToTopBlockFlow; }
+    WritingMode writingMode() const { return static_cast<WritingMode>(inherited_flags.m_writingMode); }
+    bool isHorizontalWritingMode() const { return writingMode() == TopToBottomWritingMode || writingMode() == BottomToTopWritingMode; }
 
     ESpeak speak() { return static_cast<ESpeak>(rareInheritedData->speak); }
         
@@ -1124,7 +1124,7 @@ public:
                originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;
     }
 
-    void setBlockFlow(EBlockFlowDirection v) { inherited_flags._blockFlow = v; }
+    void setWritingMode(WritingMode v) { inherited_flags.m_writingMode = v; }
 
     // To tell if this style matched attribute selectors. This makes it impossible to share.
     bool affectedByAttributeSelectors() const { return m_affectedByAttributeSelectors; }
@@ -1165,7 +1165,7 @@ public:
     static ECaptionSide initialCaptionSide() { return CAPTOP; }
     static EClear initialClear() { return CNONE; }
     static TextDirection initialDirection() { return LTR; }
-    static EBlockFlowDirection initialBlockFlow() { return TopToBottomBlockFlow; }
+    static WritingMode initialWritingMode() { return TopToBottomWritingMode; }
     static EDisplay initialDisplay() { return INLINE; }
     static EEmptyCell initialEmptyCells() { return SHOW; }
     static EFloat initialFloating() { return FNONE; }
