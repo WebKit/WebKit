@@ -1,3 +1,16 @@
+2010-10-06  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Minor naming cleanup in WebDragData, part 2
+        https://bugs.webkit.org/show_bug.cgi?id=46937
+
+        Chromium no longer uses the deprecated methods, so delete them.
+
+        * DEPS:
+        * public/WebDragData.h:
+        * src/WebDragData.cpp:
+
 2010-09-29  Alpha Lam  <hclam@chromium.org>
 
         Reviewed by James Robinson.

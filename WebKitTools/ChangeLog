@@ -1,3 +1,17 @@
+2010-10-06  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Minor naming cleanup in WebDragData, part 2
+        https://bugs.webkit.org/show_bug.cgi?id=46937
+
+        Update DRT to use the renamed methods.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::beginDragWithFiles):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (addDRTFakeFileToDataObject):
+
 2010-10-06  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/47270> Move WebArchive serialization code into its own file
