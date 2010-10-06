@@ -3186,3 +3186,6 @@ BUG58096 MAC : fast/table/simple_paint.html = IMAGE
 BUG57950 WIN LINUX : svg/batik/text/verticalText.svg = CRASH PASS
 
 BUG57957 LINUX DEBUG : fast/blockflow/block-level-images.html = IMAGE PASS
+
+// Need new baseline.
+BUG_TKENT : fast/forms/input-placeholder-focus-twice.html = FAIL

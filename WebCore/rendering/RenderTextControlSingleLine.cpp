@@ -683,11 +683,18 @@ void RenderTextControlSingleLine::updateFromElement()
     } else {
         if (!inputElement()->suggestedValue().isNull())
             setInnerTextValue(inputElement()->suggestedValue());
-        else if (!node()->isHTMLElement() || !static_cast<HTMLInputElement*>(node())->formControlValueMatchesRenderer())
-            // For HTMLInputElement, update the renderer value only if the
-            // formControlValueMatchesRenderer() flag is false. It protects an
-            // unacceptable renderer value from being overwritten with the DOM value.
-            setInnerTextValue(inputElement()->value());
+        else {
+            bool shouldUpdateValue = true;
+            if (node()->isHTMLElement()) {
+                // For HTMLInputElement, update the renderer value if the element
+                // supports placeholder or the formControlValueMatchesRenderer()
+                // flag is false. It protects an unacceptable renderer value from
+                // being overwritten with the DOM value.
+                shouldUpdateValue = static_cast<HTMLTextFormControlElement*>(node())->supportsPlaceholder() || !static_cast<HTMLInputElement*>(node())->formControlValueMatchesRenderer();
+            }
+            if (shouldUpdateValue)
+                setInnerTextValue(inputElement()->value());
+        }
     }
 
     if (m_searchPopupIsVisible)
