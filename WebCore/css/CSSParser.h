@@ -65,7 +65,7 @@ namespace WebCore {
         bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
         static bool parseColor(RGBA32& color, const String&, bool strict = false);
         bool parseColor(CSSMutableStyleDeclaration*, const String&);
-        bool parseDeclaration(CSSMutableStyleDeclaration*, const String&, CSSStyleSourceData* styleSourceData = 0);
+        bool parseDeclaration(CSSMutableStyleDeclaration*, const String&, RefPtr<CSSStyleSourceData>* styleSourceData = 0);
         bool parseMediaQuery(MediaList*, const String&);
 
         Document* document() const;
@@ -241,18 +241,20 @@ namespace WebCore {
         AtomicString m_defaultNamespace;
 
         // tokenizer methods and data
-        unsigned m_ruleBodyStartOffset;
-        unsigned m_ruleBodyEndOffset;
-        unsigned m_propertyStartOffset;
-        unsigned m_propertyEndOffset;
+        SourceRange m_selectorListRange;
+        SourceRange m_ruleBodyRange;
+        SourceRange m_propertyRange;
         StyleRuleRangeMap* m_ruleRangeMap;
-        RefPtr<CSSStyleSourceData> m_currentStyleData;
+        RefPtr<CSSRuleSourceData> m_currentRuleData;
+        void markSelectorListStart();
+        void markSelectorListEnd();
         void markRuleBodyStart();
         void markRuleBodyEnd();
         void markPropertyStart();
         void markPropertyEnd(bool isImportantFound, bool isPropertyParsed);
-        void resetRuleBodyMarks() { m_ruleBodyStartOffset = m_ruleBodyEndOffset = 0; }
-        void resetPropertyMarks() { m_propertyStartOffset = m_propertyEndOffset = UINT_MAX; }
+        void resetSelectorListMarks() { m_selectorListRange.start = m_selectorListRange.end = 0; }
+        void resetRuleBodyMarks() { m_ruleBodyRange.start = m_ruleBodyRange.end = 0; }
+        void resetPropertyMarks() { m_propertyRange.start = m_propertyRange.end = UINT_MAX; }
         int lex(void* yylval);
         int token() { return yyTok; }
         UChar* text(int* length);

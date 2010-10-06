@@ -1223,18 +1223,25 @@ void InspectorDOMAgent::getStyleSourceData(long styleId, RefPtr<InspectorObject>
     CSSStyleDeclaration* style = cssStore()->styleForId(styleId);
     if (!style)
         return;
-    RefPtr<CSSStyleSourceData> sourceData = CSSStyleSourceData::create();
-    bool success = cssStore()->getStyleSourceData(style, &sourceData);
+    RefPtr<CSSRuleSourceData> sourceData = CSSRuleSourceData::create();
+    bool success = cssStore()->getRuleSourceData(style, &sourceData);
     if (!success)
         return;
     RefPtr<InspectorObject> result = InspectorObject::create();
+
     RefPtr<InspectorObject> bodyRange = InspectorObject::create();
     result->setObject("bodyRange", bodyRange);
-    bodyRange->setNumber("start", sourceData->styleBodyRange.start);
-    bodyRange->setNumber("end", sourceData->styleBodyRange.end);
+    bodyRange->setNumber("start", sourceData->styleSourceData->styleBodyRange.start);
+    bodyRange->setNumber("end", sourceData->styleSourceData->styleBodyRange.end);
+
+    RefPtr<InspectorObject> selectorRange = InspectorObject::create();
+    result->setObject("selectorRange", selectorRange);
+    selectorRange->setNumber("start", sourceData->selectorListRange.start);
+    selectorRange->setNumber("end", sourceData->selectorListRange.end);
+
     RefPtr<InspectorArray> propertyRanges = InspectorArray::create();
     result->setArray("propertyData", propertyRanges);
-    Vector<CSSPropertySourceData>& propertyData = sourceData->propertyData;
+    Vector<CSSPropertySourceData>& propertyData = sourceData->styleSourceData->propertyData;
     for (Vector<CSSPropertySourceData>::iterator it = propertyData.begin(); it != propertyData.end(); ++it) {
         RefPtr<InspectorObject> propertyRange = InspectorObject::create();
         propertyRange->setString("name", it->name);

@@ -144,12 +144,11 @@ CSSParser::CSSParser(bool strictParsing)
     , m_hasFontFaceOnlyValues(false)
     , m_hadSyntacticallyValidCSSRule(false)
     , m_defaultNamespace(starAtom)
-    , m_ruleBodyStartOffset(0)
-    , m_ruleBodyEndOffset(0)
-    , m_propertyStartOffset(UINT_MAX)
-    , m_propertyEndOffset(UINT_MAX)
+    , m_selectorListRange(0, 0)
+    , m_ruleBodyRange(0, 0)
+    , m_propertyRange(UINT_MAX, UINT_MAX)
     , m_ruleRangeMap(0)
-    , m_currentStyleData(0)
+    , m_currentRuleData(0)
     , m_data(0)
     , yy_start(1)
     , m_lineNumber(0)
@@ -229,14 +228,16 @@ void CSSParser::parseSheet(CSSStyleSheet* sheet, const String& string, int start
     m_styleSheet = sheet;
     m_defaultNamespace = starAtom; // Reset the default namespace.
     m_ruleRangeMap = ruleRangeMap;
-    if (ruleRangeMap)
-        m_currentStyleData = CSSStyleSourceData::create();
+    if (ruleRangeMap) {
+        m_currentRuleData = CSSRuleSourceData::create();
+        m_currentRuleData->styleSourceData = CSSStyleSourceData::create();
+    }
 
     m_lineNumber = startLineNumber;
     setupParser("", string, "");
     cssyyparse(this);
     m_ruleRangeMap = 0;
-    m_currentStyleData = 0;
+    m_currentRuleData = 0;
     m_rule = 0;
 }
 
@@ -333,14 +334,17 @@ void CSSParser::parseSelector(const String& string, Document* doc, CSSSelectorLi
     m_selectorListForParseSelector = 0;
 }
 
-bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const String& string, CSSStyleSourceData* styleSourceData)
+bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const String& string, RefPtr<CSSStyleSourceData>* styleSourceData)
 {
     // Length of the "@-webkit-decls{" prefix.
     static const unsigned prefixLength = 15;
 
     ASSERT(!declaration->stylesheet() || declaration->stylesheet()->isCSSStyleSheet());
     m_styleSheet = static_cast<CSSStyleSheet*>(declaration->stylesheet());
-    m_currentStyleData = styleSourceData;
+    if (styleSourceData) {
+        m_currentRuleData = CSSRuleSourceData::create();
+        m_currentRuleData->styleSourceData = CSSStyleSourceData::create();
+    }
 
     setupParser("@-webkit-decls{", string, "} ");
     cssyyparse(this);
@@ -355,17 +359,19 @@ bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const 
         clearProperties();
     }
 
-    if (m_currentStyleData) {
-        m_currentStyleData->styleBodyRange.start = 0;
-        m_currentStyleData->styleBodyRange.end = string.length();
-        for (Vector<CSSPropertySourceData>::iterator it = m_currentStyleData->propertyData.begin(); it != m_currentStyleData->propertyData.end(); ++it) {
+    if (m_currentRuleData) {
+        m_currentRuleData->styleSourceData->styleBodyRange.start = 0;
+        m_currentRuleData->styleSourceData->styleBodyRange.end = string.length();
+        for (Vector<CSSPropertySourceData>::iterator it = m_currentRuleData->styleSourceData->propertyData.begin(), endIt = m_currentRuleData->styleSourceData->propertyData.end(); it != endIt; ++it) {
             (*it).range.start -= prefixLength;
             (*it).range.end -= prefixLength;
         }
     }
 
-    if (!m_ruleRangeMap)
-        m_currentStyleData = 0;
+    if (styleSourceData) {
+        *styleSourceData = m_currentRuleData->styleSourceData.release();
+        m_currentRuleData = 0;
+    }
     return ok;
 }
 
@@ -5479,12 +5485,15 @@ CSSRule* CSSParser::createStyleRule(Vector<CSSSelector*>* selectors)
         result = rule.get();
         m_parsedStyleObjects.append(rule.release());
         if (m_ruleRangeMap) {
-            ASSERT(m_currentStyleData);
-            m_currentStyleData->styleBodyRange = SourceRange(m_ruleBodyStartOffset, m_ruleBodyEndOffset);
-            m_ruleRangeMap->set(result, m_currentStyleData.release());
-            m_currentStyleData = CSSStyleSourceData::create();
+            ASSERT(m_currentRuleData);
+            m_currentRuleData->styleSourceData->styleBodyRange = m_ruleBodyRange;
+            m_currentRuleData->selectorListRange = m_selectorListRange;
+            m_ruleRangeMap->set(result, m_currentRuleData.release());
+            m_currentRuleData = CSSRuleSourceData::create();
+            m_currentRuleData->styleSourceData = CSSStyleSourceData::create();
         }
     }
+    resetSelectorListMarks();
     resetRuleBodyMarks();
     clearProperties();
     return result;
@@ -5733,26 +5742,44 @@ void CSSParser::updateLastSelectorLineAndPosition()
     markRuleBodyStart();
 }
 
+void CSSParser::markSelectorListStart()
+{
+    m_selectorListRange.start = yytext - m_data;
+}
+
+void CSSParser::markSelectorListEnd()
+{
+    if (!m_currentRuleData)
+        return;
+    UChar* listEnd = yytext;
+    while (listEnd > m_data + 1) {
+        if (isHTMLSpace(*(listEnd - 1)))
+            --listEnd;
+        else
+            break;
+    }
+    m_selectorListRange.end = listEnd - m_data;
+}
+
 void CSSParser::markRuleBodyStart()
 {
     unsigned offset = yytext - m_data;
     if (*yytext == '{')
         ++offset; // Skip the rule body opening brace.
-    if (offset > m_ruleBodyStartOffset)
-        m_ruleBodyStartOffset = offset;
+    if (offset > m_ruleBodyRange.start)
+        m_ruleBodyRange.start = offset;
 }
 
 void CSSParser::markRuleBodyEnd()
 {
     unsigned offset = yytext - m_data;
-    if (offset > m_ruleBodyEndOffset)
-        m_ruleBodyEndOffset = offset;
+    if (offset > m_ruleBodyRange.end)
+        m_ruleBodyRange.end = offset;
 }
 
 void CSSParser::markPropertyStart()
 {
-    unsigned offset = yytext - m_data;
-    m_propertyStartOffset = offset;
+    m_propertyRange.start = yytext - m_data;
 }
 
 void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
@@ -5760,11 +5787,11 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
     unsigned offset = yytext - m_data;
     if (*yytext == ';') // Include semicolon into the property text.
         ++offset;
-    m_propertyEndOffset = offset;
-    if (m_propertyStartOffset != UINT_MAX && m_currentStyleData) {
+    m_propertyRange.end = offset;
+    if (m_propertyRange.start != UINT_MAX && m_currentRuleData) {
         // This stuff is only executed when the style data retrieval is requested by client.
-        const unsigned start = m_propertyStartOffset;
-        const unsigned end = m_propertyEndOffset;
+        const unsigned start = m_propertyRange.start;
+        const unsigned end = m_propertyRange.end;
         ASSERT(start < end);
         String propertyString = String(m_data + start, end - start).stripWhiteSpace();
         if (propertyString.endsWith(";", true))
@@ -5776,8 +5803,8 @@ void CSSParser::markPropertyEnd(bool isImportantFound, bool isPropertyParsed)
         String name = propertyString.left(colonIndex).stripWhiteSpace();
         String value = propertyString.substring(colonIndex + 1, propertyString.length()).stripWhiteSpace();
         // The property range is relative to the declaration start offset.
-        m_currentStyleData->propertyData.append(
-            CSSPropertySourceData(name, value, isImportantFound, isPropertyParsed, SourceRange(m_propertyStartOffset - m_ruleBodyStartOffset, m_propertyEndOffset - m_ruleBodyStartOffset)));
+        m_currentRuleData->styleSourceData->propertyData.append(
+            CSSPropertySourceData(name, value, isImportantFound, isPropertyParsed, SourceRange(start - m_ruleBodyRange.start, end - m_ruleBodyRange.start)));
     }
     resetPropertyMarks();
 }

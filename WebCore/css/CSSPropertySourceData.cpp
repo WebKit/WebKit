@@ -54,13 +54,6 @@ SourceRange::SourceRange(unsigned start, unsigned end)
 {
 }
 
-SourceRange& SourceRange::operator=(const SourceRange& other)
-{
-    this->start = other.start;
-    this->end = other.end;
-    return *this;
-}
-
 CSSPropertySourceData::CSSPropertySourceData(const String& name, const String& value, bool important, bool parsedOk, const SourceRange& range)
     : name(name)
     , value(value)
@@ -86,16 +79,6 @@ CSSPropertySourceData::CSSPropertySourceData()
     , parsedOk(false)
     , range(SourceRange(0, 0))
 {
-}
-
-CSSPropertySourceData& CSSPropertySourceData::operator=(const CSSPropertySourceData& other)
-{
-    name = other.name;
-    value = other.value;
-    important = other.important;
-    parsedOk = other.parsedOk;
-    range = other.range;
-    return *this;
 }
 
 String CSSPropertySourceData::toString() const

@@ -408,7 +408,9 @@ rule_list:
  ;
 
 valid_rule:
-    ruleset
+    before_ruleset ruleset {
+        $$ = $2;
+    }
   | media
   | page
   | font_face
@@ -910,8 +912,22 @@ maybe_space_before_declaration:
     }
   ;
 
+before_ruleset:
+    /* empty */ {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markSelectorListStart();
+    }
+  ;
+
+before_rule_opening_brace:
+    /* empty */ {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->markSelectorListEnd();
+    }
+  ;
+
 ruleset:
-    selector_list '{' maybe_space_before_declaration declaration_list closing_brace {
+    selector_list before_rule_opening_brace '{' maybe_space_before_declaration declaration_list closing_brace {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createStyleRule($1);
     }

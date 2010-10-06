@@ -1,3 +1,40 @@
+2010-10-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        CSSParser: Enable rule selector source range extraction.
+        API modification followed by clients.
+        https://bugs.webkit.org/show_bug.cgi?id=46367
+
+        Some code removal suggested by Darin Adler.
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::markSelectorListStart):
+        (WebCore::CSSParser::markSelectorListEnd):
+        (WebCore::CSSParser::markRuleBodyStart):
+        (WebCore::CSSParser::markRuleBodyEnd):
+        (WebCore::CSSParser::markPropertyStart):
+        (WebCore::CSSParser::markPropertyEnd):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::resetSelectorListMarks):
+        (WebCore::CSSParser::resetRuleBodyMarks):
+        (WebCore::CSSParser::resetPropertyMarks):
+        * css/CSSPropertySourceData.cpp:
+        * css/CSSPropertySourceData.h:
+        (WebCore::CSSRuleSourceData::create):
+        * inspector/InspectorCSSStore.cpp:
+        (WebCore::InspectorCSSStore::getRuleSourceData):
+        (WebCore::InspectorCSSStore::extractRanges):
+        (WebCore::InspectorCSSStore::getStyleAttributeRanges):
+        * inspector/InspectorCSSStore.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getStyleSourceData):
+
 2010-10-06  Dirk Schulze  <krit@webkit.org>
 
         Added reviewer to commit r69187.
