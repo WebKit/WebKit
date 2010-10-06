@@ -174,12 +174,17 @@ HTMLImageElement* HTMLAreaElement::imageElement() const
 
 bool HTMLAreaElement::isKeyboardFocusable(KeyboardEvent*) const
 {
-    return supportsFocus();
+    return isFocusable();
+}
+    
+bool HTMLAreaElement::isMouseFocusable() const
+{
+    return isFocusable();
 }
 
 bool HTMLAreaElement::isFocusable() const
 {
-    return supportsFocus();
+    return supportsFocus() && Element::tabIndex() >= 0;
 }
     
 void HTMLAreaElement::dispatchBlurEvent()
@@ -192,6 +197,9 @@ void HTMLAreaElement::dispatchBlurEvent()
     
 void HTMLAreaElement::updateFocusAppearance(bool restorePreviousSelection)
 {
+    if (!isFocusable())
+        return;
+    
     Node* parent = parentNode();
     if (!parent || !parent->hasTagName(mapTag))
         return;

@@ -1,3 +1,19 @@
+2010-10-06  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        REGRESSION (r53857): AREA tag with tabindex="-1" displays focus ring after multiple mouse clicks.
+        https://bugs.webkit.org/show_bug.cgi?id=45832
+
+        Test: fast/events/mouse-focus-imagemap.html
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::isKeyboardFocusable):
+        (WebCore::HTMLAreaElement::isMouseFocusable):
+        (WebCore::HTMLAreaElement::isFocusable):
+        (WebCore::HTMLAreaElement::updateFocusAppearance):
+        * html/HTMLAreaElement.h:
+
 2010-10-06  David Hyatt  <hyatt@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -52,7 +52,7 @@ function test()
     var homeBase = window.frames[1].document.getElementsByClassName('homebase');
     homeBase[0].focus();
 
-    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 337 / 337 ";
+    var resultSummary = focusCount+" focus / "+blurCount+" blur events dispatched, and should be 331 / 331 ";
     resultSummary += (focusCount==blurCount) ? "<span style='color:green'>PASSED</span><br>" : "<span style='color:red'>FAILED</span><br>";
     resultSummary += "Total of "+failedTestCount+" focus test(s) failed.";
     if (failedTestCount)
@@ -108,6 +108,10 @@ function testProgrammaticFocus(elem)
 
     // Hidden elements should not be focusable. https://bugs.webkit.org/show_bug.cgi?id=27099
     if (document.defaultView.getComputedStyle(elem).display == "none" && !noDisplayTagNamesWithFocus.find(elem.tagName))
+        elemThatShouldFocus = null;
+
+    // AREA elements with tabindex = -1 should not be focusable.
+    if (elem.tabIndex == -1 && elem.tagName == "AREA")
         elemThatShouldFocus = null;
 
     if (tagNamesTransferFocused.find(elem.tagName)) {
