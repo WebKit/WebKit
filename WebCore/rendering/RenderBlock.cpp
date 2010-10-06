@@ -3606,12 +3606,12 @@ void RenderBlock::markLinesDirtyInBlockRange(int logicalTop, int logicalBottom, 
 
     RootInlineBox* lowestDirtyLine = lastRootBox();
     RootInlineBox* afterLowest = lowestDirtyLine;
-    while (lowestDirtyLine && lowestDirtyLine->blockHeight() >= logicalBottom) {
+    while (lowestDirtyLine && lowestDirtyLine->blockLogicalHeight() >= logicalBottom) {
         afterLowest = lowestDirtyLine;
         lowestDirtyLine = lowestDirtyLine->prevRootBox();
     }
 
-    while (afterLowest && afterLowest != highest && afterLowest->blockHeight() >= logicalTop) {
+    while (afterLowest && afterLowest != highest && afterLowest->blockLogicalHeight() >= logicalTop) {
         afterLowest->markDirty();
         afterLowest = afterLowest->prevRootBox();
     }

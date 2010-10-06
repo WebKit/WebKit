@@ -464,7 +464,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
 void RenderBlock::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     setLogicalHeight(lineBox->alignBoxesInBlockDirection(height(), textBoxDataMap));
-    lineBox->setBlockHeight(height());
+    lineBox->setBlockLogicalHeight(height());
 
     // Now make sure we place replaced render objects correctly.
     for (BidiRun* r = firstRun; r; r = r->next()) {
@@ -790,7 +790,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                                 continue;
                             }
 
-                            setLogicalHeight(lineBox->blockHeight());
+                            setLogicalHeight(lineBox->blockLogicalHeight());
                         }
                     }
                 }
@@ -846,7 +846,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                         }
                     }
                 }
-                setLogicalHeight(lastRootBox()->blockHeight());
+                setLogicalHeight(lastRootBox()->blockLogicalHeight());
             } else {
                 // Delete all the remaining lines.
                 RootInlineBox* line = endLine;
@@ -873,7 +873,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintTop, i
                 GlyphOverflowAndFallbackFontsMap textBoxDataMap;
                 trailingFloatsLineBox->alignBoxesInBlockDirection(height(), textBoxDataMap);
                 trailingFloatsLineBox->setBlockDirectionOverflowPositions(height(), bottomLayoutOverflow, height(), bottomVisualOverflow, 0);
-                trailingFloatsLineBox->setBlockHeight(height());
+                trailingFloatsLineBox->setBlockLogicalHeight(height());
             }
             if (lastFloat) {
                 for (FloatingObject* f = m_floatingObjects->last(); f != lastFloat; f = m_floatingObjects->prev()) {
@@ -959,7 +959,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
                     if (floats[floatIndex].rect.size() != newSize) {
                         int floatTop = floats[floatIndex].rect.y();
                         curr->markDirty();
-                        markLinesDirtyInBlockRange(curr->blockHeight(), floatTop + max(floats[floatIndex].rect.height(), newSize.height()), curr);
+                        markLinesDirtyInBlockRange(curr->blockLogicalHeight(), floatTop + max(floats[floatIndex].rect.height(), newSize.height()), curr);
                         floats[floatIndex].rect.setSize(newSize);
                         dirtiedByFloat = true;
                     }
@@ -1034,7 +1034,7 @@ RootInlineBox* RenderBlock::determineStartPosition(bool& firstLine, bool& fullLa
     RenderObject* startObj;
     int pos = 0;
     if (last) {
-        setLogicalHeight(last->blockHeight());
+        setLogicalHeight(last->blockLogicalHeight());
         startObj = last->lineBreakObj();
         pos = last->lineBreakPos();
         resolver.setStatus(last->lineBreakBidiStatus());
@@ -1079,7 +1079,7 @@ RootInlineBox* RenderBlock::determineEndPosition(RootInlineBox* startLine, Inlin
     RootInlineBox* prev = last->prevRootBox();
     cleanLineStart = InlineIterator(this, prev->lineBreakObj(), prev->lineBreakPos());
     cleanLineBidiStatus = prev->lineBreakBidiStatus();
-    yPos = prev->blockHeight();
+    yPos = prev->blockLogicalHeight();
 
     for (RootInlineBox* line = last; line; line = line->nextRootBox())
         line->extractLine(); // Disconnect all line boxes from their render objects while preserving
@@ -1105,7 +1105,7 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
         while (RootInlineBox* nextLine = lastLine->nextRootBox())
             lastLine = nextLine;
 
-        int bottom = lastLine->blockHeight() + abs(delta);
+        int bottom = lastLine->blockLogicalHeight() + abs(delta);
 
         for (FloatingObject* f = m_floatingObjects->first(); f; f = m_floatingObjects->next()) {
             if (f->bottom() >= top && f->bottom() < bottom)
@@ -1128,7 +1128,7 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
 
             // Set our yPos to be the block height of endLine.
             if (result)
-                endYPos = line->blockHeight();
+                endYPos = line->blockLogicalHeight();
 
             int delta = height() - endYPos;
             if (delta && m_floatingObjects) {
@@ -1139,7 +1139,7 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
                 while (RootInlineBox* nextLine = lastLine->nextRootBox())
                     lastLine = nextLine;
 
-                int bottom = lastLine->blockHeight() + abs(delta);
+                int bottom = lastLine->blockLogicalHeight() + abs(delta);
 
                 for (FloatingObject* f = m_floatingObjects->first(); f; f = m_floatingObjects->next()) {
                     if (f->bottom() >= top && f->bottom() < bottom)

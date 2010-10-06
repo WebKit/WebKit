@@ -189,7 +189,7 @@ void SVGRootInlineBox::layoutRootBox()
     setY(0);
     setLogicalWidth(widthBlock);
     setLogicalHeight(heightBlock);
-    setBlockHeight(heightBlock);
+    setBlockLogicalHeight(heightBlock);
     setLineTopBottomPositions(0, heightBlock);
 }
 

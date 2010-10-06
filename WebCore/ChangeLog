@@ -1,3 +1,28 @@
+2010-10-06  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47298
+        
+        Rename blockHeight to blockLogicalHeight.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::markLinesDirtyInBlockRange):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::computeBlockDirectionPositionsForLine):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::adjustPosition):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::blockLogicalHeight):
+        (WebCore::RootInlineBox::setBlockLogicalHeight):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+
 2010-10-05  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

@@ -69,8 +69,8 @@ public:
     unsigned lineBreakPos() const { return m_lineBreakPos; }
     void setLineBreakPos(unsigned p) { m_lineBreakPos = p; }
 
-    int blockHeight() const { return m_blockHeight; }
-    void setBlockHeight(int h) { m_blockHeight = h; }
+    int blockLogicalHeight() const { return m_blockLogicalHeight; }
+    void setBlockLogicalHeight(int h) { m_blockLogicalHeight = h; }
 
     bool endsWithBreak() const { return m_endsWithBreak; }
     void setEndsWithBreak(bool b) { m_endsWithBreak = b; }
@@ -143,8 +143,8 @@ private:
     // good for as long as the line has not been marked dirty.
     OwnPtr<Vector<RenderBox*> > m_floats;
 
-    // The height of the block at the end of this line.  This is where the next line starts.
-    int m_blockHeight;
+    // The logical height of the block at the end of this line.  This is where the next line starts.
+    int m_blockLogicalHeight;
 
     WTF::Unicode::Direction m_lineBreakBidiStatusEor : 5;
     WTF::Unicode::Direction m_lineBreakBidiStatusLastStrong : 5;
