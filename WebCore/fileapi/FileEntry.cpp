@@ -48,12 +48,12 @@ FileEntry::FileEntry(DOMFileSystem* fileSystem, const String& fullPath)
 
 void FileEntry::createWriter(PassRefPtr<FileWriterCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    m_fileSystem->createWriter(this, successCallback, errorCallback);
+    filesystem()->createWriter(this, successCallback, errorCallback);
 }
 
 void FileEntry::file(PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback>)
 {
-    m_fileSystem->scheduleCallback(successCallback, File::create(m_fullPath));
+    filesystem()->scheduleCallback(successCallback, File::create(m_fullPath));
 }
 
 } // namespace

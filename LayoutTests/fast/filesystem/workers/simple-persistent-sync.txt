@@ -1,0 +1,12 @@
+This tests requesting PERSISTENT FileSystemSync in Worker.
+
+Starting worker: ../resources/simple-persistent-sync.js
+Worker started.
+Successfully obtained PERSISTENT FileSystem:http_localhost_8080:Persistent
+PASS: fileSystem.name.length > 0 is true
+PASS: fileSystem.root.fullPath is "/"
+DONE
+
+TEST COMPLETE
+
+

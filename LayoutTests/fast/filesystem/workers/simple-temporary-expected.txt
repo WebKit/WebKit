@@ -1,0 +1,11 @@
+This tests requesting TEMPORARY FileSystem in Worker.
+
+Starting worker: ../resources/simple-temporary.js
+Description: requestFileSystem TEMPORARY test.
+Successfully obtained TEMPORARY FileSystem:file__0:Temporary
+PASS: fileSystem.name.length > 0 is true
+PASS: fileSystem.root.fullPath is "/"
+DONE
+
+TEST COMPLETE
+

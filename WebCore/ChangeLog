@@ -1,3 +1,55 @@
+2010-10-05  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add idl and mock classes for FileSystemSync for FileSystem API
+        https://bugs.webkit.org/show_bug.cgi?id=46405
+
+        Added bunch of *Sync classes, plus refactored some classes:
+        Added DOMFileSystemBase as a common base class for DOMFileSystem and
+        DOMFileSystemSync.
+        Added EntryBase as a common base class for Entry and EntrySync.
+        Added DirectoryReaderBase as a common base class for DirectoryReader and
+        DirectoryReaderSync.
+
+        Test: fast/filesystem/workers/
+
+        * CMakeLists.txt: Added new files.
+        * DerivedSources.cpp: Added new files.
+        * DerivedSources.make: Added new files.
+        * GNUmakefile.am: Added new files.
+        * WebCore.gypi: Added new files.
+        * WebCore.pri: Added new files.
+        * WebCore.pro: Added new files.
+        * WebCore.vcproj/WebCore.vcproj: Added new files. Also removed the duplicated fileapi\FileEntry.cpp entry.
+        * WebCore.xcodeproj/project.pbxproj: Added new files.
+        * bindings/js/JSDirectoryEntrySyncCustom.cpp: Added.
+        * bindings/js/JSEntrySyncCustom.cpp: Added.
+        * bindings/v8/custom/V8DirectoryEntrySyncCustom.cpp: Added.
+        * bindings/v8/custom/V8EntrySyncCustom.cpp: Added.
+        * fileapi/DOMFileSystemBase.cpp: Added.
+        * fileapi/DOMFileSystemBase.h: Added.
+        * fileapi/DOMFileSystemSync.cpp: Added.
+        * fileapi/DOMFileSystemSync.h: Added.
+        * fileapi/DOMFileSystemSync.idl: Added.
+        * fileapi/DirectoryEntrySync.cpp: Added.
+        * fileapi/DirectoryEntrySync.h: Added.
+        * fileapi/DirectoryEntrySync.idl: Added.
+        * fileapi/DirectoryReaderBase.h: Added.
+        * fileapi/DirectoryReaderSync.cpp: Added.
+        * fileapi/DirectoryReaderSync.h: Added.
+        * fileapi/DirectoryReaderSync.idl: Added.
+        * fileapi/EntryArraySync.cpp: Added.
+        * fileapi/EntryArraySync.h: Added.
+        * fileapi/EntryArraySync.idl: Added.
+        * fileapi/EntryBase.h: Added.
+        * fileapi/EntrySync.cpp: Added.
+        * fileapi/EntrySync.h: Added.
+        * fileapi/EntrySync.idl: Added.
+        * fileapi/FileEntrySync.cpp: Added.
+        * fileapi/FileEntrySync.h: Added.
+        * fileapi/FileEntrySync.idl: Added.
+
 2010-10-05  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

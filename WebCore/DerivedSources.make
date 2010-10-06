@@ -114,6 +114,7 @@ DOM_CLASSES = \
     DOMApplicationCache \
     DOMCoreException \
     DOMFileSystem \
+    DOMFileSystemSync \
     DOMFormData \
     DOMImplementation \
     DOMMimeType \
@@ -132,7 +133,9 @@ DOM_CLASSES = \
     DeviceMotionEvent \
     DeviceOrientationEvent \
     DirectoryEntry \
+    DirectoryEntrySync \
     DirectoryReader \
+    DirectoryReaderSync \
     Document \
     DocumentFragment \
     DocumentType \
@@ -142,7 +145,9 @@ DOM_CLASSES = \
     EntityReference \
     EntriesCallback \
     Entry \
+    EntrySync \
     EntryArray \
+    EntryArraySync \
     EntryCallback \
     ErrorCallback \
     ErrorEvent \
@@ -154,6 +159,7 @@ DOM_CLASSES = \
     File \
     FileCallback \
     FileEntry \
+    FileEntrySync \
     FileException \
     FileError \
     FileList \

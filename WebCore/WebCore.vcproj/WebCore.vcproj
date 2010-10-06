@@ -3095,6 +3095,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDirectoryEntrySync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDirectoryEntrySync.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDirectoryReader.cpp"
 				>
 				<FileConfiguration
@@ -3148,6 +3156,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDirectoryReader.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDirectoryReaderSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDirectoryReaderSync.h"
 				>
 			</File>
 			<File
@@ -3484,6 +3500,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMFileSystemSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMFileSystemSync.h"
 				>
 			</File>
 			<File
@@ -4499,6 +4523,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEntryArraySync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEntryArraySync.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEntryCallback.cpp"
 				>
 				<FileConfiguration
@@ -4552,6 +4584,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEntryCallback.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEntrySync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSEntrySync.h"
 				>
 			</File>
 			<File
@@ -4949,6 +4989,22 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileEntry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileEntry.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileEntrySync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileEntrySync.h"
+				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSFileError.h"
@@ -37687,11 +37743,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\DirectoryEntrySync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DirectoryEntrySync.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\DirectoryReader.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\fileapi\DirectoryReader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DirectoryReaderBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DirectoryReaderSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DirectoryReaderSync.h"
 				>
 			</File>
 			<File
@@ -37716,6 +37792,22 @@
 			</File>
 			<File
 				RelativePath="..\fileapi\DOMFileSystem.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMFileSystemBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMFileSystemBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMFileSystemSync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\DOMFileSystemSync.h"
 				>
 			</File>
 			<File
@@ -37763,6 +37855,26 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\EntryArraySync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntryArraySync.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntryBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntrySync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\EntrySync.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\EntryCallback.h"
 				>
 			</File>
@@ -37787,11 +37899,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\FileEntry.cpp"
+				RelativePath="..\fileapi\FileEntry.h"
 				>
 			</File>
 			<File
-				RelativePath="..\fileapi\FileEntry.h"
+				RelativePath="..\fileapi\FileEntrySync.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileEntrySync.h"
 				>
 			</File>
 			<File
@@ -44330,6 +44446,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDirectoryEntrySyncCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDocumentCustom.cpp"
 					>
 					<FileConfiguration
@@ -45087,6 +45207,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSEntryCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSEntrySyncCustom.cpp"
 					>
 				</File>
 				<File

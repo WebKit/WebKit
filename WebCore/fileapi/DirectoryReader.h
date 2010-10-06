@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "DOMFileSystem.h"
+#include "DirectoryReaderBase.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -44,26 +45,22 @@ class EntriesCallback;
 class EntriesCallbacks;
 class ErrorCallback;
 
-class DirectoryReader : public RefCounted<DirectoryReader> {
+class DirectoryReader : public DirectoryReaderBase {
 public:
-    static PassRefPtr<DirectoryReader> create(PassRefPtr<DOMFileSystem> fileSystem, const String& path)
+    static PassRefPtr<DirectoryReader> create(DOMFileSystemBase* fileSystem, const String& fullPath)
     {
-        return adoptRef(new DirectoryReader(fileSystem, path));
+        return adoptRef(new DirectoryReader(fileSystem, fullPath));
     }
 
-    DOMFileSystem* filesystem() const { return m_fileSystem.get(); }
     void readEntries(PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback> = 0);
-    void setHasMore(bool hasMore) { m_hasMore = hasMore; }
+
+    DOMFileSystem* filesystem() const { return static_cast<DOMFileSystem*>(m_fileSystem); }
 
 private:
-    DirectoryReader(PassRefPtr<DOMFileSystem> fileSystem, const String& path);
-
-    RefPtr<DOMFileSystem> m_fileSystem;
-    String m_fullPath;
-    bool m_hasMore;
+    DirectoryReader(DOMFileSystemBase*, const String& fullPath);
 };
 
-} // namespace
+}
 
 #endif // ENABLE(FILE_SYSTEM)
 

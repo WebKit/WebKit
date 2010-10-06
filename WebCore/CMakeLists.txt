@@ -1632,14 +1632,23 @@ ENDIF ()
 if (ENABLE_FILE_SYSTEM)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSDirectoryEntryCustom.cpp
+        bindings/js/JSDirectoryEntrySyncCustom.cpp
         bindings/js/JSEntryCustom.cpp
+        bindings/js/JSEntrySyncCustom.cpp
         fileapi/DirectoryEntry.cpp
+        fileapi/DirectoryEntrySync.cpp
         fileapi/DirectoryReader.cpp
+        fileapi/DirectoryReaderSync.cpp
         fileapi/DOMFilePath.cpp
         fileapi/DOMFileSystem.cpp
+        fileapi/DOMFileSystemBase.cpp
+        fileapi/DOMFileSystemSync.cpp
         fileapi/Entry.cpp
         fileapi/EntryArray.cpp
+        fileapi/EntryArraySync.cpp
+        fileapi/EntrySync.cpp
         fileapi/FileEntry.cpp
+        fileapi/FileEntrySync.cpp
         fileapi/FileSystemCallbacks.cpp
         fileapi/FileWriter.cpp
         fileapi/LocalFileSystem.cpp
@@ -1647,15 +1656,21 @@ if (ENABLE_FILE_SYSTEM)
     )
     LIST(APPEND WebCore_IDL_FILES
         fileapi/DirectoryEntry.idl
+        fileapi/DirectoryEntrySync.idl
         fileapi/DirectoryReader.idl
+        fileapi/DirectoryReaderSync.idl
         fileapi/DOMFileSystem.idl
+        fileapi/DOMFileSystemSync.idl
         fileapi/EntriesCallback.idl
         fileapi/Entry.idl
+        fileapi/EntrySync.idl
         fileapi/EntryArray.idl
+        fileapi/EntryArraySync.idl
         fileapi/EntryCallback.idl
         fileapi/ErrorCallback.idl
         fileapi/FileCallback.idl
         fileapi/FileEntry.idl
+        fileapi/FileEntrySync.idl
         fileapi/FileSystemCallback.idl
         fileapi/FileWriterCallback.idl
         fileapi/FileWriter.idl

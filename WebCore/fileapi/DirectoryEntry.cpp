@@ -51,12 +51,12 @@ PassRefPtr<DirectoryReader> DirectoryEntry::createReader()
 
 void DirectoryEntry::getFile(const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    m_fileSystem->getFile(this, path, flags, successCallback, errorCallback);
+    filesystem()->getFile(this, path, flags, successCallback, errorCallback);
 }
 
 void DirectoryEntry::getDirectory(const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    m_fileSystem->getDirectory(this, path, flags, successCallback, errorCallback);
+    filesystem()->getDirectory(this, path, flags, successCallback, errorCallback);
 }
 
 } // namespace

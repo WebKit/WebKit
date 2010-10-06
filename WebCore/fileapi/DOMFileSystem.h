@@ -35,6 +35,7 @@
 
 #include "ActiveDOMObject.h"
 #include "AsyncFileSystem.h"
+#include "DOMFileSystemBase.h"
 #include "Flags.h"
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
@@ -54,16 +55,13 @@ class FileWriterCallback;
 class MetadataCallback;
 class VoidCallback;
 
-class DOMFileSystem : public RefCounted<DOMFileSystem>, public ActiveDOMObject {
+class DOMFileSystem : public DOMFileSystemBase, public ActiveDOMObject {
 public:
     static PassRefPtr<DOMFileSystem> create(ScriptExecutionContext* context, const String& name, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     {
         return adoptRef(new DOMFileSystem(context, name, asyncFileSystem));
     }
 
-    virtual ~DOMFileSystem();
-
-    const String& name() const { return m_name; }
     PassRefPtr<DirectoryEntry> root();
 
     // ActiveDOMObject methods.
@@ -96,8 +94,6 @@ public:
 private:
     DOMFileSystem(ScriptExecutionContext*, const String& name, PassOwnPtr<AsyncFileSystem>);
 
-    AsyncFileSystem* asyncFileSystem() const { return m_asyncFileSystem.get(); }
-
     // A helper template to schedule a callback task.
     // FIXME: move this to a more generic place.
     template <typename CB, typename CBArg>
@@ -118,9 +114,6 @@ private:
         RefPtr<CB> m_callback;
         RefPtr<CBArg> m_callbackArg;
     };
-
-    String m_name;
-    mutable OwnPtr<AsyncFileSystem> m_asyncFileSystem;
 };
 
 template <typename CB, typename CBArg>

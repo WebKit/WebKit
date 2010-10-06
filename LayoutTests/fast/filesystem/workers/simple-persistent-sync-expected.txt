@@ -1,0 +1,8 @@
+This tests requesting PERSISTENT FileSystemSync in Worker.
+
+Starting worker: ../resources/simple-persistent-sync.js
+Description: requestFileSystemSync PERSISTENT test.
+Got error from worker: Uncaught ReferenceError: requestFileSystemSync is not defined
+
+TEST COMPLETE
+

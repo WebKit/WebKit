@@ -2974,16 +2974,25 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
     HEADERS += \
         fileapi/AsyncFileWriter.h \
         fileapi/DirectoryEntry.h \
+        fileapi/DirectoryEntrySync.h \
         fileapi/DirectoryReader.h \
+        fileapi/DirectoryReaderBase.h \
+        fileapi/DirectoryReaderSync.h \
         fileapi/DOMFilePath.h \
         fileapi/DOMFileSystem.h \
+        fileapi/DOMFileSystemBase.h \
+        fileapi/DOMFileSystemSync.h \
         fileapi/EntriesCallback.h \
         fileapi/Entry.h \
         fileapi/EntryArray.h \
+        fileapi/EntryArraySync.h \
+        fileapi/EntryBase.h \
         fileapi/EntryCallback.h \
+        fileapi/EntrySync.h \
         fileapi/ErrorCallback.h \
         fileapi/FileCallback.h \
         fileapi/FileEntry.h \
+        fileapi/FileEntrySync.h \
         fileapi/FileSystemCallback.h \
         fileapi/FileSystemCallbacks.h \
         fileapi/FileWriter.h \
@@ -2998,14 +3007,23 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
 
     SOURCES += \
         bindings/js/JSDirectoryEntryCustom.cpp \
+        bindings/js/JSDirectoryEntrySyncCustom.cpp \
         bindings/js/JSEntryCustom.cpp \
+        bindings/js/JSEntrySyncCustom.cpp \
         fileapi/DirectoryEntry.cpp \
+        fileapi/DirectoryEntrySync.cpp \
         fileapi/DirectoryReader.cpp \
+        fileapi/DirectoryReaderSync.cpp \
         fileapi/DOMFilePath.cpp \
         fileapi/DOMFileSystem.cpp \
+        fileapi/DOMFileSystemBase.cpp \
+        fileapi/DOMFileSystemSync.cpp \
         fileapi/Entry.cpp \
         fileapi/EntryArray.cpp \
+        fileapi/EntryArraySync.cpp \
+        fileapi/EntrySync.cpp \
         fileapi/FileEntry.cpp \
+        fileapi/FileEntrySync.cpp \
         fileapi/FileSystemCallbacks.cpp \
         fileapi/FileWriter.cpp \
         fileapi/LocalFileSystem.cpp \

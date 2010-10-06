@@ -156,16 +156,22 @@ IDL_BINDINGS += \
     fileapi/Blob.idl \
     fileapi/BlobBuilder.idl \
     fileapi/DirectoryEntry.idl \
+    fileapi/DirectoryEntrySync.idl \
     fileapi/DirectoryReader.idl \
+    fileapi/DirectoryReaderSync.idl \
     fileapi/DOMFileSystem.idl \
+    fileapi/DOMFileSystemSync.idl \
     fileapi/EntriesCallback.idl \
     fileapi/Entry.idl \
     fileapi/EntryArray.idl \
+    fileapi/EntryArraySync.idl \
     fileapi/EntryCallback.idl \
+    fileapi/EntrySync.idl \
     fileapi/ErrorCallback.idl \
     fileapi/File.idl \
     fileapi/FileCallback.idl \
     fileapi/FileEntry.idl \
+    fileapi/FileEntrySync.idl \
     fileapi/FileError.idl \
     fileapi/FileList.idl \
     fileapi/FileReader.idl \

@@ -43,35 +43,33 @@
 namespace WebCore {
 
 Entry::Entry(DOMFileSystem* fileSystem, const String& fullPath)
-    : m_fileSystem(fileSystem)
-    , m_fullPath(fullPath)
-    , m_name(DOMFilePath::getName(fullPath))
+    : EntryBase(fileSystem, fullPath)
 {
 }
 
 void Entry::getMetadata(PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    m_fileSystem->getMetadata(this, successCallback, errorCallback);
+    filesystem()->getMetadata(this, successCallback, errorCallback);
 }
 
 void Entry::moveTo(PassRefPtr<Entry> parent, const String& name, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback) const
 {
-    m_fileSystem->move(this, parent, name, successCallback, errorCallback);
+    filesystem()->move(this, parent, name, successCallback, errorCallback);
 }
 
 void Entry::copyTo(PassRefPtr<Entry> parent, const String& name, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback) const
 {
-    m_fileSystem->copy(this, parent, name, successCallback, errorCallback);
+    filesystem()->copy(this, parent, name, successCallback, errorCallback);
 }
 
 void Entry::remove(PassRefPtr<VoidCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback) const
 {
-    m_fileSystem->remove(this, successCallback, errorCallback);
+    filesystem()->remove(this, successCallback, errorCallback);
 }
 
 void Entry::getParent(PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback) const
 {
-    m_fileSystem->getParent(this, successCallback, errorCallback);
+    filesystem()->getParent(this, successCallback, errorCallback);
 }
 
 String Entry::toURI(const String&)

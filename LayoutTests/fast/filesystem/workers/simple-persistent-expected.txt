@@ -1,0 +1,11 @@
+This tests requesting PERSISTENT FileSystem in Worker.
+
+Starting worker: ../resources/simple-persistent.js
+Description: requestFileSystem PERSISTENT test.
+Successfully obtained PERSISTENT FileSystem:file__0:Temporary
+PASS: fileSystem.name.length > 0 is true
+PASS: fileSystem.root.fullPath is "/"
+DONE
+
+TEST COMPLETE
+

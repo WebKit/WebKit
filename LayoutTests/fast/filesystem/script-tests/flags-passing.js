@@ -12,7 +12,8 @@ var testsList = [
     'runObjectTestWithExclusive',
     'cleanupAndRunNext',
     'runJSONTest',
-    'runJSONTestWithExclusive'
+    'runJSONTestWithExclusive',
+    'runNullTest'
 ];
 var testCounter = 0;
 
@@ -32,6 +33,13 @@ function errorCallback(error) {
 }
 
 // Test body functions ----------------------------------------------------
+function runNullTest(v) {
+    debug("* Passing null as a Flags parameter.");
+
+    // This should be ok and we treat it as {false, false} Flags.
+    fileSystem.root.getFile(testFileName, null, runNextTest, errorCallback);
+}
+
 function runObjectTest(v) {
     debug("* Passing a Flags object.");
     var flags = new Flags();

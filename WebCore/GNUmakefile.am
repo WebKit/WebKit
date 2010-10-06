@@ -689,6 +689,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDeviceMotionEventCustom.cpp \
 	WebCore/bindings/js/JSDeviceOrientationEventCustom.cpp \
 	WebCore/bindings/js/JSDirectoryEntryCustom.cpp \
+	WebCore/bindings/js/JSDirectoryEntrySyncCustom.cpp \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
 	WebCore/bindings/js/JSDOMApplicationCacheCustom.cpp \
 	WebCore/bindings/js/JSDOMBinding.cpp \
@@ -711,6 +712,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSDOMWrapper.h \
 	WebCore/bindings/js/JSElementCustom.cpp \
 	WebCore/bindings/js/JSEntryCustom.cpp \
+	WebCore/bindings/js/JSEntrySyncCustom.cpp \
 	WebCore/bindings/js/JSEventCustom.cpp \
 	WebCore/bindings/js/JSEventListener.cpp \
 	WebCore/bindings/js/JSEventListener.h \
@@ -1366,23 +1368,38 @@ webcore_sources += \
 	WebCore/fileapi/BlobURL.h \
 	WebCore/fileapi/DirectoryEntry.cpp \
 	WebCore/fileapi/DirectoryEntry.h \
+	WebCore/fileapi/DirectoryEntrySync.cpp \
+	WebCore/fileapi/DirectoryEntrySync.h \
 	WebCore/fileapi/DirectoryReader.cpp \
 	WebCore/fileapi/DirectoryReader.h \
+	WebCore/fileapi/DirectoryReaderSync.cpp \
+	WebCore/fileapi/DirectoryReaderSync.h \
 	WebCore/fileapi/DOMFilePath.cpp \
 	WebCore/fileapi/DOMFilePath.h \
 	WebCore/fileapi/DOMFileSystem.cpp \
 	WebCore/fileapi/DOMFileSystem.h \
+	WebCore/fileapi/DOMFileSystemBase.cpp \
+	WebCore/fileapi/DOMFileSystemBase.h \
+	WebCore/fileapi/DOMFileSystemSync.cpp \
+	WebCore/fileapi/DOMFileSystemSync.h \
 	WebCore/fileapi/EntriesCallback.h \
-	WebCore/fileapi/EntryArray.cpp \
-	WebCore/fileapi/EntryArray.h \
-	WebCore/fileapi/EntryCallback.h \
 	WebCore/fileapi/Entry.cpp \
 	WebCore/fileapi/Entry.h \
+	WebCore/fileapi/EntryArray.cpp \
+	WebCore/fileapi/EntryArray.h \
+	WebCore/fileapi/EntryArraySync.cpp \
+	WebCore/fileapi/EntryArraySync.h \
+	WebCore/fileapi/EntryBase.h \
+	WebCore/fileapi/EntryCallback.h \
+	WebCore/fileapi/EntrySync.cpp \
+	WebCore/fileapi/EntrySync.h \
 	WebCore/fileapi/ErrorCallback.h \
 	WebCore/fileapi/FileCallback.h \
 	WebCore/fileapi/File.cpp \
 	WebCore/fileapi/FileEntry.cpp \
 	WebCore/fileapi/FileEntry.h \
+	WebCore/fileapi/FileEntrySync.cpp \
+	WebCore/fileapi/FileEntrySync.h \
 	WebCore/fileapi/FileError.h \
 	WebCore/fileapi/FileException.h \
 	WebCore/fileapi/File.h \

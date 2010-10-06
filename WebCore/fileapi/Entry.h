@@ -34,6 +34,7 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "DOMFileSystem.h"
+#include "EntryBase.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -44,17 +45,11 @@ class ErrorCallback;
 class MetadataCallback;
 class VoidCallback;
 
-class Entry : public RefCounted<Entry> {
+class Entry : public EntryBase {
 public:
     virtual ~Entry() { }
 
-    virtual bool isFile() const { return false; }
-    virtual bool isDirectory() const { return false; }
-
-    const String& fullPath() const { return m_fullPath; }
-    const String& name() const { return m_name; }
-
-    DOMFileSystem* filesystem() const { return m_fileSystem; }
+    DOMFileSystem* filesystem() const { return static_cast<DOMFileSystem*>(m_fileSystem); }
 
     virtual void getMetadata(PassRefPtr<MetadataCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0);
     virtual void moveTo(PassRefPtr<Entry> parent, const String& name = String(), PassRefPtr<EntryCallback> successCallback = 0, PassRefPtr<ErrorCallback> errorCallback = 0) const;
@@ -66,10 +61,6 @@ public:
 
 protected:
     Entry(DOMFileSystem* fileSystem, const String& fullPath);
-
-    DOMFileSystem* m_fileSystem;
-    String m_fullPath;
-    String m_name;
 };
 
 } // namespace WebCore
