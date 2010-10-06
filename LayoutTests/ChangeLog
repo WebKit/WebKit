@@ -1,3 +1,10 @@
+2010-10-06  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Rebased test expectations after r69185.
+
+        * inspector/report-protocol-errors-expected.txt:
+        * platform/mac-leopard/inspector/extensions-resources-expected.txt: Added.
+
 2010-10-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber stamped by Dirk Schulze.
