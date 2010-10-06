@@ -232,7 +232,10 @@ sub generateDiff($$)
         $patch .= $_;
     }
     close DIFF;
-    $patch = fixChangeLogPatch($patch) if basename($file) eq "ChangeLog";
+    if (basename($file) eq "ChangeLog") {
+        my $changeLogHash = fixChangeLogPatch($patch);
+        $patch = $changeLogHash->{patch};   
+    }
     print $patch;
     if ($fileData->{isBinary}) {
         print "\n" if ($patch && $patch =~ m/\n\S+$/m);

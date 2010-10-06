@@ -1,3 +1,35 @@
+2010-10-05  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by David Kilzer.
+
+        Add infrastructure to towards detecting change log diffs that aren't at the top of the ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=46058
+
+        Make VCSUtils::fixChangeLogPatch() return a reference to a hash
+        structure so as to support returning additional information
+        about a change log diff.
+
+        Currently, VCSUtils::fixChangeLogPatch() returns a string that
+        represents the change log diff. Towards supporting the return
+        of additional information, such as whether the change log diff
+        inserts an entry at the top of the ChangeLog file, we need to
+        make VCSUtils::fixChangeLogPatch() return a reference to hash
+        structure.
+
+        * Scripts/VCSUtils.pm:
+          - Modified fixChangeLogPatch() to return a reference to a
+            hash structure.
+          - Added documentation to fixChangeLogPatch().
+          - Modified call site in mergeChangeLogs() as necessary.
+        * Scripts/svn-apply:
+          - Modified call site in patch() as necessary.
+        * Scripts/svn-create-patch:
+          - Modified call site in generateDiff() as necessary.
+        * Scripts/svn-unapply:
+          - Modified call site in patch() as necessary.
+        * Scripts/webkitperl/VCSUtils_unittest/fixChangeLogPatch.pl:
+          - Modified the unit tests as necessary.
+
 2010-10-05  Tony Chang  <tony@chromium.org>
 
         Reviewed by Darin Adler.

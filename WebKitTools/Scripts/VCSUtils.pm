@@ -1284,6 +1284,16 @@ sub setChangeLogDateAndReviewer($$$)
 # context.
 #
 # This subroutine has unit tests in VCSUtils_unittest.pl.
+#
+# Returns $changeLogHashRef:
+#   $changeLogHashRef: a hash reference representing a change log patch.
+#     patch: a ChangeLog patch equivalent to the given one, but with the
+#            newest ChangeLog entry inserted at the top of the file, if possible.
+#     hasOverlappingLines: the value 1 if the change log entry overlaps
+#                          some lines of another change log entry. This can
+#                          happen when deliberately inserting a new ChangeLog
+#                          entry earlier in the file above an entry with
+#                          the same date and author.                     
 sub fixChangeLogPatch($)
 {
     my $patch = shift; # $patch will only contain patch fragments for ChangeLog.
@@ -1301,10 +1311,12 @@ sub fixChangeLogPatch($)
         }
     }
     my $chunkStartIndex = ++$i;
+    my %changeLogHashRef;
 
     # Optimization: do not process if new lines already begin the chunk.
     if (substr($lines[$i], 0, 1) eq "+") {
-        return $patch;
+        $changeLogHashRef{patch} = $patch;
+        return \%changeLogHashRef;
     }
 
     # Skip to first line of newly added ChangeLog entry.
@@ -1321,10 +1333,12 @@ sub fixChangeLogPatch($)
         } elsif ($firstChar eq " " or $firstChar eq "+") {
             next;
         }
-        return $patch; # Do not change if, for example, "-" or "@" found.
+        $changeLogHashRef{patch} = $patch; # Do not change if, for example, "-" or "@" found.
+        return \%changeLogHashRef;
     }
     if ($i >= @lines) {
-        return $patch; # Do not change if date not found.
+        $changeLogHashRef{patch} = $patch; # Do not change if date not found.
+        return \%changeLogHashRef;
     }
     my $dateStartIndex = $i;
 
@@ -1367,7 +1381,8 @@ sub fixChangeLogPatch($)
         my $text = substr($line, 1);
         my $newLine = pop(@overlappingLines);
         if ($text ne substr($newLine, 1)) {
-            return $patch; # Unexpected difference.
+            $changeLogHashRef{patch} = $patch; # Unexpected difference.
+            return \%changeLogHashRef;
         }
         $lines[$i] = "+$text";
     }
@@ -1379,7 +1394,8 @@ sub fixChangeLogPatch($)
         # FIXME: Handle errors differently from ChangeLog files that
         # are okay but should not be altered. That way we can find out
         # if improvements to the script ever become necessary.
-        return $patch; # Error: unexpected patch string format.
+        $changeLogHashRef{patch} = $patch; # Error: unexpected patch string format.
+        return \%changeLogHashRef;
     }
     my $skippedFirstLineCount = $1 - 1;
     my $oldSourceLineCount = $2;
@@ -1388,7 +1404,9 @@ sub fixChangeLogPatch($)
     if (@overlappingLines != $skippedFirstLineCount) {
         # This can happen, for example, when deliberately inserting
         # a new ChangeLog entry earlier in the file.
-        return $patch;
+        $changeLogHashRef{hasOverlappingLines} = 1;
+        $changeLogHashRef{patch} = $patch;
+        return \%changeLogHashRef;
     }
     # If @overlappingLines > 0, this is where we make use of the
     # assumption that the beginning of the source file was not modified.
@@ -1398,7 +1416,8 @@ sub fixChangeLogPatch($)
     my $targetLineCount = $oldTargetLineCount + @overlappingLines - $deletedLineCount;
     $lines[$chunkStartIndex - 1] = "@@ -1,$sourceLineCount +1,$targetLineCount @@";
 
-    return join($lineEnding, @lines) . "\n"; # patch(1) expects an extra trailing newline.
+    $changeLogHashRef{patch} = join($lineEnding, @lines) . "\n"; # patch(1) expects an extra trailing newline.
+    return \%changeLogHashRef;
 }
 
 # This is a supporting method for runPatchCommand.
@@ -1550,7 +1569,12 @@ sub mergeChangeLogs($$$)
     unlink("${fileNewer}.rej");
 
     open(PATCH, "| patch --force --fuzz=3 --binary $fileNewer > " . File::Spec->devnull()) or die $!;
-    print PATCH ($traditionalReject ? $patch : fixChangeLogPatch($patch));
+    if ($traditionalReject) {
+        print PATCH $patch;
+    } else {
+        my $changeLogHash = fixChangeLogPatch($patch);
+        print PATCH $changeLogHash->{patch};
+    }
     close(PATCH);
 
     my $result = !exitStatus($?);

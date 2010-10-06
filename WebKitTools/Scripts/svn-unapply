@@ -158,7 +158,8 @@ sub patch($)
         # Standard patch, patch tool can handle this.
         if (basename($fullPath) eq "ChangeLog") {
             my $changeLogDotOrigExisted = -f "${fullPath}.orig";
-            unapplyPatch(unsetChangeLogDate($fullPath, fixChangeLogPatch($patch)), $fullPath, ["--fuzz=3"]);
+            my $changeLogHash = fixChangeLogPatch($patch);
+            unapplyPatch(unsetChangeLogDate($fullPath, $changeLogHash->{patch}), $fullPath, ["--fuzz=3"]);
             unlink("${fullPath}.orig") if (! $changeLogDotOrigExisted);
         } else {
             unapplyPatch($patch, $fullPath);

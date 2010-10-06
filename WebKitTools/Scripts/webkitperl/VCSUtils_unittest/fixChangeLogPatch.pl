@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 #
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) Research In Motion 2010. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -30,7 +31,10 @@
 
 # Unit tests of VCSUtils::fixChangeLogPatch().
 
-use Test::Simple tests => 12;
+use strict;
+use warnings;
+
+use Test::More;
 use VCSUtils;
 
 # The source ChangeLog for these tests is the following:
@@ -53,14 +57,10 @@ use VCSUtils;
 #         * File:
 #         * File2:
 
-my $title;
-my $in;
-my $out;
-
-# New test
-$title = "fixChangeLogPatch: [no change] In-place change.";
-
-$in = <<'END';
+my @testCaseHashRefs = (
+{ # New test
+    diffName => "fixChangeLogPatch: [no change] In-place change.",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -1,5 +1,5 @@
@@ -71,13 +71,23 @@ $in = <<'END';
  
          Changed some code on 2010-12-22.
 END
-
-ok(fixChangeLogPatch($in) eq $in, $title);
-
-# New test
-$title = "fixChangeLogPatch: [no change] Remove first entry.";
-
-$in = <<'END';
+    expectedReturn => {
+    patch => <<'END',
+--- ChangeLog
++++ ChangeLog
+@@ -1,5 +1,5 @@
+ 2010-12-22  Bob  <bob@email.address>
+ 
+-        Reviewed by Sue.
++        Reviewed by Ray.
+ 
+         Changed some code on 2010-12-22.
+END
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: [no change] Remove first entry.",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -1,11 +1,3 @@
@@ -93,13 +103,28 @@ $in = <<'END';
  
          Reviewed by Ray.
 END
-
-ok(fixChangeLogPatch($in) eq $in, $title);
-
-# New test
-$title = "fixChangeLogPatch: [no change] Remove entry in the middle.";
-
-$in = <<'END';
+    expectedReturn => {
+    patch => <<'END',
+--- ChangeLog
++++ ChangeLog
+@@ -1,11 +1,3 @@
+-2010-12-22  Bob  <bob@email.address>
+-
+-        Reviewed by Ray.
+-
+-        Changed some code on 2010-12-22.
+-
+-        * File:
+-
+ 2010-12-22  Alice  <alice@email.address>
+ 
+         Reviewed by Ray.
+END
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: [no change] Remove entry in the middle.",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@@ -7,10 +7,6 @@
@@ -114,13 +139,27 @@ $in = <<'END';
  
          Reviewed by Ray.
 END
-
-ok(fixChangeLogPatch($in) eq $in, $title);
-
-# New test
-$title = "fixChangeLogPatch: [no change] Far apart changes (i.e. more than one chunk).";
-
-$in = <<'END';
+    expectedReturn => {
+    patch => <<'END',
+--- ChangeLog
++++ ChangeLog
+@@@ -7,10 +7,6 @@
+ 
+         * File:
+ 
+-2010-12-22  Bob  <bob@email.address>
+-
+-        Changed some code on 2010-12-22.
+-
+ 2010-12-22  Alice  <alice@email.address>
+ 
+         Reviewed by Ray.
+END
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: [no change] Far apart changes (i.e. more than one chunk).",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -7,7 +7,7 @@
@@ -141,13 +180,33 @@ $in = <<'END';
  
          Changed some code on 2010-12-21.
 END
-
-ok(fixChangeLogPatch($in) eq $in, $title);
-
-# New test
-$title = "fixChangeLogPatch: [no change] First line is new line.";
-
-$in = <<'END';
+    expectedReturn => {
+    patch => <<'END',
+--- ChangeLog
++++ ChangeLog
+@@ -7,7 +7,7 @@
+ 
+         * File:
+ 
+-2010-12-22  Bob  <bob@email.address>
++2010-12-22  Bobby <bob@email.address>
+ 
+         Changed some code on 2010-12-22.
+ 
+@@ -21,7 +21,7 @@
+ 
+         * File2:
+ 
+-2010-12-21  Bob  <bob@email.address>
++2010-12-21  Bobby <bob@email.address>
+ 
+         Changed some code on 2010-12-21.
+END
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: [no change] First line is new line.",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -1,3 +1,11 @@
@@ -163,13 +222,28 @@ $in = <<'END';
  
          Reviewed by Ray.
 END
-
-ok(fixChangeLogPatch($in) eq $in, $title);
-
-# New test
-$title = "fixChangeLogPatch: [no change] No date string.";
-
-$in = <<'END';
+    expectedReturn => {
+    patch => <<'END',
+--- ChangeLog
++++ ChangeLog
+@@ -1,3 +1,11 @@
++2009-12-22  Bob  <bob@email.address>
++
++        Reviewed by Ray.
++
++        Changed some more code on 2009-12-22.
++
++        * File:
++
+ 2009-12-22  Alice  <alice@email.address>
+ 
+         Reviewed by Ray.
+END
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: [no change] No date string.",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -6,6 +6,7 @@
@@ -181,13 +255,24 @@ $in = <<'END';
  2009-12-21  Alice  <alice@email.address>
  
 END
-
-ok(fixChangeLogPatch($in) eq $in, $title);
-
-# New test
-$title = "fixChangeLogPatch: [no change] New entry inserted in middle.";
-
-$in = <<'END';
+    expectedReturn => {
+    patch => <<'END',
+--- ChangeLog
++++ ChangeLog
+@@ -6,6 +6,7 @@
+ 
+         * File:
+         * File2:
++        * File3:
+ 
+ 2009-12-21  Alice  <alice@email.address>
+ 
+END
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: [no change] New entry inserted in middle.",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -11,6 +11,14 @@
@@ -206,13 +291,32 @@ $in = <<'END';
  
          * File:
 END
-
-ok(fixChangeLogPatch($in) eq $in, $title);
-
-# New test
-$title = "fixChangeLogPatch: [no change] New entry inserted earlier in the file, but after an entry with the same author and date.";
-
-$in = <<'END';
+    expectedReturn => {
+    hasOverlappingLines => 1,
+    patch => <<'END',
+--- ChangeLog
++++ ChangeLog
+@@ -11,6 +11,14 @@
+ 
+         Reviewed by Ray.
+ 
++        Changed some more code on 2009-12-21.
++
++        * File:
++
++2009-12-21  Alice  <alice@email.address>
++
++        Reviewed by Ray.
++
+         Changed some code on 2009-12-21.
+ 
+         * File:
+END
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: [no change] New entry inserted earlier in the file, but after an entry with the same author and date.",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -70,6 +70,14 @@
@@ -231,13 +335,32 @@ $in = <<'END';
  
          Changed some code on 2009-12-22.
 END
-
-ok(fixChangeLogPatch($in) eq $in, $title);
-
-# New test
-$title = "fixChangeLogPatch: Leading context includes first line.";
-
-$in = <<'END';
+    expectedReturn => {
+    hasOverlappingLines => 1,
+    patch => <<'END',
+--- ChangeLog
++++ ChangeLog
+@@ -70,6 +70,14 @@
+ 
+ 2009-12-22  Alice  <alice@email.address>
+ 
++        Reviewed by Sue.
++
++        Changed some more code on 2009-12-22.
++
++        * File:
++
++2009-12-22  Alice  <alice@email.address>
++
+         Reviewed by Ray.
+ 
+         Changed some code on 2009-12-22.
+END
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: Leading context includes first line.",
+    inputText => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -1,5 +1,13 @@
@@ -255,8 +378,8 @@ $in = <<'END';
  
          Changed some code on 2009-12-22.
 END
-
-$out = <<'END';
+    expectedReturn => {
+    patch => <<'END',
 --- ChangeLog
 +++ ChangeLog
 @@ -1,3 +1,11 @@
@@ -272,13 +395,11 @@ $out = <<'END';
  
          Reviewed by Ray.
 END
-
-ok(fixChangeLogPatch($in) eq $out, $title);
-
-# New test
-$title = "fixChangeLogPatch: Leading context does not include first line.";
-
-$in = <<'END';
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: Leading context does not include first line.",
+    inputText => <<'END',
 @@ -2,6 +2,14 @@
  
          Reviewed by Ray.
@@ -295,8 +416,8 @@ $in = <<'END';
  
          * File:
 END
-
-$out = <<'END';
+    expectedReturn => {
+    patch => <<'END',
 @@ -1,3 +1,11 @@
 +2009-12-22  Alice  <alice@email.address>
 +
@@ -310,18 +431,17 @@ $out = <<'END';
  
          Reviewed by Ray.
 END
-
-ok(fixChangeLogPatch($in) eq $out, $title);
-
-# New test
-$title = "fixChangeLogPatch: Non-consecutive line additions.";
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: Non-consecutive line additions.",
 
 # This can occur, for example, if the new ChangeLog entry includes
 # trailing white space in the first blank line but not the second.
 # A diff command can then match the second blank line of the new
 # ChangeLog entry with the first blank line of the old.
 # The svn diff command with the default --diff-cmd has done this.
-$in = <<'END';
+    inputText => <<'END',
 @@ -1,5 +1,11 @@
  2009-12-22  Alice  <alice@email.address>
 + <pretend-whitespace>
@@ -335,8 +455,8 @@ $in = <<'END';
  
          Changed some code on 2009-12-22.
 END
-
-$out = <<'END';
+    expectedReturn => {
+    patch => <<'END',
 @@ -1,3 +1,9 @@
 +2009-12-22  Alice  <alice@email.address>
 + <pretend-whitespace>
@@ -348,13 +468,11 @@ $out = <<'END';
  
          Reviewed by Ray.
 END
-
-ok(fixChangeLogPatch($in) eq $out, $title);
-
-# New test
-$title = "fixChangeLogPatch: Additional edits after new entry.";
-
-$in = <<'END';
+    }
+},
+{ # New test
+    diffName => "fixChangeLogPatch: Additional edits after new entry.",
+    inputText => <<'END',
 @@ -2,10 +2,17 @@
  
          Reviewed by Ray.
@@ -375,8 +493,8 @@ $in = <<'END';
  2009-12-21  Alice  <alice@email.address>
  
 END
-
-$out = <<'END';
+    expectedReturn => {
+    patch => <<'END',
 @@ -1,11 +1,18 @@
 +2009-12-22  Alice  <alice@email.address>
 +
@@ -398,5 +516,18 @@ $out = <<'END';
  2009-12-21  Alice  <alice@email.address>
  
 END
+    }
+},
+);
 
-ok(fixChangeLogPatch($in) eq $out, $title);
+my $testCasesCount = @testCaseHashRefs;
+plan(tests => $testCasesCount); # Total number of assertions.
+
+foreach my $testCase (@testCaseHashRefs) {
+    my $testNameStart = "fixChangeLogPatch(): $testCase->{diffName}: comparing";
+
+    my $got = VCSUtils::fixChangeLogPatch($testCase->{inputText});
+    my $expectedReturn = $testCase->{expectedReturn};
+ 
+    is_deeply($got, $expectedReturn, "$testNameStart return value.");
+}
