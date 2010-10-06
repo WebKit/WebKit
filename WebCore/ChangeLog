@@ -1,3 +1,14 @@
+2010-10-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add "Set Breakpoint" item to XHR resource context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=47085
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._contextMenu):
+
 2010-10-05  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
