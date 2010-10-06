@@ -1,0 +1,98 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+    RenderPath {rect} at (0,0) size 800x600 [data="M-1000.00,-1000.00 L4000.00,-1000.00 L4000.00,4000.00 L-1000.00,4000.00 Z"]
+    RenderSVGText {text} at (50,12) size 343x22 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 343x22
+        chunk 1 text run 1 at (50.00,30.00) startOffset 0 endOffset 34 width 343.00: "Demonstration of the SVG Scrollbar"
+    RenderSVGText {text} at (567,16) size 383x17 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 383x17
+        chunk 1 (end anchor) text run 1 at (567.00,30.00) startOffset 0 endOffset 59 width 383.00: "One can also drag the images and the scrollbars will adopt."
+    RenderSVGViewportContainer {svg} at (40,60) size 760x337
+      RenderSVGContainer {g} at (40,60) size 760x337
+        RenderSVGImage {image} at (40,60) size 760x337
+        RenderSVGContainer {g} at (370,112) size 430x260
+          RenderSVGText {text} at (413,74) size 86x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 86x18
+              chunk 1 (middle anchor) text run 1 at (413.50,88.80) startOffset 0 endOffset 13 width 85.00: "Furggeltihorn"
+          RenderSVGText {text} at (570,84) size 47x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 47x18
+              chunk 1 (middle anchor) text run 1 at (570.80,98.80) startOffset 0 endOffset 6 width 46.00: "P 2821"
+          RenderSVGText {text} at (592,65) size 86x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 86x18
+              chunk 1 (middle anchor) text run 1 at (592.00,79.80) startOffset 0 endOffset 13 width 86.00: "Zervreilahorn"
+          RenderSVGText {text} at (768,98) size 74x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 74x18
+              chunk 1 (middle anchor) text run 1 at (768.00,112.80) startOffset 0 endOffset 11 width 74.00: "Plattenberg"
+          RenderSVGText {text} at (2191,164) size 59x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 59x18
+              chunk 1 (middle anchor) text run 1 at (2191.90,178.80) startOffset 0 endOffset 8 width 58.00: "Piz Fess"
+          RenderSVGText {text} at (2251,148) size 81x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 81x18
+              chunk 1 (middle anchor) text run 1 at (2251.40,162.60) startOffset 0 endOffset 11 width 80.00: "Crap Grisch"
+          RenderSVGText {text} at (2380,135) size 66x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 66x18
+              chunk 1 (middle anchor) text run 1 at (2380.20,149.60) startOffset 0 endOffset 9 width 65.00: "Piz Tom\x{FC}l"
+          RenderSVGText {text} at (1736,98) size 54x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 54x18
+              chunk 1 (middle anchor) text run 1 at (1736.10,112.60) startOffset 0 endOffset 8 width 53.00: "Fruntalp"
+          RenderSVGText {text} at (963,372) size 82x18 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 82x18
+              chunk 1 (middle anchor) text run 1 at (963.30,386.50) startOffset 0 endOffset 12 width 81.00: "Zervreilasee"
+    RenderSVGContainer {g} at (40,60) size 733x173
+      RenderSVGContainer {g} at (40,220) size 720x13
+        RenderPath {rect} at (52,220) size 696x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M65.50,250.50 L934.50,250.50 L934.50,265.50 L65.50,265.50 Z"]
+        RenderPath {rect} at (52,220) size 175x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M65.50,250.50 L282.32,250.50 L282.32,265.50 L65.50,265.50 Z"]
+        RenderPath {rect} at (40,220) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.50,250.50 L65.50,250.50 L65.50,265.50 L50.50,265.50 Z"]
+        RenderPath {rect} at (747,220) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M934.50,250.50 L949.50,250.50 L949.50,265.50 L934.50,265.50 Z"]
+        RenderPath {path} at (43,223) size 8x8 [fill={[type=SOLID] [color=#696969]}] [data="M54.50,258.50 L62.50,254.50 L62.50,262.50 Z"]
+        RenderPath {path} at (750,223) size 8x8 [fill={[type=SOLID] [color=#696969]}] [data="M946.50,258.50 L938.50,262.50 L938.50,254.50 Z"]
+      RenderSVGContainer {g} at (760,60) size 13x160
+        RenderPath {rect} at (760,72) size 13x136 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M950.50,65.50 L965.50,65.50 L965.50,234.50 L950.50,234.50 Z"]
+        RenderPath {rect} at (760,72) size 13x66 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,65.50 L965.50,65.50 L965.50,145.88 L950.50,145.88 Z"]
+        RenderPath {rect} at (760,60) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,50.50 L965.50,50.50 L965.50,65.50 L950.50,65.50 Z"]
+        RenderPath {rect} at (760,207) size 13x13 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,234.50 L965.50,234.50 L965.50,249.50 L950.50,249.50 Z"]
+        RenderPath {path} at (763,63) size 8x8 [fill={[type=SOLID] [color=#696969]}] [data="M958.00,54.50 L962.50,62.50 L954.50,62.50 Z"]
+        RenderPath {path} at (763,210) size 8x8 [fill={[type=SOLID] [color=#696969]}] [data="M958.00,246.50 L954.50,238.50 L962.50,238.50 Z"]
+    RenderSVGText {text} at (430,269) size 520x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 520x14
+        chunk 1 (end anchor) text run 1 at (430.00,280.00) startOffset 0 endOffset 89 width 520.00: "Panorama Zervreilastausee, Vals, Graub\x{FC}nden, Switzerland, taken 2006-02-04 (\x{A9} A. Neumann)"
+    RenderSVGViewportContainer {svg} at (40,300) size 760x300
+      RenderSVGContainer {g} at (40,300) size 760x300
+        RenderSVGImage {image} at (40,300) size 760x300
+    RenderSVGContainer {g} at (40,300) size 729x169
+      RenderSVGContainer {g} at (40,460) size 720x9
+        RenderPath {rect} at (40,460) size 704x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M50.50,550.50 L929.50,550.50 L929.50,560.50 L50.50,560.50 Z"]
+        RenderPath {rect} at (40,460) size 180x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M50.50,550.50 L272.71,550.50 L272.71,560.50 L50.50,560.50 Z"]
+        RenderPath {rect} at (743,460) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M929.50,550.50 L939.50,550.50 L939.50,560.50 L929.50,560.50 Z"]
+        RenderPath {rect} at (751,460) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M939.50,550.50 L949.50,550.50 L949.50,560.50 L939.50,560.50 Z"]
+        RenderPath {path} at (745,462) size 7x6 [fill={[type=SOLID] [color=#696969]}] [data="M932.50,556.50 L938.50,553.50 L938.50,559.50 Z"]
+        RenderPath {path} at (753,462) size 7x6 [fill={[type=SOLID] [color=#696969]}] [data="M948.50,556.50 L942.50,559.50 L942.50,553.50 Z"]
+      RenderSVGContainer {g} at (760,300) size 9x160
+        RenderPath {rect} at (760,300) size 9x144 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#F5F5F5]}] [data="M950.50,350.50 L960.50,350.50 L960.50,529.50 L950.50,529.50 Z"]
+        RenderPath {rect} at (760,300) size 9x43 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,350.50 L960.50,350.50 L960.50,402.46 L950.50,402.46 Z"]
+        RenderPath {rect} at (760,443) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,529.50 L960.50,529.50 L960.50,539.50 L950.50,539.50 Z"]
+        RenderPath {rect} at (760,451) size 9x9 [stroke={[type=SOLID] [color=#696969]}] [fill={[type=SOLID] [color=#D3D3D3]}] [data="M950.50,539.50 L960.50,539.50 L960.50,549.50 L950.50,549.50 Z"]
+        RenderPath {path} at (762,445) size 6x7 [fill={[type=SOLID] [color=#696969]}] [data="M955.50,532.50 L959.50,538.50 L953.50,538.50 Z"]
+        RenderPath {path} at (762,453) size 6x7 [fill={[type=SOLID] [color=#696969]}] [data="M955.50,548.50 L953.50,542.50 L959.50,542.50 Z"]
+    RenderSVGText {text} at (436,564) size 514x14 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 514x14
+        chunk 1 (end anchor) text run 1 at (436.00,575.00) startOffset 0 endOffset 94 width 514.00: "Panorama Chalchtrittli, Tierfed, Linthal, Glarus, Switzerland, taken 2005-09-03 (\x{A9} A. Neumann)"
+    RenderSVGContainer {g} at (39,483) size 186x18
+      RenderSVGContainer {g} at (39,483) size 90x18
+        RenderPath {rect} at (39,483) size 89x17 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M49.00,579.00 L159.00,579.00 L159.00,599.00 L49.00,599.00 Z"]
+        RenderPath {rect} at (40,484) size 89x17 [fill={[type=SOLID] [color=#696969]}] [data="M51.00,581.00 L161.00,581.00 L161.00,601.00 L51.00,601.00 Z"]
+        RenderPath {rect} at (40,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M50.00,580.00 L160.00,580.00 L160.00,600.00 L50.00,600.00 Z"]
+        RenderSVGText {text} at (66,584) size 78x15 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 78x15
+            RenderSVGInlineText {#text} at (0,0) size 78x15
+              chunk 1 (middle anchor) text run 1 at (66.00,595.40) startOffset 0 endOffset 14 width 78.00: "Hide Scrollbar"
+      RenderSVGContainer {g} at (135,483) size 90x18
+        RenderPath {rect} at (135,483) size 89x17 [fill={[type=SOLID] [color=#FFFFFF]}] [data="M169.00,579.00 L279.00,579.00 L279.00,599.00 L169.00,599.00 Z"]
+        RenderPath {rect} at (136,484) size 89x17 [fill={[type=SOLID] [color=#696969]}] [data="M171.00,581.00 L281.00,581.00 L281.00,601.00 L171.00,601.00 Z"]
+        RenderPath {rect} at (136,484) size 88x16 [fill={[type=SOLID] [color=#DCDCDC]}] [data="M170.00,580.00 L280.00,580.00 L280.00,600.00 L170.00,600.00 Z"]
+        RenderSVGText {text} at (176,584) size 98x15 contains 1 chunk(s)
+          RenderSVGTSpan {tspan} at (0,0) size 98x15
+            RenderSVGInlineText {#text} at (0,0) size 98x15
+              chunk 1 (middle anchor) text run 1 at (176.00,595.40) startOffset 0 endOffset 16 width 98.00: "Remove Scrollbar"
