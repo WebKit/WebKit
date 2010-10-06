@@ -134,10 +134,9 @@ WebInspector.ScriptsPanel = function()
     this.sidebarPanes.jsBreakpoints = WebInspector.createJSBreakpointsSidebarPane();
     if (Preferences.nativeInstrumentationEnabled) {
         this.sidebarPanes.domBreakpoints = WebInspector.createDOMBreakpointsSidebarPane();
-        this.sidebarPanes.domBreakpoints.expanded = true;
         this.sidebarPanes.xhrBreakpoints = WebInspector.createXHRBreakpointsSidebarPane();
-        this.sidebarPanes.xhrBreakpoints.expanded = true;
     }
+    this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
 
     this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
 
@@ -473,6 +472,7 @@ WebInspector.ScriptsPanel.prototype = {
                 this.sidebarPanes.domBreakpoints.reset();
                 this.sidebarPanes.xhrBreakpoints.reset();
             }
+            this.sidebarPanes.eventListenerBreakpoints.reset();
             this.sidebarPanes.workers.reset();
         }
     },

@@ -1,3 +1,54 @@
+2010-10-06  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: add event listener breakpoints sidebar pane
+        https://bugs.webkit.org/show_bug.cgi?id=46738
+
+        * inspector/front-end/BreakpointManager.js:
+        (WebInspector.BreakpointManager.prototype.createEventListenerBreakpoint):
+        (WebInspector.BreakpointManager.prototype.createXHRBreakpoint.breakpoint.compareTo):
+        (WebInspector.BreakpointManager.prototype.createXHRBreakpoint):
+        (WebInspector.NativeBreakpoint):
+        (WebInspector.NativeBreakpoint.prototype._setOnBackend.didSet):
+        (WebInspector.NativeBreakpoint.prototype._setOnBackend):
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane.prototype._showEditBreakpointDialog):
+        (WebInspector.BreakpointItem):
+        (WebInspector.EventListenerBreakpointsSidebarPane):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._populate):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._createCheckbox):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._categoryCheckboxClicked):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._eventNameCheckboxClicked):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._breakpointEnableChanged):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype._updateCategoryCheckbox):
+        (WebInspector.EventListenerBreakpointsSidebarPane.prototype.reset):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        ():
+        * inspector/front-end/PropertiesSection.js:
+        (WebInspector.PropertiesSection):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/inspector.css:
+        (.section .properties, .event-bar .event-properties):
+        (.section.expanded .properties, .event-bar.expanded .event-properties):
+        (ol.properties-tree):
+        (ol.properties-tree li):
+        (ol.properties-tree li.parent):
+        (ol.properties-tree li.parent::before):
+        (ol.properties-tree li.parent.expanded::before):
+        (ol.properties-tree li .info):
+        (ol.properties-tree ol, .stack-trace ol, ol.stack-trace):
+        (ol.properties-tree ol.expanded, .stack-trace ol, ol.stack-trace):
+        (ol.stack-trace):
+        (.event-listener-breakpoints .event-category):
+        (ol.event-listener-breakpoints.properties-tree .children li):
+        (.event-listener-breakpoints .checkbox-elem):
+        * inspector/front-end/inspector.js:
+        (WebInspector.createXHRBreakpointsSidebarPane.breakpointAdded):
+        (WebInspector.createXHRBreakpointsSidebarPane):
+
 2010-10-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.

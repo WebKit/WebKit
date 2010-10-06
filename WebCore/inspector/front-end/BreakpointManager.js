@@ -87,6 +87,7 @@ WebInspector.BreakpointManager.prototype = {
     {
         this._breakpoints = {};
         delete this._oneTimeBreakpoint;
+        this._xhrBreakpoints = {};
     },
 
     _setBreakpoint: function(sourceID, url, line, enabled, condition)
@@ -127,20 +128,41 @@ WebInspector.BreakpointManager.prototype = {
         InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition, didSetBreakpoint.bind(this));
     },
 
+    createEventListenerBreakpoint: function(eventName)
+    {
+        var data = { type: "EventListener", condition: { eventName: eventName } };
+        var breakpoint = new WebInspector.NativeBreakpoint(data, false);
+        breakpoint.label = eventName;
+        return breakpoint;
+    },
+
     createXHRBreakpoint: function(url)
     {
         if (url in this._xhrBreakpoints)
             return;
         this._xhrBreakpoints[url] = true;
 
-        var breakpoint = new WebInspector.XHRBreakpoint(url);
-        breakpoint.addEventListener("removed", this._xhrBreakpointRemoved.bind(this));
+        var data = { type: "XHR", condition: { url: url } };
+        var breakpoint = new WebInspector.NativeBreakpoint(data, true);
+        if (!url.length)
+            breakpoint.label = WebInspector.UIString("Any XHR");
+        else
+            breakpoint.label = WebInspector.UIString("URL contains \"%s\"", url);
+        breakpoint.compareTo = function(other)
+        {
+            var urlOther = other._data.condition.url;
+            if (url !== urlOther)
+                return url < urlOther ? -1 : 1;
+            return 0;
+        };
+
+        breakpoint.addEventListener("removed", this._xhrBreakpointRemoved.bind(this, url));
         this.dispatchEventToListeners("xhr-breakpoint-added", breakpoint);
     },
 
-    _xhrBreakpointRemoved: function(event)
+    _xhrBreakpointRemoved: function(url)
     {
-        delete this._xhrBreakpoints[event.target.url];
+        delete this._xhrBreakpoints[url];
     }
 }
 
@@ -226,14 +248,14 @@ WebInspector.Breakpoint.prototype = {
 
 WebInspector.Breakpoint.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.XHRBreakpoint = function(url)
+WebInspector.NativeBreakpoint = function(data, enabled)
 {
-    this._url = url;
+    this._data = data;
     this._locked = false;
-    this.enabled = true;
+    this.enabled = enabled;
 }
 
-WebInspector.XHRBreakpoint.prototype = {
+WebInspector.NativeBreakpoint.prototype = {
     get enabled()
     {
         return "_id" in this;
@@ -251,28 +273,6 @@ WebInspector.XHRBreakpoint.prototype = {
             this._removeFromBackend();
     },
 
-    get url()
-    {
-        return this._url;
-    },
-
-    formatLabel: function()
-    {
-        var label = "";
-        if (!this.url.length)
-            label = WebInspector.UIString("Any XHR");
-        else
-            label = WebInspector.UIString("URL contains \"%s\"", this.url);
-        return label;
-    },
-
-    compareTo: function(other)
-    {
-        if (this.url != other.url)
-            return this.url < other.url ? -1 : 1;
-        return 0;
-    },
-
     remove: function()
     {
         if (this._locked)
@@ -285,13 +285,13 @@ WebInspector.XHRBreakpoint.prototype = {
     _setOnBackend: function()
     {
         this._locked = true;
-        var data = { type: "XHR", condition: { url: this.url } };
-        InspectorBackend.setNativeBreakpoint(data, didSet.bind(this));
+        InspectorBackend.setNativeBreakpoint(this._data, didSet.bind(this));
 
         function didSet(breakpointId)
         {
             this._locked = false;
-            this._id = breakpointId;
+            if (breakpointId)
+                this._id = breakpointId;
             this.dispatchEventToListeners("enable-changed");
         }
     },
@@ -304,4 +304,4 @@ WebInspector.XHRBreakpoint.prototype = {
     }
 }
 
-WebInspector.XHRBreakpoint.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.NativeBreakpoint.prototype.__proto__ = WebInspector.Object.prototype;

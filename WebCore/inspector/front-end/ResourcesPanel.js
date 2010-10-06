@@ -1268,7 +1268,7 @@ WebInspector.ResourcesPanel.prototype = {
         if (resource && resource.category === WebInspector.resourceCategories.xhr) {
             if (needSeparator)
                 contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString("Set Breakpoint"), WebInspector.breakpointManager.createXHRBreakpoint.bind(WebInspector.breakpointManager, resource.url));
+            contextMenu.appendItem(WebInspector.UIString("Set XHR Breakpoint"), WebInspector.breakpointManager.createXHRBreakpoint.bind(WebInspector.breakpointManager, resource.url));
         }
 
         contextMenu.show(event);

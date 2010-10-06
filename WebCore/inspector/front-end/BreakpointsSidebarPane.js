@@ -113,6 +113,9 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
         if (this.urlInputElement.parentElement)
             return;
 
+        if (!this.expanded)
+            this.expanded = true;
+
         this.urlInputElement.textContent = "";
         this.bodyElement.insertBefore(this.urlInputElement, this.bodyElement.firstChild);
         WebInspector.startEditing(this.urlInputElement, this._hideEditBreakpointDialog.bind(this, false), this._hideEditBreakpointDialog.bind(this, true));
@@ -141,6 +144,9 @@ WebInspector.BreakpointItem = function(breakpoint)
     checkboxElement.checked = this._breakpoint.enabled;
     checkboxElement.addEventListener("click", this._checkboxClicked.bind(this), false);
     this._element.appendChild(checkboxElement);
+
+    if ("label" in this._breakpoint)
+        this._element.appendChild(document.createTextNode(this._breakpoint.label));
 
     this._breakpoint.addEventListener("enable-changed", this._enableChanged, this);
     this._breakpoint.addEventListener("removed", this.dispatchEventToListeners.bind(this, "removed"));
@@ -235,12 +241,112 @@ WebInspector.DOMBreakpointItem.prototype = {
 
 WebInspector.DOMBreakpointItem.prototype.__proto__ = WebInspector.BreakpointItem.prototype;
 
-WebInspector.XHRBreakpointItem = function(breakpoint)
+WebInspector.EventListenerBreakpointsSidebarPane = function()
 {
-    WebInspector.BreakpointItem.call(this, breakpoint);
+    WebInspector.SidebarPane.call(this, WebInspector.UIString("Event Listener Breakpoints"));
 
-    var label = document.createTextNode(this._breakpoint.formatLabel());
-    this._element.appendChild(label);
+    this.categoriesElement = document.createElement("ol");
+    this.categoriesElement.tabIndex = 0;
+    this.categoriesElement.addStyleClass("properties-tree event-listener-breakpoints");
+    this.categoriesTreeOutline = new TreeOutline(this.categoriesElement);
+    this.bodyElement.appendChild(this.categoriesElement);
 }
 
-WebInspector.XHRBreakpointItem.prototype.__proto__ = WebInspector.BreakpointItem.prototype;
+WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
+    _populate: function()
+    {
+        var categories = {
+            "Mouse": ["click", "dblclick", "mousedown", "mouseup", "mouseover", "mousemove", "mouseout", "mousewheel"],
+            "Keyboard": ["keydown", "keypress", "keyup"]
+        };
+
+        for (var category in categories) {
+            var categoryTreeElement = new TreeElement(WebInspector.UIString(category));
+            this.categoriesTreeOutline.appendChild(categoryTreeElement);
+            categoryTreeElement.listItemElement.addStyleClass("event-category");
+            categoryTreeElement.selectable = true;
+
+            var categoryItem = {};
+            categoryItem.checkbox = this._createCheckbox(categoryTreeElement, this._categoryCheckboxClicked.bind(this, categoryItem));
+            categoryItem.children = {};
+
+            var eventNames = categories[category];
+            for (var i = 0; i < eventNames.length; ++i) {
+                var eventName = eventNames[i];
+
+                var breakpoint = WebInspector.breakpointManager.createEventListenerBreakpoint(eventName);
+
+                var eventNameTreeElement = new TreeElement(breakpoint.label);
+                categoryTreeElement.appendChild(eventNameTreeElement);
+                eventNameTreeElement.listItemElement.addStyleClass("source-code");
+                eventNameTreeElement.selectable = true;
+
+                var eventNameItem = {};
+                eventNameItem.checkbox = this._createCheckbox(eventNameTreeElement, this._eventNameCheckboxClicked.bind(this, categoryItem, eventNameItem));
+                eventNameItem.breakpoint = breakpoint;
+
+                breakpoint.addEventListener("enable-changed", this._breakpointEnableChanged.bind(this, categoryItem, eventNameItem), true);
+
+                categoryItem.children[eventName] = eventNameItem;
+            }
+        }
+    },
+
+    _createCheckbox: function(treeElement, checkboxClickedDelegate)
+    {
+        var checkbox = document.createElement("input");
+        checkbox.className = "checkbox-elem";
+        checkbox.type = "checkbox";
+        checkbox.addEventListener("click", checkboxClickedDelegate, true);
+        treeElement.listItemElement.insertBefore(checkbox, treeElement.listItemElement.firstChild);
+        return checkbox;
+    },
+
+    _categoryCheckboxClicked: function(categoryItem)
+    {
+        var checkbox = categoryItem.checkbox;
+        checkbox.indeterminate = false;
+        for (var eventName in categoryItem.children) {
+            var eventNameItem = categoryItem.children[eventName];
+            eventNameItem.checkbox.checked = checkbox.checked;
+            eventNameItem.breakpoint.enabled = checkbox.checked;
+        }
+    },
+
+    _eventNameCheckboxClicked: function(categoryItem, eventNameItem)
+    {
+        this._updateCategoryCheckbox(categoryItem);
+        eventNameItem.breakpoint.enabled = eventNameItem.checkbox.checked;
+    },
+
+    _breakpointEnableChanged: function(categoryItem, eventNameItem)
+    {
+        if (eventNameItem.checkbox.checked === eventNameItem.breakpoint.enabled)
+            return;
+
+        eventNameItem.checkbox.checked = eventNameItem.breakpoint.enabled;
+        this._updateCategoryCheckbox(categoryItem);
+    },
+
+    _updateCategoryCheckbox: function(categoryItem)
+    {
+        var hasEnabled = false, hasDisabled = false;
+        for (var eventName in categoryItem.children) {
+            var eventNameItem = categoryItem.children[eventName];
+            if (eventNameItem.checkbox.checked)
+                hasEnabled = true;
+            else
+                hasDisabled = true;
+        }
+        categoryItem.checkbox.checked = hasEnabled;
+        categoryItem.checkbox.indeterminate = hasEnabled && hasDisabled;
+    },
+
+    reset: function()
+    {
+        this.categoriesTreeOutline.removeChildren();
+        this._populate();
+    }
+}
+
+WebInspector.EventListenerBreakpointsSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;

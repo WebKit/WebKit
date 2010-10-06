@@ -224,7 +224,7 @@ var WebInspector = {
         var pane = new WebInspector.XHRBreakpointsSidebarPane();
         function breakpointAdded(event)
         {
-            pane.addBreakpoint(new WebInspector.XHRBreakpointItem(event.data));
+            pane.addBreakpoint(new WebInspector.BreakpointItem(event.data));
         }
         WebInspector.breakpointManager.addEventListener("xhr-breakpoint-added", breakpointAdded);
         return pane;
