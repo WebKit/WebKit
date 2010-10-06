@@ -267,7 +267,7 @@ bool SecurityOrigin::taintsCanvas(const KURL& url) const
     // we special case data URLs below. If we change to match HTML5 w.r.t.
     // data URL security, then we can remove this function in favor of
     // !canRequest.
-    if (url.protocolIs("data"))
+    if (url.protocolIsData())
         return false;
 
     return true;

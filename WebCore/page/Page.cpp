@@ -638,7 +638,7 @@ void Page::userStyleSheetLocationChanged()
 
     // Data URLs with base64-encoded UTF-8 style sheets are common. We can process them
     // synchronously and avoid using a loader. 
-    if (url.protocolIs("data") && url.string().startsWith("data:text/css;charset=utf-8;base64,")) {
+    if (url.protocolIsData() && url.string().startsWith("data:text/css;charset=utf-8;base64,")) {
         m_didLoadUserStyleSheet = true;
 
         Vector<char> styleSheetAsUTF8;

@@ -260,7 +260,7 @@ bool ResourceHandle::onRequestComplete()
 
 bool ResourceHandle::start(NetworkingContext* context)
 {
-    if (firstRequest().url().isLocalFile() || firstRequest().url().protocolIs("data")) {
+    if (firstRequest().url().isLocalFile() || firstRequest().url().protocolIsData()) {
         ref(); // balanced by deref in fileLoadTimer
         if (d->m_loadSynchronously)
             fileLoadTimer(0);
@@ -350,7 +350,7 @@ void ResourceHandle::fileLoadTimer(Timer<ResourceHandle>*)
     RefPtr<ResourceHandle> protector(this);
     deref(); // balances ref in start
 
-    if (firstRequest().url().protocolIs("data")) {
+    if (firstRequest().url().protocolIsData()) {
         handleDataURL(this);
         return;
     }

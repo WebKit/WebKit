@@ -1,3 +1,25 @@
+2010-10-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Add KURL::protocolIsData()
+        https://bugs.webkit.org/show_bug.cgi?id=47219
+
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::taintsCanvas):
+        * page/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::findInRequest):
+        * platform/KURL.h:
+        (WebCore::KURL::protocolIsData):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::dispatchSynchronousJob):
+        (WebCore::ResourceHandleManager::startJob):
+        * platform/network/win/ResourceHandleWin.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::fileLoadTimer):
+
 2010-10-06  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

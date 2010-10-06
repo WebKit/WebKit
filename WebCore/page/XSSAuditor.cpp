@@ -392,7 +392,7 @@ bool XSSAuditor::findInRequest(Frame* frame, const FindTask& task) const
     } else
         canonicalizedString = task.string;
 
-    if (frame->document()->url().protocolIs("data"))
+    if (frame->document()->url().protocolIsData())
         return false;
 
     canonicalizedString = canonicalize(canonicalizedString);
