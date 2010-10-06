@@ -1,3 +1,25 @@
+2010-10-06  Ragner Magalhaes  <ragner.magalhaes@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Duplicated code in QWebPagePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=47195
+
+        Remove duplicated code from QWebPagePrivate class for QGraphicsView and QWidget's mouse events.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseTripleClickEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPagePrivate::dragEnterEvent):
+        (QWebPagePrivate::dragLeaveEvent):
+        (QWebPagePrivate::dragMoveEvent):
+        (QWebPagePrivate::dropEvent):
+        * Api/qwebpage_p.h:
+
 2010-10-06  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

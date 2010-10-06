@@ -613,7 +613,8 @@ void QWebPagePrivate::timerEvent(QTimerEvent *ev)
         q->timerEvent(ev);
 }
 
-void QWebPagePrivate::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
+template<class T>
+void QWebPagePrivate::mouseMoveEvent(T* ev)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
     if (!frame->view())
@@ -623,51 +624,8 @@ void QWebPagePrivate::mouseMoveEvent(QGraphicsSceneMouseEvent* ev)
     ev->setAccepted(accepted);
 }
 
-void QWebPagePrivate::mouseMoveEvent(QMouseEvent *ev)
-{
-    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
-    if (!frame->view())
-        return;
-
-    bool accepted = frame->eventHandler()->mouseMoved(PlatformMouseEvent(ev, 0));
-    ev->setAccepted(accepted);
-}
-
-void QWebPagePrivate::mousePressEvent(QGraphicsSceneMouseEvent* ev)
-{
-    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
-    if (!frame->view())
-        return;
-
-    RefPtr<WebCore::Node> oldNode;
-    Frame* focusedFrame = page->focusController()->focusedFrame();
-    if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
-        oldNode = focusedDocument->focusedNode();
-
-    if (tripleClickTimer.isActive()
-            && (ev->pos().toPoint() - tripleClick).manhattanLength()
-                < QApplication::startDragDistance()) {
-        mouseTripleClickEvent(ev);
-        return;
-    }
-
-    bool accepted = false;
-    PlatformMouseEvent mev(ev, 1);
-    // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
-    if (mev.button() != NoButton)
-        accepted = frame->eventHandler()->handleMousePressEvent(mev);
-    ev->setAccepted(accepted);
-
-    RefPtr<WebCore::Node> newNode;
-    focusedFrame = page->focusController()->focusedFrame();
-    if (Document* focusedDocument = focusedFrame ? focusedFrame->document() : 0)
-        newNode = focusedDocument->focusedNode();
-
-    if (newNode && oldNode != newNode)
-        clickCausedFocus = true;
-}
-
-void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
+template<class T>
+void QWebPagePrivate::mousePressEvent(T* ev)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
     if (!frame->view())
@@ -701,7 +659,8 @@ void QWebPagePrivate::mousePressEvent(QMouseEvent *ev)
         clickCausedFocus = true;
 }
 
-void QWebPagePrivate::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
+template<class T>
+void QWebPagePrivate::mouseDoubleClickEvent(T *ev)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
     if (!frame->view())
@@ -715,41 +674,11 @@ void QWebPagePrivate::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *ev)
     ev->setAccepted(accepted);
 
     tripleClickTimer.start(QApplication::doubleClickInterval(), q);
-    tripleClick = ev->pos().toPoint();
+    tripleClick = QPointF(ev->pos()).toPoint();
 }
 
-void QWebPagePrivate::mouseDoubleClickEvent(QMouseEvent *ev)
-{
-    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
-    if (!frame->view())
-        return;
-
-    bool accepted = false;
-    PlatformMouseEvent mev(ev, 2);
-    // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
-    if (mev.button() != NoButton)
-        accepted = frame->eventHandler()->handleMousePressEvent(mev);
-    ev->setAccepted(accepted);
-
-    tripleClickTimer.start(QApplication::doubleClickInterval(), q);
-    tripleClick = ev->pos();
-}
-
-void QWebPagePrivate::mouseTripleClickEvent(QGraphicsSceneMouseEvent *ev)
-{
-    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
-    if (!frame->view())
-        return;
-
-    bool accepted = false;
-    PlatformMouseEvent mev(ev, 3);
-    // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
-    if (mev.button() != NoButton)
-        accepted = frame->eventHandler()->handleMousePressEvent(mev);
-    ev->setAccepted(accepted);
-}
-
-void QWebPagePrivate::mouseTripleClickEvent(QMouseEvent *ev)
+template<class T>
+void QWebPagePrivate::mouseTripleClickEvent(T *ev)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
     if (!frame->view())
@@ -786,7 +715,8 @@ void QWebPagePrivate::handleClipboard(QEvent* ev, Qt::MouseButton button)
 #endif
 }
 
-void QWebPagePrivate::mouseReleaseEvent(QGraphicsSceneMouseEvent* ev)
+template<class T>
+void QWebPagePrivate::mouseReleaseEvent(T *ev)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
     if (!frame->view())
@@ -823,23 +753,6 @@ void QWebPagePrivate::handleSoftwareInputPanel(Qt::MouseButton button)
     clickCausedFocus = false;
 }
 
-void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
-{
-    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
-    if (!frame->view())
-        return;
-
-    bool accepted = false;
-    PlatformMouseEvent mev(ev, 0);
-    // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
-    if (mev.button() != NoButton)
-        accepted = frame->eventHandler()->handleMouseReleaseEvent(mev);
-    ev->setAccepted(accepted);
-
-    handleClipboard(ev, ev->button());
-    handleSoftwareInputPanel(ev->button());
-}
-
 #ifndef QT_NO_CONTEXTMENU
 void QWebPagePrivate::contextMenuEvent(const QPoint& globalPos)
 {
@@ -870,18 +783,8 @@ QMenu *QWebPage::createStandardContextMenu()
 }
 
 #ifndef QT_NO_WHEELEVENT
-void QWebPagePrivate::wheelEvent(QGraphicsSceneWheelEvent* ev)
-{
-    WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
-    if (!frame->view())
-        return;
-
-    WebCore::PlatformWheelEvent pev(ev);
-    bool accepted = frame->eventHandler()->handleWheelEvent(pev);
-    ev->setAccepted(accepted);
-}
-
-void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
+template<class T>
+void QWebPagePrivate::wheelEvent(T *ev)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
     if (!frame->view())
@@ -1018,10 +921,11 @@ void QWebPagePrivate::focusOutEvent(QFocusEvent*)
     focusController->setActive(false);
 }
 
-void QWebPagePrivate::dragEnterEvent(QGraphicsSceneDragDropEvent* ev)
+template<class T>
+void QWebPagePrivate::dragEnterEvent(T* ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    DragData dragData(ev->mimeData(), ev->pos().toPoint(),
+    DragData dragData(ev->mimeData(), QPointF(ev->pos()).toPoint(),
             QCursor::pos(), dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragEntered(&dragData));
     ev->setDropAction(action);
@@ -1030,20 +934,8 @@ void QWebPagePrivate::dragEnterEvent(QGraphicsSceneDragDropEvent* ev)
 #endif
 }
 
-void QWebPagePrivate::dragEnterEvent(QDragEnterEvent* ev)
-{
-#ifndef QT_NO_DRAGANDDROP
-    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(),
-                      dropActionToDragOp(ev->possibleActions()));
-    Qt::DropAction action = dragOpToDropAction(page->dragController()->dragEntered(&dragData));
-    ev->setDropAction(action);
-    // We must accept this event in order to receive the drag move events that are sent
-    // while the drag and drop action is in progress.
-    ev->acceptProposedAction();
-#endif
-}
-
-void QWebPagePrivate::dragLeaveEvent(QGraphicsSceneDragDropEvent* ev)
+template<class T>
+void QWebPagePrivate::dragLeaveEvent(T *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
     DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
@@ -1052,19 +944,11 @@ void QWebPagePrivate::dragLeaveEvent(QGraphicsSceneDragDropEvent* ev)
 #endif
 }
 
-void QWebPagePrivate::dragLeaveEvent(QDragLeaveEvent* ev)
+template<class T>
+void QWebPagePrivate::dragMoveEvent(T *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    DragData dragData(0, IntPoint(), QCursor::pos(), DragOperationNone);
-    page->dragController()->dragExited(&dragData);
-    ev->accept();
-#endif
-}
-
-void QWebPagePrivate::dragMoveEvent(QGraphicsSceneDragDropEvent* ev)
-{
-#ifndef QT_NO_DRAGANDDROP
-    DragData dragData(ev->mimeData(), ev->pos().toPoint(),
+    DragData dragData(ev->mimeData(), QPointF(ev->pos()).toPoint(),
             QCursor::pos(), dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragUpdated(&dragData));
     ev->setDropAction(action);
@@ -1073,37 +957,12 @@ void QWebPagePrivate::dragMoveEvent(QGraphicsSceneDragDropEvent* ev)
 #endif
 }
 
-void QWebPagePrivate::dragMoveEvent(QDragMoveEvent* ev)
+template<class T>
+void QWebPagePrivate::dropEvent(T *ev)
 {
 #ifndef QT_NO_DRAGANDDROP
-    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(),
-                      dropActionToDragOp(ev->possibleActions()));
-    Qt::DropAction action = dragOpToDropAction(page->dragController()->dragUpdated(&dragData));
-    m_lastDropAction = action;
-    ev->setDropAction(action);
-    // We must accept this event in order to receive the drag move events that are sent
-    // while the drag and drop action is in progress.
-    ev->acceptProposedAction();
-#endif
-}
-
-void QWebPagePrivate::dropEvent(QGraphicsSceneDragDropEvent* ev)
-{
-#ifndef QT_NO_DRAGANDDROP
-    DragData dragData(ev->mimeData(), ev->pos().toPoint(),
+    DragData dragData(ev->mimeData(), QPointF(ev->pos()).toPoint(),
             QCursor::pos(), dropActionToDragOp(ev->possibleActions()));
-    if (page->dragController()->performDrag(&dragData))
-        ev->acceptProposedAction();
-#endif
-}
-
-void QWebPagePrivate::dropEvent(QDropEvent* ev)
-{
-#ifndef QT_NO_DRAGANDDROP
-    // Overwrite the defaults set by QDragManager::defaultAction()
-    ev->setDropAction(m_lastDropAction);
-    DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(),
-                      dropActionToDragOp(Qt::DropAction(ev->dropAction())));
     if (page->dragController()->performDrag(&dragData))
         ev->acceptProposedAction();
 #endif
