@@ -196,7 +196,7 @@ DEFER LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
             port.diff_image("EXPECTED", "ACTUAL")
         except ValueError, e:
             exception_raised = True
-        self.assertTrue(exception_raised)
+        self.assertFalse(exception_raised)
 
 if __name__ == '__main__':
     unittest.main()
