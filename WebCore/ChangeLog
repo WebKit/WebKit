@@ -1,3 +1,19 @@
+2010-10-06  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+        https://bugs.webkit.org/show_bug.cgi?id=47282
+
+        Robustify the creation of SharedGraphicsContext3D against shader
+        compilation failures.
+
+        Covered by any canvas 2D layout test, when opened in chrome with 
+        --enable-accelerated-2d-canvas --in-process-webgl.
+
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+        (WebCore::SharedGraphicsContext3D::SharedGraphicsContext3D):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+
 2010-10-06  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
