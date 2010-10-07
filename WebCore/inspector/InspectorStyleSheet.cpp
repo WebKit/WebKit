@@ -514,6 +514,7 @@ InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(const Strin
 bool InspectorStyleSheetForInlineStyle::setStyleText(const String& styleId, const String& text)
 {
     ASSERT(styleId == "0");
+    UNUSED_PARAM(styleId);
     ExceptionCode ec = 0;
     m_element->setAttribute("style", text, ec);
     m_ruleSourceData.clear();
