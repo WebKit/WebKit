@@ -1,0 +1,15 @@
+* Running: RemoveSimple
+PASS Succeeded: "/a".remove()
+PASS Succeeded: "/b".remove()
+PASS Verified entry does NOT exist: /a
+PASS Verified entry does NOT exist: /b
+* Running: RemoveNonRecursiveWithChildren
+PASS this.expectedErrorCode + "" is "13"
+PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/a/b name:b type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/a/c name:c type:FILE}
+Finished running tests.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

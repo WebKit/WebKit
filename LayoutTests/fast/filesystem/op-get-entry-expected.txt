@@ -1,0 +1,60 @@
+* Running: CreateSimple
+PASS Succeeded: "/".getDirectory("a")
+PASS Succeeded: "/".getFile("b")
+PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/b name:b type:FILE}
+* Running: CreateNested
+PASS Succeeded: "/".getDirectory("a")
+PASS Succeeded: "/a".getDirectory("b")
+PASS Succeeded: "/a/b".getDirectory("c")
+PASS Succeeded: "/a/b/c".getDirectory("d")
+PASS Succeeded: "/a/b/c/d".getFile("e")
+PASS Verified entry: ENTRY {path:/a/b/c/d/e name:e type:FILE}
+* Running: CreateNestedWithAbsolutePath
+PASS Succeeded: "/dummy".getDirectory("/a")
+PASS Succeeded: "/dummy".getDirectory("/a/b")
+PASS Succeeded: "/dummy".getDirectory("/a/b/c")
+PASS Succeeded: "/dummy".getDirectory("/a/b/c/d")
+PASS Succeeded: "/dummy".getFile("/a/b/c/d/e")
+PASS Verified entry: ENTRY {path:/dummy name:dummy type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/a/b/c/d/e name:e type:FILE}
+* Running: CreateNestedWithRelativePath
+PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "13"
+* Running: GetExistingEntry
+PASS Succeeded: "/".getDirectory("a")
+PASS Succeeded: "/".getFile("b")
+PASS Succeeded: "/".getDirectory("a")
+PASS this.environment[this.entry.fullPath].fullPath is "/a"
+PASS this.environment[this.entry.fullPath].isFile + "" is "false"
+PASS this.environment[this.entry.fullPath].isDirectory + "" is "true"
+PASS Succeeded: "/".getFile("b")
+PASS this.environment[this.entry.fullPath].fullPath is "/b"
+PASS this.environment[this.entry.fullPath].isFile + "" is "true"
+PASS this.environment[this.entry.fullPath].isDirectory + "" is "false"
+PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/b name:b type:FILE}
+* Running: GetNonExistent
+PASS this.expectedErrorCode + "" is "8"
+PASS this.expectedErrorCode + "" is "8"
+PASS this.expectedErrorCode + "" is "8"
+PASS this.expectedErrorCode + "" is "8"
+* Running: GetFileForDirectory
+PASS this.expectedErrorCode + "" is "11"
+PASS this.expectedErrorCode + "" is "11"
+PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
+* Running: GetDirectoryForFile
+PASS this.expectedErrorCode + "" is "11"
+PASS this.expectedErrorCode + "" is "11"
+PASS Verified entry: ENTRY {path:/a name:a type:FILE}
+* Running: CreateWithExclusive
+PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "13"
+PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/b name:b type:FILE}
+Finished running tests.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
