@@ -57,13 +57,12 @@ const unsigned cMaxLineDepth = 200;
 
 static int getBorderPaddingMargin(RenderBoxModelObject* child, bool endOfInline)
 {
-    bool leftSide = (child->style()->isLeftToRightDirection()) ? !endOfInline : endOfInline;
-    if (leftSide)
-        return child->marginLeft() + child->paddingLeft() + child->borderLeft();
-    return child->marginRight() + child->paddingRight() + child->borderRight();
+    if (endOfInline)
+        return child->marginEnd() + child->paddingEnd() + child->borderEnd();
+    return child->marginStart() + child->paddingStart() + child->borderStart();
 }
 
-static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
+static int inlineLogicalWidth(RenderObject* child, bool start = true, bool end = true)
 {
     unsigned lineDepth = 1;
     int extraWidth = 0;
@@ -296,7 +295,7 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
     // First determine our total width.
-    int availableWidth = availableLogicalWidthForLine(height(), firstLine);
+    int availableWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
     int totWidth = lineBox->getFlowSpacingLogicalWidth();
     bool needsWordSpacing = false;
     unsigned numSpaces = 0;
@@ -1203,7 +1202,7 @@ static bool inlineFlowRequiresLineBox(RenderInline* flow)
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
     // We need to fix this, though, because at the very least, inlines containing only
     // ignorable whitespace should should also have line boxes. 
-    return !flow->firstChild() && flow->hasHorizontalBordersPaddingOrMargin();
+    return !flow->firstChild() && flow->hasInlineDirectionBordersPaddingOrMargin();
 }
 
 bool RenderBlock::requiresLineBox(const InlineIterator& it, bool isLineEmpty, bool previousLineBrokeCleanly)
@@ -1275,12 +1274,12 @@ void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator, bool isLineEm
 int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver, bool firstLine, bool isLineEmpty, bool previousLineBrokeCleanly,
                                        FloatingObject* lastFloatFromPreviousLine)
 {
-    int availableWidth = availableLogicalWidthForLine(height(), firstLine);
+    int availableWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), isLineEmpty, previousLineBrokeCleanly)) {
         RenderObject* object = resolver.position().obj;
         if (object->isFloating()) {
             positionNewFloatOnLine(insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine);
-            availableWidth = availableLogicalWidthForLine(height(), firstLine);
+            availableWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
         } else if (object->isPositioned()) {
             // FIXME: The math here is actually not really right.  It's a best-guess approximation that
             // will work for the common cases
@@ -1332,7 +1331,7 @@ void RenderBlock::fitBelowFloats(int widthToFit, bool firstLine, int& availableW
     ASSERT(widthToFit > availableWidth);
 
     int floatLogicalBottom;
-    int lastFloatLogicalBottom = height();
+    int lastFloatLogicalBottom = logicalHeight();
     int newLineWidth = availableWidth;
     while (true) {
         floatLogicalBottom = nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
@@ -1437,7 +1436,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
     // very specific circumstances (in order to match common WinIE renderings). 
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
-    bool allowImagesToBreak = !document()->inQuirksMode() || !isTableCell() || !style()->width().isIntrinsicOrAuto();
+    bool allowImagesToBreak = !document()->inQuirksMode() || !isTableCell() || !style()->logicalWidth().isIntrinsicOrAuto();
 
     EWhiteSpace currWS = style()->whiteSpace();
     EWhiteSpace lastWS = currWS;
@@ -1487,9 +1486,9 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 // check if it fits in the current line.
                 // If it does, position it now, otherwise, position
                 // it after moving to next line (in newLine() func)
-                if (floatsFitOnLine && floatBox->width() + floatBox->marginLeft() + floatBox->marginRight() + w + tmpW <= width) {
+                if (floatsFitOnLine && logicalWidthForFloat(f) + w + tmpW <= width) {
                     positionNewFloatOnLine(f, lastFloatFromPreviousLine);
-                    width = availableLogicalWidthForLine(height(), firstLine);
+                    width = availableLogicalWidthForLine(logicalHeight(), firstLine);
                 } else
                     floatsFitOnLine = false;
             } else if (o->isPositioned()) {
@@ -1557,8 +1556,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                 }
             }
 
-            tmpW += flowBox->marginLeft() + flowBox->borderLeft() + flowBox->paddingLeft() +
-                    flowBox->marginRight() + flowBox->borderRight() + flowBox->paddingRight();
+            tmpW += flowBox->marginStart() + flowBox->borderStart() + flowBox->paddingStart() +
+                    flowBox->marginEnd() + flowBox->borderEnd() + flowBox->paddingEnd();
         } else if (o->isReplaced()) {
             RenderBox* replacedBox = toRenderBox(o);
 
@@ -1581,7 +1580,8 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             trailingSpaceObject = 0;
 
             // Optimize for a common case. If we can't find whitespace after the list
-            // item, then this is all moot. -dwh
+            // item, then this is all moot.
+            int replacedLogicalWidth = logicalWidthForChild(replacedBox) + marginStartForChild(replacedBox) + marginEndForChild(replacedBox) + inlineLogicalWidth(o);
             if (o->isListMarker()) {
                 if (style()->collapseWhiteSpace() && shouldSkipWhitespaceAfterStartObject(this, o, lineMidpointState)) {
                     // Like with inline flows, we start ignoring spaces to make sure that any 
@@ -1591,9 +1591,9 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                     ignoringSpaces = true;
                 }
                 if (toRenderListMarker(o)->isInside())
-                    tmpW += replacedBox->width() + replacedBox->marginLeft() + replacedBox->marginRight() + inlineWidth(o);
+                    tmpW += replacedLogicalWidth;
             } else
-                tmpW += replacedBox->width() + replacedBox->marginLeft() + replacedBox->marginRight() + inlineWidth(o);
+                tmpW += replacedLogicalWidth;
         } else if (o->isText()) {
             if (!pos)
                 appliedStartWidth = false;
@@ -1621,7 +1621,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             // space, then subtract its width.
             int wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(TextRun(&space, 1)) + wordSpacing : 0;
 
-            int wrapW = tmpW + inlineWidth(o, !appliedStartWidth, true);
+            int wrapW = tmpW + inlineLogicalWidth(o, !appliedStartWidth, true);
             int charWidth = 0;
             bool breakNBSP = autoWrap && o->style()->nbspMode() == SPACE;
             // Auto-wrapping text should wrap in the middle of a word only if it could not wrap before the word,
@@ -1705,7 +1705,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
                         additionalTmpW = textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
                     tmpW += additionalTmpW;
                     if (!appliedStartWidth) {
-                        tmpW += inlineWidth(o, true, false);
+                        tmpW += inlineLogicalWidth(o, true, false);
                         appliedStartWidth = true;
                     }
                     
@@ -1850,7 +1850,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, bool
             // IMPORTANT: pos is > length here!
             int additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, pos - lastSpace, f, w + tmpW, isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
             tmpW += additionalTmpW;
-            tmpW += inlineWidth(o, !appliedStartWidth, true);
+            tmpW += inlineLogicalWidth(o, !appliedStartWidth, true);
 
             if (canHyphenate && w + tmpW > width) {
                 tryHyphenating(t, f, style->hyphenationLocale(), lastSpace, pos, w + tmpW - additionalTmpW, width, isFixedPitch, collapseWhiteSpace, lastSpaceWordSpacing, lBreak, nextBreakable, hyphenated);

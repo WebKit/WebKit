@@ -3120,29 +3120,29 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     if (!didPosition || !newFloat->m_paginationStrut)
         return didPosition;
     
-    int floatTop = newFloat->top();
+    int floatLogicalTop = logicalTopForFloat(newFloat);
     int paginationStrut = newFloat->m_paginationStrut;
     FloatingObject* f = m_floatingObjects->last();
     
     ASSERT(f == newFloat);
 
-    if (floatTop - paginationStrut != height())
+    if (floatLogicalTop - paginationStrut != logicalHeight())
         return didPosition;
 
     for (f = m_floatingObjects->prev(); f && f != lastFloatFromPreviousLine; f = m_floatingObjects->prev()) {
-        if (f->top() == height()) {
+        if (logicalTopForFloat(f) == logicalHeight()) {
             ASSERT(!f->m_paginationStrut);
             f->m_paginationStrut = paginationStrut;
             RenderBox* o = f->m_renderer;
-            o->setY(o->y() + o->marginTop() + paginationStrut);
+            setLogicalTopForChild(o, logicalTopForChild(o) + marginBeforeForChild(o) + paginationStrut);
             if (o->isRenderBlock())
                 toRenderBlock(o)->setChildNeedsLayout(true, false);
             o->layoutIfNeeded();
-            f->setTop(f->top() + f->m_paginationStrut);
+            setLogicalTopForFloat(f, logicalTopForFloat(f) + f->m_paginationStrut);
         }
     }
         
-    setLogicalHeight(height() + paginationStrut);
+    setLogicalHeight(logicalHeight() + paginationStrut);
     
     return didPosition;
 }
