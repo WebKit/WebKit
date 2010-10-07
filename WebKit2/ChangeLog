@@ -1,3 +1,13 @@
+2010-10-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r69315.
+        http://trac.webkit.org/changeset/69315
+        https://bugs.webkit.org/show_bug.cgi?id=47363
+
+        Forgot to add the new files (Requested by kbalazs on #webkit).
+
+        * WebKit2.pro:
+
 2010-10-07  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

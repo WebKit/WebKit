@@ -103,7 +103,6 @@ INCLUDEPATH = \
     $$INCLUDEPATH
 
 INCLUDEPATH = \
-    $$PWD \
     Platform \
     Platform/CoreIPC \
     Shared \
@@ -307,7 +306,6 @@ SOURCES += \
     Platform/qt/RunLoopQt.cpp \
     Platform/qt/SharedMemoryQt.cpp \
     Platform/qt/WorkQueueQt.cpp \
-    Shared/API/c/WKArray.cpp \
     Shared/API/c/WKCertificateInfo.cpp \
     Shared/API/c/WKNumber.cpp \
     Shared/API/c/WKSerializedScriptValue.cpp \
@@ -378,12 +376,7 @@ SOURCES += \
     UIProcess/WebProcessManager.cpp \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebUIClient.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundle.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundlePage.cpp \
-    WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
     WebProcess/InjectedBundle/InjectedBundle.cpp \
