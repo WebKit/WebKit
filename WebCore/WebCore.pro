@@ -3294,11 +3294,13 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
 contains(DEFINES, ENABLE_DEVICE_ORIENTATION=1) {
     HEADERS += \
         ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.h \
+        ../WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.h \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.h \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.h \
         bindings/generic/RuntimeEnabledFeatures.h
     SOURCES += \
         ../WebKit/qt/WebCoreSupport/DeviceMotionClientQt.cpp \
+        ../WebKit/qt/WebCoreSupport/DeviceMotionProviderQt.cpp \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationClientQt.cpp \
         ../WebKit/qt/WebCoreSupport/DeviceOrientationProviderQt.cpp \
         bindings/generic/RuntimeEnabledFeatures.cpp

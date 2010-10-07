@@ -20,6 +20,9 @@
 #include "config.h"
 #include "DeviceMotionClientQt.h"
 
+#include "DeviceMotionController.h"
+#include "DeviceMotionProviderQt.h"
+
 #include "qwebpage.h"
 
 namespace WebCore {
@@ -27,7 +30,16 @@ namespace WebCore {
 DeviceMotionClientQt::DeviceMotionClientQt(QWebPage* page)
     : m_page(page)
     , m_controller(0)
+    , m_provider(new DeviceMotionProviderQt())
 {
+
+    connect(m_provider, SIGNAL(deviceMotionChanged()), SLOT(changeDeviceMotion()));
+}
+
+DeviceMotionClientQt::~DeviceMotionClientQt()
+{
+    disconnect();
+    delete m_provider;
 }
 
 void DeviceMotionClientQt::setController(DeviceMotionController* controller)
@@ -37,22 +49,30 @@ void DeviceMotionClientQt::setController(DeviceMotionController* controller)
 
 void DeviceMotionClientQt::startUpdating()
 {
-    // call start method from a motion provider.
+    m_provider->start();
 }
 
 void DeviceMotionClientQt::stopUpdating()
 {
-    // call stop method from a motion provider.
+    m_provider->stop();
 }
 
 DeviceMotionData* DeviceMotionClientQt::currentDeviceMotion() const
 {
-    return 0;
+    return m_provider->currentDeviceMotion();
 }
 
 void DeviceMotionClientQt::deviceMotionControllerDestroyed()
 {
     delete this;
+}
+
+void DeviceMotionClientQt::changeDeviceMotion()
+{
+    if (!m_controller)
+        return;
+
+    m_controller->didChangeDeviceMotion(currentDeviceMotion());
 }
 
 } // namespace WebCore
