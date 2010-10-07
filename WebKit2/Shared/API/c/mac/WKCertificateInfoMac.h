@@ -26,7 +26,7 @@
 #ifndef WKCertificateInfoMac_h
 #define WKCertificateInfoMac_h
 
-#include <Foundation/Foundation.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <WebKit2/WKBase.h>
 
 #ifdef __cplusplus

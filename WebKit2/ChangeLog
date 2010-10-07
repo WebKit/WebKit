@@ -1,3 +1,10 @@
+2010-10-07  Darin Adler  <darin@apple.com>
+
+        Fix include mistake that makes build fail with non-Objective-C.
+
+        * Shared/API/c/mac/WKCertificateInfoMac.h: Include CoreFoundation.h,
+        not Foundation.h.
+
 2010-10-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
