@@ -36,6 +36,7 @@
 #include "PDFDocumentImage.h"
 #include "PlatformString.h"
 #include <ApplicationServices/ApplicationServices.h>
+#include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
 #include "WebCoreSystemInterface.h"

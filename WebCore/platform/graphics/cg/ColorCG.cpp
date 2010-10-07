@@ -92,15 +92,18 @@ static CGColorRef leakCGColor(const Color& color, ColorSpace colorSpace)
 template<ColorSpace colorSpace> static CGColorRef cachedCGColor(const Color& color)
 {
     switch (color.rgb()) {
-    case Color::transparent:
+    case Color::transparent: {
         static CGColorRef transparentCGColor = leakCGColor(color, colorSpace);
         return transparentCGColor;
-    case Color::black:
+    }
+    case Color::black: {
         static CGColorRef blackCGColor = leakCGColor(color, colorSpace);
         return blackCGColor;
-    case Color::white:
+    }
+    case Color::white: {
         static CGColorRef whiteCGColor = leakCGColor(color, colorSpace);
         return whiteCGColor;
+    }
     }
 
     ASSERT(color.rgb());
