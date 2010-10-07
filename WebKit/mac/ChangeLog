@@ -1,3 +1,22 @@
+2010-10-06  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Screensaver starts while watching fullscreen playback.
+        https://bugs.webkit.org/show_bug.cgi?id=47299
+        <rdar://problem/8478956>
+
+        To disable the Screen Saver, we need to periodically call UpdateSystemActivity().  
+
+        * WebView/WebVideoFullscreenController.h: Added _tickleTimer.
+        * WebView/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController dealloc]): Invalidate _tickleTimer.
+        (-[WebVideoFullscreenController _enableTickleTimer]): Create _tickleTimer. 
+        (-[WebVideoFullscreenController _disableTickleTimer]): Invalidate _tickleTimer.
+        (-[WebVideoFullscreenController _tickleTimerFired]): Call UpdateSystemActivity().
+        (-[WebVideoFullscreenController updatePowerAssertions]): Call _enableTickleTimer 
+            or _disableTickleTimer.
+
 2010-10-05  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -49,7 +49,8 @@ namespace WebCore {
     BOOL _isWindowLoaded;
     BOOL _forceDisableAnimation;
     uint32_t _idleDisplaySleepAssertion;
-    uint32_t _idleSystemSleepAssertion;    
+    uint32_t _idleSystemSleepAssertion;
+    NSTimer *_tickleTimer;
     SystemUIMode _savedUIMode;
     SystemUIOptions _savedUIOptions;
 }
