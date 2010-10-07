@@ -1,3 +1,16 @@
+2010-10-07  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Some viewport meta tag api refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=47334
+
+        WebCore::findConfigurationForViewportData renamed to computeViewportAttributes.
+        WebCore::ViewportAttributes::layoutViewport renamed to layoutSize.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::viewportConfigurationForSize):
+
 2010-10-06  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by John Sullivan.

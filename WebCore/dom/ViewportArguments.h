@@ -43,7 +43,7 @@ enum ViewportErrorCode {
 };
 
 struct ViewportAttributes {
-    IntSize layoutViewport;
+    IntSize layoutSize;
 
     float devicePixelRatio;
 
@@ -97,7 +97,7 @@ struct ViewportArguments {
     }
 };
 
-ViewportAttributes findConfigurationForViewportData(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport);
+ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, int deviceDPI, IntSize visibleViewport);
 
 void setViewportFeature(const String& keyString, const String& valueString, Document*, void* data);
 void reportViewportWarning(Document*, ViewportErrorCode, const String& replacement);

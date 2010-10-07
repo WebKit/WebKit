@@ -1,3 +1,18 @@
+2010-10-07  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Some viewport meta tag api refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=47334
+
+        WebCore::findConfigurationForViewportData renamed to computeViewportAttributes.
+        WebCore::ViewportAttributes::layoutViewport renamed to layoutSize.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportConfigurationForSize):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::viewportAsText):
+
 2010-10-07  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         Reviewed by Simon Hausmann.

@@ -2250,10 +2250,10 @@ QWebPage::ViewportConfiguration QWebPage::viewportConfigurationForSize(const QSi
         deviceHeight = size.height();
     }
 
-    WebCore::ViewportAttributes conf = WebCore::findConfigurationForViewportData(d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, deviceDPI, availableSize);
+    WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments(), desktopWidth, deviceWidth, deviceHeight, deviceDPI, availableSize);
 
     result.m_isValid = true;
-    result.m_size = conf.layoutViewport;
+    result.m_size = conf.layoutSize;
     result.m_initialScaleFactor = conf.initialScale;
     result.m_minimumScaleFactor = conf.minimumScale;
     result.m_maximumScaleFactor = conf.maximumScale;
