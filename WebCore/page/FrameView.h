@@ -25,9 +25,9 @@
 #ifndef FrameView_h
 #define FrameView_h
 
-#include "Frame.h" // Only used by FrameView::inspectorTimelineAgent()
+#include "Frame.h"
 #include "IntSize.h"
-#include "Page.h" // Only used by FrameView::inspectorTimelineAgent()
+#include "Page.h"
 #include "RenderObject.h" // For PaintBehavior
 #include "ScrollView.h"
 #include <wtf/Forward.h>
@@ -38,7 +38,6 @@ namespace WebCore {
 class Color;
 class Event;
 class FrameViewPrivate;
-class InspectorTimelineAgent;
 class IntRect;
 class Node;
 class PlatformMouseEvent;
@@ -293,10 +292,6 @@ private:
     void scrollToAnchor();
     void scrollPositionChanged();
 
-#if ENABLE(INSPECTOR)
-    InspectorTimelineAgent* inspectorTimelineAgent() const;
-#endif
-    
     bool hasCustomScrollbars() const;
 
     virtual void updateScrollCorner();
@@ -385,13 +380,6 @@ private:
     static double s_maxDeferredRepaintDelayDuringLoading;
     static double s_deferredRepaintDelayIncrementDuringLoading;
 };
-
-#if ENABLE(INSPECTOR)
-inline InspectorTimelineAgent* FrameView::inspectorTimelineAgent() const
-{
-    return m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0;
-}
-#endif
 
 } // namespace WebCore
 

@@ -62,7 +62,7 @@
 #include "IDBFactory.h"
 #include "IDBFactoryBackendInterface.h"
 #include "InspectorController.h"
-#include "InspectorTimelineAgent.h"
+#include "InspectorInstrumentation.h"
 #include "KURL.h"
 #include "Location.h"
 #include "StyleMedia.h"
@@ -1522,15 +1522,6 @@ void DOMWindow::dispatchLoadEvent()
 #endif
 }
 
-#if ENABLE(INSPECTOR)
-InspectorTimelineAgent* DOMWindow::inspectorTimelineAgent() 
-{
-    if (frame() && frame()->page())
-        return frame()->page()->inspectorTimelineAgent();
-    return 0;
-}
-#endif
-
 bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget> prpTarget)
 {
     RefPtr<EventTarget> protect = this;
@@ -1540,23 +1531,11 @@ bool DOMWindow::dispatchEvent(PassRefPtr<Event> prpEvent, PassRefPtr<EventTarget
     event->setCurrentTarget(this);
     event->setEventPhase(Event::AT_TARGET);
 
-#if ENABLE(INSPECTOR)
-    Page* inspectedPage = InspectorTimelineAgent::instanceCount() && frame() ? frame()->page() : 0;
-    if (inspectedPage) {
-        if (InspectorTimelineAgent* timelineAgent = hasEventListeners(event->type()) ? inspectedPage->inspectorTimelineAgent() : 0)
-            timelineAgent->willDispatchEvent(*event);
-        else
-            inspectedPage = 0;
-    }
-#endif
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEventOnWindow(frame(), *event, this);
 
     bool result = fireEventListeners(event.get());
 
-#if ENABLE(INSPECTOR)
-    if (inspectedPage)
-        if (InspectorTimelineAgent* timelineAgent = inspectedPage->inspectorTimelineAgent())
-            timelineAgent->didDispatchEvent();
-#endif
+    InspectorInstrumentation::didDispatchEventOnWindow(frame(), cookie);
 
     return result;
 }

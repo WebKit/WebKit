@@ -33,9 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
-#include "Document.h"
 #include "InspectorValues.h"
-#include "ScriptExecutionContext.h"
 #include "ScriptGCEvent.h"
 #include "ScriptGCEventListener.h"
 #include <wtf/Vector.h>
@@ -130,9 +128,6 @@ public:
         
     virtual void didGC(double, double, size_t);
 
-    static int instanceCount() { return s_instanceCount; }
-    static InspectorTimelineAgent* retrieve(ScriptExecutionContext*);
-
 private:
     struct TimelineRecordEntry {
         TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, TimelineRecordType type)
@@ -157,7 +152,7 @@ private:
     InspectorFrontend* m_frontend;
 
     Vector<TimelineRecordEntry> m_recordStack;
-    static int s_instanceCount;
+
     static int s_id;
     const int m_id;
     struct GCEvent {
@@ -172,13 +167,6 @@ private:
     typedef Vector<GCEvent> GCEvents;
     GCEvents m_gcEvents;
 };
-
-inline InspectorTimelineAgent* InspectorTimelineAgent::retrieve(ScriptExecutionContext* context)
-{
-    if (context && context->isDocument())
-        return static_cast<Document*>(context)->inspectorTimelineAgent();
-    return 0;
-}
 
 } // namespace WebCore
 

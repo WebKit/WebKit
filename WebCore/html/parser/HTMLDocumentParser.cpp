@@ -36,14 +36,11 @@
 #include "HTMLScriptRunner.h"
 #include "HTMLTreeBuilder.h"
 #include "HTMLDocument.h"
+#include "InspectorInstrumentation.h"
 #include "NestingLevelIncrementer.h"
 #include "Settings.h"
 #include "XSSAuditor.h"
 #include <wtf/CurrentTime.h>
-
-#if ENABLE(INSPECTOR)
-#include "InspectorTimelineAgent.h"
-#endif
 
 namespace WebCore {
 
@@ -210,9 +207,12 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // ASSERT that this object is both attached to the Document and protected.
     ASSERT(refCount() >= 2);
 
-    // We tell the InspectorTimelineAgent about every pump, even if we
+    // We tell the InspectorInstrumentation about every pump, even if we
     // end up pumping nothing.  It can filter out empty pumps itself.
-    willPumpLexer();
+    // FIXME: m_input.current().length() is only accurate if we
+    // end up parsing the whole buffer in this pump.  We should pass how
+    // much we parsed as part of didWriteHTML instead of willWriteHTML.
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().length(), m_tokenizer->lineNumber());
 
     HTMLParserScheduler::PumpSession session;
     // FIXME: This loop body has is now too long and needs cleanup.
@@ -256,26 +256,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_preloadScanner->scan();
     }
 
-    didPumpLexer();
-}
-
-void HTMLDocumentParser::willPumpLexer()
-{
-#if ENABLE(INSPECTOR)
-    // FIXME: m_input.current().length() is only accurate if we
-    // end up parsing the whole buffer in this pump.  We should pass how
-    // much we parsed as part of didWriteHTML instead of willWriteHTML.
-    if (InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent())
-        timelineAgent->willWriteHTML(m_input.current().length(), m_tokenizer->lineNumber());
-#endif
-}
-
-void HTMLDocumentParser::didPumpLexer()
-{
-#if ENABLE(INSPECTOR)
-    if (InspectorTimelineAgent* timelineAgent = document()->inspectorTimelineAgent())
-        timelineAgent->didWriteHTML(m_tokenizer->lineNumber());
-#endif
+    InspectorInstrumentation::didWriteHTML(document(), m_tokenizer->lineNumber(), cookie);
 }
 
 bool HTMLDocumentParser::hasInsertionPoint()

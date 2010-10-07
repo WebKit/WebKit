@@ -88,7 +88,7 @@
 #include "HitTestResult.h"
 #include "ImageLoader.h"
 #include "InspectorController.h"
-#include "InspectorTimelineAgent.h"
+#include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
 #include "Logging.h"
 #include "MessageEvent.h"
@@ -1460,10 +1460,7 @@ void Document::recalcStyle(StyleChange change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
-#if ENABLE(INSPECTOR)
-    if (InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent())
-        timelineAgent->willRecalculateStyle();
-#endif
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willRecalculateStyle(this);
 
     m_inStyleRecalc = true;
     suspendPostAttachCallbacks();
@@ -1518,10 +1515,7 @@ bail_out:
         implicitClose();
     }
 
-#if ENABLE(INSPECTOR)
-    if (InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent())
-        timelineAgent->didRecalculateStyle();
-#endif
+    InspectorInstrumentation::didRecalculateStyle(this, cookie);
 }
 
 void Document::updateStyleIfNeeded()
@@ -4685,18 +4679,6 @@ bool Document::isXHTMLMPDocument() const
 }
 #endif
 
-#if ENABLE(INSPECTOR)
-InspectorTimelineAgent* Document::inspectorTimelineAgent() const 
-{
-    return page() ? page()->inspectorTimelineAgent() : 0;
-}
-
-InspectorController* Document::inspectorController() const 
-{
-    return page() ? page()->inspectorController() : 0;
-}
-#endif
-    
 #if ENABLE(FULLSCREEN_API)
 void Document::webkitRequestFullScreenForElement(Element* element, unsigned short flags)
 {

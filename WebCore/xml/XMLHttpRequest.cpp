@@ -35,7 +35,7 @@
 #include "File.h"
 #include "HTTPParsers.h"
 #include "InspectorController.h"
-#include "InspectorTimelineAgent.h"
+#include "InspectorInstrumentation.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
@@ -303,35 +303,17 @@ void XMLHttpRequest::callReadyStateChangeListener()
     if (!scriptExecutionContext())
         return;
 
-#if ENABLE(INSPECTOR)
-    InspectorTimelineAgent* timelineAgent = InspectorTimelineAgent::retrieve(scriptExecutionContext());
-    bool callTimelineAgentOnReadyStateChange = timelineAgent && hasEventListeners(eventNames().readystatechangeEvent);
-    if (callTimelineAgentOnReadyStateChange)
-        timelineAgent->willChangeXHRReadyState(m_url.string(), m_state);
-#endif
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willChangeXHRReadyState(scriptExecutionContext(), this);
 
     if (m_async || (m_state <= OPENED || m_state == DONE))
         m_progressEventThrottle.dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().readystatechangeEvent), m_state == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
 
-#if ENABLE(INSPECTOR)
-    if (callTimelineAgentOnReadyStateChange && (timelineAgent = InspectorTimelineAgent::retrieve(scriptExecutionContext())))
-        timelineAgent->didChangeXHRReadyState();
-#endif
+    InspectorInstrumentation::didChangeXHRReadyState(scriptExecutionContext(), cookie);
 
     if (m_state == DONE && !m_error) {
-#if ENABLE(INSPECTOR)
-        timelineAgent = InspectorTimelineAgent::retrieve(scriptExecutionContext());
-        bool callTimelineAgentOnLoad = timelineAgent && hasEventListeners(eventNames().loadEvent);
-        if (callTimelineAgentOnLoad)
-            timelineAgent->willLoadXHR(m_url.string());
-#endif
-
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willLoadXHR(scriptExecutionContext(), this);
         m_progressEventThrottle.dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadEvent));
-
-#if ENABLE(INSPECTOR)
-        if (callTimelineAgentOnLoad && (timelineAgent = InspectorTimelineAgent::retrieve(scriptExecutionContext())))
-            timelineAgent->didLoadXHR();
-#endif
+        InspectorInstrumentation::didLoadXHR(scriptExecutionContext(), cookie);
     }
 }
 

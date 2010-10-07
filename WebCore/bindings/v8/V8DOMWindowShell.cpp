@@ -37,7 +37,6 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "InspectorTimelineAgent.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "ScriptController.h"

@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-    class InspectorTimelineAgent;
-
     class DOMTimer : public SuspendableTimer {
     public:
         virtual ~DOMTimer();

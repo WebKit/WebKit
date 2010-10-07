@@ -39,7 +39,7 @@
 #include "FrameLoaderClient.h"
 #include "IDBFactoryBackendInterface.h"
 #include "IDBPendingTransactionMonitor.h"
-#include "InspectorTimelineAgent.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformBridge.h"
@@ -376,10 +376,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
 
     V8GCController::checkMemoryUsage();
 
-#if ENABLE(INSPECTOR)
-    if (InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0)
-        timelineAgent->willEvaluateScript(source.url().isNull() ? String() : source.url().string(), source.startLine());
-#endif
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willEvaluateScript(m_frame, source.url().isNull() ? String() : source.url().string(), source.startLine());
 
     v8::Local<v8::Value> result;
     {
@@ -414,10 +411,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
     PlatformBridge::traceEventEnd("v8.run", node, "");
 #endif
 
-#if ENABLE(INSPECTOR)
-    if (InspectorTimelineAgent* timelineAgent = m_frame->page() ? m_frame->page()->inspectorTimelineAgent() : 0)
-        timelineAgent->didEvaluateScript();
-#endif
+    InspectorInstrumentation::didEvaluateScript(m_frame, cookie);
 
     return result;
 }
@@ -505,33 +499,23 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
         // execution finishs before firing the timer.
         m_frame->keepAlive();
 
-#if ENABLE(INSPECTOR)
-        Page* inspectedPage = InspectorTimelineAgent::instanceCount() ? m_frame->page(): 0;
-        if (inspectedPage) {
-            if (InspectorTimelineAgent* timelineAgent = inspectedPage->inspectorTimelineAgent()) {
-                v8::ScriptOrigin origin = function->GetScriptOrigin();
-                String resourceName("undefined");
-                int lineNumber = 1;
-                if (!origin.ResourceName().IsEmpty()) {
-                    resourceName = toWebCoreString(origin.ResourceName());
-                    lineNumber = function->GetScriptLineNumber() + 1;
-                }
-                timelineAgent->willCallFunction(resourceName, lineNumber);
-            } else
-                inspectedPage = 0;
+        InspectorInstrumentationCookie cookie = 0;
+        if (InspectorInstrumentation::hasFrontends()) {
+            v8::ScriptOrigin origin = function->GetScriptOrigin();
+            String resourceName("undefined");
+            int lineNumber = 1;
+            if (!origin.ResourceName().IsEmpty()) {
+                resourceName = toWebCoreString(origin.ResourceName());
+                lineNumber = function->GetScriptLineNumber() + 1;
+            }
+            cookie = InspectorInstrumentation::willCallFunction(m_frame, resourceName, lineNumber);
         }
-#endif // !ENABLE(INSPECTOR)
 
         m_recursion++;
         result = function->Call(receiver, argc, args);
         m_recursion--;
 
-#if ENABLE(INSPECTOR)
-        if (inspectedPage)
-            if (InspectorTimelineAgent* timelineAgent = inspectedPage->inspectorTimelineAgent())
-                timelineAgent->didCallFunction();
-#endif // !ENABLE(INSPECTOR)
-
+        InspectorInstrumentation::didCallFunction(m_frame, cookie);
     }
 
     // Release the storage mutex if applicable.

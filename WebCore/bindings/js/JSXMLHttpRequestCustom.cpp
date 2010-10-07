@@ -94,7 +94,7 @@ JSValue JSXMLHttpRequest::open(ExecState* exec)
 
 JSValue JSXMLHttpRequest::send(ExecState* exec)
 {
-    InspectorInstrumentation::instrumentWillSendXMLHttpRequest(impl()->scriptExecutionContext(), impl()->url());
+    InspectorInstrumentation::willSendXMLHttpRequest(impl()->scriptExecutionContext(), impl()->url());
 
     ExceptionCode ec = 0;
     if (!exec->argumentCount())

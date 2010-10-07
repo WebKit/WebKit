@@ -43,7 +43,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
-#include "InspectorTimelineAgent.h"
+#include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "PluginViewBase.h"
 #include "RenderBox.h"
@@ -1059,26 +1059,10 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     ASSERT(!m_owningLayer->m_usedTransparency);
 }
 
-#if ENABLE(INSPECTOR)
-static InspectorTimelineAgent* inspectorTimelineAgent(RenderObject* renderer)
-{
-    Frame* frame = renderer->frame();
-    if (!frame)
-        return 0;
-    Page* page = frame->page();
-    if (!page)
-        return 0;
-    return page->inspectorTimelineAgent();
-}
-#endif
-
 // Up-call from compositing layer drawing callback.
 void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& context, GraphicsLayerPaintingPhase paintingPhase, const IntRect& clip)
 {
-#if ENABLE(INSPECTOR)
-    if (InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent(m_owningLayer->renderer()))
-        timelineAgent->willPaint(clip);
-#endif
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_owningLayer->renderer()->frame(), clip);
 
     // We have to use the same root as for hit testing, because both methods
     // can compute and cache clipRects.
@@ -1098,10 +1082,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer*, GraphicsContext& co
 
     paintIntoLayer(m_owningLayer, &context, dirtyRect, PaintBehaviorNormal, paintingPhase, renderer());
 
-#if ENABLE(INSPECTOR)
-    if (InspectorTimelineAgent* timelineAgent = inspectorTimelineAgent(m_owningLayer->renderer()))
-        timelineAgent->didPaint();
-#endif
+    InspectorInstrumentation::didPaint(m_owningLayer->renderer()->frame(), cookie);
 }
 
 bool RenderLayerBacking::showDebugBorders() const
