@@ -37,6 +37,7 @@ class TestsController {
 public:
     static TestsController& shared();
 
+    void dumpTestNames();
     bool runTestNamed(const std::string&);
 
     // Called by the tests themselves.

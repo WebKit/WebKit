@@ -40,9 +40,9 @@ public:
     
     template<typename TestClassTy> class Register {
     public:
-        Register(const std::string& identifier)
+        Register(const std::string& testSuite, const std::string& testCase)
         {
-            TestsController::shared().registerCreateTestFunction(identifier, Register::create);
+            TestsController::shared().registerCreateTestFunction(testSuite + "/" + testCase, Register::create);
         }
     
     private:
@@ -61,23 +61,23 @@ protected:
     std::string m_identifier;
 };
 
-#define TEST_CLASS_NAME(testCaseName) testCaseName##_Test
-#define TEST_REGISTRAR_NAME(testCaseName) testCaseName##_Registrar
+#define TEST_CLASS_NAME(testSuite, testCaseName) testSuite##testCaseName##_Test
+#define TEST_REGISTRAR_NAME(testSuite, testCaseName) testSuite##testCaseName##_Registrar
 
 // Use this to define a new test.
-#define TEST(testCaseName) \
-    class TEST_CLASS_NAME(testCaseName) : public Test { \
+#define TEST(testSuite, testCaseName) \
+    class TEST_CLASS_NAME(testSuite, testCaseName) : public Test { \
     public: \
-        TEST_CLASS_NAME(testCaseName)(const std::string& identifier) \
+        TEST_CLASS_NAME(testSuite, testCaseName)(const std::string& identifier) \
             : Test(identifier) \
         { \
         } \
         virtual void run(); \
     }; \
     \
-    static Test::Register<TEST_CLASS_NAME(testCaseName)> TEST_REGISTRAR_NAME(testCaseName)(#testCaseName); \
+    static Test::Register<TEST_CLASS_NAME(testSuite, testCaseName)> TEST_REGISTRAR_NAME(testSuite, testCaseName)(#testSuite, #testCaseName); \
     \
-    void TEST_CLASS_NAME(testCaseName)::run()
+    void TEST_CLASS_NAME(testSuite, testCaseName)::run()
 
 #define TEST_ASSERT(expression) do { if (!(expression)) { TestsController::shared().testFailed(__FILE__, __LINE__, #expression); return; } } while (0)
 

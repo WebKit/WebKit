@@ -31,7 +31,13 @@ int main(int argc, const char* argv[])
 
     [NSApplication sharedApplication];
 
-    bool passed = TestWebKitAPI::TestsController::shared().runTestNamed(std::string(argv[1]));
+    bool passed = true;
+
+    std::string argument(argv[1]);
+    if (argument == "--dump-tests")
+        TestWebKitAPI::TestsController::shared().dumpTestNames();
+    else   
+        passed = TestWebKitAPI::TestsController::shared().runTestNamed(argument);
 
     [pool drain];
 

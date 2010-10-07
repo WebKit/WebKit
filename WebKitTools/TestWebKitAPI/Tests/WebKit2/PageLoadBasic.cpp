@@ -97,7 +97,7 @@ static void decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURLR
     WKFramePolicyListenerUse(listener);
 }
 
-TEST(PageLoadBasic)
+TEST(WebKit2, PageLoadBasic)
 {
     State state;
 

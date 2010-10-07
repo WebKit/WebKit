@@ -24,42 +24,43 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 # Features to add:
-#   - Ability to run a single test.
-#   - Ability to run all tests under one directory.
+#   - Command line option to run a single test.
+#   - Command line option to run all tests in a suite.
 
 use strict;
 use warnings;
 
 use File::Basename;
-use File::Find;
-use File::Spec::Functions;
-use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use IPC::Open3;
 use lib $FindBin::Bin;
 use webkitdirs;
+use Term::ANSIColor qw(:constants);
 
-sub splitpath($);
-sub numericcmp($$);
-sub pathcmp($$);
-sub findTestsToRun();
-sub runTest($);
+sub dumpAllTests();
+sub runAllTests();
+sub runAllTestsInSuite($);
+sub runTest($$);
+sub populateTests();
 sub buildTestTool();
 
 my $showHelp = 0;
 my $quiet = 0;
+my $dump = 0;
 
 my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options]
   --help                Show this help message
   -q|--quite            Less verbose output
+  -d|--dump-tests       Dump the names of testcases without running them
 EOF
 
 GetOptions(
     'help' => \$showHelp,
     'quiet|q' => \$quiet,
+    'dump|d' => \$dump,
 );
 
 if ($showHelp) {
@@ -69,114 +70,117 @@ if ($showHelp) {
 
 setConfiguration();
 buildTestTool();
-my @testsToRun = findTestsToRun();
+my %testsToRun = populateTests();
 
-my $anyFailures = 0;
-for my $testPath (@testsToRun) {
-    my $failed = runTest($testPath);
-    if ($failed) {
-        $anyFailures = 1;
+if ($dump) {
+    dumpAllTests();
+    exit 0;
+}
+
+runAllTests();
+
+sub dumpAllTests()
+{
+    print "Dumping test cases\n";
+    print "------------------\n";
+    for my $suite (keys %testsToRun) {
+        print $suite . ":\n";
+        print map { "    " . $_ . "\n" } @{ $testsToRun{$suite} };
     }
-}
-exit $anyFailures;
-
-
-sub splitpath($)
-{
-    my ($path) = @_;
-
-    my $pathSeparator = "/";
-    my $dirname = dirname($path) . $pathSeparator;
-    $dirname = "" if $dirname eq "." . $pathSeparator;
-
-    return ($dirname, basename($path));
+    print "------------------\n";
 }
 
-sub numericcmp($$)
+sub runAllTests()
 {
-    my ($aa, $bb) = @_;
-
-    my @a = split /(\d+)/, $aa;
-    my @b = split /(\d+)/, $bb;
-
-    # Compare one chunk at a time.
-    # Each chunk is either all numeric digits, or all not numeric digits.
-    while (@a && @b) {
-        my $a = shift @a;
-        my $b = shift @b;
-        
-        # Use numeric comparison if chunks are non-equal numbers.
-        return $a <=> $b if $a =~ /^\d/ && $b =~ /^\d/ && $a != $b;
-
-        # Use string comparison if chunks are any other kind of non-equal string.
-        return $a cmp $b if $a ne $b;
-    }
-    
-    # One of the two is now empty; compare lengths for result in this case.
-    return @a <=> @b;
-}
-
-sub pathcmp($$)
-{
-    my ($patha, $pathb) = @_;
-
-    my ($dira, $namea) = splitpath($patha);
-    my ($dirb, $nameb) = splitpath($pathb);
-
-    return numericcmp($dira, $dirb) if $dira ne $dirb;
-    return numericcmp($namea, $nameb);
-}
-
-sub findTestsToRun()
-{
-    our %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn);
-    our %supportedFileExtensions = map { $_ => 1 } qw(cpp);
-    our $testsDirectory = File::Spec->catfile(sourceDir(), qw(WebKitTools TestWebKitAPI Tests));
-    our @testsFound = ();
-
-    sub directoryFilter
-    {
-        return () if exists $ignoredLocalDirectories{basename($File::Find::dir)};
-        return @_;
-    }
-
-    sub fileFilter
-    {
-        my $filename = $_;
-        if ($filename =~ /\.([^.]+)$/) {
-            
-            if (exists $supportedFileExtensions{$1}) {
-                my $path = File::Spec->abs2rel(catfile($File::Find::dir, $filename), $testsDirectory);
-                push @testsFound, $path;
-            }
+    my $anyFailures = 0;
+    for my $suite (keys %testsToRun) {
+        my $failed = runAllTestsInSuite($suite);
+        if ($failed) {
+            $anyFailures = 1;
         }
     }
-
-    chdirWebKit();
-
-    find({ preprocess => \&directoryFilter, wanted => \&fileFilter }, $testsDirectory);
-    return sort pathcmp @testsFound;
+    return $anyFailures;
 }
 
-sub runTest($)
+sub runAllTestsInSuite($)
 {
-    my ($testPath) = @_;
+    my ($suite) = @_;
+    print "Suite: $suite\n";
 
-    my ($dir, $testFile) = splitpath($testPath);
-    my $test = substr($testFile, 0, rindex($testFile, "."));
+    my $anyFailures = 0;
+    for my $test (@{$testsToRun{$suite}}) {
+        my $failed = runTest($suite, $test);
+        if ($failed) {
+            $anyFailures = 1;
+        }
+    }
+    
+    return $anyFailures;
+}
 
-    print "Running " . $dir . $test . "\n";
+sub runTest($$)
+{
+    my ($suite, $testName) = @_;
+    my $test = $suite . "/" . $testName;
 
+    print "    Test: $testName -> ";
+
+    my $result = 0;
     if (isAppleMacWebKit()) {
         my $productDir = productDir();
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
         $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
         my $apiTesterPath = "$productDir/TestWebKitAPI";
-        if (!isTiger() && architecture()) {
-            return system "arch", "-" . architecture(), $apiTesterPath, $test, @ARGV;
+        if (architecture()) {
+            $result = system "arch", "-" . architecture(), $apiTesterPath, $test, @ARGV;
         } else {
-            return system $apiTesterPath, $test, @ARGV;
+            $result = system $apiTesterPath, $test, @ARGV;
         }
+    }
+    
+    if ($result == 0) {
+        print BOLD GREEN, "Passed", RESET, "\n";
+    } else {
+        print BOLD RED, "Failed", RESET, "\n";
+    }
+}
+
+
+sub populateTests()
+{
+    if (isAppleMacWebKit()) {
+        my $productDir = productDir();
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+        my $apiTesterPath = "$productDir/TestWebKitAPI";
+
+        my ($pid, $childIn, $childOut);
+        if (architecture()) {
+            $pid = open3($childIn, $childOut, ">&STDERR", "arch", "-" . architecture(), $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
+        } else {
+            $pid = open3($childIn, $childOut, ">&STDERR", $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
+        }
+        close($childIn);
+        my @tests = <$childOut>;
+        close($childOut);
+
+        waitpid($pid, 0);
+        my $result = $?;
+
+        if ($result) {
+            print STDERR "Failed to build list of tests!\n";
+            exit exitStatus($result);
+        }
+
+        chomp(@tests);
+
+        my %keyedTests = ();
+        for my $test (@tests) {
+            my ($suite, $testName) = split(/\//, $test);
+            push @{$keyedTests{$suite}}, $testName;
+        }
+        
+        return %keyedTests;
     }
 }
 
@@ -184,7 +188,7 @@ sub buildTestTool()
 {
     chdirWebKit();
 
-    my $buildTestTool =  "build-api-tests";
+    my $buildTestTool = "build-api-tests";
     print STDERR "Running $buildTestTool\n";
 
     local *DEVNULL;

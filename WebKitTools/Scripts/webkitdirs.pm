@@ -1834,4 +1834,22 @@ sub debugWebKitTestRunner
     return 1;
 }
 
+sub runTestWebKitAPI
+{
+    if (isAppleMacWebKit()) {
+        my $productDir = productDir();
+        print "Starting TestWebKitAPI with DYLD_FRAMEWORK_PATH set to point to $productDir.\n";
+        $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
+        $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
+        my $testWebKitAPIPath = "$productDir/TestWebKitAPI";
+        if (!isTiger() && architecture()) {
+            return system "arch", "-" . architecture(), $testWebKitAPIPath, @ARGV;
+        } else {
+            return system $testWebKitAPIPath, @ARGV;
+        }
+    }
+
+    return 1;
+}
+
 1;

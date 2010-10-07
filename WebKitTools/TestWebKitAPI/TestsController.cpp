@@ -43,6 +43,14 @@ TestsController::TestsController()
 {
 }
 
+void TestsController::dumpTestNames()
+{
+    std::map<std::string, CreateTestFunction>::const_iterator it = m_createTestFunctions.begin();
+    std::map<std::string, CreateTestFunction>::const_iterator end = m_createTestFunctions.end();
+    for (; it != end; ++it)
+        printf("%s\n", (*it).first.c_str());
+}
+
 bool TestsController::runTestNamed(const std::string& identifier)
 {
     CreateTestFunction createTestFunction = m_createTestFunctions[identifier];
@@ -53,9 +61,6 @@ bool TestsController::runTestNamed(const std::string& identifier)
 
     m_currentTest = createTestFunction(identifier);
     m_currentTest->run();
-
-    if (!m_testFailed)
-        printf("PASS: %s\n", m_currentTest->name().c_str());
 
     delete m_currentTest;
     m_currentTest = 0;

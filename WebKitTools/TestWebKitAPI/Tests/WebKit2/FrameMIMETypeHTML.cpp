@@ -54,7 +54,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     testDone = true;
 }
 
-TEST(FrameMIMETypeHTML)
+TEST(WebKit2, FrameMIMETypeHTML)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));

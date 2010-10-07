@@ -1,3 +1,43 @@
+2010-10-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Change API tester to ask the executable for the list of all
+        tests instead of relying on the directory structure.
+        https://bugs.webkit.org/show_bug.cgi?id=47359
+
+        * Scripts/run-test-webkit-api: Added.
+        * Scripts/webkitdirs.pm:
+        Add additional script to just launch the api tester with the correct settings.
+
+        * Scripts/run-api-tests:
+        Change to use the new --dump-tests options to build the list of tests and change
+        output to reflect a (suite, testcase) tuple for each test. Also adds some color.
+
+        * TestWebKitAPI/Test.h:
+        (TestWebKitAPI::Test::Register::Register):
+        * TestWebKitAPI/Tests/WTF/VectorBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypeHTML.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypePNG.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/WKString.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/WKStringJSString.cpp:
+        (TestWebKitAPI::TEST):
+        Give each test a suite name in addition to the test name.
+
+        * TestWebKitAPI/TestsController.cpp:
+        (TestWebKitAPI::TestsController::dumpTestNames):
+        (TestWebKitAPI::TestsController::runTestNamed):
+        * TestWebKitAPI/TestsController.h:
+        * TestWebKitAPI/mac/main.mm:
+        (main):
+        Add option to print all registered tests.
+
 2010-10-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>, Andras Becsi  <abecsi@webkit.org>, Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
