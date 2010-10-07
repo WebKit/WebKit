@@ -3192,10 +3192,10 @@ BUG58212 WIN : http/tests/appcache/main-resource-redirect.html = TEXT TIMEOUT PA
 
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
-BUG58254 : editing/spelling/autocorrection-delete.html = IMAGE+TEXT
-BUG58254 : editing/spelling/autocorrection-removing-underline-after-paste.html = IMAGE+TEXT
-BUG58254 : editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
-BUG58254 : editing/spelling/autocorrection-simple.html = IMAGE+TEXT
+BUG58254 MAC : platform/mac/editing/spelling/autocorrection-delete.html = IMAGE+TEXT
+BUG58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html = IMAGE+TEXT
+BUG58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
+BUG58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAGE+TEXT
 
 BUG58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TEXT TIMEOUT
 
