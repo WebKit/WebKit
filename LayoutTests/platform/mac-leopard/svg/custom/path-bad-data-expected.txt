@@ -1,0 +1,19 @@
+CONSOLE MESSAGE: line 9: Error: Problem parsing d="M 602.7771 261.4254 A 318.0399 308.0491 0  1 602.7771 261.4253"
+CONSOLE MESSAGE: line 10: Error: Problem parsing d="M 0 0 L 10,, 10"
+CONSOLE MESSAGE: line 11: Error: Problem parsing d="M 0 0 L 10 10E Z"
+CONSOLE MESSAGE: line 12: Error: Problem parsing d="M 0 0 L 10% 10 Z"
+CONSOLE MESSAGE: line 13: Error: Problem parsing d="M"
+CONSOLE MESSAGE: line 14: Error: Problem parsing d="M 0"
+CONSOLE MESSAGE: line 15: Error: Problem parsing d="M 0 0 0"
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 200x200
+    RenderSVGPath {path} at (0,0) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L200.00,0.00 L200.00,200.00 L0.00,200.00"]
+    RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M602.78,261.43"]
+    RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00"]
+    RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00"]
+    RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00"]
+    RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+    RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [data=""]
+    RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00"]

@@ -32,9 +32,6 @@ fast/events/mouseout-on-window.html
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
 
-# see bug <rdar://problem/5646437> REGRESSION (r28015): svg/batik/text/smallFonts fails
-svg/batik/text/smallFonts.svg
-
 # Skip because fix for https://bugs.webkit.org/show_bug.cgi?id=26770 was reverted
 compositing/animation/animated-composited-inside-hidden.html
 
@@ -46,12 +43,6 @@ tables/mozilla_expected_failures/bugs/bug178855.xml
 
 # https://bugs.webkit.org/show_bug.cgi?id=21913 Repaint pixel test failure
 fast/repaint/body-background-image.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=23927 LayoutTests for svg fail after TransformationMatrix changes
-svg/W3C-SVG-1.1/animate-elem-82-t.svg
-svg/W3C-SVG-1.1/coords-trans-01-b.svg
-svg/hixie/perf/001.xml
-svg/hixie/perf/002.xml
 
 # <rdar://problem/6710625> Test media/video-error-abort.html doesn't work
 http/tests/media/video-error-abort.html
@@ -117,10 +108,6 @@ storage/database-lock-after-reload.html
 
 # Accept header is handled by the browser
 http/tests/misc/image-checks-for-accept.html
-
-# Crashes in debug
-# https://bugs.webkit.org/show_bug.cgi?id=35631
-svg/custom/tiling-regular-hexagonal-crash.svg
 
 # Need to add functionality to DumpRenderTree to handle enable/disable Spatial Navigation
 fast/events/spatial-navigation

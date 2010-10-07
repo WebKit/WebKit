@@ -4,11 +4,6 @@
 <script>
   if (window.layoutTestController)
       layoutTestController.dumpAsText();
-  // Prevent insertion of any content into the document.
-  document.documentElement.addEventListener("DOMNodeInserted", function() {
-    var insertedNode = event.target;
-    insertedNode.parentNode.removeChild(insertedNode);
-  }, true);
 </script>
 
 <defs>
@@ -21,7 +16,7 @@
       <text x="10" y="30">PASS - didn't crash, bug 36231</text>
    </g>
    
-   <pattern id="Hex_Pattern" patternUnits="userSpaceOnUse" patternTransform="translate(4, 20) scale(0.5)" width="156" height=" 270">
+   <pattern id="Hex_Pattern" patternUnits="userSpaceOnUse" patternTransform="translate(4, 20) scale(0.5)" width="156" height="270">
       <use xlink:href="#Hex_Group" fill="#99BBDD" transform="translate(0, 90) scale(1, -1)"/>
       <use xlink:href="#Hex_Group" fill="#BB99DD" transform="translate(0, 90)"/>
       <use xlink:href="#Hex_Group" fill="#DD99BB" transform="translate(0, 180)"/>

@@ -1,9 +1,6 @@
 # <rdar://problem/5313536> frame-loading-via-document-write.html sometimes fails on Leopard
 http/tests/security/frame-loading-via-document-write.html
 
-# <rdar://problem/5686552> svg/css/glyph-orientation-rounding-test.xhtml sometimes fails
-svg/css/glyph-orientation-rounding-test.xhtml
-
 # Tests of table accessibility functionality not supported on Leopard
 platform/mac/accessibility/table-multi-bodies.html
 # Lists are not supported on Leopard.
@@ -78,10 +75,6 @@ storage/indexeddb
 # Disable the tests until the mesa renderer is integrated.
 # https://bugs.webkit.org/show_bug.cgi?id=41545
 fast/canvas/webgl/texture-npot.html
-
-# Disable an SVG test that causes an assertion failure in debug-mode WebKit under 10.5.
-# https://bugs.webkit.org/show_bug.cgi?id=41808
-svg/filters/filter-empty-g.svg
 
 # Results depend on user defaults.
 # https://bugs.webkit.org/show_bug.cgi?id=43296
