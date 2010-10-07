@@ -378,10 +378,9 @@ bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, co
         trackInfo.enableState = kThemeTrackNothingToScroll;
     trackInfo.trackInfo.scrollbar.pressState = scrollbarPartToHIPressedState(scrollbar->pressedPart());
     
-    CGAffineTransform currentCTM = CGContextGetCTM(context->platformContext());
-    
     // The Aqua scrollbar is buggy when rotated and scaled.  We will just draw into a bitmap if we detect a scale or rotation.
-    bool canDrawDirectly = currentCTM.a == 1.0f && currentCTM.b == 0.0f && currentCTM.c == 0.0f && (currentCTM.d == 1.0f || currentCTM.d == -1.0f);
+    const AffineTransform& currentCTM = context->getCTM();
+    bool canDrawDirectly = currentCTM.isIdentityOrTranslationOrFlipped();
     if (canDrawDirectly)
         HIThemeDrawTrack(&trackInfo, 0, context->platformContext(), kHIThemeOrientationNormal);
     else {
