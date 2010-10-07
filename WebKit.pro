@@ -33,7 +33,8 @@ build-qtscript {
 webkit2 {
     exists($$PWD/WebKit2/WebProcess.pro): SUBDIRS += WebKit2/WebProcess.pro
     exists($$PWD/WebKitTools/MiniBrowser/qt/MiniBrowser.pro): SUBDIRS += WebKitTools/MiniBrowser/qt/MiniBrowser.pro
-    exists($$PWD/WebKitTools/WebKitTestRunner/qt/WebKitTestRunner.pro): SUBDIRS += WebKitTools/WebKitTestRunner/qt/WebKitTestRunner.pro
+    # Turn it on after the build has been stabilized.
+    #exists($$PWD/WebKitTools/WebKitTestRunner/qt/WebKitTestRunner.pro): SUBDIRS += WebKitTools/WebKitTestRunner/qt/WebKitTestRunner.pro
 }
 
 symbian {
