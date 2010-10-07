@@ -791,7 +791,7 @@ void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, int tx, int ty
 
 void RenderBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
+    if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask || paintInfo.context->paintingDisabled())
         return;
 
     int w = width();
@@ -814,6 +814,11 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, int tx, int ty, int 
     bool allMaskImagesLoaded = true;
     
     if (!compositedMask) {
+        // If the context has a rotation, scale or skew, then use a transparency layer to avoid
+        // pixel cruft around the edge of the mask.
+        const AffineTransform& currentCTM = paintInfo.context->getCTM();
+        pushTransparencyLayer = !currentCTM.isIdentityOrTranslationOrFlipped();
+
         StyleImage* maskBoxImage = style()->maskBoxImage().image();
         const FillLayer* maskLayers = style()->maskLayers();
 
