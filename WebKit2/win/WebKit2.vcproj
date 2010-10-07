@@ -458,10 +458,7 @@
  			</File>
  			<File
  				RelativePath="..\Shared\UserMessageCoders.h"
- 				>			
-			<File
-				RelativePath="..\Shared\UserMessageCoders.h"
-				>
+ 				>
 			</File>
 			<File
 				RelativePath="..\Shared\VisitedLinkTable.cpp"
@@ -2055,6 +2052,7 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageMessages.h"
 				>
  			</File>
+            <File
  				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessageReceiver.cpp"
  				>
  			</File>
