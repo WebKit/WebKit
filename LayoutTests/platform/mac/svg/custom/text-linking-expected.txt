@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderSVGText {text} at (0,-14) size 163x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 163x18
           chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 25 width 163.00: "Referenced character data"
-      RenderPath {path} at (100,140) size 100x10 [fill={[type=SOLID] [color=#000000]}] [data="M100.00,150.00 L150.00,140.00 L200.00,150.00"]
+      RenderSVGPath {path} at (100,140) size 100x10 [fill={[type=SOLID] [color=#000000]}] [data="M100.00,150.00 L150.00,140.00 L200.00,150.00"]
     RenderSVGText {text} at (100,36) size 77x18 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 77x18
         RenderSVGTSpan {tspan} at (0,0) size 77x18

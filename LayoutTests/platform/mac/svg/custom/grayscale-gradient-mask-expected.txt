@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderSVGGradientStop {stop} [offset=0.00] [color=#FFFFFF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#000000]
     RenderSVGResourceMasker {mask} [id="Mask"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
-      RenderPath {rect} at (0,143) size 781x294 [fill={[type=LINEAR-GRADIENT] [id="Gradient"]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00 Z"]
-    RenderPath {rect} at (0,143) size 781x294 [fill={[type=SOLID] [color=#FF8080]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00 Z"]
-    RenderPath {rect} at (0,241) size 781x99 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00 L800.00,100.00 L800.00,200.00 L0.00,200.00 Z"]
+      RenderSVGPath {rect} at (0,143) size 781x294 [fill={[type=LINEAR-GRADIENT] [id="Gradient"]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00 Z"]
+    RenderSVGPath {rect} at (0,143) size 781x294 [fill={[type=SOLID] [color=#FF8080]}] [data="M0.00,0.00 L800.00,0.00 L800.00,300.00 L0.00,300.00 Z"]
+    RenderSVGPath {rect} at (0,241) size 781x99 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,100.00 L800.00,100.00 L800.00,200.00 L0.00,200.00 Z"]
       [masker="Mask"] RenderSVGResourceMasker {mask} at (0,0) size 800x300

@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (50,5) size 380x55
     RenderSVGContainer {g} at (195,5) size 95x55
-      RenderPath {svg:line} at (195,5) size 10x55 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M40.00,1.00 L40.00,12.00"]
-      RenderPath {svg:line} at (280,5) size 10x55 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M57.00,1.00 L57.00,12.00"]
-      RenderPath {svg:rect} at (200,5) size 85x55 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M40.00,1.00 L57.00,1.00 L57.00,12.00 L40.00,12.00 Z"]
+      RenderSVGPath {svg:line} at (195,5) size 10x55 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M40.00,1.00 L40.00,12.00"]
+      RenderSVGPath {svg:line} at (280,5) size 10x55 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M57.00,1.00 L57.00,12.00"]
+      RenderSVGPath {svg:rect} at (200,5) size 85x55 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M40.00,1.00 L57.00,1.00 L57.00,12.00 L40.00,12.00 Z"]
     RenderSVGText {text} at (10,1) size 76x11 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 76x11
         chunk 1 text run 1 at (10.00,10.00) startOffset 0 endOffset 1 width 6.00: "T"

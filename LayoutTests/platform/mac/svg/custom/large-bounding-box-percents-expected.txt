@@ -5,4 +5,4 @@ layer at (0,0) size 800x600
     RenderSVGResourceRadialGradient {radialGradient} [id="myradial"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=5.00]
       RenderSVGGradientStop {stop} [offset=0.00] [color=#008000]
       RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
-    RenderPath {rect} at (0,0) size 100x100 [fill={[type=RADIAL-GRADIENT] [id="myradial"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=RADIAL-GRADIENT] [id="myradial"]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]

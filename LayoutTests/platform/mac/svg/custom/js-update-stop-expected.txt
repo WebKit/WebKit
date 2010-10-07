@@ -6,5 +6,5 @@ layer at (0,0) size 450x450
       RenderSVGResourceLinearGradient {linearGradient} [id="Gradient"] [gradientUnits=userSpaceOnUse] [start=(10,10)] [end=(440,10)]
         RenderSVGGradientStop {stop} [offset=0.30] [color=#0000FF]
         RenderSVGGradientStop {stop} [offset=1.00] [color=#FF0000]
-    RenderPath {rect} at (10,10) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="Gradient"]}] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00 Z"]
-    RenderPath {rect} at (10,100) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="Gradient"]}] [data="M10.00,100.00 L440.00,100.00 L440.00,180.00 L10.00,180.00 Z"]
+    RenderSVGPath {rect} at (10,10) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="Gradient"]}] [data="M10.00,10.00 L440.00,10.00 L440.00,90.00 L10.00,90.00 Z"]
+    RenderSVGPath {rect} at (10,100) size 430x80 [fill={[type=LINEAR-GRADIENT] [id="Gradient"]}] [data="M10.00,100.00 L440.00,100.00 L440.00,180.00 L10.00,180.00 Z"]

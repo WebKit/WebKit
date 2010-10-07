@@ -18,9 +18,9 @@ layer at (0,0) size 800x600
           [feOffset dx="0.00" dy="0.00"]
             [SourceGraphic]
     RenderSVGContainer {g} at (0,0) size 420x160
-      RenderPath {rect} at (0,0) size 160x160 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]
+      RenderSVGPath {rect} at (0,0) size 160x160 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]
         [filter="filter_1"] RenderSVGResourceFilter {filter} at (-40,-40) size 200x200
-      RenderPath {rect} at (160,10) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [data="M160.00,10.00 L210.00,10.00 L210.00,60.00 L160.00,60.00 Z"]
+      RenderSVGPath {rect} at (160,10) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [data="M160.00,10.00 L210.00,10.00 L210.00,60.00 L160.00,60.00 Z"]
         [filter="filter_2"] RenderSVGResourceFilter {filter} at (160,10) size 100x100
-      RenderPath {rect} at (319,9) size 101x101 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [data="M332.00,22.00 L382.00,22.00 L382.00,72.00 L332.00,72.00 Z"]
+      RenderSVGPath {rect} at (319,9) size 101x101 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [data="M332.00,22.00 L382.00,22.00 L382.00,72.00 L332.00,72.00 Z"]
         [filter="filter_3"] RenderSVGResourceFilter {filter} at (319.50,9.50) size 100x100

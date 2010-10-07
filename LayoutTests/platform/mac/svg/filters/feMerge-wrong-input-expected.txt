@@ -6,4 +6,4 @@ layer at (0,0) size 800x600
       RenderSVGResourceFilter {filter} [id="filter"] [filterUnits=objectBoundingBox] [primitiveUnits=objectBoundingBox]
     RenderSVGContainer {g} at (0,0) size 0x0
       [filter="filter"] RenderSVGResourceFilter {filter} at (0,0) size 0x0
-    RenderPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+    RenderSVGPath {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
