@@ -157,6 +157,11 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
     // Update minimum scale factor, to never allow zooming out more than viewport
     result.minimumScale = max(result.minimumScale, max(availableWidth / width, availableHeight / height));
 
+    result.userScalable = args.userScalable;
+    // Make maximum and minimum scale equal to the initial scale if user is not allowed to zoom in/out.
+    if (!args.userScalable)
+        result.maximumScale = result.minimumScale = result.initialScale;
+
     return result;
 }
 

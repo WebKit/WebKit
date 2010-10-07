@@ -1,3 +1,15 @@
+2010-10-07  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fixing viewport meta tag user-scalable handling
+        https://bugs.webkit.org/show_bug.cgi?id=47330
+
+        user-scalable attribute was not considered in viewport meta tag handling.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::viewportConfigurationForSize):
+
 2010-10-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>, Andras Becsi  <abecsi@webkit.org>, Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
