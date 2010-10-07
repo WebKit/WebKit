@@ -32,12 +32,30 @@
 #include "JSDOMFormData.h"
 
 #include "DOMFormData.h"
+#include "HTMLFormElement.h"
 #include "JSBlob.h"
+#include "JSHTMLFormElement.h"
 #include <runtime/Error.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+static HTMLFormElement* toHTMLFormElement(JSC::JSValue value)
+{
+    return value.inherits(&JSHTMLFormElement::s_info) ? static_cast<HTMLFormElement*>(static_cast<JSHTMLFormElement*>(asObject(value))->impl()) : 0;
+}
+
+EncodedJSValue JSC_HOST_CALL JSDOMFormDataConstructor::constructJSDOMFormData(ExecState* exec)
+{
+    JSDOMFormDataConstructor* jsConstructor = static_cast<JSDOMFormDataConstructor*>(exec->callee());
+
+    HTMLFormElement* form = 0;
+    if (exec->argumentCount() > 0)
+        form = toHTMLFormElement(exec->argument(0));
+    RefPtr<DOMFormData> domFormData = DOMFormData::create(form);
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), domFormData.get())));
+}
 
 JSValue JSDOMFormData::append(ExecState* exec)
 {

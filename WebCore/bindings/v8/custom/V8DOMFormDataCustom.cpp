@@ -34,10 +34,27 @@
 #include "DOMFormData.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
+#include "V8HTMLFormElement.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 
 namespace WebCore {
+
+v8::Handle<v8::Value> V8DOMFormData::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.FormData.Constructor");
+
+    if (!args.IsConstructCall())
+        return throwError("DOM object constructor cannot be called as a function.", V8Proxy::SyntaxError);
+
+    HTMLFormElement* form = 0;
+    if (args.Length() > 0 && V8HTMLFormElement::HasInstance(args[0]))
+        form = V8HTMLFormElement::toNative(args[0]->ToObject());
+    RefPtr<DOMFormData> domFormData = DOMFormData::create(form);
+
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, domFormData.get());
+    return toV8(domFormData.release(), args.Holder());
+}
 
 v8::Handle<v8::Value> V8DOMFormData::appendCallback(const v8::Arguments& args)
 {

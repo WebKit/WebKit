@@ -32,6 +32,8 @@ module html {
 
     interface [
         CanBeConstructed,
+        CustomConstructFunction,
+        V8CustomConstructor,
         GenerateNativeConverter,
         GenerateToJS
     ] DOMFormData {
