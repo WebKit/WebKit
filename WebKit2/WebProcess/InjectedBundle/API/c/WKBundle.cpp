@@ -126,3 +126,8 @@ void WKBundleOverrideXSSAuditorEnabledForTestRunner(WKBundleRef bundleRef, bool 
 {
     toImpl(bundleRef)->overrideXSSAuditorEnabledForTestRunner(enabled);
 }
+
+void WKBundleReportException(JSContextRef context, JSValueRef exception)
+{
+    InjectedBundle::reportException(context, exception);
+}

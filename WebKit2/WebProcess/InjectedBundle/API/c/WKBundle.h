@@ -26,6 +26,7 @@
 #ifndef WKBundle_h
 #define WKBundle_h
 
+#include <JavaScriptCore/JavaScript.h>
 #include <WebKit2/WKBase.h>
 
 #ifdef __cplusplus
@@ -52,6 +53,8 @@ WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClient * client);
 
 WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody);
 WK_EXPORT void WKBundlePostSynchronousMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);
+
+WK_EXPORT void WKBundleReportException(JSContextRef, JSValueRef exception);
 
 #ifdef __cplusplus
 }
