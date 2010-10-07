@@ -13,6 +13,6 @@ layer at (0,0) size 800x482
           RenderSVGContainer {use} at (9,73) size 400x400
             RenderSVGContainer {g} at (9,73) size 400x400
               RenderSVGViewportContainer {svg} at (9,73) size 400x400
-                RenderPath {rect} at (209,273) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 Z"]
-                RenderPath {rect} at (9,73) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
+                RenderSVGPath {rect} at (209,273) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M100.00,100.00 L200.00,100.00 L200.00,200.00 L100.00,200.00 Z"]
+                RenderSVGPath {rect} at (9,73) size 200x200 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L100.00,0.00 L100.00,100.00 L0.00,100.00 Z"]
         RenderText {#text} at (0,0) size 0x0

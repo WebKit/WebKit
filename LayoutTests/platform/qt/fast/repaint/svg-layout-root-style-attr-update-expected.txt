@@ -11,5 +11,5 @@ layer at (8,0) size 500x500
   RenderBlock (positioned) {DIV} at (0,0) size 500x500
 layer at (8,0) size 500x500
   RenderSVGRoot {svg} at (258,10) size 250x250
-    RenderPath {rect} at (258,10) size 250x250 [fill={[type=SOLID] [color=#FF0000]}] [data="M250.00,10.00 L500.00,10.00 L500.00,260.00 L250.00,260.00 L250.00,10.00"]
-    RenderPath {rect} at (258,10) size 250x250 [fill={[type=SOLID] [color=#008000]}] [data="M250.00,10.00 L500.00,10.00 L500.00,260.00 L250.00,260.00 L250.00,10.00"]
+    RenderSVGPath {rect} at (258,10) size 250x250 [fill={[type=SOLID] [color=#FF0000]}] [data="M250.00,10.00 L500.00,10.00 L500.00,260.00 L250.00,260.00 L250.00,10.00"]
+    RenderSVGPath {rect} at (258,10) size 250x250 [fill={[type=SOLID] [color=#008000]}] [data="M250.00,10.00 L500.00,10.00 L500.00,260.00 L250.00,260.00 L250.00,10.00"]

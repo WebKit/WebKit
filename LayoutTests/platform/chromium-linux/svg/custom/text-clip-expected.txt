@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,75) size 130x63
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGResourceClipper {clipPath} [id="myclip"] [clipPathUnits=userSpaceOnUse]
-        RenderPath {path} at (200,200) size 100x200 [fill={[type=SOLID] [color=#000000]}] [data="M200.00,200.00 L300.00,200.00 L300.00,400.00 L200.00,400.00 Z"]
+        RenderSVGPath {path} at (200,200) size 100x200 [fill={[type=SOLID] [color=#000000]}] [data="M200.00,200.00 L300.00,200.00 L300.00,400.00 L200.00,400.00 Z"]
     RenderSVGContainer {g} at (0,75) size 130x63
       RenderSVGText {text} at (0,75) size 130x63 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 130x63

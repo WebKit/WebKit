@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         [feMerge mergeNodes="1"]
           [feOffset dx="0.00" dy="0.00"]
             [SourceGraphic]
-    RenderPath {rect} at (0,0) size 120x120 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]
+    RenderSVGPath {rect} at (0,0) size 120x120 [fill={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L110.00,10.00 L110.00,110.00 L10.00,110.00 Z"]
       [filter="MyFilter1"] RenderSVGResourceFilter {filter} at (0,0) size 120x120
-    RenderPath {rect} at (120,0) size 120x120 [fill={[type=SOLID] [color=#008000]}] [data="M130.00,10.00 L230.00,10.00 L230.00,110.00 L130.00,110.00 Z"]
+    RenderSVGPath {rect} at (120,0) size 120x120 [fill={[type=SOLID] [color=#008000]}] [data="M130.00,10.00 L230.00,10.00 L230.00,110.00 L130.00,110.00 Z"]
       [filter="MyFilter2"] RenderSVGResourceFilter {filter} at (120,0) size 120x120

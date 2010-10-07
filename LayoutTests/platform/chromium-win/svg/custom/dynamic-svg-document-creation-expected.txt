@@ -33,4 +33,4 @@ layer at (0,0) size 800x600
               text run at (0,0) width 645: "Imported the SVGGElement into our document: [object SVGGElement] should be: [object SVGGElement]"
     RenderSVGContainer {g} at (192,231) size 218x218 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(250.00,250.00)}]
       RenderSVGContainer {g} at (192,231) size 218x218 [transform={m=((1.00,0.00)(0.00,1.00)) t=(-50.00,-50.00)}]
-        RenderPath {path} at (192,231) size 218x218 [stroke={[type=SOLID] [color=#00C000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M250.00,130.00 C185.00,130.00,150.00,80.00,150.00,80.00 C150.00,80.00,115.00,25.00,50.00,25.00 M50.00,130.00 C115.00,130.00,150.00,80.00,150.00,80.00 C150.00,80.00,185.00,25.00,250.00,25.00"]
+        RenderSVGPath {path} at (192,231) size 218x218 [stroke={[type=SOLID] [color=#00C000]}] [fill={[type=SOLID] [color=#FF0000]}] [data="M250.00,130.00 C185.00,130.00,150.00,80.00,150.00,80.00 C150.00,80.00,115.00,25.00,50.00,25.00 M50.00,130.00 C115.00,130.00,150.00,80.00,150.00,80.00 C150.00,80.00,185.00,25.00,250.00,25.00"]

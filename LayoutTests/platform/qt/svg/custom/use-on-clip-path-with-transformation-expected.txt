@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (107,107) size 86x86
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L0.20,0.00 L0.20,0.20 L0.00,0.20 L0.00,0.00"]
+      RenderSVGPath {rect} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L0.20,0.00 L0.20,0.20 L0.00,0.20 L0.00,0.00"]
       RenderSVGResourceClipper {clipPath} [id="clip"] [clipPathUnits=objectBoundingBox]
         RenderSVGContainer {use} at (0,0) size 2x2 [transform={m=((0.71,0.71)(-0.71,0.71)) t=(0.50,-0.21)}]
           RenderSVGContainer {g} at (0,0) size 2x3 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.40,0.40)}]
-            RenderPath {rect} at (0,0) size 2x3 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L0.20,0.00 L0.20,0.20 L0.00,0.20 L0.00,0.00"]
-    RenderPath {rect} at (107,107) size 86x86 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L300.00,0.00 L300.00,300.00 L0.00,300.00 L0.00,0.00"]
+            RenderSVGPath {rect} at (0,0) size 2x3 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,0.00 L0.20,0.00 L0.20,0.20 L0.00,0.20 L0.00,0.00"]
+    RenderSVGPath {rect} at (107,107) size 86x86 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L300.00,0.00 L300.00,300.00 L0.00,300.00 L0.00,0.00"]
       [clipPath="clip"] RenderSVGResourceClipper {clipPath} at (107.57,107.57) size 84.85x84.85

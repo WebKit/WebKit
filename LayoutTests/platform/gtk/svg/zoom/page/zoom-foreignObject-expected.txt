@@ -11,5 +11,5 @@ layer at (0,0) size 1125x837
           RenderText {#text} at (0,0) size 62x19
             text run at (0,0) width 62: "and a link."
         RenderBR {xhtml:br} at (62,0) size 0x19
-    RenderPath {rect} at (12,12) size 840x552 [stroke={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L590.00,10.00 L590.00,390.00 L10.00,390.00 Z"]
+    RenderSVGPath {rect} at (12,12) size 840x552 [stroke={[type=SOLID] [color=#008000]}] [data="M10.00,10.00 L590.00,10.00 L590.00,390.00 L10.00,390.00 Z"]
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0

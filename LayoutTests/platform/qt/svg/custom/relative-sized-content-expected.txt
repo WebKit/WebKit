@@ -9,5 +9,5 @@ layer at (0,0) size 800x484
           text run at (0,21) width 279: "resizing the content box to a different size"
       RenderBlock {div} at (0,58) size 402x402 [border: (1px solid #FF0000)]
         RenderSVGRoot {svg} at (9,75) size 400x400
-          RenderPath {rect} at (9,75) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L400.00,0.00 L400.00,400.00 L0.00,400.00 L0.00,0.00"]
+          RenderSVGPath {rect} at (9,75) size 400x400 [fill={[type=SOLID] [color=#0000FF]}] [data="M0.00,0.00 L400.00,0.00 L400.00,400.00 L0.00,400.00 L0.00,0.00"]
         RenderText {#text} at (0,0) size 0x0

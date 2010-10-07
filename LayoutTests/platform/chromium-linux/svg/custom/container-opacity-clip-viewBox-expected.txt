@@ -5,7 +5,7 @@ layer at (0,0) size 800x600
     RenderSVGViewportContainer {svg} at (59,38) size 167x149 [opacity=0.90]
       RenderSVGContainer {g} at (59,38) size 167x149 [transform={m=((1.00,0.00)(0.00,1.00)) t=(59.52,38.20)}]
         RenderSVGViewportContainer {svg} at (59,38) size 167x149
-          RenderPath {rect} at (59,38) size 167x149 [fill={[type=SOLID] [color=#008000]}] [data="M-83.00,-84.00 L83.00,-84.00 L83.00,64.00 L-83.00,64.00 Z"]
+          RenderSVGPath {rect} at (59,38) size 167x149 [fill={[type=SOLID] [color=#008000]}] [data="M-83.00,-84.00 L83.00,-84.00 L83.00,64.00 L-83.00,64.00 Z"]
     RenderSVGContainer {g} at (50,215) size 350x49 [transform={m=((1.00,0.00)(0.00,1.00)) t=(50.00,230.00)}]
       RenderSVGText {text} at (0,-15) size 350x49 contains 1 chunk(s)
         RenderSVGTSpan {tspan} at (0,0) size 254x19
