@@ -41,7 +41,7 @@ public:
 private:
     FormatBlockCommand(Document*, const QualifiedName& tagName);
 
-    virtual void formatParagraph(const VisiblePosition& endOfCurrentParagraph, RefPtr<Element>&);
+    virtual void formatRange(const Position&, const Position&, RefPtr<Element>&);
     virtual EditAction editingAction() const { return EditActionFormatBlock; }
 };
 

@@ -38,22 +38,6 @@
 namespace WebCore {
 
 using namespace HTMLNames;
-    
-// This function can return -1 if we are unable to count the paragraphs between |start| and |end|.
-static int countParagraphs(const VisiblePosition& endOfFirstParagraph, const VisiblePosition& endOfLastParagraph)
-{
-    int count = 0;
-    VisiblePosition cur = endOfFirstParagraph;
-    while (cur != endOfLastParagraph) {
-        ++count;
-        cur = endOfParagraph(cur.next());
-        // If start is before a table and end is inside a table, we will never hit end because the
-        // whole table is considered a single paragraph.
-        if (cur.isNull())
-            return -1;
-    }
-    return count;
-}
 
 ApplyBlockElementCommand::ApplyBlockElementCommand(Document* document, const QualifiedName& tagName, const AtomicString& className, const AtomicString& inlineStyle)
     : CompositeEditCommand(document)
@@ -125,30 +109,24 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
     RefPtr<Element> blockquoteForNextIndent;
     VisiblePosition endOfCurrentParagraph = endOfParagraph(startOfSelection);
     VisiblePosition endAfterSelection = endOfParagraph(endOfParagraph(endOfSelection).next());
-    int endOfCurrentParagraphIndex = indexForVisiblePosition(endOfCurrentParagraph);
-    int endAfterSelectionIndex = indexForVisiblePosition(endAfterSelection);
+    VisiblePosition endOfLastParagraph = endOfParagraph(endOfSelection);
 
-    // When indenting within a <pre> tag, we need to split each paragraph into a separate node for moveParagraphWithClones to work.
-    // However, splitting text nodes can cause endOfCurrentParagraph and endAfterSelection to point to an invalid position if we
-    // changed the text node it was pointing at.  So we have to reset these positions.
-    int numParagraphs = countParagraphs(endOfCurrentParagraph, endAfterSelection);
-    if (splitTextNodes(startOfParagraph(startOfSelection), numParagraphs + 1)) {
-        RefPtr<Range> endOfCurrentParagraphRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endOfCurrentParagraphIndex, 0, true);
-        RefPtr<Range> endAfterSelectionRange = TextIterator::rangeFromLocationAndLength(document()->documentElement(), endAfterSelectionIndex, 0, true);
-        if (!endOfCurrentParagraphRange.get() || !endAfterSelectionRange.get()) {
-            ASSERT_NOT_REACHED();
-            return;
-        }
-        endOfCurrentParagraph = VisiblePosition(endOfCurrentParagraphRange->startPosition(), DOWNSTREAM);
-        endAfterSelection = VisiblePosition(endAfterSelectionRange->startPosition(), DOWNSTREAM);
-    }
+    bool atEnd = false;
+    while (endOfCurrentParagraph != endAfterSelection && !atEnd) {
+        Position start;
+        Position end;
 
-    while (endOfCurrentParagraph != endAfterSelection) {
-        // Iterate across the selected paragraphs...
-        VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
+        if (endOfCurrentParagraph == endOfLastParagraph)
+            atEnd = true;
+
+        rangeForParagraphSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
+        endOfCurrentParagraph = end;
+
+        Position afterEnd = end.next();
         Node* enclosingCell = enclosingNodeOfType(start, &isTableCell);
+        VisiblePosition endOfNextParagraph = endOfNextParagrahSplittingTextNodesIfNeeded(endOfCurrentParagraph, start, end);
 
-        formatParagraph(endOfCurrentParagraph, blockquoteForNextIndent);
+        formatRange(start, end, blockquoteForNextIndent);
 
         // Don't put the next paragraph in the blockquote we just created for this paragraph unless 
         // the next paragraph is in the same cell.
@@ -170,6 +148,108 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
     }
 }
 
+static bool isNewLineAtPosition(const Position& position)
+{
+    if (position.anchorType() != Position::PositionIsOffsetInAnchor)
+        return false;
+
+    Node* textNode = position.containerNode();
+    int offset = position.offsetInContainerNode();
+    if (!textNode || !textNode->isTextNode() || offset < 0 || offset >= textNode->maxCharacterOffset())
+        return false;
+
+    ExceptionCode ec = 0;
+    String textAtPosition = static_cast<Text*>(textNode)->substringData(offset, 1, ec);
+    if (ec)
+        return false;
+
+    return textAtPosition[0] == '\n';
+}
+
+static RenderStyle* renderStyleOfEnclosingTextNode(const Position& position)
+{
+    if (position.anchorType() != Position::PositionIsOffsetInAnchor
+        || !position.containerNode()
+        || !position.containerNode()->isTextNode()
+        || !position.containerNode()->renderer())
+        return 0;
+    return position.containerNode()->renderer()->style();
+}
+
+void ApplyBlockElementCommand::rangeForParagraphSplittingTextNodesIfNeeded(const VisiblePosition& endOfCurrentParagraph, Position& start, Position& end)
+{
+    start = startOfParagraph(endOfCurrentParagraph).deepEquivalent();
+    end = endOfCurrentParagraph.deepEquivalent();
+
+    RenderStyle* startStyle = renderStyleOfEnclosingTextNode(start);
+    if (startStyle) {
+        // Avoid obtanining the start of next paragraph for start
+        if (startStyle->preserveNewline() && isNewLineAtPosition(start) && !isNewLineAtPosition(start.previous()) && start.offsetInContainerNode() > 0)
+            start = startOfParagraph(end.previous()).deepEquivalent();
+
+        // If start is in the middle of a text node, split.
+        if (!startStyle->collapseWhiteSpace() && start.offsetInContainerNode() > 0) {
+            int startOffset = start.offsetInContainerNode();
+            splitTextNode(static_cast<Text*>(start.node()), startOffset);
+            start = positionBeforeNode(start.node());
+            if (start.node() == end.node()) {
+                ASSERT(end.offsetInContainerNode() >= startOffset);
+                end = Position(end.node(), end.offsetInContainerNode() - startOffset, Position::PositionIsOffsetInAnchor);
+            }
+        }
+    }
+
+    RenderStyle* endStyle = renderStyleOfEnclosingTextNode(end);
+    if (endStyle) {
+        // Include \n at the end of line if we're at an empty paragraph
+        if (endStyle->preserveNewline() && start == end
+            && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
+            int endOffset = end.offsetInContainerNode();
+            if (!isNewLineAtPosition(end.previous()) && isNewLineAtPosition(end))
+                end = Position(end.node(), endOffset + 1, Position::PositionIsOffsetInAnchor);
+        }
+
+        // If end is in the middle of a text node, split.
+        if (!endStyle->collapseWhiteSpace() && end.offsetInContainerNode()
+            && end.offsetInContainerNode() < end.containerNode()->maxCharacterOffset()) {
+            splitTextNode(static_cast<Text*>(end.node()), end.offsetInContainerNode());
+            if (start.node() == end.node())
+                start = positionBeforeNode(end.node()->previousSibling());
+            end = lastPositionInNode(end.node()->previousSibling());
+        }
+    }
+}
+
+VisiblePosition ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfNeeded(VisiblePosition& endOfCurrentParagraph, Position& start, Position& end)
+{
+    VisiblePosition endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
+    Position position = endOfNextParagraph.deepEquivalent();
+    RenderStyle* style = renderStyleOfEnclosingTextNode(position);
+    if (!style)
+        return endOfNextParagraph;
+
+    RefPtr<Node> containerNode = position.containerNode();
+    if (!style->preserveNewline() || !position.offsetInContainerNode()
+        || !isNewLineAtPosition(Position(containerNode.get(), 0, Position::PositionIsOffsetInAnchor)))
+        return endOfNextParagraph;
+
+    // \n at the beginning of the text node immediately following the current paragraph is trimmed by moveParagraphWithClones.
+    // If endOfNextParagraph was pointing at this same text node, endOfNextParagraph will be shifted by one paragraph.
+    // Avoid this by splitting "\n"
+    splitTextNode(static_cast<Text*>(containerNode.get()), 1);
+
+    if (start.anchorType() == Position::PositionIsOffsetInAnchor && containerNode.get() == start.containerNode()) {
+        ASSERT(start.offsetInContainerNode() < position.offsetInContainerNode());
+        start = Position(containerNode->previousSibling(), start.offsetInContainerNode(), Position::PositionIsOffsetInAnchor);
+    }
+    if (end.anchorType() == Position::PositionIsOffsetInAnchor && containerNode.get() == end.containerNode()) {
+        ASSERT(end.offsetInContainerNode() < position.offsetInContainerNode());
+        end = Position(containerNode->previousSibling(), end.offsetInContainerNode(), Position::PositionIsOffsetInAnchor);
+    }
+
+    return Position(containerNode.get(), position.offsetInContainerNode() - 1, Position::PositionIsOffsetInAnchor);
+}
+
 PassRefPtr<Element> ApplyBlockElementCommand::createBlockElement() const
 {
     RefPtr<Element> element = createHTMLElement(document(), m_tagName);
@@ -178,29 +258,6 @@ PassRefPtr<Element> ApplyBlockElementCommand::createBlockElement() const
     if (m_inlineStyle.length())
         element->setAttribute(styleAttr, m_inlineStyle);
     return element.release();
-}
-
-// Returns true if at least one text node was split.
-bool ApplyBlockElementCommand::splitTextNodes(const VisiblePosition& start, int numParagraphs)
-{
-    VisiblePosition currentParagraphStart = start;
-    bool hasSplit = false;
-    int paragraphCount;
-    for (paragraphCount = 0; paragraphCount < numParagraphs; ++paragraphCount) {
-        // If there are multiple paragraphs in a single text node, we split the text node into a separate node for each paragraph.
-        if (currentParagraphStart.deepEquivalent().node()->isTextNode() && currentParagraphStart.deepEquivalent().node() == startOfParagraph(currentParagraphStart.previous()).deepEquivalent().node()) {
-            Text* textNode = static_cast<Text *>(currentParagraphStart.deepEquivalent().node());
-            int offset = currentParagraphStart.deepEquivalent().offsetInContainerNode();
-            splitTextNode(textNode, offset);
-            currentParagraphStart = VisiblePosition(textNode, 0, VP_DEFAULT_AFFINITY);
-            hasSplit = true;
-        }
-        VisiblePosition nextParagraph = startOfParagraph(endOfParagraph(currentParagraphStart).next());
-        if (nextParagraph.isNull())
-            break;
-        currentParagraphStart = nextParagraph;
-    }
-    return hasSplit;
 }
 
 }

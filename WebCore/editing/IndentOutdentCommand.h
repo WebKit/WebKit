@@ -49,11 +49,11 @@ private:
     void indentRegion(const VisiblePosition&, const VisiblePosition&);
     void outdentRegion(const VisiblePosition&, const VisiblePosition&);
     void outdentParagraph();
-    bool tryIndentingAsListItem(const VisiblePosition&);
-    void indentIntoBlockquote(const VisiblePosition&, RefPtr<Element>&);
+    bool tryIndentingAsListItem(const Position&, const Position&);
+    void indentIntoBlockquote(const Position&, const Position&, RefPtr<Element>&);
 
     void formatSelection(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection);
-    void formatParagraph(const VisiblePosition& endOfCurrentParagraph, RefPtr<Element>& blockquoteForNextIndent);
+    void formatRange(const Position&, const Position&, RefPtr<Element>& blockquoteForNextIndent);
 
     EIndentType m_typeOfAction;
     int m_marginInPixels;

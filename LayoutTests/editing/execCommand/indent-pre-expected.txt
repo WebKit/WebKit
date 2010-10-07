@@ -1,5 +1,7 @@
 CONSOLE MESSAGE: line 44: Wrong node selected.
 CONSOLE MESSAGE: line 46: Wrong anchor offset: 8 instead of 0
+CONSOLE MESSAGE: line 41: Wrong end node type: [object HTMLBRElement]
+CONSOLE MESSAGE: line 44: Wrong node selected.
 | <html>
 |   <head>
 |   <body>
@@ -17,8 +19,7 @@ does not crash."
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         <pre>
 |           id="pre-basic"
-|           "line one
-"
+|           "line one"
 |       <pre>
 |         id="pre-basic"
 |         "line two
@@ -27,8 +28,7 @@ does not crash."
 |         class="webkit-indent-blockquote"
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         <pre>
-|           "line three
-"
+|           "line three"
 |         <pre>
 |           "line four"
 |       "
@@ -43,12 +43,11 @@ does not crash."
 |             <blockquote>
 |               class="webkit-indent-blockquote"
 |               style="margin: 0 0 0 40px; border: none; padding: 0px;"
-|               "list two
-"
-|               "list three
-"
-|             "list four
-"
+|               "list two"
+|               <br>
+|               "list three"
+|               <br>
+|               "list four"
 |       "
 
 "
@@ -66,8 +65,7 @@ does not crash."
 |                 class="webkit-indent-blockquote"
 |                 style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |                 <pre>
-|                   "table two
-"
+|                   "table two"
 |                 <pre>
 |                   "table three<#selection-focus>"
 |             <td>

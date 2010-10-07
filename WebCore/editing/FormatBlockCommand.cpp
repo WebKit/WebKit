@@ -41,16 +41,17 @@ FormatBlockCommand::FormatBlockCommand(Document* document, const QualifiedName& 
 {
 }
 
-void FormatBlockCommand::formatParagraph(const VisiblePosition& endOfCurrentParagraph, RefPtr<Element>&)
+void FormatBlockCommand::formatRange(const Position&, const Position& end, RefPtr<Element>&)
 {
-    setEndingSelection(endOfCurrentParagraph);
+    setEndingSelection(VisiblePosition(end));
+
     Node* refNode = enclosingBlockFlowElement(endingSelection().visibleStart());
     if (refNode->hasTagName(tagName()))
         // We're already in a block with the format we want, so we don't have to do anything
         return;
 
-    VisiblePosition paragraphStart = startOfParagraph(endingSelection().visibleStart());
-    VisiblePosition paragraphEnd = endOfParagraph(endingSelection().visibleStart());
+    VisiblePosition paragraphStart = startOfParagraph(end);
+    VisiblePosition paragraphEnd = endOfParagraph(end);
     VisiblePosition blockStart = startOfBlock(endingSelection().visibleStart());
     VisiblePosition blockEnd = endOfBlock(endingSelection().visibleStart());
     RefPtr<Element> blockNode = createBlockElement();
