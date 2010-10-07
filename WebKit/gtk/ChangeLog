@@ -2,6 +2,18 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] Use draw instead of expose_event in WebView when building with gtk3
+        https://bugs.webkit.org/show_bug.cgi?id=47338
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_expose_event):
+        (webkit_web_view_draw):
+        (webkit_web_view_class_init):
+
+2010-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] Don't use GtkObject
         https://bugs.webkit.org/show_bug.cgi?id=47090
 

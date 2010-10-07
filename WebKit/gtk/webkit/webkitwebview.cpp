@@ -492,6 +492,7 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
     }
 }
 
+#ifdef GTK_API_VERSION_2
 static bool shouldCoalesce(GdkRectangle rect, GdkRectangle* rects, int count)
 {
     const int cRectThreshold = 10;
@@ -527,15 +528,9 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
         ctx.setGdkExposeEvent(event);
 
         int rectCount;
-#ifdef GTK_API_VERSION_2
         GOwnPtr<GdkRectangle> rects;
         gdk_region_get_rectangles(event->region, &rects.outPtr(), &rectCount);
-#else
-        rectCount = cairo_region_num_rectangles(event->region);
-        GOwnPtr<GdkRectangle> rects(g_new(GdkRectangle, rectCount));
-        for (int i = 0; i < rectCount; i++)
-            cairo_region_get_rectangle(event->region, i, rects.get()+i);
-#endif
+
         // Avoid recursing into the render tree excessively
         bool coalesce = shouldCoalesce(event->area, rects.get(), rectCount);
 
@@ -565,6 +560,33 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
 
     return FALSE;
 }
+#else
+static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
+    WebKitWebViewPrivate* priv = webView->priv;
+    GdkRectangle clipRect;
+
+    if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
+        return FALSE;
+
+    Frame* frame = core(webView)->mainFrame();
+    if (frame->contentRenderer() && frame->view()) {
+        GraphicsContext ctx(cr);
+        IntRect rect = clipRect;
+
+        frame->view()->updateLayoutAndStyleIfNeededRecursive();
+        if (priv->transparent)
+            ctx.clearRect(rect);
+        frame->view()->paint(&ctx, rect);
+        ctx.save();
+        frame->page()->inspectorController()->drawNodeHighlight(ctx);
+        ctx.restore();
+    }
+
+    return FALSE;
+}
+#endif // GTK_API_VERSION_2
 
 static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* event)
 {
@@ -2463,7 +2485,11 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webViewClass);
     widgetClass->realize = webkit_web_view_realize;
+#ifdef GTK_API_VERSION_2
     widgetClass->expose_event = webkit_web_view_expose_event;
+#else
+    widgetClass->draw = webkit_web_view_draw;
+#endif
     widgetClass->key_press_event = webkit_web_view_key_press_event;
     widgetClass->key_release_event = webkit_web_view_key_release_event;
     widgetClass->button_press_event = webkit_web_view_button_press_event;
