@@ -139,10 +139,12 @@ void InspectorInstrumentation::willSendXMLHttpRequestImpl(InspectorController* i
     if (!debuggerAgent)
         return;
 
-    if (!inspectorController->shouldBreakOnXMLHttpRequest(url))
+    unsigned int breakpointId = inspectorController->findXHRBreakpoint(url);
+    if (!breakpointId)
         return;
 
     RefPtr<InspectorObject> eventData = InspectorObject::create();
+    eventData->setNumber("breakpointId", breakpointId);
     eventData->setString("type", "XHR");
     eventData->setString("url", url);
     debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
@@ -203,8 +205,10 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get()) {
-        if (inspectorController->shouldBreakOnEvent(event.type())) {
+        unsigned int breakpointId = inspectorController->findEventListenerBreakpoint(event.type());
+        if (breakpointId) {
             RefPtr<InspectorObject> eventData = InspectorObject::create();
+            eventData->setNumber("breakpointId", breakpointId);
             eventData->setString("type", "EventListener");
             eventData->setString("eventName", event.type());
             debuggerAgent->schedulePauseOnNextStatement(NativeBreakpointDebuggerEventType, eventData);

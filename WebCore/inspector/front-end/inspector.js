@@ -1447,11 +1447,13 @@ WebInspector.failedToParseScriptSource = function(sourceURL, source, startingLin
 WebInspector.pausedScript = function(details)
 {
     this.panels.scripts.debuggerPaused(details);
+    this.breakpointManager.debuggerPaused(details);
     InspectorFrontendHost.bringToFront();
 }
 
 WebInspector.resumedScript = function()
 {
+    this.breakpointManager.debuggerResumed();
     this.panels.scripts.debuggerResumed();
 }
 

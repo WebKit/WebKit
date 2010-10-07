@@ -149,6 +149,7 @@ WebInspector.BreakpointItem = function(breakpoint)
         this._element.appendChild(document.createTextNode(this._breakpoint.label));
 
     this._breakpoint.addEventListener("enable-changed", this._enableChanged, this);
+    this._breakpoint.addEventListener("hit-state-changed", this._hitStateChanged, this);
     this._breakpoint.addEventListener("removed", this.dispatchEventToListeners.bind(this, "removed"));
 }
 
@@ -168,6 +169,10 @@ WebInspector.BreakpointItem.prototype = {
         this._breakpoint.remove();
     },
 
+    _breakpointClicked: function(event)
+    {
+    },
+
     _checkboxClicked: function(event)
     {
         this._breakpoint.enabled = !this._breakpoint.enabled;
@@ -182,8 +187,12 @@ WebInspector.BreakpointItem.prototype = {
         checkbox.checked = this._breakpoint.enabled;
     },
 
-    _breakpointClicked: function(event)
+    _hitStateChanged: function(event)
     {
+        if (event.target.hit)
+            this._element.addStyleClass("breakpoint-hit");
+        else
+            this._element.removeStyleClass("breakpoint-hit");
     }
 }
 

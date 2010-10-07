@@ -300,8 +300,8 @@ private:
     void toggleRecordButton(bool);
     void enableDebuggerFromFrontend(bool always);
 
-    bool shouldBreakOnEvent(const String& eventName);
-    bool shouldBreakOnXMLHttpRequest(const String&);
+    unsigned int findEventListenerBreakpoint(const String& eventName);
+    unsigned int findXHRBreakpoint(const String&);
 #endif
 #if ENABLE(DATABASE)
     void selectDatabase(Database* database);
@@ -393,7 +393,7 @@ private:
 
     HashMap<unsigned int, String> m_nativeBreakpoints;
     HashMap<unsigned int, String> m_eventListenerBreakpoints;
-    HashMap<String, unsigned int> m_eventNameToBreakpointCount;
+    HashMap<String, unsigned int> m_eventNameToBreakpointId;
     HashMap<unsigned int, String> m_XHRBreakpoints;
     unsigned int m_lastBreakpointId;
 

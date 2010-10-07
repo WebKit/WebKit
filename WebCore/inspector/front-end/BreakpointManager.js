@@ -30,6 +30,12 @@ WebInspector.BreakpointManager = function()
     this._xhrBreakpoints = {};
 }
 
+WebInspector.BreakpointManager.DebuggerEventType = {
+    JavaScriptPause: 0,
+    DOMBreakpoint: 1,
+    NativeBreakpoint: 2
+};
+
 WebInspector.BreakpointManager.prototype = {
     setOneTimeBreakpoint: function(sourceID, line)
     {
@@ -131,7 +137,7 @@ WebInspector.BreakpointManager.prototype = {
     createEventListenerBreakpoint: function(eventName)
     {
         var data = { type: "EventListener", condition: { eventName: eventName } };
-        var breakpoint = new WebInspector.NativeBreakpoint(data, false);
+        var breakpoint = new WebInspector.NativeBreakpoint(data, this);
         breakpoint.label = eventName;
         return breakpoint;
     },
@@ -143,7 +149,7 @@ WebInspector.BreakpointManager.prototype = {
         this._xhrBreakpoints[url] = true;
 
         var data = { type: "XHR", condition: { url: url } };
-        var breakpoint = new WebInspector.NativeBreakpoint(data, true);
+        var breakpoint = new WebInspector.NativeBreakpoint(data, this);
         if (!url.length)
             breakpoint.label = WebInspector.UIString("Any XHR");
         else
@@ -158,11 +164,79 @@ WebInspector.BreakpointManager.prototype = {
 
         breakpoint.addEventListener("removed", this._xhrBreakpointRemoved.bind(this, url));
         this.dispatchEventToListeners("xhr-breakpoint-added", breakpoint);
+
+        breakpoint.enabled = true;
     },
 
     _xhrBreakpointRemoved: function(url)
     {
         delete this._xhrBreakpoints[url];
+    },
+
+    _removeNativeBreakpoint: function(breakpoint)
+    {
+        if (breakpoint._beingSetOnBackend)
+            return;
+        if (breakpoint.enabled)
+            this._removeNativeBreakpointFromBackend(breakpoint);
+        breakpoint.dispatchEventToListeners("removed");
+    },
+
+    _setNativeBreakpointEnabled: function(breakpoint, enabled)
+    {
+        if (breakpoint._beingSetOnBackend)
+            return;
+        if (breakpoint.enabled === enabled)
+            return;
+        if (enabled)
+            this._setNativeBreakpointOnBackend(breakpoint);
+        else
+            this._removeNativeBreakpointFromBackend(breakpoint);
+    },
+
+    _setNativeBreakpointOnBackend: function(breakpoint)
+    {
+        breakpoint._beingSetOnBackend = true;
+        InspectorBackend.setNativeBreakpoint(breakpoint._data, didSetNativeBreakpoint.bind(this));
+
+        function didSetNativeBreakpoint(backendBreakpointId)
+        {
+            breakpoint._beingSetOnBackend = false;
+            if (backendBreakpointId !== 0) {
+                breakpoint._backendId = backendBreakpointId;
+                this._breakpoints[backendBreakpointId] = breakpoint;
+            }
+            breakpoint.dispatchEventToListeners("enable-changed");
+        }
+    },
+
+    _removeNativeBreakpointFromBackend: function(breakpoint)
+    {
+        InspectorBackend.removeNativeBreakpoint(breakpoint._backendId);
+        delete this._breakpoints[breakpoint._backendId]
+        delete breakpoint._backendId;
+        breakpoint.dispatchEventToListeners("enable-changed");
+    },
+
+    debuggerPaused: function(details)
+    {
+        if (details.eventType !== WebInspector.BreakpointManager.DebuggerEventType.NativeBreakpoint)
+            return;
+        var breakpoint = this._breakpoints[details.eventData.breakpointId];
+        if (breakpoint) {
+            breakpoint.hit = true;
+            breakpoint.dispatchEventToListeners("hit-state-changed");
+            this._lastHitBreakpoint = breakpoint;
+        }
+    },
+
+    debuggerResumed: function()
+    {
+        if (!this._lastHitBreakpoint)
+            return;
+        this._lastHitBreakpoint.hit = false;
+        this._lastHitBreakpoint.dispatchEventToListeners("hit-state-changed");
+        delete this._lastHitBreakpoint;
     }
 }
 
@@ -248,59 +322,26 @@ WebInspector.Breakpoint.prototype = {
 
 WebInspector.Breakpoint.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.NativeBreakpoint = function(data, enabled)
+WebInspector.NativeBreakpoint = function(data, manager)
 {
     this._data = data;
-    this._locked = false;
-    this.enabled = enabled;
+    this._manager = manager;
 }
 
 WebInspector.NativeBreakpoint.prototype = {
     get enabled()
     {
-        return "_id" in this;
+        return "_backendId" in this;
     },
 
     set enabled(enabled)
     {
-        if (this._locked)
-            return;
-        if (this.enabled === enabled)
-            return;
-        if (enabled)
-            this._setOnBackend();
-        else
-            this._removeFromBackend();
+        this._manager._setNativeBreakpointEnabled(this, enabled);
     },
 
     remove: function()
     {
-        if (this._locked)
-            return;
-        if (this.enabled)
-            this._removeFromBackend();
-        this.dispatchEventToListeners("removed");
-    },
-
-    _setOnBackend: function()
-    {
-        this._locked = true;
-        InspectorBackend.setNativeBreakpoint(this._data, didSet.bind(this));
-
-        function didSet(breakpointId)
-        {
-            this._locked = false;
-            if (breakpointId)
-                this._id = breakpointId;
-            this.dispatchEventToListeners("enable-changed");
-        }
-    },
-
-    _removeFromBackend: function()
-    {
-        InspectorBackend.removeNativeBreakpoint(this._id);
-        delete this._id;
-        this.dispatchEventToListeners("enable-changed");
+        this._manager._removeNativeBreakpoint(this);
     }
 }
 

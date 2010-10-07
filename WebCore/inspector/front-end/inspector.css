@@ -4023,6 +4023,10 @@ ol.breakpoint-list {
     margin: 2px 0 0px 20px;
 }
 
+.breakpoint-list .breakpoint-hit {
+    background-color: yellow;
+}
+
 .webkit-html-js-node, .webkit-html-css-node {
     white-space: pre;
 }

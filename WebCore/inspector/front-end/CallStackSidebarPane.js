@@ -28,12 +28,6 @@ WebInspector.CallStackSidebarPane = function()
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Call Stack"));
 }
 
-WebInspector.CallStackSidebarPane.DebuggerEventType = {
-    JavaScriptPause: 0,
-    DOMBreakpoint: 1,
-    NativeBreakpoint: 2
-};
-
 WebInspector.CallStackSidebarPane.prototype = {
     update: function(callFrames, sourceIDMap)
     {
@@ -91,7 +85,7 @@ WebInspector.CallStackSidebarPane.prototype = {
     updateStatus:  function(eventType, eventData)
     {
         var statusElement = document.createElement("div");
-        if (eventType === WebInspector.CallStackSidebarPane.DebuggerEventType.DOMBreakpoint) {
+        if (eventType === WebInspector.BreakpointManager.DebuggerEventType.DOMBreakpoint) {
             var breakpoint = eventData.breakpoint;
             var substitutions = [WebInspector.DOMBreakpoint.labelForType(breakpoint.type), WebInspector.panels.elements.linkifyNodeById(breakpoint.nodeId)];
             var formatters = {
@@ -117,9 +111,12 @@ WebInspector.CallStackSidebarPane.prototype = {
                     WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because its descendant %s was removed.", substitutions.concat(targetNode), formatters, "", append);
             } else
                 WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s.", substitutions, formatters, "", append);
-        } else if (eventType === WebInspector.CallStackSidebarPane.DebuggerEventType.NativeBreakpoint && eventData.type === "XHR")
-             statusElement.appendChild(document.createTextNode(WebInspector.UIString("Paused on XMLHttpRequest.")));
-        else
+        } else if (eventType === WebInspector.BreakpointManager.DebuggerEventType.NativeBreakpoint) {
+            if (eventData.type === "XHR")
+                statusElement.appendChild(document.createTextNode(WebInspector.UIString("Paused on a XMLHttpRequest.")));
+            else if (eventData.type === "EventListener")
+                statusElement.appendChild(document.createTextNode(WebInspector.UIString("Paused on a \"%s\" Event Listener.", eventData.eventName)));
+        } else
             return;
 
         statusElement.className = "info";

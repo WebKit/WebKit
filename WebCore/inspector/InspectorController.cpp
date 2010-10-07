@@ -788,7 +788,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
 
         m_nativeBreakpoints.clear();
         m_eventListenerBreakpoints.clear();
-        m_eventNameToBreakpointCount.clear();
+        m_eventNameToBreakpointId.clear();
         m_XHRBreakpoints.clear();
         m_lastBreakpointId = 0;
 #endif
@@ -1699,14 +1699,12 @@ void InspectorController::setNativeBreakpoint(PassRefPtr<InspectorObject> breakp
         String eventName;
         if (!condition->getString("eventName", &eventName))
             return;
+        if (m_eventNameToBreakpointId.contains(eventName))
+            return;
         *breakpointId = ++m_lastBreakpointId;
         m_nativeBreakpoints.set(*breakpointId, "EventListener");
         m_eventListenerBreakpoints.set(*breakpointId, eventName);
-        HashMap<String, unsigned int>::iterator it = m_eventNameToBreakpointCount.find(eventName);
-        if (it == m_eventNameToBreakpointCount.end())
-            m_eventNameToBreakpointCount.set(eventName, 1);
-        else
-            it->second += 1;
+        m_eventNameToBreakpointId.set(eventName, *breakpointId);
     }
 }
 
@@ -1717,25 +1715,22 @@ void InspectorController::removeNativeBreakpoint(unsigned int breakpointId)
         m_XHRBreakpoints.remove(breakpointId);
     else if (type == eventListenerNativeBreakpointType) {
         String eventName = m_eventListenerBreakpoints.take(breakpointId);
-        HashMap<String, unsigned int>::iterator it = m_eventNameToBreakpointCount.find(eventName);
-        it->second -= 1;
-        if (!it->second)
-            m_eventNameToBreakpointCount.remove(it);
+        m_eventNameToBreakpointId.remove(eventName);
     }
 }
 
-bool InspectorController::shouldBreakOnEvent(const String& eventName)
+unsigned int InspectorController::findEventListenerBreakpoint(const String& eventName)
 {
-    return m_eventNameToBreakpointCount.contains(eventName);
+    return m_eventNameToBreakpointId.get(eventName);
 }
 
-bool InspectorController::shouldBreakOnXMLHttpRequest(const String& url)
+unsigned int InspectorController::findXHRBreakpoint(const String& url)
 {
     for (HashMap<unsigned int, String>::iterator it = m_XHRBreakpoints.begin(); it != m_XHRBreakpoints.end(); ++it) {
         if (url.contains(it->second))
-            return true;
+            return it->first;
     }
-    return false;
+    return 0;
 }
 
 #endif
