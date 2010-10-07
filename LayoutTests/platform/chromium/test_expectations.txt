@@ -3177,8 +3177,6 @@ BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 // Added by r69084
 BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT
 
-// r69161 updated the test.  Not sure what's wrong in the actual image.
-
 // Flaky since 2010-09-17?
 BUG57950 WIN LINUX : svg/batik/text/verticalText.svg = CRASH PASS
 
@@ -3213,3 +3211,10 @@ BUG_AJWONG WIN : fast/filesystem/async-operations.html = TEXT
 // Issues starting from
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Mac%20%28webkit.org%29/builds/25455
 BUG_AJWONG MAC : fast/images/imagemap-case.html = IMAGE
+
+// Tests added in r69269.
+// Apple-Mac port corrects "notationl" to "notational" automatically?
+BUG58254 : editing/spelling/autocorrection-delete.html = IMAGE+TEXT
+BUG58254 : editing/spelling/autocorrection-removing-underline-after-paste.html = IMAGE+TEXT
+BUG58254 : editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
+BUG58254 : editing/spelling/autocorrection-simple.html = IMAGE+TEXT
