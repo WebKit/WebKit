@@ -779,7 +779,7 @@ void EventSender::beginDragWithFiles(const CppArgumentList& arguments, CppVarian
     currentDragData.initialize();
     Vector<string> files = arguments[0].toStringVector();
     for (size_t i = 0; i < files.size(); ++i)
-        currentDragData.appendToFileNames(webkit_support::GetAbsoluteWebStringFromUTF8Path(files[i]));
+        currentDragData.appendToFilenames(webkit_support::GetAbsoluteWebStringFromUTF8Path(files[i]));
     currentDragEffectsAllowed = WebKit::WebDragOperationCopy;
 
     // Provide a drag source.
