@@ -207,13 +207,13 @@ HEADERS += \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
-    UIProcess/API/C/WKNativeEvent.h \
     UIProcess/API/C/WKNavigationData.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageNamespace.h \
     UIProcess/API/C/WKPagePrivate.h \
     UIProcess/API/C/WKPreferences.h \
     UIProcess/API/C/WKPreferencesPrivate.h \
+    UIProcess/API/C/qt/WKNativeEvent.h \
     UIProcess/API/cpp/qt/WKStringQt.h \
     UIProcess/API/cpp/qt/WKURLQt.h \
     UIProcess/API/cpp/WKRetainPtr.h \

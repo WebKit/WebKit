@@ -1,3 +1,20 @@
+2010-10-07  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Adam Roben.
+
+        [Qt] Webkit2 MacOS build fix
+        https://bugs.webkit.org/show_bug.cgi?id=47167
+
+        There were two problems when building Qt WebKit2 in Mac. The first was that
+        ld does not support flag -whole-archive and it needed to be replaced by flag -all_load.
+        The second problem was that __APPLE__ is been used to identify safari builds and, when
+        building Qt in MacOS, Qt was ending up using the wrong typedef. The solution was to use
+        a Qt specific WKNativeEvent.h that only has the proper Qt typedef instead of the original one.
+
+        * UIProcess/API/C/qt/WKNativeEvent.h: Added.
+        * WebKit2.pri:
+        * WebKit2.pro:
+
 2010-10-07  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
