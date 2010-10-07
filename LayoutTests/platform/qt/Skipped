@@ -197,6 +197,7 @@ http/tests/local/send-sliced-dragged-file.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata/send-form-data.html
+http/tests/local/formdata/send-form-data-constructed-from-form.html
 http/tests/local/formdata/send-form-data-with-sliced-file.html
 http/tests/local/formdata/upload-events.html
 
