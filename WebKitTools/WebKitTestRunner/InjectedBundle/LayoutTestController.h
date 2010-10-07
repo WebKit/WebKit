@@ -28,9 +28,18 @@
 
 #include "JSWrappable.h"
 #include <JavaScriptCore/JSRetainPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RetainPtr.h>
 #include <string>
+#include <wtf/PassRefPtr.h>
+
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+typedef RetainPtr<CFRunLoopTimerRef> PlatformTimerRef;
+#elif PLATFORM(WIN)
+typedef UINT_PTR PlatformTimerRef;
+#elif PLATFORM(QT)
+#include <QTimer>
+typedef QTimer PlatformTimerRef;
+#endif
 
 namespace WTR {
 
@@ -124,11 +133,7 @@ private:
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;
 
-#if PLATFORM(MAC)
-    RetainPtr<CFRunLoopTimerRef> m_waitToDumpWatchdogTimer;
-#elif PLATFORM(WIN)
-    UINT_PTR m_waitToDumpWatchdogTimer;
-#endif
+    PlatformTimerRef m_waitToDumpWatchdogTimer;
 };
 
 } // namespace WTR
