@@ -1,5 +1,15 @@
 2010-10-07  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Unreviewed. Do a renaming that was recommended by the reviewer
+        (Kenneth) but I forgot to do before landing (http://trac.webkit.org/changeset/69253)
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::RunUntilConditionLoop::start):
+        (WTR::RunUntilConditionLoop::RunUntilConditionLoop):
+        (WTR::TestController::runUntil):
+
+2010-10-07  Balazs Kelemen  <kbalazs@webkit.org>
+
         Reviewed by Kenneth Rohde Christiansen.
 
         [Qt] Watchdog timer implementation for WTR

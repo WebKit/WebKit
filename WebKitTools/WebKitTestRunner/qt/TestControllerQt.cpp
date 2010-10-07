@@ -35,18 +35,18 @@ namespace WTR {
 
 static const unsigned kTimerIntervalMS = 50;
 
-class RunUntilLoop : public QObject {
+class RunUntilConditionLoop : public QObject {
     Q_OBJECT
 
 public:
     static void start(bool& done)
     {
-        static RunUntilLoop* instance = new RunUntilLoop;
+        static RunUntilConditionLoop* instance = new RunUntilConditionLoop;
         instance->run(done);
     }
 
 private:
-    RunUntilLoop() {}
+    RunUntilConditionLoop() {}
 
     void run(bool& done)
     {
@@ -76,7 +76,7 @@ void TestController::platformInitialize()
 
 void TestController::runUntil(bool& done)
 {
-    RunUntilLoop::start(done);
+    RunUntilConditionLoop::start(done);
     ASSERT(done);
 }
 
