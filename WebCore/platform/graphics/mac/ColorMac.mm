@@ -88,14 +88,15 @@ NSColor *nsColor(const Color& color)
             static unsigned cachedRGBAValues[cacheSize];
             static RetainPtr<NSColor>* cachedColors = new RetainPtr<NSColor>[cacheSize];
 
-            for (int i = 0; i != cacheSize; ++i)
+            for (int i = 0; i != cacheSize; ++i) {
                 if (cachedRGBAValues[i] == c)
                     return cachedColors[i].get();
+            }
 
             NSColor *result = [NSColor colorWithDeviceRed:static_cast<CGFloat>(color.red()) / 255
                                                     green:static_cast<CGFloat>(color.green()) / 255
                                                      blue:static_cast<CGFloat>(color.blue()) / 255
-                                                    alpha:static_cast<CGFloat>(color.alpha()) /255];
+                                                    alpha:static_cast<CGFloat>(color.alpha()) / 255];
 
             static int cursor;
             cachedRGBAValues[cursor] = c;
@@ -107,24 +108,5 @@ NSColor *nsColor(const Color& color)
     }
 }
 
-static CGColorRef CGColorFromNSColor(NSColor *color)
-{
-    // This needs to always use device colorspace so it can de-calibrate the color for
-    // CGColor to possibly recalibrate it.
-    CGFloat components[4];
-    NSColor *deviceColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-    [deviceColor getRed:&components[0] green:&components[1] blue:&components[2] alpha:&components[3]];
-    static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB();
-    CGColorRef cgColor = CGColorCreate(deviceRGBColorSpace, components);
-    return cgColor;
-}
-
-CGColorRef createCGColor(const Color& c)
-{
-    // We could directly create a CGColor here, but that would
-    // skip any RGB caching the nsColor method does. A direct 
-    // creation could be investigated for a possible performance win.
-    return CGColorFromNSColor(nsColor(c));
-}
 
 } // namespace WebCore

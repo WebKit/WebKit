@@ -99,9 +99,7 @@ TransformationMatrix CAToTransform3D(const CATransform3D& fromT3D)
 
 static void setLayerBorderColor(WKCACFLayer* layer, const Color& color)
 {
-    CGColorRef borderColor = createCGColor(color);
-    layer->setBorderColor(borderColor);
-    CGColorRelease(borderColor);
+    layer->setBorderColor(cachedCGColor(color, DeviceColorSpace));
 }
 
 static void clearBorderColor(WKCACFLayer* layer)
@@ -111,9 +109,7 @@ static void clearBorderColor(WKCACFLayer* layer)
 
 static void setLayerBackgroundColor(WKCACFLayer* layer, const Color& color)
 {
-    CGColorRef bgColor = createCGColor(color);
-    layer->setBackgroundColor(bgColor);
-    CGColorRelease(bgColor);
+    layer->setBackgroundColor(cachedCGColor(color, DeviceColorSpace));
 }
 
 static void clearLayerBackgroundColor(WKCACFLayer* layer)

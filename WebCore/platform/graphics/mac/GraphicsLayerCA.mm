@@ -265,9 +265,7 @@ static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction* tim
 
 static void setLayerBorderColor(PlatformLayer* layer, const Color& color)
 {
-    CGColorRef borderColor = createCGColor(color);
-    [layer setBorderColor:borderColor];
-    CGColorRelease(borderColor);
+    [layer setBorderColor:cachedCGColor(color, DeviceColorSpace)];
 }
 
 static void clearBorderColor(PlatformLayer* layer)
@@ -277,9 +275,7 @@ static void clearBorderColor(PlatformLayer* layer)
 
 static void setLayerBackgroundColor(PlatformLayer* layer, const Color& color)
 {
-    CGColorRef bgColor = createCGColor(color);
-    [layer setBackgroundColor:bgColor];
-    CGColorRelease(bgColor);
+    [layer setBackgroundColor:cachedCGColor(color, DeviceColorSpace)];
 }
 
 static void clearLayerBackgroundColor(PlatformLayer* layer)

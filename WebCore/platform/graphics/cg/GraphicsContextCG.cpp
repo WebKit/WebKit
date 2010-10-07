@@ -26,7 +26,7 @@
 
 #define _USE_MATH_DEFINES 1
 #include "config.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 
 #include "AffineTransform.h"
 #include "FloatConversion.h"
@@ -69,32 +69,14 @@ using namespace std;
 
 namespace WebCore {
 
-static CGColorRef createCGColorWithColorSpace(const Color& color, ColorSpace colorSpace)
-{
-    CGFloat components[4];
-    color.getRGBA(components[0], components[1], components[2], components[3]);
-
-    CGColorRef cgColor = 0;
-    if (colorSpace == sRGBColorSpace)
-        cgColor = CGColorCreate(sRGBColorSpaceRef(), components);
-    else
-        cgColor = CGColorCreate(deviceRGBColorSpaceRef(), components);
-
-    return cgColor;
-}
-
 static void setCGFillColor(CGContextRef context, const Color& color, ColorSpace colorSpace)
 {
-    CGColorRef cgColor = createCGColorWithColorSpace(color, colorSpace);
-    CGContextSetFillColorWithColor(context, cgColor);
-    CFRelease(cgColor);
+    CGContextSetFillColorWithColor(context, cachedCGColor(color, colorSpace));
 }
 
 static void setCGStrokeColor(CGContextRef context, const Color& color, ColorSpace colorSpace)
 {
-    CGColorRef cgColor = createCGColorWithColorSpace(color, colorSpace);
-    CGContextSetStrokeColorWithColor(context, cgColor);
-    CFRelease(cgColor);
+    CGContextSetStrokeColorWithColor(context, cachedCGColor(color, colorSpace));
 }
 
 static void setCGFillColorSpace(CGContextRef context, ColorSpace colorSpace)
@@ -659,17 +641,18 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
 {
     if (paintingDisabled())
         return;
+
     CGContextRef context = platformContext();
     Color oldFillColor = fillColor();
     ColorSpace oldColorSpace = fillColorSpace();
 
     if (oldFillColor != color || oldColorSpace != colorSpace)
-      setCGFillColor(context, color, colorSpace);
+        setCGFillColor(context, color, colorSpace);
 
     CGContextFillRect(context, rect);
 
     if (oldFillColor != color || oldColorSpace != colorSpace)
-      setCGFillColor(context, oldFillColor, oldColorSpace);
+        setCGFillColor(context, oldFillColor, oldColorSpace);
 }
 
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)
@@ -821,13 +804,8 @@ void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, con
     // and we should therefore just use the default shadow color.
     if (!color.isValid())
         CGContextSetShadow(context, CGSizeMake(xOffset, yOffset), blurRadius);
-    else {
-        RetainPtr<CGColorRef> colorCG(AdoptCF, createCGColorWithColorSpace(color, colorSpace));
-        CGContextSetShadowWithColor(context,
-                                    CGSizeMake(xOffset, yOffset),
-                                    blurRadius,
-                                    colorCG.get());
-    }
+    else
+        CGContextSetShadowWithColor(context, CGSizeMake(xOffset, yOffset), blurRadius, cachedCGColor(color, colorSpace));
 }
 
 void GraphicsContext::clearPlatformShadow()

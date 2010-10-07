@@ -250,7 +250,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
     m_rootLayer->setGeometryFlipped(true);
 
 #ifndef NDEBUG
-    CGColorRef debugColor = createCGColor(Color(255, 0, 0, 204));
+    CGColorRef debugColor = CGColorCreateGenericRGB(1, 0, 0, 0.8);
     m_rootLayer->setBackgroundColor(debugColor);
     CGColorRelease(debugColor);
 #endif

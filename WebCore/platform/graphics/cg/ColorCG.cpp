@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #if PLATFORM(CG)
 
+#include "GraphicsContextCG.h"
 #include <wtf/Assertions.h>
 #include <wtf/RetainPtr.h>
 #include <ApplicationServices/ApplicationServices.h>
@@ -69,37 +70,72 @@ Color::Color(CGColorRef color)
     m_valid = true;
 }
 
-#if OS(WINDOWS)
-
-CGColorRef createCGColor(const Color& c)
+static inline CGColorSpaceRef cachedCGColorSpace(ColorSpace colorSpace)
 {
-    CGColorRef color = NULL;
-#ifdef OBSOLETE_COLORSYNC_API
-    CMProfileRef prof = NULL;
-    CMGetSystemProfile(&prof);
-    RetainPtr<CGColorSpaceRef> rgbSpace(AdoptCF, CGColorSpaceCreateWithPlatformColorSpace(prof));
-#else
-    ColorSyncProfileRef prof = ColorSyncProfileCreateWithDisplayID(0);
-    RetainPtr<CGColorSpaceRef> rgbSpace(AdoptCF, CGColorSpaceCreateWithPlatformColorSpace(const_cast<void*>(reinterpret_cast<const void*>(prof))));
-#endif
-
-    if (rgbSpace) {
-        CGFloat components[4] = { static_cast<CGFloat>(c.red()) / 255, static_cast<CGFloat>(c.green()) / 255,
-                                  static_cast<CGFloat>(c.blue()) / 255, static_cast<CGFloat>(c.alpha()) / 255 };
-        color = CGColorCreate(rgbSpace.get(), components);
+    switch (colorSpace) {
+    case DeviceColorSpace:
+        return deviceRGBColorSpaceRef();
+    case sRGBColorSpace:
+        return sRGBColorSpaceRef();
     }
-
-#ifdef OBSOLETE_COLORSYNC_API
-    CMCloseProfile(prof);
-#else
-    if (prof)
-        CFRelease(prof);
-#endif
-
-    return color;
+    ASSERT_NOT_REACHED();
+    return deviceRGBColorSpaceRef();
 }
 
-#endif // OS(WINDOWS)
+static CGColorRef leakCGColor(const Color& color, ColorSpace colorSpace)
+{
+    CGFloat components[4];
+    color.getRGBA(components[0], components[1], components[2], components[3]);
+    return CGColorCreate(cachedCGColorSpace(colorSpace), components);
+}
+
+template<ColorSpace colorSpace> static CGColorRef cachedCGColor(const Color& color)
+{
+    switch (color.rgb()) {
+    case Color::transparent:
+        static CGColorRef transparentCGColor = leakCGColor(color, colorSpace);
+        return transparentCGColor;
+    case Color::black:
+        static CGColorRef blackCGColor = leakCGColor(color, colorSpace);
+        return blackCGColor;
+    case Color::white:
+        static CGColorRef whiteCGColor = leakCGColor(color, colorSpace);
+        return whiteCGColor;
+    }
+
+    ASSERT(color.rgb());
+
+    const size_t cacheSize = 32;
+    static RGBA32 cachedRGBAValues[cacheSize];
+    static RetainPtr<CGColorRef>* cachedCGColors = new RetainPtr<CGColorRef>[cacheSize];
+
+    for (size_t i = 0; i < cacheSize; ++i) {
+        if (cachedRGBAValues[i] == color.rgb())
+            return cachedCGColors[i].get();
+    }
+
+    CGColorRef newCGColor = leakCGColor(color, colorSpace);
+
+    static size_t cursor;
+    cachedRGBAValues[cursor] = color.rgb();
+    cachedCGColors[cursor].adoptCF(newCGColor);
+    if (++cursor == cacheSize)
+        cursor = 0;
+
+    return newCGColor;
+}
+
+CGColorRef cachedCGColor(const Color& color, ColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case DeviceColorSpace:
+        return cachedCGColor<DeviceColorSpace>(color);
+    case sRGBColorSpace:
+        return cachedCGColor<sRGBColorSpace>(color);
+    }
+    ASSERT_NOT_REACHED();
+    return cachedCGColor(color, DeviceColorSpace);
+}
 
 }
 

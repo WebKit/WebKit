@@ -28,12 +28,6 @@
 
 namespace WebCore {
 
-// FIXME: This would be in GraphicsContextCG.h if that existed.
-CGColorSpaceRef deviceRGBColorSpaceRef();
-
-// FIXME: This would be in GraphicsContextCG.h if that existed.
-CGColorSpaceRef sRGBColorSpaceRef();
-
 class GraphicsContextPlatformPrivate {
 public:
     GraphicsContextPlatformPrivate(CGContextRef cgContext)

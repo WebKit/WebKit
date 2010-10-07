@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,14 +43,14 @@ namespace WebCore {
 // calls in this file are all exception-safe, so we don't block
 // exceptions for those.
 
-static void drawFocusRingToContext(CGContextRef context, RetainPtr<CGPathRef> focusRingPath, RetainPtr<CGColorRef> colorRef, int radius)
+static void drawFocusRingToContext(CGContextRef context, CGPathRef focusRingPath, CGColorRef color, int radius)
 {
 #ifdef BUILDING_ON_TIGER
     CGContextBeginTransparencyLayer(context, 0);
 #endif
     CGContextBeginPath(context);
-    CGContextAddPath(context, focusRingPath.get());
-    wkDrawFocusRing(context, colorRef.get(), radius);
+    CGContextAddPath(context, focusRingPath);
+    wkDrawFocusRing(context, color, radius);
 #ifdef BUILDING_ON_TIGER
     CGContextEndTransparencyLayer(context);
 #endif
@@ -63,16 +63,14 @@ void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int of
     
     int radius = (width - 1) / 2;
     offset += radius;
-    RetainPtr<CGColorRef> colorRef;
-    if (color.isValid())
-        colorRef.adoptCF(createCGColor(color));
-    
+    CGColorRef colorRef = color.isValid() ? cachedCGColor(color, DeviceColorSpace) : 0;
+
     RetainPtr<CGMutablePathRef> focusRingPath(AdoptCF, CGPathCreateMutable());
     unsigned pathCount = paths.size();
     for (unsigned i = 0; i < pathCount; i++)
         CGPathAddPath(focusRingPath.get(), 0, paths[i].platformPath());
     
-    drawFocusRingToContext(platformContext(), focusRingPath, colorRef, radius);
+    drawFocusRingToContext(platformContext(), focusRingPath.get(), colorRef, radius);
 }    
     
 void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int offset, const Color& color)
@@ -82,16 +80,14 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 
     int radius = (width - 1) / 2;
     offset += radius;
-    RetainPtr<CGColorRef> colorRef;
-    if (color.isValid())
-        colorRef.adoptCF(createCGColor(color));
+    CGColorRef colorRef = color.isValid() ? cachedCGColor(color, DeviceColorSpace) : 0;
 
     RetainPtr<CGMutablePathRef> focusRingPath(AdoptCF, CGPathCreateMutable());
     unsigned rectCount = rects.size();
     for (unsigned i = 0; i < rectCount; i++)
         CGPathAddRect(focusRingPath.get(), 0, CGRectInset(rects[i], -offset, -offset));
 
-    drawFocusRingToContext(platformContext(), focusRingPath, colorRef, radius);
+    drawFocusRingToContext(platformContext(), focusRingPath.get(), colorRef, radius);
 }
 
 #ifdef BUILDING_ON_TIGER // Post-Tiger's setCompositeOperation() is defined in GraphicsContextCG.cpp.
