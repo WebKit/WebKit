@@ -541,8 +541,8 @@ void FullscreenVideoController::createHud()
     GtkWidget* label = gtk_label_new(_("Time:"));
     gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, TRUE, 0);
 
-    GtkObject* adjustment = gtk_adjustment_new(0.0, 0.0, 100.0, 0.1, 1.0, 1.0);
-    m_timeHScale = gtk_hscale_new(GTK_ADJUSTMENT(adjustment));
+    GtkAdjustment* adjustment = GTK_ADJUSTMENT(gtk_adjustment_new(0.0, 0.0, 100.0, 0.1, 1.0, 1.0));
+    m_timeHScale = gtk_hscale_new(adjustment);
     gtk_scale_set_draw_value(GTK_SCALE(m_timeHScale), FALSE);
     gtk_range_set_show_fill_level(GTK_RANGE(m_timeHScale), TRUE);
     gtk_range_set_update_policy(GTK_RANGE(m_timeHScale), GTK_UPDATE_CONTINUOUS);

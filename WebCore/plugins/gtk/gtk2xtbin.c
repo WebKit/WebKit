@@ -72,7 +72,7 @@ static void            gtk_xtbin_class_init (GtkXtBinClass *klass);
 static void            gtk_xtbin_init       (GtkXtBin      *xtbin);
 static void            gtk_xtbin_realize    (GtkWidget      *widget);
 static void            gtk_xtbin_unrealize    (GtkWidget      *widget);
-static void            gtk_xtbin_destroy    (GtkObject      *object);
+static void            gtk_xtbin_dispose    (GObject      *object);
 
 /* Xt aware XEmbed */
 static void       xt_client_init      (XtClient * xtclient, 
@@ -244,7 +244,7 @@ static void
 gtk_xtbin_class_init (GtkXtBinClass *klass)
 {
   GtkWidgetClass *widget_class;
-  GtkObjectClass *object_class;
+  GObjectClass   *object_class;
 
   parent_class = g_type_class_peek_parent (klass);
 
@@ -252,8 +252,8 @@ gtk_xtbin_class_init (GtkXtBinClass *klass)
   widget_class->realize = gtk_xtbin_realize;
   widget_class->unrealize = gtk_xtbin_unrealize;
 
-  object_class = GTK_OBJECT_CLASS (klass);
-  object_class->destroy = gtk_xtbin_destroy;
+  object_class = G_OBJECT_CLASS (klass);
+  object_class->dispose = gtk_xtbin_dispose;
 }
 
 static void
@@ -484,7 +484,7 @@ gtk_xtbin_unrealize (GtkWidget *object)
 }
 
 static void
-gtk_xtbin_destroy (GtkObject *object)
+gtk_xtbin_dispose (GObject *object)
 {
   GtkXtBin *xtbin;
 
@@ -518,7 +518,7 @@ gtk_xtbin_destroy (GtkObject *object)
     }
   }
 
-  GTK_OBJECT_CLASS(parent_class)->destroy(object);
+  G_OBJECT_CLASS(parent_class)->dispose(object);
 }
 
 /*

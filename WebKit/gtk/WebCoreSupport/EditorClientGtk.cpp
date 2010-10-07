@@ -557,7 +557,11 @@ void EditorClient::generateEditorCommands(const KeyboardEvent* event)
     m_pendingEditorCommands.clear();
 
     // First try to interpret the command as a native GTK+ key binding.
+#ifdef GTK_API_VERSION_2
     gtk_bindings_activate_event(GTK_OBJECT(m_nativeWidget.get()), event->keyEvent()->gdkEventKey());
+#else
+    gtk_bindings_activate_event(G_OBJECT(m_nativeWidget.get()), event->keyEvent()->gdkEventKey());
+#endif
     if (m_pendingEditorCommands.size() > 0)
         return;
 
