@@ -40,7 +40,7 @@ namespace WebCore {
 // Normalize all line-endings to CRLF.
 CString normalizeLineEndingsToCRLF(const CString& from)
 {
-    unsigned newLen = 0;
+    size_t newLen = 0;
     const char* p = from.data();
     while (char c = *p++) {
         if (c == '\r') {
@@ -59,6 +59,8 @@ CString normalizeLineEndingsToCRLF(const CString& from)
     }
     if (newLen == from.length())
         return from;
+    if (newLen < from.length())
+        return CString();
 
     // Make a copy of the string.
     p = from.data();
@@ -87,7 +89,7 @@ CString normalizeLineEndingsToCRLF(const CString& from)
 // Normalize all line-endings to CR or LF.
 static CString normalizeToCROrLF(const CString& from, bool toCR)
 {
-    unsigned newLen = 0;
+    size_t newLen = 0;
     bool needFix = false;
     const char* p = from.data();
     char fromEndingChar = toCR ? '\n' : '\r';
