@@ -83,8 +83,6 @@ void InlineFlowBox::addToLine(InlineBox* child)
     child->setIsVertical(m_isVertical);
     if (child->isText())
         m_hasTextChildren = true;
-    if (child->renderer()->selectionState() != RenderObject::SelectionNone)
-        root()->setHasSelectedChildren(true);
 
     checkConsistency();
 }
