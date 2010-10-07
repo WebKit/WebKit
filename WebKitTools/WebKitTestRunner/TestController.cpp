@@ -36,7 +36,7 @@ namespace WTR {
 
 static WKURLRef blankURL()
 {
-    static staticBlankURL = WKURLCreateWithUTF8CString("about:blank");
+    static WKURLRef staticBlankURL = WKURLCreateWithUTF8CString("about:blank");
     retun staticBlankURL;
 }
 

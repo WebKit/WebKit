@@ -1,3 +1,10 @@
+2010-10-07  Balazs Kelemen  <Balazs Kelemen>
+
+        Unreviewed trivial build fix for r69297
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::blankURL):
+
 2010-10-07  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
