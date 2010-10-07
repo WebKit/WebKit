@@ -1,3 +1,15 @@
+2010-10-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] The FreeType backend does not respect the FC_EMBOLDEN property
+        https://bugs.webkit.org/show_bug.cgi?id=46216
+
+        Fix my latest commit, as it contained some bad changes from a merge gone wrong.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts): Also initialize the DevaVu Sans font.
+
 2010-10-07  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
