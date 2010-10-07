@@ -27,6 +27,7 @@
 #define WKAPICast_h
 
 #include "CacheModel.h"
+#include "FindOptions.h"
 #include "WKContext.h"
 #include "WKPage.h"
 #include "WKSharedAPICast.h"
@@ -113,6 +114,33 @@ inline WKCacheModel toAPI(CacheModel cacheModel)
     }
     
     return kWKCacheModelDocumentViewer;
+}
+
+inline FindDirection toFindDirection(WKFindDirection wkFindDirection)
+{
+    switch (wkFindDirection) {
+    case kWKFindDirectionForward:
+        return FindDirectionForward;
+    case kWKFindDirectionBackward:
+        return FindDirectionBackward;
+    }
+
+    ASSERT_NOT_REACHED();
+    return FindDirectionForward;
+}
+
+inline FindOptions toFindOptions(WKFindOptions wkFindOptions)
+{
+    unsigned findOptions = 0;
+
+    if (wkFindOptions & kWKFindOptionsCaseInsensitive)
+        findOptions |= FindOptionsCaseInsensitive;
+    if (wkFindOptions & kWKFindOptionsWrapAround)
+        findOptions |= FindOptionsWrapAround;
+    if (wkFindOptions & kWKFindOptionsShowOverlay)
+        findOptions |= FindOptionsShowOverlay;
+
+    return static_cast<FindOptions>(findOptions);
 }
 
 } // namespace WebKit

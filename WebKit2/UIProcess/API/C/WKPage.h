@@ -197,6 +197,25 @@ WK_EXPORT double WKPageGetPageZoomFactor(WKPageRef page);
 WK_EXPORT void WKPageSetPageZoomFactor(WKPageRef page, double zoomFactor);
 WK_EXPORT void WKPageSetPageAndTextZoomFactors(WKPageRef page, double pageZoomFactor, double textZoomFactor);
 
+// Find.
+enum {
+    kWKFindDirectionForward,
+    kWKFindDirectionBackward
+};
+typedef uint32_t WKFindDirection;
+
+enum {
+    kWKFindOptionsCaseInsensitive = 1 << 0,
+    kWKFindOptionsWrapAround = 1 << 1,
+    kWKFindOptionsShowOverlay = 1 << 2,
+    kWKFindOptionsShowFindIndicator = 1 << 3
+};
+typedef uint32_t WKFindOptions;
+
+WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindDirection findDirection, WKFindOptions findOptions, unsigned maxNumMatches);
+WK_EXPORT void WKPageHideFindUI(WKPageRef page);
+WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, bool caseInsensitive, unsigned maxNumMatches);
+
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClient* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClient* client);
 WK_EXPORT void WKPageSetPageFormClient(WKPageRef page, const WKPageFormClient* client);

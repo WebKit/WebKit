@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "DrawingAreaProxy.h"
+#include "FindOptions.h"
 #include "GenericCallback.h"
 #include "WKBase.h"
 #include "WebEvent.h"
@@ -168,6 +169,11 @@ public:
     double pageZoomFactor() const { return m_pageZoomFactor; }
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
+
+    // Find.
+    void findString(const String&, WKFindDirection, WKFindOptions, unsigned maxNumMatches);
+    void hideFindUI();
+    void countStringMatches(const String&, bool caseInsensitive, unsigned maxNumMatches);
 
     void runJavaScriptInMainFrame(const String&, PassRefPtr<ScriptReturnValueCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);

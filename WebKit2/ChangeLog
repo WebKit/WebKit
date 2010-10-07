@@ -1,3 +1,26 @@
+2010-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Start stubbing out the find API
+        https://bugs.webkit.org/show_bug.cgi?id=47366
+        <rdar://problem/8524998>
+
+        * Shared/FindOptions.h: Added.
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toFindDirection):
+        (WebKit::toFindOptions):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageFindString):
+        (WKPageHideFindUI):
+        (WKPageCountStringMatches):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findString):
+        (WebKit::WebPageProxy::hideFindUI):
+        (WebKit::WebPageProxy::countStringMatches):
+        * UIProcess/WebPageProxy.h:
+
 2010-10-07  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>, Andras Becsi  <abecsi@webkit.org>, Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
