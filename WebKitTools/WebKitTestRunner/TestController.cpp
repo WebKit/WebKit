@@ -37,7 +37,7 @@ namespace WTR {
 static WKURLRef blankURL()
 {
     static WKURLRef staticBlankURL = WKURLCreateWithUTF8CString("about:blank");
-    retun staticBlankURL;
+    return staticBlankURL;
 }
 
 static TestController* controller;
