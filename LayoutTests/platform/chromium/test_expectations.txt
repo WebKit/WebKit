@@ -3206,3 +3206,7 @@ BUG10479 LINUX : svg/hixie/perf/002.xml = IMAGE PASS
 // New test from Webkit r69326.
 BUG58337 : platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
 
+// Failing filesystem tests
+BUGWK47375 WIN : fast/filesystem/async-operations.html = TEXT
+BUGWK47375 WIN : fast/filesystem/op-get-entry.html = TEXT
+BUGWK47375 WIN : fast/filesystem/op-move.html = TEXT
