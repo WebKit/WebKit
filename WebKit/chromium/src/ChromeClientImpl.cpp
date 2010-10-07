@@ -248,28 +248,6 @@ void ChromeClientImpl::focusedNodeChanged(Node* node)
             focusURL = hitTest.absoluteLinkURL();
     }
     m_webView->client()->setKeyboardFocusURL(focusURL);
-    
-    if (!node)
-        return;
-
-    // If accessibility is enabled, we should notify assistive technology that
-    // the active AccessibilityObject changed.
-    Document* document = node->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    // TODO: Remove once the FocusedUIElementChanged notification is handled downstream.
-    if (document && document->axObjectCache()->accessibilityEnabled()) {
-        // Retrieve the focused AccessibilityObject.
-        AccessibilityObject* focusedAccObj =
-            document->axObjectCache()->getOrCreate(node->renderer());
-
-        // Alert assistive technology that focus changed.
-        if (focusedAccObj)
-            m_webView->client()->focusAccessibilityObject(WebAccessibilityObject(focusedAccObj));
-    }
 }
 
 Page* ChromeClientImpl::createWindow(

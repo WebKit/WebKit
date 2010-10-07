@@ -1,3 +1,17 @@
+2010-10-06  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Remove unused accessibility functions from webkit.
+        https://bugs.webkit.org/attachment.cgi?bugid=46707
+
+        * public/WebAccessibilityCache.h:
+        * public/WebViewClient.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::focusedNodeChanged):
+        * src/WebAccessibilityCacheImpl.cpp:
+        * src/WebAccessibilityCacheImpl.h:
+
 2010-10-06  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.

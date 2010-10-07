@@ -45,7 +45,6 @@ public:
     virtual bool isInitialized() const { return m_initialized; }
 
     virtual WebAccessibilityObject getObjectById(int);
-    virtual bool isValidId(int) const;
     virtual int addOrGetId(const WebKit::WebAccessibilityObject&);
     virtual bool isCached(const WebAccessibilityObject&);
 

@@ -485,13 +485,11 @@ int WebViewHost::historyForwardListCount()
     return navigationController()->entryCount() - currentIndex - 1;
 }
 
-void WebViewHost::focusAccessibilityObject(const WebAccessibilityObject& object)
-{
-    m_shell->accessibilityController()->setFocusedElement(object);
-}
-
 void WebViewHost::postAccessibilityNotification(const WebAccessibilityObject& obj, WebAccessibilityNotification notification)
 {
+    if (notification == WebAccessibilityNotificationFocusedUIElementChanged)
+        m_shell->accessibilityController()->setFocusedElement(obj);
+
     if (m_shell->accessibilityController()->shouldDumpAccessibilityNotifications()) {
         printf("AccessibilityNotification - ");
 

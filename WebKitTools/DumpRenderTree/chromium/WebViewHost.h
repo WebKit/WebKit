@@ -127,7 +127,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void navigateBackForwardSoon(int offset);
     virtual int historyBackListCount();
     virtual int historyForwardListCount();
-    virtual void focusAccessibilityObject(const WebKit::WebAccessibilityObject&);
     virtual void postAccessibilityNotification(const WebKit::WebAccessibilityObject&, WebKit::WebAccessibilityNotification);
     virtual WebKit::WebNotificationPresenter* notificationPresenter();
     virtual WebKit::WebGeolocationService* geolocationService();

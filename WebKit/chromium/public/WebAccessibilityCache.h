@@ -51,7 +51,6 @@ public:
     virtual bool isInitialized() const = 0;
 
     virtual WebAccessibilityObject getObjectById(int) = 0;
-    virtual bool isValidId(int) const = 0;
     virtual int addOrGetId(const WebAccessibilityObject& object) = 0;
     virtual bool isCached(const WebAccessibilityObject&) = 0;
 

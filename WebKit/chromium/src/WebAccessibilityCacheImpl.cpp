@@ -118,11 +118,6 @@ WebAccessibilityObject WebAccessibilityCacheImpl::getObjectById(int id)
     return WebAccessibilityObject(it->second->accessibilityObject());
 }
 
-bool WebAccessibilityCacheImpl::isValidId(int id) const
-{
-    return id >= firstObjectId;
-}
-
 void WebAccessibilityCacheImpl::remove(int id)
 {
     ObjectMap::iterator it = m_objectMap.find(id);

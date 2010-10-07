@@ -1,3 +1,14 @@
+2010-10-06  Chris Guillory  <chris.guillory@google.com>
+
+        Reviewed by Chris Fleizach.
+
+        Remove unused accessibility functions from webkit.
+        https://bugs.webkit.org/attachment.cgi?bugid=46707
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::postAccessibilityNotification):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2010-10-06  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Adam Roben.
