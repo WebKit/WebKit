@@ -148,7 +148,70 @@ static int windowsKeyCodeForKeyEvent(uint16 code)
 
 static inline String singleCharacterString(UChar c)
 {
-    return String(&c, 1);
+    UChar text;
+
+    // Some key codes are not mapped to Unicode characters. Convert them to Unicode characters here.
+    switch (c) {
+    case AVK_0:
+        text = VK_0;
+        break;
+    case AVK_1:
+        text = VK_1;
+        break;
+    case AVK_2:
+        text = VK_2;
+        break;
+    case AVK_3:
+        text = VK_3;
+        break;
+    case AVK_4:
+        text = VK_4;
+        break;
+    case AVK_5:
+        text = VK_5;
+        break;
+    case AVK_6:
+        text = VK_6;
+        break;
+    case AVK_7:
+        text = VK_7;
+        break;
+    case AVK_8:
+        text = VK_8;
+        break;
+    case AVK_9:
+        text = VK_9;
+        break;
+    case AVK_STAR:
+        text = '*';
+        break;
+    case AVK_POUND:
+        text = '#';
+        break;
+    case AVK_FUNCTION1:
+        text = '=';
+        break;
+    case AVK_FUNCTION2:
+        text = '/';
+        break;
+    case AVK_FUNCTION3:
+        text = '_';
+        break;
+    case AVK_PUNC1:
+        text = ',';
+        break;
+    case AVK_PUNC2:
+        text = '.';
+        break;
+    case AVK_SPACE:
+        text = VK_SPACE;
+        break;
+    default:
+        text = c;
+        break;
+    }
+
+    return String(&text, 1);
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(AEEEvent event, uint16 code, uint32 modifiers, Type type)
