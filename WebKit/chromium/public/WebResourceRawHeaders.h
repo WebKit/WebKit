@@ -45,11 +45,20 @@ class WebString;
 
 class WebResourceRawHeaders {
 public:
-    WebResourceRawHeaders();
-    ~WebResourceRawHeaders();
+    WebResourceRawHeaders() { initialize(); }
+    ~WebResourceRawHeaders() { reset(); }
+    WebResourceRawHeaders(const WebResourceRawHeaders& r) { assign(r); }
+    WebResourceRawHeaders& operator =(const WebResourceRawHeaders& r)
+    { 
+        assign(r);
+        return *this;
+    }
 
-    void addRequestHeader(const WebString& name, const WebString& value);
-    void addResponseHeader(const WebString& name, const WebString& value);
+    WEBKIT_API void initialize();
+    WEBKIT_API void reset();
+    WEBKIT_API void assign(const WebResourceRawHeaders& r);
+    WEBKIT_API void addRequestHeader(const WebString& name, const WebString& value);
+    WEBKIT_API void addResponseHeader(const WebString& name, const WebString& value);
 
 #if WEBKIT_IMPLEMENTATION
     WebResourceRawHeaders(WTF::PassRefPtr<WebCore::ResourceRawHeaders>);

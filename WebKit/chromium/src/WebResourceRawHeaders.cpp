@@ -40,14 +40,19 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebResourceRawHeaders::WebResourceRawHeaders()
+void WebResourceRawHeaders::initialize()
 {
     m_private = adoptRef(new ResourceRawHeaders());
 }
 
-WebResourceRawHeaders::~WebResourceRawHeaders()
+void WebResourceRawHeaders::reset()
 {
     m_private.reset();
+}
+
+void WebResourceRawHeaders::assign(const WebResourceRawHeaders& r)
+{
+    m_private = r.m_private;
 }
 
 WebResourceRawHeaders::WebResourceRawHeaders(WTF::PassRefPtr<WebCore::ResourceRawHeaders> value)

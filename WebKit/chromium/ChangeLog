@@ -1,3 +1,19 @@
+2010-10-07  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Chromium multi-dll build broken due to WebResourceRawHeaders methods lacking WEBKIT_API decl spec
+        https://bugs.webkit.org/show_bug.cgi?id=47329
+
+        * public/WebResourceRawHeaders.h:
+        (WebKit::WebResourceRawHeaders::WebResourceRawHeaders):
+        (WebKit::WebResourceRawHeaders::~WebResourceRawHeaders):
+        (WebKit::WebResourceRawHeaders::operator =):
+        * src/WebResourceRawHeaders.cpp:
+        (WebKit::WebResourceRawHeaders::initialize):
+        (WebKit::WebResourceRawHeaders::reset):
+        (WebKit::WebResourceRawHeaders::assign):
+
 2010-10-06  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
