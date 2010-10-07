@@ -1693,7 +1693,6 @@ IF (ENABLE_SVG)
         css/SVGCSSStyleSelector.cpp
         rendering/PointerEventsHitRules.cpp
         rendering/RenderForeignObject.cpp
-        rendering/RenderPath.cpp
         rendering/RenderSVGBlock.cpp
         rendering/RenderSVGContainer.cpp
         rendering/RenderSVGGradientStop.cpp
@@ -1728,6 +1727,7 @@ IF (ENABLE_SVG)
         rendering/style/SVGRenderStyleDefs.cpp
         rendering/svg/RenderSVGInline.cpp
         rendering/svg/RenderSVGInlineText.cpp
+        rendering/svg/RenderSVGPath.cpp
         rendering/svg/RenderSVGTSpan.cpp
         rendering/svg/RenderSVGText.cpp
         rendering/svg/RenderSVGTextPath.cpp

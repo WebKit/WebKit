@@ -2216,7 +2216,6 @@ HEADERS += \
     rendering/RenderObjectChildList.h \
     rendering/RenderObject.h \
     rendering/RenderPart.h \
-    rendering/RenderPath.h \
     rendering/RenderProgress.h \
     rendering/RenderReplaced.h \
     rendering/RenderReplica.h \
@@ -2296,6 +2295,7 @@ HEADERS += \
     rendering/style/SVGRenderStyle.h \
     rendering/svg/RenderSVGInline.h \
     rendering/svg/RenderSVGInlineText.h \
+    rendering/svg/RenderSVGPath.h \
     rendering/svg/RenderSVGTSpan.h \
     rendering/svg/RenderSVGText.h \
     rendering/svg/RenderSVGTextPath.h \
@@ -3320,6 +3320,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         rendering/style/SVGRenderStyleDefs.cpp \
         rendering/svg/RenderSVGInline.cpp \
         rendering/svg/RenderSVGInlineText.cpp \
+        rendering/svg/RenderSVGPath.cpp \
         rendering/svg/RenderSVGTSpan.cpp \
         rendering/svg/RenderSVGText.cpp \
         rendering/svg/RenderSVGTextPath.cpp \
@@ -3489,7 +3490,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFilterBuilder.cpp \
         svg/graphics/SVGImage.cpp \
         rendering/RenderForeignObject.cpp \
-        rendering/RenderPath.cpp \
         rendering/RenderSVGBlock.cpp \
         rendering/RenderSVGContainer.cpp \
         rendering/RenderSVGGradientStop.cpp \

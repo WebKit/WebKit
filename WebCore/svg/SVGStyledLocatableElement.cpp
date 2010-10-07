@@ -24,7 +24,6 @@
 #include "SVGStyledLocatableElement.h"
 
 #include "AffineTransform.h"
-#include "RenderPath.h"
 #include "SVGElement.h"
 #include "SVGSVGElement.h"
 

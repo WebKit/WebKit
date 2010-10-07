@@ -40,11 +40,11 @@
 #include "PatternAttributes.h"
 #include "RadialGradientAttributes.h"
 #include "RenderImage.h"
-#include "RenderPath.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGPath.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGResourceGradient.h"
@@ -314,12 +314,12 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
         writeNameValuePair(ts, "transform", object.localTransform());
     writeIfNotDefault(ts, "image rendering", svgStyle->imageRendering(), SVGRenderStyle::initialImageRendering());
     writeIfNotDefault(ts, "opacity", style->opacity(), RenderStyle::initialOpacity());
-    if (object.isRenderPath()) {
-        const RenderPath& path = static_cast<const RenderPath&>(object);
+    if (object.isSVGPath()) {
+        const RenderSVGPath& path = static_cast<const RenderSVGPath&>(object);
         ASSERT(path.node());
         ASSERT(path.node()->isSVGElement());
 
-        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderPath*>(&path), path.style())) {
+        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderSVGPath*>(&path), path.style())) {
             TextStreamSeparator s(" ");
             ts << " [stroke={" << s;
             writeSVGPaintingResource(ts, strokePaintingResource);
@@ -346,7 +346,7 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
             ts << "}]";
         }
 
-        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<RenderPath*>(&path), path.style())) {
+        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<RenderSVGPath*>(&path), path.style())) {
             TextStreamSeparator s(" ");
             ts << " [fill={" << s;
             writeSVGPaintingResource(ts, fillPaintingResource);
@@ -370,7 +370,7 @@ static TextStream& writePositionAndStyle(TextStream& ts, const RenderObject& obj
     return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const RenderPath& path)
+static TextStream& operator<<(TextStream& ts, const RenderSVGPath& path)
 {
     writePositionAndStyle(ts, path);
     writeNameAndQuotedValue(ts, "data", path.path().debugString());
@@ -626,7 +626,7 @@ void writeSVGImage(TextStream& ts, const RenderSVGImage& image, int indent)
     writeResources(ts, image, indent);
 }
 
-void write(TextStream& ts, const RenderPath& path, int indent)
+void write(TextStream& ts, const RenderSVGPath& path, int indent)
 {
     writeStandardPrefix(ts, path, indent);
     ts << path << "\n";

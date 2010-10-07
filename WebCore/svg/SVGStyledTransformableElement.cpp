@@ -25,7 +25,7 @@
 
 #include "AffineTransform.h"
 #include "Attr.h"
-#include "RenderPath.h"
+#include "RenderSVGPath.h"
 #include "SVGDocument.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
@@ -104,7 +104,7 @@ FloatRect SVGStyledTransformableElement::getBBox(StyleUpdateStrategy styleUpdate
 RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, RenderStyle*)
 {
     // By default, any subclass is expected to do path-based drawing
-    return new (arena) RenderPath(this);
+    return new (arena) RenderSVGPath(this);
 }
 
 Path SVGStyledTransformableElement::toClipPath() const

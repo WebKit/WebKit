@@ -2627,8 +2627,6 @@ webcore_sources += \
 	WebCore/rendering/RenderOverflow.h \
 	WebCore/rendering/RenderPart.cpp \
 	WebCore/rendering/RenderPart.h \
-	WebCore/rendering/RenderPath.cpp \
-	WebCore/rendering/RenderPath.h \
 	WebCore/rendering/RenderProgress.cpp \
 	WebCore/rendering/RenderProgress.h \
 	WebCore/rendering/RenderReplaced.cpp \
@@ -2814,6 +2812,8 @@ webcore_sources += \
 	WebCore/rendering/svg/RenderSVGInline.h \
 	WebCore/rendering/svg/RenderSVGInlineText.cpp \
 	WebCore/rendering/svg/RenderSVGInlineText.h \
+	WebCore/rendering/svg/RenderSVGPath.cpp \
+	WebCore/rendering/svg/RenderSVGPath.h \
 	WebCore/rendering/svg/RenderSVGTSpan.cpp \
 	WebCore/rendering/svg/RenderSVGTSpan.h \
 	WebCore/rendering/svg/RenderSVGText.cpp \

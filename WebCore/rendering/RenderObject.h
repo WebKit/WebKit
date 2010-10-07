@@ -314,7 +314,7 @@ public:
     virtual bool isSVGContainer() const { return false; }
     virtual bool isSVGGradientStop() const { return false; }
     virtual bool isSVGHiddenContainer() const { return false; }
-    virtual bool isRenderPath() const { return false; }
+    virtual bool isSVGPath() const { return false; }
     virtual bool isSVGText() const { return false; }
     virtual bool isSVGTextPath() const { return false; }
     virtual bool isSVGInline() const { return false; }

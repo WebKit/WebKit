@@ -24,7 +24,7 @@
 #include "SVGPathElement.h"
 
 #include "Attribute.h"
-#include "RenderPath.h"
+#include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGNames.h"
 #include "SVGPathParserFactory.h"
@@ -197,7 +197,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
-    RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
+    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
     if (!renderer)
         return;
 

@@ -39,16 +39,16 @@ namespace WebCore {
     class RenderBlock;
     class RenderImage;
     class RenderObject;
-    class RenderPath;
     class RenderSVGGradientStop;
     class RenderSVGImage;
+    class RenderSVGPath;
     class RenderSVGRoot;
     class RenderText;
     class AffineTransform;
     class SVGUnitTypes;
 
 // functions used by the main RenderTreeAsText code
-void write(TextStream&, const RenderPath&, int indent);
+void write(TextStream&, const RenderSVGPath&, int indent);
 void write(TextStream&, const RenderSVGRoot&, int indent);
 void writeSVGGradientStop(TextStream&, const RenderSVGGradientStop&, int indent);
 void writeSVGResourceContainer(TextStream&, const RenderObject&, int indent);

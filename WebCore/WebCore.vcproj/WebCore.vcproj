@@ -30731,14 +30731,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderPath.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\rendering\RenderPath.h"
-				>
-			</File>
-			<File
 				RelativePath="..\rendering\RenderProgress.cpp"
 				>
 			</File>
@@ -33065,6 +33057,14 @@
 				</File>
 				<File
 					RelativePath="..\rendering\svg\RenderSVGInlineText.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\RenderSVGPath.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\svg\RenderSVGPath.h"
 					>
 				</File>
 				<File

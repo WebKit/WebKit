@@ -1866,8 +1866,6 @@
 		853CA9D90AEEC5E9002372DC /* RenderSVGImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 853CA9CD0AEEC5E9002372DC /* RenderSVGImage.h */; };
 		853CA9EC0AEEC63C002372DC /* RenderForeignObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 853CA9EA0AEEC63C002372DC /* RenderForeignObject.cpp */; };
 		853CA9ED0AEEC63C002372DC /* RenderForeignObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 853CA9EB0AEEC63C002372DC /* RenderForeignObject.h */; };
-		853CA9F00AEEC657002372DC /* RenderPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 853CA9EE0AEEC657002372DC /* RenderPath.cpp */; };
-		853CA9F10AEEC657002372DC /* RenderPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 853CA9EF0AEEC657002372DC /* RenderPath.h */; };
 		854074FC0AD6C22E00620C57 /* DOMSVGNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074F90AD6C22E00620C57 /* DOMSVGNumber.h */; };
 		854074FD0AD6C22E00620C57 /* DOMSVGPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074FA0AD6C22E00620C57 /* DOMSVGPoint.h */; };
 		854074FE0AD6C22E00620C57 /* DOMSVGRect.h in Headers */ = {isa = PBXBuildFile; fileRef = 854074FB0AD6C22E00620C57 /* DOMSVGRect.h */; };
@@ -3887,6 +3885,8 @@
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ABFE7E120D32FAF60066F4D2 /* MediaControlElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABFE7E100D32FAF50066F4D2 /* MediaControlElements.cpp */; };
 		ABFE7E130D32FAF60066F4D2 /* MediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = ABFE7E110D32FAF50066F4D2 /* MediaControlElements.h */; };
+		ADDF1AD61257CD9A0003A759 /* RenderSVGPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */; };
+		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
 		B0149E7D11A4B21500196A7B /* AsyncImageResizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */; };
 		B0149E7E11A4B21500196A7B /* AsyncImageResizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */; };
 		B0149E7F11A4B21500196A7B /* ImageResizerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */; };
@@ -7961,8 +7961,6 @@
 		853CA9CD0AEEC5E9002372DC /* RenderSVGImage.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGImage.h; sourceTree = "<group>"; };
 		853CA9EA0AEEC63C002372DC /* RenderForeignObject.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderForeignObject.cpp; sourceTree = "<group>"; };
 		853CA9EB0AEEC63C002372DC /* RenderForeignObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderForeignObject.h; sourceTree = "<group>"; };
-		853CA9EE0AEEC657002372DC /* RenderPath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderPath.cpp; sourceTree = "<group>"; };
-		853CA9EF0AEEC657002372DC /* RenderPath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderPath.h; sourceTree = "<group>"; };
 		854074F90AD6C22E00620C57 /* DOMSVGNumber.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGNumber.h; sourceTree = "<group>"; };
 		854074FA0AD6C22E00620C57 /* DOMSVGPoint.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGPoint.h; sourceTree = "<group>"; };
 		854074FB0AD6C22E00620C57 /* DOMSVGRect.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSVGRect.h; sourceTree = "<group>"; };
@@ -9673,6 +9671,8 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ABFE7E100D32FAF50066F4D2 /* MediaControlElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlElements.cpp; sourceTree = "<group>"; };
 		ABFE7E110D32FAF50066F4D2 /* MediaControlElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlElements.h; sourceTree = "<group>"; };
+		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
+		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
 		B0149E7911A4B21500196A7B /* AsyncImageResizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncImageResizer.cpp; sourceTree = "<group>"; };
 		B0149E7A11A4B21500196A7B /* AsyncImageResizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncImageResizer.h; sourceTree = "<group>"; };
 		B0149E7B11A4B21500196A7B /* ImageResizerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageResizerThread.cpp; sourceTree = "<group>"; };
@@ -11714,6 +11714,8 @@
 		088C2F7412390080003D65CE /* svg */ = {
 			isa = PBXGroup;
 			children = (
+				ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */,
+				ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */,
 				0854B0021255E4E600B9CDD0 /* RenderSVGInline.cpp */,
 				0854B0031255E4E600B9CDD0 /* RenderSVGInline.h */,
 				0854B0041255E4E600B9CDD0 /* RenderSVGInlineText.cpp */,
@@ -17760,8 +17762,6 @@
 				BCFA930710333193007B25D1 /* RenderOverflow.h */,
 				A871DEC80A1530C700B12A68 /* RenderPart.cpp */,
 				A871DECF0A1530C700B12A68 /* RenderPart.h */,
-				853CA9EE0AEEC657002372DC /* RenderPath.cpp */,
-				853CA9EF0AEEC657002372DC /* RenderPath.h */,
 				A43BF59A1149292800C643CA /* RenderProgress.cpp */,
 				A43BF59B1149292800C643CA /* RenderProgress.h */,
 				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
@@ -20377,7 +20377,6 @@
 				BC2CC8DF0F32881000A9DF26 /* RenderObjectChildList.h in Headers */,
 				BCFA930810333193007B25D1 /* RenderOverflow.h in Headers */,
 				A871DED70A1530C700B12A68 /* RenderPart.h in Headers */,
-				853CA9F10AEEC657002372DC /* RenderPath.h in Headers */,
 				A43BF59D1149292800C643CA /* RenderProgress.h in Headers */,
 				A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */,
 				BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */,
@@ -21054,6 +21053,7 @@
 				081668D4125603BF006F25DE /* SVGTextChunkBuilder.h in Headers */,
 				081668DA125603D5006F25DE /* SVGTextLayoutEngine.h in Headers */,
 				1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */,
+				ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */,
 				934907E4125BBBC8007F23A0 /* GraphicsContextCG.h in Headers */,
 				893C48011248BD3A002B3D86 /* DirectoryEntrySync.h in Headers */,
 				893C48031248BD3A002B3D86 /* DirectoryReaderSync.h in Headers */,
@@ -22999,7 +22999,6 @@
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
 				BC60EFB70F33A0E700812A93 /* RenderObjectChildList.cpp in Sources */,
 				A871DED00A1530C700B12A68 /* RenderPart.cpp in Sources */,
-				853CA9F00AEEC657002372DC /* RenderPath.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,
 				BCA846D60DC67A350026C309 /* RenderReplica.cpp in Sources */,
@@ -23601,6 +23600,7 @@
 				081668D9125603D5006F25DE /* SVGTextLayoutEngine.cpp in Sources */,
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,
 				1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */,
+				ADDF1AD61257CD9A0003A759 /* RenderSVGPath.cpp in Sources */,
 				893C48001248BD3A002B3D86 /* DirectoryEntrySync.cpp in Sources */,
 				893C48021248BD3A002B3D86 /* DirectoryReaderSync.cpp in Sources */,
 				893C48041248BD3A002B3D86 /* DOMFileSystemBase.cpp in Sources */,

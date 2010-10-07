@@ -21,8 +21,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef RenderPath_h
-#define RenderPath_h
+#ifndef RenderSVGPath_h
+#define RenderSVGPath_h
 
 #if ENABLE(SVG)
 #include "AffineTransform.h"
@@ -36,9 +36,9 @@ class FloatPoint;
 class RenderSVGContainer;
 class SVGStyledTransformableElement;
 
-class RenderPath : public RenderSVGModelObject {
+class RenderSVGPath : public RenderSVGModelObject {
 public:
-    RenderPath(SVGStyledTransformableElement*);
+    RenderSVGPath(SVGStyledTransformableElement*);
 
     const Path& path() const { return m_path; }
     void setNeedsPathUpdate() { m_needsPathUpdate = true; }
@@ -55,8 +55,8 @@ private:
     virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
 
-    virtual bool isRenderPath() const { return true; }
-    virtual const char* renderName() const { return "RenderPath"; }
+    virtual bool isSVGPath() const { return true; }
+    virtual const char* renderName() const { return "RenderSVGPath"; }
 
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
@@ -83,20 +83,20 @@ private:
     AffineTransform m_localTransform;
 };
 
-inline RenderPath* toRenderPath(RenderObject* object)
+inline RenderSVGPath* toRenderSVGPath(RenderObject* object)
 {
-    ASSERT(!object || object->isRenderPath());
-    return static_cast<RenderPath*>(object);
+    ASSERT(!object || object->isSVGPath());
+    return static_cast<RenderSVGPath*>(object);
 }
 
-inline const RenderPath* toRenderPath(const RenderObject* object)
+inline const RenderSVGPath* toRenderSVGPath(const RenderObject* object)
 {
-    ASSERT(!object || object->isRenderPath());
-    return static_cast<const RenderPath*>(object);
+    ASSERT(!object || object->isSVGPath());
+    return static_cast<const RenderSVGPath*>(object);
 }
 
 // This will catch anyone doing an unnecessary cast.
-void toRenderPath(const RenderPath*);
+void toRenderSVGPath(const RenderSVGPath*);
 
 }
 

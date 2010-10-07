@@ -26,7 +26,7 @@
 #include "Attribute.h"
 #include "Document.h"
 #include "FloatPoint.h"
-#include "RenderPath.h"
+#include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -81,7 +81,7 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
     if (attrName == SVGNames::pointsAttr)
         invalidateSVGAttributes();
 
-    RenderPath* renderer = static_cast<RenderPath*>(this->renderer());
+    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
     if (!renderer)
         return;
 

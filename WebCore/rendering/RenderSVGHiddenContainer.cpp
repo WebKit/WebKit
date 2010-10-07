@@ -25,7 +25,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGHiddenContainer.h"
 
-#include "RenderPath.h"
+#include "RenderSVGPath.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {

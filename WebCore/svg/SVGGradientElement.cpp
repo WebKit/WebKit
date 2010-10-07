@@ -26,7 +26,7 @@
 
 #include "Attribute.h"
 #include "CSSStyleSelector.h"
-#include "RenderPath.h"
+#include "RenderSVGPath.h"
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "RenderSVGResourceRadialGradient.h"

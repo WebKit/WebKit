@@ -50,11 +50,11 @@
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG)
-#include "RenderPath.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGImage.h"
 #include "RenderSVGInlineText.h"
+#include "RenderSVGPath.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "SVGRenderTreeAsText.h"
@@ -453,8 +453,8 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
 void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavior behavior)
 {
 #if ENABLE(SVG)
-    if (o.isRenderPath()) {
-        write(ts, *toRenderPath(&o), indent);
+    if (o.isSVGPath()) {
+        write(ts, *toRenderSVGPath(&o), indent);
         return;
     }
     if (o.isSVGGradientStop()) {

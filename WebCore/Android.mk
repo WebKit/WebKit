@@ -681,7 +681,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderObject.cpp \
 	rendering/RenderObjectChildList.cpp \
 	rendering/RenderPart.cpp \
-	rendering/RenderPath.cpp \
 	rendering/RenderReplaced.cpp \
 	rendering/RenderReplica.cpp \
 
@@ -711,6 +710,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	rendering/RenderSVGViewportContainer.cpp \
 	rendering/svg/RenderSVGInline.cpp \
 	rendering/svg/RenderSVGInlineText.cpp \
+	rendering/svg/RenderSVGPath.cpp \
 	rendering/svg/RenderSVGTSpan.cpp \
 	rendering/svg/RenderSVGText.cpp \
 	rendering/svg/RenderSVGTextPath.cpp \

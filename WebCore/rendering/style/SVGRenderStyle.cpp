@@ -138,7 +138,7 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     if (resources != other->resources)
         return StyleDifferenceLayout;
 
-    // If markers change, we need a relayout, as marker boundaries are cached in RenderPath.
+    // If markers change, we need a relayout, as marker boundaries are cached in RenderSVGPath.
     if (inheritedResources != other->inheritedResources)
         return StyleDifferenceLayout;
 
@@ -190,7 +190,7 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
             return StyleDifferenceRepaint;
     }
 
-    // If fill changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderPath contains.
+    // If fill changes, we just need to repaint. Fill boundaries are not influenced by this, only by the Path, that RenderSVGPath contains.
     if (fill != other->fill)
         return StyleDifferenceRepaint;
 
