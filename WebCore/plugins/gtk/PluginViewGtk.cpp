@@ -842,9 +842,9 @@ bool PluginView::platformStart()
             m_npWindow.window = (void*)gtk_socket_get_id(GTK_SOCKET(platformPluginWidget()));
             GdkWindow* window = gtk_widget_get_window(widget);
             ws->display = GDK_WINDOW_XDISPLAY(window);
-            ws->visual = GDK_VISUAL_XVISUAL(gdk_drawable_get_visual(GDK_DRAWABLE(window)));
-            ws->depth = gdk_visual_get_depth(gdk_drawable_get_visual(GDK_DRAWABLE(window)));
-            ws->colormap = GDK_COLORMAP_XCOLORMAP(gdk_drawable_get_colormap(GDK_DRAWABLE(window)));
+            ws->visual = GDK_VISUAL_XVISUAL(gdk_window_get_visual(window));
+            ws->depth = gdk_visual_get_depth(gdk_window_get_visual(window));
+            ws->colormap = XCreateColormap(ws->display, GDK_ROOT_WINDOW(), ws->visual, AllocNone);
         } else {
             m_npWindow.window = (void*)GTK_XTBIN(platformPluginWidget())->xtwindow;
             ws->display = GTK_XTBIN(platformPluginWidget())->xtdisplay;

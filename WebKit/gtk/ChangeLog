@@ -5,6 +5,19 @@
         [GTK] Fix the build for GTK+ 3
         https://bugs.webkit.org/show_bug.cgi?id=47249
 
+        Use GdkVisual instead of GdkColormap. GdkColormap has been removed
+        in gtk3
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_realize):
+
+2010-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix the build for GTK+ 3
+        https://bugs.webkit.org/show_bug.cgi?id=47249
+
         Do not use GdkDrawable deprecated API. Some methods of GdkDrawable
         are deprecated in gtk2 and have been removed in gtk3. Equivalent
         API has been added to GdkWindow.

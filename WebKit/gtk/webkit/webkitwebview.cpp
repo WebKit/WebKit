@@ -848,7 +848,9 @@ static void webkit_web_view_realize(GtkWidget* widget)
     attributes.height = allocation.height;
     attributes.wclass = GDK_INPUT_OUTPUT;
     attributes.visual = gtk_widget_get_visual(widget);
+#ifdef GTK_API_VERSION_2
     attributes.colormap = gtk_widget_get_colormap(widget);
+#endif
     attributes.event_mask = GDK_VISIBILITY_NOTIFY_MASK
                             | GDK_EXPOSURE_MASK
                             | GDK_BUTTON_PRESS_MASK
@@ -861,7 +863,10 @@ static void webkit_web_view_realize(GtkWidget* widget)
                             | GDK_BUTTON2_MOTION_MASK
                             | GDK_BUTTON3_MOTION_MASK;
 
-    gint attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
+    gint attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL;
+#ifdef GTK_API_VERSION_2
+    attributes_mask |= GDK_WA_COLORMAP;
+#endif
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributes_mask);
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
