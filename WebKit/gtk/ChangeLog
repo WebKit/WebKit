@@ -1,3 +1,16 @@
+2010-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Fix the build for GTK+ 3
+        https://bugs.webkit.org/show_bug.cgi?id=47249
+
+        Don't use gtk_size_request_get_size(). It has been removed,
+        gtk_widget_get_preferred_size() should be used instead
+
+        * webkit/webkitwebview.cpp:
+        (PopupMenuPositionFunc):
+
 2010-10-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r69201.

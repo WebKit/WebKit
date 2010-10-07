@@ -90,7 +90,7 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
 #ifdef GTK_API_VERSION_2
     gtk_widget_size_request(GTK_WIDGET(m_popup.get()), &requisition);
 #else
-    gtk_size_request_get_size(GTK_SIZE_REQUEST(m_popup.get()), &requisition, NULL);
+    gtk_widget_get_preferred_size(GTK_WIDGET(m_popup.get()), &requisition, 0);
 #endif
 
     gtk_widget_set_size_request(GTK_WIDGET(m_popup.get()), std::max(rect.width(), requisition.width), -1);
@@ -107,7 +107,7 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
 #ifdef GTK_API_VERSION_2
             gtk_widget_get_child_requisition(item, &itemRequisition);
 #else
-            gtk_size_request_get_size(GTK_SIZE_REQUEST(item), &itemRequisition, NULL);
+            gtk_widget_get_preferred_size(item, &itemRequisition, 0);
 #endif
             m_menuPosition.setY(m_menuPosition.y() - itemRequisition.height);
 

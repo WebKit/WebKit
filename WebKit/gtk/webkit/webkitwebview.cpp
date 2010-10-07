@@ -223,7 +223,7 @@ static void PopupMenuPositionFunc(GtkMenu* menu, gint *x, gint *y, gboolean *pus
 #ifdef GTK_API_VERSION_2
     gtk_widget_size_request(GTK_WIDGET(menu), &menuSize);
 #else
-    gtk_size_request_get_size(GTK_SIZE_REQUEST(menu), &menuSize, NULL);
+    gtk_widget_get_preferred_size(GTK_WIDGET(menu), &menuSize, NULL);
 #endif
 
     *x = priv->lastPopupXPosition;
