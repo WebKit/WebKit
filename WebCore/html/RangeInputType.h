@@ -42,6 +42,14 @@ public:
 private:
     RangeInputType(HTMLInputElement* element) : InputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool rangeUnderflow(const String&) const;
+    virtual bool rangeOverflow(const String&) const;
+    virtual double minimum() const;
+    virtual double maximum() const;
+    virtual bool stepMismatch(const String&, double) const;
+    virtual double stepBase() const;
+    virtual double defaultStep() const;
+    virtual double stepScaleFactor() const;
     virtual double parseToDouble(const String&, double) const;
 };
 

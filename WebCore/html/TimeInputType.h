@@ -42,6 +42,11 @@ public:
 private:
     TimeInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual double minimum() const;
+    virtual double maximum() const;
+    virtual double defaultStep() const;
+    virtual double stepScaleFactor() const;
+    virtual bool scaledStepValeuShouldBeInteger() const;
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const;
 };
 

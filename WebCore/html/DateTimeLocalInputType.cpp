@@ -32,9 +32,16 @@
 #include "DateTimeLocalInputType.h"
 
 #include "DateComponents.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
+
+static const double dateTimeLocalDefaultStep = 60.0;
+static const double dateTimeLocalStepScaleFactor = 1000.0;
 
 PassOwnPtr<InputType> DateTimeLocalInputType::create(HTMLInputElement* element)
 {
@@ -44,6 +51,31 @@ PassOwnPtr<InputType> DateTimeLocalInputType::create(HTMLInputElement* element)
 const AtomicString& DateTimeLocalInputType::formControlType() const
 {
     return InputTypeNames::datetimelocal();
+}
+
+double DateTimeLocalInputType::minimum() const
+{
+    return parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumDateTime());
+}
+
+double DateTimeLocalInputType::maximum() const
+{
+    return parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumDateTime());
+}
+
+double DateTimeLocalInputType::defaultStep() const
+{
+    return dateTimeLocalDefaultStep;
+}
+
+double DateTimeLocalInputType::stepScaleFactor() const
+{
+    return dateTimeLocalStepScaleFactor;
+}
+
+bool DateTimeLocalInputType::scaledStepValeuShouldBeInteger() const
+{
+    return true;
 }
 
 bool DateTimeLocalInputType::parseToDateComponentsInternal(const UChar* characters, unsigned length, DateComponents* out) const

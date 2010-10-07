@@ -32,11 +32,48 @@
 #include "BaseDateAndTimeInputType.h"
 
 #include "DateComponents.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
+#include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
+using namespace std;
+
+bool BaseDateAndTimeInputType::rangeUnderflow(const String& value) const
+{
+    const double nan = numeric_limits<double>::quiet_NaN();
+    double doubleValue = parseToDouble(value, nan);
+    return isfinite(doubleValue) && doubleValue < minimum();
+}
+
+bool BaseDateAndTimeInputType::rangeOverflow(const String& value) const
+{
+    const double nan = numeric_limits<double>::quiet_NaN();
+    double doubleValue = parseToDouble(value, nan);
+    return isfinite(doubleValue) && doubleValue > maximum();
+}
+
+bool BaseDateAndTimeInputType::stepMismatch(const String& value, double step) const
+{
+    const double nan = numeric_limits<double>::quiet_NaN();
+    double doubleValue = parseToDouble(value, nan);
+    doubleValue = fabs(doubleValue - stepBase());
+    if (!isfinite(doubleValue))
+        return false;
+    ASSERT(round(doubleValue) == doubleValue);
+    ASSERT(round(step) == step);
+    return fmod(doubleValue, step);
+}
+
+double BaseDateAndTimeInputType::stepBase() const
+{
+    return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase);
+}
 
 double BaseDateAndTimeInputType::parseToDouble(const String& src, double defaultValue) const
 {

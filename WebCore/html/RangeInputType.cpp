@@ -31,11 +31,22 @@
 #include "config.h"
 #include "RangeInputType.h"
 
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
+using namespace std;
+
+static const double rangeDefaultMinimum = 0.0;
+static const double rangeDefaultMaximum = 100.0;
+static const double rangeDefaultStep = 1.0;
+static const double rangeStepScaleFactor = 1.0;
 
 PassOwnPtr<InputType> RangeInputType::create(HTMLInputElement* element)
 {
@@ -45,6 +56,59 @@ PassOwnPtr<InputType> RangeInputType::create(HTMLInputElement* element)
 const AtomicString& RangeInputType::formControlType() const
 {
     return InputTypeNames::range();
+}
+
+bool RangeInputType::rangeUnderflow(const String& value) const
+{
+    // Guaranteed by sanitization.
+    ASSERT_UNUSED(value, parseToDouble(value, numeric_limits<double>::quiet_NaN()) >= minimum());
+    return false;
+}
+
+bool RangeInputType::rangeOverflow(const String& value) const
+{
+    // Guaranteed by sanitization.
+    ASSERT_UNUSED(value, parseToDouble(value, numeric_limits<double>::quiet_NaN()) <= maximum());
+    return false;
+}
+
+double RangeInputType::minimum() const
+{
+    return parseToDouble(element()->fastGetAttribute(minAttr), rangeDefaultMinimum);
+}
+
+double RangeInputType::maximum() const
+{
+    double max = parseToDouble(element()->fastGetAttribute(maxAttr), rangeDefaultMaximum);
+    // A remedy for the inconsistent min/max values.
+    // Sets the maximum to the default or the minimum value.
+    double min = minimum();
+    if (max < min)
+        max = std::max(min, rangeDefaultMaximum);
+    return max;
+}
+
+bool RangeInputType::stepMismatch(const String&, double) const
+{
+    // stepMismatch doesn't occur for type=range. RenderSlider guarantees the
+    // value matches to step on user input, and sanitization takes care
+    // of the general case.
+    return false;
+}
+
+double RangeInputType::stepBase() const
+{
+    return minimum();
+}
+
+double RangeInputType::defaultStep() const
+{
+    return rangeDefaultStep;
+}
+
+double RangeInputType::stepScaleFactor() const
+{
+    return rangeStepScaleFactor;
 }
 
 double RangeInputType::parseToDouble(const String& src, double defaultValue) const

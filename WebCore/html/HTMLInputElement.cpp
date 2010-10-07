@@ -82,31 +82,6 @@ using namespace HTMLNames;
 
 const int maxSavedResults = 256;
 
-// Constant values for getAllowedValueStep().
-static const double dateDefaultStep = 1.0;
-static const double dateStepScaleFactor = 86400000.0;
-static const double dateTimeDefaultStep = 60.0;
-static const double dateTimeStepScaleFactor = 1000.0;
-static const double monthDefaultStep = 1.0;
-static const double monthStepScaleFactor = 1.0;
-static const double numberDefaultStep = 1.0;
-static const double numberStepScaleFactor = 1.0;
-static const double timeDefaultStep = 60.0;
-static const double timeStepScaleFactor = 1000.0;
-static const double weekDefaultStep = 1.0;
-static const double weekStepScaleFactor = 604800000.0;
-
-// Constant values for minimum().
-static const double numberDefaultMinimum = -DBL_MAX;
-static const double rangeDefaultMinimum = 0.0;
-
-// Constant values for maximum().
-static const double numberDefaultMaximum = DBL_MAX;
-static const double rangeDefaultMaximum = 100.0;
-
-static const double defaultStepBase = 0.0;
-static const double weekDefaultStepBase = -259200000.0; // The first day of 1970-W01.
-
 static const double msecPerMinute = 60 * 1000;
 static const double msecPerSecond = 1000;
 
@@ -371,199 +346,22 @@ bool HTMLInputElement::tooLong(const String& value, NeedsToCheckDirtyFlag check)
 
 bool HTMLInputElement::rangeUnderflow(const String& value) const
 {
-    const double nan = numeric_limits<double>::quiet_NaN();
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case MONTH:
-    case NUMBER:
-    case TIME:
-    case WEEK: {
-        double doubleValue = m_inputType->parseToDouble(value, nan);
-        return isfinite(doubleValue) && doubleValue < minimum();
-    }
-    case RANGE: // Guaranteed by sanitization.
-        ASSERT(m_inputType->parseToDouble(value, nan) >= minimum());
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        break;
-    }
-    return false;
+    return m_inputType->rangeUnderflow(value);
 }
 
 bool HTMLInputElement::rangeOverflow(const String& value) const
 {
-    const double nan = numeric_limits<double>::quiet_NaN();
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case MONTH:
-    case NUMBER:
-    case TIME:
-    case WEEK: {
-        double doubleValue = m_inputType->parseToDouble(value, nan);
-        return isfinite(doubleValue) && doubleValue > maximum();
-    }
-    case RANGE: // Guaranteed by sanitization.
-        ASSERT(m_inputType->parseToDouble(value, nan) <= maximum());
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        break;
-    }
-    return false;
+    return m_inputType->rangeOverflow(value);
 }
 
 double HTMLInputElement::minimum() const
 {
-    switch (deprecatedInputType()) {
-    case DATE:
-        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumDate());
-    case DATETIME:
-    case DATETIMELOCAL:
-        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumDateTime());
-    case MONTH:
-        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumMonth());
-    case NUMBER:
-        return m_inputType->parseToDouble(getAttribute(minAttr), numberDefaultMinimum);
-    case RANGE:
-        return m_inputType->parseToDouble(getAttribute(minAttr), rangeDefaultMinimum);
-    case TIME:
-        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumTime());
-    case WEEK:
-        return m_inputType->parseToDouble(getAttribute(minAttr), DateComponents::minimumWeek());
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
+    return m_inputType->minimum();
 }
 
 double HTMLInputElement::maximum() const
 {
-    switch (deprecatedInputType()) {
-    case DATE:
-        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumDate());
-    case DATETIME:
-    case DATETIMELOCAL:
-        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumDateTime());
-    case MONTH:
-        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumMonth());
-    case NUMBER:
-        return m_inputType->parseToDouble(getAttribute(maxAttr), numberDefaultMaximum);
-    case RANGE: {
-        double max = m_inputType->parseToDouble(getAttribute(maxAttr), rangeDefaultMaximum);
-        // A remedy for the inconsistent min/max values for RANGE.
-        // Sets the maximum to the default or the minimum value.
-        double min = minimum();
-        if (max < min)
-            max = std::max(min, rangeDefaultMaximum);
-        return max;
-    }
-    case TIME:
-        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumTime());
-    case WEEK:
-        return m_inputType->parseToDouble(getAttribute(maxAttr), DateComponents::maximumWeek());
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-double HTMLInputElement::stepBase() const
-{
-    switch (deprecatedInputType()) {
-    case RANGE:
-        return minimum();
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case MONTH:
-    case NUMBER:
-    case TIME:
-        return m_inputType->parseToDouble(getAttribute(minAttr), defaultStepBase);
-    case WEEK:
-        return m_inputType->parseToDouble(getAttribute(minAttr), weekDefaultStepBase);
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return 0.0;
+    return m_inputType->maximum();
 }
 
 bool HTMLInputElement::stepMismatch(const String& value) const
@@ -571,126 +369,15 @@ bool HTMLInputElement::stepMismatch(const String& value) const
     double step;
     if (!getAllowedValueStep(&step))
         return false;
-    switch (deprecatedInputType()) {
-    case RANGE:
-        // stepMismatch doesn't occur for RANGE. RenderSlider guarantees the
-        // value matches to step on user input, and sanitation takes care
-        // of the general case.
-        return false;
-    case NUMBER: {
-        double doubleValue;
-        if (!parseToDoubleForNumberType(value, &doubleValue))
-            return false;
-        doubleValue = fabs(doubleValue - stepBase());
-        if (isinf(doubleValue))
-            return false;
-        // double's fractional part size is DBL_MAN_DIG-bit.  If the current
-        // value is greater than step*2^DBL_MANT_DIG, the following fmod() makes
-        // no sense.
-        if (doubleValue / pow(2.0, DBL_MANT_DIG) > step)
-            return false;
-        double remainder = fmod(doubleValue, step);
-        // Accepts errors in lower 7-bit.
-        double acceptableError = step / pow(2.0, DBL_MANT_DIG - 7);
-        return acceptableError < remainder && remainder < (step - acceptableError);
-    }
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case MONTH:
-    case TIME:
-    case WEEK: {
-        const double nan = numeric_limits<double>::quiet_NaN();
-        double doubleValue = m_inputType->parseToDouble(value, nan);
-        doubleValue = fabs(doubleValue - stepBase());
-        if (!isfinite(doubleValue))
-            return false;
-        ASSERT(round(doubleValue) == doubleValue);
-        ASSERT(round(step) == step);
-        return fmod(doubleValue, step);
-    }
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        break;
-    }
-    // Non-supported types should be rejected by getAllowedValueStep().
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool HTMLInputElement::getStepParameters(double* defaultStep, double* stepScaleFactor) const
-{
-    ASSERT(defaultStep);
-    ASSERT(stepScaleFactor);
-    switch (deprecatedInputType()) {
-    case NUMBER:
-    case RANGE:
-        *defaultStep = numberDefaultStep;
-        *stepScaleFactor = numberStepScaleFactor;
-        return true;
-    case DATE:
-        *defaultStep = dateDefaultStep;
-        *stepScaleFactor = dateStepScaleFactor;
-        return true;
-    case DATETIME:
-    case DATETIMELOCAL:
-        *defaultStep = dateTimeDefaultStep;
-        *stepScaleFactor = dateTimeStepScaleFactor;
-        return true;
-    case MONTH:
-        *defaultStep = monthDefaultStep;
-        *stepScaleFactor = monthStepScaleFactor;
-        return true;
-    case TIME:
-        *defaultStep = timeDefaultStep;
-        *stepScaleFactor = timeStepScaleFactor;
-        return true;
-    case WEEK:
-        *defaultStep = weekDefaultStep;
-        *stepScaleFactor = weekStepScaleFactor;
-        return true;
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    return m_inputType->stepMismatch(value, step);
 }
 
 bool HTMLInputElement::getAllowedValueStep(double* step) const
 {
     ASSERT(step);
-    double defaultStep;
-    double stepScaleFactor;
-    if (!getStepParameters(&defaultStep, &stepScaleFactor))
+    double defaultStep = m_inputType->defaultStep();
+    double stepScaleFactor = m_inputType->stepScaleFactor();
+    if (!isfinite(defaultStep) || !isfinite(stepScaleFactor))
         return false;
     const AtomicString& stepString = getAttribute(stepAttr);
     if (stepString.isEmpty()) {
@@ -704,12 +391,12 @@ bool HTMLInputElement::getAllowedValueStep(double* step) const
         *step = defaultStep * stepScaleFactor;
         return true;
     }
-    // For DATE, MONTH, WEEK, the parsed value should be an integer.
-    if (deprecatedInputType() == DATE || deprecatedInputType() == MONTH || deprecatedInputType() == WEEK)
+    // For date, month, week, the parsed value should be an integer for some types.
+    if (m_inputType->parsedStepValueShouldBeInteger())
         parsed = max(round(parsed), 1.0);
     double result = parsed * stepScaleFactor;
-    // For DATETIME, DATETIMELOCAL, TIME, the result should be an integer.
-    if (deprecatedInputType() == DATETIME || deprecatedInputType() == DATETIMELOCAL || deprecatedInputType() == TIME)
+    // For datetime, datetime-local, time, the result should be an integer.
+    if (m_inputType->scaledStepValeuShouldBeInteger())
         result = max(round(result), 1.0);
     ASSERT(result > 0);
     *step = result;
@@ -734,13 +421,13 @@ void HTMLInputElement::applyStep(double count, ExceptionCode& ec)
         ec = INVALID_STATE_ERR;
         return;
     }
-    if (newValue < minimum()) {
+    if (newValue < m_inputType->minimum()) {
         ec = INVALID_STATE_ERR;
         return;
     }
-    double base = stepBase();
+    double base = m_inputType->stepBase();
     newValue = base + round((newValue - base) / step) * step;
-    if (newValue > maximum()) {
+    if (newValue > m_inputType->maximum()) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -2442,8 +2129,8 @@ void HTMLInputElement::handleKeyEventForRange(KeyboardEvent* event)
 
     ExceptionCode ec;
     if (equalIgnoringCase(getAttribute(stepAttr), "any")) {
-        double min = minimum();
-        double max = maximum();
+        double min = m_inputType->minimum();
+        double max = m_inputType->maximum();
         // FIXME: Is 1/100 reasonable?
         double step = (max - min) / 100;
         double current = m_inputType->parseToDouble(value(), numeric_limits<double>::quiet_NaN());
@@ -2837,8 +2524,8 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     const double nan = numeric_limits<double>::quiet_NaN();
     String currentStringValue = value();
     double current = m_inputType->parseToDouble(currentStringValue, nan);
-    if (!isfinite(current) || (n > 0 && current < minimum()) || (n < 0 && current > maximum()))
-        setValue(serialize(n > 0 ? minimum() : maximum()));
+    if (!isfinite(current) || (n > 0 && current < m_inputType->minimum()) || (n < 0 && current > m_inputType->maximum()))
+        setValue(serialize(n > 0 ? m_inputType->minimum() : m_inputType->maximum()));
     else {
         ExceptionCode ec;
         stepUp(n, ec);

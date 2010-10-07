@@ -41,6 +41,8 @@ class HTMLInputElement;
 
 class InputType : public Noncopyable {
 public:
+    static const double defaultStepBase = 0.0;
+
     static PassOwnPtr<InputType> create(HTMLInputElement*, const AtomicString&);
     static PassOwnPtr<InputType> createText(HTMLInputElement*);
     virtual ~InputType();
@@ -49,7 +51,19 @@ public:
     virtual bool isTextType() const;
     virtual const AtomicString& formControlType() const = 0;
 
+    // Validation-related functions
+
     virtual bool patternMismatch(const String&) const;
+    virtual bool rangeUnderflow(const String&) const;
+    virtual bool rangeOverflow(const String&) const;
+    virtual double minimum() const;
+    virtual double maximum() const;
+    virtual bool stepMismatch(const String&, double) const;
+    virtual double stepBase() const;
+    virtual double defaultStep() const;
+    virtual double stepScaleFactor() const;
+    virtual bool parsedStepValueShouldBeInteger() const;
+    virtual bool scaledStepValeuShouldBeInteger() const;
 
     // Parses the specified string for the type, and return
     // the double value for the parsing result if the parsing

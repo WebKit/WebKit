@@ -326,12 +326,8 @@ private:
     void handleBeforeTextInsertedEvent(Event*);
     void handleKeyEventForRange(KeyboardEvent*);
     PassRefPtr<HTMLFormElement> createTemporaryFormForIsIndex();
-    // Helper for getAllowedValueStep();
-    bool getStepParameters(double* defaultStep, double* stepScaleFactor) const;
     // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
     void applyStep(double count, ExceptionCode&);
-    // Helper for applyStepForNumberOrRange().
-    double stepBase() const;
 
     // Create a string representation of the specified double value for the
     // current input type. If NaN or Infinity is specified, this returns an

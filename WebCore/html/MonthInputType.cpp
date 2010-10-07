@@ -32,10 +32,17 @@
 #include "MonthInputType.h"
 
 #include "DateComponents.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
+
+using namespace HTMLNames;
+
+static const double monthDefaultStep = 1.0;
+static const double monthStepScaleFactor = 1.0;
 
 PassOwnPtr<InputType> MonthInputType::create(HTMLInputElement* element)
 {
@@ -45,6 +52,31 @@ PassOwnPtr<InputType> MonthInputType::create(HTMLInputElement* element)
 const AtomicString& MonthInputType::formControlType() const
 {
     return InputTypeNames::month();
+}
+
+double MonthInputType::minimum() const
+{
+    return parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumMonth());
+}
+
+double MonthInputType::maximum() const
+{
+    return parseToDouble(element()->fastGetAttribute(maxAttr), DateComponents::maximumMonth());
+}
+
+double MonthInputType::defaultStep() const
+{
+    return monthDefaultStep;
+}
+
+double MonthInputType::stepScaleFactor() const
+{
+    return monthStepScaleFactor;
+}
+
+bool MonthInputType::parsedStepValueShouldBeInteger() const
+{
+    return true;
 }
 
 double MonthInputType::parseToDouble(const String& src, double defaultValue) const

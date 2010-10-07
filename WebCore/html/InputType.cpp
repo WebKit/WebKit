@@ -53,10 +53,14 @@
 #include "TimeInputType.h"
 #include "URLInputType.h"
 #include "WeekInputType.h"
+#include <limits>
+#include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
+
+using namespace std;
 
 typedef HashMap<String, PassOwnPtr<InputType> (*)(HTMLInputElement*), CaseFoldingHash> InputTypeFactoryMap;
 static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
@@ -118,6 +122,61 @@ bool InputType::isTextType() const
 }
 
 bool InputType::patternMismatch(const String&) const
+{
+    return false;
+}
+
+bool InputType::rangeUnderflow(const String&) const
+{
+    return false;
+}
+
+bool InputType::rangeOverflow(const String&) const
+{
+    return false;
+}
+
+double InputType::minimum() const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+double InputType::maximum() const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+bool InputType::stepMismatch(const String&, double) const
+{
+    // Non-supported types should be rejected by HTMLInputElement::getAllowedValueStep().
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+double InputType::stepBase() const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+double InputType::defaultStep() const
+{
+    return numeric_limits<double>::quiet_NaN();
+}
+
+double InputType::stepScaleFactor() const
+{
+    return numeric_limits<double>::quiet_NaN();
+}
+
+bool InputType::parsedStepValueShouldBeInteger() const
+{
+    return false;
+}
+
+bool InputType::scaledStepValeuShouldBeInteger() const
 {
     return false;
 }
