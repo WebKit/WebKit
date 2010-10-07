@@ -2,6 +2,21 @@
 
         Reviewed by Xan Lopez.
 
+        [GTK] Use draw signal instead of expose_event in DragClientGtk when building with gtk3
+        https://bugs.webkit.org/show_bug.cgi?id=47326
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::dragIconWindowDrawCallback):
+        (WebKit::DragClient::DragClient):
+        (WebKit::DragClient::~DragClient):
+        (WebKit::DragClient::startDrag):
+        (WebKit::DragClient::dragIconWindowDraw):
+        * WebCoreSupport/DragClientGtk.h:
+
+2010-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
         [GTK] Fix the build for GTK+ 3
         https://bugs.webkit.org/show_bug.cgi?id=47249
 
