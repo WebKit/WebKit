@@ -1,3 +1,10 @@
+2010-10-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by BUILD FIX for non-gcc builds.
+
+        * Platform/Logging.cpp:
+        (initializeLogChannel):  GCC optimized out the only caller of this function. Windows doesn't, and is breaking.
+
 2010-10-07  Darin Adler  <darin@apple.com>
 
         Fix include mistake that makes build fail with non-Objective-C.
