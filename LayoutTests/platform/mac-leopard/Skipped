@@ -100,3 +100,9 @@ media/video-autoplay.html
 media/video-aspect-ratio.html
 media/video-play-pause-events.html
 media/video-width-height.html
+
+# Disable spelling tests for autocorrection panel
+editing/spelling/autocorrection-delete.html
+editing/spelling/autocorrection-removing-underline-after-paste.html
+editing/spelling/autocorrection-removing-underline.html
+editing/spelling/autocorrection-simple.html

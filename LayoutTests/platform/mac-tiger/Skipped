@@ -206,3 +206,9 @@ fast/harness/show-modal-dialog.html
 
 # Loading fails on Tiger with error -1012 after asking NSURLConnection to continue without credentials.
 http/tests/misc/401-alternative-content.php
+
+# Disable spelling tests for autocorrection panel
+editing/spelling/autocorrection-delete.html
+editing/spelling/autocorrection-removing-underline-after-paste.html
+editing/spelling/autocorrection-removing-underline.html
+editing/spelling/autocorrection-simple.html
