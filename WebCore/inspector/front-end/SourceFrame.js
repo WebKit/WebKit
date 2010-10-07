@@ -169,6 +169,14 @@ WebInspector.SourceFrame.prototype = {
             this._lineToHighlight = line;
     },
 
+    clearLineHighlight: function()
+    {
+        if (this._textViewer)
+            this._textViewer.clearLineHighlight();
+        else
+            delete this._lineToHighlight;
+    },
+
     _createViewerIfNeeded: function()
     {
         if (!this._visible || !this._loaded || this._textViewer)

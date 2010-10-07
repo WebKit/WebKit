@@ -59,6 +59,8 @@ WebInspector.SourceView.prototype = {
     hide: function()
     {
         this.sourceFrame.visible = false;
+        if (!this._frameNeedsSetup)
+            this.sourceFrame.clearLineHighlight();
         WebInspector.View.prototype.hide.call(this);
         if (this.localSourceFrame)
             this.localSourceFrame.visible = false;
