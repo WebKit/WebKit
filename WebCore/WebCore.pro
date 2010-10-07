@@ -990,6 +990,7 @@ SOURCES += \
     inspector/InjectedScriptHost.cpp \
     inspector/InspectorApplicationCacheAgent.cpp \
     inspector/InspectorBackend.cpp \
+    inspector/InspectorCSSAgent.cpp \
     inspector/InspectorCSSStore.cpp \
     inspector/InspectorController.cpp \
     inspector/InspectorDatabaseResource.cpp \
@@ -1002,7 +1003,9 @@ SOURCES += \
     inspector/InspectorProfilerAgent.cpp \
     inspector/InspectorResource.cpp \
     inspector/InspectorStorageAgent.cpp \
+    inspector/InspectorStyleSheet.cpp \
     inspector/InspectorTimelineAgent.cpp \
+    inspector/InspectorUtilities.cpp \
     inspector/InspectorValues.cpp \
     inspector/ScriptBreakpoint.cpp \
     inspector/TimelineRecordFactory.cpp \
@@ -1869,6 +1872,7 @@ HEADERS += \
     inspector/InspectorApplicationCacheAgent.h \
     inspector/InspectorBackend.h \
     inspector/InspectorController.h \
+    inspector/InspectorCSSAgent.h \
     inspector/InspectorDatabaseResource.h \
     inspector/InspectorDebuggerAgent.h \
     inspector/InspectorDOMStorageResource.h \
@@ -1879,7 +1883,9 @@ HEADERS += \
     inspector/InspectorProfilerAgent.h \
     inspector/InspectorResource.h \
     inspector/InspectorStorageAgent.h \
+    inspector/InspectorStyleSheet.h \
     inspector/InspectorTimelineAgent.h \
+    inspector/InspectorUtilities.h \
     inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \
     loader/appcache/ApplicationCacheGroup.h \

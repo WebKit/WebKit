@@ -217,6 +217,7 @@ InspectorDOMAgent::InspectorDOMAgent(InspectorCSSStore* cssStore, InspectorFront
     : EventListener(InspectorDOMAgentType)
     , m_cssStore(cssStore)
     , m_frontend(frontend)
+    , m_domListener(0)
     , m_lastNodeId(1)
     , m_matchJobsTimer(this, &InspectorDOMAgent::onMatchJobsTimer)
 {
@@ -237,6 +238,11 @@ void InspectorDOMAgent::reset()
         stopListening((*it).get());
 
     ASSERT(!m_documents.size());
+}
+
+void InspectorDOMAgent::setDOMListener(DOMListener* listener)
+{
+    m_domListener = listener;
 }
 
 void InspectorDOMAgent::setDocument(Document* doc)
@@ -328,6 +334,8 @@ void InspectorDOMAgent::unbind(Node* node, NodeToIdMap* nodesMap)
     if (node->isFrameOwnerElement()) {
         const HTMLFrameOwnerElement* frameOwner = static_cast<const HTMLFrameOwnerElement*>(node);
         stopListening(frameOwner->contentDocument());
+        if (m_domListener)
+            m_domListener->didRemoveDocument(frameOwner->contentDocument());
         cssStore()->removeDocument(frameOwner->contentDocument());
     }
 
@@ -1104,6 +1112,9 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
     if (!parentId)
         return;
 
+    if (m_domListener)
+        m_domListener->didRemoveDOMNode(node);
+
     if (!m_childrenRequested.contains(parentId)) {
         // No children are mapped yet -> only notify on changes of hasChildren.
         if (innerChildNodeCount(parent) == 1)
@@ -1502,6 +1513,7 @@ void InspectorDOMAgent::getSupportedCSSProperties(RefPtr<InspectorArray>* cssPro
     RefPtr<InspectorArray> properties = InspectorArray::create();
     for (int i = 0; i < numCSSProperties; ++i)
         properties->pushString(propertyNameStrings[i]);
+
     *cssProperties = properties.release();
 }
 

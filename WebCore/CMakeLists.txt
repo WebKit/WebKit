@@ -1099,6 +1099,7 @@ SET(WebCore_SOURCES
     inspector/InjectedScriptHost.cpp
     inspector/InspectorApplicationCacheAgent.cpp
     inspector/InspectorBackend.cpp
+    inspector/InspectorCSSAgent.cpp
     inspector/InspectorCSSStore.cpp
     inspector/InspectorController.cpp
     inspector/InspectorDOMAgent.cpp
@@ -1110,6 +1111,8 @@ SET(WebCore_SOURCES
     inspector/InspectorInstrumentation.cpp
     inspector/InspectorProfilerAgent.cpp
     inspector/InspectorResource.cpp
+    inspector/InspectorStyleSheet.cpp
+    inspector/InspectorUtilities.cpp
     inspector/InspectorValues.cpp
     inspector/InspectorStorageAgent.cpp
     inspector/InspectorTimelineAgent.cpp

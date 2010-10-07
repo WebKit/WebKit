@@ -1519,6 +1519,12 @@
 		81BE209911F4AB8D00915DFA /* IDBCursorBackendInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE209411F4AB8D00915DFA /* IDBCursorBackendInterface.h */; };
 		81BE20D211F4BC3200915DFA /* JSIDBCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81BE20A711F4B66F00915DFA /* JSIDBCursor.cpp */; };
 		81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */ = {isa = PBXBuildFile; fileRef = 81BE20A811F4B66F00915DFA /* JSIDBCursor.h */; };
+		82AB1743124B99EC00C5069D /* InspectorCSSAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82AB1741124B99EC00C5069D /* InspectorCSSAgent.cpp */; };
+		82AB1744124B99EC00C5069D /* InspectorCSSAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 82AB1742124B99EC00C5069D /* InspectorCSSAgent.h */; };
+		82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */; };
+		82AB1774125C826700C5069D /* InspectorStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = 82AB1770125C826700C5069D /* InspectorStyleSheet.h */; };
+		82AB1775125C826700C5069D /* InspectorUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82AB1771125C826700C5069D /* InspectorUtilities.cpp */; };
+		82AB1776125C826700C5069D /* InspectorUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 82AB1772125C826700C5069D /* InspectorUtilities.h */; };
 		82B658981189E39200E052A1 /* InspectorCSSStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 82B658971189E39200E052A1 /* InspectorCSSStore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		82B6589A1189E47600E052A1 /* InspectorCSSStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82B658991189E47600E052A1 /* InspectorCSSStore.cpp */; };
 		82E3D8DE122EA0D1003AE5BC /* CSSPropertySourceData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 82E3D8DC122EA0D1003AE5BC /* CSSPropertySourceData.cpp */; };
@@ -7614,6 +7620,12 @@
 		81BE209C11F4ABBD00915DFA /* IDBCursor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBCursor.idl; sourceTree = "<group>"; };
 		81BE20A711F4B66F00915DFA /* JSIDBCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBCursor.cpp; sourceTree = "<group>"; };
 		81BE20A811F4B66F00915DFA /* JSIDBCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBCursor.h; sourceTree = "<group>"; };
+		82AB1741124B99EC00C5069D /* InspectorCSSAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCSSAgent.cpp; sourceTree = "<group>"; };
+		82AB1742124B99EC00C5069D /* InspectorCSSAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCSSAgent.h; sourceTree = "<group>"; };
+		82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorStyleSheet.cpp; sourceTree = "<group>"; };
+		82AB1770125C826700C5069D /* InspectorStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorStyleSheet.h; sourceTree = "<group>"; };
+		82AB1771125C826700C5069D /* InspectorUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorUtilities.cpp; sourceTree = "<group>"; };
+		82AB1772125C826700C5069D /* InspectorUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorUtilities.h; sourceTree = "<group>"; };
 		82B658971189E39200E052A1 /* InspectorCSSStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCSSStore.h; sourceTree = "<group>"; };
 		82B658991189E47600E052A1 /* InspectorCSSStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCSSStore.cpp; sourceTree = "<group>"; };
 		82E3D8DC122EA0D1003AE5BC /* CSSPropertySourceData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSPropertySourceData.cpp; sourceTree = "<group>"; };
@@ -12168,6 +12180,8 @@
 				1C81B9580E97330800266E07 /* InspectorClient.h */,
 				1C81B9570E97330800266E07 /* InspectorController.cpp */,
 				1C81B9560E97330800266E07 /* InspectorController.h */,
+				82AB1741124B99EC00C5069D /* InspectorCSSAgent.cpp */,
+				82AB1742124B99EC00C5069D /* InspectorCSSAgent.h */,
 				82B658991189E47600E052A1 /* InspectorCSSStore.cpp */,
 				82B658971189E39200E052A1 /* InspectorCSSStore.h */,
 				41F062130F5F192600A07EAC /* InspectorDatabaseResource.cpp */,
@@ -12192,8 +12206,12 @@
 				41F061FF0F5F0B6600A07EAC /* InspectorResource.h */,
 				7AB0B1BE1211A62200A76940 /* InspectorStorageAgent.cpp */,
 				7AB0B1BF1211A62200A76940 /* InspectorStorageAgent.h */,
+				82AB176F125C826700C5069D /* InspectorStyleSheet.cpp */,
+				82AB1770125C826700C5069D /* InspectorStyleSheet.h */,
 				754133A9102E00F400075D00 /* InspectorTimelineAgent.cpp */,
 				754133A7102E00E800075D00 /* InspectorTimelineAgent.h */,
+				82AB1771125C826700C5069D /* InspectorUtilities.cpp */,
+				82AB1772125C826700C5069D /* InspectorUtilities.h */,
 				4F3289B311A42AAB005ABE7E /* InspectorValues.cpp */,
 				4F3289B411A42AAB005ABE7E /* InspectorValues.h */,
 				F375CC061150D300008DDB81 /* InspectorWorkerResource.h */,
@@ -19641,6 +19659,7 @@
 				4F707A9A11EF679400ACDA69 /* InspectorBackendDispatcher.h in Headers */,
 				1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */,
 				1C81B95A0E97330800266E07 /* InspectorController.h in Headers */,
+				82AB1744124B99EC00C5069D /* InspectorCSSAgent.h in Headers */,
 				82B658981189E39200E052A1 /* InspectorCSSStore.h in Headers */,
 				41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */,
 				F33F053E120B0DA500E5743A /* InspectorDebuggerAgent.h in Headers */,
@@ -21070,6 +21089,8 @@
 				893C483B12495472002B3D86 /* JSEntrySync.h in Headers */,
 				893C483D12495472002B3D86 /* JSFileEntrySync.h in Headers */,
 				890AE0E11256A07900F5968C /* DirectoryReaderBase.h in Headers */,
+				82AB1774125C826700C5069D /* InspectorStyleSheet.h in Headers */,
+				82AB1776125C826700C5069D /* InspectorUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22213,6 +22234,7 @@
 				7A74ECBA101839A600BF939E /* InspectorBackend.cpp in Sources */,
 				4F707A9911EF679400ACDA69 /* InspectorBackendDispatcher.cpp in Sources */,
 				1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */,
+				82AB1743124B99EC00C5069D /* InspectorCSSAgent.cpp in Sources */,
 				82B6589A1189E47600E052A1 /* InspectorCSSStore.cpp in Sources */,
 				41F062150F5F192600A07EAC /* InspectorDatabaseResource.cpp in Sources */,
 				F33F053D120B0DA500E5743A /* InspectorDebuggerAgent.cpp in Sources */,
@@ -23616,6 +23638,8 @@
 				893C483A12495472002B3D86 /* JSEntrySync.cpp in Sources */,
 				893C483C12495472002B3D86 /* JSFileEntrySync.cpp in Sources */,
 				893C485312499B06002B3D86 /* JSEntrySyncCustom.cpp in Sources */,
+				82AB1773125C826700C5069D /* InspectorStyleSheet.cpp in Sources */,
+				82AB1775125C826700C5069D /* InspectorUtilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

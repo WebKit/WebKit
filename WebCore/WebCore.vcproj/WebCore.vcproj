@@ -52743,6 +52743,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorCSSAgent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorCSSAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorCSSStore.cpp"
 				>
 			</File>
@@ -52835,11 +52843,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorStyleSheet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorStyleSheet.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorTimelineAgent.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorTimelineAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorUtilities.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorUtilities.h"
 				>
 			</File>
 			<File
