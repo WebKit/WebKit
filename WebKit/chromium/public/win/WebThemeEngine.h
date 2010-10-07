@@ -31,20 +31,17 @@
 #ifndef WebThemeEngine_h
 #define WebThemeEngine_h
 
-#include "WebCanvas.h"
-#include "WebColor.h"
+#include "../WebCanvas.h"
+#include "../WebColor.h"
+#include "../WebSize.h"
 
 namespace WebKit {
 
 struct WebRect;
 struct WebSize;
 
-// FIXME: This file has been moved to the win subdirectory as it's entirely
-// windows dependent. Once chromium has been updated to access the file from
-// there this file should be deleted.
 class WebThemeEngine {
 public:
-#ifdef WIN32
 // The part and state parameters correspond to values defined by the
 // Windows Theme API (see
 // http://msdn.microsoft.com/en-us/library/bb773187(VS.85).aspx ).
@@ -86,8 +83,6 @@ public:
     virtual void paintProgressBar(
         WebCanvas*, const WebRect& barRect, const WebRect& valueRect,
         bool determinate, double animatedSeconds) {}
-
-#endif
 };
 
 } // namespace WebKit

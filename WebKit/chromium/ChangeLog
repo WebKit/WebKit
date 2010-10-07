@@ -1,3 +1,17 @@
+2010-10-07  Dave Moore  <davemoore@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Add WebThemeEngine api for chromium/linux
+        https://bugs.webkit.org/show_bug.cgi?id=47278
+        Create new linux specific version of WinThemeEngine.h and move
+        existing windows specific one to win directory. Keep old top
+        level file until chromium is updated to use the new ones.
+
+        * WebKit.gyp:
+        * public/WebThemeEngine.h:
+        * src/ChromiumBridge.cpp:
+
 2010-10-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

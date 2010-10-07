@@ -63,7 +63,7 @@
 
 #if OS(WINDOWS)
 #include "WebRect.h"
-#include "WebThemeEngine.h"
+#include "win/WebThemeEngine.h"
 #endif
 
 #if OS(LINUX) || OS(FREEBSD)
