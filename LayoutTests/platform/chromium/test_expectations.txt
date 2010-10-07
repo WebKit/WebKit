@@ -1164,6 +1164,7 @@ BUG10376 MAC : fast/dom/isindex-002.html = FAIL
 BUG10378 MAC : fast/images/embed-image.html = FAIL
 BUG10378 MAC : fast/images/object-image.html = FAIL
 
+BUG10381 LINUX RELEASE : svg/W3C-SVG-1.1/animate-elem-03-t.svg = IMAGE+TEXT PASS
 BUG10381 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-03-t.svg = FAIL
 
 // The following are flaky in that some times the timeout or crash, but we think
@@ -2277,8 +2278,8 @@ BUG32195 LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.
 BUG32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT IMAGE
 
 // Expectations from roll to 53171:53194
-
-BUG32308 DEBUG WIN MAC : fast/frames/cached-frame-counter.html = TIMEOUT
+// As of Oct 7, 2010, times out on all platforms when doing DEBUG costing 13 seconds on average. Skipping.
+BUG32308 DEBUG SKIP : fast/frames/cached-frame-counter.html = TIMEOUT
 
 // WebKit roll 53341:53451
 BUG32670 LINUX : fast/css/zoom-body-scroll.html = TEXT
@@ -2976,7 +2977,6 @@ BUGWK44278 WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IM
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
-BUGWK44341 WIN : svg/batik/text/textProperties.svg = IMAGE
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 
 // Flaky on Linux
@@ -2989,7 +2989,7 @@ BUG53073 LINUX : svg/custom/clip-path-units-changes.svg = TEXT PASS
 // r66144 added tests to test user scripts on special documents, and Linux can't
 // pass them because they rely on QuickTime being installed. We wontfix these
 // tests and let the Mac/Win coverage ensure that the (cross-platform)
-// special-document machinery still works. 
+// special-document machinery still works.
 BUG53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 
 // These tests are flaky on Mac and Linux.
@@ -3133,12 +3133,6 @@ BUGWK46779 WIN LINUX : fast/filesystem/flags-passing.html = TEXT PASS
 // NPP_HandleEvent doesn't be implemented/work on mac/linux.
 BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
 
-// New test added in 68808.
-BUGWK46940 WIN : fast/dom/Window/window-screen-properties.html = TEXT
-
-// New test added in 68809
-BUGWK46941 WIN : fast/media/color-does-not-include-alpha.html = TEXT
-
 // New failures introduced in 68854.
 BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
@@ -3188,27 +3182,13 @@ BUG58195 WIN LINUX : svg/filters/feDisplacementMap.svg = IMAGE
 // Test added in Webkit r69226 timesout on all platforms.
 BUG58212 LINUX MAC : http/tests/appcache/main-resource-redirect.html = TIMEOUT
 
-// First seen
-// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40007
-BUG_AJWONG : fast/events/mouse-focus-imagemap.html = TEXT
-
 // Issues starting from
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35997
-BUG_AJWONG WIN : media/audio-delete-while-slider-thumb-clicked.html = TEXT
-BUG_AJWONG WIN : fast/css/font-face-download-error.html = TEXT PASS
+BUG58333 WIN LINUX : fast/css/font-face-download-error.html = TEXT PASS
 
 // Flakiness first seen
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35995
-BUG_AJWONG WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
 BUG58212 WIN : http/tests/appcache/main-resource-redirect.html = TEXT TIMEOUT PASS
-
-// Issues starting from
-// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/36000
-BUG_AJWONG WIN : fast/filesystem/async-operations.html = TEXT
-
-// Issues starting from
-// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Mac%20%28webkit.org%29/builds/25455
-BUG_AJWONG MAC : fast/images/imagemap-case.html = IMAGE
 
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
@@ -3217,3 +3197,11 @@ BUG58254 : editing/spelling/autocorrection-removing-underline-after-paste.html =
 BUG58254 : editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
 BUG58254 : editing/spelling/autocorrection-simple.html = IMAGE+TEXT
 
+BUG58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TEXT TIMEOUT
+
+// Flaky because they snapshot and animation.
+BUG10479 LINUX : svg/hixie/perf/001.xml = IMAGE PASS
+BUG10479 LINUX : svg/hixie/perf/002.xml = IMAGE PASS
+
+// New test from Webkit r69326.
+BUG58337: platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
