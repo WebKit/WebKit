@@ -1,3 +1,18 @@
+2010-10-07  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKitTestRunner should be portable
+        https://bugs.webkit.org/show_bug.cgi?id=45393
+
+        Use only the WebKit API for working with urls.
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::createWKURL):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::blankURL):
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::TestController::didFinishLoadForFrame):
+
 2010-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.

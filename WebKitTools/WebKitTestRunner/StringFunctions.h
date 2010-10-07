@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 University of Szeged. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,18 +29,15 @@
 
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JavaScript.h>
-#include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKString.h>
-#include <WebKit2/WKStringCF.h>
-#include <WebKit2/WKStringPrivate.h>
-#include <WebKit2/WKURL.h>
-#include <WebKit2/WKURLCF.h>
 #include <sstream>
 #include <string>
+#include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKString.h>
+#include <WebKit2/WKStringPrivate.h>
+#include <WebKit2/WKURL.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/Platform.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 namespace WTR {
@@ -94,27 +92,20 @@ inline std::ostream& operator<<(std::ostream& out, const WKRetainPtr<WKStringRef
     return out << stringRef.get();
 }
 
-// URL Functions
+// URL creation
 
 inline WKURLRef createWKURL(const char* pathOrURL)
 {
-    RetainPtr<CFStringRef> pathOrURLCFString(AdoptCF, CFStringCreateWithCString(0, pathOrURL, kCFStringEncodingUTF8));
-    RetainPtr<CFURLRef> cfURL;
-    if (CFStringHasPrefix(pathOrURLCFString.get(), CFSTR("http://")) || CFStringHasPrefix(pathOrURLCFString.get(), CFSTR("https://")))
-        cfURL.adoptCF(CFURLCreateWithString(0, pathOrURLCFString.get(), 0));
-    else
-#if PLATFORM(WIN)
-        cfURL.adoptCF(CFURLCreateWithFileSystemPath(0, pathOrURLCFString.get(), kCFURLWindowsPathStyle, false));
-#else
-        cfURL.adoptCF(CFURLCreateWithFileSystemPath(0, pathOrURLCFString.get(), kCFURLPOSIXPathStyle, false));
-#endif
-    return WKURLCreateWithCFURL(cfURL.get());
-}
+    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https") || strstr(pathOrURL, "file://"))
+        return WKURLCreateWithUTF8CString(pathOrURL);
 
-inline WKStringRef copyURLString(WKURLRef url)
-{
-    RetainPtr<CFURLRef> cfURL(AdoptCF, WKURLCopyCFURL(0, url));
-    return WKStringCreateWithCFString(CFURLGetString(cfURL.get()));
+    const char* filePrefix = "file://";
+    static const size_t prefixLength = strlen(filePrefix);
+    size_t length = strlen(pathOrURL);
+    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[length + prefixLength + 1]);
+    strcpy(buffer.get(), filePrefix);
+    strcat(buffer.get(), pathOrURL);
+    return WKURLCreateWithUTF8CString(buffer.get());
 }
 
 } // namespace WTR

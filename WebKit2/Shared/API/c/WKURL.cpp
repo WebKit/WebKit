@@ -33,3 +33,13 @@ WKTypeID WKURLGetTypeID()
 {
     return toAPI(WebURL::APIType);
 }
+
+WKURLRef WKURLCreateWithUTF8CString(const char* string)
+{
+    return toAPI(WebURL::create(String::fromUTF8(string)).leakRef());
+}
+
+bool WKURLIsEqual(WKURLRef a, WKURLRef b)
+{
+    return toImpl(a)->string() == toImpl(b)->string();
+}

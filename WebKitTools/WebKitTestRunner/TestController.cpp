@@ -34,6 +34,12 @@
 
 namespace WTR {
 
+static WKURLRef blankURL()
+{
+    static staticBlankURL = WKURLCreateWithUTF8CString("about:blank");
+    retun staticBlankURL;
+}
+
 static TestController* controller;
 
 TestController& TestController::shared()
@@ -227,8 +233,7 @@ void TestController::resetStateToConsistentValues()
     // Reset main page back to about:blank
     m_doneResetting = false;
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, createWKURL("about:blank"));
-    WKPageLoadURL(m_mainWebView->page(), url.get());
+    WKPageLoadURL(m_mainWebView->page(), blankURL());
     TestController::runUntil(m_doneResetting);
 }
 
@@ -295,8 +300,7 @@ void TestController::didFinishLoadForFrame(WKPageRef page, WKFrameRef frame)
         return;
 
     WKRetainPtr<WKURLRef> wkURL(AdoptWK, WKFrameCopyURL(frame));
-    WKRetainPtr<WKStringRef> wkURLString(AdoptWK, copyURLString(wkURL.get()));
-    if (!WKStringIsEqualToUTF8CString(wkURLString.get(), "about:blank"))
+    if (!WKURLIsEqual(wkURL.get(), blankURL()))
         return;
 
     m_doneResetting = true;
