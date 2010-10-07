@@ -106,6 +106,13 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     int spacing;
     if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
         m_fixedWidth = true;
+
+    if (fontDescription.weight() >= FontWeightBold) {
+        // The FC_EMBOLDEN property instructs us to fake the boldness of the font.
+        FcBool fontConfigEmbolden;
+        if (FcPatternGetBool(pattern, FC_EMBOLDEN, 0, &fontConfigEmbolden) == FcResultMatch)
+            m_syntheticBold = fontConfigEmbolden;
+    }
 }
 
 FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
