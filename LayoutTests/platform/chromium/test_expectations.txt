@@ -3212,4 +3212,5 @@ BUGWK47375 WIN : fast/filesystem/op-get-entry.html = TEXT
 BUGWK47375 WIN : fast/filesystem/op-move.html = TEXT
 
 // From r69334. Mask seems broken on the reflected image.
-BUG58358 : fast/css/transformed-mask.html = IMAGE+TEXT
+BUG58358 WIN LINUX : fast/css/transformed-mask.html = IMAGE+TEXT
+BUG58358 MAC : fast/css/transformed-mask.html = IMAGE
