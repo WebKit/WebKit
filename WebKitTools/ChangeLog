@@ -1,3 +1,13 @@
+2010-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Use gtk_widget_draw() instead of gtk_widget_get_snapshot() in PixelDumpSupportGtk when building with gtk3
+        https://bugs.webkit.org/show_bug.cgi?id=47332
+
+        * DumpRenderTree/gtk/PixelDumpSupportGtk.cpp:
+        (createBitmapContextFromWebView):
+
 2010-10-06  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
