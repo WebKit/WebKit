@@ -294,9 +294,9 @@ RootInlineBox* RenderBlock::constructLine(unsigned runCount, BidiRun* firstRun, 
 
 void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox, bool firstLine, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)
 {
-    // First determine our total width.
-    int availableWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
-    int totWidth = lineBox->getFlowSpacingLogicalWidth();
+    // First determine our total logical width.
+    int availableLogicalWidth = availableLogicalWidthForLine(logicalHeight(), firstLine);
+    int totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     bool needsWordSpacing = false;
     unsigned numSpaces = 0;
     ETextAlign textAlign = style()->textAlign();
@@ -320,7 +320,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
 
             if (int length = rt->textLength()) {
                 if (!r->m_start && needsWordSpacing && isSpaceOrNewline(rt->characters()[r->m_start]))
-                    totWidth += rt->style(firstLine)->font().wordSpacing();
+                    totalLogicalWidth += rt->style(firstLine)->font().wordSpacing();
                 needsWordSpacing = !isSpaceOrNewline(rt->characters()[r->m_stop - 1]) && r->m_stop == length;          
             }
             HashSet<const SimpleFontData*> fallbackFonts;
@@ -330,7 +330,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
                 const AtomicString& hyphenString = rt->style()->hyphenString();
                 hyphenWidth = rt->style(firstLine)->font().width(TextRun(hyphenString.characters(), hyphenString.length()));
             }
-            r->m_box->setLogicalWidth(rt->width(r->m_start, r->m_stop - r->m_start, totWidth, firstLine, &fallbackFonts, &glyphOverflow) + hyphenWidth);
+            r->m_box->setLogicalWidth(rt->width(r->m_start, r->m_stop - r->m_start, totalLogicalWidth, firstLine, &fallbackFonts, &glyphOverflow) + hyphenWidth);
             if (!fallbackFonts.isEmpty()) {
                 ASSERT(r->m_box->isText());
                 GlyphOverflowAndFallbackFontsMap::iterator it = textBoxDataMap.add(static_cast<InlineTextBox*>(r->m_box), make_pair(Vector<const SimpleFontData*>(), GlyphOverflow())).first;
@@ -345,37 +345,37 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
         } else if (!r->m_object->isRenderInline()) {
             RenderBox* renderBox = toRenderBox(r->m_object);
             renderBox->computeLogicalWidth();
-            r->m_box->setLogicalWidth(renderBox->width());
-            totWidth += renderBox->marginLeft() + renderBox->marginRight();
+            r->m_box->setLogicalWidth(logicalWidthForChild(renderBox));
+            totalLogicalWidth += marginStartForChild(renderBox) + marginEndForChild(renderBox);
         }
 
-        totWidth += r->m_box->logicalWidth();
+        totalLogicalWidth += r->m_box->logicalWidth();
     }
 
     // Armed with the total width of the line (without justification),
     // we now examine our text-align property in order to determine where to position the
     // objects horizontally.  The total width of the line can be increased if we end up
     // justifying text.
-    int x = logicalLeftOffsetForLine(height(), firstLine);
+    int logicalLeft = logicalLeftOffsetForLine(logicalHeight(), firstLine);
     switch (textAlign) {
         case LEFT:
         case WEBKIT_LEFT:
             // The direction of the block should determine what happens with wide lines.  In
             // particular with RTL blocks, wide lines should still spill out to the left.
             if (style()->isLeftToRightDirection()) {
-                if (totWidth > availableWidth && trailingSpaceRun)
-                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totWidth + availableWidth));
+                if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
+                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
             } else {
                 if (trailingSpaceRun)
                     trailingSpaceRun->m_box->setLogicalWidth(0);
-                else if (totWidth > availableWidth)
-                    x -= (totWidth - availableWidth);
+                else if (totalLogicalWidth > availableLogicalWidth)
+                    logicalLeft -= (totalLogicalWidth - availableLogicalWidth);
             }
             break;
         case JUSTIFY:
             if (numSpaces && !reachedEnd && !lineBox->endsWithBreak()) {
                 if (trailingSpaceRun) {
-                    totWidth -= trailingSpaceRun->m_box->logicalWidth();
+                    totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
                     trailingSpaceRun->m_box->setLogicalWidth(0);
                 }
                 break;
@@ -385,8 +385,8 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             numSpaces = 0;
             // for right to left fall through to right aligned
             if (style()->isLeftToRightDirection()) {
-                if (totWidth > availableWidth && trailingSpaceRun)
-                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totWidth + availableWidth));
+                if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun)
+                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
                 break;
             }
         case RIGHT:
@@ -396,31 +396,31 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
             // side of the block.
             if (style()->isLeftToRightDirection()) {
                 if (trailingSpaceRun) {
-                    totWidth -= trailingSpaceRun->m_box->logicalWidth();
+                    totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
                     trailingSpaceRun->m_box->setLogicalWidth(0);
                 }
-                if (totWidth < availableWidth)
-                    x += availableWidth - totWidth;
+                if (totalLogicalWidth < availableLogicalWidth)
+                    logicalLeft += availableLogicalWidth - totalLogicalWidth;
             } else {
-                if (totWidth > availableWidth && trailingSpaceRun) {
-                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totWidth + availableWidth));
-                    totWidth -= trailingSpaceRun->m_box->logicalWidth();
+                if (totalLogicalWidth > availableLogicalWidth && trailingSpaceRun) {
+                    trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceRun->m_box->logicalWidth() - totalLogicalWidth + availableLogicalWidth));
+                    totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
                 } else
-                    x += availableWidth - totWidth;
+                    logicalLeft += availableLogicalWidth - totalLogicalWidth;
             }
             break;
         case CENTER:
         case WEBKIT_CENTER:
             int trailingSpaceWidth = 0;
             if (trailingSpaceRun) {
-                totWidth -= trailingSpaceRun->m_box->logicalWidth();
-                trailingSpaceWidth = min(trailingSpaceRun->m_box->logicalWidth(), (availableWidth - totWidth + 1) / 2);
+                totalLogicalWidth -= trailingSpaceRun->m_box->logicalWidth();
+                trailingSpaceWidth = min(trailingSpaceRun->m_box->logicalWidth(), (availableLogicalWidth - totalLogicalWidth + 1) / 2);
                 trailingSpaceRun->m_box->setLogicalWidth(max(0, trailingSpaceWidth));
             }
             if (style()->isLeftToRightDirection())
-                x += max((availableWidth - totWidth) / 2, 0);
+                logicalLeft += max((availableLogicalWidth - totalLogicalWidth) / 2, 0);
             else
-                x += totWidth > availableWidth ? (availableWidth - totWidth) : (availableWidth - totWidth) / 2 - trailingSpaceWidth;
+                logicalLeft += totalLogicalWidth > availableLogicalWidth ? (availableLogicalWidth - totalLogicalWidth) : (availableLogicalWidth - totalLogicalWidth) / 2 - trailingSpaceWidth;
             break;
     }
 
@@ -443,9 +443,9 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
 
                 // Only justify text if whitespace is collapsed.
                 if (r->m_object->style()->collapseWhiteSpace()) {
-                    spaceAdd = (availableWidth - totWidth) * spaces / numSpaces;
+                    spaceAdd = (availableLogicalWidth - totalLogicalWidth) * spaces / numSpaces;
                     static_cast<InlineTextBox*>(r->m_box)->setSpaceAdd(spaceAdd);
-                    totWidth += spaceAdd;
+                    totalLogicalWidth += spaceAdd;
                 }
                 numSpaces -= spaces;
                 if (!numSpaces)
@@ -457,7 +457,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     // The widths of all runs are now known.  We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).
     needsWordSpacing = false;
-    lineBox->placeBoxesInInlineDirection(x, needsWordSpacing, textBoxDataMap);
+    lineBox->placeBoxesInInlineDirection(logicalLeft, needsWordSpacing, textBoxDataMap);
 }
 
 void RenderBlock::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap)

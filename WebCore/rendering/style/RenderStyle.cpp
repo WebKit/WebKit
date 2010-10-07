@@ -935,52 +935,52 @@ void RenderStyle::setBlendedFontSize(int size)
     font().update(currentFontSelector);
 }
 
-void RenderStyle::getBoxShadowExtent(int &top, int &right, int &bottom, int &left) const
+void RenderStyle::getShadowExtent(const ShadowData* shadow, int &top, int &right, int &bottom, int &left) const
 {
     top = 0;
     right = 0;
     bottom = 0;
     left = 0;
 
-    for (const ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next()) {
-        if (boxShadow->style() == Inset)
+    for ( ; shadow; shadow = shadow->next()) {
+        if (shadow->style() == Inset)
             continue;
-        int blurAndSpread = boxShadow->blur() + boxShadow->spread();
+        int blurAndSpread = shadow->blur() + shadow->spread();
 
-        top = min(top, boxShadow->y() - blurAndSpread);
-        right = max(right, boxShadow->x() + blurAndSpread);
-        bottom = max(bottom, boxShadow->y() + blurAndSpread);
-        left = min(left, boxShadow->x() - blurAndSpread);
+        top = min(top, shadow->y() - blurAndSpread);
+        right = max(right, shadow->x() + blurAndSpread);
+        bottom = max(bottom, shadow->y() + blurAndSpread);
+        left = min(left, shadow->x() - blurAndSpread);
     }
 }
 
-void RenderStyle::getBoxShadowHorizontalExtent(int &left, int &right) const
+void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, int &left, int &right) const
 {
     left = 0;
     right = 0;
 
-    for (const ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next()) {
-        if (boxShadow->style() == Inset)
+    for ( ; shadow; shadow = shadow->next()) {
+        if (shadow->style() == Inset)
             continue;
-        int blurAndSpread = boxShadow->blur() + boxShadow->spread();
+        int blurAndSpread = shadow->blur() + shadow->spread();
 
-        left = min(left, boxShadow->x() - blurAndSpread);
-        right = max(right, boxShadow->x() + blurAndSpread);
+        left = min(left, shadow->x() - blurAndSpread);
+        right = max(right, shadow->x() + blurAndSpread);
     }
 }
 
-void RenderStyle::getBoxShadowVerticalExtent(int &top, int &bottom) const
+void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, int &top, int &bottom) const
 {
     top = 0;
     bottom = 0;
 
-    for (const ShadowData* boxShadow = this->boxShadow(); boxShadow; boxShadow = boxShadow->next()) {
-        if (boxShadow->style() == Inset)
+    for ( ; shadow; shadow = shadow->next()) {
+        if (shadow->style() == Inset)
             continue;
-        int blurAndSpread = boxShadow->blur() + boxShadow->spread();
+        int blurAndSpread = shadow->blur() + shadow->spread();
 
-        top = min(top, boxShadow->y() - blurAndSpread);
-        bottom = max(bottom, boxShadow->y() + blurAndSpread);
+        top = min(top, shadow->y() - blurAndSpread);
+        bottom = max(bottom, shadow->y() + blurAndSpread);
     }
 }
 

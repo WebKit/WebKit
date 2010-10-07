@@ -637,6 +637,11 @@ public:
     }
 
     const ShadowData* textShadow() const { return rareInheritedData->textShadow; }
+    void getTextShadowExtent(int& top, int& right, int& bottom, int& left) const { getShadowExtent(textShadow(), top, right, bottom, left); }
+    void getTextShadowHorizontalExtent(int& left, int& right) const { getShadowHorizontalExtent(textShadow(), left, right); }
+    void getTextShadowVerticalExtent(int& top, int& bottom) const { getShadowVerticalExtent(textShadow(), top, bottom); }
+    void getTextShadowInlineDirectionExtent(int& logicalLeft, int& logicalRight) { getShadowInlineDirectionExtent(textShadow(), logicalLeft, logicalRight); }
+
     float textStrokeWidth() const { return rareInheritedData->textStrokeWidth; }
     ColorSpace colorSpace() const { return static_cast<ColorSpace>(rareInheritedData->colorSpace); }
     float opacity() const { return rareNonInheritedData->opacity; }
@@ -651,9 +656,10 @@ public:
     EBoxAlignment boxPack() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->pack); }
 
     const ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
-    void getBoxShadowExtent(int &top, int &right, int &bottom, int &left) const;
-    void getBoxShadowHorizontalExtent(int &left, int &right) const;
-    void getBoxShadowVerticalExtent(int &top, int &bottom) const;
+    void getBoxShadowExtent(int& top, int& right, int& bottom, int& left) const { getShadowExtent(boxShadow(), top, right, bottom, left); }
+    void getBoxShadowHorizontalExtent(int& left, int& right) const { getShadowHorizontalExtent(boxShadow(), left, right); }
+    void getBoxShadowVerticalExtent(int& top, int& bottom) const { getShadowVerticalExtent(boxShadow(), top, bottom); }
+    void getBoxShadowInlineDirectionExtent(int& logicalLeft, int& logicalRight) { getShadowInlineDirectionExtent(boxShadow(), logicalLeft, logicalRight); }
 
     StyleReflection* boxReflect() const { return rareNonInheritedData->m_boxReflect.get(); }
     EBoxSizing boxSizing() const { return m_box->boxSizing(); }
@@ -1263,6 +1269,14 @@ public:
 #endif
 
 private:
+    void getShadowExtent(const ShadowData*, int& top, int& right, int& bottom, int& left) const;
+    void getShadowHorizontalExtent(const ShadowData*, int& left, int& right) const;
+    void getShadowVerticalExtent(const ShadowData*, int& top, int& bottom) const;
+    void getShadowInlineDirectionExtent(const ShadowData* shadow, int& logicalLeft, int& logicalRight) const
+    {
+        return isHorizontalWritingMode() ? getShadowHorizontalExtent(shadow, logicalLeft, logicalRight) : getShadowVerticalExtent(shadow, logicalLeft, logicalRight);
+    }
+
     // Color accessors are all private to make sure callers use visitedDependentColor instead to access them.
     const Color& borderLeftColor() const { return surround->border.left().color(); }
     const Color& borderRightColor() const { return surround->border.right().color(); }
