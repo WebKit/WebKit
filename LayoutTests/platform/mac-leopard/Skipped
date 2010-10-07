@@ -95,7 +95,7 @@ media/video-play-pause-events.html
 media/video-width-height.html
 
 # Disable spelling tests for autocorrection panel
-editing/spelling/autocorrection-delete.html
-editing/spelling/autocorrection-removing-underline-after-paste.html
-editing/spelling/autocorrection-removing-underline.html
-editing/spelling/autocorrection-simple.html
+platform/mac/editing/spelling/autocorrection-delete.html
+platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html
+platform/mac/editing/spelling/autocorrection-removing-underline.html
+platform/mac/editing/spelling/autocorrection-simple.html

@@ -8,7 +8,7 @@
     font-size: 24px; 
 }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script src=../../../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
 
 <script>
 
@@ -26,9 +26,8 @@ function editingTest() {
     typeCharacterCommand('o');
     typeCharacterCommand('n');
     typeCharacterCommand('l');
+    eventSender.leapForward(1000);
     typeCharacterCommand(' ');
-    var toBePasted = "<div>bar</div>baz<br class='Apple-interchange-newline'>";
-    document.execCommand("InsertHTML", false, toBePasted);
 }
 
 </script>
@@ -36,7 +35,12 @@ function editingTest() {
 <title>Autocorrection Simple Test</title> 
 </head> 
 <body>
-<div>This test verifies the removal of autocorrection underline upon pasting in HTML fragment that contains paragraph separator. You should see phrase 'the notational' without blue underline.</div>
+<div>You should see phrase 'the notational', in which the word 'notational' has blue underline.</div>
+<p style="color:green">
+    This test does not run interactively.
+    It uses the event sender to do mouse clicks.
+    To run it manually, after loading the page, type whitespace to accept the correction. Now the word 'notationl' should be replaced by 'notational' with blue underline.
+</p>
 <p  style="color:green">Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'notational' as the correct spelling of 'notationl' several times, the spell checker will not provide 'notational' as a suggestion anymore. To fix this, remove all files in ~/Library/Spelling.</p>
 <div contenteditable id="root" class="editing">
 <span id="test"></span>

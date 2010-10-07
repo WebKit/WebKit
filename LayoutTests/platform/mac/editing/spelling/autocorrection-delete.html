@@ -8,7 +8,7 @@
     font-size: 24px; 
 }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+<script src=../../../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
 
 <script>
 
@@ -27,7 +27,11 @@ function editingTest() {
     typeCharacterCommand('n');
     typeCharacterCommand('l');
     typeCharacterCommand(' ');
-    typeCharacterCommand('\n');
+    execDeleteCommand();
+    execDeleteCommand();
+    execDeleteCommand();
+    typeCharacterCommand('l');
+    typeCharacterCommand(' ');
 }
 
 </script>
@@ -35,7 +39,7 @@ function editingTest() {
 <title>Autocorrection Simple Test</title> 
 </head> 
 <body>
-<div>This test verifies the removal of autocorrection underline upon inserting paragraph separator. You should see phrase 'the notational' without blue underline.</div>
+<div>The test verified that if user modified an autocorrected word, then the autocorrection will not be applied again. You should see phrase 'the notationl', in which the word 'notationl' has red underline.</div>
 <p  style="color:green">Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'notational' as the correct spelling of 'notationl' several times, the spell checker will not provide 'notational' as a suggestion anymore. To fix this, remove all files in ~/Library/Spelling.</p>
 <div contenteditable id="root" class="editing">
 <span id="test"></span>
