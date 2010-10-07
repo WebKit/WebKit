@@ -3210,3 +3210,6 @@ BUG58337 : platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
 BUGWK47375 WIN : fast/filesystem/async-operations.html = TEXT
 BUGWK47375 WIN : fast/filesystem/op-get-entry.html = TEXT
 BUGWK47375 WIN : fast/filesystem/op-move.html = TEXT
+
+// From r69334. Mask seems broken on the reflected image.
+BUG58358 : fast/css/transformed-mask.html = IMAGE+TEXT
