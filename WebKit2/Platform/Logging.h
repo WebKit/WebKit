@@ -39,7 +39,6 @@ EXTERN_C_BEGIN
 extern WTFLogChannel LogSessionState;
 
 void initializeLogChannelsIfNecessary(void);
-void initializeLogChannel(WTFLogChannel*);
 
 EXTERN_C_END
 

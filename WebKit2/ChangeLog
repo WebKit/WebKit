@@ -1,3 +1,13 @@
+2010-10-07  Brady Eidson  <beidson@apple.com>
+
+        Build fix.
+
+        GCC continued to mask the fact that I still hadn't declared the correct symbol.
+
+        * Platform/Logging.cpp:
+        (initializeLogChannel):
+        * Platform/Logging.h:
+
 2010-10-07  Brian Weinstein  <bweinstein@apple.com>
 
         Build Fix. Fix the vcproj to make it valid and openable by Visual Studio.
