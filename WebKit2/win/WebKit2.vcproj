@@ -1781,6 +1781,14 @@
 			Name="Platform"
 			>
 			<File
+				RelativePath="..\Platform\Logging.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Platform\Logging.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Platform\Module.cpp"
 				>
 			</File>

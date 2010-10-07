@@ -157,6 +157,7 @@ HEADERS += \
     Platform/CoreIPC/DataReference.h \
     Platform/CoreIPC/HandleMessage.h \
     Platform/CoreIPC/MessageID.h \
+    Platform/Logging.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
     Platform/RunLoop.h \
@@ -299,6 +300,7 @@ SOURCES += \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/DataReference.cpp \
     Platform/CoreIPC/qt/ConnectionQt.cpp \
+    Platform/Logging.cpp \
     Platform/Module.cpp \
     Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
