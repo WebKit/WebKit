@@ -285,11 +285,15 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     const ContentLayerChromium::SharedValues* contentLayerValues = contentLayerSharedValues();
     useShader(contentLayerValues->contentShaderProgram());
     GLC(m_context, m_context->uniform1i(contentLayerValues->shaderSamplerLocation(), 0));
+    // Mask out writes to alpha channel: ClearType via Skia results in invalid
+    // zero alpha values on text glyphs. The root layer is always opaque.
+    GLC(m_context, m_context->colorMask(true, true, true, false));
     TransformationMatrix layerMatrix;
     layerMatrix.translate3d(visibleRect.width() * 0.5f, visibleRect.height() * 0.5f, 0);
     LayerChromium::drawTexturedQuad(m_context.get(), m_projectionMatrix, layerMatrix,
                                     visibleRect.width(), visibleRect.height(), 1,
                                     contentLayerValues->shaderMatrixLocation(), contentLayerValues->shaderAlphaLocation());
+    GLC(m_context, m_context->colorMask(true, true, true, true));
 
     // If culling is enabled then we will cull the backface.
     GLC(m_context, m_context->cullFace(GraphicsContext3D::BACK));
