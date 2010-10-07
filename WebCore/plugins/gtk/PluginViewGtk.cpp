@@ -208,47 +208,28 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
                                                                  m_windowRect.width(),
                                                                  m_windowRect.height());
 
-    if (m_isTransparent && drawableDepth != 32) {
-        // Attempt to fake it when we don't have an alpha channel on our
-        // pixmap.  If that's not possible, at least clear the window to
-        // avoid drawing artifacts.
-        GtkWidget* widget = m_parentFrame->view()->hostWindow()->platformPageClient();
-        GdkDrawable* gdkBackingStore = 0;
-        gint xoff = 0, yoff = 0;
-
-        gdk_window_get_internal_paint_info(gtk_widget_get_window(widget), &gdkBackingStore, &xoff, &yoff);
-
-        GC gc = XDefaultGC(GDK_DISPLAY(), gdk_screen_get_number(gdk_screen_get_default()));
-        if (gdkBackingStore) {
-            XCopyArea(GDK_DISPLAY(), GDK_DRAWABLE_XID(gdkBackingStore), m_drawable, gc,
-                      m_windowRect.x() + exposedRect.x() - xoff,
-                      m_windowRect.y() + exposedRect.y() - yoff,
-                      exposedRect.width(), exposedRect.height(),
-                      exposedRect.x(), exposedRect.y());
-        } else {
-            // no valid backing store; clear to the background color
-            XFillRectangle(GDK_DISPLAY(), m_drawable, gc,
-                           exposedRect.x(), exposedRect.y(),
-                           exposedRect.width(), exposedRect.height());
-        }
-    } else if (m_isTransparent) {
+    if (m_isTransparent) {
         // If we have a 32 bit drawable and the plugin wants transparency,
         // we'll clear the exposed area to transparent first.  Otherwise,
         // we'd end up with junk in there from the last paint, or, worse,
         // uninitialized data.
-        cairo_t* crFill = cairo_create(drawableSurface);
+        PlatformRefPtr<cairo_t> cr = adoptPlatformRef(cairo_create(drawableSurface));
 
-        cairo_set_operator(crFill, CAIRO_OPERATOR_SOURCE);
-        cairo_pattern_t* fill = cairo_pattern_create_rgba(0., 0., 0., 0.);
-        cairo_set_source(crFill, fill);
+        if (!(cairo_surface_get_content(drawableSurface) & CAIRO_CONTENT_ALPHA)) {
+            // Attempt to fake it when we don't have an alpha channel on our
+            // pixmap.  If that's not possible, at least clear the window to
+            // avoid drawing artifacts.
 
-        cairo_rectangle(crFill, exposedRect.x(), exposedRect.y(),
+            // This Would not work without double buffering, but we always use it.
+            cairo_set_source_surface(cr.get(), cairo_get_group_target(context->platformContext()),
+                                     -m_windowRect.x(), -m_windowRect.y());
+            cairo_set_operator(cr.get(), CAIRO_OPERATOR_SOURCE);
+        } else
+            cairo_set_operator(cr.get(), CAIRO_OPERATOR_CLEAR);
+
+        cairo_rectangle(cr.get(), exposedRect.x(), exposedRect.y(),
                         exposedRect.width(), exposedRect.height());
-        cairo_clip(crFill);
-        cairo_paint(crFill);
-
-        cairo_destroy(crFill);
-        cairo_pattern_destroy(fill);
+        cairo_fill(cr.get());
     }
 
     XEvent xevent;
