@@ -1,3 +1,11 @@
+2010-10-06  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix the sunspider-compare-results to actually use the passed in value for $root.
+
+        * Scripts/sunspider-compare-results:
+
 2010-10-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
