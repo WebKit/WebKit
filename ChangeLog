@@ -1,3 +1,13 @@
+2010-10-07  Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Rubber-stamped by Tor Arne Vestbø.
+
+        [Qt] Re-enable the web inspector for maemo6 builds
+
+        Yeah, it's strange :), but they really want it.
+
+        * WebKit.pri:
+
 2010-10-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
