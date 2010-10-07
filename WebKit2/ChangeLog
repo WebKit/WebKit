@@ -1,3 +1,62 @@
+2010-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a WKPageFindClient, hook up WKPageCountStringMatches
+        https://bugs.webkit.org/show_bug.cgi?id=47373
+
+        * Shared/APIClient.h: Added.
+        Add an APIClient class template which can be used to reduce duplicated
+        code in the client wrappers.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageFindClient):
+        Initialize the page find client.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebFindClient.cpp: Added.
+        (WebKit::WebFindClient::didCountStringMatches):
+        Call the WKPageFindClient function.
+
+        * UIProcess/WebFindClient.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeFindClient):
+        Initialize the WebFindClient.
+
+        (WebKit::WebPageProxy::findString):
+        Send a FindString message.
+
+        (WebKit::WebPageProxy::hideFindUI):
+        Send a HideFindUI message.
+
+        (WebKit::WebPageProxy::countStringMatches):
+        Send a CountStringMatches message.
+
+        (WebKit::WebPageProxy::didCountStringMatches):
+        Call the find client.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Add new message.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findString):
+        (WebKit::WebPage::hideFindUI):
+        Add stubs.
+
+        (WebKit::WebPage::countStringMatches):
+        Figure out the number of matches and send them back in the DidCountStringMatches msessage.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add new messages.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-10-07  Sam Weinig  <sam@webkit.org>
 
         Update unit tests results.

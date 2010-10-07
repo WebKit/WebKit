@@ -34,7 +34,7 @@ TEST(WTF, VectorBasic)
     Vector<int> intVector;
     TEST_ASSERT(intVector.isEmpty());
     TEST_ASSERT(intVector.size() == 0);
-    TEST_ASSERT(intVector.capacity() == 1);
+    TEST_ASSERT(intVector.capacity() == 0);
 }
 
 } // namespace TestWebKitAPI

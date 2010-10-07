@@ -758,6 +758,24 @@ void WebPage::didRemoveEditCommand(uint64_t commandID)
     removeWebEditCommand(commandID);
 }
 
+void WebPage::findString(const String&, uint32_t findDirection, uint32_t findOption, uint32_t maxNumMatches)
+{
+    // FIXME: Implement.
+}
+
+void WebPage::hideFindUI()
+{
+    // FIXME: Implement.
+}
+
+void WebPage::countStringMatches(const String& string, bool caseInsensitive, uint32_t maxNumMatches)
+{
+    unsigned numMatches = m_page->markAllMatchesForText(string, caseInsensitive ? TextCaseInsensitive : TextCaseSensitive, false, maxNumMatches);
+    m_page->unmarkAllTextMatches();
+
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidCountStringMatches(string, numMatches), m_pageID);
+}
+    
 #if PLATFORM(MAC)
 void WebPage::addPluginView(PluginView* pluginView)
 {

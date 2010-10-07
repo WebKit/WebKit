@@ -224,11 +224,18 @@ void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClient* wkClient
     toImpl(pageRef)->initializeFormClient(wkClient);
 }
 
-void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient * wkClient)
+void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient* wkClient)
 {
     if (wkClient && wkClient->version)
         return;
     toImpl(pageRef)->initializeUIClient(wkClient);
+}
+
+void WKPageSetPageFindClient(WKPageRef pageRef, const WKPageFindClient* wkClient)
+{
+    if (wkClient && wkClient->version)
+        return;
+    toImpl(pageRef)->initializeFindClient(wkClient);
 }
 
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)

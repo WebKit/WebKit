@@ -240,6 +240,7 @@ HEADERS += \
     UIProcess/WebContextInjectedBundleClient.h \
     UIProcess/WebContextUserMessageCoders.h \
     UIProcess/WebEditCommandProxy.h \
+    UIProcess/WebFindClient.h \
     UIProcess/WebFormClient.h \
     UIProcess/WebFormSubmissionListenerProxy.h \
     UIProcess/WebFrameListenerProxy.h \
@@ -367,6 +368,7 @@ SOURCES += \
     UIProcess/WebContext.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebEditCommandProxy.cpp \
+    UIProcess/WebFindClient.cpp \
     UIProcess/WebFormClient.cpp \
     UIProcess/WebFormSubmissionListenerProxy.cpp \
     UIProcess/WebFrameListenerProxy.cpp \

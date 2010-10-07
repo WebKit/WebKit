@@ -393,6 +393,10 @@
 			Name="Shared"
 			>
 			<File
+				RelativePath="..\Shared\APIClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\APIObject.h"
 				>
 			</File>
@@ -1433,6 +1437,14 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebEditCommandProxy.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFindClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebFindClient.h"
 				>
 			</File>
 			<File

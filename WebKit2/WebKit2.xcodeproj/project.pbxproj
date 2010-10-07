@@ -85,6 +85,9 @@
 		1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
+		1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */; };
+		1A3DD202125E5A1F004515E6 /* WebFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3DD201125E5A1F004515E6 /* WebFindClient.h */; };
+		1A3DD206125E5A2F004515E6 /* APIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3DD205125E5A2F004515E6 /* APIClient.h */; };
 		1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */; };
 		1A3E736211CC2659007BD539 /* WebPlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */; };
 		1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A433F0C113C53DD00FACDE9 /* WebErrors.h */; };
@@ -529,6 +532,9 @@
 		1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryMac.cpp; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
+		1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFindClient.cpp; sourceTree = "<group>"; };
+		1A3DD201125E5A1F004515E6 /* WebFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFindClient.h; sourceTree = "<group>"; };
+		1A3DD205125E5A2F004515E6 /* APIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIClient.h; sourceTree = "<group>"; };
 		1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPlatformStrategies.h; sourceTree = "<group>"; };
 		1A3E736011CC2659007BD539 /* WebPlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlatformStrategies.cpp; sourceTree = "<group>"; };
 		1A433F0C113C53DD00FACDE9 /* WebErrors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebErrors.h; sourceTree = "<group>"; };
@@ -1115,6 +1121,7 @@
 				BCDDB314124EBCEF0048D13C /* API */,
 				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
 				BC111B5A112F628200337BAB /* mac */,
+				1A3DD205125E5A2F004515E6 /* APIClient.h */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
 				1A043D79124FEFC100FFBFB5 /* BackingStore.cpp */,
 				1A043D78124FEFC100FFBFB5 /* BackingStore.h */,
@@ -1318,6 +1325,8 @@
 				BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */,
 				BCA0EF9E12332642007D3CFB /* WebEditCommandProxy.cpp */,
 				BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */,
+				1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */,
+				1A3DD201125E5A1F004515E6 /* WebFindClient.h */,
 				BCE4694F1214E6CB000B98EB /* WebFormClient.cpp */,
 				BCE469501214E6CB000B98EB /* WebFormClient.h */,
 				BCE469511214E6CB000B98EB /* WebFormSubmissionListenerProxy.cpp */,
@@ -1950,6 +1959,8 @@
 				51A7F2F3125BF820008AEB1D /* Logging.h in Headers */,
 				BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */,
 				BCBD3C3B125BFA7A00D2C29F /* StringPairVector.h in Headers */,
+				1A3DD202125E5A1F004515E6 /* WebFindClient.h in Headers */,
+				1A3DD206125E5A2F004515E6 /* APIClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2249,6 +2260,7 @@
 				BC306825125A6B9400E71278 /* WebProcessCreationParameters.cpp in Sources */,
 				51A7F2F5125BF8D4008AEB1D /* Logging.cpp in Sources */,
 				BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */,
+				1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

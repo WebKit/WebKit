@@ -82,9 +82,12 @@ messages -> WebPageProxy {
     BackForwardBackListCount() -> (int32_t itemID)
     BackForwardForwardListCount() -> (int32_t itemID)
 
-    # UndoRedo messages.
+    # Undo/Redo messages.
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)
     ClearAllEditCommands()
+
+    # Find.
+    DidCountStringMatches(WTF::String string, uint32_t numMatches)
 
 #if USE(ACCELERATED_COMPOSITING)
     # Accelerated compsiting messages.

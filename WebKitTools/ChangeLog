@@ -1,3 +1,24 @@
+2010-10-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a WKPageFindClient, hook up WKPageCountStringMatches
+        https://bugs.webkit.org/show_bug.cgi?id=47373
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Remove hard coded paths.
+
+        * TestWebKitAPI/Tests/WTF/VectorBasic.cpp:
+        (TestWebKitAPI::TEST):
+        Fix expected result.
+
+        * TestWebKitAPI/Tests/WebKit2/Find.cpp: Added.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::didCountStringMatches):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/find.html: Added.
+        Add test for WKPageCountStringMatches.
+
 2010-09-21  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Chris Fleizach.

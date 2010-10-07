@@ -32,6 +32,7 @@
 #include "GenericCallback.h"
 #include "WKBase.h"
 #include "WebEvent.h"
+#include "WebFindClient.h"
 #include "WebFormClient.h"
 #include "WebFrameProxy.h"
 #include "WebHistoryClient.h"
@@ -106,7 +107,7 @@ public:
     void initializePolicyClient(const WKPagePolicyClient*);
     void initializeFormClient(const WKPageFormClient*);
     void initializeUIClient(const WKPageUIClient*);
-
+    void initializeFindClient(const WKPageFindClient*);
     void revive();
 
     void initializeWebPage(const WebCore::IntSize&);
@@ -172,7 +173,7 @@ public:
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
     // Find.
-    void findString(const String&, WKFindDirection, WKFindOptions, unsigned maxNumMatches);
+    void findString(const String&, FindDirection, FindOptions, unsigned maxNumMatches);
     void hideFindUI();
     void countStringMatches(const String&, bool caseInsensitive, unsigned maxNumMatches);
 
@@ -269,6 +270,9 @@ private:
     void registerEditCommandForUndo(uint64_t commandID, uint32_t editAction);
     void clearAllEditCommands();
 
+    // Find.
+    void didCountStringMatches(const String&, uint32_t numMatches);
+
     void takeFocus(bool direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
@@ -291,6 +295,7 @@ private:
     WebPolicyClient m_policyClient;
     WebFormClient m_formClient;
     WebUIClient m_uiClient;
+    WebFindClient m_findClient;
 
     OwnPtr<DrawingAreaProxy> m_drawingArea;
     RefPtr<WebPageNamespace> m_pageNamespace;
