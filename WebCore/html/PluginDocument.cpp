@@ -155,6 +155,13 @@ Node* PluginDocument::pluginNode()
     return m_pluginNode.get();
 }
 
+void PluginDocument::detach()
+{
+    // Release the plugin node so that we don't have a circular reference.
+    m_pluginNode = 0;
+    HTMLDocument::detach();
+}
+
 void PluginDocument::cancelManualPluginLoad()
 {
     // PluginDocument::cancelManualPluginLoad should only be called once, but there are issues
