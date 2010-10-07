@@ -1826,8 +1826,6 @@ BUG9786 SLOW WIN RELEASE : http/tests/security/cross-frame-access-history-protot
 BUG9786 LINUX MAC : http/tests/security/cross-frame-access-history-prototype.html = FAIL
 BUG9786 : http/tests/security/cross-frame-access-location-prototype.html = FAIL
 BUG9786 : http/tests/security/cross-frame-access-document-direct.html = TIMEOUT
-BUG10479 MAC : svg/hixie/perf/001.xml = FAIL
-BUG10479 MAC : svg/hixie/perf/002.xml = FAIL
 
 BUG9798 SLOW WIN DEBUG : fast/dom/Window/slow-unload-handler.html = PASS
 
@@ -3218,3 +3216,4 @@ BUG58254 : editing/spelling/autocorrection-delete.html = IMAGE+TEXT
 BUG58254 : editing/spelling/autocorrection-removing-underline-after-paste.html = IMAGE+TEXT
 BUG58254 : editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
 BUG58254 : editing/spelling/autocorrection-simple.html = IMAGE+TEXT
+
