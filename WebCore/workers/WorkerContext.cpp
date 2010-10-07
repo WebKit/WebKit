@@ -365,7 +365,7 @@ void WorkerContext::requestFileSystem(int type, long long size, PassRefPtr<FileS
         return;
     }
 
-    LocalFileSystem::localFileSystem().requestFileSystem(this, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, this));
+    LocalFileSystem::localFileSystem().requestFileSystem(this, fileSystemType, size, FileSystemCallbacks::create(successCallback, errorCallback, this), false);
 }
 
 PassRefPtr<DOMFileSystemSync> WorkerContext::requestFileSystemSync(int type, long long size, ExceptionCode& ec)
