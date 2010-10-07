@@ -107,7 +107,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-background-composite: source-over
     -webkit-background-origin: padding-box
     -webkit-background-size: auto auto
-    -webkit-block-flow: tb
     -webkit-border-fit: border
     -webkit-border-horizontal-spacing: 0px
     -webkit-border-image: none
@@ -134,7 +133,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-column-rule-width: 0px
     -webkit-column-span: 1
     -webkit-column-width: auto
-    -webkit-dashboard-region: null
     -webkit-font-smoothing: auto
     -webkit-highlight: none
     -webkit-line-break: normal
@@ -173,6 +171,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-user-drag: auto
     -webkit-user-modify: read-only
     -webkit-user-select: text
+    -webkit-writing-mode: horizontal-tb
     clip-path: none
     clip-rule: nonzero
     mask: none
