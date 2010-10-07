@@ -41,8 +41,6 @@ class HTMLInputElement;
 
 class InputType : public Noncopyable {
 public:
-    static const double defaultStepBase = 0.0;
-
     static PassOwnPtr<InputType> create(HTMLInputElement*, const AtomicString&);
     static PassOwnPtr<InputType> createText(HTMLInputElement*);
     virtual ~InputType();
@@ -79,6 +77,8 @@ public:
 protected:
     InputType(HTMLInputElement* element) : m_element(element) { }
     HTMLInputElement* element() const { return m_element; }
+    // We can't make this a static const data member because VC++ doesn't like it.
+    static double defaultStepBase() { return 0.0; }
 
 private:
     // Raw pointer because the HTMLInputElement object owns this InputType object.

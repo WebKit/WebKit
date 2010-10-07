@@ -106,7 +106,7 @@ bool NumberInputType::stepMismatch(const String& value, double step) const
 
 double NumberInputType::stepBase() const
 {
-    return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase);
+    return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase());
 }
 
 double NumberInputType::defaultStep() const

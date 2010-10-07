@@ -72,7 +72,7 @@ bool BaseDateAndTimeInputType::stepMismatch(const String& value, double step) co
 
 double BaseDateAndTimeInputType::stepBase() const
 {
-    return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase);
+    return parseToDouble(element()->fastGetAttribute(minAttr), defaultStepBase());
 }
 
 double BaseDateAndTimeInputType::parseToDouble(const String& src, double defaultValue) const
