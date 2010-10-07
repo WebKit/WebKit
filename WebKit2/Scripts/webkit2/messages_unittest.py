@@ -276,6 +276,7 @@ enum Kind {
 
 struct LoadURL : CoreIPC::Arguments1<const WTF::String&> {
     static const Kind messageID = LoadURLID;
+    typedef CoreIPC::Arguments1<const WTF::String&> DecodeType;
     explicit LoadURL(const WTF::String& url)
         : CoreIPC::Arguments1<const WTF::String&>(url)
     {
@@ -285,6 +286,7 @@ struct LoadURL : CoreIPC::Arguments1<const WTF::String&> {
 #if ENABLE(TOUCH_EVENTS)
 struct TouchEvent : CoreIPC::Arguments1<const WebKit::WebTouchEvent&> {
     static const Kind messageID = TouchEventID;
+    typedef CoreIPC::Arguments1<const WebKit::WebTouchEvent&> DecodeType;
     explicit TouchEvent(const WebKit::WebTouchEvent& event)
         : CoreIPC::Arguments1<const WebKit::WebTouchEvent&>(event)
     {
@@ -294,6 +296,7 @@ struct TouchEvent : CoreIPC::Arguments1<const WebKit::WebTouchEvent&> {
 
 struct DidReceivePolicyDecision : CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t> {
     static const Kind messageID = DidReceivePolicyDecisionID;
+    typedef CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t> DecodeType;
     DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
         : CoreIPC::Arguments3<uint64_t, uint64_t, uint32_t>(frameID, listenerID, policyAction)
     {
@@ -302,10 +305,12 @@ struct DidReceivePolicyDecision : CoreIPC::Arguments3<uint64_t, uint64_t, uint32
 
 struct Close : CoreIPC::Arguments0 {
     static const Kind messageID = CloseID;
+    typedef CoreIPC::Arguments0 DecodeType;
 };
 
 struct PreferencesDidChange : CoreIPC::Arguments1<const WebKit::WebPreferencesStore&> {
     static const Kind messageID = PreferencesDidChangeID;
+    typedef CoreIPC::Arguments1<const WebKit::WebPreferencesStore&> DecodeType;
     explicit PreferencesDidChange(const WebKit::WebPreferencesStore& store)
         : CoreIPC::Arguments1<const WebKit::WebPreferencesStore&>(store)
     {
@@ -314,6 +319,7 @@ struct PreferencesDidChange : CoreIPC::Arguments1<const WebKit::WebPreferencesSt
 
 struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
     static const Kind messageID = SendDoubleAndFloatID;
+    typedef CoreIPC::Arguments2<double, float> DecodeType;
     SendDoubleAndFloat(double d, float f)
         : CoreIPC::Arguments2<double, float>(d, f)
     {
@@ -322,6 +328,7 @@ struct SendDoubleAndFloat : CoreIPC::Arguments2<double, float> {
 
 struct SendInts : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&> {
     static const Kind messageID = SendIntsID;
+    typedef CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&> DecodeType;
     SendInts(const Vector<uint64_t>& ints, const Vector<Vector<uint64_t> >& intVectors)
         : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vector<uint64_t> >&>(ints, intVectors)
     {
@@ -331,6 +338,7 @@ struct SendInts : CoreIPC::Arguments2<const Vector<uint64_t>&, const Vector<Vect
 struct CreatePlugin : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&> {
     static const Kind messageID = CreatePluginID;
     typedef CoreIPC::Arguments1<bool&> Reply;
+    typedef CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&> DecodeType;
     CreatePlugin(uint64_t pluginInstanceID, const WebKit::Plugin::Parameters& parameters)
         : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parameters&>(pluginInstanceID, parameters)
     {
@@ -340,6 +348,7 @@ struct CreatePlugin : CoreIPC::Arguments2<uint64_t, const WebKit::Plugin::Parame
 struct RunJavaScriptAlert : CoreIPC::Arguments2<uint64_t, const WTF::String&> {
     static const Kind messageID = RunJavaScriptAlertID;
     typedef CoreIPC::Arguments0 Reply;
+    typedef CoreIPC::Arguments2<uint64_t, const WTF::String&> DecodeType;
     RunJavaScriptAlert(uint64_t frameID, const WTF::String& message)
         : CoreIPC::Arguments2<uint64_t, const WTF::String&>(frameID, message)
     {
@@ -349,6 +358,7 @@ struct RunJavaScriptAlert : CoreIPC::Arguments2<uint64_t, const WTF::String&> {
 struct GetPlugins : CoreIPC::Arguments1<bool> {
     static const Kind messageID = GetPluginsID;
     typedef CoreIPC::Arguments1<Vector<WebCore::PluginInfo>&> Reply;
+    typedef CoreIPC::Arguments1<bool> DecodeType;
     explicit GetPlugins(bool refresh)
         : CoreIPC::Arguments1<bool>(refresh)
     {
@@ -358,6 +368,7 @@ struct GetPlugins : CoreIPC::Arguments1<bool> {
 struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     static const Kind messageID = GetPluginProcessConnectionID;
     typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
+    typedef CoreIPC::Arguments1<const WTF::String&> DecodeType;
     explicit GetPluginProcessConnection(const WTF::String& pluginPath)
         : CoreIPC::Arguments1<const WTF::String&>(pluginPath)
     {
@@ -366,6 +377,7 @@ struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
 
 struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPort&> {
     static const Kind messageID = DidCreateWebProcessConnectionID;
+    typedef CoreIPC::Arguments1<const CoreIPC::MachPort&> DecodeType;
     explicit DidCreateWebProcessConnection(const CoreIPC::MachPort& connectionIdentifier)
         : CoreIPC::Arguments1<const CoreIPC::MachPort&>(connectionIdentifier)
     {
@@ -419,9 +431,11 @@ _expected_receiver_implementation = """/*
 
 #include "ArgumentCoders.h"
 #include "ArgumentDecoder.h"
+#include "Connection.h"
 #include "HandleMessage.h"
 #include "MachPort.h"
 #include "Plugin.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebPageMessages.h"
 #include "WebPreferencesStore.h"

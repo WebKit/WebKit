@@ -1,3 +1,9 @@
+2010-10-07  Sam Weinig  <sam@webkit.org>
+
+        Update unit tests results.
+
+        * Scripts/webkit2/messages_unittest.py:
+
 2010-10-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by BUILD FIX for non-gcc builds.
