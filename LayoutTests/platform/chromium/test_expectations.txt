@@ -3204,4 +3204,5 @@ BUG10479 LINUX : svg/hixie/perf/001.xml = IMAGE PASS
 BUG10479 LINUX : svg/hixie/perf/002.xml = IMAGE PASS
 
 // New test from Webkit r69326.
-BUG58337: platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
+BUG58337 : platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
+
