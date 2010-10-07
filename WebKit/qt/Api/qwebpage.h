@@ -48,7 +48,7 @@ class QWebHitTestResult;
 class QWebNetworkInterface;
 class QWebPagePrivate;
 class QWebPluginFactory;
-class QtViewportConfigurationPrivate;
+class QtViewportAttributesPrivate;
 
 namespace WebCore {
     class ChromeClientQt;
@@ -208,14 +208,14 @@ public:
         GeolocationPermissionDomain
     };
 
-    class ViewportConfiguration {
+    class ViewportAttributes {
     public:
-        ViewportConfiguration();
-        ViewportConfiguration(const QWebPage::ViewportConfiguration& other);
+        ViewportAttributes();
+        ViewportAttributes(const QWebPage::ViewportAttributes& other);
 
-        ~ViewportConfiguration();
+        ~ViewportAttributes();
 
-        QWebPage::ViewportConfiguration& operator=(const QWebPage::ViewportConfiguration& other);
+        QWebPage::ViewportAttributes& operator=(const QWebPage::ViewportAttributes& other);
 
         inline qreal initialScaleFactor() const { return m_initialScaleFactor; }
         inline qreal minimumScaleFactor() const { return m_minimumScaleFactor; }
@@ -226,7 +226,7 @@ public:
         inline QSize size() const { return m_size; }
 
     private:
-        QSharedDataPointer<QtViewportConfigurationPrivate> d;
+        QSharedDataPointer<QtViewportAttributesPrivate> d;
         qreal m_initialScaleFactor;
         qreal m_minimumScaleFactor;
         qreal m_maximumScaleFactor;
@@ -276,7 +276,7 @@ public:
 
     QSize viewportSize() const;
     void setViewportSize(const QSize &size) const;
-    ViewportConfiguration viewportConfigurationForSize(const QSize& availableSize) const;
+    ViewportAttributes viewportAttributesForSize(const QSize& availableSize) const;
 
     QSize preferredContentsSize() const;
     void setPreferredContentsSize(const QSize &size) const;

@@ -1572,15 +1572,15 @@ quint16 QWebPagePrivate::inspectorServerPort()
 
 
 /*!
-    \class QWebPage::ViewportConfiguration
+    \class QWebPage::ViewportAttributes
     \since 4.7
-    \brief The QWebPage::ViewportConfiguration class describes hints that can be applied to a viewport.
+    \brief The QWebPage::ViewportAttributes class describes hints that can be applied to a viewport.
 
-    QWebPage::ViewportConfiguration provides a description of a viewport, such as viewport geometry,
+    QWebPage::ViewportAttributes provides a description of a viewport, such as viewport geometry,
     initial scale factor with limits, plus information about whether a user should be able
     to scale the contents in the viewport or not, ie. by zooming.
 
-    ViewportConfiguration can be set by a web author using the viewport meta tag extension, documented
+    ViewportAttributes can be set by a web author using the viewport meta tag extension, documented
     at \l{http://developer.apple.com/safari/library/documentation/appleapplications/reference/safariwebcontent/usingtheviewport/usingtheviewport.html}{Safari Reference Library: Using the Viewport Meta Tag}.
 
     All values might not be set, as such when dealing with the hints, the developer needs to
@@ -1590,9 +1590,9 @@ quint16 QWebPagePrivate::inspectorServerPort()
 */
 
 /*!
-    Constructs an empty QWebPage::ViewportConfiguration.
+    Constructs an empty QWebPage::ViewportAttributes.
 */
-QWebPage::ViewportConfiguration::ViewportConfiguration()
+QWebPage::ViewportAttributes::ViewportAttributes()
     : d(0)
     , m_initialScaleFactor(-1.0)
     , m_minimumScaleFactor(-1.0)
@@ -1605,9 +1605,9 @@ QWebPage::ViewportConfiguration::ViewportConfiguration()
 }
 
 /*!
-    Constructs a QWebPage::ViewportConfiguration which is a copy from \a other .
+    Constructs a QWebPage::ViewportAttributes which is a copy from \a other .
 */
-QWebPage::ViewportConfiguration::ViewportConfiguration(const QWebPage::ViewportConfiguration& other)
+QWebPage::ViewportAttributes::ViewportAttributes(const QWebPage::ViewportAttributes& other)
     : d(other.d)
     , m_initialScaleFactor(other.m_initialScaleFactor)
     , m_minimumScaleFactor(other.m_minimumScaleFactor)
@@ -1621,18 +1621,18 @@ QWebPage::ViewportConfiguration::ViewportConfiguration(const QWebPage::ViewportC
 }
 
 /*!
-    Destroys the QWebPage::ViewportConfiguration.
+    Destroys the QWebPage::ViewportAttributes.
 */
-QWebPage::ViewportConfiguration::~ViewportConfiguration()
+QWebPage::ViewportAttributes::~ViewportAttributes()
 {
 
 }
 
 /*!
-    Assigns the given QWebPage::ViewportConfiguration to this viewport hints and returns a
+    Assigns the given QWebPage::ViewportAttributes to this viewport hints and returns a
     reference to this.
 */
-QWebPage::ViewportConfiguration& QWebPage::ViewportConfiguration::operator=(const QWebPage::ViewportConfiguration& other)
+QWebPage::ViewportAttributes& QWebPage::ViewportAttributes::operator=(const QWebPage::ViewportAttributes& other)
 {
     if (this != &other) {
         d = other.d;
@@ -1647,30 +1647,30 @@ QWebPage::ViewportConfiguration& QWebPage::ViewportConfiguration::operator=(cons
     return *this;
 }
 
-/*! \fn inline bool QWebPage::ViewportConfiguration::isValid() const
-    Returns whether this is a valid ViewportConfiguration or not.
+/*! \fn inline bool QWebPage::ViewportAttributes::isValid() const
+    Returns whether this is a valid ViewportAttributes or not.
 
-    An invalid ViewportConfiguration will have an empty QSize, negative values for scale factors and
+    An invalid ViewportAttributes will have an empty QSize, negative values for scale factors and
     true for the boolean isUserScalable.
 */
 
-/*! \fn inline QSize QWebPage::ViewportConfiguration::size() const
+/*! \fn inline QSize QWebPage::ViewportAttributes::size() const
     Returns the size of the viewport.
 */
 
-/*! \fn inline qreal QWebPage::ViewportConfiguration::initialScaleFactor() const
+/*! \fn inline qreal QWebPage::ViewportAttributes::initialScaleFactor() const
     Returns the initial scale of the viewport as a multiplier.
 */
 
-/*! \fn inline qreal QWebPage::ViewportConfiguration::minimumScaleFactor() const
+/*! \fn inline qreal QWebPage::ViewportAttributes::minimumScaleFactor() const
     Returns the minimum scale value of the viewport as a multiplier.
 */
 
-/*! \fn inline qreal QWebPage::ViewportConfiguration::maximumScaleFactor() const
+/*! \fn inline qreal QWebPage::ViewportAttributes::maximumScaleFactor() const
     Returns the maximum scale value of the viewport as a multiplier.
 */
 
-/*! \fn inline bool QWebPage::ViewportConfiguration::isUserScalable() const
+/*! \fn inline bool QWebPage::ViewportAttributes::isUserScalable() const
     Determines whether or not the scale can be modified by the user.
 */
 
@@ -2233,12 +2233,12 @@ static QSize queryDeviceSizeForScreenContainingWidget(const QWidget* widget)
     both needs to be set.
 */
 
-QWebPage::ViewportConfiguration QWebPage::viewportConfigurationForSize(const QSize& availableSize) const
+QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& availableSize) const
 {
     static int desktopWidth = 980;
     static int deviceDPI = 160;
 
-    ViewportConfiguration result;
+    ViewportAttributes result;
 
     int deviceWidth = getintenv("QTWEBKIT_DEVICE_WIDTH");
     int deviceHeight = getintenv("QTWEBKIT_DEVICE_HEIGHT");
@@ -3647,7 +3647,7 @@ quint64 QWebPage::bytesReceived() const
     Page authors can provide the supplied values by using the viewport meta tag. More information
     about this can be found at \l{http://developer.apple.com/safari/library/documentation/appleapplications/reference/safariwebcontent/usingtheviewport/usingtheviewport.html}{Safari Reference Library: Using the Viewport Meta Tag}.
 
-    \sa QWebPage::ViewportConfiguration, setPreferredContentsSize(), QGraphicsWebView::setScale()
+    \sa QWebPage::ViewportAttributes, setPreferredContentsSize(), QGraphicsWebView::setScale()
 */
 
 /*!

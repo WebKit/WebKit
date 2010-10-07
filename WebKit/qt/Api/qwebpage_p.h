@@ -60,13 +60,13 @@ QT_END_NAMESPACE
 class QWebInspector;
 class QWebPageClient;
 
-class QtViewportConfigurationPrivate : public QSharedData {
+class QtViewportAttributesPrivate : public QSharedData {
 public:
-    QtViewportConfigurationPrivate(QWebPage::ViewportConfiguration* qq)
+    QtViewportAttributesPrivate(QWebPage::ViewportAttributes* qq)
         : q(qq)
     { }
 
-    QWebPage::ViewportConfiguration* q;
+    QWebPage::ViewportAttributes* q;
 };
 
 class QWebPagePrivate {
