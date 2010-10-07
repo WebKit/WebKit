@@ -55,6 +55,8 @@
     function doTest()
     {
       if (window.layoutTestController) {
+        // We need to call display() here to sync the compositor state and avoid a race condition.
+        layoutTestController.display();
         document.getElementById('layers').innerText = layoutTestController.layerTreeAsText();
         layoutTestController.notifyDone();
       }
