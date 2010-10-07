@@ -100,16 +100,8 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     , m_syntheticOblique(false)
     , m_fixedWidth(false)
 {
-    cairo_font_options_t* options = cairo_font_options_create();
-    setCairoFontOptionsFromFontConfigPattern(options, pattern);
-
-    cairo_matrix_t fontMatrix;
-    cairo_matrix_init_scale(&fontMatrix, m_size, m_size);
-    cairo_matrix_t ctm;
-    cairo_matrix_init_identity(&ctm);
-
     PlatformRefPtr<cairo_font_face_t> fontFace = adoptPlatformRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
-    m_scaledFont = adoptPlatformRef(cairo_scaled_font_create(fontFace.get(), &fontMatrix, &ctm, options));
+    initializeWithFontFace(fontFace.get());
 
     int spacing;
     if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
@@ -123,6 +115,7 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
     , m_syntheticOblique(italic)
     , m_fixedWidth(false)
 {
+    // We cannot create a scaled font here.
 }
 
 FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool bold, bool italic)
@@ -131,24 +124,7 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
 {
-    cairo_matrix_t fontMatrix;
-    cairo_matrix_init_scale(&fontMatrix, size, size);
-    cairo_matrix_t ctm;
-    cairo_matrix_init_identity(&ctm);
-    static const cairo_font_options_t* defaultOptions = cairo_font_options_create();
-    const cairo_font_options_t* options = NULL;
-
-#if !PLATFORM(EFL) || ENABLE(GLIB_SUPPORT)
-    if (GdkScreen* screen = gdk_screen_get_default())
-        options = gdk_screen_get_font_options(screen);
-#endif
-
-    // gdk_screen_get_font_options() returns NULL if no default options are
-    // set, so we always have to check.
-    if (!options)
-        options = defaultOptions;
-
-    m_scaledFont = adoptPlatformRef(cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options));
+    initializeWithFontFace(fontFace);
 
     FT_Face fontConfigFace = cairo_ft_scaled_font_lock_face(m_scaledFont.get());
     if (fontConfigFace) {
@@ -185,6 +161,16 @@ FontPlatformData::FontPlatformData(const FontPlatformData& other)
     *this = other;
 }
 
+FontPlatformData::FontPlatformData(const FontPlatformData& other, float size)
+{
+    *this = other;
+
+    // We need to reinitialize the instance, because the difference in size 
+    // necessitates a new scaled font instance.
+    m_size = size;
+    initializeWithFontFace(cairo_scaled_font_get_font_face(m_scaledFont.get()));
+}
+
 FontPlatformData::~FontPlatformData()
 {
     if (m_fallbacks) {
@@ -213,5 +199,46 @@ String FontPlatformData::description() const
     return String();
 }
 #endif
+
+void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
+{
+    cairo_font_options_t* options = 0;
+#if !PLATFORM(EFL) || ENABLE(GLIB_SUPPORT)
+    if (GdkScreen* screen = gdk_screen_get_default())
+        options = cairo_font_options_copy(gdk_screen_get_font_options(screen));
+#endif
+    // gdk_screen_get_font_options() returns null if no default
+    // options are set, so we always have to check.
+    if (!options)
+        options = cairo_font_options_create();
+
+    cairo_matrix_t ctm;
+    cairo_matrix_init_identity(&ctm);
+
+    cairo_matrix_t fontMatrix;
+    if (!m_pattern)
+        cairo_matrix_init_scale(&fontMatrix, m_size, m_size);
+    else {
+        setCairoFontOptionsFromFontConfigPattern(options, m_pattern.get());
+
+        // FontConfig may return a list of transformation matrices with the pattern, for instance,
+        // for fonts that are oblique. We use that to initialize the cairo font matrix.
+        FcMatrix fontConfigMatrix, *tempFontConfigMatrix;
+        FcMatrixInit(&fontConfigMatrix);
+
+        // These matrices may be stacked in the pattern, so it's our job to get them all and multiply them.
+        for (int i = 0; FcPatternGetMatrix(m_pattern.get(), FC_MATRIX, i, &tempFontConfigMatrix) == FcResultMatch; i++)
+            FcMatrixMultiply(&fontConfigMatrix, &fontConfigMatrix, tempFontConfigMatrix);
+        cairo_matrix_init(&fontMatrix, fontConfigMatrix.xx, -fontConfigMatrix.yx,
+                          -fontConfigMatrix.xy, fontConfigMatrix.yy, 0, 0);
+
+        // The matrix from FontConfig does not include the scale.
+        cairo_matrix_scale(&fontMatrix, m_size, m_size);
+    }
+
+    m_scaledFont = adoptPlatformRef(cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options));
+    cairo_font_options_destroy(options);
+}
+
 
 }
