@@ -28,7 +28,6 @@
 
 #include "ArgumentEncoder.h"
 #include "ProcessLauncher.h"
-#include "WebPageProxyMessageKinds.h"
 #include "WorkItem.h"
 #include <QApplication>
 #include <QLocalServer>

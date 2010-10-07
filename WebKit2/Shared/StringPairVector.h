@@ -23,40 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebFormClient.h"
+#ifndef StringPairVector_h
+#define StringPairVector_h
 
-#include "ImmutableDictionary.h"
-#include "WKAPICast.h"
-#include "WebString.h"
+#include "ArgumentCoders.h"
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-WebFormClient::WebFormClient()
-{
-    initialize(0);
-}
+// This class is a hack to work around the fact that the IPC message generator
+// cannot deal with class templates with more than one paramter.
+class StringPairVector {
+public:
+    StringPairVector()
+    {
+    }
 
-void WebFormClient::initialize(const WKPageFormClient* client)
-{
-    if (client && !client->version)
-        m_pageFormClient = *client;
-    else 
-        memset(&m_pageFormClient, 0, sizeof(m_pageFormClient));
-}
+    StringPairVector(Vector<std::pair<String, String> > stringPairVector)
+    {
+        m_stringPairVector.swap(stringPairVector);
+    }
 
-bool WebFormClient::willSubmitForm(WebPageProxy* page, WebFrameProxy* frame, WebFrameProxy* sourceFrame, const Vector<std::pair<String, String> >& textFieldValues, APIObject* userData, WebFormSubmissionListenerProxy* listener)
-{
-    if (!m_pageFormClient.willSubmitForm)
-        return false;
+    void encode(CoreIPC::ArgumentEncoder* encoder) const
+    {
+        encoder->encode(m_stringPairVector);
+    }
 
-    ImmutableDictionary::MapType map;
-    for (size_t i = 0; i < textFieldValues.size(); ++i)
-        map.set(textFieldValues[i].first, WebString::create(textFieldValues[i].second));
-    RefPtr<ImmutableDictionary> textFieldsMap = ImmutableDictionary::adopt(map);
+    static bool decode(CoreIPC::ArgumentDecoder* decoder, StringPairVector& stringPairVector)
+    {
+        return decoder->decode(stringPairVector.m_stringPairVector);
+    }
 
-    m_pageFormClient.willSubmitForm(toAPI(page), toAPI(frame), toAPI(sourceFrame), toAPI(textFieldsMap.get()), toAPI(userData), toAPI(listener), m_pageFormClient.clientInfo);
-    return true;
-}
+    const Vector<std::pair<String, String> >& stringPairVector() const { return m_stringPairVector; }
+
+private:
+    Vector<std::pair<String, String> > m_stringPairVector;
+};
 
 } // namespace WebKit
+
+#endif // StringPairVector_h

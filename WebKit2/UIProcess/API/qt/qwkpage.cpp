@@ -83,7 +83,7 @@ void QWKPagePrivate::toolTipChanged(const String&, const String& newTooltip)
     emit q->statusBarMessage(QString(newTooltip));
 }
 
-void QWKPagePrivate::registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo)
+void QWKPagePrivate::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
 {
 }
 

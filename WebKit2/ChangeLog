@@ -1,3 +1,48 @@
+2010-10-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Generate the messages sent to the WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=47239
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * Platform/CoreIPC/Arguments.h:
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        * Scripts/webkit2/messages.py:
+        * Shared/CoreIPCSupport/WebPageProxyMessageKinds.h: Removed.
+        * Shared/StringPairVector.h: Added.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::registerEditCommand):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::registerEditCommand):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebEditCommandProxy.cpp:
+        (WebKit::WebEditCommandProxy::unapply):
+        (WebKit::WebEditCommandProxy::reapply):
+        * UIProcess/WebFormClient.cpp:
+        (WebKit::WebFormClient::willSubmitForm):
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in: Added.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::registerEditCommand):
+        * UIProcess/win/WebView.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerCommandForUndo):
+        (WebKit::WebEditorClient::clearUndoRedoOperations):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * win/WebKit2.vcproj:
+
 2010-10-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by BUILD FIX.

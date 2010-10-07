@@ -448,6 +448,13 @@
 				RelativePath="..\Shared\NotImplemented.h"
 				>
 			</File>
+  			<File
+				RelativePath="..\Shared\StringPairVector.h"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="..\Shared\UserMessageCoders.h"
+ 				>			
 			<File
 				RelativePath="..\Shared\UserMessageCoders.h"
 				>
@@ -765,10 +772,6 @@
 				</File>
 				<File
 					RelativePath="..\Shared\CoreIPCSupport\WebPageProxyMessageKinds.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\CoreIPCSupport\WebProcessProxyMessageKinds.h"
 					>
 				</File>
 			</Filter>
@@ -1512,6 +1515,10 @@
 				RelativePath="..\UIProcess\WebPageProxy.h"
 				>
 			</File>
+  			<File
+				RelativePath="..\UIProcess\WebPageProxy.messages.in"
+				>
+			</File>
 			<File
 				RelativePath="..\UIProcess\WebPolicyClient.cpp"
 				>
@@ -2035,7 +2042,14 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageMessages.h"
 				>
-			</File>
+ 			</File>
+ 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessageReceiver.cpp"
+ 				>
+ 			</File>
+ 			<File
+ 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessages.h"
+ 				>
+ 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebProcessMessageReceiver.cpp"
 				>

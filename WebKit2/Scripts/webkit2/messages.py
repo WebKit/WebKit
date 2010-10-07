@@ -58,6 +58,9 @@ class MessageReceiver(object):
     def iterparameters(self):
         return (parameter for message in self.messages for parameter in message.parameters)
 
+    def iterreplyparameters(self):
+        return (reply_parameter for message in self.messages for reply_parameter in message.reply_parameters)
+
     @classmethod
     def parse(cls, file):
         destination = None
@@ -107,6 +110,10 @@ class Message(object):
         if self.reply_parameters is not None:
             self.delayed = delayed
         self.condition = condition
+        if len(self.parameters) != 0:
+            self.is_variadic = parameter_type_is_variadic(self.parameters[-1].type)
+        else:
+            self.is_variadic = False
 
     def id(self):
         return '%sID' % self.name
@@ -140,6 +147,13 @@ def messages_to_kind_enum(messages):
     return ''.join(result)
 
 
+def parameter_type_is_variadic(type):
+    variadic_types = frozenset([
+        'WebKit::InjectedBundleUserMessageEncoder',
+    ])
+
+    return type in variadic_types
+
 def function_parameter_type(type):
     # Don't use references for built-in types.
     builtin_types = frozenset([
@@ -150,6 +164,10 @@ def function_parameter_type(type):
         'uint16_t',
         'uint32_t',
         'uint64_t',
+        'int8_t',
+        'int16_t',
+        'int32_t',
+        'int64_t',
     ])
 
     if type in builtin_types:
@@ -177,6 +195,12 @@ def reply_type(message):
     return arguments_type(message.reply_parameters, reply_parameter_type)
 
 
+def decode_type(message):
+    if message.is_variadic:
+        return arguments_type(message.parameters[:-1], reply_parameter_type)
+    return base_class(message)
+
+
 def delayed_reply_type(message):
     return arguments_type(message.reply_parameters, function_parameter_type)
 
@@ -189,6 +213,8 @@ def message_to_struct_declaration(message):
     result.append('    static const Kind messageID = %s;\n' % message.id())
     if message.reply_parameters != None:
         result.append('    typedef %s Reply;\n' % reply_type(message))
+
+    result.append('    typedef %s DecodeType;\n' % decode_type(message))
     if len(function_parameters):
         result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
         result.append('\n        : %s(%s)\n' % (base_class(message), ', '.join([x[1] for x in function_parameters])))
@@ -299,9 +325,13 @@ def handler_function(receiver, message):
 
 
 def async_case_statement(receiver, message):
+    dispatch_function = 'handleMessage'
+    if message.is_variadic:
+        dispatch_function += 'Variadic'
+
     result = []
     result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
-    result.append('        CoreIPC::handleMessage<Messages::%s::%s>(arguments, this, &%s);\n' % (receiver.name, message.name, handler_function(receiver, message)))
+    result.append('        CoreIPC::%s<Messages::%s::%s>(arguments, this, &%s);\n' % (dispatch_function, receiver.name, message.name, handler_function(receiver, message)))
     result.append('        return;\n')
     return surround_in_condition(''.join(result), message.condition)
 
@@ -324,6 +354,7 @@ def argument_coder_headers_for_type(type):
 
     special_cases = {
         'WTF::String': '"ArgumentCoders.h"',
+        'WebKit::InjectedBundleUserMessageEncoder': '"InjectedBundleUserMessageCoders.h"',
     }
 
     if type in special_cases:
@@ -382,6 +413,18 @@ def generate_message_handler(file):
 
         type_headers = headers_for_type(type)
         headers.update(type_headers)
+
+    for message in receiver.messages:
+        if message.reply_parameters is not None:
+            for reply_parameter in message.reply_parameters:
+                type = reply_parameter.type
+                argument_encoder_headers = argument_coder_headers_for_type(type)
+                if argument_encoder_headers:
+                    headers.update(argument_encoder_headers)
+                    continue
+
+                type_headers = headers_for_type(type)
+                headers.update(type_headers)
 
     result = []
 

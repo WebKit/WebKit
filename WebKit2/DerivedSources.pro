@@ -52,6 +52,18 @@ messagereceiver_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/WebPageMes
 generated_files.depends            += messagereceiver_generator
 QMAKE_EXTRA_TARGETS                += messagereceiver_generator
 
+pageproxymessageheader_generator.commands = python $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py  $${SRC_ROOT_DIR}/WebKit2/UIProcess/WebPageProxy.messages.in > $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessages.h
+pageproxymessageheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py $${SRC_ROOT_DIR}/WebKit2/UIProcess/WebPageProxy.messages.in
+pageproxymessageheader_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/WebPageProxyMessages.h
+generated_files.depends                 += pageproxymessageheader_generator
+QMAKE_EXTRA_TARGETS                     += pageproxymessageheader_generator
+
+pageproxymessagereceiver_generator.commands = python $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-message-receiver.py  $${SRC_ROOT_DIR}/WebKit2/UIProcess/WebPageProxy.messages.in > $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessageReceiver.cpp
+pageproxymessagereceiver_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-message-receiver.py $${SRC_ROOT_DIR}/WebKit2/UIProcess/WebPageProxy.messages.in
+pageproxymessagereceiver_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/WebPageProxyMessageReceiver.cpp
+generated_files.depends                   += pageproxymessagereceiver_generator
+QMAKE_EXTRA_TARGETS                       += pageproxymessagereceiver_generator
+
 processmessageheader_generator.commands = python $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py  $${SRC_ROOT_DIR}/WebKit2/WebProcess/WebProcess.messages.in > $$OUTPUT_DIR/WebKit2/generated/WebProcessMessages.h
 processmessageheader_generator.depends  = $${SRC_ROOT_DIR}/WebKit2/Scripts/generate-messages-header.py $${SRC_ROOT_DIR}/WebKit2/WebProcess/WebProcess.messages.in
 processmessageheader_generator.target   = $${OUTPUT_DIR}/WebKit2/generated/WebProcessMessages.h
