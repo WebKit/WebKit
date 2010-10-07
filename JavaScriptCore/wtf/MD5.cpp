@@ -76,7 +76,7 @@ static void expectMD5(CString input, CString expected)
         snprintf(buf, 3, "%02x", digest.at(i));
         buf += 2;
     }
-    ASSERT_WITH_MESSAGE(actual == expected, "input:%s[%d] actual:%s expected:%s", input.data(), input.length(), actual.data(), expected.data());
+    ASSERT_WITH_MESSAGE(actual == expected, "input:%s[%lu] actual:%s expected:%s", input.data(), static_cast<unsigned long>(input.length()), actual.data(), expected.data());
 }
 
 static void testMD5()

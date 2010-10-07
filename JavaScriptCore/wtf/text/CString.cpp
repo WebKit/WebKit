@@ -36,12 +36,12 @@ CString::CString(const char* str)
     init(str, strlen(str));
 }
 
-CString::CString(const char* str, unsigned length)
+CString::CString(const char* str, size_t length)
 {
     init(str, length);
 }
 
-void CString::init(const char* str, unsigned length)
+void CString::init(const char* str, size_t length)
 {
     if (!str)
         return;

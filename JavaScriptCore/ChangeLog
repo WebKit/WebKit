@@ -1,3 +1,20 @@
+2010-10-06  Chris Evans  <cevans@google.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47248
+
+        Use size_t consistently in CString, to prevent theoretical trouble
+        with > 4GB strings on 64-bit platforms.
+
+        * wtf/text/CString.h:
+        * wtf/text/CString.cpp:
+        Use size_t for string lengths.
+        * wtf/MD5.cpp:
+        (WTF::expectMD5): use suitable format string + cast for size_t.
+        * JavaScriptCore.exp:
+        Update symbol name.
+
 2010-10-06  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
