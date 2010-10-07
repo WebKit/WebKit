@@ -1164,7 +1164,6 @@ BUG10376 MAC : fast/dom/isindex-002.html = FAIL
 BUG10378 MAC : fast/images/embed-image.html = FAIL
 BUG10378 MAC : fast/images/object-image.html = FAIL
 
-BUG10381 LINUX RELEASE : svg/W3C-SVG-1.1/animate-elem-03-t.svg = FAIL
 BUG10381 LINUX DEBUG : svg/W3C-SVG-1.1/animate-elem-03-t.svg = FAIL
 
 // The following are flaky in that some times the timeout or crash, but we think
@@ -2953,7 +2952,7 @@ BUG51869 : http/tests/websocket/tests/frame-length-overflow.html = TEXT PASS
 BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 
 // Regressions from r65229
-BUGWK43912 WIN LINUX : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
+BUGWK43912 WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/batik/masking/maskRegions.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/grayscale-gradient-mask.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
@@ -2979,7 +2978,7 @@ BUGWK44278 WIN LINUX : svg/transforms/text-with-mask-with-svg-transform.svg = IM
 
 // Clip paths aren't working after http://trac.webkit.org/changeset/65729
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-pixelation.svg = IMAGE+TEXT
-BUGWK44341 WIN LINUX : svg/batik/text/textProperties.svg = IMAGE
+BUGWK44341 WIN : svg/batik/text/textProperties.svg = IMAGE
 BUGWK44341 WIN LINUX : svg/clip-path/clip-path-childs-clipped.svg = IMAGE
 
 // Flaky on Linux
@@ -3126,8 +3125,6 @@ BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT
 
 // Broken somewhere in the range 68574:68591.
-BUG_SENORBLANCO WIN LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
-BUG_SENORBLANCO WIN LINUX : svg/carto.net/selectionlist.svg = IMAGE
 // thai-baht-space needs to run to rebaseline.
 //BUG_SENORBLANCO LINUX : fast/text/international/thai-baht-space.html = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
@@ -3197,7 +3194,7 @@ BUG58212 LINUX MAC : http/tests/appcache/main-resource-redirect.html = TIMEOUT
 
 // First seen
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40007
-BUG_AJWONG LINUX : fast/events/mouse-focus-imagemap.html = TEXT
+BUG_AJWONG : fast/events/mouse-focus-imagemap.html = TEXT
 
 // Issues starting from
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35997
@@ -3208,3 +3205,11 @@ BUG_AJWONG WIN : fast/css/font-face-download-error.html = TEXT PASS
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35995
 BUG_AJWONG WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
 BUG58212 WIN : http/tests/appcache/main-resource-redirect.html = TEXT TIMEOUT PASS
+
+// Issues starting from
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/36000
+BUG_AJWONG WIN : fast/filesystem/async-operations.html = TEXT
+
+// Issues starting from
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Mac%20%28webkit.org%29/builds/25455
+BUG_AJWONG MAC : fast/images/imagemap-case.html = IMAGE
