@@ -26,7 +26,7 @@
 #ifndef JSWrappable_h
 #define JSWrappable_h
 
-#include <JavaScriptCore/JavaScriptCore.h>
+#include <JavaScriptCore/JavaScript.h>
 #include <wtf/RefCounted.h>
 
 namespace WTR {

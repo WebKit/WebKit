@@ -28,6 +28,7 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestController.h"
+#include <cstdio>
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnArrayPtr.h>

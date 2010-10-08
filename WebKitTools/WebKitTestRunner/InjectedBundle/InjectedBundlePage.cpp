@@ -27,6 +27,7 @@
 
 #include "InjectedBundle.h"
 #include "StringFunctions.h"
+#include <cmath>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKArray.h>
 #include <WebKit2/WKBundleFrame.h>

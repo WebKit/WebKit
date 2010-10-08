@@ -34,7 +34,6 @@
 #include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WebKit2.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
 namespace WTR {
