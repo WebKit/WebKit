@@ -1,3 +1,29 @@
+2010-10-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        rebaseline-chromium-webkit-tests relied on the filename_to_uri()
+        hook in the Port infrastructure to generate URIs for the files
+        in its summary HTML report; however, that method is supposed to only
+        be used for test files (and should really be renamed), so this would
+        crash.
+
+        This change adds a new "path" module to the system package with a
+        routine called abspath_to_uri() that handles converting paths to
+        file: URIs independently of anything in the layout_tests package,
+        and changes the code to use this. At some point in the near future
+        the layout_tests/port/* code should use this as well.
+
+        This change also deletes a bunch of unused code and fixes some
+        comments in rebaseline_chromium_webkit_tests.py.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47319
+
+        * Scripts/webkitpy/common/system/path.py: Added.
+        * Scripts/webkitpy/common/system/path_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+
 2010-10-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

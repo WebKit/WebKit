@@ -30,10 +30,12 @@
 """Unit tests for rebaseline_chromium_webkit_tests.py."""
 
 import os
+import sys
 import unittest
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import rebaseline_chromium_webkit_tests
+from webkitpy.common.system.executive import Executive, ScriptError
 
 
 class MockPort(object):
@@ -45,8 +47,9 @@ class MockPort(object):
 
 
 class MockOptions(object):
-    def __init__(self):
-        self.configuration = None
+    def __init__(self, configuration=None, html_directory=None):
+        self.configuration = configuration
+        self.html_directory = html_directory
 
 
 def get_mock_get(config_expectations):
@@ -117,6 +120,32 @@ class TestRebaseliner(unittest.TestCase):
                          'passes/image.html'))
         self.assertFalse(rebaseliner._diff_baselines(image, image,
                                                      is_image=True))
+
+
+class TestHtmlGenerator(unittest.TestCase):
+    def make_generator(self, tests):
+        return rebaseline_chromium_webkit_tests.HtmlGenerator(
+            target_port=None,
+            options=MockOptions(html_directory="/tmp"),
+            platforms=['mac'],
+            rebaselining_tests=tests,
+            executive=Executive())
+
+    def test_generate_baseline_links(self):
+        orig_platform = sys.platform
+        orig_exists = os.path.exists
+
+        try:
+            sys.platform = 'darwin'
+            os.path.exists = lambda x: True
+            generator = self.make_generator(["foo.txt"])
+            links = generator._generate_baseline_links("foo", ".txt", "mac")
+            expected_links = '<td align=center><a href="file:///tmp/foo-expected-mac-old.txt">foo-expected.txt</a></td><td align=center><a href="file:///tmp/foo-expected-mac-new.txt">foo-expected.txt</a></td><td align=center><a href="file:///tmp/foo-expected-mac-diff.txt">Diff</a></td>'
+            self.assertEqual(links, expected_links)
+        finally:
+            sys.platform = orig_platform
+            os.path.exists = orig_exists
+
 
 if __name__ == '__main__':
     unittest.main()

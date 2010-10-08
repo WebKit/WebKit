@@ -57,8 +57,9 @@ import time
 import urllib
 import zipfile
 
+from webkitpy.common.system import path
 from webkitpy.common.system import user
-from webkitpy.common.system.executive import run_command, ScriptError
+from webkitpy.common.system.executive import Executive, ScriptError
 import webkitpy.common.checkout.scm as scm
 
 import port
@@ -79,58 +80,6 @@ ARCHIVE_DIR_NAME_DICT = {'win': 'webkit-rel',
                          'win-xp-canary': 'webkit-rel-webkit-org',
                          'mac-canary': 'webkit-rel-mac-webkit-org',
                          'linux-canary': 'webkit-rel-linux-webkit-org'}
-
-
-# FIXME: Should be rolled into webkitpy.Executive
-def run_shell_with_return_code(command, print_output=False):
-    """Executes a command and returns the output and process return code.
-
-    Args:
-      command: program and arguments.
-      print_output: if true, print the command results to standard output.
-
-    Returns:
-      command output, return code
-    """
-
-    # Use a shell for subcommands on Windows to get a PATH search.
-    # FIXME: shell=True is a trail of tears, and should be removed.
-    use_shell = sys.platform.startswith('win')
-    # Note: Not thread safe: http://bugs.python.org/issue2320
-    p = subprocess.Popen(command, stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT, shell=use_shell)
-    if print_output:
-        output_array = []
-        while True:
-            line = p.stdout.readline()
-            if not line:
-                break
-            if print_output:
-                print line.strip('\n')
-            output_array.append(line)
-        output = ''.join(output_array)
-    else:
-        output = p.stdout.read()
-    p.wait()
-    p.stdout.close()
-
-    return output, p.returncode
-
-
-# FIXME: Should be rolled into webkitpy.Executive
-def run_shell(command, print_output=False):
-    """Executes a command and returns the output.
-
-    Args:
-      command: program and arguments.
-      print_output: if true, print the command results to standard output.
-
-    Returns:
-      command output
-    """
-
-    output, return_code = run_shell_with_return_code(command, print_output)
-    return output
 
 
 def log_dashed_string(text, platform, logging_level=logging.INFO):
@@ -628,7 +577,6 @@ class Rebaseliner(object):
         base_file = get_result_file_fullpath(self._options.html_directory,
                                              baseline_filename, self._platform,
                                              'old')
-        # FIXME: This assumes run_shell returns a byte array.
         # We should be using an explicit encoding here.
         with open(base_file, "wb") as file:
             file.write(output)
@@ -642,7 +590,6 @@ class Rebaseliner(object):
                 diff_file = get_result_file_fullpath(
                     self._options.html_directory, baseline_filename,
                     self._platform, 'diff')
-                # FIXME: This assumes run_shell returns a byte array, not unicode()
                 with open(diff_file, 'wb') as file:
                     file.write(output)
                 _log.info('  Html: created baseline diff file: "%s".',
@@ -694,13 +641,19 @@ class HtmlGenerator(object):
                         '<img style="width: 200" src="%(uri)s" /></a></td>')
     HTML_TR = '<tr>%s</tr>'
 
-    def __init__(self, target_port, options, platforms, rebaselining_tests):
+    def __init__(self, target_port, options, platforms, rebaselining_tests,
+                 executive):
         self._html_directory = options.html_directory
         self._target_port = target_port
         self._platforms = platforms
         self._rebaselining_tests = rebaselining_tests
+        self._executive = executive
         self._html_file = os.path.join(options.html_directory,
                                        'rebaseline.html')
+
+    def abspath_to_uri(self, filename):
+        """Converts an absolute path to a file: URI."""
+        return path.abspath_to_uri(filename, self._executive)
 
     def generate_html(self):
         """Generate html file for rebaselining result comparison."""
@@ -769,14 +722,13 @@ class HtmlGenerator(object):
         links = ''
         if os.path.exists(old_file):
             links += html_td_link % {
-                'uri': self._target_port.filename_to_uri(old_file),
+                'uri': self.abspath_to_uri(old_file),
                 'name': baseline_filename}
         else:
             _log.info('    No old baseline file: "%s"', old_file)
             links += self.HTML_TD_NOLINK % ''
 
-        links += html_td_link % {'uri': self._target_port.filename_to_uri(
-                                     new_file),
+        links += html_td_link % {'uri': self.abspath_to_uri(new_file),
                                  'name': baseline_filename}
 
         diff_file = get_result_file_fullpath(self._html_directory,
@@ -784,8 +736,8 @@ class HtmlGenerator(object):
                                              'diff')
         _log.info('    Baseline diff file: "%s"', diff_file)
         if os.path.exists(diff_file):
-            links += html_td_link % {'uri': self._target_port.filename_to_uri(
-                diff_file), 'name': 'Diff'}
+            links += html_td_link % {'uri': self.abspath_to_uri(diff_file),
+                                     'name': 'Diff'}
         else:
             _log.info('    No baseline diff file: "%s"', diff_file)
             links += self.HTML_TD_NOLINK % ''
@@ -825,8 +777,7 @@ class HtmlGenerator(object):
         if rows:
             test_path = os.path.join(self._target_port.layout_tests_dir(),
                                      test)
-            html = self.HTML_TR_TEST % (
-                self._target_port.filename_to_uri(test_path), test)
+            html = self.HTML_TR_TEST % (self.abspath_to_uri(test_path), test)
             html += self.HTML_TEST_DETAIL % ' '.join(rows)
 
             _log.debug('    html for test: %s', html)
@@ -867,7 +818,7 @@ def get_host_port_object(options):
     return port_obj
 
 
-def main():
+def main(executive=Executive()):
     """Main function to produce new baselines."""
 
     option_parser = optparse.OptionParser()
@@ -992,7 +943,8 @@ def main():
     html_generator = HtmlGenerator(target_port_obj,
                                    options,
                                    rebaseline_platforms,
-                                   rebaselining_tests)
+                                   rebaselining_tests,
+                                   executive=executive)
     html_generator.generate_html()
     if not options.quiet:
         html_generator.show_html()
