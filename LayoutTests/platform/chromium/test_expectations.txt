@@ -2458,7 +2458,7 @@ BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
 BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
 
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
-BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
+//BUGYAAR MAC : svg/custom/dominant-baseline-hanging.svg = MISSING
 
 BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
 BUG39855 LINUX RELEASE : editing/selection/extend-selection.html = PASS TIMEOUT
@@ -3223,37 +3223,56 @@ BUG58358 MAC : fast/css/transformed-mask.html = IMAGE
 BUG58481 WIN : fast/html/object-image-nested-fallback.html = CRASH
 
 // Failing somewhere between after Webkit r69367 and r69417.
-BUG_AJWONG LINUX : fast/css-generated-content/malformed-url.html = TEXT
-BUG_AJWONG LINUX : fast/repaint/repaint-svg-after-style-change.html = TEXT
-BUG_AJWONG LINUX : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
-BUG_AJWONG LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg = IMAGE
-BUG_AJWONG LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-20-b.svg = IMAGE
-BUG_AJWONG LINUX : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = IMAGE
-BUG_AJWONG LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE
-BUG_AJWONG LINUX : svg/custom/dominant-baseline-hanging.svg = IMAGE
-BUG_AJWONG LINUX : svg/custom/gradient-with-1d-boundingbox.svg = IMAGE+TEXT
-BUG_AJWONG LINUX : svg/custom/invalid-fill-hex.svg = IMAGE
-BUG_AJWONG LINUX : svg/custom/invalid-fill.svg = IMAGE
-BUG_AJWONG LINUX : svg/custom/path-bad-data.svg = TEXT
-BUG_AJWONG LINUX : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
+BUG_AJWONG : fast/css-generated-content/malformed-url.html = TEXT
+BUG_AJWONG WIN LINUX : fast/repaint/repaint-svg-after-style-change.html = TEXT
+BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
+BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg = IMAGE
+BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-20-b.svg = IMAGE
+BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = IMAGE
+BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE
+BUG_AJWONG WIN LINUX : svg/custom/gradient-with-1d-boundingbox.svg = IMAGE+TEXT
+BUG_AJWONG WIN LINUX : svg/custom/invalid-fill-hex.svg = IMAGE IMAGE+TEXT
+BUG_AJWONG WIN LINUX : svg/custom/invalid-fill.svg = IMAGE IMAGE+TEXT
+BUG_AJWONG WIN LINUX : svg/custom/path-bad-data.svg = TEXT
+BUG_AJWONG WIN LINUX : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 BUG_AJWONG LINUX : svg/hixie/error/012.xml = TEXT
-BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = IMAGE
-BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE
-BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = IMAGE
-BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = IMAGE
-BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
+BUG_AJWONG : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = IMAGE
+BUG_AJWONG : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE
+BUG_AJWONG : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = IMAGE
+BUG_AJWONG : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = IMAGE
+BUG_AJWONG : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
 BUG_AJWONG MAC : fast/repaint/moving-shadow-on-path.html = TEXT
 BUG_AJWONG MAC : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
 BUG_AJWONG MAC : svg/W3C-SVG-1.1/animate-elem-82-t.svg = TEXT
 BUG_AJWONG MAC : svg/W3C-SVG-1.1/coords-trans-01-b.svg = TEXT
 BUG_AJWONG MAC : svg/css/stars-with-shadow.html = TEXT
-BUG_AJWONG MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
+BUG_AJWONG WIN MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
 BUG_AJWONG MAC : svg/custom/createelement.svg = TEXT
 BUG_AJWONG MAC : svg/custom/junk-data.svg = TEXT
 BUG_AJWONG MAC : svg/custom/missing-xlink.svg = TEXT
 BUG_AJWONG MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 
 // Duplicates to check on.
-BUG_AJWONG MAC : fast/repaint/moving-shadow-on-container.html = IMAGE+TEXT
-BUG_AJWONG MAC : svg/css/composite-shadow-example.html = IMAGE+TEXT
-BUG_AJWONG MAC : svg/css/composite-shadow-with-opacity.html = IMAGE+TEXT
+BUG_AJWONG : svg/custom/dominant-baseline-hanging.svg = IMAGE MISSING  // missing on mac.
+BUG_AJWONG MAC : fast/repaint/moving-shadow-on-container.html = IMAGE IMAGE+TEXT
+BUG_AJWONG : svg/css/composite-shadow-example.html = IMAGE+TEXT IMAGE
+BUG_AJWONG : svg/css/composite-shadow-with-opacity.html = IMAGE+TEXT IMAGE
+
+// Failed around r69417 to r62021 plus or minus a few.
+BUG_AJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
+BUG_AJWONG WIN : http/tests/misc/prefetch-purpose.html = TEXT
+BUG_AJWONG WIN : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = TEXT
+
+BUG_AJWONG WIN : svg/batik/paints/patternPreserveAspectRatioA.svg = TEXT
+BUG_AJWONG WIN : svg/batik/text/textLength.svg = TEXT
+BUG_AJWONG WIN : svg/carto.net/button.svg = TEXT
+BUG_AJWONG WIN : svg/carto.net/colourpicker.svg = TEXT
+BUG_AJWONG WIN : svg/carto.net/combobox.svg = TEXT
+BUG_AJWONG WIN : svg/custom/use-property-changes-through-svg-dom.svg = TEXT
+BUG_AJWONG WIN : svg/hixie/error/012.xml = TEXT
+BUG_AJWONG WIN : svg/transforms/animated-path-inside-transformed-html.xhtml = TEXT
+
+// From around r69426.  First failed build:
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40247
+BUG_AJWONG LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
+BUG_AJWONG LINUX : svg/custom/image-small-width-height.svg = IMAGE
