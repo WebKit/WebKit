@@ -892,7 +892,7 @@
                     ], # actions
                 }],
                 ['OS=="mac"', {
-                    'dependencies': ['LayoutTestHelper'],
+                    'dependencies': ['LayoutTestHelper', 'copy_mesa'],
 
                     'mac_bundle_resources': [
                         '<(ahem_path)',
@@ -965,6 +965,15 @@
                             '$(SDKROOT)/System/Library/Frameworks/AppKit.framework',
                         ],
                     },
+                },
+                {
+                    'target_name': 'copy_mesa',
+                    'type': 'none',
+                    'dependencies': ['<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa'],
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/DumpRenderTree.app/Contents/MacOS/',
+                        'files': ['<(PRODUCT_DIR)/osmesa.so'],
+                    }],
                 },
             ],
         }],
