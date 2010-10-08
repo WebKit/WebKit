@@ -127,6 +127,9 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     if (hasBoxDecorations() || hasMask())
         RenderReplaced::imageChanged(newImage, rect);
+    
+    if (!m_imageResource)
+        return;
 
     if (newImage != m_imageResource->imagePtr() || !newImage)
         return;
@@ -191,6 +194,9 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
 void RenderImage::notifyFinished(CachedResource* newImage)
 {
+    if (!m_imageResource)
+        return;
+    
     if (documentBeingDestroyed())
         return;
 
