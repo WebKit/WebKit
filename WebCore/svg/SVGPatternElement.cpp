@@ -200,9 +200,8 @@ RenderObject* SVGPatternElement::createRenderer(RenderArena* arena, RenderStyle*
     return new (arena) RenderSVGResourcePattern(this);
 }
 
-PatternAttributes SVGPatternElement::collectPatternProperties() const
+void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) const
 {
-    PatternAttributes attributes;
     HashSet<const SVGPatternElement*> processedPatterns;
 
     const SVGPatternElement* current = this;
@@ -246,8 +245,6 @@ PatternAttributes SVGPatternElement::collectPatternProperties() const
         } else
             current = 0;
     }
-
-    return attributes;
 }
 
 bool SVGPatternElement::selfHasRelativeLengths() const

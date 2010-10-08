@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- *               2007 Rob Buis <buis@kde.org>
- *               2008 Dirk Schulze <krit@webkit.org>
+ * Copyright (C) 2007 Rob Buis <buis@kde.org>
+ * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,124 +33,102 @@
 
 namespace WebCore {
 
-inline void RenderSVGResource::adjustColorForPseudoRules(const RenderStyle* style, bool useFillPaint, Color& color)
-{
-    if (style->insideLink() != InsideVisitedLink)
-        return;
-
-    RenderStyle* visitedStyle = style->getCachedPseudoStyle(VISITED_LINK);
-    SVGPaint* visitedPaint = useFillPaint ? visitedStyle->svgStyle()->fillPaint() : visitedStyle->svgStyle()->strokePaint();
-    if (visitedPaint->paintType() == SVGPaint::SVG_PAINTTYPE_URI)
-        return;
-        
-    Color visitedColor;
-    if (visitedPaint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-        visitedColor = visitedStyle->color();
-    else
-        visitedColor = visitedPaint->color();
-
-    if (visitedColor.isValid())
-        color = Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), color.alpha());
-}
-
-// FIXME: This method and strokePaintingResource() should be refactored, to share even more code
-RenderSVGResource* RenderSVGResource::fillPaintingResource(RenderObject* object, const RenderStyle* style)
+static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderObject* object, const RenderStyle* style, Color& fallbackColor)
 {
     ASSERT(object);
     ASSERT(style);
 
+    // If we have no style at all, ignore it.
     const SVGRenderStyle* svgStyle = style->svgStyle();
-    if (!svgStyle || !svgStyle->hasFill())
+    if (!svgStyle)
         return 0;
 
-    SVGPaint* fillPaint = svgStyle->fillPaint();
-    ASSERT(fillPaint);
-
-    RenderSVGResource* fillPaintingResource = 0;
-
-    SVGPaint::SVGPaintType paintType = fillPaint->paintType();
-    if (paintType == SVGPaint::SVG_PAINTTYPE_URI || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR) {
-        if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object))
-            fillPaintingResource = resources->fill();
+    // If we have no fill/stroke, return 0.
+    if (mode == ApplyToFillMode) {
+        if (!svgStyle->hasFill())
+            return 0;
+    } else {
+        if (!svgStyle->hasStroke())
+            return 0;
     }
 
-    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && !fillPaintingResource) {
-        RenderSVGResourceSolidColor* solidResource = sharedSolidPaintingResource();
-        fillPaintingResource = solidResource;
+    SVGPaint* paint = mode == ApplyToFillMode ? svgStyle->fillPaint() : svgStyle->strokePaint();
+    ASSERT(paint);
 
-        Color fillColor;
-        if (fillPaint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-            fillColor = style->visitedDependentColor(CSSPropertyColor);
-        else
-            fillColor = fillPaint->color();
+    SVGPaint::SVGPaintType paintType = paint->paintType();
+    if (paintType == SVGPaint::SVG_PAINTTYPE_NONE)
+        return 0;
 
-        adjustColorForPseudoRules(style, true /* useFillPaint */, fillColor);
+    Color color;
+    if (paintType == SVGPaint::SVG_PAINTTYPE_RGBCOLOR
+        || paintType == SVGPaint::SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR
+        || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR
+        || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR)
+        color = paint->color();
+    else if (paintType == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR || paintType == SVGPaint::SVG_PAINTTYPE_URI_CURRENTCOLOR)
+        color = style->visitedDependentColor(CSSPropertyColor);
 
-        // FIXME: Ideally invalid colors would never get set on the RenderStyle and this could turn into an ASSERT
-        if (fillColor.isValid())
-            solidResource->setColor(fillColor);
-        else
-            fillPaintingResource = 0;
+    if (style->insideLink() == InsideVisitedLink) {
+        RenderStyle* visitedStyle = style->getCachedPseudoStyle(VISITED_LINK);
+        ASSERT(visitedStyle);
+
+        if (SVGPaint* visitedPaint = mode == ApplyToFillMode ? visitedStyle->svgStyle()->fillPaint() : visitedStyle->svgStyle()->strokePaint()) {
+            // For SVG_PAINTTYPE_CURRENTCOLOR, 'color' already contains the 'visitedColor'.
+            if (visitedPaint->paintType() < SVGPaint::SVG_PAINTTYPE_URI_NONE && visitedPaint->paintType() != SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR) {
+                const Color& visitedColor = visitedPaint->color();
+                if (visitedColor.isValid())
+                    color = Color(visitedColor.red(), visitedColor.green(), visitedColor.blue(), color.alpha());
+            }
+        }
     }
 
-    if (!fillPaintingResource) {
-        // default value (black), see bug 11017
-        RenderSVGResourceSolidColor* solidResource = sharedSolidPaintingResource();
-        solidResource->setColor(Color::black);
-        fillPaintingResource = solidResource;
+    // If the primary resource is just a color, return immediately.
+    RenderSVGResourceSolidColor* colorResource = RenderSVGResource::sharedSolidPaintingResource();
+    if (paintType < SVGPaint::SVG_PAINTTYPE_URI_NONE) {
+        // If an invalid fill color is specified, fallback to fill/stroke="none".
+        if (!color.isValid())
+            return 0;
+
+        colorResource->setColor(color);
+        return colorResource;
     }
 
-    return fillPaintingResource;
+    // If no resources are associated with the given renderer, return the color resource.
+    SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
+    if (!resources) {
+        // If a paint server is specified, and no or an invalid fallback color is given, default to fill/stroke="black".
+        if (!color.isValid())
+            color = Color::black;
+
+        colorResource->setColor(color);
+        return colorResource;
+    }
+
+    // If the requested resource is not available, return the color resource.
+    RenderSVGResource* uriResource = mode == ApplyToFillMode ? resources->fill() : resources->stroke();
+    if (!uriResource) {
+        // If a paint server is specified, and no or an invalid fallback color is given, default to fill/stroke="black".
+        if (!color.isValid())
+            color = Color::black;
+
+        colorResource->setColor(color);
+        return colorResource;
+    }
+
+    // The paint server resource exists, though it may be invalid (pattern with width/height=0). Pass the fallback color to our caller
+    // so it can use the solid color painting resource, if applyResource() on the URI resource failed.
+    fallbackColor = color;
+    return uriResource;
 }
 
-RenderSVGResource* RenderSVGResource::strokePaintingResource(RenderObject* object, const RenderStyle* style)
+RenderSVGResource* RenderSVGResource::fillPaintingResource(RenderObject* object, const RenderStyle* style, Color& fallbackColor)
 {
-    ASSERT(object);
-    ASSERT(style);
+    return requestPaintingResource(ApplyToFillMode, object, style, fallbackColor);
+}
 
-    const SVGRenderStyle* svgStyle = style->svgStyle();
-    if (!svgStyle || !svgStyle->hasStroke())
-        return 0;
-
-    SVGPaint* strokePaint = svgStyle->strokePaint();
-    ASSERT(strokePaint);
-
-    RenderSVGResource* strokePaintingResource = 0;
-    FloatRect objectBoundingBox = object->objectBoundingBox();
-
-    SVGPaint::SVGPaintType paintType = strokePaint->paintType();
-    if (!objectBoundingBox.isEmpty() && (paintType == SVGPaint::SVG_PAINTTYPE_URI || paintType == SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR)) {
-        if (SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object))
-            strokePaintingResource = resources->stroke();
-    }
-
-    if (paintType != SVGPaint::SVG_PAINTTYPE_URI && !strokePaintingResource) {
-        RenderSVGResourceSolidColor* solidResource = sharedSolidPaintingResource();
-        strokePaintingResource = solidResource;
-
-        Color strokeColor;
-        if (strokePaint->paintType() == SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR)
-            strokeColor = style->visitedDependentColor(CSSPropertyColor);
-        else
-            strokeColor = strokePaint->color();
-
-        adjustColorForPseudoRules(style, false /* useFillPaint */, strokeColor);
-
-        // FIXME: Ideally invalid colors would never get set on the RenderStyle and this could turn into an ASSERT
-        if (strokeColor.isValid())
-            solidResource->setColor(strokeColor);
-        else
-            strokePaintingResource = 0;
-    }
-
-    if (!strokePaintingResource) {
-        // default value (black), see bug 11017
-        RenderSVGResourceSolidColor* solidResource = sharedSolidPaintingResource();
-        solidResource->setColor(Color::black);
-        strokePaintingResource = solidResource;
-    }
-
-    return strokePaintingResource;
+RenderSVGResource* RenderSVGResource::strokePaintingResource(RenderObject* object, const RenderStyle* style, Color& fallbackColor)
+{
+    return requestPaintingResource(ApplyToStrokeMode, object, style, fallbackColor);
 }
 
 RenderSVGResourceSolidColor* RenderSVGResource::sharedSolidPaintingResource()

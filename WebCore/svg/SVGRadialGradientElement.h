@@ -33,7 +33,7 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGRadialGradientElement> create(const QualifiedName&, Document*);
 
-        RadialGradientAttributes collectGradientProperties();
+        void collectGradientAttributes(RadialGradientAttributes&);
         void calculateFocalCenterPointsAndRadius(const RadialGradientAttributes&, FloatPoint& focalPoint, FloatPoint& centerPoint, float& radius);
 
     private:

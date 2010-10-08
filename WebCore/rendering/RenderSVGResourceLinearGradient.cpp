@@ -40,25 +40,26 @@ RenderSVGResourceLinearGradient::~RenderSVGResourceLinearGradient()
 {
 }
 
+void RenderSVGResourceLinearGradient::collectGradientAttributes(SVGGradientElement* gradientElement)
+{
+    m_attributes = LinearGradientAttributes();
+    static_cast<SVGLinearGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
+}
+
 void RenderSVGResourceLinearGradient::buildGradient(GradientData* gradientData, SVGGradientElement* gradientElement) const
 {
     SVGLinearGradientElement* linearGradientElement = static_cast<SVGLinearGradientElement*>(gradientElement);
-    LinearGradientAttributes attributes = linearGradientElement->collectGradientProperties();
 
     // Determine gradient start/end points
     FloatPoint startPoint;
     FloatPoint endPoint;
-    linearGradientElement->calculateStartEndPoints(attributes, startPoint, endPoint);
+    linearGradientElement->calculateStartEndPoints(m_attributes, startPoint, endPoint);
 
     gradientData->gradient = Gradient::create(startPoint, endPoint);
-    gradientData->gradient->setSpreadMethod(attributes.spreadMethod());
-
-    // Record current gradient transform
-    gradientData->transform = attributes.gradientTransform();
-    gradientData->boundingBoxMode = attributes.boundingBoxMode();
+    gradientData->gradient->setSpreadMethod(m_attributes.spreadMethod());
 
     // Add stops
-    addStops(gradientData, attributes.stops());
+    addStops(gradientData, m_attributes.stops());
 }
 
 }

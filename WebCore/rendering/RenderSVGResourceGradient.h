@@ -37,10 +37,7 @@ namespace WebCore {
 
 struct GradientData {
     RefPtr<Gradient> gradient;
-
-    bool boundingBoxMode;
     AffineTransform userspaceTransform;
-    AffineTransform transform;
 };
 
 class GraphicsContext;
@@ -59,9 +56,14 @@ public:
 
 protected:
     void addStops(GradientData*, const Vector<Gradient::ColorStop>&) const;
+
+    virtual bool boundingBoxMode() const = 0;
+    virtual void calculateGradientTransform(AffineTransform&) = 0;
+    virtual void collectGradientAttributes(SVGGradientElement*) = 0;
     virtual void buildGradient(GradientData*, SVGGradientElement*) const = 0;
 
 private:
+    bool m_shouldCollectGradientAttributes : 1;
     HashMap<RenderObject*, GradientData*> m_gradient;
 
 #if PLATFORM(CG)

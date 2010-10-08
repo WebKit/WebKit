@@ -40,30 +40,31 @@ RenderSVGResourceRadialGradient::~RenderSVGResourceRadialGradient()
 {
 }
 
+void RenderSVGResourceRadialGradient::collectGradientAttributes(SVGGradientElement* gradientElement)
+{
+    m_attributes = RadialGradientAttributes();
+    static_cast<SVGRadialGradientElement*>(gradientElement)->collectGradientAttributes(m_attributes);
+}
+
 void RenderSVGResourceRadialGradient::buildGradient(GradientData* gradientData, SVGGradientElement* gradientElement) const
 {
     SVGRadialGradientElement* radialGradientElement = static_cast<SVGRadialGradientElement*>(gradientElement);
-    RadialGradientAttributes attributes = radialGradientElement->collectGradientProperties();
 
     // Determine gradient focal/center points and radius
     FloatPoint focalPoint;
     FloatPoint centerPoint;
     float radius;
-    radialGradientElement->calculateFocalCenterPointsAndRadius(attributes, focalPoint, centerPoint, radius);
+    radialGradientElement->calculateFocalCenterPointsAndRadius(m_attributes, focalPoint, centerPoint, radius);
 
     gradientData->gradient = Gradient::create(focalPoint,
-                                              0.0f, // SVG does not support a "focus radius"
+                                              0, // SVG does not support a "focus radius"
                                               centerPoint,
                                               radius);
 
-    gradientData->gradient->setSpreadMethod(attributes.spreadMethod());
-
-    // Record current gradient transform
-    gradientData->transform = attributes.gradientTransform();
-    gradientData->boundingBoxMode = attributes.boundingBoxMode();
+    gradientData->gradient->setSpreadMethod(m_attributes.spreadMethod());
 
     // Add stops
-    addStops(gradientData, attributes.stops());
+    addStops(gradientData, m_attributes.stops());
 }
 
 }

@@ -327,7 +327,8 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
         ASSERT(path.node());
         ASSERT(path.node()->isSVGElement());
 
-        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderSVGPath*>(&path), path.style())) {
+        Color fallbackColor;
+        if (RenderSVGResource* strokePaintingResource = RenderSVGResource::strokePaintingResource(const_cast<RenderSVGPath*>(&path), path.style(), fallbackColor)) {
             TextStreamSeparator s(" ");
             ts << " [stroke={" << s;
             writeSVGPaintingResource(ts, strokePaintingResource);
@@ -354,7 +355,7 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
             ts << "}]";
         }
 
-        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<RenderSVGPath*>(&path), path.style())) {
+        if (RenderSVGResource* fillPaintingResource = RenderSVGResource::fillPaintingResource(const_cast<RenderSVGPath*>(&path), path.style(), fallbackColor)) {
             TextStreamSeparator s(" ");
             ts << " [fill={" << s;
             writeSVGPaintingResource(ts, fillPaintingResource);
@@ -580,7 +581,9 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
 
         // Dump final results that are used for rendering. No use in asking SVGPatternElement for its patternUnits(), as it may
         // link to other patterns using xlink:href, we need to build the full inheritance chain, aka. collectPatternProperties()
-        PatternAttributes attributes = static_cast<SVGPatternElement*>(pattern->node())->collectPatternProperties();
+        PatternAttributes attributes;
+        static_cast<SVGPatternElement*>(pattern->node())->collectPatternAttributes(attributes);
+
         writeNameValuePair(ts, "patternUnits", boundingBoxModeString(attributes.boundingBoxMode()));
         writeNameValuePair(ts, "patternContentUnits", boundingBoxModeString(attributes.boundingBoxModeContent()));
 
@@ -595,7 +598,8 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         SVGLinearGradientElement* linearGradientElement = static_cast<SVGLinearGradientElement*>(gradient->node());
 
-        LinearGradientAttributes attributes = linearGradientElement->collectGradientProperties();
+        LinearGradientAttributes attributes;
+        linearGradientElement->collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.boundingBoxMode());
 
         FloatPoint startPoint;
@@ -610,7 +614,8 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
         SVGRadialGradientElement* radialGradientElement = static_cast<SVGRadialGradientElement*>(gradient->node());
 
-        RadialGradientAttributes attributes = radialGradientElement->collectGradientProperties();
+        RadialGradientAttributes attributes;
+        radialGradientElement->collectGradientAttributes(attributes);
         writeCommonGradientProperties(ts, attributes.spreadMethod(), attributes.gradientTransform(), attributes.boundingBoxMode());
 
         FloatPoint focalPoint;

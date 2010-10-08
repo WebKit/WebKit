@@ -33,7 +33,7 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGLinearGradientElement> create(const QualifiedName&, Document*);
 
-        LinearGradientAttributes collectGradientProperties();
+        void collectGradientAttributes(LinearGradientAttributes&);
         void calculateStartEndPoints(const LinearGradientAttributes&, FloatPoint& startPoint, FloatPoint& endPoint);
 
     private:

@@ -45,7 +45,7 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGPatternElement> create(const QualifiedName&, Document*);
 
-        PatternAttributes collectPatternProperties() const;
+        void collectPatternAttributes(PatternAttributes&) const;
 
     private:
         SVGPatternElement(const QualifiedName&, Document*);

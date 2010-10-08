@@ -37,6 +37,7 @@ RenderSVGResourceType RenderSVGResourcePattern::s_resourceType = PatternResource
 
 RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement* node)
     : RenderSVGResourceContainer(node)
+    , m_shouldCollectPatternAttributes(true)
 {
 }
 
@@ -56,6 +57,7 @@ void RenderSVGResourcePattern::removeAllClientsFromCache(bool markForInvalidatio
         m_pattern.clear();
     }
 
+    m_shouldCollectPatternAttributes = true;
     markAllClientsForInvalidation(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
@@ -84,22 +86,34 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
     if (!patternElement)
         return false;
 
-    patternElement->updateAnimatedSVGAttribute(anyQName());
+    if (m_shouldCollectPatternAttributes) {
+        patternElement->updateAnimatedSVGAttribute(anyQName());
+
+        m_attributes = PatternAttributes();
+        patternElement->collectPatternAttributes(m_attributes);
+        m_shouldCollectPatternAttributes = false;
+    }
+
+    // Spec: When the geometry of the applicable element has no width or height and objectBoundingBox is specified,
+    // then the given effect (e.g. a gradient or a filter) will be ignored.
+    FloatRect objectBoundingBox = object->objectBoundingBox();
+    if (m_attributes.boundingBoxMode() && objectBoundingBox.isEmpty())
+        return false;
 
     if (!m_pattern.contains(object))
         m_pattern.set(object, new PatternData);
 
     PatternData* patternData = m_pattern.get(object);
     if (!patternData->pattern) {
-        PatternAttributes attributes = patternElement->collectPatternProperties();
-
         // If we couldn't determine the pattern content element root, stop here.
-        if (!attributes.patternContentElement())
+        if (!m_attributes.patternContentElement())
             return false;
 
         // Compute all necessary transformations to build the tile image & the pattern.
         FloatRect tileBoundaries;
-        AffineTransform tileImageTransform = buildTileImageTransform(object, attributes, patternElement, tileBoundaries);
+        AffineTransform tileImageTransform;
+        if (!buildTileImageTransform(object, m_attributes, patternElement, tileBoundaries, tileImageTransform))
+            return false;
 
         AffineTransform absoluteTransform;
         SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(object, absoluteTransform);
@@ -107,7 +121,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
         FloatRect absoluteTileBoundaries = absoluteTransform.mapRect(tileBoundaries);
 
         // Build tile image.
-        OwnPtr<ImageBuffer> tileImage = createTileImage(object, attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform);
+        OwnPtr<ImageBuffer> tileImage = createTileImage(object, m_attributes, tileBoundaries, absoluteTileBoundaries, tileImageTransform);
         if (!tileImage)
             return false;
 
@@ -124,7 +138,7 @@ bool RenderSVGResourcePattern::applyResource(RenderObject* object, RenderStyle* 
         patternData->transform.translate(tileBoundaries.x(), tileBoundaries.y());
         patternData->transform.scale(tileBoundaries.width() / absoluteTileBoundaries.width(), tileBoundaries.height() / absoluteTileBoundaries.height());
 
-        AffineTransform patternTransform = attributes.patternTransform();
+        AffineTransform patternTransform = m_attributes.patternTransform();
         if (!patternTransform.isIdentity())
             patternData->transform.multiply(patternTransform);
 
@@ -201,19 +215,21 @@ static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attr
                      attributes.height().value(patternElement));
 }
 
-AffineTransform RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
-                                                                  const PatternAttributes& attributes,
-                                                                  const SVGPatternElement* patternElement,
-                                                                  FloatRect& patternBoundaries) const
+bool RenderSVGResourcePattern::buildTileImageTransform(RenderObject* renderer,
+                                                       const PatternAttributes& attributes,
+                                                       const SVGPatternElement* patternElement,
+                                                       FloatRect& patternBoundaries,
+                                                       AffineTransform& tileImageTransform) const
 {
     ASSERT(renderer);
     ASSERT(patternElement);
 
-    FloatRect objectBoundingBox = renderer->objectBoundingBox();    
+    FloatRect objectBoundingBox = renderer->objectBoundingBox();
     patternBoundaries = calculatePatternBoundaries(attributes, objectBoundingBox, patternElement); 
+    if (patternBoundaries.width() <= 0 || patternBoundaries.height() <= 0)
+        return false;
 
     AffineTransform viewBoxCTM = patternElement->viewBoxToViewTransform(patternElement->viewBox(), patternElement->preserveAspectRatio(), patternBoundaries.width(), patternBoundaries.height());
-    AffineTransform tileImageTransform;
 
     // Apply viewBox/objectBoundingBox transformations.
     if (!viewBoxCTM.isIdentity())
@@ -223,7 +239,7 @@ AffineTransform RenderSVGResourcePattern::buildTileImageTransform(RenderObject* 
         tileImageTransform.scale(objectBoundingBox.width(), objectBoundingBox.height());
     }
 
-    return tileImageTransform;
+    return true;
 }
 
 PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(RenderObject* object,
