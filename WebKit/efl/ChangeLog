@@ -1,3 +1,19 @@
+2010-10-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Implement pageRect() function
+        https://bugs.webkit.org/show_bug.cgi?id=47395
+
+        Implement pageRect() in ChromeClientEfl using frameRect().
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::pageRect):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_page_rect_get): Added.
+
 2010-10-06  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

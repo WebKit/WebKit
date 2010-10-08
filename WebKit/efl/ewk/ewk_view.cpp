@@ -4224,3 +4224,20 @@ void ewk_view_contents_size_changed(Evas_Object *o, int w, int h)
     if (!sd->api->contents_resize(sd, w, h))
         ERR("failed to resize contents to %dx%d", w, h);
 }
+
+/**
+ * @internal
+ * Gets page size from frameview. 
+ *
+ * @param o view.
+ *
+ * @return page size.
+ */
+WebCore::FloatRect ewk_view_page_rect_get(Evas_Object *o)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    WebCore::Frame* main_frame = priv->page->mainFrame();
+    return main_frame->view()->frameRect();
+} 

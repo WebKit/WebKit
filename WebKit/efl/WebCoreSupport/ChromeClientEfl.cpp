@@ -118,8 +118,10 @@ void ChromeClientEfl::setWindowRect(const FloatRect& rect)
 
 FloatRect ChromeClientEfl::pageRect()
 {
-    notImplemented();
-    return FloatRect();
+    if (!m_view)
+        return FloatRect();
+
+    return ewk_view_page_rect_get(m_view);
 }
 
 float ChromeClientEfl::scaleFactor()
