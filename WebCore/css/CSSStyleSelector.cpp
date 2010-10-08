@@ -6818,7 +6818,8 @@ void CSSStyleSelector::loadPendingImages()
                 for (ContentData* contentData = const_cast<ContentData*>(m_style->contentData()); contentData; contentData = contentData->next()) {
                     if (contentData->isImage() && contentData->image()->isPendingImage()) {
                         CSSImageValue* imageValue = static_cast<StylePendingImage*>(contentData->image())->cssImageValue();
-                        contentData->setImage(imageValue->cachedImage(cachedResourceLoader));
+                        if (StyleCachedImage* cachedImage = imageValue->cachedImage(cachedResourceLoader))
+                            contentData->setImage(cachedImage);
                     }
                 }
                 break;
