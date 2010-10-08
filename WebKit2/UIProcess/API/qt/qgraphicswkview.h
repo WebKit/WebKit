@@ -13,7 +13,7 @@ QT_END_NAMESPACE
 
 class QGraphicsWKViewPrivate;
 
-WKStringRef WKStringCreateWithQString(QString qString);
+WKStringRef WKStringCreateWithQString(const QString& qString);
 QString WKStringCopyQString(WKStringRef stringRef);
 
 class QWEBKIT_EXPORT QGraphicsWKView : public QGraphicsWidget {

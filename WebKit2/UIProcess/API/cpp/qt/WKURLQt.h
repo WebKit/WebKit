@@ -25,15 +25,7 @@
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKURL.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 WK_EXPORT WKURLRef WKURLCreateWithQUrl(const QUrl& url);
 QUrl WKURLCopyQUrl(WKURLRef url);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* WKURLCF_h */

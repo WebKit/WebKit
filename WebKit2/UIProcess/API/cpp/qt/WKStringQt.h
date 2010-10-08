@@ -24,15 +24,7 @@
 #include <QString>
 #include <WebKit2/WKBase.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 WK_EXPORT WKStringRef WKStringCreateWithQString(const QString& string);
 WK_EXPORT QString WKStringCopyQString(WKStringRef string);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* WKStringQt_h */
