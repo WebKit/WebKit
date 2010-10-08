@@ -3200,8 +3200,9 @@ BUG58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAGE+
 BUG58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TEXT TIMEOUT
 
 // Flaky because they snapshot and animation.
-BUG10479 LINUX : svg/hixie/perf/001.xml = IMAGE PASS
-BUG10479 LINUX : svg/hixie/perf/002.xml = IMAGE PASS
+// Started failing on Mac since 69314:69342.
+BUG10479 LINUX MAC : svg/hixie/perf/001.xml = IMAGE PASS
+BUG10479 LINUX MAC : svg/hixie/perf/002.xml = IMAGE PASS
 
 // New test from Webkit r69326.
 BUG58337 : platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
