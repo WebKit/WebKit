@@ -1,3 +1,13 @@
+2010-10-08  Hui Huang  <hui.2.huang@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        ifdef out code that rewrites Flash Plug-in wmode for Symbian build
+        https://bugs.webkit.org/show_bug.cgi?id=43484
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2010-10-07  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Simon Hausmann.
