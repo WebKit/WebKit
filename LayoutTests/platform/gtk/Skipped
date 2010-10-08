@@ -3039,9 +3039,7 @@ http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/local/blob/send-data-blob.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
-http/tests/local/formdata/send-form-data.html
-http/tests/local/formdata/send-form-data-with-sliced-file.html
-http/tests/local/formdata/upload-events.html
+http/tests/local/formdata
 # File API is not supported yet
 fast/files
 http/tests/media/video-play-stall-seek.html
