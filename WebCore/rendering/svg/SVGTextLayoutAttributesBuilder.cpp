@@ -258,19 +258,19 @@ float SVGTextLayoutAttributesBuilder::nextLayoutValue(LayoutValueType type, unsi
 
         const Vector<float>* valuesPointer = 0;
         switch (type) {
-        case XValue:
+        case XValueAttribute:
             valuesPointer = &scope.attributes.xValues();
             break;
-        case YValue:
+        case YValueAttribute:
             valuesPointer = &scope.attributes.yValues();
             break;
-        case DxValue:
+        case DxValueAttribute:
             valuesPointer = &scope.attributes.dxValues();
             break;
-        case DyValue:
+        case DyValueAttribute:
             valuesPointer = &scope.attributes.dyValues();
             break;
-        case RotateValue:
+        case RotateValueAttribute:
             valuesPointer = &scope.attributes.rotateValues();
             break;
         default:
@@ -294,11 +294,11 @@ float SVGTextLayoutAttributesBuilder::nextLayoutValue(LayoutValueType type, unsi
 
 void SVGTextLayoutAttributesBuilder::assignLayoutAttributesForCharacter(SVGTextLayoutAttributes& attributes, SVGTextMetrics& metrics, unsigned valueListPosition) const
 {
-    attributes.xValues().append(nextLayoutValue(XValue, valueListPosition));
-    attributes.yValues().append(nextLayoutValue(YValue, valueListPosition));
-    attributes.dxValues().append(nextLayoutValue(DxValue, valueListPosition));
-    attributes.dyValues().append(nextLayoutValue(DyValue, valueListPosition));
-    attributes.rotateValues().append(nextLayoutValue(RotateValue, valueListPosition));
+    attributes.xValues().append(nextLayoutValue(XValueAttribute, valueListPosition));
+    attributes.yValues().append(nextLayoutValue(YValueAttribute, valueListPosition));
+    attributes.dxValues().append(nextLayoutValue(DxValueAttribute, valueListPosition));
+    attributes.dyValues().append(nextLayoutValue(DyValueAttribute, valueListPosition));
+    attributes.rotateValues().append(nextLayoutValue(RotateValueAttribute, valueListPosition));
     attributes.textMetricsValues().append(metrics);
 }
 

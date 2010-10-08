@@ -62,11 +62,11 @@ private:
     void propagateLayoutAttributes(RenderObject*, unsigned& atCharacter, UChar& lastCharacter) const;
 
     enum LayoutValueType {
-        XValue,
-        YValue,
-        DxValue,
-        DyValue,
-        RotateValue
+        XValueAttribute,
+        YValueAttribute,
+        DxValueAttribute,
+        DyValueAttribute,
+        RotateValueAttribute
     };
 
     float nextLayoutValue(LayoutValueType, unsigned atCharacter) const;
