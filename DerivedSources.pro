@@ -8,9 +8,7 @@ SUBDIRS += \
 
 webkit2 {
     SUBDIRS += WebKit2/DerivedSources.pro
-
-    # Uncomment when WTR is ready upstream
-    #SUBDIRS += WebKitTools/WebKitTestRunner/DerivedSources.pro
+    SUBDIRS += WebKitTools/WebKitTestRunner/DerivedSources.pro
 }
 
 for(subpro, SUBDIRS) {
