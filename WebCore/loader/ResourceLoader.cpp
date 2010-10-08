@@ -400,20 +400,20 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
 
 void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
 {
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame.get(), identifier(), response);
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForResponse(this, response))
         return;
 #endif
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceResponse(m_frame.get(), identifier(), response);
     didReceiveResponse(response);
-    InspectorInstrumentation::didReceiveResourceResponse(m_frame.get(), cookie);
+    InspectorInstrumentation::didReceiveResourceResponse(cookie);
 }
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int lengthReceived)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier());
     didReceiveData(data, length, lengthReceived, false);
-    InspectorInstrumentation::didReceiveResourceData(m_frame.get(), cookie);
+    InspectorInstrumentation::didReceiveResourceData(cookie);
 }
 
 void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)

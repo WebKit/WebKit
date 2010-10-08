@@ -837,7 +837,7 @@ void FrameView::layout(bool allowSubtree)
         ASSERT(m_enqueueEvents);
     }
 
-    InspectorInstrumentation::didLayout(m_frame.get(), cookie);
+    InspectorInstrumentation::didLayout(cookie);
 
     m_nestedLayoutCount--;
 }
@@ -2000,7 +2000,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (isTopLevelPainter)
         sCurrentPaintTimeStamp = 0;
 
-    InspectorInstrumentation::didPaint(m_frame.get(), cookie);
+    InspectorInstrumentation::didPaint(cookie);
 }
 
 void FrameView::setPaintBehavior(PaintBehavior behavior)

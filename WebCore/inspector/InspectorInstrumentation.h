@@ -47,7 +47,7 @@ class ResourceRequest;
 class ResourceResponse;
 class XMLHttpRequest;
 
-typedef int InspectorInstrumentationCookie;
+typedef pair<InspectorController*, int> InspectorInstrumentationCookie;
 
 class InspectorInstrumentation {
 public:
@@ -64,31 +64,31 @@ public:
     static void didRemoveTimer(ScriptExecutionContext*, int timerId);
 
     static InspectorInstrumentationCookie willCallFunction(Frame*, const String& scriptName, int scriptLine);
-    static void didCallFunction(Frame*, InspectorInstrumentationCookie cookie);
+    static void didCallFunction(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willChangeXHRReadyState(ScriptExecutionContext*, XMLHttpRequest* request);
-    static void didChangeXHRReadyState(ScriptExecutionContext*, InspectorInstrumentationCookie cookie);
+    static void didChangeXHRReadyState(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEvent(Document*, const Event& event, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors);
-    static void didDispatchEvent(Document*, InspectorInstrumentationCookie cookie);
+    static void didDispatchEvent(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventOnWindow(Frame*, const Event& event, DOMWindow* window);
-    static void didDispatchEventOnWindow(Frame*, InspectorInstrumentationCookie cookie);
+    static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScript(Frame*, const String& url, int lineNumber);
-    static void didEvaluateScript(Frame*, InspectorInstrumentationCookie cookie);
+    static void didEvaluateScript(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext*, int timerId);
-    static void didFireTimer(ScriptExecutionContext*, InspectorInstrumentationCookie cookie);
+    static void didFireTimer(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLayout(Frame*);
-    static void didLayout(Frame*, InspectorInstrumentationCookie cookie);
-    static InspectorInstrumentationCookie willLoadXHR(ScriptExecutionContext*, XMLHttpRequest* request);
-    static void didLoadXHR(ScriptExecutionContext*, InspectorInstrumentationCookie cookie);
+    static void didLayout(const InspectorInstrumentationCookie&);
+    static InspectorInstrumentationCookie willLoadXHR(ScriptExecutionContext*, XMLHttpRequest*);
+    static void didLoadXHR(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willPaint(Frame*, const IntRect& rect);
-    static void didPaint(Frame*, InspectorInstrumentationCookie cookie);
+    static void didPaint(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
-    static void didRecalculateStyle(Document*, InspectorInstrumentationCookie cookie);
+    static void didRecalculateStyle(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willReceiveResourceData(Frame*, unsigned long identifier);
-    static void didReceiveResourceData(Frame*, InspectorInstrumentationCookie cookie);
+    static void didReceiveResourceData(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willReceiveResourceResponse(Frame*, unsigned long identifier, const ResourceResponse& response);
-    static void didReceiveResourceResponse(Frame*, InspectorInstrumentationCookie cookie);
+    static void didReceiveResourceResponse(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned int length, unsigned int startLine);
-    static void didWriteHTML(Document*, unsigned int endLine, InspectorInstrumentationCookie cookie);
+    static void didWriteHTML(const InspectorInstrumentationCookie&, unsigned int endLine);
 
 #if ENABLE(INSPECTOR)
     static void frontendCreated() { s_frontendCounter += 1; }
@@ -114,31 +114,31 @@ private:
     static void didRemoveTimerImpl(InspectorController*, int timerId);
 
     static InspectorInstrumentationCookie willCallFunctionImpl(InspectorController*, const String& scriptName, int scriptLine);
-    static void didCallFunctionImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didCallFunctionImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willChangeXHRReadyStateImpl(InspectorController*, XMLHttpRequest* request);
-    static void didChangeXHRReadyStateImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didChangeXHRReadyStateImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventImpl(InspectorController*, const Event& event, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors);
-    static void didDispatchEventImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didDispatchEventImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InspectorController*, const Event& event, DOMWindow* window);
-    static void didDispatchEventOnWindowImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willEvaluateScriptImpl(InspectorController*, const String& url, int lineNumber);
-    static void didEvaluateScriptImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willFireTimerImpl(InspectorController*, int timerId);
-    static void didFireTimerImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didFireTimerImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLayoutImpl(InspectorController*);
-    static void didLayoutImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didLayoutImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLoadXHRImpl(InspectorController*, XMLHttpRequest* request);
-    static void didLoadXHRImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willPaintImpl(InspectorController*, const IntRect& rect);
-    static void didPaintImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didPaintImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InspectorController*);
-    static void didRecalculateStyleImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willReceiveResourceDataImpl(InspectorController*, unsigned long identifier);
-    static void didReceiveResourceDataImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didReceiveResourceDataImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willReceiveResourceResponseImpl(InspectorController*, unsigned long identifier, const ResourceResponse& response);
-    static void didReceiveResourceResponseImpl(InspectorController*, InspectorInstrumentationCookie);
+    static void didReceiveResourceResponseImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willWriteHTMLImpl(InspectorController*, unsigned int length, unsigned int startLine);
-    static void didWriteHTMLImpl(InspectorController*, unsigned int endLine, InspectorInstrumentationCookie);
+    static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned int endLine);
 
     static InspectorController* inspectorControllerForContext(ScriptExecutionContext*);
     static InspectorController* inspectorControllerForDocument(Document*);
@@ -147,7 +147,7 @@ private:
 
     static bool hasFrontend(InspectorController*);
     static InspectorTimelineAgent* retrieveTimelineAgent(InspectorController*);
-    static InspectorTimelineAgent* retrieveTimelineAgent(InspectorController*, InspectorInstrumentationCookie);
+    static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
 
     static int s_frontendCounter;
 #endif
@@ -243,14 +243,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willCallFunction
     if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
         return willCallFunctionImpl(inspectorController, scriptName, scriptLine);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didCallFunction(Frame* frame, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didCallFunction(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didCallFunctionImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didCallFunctionImpl(cookie);
 #endif
 }
 
@@ -260,14 +260,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willChangeXHRRea
     if (InspectorController* inspectorController = inspectorControllerForContext(context))
         return willChangeXHRReadyStateImpl(inspectorController, request);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didChangeXHRReadyState(ScriptExecutionContext* context, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didChangeXHRReadyState(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForContext(context))
-        didChangeXHRReadyStateImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didChangeXHRReadyStateImpl(cookie);
 #endif
 }
 
@@ -277,14 +277,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEven
     if (InspectorController* inspectorController = inspectorControllerForDocument(document))
         return willDispatchEventImpl(inspectorController, event, window, node, ancestors);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didDispatchEvent(Document* document, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didDispatchEvent(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForDocument(document))
-        didDispatchEventImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didDispatchEventImpl(cookie);
 #endif
 }
 
@@ -294,14 +294,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEven
     if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
         return willDispatchEventOnWindowImpl(inspectorController, event, window);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didDispatchEventOnWindow(Frame* frame, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didDispatchEventOnWindow(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didDispatchEventOnWindowImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didDispatchEventOnWindowImpl(cookie);
 #endif
 }
 
@@ -311,14 +311,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScri
     if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
         return willEvaluateScriptImpl(inspectorController, url, lineNumber);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didEvaluateScript(Frame* frame, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didEvaluateScriptImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didEvaluateScriptImpl(cookie);
 #endif
 }
 
@@ -328,14 +328,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willFireTimer(Sc
     if (InspectorController* inspectorController = inspectorControllerForContext(context))
         return willFireTimerImpl(inspectorController, timerId);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didFireTimer(ScriptExecutionContext* context, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didFireTimer(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForContext(context))
-        didFireTimerImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didFireTimerImpl(cookie);
 #endif
 }
 
@@ -345,14 +345,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willLayout(Frame
     if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
         return willLayoutImpl(inspectorController);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didLayout(Frame* frame, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didLayout(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didLayoutImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didLayoutImpl(cookie);
 #endif
 }
 
@@ -362,14 +362,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willLoadXHR(Scri
     if (InspectorController* inspectorController = inspectorControllerForContext(context))
         return willLoadXHRImpl(inspectorController, request);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didLoadXHR(ScriptExecutionContext* context, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didLoadXHR(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForContext(context))
-        didLoadXHRImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didLoadXHRImpl(cookie);
 #endif
 }
 
@@ -379,14 +379,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willPaint(Frame*
     if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
         return willPaintImpl(inspectorController, rect);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didPaint(Frame* frame, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didPaint(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didPaintImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didPaintImpl(cookie);
 #endif
 }
 
@@ -396,14 +396,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateS
     if (InspectorController* inspectorController = inspectorControllerForDocument(document))
         return willRecalculateStyleImpl(inspectorController);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didRecalculateStyle(Document* document, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didRecalculateStyle(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForDocument(document))
-        didRecalculateStyleImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didRecalculateStyleImpl(cookie);
 #endif
 }
 
@@ -413,14 +413,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResou
     if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
         return willReceiveResourceDataImpl(inspectorController, identifier);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didReceiveResourceData(Frame* frame, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didReceiveResourceData(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didReceiveResourceDataImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didReceiveResourceDataImpl(cookie);
 #endif
 }
 
@@ -430,14 +430,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willReceiveResou
     if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
         return willReceiveResourceResponseImpl(inspectorController, identifier, response);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didReceiveResourceResponse(Frame* frame, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didReceiveResourceResponse(const InspectorInstrumentationCookie& cookie)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForFrame(frame))
-        didReceiveResourceResponseImpl(inspectorController, cookie);
+    if (hasFrontends() && cookie.first)
+        didReceiveResourceResponseImpl(cookie);
 #endif
 }
 
@@ -447,14 +447,14 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTML(Do
     if (InspectorController* inspectorController = inspectorControllerForDocument(document))
         return willWriteHTMLImpl(inspectorController, length, startLine);
 #endif
-    return 0;
+    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didWriteHTML(Document* document, unsigned int endLine, InspectorInstrumentationCookie cookie)
+inline void InspectorInstrumentation::didWriteHTML(const InspectorInstrumentationCookie& cookie, unsigned int endLine)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorController* inspectorController = inspectorControllerForDocument(document))
-        didWriteHTMLImpl(inspectorController, endLine, cookie);
+    if (hasFrontends() && cookie.first)
+        didWriteHTMLImpl(cookie, endLine);
 #endif
 }
 

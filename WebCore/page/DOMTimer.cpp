@@ -117,7 +117,7 @@ void DOMTimer::fired()
         // No access to member variables after this point, it can delete the timer.
         m_action->execute(context);
 
-        InspectorInstrumentation::didFireTimer(context, cookie);
+        InspectorInstrumentation::didFireTimer(cookie);
 
         return;
     }
@@ -130,7 +130,7 @@ void DOMTimer::fired()
 
     action->execute(context);
 
-    InspectorInstrumentation::didFireTimer(context, cookie);
+    InspectorInstrumentation::didFireTimer(cookie);
 
     timerNestingLevel = 0;
 }

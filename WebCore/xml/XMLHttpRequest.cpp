@@ -308,12 +308,12 @@ void XMLHttpRequest::callReadyStateChangeListener()
     if (m_async || (m_state <= OPENED || m_state == DONE))
         m_progressEventThrottle.dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().readystatechangeEvent), m_state == DONE ? FlushProgressEvent : DoNotFlushProgressEvent);
 
-    InspectorInstrumentation::didChangeXHRReadyState(scriptExecutionContext(), cookie);
+    InspectorInstrumentation::didChangeXHRReadyState(cookie);
 
     if (m_state == DONE && !m_error) {
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willLoadXHR(scriptExecutionContext(), this);
         m_progressEventThrottle.dispatchEvent(XMLHttpRequestProgressEvent::create(eventNames().loadEvent));
-        InspectorInstrumentation::didLoadXHR(scriptExecutionContext(), cookie);
+        InspectorInstrumentation::didLoadXHR(cookie);
     }
 }
 

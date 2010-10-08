@@ -1515,7 +1515,7 @@ bail_out:
         implicitClose();
     }
 
-    InspectorInstrumentation::didRecalculateStyle(this, cookie);
+    InspectorInstrumentation::didRecalculateStyle(cookie);
 }
 
 void Document::updateStyleIfNeeded()

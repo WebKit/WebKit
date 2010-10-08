@@ -256,7 +256,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_preloadScanner->scan();
     }
 
-    InspectorInstrumentation::didWriteHTML(document(), m_tokenizer->lineNumber(), cookie);
+    InspectorInstrumentation::didWriteHTML(cookie, m_tokenizer->lineNumber());
 }
 
 bool HTMLDocumentParser::hasInsertionPoint()

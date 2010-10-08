@@ -411,7 +411,7 @@ v8::Local<v8::Value> V8Proxy::evaluate(const ScriptSourceCode& source, Node* nod
     PlatformBridge::traceEventEnd("v8.run", node, "");
 #endif
 
-    InspectorInstrumentation::didEvaluateScript(m_frame, cookie);
+    InspectorInstrumentation::didEvaluateScript(cookie);
 
     return result;
 }
@@ -499,7 +499,7 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
         // execution finishs before firing the timer.
         m_frame->keepAlive();
 
-        InspectorInstrumentationCookie cookie = 0;
+        InspectorInstrumentationCookie cookie;
         if (InspectorInstrumentation::hasFrontends()) {
             v8::ScriptOrigin origin = function->GetScriptOrigin();
             String resourceName("undefined");
@@ -515,7 +515,7 @@ v8::Local<v8::Value> V8Proxy::callFunction(v8::Handle<v8::Function> function, v8
         result = function->Call(receiver, argc, args);
         m_recursion--;
 
-        InspectorInstrumentation::didCallFunction(m_frame, cookie);
+        InspectorInstrumentation::didCallFunction(cookie);
     }
 
     // Release the storage mutex if applicable.
