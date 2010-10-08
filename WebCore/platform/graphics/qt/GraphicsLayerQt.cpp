@@ -320,7 +320,7 @@ GraphicsLayerQtImpl::~GraphicsLayerQtImpl()
     // our items automatically.
     const QList<QGraphicsItem*> children = childItems();
     QList<QGraphicsItem*>::const_iterator cit;
-    for (cit = children.begin(); cit != children.end(); ++cit) {
+    for (cit = children.constBegin(); cit != children.constEnd(); ++cit) {
         if (QGraphicsItem* item = *cit) {
             if (scene())
                 scene()->removeItem(item);
@@ -523,7 +523,7 @@ void GraphicsLayerQtImpl::updateTransform()
 
     const QList<QGraphicsItem*> children = childItems();
     QList<QGraphicsItem*>::const_iterator it;
-    for (it = children.begin(); it != children.end(); ++it)
+    for (it = children.constBegin(); it != children.constEnd(); ++it)
         if (GraphicsLayerQtImpl* layer= toGraphicsLayerQtImpl(*it))
             layer->updateTransform();
 }
@@ -634,13 +634,13 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
         const QSet<QGraphicsItem*> childrenToRemove = currentChildren - newChildren;
 
         QSet<QGraphicsItem*>::const_iterator it;
-        for (it = childrenToAdd.begin(); it != childrenToAdd.end(); ++it) {
+        for (it = childrenToAdd.constBegin(); it != childrenToAdd.constEnd(); ++it) {
              if (QGraphicsItem* w = *it)
                 w->setParentItem(this);
         }
 
         QSet<QGraphicsItem*>::const_iterator rit;
-        for (rit = childrenToRemove.begin(); rit != childrenToRemove.end(); ++rit) {
+        for (rit = childrenToRemove.constBegin(); rit != childrenToRemove.constEnd(); ++rit) {
              if (GraphicsLayerQtImpl* w = toGraphicsLayerQtImpl(*rit))
                 w->setParentItem(0);
         }
@@ -804,7 +804,7 @@ afterLayerChanges:
         children.append(m_state.maskLayer->platformLayer());
 
     QList<QGraphicsItem*>::const_iterator it;
-    for (it = children.begin(); it != children.end(); ++it) {
+    for (it = children.constBegin(); it != children.constEnd(); ++it) {
         if (QGraphicsItem* item = *it) {
             if (GraphicsLayerQtImpl* layer = toGraphicsLayerQtImpl(item))
                 layer->flushChanges(true, forceUpdateTransform);
