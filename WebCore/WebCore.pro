@@ -172,7 +172,7 @@ include($$PWD/../JavaScriptCore/JavaScriptCore.pri)
 
 webkit2 {
     include($$PWD/../WebKit2/WebKit2.pri)
-    addWebKit2Lib(../WebKit2)
+    addWebKit2LibWholeArchive(../WebKit2)
 }
 
 # Extract sources to build from the generator definitions

@@ -1,3 +1,12 @@
+2010-10-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Don't use -whole-archive to link-in libWebKit2.a except for libQtWebKit.so
+        https://bugs.webkit.org/show_bug.cgi?id=47347
+
+        * WebKit2.pri:
+
 2010-10-08  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Andreas Kling.
