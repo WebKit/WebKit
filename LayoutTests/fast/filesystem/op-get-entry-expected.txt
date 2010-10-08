@@ -19,9 +19,39 @@ PASS Succeeded: "/dummy".getFile("/a/b/c/d/e")
 PASS Verified entry: ENTRY {path:/dummy name:dummy type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b/c/d/e name:e type:FILE}
 * Running: CreateNestedWithRelativePath
+PASS Succeeded: "/a".getDirectory("./b")
+PASS Succeeded: "/a".getDirectory("../b")
+PASS Succeeded: "/a".getDirectory("../../b/c")
+PASS Succeeded: "/a".getDirectory("/a/../../d")
+PASS Succeeded: "/a".getDirectory("/a/../../b/./c/../../../../../e")
 PASS this.expectedErrorCode + "" is "13"
 PASS this.expectedErrorCode + "" is "13"
+PASS Succeeded: "/a".getFile("./b.txt")
+PASS Succeeded: "/a".getFile("../b.txt")
+PASS Succeeded: "/a".getFile("../../b/c.txt")
+PASS Succeeded: "/a".getFile("/a/../../d.txt")
+PASS Succeeded: "/a".getFile("/a/../../b/./c/../../../../../e.txt")
 PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "13"
+PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/a/b name:b type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/b name:b type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/b/c name:c type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/d name:d type:DIRECTORY}
+PASS Verified entry: ENTRY {path:/e name:e type:DIRECTORY}
+PASS Verified entry does NOT exist: /f
+PASS Verified entry does NOT exist: /a/f
+PASS Verified entry does NOT exist: /g
+PASS Verified entry does NOT exist: /a/g
+PASS Verified entry: ENTRY {path:/a/b.txt name:b.txt type:FILE}
+PASS Verified entry: ENTRY {path:/b.txt name:b.txt type:FILE}
+PASS Verified entry: ENTRY {path:/b/c.txt name:c.txt type:FILE}
+PASS Verified entry: ENTRY {path:/d.txt name:d.txt type:FILE}
+PASS Verified entry: ENTRY {path:/e.txt name:e.txt type:FILE}
+PASS Verified entry does NOT exist: /f.txt
+PASS Verified entry does NOT exist: /a/f.txt
+PASS Verified entry does NOT exist: /g.txt
+PASS Verified entry does NOT exist: /a/g.txt
 * Running: GetExistingEntry
 PASS Succeeded: "/".getDirectory("a")
 PASS Succeeded: "/".getFile("b")

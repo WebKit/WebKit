@@ -65,7 +65,7 @@ bool DOMFileSystemBase::getMetadata(const EntryBase* entry, PassRefPtr<MetadataC
     return true;
 }
 
-static bool checkValidityForForCopyOrMove(const EntryBase* source, EntryBase* parent, const String& newName)
+static bool verifyAndGetDestinationPathForCopyOrMove(const EntryBase* source, EntryBase* parent, const String& newName, String& destinationPath)
 {
     ASSERT(source);
 
@@ -83,19 +83,33 @@ static bool checkValidityForForCopyOrMove(const EntryBase* source, EntryBase* pa
     if ((newName.isEmpty() || source->name() == newName) && DOMFilePath::getDirectory(source->fullPath()) == parent->fullPath())
         return false;
 
+    destinationPath = parent->fullPath();
+    if (!newName.isEmpty())
+        destinationPath = DOMFilePath::append(destinationPath, newName);
+    else
+        destinationPath = DOMFilePath::append(destinationPath, source->name());
+
+    return true;
+}
+
+static bool pathToAbsolutePath(const EntryBase* base, String path, String& absolutePath)
+{
+    ASSERT(base);
+
+    if (!DOMFilePath::isAbsolute(path))
+        path = DOMFilePath::append(base->fullPath(), path);
+    absolutePath = DOMFilePath::removeExtraParentReferences(path);
+
+    if (!DOMFilePath::isValidPath(absolutePath))
+        return false;
     return true;
 }
 
 bool DOMFileSystemBase::move(const EntryBase* source, EntryBase* parent, const String& newName, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    if (!checkValidityForForCopyOrMove(source, parent, newName))
+    String destinationPath;
+    if (!verifyAndGetDestinationPathForCopyOrMove(source, parent, newName, destinationPath))
         return false;
-
-    String destinationPath = parent->fullPath();
-    if (!newName.isEmpty())
-        destinationPath = DOMFilePath::append(destinationPath, newName);
-    else
-        destinationPath = DOMFilePath::append(destinationPath, source->name());
 
     String sourcePlatformPath = m_asyncFileSystem->virtualToPlatformPath(source->fullPath());
     String destinationPlatformPath = parent->filesystem()->asyncFileSystem()->virtualToPlatformPath(destinationPath);
@@ -105,14 +119,9 @@ bool DOMFileSystemBase::move(const EntryBase* source, EntryBase* parent, const S
 
 bool DOMFileSystemBase::copy(const EntryBase* source, EntryBase* parent, const String& newName, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    if (!checkValidityForForCopyOrMove(source, parent, newName))
+    String destinationPath;
+    if (!verifyAndGetDestinationPathForCopyOrMove(source, parent, newName, destinationPath))
         return false;
-
-    String destinationPath = parent->fullPath();
-    if (!newName.isEmpty())
-        destinationPath = DOMFilePath::append(destinationPath, newName);
-    else
-        destinationPath = DOMFilePath::append(destinationPath, source->name());
 
     String sourcePlatformPath = m_asyncFileSystem->virtualToPlatformPath(source->fullPath());
     String destinationPlatformPath = parent->filesystem()->asyncFileSystem()->virtualToPlatformPath(destinationPath);
@@ -139,15 +148,11 @@ bool DOMFileSystemBase::getParent(const EntryBase* entry, PassRefPtr<EntryCallba
 
 bool DOMFileSystemBase::getFile(const EntryBase* base, const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    ASSERT(base);
-    if (!DOMFilePath::isValidPath(path))
+    String absolutePath;
+    if (!pathToAbsolutePath(base, path, absolutePath))
         return false;
 
-    String absolutePath = path;
-    if (!DOMFilePath::isAbsolute(path))
-        absolutePath = DOMFilePath::removeExtraParentReferences(DOMFilePath::append(base->fullPath(), path));
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(absolutePath);
-
     OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, false);
     if (flags && flags->isCreate())
         m_asyncFileSystem->createFile(platformPath, flags->isExclusive(), callbacks.release());
@@ -158,15 +163,11 @@ bool DOMFileSystemBase::getFile(const EntryBase* base, const String& path, PassR
 
 bool DOMFileSystemBase::getDirectory(const EntryBase* base, const String& path, PassRefPtr<Flags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    ASSERT(base);
-    if (!DOMFilePath::isValidPath(path))
+    String absolutePath;
+    if (!pathToAbsolutePath(base, path, absolutePath))
         return false;
 
-    String absolutePath = path;
-    if (!DOMFilePath::isAbsolute(path))
-        absolutePath = DOMFilePath::removeExtraParentReferences(DOMFilePath::append(base->fullPath(), path));
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(absolutePath);
-
     OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, true);
     if (flags && flags->isCreate())
         m_asyncFileSystem->createDirectory(platformPath, flags->isExclusive(), callbacks.release());
