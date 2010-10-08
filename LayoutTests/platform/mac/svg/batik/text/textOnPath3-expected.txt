@@ -6,16 +6,16 @@ layer at (0,0) size 450x500
       RenderSVGInlineText {#text} at (0,0) size 248x17
         chunk 1 (middle anchor) text run 1 at (101.50,40.00) startOffset 0 endOffset 38 width 247.00: "Text on Path with for text with an 'x'"
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [data="M100.00,0.00 C100.00,-125.00,240.00,-125.00,240.00,0.00"]
+      RenderSVGPath {path} at (0,0) size 0x0 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
     RenderSVGContainer {g} at (29,49) size 392x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,185.00)}]
-      RenderSVGPath {rect} at (29,49) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M-10.00,-135.00 L380.00,-135.00 L380.00,-115.00 L-10.00,-115.00 Z"]
-      RenderSVGPath {rect} at (29,69) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-10.00,-115.00 L380.00,-115.00 L380.00,5.00 L-10.00,5.00 Z"]
+      RenderSVGPath {rect} at (29,49) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
+      RenderSVGPath {rect} at (29,69) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
       RenderSVGText {text} at (-10,-133) size 230x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 230x17
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 39 width 230.00: "Text with one textPath child and x=\"10\""
       RenderSVGContainer {use} at (139,59) size 142x126
         RenderSVGContainer {g} at (139,59) size 142x126
-          RenderSVGPath {path} at (139,59) size 142x126 [stroke={[type=SOLID] [color=#0000FF]}] [data="M100.00,0.00 C100.00,-125.00,240.00,-125.00,240.00,0.00"]
+          RenderSVGPath {path} at (139,59) size 142x126 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (95,-108) size 156x80 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 156x80
           RenderSVGInlineText {#text} at (0,0) size 156x80
@@ -51,14 +51,14 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 30 at (235.86,-34.60) startOffset 29 endOffset 30 width 3.00: "'"
             chunk 1 (middle anchor) text run 31 at (236.69,-31.20) startOffset 30 endOffset 31 width 4.00: "."
     RenderSVGContainer {g} at (29,194) size 392x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,330.00)}]
-      RenderSVGPath {rect} at (29,194) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M-10.00,-135.00 L380.00,-135.00 L380.00,-115.00 L-10.00,-115.00 Z"]
-      RenderSVGPath {rect} at (29,214) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-10.00,-115.00 L380.00,-115.00 L380.00,5.00 L-10.00,5.00 Z"]
+      RenderSVGPath {rect} at (29,194) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
+      RenderSVGPath {rect} at (29,214) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
       RenderSVGText {text} at (-10,-133) size 237x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 237x17
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 40 width 237.00: "Text with one textPath child and x=\"100\""
       RenderSVGContainer {use} at (139,204) size 142x126
         RenderSVGContainer {g} at (139,204) size 142x126
-          RenderSVGPath {path} at (139,204) size 142x126 [stroke={[type=SOLID] [color=#0000FF]}] [data="M100.00,0.00 C100.00,-125.00,240.00,-125.00,240.00,0.00"]
+          RenderSVGPath {path} at (139,204) size 142x126 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (178,-107) size 77x107 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 77x107
           RenderSVGInlineText {#text} at (0,0) size 77x107
@@ -83,14 +83,14 @@ layer at (0,0) size 450x500
             chunk 1 (middle anchor) text run 19 at (239.87,-6.44) startOffset 18 endOffset 19 width 4.00: " "
             chunk 1 (middle anchor) text run 20 at (239.98,-2.44) startOffset 19 endOffset 20 width 4.00: "t"
     RenderSVGContainer {g} at (29,339) size 392x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(40.00,475.00)}]
-      RenderSVGPath {rect} at (29,339) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M-10.00,-135.00 L380.00,-135.00 L380.00,-115.00 L-10.00,-115.00 Z"]
-      RenderSVGPath {rect} at (29,359) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [data="M-10.00,-115.00 L380.00,-115.00 L380.00,5.00 L-10.00,5.00 Z"]
+      RenderSVGPath {rect} at (29,339) size 392x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=-10.00] [y=-135.00] [width=390.00] [height=20.00]
+      RenderSVGPath {rect} at (29,359) size 392x122 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=-10.00] [y=-115.00] [width=390.00] [height=120.00]
       RenderSVGText {text} at (-10,-133) size 287x17 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 287x17
           chunk 1 text run 1 at (-10.00,-120.00) startOffset 0 endOffset 48 width 287.00: "Text with one textPath child and x=\"-100\" y=\"10\""
       RenderSVGContainer {use} at (139,349) size 142x126
         RenderSVGContainer {g} at (139,349) size 142x126
-          RenderSVGPath {path} at (139,349) size 142x126 [stroke={[type=SOLID] [color=#0000FF]}] [data="M100.00,0.00 C100.00,-125.00,240.00,-125.00,240.00,0.00"]
+          RenderSVGPath {path} at (139,349) size 142x126 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 100 0 C 100 -125 240 -125 240 0"]
       RenderSVGText {text} at (85,-108) size 158x109 contains 1 chunk(s)
         RenderSVGTextPath {textPath} at (0,0) size 158x109
           RenderSVGInlineText {#text} at (0,104) size 20x5

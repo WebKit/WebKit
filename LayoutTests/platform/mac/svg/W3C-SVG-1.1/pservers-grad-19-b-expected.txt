@@ -19,14 +19,14 @@ layer at (0,0) size 480x360
               RenderSVGGradientStop {stop} [offset=0.00] [color=#008000]
               RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
       RenderSVGContainer {g} at (50,50) size 100x100
-        RenderSVGPath {rect} at (50,50) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="MyGradient1"]}] [data="M50.00,50.00 L150.00,50.00 L150.00,150.00 L50.00,150.00 Z"]
+        RenderSVGPath {rect} at (50,50) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="MyGradient1"]}] [x=50.00] [y=50.00] [width=100.00] [height=100.00]
       RenderSVGContainer {g} at (200,50) size 100x100
-        RenderSVGPath {rect} at (200,50) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="MyGradient2"]}] [data="M200.00,50.00 L300.00,50.00 L300.00,150.00 L200.00,150.00 Z"]
+        RenderSVGPath {rect} at (200,50) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="MyGradient2"]}] [x=200.00] [y=50.00] [width=100.00] [height=100.00]
       RenderSVGContainer {g} at (50,200) size 100x100
-        RenderSVGPath {rect} at (50,200) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="MyGradient3"]}] [data="M50.00,200.00 L150.00,200.00 L150.00,300.00 L50.00,300.00 Z"]
+        RenderSVGPath {rect} at (50,200) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="MyGradient3"]}] [x=50.00] [y=200.00] [width=100.00] [height=100.00]
       RenderSVGContainer {g} at (200,200) size 100x100
-        RenderSVGPath {rect} at (200,200) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="MyGradient4"]}] [data="M200.00,200.00 L300.00,200.00 L300.00,300.00 L200.00,300.00 Z"]
+        RenderSVGPath {rect} at (200,200) size 100x100 [fill={[type=LINEAR-GRADIENT] [id="MyGradient4"]}] [x=200.00] [y=200.00] [width=100.00] [height=100.00]
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

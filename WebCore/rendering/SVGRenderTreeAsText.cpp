@@ -57,10 +57,18 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderTreeAsText.h"
+#include "SVGCircleElement.h"
+#include "SVGEllipseElement.h"
 #include "SVGInlineTextBox.h"
+#include "SVGLineElement.h"
 #include "SVGLinearGradientElement.h"
+#include "SVGPathElement.h"
+#include "SVGPathParserFactory.h"
 #include "SVGPatternElement.h"
+#include "SVGPointList.h"
+#include "SVGPolyElement.h"
 #include "SVGRadialGradientElement.h"
+#include "SVGRectElement.h"
 #include "SVGRootInlineBox.h"
 #include "SVGStopElement.h"
 #include "SVGStyledElement.h"
@@ -373,7 +381,43 @@ static TextStream& writePositionAndStyle(TextStream& ts, const RenderObject& obj
 static TextStream& operator<<(TextStream& ts, const RenderSVGPath& path)
 {
     writePositionAndStyle(ts, path);
-    writeNameAndQuotedValue(ts, "data", path.path().debugString());
+
+    ASSERT(path.node()->isSVGElement());
+    SVGElement* svgElement = static_cast<SVGElement*>(path.node());
+
+    if (svgElement->hasTagName(SVGNames::rectTag)) {
+        SVGRectElement* element = static_cast<SVGRectElement*>(svgElement);
+        writeNameValuePair(ts, "x", element->x().value(element));
+        writeNameValuePair(ts, "y", element->y().value(element));
+        writeNameValuePair(ts, "width", element->width().value(element));
+        writeNameValuePair(ts, "height", element->height().value(element));
+    } else if (svgElement->hasTagName(SVGNames::lineTag)) {
+        SVGLineElement* element = static_cast<SVGLineElement*>(svgElement);
+        writeNameValuePair(ts, "x1", element->x1().value(element));
+        writeNameValuePair(ts, "y1", element->y1().value(element));
+        writeNameValuePair(ts, "x2", element->x2().value(element));
+        writeNameValuePair(ts, "y2", element->y2().value(element));
+    } else if (svgElement->hasTagName(SVGNames::ellipseTag)) {
+        SVGEllipseElement* element = static_cast<SVGEllipseElement*>(svgElement);
+        writeNameValuePair(ts, "cx", element->cx().value(element));
+        writeNameValuePair(ts, "cy", element->cy().value(element));
+        writeNameValuePair(ts, "rx", element->rx().value(element));
+        writeNameValuePair(ts, "ry", element->ry().value(element));
+    } else if (svgElement->hasTagName(SVGNames::circleTag)) {
+        SVGCircleElement* element = static_cast<SVGCircleElement*>(svgElement);
+        writeNameValuePair(ts, "cx", element->cx().value(element));
+        writeNameValuePair(ts, "cy", element->cy().value(element));
+        writeNameValuePair(ts, "r", element->r().value(element));
+    } else if (svgElement->hasTagName(SVGNames::polygonTag) || svgElement->hasTagName(SVGNames::polylineTag)) {
+        SVGPolyElement* element = static_cast<SVGPolyElement*>(svgElement);
+        writeNameAndQuotedValue(ts, "points", element->points()->valueAsString());
+    } else if (svgElement->hasTagName(SVGNames::pathTag)) {
+        SVGPathElement* element = static_cast<SVGPathElement*>(svgElement);
+        String pathString;
+        SVGPathParserFactory::self()->buildStringFromSVGPathSegList(element->pathSegList(), pathString, UnalteredParsing);
+        writeNameAndQuotedValue(ts, "data", pathString);
+    } else
+        ASSERT_NOT_REACHED();
     return ts;
 }
 

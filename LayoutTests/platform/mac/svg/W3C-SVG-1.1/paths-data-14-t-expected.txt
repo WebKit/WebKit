@@ -4,9 +4,9 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (16,99) size 397x165
       RenderSVGContainer {g} at (16,99) size 397x166 [transform={m=((1.80,0.00)(0.00,1.80)) t=(0.00,0.00)}]
-        RenderSVGPath {path} at (16,99) size 191x166 [stroke={[type=SOLID] [color=#000000]}] [data="M62.00,56.00 L113.96,146.00 L10.04,146.00 L62.00,56.00 Z M62.00,71.00 L100.97,138.50 L23.06,138.50 L62.03,71.00 Z"]
-        RenderSVGPath {path} at (225,100) size 188x163 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M177.00,56.00 L228.96,146.00 L125.04,146.00 L177.00,56.00 Z M177.00,71.00 L215.97,138.50 L138.03,138.50 L177.00,71.00 Z"]
+        RenderSVGPath {path} at (16,99) size 191x166 [stroke={[type=SOLID] [color=#000000]}] [data="M 62 56 L 113.962 146 L 10.0385 146 L 62 56 Z M 62 71 L 100.971 138.5 L 23.0589 138.5 L 62.03 71 Z"]
+        RenderSVGPath {path} at (225,100) size 188x163 [fill={[type=SOLID] [color=#FF0000] [fill rule=EVEN-ODD]}] [data="M 177 56 L 228.962 146 L 125.038 146 L 177 56 Z M 177 71 L 215.971 138.5 L 138.029 138.5 L 177 71 Z"]
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.2 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

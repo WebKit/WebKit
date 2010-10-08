@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 0x0
     RenderSVGContainer {g} at (0,0) size 0x0
       RenderSVGContainer {g} at (0,0) size 0x0
-        RenderSVGPath {polyline} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data=""]
+        RenderSVGPath {polyline} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [points=""]
       RenderSVGContainer {use} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 0x0
           RenderSVGContainer {g} at (0,0) size 0x0
-            RenderSVGPath {polyline} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data=""]
+            RenderSVGPath {polyline} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [points=""]
     RenderSVGContainer {g} at (0,0) size 0x0

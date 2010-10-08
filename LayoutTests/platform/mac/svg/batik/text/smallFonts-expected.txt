@@ -6,7 +6,7 @@ layer at (0,0) size 450x500
       RenderSVGResourceFilter {filter} [id="blur"] [filterUnits=userSpaceOnUse] [primitiveUnits=userSpaceOnUse]
         [feGaussianBlur stdDeviation="0.04, 0.04"]
           [SourceGraphic]
-      RenderSVGPath {path} at (0,0) size 150x50 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,100.00,900.00,100.00"]
+      RenderSVGPath {path} at (0,0) size 150x50 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
     RenderSVGContainer {g} at (0,0) size 450x500
       RenderSVGText {text} at (-95,-10) size 199x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 199x14
@@ -55,7 +55,7 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (216,0) size 43x15
               chunk 1 text run 1 at (216.90,3.20) startOffset 0 endOffset 9 width 42.00: "typeface."
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGPath {rect} at (0,150) size 250x100 [fill={[type=SOLID] [color=#1E90FF]}] [data="M0.90,3.50 L4.95,3.50 L4.95,4.50 L0.90,4.50 Z"]
+        RenderSVGPath {rect} at (0,150) size 250x100 [fill={[type=SOLID] [color=#1E90FF]}] [x=0.90] [y=3.50] [width=4.05] [height=1.00]
         RenderSVGText {text} at (0,-7) size 238x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 131x14
             chunk 1 text run 1 at (0.90,4.00) startOffset 0 endOffset 28 width 130.00: "Graphics attributes such as "
@@ -141,7 +141,7 @@ layer at (0,0) size 450x500
         RenderSVGContainer {g} at (250,400) size 150x50 [transform={m=((1.00,0.00)(0.00,1.00)) t=(5.00,8.00)}]
           RenderSVGContainer {use} at (250,400) size 150x50
             RenderSVGContainer {g} at (250,400) size 150x50
-              RenderSVGPath {path} at (250,400) size 150x50 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M100.00,200.00 C200.00,100.00,300.00,0.00,400.00,100.00 C500.00,200.00,600.00,300.00,700.00,200.00 C800.00,100.00,900.00,100.00,900.00,100.00"]
+              RenderSVGPath {path} at (250,400) size 150x50 [transform={m=((0.00,0.00)(0.00,0.00)) t=(0.00,0.00)}] [stroke={[type=SOLID] [color=#008000] [stroke width=5.00]}] [data="M 100 200 C 200 100 300 0 400 100 C 500 200 600 300 700 200 C 800 100 900 100 900 100"]
           RenderSVGText {text} at (0,0) size 0x0 contains 1 chunk(s)
             RenderSVGTextPath {textPath} at (0,0) size 0x0
               RenderSVGInlineText {#text} at (0,0) size 0x0

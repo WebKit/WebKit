@@ -14,17 +14,17 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 156x18
           chunk 1 (middle anchor) text run 1 at (147.50,200.00) startOffset 0 endOffset 24 width 155.00: "Display on text & tspans"
       RenderSVGContainer {g} at (12,81) size 426x252
-        RenderSVGPath {rect} at (12,81) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,82.00 L437.50,82.00 L437.50,107.00 L12.50,107.00 Z"]
-        RenderSVGPath {rect} at (12,106) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M12.50,107.00 L437.50,107.00 L437.50,132.00 L12.50,132.00 Z"]
-        RenderSVGPath {rect} at (12,131) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,132.00 L437.50,132.00 L437.50,157.00 L12.50,157.00 Z"]
-        RenderSVGPath {rect} at (12,156) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M12.50,157.00 L437.50,157.00 L437.50,182.00 L12.50,182.00 Z"]
-        RenderSVGPath {line} at (339,82) size 2x100 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M340.00,82.00 L340.00,182.00"]
-        RenderSVGPath {rect} at (12,206) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,207.00 L437.50,207.00 L437.50,232.00 L12.50,232.00 Z"]
-        RenderSVGPath {rect} at (12,231) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M12.50,232.00 L437.50,232.00 L437.50,257.00 L12.50,257.00 Z"]
-        RenderSVGPath {rect} at (12,256) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,257.00 L437.50,257.00 L437.50,282.00 L12.50,282.00 Z"]
-        RenderSVGPath {rect} at (12,281) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [data="M12.50,282.00 L437.50,282.00 L437.50,307.00 L12.50,307.00 Z"]
-        RenderSVGPath {rect} at (12,306) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [data="M12.50,307.00 L437.50,307.00 L437.50,332.00 L12.50,332.00 Z"]
-        RenderSVGPath {line} at (339,207) size 2x125 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [data="M340.00,207.00 L340.00,332.00"]
+        RenderSVGPath {rect} at (12,81) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=12.50] [y=82.00] [width=425.00] [height=25.00]
+        RenderSVGPath {rect} at (12,106) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=12.50] [y=107.00] [width=425.00] [height=25.00]
+        RenderSVGPath {rect} at (12,131) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=12.50] [y=132.00] [width=425.00] [height=25.00]
+        RenderSVGPath {rect} at (12,156) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=12.50] [y=157.00] [width=425.00] [height=25.00]
+        RenderSVGPath {line} at (339,82) size 2x100 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=340.00] [y1=82.00] [x2=340.00] [y2=182.00]
+        RenderSVGPath {rect} at (12,206) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=12.50] [y=207.00] [width=425.00] [height=25.00]
+        RenderSVGPath {rect} at (12,231) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=12.50] [y=232.00] [width=425.00] [height=25.00]
+        RenderSVGPath {rect} at (12,256) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=12.50] [y=257.00] [width=425.00] [height=25.00]
+        RenderSVGPath {rect} at (12,281) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#CCCCCC]}] [x=12.50] [y=282.00] [width=425.00] [height=25.00]
+        RenderSVGPath {rect} at (12,306) size 426x27 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=12.50] [y=307.00] [width=425.00] [height=25.00]
+        RenderSVGPath {line} at (339,207) size 2x125 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=340.00] [y1=207.00] [x2=340.00] [y2=332.00]
       RenderSVGText {text} at (360,83) size 70x18 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 70x18
           chunk 1 text run 1 at (360.00,97.00) startOffset 0 endOffset 13 width 70.00: "vis, vis, vis"

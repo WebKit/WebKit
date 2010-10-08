@@ -28,13 +28,13 @@ layer at (0,0) size 800x600
           [SourceGraphic]
     RenderSVGImage {image} at (10,10) size 100x100
       [filter="f1"] RenderSVGResourceFilter {filter} at (10,10) size 100x100
-    RenderSVGPath {rect} at (130,10) size 100x100 [fill={[type=SOLID] [color=#000000]}] [data="M130.00,10.00 L230.00,10.00 L230.00,110.00 L130.00,110.00 Z"]
+    RenderSVGPath {rect} at (130,10) size 100x100 [fill={[type=SOLID] [color=#000000]}] [x=130.00] [y=10.00] [width=100.00] [height=100.00]
       [filter="over"] RenderSVGResourceFilter {filter} at (130,10) size 100x100
     RenderSVGContainer {g} at (240,0) size 121x121 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,10.00)}]
       [filter="gauss"] RenderSVGResourceFilter {filter} at (-10,-10) size 120x120
-      RenderSVGPath {rect} at (250,10) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L75.00,0.00 L75.00,75.00 L0.00,75.00 Z"]
-      RenderSVGPath {rect} at (275,35) size 75x75 [fill={[type=SOLID] [color=#0000FF]}] [data="M25.00,25.00 L100.00,25.00 L100.00,100.00 L25.00,100.00 Z"]
+      RenderSVGPath {rect} at (250,10) size 75x75 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=75.00] [height=75.00]
+      RenderSVGPath {rect} at (275,35) size 75x75 [fill={[type=SOLID] [color=#0000FF]}] [x=25.00] [y=25.00] [width=75.00] [height=75.00]
     RenderSVGContainer {g} at (390,30) size 65x65 [transform={m=((1.00,0.00)(0.00,1.00)) t=(370.00,10.00)}]
       [filter="dilate2"] RenderSVGResourceFilter {filter} at (20,20) size 65x65
-      RenderSVGPath {rect} at (389,29) size 52x52 [stroke={[type=SOLID] [color=#FF0000]}] [data="M20.00,20.00 L70.00,20.00 L70.00,70.00 L20.00,70.00 Z"]
-      RenderSVGPath {rect} at (404,44) size 52x52 [stroke={[type=SOLID] [color=#0000FF]}] [data="M35.00,35.00 L85.00,35.00 L85.00,85.00 L35.00,85.00 Z"]
+      RenderSVGPath {rect} at (389,29) size 52x52 [stroke={[type=SOLID] [color=#FF0000]}] [x=20.00] [y=20.00] [width=50.00] [height=50.00]
+      RenderSVGPath {rect} at (404,44) size 52x52 [stroke={[type=SOLID] [color=#0000FF]}] [x=35.00] [y=35.00] [width=50.00] [height=50.00]
