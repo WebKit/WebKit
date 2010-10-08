@@ -4210,6 +4210,9 @@ fast/text/international/bidi-menulist.html
 fast/text/international/wrap-CJK-001.html
 fast/xpath/string-value.html
 
+# http://bugs.webkit.org/show_bug.cgi?id=47388
+fast/html/object-image-nested-fallback.html
+
 # ============================================================================= #
 # failing fonts tests
 # ============================================================================= #
