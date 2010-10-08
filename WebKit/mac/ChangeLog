@@ -1,3 +1,11 @@
+2010-10-07  Jer Noble  <jer.noble@apple.com>
+
+        Fix the Leopard 64-bit build.
+
+        * Configurations/WebKit.xcconfig: Add CoreServices.framework/Frameworks to the 
+            framework search path.
+        * WebView/WebVideoFullscreenController.mm: Explicitly import <OSStatus/Power.h>.
+
 2010-10-06  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
