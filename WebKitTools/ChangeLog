@@ -1,3 +1,12 @@
+2010-10-08  Andras Becsi  <abecsi@webkit.org>
+
+        Unreviewed build fix.
+
+        [Qt] Add missing limits.h include since the Qt version currently
+        ran on the bot does need that.
+
+        * WebKitTestRunner/InjectedBundle/qt/ActivateFontsQt.cpp:
+
 2010-10-08  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

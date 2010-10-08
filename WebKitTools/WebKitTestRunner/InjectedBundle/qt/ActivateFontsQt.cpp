@@ -36,6 +36,8 @@
 #include <fontconfig/fontconfig.h>
 #endif
 
+#include <limits.h>
+
 namespace WTR {
 
 void activateFonts()
