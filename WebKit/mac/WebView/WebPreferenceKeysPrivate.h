@@ -96,6 +96,7 @@
 #define WebKitUsesProxiedOpenPanelPreferenceKey @"WebKitUsesProxiedOpenPanel"
 #define WebKitPluginAllowedRunTimePreferenceKey @"WebKitPluginAllowedRunTime"
 #define WebKitFrameFlatteningEnabledPreferenceKey @"WebKitFrameFlatteningEnabled"
+#define WebKitSpatialNavigationEnabledPreferenceKey @"WebKitSpatialNavigationEnabled"
 #define WebKitPaginateDuringLayoutEnabledPreferenceKey @"WebKitPaginateDuringLayoutEnabled"
 #define WebKitDNSPrefetchingEnabledPreferenceKey @"WebKitDNSPrefetchingEnabled"
 #define WebKitFullScreenEnabledPreferenceKey @"WebKitFullScreenEnabled"

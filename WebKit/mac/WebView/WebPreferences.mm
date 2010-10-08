@@ -365,6 +365,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitUsesProxiedOpenPanelPreferenceKey,
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitSpatialNavigationEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDNSPrefetchingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFullScreenEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitMemoryInfoEnabledPreferenceKey,
@@ -1311,6 +1312,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setFrameFlatteningEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitFrameFlatteningEnabledPreferenceKey];
+}
+
+- (BOOL)isSpatialNavigationEnabled
+{
+    return [self _boolValueForKey:WebKitSpatialNavigationEnabledPreferenceKey];
+}
+
+- (void)setSpatialNavigationEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitSpatialNavigationEnabledPreferenceKey];
 }
 
 - (BOOL)paginateDuringLayoutEnabled

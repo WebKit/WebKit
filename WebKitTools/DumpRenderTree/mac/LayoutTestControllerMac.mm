@@ -422,7 +422,7 @@ void LayoutTestController::setFrameFlatteningEnabled(bool enabled)
 
 void LayoutTestController::setSpatialNavigationEnabled(bool enabled)
 {
-    // FIXME: Implement for SpatialNavigation layout tests.
+    [[[mainFrame webView] preferences] setSpatialNavigationEnabled:enabled];
 }
 
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(bool enabled)

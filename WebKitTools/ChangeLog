@@ -1,3 +1,17 @@
+2010-10-07  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        [Mac] [DRT] implement setSpatialNavigationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=47291
+
+        Implemented LayoutTestController::setSpatialNavigationEnabled for Mac's DRT
+        so it can track regression on the existing implementation and future improvements
+        we are making.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setSpatialNavigationEnabled):
+
 2010-10-07  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

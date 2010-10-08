@@ -1472,6 +1472,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
     settings->setLoadDeferringEnabled(shouldEnableLoadDeferring());
     settings->setFrameFlatteningEnabled([preferences isFrameFlatteningEnabled]);
+    settings->setSpatialNavigationEnabled([preferences isSpatialNavigationEnabled]);
     settings->setPaginateDuringLayoutEnabled([preferences paginateDuringLayoutEnabled]);
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);

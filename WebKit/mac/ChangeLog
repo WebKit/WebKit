@@ -1,3 +1,22 @@
+2010-10-07  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Simon Fraser.
+
+        [Mac] [DRT] implement setSpatialNavigationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=47291
+
+        Added the needed bits to make it possible to enabled spatial navigation
+        for the Mac port. For now it is being only used by DRT.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences isSpatialNavigationEnabled]):
+        (-[WebPreferences setSpatialNavigationEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+
 2010-10-07  Jer Noble  <jer.noble@apple.com>
 
         Fix the Leopard 64-bit build.

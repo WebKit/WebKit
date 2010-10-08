@@ -130,6 +130,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)isFrameFlatteningEnabled;
 - (void)setFrameFlatteningEnabled:(BOOL)flag;
 
+- (BOOL)isSpatialNavigationEnabled;
+- (void)setSpatialNavigationEnabled:(BOOL)flag;
+
 // zero means do AutoScale
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;
