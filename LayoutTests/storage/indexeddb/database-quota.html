@@ -1,0 +1,126 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Tests IndexedDB's quota enforcing mechanism.");
+if (window.layoutTestController) 
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    result = evalAndLog("indexedDB.open('name', 'description')");
+    verifyResult(result);
+    result.onsuccess = openSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    verifySuccessEvent(event);
+    window.db = evalAndLog("db = event.result");
+
+    result = evalAndLog("db.setVersion('new version')");
+    verifyResult(result);
+    result.onsuccess = setVersionSuccess;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function setVersionSuccess()
+{
+    debug("setVersionSuccess():");
+    verifySuccessEvent(event);
+    window.trans = evalAndLog("trans = event.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+
+    deleteAllObjectStores(db, createNewObjectStore);
+}
+
+function createNewObjectStore()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("db.version", "version b");
+    shouldBeEqualToString("db.name", "name");
+    shouldBe("db.objectStores", "[]");
+    shouldBe("db.objectStores.length", "0");
+    shouldBe("db.objectStores.contains('')", "false");
+
+    objectStore = evalAndLog('db.createObjectStore("test123")');
+    checkObjectStore();
+    commitAndContinue();
+}
+
+function checkObjectStore()
+{
+    shouldBe("db.objectStores", "['test123']");
+    shouldBe("db.objectStores.length", "1");
+    shouldBe("db.objectStores.contains('')", "false");
+    shouldBe("db.objectStores.contains('test456')", "false");
+    shouldBe("db.objectStores.contains('test123')", "true");
+}
+
+function commitAndContinue()
+{
+    window.setTimeout(checkQuotaEnforcing, 0);
+}
+
+function checkQuotaEnforcing()
+{
+    var trans = evalAndLog("trans = db.transaction()");
+    trans.onabort = testComplete;
+    trans.oncomplete = unexpectedCompleteCallback;
+    debug("Creating 'data' which contains 64K of data");
+    window.data = "X";
+    for (var i = 0; i < 16; i++)
+        data += data;
+    shouldBe("data.length", "65536");
+    window.dataAdded = 0;
+    window.store = evalAndLog("store = trans.objectStore('test123')");
+    addData();
+}
+
+function addData()
+{
+    if (dataAdded < 5 * 1024 * 1024) {
+        if (dataAdded > 0) {
+            verifySuccessEvent(event);
+            store = evalAndLog("store = event.source");
+        }
+    } else {
+        testFailed("added more than quota");
+        done();
+        return;
+    }
+    dataAdded += 65536;
+    result = evalAndLog("store.add({x: data}, dataAdded)");
+    result.onsuccess = addData;
+    result.onerror = logError;
+}
+
+function logError()
+{
+    debug("Error function called: (" + event.code + ") " + event.message);
+    verifyErrorEvent(event);
+}
+
+function testComplete()
+{
+    testPassed("Adding data failed due to quota error. Data added was: " + dataAdded / 1024 + " KB");
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>

@@ -30,6 +30,7 @@ namespace WebCore {
 
 GroupSettings::GroupSettings()
     : m_localStorageQuotaBytes(5 * 1024 * 1024) // Suggested by the HTML5 spec.
+    , m_indexedDBQuotaBytes(5 * 1024 * 1024)
 {
 }
 
@@ -42,5 +43,11 @@ void GroupSettings::setIndexedDBDatabasePath(const String& path)
 {
     m_indexedDBDatabasePath = path;
 }
+
+void GroupSettings::setIndexedDBQuotaBytes(int64_t quota)
+{
+    m_indexedDBQuotaBytes = quota;
+}
+
 
 } // namespace WebCore

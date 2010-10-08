@@ -68,7 +68,8 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
-    m_factoryBackend->open(name, description, request, document->securityOrigin(), document->frame(), document->page()->group().groupSettings()->indexedDBDatabasePath());
+    GroupSettings* groupSettings = document->page()->group().groupSettings();
+    m_factoryBackend->open(name, description, request, document->securityOrigin(), document->frame(), groupSettings->indexedDBDatabasePath(), groupSettings->indexedDBQuotaBytes());
     return request;
 }
 

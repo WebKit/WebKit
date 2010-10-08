@@ -43,6 +43,9 @@ public:
     void setLocalStorageQuotaBytes(unsigned);
     unsigned localStorageQuotaBytes() const { return m_localStorageQuotaBytes; }
 
+    void setIndexedDBQuotaBytes(int64_t);
+    int64_t indexedDBQuotaBytes() const { return m_indexedDBQuotaBytes; }
+
     void setIndexedDBDatabasePath(const String&);
     const String& indexedDBDatabasePath() const { return m_indexedDBDatabasePath; }
 
@@ -51,6 +54,7 @@ private:
 
     unsigned m_localStorageQuotaBytes;
     String m_indexedDBDatabasePath;
+    int64_t m_indexedDBQuotaBytes;
 };
 
 } // namespace WebCore

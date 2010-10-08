@@ -131,13 +131,13 @@ static PassRefPtr<IDBKey> fetchKeyFromKeyPath(SerializedScriptValue* value, cons
     return keys[0].release();
 }
 
-static void putObjectStoreData(SQLiteDatabase& db, IDBKey* key, SerializedScriptValue* value, int64_t objectStoreId, int64_t* dataRowId)
+static bool putObjectStoreData(SQLiteDatabase& db, IDBKey* key, SerializedScriptValue* value, int64_t objectStoreId, int64_t* dataRowId)
 {
     String sql = *dataRowId != -1 ? "UPDATE ObjectStoreData SET keyString = ?, keyDate = ?, keyNumber = ?, value = ? WHERE id = ?"
                                   : "INSERT INTO ObjectStoreData (keyString, keyDate, keyNumber, value, objectStoreId) VALUES (?, ?, ?, ?, ?)";
     SQLiteStatement query(db, sql);
-    bool ok = query.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+    if (query.prepare() != SQLResultOk)
+        return false;
     key->bindWithNulls(query, 1);
     query.bindText(4, value->toWireString());
     if (*dataRowId != -1)
@@ -145,44 +145,46 @@ static void putObjectStoreData(SQLiteDatabase& db, IDBKey* key, SerializedScript
     else
         query.bindInt64(5, objectStoreId);
 
-    ok = query.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+    if (query.step() != SQLResultDone)
+        return false;
 
     if (*dataRowId == -1)
         *dataRowId = db.lastInsertRowID();
+
+    return true;
 }
 
-static void putIndexData(SQLiteDatabase& db, IDBKey* key, int64_t indexId, int64_t objectStoreDataId)
+static int putIndexData(SQLiteDatabase& db, IDBKey* key, int64_t indexId, int64_t objectStoreDataId)
 {
     SQLiteStatement deleteQuery(db, "DELETE FROM IndexData WHERE objectStoreDataId = ?");
-    bool ok = deleteQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+    if (deleteQuery.prepare() != SQLResultOk)
+        return false;
     deleteQuery.bindInt64(1, objectStoreDataId);
-    ok = deleteQuery.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+    if (deleteQuery.step() != SQLResultDone)
+        return false;
 
     SQLiteStatement putQuery(db, "INSERT INTO IndexData (keyString, keyDate, keyNumber, indexId, objectStoreDataId) VALUES (?, ?, ?, ?, ?)");
-    ok = putQuery.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+    if (putQuery.prepare() != SQLResultOk)
+        return false;
     key->bindWithNulls(putQuery, 1);
     putQuery.bindInt64(4, indexId);
     putQuery.bindInt64(5, objectStoreDataId);
 
-    ok = putQuery.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
+    return putQuery.step() == SQLResultDone;
 }
 
-void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transaction)
+void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr)
 {
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
-    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, addOnly, callbacks)))
+    RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
+    if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, addOnly, callbacks, transaction)))
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "put must be called in the context of a transaction."));
 }
 
-void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> callbacks)
+void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, bool addOnly, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
@@ -227,14 +229,25 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         return;
     }
 
-    // Before this point, don't do any mutation.  After this point, don't error out.
+    // Before this point, don't do any mutation.  After this point, rollback the transaction in case of error.
 
     int64_t dataRowId = isExistingValue ? getQuery.getColumnInt(0) : -1;
-    putObjectStoreData(objectStore->sqliteDatabase(), key.get(), value.get(), objectStore->id(), &dataRowId);
+    if (!putObjectStoreData(objectStore->sqliteDatabase(), key.get(), value.get(), objectStore->id(), &dataRowId)) {
+        // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
+        transaction->abort();
+        return;
+    }
 
     int i = 0;
-    for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it, ++i)
-        putIndexData(objectStore->sqliteDatabase(), indexKeys[i].get(), it->second->id(), dataRowId);
+    for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it, ++i) {
+        if (!putIndexData(objectStore->sqliteDatabase(), indexKeys[i].get(), it->second->id(), dataRowId)) {
+            // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
+            transaction->abort();
+            return;
+        }
+    }
 
     callbacks->onSuccess(key.get());
 }
@@ -287,14 +300,18 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(cons
 void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
     SQLiteStatement insert(objectStore->sqliteDatabase(), "INSERT INTO Indexes (objectStoreId, name, keyPath, isUnique) VALUES (?, ?, ?, ?)");
-    bool ok = insert.prepare() == SQLResultOk;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+    if (insert.prepare() != SQLResultOk) {
+        transaction->abort();
+        return;
+    }
     insert.bindInt64(1, objectStore->m_id);
     insert.bindText(2, index->name());
     insert.bindText(3, index->keyPath());
     insert.bindInt(4, static_cast<int>(index->unique()));
-    ok = insert.step() == SQLResultDone;
-    ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
+    if (insert.step() != SQLResultDone) {
+        transaction->abort();
+        return;
+    }
     int64_t id = objectStore->sqliteDatabase().lastInsertRowID();
     index->setId(id);
     transaction->didCompleteTaskEvents();

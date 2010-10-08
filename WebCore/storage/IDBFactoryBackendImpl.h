@@ -49,7 +49,7 @@ public:
     }
     virtual ~IDBFactoryBackendImpl();
 
-    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir);
+    virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
 
     static String databaseFileName(const String& name, SecurityOrigin*);
 
