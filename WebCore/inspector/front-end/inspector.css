@@ -810,6 +810,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 .resource-view {
     display: none;
     position: absolute;
+    background: white;
     top: 0;
     left: 0;
     right: 0;
@@ -820,7 +821,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     display: block;
 }
 
-.resource-view .scope-bar {
+.resource-view .tabbed-pane-header {
     display: none;
     position: absolute;
     height: 20px;
@@ -831,7 +832,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     border-bottom: 1px solid rgb(163, 163, 163);
 }
 
-.resource-view.headers-visible .scope-bar {
+.resource-view.headers-visible .tabbed-pane-header {
     display: block;
 }
 
@@ -1373,10 +1374,10 @@ body.inactive .placard.selected {
 
 .section .properties, .event-bar .event-properties {
     display: none;
-}
-
-.section.expanded .properties, .event-bar.expanded .event-properties {
-    display: block;
+    margin: 0;
+    padding: 2px 6px 3px;
+    list-style: none;
+    min-height: 18px;
 }
 
 .section.no-affect .properties li {
@@ -1387,14 +1388,11 @@ body.inactive .placard.selected {
     opacity: 1.0;
 }
 
-ol.properties-tree {
-    margin: 0;
-    padding: 2px 6px 3px;
-    list-style: none;
-    min-height: 18px;
+.section.expanded .properties, .event-bar.expanded .event-properties {
+    display: block;
 }
 
-ol.properties-tree li {
+.section .properties li, .event-properties li {
     margin-left: 12px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -1403,11 +1401,26 @@ ol.properties-tree li {
     cursor: auto;
 }
 
-ol.properties-tree li.parent {
+.section .properties li.parent, .event-properties li.parent {
     margin-left: 1px;
 }
 
-ol.properties-tree li.parent::before {
+.section .properties ol, .event-properties ol, .stack-trace ol, ol.stack-trace {
+    display: none;
+    margin: 0;
+    -webkit-padding-start: 12px;
+    list-style: none;
+}
+
+ol.stack-trace {
+    -webkit-padding-start: 0px;
+}
+
+.section .properties ol.expanded, .event-properties ol.expanded, .stack-trace ol, ol.stack-trace {
+    display: block;
+}
+
+.section .properties li.parent::before, .event-properties li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
     opacity: 0.75;
     float: left;
@@ -1419,45 +1432,14 @@ ol.properties-tree li.parent::before {
     cursor: default;
 }
 
-ol.properties-tree li.parent.expanded::before {
+.section .properties li.parent.expanded::before, .event-properties li.parent.expanded::before {
     content: url(Images/treeDownTriangleBlack.png);
     margin-top: 1px;
 }
 
-ol.properties-tree li .info {
+.section .properties li .info, .event-properties li .info {
     padding-top: 4px;
     padding-bottom: 3px;
-}
-
-ol.properties-tree ol, .stack-trace ol, ol.stack-trace {
-    display: none;
-    margin: 0;
-    -webkit-padding-start: 12px;
-    list-style: none;
-}
-
-ol.properties-tree ol.expanded, .stack-trace ol, ol.stack-trace {
-    display: block;
-}
-
-ol.stack-trace {
-    -webkit-padding-start: 0px;
-}
-
-.event-listener-breakpoints .event-category {
-    font-size: 12px;
-    font-weight: bold;
-    color: rgb(110, 110, 110);
-}
-
-ol.event-listener-breakpoints.properties-tree .children li {
-    margin-left: 17px;
-}
-
-.event-listener-breakpoints .checkbox-elem {
-    float: left;
-    margin-top: 1px;
-    margin-left: 0px;
 }
 
 .section .event-bars {
@@ -2582,6 +2564,32 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 
 #console-filter {
     margin-top: 1px;
+}
+
+.tabbed-pane-header {
+    height: 23px;
+    padding: 0 10px;
+    border-bottom: 1px solid rgb(163, 163, 163);
+}
+
+.tabbed-pane-header li {
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 11px;
+    font-weight: bold;
+    color: rgb(46, 46, 46);
+    background: transparent;
+    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
+    vertical-align: middle;
+    padding: 1px 7px 2px;
+    border: 1px solid transparent;
+    border-bottom: none;
+}
+
+.tabbed-pane-header li.selected {
+    background-color: white;
+    border: 1px solid rgb(163, 163, 163);
+    border-bottom: none;
 }
 
 .scope-bar {
@@ -4021,10 +4029,6 @@ ol.breakpoint-list {
     text-overflow: ellipsis;
     overflow: hidden;
     margin: 2px 0 0px 20px;
-}
-
-.breakpoint-list .breakpoint-hit {
-    background-color: yellow;
 }
 
 .webkit-html-js-node, .webkit-html-css-node {

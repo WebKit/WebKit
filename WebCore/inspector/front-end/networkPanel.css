@@ -494,3 +494,103 @@
 .network.panel .data-grid td.network-summary {
     padding: 0;
 }
+
+/* Viewer */
+
+.network.panel.viewing-resource .data-grid td,
+.network.panel.viewing-resource .data-grid th {
+    border-right: none;
+}
+
+.network.panel.viewing-resource .data-grid th.corner {
+    display: none;
+}
+
+#network-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    border-right: 0 none transparent;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.network.panel.viewing-resource #network-container {
+    border-right: 1px solid rgb(163, 163, 163);
+}
+
+#network-views {
+    position: absolute;
+    background: rgb(203, 203, 203);
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.network.panel .data-grid.full-grid-mode .viewer-column {
+    display: none;
+}
+
+.network.panel .data-grid.brief-grid-mode .viewer-column,
+.network.panel .data-grid.brief-grid-mode .method-column,
+.network.panel .data-grid.brief-grid-mode .status-column,
+.network.panel .data-grid.brief-grid-mode .type-column,
+.network.panel .data-grid.brief-grid-mode .size-column,
+.network.panel .data-grid.brief-grid-mode .time-column {
+    display: none;
+}
+
+.network.panel.viewing-resource .network-timeline-grid {
+    display: none;
+}
+
+.network.panel .data-grid.viewing-resource-mode .method-column,
+.network.panel .data-grid.viewing-resource-mode .status-column,
+.network.panel .data-grid.viewing-resource-mode .type-column,
+.network.panel .data-grid.viewing-resource-mode .size-column,
+.network.panel .data-grid.viewing-resource-mode .time-column,
+.network.panel .data-grid.viewing-resource-mode .timeline-column {
+    display: none;
+}
+
+.network.panel .network-sidebar {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.network.panel:not(.viewing-resource) .sidebar-resizer-vertical {
+    display: none;
+}
+
+.network.panel.viewing-resource .data-grid-resizer {
+    display: none;
+}
+
+.network.panel .scope-bar {
+    height: 23px;
+    padding-top: 5px;
+}
+
+.network.panel .resource-view.headers-visible .resource-view-content {
+    top: 23px;
+}
+
+.network.panel:not(.viewing-resource) .data-grid tr.selected {
+    background-color: transparent;
+    color: black;
+}
+
+.network.panel .resource-view .tabbed-pane-header {
+    height: 23px;
+    padding-top: 3px;
+}
+
+.network.panel.viewing-resource .data-grid .data-container {
+    padding-right: 0;
+}

@@ -32,16 +32,26 @@ WebInspector.NetworkPanel = function()
 {
     WebInspector.Panel.call(this, "network");
 
+    this.createSidebar();
+    this.sidebarElement.className = "network-sidebar";
+
     this._resources = [];
     this._staleResources = [];
     this._resourceGridNodes = {};
     this._mainResourceLoadTime = -1;
     this._mainResourceDOMContentTime = -1;
+    this._hiddenCategories = {};
 
     this._categories = WebInspector.resourceCategories;
 
+    this.containerElement = document.createElement("div");
+    this.containerElement.id = "network-container";
+    this.sidebarElement.appendChild(this.containerElement);
+
     this._viewsContainerElement = document.createElement("div");
     this._viewsContainerElement.id = "network-views";
+    this._viewsContainerElement.className = "hidden";
+
     this.element.appendChild(this._viewsContainerElement);
 
     this._createSortingFunctions();
@@ -55,6 +65,8 @@ WebInspector.NetworkPanel = function()
 
     this.calculator = new WebInspector.NetworkTransferTimeCalculator();
     this._filter(this._filterAllElement, false);
+
+    this._toggleGridMode();
 }
 
 WebInspector.NetworkPanel.prototype = {
@@ -83,6 +95,26 @@ WebInspector.NetworkPanel.prototype = {
         WebInspector.Panel.prototype.resize.call(this);
         this._dataGrid.updateWidths();
         this._positionSummaryBar();
+    },
+
+    updateSidebarWidth: function()
+    {
+        if (!this._viewingResourceMode)
+            return;
+        WebInspector.Panel.prototype.updateSidebarWidth.apply(this, arguments);
+    },
+
+    updateMainViewWidth: function(width)
+    {
+        this._viewsContainerElement.style.left = width + "px";
+    },
+
+    handleShortcut: function(event)
+    {
+        if (this._viewingResourceMode && event.keyCode === WebInspector.KeyboardShortcut.Keys.Esc.code) {
+            this._toggleGridMode();
+            event.handled = true;
+        }
     },
 
     _positionSummaryBar: function()
@@ -121,16 +153,12 @@ WebInspector.NetworkPanel.prototype = {
 
     _createTable: function()
     {
-        this.containerElement = document.createElement("div");
-        this.containerElement.id = "network-container";
-        this.element.appendChild(this.containerElement);
-
         var columns = {name: {}, method: {}, status: {}, type: {}, size: {}, time: {}, timeline: {}};
         columns.name.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Name"), WebInspector.UIString("Path"));
         columns.name.sortable = true;
         columns.name.width = "20%";
         columns.name.disclosure = true;
-        
+
         columns.method.title = WebInspector.UIString("Method");
         columns.method.sortable = true;
         columns.method.width = "7%";
@@ -159,7 +187,7 @@ WebInspector.NetworkPanel.prototype = {
         columns.timeline.sort = "ascending";
 
         this._dataGrid = new WebInspector.DataGrid(columns);
-        this.element.appendChild(this._dataGrid.element);
+        this.containerElement.appendChild(this._dataGrid.element);
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);
         this._dataGrid.addEventListener("width changed", this._updateDividersIfNeeded, this);
 
@@ -257,15 +285,17 @@ WebInspector.NetworkPanel.prototype = {
         var sortingFunction = this._sortingFunctions[columnIdentifier];
         if (!sortingFunction)
             return;
+
         this._dataGrid.sortNodes(sortingFunction, this._dataGrid.sortOrder === "descending");
         this._timelineSortSelector.selectedIndex = 0;
     },
 
     _sortByTimeline: function()
     {
-        if (this._timelineSortSelector.selectedIndex === 0)
-            return;  // Do nothing - this is 'Timeline' caption.
-        var selectedOption = this._timelineSortSelector[this._timelineSortSelector.selectedIndex];
+        var selectedIndex = this._timelineSortSelector.selectedIndex;
+        if (!selectedIndex)
+            selectedIndex = 1; // Sort by start time by default.
+        var selectedOption = this._timelineSortSelector[selectedIndex];
         var value = selectedOption.value;
 
         var sortingFunction = this._sortingFunctions[value];
@@ -312,7 +342,7 @@ WebInspector.NetworkPanel.prototype = {
     {
         this._summaryBarElement = document.createElement("div");
         this._summaryBarElement.className = "network-summary-bar";
-        this.element.appendChild(this._summaryBarElement);
+        this.containerElement.appendChild(this._summaryBarElement);
     },
 
     _updateSummaryBar: function()
@@ -344,11 +374,13 @@ WebInspector.NetworkPanel.prototype = {
     _showCategory: function(category)
     {
         this._dataGrid.element.addStyleClass("filter-" + category);
+        delete this._hiddenCategories[category];
     },
 
     _hideCategory: function(category)
     {
         this._dataGrid.element.removeStyleClass("filter-" + category);
+        this._hiddenCategories[category] = true;
     },
 
     _updateFilter: function(e)
@@ -432,8 +464,14 @@ WebInspector.NetworkPanel.prototype = {
 
     _updateDividersIfNeeded: function(force)
     {
-        this._timelineGrid.element.style.left = this._dataGrid.resizers[this._dataGrid.resizers.length - 1].style.left;
-        this._timelineGrid.element.style.right = "18px";
+        var timelineColumn = this._dataGrid.columns.timeline;
+        for (var i = 0; i < this._dataGrid.resizers.length; ++i) {
+            if (timelineColumn.ordinal === this._dataGrid.resizers[i].rightNeighboringColumnID) {
+                // Position timline grid location.
+                this._timelineGrid.element.style.left = this._dataGrid.resizers[i].style.left;
+                this._timelineGrid.element.style.right = "18px";
+            }
+        }
 
         var proceed = true;
         if (!this.visible) {
@@ -601,25 +639,15 @@ WebInspector.NetworkPanel.prototype = {
         this._positionSummaryBar();
     },
 
+    hide: function()
+    {
+        WebInspector.Panel.prototype.hide.call(this);
+        this._popoverHelper.hidePopup();
+    },
+
     get searchableViews()
     {
         var views = [];
-
-        const visibleView = this.visibleView;
-        if (visibleView && visibleView.performSearch)
-            views.push(visibleView);
-
-        var resourcesLength = this._resources.length;
-        for (var i = 0; i < resourcesLength; ++i) {
-            var resource = this._resources[i];
-            if (!this._resourceGridNode(resource) || !this._resourceGridNode(resource).selectable)
-                continue;
-            var resourceView = this.resourceViewForResource(resource);
-            if (!resourceView.performSearch || resourceView === visibleView)
-                continue;
-            views.push(resourceView);
-        }
-
         return views;
     },
 
@@ -665,7 +693,7 @@ WebInspector.NetworkPanel.prototype = {
             var node = this._resourceGridNode(resource);
             if (!node) {
                 // Create the timeline tree element and graph.
-                node = new WebInspector.NetworkDataGridNode(resource);
+                node = new WebInspector.NetworkDataGridNode(this, resource);
                 this._resourceGridNodes[resource.identifier] = node;
                 this._dataGrid.appendChild(node);
             }
@@ -693,7 +721,9 @@ WebInspector.NetworkPanel.prototype = {
     reset: function()
     {
         this._popoverHelper.hidePopup();
-        this.closeVisibleResource();
+        this._closeVisibleResource();
+
+        this._toggleGridMode();
 
         delete this.currentQuery;
         this.searchCanceled();
@@ -711,8 +741,6 @@ WebInspector.NetworkPanel.prototype = {
         }
 
         // Begin reset timeline
-        this.containerElement.scrollTop = 0;
-
         if (this._calculator)
             this._calculator.reset();
 
@@ -748,11 +776,11 @@ WebInspector.NetworkPanel.prototype = {
     {
         this._staleResources.push(resource);
         this._scheduleRefresh();
-    },
 
-    recreateViewForResourceIfNeeded: function(resource)
-    {
         if (!resource || !resource._resourcesView)
+            return;
+
+        if (this._resourceViewTypeMatchesResource(resource, resource._resourcesView))
             return;
 
         var newView = this._createResourceView(resource);
@@ -780,27 +808,26 @@ WebInspector.NetworkPanel.prototype = {
 
     canShowSourceLine: function(url, line)
     {
-        return this._resourceTrackingEnabled && !!WebInspector.resourceForURL(url);
+        return false;
     },
 
     showSourceLine: function(url, line)
     {
-        this.showResource(WebInspector.resourceForURL(url), line);
     },
 
-    showResource: function(resource, line)
+    _showResource: function(resource, line)
     {
         if (!resource)
             return;
 
         this._popoverHelper.hidePopup();
 
-        this.containerElement.addStyleClass("viewing-resource");
+        this._toggleViewingResourceMode();
 
         if (this.visibleResource && this.visibleResource._resourcesView)
             this.visibleResource._resourcesView.hide();
 
-        var view = this.resourceViewForResource(resource);
+        var view = this._resourceViewForResource(resource);
         view.headersVisible = true;
         view.show(this._viewsContainerElement);
 
@@ -812,23 +839,13 @@ WebInspector.NetworkPanel.prototype = {
                 view.highlightLine(line);
         }
 
-        this.revealAndSelectItem(resource);
-
         this.visibleResource = resource;
-
         this.updateSidebarWidth();
     },
 
-    showView: function(view)
+    _closeVisibleResource: function()
     {
-        if (!view)
-            return;
-        this.showResource(view.resource);
-    },
-
-    closeVisibleResource: function()
-    {
-        this.containerElement.removeStyleClass("viewing-resource");
+        this.element.removeStyleClass("viewing-resource");
 
         if (this.visibleResource && this.visibleResource._resourcesView)
             this.visibleResource._resourcesView.hide();
@@ -840,30 +857,13 @@ WebInspector.NetworkPanel.prototype = {
         this.updateSidebarWidth();
     },
 
-    resourceViewForResource: function(resource)
+    _resourceViewForResource: function(resource)
     {
         if (!resource)
             return null;
         if (!resource._resourcesView)
             resource._resourcesView = this._createResourceView(resource);
         return resource._resourcesView;
-    },
-
-    sourceFrameForResource: function(resource)
-    {
-        var view = this.resourceViewForResource(resource);
-        if (!view)
-            return null;
-
-        if (!view.setupSourceFrameIfNeeded)
-            return null;
-
-        // Setting up the source frame requires that we be attached.
-        if (!this.element.parentNode)
-            this.attach();
-
-        view.setupSourceFrameIfNeeded();
-        return view.sourceFrame;
     },
 
     _toggleLargerResources: function()
@@ -901,6 +901,24 @@ WebInspector.NetworkPanel.prototype = {
             default:
                 return new WebInspector.ResourceView(resource);
         }
+    },
+
+    _resourceViewTypeMatchesResource: function(resource, resourceView)
+    {
+        switch (resource.category) {
+            case WebInspector.resourceCategories.documents:
+            case WebInspector.resourceCategories.stylesheets:
+            case WebInspector.resourceCategories.scripts:
+            case WebInspector.resourceCategories.xhr:
+                return resourceView instanceof WebInspector.SourceView;
+            case WebInspector.resourceCategories.images:
+                return resourceView instanceof WebInspector.ImageView;
+            case WebInspector.resourceCategories.fonts:
+                return resourceView instanceof WebInspector.FontView;
+            default:
+                return resourceView instanceof WebInspector.ResourceView;
+        }
+        return false;
     },
 
     _getPopoverAnchor: function(element)
@@ -1000,10 +1018,80 @@ WebInspector.NetworkPanel.prototype = {
         return popover;
     },
 
-    hide: function()
+    _toggleGridMode: function()
     {
-        WebInspector.Panel.prototype.hide.call(this);
-        this._popoverHelper.hidePopup();
+        if (this._viewingResourceMode) {
+            this._viewingResourceMode = false;
+            this.element.removeStyleClass("viewing-resource");
+            this._dataGrid.element.removeStyleClass("viewing-resource-mode");
+            this._viewsContainerElement.addStyleClass("hidden");
+            this.sidebarElement.style.right = 0;
+            this.sidebarElement.style.removeProperty("width");
+        }
+
+        if (this._briefGrid) {
+            this._dataGrid.element.removeStyleClass("full-grid-mode");
+            this._dataGrid.element.addStyleClass("brief-grid-mode");
+
+            this._dataGrid.hideColumn("method");
+            this._dataGrid.hideColumn("status");
+            this._dataGrid.hideColumn("type");
+            this._dataGrid.hideColumn("size");
+            this._dataGrid.hideColumn("time");
+
+            var widths = {};
+            widths.name = 20;
+            widths.timeline = 80;
+        } else {
+            this._dataGrid.element.addStyleClass("full-grid-mode");
+            this._dataGrid.element.removeStyleClass("brief-grid-mode");
+
+            this._dataGrid.showColumn("method");
+            this._dataGrid.showColumn("status");
+            this._dataGrid.showColumn("type");
+            this._dataGrid.showColumn("size");
+            this._dataGrid.showColumn("time");
+
+            var widths = {};
+            widths.name = 20;
+            widths.method = 7;
+            widths.status = 8;
+            widths.type = 7;
+            widths.size = 10;
+            widths.time = 10;
+            widths.timeline = 40;
+        }
+
+        this._dataGrid.showColumn("timeline");
+        this._dataGrid.applyColumnWidthsMap(widths);
+
+    },
+
+    _toggleViewingResourceMode: function()
+    {
+        if (this._viewingResourceMode)
+            return;
+        this._viewingResourceMode = true;
+        this._preservedColumnWidths = this._dataGrid.columnWidthsMap();
+
+        this.element.addStyleClass("viewing-resource");
+        this._dataGrid.element.addStyleClass("viewing-resource-mode");
+        this._dataGrid.element.removeStyleClass("full-grid-mode");
+        this._dataGrid.element.removeStyleClass("brief-grid-mode");
+
+        this._dataGrid.hideColumn("method");
+        this._dataGrid.hideColumn("status");
+        this._dataGrid.hideColumn("type");
+        this._dataGrid.hideColumn("size");
+        this._dataGrid.hideColumn("time");
+        this._dataGrid.hideColumn("timeline");
+
+        this._viewsContainerElement.removeStyleClass("hidden");
+        this.updateSidebarWidth(200);
+
+        var widths = {};
+        widths.name = 100;
+        this._dataGrid.applyColumnWidthsMap(widths);
     }
 }
 
@@ -1296,9 +1384,10 @@ WebInspector.NetworkTransferDurationCalculator.prototype = {
 
 WebInspector.NetworkTransferDurationCalculator.prototype.__proto__ = WebInspector.NetworkTimeCalculator.prototype;
 
-WebInspector.NetworkDataGridNode = function(resource)
+WebInspector.NetworkDataGridNode = function(panel, resource)
 {
     WebInspector.DataGridNode.call(this, {});
+    this._panel = panel;
     this._resource = resource;
 }
 
@@ -1314,7 +1403,23 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._createTimelineCell();
     },
 
-    _createDivInTD: function(columnIdentifier) {
+    select: function()
+    {
+        WebInspector.DataGridNode.prototype.select.apply(this, arguments);
+        this._panel._showResource(this._resource);
+    },
+
+    get selectable()
+    {
+        if (!this._panel._hiddenCategories.all)
+            return true;
+        if (this._panel._hiddenCategories[this._resource.category.name])
+            return false;
+        return true;
+    },
+
+    _createDivInTD: function(columnIdentifier)
+    {
         var td = document.createElement("td");
         td.className = columnIdentifier + "-column";
         var div = document.createElement("div");
@@ -1322,7 +1427,6 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._element.appendChild(td);
         return div;
     },
-
 
     _createTimelineCell: function()
     {
@@ -1353,6 +1457,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._barAreaElement.appendChild(this._labelRightElement);
 
         this._timelineCell = document.createElement("td");
+        this._timelineCell.className = "timeline-column";
         this._element.appendChild(this._timelineCell);
         this._timelineCell.appendChild(this._graphElement);
     },
