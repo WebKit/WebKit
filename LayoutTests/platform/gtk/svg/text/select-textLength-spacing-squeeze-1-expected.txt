@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 335x95
     RenderSVGContainer {g} at (0,0) size 335x95
-      RenderSVGPath {svg:line} at (45,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M10.00,0.00 L10.00,14.00"]
-      RenderSVGPath {svg:line} at (115,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [data="M24.27,0.00 L24.27,14.00"]
-      RenderSVGPath {svg:rect} at (50,0) size 75x65 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [data="M10.00,0.00 L24.27,0.00 L24.27,13.00 L10.00,13.00 Z"]
+      RenderSVGPath {svg:line} at (45,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=0.00] [x2=10.00] [y2=14.00]
+      RenderSVGPath {svg:line} at (115,0) size 10x70 [stroke={[type=SOLID] [color=#008000]}] [fill={[type=SOLID] [color=#000000]}] [x1=24.27] [y1=0.00] [x2=24.27] [y2=14.00]
+      RenderSVGPath {svg:rect} at (50,0) size 75x65 [fill={[type=SOLID] [color=#FF0000] [opacity=0.40]}] [x=10.00] [y=0.00] [width=14.27] [height=13.00]
       RenderSVGText {svg:text} at (0,27) size 134x10 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 134x10
           chunk 1 text run 1 at (0.00,35.00) startOffset 0 endOffset 42 width 134.00: "Expected 'Tex' to be selected, got: 'Text'"

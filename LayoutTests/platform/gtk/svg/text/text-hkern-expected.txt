@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (4,29) size 142x115
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M2.50,70.00 L200.00,70.00"]
+      RenderSVGPath {path} at (0,0) size 0x0 [fill={[type=SOLID] [color=#000000]}] [data="M 2.5 70 L 200 70"]
     RenderSVGText {text} at (0,-8) size 70x10 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 70x10
         chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 2.50: "1"
