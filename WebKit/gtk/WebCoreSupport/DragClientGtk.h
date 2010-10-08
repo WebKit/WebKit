@@ -54,11 +54,7 @@ namespace WebKit {
 
         virtual void dragControllerDestroyed();
 
-#ifdef GTK_API_VERSION_2
-        void dragIconWindowExposeEvent(GtkWidget*, GdkEventExpose*);
-#else
-        void dragIconWindowDraw(GtkWidget*, cairo_t*);
-#endif
+        void drawDragIconWindow(GtkWidget*, cairo_t*);
 
     private:
         WebKitWebView* m_webView;

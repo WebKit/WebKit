@@ -1,3 +1,24 @@
+2010-10-08  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove duplicate code in WebKit/gtk/WebCoreSupport/DragClientGtk.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=47367
+
+        Remove as much duplicate code as possible from DragClientGtk. Most of this code
+        is GTK2/GTK3 independent, so only the bits that aren't should be protected by
+        #ifdefs.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::dragIconWindowDrawEventCallback): Modified the name of this callback
+        so that it is shared between build types.
+        (WebKit::DragClient::DragClient): Updated the signal connectors to reflect the change above.
+        (WebKit::DragClient::~DragClient): The build types share the callback name, so remove
+        the #ifdef here.
+        (WebKit::DragClient::drawDragIconWindow): Changed the name of this method and make it
+        independent of the build type.
+        * WebCoreSupport/DragClientGtk.h: Update method declaration and remove #ifdefs.
+
 2010-10-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.
