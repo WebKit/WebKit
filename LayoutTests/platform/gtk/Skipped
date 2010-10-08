@@ -3049,6 +3049,7 @@ http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.ht
 http/tests/misc/acid3.html
 http/tests/misc/isindex-formdata.html
 http/tests/misc/policy-delegate-called-twice.html
+http/tests/misc/prefetch-purpose.html
 http/tests/misc/redirect-to-external-url.html
 http/tests/misc/slow-preload-cancel.html
 http/tests/misc/window-dot-stop.html

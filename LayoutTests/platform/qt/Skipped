@@ -5301,6 +5301,7 @@ fast/dom/Geolocation/callback-to-remote-context2.html
 
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/prefetch.html
+http/tests/misc/prefetch-purpose.html
 
 # [Qt] Regression(r61749): inspector/debugger-pause-on-debugger-statement.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41147

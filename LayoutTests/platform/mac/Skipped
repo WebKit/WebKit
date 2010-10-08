@@ -233,6 +233,7 @@ fast/dom/Window/window-properties-device-orientation.html
 
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/prefetch.html
+http/tests/misc/prefetch-purpose.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=39908
 fast/dom/Geolocation/maximum-age.html
