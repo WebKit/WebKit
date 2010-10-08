@@ -48,9 +48,12 @@ String::String(const UChar* str)
     if (!str)
         return;
         
-    int len = 0;
+    size_t len = 0;
     while (str[len] != UChar(0))
         len++;
+
+    if (len > std::numeric_limits<unsigned>::max())
+        CRASH();
     
     m_impl = StringImpl::create(str, len);
 }
@@ -175,6 +178,8 @@ void String::append(const UChar* charactersToAppend, unsigned lengthToAppend)
 
     ASSERT(charactersToAppend);
     UChar* data;
+    if (lengthToAppend > std::numeric_limits<unsigned>::max() - length())
+        CRASH();
     RefPtr<StringImpl> newImpl =
         StringImpl::createUninitialized(length() + lengthToAppend, data);
     memcpy(data, characters(), length() * sizeof(UChar));
@@ -196,6 +201,8 @@ void String::insert(const UChar* charactersToInsert, unsigned lengthToInsert, un
 
     ASSERT(charactersToInsert);
     UChar* data;
+    if (lengthToInsert > std::numeric_limits<unsigned>::max() - length())
+        CRASH();
     RefPtr<StringImpl> newImpl =
       StringImpl::createUninitialized(length() + lengthToInsert, data);
     memcpy(data, characters(), position * sizeof(UChar));
@@ -718,6 +725,9 @@ CString String::utf8(bool strict) const
 
 String String::fromUTF8(const char* stringStart, size_t length)
 {
+    if (length > std::numeric_limits<unsigned>::max())
+        CRASH();
+
     if (!stringStart)
         return String();
 

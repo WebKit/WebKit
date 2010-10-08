@@ -1,3 +1,18 @@
+2010-10-08  Chris Evans  <cevans@google.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47393
+
+        Use unsigned consistently to check for max StringImpl length.
+        Add a few integer overflow checks.
+        Uses the existing paradigm of CRASH() when we can't reasonably handle a crazily large request.
+
+        * wtf/text/WTFString.cpp:
+        * wtf/text/StringImpl.h:
+        * wtf/text/StringImpl.cpp:
+        Better use of size_t vs. unsigned; check for integer overflows.
+
 2010-10-07  David Goodwin  <david_goodwin@apple.com>
 
         Reviewed by Oliver Hunt.

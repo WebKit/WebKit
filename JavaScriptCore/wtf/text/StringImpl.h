@@ -165,7 +165,7 @@ public:
             return empty();
         }
 
-        if (length > ((std::numeric_limits<size_t>::max() - sizeof(StringImpl)) / sizeof(UChar))) {
+        if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(UChar))) {
             output = 0;
             return 0;
         }
@@ -187,6 +187,8 @@ public:
     {
         if (size_t size = vector.size()) {
             ASSERT(vector.data());
+            if (size > std::numeric_limits<unsigned>::max())
+                CRASH();
             return adoptRef(new StringImpl(vector.releaseBuffer(), size));
         }
         return empty();

@@ -81,7 +81,7 @@ PassRefPtr<StringImpl> StringImpl::createUninitialized(unsigned length, UChar*& 
     // Allocate a single buffer large enough to contain the StringImpl
     // struct as well as the data which it contains. This removes one 
     // heap allocation from this call.
-    if (length > ((std::numeric_limits<size_t>::max() - sizeof(StringImpl)) / sizeof(UChar)))
+    if (length > ((std::numeric_limits<unsigned>::max() - sizeof(StringImpl)) / sizeof(UChar)))
         CRASH();
     size_t size = sizeof(StringImpl) + length * sizeof(UChar);
     StringImpl* string = static_cast<StringImpl*>(fastMalloc(size));
