@@ -4,13 +4,13 @@ layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGContainer {g} at (0,0) size 419x292
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGPath {path} at (198,13) size 221x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30 C206.60,66.60,235.80,13.20,270.00,30.30 C286.60,38.60,298.90,59.40,310.00,73.30 C321.70,87.90,338.60,99.00,356.00,103.30 C387.30,111.10,396.60,90.40,418.00,74.30"]
-        RenderSVGPath {path} at (33,69) size 220x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80 C41.00,123.00,70.30,69.70,104.50,86.80 C121.00,95.00,133.00,116.00,144.50,129.80 C156.20,144.40,173.00,155.50,190.50,159.80 C221.80,167.60,231.00,146.90,252.50,130.80"]
-        RenderSVGPath {path} at (113,231) size 300x4 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [data="M113.00,233.00 L413.00,233.00"]
+        RenderSVGPath {path} at (198,13) size 221x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
+        RenderSVGPath {path} at (33,69) size 220x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 33.5 145.8 C 41 123 70.3 69.7 104.5 86.8 C 121 95 133 116 144.5 129.8 C 156.2 144.4 173 155.5 190.5 159.8 C 221.8 167.6 231 146.9 252.5 130.8"]
+        RenderSVGPath {path} at (113,231) size 300x4 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [data="M 113 233 L 413 233"]
       RenderSVGContainer {g} at (168,0) size 251x114
         RenderSVGContainer {use} at (198,13) size 221x99
           RenderSVGContainer {g} at (198,13) size 221x99
-            RenderSVGPath {path} at (198,13) size 221x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M199.00,89.30 C206.60,66.60,235.80,13.20,270.00,30.30 C286.60,38.60,298.90,59.40,310.00,73.30 C321.70,87.90,338.60,99.00,356.00,103.30 C387.30,111.10,396.60,90.40,418.00,74.30"]
+            RenderSVGPath {path} at (198,13) size 221x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 199 89.3 C 206.6 66.6 235.8 13.2 270 30.3 C 286.6 38.6 298.9 59.4 310 73.3 C 321.7 87.9 338.6 99 356 103.3 C 387.3 111.1 396.6 90.4 418 74.3"]
         RenderSVGText {text} at (168,-7) size 205x121 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 205x121
             RenderSVGInlineText {#text} at (0,0) size 205x121
@@ -32,7 +32,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (0,49) size 292x162
         RenderSVGContainer {use} at (33,69) size 220x99
           RenderSVGContainer {g} at (33,69) size 220x99
-            RenderSVGPath {path} at (33,69) size 220x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M33.50,145.80 C41.00,123.00,70.30,69.70,104.50,86.80 C121.00,95.00,133.00,116.00,144.50,129.80 C156.20,144.40,173.00,155.50,190.50,159.80 C221.80,167.60,231.00,146.90,252.50,130.80"]
+            RenderSVGPath {path} at (33,69) size 220x99 [stroke={[type=SOLID] [color=#0000FF]}] [data="M 33.5 145.8 C 41 123 70.3 69.7 104.5 86.8 C 121 95 133 116 144.5 129.8 C 156.2 144.4 173 155.5 190.5 159.8 C 221.8 167.6 231 146.9 252.5 130.8"]
         RenderSVGText {text} at (-9,49) size 216x121 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 216x121
             RenderSVGTSpan {tspan} at (0,0) size 57x57
@@ -55,7 +55,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 10 at (172.40,152.84) startOffset 9 endOffset 10 width 12.00: "t"
               chunk 1 text run 11 at (187.66,159.04) startOffset 10 endOffset 11 width 21.00: "h"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGPath {rect} at (16,168) size 276x43 [stroke={[type=SOLID] [color=#000000]}] [data="M17.00,169.00 L291.00,169.00 L291.00,210.00 L17.00,210.00 Z"]
+        RenderSVGPath {rect} at (16,168) size 276x43 [stroke={[type=SOLID] [color=#000000]}] [x=17.00] [y=169.00] [width=274.00] [height=41.00]
         RenderSVGText {text} at (19,166) size 218x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 218x23
             chunk 1 text run 1 at (19.00,185.00) startOffset 0 endOffset 25 width 218.00: "'tspan' subelement inside"
@@ -65,7 +65,7 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (113,212) size 300x80
         RenderSVGContainer {use} at (113,231) size 300x4
           RenderSVGContainer {g} at (113,231) size 300x4
-            RenderSVGPath {path} at (113,231) size 300x4 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [data="M113.00,233.00 L413.00,233.00"]
+            RenderSVGPath {path} at (113,231) size 300x4 [stroke={[type=SOLID] [color=#0000FF] [stroke width=4.00]}] [data="M 113 233 L 413 233"]
         RenderSVGText {text} at (212,212) size 182x27 contains 1 chunk(s)
           RenderSVGTextPath {textPath} at (0,0) size 182x27
             RenderSVGInlineText {#text} at (0,0) size 182x27
@@ -86,7 +86,7 @@ layer at (0,0) size 480x360
               chunk 1 text run 15 at (376.50,233.00) startOffset 14 endOffset 15 width 7.00: "t"
               chunk 1 text run 16 at (387.00,233.00) startOffset 15 endOffset 16 width 14.00: "h"
           RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGPath {rect} at (117,249) size 262x43 [stroke={[type=SOLID] [color=#000000]}] [data="M118.00,250.00 L378.00,250.00 L378.00,291.00 L118.00,291.00 Z"]
+        RenderSVGPath {rect} at (117,249) size 262x43 [stroke={[type=SOLID] [color=#000000]}] [x=118.00] [y=250.00] [width=260.00] [height=41.00]
         RenderSVGText {text} at (120,248) size 237x23 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 237x23
             chunk 1 text run 1 at (120.00,267.00) startOffset 0 endOffset 30 width 237.00: "'startOffset' attribute of the"
@@ -96,4 +96,4 @@ layer at (0,0) size 480x360
     RenderSVGText {text} at (10,303) size 261x47 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 261x47
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 261.00: "$Revision: 1.9 $"
-    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [data="M1.00,1.00 L479.00,1.00 L479.00,359.00 L1.00,359.00 Z"]
+    RenderSVGPath {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

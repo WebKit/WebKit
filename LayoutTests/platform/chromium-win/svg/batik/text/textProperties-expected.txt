@@ -14,7 +14,7 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 330x17
           chunk 1 (middle anchor) text run 1 at (60.00,50.00) startOffset 0 endOffset 47 width 330.00: "Text Alignment, Geometry, References, and Spans"
       RenderSVGContainer {g} at (119,70) size 217x70
-        RenderSVGPath {line} at (224,70) size 2x70 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#000000]}] [data="M225.00,70.00 L225.00,140.00"]
+        RenderSVGPath {line} at (224,70) size 2x70 [stroke={[type=SOLID] [color=#808080]}] [fill={[type=SOLID] [color=#000000]}] [x1=225.00] [y1=70.00] [x2=225.00] [y2=140.00]
         RenderSVGText {text} at (225,77) size 111x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 111x17
             chunk 1 text run 1 at (225.00,90.00) startOffset 0 endOffset 19 width 111.00: "text-anchor=\"start\""
@@ -141,7 +141,7 @@ layer at (0,0) size 450x500
           RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#008000]
       RenderSVGContainer {g} at (302,345) size 96x44 [transform={m=((1.00,0.00)(0.00,1.00)) t=(350.00,370.00)}]
-        RenderSVGPath {rect} at (309,345) size 82x32 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [data="M-50.00,-25.00 L50.00,-25.00 L50.00,25.00 L-50.00,25.00 Z"]
+        RenderSVGPath {rect} at (309,345) size 82x32 [fill={[type=LINEAR-GRADIENT] [id="gradient"]}] [x=-50.00] [y=-25.00] [width=100.00] [height=50.00]
           [clipPath="textClip"] RenderSVGResourceClipper {clipPath} at (-41,-27) size 82x34
         RenderSVGText {text} at (-48,0) size 96x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 96x19
