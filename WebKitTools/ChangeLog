@@ -1,3 +1,15 @@
+2010-10-08  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed (Eric is on vacation in this change is trivial).
+
+        Add a "clean" command to webkit-patch to clean the working directory
+        https://bugs.webkit.org/show_bug.cgi?id=47436
+
+        This command is useful when using SVN because "svn revert" leaves
+        unversioned files behind.
+
+        * Scripts/webkitpy/tool/commands/download.py:
+
 2010-10-08  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed build fix.
