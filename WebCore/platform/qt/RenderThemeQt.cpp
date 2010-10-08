@@ -779,6 +779,7 @@ bool RenderThemeQt::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
     QStyleOptionSlider option;
     if (p.widget)
        option.initFrom(p.widget);
+    option.subControls = QStyle::SC_SliderGroove | QStyle::SC_SliderHandle;
     ControlPart appearance = initializeCommonQStyleOptions(option, o);
 
     RenderSlider* renderSlider = toRenderSlider(o);
