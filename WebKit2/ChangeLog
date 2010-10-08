@@ -1,3 +1,18 @@
+2010-10-08  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Notify WebPage when QGraphicsWKView gains focus. Set both
+        active flag and focused flag, similar to QWebPage behavior.
+
+        [Qt] WebKit2 should support focusing
+        https://bugs.webkit.org/show_bug.cgi?id=47168
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKView::focusInEvent): Added.
+        (QGraphicsWKView::focusOutEvent): Added.
+        * UIProcess/API/qt/qgraphicswkview.h: Added declarations.
+
 2010-10-07  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Mark Rowe.

@@ -248,6 +248,18 @@ void QGraphicsWKView::touchEvent(QTouchEvent* ev)
 }
 #endif
 
+void QGraphicsWKView::focusInEvent(QFocusEvent*)
+{
+    page()->d->page->setActive(true);
+    page()->d->page->setFocused(true);
+}
+
+void QGraphicsWKView::focusOutEvent(QFocusEvent*)
+{
+    page()->d->page->setFocused(false);
+    page()->d->page->setActive(false);
+}
+
 QGraphicsWKViewPrivate::QGraphicsWKViewPrivate(QGraphicsWKView* view)
     : q(view)
 {
