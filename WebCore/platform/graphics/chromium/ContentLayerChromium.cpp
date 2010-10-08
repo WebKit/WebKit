@@ -43,8 +43,6 @@
 #include "PlatformContextSkia.h"
 #include "skia/ext/platform_canvas.h"
 #elif PLATFORM(CG)
-#include "LocalCurrentGraphicsContext.h"
-
 #include <CoreGraphics/CGBitmapContext.h>
 #endif
 
@@ -221,7 +219,6 @@ void ContentLayerChromium::updateContents()
     CGContextScaleCTM(contextCG.get(), 1, -1);
 
     GraphicsContext graphicsContext(contextCG.get());
-    LocalCurrentGraphicsContext scopedNSGraphicsContext(&graphicsContext);
 
     // Translate the graphics context into the coordinate system of the dirty rect.
     graphicsContext.translate(-dirtyRect.x(), -dirtyRect.y());
