@@ -62,6 +62,16 @@ void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
+void SVGFEColorMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::typeAttr
+        || attrName == SVGNames::inAttr
+        || attrName == SVGNames::valuesAttr)
+        invalidate();
+}
+
 void SVGFEColorMatrixElement::synchronizeProperty(const QualifiedName& attrName)
 {
     SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
