@@ -3039,7 +3039,6 @@ http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/local/blob/send-data-blob.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
-http/tests/local/formdata
 # File API is not supported yet
 fast/files
 http/tests/media/video-play-stall-seek.html
@@ -5765,6 +5764,7 @@ fast/events/prevent-drag-to-navigate.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-postmessage-clone-frames.html
 http/tests/security/clipboard/clipboard-file-access.html
+http/tests/local/formdata
 
 # Still failing, looks like a bug in the EventSender drag-and-drop
 fast/css/user-drag-none.html
