@@ -1,3 +1,17 @@
+2010-10-07  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add Private API for creating a WebKit1 WebSerializedJSValue from the internal
+        representation of a WebKit2 WebSerializedScriptValue.
+        https://bugs.webkit.org/show_bug.cgi?id=47390
+
+        * WebView/WebSerializedJSValue.mm:
+        (-[WebSerializedJSValue initWithInternalRepresentation:]):
+        Set the WebSerializedJSValuePrivate's WebCore::SerializedScriptValue to be the passed in
+        internal representation.
+        * WebView/WebSerializedJSValuePrivate.h: Added.
+
 2010-10-07  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Simon Fraser.

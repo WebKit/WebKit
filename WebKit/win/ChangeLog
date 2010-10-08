@@ -1,3 +1,28 @@
+2010-10-07  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add Private API for creating a WebKit1 WebSerializedJSValue from the internal
+        representation of a WebKit2 WebSerializedScriptValue.
+        https://bugs.webkit.org/show_bug.cgi?id=47390
+
+        * Interfaces/WebKit.idl:
+        Generate IWebSerializedJSValuePrivate.
+        
+        * Interfaces/IWebSerializedJSValuePrivate.idl: Added.
+        Because it is taking a void* parameter, setInternalRepresentation must be declared [local].
+
+        * WebKit.vcproj/Interfaces.vcproj:
+        Add IWebSerializedJSValue.idl and IWebSerializedJSValuePrivate.idl.
+
+        * WebSerializedJSValue.cpp:
+        (WebSerializedJSValue::QueryInterface):
+        Since there are now two interfaces that inherit from IUnknown, do not try to cast to
+        IUnknown* anymore. Cast to IWebSerializedJSValue* instead.
+        (WebSerializedJSValue::setInternalRepresentation):
+        Only set the internal representation if it hasn't already been set.
+        * WebSerializedJSValue.h:
+
 2010-10-04  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Prevent an assertion failure when trying to create a protection space

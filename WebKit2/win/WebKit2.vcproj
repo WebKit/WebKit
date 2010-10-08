@@ -452,13 +452,13 @@
 				RelativePath="..\Shared\NotImplemented.h"
 				>
 			</File>
-  			<File
+			<File
 				RelativePath="..\Shared\StringPairVector.h"
- 				>
- 			</File>
- 			<File
- 				RelativePath="..\Shared\UserMessageCoders.h"
- 				>
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\UserMessageCoders.h"
+				>
 			</File>
 			<File
 				RelativePath="..\Shared\VisitedLinkTable.cpp"
@@ -505,19 +505,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\WebProcessCreationParameters.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Shared\WebProcessCreationParameters.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Shared\WebPreferencesStore.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\Shared\WebPreferencesStore.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebProcessCreationParameters.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebProcessCreationParameters.h"
 				>
 			</File>
 			<File
@@ -637,6 +637,10 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKSerializedScriptValue.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKSerializedScriptValuePrivate.h"
 					>
 				</File>
 				<File
@@ -1524,7 +1528,7 @@
 				RelativePath="..\UIProcess\WebPageProxy.h"
 				>
 			</File>
-  			<File
+			<File
 				RelativePath="..\UIProcess\WebPageProxy.messages.in"
 				>
 			</File>
@@ -1900,15 +1904,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Platform\CoreIPC\CoreIPCMessageKinds.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\DataReference.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\Platform\CoreIPC\DataReference.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Platform\CoreIPC\CoreIPCMessageKinds.h"
 					>
 				</File>
 				<File
@@ -2051,15 +2055,15 @@
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageMessages.h"
 				>
- 			</File>
-            <File
- 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessageReceiver.cpp"
- 				>
- 			</File>
- 			<File
- 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessages.h"
- 				>
- 			</File>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageProxyMessages.h"
+				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebProcessMessageReceiver.cpp"
 				>

@@ -123,6 +123,7 @@ import "ocidl.idl";
 #include "IWebScrollBarPrivate.idl"
 #include "IWebSecurityOrigin.idl"
 #include "IWebSerializedJSValue.idl"
+#include "IWebSerializedJSValuePrivate.idl"
 #include "IWebTextRenderer.idl"
 #include "IWebUIDelegate.idl"
 #include "IWebUIDelegate2.idl"

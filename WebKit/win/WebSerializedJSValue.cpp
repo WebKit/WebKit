@@ -69,10 +69,12 @@ HRESULT WebSerializedJSValue::QueryInterface(REFIID riid, void** ppvObject)
 
     if (IsEqualIID(riid, __uuidof(WebSerializedJSValue)))
         *ppvObject = this;
+    else if (IsEqualGUID(riid, IID_IUnknown))
+        *ppvObject = static_cast<IWebSerializedJSValue*>(this);
     else if (IsEqualIID(riid, __uuidof(IWebSerializedJSValue)))
         *ppvObject = static_cast<IWebSerializedJSValue*>(this);
-    else if (IsEqualIID(riid, IID_IUnknown))
-        *ppvObject = static_cast<IUnknown*>(this);
+    else if (IsEqualIID(riid, __uuidof(IWebSerializedJSValuePrivate)))
+        *ppvObject = static_cast<IWebSerializedJSValuePrivate*>(this);
     else
         return E_NOINTERFACE;
 
@@ -102,6 +104,16 @@ HRESULT WebSerializedJSValue::deserialize(JSContextRef destinationContext, JSVal
         *outValue = 0;
     else
         *outValue = m_value->deserialize(destinationContext, 0);
+
+    return S_OK;
+}
+
+HRESULT WebSerializedJSValue::setInternalRepresentation(void* internalRepresentation)
+{
+    if (!internalRepresentation || m_value)
+        return E_POINTER;
+
+    m_value = reinterpret_cast<SerializedScriptValue*>(internalRepresentation);
 
     return S_OK;
 }

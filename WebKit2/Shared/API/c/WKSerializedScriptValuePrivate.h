@@ -23,31 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKSerializedScriptValue.h"
-#include "WKSerializedScriptValuePrivate.h"
+#ifndef WKSerializedScriptValuePrivate_h
+#define WKSerializedScriptValuePrivate_h
 
-#include "WKAPICast.h"
-#include "WebSerializedScriptValue.h"
+#include <WebKit2/WKBase.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-WKTypeID WKSerializedScriptValueGetTypeID()
-{
-    return toAPI(WebSerializedScriptValue::APIType);
+WK_EXPORT void* WKSerializedScriptValueGetInternalRepresentation(WKSerializedScriptValueRef scriptValueRef);
+
+#ifdef __cplusplus
 }
+#endif
 
-WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, JSValueRef value, JSValueRef* exception)
-{
-    RefPtr<WebSerializedScriptValue> serializedValue = WebSerializedScriptValue::create(context, value, exception);
-    return toAPI(serializedValue.release().leakRef());
-}
-
-JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValueRef, JSContextRef contextRef, JSValueRef* exception)
-{
-    return toImpl(scriptValueRef)->deserialize(contextRef, exception);
-}
-
-void* WKSerializedScriptValueGetInternalRepresentation(WKSerializedScriptValueRef scriptValueRef)
-{
-    return toImpl(scriptValueRef)->internalRepresentation();
-}
+#endif /* WKSerializedScriptValuePrivate_h */

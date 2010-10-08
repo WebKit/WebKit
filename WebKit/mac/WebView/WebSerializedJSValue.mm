@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WebSerializedJSValue.h"
+#import "WebSerializedJSValuePrivate.h"
 
 #import <WebCore/SerializedScriptValue.h>
 #import <wtf/RefPtr.h>
@@ -62,6 +62,30 @@ using namespace WebCore;
         return nil;
     }
 
+    return self;
+}
+
+- (id)initWithInternalRepresentation:(void *)internalRepresenatation
+{
+    ASSERT_ARG(internalRepresenatation, internalRepresenatation);
+
+    if (!internalRepresenatation) {
+        [self release];
+        return nil;
+    }
+
+    self = [super init];
+    if (!self)
+        return nil;
+    
+    _private = [[WebSerializedJSValuePrivate alloc] init];
+
+    _private->value = ((SerializedScriptValue*)internalRepresenatation);
+    if (!_private->value) {
+        [self release];
+        return nil;
+    }
+    
     return self;
 }
 

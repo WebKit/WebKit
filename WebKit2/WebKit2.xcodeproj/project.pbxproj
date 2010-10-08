@@ -432,6 +432,7 @@
 		D3B9484911FF4B6500032B39 /* WebSearchPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
 		E1EE53E711F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */; };
+		F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -904,6 +905,7 @@
 		D3B9484511FF4B6500032B39 /* WebSearchPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSearchPopupMenu.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
+		F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKSerializedScriptValuePrivate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1691,6 +1693,7 @@
 				BC4075E6124FF0270068F20A /* WKNumber.h */,
 				BC4075E7124FF0270068F20A /* WKSerializedScriptValue.cpp */,
 				BC4075E8124FF0270068F20A /* WKSerializedScriptValue.h */,
+				F67DD7B9125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h */,
 				BCDDB32A124EC2AB0048D13C /* WKSharedAPICast.h */,
 				BC4075E9124FF0270068F20A /* WKString.cpp */,
 				BC4075EA124FF0270068F20A /* WKString.h */,
@@ -1857,6 +1860,7 @@
 				BCD597D0112B56AC00EC8C23 /* WKPreferences.h in Headers */,
 				762B748D120BC75C00819339 /* WKPreferencesPrivate.h in Headers */,
 				BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */,
+				F67DD7BA125E40D9007BDCB8 /* WKSerializedScriptValuePrivate.h in Headers */,
 				BC8699B5116AADAA002A925B /* WKView.h in Headers */,
 				BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */,
 				BC2E6E8C1141971500A63B1E /* WorkItem.h in Headers */,
