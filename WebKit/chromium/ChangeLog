@@ -1,5 +1,11 @@
 2010-10-07  Zhenyao Mo  <zmo@google.com>
 
+        Unreviewed, roll chromium to r61902.
+
+        * DEPS:
+
+2010-10-07  Zhenyao Mo  <zmo@google.com>
+
         Reviewed by Tony Chang.
 
         Copy mesa lib into DumpRenderTree bundle in Mac
