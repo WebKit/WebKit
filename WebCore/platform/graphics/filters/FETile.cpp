@@ -69,7 +69,7 @@ void FETile::apply(Filter* filter)
     FloatRect tileRect = in->maxEffectRect();
     FloatPoint inMaxEffectLocation = tileRect.location();
     FloatPoint maxEffectLocation = maxEffectRect().location();
-    if (in->isSourceInput()) {
+    if (in->filterEffectType() == FilterEffectTypeSourceInput) {
         tileRect = filter->filterRegion();
         tileRect.scale(filter->filterResolution().width(), filter->filterResolution().height());
     }

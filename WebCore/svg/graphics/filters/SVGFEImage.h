@@ -33,10 +33,14 @@ class FEImage : public FilterEffect {
 public:
     static PassRefPtr<FEImage> create(RefPtr<Image>, const SVGPreserveAspectRatio&);
 
+    void setAbsoluteSubregion(const FloatRect& absoluteSubregion) { m_absoluteSubregion = absoluteSubregion; }
+
     virtual void apply(Filter*);
     virtual void dump();
 
     virtual void determineAbsolutePaintRect(Filter*) { setAbsolutePaintRect(maxEffectRect()); }
+
+    virtual FilterEffectType filterEffectType() const { return FilterEffectTypeImage; }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
     
@@ -45,6 +49,7 @@ private:
 
     RefPtr<Image> m_image;
     SVGPreserveAspectRatio m_preserveAspectRatio;
+    FloatRect m_absoluteSubregion;
 };
 
 } // namespace WebCore

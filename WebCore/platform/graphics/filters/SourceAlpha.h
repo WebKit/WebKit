@@ -39,7 +39,7 @@ public:
 
     virtual void determineAbsolutePaintRect(Filter*);
 
-    virtual bool isSourceInput() const { return true; }
+    virtual FilterEffectType filterEffectType() const { return FilterEffectTypeSourceInput; }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 

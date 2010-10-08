@@ -23,6 +23,8 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFilter.h"
 
+#include "SVGFEImage.h"
+
 namespace WebCore {
 
 SVGFilter::SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode)
@@ -69,9 +71,6 @@ void SVGFilter::determineFilterPrimitiveSubregion(FilterEffect* effect, const Fl
             newSubRegion.setHeight(unionOfPreviousPrimitiveSubregions.height());
     }
 
-    // clip every filter effect to the filter region
-    newSubRegion.intersect(m_filterRegion);
-
     effect->setFilterPrimitiveSubregion(newSubRegion);
     // TODO: Everything above should be moved to a first phase of layout in RenderSVGResourceFilterPrimitive.
     // The scaling of the subregion to the repaint rect should be merged with a more intelligent repaint logic
@@ -79,8 +78,21 @@ void SVGFilter::determineFilterPrimitiveSubregion(FilterEffect* effect, const Fl
     // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.
     newSubRegion = m_absoluteTransform.mapRect(newSubRegion);
     newSubRegion.scale(filterResolution().width(), filterResolution().height());
+
+    // FEImage needs the unclipped subregion in absolute coordinates to determine the correct
+    // destination rect in combination with preserveAspectRatio.
+    if (effect->filterEffectType() == FilterEffectTypeImage) {
+        FEImage* imageEffect = static_cast<FEImage*>(effect);
+        imageEffect->setAbsoluteSubregion(newSubRegion);
+    }
+
+    // Clip every filter effect to the filter region.
+    FloatRect absoluteScaledFilterRegion = m_absoluteFilterRegion;
+    absoluteScaledFilterRegion.scale(filterResolution().width(), filterResolution().height());
+    newSubRegion.intersect(absoluteScaledFilterRegion);
+
     effect->setMaxEffectRect(enclosingIntRect(newSubRegion));
-    if (!effect->isSourceInput())
+    if (effect->filterEffectType() != FilterEffectTypeSourceInput)
         m_maxImageSize = m_maxImageSize.expandedTo(newSubRegion.size()); 
 }
 

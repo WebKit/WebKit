@@ -54,9 +54,10 @@ void FEImage::apply(Filter* filter)
         return;
 
     FloatRect srcRect(FloatPoint(), m_image->size());
-    FloatRect destRect(FloatPoint(), absolutePaintRect().size());
+    FloatRect destRect(m_absoluteSubregion);
 
     m_preserveAspectRatio.transformRect(destRect, srcRect);
+    destRect.move(-m_absoluteSubregion.x(), -m_absoluteSubregion.y());
 
     filterContext->drawImage(m_image.get(), DeviceColorSpace, destRect, srcRect);
 }

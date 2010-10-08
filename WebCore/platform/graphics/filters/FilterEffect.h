@@ -39,6 +39,13 @@ namespace WebCore {
 
 typedef Vector<RefPtr<FilterEffect> > FilterEffectVector;
 
+enum FilterEffectType {
+    FilterEffectTypeUnknown,
+    FilterEffectTypeImage,
+    FilterEffectTypeTile,
+    FilterEffectTypeSourceInput
+};
+
 class FilterEffect : public RefCounted<FilterEffect> {
 public:
     virtual ~FilterEffect();
@@ -64,7 +71,7 @@ public:
 
     IntRect absolutePaintRect() const { return m_absolutePaintRect; }
     void setAbsolutePaintRect(const IntRect& absolutePaintRect) { m_absolutePaintRect = absolutePaintRect; }
-    
+
     IntRect maxEffectRect() const { return m_maxEffectRect; }
     void setMaxEffectRect(const IntRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; } 
 
@@ -72,8 +79,8 @@ public:
     virtual void dump() = 0;
 
     virtual void determineAbsolutePaintRect(Filter*);
-    
-    virtual bool isSourceInput() const { return false; }
+
+    virtual FilterEffectType filterEffectType() const { return FilterEffectTypeUnknown; }
 
     virtual TextStream& externalRepresentation(TextStream&, int indention = 0) const;
 
