@@ -12,11 +12,11 @@
 BUG_DRT MAC LINUX : fast/backgrounds/animated-gif-as-background.html = IMAGE
 
 // input-speech related failures
-BUG_DRT WIN MAC LINUX : fast/speech/input-text-speechbutton.html = TEXT
 BUG_DRT WIN MAC LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE
 BUG_DRT WIN MAC LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE
 BUG_DRT WIN MAC LINUX : fast/speech/input-appearance-speechbutton.html = IMAGE
 
+// Plugin failures
 BUG48431 WIN MAC LINUX : plugins/geturlnotify-during-document-teardown.html = TEXT
 BUG48431 WIN MAC LINUX : plugins/open-and-close-window-with-plugin.html = TEXT
 
@@ -27,6 +27,7 @@ BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
 // random TIMEOUTs.  Is this issue DRT-specific?
 BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
+// WebGL failures
 BUG_DRT MAC : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT
 BUG_DRT MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
@@ -34,6 +35,23 @@ BUG_DRT MAC : fast/canvas/webgl/object-deletion-behaviour.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/point-size.html = TEXT
 BUG_DRT MAC : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT
 BUG_DRT MAC : fast/canvas/webgl/uniform-location.html = TIMEOUT
+
+// Filesystem failures
+BUG_DRT WIN MAC : fast/filesystem/file-from-file-entry.html = TEXT
+BUG_DRT WIN MAC : fast/filesystem/op-copy.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/op-get-entry.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/op-get-parent.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/op-move.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/op-read-directory.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/op-remove.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/op-restricted-chars.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/op-restricted-names.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/simple-persistent.html = TIMEOUT
+BUG_DRT WIN MAC : fast/filesystem/simple-temporary.html = TIMEOUT
+BUG_DRT MAC : fast/filesystem/async-operations.html = TEXT
+BUG_DRT MAC : fast/filesystem/flags-passing.html = TEXT
+BUG_DRT WIN : fast/filesystem/read-directory.html = TEXT
+BUG_DRT WIN : http/tests/local/send-sliced-dragged-file.html = TEXT
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
@@ -75,13 +93,16 @@ BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT LINUX : http/tests/multipart/invalid-image-data.html = IMAGE
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 BUG_DRT LINUX : userscripts/user-script-audio-document.html = TEXT
-BUG_DRT MAC : fast/filesystem/flags-passing.html = TEXT
 BUG_DRT MAC : media/video-aspect-ratio.html = TIMEOUT
 BUG_DRT MAC : media/video-controls-transformed.html = TEXT
 BUG_DRT MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
 BUG_DRT MAC : media/video-src-change.html = CRASH TEXT PASS
 BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
-BUG_DRT WIN : fast/notifications/notifications-replace.html = TEXT
+BUG_DRT WIN : css2.1/t1202-counter-09-b.html = IMAGE
+BUG_DRT WIN : css2.1/t1202-counters-09-b.html = IMAGE
+BUG_DRT WIN : fast/text/international/danda-space.html = IMAGE
+BUG_DRT WIN : svg/batik/text/textFeatures.svg = IMAGE
+BUG_DRT WIN : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
 
 // PASS with DRT though FAIL on test_shell
 BUG_DRT : platform/chromium/accessibility = PASS
