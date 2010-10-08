@@ -1,3 +1,13 @@
+2010-10-07  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/8349882> Many WebProcess sandbox violations during basic browsing operations.
+
+        * WebProcess/com.apple.WebProcess.sb:
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
 2010-10-07  Brady Eidson  <beidson@apple.com>
 
         Build fix.

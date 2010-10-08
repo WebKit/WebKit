@@ -1,61 +1,105 @@
 (version 1)
 (deny default)
+(allow ipc-posix-shm system-audit system-socket file-read-metadata)
 
-(allow ipc-posix-shm sysctl-read system-audit system-socket file-read-metadata)
+(import "system.sb")
 
+;; Read-only preferences and data
 (allow file-read*
        ;; Basic system paths
-       (subpath "/System")
-       (subpath "/usr/share")
        (subpath "/Library/Fonts")
-       (literal "/dev/dtracehelper")
-       (literal "/dev/urandom")
-       (literal "/private/var/db/mds/messages/se_SecurityMessages")
+       (subpath "/Library/Frameworks")
+       (subpath "/Library/Keychains")
+       (subpath "/private/var/db/mds")
+
+       ;; Plugins
+       (subpath "/Library/Internet Plug-Ins")
+       (subpath (string-append (param "_HOME") "/Library/Internet Plug-Ins"))
 
        ;; System and user preferences
        (literal "/Library/Preferences/.GlobalPreferences.plist")
        (literal (string-append (param "_HOME") "/Library/Preferences/.GlobalPreferences.plist"))
        (regex (string-append "^" (param "_HOME") "/Library/Preferences/ByHost/\.GlobalPreferences\."))
+       (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.ATS.plist"))
+       (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.HIToolbox.plist"))
        (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.LaunchServices.plist"))
+       (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.WebFoundation.plist"))
+       (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.security.plist"))
+       (literal (string-append (param "_HOME") "/Library/Preferences/com.apple.security.revocation.plist"))
+       (subpath (string-append (param "_HOME") "/Library/Keychains"))
 
        ;; On-disk WebKit2 framework location, to account for debug installations
        ;; outside of /System/Library/Frameworks
-       (subpath (param "webkit2_framework_path"))
+       (subpath (param "WEBKIT2_FRAMEWORK_DIR"))
 
        ;; Extensions from UIProcess
        (extension))
 
+;; Writable preferences and temporary files
 (allow file*
-       ;; Our caches are writable
        (subpath (string-append (param "_HOME") "/Library/Caches/com.apple.WebProcess"))
-       (literal "/dev/dtracehelper"))
+       (regex (string-append "^" (param "_HOME") "/Library/Preferences/ByHost/com\.apple\.HIToolbox\."))
+       (regex (string-append "^" (param "_HOME") "/Library/Preferences/com\.apple\.WebProcess\.")))
 
-(allow iokit-open
-       ;; This will need to be rethought once we're using accelerated graphics,
-       ;; since we probably can't pre-enumerate the client classes for graphics cards
-       (iokit-user-client-class "IOHIDParamUserClient")
-       (iokit-user-client-class "RootDomainUserClient"))
+;; Darwin temporary files and caches, if present
+(if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
+    (allow file* (subpath (param "DARWIN_USER_CACHE_DIR"))))
+(if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
+    (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
+;; FIXME: overly permissive since we can't pre-enumerate the client
+;; classes for graphics cards
+(allow iokit-open)
+       ;;(iokit-user-client-class "IOHIDParamUserClient")
+       ;;(iokit-user-client-class "RootDomainUserClient"))
+
+;; Various services required by AppKit and other frameworks
 (allow mach-lookup
-       ;; Various services required by AppKit and other frameworks
        (global-name "com.apple.CoreServices.coreservicesd")
-       (global-name "com.apple.FontObjectsServer")
-       (global-name "com.apple.FontServer")
-       (global-name "com.apple.SystemConfiguration.configd")
-       (global-name "com.apple.cookied")
-       (global-name "com.apple.distributed_notifications.2")
-       (global-name "com.apple.dock.server")
-       (global-name "com.apple.system.logger")
-       (global-name "com.apple.system.notification_center")
-       (global-name "com.apple.window_proxies")
-       (global-name "com.apple.windowserver.active")
-       (global-name "com.apple.SecurityServer")
-       (global-name "com.apple.ocspd")
        (global-name "com.apple.DiskArbitration.diskarbitrationd")
        (global-name "com.apple.FileCoordination")
-       (global-name-regex #"^com.apple.WebKit.WebProcess-"))
+       (global-name "com.apple.FontObjectsServer")
+       (global-name "com.apple.FontServer")
+       (global-name "com.apple.SecurityServer")
+       (global-name "com.apple.SystemConfiguration.configd")
+       (global-name "com.apple.audio.VDCAssistant")
+       (global-name "com.apple.audio.audiohald")
+       (global-name "com.apple.audio.coreaudiod")
+       (global-name "com.apple.cookied")
+       (global-name "com.apple.cvmsServ")
+       (global-name "com.apple.distributed_notifications.2")
+       (global-name "com.apple.dock.server")
+       (global-name "com.apple.ocspd")
+       (global-name "com.apple.pasteboard.1")
+       (global-name "com.apple.window_proxies")
+       (global-name "com.apple.windowserver.active")
+       (global-name-regex #"^com\.apple\.WebKit\.WebProcess-"))
+       (global-name-regex #"^com\.apple\.qtkitserver\.")
 
+;; FIXME: These rules are required until <rdar://problem/8448410> is addressed. See <rdar://problem/8349882> for discussion.
+(allow network-outbound)
+(deny network-outbound (regex ""))
+(deny network-outbound (local ip))
 (allow network-outbound
        ;; Local mDNSResponder for DNS, arbitrary outbound TCP
        (literal "/private/var/run/mDNSResponder")
        (remote tcp))
+
+;; FIXME: These rules are required until plug-ins are moved out of the web process.
+(allow file-read*
+       (regex (string-append "^" (param "_HOME") "/Library/Preferences/ByHost/com\.apple\.ist\."))
+       (literal (string-append (param "_HOME") "/Library/Preferences/edu.mit.Kerberos"))
+       (literal "/Library/Preferences/edu.mit.Kerberos"))
+(allow mach-lookup
+       (global-name "org.h5l.kcm")
+       (global-name "com.apple.tsm.uiserver")
+       (global-name-regex #"^com\.apple\.ist"))
+(allow network-outbound (remote ip))
+
+;; These rules are required while QTKitServer is being launched directly via posix_spawn (<rdar://problem/6912494>).
+(allow process-fork)
+(allow process-exec (literal "/System/Library/Frameworks/QTKit.framework/Versions/A/Resources/QTKitServer") (with no-sandbox))
+
+;; FIXME: Investigate these.
+(allow appleevent-send (appleevent-destination "com.apple.WebProcess"))
+(allow mach-lookup (global-name-regex #"^EPPC-"))
