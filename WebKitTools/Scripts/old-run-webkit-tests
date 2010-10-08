@@ -364,6 +364,9 @@ if ($useWebKitTestRunner) {
         $stripEditingCallbacks = 0 unless defined $stripEditingCallbacks;
         $realPlatform = $platform;
         $platform = "win-wk2";
+    } elsif (isQt()) {
+        $realPlatform = $platform;
+        $platform = "qt-wk2";
     }
 }
 
