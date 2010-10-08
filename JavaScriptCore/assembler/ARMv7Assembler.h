@@ -440,7 +440,7 @@ private:
         };
         struct {
             unsigned type   : 2;
-            unsigned amount : 5;
+            unsigned amount : 6;
         };
     } m_u;
 };
