@@ -1687,7 +1687,7 @@ BUG23473 MAC : fast/repaint/transform-repaint-descendants.html = IMAGE
 BUG23473 MAC : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUG23473 MAC : fast/repaint/transform-translate.html = IMAGE
 
-BUGWK42249 MAC : fast/repaint/moving-shadow-on-container.html = IMAGE
+//BUGWK42249 MAC : fast/repaint/moving-shadow-on-container.html = IMAGE
 // Fails due to r67862.
 BUGWK39966 : fast/repaint/table-cell-collapsed-border.html = IMAGE
 
@@ -2196,8 +2196,8 @@ BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
 // New tests courtesy of: http://trac.webkit.org/changeset/51936:
-BUG30048 : svg/css/composite-shadow-example.html = IMAGE
-BUG30048 : svg/css/composite-shadow-with-opacity.html = IMAGE
+//BUG30048 : svg/css/composite-shadow-example.html = IMAGE
+//BUG30048 : svg/css/composite-shadow-with-opacity.html = IMAGE
 
 // evan's fix rolled out in http://trac.webkit.org/changeset/52071 due to compat issues.
 BUG30343 LINUX : fast/css/large-number-round-trip.html = TEXT
@@ -3221,3 +3221,39 @@ BUG58358 WIN LINUX : fast/css/transformed-mask.html = IMAGE+TEXT
 BUG58358 MAC : fast/css/transformed-mask.html = IMAGE
 
 BUG58481 WIN : fast/html/object-image-nested-fallback.html = CRASH
+
+// Failing somewhere between after Webkit r69367 and r69417.
+BUG_AJWONG LINUX : fast/css-generated-content/malformed-url.html = TEXT
+BUG_AJWONG LINUX : fast/repaint/repaint-svg-after-style-change.html = TEXT
+BUG_AJWONG LINUX : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
+BUG_AJWONG LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg = IMAGE
+BUG_AJWONG LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-20-b.svg = IMAGE
+BUG_AJWONG LINUX : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = IMAGE
+BUG_AJWONG LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE
+BUG_AJWONG LINUX : svg/custom/dominant-baseline-hanging.svg = IMAGE
+BUG_AJWONG LINUX : svg/custom/gradient-with-1d-boundingbox.svg = IMAGE+TEXT
+BUG_AJWONG LINUX : svg/custom/invalid-fill-hex.svg = IMAGE
+BUG_AJWONG LINUX : svg/custom/invalid-fill.svg = IMAGE
+BUG_AJWONG LINUX : svg/custom/path-bad-data.svg = TEXT
+BUG_AJWONG LINUX : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
+BUG_AJWONG LINUX : svg/hixie/error/012.xml = TEXT
+BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = IMAGE
+BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE
+BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = IMAGE
+BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = IMAGE
+BUG_AJWONG LINUX MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
+BUG_AJWONG MAC : fast/repaint/moving-shadow-on-path.html = TEXT
+BUG_AJWONG MAC : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
+BUG_AJWONG MAC : svg/W3C-SVG-1.1/animate-elem-82-t.svg = TEXT
+BUG_AJWONG MAC : svg/W3C-SVG-1.1/coords-trans-01-b.svg = TEXT
+BUG_AJWONG MAC : svg/css/stars-with-shadow.html = TEXT
+BUG_AJWONG MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
+BUG_AJWONG MAC : svg/custom/createelement.svg = TEXT
+BUG_AJWONG MAC : svg/custom/junk-data.svg = TEXT
+BUG_AJWONG MAC : svg/custom/missing-xlink.svg = TEXT
+BUG_AJWONG MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
+
+// Duplicates to check on.
+BUG_AJWONG MAC : fast/repaint/moving-shadow-on-container.html = IMAGE+TEXT
+BUG_AJWONG MAC : svg/css/composite-shadow-example.html = IMAGE+TEXT
+BUG_AJWONG MAC : svg/css/composite-shadow-with-opacity.html = IMAGE+TEXT
