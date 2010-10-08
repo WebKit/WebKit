@@ -192,6 +192,7 @@ RenderThemeGtk::~RenderThemeGtk()
 
 GtkThemeParts* RenderThemeGtk::partsForDrawable(GdkDrawable* drawable) const
 {
+#ifdef GTK_API_VERSION_2
     // A null drawable represents the default screen colormap.
     GdkColormap* colormap = 0;
     if (!drawable)
@@ -205,6 +206,10 @@ GtkThemeParts* RenderThemeGtk::partsForDrawable(GdkDrawable* drawable) const
         parts->colormap = colormap;
         g_hash_table_insert(m_partsTable.get(), colormap, parts);
     }
+#else
+    // For GTK+ 3.0 we no longer have to worry about maintaining a set of widgets per-colormap.
+    static GtkThemeParts* parts = g_slice_new0(GtkThemeParts);
+#endif // GTK_API_VERSION_2
 
     return parts;
 }
@@ -284,6 +289,7 @@ static void adjustMozillaStyle(const RenderThemeGtk* theme, RenderStyle* style, 
     style->setPaddingBottom(Length(ypadding + bottom, Fixed));
 }
 
+#ifdef GTK_API_VERSION_2
 bool RenderThemeGtk::paintMozillaGtkWidget(GtkThemeWidgetType type, GraphicsContext* context, const IntRect& rect, GtkWidgetState* widgetState, int flags, GtkTextDirection textDirection)
 {
     // Painting is disabled so just claim to have succeeded
@@ -333,6 +339,18 @@ bool RenderThemeGtk::paintMozillaGtkWidget(GtkThemeWidgetType type, GraphicsCont
 
     return !success;
 }
+#else
+bool RenderThemeGtk::paintMozillaGtkWidget(GtkThemeWidgetType type, GraphicsContext* context, const IntRect& rect, GtkWidgetState* widgetState, int flags, GtkTextDirection textDirection)
+{
+    // Painting is disabled so just claim to have succeeded
+    if (context->paintingDisabled())
+        return false;
+
+    // false == success, because of awesome.
+    GdkRectangle paintRect = rect;
+    return moz_gtk_widget_paint(type, context->platformContext(), &paintRect, widgetState, flags, textDirection) != MOZ_GTK_SUCCESS;
+}
+#endif
 
 bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, int flags)
 {

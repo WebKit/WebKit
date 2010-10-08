@@ -44,6 +44,8 @@
  * Adapted from the gtkdrawing.c, and gtk+2.0 source.
  */
 
+#ifdef GTK_API_VERSION_2
+
 #include <gdk/gdkprivate.h>
 #include "gtkdrawing.h"
 #include "GtkVersioning.h"
@@ -340,7 +342,6 @@ ConvertGtkState(GtkWidgetState* state)
         return GTK_STATE_NORMAL;
 }
 
-#ifdef GTK_API_VERSION_2
 static gint
 TSOffsetStyleGCArray(GdkGC** gcs, gint xorigin, gint yorigin)
 {
@@ -350,12 +351,10 @@ TSOffsetStyleGCArray(GdkGC** gcs, gint xorigin, gint yorigin)
         gdk_gc_set_ts_origin(gcs[i], xorigin, yorigin);
     return MOZ_GTK_SUCCESS;
 }
-#endif
 
 static gint
 TSOffsetStyleGCs(GtkStyle* style, gint xorigin, gint yorigin)
 {
-#ifdef GTK_API_VERSION_2
     TSOffsetStyleGCArray(style->fg_gc, xorigin, yorigin);
     TSOffsetStyleGCArray(style->bg_gc, xorigin, yorigin);
     TSOffsetStyleGCArray(style->light_gc, xorigin, yorigin);
@@ -365,7 +364,6 @@ TSOffsetStyleGCs(GtkStyle* style, gint xorigin, gint yorigin)
     TSOffsetStyleGCArray(style->base_gc, xorigin, yorigin);
     gdk_gc_set_ts_origin(style->black_gc, xorigin, yorigin);
     gdk_gc_set_ts_origin(style->white_gc, xorigin, yorigin);
-#endif
     return MOZ_GTK_SUCCESS;
 }
 
@@ -394,19 +392,15 @@ moz_gtk_button_paint(GdkDrawable* drawable, GdkRectangle* rect,
     gtk_widget_set_state(widget, button_state);
     gtk_widget_set_direction(widget, direction);
 
-#ifdef GTK_API_VERSION_2
     if (state->isDefault)
         GTK_WIDGET_SET_FLAGS(widget, GTK_HAS_DEFAULT);
-#endif
 
     gtk_button_set_relief(GTK_BUTTON(widget), relief);
 
     /* Some theme engines love to cause us pain in that gtk_paint_focus is a
        no-op on buttons and button-like widgets. They only listen to this flag. */
-#ifdef GTK_API_VERSION_2
     if (state->focused && !state->disabled)
         GTK_WIDGET_SET_FLAGS(widget, GTK_HAS_FOCUS);
-#endif
 
     if (!interior_focus && state->focused) {
         x += focus_width + focus_pad;
@@ -453,10 +447,8 @@ moz_gtk_button_paint(GdkDrawable* drawable, GdkRectangle* rect,
                         widget, "button", x, y, width, height);
     }
 
-#ifdef GTK_API_VERSION_2
     GTK_WIDGET_UNSET_FLAGS(widget, GTK_HAS_DEFAULT);
     GTK_WIDGET_UNSET_FLAGS(widget, GTK_HAS_FOCUS);
-#endif
     return MOZ_GTK_SUCCESS;
 }
 
@@ -861,9 +853,7 @@ moz_gtk_scrollbar_thumb_paint(GtkThemeWidgetType widget,
     GtkStyle* style;
     GtkScrollbar *scrollbar;
     GtkAdjustment *adj;
-#ifdef GTK_API_VERSION_2
     gboolean activate_slider;
-#endif
 
     ensure_scrollbar_widget();
 
@@ -915,7 +905,6 @@ moz_gtk_scrollbar_thumb_paint(GtkThemeWidgetType widget,
 
     style = gtk_widget_get_style(GTK_WIDGET(scrollbar));
     
-#ifdef GTK_API_VERSION_2
     gtk_widget_style_get(GTK_WIDGET(scrollbar), "activate-slider",
                          &activate_slider, NULL);
     
@@ -923,7 +912,6 @@ moz_gtk_scrollbar_thumb_paint(GtkThemeWidgetType widget,
         shadow_type = GTK_SHADOW_IN;
         state_type = GTK_STATE_ACTIVE;
     }
-#endif
 
     TSOffsetStyleGCs(style, rect->x, rect->y);
 
@@ -1056,17 +1044,8 @@ moz_gtk_entry_paint(GdkDrawable* drawable, GdkRectangle* rect,
     if (theme_honors_transparency) {
         g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
     } else {
-#ifndef GTK_API_VERSION_2
-        cairo_t* cr = gdk_cairo_create(drawable);
-        gdk_cairo_set_source_color(cr, (const GdkColor*)&style->base[bg_state]);
-        cairo_pattern_set_extend (cairo_get_source(cr), CAIRO_EXTEND_REPEAT);
-        gdk_cairo_rectangle(cr, cliprect);
-        cairo_fill(cr);
-        cairo_destroy(cr);
-#else
         gdk_draw_rectangle(drawable, style->base_gc[bg_state], TRUE,
                            cliprect->x, cliprect->y, cliprect->width, cliprect->height);
-#endif
         g_object_set_data(G_OBJECT(widget), "transparent-bg-hint", GINT_TO_POINTER(FALSE));
     }
 
@@ -1093,9 +1072,7 @@ moz_gtk_entry_paint(GdkDrawable* drawable, GdkRectangle* rect,
     if (state->focused && !state->disabled) {
         /* This will get us the lit borders that focused textboxes enjoy on
          * some themes. */
-#ifdef GTK_API_VERSION_2
         GTK_WIDGET_SET_FLAGS(widget, GTK_HAS_FOCUS);
-#endif
 
         if (!interior_focus) {
             /* Indent the border a little bit if we have exterior focus 
@@ -1119,9 +1096,7 @@ moz_gtk_entry_paint(GdkDrawable* drawable, GdkRectangle* rect,
 
         /* Now unset the focus flag. We don't want other entries to look
          * like they're focused too! */
-#ifdef GTK_API_VERSION_2
         GTK_WIDGET_UNSET_FLAGS(widget, GTK_HAS_FOCUS);
-#endif
     }
 
     return MOZ_GTK_SUCCESS;
@@ -1151,11 +1126,7 @@ moz_gtk_combo_box_paint(GdkDrawable* drawable, GdkRectangle* rect,
                                 rect, &arrow_rect, direction, ishtml);
     /* Now arrow_rect contains the inner rect ; we want to correct the width
      * to what the arrow needs (see gtk_combo_box_size_allocate) */
-#ifdef GTK_API_VERSION_2
     gtk_widget_size_request(gParts->comboBoxArrowWidget, &arrow_req);
-#else
-    gtk_size_request_get_size(GTK_SIZE_REQUEST(gParts->comboBoxArrowWidget), &arrow_req, NULL);
-#endif
     if (direction == GTK_TEXT_DIR_LTR)
         arrow_rect.x += arrow_rect.width - arrow_req.width;
     arrow_rect.width = arrow_req.width;
@@ -1331,11 +1302,7 @@ moz_gtk_get_widget_border(GtkThemeWidgetType widget, gint* left, gint* top,
                         XTHICKNESS(style);
             }
 
-#ifdef GTK_API_VERSION_2
             gtk_widget_size_request(gParts->comboBoxArrowWidget, &arrow_req);
-#else
-            gtk_size_request_get_size(GTK_SIZE_REQUEST(gParts->comboBoxArrowWidget), &arrow_req, NULL);
-#endif
             if (direction == GTK_TEXT_DIR_RTL)
                 *left += separator_width + arrow_req.width;
             else
@@ -1532,3 +1499,5 @@ GtkWidget* moz_gtk_get_progress_widget()
     ensure_progress_widget();
     return gParts->progresWidget;
 }
+
+#endif // GTK_API_VERSION_2
