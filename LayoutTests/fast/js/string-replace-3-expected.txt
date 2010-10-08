@@ -19,6 +19,7 @@ PASS ('' + twoChar + twoChar + twoChar).replace('a', 'b') is 'baaaaa'
 PASS ('' + twoChar + twoChar + twoChar).replace('aa', 'b') is 'baaaa'
 PASS ('' + twoChar + twoChar + twoChar).replace('aa', 'bb') is 'bbaaaa'
 PASS ('' + twoChar + twoChar + twoChar).replace('a', 'bb') is 'bbaaaaa'
+PASS '"'.replace(/([^\])?(["'])/g, '$1\$2') is '"'
 PASS successfullyParsed is true
 
 TEST COMPLETE

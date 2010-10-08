@@ -1,3 +1,14 @@
+2010-10-08  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added check to start of subexpression being positive before using
+        subexpression in replacement.
+        https://bugs.webkit.org/show_bug.cgi?id=47324
+
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+
 2010-10-08  Chris Evans  <cevans@google.com>
 
         Reviewed by David Levin.
