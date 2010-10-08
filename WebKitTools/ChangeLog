@@ -1,3 +1,23 @@
+2010-10-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WTR: Prevent sending the Done message twice on test timeout.
+        https://bugs.webkit.org/show_bug.cgi?id=47410
+
+        When InjectedBundle::done() calls stopLoading, this may trigger
+        InjectedBundlePage::didFailLoadWithErrorForFrame which calls
+        InjectedBundle::done() itself later in the stack.
+        This would output the timeout failure message twice and confuse
+        the run-webkit-tests script.
+
+        This patch adds a third state, Stopping, which prevents WebCore
+        errors to trigger done() when testing is over.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::done):
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h:
+
 2010-10-08  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

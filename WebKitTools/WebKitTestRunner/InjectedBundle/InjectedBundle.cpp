@@ -139,6 +139,8 @@ void InjectedBundle::beginTesting()
 
 void InjectedBundle::done()
 {
+    m_state = Stopping;
+
     m_mainPage->stopLoading();
 
     WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("Done"));

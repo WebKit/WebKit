@@ -88,7 +88,8 @@ private:
     
     enum State {
         Idle,
-        Testing
+        Testing,
+        Stopping
     };
     State m_state;
 };
