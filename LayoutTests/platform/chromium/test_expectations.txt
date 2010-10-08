@@ -3075,14 +3075,21 @@ BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
 BUGWEBGL WIN LINUX : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TEXT
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-object-get-calls.html = TEXT TIMEOUT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/object-deletion-behaviour.html = TEXT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/point-size.html = TEXT
 BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS
-BUGWEBGL WIN LINUX : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT
-BUGWEBGL MAC : fast/canvas/webgl/texture-npot.html = TEXT
-BUGWEBGL WIN LINUX : fast/canvas/webgl/uniform-location.html = TEXT TIMEOUT
+
+// These three failures are due to Mesa bugs
+BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
+BUGWEBGL : fast/canvas/webgl/object-deletion-behaviour.html = TEXT
+BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
+
+// These three should pass once mesa is upgraded to 7.9
+BUGWEBGL : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS
+BUGWEBGL : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT PASS
+BUGWEBGL : fast/canvas/webgl/uniform-location.html = TIMEOUT PASS
+
+// These two should pass once mesa is correctly hooked up with TestShell in Mac
+BUGWEBGL MAC : fast/canvas/webgl/texture-npot.html = TEXT PASS
+BUGWEBGL MAC : fast/canvas/webgl/gl-teximage.html = TEXT PASS
 
 // Pre-HTML5 parser quirks only apply to the mac port for now.
 WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
@@ -3145,9 +3152,6 @@ BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
 // Selection is wrong.
 BUG10292 MAC : editing/selection/5354455-1.html = FAIL
-
-// This test fails due to 68940.
-BUG_HCLAM MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 
 // Started to fail at WebKit r68975 Chromium r61295-61296.
 BUG9798 DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT

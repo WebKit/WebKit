@@ -28,13 +28,7 @@ BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
 BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
 // WebGL failures
-BUG_DRT MAC : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT
 BUG_DRT MAC : fast/canvas/webgl/gl-teximage.html = TEXT
-BUG_DRT MAC : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
-BUG_DRT MAC : fast/canvas/webgl/object-deletion-behaviour.html = TEXT
-BUG_DRT MAC : fast/canvas/webgl/point-size.html = TEXT
-BUG_DRT MAC : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT
-BUG_DRT MAC : fast/canvas/webgl/uniform-location.html = TIMEOUT
 
 // Filesystem failures
 BUG_DRT WIN MAC : fast/filesystem/file-from-file-entry.html = TEXT
