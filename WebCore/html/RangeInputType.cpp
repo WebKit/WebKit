@@ -58,6 +58,16 @@ const AtomicString& RangeInputType::formControlType() const
     return InputTypeNames::range();
 }
 
+double RangeInputType::valueAsNumber() const
+{
+    return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
+}
+
+void RangeInputType::setValueAsNumber(double newValue, ExceptionCode&) const
+{
+    element()->setValue(serialize(newValue));
+}
+
 bool RangeInputType::rangeUnderflow(const String& value) const
 {
     // Guaranteed by sanitization.
@@ -118,6 +128,13 @@ double RangeInputType::parseToDouble(const String& src, double defaultValue) con
         return defaultValue;
     ASSERT(isfinite(numberValue));
     return numberValue;
+}
+
+String RangeInputType::serialize(double value) const
+{
+    if (!isfinite(value))
+        return String();
+    return serializeForNumberType(value);
 }
 
 } // namespace WebCore

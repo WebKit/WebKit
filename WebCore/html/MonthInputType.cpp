@@ -54,6 +54,26 @@ const AtomicString& MonthInputType::formControlType() const
     return InputTypeNames::month();
 }
 
+double MonthInputType::valueAsDate() const
+{
+    DateComponents date;
+    if (!parseToDateComponents(element()->value(), &date))
+        return DateComponents::invalidMilliseconds();
+    double msec = date.millisecondsSinceEpoch();
+    ASSERT(isfinite(msec));
+    return msec;
+}
+
+void MonthInputType::setValueAsDate(double value, ExceptionCode&) const
+{
+    DateComponents date;
+    if (!date.setMillisecondsSinceEpochForMonth(value)) {
+        element()->setValue(String());
+        return;
+    }
+    element()->setValue(date.toString());
+}
+
 double MonthInputType::minimum() const
 {
     return parseToDouble(element()->fastGetAttribute(minAttr), DateComponents::minimumMonth());
@@ -94,6 +114,12 @@ bool MonthInputType::parseToDateComponentsInternal(const UChar* characters, unsi
     ASSERT(out);
     unsigned end;
     return out->parseMonth(characters, length, 0, end) && end == length;
+}
+
+bool MonthInputType::setMillisecondToDateComponents(double value, DateComponents* date) const
+{
+    ASSERT(date);
+    return date->setMonthsSinceEpoch(value);
 }
 
 } // namespace WebCore

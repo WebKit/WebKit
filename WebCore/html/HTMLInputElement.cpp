@@ -82,9 +82,6 @@ using namespace HTMLNames;
 
 const int maxSavedResults = 256;
 
-static const double msecPerMinute = 60 * 1000;
-static const double msecPerSecond = 1000;
-
 static const char emailPattern[] =
     "[a-z0-9!#$%&'*+/=?^_`{|}~.-]+" // local part
     "@"
@@ -1337,123 +1334,17 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
 
 double HTMLInputElement::valueAsDate() const
 {
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case TIME:
-    case WEEK:
-        return m_inputType->parseToDouble(value(), DateComponents::invalidMilliseconds());
-    case MONTH: {
-        DateComponents date;
-        if (!m_inputType->parseToDateComponents(value(), &date))
-            return DateComponents::invalidMilliseconds();
-        double msec = date.millisecondsSinceEpoch();
-        ASSERT(isfinite(msec));
-        return msec;
-    }
-
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case DATETIMELOCAL: // valueAsDate doesn't work for the DATETIMELOCAL type according to the standard.
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case NUMBER:
-    case PASSWORD:
-    case RADIO:
-    case RANGE:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        return DateComponents::invalidMilliseconds();
-    }
-    ASSERT_NOT_REACHED();
-    return DateComponents::invalidMilliseconds();
+    return m_inputType->valueAsDate();
 }
 
 void HTMLInputElement::setValueAsDate(double value, ExceptionCode& ec)
 {
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case TIME:
-    case WEEK:
-        setValue(serializeForDateTimeTypes(value));
-        return;
-    case MONTH: {
-        DateComponents date;
-        if (!date.setMillisecondsSinceEpochForMonth(value)) {
-            setValue(String());
-            return;
-        }
-        setValue(date.toString());
-        return;
-    }
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case DATETIMELOCAL: // valueAsDate doesn't work for the DATETIMELOCAL type according to the standard.
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case NUMBER:
-    case PASSWORD:
-    case RADIO:
-    case RANGE:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-    ASSERT_NOT_REACHED();
+    m_inputType->setValueAsDate(value, ec);
 }
 
 double HTMLInputElement::valueAsNumber() const
 {
-    const double nan = numeric_limits<double>::quiet_NaN();
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case MONTH:
-    case NUMBER:
-    case RANGE:
-    case TIME:
-    case WEEK:
-        return m_inputType->parseToDouble(value(), nan);
-
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        return nan;
-    }
-    ASSERT_NOT_REACHED();
-    return nan;
+    return m_inputType->valueAsNumber();
 }
 
 void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec)
@@ -1462,133 +1353,7 @@ void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec)
         ec = NOT_SUPPORTED_ERR;
         return;
     }
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case MONTH:
-    case NUMBER:
-    case RANGE:
-    case TIME:
-    case WEEK:
-        setValue(serialize(newValue));
-        return;
-
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-String HTMLInputElement::serializeForDateTimeTypes(double value) const
-{
-    bool success = false;
-    DateComponents date;
-    switch (deprecatedInputType()) {
-    case DATE:
-        success = date.setMillisecondsSinceEpochForDate(value);
-        break;
-    case DATETIME:
-        success = date.setMillisecondsSinceEpochForDateTime(value);
-        break;
-    case DATETIMELOCAL:
-        success = date.setMillisecondsSinceEpochForDateTimeLocal(value);
-        break;
-    case MONTH:
-        success = date.setMonthsSinceEpoch(value);
-        break;
-    case TIME:
-        success = date.setMillisecondsSinceMidnight(value);
-        break;
-    case WEEK:
-        success = date.setMillisecondsSinceEpochForWeek(value);
-        break;
-    case NUMBER:
-    case RANGE:
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        ASSERT_NOT_REACHED();
-        return String();
-    }
-    if (!success)
-        return String();
-
-    double step;
-    if (!getAllowedValueStep(&step))
-        return date.toString();
-    if (!fmod(step, msecPerMinute))
-        return date.toString(DateComponents::None);
-    if (!fmod(step, msecPerSecond))
-        return date.toString(DateComponents::Second);
-    return date.toString(DateComponents::Millisecond);
-}
-
-String HTMLInputElement::serialize(double value) const
-{
-    if (!isfinite(value))
-        return String();
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case MONTH:
-    case TIME:
-    case WEEK:
-        return serializeForDateTimeTypes(value);
-    case NUMBER:
-    case RANGE:
-        return serializeForNumberType(value);
-
-    case BUTTON:
-    case CHECKBOX:
-    case COLOR:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case URL:
-        break;
-    }
-    ASSERT_NOT_REACHED();
-    return String();
+    m_inputType->setValueAsNumber(newValue, ec);
 }
 
 String HTMLInputElement::placeholder() const
@@ -2525,7 +2290,7 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     String currentStringValue = value();
     double current = m_inputType->parseToDouble(currentStringValue, nan);
     if (!isfinite(current) || (n > 0 && current < m_inputType->minimum()) || (n < 0 && current > m_inputType->maximum()))
-        setValue(serialize(n > 0 ? m_inputType->minimum() : m_inputType->maximum()));
+        setValue(m_inputType->serialize(n > 0 ? m_inputType->minimum() : m_inputType->maximum()));
     else {
         ExceptionCode ec;
         stepUp(n, ec);

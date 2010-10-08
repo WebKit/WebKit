@@ -42,6 +42,8 @@ public:
 private:
     MonthInputType(HTMLInputElement* element) : BaseDateAndTimeInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual double valueAsDate() const;
+    virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double parseToDouble(const String&, double) const;
     virtual double minimum() const;
     virtual double maximum() const;
@@ -49,6 +51,7 @@ private:
     virtual double stepScaleFactor() const;
     virtual bool parsedStepValueShouldBeInteger() const;
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const;
+    virtual bool setMillisecondToDateComponents(double, DateComponents*) const;
 };
 
 } // namespace WebCore

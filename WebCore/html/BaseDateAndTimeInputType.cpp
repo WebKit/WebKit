@@ -44,6 +44,29 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
+static const double msecPerMinute = 60 * 1000;
+static const double msecPerSecond = 1000;
+
+double BaseDateAndTimeInputType::valueAsDate() const
+{
+    return parseToDouble(element()->value(), DateComponents::invalidMilliseconds());
+}
+
+void BaseDateAndTimeInputType::setValueAsDate(double value, ExceptionCode&) const
+{
+    element()->setValue(serialize(value));
+}
+
+double BaseDateAndTimeInputType::valueAsNumber() const
+{
+    return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
+}
+
+void BaseDateAndTimeInputType::setValueAsNumber(double newValue, ExceptionCode&) const
+{
+    element()->setValue(serialize(newValue));
+}
+
 bool BaseDateAndTimeInputType::rangeUnderflow(const String& value) const
 {
     const double nan = numeric_limits<double>::quiet_NaN();
@@ -93,6 +116,23 @@ bool BaseDateAndTimeInputType::parseToDateComponents(const String& source, DateC
     if (!out)
         out = &ignoredResult;
     return parseToDateComponentsInternal(source.characters(), source.length(), out);
+}
+
+String BaseDateAndTimeInputType::serialize(double value) const
+{
+    if (!isfinite(value))
+        return String();
+    DateComponents date;
+    if (!setMillisecondToDateComponents(value, &date))
+        return String();
+    double step;
+    if (!element()->getAllowedValueStep(&step))
+        return date.toString();
+    if (!fmod(step, msecPerMinute))
+        return date.toString(DateComponents::None);
+    if (!fmod(step, msecPerSecond))
+        return date.toString(DateComponents::Second);
+    return date.toString(DateComponents::Millisecond);
 }
 
 } // namespace WebCore

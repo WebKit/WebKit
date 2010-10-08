@@ -329,15 +329,6 @@ private:
     // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
     void applyStep(double count, ExceptionCode&);
 
-    // Create a string representation of the specified double value for the
-    // current input type. If NaN or Infinity is specified, this returns an
-    // emtpy string. This should not be called for types without valueAsNumber.
-    String serialize(double) const;
-    // Create a string representation of the specified double value for the
-    // current input type. The type must be one of DATE, DATETIME,
-    // DATETIMELOCAL, MONTH, TIME, and WEEK.
-    String serializeForDateTimeTypes(double) const;
-
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;
 #endif

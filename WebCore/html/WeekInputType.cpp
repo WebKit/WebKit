@@ -91,4 +91,10 @@ bool WeekInputType::parseToDateComponentsInternal(const UChar* characters, unsig
     return out->parseWeek(characters, length, 0, end) && end == length;
 }
 
+bool WeekInputType::setMillisecondToDateComponents(double value, DateComponents* date) const
+{
+    ASSERT(date);
+    return date->setMillisecondsSinceEpochForWeek(value);
+}
+
 } // namespace WebCore

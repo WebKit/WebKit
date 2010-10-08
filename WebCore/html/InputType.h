@@ -31,6 +31,7 @@
 #ifndef InputType_h
 #define InputType_h
 
+#include "ExceptionCode.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -48,6 +49,11 @@ public:
     virtual bool isTextField() const;
     virtual bool isTextType() const;
     virtual const AtomicString& formControlType() const = 0;
+
+    virtual double valueAsDate() const;
+    virtual void setValueAsDate(double, ExceptionCode&) const;
+    virtual double valueAsNumber() const;
+    virtual void setValueAsNumber(double, ExceptionCode&) const;
 
     // Validation-related functions
 
@@ -73,6 +79,10 @@ public:
     // parameter will have parsed values and be modified even if the parsing
     // fails. The DateComponents* parameter may be 0.
     virtual bool parseToDateComponents(const String&, DateComponents*) const;
+    // Create a string representation of the specified double value for the
+    // input type. If NaN or Infinity is specified, this returns an empty
+    // string. This should not be called for types without valueAsNumber.
+    virtual String serialize(double) const;
 
 protected:
     InputType(HTMLInputElement* element) : m_element(element) { }

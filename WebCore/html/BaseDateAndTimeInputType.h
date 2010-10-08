@@ -44,12 +44,18 @@ protected:
     virtual bool parseToDateComponents(const String&, DateComponents*) const;
     // A helper for parseToDateComponents().
     virtual bool parseToDateComponentsInternal(const UChar*, unsigned length, DateComponents*) const = 0;
+    virtual bool setMillisecondToDateComponents(double, DateComponents*) const = 0;
 
 private:
+    virtual double valueAsDate() const;
+    virtual void setValueAsDate(double, ExceptionCode&) const;
+    virtual double valueAsNumber() const;
+    virtual void setValueAsNumber(double, ExceptionCode&) const;
     virtual bool rangeUnderflow(const String&) const;
     virtual bool rangeOverflow(const String&) const;
     virtual bool stepMismatch(const String&, double) const;
     virtual double stepBase() const;
+    virtual String serialize(double) const;
 };
 
 } // namespace WebCore

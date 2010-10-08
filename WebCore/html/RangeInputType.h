@@ -42,6 +42,8 @@ public:
 private:
     RangeInputType(HTMLInputElement* element) : InputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual double valueAsNumber() const;
+    virtual void setValueAsNumber(double, ExceptionCode&) const;
     virtual bool rangeUnderflow(const String&) const;
     virtual bool rangeOverflow(const String&) const;
     virtual double minimum() const;
@@ -51,6 +53,7 @@ private:
     virtual double defaultStep() const;
     virtual double stepScaleFactor() const;
     virtual double parseToDouble(const String&, double) const;
+    virtual String serialize(double) const;
 };
 
 } // namespace WebCore
