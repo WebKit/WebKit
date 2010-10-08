@@ -31,6 +31,7 @@
 #ifndef ReadableDataObject_h
 #define ReadableDataObject_h
 
+#include "Clipboard.h"
 #include "PlatformString.h"
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
@@ -43,26 +44,25 @@ namespace WebCore {
 // browser to the renderer.
 class ReadableDataObject : public RefCounted<ReadableDataObject> {
 public:
-    static PassRefPtr<ReadableDataObject> create(bool isForDragging);
+    static PassRefPtr<ReadableDataObject> create(Clipboard::ClipboardType);
 
-    virtual bool hasData() const;
-    virtual HashSet<String> types() const;
-    virtual String getData(const String& type, bool& succeeded) const;
+    bool hasData() const;
+    HashSet<String> types() const;
+    String getData(const String& type, bool& succeeded) const;
 
-    virtual String getURL(String* title) const;
-    virtual String getHTML(String* baseURL) const;
+    String urlTitle() const;
+    KURL htmlBaseUrl() const;
 
-    virtual bool hasFilenames() const;
-    virtual Vector<String> filenames() const;
+    bool containsFilenames() const;
+    Vector<String> filenames() const;
 
 private:
-    explicit ReadableDataObject(bool isForDragging);
+    explicit ReadableDataObject(Clipboard::ClipboardType);
 
     // This isn't always const... but most of the time it is.
     void ensureTypeCacheInitialized() const;
 
-
-    bool m_isForDragging;
+    Clipboard::ClipboardType m_clipboardType;
 
     // To avoid making a lot of IPC calls for each drag event, we cache some
     // values in the renderer.

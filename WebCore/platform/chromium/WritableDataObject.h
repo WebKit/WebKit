@@ -31,6 +31,7 @@
 #ifndef WritableDataObject_h
 #define WritableDataObject_h
 
+#include "Clipboard.h"
 #include "KURL.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
@@ -47,32 +48,32 @@ namespace WebCore {
 // atomically.
 class WritableDataObject : public RefCounted<WritableDataObject> {
 public:
-    static PassRefPtr<WritableDataObject> create(bool isForDragging);
+    static PassRefPtr<WritableDataObject> create(Clipboard::ClipboardType);
 
-    virtual void clearData(const String& type);
-    virtual void clearAllExceptFiles();
-    virtual void clearAll();
-    virtual bool setData(const String& type, const String& data);
+    void clearData(const String& type);
+    void clearAllExceptFiles();
+    void clearAll();
+    bool setData(const String& type, const String& data);
 
-    virtual void setURL(const String& url, const String& title);
-    virtual void setHTML(const String& html, const KURL& baseURL);
+    void setUrlTitle(const String& title) { m_urlTitle = title; }
+    void setHtmlBaseUrl(const KURL& baseURL) { m_htmlBaseURL = baseURL; }
 
     // Used for transferring drag data from the renderer to the browser.
-    virtual HashMap<String, String> dataMap() const;
-    virtual String urlTitle() const;
-    virtual KURL htmlBaseURL() const;
+    HashMap<String, String> dataMap() const { return m_dataMap; }
+    String urlTitle() const { return m_urlTitle; }
+    KURL htmlBaseURL() const { return m_htmlBaseURL; }
 
-    virtual String fileExtension() const;
-    virtual String fileContentFilename() const;
-    virtual PassRefPtr<SharedBuffer> fileContent() const;
-    virtual void setFileExtension(const String&);
-    virtual void setFileContentFilename(const String&);
-    virtual void setFileContent(PassRefPtr<SharedBuffer>);
+    String fileExtension() const { return m_fileExtension; }
+    String fileContentFilename() const { return m_fileContentFilename; }
+    PassRefPtr<SharedBuffer> fileContent() const { return m_fileContent; }
+    void setFileExtension(const String& fileExtension) { m_fileExtension = fileExtension; }
+    void setFileContentFilename(const String& fileContentFilename) { m_fileContentFilename = fileContentFilename; }
+    void setFileContent(PassRefPtr<SharedBuffer> fileContent) { m_fileContent = fileContent; }
 
 private:
-    explicit WritableDataObject(bool isForDragging);
+    explicit WritableDataObject(Clipboard::ClipboardType);
 
-    bool m_isForDragging;
+    Clipboard::ClipboardType m_clipboardType;
 
     HashMap<String, String> m_dataMap;
     String m_urlTitle;
