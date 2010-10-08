@@ -26,10 +26,14 @@
 
 #include "TestController.h"
 
-#include "NotImplemented.h"
+#include <cstdlib>
 #include <QCoreApplication>
 #include <QEventLoop>
+#include <QFileInfo>
+#include <QLibrary>
 #include <QObject>
+#include <QtGlobal>
+#include <wtf/text/WTFString.h>
 
 namespace WTR {
 
@@ -82,17 +86,24 @@ void TestController::runUntil(bool& done)
 
 void TestController::initializeInjectedBundlePath()
 {
-    notImplemented();
+    QString path = QLatin1String(getenv("WTR_INJECTEDBUNDLE_PATH"));
+    if (path.isEmpty())
+        path = QFileInfo(QCoreApplication::applicationDirPath() + "/../lib/libWTRInjectedBundle").absoluteFilePath();
+
+    if (QLibrary::isLibrary(QLibrary(path).fileName()))
+        qFatal("Cannot find the injected bundle at %s\n", qPrintable(path));
+
+    m_injectedBundlePath = WKStringCreateWithQString(path);
 }
 
 void TestController::initializeTestPluginDirectory()
 {
-    notImplemented();
+    // This is called after initializeInjectedBundlePath.
+    m_testPluginDirectory = m_injectedBundlePath;
 }
 
 void TestController::platformInitializeContext()
 {
-    notImplemented();
 }
 
 #include "TestControllerQt.moc"

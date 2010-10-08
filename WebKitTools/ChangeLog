@@ -1,3 +1,20 @@
+2010-10-08  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] TestController needs its platform dependent methods
+        https://bugs.webkit.org/show_bug.cgi?id=47413
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::initializeInjectedBundlePath):
+        If the WTR_INJECTEDBUNDLE_PATH environmental variable is
+        set then use that otherwise use the path where the bundle
+        lives in a normal trunk build.
+        (WTR::TestController::initializeTestPluginDirectory):
+        Set the bundle's value. It is not used currently.
+        (WTR::TestController::platformInitializeContext):
+        * WebKitTestRunner/qt/WebKitTestRunner.pro:
+
 2010-10-08  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
