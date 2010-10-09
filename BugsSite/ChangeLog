@@ -1,3 +1,15 @@
+2010-10-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Bugmail for new attachments should link to the reviewtool
+        https://bugs.webkit.org/show_bug.cgi?id=47440
+
+        As requested by olliej himself.  This patch was constructed by pure
+        reason.  I have no way to actually run this code.
+
+        * Bugzilla/BugMail.pm:
+
 2010-09-28  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

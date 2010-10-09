@@ -609,7 +609,7 @@ sub sendMail {
         my $showattachurlbase =
             Bugzilla->params->{'urlbase'} . "attachment.cgi?id=";
 
-        $newcomments =~ s/(Created an attachment \(id=([0-9]+)\))/$1\n --> \(${showattachurlbase}$2\)/g;
+        $newcomments =~ s/(Created an attachment \(id=([0-9]+)\))/$1\n --> \(${showattachurlbase}$2&action=review\)/g;
     }
 
     my $diffs = $difftext . "\n\n" . $newcomments;
