@@ -229,9 +229,9 @@ private:
     bool m_useGPU;
 #if ENABLE(ACCELERATED_2D_CANVAS)
     OwnPtr<GLES2Canvas> m_gpuCanvas;
+    mutable RefPtr<Texture> m_uploadTexture;
 #endif
     mutable enum { None, Software, Mixed, Hardware } m_backingStoreState;
-    mutable RefPtr<Texture> m_uploadTexture;
     mutable IntRect m_softwareDirtyRect;
 };
 
