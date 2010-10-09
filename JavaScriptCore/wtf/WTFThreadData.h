@@ -95,12 +95,6 @@ public:
     }
 
 #if USE(JSC)
-    void initializeIdentifierTable(JSC::IdentifierTable* identifierTable)
-    {
-        m_defaultIdentifierTable = identifierTable;
-        m_currentIdentifierTable = identifierTable;
-    }
-
     JSC::IdentifierTable* currentIdentifierTable()
     {
         return m_currentIdentifierTable;
