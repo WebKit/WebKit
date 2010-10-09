@@ -335,6 +335,8 @@ void Path::addEllipse(const FloatRect& r)
 
 void Path::clear()
 {
+    if (!m_path.elementCount())
+        return;
     m_path = QPainterPath();
 }
 
