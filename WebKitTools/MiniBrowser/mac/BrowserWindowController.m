@@ -500,6 +500,30 @@ static void setWindowFrame(WKPageRef page, WKRect rect, const void* clientInfo)
     [[(BrowserWindowController *)clientInfo window] setFrame:CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height) display:YES];
 }
 
+static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+
+    WKURLRef wkURL = WKFrameCopyURL(frame);
+    CFURLRef cfURL = WKURLCopyCFURL(0, wkURL);
+    WKRelease(wkURL);
+
+    [alert setMessageText:[NSString stringWithFormat:@"BeforeUnload confirm dialog from %@.", [(NSURL *)cfURL absoluteString]]];
+    CFRelease(cfURL);
+
+    CFStringRef cfMessage = WKStringCopyCFString(0, message);
+    [alert setInformativeText:(NSString *)cfMessage];
+    CFRelease(cfMessage);
+
+    [alert addButtonWithTitle:@"OK"];
+    [alert addButtonWithTitle:@"Cancel"];
+
+    NSInteger button = [alert runModal];
+    [alert release];
+
+    return button == NSAlertFirstButtonReturn;
+}
+
 - (void)awakeFromNib
 {
     _webView = [[WKView alloc] initWithFrame:[containerView frame] pageNamespaceRef:_pageNamespace];
@@ -556,7 +580,8 @@ static void setWindowFrame(WKPageRef page, WKRect rect, const void* clientInfo)
         contentsSizeChanged,
         0,          /* didNotHandleKeyEvent */
         getWindowFrame,
-        setWindowFrame
+        setWindowFrame,
+        runBeforeUnloadConfirmPanel
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

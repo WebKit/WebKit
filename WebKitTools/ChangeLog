@@ -2,6 +2,21 @@
 
         Reviewed by Dan Bernstein.
 
+        Add WebKit2 version of runBeforeUnloadConfirmPanelWithMessage
+        <rdar://problem/8447690>
+        https://bugs.webkit.org/show_bug.cgi?id=47459
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (runBeforeUnloadConfirmPanel):
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+
+2010-10-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         Need implementation of ChromeClient windowRect related functions.
         <rdar://problem/8469476>
         https://bugs.webkit.org/show_bug.cgi?id=47386

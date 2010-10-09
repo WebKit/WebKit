@@ -204,14 +204,26 @@ void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLev
 
 bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
 {
-    notImplemented();
-    return false;
+    bool canRun = false;
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::CanRunBeforeUnloadConfirmPanel(),
+            Messages::WebPageProxy::CanRunBeforeUnloadConfirmPanel::Reply(canRun),
+            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+        return false;
+
+    return canRun;
 }
 
 bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 {
-    notImplemented();
-    return false;
+    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+
+    bool shouldClose = false;
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()),
+            Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose),
+            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+        return false;
+
+    return shouldClose;
 }
 
 void WebChromeClient::closeWindowSoon()

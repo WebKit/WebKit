@@ -119,7 +119,8 @@ static WKPageRef createOtherPage(WKPageRef oldPage, const void*)
         0,
         0,
         getWindowFrameOtherPage,
-        setWindowFrameOtherPage
+        setWindowFrameOtherPage,
+        0
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -202,7 +203,8 @@ void TestController::initialize(int argc, const char* argv[])
         0,
         0,
         getWindowFrameMainPage,
-        setWindowFrameMainPage
+        setWindowFrameMainPage,
+        0,
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

@@ -865,6 +865,26 @@ void WebPageProxy::contentsSizeChanged(uint64_t frameID, const WebCore::IntSize&
     m_uiClient.contentsSizeChanged(this, size, process()->webFrame(frameID));
 }
 
+void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
+{
+    m_uiClient.setWindowFrame(this, m_pageClient->transformToDeviceSpace(newWindowFrame));
+}
+
+void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
+{
+    newWindowFrame = m_pageClient->transformToUserSpace(m_uiClient.windowFrame(this));
+}
+
+void WebPageProxy::canRunBeforeUnloadConfirmPanel(bool& canRun)
+{
+    canRun = m_uiClient.canRunBeforeUnloadConfirmPanel();
+}
+
+void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose)
+{
+    shouldClose = m_uiClient.runBeforeUnloadConfirmPanel(this, message, process()->webFrame(frameID));
+}
+
 // BackForwardList
 
 void WebPageProxy::backForwardAddItem(uint64_t itemID)
@@ -969,16 +989,6 @@ void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
 void WebPageProxy::didValidateMenuItem(const String& commandName, bool isEnabled, int32_t state)
 {
     m_pageClient->setEditCommandState(commandName, isEnabled, state);
-}
-
-void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
-{
-    m_uiClient.setWindowFrame(this, m_pageClient->transformToDeviceSpace(newWindowFrame));
-}
-
-void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
-{
-    newWindowFrame = m_pageClient->transformToUserSpace(m_uiClient.windowFrame(this));
 }
 
 void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)

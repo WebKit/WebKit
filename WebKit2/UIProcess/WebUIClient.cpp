@@ -153,4 +153,17 @@ FloatRect WebUIClient::windowFrame(WebPageProxy* page)
     return toImpl(m_pageUIClient.getWindowFrame(toAPI(page), m_pageUIClient.clientInfo));
 }
 
+bool WebUIClient::canRunBeforeUnloadConfirmPanel()
+{
+    return m_pageUIClient.runBeforeUnloadConfirmPanel;
+}
+
+bool WebUIClient::runBeforeUnloadConfirmPanel(WebPageProxy* page, const String& message, WebFrameProxy* frame)
+{
+    if (!m_pageUIClient.runBeforeUnloadConfirmPanel)
+        return true;
+
+    return m_pageUIClient.runBeforeUnloadConfirmPanel(toAPI(page), toAPI(message.impl()), toAPI(frame), m_pageUIClient.clientInfo);
+}
+
 } // namespace WebKit

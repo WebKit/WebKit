@@ -2,6 +2,33 @@
 
         Reviewed by Dan Bernstein.
 
+        Add WebKit2 version of runBeforeUnloadConfirmPanelWithMessage
+        <rdar://problem/8447690>
+        https://bugs.webkit.org/show_bug.cgi?id=47459
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setWindowFrame):
+        (WebKit::WebPageProxy::getWindowFrame):
+        (WebKit::WebPageProxy::canRunBeforeUnloadConfirmPanel):
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::canRunBeforeUnloadConfirmPanel):
+        (WebKit::WebUIClient::runBeforeUnloadConfirmPanel):
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::canRunBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel):
+        Pipe calls through to the UIProcess.
+
+2010-10-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         Need implementation of ChromeClient windowRect related functions.
         <rdar://problem/8469476>
         https://bugs.webkit.org/show_bug.cgi?id=47386

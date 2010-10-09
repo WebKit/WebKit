@@ -283,8 +283,9 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         0,  /* mouseDidMoveOverElement */
         0,  /* contentsSizeChanged */
         0,  /* didNotHandleKeyEvent */
-        0,  /* getWindowRect */
-        0   /* setWindowRect */
+        0,  /* getWindowFrame */
+        0,  /* setWindowFrame */
+        0   /* runBeforeUnloadConfirmPanel */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }

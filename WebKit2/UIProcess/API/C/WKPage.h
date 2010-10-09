@@ -141,6 +141,7 @@ typedef void (*WKPageContentsSizeChangedCallback)(WKPageRef page, int width, int
 typedef void (*WKPageDidNotHandleKeyEventCallback)(WKPageRef page, WKNativeEventPtr event, const void *clientInfo);
 typedef WKRect (*WKPageGetWindowFrameCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageSetWindowFrameCallback)(WKPageRef page, WKRect frame, const void *clientInfo);
+typedef bool (*WKPageRunBeforeUnloadConfirmPanelCallback)(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -157,6 +158,7 @@ struct WKPageUIClient {
     WKPageDidNotHandleKeyEventCallback                                  didNotHandleKeyEvent;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;
+    WKPageRunBeforeUnloadConfirmPanelCallback                           runBeforeUnloadConfirmPanel;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 
