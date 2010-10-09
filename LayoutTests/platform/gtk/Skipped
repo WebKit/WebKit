@@ -5450,7 +5450,8 @@ http/tests/xmlhttprequest/basic-auth-default.html
 http/tests/inspector/resource-har-conversion.html
 http/tests/inspector/resource-parameters.html
 
-# Some results are one pixel off on the 64-bit bot
+# Some results are one pixel off on the 64-bit bot or
+# have other rounding errors.
 # https://bugs.webkit.org/show_bug.cgi?id=39022
 css1/box_properties/acid_test.html
 fast/css/zoom-body-scroll.html
@@ -5461,6 +5462,14 @@ mathml/presentation/sub.xhtml
 mathml/presentation/sup.xhtml
 mathml/presentation/tables.xhtml
 svg/custom/recursive-filter.svg
+fast/repaint/moving-shadow-on-container.html
+fast/repaint/moving-shadow-on-path.html
+svg/css/composite-shadow-example.html
+svg/css/composite-shadow-with-opacity.html
+svg/css/stars-with-shadow.html
+svg/custom/gradient-with-1d-boundingbox.svg
+svg/custom/relative-sized-inner-svg.xhtml
+svg/custom/relative-sized-use-without-attributes-on-symbol.xhtml
 
 # New test needs enhanced frameloader delegate logging in DRT
 # Discussed in https://bugs.webkit.org/show_bug.cgi?id=38928
