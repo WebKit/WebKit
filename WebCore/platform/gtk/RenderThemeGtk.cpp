@@ -549,7 +549,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* object, const PaintInfo& inf
     if (part == SliderVerticalPart)
         gtkPart = MOZ_GTK_SCALE_VERTICAL;
 
-    return paintRenderObject(gtkPart, object, info.context, rect);
+    return paintRenderObject(gtkPart, object, info.context, toRenderBox(object)->absoluteContentBox());
 }
 
 void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
