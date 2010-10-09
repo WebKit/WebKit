@@ -4428,11 +4428,12 @@ void Document::updateURLForPushOrReplaceState(const KURL& url)
 
 void Document::statePopped(SerializedScriptValue* stateObject)
 {
-    Frame* f = frame();
-    if (!f)
+    if (!frame())
         return;
     
-    if (f->loader()->isComplete())
+    // Per step 11 of section 6.5.9 (history traversal) of the HTML5 spec, we 
+    // defer firing of popstate until we're in the complete state.
+    if (m_readyState == Complete)
         enqueuePopstateEvent(stateObject);
     else
         m_pendingStateObject = stateObject;
