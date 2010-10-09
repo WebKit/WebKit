@@ -194,8 +194,10 @@ void SocketStreamHandle::chooseProxy()
 
 void SocketStreamHandle::chooseProxyFromArray(CFArrayRef proxyArray)
 {
-    if (!proxyArray)
+    if (!proxyArray) {
         m_connectionType = Direct;
+        return;
+    }
 
     CFIndex proxyArrayCount = CFArrayGetCount(proxyArray);
 
