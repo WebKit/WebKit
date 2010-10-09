@@ -57,15 +57,21 @@ void WebChromeClient::chromeDestroyed()
     delete this;
 }
 
-void WebChromeClient::setWindowRect(const FloatRect& windowRect)
+void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
 {
-    notImplemented();
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetWindowFrame(windowFrame), m_page->pageID());
 }
 
 FloatRect WebChromeClient::windowRect()
 {
-    notImplemented();
-    return FloatRect();
+    FloatRect newWindowFrame;
+
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetWindowFrame(),
+            Messages::WebPageProxy::GetWindowFrame::Reply(newWindowFrame),
+            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+        return FloatRect();
+
+    return newWindowFrame;
 }
 
 FloatRect WebChromeClient::pageRect()

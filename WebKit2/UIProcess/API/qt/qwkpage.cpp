@@ -38,6 +38,7 @@
 #include <QStyle>
 #include <QTouchEvent>
 #include <QtDebug>
+#include <WebCore/FloatRect.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKRetainPtr.h>
 
@@ -89,6 +90,16 @@ void QWKPagePrivate::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPag
 
 void QWKPagePrivate::clearAllEditCommands()
 {
+}
+
+FloatRect QWKPagePrivate::transformToDeviceSpace(const FloatRect& rect)
+{
+    return rect;
+}
+
+FloatRect QWKPagePrivate::transformToUserSpace(const FloatRect& rect)
+{
+    return rect;
 }
 
 void QWKPagePrivate::paint(QPainter* painter, QRect area)
@@ -271,7 +282,9 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         0,  /* setStatusText */
         0,  /* mouseDidMoveOverElement */
         0,  /* contentsSizeChanged */
-        0   /* didNotHandleKeyEvent */
+        0,  /* didNotHandleKeyEvent */
+        0,  /* getWindowRect */
+        0   /* setWindowRect */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }

@@ -608,6 +608,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\API\c\WKGeometry.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\API\c\WKMutableArray.cpp"
 					>
 				</File>

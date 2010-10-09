@@ -36,6 +36,8 @@ messages -> WebPageProxy {
     SetStatusText(WTF::String statusText)
     SetToolTip(WTF::String toolTip)
     TakeFocus(bool direction)
+    SetWindowFrame(WebCore::FloatRect windowFrame)
+    GetWindowFrame() -> (WebCore::FloatRect windowFrame)
 
     # Policy messages.
     DecidePolicyForMIMEType(uint64_t frameID, WTF::String MIMEType, WTF::String url, uint64_t listenerID)

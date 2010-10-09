@@ -23,49 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClient_h
-#define PageClient_h
+#ifndef WKGeometry_h
+#define WKGeometry_h
 
-#include "WebPageProxy.h"
-#include <wtf/Forward.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebCore {
-    class Cursor;
-}
-
-namespace WebKit {
-
-class WebEditCommandProxy;
-
-class PageClient {
-public:
-    virtual ~PageClient() { }
-
-    virtual void processDidExit() = 0;
-    virtual void processDidRevive() = 0;
-
-    virtual void takeFocus(bool direction) = 0;
-    virtual void toolTipChanged(const String&, const String&) = 0;
-
-    virtual void setCursor(const WebCore::Cursor&) = 0;
-
-    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) = 0;
-    virtual void clearAllEditCommands() = 0;
-    virtual void setEditCommandState(const String& commandName, bool isEnabled, int state) = 0;
-
-    virtual WebCore::FloatRect transformToDeviceSpace(const WebCore::FloatRect&) = 0;
-    virtual WebCore::FloatRect transformToUserSpace(const WebCore::FloatRect&) = 0;
-
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void pageDidEnterAcceleratedCompositing() = 0;
-    virtual void pageDidLeaveAcceleratedCompositing() = 0;
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-#if PLATFORM(WIN)
-    virtual HWND nativeWindow() = 0;
-#endif
+struct WKPoint {
+    double x;
+    double y;
 };
+typedef struct WKPoint WKPoint;
 
-} // namespace WebKit
+struct WKSize {
+    double width;
+    double height;
+};
+typedef struct WKSize WKSize;
 
-#endif // PageClient_h
+struct WKRect {
+    WKPoint origin;
+    WKSize size;
+};
+typedef struct WKRect WKRect;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* WKGeometry_h */

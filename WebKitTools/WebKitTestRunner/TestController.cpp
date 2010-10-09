@@ -67,6 +67,30 @@ TestController::~TestController()
 {
 }
 
+static WKRect getWindowFrameMainPage(WKPageRef page, const void* clientInfo)
+{
+    PlatformWebView* view = static_cast<TestController*>(const_cast<void*>(clientInfo))->mainWebView();
+    return view->windowFrame();
+}
+
+static void setWindowFrameMainPage(WKPageRef page, WKRect frame, const void* clientInfo)
+{
+    PlatformWebView* view = static_cast<TestController*>(const_cast<void*>(clientInfo))->mainWebView();
+    view->setWindowFrame(frame);
+}
+
+static WKRect getWindowFrameOtherPage(WKPageRef page, const void* clientInfo)
+{
+    PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
+    return view->windowFrame();
+}
+
+static void setWindowFrameOtherPage(WKPageRef page, WKRect frame, const void* clientInfo)
+{
+    PlatformWebView* view = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
+    view->setWindowFrame(frame);
+}
+
 static void closeOtherPage(WKPageRef page, const void* clientInfo)
 {
     WKPageClose(page);
@@ -93,7 +117,9 @@ static WKPageRef createOtherPage(WKPageRef oldPage, const void*)
         0,
         0,
         0,
-        0
+        0,
+        getWindowFrameOtherPage,
+        setWindowFrameOtherPage
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -174,7 +200,9 @@ void TestController::initialize(int argc, const char* argv[])
         0,
         0,
         0,
-        0
+        0,
+        getWindowFrameMainPage,
+        setWindowFrameMainPage
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

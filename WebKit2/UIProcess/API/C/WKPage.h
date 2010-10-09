@@ -28,6 +28,7 @@
 
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKEvent.h>
+#include <WebKit2/WKGeometry.h>
 #include <WebKit2/WKNativeEvent.h>
 
 #ifndef __cplusplus
@@ -138,6 +139,8 @@ typedef void (*WKPageSetStatusTextCallback)(WKPageRef page, WKStringRef text, co
 typedef void (*WKPageMouseDidMoveOverElementCallback)(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageContentsSizeChangedCallback)(WKPageRef page, int width, int height, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidNotHandleKeyEventCallback)(WKPageRef page, WKNativeEventPtr event, const void *clientInfo);
+typedef WKRect (*WKPageGetWindowFrameCallback)(WKPageRef page, const void *clientInfo);
+typedef void (*WKPageSetWindowFrameCallback)(WKPageRef page, WKRect frame, const void *clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -152,6 +155,8 @@ struct WKPageUIClient {
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageContentsSizeChangedCallback                                   contentsSizeChanged;
     WKPageDidNotHandleKeyEventCallback                                  didNotHandleKeyEvent;
+    WKPageGetWindowFrameCallback                                        getWindowFrame;
+    WKPageSetWindowFrameCallback                                        setWindowFrame;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

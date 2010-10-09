@@ -55,6 +55,8 @@ public:
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
+    virtual WebCore::FloatRect transformToDeviceSpace(const WebCore::FloatRect&);
+    virtual WebCore::FloatRect transformToUserSpace(const WebCore::FloatRect&);
 
     void paint(QPainter* painter, QRect);
 

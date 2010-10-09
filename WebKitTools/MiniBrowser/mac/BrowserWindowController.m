@@ -484,6 +484,22 @@ static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRe
     LOG(@"contentsSizeChanged");
 }
 
+static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
+{
+    CGRect rect = [[(BrowserWindowController *)clientInfo window] frame];
+    WKRect wkRect;
+    wkRect.origin.x = rect.origin.x;
+    wkRect.origin.y = rect.origin.y;
+    wkRect.size.width = rect.size.width;
+    wkRect.size.height = rect.size.height;
+    return wkRect;
+}
+
+static void setWindowFrame(WKPageRef page, WKRect rect, const void* clientInfo)
+{
+    [[(BrowserWindowController *)clientInfo window] setFrame:CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height) display:YES];
+}
+
 - (void)awakeFromNib
 {
     _webView = [[WKView alloc] initWithFrame:[containerView frame] pageNamespaceRef:_pageNamespace];
@@ -538,7 +554,9 @@ static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRe
         setStatusText,
         mouseDidMoveOverElement,
         contentsSizeChanged,
-        0           /* didNotHandleKeyEvent */
+        0,          /* didNotHandleKeyEvent */
+        getWindowFrame,
+        setWindowFrame
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

@@ -30,6 +30,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "PageClient.h"
 #include "StringPairVector.h"
+#include "WKContextPrivate.h"
 #include "WebBackForwardList.h"
 #include "WebBackForwardListItem.h"
 #include "WebCertificateInfo.h"
@@ -49,8 +50,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include "WebURLRequest.h"
-
-#include "WKContextPrivate.h"
+#include <WebCore/FloatRect.h>
 #include <stdio.h>
 
 #ifndef NDEBUG
@@ -371,20 +371,19 @@ void WebPageProxy::setIsInWindow(bool isInWindow)
 }
 
 #if PLATFORM(MAC)
-void WebPageProxy::setWindowIsVisible(bool windowIsVisible)
+void WebPageProxy::updateWindowIsVisible(bool windowIsVisible)
 {
     if (!isValid())
         return;
     process()->send(Messages::WebPage::SetWindowIsVisible(windowIsVisible), m_pageID);
 }
 
-void WebPageProxy::setWindowFrame(const IntRect& windowFrame)
+void WebPageProxy::updateWindowFrame(const IntRect& windowFrame)
 {
     if (!isValid())
         return;
     process()->send(Messages::WebPage::SetWindowFrame(windowFrame), m_pageID);
 }
-
 #endif
 
 void WebPageProxy::handleMouseEvent(const WebMouseEvent& event)
@@ -970,6 +969,16 @@ void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
 void WebPageProxy::didValidateMenuItem(const String& commandName, bool isEnabled, int32_t state)
 {
     m_pageClient->setEditCommandState(commandName, isEnabled, state);
+}
+
+void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
+{
+    m_uiClient.setWindowFrame(this, m_pageClient->transformToDeviceSpace(newWindowFrame));
+}
+
+void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
+{
+    newWindowFrame = m_pageClient->transformToUserSpace(m_uiClient.windowFrame(this));
 }
 
 void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)

@@ -169,6 +169,7 @@ HEADERS += \
     Platform/WorkQueue.h \
     Shared/API/c/WKBase.h \
     Shared/API/c/WKCertificateInfo.h \
+    Shared/API/c/WKGeometry.h \
     Shared/API/c/WKNumber.h \
     Shared/API/c/WKSerializedScriptValue.h \
     Shared/API/c/WKSharedAPICast.h \

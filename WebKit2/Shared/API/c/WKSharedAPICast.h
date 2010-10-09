@@ -28,10 +28,12 @@
 
 #include "WKBase.h"
 #include "WKEvent.h"
+#include "WKGeometry.h"
 #include "WebEvent.h"
 #include "WebNumber.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include <WebCore/FloatRect.h>
 #include <wtf/TypeTraits.h>
 
 namespace WebKit {
@@ -145,6 +147,25 @@ inline String toWTFString(WKURLRef urlRef)
     if (!urlRef)
         return String();
     return toImpl(urlRef)->string();
+}
+
+
+/* Geometry conversions */
+
+inline WebCore::FloatRect toImpl(const WKRect& wkRect)
+{
+    return WebCore::FloatRect(static_cast<float>(wkRect.origin.x), static_cast<float>(wkRect.origin.y),
+                              static_cast<float>(wkRect.size.width), static_cast<float>(wkRect.size.height));
+}
+
+inline WKRect toAPI(const WebCore::FloatRect& rect)
+{
+    WKRect wkRect;
+    wkRect.origin.x = rect.x();
+    wkRect.origin.y = rect.y();
+    wkRect.size.width = rect.width();
+    wkRect.size.height = rect.height();
+    return wkRect;
 }
 
 /* Enum conversions */

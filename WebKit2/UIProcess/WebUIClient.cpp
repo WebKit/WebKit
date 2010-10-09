@@ -28,6 +28,7 @@
 #include "NativeWebKeyboardEvent.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
+#include <WebCore/FloatRect.h>
 #include <WebCore/IntSize.h>
 #include <string.h>
 #include <wtf/text/WTFString.h>
@@ -134,6 +135,22 @@ void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboa
     if (!m_pageUIClient.didNotHandleKeyEvent)
         return;
     m_pageUIClient.didNotHandleKeyEvent(toAPI(page), event.nativeEvent(), m_pageUIClient.clientInfo);
+}
+
+void WebUIClient::setWindowFrame(WebPageProxy* page, const FloatRect& frame)
+{
+    if (!m_pageUIClient.setWindowFrame)
+        return;
+
+    m_pageUIClient.setWindowFrame(toAPI(page), toAPI(frame), m_pageUIClient.clientInfo);
+}
+
+FloatRect WebUIClient::windowFrame(WebPageProxy* page)
+{
+    if (!m_pageUIClient.getWindowFrame)
+        return FloatRect();
+
+    return toImpl(m_pageUIClient.getWindowFrame(toAPI(page), m_pageUIClient.clientInfo));
 }
 
 } // namespace WebKit

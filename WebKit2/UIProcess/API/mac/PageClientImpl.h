@@ -56,6 +56,9 @@ private:
     void clearAllEditCommands();
     void setEditCommandState(const String& commandName, bool isEnabled, int state);
 
+    WebCore::FloatRect transformToDeviceSpace(const WebCore::FloatRect&);
+    WebCore::FloatRect transformToUserSpace(const WebCore::FloatRect&);
+
 #if USE(ACCELERATED_COMPOSITING)
     void pageDidEnterAcceleratedCompositing();
     void pageDidLeaveAcceleratedCompositing();

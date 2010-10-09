@@ -42,7 +42,9 @@
 #import "WebProcessManager.h"
 #import "WebProcessProxy.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/PlatformScreen.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
@@ -298,7 +300,7 @@ EVENT_HANDLER(scrollWheel, Wheel)
 
 - (void)_updateWindowVisibility
 {
-    _data->_page->setWindowIsVisible(![[self window] isMiniaturized]);
+    _data->_page->updateWindowIsVisible(![[self window] isMiniaturized]);
 }
 
 - (BOOL)_ownsWindowGrowBox
@@ -397,7 +399,7 @@ static bool isViewVisible(NSView *view)
 {
     ASSERT([self window]);
 
-    _data->_page->setWindowFrame(enclosingIntRect([[self window] frame]));
+    _data->_page->updateWindowFrame(enclosingIntRect([[self window] frame]));
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -530,6 +532,16 @@ static bool isViewVisible(NSView *view)
         [_data->_menuList[i].get() update];
     
     _data->_menuList.clear();
+}
+
+- (CGRect)_transformToDeviceSpace:(CGRect)rect
+{
+    return toDeviceSpace(rect, [self window]);
+}
+
+- (CGRect)_transformToUserSpace:(CGRect)rect
+{
+    return toUserSpace(rect, [self window]);
 }
 
 // Any non-zero value will do, but using something recognizable might help us debug some day.

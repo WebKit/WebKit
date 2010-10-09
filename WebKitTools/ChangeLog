@@ -1,3 +1,28 @@
+2010-10-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Need implementation of ChromeClient windowRect related functions.
+        <rdar://problem/8469476>
+        https://bugs.webkit.org/show_bug.cgi?id=47386
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (getWindowFrame):
+        (setWindowFrame):
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::setWindowFrame):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::setWindowFrame):
+        * WebKitTestRunner/win/PlatformWebViewWin.cpp:
+        (WTR::PlatformWebView::windowFrame):
+        (WTR::PlatformWebView::setWindowFrame):
+
 2010-10-08  Adam Barth  <abarth@webkit.org>
 
         Unreviewed (Eric is on vacation in this change is trivial).

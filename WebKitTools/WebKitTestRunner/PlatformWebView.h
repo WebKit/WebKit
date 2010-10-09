@@ -60,6 +60,9 @@ public:
     void resizeTo(unsigned width, unsigned height);
     void focus();
 
+    WKRect windowFrame();
+    void setWindowFrame(WKRect);
+
 private:
     PlatformWKView m_view;
     PlatformWindow m_window;

@@ -56,8 +56,9 @@ namespace CoreIPC {
 }
 
 namespace WebCore {
-    class IntSize;
     class Cursor;
+    class FloatRect;
+    class IntSize;
 }
 
 struct WKContextStatistics;
@@ -143,8 +144,8 @@ public:
 
 // These are only used on Mac currently.
 #if PLATFORM(MAC)
-    void setWindowIsVisible(bool windowIsVisible);
-    void setWindowFrame(const WebCore::IntRect&);
+    void updateWindowIsVisible(bool windowIsVisible);
+    void updateWindowFrame(const WebCore::IntRect&);
 #endif
 
     void handleMouseEvent(const WebMouseEvent&);
@@ -277,6 +278,9 @@ private:
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
     void didValidateMenuItem(const String& commandName, bool isEnabled, int32_t state);
+
+    void setWindowFrame(const WebCore::FloatRect&);
+    void getWindowFrame(WebCore::FloatRect&);
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
 

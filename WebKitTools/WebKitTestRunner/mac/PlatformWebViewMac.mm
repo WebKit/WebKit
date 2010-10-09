@@ -63,4 +63,21 @@ void PlatformWebView::focus()
     // Implement.
 }
 
+WKRect PlatformWebView::windowFrame()
+{
+    NSRect frame = [m_window frame];
+
+    WKRect wkFrame;
+    wkFrame.origin.x = frame.origin.x;
+    wkFrame.origin.y = frame.origin.y;
+    wkFrame.size.width = frame.size.width;
+    wkFrame.size.height = frame.size.height;
+    return wkFrame;
+}
+
+void PlatformWebView::setWindowFrame(WKRect frame)
+{
+    [m_window setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
+}
+
 } // namespace WTR

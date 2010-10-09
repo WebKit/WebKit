@@ -30,6 +30,7 @@
 #import "WKViewInternal.h"
 #import "WebEditCommandProxy.h"
 #import <WebCore/Cursor.h>
+#import <WebCore/FloatRect.h>
 #import <WebCore/FoundationExtras.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/text/WTFString.h>
@@ -87,7 +88,6 @@ using namespace WebCore;
 }
 
 @end
-
 
 namespace WebKit {
 
@@ -204,6 +204,16 @@ void PageClientImpl::clearAllEditCommands()
 void PageClientImpl::setEditCommandState(const String& commandName, bool isEnabled, int newState)
 {
     [m_wkView _setUserInterfaceItemState:nsStringFromWebCoreString(commandName) enabled:isEnabled state:newState];
+}
+
+FloatRect PageClientImpl::transformToDeviceSpace(const FloatRect& rect)
+{
+    return [m_wkView _transformToDeviceSpace:rect];
+}
+
+FloatRect PageClientImpl::transformToUserSpace(const FloatRect& rect)
+{
+    return [m_wkView _transformToUserSpace:rect];
 }
 
 #if USE(ACCELERATED_COMPOSITING)

@@ -79,4 +79,21 @@ void PlatformWebView::focus()
     m_view->setFocus(Qt::OtherFocusReason);
 }
 
+WKRect PlatformWebView::windowFrame()
+{
+    // Implement.
+
+    WKRect wkFrame;
+    wkFrame.origin.x = 0;
+    wkFrame.origin.y = 0;
+    wkFrame.size.width = 0;
+    wkFrame.size.height = 0;
+    return wkFrame;
+}
+
+void PlatformWebView::setWindowFrame(WKRect)
+{
+    // Implement.
+}
+
 } // namespace WTR

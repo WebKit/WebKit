@@ -1,3 +1,63 @@
+2010-10-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Need implementation of ChromeClient windowRect related functions.
+        <rdar://problem/8469476>
+        https://bugs.webkit.org/show_bug.cgi?id=47386
+
+        * Shared/API/c/WKGeometry.h: Added.
+        Adds WKPoint, WKSize and WKRect structs.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toImpl):
+        (WebKit::toAPI):
+        Add conversion functions for WKRect.
+
+        * Shared/WebCoreArgumentCoders.h:
+        Add encoding for FloatPoint, FloatSize and FloatRect.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::transformToDeviceSpace):
+        (WebKit::PageClientImpl::transformToUserSpace):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _transformToDeviceSpace:]):
+        (-[WKView _transformToUserSpace:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::transformToDeviceSpace):
+        (QWKPagePrivate::transformToUserSpace):
+        (QWKPage::QWKPage):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setWindowFrame):
+        (WebKit::WebPageProxy::getWindowFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::setWindowFrame):
+        (WebKit::WebUIClient::windowFrame):
+        * UIProcess/WebUIClient.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setEditCommandState):
+        (WebKit::WebView::transformToDeviceSpace):
+        (WebKit::WebView::transformToUserSpace):
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setWindowFrame):
+        (WebKit::WebChromeClient::windowFrame):
+        Pipe calls through to the UIProcess, and give ports a chance to transform
+        the rect (via the PageClient) before it is passed on.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+        Add new files.
+
 2010-10-07  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.
