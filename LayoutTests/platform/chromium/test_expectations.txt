@@ -3226,7 +3226,7 @@ BUG58481 WIN : fast/html/object-image-nested-fallback.html = CRASH
 BUG_AJWONG : fast/css-generated-content/malformed-url.html = TEXT
 BUG_AJWONG WIN LINUX : fast/repaint/repaint-svg-after-style-change.html = TEXT
 BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/filters-image-03-f.svg = IMAGE
-BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg = IMAGE
+BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg = IMAGE IMAGE+TEXT
 BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-20-b.svg = IMAGE
 BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1-SE/pservers-pattern-03-f.svg = IMAGE
 BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE
@@ -3253,7 +3253,7 @@ BUG_AJWONG MAC : svg/custom/missing-xlink.svg = TEXT
 BUG_AJWONG MAC : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 
 // Duplicates to check on.
-BUG_AJWONG : svg/custom/dominant-baseline-hanging.svg = IMAGE MISSING  // missing on mac.
+BUG_AJWONG : svg/custom/dominant-baseline-hanging.svg = IMAGE IMAGE+TEXT MISSING  // missing on mac.
 BUG_AJWONG MAC : fast/repaint/moving-shadow-on-container.html = IMAGE IMAGE+TEXT
 BUG_AJWONG : svg/css/composite-shadow-example.html = IMAGE+TEXT IMAGE
 BUG_AJWONG : svg/css/composite-shadow-with-opacity.html = IMAGE+TEXT IMAGE
@@ -3276,3 +3276,14 @@ BUG_AJWONG WIN : svg/transforms/animated-path-inside-transformed-html.xhtml = TE
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40247
 BUG_AJWONG LINUX : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
 BUG_AJWONG LINUX : svg/custom/image-small-width-height.svg = IMAGE
+
+// Failing starting around r69427
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40247
+BUG_AJWONG LINUX : svg/carto.net/selectionlist.svg = IMAGE
+
+// Failing from around r62021
+BUG_AJWONG WIN : inspector/timeline-layout.html = TEXT PASS
+BUG_AJWONG WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
+BUG_AJWONG WIN : svg/W3C-SVG-1.1/animate-elem-30-t.svg = IMAGE
+BUG_AJWONG WIN : svg/carto.net/selectionlist.svg = IMAGE
+BUG_AJWONG WIN : svg/custom/image-small-width-height.svg = IMAGE
