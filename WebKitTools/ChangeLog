@@ -2,6 +2,26 @@
 
         Reviewed by Dan Bernstein.
 
+        WKFrameGetFrameLoadState() returns kWKFrameLoadStateCommitted after the load has been stopped
+        <rdar://problem/8173667>
+        https://bugs.webkit.org/show_bug.cgi?id=47461
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/Test.h:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp: Added.
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrame):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::URLForNonExistentResource):
+        Adds a test for the frame load state after a failed provisional load. I wanted to test
+        the frame load state after a committed load failed, but I don't believe that is possible
+        to do without hooking up the http server to serve a long loading page.
+
+2010-10-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         Add WebKit2 version of runBeforeUnloadConfirmPanelWithMessage
         <rdar://problem/8447690>
         https://bugs.webkit.org/show_bug.cgi?id=47459

@@ -43,5 +43,11 @@ WKURLRef createURLForResource(const char* resource, const char* extension)
     return WKURLCreateWithCFURL((CFURLRef)nsURL);
 }
 
+WKURLRef URLForNonExistentResource()
+{
+    NSURL* nsURL = [NSURL URLWithString:@"file:///does-not-exist.html"];
+    return WKURLCreateWithCFURL((CFURLRef)nsURL);
+}
+
 } // namespace Util
 } // namespace TestWebKitAPI

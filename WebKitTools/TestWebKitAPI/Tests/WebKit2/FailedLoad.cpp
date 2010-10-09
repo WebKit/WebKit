@@ -23,32 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "Test.h"
 
-#include <WebKit2/WKString.h>
-#include <string>
-#include <wtf/OwnArrayPtr.h>
-#include <wtf/PassOwnArrayPtr.h>
+#include "PlatformUtilities.h"
+#include "PlatformWebView.h"
+#include <WebKit2/WebKit2.h>
+#include <WebKit2/WKRetainPtr.h>
 
 namespace TestWebKitAPI {
-namespace Util {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+// FIXME: This should also test the that the load state after didFailLoadWithErrorForFrame is kWKFrameLoadStateFinished
 
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+static bool testDone;
 
-inline std::string toSTD(WKStringRef string)
+static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
-    size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
-    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
-    size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
-    return std::string(buffer.get(), stringLength - 1);
+    TEST_ASSERT(WKFrameGetFrameLoadState(frame) == kWKFrameLoadStateFinished);
+    testDone = true;
 }
 
-} // namespace Util
-} // namespace TestWebKitAPI
+TEST(WebKit2, FailedLoad)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
+    PlatformWebView webView(pageNamespace.get());
 
-#endif // PlatformUtilities_h
+    WKPageLoaderClient loaderClient;
+    memset(&loaderClient, 0, sizeof(loaderClient));
+
+    loaderClient.version = 0;
+    loaderClient.clientInfo = 0;
+    loaderClient.didFailProvisionalLoadWithErrorForFrame = didFailProvisionalLoadWithErrorForFrame;
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
+
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::URLForNonExistentResource());
+    WKPageLoadURL(webView.page(), url.get());
+
+    Util::run(&testDone);
+}
+
+} // namespace TestWebKitAPI

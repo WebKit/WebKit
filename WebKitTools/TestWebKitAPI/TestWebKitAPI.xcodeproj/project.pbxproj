@@ -24,6 +24,7 @@
 		BCBD3710125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */; };
 		BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = BCBD372E125ABBE600D2C29F /* icon.png */; };
 		BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */; };
+		BCC8B95B12611F4700DE46A4 /* FailedLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -78,6 +79,7 @@
 		BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypeHTML.cpp; sourceTree = "<group>"; };
 		BCBD372E125ABBE600D2C29F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypePNG.cpp; sourceTree = "<group>"; };
+		BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FailedLoad.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +160,7 @@
 				BC909779125571AB00083756 /* PageLoadBasic.cpp */,
 				BC90995D12567BC100083756 /* WKString.cpp */,
 				BC9099931256ACF100083756 /* WKStringJSString.cpp */,
+				BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */,
 			);
 			path = WebKit2;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				BCBD3710125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp in Sources */,
 				BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */,
 				1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */,
+				BCC8B95B12611F4700DE46A4 /* FailedLoad.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

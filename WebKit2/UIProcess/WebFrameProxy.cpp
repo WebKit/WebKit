@@ -80,6 +80,11 @@ void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const String& url
     m_provisionalURL = url;
 }
 
+void WebFrameProxy::didFailProvisionalLoad()
+{
+    m_loadState = LoadStateFinished;
+}
+
 void WebFrameProxy::didCommitLoad()
 {
     // FIXME: Add assertions.
@@ -91,6 +96,11 @@ void WebFrameProxy::didCommitLoad()
 void WebFrameProxy::didFinishLoad()
 {
     // FIXME: Add assertions
+    m_loadState = LoadStateFinished;
+}
+
+void WebFrameProxy::didFailLoad()
+{
     m_loadState = LoadStateFinished;
 }
 

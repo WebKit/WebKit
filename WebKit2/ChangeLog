@@ -2,6 +2,26 @@
 
         Reviewed by Dan Bernstein.
 
+        WKFrameGetFrameLoadState() returns kWKFrameLoadStateCommitted after the load has been stopped
+        <rdar://problem/8173667>
+        https://bugs.webkit.org/show_bug.cgi?id=47461
+
+        API Test: WebKit2/FailedLoad
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didFailProvisionalLoad):
+        (WebKit::WebFrameProxy::didFailLoad):
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        Set the frame load state to LoadStateFinished for both didFailProvisionalLoadForFrame
+        and didFailLoadForFrame.
+
+2010-10-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         Add WebKit2 version of runBeforeUnloadConfirmPanelWithMessage
         <rdar://problem/8447690>
         https://bugs.webkit.org/show_bug.cgi?id=47459
