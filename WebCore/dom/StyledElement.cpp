@@ -402,62 +402,25 @@ void StyledElement::createMappedDecl(Attribute* attr)
     decl->setStrictParsing(false); // Mapped attributes are just always quirky.
 }
 
-// Paul Hsieh's SuperFastHash
-// http://www.azillionmonkeys.com/qed/hash.html
 unsigned MappedAttributeHash::hash(const MappedAttributeKey& key)
 {
-    uint32_t hash = WTF::stringHashingStartValue;
-    uint32_t tmp;
+    COMPILE_ASSERT(sizeof(key.name) == 4 || sizeof(key.name) == 8, key_name_size);
+    COMPILE_ASSERT(sizeof(key.value) == 4 || sizeof(key.value) == 8, key_value_size);
 
-    const uint16_t* p;
+    WTF::StringHasher hasher;
+    const UChar* data;
 
-    p = reinterpret_cast<const uint16_t*>(&key.name);
-    hash += p[0];
-    tmp = (p[1] << 11) ^ hash;
-    hash = (hash << 16) ^ tmp;
-    hash += hash >> 11;
-    ASSERT(sizeof(key.name) == 4 || sizeof(key.name) == 8);
-    if (sizeof(key.name) == 8) {
-        p += 2;
-        hash += p[0];
-        tmp = (p[1] << 11) ^ hash;
-        hash = (hash << 16) ^ tmp;
-        hash += hash >> 11;
-    }
+    data = reinterpret_cast<const UChar*>(&key.name);
+    hasher.addCharacters(data[0], data[1]);
+    if (sizeof(key.name) == 8)
+        hasher.addCharacters(data[2], data[3]);
 
-    p = reinterpret_cast<const uint16_t*>(&key.value);
-    hash += p[0];
-    tmp = (p[1] << 11) ^ hash;
-    hash = (hash << 16) ^ tmp;
-    hash += hash >> 11;
-    ASSERT(sizeof(key.value) == 4 || sizeof(key.value) == 8);
-    if (sizeof(key.value) == 8) {
-        p += 2;
-        hash += p[0];
-        tmp = (p[1] << 11) ^ hash;
-        hash = (hash << 16) ^ tmp;
-        hash += hash >> 11;
-    }
+    data = reinterpret_cast<const UChar*>(&key.value);
+    hasher.addCharacters(data[0], data[1]);
+    if (sizeof(key.value) == 8)
+        hasher.addCharacters(data[2], data[3]);
 
-    // Handle end case
-    hash += key.type;
-    hash ^= hash << 11;
-    hash += hash >> 17;
-
-    // Force "avalanching" of final 127 bits
-    hash ^= hash << 3;
-    hash += hash >> 5;
-    hash ^= hash << 2;
-    hash += hash >> 15;
-    hash ^= hash << 10;
-
-    // This avoids ever returning a hash code of 0, since that is used to
-    // signal "hash not computed yet", using a value that is likely to be
-    // effectively the same as 0 when the low bits are masked
-    if (hash == 0)
-        hash = 0x80000000;
-
-    return hash;
+    return hasher.hash();
 }
 
 void StyledElement::copyNonAttributeProperties(const Element *sourceElement)
