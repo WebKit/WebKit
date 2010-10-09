@@ -50,6 +50,7 @@ class WebNamedNodeMap;
         void assign(const WebElement& e) { WebNode::assign(e); }
 
         WEBKIT_API bool isFormControlElement() const;
+        WEBKIT_API bool isTextFormControlElement() const;
         WEBKIT_API WebString tagName() const;
         WEBKIT_API bool hasTagName(const WebString&) const;
         WEBKIT_API bool hasAttribute(const WebString&) const;

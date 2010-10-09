@@ -161,6 +161,9 @@ public:
     // send it.
     virtual void clearFocusedNode() = 0;
 
+    // Scrolls the node currently in focus into view.
+    virtual void scrollFocusedNodeIntoView() = 0;
+
 
     // Zoom ----------------------------------------------------------------
 

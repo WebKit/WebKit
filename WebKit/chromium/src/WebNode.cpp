@@ -32,6 +32,7 @@
 #include "WebNode.h"
 
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "FrameLoaderClientImpl.h"
 #include "Node.h"
@@ -142,6 +143,11 @@ WebString WebNode::createMarkup() const
 bool WebNode::isTextNode() const
 {
     return m_private->isTextNode();
+}
+
+bool WebNode::isContentEditable() const
+{
+    return m_private->isContentEditable();
 }
 
 bool WebNode::isElementNode() const

@@ -132,6 +132,7 @@ public:
     virtual void setFocusedFrame(WebFrame* frame);
     virtual void setInitialFocus(bool reverse);
     virtual void clearFocusedNode();
+    virtual void scrollFocusedNodeIntoView();
     virtual double zoomLevel();
     virtual double setZoomLevel(bool textOnly, double zoomLevel);
     virtual void zoomLimitsChanged(double minimumZoomLevel,

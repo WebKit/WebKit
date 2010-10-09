@@ -1525,6 +1525,15 @@ void WebViewImpl::clearFocusedNode()
     }
 }
 
+void WebViewImpl::scrollFocusedNodeIntoView()
+{
+    Node* focusedNode = focusedWebCoreNode();
+    if (focusedNode && focusedNode->isElementNode()) {
+        Element* elementNode = static_cast<Element*>(focusedNode);
+        elementNode->scrollIntoViewIfNeeded(true);
+    }
+}
+
 double WebViewImpl::zoomLevel()
 {
     return m_zoomLevel;
