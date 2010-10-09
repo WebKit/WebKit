@@ -2,6 +2,16 @@
 
         Reviewed by Jeremy Orlow.
 
+        [Chromium] IDBFactory::open only works in single process mode.
+        https://bugs.webkit.org/show_bug.cgi?id=47444
+
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::open):
+
+2010-10-08  Andrei Popescu  <andreip@google.com>
+
+        Reviewed by Jeremy Orlow.
+
         IndexedDB does not have a quota mechanism.
         https://bugs.webkit.org/show_bug.cgi?id=47389
 
