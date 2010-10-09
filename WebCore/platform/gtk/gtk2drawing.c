@@ -54,7 +54,6 @@
 
 #define XTHICKNESS(style) (style->xthickness)
 #define YTHICKNESS(style) (style->ythickness)
-#define WINDOW_IS_MAPPED(window) ((window) && GDK_IS_WINDOW(window) && gdk_window_is_visible(window))
 
 static GtkThemeParts *gParts = NULL;
 static style_prop_t style_prop_func;
@@ -382,12 +381,6 @@ moz_gtk_button_paint(GdkDrawable* drawable, GdkRectangle* rect,
     gint focus_width, focus_pad;
 
     moz_gtk_widget_get_focus(widget, &interior_focus, &focus_width, &focus_pad);
-
-    if (WINDOW_IS_MAPPED(drawable)) {
-        gdk_window_set_back_pixmap(drawable, NULL, TRUE);
-        gdk_window_clear_area(drawable, cliprect->x, cliprect->y,
-                              cliprect->width, cliprect->height);
-    }
 
     gtk_widget_set_state(widget, button_state);
     gtk_widget_set_direction(widget, direction);
