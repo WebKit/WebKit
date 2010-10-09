@@ -380,16 +380,6 @@ bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* re
     return paintMozillaGtkWidget(type, context, rect, &widgetState, flags, textDirection);
 }
 
-static void setButtonPadding(RenderStyle* style)
-{
-    // FIXME: This looks incorrect.
-    const int padding = 8;
-    style->setPaddingLeft(Length(padding, Fixed));
-    style->setPaddingRight(Length(padding, Fixed));
-    style->setPaddingTop(Length(padding / 2, Fixed));
-    style->setPaddingBottom(Length(padding / 2, Fixed));
-}
-
 static void setToggleSize(const RenderThemeGtk* theme, RenderStyle* style, ControlPart appearance)
 {
     // The width and height are both specified, so we shouldn't change them.
@@ -444,18 +434,9 @@ bool RenderThemeGtk::paintRadio(RenderObject* o, const PaintInfo& i, const IntRe
 
 void RenderThemeGtk::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
 {
-    // FIXME: Is this condition necessary?
-    if (style->appearance() == PushButtonPart) {
-        style->resetBorder();
-        style->setHeight(Length(Auto));
-        style->setWhiteSpace(PRE);
-        setButtonPadding(style);
-    } else {
-        // FIXME: This should not be hard-coded.
-        style->setMinHeight(Length(14, Fixed));
-        style->resetBorderTop();
-        style->resetBorderBottom();
-    }
+    // Some layout tests check explicitly that buttons ignore line-height.
+    if (style->appearance() == PushButtonPart)
+        style->setLineHeight(RenderStyle::initialLineHeight());
 }
 
 bool RenderThemeGtk::paintButton(RenderObject* o, const PaintInfo& i, const IntRect& rect)

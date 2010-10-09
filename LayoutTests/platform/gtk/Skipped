@@ -5014,14 +5014,6 @@ svg/filters/subRegion-in-userSpace.svg
 # ------------------
 # Tests with bugs attached : Enable these tests again once these bugs are fixed.
 # ------------------
-
-# Height not honored for <input> and <button> elements.
-# See Bug #33936 - https://bugs.webkit.org/show_bug.cgi?id=33936
-fast/css/button-height.html
-# I think this is related. Essentially we aren't honoring style
-# information for widgets.
-fast/forms/textarea-metrics.html
-
 # See Bug #27905 - http://bugs.webkit.org/show_bug.cgi?id=27905
 # Missing resource load callback ability in DRT
 http/tests/loading/redirect-methods.html
@@ -5669,6 +5661,7 @@ canvas/philip/tests/toDataURL.jpeg.quality.basic.html
 # on form elements: https://bugs.webkit.org/show_bug.cgi?id=40855
 fast/forms/basic-selects.html
 fast/forms/basic-textareas-quirks.html
+fast/forms/textarea-metrics.html
 
 # Fake italics do not work: https://bugs.webkit.org/show_bug.cgi?id=40856
 fast/text/fake-italic.html
