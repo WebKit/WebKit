@@ -42,7 +42,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 ReplaceNodeWithSpanCommand::ReplaceNodeWithSpanCommand(PassRefPtr<Node> node)
-    : CompositeEditCommand(node->document())
+    : SimpleEditCommand(node->document())
     , m_node(node)
 {
     ASSERT(m_node);

@@ -38,7 +38,7 @@ namespace WebCore {
 class HTMLElement;
 
 // More accurately, this is ReplaceNodeWithSpanPreservingChildrenAndAttributesCommand
-class ReplaceNodeWithSpanCommand : public CompositeEditCommand {
+class ReplaceNodeWithSpanCommand : public SimpleEditCommand {
 public:
     static PassRefPtr<ReplaceNodeWithSpanCommand> create(PassRefPtr<Node> node)
     {
