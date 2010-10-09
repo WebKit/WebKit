@@ -57,6 +57,14 @@ public:
 
     // Validation-related functions
 
+    virtual bool supportsValidation() const;
+    virtual bool typeMismatchFor(const String&) const;
+    // Type check for the current input value. We do nothing for some types
+    // though typeMismatchFor() does something for them because of value
+    // sanitization.
+    virtual bool typeMismatch() const;
+    virtual bool supportsRequired() const;
+    virtual bool valueMissing(const String&) const;
     virtual bool patternMismatch(const String&) const;
     virtual bool rangeUnderflow(const String&) const;
     virtual bool rangeOverflow(const String&) const;

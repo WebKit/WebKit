@@ -67,6 +67,16 @@ void BaseDateAndTimeInputType::setValueAsNumber(double newValue, ExceptionCode&)
     element()->setValue(serialize(newValue));
 }
 
+bool BaseDateAndTimeInputType::typeMismatchFor(const String& value) const
+{
+    return !value.isEmpty() && !parseToDateComponents(value, 0);
+}
+
+bool BaseDateAndTimeInputType::typeMismatch() const
+{
+    return typeMismatchFor(element()->value());
+}
+
 bool BaseDateAndTimeInputType::rangeUnderflow(const String& value) const
 {
     const double nan = numeric_limits<double>::quiet_NaN();

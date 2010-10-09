@@ -25,6 +25,7 @@
 #define HTMLInputElement_h
 
 #include "HTMLFormControlElement.h"
+#include "HTMLFormElement.h"
 #include "InputElement.h"
 #include <wtf/OwnPtr.h>
 
@@ -49,7 +50,7 @@ public:
     bool autoComplete() const;
 
     // For ValidityState
-    bool typeMismatch(const String&) const;
+    bool typeMismatch() const;
     // valueMissing() ignores the specified string value for CHECKBOX and RADIO.
     bool valueMissing(const String&) const;
     bool patternMismatch(const String&) const;
@@ -194,6 +195,13 @@ public:
 #if ENABLE(WCSS)
     void setWapInputFormat(String& mask);
 #endif
+
+    inline CheckedRadioButtons& checkedRadioButtons() const
+    {
+        if (HTMLFormElement* formElement = form())
+            return formElement->checkedRadioButtons();
+        return document()->checkedRadioButtons();
+    }
 
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement* = 0);

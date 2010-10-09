@@ -42,6 +42,9 @@ public:
 private:
     ColorInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool typeMismatchFor(const String&) const;
+    virtual bool typeMismatch() const;
+    virtual bool supportsRequired() const;
 };
 
 } // namespace WebCore

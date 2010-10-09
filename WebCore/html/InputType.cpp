@@ -142,6 +142,32 @@ void InputType::setValueAsNumber(double, ExceptionCode& ec) const
     ec = INVALID_STATE_ERR;
 }
 
+bool InputType::supportsValidation() const
+{
+    return true;
+}
+
+bool InputType::typeMismatchFor(const String&) const
+{
+    return false;
+}
+
+bool InputType::typeMismatch() const
+{
+    return false;
+}
+
+bool InputType::supportsRequired() const
+{
+    // Almost all validatable types support @required.
+    return supportsValidation();
+}
+
+bool InputType::valueMissing(const String&) const
+{
+    return false;
+}
+
 bool InputType::patternMismatch(const String&) const
 {
     return false;

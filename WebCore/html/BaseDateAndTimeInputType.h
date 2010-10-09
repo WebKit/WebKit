@@ -51,6 +51,8 @@ private:
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsNumber() const;
     virtual void setValueAsNumber(double, ExceptionCode&) const;
+    virtual bool typeMismatchFor(const String&) const;
+    virtual bool typeMismatch() const;
     virtual bool rangeUnderflow(const String&) const;
     virtual bool rangeOverflow(const String&) const;
     virtual bool stepMismatch(const String&, double) const;

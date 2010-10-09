@@ -72,6 +72,17 @@ void NumberInputType::setValueAsNumber(double newValue, ExceptionCode&) const
     element()->setValue(serialize(newValue));
 }
 
+bool NumberInputType::typeMismatchFor(const String& value) const
+{
+    return !value.isEmpty() && !parseToDoubleForNumberType(value, 0);
+}
+
+bool NumberInputType::typeMismatch() const
+{
+    ASSERT(!typeMismatchFor(element()->value()));
+    return false;
+}
+
 bool NumberInputType::rangeUnderflow(const String& value) const
 {
     const double nan = numeric_limits<double>::quiet_NaN();

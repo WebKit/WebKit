@@ -41,6 +41,7 @@ class TextFieldInputType : public InputType {
 protected:
     TextFieldInputType(HTMLInputElement* element) : InputType(element) { }
     virtual bool isTextField() const;
+    virtual bool valueMissing(const String&) const;
 };
 
 } // namespace WebCore

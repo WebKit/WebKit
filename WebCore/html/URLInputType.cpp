@@ -31,6 +31,8 @@
 #include "config.h"
 #include "URLInputType.h"
 
+#include "HTMLInputElement.h"
+#include "KURL.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -43,6 +45,16 @@ PassOwnPtr<InputType> URLInputType::create(HTMLInputElement* element)
 const AtomicString& URLInputType::formControlType() const
 {
     return InputTypeNames::url();
+}
+
+bool URLInputType::typeMismatchFor(const String& value) const
+{
+    return !value.isEmpty() && !KURL(KURL(), value).isValid();
+}
+
+bool URLInputType::typeMismatch() const
+{
+    return typeMismatchFor(element()->value());
 }
 
 } // namespace WebCore

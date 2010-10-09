@@ -44,4 +44,9 @@ const AtomicString& HiddenInputType::formControlType() const {
     return InputTypeNames::hidden();
 }
 
+bool HiddenInputType::supportsValidation() const
+{
+    return false;
+}
+
 } // namespace WebCore

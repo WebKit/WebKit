@@ -56,7 +56,6 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "RegularExpression.h"
 #include "RenderButton.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
@@ -82,42 +81,10 @@ using namespace HTMLNames;
 
 const int maxSavedResults = 256;
 
-static const char emailPattern[] =
-    "[a-z0-9!#$%&'*+/=?^_`{|}~.-]+" // local part
-    "@"
-    "[a-z0-9-]+(\\.[a-z0-9-]+)+"; // domain part
-
 static bool isNumberCharacter(UChar ch)
 {
     return ch == '+' || ch == '-' || ch == '.' || ch == 'e' || ch == 'E'
         || (ch >= '0' && ch <= '9');
-}
-
-static bool isValidColorString(const String& value)
-{
-    if (value.isEmpty())
-        return false;
-    if (value[0] == '#') {
-        // We don't accept #rgb and #aarrggbb formats.
-        if (value.length() != 7)
-            return false;
-    }
-    Color color(value); // This accepts named colors such as "white".
-    return color.isValid() && !color.hasAlpha();
-}
-
-static bool isValidEmailAddress(const String& address)
-{
-    int addressLength = address.length();
-    if (!addressLength)
-        return false;
-
-    DEFINE_STATIC_LOCAL(const RegularExpression, regExp, (emailPattern, TextCaseInsensitive));
-
-    int matchLength;
-    int matchOffset = regExp.match(address, 0, &matchLength);
-
-    return !matchOffset && matchLength == addressLength;
 }
 
 HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
@@ -169,17 +136,10 @@ bool HTMLInputElement::autoComplete() const
     return HTMLTextFormControlElement::autoComplete();
 }
 
-static inline CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement* element)
-{
-    if (HTMLFormElement* form = element->form())
-        return form->checkedRadioButtons();
-    return element->document()->checkedRadioButtons();
-}
-
 void HTMLInputElement::updateCheckedRadioButtons()
 {
     if (attached() && checked())
-        checkedRadioButtons(this).addButton(this);
+        checkedRadioButtons().addButton(this);
 
     if (form()) {
         const Vector<HTMLFormControlElement*>& controls = form()->associatedElements();
@@ -220,7 +180,7 @@ bool HTMLInputElement::isValidValue(const String& value) const
         ASSERT_NOT_REACHED();
         return false;
     }
-    return !typeMismatch(value)
+    return !m_inputType->typeMismatchFor(value)
         && !stepMismatch(value)
         && !rangeUnderflow(value)
         && !rangeOverflow(value)
@@ -229,93 +189,16 @@ bool HTMLInputElement::isValidValue(const String& value) const
         && !valueMissing(value);
 }
 
-bool HTMLInputElement::typeMismatch(const String& value) const
+bool HTMLInputElement::typeMismatch() const
 {
-    switch (deprecatedInputType()) {
-    case COLOR:
-        return !isValidColorString(value);
-    case NUMBER:
-        ASSERT(parseToDoubleForNumberType(value, 0));
-        return false;
-    case URL:
-        return !KURL(KURL(), value).isValid();
-    case EMAIL: {
-        if (!multiple())
-            return !isValidEmailAddress(value);
-        Vector<String> addresses;
-        value.split(',', addresses);
-        for (unsigned i = 0; i < addresses.size(); ++i) {
-            if (!isValidEmailAddress(addresses[i]))
-                return true;
-        }
-        return false;
-    }
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case MONTH:
-    case TIME:
-    case WEEK:
-        return !m_inputType->parseToDateComponents(value, 0);
-    case BUTTON:
-    case CHECKBOX:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case PASSWORD:
-    case RADIO:
-    case RANGE:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    return m_inputType->typeMismatch();
 }
 
 bool HTMLInputElement::valueMissing(const String& value) const
 {
     if (!isRequiredFormControl() || readOnly() || disabled())
         return false;
-
-    switch (deprecatedInputType()) {
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case EMAIL:
-    case FILE:
-    case MONTH:
-    case NUMBER:
-    case PASSWORD:
-    case SEARCH:
-    case TELEPHONE:
-    case TEXT:
-    case TIME:
-    case URL:
-    case WEEK:
-        return value.isEmpty();
-    case CHECKBOX:
-        return !checked();
-    case RADIO:
-        return !checkedRadioButtons(this).checkedButtonForGroup(name());
-    case COLOR:
-        return false;
-    case BUTTON:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case RANGE:
-    case RESET:
-    case SUBMIT:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
+    return m_inputType->valueMissing(value);
 }
 
 bool HTMLInputElement::patternMismatch(const String& value) const
@@ -466,7 +349,7 @@ bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
         }
         
         // Allow keyboard focus if we're checked or if nothing in the group is checked.
-        return checked() || !checkedRadioButtons(this).checkedButtonForGroup(name());
+        return checked() || !checkedRadioButtons().checkedButtonForGroup(name());
     }
     
     return true;
@@ -577,7 +460,7 @@ void HTMLInputElement::updateType()
             // Useful in case we were called from inside parseMappedAttribute.
             setAttribute(typeAttr, type());
         else {
-            checkedRadioButtons(this).removeButton(this);
+            checkedRadioButtons().removeButton(this);
 
             if (newType == FILE && !m_fileList)
                 m_fileList = FileList::create();
@@ -627,7 +510,7 @@ void HTMLInputElement::updateType()
                     updateFocusAppearance(true);
             }
 
-            checkedRadioButtons(this).addButton(this);
+            checkedRadioButtons().addButton(this);
         }
 
         setNeedsValidityCheck();
@@ -795,9 +678,9 @@ bool HTMLInputElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
 void HTMLInputElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == nameAttr) {
-        checkedRadioButtons(this).removeButton(this);
+        checkedRadioButtons().removeButton(this);
         m_data.setName(attr->value());
-        checkedRadioButtons(this).addButton(this);
+        checkedRadioButtons().addButton(this);
         HTMLFormControlElementWithState::parseMappedAttribute(attr);
     } else if (attr->name() == autocompleteAttr) {
         if (equalIgnoringCase(attr->value(), "off")) {
@@ -1142,7 +1025,7 @@ void HTMLInputElement::setChecked(bool nowChecked, bool sendChangeEvent)
     if (checked() == nowChecked)
         return;
 
-    checkedRadioButtons(this).removeButton(this);
+    checkedRadioButtons().removeButton(this);
 
     m_useDefaultChecked = false;
     m_checked = nowChecked;
@@ -1481,7 +1364,7 @@ void* HTMLInputElement::preDispatchEventHandler(Event* evt)
             // We really want radio groups to end up in sane states, i.e., to have something checked.
             // Therefore if nothing is currently selected, we won't allow this action to be "undone", since
             // we want some object in the radio group to actually get selected.
-            HTMLInputElement* currRadio = checkedRadioButtons(this).checkedButtonForGroup(name());
+            HTMLInputElement* currRadio = checkedRadioButtons().checkedButtonForGroup(name());
             if (currRadio) {
                 // We have a radio button selected that is not us.  Cache it in our result field and ref it so
                 // that it can't be destroyed.
@@ -2072,40 +1955,7 @@ void HTMLInputElement::unregisterForActivationCallbackIfNeeded()
 
 bool HTMLInputElement::isRequiredFormControl() const
 {
-    if (!required())
-        return false;
-
-    switch (deprecatedInputType()) {
-    case CHECKBOX:
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case EMAIL:
-    case FILE:
-    case MONTH:
-    case NUMBER:
-    case PASSWORD:
-    case RADIO:
-    case SEARCH:
-    case TELEPHONE:
-    case TEXT:
-    case TIME:
-    case URL:
-    case WEEK:
-        return true;
-    case BUTTON:
-    case COLOR:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case RANGE:
-    case RESET:
-    case SUBMIT:
-        return false;
-    }
-
-    ASSERT_NOT_REACHED();
-    return false;
+    return m_inputType->supportsRequired() && required();
 }
 
 void HTMLInputElement::cacheSelection(int start, int end)
@@ -2165,36 +2015,7 @@ void HTMLInputElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) cons
 
 bool HTMLInputElement::recalcWillValidate() const
 {
-    switch (deprecatedInputType()) {
-    case CHECKBOX:
-    case COLOR:
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case EMAIL:
-    case FILE:
-    case ISINDEX:
-    case MONTH:
-    case NUMBER:
-    case PASSWORD:
-    case RADIO:
-    case RANGE:
-    case SEARCH:
-    case TELEPHONE:
-    case TEXT:
-    case TIME:
-    case URL:
-    case WEEK:
-        return HTMLFormControlElementWithState::recalcWillValidate();
-    case BUTTON:
-    case HIDDEN:
-    case IMAGE:
-    case RESET:
-    case SUBMIT:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    return m_inputType->supportsValidation() && HTMLFormControlElementWithState::recalcWillValidate();
 }
 
 #if ENABLE(DATALIST)

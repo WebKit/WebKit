@@ -42,6 +42,7 @@ public:
 private:
     ResetInputType(HTMLInputElement* element) : InputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool supportsValidation() const;
 };
 
 } // namespace WebCore

@@ -31,9 +31,27 @@
 #include "config.h"
 #include "ColorInputType.h"
 
+#include "Color.h"
+#include "HTMLInputElement.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+static bool isValidColorString(const String& value)
+{
+    if (value.isEmpty())
+        return false;
+    if (value[0] == '#') {
+        // We don't accept #rgb and #aarrggbb formats.
+        if (value.length() != 7)
+            return false;
+    }
+    // This accepts named colors such as "white".
+    // FIXME: Reject named colors, accept only #rrggbb.
+    Color color(value);
+    return color.isValid() && !color.hasAlpha();
+}
 
 PassOwnPtr<InputType> ColorInputType::create(HTMLInputElement* element)
 {
@@ -43,6 +61,28 @@ PassOwnPtr<InputType> ColorInputType::create(HTMLInputElement* element)
 const AtomicString& ColorInputType::formControlType() const
 {
     return InputTypeNames::color();
+}
+
+bool ColorInputType::typeMismatchFor(const String& value) const
+{
+    // FIXME: Should not accept an empty value. Remove it when we implement value
+    // sanitization for type=color.
+    if (value.isEmpty())
+        return false;
+    return !isValidColorString(value);
+}
+
+bool ColorInputType::typeMismatch() const
+{
+    // FIXME: Should return false. We don't implement value sanitization for
+    // type=color yet.
+    String value = element()->value();
+    return !value.isEmpty() && !isValidColorString(value);
+}
+
+bool ColorInputType::supportsRequired() const
+{
+    return false;
 }
 
 } // namespace WebCore

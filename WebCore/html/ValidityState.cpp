@@ -83,12 +83,7 @@ bool ValidityState::typeMismatch() const
 {
     if (!m_control->hasTagName(inputTag))
         return false;
-
-    HTMLInputElement* input = static_cast<HTMLInputElement*>(m_control);
-    String value = input->value();
-    if (value.isEmpty())
-        return false;
-    return input->typeMismatch(value);
+    return static_cast<HTMLInputElement*>(m_control)->typeMismatch();
 }
 
 bool ValidityState::patternMismatch() const

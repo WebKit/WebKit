@@ -31,11 +31,18 @@
 #include "config.h"
 #include "TextFieldInputType.h"
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 bool TextFieldInputType::isTextField() const
 {
     return true;
+}
+
+bool TextFieldInputType::valueMissing(const String& value) const
+{
+    return value.isEmpty();
 }
 
 } // namespace WebCore
