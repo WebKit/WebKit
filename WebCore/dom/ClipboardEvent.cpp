@@ -34,6 +34,10 @@ ClipboardEvent::ClipboardEvent(const AtomicString& eventType, bool canBubble, bo
 {
 }
 
+ClipboardEvent::~ClipboardEvent()
+{
+}
+
 bool ClipboardEvent::isClipboardEvent() const
 {
     return true;

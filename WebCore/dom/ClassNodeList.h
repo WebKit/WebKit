@@ -31,6 +31,7 @@
 #define ClassNodeList_h
 
 #include "DynamicNodeList.h"
+#include "Node.h"
 #include "SpaceSplitString.h"
 
 namespace WebCore {

@@ -410,6 +410,10 @@ Parser::Parser()
     reset(String());
 }
 
+Parser::~Parser()
+{
+}
+
 void Parser::reset(const String& data)
 {
     m_nextPos = 0;

@@ -41,6 +41,9 @@ class Node;
 
 class StaticHashSetNodeList : public NodeList {
 public:
+    StaticHashSetNodeList();
+    ~StaticHashSetNodeList();
+
     // Adopts the contents of the nodes ListHashSet.
     static PassRefPtr<StaticHashSetNodeList> adopt(const ListHashSet<RefPtr<Node> >& nodes)
     {
@@ -57,10 +60,7 @@ public:
     virtual Node* itemWithName(const AtomicString&) const;
 
 private:
-    StaticHashSetNodeList(ListHashSet<RefPtr<Node> >& nodes)
-    {
-        m_nodes.swap(nodes);
-    }
+    StaticHashSetNodeList(ListHashSet<RefPtr<Node> >& nodes);
 
     ListHashSet<RefPtr<Node> > m_nodes;
 };

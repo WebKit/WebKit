@@ -34,7 +34,7 @@ class HTMLCanvasElement;
 
 class RenderHTMLCanvas : public RenderReplaced {
 public:
-    RenderHTMLCanvas(HTMLCanvasElement*);
+    explicit RenderHTMLCanvas(HTMLCanvasElement*);
 
     virtual bool isCanvas() const { return true; }
     virtual bool requiresLayer() const;

@@ -77,6 +77,10 @@ CompositeEditCommand::CompositeEditCommand(Document *document)
 {
 }
 
+CompositeEditCommand::~CompositeEditCommand()
+{
+}
+
 void CompositeEditCommand::doUnapply()
 {
     size_t size = m_commands.size();

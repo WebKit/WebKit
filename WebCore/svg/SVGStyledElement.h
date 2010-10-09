@@ -35,6 +35,8 @@ namespace WebCore {
     class SVGStyledElement : public SVGElement,
                              public SVGStylable {
     public:
+        virtual ~SVGStyledElement();
+
         virtual String title() const;
 
         bool hasRelativeLengths() const { return !m_elementsWithRelativeLengths.isEmpty(); }

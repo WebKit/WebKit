@@ -31,7 +31,7 @@ class Element;
 class StyleElement {
 public:
     StyleElement(Document*, bool createdByParser);
-    virtual ~StyleElement() {}
+    virtual ~StyleElement();
 
 protected:
     virtual const AtomicString& type() const = 0;

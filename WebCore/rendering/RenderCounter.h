@@ -32,6 +32,7 @@ class CounterNode;
 class RenderCounter : public RenderText {
 public:
     RenderCounter(Document*, const CounterContent&);
+    virtual ~RenderCounter();
 
     // Removes the reference to the CounterNode associated with this renderer
     // if its identifier matches the argument.

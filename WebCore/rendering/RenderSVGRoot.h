@@ -35,7 +35,8 @@ class AffineTransform;
 
 class RenderSVGRoot : public RenderBox {
 public:
-    RenderSVGRoot(SVGStyledElement*);
+    explicit RenderSVGRoot(SVGStyledElement*);
+    virtual ~RenderSVGRoot();
 
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }

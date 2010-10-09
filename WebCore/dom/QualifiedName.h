@@ -60,7 +60,7 @@ public:
     QualifiedName(const AtomicString& prefix, const char* localName, const AtomicString& namespaceURI);
     QualifiedName(WTF::HashTableDeletedValueType) : m_impl(hashTableDeletedValue()) { }
     bool isHashTableDeletedValue() const { return m_impl == hashTableDeletedValue(); }
-    ~QualifiedName() { deref(); }
+    ~QualifiedName();
 #ifdef QNAME_DEFAULT_CONSTRUCTOR
     QualifiedName() : m_impl(0) { }
 #endif

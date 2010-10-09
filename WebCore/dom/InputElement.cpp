@@ -279,6 +279,10 @@ InputElementData::InputElementData()
 {
 }
 
+InputElementData::~InputElementData()
+{
+}
+
 const AtomicString& InputElementData::name() const
 {
     return m_name.isNull() ? emptyAtom : m_name;

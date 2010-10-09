@@ -32,7 +32,7 @@ class HTMLFrameElement;
 
 class RenderFrame : public RenderFrameBase {
 public:
-    RenderFrame(HTMLFrameElement*);
+    explicit RenderFrame(HTMLFrameElement*);
 
     FrameEdgeInfo edgeInfo() const;
 

@@ -31,7 +31,7 @@ class RenderListMarker;
 
 class RenderListItem : public RenderBlock {
 public:
-    RenderListItem(Node*);
+    explicit RenderListItem(Node*);
 
     int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }
     void updateValue();

@@ -47,7 +47,7 @@ class SVGStyledElement;
 
 class RenderSVGModelObject : public RenderObject {
 public:
-    RenderSVGModelObject(SVGStyledElement*);
+    explicit RenderSVGModelObject(SVGStyledElement*);
 
     virtual bool requiresLayer() const { return false; }
 

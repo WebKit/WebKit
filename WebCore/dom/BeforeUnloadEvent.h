@@ -30,6 +30,8 @@ namespace WebCore {
 
     class BeforeUnloadEvent : public Event {
     public:
+        virtual ~BeforeUnloadEvent();
+
         static PassRefPtr<BeforeUnloadEvent> create()
         {
             return adoptRef(new BeforeUnloadEvent);

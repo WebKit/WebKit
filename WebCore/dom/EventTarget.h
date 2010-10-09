@@ -83,6 +83,7 @@ namespace WebCore {
     typedef HashMap<AtomicString, EventListenerVector*> EventListenerMap;
 
     struct EventTargetData : Noncopyable {
+        EventTargetData();
         ~EventTargetData();
 
         EventListenerMap eventListenerMap;
@@ -177,9 +178,13 @@ namespace WebCore {
         EventListener* on##attribute() { return getAttributeEventListener(eventNames().attribute##Event); } \
         void setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().attribute##Event, listener); } \
 
-    #define DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(attribute) \
-        virtual EventListener* on##attribute() { return getAttributeEventListener(eventNames().attribute##Event); } \
-        virtual void setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().attribute##Event, listener); } \
+    #define DECLARE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(attribute) \
+        virtual EventListener* on##attribute(); \
+        virtual void setOn##attribute(PassRefPtr<EventListener> listener); \
+
+    #define DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(type, attribute) \
+        EventListener* type::on##attribute() { return getAttributeEventListener(eventNames().attribute##Event); } \
+        void type::setOn##attribute(PassRefPtr<EventListener> listener) { setAttributeEventListener(eventNames().attribute##Event, listener); } \
 
     #define DEFINE_WINDOW_ATTRIBUTE_EVENT_LISTENER(attribute) \
         EventListener* on##attribute() { return document()->getWindowAttributeEventListener(eventNames().attribute##Event); } \

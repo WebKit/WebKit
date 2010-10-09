@@ -29,7 +29,7 @@ namespace WebCore {
     class SVGStyledTransformableElement;
     class RenderSVGTransformableContainer : public RenderSVGContainer {
     public:
-        RenderSVGTransformableContainer(SVGStyledTransformableElement*);
+        explicit RenderSVGTransformableContainer(SVGStyledTransformableElement*);
 
         virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
         virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }

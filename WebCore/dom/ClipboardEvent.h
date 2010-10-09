@@ -31,6 +31,8 @@ namespace WebCore {
 
     class ClipboardEvent : public Event {
     public:
+        virtual ~ClipboardEvent();
+
         static PassRefPtr<ClipboardEvent> create()
         {
             return adoptRef(new ClipboardEvent);

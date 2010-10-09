@@ -38,6 +38,10 @@ SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName
 {
 }
 
+SVGStyledTransformableElement::~SVGStyledTransformableElement()
+{
+}
+
 AffineTransform SVGStyledTransformableElement::getCTM(StyleUpdateStrategy styleUpdateStrategy) const
 {
     return SVGLocatable::computeCTM(this, SVGLocatable::NearestViewportScope, styleUpdateStrategy);

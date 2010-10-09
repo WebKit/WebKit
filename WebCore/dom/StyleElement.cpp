@@ -39,6 +39,10 @@ StyleElement::StyleElement(Document* document, bool createdByParser)
         m_startLineNumber = document->scriptableDocumentParser()->lineNumber();
 }
 
+StyleElement::~StyleElement()
+{
+}
+
 StyleSheet* StyleElement::sheet(Element* e)
 {
     if (!m_sheet)

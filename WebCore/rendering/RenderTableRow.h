@@ -31,7 +31,7 @@ namespace WebCore {
 
 class RenderTableRow : public RenderBox {
 public:
-    RenderTableRow(Node*);
+    explicit RenderTableRow(Node*);
 
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }

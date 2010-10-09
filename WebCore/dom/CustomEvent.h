@@ -34,6 +34,8 @@ namespace WebCore {
 
 class CustomEvent : public Event {
 public:
+    virtual ~CustomEvent();
+
     static PassRefPtr<CustomEvent> create()
     {
         return adoptRef(new CustomEvent);

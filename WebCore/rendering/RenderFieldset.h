@@ -30,7 +30,7 @@ namespace WebCore {
 
 class RenderFieldset : public RenderBlock {
 public:
-    RenderFieldset(Node*);
+    explicit RenderFieldset(Node*);
 
     RenderBox* findLegend() const;
 

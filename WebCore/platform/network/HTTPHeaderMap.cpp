@@ -37,6 +37,14 @@ using namespace std;
 
 namespace WebCore {
 
+HTTPHeaderMap::HTTPHeaderMap()
+{
+}
+
+HTTPHeaderMap::~HTTPHeaderMap()
+{
+}
+
 PassOwnPtr<CrossThreadHTTPHeaderMapData> HTTPHeaderMap::copyData() const
 {
     OwnPtr<CrossThreadHTTPHeaderMapData> data(new CrossThreadHTTPHeaderMapData());
@@ -58,7 +66,17 @@ void HTTPHeaderMap::adopt(PassOwnPtr<CrossThreadHTTPHeaderMapData> data)
         set(header.first, header.second);
     }
 }
-    
+
+String HTTPHeaderMap::get(const AtomicString& name) const
+{
+    return HashMap<AtomicString, String, CaseFoldingHash>::get(name);
+}
+
+pair<HTTPHeaderMap::iterator, bool> HTTPHeaderMap::add(const AtomicString& name, const String& value)
+{
+    return HashMap<AtomicString, String, CaseFoldingHash>::add(name, value);
+}
+
 // Adapter that allows the HashMap to take C strings as keys.
 struct CaseFoldingCStringTranslator {
     static unsigned hash(const char* cString)

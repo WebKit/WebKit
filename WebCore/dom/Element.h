@@ -74,10 +74,10 @@ public:
 
     // These four attribute event handler attributes are overridden by HTMLBodyElement
     // and HTMLFrameSetElement to forward to the DOMWindow.
-    DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(blur);
-    DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(error);
-    DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(focus);
-    DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(load);
+    DECLARE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(blur);
+    DECLARE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(error);
+    DECLARE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(focus);
+    DECLARE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(load);
 
     // WebKit extensions
     DEFINE_ATTRIBUTE_EVENT_LISTENER(beforecut);

@@ -32,6 +32,8 @@ namespace WebCore {
 
 class BeforeTextInsertedEvent : public Event {
 public:
+    virtual ~BeforeTextInsertedEvent();
+
     static PassRefPtr<BeforeTextInsertedEvent> create(const String& text)
     {
         return adoptRef(new BeforeTextInsertedEvent(text));

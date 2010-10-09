@@ -45,6 +45,10 @@ RenderButton::RenderButton(Node* node)
 {
 }
 
+RenderButton::~RenderButton()
+{
+}
+
 void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (!m_inner) {

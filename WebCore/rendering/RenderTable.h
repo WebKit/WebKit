@@ -38,7 +38,8 @@ class TableLayout;
 
 class RenderTable : public RenderBlock {
 public:
-    RenderTable(Node*);
+    explicit RenderTable(Node*);
+    virtual ~RenderTable();
 
     int getColumnPos(int col) const { return m_columnPos[col]; }
 

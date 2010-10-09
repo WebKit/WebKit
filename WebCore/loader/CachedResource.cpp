@@ -428,6 +428,25 @@ void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& val
     }
 }
 
+void CachedResource::registerHandle(CachedResourceHandleBase* h)
+{
+    ++m_handleCount;
+    if (m_resourceToRevalidate)
+        m_handlesToRevalidate.add(h);
+}
+
+void CachedResource::unregisterHandle(CachedResourceHandleBase* h)
+{
+    ASSERT(m_handleCount > 0);
+    --m_handleCount;
+
+    if (m_resourceToRevalidate)
+         m_handlesToRevalidate.remove(h);
+
+    if (!m_handleCount)
+        deleteIfPossible();
+}
+
 bool CachedResource::canUseCacheValidator() const
 {
     if (m_loading || m_errorOccurred)

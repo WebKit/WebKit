@@ -39,10 +39,12 @@ class Text;
 
 class CompositeEditCommand : public EditCommand {
 public:
+    virtual ~CompositeEditCommand();
+
     bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
 
 protected:
-    CompositeEditCommand(Document*);
+    explicit CompositeEditCommand(Document*);
 
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands

@@ -47,7 +47,7 @@ public:
         return adoptRef(new CSSFontFaceSrcValue(resource, true));
     }
 
-    virtual ~CSSFontFaceSrcValue() { }
+    virtual ~CSSFontFaceSrcValue();
 
     const String& resource() const { return m_resource; }
     const String& format() const { return m_format; }

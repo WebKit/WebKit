@@ -33,7 +33,8 @@ class SVGElement;
 
 class RenderSVGContainer : public RenderSVGModelObject {
 public:
-    RenderSVGContainer(SVGStyledElement*);
+    explicit RenderSVGContainer(SVGStyledElement*);
+    virtual ~RenderSVGContainer();
 
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }

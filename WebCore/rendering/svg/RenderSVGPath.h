@@ -38,7 +38,8 @@ class SVGStyledTransformableElement;
 
 class RenderSVGPath : public RenderSVGModelObject {
 public:
-    RenderSVGPath(SVGStyledTransformableElement*);
+    explicit RenderSVGPath(SVGStyledTransformableElement*);
+    virtual ~RenderSVGPath();
 
     const Path& path() const { return m_path; }
     void setNeedsPathUpdate() { m_needsPathUpdate = true; }

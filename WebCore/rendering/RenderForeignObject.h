@@ -33,7 +33,8 @@ class SVGForeignObjectElement;
 
 class RenderForeignObject : public RenderSVGBlock {
 public:
-    RenderForeignObject(SVGForeignObjectElement*);
+    explicit RenderForeignObject(SVGForeignObjectElement*);
+    virtual ~RenderForeignObject();
 
     virtual const char* renderName() const { return "RenderForeignObject"; }
 

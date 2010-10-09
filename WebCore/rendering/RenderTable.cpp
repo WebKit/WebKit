@@ -65,6 +65,10 @@ RenderTable::RenderTable(Node* node)
     
 }
 
+RenderTable::~RenderTable()
+{
+}
+
 void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);

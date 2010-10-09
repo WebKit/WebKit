@@ -34,6 +34,10 @@ CSSBorderImageValue::CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<
 {
 }
 
+CSSBorderImageValue::~CSSBorderImageValue()
+{
+}
+
 String CSSBorderImageValue::cssText() const
 {
     // Image first.

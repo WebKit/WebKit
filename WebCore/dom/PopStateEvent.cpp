@@ -36,7 +36,11 @@ PopStateEvent::PopStateEvent(PassRefPtr<SerializedScriptValue> stateObject)
     , m_stateObject(stateObject)
 {
 }
-    
+
+PopStateEvent::~PopStateEvent()
+{
+}
+
 void PopStateEvent::initPopStateEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> stateObject)
 {
     if (dispatched())

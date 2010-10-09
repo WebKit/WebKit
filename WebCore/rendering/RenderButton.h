@@ -34,7 +34,8 @@ class RenderTextFragment;
 // to date as the button changes.
 class RenderButton : public RenderFlexibleBox {
 public:
-    RenderButton(Node*);
+    explicit RenderButton(Node*);
+    virtual ~RenderButton();
 
     virtual const char* renderName() const { return "RenderButton"; }
     virtual bool isRenderButton() const { return true; }

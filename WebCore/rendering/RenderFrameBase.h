@@ -33,7 +33,7 @@ namespace WebCore {
 // Base class for RenderFrame and RenderIFrame
 class RenderFrameBase : public RenderPart {
 protected:
-    RenderFrameBase(Element*);
+    explicit RenderFrameBase(Element*);
 
 public:
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);

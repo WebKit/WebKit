@@ -32,7 +32,7 @@ class Position;
 
 class RenderInline : public RenderBoxModelObject {
 public:
-    RenderInline(Node*);
+    explicit RenderInline(Node*);
 
     virtual void destroy();
 

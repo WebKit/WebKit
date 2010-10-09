@@ -31,6 +31,8 @@ namespace WebCore {
 
     class MutationEvent : public Event {
     public:
+        virtual ~MutationEvent();
+
         enum attrChangeType {
             MODIFICATION    = 1,
             ADDITION        = 2,

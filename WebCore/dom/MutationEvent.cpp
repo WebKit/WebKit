@@ -42,6 +42,10 @@ MutationEvent::MutationEvent(const AtomicString& type, bool canBubble, bool canc
 {
 }
 
+MutationEvent::~MutationEvent()
+{
+}
+
 void MutationEvent::initMutationEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<Node> relatedNode,
                                       const String& prevValue, const String& newValue,
                                       const String& attrName, unsigned short attrChange)

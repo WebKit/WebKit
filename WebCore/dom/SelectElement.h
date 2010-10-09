@@ -113,6 +113,7 @@ private:
 class SelectElementData {
 public:
     SelectElementData();
+    ~SelectElementData();
 
     bool multiple() const { return m_multiple; }
     void setMultiple(bool value) { m_multiple = value; }

@@ -35,6 +35,8 @@ namespace WebCore {
 
 class TouchEvent : public MouseRelatedEvent {
 public:
+    virtual ~TouchEvent();
+
     static PassRefPtr<TouchEvent> create()
     {
         return adoptRef(new TouchEvent);
@@ -61,7 +63,7 @@ public:
     TouchList* changedTouches() const { return m_changedTouches.get(); }
 
 private:
-    TouchEvent() {}
+    TouchEvent();
     TouchEvent(TouchList* touches, TouchList* targetTouches,
             TouchList* changedTouches, const AtomicString& type,
             PassRefPtr<AbstractView>, int screenX, int screenY, int pageX,

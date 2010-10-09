@@ -41,6 +41,10 @@ RenderForeignObject::RenderForeignObject(SVGForeignObjectElement* node)
 {
 }
 
+RenderForeignObject::~RenderForeignObject()
+{
+}
+
 void RenderForeignObject::paint(PaintInfo& paintInfo, int, int)
 {
     if (paintInfo.context->paintingDisabled())

@@ -55,7 +55,8 @@ class RenderLayer;
 // This class handles the auto-scrolling of layers with overflow: marquee.
 class RenderMarquee : public Noncopyable {
 public:
-    RenderMarquee(RenderLayer*);
+    explicit RenderMarquee(RenderLayer*);
+    virtual ~RenderMarquee();
 
     int speed() const { return m_speed; }
     int marqueeSpeed() const;

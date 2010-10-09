@@ -43,6 +43,10 @@ RenderSVGContainer::RenderSVGContainer(SVGStyledElement* node)
 {
 }
 
+RenderSVGContainer::~RenderSVGContainer()
+{
+}
+
 void RenderSVGContainer::layout()
 {
     ASSERT(needsLayout());

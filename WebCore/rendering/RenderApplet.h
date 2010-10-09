@@ -32,6 +32,7 @@ namespace WebCore {
     class RenderApplet : public RenderWidget {
     public:
         RenderApplet(HTMLAppletElement*, const HashMap<String, String>& args);
+        virtual ~RenderApplet();
 
         void createWidgetIfNecessary();
 

@@ -34,7 +34,7 @@ class RenderTable;
 
 class RenderTableCol : public RenderBox {
 public:
-    RenderTableCol(Node*);
+    explicit RenderTableCol(Node*);
 
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }

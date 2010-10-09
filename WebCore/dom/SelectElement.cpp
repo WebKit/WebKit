@@ -953,6 +953,10 @@ SelectElementData::SelectElementData()
 {
 }
 
+SelectElementData::~SelectElementData()
+{
+}
+
 void SelectElementData::checkListItems(const Element* element) const
 {
 #if !ASSERT_DISABLED

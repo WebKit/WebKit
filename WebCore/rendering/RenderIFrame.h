@@ -32,7 +32,7 @@ namespace WebCore {
 
 class RenderIFrame : public RenderFrameBase {
 public:
-    RenderIFrame(Element*);
+    explicit RenderIFrame(Element*);
 
 #if USE(ACCELERATED_COMPOSITING)
     bool requiresAcceleratedCompositing() const;

@@ -32,7 +32,7 @@ namespace WebCore {
 // thus we inherit from RenderSVGContainer instead of RenderSVGTransformableContainer
 class RenderSVGViewportContainer : public RenderSVGContainer {
 public:
-    RenderSVGViewportContainer(SVGStyledElement*);
+    explicit RenderSVGViewportContainer(SVGStyledElement*);
 
 private:
     virtual bool isSVGContainer() const { return true; }

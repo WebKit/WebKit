@@ -35,7 +35,7 @@ class HTMLElement;
 
 class RenderWordBreak : public RenderText {
 public:
-    RenderWordBreak(HTMLElement*);
+    explicit RenderWordBreak(HTMLElement*);
 
     virtual const char* renderName() const;
     virtual bool isWordBreak() const;

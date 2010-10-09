@@ -66,6 +66,10 @@ RenderMarquee::RenderMarquee(RenderLayer* l)
 {
 }
 
+RenderMarquee::~RenderMarquee()
+{
+}
+
 int RenderMarquee::marqueeSpeed() const
 {
     int result = m_layer->renderer()->style()->marqueeSpeed();

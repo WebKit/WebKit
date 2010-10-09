@@ -34,6 +34,19 @@
 
 namespace WebCore {
 
+StaticHashSetNodeList::StaticHashSetNodeList(ListHashSet<RefPtr<Node> >& nodes)
+{
+    m_nodes.swap(nodes);
+}
+
+StaticHashSetNodeList::StaticHashSetNodeList()
+{
+}
+
+StaticHashSetNodeList::~StaticHashSetNodeList()
+{
+}
+
 unsigned StaticHashSetNodeList::length() const
 {
     return m_nodes.size();

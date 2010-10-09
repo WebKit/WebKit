@@ -31,6 +31,10 @@
 
 namespace WebCore {
 
+TouchEvent::TouchEvent()
+{
+}
+
 TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches,
         TouchList* changedTouches, const AtomicString& type, 
         PassRefPtr<AbstractView> view, int screenX, int screenY, int pageX, int pageY,
@@ -40,6 +44,10 @@ TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches,
     , m_touches(touches)
     , m_targetTouches(targetTouches)
     , m_changedTouches(changedTouches)
+{
+}
+
+TouchEvent::~TouchEvent()
 {
 }
 

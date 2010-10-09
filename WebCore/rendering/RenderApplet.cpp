@@ -39,6 +39,10 @@ RenderApplet::RenderApplet(HTMLAppletElement* applet, const HashMap<String, Stri
     setInline(true);
 }
 
+RenderApplet::~RenderApplet()
+{
+}
+
 IntSize RenderApplet::intrinsicSize() const
 {
     // FIXME: This doesn't make sense. We can't just start returning

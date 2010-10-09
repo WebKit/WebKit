@@ -35,4 +35,8 @@ BeforeTextInsertedEvent::BeforeTextInsertedEvent(const String& text)
 {
 }
 
+BeforeTextInsertedEvent::~BeforeTextInsertedEvent()
+{
+}
+
 }

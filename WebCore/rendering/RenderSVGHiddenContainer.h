@@ -34,7 +34,7 @@ namespace WebCore {
     // <defs>, <linearGradient>, <radialGradient> are all good examples
     class RenderSVGHiddenContainer : public RenderSVGContainer {
     public:
-        RenderSVGHiddenContainer(SVGStyledElement*);
+        explicit RenderSVGHiddenContainer(SVGStyledElement*);
 
         virtual const char* renderName() const { return "RenderSVGHiddenContainer"; }
 

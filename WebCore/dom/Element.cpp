@@ -94,6 +94,11 @@ NodeRareData* Element::createRareData()
     return new ElementRareData;
 }
 
+DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, blur);
+DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, error);
+DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, focus);
+DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, load);
+
 PassRefPtr<DocumentFragment> Element::deprecatedCreateContextualFragment(const String& markup, FragmentScriptingPermission scriptingPermission)
 {
     RefPtr<DocumentFragment> fragment = document()->createDocumentFragment();

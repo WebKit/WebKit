@@ -35,6 +35,7 @@ class RenderTextFragment : public RenderText {
 public:
     RenderTextFragment(Node*, StringImpl*, int startOffset, int length);
     RenderTextFragment(Node*, StringImpl*);
+    virtual ~RenderTextFragment();
 
     virtual bool isTextFragment() const { return true; }
 

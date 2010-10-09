@@ -41,20 +41,17 @@ namespace WebCore {
 
     class HTTPHeaderMap : public HashMap<AtomicString, String, CaseFoldingHash> {
     public:
+        HTTPHeaderMap();
+        ~HTTPHeaderMap();
+
         // Gets a copy of the data suitable for passing to another thread.
         PassOwnPtr<CrossThreadHTTPHeaderMapData> copyData() const;
 
         void adopt(PassOwnPtr<CrossThreadHTTPHeaderMapData>);
         
-        String get(const AtomicString& name) const
-        {
-            return HashMap<AtomicString, String, CaseFoldingHash>::get(name);
-        }
+        String get(const AtomicString& name) const;
 
-        pair<iterator, bool> add(const AtomicString& name, const String& value)
-        {
-            return HashMap<AtomicString, String, CaseFoldingHash>::add(name, value);
-        }
+        pair<iterator, bool> add(const AtomicString& name, const String& value);
 
         // Alternate accessors that are faster than converting the char* to AtomicString first.
         bool contains(const char*) const;

@@ -33,6 +33,8 @@ class AffineTransform;
 class SVGStyledTransformableElement : public SVGStyledLocatableElement,
                                       public SVGTransformable {
 public:
+    virtual ~SVGStyledTransformableElement();
+
     virtual AffineTransform getCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
     virtual AffineTransform getScreenCTM(StyleUpdateStrategy = AllowStyleUpdate) const;
     virtual SVGElement* nearestViewportElement() const;

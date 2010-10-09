@@ -32,6 +32,10 @@ BeforeUnloadEvent::BeforeUnloadEvent()
 {
 }
 
+BeforeUnloadEvent::~BeforeUnloadEvent()
+{
+}
+
 bool BeforeUnloadEvent::storesResultAsString() const
 {
     return true;

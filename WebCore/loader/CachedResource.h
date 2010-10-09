@@ -186,8 +186,8 @@ public:
     void increasePreloadCount() { ++m_preloadCount; }
     void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
     
-    void registerHandle(CachedResourceHandleBase* h) { ++m_handleCount; if (m_resourceToRevalidate) m_handlesToRevalidate.add(h); }
-    void unregisterHandle(CachedResourceHandleBase* h) { ASSERT(m_handleCount > 0); --m_handleCount; if (m_resourceToRevalidate) m_handlesToRevalidate.remove(h); if (!m_handleCount) deleteIfPossible(); }
+    void registerHandle(CachedResourceHandleBase* h);
+    void unregisterHandle(CachedResourceHandleBase* h);
     
     bool canUseCacheValidator() const;
     bool mustRevalidate(CachePolicy) const;

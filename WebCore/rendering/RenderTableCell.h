@@ -31,7 +31,7 @@ namespace WebCore {
 
 class RenderTableCell : public RenderBlock {
 public:
-    RenderTableCell(Node*);
+    explicit RenderTableCell(Node*);
 
     // FIXME: need to implement cellIndex
     int cellIndex() const { return 0; }

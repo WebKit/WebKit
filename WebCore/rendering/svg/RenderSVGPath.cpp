@@ -74,6 +74,10 @@ RenderSVGPath::RenderSVGPath(SVGStyledTransformableElement* node)
 {
 }
 
+RenderSVGPath::~RenderSVGPath()
+{
+}
+
 bool RenderSVGPath::fillContains(const FloatPoint& point, bool requiresFill, WindRule fillRule)
 {
     if (!m_fillBoundingBox.contains(point))

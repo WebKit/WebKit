@@ -31,7 +31,7 @@ class SVGElement;
 
 class RenderSVGBlock : public RenderBlock {
 public:
-    RenderSVGBlock(SVGElement*);
+    explicit RenderSVGBlock(SVGElement*);
 
 private:
     virtual void setStyle(PassRefPtr<RenderStyle>);

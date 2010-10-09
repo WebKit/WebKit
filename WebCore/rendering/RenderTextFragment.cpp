@@ -44,6 +44,10 @@ RenderTextFragment::RenderTextFragment(Node* node, StringImpl* str)
 {
 }
 
+RenderTextFragment::~RenderTextFragment()
+{
+}
+
 PassRefPtr<StringImpl> RenderTextFragment::originalText() const
 {
     Node* e = node();
