@@ -59,6 +59,10 @@ class BRect;
 struct SkRect;
 #endif
 
+#if PLATFORM(CAIRO)
+typedef struct _cairo_rectangle cairo_rectangle_t;
+#endif
+
 namespace WebCore {
 
 #if PLATFORM(OPENVG)
@@ -170,6 +174,11 @@ public:
 
 #if PLATFORM(OPENVG)
     operator VGRect() const;
+#endif
+
+#if PLATFORM(CAIRO)
+    FloatRect(const cairo_rectangle_t&);
+    operator cairo_rectangle_t() const;
 #endif
 
 private:

@@ -483,27 +483,56 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
     }
 }
 
-#ifdef GTK_API_VERSION_2
-static bool shouldCoalesce(GdkRectangle rect, GdkRectangle* rects, int count)
+static bool shouldCoalesce(const IntRect& rect, const Vector<IntRect>& rects)
 {
-    const int cRectThreshold = 10;
+    const unsigned int cRectThreshold = 10;
     const float cWastedSpaceThreshold = 0.75f;
-    bool useUnionedRect = (count <= 1) || (count > cRectThreshold);
-    if (!useUnionedRect) {
-        // Attempt to guess whether or not we should use the unioned rect or the individual rects.
-        // We do this by computing the percentage of "wasted space" in the union.  If that wasted space
-        // is too large, then we will do individual rect painting instead.
-        float unionPixels = (rect.width * rect.height);
-        float singlePixels = 0;
-        for (int i = 0; i < count; ++i)
-            singlePixels += rects[i].width * rects[i].height;
-        float wastedSpace = 1 - (singlePixels / unionPixels);
-        if (wastedSpace <= cWastedSpaceThreshold)
-            useUnionedRect = true;
-    }
+    bool useUnionedRect = (rects.size() <= 1) || (rects.size() > cRectThreshold);
+    if (useUnionedRect)
+        return true;
+    // Attempt to guess whether or not we should use the unioned rect or the individual rects.
+    // We do this by computing the percentage of "wasted space" in the union.  If that wasted space
+    // is too large, then we will do individual rect painting instead.
+    float unionPixels = (rect.width() * rect.height());
+    float singlePixels = 0;
+    for (size_t i = 0; i < rects.size(); ++i)
+        singlePixels += rects[i].width() * rects[i].height();
+    float wastedSpace = 1 - (singlePixels / unionPixels);
+    if (wastedSpace <= cWastedSpaceThreshold)
+        useUnionedRect = true;
     return useUnionedRect;
 }
 
+static void paintWebView(Frame* frame, gboolean transparent, GraphicsContext& context, const IntRect& clipRect, const Vector<IntRect>& rects)
+{
+    bool coalesce = true;
+
+    if (rects.size() > 0)
+        coalesce = shouldCoalesce(clipRect, rects);
+
+    if (coalesce) {
+        context.clip(clipRect);
+        if (transparent)
+            context.clearRect(clipRect);
+        frame->view()->paint(&context, clipRect);
+    } else {
+        for (size_t i = 0; i < rects.size(); i++) {
+            IntRect rect = rects[i];
+            context.save();
+            context.clip(rect);
+            if (transparent)
+                context.clearRect(rect);
+            frame->view()->paint(&context, rect);
+            context.restore();
+        }
+    }
+
+    context.save();
+    context.clip(clipRect);
+    frame->page()->inspectorController()->drawNodeHighlight(context);
+    context.restore();
+}
+#ifdef GTK_API_VERSION_2
 static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* event)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
@@ -521,32 +550,11 @@ static gboolean webkit_web_view_expose_event(GtkWidget* widget, GdkEventExpose* 
         int rectCount;
         GOwnPtr<GdkRectangle> rects;
         gdk_region_get_rectangles(event->region, &rects.outPtr(), &rectCount);
+        Vector<IntRect> paintRects;
+        for (int i = 0; i < rectCount; i++)
+            paintRects.append(IntRect(rects.get()[i]));
 
-        // Avoid recursing into the render tree excessively
-        bool coalesce = shouldCoalesce(event->area, rects.get(), rectCount);
-
-        if (coalesce) {
-            IntRect rect = event->area;
-            ctx.clip(rect);
-            if (priv->transparent)
-                ctx.clearRect(rect);
-            frame->view()->paint(&ctx, rect);
-        } else {
-            for (int i = 0; i < rectCount; i++) {
-                IntRect rect = rects.get()[i];
-                ctx.save();
-                ctx.clip(rect);
-                if (priv->transparent)
-                    ctx.clearRect(rect);
-                frame->view()->paint(&ctx, rect);
-                ctx.restore();
-            }
-        }
-
-        ctx.save();
-        ctx.clip(static_cast<IntRect>(event->area));
-        frame->page()->inspectorController()->drawNodeHighlight(ctx);
-        ctx.restore();
+        paintWebView(frame, priv->transparent, ctx, static_cast<IntRect>(event->area), paintRects);
     }
 
     return FALSE;
@@ -565,14 +573,18 @@ static gboolean webkit_web_view_draw(GtkWidget* widget, cairo_t* cr)
     if (frame->contentRenderer() && frame->view()) {
         GraphicsContext ctx(cr);
         IntRect rect = clipRect;
+        cairo_rectangle_list_t* rectList = cairo_copy_clip_rectangle_list(cr);
 
         frame->view()->updateLayoutAndStyleIfNeededRecursive();
-        if (priv->transparent)
-            ctx.clearRect(rect);
-        frame->view()->paint(&ctx, rect);
-        ctx.save();
-        frame->page()->inspectorController()->drawNodeHighlight(ctx);
-        ctx.restore();
+
+        Vector<IntRect> rects;
+        if (!rectList->status && rectList->num_rectangles > 0) {
+            for (int i = 0; i < rectList->num_rectangles; i++)
+                rects.append(enclosingIntRect(FloatRect(rectList->rectangles[i])));
+        }
+        paintWebView(frame, priv->transparent, ctx, rect, rects);
+
+        cairo_rectangle_list_destroy(rectList);
     }
 
     return FALSE;

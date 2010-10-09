@@ -3455,6 +3455,7 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/CairoUtilities.cpp \
 	WebCore/platform/graphics/cairo/CairoUtilities.h \
 	WebCore/platform/graphics/cairo/ContextShadowCairo.cpp \
+	WebCore/platform/graphics/cairo/FloatRectCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCairo.cpp \
 	WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
 	WebCore/platform/graphics/cairo/FontPlatformData.h \
