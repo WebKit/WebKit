@@ -167,8 +167,9 @@ void FileWriter::didWrite(long long bytes, bool complete)
     m_position += bytes;
     if (m_position > m_length)
         m_length = m_position;
-    fireEvent(eventNames().writeEvent);
+    fireEvent(eventNames().progressEvent);
     if (complete) {
+        fireEvent(eventNames().writeEvent);
         m_readyState = DONE;
         fireEvent(eventNames().writeendEvent);
     }
