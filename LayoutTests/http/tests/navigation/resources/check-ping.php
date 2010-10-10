@@ -1,11 +1,8 @@
 <?php
-if (!file_exists("ping.txt")) {
-    $page = $_SERVER['PHP_SELF'];
-    // This refresh header is unfortunate, but if the file doesn't
-    // exist when this php script starts running, it won't notice
-    // its creation even if we sleep and check again.
-    header("Refresh: 1; url=$page");
-    return;
+while (!file_exists("ping.txt")) {
+    usleep(10000);
+    // file_exists() caches results, we want to invalidate the cache.
+    clearstatcache();
 }
 
 echo "<html><body>\n";

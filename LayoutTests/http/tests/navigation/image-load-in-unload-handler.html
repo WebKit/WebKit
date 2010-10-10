@@ -13,7 +13,13 @@ function test() {
         testCalled = true;
         return;
     }
-    location.assign("resources/check-ping.php");
+    // We can't go to check-ping.php directly, since that doesn't start sending
+    // a response until the ping data is detected, but unload handlers (where
+    // we send the ping) are only run once we've begun receiving data from the
+    // page being navigated to. Instead, we go through a dummy redirect page,
+    // to make sure that the onunload handler has run before we get to 
+    // check-ping.php.
+    location.assign("resources/ping-redirect.html");
 }
 
 function ping() {
