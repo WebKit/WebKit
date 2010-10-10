@@ -170,8 +170,6 @@ http/tests/security/xss-DENIED-xsl-document.xml
 http/tests/security/cross-frame-access-callback-explicit-domain-ALLOW.html
 # - FAIL: Subframe did not finish loading.
 http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
-# missing console message
-http/tests/security/frameNavigation/not-opener.html
 # missing origin header
 http/tests/security/originHeader/origin-header-for-empty.html
 
@@ -204,9 +202,6 @@ http/tests/local/formdata
 http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/timerredirect-goback.html
-
-# new content not loaded from popup window
-http/tests/navigation/target-frame-from-window.html
 
 #CONSOLE MESSAGE: line 11: TypeError: Result of expression 'consoleWindow.log' [undefined] is not a function.
 http/tests/navigation/no-referrer-reset.html

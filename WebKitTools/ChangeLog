@@ -1,3 +1,15 @@
+2010-10-10  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Put all DRT-created pages in a page group
+
+        https://bugs.webkit.org/show_bug.cgi?id=47469
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::createWindow):
+
 2010-10-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
