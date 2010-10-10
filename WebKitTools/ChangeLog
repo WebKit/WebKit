@@ -1,3 +1,13 @@
+2010-10-10  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Adam Barth.
+
+        commit-queue: Add EFL-EWS status bubble to Bugzilla, now that the
+        EFL-EWS bot is up and running.
+        https://bugs.webkit.org/show_bug.cgi?id=47277
+
+        * QueueStatusServer/handlers/statusbubble.py:
+
 2010-10-10  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.

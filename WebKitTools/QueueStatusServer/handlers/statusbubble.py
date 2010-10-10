@@ -46,6 +46,7 @@ class StatusBubble(webapp.RequestHandler):
         ["qt", "qt-ews"],
         ["mac", "mac-ews"],
         ["win", "win-ews"],
+        ["efl", "efl-ews"],
     ]
 
     # This asserts that all of the queues listed above are valid queue names.
