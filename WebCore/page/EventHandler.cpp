@@ -1002,19 +1002,16 @@ bool EventHandler::scrollRecursively(ScrollDirection direction, ScrollGranularit
     // The layout needs to be up to date to determine if we can scroll. We may be
     // here because of an onLoad event, in which case the final layout hasn't been performed yet.
     m_frame->document()->updateLayoutIgnorePendingStylesheets();
-    printf("%s 1\n", __FUNCTION__);
     bool handled = scrollOverflow(direction, granularity, startingNode);
     if (!handled) {
         Frame* frame = m_frame;
         do {
-            printf("%s 2\n", __FUNCTION__);
             FrameView* view = frame->view();
             handled = view ? view->scroll(direction, granularity) : false;
             frame = frame->tree()->parent();
         } while (!handled && frame);
      }
 
-    printf("%s 3 %d\n", __FUNCTION__, handled);
     return handled;
 }
 
