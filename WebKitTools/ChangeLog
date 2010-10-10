@@ -1,3 +1,21 @@
+2010-10-10  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, fix failing test from r69468.
+
+        [Qt] Put all DRT-created pages in a page group
+
+        Fix on r69468.
+
+        Because we don't delete closed pages immediately in DRT we need
+        to remove them from the page group explicitly instead.
+
+        Fixes failure of fast/events/popup-blocked-from-fake-user-gesture.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=47469
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::windowCloseRequested):
+
 2010-10-10  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Adam Barth.
