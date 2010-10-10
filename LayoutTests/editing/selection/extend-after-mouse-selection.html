@@ -13,10 +13,12 @@
 <script src="resources/js-test-selection-shared.js"></script>
 
 <script>
-// FIXME: Expose settings->editingBehavior() and use that here instead.
-var onMacPlatform = navigator.userAgent.search(/\bMac OS X\b/) != -1;
 
-function editingTest() {
+function editingTest(editingBehavior) {
+
+    if (window.layoutTestController)
+        layoutTestController.setEditingBehavior(editingBehavior);
+
     var startTarget = document.getElementById('start');
     var endTarget = document.getElementById('end');
 
@@ -33,30 +35,29 @@ function editingTest() {
 
     extendSelectionBackwardByCharacterCommand();
 
-
     // On Win/Linux the anchor is be fixed after the mouse-selection and never changes.
     // On Mac, the first character-granularity selection after a mouse-selection resets the anchor/focus.
-    if (onMacPlatform)
+    if (editingBehavior == "mac")
         assertSelectionAt(endTarget.firstChild, 2, startTarget.previousSibling, 1);
     else
         assertSelectionAt(startTarget.firstChild, 0, endTarget.firstChild, 1);
 
     extendSelectionForwardByCharacterCommand();
-    if (onMacPlatform)
+    if (editingBehavior == "mac")
         assertSelectionAt(endTarget.firstChild, 2, startTarget.firstChild, 0);
     else
         assertSelectionAt(startTarget.firstChild, 0, endTarget.firstChild, 2);
 
     extendSelectionForwardByLineBoundaryCommand();
 
-    if (onMacPlatform)
+    if (editingBehavior == "mac")
         assertSelectionAt(endTarget.nextSibling, 1, startTarget.firstChild, 0);
     else
         assertSelectionAt(startTarget.firstChild, 0, endTarget.nextSibling, 1);
 
     extendSelectionBackwardByLineBoundaryCommand();
 
-    if (onMacPlatform)
+    if (editingBehavior == "mac")
         assertSelectionAt(endTarget.nextSibling, 1, startTarget.previousSibling, 0);
     else
         assertSelectionAt(startTarget.firstChild, 0, document.getElementById('test'), 4);
@@ -74,7 +75,8 @@ function editingTest() {
 <div id="console"></div>
 
 <script>
-editingTest();
+editingTest("mac");
+editingTest("win");
 var successfullyParsed = true;
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
