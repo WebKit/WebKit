@@ -117,6 +117,18 @@ function runTest()
     debug("--- Test set/get 'text/plain':");
     test("text/plain", "Lorem ipsum dolor sit amet.", 
          "text/plain", "Lorem ipsum dolor sit amet.");
+
+    debug("--- Test set 'text/plain', get 'text':");
+    test("text/plain", "Lorem ipsum dolor sit amet.",
+         "text", "Lorem ipsum dolor sit amet.");
+
+    debug("--- Test set 'text', get 'text/plain':");
+    test("text", "Lorem ipsum dolor sit amet.",
+         "text/plain", "Lorem ipsum dolor sit amet.");
+
+    debug("--- Test set/get 'text':");
+    test("text", "Lorem ipsum dolor sit amet.",
+         "text", "Lorem ipsum dolor sit amet.");
 }
 
 if (window.eventSender) {

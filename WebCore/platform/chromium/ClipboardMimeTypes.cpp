@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-const char mimeTypeText[] = "text/plain";
+const char mimeTypeText[] = "text";
 const char mimeTypeTextPlain[] = "text/plain";
 const char mimeTypeTextPlainEtc[] = "text/plain;";
 const char mimeTypeTextHTML[] = "text/html";
