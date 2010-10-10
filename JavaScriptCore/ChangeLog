@@ -1,5 +1,14 @@
 2010-10-10  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed.
+
+        Windows build fix after r69472.
+
+        * wtf/text/StringHash.h:
+        (WTF::CaseFoldingHash::hash):
+
+2010-10-10  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Adam Barth.
 
         Use WTF::StringHasher in WTF::CaseFoldingHash
