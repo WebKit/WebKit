@@ -1,3 +1,16 @@
+2010-10-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Exception in committers-autocomplete in Firefox
+        https://bugs.webkit.org/show_bug.cgi?id=47456
+
+        Remove dependency on a WebKit-only quirk.  IMHO, this quirk is bad for
+        the long-term health of the web, but that's a discussion for another
+        patch.
+
+        * committers-autocomplete.js:
+
 2010-10-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -277,12 +277,12 @@ WebKitCommitters = (function() {
             menu.addEventListener('mousedown', function(e) {
                 selectItem(getIndex(e.target));
                 e.preventDefault();
-            });
+            }, false);
 
             menu.addEventListener('mouseup', function(e) {
                 if (m_selectedIndex == getIndex(e.target))
                     insertSelectedItem();
-            });
+            }, false);
             
             m_menus[name] = menu;
         }
@@ -372,13 +372,13 @@ WebKitCommitters = (function() {
         if (!getMenu()) {
             createMenu(m_focusedInput.name);
             m_focusedInput.setAttribute('autocomplete', 'off');
-            m_focusedInput.addEventListener('keyup', handleKeyUp);
-            m_focusedInput.addEventListener('keydown', handleKeyDown);
+            m_focusedInput.addEventListener('keyup', handleKeyUp, false);
+            m_focusedInput.addEventListener('keydown', handleKeyDown, false);
             m_focusedInput.addEventListener('blur', function() {
                 showMenu(false);
                 m_prefix = null;
                 m_selectedIndex = 0;
-            });
+            }, false);
         }
         
         updateMenu();
@@ -391,7 +391,7 @@ WebKitCommitters = (function() {
                 break;
             }
         }
-    });
+    }, false);
 
     WebKitCommitters.getCommitters(function (committers) {
         m_committers = committers;
