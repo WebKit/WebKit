@@ -340,9 +340,11 @@ void ScrollView::setScrollPosition(const IntPoint& scrollPoint)
 
 bool ScrollView::scroll(ScrollDirection direction, ScrollGranularity granularity)
 {
-    if (platformWidget())
+    printf("%s \n", __FUNCTION__);
+    if (platformWidget()) {
+        printf("%s bleh\n", __FUNCTION__);
         return platformScroll(direction, granularity);
-
+    }
     if (direction == ScrollUp || direction == ScrollDown) {
         if (m_verticalScrollbar)
             return m_verticalScrollbar->scroll(direction, granularity);

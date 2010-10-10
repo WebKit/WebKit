@@ -65,11 +65,18 @@
 
     function step2()
     {
+      console.log(document.activeElement.getAttribute("id") + "");
+      console.log("log:" + document.body.scrollTop);
       shouldBeTrue(String(document.body.scrollTop != 0));
 
       // Then it scrolls down to the end of the page ...
-      if (window.eventSender)
-        eventSender.keyDown("end");
+      if (window.eventSender) {
+        var onMacPlatform = navigator.userAgent.search(/\bMac OS X\b/) != -1;
+        if (onMacPlatform)
+          eventSender.keyDown("downArrow", ["metaKey"]);
+        else
+          eventSender.keyDown("end");
+      }
 
       // And 'resultMap2' re-tries to move focus down.
       initTest(resultMap2, testCompleted);
@@ -87,9 +94,10 @@
     <script src="../js/resources/js-test-post.js"></script>
   </head>
   <body id="some-content" xmlns="http://www.w3.org/1999/xhtml">
-    <a id="start" href="a">Start</a>
+    <a id="start" href="#">Start</a>
+    <input type="button" value="test"></input>
     <div style='margin-top:100000000px'>
-        <a id="end" href="a">End</a>
+        <a id="end" href="#">End</a>
     </div>
     <div id="console"></div>
   </body>

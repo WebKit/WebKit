@@ -470,6 +470,7 @@ bool scrollInDirection(Frame* frame, FocusDirection direction, const FocusCandid
     if (!candidate.isNull() && isScrollableContainerNode(candidate.enclosingScrollableBox))
         return frame->eventHandler()->scrollRecursively(scrollDirection, ScrollByLine, candidate.enclosingScrollableBox);
 
+    printf("%s", __FUNCTION__);
     return frame->eventHandler()->scrollRecursively(scrollDirection, ScrollByLine);
 }
 
