@@ -1,3 +1,17 @@
+2010-10-11  Adam Roben  <aroben@apple.com>
+
+        Make it possible to restart a RunLoop::Timer on Windows
+
+        Fixes <http://webkit.org/b/47505> RunLoop::Timer only ever fires once
+        on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/win/RunLoopWin.cpp:
+        (RunLoop::TimerBase::timerFired): Remove non-repeating timers from the
+        set of active timers when they fire, just like we do when stopping
+        them manually.
+
 2010-10-11  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

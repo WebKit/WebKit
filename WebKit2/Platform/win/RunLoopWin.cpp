@@ -123,7 +123,9 @@ void RunLoop::TimerBase::timerFired(RunLoop* runLoop, uint64_t ID)
 
     // FIMXE: Support repeating timers.
 
+    runLoop->m_activeTimers.remove(it);
     ::KillTimer(runLoop->m_runLoopMessageWindow, ID);
+
     timer->fired();
 }
 
