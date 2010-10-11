@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 
 #include "config.h"
 #include "JSArrayBufferView.h"
@@ -90,4 +90,4 @@ JSValue JSArrayBufferView::slice(ExecState* exec)
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)

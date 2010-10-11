@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 #include "V8ArrayBufferView.h"
 
 #include "V8Binding.h"
@@ -92,4 +92,4 @@ v8::Handle<v8::Value> V8ArrayBufferView::sliceCallback(const v8::Arguments& args
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)

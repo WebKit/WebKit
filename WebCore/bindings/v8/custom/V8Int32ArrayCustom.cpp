@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 
 #include "ArrayBuffer.h"
 #include "Int32Array.h"
@@ -68,4 +68,4 @@ v8::Handle<v8::Value> toV8(Int32Array* impl)
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)

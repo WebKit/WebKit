@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 
 #include "JSArrayBuffer.h"
 
@@ -54,4 +54,4 @@ EncodedJSValue JSC_HOST_CALL JSArrayBufferConstructor::constructJSArrayBuffer(Ex
 
 } // namespace WebCore
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
