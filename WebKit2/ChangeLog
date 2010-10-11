@@ -1,3 +1,13 @@
+2010-10-11  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebProcess ASSERTs with a null application cache dir creation parameter
+        https://bugs.webkit.org/show_bug.cgi?id=47489
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2010-10-11  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
         Reviewed by Andreas Kling.

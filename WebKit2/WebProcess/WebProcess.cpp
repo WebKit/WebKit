@@ -116,7 +116,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 {
     ASSERT(m_pageMap.isEmpty());
 
-    cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
+    if (!parameters.applicationCacheDirectory.isEmpty())
+        cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
 
     if (!parameters.injectedBundlePath.isEmpty()) {
         m_injectedBundle = InjectedBundle::create(parameters.injectedBundlePath);
