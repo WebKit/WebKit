@@ -53,7 +53,10 @@ class FailureMap(object):
                  for failure_info in self._failures
                  if revision in failure_info['regression_window'].revisions()
                     and failure_info['regression_window'].failing_tests()]
-        return sorted(set(sum(tests, [])))
+        result = set()
+        for test in tests:
+            result = result.union(test)
+        return sorted(result)
 
     def _old_failures(self, is_old_failure):
         return filter(lambda revision: is_old_failure(revision),

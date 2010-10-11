@@ -43,8 +43,8 @@ class FailureMapTest(unittest.TestCase):
     build2a = Build(builder2, build_number=89, revision=1233, is_green=True)
     build2b = Build(builder2, build_number=90, revision=1235, is_green=False)
 
-    regression_window1 = RegressionWindow(build1a, build1b)
-    regression_window2 = RegressionWindow(build2a, build2b)
+    regression_window1 = RegressionWindow(build1a, build1b, failing_tests=[u'test1', u'test1'])
+    regression_window2 = RegressionWindow(build2a, build2b, failing_tests=[u'test1'])
 
     def _make_failure_map(self):
         failure_map = FailureMap()
@@ -73,4 +73,4 @@ class FailureMapTest(unittest.TestCase):
 
     def test_tests_failing_for(self):
         failure_map = self._make_failure_map()
-        self.assertEquals(failure_map.tests_failing_for(1234), [])
+        self.assertEquals(failure_map.tests_failing_for(1234), [u'test1'])

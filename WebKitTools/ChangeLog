@@ -1,3 +1,15 @@
+2010-10-11  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Fix sheriffbot not to crash when there are failing tests.  It turns out
+        Python sets don't support the + operator.  We need to use union
+        instead.  There's a more elegant way to do this in Python 2.6, but we
+        need this code to work in 2.5.
+
+        * Scripts/webkitpy/common/net/failuremap.py:
+        * Scripts/webkitpy/common/net/failuremap_unittest.py:
+
 2010-10-10  Robert Hogan  <robert@webkit.org>
 
         Unreviewed, fix failing test from r69468.
