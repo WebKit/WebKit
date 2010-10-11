@@ -3127,9 +3127,6 @@ BUGWK46735 WIN : platform/win/plugins/window-geometry-initialized-before-set-win
 //BUG_SENORBLANCO LINUX : fast/text/international/thai-baht-space.html = IMAGE
 BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
 
-// Flaky since 68620
-BUGWK46779 WIN LINUX : fast/filesystem/flags-passing.html = TEXT PASS
-
 // NPP_HandleEvent doesn't be implemented/work on mac/linux.
 BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
 
