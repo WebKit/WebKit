@@ -24,9 +24,8 @@
 #include "PlatformString.h"
 #include <wtf/text/CString.h>
 
-#include <gtk/gtk.h>
+#include <glib.h>
 #include <locale.h>
-#include <pango/pango.h>
 
 namespace WebCore {
 

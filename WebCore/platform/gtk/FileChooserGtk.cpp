@@ -34,7 +34,6 @@
 #include <wtf/text/CString.h>
 
 #include <glib.h>
-#include <gtk/gtk.h>
 
 namespace WebCore {
 
