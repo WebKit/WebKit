@@ -18,7 +18,7 @@ var reader = null;
 
 function errorCallback(error) {
     debug("Got error: " + error.code);
-    removeRecursively(fileSystem.root);
+    removeAllInDirectory(fileSystem.root);
     finishJSTest();
 }
 
@@ -34,7 +34,7 @@ function entriesCallback(entries) {
         paths.sort();
         shouldBe('"' + paths.join(',') + '"', '"/a,/b,/c,/d2,/e,/f"');
         shouldBe("dirsCount", "3");
-        removeRecursively(fileSystem.root);
+        removeAllInDirectory(fileSystem.root);
         finishJSTest();
     }
 }
@@ -97,7 +97,7 @@ if (this.requestFileSystem) {
     requestFileSystem.apply(this, [this.TEMPORARY, 100, function(fs) {
         debug("Got FileSystem:" + fs.name);
         fileSystem = fs;
-        removeRecursively(fileSystem.root, function(){ helper.done(); }, errorCallback);
+        removeAllInDirectory(fileSystem.root, function(){ helper.done(); }, errorCallback);
     }, errorCallback]); });
     debug("requested FileSystem.");
     helper.join(asyncTest1);

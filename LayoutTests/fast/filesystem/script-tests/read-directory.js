@@ -19,7 +19,7 @@ var testEntriesCount = 0;
 
 function endTest()
 {
-    removeRecursively(fileSystem.root);
+    removeAllInDirectory(fileSystem.root);
     finishJSTest();
 }
 
@@ -85,7 +85,7 @@ function successCallback(fs)
 {
     fileSystem = fs;
     debug("Successfully obtained Persistent FileSystem:" + fileSystem.name);
-    removeRecursively(fileSystem.root, prepareForTest, errorCallback);
+    removeAllInDirectory(fileSystem.root, prepareForTest, errorCallback);
 }
 
 if (window.requestFileSystem) {

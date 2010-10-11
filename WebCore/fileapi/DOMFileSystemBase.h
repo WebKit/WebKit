@@ -68,6 +68,7 @@ public:
     bool move(const EntryBase* source, EntryBase* parent, const String& name, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     bool copy(const EntryBase* source, EntryBase* parent, const String& name, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     bool remove(const EntryBase*, PassRefPtr<VoidCallback>, PassRefPtr<ErrorCallback>);
+    bool removeRecursively(const EntryBase*, PassRefPtr<VoidCallback>, PassRefPtr<ErrorCallback>);
     bool getParent(const EntryBase*, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     bool getFile(const EntryBase*, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     bool getDirectory(const EntryBase*, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);

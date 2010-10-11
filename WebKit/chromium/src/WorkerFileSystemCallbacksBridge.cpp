@@ -171,6 +171,12 @@ void WorkerFileSystemCallbacksBridge::postRemoveToMainThread(WebFileSystem* file
     dispatchTaskToMainThread(createCallbackTask(&removeOnMainThread, fileSystem, path, this, mode));
 }
 
+void WorkerFileSystemCallbacksBridge::postRemoveRecursivelyToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
+{
+    ASSERT(fileSystem);
+    dispatchTaskToMainThread(createCallbackTask(&removeRecursivelyOnMainThread, fileSystem, path, this, mode));
+}
+
 void WorkerFileSystemCallbacksBridge::postReadMetadataToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
 {
     ASSERT(fileSystem);
@@ -228,6 +234,11 @@ void WorkerFileSystemCallbacksBridge::copyOnMainThread(WebCore::ScriptExecutionC
 void WorkerFileSystemCallbacksBridge::removeOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->remove(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
+}
+
+void WorkerFileSystemCallbacksBridge::removeRecursivelyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+{
+    fileSystem->removeRecursively(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
 void WorkerFileSystemCallbacksBridge::readMetadataOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)

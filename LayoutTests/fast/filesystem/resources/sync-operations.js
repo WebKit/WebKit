@@ -6,7 +6,7 @@ if (this.importScripts) {
 description("Test making multiple synchronous FileSystem operations.");
 
 var fileSystem = requestFileSystemSync(this.TEMPORARY, 100);
-removeRecursivelySync(fileSystem.root);
+removeAllInDirectorySync(fileSystem.root);
 
 // Stage 1 (prepare)
 var a = fileSystem.root.getFile('a', {create:true});
@@ -38,7 +38,7 @@ do {
 paths.sort();
 shouldBe('"' + paths.join(',') + '"', '"/a,/b,/c,/d2,/e,/f"');
 shouldBe("dirsCount", "3");
-removeRecursivelySync(fileSystem.root);
+removeAllInDirectorySync(fileSystem.root);
 finishJSTest();
 
 var successfullyParsed = true;

@@ -263,6 +263,13 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
             this.environment[entry].remove(bindCallback(this, this.testSuccessCallback), bindCallback(this, this.testErrorCallback));
         };
 
+        this.removeRecursively = function(entry, expectedErrorCode)
+        {
+            this.expectedErrorCode = expectedErrorCode;
+            this.stage = '"' + entry + '".removeRecursively()';
+            this.environment[entry].removeRecursively(bindCallback(this, this.testSuccessCallback), bindCallback(this, this.testErrorCallback));
+        };
+
         this.readDirectory = function(entry, expectedErrorCode)
         {
             this.expectedErrorCode = expectedErrorCode;
@@ -291,7 +298,7 @@ function runOperationTest(fileSystem, testCase, successCallback, errorCallback)
         {
             this.expectedErrorCode = '';
             this.stage = 'resetting filesystem';
-            removeRecursively(this.fileSystem.root, bindCallback(this, this.setUp), bindCallback(this, this.testErrorCallback));
+            removeAllInDirectory(this.fileSystem.root, bindCallback(this, this.setUp), bindCallback(this, this.testErrorCallback));
         };
 
         this.setUp = function()

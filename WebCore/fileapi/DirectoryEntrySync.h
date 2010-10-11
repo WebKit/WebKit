@@ -55,6 +55,7 @@ public:
     PassRefPtr<DirectoryReaderSync> createReader(ExceptionCode&);
     PassRefPtr<FileEntrySync> getFile(const String& path, PassRefPtr<Flags>, ExceptionCode&);
     PassRefPtr<DirectoryEntrySync> getDirectory(const String& path, PassRefPtr<Flags>, ExceptionCode&);
+    void removeRecursively(ExceptionCode&);
 
 private:
     friend class EntrySync;

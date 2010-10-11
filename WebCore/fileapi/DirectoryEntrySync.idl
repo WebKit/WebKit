@@ -38,5 +38,6 @@ module storage {
         DirectoryReaderSync createReader() raises (FileException);
         [Custom] FileEntrySync getFile(in [ConvertUndefinedOrNullToNullString] DOMString path, in Flags flags) raises (FileException);
         [Custom] DirectoryEntrySync getDirectory(in [ConvertUndefinedOrNullToNullString] DOMString path, in Flags flags) raises (FileException);
+        void removeRecursively() raises (FileException);
     };
 }

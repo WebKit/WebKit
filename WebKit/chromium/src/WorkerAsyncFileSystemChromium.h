@@ -65,6 +65,7 @@ public:
     virtual void move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void remove(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
+    virtual void removeRecursively(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void readMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void createFile(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);
     virtual void createDirectory(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks>);

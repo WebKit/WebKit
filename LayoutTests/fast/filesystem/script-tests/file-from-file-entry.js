@@ -29,7 +29,7 @@ function createTestFile() {
 
 function fileSystemCallback(fs) {
     fileSystem = fs;
-    removeRecursively(fileSystem.root, createTestFile, errorCallback);
+    removeAllInDirectory(fileSystem.root, createTestFile, errorCallback);
 }
 
 if (window.requestFileSystem) {

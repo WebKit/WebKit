@@ -51,11 +51,11 @@ public:
 
     DOMFileSystemSync* filesystem() const { return static_cast<DOMFileSystemSync*>(m_fileSystem); }
 
-    virtual PassRefPtr<Metadata> getMetadata(ExceptionCode&);
-    virtual PassRefPtr<EntrySync> moveTo(PassRefPtr<DirectoryEntrySync> parent, const String& name, ExceptionCode&) const;
-    virtual PassRefPtr<EntrySync> copyTo(PassRefPtr<DirectoryEntrySync> parent, const String& name, ExceptionCode&) const;
-    virtual void remove(ExceptionCode&) const;
-    virtual PassRefPtr<EntrySync> getParent() const;
+    PassRefPtr<Metadata> getMetadata(ExceptionCode&);
+    PassRefPtr<EntrySync> moveTo(PassRefPtr<DirectoryEntrySync> parent, const String& name, ExceptionCode&) const;
+    PassRefPtr<EntrySync> copyTo(PassRefPtr<DirectoryEntrySync> parent, const String& name, ExceptionCode&) const;
+    void remove(ExceptionCode&) const;
+    PassRefPtr<EntrySync> getParent() const;
 
 protected:
     EntrySync(DOMFileSystemBase*, const String& fullPath);

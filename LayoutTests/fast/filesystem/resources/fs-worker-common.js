@@ -27,7 +27,7 @@ function shouldBe(_a, _b)
 
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
 
-function removeRecursivelySync(directory) {
+function removeAllInDirectorySync(directory) {
     if (!directory)
         return;
     var reader = directory.createReader();
@@ -35,13 +35,11 @@ function removeRecursivelySync(directory) {
         var entries = reader.readEntries();
         for (var i = 0; i < entries.length; ++i) {
             if (entries[i].isDirectory)
-                removeRecursivelySync(entries[i]);
+                entries[i].removeRecursively();
             else
                 entries[i].remove();
         }
     } while (entries.length);
-    if (directory.fullPath != '/')
-        directory.remove();
 }
 
 if (this.importScripts && !this.requestFileSystem) {

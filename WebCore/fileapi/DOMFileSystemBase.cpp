@@ -132,8 +132,22 @@ bool DOMFileSystemBase::copy(const EntryBase* source, EntryBase* parent, const S
 bool DOMFileSystemBase::remove(const EntryBase* entry, PassRefPtr<VoidCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     ASSERT(entry);
+    // We don't allow calling remove() on the root directory.
+    if (entry->fullPath() == String(DOMFilePath::root))
+        return false;
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(entry->fullPath());
     m_asyncFileSystem->remove(platformPath, VoidCallbacks::create(successCallback, errorCallback));
+    return true;
+}
+
+bool DOMFileSystemBase::removeRecursively(const EntryBase* entry, PassRefPtr<VoidCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+{
+    ASSERT(entry && entry->isDirectory());
+    // We don't allow calling remove() on the root directory.
+    if (entry->fullPath() == String(DOMFilePath::root))
+        return false;
+    String platformPath = m_asyncFileSystem->virtualToPlatformPath(entry->fullPath());
+    m_asyncFileSystem->removeRecursively(platformPath, VoidCallbacks::create(successCallback, errorCallback));
     return true;
 }
 

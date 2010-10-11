@@ -88,6 +88,7 @@ public:
     void postMoveToMainThread(WebFileSystem*, const String& srcPath, const String& destPath, const String& mode);
     void postCopyToMainThread(WebFileSystem*, const String& srcPath, const String& destPath, const String& mode);
     void postRemoveToMainThread(WebFileSystem*, const String& path, const String& mode);
+    void postRemoveRecursivelyToMainThread(WebFileSystem*, const String& path, const String& mode);
     void postReadMetadataToMainThread(WebFileSystem*, const String& path, const String& mode);
     void postCreateFileToMainThread(WebFileSystem*, const String& path, bool exclusive, const String& mode);
     void postCreateDirectoryToMainThread(WebFileSystem*, const String& path, bool exclusive, const String& mode);
@@ -110,6 +111,7 @@ private:
     static void moveOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const String& srcPath, const String& destPath, WorkerFileSystemCallbacksBridge*, const String& mode);
     static void copyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const String& srcPath, const String& destPath, WorkerFileSystemCallbacksBridge*, const String& mode);
     static void removeOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const String& path, WorkerFileSystemCallbacksBridge*, const String& mode);
+    static void removeRecursivelyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const String& path, WorkerFileSystemCallbacksBridge*, const String& mode);
     static void readMetadataOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const String& path, WorkerFileSystemCallbacksBridge*, const String& mode);
     static void createFileOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const String& path, bool exclusive, WorkerFileSystemCallbacksBridge*, const String& mode);
     static void createDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const String& path, bool exclusive, WorkerFileSystemCallbacksBridge*, const String& mode);

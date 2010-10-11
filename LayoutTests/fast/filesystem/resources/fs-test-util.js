@@ -46,82 +46,43 @@ var JoinHelper = function()
     };
 };
 
-// FIXME: replace this code with the equivalent File API method once it fully supports removeRecursively.
-function removeRecursively(directory, successCallback, errorCallback) {
-    var RemoveRecursiveHelper = function(successCallback, errorCallback) {
-        this.removeDirMap = {};
+// Remove everything in the given directory.
+function removeAllInDirectory(directory, successCallback, errorCallback) {
+    var RemoveAllInDirectoryHelper = function(successCallback, errorCallback) {
+        this.entriesCount = 0;
+        this.reader = null;
         this.successCallback = successCallback;
         this.errorCallback = errorCallback;
 
-        this.removeRecursively = function(directory)
+        this.entryRemovedCallback = bindCallback(this, function(entry)
         {
-            this.removeRecursivelyInternal(directory);
-        };
-
-        this.hasMoreEntries = function(hash)
-        {
-            for (k in hash)
-                return true;
-            return false;
-        };
-
-        this.removeDirectory = function(directory, parentDirectory)
-        {
-            if (directory.fullPath != '/') {
-                // Ok to remove the parent directory.
-                directory.remove(bindCallback(this, this.entryRemovedCallback, parentDirectory, directory), bindCallback(this, this.ErrorCallback));
-            } else
-                delete this.removeDirMap[directory.fullPath];
-            if (!this.hasMoreEntries(this.removeDirMap) && this.successCallback)
+            if (--this.entriesCount == 0 && this.successCallback)
                 this.successCallback();
-        };
+        });
 
-        this.entryRemovedCallback = function(directory, entry)
-        {
-            if (entry.isDirectory)
-                delete this.removeDirMap[entry.fullPath];
-
-            if (directory) {
-                var dirInfo = this.removeDirMap[directory.fullPath];
-                if (--dirInfo.entries == 0 && dirInfo.hasMore == false)
-                    this.removeDirectory(directory, dirInfo.parentDirectory);
-            }
-        };
-
-        this.removeRecursivelyCallback = function(entries, directory)
+        this.entriesCallback = bindCallback(this, function(entries)
         {
             for (var i = 0; i < entries.length; ++i) {
-                this.removeDirMap[directory.fullPath].entries++;
+                this.entriesCount++;
                 if (entries[i].isDirectory)
-                    this.removeRecursivelyInternal(entries[i], directory);
+                    entries[i].removeRecursively(this.entryRemovedCallback, this.errorCallback);
                 else {
-                    var entry = entries[i];
-                    entry.remove(bindCallback(this, this.entryRemovedCallback, directory, entry), bindCallback(this, this.errorCallback));
+                    entries[i].remove(this.entryRemovedCallback, this.errorCallback);
                 }
             }
-            if (entries.length) {
-                this.removeDirMap[directory.fullPath].reader.readEntries(bindCallback(this, this.removeRecursivelyCallback, directory), bindCallback(this, this.errorCallback));
-            } else {
-                var dirInfo = this.removeDirMap[directory.fullPath];
-                dirInfo.hasMore = false;
-                if (dirInfo.entries == 0)
-                    this.removeDirectory(directory, dirInfo.parentDirectory);
-            }
-        };
+            if (entries.length)
+                this.reader.readEntries(this.entriesCallback, this.errorCallback);
+            else if (this.entriesCount == 0 && this.successCallback)
+                this.successCallback();
+        });
 
-        this.removeRecursivelyInternal = function(directory, parentDirectory)
+        this.removeAllInDirectory = function(directory)
         {
-            directoryReader = directory.createReader();
-            this.removeDirMap[directory.fullPath] = {
-                hasMore: true,
-                parentDirectory: parentDirectory,
-                entries: 0,
-                reader: directoryReader,
-            };
-            directoryReader.readEntries(bindCallback(this, this.removeRecursivelyCallback, directory), bindCallback(this, this.errorCallback));
+            this.reader = directory.createReader();
+            this.reader.readEntries(this.entriesCallback, this.errorCallback);
         };
     };
 
-    var helper = new RemoveRecursiveHelper(successCallback, errorCallback);
-    helper.removeRecursively(directory);
+    var helper = new RemoveAllInDirectoryHelper(successCallback, errorCallback);
+    helper.removeAllInDirectory(directory);
 }
