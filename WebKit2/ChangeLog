@@ -1,3 +1,15 @@
+2010-10-11  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Issue a warning when an InjectedBundle can't be loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=47497
+
+        The original author of the patch is Jocelyn Turcotte <jocelyn.turcotte@nokia.com>.
+
+        * WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WebKit::InjectedBundle::load):
+
 2010-10-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.
