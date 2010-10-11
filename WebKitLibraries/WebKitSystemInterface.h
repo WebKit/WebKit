@@ -34,7 +34,7 @@ NSTimeInterval WKGetNSURLResponseFreshnessLifetime(NSURLResponse *response);
 NSString *WKCopyNSURLResponseStatusLine(NSURLResponse *response);
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
-CFArrayRef WKCopyNSURLResponsePeerCertificates(NSURLResponse *response);
+CFArrayRef WKCopyNSURLResponseCertificateChain(NSURLResponse *response);
 #endif
 
 CFStringEncoding WKGetWebDefaultCFStringEncoding(void);

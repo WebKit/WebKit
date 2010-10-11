@@ -1,3 +1,14 @@
+2010-10-11  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rename WKCertificateInfoGetPeerCertificates() to WKCertificateInfoGetCertificateChain()
+        https://bugs.webkit.org/show_bug.cgi?id=47495
+
+        * WebKitSystemInterface.h: 
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2010-10-03  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix.

@@ -39,23 +39,23 @@ PlatformCertificateInfo::PlatformCertificateInfo()
 }
 
 PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& response)
-    : m_peerCertificates(AdoptCF, WKCopyNSURLResponsePeerCertificates(response.nsURLResponse()))
+    : m_certificateChain(AdoptCF, WKCopyNSURLResponseCertificateChain(response.nsURLResponse()))
 {
 }
 
 void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     // Special case no certificates, 
-    if (!m_peerCertificates) {
+    if (!m_certificateChain) {
         encoder->encodeUInt64(std::numeric_limits<uint64_t>::max());
         return;
     }
 
-    uint64_t length = CFArrayGetCount(m_peerCertificates.get());
+    uint64_t length = CFArrayGetCount(m_certificateChain.get());
     encoder->encodeUInt64(length);
 
     for (size_t i = 0; i < length; ++i) {
-        RetainPtr<CFDataRef> data(AdoptCF, SecCertificateCopyData((SecCertificateRef)CFArrayGetValueAtIndex(m_peerCertificates.get(), i)));
+        RetainPtr<CFDataRef> data(AdoptCF, SecCertificateCopyData((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
         encoder->encodeBytes(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
     }
 }
@@ -83,19 +83,19 @@ bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, Platform
         CFArrayAppendValue(array.get(), certificate.get());
     }
 
-    c.m_peerCertificates = array;
+    c.m_certificateChain = array;
     return true;
 }
 
 #ifndef NDEBUG
 void PlatformCertificateInfo::dump() const
 {
-    unsigned entries = m_peerCertificates ? CFArrayGetCount(m_peerCertificates.get()) : 0;
+    unsigned entries = m_certificateChain ? CFArrayGetCount(m_certificateChain.get()) : 0;
 
     NSLog(@"PlatformCertificateInfo\n");
     NSLog(@"  Entries: %d\n", entries);
     for (unsigned i = 0; i < entries; ++i) {
-        RetainPtr<CFStringRef> summary(AdoptCF, SecCertificateCopySubjectSummary((SecCertificateRef)CFArrayGetValueAtIndex(m_peerCertificates.get(), i)));
+        RetainPtr<CFStringRef> summary(AdoptCF, SecCertificateCopySubjectSummary((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
         NSLog(@"  %@", (NSString *)summary.get());
     }
 }

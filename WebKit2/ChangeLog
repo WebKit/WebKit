@@ -1,3 +1,22 @@
+2010-10-11  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rename WKCertificateInfoGetPeerCertificates() to WKCertificateInfoGetCertificateChain()
+        https://bugs.webkit.org/show_bug.cgi?id=47495
+
+        * Shared/API/c/mac/WKCertificateInfoMac.h:
+        Renamed WKCertificateInfoGetPeerCertificates() to WKCertificateInfoGetCertificateChain()
+        * Shared/API/c/mac/WKCertificateInfoMac.mm:
+        (WKCertificateInfoGetCertificateChain): Updated for name change.
+        * Shared/mac/PlatformCertificateInfo.h:
+        (WebKit::PlatformCertificateInfo::certificateChain): Renamed from peerCertificates()
+        * Shared/mac/PlatformCertificateInfo.mm:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo): Updated for name change.
+        (WebKit::PlatformCertificateInfo::encode): Ditto.
+        (WebKit::PlatformCertificateInfo::decode): Ditto.
+        (WebKit::PlatformCertificateInfo::dump): Ditto.
+
 2010-10-11  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
