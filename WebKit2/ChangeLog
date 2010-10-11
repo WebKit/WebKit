@@ -1,5 +1,14 @@
 2010-10-11  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
+        Reviewed by Andreas Kling.
+
+        Use raster for the QtWebProcess.
+
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        (WebKit::WebProcessMainQt):
+
+2010-10-11  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
         Unreviewed win build fix.
 
         * WebProcess/WebCoreSupport/WebChromeClient.cpp:
