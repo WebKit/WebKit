@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 
 #include "Int16Array.h"
 
@@ -58,4 +58,4 @@ PassRefPtr<ArrayBufferView> Int16Array::slice(int start, int end) const
 
 }
 
-#endif // ENABLE(3D_CANVAS)
+#endif // ENABLE(3D_CANVAS) || ENABLE(BLOB)
