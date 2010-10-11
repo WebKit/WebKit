@@ -1,3 +1,12 @@
+2010-10-11  Sam Weinig  <sam@webkit.org>
+
+        Try to fix the Mac release build.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _transformToDeviceSpace:]):
+        (-[WKView _transformToUserSpace:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2010-10-11  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
