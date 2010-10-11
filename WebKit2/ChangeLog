@@ -1,3 +1,14 @@
+2010-10-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] WebKit2 build scripts are buggy
+        https://bugs.webkit.org/show_bug.cgi?id=47377
+
+        Generated sources must depends on WebKit2/Scripts/webkit2/messages.py too.
+
+        * DerivedSources.pro: Missing dependencies added.
+
 2010-10-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
