@@ -28,7 +28,7 @@
 
 #include "ResourceResponseBase.h"
 
-typedef const struct _CFURLResponse* CFURLResponseRef;
+typedef struct _CFURLResponse* CFURLResponseRef;
 
 namespace WebCore {
 
