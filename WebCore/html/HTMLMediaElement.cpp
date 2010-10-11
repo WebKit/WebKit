@@ -530,6 +530,7 @@ void HTMLMediaElement::prepareForLoad()
     m_displayMode = Unknown;
 
     // 1 - Abort any already-running instance of the resource selection algorithm for this element.
+    m_loadState = WaitingForSource;
     m_currentSourceNode = 0;
 
     // 2 - If there are any tasks from the media element's media element event task source in 
@@ -873,6 +874,10 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         // If we failed while trying to load a <source> element, the movie was never parsed, and there are more
         // <source> children, schedule the next one
         if (m_readyState < HAVE_METADATA && m_loadState == LoadingFromSourceElement) {
+            ASSERT(m_currentSourceNode);
+            if (!m_currentSourceNode)
+                return;
+
             m_currentSourceNode->scheduleErrorEvent();
             if (havePotentialSourceChild()) {
                 LOG(Media, "HTMLMediaElement::setNetworkState scheduling next <source>");
