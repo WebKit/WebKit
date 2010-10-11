@@ -96,12 +96,12 @@ namespace WTF {
     };
 
     class CaseFoldingHash {
+    public:
         template<typename T> static inline UChar foldCase(T ch)
         {
             return WTF::Unicode::foldCase(ch);
         }
 
-    public:
         static unsigned hash(const UChar* data, unsigned length)
         {
             return StringHasher::createHash<UChar, foldCase<UChar> >(data, length);

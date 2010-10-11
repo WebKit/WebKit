@@ -1,3 +1,12 @@
+2010-10-11  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed.
+
+        Clang build fix after r69472.
+        https://bugs.webkit.org/show_bug.cgi?id=46523
+
+        * wtf/text/StringHash.h:
+
 2010-10-11  Oliver Hunt  <oliver@apple.com>
 
         Undo last minute change to 32bit build.
