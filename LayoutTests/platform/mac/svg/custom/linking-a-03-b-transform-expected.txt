@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 473x360
-    RenderSVGContainer {g} at (3,19) size 386x341
+    RenderSVGContainer {g} at (3,19) size 385x341
       RenderSVGText {text} at (100,9) size 184x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 184x14
           chunk 1 text run 1 at (100.00,20.00) startOffset 0 endOffset 41 width 184.00: "Some circles with ids, for linking tests."
@@ -15,7 +15,7 @@ layer at (0,0) size 480x360
         RenderSVGInlineText {#text} at (0,0) size 40x14
           chunk 1 text run 1 at (80.00,295.00) startOffset 0 endOffset 8 width 40.00: "circle-2"
       RenderSVGPath {rect} at (9,233) size 87x87 [stroke={[type=SOLID] [color=#000000]}] [x=64.00] [y=227.00] [width=72.00] [height=72.00]
-      RenderSVGPath {circle} at (224,250) size 131x110 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [cx=340.00] [cy=260.00] [r=50.00]
+      RenderSVGPath {circle} at (225,251) size 129x109 [stroke={[type=SOLID] [color=#0000FF] [stroke width=10.00]}] [cx=340.00] [cy=260.00] [r=50.00]
       RenderSVGText {text} at (320,321) size 40x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 40x14
           chunk 1 text run 1 at (320.00,332.00) startOffset 0 endOffset 8 width 40.00: "circle-3"
