@@ -1565,13 +1565,13 @@ void JIT::emit_op_convert_this_strict(Instruction* currentInstruction)
     Jump setThis = jump();
     notNull.link(this);
     Jump isImmediate = branch32(NotEqual, regT1, Imm32(JSValue::CellTag));
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT1);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT2);
     Jump notAnObject = branch8(NotEqual, Address(regT3, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType));
-    addSlowCase(branchTest8(NonZero, Address(regT1, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(NeedsThisConversion)));
+    addSlowCase(branchTest8(NonZero, Address(regT2, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(NeedsThisConversion)));
     isImmediate.link(this);
     notAnObject.link(this);
     setThis.link(this);
-    map(m_bytecodeOffset + OPCODE_LENGTH(op_convert_this), thisRegister, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_convert_this_strict), thisRegister, regT1, regT0);
 }
 
 void JIT::emitSlow_op_convert_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

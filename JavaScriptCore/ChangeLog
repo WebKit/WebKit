@@ -1,3 +1,10 @@
+2010-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Undo last minute change to 32bit build.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_convert_this_strict):
+
 2010-10-11  Brian Weinstein  <bweinstein@apple.com>
 
         Build fix for Windows. Add a necessary export from r69516.
