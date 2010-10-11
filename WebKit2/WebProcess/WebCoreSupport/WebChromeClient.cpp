@@ -31,7 +31,6 @@
 
 #include "DrawingArea.h"
 #include "InjectedBundleUserMessageCoders.h"
-#include "ViewportArguments.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
