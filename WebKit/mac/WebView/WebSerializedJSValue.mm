@@ -103,5 +103,12 @@ using namespace WebCore;
     [super dealloc];
 }
 
+- (void*)internalRepresentation
+{
+    if (!_private)
+        return 0;
+    return _private->value.get();
+}
+
 @end
 

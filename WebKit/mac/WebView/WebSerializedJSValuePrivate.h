@@ -30,4 +30,5 @@
 
 @interface WebSerializedJSValue(WebPrivate)
 - (id)initWithInternalRepresentation:(void*)internalRepresenatation;
+- (void*)internalRepresentation;
 @end

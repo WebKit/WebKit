@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 WK_EXPORT void* WKSerializedScriptValueGetInternalRepresentation(WKSerializedScriptValueRef scriptValueRef);
+WK_EXPORT WKSerializedScriptValueRef WKSerializedScriptValueCreateWithInternalRepresentation(void*);
 
 #ifdef __cplusplus
 }

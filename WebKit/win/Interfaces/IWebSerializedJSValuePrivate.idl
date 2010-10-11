@@ -41,4 +41,5 @@ import "ocidl.idl";
 interface IWebSerializedJSValuePrivate : IUnknown
 {
     [local] HRESULT setInternalRepresentation([in] void* internalRepresentation);
+    [local] HRESULT getInternalRepresentation([out, retval] void** internalRepresentation);
 }

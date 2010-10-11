@@ -44,6 +44,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE serialize(JSContextRef, JSValueRef value, JSValueRef* exception);
     virtual HRESULT STDMETHODCALLTYPE deserialize(JSContextRef, JSValueRef* result);
     virtual HRESULT STDMETHODCALLTYPE setInternalRepresentation(void* internalRepresentation);
+    virtual HRESULT STDMETHODCALLTYPE getInternalRepresentation(void** internalRepresentation);
 
 private:
     WebSerializedJSValue();

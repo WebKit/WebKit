@@ -1,3 +1,17 @@
+2010-10-11  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add Private API for creating a WebKit2 WebSerializedScriptValue from the internal
+        representation of a WebKit1 WebSerializedJSValue.
+        https://bugs.webkit.org/show_bug.cgi?id=47439
+
+        * Shared/API/c/WKSerializedScriptValue.cpp:
+        (WKSerializedScriptValueCreateWithInternalRepresentation):
+        Use the existing WebSerializedScriptValue constructor that takes a pointer to the internal
+        representation (a WebCore::SerializedScriptValue).
+        * Shared/API/c/WKSerializedScriptValuePrivate.h:
+
 2010-10-11  Mike Thole  <mthole@apple.com>
 
         Reviewed by Darin Adler.

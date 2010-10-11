@@ -42,6 +42,12 @@ WKSerializedScriptValueRef WKSerializedScriptValueCreate(JSContextRef context, J
     return toAPI(serializedValue.release().leakRef());
 }
 
+WKSerializedScriptValueRef WKSerializedScriptValueCreateWithInternalRepresentation(void* internalRepresentation)
+{
+    RefPtr<WebSerializedScriptValue> serializedValue = WebSerializedScriptValue::create(static_cast<WebCore::SerializedScriptValue*>(internalRepresentation));
+    return toAPI(serializedValue.release().leakRef());
+}
+
 JSValueRef WKSerializedScriptValueDeserialize(WKSerializedScriptValueRef scriptValueRef, JSContextRef contextRef, JSValueRef* exception)
 {
     return toImpl(scriptValueRef)->deserialize(contextRef, exception);
