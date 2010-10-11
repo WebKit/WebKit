@@ -534,12 +534,12 @@ static bool isViewVisible(NSView *view)
     _data->_menuList.clear();
 }
 
-- (NSRect)_transformToDeviceSpace:(NSRect)rect
+- (NSRect)_convertToDeviceSpace:(NSRect)rect
 {
     return toDeviceSpace(rect, [self window]);
 }
 
-- (NSRect)_transformToUserSpace:(NSRect)rect
+- (NSRect)_convertToUserSpace:(NSRect)rect
 {
     return toUserSpace(rect, [self window]);
 }

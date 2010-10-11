@@ -33,8 +33,8 @@
 - (void)_setCursor:(NSCursor *)cursor;
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
 
-- (NSRect)_transformToDeviceSpace:(NSRect)rect;
-- (NSRect)_transformToUserSpace:(NSRect)rect;
+- (NSRect)_convertToDeviceSpace:(NSRect)rect;
+- (NSRect)_convertToUserSpace:(NSRect)rect;
 
 #if USE(ACCELERATED_COMPOSITING)
 - (void)_startAcceleratedCompositing:(CALayer *)rootLayer;

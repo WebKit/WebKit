@@ -99,8 +99,8 @@ private:
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     virtual void clearAllEditCommands();
     virtual void setEditCommandState(const WTF::String&, bool, int);
-    virtual WebCore::FloatRect transformToDeviceSpace(const WebCore::FloatRect&);
-    virtual WebCore::FloatRect transformToUserSpace(const WebCore::FloatRect&);
+    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
+    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void pageDidEnterAcceleratedCompositing();

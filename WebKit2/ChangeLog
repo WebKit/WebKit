@@ -1,5 +1,33 @@
 2010-10-11  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Simon Fraser.
+
+        Rename transformToDeviceSpace to convertToDeviceSpace and 
+        transformToUserSpace to convertToUserSpace at Simon's request.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _convertToDeviceSpace:]):
+        (-[WKView _convertToUserSpace:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::convertToDeviceSpace):
+        (QWKPagePrivate::convertToUserSpace):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setWindowFrame):
+        (WebKit::WebPageProxy::getWindowFrame):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::convertToDeviceSpace):
+        (WebKit::WebView::convertToUserSpace):
+        * UIProcess/win/WebView.h:
+
+2010-10-11  Sam Weinig  <sam@webkit.org>
+
         Try to fix the Mac release build.
 
         * UIProcess/API/mac/WKView.mm:

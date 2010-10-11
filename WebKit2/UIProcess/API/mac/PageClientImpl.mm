@@ -211,14 +211,14 @@ void PageClientImpl::setEditCommandState(const String& commandName, bool isEnabl
     [m_wkView _setUserInterfaceItemState:nsStringFromWebCoreString(commandName) enabled:isEnabled state:newState];
 }
 
-FloatRect PageClientImpl::transformToDeviceSpace(const FloatRect& rect)
+FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 {
-    return [m_wkView _transformToDeviceSpace:rect];
+    return [m_wkView _convertToDeviceSpace:rect];
 }
 
-FloatRect PageClientImpl::transformToUserSpace(const FloatRect& rect)
+FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
-    return [m_wkView _transformToUserSpace:rect];
+    return [m_wkView _convertToUserSpace:rect];
 }
 
 #if USE(ACCELERATED_COMPOSITING)

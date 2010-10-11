@@ -589,12 +589,12 @@ void WebView::setEditCommandState(const String&, bool, int)
 {
 }
 
-FloatRect WebView::transformToDeviceSpace(const FloatRect& rect)
+FloatRect WebView::convertToDeviceSpace(const FloatRect& rect)
 {
     return rect;
 }
 
-FloatRect WebView::transformToUserSpace(const FloatRect& rect)
+FloatRect WebView::convertToUserSpace(const FloatRect& rect)
 {
     return rect;
 }

@@ -868,12 +868,12 @@ void WebPageProxy::contentsSizeChanged(uint64_t frameID, const WebCore::IntSize&
 
 void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
 {
-    m_uiClient.setWindowFrame(this, m_pageClient->transformToDeviceSpace(newWindowFrame));
+    m_uiClient.setWindowFrame(this, m_pageClient->convertToDeviceSpace(newWindowFrame));
 }
 
 void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
 {
-    newWindowFrame = m_pageClient->transformToUserSpace(m_uiClient.windowFrame(this));
+    newWindowFrame = m_pageClient->convertToUserSpace(m_uiClient.windowFrame(this));
 }
 
 void WebPageProxy::canRunBeforeUnloadConfirmPanel(bool& canRun)

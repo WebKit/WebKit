@@ -55,8 +55,8 @@ public:
     virtual void clearAllEditCommands() = 0;
     virtual void setEditCommandState(const String& commandName, bool isEnabled, int state) = 0;
 
-    virtual WebCore::FloatRect transformToDeviceSpace(const WebCore::FloatRect&) = 0;
-    virtual WebCore::FloatRect transformToUserSpace(const WebCore::FloatRect&) = 0;
+    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) = 0;
+    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void pageDidEnterAcceleratedCompositing() = 0;
