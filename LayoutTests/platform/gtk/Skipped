@@ -2988,15 +2988,6 @@ fast/xsl/xslt-missing-namespace-in-xslt.xml
 fast/xsl/xslt-relative-path.xml
 fast/xsl/xslt_unicode.xml
 
-# Tests in fonts/ directory
-#   Tests generating new results
-fonts/cursive.html
-fonts/default.html
-fonts/fantasy.html
-fonts/monospace.html
-fonts/sans-serif.html
-fonts/serif.html
-
 # Tests in http/ directory
 #   Tests failing
 http/tests/appcache/crash-when-navigating-away-then-back.html

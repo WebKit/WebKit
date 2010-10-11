@@ -375,6 +375,8 @@ static void resetDefaultsToConsistentValues()
                  "monospace-font-family", "Courier",
                  "serif-font-family", "Times",
                  "sans-serif-font-family", "Helvetica",
+                 "cursive-font-family", "cursive",
+                 "fantasy-font-family", "fantasy",
                  "default-font-size", 16,
                  "default-monospace-font-size", 13,
                  "minimum-font-size", 1,
