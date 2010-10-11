@@ -45,8 +45,8 @@ VPtrHackExecutable::~VPtrHackExecutable()
 {
 }
 
-EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source)
-    : ScriptExecutable(exec, source)
+EvalExecutable::EvalExecutable(ExecState* exec, const SourceCode& source, bool inStrictContext)
+    : ScriptExecutable(exec, source, inStrictContext)
 {
 }
 
@@ -55,7 +55,7 @@ EvalExecutable::~EvalExecutable()
 }
 
 ProgramExecutable::ProgramExecutable(ExecState* exec, const SourceCode& source)
-    : ScriptExecutable(exec, source)
+    : ScriptExecutable(exec, source, false)
 {
 }
 
@@ -63,8 +63,8 @@ ProgramExecutable::~ProgramExecutable()
 {
 }
 
-FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, int firstLine, int lastLine)
-    : ScriptExecutable(globalData, source)
+FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
+    : ScriptExecutable(globalData, source, inStrictContext)
     , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
@@ -75,8 +75,8 @@ FunctionExecutable::FunctionExecutable(JSGlobalData* globalData, const Identifie
     m_lastLine = lastLine;
 }
 
-FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, int firstLine, int lastLine)
-    : ScriptExecutable(exec, source)
+FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
+    : ScriptExecutable(exec, source, inStrictContext)
     , m_numCapturedVariables(0)
     , m_forceUsesArguments(forceUsesArguments)
     , m_parameters(parameters)
@@ -96,7 +96,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<EvalNode> evalNode = globalData->parser->parse<EvalNode>(globalData, lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, &exception);
+    RefPtr<EvalNode> evalNode = globalData->parser->parse<EvalNode>(lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
     if (!evalNode) {
         ASSERT(exception);
         return exception;
@@ -131,7 +131,7 @@ JSObject* ProgramExecutable::checkSyntax(ExecState* exec)
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> programNode = globalData->parser->parse<ProgramNode>(globalData, lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, &exception);
+    RefPtr<ProgramNode> programNode = globalData->parser->parse<ProgramNode>(lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, JSParseNormal, &exception);
     if (programNode)
         return 0;
     ASSERT(exception);
@@ -145,7 +145,7 @@ JSObject* ProgramExecutable::compileInternal(ExecState* exec, ScopeChainNode* sc
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> programNode = globalData->parser->parse<ProgramNode>(globalData, lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, &exception);
+    RefPtr<ProgramNode> programNode = globalData->parser->parse<ProgramNode>(lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
     if (!programNode) {
         ASSERT(exception);
         return exception;
@@ -178,7 +178,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 {
     JSObject* exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;
-    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(globalData, exec->lexicalGlobalObject(), 0, 0, m_source, m_parameters.get(), &exception);
+    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(exec->lexicalGlobalObject(), 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
     if (!body) {
         ASSERT(exception);
         return exception;
@@ -219,7 +219,7 @@ JSObject* FunctionExecutable::compileForConstructInternal(ExecState* exec, Scope
 {
     JSObject* exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;
-    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(globalData, exec->lexicalGlobalObject(), 0, 0, m_source, m_parameters.get(), &exception);
+    RefPtr<FunctionBodyNode> body = globalData->parser->parse<FunctionBodyNode>(exec->lexicalGlobalObject(), 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
     if (!body) {
         ASSERT(exception);
         return exception;
@@ -264,12 +264,14 @@ void FunctionExecutable::markAggregate(MarkStack& markStack)
         m_codeBlockForConstruct->markAggregate(markStack);
 }
 
-PassOwnPtr<ExceptionInfo> FunctionExecutable::reparseExceptionInfo(JSGlobalData* globalData, ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
+PassOwnPtr<ExceptionInfo> FunctionExecutable::reparseExceptionInfo(ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
 {
     JSObject* exception = 0;
-    RefPtr<FunctionBodyNode> newFunctionBody = globalData->parser->parse<FunctionBodyNode>(globalData, 0, 0, 0, m_source, m_parameters.get(), &exception);
+    JSGlobalData* globalData = scopeChainNode->globalData;
+    RefPtr<FunctionBodyNode> newFunctionBody = globalData->parser->parse<FunctionBodyNode>(scopeChainNode->globalObject, 0, 0, m_source, m_parameters.get(), isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
     if (!newFunctionBody)
         return PassOwnPtr<ExceptionInfo>();
+    ASSERT(newFunctionBody->isStrictMode() == isStrictMode());
     if (m_forceUsesArguments)
         newFunctionBody->setUsesArguments();
     newFunctionBody->finishParsing(m_parameters, m_name);
@@ -298,10 +300,12 @@ PassOwnPtr<ExceptionInfo> FunctionExecutable::reparseExceptionInfo(JSGlobalData*
     return newCodeBlock->extractExceptionInfo();
 }
 
-PassOwnPtr<ExceptionInfo> EvalExecutable::reparseExceptionInfo(JSGlobalData* globalData, ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
+PassOwnPtr<ExceptionInfo> EvalExecutable::reparseExceptionInfo(ScopeChainNode* scopeChainNode, CodeBlock* codeBlock)
 {
     JSObject* exception = 0;
-    RefPtr<EvalNode> newEvalBody = globalData->parser->parse<EvalNode>(globalData, 0, 0, 0, m_source, 0, &exception);
+    JSGlobalData* globalData = scopeChainNode->globalData;
+    RefPtr<EvalNode> newEvalBody = globalData->parser->parse<EvalNode>(scopeChainNode->globalObject, 0, 0, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
+    ASSERT(newEvalBody->isStrictMode() == isStrictMode());
     if (!newEvalBody)
         return PassOwnPtr<ExceptionInfo>();
 
@@ -341,7 +345,7 @@ void FunctionExecutable::recompile(ExecState*)
 PassRefPtr<FunctionExecutable> FunctionExecutable::fromGlobalCode(const Identifier& functionName, ExecState* exec, Debugger* debugger, const SourceCode& source, JSObject** exception)
 {
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    RefPtr<ProgramNode> program = exec->globalData().parser->parse<ProgramNode>(&exec->globalData(), lexicalGlobalObject, debugger, exec, source, 0, exception);
+    RefPtr<ProgramNode> program = exec->globalData().parser->parse<ProgramNode>(lexicalGlobalObject, debugger, exec, source, 0, JSParseNormal, exception);
     if (!program) {
         ASSERT(*exception);
         return 0;
@@ -357,7 +361,7 @@ PassRefPtr<FunctionExecutable> FunctionExecutable::fromGlobalCode(const Identifi
     FunctionBodyNode* body = static_cast<FuncExprNode*>(funcExpr)->body();
     ASSERT(body);
 
-    return FunctionExecutable::create(&exec->globalData(), functionName, body->source(), body->usesArguments(), body->parameters(), body->lineNo(), body->lastLine());
+    return FunctionExecutable::create(&exec->globalData(), functionName, body->source(), body->usesArguments(), body->parameters(), false, body->lineNo(), body->lastLine());
 }
 
 UString FunctionExecutable::paramString() const
@@ -372,7 +376,7 @@ UString FunctionExecutable::paramString() const
     return builder.build();
 }
 
-PassOwnPtr<ExceptionInfo> ProgramExecutable::reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*)
+PassOwnPtr<ExceptionInfo> ProgramExecutable::reparseExceptionInfo(ScopeChainNode*, CodeBlock*)
 {
     // CodeBlocks for program code are transient and therefore do not gain from from throwing out their exception information.
     return PassOwnPtr<ExceptionInfo>();

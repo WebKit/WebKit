@@ -50,6 +50,7 @@
 #include "Nodes.h"
 #include "Parser.h"
 #include "RegExpCache.h"
+#include "StrictEvalActivation.h"
 #include <wtf/WTFThreadData.h>
 #if ENABLE(REGEXP_TRACING)
 #include "RegExp.h"
@@ -124,6 +125,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , interruptedExecutionErrorStructure(JSObject::createStructure(jsNull()))
     , terminatedExecutionErrorStructure(JSObject::createStructure(jsNull()))
     , staticScopeStructure(JSStaticScopeObject::createStructure(jsNull()))
+    , strictEvalActivationStructure(StrictEvalActivation::createStructure(jsNull()))
     , stringStructure(JSString::createStructure(jsNull()))
     , notAnObjectErrorStubStructure(JSNotAnObjectErrorStub::createStructure(jsNull()))
     , notAnObjectStructure(JSNotAnObject::createStructure(jsNull()))

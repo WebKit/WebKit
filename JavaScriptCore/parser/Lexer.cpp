@@ -453,7 +453,7 @@ ALWAYS_INLINE JSTokenType Lexer::parseIdentifier(JSTokenData* lvalp, LexType lex
     return IDENT;
 }
 
-ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp)
+ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp, bool strictMode)
 {
     int stringQuoteCharacter = m_current;
     shift();
@@ -494,6 +494,8 @@ ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp)
                     return false;
             } else if (isASCIIOctalDigit(m_current)) {
                 // Octal character sequences
+                if (strictMode)
+                    return false;
                 int character1 = m_current;
                 shift();
                 if (isASCIIOctalDigit(m_current)) {
@@ -696,7 +698,7 @@ ALWAYS_INLINE bool Lexer::parseMultilineComment()
     }
 }
 
-JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType lexType)
+JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType lexType, bool strictMode)
 {
     ASSERT(!m_error);
     ASSERT(m_buffer8.isEmpty());
@@ -976,8 +978,11 @@ start:
         } else {
             record8('0');
             if (isASCIIOctalDigit(m_current)) {
-                if (parseOctal(lvalp->doubleValue))
+                if (parseOctal(lvalp->doubleValue)) {
+                    if (strictMode)
+                        goto returnError;
                     token = NUMBER;
+                }
             }
         }
         // Fall through into CharacterNumber
@@ -1006,7 +1011,7 @@ inNumberAfterDecimalPoint:
         m_delimited = false;
         break;
     case CharacterQuote:
-        if (UNLIKELY(!parseString(lvalp)))
+        if (UNLIKELY(!parseString(lvalp, strictMode)))
             goto returnError;
         shift();
         m_delimited = false;

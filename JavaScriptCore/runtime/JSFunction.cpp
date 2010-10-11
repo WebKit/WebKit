@@ -122,6 +122,15 @@ JSFunction::~JSFunction()
     }
 }
 
+static const char* StrictModeCallerAccessError = "Cannot access caller property of a strict mode function";
+static const char* StrictModeArgumentsAccessError = "Cannot access arguments property of a strict mode function";
+
+static void createDescriptorForThrowingProperty(ExecState* exec, PropertyDescriptor& descriptor, const char* message)
+{
+    JSValue thrower = createTypeErrorFunction(exec, message);
+    descriptor.setAccessorDescriptor(thrower, thrower, DontEnum | DontDelete | Getter | Setter);
+}
+
 const UString& JSFunction::name(ExecState* exec)
 {
     return asString(getDirect(exec->globalData().propertyNames->name))->tryGetValue();
@@ -209,6 +218,12 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     }
 
     if (propertyName == exec->propertyNames().arguments) {
+        if (jsExecutable()->isStrictMode()) {
+            throwTypeError(exec, "Can't access arguments object of a strict mode function");
+            slot.setValue(jsNull());
+            return true;
+        }
+   
         slot.setCacheableCustom(this, argumentsGetter);
         return true;
     }
@@ -219,6 +234,11 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     }
 
     if (propertyName == exec->propertyNames().caller) {
+        if (jsExecutable()->isStrictMode()) {
+            throwTypeError(exec, StrictModeCallerAccessError);
+            slot.setValue(jsNull());
+            return true;
+        }
         slot.setCacheableCustom(this, callerGetter);
         return true;
     }
@@ -226,35 +246,41 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     return Base::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-    bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-    {
-        if (isHostFunction())
-            return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
-        
-        if (propertyName == exec->propertyNames().prototype) {
-            PropertySlot slot;
-            getOwnPropertySlot(exec, propertyName, slot);
-            return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
-        }
-        
-        if (propertyName == exec->propertyNames().arguments) {
-            descriptor.setDescriptor(exec->interpreter()->retrieveArguments(exec, this), ReadOnly | DontEnum | DontDelete);
-            return true;
-        }
-        
-        if (propertyName == exec->propertyNames().length) {
-            descriptor.setDescriptor(jsNumber(exec, jsExecutable()->parameterCount()), ReadOnly | DontEnum | DontDelete);
-            return true;
-        }
-        
-        if (propertyName == exec->propertyNames().caller) {
-            descriptor.setDescriptor(exec->interpreter()->retrieveCaller(exec, this), ReadOnly | DontEnum | DontDelete);
-            return true;
-        }
-        
+bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    if (isHostFunction())
+        return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    
+    if (propertyName == exec->propertyNames().prototype) {
+        PropertySlot slot;
+        getOwnPropertySlot(exec, propertyName, slot);
         return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
     }
     
+    if (propertyName == exec->propertyNames().arguments) {
+        if (jsExecutable()->isStrictMode())
+            createDescriptorForThrowingProperty(exec, descriptor, StrictModeArgumentsAccessError);
+        else
+            descriptor.setDescriptor(exec->interpreter()->retrieveArguments(exec, this), ReadOnly | DontEnum | DontDelete);
+        return true;
+    }
+    
+    if (propertyName == exec->propertyNames().length) {
+        descriptor.setDescriptor(jsNumber(exec, jsExecutable()->parameterCount()), ReadOnly | DontEnum | DontDelete);
+        return true;
+    }
+    
+    if (propertyName == exec->propertyNames().caller) {
+        if (jsExecutable()->isStrictMode())
+            createDescriptorForThrowingProperty(exec, descriptor, StrictModeCallerAccessError);
+        else
+            descriptor.setDescriptor(exec->interpreter()->retrieveCaller(exec, this), ReadOnly | DontEnum | DontDelete);
+        return true;
+    }
+    
+    return Base::getOwnPropertyDescriptor(exec, propertyName, descriptor);
+}
+
 void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     if (!isHostFunction() && (mode == IncludeDontEnumProperties)) {
@@ -271,6 +297,16 @@ void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValue va
     if (isHostFunction()) {
         Base::put(exec, propertyName, value, slot);
         return;
+    }
+    if (jsExecutable()->isStrictMode()) {
+        if (propertyName == exec->propertyNames().arguments) {
+            throwTypeError(exec, StrictModeArgumentsAccessError);
+            return;
+        }
+        if (propertyName == exec->propertyNames().caller) {
+            throwTypeError(exec, StrictModeCallerAccessError);
+            return;
+        }
     }
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length)
         return;

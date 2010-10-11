@@ -517,6 +517,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] convert_this %s\n", location, registerName(exec, r0).data());
             break;
         }
+        case op_convert_this_strict: {
+            int r0 = (++it)->u.operand;
+            printf("[%4d] convert_this_strict %s\n", location, registerName(exec, r0).data());
+            break;
+        }
         case op_new_object: {
             int r0 = (++it)->u.operand;
             printf("[%4d] new_object\t %s\n", location, registerName(exec, r0).data());
@@ -1371,6 +1376,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
     , m_needsFullScopeChain(ownerExecutable->needsActivation())
     , m_usesEval(ownerExecutable->usesEval())
     , m_isNumericCompareFunction(false)
+    , m_isStrictMode(ownerExecutable->isStrictMode())
     , m_codeType(codeType)
     , m_source(sourceProvider)
     , m_sourceOffset(sourceOffset)
@@ -1557,7 +1563,7 @@ bool CodeBlock::reparseForExceptionInfoIfNecessary(CallFrame* callFrame)
             scopeChain = scopeChain->next;
     }
 
-    m_exceptionInfo = m_ownerExecutable->reparseExceptionInfo(m_globalData, scopeChain, this);
+    m_exceptionInfo = m_ownerExecutable->reparseExceptionInfo(scopeChain, this);
     return m_exceptionInfo;
 }
 

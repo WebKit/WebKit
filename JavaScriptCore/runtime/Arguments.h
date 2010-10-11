@@ -50,6 +50,8 @@ namespace JSC {
         JSFunction* callee;
         bool overrodeLength : 1;
         bool overrodeCallee : 1;
+        bool overrodeCaller : 1;
+        bool isStrictMode : 1;
     };
 
 
@@ -105,6 +107,8 @@ namespace JSC {
         virtual void put(ExecState*, unsigned propertyName, JSValue, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
+        void createStrictModeCallerIfNecessary(ExecState*);
+        void createStrictModeCalleeIfNecessary(ExecState*);
 
         virtual const ClassInfo* classInfo() const { return &info; }
 
@@ -172,6 +176,10 @@ namespace JSC {
         d->callee = callee;
         d->overrodeLength = false;
         d->overrodeCallee = false;
+        d->overrodeCaller = false;
+        d->isStrictMode = callFrame->codeBlock()->isStrictMode();
+        if (d->isStrictMode)
+            copyRegisters();
     }
 
     inline Arguments::Arguments(CallFrame* callFrame, NoParametersType)
@@ -201,6 +209,10 @@ namespace JSC {
         d->callee = asFunction(callFrame->callee());
         d->overrodeLength = false;
         d->overrodeCallee = false;
+        d->overrodeCaller = false;
+        d->isStrictMode = callFrame->codeBlock()->isStrictMode();
+        if (d->isStrictMode)
+            copyRegisters();
     }
 
     inline void Arguments::copyRegisters()

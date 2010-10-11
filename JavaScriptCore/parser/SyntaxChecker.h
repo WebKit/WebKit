@@ -30,15 +30,24 @@ namespace JSC {
 class SyntaxChecker {
 public:
     SyntaxChecker(JSGlobalData* , Lexer*)
+        : m_topBinaryExpr(0)
     {
     }
 
     typedef SyntaxChecker FunctionBodyBuilder;
+    enum { NoneExpr = 0,
+        ResolveEvalExpr, ResolveExpr, NumberExpr, StringExpr,
+        ThisExpr, NullExpr, BoolExpr, RegExpExpr, ObjectLiteralExpr,
+        FunctionExpr, BracketExpr, DotExpr, CallExpr,
+        NewExpr, PreExpr, PostExpr, UnaryExpr, BinaryExpr,
+        ConditionalExpr, AssignmentExpr, TypeofExpr,
+        DeleteExpr, ArrayLiteralExpr };
+    typedef int ExpressionType;
 
-    typedef int Expression;
+    typedef ExpressionType Expression;
     typedef int SourceElements;
     typedef int Arguments;
-    typedef int Comma;
+    typedef ExpressionType Comma;
     struct Property {
         ALWAYS_INLINE Property(void* = 0)
             : type((PropertyNode::Type)0)
@@ -73,38 +82,38 @@ public:
     static const bool NeedsFreeVariableInfo = false;
 
     int createSourceElements() { return 1; }
-    int makeFunctionCallNode(int, int, int, int, int) { return 1; }
-    void appendToComma(int, int) { }
-    int createCommaExpr(int, int) { return 1; }
-    int makeAssignNode(int, Operator, int, bool, bool, int, int, int) { return 1; }
-    int makePrefixNode(int, Operator, int, int, int) { return 1; }
-    int makePostfixNode(int, Operator, int, int, int) { return 1; }
-    int makeTypeOfNode(int) { return 1; }
-    int makeDeleteNode(int, int, int, int) { return 1; }
-    int makeNegateNode(int) { return 1; }
-    int makeBitwiseNotNode(int) { return 1; }
-    int createLogicalNot(int) { return 1; }
-    int createUnaryPlus(int) { return 1; }
-    int createVoid(int) { return 1; }
-    int thisExpr() { return 1; }
-    int createResolve(const Identifier*, int) { return 1; }
-    int createObjectLiteral() { return 1; }
-    int createObjectLiteral(int) { return 1; }
-    int createArray(int) { return 1; }
-    int createArray(int, int) { return 1; }
-    int createNumberExpr(double) { return 1; }
-    int createString(const Identifier*) { return 1; }
-    int createBoolean(bool) { return 1; }
-    int createNull() { return 1; }
-    int createBracketAccess(int, int, bool, int, int, int) { return 1; }
-    int createDotAccess(int, const Identifier&, int, int, int) { return 1; }
-    int createRegex(const Identifier&, const Identifier&, int) { return 1; }
-    int createNewExpr(int, int, int, int, int) { return 1; }
-    int createNewExpr(int, int, int) { return 1; }
-    int createConditionalExpr(int, int, int) { return 1; }
-    int createAssignResolve(const Identifier&, int, bool, int, int, int) { return 1; }
-    int createFunctionExpr(const Identifier*, int, int, int, int, int, int) { return 1; }
-    int createFunctionBody() { return 1; }
+    ExpressionType makeFunctionCallNode(int, int, int, int, int) { return CallExpr; }
+    void appendToComma(ExpressionType& base, ExpressionType right) { base = right; }
+    ExpressionType createCommaExpr(ExpressionType, ExpressionType right) { return right; }
+    ExpressionType makeAssignNode(ExpressionType, Operator, ExpressionType, bool, bool, int, int, int) { return AssignmentExpr; }
+    ExpressionType makePrefixNode(ExpressionType, Operator, int, int, int) { return PreExpr; }
+    ExpressionType makePostfixNode(ExpressionType, Operator, int, int, int) { return PostExpr; }
+    ExpressionType makeTypeOfNode(ExpressionType) { return TypeofExpr; }
+    ExpressionType makeDeleteNode(ExpressionType, int, int, int) { return DeleteExpr; }
+    ExpressionType makeNegateNode(ExpressionType) { return UnaryExpr; }
+    ExpressionType makeBitwiseNotNode(ExpressionType) { return UnaryExpr; }
+    ExpressionType createLogicalNot(ExpressionType) { return UnaryExpr; }
+    ExpressionType createUnaryPlus(ExpressionType) { return UnaryExpr; }
+    ExpressionType createVoid(ExpressionType) { return UnaryExpr; }
+    ExpressionType thisExpr() { return ThisExpr; }
+    ExpressionType createResolve(const Identifier*, int) { return ResolveExpr; }
+    ExpressionType createObjectLiteral() { return ObjectLiteralExpr; }
+    ExpressionType createObjectLiteral(int) { return ObjectLiteralExpr; }
+    ExpressionType createArray(int) { return ArrayLiteralExpr; }
+    ExpressionType createArray(int, int) { return ArrayLiteralExpr; }
+    ExpressionType createNumberExpr(double) { return NumberExpr; }
+    ExpressionType createString(const Identifier*) { return StringExpr; }
+    ExpressionType createBoolean(bool) { return BoolExpr; }
+    ExpressionType createNull() { return NullExpr; }
+    ExpressionType createBracketAccess(ExpressionType, ExpressionType, bool, int, int, int) { return BracketExpr; }
+    ExpressionType createDotAccess(ExpressionType, const Identifier&, int, int, int) { return DotExpr; }
+    ExpressionType createRegex(const Identifier&, const Identifier&, int) { return RegExpExpr; }
+    ExpressionType createNewExpr(ExpressionType, int, int, int, int) { return NewExpr; }
+    ExpressionType createNewExpr(ExpressionType, int, int) { return NewExpr; }
+    ExpressionType createConditionalExpr(ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
+    ExpressionType createAssignResolve(const Identifier&, ExpressionType, bool, int, int, int) { return AssignmentExpr; }
+    ExpressionType createFunctionExpr(const Identifier*, int, int, int, int, int, int) { return FunctionExpr; }
+    int createFunctionBody(bool) { return 1; }
     int createArguments() { return 1; }
     int createArguments(int) { return 1; }
     int createArgumentsList(int) { return 1; }
@@ -169,26 +178,38 @@ public:
     void addVar(const Identifier*, bool) { }
     int combineCommaNodes(int, int) { return 1; }
     int evalCount() const { return 0; }
-    void appendBinaryExpressionInfo(int& operandStackDepth, int, int, int, int, bool) { operandStackDepth++; }
+    void appendBinaryExpressionInfo(int& operandStackDepth, int expr, int, int, int, bool)
+    {
+        if (!m_topBinaryExpr)
+            m_topBinaryExpr = expr;
+        else
+            m_topBinaryExpr = BinaryExpr;
+        operandStackDepth++;
+    }
     
     // Logic to handle datastructures used during parsing of binary expressions
     void operatorStackPop(int& operatorStackDepth) { operatorStackDepth--; }
     bool operatorStackHasHigherPrecedence(int&, int) { return true; }
-    BinaryOperand getFromOperandStack(int) { return 1; }
+    BinaryOperand getFromOperandStack(int) { return m_topBinaryExpr; }
     void shrinkOperandStackBy(int& operandStackDepth, int amount) { operandStackDepth -= amount; }
     void appendBinaryOperation(int& operandStackDepth, int&, BinaryOperand, BinaryOperand) { operandStackDepth++; }
     void operatorStackAppend(int& operatorStackDepth, int, int) { operatorStackDepth++; }
-    int popOperandStack(int&) { return 1; }
+    int popOperandStack(int&) { int res = m_topBinaryExpr; m_topBinaryExpr = 0; return res; }
     
-    void appendUnaryToken(int&, int, int) { }
-    int unaryTokenStackLastType(int&) { ASSERT_NOT_REACHED(); return 1; }
-    int unaryTokenStackLastStart(int&) { ASSERT_NOT_REACHED(); return 1; }
-    void unaryTokenStackRemoveLast(int&) { }
+    void appendUnaryToken(int& stackDepth, int tok, int) { stackDepth = 1; m_topUnaryToken = tok; }
+    int unaryTokenStackLastType(int&) { return m_topUnaryToken; }
+    int unaryTokenStackLastStart(int&) { return 0; }
+    void unaryTokenStackRemoveLast(int& stackDepth) { stackDepth = 0; }
     
     void assignmentStackAppend(int, int, int, int, int, Operator) { }
     int createAssignment(int, int, int, int, int) { ASSERT_NOT_REACHED(); return 1; }
     const Identifier& getName(const Property& property) { ASSERT(property.name); return *property.name; }
     PropertyNode::Type getType(const Property& property) { return property.type; }
+    bool isResolve(ExpressionType expr) { return expr == ResolveExpr || expr == ResolveEvalExpr; }
+    
+private:
+    int m_topBinaryExpr;
+    int m_topUnaryToken;
 };
 
 }

@@ -138,10 +138,10 @@ namespace JSC {
 
     class ScriptExecutable : public ExecutableBase {
     public:
-        ScriptExecutable(JSGlobalData* globalData, const SourceCode& source)
+        ScriptExecutable(JSGlobalData* globalData, const SourceCode& source, bool isInStrictContext)
             : ExecutableBase(NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
-            , m_features(0)
+            , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
             relaxAdoptionRequirement();
@@ -152,10 +152,10 @@ namespace JSC {
 #endif
         }
 
-        ScriptExecutable(ExecState* exec, const SourceCode& source)
+        ScriptExecutable(ExecState* exec, const SourceCode& source, bool isInStrictContext)
             : ExecutableBase(NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
-            , m_features(0)
+            , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
             relaxAdoptionRequirement();
@@ -175,8 +175,9 @@ namespace JSC {
         bool usesEval() const { return m_features & EvalFeature; }
         bool usesArguments() const { return m_features & ArgumentsFeature; }
         bool needsActivation() const { return m_hasCapturedVariables || m_features & (EvalFeature | WithFeature | CatchFeature); }
+        bool isStrictMode() const { return m_features & StrictModeFeature; }
 
-        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*) = 0;
+        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(ScopeChainNode*, CodeBlock*) = 0;
 
     protected:
         void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
@@ -214,7 +215,7 @@ namespace JSC {
             return *m_evalCodeBlock;
         }
 
-        static PassRefPtr<EvalExecutable> create(ExecState* exec, const SourceCode& source) { return adoptRef(new EvalExecutable(exec, source)); }
+        static PassRefPtr<EvalExecutable> create(ExecState* exec, const SourceCode& source, bool isInStrictContext) { return adoptRef(new EvalExecutable(exec, source, isInStrictContext)); }
 
 #if ENABLE(JIT)
         JITCode& generatedJITCode()
@@ -224,11 +225,11 @@ namespace JSC {
 #endif
 
     private:
-        EvalExecutable(ExecState*, const SourceCode&);
+        EvalExecutable(ExecState*, const SourceCode&, bool);
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
 
-        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*);
+        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(ScopeChainNode*, CodeBlock*);
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
     };
@@ -271,7 +272,7 @@ namespace JSC {
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
 
-        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*);
+        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(ScopeChainNode*, CodeBlock*);
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
@@ -279,14 +280,14 @@ namespace JSC {
     class FunctionExecutable : public ScriptExecutable {
         friend class JIT;
     public:
-        static PassRefPtr<FunctionExecutable> create(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, int firstLine, int lastLine)
+        static PassRefPtr<FunctionExecutable> create(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            return adoptRef(new FunctionExecutable(exec, name, source, forceUsesArguments, parameters, firstLine, lastLine));
+            return adoptRef(new FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine));
         }
 
-        static PassRefPtr<FunctionExecutable> create(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, int firstLine, int lastLine)
+        static PassRefPtr<FunctionExecutable> create(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            return adoptRef(new FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, firstLine, lastLine));
+            return adoptRef(new FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine));
         }
 
         ~FunctionExecutable();
@@ -358,13 +359,13 @@ namespace JSC {
         static PassRefPtr<FunctionExecutable> fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
 
     private:
-        FunctionExecutable(JSGlobalData*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, int firstLine, int lastLine);
-        FunctionExecutable(ExecState*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, int firstLine, int lastLine);
+        FunctionExecutable(JSGlobalData*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
+        FunctionExecutable(ExecState*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
 
         JSObject* compileForCallInternal(ExecState*, ScopeChainNode*);
         JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*);
 
-        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(JSGlobalData*, ScopeChainNode*, CodeBlock*);
+        virtual PassOwnPtr<ExceptionInfo> reparseExceptionInfo(ScopeChainNode*, CodeBlock*);
 
         unsigned m_numCapturedVariables : 31;
         bool m_forceUsesArguments : 1;

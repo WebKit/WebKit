@@ -388,6 +388,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/ScopeChainMark.h \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
+	JavaScriptCore/runtime/StrictEvalActivation.cpp\
+	JavaScriptCore/runtime/StrictEvalActivation.h\
 	JavaScriptCore/runtime/StringBuilder.h \
 	JavaScriptCore/runtime/StringConcatenate.h \
 	JavaScriptCore/runtime/StringConstructor.cpp \

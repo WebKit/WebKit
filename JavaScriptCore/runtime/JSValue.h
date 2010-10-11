@@ -193,6 +193,7 @@ namespace JSC {
 
         bool needsThisConversion() const;
         JSObject* toThisObject(ExecState*) const;
+        JSValue toStrictThisObject(ExecState*) const;
         UString toThisString(ExecState*) const;
         JSString* toThisJSString(ExecState*) const;
 

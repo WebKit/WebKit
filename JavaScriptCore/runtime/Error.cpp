@@ -195,4 +195,47 @@ JSObject* throwSyntaxError(ExecState* exec)
     return throwError(exec, createSyntaxError(exec, "Syntax error"));
 }
 
+class StrictModeTypeErrorFunction : public InternalFunction {
+public:
+    StrictModeTypeErrorFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPassRefPtr<Structure> structure, const UString& message)
+        : InternalFunction(&exec->globalData(), globalObject, structure, exec->globalData().propertyNames->emptyIdentifier)
+        , m_message(message)
+    {
+    }
+    
+    static EncodedJSValue JSC_HOST_CALL constructThrowTypeError(ExecState* exec)
+    {
+        throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
+        return JSValue::encode(jsNull());
+    }
+    
+    ConstructType getConstructData(ConstructData& constructData)
+    {
+        constructData.native.function = constructThrowTypeError;
+        return ConstructTypeHost;
+    }
+    
+    static EncodedJSValue JSC_HOST_CALL callThrowTypeError(ExecState* exec)
+    {
+        throwTypeError(exec, static_cast<StrictModeTypeErrorFunction*>(exec->callee())->m_message);
+        return JSValue::encode(jsNull());
+    }
+
+    CallType getCallData(CallData& callData)
+    {
+        callData.native.function = callThrowTypeError;
+        return CallTypeHost;
+    }
+
+private:
+    UString m_message;
+};
+
+COMPILE_ASSERT(sizeof(StrictModeTypeErrorFunction) <= sizeof(CollectorCell), sizeof_StrictModeTypeErrorFunction_must_be_less_than_CollectorCell);
+
+JSValue createTypeErrorFunction(ExecState* exec, const UString& message)
+{
+    return new (exec) StrictModeTypeErrorFunction(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->internalFunctionStructure(), message);
+}
+
 } // namespace JSC

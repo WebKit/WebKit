@@ -48,7 +48,7 @@ namespace JSC {
     class Parser : public Noncopyable {
     public:
         template <class ParsedNode>
-        PassRefPtr<ParsedNode> parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger*, ExecState*, const SourceCode& source, FunctionParameters*, JSObject** exception);
+        PassRefPtr<ParsedNode> parse(JSGlobalObject* lexicalGlobalObject, Debugger*, ExecState*, const SourceCode& source, FunctionParameters*, JSParserStrictness strictness, JSObject** exception);
 
         void didFinishParsing(SourceElements*, ParserArenaData<DeclarationStacks::VarStack>*, 
                               ParserArenaData<DeclarationStacks::FunctionStack>*, CodeFeatures features,
@@ -57,7 +57,7 @@ namespace JSC {
         ParserArena& arena() { return m_arena; }
 
     private:
-        void parse(JSGlobalData*, FunctionParameters*, int* errLine, UString* errMsg);
+        void parse(JSGlobalObject* lexicalGlobalObject, FunctionParameters*, JSParserStrictness strictness, JSParserMode mode, int* errLine, UString* errMsg);
 
         // Used to determine type of error to report.
         bool isFunctionBodyNode(ScopeNode*) { return false; }
@@ -75,20 +75,21 @@ namespace JSC {
     };
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> Parser::parse(JSGlobalData* globalData, JSGlobalObject* lexicalGlobalObject, Debugger* debugger, ExecState* debuggerExecState, const SourceCode& source, FunctionParameters* parameters, JSObject** exception)
+    PassRefPtr<ParsedNode> Parser::parse(JSGlobalObject* lexicalGlobalObject, Debugger* debugger, ExecState* debuggerExecState, const SourceCode& source, FunctionParameters* parameters, JSParserStrictness strictness, JSObject** exception)
     {
+        ASSERT(lexicalGlobalObject);
         ASSERT(exception && !*exception);
         int errLine;
         UString errMsg;
 
         m_source = &source;
         if (ParsedNode::scopeIsFunction)
-            globalData->lexer->setIsReparsing();
-        parse(globalData, parameters, &errLine, &errMsg);
+            lexicalGlobalObject->globalData()->lexer->setIsReparsing();
+        parse(lexicalGlobalObject, parameters, strictness, ParsedNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, &errLine, &errMsg);
 
         RefPtr<ParsedNode> result;
         if (m_sourceElements) {
-            result = ParsedNode::create(globalData,
+            result = ParsedNode::create(lexicalGlobalObject->globalData(),
                 m_sourceElements,
                 m_varDeclarations ? &m_varDeclarations->data : 0,
                 m_funcDeclarations ? &m_funcDeclarations->data : 0,
@@ -107,7 +108,7 @@ namespace JSC {
             if (isFunctionBodyNode(static_cast<ParsedNode*>(0)))
                 *exception = createStackOverflowError(lexicalGlobalObject);
             else
-                *exception = addErrorInfo(globalData, createSyntaxError(lexicalGlobalObject, errMsg), errLine, source);
+                *exception = addErrorInfo(lexicalGlobalObject->globalData(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, source);
         }
 
         m_arena.reset();

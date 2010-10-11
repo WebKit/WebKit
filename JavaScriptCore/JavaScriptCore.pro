@@ -197,6 +197,7 @@ SOURCES += \
     runtime/RopeImpl.cpp \
     runtime/ScopeChain.cpp \
     runtime/SmallStrings.cpp \
+    runtime/StrictEvalActivation.cpp \
     runtime/StringConstructor.cpp \
     runtime/StringObject.cpp \
     runtime/StringPrototype.cpp \

@@ -204,6 +204,7 @@ void JSGlobalObject::reset(JSValue prototype)
 
     d()->functionPrototype = new (exec) FunctionPrototype(exec, this, FunctionPrototype::createStructure(jsNull())); // The real prototype will be set once ObjectPrototype is created.
     d()->prototypeFunctionStructure = PrototypeFunction::createStructure(d()->functionPrototype);
+    d()->internalFunctionStructure = InternalFunction::createStructure(d()->functionPrototype);
     NativeFunctionWrapper* callFunction = 0;
     NativeFunctionWrapper* applyFunction = 0;
     d()->functionPrototype->addFunctionProperties(exec, this, d()->prototypeFunctionStructure.get(), &callFunction, &applyFunction);

@@ -73,6 +73,8 @@ namespace JSC {
     inline EncodedJSValue throwVMError(ExecState* exec, JSValue error) { return JSValue::encode(throwError(exec, error)); }
     inline EncodedJSValue throwVMTypeError(ExecState* exec) { return JSValue::encode(throwTypeError(exec)); }
 
+    JSValue createTypeErrorFunction(ExecState* exec, const UString& message);
+    
 } // namespace JSC
 
 #endif // Error_h

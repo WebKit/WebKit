@@ -343,6 +343,11 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
 
         emitInitLazyRegister(argumentsRegister);
         emitInitLazyRegister(unmodifiedArgumentsRegister);
+        
+        if (m_codeBlock->isStrictMode()) {
+            emitOpcode(op_create_arguments);
+            instructions().append(argumentsRegister->index());
+        }
 
         // The debugger currently retrieves the arguments object from an activation rather than pulling
         // it from a call frame.  In the long-term it should stop doing that (<rdar://problem/6911886>),
@@ -442,7 +447,10 @@ BytecodeGenerator::BytecodeGenerator(FunctionBodyNode* functionBody, const Debug
         instructions().append(m_thisRegister.index());
         instructions().append(funcProto->index());
     } else if (functionBody->usesThis() || m_shouldEmitDebugHooks) {
-        emitOpcode(op_convert_this);
+        if (codeBlock->isStrictMode())
+            emitOpcode(op_convert_this_strict);
+        else
+            emitOpcode(op_convert_this);
         instructions().append(m_thisRegister.index());
     }
 }
@@ -1557,6 +1565,12 @@ void BytecodeGenerator::createArgumentsIfNecessary()
         return;
     ASSERT(m_codeBlock->usesArguments());
 
+    // If we're in strict mode we tear off the arguments on function
+    // entry, so there's no need to check if we need to create them
+    // now
+    if (m_codeBlock->isStrictMode())
+        return;
+
     emitOpcode(op_create_arguments);
     instructions().append(m_codeBlock->argumentsRegister());
 }
@@ -1674,7 +1688,8 @@ RegisterID* BytecodeGenerator::emitReturn(RegisterID* src)
         emitOpcode(op_tear_off_activation);
         instructions().append(m_activationRegister->index());
         instructions().append(m_codeBlock->argumentsRegister());
-    } else if (m_codeBlock->usesArguments() && m_codeBlock->m_numParameters > 1) { // If there are no named parameters, there's nothing to tear off, since extra / unnamed parameters get copied to the arguments object at construct time.
+    } else if (m_codeBlock->usesArguments() && m_codeBlock->m_numParameters > 1
+               && !m_codeBlock->isStrictMode()) { // If there are no named parameters, there's nothing to tear off, since extra / unnamed parameters get copied to the arguments object at construct time.
         emitOpcode(op_tear_off_arguments);
         instructions().append(m_codeBlock->argumentsRegister());
     }

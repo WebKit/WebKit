@@ -450,7 +450,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     if (JSValue parsedObject = preparser.tryLiteralParse())
         return JSValue::encode(parsedObject);
 
-    RefPtr<EvalExecutable> eval = EvalExecutable::create(exec, makeSource(s));
+    RefPtr<EvalExecutable> eval = EvalExecutable::create(exec, makeSource(s), false);
     JSObject* error = eval->compile(exec, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node());
     if (error)
         return throwVMError(exec, error);

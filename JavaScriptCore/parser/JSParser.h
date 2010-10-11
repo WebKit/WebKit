@@ -28,9 +28,10 @@
 
 namespace JSC {
 
+class ExecState;
 class FunctionParameters;
 class Identifier;
-class JSGlobalData;
+class JSGlobalObject;
 class SourceCode;
 
 enum {
@@ -155,6 +156,9 @@ struct JSToken {
     JSTokenInfo m_info;
 };
 
-int jsParse(JSGlobalData*, FunctionParameters*, const SourceCode*);
+enum JSParserStrictness { JSParseNormal, JSParseStrict };
+enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
+
+int jsParse(JSGlobalObject*, FunctionParameters*, JSParserStrictness, JSParserMode, const SourceCode*);
 }
 #endif // JSParser_h

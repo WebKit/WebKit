@@ -145,6 +145,7 @@ namespace JSC {
         RefPtr<Structure> interruptedExecutionErrorStructure;
         RefPtr<Structure> terminatedExecutionErrorStructure;
         RefPtr<Structure> staticScopeStructure;
+        RefPtr<Structure> strictEvalActivationStructure;
         RefPtr<Structure> stringStructure;
         RefPtr<Structure> notAnObjectErrorStubStructure;
         RefPtr<Structure> notAnObjectStructure;

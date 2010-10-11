@@ -1,3 +1,301 @@
+2010-10-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [ES5] Implement strict mode
+        https://bugs.webkit.org/show_bug.cgi?id=10701
+
+        Initial strict mode implementation.  This is the simplest
+        implementation that could possibly work and adds (hopefully)
+        all of the restrictions required by strict mode.  There are
+        a number of inefficiencies, especially in the handling of
+        arguments and eval as smart implementations would make this
+        patch more complicated.  
+
+        The SyntaxChecker AST builder has become somewhat more complex
+        as strict mode does require more parse tree information to
+        validate the syntax.
+
+        Summary of major changes to the parser:
+            * We track when we enter strict mode (this may come as a surprise)
+            * Strict mode actually requires a degree of AST knowledge to validate
+              so the SyntaxChecker now produces values that can be used to distinguish
+              "node" types.
+            * We now track variables that are written to.  We do this to
+              statically identify writes to global properties that don't exist
+              and abort at that point.  This should actually make it possible
+              to optimise some other cases in the future but for now it's
+              purely for validity checking.  Currently writes are only tracked
+              in strict mode code.
+            * Labels are now tracked as it is now a syntax error to jump to a label
+              that does not exist (or to use break, continue, or return in a context
+              where they would be invalid).
+
+        Runtime changes:
+            * In order to get correct hanlding of the Arguments object all
+              strict mode functions that reference arguments create and tearoff
+              the arguments object on entry.  This is not strictly necessary
+              but was the least work necessary to get the correct behaviour.
+            * PutPropertySlot now tracks whether it is being used for a strict
+              mode write, and if so Object::put will throw when a write can't be
+              completed.
+            * StrictEvalActivation was added as an "activation" object for strict
+              mode eval (so that strict eval does not introduce new variables into
+              the containing scope).
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::reparseForExceptionInfoIfNecessary):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isStrictMode):
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::get):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::createArgumentsIfNecessary):
+        (JSC::BytecodeGenerator::emitReturn):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::isStrictMode):
+        (JSC::BytecodeGenerator::makeFunction):
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_get_pnames):
+        (JSC::JIT::emit_op_convert_this_strict):
+        (JSC::JIT::emitSlow_op_convert_this_strict):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_get_pnames):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::isResolve):
+        * parser/JSParser.cpp:
+        (JSC::JSParser::next):
+        (JSC::JSParser::startLoop):
+        (JSC::JSParser::endLoop):
+        (JSC::JSParser::startSwitch):
+        (JSC::JSParser::endSwitch):
+        (JSC::JSParser::setStrictMode):
+        (JSC::JSParser::strictMode):
+        (JSC::JSParser::isValidStrictMode):
+        (JSC::JSParser::declareParameter):
+        (JSC::JSParser::breakIsValid):
+        (JSC::JSParser::pushLabel):
+        (JSC::JSParser::popLabel):
+        (JSC::JSParser::hasLabel):
+        (JSC::JSParser::DepthManager::DepthManager):
+        (JSC::JSParser::DepthManager::~DepthManager):
+        (JSC::JSParser::Scope::Scope):
+        (JSC::JSParser::Scope::startSwitch):
+        (JSC::JSParser::Scope::endSwitch):
+        (JSC::JSParser::Scope::startLoop):
+        (JSC::JSParser::Scope::endLoop):
+        (JSC::JSParser::Scope::inLoop):
+        (JSC::JSParser::Scope::breakIsValid):
+        (JSC::JSParser::Scope::pushLabel):
+        (JSC::JSParser::Scope::popLabel):
+        (JSC::JSParser::Scope::hasLabel):
+        (JSC::JSParser::Scope::isFunction):
+        (JSC::JSParser::Scope::declareVariable):
+        (JSC::JSParser::Scope::declareWrite):
+        (JSC::JSParser::Scope::deleteProperty):
+        (JSC::JSParser::Scope::declareParameter):
+        (JSC::JSParser::Scope::setNeedsFullActivation):
+        (JSC::JSParser::Scope::collectFreeVariables):
+        (JSC::JSParser::Scope::getUncapturedWrittenVariables):
+        (JSC::JSParser::Scope::getDeletedVariables):
+        (JSC::JSParser::Scope::setStrictMode):
+        (JSC::JSParser::Scope::strictMode):
+        (JSC::JSParser::Scope::isValidStrictMode):
+        (JSC::JSParser::pushScope):
+        (JSC::JSParser::popScope):
+        (JSC::JSParser::declareVariable):
+        (JSC::JSParser::declareWrite):
+        (JSC::JSParser::deleteProperty):
+        (JSC::jsParse):
+        (JSC::JSParser::JSParser):
+        (JSC::JSParser::parseProgram):
+        (JSC::JSParser::parseSourceElements):
+        (JSC::JSParser::parseDoWhileStatement):
+        (JSC::JSParser::parseWhileStatement):
+        (JSC::JSParser::parseVarDeclarationList):
+        (JSC::JSParser::parseConstDeclarationList):
+        (JSC::JSParser::parseForStatement):
+        (JSC::JSParser::parseBreakStatement):
+        (JSC::JSParser::parseContinueStatement):
+        (JSC::JSParser::parseReturnStatement):
+        (JSC::JSParser::parseWithStatement):
+        (JSC::JSParser::parseSwitchStatement):
+        (JSC::JSParser::parseSwitchClauses):
+        (JSC::JSParser::parseSwitchDefaultClause):
+        (JSC::JSParser::parseTryStatement):
+        (JSC::JSParser::parseBlockStatement):
+        (JSC::JSParser::parseStatement):
+        (JSC::JSParser::parseFormalParameters):
+        (JSC::JSParser::parseFunctionBody):
+        (JSC::JSParser::parseFunctionInfo):
+        (JSC::JSParser::parseFunctionDeclaration):
+        (JSC::JSParser::parseExpressionOrLabelStatement):
+        (JSC::JSParser::parseIfStatement):
+        (JSC::JSParser::parseExpression):
+        (JSC::JSParser::parseAssignmentExpression):
+        (JSC::JSParser::parseConditionalExpression):
+        (JSC::JSParser::parseBinaryExpression):
+        (JSC::JSParser::parseStrictObjectLiteral):
+        (JSC::JSParser::parsePrimaryExpression):
+        (JSC::JSParser::parseMemberExpression):
+        (JSC::JSParser::parseUnaryExpression):
+        * parser/JSParser.h:
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseString):
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+        (JSC::Lexer::isReparsing):
+        * parser/Nodes.cpp:
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::create):
+        * parser/Nodes.h:
+        (JSC::ScopeNode::isStrictMode):
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::SyntaxChecker):
+        (JSC::SyntaxChecker::makeFunctionCallNode):
+        (JSC::SyntaxChecker::appendToComma):
+        (JSC::SyntaxChecker::createCommaExpr):
+        (JSC::SyntaxChecker::makeAssignNode):
+        (JSC::SyntaxChecker::makePrefixNode):
+        (JSC::SyntaxChecker::makePostfixNode):
+        (JSC::SyntaxChecker::makeTypeOfNode):
+        (JSC::SyntaxChecker::makeDeleteNode):
+        (JSC::SyntaxChecker::makeNegateNode):
+        (JSC::SyntaxChecker::makeBitwiseNotNode):
+        (JSC::SyntaxChecker::createLogicalNot):
+        (JSC::SyntaxChecker::createUnaryPlus):
+        (JSC::SyntaxChecker::createVoid):
+        (JSC::SyntaxChecker::thisExpr):
+        (JSC::SyntaxChecker::createResolve):
+        (JSC::SyntaxChecker::createObjectLiteral):
+        (JSC::SyntaxChecker::createArray):
+        (JSC::SyntaxChecker::createNumberExpr):
+        (JSC::SyntaxChecker::createString):
+        (JSC::SyntaxChecker::createBoolean):
+        (JSC::SyntaxChecker::createNull):
+        (JSC::SyntaxChecker::createBracketAccess):
+        (JSC::SyntaxChecker::createDotAccess):
+        (JSC::SyntaxChecker::createRegex):
+        (JSC::SyntaxChecker::createNewExpr):
+        (JSC::SyntaxChecker::createConditionalExpr):
+        (JSC::SyntaxChecker::createAssignResolve):
+        (JSC::SyntaxChecker::createFunctionExpr):
+        (JSC::SyntaxChecker::createFunctionBody):
+        (JSC::SyntaxChecker::appendBinaryExpressionInfo):
+        (JSC::SyntaxChecker::operatorStackPop):
+        * runtime/Arguments.cpp:
+        (JSC::Arguments::createStrictModeCallerIfNecessary):
+        (JSC::Arguments::createStrictModeCalleeIfNecessary):
+        (JSC::Arguments::getOwnPropertySlot):
+        (JSC::Arguments::getOwnPropertyDescriptor):
+        (JSC::Arguments::put):
+        (JSC::Arguments::deleteProperty):
+        * runtime/Arguments.h:
+        (JSC::Arguments::Arguments):
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Error.cpp:
+        (JSC::StrictModeTypeErrorFunction::StrictModeTypeErrorFunction):
+        (JSC::StrictModeTypeErrorFunction::constructThrowTypeError):
+        (JSC::StrictModeTypeErrorFunction::getConstructData):
+        (JSC::StrictModeTypeErrorFunction::callThrowTypeError):
+        (JSC::StrictModeTypeErrorFunction::getCallData):
+        (JSC::createTypeErrorFunction):
+        * runtime/Error.h:
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::EvalExecutable):
+        (JSC::ProgramExecutable::ProgramExecutable):
+        (JSC::FunctionExecutable::FunctionExecutable):
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::ProgramExecutable::checkSyntax):
+        (JSC::ProgramExecutable::compileInternal):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        (JSC::FunctionExecutable::compileForConstructInternal):
+        (JSC::FunctionExecutable::reparseExceptionInfo):
+        (JSC::EvalExecutable::reparseExceptionInfo):
+        (JSC::FunctionExecutable::fromGlobalCode):
+        (JSC::ProgramExecutable::reparseExceptionInfo):
+        * runtime/Executable.h:
+        (JSC::ScriptExecutable::ScriptExecutable):
+        (JSC::ScriptExecutable::isStrictMode):
+        (JSC::EvalExecutable::create):
+        (JSC::FunctionExecutable::create):
+        * runtime/JSActivation.cpp:
+        (JSC::JSActivation::toStrictThisObject):
+        * runtime/JSActivation.h:
+        * runtime/JSFunction.cpp:
+        (JSC::createDescriptorForThrowingProperty):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::getOwnPropertyDescriptor):
+        (JSC::JSFunction::put):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::internalFunctionStructure):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::toStrictThisObject):
+        (JSC::throwTypeError):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isStrictModeFunction):
+        (JSC::JSObject::putDirectInternal):
+        (JSC::JSObject::putDirect):
+        (JSC::JSValue::putDirect):
+        (JSC::JSValue::toStrictThisObject):
+        * runtime/JSStaticScopeObject.cpp:
+        (JSC::JSStaticScopeObject::toStrictThisObject):
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSValue.h:
+        * runtime/JSZombie.h:
+        (JSC::JSZombie::toStrictThisObject):
+        * runtime/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::isStrictMode):
+        * runtime/StrictEvalActivation.cpp: Added.
+        (JSC::StrictEvalActivation::StrictEvalActivation):
+        (JSC::StrictEvalActivation::deleteProperty):
+        (JSC::StrictEvalActivation::toThisObject):
+        (JSC::StrictEvalActivation::toStrictThisObject):
+        * runtime/StrictEvalActivation.h: Added.
+
 2010-10-10  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed.

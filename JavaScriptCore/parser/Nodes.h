@@ -57,6 +57,7 @@ namespace JSC {
     const CodeFeatures WithFeature = 1 << 4;
     const CodeFeatures CatchFeature = 1 << 5;
     const CodeFeatures ThisFeature = 1 << 6;
+    const CodeFeatures StrictModeFeature = 1 << 7;
     const CodeFeatures AllFeatures = EvalFeature | ClosureFeature | AssignFeature | ArgumentsFeature | WithFeature | CatchFeature | ThisFeature;
 
     enum Operator {
@@ -1393,7 +1394,7 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        ScopeNode(JSGlobalData*);
+        ScopeNode(JSGlobalData*, bool inStrictContext);
         ScopeNode(JSGlobalData*, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, CodeFeatures, int numConstants);
 
         using ParserArenaRefCounted::operator new;
@@ -1410,6 +1411,7 @@ namespace JSC {
 
         bool usesEval() const { return m_features & EvalFeature; }
         bool usesArguments() const { return m_features & ArgumentsFeature; }
+        bool isStrictMode() const { return m_features & StrictModeFeature; }
         void setUsesArguments() { m_features |= ArgumentsFeature; }
         bool usesThis() const { return m_features & ThisFeature; }
         bool needsActivationForMoreThanVariables() const { ASSERT(m_data); return m_features & (EvalFeature | WithFeature | CatchFeature); }
@@ -1444,6 +1446,7 @@ namespace JSC {
 
     class ProgramNode : public ScopeNode {
     public:
+        static const bool isFunctionNode = false;
         static PassRefPtr<ProgramNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         static const bool scopeIsFunction = false;
@@ -1456,6 +1459,7 @@ namespace JSC {
 
     class EvalNode : public ScopeNode {
     public:
+        static const bool isFunctionNode = false;
         static PassRefPtr<EvalNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         static const bool scopeIsFunction = false;
@@ -1476,7 +1480,8 @@ namespace JSC {
 
     class FunctionBodyNode : public ScopeNode {
     public:
-        static FunctionBodyNode* create(JSGlobalData*);
+        static const bool isFunctionNode = true;
+        static FunctionBodyNode* create(JSGlobalData*, bool isStrictMode);
         static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         FunctionParameters* parameters() const { return m_parameters.get(); }
@@ -1492,7 +1497,7 @@ namespace JSC {
         static const bool scopeIsFunction = true;
 
     private:
-        FunctionBodyNode(JSGlobalData*);
+        FunctionBodyNode(JSGlobalData*, bool inStrictContext);
         FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         Identifier m_ident;

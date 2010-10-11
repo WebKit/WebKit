@@ -146,6 +146,11 @@ JSObject* JSDOMWindowBase::toThisObject(ExecState*) const
     return shell();
 }
 
+JSValue JSDOMWindowBase::toStrictThisObject(ExecState*) const
+{
+    return shell();
+}
+
 JSDOMWindowShell* JSDOMWindowBase::shell() const
 {
     return d()->shell;

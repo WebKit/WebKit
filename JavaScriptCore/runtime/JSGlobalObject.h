@@ -148,6 +148,7 @@ namespace JSC {
             RefPtr<Structure> regExpMatchesArrayStructure;
             RefPtr<Structure> regExpStructure;
             RefPtr<Structure> stringObjectStructure;
+            RefPtr<Structure> internalFunctionStructure;
 
             SymbolTable symbolTable;
             unsigned profileGroup;
@@ -243,6 +244,7 @@ namespace JSC {
         Structure* functionStructure() const { return d()->functionStructure.get(); }
         Structure* numberObjectStructure() const { return d()->numberObjectStructure.get(); }
         Structure* prototypeFunctionStructure() const { return d()->prototypeFunctionStructure.get(); }
+        Structure* internalFunctionStructure() const { return d()->internalFunctionStructure.get(); }
         Structure* regExpMatchesArrayStructure() const { return d()->regExpMatchesArrayStructure.get(); }
         Structure* regExpStructure() const { return d()->regExpStructure.get(); }
         Structure* stringObjectStructure() const { return d()->stringObjectStructure.get(); }

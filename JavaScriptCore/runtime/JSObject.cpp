@@ -43,6 +43,8 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
 
+const char* StrictModeReadonlyPropertyWriteError = "Attempted to assign to readonly property.";
+
 static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* classInfo, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     // Add properties from the static hashtables of properties
@@ -114,15 +116,19 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
     for (JSObject* obj = this; !obj->structure()->hasGetterSetterProperties(); obj = asObject(prototype)) {
         prototype = obj->prototype();
         if (prototype.isNull()) {
-            putDirectInternal(exec->globalData(), propertyName, value, 0, true, slot);
+            if (!putDirectInternal(exec->globalData(), propertyName, value, 0, true, slot) && slot.isStrictMode())
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
             return;
         }
     }
     
     unsigned attributes;
     JSCell* specificValue;
-    if ((m_structure->get(propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly)
+    if ((m_structure->get(propertyName, attributes, specificValue) != WTF::notFound) && attributes & ReadOnly) {
+        if (slot.isStrictMode())
+            throwError(exec, createTypeError(exec, StrictModeReadonlyPropertyWriteError));
         return;
+    }
 
     for (JSObject* obj = this; ; obj = asObject(prototype)) {
         if (JSValue gs = obj->getDirect(propertyName)) {
@@ -151,7 +157,8 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
             break;
     }
 
-    putDirectInternal(exec->globalData(), propertyName, value, 0, true, slot);
+    if (!putDirectInternal(exec->globalData(), propertyName, value, 0, true, slot) && slot.isStrictMode())
+        throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
     return;
 }
 
@@ -489,6 +496,11 @@ JSObject* JSObject::toThisObject(ExecState*) const
     return const_cast<JSObject*>(this);
 }
 
+JSValue JSObject::toStrictThisObject(ExecState*) const
+{
+    return const_cast<JSObject*>(this);
+}
+
 JSObject* JSObject::unwrappedObject()
 {
     return this;
@@ -700,6 +712,11 @@ bool JSObject::defineOwnProperty(ExecState* exec, const Identifier& propertyName
         attrs |= Getter;
     putDirect(propertyName, getterSetter, attrs);
     return true;
+}
+
+JSObject* throwTypeError(ExecState* exec, const UString& message)
+{
+    return throwError(exec, createTypeError(exec, message));
 }
 
 } // namespace JSC

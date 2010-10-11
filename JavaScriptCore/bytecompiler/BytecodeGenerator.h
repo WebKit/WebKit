@@ -419,6 +419,8 @@ namespace JSC {
         }
 
         bool shouldEmitProfileHooks() { return m_shouldEmitProfileHooks; }
+        
+        bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
 
     private:
         void emitOpcode(OpcodeID);
@@ -499,12 +501,12 @@ namespace JSC {
 
         PassRefPtr<FunctionExecutable> makeFunction(ExecState* exec, FunctionBodyNode* body)
         {
-            return FunctionExecutable::create(exec, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->lineNo(), body->lastLine());
+            return FunctionExecutable::create(exec, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
         }
 
         PassRefPtr<FunctionExecutable> makeFunction(JSGlobalData* globalData, FunctionBodyNode* body)
         {
-            return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->lineNo(), body->lastLine());
+            return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
         }
 
         RegisterID* emitInitLazyRegister(RegisterID*);

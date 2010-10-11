@@ -59,6 +59,7 @@
 #include "RegExpPrototype.h"
 #include "Register.h"
 #include "SamplingTool.h"
+#include "StrictEvalActivation.h"
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/Threading.h>
@@ -389,14 +390,18 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
     UString programSource = asString(program)->value(callFrame);
     if (callFrame->hadException())
         return JSValue();
-
-    LiteralParser preparser(callFrame, programSource, LiteralParser::NonStrictJSON);
-    if (JSValue parsedObject = preparser.tryLiteralParse())
-        return parsedObject;
+    
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    if (!codeBlock->isStrictMode()) {
+        // FIXME: We can use the preparser in strict mode, we just need additional logic
+        // to prevent duplicates.
+        LiteralParser preparser(callFrame, programSource, LiteralParser::NonStrictJSON);
+        if (JSValue parsedObject = preparser.tryLiteralParse())
+            return parsedObject;
+    }
 
     ScopeChainNode* scopeChain = callFrame->scopeChain();
-    CodeBlock* codeBlock = callFrame->codeBlock();
-    RefPtr<EvalExecutable> eval = codeBlock->evalCodeCache().get(callFrame, programSource, scopeChain, exceptionValue);
+    RefPtr<EvalExecutable> eval = codeBlock->evalCodeCache().get(callFrame, codeBlock->isStrictMode(), programSource, scopeChain, exceptionValue);
 
     JSValue result = jsUndefined();
     if (eval)
@@ -561,9 +566,11 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
             scopeChain = scopeChain->pop();
         JSActivation* activation = asActivation(scopeChain->object);
         activation->copyRegisters();
-        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
-            asArguments(arguments)->setActivation(activation);
-    } else if (oldCodeBlock->usesArguments()) {
+        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue()) {
+            if (!oldCodeBlock->isStrictMode())
+                asArguments(arguments)->setActivation(activation);
+        }
+    } else if (oldCodeBlock->usesArguments() && !oldCodeBlock->isStrictMode()) {
         if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(oldCodeBlock->argumentsRegister())).jsValue())
             asArguments(arguments)->copyRegisters();
     }
@@ -1061,7 +1068,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     }
     EvalCodeBlock* codeBlock = &eval->generatedBytecode();
 
-    JSVariableObject* variableObject;
+    JSObject* variableObject;
     for (ScopeChainNode* node = scopeChain; ; node = node->next) {
         ASSERT(node);
         if (node->object->isVariableObject()) {
@@ -1072,7 +1079,13 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 
     unsigned numVariables = codeBlock->numVariables();
     int numFunctions = codeBlock->numberOfFunctionDecls();
+    bool pushedScope = false;
     if (numVariables || numFunctions) {
+        if (codeBlock->isStrictMode()) {
+            variableObject = new (callFrame) StrictEvalActivation(callFrame);
+            scopeChain = scopeChain->push(variableObject);
+            pushedScope = true;
+        }
         // Scope for BatchedTransitionOptimizer
         BatchedTransitionOptimizer optimizer(variableObject);
 
@@ -1095,6 +1108,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
     Register* newEnd = m_registerFile.start() + globalRegisterOffset + codeBlock->m_numCalleeRegisters;
     if (!m_registerFile.grow(newEnd)) {
         *exception = createStackOverflowError(callFrame);
+        if (pushedScope)
+            scopeChain->pop();
         return jsNull();
     }
 
@@ -1137,6 +1152,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
         (*profiler)->didExecute(callFrame, eval->sourceURL(), eval->lineNo());
 
     m_registerFile.shrink(oldEnd);
+    if (pushedScope)
+        scopeChain->pop();
     return result;
 }
 
@@ -2964,7 +2981,7 @@ skip_id_custom_self:
 
         JSValue baseValue = callFrame->r(base).jsValue();
         Identifier& ident = codeBlock->identifier(property);
-        PutPropertySlot slot;
+        PutPropertySlot slot(codeBlock->isStrictMode());
         if (direct) {
             baseValue.putDirect(callFrame, ident, callFrame->r(value).jsValue(), slot);
             ASSERT(slot.base() == baseValue);
@@ -3080,7 +3097,7 @@ skip_id_custom_self:
 
         JSValue baseValue = callFrame->r(base).jsValue();
         Identifier& ident = codeBlock->identifier(property);
-        PutPropertySlot slot;
+        PutPropertySlot slot(codeBlock->isStrictMode());
         if (direct) {
             baseValue.putDirect(callFrame, ident, callFrame->r(value).jsValue(), slot);
             ASSERT(slot.base() == baseValue);
@@ -3105,9 +3122,13 @@ skip_id_custom_self:
 
         JSObject* baseObj = callFrame->r(base).jsValue().toObject(callFrame);
         Identifier& ident = codeBlock->identifier(property);
-        JSValue result = jsBoolean(baseObj->deleteProperty(callFrame, ident));
+        bool result = baseObj->deleteProperty(callFrame, ident);
+        if (!result && codeBlock->isStrictMode()) {
+            exceptionValue = createTypeError(callFrame, "Unable to delete property.");
+            goto vm_throw;
+        }
         CHECK_FOR_EXCEPTION();
-        callFrame->r(dst) = result;
+        callFrame->r(dst) = jsBoolean(result);
         vPC += OPCODE_LENGTH(op_del_by_id);
         NEXT_INSTRUCTION();
     }
@@ -3260,7 +3281,7 @@ skip_id_custom_self:
         } else {
             Identifier property(callFrame, subscript.toString(callFrame));
             if (!globalData->exception) { // Don't put to an object if toString threw an exception.
-                PutPropertySlot slot;
+                PutPropertySlot slot(codeBlock->isStrictMode());
                 baseValue.put(callFrame, property, callFrame->r(value).jsValue(), slot);
             }
         }
@@ -3284,19 +3305,22 @@ skip_id_custom_self:
         JSObject* baseObj = callFrame->r(base).jsValue().toObject(callFrame); // may throw
 
         JSValue subscript = callFrame->r(property).jsValue();
-        JSValue result;
+        bool result;
         uint32_t i;
         if (subscript.getUInt32(i))
-            result = jsBoolean(baseObj->deleteProperty(callFrame, i));
+            result = baseObj->deleteProperty(callFrame, i);
         else {
             CHECK_FOR_EXCEPTION();
             Identifier property(callFrame, subscript.toString(callFrame));
             CHECK_FOR_EXCEPTION();
-            result = jsBoolean(baseObj->deleteProperty(callFrame, property));
+            result = baseObj->deleteProperty(callFrame, property);
         }
-
+        if (!result && codeBlock->isStrictMode()) {
+            exceptionValue = createTypeError(callFrame, "Unable to delete property.");
+            goto vm_throw;
+        }
         CHECK_FOR_EXCEPTION();
-        callFrame->r(dst) = result;
+        callFrame->r(dst) = jsBoolean(result);
         vPC += OPCODE_LENGTH(op_del_by_val);
         NEXT_INSTRUCTION();
     }
@@ -4036,6 +4060,11 @@ skip_id_custom_self:
         } else if (JSValue argumentsValue = callFrame->r(unmodifiedArgumentsRegister(arguments)).jsValue())
             asArguments(argumentsValue)->copyRegisters();
 
+        if (JSValue arguments = callFrame->r(unmodifiedArgumentsRegister(src2)).jsValue()) {
+            if (!codeBlock->isStrictMode())
+                asArguments(arguments)->setActivation(activation);
+        }
+
         vPC += OPCODE_LENGTH(op_tear_off_activation);
         NEXT_INSTRUCTION();
     }
@@ -4223,6 +4252,25 @@ skip_id_custom_self:
             callFrame->r(thisRegister) = JSValue(thisVal.toThisObject(callFrame));
 
         vPC += OPCODE_LENGTH(op_convert_this);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_convert_this_strict) {
+        /* convert_this_strict this(r)
+         
+         Takes the value in the 'this' register, and converts it to
+         its "this" form if (and only if) "this" is an object with a
+         custom this conversion
+         
+         This opcode should only be used at the beginning of a code
+         block.
+         */
+        
+        int thisRegister = vPC[1].u.operand;
+        JSValue thisVal = callFrame->r(thisRegister).jsValue();
+        if (thisVal.isObject() && thisVal.needsThisConversion())
+            callFrame->r(thisRegister) = JSValue(thisVal.toStrictThisObject(callFrame));
+        
+        vPC += OPCODE_LENGTH(op_convert_this_strict);
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_init_lazy_reg) {
