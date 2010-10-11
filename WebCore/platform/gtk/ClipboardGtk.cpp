@@ -139,23 +139,13 @@ void ClipboardGtk::clearAllData()
         m_helper->writeClipboardContents(m_clipboard);
 }
 
-static String joinURIList(Vector<KURL> uriList)
-{
-    if (uriList.isEmpty())
-        return String();
-
-    String joined(uriList[0].string());
-    for (size_t i = 1; i < uriList.size(); i++) {
-        joined.append("\r\n");
-        joined.append(uriList[i].string());
-    }
-
-    return joined;
-}
-
 String ClipboardGtk::getData(const String& typeString, bool& success) const
 {
-    success = false; // Pessimism.
+    success = true; // According to http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html
+    // "The getData(format) method must return the data that is associated with the type format converted
+    // to ASCII lowercase, if any, and must return the empty string otherwise." Since success == false 
+    // results in an 'undefined' return value, we always want to return success == true. This parameter
+    // should eventually be removed.
     if (policy() != ClipboardReadable || !m_dataObject)
         return String();
 
@@ -163,33 +153,14 @@ String ClipboardGtk::getData(const String& typeString, bool& success) const
         m_helper->getClipboardContents(m_clipboard);
 
     ClipboardDataType type = dataObjectTypeFromHTMLClipboardType(typeString);
-    if (type == ClipboardDataTypeURIList) {
-        if (!m_dataObject->hasURIList())
-            return String();
-        success = true;
-        return joinURIList(m_dataObject->uriList());
-    }
-
-    if (type == ClipboardDataTypeURL) {
-        if (!m_dataObject->hasURL())
-            return String();
-        success = true;
+    if (type == ClipboardDataTypeURIList)
+        return m_dataObject->uriList();
+    if (type == ClipboardDataTypeURL)
         return m_dataObject->url();
-    }
-
-    if (type == ClipboardDataTypeMarkup) {
-        if (!m_dataObject->hasMarkup())
-            return String();
-        success = true;
+    if (type == ClipboardDataTypeMarkup)
         return m_dataObject->markup();
-    }
-
-    if (type == ClipboardDataTypeText) {
-        if (!m_dataObject->hasText())
-                return String();
-        success = true;
+    if (type == ClipboardDataTypeText)
         return m_dataObject->text();
-    }
 
     return String();
 }
@@ -202,18 +173,8 @@ bool ClipboardGtk::setData(const String& typeString, const String& data)
     bool success = false;
     ClipboardDataType type = dataObjectTypeFromHTMLClipboardType(typeString);
     if (type == ClipboardDataTypeURIList || type == ClipboardDataTypeURL) {
-        Vector<KURL> uriList;
-        gchar** uris = g_uri_list_extract_uris(data.utf8().data());
-        if (uris) {
-            gchar** currentURI = uris;
-            while (*currentURI) {
-                uriList.append(KURL(KURL(), *currentURI));
-                currentURI++;
-            }
-            g_strfreev(uris);
-            m_dataObject->setURIList(uriList);
-            success = true;
-        }
+        m_dataObject->setURIList(data);
+        success = true;
     } else if (type == ClipboardDataTypeMarkup) {
         m_dataObject->setMarkup(data);
         success = true;
@@ -248,8 +209,10 @@ HashSet<String> ClipboardGtk::types() const
     if (m_dataObject->hasURIList()) {
         types.add("text/uri-list");
         types.add("URL");
-        types.add("Files");
     }
+
+    if (m_dataObject->hasFilenames())
+        types.add("Files");
 
     return types;
 }
@@ -263,11 +226,9 @@ PassRefPtr<FileList> ClipboardGtk::files() const
         m_helper->getClipboardContents(m_clipboard);
 
     RefPtr<FileList> fileList = FileList::create();
-    Vector<String> fileVector(m_dataObject->files());
-
-    for (size_t i = 0; i < fileVector.size(); i++)
-        fileList->append(File::create(fileVector[i]));
-
+    const Vector<String>& filenames = m_dataObject->filenames();
+    for (size_t i = 0; i < filenames.size(); i++)
+        fileList->append(File::create(filenames[i]));
     return fileList.release();
 }
 

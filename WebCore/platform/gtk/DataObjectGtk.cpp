@@ -59,8 +59,51 @@ void DataObjectGtk::setMarkup(const String& newMarkup)
     m_markup = newMarkup;
 }
 
+void DataObjectGtk::setURIList(const String& uriListString)
+{
+    m_uriList = uriListString;
+
+    // This code is originally from: platform/chromium/ChromiumDataObject.cpp.
+    // FIXME: We should make this code cross-platform eventually.
+
+    // Line separator is \r\n per RFC 2483 - however, for compatibility
+    // reasons we also allow just \n here.
+    Vector<String> uriList;
+    uriListString.split('\n', uriList);
+
+    // Process the input and copy the first valid URL into the url member.
+    // In case no URLs can be found, subsequent calls to getData("URL")
+    // will get an empty string. This is in line with the HTML5 spec (see
+    // "The DragEvent and DataTransfer interfaces"). Also extract all filenames
+    // from the URI list.
+    bool setURL = false;
+    for (size_t i = 0; i < uriList.size(); ++i) {
+        String& line = uriList[i];
+        line = line.stripWhiteSpace();
+        if (line.isEmpty())
+            continue;
+        if (line[0] == '#')
+            continue;
+
+        KURL url = KURL(KURL(), line);
+        if (url.isValid()) {
+            if (!setURL) {
+                m_url = url;
+                setURL = true;
+            }
+
+            GOwnPtr<GError> error;
+            GOwnPtr<gchar> filename(g_filename_from_uri(line.utf8().data(), 0, &error.outPtr()));
+            if (!error && filename)
+                m_filenames.append(String::fromUTF8(filename.get()));
+        }
+    }
+}
+
 void DataObjectGtk::setURL(const KURL& url, const String& label)
 {
+    m_url = url;
+    m_uriList = url;
     setText(url.string());
 
     String actualLabel(label);
@@ -75,10 +118,6 @@ void DataObjectGtk::setURL(const KURL& url, const String& label)
     append(markup, String::fromUTF8(escaped.get()));
     append(markup, "</a>");
     setMarkup(String::adopt(markup));
-
-    Vector<KURL> uriList;
-    uriList.append(url);
-    setURIList(uriList);
 }
 
 void DataObjectGtk::clearText()
@@ -93,34 +132,6 @@ void DataObjectGtk::clearMarkup()
     m_markup = "";
 }
 
-Vector<String> DataObjectGtk::files()
-{
-    Vector<KURL> uris(uriList());
-    Vector<String> files;
-
-    for (size_t i = 0; i < uris.size(); i++) {
-        KURL& uri = uris[0];
-        if (!uri.isValid() || !uri.isLocalFile())
-            continue;
-
-        files.append(uri.string());
-    }
-
-    return files;
-}
-
-String DataObjectGtk::url()
-{
-    Vector<KURL> uris(uriList());
-    for (size_t i = 0; i < uris.size(); i++) {
-        KURL& uri = uris[0];
-        if (uri.isValid())
-            return uri;
-    }
-
-    return String();
-}
-
 String DataObjectGtk::urlLabel()
 {
     if (hasText())
@@ -132,18 +143,19 @@ String DataObjectGtk::urlLabel()
     return String();
 }
 
-bool DataObjectGtk::hasURL()
-{
-    return !url().isEmpty();
-}
-
 void DataObjectGtk::clear()
 {
     m_text = "";
     m_markup = "";
-    m_uriList.clear();
+    m_uriList = "";
+    m_url = KURL();
     m_image = 0;
     m_range = 0;
+
+    // We do not clear filenames. According to the spec: "The clearData() method
+    // does not affect whether any files were included in the drag, so the types
+    // attribute's list might still not be empty after calling clearData() (it would 
+    // still contain the "Files" string if any files were included in the drag)."
 }
 
 DataObjectGtk* DataObjectGtk::forClipboard(GtkClipboard* clipboard)

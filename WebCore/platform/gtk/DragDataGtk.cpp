@@ -37,14 +37,12 @@ bool DragData::containsColor() const
 
 bool DragData::containsFiles() const
 {
-    return !m_platformDragData->files().isEmpty();
+    return m_platformDragData->hasFilenames();
 }
 
 void DragData::asFilenames(Vector<String>& result) const
 {
-    Vector<String> files(m_platformDragData->files());
-    for (size_t i = 0; i < files.size(); i++)
-        result.append(files[i]);
+    result = m_platformDragData->filenames();
 }
 
 bool DragData::containsPlainText() const
