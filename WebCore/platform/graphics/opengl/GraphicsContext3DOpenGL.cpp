@@ -1243,7 +1243,7 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
          GLint length;
          ::glGetShaderiv((GLuint) shader, GL_INFO_LOG_LENGTH, &length);
          if (!length)
-             return;
+             return "";
 
          GLsizei size;
          GLchar* info = (GLchar*) fastMalloc(length);
