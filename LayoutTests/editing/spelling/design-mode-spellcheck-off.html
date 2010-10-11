@@ -18,7 +18,7 @@ else if (window.layoutTestController && window.eventSender) {
     document.body.addEventListener('mousedown', function() {
         if (document.activeElement != document.body)
             document.body.appendChild(document.createTextNode('FAIL: active element after click is not body element'));
-        else if (textInputController && textInputController.hasSpellingMarker && textInputController.hasSpellingMarker(0, 4))
+        else if (window.textInputController && textInputController.hasSpellingMarker && textInputController.hasSpellingMarker(0, 4))
             document.body.appendChild(document.createTextNode('FAIL: spell check was invoked'));
         else
             document.body.appendChild(document.createTextNode('PASS'));
