@@ -140,8 +140,6 @@ namespace WebCore {
 
         void translate(const FloatSize&);
 
-        String debugString() const;
-
         PlatformPathPtr platformPath() const { return m_path; }
 
         static Path createRoundedRectangle(const FloatRect&, const FloatSize& roundingRadii);

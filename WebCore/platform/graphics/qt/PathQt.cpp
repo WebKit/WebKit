@@ -357,41 +357,6 @@ FloatPoint Path::currentPoint() const
     return m_path.currentPosition();
 }
 
-String Path::debugString() const
-{
-    QString ret;
-    for (int i = 0; i < m_path.elementCount(); ++i) {
-        const QPainterPath::Element &cur = m_path.elementAt(i);
-
-        switch (cur.type) {
-            case QPainterPath::MoveToElement:
-                ret += QString(QLatin1String("M%1,%2 ")).arg(cur.x, 0, 'f', 2).arg(cur.y, 0, 'f', 2);
-                break;
-            case QPainterPath::LineToElement:
-                ret += QString(QLatin1String("L%1,%2 ")).arg(cur.x, 0, 'f', 2).arg(cur.y, 0, 'f', 2);
-                break;
-            case QPainterPath::CurveToElement:
-            {
-                const QPainterPath::Element &c1 = m_path.elementAt(i + 1);
-                const QPainterPath::Element &c2 = m_path.elementAt(i + 2);
-
-                Q_ASSERT(c1.type == QPainterPath::CurveToDataElement);
-                Q_ASSERT(c2.type == QPainterPath::CurveToDataElement);
-
-                ret += QString(QLatin1String("C%1,%2,%3,%4,%5,%6 ")).arg(cur.x, 0, 'f', 2).arg(cur.y, 0, 'f', 2).arg(c1.x, 0, 'f', 2)
-                                                                    .arg(c1.y, 0, 'f', 2).arg(c2.x, 0, 'f', 2).arg(c2.y, 0, 'f', 2);
-                i += 2;
-                break;
-            }
-            case QPainterPath::CurveToDataElement:
-                Q_ASSERT(false);
-                break;
-        }
-    }
-
-    return ret.trimmed();
-}
-
 void Path::apply(void* info, PathApplierFunction function) const
 {
     PathElement pelement;

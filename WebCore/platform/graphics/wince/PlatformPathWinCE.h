@@ -164,7 +164,6 @@ namespace WebCore {
         void addEllipse(const FloatPoint& p, float a, float b, float sar, float ear, bool anticlockwise);
         void addRect(const FloatRect& r);
         void addEllipse(const FloatRect& r);
-        String debugString() const;
         void apply(void* info, PathApplierFunction function) const;
 
     private:

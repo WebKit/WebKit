@@ -123,11 +123,6 @@ bool Path::isEmpty() const
     return m_path->isEmpty();
 }
 
-String Path::debugString() const
-{
-    return m_path->debugString();
-}
-
 void Path::apply(void* info, PathApplierFunction function) const
 {
     m_path->apply(info, function);

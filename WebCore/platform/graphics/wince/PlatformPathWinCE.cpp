@@ -754,43 +754,6 @@ void PlatformPath::addEllipse(const FloatRect& r)
     addEllipse(r.location() + radius, radius.width(), radius.height(), 0, 0, true);
 }
 
-String PlatformPath::debugString() const
-{
-    String ret;
-    for (PlatformPathElements::const_iterator i(m_elements.begin()); i != m_elements.end(); ++i) {
-        switch (i->platformType()) {
-        case PlatformPathElement::PathMoveTo:
-        case PlatformPathElement::PathLineTo:
-            ret += String::format("M %f %f\n", i->pointAt(0).m_x, i->pointAt(0).m_y);
-            break;
-        case PlatformPathElement::PathArcTo:
-            ret += String::format("A %f %f %f %f %f %f %c\n"
-                , i->arcTo().m_end.m_x, i->arcTo().m_end.m_y
-                , i->arcTo().m_center.m_x, i->arcTo().m_center.m_y
-                , i->arcTo().m_radius.m_x, i->arcTo().m_radius.m_y
-                , i->arcTo().m_clockwise? 'Y' : 'N');
-            break;
-        case PlatformPathElement::PathQuadCurveTo:
-            ret += String::format("Q %f %f %f %f\n"
-                , i->pointAt(0).m_x, i->pointAt(0).m_y
-                , i->pointAt(1).m_x, i->pointAt(1).m_y);
-            break;
-        case PlatformPathElement::PathBezierCurveTo:
-            ret += String::format("B %f %f %f %f %f %f\n"
-                , i->pointAt(0).m_x, i->pointAt(0).m_y
-                , i->pointAt(1).m_x, i->pointAt(1).m_y
-                , i->pointAt(2).m_x, i->pointAt(2).m_y);
-            break;
-        default:
-            ASSERT(i->platformType() == PlatformPathElement::PathCloseSubpath);
-            ret += "S\n";
-            break;
-        }
-    }
-
-    return ret;
-}
-
 void PlatformPath::apply(void* info, PathApplierFunction function) const
 {
     PathElement pelement;

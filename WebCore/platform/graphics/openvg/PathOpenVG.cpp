@@ -436,18 +436,6 @@ bool Path::hasCurrentPoint() const
     return vgGetParameteri(m_path->vgPath(), VG_PATH_NUM_SEGMENTS) > 0;
 }
 
-String Path::debugString() const
-{
-    String debugString = "";
-
-    // OpenVG provides no means to retrieve path segment information.
-    // This is a bit unfortunate, we might need to store the segments in
-    // memory if we want to implement this function properly.
-    notImplemented();
-
-    return debugString;
-}
-
 void Path::apply(void* info, PathApplierFunction function) const
 {
     // OpenVG provides no means to retrieve path segment information.

@@ -72,16 +72,15 @@ namespace WebCore {
 
         bool operator==(const SVGGlyphIdentifier& other) const
         {
-            return isValid == other.isValid &&
-                   orientation == other.orientation &&
-                   arabicForm == other.arabicForm &&
-                   glyphName == other.glyphName &&
-                   horizontalAdvanceX == other.horizontalAdvanceX &&
-                   verticalOriginX == other.verticalOriginX &&
-                   verticalOriginY == other.verticalOriginY &&
-                   verticalAdvanceY == other.verticalAdvanceY &&
-                   pathData.debugString() == other.pathData.debugString() &&
-                   languages == other.languages;
+            return isValid == other.isValid
+                && orientation == other.orientation
+                && arabicForm == other.arabicForm
+                && glyphName == other.glyphName
+                && horizontalAdvanceX == other.horizontalAdvanceX
+                && verticalOriginX == other.verticalOriginX
+                && verticalOriginY == other.verticalOriginY
+                && verticalAdvanceY == other.verticalAdvanceY
+                && languages == other.languages;
         }
 
         bool isValid : 1;

@@ -337,40 +337,4 @@ void Path::transform(const AffineTransform& trans)
     cairo_transform(cr, &c_matrix);
 }
 
-String Path::debugString() const
-{
-    if (isEmpty())
-        return String();
-
-    String pathString;
-    OwnPtr<cairo_path_t> path(cairo_copy_path(platformPath()->context()));
-    cairo_path_data_t* data;
-
-    for (int i = 0; i < path->num_data; i += path->data[i].header.length) {
-        data = &path->data[i];
-        switch (data->header.type) {
-        case CAIRO_PATH_MOVE_TO:
-            if (i < (path->num_data - path->data[i].header.length))
-                pathString += String::format("M%.2f,%.2f ",
-                                      data[1].point.x, data[1].point.y);
-            break;
-        case CAIRO_PATH_LINE_TO:
-            pathString += String::format("L%.2f,%.2f ",
-                                      data[1].point.x, data[1].point.y);
-            break;
-        case CAIRO_PATH_CURVE_TO:
-            pathString += String::format("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f ",
-                                      data[1].point.x, data[1].point.y,
-                                      data[2].point.x, data[2].point.y,
-                                      data[3].point.x, data[3].point.y);
-            break;
-        case CAIRO_PATH_CLOSE_PATH:
-            pathString += "Z ";
-            break;
-        }
-    }
-
-    return pathString.simplifyWhiteSpace();
-}
-
 } // namespace WebCore

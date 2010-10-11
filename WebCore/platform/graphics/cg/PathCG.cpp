@@ -254,60 +254,8 @@ FloatPoint Path::currentPoint() const
     return CGPathGetCurrentPoint(m_path);
 }
 
-static void CGPathToCFStringApplierFunction(void* info, const CGPathElement *element)
-{
-    CFMutableStringRef string = static_cast<CFMutableStringRef>(info);
-
-    CGPoint* points = element->points;
-    switch (element->type) {
-    case kCGPathElementMoveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("M%.2f,%.2f "), points[0].x, points[0].y);
-        break;
-    case kCGPathElementAddLineToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("L%.2f,%.2f "), points[0].x, points[0].y);
-        break;
-    case kCGPathElementAddQuadCurveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("Q%.2f,%.2f,%.2f,%.2f "),
-                points[0].x, points[0].y, points[1].x, points[1].y);
-        break;
-    case kCGPathElementAddCurveToPoint:
-        CFStringAppendFormat(string, 0, CFSTR("C%.2f,%.2f,%.2f,%.2f,%.2f,%.2f "),
-                points[0].x, points[0].y, points[1].x, points[1].y,
-                points[2].x, points[2].y);
-        break;
-    case kCGPathElementCloseSubpath:
-        CFStringAppendFormat(string, 0, CFSTR("Z "));
-        break;
-    }
-}
-
-static CFStringRef CFStringFromCGPath(CGPathRef path)
-{
-    if (!path)
-        return 0;
-
-    CFMutableStringRef string = CFStringCreateMutable(NULL, 0);
-    CGPathApply(path, string, CGPathToCFStringApplierFunction);
-    CFStringTrimWhitespace(string);
-
-
-    return string;
-}
-
-
 #pragma mark -
 #pragma mark Path Management
-
-String Path::debugString() const
-{
-    String result;
-    if (!isEmpty()) {
-        CFStringRef pathString = CFStringFromCGPath(m_path);
-        result = String(pathString);
-        CFRelease(pathString);
-    }
-    return result;
-}
 
 struct PathApplierInfo {
     void* info;
