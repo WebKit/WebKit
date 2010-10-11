@@ -1,0 +1,4 @@
+asdf is misspelled.
+To test this manually, click "asdf" above. There should be no spelling marker for "asdf" after the click.
+
+PASS

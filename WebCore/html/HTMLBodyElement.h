@@ -77,6 +77,8 @@ private:
     void createLinkDecl();
     
     virtual bool isURLAttribute(Attribute*) const;
+    
+    virtual bool supportsFocus() const;
 
     virtual int scrollLeft() const;
     virtual void setScrollLeft(int scrollLeft);

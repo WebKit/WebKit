@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<body spellcheck="false"> 
+asdf is misspelled.
+<p>To test this manually, click "asdf" above. There should be no spelling marker for "asdf" after the click.</p>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+document.designMode = "on";
+
+if (document.activeElement != document.body)
+    document.body.appendChild(document.createTextNode('FAIL: active element before click is not body element'));
+else if (window.layoutTestController && window.eventSender) {
+    layoutTestController.waitUntilDone();
+
+    document.body.addEventListener('mousedown', function() {
+        if (document.activeElement != document.body)
+            document.body.appendChild(document.createTextNode('FAIL: active element after click is not body element'));
+        else if (textInputController && textInputController.hasSpellingMarker && textInputController.hasSpellingMarker(0, 4))
+            document.body.appendChild(document.createTextNode('FAIL: spell check was invoked'));
+        else
+            document.body.appendChild(document.createTextNode('PASS'));
+        layoutTestController.notifyDone();
+    });
+
+    var x = document.body.offsetLeft + 10;
+    var y = document.body.offsetTop + 10;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    setTimeout("layoutTestController.notifyDone();document.body.appendChild(document.createTextNode('FAIL: timeout'));", 500);
+} else
+    document.body.appendChild(document.createTextNode('PASS'));
+
+</script> 
+</body>
+</html>

@@ -206,6 +206,11 @@ bool HTMLBodyElement::isURLAttribute(Attribute *attr) const
     return attr->name() == backgroundAttr;
 }
 
+bool HTMLBodyElement::supportsFocus() const
+{
+    return isContentEditable() || HTMLElement::supportsFocus();
+}
+
 String HTMLBodyElement::aLink() const
 {
     return getAttribute(alinkAttr);
