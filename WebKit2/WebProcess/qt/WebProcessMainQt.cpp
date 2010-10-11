@@ -35,7 +35,7 @@
 #include <QtGlobal>
 
 #if USE(MEEGOTOUCH)
-#include <meegotouch/MComponentData>
+#include <MComponentData>
 #endif
 
 #if !defined(QWEBKIT_EXPORT)

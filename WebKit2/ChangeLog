@@ -1,5 +1,13 @@
 2010-10-11  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
+        Rubberstamped by Andreas Kling.
+
+        Build fix when using MeeGo Touch
+
+        * WebProcess/qt/WebProcessMainQt.cpp:
+
+2010-10-11  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
         Reviewed by Andreas Kling.
 
         Use raster for the QtWebProcess.
