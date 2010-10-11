@@ -1,5 +1,38 @@
 2010-10-11  Adam Roben  <aroben@apple.com>
 
+        Implement SharedMemory on Windows
+
+        This makes visited links be colored correctly.
+
+        Fixes <http://webkit.org/b/47499> <rdar://problem/8422725>.
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/SharedMemory.h: Add Windows-specific members to
+        SharedMemory and SharedMemory::Handle.
+
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::Handle::Handle): Initialize our members.
+        (WebKit::SharedMemory::Handle::~Handle): Close our HANDLE if we have
+        one.
+        (WebKit::SharedMemory::Handle::encode): Encode our size, HANDLE, and
+        PID. Null out our HANDLE member, as it is now the receiving process's
+        responsibility to close the HANDLE.
+        (WebKit::SharedMemory::Handle::decode): Copy the handle from the
+        sending process into the receiving process and close the HANDLE the
+        sending process gave us.
+        (WebKit::SharedMemory::create): Map some memory and store it in a new
+        SharedMemory object.
+        (WebKit::accessRights): Helper function to convert a
+        SharedMemory::Protection to a file-mapping access right.
+        (WebKit::SharedMemory::create): Map the memory represented by the
+        Handle, and adopt the HANDLE from it.
+        (WebKit::SharedMemory::~SharedMemory): Clean up our memory mapping.
+        (WebKit::SharedMemory::createHandle): Give the Handle a copy of our
+        HANDLE with the specified protection.
+
+2010-10-11  Adam Roben  <aroben@apple.com>
+
         Make it possible to restart a RunLoop::Timer on Windows
 
         Fixes <http://webkit.org/b/47505> RunLoop::Timer only ever fires once

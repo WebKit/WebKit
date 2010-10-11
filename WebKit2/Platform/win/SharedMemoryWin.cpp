@@ -25,53 +25,151 @@
 
 #include "SharedMemory.h"
 
-#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
-#include "NotImplemented.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
 SharedMemory::Handle::Handle()
+    : m_handle(0)
+    , m_size(0)
 {
-    notImplemented();
 }
 
 SharedMemory::Handle::~Handle()
 {
-    notImplemented();
+    if (!m_handle)
+        return;
+
+    ::CloseHandle(m_handle);
 }
 
 void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    notImplemented();
+    encoder->encodeUInt64(m_size);
+
+    // Hand off ownership of our HANDLE to the receiving process. It will close it for us.
+    // FIXME: If the receiving process crashes before it receives the memory, the memory will be
+    // leaked. See <http://webkit.org/b/47502>.
+    encoder->encodeUInt64(reinterpret_cast<uint64_t>(m_handle));
+    m_handle = 0;
+
+    // Send along our PID so that the receiving process can duplicate the HANDLE for its own use.
+    encoder->encodeUInt32(::GetCurrentProcessId());
 }
 
 bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
 {
-    notImplemented();
-    return false;
+    ASSERT_ARG(handle, !handle.m_handle);
+    ASSERT_ARG(handle, !handle.m_size);
+
+    uint64_t size;
+    if (!decoder->decodeUInt64(size))
+        return false;
+
+    uint64_t sourceHandle;
+    if (!decoder->decodeUInt64(sourceHandle))
+        return false;
+
+    uint32_t sourcePID;
+    if (!decoder->decodeUInt32(sourcePID))
+        return false;
+
+    HANDLE sourceProcess = ::OpenProcess(PROCESS_DUP_HANDLE, FALSE, sourcePID);
+    if (!sourceProcess)
+        return false;
+
+    // Copy the handle into our process and close the handle that the sending process created for us.
+    HANDLE duplicatedHandle;
+    BOOL success = ::DuplicateHandle(sourceProcess, reinterpret_cast<HANDLE>(sourceHandle), ::GetCurrentProcess(), &duplicatedHandle, 0, FALSE, DUPLICATE_SAME_ACCESS | DUPLICATE_CLOSE_SOURCE);
+
+    ::CloseHandle(sourceProcess);
+
+    if (!success)
+        return false;
+
+    handle.m_handle = duplicatedHandle;
+    handle.m_size = size;
+    return true;
 }
 
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
-    notImplemented();
+    HANDLE handle = ::CreateFileMappingW(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size, 0);
+    if (!handle)
+        return 0;
+
+    void* baseAddress = ::MapViewOfFile(handle, FILE_MAP_ALL_ACCESS, 0, 0, size);
+    if (!baseAddress) {
+        ::CloseHandle(handle);
+        return 0;
+    }
+
+    RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
+    memory->m_size = size;
+    memory->m_data = baseAddress;
+    memory->m_handle = handle;
+
+    return memory.release();
+}
+
+static DWORD accessRights(SharedMemory::Protection protection)
+{
+    switch (protection) {
+    case SharedMemory::ReadOnly:
+        return FILE_MAP_READ;
+    case SharedMemory::ReadWrite:
+        // FILE_MAP_WRITE implies read access, too.
+        return FILE_MAP_WRITE;
+    }
+
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
 PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
 {
-    notImplemented();
-    return 0;    
+    DWORD desiredAccess = accessRights(protection);
+
+    void* baseAddress = ::MapViewOfFile(handle.m_handle, desiredAccess, 0, 0, handle.m_size);
+    if (!baseAddress)
+        return 0;
+
+    RefPtr<SharedMemory> memory = adoptRef(new SharedMemory);
+    memory->m_size = handle.m_size;
+    memory->m_data = baseAddress;
+
+    // Adopt the HANDLE.
+    memory->m_handle = handle.m_handle;
+    handle.m_handle = 0;
+
+    return memory.release();
 }
 
 SharedMemory::~SharedMemory()
 {
-    notImplemented();
+    ASSERT(m_data);
+    ASSERT(m_handle);
+
+    ::UnmapViewOfFile(m_data);
+    ::CloseHandle(m_handle);
 }
     
 bool SharedMemory::createHandle(Handle& handle, Protection protection)
 {
-    notImplemented();
-    return false;
+    ASSERT_ARG(handle, !handle.m_handle);
+    ASSERT_ARG(handle, !handle.m_size);
+
+    HANDLE processHandle = ::GetCurrentProcess();
+
+    HANDLE duplicatedHandle;
+    if (!::DuplicateHandle(processHandle, m_handle, processHandle, &duplicatedHandle, accessRights(protection), FALSE, 0))
+        return false;
+
+    handle.m_handle = duplicatedHandle;
+    handle.m_size = m_size;
+    return true;
 }
 
 unsigned SharedMemory::systemPageSize()
