@@ -361,7 +361,13 @@ bool RenderThemeGtk::paintRenderObject(GtkThemeWidgetType type, RenderObject* re
     GtkWidgetState widgetState;
     widgetState.active = isPressed(renderObject);
     widgetState.focused = isFocused(renderObject);
-    widgetState.inHover = isHovered(renderObject);
+
+    // https://bugs.webkit.org/show_bug.cgi?id=18364
+    // The Mozilla theme drawing code, only paints a button as pressed when it's pressed 
+    // while hovered. Until we move away from the Mozila code, work-around the issue by
+    // forcing a pressed button into the hovered state. This ensures that buttons activated
+    // via the keyboard have the proper rendering.
+    widgetState.inHover = isHovered(renderObject) || (type == MOZ_GTK_BUTTON && isPressed(renderObject));
 
     // FIXME: Disabled does not always give the correct appearance for ReadOnly
     widgetState.disabled = !isEnabled(renderObject) || isReadOnlyControl(renderObject);
