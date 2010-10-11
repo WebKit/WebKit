@@ -204,6 +204,13 @@ public:
         return shadow.m_type != ContextShadow::NoShadow;
     }
 
+    inline void clearCurrentPath()
+    {
+        if (!currentPath.elementCount())
+            return;
+        currentPath = QPainterPath();
+    }
+
     QRectF clipBoundingRect() const
     {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
@@ -533,7 +540,7 @@ void GraphicsContext::fillPath()
     } else
         p->fillPath(path, p->brush());
 
-    m_data->currentPath = QPainterPath();
+    m_data->clearCurrentPath();
 }
 
 void GraphicsContext::strokePath()
@@ -566,7 +573,7 @@ void GraphicsContext::strokePath()
         p->strokePath(path, pen);
     } else
         p->strokePath(path, pen);
-    m_data->currentPath = QPainterPath();
+    m_data->clearCurrentPath();
 }
 
 static inline void drawRepeatPattern(QPainter* p, QPixmap* image, const FloatRect& rect, const bool repeatX, const bool repeatY)
@@ -734,7 +741,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
 
 void GraphicsContext::beginPath()
 {
-    m_data->currentPath = QPainterPath();
+    m_data->clearCurrentPath();
 }
 
 void GraphicsContext::addPath(const Path& path)
