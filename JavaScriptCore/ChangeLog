@@ -1,3 +1,10 @@
+2010-10-11  Oliver Hunt  <oliver@apple.com>
+
+        Fix interpreter build -- was broken by incorrect merge.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2010-10-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
