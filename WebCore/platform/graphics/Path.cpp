@@ -36,7 +36,7 @@
 #include <wtf/MathExtras.h>
 
 // Approximation of control point positions on a bezier to simulate a quarter of a circle.
-static const float gCircleControlPoint = 1 - 0.552;
+static const float gCircleControlPoint = 0.448f;
 
 namespace WebCore {
 
