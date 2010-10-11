@@ -111,12 +111,11 @@ RenderObject* SVGStyledTransformableElement::createRenderer(RenderArena* arena, 
     return new (arena) RenderSVGPath(this);
 }
 
-Path SVGStyledTransformableElement::toClipPath() const
+void SVGStyledTransformableElement::toClipPath(Path& path) const
 {
-    Path pathData = toPathData();
+    toPathData(path);
     // FIXME: How do we know the element has done a layout?
-    pathData.transform(animatedLocalTransform());
-    return pathData;
+    path.transform(animatedLocalTransform());
 }
 
 }

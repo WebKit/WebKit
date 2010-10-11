@@ -1061,7 +1061,7 @@ void RenderBoxModelObject::paintBorder(GraphicsContext* graphicsContext, int tx,
         graphicsContext->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);
         graphicsContext->clipOutRoundedRect(innerBorderRect, innerTopLeftRadius, innerTopRightRadius, innerBottomLeftRadius, innerBottomRightRadius);
 
-        roundedPath = Path::createRoundedRectangle(borderRect, topLeft, topRight, bottomLeft, bottomRight);
+        roundedPath.addRoundedRect(borderRect, topLeft, topRight, bottomLeft, bottomRight);
         graphicsContext->addPath(roundedPath);
     }
 
@@ -1752,24 +1752,29 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
 
             context->save();
 
-            if (hasBorderRadius)
-                context->clip(Path::createRoundedRectangle(rect, topLeft, topRight, bottomLeft, bottomRight));
-            else
+            Path path;
+            if (hasBorderRadius) {
+                path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+                context->clip(path);
+                path.clear();
+            } else
                 context->clip(rect);
 
             IntSize extraOffset(2 * w + max(0, shadowOffset.width()) + shadowBlur - 2 * shadowSpread + 1, 0);
             context->translate(extraOffset.width(), extraOffset.height());
             shadowOffset -= extraOffset;
 
-            context->beginPath();
-            context->addPath(Path::createRectangle(outerRect));
+            path.addRect(outerRect);
 
             if (hasBorderRadius) {
                 if (shadowSpread > 0)
                     uniformlyExpandBorderRadii(-shadowSpread, topLeft, topRight, bottomLeft, bottomRight);
-                context->addPath(Path::createRoundedRectangle(holeRect, topLeft, topRight, bottomLeft, bottomRight));
+                path.addRoundedRect(holeRect, topLeft, topRight, bottomLeft, bottomRight);
             } else
-                context->addPath(Path::createRectangle(holeRect));
+                path.addRect(holeRect);
+
+            context->beginPath();
+            context->addPath(path);
 
             context->setFillRule(RULE_EVENODD);
             context->setFillColor(fillColor, s->colorSpace());

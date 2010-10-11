@@ -37,22 +37,21 @@ PassRefPtr<SVGPolygonElement> SVGPolygonElement::create(const QualifiedName& tag
     return adoptRef(new SVGPolygonElement(tagName, document));
 }
 
-Path SVGPolygonElement::toPathData() const
+void SVGPolygonElement::toPathData(Path& path) const
 {
-    Path polyData;
+    ASSERT(path.isEmpty());
 
     int len = points()->numberOfItems();
     if (len < 1)
-        return polyData;
+        return;
     
     ExceptionCode ec = 0;
-    polyData.moveTo(points()->getItem(0, ec));
+    path.moveTo(points()->getItem(0, ec));
 
     for (int i = 1; i < len; ++i)
-        polyData.addLineTo(points()->getItem(i, ec));
+        path.addLineTo(points()->getItem(i, ec));
 
-    polyData.closeSubpath();
-    return polyData;
+    path.closeSubpath();
 }
 
 }

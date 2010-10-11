@@ -500,7 +500,9 @@ void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& top
     if (paintingDisabled())
         return;
 
-    clip(Path::createRoundedRectangle(rect, topLeft, topRight, bottomLeft, bottomRight));
+    Path path;
+    path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+    clip(path);
 }
 
 void GraphicsContext::clipOutRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,
@@ -509,7 +511,9 @@ void GraphicsContext::clipOutRoundedRect(const IntRect& rect, const IntSize& top
     if (paintingDisabled())
         return;
 
-    clipOut(Path::createRoundedRectangle(rect, topLeft, topRight, bottomLeft, bottomRight));
+    Path path;
+    path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
+    clipOut(path);
 }
 
 void GraphicsContext::clipToImageBuffer(ImageBuffer* buffer, const FloatRect& rect)

@@ -703,8 +703,13 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
     setPlatformStrokeStyle(DottedStroke);
 #else
     int radius = (width - 1) / 2;
-    for (unsigned i = 0; i < rectCount; i++)
-        appendWebCorePathToCairoContext(cr, Path::createRoundedRectangle(rects[i], FloatSize(radius, radius)));
+    Path path;
+    for (unsigned i = 0; i < rectCount; ++i) {
+        if (i > 0)
+            path.clear();
+        path.addRoundedRect(rects[i], FloatSize(radius, radius));
+        appendWebCorePathToCairoContext(cr, path);
+    }
 
     // Force the alpha to 50%.  This matches what the Mac does with outline rings.
     Color ringColor(color.red(), color.green(), color.blue(), 127);
@@ -1275,7 +1280,10 @@ void GraphicsContext::drawTiledShadow(const IntRect& rect, const FloatSize& topL
     // Draw shadow into a new ImageBuffer.
     cairo_t* smallBufferContext = smallBuffer->context()->platformContext();
     copyContextProperties(cr, smallBufferContext);
-    appendWebCorePathToCairoContext(smallBuffer->context()->platformContext(), Path::createRoundedRectangle(smallRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius));
+
+    Path path;
+    path.addRoundedRect(smallRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+    appendWebCorePathToCairoContext(smallBuffer->context()->platformContext(), path);
     setPlatformFill(this, smallBufferContext, m_common);
 
     OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(smallBufferSize);
@@ -1294,7 +1302,9 @@ void GraphicsContext::drawTiledShadow(const IntRect& rect, const FloatSize& topL
     shadowRect.inflate(-radiusTwice);
     if (!shadowRect.isEmpty()) {
         cairo_save(cr);
-        appendWebCorePathToCairoContext(cr, Path::createRoundedRectangle(shadowRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius));
+        path.clear();
+        path.addRoundedRect(shadowRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+        appendWebCorePathToCairoContext(cr, path);
         setColor(cr, shadowColor);
         cairo_fill(cr);
         cairo_restore(cr);
@@ -1373,7 +1383,9 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
 
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
-    appendWebCorePathToCairoContext(cr, Path::createRoundedRectangle(r, topLeft, topRight, bottomLeft, bottomRight));
+    Path path;
+    path.addRoundedRect(r, topLeft, topRight, bottomLeft, bottomRight);
+    appendWebCorePathToCairoContext(cr, path);
     setColor(cr, color);
     drawPathShadow(this, m_common, true, false);
     cairo_fill(cr);

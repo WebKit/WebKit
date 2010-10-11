@@ -112,7 +112,8 @@ void RenderSVGPath::layout()
 
     bool needsPathUpdate = m_needsPathUpdate;
     if (needsPathUpdate) {
-        m_path = element->toPathData();
+        m_path.clear();
+        element->toPathData(m_path);
         m_needsPathUpdate = false;
         updateCachedBoundariesInParents = true;
     }

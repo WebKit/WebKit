@@ -137,17 +137,12 @@ namespace WebCore {
         void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, bool anticlockwise);
         void addRect(const FloatRect&);
         void addEllipse(const FloatRect&);
+        void addRoundedRect(const FloatRect&, const FloatSize& roundingRadii);
+        void addRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
 
         void translate(const FloatSize&);
 
         PlatformPathPtr platformPath() const { return m_path; }
-
-        static Path createRoundedRectangle(const FloatRect&, const FloatSize& roundingRadii);
-        static Path createRoundedRectangle(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
-        static Path createRectangle(const FloatRect&);
-        static Path createEllipse(const FloatPoint& center, float rx, float ry);
-        static Path createCircle(const FloatPoint& center, float r);
-        static Path createLine(const FloatPoint&, const FloatPoint&);
 
         void apply(void* info, PathApplierFunction) const;
         void transform(const AffineTransform&);

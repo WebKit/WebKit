@@ -53,7 +53,8 @@ Path RenderSVGTextPath::layoutPath() const
     
     SVGPathElement* pathElement = static_cast<SVGPathElement*>(targetElement);
     
-    Path pathData = pathElement->toPathData();
+    Path pathData;
+    pathElement->toPathData(pathData);
     // Spec:  The transform attribute on the referenced 'path' element represents a
     // supplemental transformation relative to the current user coordinate system for
     // the current 'text' element, including any adjustments to the current user coordinate

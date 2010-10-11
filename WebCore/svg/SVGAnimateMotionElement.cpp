@@ -112,9 +112,10 @@ Path SVGAnimateMotionElement::animationPath() const
         if (child->hasTagName(SVGNames::mpathTag)) {
             SVGMPathElement* mPath = static_cast<SVGMPathElement*>(child);
             SVGPathElement* pathElement = mPath->pathElement();
+            Path path;
             if (pathElement)
-                return pathElement->toPathData();
-            return Path();
+                pathElement->toPathData(path);
+            return path;
         }
     }
     if (hasAttribute(SVGNames::pathAttr))

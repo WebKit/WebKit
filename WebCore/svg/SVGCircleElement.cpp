@@ -121,9 +121,16 @@ void SVGCircleElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeExternalResourcesRequired();
 }
 
-Path SVGCircleElement::toPathData() const
+void SVGCircleElement::toPathData(Path& path) const
 {
-    return Path::createCircle(FloatPoint(cx().value(this), cy().value(this)), r().value(this));
+    ASSERT(path.isEmpty());
+
+    float radius = r().value(this);
+
+    if (radius <= 0)
+        return;
+
+    path.addEllipse(FloatRect(cx().value(this) - radius, cy().value(this) - radius, radius * 2, radius * 2));
 }
 
 bool SVGCircleElement::selfHasRelativeLengths() const

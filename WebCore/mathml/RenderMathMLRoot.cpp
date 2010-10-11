@@ -190,9 +190,9 @@ void RenderMathMLRoot::paint(PaintInfo& info, int tx, int ty)
     info.context->setLineCap(SquareCap);
     
     Path line;
-    
-    line = line.createLine(bottomLeft, topLeft);
-    
+    line.moveTo(bottomLeft);
+    line.addLineTo(topLeft);
+
     info.context->beginPath();
     info.context->addPath(line);
     info.context->strokePath();

@@ -490,11 +490,18 @@ void SVGInlineTextBox::paintDecorationWithStyle(GraphicsContext* context, ETextD
 
     // The initial y value refers to overline position.
     float thickness = thicknessForDecoration(decoration, font);
+
+    if (fragment.width <= 0 && thickness <= 0)
+        return;
+
     float y = fragment.y - font.ascent() + positionOffsetForDecoration(decoration, font, thickness);
+
+    Path path;
+    path.addRect(FloatRect(fragment.x, y, fragment.width, thickness));
 
     context->save();
     context->beginPath();
-    context->addPath(Path::createRectangle(FloatRect(fragment.x, y, fragment.width, thickness)));
+    context->addPath(path);
 
     if (acquirePaintingResource(context, decorationRenderer, decorationStyle))
         releasePaintingResource(context);

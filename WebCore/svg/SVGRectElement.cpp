@@ -147,19 +147,37 @@ void SVGRectElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeExternalResourcesRequired();
 }
 
-Path SVGRectElement::toPathData() const
+void SVGRectElement::toPathData(Path& path) const
 {
-    FloatRect rect(x().value(this), y().value(this), width().value(this), height().value(this));
+    ASSERT(path.isEmpty());
+
+    float widthValue = width().value(this);
+    if (widthValue <= 0)
+        return;
+
+    float heightValue = height().value(this);
+    if (heightValue <= 0)
+        return;
+
+    float xValue = x().value(this);
+    float yValue = y().value(this);
+
+    FloatRect rect(xValue, yValue, widthValue, heightValue);
 
     bool hasRx = hasAttribute(SVGNames::rxAttr);
     bool hasRy = hasAttribute(SVGNames::ryAttr);
     if (hasRx || hasRy) {
-        float _rx = hasRx ? rx().value(this) : ry().value(this);
-        float _ry = hasRy ? ry().value(this) : rx().value(this);
-        return Path::createRoundedRectangle(rect, FloatSize(_rx, _ry));
+        float rxValue = rx().value(this);
+        float ryValue = ry().value(this);
+        if (!hasRx)
+            rxValue = ryValue;
+        else if (!hasRy)
+            ryValue = rxValue;
+        path.addRoundedRect(rect, FloatSize(rxValue, ryValue));
+        return;
     }
 
-    return Path::createRectangle(rect);
+    path.addRect(rect);
 }
 
 bool SVGRectElement::selfHasRelativeLengths() const

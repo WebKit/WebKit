@@ -134,8 +134,10 @@ void ContextShadow::drawRectShadowWithoutTiling(PlatformContext context, const I
     if (!m_layerContext)
         return;
 
-    appendWebCorePathToCairoContext(m_layerContext, Path::createRoundedRectangle(shadowRect, topLeftRadius, topRightRadius,
-                                                                                 bottomLeftRadius, bottomRightRadius));
+    Path path;
+    path.addRoundedRect(shadowRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+
+    appendWebCorePathToCairoContext(m_layerContext, path);
     cairo_set_source_rgba(m_layerContext, 0, 0, 0, alpha);
     cairo_fill(m_layerContext);
 
@@ -240,8 +242,9 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
 
     // Draw the rectangle.
     IntRect templateRect = IntRect(m_blurDistance, m_blurDistance, shadowTemplateSize.width() - radiusTwice, shadowTemplateSize.height() - radiusTwice);
-    appendWebCorePathToCairoContext(m_layerContext, Path::createRoundedRectangle(templateRect, topLeftRadius, topRightRadius,
-                                                                                 bottomLeftRadius, bottomRightRadius));
+    Path path;
+    path.addRoundedRect(templateRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+    appendWebCorePathToCairoContext(m_layerContext, path);
 
     cairo_set_source_rgba(m_layerContext, 0, 0, 0, context->getAlpha());
     cairo_fill(m_layerContext);
@@ -263,8 +266,9 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     shadowRect.inflate(-radiusTwice);
     if (!shadowRect.isEmpty()) {
         cairo_save(cr);
-        appendWebCorePathToCairoContext(cr, Path::createRoundedRectangle(shadowRect, topLeftRadius,
-                                                                              topRightRadius, bottomLeftRadius, bottomRightRadius));
+        path.clear();
+        path.addRoundedRect(shadowRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+        appendWebCorePathToCairoContext(cr, path);
         setSourceRGBAFromColor(cr, m_color);
         cairo_fill(cr);
         cairo_restore(cr);
