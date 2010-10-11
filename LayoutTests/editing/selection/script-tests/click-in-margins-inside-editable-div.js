@@ -66,29 +66,35 @@ function runInteractiveTests()
 // for determining if the click below a div (in the padding/margin region)
 
 // The rules for clicking above or below the text are different on Windows and Mac.
-// Later we could break this into two tests, one that tests each platform's rules,
-// since this is supported as a setting in the Settings object, but for now we'll
-// just use separate expected results for Mac and other platforms.
-var expectMacStyleSelection = navigator.userAgent.search(/\bMac OS X\b/) != -1;
+function editingTest(editingBehavior)
+{
+    if (window.layoutTestController)
+        layoutTestController.setEditingBehavior(editingBehavior);
 
-clickShouldResultInRange(10, 10, firstText, 0);
-clickShouldResultInRange(40, 10, firstText, expectMacStyleSelection ? 0 : 1);
-clickShouldResultInRange(70, 10, firstText, expectMacStyleSelection ? 0 : 2);
+    var expectMacStyleSelection = editingBehavior == "mac";
 
-clickShouldResultInRange(10, 30, firstText, 0);
-clickShouldResultInRange(70, 30, firstText, 2);
+    clickShouldResultInRange(10, 10, firstText, 0);
+    clickShouldResultInRange(40, 10, firstText, expectMacStyleSelection ? 0 : 1);
+    clickShouldResultInRange(70, 10, firstText, expectMacStyleSelection ? 0 : 2);
 
-clickShouldResultInRange(10, 50, firstText, expectMacStyleSelection ? 2 : 0);
-clickShouldResultInRange(40, 50, firstText, expectMacStyleSelection ? 2 : 1);
-clickShouldResultInRange(70, 50, firstText, 2);
+    clickShouldResultInRange(10, 30, firstText, 0);
+    clickShouldResultInRange(70, 30, firstText, 2);
 
-clickShouldResultInRange(10, 70, secondText, 0);
-clickShouldResultInRange(40, 70, secondText, expectMacStyleSelection ? 0 : 1);
-clickShouldResultInRange(70, 70, secondText, expectMacStyleSelection ? 0 : 2);
+    clickShouldResultInRange(10, 50, firstText, expectMacStyleSelection ? 2 : 0);
+    clickShouldResultInRange(40, 50, firstText, expectMacStyleSelection ? 2 : 1);
+    clickShouldResultInRange(70, 50, firstText, 2);
 
-clickShouldResultInRange(10, 110, secondText, expectMacStyleSelection ? 2 : 0);
-clickShouldResultInRange(40, 110, secondText, expectMacStyleSelection ? 2 : 1);
-clickShouldResultInRange(70, 110, secondText, 2);
+    clickShouldResultInRange(10, 70, secondText, 0);
+    clickShouldResultInRange(40, 70, secondText, expectMacStyleSelection ? 0 : 1);
+    clickShouldResultInRange(70, 70, secondText, expectMacStyleSelection ? 0 : 2);
+
+    clickShouldResultInRange(10, 110, secondText, expectMacStyleSelection ? 2 : 0);
+    clickShouldResultInRange(40, 110, secondText, expectMacStyleSelection ? 2 : 1);
+    clickShouldResultInRange(70, 110, secondText, 2);
+}
+
+editingTest("mac");
+editingTest("win");
 
 // Clean up after ourselves if we're not being run in the browser
 if (window.eventSender) {
