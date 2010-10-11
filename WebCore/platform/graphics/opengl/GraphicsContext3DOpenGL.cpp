@@ -1161,11 +1161,11 @@ String GraphicsContext3D::getProgramInfoLog(Platform3DObject program)
     makeContextCurrent();
     GLint length;
     ::glGetProgramiv((GLuint) program, GL_INFO_LOG_LENGTH, &length);
-    
+    if (!length)
+        return "";
+
     GLsizei size;
     GLchar* info = (GLchar*) fastMalloc(length);
-    if (!info)
-        return "";
 
     ::glGetProgramInfoLog((GLuint) program, length, &size, info);
     String s(info);
@@ -1229,6 +1229,8 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
     makeContextCurrent();
     GLint length;
     ::glGetShaderiv((GLuint) shader, GL_INFO_LOG_LENGTH, &length);
+    if (!length)
+        return "";
 
     HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
 
@@ -1240,11 +1242,11 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
      if (entry.isValid) {
          GLint length;
          ::glGetShaderiv((GLuint) shader, GL_INFO_LOG_LENGTH, &length);
+         if (!length)
+             return;
 
          GLsizei size;
          GLchar* info = (GLchar*) fastMalloc(length);
-         if (!info)
-             return "";
 
          ::glGetShaderInfoLog((GLuint) shader, length, &size, info);
 
