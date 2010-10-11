@@ -1,5 +1,16 @@
 2010-10-11  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
 
+        Reviewed by Andreas Kling.
+
+        Unlink the files used for I/O mapped memory as soon as they are
+        created.
+
+        * Shared/qt/UpdateChunk.cpp:
+        (WebKit::mapMemory):
+        (WebKit::mapFile):
+
+2010-10-11  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
         Rubberstamped by Andreas Kling.
 
         Build fix when using MeeGo Touch
