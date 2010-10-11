@@ -47,22 +47,28 @@ function runInteractiveTests()
 }
 
 // The rules for clicking below the text are different on Windows and Mac.
-// Later we could break this into two tests, one that tests each platform's rules,
-// since this is supported as a setting in the Settings object, but for now, we'll
-// just use separate expected results for Mac and other platforms.
-var expectMacStyleSelection = navigator.userAgent.search(/\bMac OS X\b/) != -1;
+function editingTest(editingBehavior)
+{
+    if (window.layoutTestController)
+        layoutTestController.setEditingBehavior(editingBehavior);
+    
+    var expectMacStyleSelection = editingBehavior == "mac";
 
-var foo = document.getElementById('foo');
-var x = foo.offsetLeft - div.scrollLeft + 10;
+    var foo = document.getElementById('foo');
+    var x = foo.offsetLeft - div.scrollLeft + 10;
 
-// Click 10px after the start of the span should put the cursor right after the letter F.
-if (expectMacStyleSelection) {
-    clickShouldResultInRange(x, foo.offsetTop - 20, div.firstChild, 0);
-    clickShouldResultInRange(x, foo.offsetTop + 20, div.lastChild.firstChild, 3);
-} else {
-    clickShouldResultInRange(x, foo.offsetTop - 20, foo.firstChild, 1);
-    clickShouldResultInRange(x, foo.offsetTop + 20, foo.firstChild, 1);
+    // Click 10px after the start of the span should put the cursor right after the letter F.
+    if (expectMacStyleSelection) {
+        clickShouldResultInRange(x, foo.offsetTop - 20, div.firstChild, 0);
+        clickShouldResultInRange(x, foo.offsetTop + 20, div.lastChild.firstChild, 3);
+    } else {
+        clickShouldResultInRange(x, foo.offsetTop - 20, foo.firstChild, 1);
+        clickShouldResultInRange(x, foo.offsetTop + 20, foo.firstChild, 1);
+    }
 }
+
+editingTest("mac");
+editingTest("win");
 
 // Clean up after ourselves if we're not being run in the browser
 if (window.eventSender) {
