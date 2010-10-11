@@ -3224,5 +3224,5 @@ BUG_AJWONG WIN : inspector/timeline-layout.html = TEXT PASS
 BUG_AJWONG WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
 
 // Failing from r69420
-BUG58735 WIN : http/tests/misc/prefetch-purpose.html = SLOW TEXT
+BUG58735 SLOW WIN : http/tests/misc/prefetch-purpose.html = TEXT
 BUG58735 LINUX : http/tests/misc/prefetch-purpose.html = PASS TEXT
