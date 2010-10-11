@@ -223,8 +223,13 @@ void RenderBox::removeFloatingOrPositionedChildFromBlockLists()
                 outermostBlock = p;
         }
 
-        if (outermostBlock)
+        if (outermostBlock) {
+            RenderObject* parent = outermostBlock->parent();
+            if (parent && parent->isFlexibleBox())
+                outermostBlock = toRenderBlock(parent);
+
             outermostBlock->markAllDescendantsWithFloatsForLayout(this, false);
+        }
     }
 
     if (isPositioned()) {
