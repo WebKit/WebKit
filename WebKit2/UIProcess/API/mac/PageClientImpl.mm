@@ -136,6 +136,11 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
     [m_wkView _setCursor:cursor.platformCursor()];
 }
 
+void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
+{
+
+}
+
 static NSString* nameForEditAction(EditAction editAction)
 {
     // FIXME: Use localized strings.

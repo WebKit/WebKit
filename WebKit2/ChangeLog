@@ -1,3 +1,48 @@
+2010-10-08  Kenneth Rohde Christiansen  <kenneth.christiansen@openbossa.org>
+
+        Reviewed by Sam Weinig.
+
+        Adding Qt WebKit2 API for dealing with viewport meta info
+        https://bugs.webkit.org/show_bug.cgi?id=47202
+
+        Add new API for setting scale and layout viewport given the data
+        provided by the viewport meta tag.
+
+        Any Qt view components who wants to support this, will need to
+        compute the viewport attributes before first load using
+        viewportAttributesForSize(..), and then again everytime
+        the viewport attributes gets invalidates (loading a new page,
+        navigating page cache) or every time on of the browser
+        attributes change, such as when the device is rotates (which
+        changes the actual visible viewport). A signal
+        viewportChangeRequested() is provided for the former.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setViewportArguments):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::setViewportArguments):
+        (QWKPage::ViewportAttributes::ViewportAttributes):
+        (QWKPage::ViewportAttributes::~ViewportAttributes):
+        (QWKPage::ViewportAttributes::operator=):
+        (QWKPage::viewportAttributesForSize):
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QtViewportAttributesPrivate::QtViewportAttributesPrivate):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage):
+        (WebKit::WebPageProxy::didChangeViewportData):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setViewportArguments):
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::dispatchViewportDataDidChange):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2010-10-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Andreas Kling.

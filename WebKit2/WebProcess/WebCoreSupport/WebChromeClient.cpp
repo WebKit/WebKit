@@ -31,6 +31,7 @@
 
 #include "DrawingArea.h"
 #include "InjectedBundleUserMessageCoders.h"
+#include "ViewportArguments.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
@@ -564,5 +565,9 @@ void WebChromeClient::setLastSetCursorToCurrentCursor()
 }
 #endif
 
+void WebChromeClient::dispatchViewportDataDidChange(const ViewportArguments& args) const
+{
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidChangeViewportData(args), m_page->pageID());
+}
 
 } // namespace WebKit

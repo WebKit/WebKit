@@ -31,6 +31,7 @@
 
 namespace WebCore {
     class Cursor;
+    class ViewportArguments;
 }
 
 namespace WebKit {
@@ -48,6 +49,7 @@ public:
     virtual void toolTipChanged(const String&, const String&) = 0;
 
     virtual void setCursor(const WebCore::Cursor&) = 0;
+    virtual void setViewportArguments(const WebCore::ViewportArguments&) = 0;
 
     virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) = 0;
     virtual void clearAllEditCommands() = 0;

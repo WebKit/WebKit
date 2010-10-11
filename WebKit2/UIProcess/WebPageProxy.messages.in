@@ -30,6 +30,7 @@ messages -> WebPageProxy {
     RunJavaScriptPrompt(uint64_t frameID, WTF::String message, WTF::String defaultValue) -> (WTF::String result)
     MouseDidMoveOverElement(uint32_t modifiers, WebKit::InjectedBundleUserMessageEncoder userData);
     ContentsSizeChanged(uint64_t frameID, WebCore::IntSize newSize)
+    DidChangeViewportData(WebCore::ViewportArguments arguments)
     DidReceiveEvent(uint32_t type, bool handled)
     DidValidateMenuItem(WTF::String commandName, bool isEnabled, int32_t state)
     SetCursor(WebCore::Cursor cursor)

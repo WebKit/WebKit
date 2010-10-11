@@ -51,6 +51,7 @@ public:
     virtual void processDidExit() { }
     virtual void processDidRevive() { }
     virtual void setCursor(const WebCore::Cursor&);
+    virtual void setViewportArguments(const WebCore::ViewportArguments&);
     virtual void takeFocus(bool direction) { }
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);
     virtual void registerEditCommand(PassRefPtr<WebKit::WebEditCommandProxy>, WebKit::WebPageProxy::UndoOrRedo);
@@ -84,6 +85,7 @@ public:
 
     RefPtr<WebKit::WebPageProxy> page;
     WKPageNamespaceRef pageNamespaceRef;
+    WebCore::ViewportArguments viewportArguments;
 
     QWKPage::CreateNewPageFn createNewPageFn;
 
@@ -91,13 +93,13 @@ public:
     QBasicTimer tripleClickTimer;
 };
 
-class QtViewportConfigurationPrivate : public QSharedData {
+class QtViewportAttributesPrivate : public QSharedData {
 public:
-    QtViewportConfigurationPrivate(QWKPage::ViewportConfiguration* qq)
+    QtViewportAttributesPrivate(QWKPage::ViewportAttributes* qq)
         : q(qq)
     { }
 
-    QWKPage::ViewportConfiguration* q;
+    QWKPage::ViewportAttributes* q;
 };
 
 

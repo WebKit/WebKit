@@ -51,6 +51,7 @@ private:
     virtual void takeFocus(bool direction);
     virtual void toolTipChanged(const String& oldToolTip, const String& newToolTip);
     virtual void setCursor(const WebCore::Cursor&);
+    virtual void setViewportArguments(const WebCore::ViewportArguments&);
 
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
     void clearAllEditCommands();

@@ -59,6 +59,7 @@ namespace WebCore {
     class Cursor;
     class FloatRect;
     class IntSize;
+    class ViewportArguments;
 }
 
 struct WKContextStatistics;
@@ -261,6 +262,7 @@ private:
     void getWindowFrame(WebCore::FloatRect&);
     void canRunBeforeUnloadConfirmPanel(bool& canRun);
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
+    void didChangeViewportData(const WebCore::ViewportArguments&);
 
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);

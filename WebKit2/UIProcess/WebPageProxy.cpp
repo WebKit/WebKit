@@ -560,7 +560,6 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     }
 
     didReceiveWebPageProxyMessage(connection, messageID, arguments);
-
 }
 
 void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
@@ -885,6 +884,11 @@ void WebPageProxy::canRunBeforeUnloadConfirmPanel(bool& canRun)
 void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose)
 {
     shouldClose = m_uiClient.runBeforeUnloadConfirmPanel(this, message, process()->webFrame(frameID));
+}
+
+void WebPageProxy::didChangeViewportData(const ViewportArguments& args)
+{
+    m_pageClient->setViewportArguments(args);
 }
 
 // BackForwardList
