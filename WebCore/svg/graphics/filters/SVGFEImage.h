@@ -38,7 +38,7 @@ public:
     virtual void apply(Filter*);
     virtual void dump();
 
-    virtual void determineAbsolutePaintRect(Filter*) { setAbsolutePaintRect(maxEffectRect()); }
+    virtual void determineAbsolutePaintRect(Filter*);
 
     virtual FilterEffectType filterEffectType() const { return FilterEffectTypeImage; }
 
