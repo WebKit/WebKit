@@ -609,6 +609,14 @@
  			>
  		</File>
  		<File
+ 			RelativePath="..\..\wtf\text\StringBuffer.h"
+ 			>
+ 		</File>
+ 		<File
+ 			RelativePath="..\..\wtf\text\StringBuilder.h"
+ 			>
+ 		</File>
+ 		<File
  			RelativePath="..\..\wtf\text\StringHash.h"
  			>
  		</File>

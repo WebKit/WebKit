@@ -1200,7 +1200,6 @@ SOURCES += \
     platform/text/SegmentedString.cpp \
     platform/SharedBuffer.cpp \
     platform/text/String.cpp \
-    platform/text/StringBuilder.cpp \
     platform/text/TextCodec.cpp \
     platform/text/TextCodecLatin1.cpp \
     platform/text/TextCodecUserDefined.cpp \
@@ -2141,7 +2140,6 @@ HEADERS += \
     platform/text/qt/TextCodecQt.h \
     platform/text/RegularExpression.h \
     platform/text/SegmentedString.h \
-    platform/text/StringBuilder.h \
     platform/text/TextCodec.h \
     platform/text/TextCodecLatin1.h \
     platform/text/TextCodecUserDefined.h \

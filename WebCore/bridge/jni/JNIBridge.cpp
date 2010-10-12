@@ -29,14 +29,11 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "StringBuilder.h"
 #include <wtf/text/CString.h>
-
+#include <wtf/text/StringBuilder.h>
 
 using namespace JSC;
 using namespace JSC::Bindings;
-using namespace WebCore;
-
 
 JavaParameter::JavaParameter(JNIEnv* env, jstring type)
 {
@@ -132,7 +129,7 @@ const char* JavaMethod::signature() const
 #endif
 
         StringBuilder signatureBuilder;
-        signatureBuilder.append("(");
+        signatureBuilder.append('(');
         for (int i = 0; i < m_numParameters; i++) {
             JavaParameter* aParameter = parameterAt(i);
             JNIType type = aParameter->getJNIType();
@@ -142,11 +139,11 @@ const char* JavaMethod::signature() const
                 signatureBuilder.append(signatureFromPrimitiveType(type));
                 if (type == object_type) {
                     appendClassName(signatureBuilder, aParameter->type());
-                    signatureBuilder.append(";");
+                    signatureBuilder.append(';');
                 }
             }
         }
-        signatureBuilder.append(")");
+        signatureBuilder.append(')');
 
         const char* returnType = m_returnType.utf8();
         if (m_JNIReturnType == array_type)
@@ -155,7 +152,7 @@ const char* JavaMethod::signature() const
             signatureBuilder.append(signatureFromPrimitiveType(m_JNIReturnType));
             if (m_JNIReturnType == object_type) {
                 appendClassName(signatureBuilder, returnType);
-                signatureBuilder.append(";");
+                signatureBuilder.append(';');
             }
         }
 

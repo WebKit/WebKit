@@ -78,9 +78,9 @@
 #include <wtf/RefPtr.h>
 #ifndef NDEBUG
 #include "Logging.h"
-#include "PlatformString.h"
-#include "StringBuilder.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 #endif
 
 namespace WebCore {

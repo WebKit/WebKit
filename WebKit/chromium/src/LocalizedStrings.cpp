@@ -33,13 +33,14 @@
 
 #include "IntSize.h"
 #include "NotImplemented.h"
-#include "PlatformString.h"
-#include "StringBuilder.h"
 
 #include "WebKit.h"
 #include "WebKitClient.h"
 #include "WebLocalizedString.h"
 #include "WebString.h"
+
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 using WebKit::WebLocalizedString;
 
@@ -220,7 +221,7 @@ String imageTitle(const String& filename, const IntSize& size)
     result.append(String::number(size.width()));
     result.append(static_cast<UChar>(0xD7));  // U+00D7 (multiplication sign)
     result.append(String::number(size.height()));
-    result.append(")");
+    result.append(')');
     return result.toString();
 }
 

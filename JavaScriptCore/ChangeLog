@@ -1,3 +1,49 @@
+2010-10-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Unify JSC::StringBuilder & WebCore::StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=47538
+
+        Move runtime/StringBuilder.h to wtf/text/StringBuilder.h. Rename build() to toString() and return a WTF::String().
+        Move the append(const JSC::UString&) method into runtime/UStringBuilder.h.
+        UStringBuilder inherits from StringBuilder.h and adds append(const JSC::UString&) and UString toUString() functionality.
+
+        No new code, just move code around.
+
+        * GNUmakefile.am: Add wtf/text/StringBuilder.h / runtime/UStringBuilder.h. Remove runtime/StringBuilder.h.
+        * JavaScriptCore.gypi: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::paramString): Use UStringBuilder, instead of StringBuilder. Rename build() -> toUString().
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction): Ditto.
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncUnescape): Ditto.
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::stringify): Ditto.
+        (JSC::Stringifier::appendQuotedString): Ditto.
+        (JSC::Stringifier::appendStringifiedValue): Ditto.
+        (JSC::Stringifier::startNewLine): Ditto.
+        (JSC::Stringifier::Holder::appendNextProperty): Ditto.
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::Lexer::lexString): Ditto.
+        * runtime/NumberPrototype.cpp: Remove unneeded JSStringBuilder.h / StringBuilder.h include.
+        * runtime/StringBuilder.h: Removed.
+        * runtime/UStringBuilder.h: Added. Inherits from WTF::StringBuilder, extending it by two methods.
+        (JSC::UStringBuilder::append): append(const JSC::UString&)
+        (JSC::UStringBuilder::toUString):
+        * wtf/text/StringBuilder.h: Copied from runtime/StringBuilder.h. Move JSC::UString parts into runtime/UStringBuilder.h
+        (WTF::StringBuilder::append): Renamed m_buffer to buffer everywhere.
+        (WTF::StringBuilder::isEmpty): Ditto (+ constify method). 
+        (WTF::StringBuilder::reserveCapacity): Ditto.
+        (WTF::StringBuilder::resize): Ditto.
+        (WTF::StringBuilder::size): Ditto.
+        (WTF::StringBuilder::operator[]): Ditto.
+        (WTF::StringBuilder::toString): Ditto (+ renamed from build()). Returns a String, not an UString. The old build() method is now named toUString() and lives in UStringBuilder.
+
 2010-10-12  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.

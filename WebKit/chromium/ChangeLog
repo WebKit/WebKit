@@ -1,3 +1,18 @@
+2010-10-12  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Unify JSC::StringBuilder & WebCore::StringBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=47538
+
+        * src/LocalizedStrings.cpp:
+        (WebCore::imageTitle): Use WTF::StringBuilder.
+        * src/WebEntities.cpp:
+        (WebKit::WebEntities::convertEntitiesInString): Ditto.
+        * src/WebPageSerializerImpl.cpp: Remove useless includes.
+        (WebKit::WebPageSerializerImpl::encodeAndFlushBuffer): 
+        * src/WebPageSerializerImpl.h: Use WTF::StringBuilder.
+
 2010-10-07  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.

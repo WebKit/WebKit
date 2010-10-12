@@ -44,12 +44,12 @@
 #include "ResourceLoadTiming.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "StringBuffer.h"
 #include "TextEncoding.h"
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/text/StringBuffer.h>
 
 namespace WebCore {
 

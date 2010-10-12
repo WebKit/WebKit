@@ -28614,18 +28614,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\text\StringBuffer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\StringBuilder.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\text\StringBuilder.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\text\StringHash.h"
 					>
 				</File>

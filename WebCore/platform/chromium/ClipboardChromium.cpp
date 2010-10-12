@@ -41,12 +41,13 @@
 #include "Image.h"
 #include "MIMETypeRegistry.h"
 #include "NamedNodeMap.h"
-#include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "ScriptExecutionContext.h"
-#include "StringBuilder.h"
 #include "markup.h"
+
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -205,7 +206,7 @@ static String imageToMarkup(const String& url, Element* element)
     StringBuilder markup;
     markup.append("<img src=\"");
     markup.append(url);
-    markup.append("\"");
+    markup.append('"');
     // Copy over attributes.  If we are dragging an image, we expect things like
     // the id to be copied as well.
     NamedNodeMap* attrs = element->attributes();
@@ -214,13 +215,13 @@ static String imageToMarkup(const String& url, Element* element)
         Attribute* attr = attrs->attributeItem(i);
         if (attr->localName() == "src")
             continue;
-        markup.append(" ");
+        markup.append(' ');
         markup.append(attr->localName());
         markup.append("=\"");
         String escapedAttr = attr->value();
         escapedAttr.replace("\"", "&quot;");
         markup.append(escapedAttr);
-        markup.append("\"");
+        markup.append('"');
     }
 
     markup.append("/>");

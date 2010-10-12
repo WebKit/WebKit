@@ -2455,9 +2455,6 @@ webcore_sources += \
 	WebCore/platform/text/RegularExpression.h \
 	WebCore/platform/text/SegmentedString.cpp \
 	WebCore/platform/text/SegmentedString.h \
-	WebCore/platform/text/StringBuffer.h \
-	WebCore/platform/text/StringBuilder.cpp \
-	WebCore/platform/text/StringBuilder.h \
 	WebCore/platform/text/String.cpp \
 	WebCore/platform/text/SuffixTree.h \
 	WebCore/platform/text/TextBoundaries.cpp \

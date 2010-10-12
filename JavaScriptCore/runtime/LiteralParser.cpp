@@ -29,7 +29,7 @@
 #include "JSArray.h"
 #include "JSString.h"
 #include "Lexer.h"
-#include "StringBuilder.h"
+#include "UStringBuilder.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/dtoa.h>
 
@@ -135,7 +135,7 @@ template <LiteralParser::ParserMode mode> inline LiteralParser::TokenType Litera
 {
     ++m_ptr;
     const UChar* runStart;
-    StringBuilder builder;
+    UStringBuilder builder;
     do {
         runStart = m_ptr;
         while (m_ptr < m_end && isSafeStringCharacter<mode>(*m_ptr))
@@ -200,7 +200,7 @@ template <LiteralParser::ParserMode mode> inline LiteralParser::TokenType Litera
     if (m_ptr >= m_end || *m_ptr != '"')
         return TokError;
 
-    token.stringToken = builder.build();
+    token.stringToken = builder.toUString();
     token.type = TokString;
     token.end = ++m_ptr;
     return TokString;

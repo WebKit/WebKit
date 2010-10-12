@@ -30,8 +30,8 @@
 #include "MediaQuery.h"
 
 #include "MediaQueryExp.h"
-#include "StringBuilder.h"
 #include <wtf/NonCopyingSort.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

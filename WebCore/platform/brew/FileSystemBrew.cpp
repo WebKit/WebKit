@@ -30,8 +30,6 @@
 #include "FileSystem.h"
 
 #include "NotImplemented.h"
-#include "PlatformString.h"
-#include "StringBuilder.h"
 
 #include <AEEAppGen.h>
 #include <AEEFile.h>
@@ -41,6 +39,8 @@
 #include <wtf/brew/RefPtrBrew.h>
 #include <wtf/brew/ShellBrew.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

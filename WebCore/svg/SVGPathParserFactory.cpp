@@ -33,7 +33,6 @@
 #include "SVGPathStringBuilder.h"
 #include "SVGPathStringSource.h"
 #include "SVGPathTraversalStateBuilder.h"
-#include "StringBuilder.h"
 
 namespace WebCore {
 

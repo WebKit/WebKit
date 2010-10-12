@@ -31,12 +31,12 @@
 #ifndef WebPageSerializerImpl_h
 #define WebPageSerializerImpl_h
 
-#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
-#include "StringBuilder.h"
+#include <wtf/text/WTFString.h>
 
 #include "WebEntities.h"
 #include "WebPageSerializer.h"
@@ -98,7 +98,7 @@ private:
     // original link.
     LinkLocalPathMap m_localLinks;
     // Data buffer for saving result of serialized DOM data.
-    WebCore::StringBuilder m_dataBuffer;
+    StringBuilder m_dataBuffer;
     // Passing true to recursive_serialization_ indicates we will serialize not
     // only the specified frame but also all sub-frames in the specific frame.
     // Otherwise we only serialize the specified frame excluded all sub-frames.

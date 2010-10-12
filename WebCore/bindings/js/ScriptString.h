@@ -32,10 +32,10 @@
 #define ScriptString_h
 
 #include "JSDOMBinding.h"
-#include "PlatformString.h"
 #include <runtime/UString.h>
-#include <runtime/StringBuilder.h>
+#include <runtime/UStringBuilder.h>
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -61,10 +61,10 @@ public:
 
     ScriptString& operator+=(const String& s)
     {
-        JSC::StringBuilder buffer;
+        JSC::UStringBuilder buffer;
         buffer.append(m_str);
         buffer.append(stringToUString(s));
-        m_str = buffer.build();
+        m_str = buffer.toUString();
         return *this;
     }
 

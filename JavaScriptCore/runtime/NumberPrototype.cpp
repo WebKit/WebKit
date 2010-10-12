@@ -25,10 +25,8 @@
 #include "Error.h"
 #include "JSFunction.h"
 #include "JSString.h"
-#include "JSStringBuilder.h"
 #include "Operations.h"
 #include "PrototypeFunction.h"
-#include "StringBuilder.h"
 #include "dtoa.h"
 #include <wtf/Assertions.h>
 #include <wtf/DecimalNumber.h>

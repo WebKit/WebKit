@@ -88,8 +88,6 @@
 #include "HTMLMetaElement.h"
 #include "HTMLNames.h"
 #include "KURL.h"
-#include "PlatformString.h"
-#include "StringBuilder.h"
 #include "TextEncoding.h"
 #include "markup.h"
 
@@ -280,11 +278,11 @@ void WebPageSerializerImpl::encodeAndFlushBuffer(
     bool force)
 {
     // Data buffer is not full nor do we want to force flush.
-    if (!force && m_dataBuffer.length() <= dataBufferCapacity)
+    if (!force && m_dataBuffer.size() <= dataBufferCapacity)
         return;
 
     String content = m_dataBuffer.toString();
-    m_dataBuffer.clear();
+    m_dataBuffer = StringBuilder();
 
     // Convert the unicode content to target encoding
     CString encodedContent = param->textEncoding.encode(

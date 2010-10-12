@@ -411,6 +411,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/Tracing.h \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
+	JavaScriptCore/runtime/UStringBuilder.h \
 	JavaScriptCore/runtime/WeakGCMap.h \
 	JavaScriptCore/runtime/WeakGCPtr.h \
 	JavaScriptCore/runtime/WeakRandom.h \
@@ -508,6 +509,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/text/CString.cpp \
 	JavaScriptCore/wtf/text/CString.h \
 	JavaScriptCore/wtf/text/StringBuffer.h \
+	JavaScriptCore/wtf/text/StringBuilder.h \
 	JavaScriptCore/wtf/text/StringHash.h \
 	JavaScriptCore/wtf/text/StringImplBase.h \
 	JavaScriptCore/wtf/text/StringImpl.cpp \

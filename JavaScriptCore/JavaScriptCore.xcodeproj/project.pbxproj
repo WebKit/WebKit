@@ -36,8 +36,10 @@
 /* Begin PBXBuildFile section */
 		06D358B30DAADAA4003B174E /* MainThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 06D358A20DAAD9C4003B174E /* MainThread.cpp */; };
 		06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06D358A10DAAD9C4003B174E /* MainThreadMac.mm */; };
+		081469491264378500DFF935 /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 081469481264375E00DFF935 /* StringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		088FA5BB0EF76D4300578E6F /* RandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088FA5B90EF76D4300578E6F /* RandomNumber.cpp */; };
 		088FA5BC0EF76D4300578E6F /* RandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 088FA5BA0EF76D4300578E6F /* RandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		08DDA5C11264631700751732 /* UStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 08DDA5BB12645F1D00751732 /* UStringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08E279E90EF83B10007DB523 /* RandomNumberSeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E279E80EF83B10007DB523 /* RandomNumberSeed.h */; };
 		0B330C270F38C62300692DE3 /* TypeTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B330C260F38C62300692DE3 /* TypeTraits.cpp */; };
 		0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B4D7E620F319AC800AD7E58 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -217,7 +219,6 @@
 		868BFA18117CF19900B908B1 /* WTFString.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA16117CF19900B908B1 /* WTFString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		868BFA60117D048200B908B1 /* StaticConstructors.h in Headers */ = {isa = PBXBuildFile; fileRef = 868BFA5F117D048200B908B1 /* StaticConstructors.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8690231512092D5C00630AF9 /* PageReservation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8690231412092D5C00630AF9 /* PageReservation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		8698B86910D44D9400D8D01B /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 8698B86810D44D9400D8D01B /* StringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869D04AF1193B54D00803475 /* CachedTranscendentalFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 869D04AE1193B54D00803475 /* CachedTranscendentalFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869EBCB70E8C6D4A008722CC /* ResultType.h in Headers */ = {isa = PBXBuildFile; fileRef = 869EBCB60E8C6D4A008722CC /* ResultType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
@@ -629,8 +630,10 @@
 		06D358A10DAAD9C4003B174E /* MainThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainThreadMac.mm; sourceTree = "<group>"; };
 		06D358A20DAAD9C4003B174E /* MainThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainThread.cpp; sourceTree = "<group>"; };
 		06D358A30DAAD9C4003B174E /* MainThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThread.h; sourceTree = "<group>"; };
+		081469481264375E00DFF935 /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringBuilder.h; path = text/StringBuilder.h; sourceTree = "<group>"; };
 		088FA5B90EF76D4300578E6F /* RandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomNumber.cpp; sourceTree = "<group>"; };
 		088FA5BA0EF76D4300578E6F /* RandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumber.h; sourceTree = "<group>"; };
+		08DDA5BB12645F1D00751732 /* UStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UStringBuilder.h; sourceTree = "<group>"; };
 		08E279E80EF83B10007DB523 /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
 		0B330C260F38C62300692DE3 /* TypeTraits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeTraits.cpp; sourceTree = "<group>"; };
 		0B4D7E620F319AC800AD7E58 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
@@ -822,7 +825,6 @@
 		868BFA16117CF19900B908B1 /* WTFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WTFString.h; path = text/WTFString.h; sourceTree = "<group>"; };
 		868BFA5F117D048200B908B1 /* StaticConstructors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticConstructors.h; sourceTree = "<group>"; };
 		8690231412092D5C00630AF9 /* PageReservation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageReservation.h; sourceTree = "<group>"; };
-		8698B86810D44D9400D8D01B /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
 		869D04AE1193B54D00803475 /* CachedTranscendentalFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTranscendentalFunction.h; sourceTree = "<group>"; };
 		869EBCB60E8C6D4A008722CC /* ResultType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResultType.h; sourceTree = "<group>"; };
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
@@ -1793,7 +1795,6 @@
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
-				8698B86810D44D9400D8D01B /* StringBuilder.h */,
 				86B6DA0112132B9A000D316F /* StringConcatenate.h */,
 				BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */,
 				BC18C3C10E16EE3300B34460 /* StringConstructor.h */,
@@ -1815,6 +1816,7 @@
 				5D53726E0E1C54880021E549 /* Tracing.h */,
 				F692A8850255597D01FF60F7 /* UString.cpp */,
 				F692A8860255597D01FF60F7 /* UString.h */,
+				08DDA5BB12645F1D00751732 /* UStringBuilder.h */,
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
@@ -1834,6 +1836,7 @@
 				86565740115BE3DA00291F40 /* CString.cpp */,
 				86565741115BE3DA00291F40 /* CString.h */,
 				86B99AE1117E578100DF5A90 /* StringBuffer.h */,
+				081469481264375E00DFF935 /* StringBuilder.h */,
 				868BFA05117CEFD100B908B1 /* StringHash.h */,
 				868BFA06117CEFD100B908B1 /* StringImpl.cpp */,
 				868BFA07117CEFD100B908B1 /* StringImpl.h */,
@@ -2256,7 +2259,7 @@
 				868BFA60117D048200B908B1 /* StaticConstructors.h in Headers */,
 				FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */,
 				86B99AE3117E578100DF5A90 /* StringBuffer.h in Headers */,
-				8698B86910D44D9400D8D01B /* StringBuilder.h in Headers */,
+				081469491264378500DFF935 /* StringBuilder.h in Headers */,
 				BC18C4660E16F5CD00B34460 /* StringConstructor.h in Headers */,
 				BC18C4670E16F5CD00B34460 /* StringExtras.h in Headers */,
 				868BFA0D117CEFD100B908B1 /* StringHash.h in Headers */,
@@ -2292,6 +2295,7 @@
 				BC18C4740E16F5CD00B34460 /* UnicodeIcu.h in Headers */,
 				BC18C4750E16F5CD00B34460 /* UnusedParam.h in Headers */,
 				BC18C4760E16F5CD00B34460 /* UString.h in Headers */,
+				08DDA5C11264631700751732 /* UStringBuilder.h in Headers */,
 				BC18C4770E16F5CD00B34460 /* UTF8.h in Headers */,
 				E17FF771112131D200076A19 /* ValueCheck.h in Headers */,
 				BC18C4780E16F5CD00B34460 /* Vector.h in Headers */,

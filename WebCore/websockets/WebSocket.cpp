@@ -42,11 +42,11 @@
 #include "Logging.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
-#include "StringBuilder.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
-#include <wtf/text/CString.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 

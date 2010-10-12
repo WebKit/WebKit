@@ -23,16 +23,16 @@
 #if ENABLE(SVG)
 #include "FloatPoint.h"
 #include "SVGPathConsumer.h"
-#include "StringBuilder.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 class SVGPathStringBuilder : public SVGPathConsumer {
 public:
-    String result() { return m_stringBuilder.toString(ConcatAddingSpacesBetweenIndividualStrings); }
+    String result();
 
 private:
-    virtual void cleanup() { m_stringBuilder.clear(); }
+    virtual void cleanup() { m_stringBuilder = StringBuilder(); }
     virtual void incrementPathSegmentCount() { }
     virtual bool continueConsuming() { return true; }
 

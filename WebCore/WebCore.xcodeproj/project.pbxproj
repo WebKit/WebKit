@@ -2745,7 +2745,6 @@
 		939885C408B7E3D100E707C4 /* EventNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 939885C208B7E3D100E707C4 /* EventNames.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939B02EE0EA2DBC400C54570 /* WidthIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */; };
 		939B02EF0EA2DBC400C54570 /* WidthIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 939B02ED0EA2DBC400C54570 /* WidthIterator.h */; };
-		939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */; };
 		93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */; };
 		93B2D8160F9920D2006AE6B2 /* SuddenTermination.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */; };
 		93B2D8180F9920EE006AE6B2 /* SuddenTermination.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B2D8170F9920EE006AE6B2 /* SuddenTermination.mm */; };
@@ -5333,8 +5332,6 @@
 		E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerContext.h */; };
 		E18258AC0EF3CD7000933242 /* JSWorkerContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */; };
 		E1A1470811102B1500EEC0F3 /* ContainerNodeAlgorithms.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */; };
-		E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A302BB0DE8370300C52F2C /* StringBuilder.h */; };
-		E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A302C00DE8376900C52F2C /* StringBuilder.cpp */; };
 		E1A5F99B0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */; };
 		E1A643F20EC0972500779668 /* WorkerScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = E1A643F10EC0972500779668 /* WorkerScriptController.h */; };
 		E1A643FD0EC097A000779668 /* WorkerScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */; };
@@ -8804,7 +8801,6 @@
 		939885C208B7E3D100E707C4 /* EventNames.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = EventNames.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		939B02EC0EA2DBC400C54570 /* WidthIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WidthIterator.cpp; sourceTree = "<group>"; };
 		939B02ED0EA2DBC400C54570 /* WidthIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WidthIterator.h; sourceTree = "<group>"; };
-		939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuffer.h; sourceTree = "<group>"; };
 		93A38B4A0D0E5808006872C2 /* EditorCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EditorCommand.cpp; sourceTree = "<group>"; };
 		93B2D8150F9920D2006AE6B2 /* SuddenTermination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SuddenTermination.h; sourceTree = "<group>"; };
 		93B2D8170F9920EE006AE6B2 /* SuddenTermination.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SuddenTermination.mm; sourceTree = "<group>"; };
@@ -11331,8 +11327,6 @@
 		E182568E0EF2B02D00933242 /* JSWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContext.h; sourceTree = "<group>"; };
 		E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextCustom.cpp; sourceTree = "<group>"; };
 		E1A1470711102B1500EEC0F3 /* ContainerNodeAlgorithms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContainerNodeAlgorithms.h; sourceTree = "<group>"; };
-		E1A302BB0DE8370300C52F2C /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringBuilder.h; sourceTree = "<group>"; };
-		E1A302C00DE8376900C52F2C /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringBuilder.cpp; sourceTree = "<group>"; };
 		E1A5F99A0E7EAA2500AF85EA /* JSMessageChannelCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageChannelCustom.cpp; sourceTree = "<group>"; };
 		E1A643F10EC0972500779668 /* WorkerScriptController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerScriptController.h; sourceTree = "<group>"; };
 		E1A643FC0EC097A000779668 /* WorkerScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerScriptController.cpp; sourceTree = "<group>"; };
@@ -16561,9 +16555,6 @@
 				B2C3D9FE0D006C1D00EF6F26 /* SegmentedString.cpp */,
 				B2C3D9FF0D006C1D00EF6F26 /* SegmentedString.h */,
 				B2C3DA000D006C1D00EF6F26 /* String.cpp */,
-				939B3E4D0D3C1E8400B4A92B /* StringBuffer.h */,
-				E1A302C00DE8376900C52F2C /* StringBuilder.cpp */,
-				E1A302BB0DE8370300C52F2C /* StringBuilder.h */,
 				97C0784F1165D5BE003A32EF /* SuffixTree.h */,
 				B2C3DA040D006C1D00EF6F26 /* TextBoundaries.h */,
 				B2C3DA060D006C1D00EF6F26 /* TextBreakIterator.h */,
@@ -20590,8 +20581,6 @@
 				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
 				C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */,
 				C5102D940FD9AA2D00FAFF04 /* StorageSyncManager.h in Headers */,
-				939B3E4E0D3C1E8400B4A92B /* StringBuffer.h in Headers */,
-				E1A302BC0DE8370300C52F2C /* StringBuilder.h in Headers */,
 				65488D6B0DD5A83D009D83B2 /* StringSourceProvider.h in Headers */,
 				B23540F30D00782E002382FA /* StringTruncator.h in Headers */,
 				849F77760EFEC6200090849D /* StrokeStyleApplier.h in Headers */,
@@ -23196,7 +23185,6 @@
 				C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */,
 				C5102D950FD9AA2D00FAFF04 /* StorageSyncManager.cpp in Sources */,
 				B2C3DA300D006C1D00EF6F26 /* String.cpp in Sources */,
-				E1A302C10DE8376900C52F2C /* StringBuilder.cpp in Sources */,
 				B2B2645C0D00A77E000ACC1D /* StringCF.cpp in Sources */,
 				B2B2645D0D00A77E000ACC1D /* StringImplCF.cpp in Sources */,
 				B2AFFC950D00A5DF0030074D /* StringImplMac.mm in Sources */,

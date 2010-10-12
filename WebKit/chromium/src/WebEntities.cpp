@@ -31,15 +31,12 @@
 #include "config.h"
 #include "WebEntities.h"
 
-#include <string.h>
-
-#include "PlatformString.h"
-#include "StringBuilder.h"
-#include <wtf/HashMap.h>
-
 #include "WebString.h"
 
-using namespace WebCore;
+#include <string.h>
+#include <wtf/HashMap.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
@@ -76,9 +73,9 @@ String WebEntities::convertEntitiesInString(const String& value) const
             // Append content before entity code.
             if (curPos > startPos)
                 result.append(String(startPos, curPos - startPos));
-            result.append("&");
+            result.append('&');
             result.append(m_entitiesMap.get(*curPos));
-            result.append(";");
+            result.append(';');
             startPos = ++curPos;
         } else
             curPos++;

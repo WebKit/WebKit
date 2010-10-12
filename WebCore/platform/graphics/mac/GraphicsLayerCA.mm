@@ -38,7 +38,6 @@
 #import <QuartzCore/QuartzCore.h>
 #import "RotateTransformOperation.h"
 #import "ScaleTransformOperation.h"
-#import "StringBuilder.h"
 #import "SystemTime.h"
 #import "TranslateTransformOperation.h"
 #import "WebLayer.h"

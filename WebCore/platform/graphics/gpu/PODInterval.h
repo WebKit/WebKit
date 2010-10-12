@@ -27,7 +27,7 @@
 #define PODInterval_h
 
 #ifndef NDEBUG
-#include "StringBuilder.h"
+#include <wtf/text/StringBuilder.h>
 #endif
 
 namespace WebCore {

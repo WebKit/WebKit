@@ -1361,7 +1361,6 @@ SET(WebCore_SOURCES
     platform/text/RegularExpression.cpp
     platform/text/SegmentedString.cpp
     platform/text/String.cpp
-    platform/text/StringBuilder.cpp
     platform/text/TextBoundaries.cpp
     platform/text/TextCodec.cpp
     platform/text/TextCodecLatin1.cpp

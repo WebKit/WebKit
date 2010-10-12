@@ -26,11 +26,11 @@
 #include "config.h"
 #include "ProxyServer.h"
 
-#include "StringBuilder.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-static void appendProxyServerString(StringBuilder &builder, const ProxyServer& proxyServer)
+static void appendProxyServerString(StringBuilder& builder, const ProxyServer& proxyServer)
 {
     switch (proxyServer.type()) {
     case ProxyServer::Direct:

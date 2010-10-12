@@ -38,7 +38,6 @@
 #include "QTMovieTask.h"
 #include "ScrollView.h"
 #include "SoftLinking.h"
-#include "StringBuilder.h"
 #include "TimeRanges.h"
 #include "Timer.h"
 #include <Wininet.h>
@@ -46,6 +45,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -159,7 +159,7 @@ static void addCookieParam(StringBuilder& cookieBuilder, const String& name, con
     // Add parameter name, and value if there is one.
     cookieBuilder.append(name);
     if (!value.isEmpty()) {
-        cookieBuilder.append("=");
+        cookieBuilder.append('=');
         cookieBuilder.append(value);
     }
 }
@@ -194,7 +194,7 @@ void MediaPlayerPrivate::setUpCookiesForQuickTime(const String& url)
             addCookieParam(cookieBuilder, "expires", rfc2616DateStringFromTime(cookie.expires));
         if (cookie.httpOnly) 
             addCookieParam(cookieBuilder, "httpOnly", String());
-        cookieBuilder.append(";");
+        cookieBuilder.append(';');
 
         String cookieURL;
         if (!cookie.domain.isEmpty()) {

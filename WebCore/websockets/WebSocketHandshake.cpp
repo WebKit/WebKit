@@ -43,7 +43,6 @@
 #include "Logging.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
-#include "StringBuilder.h"
 
 #include <wtf/MD5.h>
 #include <wtf/RandomNumber.h>
@@ -52,6 +51,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -75,7 +75,7 @@ static String hostName(const KURL& url, bool secure)
     StringBuilder builder;
     builder.append(url.host().lower());
     if (url.port() && ((!secure && url.port() != 80) || (secure && url.port() != 443))) {
-        builder.append(":");
+        builder.append(':');
         builder.append(String::number(url.port()));
     }
     return builder.toString();

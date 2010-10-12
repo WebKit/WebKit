@@ -72,7 +72,6 @@
 #include "ScriptController.h"
 #include "SelectorNodeList.h"
 #include "StaticNodeList.h"
-#include "StringBuilder.h"
 #include "TagNodeList.h"
 #include "Text.h"
 #include "TextEvent.h"
@@ -88,6 +87,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(DOM_STORAGE)
 #include "StorageEvent.h"
@@ -1923,52 +1923,54 @@ String Node::lookupNamespacePrefix(const AtomicString &_namespaceURI, const Elem
     return String();
 }
 
-void Node::appendTextContent(bool convertBRsToNewlines, StringBuilder& content) const
+static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool& isNullString, StringBuilder& content)
 {
-    switch (nodeType()) {
-        case TEXT_NODE:
-        case CDATA_SECTION_NODE:
-        case COMMENT_NODE:
-            content.append(static_cast<const CharacterData*>(this)->data());
-            break;
+    switch (node->nodeType()) {
+    case Node::TEXT_NODE:
+    case Node::CDATA_SECTION_NODE:
+    case Node::COMMENT_NODE:
+        isNullString = false;
+        content.append(static_cast<const CharacterData*>(node)->data());
+        break;
 
-        case PROCESSING_INSTRUCTION_NODE:
-            content.append(static_cast<const ProcessingInstruction*>(this)->data());
+    case Node::PROCESSING_INSTRUCTION_NODE:
+        isNullString = false;
+        content.append(static_cast<const ProcessingInstruction*>(node)->data());
+        break;
+    
+    case Node::ELEMENT_NODE:
+        if (node->hasTagName(brTag) && convertBRsToNewlines) {
+            isNullString = false;
+            content.append('\n');
             break;
-        
-        case ELEMENT_NODE:
-            if (hasTagName(brTag) && convertBRsToNewlines) {
-                content.append('\n');
-                break;
         }
-        // Fall through.
-        case ATTRIBUTE_NODE:
-        case ENTITY_NODE:
-        case ENTITY_REFERENCE_NODE:
-        case DOCUMENT_FRAGMENT_NODE:
-            content.setNonNull();
+    // Fall through.
+    case Node::ATTRIBUTE_NODE:
+    case Node::ENTITY_NODE:
+    case Node::ENTITY_REFERENCE_NODE:
+    case Node::DOCUMENT_FRAGMENT_NODE:
+        isNullString = false;
+        for (Node* child = node->firstChild(); child; child = child->nextSibling()) {
+            if (child->nodeType() == Node::COMMENT_NODE || child->nodeType() == Node::PROCESSING_INSTRUCTION_NODE)
+                continue;
+            appendTextContent(child, convertBRsToNewlines, isNullString, content);
+        }
+        break;
 
-            for (Node *child = firstChild(); child; child = child->nextSibling()) {
-                if (child->nodeType() == COMMENT_NODE || child->nodeType() == PROCESSING_INSTRUCTION_NODE)
-                    continue;
-            
-                child->appendTextContent(convertBRsToNewlines, content);
-            }
-            break;
-
-        case DOCUMENT_NODE:
-        case DOCUMENT_TYPE_NODE:
-        case NOTATION_NODE:
-        case XPATH_NAMESPACE_NODE:
-            break;
+    case Node::DOCUMENT_NODE:
+    case Node::DOCUMENT_TYPE_NODE:
+    case Node::NOTATION_NODE:
+    case Node::XPATH_NAMESPACE_NODE:
+        break;
     }
 }
 
 String Node::textContent(bool convertBRsToNewlines) const
 {
     StringBuilder content;
-    appendTextContent(convertBRsToNewlines, content);
-    return content.toString();
+    bool isNullString = true;
+    appendTextContent(this, convertBRsToNewlines, isNullString, content);
+    return isNullString ? String() : content.toString();
 }
 
 void Node::setTextContent(const String &text, ExceptionCode& ec)

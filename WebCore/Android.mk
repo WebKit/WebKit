@@ -606,7 +606,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	platform/text/RegularExpression.cpp \
 	platform/text/SegmentedString.cpp \
 	platform/text/String.cpp \
-	platform/text/StringBuilder.cpp \
 	platform/text/TextBreakIteratorICU.cpp \
 	platform/text/TextCodec.cpp \
 	platform/text/TextCodecICU.cpp \

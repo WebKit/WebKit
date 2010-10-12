@@ -28,7 +28,6 @@
 #include "config.h"
 #include "FileSystem.h"
 
-#include "StringBuilder.h"
 #include "cutils/log.h"
 #include <dirent.h>
 #include <dlfcn.h>
@@ -36,6 +35,7 @@
 #include <fnmatch.h>
 #include <sys/stat.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
