@@ -81,18 +81,18 @@ unsigned Screen::pixelDepth() const
     return static_cast<unsigned>(screenDepth(m_frame->view()));
 }
 
-unsigned Screen::availLeft() const
+int Screen::availLeft() const
 {
     if (!m_frame)
         return 0;
-    return static_cast<unsigned>(screenAvailableRect(m_frame->view()).x());
+    return static_cast<int>(screenAvailableRect(m_frame->view()).x());
 }
 
-unsigned Screen::availTop() const
+int Screen::availTop() const
 {
     if (!m_frame)
         return 0;
-    return static_cast<unsigned>(screenAvailableRect(m_frame->view()).y());
+    return static_cast<int>(screenAvailableRect(m_frame->view()).y());
 }
 
 unsigned Screen::availHeight() const

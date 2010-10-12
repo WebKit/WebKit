@@ -48,8 +48,8 @@ namespace WebCore {
         unsigned width() const;
         unsigned colorDepth() const;
         unsigned pixelDepth() const;
-        unsigned availLeft() const;
-        unsigned availTop() const;
+        int availLeft() const;
+        int availTop() const;
         unsigned availHeight() const;
         unsigned availWidth() const;
 
