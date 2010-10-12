@@ -486,7 +486,7 @@ static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRe
 
 static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
 {
-    CGRect rect = [[(BrowserWindowController *)clientInfo window] frame];
+    NSRect rect = [[(BrowserWindowController *)clientInfo window] frame];
     WKRect wkRect;
     wkRect.origin.x = rect.origin.x;
     wkRect.origin.y = rect.origin.y;
@@ -497,7 +497,7 @@ static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
 
 static void setWindowFrame(WKPageRef page, WKRect rect, const void* clientInfo)
 {
-    [[(BrowserWindowController *)clientInfo window] setFrame:CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height) display:YES];
+    [[(BrowserWindowController *)clientInfo window] setFrame:NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height) display:YES];
 }
 
 static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)

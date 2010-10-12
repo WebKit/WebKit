@@ -70,19 +70,19 @@ bool WebBackForwardList::restoreFromCFDictionaryRepresentation(CFDictionaryRef d
         LOG(SessionState, "WebBackForwardList dictionary representation does not have a valid current index");
         return false;
     }
-    
-    unsigned currentIndex;
-    if (!CFNumberGetValue(cfIndex, kCFNumberIntType, &currentIndex)) {
+
+    CFIndex currentIndex;
+    if (!CFNumberGetValue(cfIndex, kCFNumberCFIndexType, &currentIndex)) {
         LOG(SessionState, "WebBackForwardList dictionary representation does not have a valid integer current index");
         return false;
     }
-    
+
     CFArrayRef cfEntries = (CFArrayRef)CFDictionaryGetValue(dictionary, SessionHistoryEntriesKey());
     if (!cfEntries || CFGetTypeID(cfEntries) != CFArrayGetTypeID()) {
         LOG(SessionState, "WebBackForwardList dictionary representation does not have a valid list of entries");
         return false;
     }
-    
+
     CFIndex size = CFArrayGetCount(cfEntries);
     for (CFIndex i = 0; i < size; ++i) {
         CFDictionaryRef entryDictionary = (CFDictionaryRef)CFArrayGetValueAtIndex(cfEntries, i);
