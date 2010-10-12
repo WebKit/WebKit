@@ -405,7 +405,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\CommandLine.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\DrawingAreaBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\FindOptions.h"
 				>
 			</File>
 			<File
@@ -473,7 +481,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Shared\WebCoreTypeArgumentMarshalling.h"
+				RelativePath="..\Shared\WebCoreArgumentCoders.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebError.h"
 				>
 			</File>
 			<File
@@ -780,7 +796,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Shared\CoreIPCSupport\WebContextMessageKinds.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\CoreIPCSupport\WebPageProxyMessageKinds.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\CoreIPCSupport\WebProcessProxyMessageKinds.h"
 					>
 				</File>
 			</Filter>
@@ -878,6 +902,10 @@
 			</File>
 			<File
 				RelativePath="..\WebProcess\WebProcess.h"
+				>
+			</File>
+			<File
+				RelativePath="..\WebProcess\WebProcess.messages.in"
 				>
 			</File>
 			<File
@@ -1039,6 +1067,10 @@
 					RelativePath="..\WebProcess\WebPage\WebPage.h"
 					>
 				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebPage.messages.in"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>
@@ -1143,10 +1175,6 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleAPICast.h"
-							>
-						</File>
-						<File
-							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleBase.h"
 							>
 						</File>
 						<File
@@ -1888,6 +1916,14 @@
 				Name="CoreIPC"
 				>
 				<File
+					RelativePath="..\Platform\CoreIPC\ArgumentCoder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\ArgumentCoders.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\ArgumentDecoder.cpp"
 					>
 				</File>
@@ -2121,6 +2157,10 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\WebKit2.def"
+			>
+		</File>
 		<File
 			RelativePath="..\WebKit2Prefix.cpp"
 			>
