@@ -16,7 +16,7 @@ PASS jsoc.setJSObject( MyObject ); jsoc.getJSObject() is MyObject
 PASS jsoc.getJSObject().constructor is Function
 FAIL jsoc.setJSObject( THIS ); jsoc.PUB_JSOBJECT should be [object DOMWindow]. Was [object DOMWindow].
 PASS jsoc.setJSObject( THIS ); jsoc.getJSObject() is this
-PASS jsoc.getJSObject().constructor is Object
+PASS jsoc.getJSObject().constructor is this.constructor
 FAIL jsoc.setJSObject( Math ); jsoc.PUB_JSOBJECT should be [object Math]. Was [object Math].
 PASS jsoc.setJSObject( Math ); jsoc.getJSObject() is Math
 PASS jsoc.getJSObject().constructor is Object

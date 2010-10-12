@@ -43,7 +43,7 @@ PASS dt.setObject( MyObject ); dt.getObject() is MyObject
 PASS dt.getObject().constructor is Function
 FAIL dt.setObject( THIS ); dt.PUB_OBJECT should be [object DOMWindow]. Was [object DOMWindow].
 PASS dt.setObject( THIS ); dt.getObject() is this
-PASS dt.getObject().constructor is Object
+PASS dt.getObject().constructor is this.constructor
 FAIL dt.setObject( Math ); dt.PUB_OBJECT should be [object Math]. Was [object Math].
 PASS dt.setObject( Math ); dt.getObject() is Math
 PASS dt.getObject().constructor is Object

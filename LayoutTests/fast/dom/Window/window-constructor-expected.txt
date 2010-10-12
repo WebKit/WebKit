@@ -1,0 +1,4 @@
+Test for bug 47422: window constructor shouldn't be directly callable.
+
+Window constructor prototype is window prototype: PASS
+Window constructor not callable: PASS

@@ -130,7 +130,7 @@ Other
 
 PASS jsWrapperClass(window) is 'DOMWindow'
 PASS jsWrapperClass(window.__proto__) is 'DOMWindowPrototype'
-FAIL jsWrapperClass(window.constructor) should be DOMWindowConstructor. Was Function.
+PASS jsWrapperClass(window.constructor) is 'DOMWindowConstructor'
 
 HTML DOM
 

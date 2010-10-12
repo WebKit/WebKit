@@ -1632,6 +1632,12 @@ sub GenerateImplementation
                 push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, JSValue slotBase, const Identifier&)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    ${className}* domObject = static_cast<$className*>(asObject(slotBase));\n");
+
+                if ($dataNode->extendedAttributes->{"CheckDomainSecurity"}) {
+                    push(@implContent, "    if (!domObject->allowsAccessFrom(exec))\n");
+                    push(@implContent, "        return jsUndefined();\n");
+                }
+
                 push(@implContent, "    return ${className}::getConstructor(exec, domObject->globalObject());\n");
                 push(@implContent, "}\n");
             }
@@ -2838,7 +2844,11 @@ sub GenerateConstructorDefinition
     push(@$outputArray, "${constructorClassName}::${constructorClassName}(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->objectPrototype()), globalObject)\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
+    if ($interfaceName eq "DOMWindow") {
+        push(@$outputArray, "    putDirect(exec->propertyNames().prototype, globalObject->prototype(), DontDelete | ReadOnly);\n");
+    } else {
+        push(@$outputArray, "    putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
+    }
     push(@$outputArray, "    putDirect(exec->propertyNames().length, jsNumber(exec, ${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
     push(@$outputArray, "}\n\n");
 

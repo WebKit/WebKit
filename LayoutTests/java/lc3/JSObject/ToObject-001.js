@@ -175,7 +175,7 @@ a[i++] = new TestObject(
   "dt.getObject()",
   "dt.getObject().constructor",
   'this',
-  'Object');
+  'this.constructor');
 
 a[i++] = new TestObject(
   "dt.setObject( Math )",

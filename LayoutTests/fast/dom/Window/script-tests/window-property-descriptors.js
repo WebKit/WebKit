@@ -7,6 +7,7 @@ var __skip__ = {
 
     // Don't log DumpRenderTree injected objects
     "layoutTestController" : 1, // Work around http://bugs.webkit.org/show_bug.cgi?id=11373
+    "constructor" : 0,  // Workaround to include constructor in windowPropertyNames
     "GCController" : 1,
     "accessibilityController" : 1,
     "appleScriptController" : 1,
@@ -58,6 +59,8 @@ protoPropertyNames.sort();
 for (var i = 0; i < protoPropertyNames.length; ++i) {
     // Ignore these properties because they do not exist in all implementations.
     if (protoPropertyNames[i] == "createBlobURL" || protoPropertyNames[i] == "revokeBlobURL")
+        continue;
+    if (protoPropertyNames[i] == "constructor")
         continue;
     shouldBeUndefined("Object.getOwnPropertyDescriptor(window, '" + protoPropertyNames[i] + "')");
 }

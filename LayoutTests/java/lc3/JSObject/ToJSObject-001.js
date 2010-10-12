@@ -173,7 +173,7 @@ a[i++] = new TestObject(
   "jsoc.getJSObject()",
   "jsoc.getJSObject().constructor",
   'this',
-  'Object');
+  'this.constructor');
 
 a[i++] = new TestObject(
   "jsoc.setJSObject( Math )",
