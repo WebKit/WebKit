@@ -616,48 +616,10 @@ css2.1/t170602-bdr-conflct-w-99-d.html
 
 # Tests in editing/ directory
 #   Tests failing
-editing/deleting/5546763.html
-editing/deleting/delete-all-text-in-text-field-assertion.html
-editing/deleting/delete-ligature-001.html
-editing/deleting/delete-ligature-002.html
-editing/deleting/delete-ligature-003.html
-editing/deleting/pruning-after-merge-1.html
-editing/deleting/skip-virama-001.html
 editing/inserting/5994480-2.html
-editing/inserting/insert-thai-characters-001.html
-editing/inserting/space-after-removeformat.html
-editing/pasteboard/4744008.html
-editing/pasteboard/5368833.html
-editing/pasteboard/5780697-2.html
-editing/pasteboard/copy-in-password-field.html
-editing/pasteboard/file-input-files-access.html
-editing/pasteboard/paste-into-anchor-text.html
-editing/pasteboard/paste-plaintext-user-select-none.html
-editing/pasteboard/paste-table-002.html
-editing/pasteboard/paste-text-013.html
-editing/selection/after-line-break.html
-editing/selection/anchor-focus1.html
-editing/selection/anchor-focus2.html
-editing/selection/anchor-focus3.html
-editing/selection/click-before-and-after-table.html
-editing/selection/click-in-margins-inside-editable-div.html
-editing/selection/click-in-padding-with-multiple-line-boxes.html
 editing/selection/doubleclick-whitespace.html
-editing/selection/extend-selection-bidi.html
-editing/selection/getRangeAt.html
-# home-end.html and extended-selection.html have some potential breakage, commenting for now: https://bugs.webkit.org/show_bug.cgi?id=30208
-editing/selection/home-end.html
-editing/selection/legal-positions.html
-editing/selection/move-begin-end.html
-editing/selection/removeAllRanges.html
-editing/selection/select-all-textarea.html
-editing/selection/skip-non-editable-1.html
-editing/selection/skip-non-editable-2.html
-editing/selection/toString-1.html
-editing/selection/toString.html
-editing/style/apply-through-end-of-document.html
-editing/style/remove-underline-from-stylesheet.html
 editing/text-iterator/basic-iteration.html
+
 #   Tests generating new results
 editing/deleting/4845371.html
 editing/deleting/5144139-2.html
@@ -4951,6 +4913,38 @@ editing/execCommand/switch-list-type.html
 editing/execCommand/unlink.html
 editing/selection/4947387.html
 editing/selection/5195166-2.html
+editing/selection/legal-positions.html
+editing/deleting/5546763.html
+editing/deleting/delete-all-text-in-text-field-assertion.html
+editing/deleting/delete-ligature-001.html
+editing/deleting/delete-ligature-002.html
+editing/deleting/delete-ligature-003.html
+editing/deleting/pruning-after-merge-1.html
+editing/deleting/skip-virama-001.html
+editing/inserting/insert-thai-characters-001.html
+editing/inserting/space-after-removeformat.html
+editing/pasteboard/4744008.html
+editing/pasteboard/5368833.html
+editing/pasteboard/copy-in-password-field.html
+editing/pasteboard/paste-into-anchor-text.html
+editing/pasteboard/paste-plaintext-user-select-none.html
+editing/pasteboard/paste-table-002.html
+editing/pasteboard/paste-text-013.html
+editing/selection/after-line-break.html
+editing/selection/anchor-focus1.html
+editing/selection/anchor-focus2.html
+editing/selection/anchor-focus3.html
+editing/selection/click-before-and-after-table.html
+editing/selection/extend-selection-bidi.html
+editing/selection/getRangeAt.html
+editing/selection/move-begin-end.html
+editing/selection/removeAllRanges.html
+editing/selection/select-all-textarea.html
+editing/selection/skip-non-editable-1.html
+editing/selection/skip-non-editable-2.html
+editing/selection/toString-1.html
+editing/selection/toString.html
+editing/style/remove-underline-from-stylesheet.html
 
 # Requires expected results that we don't have atm
 editing/inserting/break-blockquote-after-delete.html
@@ -5662,6 +5656,7 @@ canvas/philip/tests/toDataURL.jpeg.quality.basic.html
 fast/forms/basic-selects.html
 fast/forms/basic-textareas-quirks.html
 fast/forms/textarea-metrics.html
+editing/pasteboard/5780697-2.html
 
 # Fake italics do not work: https://bugs.webkit.org/show_bug.cgi?id=40856
 fast/text/fake-italic.html
@@ -5759,6 +5754,7 @@ fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-postmessage-clone-frames.html
 http/tests/security/clipboard/clipboard-file-access.html
 http/tests/local/formdata
+editing/pasteboard/file-input-files-access.html
 
 # Still failing, looks like a bug in the EventSender drag-and-drop
 fast/css/user-drag-none.html
