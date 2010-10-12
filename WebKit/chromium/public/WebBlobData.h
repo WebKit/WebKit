@@ -31,7 +31,7 @@
 #ifndef WebBlobData_h
 #define WebBlobData_h
 
-#include "WebCString.h"
+#include "WebThreadSafeData.h"
 #include "WebString.h"
 #include "WebURL.h"
 
@@ -48,7 +48,7 @@ class WebBlobData {
 public:
     struct Item {
         enum { TypeData, TypeFile, TypeBlob } type;
-        WebCString data;
+        WebThreadSafeData data;
         WebString filePath;
         WebURL blobURL;
         long long offset;
@@ -72,17 +72,9 @@ public:
     // index is out of bounds.
     WEBKIT_API bool itemAt(size_t index, Item& result) const;
 
-    // Appends to the list of items.
-    WEBKIT_API void appendData(const WebCString&);
-    WEBKIT_API void appendFile(const WebString& filePath);
-    WEBKIT_API void appendFile(const WebString& filePath, long long offset, long long length, double expectedModificationTime);
-    WEBKIT_API void appendBlob(const WebURL& blobURL, long long offset, long long length);
-
     WEBKIT_API WebString contentType() const;
-    WEBKIT_API void setContentType(const WebString&);
 
     WEBKIT_API WebString contentDisposition() const;
-    WEBKIT_API void setContentDisposition(const WebString&);
 
 #if WEBKIT_IMPLEMENTATION
     WebBlobData(const WTF::PassOwnPtr<WebCore::BlobData>&);

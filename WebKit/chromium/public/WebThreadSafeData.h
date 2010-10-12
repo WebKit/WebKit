@@ -28,56 +28,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebBlobStorageData_h
-#define WebBlobStorageData_h
+#ifndef WebThreadSafeData_h
+#define WebThreadSafeData_h
 
-#include "WebBlobData.h"
-#include "WebData.h"
-#include "WebFileInfo.h"
-#include "WebString.h"
+#include "WebCommon.h"
+#include "WebPrivatePtr.h"
 
-#if WEBKIT_IMPLEMENTATION
-namespace WebCore { class BlobStorageData; }
-namespace WTF { template <typename T> class PassRefPtr; }
+#if !WEBKIT_IMPLEMENTATION
+#include <string>
 #endif
+
+namespace WebCore { class RawData; }
 
 namespace WebKit {
 
-class WebBlobStorageDataPrivate;
-
-class WebBlobStorageData {
+// A container for raw bytes.  It is inexpensive to copy a WebThreadSafeData object.
+// It is safe to pass a WebThreadSafeData across threads!!!
+class WebThreadSafeData {
 public:
-    ~WebBlobStorageData() { reset(); }
+    WebThreadSafeData() { }
+    ~WebThreadSafeData() { reset(); }
 
-    WebBlobStorageData() : m_private(0) { }
-
+    WEBKIT_API void assign(const WebThreadSafeData&);
     WEBKIT_API void reset();
 
-    bool isNull() const { return !m_private; }
+    WEBKIT_API size_t size() const;
+    WEBKIT_API const char* data() const;
 
-    // Returns the number of items.
-    WEBKIT_API size_t itemCount() const;
-
-    // Retrieves the values of the item at the given index. Returns false if
-    // index is out of bounds.
-    WEBKIT_API bool itemAt(size_t index, WebBlobData::Item& result) const;
-
-    WEBKIT_API WebString contentType() const;
-    WEBKIT_API WebString contentDisposition() const;
+    bool isEmpty() const { return !size(); }
 
 #if WEBKIT_IMPLEMENTATION
-    WebBlobStorageData(const WTF::PassRefPtr<WebCore::BlobStorageData>&);
-    WebBlobStorageData& operator=(const WTF::PassRefPtr<WebCore::BlobStorageData>&);
-    operator WTF::PassRefPtr<WebCore::BlobStorageData>() const;
+    WebThreadSafeData(const WTF::PassRefPtr<WebCore::RawData>&);
+    WebThreadSafeData& operator=(const WTF::PassRefPtr<WebCore::RawData>&);
+#else
+    operator std::string() const
+    {
+        size_t len = size();
+        return len ? std::string(data(), len) : std::string();
+    }
 #endif
 
 private:
-#if WEBKIT_IMPLEMENTATION
-    void assign(const WTF::PassRefPtr<WebCore::BlobStorageData>&);
-#endif
-    WebBlobStorageDataPrivate* m_private;
+    WebPrivatePtr<WebCore::RawData> m_private;
 };
 
 } // namespace WebKit
 
-#endif // WebBlobStorageData_h
+#endif

@@ -32,6 +32,7 @@
 #include "WebBlobData.h"
 
 #include "BlobData.h"
+#include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;
 
@@ -89,52 +90,16 @@ bool WebBlobData::itemAt(size_t index, Item& result) const
     return false;
 }
 
-void WebBlobData::appendData(const WebCString& data)
-{
-    ASSERT(!isNull());
-    m_private->appendData(data);
-}
-
-void WebBlobData::appendFile(const WebString& filePath)
-{
-    ASSERT(!isNull());
-    m_private->appendFile(filePath);
-}
-
-void WebBlobData::appendFile(const WebString& filePath, long long offset, long long length, double expectedModificationTime)
-{
-    ASSERT(!isNull());
-    m_private->appendFile(filePath, offset, length, expectedModificationTime);
-}
-
-void WebBlobData::appendBlob(const WebURL& blobURL, long long offset, long long length)
-{
-    ASSERT(!isNull());
-    m_private->appendBlob(blobURL, offset, length);
-}
-
 WebString WebBlobData::contentType() const
 {
     ASSERT(!isNull());
     return m_private->contentType();
 }
 
-void WebBlobData::setContentType(const WebString& contentType)
-{
-    ASSERT(!isNull());
-    m_private->setContentType(contentType);
-}
-
 WebString WebBlobData::contentDisposition() const
 {
     ASSERT(!isNull());
     return m_private->contentDisposition();
-}
-
-void WebBlobData::setContentDisposition(const WebString& contentDisposition)
-{
-    ASSERT(!isNull());
-    m_private->setContentDisposition(contentDisposition);
 }
 
 WebBlobData::WebBlobData(const PassOwnPtr<BlobData>& data)

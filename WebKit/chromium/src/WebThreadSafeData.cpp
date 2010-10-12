@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- *
+ * 
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,29 +28,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebBlobRegistry_h
-#define WebBlobRegistry_h
+#include "config.h"
+#include "WebThreadSafeData.h"
+
+#include "BlobData.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebBlobData;
-class WebURL;
+void WebThreadSafeData::reset()
+{
+    m_private.reset();
+}
 
-class WebBlobRegistry {
-public:
-    WEBKIT_API static WebBlobRegistry* create();
+void WebThreadSafeData::assign(const WebThreadSafeData& other)
+{
+    m_private = other.m_private;
+}
 
-    virtual ~WebBlobRegistry() { }
+size_t WebThreadSafeData::size() const
+{
+    if (m_private.isNull())
+        return 0;
+    return m_private->length();
+}
 
-    // Registers a blob URL referring to the specified blob data.
-    virtual void registerBlobURL(const WebURL&, WebBlobData&) = 0;
-    
-    // Registers a blob URL referring to the blob data identified by the specified srcURL.
-    virtual void registerBlobURL(const WebURL&, const WebURL& srcURL) = 0;
+const char* WebThreadSafeData::data() const
+{
+    if (m_private.isNull())
+        return 0;
+    return m_private->data();
+}
 
-    virtual void unregisterBlobURL(const WebURL&) = 0;
-};
+WebThreadSafeData::WebThreadSafeData(const PassRefPtr<RawData>& data)
+    : m_private(data.releaseRef())
+{
+}
+
+WebThreadSafeData& WebThreadSafeData::operator=(const PassRefPtr<RawData>& data)
+{
+    m_private = data;
+    return *this;
+}
 
 } // namespace WebKit
-
-#endif // WebBlobRegistry_h
