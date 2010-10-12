@@ -1,3 +1,10 @@
+2010-10-12  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::length):
+
 2010-10-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Gavin Barraclough.

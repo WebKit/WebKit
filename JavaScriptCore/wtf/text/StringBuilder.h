@@ -69,6 +69,9 @@ public:
     }
     void resize(size_t size) { m_buffer.resize(size); }
     size_t size() const { return m_buffer.size(); }
+    // FIXME: remove size(), above (strings have a length, not a size).
+    // also, should return an unsigned, not a size_t.
+    size_t length() const { return size(); }
 
     UChar operator[](size_t i) const { return m_buffer.at(i); }
 
