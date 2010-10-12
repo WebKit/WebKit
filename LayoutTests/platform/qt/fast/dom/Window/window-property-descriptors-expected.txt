@@ -317,6 +317,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'areArraysEqual') is 'object
 PASS typeof Object.getOwnPropertyDescriptor(window, 'clientInformation') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'closed') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'console') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'constructor') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'crypto') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'debug') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'decodeURI') is 'object'
@@ -486,7 +487,6 @@ PASS Object.getOwnPropertyDescriptor(window, 'clearInterval') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'clearTimeout') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'close') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'confirm') is undefined.
-PASS Object.getOwnPropertyDescriptor(window, 'constructor') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'dispatchEvent') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'find') is undefined.
 PASS Object.getOwnPropertyDescriptor(window, 'focus') is undefined.
