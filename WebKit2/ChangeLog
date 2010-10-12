@@ -1,3 +1,20 @@
+2010-10-12  Juha Savolainen  <juha.savolainen@weego.fi>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] Adding Qt WebKit2 API for zooming.
+        https://bugs.webkit.org/show_bug.cgi?id=47539
+
+        Adding zoom methods to QWKPage.
+        
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::textZoomFactor): Added
+        (QWKPage::setTextZoomFactor): Added
+        (QWKPage::pageZoomFactor): Added
+        (QWKPage::setPageZoomFactor): Added
+        (QWKPage::setPageAndTextZoomFactors): Added
+        * UIProcess/API/qt/qwkpage.h:
+
 2010-10-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler of the past.

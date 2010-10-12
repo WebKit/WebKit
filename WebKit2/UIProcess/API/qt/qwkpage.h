@@ -89,6 +89,12 @@ public:
 
     void setCustomUserAgent(const QString&);
 
+    qreal textZoomFactor() const;
+    qreal pageZoomFactor() const;
+    void setTextZoomFactor(qreal zoomFactor);
+    void setPageZoomFactor(qreal zoomFactor);
+    void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
+
 public:
     Q_SIGNAL void statusBarMessage(const QString&);
     Q_SIGNAL void titleChanged(const QString&);

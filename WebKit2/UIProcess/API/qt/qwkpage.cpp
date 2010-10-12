@@ -437,6 +437,31 @@ void QWKPage::setViewportSize(const QSize& size)
         d->page->drawingArea()->setSize(IntSize(size));
 }
 
+qreal QWKPage::textZoomFactor() const
+{
+    return WKPageGetTextZoomFactor(pageRef());
+}
+
+void QWKPage::setTextZoomFactor(qreal zoomFactor)
+{
+    WKPageSetTextZoomFactor(pageRef(), zoomFactor);
+}
+
+qreal QWKPage::pageZoomFactor() const
+{
+    return WKPageGetPageZoomFactor(pageRef());
+}
+
+void QWKPage::setPageZoomFactor(qreal zoomFactor)
+{
+    WKPageSetPageZoomFactor(pageRef(), zoomFactor);
+}
+
+void QWKPage::setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor)
+{
+    WKPageSetPageAndTextZoomFactors(pageRef(), pageZoomFactor, textZoomFactor);
+}
+
 #ifndef QT_NO_ACTION
 void QWKPage::triggerAction(WebAction action, bool)
 {
