@@ -261,95 +261,95 @@ layer at (0,0) size 784x814
           RenderText {#text} at (394,0) size 4x21
             text run at (394,0) width 4: "\\"
       RenderBlock {DIV} at (0,420) size 768x21
-        RenderInline {SPAN} at (0,0) size 366x21
-          RenderText {#text} at (0,0) size 350x21
-            text run at (0,0) width 350: "Using font \"caption\". expected: backslash, actual: \x{A5}"
+        RenderInline {SPAN} at (0,0) size 355x21
+          RenderText {#text} at (0,0) size 339x21
+            text run at (0,0) width 339: "Using font \"caption\". expected: yen sign, actual: \x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (350,0) size 8x21
-              text run at (350,0) width 8: "\x{A5}"
+            RenderText {#text} at (339,0) size 8x21
+              text run at (339,0) width 8: "\x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (358,0) size 8x21
-              text run at (358,0) width 8: "\x{A5}"
+            RenderText {#text} at (347,0) size 8x21
+              text run at (347,0) width 8: "\x{A5}"
       RenderBlock {DIV} at (0,441) size 768x21
-        RenderInline {SPAN} at (0,0) size 344x21
-          RenderText {#text} at (0,0) size 328x21
-            text run at (0,0) width 328: "Using font \"icon\". expected: backslash, actual: \x{A5}"
+        RenderInline {SPAN} at (0,0) size 333x21
+          RenderText {#text} at (0,0) size 317x21
+            text run at (0,0) width 317: "Using font \"icon\". expected: yen sign, actual: \x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (328,0) size 8x21
-              text run at (328,0) width 8: "\x{A5}"
+            RenderText {#text} at (317,0) size 8x21
+              text run at (317,0) width 8: "\x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (336,0) size 8x21
-              text run at (336,0) width 8: "\x{A5}"
+            RenderText {#text} at (325,0) size 8x21
+              text run at (325,0) width 8: "\x{A5}"
       RenderBlock {DIV} at (0,462) size 768x21
-        RenderInline {SPAN} at (0,0) size 354x21
-          RenderText {#text} at (0,0) size 338x21
-            text run at (0,0) width 338: "Using font \"menu\". expected: backslash, actual: \x{A5}"
+        RenderInline {SPAN} at (0,0) size 343x21
+          RenderText {#text} at (0,0) size 327x21
+            text run at (0,0) width 327: "Using font \"menu\". expected: yen sign, actual: \x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (338,0) size 8x21
-              text run at (338,0) width 8: "\x{A5}"
+            RenderText {#text} at (327,0) size 8x21
+              text run at (327,0) width 8: "\x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (346,0) size 8x21
-              text run at (346,0) width 8: "\x{A5}"
+            RenderText {#text} at (335,0) size 8x21
+              text run at (335,0) width 8: "\x{A5}"
       RenderBlock {DIV} at (0,483) size 768x21
-        RenderInline {SPAN} at (0,0) size 401x21
-          RenderText {#text} at (0,0) size 385x21
-            text run at (0,0) width 385: "Using font \"message-box\". expected: backslash, actual: \x{A5}"
+        RenderInline {SPAN} at (0,0) size 390x21
+          RenderText {#text} at (0,0) size 374x21
+            text run at (0,0) width 374: "Using font \"message-box\". expected: yen sign, actual: \x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (385,0) size 8x21
-              text run at (385,0) width 8: "\x{A5}"
+            RenderText {#text} at (374,0) size 8x21
+              text run at (374,0) width 8: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (382,0) size 8x21
+              text run at (382,0) width 8: "\x{A5}"
+      RenderBlock {DIV} at (0,504) size 768x21
+        RenderInline {SPAN} at (0,0) size 395x21
+          RenderText {#text} at (0,0) size 379x21
+            text run at (0,0) width 379: "Using font \"small-caption\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (379,0) size 8x21
+              text run at (379,0) width 8: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (387,0) size 8x21
+              text run at (387,0) width 8: "\x{A5}"
+      RenderBlock {DIV} at (0,525) size 768x21
+        RenderInline {SPAN} at (0,0) size 373x21
+          RenderText {#text} at (0,0) size 357x21
+            text run at (0,0) width 357: "Using font \"status-bar\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (357,0) size 8x21
+              text run at (357,0) width 8: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (365,0) size 8x21
+              text run at (365,0) width 8: "\x{A5}"
+      RenderBlock {DIV} at (0,546) size 768x21
+        RenderInline {SPAN} at (0,0) size 444x21
+          RenderText {#text} at (0,0) size 428x21
+            text run at (0,0) width 428: "Using font \"-webkit-mini-control\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (428,0) size 8x21
+              text run at (428,0) width 8: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (436,0) size 8x21
+              text run at (436,0) width 8: "\x{A5}"
+      RenderBlock {DIV} at (0,567) size 768x21
+        RenderInline {SPAN} at (0,0) size 449x21
+          RenderText {#text} at (0,0) size 433x21
+            text run at (0,0) width 433: "Using font \"-webkit-small-control\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (433,0) size 8x21
+              text run at (433,0) width 8: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 8x21
+            RenderText {#text} at (441,0) size 8x21
+              text run at (441,0) width 8: "\x{A5}"
+      RenderBlock {DIV} at (0,588) size 768x21
+        RenderInline {SPAN} at (0,0) size 409x21
+          RenderText {#text} at (0,0) size 393x21
+            text run at (0,0) width 393: "Using font \"-webkit-control\". expected: yen sign, actual: \x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
             RenderText {#text} at (393,0) size 8x21
               text run at (393,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,504) size 768x21
-        RenderInline {SPAN} at (0,0) size 406x21
-          RenderText {#text} at (0,0) size 390x21
-            text run at (0,0) width 390: "Using font \"small-caption\". expected: backslash, actual: \x{A5}"
           RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (390,0) size 8x21
-              text run at (390,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (398,0) size 8x21
-              text run at (398,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,525) size 768x21
-        RenderInline {SPAN} at (0,0) size 384x21
-          RenderText {#text} at (0,0) size 368x21
-            text run at (0,0) width 368: "Using font \"status-bar\". expected: backslash, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (368,0) size 8x21
-              text run at (368,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (376,0) size 8x21
-              text run at (376,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,546) size 768x21
-        RenderInline {SPAN} at (0,0) size 455x21
-          RenderText {#text} at (0,0) size 439x21
-            text run at (0,0) width 439: "Using font \"-webkit-mini-control\". expected: backslash, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (439,0) size 8x21
-              text run at (439,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (447,0) size 8x21
-              text run at (447,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,567) size 768x21
-        RenderInline {SPAN} at (0,0) size 460x21
-          RenderText {#text} at (0,0) size 444x21
-            text run at (0,0) width 444: "Using font \"-webkit-small-control\". expected: backslash, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (444,0) size 8x21
-              text run at (444,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (452,0) size 8x21
-              text run at (452,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,588) size 768x21
-        RenderInline {SPAN} at (0,0) size 420x21
-          RenderText {#text} at (0,0) size 404x21
-            text run at (0,0) width 404: "Using font \"-webkit-control\". expected: backslash, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (404,0) size 8x21
-              text run at (404,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x21
-            RenderText {#text} at (412,0) size 8x21
-              text run at (412,0) width 8: "\x{A5}"
+            RenderText {#text} at (401,0) size 8x21
+              text run at (401,0) width 8: "\x{A5}"
       RenderBlock {DIV} at (0,609) size 768x21
         RenderInline {SPAN} at (0,0) size 441x20
           RenderText {#text} at (0,0) size 423x20
