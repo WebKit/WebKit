@@ -65,7 +65,7 @@ PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilte
     RetainPtr<CFDataRef> stateCFData(AdoptCF, (CFDataRef)CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten));
 
     CFIndex length = CFDataGetLength(stateCFData.get());
-    Vector<unsigned char> stateVector(length + 4);
+    Vector<unsigned char> stateVector(length + sizeof(UInt32));
     
     // Put the session state version number at the start of the buffer
     stateVector.data()[0] = (CurrentSessionStateDataVersion & 0xFF000000) >> 24;
@@ -74,14 +74,14 @@ PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilte
     stateVector.data()[3] = (CurrentSessionStateDataVersion & 0x000000FF);
     
     // Copy in the actual session state data
-    CFDataGetBytes(stateCFData.get(), CFRangeMake(0, length), stateVector.data() + 4);
+    CFDataGetBytes(stateCFData.get(), CFRangeMake(0, length), stateVector.data() + sizeof(UInt32));
     
     return WebData::create(stateVector);
 }
 
 void WebPageProxy::restoreFromSessionStateData(WebData* webData)
 {
-    if (!webData || webData->size() < 4)
+    if (!webData || webData->size() < sizeof(UInt32))
         return;
 
     const unsigned char* buffer = webData->bytes();
@@ -92,7 +92,7 @@ void WebPageProxy::restoreFromSessionStateData(WebData* webData)
         return;
     }
     
-    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, webData->bytes() + 4, webData->size() - 4));
+    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, webData->bytes() + sizeof(UInt32), webData->size() - sizeof(UInt32)));
 
     CFStringRef propertyListError = 0;
     RetainPtr<CFPropertyListRef> propertyList(AdoptCF, CFPropertyListCreateFromXMLData(0, data.get(), kCFPropertyListImmutable, &propertyListError));

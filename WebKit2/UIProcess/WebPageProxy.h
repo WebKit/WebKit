@@ -165,7 +165,7 @@ public:
 
     void terminateProcess();
 
-    typedef bool (*WebPageProxySessionStateFilterCallback)(WKPageRef, WKStringRef type, WKTypeRef object, void*);
+    typedef bool (*WebPageProxySessionStateFilterCallback)(WKPageRef, WKStringRef type, WKTypeRef object, void* context);
     PassRefPtr<WebData> sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const;
     void restoreFromSessionStateData(WebData*);
 

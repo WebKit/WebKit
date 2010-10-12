@@ -160,8 +160,7 @@ WKStringRef WKPageGetSessionHistoryURLValueType()
 
 WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSessionStateFilterCallback filter)
 {
-    RefPtr<WebData> state = toImpl(pageRef)->sessionStateData(filter, context);
-    return toAPI(state.release().releaseRef());
+    return toAPI(toImpl(pageRef)->sessionStateData(filter, context).releaseRef());
 }
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData)

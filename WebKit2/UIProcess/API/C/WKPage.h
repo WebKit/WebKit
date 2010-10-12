@@ -208,7 +208,7 @@ WK_EXPORT void WKPageTerminate(WKPageRef page);
 WK_EXPORT WKStringRef WKPageGetSessionHistoryURLValueType(void);
 
 typedef bool (*WKPageSessionStateFilterCallback)(WKPageRef page, WKStringRef valueType, WKTypeRef value, void* context);
-WK_EXPORT WKDataRef WKPageCopySessionState(WKPageRef page, void *context, WKPageSessionStateFilterCallback urlAllowedCallback);
+WK_EXPORT WKDataRef WKPageCopySessionState(WKPageRef page, void* context, WKPageSessionStateFilterCallback urlAllowedCallback);
 WK_EXPORT void WKPageRestoreFromSessionState(WKPageRef page, WKDataRef sessionStateData);
 
 WK_EXPORT double WKPageGetTextZoomFactor(WKPageRef page);

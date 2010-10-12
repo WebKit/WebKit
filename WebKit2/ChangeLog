@@ -1,5 +1,22 @@
 2010-10-11  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Darin Adler of the past.
+
+        Address some of Darin's review feedback in https://bugs.webkit.org/show_bug.cgi?id=47354
+        that wasn't left till after my original commit.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopySessionState): Nuke the temporary variable.
+        * UIProcess/API/C/WKPage.h:
+
+        * UIProcess/WebPageProxy.h: Fix up function declarations.
+        
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData): Use sizeof(UInt32) instead of 4.
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Ditto.
+
+2010-10-11  Brady Eidson  <beidson@apple.com>
+
         Reviewed by BUILD FIX.
 
         Build fix for Windows in https://bugs.webkit.org/show_bug.cgi?id=47354
