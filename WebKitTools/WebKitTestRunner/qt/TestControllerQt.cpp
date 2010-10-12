@@ -33,6 +33,7 @@
 #include <QLibrary>
 #include <QObject>
 #include <QtGlobal>
+#include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
@@ -84,13 +85,31 @@ void TestController::runUntil(bool& done)
     ASSERT(done);
 }
 
+static bool isExistingLibrary(const QString& path)
+{
+#if OS(WINDOWS) || OS(SYMBIAN)
+    const char* librarySuffixes[] = { ".dll" };
+#elif PLATFORM(MAC)
+    const char* librarySuffixes[] = { ".bundle", ".dylib", ".so" };
+#elif OS(UNIX)
+    const char* librarySuffixes[] = { ".so" };
+#else
+#error Library path suffix should be specified for this platform
+#endif
+    for (unsigned i = 0; i < sizeof(librarySuffixes) / sizeof(const char*); ++i) {
+        if (QLibrary::isLibrary(path + librarySuffixes[i]))
+            return true;
+    }
+
+    return false;
+}
+
 void TestController::initializeInjectedBundlePath()
 {
     QString path = QLatin1String(getenv("WTR_INJECTEDBUNDLE_PATH"));
     if (path.isEmpty())
         path = QFileInfo(QCoreApplication::applicationDirPath() + "/../lib/libWTRInjectedBundle").absoluteFilePath();
-
-    if (QLibrary::isLibrary(QLibrary(path).fileName()))
+    if (!isExistingLibrary(path))
         qFatal("Cannot find the injected bundle at %s\n", qPrintable(path));
 
     m_injectedBundlePath = WKStringCreateWithQString(path);

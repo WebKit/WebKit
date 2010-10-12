@@ -1,3 +1,21 @@
+2010-10-12  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WTR] Checking the path of the injected bundle is bogus
+        https://bugs.webkit.org/show_bug.cgi?id=47541
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::isExistingLibrary): Added (static helper).
+        Extend the path with the appropriate suffix(es) on the
+        platform and check that the file exists.
+        (WTR::TestController::initializeInjectedBundlePath):
+        There were two bugs with the path checking:
+            - the condition should have been inverted
+            - QLibrary::fileName does not give back the filename
+              with the library suffix so we cannot check
+              that existance of the file this way.
+
 2010-10-12  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Tony Chang.
