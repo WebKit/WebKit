@@ -1,3 +1,10 @@
+2010-10-11  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, roll chromium DEPS to pick up Dave's fix for
+        scrollbar painting.  This will be needed by an upcoming patch.
+
+        * DEPS:
+
 2010-10-11  Kinuko Yasuda  <kinuko@google.com>
 
         Reviewed by David Levin.
