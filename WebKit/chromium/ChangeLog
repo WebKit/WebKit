@@ -1,3 +1,13 @@
+2010-10-12  Dave Moore  <davemoore@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Use new WebThemeEngine api on chromium / linux to draw scrollbars.
+        https://bugs.webkit.org/show_bug.cgi?id=47473
+
+        * public/WebThemeEngine.h: Removed.
+        * chromium/src/ChromiumBridge.cpp:
+
 2010-10-11  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.

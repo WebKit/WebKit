@@ -67,6 +67,7 @@
 #endif
 
 #if OS(LINUX) || OS(FREEBSD)
+#include "linux/WebThemeEngine.h"
 #include "WebFontInfo.h"
 #include "WebFontRenderStyle.h"
 #endif
@@ -737,6 +738,60 @@ void ChromiumBridge::paintProgressBar(
 {
     webKitClient()->themeEngine()->paintProgressBar(
         gc->platformContext()->canvas(), barRect, valueRect, determinate, animatedSeconds);
+}
+
+#elif OS(LINUX)
+
+static WebThemeEngine::Part WebThemePart(ChromiumBridge::ThemePart part)
+{
+    switch (part) {
+    case ChromiumBridge::PartScrollbarDownArrow: return WebThemeEngine::PartScrollbarDownArrow;
+    case ChromiumBridge::PartScrollbarLeftArrow: return WebThemeEngine::PartScrollbarLeftArrow;
+    case ChromiumBridge::PartScrollbarRightArrow: return WebThemeEngine::PartScrollbarRightArrow;
+    case ChromiumBridge::PartScrollbarUpArrow: return WebThemeEngine::PartScrollbarUpArrow;
+    case ChromiumBridge::PartScrollbarHorizontalThumb: return WebThemeEngine::PartScrollbarHorizontalThumb;
+    case ChromiumBridge::PartScrollbarVerticalThumb: return WebThemeEngine::PartScrollbarVerticalThumb;
+    case ChromiumBridge::PartScrollbarHoriztonalTrack: return WebThemeEngine::PartScrollbarHoriztonalTrack;
+    case ChromiumBridge::PartScrollbarVerticalTrack: return WebThemeEngine::PartScrollbarVerticalTrack;
+    }
+    ASSERT_NOT_REACHED();
+    return WebThemeEngine::PartScrollbarDownArrow;
+}
+
+static WebThemeEngine::State WebThemeState(ChromiumBridge::ThemePaintState state)
+{
+    switch (state) {
+    case ChromiumBridge::StateDisabled: return WebThemeEngine::StateDisabled;
+    case ChromiumBridge::StateHover: return WebThemeEngine::StateHover;
+    case ChromiumBridge::StateNormal: return WebThemeEngine::StateNormal;
+    case ChromiumBridge::StatePressed: return WebThemeEngine::StatePressed;
+    }
+    ASSERT_NOT_REACHED();
+    return WebThemeEngine::StateDisabled;
+}
+
+static void GetWebThemeExtraParams(ChromiumBridge::ThemePart part, ChromiumBridge::ThemePaintState state, const ChromiumBridge::ThemePaintExtraParams* extraParams, WebThemeEngine::ExtraParams* webThemeExtraParams)
+{
+    if (part == ChromiumBridge::PartScrollbarHoriztonalTrack || part == ChromiumBridge::PartScrollbarVerticalTrack) {
+        webThemeExtraParams->scrollbarTrack.trackX = extraParams->scrollbarTrack.trackX;
+        webThemeExtraParams->scrollbarTrack.trackY = extraParams->scrollbarTrack.trackY;
+        webThemeExtraParams->scrollbarTrack.trackWidth = extraParams->scrollbarTrack.trackWidth;
+        webThemeExtraParams->scrollbarTrack.trackHeight = extraParams->scrollbarTrack.trackHeight;
+    }
+}
+
+IntSize ChromiumBridge::getThemePartSize(ThemePart part)
+{
+     return webKitClient()->themeEngine()->getSize(WebThemePart(part));
+}
+
+void ChromiumBridge::paintThemePart(
+    GraphicsContext* gc, ThemePart part, ThemePaintState state, const IntRect& rect, const ThemePaintExtraParams* extraParams)
+{
+    WebThemeEngine::ExtraParams webThemeExtraParams;
+    GetWebThemeExtraParams(part, state, extraParams, &webThemeExtraParams);
+    webKitClient()->themeEngine()->paint(
+        gc->platformContext()->canvas(), WebThemePart(part), WebThemeState(state), rect, &webThemeExtraParams);
 }
 
 #endif
