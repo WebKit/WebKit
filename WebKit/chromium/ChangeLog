@@ -1,5 +1,11 @@
 2010-10-12  Jian Li  <jianli@chromium.org>
 
+        Unreviewed. Bump up revision in order to pick up fix.
+
+        * DEPS:
+
+2010-10-12  Jian Li  <jianli@chromium.org>
+
         Unreview. Build fix for chromium.
 
         * public/WebBlobRegistry.h:
