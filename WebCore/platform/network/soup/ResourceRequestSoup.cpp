@@ -33,29 +33,6 @@ using namespace std;
 
 namespace WebCore {
 
-void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
-{
-    g_object_set(soupMessage, SOUP_MESSAGE_METHOD, httpMethod().utf8().data(), NULL);
-
-    const HTTPHeaderMap& headers = httpHeaderFields();
-    SoupMessageHeaders* soupHeaders = soupMessage->request_headers;
-    if (!headers.isEmpty()) {
-        HTTPHeaderMap::const_iterator end = headers.end();
-        for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-            soup_message_headers_append(soupHeaders, it->first.string().utf8().data(), it->second.utf8().data());
-    }
-
-#ifdef HAVE_LIBSOUP_2_29_90
-    String firstPartyString = firstPartyForCookies().string();
-    if (!firstPartyString.isEmpty()) {
-        GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
-        soup_message_set_first_party(soupMessage, firstParty.get());
-    }
-#endif
-
-    soup_message_set_flags(soupMessage, m_soupFlags);
-}
-
 SoupMessage* ResourceRequest::toSoupMessage() const
 {
     SoupMessage* soupMessage = soup_message_new(httpMethod().utf8().data(), url().string().utf8().data());

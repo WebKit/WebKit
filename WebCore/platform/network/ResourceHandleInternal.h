@@ -46,8 +46,6 @@
 #endif
 
 #if USE(SOUP)
-#include "soup-requester.h"
-#include <GRefPtr.h>
 #include <libsoup/soup.h>
 class Frame;
 #endif
@@ -110,11 +108,15 @@ namespace WebCore {
             , m_formDataStream(loader)
 #endif
 #if USE(SOUP)
+            , m_msg(0)
             , m_cancelled(false)
+            , m_gfile(0)
+            , m_inputStream(0)
+            , m_cancellable(0)
             , m_buffer(0)
+            , m_bufferSize(0)
             , m_total(0)
             , m_idleHandler(0)
-            , m_gotChunkHandler(0)
 #endif
 #if PLATFORM(QT)
             , m_job(0)
@@ -131,9 +133,6 @@ namespace WebCore {
             m_user = url.user();
             m_pass = url.pass();
             m_firstRequest.removeCredentials();
-#if USE(SOUP)
-            m_requester = adoptPlatformRef(webkit_soup_requester_new());
-#endif
         }
         
         ~ResourceHandleInternal();
@@ -186,18 +185,16 @@ namespace WebCore {
         Vector<char> m_postBytes;
 #endif
 #if USE(SOUP)
-        PlatformRefPtr<SoupMessage> m_soupMessage;
+        SoupMessage* m_msg;
         ResourceResponse m_response;
         bool m_cancelled;
-        PlatformRefPtr<WebKitSoupRequest> m_soupRequest;
-        PlatformRefPtr<WebKitSoupRequester> m_requester;
-        PlatformRefPtr<GInputStream> m_inputStream;
-        PlatformRefPtr<GCancellable> m_cancellable;
+        GFile* m_gfile;
+        GInputStream* m_inputStream;
+        GCancellable* m_cancellable;
         char* m_buffer;
-        gsize m_total;
+        gsize m_bufferSize, m_total;
         guint m_idleHandler;
         RefPtr<NetworkingContext> m_context;
-        gulong m_gotChunkHandler;
 #endif
 #if PLATFORM(QT)
         QNetworkReplyHandler* m_job;

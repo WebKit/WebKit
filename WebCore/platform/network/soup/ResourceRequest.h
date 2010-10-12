@@ -67,9 +67,8 @@ namespace WebCore {
             updateFromSoupMessage(soupMessage);
         }
 
-        void updateSoupMessage(SoupMessage*) const;
         SoupMessage* toSoupMessage() const;
-        void updateFromSoupMessage(SoupMessage*);
+        void updateFromSoupMessage(SoupMessage* soupMessage);
 
         SoupMessageFlags soupMessageFlags() const { return m_soupFlags; }
         void setSoupMessageFlags(SoupMessageFlags soupFlags) { m_soupFlags = soupFlags; }
