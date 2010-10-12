@@ -3208,6 +3208,9 @@ BUGWK47375 WIN : fast/filesystem/op-get-entry.html = TEXT
 BUG58358 WIN LINUX : fast/css/transformed-mask.html = IMAGE+TEXT
 BUG58358 MAC : fast/css/transformed-mask.html = IMAGE
 
+// FileWriter isn't in TestShell yet.
+BUG58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
+
 // Failing somewhere between after Webkit r69367 and r69417.
 BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE
 

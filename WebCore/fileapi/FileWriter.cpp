@@ -82,6 +82,7 @@ void FileWriter::stop()
 {
     if (m_writer && m_readyState == WRITING)
         m_writer->abort();
+    m_blobBeingWritten.clear();
     m_readyState = DONE;
 }
 
@@ -99,6 +100,7 @@ void FileWriter::write(Blob* data, ExceptionCode& ec)
         return;
     }
 
+    m_blobBeingWritten = data;
     m_readyState = WRITING;
     m_startedWriting = false;
     m_bytesWritten = 0;
@@ -169,6 +171,7 @@ void FileWriter::didWrite(long long bytes, bool complete)
         m_length = m_position;
     fireEvent(eventNames().progressEvent);
     if (complete) {
+        m_blobBeingWritten.clear();
         fireEvent(eventNames().writeEvent);
         m_readyState = DONE;
         fireEvent(eventNames().writeendEvent);
@@ -195,6 +198,7 @@ void FileWriter::didFail(ExceptionCode ec)
     if (ABORT_ERR == ec)
         fireEvent(eventNames().abortEvent);
     fireEvent(eventNames().errorEvent);
+    m_blobBeingWritten.clear();
     m_readyState = DONE;
     fireEvent(eventNames().writeendEvent);
 }

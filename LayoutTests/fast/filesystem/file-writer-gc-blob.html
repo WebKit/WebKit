@@ -1,0 +1,102 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>File Writer test</title>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+    var fileEntry;
+
+    function cleanUp() {
+      var needToCallFinish = true;
+      try {
+        if (fileEntry) {
+          fileEntry.remove(finishJSTest, finishJSTest);
+          needToCallFinish = false;
+        }
+      } catch (ex) {
+      }
+      if (needToCallFinish) {
+        finishJSTest();
+      }
+    }
+
+    function stringifyObj(o) {
+        s = "";
+        if (o)
+            for (index in o) {
+                s += index + ": " + o[index] + "\n";
+            }
+        return s;
+    }
+
+    function onError(e) {
+        debug("Caught an error.");
+        if (e && e.code) {  // Each FileError has a code.
+          debug("Error code: " + e.code);
+        }
+        testFailed(stringifyObj(e));
+        cleanUp();
+    }
+
+    function onSuccess() {
+        testPassed("Successfully wrote blob.");
+        cleanUp();
+    }
+
+    function tenXBlob(blob) {
+        var bb = new BlobBuilder();
+        for (var i = 0; i < 10; ++i) {
+            bb.append(blob);
+        }
+        return bb.getBlob();
+    }
+
+    function startWrite(writer) {
+        // Let's make it about a megabyte.
+        var bb = new BlobBuilder();
+        bb.append("lorem ipsum");
+        var blob = tenXBlob(bb.getBlob());
+        blob = tenXBlob(bb.getBlob());
+        blob = tenXBlob(bb.getBlob());
+        blob = tenXBlob(bb.getBlob());
+        blob = tenXBlob(bb.getBlob());
+        writer.onerror = onError;
+        writer.onwriteend = onSuccess;
+        writer.write(blob);
+    }
+
+    function useFileWriter(writer) {
+        startWrite(writer);
+        gc();
+    }
+
+    function fileCallback(f) {
+        fileEntry = f;
+        fileEntry.createWriter(useFileWriter, onError);
+    }
+
+    function runTest() {
+        debug("starting test");
+        if (window.requestFileSystem) {
+            requestFileSystem(0, 1024*1024,
+                function(fs) {
+                    fs.root.getFile("test.txt", {create:true}, fileCallback,
+                                    onError);
+                },
+                onError);
+        } else {
+            debug("This test requires FileSystem API support.");
+        }
+    }
+    window.successfullyParsed = true;
+    window.jsTestIsAsync = true;
+</script>
+</head>
+<body onload="runTest()">
+    <div id="description"></div>
+    <div id="console"></div>
+    <script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+
