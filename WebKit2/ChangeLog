@@ -1,3 +1,52 @@
+2010-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start fleshing out find page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=47559
+
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toFindOptions):
+        Handle the kWKFindOptionsShowFindIndicator flag.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+        
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::FindController):
+        Initialize the find page overlay.
+
+        (WebKit::FindController::findString):
+        Hide or show the find page overlay.
+
+        (WebKit::FindController::findPageOverlayDestroyed):
+        Null out the find page overlay.
+
+        * WebProcess/WebPage/FindPageOverlay.cpp: Added.
+        * WebProcess/WebPage/FindPageOverlay.h: Added.
+        Add stubbed out FindPageOverlay class.
+
+        * WebProcess/WebPage/PageOverlay.cpp: Added.
+        (WebKit::PageOverlay::setPage):
+        Set the parent web page.
+
+        (WebKit::PageOverlay::setNeedsDisplay):
+        Invalidate the parent web page.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRect):
+        If there's a page overlay, ask it to draw on top of the page contents.
+
+        (WebKit::WebPage::installPageOverlay):
+        Set the page overlay.
+
+        (WebKit::WebPage::uninstallPageOverlay):
+        Clear the page overlay.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-10-12  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Jon Honeycutt.

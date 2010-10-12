@@ -1044,6 +1044,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\FindPageOverlay.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\FindPageOverlay.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\PageOverlay.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\PageOverlay.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebBackForwardListProxy.cpp"
 					>
 				</File>

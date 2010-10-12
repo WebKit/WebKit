@@ -25,6 +25,7 @@
 
 #include "FindController.h"
 
+#include "FindPageOverlay.h"
 #include "WebPage.h"
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
@@ -35,6 +36,7 @@ namespace WebKit {
 
 FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)
+    , m_findPageOverlay(0)
 {
 }
 
@@ -56,6 +58,8 @@ void FindController::findString(const String& string, FindDirection findDirectio
 
     Frame* selectedFrame = frameWithSelection(m_webPage->corePage());
 
+    bool shouldShowOverlay = false;
+
     if (!found) {
         // We didn't find the string, clear all text matches.
         m_webPage->corePage()->unmarkAllTextMatches();
@@ -63,14 +67,41 @@ void FindController::findString(const String& string, FindDirection findDirectio
         // And clear the selection.
         if (selectedFrame)
             selectedFrame->selection()->clear();
+    } else {
+        // FIXME: We need to show the find indicator here.
 
+        shouldShowOverlay = findOptions & FindOptionsShowOverlay;
+    }
+
+    if (!shouldShowOverlay) {
+        if (m_findPageOverlay) {
+            // Get rid of the overlay.
+            m_webPage->uninstallPageOverlay();
+        }
+        
+        ASSERT(!m_findPageOverlay);
         return;
+    }
+
+    if (!m_findPageOverlay) {
+        OwnPtr<FindPageOverlay> findPageOverlay = FindPageOverlay::create(this);
+        m_findPageOverlay = findPageOverlay.get();
+        m_webPage->installPageOverlay(findPageOverlay.release());
+    } else {
+        // The page overlay needs to be repainted.
+        m_findPageOverlay->setNeedsDisplay();
     }
 }
 
 void FindController::hideFindUI()
 {
     // FIXME: Implement.
+}
+
+void FindController::findPageOverlayDestroyed()
+{
+    ASSERT(m_findPageOverlay);
+    m_findPageOverlay = 0;
 }
 
 } // namespace WebKit

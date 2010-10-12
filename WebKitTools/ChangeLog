@@ -1,3 +1,14 @@
+2010-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Start fleshing out find page overlays
+        https://bugs.webkit.org/show_bug.cgi?id=47559
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController find:]):
+        Pass kWKFindOptionsShowOverlay to WKPageFindString.
+
 2010-10-12  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.

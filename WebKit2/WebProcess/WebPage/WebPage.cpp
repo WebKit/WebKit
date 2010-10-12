@@ -30,6 +30,7 @@
 #include "InjectedBundle.h"
 #include "MessageID.h"
 #include "NetscapePlugin.h"
+#include "PageOverlay.h"
 #include "PluginProcessConnection.h"
 #include "PluginProcessConnectionManager.h"
 #include "PluginProxy.h"
@@ -382,6 +383,13 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     graphicsContext.clip(rect);
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
     graphicsContext.restore();
+
+    if (m_pageOverlay) {
+        graphicsContext.save();
+        graphicsContext.clip(rect);
+        m_pageOverlay->drawRect(graphicsContext, rect);
+        graphicsContext.restore();
+    }
 }
 
 double WebPage::textZoomFactor() const
@@ -422,6 +430,17 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
     if (!frame)
         return;
     return frame->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
+}
+
+void WebPage::installPageOverlay(PassOwnPtr<PageOverlay> pageOverlay)
+{
+    m_pageOverlay = pageOverlay;
+    m_pageOverlay->setPage(this);
+}
+
+void WebPage::uninstallPageOverlay()
+{
+    m_pageOverlay = 0;
 }
 
 // Events 

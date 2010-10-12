@@ -23,38 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FindController_h
-#define FindController_h
+#ifndef PageOverlay_h
+#define PageOverlay_h
 
-#include "FindOptions.h"
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
-    class Frame;
+    class GraphicsContext;
+    class IntRect;
 }
 
 namespace WebKit {
 
-class FindPageOverlay;
 class WebPage;
 
-class FindController {
-    WTF_MAKE_NONCOPYABLE(FindController);
+class PageOverlay {
+    WTF_MAKE_NONCOPYABLE(PageOverlay);
 
 public:
-    explicit FindController(WebPage*);
+    virtual ~PageOverlay();
+    virtual void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
+    
+    void setPage(WebPage*);
+    void setNeedsDisplay();
 
-    void findString(const String&, FindDirection, FindOptions, unsigned maxNumMatches);
-    void hideFindUI();
-
-    void findPageOverlayDestroyed();
+protected:
+    PageOverlay();
 
 private:
     WebPage* m_webPage;
-    FindPageOverlay* m_findPageOverlay;
 };
 
 } // namespace WebKit
 
-#endif // FindController_h
+#endif // PageOverlay_h

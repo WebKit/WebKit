@@ -64,6 +64,7 @@ namespace WebCore {
 namespace WebKit {
 
 class DrawingArea;
+class PageOverlay;
 class PluginView;
 class WebEvent;
 class WebFrame;
@@ -156,6 +157,9 @@ public:
 #elif PLATFORM(WIN)
     HWND nativeWindow() const { return m_nativeWindow; }
 #endif
+
+    void installPageOverlay(PassOwnPtr<PageOverlay>);
+    void uninstallPageOverlay();
 
     static const WebEvent* currentEvent();
 
@@ -252,6 +256,7 @@ private:
     InjectedBundlePageUIClient m_uiClient;
 
     FindController m_findController;
+    OwnPtr<PageOverlay> m_pageOverlay;
 
     uint64_t m_pageID;
 };
