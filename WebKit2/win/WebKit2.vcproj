@@ -1952,6 +1952,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Platform\CoreIPC\BinarySemaphore.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\BinarySemaphore.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\Connection.cpp"
 					>
 				</File>

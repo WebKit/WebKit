@@ -30,6 +30,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
+#include "BinarySemaphore.h"
 #include "MessageID.h"
 #include "WorkQueue.h"
 #include <wtf/HashMap.h>
@@ -224,12 +225,10 @@ private:
             return reply.release();
         }
     };
+    
+    BinarySemaphore m_waitForSyncReplySemaphore;
 
-
-    Mutex m_waitForSyncReplyMutex;
-    ThreadCondition m_waitForSyncReplyCondition;
-
-    // This is protected by the m_waitForSyncReply mutex.    
+    Mutex m_pendingSyncRepliesMutex;
     Vector<PendingSyncReply> m_pendingSyncReplies;
 
 #if PLATFORM(MAC)

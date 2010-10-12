@@ -155,6 +155,7 @@ HEADERS += \
     Platform/CoreIPC/ArgumentEncoder.h \
     Platform/CoreIPC/Arguments.h \
     Platform/CoreIPC/Attachment.h \
+    Platform/CoreIPC/BinarySemaphore.h \
     Platform/CoreIPC/Connection.h \
     Platform/CoreIPC/CoreIPCMessageKinds.h \
     Platform/CoreIPC/DataReference.h \
@@ -304,6 +305,7 @@ SOURCES += \
     Platform/CoreIPC/ArgumentDecoder.cpp \
     Platform/CoreIPC/ArgumentEncoder.cpp \
     Platform/CoreIPC/Attachment.cpp \
+    Platform/CoreIPC/BinarySemaphore.cpp \
     Platform/CoreIPC/Connection.cpp \
     Platform/CoreIPC/DataReference.cpp \
     Platform/CoreIPC/qt/ConnectionQt.cpp \
