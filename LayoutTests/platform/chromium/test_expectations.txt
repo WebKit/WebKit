@@ -3227,8 +3227,15 @@ BUG58735 LINUX : http/tests/misc/prefetch-purpose.html = PASS TEXT
 // Failing from r69485
 BUG58743 WIN : fast/filesystem/op-remove.html = TEXT
 
+// New test added in r69516.
+BUG_AJWONG : fast/js/basic-strict-mode.html = TEXT
+
 // Needs rebaselining after r69517.
 BUG_AJWONG MAC WIN WIN-XP : svg/batik/text/textOnPathSpaces.svg = IMAGE
 BUG_AJWONG MAC : svg/W3C-SVG-1.1/animate-elem-81-t.svg = TEXT
 BUG_AJWONG MAC : svg/W3C-SVG-1.1/animate-elem-82-t.svg = TEXT
 BUG_AJWONG MAC : svg/W3C-SVG-1.1/animate-elem-83-t.svg = TEXT
+
+// Started failing around Webkit r69541 in this build.
+// http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40424
+BUG_AJWONG LINUX : fast/dom/prototype-inheritance.html = TEXT
