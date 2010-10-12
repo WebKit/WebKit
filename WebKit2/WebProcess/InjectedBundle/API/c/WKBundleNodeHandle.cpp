@@ -42,3 +42,13 @@ WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef contextRef, JSObject
     RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef);
     return toAPI(nodeHandle.release().releaseRef());
 }
+
+void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandleRef, WKStringRef valueRef)
+{
+    toImpl(htmlInputElementHandleRef)->setHTMLInputElementValueForUser(toWTFString(valueRef));
+}
+
+void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool filled)
+{
+    toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutofilled(filled);
+}

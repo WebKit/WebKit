@@ -28,12 +28,18 @@
 
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKGeometry.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef context, JSObjectRef object);
+
+/* Additional DOM Operations */
+
+WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandle, WKStringRef value);
+WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandle, bool filled);
 
 #ifdef __cplusplus
 }

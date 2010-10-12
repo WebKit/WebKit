@@ -25,6 +25,7 @@
 
 #include "APIObject.h"
 #include <JavaScriptCore/JSBase.h>
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -46,6 +47,11 @@ public:
     ~InjectedBundleNodeHandle();
 
     WebCore::Node* coreNode() const;
+
+    // Additional DOM Operations
+    // Note: These should only be operations that are not exposed to JavaScript.
+    void setHTMLInputElementValueForUser(const String&);
+    void setHTMLInputElementAutofilled(bool);
 
 private:
     static PassRefPtr<InjectedBundleNodeHandle> create(WebCore::Node*);
