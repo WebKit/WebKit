@@ -349,7 +349,13 @@ public:
     // WebFileSystemCallbacks::didOpenFileSystem() must be called with
     // a name and root path for the requested FileSystem when the operation
     // is completed successfully. WebFileSystemCallbacks::didFail() must be
-    // called otherwise.
+    // called otherwise. The create bool is for indicating whether or not to
+    // create root path for file systems if it do not exist.
+    virtual void openFileSystem(
+        WebFrame*, WebFileSystem::Type, long long size,
+        bool create, WebFileSystemCallbacks*) { }
+
+    // This method will be deleted once chromium uses the new method above.
     virtual void openFileSystem(
         WebFrame*, WebFileSystem::Type, long long size,
         WebFileSystemCallbacks*) { }

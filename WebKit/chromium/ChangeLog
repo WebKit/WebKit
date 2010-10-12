@@ -1,3 +1,15 @@
+2010-10-12  Kavita Kanetkar  <kkanetkar@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        [FileSystem] Add ability to pass a bool to create or not create root path while opening filesystem.
+        https://bugs.webkit.org/show_bug.cgi?id=47519
+
+        * public/WebCommonWorkerClient.h:
+        (WebKit::WebCommonWorkerClient::openFileSystem):
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::openFileSystem):
+
 2010-10-12  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Nate Chapin (in person).
