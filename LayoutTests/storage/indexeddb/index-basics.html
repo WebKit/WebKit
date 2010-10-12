@@ -10,13 +10,13 @@
 <div id="console"></div>
 <script>
 
-description("Test the basics of IndexedDB's IDBIndex.");
+description("Test the basics of IndexedDB's webkitIDBIndex.");
 if (window.layoutTestController) 
     layoutTestController.waitUntilDone();
 
 function test()
 {
-    result = evalAndLog("indexedDB.open('name', 'description')");
+    result = evalAndLog("webkitIndexedDB.open('name', 'description')");
     verifyResult(result);
     result.onsuccess = setVersion;
     result.onerror = unexpectedErrorCallback;
@@ -118,7 +118,7 @@ function getDataFail()
 function getObjectDataFail()
 {
     verifyErrorEvent(event);
-    shouldBe("event.code", "IDBDatabaseException.NOT_FOUND_ERR");
+    shouldBe("event.code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
 
     result = evalAndLog("indexObject.get('does not exist')");
     verifyResult(result);
@@ -129,7 +129,7 @@ function getObjectDataFail()
 function openKeyCursor()
 {
     verifyErrorEvent(event);
-    shouldBe("event.code", "IDBDatabaseException.NOT_FOUND_ERR");
+    shouldBe("event.code", "webkitIDBDatabaseException.NOT_FOUND_ERR");
 
     window.result = evalAndLog("indexObject.openKeyCursor()");
     verifyResult(result);

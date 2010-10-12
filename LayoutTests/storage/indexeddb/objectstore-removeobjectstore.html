@@ -10,13 +10,13 @@
 <div id="console"></div>
 <script>
 
-description("Test IndexedDB's IDBObjectStore.removeObjectStore().");
+description("Test IndexedDB's webkitIDBObjectStore.removeObjectStore().");
 if (window.layoutTestController) 
     layoutTestController.waitUntilDone();
 
 function test()
 {
-    result = evalAndLog("indexedDB.open('name', 'description')");
+    result = evalAndLog("webkitIndexedDB.open('name', 'description')");
     verifyResult(result);
     result.onsuccess = startSetVersion;
     result.onerror = unexpectedErrorCallback;

@@ -700,7 +700,7 @@ void DOMWindow::pageDestroyed()
 }
 
 #if ENABLE(INDEXED_DATABASE)
-IDBFactory* DOMWindow::indexedDB() const
+IDBFactory* DOMWindow::webkitIndexedDB() const
 {
     if (m_idbFactory)
         return m_idbFactory.get();

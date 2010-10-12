@@ -3,20 +3,20 @@ Test IndexedDB's KeyRange.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS 'SINGLE' in IDBKeyRange is true
-PASS 'LEFT_OPEN' in IDBKeyRange is true
-PASS 'RIGHT_OPEN' in IDBKeyRange is true
-PASS 'LEFT_BOUND' in IDBKeyRange is true
-PASS 'RIGHT_BOUND' in IDBKeyRange is true
-PASS 'left' in IDBKeyRange is false
-PASS 'right' in IDBKeyRange is false
-PASS 'flags' in IDBKeyRange is false
-PASS 'only' in IDBKeyRange is true
-PASS 'leftBound' in IDBKeyRange is true
-PASS 'rightBound' in IDBKeyRange is true
-PASS 'bound' in IDBKeyRange is true
+PASS 'SINGLE' in webkitIDBKeyRange is true
+PASS 'LEFT_OPEN' in webkitIDBKeyRange is true
+PASS 'RIGHT_OPEN' in webkitIDBKeyRange is true
+PASS 'LEFT_BOUND' in webkitIDBKeyRange is true
+PASS 'RIGHT_BOUND' in webkitIDBKeyRange is true
+PASS 'left' in webkitIDBKeyRange is false
+PASS 'right' in webkitIDBKeyRange is false
+PASS 'flags' in webkitIDBKeyRange is false
+PASS 'only' in webkitIDBKeyRange is true
+PASS 'leftBound' in webkitIDBKeyRange is true
+PASS 'rightBound' in webkitIDBKeyRange is true
+PASS 'bound' in webkitIDBKeyRange is true
 
-instance = IDBKeyRange.only(1)
+instance = webkitIDBKeyRange.only(1)
 PASS 'SINGLE' in instance is true
 PASS 'LEFT_OPEN' in instance is true
 PASS 'RIGHT_OPEN' in instance is true
@@ -30,113 +30,113 @@ PASS 'leftBound' in instance is false
 PASS 'rightBound' in instance is false
 PASS 'bound' in instance is false
 
-IDBKeyRange.only(1)
+webkitIDBKeyRange.only(1)
 PASS keyRange.left is 1
 PASS keyRange.right is 1
 PASS keyRange.flags is keyRange.SINGLE
-IDBKeyRange.only('a')
+webkitIDBKeyRange.only('a')
 PASS keyRange.left is 'a'
 PASS keyRange.right is 'a'
 PASS keyRange.flags is keyRange.SINGLE
-IDBKeyRange.leftBound(10,true)
+webkitIDBKeyRange.leftBound(10,true)
 PASS keyRange.left is 10
 PASS keyRange.right is null
 PASS keyRange.flags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
-IDBKeyRange.leftBound(11,false)
+webkitIDBKeyRange.leftBound(11,false)
 PASS keyRange.left is 11
 PASS keyRange.right is null
 PASS keyRange.flags is keyRange.LEFT_BOUND
-IDBKeyRange.leftBound(12,undefined)
+webkitIDBKeyRange.leftBound(12,undefined)
 PASS keyRange.left is 12
 PASS keyRange.right is null
 PASS keyRange.flags is keyRange.LEFT_BOUND
-IDBKeyRange.leftBound('aa',true)
+webkitIDBKeyRange.leftBound('aa',true)
 PASS keyRange.left is 'aa'
 PASS keyRange.right is null
 PASS keyRange.flags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
-IDBKeyRange.leftBound('ab',false)
+webkitIDBKeyRange.leftBound('ab',false)
 PASS keyRange.left is 'ab'
 PASS keyRange.right is null
 PASS keyRange.flags is keyRange.LEFT_BOUND
-IDBKeyRange.leftBound('ac',undefined)
+webkitIDBKeyRange.leftBound('ac',undefined)
 PASS keyRange.left is 'ac'
 PASS keyRange.right is null
 PASS keyRange.flags is keyRange.LEFT_BOUND
-IDBKeyRange.rightBound(20,true)
+webkitIDBKeyRange.rightBound(20,true)
 PASS keyRange.right is 20
 PASS keyRange.left is null
 PASS keyRange.flags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
-IDBKeyRange.rightBound(21,false)
+webkitIDBKeyRange.rightBound(21,false)
 PASS keyRange.right is 21
 PASS keyRange.left is null
 PASS keyRange.flags is keyRange.RIGHT_BOUND
-IDBKeyRange.rightBound(22,undefined)
+webkitIDBKeyRange.rightBound(22,undefined)
 PASS keyRange.right is 22
 PASS keyRange.left is null
 PASS keyRange.flags is keyRange.RIGHT_BOUND
-IDBKeyRange.rightBound('ba',true)
+webkitIDBKeyRange.rightBound('ba',true)
 PASS keyRange.right is 'ba'
 PASS keyRange.left is null
 PASS keyRange.flags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
-IDBKeyRange.rightBound('bb',false)
+webkitIDBKeyRange.rightBound('bb',false)
 PASS keyRange.right is 'bb'
 PASS keyRange.left is null
 PASS keyRange.flags is keyRange.RIGHT_BOUND
-IDBKeyRange.rightBound('bc',undefined)
+webkitIDBKeyRange.rightBound('bc',undefined)
 PASS keyRange.right is 'bc'
 PASS keyRange.left is null
 PASS keyRange.flags is keyRange.RIGHT_BOUND
-IDBKeyRange.bound(30,40,undefined,undefined)
+webkitIDBKeyRange.bound(30,40,undefined,undefined)
 PASS keyRange.left is 30
 PASS keyRange.right is 40
 PASS leftFlags is keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
-IDBKeyRange.bound(31,41,false,false)
+webkitIDBKeyRange.bound(31,41,false,false)
 PASS keyRange.left is 31
 PASS keyRange.right is 41
 PASS leftFlags is keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
-IDBKeyRange.bound(32,42,false,true)
+webkitIDBKeyRange.bound(32,42,false,true)
 PASS keyRange.left is 32
 PASS keyRange.right is 42
 PASS leftFlags is keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
-IDBKeyRange.bound(33,43,true,false)
+webkitIDBKeyRange.bound(33,43,true,false)
 PASS keyRange.left is 33
 PASS keyRange.right is 43
 PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
-IDBKeyRange.bound(34,44,true,true)
+webkitIDBKeyRange.bound(34,44,true,true)
 PASS keyRange.left is 34
 PASS keyRange.right is 44
 PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
-IDBKeyRange.bound('aaa','aba',false,false)
+webkitIDBKeyRange.bound('aaa','aba',false,false)
 PASS keyRange.left is 'aaa'
 PASS keyRange.right is 'aba'
 PASS leftFlags is keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
-IDBKeyRange.bound('aab','abb',undefined,undefined)
+webkitIDBKeyRange.bound('aab','abb',undefined,undefined)
 PASS keyRange.left is 'aab'
 PASS keyRange.right is 'abb'
 PASS leftFlags is keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
-IDBKeyRange.bound('aac','abc',false,false)
+webkitIDBKeyRange.bound('aac','abc',false,false)
 PASS keyRange.left is 'aac'
 PASS keyRange.right is 'abc'
 PASS leftFlags is keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
-IDBKeyRange.bound('aad','abd',false,true)
+webkitIDBKeyRange.bound('aad','abd',false,true)
 PASS keyRange.left is 'aad'
 PASS keyRange.right is 'abd'
 PASS leftFlags is keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
-IDBKeyRange.bound('aae','abe',true,false)
+webkitIDBKeyRange.bound('aae','abe',true,false)
 PASS keyRange.left is 'aae'
 PASS keyRange.right is 'abe'
 PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_BOUND
-IDBKeyRange.bound('aaf','abf',true,true)
+webkitIDBKeyRange.bound('aaf','abf',true,true)
 PASS keyRange.left is 'aaf'
 PASS keyRange.right is 'abf'
 PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND

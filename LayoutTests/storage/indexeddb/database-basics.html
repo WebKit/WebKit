@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("indexedDB.open('name', 'description')");
+    result = evalAndLog("webkitIndexedDB.open('name', 'description')");
     verifyResult(result);
     result.onsuccess = openSuccess;
     result.onerror = unexpectedErrorCallback;

@@ -1,9 +1,9 @@
-Test IndexedDB's IDBIndex.openCursor + the cursor it produces in depth.
+Test IndexedDB's webkitIDBIndex.openCursor + the cursor it produces in depth.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB.open('someDB', 'some description')
+webkitIndexedDB.open('someDB', 'some description')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
 PASS 'readyState' in result is true

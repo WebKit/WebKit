@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function checkSingleKeyRange(value)
 {
-    keyRange = evalAndLog("IDBKeyRange.only(" + value + ")");
+    keyRange = evalAndLog("webkitIDBKeyRange.only(" + value + ")");
     shouldBe("keyRange.left", "" + value);
     shouldBe("keyRange.right", "" + value);
     shouldBe("keyRange.flags", "keyRange.SINGLE");
@@ -24,7 +24,7 @@ function checkSingleKeyRange(value)
 
 function checkLeftBoundKeyRange(value, open)
 {
-    keyRange = evalAndLog("IDBKeyRange.leftBound(" + value + "," + open + ")");
+    keyRange = evalAndLog("webkitIDBKeyRange.leftBound(" + value + "," + open + ")");
     shouldBe("keyRange.left", "" + value);
     shouldBeNull("keyRange.right");
     shouldBe("keyRange.flags", open ? "keyRange.LEFT_OPEN | keyRange.LEFT_BOUND" : "keyRange.LEFT_BOUND");
@@ -32,7 +32,7 @@ function checkLeftBoundKeyRange(value, open)
 
 function checkRightBoundKeyRange(value, open)
 {
-    keyRange = evalAndLog("IDBKeyRange.rightBound(" + value + "," + open + ")");
+    keyRange = evalAndLog("webkitIDBKeyRange.rightBound(" + value + "," + open + ")");
     shouldBe("keyRange.right", "" + value);
     shouldBeNull("keyRange.left");
     shouldBe("keyRange.flags", open ? "keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND" : "keyRange.RIGHT_BOUND");
@@ -40,7 +40,7 @@ function checkRightBoundKeyRange(value, open)
 
 function checkBoundKeyRange(left, right, openLeft, openRight)
 {
-    keyRange = evalAndLog("IDBKeyRange.bound(" + left + "," + right + "," + openLeft + "," + openRight + ")");
+    keyRange = evalAndLog("webkitIDBKeyRange.bound(" + left + "," + right + "," + openLeft + "," + openRight + ")");
     shouldBe("keyRange.left", "" + left);
     shouldBe("keyRange.right", "" + right);
     leftFlags = keyRange.flags & (keyRange.LEFT_OPEN | keyRange.LEFT_BOUND);
@@ -51,22 +51,22 @@ function checkBoundKeyRange(left, right, openLeft, openRight)
 
 function test()
 {
-    shouldBeTrue("'SINGLE' in IDBKeyRange");
-    shouldBeTrue("'LEFT_OPEN' in IDBKeyRange");
-    shouldBeTrue("'RIGHT_OPEN' in IDBKeyRange");
-    shouldBeTrue("'LEFT_BOUND' in IDBKeyRange");
-    shouldBeTrue("'RIGHT_BOUND' in IDBKeyRange");
-    shouldBeFalse("'left' in IDBKeyRange");
-    shouldBeFalse("'right' in IDBKeyRange");
-    shouldBeFalse("'flags' in IDBKeyRange");
-    shouldBeTrue("'only' in IDBKeyRange");
-    shouldBeTrue("'leftBound' in IDBKeyRange");
-    shouldBeTrue("'rightBound' in IDBKeyRange");
-    shouldBeTrue("'bound' in IDBKeyRange");
+    shouldBeTrue("'SINGLE' in webkitIDBKeyRange");
+    shouldBeTrue("'LEFT_OPEN' in webkitIDBKeyRange");
+    shouldBeTrue("'RIGHT_OPEN' in webkitIDBKeyRange");
+    shouldBeTrue("'LEFT_BOUND' in webkitIDBKeyRange");
+    shouldBeTrue("'RIGHT_BOUND' in webkitIDBKeyRange");
+    shouldBeFalse("'left' in webkitIDBKeyRange");
+    shouldBeFalse("'right' in webkitIDBKeyRange");
+    shouldBeFalse("'flags' in webkitIDBKeyRange");
+    shouldBeTrue("'only' in webkitIDBKeyRange");
+    shouldBeTrue("'leftBound' in webkitIDBKeyRange");
+    shouldBeTrue("'rightBound' in webkitIDBKeyRange");
+    shouldBeTrue("'bound' in webkitIDBKeyRange");
 
     debug("");
 
-    var instance = evalAndLog("instance = IDBKeyRange.only(1)");
+    var instance = evalAndLog("instance = webkitIDBKeyRange.only(1)");
     shouldBeTrue("'SINGLE' in instance");
     shouldBeTrue("'LEFT_OPEN' in instance");
     shouldBeTrue("'RIGHT_OPEN' in instance");

@@ -171,14 +171,14 @@ bool WebRuntimeFeatures::isGeolocationEnabled()
 void WebRuntimeFeatures::enableIndexedDatabase(bool enable)
 {
 #if ENABLE(INDEXED_DATABASE)
-    RuntimeEnabledFeatures::setIndexedDBEnabled(enable);
+    RuntimeEnabledFeatures::setWebkitIndexedDBEnabled(enable);
 #endif
 }
 
 bool WebRuntimeFeatures::isIndexedDatabaseEnabled()
 {
 #if ENABLE(INDEXED_DATABASE)
-    return RuntimeEnabledFeatures::indexedDBEnabled();
+    return RuntimeEnabledFeatures::webkitIndexedDBEnabled();
 #else
     return false;
 #endif

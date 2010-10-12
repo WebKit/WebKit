@@ -234,7 +234,7 @@ namespace WebCore {
         void pageDestroyed();
 
 #if ENABLE(INDEXED_DATABASE)
-        IDBFactory* indexedDB() const;
+        IDBFactory* webkitIndexedDB() const;
 #endif
 
 #if ENABLE(FILE_SYSTEM)

@@ -16,7 +16,7 @@ if (window.layoutTestController)
 
 function test()
 {
-    result = evalAndLog("indexedDB.open('name', 'description')");
+    result = evalAndLog("webkitIndexedDB.open('name', 'description')");
     verifyResult(result);
     result.onsuccess = openSuccess;
     result.onerror = unexpectedErrorCallback;
@@ -159,7 +159,7 @@ function addAgainFailure()
     debug("addAgainFailure():");
     verifyErrorEvent(event);
     // FIXME: This error code needs to be specced.
-    shouldBe("event.code", "IDBDatabaseException.UNKNOWN_ERR");
+    shouldBe("event.code", "webkitIDBDatabaseException.UNKNOWN_ERR");
 
     transaction = evalAndLog("db.transaction()");
     transaction.onabort = unexpectedErrorCallback;
