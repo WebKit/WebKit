@@ -1,3 +1,16 @@
+2010-10-11  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Attempt to fix windows build failure.
+
+        Remove WebIconFetcher from WebKit and IconFetcher from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=47523
+
+        * Interfaces/IWebFramePrivate.idl: s/unused1/unused2/
+        * Interfaces/WebKit.idl: Touched.
+        * WebFrame.cpp: s/unused1/unused2/
+        (WebFrame::unused2):
+        * WebFrame.h: s/unused1/unused2/
+
 2010-10-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

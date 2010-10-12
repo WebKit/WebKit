@@ -79,7 +79,7 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT pendingFrameUnloadEventCount([out, retval] UINT* result);
 
-    HRESULT unused1();
+    HRESULT unused2();
 
     HRESULT paintDocumentRectToContext([in] RECT rect, [in] OLE_HANDLE deviceContext);
 
