@@ -258,7 +258,7 @@ reviewers_list = [
     Reviewer("Laszlo Gombos", "laszlo.1.gombos@nokia.com", "lgombos"),
     Reviewer("Maciej Stachowiak", "mjs@apple.com", "othermaciej"),
     Reviewer("Mark Rowe", "mrowe@apple.com", "bdash"),
-    Reviewer("Martin Robinson", ["mrobinson@igalia.com", "mrobinson@webkit.org", "martin.james.robinson@gmail.com"], "mrobinson"),
+    Reviewer("Martin Robinson", ["mrobinson@webkit.org", "mrobinson@igalia.com", "martin.james.robinson@gmail.com"], "mrobinson"),
     Reviewer("Nate Chapin", "japhet@chromium.org", "japhet"),
     Reviewer("Nikolas Zimmermann", ["zimmermann@kde.org", "zimmermann@physik.rwth-aachen.de", "zimmermann@webkit.org"], "wildfox"),
     Reviewer("Ojan Vafai", "ojan@chromium.org", "ojan"),

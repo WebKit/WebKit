@@ -1,3 +1,15 @@
+2010-10-11  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        change the order of mrobinson's email addresses so bugs.webkit.org suggests the right one
+        https://bugs.webkit.org/show_bug.cgi?id=47513
+
+        bugs.webkit.org suggests mrobinson@igalia.com as an autocomplete,
+        which doesn't actually work.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-10-11  Prasad Tammana  <prasadt@chromium.org>
 
         Reviewed by Dmitry Titov.
