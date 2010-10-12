@@ -3206,6 +3206,7 @@ BUG58358 WIN LINUX : fast/css/transformed-mask.html = IMAGE+TEXT
 BUG58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
 
 // Failing somewhere between after Webkit r69367 and r69417.
+BUG58970 LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 BUG58931 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE PASS
 
 // Failing from around r62021
