@@ -1,3 +1,13 @@
+2010-10-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47556
+        WKBundleNodeHandlePrivate.h should be marked private, not project
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Marked WKBundleNodeHandlePrivate.h as private.
+
 2010-10-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

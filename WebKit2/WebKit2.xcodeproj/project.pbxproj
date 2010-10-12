@@ -288,7 +288,7 @@
 		BC4BEEAC120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEEAA120A0A5F00FBA0C7 /* InjectedBundleNodeHandle.cpp */; };
 		BC4BEFE1120A1A4C00FBA0C7 /* WKBundleNodeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC4BEFDF120A1A4C00FBA0C7 /* WKBundleNodeHandle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC4BEFE2120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC4BEFE0120A1A4C00FBA0C7 /* WKBundleNodeHandle.cpp */; };
-		BC57450C1263B155006F0F12 /* WKBundleNodeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC57450B1263B155006F0F12 /* WKBundleNodeHandlePrivate.h */; };
+		BC57450C1263B155006F0F12 /* WKBundleNodeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC57450B1263B155006F0F12 /* WKBundleNodeHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC59534210FC04520098F82D /* WebLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC59534010FC04520098F82D /* WebLoaderClient.h */; };
 		BC597075116591D000551FCA /* ProcessModel.h in Headers */ = {isa = PBXBuildFile; fileRef = BC597074116591D000551FCA /* ProcessModel.h */; };
 		BC5F7BB41182376C0052C02C /* ChunkedUpdateDrawingArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5F7BB21182376C0052C02C /* ChunkedUpdateDrawingArea.cpp */; };
