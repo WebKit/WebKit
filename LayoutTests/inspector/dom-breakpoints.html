@@ -25,6 +25,8 @@ function removeElement(elementId)
 
 var test = function()
 {
+    var subtreeModifiedBreakpoint;
+    var attributeModifiedBreakpoint;
     testInsertChild = {};
     testInsertChild.step1 = function()
     {
@@ -33,7 +35,7 @@ var test = function()
     };
     testInsertChild.step2 = function(node)
     {
-        node.setBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        subtreeModifiedBreakpoint = WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.SubtreeModified);
         InspectorTest.addResult("Set 'Subtree Modified' DOM breakpoint on rootElement.");
         InspectorTest.evaluateInPageWithTimeout("appendElement('rootElement', 'childElement')");
         InspectorTest.addResult("Append childElement to rootElement.");
@@ -71,11 +73,7 @@ var test = function()
     testRemoveChild.step2 = function(callFrames)
     {
         dumpStatus(callFrames);
-        findDOMNodeById("rootElement", testRemoveChild.step3);
-    }
-    testRemoveChild.step3 = function(node)
-    {
-        node.removeBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        subtreeModifiedBreakpoint.remove();
         InspectorTest.resumeExecution(testModifyAttribute.step1);
     }
 
@@ -87,7 +85,7 @@ var test = function()
     }
     testModifyAttribute.step2 = function(node)
     {
-        node.setBreakpoint(WebInspector.DOMBreakpoint.Types.AttributeModified);
+        attributeModifiedBreakpoint = WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.AttributeModified);
         InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
         InspectorTest.evaluateInPageWithTimeout("modifyAttribute('rootElement', 'className', 'foo')");
         InspectorTest.addResult("Modify rootElement className.");
@@ -96,7 +94,7 @@ var test = function()
     testModifyAttribute.step3 = function(node, callFrames)
     {
         dumpStatus(callFrames);
-        node.removeBreakpoint(WebInspector.DOMBreakpoint.Types.AttributeModified);
+        attributeModifiedBreakpoint.remove();
         InspectorTest.resumeExecution(testRemoveNode.step1);
     }
 
@@ -113,7 +111,7 @@ var test = function()
     }
     testRemoveNode.step3 = function(node)
     {
-        node.setBreakpoint(WebInspector.DOMBreakpoint.Types.NodeRemoved);
+        WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.NodeRemoved);
         InspectorTest.addResult("Set 'Node Removed' DOM breakpoint on elementToRemove.");
         InspectorTest.evaluateInPageWithTimeout("removeElement('elementToRemove')");
         InspectorTest.addResult("Remove elementToRemove.");
@@ -133,7 +131,7 @@ var test = function()
     }
     testReload.step2 = function(node)
     {
-        node.setBreakpoint(WebInspector.DOMBreakpoint.Types.SubtreeModified);
+        WebInspector.breakpointManager.createDOMBreakpoint(node.id, WebInspector.DOMBreakpointTypes.SubtreeModified);
         InspectorTest.addResult("Set 'Subtree Modified' DOM breakpoint on rootElement.");
         InspectorTest.reloadPage(testReload.step3);
     }
