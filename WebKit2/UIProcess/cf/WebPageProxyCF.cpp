@@ -29,6 +29,8 @@
 #include "WebBackForwardList.h"
 #include "WebData.h"
 
+#include <CoreFoundation/CFPropertyList.h>
+
 using namespace WebCore;
 
 namespace WebKit {

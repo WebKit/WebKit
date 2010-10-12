@@ -1,5 +1,11 @@
 2010-10-11  Brian Weinstein  <bweinstein@apple.com>
 
+        Windows build fix. Add a needed include.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+
+2010-10-11  Brian Weinstein  <bweinstein@apple.com>
+
         Windows build fix. Wrap calls to CFSTR in parentheses.
 
         * UIProcess/cf/WebBackForwardListCF.cpp:
