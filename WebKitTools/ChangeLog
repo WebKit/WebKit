@@ -1,3 +1,23 @@
+2010-10-12  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] editing/input/emacs-ctrl-o.html
+
+        ctrl-o is bound to a sequence of commands on Mac, namely:
+        insertParagraphSeparator then moveLeft. In the DRT, we just interpret
+        ctrl-o in EventSenderQt as '\n', i.e. insertParagraphSeparator. As a
+        result we only issue one command, so don't generate the change in caret
+        position that results in the extra editing delegate messages.
+
+        So for the sake of not managing suspicious-looking differences, just
+        make DRT issue the appropriate edit commands to pass the test.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47548
+
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::keyDown):
+
 2010-10-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

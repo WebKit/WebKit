@@ -254,9 +254,18 @@ void EventSender::keyDown(const QString& string, const QStringList& modifiers, u
                 modifs = Qt::ControlModifier;
             s = QString();
         } else if (code == 'o' && modifs == Qt::ControlModifier) {
+            // Mimic the emacs ctrl-o binding on Mac by inserting a paragraph
+            // separator and then putting the cursor back to its original
+            // position. Allows us to pass emacs-ctrl-o.html
             s = QLatin1String("\n");
             code = '\n';
             modifs = 0;
+            QKeyEvent event(QEvent::KeyPress, code, modifs, s);
+            sendEvent(m_page, &event);
+            QKeyEvent event2(QEvent::KeyRelease, code, modifs, s);
+            sendEvent(m_page, &event2);
+            s = QString();
+            code = Qt::Key_Left;
         } else if (code == 'y' && modifs == Qt::ControlModifier) {
             s = QLatin1String("c");
             code = 'c';
