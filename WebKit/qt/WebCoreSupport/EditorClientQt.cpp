@@ -457,39 +457,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
             m_page->triggerAction(QWebPage::Copy);
         else
 #endif // QT_NO_SHORTCUT
-        switch (kevent->windowsVirtualKeyCode()) {
-        case VK_UP:
-            frame->editor()->command("MoveUp").execute();
-            break;
-        case VK_DOWN:
-            frame->editor()->command("MoveDown").execute();
-            break;
-        case VK_PRIOR: // PageUp
-            frame->editor()->command("MovePageUp").execute();
-            break;
-        case VK_NEXT: // PageDown
-            frame->editor()->command("MovePageDown").execute();
-            break;
-        case VK_HOME:
-            if (kevent->ctrlKey())
-                frame->editor()->command("MoveToBeginningOfDocument").execute();
-            break;
-        case VK_END:
-            if (kevent->ctrlKey())
-                frame->editor()->command("MoveToEndOfDocument").execute();
-            break;
-        default:
-            if (kevent->ctrlKey()) {
-                switch (kevent->windowsVirtualKeyCode()) {
-                case VK_A:
-                    frame->editor()->command("SelectAll").execute();
-                    break;
-                default:
-                    return;
-                }
-            } else
-                return;
-        }
+            return;
     }
     event->setDefaultHandled();
 }

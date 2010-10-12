@@ -1,3 +1,16 @@
+2010-10-12  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Editing commands should not be executed on non-editable content.
+        https://bugs.webkit.org/show_bug.cgi?id=47426
+
+        Remove calls to editor()->command() when we are not in editable content.
+        There is no value in doing that, and in some cases, it prevents scrolling.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2010-10-08  Hui Huang  <hui.2.huang@nokia.com>
 
         Reviewed by Simon Hausmann.
