@@ -1,3 +1,17 @@
+2010-10-12  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Cleaned up the processing of replacements after regular expression
+        processing, especially the case where there wasn't a match.
+        Changed to use empty strings instead of computing a zero length sub
+        string.
+        https://bugs.webkit.org/show_bug.cgi?id=47506
+
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::stringProtoFuncReplace):
+
 2010-10-11  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed.
