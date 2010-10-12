@@ -42,8 +42,9 @@ import sys
 import time
 
 import apache_http_server
-import test_files
+import http_lock
 import http_server
+import test_files
 import websocket_server
 
 from webkitpy.common.system import logutils
@@ -92,6 +93,7 @@ class Port(object):
         self._http_server = None
         self._webkit_base_dir = None
         self._websocket_server = None
+        self._http_lock = None
 
     def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this
@@ -500,6 +502,10 @@ class Port(object):
             self._options.results_directory)
         self._websocket_server.start()
 
+    def acquire_http_lock(self):
+        self._http_lock = http_lock.HttpLock(None)
+        self._http_lock.wait_for_httpd_lock()
+
     def stop_helper(self):
         """Shut down the test helper if it is running. Do nothing if
         it isn't, or it isn't available. If a port overrides start_helper()
@@ -517,6 +523,10 @@ class Port(object):
         it isn't, or it isn't available."""
         if self._websocket_server:
             self._websocket_server.stop()
+
+    def release_http_lock(self):
+        if self._http_lock:
+            self._http_lock.cleanup_http_lock()
 
     def test_expectations(self):
         """Returns the test expectations for this port.

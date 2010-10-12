@@ -704,6 +704,10 @@ class TestRunner:
         """Returns whether the test runner needs an HTTP server."""
         return self._contains_tests(self.HTTP_SUBDIR)
 
+    def needs_websocket(self):
+        """Returns whether the test runner needs a WEBSOCKET server."""
+        return self._contains_tests(self.WEBSOCKET_SUBDIR)
+
     def set_up_run(self):
         """Configures the system to be ready to run tests.
 
@@ -736,14 +740,16 @@ class TestRunner:
         if not result_summary:
             return None
 
-        if self.needs_http():
-            self._printer.print_update('Starting HTTP server ...')
-            self._port.start_http_server()
+        # Do not start when http locking is enabled.
+        if not self._options.wait_for_httpd:
+            if self.needs_http():
+                self._printer.print_update('Starting HTTP server ...')
+                self._port.start_http_server()
 
-        if self._contains_tests(self.WEBSOCKET_SUBDIR):
-            self._printer.print_update('Starting WebSocket server ...')
-            self._port.start_websocket_server()
-            # self._websocket_secure_server.Start()
+            if self.needs_websocket():
+                self._printer.print_update('Starting WebSocket server ...')
+                self._port.start_websocket_server()
+                # self._websocket_secure_server.Start()
 
         return result_summary
 
@@ -834,10 +840,11 @@ class TestRunner:
         sys.stdout.flush()
         _log.debug("flushing stderr")
         sys.stderr.flush()
-        _log.debug("stopping http server")
-        self._port.stop_http_server()
-        _log.debug("stopping websocket server")
-        self._port.stop_websocket_server()
+        if not self._options.wait_for_httpd:
+            _log.debug("stopping http server")
+            self._port.stop_http_server()
+            _log.debug("stopping websocket server")
+            self._port.stop_websocket_server()
         _log.debug("stopping helper")
         self._port.stop_helper()
 
@@ -1593,13 +1600,12 @@ def parse_args(args=None):
         optparse.make_option("--no-record-results", action="store_false",
             default=True, dest="record_results",
             help="Don't record the results."),
+        optparse.make_option("--wait-for-httpd", action="store_true",
+            default=False, dest="wait_for_httpd",
+            help="Wait for http locks."),
         # old-run-webkit-tests also has HTTP toggle options:
         # --[no-]http                     Run (or do not run) http tests
         #                                 (default: run)
-        # --[no-]wait-for-httpd           Wait for httpd if some other test
-        #                                 session is using it already (same
-        #                                 as WEBKIT_WAIT_FOR_HTTPD=1).
-        #                                 (default: 0)
     ]
 
     test_options = [

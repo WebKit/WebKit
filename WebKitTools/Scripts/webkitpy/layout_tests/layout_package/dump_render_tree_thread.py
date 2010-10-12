@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -276,6 +277,9 @@ class TestShellThread(WatchableThread):
         self._num_tests = 0
         self._start_time = 0
         self._stop_time = 0
+        self._have_http_lock = False
+        self._http_lock_wait_begin = 0
+        self._http_lock_wait_end = 0
 
         # Current group of tests we're running.
         self._current_group = None
@@ -298,7 +302,8 @@ class TestShellThread(WatchableThread):
         return self._test_results
 
     def get_total_time(self):
-        return max(self._stop_time - self._start_time, 0.0)
+        return max(self._stop_time - self._start_time -
+                   self._http_lock_wait_time(), 0.0)
 
     def get_num_tests(self):
         return self._num_tests
@@ -337,6 +342,25 @@ class TestShellThread(WatchableThread):
         do multi-threaded debugging."""
         self._run(test_runner, result_summary)
 
+    def cancel(self):
+        """Clean up http lock and set a flag telling this thread to quit."""
+        self._stop_http_lock()
+        WatchableThread.cancel(self)
+
+    def next_timeout(self):
+        """Return the time the test is supposed to finish by."""
+        if self._next_timeout:
+            return self._next_timeout + self._http_lock_wait_time()
+        return self._next_timeout
+
+    def _http_lock_wait_time(self):
+        """Return the time what http locking takes."""
+        if self._http_lock_wait_begin == 0:
+            return 0
+        if self._http_lock_wait_end == 0:
+            return time.time() - self._http_lock_wait_begin
+        return self._http_lock_wait_end - self._http_lock_wait_begin
+
     def _run(self, test_runner, result_summary):
         """Main work entry point of the thread. Basically we pull urls from the
         filename queue and run the tests until we run out of urls.
@@ -368,9 +392,23 @@ class TestShellThread(WatchableThread):
                     self._current_group, self._filename_list = \
                         self._filename_list_queue.get_nowait()
                 except Queue.Empty:
+                    self._stop_http_lock()
                     self._kill_dump_render_tree()
                     tests_run_file.close()
                     return
+
+                if self._options.wait_for_httpd:
+                    if self._current_group == "tests_to_http_lock":
+                        self._http_lock_wait_begin = time.time()
+                        self._port.acquire_http_lock()
+
+                        self._port.start_http_server()
+                        self._port.start_websocket_server()
+
+                        self._have_http_lock = True
+                        self._http_lock_wait_end = time.time()
+                    elif self._have_http_lock:
+                        self._stop_http_lock()
 
                 self._num_tests_in_current_group = len(self._filename_list)
                 self._current_group_start_time = time.time()
@@ -516,6 +554,14 @@ class TestShellThread(WatchableThread):
             self._driver = self._port.create_driver(self._test_args.png_path,
                                                     self._options)
             self._driver.start()
+
+    def _stop_http_lock(self):
+        """Stop the servers and release http lock."""
+        if self._have_http_lock:
+            self._port.stop_http_server()
+            self._port.stop_websocket_server()
+            self._port.release_http_lock()
+            self._have_http_lock = False
 
     def _kill_dump_render_tree(self):
         """Kill the DumpRenderTree process if it's running."""
