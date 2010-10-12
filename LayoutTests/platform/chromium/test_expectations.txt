@@ -3202,9 +3202,7 @@ BUG10479 LINUX MAC : svg/hixie/perf/002.xml = IMAGE PASS
 BUG58337 : platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
 
 // Failing filesystem tests
-BUGWK47375 WIN : fast/filesystem/async-operations.html = TEXT
 BUGWK47375 WIN : fast/filesystem/op-get-entry.html = TEXT
-BUGWK47375 WIN : fast/filesystem/op-move.html = TEXT
 
 // From r69334. Mask seems broken on the reflected image.
 BUG58358 WIN LINUX : fast/css/transformed-mask.html = IMAGE+TEXT
@@ -3223,9 +3221,6 @@ BUG_AJWONG WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
 // Failing from r69420
 BUG58735 SLOW WIN : http/tests/misc/prefetch-purpose.html = TEXT
 BUG58735 LINUX : http/tests/misc/prefetch-purpose.html = PASS TEXT
-
-// Failing from r69485
-BUG58743 WIN : fast/filesystem/op-remove.html = TEXT
 
 // New test added in r69516.
 BUG_AJWONG : fast/js/basic-strict-mode.html = TEXT
