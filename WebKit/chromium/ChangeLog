@@ -1,5 +1,11 @@
 2010-10-12  Jian Li  <jianli@chromium.org>
 
+        Unreview. Build fix for chromium.
+
+        * public/WebBlobRegistry.h:
+
+2010-10-12  Jian Li  <jianli@chromium.org>
+
         Reviewed by Darin Fisher.
 
         [chromium] Update WebBlobData to adapt to BlobData change in terms of
