@@ -1,3 +1,13 @@
+2010-10-12  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Nate Chapin (in person).
+
+        Fix chromium compile.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::WebPageSerializerImpl):
+        (WebKit::WebPageSerializerImpl::serialize):
+
 2010-10-12  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Gavin Barraclough.

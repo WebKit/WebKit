@@ -454,7 +454,7 @@ WebPageSerializerImpl::WebPageSerializerImpl(WebFrame* frame,
         m_localLinks.set(url.string(), localPaths[i]);
     }
 
-    ASSERT(!m_dataBuffer.length());
+    ASSERT(m_dataBuffer.isEmpty());
 }
 
 void WebPageSerializerImpl::collectTargetFrames()
@@ -534,7 +534,7 @@ bool WebPageSerializerImpl::serialize()
 
     // We have done call frames, so we send message to embedder to tell it that
     // frames are finished serializing.
-    ASSERT(!m_dataBuffer.length());
+    ASSERT(m_dataBuffer.isEmpty());
     m_client->didSerializeDataForFrame(KURL(),
                                        WebCString("", 0),
                                        WebPageSerializerClient::AllFramesAreFinished);
