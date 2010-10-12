@@ -1,3 +1,18 @@
+2010-10-07  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Zero-out all textures created via WebGraphicsContext3DDefaultImpl::texImage2D().
+        https://bugs.webkit.org/show_bug.cgi?id=47178
+        
+        Covered by fast/canvas/toDataURL-alpha.html, when run with --accelerated-2d-canvas.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::bytesPerComponent):
+        (WebKit::componentsPerPixel):
+        (WebKit::imageSizeInBytes):
+        (WebKit::WebGraphicsContext3DDefaultImpl::texImage2D):
+
 2010-10-12  Dave Moore  <davemoore@chromium.org>
 
         Reviewed by Tony Chang.
