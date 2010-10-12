@@ -1227,10 +1227,6 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
     ASSERT(shader);
 
     makeContextCurrent();
-    GLint length;
-    ::glGetShaderiv((GLuint) shader, GL_INFO_LOG_LENGTH, &length);
-    if (!length)
-        return "";
 
     HashMap<Platform3DObject, ShaderSourceEntry>::iterator result = m_shaderSourceMap.find(shader);
 
@@ -1253,10 +1249,8 @@ String GraphicsContext3D::getShaderInfoLog(Platform3DObject shader)
          String s(info);
          fastFree(info);
          return s;
-     }
-     else {
+     } else
          return entry.log;
-     }
 }
 
 String GraphicsContext3D::getShaderSource(Platform3DObject shader)
