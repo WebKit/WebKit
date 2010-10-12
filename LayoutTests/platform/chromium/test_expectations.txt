@@ -1721,9 +1721,6 @@ BUG20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
 // Linux's rotated text output looks terrible.
 BUG10397 LINUX : fast/transforms/transformed-document-element.html = FAIL
 
-// might need to be rebaselined in win, 'DRAFT' rendering incorrect before
-BUG10405 WIN : svg/custom/struct-use-09-b.svg = FAIL
-
 // New test. We should fix it, but it doesn't need to block the current release
 BUG10418 SLOW MAC RELEASE : fast/events/click-count.html = PASS
 BUG10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
@@ -2943,7 +2940,6 @@ BUG51869 : http/tests/websocket/tests/frame-length-overflow.html = TEXT PASS
 BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 
 // Regressions from r65229
-BUGWK43912 WIN : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/batik/masking/maskRegions.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/grayscale-gradient-mask.svg = IMAGE
 //BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
@@ -3156,7 +3152,6 @@ BUG_HCLAM : http/tests/css/css-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/mask-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/reflection-mask-image-loading.html = TEXT TIMEOUT PASS
 
-BUG_HCLAM WIN : svg/text/text-intro-05-t.svg = IMAGE+TEXT CRASH TEXT
 BUG_HCLAM LINUX : svg/text/text-intro-05-t.svg = IMAGE PASS
 
 // Added by r69084
@@ -3199,9 +3194,6 @@ BUG10479 LINUX MAC : svg/hixie/perf/002.xml = IMAGE PASS
 
 // New test from Webkit r69326.
 BUG58337 : platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
-
-// Failing filesystem tests
-BUGWK47375 WIN : fast/filesystem/op-get-entry.html = TEXT
 
 // From r69334. Mask seems broken on the reflected image.
 BUG58358 WIN LINUX : fast/css/transformed-mask.html = IMAGE+TEXT
