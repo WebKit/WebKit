@@ -164,9 +164,10 @@ public:
     void setCustomUserAgent(const String&);
 
     void terminateProcess();
-    
-    PassRefPtr<WebData> sessionState() const;
-    void restoreFromSessionState(WebData*);
+
+    typedef bool (*WebPageProxySessionStateFilterCallback)(WKPageRef, WKStringRef type, WKTypeRef object, void*);
+    PassRefPtr<WebData> sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const;
+    void restoreFromSessionStateData(WebData*);
 
     double textZoomFactor() const { return m_textZoomFactor; }
     void setTextZoomFactor(double);

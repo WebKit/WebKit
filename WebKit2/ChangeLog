@@ -1,3 +1,41 @@
+2010-10-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        <rdar://problem/8262202> and https://bugs.webkit.org/show_bug.cgi?id=47354
+        Need WKPage API for serializing and restoring a page's state
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+        * WebKit2Prefix.h: Add DEFINE_STATIC_GETTER convenience.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSessionHistoryURLValueType):
+        (WKPageCopySessionState): Change to use a filter function to allow the API client to decide what
+          types of things get serialized as session state.  For now it only filters based on URL in
+          session history entries.
+        (WKPageRestoreFromSessionState):
+        * UIProcess/API/C/WKPage.h:
+
+        * UIProcess/WebBackForwardList.h:
+        (WebKit::WebBackForwardList::restoredCurrentURL):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sessionStateData): Leave stubs for non-CF platform builds.
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Ditto.
+        * UIProcess/WebPageProxy.h:
+
+        * UIProcess/cf: Added.
+        * UIProcess/cf/WebBackForwardListCF.cpp: Added.
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation): Store back/forward list info CF property list style.
+        (WebKit::WebBackForwardList::restoreFromCFDictionaryRepresentation): Restore from that data - but for now we don't 
+          actually put the back/forward list back into place and instead only remember the current URL.
+
+        * UIProcess/cf/WebPageProxyCF.cpp: Added.
+        (WebKit::WebPageProxy::sessionStateData): Create the sessions state date CF property list style, plus a version header.
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Restore from that property list style session state data.
+
 2010-10-11  Adam Roben  <aroben@apple.com>
 
         Implement SharedMemory on Windows

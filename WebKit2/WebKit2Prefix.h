@@ -37,6 +37,14 @@
 #define EXTERN_C_END
 #endif
 
+// For defining getters to a static value, where the getters have internal linkage
+#define DEFINE_STATIC_GETTER(type, name, arguments) \
+static const type& name() \
+{ \
+    DEFINE_STATIC_LOCAL(type, name##Value, arguments); \
+    return name##Value; \
+}
+
 #if defined(BUILDING_QT__)
 
 #define WTF_USE_JSC 1

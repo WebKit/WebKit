@@ -29,13 +29,12 @@
 #include "APIObject.h"
 #include "ImmutableArray.h"
 #include "WebBackForwardListItem.h"
+#include "WebPageProxy.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
-
-class WebPageProxy;
 
 typedef Vector<RefPtr<WebBackForwardListItem> > BackForwardListItemVector;
 
@@ -72,6 +71,11 @@ public:
     PassRefPtr<ImmutableArray> backListAsImmutableArrayWithLimit(unsigned limit);
     PassRefPtr<ImmutableArray> forwardListAsImmutableArrayWithLimit(unsigned limit);
 
+#if PLATFORM(CF)
+    CFDictionaryRef createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback, void* context) const;
+    bool restoreFromCFDictionaryRepresentation(CFDictionaryRef);
+#endif
+
 private:
     WebBackForwardList(WebPageProxy*);
 
@@ -83,6 +87,14 @@ private:
     unsigned m_capacity;
     bool m_closed;
     bool m_enabled;
+    
+// FIXME - <rdar://problem/8261624> and https://bugs.webkit.org/show_bug.cgi?id=47355 - 
+// When we have a solution for restoring the full back/forward list 
+// then causing a load of the current item, we will no longer need this.
+public:
+    const WTF::String& restoredCurrentURL() const { return m_restoredCurrentURL; }
+private:
+    WTF::String m_restoredCurrentURL;
 };
 
 } // namespace WebKit

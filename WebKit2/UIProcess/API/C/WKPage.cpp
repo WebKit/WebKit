@@ -152,15 +152,21 @@ void WKPageTerminate(WKPageRef pageRef)
     toImpl(pageRef)->terminateProcess();
 }
 
-WKDataRef WKPageCopySessionState(WKPageRef pageRef)
+WKStringRef WKPageGetSessionHistoryURLValueType()
 {
-    RefPtr<WebData> state = toImpl(pageRef)->sessionState();
+    static WebString* sessionHistoryURLValueType = WebString::create("SessionHistoryURL").releaseRef();
+    return toAPI(sessionHistoryURLValueType);
+}
+
+WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSessionStateFilterCallback filter)
+{
+    RefPtr<WebData> state = toImpl(pageRef)->sessionStateData(filter, context);
     return toAPI(state.release().releaseRef());
 }
 
 void WKPageRestoreFromSessionState(WKPageRef pageRef, WKDataRef sessionStateData)
 {
-    toImpl(pageRef)->restoreFromSessionState(toImpl(sessionStateData));
+    toImpl(pageRef)->restoreFromSessionStateData(toImpl(sessionStateData));
 }
 
 double WKPageGetTextZoomFactor(WKPageRef pageRef)

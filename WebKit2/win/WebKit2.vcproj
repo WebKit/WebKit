@@ -1729,6 +1729,18 @@
 				</Filter>
 			</Filter>
 			<Filter
+				Name="cf"
+				>
+				<File
+					RelativePath="..\UIProcess\cf\WebBackForwardListCF.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\cf\WebPageProxyCF.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="Launcher"
 				>
 				<File

@@ -450,16 +450,18 @@ void WebPageProxy::terminateProcess()
     process()->terminate();
 }
 
-PassRefPtr<WebData> WebPageProxy::sessionState() const
+#if !PLATFORM(CF)
+PassRefPtr<WebData> WebPageProxy::sessionStateData(WebPageProxySessionStateFilterCallback, void* context) const
 {
     // FIXME: Return session state data for saving Page state.
     return 0;
 }
 
-void WebPageProxy::restoreFromSessionState(WebData*)
+void WebPageProxy::restoreFromSessionStateData(WebData*)
 {
     // FIXME: Restore the Page from the passed in session state data.
 }
+#endif
 
 void WebPageProxy::setTextZoomFactor(double zoomFactor)
 {
