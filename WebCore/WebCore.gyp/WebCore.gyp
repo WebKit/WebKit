@@ -1278,7 +1278,6 @@
         # be nice to provide more explicit comments.  Some of these do actually
         # compile.
         ['exclude', 'dom/StaticStringList\\.cpp$'],
-        ['exclude', 'loader/icon/IconFetcher\\.cpp$'],
         ['exclude', 'loader/UserStyleSheetLoader\\.cpp$'],
 
         # We use a multi-process version from the WebKit API.

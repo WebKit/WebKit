@@ -1,3 +1,14 @@
+2010-10-11  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Remove WebIconFetcher from WebKit and IconFetcher from WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=47523
+
+        Remove all traces of the WebKit WebIconFetcher class. It's SPI that nobody uses.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-10-07  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

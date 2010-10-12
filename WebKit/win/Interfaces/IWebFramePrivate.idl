@@ -30,8 +30,6 @@ import "IWebFrame.idl";
 #endif
 
 interface IWebFrame;
-interface IWebIconFetcher;
-interface IWebIconFetcherDelegate;
 interface IWebScriptWorld;
 
 typedef enum {
@@ -81,7 +79,7 @@ interface IWebFramePrivate : IUnknown
 
     HRESULT pendingFrameUnloadEventCount([out, retval] UINT* result);
 
-    HRESULT fetchApplicationIcon([in] IWebIconFetcherDelegate* delegate, [out, retval] IWebIconFetcher** result);
+    HRESULT unused1();
 
     HRESULT paintDocumentRectToContext([in] RECT rect, [in] OLE_HANDLE deviceContext);
 

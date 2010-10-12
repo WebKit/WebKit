@@ -24006,14 +24006,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\loader\icon\IconFetcher.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\loader\icon\IconFetcher.h"
-					>
-				</File>
-				<File
 					RelativePath="..\loader\icon\IconLoader.cpp"
 					>
 				</File>

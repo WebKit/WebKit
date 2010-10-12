@@ -46,7 +46,6 @@
 #include "WebFramePolicyListener.h"
 #include "WebHistory.h"
 #include "WebHistoryItem.h"
-#include "WebIconFetcher.h"
 #include "WebKit.h"
 #include "WebKitStatisticsPrivate.h"
 #include "WebMutableURLRequest.h"
@@ -1015,27 +1014,9 @@ HRESULT STDMETHODCALLTYPE WebFrame::pendingFrameUnloadEventCount(
     return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE WebFrame::fetchApplicationIcon( 
-    /* [in] */ IWebIconFetcherDelegate *delegate,
-    /* [retval][out] */ IWebIconFetcher **result)
+HRESULT STDMETHODCALLTYPE WebFrame::unused1()
 {
-    if (!result)
-        return E_POINTER;
-
-    *result = 0;
-
-    if (!delegate)
-        return E_FAIL;
-
-    Frame* coreFrame = core(this);
-    if (!coreFrame)
-        return E_FAIL;
-
-    *result = WebIconFetcher::fetchApplicationIcon(coreFrame, delegate);
-    if (!*result)
-        return E_FAIL;
-
-    return S_OK;
+    return E_NOTIMPL;
 }
 
 // IWebDocumentText -----------------------------------------------------------

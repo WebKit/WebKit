@@ -100,7 +100,6 @@ import "ocidl.idl";
 #include "IWebHistoryItemPrivate.idl"
 #include "IWebHistoryPrivate.idl"
 #include "IWebIconDatabase.idl"
-#include "IWebIconFetcher.idl"
 #include "IWebInspector.idl"
 #include "IWebInspectorPrivate.idl"
 #include "IWebJavaScriptCollector.idl"

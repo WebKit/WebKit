@@ -1982,8 +1982,6 @@
             'loader/icon/IconDatabase.h',
             'loader/icon/IconDatabaseClient.h',
             'loader/icon/IconDatabaseNone.cpp',
-            'loader/icon/IconFetcher.cpp',
-            'loader/icon/IconFetcher.h',
             'loader/icon/IconLoader.cpp',
             'loader/icon/IconLoader.h',
             'loader/icon/IconRecord.cpp',
