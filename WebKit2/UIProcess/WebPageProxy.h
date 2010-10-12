@@ -59,7 +59,7 @@ namespace WebCore {
     class Cursor;
     class FloatRect;
     class IntSize;
-    class ViewportArguments;
+    struct ViewportArguments;
 }
 
 struct WKContextStatistics;

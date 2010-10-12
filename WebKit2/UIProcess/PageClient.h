@@ -31,7 +31,7 @@
 
 namespace WebCore {
     class Cursor;
-    class ViewportArguments;
+    struct ViewportArguments;
 }
 
 namespace WebKit {

@@ -1,3 +1,11 @@
+2010-10-12  Mark Rowe  <mrowe@apple.com>
+
+        Fix class vs struct forward declaration issues in WebKit2 observed when using clang.
+
+        * Scripts/webkit2/messages.py: Add WebCore::ViewportArguments to the set of structs.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+
 2010-10-12  Juha Savolainen  <juha.savolainen@weego.fi>
 
         Reviewed by Antti Koivisto.
