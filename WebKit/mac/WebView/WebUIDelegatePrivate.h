@@ -183,4 +183,6 @@ enum {
 - (void)webView:(WebView *)sender exitFullScreenForElement:(DOMElement *)element;
 #endif
 
+- (void)webView:(WebView *)sender didDrawFrame:(WebFrame *)frame;
+
 @end

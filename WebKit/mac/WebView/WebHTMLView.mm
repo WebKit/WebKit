@@ -3417,6 +3417,9 @@ WEBCORE_COMMAND(yankAndSelect)
         [webView _setNeedsOneShotDrawingSynchronization:NO];
     }
 #endif
+
+    if (webView)
+        CallUIDelegate(webView, @selector(webView:didDrawFrame:), [self _frame]);
 }
 
 // Turn off the additional clip while computing our visibleRect.
