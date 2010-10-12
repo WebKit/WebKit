@@ -63,10 +63,6 @@ BUG_DRT LINUX : fast/text/international/003.html = IMAGE
 // CJK characters are not rotated.
 BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
-// Need modal dialog support.
-BUG_DRT WIN : fast/events/show-modal-dialog-onblur-onfocus.html = TEXT
-BUG_DRT WIN : fast/harness/show-modal-dialog.html = TEXT
-
 // This is an error which test_shell can't find.
 BUGWK43960 WIN MAC LINUX : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 

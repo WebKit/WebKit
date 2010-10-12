@@ -1,3 +1,18 @@
+2010-10-11  Prasad Tammana  <prasadt@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Added support for showModalDialog on chromium port.
+
+        Implement showModalDialog for Layout tests for chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=46759
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::closeWidgetSoon): Quit current message loop if in a modal loop.
+        (WebViewHost::runModal):  Start a nested message loop and remember that.
+        (WebViewHost::WebViewHost):  Initialize m_inModalLoop.
+        * DumpRenderTree/chromium/WebViewHost.h:  Add m_inModalLoop.
+
 2010-10-11  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
