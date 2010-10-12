@@ -679,6 +679,7 @@ BUGWK40520 DEFER : fast/forms/interactive-validation-prevented.html = TEXT
 BUG26734 LINUX MAC SKIP : inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector = PASS
 BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
+BUG26734 WIN SLOW : inspector/timeline-layout.html = TEXT PASS
 
 // These tests need to be changed to be platform independent.
 BUG13907 : http/tests/media/remove-while-loading.html = TIMEOUT
@@ -838,7 +839,6 @@ BUGWK44514 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg
 BUGWK44514 LINUX WIN : svg/custom/missing-xlink.svg = TEXT
 // Also fail since WK roll 65859:65885
 BUGWK44514 MAC : fast/backgrounds/svg-as-background-6.html = IMAGE
-//BUGWK44514 MAC : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 
 // -----------------------------------------------------------------
 // End SVG Regressions
@@ -2942,7 +2942,6 @@ BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.h
 // Regressions from r65229
 BUGWK43912 WIN LINUX : svg/batik/masking/maskRegions.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/grayscale-gradient-mask.svg = IMAGE
-//BUGWK43912 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE
 BUGWK43912 WIN LINUX : svg/custom/absolute-sized-content-with-resources.xhtml = IMAGE
 
 // Times out frequently since the test was added
@@ -3125,6 +3124,12 @@ BUG_SENORBLANCO LINUX : fast/text/midword-break-after-breakable-char.html = TEXT
 // NPP_HandleEvent doesn't be implemented/work on mac/linux.
 BUG48033 LINUX MAC SKIP : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
 
+// New test added in 68808.
+BUGWK46940 WIN : fast/dom/Window/window-screen-properties.html = TEXT
+
+// New test added in 68809
+BUGWK46941 WIN : fast/media/color-does-not-include-alpha.html = TEXT
+
 // New failures introduced in 68854.
 BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
@@ -3189,44 +3194,32 @@ BUG58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TEXT TIMEOUT
 
 // Flaky because they snapshot and animation.
 // Started failing on Mac since 69314:69342.
-BUG10479 LINUX MAC : svg/hixie/perf/001.xml = IMAGE PASS
-BUG10479 LINUX MAC : svg/hixie/perf/002.xml = IMAGE PASS
+BUG10479 : svg/hixie/perf/001.xml = IMAGE PASS
+BUG10479 : svg/hixie/perf/002.xml = IMAGE PASS
 
 // New test from Webkit r69326.
 BUG58337 : platform/gtk/fonts/fontconfig-synthetic-bold.html = MISSING
 
 // From r69334. Mask seems broken on the reflected image.
 BUG58358 WIN LINUX : fast/css/transformed-mask.html = IMAGE+TEXT
-BUG58358 MAC : fast/css/transformed-mask.html = IMAGE
 
 // FileWriter isn't in TestShell yet.
 BUG58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
 
 // Failing somewhere between after Webkit r69367 and r69417.
-BUG_AJWONG WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE
-
-// Failed around r69417 to r62021 plus or minus a few.
-BUG_AJWONG LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
+BUG58931 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE PASS
 
 // Failing from around r62021
-BUG_AJWONG WIN : inspector/timeline-layout.html = TEXT PASS
-BUG_AJWONG WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
+BUG15797 WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS
 
 // Failing from r69420
 BUG58735 SLOW WIN : http/tests/misc/prefetch-purpose.html = TEXT
 BUG58735 LINUX : http/tests/misc/prefetch-purpose.html = PASS TEXT
 
 // New test added in r69516.
-BUG_AJWONG : fast/js/basic-strict-mode.html = TEXT
+BUG58936 : fast/js/basic-strict-mode.html = TEXT
 
 // Started failing around Webkit r69541 in this build.
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20Linux%20%28webkit.org%29/builds/40424
-BUG_AJWONG : fast/dom/prototype-inheritance.html = TEXT
+BUG58942 : fast/dom/prototype-inheritance.html = TEXT
 
-// More fallout from r69517 still. Verify that they cannot be rebaselined.
-BUG_AJWONG WIN : svg/batik/paints/patternPreserveAspectRatioA.svg = IMAGE
-BUG_AJWONG WIN : svg/carto.net/button.svg = IMAGE
-BUG_AJWONG WIN : svg/custom/marker-child-changes.svg = IMAGE
-BUG_AJWONG WIN : svg/custom/marker-viewBox-changes.svg = IMAGE
-BUG_AJWONG WIN : svg/hixie/perf/001.xml = IMAGE
-BUG_AJWONG WIN : svg/hixie/perf/002.xml = IMAGE
