@@ -28,6 +28,7 @@
 
 #include "WebCommon.h"
 #include "WebDOMStringList.h"
+#include "WebExceptionCode.h"
 
 namespace WebKit {
 
@@ -62,29 +63,63 @@ public:
         return WebDOMStringList();
     }
 
-    // FIXME: Remove once we update Chromium side.
-    virtual void createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, WebIDBCallbacks*) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&)
-    { 
-        WEBKIT_ASSERT_NOT_REACHED();
-        return 0;
-    }
-    // Transfers ownership of the WebIDBObjectStore to the caller.
+    // FIXME: Remove after next roll.
     virtual WebIDBObjectStore* objectStore(const WebString& name, unsigned short mode)
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
-    // FIXME: Remove after WebKit roll.
-    virtual void removeObjectStore(const WebString& name, WebIDBCallbacks* callbacks) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void removeObjectStore(const WebString& name, const WebIDBTransaction&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks) { WEBKIT_ASSERT_NOT_REACHED(); }
-    // Transfers ownership of the WebIDBTransaction to the caller.
+    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction& transaction, WebExceptionCode&)
+    { 
+        return createObjectStore(name, keyPath, autoIncrement, transaction);
+    }
+    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction& transaction)
+    {
+        WebExceptionCode ec = 0;
+        return createObjectStore(name, keyPath, autoIncrement, transaction, ec);
+    }
+    virtual void removeObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode&)
+    {
+        removeObjectStore(name, transaction);
+    }
+    virtual void removeObjectStore(const WebString& name, const WebIDBTransaction& transaction)
+    {
+        WebExceptionCode ec = 0;
+        removeObjectStore(name, transaction, ec);
+    }
+    virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&)
+    {
+        setVersion(version, callbacks);
+    }
+    virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks)
+    {
+        WebExceptionCode ec = 0;
+        setVersion(version, callbacks, ec);
+    }
+    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout, WebExceptionCode&)
+    {
+        return transaction(names, mode, timeout);
+    }
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout)
+    {
+        WebExceptionCode ec = 0;
+        return transaction(names, mode, timeout, ec);
+    }
+/*
+    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&)
+    { 
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
+    }
+    virtual void removeObjectStore(const WebString& name, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // Transfers ownership of the WebIDBTransaction to the caller.
+    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout, WebExceptionCode&)
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
+*/
     virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 

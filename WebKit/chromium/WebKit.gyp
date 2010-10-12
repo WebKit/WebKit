@@ -150,6 +150,7 @@
                 'public/WebDragData.h',
                 'public/WebEditingAction.h',
                 'public/WebElement.h',
+                'public/WebExceptionCode.h',
                 'public/WebFileChooserCompletion.h',
                 'public/WebFileChooserParams.h',
                 'public/WebFileError.h',
