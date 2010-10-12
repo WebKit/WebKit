@@ -1,3 +1,13 @@
+2010-10-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by BUILD FIX.
+
+        Build fix for Windows in https://bugs.webkit.org/show_bug.cgi?id=47354
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        (WebKit::WebPageProxy::sessionStateData): Change to use CF APIs that exist on Windows.
+        (WebKit::WebPageProxy::restoreFromSessionStateData): Ditto.
+
 2010-10-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
