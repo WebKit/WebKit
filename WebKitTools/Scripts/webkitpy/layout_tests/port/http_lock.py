@@ -28,10 +28,8 @@
 """This class helps to block NRWT threads when more NRWTs run
 http and websocket tests in a same time."""
 
-import fcntl
 import glob
 import os
-import signal
 import sys
 import tempfile
 import time
