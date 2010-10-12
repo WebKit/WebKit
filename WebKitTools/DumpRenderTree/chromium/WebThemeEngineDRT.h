@@ -47,7 +47,7 @@
 #ifndef WebThemeEngineDRT_h
 #define WebThemeEngineDRT_h
 
-#include "public/WebThemeEngine.h"
+#include "public/win/WebThemeEngine.h"
 #include <wtf/Noncopyable.h>
 
 class WebThemeEngineDRT : public WebKit::WebThemeEngine, public Noncopyable {

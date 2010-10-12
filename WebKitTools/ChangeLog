@@ -1,5 +1,11 @@
 2010-10-12  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, fixing DRT compile on Windows after r69586.
+
+        * DumpRenderTree/chromium/WebThemeEngineDRT.h:
+
+2010-10-12  Tony Chang  <tony@chromium.org>
+
         Unreviewed, trying to fix NRWT on Windows.
 
         * Scripts/webkitpy/layout_tests/port/http_lock.py:
