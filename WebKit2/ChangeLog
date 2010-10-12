@@ -1,3 +1,38 @@
+2010-10-12  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add ability for WK2 to register a scheme as secure.
+        https://bugs.webkit.org/show_bug.cgi?id=47557
+
+        Add the schemes that need to be registered as secure to the WebProcessCreationParameters.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextRegisterURLSchemeAsSecure):
+        * UIProcess/API/C/WKContextPrivate.h:
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        Copy over the schemes that are to be registered as secure to the
+        WebProcessCreationParameters.
+        (WebKit::WebContext::registerURLSchemeAsSecure):
+        Only send a message to the WebProcess if it is valid.
+        * UIProcess/WebContext.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Register the schemes that need to be registered as secure from the
+        WebProcessCreationParameters.
+        (WebKit::WebProcess::registerURLSchemeAsSecure):
+        * WebProcess/WebProcess.h:
+
+        * WebProcess/WebProcess.messages.in:
+        Add the RegisterURLSchemeAsSecure message.
+
 2010-10-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders Carlsson.

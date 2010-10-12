@@ -36,6 +36,7 @@ messages -> WebProcess {
     SetShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
     SetCacheModel(uint32_t cacheModel)
     RegisterURLSchemeAsEmptyDocument(WTF::String scheme)
+    RegisterURLSchemeAsSecure(WTF::String scheme)
 #if PLATFORM(WIN)
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)
 #endif

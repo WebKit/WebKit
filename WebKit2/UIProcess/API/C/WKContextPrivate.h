@@ -48,6 +48,8 @@ WK_EXPORT void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKS
 
 WK_EXPORT void _WKContextRegisterURLSchemeAsEmptyDocument(WKContextRef context, WKStringRef urlScheme);
 
+WK_EXPORT void WKContextRegisterURLSchemeAsSecure(WKContextRef context, WKStringRef urlScheme);
+
 #ifdef __cplusplus
 }
 #endif

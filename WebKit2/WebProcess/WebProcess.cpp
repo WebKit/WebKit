@@ -132,8 +132,12 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     setShouldTrackVisitedLinks(parameters.shouldTrackVisitedLinks);
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
+
     for (size_t i = 0; i < parameters.urlSchemesRegistererdAsEmptyDocument.size(); ++i)
         registerURLSchemeAsEmptyDocument(parameters.urlSchemesRegistererdAsEmptyDocument[i]);
+
+    for (size_t i = 0; i < parameters.urlSchemesRegisteredAsSecure.size(); ++i)
+        registerURLSchemeAsSecure(parameters.urlSchemesRegisteredAsSecure[i]);
 
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
@@ -151,6 +155,11 @@ void WebProcess::setShouldTrackVisitedLinks(bool shouldTrackVisitedLinks)
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 {
     SchemeRegistry::registerURLSchemeAsEmptyDocument(urlScheme);
+}
+
+void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
+{
+    SchemeRegistry::registerURLSchemeAsSecure(urlScheme);
 }
 
 void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)

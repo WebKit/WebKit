@@ -102,6 +102,7 @@ public:
     String applicationCacheDirectory();
     
     void registerURLSchemeAsEmptyDocument(const String&);
+    void registerURLSchemeAsSecure(const String&);
     
     void addVisitedLink(const String&);
     void addVisitedLink(WebCore::LinkHash);
@@ -142,6 +143,7 @@ private:
     VisitedLinkProvider m_visitedLinkProvider;
         
     HashSet<String> m_schemesToRegisterAsEmptyDocument;
+    HashSet<String> m_schemesToRegisterAsSecure;
     Vector<pair<String, RefPtr<APIObject> > > m_pendingMessagesToPostToInjectedBundle;
 
     CacheModel m_cacheModel;
