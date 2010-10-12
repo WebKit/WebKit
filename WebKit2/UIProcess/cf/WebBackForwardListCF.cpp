@@ -30,10 +30,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryCurrentIndexKey, CFSTR("SessionHistoryCurrentIndex"));
-DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntriesKey, CFSTR("SessionHistoryEntries"));
-DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryTitleKey, CFSTR("SessionHistoryEntryTitle"));
-DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryURLKey, CFSTR("SessionHistoryEntryURL"));
+DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryCurrentIndexKey, (CFSTR("SessionHistoryCurrentIndex")));
+DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntriesKey, (CFSTR("SessionHistoryEntries")));
+DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryTitleKey, (CFSTR("SessionHistoryEntryTitle")));
+DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryEntryURLKey, (CFSTR("SessionHistoryEntryURL")));
 
 CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProxy::WebPageProxySessionStateFilterCallback filter, void* context) const
 {

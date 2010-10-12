@@ -33,7 +33,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryKey, CFSTR("SessionHistory"));
+DEFINE_STATIC_GETTER(CFStringRef, SessionHistoryKey, (CFSTR("SessionHistory")));
 
 static const UInt32 CurrentSessionStateDataVersion = 1;
 
