@@ -51,6 +51,10 @@
 #include <inttypes.h>
 #include <sys/time.h>
 
+#ifdef HAVE_ECORE_X
+#include <Ecore_X.h>
+#endif
+
 #define ZOOM_MIN (0.05)
 #define ZOOM_MAX (4.0)
 
@@ -4241,3 +4245,18 @@ WebCore::FloatRect ewk_view_page_rect_get(Evas_Object *o)
     WebCore::Frame* main_frame = priv->page->mainFrame();
     return main_frame->view()->frameRect();
 } 
+
+/**
+ * @internal
+ * Gets dpi value.
+ *
+ * @return device's dpi value.
+ */
+int ewk_view_dpi_get()
+{
+#ifdef HAVE_ECORE_X
+     return ecore_x_dpi_get();
+#else
+     return 160;
+#endif
+}

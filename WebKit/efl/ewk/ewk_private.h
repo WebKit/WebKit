@@ -106,6 +106,8 @@ void ewk_view_viewport_set(Evas_Object *o, float w, float h, float init_scale, f
 
 void ewk_view_download_request(Evas_Object *o, Ewk_Download *download);
 
+int ewk_view_dpi_get();
+
 Ewk_History *ewk_history_new(WebCore::BackForwardList *history);
 void ewk_history_free(Ewk_History *history);
 
