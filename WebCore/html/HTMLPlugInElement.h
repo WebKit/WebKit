@@ -59,6 +59,8 @@ protected:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
 
+    bool m_inBeforeLoadEventHandler;
+
 private:
     virtual void defaultEventHandler(Event*);
 

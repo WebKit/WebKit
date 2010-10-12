@@ -49,10 +49,11 @@ using namespace HTMLNames;
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc)
     : HTMLFrameOwnerElement(tagName, doc)
+    , m_inBeforeLoadEventHandler(false)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_NPObject(0)
-    , m_isCapturingMouseEvents(false)
 #endif
+    , m_isCapturingMouseEvents(false)
 {
 }
 
@@ -100,6 +101,12 @@ PassScriptInstance HTMLPlugInElement::getInstance() const
 
 Widget* HTMLPlugInElement::pluginWidget() const
 {
+    if (m_inBeforeLoadEventHandler) {
+        // The plug-in hasn't loaded yet, and it makes no sense to try to load if beforeload handler happened to touch the plug-in element.
+        // That would recursively call beforeload for the same element.
+        return 0;
+    }
+
     RenderWidget* renderWidget = renderWidgetForJSBindings();
     if (!renderWidget)
         return 0;

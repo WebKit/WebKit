@@ -279,7 +279,10 @@ void HTMLObjectElement::updateWidget(bool onlyCreateNonNetscapePlugins)
     if (onlyCreateNonNetscapePlugins && wouldLoadAsNetscapePlugin(url, serviceType))
         return;
 
+    ASSERT(!m_inBeforeLoadEventHandler);
+    m_inBeforeLoadEventHandler = true;
     bool beforeLoadAllowedLoad = dispatchBeforeLoadEvent(url);
+    m_inBeforeLoadEventHandler = false;
 
     // beforeload events can modify the DOM, potentially causing
     // RenderWidget::destroy() to be called.  Ensure we haven't been
