@@ -507,6 +507,9 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (m_isWindowed)
         return;
 
+    if (event->button() == RightButton && m_plugin->quirks().contains(PluginQuirkIgnoreRightClickInWindowlessMode))
+        return;
+
     if (event->type() == eventNames().mousedownEvent) {
         // Give focus to the plugin on click
         if (Page* page = m_parentFrame->page())
