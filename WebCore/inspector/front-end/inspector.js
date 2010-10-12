@@ -213,9 +213,9 @@ var WebInspector = {
         var pane = new WebInspector.BreakpointsSidebarPane(WebInspector.UIString("DOM Breakpoints"));
         function breakpointAdded(event)
         {
-            pane.addBreakpoint(new WebInspector.DOMBreakpointItem(event.data));
+            pane.addBreakpoint(new WebInspector.BreakpointItem(event.data));
         }
-        WebInspector.domBreakpointManager.addEventListener("dom-breakpoint-added", breakpointAdded);
+        WebInspector.breakpointManager.addEventListener("dom-breakpoint-added", breakpointAdded);
         return pane;
     },
 
@@ -530,7 +530,6 @@ WebInspector.doLoadedDone = function()
     };
 
     this.breakpointManager = new WebInspector.BreakpointManager();
-    this.domBreakpointManager = new WebInspector.DOMBreakpointManager();
     this.cssModel = new WebInspector.CSSStyleModel();
 
     this.panels = {};
@@ -1459,6 +1458,8 @@ WebInspector.resumedScript = function()
 
 WebInspector.reset = function()
 {
+    this.breakpointManager.reset();
+
     for (var panelName in this.panels) {
         var panel = this.panels[panelName];
         if ("reset" in panel)
@@ -1466,7 +1467,6 @@ WebInspector.reset = function()
     }
 
     this.sessionSettings.reset();
-    this.breakpointManager.reset();
 
     for (var category in this.resourceCategories)
         this.resourceCategories[category].removeAllResources();

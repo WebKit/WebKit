@@ -759,15 +759,15 @@ WebInspector.ElementsTreeElement.prototype = {
             contextMenu.appendSeparator();
 
             var node = this.representedObject;
-            for (var key in WebInspector.DOMBreakpoint.Types) {
-                var type = WebInspector.DOMBreakpoint.Types[key];
-                var label = WebInspector.DOMBreakpoint.contextMenuLabelForType(type);
-                var hasBreakpoint = node.hasBreakpoint(type);
-                if (!hasBreakpoint)
-                    var handler = node.setBreakpoint.bind(node, type);
+            for (var key in WebInspector.DOMBreakpointTypes) {
+                var type = WebInspector.DOMBreakpointTypes[key];
+                var label = WebInspector.domBreakpointTypeContextMenuLabel(type);
+                var breakpoint = node.breakpoints[type];
+                if (!breakpoint)
+                    var handler = WebInspector.breakpointManager.createDOMBreakpoint.bind(WebInspector.breakpointManager, node.id, type);
                 else
-                    var handler = node.removeBreakpoint.bind(node, type);
-                contextMenu.appendCheckboxItem(label, handler, hasBreakpoint);
+                    var handler = breakpoint.remove.bind(breakpoint);
+                contextMenu.appendCheckboxItem(label, handler, !!breakpoint);
             }
         }
     },

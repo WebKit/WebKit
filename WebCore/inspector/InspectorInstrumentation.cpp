@@ -73,7 +73,7 @@ void InspectorInstrumentation::willInsertDOMNodeImpl(InspectorController* inspec
         return;
     PassRefPtr<InspectorValue> eventData;
     if (domAgent->shouldBreakOnNodeInsertion(node, parent, &eventData))
-        debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
+        debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
 #endif
 }
 
@@ -94,7 +94,7 @@ void InspectorInstrumentation::willRemoveDOMNodeImpl(InspectorController* inspec
         return;
     PassRefPtr<InspectorValue> eventData;
     if (domAgent->shouldBreakOnNodeRemoval(node, &eventData))
-        debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
+        debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
 #endif
 }
 
@@ -115,7 +115,7 @@ void InspectorInstrumentation::willModifyDOMAttrImpl(InspectorController* inspec
         return;
     PassRefPtr<InspectorValue> eventData;
     if (domAgent->shouldBreakOnAttributeModification(element, &eventData))
-        debuggerAgent->breakProgram(DOMBreakpointDebuggerEventType, eventData);
+        debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
 #endif
 }
 
@@ -139,13 +139,12 @@ void InspectorInstrumentation::willSendXMLHttpRequestImpl(InspectorController* i
     if (!debuggerAgent)
         return;
 
-    unsigned int breakpointId = inspectorController->findXHRBreakpoint(url);
-    if (!breakpointId)
+    String breakpointId = inspectorController->findXHRBreakpoint(url);
+    if (breakpointId.isEmpty())
         return;
 
     RefPtr<InspectorObject> eventData = InspectorObject::create();
-    eventData->setNumber("breakpointId", breakpointId);
-    eventData->setString("type", "XHR");
+    eventData->setString("breakpointId", breakpointId);
     eventData->setString("url", url);
     debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
 #endif
@@ -208,11 +207,10 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get()) {
-        unsigned int breakpointId = inspectorController->findEventListenerBreakpoint(event.type());
-        if (breakpointId) {
+        String breakpointId = inspectorController->findEventListenerBreakpoint(event.type());
+        if (!breakpointId.isEmpty()) {
             RefPtr<InspectorObject> eventData = InspectorObject::create();
-            eventData->setNumber("breakpointId", breakpointId);
-            eventData->setString("type", "EventListener");
+            eventData->setString("breakpointId", breakpointId);
             eventData->setString("eventName", event.type());
             debuggerAgent->schedulePauseOnNextStatement(NativeBreakpointDebuggerEventType, eventData);
         }

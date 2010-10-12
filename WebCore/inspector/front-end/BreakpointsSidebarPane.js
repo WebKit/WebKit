@@ -145,8 +145,8 @@ WebInspector.BreakpointItem = function(breakpoint)
     checkboxElement.addEventListener("click", this._checkboxClicked.bind(this), false);
     this._element.appendChild(checkboxElement);
 
-    if ("label" in this._breakpoint)
-        this._element.appendChild(document.createTextNode(this._breakpoint.label));
+    if ("populateLabelElement" in this._breakpoint)
+        this._breakpoint.populateLabelElement(this._element);
 
     this._breakpoint.addEventListener("enable-changed", this._enableChanged, this);
     this._breakpoint.addEventListener("hit-state-changed", this._hitStateChanged, this);
@@ -171,6 +171,8 @@ WebInspector.BreakpointItem.prototype = {
 
     _breakpointClicked: function(event)
     {
+        if ("click" in this._breakpoint)
+            this._breakpoint.click();
     },
 
     _checkboxClicked: function(event)
@@ -229,27 +231,6 @@ WebInspector.JSBreakpointItem.prototype = {
 
 WebInspector.JSBreakpointItem.prototype.__proto__ = WebInspector.BreakpointItem.prototype;
 
-WebInspector.DOMBreakpointItem = function(breakpoint)
-{
-    WebInspector.BreakpointItem.call(this, breakpoint);
-
-    var link = WebInspector.panels.elements.linkifyNodeById(this._breakpoint.nodeId);
-    this._element.appendChild(link);
-
-    var type = WebInspector.DOMBreakpoint.labelForType(this._breakpoint.type);
-    var typeElement = document.createTextNode(" - " + type);
-    this._element.appendChild(typeElement);
-}
-
-WebInspector.DOMBreakpointItem.prototype = {
-    _breakpointClicked: function()
-    {
-        WebInspector.updateFocusedNode(this._breakpoint.nodeId);
-    }
-}
-
-WebInspector.DOMBreakpointItem.prototype.__proto__ = WebInspector.BreakpointItem.prototype;
-
 WebInspector.EventListenerBreakpointsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Event Listener Breakpoints"));
@@ -283,9 +264,11 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
             for (var i = 0; i < eventNames.length; ++i) {
                 var eventName = eventNames[i];
 
-                var breakpoint = WebInspector.breakpointManager.createEventListenerBreakpoint(eventName);
+                var breakpoint = WebInspector.breakpointManager.createEventListenerBreakpoint(eventName, true);
+                if (!breakpoint)
+                    continue;
 
-                var eventNameTreeElement = new TreeElement(breakpoint.label);
+                var eventNameTreeElement = new TreeElement(breakpoint.label());
                 categoryTreeElement.appendChild(eventNameTreeElement);
                 eventNameTreeElement.listItemElement.addStyleClass("source-code");
                 eventNameTreeElement.selectable = true;

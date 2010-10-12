@@ -388,9 +388,6 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.callstack.update(details.callFrames, this._sourceIDMap);
         this.sidebarPanes.callstack.selectedCallFrame = details.callFrames[0];
 
-        if ("eventType" in details)
-            this.sidebarPanes.callstack.updateStatus(details.eventType, details.eventData);
-
         WebInspector.currentPanel = this;
         window.focus();
     },

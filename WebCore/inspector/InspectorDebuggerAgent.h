@@ -48,7 +48,7 @@ class InspectorValue;
 
 enum DebuggerEventType {
     JavaScriptPauseEventType,
-    DOMBreakpointDebuggerEventType,
+    JavaScriptBreakpointEventType,
     NativeBreakpointDebuggerEventType
 };
 

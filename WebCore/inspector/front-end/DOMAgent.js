@@ -60,6 +60,8 @@ WebInspector.DOMNode = function(doc, payload) {
     this.style = null;
     this._matchedCSSRules = [];
 
+    this.breakpoints = {};
+
     if (this.nodeType === Node.ELEMENT_NODE) {
         // HTML and BODY from internal iframes should not overwrite top-level ones.
         if (!this.ownerDocument.documentElement && this.nodeName === "HTML")
@@ -147,28 +149,6 @@ WebInspector.DOMNode.prototype = {
         }
         path.reverse();
         return path.join(",");
-    },
-
-    setBreakpoint: function(type)
-    {
-        return WebInspector.domBreakpointManager.setBreakpoint(this.id, type, true, this.path());
-    },
-
-    hasBreakpoint: function(type)
-    {
-        return !!WebInspector.domBreakpointManager.findBreakpoint(this.id, type);
-    },
-
-    removeBreakpoint: function(type)
-    {
-        var breakpoint = WebInspector.domBreakpointManager.findBreakpoint(this.id, type);
-        if (breakpoint)
-            breakpoint.remove();
-    },
-
-    removeBreakpoints: function()
-    {
-        WebInspector.domBreakpointManager.removeBreakpointsForNode(this.id);
     },
 
     _setAttributesPayload: function(attrs)
@@ -399,7 +379,7 @@ WebInspector.DOMAgent.prototype = {
             this.document = new WebInspector.DOMDocument(this, this._window, payload);
             this._idToDOMNode[payload.id] = this.document;
             this._bindNodes(this.document.children);
-            WebInspector.domBreakpointManager.restoreBreakpoints();
+            WebInspector.breakpointManager.restoreDOMBreakpoints();
         } else
             this.document = null;
         WebInspector.panels.elements.setDocument(this.document);
@@ -461,12 +441,13 @@ WebInspector.DOMAgent.prototype = {
 
     _removeBreakpoints: function(node)
     {
-        node.removeBreakpoints();
+        for (var type in node.breakpoints)
+            node.breakpoints[type].remove();
         if (!node.children)
             return;
         for (var i = 0; i < node.children.length; ++i)
             this._removeBreakpoints(node.children[i]);
-     }
+    }
 }
 
 WebInspector.ApplicationCache = {}
@@ -728,166 +709,3 @@ WebInspector.childNodeRemoved = function()
 {
     this.domAgent._childNodeRemoved.apply(this.domAgent, arguments);
 }
-
-WebInspector.DOMBreakpointManager = function()
-{
-    this._breakpoints = {};
-    this._pathCache = {};
-}
-
-WebInspector.DOMBreakpointManager.prototype = {
-    setBreakpoint: function(nodeId, type, enabled, path)
-    {
-        if (!(nodeId in this._breakpoints))
-            this._breakpoints[nodeId] = {};
-        else if (type in this._breakpoints[nodeId])
-            return;
-
-        var breakpoint = new WebInspector.DOMBreakpoint(nodeId, type, enabled);
-        this._breakpoints[nodeId][type] = breakpoint;
-        breakpoint.addEventListener("removed", this._breakpointRemoved, this);
-
-        if (!(nodeId in this._pathCache))
-            this._pathCache[nodeId] = path;
-
-        this.dispatchEventToListeners("dom-breakpoint-added", breakpoint);
-    },
-
-    findBreakpoint: function(nodeId, type)
-    {
-        var nodeBreakpoints = this._breakpoints[nodeId];
-        if (nodeBreakpoints && type in nodeBreakpoints)
-            return nodeBreakpoints[type];
-    },
-
-    removeBreakpointsForNode: function(nodeId)
-    {
-        var nodeBreakpoints = this._breakpoints[nodeId];
-        for (var type in nodeBreakpoints)
-            nodeBreakpoints[type].remove();
-    },
-
-    _breakpointRemoved: function(event)
-    {
-        var breakpoint = event.target;
-
-        var nodeBreakpoints = this._breakpoints[breakpoint.nodeId];
-        delete nodeBreakpoints[breakpoint.type];
-        for (var type in nodeBreakpoints)
-            return;
-
-        delete this._breakpoints[breakpoint.nodeId];
-        delete this._pathCache[breakpoint.nodeId];
-    },
-
-    restoreBreakpoints: function()
-    {
-        var breakpoints = this._breakpoints;
-        this._breakpoints = {};
-        var pathCache = this._pathCache;
-        this._pathCache = {};
-
-        for (var oldNodeId in breakpoints) {
-            var path = pathCache[oldNodeId];
-            InspectorBackend.pushNodeByPathToFrontend(path, restoreBreakpointsForNode.bind(this, breakpoints[oldNodeId], path));
-        }
-
-        function restoreBreakpointsForNode(nodeBreakpoints, path, nodeId)
-        {
-            if (!nodeId)
-                return;
-            for (var type in nodeBreakpoints) {
-                var breakpoint = nodeBreakpoints[type];
-                this.setBreakpoint(nodeId, breakpoint.type, breakpoint.enabled, path);
-            }
-        }
-    }
-}
-
-WebInspector.DOMBreakpointManager.prototype.__proto__ = WebInspector.Object.prototype;
-
-WebInspector.DOMBreakpoint = function(nodeId, type, enabled)
-{
-    this._nodeId = nodeId;
-    this._type = type;
-    this._enabled = enabled;
-
-    if (this.enabled)
-        InspectorBackend.setDOMBreakpoint(this.nodeId, this.type);
-}
-
-WebInspector.DOMBreakpoint.Types = {
-    SubtreeModified: 0,
-    AttributeModified: 1,
-    NodeRemoved: 2
-};
-
-WebInspector.DOMBreakpoint.labelForType = function(type)
-{
-    if (!WebInspector.DOMBreakpoint._labels) {
-        WebInspector.DOMBreakpoint._labels = {};
-        WebInspector.DOMBreakpoint._labels[WebInspector.DOMBreakpoint.Types.SubtreeModified] = WebInspector.UIString("Subtree Modified");
-        WebInspector.DOMBreakpoint._labels[WebInspector.DOMBreakpoint.Types.AttributeModified] = WebInspector.UIString("Attribute Modified");
-        WebInspector.DOMBreakpoint._labels[WebInspector.DOMBreakpoint.Types.NodeRemoved] = WebInspector.UIString("Node Removed");
-    }
-    return WebInspector.DOMBreakpoint._labels[type];
-}
-
-WebInspector.DOMBreakpoint.contextMenuLabelForType = function(type)
-{
-    if (!WebInspector.DOMBreakpoint._contextMenuLabels) {
-        WebInspector.DOMBreakpoint._contextMenuLabels = {};
-        WebInspector.DOMBreakpoint._contextMenuLabels[WebInspector.DOMBreakpoint.Types.SubtreeModified] = WebInspector.UIString("Break on Subtree Modifications");
-        WebInspector.DOMBreakpoint._contextMenuLabels[WebInspector.DOMBreakpoint.Types.AttributeModified] = WebInspector.UIString("Break on Attributes Modifications");
-        WebInspector.DOMBreakpoint._contextMenuLabels[WebInspector.DOMBreakpoint.Types.NodeRemoved] = WebInspector.UIString("Break on Node Removal");
-    }
-    return WebInspector.DOMBreakpoint._contextMenuLabels[type];
-}
-
-WebInspector.DOMBreakpoint.prototype = {
-    get nodeId()
-    {
-        return this._nodeId;
-    },
-
-    get type()
-    {
-        return this._type;
-    },
-
-    get enabled()
-    {
-        return this._enabled;
-    },
-
-    set enabled(enabled)
-    {
-        if (this._enabled === enabled)
-            return;
-
-        this._enabled = enabled;
-        if (this.enabled)
-            InspectorBackend.setDOMBreakpoint(this.nodeId, this.type);
-        else
-            InspectorBackend.removeDOMBreakpoint(this.nodeId, this.type);
-
-        this.dispatchEventToListeners("enable-changed");
-    },
-
-    compareTo: function(other)
-    {
-        if (this.type != other.type)
-            return this.type < other.type ? -1 : 1;
-        return 0;
-    },
-
-    remove: function()
-    {
-        if (this.enabled)
-            InspectorBackend.removeDOMBreakpoint(this.nodeId, this.type);
-        this.dispatchEventToListeners("removed");
-    }
-}
-
-WebInspector.DOMBreakpoint.prototype.__proto__ = WebInspector.Object.prototype;
-

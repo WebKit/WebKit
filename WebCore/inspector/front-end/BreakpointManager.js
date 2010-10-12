@@ -27,14 +27,9 @@
 WebInspector.BreakpointManager = function()
 {
     this._breakpoints = {};
-    this._xhrBreakpoints = {};
+    this._nativeBreakpoints = {};
+    this._domBreakpoints = {};
 }
-
-WebInspector.BreakpointManager.DebuggerEventType = {
-    JavaScriptPause: 0,
-    DOMBreakpoint: 1,
-    NativeBreakpoint: 2
-};
 
 WebInspector.BreakpointManager.prototype = {
     setOneTimeBreakpoint: function(sourceID, line)
@@ -93,7 +88,7 @@ WebInspector.BreakpointManager.prototype = {
     {
         this._breakpoints = {};
         delete this._oneTimeBreakpoint;
-        this._xhrBreakpoints = {};
+        this._nativeBreakpoints = {};
     },
 
     _setBreakpoint: function(sourceID, url, line, enabled, condition)
@@ -134,43 +129,43 @@ WebInspector.BreakpointManager.prototype = {
         InspectorBackend.setBreakpoint(breakpoint.sourceID, breakpoint.line, breakpoint.enabled, breakpoint.condition, didSetBreakpoint.bind(this));
     },
 
-    createEventListenerBreakpoint: function(eventName)
+    createDOMBreakpoint: function(nodeId, domEventType, disabled)
     {
-        var data = { type: "EventListener", condition: { eventName: eventName } };
-        var breakpoint = new WebInspector.NativeBreakpoint(data, this);
-        breakpoint.label = eventName;
+        var frontendId = "dom:" + nodeId + ":" + domEventType;
+        if (frontendId in this._nativeBreakpoints)
+            return;
+
+        var breakpoint = new WebInspector.DOMBreakpoint(this, frontendId, nodeId, domEventType);
+        this._nativeBreakpoints[frontendId] = breakpoint;
+        this._domBreakpoints[frontendId] = breakpoint;
+        this.dispatchEventToListeners("dom-breakpoint-added", breakpoint);
+        breakpoint.enabled = !disabled;
         return breakpoint;
     },
 
-    createXHRBreakpoint: function(url)
+    createEventListenerBreakpoint: function(eventName, disabled)
     {
-        if (url in this._xhrBreakpoints)
+        var frontendId = eventName;
+        if (frontendId in this._nativeBreakpoints)
             return;
-        this._xhrBreakpoints[url] = true;
 
-        var data = { type: "XHR", condition: { url: url } };
-        var breakpoint = new WebInspector.NativeBreakpoint(data, this);
-        if (!url.length)
-            breakpoint.label = WebInspector.UIString("Any XHR");
-        else
-            breakpoint.label = WebInspector.UIString("URL contains \"%s\"", url);
-        breakpoint.compareTo = function(other)
-        {
-            var urlOther = other._data.condition.url;
-            if (url !== urlOther)
-                return url < urlOther ? -1 : 1;
-            return 0;
-        };
-
-        breakpoint.addEventListener("removed", this._xhrBreakpointRemoved.bind(this, url));
-        this.dispatchEventToListeners("xhr-breakpoint-added", breakpoint);
-
-        breakpoint.enabled = true;
+        var breakpoint = new WebInspector.EventListenerBreakpoint(this, frontendId, eventName);
+        this._nativeBreakpoints[frontendId] = breakpoint;
+        breakpoint.enabled = !disabled;
+        return breakpoint;
     },
 
-    _xhrBreakpointRemoved: function(url)
+    createXHRBreakpoint: function(url, disabled)
     {
-        delete this._xhrBreakpoints[url];
+        var frontendId = url;
+        if (frontendId in this._nativeBreakpoints)
+            return;
+
+        var breakpoint = new WebInspector.XHRBreakpoint(this, frontendId, url);
+        this._nativeBreakpoints[frontendId] = breakpoint;
+        this.dispatchEventToListeners("xhr-breakpoint-added", breakpoint);
+        breakpoint.enabled = !disabled
+        return breakpoint;
     },
 
     _removeNativeBreakpoint: function(breakpoint)
@@ -179,6 +174,9 @@ WebInspector.BreakpointManager.prototype = {
             return;
         if (breakpoint.enabled)
             this._removeNativeBreakpointFromBackend(breakpoint);
+        delete this._nativeBreakpoints[breakpoint._frontendId];
+        if (breakpoint._type === "DOM")
+            delete this._domBreakpoints[breakpoint._frontendId];
         breakpoint.dispatchEventToListeners("removed");
     },
 
@@ -197,12 +195,13 @@ WebInspector.BreakpointManager.prototype = {
     _setNativeBreakpointOnBackend: function(breakpoint)
     {
         breakpoint._beingSetOnBackend = true;
-        InspectorBackend.setNativeBreakpoint(breakpoint._data, didSetNativeBreakpoint.bind(this));
+        var data = { type: breakpoint._type, condition: breakpoint._condition() };
+        InspectorBackend.setNativeBreakpoint(data, didSetNativeBreakpoint.bind(this));
 
         function didSetNativeBreakpoint(backendBreakpointId)
         {
             breakpoint._beingSetOnBackend = false;
-            if (backendBreakpointId !== 0) {
+            if (backendBreakpointId !== "") {
                 breakpoint._backendId = backendBreakpointId;
                 this._breakpoints[backendBreakpointId] = breakpoint;
             }
@@ -220,14 +219,18 @@ WebInspector.BreakpointManager.prototype = {
 
     debuggerPaused: function(details)
     {
-        if (details.eventType !== WebInspector.BreakpointManager.DebuggerEventType.NativeBreakpoint)
+        if (details.eventType !== WebInspector.DebuggerEventTypes.NativeBreakpoint)
             return;
+
         var breakpoint = this._breakpoints[details.eventData.breakpointId];
-        if (breakpoint) {
-            breakpoint.hit = true;
-            breakpoint.dispatchEventToListeners("hit-state-changed");
-            this._lastHitBreakpoint = breakpoint;
-        }
+        if (!breakpoint)
+            return;
+
+        breakpoint.hit = true;
+        breakpoint.dispatchEventToListeners("hit-state-changed");
+        this._lastHitBreakpoint = breakpoint;
+
+        this.dispatchEventToListeners("breakpoint-hit", { breakpoint: breakpoint, eventData: details.eventData });
     },
 
     debuggerResumed: function()
@@ -237,6 +240,33 @@ WebInspector.BreakpointManager.prototype = {
         this._lastHitBreakpoint.hit = false;
         this._lastHitBreakpoint.dispatchEventToListeners("hit-state-changed");
         delete this._lastHitBreakpoint;
+    },
+
+    restoreDOMBreakpoints: function()
+    {
+        var domBreakpoints = this._domBreakpoints;
+        this._domBreakpoints = {};
+
+        var breakpointsToRestore = {};
+        for (var frontendId in domBreakpoints) {
+            var breakpoint = domBreakpoints[frontendId];
+            var path = breakpoint._path;
+            if (!path)
+                continue;
+            if (!breakpointsToRestore[path]) {
+                breakpointsToRestore[path] = [];
+                InspectorBackend.pushNodeByPathToFrontend(path, restoreBreakpointsForNode.bind(this, breakpointsToRestore[path]));
+            }
+            breakpointsToRestore[path].push(breakpoint);
+        }
+
+        function restoreBreakpointsForNode(breakpoints, nodeId)
+        {
+            if (!nodeId)
+                return;
+            for (var i = 0; i < breakpoints.length; ++i)
+                this.createDOMBreakpoint(nodeId, breakpoints[i]._domEventType, !breakpoints[i].enabled);
+        }
     }
 }
 
@@ -322,10 +352,11 @@ WebInspector.Breakpoint.prototype = {
 
 WebInspector.Breakpoint.prototype.__proto__ = WebInspector.Object.prototype;
 
-WebInspector.NativeBreakpoint = function(data, manager)
+WebInspector.NativeBreakpoint = function(manager, frontendId, type)
 {
-    this._data = data;
     this._manager = manager;
+    this.__frontendId = frontendId;
+    this.__type = type;
 }
 
 WebInspector.NativeBreakpoint.prototype = {
@@ -342,7 +373,204 @@ WebInspector.NativeBreakpoint.prototype = {
     remove: function()
     {
         this._manager._removeNativeBreakpoint(this);
+        this._onRemove();
+    },
+
+    get _frontendId()
+    {
+        return this.__frontendId;
+    },
+
+    get _type()
+    {
+        return this.__type;
+    },
+
+    _compare: function(x, y)
+    {
+        if (x !== y)
+            return x < y ? -1 : 1;
+        return 0;
+    },
+
+    _onRemove: function()
+    {
     }
 }
 
 WebInspector.NativeBreakpoint.prototype.__proto__ = WebInspector.Object.prototype;
+
+WebInspector.DOMBreakpoint = function(manager, frontendId, nodeId, domEventType)
+{
+    WebInspector.NativeBreakpoint.call(this, manager, frontendId, "DOM");
+    this._nodeId = nodeId;
+    this._domEventType = domEventType;
+
+    var node = WebInspector.domAgent.nodeForId(this._nodeId);
+    if (node) {
+        node.breakpoints[this._domEventType] = this;
+        this._path = node.path();
+    }
+}
+
+WebInspector.DOMBreakpoint.prototype = {
+    click: function()
+    {
+        WebInspector.updateFocusedNode(this._nodeId);
+    },
+
+    compareTo: function(other)
+    {
+        return this._compare(this._domEventType, other._domEventType);
+    },
+
+    populateLabelElement: function(element)
+    {
+        element.appendChild(WebInspector.panels.elements.linkifyNodeById(this._nodeId));
+        element.appendChild(document.createTextNode(" - "));
+        element.appendChild(document.createTextNode(WebInspector.domBreakpointTypeLabel(this._domEventType)));
+    },
+
+    populateStatusMessageElement: function(element, eventData)
+    {
+        var substitutions = [WebInspector.domBreakpointTypeLabel(this._domEventType), WebInspector.panels.elements.linkifyNodeById(this._nodeId)];
+        var formatters = {
+            s: function(substitution)
+            {
+                return substitution;
+            }
+        };
+        function append(a, b)
+        {
+            if (typeof b === "string")
+                b = document.createTextNode(b);
+            element.appendChild(b);
+        }
+        if (this._domEventType === WebInspector.DOMBreakpointTypes.SubtreeModified) {
+            var targetNode = WebInspector.panels.elements.linkifyNodeById(eventData.targetNodeId);
+            if (eventData.insertion) {
+                if (eventData.targetNodeId !== this._nodeId)
+                    WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to its descendant %s.", substitutions.concat(targetNode), formatters, "", append);
+                else
+                    WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because a new child was added to that node.", substitutions, formatters, "", append);
+            } else
+                WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s, because its descendant %s was removed.", substitutions.concat(targetNode), formatters, "", append);
+        } else
+            WebInspector.formatLocalized("Paused on a \"%s\" breakpoint set on %s.", substitutions, formatters, "", append);
+    },
+
+    _condition: function()
+    {
+        return { nodeId: this._nodeId, type: this._domEventType };
+    },
+
+    _onRemove: function()
+    {
+        var node = WebInspector.domAgent.nodeForId(this._nodeId);
+        if (node)
+            delete node.breakpoints[this._domEventType];
+    }
+}
+
+WebInspector.DOMBreakpoint.prototype.__proto__ = WebInspector.NativeBreakpoint.prototype;
+
+WebInspector.EventListenerBreakpoint = function(manager, frontendId, eventName)
+{
+    WebInspector.NativeBreakpoint.call(this, manager, frontendId, "EventListener");
+    this._eventName = eventName;
+}
+
+WebInspector.EventListenerBreakpoint.prototype = {
+    compareTo: function(other)
+    {
+        return this._compare(this._eventName, other._eventName);
+    },
+
+    label: function()
+    {
+        return this._eventName;
+    },
+
+    populateStatusMessageElement: function(element, eventData)
+    {
+        var status = WebInspector.UIString("Paused on a \"%s\" Event Listener.", this._eventName);
+        element.appendChild(document.createTextNode(status));
+    },
+
+    _condition: function()
+    {
+        return { eventName: this._eventName };
+    }
+}
+
+WebInspector.EventListenerBreakpoint.prototype.__proto__ = WebInspector.NativeBreakpoint.prototype;
+
+WebInspector.XHRBreakpoint = function(manager, frontendId, url)
+{
+    WebInspector.NativeBreakpoint.call(this, manager, frontendId, "XHR");
+    this._url = url;
+}
+
+WebInspector.XHRBreakpoint.prototype = {
+    compareTo: function(other)
+    {
+        return this._compare(this._url, other._url);
+    },
+
+    populateLabelElement: function(element)
+    {
+        var label;
+        if (!this._url.length)
+            label = WebInspector.UIString("Any XHR");
+        else
+            label = WebInspector.UIString("URL contains \"%s\"", this._url);
+        element.appendChild(document.createTextNode(label));
+    },
+
+    populateStatusMessageElement: function(element)
+    {
+        var status = WebInspector.UIString("Paused on a XMLHttpRequest.");
+        element.appendChild(document.createTextNode(status));
+    },
+
+    _condition: function()
+    {
+        return { url: this._url };
+    }
+}
+
+WebInspector.XHRBreakpoint.prototype.__proto__ = WebInspector.NativeBreakpoint.prototype;
+
+WebInspector.DebuggerEventTypes = {
+    JavaScriptPause: 0,
+    JavaScriptBreakpoint: 1,
+    NativeBreakpoint: 2
+};
+
+WebInspector.DOMBreakpointTypes = {
+    SubtreeModified: 0,
+    AttributeModified: 1,
+    NodeRemoved: 2
+};
+
+WebInspector.domBreakpointTypeLabel = function(type)
+{
+    if (!WebInspector._DOMBreakpointTypeLabels) {
+        WebInspector._DOMBreakpointTypeLabels = {};
+        WebInspector._DOMBreakpointTypeLabels[WebInspector.DOMBreakpointTypes.SubtreeModified] = WebInspector.UIString("Subtree Modified");
+        WebInspector._DOMBreakpointTypeLabels[WebInspector.DOMBreakpointTypes.AttributeModified] = WebInspector.UIString("Attribute Modified");
+        WebInspector._DOMBreakpointTypeLabels[WebInspector.DOMBreakpointTypes.NodeRemoved] = WebInspector.UIString("Node Removed");
+    }
+    return WebInspector._DOMBreakpointTypeLabels[type];
+}
+
+WebInspector.domBreakpointTypeContextMenuLabel = function(type)
+{
+    if (!WebInspector._DOMBreakpointTypeContextMenuLabels) {
+        WebInspector._DOMBreakpointTypeContextMenuLabels = {};
+        WebInspector._DOMBreakpointTypeContextMenuLabels[WebInspector.DOMBreakpointTypes.SubtreeModified] = WebInspector.UIString("Break on Subtree Modifications");
+        WebInspector._DOMBreakpointTypeContextMenuLabels[WebInspector.DOMBreakpointTypes.AttributeModified] = WebInspector.UIString("Break on Attributes Modifications");
+        WebInspector._DOMBreakpointTypeContextMenuLabels[WebInspector.DOMBreakpointTypes.NodeRemoved] = WebInspector.UIString("Break on Node Removal");
+    }
+    return WebInspector._DOMBreakpointTypeContextMenuLabels[type];
+}

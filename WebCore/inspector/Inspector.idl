@@ -135,8 +135,8 @@ module core {
         [handler=Debug] void editScriptSource(in String sourceID, in String newContent, out boolean success, out String result, out Value newCallFrames);
         [handler=Debug] void getScriptSource(in String sourceID, out String scriptSource);
 
-        [handler=Controller] void setNativeBreakpoint(in Object breakpoint, out unsigned int breakpointId);
-        [handler=Controller] void removeNativeBreakpoint(in unsigned int breakpointId);
+        [handler=Controller] void setNativeBreakpoint(in Object breakpoint, out String breakpointId);
+        [handler=Controller] void removeNativeBreakpoint(in String breakpointId);
 
         [handler=Controller] void enableProfiler(in boolean always);
         [handler=Controller] void disableProfiler(in boolean always);
@@ -171,8 +171,6 @@ module core {
         [handler=DOM] void performSearch(in String query, in boolean runSynchronously);
         [handler=DOM] void searchCanceled();
         [handler=DOM] void pushNodeByPathToFrontend(in String path, out long nodeId);
-        [handler=DOM] void setDOMBreakpoint(in long nodeId, in long type);
-        [handler=DOM] void removeDOMBreakpoint(in long nodeId, in long type);
 
         [handler=Controller] void clearConsoleMessages();
         [handler=Controller] void highlightDOMNode(in long nodeId);
