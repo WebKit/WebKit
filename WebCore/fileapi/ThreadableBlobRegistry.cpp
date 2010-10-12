@@ -41,8 +41,9 @@ namespace WebCore {
 struct BlobRegistryContext {
     BlobRegistryContext(const KURL& url, PassOwnPtr<BlobData> blobData)
         : url(url.copy())
-        , blobData(blobData->copy())
+        , blobData(blobData)
     {
+        this->blobData->detachFromCurrentThread();
     }
 
     BlobRegistryContext(const KURL& url, const KURL& srcURL)

@@ -41,36 +41,6 @@
 
 namespace WebCore {
 
-static CString convertToCString(const String& text, const String& endingType, ExceptionCode& ec)
-{
-    DEFINE_STATIC_LOCAL(AtomicString, transparent, ("transparent"));
-    DEFINE_STATIC_LOCAL(AtomicString, native, ("native"));
-
-    ec = 0;
-
-    if (endingType.isEmpty() || endingType == transparent)
-        return UTF8Encoding().encode(text.characters(), text.length(), EntitiesForUnencodables);
-    if (endingType == native)
-        return normalizeLineEndingsToNative(UTF8Encoding().encode(text.characters(), text.length(), EntitiesForUnencodables));
-
-    ec = SYNTAX_ERR;
-    return CString();
-}
-
-static CString concatenateTwoCStrings(const CString& a, const CString& b)
-{
-    if (a.isNull() && b.isNull())
-        return CString();
-
-    char* q;
-    CString result = CString::newUninitialized(a.length() + b.length(), q);
-    if (a.length())
-        memcpy(q, a.data(), a.length());
-    if (b.length())
-        memcpy(q + a.length(), b.data(), b.length());
-    return result;
-}
-
 BlobBuilder::BlobBuilder()
     : m_size(0)
 {
@@ -78,17 +48,30 @@ BlobBuilder::BlobBuilder()
 
 bool BlobBuilder::append(const String& text, const String& endingType, ExceptionCode& ec)
 {
-    CString cstr = convertToCString(text, endingType, ec);
-    if (ec)
-        return false;
+    bool isEndingTypeTransparent = endingType == "transparent";
+    bool isEndingTypeNative = endingType == "native";
+    if (!endingType.isEmpty() && !isEndingTypeTransparent && !isEndingTypeNative) {
+        ec = SYNTAX_ERR;
+        return 0;
+    }
 
-    m_size += cstr.length();
+    CString utf8Text = UTF8Encoding().encode(text.characters(), text.length(), EntitiesForUnencodables);
 
-    // If the last item is a string, concatenate it with current string.
-    if (!m_items.isEmpty() && m_items[m_items.size() - 1].type == BlobDataItem::Data)
-        m_items[m_items.size() - 1].data = concatenateTwoCStrings(m_items[m_items.size() - 1].data, cstr);
-    else
-        m_items.append(BlobDataItem(cstr));
+    // If the last item is not a data item, create one. Otherwise, we simply append the new string to the last data item.
+    if (m_items.isEmpty() || m_items[m_items.size() - 1].type != BlobDataItem::Data)
+        m_items.append(BlobDataItem(RawData::create()));
+
+    if (!utf8Text.isNull()) {
+        Vector<char>& buffer = *m_items[m_items.size() - 1].data->mutableData();
+        unsigned oldSize = buffer.size();
+
+        if (isEndingTypeNative)
+            normalizeLineEndingsToNative(utf8Text, buffer);
+        else
+            buffer.append(utf8Text.data(), utf8Text.length());
+        m_size += buffer.size() - oldSize;
+    }
+
     return true;
 }
 

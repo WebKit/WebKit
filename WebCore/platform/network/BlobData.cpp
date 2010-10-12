@@ -31,40 +31,46 @@
 #include "config.h"
 #include "BlobData.h"
 
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
+
 namespace WebCore {
 
 const long long BlobDataItem::toEndOfFile = -1;
 const double BlobDataItem::doNotCheckFileChange = 0;
 
-void BlobDataItem::copy(const BlobDataItem& item)
+RawData::RawData()
 {
-    type = item.type;
-    data = item.data; // This is OK because the underlying storage is Vector<char>.
-    path = item.path.crossThreadString();
-    url = item.url.copy();
-    offset = item.offset;
-    length = item.length;
-    expectedModificationTime = item.expectedModificationTime;
 }
 
-PassOwnPtr<BlobData> BlobData::copy() const
+void RawData::detachFromCurrentThread()
 {
-    OwnPtr<BlobData> blobData = adoptPtr(new BlobData());
-    blobData->m_contentType = m_contentType.crossThreadString();
-    blobData->m_contentDisposition = m_contentDisposition.crossThreadString();
-    blobData->m_items.resize(m_items.size());
+}
+
+void BlobDataItem::detachFromCurrentThread()
+{
+    data->detachFromCurrentThread();
+    path = path.crossThreadString();
+    url = url.copy();
+}
+
+PassOwnPtr<BlobData> BlobData::create()
+{
+    return adoptPtr(new BlobData());
+}
+
+void BlobData::detachFromCurrentThread()
+{
+    m_contentType = m_contentType.crossThreadString();
+    m_contentDisposition = m_contentDisposition.crossThreadString();
     for (size_t i = 0; i < m_items.size(); ++i)
-        blobData->m_items.at(i).copy(m_items.at(i));
-
-    return blobData.release();
+        m_items.at(i).detachFromCurrentThread();
 }
 
-void BlobData::appendData(const CString& data)
-{
-    m_items.append(BlobDataItem(data));
-}
-
-void BlobData::appendData(const CString& data, long long offset, long long length)
+void BlobData::appendData(PassRefPtr<RawData> data, long long offset, long long length)
 {
     m_items.append(BlobDataItem(data, offset, length));
 }
