@@ -48,6 +48,9 @@ namespace WebCore {
         static PassRefPtr<ClipboardChromium> create(
             ClipboardType, PassRefPtr<ChromiumDataObject>, ClipboardAccessPolicy, Frame*);
 
+        static PassRefPtr<ClipboardChromium> create(
+            ClipboardType, ClipboardAccessPolicy, Frame*);
+
         // Returns the file name (not including the extension). This removes any
         // invalid file system characters as well as making sure the
         // path + extension is not bigger than allowed by the file system.

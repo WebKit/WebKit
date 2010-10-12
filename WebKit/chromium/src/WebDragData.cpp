@@ -32,6 +32,7 @@
 #include "WebDragData.h"
 
 #include "ChromiumDataObject.h"
+#include "ChromiumDataObjectLegacy.h"
 #include "ClipboardMimeTypes.h"
 #include "WebData.h"
 #include "WebString.h"
@@ -49,7 +50,7 @@ class WebDragDataPrivate : public ChromiumDataObject {
 
 void WebDragData::initialize()
 {
-    assign(static_cast<WebDragDataPrivate*>(ChromiumDataObject::create(Clipboard::DragAndDrop).releaseRef()));
+    assign(static_cast<WebDragDataPrivate*>(ChromiumDataObject::create(ChromiumDataObjectLegacy::create(Clipboard::DragAndDrop)).releaseRef()));
 }
 
 void WebDragData::reset()
@@ -232,8 +233,7 @@ void WebDragData::assign(WebDragDataPrivate* p)
 void WebDragData::ensureMutable()
 {
     ASSERT(!isNull());
-    if (!m_private->hasOneRef())
-        assign(static_cast<WebDragDataPrivate*>(m_private->copy().releaseRef()));
+    ASSERT(m_private->hasOneRef());
 }
 
 } // namespace WebKit

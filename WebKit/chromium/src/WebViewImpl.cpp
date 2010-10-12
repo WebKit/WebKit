@@ -1690,6 +1690,21 @@ WebDragOperation WebViewImpl::dragTargetDragEnter(
     return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter);
 }
 
+WebDragOperation WebViewImpl::dragTargetDragEnterNew(
+    int identity,
+    const WebPoint& clientPoint,
+    const WebPoint& screenPoint,
+    WebDragOperationsMask operationsAllowed)
+{
+    ASSERT(!m_currentDragData.get());
+
+    m_currentDragData = ChromiumDataObject::createReadable(Clipboard::DragAndDrop);
+    m_dragIdentity = identity;
+    m_operationsAllowed = operationsAllowed;
+
+    return dragTargetDragEnterOrOver(clientPoint, screenPoint, DragEnter);
+}
+
 WebDragOperation WebViewImpl::dragTargetDragOver(
     const WebPoint& clientPoint,
     const WebPoint& screenPoint,

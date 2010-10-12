@@ -1,3 +1,25 @@
+2010-10-11  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Prepare Clipboard/DragData for transition to new drag-and-drop interface.
+        https://bugs.webkit.org/show_bug.cgi?id=44992
+
+        Add a new entry point for drag in to allow a graceful transition
+        from the legacy drag and drop model, where all data is copied in at the
+        beginning of a drag, to a model where data is retrieved on demand via
+        IPCs. The rationale for this is when we begin supporting arbitrary MIME
+        types in dataTransfer, we don't want to be copying aribtrary amounts of
+        data over for each start drag IPC.
+
+        * public/WebView.h:
+        * src/WebDragData.cpp:
+        (WebKit::WebDragData::initialize): Use the legacy data object.
+        (WebKit::WebDragData::ensureMutable): Change the if to an ASSERT.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::dragTargetDragEnterNew): New entry point.
+        * src/WebViewImpl.h:
+
 2010-10-11  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.

@@ -2290,6 +2290,8 @@
             'platform/chromium/ChromiumBridge.h',
             'platform/chromium/ChromiumDataObject.cpp',
             'platform/chromium/ChromiumDataObject.h',
+            'platform/chromium/ChromiumDataObjectLegacy.cpp',
+            'platform/chromium/ChromiumDataObjectLegacy.h',
             'platform/chromium/ClipboardChromium.cpp',
             'platform/chromium/ClipboardChromium.h',
             'platform/chromium/ClipboardChromiumLinux.cpp',

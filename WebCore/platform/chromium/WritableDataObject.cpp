@@ -77,6 +77,9 @@ void WritableDataObject::clearAll()
 bool WritableDataObject::setData(const String& type, const String& data)
 {
     if (m_clipboardType == Clipboard::CopyAndPaste) {
+        // FIXME: This is currently unimplemented on the Chromium-side. This is
+        // "okay" for now since the original implementation didn't support it
+        // anyway. Going forward, this is something we'll need to fix though.
         ChromiumBridge::clipboardWriteData(type, data, "");
         return true;
     }

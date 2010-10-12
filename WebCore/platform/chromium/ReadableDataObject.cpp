@@ -33,6 +33,8 @@
 
 #include "ChromiumBridge.h"
 #include "ClipboardMimeTypes.h"
+#include "Pasteboard.h"
+#include "PasteboardPrivate.h"
 
 namespace WebCore {
 
@@ -69,6 +71,27 @@ String ReadableDataObject::getData(const String& type, bool& succeeded) const
 {
     String data;
     String ignoredMetadata;
+    // Since the Chromium-side bridge isn't complete yet, we special case this
+    // for copy-and-paste, since that code path no longer uses
+    // ChromiumDataObjectLegacy.
+    if (m_clipboardType == Clipboard::CopyAndPaste) {
+        if (type == mimeTypeTextPlain) {
+            PasteboardPrivate::ClipboardBuffer buffer =
+                Pasteboard::generalPasteboard()->isSelectionMode() ?
+                PasteboardPrivate::SelectionBuffer :
+                PasteboardPrivate::StandardBuffer;
+            data = ChromiumBridge::clipboardReadPlainText(buffer);
+        } else if (type == mimeTypeTextHTML) {
+            PasteboardPrivate::ClipboardBuffer buffer =
+                Pasteboard::generalPasteboard()->isSelectionMode() ?
+                PasteboardPrivate::SelectionBuffer :
+                PasteboardPrivate::StandardBuffer;
+            KURL ignoredSourceURL;
+            ChromiumBridge::clipboardReadHTML(buffer, &data, &ignoredSourceURL);
+        }
+        succeeded = !data.isEmpty();
+        return data;
+    }
     succeeded = ChromiumBridge::clipboardReadData(
         clipboardBuffer(m_clipboardType), type, data, ignoredMetadata);
     return data;
