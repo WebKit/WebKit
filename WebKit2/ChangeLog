@@ -1,3 +1,18 @@
+2010-10-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Need WebKit2 API to get the cell above a table cell
+        <rdar://problem/8537111>
+        https://bugs.webkit.org/show_bug.cgi?id=47532
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCopyHTMLTableCellElementCellAbove):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::copyHTMLTableCellElementCellAbove):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+
 2010-10-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

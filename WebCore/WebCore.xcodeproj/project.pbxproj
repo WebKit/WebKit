@@ -3366,9 +3366,9 @@
 		A871DB270A150BD600B12A68 /* HTMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB190A150BD600B12A68 /* HTMLTableElement.h */; };
 		A871DB280A150BD600B12A68 /* HTMLTableElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DB1A0A150BD600B12A68 /* HTMLTableElement.cpp */; };
 		A871DB290A150BD600B12A68 /* HTMLTableColElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DB1B0A150BD600B12A68 /* HTMLTableColElement.cpp */; };
-		A871DB2A0A150BD600B12A68 /* HTMLTableCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB1C0A150BD600B12A68 /* HTMLTableCellElement.h */; };
+		A871DB2A0A150BD600B12A68 /* HTMLTableCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB1C0A150BD600B12A68 /* HTMLTableCellElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DB2B0A150BD600B12A68 /* HTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB1D0A150BD600B12A68 /* HTMLTableCaptionElement.h */; };
-		A871DB2C0A150BD600B12A68 /* HTMLTablePartElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB1E0A150BD600B12A68 /* HTMLTablePartElement.h */; };
+		A871DB2C0A150BD600B12A68 /* HTMLTablePartElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB1E0A150BD600B12A68 /* HTMLTablePartElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A871DB2D0A150BD600B12A68 /* HTMLTablePartElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DB1F0A150BD600B12A68 /* HTMLTablePartElement.cpp */; };
 		A871DB2E0A150BD600B12A68 /* HTMLTableCellElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A871DB200A150BD600B12A68 /* HTMLTableCellElement.cpp */; };
 		A871DB2F0A150BD600B12A68 /* HTMLTableColElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A871DB210A150BD600B12A68 /* HTMLTableColElement.h */; };

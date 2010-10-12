@@ -27,6 +27,7 @@
 
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/HTMLInputElement.h>
+#include <WebCore/HTMLTableCellElement.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/Node.h>
 #include <WebCore/HTMLNames.h>
@@ -103,6 +104,14 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutofilled(bool filled)
         return;
 
     static_cast<HTMLInputElement*>(m_node.get())->setAutofilled(filled);
+}
+
+PassRefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::copyHTMLTableCellElementCellAbove()
+{
+    if (!m_node->hasTagName(tdTag))
+        return 0;
+
+    return getOrCreate(static_cast<HTMLTableCellElement*>(m_node.get())->cellAbove());
 }
 
 } // namespace WebKit

@@ -52,3 +52,9 @@ void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlI
 {
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutofilled(filled);
 }
+
+WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBundleNodeHandleRef htmlTableCellElementHandleRef)
+{
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = toImpl(htmlTableCellElementHandleRef)->copyHTMLTableCellElementCellAbove();
+    return toAPI(nodeHandle.release().releaseRef());
+}

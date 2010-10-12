@@ -52,6 +52,7 @@ public:
     // Note: These should only be operations that are not exposed to JavaScript.
     void setHTMLInputElementValueForUser(const String&);
     void setHTMLInputElementAutofilled(bool);
+    PassRefPtr<InjectedBundleNodeHandle> copyHTMLTableCellElementCellAbove();
 
 private:
     static PassRefPtr<InjectedBundleNodeHandle> create(WebCore::Node*);

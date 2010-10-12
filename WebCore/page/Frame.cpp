@@ -343,35 +343,25 @@ static RegularExpression* createRegExpForLabels(const Vector<String>& labels)
 
 String Frame::searchForLabelsAboveCell(RegularExpression* regExp, HTMLTableCellElement* cell, size_t* resultDistanceFromStartOfCell)
 {
-    RenderObject* cellRenderer = cell->renderer();
-
-    if (cellRenderer && cellRenderer->isTableCell()) {
-        RenderTableCell* tableCellRenderer = toRenderTableCell(cellRenderer);
-        RenderTableCell* cellAboveRenderer = tableCellRenderer->table()->cellAbove(tableCellRenderer);
-
-        if (cellAboveRenderer) {
-            HTMLTableCellElement* aboveCell =
-                static_cast<HTMLTableCellElement*>(cellAboveRenderer->node());
-
-            if (aboveCell) {
-                // search within the above cell we found for a match
-                size_t lengthSearched = 0;    
-                for (Node* n = aboveCell->firstChild(); n; n = n->traverseNextNode(aboveCell)) {
-                    if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
-                        // For each text chunk, run the regexp
-                        String nodeString = n->nodeValue();
-                        int pos = regExp->searchRev(nodeString);
-                        if (pos >= 0) {
-                            if (resultDistanceFromStartOfCell)
-                                *resultDistanceFromStartOfCell = lengthSearched;
-                            return nodeString.substring(pos, regExp->matchedLength());
-                        }
-                        lengthSearched += nodeString.length();
-                    }
+    HTMLTableCellElement* aboveCell = cell->cellAbove();
+    if (aboveCell) {
+        // search within the above cell we found for a match
+        size_t lengthSearched = 0;    
+        for (Node* n = aboveCell->firstChild(); n; n = n->traverseNextNode(aboveCell)) {
+            if (n->isTextNode() && n->renderer() && n->renderer()->style()->visibility() == VISIBLE) {
+                // For each text chunk, run the regexp
+                String nodeString = n->nodeValue();
+                int pos = regExp->searchRev(nodeString);
+                if (pos >= 0) {
+                    if (resultDistanceFromStartOfCell)
+                        *resultDistanceFromStartOfCell = lengthSearched;
+                    return nodeString.substring(pos, regExp->matchedLength());
                 }
+                lengthSearched += nodeString.length();
             }
         }
     }
+
     // Any reason in practice to search all cells in that are above cell?
     if (resultDistanceFromStartOfCell)
         *resultDistanceFromStartOfCell = notFound;

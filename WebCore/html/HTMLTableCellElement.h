@@ -53,6 +53,8 @@ public:
     void setRowSpan(int);
     String scope() const;
 
+    HTMLTableCellElement* cellAbove() const;
+
 private:
     HTMLTableCellElement(const QualifiedName&, Document*);
 
