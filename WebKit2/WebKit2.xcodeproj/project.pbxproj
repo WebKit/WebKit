@@ -120,6 +120,9 @@
 		1A8EFA711252B84100F7067F /* PluginProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */; };
 		1A8EFDFA1253CAA200F7067F /* DataReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EFDF91253CAA200F7067F /* DataReference.h */; };
 		1A8EFDFE1253CB6E00F7067F /* DataReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EFDFD1253CB6E00F7067F /* DataReference.cpp */; };
+		1A90C1EE1264FD50003E44D4 /* FindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C1ED1264FD50003E44D4 /* FindOptions.h */; };
+		1A90C1F41264FD71003E44D4 /* FindController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C1F21264FD71003E44D4 /* FindController.h */; };
+		1A90C1F51264FD71003E44D4 /* FindController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C1F31264FD71003E44D4 /* FindController.cpp */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
@@ -578,6 +581,9 @@
 		1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProxyMessages.h; sourceTree = "<group>"; };
 		1A8EFDF91253CAA200F7067F /* DataReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataReference.h; sourceTree = "<group>"; };
 		1A8EFDFD1253CB6E00F7067F /* DataReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataReference.cpp; sourceTree = "<group>"; };
+		1A90C1ED1264FD50003E44D4 /* FindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindOptions.h; sourceTree = "<group>"; };
+		1A90C1F21264FD71003E44D4 /* FindController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindController.h; sourceTree = "<group>"; };
+		1A90C1F31264FD71003E44D4 /* FindController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindController.cpp; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -1141,6 +1147,7 @@
 				1A043D78124FEFC100FFBFB5 /* BackingStore.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
 				0FB659221208B4DB0044816C /* DrawingAreaBase.h */,
+				1A90C1ED1264FD50003E44D4 /* FindOptions.h */,
 				762B7481120BBA0100819339 /* FontSmoothingLevel.h */,
 				BC3065F91259344E00E71278 /* CacheModel.h */,
 				BC64696D11DBE603006455B0 /* ImmutableArray.cpp */,
@@ -1304,6 +1311,8 @@
 				BC5F7BB31182376C0052C02C /* ChunkedUpdateDrawingArea.h */,
 				BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */,
 				BC8452A61162C80900CAB9B5 /* DrawingArea.h */,
+				1A90C1F31264FD71003E44D4 /* FindController.cpp */,
+				1A90C1F21264FD71003E44D4 /* FindController.h */,
 				0F5265B111DD37680006D33C /* LayerBackedDrawingArea.cpp */,
 				0F5265B211DD37680006D33C /* LayerBackedDrawingArea.h */,
 				BC72B9F811E6476B001EB4EA /* WebBackForwardListProxy.cpp */,
@@ -1994,6 +2003,8 @@
 				BCC8B374125FB69000DE46A4 /* WKGeometry.h in Headers */,
 				BC57450C1263B155006F0F12 /* WKBundleNodeHandlePrivate.h in Headers */,
 				1AC41AC71263C88300054E94 /* BinarySemaphore.h in Headers */,
+				1A90C1EE1264FD50003E44D4 /* FindOptions.h in Headers */,
+				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2297,6 +2308,7 @@
 				BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */,
 				1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */,
 				1AC41AC81263C88300054E94 /* BinarySemaphore.cpp in Sources */,
+				1A90C1F51264FD71003E44D4 /* FindController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

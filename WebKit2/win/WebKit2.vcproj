@@ -1036,6 +1036,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\FindController.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\FindController.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebBackForwardListProxy.cpp"
 					>
 				</File>

@@ -295,6 +295,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     WebProcess/WebPage/DrawingArea.h \
+    WebProcess/WebPage/FindController.h \
     WebProcess/WebPage/WebEditCommand.h \
     WebProcess/WebPage/WebFrame.h \
     WebProcess/WebPage/WebPage.h \
@@ -431,6 +432,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
+    WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/WebEditCommand.cpp \
     WebProcess/WebPage/WebFrame.cpp \
     WebProcess/WebPage/WebPage.cpp \

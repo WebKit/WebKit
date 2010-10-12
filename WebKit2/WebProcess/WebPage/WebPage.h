@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 #include "DrawingArea.h"
+#include "FindController.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageLoaderClient.h"
@@ -213,7 +214,7 @@ private:
     void reapplyEditCommand(uint64_t commandID);
     void didRemoveEditCommand(uint64_t commandID);
 
-    void findString(const String&, uint32_t findDirection, uint32_t findOption, uint32_t maxNumMatches);
+    void findString(const String&, uint32_t findDirection, uint32_t findOptions, uint32_t maxNumMatches);
     void hideFindUI();
     void countStringMatches(const String&, bool caseInsensitive, uint32_t maxNumMatches);
 
@@ -249,6 +250,8 @@ private:
     InjectedBundlePageFormClient m_formClient;
     InjectedBundlePageLoaderClient m_loaderClient;
     InjectedBundlePageUIClient m_uiClient;
+
+    FindController m_findController;
 
     uint64_t m_pageID;
 };
