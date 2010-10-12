@@ -23,22 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKBundleNodeHandle.h"
-#include "WKBundleNodeHandlePrivate.h"
+#ifndef WKBundleNodeHandlePrivate_h
+#define WKBundleNodeHandlePrivate_h
 
-#include "InjectedBundleNodeHandle.h"
-#include "WKAPICast.h"
-#include "WKBundleAPICast.h"
+#include <JavaScriptCore/JavaScript.h>
+#include <WebKit2/WKBase.h>
 
-using namespace WebKit;
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-WKTypeID WKBundleNodeHandleGetTypeID()
-{
-    return toAPI(InjectedBundleNodeHandle::APIType);
+WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef context, JSObjectRef object);
+
+#ifdef __cplusplus
 }
+#endif
 
-WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef contextRef, JSObjectRef objectRef)
-{
-    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(contextRef, objectRef);
-    return toAPI(nodeHandle.release().releaseRef());
-}
+#endif /* WKBundleNodeHandlePrivate_h */

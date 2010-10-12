@@ -1,3 +1,24 @@
+2010-10-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add ability to convert from a JSObjectRef back to a WKBundleNodeHandleRef
+        https://bugs.webkit.org/show_bug.cgi?id=47509
+
+        Add SPI to convert a JSObjectRef to a WKBundleNodeHandleRef.
+
+        * DerivedSources.pro:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCreate):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h: Added.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::InjectedBundleNodeHandle::getOrCreate):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        * win/WebKit2.vcproj:
+        * win/WebKit2Generated.make:
+
 2010-10-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler and Sam Weinig.

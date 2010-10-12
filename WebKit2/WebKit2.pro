@@ -257,8 +257,10 @@ HEADERS += \
     UIProcess/WebProcessManager.h \
     UIProcess/WebProcessProxy.h \
     UIProcess/WebUIClient.h \
-    WebProcess/InjectedBundle/API/c/WKBundlePage.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
+    WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
+    WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
+    WebProcess/InjectedBundle/API/c/WKBundlePage.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h \
     WebProcess/InjectedBundle/InjectedBundle.h \
