@@ -1,3 +1,21 @@
+2010-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add a simple Find UI to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=47553
+
+        * MiniBrowser/mac/BrowserWindow.xib:
+        Add Find panel.
+
+        * MiniBrowser/mac/BrowserWindowController.h:
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController performFindPanelAction:]):
+        Show the find panel.
+
+        (-[BrowserWindowController find:]):
+        Tell the WKPageRef to find the given string.
+
 2010-10-12  Tony Chang  <tony@chromium.org>
 
         Unreviewed, fixing DRT compile on Windows after r69586.

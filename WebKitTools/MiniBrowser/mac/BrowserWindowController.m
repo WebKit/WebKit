@@ -659,4 +659,17 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
     [self fetch:nil];
 }
 
+- (IBAction)performFindPanelAction:(id)sender
+{
+    [findPanelWindow makeKeyAndOrderFront:sender];
+}
+
+- (IBAction)find:(id)sender
+{
+    WKStringRef string = WKStringCreateWithCFString((CFStringRef)[sender stringValue]);
+
+    WKPageFindString(_webView.pageRef, string, kWKFindDirectionForward, 
+                     kWKFindOptionsCaseInsensitive | kWKFindOptionsWrapAround | kWKFindOptionsShowFindIndicator, 100);
+}
+
 @end
