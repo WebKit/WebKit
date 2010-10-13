@@ -34,6 +34,7 @@
 #include "RegExpObject.h"
 #include "RegExp.h"
 #include "RegExpCache.h"
+#include "UStringConcatenate.h"
 
 namespace JSC {
 
@@ -94,7 +95,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     }
 
     if (!regExp->isValid())
-        return throwVMError(exec, createSyntaxError(exec, makeString("Invalid regular expression: ", regExp->errorMessage())));
+        return throwVMError(exec, createSyntaxError(exec, makeUString("Invalid regular expression: ", regExp->errorMessage())));
 
     asRegExpObject(thisValue)->setRegExp(regExp.release());
     asRegExpObject(thisValue)->setLastIndex(0);

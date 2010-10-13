@@ -1,3 +1,57 @@
+2010-10-13  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add wtf/text/StringConcatenate
+        https://bugs.webkit.org/show_bug.cgi?id=47584
+
+        Move runtime/StringConcatenate.h to wtf/text, make it work for Strings too.
+        Add a special runtime/UStringConcatenate.h class that inherits from StringConcatenate, and extends it for use with UString.
+        Exactly the same design that has been followed while refactoring StringBuilder.
+
+        The UString variants can all be removed as soon as WTF::String & JSC::UString converge.
+
+        * GNUmakefile.am: Add wtf/text/StringConcatenate.h and runtime/UStringConcatenate.h.
+        * JavaScriptCore.gypi: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * bytecode/CodeBlock.cpp: s/makeString/makeUString/
+        (JSC::escapeQuotes):
+        (JSC::valueToSourceString):
+        (JSC::constantName):
+        (JSC::idName):
+        (JSC::CodeBlock::registerName):
+        (JSC::regexpToSourceString):
+        (JSC::regexpName):
+        * bytecompiler/NodesCodegen.cpp: Ditto.
+        (JSC::substitute):
+        * profiler/Profiler.cpp: Ditto.
+        (JSC::Profiler::createCallIdentifier):
+        * runtime/ExceptionHelpers.cpp: Ditto.
+        (JSC::createUndefinedVariableError):
+        (JSC::createErrorMessage):
+        (JSC::createInvalidParamError):
+        * runtime/FunctionConstructor.cpp: Ditto.
+        (JSC::constructFunction):
+        * runtime/FunctionPrototype.cpp: Ditto.
+        (JSC::insertSemicolonIfNeeded):
+        * runtime/JSONObject.cpp: Ditto.
+        (JSC::Stringifier::indent):
+        * runtime/JSStringBuilder.h:
+        (JSC::jsMakeNontrivialString):
+        * runtime/RegExpConstructor.cpp: Ditto.
+        (JSC::constructRegExp):
+        * runtime/RegExpObject.cpp: Ditto.
+        (JSC::RegExpObject::match):
+        * runtime/RegExpPrototype.cpp: Ditto.
+        (JSC::regExpProtoFuncCompile):
+        * runtime/StringConcatenate.h: Removed.
+        * runtime/UStringConcatenate.h: Added. Only contains the StringTypeAdapter<JSC::UString> code and the makeUString variants, the rest lives in wtf/text/StringConcatenate.h
+        (JSC::makeUString):
+        * wtf/text/StringConcatenate.h: Copied from runtime/StringConcatenate.h.
+        (WTF::makeString):
+
 2010-10-12  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.

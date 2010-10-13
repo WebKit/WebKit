@@ -31,7 +31,7 @@
 #include "Nodes.h"
 #include "Parser.h"
 #include "UStringBuilder.h"
-#include "StringConcatenate.h"
+#include "UStringConcatenate.h"
 
 namespace JSC {
 
@@ -81,7 +81,7 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
     if (args.isEmpty())
         program = "(function() { \n})";
     else if (args.size() == 1)
-        program = makeString("(function() { ", args.at(0).toString(exec), "\n})");
+        program = makeUString("(function() { ", args.at(0).toString(exec), "\n})");
     else {
         UStringBuilder builder;
         builder.append("(function(");

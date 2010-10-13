@@ -35,7 +35,7 @@
 #include "Lookup.h"
 #include "PropertyNameArray.h"
 #include "UStringBuilder.h"
-#include "StringConcatenate.h"
+#include "UStringConcatenate.h"
 #include <wtf/MathExtras.h>
 
 namespace JSC {
@@ -466,7 +466,7 @@ inline void Stringifier::indent()
     // Use a single shared string, m_repeatedGap, so we don't keep allocating new ones as we indent and unindent.
     unsigned newSize = m_indent.length() + m_gap.length();
     if (newSize > m_repeatedGap.length())
-        m_repeatedGap = makeString(m_repeatedGap, m_gap);
+        m_repeatedGap = makeUString(m_repeatedGap, m_gap);
     ASSERT(newSize <= m_repeatedGap.length());
     m_indent = m_repeatedGap.substringSharingImpl(0, newSize);
 }

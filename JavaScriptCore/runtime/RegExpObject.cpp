@@ -29,7 +29,7 @@
 #include "Lookup.h"
 #include "RegExpConstructor.h"
 #include "RegExpPrototype.h"
-#include "StringConcatenate.h"
+#include "UStringConcatenate.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace JSC {
@@ -146,7 +146,7 @@ bool RegExpObject::match(ExecState* exec)
 
     UString input = !exec->argumentCount() ? regExpConstructor->input() : exec->argument(0).toString(exec);
     if (input.isNull()) {
-        throwError(exec, createError(exec, makeString("No input to ", toString(exec), ".")));
+        throwError(exec, createError(exec, makeUString("No input to ", toString(exec), ".")));
         return false;
     }
 

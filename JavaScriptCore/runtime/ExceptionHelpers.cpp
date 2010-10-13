@@ -36,7 +36,7 @@
 #include "JSNotAnObject.h"
 #include "Interpreter.h"
 #include "Nodes.h"
-#include "StringConcatenate.h"
+#include "UStringConcatenate.h"
 
 namespace JSC {
 
@@ -90,7 +90,7 @@ JSValue createUndefinedVariableError(ExecState* exec, const Identifier& ident, u
     int endOffset = 0;
     int divotPoint = 0;
     int line = codeBlock->expressionRangeForBytecodeOffset(exec, bytecodeOffset, divotPoint, startOffset, endOffset);
-    UString message(makeString("Can't find variable: ", ident.ustring()));
+    UString message(makeUString("Can't find variable: ", ident.ustring()));
     JSObject* exception = addErrorInfo(exec, createReferenceError(exec, message), line, codeBlock->ownerExecutable()->source(), divotPoint, startOffset, endOffset);
     return exception;
 }
@@ -98,9 +98,9 @@ JSValue createUndefinedVariableError(ExecState* exec, const Identifier& ident, u
 static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, int expressionStart, int expressionStop, JSValue value, UString error)
 {
     if (!expressionStop || expressionStart > codeBlock->source()->length())
-        return makeString(value.toString(exec), " is ", error);
+        return makeUString(value.toString(exec), " is ", error);
     if (expressionStart < expressionStop)
-        return makeString("Result of expression '", codeBlock->source()->getRange(expressionStart, expressionStop), "' [", value.toString(exec), "] is ", error, ".");
+        return makeUString("Result of expression '", codeBlock->source()->getRange(expressionStart, expressionStop), "' [", value.toString(exec), "] is ", error, ".");
 
     // No range information, so give a few characters of context
     const UChar* data = codeBlock->source()->data();
@@ -117,7 +117,7 @@ static UString createErrorMessage(ExecState* exec, CodeBlock* codeBlock, int, in
         stop++;
     while (stop > expressionStart && isStrWhiteSpace(data[stop]))
         stop--;
-    return makeString("Result of expression near '...", codeBlock->source()->getRange(start, stop), "...' [", value.toString(exec), "] is ", error, ".");
+    return makeUString("Result of expression near '...", codeBlock->source()->getRange(start, stop), "...' [", value.toString(exec), "] is ", error, ".");
 }
 
 JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue value, unsigned bytecodeOffset, CodeBlock* codeBlock)
@@ -126,7 +126,7 @@ JSObject* createInvalidParamError(ExecState* exec, const char* op, JSValue value
     int endOffset = 0;
     int divotPoint = 0;
     int line = codeBlock->expressionRangeForBytecodeOffset(exec, bytecodeOffset, divotPoint, startOffset, endOffset);
-    UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint, divotPoint + endOffset, value, makeString("not a valid argument for '", op, "'"));
+    UString errorMessage = createErrorMessage(exec, codeBlock, line, divotPoint, divotPoint + endOffset, value, makeUString("not a valid argument for '", op, "'"));
     JSObject* exception = addErrorInfo(exec, createTypeError(exec, errorMessage), line, codeBlock->ownerExecutable()->source(), divotPoint, startOffset, endOffset);
     return exception;
 }

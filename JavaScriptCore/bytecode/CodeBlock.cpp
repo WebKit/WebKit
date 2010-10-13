@@ -38,7 +38,7 @@
 #include "JSFunction.h"
 #include "JSStaticScopeObject.h"
 #include "JSValue.h"
-#include "StringConcatenate.h"
+#include "UStringConcatenate.h"
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 
@@ -53,7 +53,7 @@ static UString escapeQuotes(const UString& str)
     UString result = str;
     size_t pos = 0;
     while ((pos = result.find('\"', pos)) != notFound) {
-        result = makeString(result.substringSharingImpl(0, pos), "\"\\\"\"", result.substringSharingImpl(pos + 1));
+        result = makeUString(result.substringSharingImpl(0, pos), "\"\\\"\"", result.substringSharingImpl(pos + 1));
         pos += 4;
     }
     return result;
@@ -65,19 +65,19 @@ static UString valueToSourceString(ExecState* exec, JSValue val)
         return "0";
 
     if (val.isString())
-        return makeString("\"", escapeQuotes(val.toString(exec)), "\"");
+        return makeUString("\"", escapeQuotes(val.toString(exec)), "\"");
 
     return val.toString(exec);
 }
 
 static CString constantName(ExecState* exec, int k, JSValue value)
 {
-    return makeString(valueToSourceString(exec, value), "(@k", UString::number(k - FirstConstantRegisterIndex), ")").utf8();
+    return makeUString(valueToSourceString(exec, value), "(@k", UString::number(k - FirstConstantRegisterIndex), ")").utf8();
 }
 
 static CString idName(int id0, const Identifier& ident)
 {
-    return makeString(ident.ustring(), "(@id", UString::number(id0), ")").utf8();
+    return makeUString(ident.ustring(), "(@id", UString::number(id0), ")").utf8();
 }
 
 CString CodeBlock::registerName(ExecState* exec, int r) const
@@ -88,7 +88,7 @@ CString CodeBlock::registerName(ExecState* exec, int r) const
     if (isConstantRegisterIndex(r))
         return constantName(exec, r, getConstant(r));
 
-    return makeString("r", UString::number(r)).utf8();
+    return makeUString("r", UString::number(r)).utf8();
 }
 
 static UString regexpToSourceString(RegExp* regExp)
@@ -102,12 +102,12 @@ static UString regexpToSourceString(RegExp* regExp)
     if (regExp->multiline())
         postfix[index] = 'm';
 
-    return makeString("/", regExp->pattern(), postfix);
+    return makeUString("/", regExp->pattern(), postfix);
 }
 
 static CString regexpName(int re, RegExp* regexp)
 {
-    return makeString(regexpToSourceString(regexp), "(@re", UString::number(re), ")").utf8();
+    return makeUString(regexpToSourceString(regexp), "(@re", UString::number(re), ")").utf8();
 }
 
 static UString pointerToSourceString(void* p)

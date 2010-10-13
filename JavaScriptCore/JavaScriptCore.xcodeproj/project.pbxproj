@@ -39,6 +39,7 @@
 		081469491264378500DFF935 /* StringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 081469481264375E00DFF935 /* StringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		088FA5BB0EF76D4300578E6F /* RandomNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088FA5B90EF76D4300578E6F /* RandomNumber.cpp */; };
 		088FA5BC0EF76D4300578E6F /* RandomNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 088FA5BA0EF76D4300578E6F /* RandomNumber.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		08CABBA61265AB3900B206CE /* StringConcatenate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0896C29E1265AB0900B1CDD3 /* StringConcatenate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08DDA5C11264631700751732 /* UStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 08DDA5BB12645F1D00751732 /* UStringBuilder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		08E279E90EF83B10007DB523 /* RandomNumberSeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E279E80EF83B10007DB523 /* RandomNumberSeed.h */; };
 		0B330C270F38C62300692DE3 /* TypeTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B330C260F38C62300692DE3 /* TypeTraits.cpp */; };
@@ -224,7 +225,6 @@
 		86A90ED00EE7D51F00AB350D /* JITArithmetic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */; };
 		86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */; };
 		86ADD1460FDDEA980006EEC2 /* MacroAssemblerARMv7.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */; };
-		86B6DA0212132B9A000D316F /* StringConcatenate.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B6DA0112132B9A000D316F /* StringConcatenate.h */; };
 		86B99AB8117E391E00DF5A90 /* RopeImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */; };
 		86B99AB9117E391E00DF5A90 /* RopeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AB7117E391E00DF5A90 /* RopeImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B99AE3117E578100DF5A90 /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AE1117E578100DF5A90 /* StringBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -633,6 +633,8 @@
 		081469481264375E00DFF935 /* StringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringBuilder.h; path = text/StringBuilder.h; sourceTree = "<group>"; };
 		088FA5B90EF76D4300578E6F /* RandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RandomNumber.cpp; sourceTree = "<group>"; };
 		088FA5BA0EF76D4300578E6F /* RandomNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumber.h; sourceTree = "<group>"; };
+		0896C29B1265AAF600B1CDD3 /* UStringConcatenate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UStringConcatenate.h; sourceTree = "<group>"; };
+		0896C29E1265AB0900B1CDD3 /* StringConcatenate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringConcatenate.h; path = text/StringConcatenate.h; sourceTree = "<group>"; };
 		08DDA5BB12645F1D00751732 /* UStringBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UStringBuilder.h; sourceTree = "<group>"; };
 		08E279E80EF83B10007DB523 /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
 		0B330C260F38C62300692DE3 /* TypeTraits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeTraits.cpp; sourceTree = "<group>"; };
@@ -830,7 +832,6 @@
 		86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITArithmetic.cpp; sourceTree = "<group>"; };
 		86ADD1430FDDEA980006EEC2 /* ARMv7Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARMv7Assembler.h; sourceTree = "<group>"; };
 		86ADD1440FDDEA980006EEC2 /* MacroAssemblerARMv7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerARMv7.h; sourceTree = "<group>"; };
-		86B6DA0112132B9A000D316F /* StringConcatenate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConcatenate.h; sourceTree = "<group>"; };
 		86B99AB6117E391E00DF5A90 /* RopeImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RopeImpl.cpp; sourceTree = "<group>"; };
 		86B99AB7117E391E00DF5A90 /* RopeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RopeImpl.h; sourceTree = "<group>"; };
 		86B99AE1117E578100DF5A90 /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringBuffer.h; path = text/StringBuffer.h; sourceTree = "<group>"; };
@@ -1795,7 +1796,6 @@
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
 				93303FE80E6A72B500786E6A /* SmallStrings.cpp */,
 				93303FEA0E6A72C000786E6A /* SmallStrings.h */,
-				86B6DA0112132B9A000D316F /* StringConcatenate.h */,
 				BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */,
 				BC18C3C10E16EE3300B34460 /* StringConstructor.h */,
 				BC18C3C20E16EE3300B34460 /* StringObject.cpp */,
@@ -1817,6 +1817,7 @@
 				F692A8850255597D01FF60F7 /* UString.cpp */,
 				F692A8860255597D01FF60F7 /* UString.h */,
 				08DDA5BB12645F1D00751732 /* UStringBuilder.h */,
+				0896C29B1265AAF600B1CDD3 /* UStringConcatenate.h */,
 				14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */,
 				14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */,
 				1420BE7A10AA6DDB00F455D2 /* WeakRandom.h */,
@@ -1837,6 +1838,7 @@
 				86565741115BE3DA00291F40 /* CString.h */,
 				86B99AE1117E578100DF5A90 /* StringBuffer.h */,
 				081469481264375E00DFF935 /* StringBuilder.h */,
+				0896C29E1265AB0900B1CDD3 /* StringConcatenate.h */,
 				868BFA05117CEFD100B908B1 /* StringHash.h */,
 				868BFA06117CEFD100B908B1 /* StringImpl.cpp */,
 				868BFA07117CEFD100B908B1 /* StringImpl.h */,
@@ -2260,6 +2262,7 @@
 				FE1B447A0ECCD73B004F4DD1 /* StdLibExtras.h in Headers */,
 				86B99AE3117E578100DF5A90 /* StringBuffer.h in Headers */,
 				081469491264378500DFF935 /* StringBuilder.h in Headers */,
+				08CABBA61265AB3900B206CE /* StringConcatenate.h in Headers */,
 				BC18C4660E16F5CD00B34460 /* StringConstructor.h in Headers */,
 				BC18C4670E16F5CD00B34460 /* StringExtras.h in Headers */,
 				868BFA0D117CEFD100B908B1 /* StringHash.h in Headers */,
@@ -2312,7 +2315,6 @@
 				DD2724691208D1FF00F9ABE7 /* AlignedMemoryAllocator.h in Headers */,
 				DDE82AD81209D955005C1756 /* GCHandle.h in Headers */,
 				86F38859121130CA007A7CE3 /* AtomicStringHash.h in Headers */,
-				86B6DA0212132B9A000D316F /* StringConcatenate.h in Headers */,
 				862AF4B612239C7B0024E5B8 /* DecimalNumber.h in Headers */,
 				BCFBE696122560E800309E9D /* PassOwnArrayPtr.h in Headers */,
 				BCFBE698122561D200309E9D /* OwnArrayPtrCommon.h in Headers */,

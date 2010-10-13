@@ -35,7 +35,7 @@
 #include "RegExpPrototype.h"
 #include "RegExp.h"
 #include "RegExpCache.h"
-#include "StringConcatenate.h"
+#include "UStringConcatenate.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace JSC {
@@ -307,7 +307,7 @@ JSObject* constructRegExp(ExecState* exec, const ArgList& args)
 
     RefPtr<RegExp> regExp = exec->globalData().regExpCache()->lookupOrCreate(pattern, flags);
     if (!regExp->isValid())
-        return throwError(exec, createSyntaxError(exec, makeString("Invalid regular expression: ", regExp->errorMessage())));
+        return throwError(exec, createSyntaxError(exec, makeUString("Invalid regular expression: ", regExp->errorMessage())));
     return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
 }
 

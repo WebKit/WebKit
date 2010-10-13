@@ -388,10 +388,8 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/ScopeChainMark.h \
 	JavaScriptCore/runtime/SmallStrings.cpp \
 	JavaScriptCore/runtime/SmallStrings.h \
-	JavaScriptCore/runtime/StrictEvalActivation.cpp\
-	JavaScriptCore/runtime/StrictEvalActivation.h\
-	JavaScriptCore/runtime/StringBuilder.h \
-	JavaScriptCore/runtime/StringConcatenate.h \
+	JavaScriptCore/runtime/StrictEvalActivation.cpp \
+	JavaScriptCore/runtime/StrictEvalActivation.h \
 	JavaScriptCore/runtime/StringConstructor.cpp \
 	JavaScriptCore/runtime/StringConstructor.h \
 	JavaScriptCore/runtime/StringObject.cpp \
@@ -412,6 +410,7 @@ javascriptcore_sources += \
 	JavaScriptCore/runtime/UString.cpp \
 	JavaScriptCore/runtime/UString.h \
 	JavaScriptCore/runtime/UStringBuilder.h \
+	JavaScriptCore/runtime/UStringConcatenate.h \
 	JavaScriptCore/runtime/WeakGCMap.h \
 	JavaScriptCore/runtime/WeakGCPtr.h \
 	JavaScriptCore/runtime/WeakRandom.h \
@@ -510,6 +509,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/text/CString.h \
 	JavaScriptCore/wtf/text/StringBuffer.h \
 	JavaScriptCore/wtf/text/StringBuilder.h \
+	JavaScriptCore/wtf/text/StringConcatenate.h \
 	JavaScriptCore/wtf/text/StringHash.h \
 	JavaScriptCore/wtf/text/StringImplBase.h \
 	JavaScriptCore/wtf/text/StringImpl.cpp \

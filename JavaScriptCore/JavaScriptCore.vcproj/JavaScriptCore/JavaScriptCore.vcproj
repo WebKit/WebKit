@@ -1257,6 +1257,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\UStringConcatenate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\UStringImpl.h"
 				>
 			</File>
