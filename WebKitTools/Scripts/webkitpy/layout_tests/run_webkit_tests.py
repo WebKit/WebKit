@@ -91,13 +91,14 @@ class TestInfo:
     """Groups information about a test for easy passing of data."""
 
     def __init__(self, port, filename, timeout):
-        """
+        """Generates the URI and stores the filename and timeout for this test.
         Args:
           filename: Full path to the test.
-          timeout: Timeout for running the test in DRT.
+          timeout: Timeout for running the test in TestShell.
           """
         self.filename = filename
         self._port = port
+        self.uri = port.filename_to_uri(filename)
         self.timeout = timeout
         self._image_checksum = -1
 

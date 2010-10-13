@@ -43,12 +43,11 @@ import tempfile
 import time
 import webbrowser
 
-from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.path import abspath_to_uri, cygpath
-from webkitpy.layout_tests.layout_package import test_expectations
-
 import base
 import http_server
+
+from webkitpy.common.system.executive import Executive
+from webkitpy.layout_tests.layout_package import test_expectations
 
 # Chromium DRT on OSX uses WebKitDriver.
 if sys.platform == 'darwin':
@@ -144,21 +143,11 @@ class ChromiumPort(base.Port):
         with open(actual_filename, 'w+b') as file:
             file.write(actual_contents)
 
-        # We use convert_path if there's a chance that the launched
-        # executable needs filename arguments in a different format than
-        # the normal format provided by the python runtime. The main
-        # example of this is running under Cygwin on Windows but
-        # launching a Win32 binary, where we need to convert the path
-        # from /cygdrive/c/foo.txt to c:\foo.txt.
         if diff_filename:
-            cmd = [executable, '--diff',
-                   self._convert_path(expected_filename),
-                   self._convert_path(actual_filename),
-                   self._convert_path(diff_filename)]
+            cmd = [executable, '--diff', expected_filename,
+                   actual_filename, diff_filename]
         else:
-            cmd = [executable,
-                   self._convert_path(expected_filename),
-                   self._convert_path(actual_filename)]
+            cmd = [executable, expected_filename, actual_filename]
 
         result = True
         try:
@@ -351,13 +340,6 @@ class ChromiumPort(base.Port):
             platform = self.name()
         return self.path_from_webkit_base('LayoutTests', 'platform', platform)
 
-    def _convert_path(self, path):
-        """Handles filename conversion for subprocess command line args."""
-        # See note above in diff_image() for why we need this.
-        if sys.platform == 'cygwin':
-            return cygpath(path, self._executive)
-        return path
-
     def _path_to_image_diff(self):
         binary_name = 'image_diff'
         if self._options.use_drt:
@@ -377,10 +359,7 @@ class ChromiumDriver(base.Driver):
     def _driver_args(self):
         driver_args = []
         if self._image_path:
-            # See note above in diff_image() for why we need
-            # _convert_path().
-            driver_args.append("--pixel-tests=" +
-                               self._port._convert_path(self._image_path))
+            driver_args.append("--pixel-tests=" + self._image_path)
 
         if self._options.use_drt:
             driver_args.append('--test-shell')
