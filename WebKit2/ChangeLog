@@ -1,3 +1,13 @@
+2010-10-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Simplify code generation in WebKit2/DerivedSources.pro
+        https://bugs.webkit.org/show_bug.cgi?id=47543
+
+        * DerivedSources.pro: General generator rules added instead of copy/paste code to converge Makefile.DerivedSources.
+        * WebKit2.pro: PluginProcess' headers and sources added.
+
 2010-10-13  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
