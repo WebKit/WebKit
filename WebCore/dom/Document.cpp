@@ -984,8 +984,10 @@ String Document::readyState() const
 
 void Document::setReadyState(ReadyState readyState)
 {
-    // FIXME: Fire the readystatechange event on this Document.
+    if (readyState == m_readyState)
+        return;
     m_readyState = readyState;
+    dispatchEvent(Event::create(eventNames().readystatechangeEvent, false, false));
 }
 
 String Document::encoding() const
@@ -1861,6 +1863,7 @@ void Document::open(Document* ownerDocument)
             m_frame->loader()->stopAllLoaders();
     }
 
+    removeAllEventListeners();
     implicitOpen();
 
     if (DOMWindow* domWindow = this->domWindow())

@@ -278,6 +278,7 @@ module core {
         attribute [DontEnum] EventListener onmouseover;
         attribute [DontEnum] EventListener onmouseup;
         attribute [DontEnum] EventListener onmousewheel;
+        attribute [DontEnum] EventListener onreadystatechange;
         attribute [DontEnum] EventListener onscroll;
         attribute [DontEnum] EventListener onselect;
         attribute [DontEnum] EventListener onsubmit;
@@ -297,7 +298,6 @@ module core {
         // attribute [DontEnum] EventListener onplaying;
         // attribute [DontEnum] EventListener onprogress;
         // attribute [DontEnum] EventListener onratechange;
-        // attribute [DontEnum] EventListener onreadystatechange;
         // attribute [DontEnum] EventListener onseeked;
         // attribute [DontEnum] EventListener onseeking;
         // attribute [DontEnum] EventListener onshow;
