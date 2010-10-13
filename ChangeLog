@@ -1,3 +1,15 @@
+2010-10-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Remove more warnings from the g-i scanner run
+        https://bugs.webkit.org/show_bug.cgi?id=47255
+
+        Fixes almost all warnings coming from the g-i scanner.
+
+        * GNUmakefile.am: Add missing files and include dirs to the
+        scanner run.
+
 2010-10-08  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

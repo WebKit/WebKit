@@ -1519,7 +1519,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::create-web-view:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame
      *
      * Emitted when the creation of a new window is requested.
@@ -1549,7 +1549,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::web-view-ready:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      *
      * Emitted after #WebKitWebView::create-web-view when the new #WebKitWebView
      * should be displayed to the user. When this signal is emitted
@@ -1578,7 +1578,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::close-web-view:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      *
      * Emitted when closing a #WebKitWebView is requested. This occurs when a
      * call is made from JavaScript's window.close function. The default
@@ -1601,7 +1601,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::navigation-requested:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame that required the navigation
      * @request: a #WebKitNetworkRequest
      *
@@ -1625,7 +1625,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::new-window-policy-decision-requested:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame that required the navigation
      * @request: a #WebKitNetworkRequest
      * @navigation_action: a #WebKitWebNavigationAction
@@ -1672,7 +1672,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::navigation-policy-decision-requested:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame that required the navigation
      * @request: a #WebKitNetworkRequest
      * @navigation_action: a #WebKitWebNavigationAction
@@ -1709,7 +1709,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::mime-type-policy-decision-requested:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame that required the policy decision
      * @request: a WebKitNetworkRequest
      * @mimetype: the MIME type attempted to load
@@ -1751,7 +1751,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::window-object-cleared:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the #WebKitWebFrame to which @window_object belongs
      * @context: the #JSGlobalContextRef holding the global object and other
      * execution state; equivalent to the return value of
@@ -1777,7 +1777,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::download-requested:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @download: a #WebKitDownload object that lets you control the
      * download process
      *
@@ -1819,7 +1819,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::load-started:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the frame going to do the load
      *
      * When a #WebKitWebFrame begins to load this signal is emitted.
@@ -1838,7 +1838,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::load-committed:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the main frame that received the first data
      *
      * When a #WebKitWebFrame loaded the first data this signal is emitted.
@@ -1858,7 +1858,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::load-progress-changed:
-     * @web_view: the #WebKitWebView
+     * @webView: the #WebKitWebView
      * @progress: the global progress
      *
      * Deprecated: Use the "progress" property instead.
@@ -1875,7 +1875,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::load-error
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @web_frame: the #WebKitWebFrame
      * @uri: the URI that triggered the error
      * @web_error: the #GError that was triggered
@@ -1903,7 +1903,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::load-finished:
-     * @web_view: the #WebKitWebView
+     * @webView: the #WebKitWebView
      * @frame: the #WebKitWebFrame
      *
      * Deprecated: Use the "load-status" property instead.
@@ -1920,7 +1920,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::onload-event:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the frame
      *
      * When a #WebKitWebFrame receives an onload event this signal is emitted.
@@ -1937,7 +1937,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::title-changed:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the main frame
      * @title: the new title
      *
@@ -1958,7 +1958,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::hovering-over-link:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @title: the link's title
      * @uri: the URI the link points to
      *
@@ -1977,7 +1977,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::populate-popup:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @menu: the context menu
      *
      * When a context menu is about to be displayed this signal is emitted.
@@ -1996,7 +1996,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::print-requested
-     * @web_view: the object in which the signal is emitted
+     * @webView: the object in which the signal is emitted
      * @web_frame: the frame that is requesting to be printed
      *
      * Emitted when printing is requested by the frame, usually
@@ -2036,7 +2036,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::icon-loaded:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @icon_uri: the URI for the icon
      *
      * This signal is emitted when the main frame has got a favicon.
@@ -2064,7 +2064,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::console-message:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @message: the message text
      * @line: the line where the error occured
      * @source_id: the source id
@@ -2086,7 +2086,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::script-alert:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
      *
@@ -2107,7 +2107,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::script-confirm:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
      * @confirmed: whether the dialog has been confirmed
@@ -2129,7 +2129,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::script-prompt:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the relevant frame
      * @message: the message text
      * @default: the default value
@@ -2152,7 +2152,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::select-all:
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      *
      * The #WebKitWebView::select-all signal is a keybinding signal which gets emitted to
      * select the complete contents of the text view.
@@ -2169,7 +2169,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::cut-clipboard:
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      *
      * The #WebKitWebView::cut-clipboard signal is a keybinding signal which gets emitted to
      * cut the selection to the clipboard.
@@ -2186,7 +2186,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::copy-clipboard:
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      *
      * The #WebKitWebView::copy-clipboard signal is a keybinding signal which gets emitted to
      * copy the selection to the clipboard.
@@ -2203,7 +2203,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::paste-clipboard:
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      *
      * The #WebKitWebView::paste-clipboard signal is a keybinding signal which gets emitted to
      * paste the contents of the clipboard into the Web view.
@@ -2220,7 +2220,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::undo
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      *
      * The #WebKitWebView::undo signal is a keybinding signal which gets emitted to
      * undo the last editing command.
@@ -2239,7 +2239,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::redo
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      *
      * The #WebKitWebView::redo signal is a keybinding signal which gets emitted to
      * redo the last editing command.
@@ -2258,7 +2258,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::move-cursor:
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      * @step: the type of movement, one of #GtkMovementStep
      * @count: an integer indicating the subtype of movement. Currently
      *         the permitted values are '1' = forward, '-1' = backwards.
@@ -2282,7 +2282,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::create-plugin-widget:
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      * @mime_type: the mimetype of the requested object
      * @uri: the URI to load
      * @param: a #GHashTable with additional attributes (strings)
@@ -2310,7 +2310,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::database-quota-exceeded
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      * @frame: the relevant frame
      * @database: the #WebKitWebDatabase which exceeded the quota of its #WebKitSecurityOrigin
      *
@@ -2332,7 +2332,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::resource-request-starting:
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      * @web_frame: the #WebKitWebFrame whose load dispatched this request
      * @web_resource: an empty #WebKitWebResource object
      * @request: the #WebKitNetworkRequest that will be dispatched
@@ -2373,7 +2373,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::geolocation-policy-decision-requested:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the frame that requests permission
      * @policy_decision: a WebKitGeolocationPolicyDecision
      *
@@ -2398,7 +2398,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /**
      * WebKitWebView::geolocation-policy-decision-cancelled:
-     * @web_view: the object on which the signal is emitted
+     * @webView: the object on which the signal is emitted
      * @frame: the frame that cancels geolocation request.
      *
      * When a @frame wants to cancel geolocation permission it had requested
@@ -2423,7 +2423,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /*
      * WebKitWebView::document-load-finished
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      * @web_frame: the #WebKitWebFrame whose load dispatched this request
      *
      * Emitted when the DOM document object load is finished for the
@@ -2440,7 +2440,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 
     /*
      * WebKitWebView::frame-created
-     * @web_view: the object which received the signal
+     * @webView: the object which received the signal
      * @web_frame: the #WebKitWebFrame which was just created.
      *
      * Emitted when a WebKitWebView has created a new frame. This signal will
@@ -3182,7 +3182,7 @@ bool webkit_web_view_use_primary_for_paste(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_settings:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @settings: (transfer none): the #WebKitWebSettings to be set
  *
  * Replaces the #WebKitWebSettings instance that is currently attached
@@ -3207,7 +3207,7 @@ void webkit_web_view_set_settings(WebKitWebView* webView, WebKitWebSettings* web
 
 /**
  * webkit_web_view_get_settings:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Obtains the #WebKitWebSettings associated with the
  * #WebKitWebView. The #WebKitWebView always has an associated
@@ -3226,7 +3226,7 @@ WebKitWebSettings* webkit_web_view_get_settings(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_inspector:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Obtains the #WebKitWebInspector associated with the
  * #WebKitWebView. Every #WebKitWebView object has a
@@ -3256,7 +3256,7 @@ static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWe
 
 /**
  * webkit_web_view_get_window_features:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns the instance of #WebKitWebWindowFeatures held by the given
  * #WebKitWebView.
@@ -3273,7 +3273,7 @@ WebKitWebWindowFeatures* webkit_web_view_get_window_features(WebKitWebView* webV
 
 /**
  * webkit_web_view_get_title:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns the @web_view's document title
  *
@@ -3291,7 +3291,7 @@ G_CONST_RETURN gchar* webkit_web_view_get_title(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_uri:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns the current URI of the contents displayed by the @web_view
  *
@@ -3309,7 +3309,7 @@ G_CONST_RETURN gchar* webkit_web_view_get_uri(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_maintains_back_forward_list:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @flag: to tell the view to maintain a back or forward list
  *
  * Set the view to maintain a back or forward list of history items.
@@ -3323,7 +3323,7 @@ void webkit_web_view_set_maintains_back_forward_list(WebKitWebView* webView, gbo
 
 /**
  * webkit_web_view_get_back_forward_list:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Obtains the #WebKitWebBackForwardList associated with the given #WebKitWebView. The
  * #WebKitWebBackForwardList is owned by the #WebKitWebView.
@@ -3340,7 +3340,7 @@ WebKitWebBackForwardList* webkit_web_view_get_back_forward_list(WebKitWebView* w
 
 /**
  * webkit_web_view_go_to_back_forward_item:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @item: a #WebKitWebHistoryItem*
  *
  * Go to the specified #WebKitWebHistoryItem
@@ -3362,7 +3362,7 @@ gboolean webkit_web_view_go_to_back_forward_item(WebKitWebView* webView, WebKitW
 
 /**
  * webkit_web_view_go_back:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Loads the previous history item.
  */
@@ -3375,7 +3375,7 @@ void webkit_web_view_go_back(WebKitWebView* webView)
 
 /**
  * webkit_web_view_go_back_or_forward:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @steps: the number of steps
  *
  * Loads the history item that is the number of @steps away from the current
@@ -3391,7 +3391,7 @@ void webkit_web_view_go_back_or_forward(WebKitWebView* webView, gint steps)
 
 /**
  * webkit_web_view_go_forward:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Loads the next history item.
  */
@@ -3404,7 +3404,7 @@ void webkit_web_view_go_forward(WebKitWebView* webView)
 
 /**
  * webkit_web_view_can_go_back:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines whether #web_view has a previous history item.
  *
@@ -3422,7 +3422,7 @@ gboolean webkit_web_view_can_go_back(WebKitWebView* webView)
 
 /**
  * webkit_web_view_can_go_back_or_forward:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @steps: the number of steps
  *
  * Determines whether #web_view has a history item of @steps. Negative values
@@ -3440,7 +3440,7 @@ gboolean webkit_web_view_can_go_back_or_forward(WebKitWebView* webView, gint ste
 
 /**
  * webkit_web_view_can_go_forward:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines whether #web_view has a next history item.
  *
@@ -3463,7 +3463,7 @@ gboolean webkit_web_view_can_go_forward(WebKitWebView* webView)
 
 /**
  * webkit_web_view_open:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @uri: an URI
  *
  * Requests loading of the specified URI string.
@@ -3495,7 +3495,7 @@ void webkit_web_view_reload(WebKitWebView* webView)
 
 /**
  * webkit_web_view_reload_bypass_cache:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Reloads the @web_view without using any cached data.
  *
@@ -3510,7 +3510,7 @@ void webkit_web_view_reload_bypass_cache(WebKitWebView* webView)
 
 /**
  * webkit_web_view_load_uri:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @uri: an URI string
  *
  * Requests loading of the specified URI string.
@@ -3527,20 +3527,20 @@ void webkit_web_view_load_uri(WebKitWebView* webView, const gchar* uri)
 }
 
 /**
-+  * webkit_web_view_load_string:
-+  * @web_view: a #WebKitWebView
-+  * @content: an URI string
-+  * @mime_type: the MIME type, or %NULL
-+  * @encoding: the encoding, or %NULL
-+  * @base_uri: the base URI for relative locations
-+  *
-+  * Requests loading of the given @content with the specified @mime_type,
-+  * @encoding and @base_uri.
-+  *
-+  * If @mime_type is %NULL, "text/html" is assumed.
-+  *
-+  * If @encoding is %NULL, "UTF-8" is assumed.
-+  */
+  * webkit_web_view_load_string:
+  * @webView: a #WebKitWebView
+  * @content: an URI string
+  * @mime_type: the MIME type, or %NULL
+  * @encoding: the encoding, or %NULL
+  * @base_uri: the base URI for relative locations
+  *
+  * Requests loading of the given @content with the specified @mime_type,
+  * @encoding and @base_uri.
+  *
+  * If @mime_type is %NULL, "text/html" is assumed.
+  *
+  * If @encoding is %NULL, "UTF-8" is assumed.
+  */
 void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, const gchar* mimeType, const gchar* encoding, const gchar* baseUri)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
@@ -3551,7 +3551,7 @@ void webkit_web_view_load_string(WebKitWebView* webView, const gchar* content, c
 }
 /**
  * webkit_web_view_load_html_string:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @content: an URI string
  * @base_uri: the base URI for relative locations
  *
@@ -3569,7 +3569,7 @@ void webkit_web_view_load_html_string(WebKitWebView* webView, const gchar* conte
 
 /**
  * webkit_web_view_load_request:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @request: a #WebKitNetworkRequest
  *
  * Requests loading of the specified asynchronous client request.
@@ -3607,7 +3607,7 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
 
 /**
  * webkit_web_view_search_text:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @text: a string to look for
  * @forward: whether to find forward or not
  * @case_sensitive: whether to respect the case of text
@@ -3630,7 +3630,7 @@ gboolean webkit_web_view_search_text(WebKitWebView* webView, const gchar* string
 
 /**
  * webkit_web_view_mark_text_matches:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @string: a string to look for
  * @case_sensitive: whether to respect the case of text
  * @limit: the maximum number of strings to look for or 0 for all
@@ -3651,7 +3651,7 @@ guint webkit_web_view_mark_text_matches(WebKitWebView* webView, const gchar* str
 
 /**
  * webkit_web_view_set_highlight_text_matches:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @highlight: whether to highlight text matches
  *
  * Highlights text matches previously marked by webkit_web_view_mark_text_matches.
@@ -3669,7 +3669,7 @@ void webkit_web_view_set_highlight_text_matches(WebKitWebView* webView, gboolean
 
 /**
  * webkit_web_view_unmark_text_matches:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Removes highlighting previously set by webkit_web_view_mark_text_matches.
  */
@@ -3697,7 +3697,7 @@ WebKitWebFrame* webkit_web_view_get_main_frame(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_focused_frame:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns the frame that has focus or an active text selection.
  *
@@ -3721,7 +3721,7 @@ void webkit_web_view_execute_script(WebKitWebView* webView, const gchar* script)
 
 /**
  * webkit_web_view_cut_clipboard:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines whether or not it is currently possible to cut to the clipboard.
  *
@@ -3737,7 +3737,7 @@ gboolean webkit_web_view_can_cut_clipboard(WebKitWebView* webView)
 
 /**
  * webkit_web_view_copy_clipboard:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines whether or not it is currently possible to copy to the clipboard.
  *
@@ -3753,7 +3753,7 @@ gboolean webkit_web_view_can_copy_clipboard(WebKitWebView* webView)
 
 /**
  * webkit_web_view_paste_clipboard:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines whether or not it is currently possible to paste from the clipboard.
  *
@@ -3769,7 +3769,7 @@ gboolean webkit_web_view_can_paste_clipboard(WebKitWebView* webView)
 
 /**
  * webkit_web_view_cut_clipboard:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Cuts the current selection inside the @web_view to the clipboard.
  */
@@ -3783,7 +3783,7 @@ void webkit_web_view_cut_clipboard(WebKitWebView* webView)
 
 /**
  * webkit_web_view_copy_clipboard:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Copies the current selection inside the @web_view to the clipboard.
  */
@@ -3797,7 +3797,7 @@ void webkit_web_view_copy_clipboard(WebKitWebView* webView)
 
 /**
  * webkit_web_view_paste_clipboard:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Pastes the current contents of the clipboard to the @web_view.
  */
@@ -3811,7 +3811,7 @@ void webkit_web_view_paste_clipboard(WebKitWebView* webView)
 
 /**
  * webkit_web_view_delete_selection:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Deletes the current selection inside the @web_view.
  */
@@ -3825,7 +3825,7 @@ void webkit_web_view_delete_selection(WebKitWebView* webView)
 
 /**
  * webkit_web_view_has_selection:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines whether text was selected.
  *
@@ -3840,7 +3840,7 @@ gboolean webkit_web_view_has_selection(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_selected_text:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Retrieves the selected text if any.
  *
@@ -3856,7 +3856,7 @@ gchar* webkit_web_view_get_selected_text(WebKitWebView* webView)
 
 /**
  * webkit_web_view_select_all:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Attempts to select everything inside the @web_view.
  */
@@ -3869,7 +3869,7 @@ void webkit_web_view_select_all(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_editable:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns whether the user is allowed to edit the document.
  *
@@ -3890,7 +3890,7 @@ gboolean webkit_web_view_get_editable(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_editable:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @flag: a #gboolean indicating the editable state
  *
  * Sets whether @web_view allows the user to edit its HTML document.
@@ -3933,7 +3933,7 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
 
 /**
  * webkit_web_view_get_copy_target_list:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * This function returns the list of targets this #WebKitWebView can
  * provide for clipboard copying and as DND source. The targets in the list are
@@ -3950,7 +3950,7 @@ GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_paste_target_list:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * This function returns the list of targets this #WebKitWebView can
  * provide for clipboard pasting and as DND destination. The targets in the list are
@@ -3967,7 +3967,7 @@ GtkTargetList* webkit_web_view_get_paste_target_list(WebKitWebView* webView)
 
 /**
  * webkit_web_view_can_show_mime_type:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @mime_type: a MIME type
  *
  * This functions returns whether or not a MIME type can be displayed using this view.
@@ -3990,7 +3990,7 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const gchar*
 
 /**
  * webkit_web_view_get_transparent:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns whether the #WebKitWebView has a transparent background.
  *
@@ -4007,7 +4007,7 @@ gboolean webkit_web_view_get_transparent(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_transparent:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Sets whether the #WebKitWebView has a transparent background.
  *
@@ -4031,7 +4031,7 @@ void webkit_web_view_set_transparent(WebKitWebView* webView, gboolean flag)
 
 /**
  * webkit_web_view_get_zoom_level:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns the zoom level of @web_view, i.e. the factor by which elements in
  * the page are scaled with respect to their original size.
@@ -4070,7 +4070,7 @@ static void webkit_web_view_apply_zoom_level(WebKitWebView* webView, gfloat zoom
 
 /**
  * webkit_web_view_set_zoom_level:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @zoom_level: the new zoom level
  *
  * Sets the zoom level of @web_view, i.e. the factor by which elements in
@@ -4091,7 +4091,7 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gfloat zoomLevel)
 
 /**
  * webkit_web_view_zoom_in:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Increases the zoom level of @web_view. The current zoom
  * level is incremented by the value of the "zoom-step"
@@ -4112,7 +4112,7 @@ void webkit_web_view_zoom_in(WebKitWebView* webView)
 
 /**
  * webkit_web_view_zoom_out:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Decreases the zoom level of @web_view. The current zoom
  * level is decremented by the value of the "zoom-step"
@@ -4133,7 +4133,7 @@ void webkit_web_view_zoom_out(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_full_content_zoom:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns whether the zoom level affects only text or all elements.
  *
@@ -4152,7 +4152,7 @@ gboolean webkit_web_view_get_full_content_zoom(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_full_content_zoom:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @full_content_zoom: %FALSE if only text should be scaled (the default),
  * %TRUE if the full content of the view should be scaled.
  *
@@ -4185,7 +4185,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView* webView, gboolean zoom
 
 /**
  * webkit_web_view_get_load_status:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines the current status of the load.
  *
@@ -4201,7 +4201,7 @@ WebKitLoadStatus webkit_web_view_get_load_status(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_progress:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines the current progress of the load.
  *
@@ -4216,7 +4216,7 @@ gdouble webkit_web_view_get_progress(WebKitWebView* webView)
 
 /**
  * webkit_web_view_get_encoding:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns the default encoding of the #WebKitWebView.
  *
@@ -4236,7 +4236,7 @@ const gchar* webkit_web_view_get_encoding(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_custom_encoding:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @encoding: the new encoding, or %NULL to restore the default encoding
  *
  * Sets the current #WebKitWebView encoding, without modifying the default one,
@@ -4253,7 +4253,7 @@ void webkit_web_view_set_custom_encoding(WebKitWebView* webView, const char* enc
 
 /**
  * webkit_web_view_get_custom_encoding:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Returns the current encoding of the #WebKitWebView, not the default-encoding
  * of WebKitWebSettings.
@@ -4274,7 +4274,7 @@ const char* webkit_web_view_get_custom_encoding(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_view_mode:
- * @web_view: the #WebKitWebView that will have its view mode set
+ * @webView: the #WebKitWebView that will have its view mode set
  * @mode: the %WebKitWebViewViewMode to be set
  *
  * Sets the view-mode property of the #WebKitWebView. Check the
@@ -4309,7 +4309,7 @@ void webkit_web_view_set_view_mode(WebKitWebView* webView, WebKitWebViewViewMode
 
 /**
  * webkit_web_view_get_view_mode:
- * @web_view: the #WebKitWebView to obtain the view mode from
+ * @webView: the #WebKitWebView to obtain the view mode from
  *
  * Gets the value of the view-mode property of the
  * #WebKitWebView. Check the property's documentation for more
@@ -4344,7 +4344,7 @@ WebKitWebViewViewMode webkit_web_view_get_view_mode(WebKitWebView* webView)
 
 /**
  * webkit_web_view_move_cursor:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @step: a #GtkMovementStep
  * @count: integer describing the direction of the movement. 1 for forward, -1 for backwards.
  *
@@ -4379,7 +4379,7 @@ void webkit_web_view_set_group_name(WebKitWebView* webView, const gchar* groupNa
 
 /**
  * webkit_web_view_can_undo:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines whether or not it is currently possible to undo the last
  * editing command in the view.
@@ -4398,7 +4398,7 @@ gboolean webkit_web_view_can_undo(WebKitWebView* webView)
 
 /**
  * webkit_web_view_undo:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Undoes the last editing command in the view, if possible.
  *
@@ -4414,7 +4414,7 @@ void webkit_web_view_undo(WebKitWebView* webView)
 
 /**
  * webkit_web_view_can_redo:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Determines whether or not it is currently possible to redo the last
  * editing command in the view.
@@ -4433,7 +4433,7 @@ gboolean webkit_web_view_can_redo(WebKitWebView* webView)
 
 /**
  * webkit_web_view_redo:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Redoes the last editing command in the view, if possible.
  *
@@ -4450,7 +4450,7 @@ void webkit_web_view_redo(WebKitWebView* webView)
 
 /**
  * webkit_web_view_set_view_source_mode:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  * @view_source_mode: the mode to turn on or off view source mode
  *
  * Set whether the view should be in view source mode. Setting this mode to
@@ -4469,7 +4469,7 @@ void webkit_web_view_set_view_source_mode (WebKitWebView* webView, gboolean mode
 
 /**
  * webkit_web_view_get_view_source_mode:
- * @web_view: a #WebKitWebView
+ * @webView: a #WebKitWebView
  *
  * Return value: %TRUE if @web_view is in view source mode, %FALSE otherwise.
  *
@@ -4598,7 +4598,7 @@ WebKitHitTestResult* webkit_web_view_get_hit_test_result(WebKitWebView* webView,
 
 /**
  * webkit_web_view_get_icon_uri:
- * @web_view: the #WebKitWebView object
+ * @webView: the #WebKitWebView object
  *
  * Obtains the URI for the favicon for the given #WebKitWebView, or
  * %NULL if there is none.
@@ -4656,7 +4656,7 @@ webkit_web_view_get_dom_document(WebKitWebView* webView)
  * so if you insert your own #SoupCookieJar before any network
  * traffic occurs, WebKit will use it instead of the default.
  *
- * Return value: the default #SoupSession
+ * Return value: (transfer none): the default #SoupSession
  *
  * Since: 1.1.1
  */

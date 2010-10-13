@@ -59,6 +59,19 @@ static void webkit_soup_auth_dialog_class_init(WebKitSoupAuthDialogClass* klass)
 {
     GObjectClass* object_class = G_OBJECT_CLASS(klass);
 
+    /**
+     * WebKitSoupAuthDialog::current-toplevel:
+     * @authDialog: the object on which the signal is emitted
+     * @message: the #SoupMessage being used in the authentication process
+     *
+     * This signal is emitted by the @authDialog when it needs to know
+     * the current toplevel widget in order to correctly set the
+     * transiency for the authentication dialog.
+     *
+     * Return value: (transfer none): the current toplevel #GtkWidget or %NULL if there's none
+     *
+     * Since: 1.1.1
+     */
     signals[CURRENT_TOPLEVEL] =
       g_signal_new("current-toplevel",
                    G_OBJECT_CLASS_TYPE(object_class),

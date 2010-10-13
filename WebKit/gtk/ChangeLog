@@ -1,3 +1,28 @@
+2010-10-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Gustavo Noronha.
+
+        [GTK] Remove more warnings from the g-i scanner run
+        https://bugs.webkit.org/show_bug.cgi?id=47255
+
+        Fixes almost all warnings coming from the g-i scanner.
+
+        * webkit/webkitsecurityorigin.cpp: Rename parameter names in
+        gtk-doc blurb to the actual name of the parameter.
+        * webkit/webkitsoupauthdialog.c: ditto.
+        (webkit_soup_auth_dialog_class_init): Write missing doc for the
+        'current-toplevel' signal.
+        * webkit/webkitsoupauthdialog.h: Rename signal parameter to its
+        actual name.
+        * webkit/webkitwebdatabase.cpp: Rename parameter names in
+        gtk-doc blurb to the actual name of the parameter.
+        * webkit/webkitwebinspector.cpp: ditto.
+        (webkit_web_inspector_class_init): ditto.
+        * webkit/webkitwebview.cpp: ditto.
+        (webkit_web_view_class_init): ditto.
+        * webkit/webkitwebview.h: Rename the parameter names to be in sync
+        with the ones we use in the function definition.
+
 2010-10-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r69589.

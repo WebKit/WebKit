@@ -127,7 +127,6 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * WebKitWebInspector::inspect-web-view:
      * @web_inspector: the object on which the signal is emitted
      * @web_view: the #WebKitWebView which will be inspected
-     * @return: a newly allocated #WebKitWebView or %NULL
      *
      * Emitted when the user activates the 'inspect' context menu item
      * to inspect a web view. The application which is interested in
@@ -137,6 +136,8 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * You don't need to handle the reference count of the
      * #WebKitWebView instance you create; the widget to which you add
      * it will do that.
+     *
+     * Return value: (transfer none): a newly allocated #WebKitWebView or %NULL
      *
      * Since: 1.0.3
      */
@@ -476,7 +477,7 @@ webkit_web_inspector_set_inspector_client(WebKitWebInspector* web_inspector, Web
 
 /**
  * webkit_web_inspector_show:
- * @web_inspector: the #WebKitWebInspector that will be shown
+ * @webInspector: the #WebKitWebInspector that will be shown
  *
  * Causes the Web Inspector to be shown.
  *
@@ -537,7 +538,7 @@ void webkit_web_inspector_inspect_coordinates(WebKitWebInspector* webInspector, 
 
 /**
  * webkit_web_inspector_close:
- * @web_inspector: the #WebKitWebInspector that will be closed
+ * @webInspector: the #WebKitWebInspector that will be closed
  *
  * Causes the Web Inspector to be closed.
  *
