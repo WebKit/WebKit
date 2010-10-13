@@ -72,6 +72,9 @@ class Build(AbstractSequencedCommand):
         steps.Build,
     ]
 
+    def _prepare_state(self, options, args, tool):
+        options.build = True
+
 
 class BuildAndTest(AbstractSequencedCommand):
     name = "build-and-test"

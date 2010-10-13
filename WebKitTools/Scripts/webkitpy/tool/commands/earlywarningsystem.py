@@ -48,7 +48,6 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
             self.run_webkit_patch([
                 "build",
                 self.port.flag(),
-                "--build",
                 "--build-style=%s" % self._build_style,
                 "--force-clean",
                 "--no-update",

@@ -1,3 +1,24 @@
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        webkit-patch build shouldn't need --build to actually build!
+        https://bugs.webkit.org/show_bug.cgi?id=47438
+
+        Yeah, requiring --build for the build command is really dumb.  We did
+        this originally because the build step is usually optional in other
+        commands.  We don't have a good way of reversing the default for an
+        option in one command.  This approach is slightly hacky since --build
+        still shows up as an option on the help page, but at least it makes
+        progress.  Passing --build is harmless, so the EWS bots shouldn't
+        explode because of this change.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-10-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r69638.

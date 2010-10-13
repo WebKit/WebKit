@@ -68,7 +68,7 @@ class CommitQueueTaskTest(unittest.TestCase):
         commit_queue = MockCommitQueue([])
         expected_stderr = """run_webkit_patch: ['apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 command_passed: success_message='Applied patch' patch='197'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
 command_passed: success_message='Passed tests' patch='197'
@@ -93,9 +93,9 @@ command_failed: failure_message='Patch does not apply' script_error='MOCK apply 
         ])
         expected_stderr = """run_webkit_patch: ['apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 command_passed: success_message='Applied patch' patch='197'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='197'
-run_webkit_patch: ['build', '--force-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=both', '--quiet']
 command_passed: success_message='Able to build without patch' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr, ScriptError)
@@ -108,9 +108,9 @@ command_passed: success_message='Able to build without patch' patch='197'
         ])
         expected_stderr = """run_webkit_patch: ['apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 command_passed: success_message='Applied patch' patch='197'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
 command_failed: failure_message='Patch does not build' script_error='MOCK build failure' patch='197'
-run_webkit_patch: ['build', '--force-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=both', '--quiet']
 command_failed: failure_message='Unable to build without patch' script_error='MOCK clean build failure' patch='197'
 """
         self._run_through_task(commit_queue, expected_stderr)
@@ -123,7 +123,7 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
         ])
         expected_stderr = """run_webkit_patch: ['apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 command_passed: success_message='Applied patch' patch='197'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK tests failure' patch='197'
@@ -143,7 +143,7 @@ command_passed: success_message='Landed patch' patch='197'
         ])
         expected_stderr = """run_webkit_patch: ['apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 command_passed: success_message='Applied patch' patch='197'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='197'
@@ -164,7 +164,7 @@ command_passed: success_message='Able to pass tests without patch' patch='197'
         ])
         expected_stderr = """run_webkit_patch: ['apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 command_passed: success_message='Applied patch' patch='197'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
 command_failed: failure_message='Patch does not pass tests' script_error='MOCK test failure' patch='197'
@@ -184,7 +184,7 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
         ])
         expected_stderr = """run_webkit_patch: ['apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
 command_passed: success_message='Applied patch' patch='197'
-run_webkit_patch: ['build', '--no-clean', '--no-update', '--build', '--build-style=both', '--quiet']
+run_webkit_patch: ['build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
 command_passed: success_message='Built patch' patch='197'
 run_webkit_patch: ['build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
 command_passed: success_message='Passed tests' patch='197'
