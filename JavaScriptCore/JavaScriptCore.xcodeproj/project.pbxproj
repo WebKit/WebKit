@@ -311,6 +311,7 @@
 		9714AF5F122F32070092D9F5 /* ParsedURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF58122F31F50092D9F5 /* ParsedURL.h */; };
 		9714AF60122F32070092D9F5 /* URLString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF59122F31F50092D9F5 /* URLString.h */; };
 		971EDEA61169E0D3005E4262 /* Terminator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F6903A1169DF7F00A6BB46 /* Terminator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		972A485F12661E0800F4514F /* URLCharacterTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 972A485D12661E0800F4514F /* URLCharacterTypes.cpp */; };
 		A1712B3B11C7B212007A5315 /* RegExpCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1712B3A11C7B212007A5315 /* RegExpCache.cpp */; };
 		A1712B3F11C7B228007A5315 /* RegExpCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B3E11C7B228007A5315 /* RegExpCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1712B4111C7B235007A5315 /* RegExpKey.h in Headers */ = {isa = PBXBuildFile; fileRef = A1712B4011C7B235007A5315 /* RegExpKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -944,6 +945,8 @@
 		9714AF57122F31F50092D9F5 /* ParsedURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParsedURL.cpp; path = url/api/ParsedURL.cpp; sourceTree = "<group>"; };
 		9714AF58122F31F50092D9F5 /* ParsedURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParsedURL.h; path = url/api/ParsedURL.h; sourceTree = "<group>"; };
 		9714AF59122F31F50092D9F5 /* URLString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLString.h; path = url/api/URLString.h; sourceTree = "<group>"; };
+		972A485D12661E0800F4514F /* URLCharacterTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = URLCharacterTypes.cpp; path = url/src/URLCharacterTypes.cpp; sourceTree = "<group>"; };
+		972A485E12661E0800F4514F /* URLCharacterTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLCharacterTypes.h; path = url/src/URLCharacterTypes.h; sourceTree = "<group>"; };
 		97F6903A1169DF7F00A6BB46 /* Terminator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Terminator.h; sourceTree = "<group>"; };
 		A1712B3A11C7B212007A5315 /* RegExpCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCache.cpp; sourceTree = "<group>"; };
 		A1712B3E11C7B228007A5315 /* RegExpCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpCache.h; sourceTree = "<group>"; };
@@ -1955,6 +1958,8 @@
 			children = (
 				9714AF31122F27E70092D9F5 /* RawURLBuffer.h */,
 				9714AF32122F27E70092D9F5 /* URLBuffer.h */,
+				972A485D12661E0800F4514F /* URLCharacterTypes.cpp */,
+				972A485E12661E0800F4514F /* URLCharacterTypes.h */,
 				9714AF33122F27E70092D9F5 /* URLComponent.h */,
 				9714AF34122F27E70092D9F5 /* URLParser.h */,
 				9714AF35122F27E70092D9F5 /* URLSegments.cpp */,
@@ -2791,6 +2796,7 @@
 			files = (
 				932F5BDD0822A1C700736975 /* jsc.cpp in Sources */,
 				DDE82AD31209D955005C1756 /* GCHandle.cpp in Sources */,
+				972A485F12661E0800F4514F /* URLCharacterTypes.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

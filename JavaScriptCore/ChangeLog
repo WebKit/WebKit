@@ -1,3 +1,21 @@
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        [WTFURL] Add a mechanism for classifying types of characters
+        https://bugs.webkit.org/show_bug.cgi?id=45085
+
+        Various characters have different escaping rules depending on where
+        they are in URLs.  This patch adds a table containing that information.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/url/src/URLCharacterTypes.cpp: Added.
+        * wtf/url/src/URLCharacterTypes.h: Added.
+        (WTF::URLCharacterTypes::isQueryChar):
+        (WTF::URLCharacterTypes::isIPv4Char):
+        (WTF::URLCharacterTypes::isHexChar):
+        (WTF::URLCharacterTypes::isCharOfType):
+
 2010-10-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Csaba Osztrogonác.
