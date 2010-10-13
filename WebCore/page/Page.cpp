@@ -856,8 +856,6 @@ void Page::privateBrowsingStateChanged()
 
     // Collect the PluginViews in to a vector to ensure that action the plug-in takes
     // from below privateBrowsingStateChanged does not affect their lifetime.
-    // FIXME: When PluginViewBase and PluginView are merged we don't need this extra Vector.
-    Vector<RefPtr<PluginView>, 32> pluginViews;
     Vector<RefPtr<PluginViewBase>, 32> pluginViewBases;
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         FrameView* view = frame->view();
@@ -870,15 +868,11 @@ void Page::privateBrowsingStateChanged()
         HashSet<RefPtr<Widget> >::const_iterator end = children->end();
         for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(); it != end; ++it) {
             Widget* widget = (*it).get();
-            if (widget->isPluginView())
-                pluginViews.append(static_cast<PluginView*>(widget));
             if (widget->isPluginViewBase())
                 pluginViewBases.append(static_cast<PluginViewBase*>(widget));
         }
     }
 
-    for (size_t i = 0; i < pluginViews.size(); ++i)
-        pluginViews[i]->privateBrowsingStateChanged(privateBrowsingEnabled);
     for (size_t i = 0; i < pluginViewBases.size(); ++i)
         pluginViewBases[i]->privateBrowsingStateChanged(privateBrowsingEnabled);
 }

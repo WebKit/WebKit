@@ -32,9 +32,9 @@
 #include "HaltablePlugin.h"
 #include "IntRect.h"
 #include "MediaCanStartListener.h"
+#include "PluginViewBase.h"
 #include "ResourceRequest.h"
 #include "Timer.h"
-#include "Widget.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -120,7 +120,7 @@ namespace WebCore {
         virtual void didFail(const ResourceError&) = 0;
     };
 
-    class PluginView : public Widget
+    class PluginView : public PluginViewBase
 #if ENABLE(NETSCAPE_PLUGIN_API)
                      , private PluginStreamClient
 #endif

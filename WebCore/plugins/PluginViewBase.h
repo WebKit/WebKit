@@ -48,7 +48,7 @@ public:
     virtual void privateBrowsingStateChanged(bool) { }
 
 protected:
-    PluginViewBase(PlatformWidget widget) : Widget(widget) { }
+    PluginViewBase(PlatformWidget widget = 0) : Widget(widget) { }
     
 private:
     virtual bool isPluginViewBase() const { return true; }
