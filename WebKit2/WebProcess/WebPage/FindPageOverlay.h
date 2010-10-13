@@ -28,6 +28,7 @@
 
 #include "PageOverlay.h"
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -40,6 +41,8 @@ public:
 
 private:
     explicit FindPageOverlay(FindController*);
+
+    Vector<WebCore::IntRect> rectsForTextMatches();
 
     // PageOverlay.
     virtual void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);

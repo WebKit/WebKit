@@ -1,3 +1,22 @@
+2010-10-12  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Paint the find overlay background
+        https://bugs.webkit.org/show_bug.cgi?id=47565
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+        Don't show the overlay if we have too many matches.
+
+        * WebProcess/WebPage/FindPageOverlay.cpp:
+        (WebKit::FindPageOverlay::rectsForTextMatches):
+        Get the rects for all text matches.
+
+        (WebKit::FindPageOverlay::drawRect):
+        Assert that we're only being called if there are any text matches.
+        Paint the background.
+
 2010-10-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

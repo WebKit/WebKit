@@ -26,7 +26,11 @@
 #include "FindPageOverlay.h"
 
 #include "FindController.h"
+#include "WebPage.h"
+#include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/Page.h>
 
 using namespace WebCore;
 
@@ -47,10 +51,67 @@ FindPageOverlay::~FindPageOverlay()
     m_findController->findPageOverlayDestroyed();
 }
 
-void FindPageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+Vector<IntRect> FindPageOverlay::rectsForTextMatches()
 {
-    // FIXME: Draw something.
+    Vector<IntRect> rects;
+
+    for (Frame* frame = webPage()->corePage()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        Document* document = frame->document();
+        if (!document)
+            continue;
+
+        IntRect visibleRect = frame->view()->visibleContentRect();
+        Vector<IntRect> frameRects = document->markers()->renderedRectsForMarkers(DocumentMarker::TextMatch);
+        IntPoint frameOffset(-frame->view()->scrollOffset().width(), -frame->view()->scrollOffset().height());
+        frameOffset = frame->view()->convertToContainingWindow(frameOffset);
+
+        for (Vector<IntRect>::iterator it = frameRects.begin(), end = frameRects.end(); it != end; ++it) {
+            it->intersect(visibleRect);
+            it->move(frameOffset.x(), frameOffset.y());
+            rects.append(*it);
+        }
+    }
+
+    return rects;
 }
 
+static const int overlayBackgroundRed = 25;
+static const int overlayBackgroundGreen = 25;
+static const int overlayBackgroundBlue = 25;
+static const int overlayBackgroundAlpha = 63;
+    
+static Color overlayBackgroundColor()
+{
+    return Color(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
+}
+    
+void FindPageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirtyRect)
+{
+    Vector<IntRect> rects = rectsForTextMatches();
+    ASSERT(!rects.isEmpty());
+
+    FrameView* frameView = webPage()->corePage()->mainFrame()->view();
+
+    int width = frameView->width();
+    if (frameView->verticalScrollbar())
+        width -= frameView->verticalScrollbar()->width();
+    int height = frameView->height();
+    if (frameView->horizontalScrollbar())
+        height -= frameView->horizontalScrollbar()->height();
+    
+    IntRect paintRect = intersection(dirtyRect, IntRect(0, 0, width, height));
+    if (paintRect.isEmpty())
+        return;
+
+    graphicsContext.beginTransparencyLayer(1);
+    graphicsContext.setCompositeOperation(CompositeCopy);
+
+    // Draw the background.
+    graphicsContext.fillRect(paintRect, overlayBackgroundColor(), sRGBColorSpace);
+
+    // FIXME: Draw the holes.
+
+    graphicsContext.endTransparencyLayer();
+}
 
 } // namespace WebKit

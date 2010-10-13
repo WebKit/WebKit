@@ -52,7 +52,8 @@ static Frame* frameWithSelection(Page* page)
 
 void FindController::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxNumMatches)
 {
-    bool found = m_webPage->corePage()->findString(string, (findOptions & FindOptionsCaseInsensitive) ? TextCaseInsensitive : TextCaseSensitive,
+    TextCaseSensitivity caseSensitivity = findOptions & FindOptionsCaseInsensitive ? TextCaseInsensitive : TextCaseSensitive;
+    bool found = m_webPage->corePage()->findString(string, caseSensitivity,
                                                    findDirection == FindDirectionForward ? WebCore::FindDirectionForward : WebCore::FindDirectionBackward,
                                                    findOptions & FindOptionsWrapAround);
 
@@ -68,9 +69,15 @@ void FindController::findString(const String& string, FindDirection findDirectio
         if (selectedFrame)
             selectedFrame->selection()->clear();
     } else {
-        // FIXME: We need to show the find indicator here.
-
         shouldShowOverlay = findOptions & FindOptionsShowOverlay;
+
+        if (shouldShowOverlay) {
+            unsigned numMatches = m_webPage->corePage()->markAllMatchesForText(string, caseSensitivity, false, maxNumMatches);
+
+            // Check if we have more matches than allowed.
+            if (numMatches > maxNumMatches)
+                shouldShowOverlay = false;
+        }
     }
 
     if (!shouldShowOverlay) {
