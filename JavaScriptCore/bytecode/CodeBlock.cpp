@@ -1139,9 +1139,12 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_next_pname: {
             int dest = it[1].u.operand;
-            int iter = it[4].u.operand;
-            int offset = it[5].u.operand;
-            printf("[%4d] next_pname\t %s, %s, %d(->%d)\n", location, registerName(exec, dest).data(), registerName(exec, iter).data(), offset, location + offset);
+            int base = it[2].u.operand;
+            int i = it[3].u.operand;
+            int size = it[4].u.operand;
+            int iter = it[5].u.operand;
+            int offset = it[6].u.operand;
+            printf("[%4d] next_pname\t %s, %s, %s, %s, %s, %d(->%d)\n", location, registerName(exec, dest).data(), registerName(exec, base).data(), registerName(exec, i).data(), registerName(exec, size).data(), registerName(exec, iter).data(), offset, location + offset);
             it += OPCODE_LENGTH(op_next_pname) - 1;
             break;
         }

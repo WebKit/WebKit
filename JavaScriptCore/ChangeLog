@@ -1,3 +1,13 @@
+2010-10-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Missing parameters for bytecode dump of next_pname
+        https://bugs.webkit.org/show_bug.cgi?id=47590
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump): add missing parameters to the dump.
+
 2010-10-13  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
