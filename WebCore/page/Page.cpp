@@ -20,7 +20,6 @@
 #include "config.h"
 #include "Page.h"
 
-#include "DeviceMotionController.h"
 #include "BackForwardController.h"
 #include "BackForwardList.h"
 #include "Base64.h"
@@ -30,6 +29,7 @@
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
 #include "DOMWindow.h"
+#include "DeviceMotionController.h"
 #include "DeviceOrientationController.h"
 #include "DragController.h"
 #include "EditorClient.h"

@@ -48,6 +48,8 @@ public:
 
     void didChangeDeviceOrientation(DeviceOrientation*);
 
+    bool isActive() { return !m_listeners.isEmpty(); }
+
 private:
     void timerFired(Timer<DeviceOrientationController>*);
 

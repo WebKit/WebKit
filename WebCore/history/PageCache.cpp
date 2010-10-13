@@ -31,6 +31,8 @@
 #include "Cache.h"
 #include "CachedPage.h"
 #include "DOMWindow.h"
+#include "DeviceMotionController.h"
+#include "DeviceOrientationController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -201,6 +203,16 @@ static void logCanCachePageDecision(Page* page)
         PCLOG("   -Page settings says b/f cache disabled");
         cannotCache = true;
     }
+#if ENABLE(DEVICE_ORIENTATION)
+    if (!page->deviceMotionController()->isActive()) {
+        PCLOG("   -Page is using DeviceMotion");
+        cannotCache = true;
+    }
+    if (!page->deviceOrientationController()->isActive()) {
+        PCLOG("   -Page is using DeviceOrientation");
+        cannotCache = true;
+    }
+#endif
     if (loadType == FrameLoadTypeReload) {
         PCLOG("   -Load type is: Reload");
         cannotCache = true;
@@ -297,7 +309,11 @@ bool PageCache::canCache(Page* page)
         && page->backForwardList()->enabled()
         && page->backForwardList()->capacity() > 0
         && page->settings()->usesPageCache()
-        && loadType != FrameLoadTypeReload 
+#if ENABLE(DEVICE_ORIENTATION)
+        && !page->deviceMotionController()->isActive()
+        && !page->deviceOrientationController()->isActive()
+#endif
+        && loadType != FrameLoadTypeReload
         && loadType != FrameLoadTypeReloadFromOrigin
         && loadType != FrameLoadTypeSame;
 }

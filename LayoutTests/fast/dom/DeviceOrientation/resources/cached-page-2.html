@@ -1,0 +1,8 @@
+<script>
+function init() {
+    window.opener.pageTwoLoaded = true;
+    window.opener.debug('resources/cached-page-2.html about to go back to resources/cached-page-1.html');
+    history.back();
+}
+</script>
+<body onload="init()"></body>

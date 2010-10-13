@@ -1,0 +1,14 @@
+Tests that pages that use DeviceOrientation are not put in the page cache.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Main page opening resources/cached-page-1.html
+resources/cached-page-1.html onload fired, count = 1
+resources/cached-page-1.html about to navigate to resources/cached-page-2.html
+resources/cached-page-2.html about to go back to resources/cached-page-1.html
+resources/cached-page-1.html onload fired, count = 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
