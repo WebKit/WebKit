@@ -1,3 +1,15 @@
+2010-10-13  Adam Roben  <aroben@apple.com>
+
+        Fix the Cairo build
+
+        * Shared/cairo/BackingStoreCairo.cpp: Added.
+        (WebKit::BackingStore::createGraphicsContext):
+        (WebKit::BackingStore::paint):
+        Stubbed out.
+
+        * win/WebKit2.vcproj: Build BackingStoreCG.cpp in CG builds and
+        BackingStoreCairo.cpp in Cairo builds.
+
 2010-10-13  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
