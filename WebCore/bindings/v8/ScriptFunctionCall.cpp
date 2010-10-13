@@ -33,7 +33,6 @@
 
 #include "ScriptScope.h"
 #include "ScriptState.h"
-#include "ScriptString.h"
 #include "ScriptValue.h"
 
 #include "V8Binding.h"
@@ -52,12 +51,6 @@ void ScriptCallArgumentHandler::appendArgument(const ScriptObject& argument)
         return;
     }
     m_arguments.append(argument);
-}
-
-void ScriptCallArgumentHandler::appendArgument(const ScriptString& argument)
-{
-    ScriptScope scope(m_scriptState);
-    m_arguments.append(v8String(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const ScriptValue& argument)
