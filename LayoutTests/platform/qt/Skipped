@@ -387,10 +387,6 @@ http/tests/plugins/plugin-document-has-focus.html
 #       Failing execCommand tests.                                            #
 # =========================================================================== #
 
-# It fails in DRT, but passes in QtLauncher
-# https://bugs.webkit.org/show_bug.cgi?id=35921
-editing/execCommand/move-selection-back-line.html
-
 # -- passes
 editing/execCommand/indent-paragraphs.html
 
