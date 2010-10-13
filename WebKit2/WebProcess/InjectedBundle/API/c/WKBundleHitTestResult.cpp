@@ -45,7 +45,12 @@ WKBundleNodeHandleRef WKBundleHitTestResultGetNodeHandle(WKBundleHitTestResultRe
 
 WKBundleFrameRef WKBundleHitTestResultGetFrame(WKBundleHitTestResultRef hitTestResultRef)
 {
-    return toAPI(toImpl(hitTestResultRef)->webFrame());
+    return toAPI(toImpl(hitTestResultRef)->frame());
+}
+
+WKBundleFrameRef WKBundleHitTestResultGetTargetFrame(WKBundleHitTestResultRef hitTestResultRef)
+{
+    return toAPI(toImpl(hitTestResultRef)->targetFrame());
 }
 
 WKURLRef WKBundleHitTestResultCopyAbsoluteLinkURL(WKBundleHitTestResultRef hitTestResultRef)

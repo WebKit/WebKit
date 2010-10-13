@@ -1,3 +1,18 @@
+2010-10-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin "Sometimes" Barraclough.
+
+        Add API to get the target frame from a HitTestResult.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp:
+        (WKBundleHitTestResultGetFrame):
+        (WKBundleHitTestResultGetTargetFrame):
+        * WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h:
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::frame): Rename from webFrame.
+        (WebKit::InjectedBundleHitTestResult::targetFrame):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+
 2010-10-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -48,7 +48,7 @@ PassRefPtr<InjectedBundleNodeHandle> InjectedBundleHitTestResult::nodeHandle() c
     return InjectedBundleNodeHandle::getOrCreate(m_hitTestResult.innerNonSharedNode());
 }
 
-WebFrame* InjectedBundleHitTestResult::webFrame() const
+WebFrame* InjectedBundleHitTestResult::frame() const
 {
     Node* node = m_hitTestResult.innerNonSharedNode();
     if (!node)
@@ -59,6 +59,15 @@ WebFrame* InjectedBundleHitTestResult::webFrame() const
         return 0;
 
     Frame* frame = document->frame();
+    if (!frame)
+        return 0;
+
+    return static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+}
+
+WebFrame* InjectedBundleHitTestResult::targetFrame() const
+{
+    Frame* frame = m_hitTestResult.targetFrame();
     if (!frame)
         return 0;
 
