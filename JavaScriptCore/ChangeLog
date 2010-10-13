@@ -1,3 +1,9 @@
+2010-10-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-10-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.

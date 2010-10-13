@@ -41,7 +41,6 @@ EXPORTS
     ??8JSC@@YA_NABVUString@0@0@Z
     ??8WTF@@YA_NABVCString@0@0@Z
     ?NaN@JSC@@3NB
-    ?utf8@UString@JSC@@QBE?AVCString@WTF@@_N@Z
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
     ?add@PropertyNameArray@JSC@@QAEXPAVStringImpl@WTF@@@Z
     ?addBytes@MD5@WTF@@QAEXPBEI@Z
@@ -53,6 +52,8 @@ EXPORTS
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
     ?allocateStack@MarkStack@JSC@@CAPAXI@Z
+    ?append@StringBuilder@WTF@@QAEXPBDI@Z
+    ?append@StringBuilder@WTF@@QAEXPB_WI@Z
     ?ascii@UString@JSC@@QBE?AVCString@WTF@@XZ
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
@@ -149,10 +150,6 @@ EXPORTS
     ?free@WeakGCHandlePool@JSC@@QAEXPAVWeakGCHandle@2@@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@H@Z
     ?from@Identifier@JSC@@SA?AV12@PAVExecState@2@I@Z
-    ?number@UString@JSC@@SA?AV12@H@Z
-    ?number@UString@JSC@@SA?AV12@I@Z
-    ?number@UString@JSC@@SA?AV12@N@Z
-    ?numberToString@WTF@@YAINQA_W@Z
     ?functionGetter@PropertySlot@JSC@@ABE?AVJSValue@2@PAVExecState@2@@Z
     ?functionName@DebuggerCallFrame@JSC@@QBEPBVUString@2@XZ
     ?get@Structure@JSC@@QAEIPBVStringImpl@WTF@@AAIAAPAVJSCell@2@@Z
@@ -229,6 +226,10 @@ EXPORTS
     ?name@JSFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?nonInlineNaN@JSC@@YANXZ
+    ?number@UString@JSC@@SA?AV12@H@Z
+    ?number@UString@JSC@@SA?AV12@I@Z
+    ?number@UString@JSC@@SA?AV12@N@Z
+    ?numberToString@WTF@@YAINQA_W@Z
     ?objectCount@Heap@JSC@@QBEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
@@ -256,10 +257,12 @@ EXPORTS
     ?randomNumber@WTF@@YANXZ
     ?recompileAllJSFunctions@Debugger@JSC@@QAEXPAVJSGlobalData@2@@Z
     ?recordExtraCost@Heap@JSC@@AAEXI@Z
+    ?reifyString@StringBuilder@WTF@@AAEXXZ
     ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
     ?reset@ParserArena@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?resetDateCache@JSGlobalData@JSC@@QAEXXZ
+    ?resize@StringBuilder@WTF@@QAEXI@Z
     ?resolveRope@JSString@JSC@@ABEXPAVExecState@2@@Z
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
@@ -279,6 +282,7 @@ EXPORTS
     ?setUpStaticFunctionSlot@JSC@@YAXPAVExecState@1@PBVHashEntry@1@PAVJSObject@1@ABVIdentifier@1@AAVPropertySlot@1@@Z
     ?setWritable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
+    ?shrinkToFit@StringBuilder@WTF@@QAEXXZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
     ?size@Heap@JSC@@QBEIXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
@@ -333,6 +337,7 @@ EXPORTS
     ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
     ?unwrappedObject@JSObject@JSC@@UAEPAV12@XZ
+    ?utf8@UString@JSC@@QBE?AVCString@WTF@@_N@Z
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
