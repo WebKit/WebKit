@@ -193,7 +193,6 @@ EXPORTS
     ?hasTransition@Structure@JSC@@QAE_NPAVStringImpl@WTF@@I@Z
     ?heap@Heap@JSC@@SAPAV12@VJSValue@2@@Z
     ?increment@RefCountedLeakCounter@WTF@@QAEXXZ
-    ?info@RegExpObject@JSC@@2UClassInfo@2@B
     ?init@AtomicString@WTF@@SAXXZ
     ?init@JSGlobalObject@JSC@@AAEXPAVJSObject@2@@Z
     ?initializeMainThread@WTF@@YAXXZ
@@ -326,6 +325,7 @@ EXPORTS
     ?toUInt32@Identifier@JSC@@SAIABVUString@2@AA_N@Z
     ?tryFastCalloc@WTF@@YA?AUTryMallocReturnValue@1@II@Z
     ?tryFastMalloc@WTF@@YA?AUTryMallocReturnValue@1@I@Z
+    ?tryFastRealloc@WTF@@YA?AUTryMallocReturnValue@1@PAXI@Z
     ?tryLock@Mutex@WTF@@QAE_NXZ
     ?type@DebuggerCallFrame@JSC@@QBE?AW4Type@12@XZ
     ?unlock@JSLock@JSC@@SAXW4JSLockBehavior@2@@Z

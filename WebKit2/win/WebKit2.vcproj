@@ -401,6 +401,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\BackingStore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\BackingStore.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\CacheModel.h"
 				>
 			</File>
@@ -886,6 +894,14 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="cg"
+				>
+				<File
+					RelativePath="..\Shared\cg\BackingStoreCG.cpp"
+					>
 				</File>
 			</Filter>
 		</Filter>

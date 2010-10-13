@@ -1,5 +1,13 @@
 2010-10-13  Adam Roben  <aroben@apple.com>
 
+        Start compiling BackingStore on Windows
+
+        Rubber-stamped by Anders Carlsson.
+
+        * win/WebKit2.vcproj: Added BackingStore.
+
+2010-10-13  Adam Roben  <aroben@apple.com>
+
         Rename BackingStoreMac.mm to BackingStoreCG.cpp
 
         There's nothing Mac-specific about this file.

@@ -1,3 +1,13 @@
+2010-10-13  Adam Roben  <aroben@apple.com>
+
+        Export tryFastRealloc for WebKit2's benefit
+
+        Rubber-stamped by Anders Carlsson.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Added
+        tryFastRealloc. Removed RegExpObject::info, which is now exported via
+        JS_EXPORTDATA.
+
 2010-10-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej Stachowiak.
