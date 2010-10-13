@@ -54,14 +54,7 @@ public:
     // The WebKit implementation of open ignores the WebFrame* parameter.
     virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, const WebString& dataDir, unsigned long long maximumSize)
     {
-        // FIXME: Remove the line below and renable this assertion.
-        open(name, description, callbacks, origin, webFrame, dataDir);
-        // WEBKIT_ASSERT_NOT_REACHED();
-    }
-    // FIXME: Remove once we update Chromium side.
-    virtual void open(const WebString& name, const WebString& description, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* webFrame, const WebString& dataDir)
-    {
-        open(name, description, callbacks, origin, webFrame, dataDir, 5 * 1024 * 1024);
+        WEBKIT_ASSERT_NOT_REACHED();
     }
 
     // The file name that would be used for persisting a given indexed database on the file system.
