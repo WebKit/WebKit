@@ -1,3 +1,15 @@
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add list of Ubuntu packages needed by the EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=47628
+
+        I've been copy/pasting this list between bots, but it's better to have
+        this checked in.
+
+        * EWSTools/ubuntu-ews-packages: Added.
+
 2010-10-13  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Csaba Osztrogonác.
