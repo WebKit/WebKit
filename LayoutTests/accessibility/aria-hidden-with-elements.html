@@ -44,12 +44,8 @@ var successfullyParsed = false;
        var child = root.childAtIndex(0).childAtIndex(0);
        shouldBe("child.childrenCount", "0");
 
-       // second child is an AXGroup that has no children
+       // The second child we ask for from the web area should be the heading, and we should have skipped over everything else.
        child = root.childAtIndex(0).childAtIndex(1);
-       shouldBe("child.childrenCount", "0");
-
-       // the next child we ask for from the web area should be the heading, and we should have skipped over everything else.
-       child = root.childAtIndex(0).childAtIndex(2);
        shouldBe("child.role", "'AXRole: AXHeading'");
     }
 
