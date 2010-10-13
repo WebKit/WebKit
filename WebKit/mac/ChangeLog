@@ -1,3 +1,16 @@
+2010-10-12  Andy Estes  <aestes@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        Check in some cleanup from the previous commit.
+
+        * WebView/WebView.mm:
+        (leakMailQuirksUserScriptPath): Renamed to indicate that this function
+        leaks an NSString.
+        (-[WebView _injectMailQuirksScript]): Moved a static initialization from
+        a separate class method into the only method that used it and removed
+        the now-unnecessary class method.
+
 2010-10-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.

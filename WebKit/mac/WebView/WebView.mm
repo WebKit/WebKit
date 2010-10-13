@@ -637,23 +637,17 @@ static bool shouldEnableLoadDeferring()
     return _private->usesDocumentViews;
 }
 
-static NSString *mailQuirksUserScriptPath()
+static NSString *leakMailQuirksUserScriptPath()
 {
     NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"MailQuirksUserScript" ofType:@"js"];
     return [[NSString alloc] initWithContentsOfFile:scriptPath];
 }
 
-+ (NSString *)_mailQuirksUserScript
-{
-    static NSString* mailQuirksScript = mailQuirksUserScriptPath();
-    return mailQuirksScript;
-}
-
 - (void)_injectMailQuirksScript
 {
+    static NSString *mailQuirksScriptPath = leakMailQuirksUserScriptPath();
     core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
-        [WebView _mailQuirksUserScript], KURL(), 0, 0, InjectAtDocumentEnd,
-        InjectInAllFrames);
+        mailQuirksScriptPath, KURL(), 0, 0, InjectAtDocumentEnd, InjectInAllFrames);
 }
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
