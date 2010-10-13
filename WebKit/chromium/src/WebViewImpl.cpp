@@ -2369,7 +2369,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         return;
     }
 
-    OwnPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
+    RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
     if (!context) {
         context = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
         if (context)

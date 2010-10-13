@@ -1,3 +1,13 @@
+2010-10-12  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed chromium compile fixes for http://trac.webkit.org/changeset/69619.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::create):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        * src/WebViewImpl.h:
+
 2010-10-12  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Bump up revision in order to pick up fix.

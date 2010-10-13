@@ -59,9 +59,8 @@ class GraphicsContext3D;
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassRefPtr<LayerRendererChromium> create(PassOwnPtr<GraphicsContext3D> graphicsContext3D);
+    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D> graphicsContext3D);
 
-    LayerRendererChromium(PassOwnPtr<GraphicsContext3D> graphicsContext3D);
     ~LayerRendererChromium();
 
     GraphicsContext3D* context();
@@ -112,6 +111,8 @@ public:
     void getFramebufferPixels(void *pixels, const IntRect& rect);
 
 private:
+    explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D> graphicsContext3D);
+
     void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity);
 
     void drawLayersRecursive(LayerChromium*, const FloatRect& scissorRect);
@@ -174,7 +175,7 @@ private:
     OwnPtr<CanvasLayerChromium::SharedValues> m_canvasLayerSharedValues;
     OwnPtr<VideoLayerChromium::SharedValues> m_videoLayerSharedValues;
 
-    OwnPtr<GraphicsContext3D> m_context;
+    RefPtr<GraphicsContext3D> m_context;
 };
 
 // Setting DEBUG_GL_CALLS to 1 will call glGetError() after almost every GL

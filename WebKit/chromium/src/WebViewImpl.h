@@ -548,7 +548,7 @@ private:
     // If we attempt to fetch the on-screen GraphicsContext3D before
     // the compositor has been turned on, we need to instantiate it
     // early. This member holds on to the GC3D in this case.
-    OwnPtr<WebCore::GraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
+    RefPtr<WebCore::GraphicsContext3D> m_temporaryOnscreenGraphicsContext3D;
     OwnPtr<DeviceOrientationClientProxy> m_deviceOrientationClientProxy;
 };
 
