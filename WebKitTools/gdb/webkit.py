@@ -100,6 +100,36 @@ class WTFStringPrinter(StringPrinter):
                                  self.get_length())
 
 
+class JSCUStringPrinter(StringPrinter):
+    "Print a JSC::UString"
+    def get_length(self):
+        if not self.val['m_impl']['m_ptr']:
+            return 0
+        return self.val['m_impl']['m_ptr']['m_length']
+
+    def to_string(self):
+        if self.get_length() == 0:
+            return ''
+
+        return ustring_to_string(self.val['m_impl']['m_ptr']['m_data'],
+                                 self.get_length())
+
+
+class JSCIdentifierPrinter(StringPrinter):
+    "Print a JSC::Identifier"
+    def to_string(self):
+        return JSCUStringPrinter(self.val['m_string']).to_string()
+
+
+class JSCJSStringPrinter(StringPrinter):
+    "Print a JSC::JSString"
+    def to_string(self):
+        if self.val['m_length'] == 0:
+            return ''
+
+        return JSCUStringPrinter(self.val['m_value']).to_string()
+
+
 class WebCoreQualifiedNamePrinter(StringPrinter):
     "Print a WebCore::QualifiedName"
 
@@ -198,13 +228,15 @@ class WTFVectorPrinter:
     def display_hint(self):
         return 'array'
 
-
 def add_pretty_printers():
     pretty_printers_dict = {
         re.compile("^WTF::Vector<.*>$"): WTFVectorPrinter,
         re.compile("^WTF::AtomicString$"): WTFAtomicStringPrinter,
         re.compile("^WTF::String$"): WTFStringPrinter,
         re.compile("^WebCore::QualifiedName$"): WebCoreQualifiedNamePrinter,
+        re.compile("^JSC::UString$"): JSCUStringPrinter,
+        re.compile("^JSC::Identifier$"): JSCIdentifierPrinter,
+        re.compile("^JSC::JSString$"): JSCJSStringPrinter,
     }
 
     def lookup_function(val):
