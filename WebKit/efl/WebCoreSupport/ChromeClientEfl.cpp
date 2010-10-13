@@ -519,7 +519,7 @@ void ChromeClientEfl::chooseIconForFiles(const Vector<String>&, FileChooser*)
 
 void ChromeClientEfl::dispatchViewportDataDidChange(const ViewportArguments& arguments) const
 {
-    ewk_view_viewport_set(m_view, arguments.width, arguments.height, arguments.initialScale, arguments.minimumScale, arguments.maximumScale, arguments.userScalable);
+    ewk_view_viewport_attributes_set(m_view, arguments);
 }
 
 bool ChromeClientEfl::selectItemWritingDirectionIsNatural()

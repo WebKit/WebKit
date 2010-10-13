@@ -132,6 +132,7 @@ typedef struct _Viewport {
     float initScale;
     float minScale;
     float maxScale;
+    float devicePixelRatio;
     Eina_Bool userScalable;
 } Viewport;
 
@@ -402,9 +403,10 @@ on_viewport_changed(void* user_data, Evas_Object* webview, void* event_info)
 {
     ELauncher *app = (ELauncher *)user_data;
 
-    float w, h, initScale, minScale, maxScale, userScalable;
+    float w, h, initScale, minScale, maxScale, devicePixelRatio;
+    Eina_Bool userScalable;
 
-    ewk_view_viewport_get(webview, &w, &h, &initScale, &maxScale, &minScale, &userScalable);
+    ewk_view_viewport_attributes_get(webview, &w, &h, &initScale, &maxScale, &minScale, &devicePixelRatio, &userScalable);
 
     /**
      * If there is no argument in viewport tag, argument's value is -1.
@@ -419,6 +421,8 @@ on_viewport_changed(void* user_data, Evas_Object* webview, void* event_info)
         minScale = ewk_view_zoom_range_min_get(webview);
     if ((int)maxScale == -1)
         maxScale = ewk_view_zoom_range_max_get(webview);
+    if ((int)devicePixelRatio == -1)
+        devicePixelRatio = ewk_view_device_pixel_ratio_get(webview);
     if ((int)userScalable == -1)
         userScalable = EINA_TRUE;
 
@@ -427,7 +431,8 @@ on_viewport_changed(void* user_data, Evas_Object* webview, void* event_info)
     app->viewport.initScale = initScale;
     app->viewport.minScale = minScale;
     app->viewport.maxScale = maxScale;
-    app->viewport.userScalable = (Eina_Bool)userScalable;
+    app->viewport.devicePixelRatio = devicePixelRatio;
+    app->viewport.userScalable = userScalable;
     viewport_set();
 }
 

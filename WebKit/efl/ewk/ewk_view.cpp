@@ -22,7 +22,7 @@
 #include "config.h"
 #include "ewk_view.h"
 
-#include "appcache/ApplicationCacheStorage.h"
+#include "Chrome.h"
 #include "ChromeClientEfl.h"
 #include "ContextMenuClientEfl.h"
 #include "ContextMenuController.h"
@@ -42,6 +42,7 @@
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
+#include "appcache/ApplicationCacheStorage.h"
 #include "ewk_private.h"
 
 #include <Ecore.h>
@@ -58,6 +59,8 @@
 #define ZOOM_MIN (0.05)
 #define ZOOM_MAX (4.0)
 
+#define DEVICE_PIXEL_RATIO (1.0)
+
 static const char EWK_VIEW_TYPE_STR[] = "EWK_View";
 
 static const size_t EWK_VIEW_REPAINTS_SIZE_INITIAL = 32;
@@ -72,6 +75,7 @@ struct _Ewk_View_Private_Data {
     WebCore::Page* page;
     WebCore::Settings* page_settings;
     WebCore::Frame* main_frame;
+    WebCore::ViewportArguments viewport_arguments;
     Ewk_History* history;
     struct {
         Ewk_Menu menu;
@@ -120,18 +124,11 @@ struct _Ewk_View_Private_Data {
         Eina_Bool offline_app_cache: 1;
         Eina_Bool page_cache: 1;
         struct {
-            float w;
-            float h;
-            float init_scale;
-            float min_scale;
-            float max_scale;
-            float user_scalable;
-        } viewport;
-        struct {
             float min_scale;
             float max_scale;
             Eina_Bool user_scalable:1;
         } zoom_range;
+        float device_pixel_ratio;
     } settings;
     struct {
         struct {
@@ -624,6 +621,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.zoom_range.min_scale = ZOOM_MIN;
     priv->settings.zoom_range.max_scale = ZOOM_MAX;
     priv->settings.zoom_range.user_scalable = EINA_TRUE;
+    priv->settings.device_pixel_ratio = DEVICE_PIXEL_RATIO;
 
     priv->main_frame = _ewk_view_core_frame_new(sd, priv, 0).get();
     if (!priv->main_frame) {
@@ -965,6 +963,26 @@ static void _ewk_view_zoom_animation_start(Ewk_View_Smart_Data* sd)
         return;
     priv->animated_zoom.animator = ecore_animator_add
         (_ewk_view_zoom_animator_cb, sd);
+}
+
+static WebCore::ViewportAttributes _ewk_view_viewport_attributes_compute(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    int desktop_width = 980;
+    int device_dpi = 160;
+
+    int available_width = (int) priv->page->chrome()->client()->pageRect().width();
+    int available_height = (int) priv->page->chrome()->client()->pageRect().height();
+
+    int device_width = (int) priv->page->chrome()->client()->windowRect().width();
+    int device_height = (int) priv->page->chrome()->client()->windowRect().height();
+
+    IntSize available_size = IntSize(available_width, available_height);
+    WebCore::ViewportAttributes attributes = WebCore::computeViewportAttributes(priv->viewport_arguments, desktop_width, device_width, device_height, device_dpi, available_size);
+
+    return attributes;
 }
 
 /**
@@ -4049,33 +4067,21 @@ void ewk_view_download_request(Evas_Object* o, Ewk_Download* download)
  * @internal
  * Reports the viewport has changed.
  *
- * @param o view.
- * @param w width.
- * @param h height.
- * @param init_scale initialScale value.
- * @param max_scale maximumScale value.
- * @param min_scale minimumScale value.
- * @param user_scalable userscalable flag.
+ * @param arguments viewport argument.
  *
  * Emits signal: "viewport,changed" with no parameters.
  */
-void ewk_view_viewport_set(Evas_Object *o, float w, float h, float init_scale, float max_scale, float min_scale, float user_scalable)
+void ewk_view_viewport_attributes_set(Evas_Object *o, const WebCore::ViewportArguments& arguments)
 {
     EWK_VIEW_SD_GET(o, sd);
     EWK_VIEW_PRIV_GET(sd, priv);
-
-    priv->settings.viewport.w = w;
-    priv->settings.viewport.h = h;
-    priv->settings.viewport.init_scale = init_scale;
-    priv->settings.viewport.min_scale = min_scale;
-    priv->settings.viewport.max_scale = max_scale;
-    priv->settings.viewport.user_scalable = user_scalable;
-
+    
+    priv->viewport_arguments = arguments;
     evas_object_smart_callback_call(o, "viewport,changed", 0);
 }
 
 /**
- * Gets data of viewport meta tag.
+ * Gets attributes of viewport meta tag.
  *
  * @param o view.
  * @param w width.
@@ -4083,25 +4089,27 @@ void ewk_view_viewport_set(Evas_Object *o, float w, float h, float init_scale, f
  * @param init_scale initial Scale value.
  * @param max_scale maximum Scale value.
  * @param min_scale minimum Scale value.
+ * @param device_pixel_ratio value.
  * @param user_scalable user Scalable value.
  */
-void ewk_view_viewport_get(Evas_Object *o, float* w, float* h, float* init_scale, float* max_scale, float* min_scale, float* user_scalable)
+void ewk_view_viewport_attributes_get(Evas_Object *o, float* w, float* h, float* init_scale, float* max_scale, float* min_scale, float* device_pixel_ratio, Eina_Bool* user_scalable)
 {
-    EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
+    WebCore::ViewportAttributes attributes = _ewk_view_viewport_attributes_compute(o);
 
     if (w)
-        *w = priv->settings.viewport.w;
+        *w = attributes.layoutSize.width();
     if (h)
-        *h = priv->settings.viewport.h;
+        *h = attributes.layoutSize.height();
     if (init_scale)
-        *init_scale = priv->settings.viewport.init_scale;
+        *init_scale = attributes.initialScale;
     if (max_scale)
-        *max_scale = priv->settings.viewport.max_scale;
+        *max_scale = attributes.maximumScale;
     if (min_scale)
-        *min_scale = priv->settings.viewport.min_scale;
+        *min_scale = attributes.minimumScale;
+    if (device_pixel_ratio)
+        *device_pixel_ratio = attributes.devicePixelRatio;
     if (user_scalable)
-        *user_scalable = priv->settings.viewport.user_scalable;
+        *user_scalable = attributes.userScalable;
 }
 
 /**
@@ -4188,6 +4196,22 @@ Eina_Bool ewk_view_user_scalable_get(Evas_Object* o)
     EWK_VIEW_PRIV_GET(sd, priv);
 
     return priv->settings.zoom_range.user_scalable;
+}
+
+/**
+ * Gets device pixel ratio value.
+ *
+ * @param o view.
+ * @param user_scalable where to return the current user scalable value.
+ *
+ * @return @c EINA_TRUE if zoom is enabled, @c EINA_FALSE if not.
+ */
+float ewk_view_device_pixel_ratio_get(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_PRIV_GET(sd, priv);
+
+    return priv->settings.device_pixel_ratio;
 }
 
 /**

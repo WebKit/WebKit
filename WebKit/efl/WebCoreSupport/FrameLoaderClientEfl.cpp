@@ -621,7 +621,7 @@ void FrameLoaderClientEfl::dispatchDidCommitLoad()
     ewk_view_uri_changed(m_view);
 
     ViewportArguments arguments;
-    ewk_view_viewport_set(m_view, arguments.width, arguments.height, arguments.initialScale, arguments.minimumScale, arguments.maximumScale, arguments.userScalable);
+    ewk_view_viewport_attributes_set(m_view, arguments);
 }
 
 void FrameLoaderClientEfl::dispatchDidFinishDocumentLoad()

@@ -1,3 +1,16 @@
+2010-10-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Support viewport configuration and add new arguments for WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=47084
+
+        Opera spec regarding to viewport meta tag was adjusted to WebCore. So, EFL port
+        needs to be modified according to the changes.
+
+        * EWebLauncher/main.c:
+        (on_viewport_changed):
+
 2010-10-12  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

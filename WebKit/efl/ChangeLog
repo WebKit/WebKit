@@ -1,3 +1,26 @@
+2010-10-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Support viewport configuration and add new arguments for WebKit EFL
+        https://bugs.webkit.org/show_bug.cgi?id=47084
+
+        Opera spec regarding to viewport meta tag was adjusted to WebCore. So, EFL port 
+        needs to be modified according to the changes.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::dispatchViewportDataDidChange):
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidCommitLoad):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (_ewk_view_viewport_attributes_compute):
+        (ewk_view_viewport_attributes_set):
+        (ewk_view_viewport_attributes_get):
+        (ewk_view_device_pixel_ratio_get):
+        * ewk/ewk_view.h:
+
 2010-10-12  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
