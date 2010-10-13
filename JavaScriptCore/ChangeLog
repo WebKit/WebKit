@@ -1,3 +1,25 @@
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        [WTFURL] Add URLQueryCanonicalizer
+        https://bugs.webkit.org/show_bug.cgi?id=45088
+
+        This class canonicalizes the query component of URLs.  The main tricky
+        bit there is the convertCharset function, which I've moved to a
+        templated dependency.  There'll likely be more about that in future
+        patches.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/url/src/URLEscape.cpp: Added.
+        * wtf/url/src/URLEscape.h: Added.
+        (WTF::appendEscapedCharacter):
+        * wtf/url/src/URLQueryCanonicalizer.h: Added.
+        (WTF::URLQueryCanonicalizer::canonicalize):
+        (WTF::URLQueryCanonicalizer::isAllASCII):
+        (WTF::URLQueryCanonicalizer::appendRaw8BitQueryString):
+        (WTF::URLQueryCanonicalizer::convertToQueryEncoding):
+
 2010-10-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
