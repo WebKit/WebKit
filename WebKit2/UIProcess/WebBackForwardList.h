@@ -33,6 +33,9 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
+#if PLATFORM(CF)
+#include <CoreFoundation/CFDictionary.h>
+#endif
 
 namespace WebKit {
 

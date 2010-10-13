@@ -25,6 +25,8 @@
 
 #include "WebBackForwardList.h"
 #include "Logging.h"
+#include <wtf/RetainPtr.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 using namespace WebCore;
 

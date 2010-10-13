@@ -1,3 +1,14 @@
+2010-10-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fixes after r69538.
+
+        * UIProcess/WebBackForwardList.h: Add missing include directive
+        for CoreFoundation.
+        * UIProcess/cf/WebBackForwardListCF.cpp: Add missing include
+        directives for RetainPtr.h and CoreFoundation.
+        * UIProcess/cf/WebPageProxyCF.cpp: Add missing include directive
+        for RetainPtr.h.
+
 2010-10-13  Adam Roben  <aroben@apple.com>
 
         Start compiling BackingStore on Windows

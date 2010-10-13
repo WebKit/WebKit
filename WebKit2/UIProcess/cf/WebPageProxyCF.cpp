@@ -29,6 +29,7 @@
 #include "WebBackForwardList.h"
 #include "WebData.h"
 
+#include <wtf/RetainPtr.h>
 #include <CoreFoundation/CFPropertyList.h>
 
 using namespace WebCore;
