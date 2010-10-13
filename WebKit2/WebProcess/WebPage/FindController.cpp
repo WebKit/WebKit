@@ -25,9 +25,14 @@
 
 #include "FindController.h"
 
+#include "BackingStore.h"
 #include "FindPageOverlay.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/Frame.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/Page.h>
 
 using namespace WebCore;
@@ -37,6 +42,7 @@ namespace WebKit {
 FindController::FindController(WebPage* webPage)
     : m_webPage(webPage)
     , m_findPageOverlay(0)
+    , m_isShowingFindIndicator(false)
 {
 }
 
@@ -68,6 +74,8 @@ void FindController::findString(const String& string, FindDirection findDirectio
         // And clear the selection.
         if (selectedFrame)
             selectedFrame->selection()->clear();
+
+        resetFindIndicator();
     } else {
         shouldShowOverlay = findOptions & FindOptionsShowOverlay;
 
@@ -77,6 +85,11 @@ void FindController::findString(const String& string, FindDirection findDirectio
             // Check if we have more matches than allowed.
             if (numMatches > maxNumMatches)
                 shouldShowOverlay = false;
+        }
+
+        if (!(findOptions & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame)) {
+            // Either we shouldn't show the find indicator, or we couldn't update it.
+            resetFindIndicator();
         }
     }
 
@@ -110,5 +123,60 @@ void FindController::findPageOverlayDestroyed()
     ASSERT(m_findPageOverlay);
     m_findPageOverlay = 0;
 }
+
+bool FindController::updateFindIndicator(Frame* selectedFrame)
+{
+    if (!selectedFrame)
+        return false;
+
+    IntRect selectionRect = enclosingIntRect(selectedFrame->selection()->bounds());
+    Vector<FloatRect> textRects;
+    selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
+
+    // Create a backing store and paint the find indicator text into it.
+    RefPtr<BackingStore> findIndicatorTextBackingStore = BackingStore::createSharable(selectionRect.size());
+    OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
+
+    graphicsContext->translate(-selectionRect.x(), -selectionRect.y());
+    selectedFrame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText | PaintBehaviorFlattenCompositingLayers);
+    selectedFrame->document()->updateLayout();
+    
+    graphicsContext->clip(selectionRect);
+    selectedFrame->view()->paint(graphicsContext.get(), selectionRect);
+    selectedFrame->view()->setPaintBehavior(PaintBehaviorNormal);
+    
+    SharedMemory::Handle handle;
+    if (!findIndicatorTextBackingStore->createHandle(handle))
+        return false;
+
+    // We want the selection rect in window coordinates.
+    IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(selectionRect);
+
+    // We want the text rects in selection rect coordinates.
+    Vector<FloatRect> textRectsInSelectionRectCoordinates;
+    
+    for (size_t i = 0; i < textRects.size(); ++i) {
+        IntRect textRectInSelectionRectCoordinates = selectedFrame->view()->contentsToWindow(enclosingIntRect(textRects[i]));
+        textRectInSelectionRectCoordinates.move(-selectionRectInWindowCoordinates.x(), -selectionRectInWindowCoordinates.y());
+
+        textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
+    }            
+    
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, handle), m_webPage->pageID());
+    m_isShowingFindIndicator = true;
+
+    return true;
+}
+
+void FindController::resetFindIndicator()
+{
+    if (!m_isShowingFindIndicator)
+        return;
+
+    SharedMemory::Handle handle;
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), handle), m_webPage->pageID());
+    m_isShowingFindIndicator = false;
+}
+
 
 } // namespace WebKit

@@ -51,8 +51,15 @@ public:
     void findPageOverlayDestroyed();
 
 private:
+    bool updateFindIndicator(WebCore::Frame* selectedFrame);
+    void resetFindIndicator();
+    
     WebPage* m_webPage;
     FindPageOverlay* m_findPageOverlay;
+
+    // Whether the UI process is showing the find indicator. Note that this can be true even if
+    // the find indicator isn't showing, but it will never be false when it is showing.
+    bool m_isShowingFindIndicator;
 };
 
 } // namespace WebKit

@@ -93,6 +93,7 @@ messages -> WebPageProxy {
 
     # Find.
     DidCountStringMatches(WTF::String string, uint32_t numMatches)
+    SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle)
 
 #if USE(ACCELERATED_COMPOSITING)
     # Accelerated compsiting messages.

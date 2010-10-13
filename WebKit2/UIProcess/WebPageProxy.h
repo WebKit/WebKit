@@ -30,6 +30,7 @@
 #include "DrawingAreaProxy.h"
 #include "FindOptions.h"
 #include "GenericCallback.h"
+#include "SharedMemory.h"
 #include "WKBase.h"
 #include "WebEvent.h"
 #include "WebFindClient.h"
@@ -281,6 +282,7 @@ private:
 
     // Find.
     void didCountStringMatches(const String&, uint32_t numMatches);
+    void setFindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle);
 
     void takeFocus(bool direction);
     void setToolTip(const String&);
