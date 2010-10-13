@@ -1,5 +1,16 @@
 2010-10-13  Yi Shen  <yi.4.shen@nokia.com>
 
+        Reviewed by Antonio Gomes.
+
+        [Qt] QtTestBrowser shows two Url input fields
+        https://bugs.webkit.org/show_bug.cgi?id=47613
+
+        * QtTestBrowser/mainwindow.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::buildUI):
+
+2010-10-13  Yi Shen  <yi.4.shen@nokia.com>
+
         Reviewed by Tony Chang.
 
         [gdb] Add pretty-print supports for UString, Identifier and JSString
