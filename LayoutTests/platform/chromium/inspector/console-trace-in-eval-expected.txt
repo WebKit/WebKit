@@ -1,4 +1,3 @@
-Tests that when console.trace is called in eval'ed script ending with //@ sourceURL=url it will dump a stack trace that will have the url as the script source. Bug 47252.
-
-evalURL.js:5console.trace()bevalURL.js:5aevalURL.js:10evalSourceevalURL.js:13(anonymous function)evalURL.js:15(anonymous function)console-trace-in-eval.html:27
-
+Tests that when console.trace is called in eval'ed script ending with //@ sourceURL=url it will dump a stack trace that will have the url as the script source. Bug 47252.
+
+evalURL.js:5console.trace()bevalURL.js:5aevalURL.js:10evalSourceevalURL.js:13(anonymous function)evalURL.js:15(anonymous function)console-trace-in-eval.html:27

@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: line 5: Uncaught Error: Exception in eval.
-CONSOLE MESSAGE: line 5: Uncaught Error: Exception in eval.
-Tests that when uncaught exception in eval'ed script ending with //@ sourceURL=url is logged into console, its stack trace will have the url as the script source. Bug 47252.
-
-Page reloaded.
-evalURL.js:5Uncaught Error: Exception in eval.bevalURL.js:5aevalURL.js:10evalSourceevalURL.js:13(anonymous function)evalURL.js:15(anonymous function)console-uncaught-exception-in-eval.html:33
-
+CONSOLE MESSAGE: line 5: Uncaught Error: Exception in eval.
+CONSOLE MESSAGE: line 5: Uncaught Error: Exception in eval.
+Tests that when uncaught exception in eval'ed script ending with //@ sourceURL=url is logged into console, its stack trace will have the url as the script source. Bug 47252.
+
+Page reloaded.
+evalURL.js:5Uncaught Error: Exception in eval.bevalURL.js:5aevalURL.js:10evalSourceevalURL.js:13(anonymous function)evalURL.js:15(anonymous function)console-uncaught-exception-in-eval.html:33
