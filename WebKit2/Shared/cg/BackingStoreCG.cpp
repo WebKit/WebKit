@@ -26,6 +26,7 @@
 #include "BackingStore.h"
 
 #include <WebCore/GraphicsContext.h>
+#include <wtf/RetainPtr.h>
 
 using namespace WebCore;
 
