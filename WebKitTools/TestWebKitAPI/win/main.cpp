@@ -23,19 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "TestsController.h"
 
-#if __APPLE__
+int main(int argc, const char* argv[])
+{
+    bool passed = true;
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
+    std::string argument(argv[1]);
+    if (argument == "--dump-tests")
+        TestWebKitAPI::TestsController::shared().dumpTestNames();
+    else   
+        passed = TestWebKitAPI::TestsController::shared().runTestNamed(argument);
 
-#elif defined(WIN32) || defined(_WIN32)
-
-#define NOMINMAX
-
-#endif
-
-#include <stdint.h>
-
-#include <WebKit2/WebKit2.h>
+    return passed ? EXIT_SUCCESS : EXIT_FAILURE;
+}

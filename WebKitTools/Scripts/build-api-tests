@@ -61,6 +61,8 @@ chdir "WebKitTools/TestWebKitAPI" or die;
 my $result;
 if (isAppleMacWebKit()) {
     $result = buildXCodeProject("TestWebKitAPI", $clean, XcodeOptions(), @ARGV);
+} elsif (isAppleWinWebKit()) {
+    $result = buildVisualStudioProject("win/TestWebKitAPI.sln", $clean);
 } else {
     die "TestWebKitAPI is not supported on this platform.\n";
 }

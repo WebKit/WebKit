@@ -1,3 +1,66 @@
+2010-10-12  Adam Roben  <aroben@apple.com>
+
+        Make TestWebKitAPI work on Windows
+
+        Fixes <http://webkit.org/b/47552> <rdar://problem/8541708>.
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/build-api-tests: Build TestWebKitAPI.sln on Windows.
+
+        * Scripts/run-api-tests: Fix the PATH so that TestWebKitAPI can be
+        run on Windows.
+        (runTest): Added code to run TestWebKitAPI.exe on Windows and to die
+        on unsupported platforms.
+        (populateTests): Added code to run TestWebKitAPI.exe on Windows and to
+        die on other platforms. Extracted some formerly-Mac-specific code to
+        be cross-platform and made it handle any style of line-endings.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPICFLite.vsprops: Added.
+        Links against CFLite.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPICommon.vsprops: Added.
+        Contains most properties for the project.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPICoreFoundation.vsprops:
+        Added. Links against CoreFoundation.
+
+        * TestWebKitAPI/TestWebKitAPIPrefix.h: Added a Windows-specific
+        section and moved the cross-platform section after the
+        platform-specific parts.
+
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp: Added.
+        (TestWebKitAPI::Util::run): Runs a normal message pump until we're
+        done.
+        (TestWebKitAPI::Util::cf): Turns a UTF-8 C string into a CFString.
+        (TestWebKitAPI::Util::createURLForResource): Uses CFBundle to get the
+        resource path.
+        (TestWebKitAPI::Util::URLForNonExistentResource): Creates a bogus
+        WKURL.
+
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp: Added.
+        (TestWebKitAPI::registerWindowClass):
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::page):
+        This was mostly copied from WebKitTestRunner's PlatformWebView.
+
+        * TestWebKitAPI/win/TestWebKitAPI.sln: Added. Builds both
+        TestWebKitAPI and TestWebKitAPIGeneratd. This is used by the
+        build-api-tests script.
+
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added. Builds
+        TestWebKitAPI.exe.
+
+        * TestWebKitAPI/win/TestWebKitAPIGenerated.vcproj: Added. Just calls
+        through to copy-resources.cmd.
+
+        * TestWebKitAPI/win/copy-resources.cmd: Added. Copies resources into
+        or deletes resources from TestWebKitAPI.resources.
+
+        * TestWebKitAPI/win/main.cpp: Added.
+        (main): Calls through to TestsController.
+
 2010-10-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

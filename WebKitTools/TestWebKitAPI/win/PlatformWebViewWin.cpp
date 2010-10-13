@@ -23,19 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "PlatformWebView.h"
 
-#if __APPLE__
+namespace TestWebKitAPI {
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
+static const wchar_t* hostWindowClassName = L"org.WebKit.TestWebKitAPI.PlatformWebViewHostWindow";
 
-#elif defined(WIN32) || defined(_WIN32)
+static void registerWindowClass()
+{
+    static bool initialized;
+    if (initialized)
+        return;
+    initialized = true;
 
-#define NOMINMAX
+    WNDCLASSEXW wndClass = {0};
+    wndClass.cbSize = sizeof(wndClass);
+    wndClass.style = CS_HREDRAW | CS_VREDRAW;
+    wndClass.lpfnWndProc = DefWindowProcW;
+    wndClass.hCursor = LoadCursor(0, IDC_ARROW);
+    wndClass.lpszClassName = hostWindowClassName;
 
-#endif
+    ::RegisterClassExW(&wndClass);
+}
 
-#include <stdint.h>
+PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef)
+{
+    registerWindowClass();
 
-#include <WebKit2/WebKit2.h>
+    RECT viewRect = {0, 0, 800, 600};
+    m_window = CreateWindowExW(0, hostWindowClassName, L"TestWebKitAPI", WS_OVERLAPPEDWINDOW, viewRect.left, viewRect.top, viewRect.right, viewRect.bottom, 0, 0, 0, 0);
+    m_view = WKViewCreate(viewRect, namespaceRef, m_window);
+}
+
+PlatformWebView::~PlatformWebView()
+{
+    ::DestroyWindow(m_window);
+    WKRelease(m_view);
+}
+
+WKPageRef PlatformWebView::page()
+{
+    return WKViewGetPage(m_view);
+}
+
+} // namespace TestWebKitAPI

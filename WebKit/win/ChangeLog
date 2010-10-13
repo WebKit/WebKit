@@ -1,3 +1,16 @@
+2010-10-12  Adam Roben  <aroben@apple.com>
+
+        Build TestWebKitAPI on Windows
+
+        Fixes <http://webkit.org/b/47552> <rdar://problem/8541708> Make
+        TestWebKitAPI work on Windows
+
+        Reviewed by Sam Weinig.
+
+        * WebKit.vcproj/WebKit.sln: Added TestWebKitAPI and
+        TestWebKitAPIGenerated and made them build just after
+        WebKitTestRunner.
+
 2010-10-11  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Attempt to fix windows build failure.

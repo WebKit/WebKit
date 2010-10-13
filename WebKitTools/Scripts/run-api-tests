@@ -70,6 +70,7 @@ if ($showHelp) {
 
 setConfiguration();
 buildTestTool();
+setPathForRunningWebKitApp(\%ENV);
 my %testsToRun = populateTests();
 
 if ($dump) {
@@ -136,6 +137,17 @@ sub runTest($$)
         } else {
             $result = system $apiTesterPath, $test, @ARGV;
         }
+    } elsif (isAppleWinWebKit()) {
+        my $apiTesterNameSuffix;
+        if (configurationForVisualStudio() =~ /^Release|Debug_Internal$/) {
+            $apiTesterNameSuffix = "";
+        } else {
+            $apiTesterNameSuffix = "_debug";
+        }
+        my $apiTesterPath = File::Spec->catfile(productDir(), "TestWebKitAPI$apiTesterNameSuffix.exe");
+        $result = system $apiTesterPath, $test, @ARGV;
+    } else {
+        die "run-api-tests is not supported on this platform.\n"
     }
     
     if ($result == 0) {
@@ -148,6 +160,8 @@ sub runTest($$)
 
 sub populateTests()
 {
+    my @tests;
+
     if (isAppleMacWebKit()) {
         my $productDir = productDir();
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
@@ -161,7 +175,7 @@ sub populateTests()
             $pid = open3($childIn, $childOut, ">&STDERR", $apiTesterPath, "--dump-tests") or die "Failed to build list of tests!";
         }
         close($childIn);
-        my @tests = <$childOut>;
+        @tests = <$childOut>;
         close($childOut);
 
         waitpid($pid, 0);
@@ -171,17 +185,29 @@ sub populateTests()
             print STDERR "Failed to build list of tests!\n";
             exit exitStatus($result);
         }
-
-        chomp(@tests);
-
-        my %keyedTests = ();
-        for my $test (@tests) {
-            my ($suite, $testName) = split(/\//, $test);
-            push @{$keyedTests{$suite}}, $testName;
+    } elsif (isAppleWinWebKit()) {
+        my $apiTesterNameSuffix;
+        if (configurationForVisualStudio() =~ /^Release|Debug_Internal$/) {
+            $apiTesterNameSuffix = "";
+        } else {
+            $apiTesterNameSuffix = "_debug";
         }
-        
-        return %keyedTests;
+        my $apiTesterPath = File::Spec->catfile(productDir(), "TestWebKitAPI$apiTesterNameSuffix.exe");
+        open(TESTS, "-|", $apiTesterPath, "--dump-tests") or die $!;
+        @tests = <TESTS>;
+        close(TESTS) or die $!;
+    } else {
+        die "run-api-tests is not supported on this platform.\n"
     }
+
+    my %keyedTests = ();
+    for my $test (@tests) {
+        $test =~ s/[\r\n]*$//;
+        my ($suite, $testName) = split(/\//, $test);
+        push @{$keyedTests{$suite}}, $testName;
+    }
+    
+    return %keyedTests;
 }
 
 sub buildTestTool()

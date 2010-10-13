@@ -23,19 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "PlatformUtilities.h"
 
-#if __APPLE__
+#include <WebKit2/WKURLCF.h>
+#include <wtf/RetainPtr.h>
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
+namespace TestWebKitAPI {
+namespace Util {
 
-#elif defined(WIN32) || defined(_WIN32)
+void run(bool* done)
+{
+    while (!*done) {
+        MSG msg;
+        BOOL result = ::GetMessageW(&msg, 0, 0, 0);
+        if (!result || result == -1)
+            break;
+        ::TranslateMessage(&msg);
+        ::DispatchMessage(&msg);
+    }
+}
 
-#define NOMINMAX
+RetainPtr<CFStringRef> cf(const char* utf8String)
+{
+    return RetainPtr<CFStringRef>(AdoptCF, CFStringCreateWithCString(kCFAllocatorDefault, utf8String, kCFStringEncodingUTF8));
+}
 
-#endif
+WKURLRef createURLForResource(const char* resource, const char* extension)
+{
+    RetainPtr<CFURLRef> url(AdoptCF, CFBundleCopyResourceURL(CFBundleGetMainBundle(), cf(resource).get(), cf(extension).get(), 0));
+    return WKURLCreateWithCFURL(url.get());
+}
 
-#include <stdint.h>
+WKURLRef URLForNonExistentResource()
+{
+    return WKURLCreateWithUTF8CString("file:///does-not-exist.html");
+}
 
-#include <WebKit2/WebKit2.h>
+} // namespace Util
+} // namespace TestWebKitAPI
