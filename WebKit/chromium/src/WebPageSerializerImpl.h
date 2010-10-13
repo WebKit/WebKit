@@ -161,12 +161,18 @@ private:
     // Save generated html content to data buffer.
     void saveHTMLContentToBuffer(const WTF::String& content,
                                  SerializeDomParam* param);
+
+    enum FlushOption {
+        ForceFlush,
+        DoNotForceFlush,
+    };
+
     // Flushes the content buffer by encoding and sending the content to the
     // WebPageSerializerClient. Content is not flushed if the buffer is not full
     // unless force is 1.
     void encodeAndFlushBuffer(WebPageSerializerClient::PageSerializationStatus status,
                               SerializeDomParam* param,
-                              bool force);
+                              FlushOption);
     // Serialize open tag of an specified element.
     void openTagToString(const WebCore::Element* element,
                          SerializeDomParam* param);

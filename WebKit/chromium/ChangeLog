@@ -1,3 +1,19 @@
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] Clean up WebPageSerializerImpl::serialize
+        https://bugs.webkit.org/show_bug.cgi?id=47577
+
+        This patch shouldn't have any behavior change.  I'm just trying to
+        understand what this code does.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::saveHTMLContentToBuffer):
+        (WebKit::WebPageSerializerImpl::encodeAndFlushBuffer):
+        (WebKit::WebPageSerializerImpl::serialize):
+        * src/WebPageSerializerImpl.h:
+
 2010-10-13  John Knottenbelt  <jknotten@chromium.org>
 
         Reviewed by Steve Block.

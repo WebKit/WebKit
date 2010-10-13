@@ -269,16 +269,16 @@ void WebPageSerializerImpl::saveHTMLContentToBuffer(
     m_dataBuffer.append(result);
     encodeAndFlushBuffer(WebPageSerializerClient::CurrentFrameIsNotFinished,
                          param,
-                         0);
+                         DoNotForceFlush);
 }
 
 void WebPageSerializerImpl::encodeAndFlushBuffer(
     WebPageSerializerClient::PageSerializationStatus status,
     SerializeDomParam* param,
-    bool force)
+    FlushOption flushOption)
 {
     // Data buffer is not full nor do we want to force flush.
-    if (!force && m_dataBuffer.size() <= dataBufferCapacity)
+    if (flushOption != ForceFlush && m_dataBuffer.size() <= dataBufferCapacity)
         return;
 
     String content = m_dataBuffer.toString();
@@ -489,55 +489,37 @@ void WebPageSerializerImpl::collectTargetFrames()
 
 bool WebPageSerializerImpl::serialize()
 {
-    // Collect target frames.
     if (!m_framesCollected)
         collectTargetFrames();
+
     bool didSerialization = false;
-    // Get KURL for main frame.
-    KURL mainPageURL = m_specifiedWebFrameImpl->frame()->loader()->url();
+    KURL mainURL = m_specifiedWebFrameImpl->frame()->document()->url();
 
-    // Go through all frames for serializing DOM for whole page, include
-    // sub-frames.
-    for (int i = 0; i < static_cast<int>(m_frames.size()); ++i) {
-        // Get current serializing frame.
-        WebFrameImpl* currentFrame = m_frames[i];
-        // Get current using document.
-        Document* currentDoc = currentFrame->frame()->document();
-        // Get current frame's URL.
-        const KURL& currentFrameURL = currentFrame->frame()->loader()->url();
+    for (unsigned i = 0; i < m_frames.size(); ++i) {
+        WebFrameImpl* webFrame = m_frames[i];
+        Document* document = webFrame->frame()->document();
+        const KURL& url = document->url();
 
-        // Check whether we have done this document.
-        if (currentFrameURL.isValid() && m_localLinks.contains(currentFrameURL.string())) {
-            // A new document, we will serialize it.
-            didSerialization = true;
-            // Get target encoding for current document.
-            String encoding = currentFrame->frame()->loader()->writer()->encoding();
-            // Create the text encoding object with target encoding.
-            TextEncoding textEncoding(encoding);
-            // Construct serialize parameter for late processing document.
-            SerializeDomParam param(currentFrameURL,
-                                    encoding.length() ? textEncoding : UTF8Encoding(),
-                                    currentDoc,
-                                    currentFrameURL == mainPageURL ? m_localDirectoryName : "");
+        if (!url.isValid() || !m_localLinks.contains(url.string()))
+            continue;
 
-            // Process current document.
-            Element* rootElement = currentDoc->documentElement();
-            if (rootElement)
-                buildContentForNode(rootElement, &param);
+        didSerialization = true;
 
-            // Flush the remainder data and finish serializing current frame.
-            encodeAndFlushBuffer(WebPageSerializerClient::CurrentFrameIsFinished,
-                                 &param,
-                                 1);
-        }
+        String encoding = webFrame->frame()->loader()->writer()->encoding();
+        const TextEncoding& textEncoding = encoding.isEmpty() ? UTF8Encoding() : TextEncoding(encoding);
+        String directoryName = url == mainURL ? m_localDirectoryName : "";
+
+        SerializeDomParam param(url, textEncoding, document, directoryName);
+
+        Element* documentElement = document->documentElement();
+        if (documentElement)
+            buildContentForNode(documentElement, &param);
+
+        encodeAndFlushBuffer(WebPageSerializerClient::CurrentFrameIsFinished, &param, ForceFlush);
     }
 
-    // We have done call frames, so we send message to embedder to tell it that
-    // frames are finished serializing.
     ASSERT(m_dataBuffer.isEmpty());
-    m_client->didSerializeDataForFrame(KURL(),
-                                       WebCString("", 0),
-                                       WebPageSerializerClient::AllFramesAreFinished);
+    m_client->didSerializeDataForFrame(KURL(), WebCString("", 0), WebPageSerializerClient::AllFramesAreFinished);
     return didSerialization;
 }
 
