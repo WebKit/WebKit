@@ -1,3 +1,27 @@
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Clean up SerializeDomParam
+        https://bugs.webkit.org/show_bug.cgi?id=47580
+
+        This patch just renames a bunch of the members of this struct to be
+        more sensible.  No behavior change, well, except for one struct member
+        that wasn't initialized.  I didn't trace through this code to see if
+        the uninitialized value was used anywhere, but initializing all the
+        values seems like a good idea.
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::SerializeDomParam::SerializeDomParam):
+        (WebKit::WebPageSerializerImpl::preActionBeforeSerializeOpenTag):
+        (WebKit::WebPageSerializerImpl::postActionAfterSerializeOpenTag):
+        (WebKit::WebPageSerializerImpl::postActionAfterSerializeEndTag):
+        (WebKit::WebPageSerializerImpl::encodeAndFlushBuffer):
+        (WebKit::WebPageSerializerImpl::openTagToString):
+        (WebKit::WebPageSerializerImpl::endTagToString):
+        (WebKit::WebPageSerializerImpl::buildContentForNode):
+        * src/WebPageSerializerImpl.h:
+
 2010-10-13  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

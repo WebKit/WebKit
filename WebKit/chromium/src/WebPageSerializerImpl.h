@@ -116,42 +116,26 @@ private:
     WebEntities m_xmlEntities;
 
     struct SerializeDomParam {
-        // Frame URL of current processing document presented by GURL
-        const WebCore::KURL& currentFrameURL;
-        // Current using text encoding object.
+        const WebCore::KURL& url;
         const WebCore::TextEncoding& textEncoding;
-
-        // Document object of current frame.
-        WebCore::Document* doc;
-        // Local directory name of all local resource files.
+        WebCore::Document* document;
         const WTF::String& directoryName;
-
-        // Flag indicates current doc is html document or not. It's a cache value
-        // of Document.isHTMLDocument().
-        bool isHTMLDocument;
-        // Flag which indicate whether we have met document type declaration.
-        bool hasDoctype;
-        // Flag which indicate whether will process meta issue.
-        bool hasCheckedMeta;
+        bool isHTMLDocument; // document.isHTMLDocument()
+        bool haveSeenDocType;
+        bool haveAddedCharsetDeclaration;
         // This meta element need to be skipped when serializing DOM.
         const WebCore::Element* skipMetaElement;
         // Flag indicates we are in script or style tag.
         bool isInScriptOrStyleTag;
-        // Flag indicates whether we have written xml document declaration.
-        // It is only used in xml document
-        bool hasDocDeclaration;
+        bool haveAddedXMLProcessingDirective;
         // Flag indicates whether we have added additional contents before end tag.
         // This flag will be re-assigned in each call of function
         // PostActionAfterSerializeOpenTag and it could be changed in function
         // PreActionBeforeSerializeEndTag if the function adds new contents into
         // serialization stream.
-        bool hasAddedContentsBeforeEnd;
+        bool haveAddedContentsBeforeEnd;
 
-        // Constructor.
-        SerializeDomParam(const WebCore::KURL& currentFrameURL,
-                          const WebCore::TextEncoding& textEncoding,
-                          WebCore::Document* doc,
-                          const WTF::String& directoryName);
+        SerializeDomParam(const WebCore::KURL&, const WebCore::TextEncoding&, WebCore::Document*, const WTF::String& directoryName);
     };
 
     // Collect all target frames which need to be serialized.

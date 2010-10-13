@@ -105,22 +105,22 @@ namespace WebKit {
 // contegious string is found in the page.
 static const unsigned dataBufferCapacity = 65536;
 
-WebPageSerializerImpl::SerializeDomParam::SerializeDomParam(const KURL& currentFrameURL,
+WebPageSerializerImpl::SerializeDomParam::SerializeDomParam(const KURL& url,
                                                             const TextEncoding& textEncoding,
-                                                            Document* doc,
+                                                            Document* document,
                                                             const String& directoryName)
-    : currentFrameURL(currentFrameURL)
+    : url(url)
     , textEncoding(textEncoding)
-    , doc(doc)
+    , document(document)
     , directoryName(directoryName)
-    , hasDoctype(false)
-    , hasCheckedMeta(false)
+    , isHTMLDocument(document->isHTMLDocument())
+    , haveSeenDocType(false)
+    , haveAddedCharsetDeclaration(false)
     , skipMetaElement(0)
     , isInScriptOrStyleTag(false)
-    , hasDocDeclaration(false)
+    , haveAddedXMLProcessingDirective(false)
+    , haveAddedContentsBeforeEnd(false)
 {
-    // Cache the value since we check it lots of times.
-    isHTMLDocument = doc->isHTMLDocument();
 }
 
 String WebPageSerializerImpl::preActionBeforeSerializeOpenTag(
@@ -148,41 +148,41 @@ String WebPageSerializerImpl::preActionBeforeSerializeOpenTag(
             }
         } else if (element->hasTagName(HTMLNames::htmlTag)) {
             // Check something before processing the open tag of HEAD element.
-            // First we add doc type declaration if original doc has it.
-            if (!param->hasDoctype) {
-                param->hasDoctype = true;
-                result.append(createMarkup(param->doc->doctype()));
+            // First we add doc type declaration if original document has it.
+            if (!param->haveSeenDocType) {
+                param->haveSeenDocType = true;
+                result.append(createMarkup(param->document->doctype()));
             }
 
             // Add MOTW declaration before html tag.
             // See http://msdn2.microsoft.com/en-us/library/ms537628(VS.85).aspx.
-            result.append(WebPageSerializer::generateMarkOfTheWebDeclaration(param->currentFrameURL));
+            result.append(WebPageSerializer::generateMarkOfTheWebDeclaration(param->url));
         } else if (element->hasTagName(HTMLNames::baseTag)) {
             // Comment the BASE tag when serializing dom.
             result.append("<!--");
         }
     } else {
         // Write XML declaration.
-        if (!param->hasDocDeclaration) {
-            param->hasDocDeclaration = true;
+        if (!param->haveAddedXMLProcessingDirective) {
+            param->haveAddedXMLProcessingDirective = true;
             // Get encoding info.
-            String xmlEncoding = param->doc->xmlEncoding();
+            String xmlEncoding = param->document->xmlEncoding();
             if (xmlEncoding.isEmpty())
-                xmlEncoding = param->doc->frame()->loader()->writer()->encoding();
+                xmlEncoding = param->document->frame()->loader()->writer()->encoding();
             if (xmlEncoding.isEmpty())
                 xmlEncoding = UTF8Encoding().name();
             result.append("<?xml version=\"");
-            result.append(param->doc->xmlVersion());
+            result.append(param->document->xmlVersion());
             result.append("\" encoding=\"");
             result.append(xmlEncoding);
-            if (param->doc->xmlStandalone())
+            if (param->document->xmlStandalone())
                 result.append("\" standalone=\"yes");
             result.append("\"?>\n");
         }
-        // Add doc type declaration if original doc has it.
-        if (!param->hasDoctype) {
-            param->hasDoctype = true;
-            result.append(createMarkup(param->doc->doctype()));
+        // Add doc type declaration if original document has it.
+        if (!param->haveSeenDocType) {
+            param->haveSeenDocType = true;
+            result.append(createMarkup(param->document->doctype()));
         }
     }
     return result.toString();
@@ -193,13 +193,13 @@ String WebPageSerializerImpl::postActionAfterSerializeOpenTag(
 {
     StringBuilder result;
 
-    param->hasAddedContentsBeforeEnd = false;
+    param->haveAddedContentsBeforeEnd = false;
     if (!param->isHTMLDocument)
         return result.toString();
     // Check after processing the open tag of HEAD element
-    if (!param->hasCheckedMeta
+    if (!param->haveAddedCharsetDeclaration
         && element->hasTagName(HTMLNames::headTag)) {
-        param->hasCheckedMeta = true;
+        param->haveAddedCharsetDeclaration = true;
         // Check meta element. WebKit only pre-parse the first 512 bytes
         // of the document. If the whole <HEAD> is larger and meta is the
         // end of head part, then this kind of pages aren't decoded correctly
@@ -210,7 +210,7 @@ String WebPageSerializerImpl::postActionAfterSerializeOpenTag(
         result.append(WebPageSerializer::generateMetaCharsetDeclaration(
             String(param->textEncoding.name())));
 
-        param->hasAddedContentsBeforeEnd = true;
+        param->haveAddedContentsBeforeEnd = true;
         // Will search each META which has charset declaration, and skip them all
         // in PreActionBeforeSerializeOpenTag.
     } else if (element->hasTagName(HTMLNames::scriptTag)
@@ -257,7 +257,7 @@ String WebPageSerializerImpl::postActionAfterSerializeEndTag(
         result.append("-->");
         // Append a new base tag declaration.
         result.append(WebPageSerializer::generateBaseTagDeclaration(
-            param->doc->baseTarget()));
+            param->document->baseTarget()));
     }
 
     return result.toString();
@@ -289,7 +289,7 @@ void WebPageSerializerImpl::encodeAndFlushBuffer(
         content.characters(), content.length(), EntitiesForUnencodables);
 
     // Send result to the client.
-    m_client->didSerializeDataForFrame(param->currentFrameURL,
+    m_client->didSerializeDataForFrame(param->url,
                                        WebCString(encodedContent.data(), encodedContent.length()),
                                        status);
 }
@@ -327,7 +327,7 @@ void WebPageSerializerImpl::openTagToString(const Element* element,
                         result += attrValue;
                     else {
                         // Get the absolute link
-                        String completeURL = param->doc->completeURL(attrValue);
+                        String completeURL = param->document->completeURL(attrValue);
                         // Check whether we have local files for those link.
                         if (m_localLinks.contains(completeURL)) {
                             if (!m_localDirectoryName.isEmpty())
@@ -350,7 +350,7 @@ void WebPageSerializerImpl::openTagToString(const Element* element,
     // Do post action for open tag.
     String addedContents = postActionAfterSerializeOpenTag(element, param);
     // Complete the open tag for element when it has child/children.
-    if (element->hasChildNodes() || param->hasAddedContentsBeforeEnd)
+    if (element->hasChildNodes() || param->haveAddedContentsBeforeEnd)
         result += ">";
     // Append the added contents generate in  post action of open tag.
     result += addedContents;
@@ -370,7 +370,7 @@ void WebPageSerializerImpl::endTagToString(const Element* element,
     if (needSkip)
         return;
     // Write end tag when element has child/children.
-    if (element->hasChildNodes() || param->hasAddedContentsBeforeEnd) {
+    if (element->hasChildNodes() || param->haveAddedContentsBeforeEnd) {
         result += "</";
         result += element->nodeName().lower();
         result += ">";
@@ -420,7 +420,7 @@ void WebPageSerializerImpl::buildContentForNode(const Node* node,
         break;
     // Document type node can be in DOM?
     case Node::DOCUMENT_TYPE_NODE:
-        param->hasDoctype = true;
+        param->haveSeenDocType = true;
     default:
         // For other type node, call default action.
         saveHTMLContentToBuffer(createMarkup(node), param);
