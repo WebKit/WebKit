@@ -50,6 +50,7 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_selectionEndPos(-1)
     , m_maximalOutlineSize(0)
     , m_pageHeight(0)
+    , m_pageHeightChanged(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
 {
@@ -116,6 +117,8 @@ void RenderView::layout()
     // FIXME: May be better to push a clip and avoid issuing offscreen repaints.
     state.m_clipped = false;
     state.m_pageHeight = m_pageHeight;
+    state.m_pageHeightChanged = m_pageHeightChanged;
+    m_pageHeightChanged = false;
     m_layoutState = &state;
 
     if (needsLayout())

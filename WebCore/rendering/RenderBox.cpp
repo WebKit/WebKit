@@ -3126,19 +3126,4 @@ void RenderBox::clearLayoutOverflow()
     m_overflow->resetLayoutOverflow(borderBoxRect());
 }
 
-void RenderBox::markDescendantBlocksAndLinesForLayout(bool inLayout)
-{
-    if (!m_everHadLayout || isReplaced())
-        return;
-
-    setChildNeedsLayout(true, !inLayout);
-
-    // Iterate over our children and mark them as needed.
-    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (child->isFloatingOrPositioned())
-            continue;
-        child->markDescendantBlocksAndLinesForLayout(inLayout);
-    }
-}
-
 } // namespace WebCore

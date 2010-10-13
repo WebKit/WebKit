@@ -334,8 +334,6 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
     bool haveFlex = false;
     gatherFlexChildrenInfo(iterator, relayoutChildren, highestFlexGroup, lowestFlexGroup, haveFlex);
 
-    bool paginated = view()->layoutState()->isPaginated();
-
     RenderBox* child;
 
     RenderBlock::startDelayUpdateScrollInfo();
@@ -366,11 +364,8 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             // Compute the child's vertical margins.
             child->computeBlockDirectionMargins(this);
     
-            if (!child->needsLayout() && paginated && view()->layoutState()->m_pageHeight) {
-                RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
-                if (childRenderBlock && view()->layoutState()->pageY(child->y()) != childRenderBlock->pageY())
-                    childRenderBlock->markForPaginationRelayout();
-            }
+            if (!child->needsLayout())
+                child->markForPaginationRelayoutIfNeeded();
 
             // Now do the layout.
             child->layoutIfNeeded();
@@ -440,11 +435,8 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             if (oldChildHeight != child->height())
                 child->setChildNeedsLayout(true, false);
                 
-            if (!child->needsLayout() && paginated && view()->layoutState()->m_pageHeight) {
-                RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
-                if (childRenderBlock && view()->layoutState()->pageY(child->y()) != childRenderBlock->pageY())
-                    childRenderBlock->markForPaginationRelayout();
-            }
+            if (!child->needsLayout())
+                child->markForPaginationRelayoutIfNeeded();
 
             child->layoutIfNeeded();
     
@@ -659,8 +651,6 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
     bool haveFlex = false;
     gatherFlexChildrenInfo(iterator, relayoutChildren, highestFlexGroup, lowestFlexGroup, haveFlex);
 
-    bool paginated = view()->layoutState()->isPaginated();
-
     RenderBox* child;
 
     // We confine the line clamp ugliness to vertical flexible boxes (thus keeping it out of
@@ -710,11 +700,8 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
             // Add in the child's marginTop to our height.
             setHeight(height() + child->marginTop());
     
-            if (!child->needsLayout() && paginated && view()->layoutState()->m_pageHeight) {
-                RenderBlock* childRenderBlock = child->isRenderBlock() ? toRenderBlock(child) : 0;
-                if (childRenderBlock && view()->layoutState()->pageY(child->y()) != childRenderBlock->pageY())
-                    childRenderBlock->markForPaginationRelayout();
-            }
+            if (!child->needsLayout())
+                child->markForPaginationRelayoutIfNeeded();
 
             // Now do a layout.
             child->layoutIfNeeded();

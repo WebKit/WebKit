@@ -362,8 +362,8 @@ public:
     bool shrinkToAvoidFloats() const;
     virtual bool avoidsFloats() const;
 
-    virtual void markDescendantBlocksAndLinesForLayout(bool inLayout = true);
-    
+    virtual void markForPaginationRelayoutIfNeeded() { }
+
     bool isWritingModeRoot() const { return !parent() || parent()->style()->writingMode() != style()->writingMode(); }
 
 protected:

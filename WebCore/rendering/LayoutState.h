@@ -42,6 +42,7 @@ public:
     LayoutState()
         : m_clipped(false)
         , m_pageHeight(0)
+        , m_pageHeightChanged(false)
         , m_columnInfo(0)
         , m_next(0)
 #ifndef NDEBUG
@@ -50,7 +51,7 @@ public:
     {
     }
 
-    LayoutState(LayoutState*, RenderBox*, const IntSize& offset, int pageHeight, ColumnInfo*);
+    LayoutState(LayoutState*, RenderBox*, const IntSize& offset, int pageHeight, bool pageHeightChanged, ColumnInfo*);
     LayoutState(RenderObject*);
 
     void destroy(RenderArena*);
@@ -67,6 +68,9 @@ public:
     int pageY(int childY) const;
     void addForcedColumnBreak(int childY);
     
+    bool pageHeight() const { return m_pageHeight; }
+    bool pageHeightChanged() const { return m_pageHeightChanged; }
+
 private:
     // The normal operator new is disallowed.
     void* operator new(size_t) throw();
@@ -81,6 +85,7 @@ public:
                            // This is a total delta accumulated from the root.
 
     int m_pageHeight; // The current page height for the pagination model that encloses us.
+    bool m_pageHeightChanged; // If our page height has changed, this will force all blocks to relayout.
     IntSize m_pageOffset; // The offset of the start of the first page in the nearest enclosing pagination model.
     ColumnInfo* m_columnInfo; // If the enclosing pagination model is a column model, then this will store column information for easy retrieval/manipulation.
 
