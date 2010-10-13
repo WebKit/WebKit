@@ -44,7 +44,7 @@ namespace WebCore {
 static void getFrameLocation(v8::Handle<v8::StackFrame> frame, String* sourceName, int* sourceLineNumber, String* functionName)
 {
     ASSERT(!frame.IsEmpty());
-    v8::Local<v8::String> sourceNameValue(frame->GetScriptName());
+    v8::Local<v8::String> sourceNameValue(frame->GetScriptNameOrSourceURL());
     v8::Local<v8::String> functionNameValue(frame->GetFunctionName());
     *sourceName = sourceNameValue.IsEmpty() ? "" : toWebCoreString(sourceNameValue);
     *functionName = functionNameValue.IsEmpty() ? "" : toWebCoreString(functionNameValue);
@@ -85,13 +85,19 @@ static void toScriptCallFramesVector(v8::Local<v8::Context> context, v8::Handle<
 }
 
 const int ScriptCallStack::maxCallStackSizeToCapture = 200;
+const v8::StackTrace::StackTraceOptions ScriptCallStack::stackTraceOptions = static_cast<v8::StackTrace::StackTraceOptions>(
+     v8::StackTrace::kLineNumber
+    | v8::StackTrace::kColumnOffset
+    | v8::StackTrace::kScriptNameOrSourceURL
+    | v8::StackTrace::kFunctionName);
+
 
 PassOwnPtr<ScriptCallStack> ScriptCallStack::create(const v8::Arguments& arguments, unsigned skipArgumentCount, int framCountLimit)
 {
     v8::HandleScope scope;
     v8::Local<v8::Context> context = v8::Context::GetCurrent();
     v8::Context::Scope contextScope(context);
-    v8::Handle<v8::StackTrace> stackTrace(v8::StackTrace::CurrentStackTrace(framCountLimit));
+    v8::Handle<v8::StackTrace> stackTrace(v8::StackTrace::CurrentStackTrace(framCountLimit, ScriptCallStack::stackTraceOptions));
 
     if (stackTrace.IsEmpty())
         return 0;

@@ -1,3 +1,12 @@
+2010-10-13  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: stack information is inconsistent between console.trace and runtime errors.
+        https://bugs.webkit.org/show_bug.cgi?id=47252
+
+        * DEPS: bump up V8 revision
+
 2010-10-12  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Fixes for all WebGL content causing assertion failures

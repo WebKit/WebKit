@@ -40,7 +40,7 @@ namespace WebCore {
 
 ScriptCallFrame::ScriptCallFrame(const UString& functionName, const UString& urlString, int lineNumber, ExecState* exec, unsigned skipArgumentCount)
     : m_functionName(functionName)
-    , m_sourceURL(ParsedURLString, ustringToString(urlString))
+    , m_sourceURL(ustringToString(urlString))
     , m_lineNumber(lineNumber)
 {
     if (!exec)

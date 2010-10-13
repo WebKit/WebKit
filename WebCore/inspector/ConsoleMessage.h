@@ -72,7 +72,7 @@ private:
 
     private:
         String m_functionName;
-        KURL m_sourceURL;
+        String m_sourceURL;
         unsigned m_lineNumber;
     };
 
