@@ -40,6 +40,8 @@ void run(bool* done);
 WKURLRef createURLForResource(const char* resource, const char* extension);
 WKURLRef URLForNonExistentResource();
 
+bool isKeyDown(WKNativeEventPtr);
+
 inline std::string toSTD(WKStringRef string)
 {
     size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);

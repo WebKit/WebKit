@@ -53,6 +53,8 @@ public:
     void resizeTo(unsigned width, unsigned height);
     void focus();
 
+    void simulateSpacebarKeyPress();
+
 private:
     PlatformWKView m_view;
     PlatformWindow m_window;

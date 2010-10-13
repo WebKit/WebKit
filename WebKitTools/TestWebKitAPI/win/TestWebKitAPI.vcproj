@@ -421,6 +421,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\find.html"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\FrameMIMETypeHTML.cpp"
 					>
 				</File>
@@ -429,7 +433,23 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\icon.png"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\PageLoadBasic.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\simple.html"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\spacebar-scrolling.html"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\SpacebarScrolling.cpp"
 					>
 				</File>
 				<File

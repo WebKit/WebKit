@@ -59,5 +59,10 @@ WKURLRef URLForNonExistentResource()
     return WKURLCreateWithUTF8CString("file:///does-not-exist.html");
 }
 
+bool isKeyDown(WKNativeEventPtr event)
+{
+    return event->message == WM_KEYDOWN;
+}
+
 } // namespace Util
 } // namespace TestWebKitAPI

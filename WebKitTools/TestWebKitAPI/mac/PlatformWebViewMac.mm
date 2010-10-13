@@ -25,6 +25,8 @@
 
 #include "PlatformWebView.h"
 
+#import <Carbon/Carbon.h>
+
 namespace TestWebKitAPI {
 
 PlatformWebView::PlatformWebView(WKPageNamespaceRef namespaceRef)
@@ -61,6 +63,35 @@ WKPageRef PlatformWebView::page()
 void PlatformWebView::focus()
 {
     // Implement.
+}
+
+void PlatformWebView::simulateSpacebarKeyPress()
+{
+    NSEvent *event = [NSEvent keyEventWithType:NSKeyDown
+                                      location:NSMakePoint(5, 5)
+                                 modifierFlags:0
+                                     timestamp:GetCurrentEventTime()
+                                  windowNumber:[m_window windowNumber]
+                                       context:[NSGraphicsContext currentContext]
+                                    characters:@" "
+                   charactersIgnoringModifiers:@" "
+                                     isARepeat:NO
+                                       keyCode:0x31];
+
+    [m_view keyDown:event];
+
+    event = [NSEvent keyEventWithType:NSKeyUp
+                             location:NSMakePoint(5, 5)
+                        modifierFlags:0
+                            timestamp:GetCurrentEventTime()
+                         windowNumber:[m_window windowNumber]
+                              context:[NSGraphicsContext currentContext]
+                           characters:@" "
+          charactersIgnoringModifiers:@" "
+                            isARepeat:NO
+                              keyCode:0x31];
+
+    [m_view keyUp:event];
 }
 
 } // namespace TestWebKitAPI

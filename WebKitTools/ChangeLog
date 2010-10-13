@@ -1,5 +1,57 @@
 2010-10-13  Adam Roben  <aroben@apple.com>
 
+        Test that pressing the spacebar in a text field does not scroll the
+        document
+
+        Test for <http://webkit.org/b/47544> <rdar://problem/8540645>
+        REGRESSION: Pressing spacebar in a text field in WebKit2 does not
+        insert a space, scrolls the page instead
+
+        Reviewed by Sam Weinig.
+
+        * TestWebKitAPI/PlatformUtilities.h: Added isKeyDown.
+
+        * TestWebKitAPI/PlatformWebView.h: Added simulateSpacebarKeyPress.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/copy-resources.cmd:
+        Added new files.
+
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp: Added.
+        (TestWebKitAPI::JavaScriptCallbackContext::JavaScriptCallbackContext):
+        We use this to track what the result of calling into JavaScript was.
+        (TestWebKitAPI::didFinishLoadForFrame): Records when the page
+        finishes loading.
+        (TestWebKitAPI::didNotHandleKeyEventCallback): Records when a key down
+        event is not handled.
+        (TestWebKitAPI::javaScriptCallback): Records that JavaScript finished
+        executing and whether the result matched our expectation.
+        (TestWebKitAPI::wk): Turns a UTF-8 C string into a WKStringRef.
+        (TestWebKitAPI::runJSTest): Calls into JS, waits for the call to
+        complete, and returns whether we got back the expected result.
+        (TestWebKitAPI::WebKit2_SpacebarScrolling): Tests that pressing
+        spacebar inside a text field does not scroll the document and that
+        pressing it outside the text field does scroll the document.
+
+        * TestWebKitAPI/Tests/WebKit2/spacebar-scrolling.html: Added.
+
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::isKeyDown): Checks the event's type.
+
+        * TestWebKitAPI/mac/PlatformWebViewMac.mm:
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress): Copied
+        code from DRT's EventSendingController.
+
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::isKeyDown): Checks the message's type.
+
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress): Send the
+        same messages that get sent when you press spacebar in Notepad.
+
+2010-10-13  Adam Roben  <aroben@apple.com>
+
         Fix a couple of issues with the TestWebKitAPI build
 
         * TestWebKitAPI/Configurations/TestWebKitAPICFLite.vsprops:

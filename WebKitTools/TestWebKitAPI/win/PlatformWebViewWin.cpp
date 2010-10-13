@@ -66,4 +66,20 @@ WKPageRef PlatformWebView::page()
     return WKViewGetPage(m_view);
 }
 
+void PlatformWebView::simulateSpacebarKeyPress()
+{
+    HWND window = WKViewGetWindow(m_view);
+
+    // These offsets come from rom <http://msdn.microsoft.com/en-us/library/ms646280(VS.85).aspx>.
+    static const size_t repeatCountBitOffset = 0;
+    static const size_t scanCodeBitOffset = 16;
+    static const size_t previousStateBitOffset = 30;
+    static const size_t transitionStateBitOffset = 31;
+
+    // These values match what happens when you press the spacebar in Notepad, as observed by Spy++.
+    ::SendMessageW(window, WM_KEYDOWN, VK_SPACE, (1 << repeatCountBitOffset) | (39 << scanCodeBitOffset));
+    ::SendMessageW(window, WM_CHAR, ' ', (1 << repeatCountBitOffset) | (39 << scanCodeBitOffset));
+    ::SendMessageW(window, WM_KEYUP, VK_SPACE, (1 << repeatCountBitOffset) | (39 << scanCodeBitOffset) | (1 << previousStateBitOffset) | (1 << transitionStateBitOffset));
+}
+
 } // namespace TestWebKitAPI

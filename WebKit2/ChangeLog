@@ -1,3 +1,26 @@
+2010-10-12  Adam Roben  <aroben@apple.com>
+
+        Let WebCore handle scrolling when the spacebar is pressed on Windows
+
+        WebCore already has code to do this, and WebKit2 was doing it on
+        keydown instead of keypress, which caused problems with text fields.
+
+        WebCore's spacebar-handling code is currently compiled out on Mac and
+        Qt, so we continue to handle spacebar in WebKit2 on those platforms.
+
+        Fixes <http://webkit.org/b/47544> <rdar://problem/8540645> REGRESSION:
+        Pressing spacebar in a text field in WebKit2 does not insert a space,
+        scrolls the page instead
+
+        Test: WebKit2/SpacebarScrolling
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        Removed handling for spacebar presses. WebCore already does this for
+        us, and does it better.
+
 2010-10-12  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Jon Honeycutt.

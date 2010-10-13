@@ -49,5 +49,10 @@ WKURLRef URLForNonExistentResource()
     return WKURLCreateWithCFURL((CFURLRef)nsURL);
 }
 
+bool isKeyDown(WKNativeEventPtr event)
+{
+    return [event type] == NSKeyDown;
+}
+
 } // namespace Util
 } // namespace TestWebKitAPI

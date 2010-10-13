@@ -25,6 +25,9 @@
 		BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = BCBD372E125ABBE600D2C29F /* icon.png */; };
 		BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */; };
 		BCC8B95B12611F4700DE46A4 /* FailedLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */; };
+		C01A23F21266156700C9ED55 /* spacebar-scrolling.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C02B7882126615410026BF0F /* spacebar-scrolling.html */; };
+		C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */; };
+		C02B7854126613AE0026BF0F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C02B7853126613AE0026BF0F /* Carbon.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,6 +49,7 @@
 				BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */,
 				1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */,
 				BC909784125571CF00083756 /* simple.html in Copy Resources */,
+				C01A23F21266156700C9ED55 /* spacebar-scrolling.html in Copy Resources */,
 			);
 			name = "Copy Resources";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -80,6 +84,9 @@
 		BCBD372E125ABBE600D2C29F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypePNG.cpp; sourceTree = "<group>"; };
 		BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FailedLoad.cpp; sourceTree = "<group>"; };
+		C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpacebarScrolling.cpp; sourceTree = "<group>"; };
+		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = Carbon.framework; sourceTree = SDKROOT; };
+		C02B7882126615410026BF0F /* spacebar-scrolling.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "spacebar-scrolling.html"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +97,7 @@
 				BCB9E9F111235BDE00A137E0 /* Cocoa.framework in Frameworks */,
 				BCA61DB511700EFD00460D1E /* WebKit2.framework in Frameworks */,
 				BC90964E1255620C00083756 /* JavaScriptCore.framework in Frameworks */,
+				C02B7854126613AE0026BF0F /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,6 +136,7 @@
 				BCB9E9F011235BDE00A137E0 /* Cocoa.framework */,
 				BC90964D1255620C00083756 /* JavaScriptCore.framework */,
 				BCA61DB411700EFD00460D1E /* WebKit2.framework */,
+				C02B7853126613AE0026BF0F /* Carbon.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -158,6 +167,7 @@
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
 				BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */,
 				BC909779125571AB00083756 /* PageLoadBasic.cpp */,
+				C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */,
 				BC90995D12567BC100083756 /* WKString.cpp */,
 				BC9099931256ACF100083756 /* WKStringJSString.cpp */,
 				BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */,
@@ -179,6 +189,7 @@
 				BCBD372E125ABBE600D2C29F /* icon.png */,
 				1A02C84B125D4A5E00E3F4BD /* find.html */,
 				BC909778125571AB00083756 /* simple.html */,
+				C02B7882126615410026BF0F /* spacebar-scrolling.html */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -265,6 +276,7 @@
 				BCBD3761125ABCFE00D2C29F /* FrameMIMETypePNG.cpp in Sources */,
 				1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */,
 				BCC8B95B12611F4700DE46A4 /* FailedLoad.cpp in Sources */,
+				C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
