@@ -114,7 +114,14 @@ void ProcessLauncher::launchProcess()
     posix_spawnattr_t attr;
     posix_spawnattr_init(&attr);
 
-    // FIXME: Should we restore signals here?
+    short flags = 0;
+
+    // We want our process to receive all signals.
+    sigset_t signalMaskSet;
+    sigemptyset(&signalMaskSet);
+
+    posix_spawnattr_setsigmask(&attr, &signalMaskSet);
+    flags |= POSIX_SPAWN_SETSIGMASK;
 
     // Determine the architecture to use.
     cpu_type_t architecture = m_launchOptions.architecture;
@@ -126,7 +133,9 @@ void ProcessLauncher::launchProcess()
     posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
 
     // Start suspended so we can set up the termination notification handler.
-    posix_spawnattr_setflags(&attr, POSIX_SPAWN_START_SUSPENDED);
+    flags |= POSIX_SPAWN_START_SUSPENDED;
+
+    posix_spawnattr_setflags(&attr, flags);
 
     pid_t processIdentifier;
     int result = posix_spawn(&processIdentifier, path, 0, &attr, (char *const*)args, *_NSGetEnviron());
