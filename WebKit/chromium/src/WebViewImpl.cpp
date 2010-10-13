@@ -2369,13 +2369,13 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         return;
     }
 
-    RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
+    PassRefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
     if (!context) {
         context = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
         if (context)
             context->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
     }
-    m_layerRenderer = LayerRendererChromium::create(context.release());
+    m_layerRenderer = LayerRendererChromium::create(context);
     if (m_layerRenderer) {
         m_isAcceleratedCompositingActive = true;
         m_compositorCreationFailed = false;

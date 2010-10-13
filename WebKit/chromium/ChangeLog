@@ -1,3 +1,14 @@
+2010-10-12  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed. Fixes for all WebGL content causing assertion failures
+        in Chromium after http://trac.webkit.org/changeset/69619 and
+        http://trac.webkit.org/changeset/69624 .
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3D::create):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2010-10-12  Alok priyadarshi  <alokp@chromium.org>
 
         Reviewed by Kenneth Russell.
