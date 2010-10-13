@@ -1,3 +1,14 @@
+2010-10-12  Alok priyadarshi  <alokp@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Remove support for ANGLE SH_VERSION <= 100
+        https://bugs.webkit.org/show_bug.cgi?id=47307
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::angleCreateCompilers):
+        (WebKit::WebGraphicsContext3DDefaultImpl::angleValidateShaderSource):
+
 2010-10-12  James Robinson  <jamesr@chromium.org>
 
         Unreviewed chromium compile fixes for http://trac.webkit.org/changeset/69619.

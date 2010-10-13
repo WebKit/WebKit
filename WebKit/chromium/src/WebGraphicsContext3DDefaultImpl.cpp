@@ -1478,13 +1478,8 @@ bool WebGraphicsContext3DDefaultImpl::angleCreateCompilers()
     if (!ShInitialize())
         return false;
 
-#if defined(SH_VERSION) && (SH_VERSION > 100)
     ShBuiltInResources resources;
     ShInitBuiltInResources(&resources);
-#else
-    TBuiltInResource resources;
-    ShInitBuiltInResource(&resources);
-#endif // SH_VERSION
     getIntegerv(GL_MAX_VERTEX_ATTRIBS, &resources.MaxVertexAttribs);
     getIntegerv(MAX_VERTEX_UNIFORM_VECTORS, &resources.MaxVertexUniformVectors);
     getIntegerv(MAX_VARYING_VECTORS, &resources.MaxVaryingVectors);
@@ -1495,13 +1490,8 @@ bool WebGraphicsContext3DDefaultImpl::angleCreateCompilers()
     // Always set to 1 for OpenGL ES.
     resources.MaxDrawBuffers = 1;
 
-#if defined(SH_VERSION) && (SH_VERSION > 100)
     m_fragmentCompiler = ShConstructCompiler(SH_FRAGMENT_SHADER, SH_WEBGL_SPEC, &resources);
     m_vertexCompiler = ShConstructCompiler(SH_VERTEX_SHADER, SH_WEBGL_SPEC, &resources);
-#else
-    m_fragmentCompiler = ShConstructCompiler(EShLangFragment, EShSpecWebGL, &resources);
-    m_vertexCompiler = ShConstructCompiler(EShLangVertex, EShSpecWebGL, &resources);
-#endif // SH_VERSION
     return (m_fragmentCompiler && m_vertexCompiler);
 }
 
@@ -1541,11 +1531,7 @@ bool WebGraphicsContext3DDefaultImpl::angleValidateShaderSource(ShaderSourceEntr
     if (!compiler)
         return false;
 
-#if defined(SH_VERSION) && (SH_VERSION > 100)
     if (!ShCompile(compiler, &entry.source, 1, SH_OBJECT_CODE)) {
-#else
-    if (!ShCompile(compiler, &entry.source, 1, EShOptObjectCode)) {
-#endif // SH_VERSION
         int logSize = 0;
         ShGetInfo(compiler, SH_INFO_LOG_LENGTH, &logSize);
         if (logSize > 1 && tryFastMalloc(logSize * sizeof(char)).getValue(entry.log))
