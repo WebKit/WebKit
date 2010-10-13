@@ -1,3 +1,13 @@
+2010-10-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (new parser): Leopard/Tiger Mail <head>/<body> quirk is gone
+        https://bugs.webkit.org/show_bug.cgi?id=45693
+
+        * WebKit.xcodeproj/project.pbxproj:
+         - Add the MailQuirksUserScript.js to the project.
+
 2010-10-11  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

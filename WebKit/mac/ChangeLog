@@ -1,3 +1,20 @@
+2010-10-12  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (new parser): Leopard/Tiger Mail <head>/<body> quirk is gone
+        https://bugs.webkit.org/show_bug.cgi?id=45693
+
+        Re-implement this former WebCore parser quirk as a
+        Mac-only userscript-based quirk.  As far as I can tell
+        from Darin's description this should satisfy Mail's needs.
+
+        * Misc/MailQuirksUserScript.js: Added.
+        * WebView/WebView.mm:
+        (+[WebView _mailQuirksUserScript]):
+        (-[WebView _injectMailQuirksScript]):
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+
 2010-10-12  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

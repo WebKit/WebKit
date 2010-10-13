@@ -637,6 +637,25 @@ static bool shouldEnableLoadDeferring()
     return _private->usesDocumentViews;
 }
 
+static NSString *mailQuirksUserScriptPath()
+{
+    NSString *scriptPath = [[NSBundle bundleForClass:[WebView class]] pathForResource:@"MailQuirksUserScript" ofType:@"js"];
+    return [[NSString alloc] initWithContentsOfFile:scriptPath];
+}
+
++ (NSString *)_mailQuirksUserScript
+{
+    static NSString* mailQuirksScript = mailQuirksUserScriptPath();
+    return mailQuirksScript;
+}
+
+- (void)_injectMailQuirksScript
+{
+    core(self)->group().addUserScriptToWorld(core([WebScriptWorld world]),
+        [WebView _mailQuirksUserScript], KURL(), 0, 0, InjectAtDocumentEnd,
+        InjectInAllFrames);
+}
+
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
 {
     WebCoreThreadViolationCheckRoundTwo();
@@ -754,6 +773,8 @@ static bool shouldEnableLoadDeferring()
     [self _scheduleGlibContextIterations];
 #endif
 
+    if (runningTigerMail() || runningLeopardMail())
+        [self _injectMailQuirksScript];
 }
 
 - (id)_initWithFrame:(NSRect)f frameName:(NSString *)frameName groupName:(NSString *)groupName usesDocumentViews:(BOOL)usesDocumentViews
