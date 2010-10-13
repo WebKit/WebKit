@@ -36,20 +36,18 @@
 #include "AffineTransform.h"
 #include "CairoPath.h"
 #include "CairoUtilities.h"
-#include "FEGaussianBlur.h"
+#include "ContextShadow.h"
 #include "FloatRect.h"
 #include "Font.h"
+#include "GraphicsContextPlatformPrivateCairo.h"
+#include "GraphicsContextPrivate.h"
 #include "OwnPtrCairo.h"
-#include "ImageBuffer.h"
-#include "ImageBufferFilter.h"
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "Path.h"
 #include "Pattern.h"
 #include "PlatformRefPtrCairo.h"
 #include "SimpleFontData.h"
-#include "SourceGraphic.h"
-
 #include <cairo.h>
 #include <math.h>
 #include <stdio.h>
@@ -61,8 +59,6 @@
 #elif PLATFORM(WIN)
 #include <cairo-win32.h>
 #endif
-#include "GraphicsContextPlatformPrivateCairo.h"
-#include "GraphicsContextPrivate.h"
 
 using namespace std;
 
@@ -140,83 +136,59 @@ static void addConvexPolygonToContext(cairo_t* context, size_t numPoints, const 
     cairo_close_path(context);
 }
 
-void GraphicsContext::calculateShadowBufferDimensions(IntSize& shadowBufferSize, FloatRect& shadowRect, float& radius, const FloatRect& sourceRect, const FloatSize& shadowOffset, float shadowBlur)
+enum PathDrawingStyle { 
+    Fill = 1,
+    Stroke = 2,
+    FillAndStroke = Fill + Stroke
+};
+
+static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPrivate* contextPrivate, PathDrawingStyle drawingStyle)
 {
-#if ENABLE(FILTERS)
-    // limit radius to 128
-    radius = min(128.f, max(shadowBlur, 0.f));
-
-    shadowBufferSize = IntSize(sourceRect.width() + radius * 2, sourceRect.height() + radius * 2);
-
-    // determine dimensions of shadow rect
-    shadowRect = FloatRect(sourceRect.location(), shadowBufferSize);
-    shadowRect.move(shadowOffset.width() - radius, shadowOffset.height() - radius);
-#endif
-}
-
-static inline void drawPathShadow(GraphicsContext* context, GraphicsContextPrivate* gcp, bool fillShadow, bool strokeShadow)
-{
-#if ENABLE(FILTERS)
-    FloatSize shadowOffset;
-    float shadowBlur;
-    Color shadowColor;
-    if (!context->getShadow(shadowOffset, shadowBlur, shadowColor))
+    ContextShadow* shadow = context->contextShadow();
+    ASSERT(shadow);
+    if (shadow->m_type == ContextShadow::NoShadow)
         return;
-    
-    // Calculate filter values to create appropriate shadow.
-    cairo_t* cr = context->platformContext();
-    double x0, x1, y0, y1;
-    if (strokeShadow)
-        cairo_stroke_extents(cr, &x0, &y0, &x1, &y1);
-    else
-        cairo_fill_extents(cr, &x0, &y0, &x1, &y1);
-    FloatRect rect(x0, y0, x1 - x0, y1 - y0);
 
-    IntSize shadowBufferSize;
-    FloatRect shadowRect;
-    float radius = 0;
-    GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, radius, rect, shadowOffset, shadowBlur);
+    // Calculate the extents of the rendered solid paths.
+    cairo_t* cairoContext = context->platformContext();
+    cairo_path_t* path = cairo_copy_path(cairoContext);
 
-    cairo_clip_extents(cr, &x0, &y0, &x1, &y1);
-    FloatRect clipRect(x0, y0, x1 - x0, y1 - y0);
-
-    FloatPoint rectLocation = shadowRect.location();
-
-    // Reduce the shadow rect using the clip area.
-    if (!clipRect.contains(shadowRect)) {
-        shadowRect.intersect(clipRect);
-        if (shadowRect.isEmpty())
-            return;
-        shadowRect.inflate(radius);
-        shadowBufferSize = IntSize(shadowRect.width(), shadowRect.height());
+    FloatRect solidFigureExtents;
+    double x0 = 0;
+    double x1 = 0;
+    double y0 = 0;
+    double y1 = 0;
+    if (drawingStyle & Stroke) {
+        cairo_stroke_extents(cairoContext, &x0, &y0, &x1, &y1);
+        solidFigureExtents = FloatRect(x0, y0, x1 - x0, y1 - y0);
+    }
+    if (drawingStyle & Fill) {
+        cairo_fill_extents(cairoContext, &x0, &y0, &x1, &y1);
+        FloatRect fillExtents(x0, y0, x1 - x0, y1 - y0);
+        solidFigureExtents.unite(fillExtents);
     }
 
-    shadowOffset = rectLocation - shadowRect.location();
+    cairo_t* shadowContext = shadow->beginShadowLayer(cairoContext, solidFigureExtents);
+    if (!shadowContext)
+        return;
 
-    // Create suitably-sized ImageBuffer to hold the shadow.
-    OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
+    // It's important to copy the context properties to the new shadow
+    // context to preserve things such as the fill rule and stroke width.
+    copyContextProperties(cairoContext, shadowContext);
+    cairo_append_path(shadowContext, path);
 
-    // Draw shadow into a new ImageBuffer.
-    cairo_t* shadowContext = shadowBuffer->context()->platformContext();
-    copyContextProperties(cr, shadowContext);
-    cairo_translate(shadowContext, -rect.x() + radius + shadowOffset.width(), -rect.y() + radius + shadowOffset.height());
-    cairo_new_path(shadowContext);
-    OwnPtr<cairo_path_t> path(cairo_copy_path(cr));
-    cairo_append_path(shadowContext, path.get());
+    if (drawingStyle & Fill)
+        setPlatformFill(context, shadowContext, contextPrivate);
+    if (drawingStyle & Stroke)
+        setPlatformStroke(context, shadowContext, contextPrivate);
 
-    if (fillShadow)
-        setPlatformFill(context, shadowContext, gcp);
-    if (strokeShadow)
-        setPlatformStroke(context, shadowContext, gcp);
-
-    context->applyPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, radius);
-#endif
+    shadow->endShadowLayer(cairoContext);
 }
 
 static void fillCurrentCairoPath(GraphicsContext* context, GraphicsContextPrivate* gcp, cairo_t* cairoContext)
 {
     cairo_set_fill_rule(cairoContext, context->fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    drawPathShadow(context, gcp, true, false);
+    drawPathShadow(context, gcp, Fill);
 
     setPlatformFill(context, cairoContext, gcp);
     cairo_new_path(cairoContext);
@@ -224,7 +196,7 @@ static void fillCurrentCairoPath(GraphicsContext* context, GraphicsContextPrivat
 
 static void strokeCurrentCairoPath(GraphicsContext* context, GraphicsContextPrivate* gcp, cairo_t* cairoContext)
 {
-    drawPathShadow(context, gcp, false, true);
+    drawPathShadow(context, gcp, Stroke);
     setPlatformStroke(context, cairoContext, gcp);
     cairo_new_path(cairoContext);
 }
@@ -261,12 +233,20 @@ void GraphicsContext::savePlatformState()
 {
     cairo_save(m_data->cr);
     m_data->save();
+    m_data->shadowStack.append(m_data->shadow);
 }
 
 void GraphicsContext::restorePlatformState()
 {
     cairo_restore(m_data->cr);
     m_data->restore();
+
+    if (m_data->shadowStack.isEmpty())
+        m_data->shadow = ContextShadow();
+    else {
+        m_data->shadow = m_data->shadowStack.last();
+        m_data->shadowStack.removeLast();
+    }
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -582,7 +562,7 @@ void GraphicsContext::drawPath()
     setPathOnCairoContext(cr, m_data->m_pendingPath.context());
 
     cairo_set_fill_rule(cr, fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    drawPathShadow(this, m_common, true, true);
+    drawPathShadow(this, m_common, FillAndStroke);
 
     setPlatformFill(this, cr, m_common);
     setPlatformStroke(this, cr, m_common);
@@ -601,35 +581,14 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     cairo_restore(cr);
 }
 
-static void drawBorderlessRectShadow(GraphicsContext* context, const FloatRect& rect, const Color& rectColor)
-{
-#if ENABLE(FILTERS)
-    FloatSize shadowOffset;
-    float shadowBlur;
-    Color shadowColor;
-    if (!context->getShadow(shadowOffset, shadowBlur, shadowColor))
-        return;
-
-    IntSize shadowBufferSize;
-    FloatRect shadowRect;
-    float radius = 0;
-    GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, radius, rect, shadowOffset, shadowBlur);
-
-    // Draw shadow into a new ImageBuffer
-    OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
-    GraphicsContext* shadowContext = shadowBuffer->context();
-    shadowContext->fillRect(FloatRect(FloatPoint(radius, radius), rect.size()), rectColor, DeviceColorSpace);
-
-    context->applyPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, radius);
-#endif
-}
-
-void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace colorSpace)
+void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace)
 {
     if (paintingDisabled())
         return;
 
-    drawBorderlessRectShadow(this, rect, color);
+    if (m_data->hasShadow())
+        m_data->shadow.drawRectShadow(this, enclosingIntRect(rect));
+
     if (color.alpha())
         fillRectSourceOver(m_data->cr, rect, color);
 }
@@ -899,61 +858,26 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void GraphicsContext::setPlatformShadow(FloatSize const& size, float, Color const&, ColorSpace)
+void GraphicsContext::setPlatformShadow(FloatSize const& size, float blur, Color const& color, ColorSpace)
 {
-    // Cairo doesn't support shadows natively, they are drawn manually in the draw*
-    // functions
-
+    // Cairo doesn't support shadows natively, they are drawn manually in the draw* functions
     if (m_common->state.shadowsIgnoreTransforms) {
         // Meaning that this graphics context is associated with a CanvasRenderingContext
         // We flip the height since CG and HTML5 Canvas have opposite Y axis
         m_common->state.shadowOffset = FloatSize(size.width(), -size.height());
-    }
+        m_data->shadow = ContextShadow(color, blur, FloatSize(size.width(), -size.height()));
+    } else
+        m_data->shadow = ContextShadow(color, blur, FloatSize(size.width(), size.height()));
 }
 
-void GraphicsContext::applyPlatformShadow(PassOwnPtr<ImageBuffer> buffer, const Color& shadowColor, FloatRect& shadowRect, float radius)
+ContextShadow* GraphicsContext::contextShadow()
 {
-#if ENABLE(FILTERS)
-    setColor(m_data->cr, shadowColor);
-    PlatformRefPtr<cairo_surface_t> shadowMask(createShadowMask(buffer, shadowRect, radius));
-    cairo_mask_surface(m_data->cr, shadowMask.get(), shadowRect.x(), shadowRect.y());
-#endif
+    return &m_data->shadow;
 }
-
-PlatformRefPtr<cairo_surface_t> GraphicsContext::createShadowMask(PassOwnPtr<ImageBuffer> buffer, FloatRect& shadowRect, float radius)
-{
-#if ENABLE(FILTERS)
-    if (!radius)
-        return buffer->m_data.m_surface;
-
-    FloatPoint blurRadius = FloatPoint(radius, radius);
-    float stdDeviation = FEGaussianBlur::calculateStdDeviation(radius);
-    if (!stdDeviation)
-        return buffer->m_data.m_surface;
-
-    // create filter
-    IntRect filterRegion = IntRect(IntPoint(), roundedIntSize(shadowRect.size()));
-    RefPtr<Filter> filter = ImageBufferFilter::create(filterRegion);
-    filter->setSourceImage(buffer);
-    RefPtr<FilterEffect> source = SourceGraphic::create();
-    source->setIsAlphaImage(true);
-    RefPtr<FilterEffect> blur = FEGaussianBlur::create(stdDeviation, stdDeviation);
-    blur->setMaxEffectRect(filterRegion);
-    FilterEffectVector& inputEffects = blur->inputEffects();
-    inputEffects.append(source.get());
-    blur->apply(filter.get());
-
-    // Calculate shadow region for context
-    shadowRect.move(blur->absolutePaintRect().location().x(), blur->absolutePaintRect().location().y());
-    shadowRect.setSize(blur->absolutePaintRect().size());
-    return blur->resultImage()->m_data.m_surface;
-#endif
-}
-
 
 void GraphicsContext::clearPlatformShadow()
 {
-    notImplemented();
+    m_data->shadow.clear();
 }
 
 void GraphicsContext::beginTransparencyLayer(float opacity)
@@ -1186,200 +1110,13 @@ static inline FloatPoint getPhase(const FloatRect& dest, const FloatRect& tile)
     return phase;
 }
 
-/*
-  This function uses tiling to improve the performance of the shadow
-  drawing of rounded rectangles. The code basically does the following
-  steps:
-
-     1. Calculate the minimum rectangle size required to create the
-     tiles
-
-     2. If that size is smaller than the real rectangle render the new
-     small rectangle and its shadow in a new surface, in other case
-     render the shadow of the real rectangle in the destination
-     surface.
-
-     3. Calculate the sizes and positions of the tiles and their
-     destinations and use drawPattern to render the final shadow. The
-     code divides the rendering in 8 tiles:
-
-        1 | 2 | 3
-       -----------
-        4 |   | 5
-       -----------
-        6 | 7 | 8
-
-     The corners are directly copied from the small rectangle to the
-     real one and the side tiles are 1 pixel width, we use them as
-
-     tiles to cover the destination side. The corner tiles are bigger
-     than just the side of the rounded corner, we need to increase it
-     because the modifications caused by the corner over the blur
-     effect. We fill the central part with solid color to complete the
-     shadow.
- */
-void GraphicsContext::drawTiledShadow(const IntRect& rect, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius, ColorSpace colorSpace)
-{
-#if ENABLE(FILTERS)
-    FloatSize shadowSize;
-    float shadowBlur;
-    Color shadowColor;
-    if (!getShadow(shadowSize, shadowBlur, shadowColor))
-        return;
-
-    // Calculate filter values to create appropriate shadow.
-    cairo_t* cr = m_data->cr;
-
-    IntSize shadowBufferSize;
-    FloatRect shadowRect;
-    float blurRadius = 0;
-    GraphicsContext::calculateShadowBufferDimensions(shadowBufferSize, shadowRect, blurRadius, rect, shadowSize, shadowBlur);
-
-    // Size of the tiling side.
-    int sideTileWidth = 1;
-    float radiusTwice = blurRadius * 2;
-
-    // Find the extra space needed from the curve of the corners.
-    int extraWidthFromCornerRadii = radiusTwice + max(topLeftRadius.width(), bottomLeftRadius.width()) +
-                                    radiusTwice + max(topRightRadius.width(), bottomRightRadius.width());
-    int extraHeightFromCornerRadii = radiusTwice + max(topLeftRadius.height(), topRightRadius.height()) +
-                                     radiusTwice + max(bottomLeftRadius.height(), bottomRightRadius.height());
-
-    // The length of a side of the buffer is the enough space for four blur radii,
-    // the radii of the corners, and then 1 pixel to draw the side tiles.
-    IntSize smallBufferSize = IntSize(sideTileWidth + extraWidthFromCornerRadii,
-                                      sideTileWidth + extraHeightFromCornerRadii);
-
-    if ((smallBufferSize.width() > shadowBufferSize.width()) || (smallBufferSize.height() > shadowBufferSize.height()) || (blurRadius <= 0)) {
-        // Create suitably-sized ImageBuffer to hold the shadow.
-        OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
-        if (!shadowBuffer)
-            return;
-
-        // Draw shadow into a new ImageBuffer.
-        cairo_t* shadowContext = shadowBuffer->context()->platformContext();
-        copyContextProperties(cr, shadowContext);
-        cairo_translate(shadowContext, -rect.x() + blurRadius, -rect.y() + blurRadius);
-        cairo_new_path(shadowContext);
-        OwnPtr<cairo_path_t> path(cairo_copy_path(cr));
-        cairo_append_path(shadowContext, path.get());
-
-        setPlatformFill(this, shadowContext, m_common);
-
-        applyPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, blurRadius);
-
-        return;
-    }
-
-    OwnPtr<ImageBuffer> smallBuffer = ImageBuffer::create(smallBufferSize);
-    if (!smallBuffer)
-        return;
-
-    FloatRect smallRect = FloatRect(blurRadius, blurRadius, smallBufferSize.width() - radiusTwice, smallBufferSize.height() - radiusTwice);
-
-    // Draw shadow into a new ImageBuffer.
-    cairo_t* smallBufferContext = smallBuffer->context()->platformContext();
-    copyContextProperties(cr, smallBufferContext);
-
-    Path path;
-    path.addRoundedRect(smallRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
-    appendWebCorePathToCairoContext(smallBuffer->context()->platformContext(), path);
-    setPlatformFill(this, smallBufferContext, m_common);
-
-    OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(smallBufferSize);
-    if (!shadowBuffer)
-        return;
-
-    smallRect.setSize(smallBufferSize);
-
-    PlatformRefPtr<cairo_surface_t> shadowMask(createShadowMask(smallBuffer.release(), smallRect, blurRadius));
-
-    cairo_t* shadowContext = shadowBuffer->context()->platformContext();
-    setColor(shadowContext, shadowColor);
-    cairo_mask_surface(shadowContext, shadowMask.get(), 0, 0);
-
-    // Fill the internal part of the shadow.
-    shadowRect.inflate(-radiusTwice);
-    if (!shadowRect.isEmpty()) {
-        cairo_save(cr);
-        path.clear();
-        path.addRoundedRect(shadowRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
-        appendWebCorePathToCairoContext(cr, path);
-        setColor(cr, shadowColor);
-        cairo_fill(cr);
-        cairo_restore(cr);
-    }
-    shadowRect.inflate(radiusTwice);
-
-    // Draw top side.
-    FloatRect tileRect = FloatRect(radiusTwice + topLeftRadius.width(), 0, sideTileWidth, radiusTwice);
-    FloatRect destRect = tileRect;
-    destRect.move(shadowRect.x(), shadowRect.y());
-    destRect.setWidth(shadowRect.width() - topLeftRadius.width() - topRightRadius.width() - blurRadius * 4);
-    FloatPoint phase = getPhase(destRect, tileRect);
-    AffineTransform patternTransform;
-    patternTransform.makeIdentity();
-    shadowBuffer->drawPattern(this, tileRect, patternTransform, phase, colorSpace, CompositeSourceOver, destRect);
-
-    // Draw the bottom side.
-    tileRect = FloatRect(radiusTwice + bottomLeftRadius.width(), smallBufferSize.height() - radiusTwice, sideTileWidth, radiusTwice);
-    destRect = tileRect;
-    destRect.move(shadowRect.x(), shadowRect.y() + radiusTwice + rect.height() - smallBufferSize.height());
-    destRect.setWidth(shadowRect.width() - bottomLeftRadius.width() - bottomRightRadius.width() - blurRadius * 4);
-    phase = getPhase(destRect, tileRect);
-    shadowBuffer->drawPattern(this, tileRect, patternTransform, phase, colorSpace, CompositeSourceOver, destRect);
-
-    // Draw the right side.
-    tileRect = FloatRect(smallBufferSize.width() - radiusTwice, radiusTwice + topRightRadius.height(), radiusTwice, sideTileWidth);
-    destRect = tileRect;
-    destRect.move(shadowRect.x() + radiusTwice + rect.width() - smallBufferSize.width(), shadowRect.y());
-    destRect.setHeight(shadowRect.height() - topRightRadius.height() - bottomRightRadius.height() - blurRadius * 4);
-    phase = getPhase(destRect, tileRect);
-    shadowBuffer->drawPattern(this, tileRect, patternTransform, phase, colorSpace, CompositeSourceOver, destRect);
-
-    // Draw the left side.
-    tileRect = FloatRect(0, radiusTwice + topLeftRadius.height(), radiusTwice, sideTileWidth);
-    destRect = tileRect;
-    destRect.move(shadowRect.x(), shadowRect.y());
-    destRect.setHeight(shadowRect.height() - topLeftRadius.height() - bottomLeftRadius.height() - blurRadius * 4);
-    phase = FloatPoint(destRect.x() - tileRect.x(), destRect.y() - tileRect.y());
-    shadowBuffer->drawPattern(this, tileRect, patternTransform,
-                              phase, colorSpace, CompositeSourceOver, destRect);
-
-    // Draw the top left corner.
-    tileRect = FloatRect(0, 0, radiusTwice + topLeftRadius.width(), radiusTwice + topLeftRadius.height());
-    destRect = tileRect;
-    destRect.move(shadowRect.x(), shadowRect.y());
-    phase = getPhase(destRect, tileRect);
-    shadowBuffer->drawPattern(this, tileRect, patternTransform, phase, colorSpace, CompositeSourceOver, destRect);
-
-    // Draw the top right corner.
-    tileRect = FloatRect(smallBufferSize.width() - radiusTwice - topRightRadius.width(), 0, radiusTwice + topRightRadius.width(), radiusTwice + topRightRadius.height());
-    destRect = tileRect;
-    destRect.move(shadowRect.x() + rect.width() - smallBufferSize.width() + radiusTwice, shadowRect.y());
-    phase = getPhase(destRect, tileRect);
-    shadowBuffer->drawPattern(this, tileRect, patternTransform, phase, colorSpace, CompositeSourceOver, destRect);
-
-    // Draw the bottom right corner.
-    tileRect = FloatRect(smallBufferSize.width() - radiusTwice - bottomRightRadius.width(), smallBufferSize.height() - radiusTwice - bottomRightRadius.height(), radiusTwice + bottomRightRadius.width(), radiusTwice + bottomRightRadius.height());
-    destRect = tileRect;
-    destRect.move(shadowRect.x() + rect.width() - smallBufferSize.width() + radiusTwice, shadowRect.y() + rect.height() - smallBufferSize.height() + radiusTwice);
-    phase = getPhase(destRect, tileRect);
-    shadowBuffer->drawPattern(this, tileRect, patternTransform, phase, colorSpace, CompositeSourceOver, destRect);
-
-    // Draw the bottom left corner.
-    tileRect = FloatRect(0, smallBufferSize.height() - radiusTwice - bottomLeftRadius.height(), radiusTwice + bottomLeftRadius.width(), radiusTwice + bottomLeftRadius.height());
-    destRect = tileRect;
-    destRect.move(shadowRect.x(), shadowRect.y() + rect.height() - smallBufferSize.height() + radiusTwice);
-    phase = getPhase(destRect, tileRect);
-    shadowBuffer->drawPattern(this, tileRect, patternTransform, phase, colorSpace, CompositeSourceOver, destRect);
-#endif
-}
-
 void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)
 {
     if (paintingDisabled())
         return;
+
+    if (m_data->hasShadow())
+        m_data->shadow.drawRectShadow(this, r, topLeft, topRight, bottomLeft, bottomRight);
 
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
@@ -1387,7 +1124,6 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
     path.addRoundedRect(r, topLeft, topRight, bottomLeft, bottomRight);
     appendWebCorePathToCairoContext(cr, path);
     setColor(cr, color);
-    drawPathShadow(this, m_common, true, false);
     cairo_fill(cr);
     cairo_restore(cr);
 }

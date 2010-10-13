@@ -100,7 +100,7 @@ public:
     void endShadowLayer(PlatformContext);
     static void purgeScratchBuffer();
 #if PLATFORM(CAIRO)
-    void drawRectShadow(GraphicsContext* context, const IntRect& rect, const IntSize& topLeftRadius, const IntSize& topRightRadius, const IntSize& bottomLeftRadius, const IntSize& bottomRightRadius);
+    void drawRectShadow(GraphicsContext* context, const IntRect& rect, const IntSize& topLeftRadius = IntSize(), const IntSize& topRightRadius = IntSize(), const IntSize& bottomLeftRadius = IntSize(), const IntSize& bottomRightRadius = IntSize());
 #endif
 
 #if PLATFORM(QT)

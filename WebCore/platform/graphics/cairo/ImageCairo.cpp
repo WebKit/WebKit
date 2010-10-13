@@ -33,6 +33,7 @@
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
 #include "Color.h"
+#include "ContextShadow.h"
 #include "FloatRect.h"
 #include "PlatformRefPtrCairo.h"
 #include "GraphicsContext.h"
@@ -134,29 +135,18 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
     cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, srcRect.x(), srcRect.y() };
     cairo_pattern_set_matrix(pattern, &matrix);
 
-    // Draw the shadow
-#if ENABLE(FILTERS)
-    FloatSize shadowOffset;
-    float shadowBlur;
-    Color shadowColor;
-    if (context->getShadow(shadowOffset, shadowBlur, shadowColor)) {
-        IntSize shadowBufferSize;
-        FloatRect shadowRect;
-        float radius = 0;
-        context->calculateShadowBufferDimensions(shadowBufferSize, shadowRect, radius, dstRect, shadowOffset, shadowBlur);
-        shadowColor = colorWithOverrideAlpha(shadowColor.rgb(), (shadowColor.alpha() *  context->getAlpha()) / 255.f);
-
-        //draw shadow into a new ImageBuffer
-        OwnPtr<ImageBuffer> shadowBuffer = ImageBuffer::create(shadowBufferSize);
-        cairo_t* shadowContext = shadowBuffer->context()->platformContext();
-        cairo_set_source(shadowContext, pattern);
-        cairo_translate(shadowContext, -dstRect.x(), -dstRect.y());
-        cairo_rectangle(shadowContext, 0, 0, dstRect.width(), dstRect.height());
-        cairo_fill(shadowContext);
-
-        context->applyPlatformShadow(shadowBuffer.release(), shadowColor, shadowRect, radius);
+    ContextShadow* shadow = context->contextShadow();
+    ASSERT(shadow);
+    if (shadow->m_type != ContextShadow::NoShadow) {
+        cairo_t* shadowContext = shadow->beginShadowLayer(cr, dstRect);
+        if (shadowContext) {
+            cairo_translate(shadowContext, dstRect.x(), dstRect.y());
+            cairo_set_source(shadowContext, pattern);
+            cairo_rectangle(shadowContext, 0, 0, dstRect.width(), dstRect.height());
+            cairo_fill(shadowContext);
+            shadow->endShadowLayer(cr);
+        }
     }
-#endif
 
     // Draw the image.
     cairo_translate(cr, dstRect.x(), dstRect.y());
