@@ -192,6 +192,7 @@ HEADERS += \
     Shared/API/c/WKURLResponse.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
+    Shared/BackingStore.h \
     Shared/CacheModel.h \
     Shared/DrawingAreaBase.h \
     Shared/ImmutableArray.h \
@@ -339,10 +340,12 @@ SOURCES += \
     Shared/API/c/WKURL.cpp \
     Shared/API/c/WKURLRequest.cpp \
     Shared/API/c/WKURLResponse.cpp \
+    Shared/BackingStore.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
     Shared/MutableArray.cpp \
     Shared/MutableDictionary.cpp \
+    Shared/qt/BackingStoreQt.cpp \
     Shared/qt/MappedMemoryPool.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/UpdateChunk.cpp \
