@@ -53,7 +53,7 @@ void FileEntry::createWriter(PassRefPtr<FileWriterCallback> successCallback, Pas
 
 void FileEntry::file(PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback>)
 {
-    filesystem()->scheduleCallback(successCallback, File::create(m_fullPath));
+    filesystem()->scheduleCallback(successCallback, File::create(filesystem()->asyncFileSystem()->virtualToPlatformPath(m_fullPath)));
 }
 
 } // namespace
