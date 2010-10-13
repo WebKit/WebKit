@@ -5041,7 +5041,6 @@ fast/xsl/sort-locale.xml
 # ASSERTION FAILED: currentThread() == m_openingThread in WebCore::SQLiteDatabase::sqlite3Handle()
 # https://bugs.webkit.org/show_bug.cgi?id=30814
 storage
-fast/js/excessive-comma-usage.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=39346
 fast/workers/storage
@@ -5319,12 +5318,6 @@ media/video-src-invalid-remove.html
 
 # See https://bugs.webkit.org/show_bug.cgi?id=37526
 fast/history/multiple-classes-visited.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37532
-fast/js/kde/string-1-n.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=37534
-fast/js/kde/string-2-n.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=37535
 inspector/console-format.html
@@ -5801,42 +5794,9 @@ editing/selection/5195166-1.html
 
 # Remaining Sputnik failures
 # https://bugs.webkit.org/show_bug.cgi?id=43568
-fast/js/sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.12_Array_prototype_splice/S15.4.4.12_A2.1_T3.html
 fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.16_sin/S15.8.2.16_A7.html
 fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
 fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.1.html
-
-# The following Sputnik tests fail on debug builds.
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.1_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.2_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.3.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.4.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.1_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A1.2_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.1_T2.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T1.html
-fast/js/sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.4_String_Literals/S7.8.4_A3.2_T2.html
-fast/js/sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T1.html
-fast/js/sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A13_T2.html
-fast/js/sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T1.html
-fast/js/sputnik/Conformance/08_Types/8.4_The_String_Type/S8.4_A14_T2.html
-fast/js/sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_320/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_320/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_320/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_410/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_410/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_410/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.1.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-fast/js/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
 # The following Sputnik tests fail on the 32bit release bot
 fast/js/sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_A7.html
