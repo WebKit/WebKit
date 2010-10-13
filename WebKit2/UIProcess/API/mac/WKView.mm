@@ -41,6 +41,7 @@
 #import "WebPageProxy.h"
 #import "WebProcessManager.h"
 #import "WebProcessProxy.h"
+#import "WebSystemInterface.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
@@ -96,6 +97,7 @@ struct EditCommandState {
     if (!self)
         return nil;
 
+    InitWebCoreSystemInterface();
     RunLoop::initializeMainRunLoop();
 
     NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect:frame

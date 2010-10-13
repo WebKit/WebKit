@@ -24,15 +24,12 @@
  */
 
 #import "WebEventFactory.h"
+
+#import "WebKitSystemInterface.h"
 #import <wtf/ASCIICType.h>
+#import <WebCore/Scrollbar.h>
 
 using namespace WebCore;
-
-@interface NSEvent (Details)
-- (CGFloat)deviceDeltaX;
-- (CGFloat)deviceDeltaY;
-- (BOOL)_continuousScroll;
-@end
 
 namespace WebKit {
 
@@ -975,9 +972,6 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windo
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
 {
-    // Taken from WebCore
-    const int cScrollbarPixelsPerLineStep = 40;
-
     NSPoint position = pointForEvent(event, windowView);
     NSPoint globalPosition = globalPointForEvent(event);
 
@@ -987,24 +981,24 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     int globalPositionY                     = globalPosition.y;
     WebWheelEvent::Granularity granularity  = WebWheelEvent::ScrollByPixelWheelEvent;
 
+    BOOL continuous;
     float deltaX = 0;
     float deltaY = 0;
     float wheelTicksX = 0;
     float wheelTicksY = 0;
-    if ([event _continuousScroll]) {
+
+    WKGetWheelEventDeltas(event, &deltaX, &deltaY, &continuous);
+    
+    if (continuous) {
         // smooth scroll events
-        deltaX = [event deviceDeltaX];
-        deltaY = [event deviceDeltaY];
-        wheelTicksX = deltaX / static_cast<float>(cScrollbarPixelsPerLineStep);
-        wheelTicksY = deltaY / static_cast<float>(cScrollbarPixelsPerLineStep);
+        wheelTicksX = deltaX / static_cast<float>(Scrollbar::pixelsPerLineStep());
+        wheelTicksY = deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
     } else {
         // plain old wheel events
-        deltaX = [event deltaX];
-        deltaY = [event deltaY];
         wheelTicksX = deltaX;
         wheelTicksY = deltaY;
-        deltaX *= static_cast<float>(cScrollbarPixelsPerLineStep);
-        deltaY *= static_cast<float>(cScrollbarPixelsPerLineStep);
+        deltaX *= static_cast<float>(Scrollbar::pixelsPerLineStep());
+        deltaY *= static_cast<float>(Scrollbar::pixelsPerLineStep());
     }
 
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);

@@ -32,87 +32,68 @@
 
 void InitWebCoreSystemInterface(void)
 {
-    static bool didInit;
-    if (didInit)
-        return;
+    static dispatch_once_t initOnce;
+    
+    dispatch_once(&initOnce, ^{
+        INIT(AdvanceDefaultButtonPulseAnimation);
+        INIT(CGContextGetShouldSmoothFonts);
+        INIT(CopyCONNECTProxyResponse);
+        INIT(CopyNSURLResponseStatusLine);
+        INIT(CreateCustomCFReadStream);
+        INIT(CreateNSURLConnectionDelegateProxy);
+        INIT(DrawBezeledTextArea);
+        INIT(DrawBezeledTextFieldCell);
+        INIT(DrawCapsLockIndicator);
+        INIT(DrawFocusRing);
+        INIT(DrawMediaSliderTrack);
+        INIT(DrawMediaUIPart);
+        INIT(DrawTextFieldCellFocusRing);
+        INIT(GetExtensionsForMIMEType);
+        INIT(GetFontInLanguageForCharacter);
+        INIT(GetFontInLanguageForRange);
+        INIT(GetGlyphTransformedAdvances);
+        INIT(GetGlyphsForCharacters);
+        INIT(GetMIMETypeForExtension);
+        INIT(GetNSURLResponseLastModifiedDate);
+        INIT(GetPreferredExtensionForMIMEType);
+        INIT(GetUserToBaseCTM);
+        INIT(GetWheelEventDeltas);
+        INIT(HitTestMediaUIPart);
+        INIT(InitializeMaximumHTTPConnectionCountPerHost);
+        INIT(IsLatchingWheelEvent);
+        INIT(MeasureMediaUIPart);
+        INIT(MediaControllerThemeAvailable);
+        INIT(PopupMenu);
+        INIT(QTIncludeOnlyModernMediaFileTypes);
+        INIT(QTMovieDataRate);
+        INIT(QTMovieDisableComponent);
+        INIT(QTMovieGetType);
+        INIT(QTMovieHasClosedCaptions);
+        INIT(QTMovieMaxTimeLoaded);
+        INIT(QTMovieMaxTimeLoadedChangeNotification);
+        INIT(QTMovieMaxTimeSeekable);
+        INIT(QTMovieSelectPreferredAlternates);
+        INIT(QTMovieSetShowClosedCaptions);
+        INIT(QTMovieViewSetDrawSynchronously);
+        INIT(SetCGFontRenderingMode);
+        INIT(SetCONNECTProxyAuthorizationForStream);
+        INIT(SetCONNECTProxyForStream);
+        INIT(SetDragImage);
+        INIT(SetNSURLConnectionDefersCallbacks);
+        INIT(SetNSURLRequestShouldContentSniff);
+        INIT(SetPatternBaseCTM);
+        INIT(SetPatternPhaseInUserSpace);
+        INIT(SetUpFontCache);
+        INIT(SignalCFReadStreamEnd);
+        INIT(SignalCFReadStreamError);
+        INIT(SignalCFReadStreamHasBytes);
 
-    INIT(AdvanceDefaultButtonPulseAnimation);
-    INIT(CGContextGetShouldSmoothFonts);
-    INIT(CopyCONNECTProxyResponse);
-    INIT(CopyNSURLResponseStatusLine);
-    INIT(CreateCustomCFReadStream);
-    INIT(CreateNSURLConnectionDelegateProxy);
-    INIT(DrawCapsLockIndicator);
-    INIT(DrawBezeledTextArea);
-    INIT(DrawBezeledTextFieldCell);
-    INIT(DrawFocusRing);
-    INIT(DrawMediaUIPart);
-    INIT(DrawMediaSliderTrack);
-    INIT(DrawTextFieldCellFocusRing);
-    INIT(GetExtensionsForMIMEType);
-    INIT(GetFontInLanguageForCharacter);
-    INIT(GetFontInLanguageForRange);
-    INIT(GetGlyphTransformedAdvances);
-    INIT(GetMIMETypeForExtension);
-    INIT(GetNSURLResponseLastModifiedDate);
-    INIT(GetPreferredExtensionForMIMEType);
-    INIT(GetWheelEventDeltas);
-    INIT(HitTestMediaUIPart);
-    INIT(InitializeMaximumHTTPConnectionCountPerHost);
-    INIT(IsLatchingWheelEvent);
-    INIT(MeasureMediaUIPart);
-    INIT(MediaControllerThemeAvailable);
-    INIT(PopupMenu);
-    INIT(SetCGFontRenderingMode);
-    INIT(SetCONNECTProxyAuthorizationForStream);
-    INIT(SetCONNECTProxyForStream);
-    INIT(SetDragImage);
-    INIT(SetNSURLConnectionDefersCallbacks);
-    INIT(SetNSURLRequestShouldContentSniff);
-    INIT(SetPatternBaseCTM);
-    INIT(SetPatternPhaseInUserSpace);
-    INIT(GetUserToBaseCTM);
-    INIT(SetUpFontCache);
-    INIT(SignalCFReadStreamEnd);
-    INIT(SignalCFReadStreamError);
-    INIT(SignalCFReadStreamHasBytes);
-    INIT(QTIncludeOnlyModernMediaFileTypes);
-    INIT(QTMovieDataRate);
-    INIT(QTMovieDisableComponent);
-    INIT(QTMovieMaxTimeLoaded);
-    INIT(QTMovieMaxTimeLoadedChangeNotification);
-    INIT(QTMovieMaxTimeSeekable);
-    INIT(QTMovieGetType);
-    INIT(QTMovieHasClosedCaptions);
-    INIT(QTMovieSetShowClosedCaptions);
-    INIT(QTMovieSelectPreferredAlternates);
-    INIT(QTMovieViewSetDrawSynchronously);
+    #if !defined(BUILDING_ON_SNOW_LEOPARD)
+        INIT(NoteOpenPanelFiles);
+    #endif
 
-#ifndef BUILDING_ON_TIGER
-    INIT(GetGlyphsForCharacters);
-#else
-    INIT(ClearGlyphVector);
-    INIT(ConvertCharToGlyphs);
-    INIT(CopyFullFontName);
-    INIT(GetATSStyleGroup);
-    INIT(GetCGFontFromNSFont);
-    INIT(GetFontMetrics);
-    INIT(GetGlyphVectorFirstRecord);
-    INIT(GetGlyphVectorNumGlyphs);
-    INIT(GetGlyphVectorRecordSize);
-    INIT(GetNSFontATSUFontId);
-    INIT(InitializeGlyphVector);
-    INIT(ReleaseStyleGroup);
-    INIT(SupportsMultipartXMixedReplace);
-#endif
-
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    INIT(NoteOpenPanelFiles);
-#endif
-
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
-    INIT(GetHyphenationLocationBeforeIndex);
-#endif
-
-    didInit = true;
+    #if defined(BUILDING_ON_SNOW_LEOPARD)
+        INIT(GetHyphenationLocationBeforeIndex);
+    #endif
+    });
 }
