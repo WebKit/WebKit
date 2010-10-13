@@ -5207,6 +5207,8 @@ fast/loader/crash-copying-backforwardlist.html
 # Skip frame flattening tests until it can be tested by this DRT (bug 32717)
 # https://bugs.webkit.org/show_bug.cgi?id=38650
 fast/frames/flattening/
+
+# https://bugs.webkit.org/show_bug.cgi?id=47587
 fast/events/spatial-navigation/snav-iframe-flattening-simple.html
 
 # Implement LayoutTestController::callShouldCloseOnWebView()
