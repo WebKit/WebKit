@@ -1,3 +1,15 @@
+2010-10-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [EFL] Adds a build slave.
+        https://bugs.webkit.org/show_bug.cgi?id=47290
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add an
+        entry for a release build of the EFL port.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Add platform
+        flag to build the EFL port.
+
 2010-10-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
