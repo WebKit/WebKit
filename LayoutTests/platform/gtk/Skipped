@@ -5087,6 +5087,7 @@ fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 http/tests/globalhistory
 
 # Ruby tests
+fast/ruby/ruby-beforeafter.html
 fast/ruby/ruby-empty-rt.html
 fast/ruby/ruby-inline-table.html
 fast/ruby/ruby-length.html

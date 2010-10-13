@@ -44,8 +44,8 @@ static RenderRubyRun* lastRubyRun(const RenderObject* ruby)
     RenderObject* child = ruby->lastChild();
     if (child && ruby->isAfterContent(child))
         child = child->previousSibling();
-    ASSERT(!child || child->isRubyRun());
-    return static_cast<RenderRubyRun*>(child);
+    ASSERT(!child || child->isRubyRun() || child->isBeforeContent());
+    return child && child->isRubyRun() ? static_cast<RenderRubyRun*>(child) : 0;
 }
 
 static inline RenderRubyRun* findRubyRunParent(RenderObject* child)
@@ -75,15 +75,25 @@ bool RenderRubyAsInline::isChildAllowed(RenderObject* child, RenderStyle*) const
 
 void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    // Note: ':after' content is handled implicitly below
+    // Insert :before and :after content outside of ruby runs.
+    if (child->isBeforeContent() || child->isAfterContent()) {
+        RenderInline::addChild(child, beforeChild);
+        return;
+    }
 
+    // If the child is a ruby run, just add it normally.
     if (child->isRubyRun()) {
         RenderInline::addChild(child, beforeChild);
         return;
     }
 
-    if (beforeChild && !isAfterContent(beforeChild) && !beforeChild->isRubyRun()) {
-        if (RenderRubyRun* run = findRubyRunParent(beforeChild)) {
+    if (beforeChild && !isAfterContent(beforeChild)) {
+        // insert child into run
+        ASSERT(!beforeChild->isRubyRun());
+        RenderObject* run = beforeChild;
+        while (run && !run->isRubyRun())
+            run = run->parent();
+        if (run) {
             run->addChild(child, beforeChild);
             return;
         }
@@ -104,15 +114,15 @@ void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild
 
 void RenderRubyAsInline::removeChild(RenderObject* child)
 {
-    // If the child's parent is *this, i.e. a ruby run or ':after' content,
+    // If the child's parent is *this (a ruby run or :before or :after content),
     // just use the normal remove method.
-    if (child->parent() == this) {
-        ASSERT(child->isRubyRun() || child->isAfterContent());
+    if (child->isRubyRun() || child->isBeforeContent() || child->isAfterContent()) {
         RenderInline::removeChild(child);
         return;
     }
 
-    // Find the containing run
+    // Otherwise find the containing run and remove it from there.
+    ASSERT(child->parent() != this);
     RenderRubyRun* run = findRubyRunParent(child);
     ASSERT(run);
     run->removeChild(child);
@@ -139,9 +149,13 @@ bool RenderRubyAsBlock::isChildAllowed(RenderObject* child, RenderStyle*) const
 
 void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    // Note: ':after' content is handled implicitely below
+    // Insert :before and :after content outside of ruby runs.
+    if (child->isBeforeContent() || child->isAfterContent()) {
+        RenderBlock::addChild(child, beforeChild);
+        return;
+    }
 
-    // if child is a ruby run, just add it normally
+    // If the child is a ruby run, just add it normally.
     if (child->isRubyRun()) {
         RenderBlock::addChild(child, beforeChild);
         return;
@@ -157,7 +171,7 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
             run->addChild(child, beforeChild);
             return;
         }
-        ASSERT(false); // beforeChild should always have a run as parent!
+        ASSERT_NOT_REACHED(); // beforeChild should always have a run as parent!
         // Emergency fallback: fall through and just append.
     }
 
@@ -174,14 +188,15 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
 
 void RenderRubyAsBlock::removeChild(RenderObject* child)
 {
-    // If the child's parent is *this, just use the normal remove method.
-    if (child->parent() == this) {
-        // This should happen only during destruction of the whole ruby element, though.
+    // If the child's parent is *this (a ruby run or :before or :after content),
+    // just use the normal remove method.
+    if (child->isRubyRun() || child->isBeforeContent() || child->isAfterContent()) {
         RenderBlock::removeChild(child);
         return;
     }
 
-    // Find the containing run
+    // Otherwise find the containing run and remove it from there.
+    ASSERT(child->parent() != this);
     RenderRubyRun* run = findRubyRunParent(child);
     ASSERT(run);
     run->removeChild(child);

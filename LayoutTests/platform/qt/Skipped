@@ -780,6 +780,7 @@ fast/images/icon-0colors.html
 fast/images/icon-decoding.html
 
 # ------- missing ruby annotation support for japanese fonts
+fast/ruby/ruby-beforeafter.html
 fast/ruby/ruby-empty-rt.html
 fast/ruby/ruby-length.html
 fast/ruby/ruby-run-break.html
