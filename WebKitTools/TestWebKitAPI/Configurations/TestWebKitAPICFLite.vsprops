@@ -6,6 +6,6 @@
 	>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="CFLite$(LibrariesConfigSuffix).lib"
+		AdditionalDependencies="CFLite$(LibraryConfigSuffix).lib"
 	/>
 </VisualStudioPropertySheet>

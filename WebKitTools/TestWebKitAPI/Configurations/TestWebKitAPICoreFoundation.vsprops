@@ -6,6 +6,6 @@
 	>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="CoreFoundation$(LibrariesConfigSuffix).lib"
+		AdditionalDependencies="CoreFoundation$(LibraryConfigSuffix).lib"
 	/>
 </VisualStudioPropertySheet>

@@ -16,9 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="all|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
+			InheritedPropertySheets="$(WebKitLibrariesDir)\tools\vsprops\common.vsprops"
 			>
 			<Tool
 				Name="VCNMakeTool"

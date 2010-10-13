@@ -1,3 +1,15 @@
+2010-10-13  Adam Roben  <aroben@apple.com>
+
+        Fix a couple of issues with the TestWebKitAPI build
+
+        * TestWebKitAPI/Configurations/TestWebKitAPICFLite.vsprops:
+        * TestWebKitAPI/Configurations/TestWebKitAPICoreFoundation.vsprops:
+        Fixed a typo.
+
+        * TestWebKitAPI/win/TestWebKitAPIGenerated.vcproj: Use common.vsprops
+        to set our output and intermediate directories so that we don't spew
+        files into the source tree.
+
 2010-10-13  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
