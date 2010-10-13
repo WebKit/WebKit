@@ -79,34 +79,6 @@ static void setCGStrokeColor(CGContextRef context, const Color& color, ColorSpac
     CGContextSetStrokeColorWithColor(context, cachedCGColor(color, colorSpace));
 }
 
-static void setCGFillColorSpace(CGContextRef context, ColorSpace colorSpace)
-{
-    switch (colorSpace) {
-    case DeviceColorSpace:
-        break;
-    case sRGBColorSpace:
-        CGContextSetFillColorSpace(context, sRGBColorSpaceRef());
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-}
-
-static void setCGStrokeColorSpace(CGContextRef context, ColorSpace colorSpace)
-{
-    switch (colorSpace) {
-    case DeviceColorSpace:
-        break;
-    case sRGBColorSpace:
-        CGContextSetStrokeColorSpace(context, sRGBColorSpaceRef());
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-}
-
 CGColorSpaceRef deviceRGBColorSpaceRef()
 {
     static CGColorSpaceRef deviceSpace = CGColorSpaceCreateDeviceRGB();
@@ -568,9 +540,6 @@ void GraphicsContext::fillPath()
 
     CGContextRef context = platformContext();
 
-    // FIXME: Is this helpful and correct in the fillPattern and fillGradient cases?
-    setCGFillColorSpace(context, m_common->state.fillColorSpace);
-
     if (m_common->state.fillGradient) {
         CGContextSaveGState(context);
         if (fillRule() == RULE_EVENODD)
@@ -595,9 +564,6 @@ void GraphicsContext::strokePath()
 
     CGContextRef context = platformContext();
 
-    // FIXME: Is this helpful and correct in the strokePattern and strokeGradient cases?
-    setCGStrokeColorSpace(context, m_common->state.strokeColorSpace);
-
     if (m_common->state.strokeGradient) {
         CGContextSaveGState(context);
         CGContextReplacePathWithStrokedPath(context);
@@ -619,9 +585,6 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         return;
 
     CGContextRef context = platformContext();
-
-    // FIXME: Is this helpful and correct in the fillPattern and fillGradient cases?
-    setCGFillColorSpace(context, m_common->state.fillColorSpace);
 
     if (m_common->state.fillGradient) {
         CGContextSaveGState(context);
@@ -844,9 +807,6 @@ void GraphicsContext::strokeRect(const FloatRect& r, float lineWidth)
         return;
 
     CGContextRef context = platformContext();
-
-    // FIXME: Is this helpful and correct in the strokePattern and strokeGradient cases?
-    setCGStrokeColorSpace(context, m_common->state.strokeColorSpace);
 
     if (m_common->state.strokeGradient) {
         CGContextSaveGState(context);
