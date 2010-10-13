@@ -27,9 +27,6 @@ BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
 // random TIMEOUTs.  Is this issue DRT-specific?
 BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
-// WebGL failures
-BUG_DRT MAC : fast/canvas/webgl/gl-teximage.html = TEXT
-
 // Filesystem failures
 BUG_DRT WIN MAC : fast/filesystem/file-from-file-entry.html = TEXT
 BUG_DRT WIN MAC : fast/filesystem/op-copy.html = TIMEOUT
