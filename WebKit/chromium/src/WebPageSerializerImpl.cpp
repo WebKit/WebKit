@@ -278,7 +278,7 @@ void WebPageSerializerImpl::encodeAndFlushBuffer(
     FlushOption flushOption)
 {
     // Data buffer is not full nor do we want to force flush.
-    if (flushOption != ForceFlush && m_dataBuffer.size() <= dataBufferCapacity)
+    if (flushOption != ForceFlush && m_dataBuffer.length() <= dataBufferCapacity)
         return;
 
     String content = m_dataBuffer.toString();

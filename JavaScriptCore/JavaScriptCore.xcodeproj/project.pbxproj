@@ -206,6 +206,7 @@
 		8627E5EC11F1281900A313B5 /* PageAllocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8627E5EA11F1281900A313B5 /* PageAllocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		862AF4B612239C7B0024E5B8 /* DecimalNumber.h in Headers */ = {isa = PBXBuildFile; fileRef = 862AF4B512239C7B0024E5B8 /* DecimalNumber.h */; };
 		863B23E00FC6118900703AA4 /* MacroAssemblerCodeRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		86438FC41265503E00E0DFCA /* StringBuilder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86438FC31265503E00E0DFCA /* StringBuilder.cpp */; };
 		86565742115BE3DA00291F40 /* CString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86565740115BE3DA00291F40 /* CString.cpp */; };
 		86565743115BE3DA00291F40 /* CString.h in Headers */ = {isa = PBXBuildFile; fileRef = 86565741115BE3DA00291F40 /* CString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		865F408810E7D56300947361 /* APIShims.h in Headers */ = {isa = PBXBuildFile; fileRef = 865F408710E7D56300947361 /* APIShims.h */; };
@@ -811,6 +812,7 @@
 		8627E5EA11F1281900A313B5 /* PageAllocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageAllocation.h; sourceTree = "<group>"; };
 		862AF4B512239C7B0024E5B8 /* DecimalNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecimalNumber.h; sourceTree = "<group>"; };
 		863B23DF0FC60E6200703AA4 /* MacroAssemblerCodeRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerCodeRef.h; sourceTree = "<group>"; };
+		86438FC31265503E00E0DFCA /* StringBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringBuilder.cpp; path = text/StringBuilder.cpp; sourceTree = "<group>"; };
 		86565740115BE3DA00291F40 /* CString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CString.cpp; path = text/CString.cpp; sourceTree = "<group>"; };
 		86565741115BE3DA00291F40 /* CString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CString.h; path = text/CString.h; sourceTree = "<group>"; };
 		865F408710E7D56300947361 /* APIShims.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIShims.h; sourceTree = "<group>"; };
@@ -1840,6 +1842,7 @@
 				86565740115BE3DA00291F40 /* CString.cpp */,
 				86565741115BE3DA00291F40 /* CString.h */,
 				86B99AE1117E578100DF5A90 /* StringBuffer.h */,
+				86438FC31265503E00E0DFCA /* StringBuilder.cpp */,
 				081469481264375E00DFF935 /* StringBuilder.h */,
 				0896C29E1265AB0900B1CDD3 /* StringConcatenate.h */,
 				868BFA05117CEFD100B908B1 /* StringHash.h */,
@@ -2787,6 +2790,7 @@
 				9714AF5E122F32070092D9F5 /* ParsedURL.cpp in Sources */,
 				90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */,
 				A730B6131250068F009D25B1 /* StrictEvalActivation.cpp in Sources */,
+				86438FC41265503E00E0DFCA /* StringBuilder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

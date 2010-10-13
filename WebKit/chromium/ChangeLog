@@ -1,3 +1,12 @@
+2010-10-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 43987 - Downloading using XHR is much slower than before
+
+        * src/WebPageSerializerImpl.cpp:
+        (WebKit::WebPageSerializerImpl::encodeAndFlushBuffer):
+
 2010-10-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Tony Chang.

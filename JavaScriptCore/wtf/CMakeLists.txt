@@ -16,6 +16,7 @@ SET(WTF_SOURCES
 
     text/AtomicString.cpp
     text/CString.cpp
+    text/StringBuilder.cpp
     text/StringImpl.cpp
     text/StringStatics.cpp
     text/WTFString.cpp

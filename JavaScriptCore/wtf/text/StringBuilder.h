@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,57 +33,103 @@ namespace WTF {
 
 class StringBuilder {
 public:
-    void append(const UChar u)
+    StringBuilder()
+        : m_length(0)
     {
-        m_buffer.append(u);
     }
 
-    void append(const char* str)
-    {
-        append(str, strlen(str));
-    }
+    void append(const UChar*, unsigned);
+    void append(const char*, unsigned);
 
-    void append(const char* str, size_t len)
+    void append(const String& string)
     {
-        reserveCapacity(m_buffer.size() + len);
-        for (size_t i = 0; i < len; i++)
-            m_buffer.append(static_cast<unsigned char>(str[i]));
-    }
-
-    void append(const UChar* str, size_t len)
-    {
-        m_buffer.append(str, len);
-    }
-
-    void append(const String& str)
-    {
-        m_buffer.append(str.characters(), str.length());
-    }
-
-    bool isEmpty() const { return m_buffer.isEmpty(); }
-    void reserveCapacity(size_t newCapacity)
-    {
-        if (newCapacity < m_buffer.capacity())
+        // If we're appending to an empty string, and there is not buffer
+        // (in case reserveCapacity has been called) then just retain the
+        // string.
+        if (!m_length && !m_buffer) {
+            m_string = string;
+            m_length = string.length();
             return;
-        m_buffer.reserveCapacity(std::max(newCapacity, m_buffer.capacity() + m_buffer.capacity() / 4 + 1));
+        }
+        append(string.characters(), string.length());
     }
-    void resize(size_t size) { m_buffer.resize(size); }
-    size_t size() const { return m_buffer.size(); }
-    // FIXME: remove size(), above (strings have a length, not a size).
-    // also, should return an unsigned, not a size_t.
-    size_t length() const { return size(); }
 
-    UChar operator[](size_t i) const { return m_buffer.at(i); }
+    void append(const char* characters)
+    {
+        if (characters)
+            append(characters, strlen(characters));
+    }
+
+    void append(UChar c)
+    {
+        if (m_buffer && m_length < m_buffer->length() && m_string.isNull())
+            m_bufferCharacters[m_length++] = c;
+        else
+            append(&c, 1);
+    }
+
+    void append(char c)
+    {
+        if (m_buffer && m_length < m_buffer->length() && m_string.isNull())
+            m_bufferCharacters[m_length++] = (unsigned char)c;
+        else
+            append(&c, 1);
+    }
 
     String toString()
     {
-        m_buffer.shrinkToFit();
-        ASSERT(m_buffer.data() || !m_buffer.size());
-        return String::adopt(m_buffer);
+        if (m_string.isNull()) {
+            shrinkToFit();
+            reifyString();
+        }
+        return m_string;
     }
 
-protected:
-    Vector<UChar, 64> m_buffer;
+    String toStringPreserveCapacity()
+    {
+        if (m_string.isNull())
+            reifyString();
+        return m_string;
+    }
+
+    unsigned length() const
+    {
+        return m_length;
+    }
+
+    bool isEmpty() const { return !length(); }
+
+    void reserveCapacity(unsigned newCapacity);
+
+    void resize(unsigned newSize);
+
+    void shrinkToFit();
+
+    UChar operator[](unsigned i) const
+    {
+        ASSERT(i < m_length);
+        if (!m_string.isNull())
+            return m_string[i];
+        ASSERT(m_buffer);
+        return m_buffer->characters()[i];
+    }
+
+    void clear()
+    {
+        m_length = 0;
+        m_string = String();
+        m_buffer = 0;
+    }
+
+private:
+    void allocateBuffer(const UChar* currentCharacters, unsigned requiredLength);
+    UChar* appendUninitialized(unsigned length);
+    void reifyString();
+
+    unsigned m_length;
+    String m_string;
+    RefPtr<StringImpl> m_buffer;
+    UChar* m_bufferCharacters;
 };
 
 } // namespace WTF

@@ -453,6 +453,7 @@
             'wtf/text/CString.cpp',
             'wtf/text/CString.h',
             'wtf/text/StringBuffer.h',
+            'wtf/text/StringBuilder.cpp',
             'wtf/text/StringBuilder.h',
             'wtf/text/StringConcatenate.h',
             'wtf/text/StringHash.h',

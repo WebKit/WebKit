@@ -284,7 +284,7 @@ void Stringifier::appendQuotedString(UStringBuilder& builder, const UString& val
     int length = value.length();
 
     // String length plus 2 for quote marks plus 8 so we can accomodate a few escaped characters.
-    builder.reserveCapacity(builder.size() + length + 2 + 8);
+    builder.reserveCapacity(builder.length() + length + 2 + 8);
 
     builder.append('"');
 
@@ -521,7 +521,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
     // Last time through, finish up and return false.
     if (m_index == m_size) {
         stringifier.unindent();
-        if (m_size && builder[builder.size() - 1] != '{')
+        if (m_size && builder[builder.length() - 1] != '{')
             stringifier.startNewLine(builder);
         builder.append(m_isArray ? ']' : '}');
         return false;
@@ -562,7 +562,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, UStringBu
         if (exec->hadException())
             return false;
 
-        rollBackPoint = builder.size();
+        rollBackPoint = builder.length();
 
         // Append the separator string.
         if (builder[rollBackPoint - 1] != '{')

@@ -613,6 +613,10 @@
  			>
  		</File>
  		<File
+ 			RelativePath="..\..\wtf\text\StringBuilder.cpp"
+ 			>
+ 		</File>
+ 		<File
  			RelativePath="..\..\wtf\text\StringBuilder.h"
  			>
  		</File>

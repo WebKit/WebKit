@@ -508,6 +508,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/text/CString.cpp \
 	JavaScriptCore/wtf/text/CString.h \
 	JavaScriptCore/wtf/text/StringBuffer.h \
+	JavaScriptCore/wtf/text/StringBuilder.cpp \
 	JavaScriptCore/wtf/text/StringBuilder.h \
 	JavaScriptCore/wtf/text/StringConcatenate.h \
 	JavaScriptCore/wtf/text/StringHash.h \

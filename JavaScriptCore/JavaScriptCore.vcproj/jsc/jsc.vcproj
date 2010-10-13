@@ -334,6 +334,10 @@
 			>
 		</File>
 		<File
+			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\StringBuilder.cpp"
+			>
+		</File>
+		<File
 			RelativePath="$(WebKitOutputDir)\include\private\JavaScriptCore\StringImpl.cpp"
 			>
 		</File>

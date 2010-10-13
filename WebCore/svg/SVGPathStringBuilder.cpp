@@ -26,7 +26,7 @@ namespace WebCore {
 
 String SVGPathStringBuilder::result()
 {
-    unsigned size = m_stringBuilder.size();
+    unsigned size = m_stringBuilder.length();
     if (!size)
         return String();
 

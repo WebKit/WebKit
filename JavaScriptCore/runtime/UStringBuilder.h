@@ -32,23 +32,10 @@ namespace JSC {
 
 class UStringBuilder : public StringBuilder {
 public:
-    // Forward declare these methods, otherwhise append() is ambigious.
-    void append(const UChar u) { StringBuilder::append(u); }
-    void append(const char* str) { StringBuilder::append(str); }
-    void append(const char* str, size_t len) { StringBuilder::append(str, len); }
-    void append(const UChar* str, size_t len) { StringBuilder::append(str, len); }
+    using StringBuilder::append;
+    void append(const UString& str) { append(String(str.impl())); }
 
-    void append(const UString& str)
-    {
-        m_buffer.append(str.characters(), str.length());
-    }
-
-    UString toUString()
-    {
-        m_buffer.shrinkToFit();
-        ASSERT(m_buffer.data() || !m_buffer.size());
-        return UString::adopt(m_buffer);
-    }
+    UString toUString() { return toString().impl(); }
 };
 
 } // namespace JSC

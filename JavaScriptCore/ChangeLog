@@ -1,3 +1,54 @@
+2010-10-13  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 43987 - Downloading using XHR is much slower than before
+        Change StringBuilder to use overcapacity in a StringImpl, rather than a Vector.
+        Fundamentally this should be the same (copies current contents to expand capacity,
+        rather than using a rope), but this approach allows the intermadiate state of the
+        String to be inspected in the buffer without copying to resolve.
+
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendQuotedString):
+        (JSC::Stringifier::Holder::appendNextProperty):
+            Renamed StringBuilder::size() -> length() (to match other String types).
+
+        * runtime/UStringBuilder.h:
+        (JSC::UStringBuilder::append):
+        (JSC::UStringBuilder::toUString):
+            Update for changes in parent class, can just 'using' the append methods.
+
+        * wtf/text/StringBuilder.cpp: Added.
+        (WTF::StringBuilder::reifyString):
+        (WTF::StringBuilder::resize):
+        (WTF::StringBuilder::reserveCapacity):
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::appendUninitialized):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::shrinkToFit):
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::StringBuilder):
+        (WTF::StringBuilder::append):
+        (WTF::StringBuilder::toString):
+        (WTF::StringBuilder::toStringPreserveCapacity):
+        (WTF::StringBuilder::length):
+        (WTF::StringBuilder::isEmpty):
+        (WTF::StringBuilder::operator[]):
+        (WTF::StringBuilder::clear):
+            Class updated to use overcapacity in a StringImpl, rather than a Vector.
+
+        * Android.mk:
+        * Android.v8.wtf.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/wtf.pri:
+
 2010-10-13  Adam Roben  <aroben@apple.com>
 
         Export tryFastRealloc for WebKit2's benefit
