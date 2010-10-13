@@ -1,3 +1,19 @@
+2010-10-13  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Revert changes to WebViewImpl in r69633
+        https://bugs.webkit.org/show_bug.cgi?id=47610
+
+        Revert change to WebViewImpl.cpp in
+        http://trac.webkit.org/changeset/69633 which incorrectly used
+        PassRefPtr for a local variable instead of RefPtr. This was a fix
+        for changes in http://trac.webkit.org/changeset/69619 and
+        http://trac.webkit.org/changeset/69624 .
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2010-10-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
