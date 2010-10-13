@@ -38,6 +38,21 @@ def abspath_to_uri(path, executive, platform=None):
     return "file:" + _escape(_convert_path(path, executive, platform))
 
 
+def cygpath(path, executive):
+    """Converts a cygwin path to Windows path."""
+    # FIXME: this may not be correct in every situation, but forking
+    # cygpath is very slow. More importantly, there is a bug in Python
+    # where launching subprocesses and communicating with PIPEs (which
+    # is what run_command() does) can lead to deadlocks when running in
+    # multiple threads.
+    if path.startswith("/cygdrive"):
+        path = path[10] + ":" + path[11:]
+        path = path.replace("/", "\\")
+        return path
+    return executive.run_command(['cygpath', '-wa', path],
+                                 decode_output=False).rstrip()
+
+
 def _escape(path):
     """Handle any characters in the path that should be escaped."""
     # FIXME: web browsers don't appear to blindly quote every character
@@ -52,20 +67,13 @@ def _convert_path(path, executive, platform):
     if platform == 'win32':
         return _winpath_to_uri(path)
     if platform == 'cygwin':
-        return _winpath_to_uri(_cygpath(path, executive))
+        return _winpath_to_uri(cygpath(path, executive))
     return _unixypath_to_uri(path)
 
 
 def _winpath_to_uri(path):
     """Converts a window absolute path to a file: URL."""
     return "///" + path.replace("\\", "/")
-
-
-def _cygpath(path, executive):
-    """Converts a cygwin path to Windows path."""
-    return executive.run_command(['cygpath', '-wa', path],
-                                 decode_output=False).rstrip()
-
 
 def _unixypath_to_uri(path):
     """Converts a unix-style path to a file: URL."""

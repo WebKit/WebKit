@@ -83,7 +83,7 @@ def _process_output(port, options, test_info, test_types, test_args,
       port: port-specific hooks
       options: command line options argument from optparse
       proc: an active DumpRenderTree process
-      test_info: Object containing the test filename, uri and timeout
+      test_info: Object containing the test filename and timeout
       test_types: list of test types to subject the output to
       test_args: arguments to be passed to each test
 
@@ -172,7 +172,7 @@ class SingleTestThread(threading.Thread):
         Args:
           port: object implementing port-specific hooks
           options: command line argument object from optparse
-          test_info: Object containing the test filename, uri and timeout
+          test_info: Object containing the test filename and timeout
           test_types: A list of TestType objects to run the test output
               against.
           test_args: A TestArguments object to pass to each TestType.
@@ -193,12 +193,13 @@ class SingleTestThread(threading.Thread):
         # FIXME: this is a separate routine to work around a bug
         # in coverage: see http://bitbucket.org/ned/coveragepy/issue/85.
         test_info = self._test_info
+        uri = self._port.filename_to_uri(test_info.filename)
         self._driver = self._port.create_driver(self._test_args.png_path,
                                                 self._options)
         self._driver.start()
         start = time.time()
         crash, timeout, actual_checksum, output, error = \
-            self._driver.run_test(test_info.uri.strip(), test_info.timeout,
+            self._driver.run_test(uri, test_info.timeout,
                                   test_info.image_hash())
         end = time.time()
         self._test_result = _process_output(self._port, self._options,
@@ -255,7 +256,7 @@ class TestShellThread(WatchableThread):
           port: interface to port-specific hooks
           options: command line options argument from optparse
           filename_list_queue: A thread safe Queue class that contains lists
-              of tuples of (filename, uri) pairs.
+              of (filename, TestInfo) pairs.
           result_queue: A thread safe Queue class that will contain tuples of
               (test, failure lists) for the test results.
           test_types: A list of TestType objects to run the test output
@@ -459,7 +460,7 @@ class TestShellThread(WatchableThread):
         files singly.
 
         Args:
-          test_info: Object containing the test filename, uri and timeout
+          test_info: Object containing the test filename and timeout
 
         Returns:
           A TestResult
@@ -507,7 +508,7 @@ class TestShellThread(WatchableThread):
         """Run a single test file using a shared DumpRenderTree process.
 
         Args:
-          test_info: Object containing the test filename, uri and timeout
+          test_info: Object containing the test filename and timeout
 
         Returns:
           A list of TestFailure objects describing the error.
@@ -529,8 +530,9 @@ class TestShellThread(WatchableThread):
              _pad_timeout(int(test_info.timeout)))
         self._next_timeout = start + thread_timeout
 
+        uri = self._port.filename_to_uri(test_info.filename)
         crash, timeout, actual_checksum, output, error = \
-           self._driver.run_test(test_info.uri, test_info.timeout, image_hash)
+           self._driver.run_test(uri, test_info.timeout, image_hash)
         end = time.time()
 
         result = _process_output(self._port, self._options,

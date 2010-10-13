@@ -49,6 +49,7 @@ import websocket_server
 
 from webkitpy.common.system import logutils
 from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.common.system.user import User
 
 
@@ -312,17 +313,7 @@ class Port(object):
                 protocol = "http"
             return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
 
-        abspath = os.path.abspath(filename)
-
-        # On Windows, absolute paths are of the form "c:\foo.txt". However,
-        # all current browsers (except for Opera) normalize file URLs by
-        # prepending an additional "/" as if the absolute path was
-        # "/c:/foo.txt". This means that all file URLs end up with "file:///"
-        # at the beginning.
-        if sys.platform == 'win32':
-            abspath = '/' + abspath.replace('\\', '/')
-
-        return "file://" + abspath
+        return abspath_to_uri(os.path.abspath(filename), self._executive)
 
     def tests(self, paths):
         """Return the list of tests found (relative to layout_tests_dir()."""
@@ -371,9 +362,12 @@ class Port(object):
         """
         test = uri
         if uri.startswith("file:///"):
+            # FIXME: need an inverse of uri_to_abspath()
             if sys.platform == 'win32':
                 test = test.replace('file:///', '')
                 test = test.replace('/', '\\')
+            elif sys.platform == 'cygwin':
+                test = '/cygdrive/' + uri[8] + '/' + uri[11:]
             else:
                 test = test.replace('file://', '')
             return self.relative_test_filename(test)

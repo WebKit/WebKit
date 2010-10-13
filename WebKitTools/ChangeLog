@@ -1,3 +1,26 @@
+2010-10-12  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        This patch enables new-run-webkit-tests (in particular the
+        chromium-win port) to run under Cygwin as well as Win32. Mostly
+        this just required some conversions from cygwin paths to Win32
+        paths when we spawn off Win32 binaries like test_shell.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47220
+
+        * Scripts/webkitpy/common/system/path.py:
+        - Expose the cygpath() function for path conversion
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        - shift filename->uri conversion in the TestInfo objects to the
+          dump_render_tree thread
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        - use cygpath()
+
 2010-10-12  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Add Yuta Kitamura (yutak) to the committers list.
