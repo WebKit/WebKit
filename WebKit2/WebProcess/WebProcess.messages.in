@@ -37,6 +37,7 @@ messages -> WebProcess {
     SetCacheModel(uint32_t cacheModel)
     RegisterURLSchemeAsEmptyDocument(WTF::String scheme)
     RegisterURLSchemeAsSecure(WTF::String scheme)
+    SetDomainRelaxationForbiddenForURLScheme(WTF::String scheme)
 #if PLATFORM(WIN)
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)
 #endif

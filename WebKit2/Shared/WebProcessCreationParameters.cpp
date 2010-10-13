@@ -47,6 +47,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(applicationCacheDirectory);
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
     encoder->encode(urlSchemesRegisteredAsSecure);
+    encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
     encoder->encode(static_cast<uint32_t>(cacheModel));
     encoder->encode(shouldTrackVisitedLinks);
 
@@ -71,6 +72,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.urlSchemesRegistererdAsEmptyDocument))
         return false;
     if (!decoder->decode(parameters.urlSchemesRegisteredAsSecure))
+        return false;
+    if (!decoder->decode(parameters.urlSchemesForWhichDomainRelaxationIsForbidden))
         return false;
 
     uint32_t cacheModel;

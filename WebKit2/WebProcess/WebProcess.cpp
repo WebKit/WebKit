@@ -41,6 +41,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SchemeRegistry.h>
+#include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RandomNumber.h>
@@ -139,6 +140,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     for (size_t i = 0; i < parameters.urlSchemesRegisteredAsSecure.size(); ++i)
         registerURLSchemeAsSecure(parameters.urlSchemesRegisteredAsSecure[i]);
 
+    for (size_t i = 0; i < parameters.urlSchemesForWhichDomainRelaxationIsForbidden.size(); ++i)
+        setDomainRelaxationForbiddenForURLScheme(parameters.urlSchemesForWhichDomainRelaxationIsForbidden[i]);
+
 #if USE(ACCELERATED_COMPOSITING) && PLATFORM(MAC)
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
 #endif
@@ -160,6 +164,11 @@ void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
 void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
 {
     SchemeRegistry::registerURLSchemeAsSecure(urlScheme);
+}
+
+void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme) const
+{
+    SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
 }
 
 void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)

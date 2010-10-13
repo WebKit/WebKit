@@ -55,6 +55,7 @@ struct WebProcessCreationParameters {
     String applicationCacheDirectory;
     Vector<String> urlSchemesRegistererdAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;
+    Vector<String> urlSchemesForWhichDomainRelaxationIsForbidden;
 
     CacheModel cacheModel;
     bool shouldTrackVisitedLinks;

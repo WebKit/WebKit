@@ -1,3 +1,39 @@
+2010-10-12  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Add ability for WK2 to set domain relaxation forbidden for a URL scheme.
+        https://bugs.webkit.org/show_bug.cgi?id=47562
+
+        Add the schemes for which domain relaxation is forbidden to the
+        WebProcessCreationParameters.
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDomainRelaxationForbiddenForURLScheme):
+        * UIProcess/API/C/WKContextPrivate.h:
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        Copy over the schemes for which domain relaxation is forbidden to
+        WebProcessCreationParameters.
+        (WebKit::WebContext::setDomainRelaxationForbiddenForURLScheme):
+        Only send a message to the WebProcess if it is valid.
+        * UIProcess/WebContext.h:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        Set domain relaxation forbidden for the schemes in
+        WebProcesCreationParameters.urlSchemesForWhichDomainRelaxationIsForbidden.
+        (WebKit::WebProcess::setDomainRelaxationForbiddenForURLScheme):
+        * WebProcess/WebProcess.h:
+
+        * WebProcess/WebProcess.messages.in:
+        Add the SetDomainRelaxationFobiddenForURLScheme message.
+
 2010-10-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

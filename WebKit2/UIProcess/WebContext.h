@@ -103,7 +103,8 @@ public:
     
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&);
-    
+    void setDomainRelaxationForbiddenForURLScheme(const String&);
+
     void addVisitedLink(const String&);
     void addVisitedLink(WebCore::LinkHash);
 
@@ -144,6 +145,8 @@ private:
         
     HashSet<String> m_schemesToRegisterAsEmptyDocument;
     HashSet<String> m_schemesToRegisterAsSecure;
+    HashSet<String> m_schemesToSetDomainRelaxationForbiddenFor;
+
     Vector<pair<String, RefPtr<APIObject> > > m_pendingMessagesToPostToInjectedBundle;
 
     CacheModel m_cacheModel;
