@@ -559,12 +559,14 @@ WebNotificationPresenter* WebViewHost::notificationPresenter()
     return m_shell->notificationPresenter();
 }
 
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
 WebKit::WebGeolocationService* WebViewHost::geolocationService()
 {
     if (!m_geolocationServiceMock.get())
         m_geolocationServiceMock.set(WebGeolocationServiceMock::createWebGeolocationServiceMock());
     return m_geolocationServiceMock.get();
 }
+#endif
 
 WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechInputListener* listener)
 {

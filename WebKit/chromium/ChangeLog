@@ -1,3 +1,22 @@
+2010-10-13  John Knottenbelt  <jknotten@chromium.org>
+
+        Reviewed by Steve Block.
+
+        First step towards client-based Geolocation in Chromium. Build
+        fixes for CLIENT_BASED_GEOLOCATION preprocessor feature define.
+        https://bugs.webkit.org/show_bug.cgi?id=47586
+
+        * WebKit.gyp:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::requestGeolocationPermissionForFrame):
+        (WebKit::ChromeClientImpl::cancelGeolocationPermissionRequestForFrame):
+        * src/ChromiumBridge.cpp:
+        * src/WebGeolocationServiceMock.cpp:
+        (WebKit::WebGeolocationServiceMock::createWebGeolocationServiceMock):
+        (WebKit::WebGeolocationServiceMock::setMockGeolocationPermission):
+        (WebKit::WebGeolocationServiceMock::setMockGeolocationPosition):
+        (WebKit::WebGeolocationServiceMock::setMockGeolocationError):
+
 2010-10-11  Andrei Popescu  <andreip@google.com>
 
         Reviewed by Jeremy Orlow.

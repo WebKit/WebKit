@@ -33,6 +33,10 @@
 
 #include "ChromiumBridge.h"
 
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+#error "This file should not be compiled when ENABLE(CLIENT_BASED_GEOLOCATION)"
+#endif // ENABLE(CLIENT_BASED_GEOLOCATION)
+
 namespace WebCore {
 
 GeolocationServiceBridge::~GeolocationServiceBridge()

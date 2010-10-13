@@ -646,6 +646,12 @@
                         }],
                     ],
                 }],
+                ['"ENABLE_CLIENT_BASED_GEOLOCATION=1" in feature_defines', {
+                    'sources/': [
+                        ['exclude', 'WebGeolocationService.*$'],
+                        ['include', 'WebGeolocationServiceMock.*'],
+                    ],
+                }]
             ],
         },
 

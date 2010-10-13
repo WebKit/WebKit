@@ -86,7 +86,11 @@
 #include "PlatformContextSkia.h"
 #include "PluginData.h"
 #include "SharedBuffer.h"
+
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
 #include "WebGeolocationServiceBridgeImpl.h"
+#endif
+
 #include "Worker.h"
 #include "WorkerContextProxy.h"
 #include <wtf/Assertions.h>
@@ -465,12 +469,14 @@ bool ChromiumBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* out)
 }
 #endif
 
+#if !ENABLE(CLIENT_BASED_GEOLOCATION)
 // Geolocation ----------------------------------------------------------------
 
 GeolocationServiceBridge* ChromiumBridge::createGeolocationServiceBridge(GeolocationServiceChromium* geolocationServiceChromium)
 {
     return createGeolocationServiceBridgeImpl(geolocationServiceChromium);
 }
+#endif
 
 // Databases ------------------------------------------------------------------
 

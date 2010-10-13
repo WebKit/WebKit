@@ -771,15 +771,23 @@ NotificationPresenter* ChromeClientImpl::notificationPresenter() const
 
 void ChromeClientImpl::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    // FIXME: Implement Client-based Geolocation Permissions
+#else
     GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
     geolocationService->geolocationServiceBridge()->attachBridgeIfNeeded();
     m_webView->client()->geolocationService()->requestPermissionForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
+#endif
 }
 
 void ChromeClientImpl::cancelGeolocationPermissionRequestForFrame(Frame* frame, Geolocation* geolocation)
 {
+#if ENABLE(CLIENT_BASED_GEOLOCATION)
+    // FIXME: Implement Client-based Geolocation Permissions
+#else
     GeolocationServiceChromium* geolocationService = static_cast<GeolocationServiceChromium*>(geolocation->getGeolocationService());
     m_webView->client()->geolocationService()->cancelPermissionRequestForFrame(geolocationService->geolocationServiceBridge()->getBridgeId(), frame->document()->url());
+#endif
 }
 
 #if USE(ACCELERATED_COMPOSITING)
