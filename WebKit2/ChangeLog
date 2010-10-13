@@ -1,3 +1,15 @@
+2010-10-13  Adam Roben  <aroben@apple.com>
+
+        Rename BackingStoreMac.mm to BackingStoreCG.cpp
+
+        There's nothing Mac-specific about this file.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * Shared/cg/BackingStoreCG.cpp: Renamed from WebKit2/Shared/mac/BackingStoreMac.mm.
+
+        * WebKit2.xcodeproj/project.pbxproj: Updated for rename.
+
 2010-10-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
