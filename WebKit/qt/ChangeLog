@@ -1,3 +1,16 @@
+2010-10-13  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Update .def file for Symbian
+        https://bugs.webkit.org/show_bug.cgi?id=47540
+
+        Updated symbols for Symbian - added viewportAttributesForSize and
+        made viewportConfigurationForSize absent based on the API change in
+        47325
+
+        * symbian/eabi/QtWebKitu.def:
+
 2010-10-12  David Leong  <david.leong@nokia.com>
 
         Reviewed by Laszlo Gombos.

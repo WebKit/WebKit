@@ -815,8 +815,10 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt14viewportAsTextEP8QWebPageRK5QSize @ 814 NONAME
 	_ZN23DumpRenderTreeSupportQt32simulateDesktopNotificationClickERK7QString @ 815 NONAME
 	_ZN8QWebPage23viewportChangeRequestedEv @ 816 NONAME
-	_ZNK8QWebPage28viewportConfigurationForSizeERK5QSize @ 817 NONAME
+	_ZNK8QWebPage28viewportConfigurationForSizeERK5QSize @ 817 NONAME ABSENT
 	_ZN23DumpRenderTreeSupportQt20dumpHistoryCallbacksEb @ 818 NONAME
 	_ZN23DumpRenderTreeSupportQt25dumpVisitedLinksCallbacksEb @ 819 NONAME
 	_ZN23DumpRenderTreeSupportQt9plainTextERK8QVariant @ 820 NONAME
+	_ZNK8QWebPage25viewportAttributesForSizeERK5QSize @ 821 NONAME
+
 
