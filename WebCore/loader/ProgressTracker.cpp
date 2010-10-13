@@ -59,9 +59,10 @@ struct ProgressItem : Noncopyable {
     long long estimatedLength;
 };
 
+unsigned long ProgressTracker::s_uniqueIdentifier = 0;
+
 ProgressTracker::ProgressTracker()
-    : m_uniqueIdentifier(0)
-    , m_totalPageAndResourceBytesToLoad(0)
+    : m_totalPageAndResourceBytesToLoad(0)
     , m_totalBytesReceived(0)
     , m_lastNotifiedProgressValue(0)
     , m_lastNotifiedProgressTime(0)
@@ -255,7 +256,7 @@ void ProgressTracker::completeProgress(unsigned long identifier)
 
 unsigned long ProgressTracker::createUniqueIdentifier()
 {
-    return ++m_uniqueIdentifier;
+    return ++s_uniqueIdentifier;
 }
 
 
