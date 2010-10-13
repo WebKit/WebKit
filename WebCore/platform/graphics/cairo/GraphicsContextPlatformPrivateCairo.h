@@ -28,6 +28,7 @@
 #include "GraphicsContext.h"
 
 #include "CairoPath.h"
+#include "ContextShadow.h"
 #include <cairo.h>
 #include <math.h>
 #include <stdio.h>
