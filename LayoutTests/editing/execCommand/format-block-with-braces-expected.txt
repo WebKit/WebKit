@@ -16,6 +16,5 @@ Format Me
 
 After FormatBlock with <h1>:
 | <h1>
-|   "
-<#selection-caret>Format Me
-"
+|   "<#selection-caret>Format Me"
+|   <br>

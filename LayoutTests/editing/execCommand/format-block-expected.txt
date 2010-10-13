@@ -52,6 +52,7 @@ After FormatBlock:
 "
 | <pre>
 |   "Make Pre"
+|   <br>
 | "
 "
 | <br>
@@ -61,9 +62,8 @@ After FormatBlock:
 |   "Foo"
 |   <br>
 |   <h1>
-|     <span>
-|       id="item2"
-|       "Make h1"
+|     "Make h1"
+|     <br>
 |   "baz"
 | "
 "
