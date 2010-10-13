@@ -1,0 +1,33 @@
+<html>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+function getCenterFor(element)
+{
+  var rect = element.getBoundingClientRect();
+  return { x : parseInt((rect.left + rect.right) / 2) , y : parseInt((rect.top + rect.bottom) / 2)};
+}
+
+function runTest()
+{
+  if (!window.layoutTestController)
+    return;
+  if (!window.eventSender)
+    return;
+
+  layoutTestController.dumpAsText();
+  center = getCenterFor(document.getElementById("emptyselect"));
+  eventSender.mouseMoveTo(center.x, center.y);
+  eventSender.mouseDown();
+  eventSender.mouseUp();
+  eventSender.keyDown("downArrow");
+}
+
+</script>
+<style>
+</style>
+<body onload="runTest();">
+<select multiple id="emptyselect"></select>
+This should not crash
+</body>
+</html>
+

@@ -152,7 +152,7 @@ void SelectElement::setActiveSelectionEndIndex(SelectElementData& data, int inde
 void SelectElement::updateListBoxSelection(SelectElementData& data, Element* element, bool deselectOtherOptions)
 {
     ASSERT(element->renderer() && (element->renderer()->isListBox() || data.multiple()));
-    ASSERT(data.activeSelectionAnchorIndex() >= 0);
+    ASSERT(!data.listItems(element).size() || data.activeSelectionAnchorIndex() >= 0);
 
     unsigned start = min(data.activeSelectionAnchorIndex(), data.activeSelectionEndIndex());
     unsigned end = max(data.activeSelectionAnchorIndex(), data.activeSelectionEndIndex());
@@ -752,7 +752,7 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             // Save the selection so it can be compared to the new selection when dispatching change events immediately after making the new selection.
             saveLastSelection(data, element);
 
-            ASSERT_UNUSED(listItems, endIndex >= 0 && (unsigned) endIndex < listItems.size());
+            ASSERT_UNUSED(listItems, !listItems.size() || (endIndex >= 0 && (unsigned) endIndex < listItems.size()));
             setActiveSelectionEndIndex(data, endIndex);
             
             // If the anchor is unitialized, or if we're going to deselect all other options, then set the anchor index equal to the end index.
