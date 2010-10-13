@@ -1,3 +1,16 @@
+2010-10-12  David Leong  <david.leong@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Enable Netscape plugin metadata caching on Linux 
+        https://bugs.webkit.org/show_bug.cgi?id=46287
+        
+        QWebSettings::enablePersistentStorage will now store the netscape
+        plugin cache to QDesktopServices::CacheLocation.
+        
+        * Api/qwebsettings.cpp:
+        (QWebSettings::enablePersistentStorage):
+
 2010-10-12  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Antonio Gomes.

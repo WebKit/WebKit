@@ -1076,12 +1076,12 @@ QString QWebSettings::localStoragePath() const
 */
 void QWebSettings::enablePersistentStorage(const QString& path)
 {
+#ifndef QT_NO_DESKTOPSERVICES
     QString storagePath;
 
     if (path.isEmpty()) {
-#ifndef QT_NO_DESKTOPSERVICES
+
         storagePath = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#endif
         if (storagePath.isEmpty())
             storagePath = WebCore::pathByAppendingComponent(QDir::homePath(), QCoreApplication::applicationName());
     } else
@@ -1098,11 +1098,17 @@ void QWebSettings::enablePersistentStorage(const QString& path)
     QWebSettings::globalSettings()->setAttribute(QWebSettings::OfflineWebApplicationCacheEnabled, true);
 
 #if ENABLE(NETSCAPE_PLUGIN_METADATA_CACHE)
-    QFileInfo info(storagePath);
+    // All applications can share the common QtWebkit cache file(s).
+    // Path is not configurable and uses QDesktopServices::CacheLocation by default.
+    QString cachePath = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
+    WebCore::makeAllDirectories(cachePath);
+
+    QFileInfo info(cachePath);
     if (info.isDir() && info.isWritable()) {
         WebCore::PluginDatabase::setPersistentMetadataCacheEnabled(true);
-        WebCore::PluginDatabase::setPersistentMetadataCachePath(storagePath);
+        WebCore::PluginDatabase::setPersistentMetadataCachePath(cachePath);
     }
+#endif
 #endif
 }
 
