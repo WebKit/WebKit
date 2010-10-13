@@ -1,3 +1,9 @@
+2010-10-12  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed. Add Yuta Kitamura (yutak) to the committers list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-10-12  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
