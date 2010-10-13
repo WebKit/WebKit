@@ -40,6 +40,7 @@ namespace WebCore {
 ContextShadow::ContextShadow()
     : m_type(NoShadow)
     , m_blurDistance(0)
+    , m_layerContext(0)
 {
 }
 
@@ -47,6 +48,7 @@ ContextShadow::ContextShadow(const Color& color, float radius, const FloatSize& 
     : m_color(color)
     , m_blurDistance(round(radius))
     , m_offset(offset)
+    , m_layerContext(0)
 {
     // See comments in http://webkit.org/b/40793, it seems sensible
     // to follow Skia's limit of 128 pixels of blur radius
