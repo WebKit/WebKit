@@ -48,7 +48,7 @@ struct DrawingBufferInternal {
 #endif
 };
 
-static unsigned generateColorTexture(SharedGraphicsContext3D* context, const IntSize& size)
+static unsigned generateColorTexture(GraphicsContext3D* context, const IntSize& size)
 {
     unsigned offscreenColorTexture = context->createTexture();
     if (!offscreenColorTexture)
@@ -66,13 +66,13 @@ static unsigned generateColorTexture(SharedGraphicsContext3D* context, const Int
 }
 
 
-DrawingBuffer::DrawingBuffer(SharedGraphicsContext3D* context, const IntSize& size, unsigned framebuffer)
+DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
     : m_context(context)
     , m_size(size)
-    , m_framebuffer(framebuffer)
+    , m_fbo(context->createFramebuffer())
     , m_internal(new DrawingBufferInternal)
 {
-    context->bindFramebuffer(framebuffer);
+    context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     m_internal->offscreenColorTexture = generateColorTexture(context, size);
 }
 
@@ -82,14 +82,22 @@ DrawingBuffer::~DrawingBuffer()
     if (m_internal->platformLayer)
         m_internal->platformLayer->setDrawingBuffer(0);
 #endif
-    m_context->bindFramebuffer(m_framebuffer);
+
+    if (!m_context)
+        return;
+        
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     m_context->deleteTexture(m_internal->offscreenColorTexture);
-    m_context->deleteFramebuffer(m_framebuffer);
+
+    clear();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
 void DrawingBuffer::publishToPlatformLayer()
 {
+    if (!m_context)
+        return;
+        
     if (m_callback)
         m_callback->willPublish();
     unsigned parentTexture = m_internal->platformLayer->textureId();
@@ -106,6 +114,9 @@ void DrawingBuffer::publishToPlatformLayer()
 
 void DrawingBuffer::reset(const IntSize& newSize)
 {
+    if (!m_context)
+        return;
+        
     if (m_size == newSize)
         return;
     m_size = newSize;

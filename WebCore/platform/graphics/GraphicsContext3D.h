@@ -26,16 +26,12 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
-#if PLATFORM(MAC)
-#include "ANGLEWebKitBridge.h"
-#endif
 #include "GraphicsLayer.h"
 #include "PlatformString.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 // FIXME: Find a better way to avoid the name confliction for NO_ERROR.
 #if ((PLATFORM(CHROMIUM) && OS(WINDOWS)) || PLATFORM(WIN) || (PLATFORM(QT) && OS(WINDOWS)))
@@ -43,6 +39,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#include "ANGLEWebKitBridge.h"
 #include <OpenGL/OpenGL.h>
 #include <wtf/RetainPtr.h>
 
@@ -78,6 +75,7 @@ const Platform3DObject NullPlatform3DObject = 0;
 
 namespace WebCore {
 class CanvasRenderingContext;
+class DrawingBuffer;
 class HostWindow;
 class Image;
 class ImageData;
@@ -94,7 +92,7 @@ struct ActiveInfo {
 class GraphicsContext3DInternal;
 #endif
 
-class GraphicsContext3D : public Noncopyable {
+class GraphicsContext3D : public RefCounted<GraphicsContext3D> {
 public:
     enum WebGLEnumType {
         DEPTH_BUFFER_BIT = 0x00000100,
@@ -441,8 +439,8 @@ public:
         RenderDirectlyToHostWindow
     };
 
-    static PassOwnPtr<GraphicsContext3D> create(Attributes attrs, HostWindow* hostWindow, RenderStyle renderStyle = RenderOffscreen);
-    virtual ~GraphicsContext3D();
+    static PassRefPtr<GraphicsContext3D> create(Attributes, HostWindow*, RenderStyle = RenderOffscreen);
+    ~GraphicsContext3D();
 
 #if PLATFORM(MAC)
     PlatformGraphicsContext3D platformGraphicsContext3D() const { return m_contextObj; }
@@ -469,6 +467,8 @@ public:
 #endif
     void makeContextCurrent();
 
+    PassRefPtr<DrawingBuffer> createDrawingBuffer(const IntSize& = IntSize());
+    
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();

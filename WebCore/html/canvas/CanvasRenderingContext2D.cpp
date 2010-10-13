@@ -131,7 +131,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
     if (GraphicsContext* c = drawingContext()) {
         m_context3D = p->sharedGraphicsContext3D();
         if (m_context3D) {
-            m_drawingBuffer = DrawingBuffer::create(m_context3D.get(), IntSize(canvas->width(), canvas->height()));
+            m_drawingBuffer = m_context3D->graphicsContext3D()->createDrawingBuffer(IntSize(canvas->width(), canvas->height()));
             c->setSharedGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas->width(), canvas->height()));
         }
     }

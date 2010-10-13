@@ -25,41 +25,46 @@
 
 #include "config.h"
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(3D_CANVAS)
 
 #include "DrawingBuffer.h"
 
-#include "SharedGraphicsContext3D.h"
 #include "WebGLLayer.h"
 
 #import "BlockExceptions.h"
 
 namespace WebCore {
 
-DrawingBuffer::DrawingBuffer(SharedGraphicsContext3D* context, const IntSize& size, unsigned framebuffer)
+DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
     : m_context(context)
     , m_size(size)
-    , m_framebuffer(framebuffer)
+    , m_fbo(context->createFramebuffer())
 {
-    context->bindFramebuffer(framebuffer);
-
+    ASSERT(m_fbo);
+    if (!m_fbo) {
+        clear();
+        return;
+    }
+        
     // Create the WebGLLayer
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-        m_platformLayer.adoptNS([[WebGLLayer alloc] initWithGraphicsContext3D:0]);
+        m_platformLayer.adoptNS([[WebGLLayer alloc] initWithGraphicsContext3D:m_context.get()]);
 #ifndef NDEBUG
-        [m_platformLayer.get() setName:@"WebGL Layer"];
+        [m_platformLayer.get() setName:@"DrawingBuffer Layer"];
 #endif    
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
 DrawingBuffer::~DrawingBuffer()
 {
-    m_context->bindFramebuffer(m_framebuffer);
-    m_context->deleteFramebuffer(m_framebuffer);
+    clear();
 }
 
 void DrawingBuffer::reset(const IntSize& newSize)
 {
+    if (!m_context)
+        return;
+        
     if (m_size == newSize)
         return;
     m_size = newSize;

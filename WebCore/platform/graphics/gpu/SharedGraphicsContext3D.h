@@ -118,14 +118,16 @@ public:
     // the texture.
     PassRefPtr<Texture> createTexture(Texture::Format, int width, int height);
 
+    GraphicsContext3D* graphicsContext3D() const { return m_context.get(); }
+
 private:
-    SharedGraphicsContext3D(PassOwnPtr<GraphicsContext3D>, PassOwnPtr<SolidFillShader>, PassOwnPtr<TexShader>);
+    SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D>, PassOwnPtr<SolidFillShader>, PassOwnPtr<TexShader>);
 
     // Used to implement removeTexturesFor(), see the comment above.
     static HashSet<SharedGraphicsContext3D*>* allContexts();
     void removeTextureFor(NativeImagePtr);
 
-    OwnPtr<GraphicsContext3D> m_context;
+    RefPtr<GraphicsContext3D> m_context;
 
     unsigned m_quadVertices;
 

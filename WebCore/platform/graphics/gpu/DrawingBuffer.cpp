@@ -30,27 +30,38 @@
 
 #include "config.h"
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
+#if ENABLE(ACCELERATED_2D_CANVAS) || ENABLE(3D_CANVAS)
 
 #include "DrawingBuffer.h"
 
-#include "SharedGraphicsContext3D.h"
-
 namespace WebCore {
 
-PassOwnPtr<DrawingBuffer> DrawingBuffer::create(SharedGraphicsContext3D* context, const IntSize& size)
+PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, const IntSize& size)
 {
-    unsigned framebuffer = context->createFramebuffer();
-    ASSERT(framebuffer);
-    if (!framebuffer)
-        return 0;
-    return adoptPtr(new DrawingBuffer(context, size, framebuffer));
+    RefPtr<DrawingBuffer> drawingBuffer = adoptRef(new DrawingBuffer(context, size));
+    return (drawingBuffer->m_context) ? drawingBuffer.release() : 0;
+}
+
+void DrawingBuffer::clear()
+{
+    if (!m_context)
+        return;
+
+    m_context->makeContextCurrent();
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    m_context->deleteFramebuffer(m_fbo);
+    m_fbo = 0;
+
+    m_context.clear();
 }
 
 void DrawingBuffer::bind()
 {
-    m_context->bindFramebuffer(m_framebuffer);
-    m_context->setViewport(m_size);
+    if (!m_context)
+        return;
+        
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
+    m_context->viewport(0, 0, m_size.width(), m_size.height());
 }
 
 } // namespace WebCore

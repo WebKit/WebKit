@@ -294,7 +294,7 @@ private:
 #endif
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    OwnPtr<DrawingBuffer> m_drawingBuffer;
+    RefPtr<DrawingBuffer> m_drawingBuffer;
     RefPtr<SharedGraphicsContext3D> m_context3D;
 #endif
 };

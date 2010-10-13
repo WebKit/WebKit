@@ -44,23 +44,26 @@
 
 namespace WebCore {
 
-class SharedGraphicsContext3D;
-
 #if PLATFORM(CHROMIUM)
 struct DrawingBufferInternal;
 #endif
 
 // Manages a rendering target (framebuffer + attachment) for a canvas.  Can publish its rendering
 // results to a PlatformLayer for compositing.
-class DrawingBuffer : public Noncopyable {
+class DrawingBuffer : public RefCounted<DrawingBuffer> {
 public:
-    static PassOwnPtr<DrawingBuffer> create(SharedGraphicsContext3D*, const IntSize&);
+    friend class GraphicsContext3D;
+    
     ~DrawingBuffer();
 
     void reset(const IntSize&);
     void bind();
     IntSize size() const { return m_size; }
 
+    // Clear all resources from this object, as well as context. Called when context is destroyed
+    // to prevent invalid accesses to the resources.
+    void clear();
+    
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer();
     void publishToPlatformLayer();
@@ -79,12 +82,16 @@ public:
     void setWillPublishCallback(PassOwnPtr<WillPublishCallback> callback) { m_callback = callback; }
 #endif
 
-private:
-    DrawingBuffer(SharedGraphicsContext3D*, const IntSize&, unsigned framebuffer);
+    PassRefPtr<GraphicsContext3D> graphicsContext3D() const { return m_context; }
 
-    SharedGraphicsContext3D* m_context;
+private:
+    static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&);
+    
+    DrawingBuffer(GraphicsContext3D*, const IntSize&);
+
+    RefPtr<GraphicsContext3D> m_context;
     IntSize m_size;
-    unsigned m_framebuffer;
+    Platform3DObject m_fbo;
 
 #if PLATFORM(CHROMIUM)
     OwnPtr<WillPublishCallback> m_callback;
