@@ -35,11 +35,21 @@
 namespace WebKit {
 struct MappedMemory {
     QFile* file;
-    uchar* data;
-    size_t size;
-    void markUsed() { *reinterpret_cast<uint64_t*>(data) = 0; }
-    void markFree() { *reinterpret_cast<uint64_t*>(data) = 0xdeadbeef; }
-    bool isFree() { return *reinterpret_cast<uint64_t*>(data) == 0xdeadbeef; }
+    struct Data {
+        uint32_t isFree; // keep bytes aligned
+        uchar bytes;
+    };
+    union {
+        uchar* mappedBytes;
+        Data* dataPtr;
+    };
+    size_t dataSize;
+
+    size_t mapSize() const { return dataSize + sizeof(Data); }
+    void markUsed() { dataPtr->isFree = false; }
+    void markFree() { dataPtr->isFree = true; }
+    bool isFree() const { return dataPtr->isFree; }
+    uchar* data() const { return &dataPtr->bytes; }
 };
 
 class MappedMemoryPool : public QObject {

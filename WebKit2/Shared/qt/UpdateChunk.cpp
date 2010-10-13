@@ -48,17 +48,17 @@ static MappedMemory* mapMemory(size_t size)
     MappedMemoryPool* pool = MappedMemoryPool::instance();
     for (unsigned n = 0; n < pool->size(); ++n) {
         MappedMemory& current = pool->at(n);
-        if (current.size >= size && current.isFree()) {
+        if (current.dataSize >= size && current.isFree()) {
             current.markUsed();
             return &current;
         }
     }
     MappedMemory newMap;
-    newMap.size = size;
+    newMap.dataSize = size;
     newMap.file = new QTemporaryFile(QDir::tempPath() + "/WebKit2UpdateChunk");
     newMap.file->open(QIODevice::ReadWrite);
-    newMap.file->resize(newMap.size);
-    newMap.data = newMap.file->map(0, newMap.size);
+    newMap.file->resize(newMap.mapSize());
+    newMap.mappedBytes = newMap.file->map(0, newMap.mapSize());
     newMap.file->close();
     newMap.markUsed();
     return &pool->append(newMap);
@@ -78,7 +78,8 @@ static MappedMemory* mapFile(QString fileName, size_t size)
     newMap.file = new QFile(fileName);
     if (!newMap.file->open(QIODevice::ReadWrite))
         return 0;
-    newMap.data = newMap.file->map(0, size);
+    newMap.dataSize = size;
+    newMap.mappedBytes = newMap.file->map(0, newMap.mapSize());
     ASSERT(!newMap.isFree());
     newMap.file->close();
     newMap.file->remove(); // The map stays alive even when the file is unlinked.
@@ -105,8 +106,8 @@ UpdateChunk::~UpdateChunk()
 uint8_t* UpdateChunk::data()
 {
     ASSERT(m_mappedMemory);
-    ASSERT(m_mappedMemory->data);
-    return reinterpret_cast<uint8_t*>(m_mappedMemory->data);
+    ASSERT(m_mappedMemory->mappedBytes);
+    return reinterpret_cast<uint8_t*>(m_mappedMemory->data());
 }
 
 void UpdateChunk::encode(CoreIPC::ArgumentEncoder* encoder) const
@@ -130,7 +131,7 @@ bool UpdateChunk::decode(CoreIPC::ArgumentDecoder* decoder, UpdateChunk& chunk)
 
     chunk.m_mappedMemory = mapFile(fileName, chunk.size());
 
-    return chunk.m_mappedMemory->data;
+    return chunk.m_mappedMemory->mappedBytes;
 }
 
 QImage UpdateChunk::createImage()

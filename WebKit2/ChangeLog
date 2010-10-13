@@ -1,3 +1,25 @@
+2010-10-13  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Use flag instead of magic word to mark memory map free/used
+
+        Original patch by Antti Koivisto.
+
+        * Shared/qt/MappedMemory.h:
+        (WebKit::MappedMemory::mapSize):
+        (WebKit::MappedMemory::markUsed):
+        (WebKit::MappedMemory::markFree):
+        (WebKit::MappedMemory::isFree):
+        (WebKit::MappedMemory::data):
+        * Shared/qt/MappedMemoryPool.cpp:
+        (WebKit::MappedMemoryPool::cleanUp):
+        * Shared/qt/UpdateChunk.cpp:
+        (WebKit::mapMemory):
+        (WebKit::mapFile):
+        (WebKit::UpdateChunk::data):
+        (WebKit::UpdateChunk::decode):
+
 2010-10-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Build fix. Unreviewed.

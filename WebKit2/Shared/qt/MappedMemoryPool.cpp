@@ -64,7 +64,7 @@ void MappedMemoryPool::cleanUp()
     for (size_t i = 0; i < size; ++i) {
         MappedMemory& chunk = m_pool.at(i);
         if (!chunk.isFree())
-            chunk.file->unmap(chunk.data);
+            chunk.file->unmap(chunk.mappedBytes);
         chunk.file->remove();
     }
 
