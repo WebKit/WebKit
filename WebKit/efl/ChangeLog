@@ -1,3 +1,10 @@
+2010-10-13  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Unreviewed. Build fix.
+
+        * WebCoreSupport/FrameLoaderClientEfl.h: Use String instead of
+        WebCore::String.
+
 2010-10-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
