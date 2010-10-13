@@ -411,7 +411,7 @@ InspectorResource::Type InspectorResource::type() const
     return cachedResourceType();
 }
 
-void InspectorResource::setOverrideContent(const ScriptString& data, Type type)
+void InspectorResource::setOverrideContent(const String& data, Type type)
 {
     m_overrideContent = data;
     m_overrideContentType = type;

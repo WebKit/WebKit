@@ -43,6 +43,7 @@
 #include "ProgressEvent.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableBlobRegistry.h"
@@ -57,7 +58,6 @@ FileReader::FileReader(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_state(None)
     , m_readType(ReadFileAsBinaryString)
-    , m_result("")
     , m_isRawDataConverted(false)
     , m_bytesLoaded(0)
     , m_totalBytes(0)
@@ -144,7 +144,7 @@ void FileReader::abort()
 
     terminate();
 
-    m_result = "";
+    m_builder.clear();
     m_error = FileError::create(ABORT_ERR);
 
     fireEvent(eventNames().errorEvent);
@@ -212,7 +212,7 @@ void FileReader::didReceiveData(const char* data, int lengthReceived)
 
     switch (m_readType) {
     case ReadFileAsBinaryString:
-        m_result += String(data, static_cast<unsigned>(lengthReceived));
+        m_builder.append(data, static_cast<unsigned>(lengthReceived));
         break;
     case ReadFileAsText:
     case ReadFileAsDataURL:
@@ -296,30 +296,30 @@ FileReader::ReadyState FileReader::readyState() const
     return EMPTY;
 }
 
-const ScriptString& FileReader::result()
+String FileReader::result()
 {
     // If reading as binary string, we can return the result immediately.
     if (m_readType == ReadFileAsBinaryString)
-        return m_result;
+        return m_builder.toString();
 
     // If we already convert the raw data received so far, we can return the result now.
     if (m_isRawDataConverted)
-        return m_result;
+        return m_builder.toString();
     m_isRawDataConverted = true;
 
     if (m_readType == ReadFileAsText)
         convertToText();
     // For data URL, we only do the coversion until we receive all the raw data.
     else if (m_readType == ReadFileAsDataURL && m_state == Completed)
-        convertToDataURL(m_rawData, m_fileType, m_result);
+        convertToDataURL(m_rawData, m_fileType, m_builder);
 
-    return m_result;
+    return m_builder.toString();
 }
 
 void FileReader::convertToText()
 {
     if (!m_rawData.size()) {
-        m_result = "";
+        m_builder.clear();
         return;
     }
 
@@ -330,28 +330,31 @@ void FileReader::convertToText()
     // FIXME: consider supporting incremental decoding to improve the perf.
     if (!m_decoder)
         m_decoder = TextResourceDecoder::create("text/plain", m_encoding.isValid() ? m_encoding : UTF8Encoding());
-    m_result = m_decoder->decode(&m_rawData.at(0), m_rawData.size());
+    m_builder.clear();
+    m_builder.append(m_decoder->decode(&m_rawData.at(0), m_rawData.size()));
 
     if (m_state == Completed && !m_error)
-        m_result += m_decoder->flush();
+        m_builder.append(m_decoder->flush());
 }
 
-void FileReader::convertToDataURL(const Vector<char>& rawData, const String& fileType, ScriptString& result)
+void FileReader::convertToDataURL(const Vector<char>& rawData, const String& fileType, StringBuilder& builder)
 {
-    result = "data:";
+    builder.clear();
+    builder.append("data:");
 
     if (!rawData.size())
         return;
 
-    result += fileType;
-    if (!fileType.isEmpty())
-        result += ";";
-    result += "base64,";
+    if (!fileType.isEmpty()) {
+        builder.append(fileType);
+        builder.append(";base64,");
+    } else
+        builder.append("base64,");
 
     Vector<char> out;
     base64Encode(rawData, out);
     out.append('\0');
-    result += out.data();
+    builder.append(out.data());
 }
 
 } // namespace WebCore

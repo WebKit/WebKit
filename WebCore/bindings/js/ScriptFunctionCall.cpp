@@ -33,7 +33,6 @@
 
 #include "JSDOMBinding.h"
 #include "JSMainThreadExecState.h"
-#include "ScriptString.h"
 #include "ScriptValue.h"
 
 #include <runtime/JSLock.h>
@@ -50,11 +49,6 @@ void ScriptCallArgumentHandler::appendArgument(const ScriptObject& argument)
         return;
     }
     m_arguments.append(argument.jsObject());
-}
-
-void ScriptCallArgumentHandler::appendArgument(const ScriptString& argument)
-{
-    m_arguments.append(jsString(m_exec, argument.ustring()));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const ScriptValue& argument)

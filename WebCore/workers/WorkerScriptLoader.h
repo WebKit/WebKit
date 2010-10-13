@@ -33,7 +33,6 @@
 #include "KURL.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "ScriptString.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"

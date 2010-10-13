@@ -32,7 +32,6 @@
 #define ScriptCallFrame_h
 
 #include <runtime/ArgList.h>
-#include "ScriptString.h"
 #include "ScriptValue.h"
 #include <wtf/Vector.h>
 
@@ -52,7 +51,7 @@ namespace WebCore {
         ScriptCallFrame(const JSC::UString& functionName, const JSC::UString& urlString, int lineNumber, JSC::ExecState*, unsigned skipArgumentCount);
         ~ScriptCallFrame();
 
-        const ScriptString& functionName() const { return m_functionName; }
+        const String& functionName() const { return m_functionName; }
         const String& sourceURL() const { return m_sourceURL; }
         unsigned lineNumber() const { return m_lineNumber; }
 
@@ -61,7 +60,7 @@ namespace WebCore {
         unsigned argumentCount() const { return m_arguments.size(); }
 
     private:
-        ScriptString m_functionName;
+        String m_functionName;
         String m_sourceURL;
         unsigned m_lineNumber;
 

@@ -67,7 +67,6 @@
 #include <WebCore/PluginView.h>
 #include <WebCore/RenderPart.h>
 #include <WebCore/ResourceHandle.h>
-#include <WebCore/ScriptString.h>
 #pragma warning(pop)
 
 using namespace WebCore;

@@ -73,7 +73,6 @@ class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
 class ScriptSourceCode;
-class ScriptString;
 class ScriptValue;
 class SecurityOrigin;
 class SerializedScriptValue;

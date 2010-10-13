@@ -44,14 +44,12 @@ namespace JSC {
 
 namespace WebCore {
     class ScriptValue;
-    class ScriptString;
 
     class ScriptCallArgumentHandler {
     public:
         ScriptCallArgumentHandler(ScriptState* state) : m_exec(state) { }
 
         void appendArgument(const ScriptObject&);
-        void appendArgument(const ScriptString&);
         void appendArgument(const ScriptValue&);
         void appendArgument(const String&);
         void appendArgument(const char*);

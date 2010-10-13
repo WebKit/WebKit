@@ -26,11 +26,11 @@
 #include "EventTarget.h"
 #include "FormData.h"
 #include "ResourceResponse.h"
-#include "ScriptString.h"
 #include "ThreadableLoaderClient.h"
 #include "XMLHttpRequestProgressEventThrottle.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/text/AtomicStringHash.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -89,8 +89,8 @@ public:
     void overrideMimeType(const String& override);
     String getAllResponseHeaders(ExceptionCode&) const;
     String getResponseHeader(const AtomicString& name, ExceptionCode&) const;
-    const ScriptString& responseText(ExceptionCode&) const;
-    Document* responseXML(ExceptionCode&) const;
+    String responseText(ExceptionCode&);
+    Document* responseXML(ExceptionCode&);
 #if ENABLE(XHR_RESPONSE_BLOB)
     Blob* responseBlob(ExceptionCode&) const;
 #endif
@@ -176,13 +176,7 @@ private:
 
     RefPtr<TextResourceDecoder> m_decoder;
 
-    // Unlike most strings in the DOM, we keep this as a ScriptString, not a WTF::String.
-    // That's because these strings can easily get huge (they are filled from the network with
-    // no parsing) and because JS can easily observe many intermediate states, so it's very useful
-    // to be able to share the buffer with JavaScript versions of the whole or partial string.
-    // In contrast, this string doesn't interact much with the rest of the engine so it's not that
-    // big a cost that it isn't a String.
-    ScriptString m_responseText;
+    StringBuilder m_responseBuilder;
     mutable bool m_createdDocument;
     mutable RefPtr<Document> m_responseXML;
 

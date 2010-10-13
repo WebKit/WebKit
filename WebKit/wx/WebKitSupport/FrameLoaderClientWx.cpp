@@ -49,7 +49,6 @@
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "ScriptController.h"
-#include "ScriptString.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 

@@ -90,7 +90,6 @@
 #include "SchemeRegistry.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
-#include "ScriptString.h"
 #include "SecurityOrigin.h"
 #include "SegmentedString.h"
 #include "SerializedScriptValue.h"

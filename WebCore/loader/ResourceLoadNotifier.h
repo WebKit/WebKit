@@ -40,7 +40,6 @@ class Frame;
 class ResourceError;
 class ResourceLoader;
 class ResourceResponse;
-class ScriptString;
 class ResourceRequest;
 
 class ResourceLoadNotifier : public Noncopyable {

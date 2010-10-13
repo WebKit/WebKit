@@ -64,7 +64,6 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceHandle.h"
 #include "ScriptController.h"
-#include "ScriptString.h"
 #include "Settings.h"
 #include "QWebPageClient.h"
 #include "ViewportArguments.h"

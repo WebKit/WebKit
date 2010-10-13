@@ -33,7 +33,6 @@
 
 #include "ScriptCallFrame.h"
 #include "ScriptState.h"
-#include "ScriptString.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
 

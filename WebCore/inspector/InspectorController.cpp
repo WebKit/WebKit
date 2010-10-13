@@ -86,7 +86,6 @@
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include "ScriptSourceCode.h"
-#include "ScriptString.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
@@ -1132,7 +1131,7 @@ void InspectorController::didFailLoading(unsigned long identifier, const Resourc
         resource->updateScriptObject(m_frontend.get());
 }
 
-void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const ScriptString& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
+void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber)
 {
     if (!enabled())
         return;
@@ -1162,7 +1161,7 @@ void InspectorController::scriptImported(unsigned long identifier, const String&
     if (!resource)
         return;
 
-    resource->setOverrideContent(ScriptString(sourceString), InspectorResource::Script);
+    resource->setOverrideContent(sourceString, InspectorResource::Script);
 
     if (m_frontend)
         resource->updateScriptObject(m_frontend.get());

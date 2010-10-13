@@ -759,7 +759,7 @@ bool FrameLoaderClientEfl::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
     return false;
 }
 
-void FrameLoaderClientEfl::dispatchDidLoadResourceByXMLHttpRequest(unsigned long, const ScriptString&)
+void FrameLoaderClientEfl::dispatchDidLoadResourceByXMLHttpRequest(unsigned long, const String&)
 {
     notImplemented();
 }

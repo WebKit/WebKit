@@ -33,7 +33,6 @@
 
 #include "HTTPHeaderMap.h"
 #include "KURL.h"
-#include "ScriptString.h"
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
 
@@ -98,7 +97,7 @@ namespace WebCore {
         void updateWebSocketResponse(const WebSocketHandshakeResponse&);
 #endif
 
-        void setOverrideContent(const ScriptString& data, Type);
+        void setOverrideContent(const String& data, Type);
 
         String sourceString() const;
         String sourceBytes() const;
@@ -194,7 +193,7 @@ namespace WebCore {
         unsigned m_connectionID;
         bool m_connectionReused;
         RefPtr<ResourceLoadTiming> m_loadTiming;
-        ScriptString m_overrideContent;
+        String m_overrideContent;
         Type m_overrideContentType;
         Changes m_changes;
         bool m_isMainResource;
