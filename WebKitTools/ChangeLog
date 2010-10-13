@@ -1,3 +1,15 @@
+2010-10-13  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        WTR should accept relative paths
+        https://bugs.webkit.org/show_bug.cgi?id=47486
+
+        * WebKitTestRunner/StringFunctions.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::createWKURL): Moved from StringFunctions.h since it is
+        used only here. Extend relative paths to absolute.
+
 2010-10-12  Adam Roben  <aroben@apple.com>
 
         Make TestWebKitAPI work on Windows

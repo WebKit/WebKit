@@ -92,22 +92,6 @@ inline std::ostream& operator<<(std::ostream& out, const WKRetainPtr<WKStringRef
     return out << stringRef.get();
 }
 
-// URL creation
-
-inline WKURLRef createWKURL(const char* pathOrURL)
-{
-    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https") || strstr(pathOrURL, "file://"))
-        return WKURLCreateWithUTF8CString(pathOrURL);
-
-    const char* filePrefix = "file://";
-    static const size_t prefixLength = strlen(filePrefix);
-    size_t length = strlen(pathOrURL);
-    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[length + prefixLength + 1]);
-    strcpy(buffer.get(), filePrefix);
-    strcat(buffer.get(), pathOrURL);
-    return WKURLCreateWithUTF8CString(buffer.get());
-}
-
 } // namespace WTR
 
 #endif // StringFunctions_h

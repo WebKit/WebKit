@@ -28,16 +28,61 @@
 #include "PlatformWebView.h"
 #include "StringFunctions.h"
 #include "TestController.h"
+#include <climits>
 #include <cstdio>
 #include <WebKit2/WKContextPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
+#if OS(WINDOWS)
+#include <direct.h> // For _getcwd.
+#define getcwd _getcwd // MSDN says getcwd is deprecated.
+#define PATH_MAX _MAX_PATH
+#endif
+
 using namespace WebKit;
 using namespace std;
 
 namespace WTR {
+
+static WKURLRef createWKURL(const char* pathOrURL)
+{
+    if (strstr(pathOrURL, "http://") || strstr(pathOrURL, "https://") || strstr(pathOrURL, "file://"))
+        return WKURLCreateWithUTF8CString(pathOrURL);
+
+    // Creating from filesytem path.
+    size_t length = strlen(pathOrURL);
+    if (!length)
+        return 0;
+
+    const char* filePrefix = "file://";
+    static const size_t prefixLength = strlen(filePrefix);
+#if OS(WINDOWS)
+    const char separator = '\\';
+    bool isAbsolutePath = length >= 3 && pathOrURL[1] == ':' && pathOrURL[2] == separator;
+#else
+    const char separator = '/';
+    bool isAbsolutePath = pathOrURL[0] == separator;
+#endif
+
+    OwnArrayPtr<char> buffer;
+    if (isAbsolutePath) {
+        buffer = adoptArrayPtr(new char[prefixLength + length + 1]);
+        strcpy(buffer.get(), filePrefix);
+        strcpy(buffer.get() + prefixLength, pathOrURL);
+    } else {
+        buffer = adoptArrayPtr(new char[prefixLength + PATH_MAX + length + 2]); // 1 for the separator
+        strcpy(buffer.get(), filePrefix);
+        if (!getcwd(buffer.get() + prefixLength, PATH_MAX))
+            return 0;
+        size_t numCharacters = strlen(buffer.get());
+        buffer[numCharacters] = separator;
+        strcpy(buffer.get() + numCharacters + 1, pathOrURL);
+    }
+
+    return WKURLCreateWithUTF8CString(buffer.get());
+}
 
 TestInvocation::TestInvocation(const char* pathOrURL)
     : m_url(AdoptWK, createWKURL(pathOrURL))
