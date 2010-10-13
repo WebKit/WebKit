@@ -1,5 +1,16 @@
 2010-10-13  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John Sullivan.
+
+        Draw the find overlay holes
+        https://bugs.webkit.org/show_bug.cgi?id=47631
+
+        * WebProcess/WebPage/FindPageOverlay.cpp:
+        (WebKit::FindPageOverlay::drawRect):
+        Draw the white frames and the holes.
+
+2010-10-13  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Use WKSI to get wheel event deltas

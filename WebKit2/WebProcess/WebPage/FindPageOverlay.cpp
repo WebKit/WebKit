@@ -36,6 +36,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static const float shadowOffsetX = 0.0;
+static const float shadowOffsetY = 1.0;
+static const float shadowBlurRadius = 2.0;
+static const float whiteFrameThickness = 1.0;
+
+static const int overlayBackgroundRed = 25;
+static const int overlayBackgroundGreen = 25;
+static const int overlayBackgroundBlue = 25;
+static const int overlayBackgroundAlpha = 63;
+
 PassOwnPtr<FindPageOverlay> FindPageOverlay::create(FindController* findController)
 {
     return adoptPtr(new FindPageOverlay(findController));
@@ -75,16 +85,11 @@ Vector<IntRect> FindPageOverlay::rectsForTextMatches()
     return rects;
 }
 
-static const int overlayBackgroundRed = 25;
-static const int overlayBackgroundGreen = 25;
-static const int overlayBackgroundBlue = 25;
-static const int overlayBackgroundAlpha = 63;
-    
 static Color overlayBackgroundColor()
 {
     return Color(overlayBackgroundRed, overlayBackgroundGreen, overlayBackgroundBlue, overlayBackgroundAlpha);
 }
-    
+
 void FindPageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirtyRect)
 {
     Vector<IntRect> rects = rectsForTextMatches();
@@ -109,8 +114,29 @@ void FindPageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& 
     // Draw the background.
     graphicsContext.fillRect(paintRect, overlayBackgroundColor(), sRGBColorSpace);
 
-    // FIXME: Draw the holes.
+    graphicsContext.save();
+    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, sRGBColorSpace);
 
+    graphicsContext.setFillColor(Color::white, sRGBColorSpace);
+
+    // Draw white frames around the holes.
+    for (size_t i = 0; i < rects.size(); ++i) {
+        IntRect whiteFrameRect = rects[i];
+        whiteFrameRect.inflate(1);
+
+        graphicsContext.fillRect(whiteFrameRect);
+    }
+
+    graphicsContext.restore();
+
+    graphicsContext.save();
+    graphicsContext.setFillColor(Color::transparent, sRGBColorSpace);
+
+    // Clear out the holes.
+    for (size_t i = 0; i < rects.size(); ++i)
+        graphicsContext.fillRect(rects[i]);
+
+    graphicsContext.restore();
     graphicsContext.endTransparencyLayer();
 }
 
