@@ -1,3 +1,17 @@
+2010-10-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        When a provisional load fails, the provisional URL returned
+        from WKFrameCopyProvisionalURL should be empty
+        <rdar://problem/8540878>
+        https://bugs.webkit.org/show_bug.cgi?id=47546
+
+        Add test.
+
+        * TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp:
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrame):
+
 2010-10-12  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

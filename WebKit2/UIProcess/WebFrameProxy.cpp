@@ -83,6 +83,7 @@ void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const String& url
 void WebFrameProxy::didFailProvisionalLoad()
 {
     m_loadState = LoadStateFinished;
+    m_provisionalURL = String();
 }
 
 void WebFrameProxy::didCommitLoad()
