@@ -32,22 +32,23 @@ after FormatBlock:
 "
 | <dl>
 |   "Fo<#selection-anchor>o"
-| "
-"
-| <div>
-|   <dl>
-|     "bar"
+|   <br>
+|   "bar"
+|   <br>
 |   <span>
-|     <dl>
-|       "baz"
-|   <dl>
-|     "raz"
-| <dl>
-|   "dar"
-|   " "
+|     "baz"
+|     <br>
+|   "raz"
+|   <br>
+|   "
+dar"
+|   <br>
+|   "
+"
+|   "yar<#selection-focus>"
 | "
 "
-| <dl>
-|   "ya<#selection-focus>r"
+| "
+"
 | "
 "
