@@ -33,9 +33,13 @@ import re
 
 _log = logging.getLogger("webkitpy.common.checkout.diff_parser")
 
+
+# FIXME: This is broken. We should compile our regexps up-front
+# instead of using a custom cache.
 _regexp_compile_cache = {}
 
 
+# FIXME: This function should be removed.
 def match(pattern, string):
     """Matches the string with the pattern, caching the compiled regexp."""
     if not pattern in _regexp_compile_cache:
@@ -43,12 +47,15 @@ def match(pattern, string):
     return _regexp_compile_cache[pattern].match(string)
 
 
+# FIXME: This belongs on DiffParser (e.g. as to_svn_diff()).
 def git_diff_to_svn_diff(line):
     """Converts a git formatted diff line to a svn formatted line.
 
     Args:
       line: A string representing a line of the diff.
     """
+    # FIXME: This list should be a class member on DiffParser.
+    # These regexp patterns should be compiled once instead of every time.
     conversion_patterns = (("^diff --git \w/(.+) \w/(?P<FilePath>.+)", lambda matched: "Index: " + matched.group('FilePath') + "\n"),
                            ("^new file.*", lambda matched: "\n"),
                            ("^index [0-9a-f]{7}\.\.[0-9a-f]{7} [0-9]{6}", lambda matched: "===================================================================\n"),
@@ -62,6 +69,7 @@ def git_diff_to_svn_diff(line):
     return line
 
 
+# FIXME: This method belongs on DiffParser
 def get_diff_converter(first_diff_line):
     """Gets a converter function of diff lines.
 
@@ -80,7 +88,7 @@ _DECLARED_FILE_PATH = 2
 _PROCESSING_CHUNK = 3
 
 
-class DiffFile:
+class DiffFile(object):
     """Contains the information for one file in a patch.
 
     The field "lines" is a list which contains tuples in this format:
@@ -88,6 +96,13 @@ class DiffFile:
     If deleted_line_number is zero, it means this line is newly added.
     If new_line_number is zero, it means this line is deleted.
     """
+    # FIXME: Tuples generally grow into classes.  We should consider
+    # adding a DiffLine object.
+
+    def added_or_modified_line_numbers(self):
+        # This logic was moved from patchreader.py, but may not be
+        # the right API for this object long-term.
+        return [line[1] for line in self.lines if not line[0]]
 
     def __init__(self, filename):
         self.filename = filename
@@ -103,13 +118,14 @@ class DiffFile:
         self.lines.append((deleted_line_number, new_line_number, line))
 
 
-class DiffParser:
+class DiffParser(object):
     """A parser for a patch file.
 
     The field "files" is a dict whose key is the filename and value is
     a DiffFile object.
     """
 
+    # FIXME: This function is way too long and needs to be broken up.
     def __init__(self, diff_input):
         """Parses a diff.
 

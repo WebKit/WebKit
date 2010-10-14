@@ -37,7 +37,6 @@ _log = logging.getLogger("webkitpy.style.patchreader")
 
 
 class PatchReader(object):
-
     """Supports checking style in patches."""
 
     def __init__(self, text_file_reader):
@@ -53,28 +52,15 @@ class PatchReader(object):
         """Check style in the given patch."""
         patch_files = DiffParser(patch_string.splitlines()).files
 
-        # The diff variable is a DiffFile instance.
-        for path, diff in patch_files.iteritems():
-            line_numbers = set()
-            for line in diff.lines:
-                # When deleted line is not set, it means that
-                # the line is newly added (or modified).
-                if not line[0]:
-                    line_numbers.add(line[1])
+        for path, diff_file in patch_files.iteritems():
+            line_numbers = diff_file.added_or_modified_line_numbers()
+            _log.debug('Found %s new or modified lines in: %s' % (len(line_numbers), path))
 
-            _log.debug('Found %s new or modified lines in: %s'
-                       % (len(line_numbers), path))
-
-            # If line_numbers is empty, the file has no new or
-            # modified lines.  In this case, we don't check the file
-            # because we'll never output errors for the file.
-            # This optimization also prevents the program from exiting
-            # due to a deleted file.
-            if line_numbers:
-                self._text_file_reader.process_file(file_path=path,
-                                                    line_numbers=line_numbers)
-            else:
-                # We don't check the file which contains deleted lines only
-                # but would like to treat it as to be processed so that
-                # we count up number of such files.
+            if not line_numbers:
+                # Don't check files which contain only deleted lines
+                # as they can never add style errors. However, mark them as
+                # processed so that we count up number of such files.
                 self._text_file_reader.count_delete_only_file()
+                continue
+
+            self._text_file_reader.process_file(file_path=path, line_numbers=line_numbers)

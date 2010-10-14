@@ -78,7 +78,7 @@ index ef65bee..e3db70e 100644
  # Required for Python to search this directory for module files
 +# New line
 """)
-        self._assert_checked([("__init__.py", set([2]))], 0)
+        self._assert_checked([("__init__.py", [2])], 0)
 
     def test_check_patch_with_deletion(self):
         self._call_check_patch("""Index: __init__.py

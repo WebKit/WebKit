@@ -2,6 +2,17 @@
 
         Reviewed by Adam Barth.
 
+        beat diff_parser with the ugly stick
+        https://bugs.webkit.org/show_bug.cgi?id=47626
+
+        * Scripts/webkitpy/common/checkout/diff_parser.py:
+        * Scripts/webkitpy/style/patchreader.py:
+        * Scripts/webkitpy/style/patchreader_unittest.py:
+
+2010-10-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Break LayoutTestResults out into its own file
         https://bugs.webkit.org/show_bug.cgi?id=47637
 
