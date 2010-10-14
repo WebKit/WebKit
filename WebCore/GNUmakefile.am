@@ -50,6 +50,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/text \
 	-I$(srcdir)/WebCore/platform/text/transcoder \
 	-I$(srcdir)/WebCore/plugins \
+	-I$(srcdir)/WebCore/plugins/win \
 	-I$(srcdir)/WebCore/rendering \
 	-I$(srcdir)/WebCore/rendering/style \
 	-I$(srcdir)/WebCore/rendering/svg \
