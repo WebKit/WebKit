@@ -2,6 +2,18 @@
 
         Reviewed by Jon Honeycutt.
 
+        Memory smasher in WebKit2 InjectedBundleHitTestResult::absoluteLinkURL
+        https://bugs.webkit.org/show_bug.cgi?id=47648
+
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp:
+        (WebKit::InjectedBundleHitTestResult::absoluteLinkURL):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h: Return a String instead of
+        a const String&.
+
+2010-10-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
         PlatformMouseEvents need to contain modifier flags
         https://bugs.webkit.org/show_bug.cgi?id=47651
 
