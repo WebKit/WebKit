@@ -127,10 +127,18 @@ typedef enum {
     WKMediaControllerFlagFocused = 1 << 4
 } WKMediaControllerThemeState;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 bool WKMediaControllerThemeAvailable(int themeStyle);
 bool WKHitTestMediaUIPart(int part, int themeStyle, CGRect bounds, CGPoint point);
 void WKMeasureMediaUIPart(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
 void WKDrawMediaUIPart(int part, int themeStyle, CGContextRef context, CGRect rect, unsigned state);
 void WKDrawMediaSliderTrack(int themeStyle, CGContextRef context, CGRect rect, float timeLoaded, float currentTime, float duration, unsigned state);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // WebKitSystemInterface_h

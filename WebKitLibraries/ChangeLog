@@ -1,5 +1,15 @@
 2010-10-14  Ada Chan  <adachan@apple.com>
 
+        Rubber-stamped by Adam Roben.
+
+        Fix Windows build.
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+
+2010-10-14  Ada Chan  <adachan@apple.com>
+
         Reviewed by Steve Falkenburg.
 
         Add wkGetSSLCertificateChainContext for fetching the certificate chain.
