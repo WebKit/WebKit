@@ -27,7 +27,6 @@
 #define PlatformBridge_h
 
 #include "KURL.h"
-#include "npapi.h"
 #include "PlatformString.h"
 
 #include <wtf/Vector.h>
@@ -77,7 +76,9 @@
    static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
 
 
-class NPObject;
+typedef struct NPObject NPObject;
+typedef struct _NPP NPP_t;
+typedef NPP_t* NPP;
 
 namespace WebCore {
 
