@@ -114,8 +114,6 @@ namespace WebCore {
         String requestFormData() const { return m_requestFormData; }
 
         void startTiming();
-        void markLoadEventTime();
-        void markDOMContentEventTime();
         void endTiming(double actualEndTime);
 
         void markFailed();
@@ -183,8 +181,6 @@ namespace WebCore {
         double m_startTime;
         double m_responseReceivedTime;
         double m_endTime;
-        double m_loadEventTime;
-        double m_domContentEventTime;
         unsigned m_connectionID;
         bool m_connectionReused;
         RefPtr<ResourceLoadTiming> m_loadTiming;

@@ -355,6 +355,8 @@ private:
     ResourcesMap m_resources;
     HashSet<String> m_knownResources;
     FrameResourcesMap m_frameResources;
+    double m_loadEventTime;
+    double m_domContentEventTime;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;
     unsigned m_expiredConsoleMessageCount;
     HashMap<String, double> m_times;

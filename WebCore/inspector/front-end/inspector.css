@@ -2769,7 +2769,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
 .resources-event-dividers {
     position: absolute;
     left: 0;
-    right: 0;
+    right: 5px;
     height: 100%;
     top: 0;
     z-index: 300;

@@ -1292,29 +1292,27 @@ WebInspector.updateResource = function(payload)
             resource.responseReceivedTime = payload.responseReceivedTime;
         if (payload.endTime)
             resource.endTime = payload.endTime;
-
-        if (payload.loadEventTime) {
-            // This loadEventTime is for the main resource, and we want to show it
-            // for all resources on this page. This means we want to set it as a member
-            // of the resources panel instead of the individual resource.
-            this.panels.resources.mainResourceLoadTime = payload.loadEventTime;
-            this.panels.audits.mainResourceLoadTime = payload.loadEventTime;
-            if (this.panels.network)
-                this.panels.network.mainResourceLoadTime = payload.loadEventTime;
-        }
-
-        if (payload.domContentEventTime) {
-            // This domContentEventTime is for the main resource, so it should go in
-            // the resources panel for the same reasons as above.
-            this.panels.resources.mainResourceDOMContentTime = payload.domContentEventTime;
-            this.panels.audits.mainResourceDOMContentTime = payload.domContentEventTime;
-            if (this.panels.network)
-                this.panels.network.mainResourceDOMContentTime = payload.domContentEventTime;
-        }
     }
 
     if (this.panels.network)
         this.panels.network.refreshResource(resource);
+}
+
+
+WebInspector.domContentEventFired = function(time)
+{
+    this.panels.resources.mainResourceDOMContentTime = time;
+    this.panels.audits.mainResourceDOMContentTime = time;
+    if (this.panels.network)
+        this.panels.network.mainResourceDOMContentTime = time;
+}
+
+WebInspector.loadEventFired = function(time)
+{
+    this.panels.resources.mainResourceLoadTime = time;
+    this.panels.audits.mainResourceLoadTime = time;
+    if (this.panels.network)
+        this.panels.network.mainResourceLoadTime = time;
 }
 
 WebInspector.removeResource = function(identifier)

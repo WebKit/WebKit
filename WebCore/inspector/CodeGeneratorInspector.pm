@@ -114,6 +114,14 @@ $typeTransform{"unsigned int"} = {
     "header" => "",
     "JSONType" => "Number"
 };
+$typeTransform{"double"} = {
+    "param" => "double",
+    "variable" => "double",
+    "defaultValue" => "0.0",
+    "forward" => "",
+    "header" => "",
+    "JSONType" => "Number"
+};
 $typeTransform{"boolean"} = {
     "param" => "bool",
     "variable"=> "bool",
