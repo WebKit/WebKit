@@ -51,6 +51,19 @@ void PluginInfoStore::refresh()
     m_pluginListIsUpToDate = false;
 }
 
+template <typename T, typename U, typename V, typename W>
+static void addFromVector(HashSet<T, U, V>& hashSet, const W& vector)
+{
+    for (size_t i = 0; i < vector.size(); ++i)
+        hashSet.add(vector[i]);
+}
+
+#if OS(WINDOWS)
+typedef HashSet<String, CaseFoldingHash> PathHashSet;
+#else
+typedef HashSet<String> PathHashSet;
+#endif
+
 void PluginInfoStore::loadPluginsIfNecessary()
 {
     if (m_pluginListIsUpToDate)
@@ -58,28 +71,25 @@ void PluginInfoStore::loadPluginsIfNecessary()
 
     m_plugins.clear();
 
+    PathHashSet uniquePluginPaths;
+
     // First, load plug-ins from the additional plug-ins directories specified.
     for (size_t i = 0; i < m_additionalPluginsDirectories.size(); ++i)
-        loadPluginsInDirectory(m_additionalPluginsDirectories[i]);
+        addFromVector(uniquePluginPaths, pluginPathsInDirectory(m_additionalPluginsDirectories[i]));
 
     // Then load plug-ins from the standard plug-ins directories.
     Vector<String> directories = pluginsDirectories();
     for (size_t i = 0; i < directories.size(); ++i)
-        loadPluginsInDirectory(directories[i]);
+        addFromVector(uniquePluginPaths, pluginPathsInDirectory(directories[i]));
 
     // Then load plug-ins that are not in the standard plug-ins directories.
-    Vector<String> paths = individualPluginPaths();
-    for (size_t i = 0; i < paths.size(); ++i)
-        loadPlugin(paths[i]);
+    addFromVector(uniquePluginPaths, individualPluginPaths());
+
+    PathHashSet::const_iterator end = uniquePluginPaths.end();
+    for (PathHashSet::const_iterator it = uniquePluginPaths.begin(); it != end; ++it)
+        loadPlugin(*it);
 
     m_pluginListIsUpToDate = true;
-}
-
-void PluginInfoStore::loadPluginsInDirectory(const String& directory)
-{
-    Vector<String> pluginPaths = pluginPathsInDirectory(directory);
-    for (size_t i = 0; i < pluginPaths.size(); ++i)
-        loadPlugin(pluginPaths[i]);
 }
 
 void PluginInfoStore::loadPlugin(const String& pluginPath)

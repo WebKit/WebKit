@@ -68,7 +68,6 @@ private:
     Plugin findPluginForExtension(const String& extension, String& mimeType);
 
     void loadPluginsIfNecessary();
-    void loadPluginsInDirectory(const String& directory);
     void loadPlugin(const String& pluginPath);
     
     // Platform-specific member functions

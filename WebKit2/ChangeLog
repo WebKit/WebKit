@@ -1,5 +1,31 @@
 2010-10-14  Adam Roben  <aroben@apple.com>
 
+        Make sure WebKit2 only loads each plugin once
+
+        Fixes <http://webkit.org/b/47677> <rdar://problem/8552178> WebKit2 can
+        load the same plugin multiple times
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::addFromVector): Helper function that adds all the elements
+        from a Vector to a HashSet.
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary): Put all the plugin
+        paths into a HashSet, then load the plugins specified in the HashSet.
+        On Windows, the HashSet is case-insensitive, just like the file
+        system.
+
+        * UIProcess/Plugins/PluginInfoStore.h: Removed loadPluginsInDirectory,
+        which is no longer used.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::addPluginPathsFromRegistry):
+        (WebKit::PluginInfoStore::individualPluginPaths):
+        Changed to store the paths in a Vector instead of a HashSet now that
+        loadPluginsIfNecessary will handle duplicates for us.
+
+2010-10-14  Adam Roben  <aroben@apple.com>
+
         Load plugins that are specified in the MozillaPlugins registry key
 
         Fixes <http://webkit.org/b/44271> <rdar://problem/8329750> WebKit2
