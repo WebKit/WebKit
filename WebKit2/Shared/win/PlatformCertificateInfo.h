@@ -26,6 +26,8 @@
 #ifndef PlatformCertificateInfo_h
 #define PlatformCertificateInfo_h
 
+#include <wtf/Vector.h>
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class ArgumentEncoder;
@@ -46,13 +48,15 @@ public:
     PlatformCertificateInfo(const PlatformCertificateInfo&);
     PlatformCertificateInfo& operator=(const PlatformCertificateInfo&);
 
-    PCCERT_CONTEXT certificateContext() const { return m_certificateContext; }
+    const Vector<PCCERT_CONTEXT>& certificateChain() const { return m_certificateChain; }
 
     void encode(CoreIPC::ArgumentEncoder* encoder) const;
     static bool decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& t);
 
 private:
-    PCCERT_CONTEXT m_certificateContext;
+    void clearCertificateChain();
+
+    Vector<PCCERT_CONTEXT> m_certificateChain;
 };
 
 } // namespace WebKit

@@ -1,3 +1,26 @@
+2010-10-14  Ada Chan  <adachan@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2: Store the certificate chain in PlatformCertificateInfo.
+        https://bugs.webkit.org/show_bug.cgi?id=47603
+
+        * Shared/API/c/win/WKCertificateInfoWin.cpp:
+        (WKCertificateInfoGetCertificateChainLength):
+        (WKCertificateInfoGetCertificateContextAtIndex):
+        * Shared/API/c/win/WKCertificateInfoWin.h:
+        * Shared/win/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::PlatformCertificateInfo): Get the chain context from the response and duplicate the certificate contexts
+        in the chain to store in m_certificateChain.
+        (WebKit::PlatformCertificateInfo::~PlatformCertificateInfo): Free all the certificate contexts in the chain.
+        (WebKit::PlatformCertificateInfo::operator=): Duplicate the certificate contexts from the other PlatformCertificateInfo's certificate chain
+        to store in m_certificateChain.
+        (WebKit::PlatformCertificateInfo::encode):
+        (WebKit::PlatformCertificateInfo::decode):
+        (WebKit::PlatformCertificateInfo::clearCertificateChain): Free all the certificate contexts in the chain and clear the vector.
+        * Shared/win/PlatformCertificateInfo.h:
+        (WebKit::PlatformCertificateInfo::certificateChain):
+
 2010-10-14  Adam Roben  <aroben@apple.com>
 
         Make sure WebKit2 only loads each plugin once

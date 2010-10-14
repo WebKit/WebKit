@@ -38,12 +38,10 @@ using namespace WebCore;
 namespace WebKit {
 
 PlatformCertificateInfo::PlatformCertificateInfo()
-    : m_certificateContext(0)
 {
 }
 
 PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& response)
-    : m_certificateContext(0)
 {
     CFURLResponseRef cfResponse = response.cfURLResponse();
     if (!cfResponse)
@@ -54,11 +52,21 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& respons
     if (!certificateInfo)
         return;
 
-    void* data = wkGetSSLPeerCertificateData(certificateInfo);
+    void* data = wkGetSSLCertificateChainContext(certificateInfo);
     if (!data)
         return;
 
-    m_certificateContext = ::CertDuplicateCertificateContext(static_cast<PCCERT_CONTEXT>(data));
+    PCCERT_CHAIN_CONTEXT chainContext = static_cast<PCCERT_CHAIN_CONTEXT>(data);
+    if (chainContext->cChain < 1)
+        return;
+
+    // The first simple chain starts with the leaf certificate and ends with a trusted root or self-signed certificate.
+    PCERT_SIMPLE_CHAIN firstSimpleChain = chainContext->rgpChain[0];
+    for (unsigned i = 0; i < firstSimpleChain->cElement; ++i) {
+        PCCERT_CONTEXT certificateContext = firstSimpleChain->rgpElement[i]->pCertContext;
+        ::CertDuplicateCertificateContext(certificateContext);
+        m_certificateChain.append(certificateContext);
+    }
 #else
     // FIXME: WinCairo implementation
 #endif
@@ -66,56 +74,77 @@ PlatformCertificateInfo::PlatformCertificateInfo(const ResourceResponse& respons
 
 PlatformCertificateInfo::~PlatformCertificateInfo()
 {
-    if (m_certificateContext)
-        ::CertFreeCertificateContext(m_certificateContext);
+    clearCertificateChain();
 }
 
 PlatformCertificateInfo::PlatformCertificateInfo(const PlatformCertificateInfo& other)
-    : m_certificateContext(::CertDuplicateCertificateContext(other.m_certificateContext))
 {
+    for (size_t i = 0; i < other.m_certificateChain.size(); ++i) {
+        ::CertDuplicateCertificateContext(other.m_certificateChain[i]);
+        m_certificateChain.append(other.m_certificateChain[i]);
+    }
 }
 
 PlatformCertificateInfo& PlatformCertificateInfo::operator=(const PlatformCertificateInfo& other)
 {
-    ::CertDuplicateCertificateContext(other.m_certificateContext);
-    if (m_certificateContext)
-        ::CertFreeCertificateContext(m_certificateContext);
-    m_certificateContext = other.m_certificateContext;
+    clearCertificateChain();
+    for (size_t i = 0; i < other.m_certificateChain.size(); ++i) {
+        ::CertDuplicateCertificateContext(other.m_certificateChain[i]);
+        m_certificateChain.append(other.m_certificateChain[i]);
+    }
     return *this;
 }
 
 void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    // FIXME: We should encode the no certificate context case in the
-    // number of the bytes.
-    if (!m_certificateContext) {
-        encoder->encodeBool(true);
+    // Special case no certificates
+    if (m_certificateChain.isEmpty()) {
+        encoder->encodeUInt64(std::numeric_limits<uint64_t>::max());
         return;
     }
 
-    encoder->encodeBool(false);
-    encoder->encodeBytes(static_cast<uint8_t*>(m_certificateContext->pbCertEncoded), m_certificateContext->cbCertEncoded);
+    uint64_t length = m_certificateChain.size();
+    encoder->encodeUInt64(length);
+
+    for (size_t i = 0; i < length; ++i)
+        encoder->encodeBytes(static_cast<uint8_t*>(m_certificateChain[i]->pbCertEncoded), m_certificateChain[i]->cbCertEncoded);
 }
 
 bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& c)
 {
-    bool noCertificate;
-    if (!decoder->decode(noCertificate))
+    uint64_t length;
+    if (!decoder->decode(length))
         return false;
 
-    if (noCertificate)
+    if (length == std::numeric_limits<uint64_t>::max()) {
+        // This is the no certificates case.
         return true;
+    }
 
-    Vector<uint8_t> bytes;
-    if (!decoder->decodeBytes(bytes))
-        return false;
+    for (size_t i = 0; i < length; ++i) {
+        Vector<uint8_t> bytes;
+        if (!decoder->decodeBytes(bytes)) {
+            c.clearCertificateChain();
+            return false;
+        }
 
-    PCCERT_CONTEXT certificateContext = ::CertCreateCertificateContext(PKCS_7_ASN_ENCODING | X509_ASN_ENCODING, bytes.data(), bytes.size());
-    if (!certificateContext)
-        return false;
+        PCCERT_CONTEXT certificateContext = ::CertCreateCertificateContext(PKCS_7_ASN_ENCODING | X509_ASN_ENCODING, bytes.data(), bytes.size());
+        if (!certificateContext) {
+            c.clearCertificateChain();
+            return false;
+        }
+        
+        c.m_certificateChain.append(certificateContext);
+    }
 
-    c.m_certificateContext = certificateContext;
     return true;
+}
+
+void PlatformCertificateInfo::clearCertificateChain()
+{
+    for (size_t i = 0; i < m_certificateChain.size(); ++i)
+        ::CertFreeCertificateContext(m_certificateChain[i]);
+    m_certificateChain.clear();
 }
 
 } // namespace WebKit
