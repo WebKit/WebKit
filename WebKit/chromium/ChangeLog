@@ -1,3 +1,13 @@
+2010-10-13  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [Chromium] Enable FILE_SYSTEM by default for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=47639
+
+        * features.gypi: Add FILE_SYSTEM=1. Also remove FILE_READER=1
+        as it seems to be not used anymore.
+
 2010-10-13  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Nate Chapin.
