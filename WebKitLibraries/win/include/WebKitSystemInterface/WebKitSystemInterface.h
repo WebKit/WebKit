@@ -72,6 +72,7 @@ void wkDrawFocusRing(CGContextRef, CGColorRef, float radius);
 
 CFDictionaryRef wkGetSSLCertificateInfo(CFURLResponseRef);
 void* wkGetSSLPeerCertificateData(CFDictionaryRef);
+void* wkGetSSLCertificateChainContext(CFDictionaryRef);
 CFHTTPCookieStorageRef wkGetDefaultHTTPCookieStorage();
 void wkSetCFURLRequestShouldContentSniff(CFMutableURLRequestRef, bool);
 CFStringRef wkCopyFoundationCacheDirectory();
