@@ -495,6 +495,13 @@ public:
 
         int matchBegin = output[(term.atom.subpatternId << 1)];
         int matchEnd = output[(term.atom.subpatternId << 1) + 1];
+
+        // If the end position of the referenced match hasn't set yet then the backreference in the same parentheses where it references to that.
+        // In this case the result of match is empty string like when it references to a parentheses with zero-width match.
+        // Eg.: /(a\1)/
+        if (matchEnd == -1)
+            return true;
+
         ASSERT((matchBegin == -1) == (matchEnd == -1));
         ASSERT(matchBegin <= matchEnd);
 

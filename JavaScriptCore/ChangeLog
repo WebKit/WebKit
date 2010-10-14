@@ -1,3 +1,16 @@
+2010-10-14  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        The backreference checking isn't working in some cases with YARR Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=46904
+
+        The Interpreter::matchBackReference() function returns true without matching
+        when a backreference points to the same parentheses where it is.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchBackReference):
+
 2010-10-14  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Andreas Kling.
