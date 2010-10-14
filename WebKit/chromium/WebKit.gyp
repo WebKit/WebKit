@@ -982,6 +982,37 @@
                         'files': ['<(PRODUCT_DIR)/osmesa.so'],
                     }],
                 },
+                {
+                    'target_name': 'TestNetscapePlugIn',
+                    'type': 'loadable_module',
+                    'sources': [ '<@(test_plugin_files)' ],
+                    'dependencies': [
+                        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+                    ],
+                    'include_dirs': [
+                        '.',
+                        '../../WebKitTools/DumpRenderTree/TestNetscapePlugIn',
+                        '../../WebKitTools/DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders',
+                    ],
+
+                    # Mac specific stuff.
+                    'mac_bundle': 1,
+                    # It would be nice to name this TestNetscapePlugIn, but
+                    # that name is already used by the fork of this plugin in
+                    # Chromium.
+                    'product_name': 'WebKitTestNetscapePlugIn',
+                    'product_extension': 'plugin',
+                    'link_settings': {
+                        'libraries': [
+                            '$(SDKROOT)/System/Library/Frameworks/Carbon.framework',
+                            '$(SDKROOT)/System/Library/Frameworks/Cocoa.framework',
+                            '$(SDKROOT)/System/Library/Frameworks/QuartzCore.framework',
+                        ]
+                    },
+                    'xcode_settings': {
+                        'INFOPLIST_FILE': '../../WebKitTools/DumpRenderTree/TestNetscapePlugIn/mac/Info.plist',
+                    }
+                }
             ],
         }],
     ], # conditions

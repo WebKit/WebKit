@@ -44,6 +44,20 @@
             'chromium/WebViewHost.cpp',
             'chromium/WebViewHost.h',
         ],
+        'test_plugin_files': [
+            'TestNetscapePlugIn/PluginObject.cpp',
+            'TestNetscapePlugIn/PluginObject.h',
+            'TestNetscapePlugIn/PluginObjectMac.mm',
+            'TestNetscapePlugIn/PluginTest.cpp',
+            'TestNetscapePlugIn/PluginTest.h',
+            'TestNetscapePlugIn/TestObject.cpp',
+            'TestNetscapePlugIn/TestObject.h',
+            'TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp',
+            'TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp',
+            'TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp',
+            'TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp',
+            'TestNetscapePlugIn/main.cpp',
+        ],
         'conditions': [
             ['OS=="win"', {
                 'drt_files': [
