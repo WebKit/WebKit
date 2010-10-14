@@ -1,3 +1,15 @@
+2010-10-14  David Goodwin  <david_goodwin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        need way to measure size of JITed ARM code
+        https://bugs.webkit.org/show_bug.cgi?id=47121
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::linkCode):
+        (JSC::LinkBuffer::dumpLinkStats):
+        (JSC::LinkBuffer::dumpCode):
+
 2010-10-14  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.

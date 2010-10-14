@@ -28,6 +28,9 @@
 
 #if ENABLE(ASSEMBLER)
 
+#define DUMP_LINK_STATISTICS 0
+#define DUMP_CODE 0
+
 #include <MacroAssembler.h>
 #include <wtf/Noncopyable.h>
 
@@ -263,6 +266,13 @@ private:
         jumpsToLink.clear();
         m_size = writePtr + m_assembler->size() - readPtr;
         m_executablePool->returnLastBytes(initialSize - m_size);
+
+#if DUMP_LINK_STATISTICS
+        dumpLinkStatistics(m_code, initialSize, m_size);
+#endif
+#if DUMP_CODE
+        dumpCode(m_code, m_size);
+#endif
 #endif
     }
 
@@ -277,6 +287,53 @@ private:
         ExecutableAllocator::cacheFlush(code(), m_size);
     }
 
+#if DUMP_LINK_STATISTICS
+    static void dumpLinkStatistics(void* code, size_t initialSize, size_t finalSize)
+    {
+        static unsigned linkCount = 0;
+        static unsigned totalInitialSize = 0;
+        static unsigned totalFinalSize = 0;
+        linkCount++;
+        totalInitialSize += initialSize;
+        totalFinalSize += finalSize;
+        printf("link %p: orig %u, compact %u (delta %u, %.2f%%)\n", 
+               code, static_cast<unsigned>(initialSize), static_cast<unsigned>(finalSize),
+               static_cast<unsigned>(initialSize - finalSize),
+               100.0 * (initialSize - finalSize) / initialSize);
+        printf("\ttotal %u: orig %u, compact %u (delta %u, %.2f%%)\n", 
+               linkCount, totalInitialSize, totalFinalSize, totalInitialSize - totalFinalSize,
+               100.0 * (totalInitialSize - totalFinalSize) / totalInitialSize);
+    }
+#endif
+    
+#if DUMP_CODE
+    static void dumpCode(void* code, size_t size)
+    {
+#if CPU(ARM_THUMB2)
+        // Dump the generated code in an asm file format that can be assembled and then disassembled
+        // for debugging purposes. For example, save this output as jit.s:
+        //   gcc -arch armv7 -c jit.s
+        //   otool -tv jit.o
+        static unsigned codeCount = 0;
+        unsigned short* tcode = static_cast<unsigned short*>(code);
+        size_t tsize = size / sizeof(short);
+        char nameBuf[128];
+        snprintf(nameBuf, sizeof(nameBuf), "_jsc_jit%u", codeCount++);
+        printf("\t.syntax unified\n"
+               "\t.section\t__TEXT,__text,regular,pure_instructions\n"
+               "\t.globl\t%s\n"
+               "\t.align 2\n"
+               "\t.code 16\n"
+               "\t.thumb_func\t%s\n"
+               "# %p\n"
+               "%s:\n", nameBuf, nameBuf, code, nameBuf);
+        
+        for (unsigned i = 0; i < tsize; i++)
+            printf("\t.short\t0x%x\n", tcode[i]);
+#endif
+    }
+#endif
+    
     RefPtr<ExecutablePool> m_executablePool;
     size_t m_size;
     void* m_code;
