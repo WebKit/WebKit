@@ -266,9 +266,9 @@ webkit_soup_cache_entry_get_current_age (WebKitSoupCacheEntry *entry)
 }
 
 static gboolean
-webkit_soup_cache_entry_is_fresh_enough (WebKitSoupCacheEntry *entry, int min_fresh)
+webkit_soup_cache_entry_is_fresh_enough (WebKitSoupCacheEntry *entry, gint min_fresh)
 {
-	unsigned limit = (min_fresh == -1) ? webkit_soup_cache_entry_get_current_age (entry) : min_fresh;
+	guint limit = (min_fresh == -1) ? webkit_soup_cache_entry_get_current_age (entry) : (guint) min_fresh;
 	return entry->freshness_lifetime > limit;
 }
 
@@ -1344,7 +1344,7 @@ webkit_soup_cache_has_response (WebKitSoupCache *cache, SoupMessage *msg)
 			/* If we are over max-age and max-stale is not
 			   set, do not use the value from the cache
 			   without validation */
-			if (max_age <= current_age && max_stale == -1)
+			if ((guint) max_age <= current_age && max_stale == -1)
 				return WEBKIT_SOUP_CACHE_RESPONSE_NEEDS_VALIDATION;
 		}
 	}
@@ -1363,7 +1363,7 @@ webkit_soup_cache_has_response (WebKitSoupCache *cache, SoupMessage *msg)
 			if (max_stale == G_MAXINT32)
 				return WEBKIT_SOUP_CACHE_RESPONSE_FRESH;
 
-			if ((webkit_soup_cache_entry_get_current_age (entry) - entry->freshness_lifetime) <= max_stale)
+			if ((webkit_soup_cache_entry_get_current_age (entry) - entry->freshness_lifetime) <= (guint) max_stale)
 				return WEBKIT_SOUP_CACHE_RESPONSE_FRESH;
 		}
 

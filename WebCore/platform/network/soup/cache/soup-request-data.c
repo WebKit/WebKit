@@ -79,7 +79,7 @@ webkit_soup_request_data_send (WebKitSoupRequest   *request,
 		semi = memchr (uristr, ';', comma - uristr);
 		end = semi ? semi : comma;
 
-		if (semi && !g_ascii_strncasecmp (semi, ";base64", MAX (comma - semi, strlen (";base64"))))
+		if (semi && !g_ascii_strncasecmp (semi, ";base64", MAX ((size_t) (comma - semi), strlen (";base64"))))
 			base64 = TRUE;
 
 		if (end != uristr)

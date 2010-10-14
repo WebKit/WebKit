@@ -109,7 +109,7 @@ webkit_soup_directory_input_stream_read (GInputStream  *input,
 					 GError       **error)
 {
 	WebKitSoupDirectoryInputStream *stream = WEBKIT_SOUP_DIRECTORY_INPUT_STREAM (input);
-	gssize total, size;
+	gsize total, size;
 
 	for (total = 0; total < count; total += size) {
 		if (stream->buffer == NULL) {
