@@ -221,6 +221,10 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
     return [m_wkView _convertToUserSpace:rect];
 }
 
+void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
+{
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 void PageClientImpl::pageDidEnterAcceleratedCompositing()
 {

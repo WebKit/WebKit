@@ -405,6 +405,10 @@
 				RelativePath=".\PlatformWebViewWin.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\WindowMessageObserver.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Tests"
@@ -460,6 +464,14 @@
 					RelativePath="..\Tests\WebKit2\WKStringJSString.cpp"
 					>
 				</File>
+				<Filter
+					Name="win"
+					>
+					<File
+						RelativePath="..\Tests\WebKit2\win\AltKeyGeneratesWMSysCommand.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="WTF"

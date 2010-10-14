@@ -23,63 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformWebView_h
-#define PlatformWebView_h
-
-#include <wtf/Platform.h>
-
-#ifdef __APPLE__
-#ifdef __OBJC__
-@class WKView;
-@class NSWindow;
-#else
-class WKView;
-class NSWindow;
-#endif
-typedef WKView *PlatformWKView;
-typedef NSWindow *PlatformWindow;
-#elif defined(WIN32) || defined(_WIN32)
-typedef WKViewRef PlatformWKView;
-typedef HWND PlatformWindow;
-#endif
+#ifndef WindowMessageObserver_h
+#define WindowMessageObserver_h
 
 namespace TestWebKitAPI {
 
-#if PLATFORM(WIN)
-class WindowMessageObserver;
-#endif
-
-class PlatformWebView {
+class WindowMessageObserver {
 public:
-    PlatformWebView(WKPageNamespaceRef);
-    ~PlatformWebView();
+    virtual void windowReceivedMessage(HWND, UINT message, WPARAM, LPARAM) = 0;
 
-    WKPageRef page();
-    PlatformWKView platformView() const { return m_view; }
-    void resizeTo(unsigned width, unsigned height);
-    void focus();
-
-    void simulateSpacebarKeyPress();
-    void simulateAltKeyPress();
-
-#if PLATFORM(WIN)
-    void setParentWindowMessageObserver(WindowMessageObserver* observer) { m_parentWindowMessageObserver = observer; }
-#endif
-
-private:
-#if PLATFORM(WIN)
-    static void registerWindowClass();
-    static LRESULT CALLBACK wndProc(HWND, UINT message, WPARAM, LPARAM);
-#endif
-
-    PlatformWKView m_view;
-    PlatformWindow m_window;
-
-#if PLATFORM(WIN)
-    WindowMessageObserver* m_parentWindowMessageObserver;
-#endif
+protected:
+    virtual ~WindowMessageObserver() { }
 };
 
 } // namespace TestWebKitAPI
 
-#endif // PlatformWebView_h
+#endif // WindowMessageObserver_h

@@ -1,3 +1,63 @@
+2010-10-14  Adam Roben  <aroben@apple.com>
+
+        Test that pressing the Alt key generates a WM_SYSCOMMAND message
+
+        Test for <http://webkit.org/b/47671> <rdar://problem/8435594> Pressing
+        the Alt key when MiniBrowser's WKView is focused doesn't send focus to
+        the menu bar
+
+        Reviewed by Steve Falkenburg.
+
+        * TestWebKitAPI/Configurations/TestWebKitAPICommon.vsprops: Added
+        TestWebKitAPI/win to the include path so that WindowMessageObserver
+        can be found.
+
+        * TestWebKitAPI/PlatformWebView.h: Added simulateAltKeyPress and
+        Windows-specific members.
+        (TestWebKitAPI::PlatformWebView::setParentWindowMessageObserver):
+        Added this simple setter.
+
+        * TestWebKitAPI/Tests/WebKit2/win/AltKeyGeneratesWMSysCommand.cpp: Added.
+        (TestWebKitAPI::WMSysCommandObserver::WMSysCommandObserver):
+        Initialize our lone data member.
+        (TestWebKitAPI::WMSysCommandObserver::windowDidReceiveWMSysCommand):
+        Simple getter.
+        (TestWebKitAPI::WMSysCommandObserver::windowReceivedMessage): Record
+        when a WM_SYSCOMMAND message is received.
+        (TestWebKitAPI::didNotHandleKeyEventCallback): Record when a
+        WM_SYSKEYUP message is not handled.
+        (TestWebKitAPI::WebKit2_AltKeyGeneratesWMSysCommand): Simulate
+        pressing the Alt key and check that a WM_SYSCOMMAND message got sent
+        to the WKView's parent window.
+
+        * TestWebKitAPI/win/PlatformWebViewWin.cpp:
+        (TestWebKitAPI::PlatformWebView::registerWindowClass): Made this a
+        member function so it could access PlatformWebView::wndProc. Use
+        PlatformWebView::wndProc as the WNDPROC.
+        (TestWebKitAPI::PlatformWebView::PlatformWebView): Initialize our new
+        data member and pass the this pointer to CreateWindowEx so we can
+        store it on the HWND.
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress): Moved some
+        constants from here to the top of the file.
+        (TestWebKitAPI::PlatformWebView::simulateAltKeyPress): Added. Sends
+        the same messages that Notepad receives when you press the Alt key.
+        (TestWebKitAPI::PlatformWebView::wndProc): Added.
+          - When WM_CREATE is received, we set the PlatformWebView instance
+            pointer as a property on the HWND so we can access it later.
+          - For other messages, we try to get the PlatformWebView instance
+            pointer from the HWND property.
+          - When WM_NCDESTROY is received (which is the last message we will
+            receive), we remove the PlatformWebView instance property.
+          - Pass messages to the parent window's message observer, if there is
+            one.
+          - Pass all messages through to ::DefWindowProcW.
+
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added WindowMessageObserver
+        and AltKeyGeneratesWMSysCommand.
+
+        * TestWebKitAPI/win/WindowMessageObserver.h: Added. This class can be
+        used to observe messages sent to one or more windows.
+
 2010-10-01  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Holger Freyther.

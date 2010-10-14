@@ -1033,6 +1033,7 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     if (handled)
         return;
 
+    m_pageClient->didNotHandleKeyEvent(event);
     m_uiClient.didNotHandleKeyEvent(this, event);
 }
 

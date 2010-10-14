@@ -60,6 +60,8 @@ private:
     WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
 
+    virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
+
 #if USE(ACCELERATED_COMPOSITING)
     void pageDidEnterAcceleratedCompositing();
     void pageDidLeaveAcceleratedCompositing();

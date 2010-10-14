@@ -58,6 +58,7 @@ public:
     virtual void clearAllEditCommands();
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
+    virtual void didNotHandleKeyEvent(const WebKit::NativeWebKeyboardEvent&);
 
     void paint(QPainter* painter, QRect);
 

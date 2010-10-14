@@ -337,6 +337,8 @@ LRESULT WebView::onKeyEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 {
     m_page->handleKeyboardEvent(NativeWebKeyboardEvent(hWnd, message, wParam, lParam));
 
+    // We claim here to always have handled the event. If the event is not in fact handled, we will
+    // find out later in didNotHandleKeyEvent.
     handled = true;
     return 0;
 }
@@ -597,6 +599,13 @@ FloatRect WebView::convertToDeviceSpace(const FloatRect& rect)
 FloatRect WebView::convertToUserSpace(const FloatRect& rect)
 {
     return rect;
+}
+
+void WebView::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
+{
+    // Calling ::DefWindowProcW will ensure that pressing the Alt key will generate a WM_SYSCOMMAND
+    // event, e.g. See <http://webkit.org/b/47671>.
+    ::DefWindowProcW(event.nativeEvent()->hwnd, event.nativeEvent()->message, event.nativeEvent()->wParam, event.nativeEvent()->lParam);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

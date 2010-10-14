@@ -1,3 +1,39 @@
+2010-10-14  Adam Roben  <aroben@apple.com>
+
+        Call ::DefWindowProcW for unhandled key events
+
+        ::DefWindowProcW does important things for at least some key events
+        (e.g., it generates a WM_SYSCOMMAND message when the Alt key is
+        released), so we need to make sure to call it when we don't handle key
+        events.
+
+        Fixes <http://webkit.org/b/47671> <rdar://problem/8435594> Pressing
+        the Alt key when MiniBrowser's WKView is focused doesn't send focus to
+        the menu bar
+
+        Reviewed by Steve Falkenburg.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didNotHandleKeyEvent):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::didNotHandleKeyEvent):
+        * UIProcess/API/qt/qwkpage_p.h:
+        Stubbed out didNotHandleKeyEvent.
+
+        * UIProcess/PageClient.h: Added didNotHandleKeyEvent.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveEvent): Tell the PageClient about the
+        unhandled event.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onKeyEvent): Added a comment.
+        (WebKit::WebView::didNotHandleKeyEvent): Pass the event to
+        ::DefWindowProcW.
+
+        * UIProcess/win/WebView.h: Added didNotHandleKeyEvent.
+
 2010-10-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.
