@@ -115,6 +115,10 @@ class ChromiumPort(base.Port):
             result = self.check_image_diff(
                 'To override, invoke with --no-pixel-tests') and result
 
+        # It's okay if pretty patch isn't available, but we will at
+        # least log a message.
+        self.check_pretty_patch()
+
         return result
 
     def check_sys_deps(self, needs_http):

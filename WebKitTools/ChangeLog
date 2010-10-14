@@ -1,3 +1,25 @@
+2010-10-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests will now handle missing Ruby installs (or
+        missing PrettyPatch scripts) more cleanly - previously this
+        would be detected when we actually tried to create the diff, and
+        the error message was obscure. Now we'll log a warning up front
+        and otherwise be silent.
+
+        This change also refactors some global variables to be class or
+        instance variables to be slightly more testable and more
+        modular. There are no cases where we create lots of port objects
+        and can't afford to test for configurations repeatedly, so
+        there's no performance concern here.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47466
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2010-10-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
