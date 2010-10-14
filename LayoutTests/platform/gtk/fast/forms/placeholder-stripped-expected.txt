@@ -8,23 +8,23 @@ layer at (0,0) size 800x240
           text run at (0,0) width 715: "CR and LF in placeholder values should be stripped. The first input element and the first textarea element should have a"
           text run at (0,19) width 706: "placeholder \"first line second line\", and the second input element and the second textarea element should have nothing."
       RenderBlock (anonymous) at (0,54) size 784x162
-        RenderTextControl {INPUT} at (2,2) size 168x25 [bgcolor=#FFFFFF]
-        RenderBR {BR} at (172,5) size 0x19
-        RenderTextControl {INPUT} at (2,31) size 168x25 [bgcolor=#FFFFFF]
-        RenderBR {BR} at (172,34) size 0x19
-        RenderBR {BR} at (186,91) size 0x19
+        RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF]
+        RenderBR {BR} at (198,5) size 0x19
+        RenderTextControl {INPUT} at (2,31) size 194x25 [bgcolor=#FFFFFF]
+        RenderBR {BR} at (198,34) size 0x19
+        RenderBR {BR} at (206,91) size 0x19
         RenderText {#text} at (0,0) size 0x0
-layer at (13,75) size 162x19
-  RenderBlock {DIV} at (3,3) size 162x19 [color=#A9A9A9]
-    RenderText {#text} at (1,0) size 117x19
-      text run at (1,0) width 117: "first line second line"
-layer at (13,104) size 162x19
-  RenderBlock {DIV} at (3,3) size 162x19
-layer at (10,130) size 182x44 clip at (11,131) size 180x42
-  RenderTextControl {TEXTAREA} at (2,60) size 182x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 176x19 [color=#A9A9A9]
-      RenderText {#text} at (0,0) size 117x19
-        text run at (0,0) width 117: "first line second line"
-layer at (10,182) size 182x44 clip at (11,183) size 180x42
-  RenderTextControl {TEXTAREA} at (2,112) size 182x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 176x19
+layer at (13,75) size 188x19
+  RenderBlock {DIV} at (3,3) size 188x19 [color=#A9A9A9]
+    RenderText {#text} at (1,0) size 136x19
+      text run at (1,0) width 136: "first line second line"
+layer at (13,104) size 188x19
+  RenderBlock {DIV} at (3,3) size 188x19
+layer at (10,130) size 202x44 clip at (11,131) size 200x42
+  RenderTextControl {TEXTAREA} at (2,60) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 196x19 [color=#A9A9A9]
+      RenderText {#text} at (0,0) size 136x19
+        text run at (0,0) width 136: "first line second line"
+layer at (10,182) size 202x44 clip at (11,183) size 200x42
+  RenderTextControl {TEXTAREA} at (2,112) size 202x44 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 196x19

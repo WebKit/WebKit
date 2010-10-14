@@ -13,9 +13,9 @@ layer at (0,0) size 800x600
             text run at (0,5) width 63: "Start here."
         RenderText {#text} at (63,5) size 4x19
           text run at (63,5) width 4: " "
-        RenderTextControl {INPUT} at (69,2) size 168x25 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (69,2) size 194x25 [bgcolor=#FFFFFF]
       RenderBlock {UL} at (0,80) size 784x0
-layer at (80,48) size 162x19
-  RenderBlock {DIV} at (3,3) size 162x19
+layer at (80,48) size 188x19
+  RenderBlock {DIV} at (3,3) size 188x19
 selection start: position 5 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body
 selection end:   position 1 of child 1 {#text} of child 2 {DIV} of body

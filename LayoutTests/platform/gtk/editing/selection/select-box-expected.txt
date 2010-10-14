@@ -11,10 +11,10 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x29
           RenderText {#text} at (0,5) size 68x19
             text run at (0,5) width 68: "select box: "
-          RenderMenuList {SELECT} at (70,2) size 31x25 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (3,3) size 8x19
-              RenderText at (0,0) size 8x19
-                text run at (0,0) width 8: "1"
-          RenderText {#text} at (103,5) size 64x19
-            text run at (103,5) width 64: " the end ..."
+          RenderMenuList {SELECT} at (70,2) size 32x25 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (3,3) size 9x19
+              RenderText at (0,0) size 9x19
+                text run at (0,0) width 9: "1"
+          RenderText {#text} at (104,5) size 64x19
+            text run at (104,5) width 64: " the end ..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

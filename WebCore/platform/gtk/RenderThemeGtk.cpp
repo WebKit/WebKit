@@ -671,10 +671,46 @@ double RenderThemeGtk::caretBlinkInterval() const
     return time / 2000.;
 }
 
-void RenderThemeGtk::systemFont(int, FontDescription&) const
+static double getScreenDPI()
 {
-    // If you remove this notImplemented(), replace it with an comment that explains why.
-    notImplemented();
+    // FIXME: Really this should be the widget's screen.
+    GdkScreen* screen = gdk_screen_get_default();
+    if (!screen)
+        return 96; // Default to 96 DPI.
+
+    float dpi = gdk_screen_get_resolution(screen);
+    if (dpi <= 0)
+        return 96;
+    return dpi;
+}
+
+void RenderThemeGtk::systemFont(int, FontDescription& fontDescription) const
+{
+    GtkSettings* settings = gtk_settings_get_default();
+    if (!settings)
+        return;
+
+    // This will be a font selection string like "Sans 10" so we cannot use it as the family name.
+    GOwnPtr<gchar> fontName;
+    g_object_get(settings, "gtk-font-name", &fontName.outPtr(), NULL);
+
+    PangoFontDescription* pangoDescription = pango_font_description_from_string(fontName.get());
+    if (!pangoDescription)
+        return;
+
+    fontDescription.firstFamily().setFamily(pango_font_description_get_family(pangoDescription));
+
+    int size = pango_font_description_get_size(pangoDescription) / PANGO_SCALE;
+    // If the size of the font is in points, we need to convert it to pixels.
+    if (!pango_font_description_get_size_is_absolute(pangoDescription))
+        size = size * (getScreenDPI() / 72.0);
+
+    fontDescription.setSpecifiedSize(size);
+    fontDescription.setIsAbsoluteSize(true);
+    fontDescription.setGenericFamily(FontDescription::NoFamily);
+    fontDescription.setWeight(FontWeightNormal);
+    fontDescription.setItalic(false);
+    pango_font_description_free(pangoDescription);
 }
 
 Color RenderThemeGtk::systemColor(int cssValueId) const
