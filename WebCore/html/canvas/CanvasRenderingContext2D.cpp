@@ -249,7 +249,13 @@ void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
     if (state().m_strokeStyle && state().m_strokeStyle->isEquivalentColor(*style))
         return;
 
-    checkOrigin(style->canvasPattern());
+    if (style->isCurrentColor()) {
+        if (style->hasOverrideAlpha())
+            style = CanvasStyle::createFromRGBA(colorWithOverrideAlpha(currentColor(canvas()), style->overrideAlpha()));
+        else
+            style = CanvasStyle::createFromRGBA(currentColor(canvas()));
+    } else
+        checkOrigin(style->canvasPattern());
 
     state().m_strokeStyle = style;
     GraphicsContext* c = drawingContext();
@@ -272,7 +278,13 @@ void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
     if (state().m_fillStyle && state().m_fillStyle->isEquivalentColor(*style))
         return;
 
-    checkOrigin(style->canvasPattern());
+    if (style->isCurrentColor()) {
+        if (style->hasOverrideAlpha())
+            style = CanvasStyle::createFromRGBA(colorWithOverrideAlpha(currentColor(canvas()), style->overrideAlpha()));
+        else
+            style = CanvasStyle::createFromRGBA(currentColor(canvas()));
+    } else
+        checkOrigin(style->canvasPattern());
 
     state().m_fillStyle = style;
     GraphicsContext* c = drawingContext();
@@ -394,7 +406,7 @@ String CanvasRenderingContext2D::shadowColor() const
 
 void CanvasRenderingContext2D::setShadowColor(const String& color)
 {
-    if (!CSSParser::parseColor(state().m_shadowColor, color))
+    if (!parseColorOrCurrentColor(state().m_shadowColor, color, canvas()))
         return;
 
     applyShadow();
@@ -982,7 +994,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur)
 
 void CanvasRenderingContext2D::setShadow(float width, float height, float blur, const String& color)
 {
-    if (!CSSParser::parseColor(state().m_shadowColor, color))
+    if (!parseColorOrCurrentColor(state().m_shadowColor, color, canvas()))
         return;
 
     state().m_shadowOffset = FloatSize(width, height);
@@ -1007,7 +1019,7 @@ void CanvasRenderingContext2D::setShadow(float width, float height, float blur, 
 {
     RGBA32 rgba;
 
-    if (!CSSParser::parseColor(rgba, color))
+    if (!parseColorOrCurrentColor(rgba, color, canvas()))
         return;
 
     state().m_shadowColor = colorWithOverrideAlpha(rgba, alpha);

@@ -27,6 +27,8 @@
 #include "config.h"
 #include "CanvasGradient.h"
 
+#include "CanvasPattern.h"
+#include "CanvasStyle.h"
 #include "CSSParser.h"
 #include "ExceptionCode.h"
 
@@ -52,7 +54,7 @@ void CanvasGradient::addColorStop(float value, const String& color, ExceptionCod
     }
 
     RGBA32 rgba = 0;
-    if (!CSSParser::parseColor(rgba, color)) {
+    if (!parseColorOrCurrentColor(rgba, color, 0 /*canvas*/)) {
         if (!m_dashbardCompatibilityMode)
             ec = SYNTAX_ERR;
         return;

@@ -30,9 +30,11 @@
 #include "CanvasStyle.h"
 
 #include "CSSParser.h"
+#include "CSSPropertyNames.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "GraphicsContext.h"
+#include "HTMLCanvasElement.h"
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 
@@ -48,6 +50,46 @@
 #endif
 
 namespace WebCore {
+
+enum ColorParseResult { ParsedRGBA, ParsedCurrentColor, ParseFailed };
+
+static ColorParseResult parseColor(RGBA32& parsedColor, const String& colorString)
+{
+    if (equalIgnoringCase(colorString, "currentcolor"))
+        return ParsedCurrentColor;
+    if (CSSParser::parseColor(parsedColor, colorString))
+        return ParsedRGBA;
+    return ParseFailed;
+}
+
+RGBA32 currentColor(HTMLCanvasElement* canvas)
+{
+    if (!canvas || !canvas->inDocument())
+        return Color::black;
+    RGBA32 rgba = Color::black;
+    CSSParser::parseColor(rgba, canvas->style()->getPropertyValue(CSSPropertyColor));
+    return rgba;
+}
+
+bool parseColorOrCurrentColor(RGBA32& parsedColor, const String& colorString, HTMLCanvasElement* canvas)
+{
+    ColorParseResult parseResult = parseColor(parsedColor, colorString);
+    switch (parseResult) {
+    case ParsedRGBA:
+        return true;
+    case ParsedCurrentColor:
+        parsedColor = currentColor(canvas);
+        return true;
+    case ParseFailed:
+        return false;
+    }
+}
+
+CanvasStyle::CanvasStyle(Type type, float overrideAlpha)
+    : m_type(type)
+    , m_overrideAlpha(overrideAlpha)
+{
+}
 
 CanvasStyle::CanvasStyle(RGBA32 rgba)
     : m_type(RGBA)
@@ -89,17 +131,29 @@ CanvasStyle::CanvasStyle(PassRefPtr<CanvasPattern> pattern)
 PassRefPtr<CanvasStyle> CanvasStyle::createFromString(const String& color)
 {
     RGBA32 rgba;
-    if (!CSSParser::parseColor(rgba, color))
+    ColorParseResult parseResult = parseColor(rgba, color);
+    switch (parseResult) {
+    case ParsedRGBA:
+        return adoptRef(new CanvasStyle(rgba));
+    case ParsedCurrentColor:
+        return adoptRef(new CanvasStyle(CurrentColor));
+    case ParseFailed:
         return 0;
-    return adoptRef(new CanvasStyle(rgba));
+    }
 }
 
 PassRefPtr<CanvasStyle> CanvasStyle::createFromStringWithOverrideAlpha(const String& color, float alpha)
 {
     RGBA32 rgba;
-    if (!CSSParser::parseColor(rgba, color))
+    ColorParseResult parseResult = parseColor(rgba, color);
+    switch (parseResult) {
+    case ParsedRGBA:
+        return adoptRef(new CanvasStyle(colorWithOverrideAlpha(rgba, alpha)));
+    case ParsedCurrentColor:
+        return adoptRef(new CanvasStyle(CurrentColorWithOverrideAlpha, alpha));
+    case ParseFailed:
         return 0;
-    return adoptRef(new CanvasStyle(colorWithOverrideAlpha(rgba, alpha)));
+    }
 }
 
 PassRefPtr<CanvasStyle> CanvasStyle::createFromGradient(PassRefPtr<CanvasGradient> gradient)
@@ -121,16 +175,18 @@ bool CanvasStyle::isEquivalentColor(const CanvasStyle& other) const
         return false;
 
     switch (m_type) {
-    case CanvasStyle::RGBA:
+    case RGBA:
         return m_rgba == other.m_rgba;
-    case CanvasStyle::CMYKA:
+    case CMYKA:
         return m_cmyka.c == other.m_cmyka.c
             && m_cmyka.m == other.m_cmyka.m
             && m_cmyka.y == other.m_cmyka.y
             && m_cmyka.k == other.m_cmyka.k
             && m_cmyka.a == other.m_cmyka.a;
-    case CanvasStyle::Gradient:
-    case CanvasStyle::ImagePattern:
+    case Gradient:
+    case ImagePattern:
+    case CurrentColor:
+    case CurrentColorWithOverrideAlpha:
         return false;
     }
 
@@ -188,6 +244,10 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
     case ImagePattern:
         context->setStrokePattern(canvasPattern()->pattern());
         break;
+    case CurrentColor:
+    case CurrentColorWithOverrideAlpha:
+        ASSERT_NOT_REACHED();
+        break;
     }
 }
 
@@ -220,6 +280,10 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
         break;
     case ImagePattern:
         context->setFillPattern(canvasPattern()->pattern());
+        break;
+    case CurrentColor:
+    case CurrentColorWithOverrideAlpha:
+        ASSERT_NOT_REACHED();
         break;
     }
 }
