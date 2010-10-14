@@ -1,3 +1,18 @@
+2010-10-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        WebKitGtk+ to use the new API from the imported SoupURILoader code
+
+        [GTK] Add HTTP caching support
+        https://bugs.webkit.org/show_bug.cgi?id=44261
+
+        ResourceHandleInternal m_msg is now called m_soupMessage.
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_new_with_handle):
+        (webkit_download_start):
+
 2010-10-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.
