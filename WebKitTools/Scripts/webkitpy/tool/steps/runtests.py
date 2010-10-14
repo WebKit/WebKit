@@ -37,7 +37,6 @@ class RunTests(AbstractStep):
             Options.test,
             Options.non_interactive,
             Options.quiet,
-            Options.port,
         ]
 
     def run(self, state):

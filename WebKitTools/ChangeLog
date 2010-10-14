@@ -2,6 +2,24 @@
 
         Reviewed by Eric Seidel.
 
+        Make --port a global option and pass the port information to the commit-queue subprocess
+        https://bugs.webkit.org/show_bug.cgi?id=47650
+
+        This patch paves the way to run the commit-queue on a non-Mac port.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/steps/options.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/update.py:
+
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
         Introduce the ChromiumXVFBPort for running commit-queue on EC2
         https://bugs.webkit.org/show_bug.cgi?id=47653
 

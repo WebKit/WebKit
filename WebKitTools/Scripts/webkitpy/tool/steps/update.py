@@ -36,7 +36,6 @@ class Update(AbstractStep):
     def options(cls):
         return AbstractStep.options() + [
             Options.update,
-            Options.port,
         ]
 
     def run(self, state):

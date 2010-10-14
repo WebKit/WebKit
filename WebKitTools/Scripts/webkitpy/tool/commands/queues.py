@@ -80,6 +80,8 @@ class AbstractQueue(Command, QueueEngineDelegate):
         webkit_patch_args += ["--status-host=%s" % self._tool.status_server.host]
         if self._tool.status_server.bot_id:
             webkit_patch_args += ["--bot-id=%s" % self._tool.status_server.bot_id]
+        if self._options.port:
+            webkit_patch_args += ["--port=%s" % self._options.port]
         webkit_patch_args.extend(args)
         return self._tool.executive.run_and_throw_if_fail(webkit_patch_args)
 
@@ -96,7 +98,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     def begin_work_queue(self):
         log("CAUTION: %s will discard all local changes in \"%s\"" % (self.name, self._tool.scm().checkout_root))
-        if self.options.confirm:
+        if self._options.confirm:
             response = self._tool.user.prompt("Are you sure?  Type \"yes\" to continue: ")
             if (response != "yes"):
                 error("User declined.")
@@ -108,7 +110,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
 
     def should_continue_work_queue(self):
         self._iteration_count += 1
-        return not self.options.iterations or self._iteration_count <= self.options.iterations
+        return not self._options.iterations or self._iteration_count <= self._options.iterations
 
     def next_work_item(self):
         raise NotImplementedError, "subclasses must implement"
@@ -125,7 +127,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     # Command methods
 
     def execute(self, options, args, tool, engine=QueueEngine):
-        self.options = options  # FIXME: This code is wrong.  Command.options is a list, this assumes an Options element!
+        self._options = options # FIXME: This code is wrong.  Command.options is a list, this assumes an Options element!
         self._tool = tool  # FIXME: This code is wrong too!  Command.bind_to_tool handles this!
         return engine(self.name, self, self._tool.wakeup_event).run()
 

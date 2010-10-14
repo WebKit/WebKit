@@ -60,25 +60,31 @@ class AbstractQueueTest(CommandsTest):
     def test_log_directory(self):
         self.assertEquals(TestQueue()._log_directory(), "test-queue-logs")
 
-    def _assert_run_webkit_patch(self, run_args):
+    def _assert_run_webkit_patch(self, run_args, port=None):
         queue = TestQueue()
         tool = MockTool()
         tool.status_server.bot_id = "gort"
         tool.executive = Mock()
         queue.bind_to_tool(tool)
+        queue._options = Mock()
+        queue._options.port = port
 
         queue.run_webkit_patch(run_args)
-        expected_run_args = ["echo", "--status-host=example.com", "--bot-id=gort"] + run_args
+        expected_run_args = ["echo", "--status-host=example.com", "--bot-id=gort"]
+        if port:
+            expected_run_args.append("--port=%s" % port)
+        expected_run_args.extend(run_args)
         tool.executive.run_and_throw_if_fail.assert_called_with(expected_run_args)
 
     def test_run_webkit_patch(self):
         self._assert_run_webkit_patch([1])
         self._assert_run_webkit_patch(["one", 2])
+        self._assert_run_webkit_patch([1], port="mockport")
 
     def test_iteration_count(self):
         queue = TestQueue()
-        queue.options = Mock()
-        queue.options.iterations = 3
+        queue._options = Mock()
+        queue._options.iterations = 3
         self.assertTrue(queue.should_continue_work_queue())
         self.assertTrue(queue.should_continue_work_queue())
         self.assertTrue(queue.should_continue_work_queue())
@@ -86,7 +92,7 @@ class AbstractQueueTest(CommandsTest):
 
     def test_no_iteration_count(self):
         queue = TestQueue()
-        queue.options = Mock()
+        queue._options = Mock()
         self.assertTrue(queue.should_continue_work_queue())
         self.assertTrue(queue.should_continue_work_queue())
         self.assertTrue(queue.should_continue_work_queue())
@@ -140,6 +146,8 @@ class AbstractPatchQueueTest(CommandsTest):
         queue = AbstractPatchQueue()
         tool = MockTool()
         queue.bind_to_tool(tool)
+        queue._options = Mock()
+        queue._options.port = None
         self.assertEquals(queue._fetch_next_work_item(), None)
         tool.status_server = MockStatusServer(work_items=[2, 1, 3])
         self.assertEquals(queue._fetch_next_work_item(), 2)
@@ -150,6 +158,8 @@ class AbstractReviewQueueTest(CommandsTest):
         queue = TestReviewQueue()
         tool = MockTool()
         queue.bind_to_tool(tool)
+        queue._options = Mock()
+        queue._options.port = None
         self.assertEquals(queue.collection_name(), "test-review-queue")
         self.assertEquals(queue.fetch_potential_patch_ids(), [103])
         queue.status_server()
@@ -291,6 +301,8 @@ MOCK: update_status: commit-queue Pass
     def test_manual_reject_during_processing(self):
         queue = SecondThoughtsCommitQueue()
         queue.bind_to_tool(MockTool())
+        queue._options = Mock()
+        queue._options.port = None
         expected_stderr = """MOCK: update_status: commit-queue Applied patch
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests

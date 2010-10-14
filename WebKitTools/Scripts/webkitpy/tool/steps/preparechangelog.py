@@ -39,7 +39,6 @@ class PrepareChangeLog(AbstractStep):
     @classmethod
     def options(cls):
         return AbstractStep.options() + [
-            Options.port,
             Options.quiet,
             Options.email,
             Options.git_commit,
