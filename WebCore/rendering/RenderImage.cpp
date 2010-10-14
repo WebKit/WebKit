@@ -323,6 +323,9 @@ void RenderImage::paintFocusRings(PaintInfo& paintInfo, const RenderStyle* style
     
     RefPtr<HTMLCollection> areas = mapElement->areas();
     unsigned numAreas = areas->length();
+
+    if (theme()->supportsFocusRing(style))
+        return; // The theme draws the focus ring.
     
     // FIXME: Clip the paths to the image bounding box.
     for (unsigned k = 0; k < numAreas; ++k) {

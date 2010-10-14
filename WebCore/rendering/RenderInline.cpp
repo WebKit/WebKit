@@ -993,15 +993,10 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     
     RenderStyle* styleToUse = style();
     if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
-        int ow = styleToUse->outlineWidth();
-        Color oc = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
-
-        Vector<IntRect> focusRingRects;
-        addFocusRingRects(focusRingRects, tx, ty);
-        if (styleToUse->outlineStyleIsAuto())
-            graphicsContext->drawFocusRing(focusRingRects, ow, styleToUse->outlineOffset(), oc);
-        else
-            addPDFURLRect(graphicsContext, unionRect(focusRingRects));
+        if (!theme()->supportsFocusRing(styleToUse)) {
+            // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
+            paintFocusRing(graphicsContext, tx, ty, styleToUse);
+        }
     }
 
     if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
