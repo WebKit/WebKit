@@ -168,7 +168,7 @@ webkit_soup_request_file_ensure_file (WebKitSoupRequestFile  *file,
 		 * soup_uri_decode when the required libsoup version
 		 * is bumped out to 2.32.1
 		 */
-		gchar *uri_path = soup_uri_get_path (uri);
+		gchar *uri_path = uri->path;
 		gchar *decoded_uri = webkit_soup_request_uri_decoded_copy (uri_path, strlen (uri_path));
 
 		if (decoded_uri) {
