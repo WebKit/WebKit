@@ -40,6 +40,7 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "InspectorFrontend.h"
+#include "InspectorResourceAgent.h"
 #include "InspectorValues.h"
 #include "ResourceLoadTiming.h"
 #include "ResourceRequest.h"
@@ -348,44 +349,6 @@ void InspectorResource::releaseScriptObject(InspectorFrontend* frontend)
         frontend->removeResource(m_identifier);
 }
 
-CachedResource* InspectorResource::cachedResource() const
-{
-    // Try hard to find a corresponding CachedResource. During preloading, CachedResourceLoader may not have the resource in document resources set yet,
-    // but Inspector will already try to fetch data that is only available via CachedResource (and it won't update once the resource is added,
-    // because m_changes will not have the appropriate bits set).
-    if (!m_frame)
-        return 0;
-    const String& url = m_requestURL.string();
-    CachedResource* cachedResource = m_frame->document()->cachedResourceLoader()->cachedResource(url);
-    if (!cachedResource)
-        cachedResource = cache()->resourceForURL(url);
-    return cachedResource;
-}
-
-InspectorResource::Type InspectorResource::cachedResourceType() const
-{
-    CachedResource* cachedResource = this->cachedResource();
-
-    if (!cachedResource)
-        return Other;
-
-    switch (cachedResource->type()) {
-        case CachedResource::ImageResource:
-            return Image;
-        case CachedResource::FontResource:
-            return Font;
-        case CachedResource::CSSStyleSheet:
-#if ENABLE(XSLT)
-        case CachedResource::XSLStyleSheet:
-#endif
-            return Stylesheet;
-        case CachedResource::Script:
-            return Script;
-        default:
-            return Other;
-    }
-}
-
 InspectorResource::Type InspectorResource::type() const
 {
     if (!m_overrideContent.isNull())
@@ -397,18 +360,18 @@ InspectorResource::Type InspectorResource::type() const
 #endif
 
     ASSERT(m_loader);
-    if (equalIgnoringFragmentIdentifier(m_requestURL, m_loader->requestURL())) {
-        InspectorResource::Type resourceType = cachedResourceType();
-        if (resourceType == Other)
-            return Doc;
-
-        return resourceType;
-    }
 
     if (m_loader->frameLoader() && equalIgnoringFragmentIdentifier(m_requestURL, m_loader->frameLoader()->iconURL()))
         return Image;
 
-    return cachedResourceType();
+    if (!m_frame)
+        return Other;
+
+    InspectorResource::Type resourceType = InspectorResourceAgent::cachedResourceType(m_frame->document(), m_requestURL);
+    if (equalIgnoringFragmentIdentifier(m_requestURL, m_loader->requestURL()) && resourceType == Other)
+        return Doc;
+
+    return resourceType;
 }
 
 void InspectorResource::setOverrideContent(const String& data, Type type)
@@ -423,15 +386,10 @@ String InspectorResource::sourceString() const
     if (!m_overrideContent.isNull())
         return String(m_overrideContent);
 
-    String textEncodingName;
-    RefPtr<SharedBuffer> buffer = resourceData(&textEncodingName);
-    if (!buffer)
+    String result;
+    if (!InspectorResourceAgent::resourceContent(m_frame->document(), m_requestURL, &result))
         return String();
-
-    TextEncoding encoding(textEncodingName);
-    if (!encoding.isValid())
-        encoding = WindowsLatin1Encoding();
-    return encoding.decode(buffer->data(), buffer->size());
+    return result;
 }
 
 String InspectorResource::sourceBytes() const
@@ -442,40 +400,13 @@ String InspectorResource::sourceBytes() const
         String overrideContent = m_overrideContent;
         data.append(overrideContent.characters(), overrideContent.length());
         base64Encode(data, out);
-    } else {
-        String textEncodingName;
-        RefPtr<SharedBuffer> data = resourceData(&textEncodingName);
-        if (!data)
-            return String();
-        base64Encode(data->buffer(), out);
-    }
-    return String(out.data(), out.size());
-}
-
-PassRefPtr<SharedBuffer> InspectorResource::resourceData(String* textEncodingName) const
-{
-    if (m_loader && equalIgnoringFragmentIdentifier(m_requestURL, m_loader->requestURL())) {
-        *textEncodingName = m_frame->document()->inputEncoding();
-        return m_loader->mainResourceData();
+        return String(out.data(), out.size());
     }
 
-    CachedResource* cachedResource = this->cachedResource();
-    if (!cachedResource)
-        return 0;
-
-    if (cachedResource->isPurgeable()) {
-        // If the resource is purgeable then make it unpurgeable to get
-        // get its data. This might fail, in which case we return an
-        // empty String.
-        // FIXME: should we do something else in the case of a purged
-        // resource that informs the user why there is no data in the
-        // inspector?
-        if (!cachedResource->makePurgeable(false))
-            return 0;
-    }
-
-    *textEncodingName = cachedResource->encoding();
-    return cachedResource->data();
+    String result;
+    if (!InspectorResourceAgent::resourceContentBase64(m_frame->document(), m_requestURL, &result))
+        return String();
+    return result;
 }
 
 void InspectorResource::startTiming()

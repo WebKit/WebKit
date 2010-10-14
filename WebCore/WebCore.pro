@@ -1001,10 +1001,10 @@ SOURCES += \
     inspector/InspectorInstrumentation.cpp \
     inspector/InspectorProfilerAgent.cpp \
     inspector/InspectorResource.cpp \
+    inspector/InspectorResourceAgent.cpp \
     inspector/InspectorStorageAgent.cpp \
     inspector/InspectorStyleSheet.cpp \
     inspector/InspectorTimelineAgent.cpp \
-    inspector/InspectorUtilities.cpp \
     inspector/InspectorValues.cpp \
     inspector/ScriptBreakpoint.cpp \
     inspector/TimelineRecordFactory.cpp \
@@ -1878,10 +1878,10 @@ HEADERS += \
     inspector/InspectorInstrumentation.h \
     inspector/InspectorProfilerAgent.h \
     inspector/InspectorResource.h \
+    inspector/InspectorResourceAgent.h \
     inspector/InspectorStorageAgent.h \
     inspector/InspectorStyleSheet.h \
     inspector/InspectorTimelineAgent.h \
-    inspector/InspectorUtilities.h \
     inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \
     loader/appcache/ApplicationCacheGroup.h \
