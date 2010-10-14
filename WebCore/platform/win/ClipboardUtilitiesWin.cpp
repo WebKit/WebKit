@@ -33,6 +33,7 @@
 #include "markup.h"
 #include <shlwapi.h>
 #include <wininet.h> // for INTERNET_MAX_URL_LENGTH
+#include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
 
@@ -241,9 +242,10 @@ void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& re
     unsigned endHTMLOffset = endFragmentOffset + strlen(endMarkup);
 
     unsigned headerBufferLength = startHTMLOffset + 1; // + 1 for '\0' terminator.
-    char headerBuffer[headerBufferLength];
+    char* headerBuffer = (char*)malloc(headerBufferLength);
     snprintf(headerBuffer, headerBufferLength, header, startHTMLOffset, endHTMLOffset, startFragmentOffset, endFragmentOffset);
     append(result, CString(headerBuffer));
+    free(headerBuffer);
     if (sourceURLUTF8.length()) {
         append(result, sourceURLPrefix);
         append(result, sourceURLUTF8);
