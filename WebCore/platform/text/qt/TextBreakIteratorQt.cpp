@@ -33,6 +33,12 @@
 
 namespace WebCore {
 
+#if USE(QT_ICU_TEXT_BREAKING)
+const char* currentTextBreakLocaleID()
+{
+    return QLocale::system().name().toLatin1();
+}
+#else
     static unsigned char buffer[1024];
 
     class TextBreakIterator : public QTextBoundaryFinder {
@@ -135,5 +141,6 @@ namespace WebCore {
     {
         return true;
     }
+#endif
 
 }

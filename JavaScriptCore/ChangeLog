@@ -1,3 +1,28 @@
+2010-10-14  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Text breaking is slow: enable ICU as an opt-in
+        https://bugs.webkit.org/show_bug.cgi?id=40332
+
+        Added a config flag that enables ICU as an opt-in instead of the Qt specific code.
+        Because of the inclusion of ICU headers, some explicit casting was necessary in UnicodeQt4.h
+
+        * JavaScriptCore.pri:
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::category):
+
 2010-10-14  Anton Faern  <anton@bladehawke.com>
 
         Reviewed by Csaba Osztrogonác.

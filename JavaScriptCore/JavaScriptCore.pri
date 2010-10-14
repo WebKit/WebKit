@@ -54,6 +54,12 @@ win32-*: DEFINES += _HAS_TR1=0
 
 DEFINES += BUILDING_QT__ BUILDING_JavaScriptCore BUILDING_WTF
 
+# CONFIG += text_breaking_with_icu
+
+contains (CONFIG, text_breaking_with_icu) {
+    DEFINES += WTF_USE_QT_ICU_TEXT_BREAKING=1
+}
+
 wince* {
     INCLUDEPATH += $$QT_SOURCE_TREE/src/3rdparty/ce-compat
     INCLUDEPATH += $$PWD/../JavaScriptCore/os-win32

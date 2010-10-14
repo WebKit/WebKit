@@ -2676,7 +2676,6 @@ SOURCES += \
     ../WebKit/qt/Api/qwebinspector.cpp \
     ../WebKit/qt/Api/qwebkitversion.cpp
 
-
 contains(DEFINES, WTF_USE_QT_MOBILE_THEME=1) {
     HEADERS += platform/qt/QtMobileWebStyle.h
     SOURCES += platform/qt/QtMobileWebStyle.cpp
@@ -2711,6 +2710,11 @@ maemo5 {
         LIBS += -lmmtimer
         LIBS += -lole32
     }
+
+contains (CONFIG, text_breaking_with_icu) {
+    SOURCES += platform/text/TextBreakIteratorICU.cpp
+    LIBS += -licuuc
+}
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
