@@ -1,3 +1,17 @@
+2010-10-14  Rafael Antognolli  <antognolli@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Use data_set after data_get to keep refcount correct.
+        https://bugs.webkit.org/show_bug.cgi?id=47110
+
+        The call to evas_object_image_data_set was missed in this function,
+        which caused the refcount of the data being always increased on every
+        scroll.
+
+        * ewk/ewk_view_single.c:
+        (_ewk_view_single_smart_scrolls_process):
+
 2010-10-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Eric Seidel.

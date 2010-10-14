@@ -348,6 +348,8 @@ static Eina_Bool _ewk_view_single_smart_scrolls_process(Ewk_View_Smart_Data *sd)
     for (; sr < sr_end; sr++)
         _ewk_view_single_scroll_process_single(sd, pixels, ow, oh, sr);
 
+    evas_object_image_data_set(sd->backing_store, pixels);
+
     return EINA_TRUE;
 }
 
