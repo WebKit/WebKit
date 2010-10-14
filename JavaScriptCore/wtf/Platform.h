@@ -574,6 +574,8 @@
 #define WTF_USE_QT4_UNICODE 1
 #elif OS(WINCE)
 #define WTF_USE_WINCE_UNICODE 1
+#elif PLATFORM(BREWMP)
+#define WTF_USE_BREWMP_UNICODE 1
 #elif PLATFORM(GTK)
 /* The GTK+ Unicode backend is configurable */
 #else

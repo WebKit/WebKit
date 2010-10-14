@@ -1,3 +1,41 @@
+2010-10-13  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Port unicode
+        https://bugs.webkit.org/show_bug.cgi?id=45716
+
+        Brew MP port uses only the subset of ICU library to reduce the binary size.
+        Follow the WinCE's implementation.
+
+        * wtf/Platform.h:
+        * wtf/unicode/Unicode.h:
+        * wtf/unicode/brew/UnicodeBrew.cpp: Added.
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isUpper):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::isAlphanumeric):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::direction):
+        (WTF::Unicode::category):
+        (WTF::Unicode::decompositionType):
+        (WTF::Unicode::combiningClass):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::digitValue):
+        (WTF::Unicode::isSpace):
+        (WTF::Unicode::isLetter):
+        * wtf/unicode/brew/UnicodeBrew.h: Added.
+        (WTF::Unicode::isArabicChar):
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContext):
+        (WTF::Unicode::hasLineBreakingPropertyComplexContextOrIdeographic):
+        (WTF::Unicode::umemcasecmp):
+
 2010-10-13  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix.
