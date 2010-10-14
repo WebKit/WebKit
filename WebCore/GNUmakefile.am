@@ -3576,6 +3576,7 @@ webcoregtk_sources += \
 	WebCore/platform/network/soup/CookieJarSoup.h \
 	WebCore/platform/network/soup/GOwnPtrSoup.cpp \
 	WebCore/platform/network/soup/GOwnPtrSoup.h \
+	WebCore/platform/network/soup/ProxyServerSoup.cpp \
 	WebCore/platform/network/soup/ResourceError.h \
 	WebCore/platform/network/soup/ResourceHandleSoup.cpp \
 	WebCore/platform/network/soup/ResourceRequest.h \
