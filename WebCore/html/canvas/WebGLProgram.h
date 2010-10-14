@@ -50,11 +50,8 @@ public:
 
     bool isUsingVertexAttrib0() const;
 
-    // Return true means getProgramParameter(LINK_STATUS) should return
-    // false; return false means we should actually call
-    // getProgramParameter(LINK_STATUS) to find out.
-    bool isLinkFailureFlagSet() const { return m_linkFailure; }
-    void setLinkFailureFlag(bool failed) { m_linkFailure = failed; }
+    bool getLinkStatus() const { return m_linkStatus; }
+    void setLinkStatus(bool status) { m_linkStatus = status; }
 
     WebGLShader* getAttachedShader(GraphicsContext3D::WebGLEnumType);
     bool attachShader(WebGLShader*);
@@ -70,7 +67,7 @@ private:
 
     Vector<int> m_activeAttribLocations;
 
-    bool m_linkFailure;
+    bool m_linkStatus;
 
     RefPtr<WebGLShader> m_vertexShader;
     RefPtr<WebGLShader> m_fragmentShader;
