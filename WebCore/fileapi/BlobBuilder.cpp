@@ -63,7 +63,7 @@ bool BlobBuilder::append(const String& text, const String& endingType, Exception
 
     if (!utf8Text.isNull()) {
         Vector<char>& buffer = *m_items[m_items.size() - 1].data->mutableData();
-        unsigned oldSize = buffer.size();
+        size_t oldSize = buffer.size();
 
         if (isEndingTypeNative)
             normalizeLineEndingsToNative(utf8Text, buffer);

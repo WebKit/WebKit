@@ -86,7 +86,7 @@ PassRefPtr<Blob> Blob::slice(long long start, long long length, const String& co
     if (start >= size) {
         start = 0;
         length = 0;
-    } else if (start + length > size)
+    } else if (start + length > size || length > std::numeric_limits<long long>::max() - start)
         length = size - start;
 
     OwnPtr<BlobData> blobData = BlobData::create();
