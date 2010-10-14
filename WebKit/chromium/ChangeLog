@@ -1,3 +1,14 @@
+2010-10-13  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Save and restore the GraphicsContext around setting the clip rect for
+        drawing text.
+        https://bugs.webkit.org/show_bug.cgi?id=47634
+
+        * src/WebFontImpl.cpp:
+        (WebKit::WebFontImpl::drawText):
+
 2010-10-13  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
