@@ -1,3 +1,13 @@
+2010-10-14  Anton Faern  <anton@bladehawke.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47658
+        NetBSD was not included in the WTF_PLATFORM_FOO to WTF_OS_FOO
+        change.  This means that OS(NETBSD) is also undefined.
+
+        * wtf/Platform.h: s/_PLATFORM_/_OS_/ for NetBSD
+
 2010-10-13  David Goodwin  <david_goodwin@apple.com>
 
         Reviewed by Oliver Hunt.
