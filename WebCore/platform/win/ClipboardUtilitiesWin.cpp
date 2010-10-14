@@ -240,7 +240,10 @@ void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& re
     unsigned endFragmentOffset = startFragmentOffset + markupUTF8.length();
     unsigned endHTMLOffset = endFragmentOffset + strlen(endMarkup);
 
-    append(result, makeString(header, startHTMLOffset, endHTMLOffset, startFragmentOffset, endFragmentOffset).utf8());
+    unsigned headerBufferLength = startHTMLOffset + 1; // + 1 for '\0' terminator.
+    char headerBuffer[headerBufferLength];
+    snprintf(headerBuffer, headerBufferLength, header, startHTMLOffset, endHTMLOffset, startFragmentOffset, endFragmentOffset);
+    append(result, CString(headerBuffer));
     if (sourceURLUTF8.length()) {
         append(result, sourceURLPrefix);
         append(result, sourceURLUTF8);
