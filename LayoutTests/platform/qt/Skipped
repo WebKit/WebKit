@@ -722,6 +722,7 @@ http/tests/xmlhttprequest/default-content-type-dashboard.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 
 # timeout
+http/tests/misc/redirect-to-external-url.html
 http/tests/security/feed-urls-from-remote.html
 
 # This requires didClearWindowObjectForFrameInIsolatedWorld foo in FrameLoaderClient
