@@ -1,3 +1,13 @@
+2010-10-14  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Fix -Werror after r68637 on x86 platforms.
+        Qt's build system sets QT_ARCH statically to i386 or x86_64 accordingly,
+        so check for this instead of only checking for x86.
+
+        * WebKit.pri:
+
 2010-10-13  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.
