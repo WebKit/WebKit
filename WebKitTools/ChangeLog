@@ -1,3 +1,17 @@
+2010-10-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Holger Freyther.
+
+        [GTK] REGRESSION: FreeType backend does not respect XSettings font settings after r68558
+        https://bugs.webkit.org/show_bug.cgi?id=47033
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGtkFontSettings): Added this method which initializes XSettings
+        font settings to consistent values before running a test. For the one test
+        in which we need subpixel aliasing turned on, do that.
+        (initializeFonts): Accepts a testURL parameter now and delegates to initializeGtkFontSettings.
+        (runTest): Pass the testURL to initializeFonts.
+
 2010-10-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

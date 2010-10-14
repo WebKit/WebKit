@@ -75,21 +75,42 @@ void setCairoFontOptionsFromFontConfigPattern(cairo_font_options_t* options, FcP
     FcBool booleanResult;
     int integerResult;
 
-    // We will determine if subpixel anti-aliasing is enabled via the FC_RGBA setting.
-    if (FcPatternGetBool(pattern, FC_ANTIALIAS, 0, &booleanResult) == FcResultMatch && booleanResult)
-        cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_GRAY);
-
     if (FcPatternGetInteger(pattern, FC_RGBA, 0, &integerResult) == FcResultMatch) {
+        cairo_font_options_set_subpixel_order(options, convertFontConfigSubpixelOrder(integerResult));
+
+        // Based on the logic in cairo-ft-font.c in the cairo source, a font with
+        // a subpixel order implies that is uses subpixel antialiasing.
         if (integerResult != FC_RGBA_NONE)
             cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_SUBPIXEL);
-        cairo_font_options_set_subpixel_order(options, convertFontConfigSubpixelOrder(integerResult));
+    }
+
+    if (FcPatternGetBool(pattern, FC_ANTIALIAS, 0, &booleanResult) == FcResultMatch) {
+        // Only override the anti-aliasing setting if was previously turned off. Otherwise
+        // we'll override the preference which decides between gray anti-aliasing and
+        // subpixel anti-aliasing.
+        if (!booleanResult)
+            cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_NONE);
+        else if (cairo_font_options_get_antialias(options) == CAIRO_ANTIALIAS_NONE)
+            cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_GRAY);
     }
 
     if (FcPatternGetInteger(pattern, FC_HINT_STYLE, 0, &integerResult) == FcResultMatch)
         cairo_font_options_set_hint_style(options, convertFontConfigHintStyle(integerResult));
-
     if (FcPatternGetBool(pattern, FC_HINTING, 0, &booleanResult) == FcResultMatch && !booleanResult)
         cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
+}
+
+static const cairo_font_options_t* getDefaultFontOptions()
+{
+    static const cairo_font_options_t* options = cairo_font_options_create();
+#if PLATFORM(GTK) || ENABLE(GLIB_SUPPORT)
+    if (GdkScreen* screen = gdk_screen_get_default()) {
+        const cairo_font_options_t* screenOptions = gdk_screen_get_font_options(screen);
+        if (screenOptions)
+            options = screenOptions;
+    }
+#endif
+    return options;
 }
 
 FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fontDescription)
@@ -209,15 +230,7 @@ String FontPlatformData::description() const
 
 void FontPlatformData::initializeWithFontFace(cairo_font_face_t* fontFace)
 {
-    cairo_font_options_t* options = 0;
-#if !PLATFORM(EFL) || ENABLE(GLIB_SUPPORT)
-    if (GdkScreen* screen = gdk_screen_get_default())
-        options = cairo_font_options_copy(gdk_screen_get_font_options(screen));
-#endif
-    // gdk_screen_get_font_options() returns null if no default
-    // options are set, so we always have to check.
-    if (!options)
-        options = cairo_font_options_create();
+    cairo_font_options_t* options = cairo_font_options_copy(getDefaultFontOptions());
 
     cairo_matrix_t ctm;
     cairo_matrix_init_identity(&ctm);

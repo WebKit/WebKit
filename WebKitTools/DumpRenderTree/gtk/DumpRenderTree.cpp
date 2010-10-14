@@ -131,9 +131,28 @@ static void appendString(gchar*& target, gchar* string)
     g_free(oldString);
 }
 
-static void initializeFonts()
+static void initializeGtkFontSettings(const char* testURL)
+{
+    GtkSettings* settings = gtk_settings_get_default();
+    if (!settings)
+        return;
+    g_object_set(settings, "gtk-xft-antialias", 1, NULL);
+    g_object_set(settings, "gtk-xft-hinting", 1, NULL);
+    g_object_set(settings, "gtk-xft-hintstyle", "hintfull", NULL);
+
+    // One test needs subpixel anti-aliasing turned on, but generally we
+    // want all text in other tests to use to grayscale anti-aliasing.
+    if (testURL && strstr(testURL, "xsettings_antialias_settings.html"))
+        g_object_set(settings, "gtk-xft-rgba", "rgb", NULL);
+    else
+        g_object_set(settings, "gtk-xft-rgba", "none", NULL);
+}
+
+static void initializeFonts(const char* testURL = 0)
 {
 #if PLATFORM(X11)
+    initializeGtkFontSettings(testURL);
+
     FcInit();
 
     // If a test resulted a font being added or removed via the @font-face rule, then
@@ -614,7 +633,7 @@ static void runTest(const string& testPathOrURL)
     if (prevTestBFItem)
         g_object_ref(prevTestBFItem);
 
-    initializeFonts();
+    initializeFonts(testURL.c_str());
 
     // Focus the web view before loading the test to avoid focusing problems
     gtk_widget_grab_focus(GTK_WIDGET(webView));
