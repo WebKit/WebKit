@@ -139,7 +139,7 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& floatRect) con
     if (!nativeImage)
         return;
 
-    IntRect rect(floatRect);
+    IntRect rect = enclosingIntRect(floatRect);
     QPixmap alphaMask = *nativeImage;
     if (alphaMask.width() != rect.width() || alphaMask.height() != rect.height())
         alphaMask = alphaMask.scaled(rect.width(), rect.height());
