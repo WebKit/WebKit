@@ -11,37 +11,8 @@ CONSOLE MESSAGE: line 2: PASS
 CONSOLE MESSAGE: line 2: FOO<span>BAR</span>BAZ
 resources/pending-spec-changes-plain-text-unsafe.dat: PASS
 
-resources/pending-spec-changes.dat:
-3
-4
+resources/pending-spec-changes.dat: PASS
 
-Test 3 of 4 in resources/pending-spec-changes.dat failed. Input:
-<svg><![CDATA[]]
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       "]]"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-
-Test 4 of 4 in resources/pending-spec-changes.dat failed. Input:
-<svg><![CDATA[]
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       "]"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
 resources/plain-text-unsafe.dat: PASS
 
 resources/tests1.dat: PASS
@@ -187,49 +158,8 @@ resources/comments01.dat: PASS
 
 resources/adoption01.dat: PASS
 
-resources/adoption02.dat:
-2
+resources/adoption02.dat: PASS
 
-Test 2 of 3 in resources/adoption02.dat failed. Input:
-<b id="b">1<i id="i">2<p>3<script>document.getElementById("b").id = "c";document.getElementById("i").id = "j"</script></b>4
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       id="c"
-|       "1"
-|       <i>
-|         id="j"
-|         "2"
-|     <i>
-|       id="j"
-|       <p>
-|         <b>
-|           id="c"
-|           "3"
-|           <script>
-|             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
-|         "4"
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <b>
-|       id="c"
-|       "1"
-|       <i>
-|         id="j"
-|         "2"
-|     <i>
-|       id="i"
-|       <p>
-|         <b>
-|           id="b"
-|           "3"
-|           <script>
-|             "document.getElementById("b").id = "c";document.getElementById("i").id = "j""
-|         "4"
 resources/inbody01.dat: PASS
 
 resources/isindex.dat: PASS
