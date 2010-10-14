@@ -242,4 +242,4 @@ class ChromiumXVFBPort(ChromiumPort):
     @classmethod
     def run_webkit_tests_command(cls):
         # FIXME: We should find a better way to do this.
-        return ["xvfb-run"] + cls.run_webkit_tests_command()
+        return ["xvfb-run"] + ChromiumPort.run_webkit_tests_command()

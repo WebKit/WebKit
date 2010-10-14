@@ -29,7 +29,7 @@
 
 import unittest
 
-from webkitpy.common.config.ports import WebKitPort, MacPort, GtkPort, QtPort, ChromiumPort
+from webkitpy.common.config.ports import *
 
 
 class WebKitPortTest(unittest.TestCase):
@@ -69,6 +69,8 @@ class WebKitPortTest(unittest.TestCase):
         self.assertEquals(ChromiumPort.build_webkit_command(build_style="debug"), [WebKitPort.script_path("build-webkit"), "--debug", "--chromium"])
         self.assertEquals(ChromiumPort.update_webkit_command(), [WebKitPort.script_path("update-webkit"), "--chromium"])
 
+    def test_chromium_xvfb_port(self):
+        self.assertEquals(ChromiumXVFBPort.run_webkit_tests_command(), ["xvfb-run", "WebKitTools/Scripts/new-run-webkit-tests", "--chromium", "--use-drt", "--no-pixel-tests"])
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,3 +1,13 @@
+2010-10-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        ChromiumXVFBPort.run_webkit_tests_command has infinite recursion
+        https://bugs.webkit.org/show_bug.cgi?id=47655
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+
 2010-10-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
