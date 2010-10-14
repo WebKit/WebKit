@@ -86,7 +86,7 @@ static void init_request_types (WebKitSoupRequesterPrivate *priv)
 
 WebKitSoupRequester *webkit_soup_requester_new (void)
 {
-	return (WebKitSoupRequester *)g_object_new (WEBKIT_TYPE_SOUP_REQUESTER, 0);
+	return (WebKitSoupRequester *)g_object_new (WEBKIT_TYPE_SOUP_REQUESTER, NULL);
 }
 
 WebKitSoupRequest *webkit_soup_requester_request (WebKitSoupRequester *requester, const char *uriString, SoupSession *session, GError **error)
@@ -124,12 +124,12 @@ WebKitSoupRequest *webkit_soup_requester_request_uri (WebKitSoupRequester *reque
 		return (WebKitSoupRequest *)g_initable_new (requestType, 0, error,
 							    "uri", uri,
 							    "session", session,
-							    0);
+							    NULL);
 	} else {
 		return (WebKitSoupRequest *)g_object_new (requestType,
 							  "uri", uri,
 							  "session", session,
-							  0);
+							  NULL);
 	}
 }
 
