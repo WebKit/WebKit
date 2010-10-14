@@ -2376,6 +2376,8 @@ webcore_sources += \
 	WebCore/platform/network/HTTPParsers.cpp \
 	WebCore/platform/network/HTTPParsers.h \
 	WebCore/platform/network/NetworkingContext.h \
+	WebCore/platform/network/ProxyServer.cpp \
+	WebCore/platform/network/ProxyServer.h \
 	WebCore/platform/network/NetworkStateNotifier.cpp \
 	WebCore/platform/network/NetworkStateNotifier.h \
 	WebCore/platform/network/ProtectionSpace.cpp \
