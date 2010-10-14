@@ -59,6 +59,8 @@ namespace WebCore {
 
         String toString() const;
 
+        String getParameter(const String&) const;
+
     private:
         Location(Frame*);
 

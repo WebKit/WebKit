@@ -138,6 +138,16 @@ String Location::hash() const
     return fragmentIdentifier.isEmpty() ? "" : "#" + fragmentIdentifier;
 }
 
+String Location::getParameter(const String& name) const
+{
+    if (!m_frame)
+        return String();
+
+    ParsedURLParameters parameters;
+    url().copyParsedQueryTo(parameters);
+    return parameters.get(name);
+}
+
 String Location::toString() const
 {
     if (!m_frame)

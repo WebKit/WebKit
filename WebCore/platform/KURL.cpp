@@ -616,6 +616,33 @@ bool KURL::hasFragmentIdentifier() const
     return m_fragmentEnd != m_queryEnd;
 }
 
+void KURL::copyParsedQueryTo(ParsedURLParameters& parameters) const
+{
+    const UChar* pos = m_string.characters() + m_pathEnd + 1;
+    const UChar* end = m_string.characters() + m_queryEnd;
+    while (pos < end) {
+        const UChar* parameterStart = pos;
+        while (pos < end && *pos != '&')
+            ++pos;
+        const UChar* parameterEnd = pos;
+        if (pos < end) {
+            ASSERT(*pos == '&');
+            ++pos;
+        }
+        if (parameterStart == parameterEnd)
+            continue;
+        const UChar* nameStart = parameterStart;
+        const UChar* equalSign = parameterStart;
+        while (equalSign < parameterEnd && *equalSign != '=')
+            ++equalSign;
+        if (equalSign == nameStart)
+            continue;
+        String name(nameStart, equalSign - nameStart);
+        String value = equalSign == parameterEnd ? String() : String(equalSign + 1, parameterEnd - equalSign - 1);
+        parameters.set(name, value);
+    }
+}
+
 String KURL::baseAsString() const
 {
     return m_string.left(m_pathAfterLastSlash);
