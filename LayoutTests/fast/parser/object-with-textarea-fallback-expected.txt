@@ -1,0 +1,18 @@
+| <html>
+|   <head>
+|     <script>
+|       src="../../resources/dump-as-markup.js"
+|     "
+"
+|   <body>
+|     <object>
+|       name="editor1"
+|       type="application/x-xstandard"
+|       "
+"
+|       <textarea>
+|         name="editor1"
+|       "
+"
+|     "
+"
