@@ -34,6 +34,7 @@
 #include "InspectorValues.h"
 
 #include <v8-profiler.h>
+#include <V8Binding.h>
 
 namespace WebCore {
 
