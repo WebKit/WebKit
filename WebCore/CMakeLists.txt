@@ -1111,8 +1111,8 @@ SET(WebCore_SOURCES
     inspector/InspectorInstrumentation.cpp
     inspector/InspectorProfilerAgent.cpp
     inspector/InspectorResource.cpp
-    inspector/InspectorResourceAgent.cpp
     inspector/InspectorStyleSheet.cpp
+    inspector/InspectorUtilities.cpp
     inspector/InspectorValues.cpp
     inspector/InspectorStorageAgent.cpp
     inspector/InspectorTimelineAgent.cpp

@@ -63239,14 +63239,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorResourceAgent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorResourceAgent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorStorageAgent.cpp"
 				>
 			</File>
@@ -63268,6 +63260,14 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorTimelineAgent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorUtilities.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorUtilities.h"
 				>
 			</File>
 			<File

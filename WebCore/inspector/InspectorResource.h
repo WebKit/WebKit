@@ -98,8 +98,10 @@ namespace WebCore {
 #endif
 
         void setOverrideContent(const String& data, Type);
+
         String sourceString() const;
         String sourceBytes() const;
+        PassRefPtr<SharedBuffer> resourceData(String* textEncodingName) const;
 
         bool isSameLoader(DocumentLoader* loader) const { return loader == m_loader; }
         void markMainResource() { m_isMainResource = true; }
@@ -159,6 +161,9 @@ namespace WebCore {
 
         InspectorResource(unsigned long identifier, DocumentLoader*, const KURL& requestURL);
         Type type() const;
+
+        Type cachedResourceType() const;
+        CachedResource* cachedResource() const;
 
 #if ENABLE(WEB_SOCKETS)
         void markWebSocket() { m_isWebSocket = true; }

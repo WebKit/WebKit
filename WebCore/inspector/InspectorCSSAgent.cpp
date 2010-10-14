@@ -40,6 +40,7 @@
 #include "HTMLHeadElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
+#include "InspectorUtilities.h"
 #include "InspectorValues.h"
 #include "Node.h"
 #include "StyleSheetList.h"

@@ -1832,14 +1832,14 @@ webcore_sources += \
 	WebCore/inspector/InspectorProfilerAgent.h \
 	WebCore/inspector/InspectorResource.cpp \
 	WebCore/inspector/InspectorResource.h \
-	WebCore/inspector/InspectorResourceAgent.cpp \
-	WebCore/inspector/InspectorResourceAgent.h \
 	WebCore/inspector/InspectorStorageAgent.cpp \
 	WebCore/inspector/InspectorStorageAgent.h \
 	WebCore/inspector/InspectorStyleSheet.cpp \
 	WebCore/inspector/InspectorStyleSheet.h \
 	WebCore/inspector/InspectorTimelineAgent.cpp \
 	WebCore/inspector/InspectorTimelineAgent.h \
+	WebCore/inspector/InspectorUtilities.cpp \
+	WebCore/inspector/InspectorUtilities.h \
 	WebCore/inspector/InspectorValues.cpp \
 	WebCore/inspector/InspectorValues.h \
 	WebCore/inspector/InspectorWorkerResource.h \
