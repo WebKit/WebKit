@@ -133,8 +133,7 @@ class FastQueueEngine(QueueEngine):
 class QueueEngineTest(unittest.TestCase):
     def test_trivial(self):
         delegate = LoggingDelegate(self)
-        work_queue = QueueEngine("trivial-queue", delegate, threading.Event())
-        work_queue.run()
+        self._run_engine(delegate)
         self.assertEquals(delegate.stop_message, "Delegate terminated queue.")
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
         self.assertTrue(os.path.exists(os.path.join(self.temp_dir, "queue_log_path")))
@@ -142,8 +141,7 @@ class QueueEngineTest(unittest.TestCase):
 
     def test_unexpected_error(self):
         delegate = RaisingDelegate(self, ScriptError(exit_code=3))
-        work_queue = QueueEngine("error-queue", delegate, threading.Event())
-        work_queue.run()
+        self._run_engine(delegate)
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
         work_item_index = expected_callbacks.index('process_work_item')
         # The unexpected error should be handled right after process_work_item starts
@@ -153,11 +151,18 @@ class QueueEngineTest(unittest.TestCase):
 
     def test_handled_error(self):
         delegate = RaisingDelegate(self, ScriptError(exit_code=QueueEngine.handled_error_code))
-        work_queue = QueueEngine("handled-error-queue", delegate, threading.Event())
-        work_queue.run()
+        self._run_engine(delegate)
         self.assertEquals(delegate._callbacks, LoggingDelegate.expected_callbacks)
 
-    def _test_terminating_queue(self, exception, expected_message):
+    def _run_engine(self, delegate, engine=None, termination_message=None):
+        if not engine:
+            engine = QueueEngine("test-queue", delegate, threading.Event())
+        if not termination_message:
+            termination_message = "Delegate terminated queue."
+        expected_stderr = "\n%s\n" % termination_message
+        OutputCapture().assert_outputs(self, engine.run, [], expected_stderr=expected_stderr)
+
+    def _test_terminating_queue(self, exception, termination_message):
         work_item_index = LoggingDelegate.expected_callbacks.index('process_work_item')
         # The terminating error should be handled right after process_work_item.
         # There should be no other callbacks after stop_work_queue.
@@ -165,14 +170,10 @@ class QueueEngineTest(unittest.TestCase):
         expected_callbacks.append("stop_work_queue")
 
         delegate = RaisingDelegate(self, exception)
-        work_queue = QueueEngine("terminating-queue", delegate, threading.Event())
-
-        output = OutputCapture()
-        expected_stderr = "\n%s\n" % expected_message
-        output.assert_outputs(self, work_queue.run, [], expected_stderr=expected_stderr)
+        self._run_engine(delegate, termination_message=termination_message)
 
         self.assertEquals(delegate._callbacks, expected_callbacks)
-        self.assertEquals(delegate.stop_message, expected_message)
+        self.assertEquals(delegate.stop_message, termination_message)
 
     def test_terminating_error(self):
         self._test_terminating_queue(KeyboardInterrupt(), "User terminated queue.")
@@ -180,8 +181,7 @@ class QueueEngineTest(unittest.TestCase):
 
     def test_not_safe_to_proceed(self):
         delegate = NotSafeToProceedDelegate(self)
-        work_queue = FastQueueEngine(delegate)
-        work_queue.run()
+        self._run_engine(delegate, engine=FastQueueEngine(delegate))
         expected_callbacks = LoggingDelegate.expected_callbacks[:]
         expected_callbacks.remove('work_item_log_path')
         expected_callbacks.remove('process_work_item')
