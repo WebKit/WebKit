@@ -6,6 +6,7 @@ noinst_PROGRAMS += \
 # GtkLauncher
 Programs_GtkLauncher_CPPFLAGS = \
 	-I$(srcdir)/WebKit/gtk \
+	-I$(srcdir)/WebCore/platform/network/soup/cache/ \
 	-I$(top_builddir)/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
 	$(global_cppflags) \
@@ -38,6 +39,7 @@ dumprendertree_cppflags := \
 	-I$(srcdir)/WebKitTools/DumpRenderTree/gtk \
 	-I$(srcdir)/WebKit/gtk \
 	-I$(srcdir)/WebCore/platform/gtk \
+	-I$(srcdir)/WebCore/platform/network/soup/cache/ \
 	-I$(top_builddir)/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
 	$(global_cppflags) \

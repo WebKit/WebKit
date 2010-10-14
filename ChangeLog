@@ -1,3 +1,17 @@
+2010-10-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add HTTP caching support
+        https://bugs.webkit.org/show_bug.cgi?id=44261
+
+        Bump the required version of GLib. The serialization/deserialization
+        code of libsoup caching code uses GVariant, which was added to GLib in
+        version 2.24.
+
+        * GNUmakefile.am: Add paths for soup HTTP cache code.
+        * autotools/webkit.m4: Increase required glib version.
+
 2010-10-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Gustavo Noronha.

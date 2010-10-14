@@ -308,28 +308,29 @@ global_cppflags += \
 endif
 
 webkitgtk_static_h_api += \
+	$(srcdir)/WebCore/platform/network/soup/cache/webkit/soup-cache.h \
 	$(srcdir)/WebKit/gtk/webkit/webkit.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitdefines.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitdownload.h \
 	$(srcdir)/WebKit/gtk/webkit/webkiterror.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitgeolocationpolicydecision.h \
 	$(srcdir)/WebKit/gtk/webkit/webkithittestresult.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitnetworkrequest.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitnetworkresponse.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitsecurityorigin.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitsoupauthdialog.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebbackforwardlist.h \
+	$(srcdir)/WebKit/gtk/webkit/webkitwebdatabase.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebdatasource.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebframe.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebhistoryitem.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebinspector.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebnavigationaction.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebpolicydecision.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitgeolocationpolicydecision.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebresource.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebsettings.h \
 	$(srcdir)/WebKit/gtk/webkit/webkitwebwindowfeatures.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebview.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitwebdatabase.h \
-	$(srcdir)/WebKit/gtk/webkit/webkitsecurityorigin.h
+	$(srcdir)/WebKit/gtk/webkit/webkitwebview.h
 
 webkitgtk_built_h_api += \
 	WebKit/gtk/webkit/webkitversion.h
@@ -557,6 +558,7 @@ noinst_PROGRAMS += $(TEST_PROGS)
 webkit_tests_cflags = \
 	-fno-strict-aliasing \
 	-I$(srcdir)/JavaScriptCore/ForwardingHeaders \
+	-I$(srcdir)/WebCore/platform/network/soup/cache \
 	-I$(srcdir)/WebKit/gtk \
 	-I$(top_builddir)/WebKit/gtk \
 	-I$(top_builddir)/DerivedSources \
