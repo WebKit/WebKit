@@ -246,8 +246,10 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
     _populate: function()
     {
         var categories = {
-            "Mouse": ["click", "dblclick", "mousedown", "mouseup", "mouseover", "mousemove", "mouseout", "mousewheel"],
-            "Keyboard": ["keydown", "keypress", "keyup"]
+            "Mouse": { type: "listener", eventNames: ["click", "dblclick", "mousedown", "mouseup", "mouseover", "mousemove", "mouseout", "mousewheel"] },
+            "Keyboard": { type: "listener", eventNames: ["keydown", "keypress", "keyup"] },
+            "HTML frame/object":  { type: "listener", eventNames: ["load", "error", "resize", "scroll"] },
+            "Timer": { type: "instrumentation", eventNames: ["setTimer", "clearTimer", "timerFired"] }
         };
 
         for (var category in categories) {
@@ -260,15 +262,18 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
             categoryItem.checkbox = this._createCheckbox(categoryTreeElement, this._categoryCheckboxClicked.bind(this, categoryItem));
             categoryItem.children = {};
 
-            var eventNames = categories[category];
+            var categoryType = categories[category].type;
+            var eventNames = categories[category].eventNames;
             for (var i = 0; i < eventNames.length; ++i) {
-                var eventName = eventNames[i];
+                var eventName = categoryType + ":" + eventNames[i];
 
                 var breakpoint = WebInspector.breakpointManager.createEventListenerBreakpoint(eventName, true);
                 if (!breakpoint)
                     continue;
 
-                var eventNameTreeElement = new TreeElement(breakpoint.label());
+                var labelElement = document.createElement("div");
+                breakpoint.populateLabelElement(labelElement);
+                var eventNameTreeElement = new TreeElement(labelElement);
                 categoryTreeElement.appendChild(eventNameTreeElement);
                 eventNameTreeElement.listItemElement.addStyleClass("source-code");
                 eventNameTreeElement.selectable = true;

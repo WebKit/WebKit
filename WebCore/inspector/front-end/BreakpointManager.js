@@ -486,20 +486,32 @@ WebInspector.EventListenerBreakpoint.prototype = {
         return this._compare(this._eventName, other._eventName);
     },
 
-    label: function()
+    populateLabelElement: function(element)
     {
-        return this._eventName;
+        element.appendChild(document.createTextNode(this._uiEventName()));
     },
 
     populateStatusMessageElement: function(element, eventData)
     {
-        var status = WebInspector.UIString("Paused on a \"%s\" Event Listener.", this._eventName);
+        var status = WebInspector.UIString("Paused on a \"%s\" Event Listener.", this._uiEventName());
         element.appendChild(document.createTextNode(status));
     },
 
     _condition: function()
     {
         return { eventName: this._eventName };
+    },
+
+    _uiEventName: function()
+    {
+        if (!WebInspector.EventListenerBreakpoint._uiEventNames) {
+            WebInspector.EventListenerBreakpoint._uiEventNames = {
+                "instrumentation:setTimer": WebInspector.UIString("Set Timer"),
+                "instrumentation:clearTimer": WebInspector.UIString("Clear Timer"),
+                "instrumentation:timerFired": WebInspector.UIString("Timer Fired")
+            };
+        }
+        return WebInspector.EventListenerBreakpoint._uiEventNames[this._eventName] || this._eventName.substring(this._eventName.indexOf(":") + 1);
     }
 }
 

@@ -43,6 +43,13 @@
 
 namespace WebCore {
 
+static const char* const listenerEventCategoryType = "listener";
+static const char* const instrumentationEventCategoryType = "instrumentation";
+
+static const char* const setTimerEventName = "setTimer";
+static const char* const clearTimerEventName = "clearTimer";
+static const char* const timerFiredEventName = "timerFired";
+
 int InspectorInstrumentation::s_frontendCounter = 0;
 
 static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors)
@@ -158,12 +165,14 @@ void InspectorInstrumentation::didScheduleResourceRequestImpl(InspectorControlle
 
 void InspectorInstrumentation::didInstallTimerImpl(InspectorController* inspectorController, int timerId, int timeout, bool singleShot)
 {
+    pauseOnNativeEventIfNeeded(inspectorController, instrumentationEventCategoryType, setTimerEventName, true);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorController))
         timelineAgent->didInstallTimer(timerId, timeout, singleShot);
 }
 
 void InspectorInstrumentation::didRemoveTimerImpl(InspectorController* inspectorController, int timerId)
 {
+    pauseOnNativeEventIfNeeded(inspectorController, instrumentationEventCategoryType, clearTimerEventName, true);
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorController))
         timelineAgent->didRemoveTimer(timerId);
 }
@@ -205,17 +214,7 @@ void InspectorInstrumentation::didChangeXHRReadyStateImpl(const InspectorInstrum
 
 InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(InspectorController* inspectorController, const Event& event, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors)
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get()) {
-        String breakpointId = inspectorController->findEventListenerBreakpoint(event.type());
-        if (!breakpointId.isEmpty()) {
-            RefPtr<InspectorObject> eventData = InspectorObject::create();
-            eventData->setString("breakpointId", breakpointId);
-            eventData->setString("eventName", event.type());
-            debuggerAgent->schedulePauseOnNextStatement(NativeBreakpointDebuggerEventType, eventData);
-        }
-    }
-#endif
+    pauseOnNativeEventIfNeeded(inspectorController, listenerEventCategoryType, event.type(), false);
 
     int timelineAgentId = 0;
     InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorController);
@@ -228,10 +227,7 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(I
 
 void InspectorInstrumentation::didDispatchEventImpl(const InspectorInstrumentationCookie& cookie)
 {
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent* debuggerAgent = cookie.first->m_debuggerAgent.get())
-        debuggerAgent->cancelPauseOnNextStatement();
-#endif
+    cancelPauseOnNativeEvent(cookie.first);
 
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didDispatchEvent();
@@ -239,6 +235,8 @@ void InspectorInstrumentation::didDispatchEventImpl(const InspectorInstrumentati
 
 InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWindowImpl(InspectorController* inspectorController, const Event& event, DOMWindow* window)
 {
+    pauseOnNativeEventIfNeeded(inspectorController, listenerEventCategoryType, event.type(), false);
+
     int timelineAgentId = 0;
     InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorController);
     if (timelineAgent && window->hasEventListeners(event.type())) {
@@ -250,6 +248,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventOnWind
 
 void InspectorInstrumentation::didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie& cookie)
 {
+    cancelPauseOnNativeEvent(cookie.first);
+
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didDispatchEvent();
 }
@@ -273,6 +273,8 @@ void InspectorInstrumentation::didEvaluateScriptImpl(const InspectorInstrumentat
 
 InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(InspectorController* inspectorController, int timerId)
 {
+    pauseOnNativeEventIfNeeded(inspectorController, instrumentationEventCategoryType, timerFiredEventName, false);
+
     int timelineAgentId = 0;
     InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(inspectorController);
     if (timelineAgent) {
@@ -284,6 +286,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willFireTimerImpl(Inspe
 
 void InspectorInstrumentation::didFireTimerImpl(const InspectorInstrumentationCookie& cookie)
 {
+    cancelPauseOnNativeEvent(cookie.first);
+
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didFireTimer();
 }
@@ -410,6 +414,33 @@ void InspectorInstrumentation::didWriteHTMLImpl(const InspectorInstrumentationCo
 bool InspectorInstrumentation::hasFrontend(InspectorController* inspectorController)
 {
     return inspectorController->hasFrontend();
+}
+
+void InspectorInstrumentation::pauseOnNativeEventIfNeeded(InspectorController* inspectorController, const String& categoryType, const String& eventName, bool synchronous)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get();
+    if (!debuggerAgent)
+        return;
+    String fullEventName = String::format("%s:%s", categoryType.utf8().data(), eventName.utf8().data());
+    String breakpointId = inspectorController->findEventListenerBreakpoint(fullEventName);
+    if (breakpointId.isEmpty())
+        return;
+    RefPtr<InspectorObject> eventData = InspectorObject::create();
+    eventData->setString("breakpointId", breakpointId);
+    if (synchronous)
+        debuggerAgent->breakProgram(NativeBreakpointDebuggerEventType, eventData);
+    else
+        debuggerAgent->schedulePauseOnNextStatement(NativeBreakpointDebuggerEventType, eventData);
+#endif
+}
+
+void InspectorInstrumentation::cancelPauseOnNativeEvent(InspectorController* inspectorController)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (InspectorDebuggerAgent* debuggerAgent = inspectorController->m_debuggerAgent.get())
+        debuggerAgent->cancelPauseOnNextStatement();
+#endif
 }
 
 InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(InspectorController* inspectorController)
