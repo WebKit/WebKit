@@ -1,3 +1,16 @@
+2010-10-14  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Andreas Kling.
+
+        [GTK] google.co.kr was missed when checking Google domains
+        https://bugs.webkit.org/show_bug.cgi?id=47652
+
+        WebKitGtk+ maintains a list of Google domains for working well with Google sites.
+        Add google.co.kr also to the list to be checked with other Google domains.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::initializeDomainsList): Added google.co.kr.
+
 2010-10-13  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

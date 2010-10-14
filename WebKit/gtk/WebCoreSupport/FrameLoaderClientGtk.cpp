@@ -116,6 +116,7 @@ static void initializeDomainsList(HashSet<String>& googleDomains)
     googleDomains.add("cl");
     googleDomains.add("com.br");
     googleDomains.add("co.uk");
+    googleDomains.add("co.kr");
     googleDomains.add("co.jp");
     googleDomains.add("de");
     googleDomains.add("dj");
