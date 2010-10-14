@@ -177,7 +177,6 @@ canvas/philip/tests/2d.gradient.radial.cone.front.html
 canvas/philip/tests/2d.gradient.radial.cone.top.html
 canvas/philip/tests/2d.gradient.radial.inside2.html
 canvas/philip/tests/2d.gradient.radial.inside3.html
-canvas/philip/tests/2d.gradient.radial.negative.html
 canvas/philip/tests/2d.gradient.radial.outside1.html
 canvas/philip/tests/2d.imageData.create1.type.html
 canvas/philip/tests/2d.imageData.create2.type.html

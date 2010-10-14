@@ -1402,9 +1402,9 @@ PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float 
         return 0;
     }
 
-    PassRefPtr<CanvasGradient> gradient = CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
+    RefPtr<CanvasGradient> gradient = CanvasGradient::create(FloatPoint(x0, y0), FloatPoint(x1, y1));
     prepareGradientForDashboard(gradient.get());
-    return gradient;
+    return gradient.release();
 }
 
 PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode& ec)
@@ -1413,9 +1413,15 @@ PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float 
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
-    PassRefPtr<CanvasGradient> gradient =  CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
+
+    if (r0 < 0 || r1 < 0) {
+        ec = INDEX_SIZE_ERR;
+        return 0;
+    }
+
+    RefPtr<CanvasGradient> gradient = CanvasGradient::create(FloatPoint(x0, y0), r0, FloatPoint(x1, y1), r1);
     prepareGradientForDashboard(gradient.get());
-    return gradient;
+    return gradient.release();
 }
 
 PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageElement* image,
@@ -1513,7 +1519,7 @@ static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)
 {
     RefPtr<ImageData> data = ImageData::create(size.width(), size.height());
     memset(data->data()->data()->data(), 0, data->data()->data()->length());
-    return data.get();
+    return data.release();
 }
 
 PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(PassRefPtr<ImageData> imageData, ExceptionCode& ec) const
@@ -1732,7 +1738,7 @@ PassRefPtr<TextMetrics> CanvasRenderingContext2D::measureText(const String& text
     Font::setCodePath(oldCodePath);
 #endif
 
-    return metrics;
+    return metrics.release();
 }
 
 void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, float y, bool fill, float /*maxWidth*/, bool /*useMaxWidth*/)
