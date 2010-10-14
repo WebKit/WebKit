@@ -96,6 +96,9 @@
 #include "runtime_object.h"
 #include "runtime_root.h"
 #endif
+#if USE(TEXTURE_MAPPER)
+#include "texmap/TextureMapperPlatformLayer.h"
+#endif
 #include "wtf/HashMap.h"
 #include <QMultiMap>
 #include <qdebug.h>
@@ -291,6 +294,16 @@ void QWebFramePrivate::renderFromTiledBackingStore(GraphicsContext* context, con
 
         painter->restore();
     }
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+    // TextureMapper might use raw OpenGL or some other backend that requires native painting. On raster this doesn't have any effect.
+    if (rootGraphicsLayer) {
+        painter->beginNativePainting();
+        rootGraphicsLayer->paint(context, view->size(), view->frameRect(), IntRect(clip.boundingRect()), TransformationMatrix(), painter->opacity());
+        painter->endNativePainting();
+    }
+
+    renderRelativeCoords(context, (QWebFrame::RenderLayer)(QWebFrame::ScrollBarLayer | QWebFrame::PanIconLayer), clip);
+#endif
 }
 #endif
 
@@ -308,18 +321,18 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
     WebCore::FrameView* view = frame->view();
     view->updateLayoutAndStyleIfNeededRecursive();
 
-    for (int i = 0; i < vector.size(); ++i) {
-        const QRect& clipRect = vector.at(i);
-
-        QRect intersectedRect = clipRect.intersected(view->frameRect());
-
+    if (layer & QWebFrame::ContentsLayer) {
         painter->save();
-        painter->setClipRect(clipRect, Qt::IntersectClip);
+        for (int i = 0; i < vector.size(); ++i) {
+            const QRect& clipRect = vector.at(i);
 
-        int x = view->x();
-        int y = view->y();
+            QRect intersectedRect = clipRect.intersected(view->frameRect());
 
-        if (layer & QWebFrame::ContentsLayer) {
+            painter->setClipRect(clipRect, Qt::IntersectClip);
+
+            int x = view->x();
+            int y = view->y();
+
             context->save();
 
             int scrollX = view->scrollX();
@@ -336,27 +349,52 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
 
             context->restore();
         }
+        painter->restore();
 
-        if (layer & QWebFrame::ScrollBarLayer
-            && !view->scrollbarsSuppressed()
-            && (view->horizontalScrollbar() || view->verticalScrollbar())) {
-            context->save();
-
-            QRect rect = intersectedRect;
-            context->translate(x, y);
-            rect.translate(-x, -y);
-
-            view->paintScrollbars(context, rect);
-
-            context->restore();
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+        if (rootGraphicsLayer) {
+            painter->save();
+            painter->beginNativePainting();
+            rootGraphicsLayer->paint(context, view->size(), view->frameRect(), IntRect(clip.boundingRect()),
+                                     TransformationMatrix(), context->platformContext()->opacity());
+            painter->endNativePainting();
+            painter->restore();
         }
+#endif
+    }
+    if (layer & (QWebFrame::PanIconLayer | QWebFrame::ScrollBarLayer)) {
+        for (int i = 0; i < vector.size(); ++i) {
+            const QRect& clipRect = vector.at(i);
+
+            QRect intersectedRect = clipRect.intersected(view->frameRect());
+
+            painter->save();
+            painter->setClipRect(clipRect, Qt::IntersectClip);
+
+            int x = view->x();
+            int y = view->y();
+
+            if (layer & QWebFrame::ScrollBarLayer
+                && !view->scrollbarsSuppressed()
+                && (view->horizontalScrollbar() || view->verticalScrollbar())) {
+                context->save();
+
+                QRect rect = intersectedRect;
+                context->translate(x, y);
+                rect.translate(-x, -y);
+
+                view->paintScrollbars(context, rect);
+
+                context->restore();
+            }
 
 #if ENABLE(PAN_SCROLLING)
-        if (layer & QWebFrame::PanIconLayer)
-            view->paintPanScrollIcon(context);
+            if (layer & QWebFrame::PanIconLayer)
+                view->paintPanScrollIcon(context);
 #endif
 
-        painter->restore();
+            painter->restore();
+        }
     }
 }
 

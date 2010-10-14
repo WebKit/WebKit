@@ -1,3 +1,21 @@
+2010-10-14  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap] [Qt] Texture mapper initial implementation
+        https://bugs.webkit.org/show_bug.cgi?id=47070
+
+        Allow rendering of accelerated-compositing with TextureMapper, inside a QWebFrame. The frame will render the regular content,
+        either normally or through tiled backingstore, then let the TextureMapper layer render itself to the active context, and
+        then render the scrollbar and pan icon. This is different from the current implementation, which uses additional QGraphicsItems for AC
+        and the scrollbar overlay.
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebView::paint):
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderFromTiledBackingStore):
+        (QWebFramePrivate::renderRelativeCoords):
+
 2010-10-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
