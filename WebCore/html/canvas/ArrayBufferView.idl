@@ -24,7 +24,7 @@
  */
 
 module html {
-    interface [Conditional=3D_CANVAS|BLOB, CustomToJS, OmitConstructor] ArrayBufferView {
+    interface [Conditional=3D_CANVAS|BLOB, CustomToJS, NoStaticTables, OmitConstructor] ArrayBufferView {
         readonly attribute ArrayBuffer buffer;
         readonly attribute unsigned long byteOffset;
         readonly attribute unsigned long byteLength;

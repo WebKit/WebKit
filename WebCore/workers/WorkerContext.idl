@@ -113,6 +113,15 @@ module threads {
 
                  attribute [EnabledAtRuntime=FileSystem] FlagsConstructor Flags;
 #endif
+
+        attribute [Conditional=BLOB,EnabledAtRuntime] ArrayBufferConstructor ArrayBuffer; // Usable with new operator
+        attribute [Conditional=BLOB,EnabledAtRuntime] Int8ArrayConstructor Int8Array; // Usable with new operator
+        attribute [Conditional=BLOB,EnabledAtRuntime] Uint8ArrayConstructor Uint8Array; // Usable with new operator
+        attribute [Conditional=BLOB,EnabledAtRuntime] Int16ArrayConstructor Int16Array; // Usable with new operator
+        attribute [Conditional=BLOB,EnabledAtRuntime] Uint16ArrayConstructor Uint16Array; // Usable with new operator
+        attribute [Conditional=BLOB,EnabledAtRuntime] Int32ArrayConstructor Int32Array; // Usable with new operator
+        attribute [Conditional=BLOB,EnabledAtRuntime] Uint32ArrayConstructor Uint32Array; // Usable with new operator
+        attribute [Conditional=BLOB,EnabledAtRuntime] Float32ArrayConstructor Float32Array; // Usable with new operator
     };
 
 }

@@ -51,7 +51,7 @@
 #include "JSSharedWorker.h"
 #endif
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 #include "JSArrayBuffer.h"
 #include "JSInt8Array.h"
 #include "JSUint8Array.h"
@@ -565,7 +565,7 @@ JSValue JSDOMWindow::webKitCSSMatrix(ExecState* exec) const
     return getDOMConstructor<JSWebKitCSSMatrixConstructor>(exec, this);
 }
  
-#if ENABLE(3D_CANVAS)
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
 JSValue JSDOMWindow::arrayBuffer(ExecState* exec) const
 {
     return getDOMConstructor<JSArrayBufferConstructor>(exec, this);

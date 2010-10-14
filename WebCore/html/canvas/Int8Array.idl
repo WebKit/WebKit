@@ -33,6 +33,7 @@ module html {
         HasNumericIndexGetter,
         HasCustomIndexSetter,
         GenerateNativeConverter,
+        NoStaticTables,
         CustomToJS,
         DontCheckEnums
     ] Int8Array : ArrayBufferView {

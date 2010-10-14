@@ -29,7 +29,8 @@ module html {
         Conditional=3D_CANVAS|BLOB,
         CanBeConstructed,
         CustomConstructFunction,
-        V8CustomConstructor
+        NoStaticTables,
+        V8CustomConstructor,
     ] ArrayBuffer {
         readonly attribute int byteLength;
     };
