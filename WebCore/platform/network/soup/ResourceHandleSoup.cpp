@@ -492,7 +492,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
             return;
         }
 
-        if (d->m_soupMessage && soupMessage->status_code == SOUP_STATUS_UNAUTHORIZED) {
+        if (d->m_soupMessage && d->m_soupMessage->status_code == SOUP_STATUS_UNAUTHORIZED) {
             fillResponseFromMessage(soupMsg, &d->m_response);
             client->didReceiveResponse(handle.get(), d->m_response);
 
