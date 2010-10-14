@@ -168,6 +168,9 @@ namespace WebCore {
         NPError getValue(NPNVariable variable, void* value);
         static NPError getValueStatic(NPNVariable variable, void* value);
         NPError setValue(NPPVariable variable, void* value);
+        NPError getValueForURL(NPNURLVariable variable, const char* url, char** value, uint32_t* len);
+        NPError setValueForURL(NPNURLVariable variable, const char* url, const char* value, uint32_t len);
+        NPError getAuthenticationInfo(const char* protocol, const char* host, int32_t port, const char* scheme, const char* realm, char** username, uint32_t* ulen, char** password, uint32_t* plen);
         void invalidateRect(NPRect*);
         void invalidateRegion(NPRegion);
 #endif

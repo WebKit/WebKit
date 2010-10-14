@@ -79,7 +79,7 @@ static void addProxyServersForURL(Vector<ProxyServer>& proxyServers, const KURL&
     }
 }
 
-Vector<ProxyServer> proxyServersForURL(const KURL& url)
+Vector<ProxyServer> proxyServersForURL(const KURL& url, const NetworkingContext*)
 {
     Vector<ProxyServer> proxyServers;
     

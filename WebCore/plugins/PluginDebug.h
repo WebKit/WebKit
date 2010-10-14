@@ -41,6 +41,7 @@ const char* prettyNameForNPError(NPError error);
 
 CString prettyNameForNPNVariable(NPNVariable variable);
 CString prettyNameForNPPVariable(NPPVariable variable, void* value);
+CString prettyNameForNPNURLVariable(NPNURLVariable variable);
 
 #ifdef XP_MACOSX
 const char* prettyNameForDrawingModel(NPDrawingModel drawingModel);

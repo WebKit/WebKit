@@ -26,15 +26,48 @@
 #include "config.h"
 #include "ProxyServer.h"
 
-#include "NotImplemented.h"
 #include "KURL.h"
+#include "NetworkingContext.h"
+
+#include <QNetworkAccessManager>
+#include <QNetworkProxy>
+#include <QNetworkProxyFactory>
+#include <QNetworkProxyQuery>
+#include <QUrl>
 
 namespace WebCore {
 
-Vector<ProxyServer> proxyServersForURL(const KURL&)
+Vector<ProxyServer> proxyServersForURL(const KURL& url, const NetworkingContext* context)
 {
-    notImplemented();
-    return Vector<ProxyServer>();
+    Vector<ProxyServer> servers;
+    
+    const QNetworkAccessManager* accessManager = context ? context->networkAccessManager() : 0;
+    QNetworkProxyFactory* proxyFactory = accessManager ? accessManager->proxyFactory() : 0;
+
+    if (proxyFactory) {
+        const QList<QNetworkProxy> proxies = proxyFactory->queryProxy(QNetworkProxyQuery(url));
+        Q_FOREACH(const QNetworkProxy& proxy, proxies) {
+            ProxyServer::Type proxyType;
+            switch (proxy.type()) {
+            case QNetworkProxy::Socks5Proxy:
+                proxyType = ProxyServer::SOCKS;
+                break;
+            case QNetworkProxy::HttpProxy:
+            case QNetworkProxy::HttpCachingProxy:
+            case QNetworkProxy::FtpCachingProxy:
+                proxyType = ProxyServer::HTTP;
+                break;
+            case QNetworkProxy::DefaultProxy:
+            case QNetworkProxy::NoProxy:
+            default:
+                proxyType = ProxyServer::Direct;
+                break;
+            }
+            servers.append(ProxyServer(proxyType, proxy.hostName(), proxy.port()));
+        }
+    }
+
+    return servers;
 }
 
 } // namespace WebCore

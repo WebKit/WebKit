@@ -175,3 +175,18 @@ void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userDa
 {
     PluginMainThreadScheduler::scheduler().scheduleCall(instance, func, userData);
 }
+
+NPError NPN_GetValueForURL(NPP instance, NPNURLVariable variable, const char* url, char** value, uint32_t* len)
+{
+    return pluginViewForInstance(instance)->getValueForURL(variable, url, value, len);
+}
+
+NPError NPN_SetValueForURL(NPP instance, NPNURLVariable variable, const char* url, const char* value, uint32_t len)
+{
+    return pluginViewForInstance(instance)->setValueForURL(variable, url, value, len);
+}
+
+NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char* host, int32_t port, const char* scheme, const char* realm, char** username, uint32_t* ulen, char** password, uint32_t* plen)
+{
+    return pluginViewForInstance(instance)->getAuthenticationInfo(protocol, host, port, scheme, realm, username, ulen, password, plen);
+}

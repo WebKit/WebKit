@@ -334,6 +334,9 @@ void PluginPackage::initializeBrowserFuncs()
     m_browserFuncs.setexception = _NPN_SetException;
     m_browserFuncs.enumerate = _NPN_Enumerate;
     m_browserFuncs.construct = _NPN_Construct;
+    m_browserFuncs.getvalueforurl = NPN_GetValueForURL;
+    m_browserFuncs.setvalueforurl = NPN_SetValueForURL;
+    m_browserFuncs.getauthenticationinfo = NPN_GetAuthenticationInfo;
 }
 #endif
 

@@ -41,6 +41,7 @@
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HostWindow.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
+#include <WebCore/NetworkingContext.h>
 #include <WebCore/ProxyServer.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/RenderLayer.h>
@@ -841,7 +842,9 @@ HWND PluginView::nativeParentWindow()
 
 String PluginView::proxiesForURL(const String& urlString)
 {
-    Vector<ProxyServer> proxyServers = proxyServersForURL(KURL(KURL(), urlString));
+    const FrameLoader* frameLoader = frame() ? frame()->loader() : 0;
+    const NetworkingContext* context = frameLoader ? frameLoader->networkingContext() : 0;
+    Vector<ProxyServer> proxyServers = proxyServersForURL(KURL(KURL(), urlString), context);
     return toString(proxyServers);
 }
 

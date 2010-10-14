@@ -32,6 +32,7 @@
 #include "Bridge.h"
 #endif
 #include "Chrome.h"
+#include "CookieJar.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -55,6 +56,7 @@
 #include "PluginDebug.h"
 #include "PluginMainThreadScheduler.h"
 #include "PluginPackage.h"
+#include "ProxyServer.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "ScriptController.h"
@@ -1391,6 +1393,119 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
     default:
         return NPERR_GENERIC_ERROR;
     }
+}
+
+static Frame* getFrame(Frame* parentFrame, Element* element)
+{
+    if (parentFrame)
+        return parentFrame;
+    
+    Document* document = element->document();
+    if (!document)
+        document = element->ownerDocument();
+    if (document)
+        return document->frame();
+    
+    return 0;
+}
+
+NPError PluginView::getValueForURL(NPNURLVariable variable, const char* url, char** value, uint32_t* len)
+{
+    LOG(Plugins, "PluginView::getValueForURL(%s)", prettyNameForNPNURLVariable(variable).data());
+
+    NPError result = NPERR_NO_ERROR;
+
+    switch (variable) {
+    case NPNURLVCookie: {
+        KURL u(m_baseURL, url);
+        if (u.isValid()) {
+            Frame* frame = getFrame(parentFrame(), m_element);
+            if (frame) {
+                const CString cookieStr = cookies(frame->document(), u).utf8();
+                if (!cookieStr.isNull()) {
+                    const int size = cookieStr.length();
+                    *value = static_cast<char*>(NPN_MemAlloc(size+1));
+                    if (*value) {
+                        memset(*value, 0, size+1);
+                        memcpy(*value, cookieStr.data(), size+1);
+                        if (len)
+                            *len = size;
+                    } else
+                        result = NPERR_OUT_OF_MEMORY_ERROR;
+                }
+            }
+        } else
+            result = NPERR_INVALID_URL;
+        break;
+    }
+    case NPNURLVProxy: {
+        KURL u(m_baseURL, url);
+        if (u.isValid()) {
+            Frame* frame = getFrame(parentFrame(), m_element);
+            const FrameLoader* frameLoader = frame ? frame->loader() : 0;
+            const NetworkingContext* context = frameLoader ? frameLoader->networkingContext() : 0;
+            const CString proxyStr = toString(proxyServersForURL(u, context)).utf8();
+            if (!proxyStr.isNull()) {
+                const int size = proxyStr.length();
+                *value = static_cast<char*>(NPN_MemAlloc(size+1));
+                if (*value) {
+                    memset(*value, 0, size+1);
+                    memcpy(*value, proxyStr.data(), size+1);
+                    if (len)
+                        *len = size;
+                } else
+                    result = NPERR_OUT_OF_MEMORY_ERROR;
+            }
+        } else
+            result = NPERR_INVALID_URL;
+        break;
+    }
+    default:
+        result = NPERR_GENERIC_ERROR;
+        LOG(Plugins, "PluginView::getValueForURL: %s", prettyNameForNPNURLVariable(variable).data());
+        break;
+    }
+
+    return result;
+}
+
+
+NPError PluginView::setValueForURL(NPNURLVariable variable, const char* url, const char* value, uint32_t len)
+{
+    LOG(Plugins, "PluginView::setValueForURL(%s)", prettyNameForNPNURLVariable(variable).data());
+
+    NPError result = NPERR_NO_ERROR;
+
+    switch (variable) {
+    case NPNURLVCookie: {
+        KURL u(m_baseURL, url);
+        if (u.isValid()) {
+            const String cookieStr = String::fromUTF8(value, len);
+            Frame* frame = getFrame(parentFrame(), m_element);
+            if (frame && !cookieStr.isEmpty())
+                setCookies(frame->document(), u, cookieStr);
+        } else
+            result = NPERR_INVALID_URL;
+        break;
+    }
+    case NPNURLVProxy:
+        LOG(Plugins, "PluginView::setValueForURL(%s): Plugins are NOT allowed to set proxy information.", prettyNameForNPNURLVariable(variable).data());
+        result = NPERR_GENERIC_ERROR;
+        break;
+    default:
+        LOG(Plugins, "PluginView::setValueForURL: %s", prettyNameForNPNURLVariable(variable).data());
+        result = NPERR_GENERIC_ERROR;
+        break;
+    }
+
+    return result;
+}
+
+NPError PluginView::getAuthenticationInfo(const char* protocol, const char* host, int32_t port, const char* scheme, const char* realm, char** username, uint32_t* ulen, char** password, uint32_t* plen)
+{
+    LOG(Plugins, "PluginView::getAuthenticationInfo: protocol=%s, host=%s, port=%d", protocol, host, port);
+    notImplemented();
+    return NPERR_GENERIC_ERROR;
 }
 #endif
 
