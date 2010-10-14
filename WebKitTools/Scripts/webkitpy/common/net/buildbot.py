@@ -35,11 +35,11 @@ import urllib2
 import xmlrpclib
 
 from webkitpy.common.net.failuremap import FailureMap
+from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.logutils import get_logger
 from webkitpy.thirdparty.autoinstalled.mechanize import Browser
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
-
 
 _log = get_logger(__file__)
 
@@ -194,66 +194,6 @@ class Builder(object):
         if avoid_flakey_tests and regression_window.failing_build() == red_build:
             return None
         return regression_window
-
-
-# FIXME: This should be unified with all the layout test results code in the layout_tests package
-class LayoutTestResults(object):
-    stderr_key = u'Tests that had stderr output:'
-    fail_key = u'Tests where results did not match expected results:'
-    timeout_key = u'Tests that timed out:'
-    crash_key = u'Tests that caused the DumpRenderTree tool to crash:'
-    missing_key = u'Tests that had no expected results (probably new):'
-
-    expected_keys = [
-        stderr_key,
-        fail_key,
-        crash_key,
-        timeout_key,
-        missing_key,
-    ]
-
-    @classmethod
-    def _parse_results_html(cls, page):
-        parsed_results = {}
-        tables = BeautifulSoup(page).findAll("table")
-        for table in tables:
-            table_title = unicode(table.findPreviousSibling("p").string)
-            if table_title not in cls.expected_keys:
-                # This Exception should only ever be hit if run-webkit-tests changes its results.html format.
-                raise Exception("Unhandled title: %s" % table_title)
-            # We might want to translate table titles into identifiers before storing.
-            parsed_results[table_title] = [unicode(row.find("a").string) for row in table.findAll("tr")]
-
-        return parsed_results
-
-    @classmethod
-    def _fetch_results_html(cls, base_url):
-        results_html = "%s/results.html" % base_url
-        # FIXME: We need to move this sort of 404 logic into NetworkTransaction or similar.
-        try:
-            page = urllib2.urlopen(results_html)
-            return cls._parse_results_html(page)
-        except urllib2.HTTPError, error:
-            if error.code != 404:
-                raise
-
-    @classmethod
-    def results_from_url(cls, base_url):
-        parsed_results = cls._fetch_results_html(base_url)
-        if not parsed_results:
-            return None
-        return cls(base_url, parsed_results)
-
-    def __init__(self, base_url, parsed_results):
-        self._base_url = base_url
-        self._parsed_results = parsed_results
-
-    def parsed_results(self):
-        return self._parsed_results
-
-    def failing_tests(self):
-        failing_keys = [self.fail_key, self.crash_key, self.timeout_key]
-        return sorted(sum([tests for key, tests in self._parsed_results.items() if key in failing_keys], []))
 
 
 class Build(object):

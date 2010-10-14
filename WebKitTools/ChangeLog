@@ -1,3 +1,15 @@
+2010-10-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Break LayoutTestResults out into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=47637
+
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/layouttestresults.py: Added.
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py: Added.
+
 2010-10-13  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.
