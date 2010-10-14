@@ -220,7 +220,7 @@ InjectedScript.prototype = {
                 if (!callFrame)
                     return props;
                 if (expression)
-                    expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression);
+                    expressionResult = this._evaluateOn(callFrame.evaluate, callFrame, expression, true);
                 else {
                     // Evaluate into properties in scope of the selected call frame.
                     var scopeChain = callFrame.scopeChain;
@@ -230,7 +230,7 @@ InjectedScript.prototype = {
             } else {
                 if (!expression)
                     expression = "this";
-                expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression);
+                expressionResult = this._evaluateOn(inspectedWindow.eval, inspectedWindow, expression, false);
             }
             if (typeof expressionResult === "object")
                 this._populatePropertyNames(expressionResult, props);
@@ -246,26 +246,29 @@ InjectedScript.prototype = {
 
     evaluate: function(expression, objectGroup)
     {
-        return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup);
+        return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup, false);
     },
 
-    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup)
+    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame)
     {
         try {
-            return this._wrapObject(this._evaluateOn(evalFunction, object, expression), objectGroup);
+            return this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame), objectGroup);
         } catch (e) {
             return InjectedScript.RemoteObject.fromException(e);
         }
     },
 
-    _evaluateOn: function(evalFunction, object, expression)
+    _evaluateOn: function(evalFunction, object, expression, isEvalOnCallFrame)
     {
         // Only install command line api object for the time of evaluation.
         // Surround the expression in with statements to inject our command line API so that
         // the window object properties still take more precedent than our API functions.
         inspectedWindow.console._commandLineAPI = this._commandLineAPI;
     
-        expression = "with (window.console._commandLineAPI) { with (window) {\n" + expression + "\n} }";
+        // We don't want local variables to be shadowed by global ones when evaluating on CallFrame.
+        if (!isEvalOnCallFrame)
+            expression = "with (window) {\n" + expression + "\n} ";
+        expression = "with (window.console._commandLineAPI) {\n" + expression + "\n}";
         var value = evalFunction.call(object, expression);
     
         delete inspectedWindow.console._commandLineAPI;
@@ -303,7 +306,7 @@ InjectedScript.prototype = {
         var callFrame = this._callFrameForId(callFrameId);
         if (!callFrame)
             return false;
-        return this._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup);
+        return this._evaluateAndWrap(callFrame.evaluate, callFrame, code, objectGroup, true);
     },
 
     _callFrameForId: function(id)
