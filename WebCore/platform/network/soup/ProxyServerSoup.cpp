@@ -27,7 +27,6 @@
 #include "ProxyServer.h"
 
 #include "KURL.h"
-#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
