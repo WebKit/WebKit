@@ -1,3 +1,17 @@
+2010-10-14  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Fix http/tests/misc/redirect-to-external-url.html
+
+        Support the test in FrameLoaderClientQt and unskip.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47609
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::canHandleRequest):
+        (WebCore::FrameLoaderClientQt::dispatchUnableToImplementPolicy):
+
 2010-10-14  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
