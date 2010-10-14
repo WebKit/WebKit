@@ -49,9 +49,10 @@ using namespace HTMLNames;
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document* doc)
     : HTMLFrameOwnerElement(tagName, doc)
+    , m_isCapturingMouseEvents(false)
+    , m_inBeforeLoadEventHandler(false)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_NPObject(0)
-    , m_isCapturingMouseEvents(false)
 #endif
 {
 }
@@ -91,6 +92,12 @@ PassScriptInstance HTMLPlugInElement::getInstance() const
     // the cached allocated Bindings::Instance.  Not supporting this edge-case is OK.
     if (m_instance)
         return m_instance;
+
+    if (m_inBeforeLoadEventHandler) {
+        // The plug-in hasn't loaded yet, and it makes no sense to try to load if beforeload handler happened to touch the plug-in element.
+        // That would recursively call beforeload for the same element.
+        return 0;
+    }
 
     RenderWidget* renderWidget = renderWidgetForJSBindings();
     if (renderWidget && renderWidget->widget())

@@ -53,6 +53,9 @@ public:
     bool isCapturingMouseEvents() const { return m_isCapturingMouseEvents; }
     void setIsCapturingMouseEvents(bool capturing) { m_isCapturingMouseEvents = capturing; }
 
+    bool inBeforeLoadEventHandler() const { return m_inBeforeLoadEventHandler; }
+    void setInBeforeLoadEventHandler(bool inBeforeLoadEventHandler) { m_inBeforeLoadEventHandler = inBeforeLoadEventHandler; }
+
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
 
@@ -78,10 +81,11 @@ protected:
 
 private:
     mutable ScriptInstance m_instance;
+    bool m_isCapturingMouseEvents;
+    bool m_inBeforeLoadEventHandler;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* m_NPObject;
 #endif
-    bool m_isCapturingMouseEvents;
 };
 
 } // namespace WebCore

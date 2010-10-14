@@ -1,3 +1,30 @@
+2010-10-13  Mark Rowe  <mrowe@apple.com>
+
+        Merge r69596.
+
+    2010-10-12  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47550
+        <rdar://problem/8353386> For WebKit plug-ins, beforeload can be called recursively
+        (esp. with AdBlock style extensions)
+
+        No test - we don't have a WebKit-style plugin in DRT, and don't care enough to add one.
+
+        The fix is to block plug-in scripting while in beforeload event - the plug-in is obviously
+        not available yet, so scripting could only attempt to load it recursively.
+
+        This didn't affect NPAPI plug-ins, because of a completely different code path taken in
+        updateWidget(), see <https://bugs.webkit.org/show_bug.cgi?id=44575#c8>.
+
+        * html/HTMLEmbedElement.cpp: (WebCore::HTMLEmbedElement::updateWidget):
+        * html/HTMLObjectElement.cpp: (WebCore::HTMLObjectElement::updateWidget):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::HTMLPlugInElement):
+        (WebCore::HTMLPlugInElement::pluginWidget):
+        * html/HTMLPlugInElement.h:
+
 2010-10-01  Mark Rowe  <mrowe@apple.com>
 
         Merge r60541.

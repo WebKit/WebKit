@@ -298,8 +298,11 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                 return;
         }
 
+        ASSERT(!objectElement->inBeforeLoadEventHandler());
+        objectElement->setInBeforeLoadEventHandler(true);
         bool beforeLoadAllowedLoad = objectElement->dispatchBeforeLoadEvent(url);
-        
+        objectElement->setInBeforeLoadEventHandler(false);
+
         // beforeload events can modify the DOM, potentially causing
         // RenderWidget::destroy() to be called.  Ensure we haven't been
         // destroyed before continuing.
@@ -341,7 +344,12 @@ void RenderEmbeddedObject::updateWidget(bool onlyCreateNonNetscapePlugins)
                 return;
         }
 
-        if (embedElement->dispatchBeforeLoadEvent(url))
+        ASSERT(!embedElement->inBeforeLoadEventHandler());
+        embedElement->setInBeforeLoadEventHandler(true);
+        bool beforeLoadAllowedLoad = embedElement->dispatchBeforeLoadEvent(url);
+        embedElement->setInBeforeLoadEventHandler(false);
+
+        if (beforeLoadAllowedLoad)
             frame->loader()->requestObject(this, url, embedElement->getAttribute(nameAttr), serviceType, paramNames, paramValues);
     }
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)        
