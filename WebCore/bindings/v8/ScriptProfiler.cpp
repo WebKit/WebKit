@@ -32,7 +32,6 @@
 #include "ScriptProfiler.h"
 
 #include "InspectorValues.h"
-#include "ScriptString.h"
 
 #include <v8-profiler.h>
 

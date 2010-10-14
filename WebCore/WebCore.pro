@@ -360,7 +360,6 @@ v8 {
         bindings/v8/ScriptObject.cpp \
         bindings/v8/ScriptScope.cpp \
         bindings/v8/ScriptState.cpp \
-        bindings/v8/ScriptStringImpl.cpp \
         bindings/v8/ScriptValue.cpp \
         bindings/v8/StaticDOMDataStore.cpp \
         bindings/v8/SerializedScriptValue.cpp \
@@ -1394,8 +1393,6 @@ v8 {
         bindings/v8/ScriptScope.h \
         bindings/v8/ScriptSourceCode.h \
         bindings/v8/ScriptState.h \
-        bindings/v8/ScriptString.h \
-        bindings/v8/ScriptStringImpl.h \
         bindings/v8/ScriptValue.h \
         bindings/v8/ScriptWrappable.h \
         bindings/v8/SerializedScriptValue.h \
