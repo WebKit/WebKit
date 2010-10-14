@@ -29,7 +29,6 @@
 
 #include "Console.h"
 #include "JSScriptProfile.h"
-#include "ScriptCallStack.h"
 #include "ScriptProfile.h"
 #include <runtime/JSArray.h>
 

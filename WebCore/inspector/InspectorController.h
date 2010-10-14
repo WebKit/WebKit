@@ -34,7 +34,6 @@
 #include "Cookie.h"
 #include "Page.h"
 #include "PlatformString.h"
-#include "ScriptState.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
@@ -315,7 +314,7 @@ private:
 
     void focusNode();
 
-    void addConsoleMessage(ScriptState*, PassOwnPtr<ConsoleMessage>);
+    void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);

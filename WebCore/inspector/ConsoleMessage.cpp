@@ -155,22 +155,20 @@ void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend* frontend)
 }
 #endif // ENABLE(INSPECTOR)
 
-bool ConsoleMessage::isEqual(ScriptState* state, ConsoleMessage* msg) const
+bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
 {
 #if ENABLE(INSPECTOR)
     if (msg->m_arguments.size() != m_arguments.size())
         return false;
-    if (!state && msg->m_arguments.size())
+    if (!msg->m_scriptState.get() && msg->m_arguments.size()) {
+        ASSERT_NOT_REACHED();
         return false;
+    }
 
-    ASSERT_ARG(state, state || msg->m_arguments.isEmpty());
-
-    for (size_t i = 0; i < msg->m_arguments.size(); ++i) {
-        if (!m_arguments[i].isEqual(state, msg->m_arguments[i]))
+    for (size_t i = 0; i < m_arguments.size(); ++i) {
+        if (!m_arguments[i].isEqual(msg->m_scriptState.get(), msg->m_arguments[i]))
             return false;
     }
-#else
-    UNUSED_PARAM(state);
 #endif // ENABLE(INSPECTOR)
 
     size_t frameCount = msg->m_frames.size();

@@ -31,41 +31,37 @@
 #ifndef ScriptCallFrame_h
 #define ScriptCallFrame_h
 
-#include <runtime/ArgList.h>
+#include "PlatformString.h"
 #include "ScriptValue.h"
 #include <wtf/Vector.h>
 
 namespace JSC {
-    class ExecState;
-    class InternalFunction;
+class ExecState;
+class UString;
 }
 
 namespace WebCore {
 
-    // FIXME: Implement retrieving line number and source URL and storing here
-    // for all call frames, not just the first one.
-    // See <https://bugs.webkit.org/show_bug.cgi?id=22556> and
-    // <https://bugs.webkit.org/show_bug.cgi?id=21180>
-    class ScriptCallFrame  {
-    public:
-        ScriptCallFrame(const JSC::UString& functionName, const JSC::UString& urlString, int lineNumber, JSC::ExecState*, unsigned skipArgumentCount);
-        ~ScriptCallFrame();
+class ScriptCallFrame  {
+public:
+    ScriptCallFrame(const JSC::UString& functionName, const JSC::UString& urlString, int lineNumber, JSC::ExecState*, unsigned skipArgumentCount);
+    ~ScriptCallFrame();
 
-        const String& functionName() const { return m_functionName; }
-        const String& sourceURL() const { return m_sourceURL; }
-        unsigned lineNumber() const { return m_lineNumber; }
+    const String& functionName() const { return m_functionName; }
+    const String& sourceURL() const { return m_sourceURL; }
+    unsigned lineNumber() const { return m_lineNumber; }
 
-        // argument retrieval methods
-        const ScriptValue& argumentAt(unsigned) const;
-        unsigned argumentCount() const { return m_arguments.size(); }
+    // argument retrieval methods
+    const ScriptValue& argumentAt(unsigned) const;
+    unsigned argumentCount() const { return m_arguments.size(); }
 
-    private:
-        String m_functionName;
-        String m_sourceURL;
-        unsigned m_lineNumber;
+private:
+    String m_functionName;
+    String m_sourceURL;
+    unsigned m_lineNumber;
 
-        Vector<ScriptValue> m_arguments;
-    };
+    Vector<ScriptValue> m_arguments;
+};
 
 } // namespace WebCore
 

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "ScriptCallFrame.h"
 
-#include <interpreter/CallFrame.h>
+#include <runtime/ArgList.h>
 #include <runtime/UString.h>
 
 using namespace JSC;
