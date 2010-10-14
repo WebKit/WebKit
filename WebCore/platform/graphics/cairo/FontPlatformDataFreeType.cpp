@@ -135,7 +135,7 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
 
     FT_Face fontConfigFace = cairo_ft_scaled_font_lock_face(m_scaledFont.get());
     if (fontConfigFace) {
-        m_fixedWidth = fontConfigFace->face_flags && FT_FACE_FLAG_FIXED_WIDTH;
+        m_fixedWidth = fontConfigFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH;
         cairo_ft_scaled_font_unlock_face(m_scaledFont.get());
     }
 }
