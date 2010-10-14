@@ -5904,3 +5904,5 @@ http/tests/websocket/tests/bad-sub-protocol-control-chars.html
 # https://bugs.webkit.org/show_bug.cgi?id=47244
 editing/pasteboard/dataTransfer-setData-getData.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=47564
+accessibility/aria-table-hierarchy.html
