@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,7 @@ class MacroAssemblerARMv7 : public AbstractMacroAssembler<ARMv7Assembler> {
 
 public:
     typedef ARMv7Assembler::LinkRecord LinkRecord;
+    typedef ARMv7Assembler::JumpType JumpType;
     typedef ARMv7Assembler::JumpLinkType JumpLinkType;
 
     MacroAssemblerARMv7()
@@ -57,9 +58,11 @@ public:
     void endUninterruptedSequence() { m_inUninterruptedSequence = false; }
     Vector<LinkRecord>& jumpsToLink() { return m_assembler.jumpsToLink(); }
     void* unlinkedCode() { return m_assembler.unlinkedCode(); }
+    bool canCompact(JumpType jumpType) { return m_assembler.canCompact(jumpType); }
+    JumpLinkType computeJumpType(JumpType jumpType, const uint8_t* from, const uint8_t* to) { return m_assembler.computeJumpType(jumpType, from, to); }
     JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return m_assembler.computeJumpType(record, from, to); }
     void recordLinkOffsets(int32_t regionStart, int32_t regionEnd, int32_t offset) {return m_assembler.recordLinkOffsets(regionStart, regionEnd, offset); }
-    int jumpSizeDelta(JumpLinkType jumpLinkType) { return m_assembler.jumpSizeDelta(jumpLinkType); }
+    int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return m_assembler.jumpSizeDelta(jumpType, jumpLinkType); }
     void link(LinkRecord& record, uint8_t* from, uint8_t* to) { return m_assembler.link(record, from, to); }
 
     struct ArmAddress {
@@ -986,14 +989,14 @@ public:
 
     void jump(RegisterID target)
     {
-        m_assembler.bx(target, inUninterruptedSequence() ? ARMv7Assembler::JumpFullSize : ARMv7Assembler::JumpNoCondition);
+        m_assembler.bx(target, ARMv7Assembler::JumpFixed);
     }
 
     // Address is a memory location containing the address to jump to
     void jump(Address address)
     {
         load32(address, dataTempRegister);
-        m_assembler.bx(dataTempRegister, inUninterruptedSequence() ? ARMv7Assembler::JumpFullSize : ARMv7Assembler::JumpNoCondition);
+        m_assembler.bx(dataTempRegister, ARMv7Assembler::JumpFixed);
     }
 
 
@@ -1082,29 +1085,29 @@ public:
     Call nearCall()
     {
         moveFixedWidthEncoding(Imm32(0), dataTempRegister);
-        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFullSize), Call::LinkableNear);
+        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFixed), Call::LinkableNear);
     }
 
     Call call()
     {
         moveFixedWidthEncoding(Imm32(0), dataTempRegister);
-        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFullSize), Call::Linkable);
+        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFixed), Call::Linkable);
     }
 
     Call call(RegisterID target)
     {
-        return Call(m_assembler.blx(target, ARMv7Assembler::JumpFullSize), Call::None);
+        return Call(m_assembler.blx(target, ARMv7Assembler::JumpFixed), Call::None);
     }
 
     Call call(Address address)
     {
         load32(address, dataTempRegister);
-        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFullSize), Call::None);
+        return Call(m_assembler.blx(dataTempRegister, ARMv7Assembler::JumpFixed), Call::None);
     }
 
     void ret()
     {
-        m_assembler.bx(linkRegister, ARMv7Assembler::JumpFullSize);
+        m_assembler.bx(linkRegister, ARMv7Assembler::JumpFixed);
     }
 
     void set32(Condition cond, RegisterID left, RegisterID right, RegisterID dest)
@@ -1204,7 +1207,7 @@ public:
     {
         // Like a normal call, but don't link.
         moveFixedWidthEncoding(Imm32(0), dataTempRegister);
-        return Call(m_assembler.bx(dataTempRegister, ARMv7Assembler::JumpFullSize), Call::Linkable);
+        return Call(m_assembler.bx(dataTempRegister, ARMv7Assembler::JumpFixed), Call::Linkable);
     }
 
     Call makeTailRecursiveCall(Jump oldJump)
@@ -1228,14 +1231,14 @@ protected:
     ARMv7Assembler::JmpSrc makeJump()
     {
         moveFixedWidthEncoding(Imm32(0), dataTempRegister);
-        return m_assembler.bx(dataTempRegister, inUninterruptedSequence() ? ARMv7Assembler::JumpFullSize : ARMv7Assembler::JumpNoCondition);
+        return m_assembler.bx(dataTempRegister, inUninterruptedSequence() ? ARMv7Assembler::JumpNoConditionFixedSize : ARMv7Assembler::JumpNoCondition);
     }
 
     ARMv7Assembler::JmpSrc makeBranch(ARMv7Assembler::Condition cond)
     {
         m_assembler.it(cond, true, true);
         moveFixedWidthEncoding(Imm32(0), dataTempRegister);
-        return m_assembler.bx(dataTempRegister, inUninterruptedSequence() ? ARMv7Assembler::JumpFullSize : ARMv7Assembler::JumpCondition, cond);
+        return m_assembler.bx(dataTempRegister, inUninterruptedSequence() ? ARMv7Assembler::JumpConditionFixedSize : ARMv7Assembler::JumpCondition, cond);
     }
     ARMv7Assembler::JmpSrc makeBranch(Condition cond) { return makeBranch(armV7Condition(cond)); }
     ARMv7Assembler::JmpSrc makeBranch(DoubleCondition cond) { return makeBranch(armV7Condition(cond)); }

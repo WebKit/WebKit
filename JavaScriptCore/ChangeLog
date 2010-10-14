@@ -1,3 +1,54 @@
+2010-10-13  David Goodwin  <david_goodwin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        ARMv7 JIT should generated conditional branches when possible
+        https://bugs.webkit.org/show_bug.cgi?id=47384
+
+        Use different jump padding sizes for conditional and unconditional
+        jumps (12 bytes and 10 bytes respectively). This allows the JIT to
+        include the IT instruction as part of the conditional jump sequence
+        which in turn allows it to optimize away the IT using an ARMv7 
+        conditional branch instruction. Use 2-byte B(T1) and 4-byte B(T3) for
+        conditional branches when displacement is in range. Also use IT/B(T4)
+        for conditional branch when displacement does not fit in B(T3).
+
+        For unconditional jump, instruction selection options are:
+        B(T2), B(T4), MOVW/MOVT/BX. For conditional jump, instruction selection
+        options are: B(T1), B(T3), IT/B(T4), ITTT/MOVW/MOVT/BX.
+
+        * assembler/ARMv7Assembler.cpp:
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::JmpSrc::JmpSrc):
+        (JSC::ARMv7Assembler::ifThenElse):
+        (JSC::ARMv7Assembler::jumpSizeDelta):
+        (JSC::ARMv7Assembler::canCompact):
+        (JSC::ARMv7Assembler::computeJumpType):
+        (JSC::ARMv7Assembler::link):
+        (JSC::ARMv7Assembler::canBeJumpT1):
+        (JSC::ARMv7Assembler::canBeJumpT3):
+        (JSC::ARMv7Assembler::canBeJumpT4):
+        (JSC::ARMv7Assembler::linkJumpT1):
+        (JSC::ARMv7Assembler::linkJumpT3):
+        (JSC::ARMv7Assembler::linkJumpT4):
+        (JSC::ARMv7Assembler::linkConditionalJumpT4):
+        (JSC::ARMv7Assembler::linkBX):
+        (JSC::ARMv7Assembler::linkConditionalBX):
+        (JSC::ARMv7Assembler::linkJumpAbsolute):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::linkCode):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::canCompact):
+        (JSC::MacroAssemblerARMv7::computeJumpType):
+        (JSC::MacroAssemblerARMv7::jumpSizeDelta):
+        (JSC::MacroAssemblerARMv7::jump):
+        (JSC::MacroAssemblerARMv7::nearCall):
+        (JSC::MacroAssemblerARMv7::call):
+        (JSC::MacroAssemblerARMv7::ret):
+        (JSC::MacroAssemblerARMv7::tailRecursiveCall):
+        (JSC::MacroAssemblerARMv7::makeJump):
+        (JSC::MacroAssemblerARMv7::makeBranch):
+
 2010-10-13  Fridrich Strba  <fridrich.strba@bluewin.ch>
 
         Reviewed by Darin Adler.

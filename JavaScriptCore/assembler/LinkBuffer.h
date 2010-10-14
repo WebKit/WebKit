@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -235,12 +235,14 @@ private:
                 target = linkBase + jumpsToLink[i].to() - m_assembler->executableOffsetFor(jumpsToLink[i].to());
             
             JumpLinkType jumpLinkType = m_assembler->computeJumpType(jumpsToLink[i], linkBase + writePtr, target);
-
-            // Step back in the write stream
-            int32_t delta = m_assembler->jumpSizeDelta(jumpLinkType);
-            if (delta) {
-                writePtr -= delta;
-                m_assembler->recordLinkOffsets(jumpsToLink[i].from() - delta, readPtr, readPtr - writePtr);
+            // Compact branch if we can...
+            if (m_assembler->canCompact(jumpsToLink[i].type())) {
+                // Step back in the write stream
+                int32_t delta = m_assembler->jumpSizeDelta(jumpsToLink[i].type(), jumpLinkType);
+                if (delta) {
+                    writePtr -= delta;
+                    m_assembler->recordLinkOffsets(jumpsToLink[i].from() - delta, readPtr, readPtr - writePtr);
+                }
             }
             jumpsToLink[i].setFrom(writePtr);
         }
