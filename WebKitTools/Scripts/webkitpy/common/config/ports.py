@@ -45,6 +45,7 @@ class WebKitPort(object):
     def port(port_name):
         ports = {
             "chromium": ChromiumPort,
+            "chromium-xvfb": ChromiumXVFBPort,
             "gtk": GtkPort,
             "mac": MacPort,
             "win": WinPort,
@@ -217,3 +218,24 @@ class ChromiumPort(WebKitPort):
         command = WebKitPort.build_webkit_command(build_style=build_style)
         command.append("--chromium")
         return command
+
+    @classmethod
+    def run_webkit_tests_command(cls):
+        return [
+            cls.script_path("new-run-webkit-tests"),
+            "--chromium",
+            "--use-drt",
+            "--no-pixel-tests",
+        ]
+
+
+class ChromiumXVFBPort(ChromiumPort):
+
+    @classmethod
+    def flag(cls):
+        return "--port=chromium-xvfb"
+
+    @classmethod
+    def run_webkit_tests_command(cls):
+        # FIXME: We should find a better way to do this.
+        return ["xvfb-run"] + cls.run_webkit_tests_command()

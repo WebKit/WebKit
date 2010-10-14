@@ -1,3 +1,18 @@
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Introduce the ChromiumXVFBPort for running commit-queue on EC2
+        https://bugs.webkit.org/show_bug.cgi?id=47653
+
+        I'm not entirely sure this is the best way to do this, but we need to
+        run the tests under XVFB on EC2 because the EC2 instances don't have a
+        real monitor hooked up.  This patch adds a ChromiumXVFBPort that runs
+        that way.  The idea is that XVFB is like a platform for the Chromium
+        port, but we don't have a real notion of platform separate from port.
+
+        * Scripts/webkitpy/common/config/ports.py:
+
 2010-10-13  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

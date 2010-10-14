@@ -64,7 +64,7 @@ class WebKitPortTest(unittest.TestCase):
     def test_chromium_port(self):
         self.assertEquals(ChromiumPort.name(), "Chromium")
         self.assertEquals(ChromiumPort.flag(), "--port=chromium")
-        self.assertEquals(ChromiumPort.run_webkit_tests_command(), [WebKitPort.script_path("run-webkit-tests")])
+        self.assertEquals(ChromiumPort.run_webkit_tests_command(), [WebKitPort.script_path("new-run-webkit-tests"), "--chromium", "--use-drt", "--no-pixel-tests"])
         self.assertEquals(ChromiumPort.build_webkit_command(), [WebKitPort.script_path("build-webkit"), "--chromium"])
         self.assertEquals(ChromiumPort.build_webkit_command(build_style="debug"), [WebKitPort.script_path("build-webkit"), "--debug", "--chromium"])
         self.assertEquals(ChromiumPort.update_webkit_command(), [WebKitPort.script_path("update-webkit"), "--chromium"])
