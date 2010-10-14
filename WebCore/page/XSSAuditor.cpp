@@ -41,8 +41,7 @@
 #include "Settings.h"
 #include "TextResourceDecoder.h"
 #include <wtf/text/CString.h>
-
-using namespace WTF;
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
@@ -203,7 +202,7 @@ bool XSSAuditor::canLoadObject(const String& url) const
     task.allowRequestIfNoIllegalURICharacters = true;
 
     if (findInRequest(task)) {
-        String consoleMessage = String::format("Refused to load an object. URL found within request: \"%s\".\n", url.utf8().data());
+        String consoleMessage = makeString("Refused to load an object. URL found within request: \"", url, "\".\n");
         m_frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, consoleMessage, 1, String());
         return false;
     }

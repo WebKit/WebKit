@@ -26,8 +26,7 @@
 #include "config.h"
 #include "Language.h"
 
-#include "PlatformString.h"
-#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
@@ -60,7 +59,7 @@ String defaultLanguage()
     if (countryName.isEmpty())
         computedDefaultLanguage = languageName;
     else
-        computedDefaultLanguage = String::format("%s-%s", languageName.latin1().data(), countryName.latin1().data());
+        computedDefaultLanguage = makeString(languageName, '-', countryName);
 
     return computedDefaultLanguage;
 }

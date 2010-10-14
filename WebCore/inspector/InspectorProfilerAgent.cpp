@@ -43,7 +43,7 @@
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include <wtf/OwnPtr.h>
-#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #if USE(JSC)
 #include "JSDOMWindow.h"
@@ -89,13 +89,13 @@ void InspectorProfilerAgent::addProfileFinishedMessageToConsole(PassRefPtr<Scrip
 {
     RefPtr<ScriptProfile> profile = prpProfile;
     String title = profile->title();
-    String message = String::format("Profile \"webkit-profile://%s/%s#%d\" finished.", CPUProfileType, encodeWithURLEscapeSequences(title).utf8().data(), profile->uid());
+    String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), '#', String::number(profile->uid()), "\" finished.");
     m_inspectorController->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
 void InspectorProfilerAgent::addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL)
 {
-    String message = String::format("Profile \"webkit-profile://%s/%s#0\" started.", CPUProfileType, encodeWithURLEscapeSequences(title).utf8().data());
+    String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), "#0 \" started.");
     m_inspectorController->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
@@ -143,7 +143,7 @@ String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool increment
     if (incrementProfileNumber)
         m_currentUserInitiatedProfileNumber = m_nextUserInitiatedProfileNumber++;
 
-    return String::format("%s.%d", UserInitiatedProfileName, m_currentUserInitiatedProfileNumber);
+    return makeString(UserInitiatedProfileName, '.', String::number(m_currentUserInitiatedProfileNumber));
 }
 
 void InspectorProfilerAgent::getProfileHeaders(RefPtr<InspectorArray>* headers)
@@ -232,7 +232,9 @@ void InspectorProfilerAgent::stopUserInitiatedProfiling()
 
 void InspectorProfilerAgent::takeHeapSnapshot()
 {
-    String title = String::format("%s.%d", UserInitiatedProfileName, m_nextUserInitiatedHeapSnapshotNumber++);
+    String title = makeString(UserInitiatedProfileName, '.', String::number(m_nextUserInitiatedHeapSnapshotNumber));
+    ++m_nextUserInitiatedHeapSnapshotNumber;
+
     RefPtr<ScriptHeapSnapshot> snapshot = ScriptProfiler::takeHeapSnapshot(title);
     if (snapshot) {
         m_snapshots.add(snapshot->uid(), snapshot);

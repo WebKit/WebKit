@@ -45,6 +45,8 @@
 #include "SkColorPriv.h"
 #include "SkiaUtils.h"
 
+#include <wtf/text/StringConcatenate.h>
+
 using namespace std;
 
 namespace WebCore {
@@ -312,7 +314,7 @@ String ImageBuffer::toDataURL(const String&, const double*) const
     base64EncodedData.append('\0');
 
     // And the resulting string.
-    return String::format("data:image/png;base64,%s", base64EncodedData.data());
+    return makeString("data:image/png;base64,", base64EncodedData.data());
 }
 
 } // namespace WebCore

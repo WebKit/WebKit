@@ -34,6 +34,7 @@
 #include <sqlite3.h>
 #include <wtf/Threading.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
@@ -217,7 +218,7 @@ int64_t SQLiteDatabase::totalSize()
 
 void SQLiteDatabase::setSynchronous(SynchronousPragma sync)
 {
-    executeCommand(String::format("PRAGMA synchronous = %i", sync));
+    executeCommand(makeString("PRAGMA synchronous = ", String::number(sync)));
 }
 
 void SQLiteDatabase::setBusyTimeout(int ms)

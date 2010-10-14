@@ -92,7 +92,7 @@
 #include "TextEncoding.h"
 #include "TextIterator.h"
 #include "WindowFeatures.h"
-#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefCounted.h>
@@ -1067,9 +1067,7 @@ void InspectorController::didReceiveResponse(unsigned long identifier, const Res
             resource->updateScriptObject(m_frontend.get());
     }
     if (response.httpStatusCode() >= 400) {
-        // The ugly code below is due to that String::format() is not utf8-safe at the moment.
-        String message = String::format("Failed to load resource: the server responded with a status of %u (", response.httpStatusCode()) + response.httpStatusText() + ")";
-
+        String message = makeString("Failed to load resource: the server responded with a status of ", String::number(response.httpStatusCode()), " (", response.httpStatusText(), ')');
         addMessageToConsole(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 0, response.url().string());
     }
 }
@@ -2032,7 +2030,7 @@ void InspectorController::openInInspectedWindow(const String& url)
 
 void InspectorController::count(const String& title, unsigned lineNumber, const String& sourceID)
 {
-    String identifier = title + String::format("@%s:%d", sourceID.utf8().data(), lineNumber);
+    String identifier = makeString(title, '@', sourceID, ':', String::number(lineNumber));
     HashMap<String, unsigned>::iterator it = m_counts.find(identifier);
     int count;
     if (it == m_counts.end())
@@ -2044,7 +2042,7 @@ void InspectorController::count(const String& title, unsigned lineNumber, const 
 
     m_counts.add(identifier, count);
 
-    String message = String::format("%s: %d", title.utf8().data(), count);
+    String message = makeString(title, ": ", String::number(count));
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceID);
 }
 

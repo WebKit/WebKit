@@ -36,13 +36,13 @@
 #include "SharedBuffer.h"
 
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
 PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
-    String resourcePath = homeDirectoryPath() + String::format("res/%s.png", name);
+    String resourcePath = makeString(homeDirectoryPath(), "res/", name, ".png");
 
     RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(resourcePath.utf8().data());
     if (!buffer)

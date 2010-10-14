@@ -39,6 +39,7 @@
 #include "Text.h"
 
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 
@@ -253,9 +254,9 @@ static String processFileDateString(const FTPTime& fileTime)
     String dateString;
 
     if (fileTime.tm_year > -1)
-        dateString = String::format("%s %i, %i", months[month], fileTime.tm_mday, fileTime.tm_year);
+        dateString = makeString(months[month], ' ', String::number(fileTime.tm_mday), ", ", String::number(fileTime.tm_year));
     else
-        dateString = String::format("%s %i, %i", months[month], fileTime.tm_mday, now.tm_year);
+        dateString = makeString(months[month], ' ', String::number(fileTime.tm_mday), ", ", String::number(now.tm_year));
 
     return dateString + timeOfDay;
 }

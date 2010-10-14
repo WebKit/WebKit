@@ -28,6 +28,7 @@
 #include <cairo.h>
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
@@ -67,7 +68,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     base64Encode(reinterpret_cast<const char*>(buffer.get()), bufferSize, out);
     out.append('\0');
 
-    return String::format("data:%s;base64,%s", mimeType.utf8().data(), out.data());
+    return makeString("data:", mimeType, ";base64,", out.data());
 }
 
 }

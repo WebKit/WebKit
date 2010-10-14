@@ -32,7 +32,7 @@
 #include <winnls.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/unicode/UTF8.h>
 
@@ -110,7 +110,7 @@ LanguageManager::LanguageManager()
                 info.m_aliases.append(name);
                 info.m_aliases.append(String(cpInfo.wszHeaderCharset).latin1());
                 info.m_aliases.append(String(cpInfo.wszBodyCharset).latin1());
-                String cpName = String::format("cp%d", cpInfo.uiCodePage);
+                String cpName = makeString("cp", String::number(cpInfo.uiCodePage));
                 info.m_aliases.append(cpName.latin1());
                 supportedCharsets().add(i->second.data());
             }

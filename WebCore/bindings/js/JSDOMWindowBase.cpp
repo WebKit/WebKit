@@ -37,7 +37,7 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <wtf/Threading.h>
-#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 using namespace JSC;
 
@@ -83,8 +83,8 @@ String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* othe
         return String();
 
     // FIXME: this error message should contain more specifics of why the same origin check has failed.
-    return String::format("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains, protocols and ports must match.\n",
-        targetURL.string().utf8().data(), originURL.string().utf8().data());
+    return makeString("Unsafe JavaScript attempt to access frame with URL ", targetURL.string(),
+                      " from frame with URL ", originURL.string(), ". Domains, protocols and ports must match.\n");
 }
 
 void JSDOMWindowBase::printErrorMessage(const String& message) const

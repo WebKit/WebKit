@@ -86,7 +86,7 @@
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
-#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #if ENABLE(FILE_SYSTEM)
 #include "AsyncFileSystem.h"
@@ -798,8 +798,8 @@ void DOMWindow::postMessageTimerFired(PostMessageTimer* t)
     if (timer->targetOrigin()) {
         // Check target origin now since the target document may have changed since the simer was scheduled.
         if (!timer->targetOrigin()->isSameSchemeHostPort(document()->securityOrigin())) {
-            String message = String::format("Unable to post message to %s. Recipient has origin %s.\n", 
-                timer->targetOrigin()->toString().utf8().data(), document()->securityOrigin()->toString().utf8().data());
+            String message = makeString("Unable to post message to ", timer->targetOrigin()->toString(),
+                                        ". Recipient has origin ", document()->securityOrigin()->toString(), ".\n");
             console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 0, String());
             return;
         }

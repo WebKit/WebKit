@@ -38,13 +38,13 @@
 #include "PlatformString.h"
 #include "ScriptDebugServer.h"
 #include <wtf/MD5.h>
-#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
 static String formatBreakpointId(const String& sourceID, unsigned lineNumber)
 {
-    return String::format("%s:%d", sourceID.utf8().data(), lineNumber);
+    return makeString(sourceID, ':', String::number(lineNumber));
 }
 
 PassOwnPtr<InspectorDebuggerAgent> InspectorDebuggerAgent::create(InspectorController* inspectorController, InspectorFrontend* frontend)

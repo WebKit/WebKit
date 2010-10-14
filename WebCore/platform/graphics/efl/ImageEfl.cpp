@@ -32,6 +32,7 @@
 #include "BitmapImage.h"
 #include "SharedBuffer.h"
 
+#include <wtf/text/StringConcatenate.h>
 #include <cairo.h>
 
 namespace WebCore {
@@ -51,7 +52,7 @@ static PassRefPtr<SharedBuffer> loadResourceSharedBufferFallback()
 
 static PassRefPtr<SharedBuffer> loadResourceSharedBuffer(const char* name)
 {
-    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(String::format(DATA_DIR "/webkit-1.0/images/%s.png", name));
+    RefPtr<SharedBuffer> buffer = SharedBuffer::createWithContentsOfFile(makeString(DATA_DIR "/webkit-1.0/images/", name, ".png"));    
     if (buffer)
         return buffer.release();
     return loadResourceSharedBufferFallback();

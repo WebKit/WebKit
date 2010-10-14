@@ -34,6 +34,7 @@
 #include <shlwapi.h>
 #include <wininet.h> // for INTERNET_MAX_URL_LENGTH
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #if PLATFORM(CF)
 #include <CoreFoundation/CoreFoundation.h>
@@ -239,7 +240,7 @@ void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& re
     unsigned endFragmentOffset = startFragmentOffset + markupUTF8.length();
     unsigned endHTMLOffset = endFragmentOffset + strlen(endMarkup);
 
-    append(result, String::format(header, startHTMLOffset, endHTMLOffset, startFragmentOffset, endFragmentOffset).utf8());
+    append(result, makeString(header, startHTMLOffset, endHTMLOffset, startFragmentOffset, endFragmentOffset).utf8());
     if (sourceURLUTF8.length()) {
         append(result, sourceURLPrefix);
         append(result, sourceURLUTF8);

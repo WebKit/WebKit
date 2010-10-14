@@ -48,6 +48,7 @@
 #include "WebSocketHandshake.h"
 
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
@@ -246,7 +247,7 @@ bool WebSocketChannel::appendToBuffer(const char* data, size_t len)
         m_bufferSize = newBufferSize;
         return true;
     }
-    m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, String::format("WebSocket frame (at %lu bytes) is too long.", static_cast<unsigned long>(newBufferSize)), 0, m_handshake.clientOrigin());
+    m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, makeString("WebSocket frame (at ", String::number(static_cast<unsigned long>(newBufferSize)), " bytes) is too long."), 0, m_handshake.clientOrigin());
     return false;
 }
 

@@ -94,7 +94,7 @@ void WebLayer::drawInContext(PlatformGraphicsContext* context)
 #endif
 
     if (m_owner->showRepaintCounter()) {
-        String text = String::format("%d", m_owner->incrementRepaintCount());;
+        String text = String::number(m_owner->incrementRepaintCount());
 
         CGContextSaveGState(context);
 

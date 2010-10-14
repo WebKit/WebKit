@@ -1,3 +1,15 @@
+2010-10-14  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Replace lots of String::format() usages by StringConcatenate
+        https://bugs.webkit.org/show_bug.cgi?id=47664
+
+        Add StringTypeAdapter<char> to accept single characters for makeString().
+
+        * wtf/text/StringConcatenate.h:
+        (WTF::makeString):
+
 2010-10-14  David Goodwin  <david_goodwin@apple.com>
 
         Reviewed by Darin Adler.

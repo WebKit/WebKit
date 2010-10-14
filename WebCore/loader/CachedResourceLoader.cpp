@@ -44,7 +44,7 @@
 #include "PingLoader.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
-#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #define PRELOAD_DEBUG 0
 
@@ -289,12 +289,8 @@ void CachedResourceLoader::printAccessDeniedMessage(const KURL& url) const
         return;
 
     String message = m_doc->url().isNull() ?
-        String::format("Unsafe attempt to load URL %s.",
-                       url.string().utf8().data()) :
-        String::format("Unsafe attempt to load URL %s from frame with URL %s. "
-                       "Domains, protocols and ports must match.\n",
-                       url.string().utf8().data(),
-                       m_doc->url().string().utf8().data());
+        makeString("Unsafe attempt to load URL ", url.string(), '.') :
+        makeString("Unsafe attempt to load URL ", url.string(), " from frame with URL ", m_doc->url().string(), ". Domains, protocols and ports must match.\n");
 
     // FIXME: provide a real line number and source URL.
     frame()->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());

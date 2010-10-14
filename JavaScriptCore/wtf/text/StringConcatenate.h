@@ -35,6 +35,21 @@ class StringTypeAdapter {
 };
 
 template<>
+class StringTypeAdapter<char> {
+public:
+    StringTypeAdapter<char>(char buffer)
+        : m_buffer(buffer)
+    {
+    }
+
+    unsigned length() { return 1; }
+    void writeTo(UChar* destination) { *destination = m_buffer; }
+
+private:
+    unsigned char m_buffer;
+};
+
+template<>
 class StringTypeAdapter<char*> {
 public:
     StringTypeAdapter<char*>(char* buffer)
@@ -360,6 +375,13 @@ PassRefPtr<StringImpl> tryMakeString(StringType1 string1, StringType2 string2, S
     return resultImpl;
 }
 
+// Convenience only.
+template<typename StringType1>
+String makeString(StringType1 string1)
+{
+    return String(string1);
+}
+
 template<typename StringType1, typename StringType2>
 String makeString(StringType1 string1, StringType2 string2)
 {
@@ -424,5 +446,7 @@ String makeString(StringType1 string1, StringType2 string2, StringType3 string3,
 }
 
 } // namespace WTF
+
+using WTF::makeString;
 
 #endif

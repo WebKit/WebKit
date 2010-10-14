@@ -47,6 +47,7 @@
 #import <wtf/CurrentTime.h>
 #import <wtf/UnusedParam.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringConcatenate.h>
 
 using namespace std;
 
@@ -247,7 +248,7 @@ static String propertyIdToString(AnimatedPropertyID property)
 
 static String animationIdentifier(const String& animationName, AnimatedPropertyID property, int index)
 {
-    return animationName + String::format("_%d_%d", property, index);
+    return makeString(animationName, '_', String::number(property), '_', String::number(index));
 }
 
 static CAMediaTimingFunction* getCAMediaTimingFunction(const TimingFunction* timingFunction)
