@@ -193,29 +193,20 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     exposedRect.intersect(frameRect());
     exposedRect.move(-frameRect().x(), -frameRect().y());
 
-    Window dummyW;
-    int dummyI;
-    unsigned int dummyUI, actualDepth = 0;
-    XGetGeometry(GDK_DISPLAY(), m_drawable, &dummyW, &dummyI, &dummyI,
-                 &dummyUI, &dummyUI, &dummyUI, &actualDepth);
-
-    const unsigned int drawableDepth = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth;
-    ASSERT(drawableDepth == actualDepth);
-
-    cairo_surface_t* drawableSurface = cairo_xlib_surface_create(GDK_DISPLAY(),
-                                                                 m_drawable,
-                                                                 m_visual,
-                                                                 m_windowRect.width(),
-                                                                 m_windowRect.height());
+    PlatformRefPtr<cairo_surface_t> drawableSurface = adoptPlatformRef(cairo_xlib_surface_create(GDK_DISPLAY(),
+                                                                                                 m_drawable,
+                                                                                                 m_visual,
+                                                                                                 m_windowRect.width(),
+                                                                                                 m_windowRect.height()));
 
     if (m_isTransparent) {
         // If we have a 32 bit drawable and the plugin wants transparency,
         // we'll clear the exposed area to transparent first.  Otherwise,
         // we'd end up with junk in there from the last paint, or, worse,
         // uninitialized data.
-        PlatformRefPtr<cairo_t> cr = adoptPlatformRef(cairo_create(drawableSurface));
+        PlatformRefPtr<cairo_t> cr = adoptPlatformRef(cairo_create(drawableSurface.get()));
 
-        if (!(cairo_surface_get_content(drawableSurface) & CAIRO_CONTENT_ALPHA)) {
+        if (!(cairo_surface_get_content(drawableSurface.get()) & CAIRO_CONTENT_ALPHA)) {
             // Attempt to fake it when we don't have an alpha channel on our
             // pixmap.  If that's not possible, at least clear the window to
             // avoid drawing artifacts.
@@ -251,7 +242,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     cairo_t* cr = context->platformContext();
     cairo_save(cr);
 
-    cairo_set_source_surface(cr, drawableSurface, frameRect().x(), frameRect().y());
+    cairo_set_source_surface(cr, drawableSurface.get(), frameRect().x(), frameRect().y());
 
     cairo_rectangle(cr,
                     frameRect().x() + exposedRect.x(), frameRect().y() + exposedRect.y(),
@@ -265,7 +256,6 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     cairo_paint(cr);
 
     cairo_restore(cr);
-    cairo_surface_destroy(drawableSurface);
 #endif // defined(XP_UNIX)
 }
 
