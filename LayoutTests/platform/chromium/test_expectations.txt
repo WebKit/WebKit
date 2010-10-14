@@ -2898,9 +2898,6 @@ BUGWK42769 : http/tests/security/401-logout/401-logout.php = TIMEOUT
 // Flaky since at least chromium r52834, WebKit r63615.
 BUG49970 : platform/chromium/plugins/call-as-function.html = PASS TEXT
 
-// Need rebaseline
-BUGWK24906 : fast/text/backslash-to-yen-sign-euc.html = FAIL
-
 // Flaky since WebKit r63994
 BUGWK42964 WIN LINUX : tables/mozilla_expected_failures/bugs/bug89315.html = PASS FAIL
 
