@@ -228,6 +228,10 @@ class ChromiumPort(WebKitPort):
             "--no-pixel-tests",
         ]
 
+    @classmethod
+    def run_javascriptcore_tests_command(cls):
+        return None
+
 
 class ChromiumXVFBPort(ChromiumPort):
 

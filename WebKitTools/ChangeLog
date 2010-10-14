@@ -1,5 +1,17 @@
 2010-10-13  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed.
+
+        Chromium port can't run JavaScriptCore tests
+        https://bugs.webkit.org/show_bug.cgi?id=47654
+
+        This lets webkit-patch build-and-test work on Chromium.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+
+2010-10-13  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Make --port a global option and pass the port information to the commit-queue subprocess

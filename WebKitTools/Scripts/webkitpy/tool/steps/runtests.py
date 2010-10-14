@@ -48,8 +48,11 @@ class RunTests(AbstractStep):
         self._tool.executive.run_and_throw_if_fail(self.port().run_python_unittests_command())
         log("Running Perl unit tests")
         self._tool.executive.run_and_throw_if_fail(self.port().run_perl_unittests_command())
-        log("Running JavaScriptCore tests")
-        self._tool.executive.run_and_throw_if_fail(self.port().run_javascriptcore_tests_command(), quiet=True)
+
+        javascriptcore_tests_command = self.port().run_javascriptcore_tests_command()
+        if javascriptcore_tests_command:
+            log("Running JavaScriptCore tests")
+            self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True)
 
         log("Running run-webkit-tests")
         args = self.port().run_webkit_tests_command()
