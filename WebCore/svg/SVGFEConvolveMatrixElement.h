@@ -38,6 +38,7 @@ private:
     SVGFEConvolveMatrixElement(const QualifiedName&, Document*);
 
     virtual void parseMappedAttribute(Attribute*);
+    virtual void svgAttributeChanged(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
     DECLARE_ANIMATED_PROPERTY(SVGFEConvolveMatrixElement, SVGNames::inAttr, String, In1, in1)

@@ -93,14 +93,35 @@ void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-void SVGFEConvolveMatrixElement::setOrder(float, float)
+void SVGFEConvolveMatrixElement::setOrder(float x, float y)
 {
-    // FIXME: Needs an implementation.
+    setOrderXBaseValue(x);
+    setOrderYBaseValue(y);
+    invalidate();
 }
 
-void SVGFEConvolveMatrixElement::setKernelUnitLength(float, float)
+void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
 {
-    // FIXME: Needs an implementation.
+    setKernelUnitLengthXBaseValue(x);
+    setKernelUnitLengthYBaseValue(y);
+    invalidate();
+}
+
+void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+
+    if (attrName == SVGNames::inAttr
+        || attrName == SVGNames::orderAttr
+        || attrName == SVGNames::edgeModeAttr
+        || attrName == SVGNames::kernelMatrixAttr
+        || attrName == SVGNames::divisorAttr
+        || attrName == SVGNames::biasAttr
+        || attrName == SVGNames::targetXAttr
+        || attrName == SVGNames::targetYAttr
+        || attrName == SVGNames::kernelUnitLengthAttr
+        || attrName == SVGNames::preserveAlphaAttr)
+        invalidate();
 }
 
 PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* filterBuilder)
