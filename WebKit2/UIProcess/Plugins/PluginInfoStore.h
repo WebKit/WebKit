@@ -71,9 +71,14 @@ private:
     void loadPluginsInDirectory(const String& directory);
     void loadPlugin(const String& pluginPath);
     
-    // Platform specific member functions.
+    // Platform-specific member functions
+
+    // Returns paths to directories that should be searched for plug-ins (via pluginPathsInDirectory).
     static Vector<String> pluginsDirectories();
+    // Returns paths to all plug-ins in the specified directory.
     static Vector<String> pluginPathsInDirectory(const String& directory);
+    // Returns paths to individual plug-ins that won't be found via pluginsDirectories/pluginPathsInDirectory.
+    static Vector<String> individualPluginPaths();
     static bool getPluginInfo(const String& pluginPath, Plugin& plugin);
     static bool shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins);
     static String getMIMETypeForExtension(const String& extension);

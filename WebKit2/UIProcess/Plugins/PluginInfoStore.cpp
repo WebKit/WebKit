@@ -62,9 +62,15 @@ void PluginInfoStore::loadPluginsIfNecessary()
     for (size_t i = 0; i < m_additionalPluginsDirectories.size(); ++i)
         loadPluginsInDirectory(m_additionalPluginsDirectories[i]);
 
+    // Then load plug-ins from the standard plug-ins directories.
     Vector<String> directories = pluginsDirectories();
     for (size_t i = 0; i < directories.size(); ++i)
         loadPluginsInDirectory(directories[i]);
+
+    // Then load plug-ins that are not in the standard plug-ins directories.
+    Vector<String> paths = individualPluginPaths();
+    for (size_t i = 0; i < paths.size(); ++i)
+        loadPlugin(paths[i]);
 
     m_pluginListIsUpToDate = true;
 }

@@ -64,6 +64,11 @@ Vector<String> PluginInfoStore::pluginPathsInDirectory(const String& directory)
     return pluginPaths;
 }
 
+Vector<String> PluginInfoStore::individualPluginPaths()
+{
+    return Vector<String>();
+}
+
 static bool getPluginArchitecture(CFBundleRef bundle, cpu_type_t& pluginArchitecture)
 {
     RetainPtr<CFArrayRef> pluginArchitecturesArray(AdoptCF, CFBundleCopyExecutableArchitectures(bundle));

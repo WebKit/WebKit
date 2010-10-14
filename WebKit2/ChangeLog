@@ -1,5 +1,37 @@
 2010-10-14  Adam Roben  <aroben@apple.com>
 
+        Load plugins that are specified in the MozillaPlugins registry key
+
+        Fixes <http://webkit.org/b/44271> <rdar://problem/8329750> WebKit2
+        should load plugins specified in the MozillaPlugins registry key (like
+        old WebKit does)
+
+        I couldn't think of a good way to test this.
+
+        Reviewed by Steve Falkenburg.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary): Also load plugins
+        specified by individualPluginPaths.
+
+        * UIProcess/Plugins/PluginInfoStore.h: Added individualPluginPaths and
+        some comments.
+
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::individualPluginPaths):
+        * UIProcess/Plugins/qt/PluginInfoStoreQt.cpp:
+        (WebKit::PluginInfoStore::individualPluginPaths):
+        Stubbed out.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::addPluginPathsFromRegistry):
+        (WebKit::PluginInfoStore::individualPluginPaths):
+        Ported this code from WebCore's PluginDatabaseWin.cpp. I slightly
+        cleaned it up and changed it to use a case-insensitive hash, since
+        paths on Windows are case-insensitive.
+
+2010-10-14  Adam Roben  <aroben@apple.com>
+
         Call ::DefWindowProcW for unhandled key events
 
         ::DefWindowProcW does important things for at least some key events
