@@ -3214,3 +3214,12 @@ BUG58942 : fast/dom/prototype-inheritance.html = TEXT
 
 // Started failing at Webkit r69628.
 BUG47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
+
+// Added in WebKit r69755, failed immediately.
+BUGJAPHET : fast/canvas/canvas-currentColor.html = TEXT
+
+// Added in WebKit r69749, failed immediately due to KURL/KURLGoogle differences.
+BUGJAPHET : fast/dom/anchor-getParameter.html = TEXT
+
+// Added in Webkit r69707 without expected results.
+BUGJAPHET : platform/gtk/accessibility/aria-table-hierarchy.html = MISSING
