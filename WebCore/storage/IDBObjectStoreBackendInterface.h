@@ -26,6 +26,7 @@
 #ifndef IDBObjectStoreBackendInterface_h
 #define IDBObjectStoreBackendInterface_h
 
+#include "ExceptionCode.h"
 #include "PlatformString.h"
 #include <wtf/Threading.h>
 
@@ -49,15 +50,15 @@ public:
     virtual String keyPath() const = 0;
     virtual PassRefPtr<DOMStringList> indexNames() const = 0;
 
-    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
-    virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, bool addOnly, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
-    virtual void remove(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
+    virtual void get(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
+    virtual void put(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, bool addOnly, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
+    virtual void remove(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
-    virtual PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface*) = 0;
-    virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name) = 0;
-    virtual void removeIndex(const String& name, IDBTransactionBackendInterface*) = 0;
+    virtual PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
+    virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name, ExceptionCode&) = 0;
+    virtual void removeIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 
-    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*) = 0;
+    virtual void openCursor(PassRefPtr<IDBKeyRange>, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
 };
 
 } // namespace WebCore

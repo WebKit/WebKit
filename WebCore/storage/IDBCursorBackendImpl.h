@@ -60,9 +60,9 @@ public:
     virtual unsigned short direction() const;
     virtual PassRefPtr<IDBKey> key() const;
     virtual PassRefPtr<IDBAny> value() const;
-    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>);
-    virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>);
-    virtual void remove(PassRefPtr<IDBCallbacks>);
+    virtual void update(PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    virtual void continueFunction(PassRefPtr<IDBKey>, PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    virtual void remove(PassRefPtr<IDBCallbacks>, ExceptionCode&);
 
 private:
     IDBCursorBackendImpl(PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, IDBCursor::Direction, PassOwnPtr<SQLiteStatement> query, IDBTransactionBackendInterface*);

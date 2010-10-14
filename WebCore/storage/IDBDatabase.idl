@@ -32,10 +32,14 @@ module storage {
         readonly attribute DOMString version;
         readonly attribute DOMStringList objectStores;
 
-        IDBObjectStore createObjectStore(in DOMString name, in [Optional, ConvertNullToNullString] DOMString keyPath, in [Optional] boolean autoIncrement);
-        void removeObjectStore(in DOMString name);
-        [CallWith=ScriptExecutionContext] IDBRequest setVersion(in DOMString version);
-        [CallWith=ScriptExecutionContext] IDBTransaction transaction (in [Optional] DOMStringList storeNames, in [Optional] unsigned short mode, in [Optional] unsigned long timeout);
+        IDBObjectStore createObjectStore(in DOMString name, in [Optional, ConvertNullToNullString] DOMString keyPath, in [Optional] boolean autoIncrement)
+            raises (IDBDatabaseException);
+        void removeObjectStore(in DOMString name)
+            raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBRequest setVersion(in DOMString version)
+            raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBTransaction transaction (in [Optional] DOMStringList storeNames, in [Optional] unsigned short mode, in [Optional] unsigned long timeout)
+            raises (IDBDatabaseException);
         void close();
     };
 

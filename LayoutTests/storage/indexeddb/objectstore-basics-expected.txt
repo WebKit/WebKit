@@ -52,8 +52,7 @@ PASS storeNames.contains('storeName') is true
 PASS storeNames.length is 1
 Ask for an index that doesn't exist:
 index = store.index('asdf')
-PASS index is null
-PASS index is null
+PASS Exception thrown.
 createIndex():
 index = store.createIndex('indexName', 'x', true)
 PASS index !== null is true
@@ -62,8 +61,7 @@ index = store.index('indexName')
 PASS index !== null is true
 Ask for an index that doesn't exist:
 index = store.index('asdf')
-PASS index is null
-PASS index is null.
+PASS Exception thrown.
 db.setVersion("version fail")
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

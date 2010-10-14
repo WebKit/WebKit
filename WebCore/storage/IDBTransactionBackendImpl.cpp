@@ -57,7 +57,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStor
 {
     if (m_state == Finished)
         return 0;
-    return m_database->objectStore(name, 0); // FIXME: remove mode param.
+    return m_database->objectStore(name);
 }
 
 bool IDBTransactionBackendImpl::scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask)

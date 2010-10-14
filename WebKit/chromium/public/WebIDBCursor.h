@@ -53,40 +53,9 @@ public:
     // One or the other will set, depending on what type of cursor this is.
     virtual void value(WebSerializedScriptValue& serializedScriptValue, WebIDBKey& idbKey) const { WEBKIT_ASSERT_NOT_REACHED(); }
 
-    // FIXME: Remove.
-    virtual void update(const WebSerializedScriptValue& value, WebIDBCallbacks* callbacks, WebExceptionCode&)
-    {
-        update(value, callbacks);
-    }
-    virtual void update(const WebSerializedScriptValue& value, WebIDBCallbacks* callbacks)
-    {
-        WebExceptionCode ec = 0;
-        update(value, callbacks, ec);
-    }
-    virtual void continueFunction(const WebIDBKey& key, WebIDBCallbacks* callbacks, WebExceptionCode&)
-    {
-        continueFunction(key, callbacks);
-    }
-    virtual void continueFunction(const WebIDBKey& key, WebIDBCallbacks* callbacks)
-    {
-        WebExceptionCode ec = 0;
-        continueFunction(key, callbacks, ec);
-    }
-    virtual void remove(WebIDBCallbacks* callbacks, WebExceptionCode&)
-    {
-        remove(callbacks);
-    }
-    virtual void remove(WebIDBCallbacks* callbacks)
-    {
-        WebExceptionCode ec = 0;
-        remove(callbacks, ec);
-    }
-
-    /*
     virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void remove(WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    */
 };
 
 } // namespace WebKit

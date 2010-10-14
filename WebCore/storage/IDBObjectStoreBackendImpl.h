@@ -50,7 +50,7 @@ public:
     {
         return adoptRef(new IDBObjectStoreBackendImpl(database, name, keyPath, autoIncrement));
     }
-    ~IDBObjectStoreBackendImpl();
+    virtual ~IDBObjectStoreBackendImpl();
 
     int64_t id() const
     {
@@ -58,20 +58,21 @@ public:
         return m_id;
     }
     void setId(int64_t id) { m_id = id; }
-    String name() const { return m_name; }
-    String keyPath() const { return m_keyPath; }
-    PassRefPtr<DOMStringList> indexNames() const;
-    bool autoIncrement() const { return m_autoIncrement; }
 
-    void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
-    void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
-    void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual String name() const { return m_name; }
+    virtual String keyPath() const { return m_keyPath; }
+    virtual PassRefPtr<DOMStringList> indexNames() const;
+    virtual bool autoIncrement() const { return m_autoIncrement; }
 
-    PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface*);
-    PassRefPtr<IDBIndexBackendInterface> index(const String& name);
-    void removeIndex(const String& name, IDBTransactionBackendInterface*);
+    virtual void get(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void put(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, bool addOnly, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void remove(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
-    void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*);
+    virtual PassRefPtr<IDBIndexBackendInterface> createIndex(const String& name, const String& keyPath, bool unique, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual PassRefPtr<IDBIndexBackendInterface> index(const String& name, ExceptionCode&);
+    virtual void removeIndex(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
+
+    virtual void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
     IDBDatabaseBackendImpl* database() const { return m_database.get(); }
 

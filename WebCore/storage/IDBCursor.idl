@@ -37,8 +37,11 @@ module storage {
         readonly attribute IDBKey key;
         readonly attribute IDBAny value;
 
-        [CallWith=ScriptExecutionContext] IDBRequest update(in SerializedScriptValue value);
-        [ImplementationFunction=continueFunction] void continue(in [Optional] IDBKey key);
-        [CallWith=ScriptExecutionContext] IDBRequest remove();
+        [CallWith=ScriptExecutionContext] IDBRequest update(in SerializedScriptValue value)
+            raises (IDBDatabaseException);
+        [ImplementationFunction=continueFunction] void continue(in [Optional] IDBKey key)
+            raises (IDBDatabaseException);
+        [CallWith=ScriptExecutionContext] IDBRequest remove()
+            raises (IDBDatabaseException);
     };
 }

@@ -27,7 +27,9 @@
 #define IDBDatabase_h
 
 #include "DOMStringList.h"
+#include "ExceptionCode.h"
 #include "IDBDatabaseBackendInterface.h"
+#include "IDBObjectStore.h"
 #include "IDBTransaction.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -38,7 +40,6 @@
 namespace WebCore {
 
 class IDBAny;
-class IDBObjectStore;
 class IDBRequest;
 class ScriptExecutionContext;
 
@@ -57,11 +58,17 @@ public:
     String version() const { return m_backend->version(); }
     PassRefPtr<DOMStringList> objectStores() const { return m_backend->objectStores(); }
 
-    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const String& keyPath = String(), bool autoIncrement = false);
-    void removeObjectStore(const String& name);
-    PassRefPtr<IDBRequest> setVersion(ScriptExecutionContext*, const String& version);
-    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, DOMStringList* storeNames = 0, unsigned short mode = IDBTransaction::READ_ONLY,
-                                           unsigned long timeout = 0); // FIXME: what should the default timeout be?
+    // FIXME: Try to modify the code generator so this is unneeded.
+    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, ExceptionCode& ec) { return createObjectStore(name, String(), ec); }
+    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const String& keyPath, ExceptionCode& ec) { return createObjectStore(name, keyPath, false, ec); }
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, ExceptionCode& ec) { return transaction(context, 0, ec); }
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, DOMStringList* storeNames, ExceptionCode& ec) { return transaction(context, storeNames, IDBTransaction::READ_ONLY, ec); }
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext* context, DOMStringList* storeNames, unsigned short mode, ExceptionCode& ec) { return transaction(context, storeNames, mode, 0, ec); } // FIXME: what should the default timeout be?
+
+    PassRefPtr<IDBObjectStore> createObjectStore(const String& name, const String& keyPath, bool autoIncrement, ExceptionCode&);
+    void removeObjectStore(const String& name, ExceptionCode&);
+    PassRefPtr<IDBRequest> setVersion(ScriptExecutionContext*, const String& version, ExceptionCode&);
+    PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, DOMStringList*, unsigned short mode, unsigned long timeout, ExceptionCode&);
     void close();
 
 private:

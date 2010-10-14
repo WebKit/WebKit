@@ -63,49 +63,6 @@ public:
         return WebDOMStringList();
     }
 
-    // FIXME: Remove after next roll.
-    virtual WebIDBObjectStore* objectStore(const WebString& name, unsigned short mode)
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-        return 0;
-    }
-    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction& transaction, WebExceptionCode&)
-    { 
-        return createObjectStore(name, keyPath, autoIncrement, transaction);
-    }
-    virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction& transaction)
-    {
-        WebExceptionCode ec = 0;
-        return createObjectStore(name, keyPath, autoIncrement, transaction, ec);
-    }
-    virtual void removeObjectStore(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode&)
-    {
-        removeObjectStore(name, transaction);
-    }
-    virtual void removeObjectStore(const WebString& name, const WebIDBTransaction& transaction)
-    {
-        WebExceptionCode ec = 0;
-        removeObjectStore(name, transaction, ec);
-    }
-    virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&)
-    {
-        setVersion(version, callbacks);
-    }
-    virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks)
-    {
-        WebExceptionCode ec = 0;
-        setVersion(version, callbacks, ec);
-    }
-    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout, WebExceptionCode&)
-    {
-        return transaction(names, mode, timeout);
-    }
-    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long timeout)
-    {
-        WebExceptionCode ec = 0;
-        return transaction(names, mode, timeout, ec);
-    }
-/*
     virtual WebIDBObjectStore* createObjectStore(const WebString& name, const WebString& keyPath, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&)
     { 
         WEBKIT_ASSERT_NOT_REACHED();
@@ -119,7 +76,6 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return 0;
     }
-*/
     virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
 };
 

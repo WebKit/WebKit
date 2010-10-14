@@ -27,6 +27,7 @@
 #define WebIDBCursorImpl_h
 
 #include "WebCommon.h"
+#include "WebExceptionCode.h"
 #include "WebIDBCursor.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -44,9 +45,9 @@ public:
     virtual unsigned short direction() const;
     virtual WebIDBKey key() const;
     virtual void value(WebSerializedScriptValue&, WebIDBKey&) const;
-    virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*);
-    virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*);
-    virtual void remove(WebIDBCallbacks*);
+    virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*, WebExceptionCode&);
+    virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&);
+    virtual void remove(WebIDBCallbacks*, WebExceptionCode&);
 
  private:
     WTF::RefPtr<WebCore::IDBCursorBackendInterface> m_idbCursorBackend;

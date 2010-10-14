@@ -127,7 +127,7 @@ PassRefPtr<DOMStringList> IDBDatabaseBackendImpl::objectStores() const
     return objectStoreNames.release();
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface>  IDBDatabaseBackendImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr)
+PassRefPtr<IDBObjectStoreBackendInterface>  IDBDatabaseBackendImpl::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     if (m_objectStores.contains(name)) {
         // FIXME: Throw CONSTRAINT_ERR in this case.
@@ -167,12 +167,9 @@ void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, 
     transaction->didCompleteTaskEvents();
 }
 
-// FIXME: Do not expose this method via IDL.
-PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::objectStore(const String& name, unsigned short mode)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::objectStore(const String& name)
 {
-    ASSERT_UNUSED(mode, !mode); // FIXME: Remove the mode parameter. Transactions have modes, not object stores.
-    RefPtr<IDBObjectStoreBackendInterface> objectStore = m_objectStores.get(name);
-    return objectStore.release();
+    return m_objectStores.get(name);
 }
 
 static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
@@ -185,18 +182,18 @@ static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling.
 }
 
-void IDBDatabaseBackendImpl::removeObjectStore(const String& name, IDBTransactionBackendInterface* transactionPtr)
+void IDBDatabaseBackendImpl::removeObjectStore(const String& name, IDBTransactionBackendInterface* transactionPtr, ExceptionCode& ec)
 {
     RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(name);
     if (!objectStore) {
-        // FIXME: Raise NOT_FOUND_ERR.
+        ec = IDBDatabaseException::NOT_FOUND_ERR;
         return;
     }
     RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBTransactionBackendInterface> transaction = transactionPtr;
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::removeObjectStoreInternal, database, objectStore, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::addObjectStoreToMap, database, objectStore))) {
-        // FIXME: Raise NOT_ALLOWED_ERR if the above fails.
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
         return;
     }
     m_objectStores.remove(name);
@@ -212,7 +209,7 @@ void IDBDatabaseBackendImpl::removeObjectStoreInternal(ScriptExecutionContext*, 
     transaction->didCompleteTaskEvents();
 }
 
-void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCallbacks> prpCallbacks)
+void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode& ec)
 {
     RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
@@ -220,7 +217,7 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     RefPtr<IDBTransactionBackendInterface> transaction = m_transactionCoordinator->createTransaction(objectStores.get(), IDBTransaction::VERSION_CHANGE, 0, this);
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::NOT_ALLOWED_ERR, "setVersion must be called from within a setVersion transaction."));
+        ec = IDBDatabaseException::NOT_ALLOWED_ERR;
     }
 }
 
@@ -236,8 +233,9 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
     callbacks->onSuccess(transaction);
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, ExceptionCode&)
 {
+    // FIXME: Return not allowed err if close has been called.
     return m_transactionCoordinator->createTransaction(objectStores, mode, timeout, this);
 }
 

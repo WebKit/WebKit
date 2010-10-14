@@ -44,7 +44,11 @@ function deleteExisting()
 
 function createObjectStoreAndAddValue()
 {
-    var store = evalAndLog("store = db.createObjectStore('storeName', null)");
+    store = evalAndLog("store = db.createObjectStore('storeName', null)");
+
+    window.index = evalAndLog("store.createIndex('indexName', '')");
+    shouldBeTrue("store.indexNames.contains('indexName')");
+
     result = evalAndLog("store.add('value', 'key')");
     verifyResult(result);
     result.onsuccess = getValue;
@@ -70,14 +74,6 @@ function addIndex()
     verifySuccessEvent(event);
     shouldBeEqualToString("event.result", "value");
 
-    window.index = evalAndLog("event.source.createIndex('indexName', '')");
-    shouldBeTrue("event.source.indexNames.contains('indexName')");
-    // Let the transaction commit.
-    window.setTimeout('secondSetVersion()', 0);
-}
-
-function secondSetVersion()
-{
     result = evalAndLog("db.setVersion('new version')");
     verifyResult(result);
     result.onsuccess = removeObjectStore;

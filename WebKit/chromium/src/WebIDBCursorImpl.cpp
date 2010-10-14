@@ -70,19 +70,19 @@ void WebIDBCursorImpl::value(WebSerializedScriptValue& serializedScriptValue, We
         ASSERT_NOT_REACHED();
 }
 
-void WebIDBCursorImpl::update(const WebSerializedScriptValue& value, WebIDBCallbacks* callbacks)
+void WebIDBCursorImpl::update(const WebSerializedScriptValue& value, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
-    m_idbCursorBackend->update(value, IDBCallbacksProxy::create(callbacks));
+    m_idbCursorBackend->update(value, IDBCallbacksProxy::create(callbacks), ec);
 }
 
-void WebIDBCursorImpl::continueFunction(const WebIDBKey& key, WebIDBCallbacks* callbacks)
+void WebIDBCursorImpl::continueFunction(const WebIDBKey& key, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
-    m_idbCursorBackend->continueFunction(key, IDBCallbacksProxy::create(callbacks));
+    m_idbCursorBackend->continueFunction(key, IDBCallbacksProxy::create(callbacks), ec);
 }
 
-void WebIDBCursorImpl::remove(WebIDBCallbacks* callbacks)
+void WebIDBCursorImpl::remove(WebIDBCallbacks* callbacks, WebExceptionCode& ec)
 {
-    m_idbCursorBackend->remove(IDBCallbacksProxy::create(callbacks));
+    m_idbCursorBackend->remove(IDBCallbacksProxy::create(callbacks), ec);
 }
 
 } // namespace WebCore

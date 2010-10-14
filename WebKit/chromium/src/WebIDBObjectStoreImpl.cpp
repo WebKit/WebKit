@@ -66,45 +66,45 @@ WebDOMStringList WebIDBObjectStoreImpl::indexNames() const
     return m_objectStore->indexNames();
 }
 
-void WebIDBObjectStoreImpl::get(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+void WebIDBObjectStoreImpl::get(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->get(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
+    m_objectStore->get(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-void WebIDBObjectStoreImpl::put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+void WebIDBObjectStoreImpl::put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->put(value, key, addOnly, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
+    m_objectStore->put(value, key, addOnly, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-void WebIDBObjectStoreImpl::remove(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+void WebIDBObjectStoreImpl::remove(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->remove(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
+    m_objectStore->remove(key, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction)
+WebIDBIndex* WebIDBObjectStoreImpl::createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, transaction.getIDBTransactionBackendInterface());
+    RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, transaction.getIDBTransactionBackendInterface(), ec);
     if (!index)
         return 0;
     return new WebIDBIndexImpl(index);
 }
 
-WebIDBIndex* WebIDBObjectStoreImpl::index(const WebString& name)
+WebIDBIndex* WebIDBObjectStoreImpl::index(const WebString& name, WebExceptionCode& ec)
 {
-    RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name);
+    RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name, ec);
     if (!index)
         return 0;
     return new WebIDBIndexImpl(index);
 }
 
-void WebIDBObjectStoreImpl::removeIndex(const WebString& name, const WebIDBTransaction& transaction)
+void WebIDBObjectStoreImpl::removeIndex(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->removeIndex(name, transaction.getIDBTransactionBackendInterface());
+    m_objectStore->removeIndex(name, transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
+void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->openCursor(IDBKeyRange::create(keyRange.left(), keyRange.right(), keyRange.flags()), direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface());
+    m_objectStore->openCursor(IDBKeyRange::create(keyRange.left(), keyRange.right(), keyRange.flags()), direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 } // namespace WebCore

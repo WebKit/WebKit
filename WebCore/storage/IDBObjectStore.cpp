@@ -64,60 +64,71 @@ PassRefPtr<DOMStringList> IDBObjectStore::indexNames() const
     return m_objectStore->indexNames();
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
+PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->get(key, request, m_transaction.get());
+    m_objectStore->get(key, request, m_transaction.get(), ec);
+    if (ec)
+        return 0;
     return request.release();
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key)
+PassRefPtr<IDBRequest> IDBObjectStore::add(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->put(value, key, true, request, m_transaction.get());
+    m_objectStore->put(value, key, true, request, m_transaction.get(), ec);
+    if (ec)
+        return 0;
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key)
+PassRefPtr<IDBRequest> IDBObjectStore::put(ScriptExecutionContext* context, PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->put(value, key, false, request, m_transaction.get());
+    m_objectStore->put(value, key, false, request, m_transaction.get(), ec);
+    if (ec)
+        return 0;
     return request;
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::remove(ScriptExecutionContext* context, PassRefPtr<IDBKey> key)
+PassRefPtr<IDBRequest> IDBObjectStore::remove(ScriptExecutionContext* context, PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->remove(key, request, m_transaction.get());
+    m_objectStore->remove(key, request, m_transaction.get(), ec);
+    if (ec)
+        return 0;
     return request;
 }
 
-PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, bool unique)
+PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, bool unique, ExceptionCode& ec)
 {
-    RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, m_transaction.get());
+    RefPtr<IDBIndexBackendInterface> index = m_objectStore->createIndex(name, keyPath, unique, m_transaction.get(), ec);
+    ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (!index)
         return 0;
     return IDBIndex::create(index.release(), m_transaction.get());
 }
 
-PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name)
+PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec)
 {
-    // FIXME: If this is null, we should raise a NOT_FOUND_ERR.
-    RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name);
+    RefPtr<IDBIndexBackendInterface> index = m_objectStore->index(name, ec);
+    ASSERT(!index != !ec); // If we didn't get an index, we should have gotten an exception code. And vice versa.
     if (!index)
         return 0;
     return IDBIndex::create(index.release(), m_transaction.get());
 }
 
-void IDBObjectStore::removeIndex(const String& name)
+void IDBObjectStore::removeIndex(const String& name, ExceptionCode& ec)
 {
-    m_objectStore->removeIndex(name, m_transaction.get());
+    m_objectStore->removeIndex(name, m_transaction.get(), ec);
 }
 
-PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction)
+PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* context, PassRefPtr<IDBKeyRange> range, unsigned short direction, ExceptionCode& ec)
 {
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    m_objectStore->openCursor(range, direction, request, m_transaction.get());
+    m_objectStore->openCursor(range, direction, request, m_transaction.get(), ec);
+    if (ec)
+        return 0;
     return request.release();
 }
 

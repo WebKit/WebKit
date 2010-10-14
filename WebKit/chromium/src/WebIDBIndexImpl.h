@@ -46,10 +46,10 @@ public:
     virtual WebString keyPath() const;
     virtual bool unique() const;
 
-    virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&); 
-    virtual void openKeyCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&);
-    virtual void getObject(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&);
-    virtual void getKey(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&);
+    virtual void openObjectCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&); 
+    virtual void openKeyCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
+    virtual void getObject(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
+    virtual void getKey(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&);
 
 private:
     WTF::RefPtr<WebCore::IDBIndexBackendInterface> m_backend;

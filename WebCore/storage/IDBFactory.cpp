@@ -56,7 +56,7 @@ IDBFactory::~IDBFactory()
 {
 }
 
-PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, const String& description)
+PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, const String& description, ExceptionCode& ec)
 {
     if (!context->isDocument()) {
         // FIXME: make this work with workers.
@@ -66,6 +66,9 @@ PassRefPtr<IDBRequest> IDBFactory::open(ScriptExecutionContext* context, const S
     Document* document = static_cast<Document*>(context);
     if (!document->frame() || !document->page())
         return 0;
+
+
+    // FIXME: Raise a NON_TRANSIENT_ERR if the name is invalid.
 
     RefPtr<IDBRequest> request = IDBRequest::create(document, IDBAny::create(this), 0);
     GroupSettings* groupSettings = document->page()->group().groupSettings();

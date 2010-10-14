@@ -59,11 +59,11 @@ function createObjectStore()
 
     debug("Ask for an index that doesn't exist:");
     try {
-        index = evalAndLog("index = store.index('asdf')");
-        shouldBeNull("index"); // Returning null is wrong, but less wrong than returning an actual object!
-        testPassed("index is null");
-        // FIXME: testFailed("Asking for a store that doesn't exist should have thrown.");
+        debug("index = store.index('asdf')");
+        index = store.index('asdf');
+        testFailed("Asking for a store that doesn't exist should have thrown.");
     } catch (err) {
+        testPassed("Exception thrown.");
         // FIXME: Verify the correct exception thrown.
     }
 
@@ -78,16 +78,17 @@ function createIndex()
     shouldBeTrue("store.indexNames.contains('indexName')");
     index = evalAndLog("index = store.index('indexName')");
     shouldBeTrue("index !== null");
-
+ 
     debug("Ask for an index that doesn't exist:");
     try {
-        index = evalAndLog("index = store.index('asdf')");
-        shouldBeNull("index"); // Returning null is wrong, but less wrong than returning an actual object!
-        testPassed("index is null.");
-        // FIXME: testFailed("Asking for a store that doesn't exist should have thrown.");
+        debug("index = store.index('asdf')");
+        index = store.index('asdf');
+        testFailed("Asking for a store that doesn't exist should have thrown.");
     } catch (err) {
+        testPassed("Exception thrown.");
         // FIXME: Verify the correct exception thrown.
     }
+
     commitAndContinue();    
 }
 

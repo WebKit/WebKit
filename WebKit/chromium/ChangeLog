@@ -1,3 +1,70 @@
+2010-10-13  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Nate Chapin.
+
+        IndexedDB should fire some errors synchronously
+        https://bugs.webkit.org/show_bug.cgi?id=47530
+
+        * public/WebIDBCursor.h:
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::transaction):
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::open):
+        * public/WebIDBObjectStore.h:
+        * public/WebIDBTransactionCallbacks.h:
+        * src/IDBCursorBackendProxy.cpp:
+        (WebCore::IDBCursorBackendProxy::update):
+        (WebCore::IDBCursorBackendProxy::continueFunction):
+        (WebCore::IDBCursorBackendProxy::remove):
+        * src/IDBCursorBackendProxy.h:
+        * src/IDBDatabaseProxy.cpp:
+        (WebCore::IDBDatabaseProxy::createObjectStore):
+        (WebCore::IDBDatabaseProxy::removeObjectStore):
+        (WebCore::IDBDatabaseProxy::setVersion):
+        (WebCore::IDBDatabaseProxy::transaction):
+        * src/IDBDatabaseProxy.h:
+        * src/IDBIndexBackendProxy.cpp:
+        (WebCore::IDBIndexBackendProxy::openCursor):
+        (WebCore::IDBIndexBackendProxy::openKeyCursor):
+        (WebCore::IDBIndexBackendProxy::get):
+        (WebCore::IDBIndexBackendProxy::getKey):
+        * src/IDBIndexBackendProxy.h:
+        * src/IDBObjectStoreProxy.cpp:
+        (WebCore::IDBObjectStoreProxy::get):
+        (WebCore::IDBObjectStoreProxy::put):
+        (WebCore::IDBObjectStoreProxy::remove):
+        (WebCore::IDBObjectStoreProxy::createIndex):
+        (WebCore::IDBObjectStoreProxy::index):
+        (WebCore::IDBObjectStoreProxy::removeIndex):
+        (WebCore::IDBObjectStoreProxy::openCursor):
+        * src/IDBObjectStoreProxy.h:
+        * src/WebIDBCursorImpl.cpp:
+        (WebKit::WebIDBCursorImpl::update):
+        (WebKit::WebIDBCursorImpl::continueFunction):
+        (WebKit::WebIDBCursorImpl::remove):
+        * src/WebIDBCursorImpl.h:
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::createObjectStore):
+        (WebKit::WebIDBDatabaseImpl::removeObjectStore):
+        (WebKit::WebIDBDatabaseImpl::setVersion):
+        (WebKit::WebIDBDatabaseImpl::transaction):
+        * src/WebIDBDatabaseImpl.h:
+        * src/WebIDBIndexImpl.cpp:
+        (WebKit::WebIDBIndexImpl::openObjectCursor):
+        (WebKit::WebIDBIndexImpl::openKeyCursor):
+        (WebKit::WebIDBIndexImpl::getObject):
+        (WebKit::WebIDBIndexImpl::getKey):
+        * src/WebIDBIndexImpl.h:
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::get):
+        (WebKit::WebIDBObjectStoreImpl::put):
+        (WebKit::WebIDBObjectStoreImpl::remove):
+        (WebKit::WebIDBObjectStoreImpl::createIndex):
+        (WebKit::WebIDBObjectStoreImpl::index):
+        (WebKit::WebIDBObjectStoreImpl::removeIndex):
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+        * src/WebIDBObjectStoreImpl.h:
+
 2010-10-13  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin Fisher.

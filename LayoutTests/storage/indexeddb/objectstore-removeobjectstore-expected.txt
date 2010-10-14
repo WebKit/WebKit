@@ -42,6 +42,8 @@ trans = event.result
 PASS trans !== null is true
 Deleted all object stores.
 store = db.createObjectStore('storeName', null)
+store.createIndex('indexName', '')
+PASS store.indexNames.contains('indexName') is true
 store.add('value', 'key')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true
@@ -79,8 +81,6 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.result is "value"
-event.source.createIndex('indexName', '')
-PASS event.source.indexNames.contains('indexName') is true
 db.setVersion('new version')
 PASS 'onsuccess' in result is true
 PASS 'onerror' in result is true

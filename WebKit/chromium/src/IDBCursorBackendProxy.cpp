@@ -75,19 +75,19 @@ PassRefPtr<IDBAny> IDBCursorBackendProxy::value() const
     return IDBAny::create<IDBKey>(webKey);
 }
 
-void IDBCursorBackendProxy::update(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBCallbacks> callbacks)
+void IDBCursorBackendProxy::update(PassRefPtr<SerializedScriptValue> value, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
-    m_idbCursor->update(value, new WebIDBCallbacksImpl(callbacks));
+    m_idbCursor->update(value, new WebIDBCallbacksImpl(callbacks), ec);
 }
 
-void IDBCursorBackendProxy::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks)
+void IDBCursorBackendProxy::continueFunction(PassRefPtr<IDBKey> key, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
-    m_idbCursor->continueFunction(key, new WebIDBCallbacksImpl(callbacks));
+    m_idbCursor->continueFunction(key, new WebIDBCallbacksImpl(callbacks), ec);
 }
 
-void IDBCursorBackendProxy::remove(PassRefPtr<IDBCallbacks> callbacks)
+void IDBCursorBackendProxy::remove(PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
-    m_idbCursor->remove(new WebIDBCallbacksImpl(callbacks));
+    m_idbCursor->remove(new WebIDBCallbacksImpl(callbacks), ec);
 }
 
 } // namespace WebCore

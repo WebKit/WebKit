@@ -59,72 +59,6 @@ public:
         return WebDOMStringList();
     }
 
-    // FIXME: Remove.
-    virtual void get(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode&)
-    {
-        get(key, callbacks, transaction);
-    }
-    virtual void get(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
-    {
-        WebExceptionCode ec = 0;
-        get(key, callbacks, transaction, ec);
-    }
-    virtual void put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode&)
-    {
-        put(value, key, addOnly, callbacks, transaction);
-    }
-    virtual void put(const WebSerializedScriptValue& value, const WebIDBKey& key, bool addOnly, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
-    {
-        WebExceptionCode ec = 0;
-        put(value, key, addOnly, callbacks, transaction, ec);
-    }
-    virtual void remove(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode&)
-    {
-        remove(key, callbacks, transaction);
-    }
-    virtual void remove(const WebIDBKey& key, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
-    {
-        WebExceptionCode ec = 0;
-        remove(key, callbacks, transaction, ec);
-    }
-    virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction, WebExceptionCode&)
-    {
-        return createIndex(name, keyPath, unique, transaction);
-    }
-    virtual WebIDBIndex* createIndex(const WebString& name, const WebString& keyPath, bool unique, const WebIDBTransaction& transaction)
-    {
-        WebExceptionCode ec = 0;
-        return createIndex(name, keyPath, unique, transaction, ec);
-    }
-    virtual WebIDBIndex* index(const WebString& name, WebExceptionCode&)
-    {
-        return index(name);
-    }
-    virtual WebIDBIndex* index(const WebString& name)
-    {
-        WebExceptionCode ec = 0;
-        return index(name, ec);
-    }
-    virtual void removeIndex(const WebString& name, const WebIDBTransaction& transaction, WebExceptionCode&)
-    {
-        removeIndex(name, transaction);
-    }
-    virtual void removeIndex(const WebString& name, const WebIDBTransaction& transaction)
-    {
-        WebExceptionCode ec = 0;
-        removeIndex(name, transaction, ec);
-    }
-    virtual void openCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode&)
-    {
-        openCursor(range, direction, callbacks, transaction);
-    }
-    virtual void openCursor(const WebIDBKeyRange& range, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction)
-    {
-        WebExceptionCode ec = 0;
-        openCursor(range, direction, callbacks, transaction, ec);
-    }
-
-    /*
     virtual void get(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void put(const WebSerializedScriptValue&, const WebIDBKey&, bool addOnly, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void remove(const WebIDBKey&, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
@@ -141,7 +75,6 @@ public:
     }
     virtual void removeIndex(const WebString& name, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void openCursor(const WebIDBKeyRange&, unsigned short direction, WebIDBCallbacks*, const WebIDBTransaction&, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    */
 };
 
 } // namespace WebKit

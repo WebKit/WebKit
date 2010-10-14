@@ -76,42 +76,34 @@ PassRefPtr<DOMStringList> IDBDatabaseProxy::objectStores() const
     return m_webIDBDatabase->objectStores();
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseProxy::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction)
+PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseProxy::createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
     IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    WebKit::WebIDBObjectStore* objectStore = m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, *transactionProxy->getWebIDBTransaction());
+    WebKit::WebIDBObjectStore* objectStore = m_webIDBDatabase->createObjectStore(name, keyPath, autoIncrement, *transactionProxy->getWebIDBTransaction(), ec);
     if (!objectStore)
         return 0;
     return IDBObjectStoreProxy::create(objectStore);
 }
 
-PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseProxy::objectStore(const String& name, unsigned short mode)
-{
-    WebKit::WebIDBObjectStore* objectStore = m_webIDBDatabase->objectStore(name, mode);
-    if (!objectStore)
-        return 0;
-    return IDBObjectStoreProxy::create(objectStore);
-}
-
-void IDBDatabaseProxy::removeObjectStore(const String& name, IDBTransactionBackendInterface* transaction)
+void IDBDatabaseProxy::removeObjectStore(const String& name, IDBTransactionBackendInterface* transaction, ExceptionCode& ec)
 {
     // The transaction pointer is guaranteed to be a pointer to a proxy object as, in the renderer,
     // all implementations of IDB interfaces are proxy objects.
     IDBTransactionBackendProxy* transactionProxy = static_cast<IDBTransactionBackendProxy*>(transaction);
-    m_webIDBDatabase->removeObjectStore(name, *transactionProxy->getWebIDBTransaction());
+    m_webIDBDatabase->removeObjectStore(name, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-void IDBDatabaseProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks)
+void IDBDatabaseProxy::setVersion(const String& version, PassRefPtr<IDBCallbacks> callbacks, ExceptionCode& ec)
 {
-    m_webIDBDatabase->setVersion(version, new WebIDBCallbacksImpl(callbacks));
+    m_webIDBDatabase->setVersion(version, new WebIDBCallbacksImpl(callbacks), ec);
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseProxy::transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout, ExceptionCode& ec)
 {
     WebKit::WebDOMStringList names(storeNames);
-    WebKit::WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, timeout);
+    WebKit::WebIDBTransaction* transaction = m_webIDBDatabase->transaction(names, mode, timeout, ec);
     return IDBTransactionBackendProxy::create(transaction);
 }
 

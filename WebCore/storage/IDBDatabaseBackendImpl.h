@@ -55,13 +55,13 @@ public:
     virtual String version() const { return m_version; }
     virtual PassRefPtr<DOMStringList> objectStores() const;
 
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface*);
-    virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name, unsigned short mode);
-    virtual void removeObjectStore(const String& name, IDBTransactionBackendInterface*);
-    virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>);
-    virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout);
+    virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(const String& name, const String& keyPath, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void removeObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&);
+    virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, ExceptionCode&);
+    virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, unsigned long timeout, ExceptionCode&);
     virtual void close();
 
+    PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
 
 private:
