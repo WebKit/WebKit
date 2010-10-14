@@ -3336,6 +3336,83 @@ int RenderBlock::lowestFloatLogicalBottom(FloatingObject::Type floatType) const
     return lowestFloatBottom;
 }
 
+int RenderBlock::topmostPosition(bool includeOverflowInterior, bool includeSelf) const
+{
+    int top = includeSelf && width() > 0 ? 0 : height();
+    
+    if (!includeOverflowInterior && (hasOverflowClip() || hasControlClip()))
+        return top;
+
+    if (!firstChild() && (!width() || !height()))
+        return top;
+
+    if (!hasColumns()) {
+        // FIXME: Come up with a way to use the layer tree to avoid visiting all the kids.
+        // For now, we have to descend into all the children, since we may have a huge abs div inside
+        // a tiny rel div buried somewhere deep in our child tree.  In this case we have to get to
+        // the abs div.
+        for (RenderObject* c = firstChild(); c; c = c->nextSibling()) {
+            if (!c->isFloatingOrPositioned() && c->isBox()) {
+                RenderBox* childBox = toRenderBox(c);
+                top = min(top, childBox->y() + childBox->topmostPosition(false));
+            }
+        }
+    }
+
+    if (includeSelf && isRelPositioned())
+        top += relativePositionOffsetY(); 
+
+    if (!includeOverflowInterior && hasOverflowClip())
+        return top;
+    
+    int relativeOffset = includeSelf && isRelPositioned() ? relativePositionOffsetY() : 0;
+
+    if (includeSelf)
+        top = min(top, topLayoutOverflow() + relativeOffset);
+
+    if (m_positionedObjects) {
+        RenderBox* r;
+        Iterator end = m_positionedObjects->end();
+        for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+            r = *it;
+            // Fixed positioned objects do not scroll and thus should not constitute
+            // part of the topmost position.
+            if (r->style()->position() != FixedPosition) {
+                // FIXME: Should work for overflow sections too.
+                // If a positioned object lies completely to the left of the root it will be unreachable via scrolling.
+                // Therefore we should not allow it to contribute to the topmost position.
+                if (!isRenderView() || r->x() + r->width() > 0 || r->x() + r->rightmostPosition(false) > 0) {
+                    int tp = r->y() + r->topmostPosition(false);
+                    top = min(top, tp + relativeOffset);
+                }
+            }
+        }
+    }
+
+    if (hasColumns()) {
+        ColumnInfo* colInfo = columnInfo();
+        for (unsigned i = 0; i < columnCount(colInfo); i++)
+            top = min(top, columnRectAt(colInfo, i).y() + relativeOffset);
+        return top;
+    }
+
+    if (m_floatingObjects) {
+        FloatingObject* r;
+        DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for ( ; (r = it.current()); ++it) {
+            if (r->m_shouldPaint || r->m_renderer->hasSelfPaintingLayer()) {
+                int tp = r->top() + r->m_renderer->marginTop() + r->m_renderer->topmostPosition(false);
+                top = min(top, tp + relativeOffset);
+            }
+        }
+    }
+
+    if (!includeSelf && firstRootBox())
+        top = min(top, firstRootBox()->selectionTop() + relativeOffset);
+    
+    return top;
+}
+
 int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     int bottom = includeSelf && width() > 0 ? height() : 0;

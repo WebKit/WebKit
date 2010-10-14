@@ -661,6 +661,24 @@ int RenderTableSection::layoutRows(int toAdd)
     return height();
 }
 
+int RenderTableSection::topmostPosition(bool includeOverflowInterior, bool includeSelf) const
+{
+    int top = RenderBox::topmostPosition(includeOverflowInterior, includeSelf);
+    if (!includeOverflowInterior && hasOverflowClip())
+        return top;
+
+    for (RenderObject* row = firstChild(); row; row = row->nextSibling()) {
+        for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
+            if (curr->isTableCell()) {
+                RenderTableCell* cell = toRenderTableCell(curr);
+                top = min(top, cell->y() + cell->topmostPosition(false));
+            }
+        }
+    }
+    
+    return top;
+}
+
 int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     int bottom = RenderBox::lowestPosition(includeOverflowInterior, includeSelf);

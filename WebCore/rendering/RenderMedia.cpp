@@ -599,6 +599,15 @@ void RenderMedia::forwardEvent(Event* event)
     }
 }
 
+int RenderMedia::topmostPosition(bool includeOverflowInterior, bool includeSelf) const
+{
+    int top = RenderImage::topmostPosition(includeOverflowInterior, includeSelf);
+    if (!m_controlsShadowRoot || !m_controlsShadowRoot->renderer())
+        return top;
+    
+    return min(top,  m_controlsShadowRoot->renderBox()->y() + m_controlsShadowRoot->renderBox()->topmostPosition(includeOverflowInterior, includeSelf));
+}
+
 int RenderMedia::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
     int bottom = RenderImage::lowestPosition(includeOverflowInterior, includeSelf);

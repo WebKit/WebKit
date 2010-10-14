@@ -136,6 +136,7 @@ private:
 
     virtual void removeChild(RenderObject* oldChild);
 
+    virtual int topmostPosition(bool includeOverflowInterior, bool includeSelf) const;
     virtual int lowestPosition(bool includeOverflowInterior, bool includeSelf) const;
     virtual int rightmostPosition(bool includeOverflowInterior, bool includeSelf) const;
     virtual int leftmostPosition(bool includeOverflowInterior, bool includeSelf) const;
