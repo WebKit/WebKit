@@ -43,12 +43,17 @@
 #include <QPainter>
 #include <QPoint>
 #include <QRect>
+#include <QStyleOptionGraphicsItem>
 #include <QTime>
 #include <QTimer>
 #include <QUrl>
 #include <limits>
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
+
+#if USE(ACCELERATED_COMPOSITING)
+#include "texmap/TextureMapperPlatformLayer.h"
+#endif
 
 using namespace WTF;
 
@@ -602,7 +607,41 @@ void MediaPlayerPrivateQt::repaint()
     m_webCorePlayer->repaint();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+
+class TextureMapperVideoLayerQt : public virtual TextureMapperVideoLayer {
+public:
+    TextureMapperVideoLayerQt(QGraphicsVideoItem* videoItem)
+        : m_videoItem(videoItem)
+    {
+    }
+
+    virtual void setPlatformLayerClient(TextureMapperLayerClient* client)
+    {
+        m_client = client;
+    }
+
+    virtual void paint(GraphicsContext* context)
+    {
+        if (!m_videoItem)
+            return;
+
+        QStyleOptionGraphicsItem opt;
+        opt.exposedRect = m_videoItem.data()->sceneBoundingRect();
+        opt.rect = opt.exposedRect.toRect();
+        m_videoItem.data()->paint(context->platformContext(), &opt);
+    }
+
+    virtual IntSize size() const
+    {
+        return m_videoItem ? IntSize(m_videoItem.data()->size().width(), m_videoItem.data()->size().height()) : IntSize();
+    }
+
+    QWeakPointer<QGraphicsVideoItem> m_videoItem;
+    TextureMapperLayerClient* m_client;
+};
+
+
 void MediaPlayerPrivateQt::acceleratedRenderingStateChanged()
 {
     MediaPlayerClient* client = m_webCorePlayer->mediaPlayerClient();
@@ -612,14 +651,12 @@ void MediaPlayerPrivateQt::acceleratedRenderingStateChanged()
 
     m_composited = composited;
     if (composited)
-        m_videoScene->removeItem(m_videoItem);
-    else
-        m_videoScene->addItem(m_videoItem);
+        m_platformLayer = new TextureMapperVideoLayerQt(m_videoItem);
 }
 
 PlatformLayer* MediaPlayerPrivateQt::platformLayer() const
 {
-    return m_composited ? m_videoItem : 0;
+    return m_composited ? m_platformLayer.get() : 0;
 }
 #endif
 
