@@ -241,8 +241,12 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
     placeBoxesInBlockDirection(heightOfBlock, maxHeight, maxAscent, noQuirksMode, lineTop, lineBottom);
     computeBlockDirectionOverflow(lineTop, lineBottom, noQuirksMode, textBoxDataMap);
     setLineTopBottomPositions(lineTop, lineBottom);
-    
-    heightOfBlock += maxHeight;
+
+    // Detect integer overflow.
+    if (heightOfBlock > numeric_limits<int>::max() - maxHeight)
+        return numeric_limits<int>::max();
+
+    heightOfBlock = heightOfBlock + maxHeight;
     
     return heightOfBlock;
 }
