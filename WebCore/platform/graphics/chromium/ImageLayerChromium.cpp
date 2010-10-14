@@ -75,6 +75,14 @@ void ImageLayerChromium::updateContents()
 {
     ASSERT(layerRenderer());
 
+    // FIXME: Remove this test when tiled layers are implemented.
+    if (requiresClippedUpdateRect()) {
+        // Use the base version of updateContents which draws a subset of the
+        // image to a bitmap, as the pixel contents can't be uploaded directly.
+        ContentLayerChromium::updateContents();
+        return;
+    }
+
     void* pixels = 0;
     IntSize requiredTextureSize;
     IntSize bitmapSize;
@@ -136,12 +144,6 @@ void ImageLayerChromium::updateContents()
 #else
 #error "Need to implement for your platform."
 #endif
-    // FIXME: Remove this test when tiled layers are implemented.
-    m_skipsDraw = false;
-    if (!layerRenderer()->checkTextureSize(requiredTextureSize)) {
-        m_skipsDraw = true;
-        return;
-    }
 
     unsigned textureId = m_contentsTexture;
     if (!textureId)

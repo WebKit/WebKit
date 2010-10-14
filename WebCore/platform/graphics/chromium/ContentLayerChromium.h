@@ -84,11 +84,16 @@ protected:
                            const IntRect& updateRect, unsigned textureId, MipmapUse generateMipmap = noMipmap);
 
     virtual void cleanupResources();
+    bool requiresClippedUpdateRect() const;
 
     unsigned m_contentsTexture;
     IntSize m_allocatedTextureSize;
     bool m_skipsDraw;
 
+private:
+    void calculateClippedUpdateRect(IntRect& dirtyRect, IntRect& drawRect) const;
+    IntRect m_largeLayerDrawRect;
+    IntRect m_largeLayerDirtyRect;
 };
 
 }

@@ -307,8 +307,9 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
     GLC(m_context, m_context->enable(GraphicsContext3D::BLEND));
     GLC(m_context, m_context->blendFunc(GraphicsContext3D::ONE, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
 
-    // Set the rootVisibleRect --- used by subsequent drawLayers calls
+    // Set the root visible/content rects --- used by subsequent drawLayers calls.
     m_rootVisibleRect = visibleRect;
+    m_rootContentRect = contentRect;
 
     // Traverse the layer tree and update the layer transforms.
     float opacity = 1;
