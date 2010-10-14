@@ -1,3 +1,18 @@
+2010-10-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add setting api for enabling encoding detector
+        https://bugs.webkit.org/show_bug.cgi?id=45427
+
+        Add settings api for enabling encoding detector.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_encoding_detector_set):
+        (ewk_view_setting_encoding_detector_get):
+        * ewk/ewk_view.h:
+
 2010-10-13  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Unreviewed. Build fix.

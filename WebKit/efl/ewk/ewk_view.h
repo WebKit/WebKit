@@ -455,6 +455,9 @@ EAPI Eina_Bool    ewk_view_setting_local_storage_database_path_set(Evas_Object *
 EAPI Eina_Bool    ewk_view_setting_page_cache_get(Evas_Object* o);
 EAPI Eina_Bool    ewk_view_setting_page_cache_set(Evas_Object* o, Eina_Bool enable);
 
+EAPI Eina_Bool    ewk_view_setting_encoding_detector_get(Evas_Object* o);
+EAPI Eina_Bool    ewk_view_setting_encoding_detector_set(Evas_Object* o, Eina_Bool enable);
+
 /* to be used by subclass implementations */
 EAPI Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object *o);
 
