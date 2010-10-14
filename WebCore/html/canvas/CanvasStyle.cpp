@@ -82,6 +82,9 @@ bool parseColorOrCurrentColor(RGBA32& parsedColor, const String& colorString, HT
         return true;
     case ParseFailed:
         return false;
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
     }
 }
 
@@ -139,6 +142,9 @@ PassRefPtr<CanvasStyle> CanvasStyle::createFromString(const String& color)
         return adoptRef(new CanvasStyle(CurrentColor));
     case ParseFailed:
         return 0;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
     }
 }
 
@@ -152,6 +158,9 @@ PassRefPtr<CanvasStyle> CanvasStyle::createFromStringWithOverrideAlpha(const Str
     case ParsedCurrentColor:
         return adoptRef(new CanvasStyle(CurrentColorWithOverrideAlpha, alpha));
     case ParseFailed:
+        return 0;
+    default:
+        ASSERT_NOT_REACHED();
         return 0;
     }
 }
