@@ -1,3 +1,17 @@
+2010-10-13  Fridrich Strba  <fridrich.strba@bluewin.ch>
+
+        Reviewed by Darin Adler.
+
+        Don't depend on Windows on sched_yield and sched.h
+        https://bugs.webkit.org/show_bug.cgi?id=45543
+
+        sched.h is part of pthreads and sched_yield is implemented
+        in pthreads-win32 as Sleep(0). This patch avoids a gratuitous
+        dependency on pthreads-win32 in this file.
+
+        * wtf/TCSpinLock.h:
+        (TCMalloc_SlowLock):
+
 2010-10-13  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.

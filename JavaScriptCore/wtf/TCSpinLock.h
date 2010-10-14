@@ -38,8 +38,6 @@
 
 #include <time.h>       /* For nanosleep() */
 
-#include <sched.h>      /* For sched_yield() */
-
 #if HAVE(STDINT_H)
 #include <stdint.h>
 #elif HAVE(INTTYPES_H)
@@ -53,6 +51,8 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
+#else
+#include <sched.h>      /* For sched_yield() */
 #endif
 
 static void TCMalloc_SlowLock(volatile unsigned int* lockword);
@@ -135,7 +135,12 @@ struct TCMalloc_SpinLock {
 #define SPINLOCK_INITIALIZER { 0 }
 
 static void TCMalloc_SlowLock(volatile unsigned int* lockword) {
-  sched_yield();        // Yield immediately since fast path failed
+// Yield immediately since fast path failed
+#if OS(WINDOWS)
+  Sleep(0);
+#else
+  sched_yield();
+#endif
   while (true) {
     int r;
 #if COMPILER(GCC)
