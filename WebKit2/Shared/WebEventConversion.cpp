@@ -75,6 +75,14 @@ public:
         m_metaKey = webEvent.metaKey();
 
         m_modifierFlags = 0;
+        if (m_shiftKey)
+            m_modifierFlags |= WebEvent::ShiftKey;
+        if (m_ctrlKey)
+            m_modifierFlags |= WebEvent::ControlKey;
+        if (m_altKey)
+            m_modifierFlags |= WebEvent::AltKey;
+        if (m_metaKey)
+            m_modifierFlags |= WebEvent::MetaKey;
     }
 };
 
