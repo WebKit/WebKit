@@ -41,6 +41,9 @@ public:
         return adoptRef(new RotateTransformOperation(x, y, z, angle, type));
     }
 
+    double x() const { return m_x; }
+    double y() const { return m_y; }
+    double z() const { return m_z; }
     double angle() const { return m_angle; }
 
 private:
