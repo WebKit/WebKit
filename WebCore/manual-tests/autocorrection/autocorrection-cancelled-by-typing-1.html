@@ -1,0 +1,59 @@
+<html>
+<head>
+
+<style>
+.editing {
+    border: 2px solid red;
+    padding: 12px;
+    font-size: 24px;
+}
+</style>
+<script src=../../../LayoutTests/editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+ if (window.layoutTestController)
+        layoutTestController.waitUntilDone();
+
+function keepTyping() {
+    typeCharacterCommand('i');
+    typeCharacterCommand('n');
+    typeCharacterCommand('g');
+    typeCharacterCommand(' ');
+    if (window.layoutTestController)
+            layoutTestController.notifyDone();
+}
+
+function editingTest() {
+    typeCharacterCommand('t');
+    typeCharacterCommand('h');
+    typeCharacterCommand('e');
+    typeCharacterCommand(' ');
+    typeCharacterCommand('c');
+    typeCharacterCommand('o');
+    typeCharacterCommand('l');
+    typeCharacterCommand('l');
+    typeCharacterCommand('a');
+    typeCharacterCommand('p');
+    typeCharacterCommand('s');
+    setTimeout("keepTyping()", 1000);
+}
+
+</script>
+
+<title>Autocorrection Cancellation Test</title>
+</head>
+<body>
+<div>This test verifies that continuing typing dismisses autocorrection panel that has been previously 
+shown. You should see phrase 'the notational', in which the word 'notational' has blue underline.</div>
+<p  style="color:green">Note, this test can fail due to user specific spell checking data. If the user has previously dismissed 'collapse' as the correct spelling of 'collaps' several times, the spell checker will not provide 'collapse' as a suggestion anymore. To fix this, remove all files in ~/Library/Spelling.</p>
+<div contenteditable id="root" class="editing">
+<span id="test"></span>
+</div>
+
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

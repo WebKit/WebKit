@@ -2447,7 +2447,7 @@ void Editor::markMisspellingsAfterTypingToPosition(const VisiblePosition &p)
                 }
             }
         }
-        m_rangeToBeReplacedByCorrection.release();
+        m_rangeToBeReplacedByCorrection.clear();
     }
 #endif
 
@@ -2901,8 +2901,10 @@ void Editor::startCorrectionPanelTimer()
 {
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     static const double correctionPanelTimerInterval = 0.3;
-    if (isAutomaticSpellingCorrectionEnabled())
+    if (isAutomaticSpellingCorrectionEnabled()) {
+        m_rangeToBeReplacedByCorrection.clear();
         m_correctionPanelTimer.startOneShot(correctionPanelTimerInterval);
+    }
 #endif
 }
 
