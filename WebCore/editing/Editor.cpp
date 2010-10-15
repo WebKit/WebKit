@@ -95,10 +95,14 @@ VisibleSelection Editor::selectionForCommand(Event* event)
     Node* target = event->target()->toNode();
     Node* selectionStart = selection.start().node();
     if (target && (!selectionStart || target->shadowAncestorNode() != selectionStart->shadowAncestorNode())) {
+        RefPtr<Range> range;
         if (target->hasTagName(inputTag) && static_cast<HTMLInputElement*>(target)->isTextField())
-            return static_cast<HTMLInputElement*>(target)->selection();
-        if (target->hasTagName(textareaTag))
-            return static_cast<HTMLTextAreaElement*>(target)->selection();
+            range = static_cast<HTMLInputElement*>(target)->selection();
+        else if (target->hasTagName(textareaTag))
+            range = static_cast<HTMLTextAreaElement*>(target)->selection();
+
+        if (range)
+            return VisibleSelection(range.get());
     }
     return selection;
 }

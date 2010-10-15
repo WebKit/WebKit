@@ -1,0 +1,3 @@
+To run this test manually, press arrow keys three times. WebKit should not crash. On DRT, you see see PASS:
+
+ PASS

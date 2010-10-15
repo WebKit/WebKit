@@ -262,10 +262,12 @@ void RenderTextControl::setSelectionRange(int start, int end)
         frame->selection()->setSelection(newSelection);
 }
 
-VisibleSelection RenderTextControl::selection(int start, int end) const
+PassRefPtr<Range> RenderTextControl::selection(int start, int end) const
 {
-    return VisibleSelection(VisiblePosition(m_innerText.get(), start, VP_DEFAULT_AFFINITY),
-                            VisiblePosition(m_innerText.get(), end, VP_DEFAULT_AFFINITY));
+    if (!m_innerText)
+        return 0;
+
+    return Range::create(document(), m_innerText, start, m_innerText, end);
 }
 
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index)

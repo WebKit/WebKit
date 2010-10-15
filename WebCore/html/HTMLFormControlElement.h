@@ -187,7 +187,7 @@ public:
     void setSelectionEnd(int);
     void select();
     void setSelectionRange(int start, int end);
-    VisibleSelection selection() const;
+    PassRefPtr<Range> selection() const;
 
 protected:
     HTMLTextFormControlElement(const QualifiedName&, Document*, HTMLFormElement*);
