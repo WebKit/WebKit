@@ -1,3 +1,15 @@
+2010-10-15  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Unbreak scrolling the ContentsLayer with QWebView
+
+        r69777 broke scrolling the contents layer in QWebView by not restoring
+        the painter clip after painting each part of the dirty region.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderRelativeCoords):
+
 2010-09-27 Dawit Alemayehu  <adawit@kde.org>
 
         Reviewed by Andreas Kling.

@@ -328,12 +328,11 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
 
             QRect intersectedRect = clipRect.intersected(view->frameRect());
 
+            context->save();
             painter->setClipRect(clipRect, Qt::IntersectClip);
 
             int x = view->x();
             int y = view->y();
-
-            context->save();
 
             int scrollX = view->scrollX();
             int scrollY = view->scrollY();
