@@ -1461,6 +1461,9 @@ sub buildCMakeProject($@)
 
         print "Calling '$make $makeArgs' in " . $dir . "\n\n";
         $result = system "$make $makeArgs";
+        if ($result ne 0) {
+            die "Failed to build $port port\n";
+        }
 
         chdir ".." or die;
     }
