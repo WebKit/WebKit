@@ -33,6 +33,7 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "KURL.h"
+#include "Logging.h"
 #include "PurgeableBuffer.h"
 #include "Request.h"
 #include "ResourceHandle.h"
@@ -350,6 +351,8 @@ void CachedResource::setResourceToRevalidate(CachedResource* resource)
     ASSERT(m_handlesToRevalidate.isEmpty());
     ASSERT(resource->type() == type());
 
+    LOG(ResourceLoading, "CachedResource %p setResourceToRevalidate %p", this, resource);
+
     // The following assert should be investigated whenever it occurs. Although it should never fire, it currently does in rare circumstances.
     // https://bugs.webkit.org/show_bug.cgi?id=28604.
     // So the code needs to be robust to this assert failing thus the "if (m_resourceToRevalidate->m_proxyResource == this)" in CachedResource::clearResourceToRevalidate.
@@ -377,6 +380,8 @@ void CachedResource::switchClientsToRevalidatedResource()
     ASSERT(m_resourceToRevalidate);
     ASSERT(m_resourceToRevalidate->inCache());
     ASSERT(!inCache());
+
+    LOG(ResourceLoading, "CachedResource %p switchClientsToRevalidatedResource %p", this, m_resourceToRevalidate);
 
     HashSet<CachedResourceHandleBase*>::iterator end = m_handlesToRevalidate.end();
     for (HashSet<CachedResourceHandleBase*>::iterator it = m_handlesToRevalidate.begin(); it != end; ++it) {
@@ -462,19 +467,33 @@ bool CachedResource::canUseCacheValidator() const
     
 bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
 {
-    if (m_errorOccurred)
+    if (m_errorOccurred) {
+        LOG(ResourceLoading, "CachedResource %p mustRevalidate because of m_errorOccurred\n", this);
         return true;
+    }
 
     if (m_loading)
         return false;
     
-    if (m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore())
+    if (m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore()) {
+        LOG(ResourceLoading, "CachedResource %p mustRevalidate because of m_response.cacheControlContainsNoCache() || m_response.cacheControlContainsNoStore()\n", this);
         return true;
+    }
 
-    if (cachePolicy == CachePolicyCache)
-        return m_response.cacheControlContainsMustRevalidate() && isExpired();
+    if (cachePolicy == CachePolicyCache) {
+        if (m_response.cacheControlContainsMustRevalidate() && isExpired()) {
+            LOG(ResourceLoading, "CachedResource %p mustRevalidate because of cachePolicy == CachePolicyCache and m_response.cacheControlContainsMustRevalidate() && isExpired()\n", this);
+            return true;
+        }
+        return false;
+    }
 
-    return isExpired();
+    if (isExpired()) {
+        LOG(ResourceLoading, "CachedResource %p mustRevalidate because of isExpired()\n", this);
+        return true;
+    }
+
+    return false;
 }
 
 bool CachedResource::isSafeToMakePurgeable() const

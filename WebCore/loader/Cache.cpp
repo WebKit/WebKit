@@ -34,6 +34,7 @@
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
 #include "Image.h"
+#include "Logging.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include <stdio.h>
@@ -95,6 +96,8 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
 
 CachedResource* Cache::requestResource(CachedResourceLoader* cachedResourceLoader, CachedResource::Type type, const KURL& url, const String& charset, bool requestIsPreload)
 {
+    LOG(ResourceLoading, "Cache::requestResource '%s', charset '%s', preload=%u", url.string().latin1().data(), charset.latin1().data(), requestIsPreload);
+
     // FIXME: Do we really need to special-case an empty URL?
     // Would it be better to just go on with the cache code and let it fail later?
     if (url.isEmpty())
@@ -103,16 +106,20 @@ CachedResource* Cache::requestResource(CachedResourceLoader* cachedResourceLoade
     // Look up the resource in our map.
     CachedResource* resource = resourceForURL(url.string());
 
-    if (resource && requestIsPreload && !resource->isPreloaded())
+    if (resource && requestIsPreload && !resource->isPreloaded()) {
+        LOG(ResourceLoading, "Cache::requestResource already has a preload request for this request, and it hasn't been preloaded yet");
         return 0;
+    }
 
     if (!cachedResourceLoader->doc()->securityOrigin()->canDisplay(url)) {
+        LOG(ResourceLoading, "...URL was not allowed by SecurityOrigin");
         if (!requestIsPreload)
             FrameLoader::reportLocalLoadFailed(cachedResourceLoader->doc()->frame(), url.string());
         return 0;
     }
     
     if (!resource) {
+        LOG(ResourceLoading, "CachedResource for '%s' wasn't found in cache. Creating it", url.string().latin1().data());
         // The resource does not exist. Create it.
         resource = createResource(type, url, charset);
         ASSERT(resource);
@@ -141,13 +148,17 @@ CachedResource* Cache::requestResource(CachedResourceLoader* cachedResourceLoade
         }
     }
 
-    if (resource->type() != type)
+    if (resource->type() != type) {
+        LOG(ResourceLoading, "Cache::requestResource cannot use cached resource for '%s' due to type mismatch", url.string().latin1().data());
         return 0;
+    }
 
     if (!disabled()) {
         // This will move the resource to the front of its LRU list and increase its access count.
         resourceAccessed(resource);
     }
+
+    LOG(ResourceLoading, "Cache::requestResource for '%s' returning resource %p\n", url.string().latin1().data(), resource);
 
     return resource;
 }
@@ -195,6 +206,7 @@ void Cache::revalidateResource(CachedResource* resource, CachedResourceLoader* c
     }
     const String& url = resource->url();
     CachedResource* newResource = createResource(resource->type(), KURL(ParsedURLString, url), resource->encoding());
+    LOG(ResourceLoading, "Resource %p created to revalidate %p", newResource, resource);
     newResource->setResourceToRevalidate(resource);
     evict(resource);
     m_resources.set(url, newResource);
@@ -231,6 +243,7 @@ void Cache::revalidationSucceeded(CachedResource* revalidatingResource, const Re
 
 void Cache::revalidationFailed(CachedResource* revalidatingResource)
 {
+    LOG(ResourceLoading, "Revalidation failed for %p", revalidatingResource);
     ASSERT(revalidatingResource->resourceToRevalidate());
     revalidatingResource->clearResourceToRevalidate();
 }
@@ -424,6 +437,7 @@ bool Cache::makeResourcePurgeable(CachedResource* resource)
 
 void Cache::evict(CachedResource* resource)
 {
+    LOG(ResourceLoading, "Evicting resource %p for '%s' from cache", resource, resource->url().latin1().data());
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
     if (resource->inCache()) {
