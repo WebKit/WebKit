@@ -38,7 +38,9 @@
 
 namespace WTR {
 
-static const unsigned kTimerIntervalMS = 50;
+// With a bigger interval we would waste to much time
+// after the test had been finished.
+static const unsigned kTimerIntervalMS = 1;
 
 class RunUntilConditionLoop : public QObject {
     Q_OBJECT
