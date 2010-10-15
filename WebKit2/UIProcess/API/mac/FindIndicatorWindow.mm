@@ -28,6 +28,10 @@
 #include "FindIndicator.h"
 #include <WebCore/GraphicsContext.h>
 
+static const double pulseAnimationDuration = 0.12;
+static const double timeBeforeFadeStarts = pulseAnimationDuration + 0.2;
+static const double fadeOutAnimationDuration = 0.3;
+
 using namespace WebCore;
 
 @interface WebFindIndicatorView : NSView {
@@ -61,6 +65,47 @@ using namespace WebCore;
 
 @end
 
+@interface WebFindIndicatorWindowAnimation : NSAnimation<NSAnimationDelegate> {
+    WebKit::FindIndicatorWindow* _findIndicatorWindow;
+    void (WebKit::FindIndicatorWindow::*_animationProgressCallback)(double progress);
+    void (WebKit::FindIndicatorWindow::*_animationDidEndCallback)();
+}
+
+- (id)_initWithFindIndicatorWindow:(WebKit::FindIndicatorWindow *)findIndicatorWindow 
+                 animationProgressCallback:(void (WebKit::FindIndicatorWindow::*)(double progress))animationProgressCallback
+                   animationDidEndCallback:(void (WebKit::FindIndicatorWindow::*)())animationDidEndCallback;
+@end
+
+@implementation WebFindIndicatorWindowAnimation
+
+- (id)_initWithFindIndicatorWindow:(WebKit::FindIndicatorWindow *)findIndicatorWindow 
+         animationProgressCallback:(void (WebKit::FindIndicatorWindow::*)(double progress))animationProgressCallback
+           animationDidEndCallback:(void (WebKit::FindIndicatorWindow::*)())animationDidEndCallback;
+{
+    if ((self = [super initWithDuration:fadeOutAnimationDuration animationCurve:NSAnimationEaseInOut])) {
+        _findIndicatorWindow = findIndicatorWindow;
+        _animationCallback = animationCallback;
+        _animationDidEndCallback = animationDidEndCallback;
+        [self setDelegate:self];
+        [self setAnimationBlockingMode:NSAnimationNonblocking];
+    }
+    return self;
+}
+
+- (void)setCurrentProgress:(NSAnimationProgress)progress
+{
+    (_findIndicatorWindow->*_animationCallback)(progress);
+}
+
+- (void)animationDidEnd:(NSAnimation *)animation
+{
+    ASSERT(animation == self);
+
+    (_findIndicatorWindow->*_animationDidEndCallback)();
+}
+
+@end
+
 namespace WebKit {
 
 PassOwnPtr<FindIndicatorWindow> FindIndicatorWindow::create(WKView *wkView)
@@ -70,6 +115,7 @@ PassOwnPtr<FindIndicatorWindow> FindIndicatorWindow::create(WKView *wkView)
 
 FindIndicatorWindow::FindIndicatorWindow(WKView *wkView)
     : m_wkView(wkView)
+    , m_startFadeOutTimer(RunLoop::main(), this, &FindIndicatorWindow::startFadeOutTimerFired)
 {
 }
 
@@ -113,6 +159,9 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
 
     [[m_wkView window] addChildWindow:m_findIndicatorWindow.get() ordered:NSWindowAbove];
     [m_findIndicatorWindow.get() setReleasedWhenClosed:NO];
+
+    if (fadeOut)
+        m_startFadeOutTimer.startOneShot(timeBeforeFadeStarts);
 }
 
 void FindIndicatorWindow::closeWindow()
@@ -120,10 +169,41 @@ void FindIndicatorWindow::closeWindow()
     if (!m_findIndicatorWindow)
         return;
 
+    m_startFadeOutTimer.stop();
+
+    if (m_fadeOutAnimation) {
+        [m_fadeOutAnimation.get() stopAnimation];
+        m_fadeOutAnimation = 0;
+    }
+
     [[m_findIndicatorWindow.get() parentWindow] removeChildWindow:m_findIndicatorWindow.get()];
     [m_findIndicatorWindow.get() close];
-    m_findIndicatorWindow.clear();
+    m_findIndicatorWindow = 0;
+}
+
+void FindIndicatorWindow::startFadeOutTimerFired()
+{
+    ASSERT(!m_fadeOutAnimation);
     
+    m_fadeOutAnimation.adoptNS([[WebFindIndicatorWindowAnimation alloc] _initWithFindIndicatorWindow:this 
+                                                                           animationProgressCallback:&FindIndicatorWindow::fadeOutAnimationCallback
+                                                                             animationDidEndCallback:&FindIndicatorWindow::fadeOutAnimationDidEnd]);
+    [m_fadeOutAnimation.get() startAnimation];
+}
+                        
+void FindIndicatorWindow::fadeOutAnimationCallback(double progress)
+{
+    ASSERT(m_fadeOutAnimation);
+
+    [m_findIndicatorWindow.get() setAlphaValue:1.0 - progress];
+}
+
+void FindIndicatorWindow::fadeOutAnimationDidEnd()
+{
+    ASSERT(m_fadeOutAnimation);
+    ASSERT(m_findIndicatorWindow);
+
+    closeWindow();
 }
 
 } // namespace WebKit

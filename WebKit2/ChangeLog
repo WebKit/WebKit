@@ -23,6 +23,43 @@
 
         Reviewed by Sam Weinig.
 
+        Make the find indicator window fade out when requested
+        https://bugs.webkit.org/show_bug.cgi?id=47747
+
+        * UIProcess/API/mac/FindIndicatorWindow.h:
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        Add WebFindIndicatorWindowAnimation - an NSAnimation subclass that takes two
+        C++ member function pointers and invokes them the animation progress changes and
+        when the animation stops.
+
+        (-[WebFindIndicatorWindowAnimation setCurrentProgress:]):
+        Call the _animationProgressCallback.
+
+        (-[WebFindIndicatorWindowAnimation animationDidEnd:]):
+        Call the _animationDidEndCallback.
+
+        (WebKit::FindIndicatorWindow::FindIndicatorWindow):
+        Initialize the fade out start timer.
+
+        (WebKit::FindIndicatorWindow::setFindIndicator):
+        When asked to fade out, we start the fade out timer.
+
+        (WebKit::FindIndicatorWindow::closeWindow):
+        Stop the fade out timer and the fade out animation.
+
+        (WebKit::FindIndicatorWindow::startFadeOutTimerFired):
+        Create a fade out animation.
+
+        (WebKit::FindIndicatorWindow::fadeOutAnimationCallback):
+        Update the window alpha.
+
+        (WebKit::FindIndicatorWindow::fadeOutAnimationDidEnd):
+        Close the window.
+
+2010-10-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Move find indicator window logic to WKView
         https://bugs.webkit.org/show_bug.cgi?id=47739
 

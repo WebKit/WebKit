@@ -30,8 +30,10 @@
 #import <wtf/PassOwnPtr.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
+#import "RunLoop.h"
 
 @class WKView;
+@class WebFindIndicatorWindowAnimation;
 
 namespace WebKit {
 
@@ -50,9 +52,17 @@ private:
     explicit FindIndicatorWindow(WKView *);
     void closeWindow();
 
+    void startFadeOutTimerFired();
+
+    void fadeOutAnimationCallback(double);
+    void fadeOutAnimationDidEnd();
+
     WKView* m_wkView;
     RefPtr<FindIndicator> m_findIndicator;
     RetainPtr<NSWindow> m_findIndicatorWindow;
+
+    RunLoop::Timer<FindIndicatorWindow> m_startFadeOutTimer;
+    RetainPtr<WebFindIndicatorWindowAnimation> m_fadeOutAnimation;
 };
 
 } // namespace WebKit
