@@ -56,7 +56,7 @@ const AtomicString& WMLOptionElement::formControlType() const
 
 static inline WMLSelectElement* ownerSelectElement(Element* element)
 {
-    Node* select = element->parentNode();
+    ContainerNode* select = element->parentNode();
     while (select && !select->hasTagName(selectTag))
         select = select->parentNode();
 

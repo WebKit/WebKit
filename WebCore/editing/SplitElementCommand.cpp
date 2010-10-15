@@ -53,7 +53,7 @@ void SplitElementCommand::executeApply()
     
     ExceptionCode ec = 0;
     
-    Node* parent = m_element2->parentNode();
+    ContainerNode* parent = m_element2->parentNode();
     if (!parent || !parent->isContentEditable())
         return;
     parent->insertBefore(m_element1.get(), m_element2.get(), ec);

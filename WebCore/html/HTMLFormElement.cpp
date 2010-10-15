@@ -107,7 +107,7 @@ bool HTMLFormElement::rendererIsNeeded(RenderStyle* style)
     if (!isDemoted())
         return HTMLElement::rendererIsNeeded(style);
 
-    Node* node = parentNode();
+    ContainerNode* node = parentNode();
     RenderObject* parentRenderer = node->renderer();
     bool parentIsTableElementPart = (parentRenderer->isTable() && node->hasTagName(tableTag))
         || (parentRenderer->isTableRow() && node->hasTagName(trTag))

@@ -706,7 +706,7 @@ HTMLElement* enclosingList(Node* node)
         
     Node* root = highestEditableRoot(Position(node, 0));
     
-    for (Node* n = node->parentNode(); n; n = n->parentNode()) {
+    for (ContainerNode* n = node->parentNode(); n; n = n->parentNode()) {
         if (n->hasTagName(ulTag) || n->hasTagName(olTag))
             return static_cast<HTMLElement*>(n);
         if (n == root)

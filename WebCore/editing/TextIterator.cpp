@@ -154,9 +154,9 @@ unsigned BitStack::size() const
 
 // --------
 
-static inline Node* parentCrossingShadowBoundaries(Node* node)
+static inline ContainerNode* parentCrossingShadowBoundaries(Node* node)
 {
-    if (Node* parent = node->parentNode())
+    if (ContainerNode* parent = node->parentNode())
         return parent;
     return node->shadowParentNode();
 }

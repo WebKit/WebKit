@@ -47,7 +47,7 @@ PassRefPtr<SVGHKernElement> SVGHKernElement::create(const QualifiedName& tagName
 
 void SVGHKernElement::insertedIntoDocument()
 {
-    Node* fontNode = parentNode();
+    ContainerNode* fontNode = parentNode();
     if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();
@@ -56,7 +56,7 @@ void SVGHKernElement::insertedIntoDocument()
 
 void SVGHKernElement::removedFromDocument()
 {
-    Node* fontNode = parentNode();
+    ContainerNode* fontNode = parentNode();
     if (fontNode && fontNode->hasTagName(SVGNames::fontTag)) {
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();

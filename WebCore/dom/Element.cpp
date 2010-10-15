@@ -122,18 +122,19 @@ PassRefPtr<DocumentFragment> Element::deprecatedCreateContextualFragment(const S
     for (RefPtr<Node> node = fragment->firstChild(); node; node = nextNode) {
         nextNode = node->nextSibling();
         if (node->hasTagName(htmlTag) || node->hasTagName(bodyTag)) {
-            Node* firstChild = node->firstChild();
+            HTMLElement* element = static_cast<HTMLElement*>(node.get());
+            Node* firstChild = element->firstChild();
             if (firstChild)
                 nextNode = firstChild;
             RefPtr<Node> nextChild;
             for (RefPtr<Node> child = firstChild; child; child = nextChild) {
                 nextChild = child->nextSibling();
-                node->removeChild(child.get(), ignoredExceptionCode);
+                element->removeChild(child.get(), ignoredExceptionCode);
                 ASSERT(!ignoredExceptionCode);
-                fragment->insertBefore(child, node.get(), ignoredExceptionCode);
+                fragment->insertBefore(child, element, ignoredExceptionCode);
                 ASSERT(!ignoredExceptionCode);
             }
-            fragment->removeChild(node.get(), ignoredExceptionCode);
+            fragment->removeChild(element, ignoredExceptionCode);
             ASSERT(!ignoredExceptionCode);
         } else if (node->hasTagName(headTag)) {
             fragment->removeChild(node.get(), ignoredExceptionCode);
@@ -775,7 +776,7 @@ KURL Element::baseURI() const
     if (!base.protocol().isEmpty())
         return base;
 
-    Node* parent = parentNode();
+    ContainerNode* parent = parentNode();
     if (!parent)
         return base;
 

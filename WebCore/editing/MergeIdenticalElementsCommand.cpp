@@ -67,7 +67,7 @@ void MergeIdenticalElementsCommand::doUnapply()
 
     RefPtr<Node> atChild = m_atChild.release();
 
-    Node* parent = m_element2->parent();
+    ContainerNode* parent = m_element2->parent();
     if (!parent || !parent->isContentEditable())
         return;
 

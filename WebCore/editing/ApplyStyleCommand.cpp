@@ -1200,7 +1200,7 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDec
         
         Node* previousSibling = node->previousSibling();
         Node* nextSibling = node->nextSibling();
-        Node* parent = node->parentNode();
+        ContainerNode* parent = node->parentNode();
         removeInlineStyleFromElement(style, static_cast<HTMLElement*>(node), RemoveAlways);
         if (!node->inDocument()) {
             // FIXME: We might need to update the start and the end of current selection here but need a test.
@@ -1366,7 +1366,7 @@ void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&
     if (removeNode)
         removeNodePreservingChildren(elem);
     else {
-        HTMLElement* newSpanElement = replaceNodeWithSpanPreservingChildrenAndAttributes(elem);
+        HTMLElement* newSpanElement = replaceElementWithSpanPreservingChildrenAndAttributes(elem);
         ASSERT(newSpanElement && newSpanElement->inDocument());
         elem = newSpanElement;
     }

@@ -63,7 +63,7 @@ void WMLTimerElement::insertedIntoDocument()
     if (value().toInt() <= 0)
         return;
 
-    Node* parent = parentNode();
+    ContainerNode* parent = parentNode();
     if (!parent || !parent->isWMLElement())
         return;
 
@@ -75,7 +75,7 @@ void WMLTimerElement::insertedIntoDocument()
 
 void WMLTimerElement::removedFromDocument()
 {
-    Node* parent = parentNode();
+    ContainerNode* parent = parentNode();
     if (parent && parent->isWMLElement() && parent->hasTagName(cardTag)) {
         m_card->setIntrinsicEventTimer(0);
         m_card = 0;

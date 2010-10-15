@@ -49,7 +49,7 @@ SplitTextNodeCommand::SplitTextNodeCommand(PassRefPtr<Text> text, int offset)
 
 void SplitTextNodeCommand::doApply()
 {
-    Node* parent = m_text2->parentNode();
+    ContainerNode* parent = m_text2->parentNode();
     if (!parent || !parent->isContentEditable())
         return;
 
@@ -87,7 +87,7 @@ void SplitTextNodeCommand::doReapply()
     if (!m_text1 || !m_text2)
         return;
 
-    Node* parent = m_text2->parentNode();
+    ContainerNode* parent = m_text2->parentNode();
     if (!parent || !parent->isContentEditable())
         return;
 

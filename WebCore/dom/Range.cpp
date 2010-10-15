@@ -373,7 +373,7 @@ Range::CompareResults Range::compareNode(Node* refNode, ExceptionCode& ec) const
         return NODE_BEFORE;
     }
 
-    Node* parentNode = refNode->parentNode();
+    ContainerNode* parentNode = refNode->parentNode();
     int nodeIndex = refNode->nodeIndex();
     
     if (!parentNode) {
@@ -572,7 +572,7 @@ bool Range::intersectsNode(Node* refNode, ExceptionCode& ec)
         return false;
     }
 
-    Node* parentNode = refNode->parentNode();
+    ContainerNode* parentNode = refNode->parentNode();
     int nodeIndex = refNode->nodeIndex();
     
     if (!parentNode) {
@@ -667,7 +667,7 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
                 else if (action == CLONE_CONTENTS)
                     fragment->appendChild(n->cloneNode(true), ec);
                 else
-                    m_start.container()->removeChild(n, ec);
+                    toContainerNode(m_start.container())->removeChild(n, ec);
                 n = next;
                 i++;
             }
@@ -730,12 +730,12 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
                 else if (action == CLONE_CONTENTS)
                     leftContents->appendChild(n->cloneNode(true), ec);
                 else
-                    m_start.container()->removeChild(n, ec);
+                    toContainerNode(m_start.container())->removeChild(n, ec);
                 n = next;
             }
         }
 
-        Node* leftParent = m_start.container()->parentNode();
+        ContainerNode* leftParent = m_start.container()->parentNode();
         Node* n = m_start.container()->nextSibling();
         for (; leftParent != commonRoot; leftParent = leftParent->parentNode()) {
             if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
@@ -800,12 +800,12 @@ PassRefPtr<DocumentFragment> Range::processContents(ActionType action, Exception
                     else if (action == CLONE_CONTENTS)
                         rightContents->insertBefore(n->cloneNode(true), rightContents->firstChild(), ec);
                     else
-                        m_end.container()->removeChild(n, ec);
+                        toContainerNode(m_end.container())->removeChild(n, ec);
                 }
             }
         }
 
-        Node* rightParent = m_end.container()->parentNode();
+        ContainerNode* rightParent = m_end.container()->parentNode();
         Node* n = m_end.container()->previousSibling();
         for (; rightParent != commonRoot; rightParent = rightParent->parentNode()) {
             if (action == EXTRACT_CONTENTS || action == CLONE_CONTENTS) {
@@ -1161,7 +1161,7 @@ void Range::checkNodeBA(Node* n, ExceptionCode& ec) const
     }
 
     Node* root = n;
-    while (Node* parent = root->parentNode())
+    while (ContainerNode* parent = root->parentNode())
         root = parent;
 
     switch (root->nodeType()) {
@@ -1287,7 +1287,7 @@ void Range::selectNode(Node* refNode, ExceptionCode& ec)
     // INVALID_NODE_TYPE_ERR: Raised if an ancestor of refNode is an Entity, Notation or
     // DocumentType node or if refNode is a Document, DocumentFragment, Attr, Entity, or Notation
     // node.
-    for (Node* anc = refNode->parentNode(); anc; anc = anc->parentNode()) {
+    for (ContainerNode* anc = refNode->parentNode(); anc; anc = anc->parentNode()) {
         switch (anc->nodeType()) {
             case Node::ATTRIBUTE_NODE:
             case Node::CDATA_SECTION_NODE:
@@ -1463,7 +1463,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
 
     ec = 0;
     while (Node* n = newParent->firstChild()) {
-        newParent->removeChild(n, ec);
+        toContainerNode(newParent.get())->removeChild(n, ec);
         if (ec)
             return;
     }

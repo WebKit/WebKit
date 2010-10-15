@@ -48,14 +48,14 @@ void WMLPostfieldElement::insertedIntoDocument()
 {
     WMLElement::insertedIntoDocument();
 
-    Node* parent = parentNode();
+    ContainerNode* parent = parentNode();
     if (parent && parent->hasTagName(goTag))
         static_cast<WMLGoElement*>(parent)->registerPostfieldElement(this);
 }
 
 void WMLPostfieldElement::removedFromDocument()
 {
-    Node* parent = parentNode();
+    ContainerNode* parent = parentNode();
     if (parent && parent->hasTagName(goTag))
         static_cast<WMLGoElement*>(parent)->deregisterPostfieldElement(this);
 

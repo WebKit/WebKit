@@ -724,7 +724,7 @@ inline void Node::setStyleChange(StyleChangeType changeType)
 
 inline void Node::markAncestorsWithChildNeedsStyleRecalc()
 {
-    for (Node* p = parentNode(); p && !p->childNeedsStyleRecalc(); p = p->parentNode())
+    for (ContainerNode* p = parentNode(); p && !p->childNeedsStyleRecalc(); p = p->parentNode())
         p->setChildNeedsStyleRecalc();
     
     if (document()->childNeedsStyleRecalc())
@@ -1166,7 +1166,7 @@ bool Node::isDescendantOf(const Node *other) const
     // Return true if other is an ancestor of this, otherwise false
     if (!other)
         return false;
-    for (const Node *n = parentNode(); n; n = n->parentNode()) {
+    for (const ContainerNode* n = parentNode(); n; n = n->parentNode()) {
         if (n == other)
             return true;
     }
@@ -1333,7 +1333,7 @@ void Node::createRendererIfNeeded()
 
     ASSERT(!renderer());
     
-    Node* parent = parentNode();    
+    ContainerNode* parent = parentNode();    
     ASSERT(parent);
     
     RenderObject* parentRenderer = parent->renderer();
@@ -1973,7 +1973,7 @@ String Node::textContent(bool convertBRsToNewlines) const
     return isNullString ? String() : content.toString();
 }
 
-void Node::setTextContent(const String &text, ExceptionCode& ec)
+void Node::setTextContent(const String& text, ExceptionCode& ec)
 {           
     switch (nodeType()) {
         case TEXT_NODE:
@@ -1981,33 +1981,32 @@ void Node::setTextContent(const String &text, ExceptionCode& ec)
         case COMMENT_NODE:
         case PROCESSING_INSTRUCTION_NODE:
             setNodeValue(text, ec);
-            break;
+            return;
         case ELEMENT_NODE:
         case ATTRIBUTE_NODE:
         case ENTITY_NODE:
         case ENTITY_REFERENCE_NODE:
         case DOCUMENT_FRAGMENT_NODE: {
-            ContainerNode *container = static_cast<ContainerNode *>(this);
-            
+            ContainerNode* container = toContainerNode(this);
             container->removeChildren();
-            
             if (!text.isEmpty())
-                appendChild(document()->createTextNode(text), ec);
-            break;
+                container->appendChild(document()->createTextNode(text), ec);
+            return;
         }
         case DOCUMENT_NODE:
         case DOCUMENT_TYPE_NODE:
         case NOTATION_NODE:
-        default:
-            // Do nothing
-            break;
+        case XPATH_NAMESPACE_NODE:
+            // Do nothing.
+            return;
     }
+    ASSERT_NOT_REACHED();
 }
 
 Element* Node::ancestorElement() const
 {
     // In theory, there can be EntityReference nodes between elements, but this is currently not supported.
-    for (Node* n = parentNode(); n; n = n->parentNode()) {
+    for (ContainerNode* n = parentNode(); n; n = n->parentNode()) {
         if (n->isElementNode())
             return static_cast<Element*>(n);
     }

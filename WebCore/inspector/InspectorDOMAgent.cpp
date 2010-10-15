@@ -485,7 +485,7 @@ void InspectorDOMAgent::removeNode(long nodeId, long* outNodeId)
     if (!node)
         return;
 
-    Node* parentNode = node->parentNode();
+    ContainerNode* parentNode = node->parentNode();
     if (!parentNode)
         return;
 
@@ -520,7 +520,7 @@ void InspectorDOMAgent::changeTagName(long nodeId, const String& tagName, long* 
         newElem->appendChild(child, ec);
 
     // Replace the old node with the new node
-    Node* parent = oldNode->parentNode();
+    ContainerNode* parent = oldNode->parentNode();
     parent->insertBefore(newElem, oldNode->nextSibling(), ec);
     parent->removeChild(oldNode, ec);
 
@@ -551,7 +551,7 @@ void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long*
 
     bool childrenRequested = m_childrenRequested.contains(nodeId);
     Node* previousSibling = node->previousSibling();
-    Node* parentNode = node->parentNode();
+    ContainerNode* parentNode = node->parentNode();
 
     HTMLElement* htmlElement = static_cast<HTMLElement*>(node);
     ExceptionCode ec = 0;
@@ -1034,8 +1034,8 @@ unsigned InspectorDOMAgent::innerChildNodeCount(Node* node)
 
 Node* InspectorDOMAgent::innerParentNode(Node* node)
 {
-    Node* parent = node->parentNode();
-    if (parent && parent->nodeType() == Node::DOCUMENT_NODE)
+    ContainerNode* parent = node->parentNode();
+    if (parent && parent->isDocumentNode())
         return static_cast<Document*>(parent)->ownerElement();
     return parent;
 }
@@ -1076,7 +1076,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node* node)
     // We could be attaching existing subtree. Forget the bindings.
     unbind(node, &m_documentNodeToIdMap);
 
-    Node* parent = node->parentNode();
+    ContainerNode* parent = node->parentNode();
     long parentId = m_documentNodeToIdMap.get(parent);
     // Return if parent is not mapped yet.
     if (!parentId)
@@ -1114,7 +1114,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
         } while (!stack.isEmpty());
     }
 
-    Node* parent = node->parentNode();
+    ContainerNode* parent = node->parentNode();
     long parentId = m_documentNodeToIdMap.get(parent);
     // If parent is not mapped yet -> ignore the event.
     if (!parentId)

@@ -41,7 +41,7 @@ RemoveNodeCommand::RemoveNodeCommand(PassRefPtr<Node> node)
 
 void RemoveNodeCommand::doApply()
 {
-    Node* parent = m_node->parentNode();
+    ContainerNode* parent = m_node->parentNode();
     if (!parent || !parent->isContentEditable())
         return;
 
@@ -54,7 +54,7 @@ void RemoveNodeCommand::doApply()
 
 void RemoveNodeCommand::doUnapply()
 {
-    RefPtr<Node> parent = m_parent.release();
+    RefPtr<ContainerNode> parent = m_parent.release();
     RefPtr<Node> refChild = m_refChild.release();
     if (!parent || !parent->isContentEditable())
         return;

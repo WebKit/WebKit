@@ -94,7 +94,7 @@ Node* TreeWalker::firstChild(ScriptState* state)
                 node = node->nextSibling();
                 break;
             }
-            Node* parent = node->parentNode();
+            ContainerNode* parent = node->parentNode();
             if (!parent || parent == root() || parent == m_current)
                 return 0;
             node = parent;
@@ -127,7 +127,7 @@ Node* TreeWalker::lastChild(ScriptState* state)
                 node = node->previousSibling();
                 break;
             }
-            Node* parent = node->parentNode();
+            ContainerNode* parent = node->parentNode();
             if (!parent || parent == root() || parent == m_current)
                 return 0;
             node = parent;
@@ -236,7 +236,7 @@ Node* TreeWalker::previousNode(ScriptState* state)
         }
         if (node == root())
             return 0;
-        Node* parent = node->parentNode();
+        ContainerNode* parent = node->parentNode();
         if (!parent)
             return 0;
         node = parent;

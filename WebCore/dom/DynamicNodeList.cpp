@@ -124,7 +124,7 @@ Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
     if (m_rootNode->isDocumentNode() || m_rootNode->inDocument()) {
         Element* node = m_rootNode->document()->getElementById(elementId);
         if (node && nodeMatches(node)) {
-            for (Node* p = node->parentNode(); p; p = p->parentNode()) {
+            for (ContainerNode* p = node->parentNode(); p; p = p->parentNode()) {
                 if (p == m_rootNode)
                     return node;
             }

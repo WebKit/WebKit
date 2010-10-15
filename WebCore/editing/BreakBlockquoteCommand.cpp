@@ -67,7 +67,7 @@ void BreakBlockquoteCommand::doApply()
     
     // Find the top-most blockquote from the start.
     Element* topBlockquote = 0;
-    for (Node *node = pos.node()->parentNode(); node; node = node->parentNode()) {
+    for (ContainerNode* node = pos.node()->parentNode(); node; node = node->parentNode()) {
         if (isMailBlockquote(node))
             topBlockquote = static_cast<Element*>(node);
     }

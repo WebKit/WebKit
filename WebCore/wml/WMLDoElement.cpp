@@ -120,7 +120,7 @@ void WMLDoElement::insertedIntoDocument()
     if (!hasAttribute(HTMLNames::nameAttr))
         m_name = m_type;
 
-    Node* parent = parentNode();
+    ContainerNode* parent = parentNode();
     if (!parent || !parent->isWMLElement())
         return;
 
@@ -130,7 +130,7 @@ void WMLDoElement::insertedIntoDocument()
 
 void WMLDoElement::removedFromDocument()
 {
-    Node* parent = parentNode();
+    ContainerNode* parent = parentNode();
 
     if (parent  && parent->isWMLElement()) {
         if (WMLEventHandlingElement* eventHandlingElement = toWMLEventHandlingElement(static_cast<WMLElement*>(parent)))

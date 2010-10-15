@@ -56,7 +56,7 @@ PassRefPtr<HTMLTableRowElement> HTMLTableRowElement::create(const QualifiedName&
 
 int HTMLTableRowElement::rowIndex() const
 {
-    Node *table = parentNode();
+    ContainerNode* table = parentNode();
     if (!table)
         return -1;
     table = table->parentNode();

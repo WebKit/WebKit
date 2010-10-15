@@ -370,7 +370,7 @@ PassRefPtr<Range> DOMSelection::getRangeAt(int index, ExceptionCode& ec)
     ASSERT(rangeCount() == 1);
 
     if (Node* shadowAncestor = selectionShadowAncestor(m_frame)) {
-        Node* container = shadowAncestor->parentNode();
+        ContainerNode* container = shadowAncestor->parentNode();
         int offset = shadowAncestor->nodeIndex();
         return Range::create(shadowAncestor->document(), container, offset, container, offset);
     }
@@ -460,7 +460,7 @@ bool DOMSelection::containsNode(const Node* n, bool allowPartial) const
     if (!n || m_frame->document() != n->document() || selection->isNone())
         return false;
 
-    Node* parentNode = n->parentNode();
+    ContainerNode* parentNode = n->parentNode();
     unsigned nodeIndex = n->nodeIndex();
     RefPtr<Range> selectedRange = selection->selection().toNormalizedRange();
 

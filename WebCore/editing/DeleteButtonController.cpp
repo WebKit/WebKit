@@ -121,7 +121,7 @@ static bool isDeletableElement(const Node* node)
             return true;
 
         // Allow blocks that have a different background from it's parent
-        Node* parentNode = node->parentNode();
+        ContainerNode* parentNode = node->parentNode();
         if (!parentNode)
             return false;
 

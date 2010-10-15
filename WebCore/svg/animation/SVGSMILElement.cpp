@@ -463,7 +463,7 @@ void SVGSMILElement::reschedule()
 SVGElement* SVGSMILElement::targetElement() const
 {
     String href = xlinkHref();
-    Node* target = href.isEmpty() ? parentNode() : document()->getElementById(SVGURIReference::getTarget(href));
+    ContainerNode* target = href.isEmpty() ? parentNode() : document()->getElementById(SVGURIReference::getTarget(href));
     if (target && target->isSVGElement())
         return static_cast<SVGElement*>(target);
     return 0;

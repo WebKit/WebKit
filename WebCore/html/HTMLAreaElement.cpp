@@ -200,7 +200,7 @@ void HTMLAreaElement::updateFocusAppearance(bool restorePreviousSelection)
     if (!isFocusable())
         return;
     
-    Node* parent = parentNode();
+    ContainerNode* parent = parentNode();
     if (!parent || !parent->hasTagName(mapTag))
         return;
     

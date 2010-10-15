@@ -239,7 +239,7 @@ Position Position::previous(PositionMoveType moveType) const
         }
     }
 
-    Node* parent = n->parentNode();
+    ContainerNode* parent = n->parentNode();
     if (!parent)
         return *this;
 
@@ -271,7 +271,7 @@ Position Position::next(PositionMoveType moveType) const
         return Position(n, (moveType == Character) ? uncheckedNextOffset(n, o) : o + 1);
     }
 
-    Node* parent = n->parentNode();
+    ContainerNode* parent = n->parentNode();
     if (!parent)
         return *this;
 

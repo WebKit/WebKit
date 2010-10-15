@@ -118,6 +118,21 @@ private:
     Node* m_lastChild;
 };
 
+inline ContainerNode* toContainerNode(Node* node)
+{
+    ASSERT(!node || node->isContainerNode());
+    return static_cast<ContainerNode*>(node);
+}
+
+inline const ContainerNode* toContainerNode(const Node* node)
+{
+    ASSERT(!node || node->isContainerNode());
+    return static_cast<const ContainerNode*>(node);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toContainerNode(const ContainerNode*);
+
 inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
     : Node(document, type)
     , m_firstChild(0)
@@ -127,26 +142,22 @@ inline ContainerNode::ContainerNode(Document* document, ConstructionType type)
 
 inline unsigned Node::containerChildNodeCount() const
 {
-    ASSERT(isContainerNode());
-    return static_cast<const ContainerNode*>(this)->childNodeCount();
+    return toContainerNode(this)->childNodeCount();
 }
 
 inline Node* Node::containerChildNode(unsigned index) const
 {
-    ASSERT(isContainerNode());
-    return static_cast<const ContainerNode*>(this)->childNode(index);
+    return toContainerNode(this)->childNode(index);
 }
 
 inline Node* Node::containerFirstChild() const
 {
-    ASSERT(isContainerNode());
-    return static_cast<const ContainerNode*>(this)->firstChild();
+    return toContainerNode(this)->firstChild();
 }
 
 inline Node* Node::containerLastChild() const
 {
-    ASSERT(isContainerNode());
-    return static_cast<const ContainerNode*>(this)->lastChild();
+    return toContainerNode(this)->lastChild();
 }
 
 } // namespace WebCore

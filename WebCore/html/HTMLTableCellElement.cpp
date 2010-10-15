@@ -115,7 +115,7 @@ void HTMLTableCellElement::parseMappedAttribute(Attribute* attr)
 // used by table cells to share style decls created by the enclosing table.
 void HTMLTableCellElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDeclaration*>& results)
 {
-    Node* p = parentNode();
+    ContainerNode* p = parentNode();
     while (p && !p->hasTagName(tableTag))
         p = p->parentNode();
     if (!p)

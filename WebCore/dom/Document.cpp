@@ -1162,7 +1162,7 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
     Node* shadowAncestorNode = node->shadowAncestorNode();
     if (shadowAncestorNode != node) {
         unsigned offset = shadowAncestorNode->nodeIndex();
-        Node* container = shadowAncestorNode->parentNode();
+        ContainerNode* container = shadowAncestorNode->parentNode();
         return Range::create(this, container, offset, container, offset);
     }
 

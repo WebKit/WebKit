@@ -76,9 +76,9 @@ public:
     void removeNodePreservingChildren(Node*);
 
 private:
-    PassRefPtr<Node> insertFragmentForTestRendering(Node* context);
+    PassRefPtr<StyledElement> insertFragmentForTestRendering(Node* context);
     void removeUnrenderedNodes(Node*);
-    void restoreTestRenderingNodesToFragment(Node*);
+    void restoreTestRenderingNodesToFragment(StyledElement*);
     void removeInterchangeNodes(Node*);
     
     void insertNodeBefore(PassRefPtr<Node> node, Node* refNode);
@@ -150,7 +150,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     }
 
     Node* styleNode = selection.base().node();
-    RefPtr<Node> holder = insertFragmentForTestRendering(styleNode);
+    RefPtr<StyledElement> holder = insertFragmentForTestRendering(styleNode);
     
     RefPtr<Range> range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
     String text = plainText(range.get());
@@ -208,7 +208,7 @@ void ReplacementFragment::removeNode(PassRefPtr<Node> node)
     if (!node)
         return;
     
-    Node *parent = node->parentNode();
+    ContainerNode* parent = node->parentNode();
     if (!parent)
         return;
     
@@ -222,7 +222,7 @@ void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
     if (!node || !refNode)
         return;
         
-    Node* parent = refNode->parentNode();
+    ContainerNode* parent = refNode->parentNode();
     if (!parent)
         return;
         
@@ -231,9 +231,9 @@ void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
     ASSERT(ec == 0);
 }
 
-PassRefPtr<Node> ReplacementFragment::insertFragmentForTestRendering(Node* context)
+PassRefPtr<StyledElement> ReplacementFragment::insertFragmentForTestRendering(Node* context)
 {
-    Node* body = m_document->body();
+    HTMLElement* body = m_document->body();
     if (!body)
         return 0;
 
@@ -266,7 +266,7 @@ PassRefPtr<Node> ReplacementFragment::insertFragmentForTestRendering(Node* conte
     return holder.release();
 }
 
-void ReplacementFragment::restoreTestRenderingNodesToFragment(Node *holder)
+void ReplacementFragment::restoreTestRenderingNodesToFragment(StyledElement* holder)
 {
     if (!holder)
         return;
@@ -628,7 +628,7 @@ void ReplaceSelectionCommand::handleStyleSpans()
         return;
         
     RefPtr<CSSMutableStyleDeclaration> sourceDocumentStyle = static_cast<HTMLElement*>(sourceDocumentStyleSpan)->getInlineStyleDecl()->copy();
-    Node* context = sourceDocumentStyleSpan->parentNode();
+    ContainerNode* context = sourceDocumentStyleSpan->parentNode();
     
     // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
     // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
@@ -710,13 +710,15 @@ void ReplaceSelectionCommand::copyStyleToChildren(Node* parentNode, const CSSMut
     for (Node* childNode = parentNode->firstChild(); childNode; childNode = childNode->nextSibling()) {
         if (childNode->isTextNode() || !isBlock(childNode) || childNode->hasTagName(preTag)) {
             // In this case, put a span tag around the child node.
-            RefPtr<Node> newSpan = parentNode->cloneNode(false);
-            setNodeAttribute(static_cast<Element*>(newSpan.get()), styleAttr, parentStyle->cssText());
+            RefPtr<Node> newNode = parentNode->cloneNode(false);
+            ASSERT(newNode->hasTagName(spanTag));
+            HTMLElement* newSpan = static_cast<HTMLElement*>(newNode.get());
+            setNodeAttribute(newSpan, styleAttr, parentStyle->cssText());
             insertNodeAfter(newSpan, childNode);
             ExceptionCode ec = 0;
             newSpan->appendChild(childNode, ec);
             ASSERT(!ec);
-            childNode = newSpan.get();
+            childNode = newSpan;
         } else if (childNode->isHTMLElement()) {
             // Copy the style attribute and merge them into the child node.  We don't want to override
             // existing styles, so don't clobber on merge.
@@ -1211,7 +1213,7 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<Node> listElement, N
 
     while (RefPtr<Node> listItem = listElement->firstChild()) {
         ExceptionCode ec = 0;
-        listElement->removeChild(listItem.get(), ec);
+        toContainerNode(listElement.get())->removeChild(listItem.get(), ec);
         ASSERT(!ec);
         if (isStart || isMiddle)
             insertNodeBefore(listItem, lastNode);

@@ -46,7 +46,7 @@ InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, P
 
 void InsertNodeBeforeCommand::doApply()
 {
-    Node* parent = m_refChild->parentNode();
+    ContainerNode* parent = m_refChild->parentNode();
     if (!parent || !parent->isContentEditable())
         return;
 

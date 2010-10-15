@@ -55,49 +55,9 @@ const AtomicString& WMLOptGroupElement::formControlType() const
     return optgroup;
 }
 
-bool WMLOptGroupElement::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, bool shouldLazyAttach)
-{
-    bool result = WMLFormControlElement::insertBefore(newChild, refChild, ec, shouldLazyAttach);
-    if (result)
-        recalcSelectOptions();
-    return result;
-}
-
-bool WMLOptGroupElement::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, bool shouldLazyAttach)
-{
-    bool result = WMLFormControlElement::replaceChild(newChild, oldChild, ec, shouldLazyAttach);
-    if (result)
-        recalcSelectOptions();
-    return result;
-}
-
-bool WMLOptGroupElement::removeChild(Node* oldChild, ExceptionCode& ec)
-{
-    bool result = WMLFormControlElement::removeChild(oldChild, ec);
-    if (result)
-        recalcSelectOptions();
-    return result;
-}
-
-bool WMLOptGroupElement::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)
-{
-    bool result = WMLFormControlElement::appendChild(newChild, ec, shouldLazyAttach);
-    if (result)
-        recalcSelectOptions();
-    return result;
-}
-
-bool WMLOptGroupElement::removeChildren()
-{
-    bool result = WMLFormControlElement::removeChildren();
-    if (result)
-        recalcSelectOptions();
-    return result;
-}
-
 static inline WMLSelectElement* ownerSelectElement(Element* element)
 {
-    Node* select = element->parentNode();
+    ContainerNode* select = element->parentNode();
     while (select && !select->hasTagName(selectTag))
         select = select->parentNode();
 

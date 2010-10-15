@@ -1964,7 +1964,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
     switch (relation) {
         case CSSSelector::Descendant:
             while (true) {
-                Node* n = e->parentNode();
+                ContainerNode* n = e->parentNode();
                 if (!n || !n->isElementNode())
                     return SelectorFailsCompletely;
                 e = static_cast<Element*>(n);
@@ -1975,7 +1975,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             break;
         case CSSSelector::Child:
         {
-            Node* n = e->parentNode();
+            ContainerNode* n = e->parentNode();
             if (!n || !n->isElementNode())
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(n);

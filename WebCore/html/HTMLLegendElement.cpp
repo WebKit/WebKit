@@ -57,7 +57,7 @@ const AtomicString& HTMLLegendElement::formControlType() const
 HTMLFormControlElement* HTMLLegendElement::associatedControl()
 {
     // Check if there's a fieldset belonging to this legend.
-    Node* fieldset = parentNode();
+    ContainerNode* fieldset = parentNode();
     while (fieldset && !fieldset->hasTagName(fieldsetTag))
         fieldset = fieldset->parentNode();
     if (!fieldset)

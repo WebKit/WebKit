@@ -216,12 +216,12 @@ void CompositeEditCommand::removeNodePreservingChildren(PassRefPtr<Node> node)
 
 void CompositeEditCommand::removeNodeAndPruneAncestors(PassRefPtr<Node> node)
 {
-    RefPtr<Node> parent = node->parentNode();
+    RefPtr<ContainerNode> parent = node->parentNode();
     removeNode(node);
     prune(parent.release());
 }
 
-HTMLElement* CompositeEditCommand::replaceNodeWithSpanPreservingChildrenAndAttributes(PassRefPtr<Node> node)
+HTMLElement* CompositeEditCommand::replaceElementWithSpanPreservingChildrenAndAttributes(PassRefPtr<HTMLElement> node)
 {
     // It would also be possible to implement all of ReplaceNodeWithSpanCommand
     // as a series of existing smaller edit commands.  Someone who wanted to
@@ -254,7 +254,7 @@ void CompositeEditCommand::prune(PassRefPtr<Node> node)
         if (renderer && (!renderer->canHaveChildren() || hasARenderedDescendant(node.get()) || node->rootEditableElement() == node))
             return;
             
-        RefPtr<Node> next = node->parentNode();
+        RefPtr<ContainerNode> next = node->parentNode();
         removeNode(node);
         node = next;
     }
@@ -1005,7 +1005,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
 
     RefPtr<CSSMutableStyleDeclaration> style = ApplyStyleCommand::editingStyleAtPosition(endingSelection().start(), IncludeTypingStyle);
 
-    Node* listNode = emptyListItem->parentNode();
+    ContainerNode* listNode = emptyListItem->parentNode();
     // FIXME: Can't we do something better when the immediate parent wasn't a list node?
     if (!listNode
         || (!listNode->hasTagName(ulTag) && !listNode->hasTagName(olTag))
@@ -1014,7 +1014,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
         return false;
 
     RefPtr<Element> newBlock = 0;
-    if (Node* blockEnclosingList = listNode->parentNode()) {
+    if (ContainerNode* blockEnclosingList = listNode->parentNode()) {
         if (blockEnclosingList->hasTagName(liTag)) { // listNode is inside another list item
             if (visiblePositionAfterNode(blockEnclosingList) == visiblePositionAfterNode(listNode)) {
                 // If listNode appears at the end of the outer list item, then move listNode outside of this list item
@@ -1105,7 +1105,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     } else {
         ASSERT(caretPos.deprecatedEditingOffset() == 0);
         Text* textNode = static_cast<Text*>(caretPos.node());
-        Node* parentNode = textNode->parentNode();
+        ContainerNode* parentNode = textNode->parentNode();
         // The preserved newline must be the first thing in the node, since otherwise the previous
         // paragraph would be quoted, and we verified that it wasn't above.
         deleteTextFromNode(textNode, 0, 1);
