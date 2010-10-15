@@ -98,9 +98,15 @@ webkit_soup_request_data_send (WebKitSoupRequest   *request,
 		guchar *buf;
 
 		if (base64) {
-			buf = g_base64_decode (start, &data->priv->content_length);
+			int inlen, state = 0;
+			guint save = 0;
 
-			if (!buf || data->priv->content_length <= 0) {
+			inlen = strlen (start);
+			buf = g_malloc0 (inlen * 3 / 4 + 3);
+			data->priv->content_length =
+				g_base64_decode_step (start, inlen, buf,
+						      &state, &save);
+			if (state != 0) {
 				g_free (buf);
 				goto fail;
 			}

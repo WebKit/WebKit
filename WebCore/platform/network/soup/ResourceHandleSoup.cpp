@@ -348,12 +348,14 @@ static gboolean parseDataUrl(gpointer callbackData)
     d->m_soupRequest = adoptPlatformRef(webkit_soup_requester_request(d->m_requester.get(), handle->firstRequest().url().string().utf8().data(), session, &error.outPtr()));
     if (error) {
         d->m_soupRequest = 0;
+        client->didFinishLoading(handle, 0);
         return false;
     }
 
     d->m_inputStream = adoptPlatformRef(webkit_soup_request_send(d->m_soupRequest.get(), 0, &error.outPtr()));
     if (error) {
         d->m_inputStream = 0;
+        client->didFinishLoading(handle, 0);
         return false;
     }
 
