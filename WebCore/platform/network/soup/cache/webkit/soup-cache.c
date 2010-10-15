@@ -1179,7 +1179,7 @@ webkit_soup_cache_type_get_type (void)
 	};
 
 	if (!cache_type) {
-		cache_type = g_enum_register_static ("WebKitSoupCacheType", cache_types);
+		cache_type = g_enum_register_static ("WebKitSoupCacheTypeType", cache_types);
 	}
 	return cache_type;
 }

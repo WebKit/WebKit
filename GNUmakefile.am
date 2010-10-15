@@ -424,6 +424,7 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     --output=$@ \
 	     --add-include-path=$(top_srcdir)/WebKit/gtk \
 	     --add-include-path=$(builddir) \
+	     -I$(top_srcdir)/WebCore/platform/network/soup/cache \
 	     -I$(top_srcdir)/WebKit/gtk \
 	     -I$(top_builddir)/WebKit/gtk \
 	     -I$(top_builddir)/DerivedSources \
