@@ -2,6 +2,25 @@
 
         Reviewed by Sam Weinig.
 
+        Move find indicator window logic to WKView
+        https://bugs.webkit.org/show_bug.cgi?id=47739
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setFindIndicator):
+        Call -[WKView _setFindIndicator:fadeOut:].
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView renewGState]):
+        Hide the find indicator.
+
+        (-[WKView _setFindIndicator:fadeOut:]):
+        Move the find indicator logic here.
+
+2010-10-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Hide the find indicator/overlay when necessary
         https://bugs.webkit.org/show_bug.cgi?id=47737
 

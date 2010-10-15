@@ -30,6 +30,8 @@
 
 // Implementation
 #import "ChunkedUpdateDrawingAreaProxy.h"
+#import "FindIndicator.h"
+#import "FindIndicatorWindow.h"
 #import "LayerBackedDrawingAreaProxy.h"
 #import "NativeWebKeyboardEvent.h"
 #import "PageClientImpl.h"
@@ -83,6 +85,8 @@ struct EditCommandState {
     bool _isPerformingUpdate;
     
     HashMap<String, EditCommandState> _menuMap;
+
+    OwnPtr<FindIndicatorWindow> _findIndicatorWindow;
 }
 @end
 
@@ -174,6 +178,13 @@ struct EditCommandState {
     _data->_page->drawingArea()->setSize(IntSize(size));
 }
 
+- (void)renewGState
+{
+    // Hide the find indicator.
+    _data->_findIndicatorWindow = 0;
+
+    [super renewGState];
+}
 typedef HashMap<SEL, String> SelectorNameMap;
 
 // Map selectors into Editor command names.
@@ -658,6 +669,19 @@ static bool isViewVisible(NSView *view)
         _data->_lastToolTipTag = [self addToolTipRect:wideOpenRect owner:self userData:NULL];
         [self _sendToolTipMouseEntered];
     }
+}
+
+- (void)_setFindIndicator:(PassRefPtr<FindIndicator>)findIndicator fadeOut:(BOOL)fadeOut
+{
+    if (!findIndicator) {
+        _data->_findIndicatorWindow = 0;
+        return;
+    }
+
+    if (!_data->_findIndicatorWindow)
+        _data->_findIndicatorWindow = FindIndicatorWindow::create(self);
+
+    _data->_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

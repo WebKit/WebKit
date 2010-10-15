@@ -73,7 +73,6 @@ private:
 
     WKView* m_wkView;
     RetainPtr<WebEditorUndoTargetObjC> m_undoTarget;
-    OwnPtr<FindIndicatorWindow> m_findIndicatorWindow;
 };
 
 } // namespace WebKit
