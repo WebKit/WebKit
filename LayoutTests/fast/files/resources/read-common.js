@@ -1,12 +1,13 @@
 // Builds a blob from a list of items.
+// The 'contentType' argument is optional.
 // If the 'builder' argument is not provided, create a new one.
-function buildBlob(items, builder)
+function buildBlob(items, contentType, builder)
 {
     if (builder === undefined)
         builder = new BlobBuilder();
     for (var i = 0; i < items.length; i++)
         builder.append(items[i]);
-    return builder.getBlob();
+    return builder.getBlob(contentType);
 }
 
 // Reads a blob either asynchronously or synchronously.

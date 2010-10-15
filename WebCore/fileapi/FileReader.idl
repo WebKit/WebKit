@@ -44,9 +44,9 @@ module html {
         readonly attribute unsigned short readyState;
 
         // async read methods
-        void readAsBinaryString(in Blob fileBlob);
-        void readAsText(in Blob fileBlob, in [Optional] DOMString encoding);
-        void readAsDataURL(in File file);
+        void readAsBinaryString(in Blob blob);
+        void readAsText(in Blob blob, in [Optional] DOMString encoding);
+        void readAsDataURL(in Blob blob);
 
         void abort();
 

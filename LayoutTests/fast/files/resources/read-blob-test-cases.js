@@ -6,6 +6,8 @@ var testCases = [
     "testReadingEmptyFileAndTextBlob",
     "testReadingSingleFileBlob",
     "testReadingSingleTextBlob",
+    "testReadingSingleTextBlobAsDataURL",
+    "testReadingSingleTextBlobAsDataURL2",
     "testReadingSlicedFileBlob",
     "testReadingSlicedTextBlob",
     "testReadingMultipleFileBlob",
@@ -75,6 +77,20 @@ function testReadingSingleTextBlob(testFiles)
     readBlobAsBinaryString(testFiles, blob);
 }
 
+function testReadingSingleTextBlobAsDataURL(testFiles)
+{
+    log("Test reading a blob containing single text as data URL");
+    var blob = buildBlob(['First']);
+    readBlobAsDataURL(testFiles, blob);
+}
+
+function testReadingSingleTextBlobAsDataURL2(testFiles)
+{
+    log("Test reading a blob containing single text as data URL (optional content type provided)");
+    var blob = buildBlob(['First'], 'type/foo');
+    readBlobAsDataURL(testFiles, blob);
+}
+
 function testReadingSlicedFileBlob(testFiles)
 {
     log("Test reading a blob containing sliced file");
@@ -123,9 +139,9 @@ function testReadingTripleSlicedHybridBlob(testFiles)
 {
     log("Test reading a triple-sliced hybrid blob");
     var builder = new BlobBuilder();
-    var blob = buildBlob(['First', testFiles['file1'].slice(1, 10), testFiles['empty-file'], 'Second', testFiles['file2'], testFiles['file3'], 'Third'], builder);
+    var blob = buildBlob(['First', testFiles['file1'].slice(1, 10), testFiles['empty-file'], 'Second', testFiles['file2'], testFiles['file3'], 'Third'], undefined, builder);
     var blob = blob.slice(7, 12);
-    var blob2 = buildBlob(['Foo', blob, 'Bar'], builder);
+    var blob2 = buildBlob(['Foo', blob, 'Bar'], undefined, builder);
     var blob2 = blob2.slice(12, 30);
     readBlobAsBinaryString(testFiles, blob2);
 }

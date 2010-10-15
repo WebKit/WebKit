@@ -56,6 +56,24 @@ readyState: 2
 result size: 5
 result: First
 Received loadend event
+Test reading a blob containing single text as data URL
+readyState: 0
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 20
+result: data:base64,Rmlyc3Q=
+Received loadend event
+Test reading a blob containing single text as data URL (optional content type provided)
+readyState: 0
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 29
+result: data:type/foo;base64,Rmlyc3Q=
+Received loadend event
 Test reading a blob containing sliced file
 readyState: 0
 Received loadstart event
