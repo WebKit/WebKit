@@ -1518,7 +1518,7 @@ public:
         m_currentAlternativeIndex = newAlternativeIndex;
     }
 
-    void emitDisjunction(PatternDisjunction* disjunction, unsigned inputCountAlreadyChecked = 0, unsigned parenthesesInputCountAlreadyChecked = 0)
+    void emitDisjunction(PatternDisjunction* disjunction, unsigned inputCountAlreadyChecked = 0, unsigned parenthesesInputCountAlreadyChecked = 0, bool isParentheticalAssertion = false)
     {
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             unsigned currentCountAlreadyChecked = inputCountAlreadyChecked;
@@ -1533,12 +1533,18 @@ public:
             }
 
             unsigned minimumSize = alternative->m_minimumSize;
+            int countToCheck;
 
-            ASSERT(minimumSize >= parenthesesInputCountAlreadyChecked);
-            unsigned countToCheck = minimumSize - parenthesesInputCountAlreadyChecked;
-            if (countToCheck)
+            if (isParentheticalAssertion && parenthesesInputCountAlreadyChecked > minimumSize)
+                countToCheck = 0;
+            else
+                countToCheck = minimumSize - parenthesesInputCountAlreadyChecked;
+
+            ASSERT(countToCheck >= 0);
+            if (countToCheck) {
                 checkInput(countToCheck);
-            currentCountAlreadyChecked += countToCheck;
+                currentCountAlreadyChecked += countToCheck;
+            }
 
             for (unsigned i = 0; i < alternative->m_terms.size(); ++i) {
                 PatternTerm& term = alternative->m_terms[i];
@@ -1598,8 +1604,11 @@ public:
                 case PatternTerm::TypeParentheticalAssertion: {
                     unsigned alternativeFrameLocation = term.frameLocation + RegexStackSpaceForBackTrackInfoParentheticalAssertion;
 
+                    ASSERT(currentCountAlreadyChecked >= term.inputPosition);
+                    int positiveInputOffset = currentCountAlreadyChecked - term.inputPosition;
+
                     atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invertOrCapture, term.frameLocation, alternativeFrameLocation);
-                    emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, 0);
+                    emitDisjunction(term.parentheses.disjunction, currentCountAlreadyChecked, positiveInputOffset, true);
                     atomParenthesesEnd(true, term.parentheses.lastSubpatternId, 0, term.frameLocation, term.quantityCount, term.quantityType);
                     break;
                 }

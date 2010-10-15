@@ -1,3 +1,20 @@
+2010-10-15  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Gavin Barraclough.
+
+        The parenthetical assertion checking isn't working in some cases with YARR
+        Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=46893
+
+        Calculate the countToCheck value of a TypeParentheticalAssertion by
+        subtracting the number of characters which follows
+        a TypeParentheticalAssertion term with the number of characters which should
+        be matched by terms which are contained
+        in the TypeParentheticalAssertion term (minimumSize).
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+
 2010-10-14  Nathan Vander Wilt  <nate@andyet.net>
 
         Reviewed by Darin Adler.
