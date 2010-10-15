@@ -49,6 +49,7 @@
 
 #include <tchar.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/text/StringConcatenate.h>
 
 using namespace WebCore;
 

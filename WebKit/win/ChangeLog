@@ -1,3 +1,10 @@
+2010-10-15  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        Add a missing include.
+
 2010-10-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
