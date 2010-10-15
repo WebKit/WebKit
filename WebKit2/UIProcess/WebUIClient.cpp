@@ -166,4 +166,13 @@ bool WebUIClient::runBeforeUnloadConfirmPanel(WebPageProxy* page, const String& 
     return m_pageUIClient.runBeforeUnloadConfirmPanel(toAPI(page), toAPI(message.impl()), toAPI(frame), m_pageUIClient.clientInfo);
 }
 
+void WebUIClient::didDraw(WebPageProxy* page)
+{
+    if (!m_pageUIClient.didDraw)
+        return;
+
+    return m_pageUIClient.didDraw(toAPI(page), m_pageUIClient.clientInfo);
+}
+
+
 } // namespace WebKit

@@ -1,3 +1,24 @@
+2010-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add 'didDraw' callback for framerate tracking
+        https://bugs.webkit.org/show_bug.cgi?id=47478
+        
+        Hook up the 'didDraw' callback for WebKit2 on Mac.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView drawRect:]):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didDraw):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::didDraw):
+        * UIProcess/WebUIClient.h:
+
 2010-10-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

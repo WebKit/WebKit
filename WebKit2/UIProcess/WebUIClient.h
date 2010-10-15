@@ -67,6 +67,8 @@ public:
     bool canRunBeforeUnloadConfirmPanel();
     bool runBeforeUnloadConfirmPanel(WebPageProxy*, const String&, WebFrameProxy*);
 
+    void didDraw(WebPageProxy*);
+
 private:
     WKPageUIClient m_pageUIClient;
 };

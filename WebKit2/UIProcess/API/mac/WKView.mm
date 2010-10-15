@@ -477,6 +477,7 @@ static bool isViewVisible(NSView *view)
     if (_data->_page->isValid() && _data->_page->drawingArea()) {
         CGContextRef context = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
         _data->_page->drawingArea()->paint(IntRect(rect), context);
+        _data->_page->didDraw();
     }
 }
 

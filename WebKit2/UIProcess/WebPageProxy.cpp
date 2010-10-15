@@ -894,6 +894,11 @@ void WebPageProxy::didChangeViewportData(const ViewportArguments& args)
     m_pageClient->setViewportArguments(args);
 }
 
+void WebPageProxy::didDraw()
+{
+    m_uiClient.didDraw(this);
+}
+
 // BackForwardList
 
 void WebPageProxy::backForwardAddItem(uint64_t itemID)
