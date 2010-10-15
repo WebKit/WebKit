@@ -603,6 +603,7 @@ WebInspector.doLoadedDone = function()
     InspectorBackend.getInspectorState(populateInspectorState);
 
     InspectorBackend.populateScriptObjects();
+    InspectorBackend.setConsoleMessagesEnabled(true);
 
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
     InspectorBackend.getSupportedCSSProperties(WebInspector.CSSCompletions._load);

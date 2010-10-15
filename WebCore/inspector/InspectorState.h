@@ -54,6 +54,7 @@ public:
         inspectorStartsAttached,
         inspectorAttachedHeight,
         pauseOnExceptionsState,
+        consoleMessagesEnabled,
         lastPropertyId
     };
 
@@ -62,6 +63,7 @@ public:
     PassRefPtr<InspectorObject> generateStateObjectForFrontend();
     void restoreFromInspectorCookie(const String& jsonString);
     void loadFromSettings();
+    String getFrontendAlias(InspectorPropertyId propertyId);
 
     bool getBoolean(InspectorPropertyId propertyId);
     String getString(InspectorPropertyId propertyId);
