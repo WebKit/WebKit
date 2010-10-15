@@ -47,6 +47,7 @@ namespace WebCore {
 
 RenderSVGImage::RenderSVGImage(SVGImageElement* impl)
     : RenderSVGModelObject(impl)
+    , m_updateCachedRepaintRect(true)
     , m_needsTransformUpdate(true)
     , m_imageResource(RenderImageResource::create())
 {
@@ -62,34 +63,43 @@ void RenderSVGImage::layout()
 {
     ASSERT(needsLayout());
 
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
+    LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && selfNeedsLayout());
     SVGImageElement* image = static_cast<SVGImageElement*>(node());
 
-    bool updateCachedBoundariesInParents = false;
+    bool transformOrBoundariesUpdate = m_needsTransformUpdate || m_updateCachedRepaintRect;
     if (m_needsTransformUpdate) {
         m_localTransform = image->animatedLocalTransform();
         m_needsTransformUpdate = false;
-        updateCachedBoundariesInParents = true;
     }
 
-    // FIXME: Optimize caching the repaint rects.
-    FloatRect oldBoundaries = m_localBounds;
-    m_localBounds = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
-    m_cachedLocalRepaintRect = FloatRect();
-
-    if (!updateCachedBoundariesInParents)
-        updateCachedBoundariesInParents = oldBoundaries != m_localBounds;
+    if (m_updateCachedRepaintRect) {
+        m_repaintBoundingBox = m_objectBoundingBox;
+        SVGRenderSupport::intersectRepaintRectWithResources(this, m_repaintBoundingBox);
+        m_updateCachedRepaintRect = false;
+    }
 
     // Invalidate all resources of this client if our layout changed.
     if (m_everHadLayout && selfNeedsLayout())
         SVGResourcesCache::clientLayoutChanged(this);
 
     // If our bounds changed, notify the parents.
-    if (updateCachedBoundariesInParents)
+    if (transformOrBoundariesUpdate)
         RenderSVGModelObject::setNeedsBoundariesUpdate();
 
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
+}
+
+void RenderSVGImage::updateFromElement()
+{
+    SVGImageElement* image = static_cast<SVGImageElement*>(node());
+
+    FloatRect oldBoundaries = m_objectBoundingBox;
+    m_objectBoundingBox = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
+    if (m_objectBoundingBox != oldBoundaries) {
+        m_updateCachedRepaintRect = true;
+        setNeedsLayout(true);
+    }
 }
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
@@ -112,7 +122,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
 
             if (SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo)) {
                 Image* image = m_imageResource->image();
-                FloatRect destRect = m_localBounds;
+                FloatRect destRect = m_objectBoundingBox;
                 FloatRect srcRect(0, 0, image->width(), image->height());
 
                 SVGImageElement* imageElement = static_cast<SVGImageElement*>(node());
@@ -148,7 +158,7 @@ bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
             return false;
 
         if (hitRules.canHitFill) {
-            if (m_localBounds.contains(localPoint)) {
+            if (m_objectBoundingBox.contains(localPoint)) {
                 updateHitTestResult(result, roundedIntPoint(localPoint));
                 return true;
             }
@@ -156,18 +166,6 @@ bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResu
     }
 
     return false;
-}
-
-FloatRect RenderSVGImage::repaintRectInLocalCoordinates() const
-{
-    // If we already have a cached repaint rect, return that
-    if (!m_cachedLocalRepaintRect.isEmpty())
-        return m_cachedLocalRepaintRect;
-
-    m_cachedLocalRepaintRect = m_localBounds;
-    SVGRenderSupport::intersectRepaintRectWithResources(this, m_cachedLocalRepaintRect);
-
-    return m_cachedLocalRepaintRect;
 }
 
 void RenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
