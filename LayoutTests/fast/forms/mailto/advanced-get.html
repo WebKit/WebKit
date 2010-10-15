@@ -1,4 +1,29 @@
-Policy delegate: attempt to load mailto:?to=to1%40site.com%2Cto2%40site.com%2Cto3%40site.com&cc=cc1%40site.com%2Ccc2%40site.com%2Ccc3%40site.com&bcc=bcc1%40site.com%2Cbcc2%40site.com%2Cbcc3%40site.com&subject=m%26m%3B%3F%3D&body=line1%0D%0Aline2%0D%0Aline3%0D%0Aline4 with navigation type 'form submitted'
-Press Compose button and check that the created e-mail has correct headers and body.
-
-         
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>action="mailto" GET method</title>
+        <script>
+            function test() {
+              if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitForPolicyDelegate();
+                document.getElementsByTagName("form")[0].submit();
+              }
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <p>Press Compose button and check that the created e-mail has correct headers and body.</p>
+        <form action="mailto:" method="get">
+            <input name="to" value="to1@site.com,to2@site.com,to3@site.com">
+            <input name="cc" value="cc1@site.com,cc2@site.com,cc3@site.com">
+            <input name="bcc" value="bcc1@site.com,bcc2@site.com,bcc3@site.com">
+            <input name="subject" value="m&amp;m;?=">
+<textarea name="body">line1
+line2
+line3
+line4</textarea>
+            <input type="submit" value="Compose">
+        </form>
+    </body>
+</html>
