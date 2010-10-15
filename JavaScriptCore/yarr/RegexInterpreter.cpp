@@ -1604,7 +1604,7 @@ public:
                 case PatternTerm::TypeParentheticalAssertion: {
                     unsigned alternativeFrameLocation = term.frameLocation + RegexStackSpaceForBackTrackInfoParentheticalAssertion;
 
-                    ASSERT(currentCountAlreadyChecked >= term.inputPosition);
+                    ASSERT(currentCountAlreadyChecked >= (unsigned)term.inputPosition);
                     int positiveInputOffset = currentCountAlreadyChecked - term.inputPosition;
 
                     atomParentheticalAssertionBegin(term.parentheses.subpatternId, term.invertOrCapture, term.frameLocation, alternativeFrameLocation);

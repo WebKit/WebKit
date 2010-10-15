@@ -1,3 +1,10 @@
+2010-10-15  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for Debug Leopard which is failng to compile after r69842.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+
 2010-10-15  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Gavin Barraclough.
