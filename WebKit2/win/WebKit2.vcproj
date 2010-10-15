@@ -1501,6 +1501,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\FindIndicator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\FindIndicator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\GenericCallback.h"
 				>
 			</File>

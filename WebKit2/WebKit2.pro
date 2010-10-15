@@ -240,6 +240,7 @@ HEADERS += \
     UIProcess/API/qt/qwkpreferences.h \
     UIProcess/ChunkedUpdateDrawingAreaProxy.h \
     UIProcess/DrawingAreaProxy.h \
+    UIProcess/FindIndicator.h \
     UIProcess/GenericCallback.h \
     UIProcess/Launcher/ProcessLauncher.h \
     UIProcess/Launcher/ThreadLauncher.h \
@@ -376,6 +377,7 @@ SOURCES += \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/ChunkedUpdateDrawingAreaProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
+    UIProcess/FindIndicator.cpp \
     UIProcess/Plugins/PluginInfoStore.cpp \
     UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \

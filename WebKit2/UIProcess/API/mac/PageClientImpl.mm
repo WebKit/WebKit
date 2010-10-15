@@ -225,6 +225,11 @@ void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
 {
 }
 
+void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
+{
+    // FIXME: Implement.
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 void PageClientImpl::pageDidEnterAcceleratedCompositing()
 {

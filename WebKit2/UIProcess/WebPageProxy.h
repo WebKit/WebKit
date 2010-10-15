@@ -282,7 +282,7 @@ private:
 
     // Find.
     void didCountStringMatches(const String&, uint32_t numMatches);
-    void setFindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle);
+    void setFindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle, bool fadeOut);
 
     void takeFocus(bool direction);
     void setToolTip(const String&);

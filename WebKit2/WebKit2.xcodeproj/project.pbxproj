@@ -126,6 +126,8 @@
 		1A90C23812650717003E44D4 /* PageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C23612650717003E44D4 /* PageOverlay.cpp */; };
 		1A90C2A312650C60003E44D4 /* FindPageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C2A112650C60003E44D4 /* FindPageOverlay.h */; };
 		1A90C2A412650C60003E44D4 /* FindPageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C2A212650C60003E44D4 /* FindPageOverlay.cpp */; };
+		1A910071126675C4001842F5 /* FindIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A91006F126675C3001842F5 /* FindIndicator.h */; };
+		1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A910070126675C4001842F5 /* FindIndicator.cpp */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
@@ -591,6 +593,8 @@
 		1A90C23612650717003E44D4 /* PageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageOverlay.cpp; sourceTree = "<group>"; };
 		1A90C2A112650C60003E44D4 /* FindPageOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindPageOverlay.h; sourceTree = "<group>"; };
 		1A90C2A212650C60003E44D4 /* FindPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindPageOverlay.cpp; sourceTree = "<group>"; };
+		1A91006F126675C3001842F5 /* FindIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicator.h; sourceTree = "<group>"; };
+		1A910070126675C4001842F5 /* FindIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindIndicator.cpp; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -1353,6 +1357,8 @@
 				BC2652151182608100243E12 /* ChunkedUpdateDrawingAreaProxy.h */,
 				BC2652121182608100243E12 /* DrawingAreaProxy.cpp */,
 				BC2652131182608100243E12 /* DrawingAreaProxy.h */,
+				1A910070126675C4001842F5 /* FindIndicator.cpp */,
+				1A91006F126675C3001842F5 /* FindIndicator.h */,
 				BC17753E118BABF0007D9E9A /* GenericCallback.h */,
 				0F5265B711DD377F0006D33C /* LayerBackedDrawingAreaProxy.cpp */,
 				0F5265B811DD377F0006D33C /* LayerBackedDrawingAreaProxy.h */,
@@ -2027,6 +2033,7 @@
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
 				1A90C23712650717003E44D4 /* PageOverlay.h in Headers */,
 				1A90C2A312650C60003E44D4 /* FindPageOverlay.h in Headers */,
+				1A910071126675C4001842F5 /* FindIndicator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2333,6 +2340,7 @@
 				1A90C23812650717003E44D4 /* PageOverlay.cpp in Sources */,
 				1A90C2A412650C60003E44D4 /* FindPageOverlay.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* BackingStoreCG.cpp in Sources */,
+				1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

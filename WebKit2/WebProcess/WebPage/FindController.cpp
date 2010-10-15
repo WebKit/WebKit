@@ -87,7 +87,7 @@ void FindController::findString(const String& string, FindDirection findDirectio
                 shouldShowOverlay = false;
         }
 
-        if (!(findOptions & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame)) {
+        if (!(findOptions & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay)) {
             // Either we shouldn't show the find indicator, or we couldn't update it.
             resetFindIndicator();
         }
@@ -124,7 +124,7 @@ void FindController::findPageOverlayDestroyed()
     m_findPageOverlay = 0;
 }
 
-bool FindController::updateFindIndicator(Frame* selectedFrame)
+bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOverlay)
 {
     if (!selectedFrame)
         return false;
@@ -162,7 +162,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame)
         textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
     }            
     
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, handle), m_webPage->pageID());
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, handle, !isShowingOverlay), m_webPage->pageID());
     m_isShowingFindIndicator = true;
 
     return true;
@@ -174,7 +174,7 @@ void FindController::resetFindIndicator()
         return;
 
     SharedMemory::Handle handle;
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), handle), m_webPage->pageID());
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), handle, false), m_webPage->pageID());
     m_isShowingFindIndicator = false;
 }
 
