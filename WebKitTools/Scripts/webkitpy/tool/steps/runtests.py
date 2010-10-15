@@ -45,17 +45,17 @@ class RunTests(AbstractStep):
 
         # Run the scripting unit tests first because they're quickest.
         log("Running Python unit tests")
-        self._tool.executive.run_and_throw_if_fail(self.port().run_python_unittests_command())
+        self._tool.executive.run_and_throw_if_fail(self._tool.port().run_python_unittests_command())
         log("Running Perl unit tests")
-        self._tool.executive.run_and_throw_if_fail(self.port().run_perl_unittests_command())
+        self._tool.executive.run_and_throw_if_fail(self._tool.port().run_perl_unittests_command())
 
-        javascriptcore_tests_command = self.port().run_javascriptcore_tests_command()
+        javascriptcore_tests_command = self._tool.port().run_javascriptcore_tests_command()
         if javascriptcore_tests_command:
             log("Running JavaScriptCore tests")
             self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True)
 
         log("Running run-webkit-tests")
-        args = self.port().run_webkit_tests_command()
+        args = self._tool.port().run_webkit_tests_command()
         if self._options.non_interactive:
             args.append("--no-launch-safari")
             args.append("--exit-after-n-failures=1")
@@ -63,7 +63,7 @@ class RunTests(AbstractStep):
             # FIXME: Hack to work around https://bugs.webkit.org/show_bug.cgi?id=38912
             # when running the commit-queue on a mac leopard machine since compositing
             # does not work reliably on Leopard due to various graphics driver/system bugs.
-            if self.port().name() == "Mac" and self.port().is_leopard():
+            if self._tool.port().name() == "Mac" and self._tool.port().is_leopard():
                 tests_to_ignore = []
                 tests_to_ignore.append("compositing")
 

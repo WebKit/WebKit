@@ -42,4 +42,4 @@ class Update(AbstractStep):
         if not self._options.update:
             return
         log("Updating working directory")
-        self._tool.executive.run_and_throw_if_fail(self.port().update_webkit_command(), quiet=True)
+        self._tool.executive.run_and_throw_if_fail(self._tool.port().update_webkit_command(), quiet=True)

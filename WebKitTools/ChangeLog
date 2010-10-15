@@ -1,3 +1,59 @@
+2010-10-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should not fail patches due to flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=47647
+
+        This patch makes it so that the *same* flaky test has to fail
+        twice in a row to have a false negative from a flaky test.
+
+        If different flaky tests fail (or if a test fails and then passes
+        in a second run) then we will warn in the bug that we encountered
+        a flaky test.
+
+        This patch grew to include moving port off of steps onto tool
+        (which Adam wrote and then I integrated), as well as removing the
+        use of tool from CommitQueueTask.
+
+        * Scripts/webkitpy/common/config/ports.py:
+         - Added a layout_test_results_path method.  This covers old-run-webkit-tests
+           but doesn't cover NRWT.  This is probably not the long term solution, but
+           putting this knowledge on port makes more sense than in LayoutTestResults.
+        * Scripts/webkitpy/common/net/buildbot.py:
+         - LayoutTestResults shouldn't know how to fetch from the network, make
+           the Build code do that instead.
+        * Scripts/webkitpy/common/net/buildbot_unittest.py:
+         - Code style fix.
+        * Scripts/webkitpy/common/net/layouttestresults.py:
+         - Remove code for reading from the network.
+        * Scripts/webkitpy/common/net/layouttestresults_unittest.py:
+         - Test the new entrypoint.
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+         - Make the delegate interface explicit.
+         - Remove the _tool member, since using the delegate for
+           everything is cleaner.
+         - Teach the testing logic how to deal with flaky tests.
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+         - Update to match the CommitQueueTask changes.
+        * Scripts/webkitpy/tool/commands/queues.py:
+         - Use the new CommitQueueTaskDelegate interface.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+         - Fix the SecondThoughtsCommitQueue test which was broken.
+         - Add a new test to make sure the flaky test reporting works.
+        * Scripts/webkitpy/tool/main.py:
+         - Store the port on the tool object.
+        * Scripts/webkitpy/tool/mocktool.py:
+         - Add a port() accessor to MockTool
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+         - Move port() off of Step and onto Tool.
+        * Scripts/webkitpy/tool/steps/build.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+         - Two tests with the same name!  only the latter was being run.
+        * Scripts/webkitpy/tool/steps/update.py:
+
 2010-10-14  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

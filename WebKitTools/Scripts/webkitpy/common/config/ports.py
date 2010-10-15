@@ -103,6 +103,10 @@ class WebKitPort(object):
     def run_perl_unittests_command(cls):
         return [cls.script_path("test-webkitperl")]
 
+    @classmethod
+    def layout_tests_results_path(cls):
+        return "/tmp/layout-test-results/results.html"
+
 
 class MacPort(WebKitPort):
 

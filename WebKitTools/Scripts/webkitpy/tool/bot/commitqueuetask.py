@@ -27,19 +27,39 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.net.layouttestresults import LayoutTestResults
+
+
+class CommitQueueTaskDelegate(object):
+    def run_command(self, command):
+        raise NotImplementedError("subclasses must implement")
+
+    def command_passed(self, message, patch):
+        raise NotImplementedError("subclasses must implement")
+
+    def command_failed(self, message, script_error, patch):
+        raise NotImplementedError("subclasses must implement")
+
+    def refetch_patch(self, patch):
+        raise NotImplementedError("subclasses must implement")
+
+    def layout_test_results(self):
+        raise NotImplementedError("subclasses must implement")
+
+    def report_flaky_tests(self, patch, flaky_tests):
+        raise NotImplementedError("subclasses must implement")
 
 
 class CommitQueueTask(object):
-    def __init__(self, tool, commit_queue, patch):
-        self._tool = tool
-        self._commit_queue = commit_queue
+    def __init__(self, delegate, patch):
+        self._delegate = delegate
         self._patch = patch
         self._script_error = None
 
     def _validate(self):
         # Bugs might get closed, or patches might be obsoleted or r-'d while the
         # commit-queue is processing.
-        self._patch = self._tool.bugs.fetch_attachment(self._patch.id())
+        self._patch = self._delegate.refetch_patch(self._patch)
         if self._patch.is_obsolete():
             return False
         if self._patch.bug().is_closed():
@@ -52,12 +72,12 @@ class CommitQueueTask(object):
 
     def _run_command(self, command, success_message, failure_message):
         try:
-            self._commit_queue.run_webkit_patch(command)
-            self._commit_queue.command_passed(success_message, patch=self._patch)
+            self._delegate.run_command(command)
+            self._delegate.command_passed(success_message, patch=self._patch)
             return True
         except ScriptError, e:
             self._script_error = e
-            self.failure_status_id = self._commit_queue.command_failed(failure_message, script_error=self._script_error, patch=self._patch)
+            self.failure_status_id = self._delegate.command_failed(failure_message, script_error=self._script_error, patch=self._patch)
             return False
 
     def _apply(self):
@@ -119,6 +139,12 @@ class CommitQueueTask(object):
         "Able to pass tests without patch",
         "Unable to pass tests without patch (tree is red?)")
 
+    def _failing_tests_from_last_run(self):
+        results = self._delegate.layout_test_results()
+        if not results:
+            return None
+        return results.failing_tests()
+
     def _land(self):
         return self._run_command([
             "land-attachment",
@@ -132,6 +158,29 @@ class CommitQueueTask(object):
         "Landed patch",
         "Unable to land patch")
 
+    def _report_flaky_tests(self, flaky_tests):
+        self._delegate.report_flaky_tests(self._patch, flaky_tests)
+
+    def _test_patch(self):
+        if self._patch.is_rollout():
+            return True
+        if self._test():
+            return True
+
+        first_failing_tests = self._failing_tests_from_last_run()
+        if self._test():
+            self._report_flaky_tests(first_failing_tests)
+            return True
+
+        second_failing_tests = self._failing_tests_from_last_run()
+        if first_failing_tests != second_failing_tests:
+            self._report_flaky_tests(first_failing_tests + second_failing_tests)
+            return False
+
+        if self._build_and_test_without_patch():
+            raise self._script_error  # The error from the previous ._test() run is real, report it.
+        return False  # Tree must be red, just retry later.
+
     def run(self):
         if not self._validate():
             return False
@@ -141,12 +190,8 @@ class CommitQueueTask(object):
             if not self._build_without_patch():
                 return False
             raise self._script_error
-        if not self._patch.is_rollout():
-            if not self._test():
-                if not self._test():
-                    if not self._build_and_test_without_patch():
-                        return False
-                    raise self._script_error
+        if not self._test_patch():
+            return False
         # Make sure the patch is still valid before landing (e.g., make sure
         # no one has set commit-queue- since we started working on the patch.)
         if not self._validate():

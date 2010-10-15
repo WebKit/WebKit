@@ -69,3 +69,8 @@ class LayoutTestResultsTest(unittest.TestCase):
     def test_parse_layout_test_results(self):
         results = LayoutTestResults._parse_results_html(self._example_results_html)
         self.assertEqual(self._expected_layout_test_results, results)
+
+    def test_results_from_string(self):
+        self.assertEqual(LayoutTestResults.results_from_string(""), None)
+        results = LayoutTestResults.results_from_string(self._example_results_html)
+        self.assertEqual(len(results.failing_tests()), 0)

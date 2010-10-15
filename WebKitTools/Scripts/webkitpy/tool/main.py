@@ -34,6 +34,7 @@ import threading
 
 from webkitpy.common.checkout.api import Checkout
 from webkitpy.common.checkout.scm import default_scm
+from webkitpy.common.config.ports import WebKitPort
 from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.rietveld import Rietveld
@@ -52,7 +53,6 @@ from webkitpy.tool.commands.queues import *
 from webkitpy.tool.commands.sheriffbot import *
 from webkitpy.tool.commands.upload import *
 from webkitpy.tool.multicommandtool import MultiCommandTool
-from webkitpy.common.system.deprecated_logging import log
 
 
 class WebKitPatch(MultiCommandTool):
@@ -74,6 +74,7 @@ class WebKitPatch(MultiCommandTool):
         self.buildbot = BuildBot()
         self.executive = Executive()
         self._irc = None
+        self._port = None
         self.user = User()
         self._scm = None
         self._checkout = None
@@ -91,6 +92,9 @@ class WebKitPatch(MultiCommandTool):
         if not self._checkout:
             self._checkout = Checkout(self.scm())
         return self._checkout
+
+    def port(self):
+        return self._port
 
     def ensure_irc_connected(self, irc_delegate):
         if not self._irc:
@@ -129,6 +133,8 @@ class WebKitPatch(MultiCommandTool):
             self.status_server.set_bot_id(options.bot_id)
         if options.irc_password:
             self.irc_password = options.irc_password
+        # If options.port is None, we'll get the default port for this platform.
+        self._port = WebKitPort.port(options.port)
 
     def should_execute_command(self, command):
         if command.requires_local_commits and not self.scm().supports_local_commits():

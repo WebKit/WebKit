@@ -27,6 +27,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import with_statement
+
+import codecs
 import time
 import traceback
 import os
@@ -40,7 +43,7 @@ from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
-from webkitpy.tool.bot.commitqueuetask import CommitQueueTask
+from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.feeders import CommitQueueFeeder
 from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
@@ -211,7 +214,7 @@ class AbstractPatchQueue(AbstractQueue):
         return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
 
 
-class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
+class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
     name = "commit-queue"
 
     # AbstractPatchQueue methods
@@ -233,7 +236,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
     def process_work_item(self, patch):
         self._cc_watchers(patch.bug_id())
-        task = CommitQueueTask(self._tool, self, patch)
+        task = CommitQueueTask(self, patch)
         try:
             if task.run():
                 self._did_pass(patch)
@@ -244,8 +247,19 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task.failure_status_id, e))
             self._did_fail(patch)
 
+    def _error_message_for_bug(self, status_id, script_error):
+        if not script_error.output:
+            return script_error.message_with_output()
+        results_link = self._tool.status_server.results_url_for_status(status_id)
+        return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
+
     def handle_unexpected_error(self, patch, message):
         self.committer_validator.reject_patch_from_commit_queue(patch.id(), message)
+
+    # CommitQueueTaskDelegate methods
+
+    def run_command(self, command):
+        self.run_webkit_patch(command)
 
     def command_passed(self, message, patch):
         self._update_status(message, patch=patch)
@@ -254,11 +268,22 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         failure_log = self._log_from_script_error_for_upload(script_error)
         return self._update_status(message, patch=patch, results_file=failure_log)
 
-    def _error_message_for_bug(self, status_id, script_error):
-        if not script_error.output:
-            return script_error.message_with_output()
-        results_link = self._tool.status_server.results_url_for_status(status_id)
-        return "%s\nFull output: %s" % (script_error.message_with_output(), results_link)
+    # FIXME: This may belong on the Port object.
+    def layout_test_results(self):
+        results_path = self._tool.port().layout_tests_results_path()
+        try:
+            # FIXME: We need a nice open() abstraction for better mocking here.
+            with codecs.open(results_path, "r", "utf-8") as results_file:
+                return LayoutTestResults.results_from_string(results_file)
+        except OSError, e:  # File does not exist or can't be read.
+            return None
+
+    def refetch_patch(self, patch):
+        return self._tool.bugs.fetch_attachment(patch.id())
+
+    def report_flaky_tests(self, patch, flaky_tests):
+        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n%s\n\nPlease file bugs against the tests.  The commit-queue is continuing to process your patch." % (self.name, patch.id(), flaky_tests)
+        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
 
     # StepSequenceErrorHandler methods
 

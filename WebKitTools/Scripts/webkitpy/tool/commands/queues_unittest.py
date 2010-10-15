@@ -183,7 +183,20 @@ class AlwaysCommitQueueTool(object):
 
 
 class SecondThoughtsCommitQueue(CommitQueue):
-    def _build_and_test_patch(self, patch, first_run=True):
+    def __init__(self):
+        self._reject_patch = False
+        CommitQueue.__init__(self)
+
+    def run_command(self, command):
+        # We want to reject the patch after the first validation,
+        # so wait to reject it until after some other command has run.
+        self._reject_patch = True
+        return CommitQueue.run_command(self, command)
+
+    def refetch_patch(self, patch):
+        if not self._reject_patch:
+            return self._tool.bugs.fetch_attachment(patch.id())
+
         attachment_dictionary = {
             "id": patch.id(),
             "bug_id": patch.bug_id(),
@@ -196,9 +209,7 @@ class SecondThoughtsCommitQueue(CommitQueue):
             "committer_email": "foo@bar.com",
             "attacher_email": "Contributer1",
         }
-        patch = Attachment(attachment_dictionary, None)
-        self._tool.bugs.set_override_patch(patch)
-        return True
+        return Attachment(attachment_dictionary, None)
 
 
 class CommitQueueTest(QueuesTest):
@@ -306,10 +317,24 @@ MOCK: update_status: commit-queue Pass
         expected_stderr = """MOCK: update_status: commit-queue Applied patch
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
-MOCK: update_status: commit-queue Landed patch
-MOCK: update_status: commit-queue Pass
+MOCK: update_status: commit-queue Retry
 """
         OutputCapture().assert_outputs(self, queue.process_work_item, [MockPatch()], expected_stderr=expected_stderr)
+
+    def test_report_flaky_tests(self):
+        queue = CommitQueue()
+        queue.bind_to_tool(MockTool())
+        expected_stderr = """MOCK bug comment: bug_id=142, cc=[]
+--- Begin comment ---
+The commit-queue encountered the following flaky tests while processing attachment 197:
+
+['foo/bar.html', 'bar/baz.html']
+
+Please file bugs against the tests.  The commit-queue is continuing to process your patch.
+--- End comment ---
+
+"""
+        OutputCapture().assert_outputs(self, queue.report_flaky_tests, [MockPatch(), ["foo/bar.html", "bar/baz.html"]], expected_stderr=expected_stderr)
 
 
 class RietveldUploadQueueTest(QueuesTest):

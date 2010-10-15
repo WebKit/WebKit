@@ -41,10 +41,8 @@ class BuilderTest(unittest.TestCase):
                 revision=build_number + 1000,
                 is_green=build_number < 4
             )
-            build._layout_test_results = LayoutTestResults(
-                "http://buildbot.example.com/foo", {
-                    LayoutTestResults.fail_key: failure(build_number),
-                })
+            parsed_results = {LayoutTestResults.fail_key: failure(build_number)}
+            build._layout_test_results = LayoutTestResults(parsed_results)
             return build
         self.builder._fetch_build = _mock_fetch_build
 

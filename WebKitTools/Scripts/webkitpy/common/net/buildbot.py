@@ -215,9 +215,19 @@ class Build(object):
         results_directory = "r%s (%s)" % (self.revision(), self._number)
         return "%s/%s" % (self._builder.results_url(), urllib.quote(results_directory))
 
+    def _fetch_results_html(self):
+        results_html = "%s/results.html" % (self.results_url())
+        # FIXME: We need to move this sort of 404 logic into NetworkTransaction or similar.
+        try:
+            return urllib2.urlopen(results_html)
+        except urllib2.HTTPError, error:
+            if error.code != 404:
+                raise
+
     def layout_test_results(self):
         if not self._layout_test_results:
-            self._layout_test_results = LayoutTestResults.results_from_url(self.results_url())
+            # FIXME: This should cache that the result was a 404 and stop hitting the network.
+            self._layout_test_results = LayoutTestResults.results_from_string(self._fetch_results_html())
         return self._layout_test_results
 
     def builder(self):

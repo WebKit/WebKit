@@ -36,22 +36,14 @@ class AbstractStep(object):
     def __init__(self, tool, options):
         self._tool = tool
         self._options = options
-        self._port = None
 
+    # FIXME: This should use tool.port()
     def _run_script(self, script_name, args=None, quiet=False, port=WebKitPort):
         log("Running %s" % script_name)
         command = [port.script_path(script_name)]
         if args:
             command.extend(args)
-        # FIXME: This should use self.port()
         self._tool.executive.run_and_throw_if_fail(command, quiet)
-
-    # FIXME: The port should live on the tool.
-    def port(self):
-        if self._port:
-            return self._port
-        self._port = WebKitPort.port(self._options.port)
-        return self._port
 
     _well_known_keys = {
         "diff": lambda self, state: self._tool.scm().create_patch(self._options.git_commit),

@@ -34,6 +34,8 @@ from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 # FIXME: This should be unified with all the layout test results code in the layout_tests package
 # This doesn't belong in common.net, but we don't have a better place for it yet.
 class LayoutTestResults(object):
+    """This class knows how to parse old-run-webkit-tests results.html files."""
+
     stderr_key = u'Tests that had stderr output:'
     fail_key = u'Tests where results did not match expected results:'
     timeout_key = u'Tests that timed out:'
@@ -62,27 +64,14 @@ class LayoutTestResults(object):
 
         return parsed_results
 
-    # FIXME: This class shouldn't know how to fetch from the network.
     @classmethod
-    def _fetch_results_html(cls, base_url):
-        results_html = "%s/results.html" % base_url
-        # FIXME: We need to move this sort of 404 logic into NetworkTransaction or similar.
-        try:
-            page = urllib2.urlopen(results_html)
-            return cls._parse_results_html(page)
-        except urllib2.HTTPError, error:
-            if error.code != 404:
-                raise
-
-    @classmethod
-    def results_from_url(cls, base_url):
-        parsed_results = cls._fetch_results_html(base_url)
+    def results_from_string(cls, string):
+        parsed_results = cls._parse_results_html(string)
         if not parsed_results:
             return None
-        return cls(base_url, parsed_results)
+        return cls(parsed_results)
 
-    def __init__(self, base_url, parsed_results):
-        self._base_url = base_url
+    def __init__(self, parsed_results):
         self._parsed_results = parsed_results
 
     def parsed_results(self):
