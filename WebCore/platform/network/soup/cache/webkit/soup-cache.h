@@ -23,7 +23,13 @@
 #ifndef WEBKIT_SOUP_CACHE_H
 #define WEBKIT_SOUP_CACHE_H 1
 
+#if PLATFORM(GTK)
 #include <webkit/webkitdefines.h>
+#else
+#ifndef WEBKIT_API
+#define WEBKIT_API
+#endif
+#endif
 
 #include <libsoup/soup-types.h>
 #include <gio/gio.h>
