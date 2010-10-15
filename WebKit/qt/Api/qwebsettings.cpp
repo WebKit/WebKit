@@ -184,6 +184,10 @@ void QWebSettingsPrivate::apply()
                                       global->attributes.value(QWebSettings::JavascriptCanOpenWindows));
         settings->setJavaScriptCanOpenWindowsAutomatically(value);
 
+        value = attributes.value(QWebSettings::JavascriptCanCloseWindows,
+                                      global->attributes.value(QWebSettings::JavascriptCanCloseWindows));
+        settings->setAllowScriptsToCloseWindows(value);
+
         value = attributes.value(QWebSettings::JavaEnabled,
                                       global->attributes.value(QWebSettings::JavaEnabled));
         settings->setJavaEnabled(value);
@@ -389,6 +393,8 @@ QWebSettings* QWebSettings::globalSettings()
         recording visited pages in the history and storing web page icons. This is disabled by default.
     \value JavascriptCanOpenWindows Specifies whether JavaScript programs
         can open new windows. This is disabled by default.
+    \value JavascriptCanCloseWindows Specifies whether JavaScript programs
+        can close windows. This is disabled by default.
     \value JavascriptCanAccessClipboard Specifies whether JavaScript programs
         can read or write to the clipboard. This is disabled by default.
     \value DeveloperExtrasEnabled Enables extra tools for Web developers.
