@@ -136,7 +136,7 @@ bool setEnd(Range*, const VisiblePosition&);
 VisiblePosition startVisiblePosition(const Range*, EAffinity);
 VisiblePosition endVisiblePosition(const Range*, EAffinity);
 
-Node *enclosingBlockFlowElement(const VisiblePosition&);
+Element* enclosingBlockFlowElement(const VisiblePosition&);
 
 bool isFirstVisiblePositionInNode(const VisiblePosition&, const Node*);
 bool isLastVisiblePositionInNode(const VisiblePosition&, const Node*);

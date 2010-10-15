@@ -24,5 +24,7 @@ DOM for the above (so this test can dump as text)
 
 <p><br></p>
 
-<div contenteditable="true" id="editable"><nav>Test of FormatBlock behavior. This text should have a green border.<br></nav></div>
+<div contenteditable="true" id="editable"><nav>
+Test of FormatBlock behavior. This text should have a green border.
+</nav></div>
 

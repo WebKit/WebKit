@@ -432,14 +432,15 @@ static bool executeFormatBlock(Frame* frame, Event*, EditorCommandSource, const 
     String tagName = value.lower();
     if (tagName[0] == '<' && tagName[tagName.length() - 1] == '>')
         tagName = tagName.substring(1, tagName.length() - 2);
-    if (!validBlockTag(tagName))
-        return false;
 
     ExceptionCode ec;
     String localName, prefix;
     if (!Document::parseQualifiedName(tagName, prefix, localName, ec))
         return false;
     QualifiedName qualifiedTagName(prefix, localName, xhtmlNamespaceURI);
+
+    if (!FormatBlockCommand::isElementToApplyInFormatBlockCommand(qualifiedTagName))
+        return false;
 
     applyCommand(FormatBlockCommand::create(frame->document(), qualifiedTagName));
     return true;
