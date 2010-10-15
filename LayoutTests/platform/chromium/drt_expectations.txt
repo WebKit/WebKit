@@ -28,21 +28,21 @@ BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
 BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
 // Filesystem failures
-BUG_DRT WIN MAC : fast/filesystem/file-from-file-entry.html = TEXT
-BUG_DRT WIN MAC : fast/filesystem/op-copy.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/op-get-entry.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/op-get-parent.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/op-move.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/op-read-directory.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/op-remove.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/op-restricted-chars.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/op-restricted-names.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/simple-persistent.html = TIMEOUT
-BUG_DRT WIN MAC : fast/filesystem/simple-temporary.html = TIMEOUT
-BUG_DRT MAC : fast/filesystem/async-operations.html = TEXT
-BUG_DRT MAC : fast/filesystem/flags-passing.html = TEXT
-BUG_DRT WIN : fast/filesystem/read-directory.html = TEXT
-BUG_DRT WIN : http/tests/local/send-sliced-dragged-file.html = TEXT
+BUG47643 WIN MAC : fast/filesystem/file-from-file-entry.html = TEXT
+BUG47643 WIN MAC : fast/filesystem/op-copy.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/op-get-entry.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/op-get-parent.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/op-move.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/op-read-directory.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/op-remove.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/op-restricted-chars.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/op-restricted-names.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/simple-persistent.html = TIMEOUT
+BUG47643 WIN MAC : fast/filesystem/simple-temporary.html = TIMEOUT
+BUG47643 MAC : fast/filesystem/async-operations.html = TEXT
+BUG47643 MAC : fast/filesystem/flags-passing.html = TEXT
+BUG47643 WIN : fast/filesystem/read-directory.html = TEXT
+BUG47643 WIN : http/tests/local/send-sliced-dragged-file.html = TEXT
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
