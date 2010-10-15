@@ -34,6 +34,7 @@
 #include "HistoryItem.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include <wtf/text/StringConcatenate.h>
 
 using namespace WebCore;
 
@@ -102,11 +103,8 @@ HistoryItem* BackForwardListClientImpl::itemAtIndex(int index)
     // differently.  It should perhaps just ask the FrameLoaderClient to
     // perform those navigations.
 
-    String url_string = String::format(
-        "%s://go/%d", backForwardNavigationScheme, index);
-
-    m_pendingHistoryItem =
-        HistoryItem::create(url_string, String(), 0.0);
+    String urlString = makeString(backForwardNavigationScheme, "://go/", String::number(index));
+    m_pendingHistoryItem = HistoryItem::create(urlString, String(), 0);
     return m_pendingHistoryItem.get();
 }
 

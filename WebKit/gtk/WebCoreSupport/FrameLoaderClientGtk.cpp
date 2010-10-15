@@ -50,7 +50,6 @@
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "PluginDatabase.h"
 #include "RenderPart.h"
 #include "ResourceHandle.h"
@@ -67,6 +66,7 @@
 #include "webkitwebpolicydecision.h"
 #include "webkitwebview.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #include <JavaScriptCore/APICast.h>
 #include <gio/gio.h>
@@ -1120,13 +1120,13 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     g_free(errorURI);
 
     if (!errorFile)
-        content = String::format("<html><body>%s</body></html>", webError->message);
+        content = makeString("<html><body>", webError->message, "</body></html>");
     else {
         gboolean loaded = g_file_load_contents(errorFile, 0, &fileContent, 0, 0, 0);
         if (!loaded)
-            content = String::format("<html><body>%s</body></html>", webError->message);
+            content = makeString("<html><body>", webError->message, "</body></html>");
         else
-            content = String::format(fileContent, error.failingURL().utf8().data(), webError->message);
+            content = makeString(fileContent, error.failingURL(), webError->message);
     }
 
     webkit_web_frame_load_alternate_string(m_frame, content.utf8().data(), 0, error.failingURL().utf8().data());

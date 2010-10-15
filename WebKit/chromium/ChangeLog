@@ -1,3 +1,20 @@
+2010-10-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Replace some String::format() usages by StringConcatenate in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=47714
+
+        * src/BackForwardListClientImpl.cpp:
+        (WebKit::BackForwardListClientImpl::itemAtIndex):
+        * src/DebuggerAgentManager.cpp:
+        (WebKit::DebuggerAgentManager::debugDetach):
+        * src/LocalizedStrings.cpp:
+        (WebCore::imageTitle):
+        * src/WebPageSerializer.cpp:
+        (WebKit::WebPageSerializer::generateMetaCharsetDeclaration):
+        (WebKit::WebPageSerializer::generateBaseTagDeclaration):
+
 2010-10-14  Wei Jia  <wjia@chromium.org>
 
         Reviewed by Darin Fisher.

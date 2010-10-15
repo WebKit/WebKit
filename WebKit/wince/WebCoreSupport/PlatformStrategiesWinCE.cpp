@@ -27,14 +27,16 @@
 #include "PlatformStrategiesWinCE.h"
 
 #include "IntSize.h"
-#include "MathExtras.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PluginDatabase.h"
-#include <wtf/text/CString.h>
 
-#define UI_STRING(text, desciprion) text
-#define UI_STRING_KEY(text, key, desciprion) text
+#include <wtf/MathExtras.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
+
+#define UI_STRING(text, description) text
+#define UI_STRING_KEY(text, key, description) text
 
 using namespace WebCore;
 
@@ -489,13 +491,13 @@ String PlatformStrategiesWinCE::crashedPluginText()
 
 String PlatformStrategiesWinCE::imageTitle(const String& filename, const IntSize& size) 
 {
-    CString filenameCString = filename.utf8();
-    return String::format(UI_STRING("%s %d\xC3\x97%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filenameCString.data(), size.width(), size.height());
+    return UI_STRING(makeString(filename, ' ', String::number(size.width()), "\xC3\x97", String::number(size.height()), " pixels"),
+                     "window title for a standalone image (uses multiplication symbol, not x)");
 }
 
 String PlatformStrategiesWinCE::multipleFileUploadText(unsigned numberOfFiles)
 {
-    return String::format(UI_STRING("%d files", "Label to describe the number of files selected in a file upload control that allows multiple files"), numberOfFiles);
+    return UI_STRING(makeString(String::number(numberOfFiles), " files"), "Label to describe the number of files selected in a file upload control that allows multiple files");
 }
 
 String PlatformStrategiesWinCE::mediaElementLoadingStateText()

@@ -214,7 +214,6 @@ String keygenMenuMediumGradeKeySize()
 // Used in ImageDocument.cpp as the title for pages when that page is an image.
 String imageTitle(const String& filename, const IntSize& size)
 {
-    // Note that we cannot use String::format because it works for ASCII only.
     StringBuilder result;
     result.append(filename);
     result.append(" (");

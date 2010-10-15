@@ -33,8 +33,8 @@
 #include "FileSystem.h"
 #include "PluginDatabase.h"
 #include "Language.h"
-#include "PlatformString.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #include <glib/gi18n-lib.h>
 #if OS(UNIX)
@@ -201,7 +201,7 @@ static String webkitOSVersion()
 
     struct utsname name;
     if (uname(&name) != -1)
-        uaOSVersion = String::format("%s %s", name.sysname, name.machine);
+        uaOSVersion = makeString(name.sysname, ' ', name.machine);
     else
         uaOSVersion = String("Unknown");
 #elif OS(WINDOWS)
@@ -218,9 +218,9 @@ String webkitUserAgent()
     // We mention Safari since many broken sites check for it (OmniWeb does this too)
     // We re-use the WebKit version, though it doesn't seem to matter much in practice
 
-    DEFINE_STATIC_LOCAL(const String, uaVersion, (String::format("%d.%d+", WEBKIT_USER_AGENT_MAJOR_VERSION, WEBKIT_USER_AGENT_MINOR_VERSION)));
-    DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (%s; U; %s; %s) AppleWebKit/%s (KHTML, like Gecko) Version/5.0 Safari/%s",
-                                                                webkitPlatform().utf8().data(), webkitOSVersion().utf8().data(), defaultLanguage().utf8().data(), uaVersion.utf8().data(), uaVersion.utf8().data())));
+    DEFINE_STATIC_LOCAL(const String, uaVersion, (makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+')));
+    DEFINE_STATIC_LOCAL(const String, staticUA, (makeString("Mozilla/5.0 (", webkitPlatform(), "; U; ", webkitOSVersion(), "; ", defaultLanguage(), ") AppleWebKit/", uaVersion) +
+                                                 makeString(" (KHTML, like Gecko) Version/5.0 Safari/", uaVersion)));
 
     return staticUA;
 }

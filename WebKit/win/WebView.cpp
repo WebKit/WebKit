@@ -159,6 +159,7 @@
 #include <windowsx.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 // Soft link functions for gestures and panning feedback
 SOFT_LINK_LIBRARY(USER32);
@@ -1200,7 +1201,9 @@ bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
 
 String WebView::standardUserAgentWithApplicationName(const String& applicationName)
 {
-    return String::format("Mozilla/5.0 (Windows; U; %s; %s) AppleWebKit/%s (KHTML, like Gecko)%s%s", osVersion().latin1().data(), defaultLanguage().latin1().data(), webKitVersion().latin1().data(), (applicationName.length() ? " " : ""), applicationName.latin1().data());
+    if (applicationName.isEmpty())
+        return makeString("Mozilla/5.0 (Windows; U; ", osVersion(), "; ", defaultLanguage(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko)");
+    return makeString("Mozilla/5.0 (Windows; U; ", osVersion(), "; ", defaultLanguage(), ") AppleWebKit/", webKitVersion(), " (KHTML, like Gecko) ", applicationName);
 }
 
 Page* WebView::page()
@@ -2310,11 +2313,10 @@ static String osVersion()
                 osVersion = "Windows 98; Win 9x 4.90";
         }
     } else if (versionInfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-        osVersion = String::format("Windows NT %d.%d", versionInfo.dwMajorVersion, versionInfo.dwMinorVersion);
+        osVersion = makeString("Windows NT ", String::number(versionInfo.dwMajorVersion), '.', String::number(versionInfo.dwMinorVersion));
 
     if (!osVersion.length())
-        osVersion = String::format("Windows %d.%d", versionInfo.dwMajorVersion, versionInfo.dwMinorVersion);
-
+        osVersion = makeString("Windows ", String::number(versionInfo.dwMajorVersion), '.', String::number(versionInfo.dwMinorVersion));
     return osVersion;
 }
 

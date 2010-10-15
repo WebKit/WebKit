@@ -32,7 +32,6 @@
 #include "WebPageSerializer.h"
 
 #include "KURL.h"
-#include "PlatformString.h"
 
 #include "WebFrame.h"
 #include "WebPageSerializerClient.h"
@@ -40,6 +39,8 @@
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebVector.h"
+
+#include <wtf/text/StringConcatenate.h>
 
 using namespace WebCore;
 
@@ -59,8 +60,7 @@ bool WebPageSerializer::serialize(WebFrame* frame,
 
 WebString WebPageSerializer::generateMetaCharsetDeclaration(const WebString& charset)
 {
-    return String::format("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=%s\">",
-                          charset.utf8().data());
+    return makeString("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=", static_cast<const String&>(charset), "\">");
 }
 
 WebString WebPageSerializer::generateMarkOfTheWebDeclaration(const WebURL& url)
@@ -72,10 +72,9 @@ WebString WebPageSerializer::generateMarkOfTheWebDeclaration(const WebURL& url)
 
 WebString WebPageSerializer::generateBaseTagDeclaration(const WebString& baseTarget)
 {
-    String targetDeclaration;
-    if (!baseTarget.isEmpty())
-        targetDeclaration = String::format(" target=\"%s\"", baseTarget.utf8().data());
-    return String::format("<base href=\".\"%s>", targetDeclaration.utf8().data());
+    if (baseTarget.isEmpty())
+        return makeString("<base href=\".\">");
+    return makeString("<base href=\".\" target=\"", static_cast<const String&>(baseTarget), "\">");
 }
 
 }  // namespace WebKit

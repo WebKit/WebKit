@@ -54,6 +54,7 @@
 #include "ViewportArguments.h"
 #include "ewk_private.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h>
 
 #if PLATFORM(UNIX)
 #include <sys/utsname.h>
@@ -92,7 +93,7 @@ static String agentOS()
 #elif PLATFORM(UNIX)
     struct utsname name;
     if (uname(&name) != -1)
-        return String::format("%s %s", name.sysname, name.machine);
+        return makeString(name.sysname, ' ', name.machine);
 
     return "Unknown";
 #elif PLATFORM(WIN_OS)
