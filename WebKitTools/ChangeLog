@@ -1,3 +1,9 @@
+2010-10-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Add Matt Delaney to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-10-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.
