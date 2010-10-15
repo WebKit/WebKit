@@ -939,6 +939,38 @@ using namespace std;
 
 </ol>
 
+<h3>Classes</h3>
+
+<ol>
+<li>
+Use a constructor to do an implicit conversion when the argument is reasonably thought of as a type conversion and the type conversion is fast. Otherwise, use the explicit keyword or a function returning the type. This only applies to single argument constructors.
+<h4 class="right">Right:</h4>
+<pre class="code">
+class LargeInt {
+public:
+    LargeInt(int);
+...
+
+class Vector {
+public:
+    explicit Vector(int size); // Not a type conversion.
+    PassOwnPtr&lt;Vector&gt; create(Array); // Costly conversion.
+...
+
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+class Task {
+public:
+    Task(ScriptExecutionContext*); // Not a type conversion.
+    explicit Task(); // No arguments.
+    explicit Task(ScriptExecutionContext*, Other); // More than one argument.
+...
+</pre>
+</li>
+</ol>
+
 <?php
     include("../footer.inc");
 ?>
