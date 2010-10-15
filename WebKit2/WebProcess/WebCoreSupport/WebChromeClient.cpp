@@ -322,11 +322,17 @@ void WebChromeClient::invalidateContentsAndWindow(const IntRect& rect, bool imme
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool immediate)
 {
+    // Hide the find indicator.
+    m_page->findController().hideFindIndicator();
+
     m_page->drawingArea()->invalidateContentsForSlowScroll(rect, immediate);
 }
 
 void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
 {
+    // Hide the find indicator.
+    m_page->findController().hideFindIndicator();
+
     m_page->drawingArea()->scroll(scrollDelta, rectToScroll, clipRect);
 }
 

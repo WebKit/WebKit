@@ -58,6 +58,8 @@ static Frame* frameWithSelection(Page* page)
 
 void FindController::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxNumMatches)
 {
+    m_webPage->corePage()->unmarkAllTextMatches();
+
     TextCaseSensitivity caseSensitivity = findOptions & FindOptionsCaseInsensitive ? TextCaseInsensitive : TextCaseSensitive;
     bool found = m_webPage->corePage()->findString(string, caseSensitivity,
                                                    findDirection == FindDirectionForward ? WebCore::FindDirectionForward : WebCore::FindDirectionBackward,
@@ -68,14 +70,11 @@ void FindController::findString(const String& string, FindDirection findDirectio
     bool shouldShowOverlay = false;
 
     if (!found) {
-        // We didn't find the string, clear all text matches.
-        m_webPage->corePage()->unmarkAllTextMatches();
-
         // And clear the selection.
-        if (selectedFrame)
+        if (!string.isEmpty() && selectedFrame)
             selectedFrame->selection()->clear();
 
-        resetFindIndicator();
+        hideFindIndicator();
     } else {
         shouldShowOverlay = findOptions & FindOptionsShowOverlay;
 
@@ -89,7 +88,7 @@ void FindController::findString(const String& string, FindDirection findDirectio
 
         if (!(findOptions & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay)) {
             // Either we shouldn't show the find indicator, or we couldn't update it.
-            resetFindIndicator();
+            hideFindIndicator();
         }
     }
 
@@ -115,7 +114,10 @@ void FindController::findString(const String& string, FindDirection findDirectio
 
 void FindController::hideFindUI()
 {
-    // FIXME: Implement.
+    if (m_findPageOverlay)
+        m_webPage->uninstallPageOverlay();
+
+    hideFindIndicator();
 }
 
 void FindController::findPageOverlayDestroyed()
@@ -168,7 +170,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     return true;
 }
 
-void FindController::resetFindIndicator()
+void FindController::hideFindIndicator()
 {
     if (!m_isShowingFindIndicator)
         return;

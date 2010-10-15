@@ -424,6 +424,7 @@ void WebPage::installPageOverlay(PassOwnPtr<PageOverlay> pageOverlay)
 void WebPage::uninstallPageOverlay()
 {
     m_pageOverlay = 0;
+    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
 }
 
 // Events 

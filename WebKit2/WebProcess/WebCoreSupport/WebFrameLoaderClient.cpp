@@ -289,6 +289,8 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     if (!webPage)
         return;
 
+    webPage->findController().hideFindUI();
+    
     DocumentLoader* provisionalLoader = m_frame->coreFrame()->loader()->provisionalDocumentLoader();
     const String& url = provisionalLoader->url().string();
     RefPtr<APIObject> userData;
