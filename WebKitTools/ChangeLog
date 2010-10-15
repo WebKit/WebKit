@@ -1,5 +1,14 @@
 2010-10-14  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed, just fixing an exception seen on the commit-queue.
+
+        I should have unit tested this function before.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
+2010-10-14  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         commit-queue should not fail patches due to flaky tests

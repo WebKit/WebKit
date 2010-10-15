@@ -39,6 +39,7 @@ from optparse import make_option
 from StringIO import StringIO
 
 from webkitpy.common.net.bugzilla import CommitterValidator
+from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
@@ -268,15 +269,22 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         failure_log = self._log_from_script_error_for_upload(script_error)
         return self._update_status(message, patch=patch, results_file=failure_log)
 
+    # FIXME: This exists for mocking, but should instead be mocked via
+    # some sort of tool.filesystem() object.
+    def _read_file_contents(self, path):
+        try:
+            with codecs.open(path, "r", "utf-8") as open_file:
+                return open_file.read()
+        except OSError, e:  # File does not exist or can't be read.
+            return None
+
     # FIXME: This may belong on the Port object.
     def layout_test_results(self):
         results_path = self._tool.port().layout_tests_results_path()
-        try:
-            # FIXME: We need a nice open() abstraction for better mocking here.
-            with codecs.open(results_path, "r", "utf-8") as results_file:
-                return LayoutTestResults.results_from_string(results_file)
-        except OSError, e:  # File does not exist or can't be read.
+        results_html = self._read_file_contents(results_path)
+        if not results_html:
             return None
+        return LayoutTestResults.results_from_string(results_html)
 
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())

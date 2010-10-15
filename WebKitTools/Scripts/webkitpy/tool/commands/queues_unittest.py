@@ -336,6 +336,13 @@ Please file bugs against the tests.  The commit-queue is continuing to process y
 """
         OutputCapture().assert_outputs(self, queue.report_flaky_tests, [MockPatch(), ["foo/bar.html", "bar/baz.html"]], expected_stderr=expected_stderr)
 
+    def test_layout_test_results(self):
+        queue = CommitQueue()
+        queue.bind_to_tool(MockTool())
+        queue._read_file_contents = lambda path: None
+        self.assertEquals(queue.layout_test_results(), None)
+        queue._read_file_contents = lambda path: ""
+        self.assertEquals(queue.layout_test_results(), None)
 
 class RietveldUploadQueueTest(QueuesTest):
     def test_rietveld_upload_queue(self):
