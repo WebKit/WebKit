@@ -378,9 +378,9 @@ void FrameView::updateCanHaveScrollbars()
     ScrollbarMode vMode;
     scrollbarModes(hMode, vMode);
     if (hMode == ScrollbarAlwaysOff && vMode == ScrollbarAlwaysOff)
-        m_canHaveScrollbars = false;
+        setCanHaveScrollbars(false);
     else
-        m_canHaveScrollbars = true;
+        setCanHaveScrollbars(true);
 }
 
 PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
@@ -477,6 +477,58 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     m_viewportRenderer = o;
 }
 
+void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode)
+{
+    if (m_canHaveScrollbars) {
+        hMode = ScrollbarAuto;
+        vMode = ScrollbarAuto;
+    } else {
+        hMode = ScrollbarAlwaysOff;
+        vMode = ScrollbarAlwaysOff;
+    }
+    
+    if (!m_layoutRoot) {
+        Document* document = m_frame->document();
+        Node* documentElement = document->documentElement();
+        RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0;
+        Node* body = document->body();
+        if (body && body->renderer()) {
+            if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
+                body->renderer()->setChildNeedsLayout(true);
+                vMode = ScrollbarAlwaysOff;
+                hMode = ScrollbarAlwaysOff;
+            } else if (body->hasTagName(bodyTag)) {
+                if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
+                    body->renderer()->setChildNeedsLayout(true);
+                // It's sufficient to just check the X overflow,
+                // since it's illegal to have visible in only one direction.
+                RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE && document->documentElement()->hasTagName(htmlTag) ? body->renderer() : rootRenderer;
+                applyOverflowToViewport(o, hMode, vMode);
+            }
+        } else if (rootRenderer) {
+#if ENABLE(SVG)
+            if (documentElement->isSVGElement()) {
+                if (!m_firstLayout && (m_size.width() != layoutWidth() || m_size.height() != layoutHeight()))
+                    rootRenderer->setChildNeedsLayout(true);
+            } else
+                applyOverflowToViewport(rootRenderer, hMode, vMode);
+#else
+            applyOverflowToViewport(rootRenderer, hMode, vMode);
+#endif
+        }
+#ifdef INSTRUMENT_LAYOUT_SCHEDULING
+        if (m_firstLayout && !document->ownerElement())
+            printf("Elapsed time before first layout: %d\n", document->elapsedTime());
+#endif
+    }
+    
+    HTMLFrameOwnerElement* owner = m_frame->ownerElement();
+    if (owner && (owner->scrollingMode() == ScrollbarAlwaysOff)) {
+        hMode = ScrollbarAlwaysOff;
+        vMode = ScrollbarAlwaysOff;
+    }     
+}
+    
 #if USE(ACCELERATED_COMPOSITING)
 void FrameView::updateCompositingLayers()
 {
@@ -666,47 +718,8 @@ void FrameView::layout(bool allowSubtree)
 
     ScrollbarMode hMode;
     ScrollbarMode vMode;
-    if (m_canHaveScrollbars) {
-        hMode = ScrollbarAuto;
-        vMode = ScrollbarAuto;
-    } else {
-        hMode = ScrollbarAlwaysOff;
-        vMode = ScrollbarAlwaysOff;
-    }
-
-    if (!subtree) {
-        Node* documentElement = document->documentElement();
-        RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0;
-        Node* body = document->body();
-        if (body && body->renderer()) {
-            if (body->hasTagName(framesetTag) && m_frame->settings() && !m_frame->settings()->frameFlatteningEnabled()) {
-                body->renderer()->setChildNeedsLayout(true);
-                vMode = ScrollbarAlwaysOff;
-                hMode = ScrollbarAlwaysOff;
-            } else if (body->hasTagName(bodyTag)) {
-                if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
-                    body->renderer()->setChildNeedsLayout(true);
-                // It's sufficient to just check the X overflow,
-                // since it's illegal to have visible in only one direction.
-                RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE && document->documentElement()->hasTagName(htmlTag) ? body->renderer() : rootRenderer;
-                applyOverflowToViewport(o, hMode, vMode);
-            }
-        } else if (rootRenderer) {
-#if ENABLE(SVG)
-            if (documentElement->isSVGElement()) {
-                if (!m_firstLayout && (m_size.width() != layoutWidth() || m_size.height() != layoutHeight()))
-                    rootRenderer->setChildNeedsLayout(true);
-            } else
-                applyOverflowToViewport(rootRenderer, hMode, vMode);
-#else
-            applyOverflowToViewport(rootRenderer, hMode, vMode);
-#endif
-        }
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (m_firstLayout && !document->ownerElement())
-            printf("Elapsed time before first layout: %d\n", document->elapsedTime());
-#endif
-    }
+    
+    calculateScrollbarModesForLayout(hMode, vMode);
 
     m_doFullRepaint = !subtree && (m_firstLayout || toRenderView(root)->printing());
 

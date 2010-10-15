@@ -258,6 +258,7 @@ private:
     bool hasFixedObjects() const { return m_fixedObjectCount > 0; }
 
     void applyOverflowToViewport(RenderObject*, ScrollbarMode& hMode, ScrollbarMode& vMode);
+    void calculateScrollbarModesForLayout(ScrollbarMode& hMode, ScrollbarMode& vMode);
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 
