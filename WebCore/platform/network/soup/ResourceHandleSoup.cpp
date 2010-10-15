@@ -218,8 +218,10 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
 static void gotHeadersCallback(SoupMessage* msg, gpointer data)
 {
     // For 401, we will accumulate the resource body, and only use it
-    // in case authentication with the soup feature doesn't happen
-    if (msg->status_code == SOUP_STATUS_UNAUTHORIZED) {
+    // in case authentication with the soup feature doesn't happen.
+    // For 302 we accumulate the body too because it could be used by
+    // some servers to redirect with a clunky http-equiv=REFRESH
+    if (statusWillBeHandledBySoup(msg->status_code)) {
         soup_message_body_set_accumulate(msg->response_body, TRUE);
         return;
     }
@@ -290,7 +292,6 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
         return;
 
     client->didReceiveData(handle.get(), chunk->data, chunk->length, false);
-
 }
 
 static gboolean parseDataUrl(gpointer callbackData)
@@ -494,7 +495,7 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
             return;
         }
 
-        if (d->m_soupMessage && d->m_soupMessage->status_code == SOUP_STATUS_UNAUTHORIZED) {
+        if (d->m_soupMessage && statusWillBeHandledBySoup(d->m_soupMessage->status_code)) {
             fillResponseFromMessage(soupMsg, &d->m_response);
             client->didReceiveResponse(handle.get(), d->m_response);
 
