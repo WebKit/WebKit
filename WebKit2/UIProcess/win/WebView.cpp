@@ -26,6 +26,7 @@
 #include "WebView.h"
 
 #include "ChunkedUpdateDrawingAreaProxy.h"
+#include "FindIndicator.h"
 #include "RunLoop.h"
 #include "NativeWebKeyboardEvent.h"
 #include "WebEditCommandProxy.h"

@@ -24,6 +24,7 @@
 #include "qwkpreferences_p.h"
 
 #include "ClientImpl.h"
+#include "FindIndicator.h"
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
 #include "WebContext.h"

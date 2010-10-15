@@ -1,4 +1,11 @@
-2010-10-13  Anders Carlsson  <andersca@apple.com>
+2010-10-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/win/WebView.cpp:
+
+2010-10-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
 
