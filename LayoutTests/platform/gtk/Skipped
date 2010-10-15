@@ -5903,3 +5903,8 @@ editing/pasteboard/dataTransfer-setData-getData.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=47564
 platform/gtk/accessibility/aria-table-hierarchy.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=47727
+mathml/presentation/fenced.xhtml
+mathml/presentation/roots.xhtml
+mathml/presentation/subsup.xhtml
