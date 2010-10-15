@@ -30,7 +30,6 @@ import os
 import threading
 
 from webkitpy.common.config.committers import CommitterList, Reviewer
-from webkitpy.common.config.ports import MacPort
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.net.bugzilla import Bug, Attachment
@@ -647,8 +646,7 @@ class MockTool():
         return "echo"
 
     def port(self):
-        # FIXME: Consider using a mock here.
-        return MacPort
+        return Mock()
 
 
 class MockBrowser(object):

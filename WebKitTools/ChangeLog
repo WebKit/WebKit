@@ -1,3 +1,15 @@
+2010-10-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        test-webkitpy fails on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=47713
+
+        The old code failed on Linux because the MacPort tries to read
+        something out of platform that doesn't make sense on Linux.
+
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-10-14  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
