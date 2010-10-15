@@ -1,3 +1,18 @@
+2010-09-27 Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Added functions for obtaining and checking the supported content types.
+        http://webkit.org/b/37880
+
+        * Api/qwebpage.cpp:
+        (extractContentTypeFromHash):
+        (extractContentTypeFromPluginVector):
+        (QWebPage::supportedContentTypes):
+        (QWebPage::supportsContentType):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::supportedContentType):
+
 2010-10-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r69795.
@@ -686,7 +701,6 @@
         (QWebSettingsPrivate::apply):
         (QWebSettings::QWebSettings):
         * Api/qwebsettings.h:
-
 
 2010-09-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 

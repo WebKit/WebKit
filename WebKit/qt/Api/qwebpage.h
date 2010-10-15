@@ -309,6 +309,9 @@ public:
 
     void setUserPermission(QWebFrame* frame, PermissionDomain domain, PermissionPolicy policy);
 
+    QStringList supportedContentTypes() const;
+    bool supportsContentType(const QString& mimeType) const;
+
     enum Extension {
         ChooseMultipleFilesExtension,
         ErrorPageExtension

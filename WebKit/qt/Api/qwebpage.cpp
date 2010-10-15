@@ -93,6 +93,9 @@
 #include "PlatformTouchEvent.h"
 #include "WorkerThread.h"
 #include "wtf/Threading.h"
+#include "MIMETypeRegistry.h"
+#include "PluginDatabase.h"
+#include "PluginPackage.h"
 
 #include <QApplication>
 #include <QBasicTimer>
@@ -2017,6 +2020,63 @@ QObject *QWebPage::createPlugin(const QString &classid, const QUrl &url, const Q
     Q_UNUSED(paramNames)
     Q_UNUSED(paramValues)
     return 0;
+}
+
+static void extractContentTypeFromHash(const HashSet<String>& types, QStringList* list)
+{
+    if (!list)
+        return;
+
+    HashSet<String>::const_iterator endIt = types.end();
+    for (HashSet<String>::const_iterator it = types.begin(); it != endIt; ++it)
+        *list << *it;
+}
+
+static void extractContentTypeFromPluginVector(const Vector<PluginPackage*>& plugins, QStringList* list)
+{
+    if (!list)
+        return;
+
+    for (unsigned int i = 0; i < plugins.size(); ++i) {
+        MIMEToDescriptionsMap::const_iterator map_it = plugins[i]->mimeToDescriptions().begin();
+        MIMEToDescriptionsMap::const_iterator map_end = plugins[i]->mimeToDescriptions().end();
+        for (; map_it != map_end; ++map_it)
+            *list << map_it->first;
+    }
+}
+
+/*!
+ *  Returns the list of all content types supported by QWebPage.
+ */
+QStringList QWebPage::supportedContentTypes() const
+{
+    QStringList mimeTypes;
+
+    extractContentTypeFromHash(MIMETypeRegistry::getSupportedImageMIMETypes(), &mimeTypes);
+    extractContentTypeFromHash(MIMETypeRegistry::getSupportedNonImageMIMETypes(), &mimeTypes);
+    if (d->page->settings() && d->page->settings()->arePluginsEnabled())
+        extractContentTypeFromPluginVector(PluginDatabase::installedPlugins()->plugins(), &mimeTypes);
+
+    return mimeTypes;
+}
+
+/*!
+ *  Returns true if QWebPage can handle the given \a mimeType; otherwise, returns false.
+ */
+bool QWebPage::supportsContentType(const QString& mimeType) const
+{
+    const String type = mimeType.toLower();
+    if (MIMETypeRegistry::isSupportedImageMIMEType(type))
+        return true;
+
+    if (MIMETypeRegistry::isSupportedNonImageMIMEType(type))
+        return true;
+
+    if (d->page->settings() && d->page->settings()->arePluginsEnabled()
+        && PluginDatabase::installedPlugins()->isMIMETypeRegistered(type))
+        return true;
+
+    return false;
 }
 
 static WebCore::FrameLoadRequest frameLoadRequest(const QUrl &url, WebCore::Frame *frame)
