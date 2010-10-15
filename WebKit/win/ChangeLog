@@ -1,3 +1,24 @@
+2010-10-14  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: inspector settings/properties/states management
+        should be extracted into separate class.
+
+        We have a lot of flags/values in InspectorController.
+        Some flags are persisting into profile.
+        Others are part of inspector state for frontend.
+        All these flags should keep their values after navigation.
+        It'd be better to extract these flags/values into separate
+        class which will care about theirs lifetime.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47275
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorFrontendClient::attachWindow):
+        (WebInspectorFrontendClient::detachWindow):
+        (WebInspectorFrontendClient::showWindowWithoutNotifications):
+
 2010-10-13  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

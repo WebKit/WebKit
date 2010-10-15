@@ -358,8 +358,8 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     _visible = YES;
     
     // If no preference is set - default to an attached window. This is important for inspector LayoutTests.
-    String shouldAttach = [_inspectedWebView page]->inspectorController()->setting(InspectorController::inspectorStartsAttachedSettingName());
-    _shouldAttach = shouldAttach != "false";
+    // FIXME: This flag can be fetched directly from the flags storage.
+    _shouldAttach = [_inspectedWebView page]->inspectorController()->inspectorStartsAttached();
     
     if (_shouldAttach && !_frontendClient->canAttachWindow())
         _shouldAttach = NO;
@@ -394,7 +394,8 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     if (_attachedToInspectedWebView)
         return;
 
-    [_inspectedWebView page]->inspectorController()->setSetting(InspectorController::inspectorStartsAttachedSettingName(), "true");
+    // FIXME: This flag can be saved directly to the flags storage.
+    [_inspectedWebView page]->inspectorController()->setInspectorStartsAttached(true);
 
     [self close];
     [self showWindow:nil];
@@ -405,7 +406,8 @@ void WebInspectorFrontendClient::updateWindowTitle() const
     if (!_attachedToInspectedWebView)
         return;
 
-    [_inspectedWebView page]->inspectorController()->setSetting(InspectorController::inspectorStartsAttachedSettingName(), "false");
+    // FIXME: This flag can be saved to the flags storage directly.
+    [_inspectedWebView page]->inspectorController()->setInspectorStartsAttached(false);
 
     [self close];
     [self showWindow:nil];

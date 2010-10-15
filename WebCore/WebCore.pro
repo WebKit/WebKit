@@ -1002,6 +1002,7 @@ SOURCES += \
     inspector/InspectorProfilerAgent.cpp \
     inspector/InspectorResource.cpp \
     inspector/InspectorResourceAgent.cpp \
+    inspector/InspectorState.cpp \
     inspector/InspectorStorageAgent.cpp \
     inspector/InspectorStyleSheet.cpp \
     inspector/InspectorTimelineAgent.cpp \
@@ -1879,6 +1880,7 @@ HEADERS += \
     inspector/InspectorProfilerAgent.h \
     inspector/InspectorResource.h \
     inspector/InspectorResourceAgent.h \
+    inspector/InspectorState.h \
     inspector/InspectorStorageAgent.h \
     inspector/InspectorStyleSheet.h \
     inspector/InspectorTimelineAgent.h \

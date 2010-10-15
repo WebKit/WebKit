@@ -1834,6 +1834,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorResource.h \
 	WebCore/inspector/InspectorResourceAgent.cpp \
 	WebCore/inspector/InspectorResourceAgent.h \
+	WebCore/inspector/InspectorState.cpp \
+	WebCore/inspector/InspectorState.h \
 	WebCore/inspector/InspectorStorageAgent.cpp \
 	WebCore/inspector/InspectorStorageAgent.h \
 	WebCore/inspector/InspectorStyleSheet.cpp \

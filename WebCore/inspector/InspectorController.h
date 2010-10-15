@@ -68,6 +68,7 @@ class InspectorFrontendClient;
 class InspectorObject;
 class InspectorProfilerAgent;
 class InspectorResource;
+class InspectorState;
 class InspectorStorageAgent;
 class InspectorTimelineAgent;
 class InspectorValue;
@@ -101,6 +102,7 @@ public:
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
+    static const char* const LastActivePanel;
     static const char* const ConsolePanel;
     static const char* const ElementsPanel;
     static const char* const ProfilesPanel;
@@ -121,13 +123,11 @@ public:
     Page* inspectedPage() const { return m_inspectedPage; }
     void reloadPage();
 
-    String setting(const String& key) const;
-    void setSetting(const String& key, const String& value);
     void saveApplicationSettings(const String& settings);
     void saveSessionSettings(const String&);
     void getSettings(RefPtr<InspectorObject>*);
 
-    void restoreInspectorStateFromCookie(const String& inspectorState);
+    void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
     void inspect(Node*);
     void highlight(Node*);
@@ -151,7 +151,7 @@ public:
     void clearConsoleMessages();
     const Vector<OwnPtr<ConsoleMessage> >& consoleMessages() const { return m_consoleMessages; }
 
-    bool searchingForNodeInPage() const { return m_searchingForNode; }
+    bool searchingForNodeInPage() const;
     void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
     void handleMousePress();
 
@@ -176,7 +176,7 @@ public:
 
     void setResourceTrackingEnabled(bool enabled);
     void setResourceTrackingEnabled(bool enabled, bool always, bool* newState);
-    bool resourceTrackingEnabled() const { return m_resourceTrackingEnabled; }
+    bool resourceTrackingEnabled() const;
 
     void ensureSettingsLoaded();
 
@@ -269,10 +269,14 @@ public:
     void removeAllScriptsToEvaluateOnLoad();
     void setInspectorExtensionAPI(const String& source);
 
-    static const String& inspectorStartsAttachedSettingName();
+    bool inspectorStartsAttached();
+    void setInspectorStartsAttached(bool);
+    void setInspectorAttachedHeight(long height);
+    int inspectorAttachedHeight() const;
+
+    static const unsigned defaultAttachedHeight;
 
 private:
-    void updateInspectorStateCookie();
     void getInspectorState(RefPtr<InspectorObject>* state);
 
     friend class InspectorBackend;
@@ -344,6 +348,7 @@ private:
     RefPtr<InspectorStorageAgent> m_storageAgent;
     OwnPtr<InspectorCSSStore> m_cssStore;
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
+    OwnPtr<InspectorState> m_state;
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
@@ -372,10 +377,7 @@ private:
     RefPtr<InspectorValue> m_sessionSettings;
 #endif
     unsigned m_groupLevel;
-    bool m_searchingForNode;
-    bool m_monitoringXHR;
     ConsoleMessage* m_previousMessage;
-    bool m_resourceTrackingEnabled;
     bool m_settingsLoaded;
     RefPtr<InspectorBackend> m_inspectorBackend;
     OwnPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;

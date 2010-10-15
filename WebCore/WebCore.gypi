@@ -1935,6 +1935,8 @@
             'inspector/InspectorResource.h',
             'inspector/InspectorResourceAgent.cpp',
             'inspector/InspectorResourceAgent.h',
+            'inspector/InspectorState.cpp',
+            'inspector/InspectorState.h',
             'inspector/InspectorStorageAgent.cpp',
             'inspector/InspectorStorageAgent.h',
             'inspector/InspectorStyleSheet.cpp',
