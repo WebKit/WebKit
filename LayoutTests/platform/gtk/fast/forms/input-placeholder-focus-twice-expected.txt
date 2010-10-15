@@ -7,14 +7,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 729x19
           text run at (0,0) width 729: "Bug 45940: A bug that a placeholder text is not cleared by the second focus. The first input field should not have any text."
       RenderBlock {DIV} at (0,35) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 168x25 [color=#FF0000] [bgcolor=#FFFFFF]
-        RenderText {#text} at (172,5) size 4x19
-          text run at (172,5) width 4: " "
-        RenderTextControl {INPUT} at (178,2) size 168x25 [bgcolor=#FFFFFF]
+        RenderTextControl {INPUT} at (2,2) size 194x25 [color=#FF0000] [bgcolor=#FFFFFF]
+        RenderText {#text} at (198,5) size 4x19
+          text run at (198,5) width 4: " "
+        RenderTextControl {INPUT} at (204,2) size 194x25 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-layer at (13,48) size 162x19
-  RenderBlock {DIV} at (3,3) size 162x19
-layer at (189,48) size 162x19
-  RenderBlock {DIV} at (3,3) size 162x19
+layer at (13,48) size 188x19
+  RenderBlock {DIV} at (3,3) size 188x19
+layer at (215,48) size 188x19
+  RenderBlock {DIV} at (3,3) size 188x19
 caret: position 0 of child 0 {DIV} of child 1 {INPUT} of child 3 {DIV} of body

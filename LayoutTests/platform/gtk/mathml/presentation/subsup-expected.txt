@@ -32,11 +32,11 @@ layer at (0,0) size 800x256
                 RenderText {#text} at (0,-1) size 9x19
                   text run at (0,-1) width 9: "Z"
             RenderBlock {msubsup} at (10,0) size 30x32
-              RenderBlock {msubsup} at (0,0) size 16x16
+              RenderBlock {msubsup} at (0,0) size 30x16
                 RenderInline {mi} at (0,0) size 3x14
                   RenderText {#text} at (0,3) size 3x14
                     text run at (0,3) width 3: "j"
-              RenderBlock {msubsup} at (0,16) size 16x16
+              RenderBlock {msubsup} at (0,16) size 30x16
                 RenderBlock {mrow} at (1,2) size 29x14
                   RenderInline {mi} at (0,0) size 5x14
                     RenderText {#text} at (0,1) size 5x14
@@ -66,7 +66,7 @@ layer at (0,0) size 800x256
                 RenderText {#text} at (0,-1) size 9x19
                   text run at (0,-1) width 9: "Z"
             RenderBlock {msubsup} at (10,0) size 17x32
-              RenderBlock {msubsup} at (0,0) size 10x16
+              RenderBlock {msubsup} at (0,0) size 17x16
                 RenderBlock {mrow} at (1,2) size 16x14
                   RenderInline {mi} at (0,0) size 6x14
                     RenderText {#text} at (0,1) size 6x14
@@ -78,7 +78,7 @@ layer at (0,0) size 800x256
                   RenderInline {mi} at (0,0) size 3x14
                     RenderText {#text} at (13,1) size 3x14
                       text run at (13,1) width 3: "j"
-              RenderBlock {msubsup} at (0,16) size 10x16
+              RenderBlock {msubsup} at (0,16) size 17x16
                 RenderInline {mi} at (0,0) size 5x14
                   RenderText {#text} at (0,3) size 5x14
                     text run at (0,3) width 5: "x"
@@ -93,7 +93,7 @@ layer at (0,0) size 800x256
                 RenderText {#text} at (0,-1) size 9x19
                   text run at (0,-1) width 9: "Z"
             RenderBlock {msubsup} at (10,0) size 30x32
-              RenderBlock {msubsup} at (0,0) size 16x16
+              RenderBlock {msubsup} at (0,0) size 30x16
                 RenderBlock {mrow} at (1,2) size 16x14
                   RenderInline {mi} at (0,0) size 6x14
                     RenderText {#text} at (0,1) size 6x14
@@ -105,7 +105,7 @@ layer at (0,0) size 800x256
                   RenderInline {mi} at (0,0) size 3x14
                     RenderText {#text} at (13,1) size 3x14
                       text run at (13,1) width 3: "j"
-              RenderBlock {msubsup} at (0,16) size 16x16
+              RenderBlock {msubsup} at (0,16) size 30x16
                 RenderBlock {mrow} at (1,2) size 29x14
                   RenderInline {mi} at (0,0) size 5x14
                     RenderText {#text} at (0,1) size 5x14
