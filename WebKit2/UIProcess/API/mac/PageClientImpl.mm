@@ -25,6 +25,8 @@
 
 #import "PageClientImpl.h"
 
+#import "FindIndicator.h"
+#import "FindIndicatorWindow.h"
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
@@ -225,9 +227,17 @@ void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
 {
 }
 
-void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
+void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut)
 {
-    // FIXME: Implement.
+    if (!findIndicator) {
+        m_findIndicatorWindow = 0;
+        return;
+    }
+
+    if (!m_findIndicatorWindow)
+        m_findIndicatorWindow = FindIndicatorWindow::create(m_wkView);
+
+    m_findIndicatorWindow->setFindIndicator(findIndicator, fadeOut);
 }
 
 #if USE(ACCELERATED_COMPOSITING)

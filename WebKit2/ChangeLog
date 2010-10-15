@@ -1,5 +1,40 @@
 2010-10-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Add FindIndicatorWindow class
+        https://bugs.webkit.org/show_bug.cgi?id=47731
+
+        * UIProcess/API/mac/FindIndicatorWindow.h: Added.
+        * UIProcess/API/mac/FindIndicatorWindow.mm: Added.
+        (-[WebFindIndicatorView _initWithFindIndicator:WebKit::]):
+        Initialize the find indicator view.
+
+        (-[WebFindIndicatorView drawRect:]):
+        Ask the find indicator to draw.
+
+        (-[WebFindIndicatorView isFlipped]):
+        Return YES.
+
+        (WebKit::FindIndicatorWindow::~FindIndicatorWindow):
+        Make sure to close the window.
+
+        (WebKit::FindIndicatorWindow::setFindIndicator):
+        Update the find indicator window.
+
+        (WebKit::FindIndicatorWindow::closeWindow):
+        Close and release the window.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setFindIndicator):
+        Create a find indicator window.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+2010-10-15  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
 
         * UIProcess/API/qt/qwkpage.cpp:

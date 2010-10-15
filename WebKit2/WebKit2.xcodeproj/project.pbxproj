@@ -128,6 +128,8 @@
 		1A90C2A412650C60003E44D4 /* FindPageOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A90C2A212650C60003E44D4 /* FindPageOverlay.cpp */; };
 		1A910071126675C4001842F5 /* FindIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A91006F126675C3001842F5 /* FindIndicator.h */; };
 		1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A910070126675C4001842F5 /* FindIndicator.cpp */; };
+		1A91010A1268C8CA001842F5 /* FindIndicatorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */; };
+		1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA56F2911E92BC80061B882 /* PluginController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA56F2811E92BC80061B882 /* PluginController.h */; };
@@ -595,6 +597,8 @@
 		1A90C2A212650C60003E44D4 /* FindPageOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindPageOverlay.cpp; sourceTree = "<group>"; };
 		1A91006F126675C3001842F5 /* FindIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicator.h; sourceTree = "<group>"; };
 		1A910070126675C4001842F5 /* FindIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindIndicator.cpp; sourceTree = "<group>"; };
+		1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindIndicatorWindow.h; sourceTree = "<group>"; };
+		1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindIndicatorWindow.mm; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -1499,6 +1503,8 @@
 			children = (
 				BC111B4B112F619200337BAB /* PageClientImpl.h */,
 				BC111B4C112F619200337BAB /* PageClientImpl.mm */,
+				1A9101081268C8CA001842F5 /* FindIndicatorWindow.h */,
+				1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */,
 				BC8699B2116AADAA002A925B /* WKView.h */,
 				BC8699B3116AADAA002A925B /* WKView.mm */,
 				BC8699B4116AADAA002A925B /* WKViewInternal.h */,
@@ -2034,6 +2040,7 @@
 				1A90C23712650717003E44D4 /* PageOverlay.h in Headers */,
 				1A90C2A312650C60003E44D4 /* FindPageOverlay.h in Headers */,
 				1A910071126675C4001842F5 /* FindIndicator.h in Headers */,
+				1A91010A1268C8CA001842F5 /* FindIndicatorWindow.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2341,6 +2348,7 @@
 				1A90C2A412650C60003E44D4 /* FindPageOverlay.cpp in Sources */,
 				C01A260112662F2100C9ED55 /* BackingStoreCG.cpp in Sources */,
 				1A910072126675C4001842F5 /* FindIndicator.cpp in Sources */,
+				1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
