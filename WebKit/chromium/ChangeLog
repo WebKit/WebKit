@@ -1,3 +1,17 @@
+2010-10-14  Wei Jia  <wjia@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Retrieve info of lock keys from stashed currentInputEvent which
+        is stored by chromium when it passes input event to WebCore.
+        Retrieving only when stashed event is a keyboard event, which
+        means synthetic KeyboardEvent inherits lock key state from real
+        keyboard event.
+        https://bugs.webkit.org/show_bug.cgi?id=46518
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleKeyboardEvent):
+
 2010-10-14  John Abd-El-Malek  <jam@chromium.org>
 
         Reviewed by Tony Chang.

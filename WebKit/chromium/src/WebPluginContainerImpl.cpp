@@ -468,6 +468,16 @@ void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
         }
     }
 
+    const WebInputEvent* currentInputEvent = WebViewImpl::currentInputEvent();
+
+    // Copy stashed info over, and only copy here in order not to interfere
+    // the ctrl-c logic above.
+    if (currentInputEvent
+        && WebInputEvent::isKeyboardEventType(currentInputEvent->type)) {
+        webEvent.modifiers |= currentInputEvent->modifiers &
+            (WebInputEvent::CapsLockOn | WebInputEvent::NumLockOn);
+    }
+
     WebCursorInfo cursorInfo;
     if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
         event->setDefaultHandled();
