@@ -1,3 +1,16 @@
+2010-10-14  Nathan Vander Wilt  <nate@andyet.net>
+
+        Reviewed by Darin Adler.
+
+        Added parser for ECMAScript 5 standard date format, so Date.parse can handle RFC 3339 timestamps: https://bugs.webkit.org/show_bug.cgi?id=44632
+
+        * runtime/DateConversion.cpp:
+        (JSC::parseDate):
+        * wtf/DateMath.cpp:
+        (WTF::ymdhmsToSeconds):
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+        * wtf/DateMath.h:
+
 2010-10-14  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Gavin Barraclough.

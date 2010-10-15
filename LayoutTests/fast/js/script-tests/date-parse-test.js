@@ -28,6 +28,49 @@ function testDateParse(date, numericResult)
     }
 }
 
+function testDateParseExact(date, numericResult)
+{
+    if (numericResult == "NaN") {
+        shouldBeNaN('Date.parse("' + date + '")');
+    } else {
+        shouldBeTrue('Date.parse("' + date + '") == ' + numericResult.toString());
+    }
+}
+
+
+// test ECMAScript 5 standard date parsing
+testDateParseExact("1995-12-25T01:30:00Z", "819855000000");
+testDateParseExact("1995-12-25T01:30:00.5Z", "819855000500");
+testDateParseExact("1995-12-25T01:30:00.009Z", "819855000009");
+testDateParseExact("1995-12-25T01:30:00+00:00", "819855000000");
+testDateParseExact("1995-12-25T01:30:00.0+00:01", "819854940000");
+testDateParseExact("1995-12-25T01:30:00.0-00:01", "819855060000");
+testDateParseExact("1995-12-25T01:30:00.0+01:01", "819851340000");
+testDateParseExact("1995-12-25T01:30:00.0-01:01", "819858660000");
+
+testDateParseExact("0000-01-01T00:00:00Z", "-62167219200000");
+testDateParseExact("+99999-12-31T24:00:00Z", "3093527980800000");
+testDateParseExact("-99999-01-01T00:00:00Z", "-3217830796800000");
+testDateParseExact("1995-12-31T23:59:60Z", "820454400000");
+testDateParseExact("1995-12-31T23:59:60.5Z", "820454400000");
+
+testDateParseExact("1995-13-25T01:30:00Z", "NaN");
+testDateParseExact("1995-00-25T01:30:00Z", "NaN");
+testDateParseExact("1995--1-25T01:30:00Z", "NaN");
+testDateParseExact("1995-01-25T01:05:-0.3Z", "NaN");
+testDateParseExact("1995/12/25T01:30:00Z", "NaN");
+testDateParseExact("1995-12-25T1:30:00Z", "NaN");
+testDateParseExact("1995-12-25T01:30:00.Z", "NaN");
+testDateParseExact("1995-12-25T01:30:00.+1Z", "NaN");
+testDateParseExact("1995-12-25T01:30:00Z ", "NaN");
+testDateParseExact("1995-12-25T01:30:00+00:00 ", "NaN");
+testDateParseExact("1995-02-29T00:00:00Z", "NaN");
+testDateParseExact("1995-12-25 01:30:00Z", "NaN");
+testDateParseExact("1995-12-25T01:30:00z", "NaN");
+
+
+// test old implementation fallback
+
 var timeZoneOffset = Date.parse(" Dec 25 1995 1:30 ") - Date.parse(" Dec 25 1995 1:30 GMT ");
 
 testDateParse("Dec 25 1995 GMT", "819849600000");
@@ -43,7 +86,7 @@ testDateParse("Dec 25 1995 1:30 AM ", "819855000000 + timeZoneOffset");
 
 testDateParse("Dec 25 1995 13:30 GMT", "819898200000");
 testDateParse("Dec 25 1995 13:30", "819898200000 + timeZoneOffset");
-testDateParse('Dec 25 13:30 1995', "819898200000 + timeZoneOffset");
+testDateParse("Dec 25 13:30 1995", "819898200000 + timeZoneOffset");
 testDateParse("Dec 25 1995 13:30 ", "819898200000 + timeZoneOffset");
 testDateParse("Dec 25 1995 1:30 PM GMT", "819898200000");
 testDateParse("Dec 25 1995 1:30 PM", "819898200000 + timeZoneOffset");

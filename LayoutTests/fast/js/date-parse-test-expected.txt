@@ -3,6 +3,32 @@ Test of JavaScript date parsing.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS Date.parse("1995-12-25T01:30:00Z") == 819855000000 is true
+PASS Date.parse("1995-12-25T01:30:00.5Z") == 819855000500 is true
+PASS Date.parse("1995-12-25T01:30:00.009Z") == 819855000009 is true
+PASS Date.parse("1995-12-25T01:30:00+00:00") == 819855000000 is true
+PASS Date.parse("1995-12-25T01:30:00.0+00:01") == 819854940000 is true
+PASS Date.parse("1995-12-25T01:30:00.0-00:01") == 819855060000 is true
+PASS Date.parse("1995-12-25T01:30:00.0+01:01") == 819851340000 is true
+PASS Date.parse("1995-12-25T01:30:00.0-01:01") == 819858660000 is true
+PASS Date.parse("0000-01-01T00:00:00Z") == -62167219200000 is true
+PASS Date.parse("+99999-12-31T24:00:00Z") == 3093527980800000 is true
+PASS Date.parse("-99999-01-01T00:00:00Z") == -3217830796800000 is true
+PASS Date.parse("1995-12-31T23:59:60Z") == 820454400000 is true
+PASS Date.parse("1995-12-31T23:59:60.5Z") == 820454400000 is true
+PASS Date.parse("1995-13-25T01:30:00Z") is NaN
+PASS Date.parse("1995-00-25T01:30:00Z") is NaN
+PASS Date.parse("1995--1-25T01:30:00Z") is NaN
+PASS Date.parse("1995-01-25T01:05:-0.3Z") is NaN
+PASS Date.parse("1995/12/25T01:30:00Z") is NaN
+PASS Date.parse("1995-12-25T1:30:00Z") is NaN
+PASS Date.parse("1995-12-25T01:30:00.Z") is NaN
+PASS Date.parse("1995-12-25T01:30:00.+1Z") is NaN
+PASS Date.parse("1995-12-25T01:30:00Z ") is NaN
+PASS Date.parse("1995-12-25T01:30:00+00:00 ") is NaN
+PASS Date.parse("1995-02-29T00:00:00Z") is NaN
+PASS Date.parse("1995-12-25 01:30:00Z") is NaN
+PASS Date.parse("1995-12-25T01:30:00z") is NaN
 PASS Date.parse("Dec 25 1995 GMT") == 819849600000 is true
 PASS Date.parse("DEC 25 1995 GMT") == 819849600000 is true
 PASS Date.parse("dec 25 1995 gmt") == 819849600000 is true
