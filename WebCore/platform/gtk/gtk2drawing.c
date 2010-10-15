@@ -46,6 +46,9 @@
 
 #ifdef GTK_API_VERSION_2
 
+#undef GTK_DISABLE_DEPRECATED
+#undef GDK_DISABLE_DEPRECATED
+
 #include <gdk/gdkprivate.h>
 #include "gtkdrawing.h"
 #include "GtkVersioning.h"
