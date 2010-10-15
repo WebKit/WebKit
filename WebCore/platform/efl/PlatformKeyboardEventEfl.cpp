@@ -131,9 +131,9 @@ static void createWindowsKeyMap()
     gWindowsKeyMap.set("quotedbl",     VK_OEM_7);
 
     // Alphabet
-    String alphabet = "abcdefghijklmnopqrstuvwxyz";
+    const char* alphabet = "abcdefghijklmnopqrstuvwxyz";
     for (unsigned int i = 0; i < 26; i++) {
-        String key = alphabet[i];
+        String key(alphabet + i, 1);
         gWindowsKeyMap.set(key, VK_A + i);
     }
 
