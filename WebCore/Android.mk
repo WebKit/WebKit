@@ -220,6 +220,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	editing/InsertParagraphSeparatorCommand.cpp \
 	editing/InsertTextCommand.cpp \
 	editing/JoinTextNodesCommand.cpp \
+	editing/MarkupAccumulator.cpp \
 	editing/MergeIdenticalElementsCommand.cpp \
 	editing/ModifySelectionListLevel.cpp \
 	editing/MoveSelectionCommand.cpp \

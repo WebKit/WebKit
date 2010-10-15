@@ -56,6 +56,9 @@ namespace WebCore {
     String createFullMarkup(const Range*);
 
     String urlToMarkup(const KURL&, const String& title);
+
+    // FIXME: Should this be better encapulated somewhere?
+    bool elementCannotHaveEndTag(const Node*);
 }
 
 #endif // markup_h

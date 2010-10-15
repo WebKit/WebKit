@@ -2861,6 +2861,8 @@
 		97205AB81239291000B17380 /* MediaDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205AB41239291000B17380 /* MediaDocument.h */; };
 		97205ABB1239292700B17380 /* PluginDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97205AB91239292700B17380 /* PluginDocument.cpp */; };
 		97205ABC1239292700B17380 /* PluginDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 97205ABA1239292700B17380 /* PluginDocument.h */; };
+		9728C3131268E4390041E89B /* MarkupAccumulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9728C3111268E4390041E89B /* MarkupAccumulator.cpp */; };
+		9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9728C3121268E4390041E89B /* MarkupAccumulator.h */; };
 		973889A0116EA9DC00ADF313 /* DocumentWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */; };
 		973889A1116EA9DC00ADF313 /* DocumentWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 9738899F116EA9DC00ADF313 /* DocumentWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		973E325610883B7C005BC493 /* ResourceLoadNotifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */; };
@@ -8896,6 +8898,8 @@
 		97205AB41239291000B17380 /* MediaDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaDocument.h; sourceTree = "<group>"; };
 		97205AB91239292700B17380 /* PluginDocument.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDocument.cpp; sourceTree = "<group>"; };
 		97205ABA1239292700B17380 /* PluginDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDocument.h; sourceTree = "<group>"; };
+		9728C3111268E4390041E89B /* MarkupAccumulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkupAccumulator.cpp; sourceTree = "<group>"; };
+		9728C3121268E4390041E89B /* MarkupAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupAccumulator.h; sourceTree = "<group>"; };
 		9738899E116EA9DC00ADF313 /* DocumentWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentWriter.cpp; sourceTree = "<group>"; };
 		9738899F116EA9DC00ADF313 /* DocumentWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentWriter.h; sourceTree = "<group>"; };
 		973E325410883B7C005BC493 /* ResourceLoadNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoadNotifier.cpp; sourceTree = "<group>"; };
@@ -14406,6 +14410,8 @@
 				93309DA5099E64910056E581 /* JoinTextNodesCommand.h */,
 				93309DA8099E64910056E581 /* markup.cpp */,
 				93309DA9099E64910056E581 /* markup.h */,
+				9728C3111268E4390041E89B /* MarkupAccumulator.cpp */,
+				9728C3121268E4390041E89B /* MarkupAccumulator.h */,
 				93309DAA099E64910056E581 /* MergeIdenticalElementsCommand.cpp */,
 				93309DAB099E64910056E581 /* MergeIdenticalElementsCommand.h */,
 				C6D74AE309AA290A000B0A52 /* ModifySelectionListLevel.cpp */,
@@ -21076,6 +21082,7 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				4FA3B90B125CD12200300BAD /* InspectorState.h in Headers */,
+				9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21135,7 +21142,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -23624,6 +23630,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				4FA3B90A125CD12200300BAD /* InspectorState.cpp in Sources */,
+				9728C3131268E4390041E89B /* MarkupAccumulator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

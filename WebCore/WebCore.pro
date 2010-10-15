@@ -795,6 +795,7 @@ SOURCES += \
     editing/InsertTextCommand.cpp \
     editing/JoinTextNodesCommand.cpp \
     editing/markup.cpp \
+    editing/MarkupAccumulator.cpp \
     editing/MergeIdenticalElementsCommand.cpp \
     editing/ModifySelectionListLevel.cpp \
     editing/MoveSelectionCommand.cpp \

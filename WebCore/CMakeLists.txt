@@ -904,6 +904,7 @@ SET(WebCore_SOURCES
     editing/InsertParagraphSeparatorCommand.cpp
     editing/InsertTextCommand.cpp
     editing/JoinTextNodesCommand.cpp
+    editing/MarkupAccumulator.cpp
     editing/MergeIdenticalElementsCommand.cpp
     editing/ModifySelectionListLevel.cpp
     editing/MoveSelectionCommand.cpp

@@ -1314,6 +1314,8 @@ webcore_sources += \
 	WebCore/editing/JoinTextNodesCommand.h \
 	WebCore/editing/markup.cpp \
 	WebCore/editing/markup.h \
+	WebCore/editing/MarkupAccumulator.cpp \
+	WebCore/editing/MarkupAccumulator.h \
 	WebCore/editing/MergeIdenticalElementsCommand.cpp \
 	WebCore/editing/MergeIdenticalElementsCommand.h \
 	WebCore/editing/ModifySelectionListLevel.cpp \
