@@ -109,18 +109,19 @@ static WKPageRef createOtherPage(WKPageRef oldPage, const void*)
         0,
         view,
         createOtherPage,
-        0,
+        0, // showPage
         closeOtherPage,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
+        0, // runJavaScriptAlert        
+        0, // runJavaScriptConfirm
+        0, // runJavaScriptPrompt
+        0, // setStatusText
+        0, // mouseDidMoveOverElement
+        0, // contentsSizeChanged
+        0, // didNotHandleKeyEvent
         getWindowFrameOtherPage,
         setWindowFrameOtherPage,
-        0
+        0, // runBeforeUnloadConfirmPanel
+        0 // didDraw
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -193,42 +194,43 @@ void TestController::initialize(int argc, const char* argv[])
         0,
         this,
         createOtherPage,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
+        0, // showPage
+        0, // close
+        0, // runJavaScriptAlert        
+        0, // runJavaScriptConfirm
+        0, // runJavaScriptPrompt
+        0, // setStatusText
+        0, // mouseDidMoveOverElement
+        0, // contentsSizeChanged
+        0, // didNotHandleKeyEvent
         getWindowFrameMainPage,
         setWindowFrameMainPage,
-        0,
+        0, // runBeforeUnloadConfirmPanel
+        0 // didDraw
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 
     WKPageLoaderClient pageLoaderClient = {
         0,
         this,
-        0,
-        0,
-        0,
-        0,
-        0,
+        0, // didStartProvisionalLoadForFrame
+        0, // didReceiveServerRedirectForProvisionalLoadForFrame
+        0, // didFailProvisionalLoadWithErrorForFrame
+        0, // didCommitLoadForFrame
+        0, // didFinishDocumentLoadForFrame
         didFinishLoadForFrame,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
+        0, // didFailLoadWithErrorForFrame
+        0, // didReceiveTitleForFrame
+        0, // didFirstLayoutForFrame
+        0, // didFirstVisuallyNonEmptyLayoutForFrame
+        0, // didRemoveFrameFromHierarchy
+        0, // didStartProgress
+        0, // didChangeProgress
+        0, // didFinishProgress
+        0, // didBecomeUnresponsive
+        0, // didBecomeResponsive
+        0, // processDidExit
+        0 // didChangeBackForwardList
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 }

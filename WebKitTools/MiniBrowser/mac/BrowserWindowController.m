@@ -581,7 +581,8 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
         0,          /* didNotHandleKeyEvent */
         getWindowFrame,
         setWindowFrame,
-        runBeforeUnloadConfirmPanel
+        runBeforeUnloadConfirmPanel,
+        0          /* didDraw */
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }
