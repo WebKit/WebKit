@@ -547,6 +547,10 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
 #if ARROW_KEYS_POP_MENU
         if (keyIdentifier == "Down" || keyIdentifier == "Up") {
             element->focus();
+
+            if (!element->renderer()) // Calling focus() may cause us to lose our renderer, in which case do not want to handle the event.
+                return;
+
             // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
             // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
             saveLastSelection(data, element);
@@ -605,6 +609,10 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
 #if SPACE_OR_RETURN_POP_MENU
         if (keyCode == ' ' || keyCode == '\r') {
             element->focus();
+
+            if (!element->renderer()) // Calling focus() may cause us to lose our renderer, in which case do not want to handle the event.
+                return;
+
             // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
             // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
             saveLastSelection(data, element);
@@ -615,6 +623,10 @@ void SelectElement::menuListDefaultEventHandler(SelectElementData& data, Element
 #elif ARROW_KEYS_POP_MENU
         if (keyCode == ' ') {
             element->focus();
+
+            if (!element->renderer()) // Calling focus() may cause us to lose our renderer, in which case do not want to handle the event.
+                return;
+
             // Save the selection so it can be compared to the new selection when dispatching change events during setSelectedIndex,
             // which gets called from RenderMenuList::valueChanged, which gets called after the user makes a selection from the menu.
             saveLastSelection(data, element);
@@ -709,6 +721,9 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
 
     if (event->type() == eventNames().mousedownEvent && event->isMouseEvent() && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         element->focus();
+
+        if (!element->renderer()) // Calling focus() may cause us to lose our renderer, in which case do not want to handle the event.
+            return;
 
         // Convert to coords relative to the list box if needed.
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
