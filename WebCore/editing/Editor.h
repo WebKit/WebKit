@@ -125,7 +125,6 @@ public:
 
     TriState selectionHasStyle(CSSStyleDeclaration*) const;
     String selectionStartCSSPropertyValue(int propertyID);
-    Element* elementForFormatBlockCommand() const;
     const SimpleFontData* fontForSelection(bool&) const;
     WritingDirection textDirectionForSelection(bool&) const;
     

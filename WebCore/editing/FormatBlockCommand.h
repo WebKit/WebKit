@@ -38,13 +38,17 @@ public:
         return adoptRef(new FormatBlockCommand(document, tagName));
     }
 
-    static bool isElementToApplyInFormatBlockCommand(const QualifiedName& tagName);
+    static Element* elementForFormatBlockCommand(Range*);
+    bool didApply() const { return m_didApply; }
 
 private:
     FormatBlockCommand(Document*, const QualifiedName& tagName);
 
+    void formatSelection(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection);
     void formatRange(const Position&, const Position&, RefPtr<Element>&);
     EditAction editingAction() const { return EditActionFormatBlock; }
+
+    bool m_didApply;
 };
 
 } // namespace WebCore

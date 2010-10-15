@@ -30,6 +30,7 @@
 #include "htmlediting.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
+#include "Range.h"
 #include "visible_units.h"
 
 namespace WebCore {
@@ -37,10 +38,24 @@ namespace WebCore {
 using namespace HTMLNames;
 
 static Node* enclosingBlockToSplitTreeTo(Node* startNode);
+static bool isElementForFormatBlock(const QualifiedName& tagName);
+static inline bool isElementForFormatBlock(Node* node)
+{
+    return node->isElementNode() && isElementForFormatBlock(static_cast<Element*>(node)->tagQName());
+}
 
 FormatBlockCommand::FormatBlockCommand(Document* document, const QualifiedName& tagName) 
     : ApplyBlockElementCommand(document, tagName)
+    , m_didApply(false)
 {
+}
+
+void FormatBlockCommand::formatSelection(const VisiblePosition& startOfSelection, const VisiblePosition& endOfSelection)
+{
+    if (!isElementForFormatBlock(tagName()))
+        return;
+    ApplyBlockElementCommand::formatSelection(startOfSelection, endOfSelection);
+    m_didApply = true;
 }
 
 void FormatBlockCommand::formatRange(const Position& start, const Position& end, RefPtr<Element>& blockNode)
@@ -51,7 +66,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
 
     Element* refNode = enclosingBlockFlowElement(end);
     Element* root = editableRootForPosition(start);
-    if (isElementToApplyInFormatBlockCommand(refNode->tagQName()) && start == startOfBlock(start) && end == endOfBlock(end)
+    if (isElementForFormatBlock(refNode->tagQName()) && start == startOfBlock(start) && end == endOfBlock(end)
         && refNode != root && !root->isDescendantOf(refNode)) {
         // Already in a block element that only contains the current paragraph
         if (refNode->hasTagName(tagName()))
@@ -74,10 +89,25 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     if (wasEndOfParagraph && !isEndOfParagraph(lastParagraphInBlockNode) && !isStartOfParagraph(lastParagraphInBlockNode))
         insertBlockPlaceholder(lastParagraphInBlockNode);
 }
+    
+Element* FormatBlockCommand::elementForFormatBlockCommand(Range* range)
+{
+    if (!range)
+        return 0;
 
-// FIXME: We should consider merging this function with isElementForFormatBlockCommand in Editor.cpp
-// Checks if a tag name is valid for execCommand('FormatBlock').
-bool FormatBlockCommand::isElementToApplyInFormatBlockCommand(const QualifiedName& tagName)
+    ExceptionCode ec;
+    Node* commonAncestor = range->commonAncestorContainer(ec);
+    while (commonAncestor && !isElementForFormatBlock(commonAncestor))
+        commonAncestor = commonAncestor->parentNode();
+
+    if (!commonAncestor)
+        return 0;
+
+    ASSERT(commonAncestor->isElementNode());
+    return static_cast<Element*>(commonAncestor);
+}
+
+bool isElementForFormatBlock(const QualifiedName& tagName)
 {
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, blockTags, ());
     if (blockTags.isEmpty()) {
@@ -112,8 +142,7 @@ Node* enclosingBlockToSplitTreeTo(Node* startNode)
     for (Node* n = startNode; n; n = n->parentNode()) {
         if (!n->isContentEditable())
             return lastBlock;
-        if (isTableCell(n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->isContentEditable()
-            || (n->isElementNode() && FormatBlockCommand::isElementToApplyInFormatBlockCommand(static_cast<Element*>(n)->tagQName())))
+        if (isTableCell(n) || n->hasTagName(bodyTag) || !n->parentNode() || !n->parentNode()->isContentEditable() || isElementForFormatBlock(n))
             return n;
         if (isBlock(n))
             lastBlock = n;
