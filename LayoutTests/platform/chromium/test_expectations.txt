@@ -3223,3 +3223,9 @@ BUGJAPHET : fast/dom/anchor-getParameter.html = TEXT
 
 // Added in Webkit r69707 without expected results.
 BUGJAPHET : platform/gtk/accessibility/aria-table-hierarchy.html = MISSING
+
+// Added in WebKit r69824, failed immediately due to KURL/KURLGoogle differences.
+BUGJAPHET : fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html = TEXT
+
+// r69833, JSC/V8 Date parsing differences
+BUGJAPHET : fast/js/date-parse-test.html = TEXT
