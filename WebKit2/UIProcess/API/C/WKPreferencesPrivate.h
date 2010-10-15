@@ -47,6 +47,18 @@ typedef enum WKFontSmoothingLevel WKFontSmoothingLevel;
 WK_EXPORT void WKPreferencesSetFontSmoothingLevel(WKPreferencesRef, WKFontSmoothingLevel);
 WK_EXPORT WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef);
 
+// Defaults to true.
+WK_EXPORT void WKPreferencesSetAcceleratedCompositingEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetAcceleratedCompositingEnabled(WKPreferencesRef);
+
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetCompositingBordersVisible(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetCompositingBordersVisible(WKPreferencesRef);
+
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetCompositingRepaintCountersVisible(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRef);
+
 #ifdef __cplusplus
 }
 #endif

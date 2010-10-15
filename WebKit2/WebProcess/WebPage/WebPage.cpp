@@ -119,24 +119,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.backForwardControllerClient = new WebBackForwardControllerClient(this);
     m_page = adoptPtr(new Page(pageClients));
 
-    m_page->settings()->setJavaScriptEnabled(parameters.store.javaScriptEnabled);
-    m_page->settings()->setLoadsImagesAutomatically(parameters.store.loadsImagesAutomatically);
-    m_page->settings()->setPluginsEnabled(parameters.store.pluginsEnabled);
-    m_page->settings()->setOfflineWebApplicationCacheEnabled(parameters.store.offlineWebApplicationCacheEnabled);
-    m_page->settings()->setLocalStorageEnabled(parameters.store.localStorageEnabled);
-    m_page->settings()->setXSSAuditorEnabled(parameters.store.xssAuditorEnabled);
-    m_page->settings()->setFrameFlatteningEnabled(parameters.store.frameFlatteningEnabled);
-    m_page->settings()->setMinimumFontSize(parameters.store.minimumFontSize);
-    m_page->settings()->setMinimumLogicalFontSize(parameters.store.minimumLogicalFontSize);
-    m_page->settings()->setDefaultFontSize(parameters.store.defaultFontSize);
-    m_page->settings()->setDefaultFixedFontSize(parameters.store.defaultFixedFontSize);
-    m_page->settings()->setStandardFontFamily(parameters.store.standardFontFamily);
-    m_page->settings()->setCursiveFontFamily(parameters.store.cursiveFontFamily);
-    m_page->settings()->setFantasyFontFamily(parameters.store.fantasyFontFamily);
-    m_page->settings()->setFixedFontFamily(parameters.store.fixedFontFamily);
-    m_page->settings()->setSansSerifFontFamily(parameters.store.sansSerifFontFamily);
-    m_page->settings()->setSerifFontFamily(parameters.store.serifFontFamily);
-    m_page->settings()->setJavaScriptCanOpenWindowsAutomatically(true);
+    updatePreferences(parameters.store);
 
     m_page->setGroupName("WebKit2Group");
     
@@ -690,21 +673,36 @@ void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)
 {
     WebPreferencesStore::removeTestRunnerOverrides();
+    updatePreferences(store);
+}
 
-    m_page->settings()->setJavaScriptEnabled(store.javaScriptEnabled);
-    m_page->settings()->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
-    m_page->settings()->setPluginsEnabled(store.pluginsEnabled);
-    m_page->settings()->setOfflineWebApplicationCacheEnabled(store.offlineWebApplicationCacheEnabled);
-    m_page->settings()->setLocalStorageEnabled(store.localStorageEnabled);
-    m_page->settings()->setXSSAuditorEnabled(store.xssAuditorEnabled);
-    m_page->settings()->setFrameFlatteningEnabled(store.frameFlatteningEnabled);
-    m_page->settings()->setStandardFontFamily(store.standardFontFamily);
-    m_page->settings()->setCursiveFontFamily(store.cursiveFontFamily);
-    m_page->settings()->setFantasyFontFamily(store.fantasyFontFamily);
-    m_page->settings()->setFixedFontFamily(store.fixedFontFamily);
-    m_page->settings()->setSansSerifFontFamily(store.sansSerifFontFamily);
-    m_page->settings()->setSerifFontFamily(store.serifFontFamily);
+void WebPage::updatePreferences(const WebPreferencesStore& store)
+{
+    Settings* settings = m_page->settings();
+    
+    settings->setJavaScriptEnabled(store.javaScriptEnabled);
+    settings->setLoadsImagesAutomatically(store.loadsImagesAutomatically);
+    settings->setPluginsEnabled(store.pluginsEnabled);
+    settings->setOfflineWebApplicationCacheEnabled(store.offlineWebApplicationCacheEnabled);
+    settings->setLocalStorageEnabled(store.localStorageEnabled);
+    settings->setXSSAuditorEnabled(store.xssAuditorEnabled);
+    settings->setFrameFlatteningEnabled(store.frameFlatteningEnabled);
+    settings->setMinimumFontSize(store.minimumFontSize);
+    settings->setMinimumLogicalFontSize(store.minimumLogicalFontSize);
+    settings->setDefaultFontSize(store.defaultFontSize);
+    settings->setDefaultFixedFontSize(store.defaultFixedFontSize);
+    settings->setStandardFontFamily(store.standardFontFamily);
+    settings->setCursiveFontFamily(store.cursiveFontFamily);
+    settings->setFantasyFontFamily(store.fantasyFontFamily);
+    settings->setFixedFontFamily(store.fixedFontFamily);
+    settings->setSansSerifFontFamily(store.sansSerifFontFamily);
+    settings->setSerifFontFamily(store.serifFontFamily);
+    settings->setJavaScriptCanOpenWindowsAutomatically(true);
 
+    settings->setAcceleratedCompositingEnabled(store.acceleratedCompositingEnabled);
+    settings->setShowDebugBorders(store.compositingBordersVisible);
+    settings->setShowRepaintCounter(store.compositingRepaintCountersVisible);
+    
     platformPreferencesDidChange(store);
 }
 

@@ -1,3 +1,41 @@
+2010-10-14  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Plumb accelerated compositing prefs through WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=46860
+        <rdar://problem/8495312>
+        
+        Wire up the prefs to enable accelerated compositing, and
+        show debug borders and repaint counters.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferencesPrivate.cpp:
+        (WKPreferencesSetAcceleratedCompositingEnabled):
+        (WKPreferencesGetAcceleratedCompositingEnabled):
+        (WKPreferencesSetCompositingBordersVisible):
+        (WKPreferencesGetCompositingBordersVisible):
+        (WKPreferencesSetCompositingRepaintCountersVisible):
+        (WKPreferencesGetCompositingRepaintCountersVisible):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setAcceleratedCompositingEnabled):
+        (WebKit::WebPreferences::acceleratedCompositingEnabled):
+        (WebKit::WebPreferences::setCompositingBordersVisible):
+        (WebKit::WebPreferences::compositingBordersVisible):
+        (WebKit::WebPreferences::setCompositingRepaintCountersVisible):
+        (WebKit::WebPreferences::compositingRepaintCountersVisible):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::preferencesDidChange):
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/WebPage.h:
+
 2010-10-14  Ada Chan  <adachan@apple.com>
 
         Reviewed by Sam Weinig.

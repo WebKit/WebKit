@@ -83,3 +83,32 @@ WKFontSmoothingLevel WKPreferencesGetFontSmoothingLevel(WKPreferencesRef prefere
     return kWKFontSmoothingLevelMedium;
 }
 
+void WKPreferencesSetAcceleratedCompositingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setAcceleratedCompositingEnabled(flag);
+}
+
+bool WKPreferencesGetAcceleratedCompositingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->acceleratedCompositingEnabled();
+}
+
+void WKPreferencesSetCompositingBordersVisible(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCompositingBordersVisible(flag);
+}
+
+bool WKPreferencesGetCompositingBordersVisible(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->compositingBordersVisible();
+}
+
+void WKPreferencesSetCompositingRepaintCountersVisible(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setCompositingRepaintCountersVisible(flag);
+}
+
+bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->compositingRepaintCountersVisible();
+}

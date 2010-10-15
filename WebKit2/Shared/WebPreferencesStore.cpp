@@ -40,6 +40,9 @@ WebPreferencesStore::WebPreferencesStore()
     , localStorageEnabled(true)
     , xssAuditorEnabled(true)
     , frameFlatteningEnabled(false)
+    , acceleratedCompositingEnabled(true)
+    , compositingBordersVisible(false)
+    , compositingRepaintCountersVisible(false)
     , fontSmoothingLevel(FontSmoothingLevelMedium)
     , minimumFontSize(1)
     , minimumLogicalFontSize(9)
@@ -83,6 +86,9 @@ void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(fixedFontFamily);
     encoder->encode(sansSerifFontFamily);
     encoder->encode(serifFontFamily);
+    encoder->encode(acceleratedCompositingEnabled);
+    encoder->encode(compositingBordersVisible);
+    encoder->encode(compositingRepaintCountersVisible);
 }
 
 bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferencesStore& s)
@@ -122,6 +128,12 @@ bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferenc
     if (!decoder->decode(s.sansSerifFontFamily))
         return false;
     if (!decoder->decode(s.serifFontFamily))
+        return false;
+    if (!decoder->decode(s.acceleratedCompositingEnabled))
+        return false;
+    if (!decoder->decode(s.compositingBordersVisible))
+        return false;
+    if (!decoder->decode(s.compositingRepaintCountersVisible))
         return false;
 
     if (hasXSSAuditorEnabledTestRunnerOverride)

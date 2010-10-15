@@ -50,6 +50,10 @@ struct WebPreferencesStore {
     bool xssAuditorEnabled;
     bool frameFlatteningEnabled;
 
+    bool acceleratedCompositingEnabled;
+    bool compositingBordersVisible;
+    bool compositingRepaintCountersVisible;
+
     uint32_t fontSmoothingLevel;
 
     uint32_t minimumFontSize;

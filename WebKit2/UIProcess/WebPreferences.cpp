@@ -218,5 +218,38 @@ const String& WebPreferences::fantasyFontFamily() const
     return m_store.fantasyFontFamily;
 }
 
+void WebPreferences::setAcceleratedCompositingEnabled(bool flag)
+{
+    m_store.acceleratedCompositingEnabled = flag;
+    update();
+}
+
+bool WebPreferences::acceleratedCompositingEnabled() const
+{
+    return m_store.acceleratedCompositingEnabled;
+}
+
+void WebPreferences::setCompositingBordersVisible(bool flag)
+{
+    m_store.compositingBordersVisible = flag;
+    update();
+}
+
+bool WebPreferences::compositingBordersVisible() const
+{
+    return m_store.compositingBordersVisible;
+}
+
+void WebPreferences::setCompositingRepaintCountersVisible(bool flag)
+{
+    m_store.compositingRepaintCountersVisible = flag;
+    update();
+}
+
+bool WebPreferences::compositingRepaintCountersVisible() const
+{
+    return m_store.compositingRepaintCountersVisible;
+}
+
 } // namespace WebKit
 

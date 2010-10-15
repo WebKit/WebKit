@@ -100,6 +100,15 @@ public:
     void setFantasyFontFamily(const String&);
     const String& fantasyFontFamily() const;
 
+    void setAcceleratedCompositingEnabled(bool);
+    bool acceleratedCompositingEnabled() const;
+
+    void setCompositingBordersVisible(bool);
+    bool compositingBordersVisible() const;
+
+    void setCompositingRepaintCountersVisible(bool);
+    bool compositingRepaintCountersVisible() const;
+    
 private:
     WebPreferences();
     WebPreferences(WebPreferences*);
