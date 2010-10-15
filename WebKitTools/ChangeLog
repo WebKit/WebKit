@@ -1,3 +1,21 @@
+2010-10-15  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] compile TestNetscapePlugIn on Chromium mac
+        https://bugs.webkit.org/show_bug.cgi?id=47633
+
+        * DumpRenderTree/DumpRenderTree.gypi: files to compile
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp: Use ifdef because gcc was complaining
+        (NP_GetEntryPoints):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_HandleEvent):
+        (NPP_GetValue):
+        * DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders/WebKit/npapi.h: Added.
+        * DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders/WebKit/npfunctions.h: Added.
+        * DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders/WebKit/npruntime.h: Added.
+
 2010-10-15  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Gustavo Noronha Silva.
