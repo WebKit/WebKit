@@ -1,3 +1,22 @@
+2010-10-15  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r69809.
+        http://trac.webkit.org/changeset/69809
+        https://bugs.webkit.org/show_bug.cgi?id=47725
+
+        Broke chromium mac compile (Requested by japhet on #webkit).
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NP_GetEntryPoints):
+        (NPP_New):
+        (NPP_Destroy):
+        (NPP_HandleEvent):
+        (NPP_GetValue):
+        * DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders/WebKit/npapi.h: Removed.
+        * DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders/WebKit/npfunctions.h: Removed.
+        * DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders/WebKit/npruntime.h: Removed.
+
 2010-10-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Adam Barth.

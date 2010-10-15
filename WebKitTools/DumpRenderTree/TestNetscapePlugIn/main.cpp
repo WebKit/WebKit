@@ -75,7 +75,7 @@ NPError STDCALL NP_GetEntryPoints(NPPluginFuncs *pluginFuncs)
 {
     getEntryPointsWasCalled = true;
 
-#ifdef XP_MACOSX
+#if XP_MACOSX
     // Simulate Silverlight's behavior of crashing when NP_GetEntryPoints is called before NP_Initialize.
     if (!initializeWasCalled)
         CRASH();
@@ -111,7 +111,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
 {
     bool forceCarbon = false;
 
-#ifdef XP_MACOSX
+#if XP_MACOSX
     NPEventModel eventModel;
     
     // Always turn on the CG model
@@ -158,7 +158,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
     PluginObject* obj = (PluginObject*)browser->createobject(instance, getPluginClass());
     instance->pdata = obj;
 
-#ifdef XP_MACOSX
+#if XP_MACOSX
     obj->eventModel = eventModel;
 #if !defined(BUILDING_ON_TIGER)
     obj->coreAnimationLayer = 0;
@@ -198,7 +198,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
         else if (strcasecmp(argn[i], "testwindowopen") == 0)
             obj->testWindowOpen = TRUE;
         else if (strcasecmp(argn[i], "drawingmodel") == 0) {
-#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
+#if XP_MACOSX && !defined(BUILDING_ON_TIGER)
             const char* value = argv[i];
             if (strcasecmp(value, "coreanimation") == 0) {
                 if (supportsCoreAnimation)
@@ -234,7 +234,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
         }
     }
 
-#ifdef XP_MACOSX
+#if XP_MACOSX
     browser->setvalue(instance, NPPVpluginDrawingModel, (void *)drawingModelToUse);
 #if !defined(BUILDING_ON_TIGER)
     if (drawingModelToUse == NPDrawingModelCoreAnimation)
@@ -276,7 +276,7 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
         if (obj->logDestroy)
             pluginLog(instance, "NPP_Destroy");
 
-#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
+#if XP_MACOSX && !defined(BUILDING_ON_TIGER)
         if (obj->coreAnimationLayer)
             CFRelease(obj->coreAnimationLayer);
 #endif
@@ -400,7 +400,7 @@ void NPP_Print(NPP instance, NPPrint *platformPrint)
 {
 }
 
-#ifdef XP_MACOSX
+#if XP_MACOSX
 #ifndef NP_NO_CARBON
 static int16_t handleEventCarbon(NPP instance, PluginObject* obj, EventRecord* event)
 {
@@ -548,7 +548,7 @@ int16_t NPP_HandleEvent(NPP instance, void *event)
     if (!obj->eventLogging)
         return 0;
 
-#ifdef XP_MACOSX
+#if XP_MACOSX
 #ifndef NP_NO_CARBON
     if (obj->eventModel == NPEventModelCarbon)
         return handleEventCarbon(instance, obj, static_cast<EventRecord*>(event));
@@ -588,7 +588,7 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
         return NPERR_NO_ERROR;
     }
     
-#if defined(XP_MACOSX) && !defined(BUILDING_ON_TIGER)
+#if XP_MACOSX && !defined(BUILDING_ON_TIGER)
     if (variable == NPPVpluginCoreAnimationLayer) {
         if (!obj->coreAnimationLayer)
             return NPERR_GENERIC_ERROR;
