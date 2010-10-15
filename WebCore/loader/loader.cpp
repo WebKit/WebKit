@@ -383,6 +383,8 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
             CachedResource* resource = request->cachedResource();
             cachedResourceLoader->decrementRequestCount(resource);
             cachedResourceLoader->setLoadInProgress(true);
+            if (resource->resourceToRevalidate())
+                cache()->revalidationFailed(resource);
             resource->error();
             cachedResourceLoader->setLoadInProgress(false);
             delete request;
