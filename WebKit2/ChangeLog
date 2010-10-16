@@ -1,5 +1,12 @@
 2010-10-15  Sam Weinig  <sam@webkit.org>
 
+        Fix Qt build.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::createPopupMenuProxy):
+
+2010-10-15  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         Popup widget support (<select>)

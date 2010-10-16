@@ -113,7 +113,7 @@ void QWKPagePrivate::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
 {
 }
 
-PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy()
+PassRefPtr<WebPopupMenuProxy> QWKPagePrivate::createPopupMenuProxy()
 {
     return WebPopupMenuProxyQt::create();
 }
