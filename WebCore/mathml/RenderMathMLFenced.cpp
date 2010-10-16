@@ -40,6 +40,8 @@ namespace WebCore {
 using namespace MathMLNames;
     
 enum Braces { OpeningBraceChar = 0x28, ClosingBraceChar = 0x29 };
+    
+static const float gOperatorPadding = 0.1f;
 
 RenderMathMLFenced::RenderMathMLFenced(Node* fenced) 
     : RenderMathMLRow(fenced)
@@ -82,8 +84,7 @@ RefPtr<RenderStyle> RenderMathMLFenced::makeOperatorStyle()
     RefPtr<RenderStyle> newStyle = RenderStyle::create();
     newStyle->inheritFrom(style());
     newStyle->setDisplay(INLINE_BLOCK);
-    newStyle->setHeight(Length(100.0, Percent));
-    newStyle->setVerticalAlign(MIDDLE);
+    newStyle->setPaddingRight(Length(static_cast<int>(gOperatorPadding * style()->fontSize()), Fixed));
     return newStyle;
 }
 
@@ -158,6 +159,8 @@ void RenderMathMLFenced::layout()
     setNeedsLayoutAndPrefWidthsRecalc();
     markContainingBlocksForLayout();
     RenderBlock::layout();
+    
+    setNeedsLayout(false);
 }
 }    
 

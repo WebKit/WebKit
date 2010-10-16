@@ -21,13 +21,10 @@ math[display="block"] {
     margin-right: auto;
 }
 
-math > * {
-    vertical-align: baseline;
-}
-
 mrow, mfenced {
     display: inline-block;
     white-space: nowrap;
+    vertical-align: baseline;
 }
 
 mfenced {
@@ -96,8 +93,7 @@ mo {
 }
 
 math > mo, mrow > mo, mfenced > mo {
-    padding-left: 0.05em;
-    padding-right: 0.05em;
+    padding-right: 0.1em;
 }
 
 math[mathvariant="normal"], mstyle[mathvariant="normal"], mo[mathvariant="normal"], mn[mathvariant="normal"], mi[mathvariant="normal"], mtext[mathvariant="normal"], mspace[mathvariant="normal"], ms[mathvariant="normal"] {
