@@ -26,7 +26,7 @@
 #include "WTFString.h"
 #include <wtf/Forward.h>
 #include <wtf/HashTraits.h>
-#include <wtf/StringHashFunctions.h>
+#include <wtf/StringHasher.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WTF {

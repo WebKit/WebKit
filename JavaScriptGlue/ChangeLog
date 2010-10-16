@@ -1,3 +1,13 @@
+2010-10-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename StringHasherFunctions.h to StringHasher.h
+        https://bugs.webkit.org/show_bug.cgi?id=47200
+
+        * ForwardingHeaders/wtf/StringHashFunctions.h: Removed.
+        * ForwardingHeaders/wtf/StringHasher.h: Copied from JavaScriptGlue/ForwardingHeaders/wtf/StringHashFunctions.h.
+
 2010-09-09  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Gavin Barraclough.

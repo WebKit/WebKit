@@ -495,7 +495,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/StaticConstructors.h \
 	JavaScriptCore/wtf/StdLibExtras.h \
 	JavaScriptCore/wtf/StringExtras.h \
-	JavaScriptCore/wtf/StringHashFunctions.h \
+	JavaScriptCore/wtf/StringHasher.h \
 	JavaScriptCore/wtf/TCPackedCache.h \
 	JavaScriptCore/wtf/TCPageMap.h \
 	JavaScriptCore/wtf/TCSpinLock.h \

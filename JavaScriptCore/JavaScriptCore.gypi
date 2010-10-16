@@ -424,7 +424,7 @@
             'wtf/StaticConstructors.h',
             'wtf/StdLibExtras.h',
             'wtf/StringExtras.h',
-            'wtf/StringHashFunctions.h',
+            'wtf/StringHasher.h',
             'wtf/TCPackedCache.h',
             'wtf/qt/MainThreadQt.cpp',
             'wtf/qt/StringQt.cpp',

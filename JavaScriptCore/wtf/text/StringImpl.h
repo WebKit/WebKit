@@ -29,7 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OwnFastMallocPtr.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/StringHashFunctions.h>
+#include <wtf/StringHasher.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringImplBase.h>
 #include <wtf/unicode/Unicode.h>
