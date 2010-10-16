@@ -30,6 +30,7 @@
 #include "WebContext.h"
 #include "WebEventFactoryQt.h"
 #include "WebPlatformStrategies.h"
+#include "WebPopupMenuProxyQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include "ViewportArguments.h"
@@ -42,7 +43,6 @@
 #include <WebCore/FloatRect.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKRetainPtr.h>
-
 
 using namespace WebKit;
 using namespace WebCore;
@@ -111,6 +111,11 @@ FloatRect QWKPagePrivate::convertToUserSpace(const FloatRect& rect)
 
 void QWKPagePrivate::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
 {
+}
+
+PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy()
+{
+    return WebPopupMenuProxyQt::create();
 }
 
 void QWKPagePrivate::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)

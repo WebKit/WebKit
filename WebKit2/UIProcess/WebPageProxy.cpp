@@ -46,6 +46,8 @@
 #include "WebPageCreationParameters.h"
 #include "WebPageMessages.h"
 #include "WebPageNamespace.h"
+#include "WebPopupItem.h"
+#include "WebPopupMenuProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
@@ -209,6 +211,8 @@ void WebPageProxy::close()
     m_editCommandSet.clear();
     for (size_t i = 0, size = editCommandVector.size(); i < size; ++i)
         editCommandVector[i]->invalidate();
+
+    m_activePopupMenu = 0;
 
     m_estimatedProgress = 0.0;
     
@@ -968,6 +972,29 @@ void WebPageProxy::setFindIndicator(const FloatRect& selectionRect, const Vector
     m_pageClient->setFindIndicator(findIndicator.release(), fadeOut);
 }
 
+void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex)
+{
+    if (m_activePopupMenu)
+        m_activePopupMenu->hidePopupMenu();
+    else
+        m_activePopupMenu = m_pageClient->createPopupMenuProxy();
+
+    int32_t newSelectedIndex = 0;
+    m_activePopupMenu->showPopupMenu(rect, items, selectedIndex, newSelectedIndex);
+
+    process()->send(Messages::WebPage::DidChangeSelectedIndexForActivePopupMenu(newSelectedIndex), m_pageID);
+    m_activePopupMenu = 0;
+}
+
+void WebPageProxy::hidePopupMenu()
+{
+    if (!m_activePopupMenu)
+        return;
+
+    m_activePopupMenu->hidePopupMenu();
+    m_activePopupMenu = 0;
+}
+
 void WebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> commandProxy, UndoOrRedo undoOrRedo)
 {
     m_pageClient->registerEditCommand(commandProxy, undoOrRedo);
@@ -1138,6 +1165,8 @@ void WebPageProxy::processDidExit()
     for (size_t i = 0, size = editCommandVector.size(); i < size; ++i)
         editCommandVector[i]->invalidate();
     m_pageClient->clearAllEditCommands();
+
+    m_activePopupMenu = 0;
 
     m_estimatedProgress = 0.0;
 

@@ -1,3 +1,106 @@
+2010-10-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Popup widget support (<select>)
+        <rdar://problem/8147746>
+        https://bugs.webkit.org/show_bug.cgi?id=47740
+
+        Add initial support for popup menus. Only works on the mac at this time.
+
+        * Shared/WebPopupItem.cpp: Added.
+        (WebKit::WebPopupItem::WebPopupItem):
+        (WebKit::WebPopupItem::encode):
+        (WebKit::WebPopupItem::decode):
+        * Shared/WebPopupItem.h: Added.
+        Serializable representation of a menu item.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        Create a WebPopupMenuProxyMac.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (WebView::createPopupMenuProxy):
+        * UIProcess/API/qt/qwkpage_p.h:
+        Create a WebPopupMenuProxyQt (which is just a stub right now).
+
+        (WebKit::WebPopupMenuProxyWin::create):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::createPopupMenuProxy):
+        * UIProcess/win/WebView.h:
+        Create a WebPopupMenuProxyWin (which is just a stub right now).
+
+        * UIProcess/PageClient.h:
+        Add new client function to get a platform specific WebPopupMenuProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::showPopupMenu):
+        (WebKit::WebPageProxy::hidePopupMenu):
+        (WebKit::WebPageProxy::processDidExit):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Pipe through calls to set up the menu.
+
+        * UIProcess/mac/WebPopupMenuProxyMac.h: Added.
+        (WebKit::WebPopupMenuProxyMac::create):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm: Added.
+        (WebKit::WebPopupMenuProxyMac::WebPopupMenuProxyMac):
+        (WebKit::WebPopupMenuProxyMac::~WebPopupMenuProxyMac):
+        (WebKit::WebPopupMenuProxyMac::populate):
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        (WebKit::WebPopupMenuProxyMac::hidePopupMenu):
+        Add UI process side implementation. Currently this does not support
+        custom fonts as the old implementation did.
+
+        * UIProcess/qt/WebPopupMenuProxyQt.cpp: Added.
+        (WebKit::WebPopupMenuProxyQt::WebPopupMenuProxyQt):
+        (WebKit::WebPopupMenuProxyQt::~WebPopupMenuProxyQt):
+        (WebKit::WebPopupMenuProxyQt::showPopupMenu):
+        (WebKit::WebPopupMenuProxyQt::hidePopupMenu):
+        * UIProcess/qt/WebPopupMenuProxyQt.h: Added.
+        (WebKit::WebPopupMenuProxyQt::create):
+        * UIProcess/win/WebPopupMenuProxyWin.cpp: Added.
+        (WebKit::WebPopupMenuProxyWin::WebPopupMenuProxyWin):
+        (WebKit::WebPopupMenuProxyWin::~WebPopupMenuProxyWin):
+        (WebKit::WebPopupMenuProxyWin::showPopupMenu):
+        (WebKit::WebPopupMenuProxyWin::hidePopupMenu):
+        * UIProcess/win/WebPopupMenuProxyWin.h: Added.
+        Add stubbed out implementations for Qt and windows.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createPopupMenu):
+        (WebKit::WebChromeClient::createSearchPopupMenu):
+        Pass the page in the create function.
+
+        * WebProcess/WebCoreSupport/WebPopupMenu.cpp:
+        (WebKit::WebPopupMenu::create):
+        (WebKit::WebPopupMenu::WebPopupMenu):
+        (WebKit::WebPopupMenu::didChangeSelectedIndex):
+        (WebKit::WebPopupMenu::populateItems):
+        (WebKit::WebPopupMenu::show):
+        (WebKit::WebPopupMenu::hide):
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+        (WebKit::WebPopupMenu::disconnectFromPage):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp:
+        (WebKit::WebSearchPopupMenu::create):
+        (WebKit::WebSearchPopupMenu::WebSearchPopupMenu):
+        (WebKit::WebSearchPopupMenu::popupMenu):
+        * WebProcess/WebCoreSupport/WebSearchPopupMenu.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::setActivePopupMenu):
+        (WebKit::WebPage::didChangeSelectedIndexForActivePopupMenu):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Pipe through calls to set up the menu.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-10-15  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

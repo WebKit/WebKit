@@ -70,6 +70,7 @@ class WebEvent;
 class WebFrame;
 class WebKeyboardEvent;
 class WebMouseEvent;
+class WebPopupMenu;
 class WebWheelEvent;
 #if ENABLE(TOUCH_EVENTS)
 class WebTouchEvent;
@@ -109,6 +110,8 @@ public:
     void addWebEditCommand(uint64_t, WebEditCommand*);
     void removeWebEditCommand(uint64_t);
     bool isInRedo() const { return m_isInRedo; }
+
+    void setActivePopupMenu(WebPopupMenu*);
 
     // -- Called from WebProcess.
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
@@ -227,6 +230,8 @@ private:
     void hideFindUI();
     void countStringMatches(const String&, bool caseInsensitive, uint32_t maxNumMatches);
 
+    void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
+
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
 
@@ -262,6 +267,8 @@ private:
 
     FindController m_findController;
     OwnPtr<PageOverlay> m_pageOverlay;
+
+    RefPtr<WebPopupMenu> m_activePopupMenu;
 
     uint64_t m_pageID;
 };

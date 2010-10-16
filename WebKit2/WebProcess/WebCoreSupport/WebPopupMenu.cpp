@@ -21,18 +21,25 @@
 
 #include "WebPopupMenu.h"
 
+#include "WebCoreArgumentCoders.h"
+#include "WebPage.h"
+#include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/FrameView.h>
 #include <WebCore/PopupMenuClient.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
-PassRefPtr<WebPopupMenu> WebPopupMenu::create(WebCore::PopupMenuClient* client)
+PassRefPtr<WebPopupMenu> WebPopupMenu::create(WebPage* page, PopupMenuClient* client)
 {
-    return adoptRef(new WebPopupMenu(client));
+    return adoptRef(new WebPopupMenu(page, client));
 }
 
-WebPopupMenu::WebPopupMenu(WebCore::PopupMenuClient* client)
+WebPopupMenu::WebPopupMenu(WebPage* page, PopupMenuClient* client)
     : m_popupClient(client)
+    , m_page(page)
 {
 }
 
@@ -40,19 +47,66 @@ WebPopupMenu::~WebPopupMenu()
 {
 }
 
-
 void WebPopupMenu::disconnectClient()
 {
     m_popupClient = 0;
 }
 
-void WebPopupMenu::show(const WebCore::IntRect& rect, WebCore::FrameView* view, int index)
+void WebPopupMenu::didChangeSelectedIndex(int newIndex)
 {
+    if (!m_popupClient)
+        return;
 
+    m_popupClient->popupDidHide();
+    if (newIndex >= 0)
+        m_popupClient->valueChanged(newIndex);
+}
+
+Vector<WebPopupItem> WebPopupMenu::populateItems()
+{
+    size_t size = m_popupClient->listSize();
+
+    Vector<WebPopupItem> items;
+    items.reserveInitialCapacity(size);
+    
+    for (size_t i = 0; i < size; ++i) {
+        if (m_popupClient->itemIsSeparator(i))
+            items.append(WebPopupItem(WebPopupItem::Seperator));
+        else {
+            // FIXME: Add support for styling the font.
+            // FIXME: Add support for styling the foreground and background colors.
+            // FIXME: Find a way to customize text color when an item is highlighted.
+            items.append(WebPopupItem(WebPopupItem::Item, m_popupClient->itemText(i), m_popupClient->itemToolTip(i), m_popupClient->itemAccessibilityText(i), m_popupClient->itemIsEnabled(i)));
+        }
+    }
+
+    return items;
+}
+
+void WebPopupMenu::show(const IntRect& rect, FrameView* view, int index)
+{
+    // FIXME: We should probably inform the client to also close the menu.
+    Vector<WebPopupItem> items = populateItems();
+
+    if (items.isEmpty() || !m_page) {
+        m_popupClient->popupDidHide();
+        return;
+    }
+
+    m_page->setActivePopupMenu(this);
+
+    // Move to page coordinates
+    IntRect pageCoordinates(view->contentsToWindow(rect.location()), rect.size());
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowPopupMenu(pageCoordinates, items, index), m_page->pageID());
 }
 
 void WebPopupMenu::hide()
 {
+    if (!m_page || !m_popupClient)
+        return;
+
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::HidePopupMenu(), m_page->pageID());
+    m_page->setActivePopupMenu(0);
 }
 
 void WebPopupMenu::updateFromElement()

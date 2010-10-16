@@ -79,6 +79,8 @@ class WebEditCommandProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebPageNamespace;
+class WebPopupItem;
+class WebPopupMenuProxy;
 class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
@@ -286,6 +288,10 @@ private:
     void didCountStringMatches(const String&, uint32_t numMatches);
     void setFindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle, bool fadeOut);
 
+    // Popup Menu.
+    void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex);
+    void hidePopupMenu();
+
     void takeFocus(bool direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
@@ -320,6 +326,8 @@ private:
     HashMap<uint64_t, RefPtr<FrameSourceCallback> > m_frameSourceCallbacks;
 
     HashSet<WebEditCommandProxy*> m_editCommandSet;
+
+    RefPtr<WebPopupMenuProxy> m_activePopupMenu;
 
     double m_estimatedProgress;
 

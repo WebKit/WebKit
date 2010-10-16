@@ -72,7 +72,10 @@ messages -> WebPage {
     FindString(WTF::String string, uint32_t findDirection, uint32_t findOptions, unsigned maxNumMatches)
     HideFindUI()
     CountStringMatches(WTF::String string, bool caseInsensitive, unsigned maxNumMatches)
-    
+
+    # Popup menu.
+    DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
+
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 
 #if PLATFORM(MAC)

@@ -95,6 +95,10 @@ messages -> WebPageProxy {
     DidCountStringMatches(WTF::String string, uint32_t numMatches)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle, bool fadeOut)
 
+    # PopupMenu.
+    ShowPopupMenu(WebCore::IntRect rect, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex)
+    HidePopupMenu()
+
 #if USE(ACCELERATED_COMPOSITING)
     # Accelerated compsiting messages.
     DidChangeAcceleratedCompositing(bool compositing) -> (WebKit::DrawingAreaBase::DrawingAreaInfo newDrawingArea)

@@ -529,6 +529,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebPopupItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebPopupItem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebPreferencesStore.cpp"
 				>
 			</File>
@@ -1917,6 +1925,14 @@
 				</File>
 				<File
 					RelativePath="..\UIProcess\win\WebContextWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebPopupMenuProxyWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\win\WebPopupMenuProxyWin.h"
 					>
 				</File>
 				<File

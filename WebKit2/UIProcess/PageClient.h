@@ -27,6 +27,7 @@
 #define PageClient_h
 
 #include "WebPageProxy.h"
+#include "WebPopupMenuProxy.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -39,6 +40,7 @@ namespace WebKit {
 class FindIndicator;
 class NativeWebKeyboardEvent;
 class WebEditCommandProxy;
+class WebPopupMenuProxy;
 
 class PageClient {
 public:
@@ -61,6 +63,8 @@ public:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
 
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&) = 0;
+
+    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy() = 0;
 
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut) = 0;
 

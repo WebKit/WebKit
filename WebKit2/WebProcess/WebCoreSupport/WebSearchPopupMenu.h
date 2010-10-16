@@ -28,7 +28,7 @@ namespace WebKit {
 
 class WebSearchPopupMenu : public WebCore::SearchPopupMenu {
 public:
-    static PassRefPtr<WebSearchPopupMenu> create(WebCore::PopupMenuClient*);
+    static PassRefPtr<WebSearchPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
 
     virtual WebCore::PopupMenu* popupMenu();
     virtual void saveRecentSearches(const WTF::AtomicString& name, const Vector<String>& searchItems);
@@ -36,7 +36,7 @@ public:
     virtual bool enabled();
 
 private:
-    WebSearchPopupMenu(WebCore::PopupMenuClient*);
+    WebSearchPopupMenu(WebPage*, WebCore::PopupMenuClient*);
 
     RefPtr<WebPopupMenu> m_popup;
 };

@@ -55,20 +55,22 @@ private:
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
 
-    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
-    void clearAllEditCommands();
-    void setEditCommandState(const String& commandName, bool isEnabled, int state);
+    virtual void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo);
+    virtual void clearAllEditCommands();
+    virtual void setEditCommandState(const String& commandName, bool isEnabled, int state);
 
-    WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
-    WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
+    virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
+    virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
 
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
+
+    virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy();
 
     void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
 
 #if USE(ACCELERATED_COMPOSITING)
-    void pageDidEnterAcceleratedCompositing();
-    void pageDidLeaveAcceleratedCompositing();
+    virtual void pageDidEnterAcceleratedCompositing();
+    virtual void pageDidLeaveAcceleratedCompositing();
 #endif
 
     WKView* m_wkView;

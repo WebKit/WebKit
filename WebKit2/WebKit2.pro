@@ -214,6 +214,7 @@ HEADERS += \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebPageCreationParameters.h \
+    Shared/WebPopupItem.h \
     Shared/WebProcessCreationParameters.h \
     Shared/WebPreferencesStore.h \
     Shared/WebURLRequest.h \
@@ -270,6 +271,7 @@ HEADERS += \
     UIProcess/WebProcessManager.h \
     UIProcess/WebProcessProxy.h \
     UIProcess/WebUIClient.h \
+    UIProcess/qt/WebPopupMenuProxyQt.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
@@ -357,6 +359,7 @@ SOURCES += \
     Shared/VisitedLinkTable.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebPageCreationParameters.cpp \
+    Shared/WebPopupItem.cpp \
     Shared/WebProcessCreationParameters.cpp \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
@@ -461,6 +464,7 @@ SOURCES += \
     WebProcess/WebProcess.cpp \
     UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
+    UIProcess/qt/WebPopupMenuProxyQt.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
     $$WEBKIT2_GENERATED_SOURCES

@@ -22,8 +22,11 @@
 #ifndef WebPopupMenu_h
 #define WebPopupMenu_h
 
+#include "WebPopupItem.h"
 #include <WebCore/PopupMenu.h>
 #include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class PopupMenuClient;
@@ -31,10 +34,16 @@ class PopupMenuClient;
 
 namespace WebKit {
 
+class WebPage;
+class WebPopupItem;
+
 class WebPopupMenu : public WebCore::PopupMenu {
 public:
-    static PassRefPtr<WebPopupMenu> create(WebCore::PopupMenuClient*);
+    static PassRefPtr<WebPopupMenu> create(WebPage*, WebCore::PopupMenuClient*);
     ~WebPopupMenu();
+
+    void disconnectFromPage() { m_page = 0; }
+    void didChangeSelectedIndex(int newIndex);
 
     virtual void show(const WebCore::IntRect&, WebCore::FrameView*, int index);
     virtual void hide();
@@ -42,9 +51,12 @@ public:
     virtual void disconnectClient();
 
 private:
-    WebPopupMenu(WebCore::PopupMenuClient*);
+    WebPopupMenu(WebPage*, WebCore::PopupMenuClient*);
+
+    Vector<WebPopupItem> populateItems();
 
     WebCore::PopupMenuClient* m_popupClient;
+    WebPage* m_page;
 };
 
 } // namespace WebKit

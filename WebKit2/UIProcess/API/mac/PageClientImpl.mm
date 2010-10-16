@@ -30,10 +30,12 @@
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
 #import "WebEditCommandProxy.h"
+#import "WebPopupMenuProxyMac.h"
 #import <WebCore/Cursor.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FoundationExtras.h>
 #import <wtf/PassOwnPtr.h>
+#import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -224,6 +226,11 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 
 void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
 {
+}
+
+PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy()
+{
+    return WebPopupMenuProxyMac::create(m_wkView);
 }
 
 void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut)
