@@ -105,6 +105,9 @@ WTFLogChannel* getChannelFromName(const String& channelName)
     if (equalIgnoringCase(channelName, String("PlatformLeaks")))
         return &LogPlatformLeaks;
 
+    if (equalIgnoringCase(channelName, String("ResourceLoading")))
+        return &LogResourceLoading;
+
     if (equalIgnoringCase(channelName, String("Plugins")))
         return &LogPlugins;
 
