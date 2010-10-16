@@ -33,11 +33,18 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "File.h"
+
 namespace WebCore {
 
 FileEntrySync::FileEntrySync(DOMFileSystemBase* fileSystem, const String& fullPath)
     : EntrySync(fileSystem, fullPath)
 {
+}
+
+PassRefPtr<File> FileEntrySync::file(ExceptionCode& ec)
+{
+    return filesystem()->createFile(this, ec);
 }
 
 }

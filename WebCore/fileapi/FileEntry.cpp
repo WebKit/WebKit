@@ -51,9 +51,9 @@ void FileEntry::createWriter(PassRefPtr<FileWriterCallback> successCallback, Pas
     filesystem()->createWriter(this, successCallback, errorCallback);
 }
 
-void FileEntry::file(PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback>)
+void FileEntry::file(PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    filesystem()->scheduleCallback(successCallback, File::create(filesystem()->asyncFileSystem()->virtualToPlatformPath(m_fullPath)));
+    filesystem()->createFile(this, successCallback, errorCallback);
 }
 
 } // namespace

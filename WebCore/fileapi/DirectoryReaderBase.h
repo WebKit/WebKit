@@ -54,7 +54,10 @@ protected:
     }
 
     DOMFileSystemBase* m_fileSystem;
+
+    // This is a virtual path.
     String m_fullPath;
+
     bool m_hasMoreEntries;
 };
 

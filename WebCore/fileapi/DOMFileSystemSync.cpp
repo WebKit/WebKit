@@ -35,6 +35,8 @@
 
 #include "DOMFilePath.h"
 #include "DirectoryEntrySync.h"
+#include "File.h"
+#include "FileEntrySync.h"
 
 namespace WebCore {
 
@@ -55,6 +57,13 @@ DOMFileSystemSync::~DOMFileSystemSync()
 PassRefPtr<DirectoryEntrySync> DOMFileSystemSync::root()
 {
     return DirectoryEntrySync::create(this, DOMFilePath::root);
+}
+
+PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, ExceptionCode& ec)
+{
+    ec = 0;
+    String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
+    return File::create(platformPath);
 }
 
 }

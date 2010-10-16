@@ -35,5 +35,6 @@ module storage {
         GenerateToJS,
         NoStaticTables
     ] FileEntrySync : EntrySync {
+        File file() raises (FileException);
     };
 }

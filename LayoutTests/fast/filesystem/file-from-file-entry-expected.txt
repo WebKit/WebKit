@@ -1,4 +1,4 @@
-Obtaining File from FileEntry
+Obtaining File from FileEntry.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

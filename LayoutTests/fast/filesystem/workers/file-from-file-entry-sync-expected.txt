@@ -1,0 +1,11 @@
+This tests returning File from FileEntrySync in workers.
+
+Starting worker: ../resources/file-from-file-entry-sync.js
+Description: Obtaining File from FileEntrySync.
+PASS: testFile.name is testFileEntry.name
+PASS: testFile.type is 'text/plain'
+PASS: testFile.size is 0
+DONE
+
+TEST COMPLETE
+

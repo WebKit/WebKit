@@ -37,6 +37,7 @@
 #include "DOMFilePath.h"
 #include "DirectoryEntry.h"
 #include "ErrorCallback.h"
+#include "File.h"
 #include "FileEntry.h"
 #include "FileSystemCallbacks.h"
 #include "FileWriter.h"
@@ -74,15 +75,21 @@ void DOMFileSystem::contextDestroyed()
     ActiveDOMObject::contextDestroyed();
 }
 
-void DOMFileSystem::createWriter(const FileEntry* file, PassRefPtr<FileWriterCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+void DOMFileSystem::createWriter(const FileEntry* fileEntry, PassRefPtr<FileWriterCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    ASSERT(file);
+    ASSERT(fileEntry);
 
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(file->fullPath());
+    String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
 
     RefPtr<FileWriter> fileWriter = FileWriter::create(scriptExecutionContext());
     OwnPtr<FileWriterCallbacks> callbacks = FileWriterCallbacks::create(fileWriter, successCallback, errorCallback);
     m_asyncFileSystem->createWriter(fileWriter.get(), platformPath, callbacks.release());
+}
+
+void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback>)
+{
+    String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
+    scheduleCallback(successCallback, File::create(platformPath));
 }
 
 } // namespace

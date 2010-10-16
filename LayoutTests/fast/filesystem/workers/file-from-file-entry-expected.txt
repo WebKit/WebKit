@@ -1,0 +1,11 @@
+This tests returning File from FileEntry in workers.
+
+Starting worker: ../resources/file-from-file-entry.js
+Description: Obtaining File from FileEntry.
+PASS: testFile.name is testFileEntry.name
+PASS: testFile.type is 'text/plain'
+PASS: testFile.size is 0
+DONE
+
+TEST COMPLETE
+
