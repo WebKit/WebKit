@@ -1,3 +1,37 @@
+2010-10-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Automatic Semicolon Insertion incorrectly inserts semicolon after break, continue, and return followed by a newline
+        https://bugs.webkit.org/show_bug.cgi?id=47762
+
+        The old YACC parser depended on the lexer for some classes of semicolon insertion.
+        The new parser handles ASI entirely on its own so when the lexer inserts a semicolon
+        on its own the net result is a spurious semicolon in the input stream.  This can result
+        in incorrect parsing in some cases:
+
+        if (0)
+            break
+        ;else {}
+
+        Would result in a parse failure as the output from the lexer is essentially
+
+        if (0)
+             break
+        ;;else
+
+        So the second semicolon is interpreted as a empty statement, which terminates the if,
+        making the else an error.
+
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseThrowStatement):
+          Parsing of throw statement was wrong, and only worked due to the weird behaviour
+          in the lexer
+        * parser/Lexer.cpp:
+        (JSC::Lexer::lex):
+          Remove bogus semicolon insertion from the newline handling
+
 2010-10-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

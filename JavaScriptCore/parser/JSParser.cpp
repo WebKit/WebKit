@@ -901,12 +901,13 @@ template <class TreeBuilder> TreeStatement JSParser::parseThrowStatement(TreeBui
     int eStart = tokenStart();
     int startLine = tokenLine();
     next();
+    
+    failIfTrue(autoSemiColon());
 
     TreeExpression expr = parseExpression(context);
     failIfFalse(expr);
     int eEnd = lastTokenEnd();
     int endLine = tokenLine();
-    failIfFalse(autoSemiColon());
 
     return context.createThrowStatement(expr, eStart, eEnd, startLine, endLine);
 }
