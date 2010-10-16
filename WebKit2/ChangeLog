@@ -1,3 +1,10 @@
+2010-10-15  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        (-[WebFindIndicatorWindowAnimation setCurrentProgress:]):
+
 2010-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

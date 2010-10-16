@@ -84,7 +84,7 @@ using namespace WebCore;
 {
     if ((self = [super initWithDuration:fadeOutAnimationDuration animationCurve:NSAnimationEaseInOut])) {
         _findIndicatorWindow = findIndicatorWindow;
-        _animationCallback = animationCallback;
+        _animationProgressCallback = animationProgressCallback;
         _animationDidEndCallback = animationDidEndCallback;
         [self setDelegate:self];
         [self setAnimationBlockingMode:NSAnimationNonblocking];
@@ -94,7 +94,7 @@ using namespace WebCore;
 
 - (void)setCurrentProgress:(NSAnimationProgress)progress
 {
-    (_findIndicatorWindow->*_animationCallback)(progress);
+    (_findIndicatorWindow->*_animationProgressCallback)(progress);
 }
 
 - (void)animationDidEnd:(NSAnimation *)animation
