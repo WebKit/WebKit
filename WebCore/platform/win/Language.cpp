@@ -44,6 +44,7 @@ static String localeInfo(LCTYPE localeType, const String& fallback)
     if (localeName.isEmpty())
         return fallback;
 
+    localeName.truncate(localeName.length() - 1);
     return localeName;
 }
 

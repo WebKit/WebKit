@@ -2350,7 +2350,7 @@ static String webKitVersion()
     UINT productVersionLength;
     if (!VerQueryValue(data, (LPTSTR)(LPCTSTR)key, (void**)&productVersion, &productVersionLength))
         goto exit;
-    versionStr = String(productVersion, productVersionLength);
+    versionStr = String(productVersion, productVersionLength - 1);
 
 exit:
     if (data)
