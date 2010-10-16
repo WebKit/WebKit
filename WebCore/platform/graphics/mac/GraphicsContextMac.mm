@@ -30,6 +30,7 @@
 #import <AppKit/AppKit.h>
 #import <wtf/StdLibExtras.h>
 
+#import "LocalCurrentGraphicsContext.h"
 #import "WebCoreSystemInterface.h"
 
 @class NSColor;
@@ -178,6 +179,7 @@ void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, 
     // for transforms.
 
     // Draw underline.
+    LocalCurrentGraphicsContext localContext(this);
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     CGContextRef context = (CGContextRef)[currentContext graphicsPort];
     CGContextSaveGState(context);
