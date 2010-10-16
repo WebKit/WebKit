@@ -29,6 +29,8 @@
 #ifndef InspectorState_h
 #define InspectorState_h
 
+#if ENABLE(INSPECTOR)
+
 #include "InspectorValues.h"
 #include "PlatformString.h"
 
@@ -95,4 +97,5 @@ private:
 
 } // namespace WebCore
 
+#endif // ENABLE(INSPECTOR)
 #endif // !defined(InspectorState_h)
