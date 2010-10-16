@@ -52,11 +52,12 @@ class UploadCommandsTest(CommandsTest):
 
     def test_post(self):
         options = MockOptions()
+        options.cc = None
+        options.check_style = True
+        options.comment = None
         options.description = "MOCK description"
         options.request_commit = False
         options.review = True
-        options.comment = None
-        options.cc = None
         expected_stderr = """Running check-webkit-style
 MOCK: user.open_url: file://...
 Obsoleting 2 old patches on bug 42
@@ -81,11 +82,12 @@ MOCK: user.open_url: http://example.com/42
 
     def test_upload(self):
         options = MockOptions()
+        options.cc = None
+        options.check_style = True
+        options.comment = None
         options.description = "MOCK description"
         options.request_commit = False
         options.review = True
-        options.comment = None
-        options.cc = None
         expected_stderr = """Running check-webkit-style
 MOCK: user.open_url: file://...
 Obsoleting 2 old patches on bug 42

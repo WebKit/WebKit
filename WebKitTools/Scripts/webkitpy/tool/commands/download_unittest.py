@@ -57,15 +57,19 @@ class AbstractRolloutPrepCommandTest(unittest.TestCase):
 class DownloadCommandsTest(CommandsTest):
     def _default_options(self):
         options = MockOptions()
-        options.force_clean = False
-        options.clean = True
-        options.check_builders = True
-        options.quiet = False
-        options.non_interactive = False
-        options.update = True
         options.build = True
-        options.test = True
+        options.build_style = True
+        options.check_builders = True
+        options.check_style = True
+        options.clean = True
         options.close_bug = True
+        options.force_clean = False
+        options.force_patch = True
+        options.non_interactive = False
+        options.parent_command = 'MOCK parent command'
+        options.quiet = False
+        options.test = True
+        options.update = True
         return options
 
     def test_build(self):

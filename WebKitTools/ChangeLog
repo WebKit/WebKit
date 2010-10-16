@@ -1,3 +1,33 @@
+2010-10-15  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Siedel.
+
+        mocktool.MockOptions is inheriting from Mock, which has the side
+        effect of defaulting any attribute to another MockObject. So,
+        MockOptions().foo would always evaluate to true. This was
+        covering over bugs in the unit tests, and is probably the wrong
+        default behavior for anything attempting to mock out the options
+        argument returned from optparse.parse_args().
+
+        This patch changes the default behavior. The new MockOptions()
+        class takes an optional list of keyword parameters to set; this
+        patch doesn't use that feature but the fix for bug 47510 will.
+
+        Also, this patch just fills in the default values necessary to
+        get all of the tests to pass; I didn't stare at each test by
+        hand to determine the "right" values. We can either fix that in
+        subsequent patches or let me know if we want to do that now (and
+        give me some guidance on what those values might want to be).
+
+        https://bugs.webkit.org/show_bug.cgi?id=47709
+
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittest.py:
+
 2010-10-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the build; need to add new slot to PageUIClient callbacks.

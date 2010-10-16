@@ -41,5 +41,8 @@ class UpdateChangeLogsWithReviewerTest(unittest.TestCase):
 
     def test_empty_state(self):
         capture = OutputCapture()
-        step = UpdateChangeLogsWithReviewer(MockTool(), MockOptions())
+        options = MockOptions()
+        options.reviewer = 'MOCK reviewer'
+        options.git_commit = 'MOCK git commit'
+        step = UpdateChangeLogsWithReviewer(MockTool(), options)
         capture.assert_outputs(self, step.run, [{}])

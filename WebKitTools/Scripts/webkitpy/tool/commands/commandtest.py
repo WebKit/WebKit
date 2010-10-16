@@ -33,5 +33,16 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 
 class CommandsTest(unittest.TestCase):
     def assert_execute_outputs(self, command, args, expected_stdout="", expected_stderr="", options=MockOptions(), tool=MockTool()):
+        options.blocks = True
+        options.cc = 'MOCK cc'
+        options.component = 'MOCK component'
+        options.confirm = True
+        options.email = 'MOCK email'
+        options.git_commit = 'MOCK git commit'
+        options.obsolete_patches = True
+        options.open_bug = True
+        options.port = 'MOCK port'
+        options.quiet = True
+        options.reviewer = 'MOCK reviewer'
         command.bind_to_tool(tool)
         OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr)

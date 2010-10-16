@@ -37,20 +37,29 @@ from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
 
 
 class StepsTest(unittest.TestCase):
+    def _step_options(self):
+        options = MockOptions()
+        options.non_interactive = True
+        options.port = 'MOCK port'
+        options.quiet = True
+        options.test = True
+        return options
+
     def _run_step(self, step, tool=None, options=None, state=None):
         if not tool:
             tool = MockTool()
         if not options:
-            options = MockOptions()
+            options = self._step_options()
         if not state:
             state = {}
         step(tool, options).run(state)
 
     def test_update_step(self):
-        options = MockOptions()
+        tool = MockTool()
+        options = self._step_options()
         options.update = True
         expected_stderr = "Updating working directory\n"
-        OutputCapture().assert_outputs(self, self._run_step, [Update, options], expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, self._run_step, [Update, tool, options], expected_stderr=expected_stderr)
 
     def test_prompt_for_bug_or_title_step(self):
         tool = MockTool()
@@ -62,8 +71,8 @@ class StepsTest(unittest.TestCase):
         OutputCapture().assert_outputs(self, self._run_step, [RunTests], expected_stderr=expected_stderr)
 
     def test_runtests_leopard_commit_queue_hack_command(self):
-        mock_options = MockOptions()
-        mock_options.non_interactive = True
+        mock_options = self._step_options()
+        step = RunTests(MockTool(log_executive=True), mock_options)
         # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
         mock_port = WebKitPort()
         mock_port.name = lambda: "Mac"

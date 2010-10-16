@@ -581,9 +581,17 @@ class MockExecute(Mock):
         return "MOCK output of child process"
 
 
-class MockOptions(Mock):
-    no_squash = False
-    squash = False
+class MockOptions(object):
+    """Mock implementation of optparse.Values."""
+
+    def __init__(self, **kwargs):
+        # The caller can set option values using keyword arguments. We don't
+        # set any values by default because we don't know how this
+        # object will be used. Generally speaking unit tests should
+        # subclass this or provider wrapper functions that set a common
+        # set of options.
+        for key, value in kwargs.items():
+            self.__dict__[key] = value
 
 
 class MockRietveld():
