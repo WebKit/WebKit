@@ -139,11 +139,14 @@ public:
     , m_shouldAnnotate(shouldAnnotate)
     {
     }
+
+    Node* serializeNodes(Node* startNode, Node* pastEnd);
+    void appendString(const String& s) { return MarkupAccumulator::appendString(s); }
     void wrapWithNode(Node*, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
     void wrapWithStyleNode(CSSStyleDeclaration*, Document*, bool isBlock = false);
     String takeResults();
 
-protected:
+private:
     virtual void appendText(Vector<UChar>& out, Text*);
     String renderedText(const Node*, const Range*);
     String stringValueForRange(const Node*, const Range*);
@@ -153,7 +156,6 @@ protected:
 
     bool shouldAnnotate() { return m_shouldAnnotate == AnnotateForInterchange; }
 
-private:
     Vector<String> m_reversedPrecedingMarkup;
     const EAnnotateForInterchange m_shouldAnnotate;
 };
@@ -186,29 +188,18 @@ void StyledMarkupAccumulator::wrapWithStyleNode(CSSStyleDeclaration* style, Docu
     openTag.append('\"');
     openTag.append('>');
     m_reversedPrecedingMarkup.append(String::adopt(openTag));
-    m_succeedingMarkup.append(isBlock ? divClose : styleSpanClose);
+    appendString(isBlock ? divClose : styleSpanClose);
 }
 
 String StyledMarkupAccumulator::takeResults()
 {
-    size_t length = 0;
-
-    size_t preCount = m_reversedPrecedingMarkup.size();
-    for (size_t i = 0; i < preCount; ++i)
-        length += m_reversedPrecedingMarkup[i].length();
-
-    size_t postCount = m_succeedingMarkup.size();
-    for (size_t i = 0; i < postCount; ++i)
-        length += m_succeedingMarkup[i].length();
-
     Vector<UChar> result;
-    result.reserveInitialCapacity(length);
+    result.reserveInitialCapacity(totalLength(m_reversedPrecedingMarkup) + length());
 
-    for (size_t i = preCount; i > 0; --i)
+    for (size_t i = m_reversedPrecedingMarkup.size(); i > 0; --i)
         append(result, m_reversedPrecedingMarkup[i - 1]);
 
-    for (size_t i = 0; i < postCount; ++i)
-        append(result, m_succeedingMarkup[i]);
+    concatenateMarkup(result);
 
     return String::adopt(result);
 }
@@ -342,7 +333,7 @@ void StyledMarkupAccumulator::removeExteriorStyles(CSSMutableStyleDeclaration* s
     style->removeProperty(CSSPropertyFloat);
 }
 
-static Node* serializeNodes(StyledMarkupAccumulator& accumulator, Node* startNode, Node* pastEnd)
+Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
 {
     Vector<Node*> ancestorsToClose;
     Node* next;
@@ -370,11 +361,11 @@ static Node* serializeNodes(StyledMarkupAccumulator& accumulator, Node* startNod
                 next = pastEnd;
         } else {
             // Add the node to the markup if we're not skipping the descendants
-            accumulator.appendStartTag(n);
+            appendStartTag(n);
 
             // If node has no children, close the tag now.
             if (!n->childNodeCount()) {
-                accumulator.appendEndTag(n);
+                appendEndTag(n);
                 lastClosed = n;
             } else {
                 openedTag = true;
@@ -391,7 +382,7 @@ static Node* serializeNodes(StyledMarkupAccumulator& accumulator, Node* startNod
                 if (next != pastEnd && next->isDescendantOf(ancestor))
                     break;
                 // Not at the end of the range, close ancestors up to sibling of next node.
-                accumulator.appendEndTag(ancestor);
+                appendEndTag(ancestor);
                 lastClosed = ancestor;
                 ancestorsToClose.removeLast();
             }
@@ -406,7 +397,7 @@ static Node* serializeNodes(StyledMarkupAccumulator& accumulator, Node* startNod
                         continue;
                     // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
                     ASSERT(startNode->isDescendantOf(parent));
-                    accumulator.wrapWithNode(parent);
+                    wrapWithNode(parent);
                     lastClosed = parent;
                 }
             }
@@ -630,7 +621,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
     Node* specialCommonAncestor = highestAncestorToWrapMarkup(updatedRange.get(), fullySelectedRoot, shouldAnnotate);
 
-    Node* lastClosed = serializeNodes(accumulator, startNode, pastEnd);
+    Node* lastClosed = accumulator.serializeNodes(startNode, pastEnd);
 
     if (specialCommonAncestor && lastClosed) {
         // Also include all of the ancestors of lastClosed up to this special ancestor.
@@ -726,27 +717,6 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const 
     return fragment.release();
 }
 
-static void serializeNodesWithNamespaces(MarkupAccumulator& accumulator, Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly, const Namespaces* namespaces)
-{
-    if (node == nodeToSkip)
-        return;
-
-    Namespaces namespaceHash;
-    if (namespaces)
-        namespaceHash = *namespaces;
-
-    if (!childrenOnly)
-        accumulator.appendStartTag(node, &namespaceHash);
-
-    if (!(node->document()->isHTMLDocument() && elementCannotHaveEndTag(node))) {
-        for (Node* current = node->firstChild(); current; current = current->nextSibling())
-            serializeNodesWithNamespaces(accumulator, current, nodeToSkip, IncludeNode, &namespaceHash);
-    }
-
-    if (!childrenOnly)
-        accumulator.appendEndTag(node);
-}
-
 String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs)
 {
     if (!node)
@@ -760,8 +730,7 @@ String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>*
     }
 
     MarkupAccumulator accumulator(nodes, shouldResolveURLs);
-    serializeNodesWithNamespaces(accumulator, const_cast<Node*>(node), deleteButtonContainerElement, childrenOnly, 0);
-    return accumulator.takeResults();
+    return accumulator.serializeNodes(const_cast<Node*>(node), deleteButtonContainerElement, childrenOnly);
 }
 
 static void fillContainerFromString(ContainerNode* paragraph, const String& string)

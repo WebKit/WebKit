@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,17 +11,17 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -83,6 +84,36 @@ MarkupAccumulator::~MarkupAccumulator()
 {
 }
 
+String MarkupAccumulator::serializeNodes(Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly)
+{
+    Vector<UChar> out;
+    serializeNodesWithNamespaces(node, nodeToSkip, childrenOnly, 0);
+    out.reserveInitialCapacity(length());
+    concatenateMarkup(out);
+    return String::adopt(out);
+}
+
+void MarkupAccumulator::serializeNodesWithNamespaces(Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly, const Namespaces* namespaces)
+{
+    if (node == nodeToSkip)
+        return;
+
+    Namespaces namespaceHash;
+    if (namespaces)
+        namespaceHash = *namespaces;
+
+    if (!childrenOnly)
+        appendStartTag(node, &namespaceHash);
+
+    if (!(node->document()->isHTMLDocument() && elementCannotHaveEndTag(node))) {
+        for (Node* current = node->firstChild(); current; current = current->nextSibling())
+            serializeNodesWithNamespaces(current, nodeToSkip, IncludeNode, &namespaceHash);
+    }
+
+    if (!childrenOnly)
+        appendEndTag(node);
+}
+
 void MarkupAccumulator::appendString(const String& string)
 {
     m_succeedingMarkup.append(string);
@@ -92,7 +123,7 @@ void MarkupAccumulator::appendStartTag(Node* node, Namespaces* namespaces)
 {
     Vector<UChar> markup;
     appendStartMarkup(markup, node, namespaces);
-    m_succeedingMarkup.append(String::adopt(markup));
+    appendString(String::adopt(markup));
     if (m_nodes)
         m_nodes->append(node);
 }
@@ -101,27 +132,24 @@ void MarkupAccumulator::appendEndTag(Node* node)
 {
     Vector<UChar> markup;
     appendEndMarkup(markup, node);
-    m_succeedingMarkup.append(String::adopt(markup));
+    appendString(String::adopt(markup));
+}
+
+size_t MarkupAccumulator::totalLength(const Vector<String>& strings)
+{
+    size_t length = 0;
+    for (size_t i = 0; i < strings.size(); ++i)
+        length += strings[i].length();
+    return length;
 }
 
 // FIXME: This is a very inefficient way of accumulating the markup.
 // We're converting results of appendStartMarkup and appendEndMarkup from Vector<UChar> to String
 // and then back to Vector<UChar> and again to String here.
-String MarkupAccumulator::takeResults()
+void MarkupAccumulator::concatenateMarkup(Vector<UChar>& out)
 {
-    size_t length = 0;
-
-    size_t postCount = m_succeedingMarkup.size();
-    for (size_t i = 0; i < postCount; ++i)
-        length += m_succeedingMarkup[i].length();
-
-    Vector<UChar> result;
-    result.reserveInitialCapacity(length);
-
-    for (size_t i = 0; i < postCount; ++i)
-        append(result, m_succeedingMarkup[i]);
-
-    return String::adopt(result);
+    for (size_t i = 0; i < m_succeedingMarkup.size(); ++i)
+        append(out, m_succeedingMarkup[i]);
 }
 
 void MarkupAccumulator::appendAttributeValue(Vector<UChar>& result, const String& attribute, bool documentIsHTML)

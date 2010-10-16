@@ -69,12 +69,15 @@ public:
     MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, const Range* range = 0);
     virtual ~MarkupAccumulator();
 
+    String serializeNodes(Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly);
+
+protected:
     void appendString(const String&);
     void appendStartTag(Node*, Namespaces* = 0);
     void appendEndTag(Node*);
-    virtual String takeResults();
-
-protected:
+    static size_t totalLength(const Vector<String>&);
+    size_t length() const { return totalLength(m_succeedingMarkup); }
+    void concatenateMarkup(Vector<UChar>& out);
     void appendAttributeValue(Vector<UChar>& result, const String& attribute, bool documentIsHTML);
     void appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString);
     void appendNodeValue(Vector<UChar>& out, const Node*, const Range*, EntityMask);
@@ -99,9 +102,11 @@ protected:
 
     Vector<Node*>* const m_nodes;
     const Range* const m_range;
-    Vector<String> m_succeedingMarkup;
 
 private:
+    void serializeNodesWithNamespaces(Node*, Node* nodeToSkip, EChildrenOnly, const Namespaces*);
+
+    Vector<String> m_succeedingMarkup;
     const bool m_shouldResolveURLs;
 };
 
