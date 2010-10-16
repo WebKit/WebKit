@@ -31,6 +31,7 @@
 #include "TextCodecLatin1.h"
 #include "TextCodecUserDefined.h"
 #include "TextCodecUTF16.h"
+#include "TextEncoding.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashFunctions.h>
@@ -50,6 +51,9 @@
 #endif
 #if USE(GLIB_UNICODE)
 #include "gtk/TextCodecGtk.h"
+#endif
+#if USE(BREWMP_UNICODE)
+#include "brew/TextCodecBrew.h"
 #endif
 #if OS(WINCE) && !PLATFORM(QT)
 #include "TextCodecWinCE.h"
@@ -233,6 +237,11 @@ static void buildBaseTextCodecMaps()
 #if USE(GLIB_UNICODE)
     TextCodecGtk::registerBaseEncodingNames(addToTextEncodingNameMap);
     TextCodecGtk::registerBaseCodecs(addToTextCodecMap);
+#endif
+
+#if USE(BREWMP_UNICODE)
+    TextCodecBrew::registerBaseEncodingNames(addToTextEncodingNameMap);
+    TextCodecBrew::registerBaseCodecs(addToTextCodecMap);
 #endif
 
 #if OS(WINCE) && !PLATFORM(QT)
