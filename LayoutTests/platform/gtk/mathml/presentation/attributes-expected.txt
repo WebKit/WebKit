@@ -6,12 +6,12 @@ layer at (0,0) size 800x253
       RenderBlock {p} at (0,0) size 784x39
         RenderText {#text} at (0,11) size 407x19
           text run at (0,11) width 407: "following elements should appear in blue on an orange background: "
-        RenderBlock {math} at (407,0) size 55x39 [bgcolor=#FFA500]
-          RenderBlock {mo} at (1,0) size 11x28 [color=#0000FF]
+        RenderBlock {math} at (407,0) size 56x39 [bgcolor=#FFA500]
+          RenderBlock {mo} at (1,0) size 12x28 [color=#0000FF]
             RenderBlock {mo} at (0,0) size 11x28
               RenderText {mo} at (0,11) size 11x19
                 text run at (0,11) width 11: "\x{2211}"
-          RenderBlock {mfrac} at (12,5) size 14x34 [color=#0000FF]
+          RenderBlock {mfrac} at (13,5) size 14x34 [color=#0000FF]
             RenderBlock {mfrac} at (0,0) size 14x16
               RenderInline {mi} at (0,0) size 8x19
                 RenderText {#text} at (3,-1) size 8x19
@@ -21,15 +21,15 @@ layer at (0,0) size 800x253
                 RenderText {#text} at (3,1) size 7x19
                   text run at (3,1) width 7: "y"
           RenderInline {mn} at (0,0) size 8x19 [color=#0000FF]
-            RenderText {#text} at (26,11) size 8x19
-              text run at (26,11) width 8: "1"
-          RenderBlock {msqrt} at (34,9) size 20x19 [color=#0000FF]
+            RenderText {#text} at (27,11) size 8x19
+              text run at (27,11) width 8: "1"
+          RenderBlock {msqrt} at (35,9) size 20x19 [color=#0000FF]
             RenderInline {mn} at (0,0) size 8x19
               RenderText {#text} at (12,2) size 8x19
                 text run at (12,2) width 8: "2"
-        RenderText {#text} at (462,11) size 4x19
-          text run at (462,11) width 4: " "
-        RenderBlock {math} at (466,5) size 16x34 [bgcolor=#FFA500]
+        RenderText {#text} at (463,11) size 4x19
+          text run at (463,11) width 4: " "
+        RenderBlock {math} at (467,5) size 16x34 [bgcolor=#FFA500]
           RenderBlock {mfrac} at (1,0) size 14x34 [color=#0000FF]
             RenderBlock {mfrac} at (0,0) size 14x16
               RenderInline {mi} at (0,0) size 8x19

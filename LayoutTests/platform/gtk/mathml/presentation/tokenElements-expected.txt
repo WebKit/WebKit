@@ -6,20 +6,20 @@ layer at (0,0) size 800x88
       RenderBlock {p} at (0,0) size 784x21
         RenderText {#text} at (0,2) size 272x19
           text run at (0,2) width 272: "Following elements should use a regular font: "
-        RenderBlock {math} at (272,0) size 55x19
+        RenderBlock {math} at (272,0) size 56x19
           RenderInline {mn} at (0,0) size 8x19
             RenderText {#text} at (1,2) size 8x19
               text run at (1,2) width 8: "1"
-          RenderBlock {mo} at (9,0) size 11x19
+          RenderBlock {mo} at (9,0) size 12x19
             RenderBlock {mo} at (0,0) size 11x19
               RenderText {mo} at (0,2) size 11x19
                 text run at (0,2) width 11: "\x{2207}"
           RenderInline {mtext} at (0,0) size 22x19
-            RenderText {#text} at (20,2) size 22x19
-              text run at (20,2) width 22: "text"
+            RenderText {#text} at (21,2) size 22x19
+              text run at (21,2) width 22: "text"
           RenderInline {ms} at (0,0) size 12x19
-            RenderText {#text} at (42,2) size 12x19
-              text run at (42,2) width 12: "&"
+            RenderText {#text} at (43,2) size 12x19
+              text run at (43,2) width 12: "&"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {p} at (0,37) size 784x19
         RenderText {#text} at (0,0) size 223x19
