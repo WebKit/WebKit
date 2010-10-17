@@ -160,11 +160,17 @@ static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document*
         return 0;
 
     id = SVGURIReference::getTarget(paint->uri());
-    if (RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(document, id))
-        return container;
+    RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(document, id);
+    if (!container) {
+        hasPendingResource = true;
+        return 0;
+    }
 
-    hasPendingResource = true;
-    return 0;
+    RenderSVGResourceType resourceType = container->resourceType();
+    if (resourceType != PatternResourceType && resourceType != LinearGradientResourceType && resourceType != RadialGradientResourceType)
+        return 0;
+
+    return container;
 }
 
 static inline void registerPendingResource(SVGDocumentExtensions* extensions, const AtomicString& id, SVGElement* element)
@@ -445,6 +451,8 @@ bool SVGResources::setClipper(RenderSVGResourceClipper* clipper)
     if (!clipper)
         return false;
 
+    ASSERT(clipper->resourceType() == ClipperResourceType);
+
     if (!m_clipperFilterMaskerData)
         m_clipperFilterMaskerData = ClipperFilterMaskerData::create();
 
@@ -464,6 +472,8 @@ bool SVGResources::setFilter(RenderSVGResourceFilter* filter)
 {
     if (!filter)
         return false;
+
+    ASSERT(filter->resourceType() == FilterResourceType);
 
     if (!m_clipperFilterMaskerData)
         m_clipperFilterMaskerData = ClipperFilterMaskerData::create();
@@ -485,6 +495,8 @@ bool SVGResources::setMarkerStart(RenderSVGResourceMarker* markerStart)
     if (!markerStart)
         return false;
 
+    ASSERT(markerStart->resourceType() == MarkerResourceType);
+
     if (!m_markerData)
         m_markerData = MarkerData::create();
 
@@ -503,6 +515,8 @@ bool SVGResources::setMarkerMid(RenderSVGResourceMarker* markerMid)
 {
     if (!markerMid)
         return false;
+
+    ASSERT(markerMid->resourceType() == MarkerResourceType);
 
     if (!m_markerData)
         m_markerData = MarkerData::create();
@@ -523,6 +537,8 @@ bool SVGResources::setMarkerEnd(RenderSVGResourceMarker* markerEnd)
     if (!markerEnd)
         return false;
 
+    ASSERT(markerEnd->resourceType() == MarkerResourceType);
+
     if (!m_markerData)
         m_markerData = MarkerData::create();
 
@@ -541,6 +557,8 @@ bool SVGResources::setMasker(RenderSVGResourceMasker* masker)
 {
     if (!masker)
         return false;
+
+    ASSERT(masker->resourceType() == MaskerResourceType);
 
     if (!m_clipperFilterMaskerData)
         m_clipperFilterMaskerData = ClipperFilterMaskerData::create();
@@ -561,6 +579,10 @@ bool SVGResources::setFill(RenderSVGResourceContainer* fill)
     if (!fill)
         return false;
 
+    ASSERT(fill->resourceType() == PatternResourceType
+           || fill->resourceType() == LinearGradientResourceType
+           || fill->resourceType() == RadialGradientResourceType);
+
     if (!m_fillStrokeData)
         m_fillStrokeData = FillStrokeData::create();
 
@@ -579,6 +601,10 @@ bool SVGResources::setStroke(RenderSVGResourceContainer* stroke)
 {
     if (!stroke)
         return false;
+
+    ASSERT(stroke->resourceType() == PatternResourceType
+           || stroke->resourceType() == LinearGradientResourceType
+           || stroke->resourceType() == RadialGradientResourceType);
 
     if (!m_fillStrokeData)
         m_fillStrokeData = FillStrokeData::create();
