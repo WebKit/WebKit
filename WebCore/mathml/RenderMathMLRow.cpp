@@ -150,7 +150,7 @@ int RenderMathMLRow::baselinePosition(bool firstLine, bool isRootLineBox) const
     if (firstChild() && firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* block = toRenderMathMLBlock(firstChild());
         if (block->isRenderMathMLOperator())
-            return block->baselinePosition(firstLine, isRootLineBox);
+            return block->y() + block->baselinePosition(firstLine, isRootLineBox);
     }
     
     return RenderBlock::baselinePosition(firstLine, isRootLineBox);

@@ -51,7 +51,6 @@ protected:
 private:
     int m_stretchHeight;
     bool m_isStacked;
-    bool m_isCentered;
     UChar m_operator;
 };
 
