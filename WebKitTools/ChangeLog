@@ -1,3 +1,18 @@
+2010-10-14  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson and Xan Lopez.
+
+        [Gtk]: DRT does not support frame flattening testing
+        https://bugs.webkit.org/show_bug.cgi?id=38650
+
+        Implement DRT's support for toggling on/off frame flattening
+        support.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setFrameFlatteningEnabled):
+
 2010-10-15  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Siedel.

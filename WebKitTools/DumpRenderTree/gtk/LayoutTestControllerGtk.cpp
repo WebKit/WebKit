@@ -423,7 +423,11 @@ void LayoutTestController::setXSSAuditorEnabled(bool flag)
 
 void LayoutTestController::setFrameFlatteningEnabled(bool flag)
 {
-    // FIXME: implement
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
+    g_object_set(G_OBJECT(settings), "enable-frame-flattening", flag, NULL);
 }
 
 void LayoutTestController::setSpatialNavigationEnabled(bool flag)
