@@ -1,1 +1,0 @@
-FAIL: read 90010000px back as 9.001e+007px, read again as 0px
