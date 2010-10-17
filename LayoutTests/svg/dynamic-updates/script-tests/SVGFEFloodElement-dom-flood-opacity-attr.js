@@ -34,11 +34,11 @@ rectElement.setAttribute("stroke-width", "8");
 rectElement.setAttribute("filter", "url(#myFilter)");
 rootSVGElement.appendChild(rectElement);
 
-shouldBeEqualToString("floodElement.getAttribute('flood-opacity')", ".1");
+shouldBeEqualToString("parseFloat(floodElement.getAttribute('flood-opacity')).toFixed(1)", "0.1");
 
 function executeTest() {
     floodElement.setAttribute("flood-opacity", ".8");
-    shouldBeEqualToString("floodElement.getAttribute('flood-opacity')", ".8");
+    shouldBeEqualToString("parseFloat(floodElement.getAttribute('flood-opacity')).toFixed(1)", "0.8");
 
     completeTest();
 }

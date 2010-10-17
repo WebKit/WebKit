@@ -35,6 +35,7 @@
 #include "Rect.h"
 #include "RenderStyle.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/DecimalNumber.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -613,6 +614,13 @@ int CSSPrimitiveValue::getIdent()
     return m_value.ident;
 }
 
+static String formatNumber(double number)
+{
+    NumberToStringBuffer buffer;
+    unsigned length = DecimalNumber(number).toStringDecimal(buffer);
+    return String(buffer, length);
+}
+
 String CSSPrimitiveValue::cssText() const
 {
     // FIXME: return the original value instead of a generated one (e.g. color
@@ -630,61 +638,61 @@ String CSSPrimitiveValue::cssText() const
             break;
         case CSS_NUMBER:
         case CSS_PARSER_INTEGER:
-            text = String::number(m_value.num);
+            text = formatNumber(m_value.num);
             break;
         case CSS_PERCENTAGE:
-            text = String::format("%.6lg%%", m_value.num);
+            text = formatNumber(m_value.num) + "%";
             break;
         case CSS_EMS:
-            text = String::format("%.6lgem", m_value.num);
+            text = formatNumber(m_value.num) + "em";
             break;
         case CSS_EXS:
-            text = String::format("%.6lgex", m_value.num);
+            text = formatNumber(m_value.num) + "ex";
             break;
         case CSS_REMS:
-            text = String::format("%.6lgrem", m_value.num);
+            text = formatNumber(m_value.num) + "rem";
             break;
         case CSS_PX:
-            text = String::format("%.6lgpx", m_value.num);
+            text = formatNumber(m_value.num) + "px";
             break;
         case CSS_CM:
-            text = String::format("%.6lgcm", m_value.num);
+            text = formatNumber(m_value.num) + "cm";
             break;
         case CSS_MM:
-            text = String::format("%.6lgmm", m_value.num);
+            text = formatNumber(m_value.num) + "mm";
             break;
         case CSS_IN:
-            text = String::format("%.6lgin", m_value.num);
+            text = formatNumber(m_value.num) + "in";
             break;
         case CSS_PT:
-            text = String::format("%.6lgpt", m_value.num);
+            text = formatNumber(m_value.num) + "pt";
             break;
         case CSS_PC:
-            text = String::format("%.6lgpc", m_value.num);
+            text = formatNumber(m_value.num) + "pc";
             break;
         case CSS_DEG:
-            text = String::format("%.6lgdeg", m_value.num);
+            text = formatNumber(m_value.num) + "deg";
             break;
         case CSS_RAD:
-            text = String::format("%.6lgrad", m_value.num);
+            text = formatNumber(m_value.num) + "rad";
             break;
         case CSS_GRAD:
-            text = String::format("%.6lggrad", m_value.num);
+            text = formatNumber(m_value.num) + "grad";
             break;
         case CSS_MS:
-            text = String::format("%.6lgms", m_value.num);
+            text = formatNumber(m_value.num) + "ms";
             break;
         case CSS_S:
-            text = String::format("%.6lgs", m_value.num);
+            text = formatNumber(m_value.num) + "s";
             break;
         case CSS_HZ:
-            text = String::format("%.6lghz", m_value.num);
+            text = formatNumber(m_value.num) + "hz";
             break;
         case CSS_KHZ:
-            text = String::format("%.6lgkhz", m_value.num);
+            text = formatNumber(m_value.num) + "khz";
             break;
         case CSS_TURN:
-            text = String::format("%.6lgturn", m_value.num);
+            text = formatNumber(m_value.num) + "turn";
             break;
         case CSS_DIMENSION:
             // FIXME

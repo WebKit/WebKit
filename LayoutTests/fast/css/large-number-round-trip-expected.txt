@@ -1,1 +1,1 @@
-FAIL: read 90010000px back as 9.001e+07px, read again as 0px
+PASS: read 90010000px back as 90010000px, read again as 90010000px

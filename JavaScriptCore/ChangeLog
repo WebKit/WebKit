@@ -1,3 +1,15 @@
+2010-10-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Very large and small numbers fail to round-trip through CSS
+        https://bugs.webkit.org/show_bug.cgi?id=20674
+        
+        New exports required to use DecimalNumber in WebCore.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2010-10-16  Kyusun Kim  <maniagoon@company100.net>
 
         Reviewed by Alexey Proskuryakov.

@@ -3,7 +3,7 @@
 
 function floatingPointEqual(a, b)
 {
-  const kEpsilon = 1e-6;
+  const kEpsilon = 1e-4;
   return (Math.abs(a - b) < kEpsilon);
 }
 
