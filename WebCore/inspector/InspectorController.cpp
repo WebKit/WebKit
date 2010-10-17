@@ -93,6 +93,7 @@
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
+#include "UserGestureIndicator.h"
 #include "WindowFeatures.h"
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/CurrentTime.h>
@@ -1988,9 +1989,10 @@ void InspectorController::openInInspectedWindow(const String& url)
     if (!newFrame)
         return;
 
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     newFrame->loader()->setOpener(mainFrame);
     newFrame->page()->setOpenedByDOM();
-    newFrame->loader()->changeLocation(newFrame->loader()->completeURL(url), "", false, false, true);
+    newFrame->loader()->changeLocation(newFrame->loader()->completeURL(url), "", false, false);
 }
 
 void InspectorController::count(const String& title, unsigned lineNumber, const String& sourceID)

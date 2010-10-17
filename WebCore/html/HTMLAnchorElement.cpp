@@ -38,6 +38,7 @@
 #include "RenderImage.h"
 #include "ResourceHandle.h"
 #include "Settings.h"
+#include "UserGestureIndicator.h"
 
 namespace WebCore {
 
@@ -550,7 +551,9 @@ void handleLinkClick(Event* event, Document* document, const String& url, const 
     Frame* frame = document->frame();
     if (!frame)
         return;
-    frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, true, hideReferrer ? NoReferrer : SendReferrer);
+    // FIXME: This seems wrong.  Why are we manufactuing a user gesture?
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+    frame->loader()->urlSelected(document->completeURL(url), target, event, false, false, hideReferrer ? NoReferrer : SendReferrer);
 }
 
 }
