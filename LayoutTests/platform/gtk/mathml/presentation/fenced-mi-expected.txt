@@ -4,8 +4,8 @@ layer at (0,0) size 800x94
   RenderBlock {html} at (0,0) size 800x94
     RenderBody {body} at (8,16) size 784x62
       RenderBlock {p} at (0,0) size 784x23
-        RenderBlock {math} at (0,0) size 52x22
-          RenderBlock {mfenced} at (1,0) size 50x22
+        RenderBlock {math} at (0,0) size 53x22
+          RenderBlock {mfenced} at (1,0) size 51x22
             RenderBlock {mfenced} at (1,0) size 8x22
               RenderBlock {mfenced} at (0,0) size 7x22
                 RenderText {mfenced} at (0,-1) size 7x25
@@ -13,22 +13,22 @@ layer at (0,0) size 800x94
             RenderInline {mi} at (0,0) size 8x19
               RenderText {#text} at (9,4) size 8x19
                 text run at (9,4) width 8: "x"
-            RenderBlock {mfenced} at (17,2) size 5x19
-              RenderBlock {mfenced} at (0,0) size 4x19
-                RenderText {mfenced} at (0,2) size 4x19
-                  text run at (0,2) width 4: ","
+            RenderBlock {mfenced} at (17,5) size 5x16
+              RenderBlock {mfenced} at (0,0) size 4x16
+                RenderText {mfenced} at (0,-1) size 4x19
+                  text run at (0,-1) width 4: ","
             RenderInline {mi} at (0,0) size 7x19
               RenderText {#text} at (22,4) size 7x19
                 text run at (22,4) width 7: "y"
-            RenderBlock {mfenced} at (29,2) size 5x19
-              RenderBlock {mfenced} at (0,0) size 4x19
-                RenderText {mfenced} at (0,2) size 4x19
-                  text run at (0,2) width 4: ","
+            RenderBlock {mfenced} at (29,5) size 5x16
+              RenderBlock {mfenced} at (0,0) size 4x16
+                RenderText {mfenced} at (0,-1) size 4x19
+                  text run at (0,-1) width 4: ","
             RenderInline {mi} at (0,0) size 6x19
               RenderText {#text} at (34,4) size 6x19
                 text run at (34,4) width 6: "z"
-            RenderBlock {mfenced} at (40,0) size 8x22
-              RenderBlock {mfenced} at (0,0) size 7x22
+            RenderBlock {mfenced} at (40,0) size 9x22
+              RenderBlock {mfenced} at (1,0) size 7x22
                 RenderText {mfenced} at (0,-1) size 7x25
                   text run at (0,-1) width 7: ")"
         RenderText {#text} at (0,0) size 0x0
@@ -41,17 +41,17 @@ layer at (0,0) size 800x94
           RenderInline {mi} at (0,0) size 8x19
             RenderText {#text} at (9,4) size 8x19
               text run at (9,4) width 8: "x"
-          RenderBlock {mo} at (17,2) size 5x19
-            RenderBlock {mo} at (0,0) size 4x19
-              RenderText {mo} at (0,2) size 4x19
-                text run at (0,2) width 4: ","
+          RenderBlock {mo} at (17,5) size 5x16
+            RenderBlock {mo} at (0,0) size 4x16
+              RenderText {mo} at (0,-1) size 4x19
+                text run at (0,-1) width 4: ","
           RenderInline {mi} at (0,0) size 7x19
             RenderText {#text} at (22,4) size 7x19
               text run at (22,4) width 7: "y"
-          RenderBlock {mo} at (29,2) size 5x19
-            RenderBlock {mo} at (0,0) size 4x19
-              RenderText {mo} at (0,2) size 4x19
-                text run at (0,2) width 4: ","
+          RenderBlock {mo} at (29,5) size 5x16
+            RenderBlock {mo} at (0,0) size 4x16
+              RenderText {mo} at (0,-1) size 4x19
+                text run at (0,-1) width 4: ","
           RenderInline {mi} at (0,0) size 6x19
             RenderText {#text} at (34,4) size 6x19
               text run at (34,4) width 6: "z"

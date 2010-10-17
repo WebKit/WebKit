@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x274
-  RenderBlock {html} at (0,0) size 800x274
-    RenderBody {body} at (8,16) size 784x242
+layer at (0,0) size 800x272
+  RenderBlock {html} at (0,0) size 800x272
+    RenderBody {body} at (8,16) size 784x240
       RenderBlock {p} at (0,0) size 784x43
         RenderText {#text} at (0,15) size 88x19
           text run at (0,15) width 88: "under & over: "
@@ -39,73 +39,73 @@ layer at (0,0) size 800x274
                 RenderText {#text} at (1,3) size 7x14
                   text run at (1,3) width 7: "X"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,118) size 784x54
-        RenderText {#text} at (0,22) size 88x19
-          text run at (0,22) width 88: "under & over: "
-        RenderBlock {math} at (88,0) size 20x54
-          RenderBlock {munderover} at (1,0) size 18x54
+      RenderBlock {p} at (0,118) size 784x53
+        RenderText {#text} at (0,21) size 88x19
+          text run at (0,21) width 88: "under & over: "
+        RenderBlock {math} at (88,0) size 20x53
+          RenderBlock {munderover} at (1,0) size 18x53
             RenderBlock {munderover} at (0,0) size 18x16
-              RenderBlock {mrow} at (0,2) size 18x14
+              RenderBlock {mrow} at (0,4) size 18x12
                 RenderInline {mi} at (0,0) size 5x14
-                  RenderText {#text} at (0,1) size 5x14
-                    text run at (0,1) width 5: "x"
-                RenderBlock {mo} at (5,0) size 8x14
-                  RenderBlock {mo} at (0,0) size 7x14
-                    RenderText {mo} at (0,1) size 7x14
-                      text run at (0,1) width 7: "+"
+                  RenderText {#text} at (0,-1) size 5x14
+                    text run at (0,-1) width 5: "x"
+                RenderBlock {mo} at (5,0) size 8x12
+                  RenderBlock {mo} at (0,0) size 7x12
+                    RenderText {mo} at (0,-1) size 7x14
+                      text run at (0,-1) width 7: "+"
                 RenderInline {mi} at (0,0) size 5x14
-                  RenderText {#text} at (13,1) size 5x14
-                    text run at (13,1) width 5: "y"
-            RenderBlock {munderover} at (0,14) size 18x24
+                  RenderText {#text} at (13,-1) size 5x14
+                    text run at (13,-1) width 5: "y"
+            RenderBlock {munderover} at (0,13) size 18x24
               RenderBlock {mo} at (0,0) size 17x24
                 RenderBlock {mo} at (0,0) size 17x24
                   RenderText {mo} at (0,-2) size 17x28
                     text run at (0,-2) width 17: "\x{2211}"
-            RenderBlock {munderover} at (0,38) size 18x16
-              RenderBlock {mrow} at (0,2) size 17x14
+            RenderBlock {munderover} at (0,37) size 18x16
+              RenderBlock {mrow} at (0,4) size 17x12
                 RenderInline {mi} at (0,0) size 3x14
-                  RenderText {#text} at (0,1) size 3x14
-                    text run at (0,1) width 3: "i"
-                RenderBlock {mo} at (3,0) size 8x14
-                  RenderBlock {mo} at (0,0) size 7x14
-                    RenderText {mo} at (0,1) size 7x14
-                      text run at (0,1) width 7: "="
+                  RenderText {#text} at (0,-1) size 3x14
+                    text run at (0,-1) width 3: "i"
+                RenderBlock {mo} at (3,0) size 8x12
+                  RenderBlock {mo} at (0,0) size 7x12
+                    RenderText {mo} at (0,-1) size 7x14
+                      text run at (0,-1) width 7: "="
                 RenderInline {mi} at (0,0) size 6x14
-                  RenderText {#text} at (11,1) size 6x14
-                    text run at (11,1) width 6: "0"
+                  RenderText {#text} at (11,-1) size 6x14
+                    text run at (11,-1) width 6: "0"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {p} at (0,188) size 784x54
-        RenderText {#text} at (0,22) size 88x19
-          text run at (0,22) width 88: "under & over: "
-        RenderBlock {math} at (88,0) size 22x54
-          RenderBlock {munderover} at (1,0) size 20x54
+      RenderBlock {p} at (0,187) size 784x53
+        RenderText {#text} at (0,21) size 88x19
+          text run at (0,21) width 88: "under & over: "
+        RenderBlock {math} at (88,0) size 22x53
+          RenderBlock {munderover} at (1,0) size 20x53
             RenderBlock {munderover} at (0,0) size 20x16
-              RenderBlock {mrow} at (0,2) size 20x14
+              RenderBlock {mrow} at (0,4) size 20x12
                 RenderInline {mi} at (0,0) size 7x14
-                  RenderText {#text} at (0,1) size 7x14
-                    text run at (0,1) width 7: "X"
-                RenderBlock {mo} at (7,0) size 8x14
-                  RenderBlock {mo} at (0,0) size 7x14
-                    RenderText {mo} at (0,1) size 7x14
-                      text run at (0,1) width 7: "+"
+                  RenderText {#text} at (0,-1) size 7x14
+                    text run at (0,-1) width 7: "X"
+                RenderBlock {mo} at (7,0) size 8x12
+                  RenderBlock {mo} at (0,0) size 7x12
+                    RenderText {mo} at (0,-1) size 7x14
+                      text run at (0,-1) width 7: "+"
                 RenderInline {mi} at (0,0) size 5x14
-                  RenderText {#text} at (15,1) size 5x14
-                    text run at (15,1) width 5: "y"
-            RenderBlock {munderover} at (0,14) size 20x24
+                  RenderText {#text} at (15,-1) size 5x14
+                    text run at (15,-1) width 5: "y"
+            RenderBlock {munderover} at (0,13) size 20x24
               RenderBlock {mo} at (0,0) size 17x24
                 RenderBlock {mo} at (0,0) size 17x24
                   RenderText {mo} at (0,-2) size 17x28
                     text run at (0,-2) width 17: "\x{2211}"
-            RenderBlock {munderover} at (0,38) size 20x16
-              RenderBlock {mrow} at (1,2) size 18x14
+            RenderBlock {munderover} at (0,37) size 20x16
+              RenderBlock {mrow} at (1,4) size 18x12
                 RenderInline {mi} at (0,0) size 4x14
-                  RenderText {#text} at (0,1) size 4x14
-                    text run at (0,1) width 4: "I"
-                RenderBlock {mo} at (4,0) size 8x14
-                  RenderBlock {mo} at (0,0) size 7x14
-                    RenderText {mo} at (0,1) size 7x14
-                      text run at (0,1) width 7: "="
+                  RenderText {#text} at (0,-1) size 4x14
+                    text run at (0,-1) width 4: "I"
+                RenderBlock {mo} at (4,0) size 8x12
+                  RenderBlock {mo} at (0,0) size 7x12
+                    RenderText {mo} at (0,-1) size 7x14
+                      text run at (0,-1) width 7: "="
                 RenderInline {mi} at (0,0) size 6x14
-                  RenderText {#text} at (12,1) size 6x14
-                    text run at (12,1) width 6: "0"
+                  RenderText {#text} at (12,-1) size 6x14
+                    text run at (12,-1) width 6: "0"
         RenderText {#text} at (0,0) size 0x0
