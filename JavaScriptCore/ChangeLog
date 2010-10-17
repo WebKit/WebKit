@@ -1,5 +1,13 @@
 2010-10-17  Simon Fraser  <simon.fraser@apple.com>
 
+        First part of fix for Windows build failure. Will wait for the
+        next set of link errors to determine the mangled forms for dtoaRoundSF
+        and dtoaRoundDP.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
+2010-10-17  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Nikolas Zimmermann.
 
         Very large and small numbers fail to round-trip through CSS
