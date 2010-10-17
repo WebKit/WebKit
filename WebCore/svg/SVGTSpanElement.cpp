@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2010 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,7 +45,10 @@ bool SVGTSpanElement::childShouldCreateRenderer(Node* child) const
 #if ENABLE(SVG_FONTS)
         || child->hasTagName(SVGNames::altGlyphTag)
 #endif
-        || child->hasTagName(SVGNames::tspanTag) || child->hasTagName(SVGNames::trefTag) || child->hasTagName(SVGNames::textPathTag))
+        || child->hasTagName(SVGNames::tspanTag)
+        || child->hasTagName(SVGNames::trefTag)
+        || child->hasTagName(SVGNames::aTag)
+        || child->hasTagName(SVGNames::textPathTag))
         return true;
 
     return false;

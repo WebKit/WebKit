@@ -8,6 +8,7 @@
       Referenced character data
     </text>
     <path id="path1" d="M 100 150 L 150 140 L 200 150"/>
+    <path id="path2" d="M 100 250 L 150 240 L 200 250 L 250 240 L 300 250"/>
     <font id="Font1" horiz-adv-x="5">
       <font-face font-family="HappySad" font-weight="bold" font-style="normal" units-per-em="8" cap-height="8" x-height="4" ascent="8" descent="2" alphabetic="0" mathematical="4" ideographic="-2" hanging="8"/>
       <missing-glyph d="M1,3h2v2h-2z"/>
@@ -22,5 +23,7 @@
     <text><a xlink:href="http://www.webkit.org"><textPath xlink:href="#path1">textPath in link</textPath></a></text>
     <text x="100" y="200"><a xlink:href="http://www.webkit.org"><altGlyph xlink:href="#Asmile">A</altGlyph>ltGlyph content</a></text>
     <text x="100" y="250"><a xlink:href="http://www.webkit.org"><a>This should not be rendered</a></a></text>
+    <text x="100" y="300"><tspan><a xlink:href="http://www.webkit.org"><tspan>tspan in link in tspan</tspan></a></tspan></text>
+    <text><textPath><a xlink:href="http://www.webkit.org"><textPath xlink:href="#path2">textPath in link in textPath</textPath></a></textPath></text>
 </svg>
 
