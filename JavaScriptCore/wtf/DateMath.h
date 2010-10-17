@@ -95,6 +95,7 @@ using WTF::msPerDay;
 using WTF::msPerSecond;
 using WTF::msToYear;
 using WTF::secondsPerMinute;
+using WTF::parseDateFromNullTerminatedCharacters;
 
 #if USE(JSC)
 namespace JSC {

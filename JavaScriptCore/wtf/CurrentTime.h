@@ -61,6 +61,7 @@ namespace WTF {
 } // namespace WTF
 
 using WTF::currentTime;
+using WTF::currentTimeMS;
 using WTF::getLocalTime;
 
 #endif // CurrentTime_h
