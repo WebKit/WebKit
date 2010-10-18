@@ -493,9 +493,19 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
 
 void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 {
-    CurrentEvent currentEvent(mouseEvent);
+    bool handled = false;
+    
+    if (m_pageOverlay) {
+        // Let the page overlay handle the event.
+        handled = m_pageOverlay->mouseEvent(mouseEvent);
+    }
 
-    bool handled = handleMouseEvent(mouseEvent, m_page.get());
+    if (!handled) {
+        CurrentEvent currentEvent(mouseEvent);
+
+        handled = handleMouseEvent(mouseEvent, m_page.get());
+    }
+
     WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled), m_pageID);
 }
 

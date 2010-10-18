@@ -46,6 +46,7 @@ private:
 
     // PageOverlay.
     virtual void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect);
+    virtual bool mouseEvent(const WebMouseEvent&);
 
     FindController* m_findController;
 };

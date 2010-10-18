@@ -1,5 +1,20 @@
 2010-10-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John Sullivan.
+
+        WebKit2 should handle dismissing the Find overlay on mouse-down
+        https://bugs.webkit.org/show_bug.cgi?id=47854
+
+        * WebProcess/WebPage/FindPageOverlay.cpp:
+        (WebKit::FindPageOverlay::mouseEvent):
+        Dismiss the find UI on MouseDown.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEvent):
+        If there's a page overlay, let it have a go at the event.
+
+2010-10-18  Anders Carlsson  <andersca@apple.com>
+
         Fix clang build.
 
         * UIProcess/API/mac/FindIndicatorWindow.mm:
