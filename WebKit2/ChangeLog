@@ -1,5 +1,21 @@
 2010-10-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Don't try to change accelerated compositing mode if the web page is closed
+        https://bugs.webkit.org/show_bug.cgi?id=47852
+
+        changeAcceleratedCompositingMode ends up sending a sync message to the UI process which is unnecessary if
+        the UI process is being torn down.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+        (WebKit::WebPage::close):
+        * WebProcess/WebPage/WebPage.h:
+
+2010-10-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/8036034>

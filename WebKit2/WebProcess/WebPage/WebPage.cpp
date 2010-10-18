@@ -101,6 +101,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     : m_viewSize(parameters.viewSize)
     , m_drawingArea(DrawingArea::create(parameters.drawingAreaInfo.type, parameters.drawingAreaInfo.id, this))
     , m_isInRedo(false)
+    , m_isClosed(false)
 #if PLATFORM(MAC)
     , m_windowIsVisible(false)
 #elif PLATFORM(WIN)
@@ -227,6 +228,9 @@ void WebPage::clearMainFrameName()
 #if USE(ACCELERATED_COMPOSITING)
 void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
 {
+    if (m_isClosed)
+        return;
+
     bool compositing = layer;
     
     // Tell the UI process that accelerated compositing changed. It may respond by changing
@@ -260,6 +264,11 @@ void WebPage::exitAcceleratedCompositingMode()
 
 void WebPage::close()
 {
+    if (m_isClosed)
+        return;
+
+    m_isClosed = true;
+
     if (WebProcess::shared().injectedBundle())
         WebProcess::shared().injectedBundle()->willDestroyPage(this);
 
