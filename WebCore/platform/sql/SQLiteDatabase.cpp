@@ -101,6 +101,7 @@ void SQLiteDatabase::close()
 
 void SQLiteDatabase::interrupt()
 {
+#if !ENABLE(SINGLE_THREADED)
     m_interrupted = true;
     while (!m_lockingMutex.tryLock()) {
         MutexLocker locker(m_databaseClosingMutex);
@@ -111,6 +112,7 @@ void SQLiteDatabase::interrupt()
     }
 
     m_lockingMutex.unlock();
+#endif
 }
 
 bool SQLiteDatabase::isInterrupted()
