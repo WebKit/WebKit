@@ -54,6 +54,7 @@ namespace JSC {
     JSValue createNotAFunctionError(ExecState*, JSValue, unsigned bytecodeOffset, CodeBlock*);
     JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, unsigned bytecodeOffset, CodeBlock*);
     JSValue throwOutOfMemoryError(ExecState*);
+    JSObject* createErrorForInvalidGlobalAssignment(ExecState*, const UString&);
 
 } // namespace JSC
 

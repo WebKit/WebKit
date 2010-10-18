@@ -192,4 +192,9 @@ JSValue throwOutOfMemoryError(ExecState* exec)
     return throwError(exec, createError(exec, "Out of memory"));
 }
 
+JSObject* createErrorForInvalidGlobalAssignment(ExecState* exec, const UString& propertyName)
+{
+    return createReferenceError(exec, makeUString("Strict mode forbids implicit creation of global property '", propertyName, "'"));
+}    
+
 } // namespace JSC

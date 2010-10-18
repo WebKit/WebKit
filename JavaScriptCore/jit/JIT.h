@@ -811,6 +811,7 @@ namespace JSC {
         void emit_op_put_setter(Instruction*);
         void emit_op_resolve(Instruction*);
         void emit_op_resolve_base(Instruction*);
+        void emit_op_ensure_property_exists(Instruction*);
         void emit_op_resolve_global(Instruction*, bool dynamic = false);
         void emit_op_resolve_global_dynamic(Instruction*);
         void emit_op_resolve_skip(Instruction*);

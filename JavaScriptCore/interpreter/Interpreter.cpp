@@ -280,8 +280,14 @@ NEVER_INLINE void Interpreter::resolveBase(CallFrame* callFrame, Instruction* vP
 {
     int dst = vPC[1].u.operand;
     int property = vPC[2].u.operand;
-    callFrame->r(dst) = JSValue(JSC::resolveBase(callFrame, callFrame->codeBlock()->identifier(property), callFrame->scopeChain()));
-    ASSERT(callFrame->r(dst).jsValue());
+    bool isStrictPut = vPC[3].u.operand;
+    const Identifier ident = callFrame->codeBlock()->identifier(property);
+    JSValue result = JSC::resolveBase(callFrame, ident, callFrame->scopeChain(), isStrictPut);
+    if (!result) {
+        callFrame->r(dst) = result;
+        ASSERT(callFrame->r(dst).jsValue());
+    } else
+        callFrame->globalData().exception = createErrorForInvalidGlobalAssignment(callFrame, ident.ustring());
 }
 
 NEVER_INLINE bool Interpreter::resolveBaseAndProperty(CallFrame* callFrame, Instruction* vPC, JSValue& exceptionValue)
@@ -2430,6 +2436,24 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         resolveBase(callFrame, vPC);
 
         vPC += OPCODE_LENGTH(op_resolve_base);
+        NEXT_INSTRUCTION();
+    }
+    DEFINE_OPCODE(op_ensure_property_exists) {
+        /* ensure_property_exists base(r) property(id)
+
+           Throws an exception if property does not exist on base
+         */
+        int base = vPC[1].u.operand;
+        int property = vPC[2].u.operand;
+        Identifier& ident = codeBlock->identifier(property);
+        
+        JSValue baseVal = callFrame->r(base).jsValue();
+        JSObject* baseObject = asObject(baseVal);
+        PropertySlot slot(baseVal);
+        if (!baseObject->getPropertySlot(callFrame, ident, slot)) {
+            exceptionValue = createErrorForInvalidGlobalAssignment(callFrame, ident.ustring());
+            goto vm_throw;
+        }
         NEXT_INSTRUCTION();
     }
     DEFINE_OPCODE(op_resolve_with_base) {

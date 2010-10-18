@@ -529,18 +529,10 @@ bool JSParser::parseProgram(JSGlobalObject* lexicalGlobalObject)
     if (!sourceElements || !consume(EOFTOK))
         return true;
     if (!m_syntaxAlreadyValidated) {
-        IdentifierSet writtenVariables;
-        scope->getUncapturedWrittenVariables(writtenVariables);
-        IdentifierSet::const_iterator end = writtenVariables.end();
-        for (IdentifierSet::const_iterator ptr = writtenVariables.begin(); ptr != end; ++ptr) {
-            PropertySlot slot(lexicalGlobalObject);
-            if (!lexicalGlobalObject->getPropertySlot(lexicalGlobalObject->globalExec(), Identifier(m_globalData, *ptr), slot))
-                return true;
-        }
         IdentifierSet deletedVariables;
         if (!scope->getDeletedVariables(deletedVariables))
             return true;
-        end = deletedVariables.end();
+        IdentifierSet::const_iterator end = deletedVariables.end();
         SymbolTable& globalEnvRecord = lexicalGlobalObject->symbolTable();
         for (IdentifierSet::const_iterator ptr = deletedVariables.begin(); ptr != end; ++ptr) {
             if (!globalEnvRecord.get(*ptr).isNull())

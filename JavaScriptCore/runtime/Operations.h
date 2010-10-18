@@ -460,7 +460,7 @@ namespace JSC {
         }
     }
 
-    ALWAYS_INLINE JSValue resolveBase(CallFrame* callFrame, Identifier& property, ScopeChainNode* scopeChain)
+    ALWAYS_INLINE JSValue resolveBase(CallFrame* callFrame, Identifier& property, ScopeChainNode* scopeChain, bool isStrictPut)
     {
         ScopeChainIterator iter = scopeChain->begin();
         ScopeChainIterator next = iter;
@@ -472,7 +472,9 @@ namespace JSC {
         JSObject* base;
         while (true) {
             base = *iter;
-            if (next == end || base->getPropertySlot(callFrame, property, slot))
+            if (next == end)
+                return isStrictPut ? JSValue() : base;
+            if (base->getPropertySlot(callFrame, property, slot))
                 return base;
 
             iter = next;

@@ -1231,7 +1231,7 @@ RegisterID* AssignResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
         return value;
     }
 
-    RefPtr<RegisterID> base = generator.emitResolveBase(generator.newTemporary(), m_ident);
+    RefPtr<RegisterID> base = generator.emitResolveBaseForPut(generator.newTemporary(), m_ident);
     if (dst == generator.ignoredResult())
         dst = 0;
     RegisterID* value = generator.emitNode(dst, m_right);
@@ -1605,7 +1605,7 @@ RegisterID* ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
         if (!propertyName) {
             propertyName = generator.newTemporary();
             RefPtr<RegisterID> protect = propertyName;
-            RegisterID* base = generator.emitResolveBase(generator.newTemporary(), ident);
+            RegisterID* base = generator.emitResolveBaseForPut(generator.newTemporary(), ident);
 
             generator.emitExpressionInfo(divot(), startOffset(), endOffset());
             generator.emitPutById(base, ident, propertyName);

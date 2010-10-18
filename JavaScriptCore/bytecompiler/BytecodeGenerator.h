@@ -329,6 +329,7 @@ namespace JSC {
         RegisterID* emitPutScopedVar(size_t skip, int index, RegisterID* value, JSValue globalObject);
 
         RegisterID* emitResolveBase(RegisterID* dst, const Identifier& property);
+        RegisterID* emitResolveBaseForPut(RegisterID* dst, const Identifier& property);
         RegisterID* emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
 
         void emitMethodCheck();

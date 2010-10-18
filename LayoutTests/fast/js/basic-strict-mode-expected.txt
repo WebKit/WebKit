@@ -51,7 +51,8 @@ PASS 'use strict'; '\007'; threw exception SyntaxError: Parse error.
 PASS '\007'; 'use strict'; threw exception SyntaxError: Parse error.
 PASS 'use strict'; (function (){ delete someDeclaredGlobal;}) threw exception SyntaxError: Parse error.
 PASS (function (){ 'use strict'; delete someDeclaredGlobal;}) threw exception SyntaxError: Parse error.
-PASS 'use strict'; someGlobal = 'Shouldn\'t be able to assign this.'; someGlobal; threw exception SyntaxError: Parse error.
+PASS 'use strict'; if (0) { someGlobal = 'Shouldn\'t be able to assign this.'; }; true; is true
+PASS 'use strict'; someGlobal = 'Shouldn\'t be able to assign this.';  threw exception ReferenceError: Strict mode forbids implicit creation of global property 'someGlobal'.
 PASS 'use strict'; eval('var introducedVariable = "FAIL: variable introduced into containing scope";'); introducedVariable threw exception ReferenceError: Can't find variable: introducedVariable.
 PASS 'use strict'; objectWithReadonlyProperty.prop = 'fail' threw exception TypeError: Attempted to assign to readonly property..
 PASS 'use strict'; delete objectWithReadonlyProperty.prop threw exception TypeError: Unable to delete property..

@@ -2697,9 +2697,35 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    return JSValue::encode(JSC::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.callFrame->scopeChain()));
+    return JSValue::encode(JSC::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.callFrame->scopeChain(), false));
 }
 
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_base_strict_put)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    JSValue base = JSC::resolveBase(stackFrame.callFrame, stackFrame.args[0].identifier(), stackFrame.callFrame->scopeChain(), true);
+    if (!base) {
+        stackFrame.globalData->exception = createErrorForInvalidGlobalAssignment(stackFrame.callFrame, stackFrame.args[0].identifier().ustring());
+        VM_THROW_EXCEPTION();
+    }
+    return JSValue::encode(base);
+}
+
+DEFINE_STUB_FUNCTION(EncodedJSValue, op_ensure_property_exists)
+{
+    STUB_INIT_STACK_FRAME(stackFrame);
+    JSValue base = stackFrame.callFrame->r(stackFrame.args[0].int32()).jsValue();
+    JSObject* object = asObject(base);
+    PropertySlot slot(object);
+    ASSERT(stackFrame.callFrame->codeBlock()->isStrictMode());
+    if (!object->getPropertySlot(stackFrame.callFrame, stackFrame.args[1].identifier(), slot)) {
+        stackFrame.globalData->exception = createErrorForInvalidGlobalAssignment(stackFrame.callFrame, stackFrame.args[1].identifier().ustring());
+        VM_THROW_EXCEPTION();
+    }
+
+    return JSValue::encode(base);
+}
+    
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve_skip)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

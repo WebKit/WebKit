@@ -1,3 +1,58 @@
+2010-10-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Strict mode: Assignment that would create a global should be a late ReferenceError, not a syntax failure
+        https://bugs.webkit.org/show_bug.cgi?id=47788
+
+        Fixing this required a couple of changes:
+         * resolve_base now has a flag to indicate whether it is being used for a put in strict mode.
+           this allows us to throw an exception when we're doing a completely generic resolve for
+           assignment, and that assignment would create a new global.
+         * There is a new opcode 'op_ensure_property_exists' that is used to determine whether
+           the property being assigned to already exists on the global object.  This currently
+           has no caching, but such caching could be added relatively trivially.  It is only used
+           in the case where we know that a property will be placed on the global object, and
+           we cannot verify that the property already exists.
+
+        In the jit we plant a call to cti_op_resolve_base_strict_put in the effected case rather
+        than making op_resolve_base have an additional runtime branch.
+
+        There's also a new helper function to create the exception for the invalid assignment.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveBaseForPut):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveBase):
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_ensure_property_exists):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emit_op_ensure_property_exists):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseProgram):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createErrorForInvalidGlobalAssignment):
+        * runtime/ExceptionHelpers.h:
+        * runtime/Operations.h:
+        (JSC::resolveBase):
+
 2010-10-17  Simon Fraser  <simon.fraser@apple.com>
 
         First part of fix for Windows build failure. Will wait for the

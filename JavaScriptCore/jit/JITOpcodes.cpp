@@ -644,7 +644,15 @@ void JIT::emit_op_strcat(Instruction* currentInstruction)
 
 void JIT::emit_op_resolve_base(Instruction* currentInstruction)
 {
-    JITStubCall stubCall(this, cti_op_resolve_base);
+    JITStubCall stubCall(this, currentInstruction[3].u.operand ? cti_op_resolve_base_strict_put : cti_op_resolve_base);
+    stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_ensure_property_exists(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_ensure_property_exists);
+    stubCall.addArgument(Imm32(currentInstruction[1].u.operand));
     stubCall.addArgument(ImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
 }
