@@ -512,7 +512,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue value)
 
     if (!protocolIsJavaScript(url) || allowsAccessFrom(exec)) {
         // We want a new history item if this JS was called via a user gesture
-        frame->navigationScheduler()->scheduleLocationChange(url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false, processingUserGesture());
+        frame->navigationScheduler()->scheduleLocationChange(url, lexicalFrame->loader()->outgoingReferrer(), !lexicalFrame->script()->anyPageIsProcessingUserGesture(), false);
     }
 }
 

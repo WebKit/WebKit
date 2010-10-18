@@ -53,13 +53,13 @@ namespace WebCore {
 
 class ScheduledNavigation : public Noncopyable {
 public:
-    ScheduledNavigation(double delay, bool lockHistory, bool lockBackForwardList, bool wasDuringLoad, bool isLocationChange, bool wasUserGesture)
+    ScheduledNavigation(double delay, bool lockHistory, bool lockBackForwardList, bool wasDuringLoad, bool isLocationChange)
         : m_delay(delay)
         , m_lockHistory(lockHistory)
         , m_lockBackForwardList(lockBackForwardList)
         , m_wasDuringLoad(wasDuringLoad)
         , m_isLocationChange(isLocationChange)
-        , m_wasUserGesture(wasUserGesture)
+        , m_wasUserGesture(ScriptController::processingUserGesture())
     {
     }
     virtual ~ScheduledNavigation() { }
@@ -88,8 +88,8 @@ private:
 
 class ScheduledURLNavigation : public ScheduledNavigation {
 public:
-    ScheduledURLNavigation(double delay, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture, bool duringLoad, bool isLocationChange)
-        : ScheduledNavigation(delay, lockHistory, lockBackForwardList, duringLoad, isLocationChange, wasUserGesture)
+    ScheduledURLNavigation(double delay, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool duringLoad, bool isLocationChange)
+        : ScheduledNavigation(delay, lockHistory, lockBackForwardList, duringLoad, isLocationChange)
         , m_url(url)
         , m_referrer(referrer)
         , m_haveToldClient(false)
@@ -128,22 +128,26 @@ private:
 
 class ScheduledRedirect : public ScheduledURLNavigation {
 public:
-    ScheduledRedirect(double delay, const String& url, bool lockHistory, bool lockBackForwardList, bool wasUserGesture)
-        : ScheduledURLNavigation(delay, url, String(), lockHistory, lockBackForwardList, wasUserGesture, false, false) { }
+    ScheduledRedirect(double delay, const String& url, bool lockHistory, bool lockBackForwardList)
+        : ScheduledURLNavigation(delay, url, String(), lockHistory, lockBackForwardList, false, false)
+    {
+    }
 
     virtual bool shouldStartTimer(Frame* frame) { return frame->loader()->allAncestorsAreComplete(); }
 };
 
 class ScheduledLocationChange : public ScheduledURLNavigation {
 public:
-    ScheduledLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture, bool duringLoad)
-        : ScheduledURLNavigation(0.0, url, referrer, lockHistory, lockBackForwardList, wasUserGesture, duringLoad, true) { }
+    ScheduledLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool duringLoad)
+        : ScheduledURLNavigation(0.0, url, referrer, lockHistory, lockBackForwardList, duringLoad, true) { }
 };
 
 class ScheduledRefresh : public ScheduledURLNavigation {
 public:
-    ScheduledRefresh(const String& url, const String& referrer, bool wasUserGesture)
-        : ScheduledURLNavigation(0.0, url, referrer, true, true, wasUserGesture, false, true) { }
+    ScheduledRefresh(const String& url, const String& referrer)
+        : ScheduledURLNavigation(0.0, url, referrer, true, true, false, true)
+    {
+    }
 
     virtual void fire(Frame* frame)
     {
@@ -154,7 +158,11 @@ public:
 
 class ScheduledHistoryNavigation : public ScheduledNavigation {
 public:
-    explicit ScheduledHistoryNavigation(int historySteps, bool wasUserGesture) : ScheduledNavigation(0, false, false, false, true, wasUserGesture), m_historySteps(historySteps) { }
+    explicit ScheduledHistoryNavigation(int historySteps)
+        : ScheduledNavigation(0, false, false, false, true)
+        , m_historySteps(historySteps)
+    {
+    }
 
     virtual void fire(Frame* frame)
     {
@@ -178,8 +186,8 @@ private:
 
 class ScheduledFormSubmission : public ScheduledNavigation {
 public:
-    ScheduledFormSubmission(PassRefPtr<FormSubmission> submission, bool lockBackForwardList, bool duringLoad, bool wasUserGesture)
-        : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true, wasUserGesture)
+    ScheduledFormSubmission(PassRefPtr<FormSubmission> submission, bool lockBackForwardList, bool duringLoad)
+        : ScheduledNavigation(0, submission->lockHistory(), lockBackForwardList, duringLoad, true)
         , m_submission(submission)
         , m_haveToldClient(false)
     {
@@ -258,14 +266,14 @@ void NavigationScheduler::scheduleRedirect(double delay, const String& url)
 
     // We want a new back/forward list item if the refresh timeout is > 1 second.
     if (!m_redirect || delay <= m_redirect->delay())
-        schedule(adoptPtr(new ScheduledRedirect(delay, url, true, delay <= 1, false)));
+        schedule(adoptPtr(new ScheduledRedirect(delay, url, true, delay <= 1)));
 }
 
-bool NavigationScheduler::mustLockBackForwardList(Frame* targetFrame, bool wasUserGesture)
+bool NavigationScheduler::mustLockBackForwardList(Frame* targetFrame)
 {
     // Non-user navigation before the page has finished firing onload should not create a new back/forward item.
     // See https://webkit.org/b/42861 for the original motivation for this.    
-    if (!wasUserGesture && targetFrame->loader()->documentLoader() && !targetFrame->loader()->documentLoader()->wasOnloadHandled())
+    if (!ScriptController::processingUserGesture() && targetFrame->loader()->documentLoader() && !targetFrame->loader()->documentLoader()->wasOnloadHandled())
         return true;
     
     // Navigation of a subframe during loading of an ancestor frame does not create a new back/forward item.
@@ -279,14 +287,14 @@ bool NavigationScheduler::mustLockBackForwardList(Frame* targetFrame, bool wasUs
     return false;
 }
 
-void NavigationScheduler::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool wasUserGesture)
+void NavigationScheduler::scheduleLocationChange(const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList)
 {
     if (!m_frame->page())
         return;
     if (url.isEmpty())
         return;
 
-    lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame, wasUserGesture);
+    lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame);
 
     FrameLoader* loader = m_frame->loader();
     
@@ -302,7 +310,7 @@ void NavigationScheduler::scheduleLocationChange(const String& url, const String
     // This may happen when a frame changes the location of another frame.
     bool duringLoad = !loader->stateMachine()->committedFirstRealDocumentLoad();
 
-    schedule(adoptPtr(new ScheduledLocationChange(url, referrer, lockHistory, lockBackForwardList, wasUserGesture, duringLoad)));
+    schedule(adoptPtr(new ScheduledLocationChange(url, referrer, lockHistory, lockBackForwardList, duringLoad)));
 }
 
 void NavigationScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> submission)
@@ -319,13 +327,14 @@ void NavigationScheduler::scheduleFormSubmission(PassRefPtr<FormSubmission> subm
     // If this is a child frame and the form submission was triggered by a script, lock the back/forward list
     // to match IE and Opera.
     // See https://bugs.webkit.org/show_bug.cgi?id=32383 for the original motivation for this.
-    bool isUserGesture = m_frame->loader()->isProcessingUserGesture();
-    bool lockBackForwardList = mustLockBackForwardList(m_frame, isUserGesture) || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript && m_frame->tree()->parent() && !isUserGesture);
+    bool lockBackForwardList = mustLockBackForwardList(m_frame)
+        || (submission->state()->formSubmissionTrigger() == SubmittedByJavaScript
+            && m_frame->tree()->parent() && !ScriptController::processingUserGesture());
 
-    schedule(adoptPtr(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad, isUserGesture)));
+    schedule(adoptPtr(new ScheduledFormSubmission(submission, lockBackForwardList, duringLoad)));
 }
 
-void NavigationScheduler::scheduleRefresh(bool wasUserGesture)
+void NavigationScheduler::scheduleRefresh()
 {
     if (!m_frame->page())
         return;
@@ -333,7 +342,7 @@ void NavigationScheduler::scheduleRefresh(bool wasUserGesture)
     if (url.isEmpty())
         return;
 
-    schedule(adoptPtr(new ScheduledRefresh(url.string(), m_frame->loader()->outgoingReferrer(), wasUserGesture)));
+    schedule(adoptPtr(new ScheduledRefresh(url.string(), m_frame->loader()->outgoingReferrer())));
 }
 
 void NavigationScheduler::scheduleHistoryNavigation(int steps)
@@ -350,7 +359,7 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
     }
 
     // In all other cases, schedule the history traversal to occur asynchronously.
-    schedule(adoptPtr(new ScheduledHistoryNavigation(steps, m_frame->loader()->isProcessingUserGesture())));
+    schedule(adoptPtr(new ScheduledHistoryNavigation(steps)));
 }
 
 void NavigationScheduler::timerFired(Timer<NavigationScheduler>*)

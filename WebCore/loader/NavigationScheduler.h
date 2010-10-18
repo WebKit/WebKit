@@ -56,9 +56,9 @@ public:
     bool locationChangePending();
 
     void scheduleRedirect(double delay, const String& url);
-    void scheduleLocationChange(const String& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true, bool userGesture = false);
+    void scheduleLocationChange(const String& url, const String& referrer, bool lockHistory = true, bool lockBackForwardList = true);
     void scheduleFormSubmission(PassRefPtr<FormSubmission>);
-    void scheduleRefresh(bool userGesture = false);
+    void scheduleRefresh();
     void scheduleHistoryNavigation(int steps);
 
     void startTimer();
@@ -70,7 +70,7 @@ private:
     void timerFired(Timer<NavigationScheduler>*);
     void schedule(PassOwnPtr<ScheduledNavigation>);
 
-    static bool mustLockBackForwardList(Frame* targetFrame, bool mustLockIfDuringLoad);
+    static bool mustLockBackForwardList(Frame* targetFrame);
 
     Frame* m_frame;
     Timer<NavigationScheduler> m_timer;

@@ -1162,7 +1162,7 @@ void InspectorController::setResourceTrackingEnabled(bool enable, bool always, b
     m_state->setBoolean(InspectorState::resourceTrackingEnabled, enable);
 
     if (enable)
-        m_inspectedPage->mainFrame()->navigationScheduler()->scheduleRefresh(true);
+        reloadPage();
 }
 
 void InspectorController::ensureSettingsLoaded()
@@ -2122,7 +2122,9 @@ bool InspectorController::resourceContentForURL(const KURL& url, Document* frame
 
 void InspectorController::reloadPage()
 {
-    m_inspectedPage->mainFrame()->navigationScheduler()->scheduleRefresh(true);
+    // FIXME: Why do we set the user gesture indicator here?
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+    m_inspectedPage->mainFrame()->navigationScheduler()->scheduleRefresh();
 }
 
 } // namespace WebCore
