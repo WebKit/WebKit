@@ -359,7 +359,7 @@ void PluginView::setFocus(bool focused)
 
 #ifndef NP_NO_CARBON
     EventRecord record;
-    record.what = getFocusEvent;
+    record.what = NPEventType_GetFocusEvent;
     record.message = 0;
     record.when = TickCount();
     record.where = globalMousePosForPlugin();
@@ -576,9 +576,9 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         m_lastMousePos = mousePosForPlugin(event);
         return;
     } else if (event->type() == eventNames().mouseoverEvent) {
-        record.what = adjustCursorEvent;
+        record.what = NPEventType_AdjustCursorEvent;
     } else if (event->type() == eventNames().mouseoutEvent) {
-        record.what = adjustCursorEvent;
+        record.what = NPEventType_AdjustCursorEvent;
     } else if (event->type() == eventNames().mousedownEvent) {
         record.what = mouseDown;
         // The plugin needs focus to receive keyboard events
@@ -600,7 +600,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
         record.modifiers |= controlKey;
 
     if (!dispatchNPEvent(record)) {
-        if (record.what == adjustCursorEvent)
+        if (record.what == NPEventType_AdjustCursorEvent)
             return; // Signals that the plugin wants a normal cursor
 
         LOG(Events, "PluginView::handleMouseEvent(): Mouse event type %d at %d,%d not accepted",

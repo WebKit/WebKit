@@ -174,7 +174,7 @@ void WebNetscapePluginEventHandlerCarbon::mouseEntered(NSEvent* theEvent)
     EventRecord event;
     
     getCarbonEvent(&event, theEvent);
-    event.what = adjustCursorEvent;
+    event.what = NPEventType_AdjustCursorEvent;
     
     BOOL acceptedEvent;
     acceptedEvent = sendEvent(&event);
@@ -187,7 +187,7 @@ void WebNetscapePluginEventHandlerCarbon::mouseExited(NSEvent* theEvent)
     EventRecord event;
     
     getCarbonEvent(&event, theEvent);
-    event.what = adjustCursorEvent;
+    event.what = NPEventType_AdjustCursorEvent;
     
     BOOL acceptedEvent;
     acceptedEvent = sendEvent(&event);
@@ -204,7 +204,7 @@ void WebNetscapePluginEventHandlerCarbon::mouseMoved(NSEvent* theEvent)
     EventRecord event;
     
     getCarbonEvent(&event, theEvent);
-    event.what = adjustCursorEvent;
+    event.what = NPEventType_AdjustCursorEvent;
     
     BOOL acceptedEvent;
     acceptedEvent = sendEvent(&event);
@@ -271,14 +271,14 @@ void WebNetscapePluginEventHandlerCarbon::focusChanged(bool hasFocus)
     getCarbonEvent(&event);
     bool acceptedEvent;
     if (hasFocus) {
-        event.what = getFocusEvent;
+        event.what = NPEventType_GetFocusEvent;
         acceptedEvent = sendEvent(&event);
-        LOG(PluginEvents, "NPP_HandleEvent(getFocusEvent): %d", acceptedEvent);
+        LOG(PluginEvents, "NPP_HandleEvent(NPEventType_GetFocusEvent): %d", acceptedEvent);
         installKeyEventHandler();
     } else {
-        event.what = loseFocusEvent;
+        event.what = NPEventType_LoseFocusEvent;
         acceptedEvent = sendEvent(&event);
-        LOG(PluginEvents, "NPP_HandleEvent(loseFocusEvent): %d", acceptedEvent);
+        LOG(PluginEvents, "NPP_HandleEvent(NPEventType_LoseFocusEvent): %d", acceptedEvent);
         removeKeyEventHandler();
     }
 }

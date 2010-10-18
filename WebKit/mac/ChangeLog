@@ -1,3 +1,18 @@
+2010-10-18  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch to using the new Carbon NPAPI event declarations, and remove
+        the old ones.
+
+        https://bugs.webkit.org/show_bug.cgi?id=40784
+
+        * Plugins/WebNetscapePluginEventHandlerCarbon.mm:
+        (WebNetscapePluginEventHandlerCarbon::mouseEntered):
+        (WebNetscapePluginEventHandlerCarbon::mouseExited):
+        (WebNetscapePluginEventHandlerCarbon::mouseMoved):
+        (WebNetscapePluginEventHandlerCarbon::focusChanged):
+
 2010-10-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Timothy Hatcher.
