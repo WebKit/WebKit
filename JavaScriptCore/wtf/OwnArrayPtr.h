@@ -23,6 +23,7 @@
 
 #include "Assertions.h"
 #include "Noncopyable.h"
+#include "NullPtr.h"
 #include "OwnArrayPtrCommon.h"
 #include <algorithm>
 
@@ -73,6 +74,7 @@ public:
 #endif
 
     OwnArrayPtr& operator=(const PassOwnArrayPtr<T>&);
+    OwnArrayPtr& operator=(std::nullptr_t) { clear(); return *this; }
     template<typename U> OwnArrayPtr& operator=(const PassOwnArrayPtr<U>&);
 
     void swap(OwnArrayPtr& o) { std::swap(m_ptr, o.m_ptr); }

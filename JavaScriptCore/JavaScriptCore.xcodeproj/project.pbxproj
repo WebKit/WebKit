@@ -277,6 +277,7 @@
 		932F5BEA0822A1C700736975 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		933040040E6A749400786E6A /* SmallStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 93303FEA0E6A72C000786E6A /* SmallStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93303FE80E6A72B500786E6A /* SmallStrings.cpp */; };
+		933F5CDC1269229B0049191E /* NullPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 933F5CDB126922690049191E /* NullPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-compare"; }; };
 		93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BD308B1514100F85226 /* pcre_xclass.cpp */; };
 		9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 952C63AC0E4777D600C13936 /* JSProfilerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -891,6 +892,7 @@
 		93303FEA0E6A72C000786E6A /* SmallStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmallStrings.h; sourceTree = "<group>"; };
 		933A349A038AE7C6008635CE /* Identifier.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Identifier.h; sourceTree = "<group>"; tabWidth = 8; };
 		933A349D038AE80F008635CE /* Identifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Identifier.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		933F5CDB126922690049191E /* NullPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NullPtr.h; sourceTree = "<group>"; };
 		935AF46909E9D9DB00ACD1D8 /* Forward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Forward.h; sourceTree = "<group>"; };
 		935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnusedParam.h; sourceTree = "<group>"; };
 		937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pcre_ucp_searchfuncs.cpp; sourceTree = "<group>"; };
@@ -1517,6 +1519,7 @@
 				65E1A2F4122B880D00B26097 /* NonCopyingSort.h */,
 				9303F5690991190000AD71B8 /* Noncopyable.h */,
 				C0A2723F0E509F1E00E96E15 /* NotFound.h */,
+				933F5CDB126922690049191E /* NullPtr.h */,
 				9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */,
 				BCFBE697122561D200309E9D /* OwnArrayPtrCommon.h */,
 				0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */,
@@ -2342,6 +2345,7 @@
 				9714AF60122F32070092D9F5 /* URLString.h in Headers */,
 				90213E3E123A40C200D422F3 /* MemoryStatistics.h in Headers */,
 				A730B6121250068F009D25B1 /* StrictEvalActivation.h in Headers */,
+				933F5CDC1269229B0049191E /* NullPtr.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

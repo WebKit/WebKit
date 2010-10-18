@@ -27,6 +27,7 @@
 #define WTF_PassOwnPtr_h
 
 #include "Assertions.h"
+#include "NullPtr.h"
 #include "OwnPtrCommon.h"
 #include "TypeTraits.h"
 
@@ -71,6 +72,7 @@ namespace WTF {
         operator UnspecifiedBoolType() const { return m_ptr ? &PassOwnPtr::m_ptr : 0; }
 
         PassOwnPtr& operator=(const PassOwnPtr<T>&);
+        PassOwnPtr& operator=(std::nullptr_t) { clear(); return *this; }
         template<typename U> PassOwnPtr& operator=(const PassOwnPtr<U>&);
 
         template<typename U> friend PassOwnPtr<U> adoptPtr(U*);

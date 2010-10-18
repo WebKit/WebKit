@@ -1,3 +1,22 @@
+2010-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Make a nullptr that works with OwnPtr and RefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=47756
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added NullPtr.h.
+
+        * wtf/NullPtr.h: Added.
+
+        * wtf/OwnArrayPtr.h: Add an overload of = taking nullptr.
+        * wtf/OwnPtr.h: Ditto.
+        * wtf/PassOwnArrayPtr.h: Ditto.
+        * wtf/PassOwnPtr.h: Ditto.
+        * wtf/PassRefPtr.h: Ditto.
+        * wtf/RefPtr.h: Ditto.
+        * wtf/RetainPtr.h: Ditto.
+
 2010-10-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
