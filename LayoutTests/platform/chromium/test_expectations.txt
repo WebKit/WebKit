@@ -3222,6 +3222,13 @@ BUGWK47512 : fast/images/webp-image-decoding.html = TEXT
 
 BUG59647 WIN : svg/dom/length-list-parser.html = PASS CRASH
 
+// Many flaky SVG tests
+BUG59671 LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg = IMAGE+TEXT PASS
+BUG59671 LINUX : svg/custom/convolution-crash.svg = PASS TEXT
+BUG59671 LINUX : svg/custom/focus-ring.svg = IMAGE+TEXT PASS
+BUG59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
+BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
+
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET : fast/canvas/canvas-currentColor.html = TEXT
 
