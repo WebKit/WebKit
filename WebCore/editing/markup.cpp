@@ -93,18 +93,6 @@ private:
     String m_value;
 };
 
-bool elementCannotHaveEndTag(const Node* node)
-{
-    if (!node->isHTMLElement())
-        return false;
-
-    // FIXME: ieForbidsInsertHTML may not be the right function to call here
-    // ieForbidsInsertHTML is used to disallow setting innerHTML/outerHTML
-    // or createContextualFragment.  It does not necessarily align with
-    // which elements should be serialized w/o end tags.
-    return static_cast<const HTMLElement*>(node)->ieForbidsInsertHTML();
-}
-
 static void completeURLs(Node* node, const String& baseURL)
 {
     Vector<AttributeChange> changes;
