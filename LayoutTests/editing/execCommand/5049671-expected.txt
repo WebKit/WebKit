@@ -1,0 +1,2 @@
+This tests for a bug where Remove Format would fail to remove links that were fully selected.  You should see plain text only in the editable region below.
+| "<#selection-anchor>This shouldn't be a link or underlined.<#selection-focus>"
