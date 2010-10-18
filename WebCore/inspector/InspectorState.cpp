@@ -92,13 +92,15 @@ void InspectorState::loadFromSettings()
             m_client->populateSetting(i->second.m_preferenceName, &value);
             switch (i->second.m_value->type()) {
             case InspectorValue::TypeBoolean:
-                i->second.m_value = InspectorBasicValue::create(value == "true");
+                if (value.length())
+                    i->second.m_value = InspectorBasicValue::create(value == "true");
                 break;
             case InspectorValue::TypeString:
                 i->second.m_value = InspectorString::create(value);
                 break;
             case InspectorValue::TypeNumber:
-                i->second.m_value = InspectorBasicValue::create((double)value.toInt());
+                if (value.length())
+                    i->second.m_value = InspectorBasicValue::create((double)value.toInt());
                 break;
             default:
                 ASSERT(false);
