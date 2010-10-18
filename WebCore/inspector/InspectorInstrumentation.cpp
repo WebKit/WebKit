@@ -40,6 +40,7 @@
 #include "InspectorDebuggerAgent.h"
 #include "InspectorTimelineAgent.h"
 #include "XMLHttpRequest.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
