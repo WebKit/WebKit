@@ -112,7 +112,6 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
         return;
 
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
-    // One reason this is good is that it keeps the inspector out of history via "private browsing".
     // FIXME: It's crazy that we have to do this song and dance to end up with
     // a private WebPreferences object, even within WebKit. We should make this
     // process simpler, and consider whether we can make it simpler for WebKit
@@ -125,8 +124,6 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     if (!preferences)
         return;
     if (FAILED(preferences->setAutosaves(FALSE)))
-        return;
-    if (FAILED(preferences->setPrivateBrowsingEnabled(TRUE)))
         return;
     if (FAILED(preferences->setLoadsImagesAutomatically(TRUE)))
         return;

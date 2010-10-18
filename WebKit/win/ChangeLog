@@ -1,3 +1,13 @@
+2010-10-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: disable private browsing for inspector
+        https://bugs.webkit.org/show_bug.cgi?id=47827
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::openInspectorFrontend):
+
 2010-10-17  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Dimitri Glazkov.

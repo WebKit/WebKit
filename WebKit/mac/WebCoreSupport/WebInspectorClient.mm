@@ -217,11 +217,9 @@ void WebInspectorFrontendClient::updateWindowTitle() const
         return nil;
 
     // Keep preferences separate from the rest of the client, making sure we are using expected preference values.
-    // One reason this is good is that it keeps the inspector out of history via "private browsing".
 
     WebPreferences *preferences = [[WebPreferences alloc] init];
     [preferences setAutosaves:NO];
-    [preferences setPrivateBrowsingEnabled:YES];
     [preferences setLoadsImagesAutomatically:YES];
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptEnabled:YES];
