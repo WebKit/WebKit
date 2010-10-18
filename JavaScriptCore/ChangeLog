@@ -1,5 +1,19 @@
 2010-10-18  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Strict mode: Functions created with the function constructor don't implement strict mode semantics
+        https://bugs.webkit.org/show_bug.cgi?id=47860
+
+        When creating the FunctionExecutable for a new function the function constructor
+        was always passing false for whether or not a function was strict, rather than
+        using the information from the freshly parsed function itself.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::fromGlobalCode):
+
+2010-10-18  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Darin Adler.
 
         Strict mode: |this| should be undefined if it is not explicitly provided

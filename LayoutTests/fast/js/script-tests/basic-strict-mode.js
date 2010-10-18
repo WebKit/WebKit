@@ -34,6 +34,8 @@ shouldThrow("testThisBracketAccess.call(undefined, 'length')");
 shouldBeUndefined("testThisBracketAccess.call(true, 'length')");
 shouldBeUndefined("testThisBracketAccess.call(false, 'length')");
 shouldBeUndefined("testThisBracketAccess.call(1, 'length')");
+shouldBeUndefined("Function('\"use strict\"; return this;')()");
+shouldThrow("Function('\"use strict\"; with({});')");
 
 
 shouldBe("testGlobalAccess()", "undefined");
