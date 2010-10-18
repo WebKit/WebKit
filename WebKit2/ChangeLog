@@ -1,3 +1,9 @@
+2010-10-18  Sam Weinig  <sam@webkit.org>
+
+        Fix Qt build.
+
+        * WebKit2.pro:
+
 2010-10-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Simon Fraser.

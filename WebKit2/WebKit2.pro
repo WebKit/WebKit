@@ -220,6 +220,7 @@ HEADERS += \
     Shared/WebPreferencesStore.h \
     Shared/WebURLRequest.h \
     Shared/WebURLResponse.h \
+    Shared/WebUserContentURLPattern.h \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/WKAPICast.h \
     UIProcess/API/C/WKContext.h \
@@ -366,7 +367,6 @@ SOURCES += \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
-    Shared/WebUserContentURLPattern.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
