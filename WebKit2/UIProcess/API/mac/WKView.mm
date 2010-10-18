@@ -181,7 +181,7 @@ struct EditCommandState {
 - (void)renewGState
 {
     // Hide the find indicator.
-    _data->_findIndicatorWindow = 0;
+    _data->_findIndicatorWindow = nullptr;
 
     [super renewGState];
 }

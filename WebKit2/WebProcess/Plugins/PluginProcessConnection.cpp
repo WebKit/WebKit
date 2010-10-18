@@ -62,7 +62,7 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
     // We have no more plug-ins, invalidate the connection to the plug-in process.
     ASSERT(m_connection);
     m_connection->invalidate();
-    m_connection = 0;
+    m_connection = nullptr;
 
     // This will cause us to be deleted.
     m_pluginProcessConnectionManager->removePluginProcessConnection(this);

@@ -173,12 +173,12 @@ void FindIndicatorWindow::closeWindow()
 
     if (m_fadeOutAnimation) {
         [m_fadeOutAnimation.get() stopAnimation];
-        m_fadeOutAnimation = 0;
+        m_fadeOutAnimation = nullptr;
     }
 
     [[m_findIndicatorWindow.get() parentWindow] removeChildWindow:m_findIndicatorWindow.get()];
     [m_findIndicatorWindow.get() close];
-    m_findIndicatorWindow = 0;
+    m_findIndicatorWindow = nullptr;
 }
 
 void FindIndicatorWindow::startFadeOutTimerFired()

@@ -1,3 +1,16 @@
+2010-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Use nullptr instead of 0.
+
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        (WebKit::FindIndicatorWindow::closeWindow):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView renewGState]):
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::removePluginProxy):
+
 2010-10-15  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.
