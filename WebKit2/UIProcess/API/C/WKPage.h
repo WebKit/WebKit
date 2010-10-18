@@ -165,11 +165,13 @@ struct WKPageUIClient {
 typedef struct WKPageUIClient WKPageUIClient;
 
 // Find client.
-typedef void (*WKPageDidCountStringMatchesCallback)(WKPageRef page, WKStringRef string, unsigned numMatches, const void* clientInfo);
+typedef void (*WKPageMatchCountDidChangeCallback)(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo);
+typedef void (*WKPageDidCountStringMatchesCallback)(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo);
 
 struct WKPageFindClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+    WKPageMatchCountDidChangeCallback                                   matchCountDidChange;
     WKPageDidCountStringMatchesCallback                                 didCountStringMatches;
 };
 typedef struct WKPageFindClient WKPageFindClient;
@@ -234,9 +236,9 @@ enum {
 };
 typedef uint32_t WKFindOptions;
 
-WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindDirection findDirection, WKFindOptions findOptions, unsigned maxNumMatches);
+WK_EXPORT void WKPageFindString(WKPageRef page, WKStringRef string, WKFindDirection findDirection, WKFindOptions findOptions, unsigned maxMatchCount);
 WK_EXPORT void WKPageHideFindUI(WKPageRef page);
-WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, bool caseInsensitive, unsigned maxNumMatches);
+WK_EXPORT void WKPageCountStringMatches(WKPageRef page, WKStringRef string, bool caseInsensitive, unsigned maxMatchCount);
 
 WK_EXPORT void WKPageSetPageLoaderClient(WKPageRef page, const WKPageLoaderClient* client);
 WK_EXPORT void WKPageSetPagePolicyClient(WKPageRef page, const WKPagePolicyClient* client);

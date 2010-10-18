@@ -179,9 +179,9 @@ public:
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
     // Find.
-    void findString(const String&, FindDirection, FindOptions, unsigned maxNumMatches);
+    void findString(const String&, FindDirection, FindOptions, unsigned maxMatchCount);
     void hideFindUI();
-    void countStringMatches(const String&, bool caseInsensitive, unsigned maxNumMatches);
+    void countStringMatches(const String&, bool caseInsensitive, unsigned maxMatchCount);
 
     void runJavaScriptInMainFrame(const String&, PassRefPtr<ScriptReturnValueCallback>);
     void getRenderTreeExternalRepresentation(PassRefPtr<RenderTreeExternalRepresentationCallback>);
@@ -285,8 +285,9 @@ private:
     void clearAllEditCommands();
 
     // Find.
-    void didCountStringMatches(const String&, uint32_t numMatches);
+    void didCountStringMatches(const String&, uint32_t matchCount);
     void setFindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle, bool fadeOut);
+    void matchCountDidChange(const String&, uint32_t matchCount);
 
     // Popup Menu.
     void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex);

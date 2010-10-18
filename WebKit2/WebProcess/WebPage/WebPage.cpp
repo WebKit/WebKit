@@ -787,9 +787,9 @@ void WebPage::setActivePopupMenu(WebPopupMenu* menu)
     m_activePopupMenu = menu;
 }
 
-void WebPage::findString(const String& string, uint32_t findDirection, uint32_t findOptions, uint32_t maxNumMatches)
+void WebPage::findString(const String& string, uint32_t findDirection, uint32_t findOptions, uint32_t maxMatchCount)
 {
-    m_findController.findString(string, static_cast<FindDirection>(findDirection), static_cast<FindOptions>(findOptions), maxNumMatches);
+    m_findController.findString(string, static_cast<FindDirection>(findDirection), static_cast<FindOptions>(findOptions), maxMatchCount);
 }
 
 void WebPage::hideFindUI()
@@ -797,12 +797,9 @@ void WebPage::hideFindUI()
     m_findController.hideFindUI();
 }
 
-void WebPage::countStringMatches(const String& string, bool caseInsensitive, uint32_t maxNumMatches)
+void WebPage::countStringMatches(const String& string, bool caseInsensitive, uint32_t maxMatchCount)
 {
-    unsigned numMatches = m_page->markAllMatchesForText(string, caseInsensitive ? TextCaseInsensitive : TextCaseSensitive, false, maxNumMatches);
-    m_page->unmarkAllTextMatches();
-
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidCountStringMatches(string, numMatches), m_pageID);
+    m_findController.countStringMatches(string, caseInsensitive, maxMatchCount);
 }
 
 void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
@@ -813,7 +810,6 @@ void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
     m_activePopupMenu->didChangeSelectedIndex(newIndex);
     m_activePopupMenu = 0;
 }
-
 
 #if PLATFORM(MAC)
 void WebPage::addPluginView(PluginView* pluginView)

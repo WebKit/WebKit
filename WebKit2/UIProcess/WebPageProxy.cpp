@@ -505,9 +505,9 @@ void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZ
     process()->send(Messages::WebPage::SetPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor), m_pageID); 
 }
 
-void WebPageProxy::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxNumMatches)
+void WebPageProxy::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxMatchCount)
 {
-    process()->send(Messages::WebPage::FindString(string, findDirection, findOptions, maxNumMatches), m_pageID);
+    process()->send(Messages::WebPage::FindString(string, findDirection, findOptions, maxMatchCount), m_pageID);
 }
 
 void WebPageProxy::hideFindUI()
@@ -515,9 +515,9 @@ void WebPageProxy::hideFindUI()
     process()->send(Messages::WebPage::HideFindUI(), m_pageID);
 }
 
-void WebPageProxy::countStringMatches(const String& string, bool caseInsensitive, unsigned maxNumMatches)
+void WebPageProxy::countStringMatches(const String& string, bool caseInsensitive, unsigned maxMatchCount)
 {
-    process()->send(Messages::WebPage::CountStringMatches(string, caseInsensitive, maxNumMatches), m_pageID);
+    process()->send(Messages::WebPage::CountStringMatches(string, caseInsensitive, maxMatchCount), m_pageID);
 }
     
 void WebPageProxy::runJavaScriptInMainFrame(const String& script, PassRefPtr<ScriptReturnValueCallback> prpCallback)
@@ -961,15 +961,20 @@ void WebPageProxy::clearAllEditCommands()
     m_pageClient->clearAllEditCommands();
 }
 
-void WebPageProxy::didCountStringMatches(const String& string, uint32_t numMatches)
+void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCount)
 {
-    m_findClient.didCountStringMatches(this, string, numMatches);
+    m_findClient.didCountStringMatches(this, string, matchCount);
 }
 
 void WebPageProxy::setFindIndicator(const FloatRect& selectionRect, const Vector<FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle, bool fadeOut)
 {
     RefPtr<FindIndicator> findIndicator = FindIndicator::create(selectionRect, textRects, contentImageHandle);
     m_pageClient->setFindIndicator(findIndicator.release(), fadeOut);
+}
+
+void WebPageProxy::matchCountDidChange(const String& string, uint32_t matchCount)
+{
+    m_findClient.matchCountDidChange(this, string, matchCount);
 }
 
 void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex)

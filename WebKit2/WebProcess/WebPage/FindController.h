@@ -45,9 +45,10 @@ class FindController {
 public:
     explicit FindController(WebPage*);
 
-    void findString(const String&, FindDirection, FindOptions, unsigned maxNumMatches);
+    void findString(const String&, FindDirection, FindOptions, unsigned maxMatchCount);
     void hideFindUI();
-
+    void countStringMatches(const String&, bool caseInsensitive, unsigned maxMatchCount);
+    
     void findPageOverlayDestroyed();
 
     void hideFindIndicator();

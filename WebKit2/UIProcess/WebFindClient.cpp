@@ -29,12 +29,20 @@
 
 namespace WebKit {
 
-void WebFindClient::didCountStringMatches(WebPageProxy* page, const String& string, uint32_t numMatches)
+void WebFindClient::matchCountDidChange(WebPageProxy* page, const String& string, uint32_t matchCount)
+{
+    if (!m_client.matchCountDidChange)
+        return;
+
+    m_client.matchCountDidChange(toAPI(page), toAPI(string.impl()), matchCount, m_client.clientInfo);
+}
+
+void WebFindClient::didCountStringMatches(WebPageProxy* page, const String& string, uint32_t matchCount)
 {
     if (!m_client.didCountStringMatches)
         return;
 
-    m_client.didCountStringMatches(toAPI(page), toAPI(string.impl()), numMatches, m_client.clientInfo);
+    m_client.didCountStringMatches(toAPI(page), toAPI(string.impl()), matchCount, m_client.clientInfo);
 }
 
 } // namespace WebKit

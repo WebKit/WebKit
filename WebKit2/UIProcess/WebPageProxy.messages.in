@@ -92,8 +92,9 @@ messages -> WebPageProxy {
     ClearAllEditCommands()
 
     # Find.
-    DidCountStringMatches(WTF::String string, uint32_t numMatches)
+    DidCountStringMatches(WTF::String string, uint32_t matchCount)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle, bool fadeOut)
+    MatchCountDidChange(WTF::String string, uint32_t matchCount)
 
     # PopupMenu.
     ShowPopupMenu(WebCore::IntRect rect, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex)

@@ -46,6 +46,14 @@ FindController::FindController(WebPage* webPage)
 {
 }
 
+void FindController::countStringMatches(const String& string, bool caseInsensitive, unsigned maxMatchCount)
+{
+    unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, caseInsensitive ? TextCaseInsensitive : TextCaseSensitive, false, maxMatchCount);
+    m_webPage->corePage()->unmarkAllTextMatches();
+
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidCountStringMatches(string, matchCount), m_webPage->pageID());
+}
+
 static Frame* frameWithSelection(Page* page)
 {
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
@@ -56,7 +64,7 @@ static Frame* frameWithSelection(Page* page)
     return 0;
 }
 
-void FindController::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxNumMatches)
+void FindController::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxMatchCount)
 {
     m_webPage->corePage()->unmarkAllTextMatches();
 
@@ -75,15 +83,20 @@ void FindController::findString(const String& string, FindDirection findDirectio
             selectedFrame->selection()->clear();
 
         hideFindIndicator();
+
+        WebProcess::shared().connection()->send(Messages::WebPageProxy::MatchCountDidChange(string, 0), m_webPage->pageID());
+
     } else {
         shouldShowOverlay = findOptions & FindOptionsShowOverlay;
 
         if (shouldShowOverlay) {
-            unsigned numMatches = m_webPage->corePage()->markAllMatchesForText(string, caseSensitivity, false, maxNumMatches);
+            unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, caseSensitivity, false, maxMatchCount);
 
             // Check if we have more matches than allowed.
-            if (numMatches > maxNumMatches)
+            if (matchCount > maxMatchCount)
                 shouldShowOverlay = false;
+
+            WebProcess::shared().connection()->send(Messages::WebPageProxy::MatchCountDidChange(string, matchCount), m_webPage->pageID());
         }
 
         if (!(findOptions & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay)) {

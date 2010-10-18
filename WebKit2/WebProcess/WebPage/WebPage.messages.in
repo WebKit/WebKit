@@ -69,9 +69,9 @@ messages -> WebPage {
     SetTextZoomFactor(double zoomFactor)
 
     # Find.
-    FindString(WTF::String string, uint32_t findDirection, uint32_t findOptions, unsigned maxNumMatches)
+    FindString(WTF::String string, uint32_t findDirection, uint32_t findOptions, unsigned maxMatchCount)
     HideFindUI()
-    CountStringMatches(WTF::String string, bool caseInsensitive, unsigned maxNumMatches)
+    CountStringMatches(WTF::String string, bool caseInsensitive, unsigned maxMatchCount)
 
     # Popup menu.
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);

@@ -193,9 +193,9 @@ void WKPageSetPageAndTextZoomFactors(WKPageRef pageRef, double pageZoomFactor, d
     toImpl(pageRef)->setPageAndTextZoomFactors(pageZoomFactor, textZoomFactor);
 }
 
-void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindDirection findDirection, WKFindOptions findOptions, unsigned maxNumMatches)
+void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindDirection findDirection, WKFindOptions findOptions, unsigned maxMatchCount)
 {
-    toImpl(pageRef)->findString(toImpl(string)->string(), toFindDirection(findDirection), toFindOptions(findOptions), maxNumMatches);
+    toImpl(pageRef)->findString(toImpl(string)->string(), toFindDirection(findDirection), toFindOptions(findOptions), maxMatchCount);
 }
 
 void WKPageHideFindUI(WKPageRef pageRef)
@@ -203,9 +203,9 @@ void WKPageHideFindUI(WKPageRef pageRef)
     toImpl(pageRef)->hideFindUI();
 }
 
-void WKPageCountStringMatches(WKPageRef pageRef, WKStringRef string, bool caseInsensitive, unsigned maxNumMatches)
+void WKPageCountStringMatches(WKPageRef pageRef, WKStringRef string, bool caseInsensitive, unsigned maxMatchCount)
 {
-    toImpl(pageRef)->countStringMatches(toImpl(string)->string(), caseInsensitive, maxNumMatches);
+    toImpl(pageRef)->countStringMatches(toImpl(string)->string(), caseInsensitive, maxMatchCount);
 }
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)

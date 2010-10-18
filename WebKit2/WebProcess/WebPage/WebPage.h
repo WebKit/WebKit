@@ -226,9 +226,9 @@ private:
     void reapplyEditCommand(uint64_t commandID);
     void didRemoveEditCommand(uint64_t commandID);
 
-    void findString(const String&, uint32_t findDirection, uint32_t findOptions, uint32_t maxNumMatches);
+    void findString(const String&, uint32_t findDirection, uint32_t findOptions, uint32_t maxMatchCount);
     void hideFindUI();
-    void countStringMatches(const String&, bool caseInsensitive, uint32_t maxNumMatches);
+    void countStringMatches(const String&, bool caseInsensitive, uint32_t maxMatchCount);
 
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
 
