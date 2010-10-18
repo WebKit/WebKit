@@ -1291,11 +1291,6 @@ WebInspector.ResourcesPanel.prototype = {
 
 WebInspector.ResourcesPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
-WebInspector.getResourceContent = function(identifier, callback)
-{
-    InspectorBackend.getResourceContent(identifier, false, callback);
-}
-
 WebInspector.ResourceBaseCalculator = function()
 {
 }

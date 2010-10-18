@@ -507,6 +507,7 @@ WebInspector.doLoadedDone = function()
     // this.changes = new WebInspector.ChangesView(this.drawer);
     // TODO: Remove class="hidden" from inspector.html on button#changes-status-bar-item
     this.drawer.visibleView = this.console;
+    this.resourceManager = new WebInspector.ResourceManager();
     this.domAgent = new WebInspector.DOMAgent();
 
     this.resourceCategories = {
@@ -1220,8 +1221,6 @@ WebInspector.updateResource = function(payload)
         this.resourceURLMap[resource.url] = resource;
         this.panels.resources.addResource(resource);
         this.panels.audits.resourceStarted(resource);
-        if (this.panels.network)
-            this.panels.network.addResource(resource);
     }
 
     if (payload.didRequestChange) {
@@ -1281,11 +1280,7 @@ WebInspector.updateResource = function(payload)
         if (payload.endTime)
             resource.endTime = payload.endTime;
     }
-
-    if (this.panels.network)
-        this.panels.network.refreshResource(resource);
 }
-
 
 WebInspector.domContentEventFired = function(time)
 {

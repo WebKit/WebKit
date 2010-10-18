@@ -240,7 +240,7 @@ WebInspector.ExtensionServer.prototype = {
         var id = message.id;
         var resource = null;
 
-        resource = typeof id === "number" ? WebInspector.resources[id] : WebInspector.resourceForURL(id);
+        resource = WebInspector.resources[id] || WebInspector.resourceForURL(id);
         if (!resource)
             return this._status.E_NOTFOUND(typeof id + ": " + id);
         WebInspector.panels.resources.showResource(resource, message.line);
@@ -284,13 +284,12 @@ WebInspector.ExtensionServer.prototype = {
                 this._dispatchCallback(message.requestId, port, response);
         }
 
-        if (typeof message.ids === "number") {
+        if (typeof message.ids === "number")
             ids = [ message.ids ];
-        } else if (message.ids instanceof Array) {
+        else if (message.ids instanceof Array)
             ids = message.ids;
-        } else {
+        else
             return this._status.E_BADARGTYPE("message.ids", "Array", typeof message.ids);
-        }
 
         for (var i = 0; i < ids.length; ++i) {
             var id = ids[i];

@@ -523,7 +523,7 @@ void ApplicationCacheGroup::didReceiveResponse(ResourceHandle* handle, const Res
             if (InspectorApplicationCacheAgent* applicationCacheAgent = page->inspectorController()->applicationCacheAgent())
                 applicationCacheAgent->didReceiveManifestResponse(m_currentResourceIdentifier, response);
         } else
-            page->inspectorController()->didReceiveResponse(m_currentResourceIdentifier, response);
+            page->inspectorController()->didReceiveResponse(m_currentResourceIdentifier, m_frame->loader()->documentLoader(), response);
     }
 #endif
 

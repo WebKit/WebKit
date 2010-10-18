@@ -4403,6 +4403,7 @@
             'inspector/front-end/RemoteObject.js',
             'inspector/front-end/Resource.js',
             'inspector/front-end/ResourceCategory.js',
+            'inspector/front-end/ResourceManager.js',
             'inspector/front-end/ResourcesPanel.js',
             'inspector/front-end/ResourceView.js',
             'inspector/front-end/ScopeChainSidebarPane.js',

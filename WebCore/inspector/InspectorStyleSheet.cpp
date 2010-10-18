@@ -468,7 +468,7 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
     if (!m_pageStyleSheet)
         return false;
 
-    return InspectorResourceAgent::resourceContent(ownerDocument(), m_pageStyleSheet->finalURL(), result);
+    return InspectorResourceAgent::resourceContent(ownerDocument()->frame(), m_pageStyleSheet->finalURL(), result);
 }
 
 bool InspectorStyleSheet::inlineStyleSheetText(String* result) const

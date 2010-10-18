@@ -63658,6 +63658,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ResourceManager.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ResourcesPanel.js"
 					>
 				</File>

@@ -136,7 +136,7 @@ void ResourceLoadNotifier::dispatchDidReceiveResponse(DocumentLoader* loader, un
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
-        page->inspectorController()->didReceiveResponse(identifier, r);
+        page->inspectorController()->didReceiveResponse(identifier, loader, r);
 #endif
 }
 

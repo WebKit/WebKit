@@ -28,6 +28,11 @@ $typeTransform{"Debug"} = {
     "header" => "InspectorDebuggerAgent.h",
     "domainAccessor" => "m_inspectorController->debuggerAgent()",
 };
+$typeTransform{"Resource"} = {
+    "forward" => "InspectorResourceAgent",
+    "header" => "InspectorResourceAgent.h",
+    "domainAccessor" => "m_inspectorController->m_resourceAgent",
+};
 $typeTransform{"DOM"} = {
     "forward" => "InspectorDOMAgent",
     "header" => "InspectorDOMAgent.h",

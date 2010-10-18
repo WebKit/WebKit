@@ -69,6 +69,7 @@
 #include "InspectorInstrumentation.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResource.h"
+#include "InspectorResourceAgent.h"
 #include "InspectorState.h"
 #include "InspectorStorageAgent.h"
 #include "InspectorTimelineAgent.h"
@@ -499,6 +500,8 @@ void InspectorController::connectFrontend()
     releaseFrontendLifetimeAgents();
     m_frontend = new InspectorFrontend(m_client);
     m_domAgent = InspectorDOMAgent::create(m_cssStore.get(), m_frontend.get());
+    // FIXME: enable resource agent once front-end is ready.
+    // m_resourceAgent = InspectorResourceAgent::create(m_inspectedPage, m_frontend.get());
 
 #if ENABLE(DATABASE)
     m_storageAgent = InspectorStorageAgent::create(m_frontend.get());
@@ -608,6 +611,8 @@ void InspectorController::disconnectFrontend()
 
 void InspectorController::releaseFrontendLifetimeAgents()
 {
+    m_resourceAgent.clear();
+
     // m_domAgent is RefPtr. Remove DOM listeners first to ensure that there are
     // no references to the DOM agent from the DOM tree.
     if (m_domAgent)
@@ -748,6 +753,9 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
     if (!enabled())
         return;
 
+    if (m_resourceAgent)
+        m_resourceAgent->didCommitLoad(loader);
+
     ASSERT(m_inspectedPage);
 
     if (loader->frame() == m_inspectedPage->mainFrame()) {
@@ -822,6 +830,10 @@ void InspectorController::frameDetachedFromParent(Frame* frame)
 {
     if (!enabled())
         return;
+
+    if (m_resourceAgent)
+        m_resourceAgent->frameDetachedFromParent(frame);
+
     if (ResourcesMap* resourceMap = m_frameResources.get(frame))
         removeAllResources(resourceMap);
 }
@@ -896,6 +908,9 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
     if (!enabled())
         return;
 
+    if (m_resourceAgent)
+        m_resourceAgent->didLoadResourceFromMemoryCache(loader, cachedResource);
+
     // If the resource URL is already known, we don't need to add it again since this is just a cached load.
     if (m_knownResources.contains(cachedResource->url()))
         return;
@@ -926,6 +941,10 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
     ASSERT(m_inspectedPage);
 
     bool isMainResource = isMainResourceLoader(loader, request.url());
+
+    if (m_resourceAgent)
+        m_resourceAgent->identifierForInitialRequest(identifier, request.url(), loader, isMainResource);
+
     ensureSettingsLoaded();
     if (!isMainResource && !resourceTrackingEnabled())
         return;
@@ -977,6 +996,9 @@ void InspectorController::willSendRequest(unsigned long identifier, ResourceRequ
     if (!enabled())
         return;
 
+    if (m_resourceAgent)
+        m_resourceAgent->willSendRequest(identifier, request, redirectResponse);
+
     bool isMainResource = (m_mainResource && m_mainResource->identifier() == identifier);
     if (m_timelineAgent)
         m_timelineAgent->willSendResourceRequest(identifier, isMainResource, request);
@@ -1023,14 +1045,20 @@ void InspectorController::markResourceAsCached(unsigned long identifier)
     if (!enabled())
         return;
 
+    if (m_resourceAgent)
+        m_resourceAgent->markResourceAsCached(identifier);
+
     if (RefPtr<InspectorResource> resource = getTrackedResource(identifier))
         resource->markAsCached();
 }
 
-void InspectorController::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+void InspectorController::didReceiveResponse(unsigned long identifier, DocumentLoader* loader, const ResourceResponse& response)
 {
     if (!enabled())
         return;
+
+    if (m_resourceAgent)
+        m_resourceAgent->didReceiveResponse(identifier, loader, response);
 
     if (RefPtr<InspectorResource> resource = getTrackedResource(identifier)) {
         resource->updateResponse(response);
@@ -1049,6 +1077,9 @@ void InspectorController::didReceiveContentLength(unsigned long identifier, int 
     if (!enabled())
         return;
 
+    if (m_resourceAgent)
+        m_resourceAgent->didReceiveContentLength(identifier, lengthReceived);
+
     RefPtr<InspectorResource> resource = getTrackedResource(identifier);
     if (!resource)
         return;
@@ -1063,6 +1094,9 @@ void InspectorController::didFinishLoading(unsigned long identifier, double fini
 {
     if (!enabled())
         return;
+
+    if (m_resourceAgent)
+        m_resourceAgent->didFinishLoading(identifier, finishTime);
 
     if (m_timelineAgent)
         m_timelineAgent->didFinishLoadingResource(identifier, false, finishTime);
@@ -1082,6 +1116,9 @@ void InspectorController::didFailLoading(unsigned long identifier, const Resourc
 {
     if (!enabled())
         return;
+
+    if (m_resourceAgent)
+        m_resourceAgent->didFailLoading(identifier, error);
 
     if (m_timelineAgent)
         m_timelineAgent->didFinishLoadingResource(identifier, true, 0);
@@ -1108,6 +1145,9 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
     if (!enabled())
         return;
 
+    if (m_resourceAgent)
+        m_resourceAgent->setOverrideContent(identifier, sourceString, InspectorResource::XHR);
+
     if (m_state->getBoolean(InspectorState::monitoringXHR))
         addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, "XHR finished loading: \"" + url + "\".", sendLineNumber, sendURL);
 
@@ -1126,7 +1166,13 @@ void InspectorController::resourceRetrievedByXMLHttpRequest(unsigned long identi
 
 void InspectorController::scriptImported(unsigned long identifier, const String& sourceString)
 {
-    if (!enabled() || !resourceTrackingEnabled())
+    if (!enabled())
+        return;
+
+    if (m_resourceAgent)
+        m_resourceAgent->setOverrideContent(identifier, sourceString, InspectorResource::Script);
+
+    if (!resourceTrackingEnabled())
         return;
 
     InspectorResource* resource = m_resources.get(identifier).get();
@@ -1482,6 +1528,9 @@ void InspectorController::didCreateWebSocket(unsigned long identifier, const KUR
         return;
     ASSERT(m_inspectedPage);
 
+    if (m_resourceAgent)
+        m_resourceAgent->didCreateWebSocket(identifier, requestURL);
+
     RefPtr<InspectorResource> resource = InspectorResource::createWebSocket(identifier, requestURL, documentURL);
     addResource(resource.get());
 
@@ -1491,6 +1540,9 @@ void InspectorController::didCreateWebSocket(unsigned long identifier, const KUR
 
 void InspectorController::willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest& request)
 {
+    if (m_resourceAgent)
+        m_resourceAgent->willSendWebSocketHandshakeRequest(identifier, request);
+
     RefPtr<InspectorResource> resource = getTrackedResource(identifier);
     if (!resource)
         return;
@@ -1502,6 +1554,9 @@ void InspectorController::willSendWebSocketHandshakeRequest(unsigned long identi
 
 void InspectorController::didReceiveWebSocketHandshakeResponse(unsigned long identifier, const WebSocketHandshakeResponse& response)
 {
+    if (m_resourceAgent)
+        m_resourceAgent->didReceiveWebSocketHandshakeResponse(identifier, response);
+
     RefPtr<InspectorResource> resource = getTrackedResource(identifier);
     if (!resource)
         return;
@@ -1515,6 +1570,9 @@ void InspectorController::didReceiveWebSocketHandshakeResponse(unsigned long ide
 
 void InspectorController::didCloseWebSocket(unsigned long identifier)
 {
+    if (m_resourceAgent)
+        m_resourceAgent->didCloseWebSocket(identifier);
+
     RefPtr<InspectorResource> resource = getTrackedResource(identifier);
     if (!resource)
         return;

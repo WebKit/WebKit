@@ -189,12 +189,7 @@ void InspectorResource::updateResponse(const ResourceResponse& response)
     m_connectionReused = response.connectionReused();
     m_loadTiming = response.resourceLoadTiming();
     m_cached = m_cached || response.wasCached();
-
-    if (!m_cached && m_loadTiming && m_loadTiming->requestTime)
-        m_responseReceivedTime = m_loadTiming->requestTime + m_loadTiming->receiveHeadersEnd / 1000.0;
-    else
-        m_responseReceivedTime = currentTime();
-
+    m_responseReceivedTime = currentTime();
     m_changes.set(TimingChange);
     m_changes.set(ResponseChange);
     m_changes.set(TypeChange);
@@ -340,6 +335,28 @@ void InspectorResource::releaseScriptObject(InspectorFrontend* frontend)
         frontend->removeResource(m_identifier);
 }
 
+static InspectorResource::Type cachedResourceType(CachedResource* cachedResource)
+{
+    if (!cachedResource)
+        return InspectorResource::Other;
+
+    switch (cachedResource->type()) {
+    case CachedResource::ImageResource:
+        return InspectorResource::Image;
+    case CachedResource::FontResource:
+        return InspectorResource::Font;
+    case CachedResource::CSSStyleSheet:
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
+        return InspectorResource::Stylesheet;
+    case CachedResource::Script:
+        return InspectorResource::Script;
+    default:
+        return InspectorResource::Other;
+    }
+}
+
 InspectorResource::Type InspectorResource::type() const
 {
     if (!m_overrideContent.isNull())
@@ -358,7 +375,7 @@ InspectorResource::Type InspectorResource::type() const
     if (!m_frame)
         return Other;
 
-    InspectorResource::Type resourceType = InspectorResourceAgent::cachedResourceType(m_frame->document(), m_requestURL);
+    InspectorResource::Type resourceType = cachedResourceType(InspectorResourceAgent::cachedResource(m_frame.get(), m_requestURL));
     if (equalIgnoringFragmentIdentifier(m_requestURL, m_loader->requestURL()) && resourceType == Other)
         return Doc;
 
@@ -378,7 +395,7 @@ String InspectorResource::sourceString() const
         return String(m_overrideContent);
 
     String result;
-    if (!InspectorResourceAgent::resourceContent(m_frame->document(), m_requestURL, &result))
+    if (!InspectorResourceAgent::resourceContent(m_frame.get(), m_requestURL, &result))
         return String();
     return result;
 }
@@ -395,7 +412,7 @@ String InspectorResource::sourceBytes() const
     }
 
     String result;
-    if (!InspectorResourceAgent::resourceContentBase64(m_frame->document(), m_requestURL, &result))
+    if (!InspectorResourceAgent::resourceContentBase64(m_frame.get(), m_requestURL, &result))
         return String();
     return result;
 }
@@ -408,14 +425,9 @@ void InspectorResource::startTiming()
 
 void InspectorResource::endTiming(double actualEndTime)
 {
-    if (actualEndTime) {
+    if (actualEndTime)
         m_endTime = actualEndTime;
-        // In case of fast load (or in case of cached resources), endTime on network stack
-        // can be less then m_responseReceivedTime measured in WebCore. Normalize it here,
-        // prefer actualEndTime to m_responseReceivedTime.
-        if (m_endTime < m_responseReceivedTime)
-            m_responseReceivedTime = m_endTime;
-    } else
+    else
         m_endTime = currentTime();
 
     m_finished = true;

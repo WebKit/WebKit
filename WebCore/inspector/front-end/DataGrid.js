@@ -661,7 +661,7 @@ WebInspector.DataGrid.prototype = {
         var fillerRow = childNodes[childNodes.length - 1];
 
         var sortedRows = Array.prototype.slice.call(childNodes, 0, childNodes.length - 1);
-        sortedRows.sort(comparatorWrapper.bind(this));
+        sortedRows.sort(comparatorWrapper);
         var sortedRowsLength = sortedRows.length;
 
         tbody.removeChildren();

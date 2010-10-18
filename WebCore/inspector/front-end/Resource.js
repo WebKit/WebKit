@@ -164,6 +164,11 @@ WebInspector.Resource.prototype = {
 
     get responseReceivedTime()
     {
+        if (this.timing && this.timing.requestTime) {
+            // Calculate responseReceivedTime from timing data for better accuracy.
+            // Timing's requestTime is a baseline in seconds, rest of the numbers there are ticks in millis.
+            return this.timing.requestTime + this.timing.receiveHeadersEnd / 1000.0;
+        }
         return this._responseReceivedTime || -1;
     },
 
@@ -185,6 +190,12 @@ WebInspector.Resource.prototype = {
 
     set endTime(x)
     {
+        // In case of fast load (or in case of cached resources), endTime on network stack
+        // can be less then m_responseReceivedTime measured in WebCore. Normalize it here,
+        // prefer actualEndTime to m_responseReceivedTime.
+        if (x < this.responseReceivedTime)
+            this.responseReceivedTime = x;
+
         if (this._endTime === x)
             return;
 
@@ -609,6 +620,15 @@ WebInspector.Resource.prototype = {
 
         if (msg)
             WebInspector.console.addMessage(msg);
+    },
+
+    getContents: function(callback)
+    {
+        // FIXME: eventually, cached resources will have no identifiers.
+        if (this.frameID)
+            InspectorBackend.resourceContent(this.frameID, this.url, callback);
+        else
+            InspectorBackend.getResourceContent(this.identifier, false, callback);
     }
 }
 
