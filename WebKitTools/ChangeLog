@@ -1,5 +1,15 @@
 2010-10-18  David Levin  <levin@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        check-webkit-style should treat the GObject binding directory like other GTK directories.
+        https://bugs.webkit.org/show_bug.cgi?id=47796
+
+        * Scripts/webkitpy/style/checker.py: Added the GObject binding directory
+        with the other gtk directories (and fixed typo).
+
+2010-10-18  David Levin  <levin@chromium.org>
+
         Reviewed by Oliver Hunt.
 
         check-webkit-style needs to ignore underscores in opcode names and vm_throw
