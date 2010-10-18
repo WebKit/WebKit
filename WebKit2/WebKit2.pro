@@ -190,6 +190,7 @@ HEADERS += \
     Shared/API/c/WKURL.h \
     Shared/API/c/WKURLRequest.h \
     Shared/API/c/WKURLResponse.h \
+    Shared/API/c/WKUserContentURLPattern.h \
     Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/BackingStore.h \
@@ -343,6 +344,7 @@ SOURCES += \
     Shared/API/c/WKURL.cpp \
     Shared/API/c/WKURLRequest.cpp \
     Shared/API/c/WKURLResponse.cpp \
+    Shared/API/c/WKUserContentURLPattern.cpp \
     Shared/BackingStore.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
@@ -364,6 +366,7 @@ SOURCES += \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
+    Shared/WebUserContentURLPattern.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \

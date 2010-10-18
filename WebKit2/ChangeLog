@@ -1,3 +1,45 @@
+2010-10-18  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Need a WebKit2 equivalent of the WebKit1 WebUserContentURLPattern.
+        https://bugs.webkit.org/show_bug.cgi?id=47783
+
+        * Shared/API/c/WKBase.h:
+
+        * Shared/API/c/WKSharedAPICast.h:
+
+        * Shared/API/c/WKUserContentURLPattern.cpp: Added.
+        (WKUserContentURLPatternGetTypeID):
+        (WKUserContentURLPatternCreate):
+        (WKUserContentURLPatternMatchesURL):
+        * Shared/API/c/WKUserContentURLPattern.h: Added.
+
+        * Shared/APIObject.h:
+
+        * Shared/UserMessageCoders.h:
+        Use the original pattern string to encode and decode a UserContentURLPattern.
+        (WebKit::UserMessageEncoder::baseEncode):
+        (WebKit::UserMessageDecoder::baseDecode):
+
+        * Shared/WebUserContentURLPattern.h: Added.
+        (WebKit::WebUserContentURLPattern::create):
+        (WebKit::WebUserContentURLPattern::matchesURL):
+        Use WebCore::UserContentURLPattern::matches.
+        (WebKit::WebUserContentURLPattern::patternString):
+        Expose the pattern string used to create the UserContentURLPattern for the purpose of
+        encoding and decoding.
+        (WebKit::WebUserContentURLPattern::WebUserContentURLPattern):
+        (WebKit::WebUserContentURLPattern::type):
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add WKUserContentURLPattern.h/.cpp and WebUserContentURLPattern.h
+
+        * win/WebKit2Generated.make:
+        Copy over WKUsercontentURLPattern into the output directory.
+
 2010-10-18  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

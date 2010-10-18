@@ -23,72 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WebUserContentURLPattern_h
+#define WebUserContentURLPattern_h
 
-#include <wtf/RefCounted.h>
+#include "APIObject.h"
+
+#include <WebCore/KURL.h>
+#include <WebCore/UserContentURLPattern.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
+class WebUserContentURLPattern : public APIObject {
 public:
-    enum Type {
-        // Base types
-        TypeNull = 0,
-        TypeArray,
-        TypeCertificateInfo,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeSerializedScriptValue,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        TypeURLResponse,
-        TypeUserContentURLPattern,
+    static const Type APIType = TypeUserContentURLPattern;
 
-        // Base numeric types
-        TypeBoolean,
-        TypeDouble,
-        TypeUInt64,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+    static PassRefPtr<WebUserContentURLPattern> create(const String& pattern)
+    {
+        return adoptRef(new WebUserContentURLPattern(pattern));
+    }
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundleHitTestResult,
-        TypeBundleNodeHandle,
-        TypeBundlePage,
-        TypeBundleRangeHandle,
-        TypeBundleScriptWorld,
+    bool matchesURL(const String& url) const { return m_pattern.matches(WebCore::KURL(WebCore::ParsedURLString, url)); }
 
-        // Platform specific
-        TypeView
-    };
+    const String& patternString() const { return m_patternString; }
 
-    virtual ~APIObject()
+private:
+    explicit WebUserContentURLPattern(const String& pattern)
+        : m_pattern(WebCore::UserContentURLPattern(pattern))
+        , m_patternString(pattern)
     {
     }
 
-    virtual Type type() const = 0;
+    virtual Type type() const { return APIType; }
 
-protected:
-    APIObject()
-    {
-    }
+    WebCore::UserContentURLPattern m_pattern;
+    String m_patternString;
 };
 
-} // namespace WebKit
+}
 
-#endif // APIObject_h
+#endif // WebUserContentURLPattern_h

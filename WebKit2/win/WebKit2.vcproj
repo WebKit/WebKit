@@ -580,6 +580,10 @@
 				RelativePath="..\Shared\WebURLResponse.h"
 				>
 			</File>
+			<File
+				RelativePath="..\Shared\WebUserContentURLPattern.h"
+				>
+			</File>
 			<Filter
 				Name="API"
 				>
@@ -725,6 +729,14 @@
 				</File>
 				<File
 					RelativePath="..\Shared\API\c\WKURLResponse.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKUserContentURLPattern.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\API\c\WKUserContentURLPattern.h"
 					>
 				</File>
 				<Filter

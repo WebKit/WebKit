@@ -54,6 +54,7 @@ typedef const struct OpaqueWKUInt64* WKUInt64Ref;
 typedef const struct OpaqueWKURL* WKURLRef;
 typedef const struct OpaqueWKURLRequest* WKURLRequestRef;
 typedef const struct OpaqueWKURLResponse* WKURLResponseRef;
+typedef const struct OpaqueWKUserContentURLPattern* WKUserContentURLPatternRef;
 
 /* WebKit2 main API types */
 
