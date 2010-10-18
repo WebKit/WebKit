@@ -31,6 +31,7 @@
 #include "ICOImageDecoder.h"
 #include "JPEGImageDecoder.h"
 #include "PNGImageDecoder.h"
+#include "WEBPImageDecoder.h"
 #include "SharedBuffer.h"
 
 using namespace std;
@@ -73,6 +74,19 @@ ImageDecoder* ImageDecoder::create(const SharedBuffer& data, bool premultiplyAlp
     // JPEG
     if (!memcmp(contents, "\xFF\xD8\xFF", 3))
         return new JPEGImageDecoder(premultiplyAlpha);
+
+#if USE(WEBP)
+    if (!memcmp(contents, "RIFF", 4)) {
+        static const unsigned webpExtraMarker = 6;
+        static const unsigned webpExtraMarkeroffset = 8;
+        char header[webpExtraMarker];
+        unsigned length = copyFromSharedBuffer(header, webpExtraMarker, data, webpExtraMarkeroffset);
+        if (length >= webpExtraMarker) {
+            if (!memcmp(header, "WEBPVP", webpExtraMarker))
+                return new WEBPImageDecoder(premultiplyAlpha);
+        }
+    }
+#endif
 
     // BMP
     if (strncmp(contents, "BM", 2) == 0)

@@ -99,6 +99,8 @@ deps = {
     From('chromium_deps', 'src/third_party/libvpx/include'),
   'third_party/libvpx/lib':
     From('chromium_deps', 'src/third_party/libvpx/lib'),
+  'third_party/libwebp':
+    Var('chromium_svn')+'/third_party/libwebp@'+Var('chromium_rev'),
   'tools/grit':
     Var('chromium_svn')+'/tools/grit@'+Var('chromium_rev'),
   'tools/generate_stubs':

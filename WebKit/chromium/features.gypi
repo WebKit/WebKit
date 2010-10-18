@@ -87,6 +87,7 @@
         'ENABLE_XPATH=1',
         'ENABLE_XSLT=1',
         'WTF_USE_ACCELERATED_COMPOSITING=1',
+        'WTF_USE_WEBP=1',
       ],
 
       'use_accelerated_compositing%': 1,

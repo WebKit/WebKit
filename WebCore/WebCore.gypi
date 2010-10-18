@@ -2854,6 +2854,8 @@
             'platform/image-decoders/jpeg/JPEGImageDecoder.h',
             'platform/image-decoders/png/PNGImageDecoder.cpp',
             'platform/image-decoders/png/PNGImageDecoder.h',
+            'platform/image-decoders/webp/WEBPImageDecoder.cpp',
+            'platform/image-decoders/webp/WEBPImageDecoder.h',
             'platform/image-decoders/skia/ImageDecoderSkia.cpp',
             'platform/image-decoders/wx/ImageDecoderWx.cpp',
             'platform/image-decoders/zlib/crc32.h',

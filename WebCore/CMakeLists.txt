@@ -38,6 +38,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/image-decoders/ico"
     "${WEBCORE_DIR}/platform/image-decoders/jpeg"
     "${WEBCORE_DIR}/platform/image-decoders/png"
+    "${WEBCORE_DIR}/platform/image-decoders/webp"
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/platform/network"
     "${WEBCORE_DIR}/platform/sql"
@@ -1335,6 +1336,7 @@ SET(WebCore_SOURCES
     platform/image-decoders/ico/ICOImageDecoder.cpp
     platform/image-decoders/jpeg/JPEGImageDecoder.cpp
     platform/image-decoders/png/PNGImageDecoder.cpp
+    platform/image-decoders/webp/WEBPImageDecoder.cpp
 
     platform/mock/DeviceOrientationClientMock.cpp
     platform/mock/GeolocationServiceMock.cpp

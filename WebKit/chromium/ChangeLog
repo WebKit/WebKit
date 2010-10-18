@@ -1,3 +1,41 @@
+2010-10-17  Pascal Massimino  <pascal.massimino@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        Add support for WebP image decoding in ImageDecoder
+        using library libwebp-decode library available from
+        http://www.webmproject.org/code/
+
+        https://bugs.webkit.org/show_bug.cgi?id=47512
+
+        Tests: fast/images/webp-image-decoding.html
+
+        * CMakeLists.txt:
+            add platform/image-decoders/webp files and directory
+        * GNUmakefile.am:
+            add platform/image-decoders/webp directory
+        * WebCore.gyp/WebCore.gyp:
+            add platform/image-decoders/webp directory
+        * WebCore.gypi:
+            add platform/image-decoders/webp directory
+        * features.gypi:
+            add WTF_USE_WEBP=1
+        * platform/image-decoders/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+            instantiate webp decoder for file starting with 'RIFF????WEBP'
+        * platform/image-decoders/webp: Added.
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp: Added.
+        (WebCore::WEBPImageDecoder::WEBPImageDecoder):
+        (WebCore::WEBPImageDecoder::~WEBPImageDecoder):
+        (WebCore::WEBPImageDecoder::isSizeAvailable):
+        (WebCore::WEBPImageDecoder::frameBufferAtIndex):
+        (WebCore::WEBPImageDecoder::decode):
+            sub-class handling decoding of webp images
+        * platform/image-decoders/webp/WEBPImageDecoder.h: Added.
+        (WebCore::WEBPImageDecoder::filenameExtension):
+        (WebCore::WEBPImageDecoder::supportsAlpha):
+            header for webp-decoder sub-class
+
 2010-10-15  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.

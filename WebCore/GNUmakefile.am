@@ -43,6 +43,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/image-decoders/gif \
 	-I$(srcdir)/WebCore/platform/image-decoders/ico \
 	-I$(srcdir)/WebCore/platform/image-decoders/jpeg \
+	-I$(srcdir)/WebCore/platform/image-decoders/webp \
 	-I$(srcdir)/WebCore/platform/image-decoders/png \
 	-I$(srcdir)/WebCore/platform/mock \
 	-I$(srcdir)/WebCore/platform/network \
@@ -3573,6 +3574,8 @@ webcoregtk_sources += \
 	WebCore/platform/image-decoders/ImageDecoder.h \
 	WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
 	WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
+	WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp \
+	WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
 	WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
 	WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	WebCore/platform/network/soup/AuthenticationChallenge.h \
