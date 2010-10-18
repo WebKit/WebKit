@@ -1,5 +1,14 @@
 2010-10-18  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleMouseEnterEvent):
+        (WebKit::NetscapePlugin::platformHandleMouseLeaveEvent):
+        (WebKit::NetscapePlugin::platformSetFocus):
+
+2010-10-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Add matchCountDidChange callback

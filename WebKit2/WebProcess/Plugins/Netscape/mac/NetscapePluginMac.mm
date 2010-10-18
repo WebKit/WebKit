@@ -442,7 +442,7 @@ bool NetscapePlugin::platformHandleMouseEnterEvent(const WebMouseEvent& mouseEve
 
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
-            EventRecord eventRecord = initializeEventRecord(adjustCursorEvent);
+            EventRecord eventRecord = initializeEventRecord(NPEventType_AdjustCursorEvent);
             eventRecord.modifiers = modifiersForEvent(mouseEvent);
             
             return NPP_HandleEvent(&eventRecord);
@@ -468,7 +468,7 @@ bool NetscapePlugin::platformHandleMouseLeaveEvent(const WebMouseEvent& mouseEve
 
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
-            EventRecord eventRecord = initializeEventRecord(adjustCursorEvent);
+            EventRecord eventRecord = initializeEventRecord(NPEventType_AdjustCursorEvent);
             eventRecord.modifiers = modifiersForEvent(mouseEvent);
             
             return NPP_HandleEvent(&eventRecord);
@@ -552,7 +552,7 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
 
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
-            EventRecord event = initializeEventRecord(hasFocus ? getFocusEvent : loseFocusEvent);
+            EventRecord event = initializeEventRecord(hasFocus ? NPEventType_GetFocusEvent : NPEventType_LoseFocusEvent);
 
             NPP_HandleEvent(&event);
             break;
