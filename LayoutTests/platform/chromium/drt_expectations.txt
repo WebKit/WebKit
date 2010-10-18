@@ -63,6 +63,12 @@ BUG_DRT LINUX : svg/batik/text/verticalText.svg = IMAGE+TEXT
 // This is an error which test_shell can't find.
 BUGWK43960 WIN MAC LINUX : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
+// media/video-* flakyness
+BUG59665 MAC : media/video-aspect-ratio.html = TIMEOUT
+BUG59665 MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
+BUG59665 MAC : media/video-src-change.html = CRASH TEXT PASS
+BUG59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
+
 // Not investigated.
 BUG_DRT WIN MAC LINUX : fast/dynamic/window-resize-scrollbars-test.html = IMAGE+TEXT
 BUG_DRT WIN MAC LINUX : storage/domstorage/quota.html = TEXT
@@ -80,10 +86,6 @@ BUG_DRT LINUX : fast/text/international/wrap-CJK-001.html = IMAGE
 BUG_DRT LINUX : http/tests/multipart/invalid-image-data.html = IMAGE
 BUG_DRT LINUX : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = IMAGE+TEXT
 BUG_DRT LINUX : userscripts/user-script-audio-document.html = TEXT
-BUG_DRT MAC : media/video-aspect-ratio.html = TIMEOUT
-BUG_DRT MAC : media/video-controls-transformed.html = TEXT
-BUG_DRT MAC : media/video-play-empty-events.html = CRASH TIMEOUT PASS
-BUG_DRT MAC : media/video-src-change.html = CRASH TEXT PASS
 BUG_DRT MAC : svg/custom/clip-path-referencing-use2.svg = TEXT
 BUG_DRT WIN : css2.1/t1202-counter-09-b.html = IMAGE
 BUG_DRT WIN : css2.1/t1202-counters-09-b.html = IMAGE
