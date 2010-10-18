@@ -54,9 +54,6 @@ public:
     }
     ~IDBFactory();
 
-    // FIXME: Try to modify the code generator so this is unneeded.
-    PassRefPtr<IDBRequest> open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec) { return open(context, name, String(), ec); }
-
     PassRefPtr<IDBRequest> open(ScriptExecutionContext*, const String& name, const String& description, ExceptionCode&);
 
 private:
