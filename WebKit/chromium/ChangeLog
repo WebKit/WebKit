@@ -1,3 +1,9 @@
+2010-10-18  James Robinson  <jamesr@chromium.org>
+
+        Update the chromium DEPS from 62399 to 62813 to pick up skia fixes
+
+        * DEPS:
+
 2010-10-17  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
