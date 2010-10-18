@@ -1,3 +1,13 @@
+2010-10-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by nobody, build fix.
+
+        [Qt] Fix the build with MSVC.
+
+        Splitting the condition in two to prevent qmake parentheses issues.
+
+        * Api/DerivedSources.pro:
+
 2010-10-18  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Antonio Gomes.

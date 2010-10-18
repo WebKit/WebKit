@@ -10,7 +10,9 @@ DESTDIR = ../../../include/QtWebKit
 QUOTE = ""
 DOUBLE_ESCAPED_QUOTE = ""
 ESCAPE = ""
-win32-msvc* | wince* | contains(QMAKE_HOST.os, "Windows"):isEmpty(QMAKE_SH) {
+win32-msvc* | wince* {
+    ESCAPE = "^"
+} else:contains(QMAKE_HOST.os, "Windows"):isEmpty(QMAKE_SH) {
     # MinGW's make will run makefile commands using sh, even if make
     #  was run from the Windows shell, if it finds sh in the path.
     ESCAPE = "^"
