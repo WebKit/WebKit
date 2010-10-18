@@ -1103,6 +1103,7 @@ SET(WebCore_SOURCES
     inspector/InspectorBackend.cpp
     inspector/InspectorCSSAgent.cpp
     inspector/InspectorCSSStore.cpp
+    inspector/InspectorClient.cpp
     inspector/InspectorController.cpp
     inspector/InspectorDOMAgent.cpp
     inspector/InspectorDOMStorageResource.cpp

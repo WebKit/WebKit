@@ -63191,6 +63191,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorClient.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorClient.h"
 				>
 			</File>

@@ -1809,6 +1809,7 @@ webcore_sources += \
 	WebCore/inspector/InspectorApplicationCacheAgent.h \
 	WebCore/inspector/InspectorBackend.cpp \
 	WebCore/inspector/InspectorBackend.h \
+	WebCore/inspector/InspectorClient.cpp \
 	WebCore/inspector/InspectorClient.h \
 	WebCore/inspector/InspectorController.cpp \
 	WebCore/inspector/InspectorController.h \

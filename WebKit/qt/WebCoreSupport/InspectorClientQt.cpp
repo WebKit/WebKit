@@ -39,7 +39,6 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformString.h"
-#include "ScriptController.h"
 #include "ScriptDebugServer.h"
 #include "qwebinspector.h"
 #include "qwebinspector_p.h"
@@ -266,22 +265,7 @@ bool InspectorClientQt::sendMessageToFrontend(const String& message)
         return false;
 
     Page* frontendPage = QWebPagePrivate::core(m_frontendWebPage);
-    if (!frontendPage)
-        return false;
-
-    Frame* frame = frontendPage->mainFrame();
-    if (!frame)
-        return false;
-
-    ScriptController* scriptController = frame->script();
-    if (!scriptController)
-        return false;
-
-    String dispatchToFrontend("WebInspector.dispatchMessageFromBackend(");
-    dispatchToFrontend += message;
-    dispatchToFrontend += ");";
-    scriptController->executeScript(dispatchToFrontend);
-    return true;
+    return doDispatchMessageOnFrontendPage(frontendPage, message);
 }
 
 static String variantToSetting(const QVariant& qvariant)

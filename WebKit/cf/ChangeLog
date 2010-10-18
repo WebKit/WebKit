@@ -1,3 +1,13 @@
+2010-10-18  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Web Inspector: [crash] when Inspector Open in CSSStyleSelector::loadPendingImages().
+        https://bugs.webkit.org/show_bug.cgi?id=46224
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::sendMessageToFrontend):
+
 2010-06-14  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Pavel Feldman.

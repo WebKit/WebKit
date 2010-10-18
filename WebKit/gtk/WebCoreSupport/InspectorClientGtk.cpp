@@ -222,22 +222,7 @@ void InspectorClient::storeSetting(const String&, const String&)
 
 bool InspectorClient::sendMessageToFrontend(const String& message)
 {
-    if (!m_frontendPage)
-        return false;
-
-    Frame* frame = m_frontendPage->mainFrame();
-    if (!frame)
-        return false;
-
-    ScriptController* scriptController = frame->script();
-    if (!scriptController)
-        return false;
-
-    String dispatchToFrontend("WebInspector.dispatchMessageFromBackend(");
-    dispatchToFrontend += message;
-    dispatchToFrontend += ");";
-    scriptController->executeScript(dispatchToFrontend);
-    return true;
+    return doDispatchMessageOnFrontendPage(m_frontendPage, message);
 }
 
 const char* InspectorClient::inspectorFilesPath()

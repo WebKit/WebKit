@@ -37,7 +37,7 @@ class Page;
 
 class InspectorClient {
 public:
-    virtual ~InspectorClient() {  }
+    virtual ~InspectorClient() { }
 
     virtual void inspectorDestroyed() = 0;
 
@@ -55,6 +55,8 @@ public:
     // However, there are some inspector controller states that should survive navigation (such as tracking resources
     // or recording timeline). Following callbacks allow embedders to track these states.
     virtual void updateInspectorStateCookie(const String&) { };
+
+    bool doDispatchMessageOnFrontendPage(Page* frontendPage, const String& message);
 };
 
 } // namespace WebCore
