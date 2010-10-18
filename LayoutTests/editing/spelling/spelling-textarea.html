@@ -28,8 +28,7 @@ if (window.layoutTestController) {
 
     // Test the above 'zz' is marked as misspelled. We test it only on platforms that implement
     // textInputController.hasSpellingMarker() to avoid exceptions.
-    if (textInputController && textInputController.hasSpellingMarker)
-        logResult(textInputController.hasSpellingMarker(0, 2));
+    logResult(layoutTestController.hasSpellingMarker(0, 2));
 }
 
 var successfullyParsed = true;

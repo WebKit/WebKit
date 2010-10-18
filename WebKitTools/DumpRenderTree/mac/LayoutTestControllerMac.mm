@@ -944,3 +944,8 @@ void LayoutTestController::abortModal()
 {
     [NSApp abortModal];
 }
+
+bool LayoutTestController::hasSpellingMarker(int from, int length)
+{
+    return [mainFrame hasSpellingMarker:from length:length];
+}

@@ -1,3 +1,41 @@
+2010-10-18  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        TextInputController.hasSpellingMarkers() should be owned by LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=47659
+        
+        Moved hasSpellingMarkers() from TextInputController to
+        LayoutTestController.  Currently the implementation is available
+        only for Mac and for Chromium.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (hasSpellingMarkerCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::hasSpellingMarker):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        (TextInputController::TextInputController):
+        (TextInputController::makeAttributedString):
+        * DumpRenderTree/chromium/TextInputController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::hasSpellingMarker):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::hasSpellingMarker):
+        * DumpRenderTree/mac/TextInputController.m:
+        (+[TextInputController isSelectorExcludedFromWebScript:]):
+        (+[TextInputController webScriptNameForSelector:]):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::hasSpellingMarker):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::hasSpellingMarker):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::hasSpellingMarker):
+
 2010-10-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
