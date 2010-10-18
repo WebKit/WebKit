@@ -1,0 +1,44 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldInsertText:
+ replacingDOMRange:range from 9 of #text > DIV > DIV > BODY > HTML > #document to 9 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionTyped
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document toDOMRange:range from 9 of #text > DIV > DIV > BODY > HTML > #document to 9 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x171
+        RenderBlock {DIV} at (0,0) size 784x62
+          RenderText {#text} at (0,0) size 61x32
+            text run at (0,0) width 61: "Tests:"
+          RenderBR {BR} at (61,24) size 0x0
+          RenderText {#text} at (0,31) size 270x32
+            text run at (0,31) width 270: "Key binding for control-O"
+        RenderBlock {DIV} at (0,78) size 784x93
+          RenderText {#text} at (0,0) size 177x32
+            text run at (0,0) width 177: "Expected results:"
+          RenderBR {BR} at (177,24) size 0x0
+          RenderText {#text} at (0,31) size 91x32
+            text run at (0,31) width 91: "one five |"
+          RenderBR {BR} at (91,55) size 0x0
+          RenderText {#text} at (0,62) size 147x32
+            text run at (0,62) width 147: "two three four"
+      RenderBlock {DIV} at (0,195) size 784x62
+        RenderBlock {DIV} at (0,0) size 784x31
+          RenderText {#text} at (0,0) size 86x32
+            text run at (0,0) width 80: "one five"
+            text run at (80,0) width 6: " "
+        RenderBlock {DIV} at (0,31) size 784x31
+          RenderText {#text} at (0,0) size 147x32
+            text run at (0,0) width 147: "two three four"
+caret: position 9 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
