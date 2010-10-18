@@ -3463,6 +3463,10 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
     else if (eventType == "DeviceOrientationEvent")
         event = DeviceOrientationEvent::create();
 #endif
+#if ENABLE(ORIENTATION_EVENTS)
+    else if (eventType == "OrientationEvent")
+        event = Event::create();
+#endif
     if (event)
         return event.release();
 
