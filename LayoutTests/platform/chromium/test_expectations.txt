@@ -3050,7 +3050,6 @@ BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
 
 BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
 
-BUGWEBGL WIN LINUX : fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html = TEXT
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
 BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html = TEXT PASS

@@ -196,6 +196,12 @@ void WebGraphicsContext3DDefaultImpl::validateAttributes()
 #endif
         if (!isValidVendor || !strstr(extensions, "GL_EXT_framebuffer_multisample"))
             m_attributes.antialias = false;
+
+        // Don't antialias when using Mesa to ensure more reliable testing and
+        // because it doesn't appear to multisample straight lines correctly.
+        const char* renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+        if (!strncmp(renderer, "Mesa", 4))
+            m_attributes.antialias = false;
     }
     // FIXME: instead of enforcing premultipliedAlpha = true, implement the
     // correct behavior when premultipliedAlpha = false is requested.

@@ -1,3 +1,13 @@
+2010-10-18  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Turn off antialiasing when using Mesa during testing.
+        https://bugs.webkit.org/show_bug.cgi?id=47697
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::validateAttributes):
+
 2010-10-18  James Robinson  <jamesr@chromium.org>
 
         Update the chromium DEPS from 62399 to 62813 to pick up skia fixes
