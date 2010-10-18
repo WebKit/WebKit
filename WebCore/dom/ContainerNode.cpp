@@ -489,10 +489,10 @@ void ContainerNode::parserRemoveChild(Node* oldChild)
 
 // this differs from other remove functions because it forcibly removes all the children,
 // regardless of read-only status or event exceptions, e.g.
-bool ContainerNode::removeChildren()
+void ContainerNode::removeChildren()
 {
     if (!m_firstChild)
-        return false;
+        return;
 
     // The container node can be removed from event handlers.
     RefPtr<ContainerNode> protect(this);
@@ -541,8 +541,6 @@ bool ContainerNode::removeChildren()
         // document. There is no explanation for this discrepancy between removeChild()
         // and its optimized version removeChildren().
     }
-
-    return true;
 }
 
 bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)

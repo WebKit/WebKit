@@ -32,8 +32,9 @@
 #include "PageCache.h"
 #include "ResourceRequest.h"
 #include <stdio.h>
-#include <wtf/text/CString.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/MathExtras.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

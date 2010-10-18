@@ -45,10 +45,9 @@ using namespace HTMLNames;
 
 static Node* nextRenderedEditable(Node* node)
 {
-    while (1) {
-        node = node->nextEditable();
-        if (!node)
-            return 0;
+    while ((node = node->nextLeafNode())) {
+        if (!node->isContentEditable())
+            continue;
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;
@@ -60,10 +59,9 @@ static Node* nextRenderedEditable(Node* node)
 
 static Node* previousRenderedEditable(Node* node)
 {
-    while (1) {
-        node = node->previousEditable();
-        if (!node)
-            return 0;
+    while ((node = node->previousLeafNode())) {
+        if (!node->isContentEditable())
+            continue;
         RenderObject* renderer = node->renderer();
         if (!renderer)
             continue;

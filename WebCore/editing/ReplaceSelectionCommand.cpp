@@ -779,6 +779,21 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
     }
 }
 
+static Node* enclosingInline(Node* node)
+{
+    while (ContainerNode* parent = node->parentNode()) {
+        if (parent->isBlockFlow() || parent->hasTagName(bodyTag))
+            return node;
+        // Stop if any previous sibling is a block.
+        for (Node* sibling = node->previousSibling(); sibling; sibling = sibling->previousSibling()) {
+            if (sibling->isBlockFlow())
+                return node;
+        }
+        node = parent;
+    }
+    return node;
+}
+
 void ReplaceSelectionCommand::doApply()
 {
     VisibleSelection selection = endingSelection();
@@ -998,7 +1013,7 @@ void ReplaceSelectionCommand::doApply()
         // but our destination node is inside an inline that is the last in the block.
         // We insert a placeholder before the newly inserted content to avoid being merged into the inline.
         Node* destinationNode = destination.deepEquivalent().node();
-        if (m_shouldMergeEnd && destinationNode != destinationNode->enclosingInlineElement() && destinationNode->enclosingInlineElement()->nextSibling())
+        if (m_shouldMergeEnd && destinationNode != enclosingInline(destinationNode) && enclosingInline(destinationNode)->nextSibling())
             insertNodeBefore(createBreakElement(document()), refNode.get());
         
         // Merging the the first paragraph of inserted content with the content that came

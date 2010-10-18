@@ -276,6 +276,12 @@ public:
     DOMStringMap* dataset();
     DOMStringMap* optionalDataset() const;
 
+#if ENABLE(MATHML)
+    virtual bool isMathMLElement() const { return false; }
+#else
+    static bool isMathMLElement() { return false; }
+#endif
+
     virtual bool isFormControlElement() const { return false; }
     virtual bool isEnabledFormControl() const { return true; }
     virtual bool isReadOnlyFormControl() const { return false; }

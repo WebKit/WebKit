@@ -127,6 +127,8 @@ void JSNode::markChildren(MarkStack& markStack)
     // the document, we need to mark the document, but we don't need to explicitly
     // mark any other nodes.
     if (node->inDocument()) {
+        // FIXME: Do we really want to call a virtual function, ownerDocument here,
+        // when the non-virtual inline function, document, is so much faster?!
         if (Document* doc = node->ownerDocument())
             markDOMNodeWrapper(markStack, doc, doc);
         return;

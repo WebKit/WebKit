@@ -530,38 +530,48 @@ Node* Node::firstDescendant() const
     return n;
 }
 
-bool Node::insertBefore(PassRefPtr<Node>, Node*, ExceptionCode& ec, bool)
+bool Node::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
-    ec = HIERARCHY_REQUEST_ERR;
-    return false;
+    if (!isContainerNode()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return false;
+    }
+    return toContainerNode(this)->insertBefore(newChild, refChild, ec, shouldLazyAttach);
 }
 
-bool Node::replaceChild(PassRefPtr<Node>, Node*, ExceptionCode& ec, bool)
+bool Node::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
-    ec = HIERARCHY_REQUEST_ERR;
-    return false;
+    if (!isContainerNode()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return false;
+    }
+    return toContainerNode(this)->replaceChild(newChild, oldChild, ec, shouldLazyAttach);
 }
 
-bool Node::removeChild(Node*, ExceptionCode& ec)
+bool Node::removeChild(Node* oldChild, ExceptionCode& ec)
 {
-    ec = NOT_FOUND_ERR;
-    return false;
+    if (!isContainerNode()) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+    return toContainerNode(this)->removeChild(oldChild, ec);
 }
 
-bool Node::appendChild(PassRefPtr<Node>, ExceptionCode& ec, bool)
+bool Node::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)
 {
-    ec = HIERARCHY_REQUEST_ERR;
-    return false;
+    if (!isContainerNode()) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return false;
+    }
+    return toContainerNode(this)->appendChild(newChild, ec, shouldLazyAttach);
 }
 
 void Node::remove(ExceptionCode& ec)
 {
-    ref();
-    if (Node *p = parentNode())
-        p->removeChild(this, ec);
+    if (ContainerNode* parent = parentNode())
+        parent->removeChild(this, ec);
     else
         ec = HIERARCHY_REQUEST_ERR;
-    deref();
 }
 
 void Node::normalize()
@@ -1228,28 +1238,6 @@ void Node::detach()
     clearFlag(InDetachFlag);
 }
 
-Node *Node::previousEditable() const
-{
-    Node *node = previousLeafNode();
-    while (node) {
-        if (node->isContentEditable())
-            return node;
-        node = node->previousLeafNode();
-    }
-    return 0;
-}
-
-Node *Node::nextEditable() const
-{
-    Node *node = nextLeafNode();
-    while (node) {
-        if (node->isContentEditable())
-            return node;
-        node = node->nextLeafNode();
-    }
-    return 0;
-}
-
 RenderObject * Node::previousRenderer()
 {
     for (Node *n = previousSibling(); n; n = n->previousSibling()) {
@@ -1337,11 +1325,7 @@ void Node::createRendererIfNeeded()
     ASSERT(parent);
     
     RenderObject* parentRenderer = parent->renderer();
-    if (parentRenderer && parentRenderer->canHaveChildren()
-#if ENABLE(SVG) || ENABLE(XHTMLMP)
-        && parent->childShouldCreateRenderer(this)
-#endif
-        ) {
+    if (parentRenderer && parentRenderer->canHaveChildren() && parent->childShouldCreateRenderer(this)) {
         RefPtr<RenderStyle> style = styleForRenderer();
         if (rendererIsNeeded(style.get())) {
             if (RenderObject* r = createRenderer(document()->renderArena(), style.get())) {
@@ -1466,11 +1450,6 @@ bool Node::isBlockFlowOrBlockTable() const
     return renderer() && (renderer()->isBlockFlow() || (renderer()->isTable() && !renderer()->isInline()));
 }
 
-bool Node::isEditableBlock() const
-{
-    return isContentEditable() && isBlockFlow();
-}
-
 Element *Node::enclosingBlockFlowElement() const
 {
     Node *n = const_cast<Node *>(this);
@@ -1484,26 +1463,6 @@ Element *Node::enclosingBlockFlowElement() const
         if (n->isBlockFlow() || n->hasTagName(bodyTag))
             return static_cast<Element *>(n);
     }
-    return 0;
-}
-
-Element *Node::enclosingInlineElement() const
-{
-    Node *n = const_cast<Node *>(this);
-    Node *p;
-
-    while (1) {
-        p = n->parentNode();
-        if (!p || p->isBlockFlow() || p->hasTagName(bodyTag))
-            return static_cast<Element *>(n);
-        // Also stop if any previous sibling is a block
-        for (Node *sibling = n->previousSibling(); sibling; sibling = sibling->previousSibling()) {
-            if (sibling->isBlockFlow())
-                return static_cast<Element *>(n);
-        }
-        n = p;
-    }
-    ASSERT_NOT_REACHED();
     return 0;
 }
 

@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -35,8 +35,8 @@
 
 #if USE(JSC)
 namespace JSC {
-class JSGlobalData;
-class MarkStack;
+    class JSGlobalData;
+    class MarkStack;
 }
 #endif
 
@@ -137,8 +137,8 @@ public:
     Node* previousSibling() const { return m_previous; }
     Node* nextSibling() const { return m_next; }
     PassRefPtr<NodeList> childNodes();
-    Node* firstChild() const { return isContainerNode() ? containerFirstChild() : 0; }
-    Node* lastChild() const { return isContainerNode() ? containerLastChild() : 0; }
+    Node* firstChild() const;
+    Node* lastChild() const;
     bool hasAttributes() const;
     NamedNodeMap* attributes() const;
 
@@ -149,10 +149,10 @@ public:
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
     // these methods to be more efficient since they don't need to return a ref
-    virtual bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, bool shouldLazyAttach = false);
-    virtual bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, bool shouldLazyAttach = false);
-    virtual bool removeChild(Node* child, ExceptionCode&);
-    virtual bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, bool shouldLazyAttach = false);
+    bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, bool shouldLazyAttach = false);
+    bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, bool shouldLazyAttach = false);
+    bool removeChild(Node* child, ExceptionCode&);
+    bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, bool shouldLazyAttach = false);
 
     void remove(ExceptionCode&);
     bool hasChildNodes() const { return firstChild(); }
@@ -192,13 +192,6 @@ public:
     static bool isWMLElement() { return false; }
 #endif
 
-#if ENABLE(MATHML)
-    virtual bool isMathMLElement() const { return false; }
-#else
-    static bool isMathMLElement() { return false; }
-#endif
-
-
     virtual bool isMediaControlElement() const { return false; }
     bool isStyledElement() const { return getFlag(IsStyledElementFlag); }
     virtual bool isFrameOwnerElement() const { return false; }
@@ -218,7 +211,8 @@ public:
     // Returns the enclosing event parent node (or self) that, when clicked, would trigger a navigation.
     Node* enclosingLinkEventParentOrSelf();
 
-    // Node ancestors when concerned about event flow
+    // Node ancestors when concerned about event flow.
+    // FIXME: Should be named getEventAncestors.
     void eventAncestors(Vector<RefPtr<ContainerNode> > &ancestors);
 
     bool isBlockFlow() const;
@@ -232,28 +226,21 @@ public:
     Node* previousNodeConsideringAtomicNodes() const;
     Node* nextNodeConsideringAtomicNodes() const;
     
-    /** (Not part of the official DOM)
-     * Returns the next leaf node.
-     *
-     * Using this function delivers leaf nodes as if the whole DOM tree were a linear chain of its leaf nodes.
-     * @return next leaf node or 0 if there are no more.
-     */
+    // Returns the next leaf node or 0 if there are no more.
+    // Delivers leaf nodes as if the whole DOM tree were a linear chain of its leaf nodes.
+    // Uses an editing-specific concept of what a leaf node is, and should probably be moved
+    // out of the Node class into an editing-specific source file.
     Node* nextLeafNode() const;
 
-    /** (Not part of the official DOM)
-     * Returns the previous leaf node.
-     *
-     * Using this function delivers leaf nodes as if the whole DOM tree were a linear chain of its leaf nodes.
-     * @return previous leaf node or 0 if there are no more.
-     */
+    // Returns the previous leaf node or 0 if there are no more.
+    // Delivers leaf nodes as if the whole DOM tree were a linear chain of its leaf nodes.
+    // Uses an editing-specific concept of what a leaf node is, and should probably be moved
+    // out of the Node class into an editing-specific source file.
     Node* previousLeafNode() const;
 
-    bool isEditableBlock() const;
-    
-    // enclosingBlockFlowElement() is deprecated.  Use enclosingBlock instead.
+    // enclosingBlockFlowElement() is deprecated. Use enclosingBlock instead.
     Element* enclosingBlockFlowElement() const;
     
-    Element* enclosingInlineElement() const;
     Element* rootEditableElement() const;
     
     bool inSameContainingBlockFlowElement(Node*);
@@ -270,9 +257,7 @@ public:
     virtual void finishParsingChildren() { }
     virtual void beginParsingChildren() { }
 
-    // Called by the frame right before dispatching an unloadEvent. [Radar 4532113]
-    // This is needed for HTMLInputElements to tell the frame that it is done editing 
-    // (sends textFieldDidEndEditing notification)
+    // Called on the focused node right before dispatching an unload event.
     virtual void aboutToUnload() { }
 
     // For <link> and <style> elements.
@@ -315,14 +300,14 @@ public:
     };
     void lazyAttach(ShouldSetAttached = SetAttached);
 
-    virtual void setFocus(bool b = true);
+    virtual void setFocus(bool = true);
     virtual void setActive(bool f = true, bool /*pause*/ = false) { setFlag(f, IsActiveFlag); }
     virtual void setHovered(bool f = true) { setFlag(f, IsHoveredFlag); }
 
     virtual short tabIndex() const;
 
     // Whether this kind of node can receive focus by default. Most nodes are
-    // not focusable but some elements, such as form controls and links are.
+    // not focusable but some elements, such as form controls and links, are.
     virtual bool supportsFocus() const;
     // Whether the node can actually be focused.
     virtual bool isFocusable() const;
@@ -371,53 +356,27 @@ public:
 
     bool isReadOnlyNode() const { return nodeType() == ENTITY_REFERENCE_NODE; }
     virtual bool childTypeAllowed(NodeType) { return false; }
-    unsigned childNodeCount() const { return isContainerNode() ? containerChildNodeCount() : 0; }
-    Node* childNode(unsigned index) const { return isContainerNode() ? containerChildNode(index) : 0; }
+    unsigned childNodeCount() const;
+    Node* childNode(unsigned index) const;
 
-    /**
-     * Does a pre-order traversal of the tree to find the node next node after this one. This uses the same order that
-     * the tags appear in the source file.
-     *
-     * @param stayWithin If not null, the traversal will stop once the specified node is reached. This can be used to
-     * restrict traversal to a particular sub-tree.
-     *
-     * @return The next node, in document order
-     *
-     * see @ref traversePreviousNode()
-     */
+    // Does a pre-order traversal of the tree to find the node next node after this one.
+    // This uses the same order that tags appear in the source file. If the stayWithin
+    // argument is non-null, the traversal will stop once the specified node is reached.
+    // This can be used to restrict traversal to a particular sub-tree.
     Node* traverseNextNode(const Node* stayWithin = 0) const;
     
     // Like traverseNextNode, but skips children and starts with the next sibling.
     Node* traverseNextSibling(const Node* stayWithin = 0) const;
 
-    /**
-     * Does a reverse pre-order traversal to find the node that comes before the current one in document order
-     *
-     * see @ref traverseNextNode()
-     */
-    Node* traversePreviousNode(const Node * stayWithin = 0) const;
+    // Does a reverse pre-order traversal to find the node that comes before the current one in document order
+    Node* traversePreviousNode(const Node* stayWithin = 0) const;
 
     // Like traverseNextNode, but visits parents after their children.
     Node* traverseNextNodePostOrder() const;
 
     // Like traversePreviousNode, but visits parents before their children.
-    Node* traversePreviousNodePostOrder(const Node *stayWithin = 0) const;
-    Node* traversePreviousSiblingPostOrder(const Node *stayWithin = 0) const;
-
-    /**
-     * Finds previous or next editable leaf node.
-     */
-    Node* previousEditable() const;
-    Node* nextEditable() const;
-
-    RenderObject* renderer() const { return m_renderer; }
-    RenderObject* nextRenderer();
-    RenderObject* previousRenderer();
-    void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
-    
-    // Use these two methods with caution.
-    RenderBox* renderBox() const;
-    RenderBoxModelObject* renderBoxModelObject() const;
+    Node* traversePreviousNodePostOrder(const Node* stayWithin = 0) const;
+    Node* traversePreviousSiblingPostOrder(const Node* stayWithin = 0) const;
 
     void checkSetPrefix(const AtomicString& prefix, ExceptionCode&);
     bool isDescendantOf(const Node*) const;
@@ -444,32 +403,35 @@ public:
     virtual bool canStartSelection() const;
 
     // Getting points into and out of screen space
-    FloatPoint convertToPage(const FloatPoint& p) const;
-    FloatPoint convertFromPage(const FloatPoint& p) const;
+    FloatPoint convertToPage(const FloatPoint&) const;
+    FloatPoint convertFromPage(const FloatPoint&) const;
 
     // -----------------------------------------------------------------------------
     // Integration with rendering tree
 
-    /**
-     * Attaches this node to the rendering tree. This calculates the style to be applied to the node and creates an
-     * appropriate RenderObject which will be inserted into the tree (except when the style has display: none). This
-     * makes the node visible in the FrameView.
-     */
+    RenderObject* renderer() const { return m_renderer; }
+    RenderObject* nextRenderer();
+    RenderObject* previousRenderer();
+    void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
+    
+    // Use these two methods with caution.
+    RenderBox* renderBox() const;
+    RenderBoxModelObject* renderBoxModelObject() const;
+
+    // Attaches this node to the rendering tree. This calculates the style to be applied to the node and creates an
+    // appropriate RenderObject which will be inserted into the tree (except when the style has display: none). This
+    // makes the node visible in the FrameView.
     virtual void attach();
 
-    /**
-     * Detaches the node from the rendering tree, making it invisible in the rendered view. This method will remove
-     * the node's rendering object from the rendering tree and delete it.
-     */
+    // Detaches the node from the rendering tree, making it invisible in the rendered view. This method will remove
+    // the node's rendering object from the rendering tree and delete it.
     virtual void detach();
 
     virtual void willRemove();
     void createRendererIfNeeded();
     PassRefPtr<RenderStyle> styleForRenderer();
     virtual bool rendererIsNeeded(RenderStyle*);
-#if ENABLE(SVG) || ENABLE(XHTMLMP)
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
-#endif
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
@@ -481,24 +443,20 @@ public:
     // -----------------------------------------------------------------------------
     // Notification of document structure changes
 
-    /**
-     * Notifies the node that it has been inserted into the document. This is called during document parsing, and also
-     * when a node is added through the DOM methods insertBefore(), appendChild() or replaceChild(). Note that this only
-     * happens when the node becomes part of the document tree, i.e. only when the document is actually an ancestor of
-     * the node. The call happens _after_ the node has been added to the tree.
-     *
-     * This is similar to the DOMNodeInsertedIntoDocument DOM event, but does not require the overhead of event
-     * dispatching.
-     */
+    // Notifies the node that it has been inserted into the document. This is called during document parsing, and also
+    // when a node is added through the DOM methods insertBefore(), appendChild() or replaceChild(). Note that this only
+    // happens when the node becomes part of the document tree, i.e. only when the document is actually an ancestor of
+    // the node. The call happens _after_ the node has been added to the tree.
+    //
+    // This is similar to the DOMNodeInsertedIntoDocument DOM event, but does not require the overhead of event
+    // dispatching.
     virtual void insertedIntoDocument();
 
-    /**
-     * Notifies the node that it is no longer part of the document tree, i.e. when the document is no longer an ancestor
-     * node.
-     *
-     * This is similar to the DOMNodeRemovedFromDocument DOM event, but does not require the overhead of event
-     * dispatching, and is called _after_ the node is removed from the tree.
-     */
+    // Notifies the node that it is no longer part of the document tree, i.e. when the document is no longer an ancestor
+    // node.
+    //
+    // This is similar to the DOMNodeRemovedFromDocument DOM event, but does not require the overhead of event
+    // dispatching, and is called _after_ the node is removed from the tree.
     virtual void removedFromDocument();
 
     // These functions are called whenever you are connected or disconnected from a tree.  That tree may be the main
@@ -507,10 +465,8 @@ public:
     virtual void insertedIntoTree(bool /*deep*/) { }
     virtual void removedFromTree(bool /*deep*/) { }
 
-    /**
-     * Notifies the node that it's list of children have changed (either by adding or removing child nodes), or a child
-     * node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
-     */
+    // Notifies the node that it's list of children have changed (either by adding or removing child nodes), or a child
+    // node that is of the type CDATA_SECTION_NODE, TEXT_NODE or COMMENT_NODE has changed its value.
     virtual void childrenChanged(bool /*changedByParser*/ = false, Node* /*beforeChange*/ = 0, Node* /*afterChange*/ = 0, int /*childCountDelta*/ = 0) { }
 
 #ifndef NDEBUG
@@ -565,8 +521,7 @@ public:
     void dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent);
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     void dispatchWheelEvent(PlatformWheelEvent&);
-    bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType,
-        int clickCount = 0, Node* relatedTarget = 0);
+    bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
     bool dispatchMouseEvent(const AtomicString& eventType, int button, int clickCount,
         int pageX, int pageY, int screenX, int screenY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
@@ -577,15 +532,11 @@ public:
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
 
-    /**
-     * Perform the default action for an event e.g. submitting a form
-     */
+    // Perform the default action for an event.
     virtual void defaultEventHandler(Event*);
 
-    /**
-     * Used for disabled form elements; if true, prevents mouse events from being dispatched
-     * to event listeners, and prevents DOMActivate events from being sent at all.
-     */
+    // Used for disabled form elements; if true, prevents mouse events from being dispatched
+    // to event listeners, and prevents DOMActivate events from being sent at all.
     virtual bool disabled() const;
 
     using TreeShared<ContainerNode>::ref;
@@ -690,10 +641,6 @@ private:
     virtual void derefEventTarget();
 
     virtual NodeRareData* createRareData();
-    Node* containerChildNode(unsigned index) const;
-    unsigned containerChildNodeCount() const;
-    Node* containerFirstChild() const;
-    Node* containerLastChild() const;
     bool rareDataFocused() const;
 
     virtual RenderStyle* nonRendererRenderStyle() const;
@@ -713,7 +660,7 @@ private:
     RenderObject* m_renderer;
     mutable uint32_t m_nodeFlags;
 
- protected:
+protected:
     bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }
     void setIsParsingChildrenFinished() { setFlag(IsParsingChildrenFinishedFlag); }
     void clearIsParsingChildrenFinished() { clearFlag(IsParsingChildrenFinishedFlag); }
