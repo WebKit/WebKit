@@ -2174,6 +2174,7 @@ void QWebPage::triggerAction(WebAction action, bool)
             break;
         case Stop:
             mainFrame()->d->frame->loader()->stopForUserCancel();
+            d->updateNavigationActions();
             break;
         case Reload:
             mainFrame()->d->frame->loader()->reload(/*endtoendreload*/false);
