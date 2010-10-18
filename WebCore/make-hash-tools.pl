@@ -56,7 +56,7 @@ struct PubIDInfo {
 
 struct NamedColor {
     const char* name;
-    int RGBValue;
+    unsigned ARGBValue;
 };
 
 struct Property {

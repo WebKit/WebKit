@@ -175,8 +175,7 @@ Color::Color(const char* name)
         m_valid = parseHexColor(&name[1], m_color);
     else {
         const NamedColor* foundColor = findColor(name, strlen(name));
-        m_color = foundColor ? foundColor->RGBValue : 0;
-        m_color |= 0xFF000000;
+        m_color = foundColor ? foundColor->ARGBValue : 0;
         m_valid = foundColor;
     }
 }
@@ -219,8 +218,7 @@ static inline const NamedColor* findNamedColor(const String& name)
 void Color::setNamedColor(const String& name)
 {
     const NamedColor* foundColor = findNamedColor(name);
-    m_color = foundColor ? foundColor->RGBValue : 0;
-    m_color |= 0xFF000000;
+    m_color = foundColor ? foundColor->ARGBValue : 0;
     m_valid = foundColor;
 }
 
