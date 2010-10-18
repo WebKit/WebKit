@@ -28,6 +28,7 @@
 
 from google.appengine.ext import db
 
+
 class SVNRevision(db.Model):
     number = db.IntegerProperty()
     broken_bots = db.StringListProperty(default=[])

@@ -26,39 +26,66 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
 import re
 
 
-queues = [
-    "commit-queue",
-    "style-queue",
-    "chromium-ews",
-    "qt-ews",
-    "gtk-ews",
-    "mac-ews",
-    "win-ews",
-    "efl-ews",
-]
+class Queue(object):
 
+    # Eventually the list of queues may be stored in the data store.
+    _all_queue_names = [
+        "commit-queue",
+        "style-queue",
+        "chromium-ews",
+        "qt-ews",
+        "gtk-ews",
+        "mac-ews",
+        "win-ews",
+        "efl-ews",
+    ]
 
-# FIXME: We need some sort of Queue object.
-def _title_case(string):
-    words = string.split(" ")
-    words = map(lambda word: word.capitalize(), words)
-    return " ".join(words)
+    def __init__(self, name):
+        assert(name in self._all_queue_names)
+        self._name = name
 
+    @classmethod
+    def queue_with_name(cls, queue_name):
+        if queue_name not in cls._all_queue_names:
+            return None
+        return Queue(queue_name)
 
-def display_name_for_queue(queue_name):
-    # HACK: chromium-ews is incorrectly named.
-    display_name = queue_name.replace("chromium-ews", "cr-linux-ews")
+    @classmethod
+    def all(cls):
+        return [Queue(name) for name in cls._all_queue_names]
 
-    display_name = display_name.replace("-", " ")
-    display_name = display_name.replace("cr", "chromium")
-    display_name = _title_case(display_name)
-    display_name = display_name.replace("Ews", "EWS")
-    return display_name
+    def name(self):
+        return self._name
 
+    def _caplitalize_after_dash(self, string):
+        return "-".join([word[0].upper() + word[1:] for word in string.split("-")])
 
-def name_with_underscores(dashed_name):
-    regexp = re.compile("-")
-    return regexp.sub("_", dashed_name)
+    # For use in status bubbles or table headers
+    def short_name(self):
+        # HACK: chromium-ews is incorrectly named.
+        short_name = self._name.replace("chromium-ews", "Cr-Linux-ews")
+        short_name = short_name.replace("-ews", "")
+        short_name = short_name.replace("-queue", "")
+        return self._caplitalize_after_dash(short_name.capitalize())
+
+    def display_name(self):
+        # HACK: chromium-ews is incorrectly named.
+        display_name = self._name.replace("chromium-ews", "cr-linux-ews")
+
+        display_name = display_name.replace("-", " ")
+        display_name = display_name.replace("cr", "chromium")
+        display_name = display_name.title()
+        display_name = display_name.replace("Ews", "EWS")
+        return display_name
+
+    _dash_regexp = re.compile("-")
+
+    def name_with_underscores(self):
+        return self._dash_regexp.sub("_", self._name)
+
+    def is_ews(self):
+        return self._name.endswith("-ews")

@@ -31,23 +31,24 @@ import datetime
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
-from model.queues import queues, display_name_for_queue
+from model.queues import Queue
 from model.queuestatus import QueueStatus
 from model.workitems import WorkItems
 
 
 class QueueBubble(object):
     """View support class for recentstatus.html"""
-    def __init__(self, queue_name):
-        self._queue_name = queue_name
-        self._work_items = WorkItems.all().filter("queue_name =", queue_name).get()
-        self._last_status = QueueStatus.all().filter("queue_name =", queue_name).order("-date").get()
+    def __init__(self, queue):
+        self._queue = queue
+        self._work_items = WorkItems.all().filter("queue_name =", queue.name()).get()
+        self._last_status = QueueStatus.all().filter("queue_name =", queue.name()).order("-date").get()
 
+    # FIXME: name and display_name should be replaced by a .queue() accessor.
     def name(self):
-        return self._queue_name
+        return self._queue.name()
 
     def display_name(self):
-        return display_name_for_queue(self._queue_name)
+        return self._queue.display_name()
 
     def _last_status_date(self):
         if not self._last_status:
@@ -88,6 +89,6 @@ class QueuesOverview(webapp.RequestHandler):
 
     def get(self):
         template_values = {
-            "queues": [QueueBubble(queue_name) for queue_name in queues],
+            "queues": [QueueBubble(queue) for queue in Queue.all()],
         }
         self.response.out.write(template.render("templates/recentstatus.html", template_values))

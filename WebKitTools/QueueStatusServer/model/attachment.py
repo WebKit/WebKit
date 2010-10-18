@@ -30,7 +30,7 @@ import re
 
 from google.appengine.api import memcache
 
-from model.queues import queues, name_with_underscores
+from model.queues import Queue
 from model.queuestatus import QueueStatus
 from model.workitems import WorkItems
 
@@ -91,7 +91,7 @@ class Attachment(object):
         return self._queue_positions().get(queue_name)
 
     def status_for_queue(self, queue_name):
-        underscore_queue_name = name_with_underscores(queue_name)
+        underscore_queue_name = Queue(queue_name).name_with_underscores()
         # summary() is a horrible API and should be killed.
         queue_summary = self.summary().get(underscore_queue_name)
         if not queue_summary:
@@ -134,7 +134,9 @@ class Attachment(object):
             summary[queue] = None
             status = QueueStatus.all().filter('queue_name =', queue).filter('active_patch_id =', self.id).order('-date').get()
             if status:
-                summary[name_with_underscores(queue)] = {
+                queue_name = Queue(queue_name).name_with_underscores()
+                # summary() is a horrible API and should be killed.
+                summary[queue_name] = {
                     "state": self.state_from_queue_status(status),
                     "status": status,
                 }

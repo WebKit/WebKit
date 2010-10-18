@@ -227,9 +227,30 @@ def init(command_args, external_package_paths):
         _log.warn(message)
 
 
-if __name__ == "__main__":
+def _path_from_webkit_root(*components):
+    webkit_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+    return os.path.join(webkit_root, *components)
 
-    external_package_paths = [os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'WebKit2', 'Scripts', 'webkit2')]
+
+def _test_import(module_path):
+    try:
+        sys.path.append(os.path.dirname(module_path))
+        module_name = os.path.basename(module_path)
+        __import__(module_name)
+        return True
+    except Exception, e:
+        message = "Skipping tests in %s due to failure (%s)." % (module_path, e)
+        if module_name.endswith("QueueStatusServer"):
+            message += "  This module is optional.  The failure is likely due to a missing Google AppEngine install.  (http://code.google.com/appengine/downloads.html)"
+        _log.warn(message)
+        return False
+
+if __name__ == "__main__":
+    # FIXME: We should probably test each package separately to avoid naming conflicts.
+    external_package_paths = [
+        _path_from_webkit_root('WebKit2', 'Scripts', 'webkit2'),
+        _path_from_webkit_root('WebKitTools', 'QueueStatusServer'),
+    ]
     init(sys.argv[1:], external_package_paths)
 
     # We import the unit test code after init() to ensure that any
@@ -239,5 +260,7 @@ if __name__ == "__main__":
     # enable the display of autoinstall logging.log messages while
     # running the unit tests.
     from webkitpy.test.main import Tester
+
+    external_package_paths = filter(_test_import, external_package_paths)
 
     Tester().run_tests(sys.argv, external_package_paths)

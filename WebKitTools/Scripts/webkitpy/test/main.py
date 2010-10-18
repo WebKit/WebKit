@@ -50,12 +50,12 @@ class Tester(object):
 
         return unittest_paths
 
-    def _modules_from_paths(self, webkitpy_dir, paths):
+    def _modules_from_paths(self, package_root, paths):
         """Return a list of fully-qualified module names given paths."""
-        webkitpy_dir = os.path.abspath(webkitpy_dir)
-        webkitpy_name = os.path.split(webkitpy_dir)[1]  # Equals "webkitpy".
+        package_path = os.path.abspath(package_root)
+        root_package_name = os.path.split(package_path)[1]  # Equals "webkitpy".
 
-        prefix_length = len(webkitpy_dir)
+        prefix_length = len(package_path)
 
         modules = []
         for path in paths:
@@ -72,7 +72,8 @@ class Tester(object):
                     break
                 parts.insert(0, tail)
             # We now have, for example: common.config.ports_unittest
-            parts.insert(0, webkitpy_name)  # Put "webkitpy" at the beginning.
+            # FIXME: This is all a hack around the fact that we always prefix webkitpy includes with "webkitpy."
+            parts.insert(0, root_package_name)  # Put "webkitpy" at the beginning.
             module = ".".join(parts)
             modules.append(module)
 
@@ -91,6 +92,9 @@ class Tester(object):
         if external_package_paths is None:
             external_package_paths = []
         else:
+            # FIXME: We should consider moving webkitpy off of using "webkitpy." to prefix
+            # all includes.  If we did that, then this would use path instead of dirname(path).
+            # QueueStatusServer.__init__ has a sys.path import hack due to this code.
             sys.path.extend(set(os.path.dirname(path) for path in external_package_paths))
 
         if len(sys_argv) > 1 and not sys_argv[-1].startswith("-"):
@@ -101,6 +105,7 @@ class Tester(object):
 
         # Otherwise, auto-detect all unit tests.
 
+        # FIXME: This should be combined with the external_package_paths code above.
         webkitpy_dir = os.path.dirname(webkitpy.__file__)
 
         modules = []

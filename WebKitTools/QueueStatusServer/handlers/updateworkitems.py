@@ -30,7 +30,7 @@ from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 
 from handlers.updatebase import UpdateBase
-from model.queues import queues
+from model.queues import Queue
 from model.workitems import WorkItems
 
 from datetime import datetime
@@ -41,8 +41,9 @@ class UpdateWorkItems(UpdateBase):
         self.response.out.write(template.render("templates/updateworkitems.html", None))
 
     def _work_items_for_queue(self, queue_name):
-        if queue_name not in queues:
-            self.response.out.write("\"%s\" is not in queues %s" % (queue_name, queues))
+        queue = Queue.queue_for_name(queue_name)
+        if queue:
+            self.response.out.write("\"%s\" is not in queues %s" % (queue_name, Queue.all()))
             return None
         work_items = WorkItems.all().filter("queue_name =", queue_name).get()
         if not work_items:

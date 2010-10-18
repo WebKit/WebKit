@@ -33,34 +33,18 @@ from google.appengine.ext.webapp import template
 
 from model.attachment import Attachment
 from model.workitems import WorkItems
-from model.queues import queues, name_with_underscores
+from model.queues import Queue
 
 
 class StatusBubble(webapp.RequestHandler):
-    # FIXME: This list probably belongs as part of a Queue object in queues.py
-    # Arrays are bubble_name, queue_name
-    _queues_to_display = [
-        ["style", "style-queue"],
-        ["cr-linux", "chromium-ews"],
-        ["gtk", "gtk-ews"],
-        ["qt", "qt-ews"],
-        ["mac", "mac-ews"],
-        ["win", "win-ews"],
-        ["efl", "efl-ews"],
-    ]
+    _queues_to_display = [queue for queue in Queue.all() if queue.is_ews()]
 
-    # This asserts that all of the queues listed above are valid queue names.
-    assert(reduce(operator.and_, map(lambda name_pair: name_pair[1] in queues, _queues_to_display)))
-
-    def _build_bubble(self, queue_name_pair, attachment):
-        bubble_name = queue_name_pair[0]
-        queue_name = queue_name_pair[1]
-
-        queue_status = attachment.status_for_queue(queue_name)
+    def _build_bubble(self, queue, attachment):
+        queue_status = attachment.status_for_queue(queue.name())
         bubble = {
-            "name": bubble_name,
+            "name": queue.short_name().lowercase(),
             "attachment_id": attachment.id,
-            "queue_position": attachment.position_in_queue(queue_name),
+            "queue_position": attachment.position_in_queue(queue.name()),
             "state": attachment.state_from_queue_status(queue_status) if queue_status else "none",
             "status": queue_status,
         }
@@ -68,7 +52,7 @@ class StatusBubble(webapp.RequestHandler):
 
     def get(self, attachment_id):
         attachment = Attachment(int(attachment_id))
-        bubbles = [self._build_bubble(name_pair, attachment) for name_pair in self._queues_to_display]
+        bubbles = [self._build_bubble(queue, attachment) for queue in self._queues_to_display]
         template_values = {
             "bubbles": bubbles,
         }

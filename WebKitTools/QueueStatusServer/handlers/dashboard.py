@@ -32,31 +32,16 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
 from model.attachment import Attachment
-from model.queues import queues
+from model.queues import Queue
 
 
 class Dashboard(webapp.RequestHandler):
+    # We may want to sort these?
+    _ordered_queues = Queue.all()
+    _header_names = [queue.short_name() for queue in _ordered_queues]
 
-    # FIXME: This list probably belongs as part of a Queue object in queues.py
-    # Arrays are bubble_name, queue_name
-    # FIXME: Can this be unified with StatusBubble._queues_to_display?
-    _queues_to_display = [
-        ["Style", "style-queue"],
-        ["Cr-Linux", "chromium-ews"],
-        ["Qt", "qt-ews"],
-        ["Gtk", "gtk-ews"],
-        ["Mac", "mac-ews"],
-        ["Win", "win-ews"],
-        ["Commit", "commit-queue"],
-    ]
-    # Split the zipped list into component parts
-    _header_names, _ordered_queue_names = zip(*_queues_to_display)
-
-    # This asserts that all of the queues listed above are valid queue names.
-    assert(reduce(operator.and_, map(lambda name: name in queues, _ordered_queue_names)))
-
-    def _build_bubble(self, attachment, queue_name):
-        queue_status = attachment.status_for_queue(queue_name)
+    def _build_bubble(self, attachment, queue):
+        queue_status = attachment.status_for_queue(queue.name())
         bubble = {
             "status_class": attachment.state_from_queue_status(queue_status) if queue_status else "none",
             "status_date": queue_status.date if queue_status else None,
@@ -67,7 +52,7 @@ class Dashboard(webapp.RequestHandler):
         row = {
             "bug_id": attachment.bug_id(),
             "attachment_id": attachment.id,
-            "bubbles": [self._build_bubble(attachment, queue_name) for queue_name in self._ordered_queue_names],
+            "bubbles": [self._build_bubble(attachment, queue) for queue in self._ordered_queues],
         }
         return row
 
