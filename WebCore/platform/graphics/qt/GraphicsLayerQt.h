@@ -75,6 +75,7 @@ public:
     virtual void resumeAnimations();
 #endif // QT_NO_ANIMATION
     virtual void setContentsToImage(Image*);
+    virtual void setContentsNeedsDisplay();
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsBackgroundColor(const Color&);
 #if ENABLE(3D_CANVAS)
