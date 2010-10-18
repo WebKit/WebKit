@@ -203,10 +203,6 @@ http/tests/navigation/javascriptlink-goback.html
 http/tests/navigation/metaredirect-goback.html
 http/tests/navigation/timerredirect-goback.html
 
-#CONSOLE MESSAGE: line 11: TypeError: Result of expression 'consoleWindow.log' [undefined] is not a function.
-http/tests/navigation/no-referrer-reset.html
-http/tests/navigation/no-referrer-target-blank.html
-
 # time out
 http/tests/multipart/invalid-image-data.html
 http/tests/multipart/invalid-image-data-standalone.html
