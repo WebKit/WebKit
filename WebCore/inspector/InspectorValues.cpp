@@ -33,6 +33,8 @@
 
 #if ENABLE(INSPECTOR)
 
+#include <wtf/DecimalNumber.h>
+
 namespace WebCore {
 
 namespace {
@@ -604,9 +606,9 @@ void InspectorBasicValue::writeJSON(Vector<UChar>* output) const
         else
             output->append(falseString, 5);
     } else if (type() == TypeNumber) {
-        String value = String::format("%f", m_doubleValue);
-        value.replace(',', '.');
-        output->append(value.characters(), value.length());
+        NumberToStringBuffer buffer;
+        unsigned length = DecimalNumber(m_doubleValue).toStringDecimal(buffer);
+        output->append(buffer, length);
     }
 }
 
