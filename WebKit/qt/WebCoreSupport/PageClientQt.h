@@ -170,7 +170,6 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void setRootGraphicsLayer(QGraphicsItem* layer);
     virtual void markForSync(bool scheduleSync);
-    void updateCompositingScrollPosition();
     void syncLayers();
 
     // QGraphicsWebView can render composited layers

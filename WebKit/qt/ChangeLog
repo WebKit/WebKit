@@ -1,3 +1,21 @@
+2010-10-18  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] AC rendering bugs
+
+        This fixes a regression that was introduced by making scrolling in accelerated compositing automatic,
+        which made our explicit function to scroll the compositing layers superfluous, making the scrolling behavior
+        when graphics layers are present incorrect. The fix simply removes those redundant functions.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47571
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQGraphicsWidget::scroll):
+        (WebCore::PageClientQGraphicsWidget::update):
+        (WebCore::PageClientQGraphicsWidget::setRootGraphicsLayer):
+        * WebCoreSupport/PageClientQt.h:
+
 2010-10-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by nobody, build fix.
