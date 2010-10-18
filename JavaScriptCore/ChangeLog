@@ -1,3 +1,17 @@
+2010-10-18  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        if (0) throw "x" ; else { } throws parse error after r69906
+        https://bugs.webkit.org/show_bug.cgi?id=47807
+
+        r69906 introduced a bug: the semicolon is not parsed after a throw
+        expression anymore. Thus, the semicolon terminates the "if" parsing
+        in the example above, and the else token results a parse error.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseThrowStatement):
+
 2010-10-18  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Andreas Kling.

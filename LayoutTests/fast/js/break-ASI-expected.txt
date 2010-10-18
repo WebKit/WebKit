@@ -9,6 +9,7 @@ PASS do { if(0) continue
 ;else true; } while (0) is true
 PASS (function(){if (0) return
 ;else return true;})() is true
+PASS do { if(0) throw 'x';else true; } while (0) is true
 PASS if (0) throw
 'Shouldn't have parsed this.'; threw exception SyntaxError: Parse error.
 PASS successfullyParsed is true

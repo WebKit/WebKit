@@ -900,6 +900,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseThrowStatement(TreeBui
     failIfFalse(expr);
     int eEnd = lastTokenEnd();
     int endLine = tokenLine();
+    failIfFalse(autoSemiColon());
 
     return context.createThrowStatement(expr, eStart, eEnd, startLine, endLine);
 }
