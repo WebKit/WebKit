@@ -328,7 +328,8 @@ MOCK: update_status: commit-queue Retry
 --- Begin comment ---
 The commit-queue encountered the following flaky tests while processing attachment 197:
 
-['foo/bar.html', 'bar/baz.html']
+foo/bar.html
+bar/baz.html
 
 Please file bugs against the tests.  The commit-queue is continuing to process your patch.
 --- End comment ---

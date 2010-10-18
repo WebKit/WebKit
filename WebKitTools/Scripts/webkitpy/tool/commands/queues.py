@@ -290,7 +290,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         return self._tool.bugs.fetch_attachment(patch.id())
 
     def report_flaky_tests(self, patch, flaky_tests):
-        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n%s\n\nPlease file bugs against the tests.  The commit-queue is continuing to process your patch." % (self.name, patch.id(), flaky_tests)
+        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n%s\n\nPlease file bugs against the tests.  The commit-queue is continuing to process your patch." % (self.name, patch.id(), "\n".join(flaky_tests))
         self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
 
     # StepSequenceErrorHandler methods
