@@ -82,6 +82,8 @@ PASS db.name is "name"
 PASS db.objectStores is []
 PASS db.objectStores.length is 0
 PASS db.objectStores.contains('') is false
+PASS db.objectStores[0] is null
+PASS db.objectStores.item(0) is null
 db.createObjectStore("test123")
 PASS db.objectStores is ['test123']
 PASS db.objectStores.length is 1

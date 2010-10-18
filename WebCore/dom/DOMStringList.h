@@ -48,7 +48,7 @@ public:
 
     // Implements the IDL.
     size_t length() const { return m_strings.size(); }
-    String item(unsigned index) const { return m_strings[index]; }
+    String item(unsigned index) const;
     bool contains(const String& str) const;
 
 private:

@@ -90,6 +90,11 @@ PASS store.indexNames.length is 1
 PASS store.indexNames.contains('') is false
 PASS store.indexNames.contains('indexFail') is false
 PASS store.indexNames.contains('indexName') is true
+PASS store.indexNames[0] is "indexName"
+PASS store.indexNames[1] is null
+PASS store.indexNames[100] is null
+PASS store.indexNames.item(1) is null
+PASS store.indexNames.item(100) is null
 transaction = db.transaction()
 store = transaction.objectStore('storeName')
 store.add({x: 'value'}, 'key')

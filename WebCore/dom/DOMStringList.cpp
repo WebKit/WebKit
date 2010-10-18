@@ -28,6 +28,13 @@
 
 namespace WebCore {
 
+String DOMStringList::item(unsigned index) const
+{
+    if (index >= m_strings.size())
+        return String();
+    return m_strings[index];
+}
+
 bool DOMStringList::contains(const String& string) const
 {
     // FIXME: Currently, all consumers of DOMStringList store fairly small lists and thus an O(n)

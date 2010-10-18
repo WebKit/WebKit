@@ -30,7 +30,7 @@ module core {
         HasIndexGetter
     ] DOMStringList {
         readonly attribute unsigned long length;
-        DOMString item(in [IsIndex] unsigned long index);
+        [ConvertNullStringTo=Null] DOMString item(in [IsIndex] unsigned long index);
         boolean contains(in DOMString string);
     };
 
