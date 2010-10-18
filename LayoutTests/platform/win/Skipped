@@ -1040,5 +1040,5 @@ plugins/iframe-shims.html
 # https://bugs.webkit.org/show_bug.cgi?id=22261
 fast/events/click-focus-control.html
 
-# Requres WebP support.
+# Requires WebP support.
 fast/images/webp-image-decoding.html
