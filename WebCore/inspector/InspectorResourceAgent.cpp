@@ -232,8 +232,8 @@ static String cachedResourceTypeString(const CachedResource& cachedResource)
     case CachedResource::Script:
         return "Script";
     default:
+        return "Other";
     }
-    return "Other";
 }
 
 static PassRefPtr<InspectorObject> buildObjectForCachedResource(const CachedResource& cachedResource)
