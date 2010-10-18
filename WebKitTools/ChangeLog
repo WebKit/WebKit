@@ -1,3 +1,10 @@
+2010-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventCarbon):
+
 2010-10-18  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by Eric Seidel.
