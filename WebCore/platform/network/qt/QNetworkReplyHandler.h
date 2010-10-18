@@ -67,6 +67,7 @@ private slots:
 private:
     void start();
     void resetState();
+    String httpMethod() const;
 
     QNetworkReply* m_reply;
     ResourceHandle* m_resourceHandle;
