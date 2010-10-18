@@ -5904,6 +5904,8 @@ platform/gtk/accessibility/aria-table-hierarchy.html
 mathml/presentation/fenced.xhtml
 mathml/presentation/roots.xhtml
 mathml/presentation/subsup.xhtml
+mathml/presentation/fenced-mi.xhtml
 
 # Requires WebP support.
 fast/images/webp-image-decoding.html
+
