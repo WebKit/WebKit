@@ -3215,6 +3215,14 @@ BUG58942 : fast/dom/prototype-inheritance.html = TEXT
 // Started failing at Webkit r69628.
 BUG47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
 
+// test_shell needs support for hasSpellingMarker
+BUG59645 : editing/spelling/design-mode-spellcheck-off.html = TEXT
+
+// test_shell's build configuration does not compile webp in
+BUGWK47512 : fast/images/webp-image-decoding.html = TEXT
+
+BUG59647 WIN : svg/dom/length-list-parser.html = PASS CRASH
+
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET : fast/canvas/canvas-currentColor.html = TEXT
 
