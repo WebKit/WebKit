@@ -58,6 +58,7 @@ typedef PlatformWidget PlatformPluginWidget;
 #endif
 #endif
 #if PLATFORM(QT)
+#include <QGraphicsItem>
 #include <QImage>
 class QPainter;
 #endif
@@ -247,6 +248,14 @@ namespace WebCore {
 #endif
         void keepAlive();
 
+#if USE(ACCELERATED_COMPOSITING)
+#if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(QT)
+        virtual PlatformLayer* platformLayer() const;
+#else
+        virtual PlatformLayer* platformLayer() const { return 0; }
+#endif
+#endif
+
     private:
         PluginView(Frame* parentFrame, const IntSize&, PluginPackage*, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
 
@@ -413,8 +422,12 @@ private:
 #endif
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
         void paintUsingXPixmap(QPainter* painter, const QRect &exposedRect);
+#if USE(ACCELERATED_COMPOSITING)
+        OwnPtr<PlatformLayer> m_platformLayer;
+        friend class PluginGraphicsLayerQt;
+#endif // USE(ACCELERATED_COMPOSITING)
 #endif
-#endif
+#endif // PLATFORM(QT)
 
         IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         IntRect m_windowRect; // Our window rect.

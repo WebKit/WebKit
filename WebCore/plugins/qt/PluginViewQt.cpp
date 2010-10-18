@@ -31,6 +31,8 @@
 #if USE(JSC)
 #include "Bridge.h"
 #endif
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -69,8 +71,10 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QGraphicsWidget>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QStyleOptionGraphicsItem>
 #include <QWidget>
 #include <QX11Info>
 #include <X11/X.h>
@@ -95,6 +99,24 @@ using namespace WTF;
 namespace WebCore {
 
 using namespace HTMLNames;
+
+#if USE(ACCELERATED_COMPOSITING)
+// Qt's GraphicsLayer (GraphicsLayerQt) requires layers to be QGraphicsWidgets
+class PluginGraphicsLayerQt : public QGraphicsWidget {
+public:
+    PluginGraphicsLayerQt(PluginView* view) : m_view(view) { }
+    ~PluginGraphicsLayerQt() { }
+
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0)
+    {
+        Q_UNUSED(widget);
+        m_view->paintUsingXPixmap(painter, option->exposedRect.toRect());
+    }
+
+private:
+    PluginView* m_view;
+};
+#endif
 
 void PluginView::updatePluginWidget()
 {
@@ -145,9 +167,11 @@ void PluginView::updatePluginWidget()
         || (QWebPagePrivate::drtRun && platformPluginWidget() && (m_windowRect != oldWindowRect || m_clipRect != oldClipRect)))
         setNPWindowIfNeeded();
 
-    // Make sure we get repainted afterwards. This is necessary for downward
-    // scrolling to move the plugin widget properly.
-    invalidate();
+    if (!m_platformLayer) {
+        // Make sure we get repainted afterwards. This is necessary for downward
+        // scrolling to move the plugin widget properly.
+        invalidate();
+    }
 }
 
 void PluginView::setFocus(bool focused)
@@ -313,6 +337,11 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     if (m_isWindowed)
         return;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_platformLayer)
+        return;
+#endif
 
     if (!m_drawable
 #if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
@@ -755,6 +784,13 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
 
 void PluginView::invalidateRect(const IntRect& rect)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_platformLayer) {
+        m_platformLayer->update(QRectF(rect));
+        return;
+    }
+#endif
+
     if (m_isWindowed) {
         if (platformWidget())
             platformWidget()->update(rect);
@@ -771,11 +807,12 @@ void PluginView::invalidateRect(NPRect* rect)
         return;
     }
     IntRect r(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top);
-    invalidateWindowlessPluginRect(r);
+    invalidateRect(r);
 }
 
 void PluginView::invalidateRegion(NPRegion region)
 {
+    Q_UNUSED(region);
     invalidate();
 }
 
@@ -880,6 +917,16 @@ bool PluginView::platformStart()
     } else {
         setPlatformWidget(0);
         m_pluginDisplay = getPluginDisplay();
+
+#if USE(ACCELERATED_COMPOSITING)
+        if (m_parentFrame->page()->chrome()->client()->allowsAcceleratedCompositing()
+            && m_parentFrame->page()->settings() 
+            && m_parentFrame->page()->settings()->acceleratedCompositingEnabled()) {
+            m_platformLayer = new PluginGraphicsLayerQt(this);
+            // Trigger layer computation in RenderLayerCompositor
+            m_element->setNeedsStyleRecalc(SyntheticStyleChange);
+        }
+#endif
     }
 
     show();
@@ -953,5 +1000,12 @@ void PluginView::halt()
 void PluginView::restart()
 {
 }
+ 
+#if USE(ACCELERATED_COMPOSITING)
+PlatformLayer* PluginView::platformLayer() const
+{
+    return m_platformLayer.get();
+}
+#endif
 
 } // namespace WebCore
