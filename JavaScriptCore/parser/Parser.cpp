@@ -26,12 +26,6 @@
 #include "Debugger.h"
 #include "JSParser.h"
 #include "Lexer.h"
-#include <wtf/HashSet.h>
-#include <wtf/Vector.h>
-
-#ifndef yyparse
-extern int jscyyparse(void*);
-#endif
 
 namespace JSC {
 

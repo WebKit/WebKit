@@ -1,3 +1,12 @@
+2010-10-18  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Andreas Kling.
+
+        Remove some unnecessary lines of code from Parser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=47816
+
+        * parser/Parser.cpp:
+
 2010-10-18  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Csaba Osztrogonác.
