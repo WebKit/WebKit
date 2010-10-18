@@ -32,6 +32,7 @@ template<typename T> class APIClient {
 public:
     APIClient()
     {
+        initialize(0);
     }
 
     void initialize(const T* client)

@@ -1,5 +1,14 @@
 2010-10-18  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Initialize the API client.
+
+        * Shared/APIClient.h:
+        (WebKit::APIClient::APIClient):
+
+2010-10-18  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         WebKit2 should handle dismissing the Find overlay on mouse-down
