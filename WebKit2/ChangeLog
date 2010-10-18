@@ -1,3 +1,19 @@
+2010-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/8036034>
+        WebKit2's WebProcess dies immediately on Mac due to DYLD_FRAMEWORK_PATH problem
+
+        Pass the path to the WebKit2 framework along to the web process and don't rely on DYLD_FRAMEWORK_PATH being set.
+
+        * Shared/mac/CommandLineMac.cpp:
+        (WebKit::CommandLine::parse):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * mac/MainMac.cpp:
+        (main):
+
 2010-10-18  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Sam Weinig.

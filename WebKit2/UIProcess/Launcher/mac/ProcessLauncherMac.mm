@@ -97,15 +97,18 @@ void ProcessLauncher::launchProcess()
     
     // Insert a send right so we can send to it.
     mach_port_insert_right(mach_task_self(), listeningPort, listeningPort, MACH_MSG_TYPE_MAKE_SEND);
-    
-    NSString *webProcessAppPath = [[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] pathForAuxiliaryExecutable:@"WebProcess.app"];
+
+    NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
+    const char* bundlePath = [[webKit2Bundle executablePath] fileSystemRepresentation];
+
+    NSString *webProcessAppPath = [webKit2Bundle pathForAuxiliaryExecutable:@"WebProcess.app"];
     NSString *webProcessAppExecutablePath = [[NSBundle bundleWithPath:webProcessAppPath] executablePath];
 
     // Make a unique, per pid, per process launcher web process service name.
     CString serviceName = String::format("com.apple.WebKit.WebProcess-%d-%p", getpid(), this).utf8();
 
     const char* path = [webProcessAppExecutablePath fileSystemRepresentation];
-    const char* args[] = { path, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-parentprocessname", processName(), 0 };
+    const char* args[] = { path, bundlePath, "-type", processTypeAsString(m_launchOptions.processType), "-servicename", serviceName.data(), "-parentprocessname", processName(), 0 };
 
     // Register ourselves.
     kern_return_t kr = bootstrap_register2(bootstrap_port, const_cast<char*>(serviceName.data()), listeningPort, 0);
