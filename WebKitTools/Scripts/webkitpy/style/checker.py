@@ -142,6 +142,10 @@ _PATH_RULES_SPECIFIER = [
       # exceptional header guards (e.g., WebCore_FWD_Debugger_h).
       "/ForwardingHeaders/"],
      ["-build/header_guard"]),
+    ([# assembler has lots of opcodes that use underscores, so
+      # we on't check for underscores in that directory.
+      "/JavaScriptCore/assembler/"],
+     ["-readability/naming"]),
 
     # For third-party Python code, keep only the following checks--
     #

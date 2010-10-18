@@ -3690,6 +3690,7 @@ class WebKitStyleTest(CppStyleTestBase):
 
         # There is an exception for op code functions but only in the JavaScriptCore directory.
         self.assert_lint('void this_op_code(int var1, int var2)', '', 'JavaScriptCore/foo.cpp')
+        self.assert_lint('void op_code(int var1, int var2)', '', 'JavaScriptCore/foo.cpp')
         self.assert_lint('void this_op_code(int var1, int var2)', 'this_op_code' + name_underscore_error_message)
 
         # GObject requires certain magical names in class declarations.
@@ -3715,6 +3716,9 @@ class WebKitStyleTest(CppStyleTestBase):
 
         # const_iterator is allowed as well.
         self.assert_lint('typedef VectorType::const_iterator const_iterator;', '')
+
+        # vm_throw is allowed as well.
+        self.assert_lint('int vm_throw;', '')
 
         # Bitfields.
         self.assert_lint('unsigned _fillRule : 1;',

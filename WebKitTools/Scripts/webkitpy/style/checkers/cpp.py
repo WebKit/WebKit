@@ -2512,7 +2512,7 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
         modified_identifier = sub(r'(^|(?<=::))[ms]_', '', identifier)
         if modified_identifier.find('_') >= 0:
             # Various exceptions to the rule: JavaScript op codes functions, const_iterator.
-            if (not (filename.find('JavaScriptCore') >= 0 and modified_identifier.find('_op_') >= 0)
+            if (not (filename.find('JavaScriptCore') >= 0 and modified_identifier.find('op_') >= 0)
                 and not modified_identifier.startswith('tst_')
                 and not modified_identifier.startswith('webkit_dom_object_')
                 and not modified_identifier.startswith('NPN_')
@@ -2521,7 +2521,8 @@ def check_identifier_name_in_declaration(filename, line_number, line, error):
                 and not modified_identifier.startswith('qt_')
                 and not modified_identifier.startswith('cairo_')
                 and not modified_identifier.find('::qt_') >= 0
-                and not modified_identifier == "const_iterator"):
+                and not modified_identifier == "const_iterator"
+                and not modified_identifier == "vm_throw"):
                 error(line_number, 'readability/naming', 4, identifier + " is incorrectly named. Don't use underscores in your identifier names.")
 
         # Check for variables named 'l', these are too easy to confuse with '1' in some fonts
