@@ -35,7 +35,7 @@ class PopupMenuClient;
 namespace WebKit {
 
 class WebPage;
-class WebPopupItem;
+struct WebPopupItem;
 
 class WebPopupMenu : public WebCore::PopupMenu {
 public:

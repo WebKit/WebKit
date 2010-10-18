@@ -80,7 +80,7 @@ using namespace WebCore;
 
 - (id)_initWithFindIndicatorWindow:(WebKit::FindIndicatorWindow *)findIndicatorWindow 
          animationProgressCallback:(void (WebKit::FindIndicatorWindow::*)(double progress))animationProgressCallback
-           animationDidEndCallback:(void (WebKit::FindIndicatorWindow::*)())animationDidEndCallback;
+           animationDidEndCallback:(void (WebKit::FindIndicatorWindow::*)())animationDidEndCallback
 {
     if ((self = [super initWithDuration:fadeOutAnimationDuration animationCurve:NSAnimationEaseInOut])) {
         _findIndicatorWindow = findIndicatorWindow;
@@ -138,8 +138,6 @@ void FindIndicatorWindow::setFindIndicator(PassRefPtr<FindIndicator> findIndicat
         return;
 
     NSRect contentRect = m_findIndicator->frameRect();
-    NSSize findIndicatorViewSize = contentRect.size;
-    
     NSRect windowFrameRect = NSIntegralRect([m_wkView convertRect:contentRect toView:nil]);
     windowFrameRect.origin = [[m_wkView window] convertBaseToScreen:windowFrameRect.origin];
 

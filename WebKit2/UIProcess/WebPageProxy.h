@@ -79,13 +79,13 @@ class WebEditCommandProxy;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebPageNamespace;
-class WebPopupItem;
 class WebPopupMenuProxy;
 class WebProcessProxy;
 class WebURLRequest;
 class WebWheelEvent;
 struct WebNavigationDataStore;
 struct WebPageCreationParameters;
+struct WebPopupItem;
 
 typedef GenericCallback<WKStringRef, StringImpl*> FrameSourceCallback;
 typedef GenericCallback<WKStringRef, StringImpl*> RenderTreeExternalRepresentationCallback;

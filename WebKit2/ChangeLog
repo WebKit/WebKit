@@ -1,3 +1,14 @@
+2010-10-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang build.
+
+        * UIProcess/API/mac/FindIndicatorWindow.mm:
+        (-[WebFindIndicatorWindowAnimation _initWithFindIndicatorWindow:WebKit::animationProgressCallback:WebKit::FindIndicatorWindow::animationDidEndCallback:WebKit::FindIndicatorWindow::]):
+        (WebKit::FindIndicatorWindow::setFindIndicator):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPopupMenuProxy.h:
+        * WebProcess/WebCoreSupport/WebPopupMenu.h:
+
 2010-10-18  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.
