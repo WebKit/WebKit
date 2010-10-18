@@ -1,3 +1,21 @@
+2010-10-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Strict mode: |this| should be undefined if it is not explicitly provided
+        https://bugs.webkit.org/show_bug.cgi?id=47833
+
+        To make strict mode behave correctly we want to pass undefined instead of null
+        as the default this value.  This has no impact on behaviour outside of strict
+        mode as both values are replaced with the global object if necessary.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallValueNode::emitBytecode):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::CallFunctionCallDotNode::emitBytecode):
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+
+
 2010-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

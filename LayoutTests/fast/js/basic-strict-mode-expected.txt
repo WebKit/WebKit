@@ -21,7 +21,11 @@ PASS testThisBracketAccess.call(undefined, 'length') threw exception TypeError: 
 PASS testThisBracketAccess.call(true, 'length') is undefined.
 PASS testThisBracketAccess.call(false, 'length') is undefined.
 PASS testThisBracketAccess.call(1, 'length') is undefined.
-PASS testGlobalAccess() is null
+PASS testGlobalAccess() is undefined
+PASS testThis.call() is undefined
+PASS testThis.apply() is undefined
+PASS testThis.call(undefined) is undefined
+PASS testThis.apply(undefined) is undefined
 PASS (function eval(){'use strict';}) threw exception SyntaxError: Parse error.
 PASS (function (eval){'use strict';}) threw exception SyntaxError: Parse error.
 PASS (function arguments(){'use strict';}) threw exception SyntaxError: Parse error.
