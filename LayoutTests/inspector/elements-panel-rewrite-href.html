@@ -42,10 +42,10 @@ function frontend_testRewriteHrefsContinuation(testController)
                 segments.push("<empty>");
                 continue;
             }
-            var match = href.match(WebInspector.URLRegExp);
-            if (!match)
+            var parsedURL = href.asParsedURL();
+            if (!parsedURL)
                 testController.notifyDone("FAIL: no URL match for <" + href + ">");
-            var split = match[4].split("/");
+            var split = parsedURL.path.split("/");
             for (var i = split.length - 1, j = 0; j < 3 && i >= 0; --i, ++j)
                 segments.push(split[i]);
             result.push(segments.reverse());

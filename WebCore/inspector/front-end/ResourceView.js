@@ -99,7 +99,6 @@ WebInspector.ResourceView = function(resource)
 
     this.headersVisible = true;
 
-    resource.addEventListener("url changed", this._refreshURL, this);
     resource.addEventListener("requestHeaders changed", this._refreshRequestHeaders, this);
     resource.addEventListener("responseHeaders changed", this._refreshResponseHeaders, this);
     resource.addEventListener("finished", this._refreshHTTPInformation, this);

@@ -262,9 +262,6 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
             m_documentURL = m_frame->document()->url();
         jsonObject->setString("url", m_requestURL.string());
         jsonObject->setString("documentURL", m_documentURL.string());
-        jsonObject->setString("host", m_requestURL.host());
-        jsonObject->setString("path", m_requestURL.path());
-        jsonObject->setString("lastPathComponent", m_requestURL.lastPathComponent());
         RefPtr<InspectorObject> requestHeaders = buildHeadersObject(m_requestHeaderFields);
         jsonObject->setObject("requestHeaders", requestHeaders);
         jsonObject->setBoolean("mainResource", m_isMainResource);

@@ -56,15 +56,6 @@ var WebInspector = {
     missingLocalizedStrings: {},
     pendingDispatches: 0,
 
-    // RegExp groups:
-    // 1 - scheme
-    // 2 - hostname
-    // 3 - ?port
-    // 4 - ?path
-    // 5 - ?fragment
-    URLRegExp: /^(http[s]?|file):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i,
-    GenericURLRegExp: /^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i,
-
     get platform()
     {
         if (!("_platform" in this))
@@ -770,10 +761,10 @@ WebInspector.documentClick = function(event)
             return;
         }
 
-        const urlMatch = WebInspector.GenericURLRegExp.exec(anchor.href);
-        if (urlMatch && urlMatch[1] === "webkit-link-action") {
-            if (urlMatch[2] === "show-panel") {
-                const panel = urlMatch[4].substring(1);
+        var parsedURL = anchor.href.asParsedURL();
+        if (parsedURL && parsedURL.scheme === "webkit-link-action") {
+            if (parsedURL.host === "show-panel") {
+                var panel = parsedURL.path.substring(1);
                 if (WebInspector.panels[panel])
                     WebInspector.currentPanel = WebInspector.panels[panel];
             }
@@ -1234,9 +1225,6 @@ WebInspector.updateResource = function(payload)
     }
 
     if (payload.didRequestChange) {
-        resource.domain = payload.host;
-        resource.path = payload.path;
-        resource.lastPathComponent = payload.lastPathComponent;
         resource.requestHeaders = payload.requestHeaders;
         resource.mainResource = payload.mainResource;
         resource.requestMethod = payload.requestMethod;
@@ -1248,11 +1236,10 @@ WebInspector.updateResource = function(payload)
         if (resource.mainResource)
             this.mainResource = resource;
 
-        var match = payload.documentURL.match(WebInspector.GenericURLRegExp);
-        if (match) {
-            var protocol = match[1].toLowerCase();
-            this._addCookieDomain(match[2]);
-            this._addAppCacheDomain(match[2]);
+        var parsedURL = payload.documentURL.asParsedURL();
+        if (parsedURL) {
+            this._addCookieDomain(parsedURL.host);
+            this._addAppCacheDomain(parsedURL.host);
         }
     }
 
@@ -1497,12 +1484,6 @@ WebInspector.inspectedURLChanged = function(url)
 {
     InspectorFrontendHost.inspectedURLChanged(url);
     this.extensionServer.notifyInspectedURLChanged();
-}
-
-WebInspector.resourceURLChanged = function(resource, oldURL)
-{
-    delete this.resourceURLMap[oldURL];
-    this.resourceURLMap[resource.url] = resource;
 }
 
 WebInspector.didCommitLoad = function()
@@ -1838,8 +1819,8 @@ WebInspector.resourceURLForRelatedNode = function(node, url)
 
     // documentURL not found or has bad value
     for (var resourceURL in WebInspector.resourceURLMap) {
-        var match = resourceURL.match(WebInspector.URLRegExp);
-        if (match && match[4] === url)
+        var parsedURL = resourceURL.asParsedURL();
+        if (parsedURL && parsedURL.path === url)
             return resourceURL;
     }
     return url;
@@ -1847,17 +1828,17 @@ WebInspector.resourceURLForRelatedNode = function(node, url)
 
 WebInspector.completeURL = function(baseURL, href)
 {
-    var match = baseURL.match(WebInspector.URLRegExp);
-    if (match) {
+    var parsedURL = baseURL.asParsedURL();
+    if (parsedURL) {
         var path = href;
         if (path.charAt(0) !== "/") {
-            var basePath = match[4] || "/";
+            var basePath = parsedURL.path;
             path = basePath.substring(0, basePath.lastIndexOf("/")) + "/" + path;
         } else if (path.length > 1 && path.charAt(1) === "/") {
             // href starts with "//" which is a full URL with the protocol dropped (use the baseURL protocol).
-            return match[1] + ":" + path;
+            return parsedURL.scheme + ":" + path;
         }
-        return match[1] + "://" + match[2] + (match[3] ? (":" + match[3]) : "") + path;
+        return parsedURL.scheme + "://" + parsedURL.host + (parsedURL.port ? (":" + parsedURL.port) : "") + path;
     }
     return null;
 }

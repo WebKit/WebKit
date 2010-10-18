@@ -29,7 +29,7 @@
 WebInspector.Resource = function(identifier, url)
 {
     this.identifier = identifier;
-    this._url = url;
+    this.url = url;
     this._startTime = -1;
     this._endTime = -1;
     this._requestMethod = "";
@@ -97,14 +97,19 @@ WebInspector.Resource.prototype = {
         if (this._url === x)
             return;
 
-        var oldURL = this._url;
         this._url = x;
         delete this._parsedQueryParameters;
-        // FIXME: We should make the WebInspector object listen for the "url changed" event.
-        // Then resourceURLChanged can be removed.
-        WebInspector.resourceURLChanged(this, oldURL);
 
-        this.dispatchEventToListeners("url changed");
+        var parsedURL = x.asParsedURL();
+        this.domain = parsedURL ? parsedURL.host : "";
+        this.path = parsedURL ? parsedURL.path : "";
+        this.lastPathComponent = "";
+        if (parsedURL && parsedURL.path) {
+            var lastSlashIndex = parsedURL.path.lastIndexOf("/");
+            if (lastSlashIndex !== -1)
+                this.lastPathComponent = parsedURL.path.substring(lastSlashIndex + 1);
+        }
+        this.lastPathComponentLowerCase = this.lastPathComponent.toLowerCase();
     },
 
     get documentURL()
@@ -119,41 +124,18 @@ WebInspector.Resource.prototype = {
         this._documentURL = x;
     },
 
-    get domain()
-    {
-        return this._domain;
-    },
-
-    set domain(x)
-    {
-        if (this._domain === x)
-            return;
-        this._domain = x;
-    },
-
-    get lastPathComponent()
-    {
-        return this._lastPathComponent;
-    },
-
-    set lastPathComponent(x)
-    {
-        if (this._lastPathComponent === x)
-            return;
-        this._lastPathComponent = x;
-        this._lastPathComponentLowerCase = x ? x.toLowerCase() : null;
-    },
-
     get displayName()
     {
-        var title = this.lastPathComponent;
-        if (!title)
-            title = this.displayDomain;
-        if (!title && this.url)
-            title = this.url.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "");
-        if (title === "/")
-            title = this.url;
-        return title;
+        if (this._displayName)
+            return this._displayName;
+        this._displayName = this.lastPathComponent;
+        if (!this._displayName)
+            this._displayName = this.displayDomain;
+        if (!this._displayName && this.url)
+            this._displayName = this.url.trimURL(WebInspector.mainResource ? WebInspector.mainResource.domain : "");
+        if (this._displayName === "/")
+            this._displayName = this.url;
+        return this._displayName;
     },
 
     get displayDomain()

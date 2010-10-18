@@ -122,8 +122,8 @@ WebInspector.CookieItemsView.prototype = {
 
         for (var id in WebInspector.resources) {
             var resource = WebInspector.resources[id];
-            var match = resource.documentURL.match(WebInspector.GenericURLRegExp);
-            if (match && match[2] === this._cookieDomain)
+            var url = resource.documentURL.asParsedURL();
+            if (url && url.host == this._cookieDomain)
                 resourceURLsForDocumentURL.push(resource.url);
         }
 

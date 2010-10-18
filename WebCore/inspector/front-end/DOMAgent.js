@@ -500,17 +500,12 @@ WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
 
 WebInspector.Cookies.cookieMatchesResourceURL = function(cookie, resourceURL)
 {
-    var match = resourceURL.match(WebInspector.GenericURLRegExp);
-    if (!match)
+    var url = resourceURL.asParsedURL();
+    if (!url || !this.cookieDomainMatchesResourceDomain(cookie.domain, url.host))
         return false;
-    // See WebInspector.URLRegExp for definitions of the group index constants.
-    if (!this.cookieDomainMatchesResourceDomain(cookie.domain, match[2]))
-        return false;
-    var resourcePort = match[3] ? match[3] : undefined;
-    var resourcePath = match[4] ? match[4] : '/';
-    return (resourcePath.indexOf(cookie.path) === 0
-        && (!cookie.port || resourcePort == cookie.port)
-        && (!cookie.secure || match[1].toLowerCase() === 'https'));
+    return (url.path.indexOf(cookie.path) === 0
+        && (!cookie.port || url.port == cookie.port)
+        && (!cookie.secure || url.scheme === "https"));
 }
 
 WebInspector.Cookies.cookieDomainMatchesResourceDomain = function(cookieDomain, resourceDomain)

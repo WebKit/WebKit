@@ -393,6 +393,26 @@ String.prototype.hasSubstring = function(string, caseInsensitive)
     return this.match(new RegExp(string.escapeForRegExp(), "i"));
 }
 
+String.prototype.asParsedURL = function()
+{
+    // RegExp groups:
+    // 1 - scheme
+    // 2 - hostname
+    // 3 - ?port
+    // 4 - ?path
+    // 5 - ?fragment
+    var match = this.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?(?:(\/[^#]*)(?:#(.*))?)?$/i);
+    if (!match)
+        return null;
+    var result = {};
+    result.scheme = match[1].toLowerCase();
+    result.host = match[2];
+    result.port = match[3];
+    result.path = match[4] || "/";
+    result.fragment = match[5];
+    return result;
+}
+
 String.prototype.escapeCharacters = function(chars)
 {
     var foundChar = false;
