@@ -92,6 +92,8 @@ public:
     unsigned createLayerTexture();
     void deleteLayerTexture(unsigned);
 
+    IntRect currentScissorRect() const { return m_currentScissorRect; }
+
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
@@ -116,7 +118,7 @@ private:
 
     void updateLayersRecursive(LayerChromium* layer, const TransformationMatrix& parentMatrix, float opacity);
 
-    void drawLayersRecursive(LayerChromium*, const FloatRect& scissorRect);
+    void drawLayersRecursive(LayerChromium*);
 
     void drawLayer(LayerChromium*);
 
@@ -124,7 +126,7 @@ private:
 
     void drawLayerIntoStencilBuffer(LayerChromium*, bool decrement);
 
-    void scissorToRect(const FloatRect&);
+    void scissorToRect(const IntRect&);
 
     bool makeContextCurrent();
 
@@ -163,6 +165,7 @@ private:
 
     IntRect m_rootVisibleRect;
     IntRect m_rootContentRect;
+    IntRect m_currentScissorRect;
 
     int m_maxTextureSize;
 

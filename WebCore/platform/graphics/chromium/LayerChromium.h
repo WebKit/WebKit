@@ -156,7 +156,7 @@ public:
     bool contentsDirty() { return m_contentsDirty; }
 
     // Returns the rect containtaining this layer in the current view's coordinate system.
-    const FloatRect getDrawRect() const;
+    const IntRect getDrawRect() const;
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() { return false; }

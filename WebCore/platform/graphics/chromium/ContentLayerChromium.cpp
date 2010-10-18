@@ -143,7 +143,13 @@ void ContentLayerChromium::cleanupResources()
 
 bool ContentLayerChromium::requiresClippedUpdateRect() const
 {
-    return !layerRenderer()->checkTextureSize(m_bounds);
+    // To avoid allocating excessively large textures, switch into "large layer mode" if
+    // one of the layer's dimensions is larger than 2000 pixels or the current size
+    // of the visible rect. This is a temporary measure until layer tiling is implemented.
+    static const int maxLayerSize = 2000;
+    return (m_bounds.width() > max(maxLayerSize, layerRenderer()->rootLayerContentRect().width())
+            || m_bounds.height() > max(maxLayerSize, layerRenderer()->rootLayerContentRect().height())
+            || !layerRenderer()->checkTextureSize(m_bounds));
 }
 
 void ContentLayerChromium::calculateClippedUpdateRect(IntRect& dirtyRect, IntRect& drawRect) const
@@ -152,7 +158,7 @@ void ContentLayerChromium::calculateClippedUpdateRect(IntRect& dirtyRect, IntRec
     // 1) The minimal texture space rectangle to be uploaded, returned in dirtyRect.
     // 2) The content rect-relative rectangle to draw this texture in, returned in drawRect.
 
-    const IntRect contentRect = layerRenderer()->rootLayerContentRect();
+    const IntRect clipRect = layerRenderer()->currentScissorRect();
     const TransformationMatrix& transform = drawTransform();
     // The layer's draw transform points to the center of the layer, relative to
     // the content rect.  layerPos is the distance from the top left of the
@@ -160,7 +166,7 @@ void ContentLayerChromium::calculateClippedUpdateRect(IntRect& dirtyRect, IntRec
     const IntPoint layerPos(m_bounds.width() / 2 - transform.m41(),
                             m_bounds.height() / 2 - transform.m42());
     // Transform the contentRect into the space of the layer.
-    IntRect contentRectInLayerSpace(layerPos, contentRect.size());
+    IntRect contentRectInLayerSpace(layerPos, clipRect.size());
 
     // Clip the entire layer against the visible region in the content rect
     // and use that as the drawable texture, instead of the entire layer.

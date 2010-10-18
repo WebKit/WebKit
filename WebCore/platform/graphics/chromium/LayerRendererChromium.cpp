@@ -321,7 +321,7 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
 
     // Enable scissoring to avoid rendering composited layers over the scrollbars.
     GLC(m_context, m_context->enable(GraphicsContext3D::SCISSOR_TEST));
-    FloatRect scissorRect(contentRect);
+    IntRect scissorRect(contentRect);
 
     // The scissorRect should not include the scroll offset.
     scissorRect.move(-m_scrollPosition.x(), -m_scrollPosition.y());
@@ -334,7 +334,7 @@ void LayerRendererChromium::drawLayers(const IntRect& visibleRect, const IntRect
 
     // Traverse the layer tree one more time to draw the layers.
     for (size_t i = 0; i < sublayers.size(); i++)
-        drawLayersRecursive(sublayers[i].get(), scissorRect);
+        drawLayersRecursive(sublayers[i].get());
 
     GLC(m_context, m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context, m_context->disable(GraphicsContext3D::BLEND));
@@ -501,14 +501,14 @@ void LayerRendererChromium::drawLayerIntoStencilBuffer(LayerChromium* layer, boo
 }
 
 // Recursively walk the layer tree and draw the layers.
-void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer, const FloatRect& scissorRect)
+void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer)
 {
     static bool depthTestEnabledForSubtree = false;
     static int currentStencilValue = 0;
 
     // Check if the layer falls within the visible bounds of the page.
-    FloatRect layerRect = layer->getDrawRect();
-    bool isLayerVisible = scissorRect.intersects(layerRect);
+    IntRect layerRect = layer->getDrawRect();
+    bool isLayerVisible = m_currentScissorRect.intersects(layerRect);
 
     // Enable depth testing for this layer and all its descendants if preserves3D is set.
     bool mustClearDepth = false;
@@ -527,15 +527,16 @@ void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer, const Floa
 
     // FIXME: We should check here if the layer has descendants that draw content
     // before we setup for clipping.
-    FloatRect currentScissorRect = scissorRect;
+    IntRect previousScissorRect = m_currentScissorRect;
     bool mustResetScissorRect = false;
     bool didStencilDraw = false;
     if (layer->masksToBounds()) {
         // If the layer isn't rotated then we can use scissoring otherwise we need
         // to clip using the stencil buffer.
         if (layer->drawTransform().isIdentityOrTranslation()) {
+            IntRect currentScissorRect = previousScissorRect;
             currentScissorRect.intersect(layerRect);
-            if (currentScissorRect != scissorRect) {
+            if (currentScissorRect != previousScissorRect) {
                 scissorToRect(currentScissorRect);
                 mustResetScissorRect = true;
             }
@@ -580,11 +581,11 @@ void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer, const Floa
         std::stable_sort(sublayerList.begin(), sublayerList.end(), compareLayerZ);
 
         for (i = 0; i < sublayerList.size(); i++)
-            drawLayersRecursive(sublayerList[i], currentScissorRect);
+            drawLayersRecursive(sublayerList[i]);
     } else {
         const Vector<RefPtr<LayerChromium> >& sublayers = layer->getSublayers();
         for (size_t i = 0; i < sublayers.size(); i++)
-            drawLayersRecursive(sublayers[i].get(), currentScissorRect);
+            drawLayersRecursive(sublayers[i].get());
     }
 
     if (didStencilDraw) {
@@ -600,7 +601,7 @@ void LayerRendererChromium::drawLayersRecursive(LayerChromium* layer, const Floa
     }
 
     if (mustResetScissorRect) {
-        scissorToRect(scissorRect);
+        scissorToRect(previousScissorRect);
     }
 
     if (mustClearDepth) {
@@ -636,11 +637,12 @@ void LayerRendererChromium::drawLayer(LayerChromium* layer)
 
 // Sets the scissor region to the given rectangle. The coordinate system for the
 // scissorRect has its origin at the top left corner of the current visible rect.
-void LayerRendererChromium::scissorToRect(const FloatRect& scissorRect)
+void LayerRendererChromium::scissorToRect(const IntRect& scissorRect)
 {
     // Compute the lower left corner of the scissor rect.
-    float bottom = std::max((float)m_rootVisibleRect.height() - scissorRect.bottom(), 0.f);
+    int bottom = std::max(m_rootVisibleRect.height() - scissorRect.bottom(), 0);
     GLC(m_context, m_context->scissor(scissorRect.x(), bottom, scissorRect.width(), scissorRect.height()));
+    m_currentScissorRect = scissorRect;
 }
 
 bool LayerRendererChromium::makeContextCurrent()
