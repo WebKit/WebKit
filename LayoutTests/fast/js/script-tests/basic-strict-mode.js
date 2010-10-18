@@ -5,6 +5,14 @@ function testThis() {
     "use strict";
     return this;
 }
+function testThisDotAccess() {
+    "use strict";
+    return this.length;
+}
+function testThisBracketAccess(prop) {
+    "use strict";
+    return this[prop];
+}
 function testGlobalAccess() {
     return testThis();
 }
@@ -14,6 +22,19 @@ shouldBe("testThis.call(true)", "true");
 shouldBe("testThis.call(false)", "false");
 shouldBe("testThis.call(undefined)", "undefined");
 shouldBe("testThis.call('a string')", "'a string'");
+shouldBe("testThisDotAccess.call('a string')", "'a string'.length");
+shouldThrow("testThisDotAccess.call(null)");
+shouldThrow("testThisDotAccess.call(undefined)");
+shouldBeUndefined("testThisDotAccess.call(true)");
+shouldBeUndefined("testThisDotAccess.call(false)");
+shouldBeUndefined("testThisDotAccess.call(1)");
+shouldBe("testThisBracketAccess.call('a string', 'length')", "'a string'.length");
+shouldThrow("testThisBracketAccess.call(null, 'length')");
+shouldThrow("testThisBracketAccess.call(undefined, 'length')");
+shouldBeUndefined("testThisBracketAccess.call(true, 'length')");
+shouldBeUndefined("testThisBracketAccess.call(false, 'length')");
+shouldBeUndefined("testThisBracketAccess.call(1, 'length')");
+
 
 shouldBe("testGlobalAccess()", "null");
 

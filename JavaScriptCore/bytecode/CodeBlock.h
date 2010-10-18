@@ -301,7 +301,7 @@ namespace JSC {
 
         inline bool isKnownNotImmediate(int index)
         {
-            if (index == m_thisRegister)
+            if (index == m_thisRegister && !m_isStrictMode)
                 return true;
 
             if (isConstantRegisterIndex(index))

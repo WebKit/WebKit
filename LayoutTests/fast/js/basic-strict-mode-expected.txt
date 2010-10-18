@@ -9,6 +9,18 @@ PASS testThis.call(true) is true
 PASS testThis.call(false) is false
 PASS testThis.call(undefined) is undefined
 PASS testThis.call('a string') is 'a string'
+PASS testThisDotAccess.call('a string') is 'a string'.length
+PASS testThisDotAccess.call(null) threw exception TypeError: Result of expression 'this' [null] is not an object..
+PASS testThisDotAccess.call(undefined) threw exception TypeError: Result of expression 'this' [undefined] is not an object..
+PASS testThisDotAccess.call(true) is undefined.
+PASS testThisDotAccess.call(false) is undefined.
+PASS testThisDotAccess.call(1) is undefined.
+PASS testThisBracketAccess.call('a string', 'length') is 'a string'.length
+PASS testThisBracketAccess.call(null, 'length') threw exception TypeError: Result of expression 'this' [null] is not an object..
+PASS testThisBracketAccess.call(undefined, 'length') threw exception TypeError: Result of expression 'this' [undefined] is not an object..
+PASS testThisBracketAccess.call(true, 'length') is undefined.
+PASS testThisBracketAccess.call(false, 'length') is undefined.
+PASS testThisBracketAccess.call(1, 'length') is undefined.
 PASS testGlobalAccess() is null
 PASS (function eval(){'use strict';}) threw exception SyntaxError: Parse error.
 PASS (function (eval){'use strict';}) threw exception SyntaxError: Parse error.

@@ -1,3 +1,16 @@
+2010-10-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Strict mode: JIT doesn't check for |this| being an immediate before dereferencing
+        https://bugs.webkit.org/show_bug.cgi?id=47826
+
+        There's no guarantee that |this| will be a cell in a strict mode function, so
+        don't claim that it is.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::isKnownNotImmediate):
+
 2010-10-18  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Oliver Hunt.
