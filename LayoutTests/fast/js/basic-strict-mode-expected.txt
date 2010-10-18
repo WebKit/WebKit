@@ -61,6 +61,19 @@ PASS 'use strict'; ++eval threw exception SyntaxError: Parse error.
 PASS 'use strict'; eval++ threw exception SyntaxError: Parse error.
 PASS 'use strict'; --eval threw exception SyntaxError: Parse error.
 PASS 'use strict'; eval-- threw exception SyntaxError: Parse error.
+PASS 'use strict'; function f() { ++arguments } threw exception SyntaxError: Parse error.
+PASS 'use strict'; function f() { arguments++ } threw exception SyntaxError: Parse error.
+PASS 'use strict'; function f() { --arguments } threw exception SyntaxError: Parse error.
+PASS 'use strict'; function f() { arguments-- } threw exception SyntaxError: Parse error.
+PASS global.eval('"use strict"; if (0) ++arguments; true;') is true
+PASS 'use strict'; ++(1, eval) threw exception ReferenceError: Prefix ++ operator applied to value that is not a reference..
+PASS 'use strict'; (1, eval)++ threw exception ReferenceError: Postfix ++ operator applied to value that is not a reference..
+PASS 'use strict'; --(1, eval) threw exception ReferenceError: Prefix -- operator applied to value that is not a reference..
+PASS 'use strict'; (1, eval)-- threw exception ReferenceError: Postfix -- operator applied to value that is not a reference..
+PASS 'use strict'; function f() { ++(1, arguments) } threw exception SyntaxError: Parse error.
+PASS 'use strict'; function f() { (1, arguments)++ } threw exception SyntaxError: Parse error.
+PASS 'use strict'; function f() { --(1, arguments) } threw exception SyntaxError: Parse error.
+PASS 'use strict'; function f() { (1, arguments)-- } threw exception SyntaxError: Parse error.
 PASS 'use strict'; if (0) delete +a.b threw exception SyntaxError: Parse error.
 PASS 'use strict'; if (0) delete ++a.b threw exception SyntaxError: Parse error.
 PASS 'use strict'; if (0) delete void a.b threw exception SyntaxError: Parse error.

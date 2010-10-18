@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig.
 
+        Strict mode: arguments is not valid as the base expression for pre- or post-fix expressions
+        https://bugs.webkit.org/show_bug.cgi?id=47791
+
+        Simple fix, check for arguments in addition to eval.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::parseUnaryExpression):
+
+2010-10-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Strict mode: Assignment that would create a global should be a late ReferenceError, not a syntax failure
         https://bugs.webkit.org/show_bug.cgi?id=47788
 
