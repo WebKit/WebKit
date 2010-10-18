@@ -3833,7 +3833,6 @@
             'storage/IDBKeyPath.h',
             'storage/IDBKeyRange.cpp',
             'storage/IDBKeyRange.h',
-            'storage/IDBKeyTree.h',
             'storage/IDBObjectStore.cpp',
             'storage/IDBObjectStore.h',
             'storage/IDBObjectStoreBackendImpl.cpp',

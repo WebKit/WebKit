@@ -5228,7 +5228,6 @@
 		C585A6E711D4FB3D004C3E4B /* IDBKey.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B311D4FB3D004C3E4B /* IDBKey.h */; };
 		C585A6E911D4FB3D004C3E4B /* IDBKeyRange.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6B511D4FB3D004C3E4B /* IDBKeyRange.cpp */; };
 		C585A6EA11D4FB3D004C3E4B /* IDBKeyRange.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B611D4FB3D004C3E4B /* IDBKeyRange.h */; };
-		C585A6EC11D4FB3D004C3E4B /* IDBKeyTree.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B811D4FB3D004C3E4B /* IDBKeyTree.h */; };
 		C585A6ED11D4FB3D004C3E4B /* IDBObjectStore.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6B911D4FB3D004C3E4B /* IDBObjectStore.h */; };
 		C585A6EE11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C585A6BA11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.cpp */; };
 		C585A6EF11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = C585A6BB11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.h */; };
@@ -11221,7 +11220,6 @@
 		C585A6B511D4FB3D004C3E4B /* IDBKeyRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBKeyRange.cpp; sourceTree = "<group>"; };
 		C585A6B611D4FB3D004C3E4B /* IDBKeyRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKeyRange.h; sourceTree = "<group>"; };
 		C585A6B711D4FB3D004C3E4B /* IDBKeyRange.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDBKeyRange.idl; sourceTree = "<group>"; };
-		C585A6B811D4FB3D004C3E4B /* IDBKeyTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBKeyTree.h; sourceTree = "<group>"; };
 		C585A6B911D4FB3D004C3E4B /* IDBObjectStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStore.h; sourceTree = "<group>"; };
 		C585A6BA11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBObjectStoreBackendImpl.cpp; sourceTree = "<group>"; };
 		C585A6BB11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBObjectStoreBackendImpl.h; sourceTree = "<group>"; };
@@ -12050,7 +12048,6 @@
 				C585A6B511D4FB3D004C3E4B /* IDBKeyRange.cpp */,
 				C585A6B611D4FB3D004C3E4B /* IDBKeyRange.h */,
 				C585A6B711D4FB3D004C3E4B /* IDBKeyRange.idl */,
-				C585A6B811D4FB3D004C3E4B /* IDBKeyTree.h */,
 				C585A6BC11D4FB3D004C3E4B /* IDBObjectStore.cpp */,
 				C585A6B911D4FB3D004C3E4B /* IDBObjectStore.h */,
 				C585A6BE11D4FB3D004C3E4B /* IDBObjectStore.idl */,
@@ -19620,7 +19617,6 @@
 				C572EE0F1201C736007D8F82 /* IDBIndexBackendInterface.h in Headers */,
 				C585A6E711D4FB3D004C3E4B /* IDBKey.h in Headers */,
 				C585A6EA11D4FB3D004C3E4B /* IDBKeyRange.h in Headers */,
-				C585A6EC11D4FB3D004C3E4B /* IDBKeyTree.h in Headers */,
 				C585A6ED11D4FB3D004C3E4B /* IDBObjectStore.h in Headers */,
 				C585A6EF11D4FB3D004C3E4B /* IDBObjectStoreBackendImpl.h in Headers */,
 				C585A6F111D4FB3D004C3E4B /* IDBObjectStoreBackendInterface.h in Headers */,
