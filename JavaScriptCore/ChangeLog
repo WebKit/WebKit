@@ -1,3 +1,16 @@
+2010-10-18  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Change FastAllocBase implementation into a macro
+        https://bugs.webkit.org/show_bug.cgi?id=42998
+
+        It was investigated in bug #33896 that inheriting classes from FastAllocBase 
+        can result in objects getting larger which leads to memory regressions. 
+        Using a macro instead of inheriting classes from FastAllocBase would solve the issue. 
+
+        * wtf/FastAllocBase.h: Add a WTF_MAKE_FAST_ALLOCATED macro
+
 2010-10-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

@@ -85,38 +85,41 @@
 
 namespace WTF {
 
-    class FastAllocBase {
-    public:
-        // Placement operator new.
-        void* operator new(size_t, void* p) { return p; }
-        void* operator new[](size_t, void* p) { return p; }
+#define WTF_MAKE_FAST_ALLOCATED \
+public: \
+    void* operator new(size_t, void* p) { return p; } \
+    void* operator new[](size_t, void* p) { return p; } \
+    \
+    void* operator new(size_t size) \
+    { \
+        void* p = ::WTF::fastMalloc(size); \
+         ::WTF::fastMallocMatchValidateMalloc(p, ::WTF::Internal::AllocTypeClassNew); \
+        return p; \
+    } \
+    \
+    void operator delete(void* p) \
+    { \
+        ::WTF::fastMallocMatchValidateFree(p, ::WTF::Internal::AllocTypeClassNew); \
+        ::WTF::fastFree(p); \
+    } \
+    \
+    void* operator new[](size_t size) \
+    { \
+        void* p = ::WTF::fastMalloc(size); \
+        ::WTF::fastMallocMatchValidateMalloc(p, ::WTF::Internal::AllocTypeClassNewArray); \
+        return p; \
+    } \
+    \
+    void operator delete[](void* p) \
+    { \
+         ::WTF::fastMallocMatchValidateFree(p, ::WTF::Internal::AllocTypeClassNewArray); \
+         ::WTF::fastFree(p); \
+    } \
+private:
 
-        void* operator new(size_t size)
-        {
-            void* p = fastMalloc(size);
-            fastMallocMatchValidateMalloc(p, Internal::AllocTypeClassNew);
-            return p;
-        }
-
-        void operator delete(void* p)
-        {
-            fastMallocMatchValidateFree(p, Internal::AllocTypeClassNew);
-            fastFree(p);
-        }
-
-        void* operator new[](size_t size)
-        {
-            void* p = fastMalloc(size);
-            fastMallocMatchValidateMalloc(p, Internal::AllocTypeClassNewArray);
-            return p;
-        }
-
-        void operator delete[](void* p)
-        {
-            fastMallocMatchValidateFree(p, Internal::AllocTypeClassNewArray);
-            fastFree(p);
-        }
-    };
+class FastAllocBase {
+    WTF_MAKE_FAST_ALLOCATED  
+};
 
     // fastNew / fastDelete
 
