@@ -96,14 +96,10 @@ namespace JSC {
 #if USE(JSVALUE64)
             moveDoubleToPtr(src, regT0);
             subPtr(tagTypeNumberRegister, regT0);
-#elif USE(JSVALUE32_64)
+#else
             storeDouble(src, Address(stackPointerRegister, -(int)sizeof(double)));
             loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.tag) - sizeof(double)), regT1);
             loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(JSValue, u.asBits.payload) - sizeof(double)), regT0);
-#else
-            UNUSED_PARAM(src);
-            ASSERT_NOT_REACHED();
-            m_failures.append(jump());
 #endif
             loadPtr(Address(callFrameRegister, RegisterFile::CallerFrame * (int)sizeof(Register)), callFrameRegister);
             ret();
@@ -144,13 +140,8 @@ namespace JSC {
         {
 #if USE(JSVALUE64)
             orPtr(tagTypeNumberRegister, regT0);
-#elif USE(JSVALUE32_64)
-            move(Imm32(JSValue::Int32Tag), regT1);
 #else
-            signExtend32ToPtr(regT0, regT0);
-            // If we can't tag the result, give up and jump to the slow case
-            m_failures.append(branchAddPtr(Overflow, regT0, regT0));
-            addPtr(Imm32(JSImmediate::TagTypeNumber), regT0);
+            move(Imm32(JSValue::Int32Tag), regT1);
 #endif
         }
 

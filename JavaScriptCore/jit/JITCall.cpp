@@ -26,7 +26,7 @@
 #include "config.h"
 
 #if ENABLE(JIT)
-#if !USE(JSVALUE32_64)
+#if USE(JSVALUE64)
 #include "JIT.h"
 
 #include "CodeBlock.h"
@@ -257,5 +257,5 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
 } // namespace JSC
 
-#endif // !USE(JSVALUE32_64)
+#endif // USE(JSVALUE64)
 #endif // ENABLE(JIT)

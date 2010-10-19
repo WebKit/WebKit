@@ -1,3 +1,84 @@
+2010-10-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Remove support for JSVALUE32 from JSC
+        https://bugs.webkit.org/show_bug.cgi?id=47948
+
+        Remove all the code for supporting JSVALUE32 from JSC.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_lshift):
+        (JSC::JIT::emitSlow_op_lshift):
+        (JSC::JIT::emit_op_rshift):
+        (JSC::JIT::emitSlow_op_rshift):
+        (JSC::JIT::emit_op_urshift):
+        (JSC::JIT::emitSlow_op_urshift):
+        (JSC::JIT::emit_op_jnless):
+        (JSC::JIT::emitSlow_op_jnless):
+        (JSC::JIT::emit_op_jless):
+        (JSC::JIT::emitSlow_op_jless):
+        (JSC::JIT::emit_op_jlesseq):
+        (JSC::JIT::emitSlow_op_jlesseq):
+        (JSC::JIT::emit_op_bitand):
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        (JSC::JIT::emit_op_pre_inc):
+        (JSC::JIT::emit_op_pre_dec):
+        (JSC::JIT::emit_op_mod):
+        (JSC::JIT::emitSlow_op_mod):
+        * jit/JITCall.cpp:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitGetFromCallFrameHeaderPtr):
+        (JSC::JIT::emitGetFromCallFrameHeader32):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_loop_if_lesseq):
+        (JSC::JIT::emit_op_bitnot):
+        (JSC::JIT::emit_op_next_pname):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emit_op_put_by_val):
+        * jit/JITStubs.h:
+        * jit/JSInterfaceJIT.h:
+        * jit/SpecializedThunkJIT.h:
+        (JSC::SpecializedThunkJIT::returnDouble):
+        (JSC::SpecializedThunkJIT::tagReturnAsInt32):
+        * jit/ThunkGenerators.cpp:
+        (JSC::sqrtThunkGenerator):
+        (JSC::powThunkGenerator):
+        * runtime/Collector.cpp:
+        (JSC::isPossibleCell):
+        (JSC::typeName):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::Structure::prototypeForLookup):
+        * runtime/JSImmediate.h:
+        (JSC::reinterpretIntptrToDouble):
+        (JSC::JSImmediate::isIntegerNumber):
+        (JSC::JSImmediate::isDouble):
+        (JSC::JSImmediate::areBothImmediateIntegerNumbers):
+        (JSC::JSImmediate::makeDouble):
+        (JSC::JSImmediate::doubleValue):
+        (JSC::JSImmediate::toBoolean):
+        (JSC::JSImmediate::fromNumberOutsideIntegerRange):
+        (JSC::JSImmediate::from):
+        (JSC::JSImmediate::toDouble):
+        (JSC::JSFastMath::rightShiftImmediateNumbers):
+        * runtime/JSNumberCell.cpp:
+        * runtime/JSNumberCell.h:
+        * runtime/JSObject.h:
+        (JSC::JSObject::JSObject):
+        * runtime/JSValue.h:
+        * runtime/NumberObject.h:
+        * wtf/Platform.h:
+
 2010-10-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Geoffrey Garen.

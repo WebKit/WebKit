@@ -516,8 +516,7 @@ namespace JSC {
         Jump emitJumpIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID);
         void emitJumpSlowCaseIfNotJSCell(RegisterID, int VReg);
-#if USE(JSVALUE64)
-#else
+#if USE(JSVALUE32_64)
         JIT::Jump emitJumpIfImmediateNumber(RegisterID reg)
         {
             return emitJumpIfImmediateInteger(reg);
@@ -535,7 +534,7 @@ namespace JSC {
         void emitJumpSlowCaseIfNotImmediateNumber(RegisterID);
         void emitJumpSlowCaseIfNotImmediateIntegers(RegisterID, RegisterID, RegisterID);
 
-#if !USE(JSVALUE64)
+#if USE(JSVALUE32_64)
         void emitFastArithDeTagImmediate(RegisterID);
         Jump emitFastArithDeTagImmediateJumpIfZero(RegisterID);
 #endif

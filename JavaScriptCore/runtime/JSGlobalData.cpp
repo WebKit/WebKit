@@ -133,9 +133,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , getterSetterStructure(GetterSetter::createStructure(jsNull()))
     , apiWrapperStructure(JSAPIValueWrapper::createStructure(jsNull()))
     , dummyMarkableCellStructure(JSCell::createDummyStructure())
-#if USE(JSVALUE32)
-    , numberStructure(JSNumberCell::createStructure(jsNull()))
-#endif
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)

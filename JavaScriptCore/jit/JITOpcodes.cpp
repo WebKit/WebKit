@@ -39,7 +39,7 @@
 
 namespace JSC {
 
-#if !USE(JSVALUE32_64)
+#if USE(JSVALUE64)
 
 #define RECORD_JUMP_TARGET(targetOffset) \
    do { m_labels[m_bytecodeOffset + (targetOffset)].used(); } while (false)
@@ -361,11 +361,7 @@ void JIT::emit_op_loop_if_lesseq(Instruction* currentInstruction)
     if (isOperandConstantImmediateInt(op2)) {
         emitGetVirtualRegister(op1, regT0);
         emitJumpSlowCaseIfNotImmediateInteger(regT0);
-#if USE(JSVALUE64)
         int32_t op2imm = getConstantOperandImmediateInt(op2);
-#else
-        int32_t op2imm = static_cast<int32_t>(JSImmediate::rawValue(getConstantOperand(op2)));
-#endif
         addJump(branch32(LessThanOrEqual, regT0, Imm32(op2imm)), target);
     } else {
         emitGetVirtualRegisters(op1, regT0, op2, regT1);
@@ -810,12 +806,8 @@ void JIT::emit_op_bitnot(Instruction* currentInstruction)
 {
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
-#if USE(JSVALUE64)
     not32(regT0);
     emitFastArithIntToImmNoCheck(regT0, regT0);
-#else
-    xorPtr(Imm32(~JSImmediate::TagTypeNumber), regT0);
-#endif
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -951,11 +943,7 @@ void JIT::emit_op_next_pname(Instruction* currentInstruction)
     loadPtr(addressFor(it), regT1);
     loadPtr(Address(regT1, OBJECT_OFFSETOF(JSPropertyNameIterator, m_jsStrings)), regT2);
 
-#if USE(JSVALUE64)
     loadPtr(BaseIndex(regT2, regT0, TimesEight), regT2);
-#else
-    loadPtr(BaseIndex(regT2, regT0, TimesFour), regT2);
-#endif
 
     emitPutVirtualRegister(dst, regT2);
 
@@ -1613,7 +1601,7 @@ void JIT::emitSlow_op_get_argument_by_val(Instruction* currentInstruction, Vecto
     stubCall.call(dst);
 }
 
-#endif // !USE(JSVALUE32_64)
+#endif // USE(JSVALUE64)
 
 void JIT::emit_op_resolve_global_dynamic(Instruction* currentInstruction)
 {

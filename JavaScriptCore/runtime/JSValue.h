@@ -80,7 +80,7 @@ namespace JSC {
     public:
         static EncodedJSValue encode(JSValue value);
         static JSValue decode(EncodedJSValue ptr);
-#if !USE(JSVALUE32_64)
+#if USE(JSVALUE64)
     private:
         static JSValue makeImmediate(intptr_t value);
         intptr_t immediateValue();

@@ -75,9 +75,6 @@ namespace JSC {
         }
 
         // Querying the type.
-#if USE(JSVALUE32)
-        bool isNumber() const;
-#endif
         bool isString() const;
         bool isObject() const;
         virtual bool isGetterSetter() const;
@@ -155,13 +152,6 @@ namespace JSC {
     inline JSCell::~JSCell()
     {
     }
-
-#if USE(JSVALUE32)
-    inline bool JSCell::isNumber() const
-    {
-        return m_structure->typeInfo().type() == NumberType;
-    }
-#endif
 
     inline bool JSCell::isObject() const
     {
@@ -253,13 +243,13 @@ namespace JSC {
         return false;
     }
 
-#if !USE(JSVALUE32_64)
+#if USE(JSVALUE64)
     ALWAYS_INLINE JSCell* JSValue::asCell() const
     {
         ASSERT(isCell());
         return m_ptr;
     }
-#endif // !USE(JSVALUE32_64)
+#endif // USE(JSVALUE64)
 
     inline JSValue JSValue::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
     {
