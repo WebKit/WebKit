@@ -59,6 +59,9 @@ messages -> PluginControllerProxy {
     # Sent when the plug-in focus changes.
     SetFocus(bool isFocused)
 
+    # Sent when the update requested by Update has been painted.
+    DidUpdate()
+
 #if PLATFORM(MAC)
     # Sent when the containing NSWindow's focus changes
     WindowFocusChanged(bool hasFocus)

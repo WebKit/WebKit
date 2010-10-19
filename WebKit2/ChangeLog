@@ -1,3 +1,38 @@
+2010-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Coalesce plug-in drawing
+        https://bugs.webkit.org/show_bug.cgi?id=47939
+
+        Coalesce plug-in drawing in the same manner as we do it in the chunked update drawing area.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        Initialize m_waitingForDidUpdate to false.
+
+        (WebKit::PluginControllerProxy::startPaintTimer):
+        Move code from invalidate out to here. Don't start the paint timer if m_waitingForDidUpdate is true.
+
+        (WebKit::PluginControllerProxy::invalidate):
+        Call startPaintTimer.
+
+        (WebKit::PluginControllerProxy::didUpdate):
+        Set m_waitingForDidUpdate to false and start the paint timer.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add DidUpdate message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::PluginProxy):
+        Initialize m_waitingForPaintInResponseToUpdate to false.
+
+        (WebKit::PluginProxy::paint):
+        If m_waitingForPaintInResponseToUpdate is true, send a DidUpdate message.
+
+        (WebKit::PluginProxy::update):
+        Set m_waitingForPaintInResponseToUpdate to true.
+
 2010-10-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

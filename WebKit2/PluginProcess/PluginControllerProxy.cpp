@@ -53,6 +53,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, u
     , m_userAgent(userAgent)
     , m_isPrivateBrowsingEnabled(isPrivateBrowsingEnabled)
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
+    , m_waitingForDidUpdate(false)
 {
 }
 
@@ -102,6 +103,27 @@ void PluginControllerProxy::paint()
     m_connection->connection()->send(Messages::PluginProxy::Update(dirtyRect), m_pluginInstanceID);
 }
 
+void PluginControllerProxy::startPaintTimer()
+{
+    // Check if we should start the timer.
+    
+    if (m_dirtyRect.isEmpty())
+        return;
+
+    // FIXME: Check clip rect.
+    
+    if (m_paintTimer.isActive())
+        return;
+
+    if (m_waitingForDidUpdate)
+        return;
+
+    // Start the timer.
+    m_paintTimer.startOneShot(0);
+
+    m_waitingForDidUpdate = true;
+}
+
 void PluginControllerProxy::invalidate(const IntRect& rect)
 {
     // Convert the dirty rect to window coordinates.
@@ -113,18 +135,7 @@ void PluginControllerProxy::invalidate(const IntRect& rect)
 
     m_dirtyRect.unite(dirtyRect);
 
-    // Check if we should start the timer.
-    
-    if (m_dirtyRect.isEmpty())
-        return;
-    
-    // FIXME: Check clip rect.
-    
-    if (m_paintTimer.isActive())
-        return;
-
-    // Start the timer.
-    m_paintTimer.startOneShot(0);
+    startPaintTimer();
 }
 
 String PluginControllerProxy::userAgent()
@@ -283,6 +294,12 @@ void PluginControllerProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboard
 void PluginControllerProxy::setFocus(bool hasFocus)
 {
     m_plugin->setFocus(hasFocus);
+}
+
+void PluginControllerProxy::didUpdate()
+{
+    m_waitingForDidUpdate = false;
+    startPaintTimer();
 }
 
 #if PLATFORM(MAC)
