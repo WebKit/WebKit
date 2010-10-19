@@ -4457,7 +4457,7 @@ DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCo
 	if sort $(WEBCORE_CSS_PROPERTY_NAMES) | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	cat $(WEBCORE_CSS_PROPERTY_NAMES) > CSSPropertyNames.in
 	$(PERL) "$(WebCore)/css/makeprop.pl"
-	mv CSSPropertyNames.* $(GENSOURCES_WEBCORE)
+	mv CSSPropertyNames* $(GENSOURCES_WEBCORE)
 
 # Lower case all the values, as CSS values are case-insensitive
 DerivedSources/WebCore/CSSValueKeywordsHash.h: DerivedSources/WebCore/CSSValueKeywords.cpp
@@ -4466,7 +4466,7 @@ DerivedSources/WebCore/CSSValueKeywords.h: $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCo
 	$(PERL) -ne 'print lc' $(WEBCORE_CSS_VALUE_KEYWORDS) > CSSValueKeywords.in
 	if sort CSSValueKeywords.in | uniq -d | grep -E '^[^#]'; then echo 'Duplicate value!'; exit 1; fi
 	$(PERL) "$(WebCore)/css/makevalues.pl"
-	mv CSSValueKeywords.* $(GENSOURCES_WEBCORE)
+	mv CSSValueKeywords* $(GENSOURCES_WEBCORE)
 
 # DOCTYPE strings
 DerivedSources/WebCore/DocTypeStrings.cpp DerivedSources/WebCore/HashTools.h: $(WebCore)/html/DocTypeStrings.gperf $(WebCore)/make-hash-tools.pl
