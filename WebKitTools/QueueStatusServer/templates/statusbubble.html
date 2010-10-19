@@ -39,6 +39,9 @@ body {
   background-color: #E0B0FF;
   border: 1px solid #ACA0B3;
 }
+.queue_position {
+    font-size: 9px;
+}
 </style>
 <script>
 function statusDetail(patch_id) {
@@ -53,7 +56,7 @@ function statusDetail(patch_id) {
     title="{{ bubble.status.date|timesince }} ago"{% endif %}>
   {{ bubble.name }}
   {% if bubble.queue_position %}
-  (#{{ bubble.queue_position }})
+  <span class="queue_position">#{{ bubble.queue_position }}</span>
   {% endif %}
 </div>
 {% endfor %}

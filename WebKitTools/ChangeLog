@@ -1,3 +1,19 @@
+2010-10-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        cr-mac bubble has caused status bubbles to wrap
+        https://bugs.webkit.org/show_bug.cgi?id=47928
+
+        We now have too many EWSes to fit in the bugs.webkit.org
+        status-bubble iframe when more than a couple EWS builds are pending.
+        To fix this I've reduced the space taken up by queue position,
+        and also moved cr-mac to the end of the list (since it's going to be
+        triple-digits for a while).
+
+        * QueueStatusServer/model/queues.py:
+        * QueueStatusServer/templates/statusbubble.html:
+
 2010-10-19  Kenneth Russell  <kbr@google.com>
 
         Reviewed by David Levin.
