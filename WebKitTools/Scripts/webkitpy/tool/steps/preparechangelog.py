@@ -74,4 +74,4 @@ class PrepareChangeLog(AbstractStep):
             self._tool.executive.run_and_throw_if_fail(args, self._options.quiet)
         except ScriptError, e:
             error("Unable to prepare ChangeLogs.")
-        state["diff"] = None # We've changed the diff
+        self.did_modify_checkout(state)

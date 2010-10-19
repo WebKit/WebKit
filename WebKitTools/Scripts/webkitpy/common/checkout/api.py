@@ -83,19 +83,20 @@ class Checkout(object):
     def bug_id_for_revision(self, revision):
         return self.commit_info_for_revision(revision).bug_id()
 
-    def _modified_files_matching_predicate(self, git_commit, predicate):
+    def _modified_files_matching_predicate(self, git_commit, predicate, changed_files=None):
         # SCM returns paths relative to scm.checkout_root
         # Callers (especially those using the ChangeLog class) may
         # expect absolute paths, so this method returns absolute paths.
-        changed_files = self._scm.changed_files(git_commit)
+        if not changed_files:
+            changed_files = self._scm.changed_files(git_commit)
         absolute_paths = [os.path.join(self._scm.checkout_root, path) for path in changed_files]
         return [path for path in absolute_paths if predicate(path)]
 
-    def modified_changelogs(self, git_commit):
-        return self._modified_files_matching_predicate(git_commit, self._is_path_to_changelog)
+    def modified_changelogs(self, git_commit, changed_files=None):
+        return self._modified_files_matching_predicate(git_commit, self._is_path_to_changelog, changed_files=changed_files)
 
-    def modified_non_changelogs(self, git_commit):
-        return self._modified_files_matching_predicate(git_commit, lambda path: not self._is_path_to_changelog(path))
+    def modified_non_changelogs(self, git_commit, changed_files=None):
+        return self._modified_files_matching_predicate(git_commit, lambda path: not self._is_path_to_changelog(path), changed_files=changed_files)
 
     def commit_message_for_this_commit(self, git_commit):
         changelog_paths = self.modified_changelogs(git_commit)

@@ -429,7 +429,7 @@ class MockSCM(Mock):
         # will actually be the root.  Since getcwd() is wrong, use a globally fake root for now.
         self.checkout_root = self.fake_checkout_root
 
-    def create_patch(self, git_commit):
+    def create_patch(self, git_commit, changed_files=None):
         return "Patch1"
 
     def commit_ids_from_commitish_arguments(self, args):
@@ -475,7 +475,7 @@ class MockCheckout(object):
     def recent_commit_infos_for_files(self, paths):
         return [self.commit_info_for_revision(32)]
 
-    def modified_changelogs(self, git_commit):
+    def modified_changelogs(self, git_commit, changed_files=None):
         # Ideally we'd return something more interesting here.  The problem is
         # that LandDiff will try to actually read the patch from disk!
         return []

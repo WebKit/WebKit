@@ -1,3 +1,21 @@
+2010-10-19  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch stats the filesystem too many times
+        https://bugs.webkit.org/show_bug.cgi?id=47883
+
+        This patch attempts to cache the list of changed files more agressively
+        and to use that list to compute the diff instead of stating the file
+        system again.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/abstractstep.py:
+        * Scripts/webkitpy/tool/steps/editchangelog.py:
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+
 2010-10-19  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/47741> Make sort-Xcode-project-file a little more friendly

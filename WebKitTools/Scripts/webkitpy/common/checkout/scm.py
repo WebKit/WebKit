@@ -260,7 +260,7 @@ class SCM:
     def display_name(self):
         self._subclass_must_implement()
 
-    def create_patch(self, git_commit=None):
+    def create_patch(self, git_commit=None, changed_files=[]):
         self._subclass_must_implement()
 
     def committer_email_for_revision(self, revision):
@@ -457,11 +457,11 @@ class SVN(SCM):
         return "svn"
 
     # FIXME: This method should be on Checkout.
-    def create_patch(self, git_commit=None):
+    def create_patch(self, git_commit=None, changed_files=[]):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
-        return self.run([self.script_path("svn-create-patch")],
+        return self.run([self.script_path("svn-create-patch")] + changed_files,
             cwd=self.checkout_root, return_stderr=False,
             decode_output=False)
 
@@ -689,12 +689,12 @@ class Git(SCM):
     def display_name(self):
         return "git"
 
-    def create_patch(self, git_commit=None):
+    def create_patch(self, git_commit=None, changed_files=[]):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
         # FIXME: This should probably use cwd=self.checkout_root
-        return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit)], decode_output=False)
+        return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit)] + changed_files, decode_output=False)
 
     @classmethod
     def git_commit_from_svn_revision(cls, revision):
