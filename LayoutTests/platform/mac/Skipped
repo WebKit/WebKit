@@ -319,3 +319,6 @@ fast/events/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html
 
 # Requires WebP support.
 fast/images/webp-image-decoding.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=47901
+fast/canvas/canvas-getImageData-negative-source.html
