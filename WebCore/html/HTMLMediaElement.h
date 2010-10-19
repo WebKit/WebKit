@@ -169,6 +169,9 @@ public:
 
     bool processingUserGesture() const;
 
+    void sourceWillBeRemoved(HTMLSourceElement*);
+    void sourceWasAdded(HTMLSourceElement*);
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);
     virtual ~HTMLMediaElement();
@@ -331,7 +334,9 @@ private:
     enum LoadState { WaitingForSource, LoadingFromSrcAttr, LoadingFromSourceElement };
     LoadState m_loadState;
     HTMLSourceElement* m_currentSourceNode;
-    
+    Node* m_nextChildNodeToConsider;
+    Node* sourceChildEndOfListValue() { return static_cast<Node*>(this); }
+
     OwnPtr<MediaPlayer> m_player;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     RefPtr<Widget> m_proxyWidget;

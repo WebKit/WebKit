@@ -33,6 +33,7 @@
 #include "HTMLDocument.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "Logging.h"
 
 using namespace std;
 
@@ -44,6 +45,7 @@ inline HTMLSourceElement::HTMLSourceElement(const QualifiedName& tagName, Docume
     : HTMLElement(tagName, document)
     , m_errorEventTimer(this, &HTMLSourceElement::errorEventTimerFired)
 {
+    LOG(Media, "HTMLSourceElement::HTMLSourceElement - %p", this);
     ASSERT(hasTagName(sourceTag));
 }
 
@@ -55,13 +57,17 @@ PassRefPtr<HTMLSourceElement> HTMLSourceElement::create(const QualifiedName& tag
 void HTMLSourceElement::insertedIntoTree(bool deep)
 {
     HTMLElement::insertedIntoTree(deep);
-    if (parentNode() && (parentNode()->hasTagName(audioTag) ||  parentNode()->hasTagName(videoTag))) {
-        HTMLMediaElement* media = static_cast<HTMLMediaElement*>(parentNode());
-        if (media->networkState() == HTMLMediaElement::NETWORK_EMPTY)
-            media->scheduleLoad();
-    }
+    if (parentNode() && (parentNode()->hasTagName(audioTag) || parentNode()->hasTagName(videoTag)))
+        static_cast<HTMLMediaElement*>(parentNode())->sourceWasAdded(this);
 }
 
+void HTMLSourceElement::willRemove()
+{
+    if (parentNode() && (parentNode()->hasTagName(audioTag) || parentNode()->hasTagName(videoTag)))
+        static_cast<HTMLMediaElement*>(parentNode())->sourceWillBeRemoved(this);
+    HTMLElement::willRemove();
+}
+    
 void HTMLSourceElement::setSrc(const String& url)
 {
     setAttribute(srcAttr, url);
@@ -89,6 +95,7 @@ void HTMLSourceElement::setType(const String& type)
 
 void HTMLSourceElement::scheduleErrorEvent()
 {
+    LOG(Media, "HTMLSourceElement::scheduleErrorEvent - %p", this);
     if (m_errorEventTimer.isActive())
         return;
 
@@ -97,11 +104,13 @@ void HTMLSourceElement::scheduleErrorEvent()
 
 void HTMLSourceElement::cancelPendingErrorEvent()
 {
+    LOG(Media, "HTMLSourceElement::cancelPendingErrorEvent - %p", this);
     m_errorEventTimer.stop();
 }
 
 void HTMLSourceElement::errorEventTimerFired(Timer<HTMLSourceElement>*)
 {
+    LOG(Media, "HTMLSourceElement::errorEventTimerFired - %p", this);
     dispatchEvent(Event::create(eventNames().errorEvent, false, true));
 }
 

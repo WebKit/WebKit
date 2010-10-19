@@ -31,6 +31,19 @@ function findMediaFile(tagName, name) {
     return "";
 }
 
+function mimeTypeForExtension(extension) {
+    for (var i = 0; i < videoCodecs.length; ++i) {
+        if (extension == videoCodecs[i][1])
+            return videoCodecs[i][0];
+    }
+    for (var i = 0; i < audioCodecs.length; ++i) {
+        if (extension == audioCodecs[i][1])
+            return audioCodecs[i][0];
+    }
+
+    return "";
+}
+
 function setSrcByTagName(tagName, src) {
     var elements = document.getElementsByTagName(tagName);
     if (elements) {

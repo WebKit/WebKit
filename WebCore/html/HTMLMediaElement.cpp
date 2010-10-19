@@ -125,6 +125,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_lastTimeUpdateEventMovieTime(numeric_limits<float>::max())
     , m_loadState(WaitingForSource)
     , m_currentSourceNode(0)
+    , m_nextChildNodeToConsider(0)
     , m_player(0)
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     , m_proxyWidget(0)
@@ -155,12 +156,14 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_loadInitiatedByUserGesture(false)
     , m_completelyLoaded(false)
 {
+    LOG(Media, "HTMLMediaElement::HTMLMediaElement");
     document->registerForDocumentActivationCallbacks(this);
     document->registerForMediaVolumeCallbacks(this);
 }
 
 HTMLMediaElement::~HTMLMediaElement()
 {
+    LOG(Media, "HTMLMediaElement::~HTMLMediaElement");
     if (m_isWaitingUntilMediaCanStart)
         document()->removeMediaCanStartListener(this);
     setShouldDelayLoadEvent(false);
@@ -324,6 +327,7 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
  
 void HTMLMediaElement::insertedIntoDocument()
 {
+    LOG(Media, "HTMLMediaElement::removedFromDocument");
     HTMLElement::insertedIntoDocument();
     if (!getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
         scheduleLoad();
@@ -331,6 +335,7 @@ void HTMLMediaElement::insertedIntoDocument()
 
 void HTMLMediaElement::removedFromDocument()
 {
+    LOG(Media, "HTMLMediaElement::removedFromDocument");
     if (m_networkState > NETWORK_EMPTY)
         pause(processingUserGesture());
     if (m_isFullscreen)
@@ -370,6 +375,7 @@ void HTMLMediaElement::recalcStyle(StyleChange change)
 
 void HTMLMediaElement::scheduleLoad()
 {
+    LOG(Media, "HTMLMediaElement::scheduleLoad");
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     createMediaPlayerProxy();
 #endif
@@ -863,7 +869,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     LOG(Media, "HTMLMediaElement::setNetworkState(%d) - current state is %d", static_cast<int>(state), static_cast<int>(m_networkState));
 
     if (state == MediaPlayer::Empty) {
-        // just update the cached state and leave, we can't do anything 
+        // Just update the cached state and leave, we can't do anything.
         m_networkState = NETWORK_EMPTY;
         return;
     }
@@ -874,16 +880,17 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
         // If we failed while trying to load a <source> element, the movie was never parsed, and there are more
         // <source> children, schedule the next one
         if (m_readyState < HAVE_METADATA && m_loadState == LoadingFromSourceElement) {
-            ASSERT(m_currentSourceNode);
-            if (!m_currentSourceNode)
-                return;
 
-            m_currentSourceNode->scheduleErrorEvent();
+            if (m_currentSourceNode)
+                m_currentSourceNode->scheduleErrorEvent();
+            else
+                LOG(Media, "HTMLMediaElement::setNetworkState - error event not sent, <source> was removed");
+
             if (havePotentialSourceChild()) {
-                LOG(Media, "HTMLMediaElement::setNetworkState scheduling next <source>");
+                LOG(Media, "HTMLMediaElement::setNetworkState - scheduling next <source>");
                 scheduleNextSourceChild();
             } else {
-                LOG(Media, "HTMLMediaElement::setNetworkState no more <source> elements, waiting");
+                LOG(Media, "HTMLMediaElement::setNetworkState - no more <source> elements, waiting");
                 waitForSourceChange();
             }
 
@@ -1419,7 +1426,7 @@ float HTMLMediaElement::volume() const
 
 void HTMLMediaElement::setVolume(float vol, ExceptionCode& ec)
 {
-    LOG(Media, "HTMLMediaElement::setControls(%f)", vol);
+    LOG(Media, "HTMLMediaElement::setVolume(%f)", vol);
 
     if (vol < 0.0f || vol > 1.0f) {
         ec = INDEX_SIZE_ERR;
@@ -1567,11 +1574,15 @@ float HTMLMediaElement::percentLoaded() const
 
 bool HTMLMediaElement::havePotentialSourceChild()
 {
-    // Stash the current <source> node so we can restore it after checking
-    // to see there is another potential
+    // Stash the current <source> node and next nodes so we can restore them after checking
+    // to see there is another potential.
     HTMLSourceElement* currentSourceNode = m_currentSourceNode;
+    Node* nextNode = m_nextChildNodeToConsider;
+
     KURL nextURL = selectNextSourceChild(0, DoNothing);
+
     m_currentSourceNode = currentSourceNode;
+    m_nextChildNodeToConsider = nextNode;
 
     return nextURL.isValid();
 }
@@ -1585,22 +1596,29 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
         LOG(Media, "HTMLMediaElement::selectNextSourceChild(contentType : \"%s\")", contentType ? contentType->raw().utf8().data() : "");
 #endif
 
+    if (m_nextChildNodeToConsider == sourceChildEndOfListValue()) {
+#if !LOG_DISABLED
+        if (shouldLog)
+            LOG(Media, "HTMLMediaElement::selectNextSourceChild -> 0x0000, \"\"");
+#endif
+        return KURL();
+    }
+
     KURL mediaURL;
     Node* node;
-    bool lookingForPreviousNode = m_currentSourceNode;
+    HTMLSourceElement* source;
+    bool lookingForStartNode = m_nextChildNodeToConsider;
     bool canUse = false;
 
     for (node = firstChild(); !canUse && node; node = node->nextSibling()) {
+        if (lookingForStartNode && m_nextChildNodeToConsider != node)
+            continue;
+        lookingForStartNode = false;
+        
         if (!node->hasTagName(sourceTag))
             continue;
 
-        if (lookingForPreviousNode) {
-            if (m_currentSourceNode == static_cast<HTMLSourceElement*>(node))
-                lookingForPreviousNode = false;
-            continue;
-        }
-
-        HTMLSourceElement* source = static_cast<HTMLSourceElement*>(node);
+        source = static_cast<HTMLSourceElement*>(node);
 
         // If candidate does not have a src attribute, or if its src attribute's value is the empty string ... jump down to the failed step below
         mediaURL = source->getNonEmptyURLAttribute(srcAttr);
@@ -1635,24 +1653,106 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
         if (!isSafeToLoadURL(mediaURL, actionIfInvalid) || !dispatchBeforeLoadEvent(mediaURL.string()))
             goto check_again;
 
-        // Making it this far means the <source> looks reasonable
+        // Making it this far means the <source> looks reasonable.
         canUse = true;
-        if (contentType)
-            *contentType = ContentType(source->type());
 
 check_again:
         if (!canUse && actionIfInvalid == Complain)
             source->scheduleErrorEvent();
-        m_currentSourceNode = static_cast<HTMLSourceElement*>(node);
     }
 
-    if (!canUse)
+    if (canUse) {
+        if (contentType)
+            *contentType = ContentType(source->type());
+        m_currentSourceNode = source;
+        m_nextChildNodeToConsider = source->nextSibling();
+        if (!m_nextChildNodeToConsider)
+            m_nextChildNodeToConsider = sourceChildEndOfListValue();
+    } else {
         m_currentSourceNode = 0;
+        m_nextChildNodeToConsider = sourceChildEndOfListValue();
+    }
+
 #if !LOG_DISABLED
     if (shouldLog)
-        LOG(Media, "HTMLMediaElement::selectNextSourceChild -> %s", canUse ? urlForLogging(mediaURL.string()).utf8().data() : "");
+        LOG(Media, "HTMLMediaElement::selectNextSourceChild -> %p, %s", m_currentSourceNode, canUse ? urlForLogging(mediaURL.string()).utf8().data() : "");
 #endif
     return canUse ? mediaURL : KURL();
+}
+
+void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
+{
+    LOG(Media, "HTMLMediaElement::sourceWasAdded(%p)", source);
+
+#if !LOG_DISABLED
+    if (source->hasTagName(sourceTag)) {
+        KURL url = source->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::sourceWasAdded - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+    
+    // We should only consider a <source> element when there is not src attribute at all.
+    if (hasAttribute(srcAttr))
+        return;
+
+    // 4.8.8 - If a source element is inserted as a child of a media element that has no src 
+    // attribute and whose networkState has the value NETWORK_EMPTY, the user agent must invoke 
+    // the media element's resource selection algorithm.
+    if (networkState() == HTMLMediaElement::NETWORK_EMPTY) {
+        scheduleLoad();
+        return;
+    }
+
+    if (m_currentSourceNode && source == m_currentSourceNode->nextSibling()) {
+        LOG(Media, "HTMLMediaElement::sourceWasAdded - <source> inserted immediately after current source");
+        m_nextChildNodeToConsider = source;
+        return;
+    }
+
+    if (m_nextChildNodeToConsider != sourceChildEndOfListValue())
+        return;
+    
+    // 4.8.9.5, resource selection algorithm, source elements section:
+    // 20 - Wait until the node after pointer is a node other than the end of the list. (This step might wait forever.)
+    // 21 - Asynchronously await a stable state...
+    // 22 - Set the element's delaying-the-load-event flag back to true (this delays the load event again, in case 
+    // it hasn't been fired yet).
+    setShouldDelayLoadEvent(true);
+
+    // 23 - Set the networkState back to NETWORK_LOADING.
+    m_networkState = NETWORK_LOADING;
+    
+    // 24 - Jump back to the find next candidate step above.
+    m_nextChildNodeToConsider = source;
+    scheduleNextSourceChild();
+}
+
+void HTMLMediaElement::sourceWillBeRemoved(HTMLSourceElement* source)
+{
+    LOG(Media, "HTMLMediaElement::sourceWillBeRemoved(%p)", source);
+
+#if !LOG_DISABLED
+    if (source->hasTagName(sourceTag)) {
+        KURL url = source->getNonEmptyURLAttribute(srcAttr);
+        LOG(Media, "HTMLMediaElement::sourceWillBeRemoved - 'src' is %s", urlForLogging(url).utf8().data());
+    }
+#endif
+
+    if (source != m_currentSourceNode && source != m_nextChildNodeToConsider)
+        return;
+
+    if (source == m_nextChildNodeToConsider) {
+        m_nextChildNodeToConsider = m_nextChildNodeToConsider->nextSibling();
+        if (!m_nextChildNodeToConsider)
+            m_nextChildNodeToConsider = sourceChildEndOfListValue();
+        LOG(Media, "HTMLMediaElement::sourceRemoved - m_nextChildNodeToConsider set to %p", m_nextChildNodeToConsider);
+    } else if (source == m_currentSourceNode) {
+        // Clear the current source node pointer, but don't change the movie as the spec says:
+        // 4.8.8 - Dynamically modifying a source element and its attribute when the element is already 
+        // inserted in a video or audio element will have no effect.
+        m_currentSourceNode = 0;
+        LOG(Media, "HTMLMediaElement::sourceRemoved - m_currentSourceNode set to 0");
+    }
 }
 
 void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
