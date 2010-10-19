@@ -2,6 +2,28 @@
 
         Reviewed by Sam Weinig.
 
+        Fix MiniBrowser crashes during startup and shutdown
+        https://bugs.webkit.org/show_bug.cgi?id=47954
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::sharedProcessContext):
+        Initialize the main thread.
+        
+        (WebKit::WebContext::create):
+        Ditto.
+
+        (WebKit::WebContext::WebContext):
+        Add the language observer here so we know that it will always be set up.
+
+        (WebKit::WebContext::ensureWebProcess):
+        Remove code.
+
+        * UIProcess/WebContext.h:
+
+2010-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Coalesce plug-in drawing
         https://bugs.webkit.org/show_bug.cgi?id=47939
 

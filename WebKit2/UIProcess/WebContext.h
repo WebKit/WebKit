@@ -127,6 +127,9 @@ private:
     bool hasValidProcess() const { return m_process && m_process->isValid(); }
     void platformInitializeWebProcess(WebProcessCreationParameters&);
 
+    static void languageChanged(void* context);
+    void languageChanged();
+
     ProcessModel m_processModel;
     
     // FIXME: In the future, this should be one or more WebProcessProxies.
