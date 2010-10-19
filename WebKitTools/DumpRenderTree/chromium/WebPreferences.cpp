@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WebPreferences.h"
 
-#include "public/WebView.h"
+#include "WebView.h"
 
 using namespace WebKit;
 

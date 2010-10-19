@@ -33,9 +33,9 @@
 #include "PlainTextController.h"
 
 #include "TestShell.h"
-#include "public/WebBindings.h"
-#include "public/WebRange.h"
-#include "public/WebString.h"
+#include "WebBindings.h"
+#include "WebRange.h"
+#include "WebString.h"
 
 using namespace WebKit;
 

@@ -39,9 +39,9 @@
 
 #include "CppBoundClass.h"
 #include "Task.h"
-#include "public/WebDragOperation.h"
-#include "public/WebInputEvent.h"
-#include "public/WebPoint.h"
+#include "WebDragOperation.h"
+#include "WebInputEvent.h"
+#include "WebPoint.h"
 
 class TestShell;
 

@@ -42,9 +42,9 @@
 #include "config.h"
 #include "CppBoundClass.h"
 
-#include "public/WebBindings.h"
-#include "public/WebFrame.h"
-#include "public/WebString.h"
+#include "WebBindings.h"
+#include "WebFrame.h"
+#include "WebString.h"
 #include <wtf/Assertions.h>
 #include <wtf/OwnPtr.h>
 

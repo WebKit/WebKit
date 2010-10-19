@@ -829,7 +829,8 @@
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
-                '.',
+                '<(chromium_src_dir)',
+                'public',
                 '../../JavaScriptCore',
                 '../../JavaScriptCore/wtf', # wtf/text/*.h refers headers in wtf/ without wtf/.
                 '<(DEPTH)',

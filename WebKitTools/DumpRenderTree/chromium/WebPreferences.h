@@ -31,9 +31,9 @@
 #ifndef WebPreferences_h
 #define WebPerferences_h
 
-#include "public/WebSettings.h"
-#include "public/WebString.h"
-#include "public/WebURL.h"
+#include "WebSettings.h"
+#include "WebString.h"
+#include "WebURL.h"
 
 namespace WebKit {
 class WebView;

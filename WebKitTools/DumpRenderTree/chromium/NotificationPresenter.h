@@ -31,8 +31,8 @@
 #ifndef NotificationPresenter_h
 #define NotificationPresenter_h
 
-#include "public/WebNotification.h"
-#include "public/WebNotificationPresenter.h"
+#include "WebNotification.h"
+#include "WebNotificationPresenter.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>

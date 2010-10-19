@@ -32,11 +32,11 @@
 #include "TextInputController.h"
 
 #include "TestShell.h"
-#include "public/WebBindings.h"
-#include "public/WebFrame.h"
-#include "public/WebRange.h"
-#include "public/WebString.h"
-#include "public/WebView.h"
+#include "WebBindings.h"
+#include "WebFrame.h"
+#include "WebRange.h"
+#include "WebString.h"
+#include "WebView.h"
 #include <wtf/StringExtras.h>
 #include <string>
 

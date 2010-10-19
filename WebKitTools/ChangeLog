@@ -1,3 +1,43 @@
+2010-10-19  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] DumpRenderTree shouldn't put '.' in include path
+        https://bugs.webkit.org/show_bug.cgi?id=47877
+
+        Fix include paths.
+
+        * DumpRenderTree/chromium/AccessibilityController.cpp:
+        * DumpRenderTree/chromium/AccessibilityUIElement.cpp:
+        * DumpRenderTree/chromium/AccessibilityUIElement.h:
+        * DumpRenderTree/chromium/CppBoundClass.cpp:
+        * DumpRenderTree/chromium/CppVariant.cpp:
+        * DumpRenderTree/chromium/CppVariant.h:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        * DumpRenderTree/chromium/DRTDevToolsCallArgs.h:
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        * DumpRenderTree/chromium/EventSender.cpp:
+        * DumpRenderTree/chromium/EventSender.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/MockSpellCheck.cpp:
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        * DumpRenderTree/chromium/NotificationPresenter.h:
+        * DumpRenderTree/chromium/PlainTextController.cpp:
+        * DumpRenderTree/chromium/Task.cpp:
+        * DumpRenderTree/chromium/TestNavigationController.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        * DumpRenderTree/chromium/TestWebWorker.h:
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        * DumpRenderTree/chromium/WebPreferences.h:
+        * DumpRenderTree/chromium/WebThemeEngineDRT.cpp:
+        * DumpRenderTree/chromium/WebThemeEngineDRT.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2010-10-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

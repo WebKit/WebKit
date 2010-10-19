@@ -31,8 +31,8 @@
 #include "config.h"
 #include "Task.h"
 
-#include "public/WebKit.h"
-#include "public/WebKitClient.h"
+#include "WebKit.h"
+#include "WebKitClient.h"
 #include "webkit/support/webkit_support.h"
 
 WebTask::WebTask(TaskList* list): m_taskList(list) { m_taskList->registerTask(this); }

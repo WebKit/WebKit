@@ -33,7 +33,7 @@
 
 #include "DRTDevToolsCallArgs.h"
 #include "Task.h"
-#include "public/WebDevToolsAgentClient.h"
+#include "WebDevToolsAgentClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 

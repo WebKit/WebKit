@@ -32,7 +32,7 @@
 #define AccessibilityUIElement_h
 
 #include "CppBoundClass.h"
-#include "public/WebAccessibilityObject.h"
+#include "WebAccessibilityObject.h"
 #include <wtf/Vector.h>
 
 class AccessibilityUIElement : public CppBoundClass {

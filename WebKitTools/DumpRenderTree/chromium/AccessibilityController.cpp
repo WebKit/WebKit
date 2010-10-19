@@ -32,11 +32,11 @@
 #include "AccessibilityController.h"
 
 #include "TestShell.h"
-#include "public/WebAccessibilityCache.h"
-#include "public/WebAccessibilityObject.h"
-#include "public/WebFrame.h"
-#include "public/WebString.h"
-#include "public/WebView.h"
+#include "WebAccessibilityCache.h"
+#include "WebAccessibilityObject.h"
+#include "WebFrame.h"
+#include "WebString.h"
+#include "WebView.h"
 
 using namespace WebKit;
 

@@ -34,10 +34,10 @@
 #include "DRTDevToolsCallArgs.h"
 #include "DRTDevToolsClient.h"
 
-#include "public/WebCString.h"
-#include "public/WebDevToolsAgent.h"
-#include "public/WebString.h"
-#include "public/WebView.h"
+#include "WebCString.h"
+#include "WebDevToolsAgent.h"
+#include "WebString.h"
+#include "WebView.h"
 #include "webkit/support/webkit_support.h"
 
 using namespace WebKit;

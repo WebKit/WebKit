@@ -31,14 +31,14 @@
 #include "config.h"
 #include "NotificationPresenter.h"
 
+#include "WebKit.h"
+#include "WebKitClient.h"
+#include "WebNotification.h"
+#include "WebNotificationPermissionCallback.h"
+#include "WebSecurityOrigin.h"
+#include "WebString.h"
+#include "WebURL.h"
 #include "googleurl/src/gurl.h"
-#include "public/WebKit.h"
-#include "public/WebKitClient.h"
-#include "public/WebNotification.h"
-#include "public/WebNotificationPermissionCallback.h"
-#include "public/WebSecurityOrigin.h"
-#include "public/WebString.h"
-#include "public/WebURL.h"
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

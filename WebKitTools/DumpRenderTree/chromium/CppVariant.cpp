@@ -31,7 +31,7 @@
 #include "config.h"
 #include "CppVariant.h"
 
-#include "public/WebBindings.h"
+#include "WebBindings.h"
 #include <limits>
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>

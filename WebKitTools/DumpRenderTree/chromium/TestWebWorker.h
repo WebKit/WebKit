@@ -31,9 +31,9 @@
 #ifndef TestWebWorker_h
 #define TestWebWorker_h
 
-#include "public/WebMessagePortChannel.h"
-#include "public/WebWorker.h"
-#include "public/WebWorkerClient.h"
+#include "WebMessagePortChannel.h"
+#include "WebWorker.h"
+#include "WebWorkerClient.h"
 #include <wtf/RefCounted.h>
 
 namespace WebKit {

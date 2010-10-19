@@ -31,8 +31,8 @@
 #include "config.h"
 #include "WebThemeEngineDRT.h"
 
+#include "WebRect.h"
 #include "WebThemeControlDRT.h"
-#include "public/WebRect.h"
 #include "third_party/skia/include/core/SkRect.h"
 
 // Although all this code is generic, we include these headers

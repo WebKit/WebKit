@@ -33,7 +33,7 @@
 
 #include "DRTDevToolsCallArgs.h"
 #include "Task.h"
-#include "public/WebDevToolsFrontendClient.h"
+#include "WebDevToolsFrontendClient.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 

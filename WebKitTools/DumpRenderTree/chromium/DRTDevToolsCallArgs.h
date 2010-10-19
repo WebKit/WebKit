@@ -31,7 +31,7 @@
 #ifndef DRTDevToolsCallArgs_h
 #define DRTDevToolsCallArgs_h
 
-#include "public/WebString.h"
+#include "WebString.h"
 #include <wtf/Assertions.h>
 
 class DRTDevToolsCallArgs {

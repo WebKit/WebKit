@@ -31,10 +31,10 @@
 #ifndef TestNavigationController_h
 #define TestNavigationController_h
 
-#include "public/WebDataSource.h"
-#include "public/WebHistoryItem.h"
-#include "public/WebString.h"
-#include "public/WebURL.h"
+#include "WebDataSource.h"
+#include "WebHistoryItem.h"
+#include "WebString.h"
+#include "WebURL.h"
 #include "webkit/support/webkit_support.h"
 #include <string>
 #include <wtf/RefCounted.h>

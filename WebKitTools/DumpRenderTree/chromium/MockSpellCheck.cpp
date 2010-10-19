@@ -31,11 +31,10 @@
 #include "config.h"
 #include "MockSpellCheck.h"
 
+#include "WebString.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
-
-#include "public/WebString.h"
 
 using namespace WebKit;
 

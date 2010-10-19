@@ -43,8 +43,8 @@
 
 #include "CppBoundClass.h"
 #include "Task.h"
-#include "public/WebString.h"
-#include "public/WebURL.h"
+#include "WebString.h"
+#include "WebURL.h"
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
 

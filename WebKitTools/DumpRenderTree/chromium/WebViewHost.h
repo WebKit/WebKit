@@ -33,10 +33,10 @@
 
 #include "MockSpellCheck.h"
 #include "TestNavigationController.h"
-#include "public/WebAccessibilityNotification.h"
-#include "public/WebCursorInfo.h"
-#include "public/WebFrameClient.h"
-#include "public/WebViewClient.h"
+#include "WebAccessibilityNotification.h"
+#include "WebCursorInfo.h"
+#include "WebFrameClient.h"
+#include "WebViewClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
