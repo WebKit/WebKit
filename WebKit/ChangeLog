@@ -1,3 +1,12 @@
+2010-10-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by David Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47864
+        Convert WebNSUserDefaultsExtras.m to .mm
+
+        * WebKit.xcodeproj/project.pbxproj: Renamed WebNSUserDefaultsExtras.m.
+
 2010-10-12  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin Adler.

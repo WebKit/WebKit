@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2010 Apple, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,14 +31,14 @@
 #import "WebNSObjectExtras.h"
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
+#import <wtf/MainThread.h>
 
-@implementation NSString (WebNSUserDefaultsPrivate)
-
-- (NSString *)_webkit_HTTPStyleLanguageCode
+static NSString *createHTTPStyleLanguageCode(NSString *languageCode)
 {
+    ASSERT(isMainThread());
+
     // Look up the language code using CFBundle.
-    NSString *languageCode = self;
-    NSString *preferredLanguageCode = WebCFAutorelease(WKCopyCFLocalizationPreferredName((CFStringRef)self));
+    NSString *preferredLanguageCode = WebCFAutorelease(WKCopyCFLocalizationPreferredName((CFStringRef)languageCode));
 
     if (preferredLanguageCode)
         languageCode = preferredLanguageCode;
@@ -47,82 +47,52 @@
     NSString *lowercaseLanguageCode = [languageCode lowercaseString];
     
     // Turn a '_' into a '-' if it appears after a 2-letter language code.
-    if ([lowercaseLanguageCode length] < 3 || [lowercaseLanguageCode characterAtIndex:2] != '_') {
+    if ([lowercaseLanguageCode length] < 3 || [lowercaseLanguageCode characterAtIndex:2] != '_')
         return lowercaseLanguageCode;
-    }
+
     NSMutableString *result = [lowercaseLanguageCode mutableCopy];
     [result replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
-    return [result autorelease];
+    return result;
 }
-
-@end
 
 @implementation NSUserDefaults (WebNSUserDefaultsExtras)
 
 static NSString *preferredLanguageCode = nil;
-static NSLock *preferredLanguageLock = nil;
-static pthread_once_t preferredLanguageLockOnce = PTHREAD_ONCE_INIT;
-static pthread_once_t addDefaultsChangeObserverOnce = PTHREAD_ONCE_INIT;
+static bool languageChangeObserverAdded = false;
 
-static void makeLock(void)
++ (void)_webkit_languagePreferencesDidChange
 {
-    preferredLanguageLock = [[NSLock alloc] init]; 
-}
-
-+ (void)_webkit_ensureAndLockPreferredLanguageLock
-{
-    pthread_once(&preferredLanguageLockOnce, makeLock);
-    [preferredLanguageLock lock];
-}
-
-+ (void)_webkit_defaultsDidChange
-{
-    [self _webkit_ensureAndLockPreferredLanguageLock];
+    ASSERT(isMainThread());
 
     [preferredLanguageCode release];
     preferredLanguageCode = nil;
-
-    [preferredLanguageLock unlock];
 }
 
-static void addDefaultsChangeObserver(void)
+static void addLanguageChangeObserver(void)
 {
-    [[NSNotificationCenter defaultCenter] addObserver:[NSUserDefaults class]
-                                             selector:@selector(_webkit_defaultsDidChange)
-                                                 name:NSUserDefaultsDidChangeNotification
-                                               object:[NSUserDefaults standardUserDefaults]];
-}
-
-+ (void)_webkit_addDefaultsChangeObserver
-{
-    pthread_once(&addDefaultsChangeObserverOnce, addDefaultsChangeObserver);
+    [[NSDistributedNotificationCenter defaultCenter] addObserver:[NSUserDefaults self]
+                                                        selector:@selector(_webkit_languagePreferencesDidChange)
+                                                            name:@"AppleLanguagePreferencesChangedNotification"
+                                                          object:nil];
 }
 
 + (NSString *)_webkit_preferredLanguageCode
 {
-    // Get this outside the lock since it might block on the defaults lock, while we are inside registerDefaults:.
-    NSUserDefaults *standardDefaults = [self standardUserDefaults];
-
-    BOOL addObserver = NO;
-
-    [self _webkit_ensureAndLockPreferredLanguageLock];
+    ASSERT(isMainThread());
 
     if (!preferredLanguageCode) {
-        NSArray *languages = [standardDefaults stringArrayForKey:@"AppleLanguages"];
-        if ([languages count] == 0) {
+        NSArray *languages = [[self standardUserDefaults] stringArrayForKey:@"AppleLanguages"];
+        if (![languages count])
             preferredLanguageCode = [@"en" retain];
-        } else {
-            preferredLanguageCode = [[[languages objectAtIndex:0] _webkit_HTTPStyleLanguageCode] copy];
-        }
-        addObserver = YES;
+        else
+            preferredLanguageCode = createHTTPStyleLanguageCode([languages objectAtIndex:0]);
     }
 
     NSString *code = [[preferredLanguageCode retain] autorelease];
     
-    [preferredLanguageLock unlock];
-
-    if (addObserver) {
-        [self _webkit_addDefaultsChangeObserver];
+    if (!languageChangeObserverAdded) {
+        addLanguageChangeObserver();
+        languageChangeObserverAdded = true;
     }
 
     return code;

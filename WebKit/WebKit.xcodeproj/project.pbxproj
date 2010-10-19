@@ -130,7 +130,7 @@
 		65E0F88408500917007E5CB9 /* WebNSURLRequestExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */; };
 		65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */; };
 		65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */; };
+		65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.mm */; };
 		65EEDE57084FFC9E0002DB25 /* WebNSFileManagerExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65EEDE58084FFC9E0002DB25 /* WebNSFileManagerExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 65EEDE56084FFC9E0002DB25 /* WebNSFileManagerExtras.m */; };
 		65FFB7FC0AD0B7D30048CD05 /* WebDocumentLoaderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 65FFB7FA0AD0B7D30048CD05 /* WebDocumentLoaderMac.h */; };
@@ -557,7 +557,7 @@
 		65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSURLRequestExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSURLRequestExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSUserDefaultsExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSUserDefaultsExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNSUserDefaultsExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E1150307EFFEBF009B8BF7 /* WebPluginContainerCheck.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginContainerCheck.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65E1150407EFFEBF009B8BF7 /* WebPluginContainerCheck.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginContainerCheck.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65EEDE55084FFC9E0002DB25 /* WebNSFileManagerExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSFileManagerExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -996,7 +996,7 @@
 				65E0F88208500917007E5CB9 /* WebNSURLRequestExtras.h */,
 				65E0F88308500917007E5CB9 /* WebNSURLRequestExtras.m */,
 				65E0F9E408500F23007E5CB9 /* WebNSUserDefaultsExtras.h */,
-				65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.m */,
+				65E0F9E508500F23007E5CB9 /* WebNSUserDefaultsExtras.mm */,
 				F508946902B71D59018A9CD4 /* WebNSViewExtras.h */,
 				F508946A02B71D59018A9CD4 /* WebNSViewExtras.m */,
 				9345DDAE0365FB27008635CE /* WebNSWindowExtras.h */,
@@ -1948,7 +1948,7 @@
 				939811190824BF01008DF038 /* WebNSPrintOperationExtras.m in Sources */,
 				939811120824BF01008DF038 /* WebNSURLExtras.mm in Sources */,
 				65E0F88508500917007E5CB9 /* WebNSURLRequestExtras.m in Sources */,
-				65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.m in Sources */,
+				65E0F9E708500F23007E5CB9 /* WebNSUserDefaultsExtras.mm in Sources */,
 				939810C90824BF01008DF038 /* WebNSViewExtras.m in Sources */,
 				939810CA0824BF01008DF038 /* WebNSWindowExtras.m in Sources */,
 				939810D00824BF01008DF038 /* WebPanelAuthenticationHandler.m in Sources */,
