@@ -397,7 +397,10 @@ class Port(object):
             data: contents of the baseline.
             encoding: file encoding to use for the baseline.
         """
-        with codecs.open(path, "w", encoding=encoding) as file:
+        write_mode = "w"
+        if encoding is None:
+            write_mode = "wb"
+        with codecs.open(path, write_mode, encoding=encoding) as file:
             file.write(data)
 
     def uri_to_test_name(self, uri):

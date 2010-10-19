@@ -1,3 +1,12 @@
+2010-10-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Eric Seidel.
+
+        new-run-webkit-tests produces corrupt PNG baselines on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=47867
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2010-10-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
