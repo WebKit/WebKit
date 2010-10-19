@@ -324,14 +324,14 @@ MOCK: update_status: commit-queue Retry
     def test_report_flaky_tests(self):
         queue = CommitQueue()
         queue.bind_to_tool(MockTool())
-        expected_stderr = """MOCK bug comment: bug_id=142, cc=[]
+        expected_stderr = """MOCK bug comment: bug_id=142, cc=['abarth@webkit.org']
 --- Begin comment ---
 The commit-queue encountered the following flaky tests while processing attachment 197:
 
 foo/bar.html
 bar/baz.html
 
-Please file bugs against the tests.  The commit-queue is continuing to process your patch.
+Please file bugs against the tests.  The author(s) of the test(s) have been CCed on this bug.  The commit-queue is continuing to process your patch.
 --- End comment ---
 
 """

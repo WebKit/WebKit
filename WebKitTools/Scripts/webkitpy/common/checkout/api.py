@@ -115,10 +115,13 @@ class Checkout(object):
         # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
         return CommitMessage("".join(changelog_messages).splitlines())
 
+    def recent_commit_infos_for_files(self, paths):
+        revisions = set(sum(map(self._scm.revisions_changing_file, paths), []))
+        return set(map(self.commit_info_for_revision, revisions))
+
     def suggested_reviewers(self, git_commit):
         changed_files = self.modified_non_changelogs(git_commit)
-        revisions = set(sum(map(self._scm.revisions_changing_file, changed_files), []))
-        commit_infos = set(map(self.commit_info_for_revision, revisions))
+        commit_infos = self.recent_commit_infos_for_files(changed_files)
         reviewers = [commit_info.reviewer() for commit_info in commit_infos if commit_info.reviewer()]
         reviewers.extend([commit_info.author() for commit_info in commit_infos if commit_info.author() and commit_info.author().can_review])
         return sorted(set(reviewers))

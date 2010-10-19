@@ -472,6 +472,9 @@ class MockCheckout(object):
     def bug_id_for_revision(self, svn_revision):
         return 12345
 
+    def recent_commit_infos_for_files(self, paths):
+        return [self.commit_info_for_revision(32)]
+
     def modified_changelogs(self, git_commit):
         # Ideally we'd return something more interesting here.  The problem is
         # that LandDiff will try to actually read the patch from disk!

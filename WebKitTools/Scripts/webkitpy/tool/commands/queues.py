@@ -39,7 +39,7 @@ from optparse import make_option
 from StringIO import StringIO
 
 from webkitpy.common.net.bugzilla import CommitterValidator
-from webkitpy.common.net.layouttestresults import LayoutTestResults
+from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
@@ -289,9 +289,16 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     def refetch_patch(self, patch):
         return self._tool.bugs.fetch_attachment(patch.id())
 
+    def _author_emails_for_tests(self, flaky_tests):
+        test_paths = map(path_for_layout_test, flaky_tests)
+        commit_infos = self._tool.checkout().recent_commit_infos_for_files(test_paths)
+        return [commit_info.author().bugzilla_email() for commit_info in commit_infos if commit_info.author()]
+
     def report_flaky_tests(self, patch, flaky_tests):
-        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n%s\n\nPlease file bugs against the tests.  The commit-queue is continuing to process your patch." % (self.name, patch.id(), "\n".join(flaky_tests))
-        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=self.watchers)
+        authors = self._author_emails_for_tests(flaky_tests)
+        cc_explaination = "  The author(s) of the test(s) have been CCed on this bug." if authors else ""
+        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n%s\n\nPlease file bugs against the tests.%s  The commit-queue is continuing to process your patch." % (self.name, patch.id(), "\n".join(flaky_tests), cc_explaination)
+        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=authors)
 
     # StepSequenceErrorHandler methods
 

@@ -33,6 +33,12 @@ from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, SoupStrainer
 
 # FIXME: This should be unified with all the layout test results code in the layout_tests package
 # This doesn't belong in common.net, but we don't have a better place for it yet.
+def path_for_layout_test(test_name):
+    return "LayoutTests/%s" % test_name
+
+
+# FIXME: This should be unified with all the layout test results code in the layout_tests package
+# This doesn't belong in common.net, but we don't have a better place for it yet.
 class LayoutTestResults(object):
     """This class knows how to parse old-run-webkit-tests results.html files."""
 
