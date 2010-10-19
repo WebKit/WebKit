@@ -38,9 +38,7 @@ SoupCookieJar* defaultCookieJar()
         cookiesInitialized = true;
 
         cookieJar = soup_cookie_jar_new();
-#ifdef HAVE_LIBSOUP_2_29_90
         soup_cookie_jar_set_accept_policy(cookieJar, SOUP_COOKIE_JAR_ACCEPT_NO_THIRD_PARTY);
-#endif
     }
 
     return cookieJar;
@@ -67,18 +65,12 @@ void setCookies(Document* document, const KURL& url, const String& value)
 
     GOwnPtr<SoupURI> origin(soup_uri_new(url.string().utf8().data()));
 
-#ifdef HAVE_LIBSOUP_2_29_90
     GOwnPtr<SoupURI> firstParty(soup_uri_new(document->firstPartyForCookies().string().utf8().data()));
 
     soup_cookie_jar_set_cookie_with_first_party(jar,
                                                 origin.get(),
                                                 firstParty.get(),
                                                 value.utf8().data());
-#else
-    soup_cookie_jar_set_cookie(jar,
-                               origin.get(),
-                               value.utf8().data());
-#endif
 }
 
 String cookies(const Document* /*document*/, const KURL& url)

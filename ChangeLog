@@ -1,3 +1,14 @@
+2010-10-19  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Bump minimum requirement for libsoup to 2.30
+        https://bugs.webkit.org/show_bug.cgi?id=46176
+
+        Bump minimum libsoup to required version to 2.30.0.
+
+        * configure.ac:
+
 2010-10-18  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
