@@ -154,7 +154,7 @@ void ImageLayerChromium::updateContents()
     dirtyRect.intersect(IntRect(IntPoint(0, 0), bitmapSize));
 
     if (pixels)
-        updateTextureRect(pixels, bitmapSize, requiredTextureSize,  dirtyRect, textureId, useMipmap);
+        updateTextureRect(pixels, bitmapSize, requiredTextureSize,  dirtyRect, textureId);
 }
 
 }
