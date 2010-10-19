@@ -1,5 +1,36 @@
 2010-10-19  Patrick Gansterer  <paroga@webkit.org>
 
+        Reviewed by David Kilzer.
+
+        Use UChar instead of wchar_t in UnicodeWinCE
+        https://bugs.webkit.org/show_bug.cgi?id=47904
+
+        Make UnicodeWinCE more portable, so we can use it for other ports too.
+
+        * wtf/unicode/wince/UnicodeWinCE.cpp:
+        (WTF::Unicode::toLower):
+        (WTF::Unicode::toUpper):
+        (WTF::Unicode::foldCase):
+        (WTF::Unicode::isPrintableChar):
+        (WTF::Unicode::isSpace):
+        (WTF::Unicode::isLetter):
+        (WTF::Unicode::isUpper):
+        (WTF::Unicode::isLower):
+        (WTF::Unicode::isDigit):
+        (WTF::Unicode::isPunct):
+        (WTF::Unicode::isAlphanumeric):
+        (WTF::Unicode::toTitleCase):
+        (WTF::Unicode::mirroredChar):
+        (WTF::Unicode::digitValue):
+        * wtf/unicode/wince/UnicodeWinCE.h:
+        (WTF::Unicode::isSeparatorSpace):
+        (WTF::Unicode::isHighSurrogate):
+        (WTF::Unicode::isLowSurrogate):
+        (WTF::Unicode::umemcasecmp):
+        (WTF::Unicode::surrogateToUcs4):
+
+2010-10-19  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by Andreas Kling.
 
         Fix style of UnicodeWinCE

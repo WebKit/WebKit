@@ -119,29 +119,29 @@ enum CharCategory {
 
 CharCategory category(unsigned int);
 
-bool isSpace(wchar_t);
-bool isLetter(wchar_t);
-bool isPrintableChar(wchar_t);
-bool isUpper(wchar_t);
-bool isLower(wchar_t);
-bool isPunct(wchar_t);
-bool isDigit(wchar_t);
-bool isAlphanumeric(wchar_t);
-inline bool isSeparatorSpace(wchar_t c) { return category(c) == Separator_Space; }
-inline bool isHighSurrogate(wchar_t c) { return (c & 0xfc00) == 0xd800; }
-inline bool isLowSurrogate(wchar_t c) { return (c & 0xfc00) == 0xdc00; }
+bool isSpace(UChar);
+bool isLetter(UChar);
+bool isPrintableChar(UChar);
+bool isUpper(UChar);
+bool isLower(UChar);
+bool isPunct(UChar);
+bool isDigit(UChar);
+bool isAlphanumeric(UChar);
+inline bool isSeparatorSpace(UChar c) { return category(c) == Separator_Space; }
+inline bool isHighSurrogate(UChar c) { return (c & 0xfc00) == 0xd800; }
+inline bool isLowSurrogate(UChar c) { return (c & 0xfc00) == 0xdc00; }
 
-wchar_t toLower(wchar_t);
-wchar_t toUpper(wchar_t);
-wchar_t foldCase(wchar_t);
-wchar_t toTitleCase(wchar_t);
-int toLower(wchar_t* result, int resultLength, const wchar_t* source, int sourceLength, bool* isError);
-int toUpper(wchar_t* result, int resultLength, const wchar_t* source, int sourceLength, bool* isError);
-int foldCase(UChar* result, int resultLength, const wchar_t* source, int sourceLength, bool* isError);
+UChar toLower(UChar);
+UChar toUpper(UChar);
+UChar foldCase(UChar);
+UChar toTitleCase(UChar);
+int toLower(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError);
+int toUpper(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError);
+int foldCase(UChar* result, int resultLength, const UChar* source, int sourceLength, bool* isError);
 
-int digitValue(wchar_t);
+int digitValue(UChar);
 
-wchar_t mirroredChar(UChar32);
+UChar mirroredChar(UChar32);
 unsigned char combiningClass(UChar32);
 DecompositionType decompositionType(UChar32);
 Direction direction(UChar32);
@@ -155,18 +155,18 @@ inline bool hasLineBreakingPropertyComplexContext(UChar32)
     return false; // FIXME: implement!
 }
 
-inline int umemcasecmp(const wchar_t* a, const wchar_t* b, int len)
+inline int umemcasecmp(const UChar* a, const UChar* b, int len)
 {
     for (int i = 0; i < len; ++i) {
-        wchar_t c1 = foldCase(a[i]);
-        wchar_t c2 = foldCase(b[i]);
+        UChar c1 = foldCase(a[i]);
+        UChar c2 = foldCase(b[i]);
         if (c1 != c2)
             return c1 - c2;
     }
     return 0;
 }
 
-inline UChar32 surrogateToUcs4(wchar_t high, wchar_t low)
+inline UChar32 surrogateToUcs4(UChar high, UChar low)
 {
     return (UChar32(high) << 10) + low - 0x35fdc00;
 }
