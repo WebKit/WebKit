@@ -25,32 +25,16 @@
 
 #include "WebErrors.h"
 
+#include "WKError.h"
+#include "WebError.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
 #include <pthread.h>
 
 using namespace WebCore;
+using namespace WebKit;
 
 // FIXME: We probably don't need to use NSErrors here.
-
-enum {
-    WebKitErrorCannotShowMIMEType =                             100,
-    WebKitErrorCannotShowURL =                                  101,
-    WebKitErrorFrameLoadInterruptedByPolicyChange =             102,
-};
-enum {
-    WebKitErrorCannotFindPlugIn =                               200,
-    WebKitErrorCannotLoadPlugIn =                               201,
-    WebKitErrorJavaUnavailable =                                202,
-};
-enum {
-    WebKitErrorCannotUseRestrictedPort =                        103,
-};
-
-#define WebKitErrorPlugInCancelledConnection 203
-#define WebKitErrorPlugInWillHandleLoad 204
-
-static NSString *WebKitErrorDomain = @"WebKitErrorDomain";
 
 static NSString * const WebKitErrorMIMETypeKey =               @"WebKitErrorMIMETypeKey";
 static NSString * const WebKitErrorPlugInNameKey =             @"WebKitErrorPlugInNameKey";
@@ -116,7 +100,7 @@ static NSMutableDictionary *descriptions = nil;
 
 + (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URLString
 {
-    return [self _webKitErrorWithDomain:WebKitErrorDomain code:code URL:[NSURL URLWithString:URLString]];
+    return [self _webKitErrorWithDomain:WebError::webKitErrorDomain() code:code URL:[NSURL URLWithString:URLString]];
 }
 
 + (void)_webkit_addErrorsWithCodesAndDescriptions:(NSDictionary *)dictionary inDomain:(NSString *)domain
@@ -133,20 +117,20 @@ static void registerErrors()
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         // Policy errors
-        WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
-        WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: WebKitErrorCannotShowURL],
-        WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
-        WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: WebKitErrorCannotUseRestrictedPort],
+        WebKitErrorDescriptionCannotShowMIMEType,                   [NSNumber numberWithInt: kWKErrorCodeCannotShowMIMEType],
+        WebKitErrorDescriptionCannotShowURL,                        [NSNumber numberWithInt: kWKErrorCodeCannotShowURL],
+        WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,   [NSNumber numberWithInt: kWKErrorCodeFrameLoadInterruptedByPolicyChange],
+        WebKitErrorDescriptionCannotUseRestrictedPort,              [NSNumber numberWithInt: kWKErrorCodeCannotUseRestrictedPort],
         
         // Plug-in and java errors
-        WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
-        WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
-        WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: WebKitErrorJavaUnavailable],
-        WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
-        WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: WebKitErrorPlugInWillHandleLoad],
+        WebKitErrorDescriptionCannotFindPlugin,                     [NSNumber numberWithInt: kWKErrorCodeCannotFindPlugIn],
+        WebKitErrorDescriptionCannotLoadPlugin,                     [NSNumber numberWithInt: kWKErrorCodeCannotLoadPlugIn],
+        WebKitErrorDescriptionJavaUnavailable,                      [NSNumber numberWithInt: kWKErrorCodeJavaUnavailable],
+        WebKitErrorDescriptionPlugInCancelledConnection,            [NSNumber numberWithInt: kWKErrorCodePlugInCancelledConnection],
+        WebKitErrorDescriptionPlugInWillHandleLoad,                 [NSNumber numberWithInt: kWKErrorCodePlugInWillHandleLoad],
         nil];
 
-    [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
+    [NSError _webkit_addErrorsWithCodesAndDescriptions:dict inDomain:WebError::webKitErrorDomain()];
 
     [pool drain];
 }
@@ -162,22 +146,22 @@ ResourceError cancelledError(const ResourceRequest& request)
 
 ResourceError blockedError(const ResourceRequest& request)
 {
-    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotUseRestrictedPort URL:request.url()];
+    return [NSError _webKitErrorWithDomain:WebError::webKitErrorDomain() code:kWKErrorCodeCannotUseRestrictedPort URL:request.url()];
 }
 
 ResourceError cannotShowURLError(const ResourceRequest& request)
 {
-    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorCannotShowURL URL:request.url()];
+    return [NSError _webKitErrorWithDomain:WebError::webKitErrorDomain() code:kWKErrorCodeCannotShowURL URL:request.url()];
 }
 
 ResourceError interruptForPolicyChangeError(const ResourceRequest& request)
 {
-    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:request.url()];
+    return [NSError _webKitErrorWithDomain:WebError::webKitErrorDomain() code:kWKErrorCodeFrameLoadInterruptedByPolicyChange URL:request.url()];
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)
 {
-    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:WebKitErrorCannotShowMIMEType URL:response.url()];
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:kWKErrorCodeCannotShowMIMEType URL:response.url()];
 }
 
 ResourceError fileDoesNotExistError(const ResourceResponse& response)

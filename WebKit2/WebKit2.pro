@@ -210,6 +210,7 @@ HEADERS += \
     Shared/VisitedLinkTable.h \
     Shared/WebCertificateInfo.h \
     Shared/WebEvent.h \
+    Shared/WebError.h \
     Shared/WebEventConversion.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
@@ -359,6 +360,7 @@ SOURCES += \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
     Shared/VisitedLinkTable.cpp \
+    Shared/WebError.cpp \
     Shared/WebEventConversion.cpp \
     Shared/WebPageCreationParameters.cpp \
     Shared/WebPopupItem.cpp \

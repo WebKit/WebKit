@@ -23,39 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WKError.h"
 
 #include "WebError.h"
-#include "WKAPICast.h"
 
-using namespace WebKit;
+#include <wtf/text/WTFString.h>
 
-WKTypeID WKErrorGetTypeID()
+namespace WebKit {
+
+const String& WebError::webKitErrorDomain()
 {
-    return toAPI(WebError::APIType);
+    DEFINE_STATIC_LOCAL(String, webKitErrorDomainString, ("WebKitErrorDomain"));
+    return webKitErrorDomainString;
 }
 
-WKStringRef WKErrorCopyWKErrorDomain()
-{
-    return toCopiedAPI(WebError::webKitErrorDomain());
-}
-
-WKStringRef WKErrorCopyDomain(WKErrorRef errorRef)
-{
-    return toCopiedAPI(toImpl(errorRef)->domain());
-}
-
-int WKErrorGetErrorCode(WKErrorRef errorRef)
-{
-    return toImpl(errorRef)->errorCode();
-}
-
-WKURLRef WKErrorCopyFailingURL(WKErrorRef errorRef)
-{
-    return toCopiedURLAPI(toImpl(errorRef)->failingURL());
-}
-
-WKStringRef WKErrorCopyLocalizedDescription(WKErrorRef errorRef)
-{
-    return toCopiedAPI(toImpl(errorRef)->localizedDescription());
-}
+} // namespace WebKit

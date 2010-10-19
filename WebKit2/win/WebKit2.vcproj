@@ -497,6 +497,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebError.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebError.h"
 				>
 			</File>

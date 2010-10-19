@@ -1,5 +1,36 @@
 2010-10-19  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Part 2 of:
+        Need to include WKErrorRef in the WKPageDidFail... functions
+        <rdar://problem/8564110>
+        https://bugs.webkit.org/show_bug.cgi?id=47871
+
+        * Shared/API/c/WKError.cpp:
+        (WKErrorCopyWKErrorDomain):
+        * Shared/API/c/WKError.h:
+        * Shared/WebError.cpp: Added.
+        (WebKit::WebError::webKitErrorDomain):
+        * Shared/WebError.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (+[NSError _webKitErrorWithCode:failingURL:]):
+        (registerErrors):
+        (WebKit::blockedError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptForPolicyChangeError):
+        (WebKit::cannotShowMIMETypeError):
+        * WebProcess/WebCoreSupport/win/WebErrorsWin.cpp:
+        (WebKit::cancelledError):
+        (WebKit::blockedError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptForPolicyChangeError):
+        * win/WebKit2.vcproj:
+
+2010-10-19  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dan Bernstein.
 
         Need to include WKErrorRef in the WKPageDidFail... functions

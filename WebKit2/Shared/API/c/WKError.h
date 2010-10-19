@@ -32,7 +32,22 @@
 extern "C" {
 #endif
 
+enum {
+    kWKErrorCodeCannotShowMIMEType =                             100,
+    kWKErrorCodeCannotShowURL =                                  101,
+    kWKErrorCodeFrameLoadInterruptedByPolicyChange =             102,
+    kWKErrorCodeCannotUseRestrictedPort =                        103,
+    kWKErrorCodeCannotFindPlugIn =                               200,
+    kWKErrorCodeCannotLoadPlugIn =                               201,
+    kWKErrorCodeJavaUnavailable =                                202,
+    kWKErrorCodePlugInCancelledConnection =                      203,
+    kWKErrorCodePlugInWillHandleLoad =                           204,
+};
+typedef uint32_t WKErrorCode;
+
 WK_EXPORT WKTypeID WKErrorGetTypeID();
+
+WK_EXPORT WKStringRef WKErrorCopyWKErrorDomain();
 
 WK_EXPORT WKStringRef WKErrorCopyDomain(WKErrorRef error);
 WK_EXPORT int WKErrorGetErrorCode(WKErrorRef error);
