@@ -112,6 +112,7 @@ struct _Ewk_View_Private_Data {
         const char* font_sans_serif;
         Eina_Bool auto_load_images:1;
         Eina_Bool auto_shrink_images:1;
+        Eina_Bool enable_auto_resize_window:1;
         Eina_Bool enable_scripts:1;
         Eina_Bool enable_plugins:1;
         Eina_Bool enable_frame_flattening:1;
@@ -606,6 +607,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
 
     priv->settings.auto_load_images = priv->page_settings->loadsImagesAutomatically();
     priv->settings.auto_shrink_images = priv->page_settings->shrinksStandaloneImagesToFit();
+    priv->settings.enable_auto_resize_window = EINA_TRUE;
     priv->settings.enable_scripts = priv->page_settings->isJavaScriptEnabled();
     priv->settings.enable_plugins = priv->page_settings->arePluginsEnabled();
     priv->settings.enable_frame_flattening = priv->page_settings->frameFlatteningEnabled();
@@ -2296,6 +2298,39 @@ Eina_Bool ewk_view_setting_auto_shrink_images_set(Evas_Object* o, Eina_Bool auto
         priv->page_settings->setShrinksStandaloneImagesToFit(automatic);
         priv->settings.auto_shrink_images = automatic;
     }
+    return EINA_TRUE;
+}
+
+/**
+ * Gets if view can be resized automatically.
+ *
+ * @param o view to check status
+ *
+ * @return EINA_TRUE if view can be resized, EINA_FALSE
+ *         otherwise (errors, cannot be resized).
+ */
+Eina_Bool ewk_view_setting_enable_auto_resize_window_get(const Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    return priv->settings.enable_auto_resize_window;
+}
+
+/**
+ * Sets if view can be resized automatically.
+ *
+ * @param o View.
+ * @param resizable @c EINA_TRUE if we want to resize automatically;
+ * @c EINA_FALSE otherwise. It defaults to @c EINA_TRUE
+ *
+ * @return EINA_TRUE if auto_resize_window status set, EINA_FALSE
+ *         otherwise (errors).
+ */
+Eina_Bool ewk_view_setting_enable_auto_resize_window_set(Evas_Object* o, Eina_Bool resizable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    priv->settings.enable_auto_resize_window = resizable;
     return EINA_TRUE;
 }
 

@@ -111,6 +111,9 @@ void ChromeClientEfl::setWindowRect(const FloatRect& rect)
     if (!m_view)
         return;
 
+    if (!ewk_view_setting_enable_auto_resize_window_get(m_view))
+        return;
+
     ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
     ecore_evas_move(ee, intrect.x(), intrect.y());
     ecore_evas_resize(ee, intrect.width(), intrect.height());

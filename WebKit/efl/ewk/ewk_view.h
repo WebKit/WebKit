@@ -384,6 +384,8 @@ EAPI Eina_Bool    ewk_view_setting_auto_load_images_set(Evas_Object *o, Eina_Boo
 EAPI Eina_Bool    ewk_view_setting_auto_shrink_images_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_auto_shrink_images_set(Evas_Object *o, Eina_Bool automatic);
 
+EAPI Eina_Bool    ewk_view_setting_enable_auto_resize_window_get(const Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_enable_auto_resize_window_set(Evas_Object *o, Eina_Bool resizable);
 EAPI Eina_Bool    ewk_view_setting_enable_scripts_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_enable_scripts_set(Evas_Object *o, Eina_Bool enable);
 

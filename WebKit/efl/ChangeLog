@@ -1,3 +1,19 @@
+2010-10-19  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add setting api for disabling auto resize window
+        https://bugs.webkit.org/show_bug.cgi?id=47787
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::setWindowRect): Return when
+        auto_resize_window was disabled.
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_enable_auto_resize_window_get): Added.
+        (ewk_view_setting_enable_auto_resize_window_set): Added.
+        * ewk/ewk_view.h:
+
 2010-10-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
