@@ -471,6 +471,33 @@ int windowsKeyCodeForKeyCode(uint16_t keyCode)
 int windowsKeyCodeForCharCode(unichar charCode)
 {
     switch (charCode) {
+#if PLATFORM(IOS)
+        case 8: case 0x7F: return VK_BACK;
+        case 9: return VK_TAB;
+        case 0xD: case 3: return VK_RETURN;
+        case 0x1B: return VK_ESCAPE;
+        case ' ': return VK_SPACE;
+        case NSHomeFunctionKey: return VK_HOME;
+        case NSEndFunctionKey: return VK_END;
+        case NSPageUpFunctionKey: return VK_PRIOR;
+        case NSPageDownFunctionKey: return VK_NEXT;
+        case NSUpArrowFunctionKey: return VK_UP;
+        case NSDownArrowFunctionKey: return VK_DOWN;
+        case NSLeftArrowFunctionKey: return VK_LEFT;
+        case NSRightArrowFunctionKey: return VK_RIGHT;
+        case NSDeleteFunctionKey: return VK_DELETE;
+
+        case '0': case ')': return VK_0;
+        case '1': case '!': return VK_1;
+        case '2': case '@': return VK_2;
+        case '3': case '#': return VK_3;
+        case '4': case '$': return VK_4;
+        case '5': case '%': return VK_5;
+        case '6': case '^': return VK_6;
+        case '7': case '&': return VK_7;
+        case '8': case '*': return VK_8;
+        case '9': case '(': return VK_9;
+#endif
         case 'a': case 'A': return VK_A; 
         case 'b': case 'B': return VK_B; 
         case 'c': case 'C': return VK_C; 
@@ -505,6 +532,30 @@ int windowsKeyCodeForCharCode(unichar charCode)
         case NSExecuteFunctionKey: return VK_EXECUTE;
         case NSPrintScreenFunctionKey: return VK_SNAPSHOT;
         case NSInsertFunctionKey: return VK_INSERT;
+#if PLATFORM(IOS)
+        case NSHelpFunctionKey: return VK_INSERT;
+
+        case NSF1FunctionKey: return VK_F1;
+        case NSF2FunctionKey: return VK_F2;
+        case NSF3FunctionKey: return VK_F3;
+        case NSF4FunctionKey: return VK_F4;
+        case NSF5FunctionKey: return VK_F5;
+        case NSF6FunctionKey: return VK_F6;
+        case NSF7FunctionKey: return VK_F7;
+        case NSF8FunctionKey: return VK_F8;
+        case NSF9FunctionKey: return VK_F9;
+        case NSF10FunctionKey: return VK_F10;
+        case NSF11FunctionKey: return VK_F11;
+        case NSF12FunctionKey: return VK_F12;
+        case NSF13FunctionKey: return VK_F13;
+        case NSF14FunctionKey: return VK_F14;
+        case NSF15FunctionKey: return VK_F15;
+        case NSF16FunctionKey: return VK_F16;
+        case NSF17FunctionKey: return VK_F17;
+        case NSF18FunctionKey: return VK_F18;
+        case NSF19FunctionKey: return VK_F19;
+        case NSF20FunctionKey: return VK_F20;
+#endif
         case NSF21FunctionKey: return VK_F21;
         case NSF22FunctionKey: return VK_F22;
         case NSF23FunctionKey: return VK_F23;
