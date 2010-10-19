@@ -2190,9 +2190,6 @@ BUG29737 MAC : svg/custom/use-elementInstance-event-target.svg = IMAGE
 BUG29737 MAC : svg/W3C-SVG-1.1/struct-image-02-b.svg = IMAGE
 BUG29737 MAC : svg/filters/sourceAlpha.svg = IMAGE
 
-// evan's fix rolled out in http://trac.webkit.org/changeset/52071 due to compat issues.
-BUG30343 LINUX : fast/css/large-number-round-trip.html = TEXT
-
 // These tests got very flaky (failing 8/10 runs!) after
 // http://src.chromium.org/viewvc/chrome?view=rev&revision=34610
 // The only relevant change there is that we now sort tests purely
@@ -3230,7 +3227,7 @@ BUG59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
 BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
 // Added in WebKit r69755, failed immediately.
-BUGJAPHET : fast/canvas/canvas-currentColor.html = TEXT
+BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 
 // Added in WebKit r69749, failed immediately due to KURL/KURLGoogle differences.
 BUGJAPHET : fast/dom/anchor-getParameter.html = TEXT
