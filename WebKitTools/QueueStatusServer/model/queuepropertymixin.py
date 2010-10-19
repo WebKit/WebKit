@@ -31,7 +31,7 @@ class QueuePropertyMixin(object):
     def _queue_getter(self):
         # Import at runtime to avoid circular imports
         from model.queues import Queue
-        return Queue.queue_from_name(self.queue_name)
+        return Queue.queue_with_name(self.queue_name)
 
     def _queue_setter(self, queue):
         self.queue_name = queue.name() if queue else None

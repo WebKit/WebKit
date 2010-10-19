@@ -1,16 +1,16 @@
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2010 Google, Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
 #
-#     * Redistributions of source code must retain the above copyright
+#    * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
+#    * Redistributions in binary form must reproduce the above
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
+#    * Neither the name of Research in Motion Ltd. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
 #
@@ -26,32 +26,37 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from datetime import datetime
+import unittest
 
-from google.appengine.ext import db
-from google.appengine.ext import webapp
 
+from handlers.statusbubble import StatusBubble
 from model.queues import Queue
 
 
-class NextPatch(webapp.RequestHandler):
-    def get(self, queue_name):
-        queue = Queue.queue_with_name(queue_name)
-        if not queue:
-            self.error(404)
-            return
-        # FIXME: Patch assignment should probably move into Queue.
-        patch_id = db.run_in_transaction(self._assign_patch, queue.active_work_items().key(), queue.work_items().item_ids)
-        if not patch_id:
-            self.error(404)
-            return
-        self.response.out.write(patch_id)
+class MockAttachment(object):
+    def __init__(self):
+        self.id = 1
 
-    @staticmethod
-    def _assign_patch(key, work_item_ids):
-        now = datetime.now()
-        active_work_items = db.get(key)
-        active_work_items.deactivate_expired(now)
-        next_item = active_work_items.next_item(work_item_ids, now)
-        active_work_items.put()
-        return next_item
+    def status_for_queue(self, queue):
+        return None
+
+    def position_in_queue(self, queue):
+        return 1
+
+
+class StatusBubbleTest(unittest.TestCase):
+    def test_build_bubble(self):
+        bubble = StatusBubble()
+        queue = Queue("mac-ews")
+        attachment = MockAttachment()
+        bubble_dict = bubble._build_bubble(queue, attachment)
+        # FIXME: assertDictEqual (in Python 2.7) would be better to use here.
+        self.assertEqual(bubble_dict["name"], "mac")
+        self.assertEqual(bubble_dict["attachment_id"], 1)
+        self.assertEqual(bubble_dict["queue_position"], "1")
+        self.assertEqual(bubble_dict["state"], "none")
+        self.assertEqual(bubble_dict["status"], None)
+
+
+if __name__ == '__main__':
+    unittest.main()

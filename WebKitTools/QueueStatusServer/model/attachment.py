@@ -108,7 +108,7 @@ class Attachment(object):
         return self._cached_queue_positions
 
     def _calculate_queue_positions(self):
-        all_work_items = WorkItems.all().fetch(limit=len(Queues.all()))
+        all_work_items = WorkItems.all().fetch(limit=len(Queue.all()))
         return dict([(items.queue.name(), items.display_position_for_attachment(self.id)) for items in all_work_items])
 
     # FIXME: This is controller/view code and does not belong in a model.
@@ -121,7 +121,7 @@ class Attachment(object):
             return summary
         summary["bug_id"] = first_status.active_bug_id
 
-        for queue in Queues.all():
+        for queue in Queue.all():
             summary[queue.name_with_underscores()] = None
             status = QueueStatus.all().filter('queue_name =', queue.name()).filter('active_patch_id =', self.id).order('-date').get()
             if status:

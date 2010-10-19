@@ -40,7 +40,7 @@ class WorkItems(db.Model, QueuePropertyMixin):
         """Returns a 1-based index corresponding to the position
         of the attachment_id in the queue.  If the attachment is
         not in this queue, this returns None"""
-        if attachment_id in attachment_id:
+        if attachment_id in self.item_ids:
             return self.item_ids.index(attachment_id) + 1
         return None
 

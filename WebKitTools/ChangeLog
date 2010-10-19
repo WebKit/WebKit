@@ -1,3 +1,24 @@
+2010-10-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Correct a bunch of typos in QueueStatusServer
+        https://bugs.webkit.org/show_bug.cgi?id=47880
+
+        These are all due to our complete lack of unit testing in QueueStatusServer.
+        I added a couple unit tests to cover a few of these fixes, but most of these
+        are still only caught by actually running the application.
+
+        * QueueStatusServer/handlers/nextpatch.py:
+        * QueueStatusServer/handlers/statusbubble.py:
+        * QueueStatusServer/handlers/statusbubble_unittest.py: Added.
+        * QueueStatusServer/handlers/updateworkitems.py:
+        * QueueStatusServer/model/attachment.py:
+        * QueueStatusServer/model/queuepropertymixin.py:
+        * QueueStatusServer/model/queuepropertymixin_unittest.py:
+        * QueueStatusServer/model/workitems.py:
+        * QueueStatusServer/model/workitems_unittest.py: Added.
+
 2010-10-18  Adam Barth  <abarth@webkit.org>
 
         Disable this test because it's failing on the bots and the authors

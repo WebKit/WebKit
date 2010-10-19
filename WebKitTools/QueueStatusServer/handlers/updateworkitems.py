@@ -54,7 +54,7 @@ class UpdateWorkItems(UpdateBase):
 
     def _work_items_from_request(self):
         queue_name = self.request.get("queue_name")
-        queue = Queue.queue_for_name(queue_name)
+        queue = Queue.queue_with_name(queue_name)
         if not queue:
             self.response.out.write("\"%s\" is not in queues %s" % (queue_name, Queue.all()))
             return None

@@ -42,7 +42,7 @@ class StatusBubble(webapp.RequestHandler):
     def _build_bubble(self, queue, attachment):
         queue_status = attachment.status_for_queue(queue)
         bubble = {
-            "name": queue.short_name().lowercase(),
+            "name": queue.short_name().lower(),
             "attachment_id": attachment.id,
             "queue_position": attachment.position_in_queue(queue),
             "state": attachment.state_from_queue_status(queue_status) if queue_status else "none",
