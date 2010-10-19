@@ -55,7 +55,7 @@ ResourceError cannotShowURLError(const ResourceRequest& request)
 
 ResourceError interruptForPolicyChangeError(const ResourceRequest& request)
 {
-    return ResourceError(WebError::webKitErrorDomain() kWKErrorCodeFrameLoadInterruptedByPolicyChange, request.url().string(), String());
+    return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeFrameLoadInterruptedByPolicyChange, request.url().string(), String());
 }
 
 ResourceError cannotShowMIMETypeError(const ResourceResponse& response)

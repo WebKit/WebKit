@@ -1,3 +1,10 @@
+2010-10-19  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebProcess/WebCoreSupport/win/WebErrorsWin.cpp:
+        (WebKit::interruptForPolicyChangeError): Add a missing comma.
+
 2010-10-19  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
