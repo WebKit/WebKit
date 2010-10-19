@@ -39,3 +39,6 @@ class QueueStatus(db.Model, QueuePropertyMixin):
     message = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
     results_file = db.BlobProperty()
+
+    def is_retry_request(self):
+        return self.message == "Retry"  # From AbstractQueue._retry_status

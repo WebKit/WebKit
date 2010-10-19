@@ -50,10 +50,11 @@ class QueueStatus(webapp.RequestHandler):
         return rows
 
     def get(self, queue_name):
-        queue_name = queue_name.lowercase()
+        queue_name = queue_name.lower()
         queue = Queue.queue_with_name(queue_name)
         if not queue:
             self.error(404)
+            return
 
         queued_items = WorkItems.all().filter("queue_name =", queue.name()).get()
         active_items = ActiveWorkItems.all().filter("queue_name =", queue.name()).get()

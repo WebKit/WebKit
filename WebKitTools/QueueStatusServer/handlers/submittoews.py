@@ -26,32 +26,36 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from datetime import datetime
+from google.appengine.ext import webapp, db
+from google.appengine.ext.webapp import template
 
-from google.appengine.ext import db
-from google.appengine.ext import webapp
-
+from handlers.updatebase import UpdateBase
+from model.attachment import Attachment
 from model.queues import Queue
 
 
-class NextPatch(webapp.RequestHandler):
-    def get(self, queue_name):
-        queue = Queue.queue_for_name(queue_name)
-        if not queue:
-            self.error(404)
-            return
-        # FIXME: Patch assignment should probably move into Queue.
-        patch_id = db.run_in_transaction(self._assign_patch, queue.active_work_items().key(), queue.work_items().item_ids)
-        if not patch_id:
-            self.error(404)
-            return
-        self.response.out.write(patch_id)
+class SubmitToEWS(UpdateBase):
+    def get(self):
+        self.response.out.write(template.render("templates/submittoews.html", None))
 
-    @staticmethod
-    def _assign_patch(key, work_item_ids):
-        now = datetime.now()
-        active_work_items = db.get(key)
-        active_work_items.deactivate_expired(now)
-        next_item = active_work_items.next_item(work_item_ids, now)
-        active_work_items.put()
-        return next_item
+    def _should_add_to_ews_queue(self, queue, attachment):
+        assert(queue.is_ews())
+        latest_status = attachment.status_for_queue(queue)
+        if not latest_status:
+            return True
+        # Only ever re-submit to the EWS if the EWS specifically requested a retry.
+        # This allows us to restart the EWS feeder queue, without all r? patches
+        # being retried as a result of that restart!
+        # In some future version we might add a "force" button to allow the user
+        # to override this restriction.
+        return latest_status.is_retry_request()
+
+    def _add_attachment_to_ews_queues(self, attachment):
+        for queue in Queue.all_ews():
+            if self._should_add_to_ews_queue(queue, attachment):
+                queue.work_items().add_work_item(attachment.id)
+
+    def post(self):
+        attachment_id = self._int_from_request("attachment_id")
+        attachment = Attachment(attachment_id)
+        self._add_attachment_to_ews_queues(attachment)

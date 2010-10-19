@@ -67,7 +67,7 @@ class UpdateStatus(UpdateBase):
 
     # FIXME: An explicit lock_release request would be cleaner than this magical "Retry" status.
     def _update_active_work_items(self, queue_status):
-        if queue_status.message != "Retry":  # From AbstractQueue._retry_status
+        if not queue_status.is_retry_request():
             return
         active_items = ActiveWorkItems.all().filter("queue_name =", queue_status.queue_name).get()
         if not active_items:

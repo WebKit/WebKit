@@ -26,11 +26,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from model.queues import Queue
-
 
 class QueuePropertyMixin(object):
     def _queue_getter(self):
+        # Import at runtime to avoid circular imports
+        from model.queues import Queue
         return Queue.queue_from_name(self.queue_name)
 
     def _queue_setter(self, queue):

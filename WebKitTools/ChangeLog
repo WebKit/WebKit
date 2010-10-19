@@ -11,6 +11,31 @@
 
         Reviewed by Adam Barth.
 
+        Make it possible to submit patches to the EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=47869
+
+        * QueueStatusServer/handlers/nextpatch.py:
+         - Move more logic into Queue, so that it can be shared with SubmitToEWS.
+        * QueueStatusServer/handlers/queuestatus.py:
+         - Fix two typos from a previous commit.
+        * QueueStatusServer/handlers/submittoews.py: Added.
+        * QueueStatusServer/handlers/updatestatus.py:
+         - Use the new is_retry_request method to share this (hacky) code with SubmitToEWS
+        * QueueStatusServer/main.py:
+         - Add /submit-to-ews
+        * QueueStatusServer/model/queuepropertymixin.py:
+         - Fix circular imports caused by adding Queue.work_items()
+        * QueueStatusServer/model/queues.py:
+         - Add work_items() and active_work_items()
+        * QueueStatusServer/model/queuestatus.py:
+        * QueueStatusServer/model/workitems.py:
+         - Add transaction-safe add/remove methods.
+        * QueueStatusServer/templates/submittoews.html: Added.
+
+2010-10-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Deploy Queue class in more places throughout QueueStatusServer
         https://bugs.webkit.org/show_bug.cgi?id=47855
 

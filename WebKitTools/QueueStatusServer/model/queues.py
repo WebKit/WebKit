@@ -29,6 +29,9 @@
 
 import re
 
+from model.activeworkitems import ActiveWorkItems
+from model.workitems import WorkItems
+
 
 class Queue(object):
 
@@ -58,8 +61,21 @@ class Queue(object):
     def all(cls):
         return [Queue(name) for name in cls._all_queue_names]
 
+    @classmethod
+    def all_ews(cls):
+        return [queue for queue in cls.all() if queue.is_ews()]
+
     def name(self):
         return self._name
+
+    def work_items(self):
+        key_name = "work-items-%s" % (self._name)
+        return WorkItems.get_or_insert(key_name=key_name, queue_name=self._name)
+
+    # FIXME: active_work_items is a bad name for this lock-table.
+    def active_work_items(self):
+        key_name = "active-work-items-%s" % (self._name)
+        return ActiveWorkItems.get_or_insert(key_name=key_name, queue_name=self._name)
 
     def _caplitalize_after_dash(self, string):
         return "-".join([word[0].upper() + word[1:] for word in string.split("-")])
