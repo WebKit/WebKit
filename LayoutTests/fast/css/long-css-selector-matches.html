@@ -1,0 +1,40 @@
+<html>
+<head></head>
+<body>
+<script>
+function generate_deeply_nested_selector(nestlevel, color) {
+    var selector = []
+    for (var i = 0; i < nestlevel; ++i) {
+        selector.push('#id' + i + ' + \n');
+    }
+    selector.push('* {background:' + color + '}');
+
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = selector.join('');
+    document.head.appendChild(style);
+}
+
+function generate_deeply_nested_elements(nestlevel) {
+    var text = [];
+    for (var i = 0; i < nestlevel; ++i) {
+        text.push('<div id=id' + i + '></div>\n');
+    }
+    text.push('<div>Hello World</div>');
+    var div = document.createElement('div')
+    div.innerHTML = text.join('');
+    document.body.appendChild(div);
+}
+
+generate_deeply_nested_selector(10000, 'red');
+generate_deeply_nested_selector(10000, 'blue');
+
+generate_deeply_nested_elements(10000);
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<p>Test case for <a href="http://bugs.webkit.org/show_bug.cgi?id=43783">http://bugs.webkit.org/show_bug.cgi?id=43783</a></p>
+<p>If browser didn't crash, the test passed.</p>
+</body>
+</html>
