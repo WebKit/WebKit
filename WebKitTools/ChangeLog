@@ -1,3 +1,17 @@
+2010-10-18  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make it possible to run a chromium-mac-ews builder
+        https://bugs.webkit.org/show_bug.cgi?id=47876
+
+        Since we can't run Mac OS X in a VM, we need to only run committer patches.
+        There was a multiple inheritance problem which was holding this patch back,
+        but I decided to just ignore the problem and go with a functional hack for now.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+
 2010-10-18  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Tony Chang.

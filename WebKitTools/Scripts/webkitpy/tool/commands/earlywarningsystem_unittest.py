@@ -85,3 +85,12 @@ class EarlyWarningSytemTest(QueuesTest):
             "handle_script_error": SystemExit,
         }
         self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
+
+    def test_chromium_mac_ews(self):
+        ews = ChromiumMacEWS()
+        expected_stderr = self._default_expected_stderr(ews)
+        expected_stderr["process_work_item"] = "MOCK: update_status: cr-mac-ews Error: cr-mac-ews cannot process patches from non-committers :(\n"
+        expected_exceptions = {
+            "handle_script_error": SystemExit,
+        }
+        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
