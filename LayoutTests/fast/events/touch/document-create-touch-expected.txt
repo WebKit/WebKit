@@ -1,0 +1,31 @@
+This tests support for the document.createTouch API.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS "createTouch" in document is true
+PASS touch is non-null.
+PASS touch.target is box
+PASS touch.identifier is 1
+PASS touch.pageX is 100
+PASS touch.pageY is 101
+PASS touch.screenX is 102
+PASS touch.screenY is 103
+PASS emptyTouch is non-null.
+PASS emptyTouch.target is null
+PASS emptyTouch.identifier is 0
+PASS emptyTouch.pageX is 0
+PASS emptyTouch.pageY is 0
+PASS emptyTouch.screenX is 0
+PASS emptyTouch.screenY is 0
+PASS badParamsTouch is non-null.
+PASS badParamsTouch.target is null
+PASS badParamsTouch.identifier is 0
+PASS badParamsTouch.pageX is 0
+PASS badParamsTouch.pageY is 0
+PASS badParamsTouch.screenX is 0
+PASS badParamsTouch.screenY is 104
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -324,6 +324,19 @@ module core {
         attribute [DontEnum, Conditional=FULLSCREEN_API] EventListener onwebkitfullscreenchange;
 #endif
 
+#if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
+        [ReturnsNew] Touch createTouch(in DOMWindow window,
+                                       in EventTarget target,
+                                       in long identifier,
+                                       in long pageX,
+                                       in long pageY,
+                                       in long ScreenX,
+                                       in long screenY)
+            raises (DOMException);
+        [ReturnsNew] TouchList createTouchList()
+            raises (DOMException);
+#endif
+
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP
         // Extra WebCore methods exposed to allow compile-time casting in C++
         boolean isHTMLDocument();

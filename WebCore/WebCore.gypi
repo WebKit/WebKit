@@ -678,6 +678,8 @@
             'bindings/js/JSSVGPODListCustom.h',
             'bindings/js/JSSVGPODTypeWrapper.h',
             'bindings/js/JSTextCustom.cpp',
+            'bindings/js/JSTouchCustom.cpp',
+            'bindings/js/JSTouchListCustom.cpp',
             'bindings/js/JSTreeWalkerCustom.cpp',
             'bindings/js/JSWebKitCSSMatrixCustom.cpp',
             'bindings/js/JSWebKitPointCustom.cpp',

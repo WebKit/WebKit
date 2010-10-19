@@ -4773,4 +4773,22 @@ void Document::loadEventDelayTimerFired(Timer<Document>*)
         frame()->loader()->checkCompleted();
 }
 
+#if ENABLE(TOUCH_EVENTS)
+PassRefPtr<Touch> Document::createTouch(DOMWindow* window, EventTarget* target, int identifier, int pageX, int pageY, int screenX, int screenY, ExceptionCode&) const
+{
+    // FIXME: It's not clear from the documentation at
+    // http://developer.apple.com/library/safari/#documentation/UserExperience/Reference/DocumentAdditionsReference/DocumentAdditions/DocumentAdditions.html
+    // when this method should throw and nor is it by inspection of iOS behavior. It would be nice to verify any cases where it throws under iOS
+    // and implement them here. See https://bugs.webkit.org/show_bug.cgi?id=47819
+    // Ditto for the createTouchList method below.
+    Frame* frame = window ? window->frame() : this->frame();
+    return Touch::create(frame, target, identifier, screenX, screenY, pageX, pageY);
+}
+
+PassRefPtr<TouchList> Document::createTouchList(ExceptionCode&) const
+{
+    return TouchList::create();
+}
+#endif
+
 } // namespace WebCore

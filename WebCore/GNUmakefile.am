@@ -796,6 +796,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSSVGPODListCustom.h \
 	WebCore/bindings/js/JSSVGPODTypeWrapper.h \
 	WebCore/bindings/js/JSTextCustom.cpp \
+	WebCore/bindings/js/JSTouchCustom.cpp \
+	WebCore/bindings/js/JSTouchListCustom.cpp \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	WebCore/bindings/js/JSWebKitCSSMatrixCustom.cpp \
 	WebCore/bindings/js/JSWebKitPointCustom.cpp \

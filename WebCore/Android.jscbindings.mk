@@ -151,6 +151,8 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSStyleSheetCustom.cpp \
 	bindings/js/JSStyleSheetListCustom.cpp \
 	bindings/js/JSTextCustom.cpp \
+	bindings/js/JSTouchCustom.cpp \
+	bindings/js/JSTouchListCustom.cpp \
 	bindings/js/JSTreeWalkerCustom.cpp \
 	bindings/js/JSWebKitCSSMatrixCustom.cpp \
 	bindings/js/JSWebKitPointCustom.cpp \
