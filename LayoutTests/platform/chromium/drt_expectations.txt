@@ -58,15 +58,15 @@ BUG59665 MAC : media/video-src.html = CRASH TIMEOUT PASS
 
 // Tests differences from switching to webkit.org's test netscape plugin rather
 // than chromium's old forked copy.
-BUG_DRT MAC : plugins/geturlnotify-during-document-teardown.html = CRASH
+BUG_DRT MAC : plugins/geturlnotify-during-document-teardown.html = CRASH TEXT
 BUG_DRT MAC : plugins/js-from-destroy.html = CRASH
-BUG_DRT MAC : plugins/open-and-close-window-with-plugin.html = CRASH
-BUG_DRT MAC : plugins/npruntime/get-int-identifier-special-values.html = TEXT
+BUG_DRT MAC : plugins/open-and-close-window-with-plugin.html = CRASH TEXT
+BUG_DRT MAC : plugins/npruntime/get-int-identifier-special-values.html = PASS TEXT
 BUG_DRT MAC : plugins/document-open.html = PASS
 BUG_DRT MAC : plugins/update-widgets-crash.html = PASS
-BUG_DRT MAC : plugins/npruntime/round-trip-npobject.html = PASS
-BUG_DRT MAC : plugins/override-node-method.html = PASS
-BUG_DRT MAC : plugins/reloadplugins-no-pages.html = PASS
+BUG_DRT MAC : plugins/npruntime/round-trip-npobject.html = PASS TEXT
+BUG_DRT MAC : plugins/override-node-method.html = PASS TEXT
+BUG_DRT MAC : plugins/reloadplugins-no-pages.html = PASS TEXT
 // This test is failing because the plugin is currently named
 // WebKitTestNetscapePlugin because the fork in the Chromium repo is named
 // TestNetscapePlugin.  Once the internal plugin is removed, this will be
