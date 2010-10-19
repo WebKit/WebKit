@@ -440,7 +440,7 @@ bool HTMLFormControlElementWithState::autoComplete() const
 bool HTMLFormControlElementWithState::shouldSaveAndRestoreFormControlState() const
 {
     // We don't save/restore control state in a form with autocomplete=off.
-    return autoComplete();
+    return attached() && autoComplete();
 }
 
 void HTMLFormControlElementWithState::finishParsingChildren()

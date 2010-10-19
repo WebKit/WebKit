@@ -1,0 +1,5 @@
+Test to NOT save state of a detached form control.
+
+PASS document.getElementById("input2").value is ""
+
+
