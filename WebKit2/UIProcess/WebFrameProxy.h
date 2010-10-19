@@ -74,6 +74,9 @@ public:
     const String& url() const { return m_url; }
     const String& provisionalURL() const { return m_provisionalURL; }
 
+    void setUnreachableURL(const String& unreachableURL) { m_unreachableURL = unreachableURL; }
+    const String& unreachableURL() const { return m_unreachableURL; }
+
     void setMIMEType(const String& mimeType) { m_MIMEType = mimeType; }
     const String& mimeType() const { return m_MIMEType; }
 
@@ -101,6 +104,7 @@ private:
     LoadState m_loadState;
     String m_url;
     String m_provisionalURL;
+    String m_unreachableURL;
     String m_MIMEType;
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFrameListenerProxy> m_activeListener;

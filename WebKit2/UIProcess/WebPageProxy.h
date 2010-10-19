@@ -125,6 +125,7 @@ public:
     void loadURL(const String&);
     void loadURLRequest(WebURLRequest*);
     void loadHTMLString(const String& htmlString, const String& baseURL);
+    void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL);
     void loadPlainTextString(const String& string);
 
     void stopLoading();
@@ -233,7 +234,7 @@ private:
     void didCreateMainFrame(uint64_t frameID);
     void didCreateSubFrame(uint64_t frameID);
 
-    void didStartProvisionalLoadForFrame(uint64_t frameID, const String&, CoreIPC::ArgumentDecoder*);
+    void didStartProvisionalLoadForFrame(uint64_t frameID, const String&, bool loadingSubstituteDataForUnreachableURL, CoreIPC::ArgumentDecoder*);
     void didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t frameID, const String&, CoreIPC::ArgumentDecoder*);
     void didFailProvisionalLoadForFrame(uint64_t frameID, const WebCore::ResourceError&, CoreIPC::ArgumentDecoder*);
     void didCommitLoadForFrame(uint64_t frameID, const String& mimeType, const PlatformCertificateInfo&, CoreIPC::ArgumentDecoder*);

@@ -298,8 +298,11 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didStartProvisionalLoadForFrame(webPage, m_frame, userData);
 
+
+    bool loadingSubstituteDataForUnreachableURL = !provisionalLoader->unreachableURL().isNull();
+
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), url, InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), url, loadingSubstituteDataForUnreachableURL, InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)

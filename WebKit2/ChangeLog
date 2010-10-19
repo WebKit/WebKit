@@ -1,3 +1,56 @@
+2010-10-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add alternateHTMLString and unreachableURL API to WebKit2
+        <rdar://problem/8557864>
+        https://bugs.webkit.org/show_bug.cgi?id=47938
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCopyUnreachableURL):
+        * UIProcess/API/C/WKFrame.h:
+        Add accessor for the unreachableURL if one is set. It will only be
+        set during a loadAlternateHTMLString and will be unset on the next normal
+        didStartProvisionalLoadForFrame call.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadHTMLString): Remove whitespace.
+        (WKPageLoadAlternateHTMLString):
+        * UIProcess/API/C/WKPage.h:
+        Add function to load a string as "alternate", meant for use as error pages.
+
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::setUnreachableURL): 
+        (WebKit::WebFrameProxy::unreachableURL):
+        Add setter/getter for the unreachableURL.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        Plumb through the call to loadAlternateHTMLString to the WebProcess
+        and set the main frame's unreachableURL. This does nothing if no pages
+        have ever been loaded in this page.
+
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        If this is not a provisional load of substitute data for an unreachableURL
+        (e.g. someone who called WKPageLoadAlternateHTMLString), reset the
+        frame's unreachableURL.
+
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        Update function signatures.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        Pass whether or not this is a load of SubstituteData for an unreachableURL
+        to the UIProcess.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadData):
+        (WebKit::WebPage::loadAlternateHTMLString):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Plumb through the loading of the alternate HTML string. 
+
 2010-10-19  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

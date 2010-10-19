@@ -35,7 +35,8 @@ messages -> WebPage {
     GoBack(uint64_t backForwardItemID)
     GoForward(uint64_t backForwardItemID)
     GoToBackForwardItem(uint64_t backForwardItemID)
-    LoadHTMLString(WTF::String htmlString, WTF::String url)
+    LoadHTMLString(WTF::String htmlString, WTF::String baseURL)
+    LoadAlternateHTMLString(WTF::String htmlString, WTF::String baseURL, WTF::String unreachableURL); 
     LoadPlainTextString(WTF::String string)
     LoadURL(WTF::String url)
     LoadURLRequest(WebCore::ResourceRequest request)

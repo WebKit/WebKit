@@ -183,6 +183,7 @@ WK_EXPORT WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef page);
 WK_EXPORT void WKPageLoadURL(WKPageRef page, WKURLRef url);
 WK_EXPORT void WKPageLoadURLRequest(WKPageRef page, WKURLRequestRef urlRequest);
 WK_EXPORT void WKPageLoadHTMLString(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL);
+WK_EXPORT void WKPageLoadAlternateHTMLString(WKPageRef page, WKStringRef htmlString, WKURLRef baseURL, WKURLRef unreachableURL);
 WK_EXPORT void WKPageLoadPlainTextString(WKPageRef page, WKStringRef plainTextString);
 
 WK_EXPORT void WKPageStopLoading(WKPageRef page);

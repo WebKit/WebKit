@@ -66,6 +66,11 @@ WKURLRef WKFrameCopyURL(WKFrameRef frameRef)
     return toCopiedURLAPI(toImpl(frameRef)->url());
 }
 
+WKURLRef WKFrameCopyUnreachableURL(WKFrameRef frameRef)
+{
+    return toCopiedURLAPI(toImpl(frameRef)->unreachableURL());
+}
+
 WKStringRef WKFrameCopyMIMEType(WKFrameRef frameRef)
 {
     return toCopiedAPI(toImpl(frameRef)->mimeType());

@@ -189,6 +189,7 @@ private:
     void loadURL(const String&);
     void loadURLRequest(const WebCore::ResourceRequest&);
     void loadHTMLString(const String& htmlString, const String& baseURL);
+    void loadAlternateHTMLString(const String& htmlString, const String& baseURL, const String& unreachableURL);
     void loadPlainTextString(const String&);
     void reload(bool reloadFromOrigin);
     void goForward(uint64_t);
