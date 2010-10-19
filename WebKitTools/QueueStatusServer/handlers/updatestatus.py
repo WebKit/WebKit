@@ -69,9 +69,8 @@ class UpdateStatus(UpdateBase):
     def _update_active_work_items(self, queue_status):
         if not queue_status.is_retry_request():
             return
-        active_items = ActiveWorkItems.all().filter("queue_name =", queue_status.queue_name).get()
-        if not active_items:
-            return
+        active_items = queue_status.queue.active_work_items()
+        # FIXME: This should move onto the ActiveWorkItems class.
         return db.run_in_transaction(self._expire_item, active_items.key(), queue_status.active_patch_id)
 
     def post(self):

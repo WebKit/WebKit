@@ -37,7 +37,9 @@ from model import queuestatus
 
 
 class QueueStatus(webapp.RequestHandler):
-    def _rows_for_work_items(self, queued_items, active_items):
+    def _rows_for_work_items(self, queue):
+        queued_items = queue.work_items()
+        active_items = queue.active_work_items()
         if not queued_items:
             return []
         rows = []
@@ -56,14 +58,11 @@ class QueueStatus(webapp.RequestHandler):
             self.error(404)
             return
 
-        queued_items = WorkItems.all().filter("queue_name =", queue.name()).get()
-        active_items = ActiveWorkItems.all().filter("queue_name =", queue.name()).get()
-        statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue.name()).order("-date").fetch(15)
-
         status_groups = []
         last_patch_id = None
         synthetic_patch_id_counter = 0
 
+        statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue.name()).order("-date").fetch(15)
         for status in statuses:
             patch_id = status.active_patch_id
             if not patch_id or last_patch_id != patch_id:
@@ -76,7 +75,7 @@ class QueueStatus(webapp.RequestHandler):
 
         template_values = {
             "display_queue_name": queue.display_name(),
-            "work_item_rows": self._rows_for_work_items(queued_items, active_items),
+            "work_item_rows": self._rows_for_work_items(queue),
             "status_groups": status_groups,
         }
         self.response.out.write(template.render("templates/queuestatus.html", template_values))

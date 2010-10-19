@@ -40,7 +40,7 @@ class QueueBubble(object):
     """View support class for recentstatus.html"""
     def __init__(self, queue):
         self._queue = queue
-        self._work_items = WorkItems.all().filter("queue_name =", queue.name()).get()
+        self._work_items = queue.work_items()
         self._last_status = QueueStatus.all().filter("queue_name =", queue.name()).order("-date").get()
 
     # FIXME: name and display_name should be replaced by a .queue() accessor.

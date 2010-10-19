@@ -40,13 +40,6 @@ class UpdateWorkItems(UpdateBase):
     def get(self):
         self.response.out.write(template.render("templates/updateworkitems.html", None))
 
-    def _work_items_for_queue(self, queue):
-        work_items = WorkItems.all().filter("queue_name =", queue.name()).get()
-        if not work_items:
-            work_items = WorkItems()
-            work_items.queue = queue
-        return work_items
-
     def _parse_work_items_string(self, items_string):
         # Our parsing could be much more robust.
         item_strings = items_string.split(" ") if items_string else []
@@ -59,10 +52,8 @@ class UpdateWorkItems(UpdateBase):
             self.response.out.write("\"%s\" is not in queues %s" % (queue_name, Queue.all()))
             return None
 
-        work_items = self._work_items_for_queue(queue)
-        if not work_items:
-            return None
         items_string = self.request.get("work_items")
+        work_items = queue.work_items()
         work_items.item_ids = self._parse_work_items_string(items_string)
         work_items.date = datetime.now()
         return work_items
