@@ -58,7 +58,7 @@ protoPropertyNames.sort();
 
 for (var i = 0; i < protoPropertyNames.length; ++i) {
     // Ignore these properties because they do not exist in all implementations.
-    if (protoPropertyNames[i] == "createBlobURL" || protoPropertyNames[i] == "revokeBlobURL")
+    if (protoPropertyNames[i] == "createObjectURL" || protoPropertyNames[i] == "revokeObjectURL")
         continue;
     if (protoPropertyNames[i] == "constructor")
         continue;

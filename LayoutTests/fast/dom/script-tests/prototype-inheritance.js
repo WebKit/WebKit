@@ -21,7 +21,7 @@ var skippedProperties = [
     "FileError", "FileReader", "requestFileSystem",
     "indexedDB", "IDBKeyRange", "IDBCursor", "IDBDatabase", "IDBDatabaseError", "IDBDatabaseException", "IDBErrorEvent", "IDBEvent", "IDBFactory", "IDBIndex", "IDBObjectStore", "IDBRequest", "IDBSuccessEvent", "IDBTransaction",
     "showModalDialog",
-    "createBlobURL", "revokeBlobURL",
+    "createObjectURL", "revokeObjectURL",
     "DeviceOrientationEvent",
     "DeviceMotionEvent",
     "TEMPORARY", "PERSISTENT",

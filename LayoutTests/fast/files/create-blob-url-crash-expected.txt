@@ -1,4 +1,4 @@
-Test that createBlobURL with no argument should not cause crash.
+Test that createObjectURL with no argument should not cause crash.
 PASS
 DONE
 

@@ -101,8 +101,8 @@ module threads {
         attribute BlobBuilderConstructor BlobBuilder;
         attribute FileReaderConstructor FileReader;
         attribute FileReaderSyncConstructor FileReaderSync;
-        DOMString createBlobURL(in Blob blob);
-        void revokeBlobURL(in DOMString blobURL);
+        DOMString createObjectURL(in Blob blob);
+        void revokeObjectURL(in DOMString blobURL);
 #endif
 
 #if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM

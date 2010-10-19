@@ -997,6 +997,6 @@ function offerFileForDownload(contents)
     var builder = new BlobBuilder();
     builder.append(contents);
     var blob = builder.getBlob("application/octet-stream");
-    var url = window.createBlobURL(blob);
+    var url = window.createObjectURL(blob);
     window.open(url);
 }

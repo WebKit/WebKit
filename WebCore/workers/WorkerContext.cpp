@@ -340,12 +340,12 @@ EventTargetData* WorkerContext::ensureEventTargetData()
 }
 
 #if ENABLE(BLOB)
-String WorkerContext::createBlobURL(Blob* blob)
+String WorkerContext::createObjectURL(Blob* blob)
 {
     return scriptExecutionContext()->createPublicBlobURL(blob).string();
 }
 
-void WorkerContext::revokeBlobURL(const String& blobURLString)
+void WorkerContext::revokeObjectURL(const String& blobURLString)
 {
     scriptExecutionContext()->revokePublicBlobURL(KURL(ParsedURLString, blobURLString));
 }

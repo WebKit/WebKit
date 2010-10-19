@@ -1274,8 +1274,8 @@ WebInspector.ResourcesPanel.prototype = {
             resource = resourceTreeItem.treeElement.representedObject;
 
         var needSeparator = false;
-        // createBlobURL is enabled conditionally, do not expose resource export if it's not available.
-        if (typeof window.createBlobURL === "function" && Preferences.resourceExportEnabled) {
+        // createObjectURL is enabled conditionally, do not expose resource export if it's not available.
+        if (typeof window.createObjectURL === "function" && Preferences.resourceExportEnabled) {
             if (resource)
                 contextMenu.appendItem(WebInspector.UIString("Export to HAR"), this._exportResource.bind(this, resource));
             contextMenu.appendItem(WebInspector.UIString("Export all to HAR"), this._exportAll.bind(this));

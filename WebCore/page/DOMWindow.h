@@ -392,8 +392,8 @@ namespace WebCore {
         DOMApplicationCache* optionalApplicationCache() const { return m_applicationCache.get(); }
 #endif
 #if ENABLE(BLOB)
-        String createBlobURL(Blob*);
-        void revokeBlobURL(const String&);
+        String createObjectURL(Blob*);
+        void revokeObjectURL(const String&);
 #endif
 
         using RefCounted<DOMWindow>::ref;

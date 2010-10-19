@@ -9,20 +9,20 @@ function log(message)
 
 function test()
 {
-    log("Test calling revokeBlobURL with no argument.");
-    var url = revokeBlobURL();
+    log("Test calling revokeObjectURL with no argument.");
+    var url = revokeObjectURL();
     log(url == undefined ? "PASS" : "FAIL");
 
-    log("Test calling revokeBlobURL with empty URL.");
-    revokeBlobURL("");
+    log("Test calling revokeObjectURL with empty URL.");
+    revokeObjectURL("");
     log("PASS");
 
-    log("Test calling revokeBlobURL with invalid URL.");
-    revokeBlobURL("[foo bar]");
+    log("Test calling revokeObjectURL with invalid URL.");
+    revokeObjectURL("[foo bar]");
     log("PASS");
 
-    log("Test calling revokeBlobURL with non-existent URL.");
-    revokeBlobURL("blob:non-existent");
+    log("Test calling revokeObjectURL with non-existent URL.");
+    revokeObjectURL("blob:non-existent");
     log("PASS");
 
     log("DONE");
