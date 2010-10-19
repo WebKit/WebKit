@@ -99,3 +99,10 @@ platform/mac/editing/spelling/autocorrection-delete.html
 platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html
 platform/mac/editing/spelling/autocorrection-removing-underline.html
 platform/mac/editing/spelling/autocorrection-simple.html
+platform/mac/editing/spelling/click-autocorrected-word.html
+platform/mac/editing/spelling/delete-into-autocorrected-word.html
+platform/mac/editing/spelling/delete-into-misspelled-word.html
+platform/mac/editing/spelling/forward-delete-into-autocorrected-word.html
+platform/mac/editing/spelling/move-cursor-around-misspelled-word.html
+platform/mac/editing/spelling/move-cursor-to-autocorrected-word.html
+platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.html

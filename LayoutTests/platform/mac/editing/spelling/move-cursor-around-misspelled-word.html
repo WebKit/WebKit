@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src=../../../../editing/editing.js language="javascript" type="text/javascript"></script>
+<title>Editing Test</title> 
+</head> 
+<body>
+<p>The test verified that if the caret is move to the beginning, end, and middle of a word that is 
+marked as misspelled, the misspell underline will remain. You should see phrase "it's a meagesga", 
+in which the word 'meagesga' has red underline.</p>
+<textarea id="test" cols="80" rows="10"></textarea>
+<div id="console"></div>
+<script language="javascript" type="text/javascript">
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+}
+
+document.getElementById('test').focus();
+typeCharacterCommand('i');
+typeCharacterCommand('t');
+typeCharacterCommand('\'');
+typeCharacterCommand('s');
+typeCharacterCommand(' ');
+typeCharacterCommand('a');
+typeCharacterCommand(' ');
+typeCharacterCommand('m');
+typeCharacterCommand('e');
+typeCharacterCommand('a');
+typeCharacterCommand('g');
+typeCharacterCommand('e');
+typeCharacterCommand('s');
+typeCharacterCommand('g');
+typeCharacterCommand('a');
+typeCharacterCommand(' ');
+execMoveSelectionBackwardByCharacterCommand();
+    
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+        document.getElementById('console').innerHTML = 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = "FAILURE. The word 'meagesga' does not have misspell underline.<br>";
+    }
+}
+
+textarea = document.getElementById('test');
+textarea.setSelectionRange(10, 10);
+textarea.focus();
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' does not have misspell underline.<br>";
+    }
+}
+
+textarea.setSelectionRange(6, 6);
+textarea.focus();
+execMoveSelectionForwardByCharacterCommand();
+if (window.layoutTestController && window.layoutTestController.hasSpellingMarker) {
+    if (window.layoutTestController.hasSpellingMarker(7,8) == 1) {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + 'SUCCESS<br>';
+    } else {
+        document.getElementById('console').innerHTML = document.getElementById('console').innerHTML + "FAILURE. The word 'meagesga' does not have misspell underline.<br>";
+    }
+}
+</script>
+</body>
+</html>
