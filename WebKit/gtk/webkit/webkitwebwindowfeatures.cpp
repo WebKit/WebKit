@@ -38,7 +38,7 @@
  * In the normal case one will use #webkit_web_view_get_window_features
  * to get the #WebKitWebWindowFeatures and then monitor the property
  * changes. Be aware that the #WebKitWebWindowFeatures might change
- * change before #WebKitWebView::web-view-ready signal is emitted.
+ * before #WebKitWebView::web-view-ready signal is emitted.
  * To be safe listen to the notify::window-features signal of the #WebKitWebView
  * and reconnect the signals whenever the #WebKitWebWindowFeatures of
  * a #WebKitWebView changes.

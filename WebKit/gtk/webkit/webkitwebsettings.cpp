@@ -45,9 +45,9 @@
  * SECTION:webkitwebsettings
  * @short_description: Control the behaviour of a #WebKitWebView
  *
- * #WebKitWebSettings can be applied to a #WebKitWebView to control
- * the to be used text encoding, color, font sizes, printing mode,
- * script support, loading of images and various other things.
+ * #WebKitWebSettings can be applied to a #WebKitWebView to control text encoding, 
+ * color, font sizes, printing mode, script support, loading of images and various other things. 
+ * After creation, a #WebKitWebSettings object contains default settings. 
  *
  * <informalexample><programlisting>
  * /<!-- -->* Create a new websettings and disable java script *<!-- -->/

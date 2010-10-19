@@ -1,3 +1,15 @@
+2010-10-19  Joone Hur  <joone@kldp.org>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Needs fixing mistyped comments in the API documentation
+        https://bugs.webkit.org/show_bug.cgi?id=47656
+
+        Fixed mistyped comments in the API documenentation.
+
+        * webkit/webkitwebsettings.cpp: Fixed a mistyped comment in the the section block.
+        * webkit/webkitwebwindowfeatures.cpp: Fixed a mistyped comment in the section block.
+
 2010-10-18  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
