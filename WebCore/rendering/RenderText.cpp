@@ -1139,12 +1139,6 @@ String RenderText::textWithoutTranscoding() const
     return text;
 }
 
-int RenderText::lineHeight(bool firstLine, bool) const
-{
-    // Always use the interior line height of the parent (e.g., if our parent is an inline block).
-    return parent()->lineHeight(firstLine, true);
-}
-
 void RenderText::dirtyLineBoxes(bool fullLayout)
 {
     if (fullLayout)

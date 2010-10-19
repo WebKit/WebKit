@@ -173,49 +173,47 @@ void RenderMathMLSubSup::layout()
     }    
 }
 
-int RenderMathMLSubSup::baselinePosition(bool firstLine, bool isRootLineBox) const
+int RenderMathMLSubSup::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     RenderObject* base = firstChild();
     if (!base) 
         return offsetHeight();
     base = base->firstChild();
-    if (!base) 
-        return offsetHeight();
     
     int baseline = offsetHeight();
-    
+    if (!base || !base->isBoxModelObject()) 
+        return baseline;
+
+    RenderBoxModelObject* box = toRenderBoxModelObject(base);
+
     switch (m_kind) {
     case SubSup:
         if (m_scripts) {
-            int topAdjust = 0;
-            if (base->isBoxModelObject()) {
-                RenderBoxModelObject* box = toRenderBoxModelObject(base);
-                topAdjust = (m_scripts->offsetHeight() - box->offsetHeight()) / 2;
-            }
+            int topAdjust = (m_scripts->offsetHeight() - box->offsetHeight()) / 2;
+        
             // FIXME: The last bit of this calculation should be more exact.  Why is the 2-3px scaled for zoom necessary?
             // The baseline is top spacing of the base + the baseline of the base + adjusted space for zoom
             float zoomFactor = style()->effectiveZoom();
-            return topAdjust + base->baselinePosition(firstLine, isRootLineBox) + static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
+            return topAdjust + box->baselinePosition(firstLine, direction, linePositionMode) + static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
         }
         break;
-    case Sup:
-        if (base) {
-            baseline = base->baselinePosition(firstLine, isRootLineBox) + 4;
-            // FIXME: The extra amount of the superscript ascending above the base's box
-            // isn't taken into account.  This should be calculated in a more reliable
-            // way.
-            RenderObject* sup = base->nextSibling();
-            if (sup && sup->isBoxModelObject()) {
-                RenderBoxModelObject* box = toRenderBoxModelObject(sup);
-                // we'll take half of the sup's box height into account in the baseline
-                baseline += static_cast<int>(box->offsetHeight() * 0.5);
-            }
-            baseline++;
+    case Sup: {
+        baseline = box->baselinePosition(firstLine, direction, linePositionMode) + 4;
+        // FIXME: The extra amount of the superscript ascending above the base's box
+        // isn't taken into account.  This should be calculated in a more reliable
+        // way.
+        RenderObject* sup = base->nextSibling();
+        if (sup && sup->isBoxModelObject()) {
+            RenderBoxModelObject* box = toRenderBoxModelObject(sup);
+            // we'll take half of the sup's box height into account in the baseline
+            baseline += static_cast<int>(box->offsetHeight() * 0.5);
         }
+        baseline++;
         break;
+    }
     case Sub:
-        if (base) 
-            baseline = base->baselinePosition(true) + 4;
+        baseline = box->baselinePosition(true, direction) + 4;
+        break;
     }
     
     return baseline;

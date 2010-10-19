@@ -855,23 +855,25 @@ int RenderBoxModelObject::verticalPosition(bool firstLine) const
         const Font& f = parent()->style(firstLine)->font();
         int fontsize = f.pixelSize();
 
+        LineDirectionMode lineDirection = parent()->style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
+
         if (va == SUB)
             vpos += fontsize / 5 + 1;
         else if (va == SUPER)
             vpos -= fontsize / 3 + 1;
         else if (va == TEXT_TOP)
-            vpos += baselinePosition(firstLine) - f.ascent();
+            vpos += baselinePosition(firstLine, lineDirection) - f.ascent();
         else if (va == MIDDLE)
-            vpos += -static_cast<int>(f.xHeight() / 2) - lineHeight(firstLine) / 2 + baselinePosition(firstLine);
+            vpos += -static_cast<int>(f.xHeight() / 2) - lineHeight(firstLine, lineDirection) / 2 + baselinePosition(firstLine, lineDirection);
         else if (va == TEXT_BOTTOM) {
             vpos += f.descent();
             // lineHeight - baselinePosition is always 0 for replaced elements (except inline blocks), so don't bother wasting time in that case.
             if (!isReplaced() || style()->display() == INLINE_BLOCK)
-                vpos -= (lineHeight(firstLine) - baselinePosition(firstLine));
+                vpos -= (lineHeight(firstLine, lineDirection) - baselinePosition(firstLine, lineDirection));
         } else if (va == BASELINE_MIDDLE)
-            vpos += -lineHeight(firstLine) / 2 + baselinePosition(firstLine);
+            vpos += -lineHeight(firstLine, lineDirection) / 2 + baselinePosition(firstLine, lineDirection);
         else if (va == LENGTH)
-            vpos -= style()->verticalAlignLength().calcValue(lineHeight(firstLine));
+            vpos -= style()->verticalAlignLength().calcValue(lineHeight(firstLine, lineDirection));
     }
 
     return vpos;

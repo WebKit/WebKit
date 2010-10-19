@@ -409,7 +409,7 @@ void RenderTextControl::computeLogicalHeight()
               m_innerText->renderBox()->paddingTop() + m_innerText->renderBox()->paddingBottom() +
               m_innerText->renderBox()->marginTop() + m_innerText->renderBox()->marginBottom());
 
-    adjustControlHeightBasedOnLineHeight(m_innerText->renderer()->lineHeight(true, true));
+    adjustControlHeightBasedOnLineHeight(m_innerText->renderBox()->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes));
     setHeight(height() + borderAndPaddingHeight());
 
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.

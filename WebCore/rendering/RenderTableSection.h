@@ -149,8 +149,6 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
-    virtual int lineHeight(bool, bool) const { return 0; }
-
     bool ensureRows(int);
     void clearGrid();
 

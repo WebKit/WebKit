@@ -33,6 +33,10 @@ const int PositionTop = -0x7fffffff;
 const int PositionBottom = 0x7fffffff;
 const int PositionUndefined = 0x80000000;
 
+// Modes for some of the line-related functions.
+enum LinePositionMode { PositionOnContainingLine, PositionOfInteriorLineBoxes };
+enum LineDirectionMode { HorizontalLine, VerticalLine };
+
 // This class is the base for all objects that adhere to the CSS box model as described
 // at http://www.w3.org/TR/CSS21/box.html
 
@@ -112,6 +116,10 @@ public:
 
     // The difference between this inline's baseline position and the line's baseline position.
     int verticalPosition(bool firstLine) const;
+    
+    // Overridden by subclasses to determine line height and baseline position.
+    virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
+    virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const = 0;
 
     // Called by RenderObject::destroy() (and RenderWidget::destroy()) and is the only way layers should ever be destroyed
     void destroyLayer();

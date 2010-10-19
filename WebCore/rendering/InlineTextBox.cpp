@@ -43,6 +43,22 @@ using namespace std;
 
 namespace WebCore {
 
+int InlineTextBox::baselinePosition() const
+{
+    if (!isText() || !parent())
+        return 0;
+    return parent()->baselinePosition();
+}
+    
+int InlineTextBox::lineHeight() const
+{
+    if (!isText() || !parent())
+        return 0;
+    if (m_renderer->isBR())
+        return toRenderBR(m_renderer)->lineHeight(m_firstLine);
+    return parent()->lineHeight();
+}
+
 int InlineTextBox::selectionTop()
 {
     return root()->selectionTop();

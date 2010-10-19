@@ -333,12 +333,11 @@ RenderBlock* RenderMathMLOperator::createGlyph(UChar glyph, int size, int charRe
     return container;
 }
 
-int RenderMathMLOperator::baselinePosition(bool firstLine, bool isRootLineBox) const
+int RenderMathMLOperator::baselinePosition(bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const
 {
     if (m_isStacked)
-        return m_stretchHeight * 2 / 3 - (m_stretchHeight - static_cast<int>(m_stretchHeight / gOperatorExpansion)) / 2;
-    
-    return RenderBlock::baselinePosition(firstLine, isRootLineBox);
+        return m_stretchHeight * 2 / 3 - (m_stretchHeight - static_cast<int>(m_stretchHeight / gOperatorExpansion)) / 2;    
+    return RenderBlock::baselinePosition(firstLine, lineDirection, linePositionMode);
 }
     
 }

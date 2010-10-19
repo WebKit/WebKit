@@ -52,8 +52,6 @@ private:
     virtual bool isSVGRoot() const { return true; }
     virtual const char* renderName() const { return "RenderSVGRoot"; }
 
-    virtual int lineHeight(bool b, bool isRootLineBox = false) const;
-    virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
     virtual void computePreferredLogicalWidths();
     virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
     virtual int computeReplacedLogicalHeight() const;

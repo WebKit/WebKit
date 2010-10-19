@@ -57,16 +57,6 @@ RenderSVGRoot::~RenderSVGRoot()
 {
 }
 
-int RenderSVGRoot::lineHeight(bool, bool) const
-{
-    return height() + marginTop() + marginBottom();
-}
-
-int RenderSVGRoot::baselinePosition(bool, bool) const
-{
-    return height() + marginTop() + marginBottom();
-}
-
 void RenderSVGRoot::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());

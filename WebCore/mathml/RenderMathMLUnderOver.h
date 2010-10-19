@@ -40,7 +40,7 @@ public:
     virtual void layout();
     virtual bool hasBase() const { return true; }
     virtual int nonOperatorHeight() const;
-    virtual int baselinePosition(bool , bool) const;    
+    virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;    
     virtual void stretchToHeight(int pixelHeight);
 private:
     enum UnderOverType { Under, Over, UnderOver };

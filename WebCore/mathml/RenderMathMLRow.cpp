@@ -145,15 +145,15 @@ void RenderMathMLRow::layout()
     RenderBlock::layout();
 }    
 
-int RenderMathMLRow::baselinePosition(bool firstLine, bool isRootLineBox) const
+int RenderMathMLRow::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     if (firstChild() && firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* block = toRenderMathMLBlock(firstChild());
         if (block->isRenderMathMLOperator())
-            return block->y() + block->baselinePosition(firstLine, isRootLineBox);
+            return block->y() + block->baselinePosition(firstLine, direction, linePositionMode);
     }
     
-    return RenderBlock::baselinePosition(firstLine, isRootLineBox);
+    return RenderBlock::baselinePosition(firstLine, direction, linePositionMode);
 }
     
 }

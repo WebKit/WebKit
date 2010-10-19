@@ -42,7 +42,7 @@ namespace WebCore {
         virtual const char* renderName() const { return "RenderSlider"; }
         virtual bool isSlider() const { return true; }
 
-        virtual int baselinePosition(bool, bool) const;
+        virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
         virtual void computePreferredLogicalWidths();
         virtual void layout();
         virtual void updateFromElement();

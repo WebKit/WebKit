@@ -50,7 +50,6 @@ private:
     virtual void destroy();
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
-    virtual int lineHeight(bool, bool) const { return 0; }
     virtual void layout();
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);

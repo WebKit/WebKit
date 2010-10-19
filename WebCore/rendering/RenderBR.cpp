@@ -38,36 +38,17 @@ RenderBR::~RenderBR()
 {
 }
 
-int RenderBR::baselinePosition(bool firstLine, bool isRootLineBox) const
+int RenderBR::lineHeight(bool firstLine) const
 {
-    if (firstTextBox() && !firstTextBox()->isText())
-        return 0;
-    return RenderText::baselinePosition(firstLine, isRootLineBox);
-}
-
-int RenderBR::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
-{
-    if (firstTextBox() && !firstTextBox()->isText())
-        return 0;
-
-    if (firstLine) {
+    if (firstLine && document()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
-        Length lh = s->lineHeight();
-        if (lh.isNegative()) {
-            if (s == style()) {
-                if (m_lineHeight == -1)
-                    m_lineHeight = RenderObject::lineHeight(false);
-                return m_lineHeight;
-            }
-            return s->font().lineSpacing();
-        }
-        if (lh.isPercent())
-            return lh.calcMinValue(s->fontSize());
-        return lh.value();
+        if (s != style())
+            return s->computedLineHeight();
     }
-
+    
     if (m_lineHeight == -1)
-        m_lineHeight = RenderObject::lineHeight(false);
+        m_lineHeight = style()->computedLineHeight();
+    
     return m_lineHeight;
 }
 

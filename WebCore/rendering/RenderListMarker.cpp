@@ -1505,20 +1505,18 @@ void RenderListMarker::updateMargins()
     style()->setMarginRight(Length(marginRight, Fixed));
 }
 
-int RenderListMarker::lineHeight(bool, bool) const
+int RenderListMarker::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     if (!isImage())
-        return m_listItem->lineHeight(false, true);
-    return height();
+        return m_listItem->lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
+    return RenderBox::lineHeight(firstLine, direction, linePositionMode);
 }
 
-int RenderListMarker::baselinePosition(bool, bool) const
+int RenderListMarker::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    if (!isImage()) {
-        const Font& font = style()->font();
-        return font.ascent() + (lineHeight(false) - font.height())/2;
-    }
-    return height();
+    if (!isImage())
+        return m_listItem->baselinePosition(firstLine, direction, PositionOfInteriorLineBoxes);
+    return RenderBox::baselinePosition(firstLine, direction, linePositionMode);
 }
 
 String RenderListMarker::suffix() const

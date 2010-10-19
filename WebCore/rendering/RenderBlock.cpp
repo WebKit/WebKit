@@ -5164,15 +5164,15 @@ bool RenderBlock::hasLineIfEmpty() const
     return false;
 }
 
-int RenderBlock::lineHeight(bool firstLine, bool isRootLineBox) const
+int RenderBlock::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     // Inline blocks are replaced elements. Otherwise, just pass off to
     // the base class.  If we're being queried as though we're the root line
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
-    if (isReplaced() && !isRootLineBox)
-        return height() + marginTop() + marginBottom();
-    
+    if (isReplaced() && linePositionMode == PositionOnContainingLine)
+        return RenderBox::lineHeight(firstLine, direction, linePositionMode);
+
     if (firstLine && document()->usesFirstLineRules()) {
         RenderStyle* s = style(firstLine);
         if (s != style())
@@ -5185,16 +5185,17 @@ int RenderBlock::lineHeight(bool firstLine, bool isRootLineBox) const
     return m_lineHeight;
 }
 
-int RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
+int RenderBlock::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     // Inline blocks are replaced elements. Otherwise, just pass off to
     // the base class.  If we're being queried as though we're the root line
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
-    if (isReplaced() && !isRootLineBox) {
+    if (isReplaced() && linePositionMode == PositionOnContainingLine) {
         // For "leaf" theme objects, let the theme decide what the baseline position is.
         // FIXME: Might be better to have a custom CSS property instead, so that if the theme
         // is turned off, checkboxes/radios will still have decent baselines.
+        // FIXME: Need to patch form controls to deal with vertical lines.
         if (style()->hasAppearance() && !theme()->isControlContainer(style()->appearance()))
             return theme()->baselinePosition(this);
             
@@ -5204,22 +5205,29 @@ int RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
         // We also give up on finding a baseline if we have a vertical scrollbar, or if we are scrolled
         // vertically (e.g., an overflow:hidden block that has had scrollTop moved) or if the baseline is outside
         // of our content box.
-        int baselinePos = (layer() && (layer()->marquee() || layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)) ? -1 : lastLineBoxBaseline();
-        if (baselinePos != -1 && baselinePos <= borderTop() + paddingTop() + contentHeight())
-            return marginTop() + baselinePos;
-        return height() + marginTop() + marginBottom();
+        bool ignoreBaseline = (layer() && (layer()->marquee() || (direction == HorizontalLine ? (layer()->verticalScrollbar() || layer()->scrollYOffset() != 0)
+            : (layer()->horizontalScrollbar() || layer()->scrollXOffset() != 0)))) || isWritingModeRoot();
+        int baselinePos = ignoreBaseline ? -1 : lastLineBoxBaseline();
+        
+        int bottomOfContent = direction == HorizontalLine ? borderTop() + paddingTop() + contentHeight() : borderRight() + paddingRight() + contentWidth();
+        if (baselinePos != -1 && baselinePos <= bottomOfContent)
+            return direction == HorizontalLine ? marginTop() + baselinePos : marginRight() + baselinePos;
+            
+        return RenderBox::baselinePosition(firstLine, direction, linePositionMode);
     }
-    return RenderBox::baselinePosition(b, isRootLineBox);
+
+    const Font& f = style(firstLine)->font();
+    return f.ascent() + (lineHeight(firstLine, direction, linePositionMode) - f.height()) / 2;
 }
 
 int RenderBlock::firstLineBoxBaseline() const
 {
-    if (!isBlockFlow())
+    if (!isBlockFlow() || isWritingModeRoot())
         return -1;
 
     if (childrenInline()) {
         if (firstLineBox())
-            return firstLineBox()->y() + style(true)->font().ascent();
+            return firstLineBox()->logicalTop() + style(true)->font().ascent();
         else
             return -1;
     }
@@ -5228,7 +5236,7 @@ int RenderBlock::firstLineBoxBaseline() const
             if (!curr->isFloatingOrPositioned()) {
                 int result = curr->firstLineBoxBaseline();
                 if (result != -1)
-                    return curr->y() + result; // Translate to our coordinate space.
+                    return curr->logicalTop() + result; // Translate to our coordinate space.
             }
         }
     }
@@ -5238,28 +5246,33 @@ int RenderBlock::firstLineBoxBaseline() const
 
 int RenderBlock::lastLineBoxBaseline() const
 {
-    if (!isBlockFlow())
+    if (!isBlockFlow() || isWritingModeRoot())
         return -1;
 
+    LineDirectionMode lineDirection = style()->isHorizontalWritingMode() ? HorizontalLine : VerticalLine;
+
     if (childrenInline()) {
-        if (!firstLineBox() && hasLineIfEmpty())
-            return RenderBox::baselinePosition(true, true) + borderTop() + paddingTop();
+        if (!firstLineBox() && hasLineIfEmpty()) {
+            const Font& f = firstLineStyle()->font();
+            return f.ascent() + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - f.height()) / 2 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
+        }
         if (lastLineBox())
-            return lastLineBox()->y() + style(lastLineBox() == firstLineBox())->font().ascent();
+            return lastLineBox()->logicalTop() + style(lastLineBox() == firstLineBox())->font().ascent();
         return -1;
-    }
-    else {
+    } else {
         bool haveNormalFlowChild = false;
         for (RenderBox* curr = lastChildBox(); curr; curr = curr->previousSiblingBox()) {
             if (!curr->isFloatingOrPositioned()) {
                 haveNormalFlowChild = true;
                 int result = curr->lastLineBoxBaseline();
                 if (result != -1)
-                    return curr->y() + result; // Translate to our coordinate space.
+                    return curr->logicalTop() + result; // Translate to our coordinate space.
             }
         }
-        if (!haveNormalFlowChild && hasLineIfEmpty())
-            return RenderBox::baselinePosition(true, true) + borderTop() + paddingTop();
+        if (!haveNormalFlowChild && hasLineIfEmpty()) {
+            const Font& f = firstLineStyle()->font();
+            return f.ascent() + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - f.height()) / 2 + (lineDirection == HorizontalLine ? borderTop() + paddingTop() : borderRight() + paddingRight());
+        }
     }
 
     return -1;
@@ -5804,7 +5817,7 @@ IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* 
     // constructed and this kludge is not called any more. So only the caret size
     // of an empty :first-line'd block is wrong. I think we can live with that.
     RenderStyle* currentStyle = firstLineStyle();
-    int height = lineHeight(true);
+    int height = lineHeight(true, currentStyle->isHorizontalWritingMode() ? HorizontalLine : VerticalLine);
 
     enum CaretAlignment { alignLeft, alignRight, alignCenter };
 

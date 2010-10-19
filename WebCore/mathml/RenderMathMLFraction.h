@@ -38,7 +38,7 @@ public:
     RenderMathMLFraction(Element* fraction);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void updateFromElement();
-    virtual int baselinePosition(bool , bool) const; 
+    virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const; 
     virtual void paint(PaintInfo&, int tx, int ty);
 protected:
     virtual void layout();

@@ -41,8 +41,8 @@ public:
     virtual void stretchToHeight(int pixelHeight);
     virtual void updateFromElement(); 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
-    virtual int baselinePosition(bool , bool) const;    
-    
+    virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+        
 protected:
     virtual void layout();
     virtual RefPtr<RenderStyle> createStackableStyle(int size, int topRelative);

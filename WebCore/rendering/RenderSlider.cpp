@@ -155,7 +155,7 @@ RenderSlider::~RenderSlider()
         m_thumb->detach();
 }
 
-int RenderSlider::baselinePosition(bool, bool) const
+int RenderSlider::baselinePosition(bool /*firstLine*/, LineDirectionMode, LinePositionMode) const
 {
     return height() + marginTop();
 }
