@@ -247,7 +247,7 @@ if test "$with_hildon" = "yes"; then
 fi
 
 # minimum base dependencies
-LIBSOUP_REQUIRED_VERSION=2.30.0
+LIBSOUP_REQUIRED_VERSION=2.28.2
 CAIRO_REQUIRED_VERSION=1.6
 FONTCONFIG_REQUIRED_VERSION=2.4
 FREETYPE2_REQUIRED_VERSION=9.0
@@ -796,6 +796,15 @@ PKG_CHECK_MODULES([LIBSOUP],
                   [libsoup-2.4 >= $LIBSOUP_REQUIRED_VERSION])
 AC_SUBST([LIBSOUP_CFLAGS])
 AC_SUBST([LIBSOUP_LIBS])
+
+# check if we can use libSoup 2.29.90 features
+PKG_CHECK_MODULES([LIBSOUP_2_29_90],
+                  [libsoup-2.4 >= 2.29.90],
+                  [have_libsoup_2_29_90=yes],
+                  [have_libsoup_2_29_90=no])
+if test "$have_libsoup_2_29_90" = "yes"; then
+   AC_DEFINE([HAVE_LIBSOUP_2_29_90], 1, [Whether libSoup 2.29.90 features are available])
+fi
 
 # check if FreeType/FontConfig are available
 if test "$with_font_backend" = "freetype"; then

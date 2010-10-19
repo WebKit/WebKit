@@ -146,10 +146,12 @@ ResourceHandle::~ResourceHandle()
 
 void ResourceHandle::prepareForURL(const KURL &url)
 {
+#ifdef HAVE_LIBSOUP_2_29_90
     GOwnPtr<SoupURI> soupURI(soup_uri_new(url.prettyURL().utf8().data()));
     if (!soupURI)
         return;
     soup_session_prepare_for_uri(ResourceHandle::defaultSession(), soupURI.get());
+#endif
 }
 
 // All other kinds of redirections, except for the *304* status code
@@ -203,12 +205,14 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     if (d->m_cancelled)
         return;
 
+#ifdef HAVE_LIBSOUP_2_29_90
     // Update the first party in case the base URL changed with the redirect
     String firstPartyString = request.firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
         GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
         soup_message_set_first_party(d->m_soupMessage.get(), firstParty.get());
     }
+#endif
 }
 
 static void gotHeadersCallback(SoupMessage* msg, gpointer data)
@@ -583,11 +587,13 @@ static bool startHttp(ResourceHandle* handle)
     g_signal_connect(soupMessage, "content-sniffed", G_CALLBACK(contentSniffedCallback), handle);
     d->m_gotChunkHandler = g_signal_connect(soupMessage, "got-chunk", G_CALLBACK(gotChunkCallback), handle);
 
+#ifdef HAVE_LIBSOUP_2_29_90
     String firstPartyString = request.firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
         GOwnPtr<SoupURI> firstParty(soup_uri_new(firstPartyString.utf8().data()));
         soup_message_set_first_party(soupMessage, firstParty.get());
     }
+#endif
 
     FormData* httpBody = d->m_firstRequest.httpBody();
     if (httpBody && !httpBody->isEmpty()) {
