@@ -181,7 +181,7 @@ WebInspector.HARLog.prototype = {
                 version: webKitVersion ? webKitVersion[1] : "n/a"
             },
             pages: this._buildPages(),
-            entries: Object.properties(WebInspector.resources).map(this._convertResource)
+            entries: Object.keys(WebInspector.resources).map(this._convertResource)
         }
     },
 

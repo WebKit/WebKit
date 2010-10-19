@@ -1695,17 +1695,13 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 self.updateTitle();
         }
 
-        function successCallback(newStyle, changedProperties)
+        function successCallback(newStyle)
         {
-            elementsPanel.removeStyleChange(section.identifier, self.style, self.name);
-
             if (!styleTextLength) {
                 // Do remove ourselves from UI when the property removal is confirmed.
                 self.parent.removeChild(self);
             } else {
                 self.style = newStyle;
-                for (var i = 0; i < changedProperties.length; ++i)
-                    elementsPanel.addStyleChange(section.identifier, self.style, changedProperties[i]);
                 self._styleRule.style = self.style;
             }
 

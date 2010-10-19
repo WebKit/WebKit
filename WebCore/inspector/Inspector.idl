@@ -207,7 +207,7 @@ module core {
         [handler=DOM] void getComputedStyle(in long nodeId, out Value style);
         [handler=DOM] void getStyleSheet(in long styleSheetId, out Object styleSheet);
         [handler=DOM] void getStyleSourceData(in long styleSheetId, out Object styleSourceData);
-        [handler=DOM] void applyStyleText(in long styleId, in String styleText, in String propertyName, out boolean success, out Value style, out Array changedProperties);
+        [handler=DOM] void applyStyleText(in long styleId, in String styleText, in String propertyName, out boolean success, out Value style);
         [handler=DOM] void setStyleText(in long styleId, in String styleText, out boolean success);
         [handler=DOM] void setStyleProperty(in long styleId, in String name, in String value, out boolean success);
         [handler=DOM] void toggleStyleEnabled(in long styleId, in String propertyName, in boolean disabled, out Value style);

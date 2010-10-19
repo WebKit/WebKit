@@ -263,7 +263,7 @@ WebInspector.ExtensionServer.prototype = {
         if (request.id)
             response = WebInspector.resources[request.id] ? resourceWrapper(request.id) : this._status.E_NOTFOUND(request.id);
         else
-            response = Object.properties(WebInspector.resources).map(resourceWrapper);
+            response = Object.keys(WebInspector.resources).map(resourceWrapper);
         return response;
     },
 

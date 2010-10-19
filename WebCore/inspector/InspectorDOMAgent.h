@@ -131,7 +131,7 @@ namespace WebCore {
         void getComputedStyle(long nodeId, RefPtr<InspectorValue>* styles);
         void getStyleSheet(long styleSheetId, RefPtr<InspectorObject>* styleSheetObject);
         void getStyleSourceData(long styleId, RefPtr<InspectorObject>* dataObject);
-        void applyStyleText(long styleId, const String& styleText, const String& propertyName, bool* success, RefPtr<InspectorValue>* styleObject, RefPtr<InspectorArray>* changedProperties);
+        void applyStyleText(long styleId, const String& styleText, const String& propertyName, bool* success, RefPtr<InspectorValue>* styleObject);
         void setStyleText(long styleId, const String& cssText, bool* success);
         void setStyleProperty(long styleId, const String& name, const String& value, bool* success);
         void toggleStyleEnabled(long styleId, const String& propertyName, bool disabled, RefPtr<InspectorValue>* styleObject);

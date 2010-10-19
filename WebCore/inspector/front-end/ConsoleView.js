@@ -360,7 +360,7 @@ WebInspector.ConsoleView.prototype = {
         }
 
         var results = [];
-        var properties = Object.sortedProperties(result);
+        var properties = Object.keys(result).sort();
 
         for (var i = 0; i < properties.length; ++i) {
             var property = properties[i];

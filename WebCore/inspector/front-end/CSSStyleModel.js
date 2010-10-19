@@ -96,13 +96,13 @@ WebInspector.CSSStyleModel.prototype = {
 
     applyStyleText: function(styleId, styleText, propertyName, successCallback, failureCallback)
     {
-        function callback(success, newPayload, changedProperties)
+        function callback(success, newPayload)
         {
             if (!success)
                 failureCallback();
             else {
                 var newStyle = newPayload ? WebInspector.CSSStyleDeclaration.parseStyle(newPayload) : null;
-                successCallback(newStyle, changedProperties);
+                successCallback(newStyle);
             }
         }
 

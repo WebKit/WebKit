@@ -26,19 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Object.properties = function(obj)
-{
-    var properties = [];
-    for (var prop in obj)
-        properties.push(prop);
-    return properties;
-}
-
-Object.sortedProperties = function(obj, sortFunc)
-{
-    return Object.properties(obj).sort(sortFunc);
-}
-
 Function.prototype.bind = function(thisObject)
 {
     var func = this;
