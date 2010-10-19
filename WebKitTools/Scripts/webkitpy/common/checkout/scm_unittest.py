@@ -352,6 +352,10 @@ class SCMTest(unittest.TestCase):
         self.assertRaises(ScriptError, self.scm.contents_at_revision, "test_file2", 2)
         self.assertRaises(ScriptError, self.scm.contents_at_revision, "does_not_exist", 2)
 
+    def _shared_test_revisions_changing_file(self):
+        self.assertEqual(self.scm.revisions_changing_file("test_file"), [5, 4, 3, 2])
+        self.assertRaises(ScriptError, self.scm.revisions_changing_file, "non_existent_file")
+
     def _shared_test_committer_email_for_revision(self):
         self.assertEqual(self.scm.committer_email_for_revision(3), getpass.getuser())  # Committer "email" will be the current user
 
@@ -695,6 +699,9 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
 
     def test_contents_at_revision(self):
         self._shared_test_contents_at_revision()
+
+    def test_revisions_changing_file(self):
+        self._shared_test_revisions_changing_file()
 
     def test_committer_email_for_revision(self):
         self._shared_test_committer_email_for_revision()
@@ -1198,6 +1205,9 @@ class GitSVNTest(SCMTest):
 
     def test_contents_at_revision(self):
         self._shared_test_contents_at_revision()
+
+    def test_revisions_changing_file(self):
+        self._shared_test_revisions_changing_file()
 
     def test_added_files(self):
         self._shared_test_added_files()

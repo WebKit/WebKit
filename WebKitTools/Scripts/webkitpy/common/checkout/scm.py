@@ -245,7 +245,10 @@ class SCM:
     def changed_files(self, git_commit=None):
         self._subclass_must_implement()
 
-    def changed_files_for_revision(self):
+    def changed_files_for_revision(self, revision):
+        self._subclass_must_implement()
+
+    def revisions_changing_file(self, path, limit=5):
         self._subclass_must_implement()
 
     def added_files(self):
@@ -426,6 +429,16 @@ class SVN(SCM):
         # No file contents printed, thus utf-8 auto-decoding in self.run is fine.
         status_command = ["svn", "diff", "--summarize", "-c", revision]
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ACDMR"))
+
+    def revisions_changing_file(self, path, limit=5):
+        revisions = []
+        log_command = ['svn', 'log', '--quiet', '--limit=%s' % limit, path]
+        for line in self.run(log_command, cwd=self.checkout_root).splitlines():
+            match = re.search('^r(?P<revision>\d+) ', line)
+            if not match:
+                continue
+            revisions.append(int(match.group('revision')))
+        return revisions
 
     def conflicted_files(self):
         return self.run_status_and_extract_filenames(self.status_command(), self._status_regexp("C"))
@@ -653,6 +666,10 @@ class Git(SCM):
         commit_id = self.git_commit_from_svn_revision(revision)
         return self._changes_files_for_commit(commit_id)
 
+    def revisions_changing_file(self, path, limit=5):
+        commit_ids = self.run(["git", "log", "--pretty=format:%H", "-%s" % limit, path]).splitlines()
+        return map(self.svn_revision_from_git_commit, commit_ids)
+
     def conflicted_files(self):
         # We do not need to pass decode_output for this diff command
         # as we're passing --name-status which does not output any data.
@@ -687,6 +704,9 @@ class Git(SCM):
         if not git_commit:
             raise ScriptError(message='Failed to find git commit for revision %s, your checkout likely needs an update.' % revision)
         return git_commit
+
+    def svn_revision_from_git_commit(self, commit_id):
+        return int(self.run(['git', 'svn', 'find-rev', commit_id]).rstrip())
 
     def contents_at_revision(self, path, revision):
         """Returns a byte array (str()) containing the contents

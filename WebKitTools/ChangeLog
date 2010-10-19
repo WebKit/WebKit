@@ -1,3 +1,15 @@
+2010-10-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        scm.py should be able tell us what revisions made changes to a given file
+        https://bugs.webkit.org/show_bug.cgi?id=47863
+
+        Look again, your SCM.py can now log files.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+
 2010-10-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Siedel.
