@@ -280,7 +280,10 @@ class RebaselineTest(unittest.TestCase):
             baseline = file + "-expected" + ext
             self.assertTrue(any(f.find(baseline) != -1 for f in file_list))
 
-    def test_reset_results(self):
+    # FIXME: This test is failing on the bots. Also, this test touches the
+    #        file system.  Unit tests should not read or write the file system.
+    #        https://bugs.webkit.org/show_bug.cgi?id=47879
+    def disabled_test_reset_results(self):
         file_list = []
         original_open = codecs.open
         try:

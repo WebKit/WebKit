@@ -1,5 +1,12 @@
 2010-10-18  Adam Barth  <abarth@webkit.org>
 
+        Disable this test because it's failing on the bots and the authors
+        aren't around to fix it.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2010-10-18  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         CC authors of flaky tests when the commit-queue hits a flaky test
