@@ -60,6 +60,8 @@ struct WebProcessCreationParameters {
     CacheModel cacheModel;
     bool shouldTrackVisitedLinks;
 
+    String languageCode;
+
 #if PLATFORM(MAC)
     CoreIPC::MachPort acceleratedCompositingPort;
 #elif PLATFORM(WIN)

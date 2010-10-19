@@ -1,3 +1,18 @@
+2010-10-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47933
+        <rdar://problem/8494337> navigator.language doesn't work in WebKit2
+
+        * Misc/WebNSUserDefaultsExtras.mm: Moved code for computing default language to WebCore.
+        We need to keep _webkit_preferredLanguageCode for Safari.
+
+        * WebCoreSupport/WebSystemInterface.mm: (InitWebCoreSystemInterface):
+        Initialize wkCopyCFLocalizationPreferredName.
+
+        * WebCoreSupport/WebViewFactory.mm: Removed defaultLanguage. WebCore was the only caller.
+
 2010-10-18  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by David Kilzer.

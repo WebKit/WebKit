@@ -24299,6 +24299,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\Language.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Language.h"
 				>
 			</File>
@@ -24718,7 +24722,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\Language.cpp"
+					RelativePath="..\platform\win\LanguageWin.cpp"
 					>
 				</File>
 				<File

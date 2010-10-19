@@ -38,6 +38,7 @@
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
+#include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
@@ -101,7 +102,8 @@ WebContext::~WebContext()
 {
     ASSERT(m_pageNamespaces.isEmpty());
     m_preferences->removeContext(this);
-
+    removeLanguageChangeObserver(this);
+    
 #ifndef NDEBUG
     webContextCounter.decrement();
 #endif
@@ -120,6 +122,13 @@ void WebContext::initializeHistoryClient(const WKContextHistoryClient* client)
         return;
         
     m_process->send(Messages::WebProcess::SetShouldTrackVisitedLinks(m_historyClient.shouldTrackVisitedLinks()), 0);
+}
+
+static void languageChanged(void* context)
+{
+    WebProcessProxy* process = static_cast<WebContext*>(context)->process();
+    if (process)
+        process->send(Messages::WebProcess::LanguageChanged(defaultLanguage()), 0);
 }
 
 void WebContext::ensureWebProcess()
@@ -150,7 +159,12 @@ void WebContext::ensureWebProcess()
 
     parameters.shouldTrackVisitedLinks = m_historyClient.shouldTrackVisitedLinks();
     parameters.cacheModel = m_cacheModel;
-    
+
+    parameters.languageCode = defaultLanguage();
+    addLanguageChangeObserver(this, languageChanged);
+
+    parameters.applicationCacheDirectory = applicationCacheDirectory();
+
     copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
     copyToVector(m_schemesToRegisterAsSecure, parameters.urlSchemesRegisteredAsSecure);
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);

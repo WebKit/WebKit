@@ -63,11 +63,6 @@
     ASSERT([[self sharedFactory] isKindOfClass:self]);
 }
 
-- (NSString *)defaultLanguageCode
-{
-    return [NSUserDefaults _webkit_preferredLanguageCode];
-}
-
 - (BOOL)objectIsTextMarker:(id)object
 {
     return object != nil && CFGetTypeID(object) == WKGetAXTextMarkerTypeID();

@@ -38,6 +38,7 @@
 #include "WebProcessMessages.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <WebCore/ApplicationCacheStorage.h>
+#include <WebCore/Language.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/SchemeRegistry.h>
@@ -134,6 +135,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     setShouldTrackVisitedLinks(parameters.shouldTrackVisitedLinks);
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));
 
+    if (!parameters.languageCode.isEmpty())
+        overrideDefaultLanguage(parameters.languageCode);
+
     for (size_t i = 0; i < parameters.urlSchemesRegistererdAsEmptyDocument.size(); ++i)
         registerURLSchemeAsEmptyDocument(parameters.urlSchemesRegistererdAsEmptyDocument[i]);
 
@@ -169,6 +173,11 @@ void WebProcess::registerURLSchemeAsSecure(const String& urlScheme) const
 void WebProcess::setDomainRelaxationForbiddenForURLScheme(const String& urlScheme) const
 {
     SecurityOrigin::setDomainRelaxationForbiddenForURLScheme(true, urlScheme);
+}
+
+void WebProcess::languageChanged(const String& language) const
+{
+    overrideDefaultLanguage(language);
 }
 
 void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)

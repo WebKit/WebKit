@@ -50,6 +50,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(urlSchemesForWhichDomainRelaxationIsForbidden);
     encoder->encode(static_cast<uint32_t>(cacheModel));
     encoder->encode(shouldTrackVisitedLinks);
+    encoder->encode(languageCode);
 
 #if PLATFORM(MAC)
     encoder->encode(acceleratedCompositingPort);
@@ -82,6 +83,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     parameters.cacheModel = static_cast<CacheModel>(cacheModel);
 
     if (!decoder->decode(parameters.shouldTrackVisitedLinks))
+        return false;
+    if (!decoder->decode(parameters.languageCode))
         return false;
 
 #if PLATFORM(MAC)

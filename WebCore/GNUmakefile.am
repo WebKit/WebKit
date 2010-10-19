@@ -2342,6 +2342,7 @@ webcore_sources += \
 	WebCore/platform/KURL.cpp \
 	WebCore/platform/KURL.h \
 	WebCore/platform/KURLHash.h \
+	WebCore/platform/Language.cpp \
 	WebCore/platform/Language.h \
 	WebCore/platform/LengthBox.h \
 	WebCore/platform/Length.cpp \
@@ -3535,7 +3536,7 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/GtkVersioning.h \
 	WebCore/platform/gtk/KeyEventGtk.cpp \
 	WebCore/platform/gtk/KURLGtk.cpp \
-	WebCore/platform/gtk/Language.cpp \
+	WebCore/platform/gtk/LanguageGtk.cpp \
 	WebCore/platform/gtk/LocalizedStringsGtk.cpp \
 	WebCore/platform/gtk/LoggingGtk.cpp \
 	WebCore/platform/gtk/MainFrameScrollbarGtk.cpp \

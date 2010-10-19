@@ -31,7 +31,7 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/FileChooserEfl.cpp
   platform/efl/FileSystemEfl.cpp
   platform/efl/KURLEfl.cpp
-  platform/efl/Language.cpp
+  platform/efl/LanguageEfl.cpp
   platform/efl/LocalizedStringsEfl.cpp
   platform/efl/LoggingEfl.cpp
   platform/efl/MIMETypeRegistryEfl.cpp

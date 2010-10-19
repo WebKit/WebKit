@@ -36,6 +36,7 @@ void InitWebCoreSystemInterface(void)
     
     dispatch_once(&initOnce, ^{
         INIT(AdvanceDefaultButtonPulseAnimation);
+        INIT(CopyCFLocalizationPreferredName);
         INIT(CGContextGetShouldSmoothFonts);
         INIT(CopyCONNECTProxyResponse);
         INIT(CopyNSURLResponseStatusLine);

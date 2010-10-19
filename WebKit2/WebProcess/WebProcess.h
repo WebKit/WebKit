@@ -92,6 +92,7 @@ private:
     void registerURLSchemeAsEmptyDocument(const String&);
     void registerURLSchemeAsSecure(const String&) const;
     void setDomainRelaxationForbiddenForURLScheme(const String&) const;
+    void languageChanged(const String&) const;
 #if PLATFORM(WIN)
     void setShouldPaintNativeControls(bool);
 #endif

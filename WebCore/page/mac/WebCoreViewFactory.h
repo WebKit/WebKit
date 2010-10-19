@@ -28,8 +28,6 @@
 
 @protocol WebCoreViewFactory
 
-- (NSString *)defaultLanguageCode;
-
 - (BOOL)objectIsTextMarker:(id)object;
 - (BOOL)objectIsTextMarkerRange:(id)object;
 

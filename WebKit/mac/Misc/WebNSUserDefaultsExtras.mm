@@ -28,74 +28,16 @@
 
 #import "WebNSUserDefaultsExtras.h"
 
-#import "WebNSObjectExtras.h"
-#import <WebKitSystemInterface.h>
-#import <wtf/Assertions.h>
-#import <wtf/MainThread.h>
+#import <WebCore/Language.h>
+#import <wtf/text/WTFString.h>
 
-static NSString *createHTTPStyleLanguageCode(NSString *languageCode)
-{
-    ASSERT(isMainThread());
-
-    // Look up the language code using CFBundle.
-    NSString *preferredLanguageCode = WebCFAutorelease(WKCopyCFLocalizationPreferredName((CFStringRef)languageCode));
-
-    if (preferredLanguageCode)
-        languageCode = preferredLanguageCode;
-    
-    // Make the string lowercase.
-    NSString *lowercaseLanguageCode = [languageCode lowercaseString];
-    
-    // Turn a '_' into a '-' if it appears after a 2-letter language code.
-    if ([lowercaseLanguageCode length] < 3 || [lowercaseLanguageCode characterAtIndex:2] != '_')
-        return lowercaseLanguageCode;
-
-    NSMutableString *result = [lowercaseLanguageCode mutableCopy];
-    [result replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
-    return result;
-}
+using namespace WebCore;
 
 @implementation NSUserDefaults (WebNSUserDefaultsExtras)
 
-static NSString *preferredLanguageCode = nil;
-static bool languageChangeObserverAdded = false;
-
-+ (void)_webkit_languagePreferencesDidChange
-{
-    ASSERT(isMainThread());
-
-    [preferredLanguageCode release];
-    preferredLanguageCode = nil;
-}
-
-static void addLanguageChangeObserver(void)
-{
-    [[NSDistributedNotificationCenter defaultCenter] addObserver:[NSUserDefaults self]
-                                                        selector:@selector(_webkit_languagePreferencesDidChange)
-                                                            name:@"AppleLanguagePreferencesChangedNotification"
-                                                          object:nil];
-}
-
 + (NSString *)_webkit_preferredLanguageCode
 {
-    ASSERT(isMainThread());
-
-    if (!preferredLanguageCode) {
-        NSArray *languages = [[self standardUserDefaults] stringArrayForKey:@"AppleLanguages"];
-        if (![languages count])
-            preferredLanguageCode = [@"en" retain];
-        else
-            preferredLanguageCode = createHTTPStyleLanguageCode([languages objectAtIndex:0]);
-    }
-
-    NSString *code = [[preferredLanguageCode retain] autorelease];
-    
-    if (!languageChangeObserverAdded) {
-        addLanguageChangeObserver();
-        languageChangeObserverAdded = true;
-    }
-
-    return code;
+    return defaultLanguage();
 }
 
 @end

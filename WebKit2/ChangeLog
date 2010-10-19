@@ -1,3 +1,35 @@
+2010-10-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47933
+        <rdar://problem/8494337> navigator.language doesn't work in WebKit2
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Pass language code when creating a web process.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::~WebContext): Don't send language change notifications to the destroyed
+        process.
+        (WebKit::languageChanged): Make web process know about the change.
+        (WebKit::WebContext::ensureWebProcess): Fill WebProcessCreationParameters, and register for
+        change notifications.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm: (InitWebCoreSystemInterface):
+        Initialize wkCopyCFLocalizationPreferredName.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Use passed in language as an override. Web process
+        doesn't know about per-application settings, so it depends on UI process for those.
+        (WebKit::WebProcess::languageChanged): Update the language override when messaged.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Added LanguageChanged message.
+
 2010-10-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

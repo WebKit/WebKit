@@ -29,6 +29,7 @@
 
 void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
+CFStringRef (*wkCopyCFLocalizationPreferredName)(CFStringRef);
 NSString* (*wkCopyNSURLResponseStatusLine)(NSURLResponse*);
 NSString* (*wkCreateURLPasteboardFlavorTypeName)(void);
 NSString* (*wkCreateURLNPasteboardFlavorTypeName)(void);

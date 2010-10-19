@@ -1170,6 +1170,7 @@ SOURCES += \
     platform/graphics/transforms/TranslateTransformOperation.cpp \
     platform/KillRingNone.cpp \
     platform/KURL.cpp \
+    platform/Language.cpp \
     platform/Length.cpp \
     platform/text/LineEnding.cpp \
     platform/LinkHash.cpp \
@@ -2641,7 +2642,7 @@ SOURCES += \
     platform/qt/SharedTimerQt.cpp \
     platform/qt/SoundQt.cpp \
     platform/qt/LoggingQt.cpp \
-    platform/qt/Language.cpp \
+    platform/qt/LanguageQt.cpp \
     platform/qt/TemporaryLinkStubsQt.cpp \
     platform/text/qt/TextBoundariesQt.cpp \
     platform/text/qt/TextBreakIteratorQt.cpp \
