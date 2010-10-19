@@ -26,7 +26,14 @@
 #ifndef PlatformWebView_h
 #define PlatformWebView_h
 
-#if defined(__APPLE__) && __APPLE__
+#if defined(BUILDING_QT__)
+namespace WTR {
+class WebView;
+}
+typedef WTR::WebView* PlatformWKView;
+class QMainWindow;
+typedef QMainWindow* PlatformWindow;
+#elif defined(__APPLE__) && __APPLE__
 #if __OBJC__
 @class WKView;
 @class NSWindow;
@@ -39,13 +46,6 @@ typedef NSWindow* PlatformWindow;
 #elif defined(WIN32) || defined(_WIN32)
 typedef WKViewRef PlatformWKView;
 typedef HWND PlatformWindow;
-#elif defined(BUILDING_QT__)
-namespace WTR {
-class WebView;
-}
-typedef WTR::WebView* PlatformWKView;
-class QMainWindow;
-typedef QMainWindow* PlatformWindow;
 #endif
 
 namespace WTR {

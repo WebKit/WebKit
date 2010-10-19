@@ -26,6 +26,8 @@
 
 #include "TestController.h"
 
+#include "WKStringQt.h"
+
 #include <cstdlib>
 #include <QCoreApplication>
 #include <QEventLoop>

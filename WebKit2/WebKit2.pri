@@ -1,5 +1,7 @@
 # WebKit2 - Qt4 build info
 
+QT += network
+
 # Use a config-specific target to prevent parallel builds file clashes on Mac
 mac: CONFIG(debug, debug|release): WEBKIT2_TARGET = webkit2d
 else: WEBKIT2_TARGET = webkit2

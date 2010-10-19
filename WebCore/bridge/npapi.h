@@ -513,6 +513,8 @@ typedef struct _NPPrint
 #if defined(XP_MACOSX)
 #ifndef NP_NO_CARBON
 typedef EventRecord NPEvent;
+#else
+typedef void*  NPEvent;
 #endif
 #elif defined(XP_SYMBIAN)
 typedef QEvent NPEvent;

@@ -12,7 +12,6 @@ TEMPLATE = lib
 CONFIG += staticlib
 TARGET = $$WEBKIT2_TARGET
 DESTDIR = $$WEBKIT2_DESTDIR
-QT += network
 
 !CONFIG(release, debug|release) {
     OBJECTS_DIR = obj/debug

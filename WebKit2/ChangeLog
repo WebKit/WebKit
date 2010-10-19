@@ -1,3 +1,16 @@
+2010-10-19  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Antti Koivisto.
+
+        [Qt] WebKit2 MacOS build fix
+        https://bugs.webkit.org/show_bug.cgi?id=47897
+
+        Qt WebKit2 MacOS build fix.
+
+        * UIProcess/WebPageProxy.cpp:
+        * WebKit2.pri:
+        * WebKit2.pro:
+
 2010-10-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
