@@ -1,3 +1,25 @@
+2010-10-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Stop waiting for sync replies if the connection is closed
+        https://bugs.webkit.org/show_bug.cgi?id=47930
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        Initialize m_shouldWaitForSyncReplies to true.
+
+        (CoreIPC::Connection::sendSyncMessage):
+        Don't attempt to send a message if m_shouldWaitForSyncReplies is false.
+
+        (CoreIPC::Connection::waitForSyncReply):
+        Return if m_shouldWaitForSyncReplies was set to false.
+
+        (CoreIPC::Connection::connectionDidClose):
+        Set m_shouldWaitForSyncReplies to true and signal the semaphore.
+
+        * Platform/CoreIPC/Connection.h:
+
 2010-10-19  Adam Roben  <aroben@apple.com>
 
         Windows build fix
