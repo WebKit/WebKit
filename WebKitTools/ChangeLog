@@ -1,3 +1,22 @@
+2010-10-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtTestBrowser: Prevent calling load() directly from loadFinished() in robot mode.
+        https://bugs.webkit.org/show_bug.cgi?id=47809
+
+        Connecting a call to load from the loadFinished signal can cause
+        re-entrance crashes in WebCore. This patch uses a timer to do so,
+        also giving some time to subsequent frames to finish loading.
+
+        * QtTestBrowser/urlloader.cpp:
+        (UrlLoader::UrlLoader):
+        (UrlLoader::loadNext):
+        (UrlLoader::checkIfFinished):
+        (UrlLoader::frameLoadStarted):
+        (UrlLoader::frameLoadFinished):
+        * QtTestBrowser/urlloader.h:
+
 2010-10-19  Sergio Villar Senín  <svillar@igalia.com>
 
         Reviewed by Xan Lopez.

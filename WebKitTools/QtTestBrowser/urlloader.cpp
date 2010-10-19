@@ -30,12 +30,21 @@
 
 #include <QFile>
 #include <QDebug>
+#include <QWebPage>
 
 UrlLoader::UrlLoader(QWebFrame* frame, const QString& inputFileName, int timeoutSeconds, int extraTimeSeconds)
     : m_frame(frame)
     , m_stdOut(stdout)
     , m_loaded(0)
+    , m_numFramesLoading(0)
 {
+    m_checkIfFinishedTimer.setInterval(200);
+    m_checkIfFinishedTimer.setSingleShot(true);
+    connect(&m_checkIfFinishedTimer, SIGNAL(timeout()), this, SLOT(checkIfFinished()));
+    // loadStarted and loadFinished on QWebPage is emitted for each frame/sub-frame
+    connect(m_frame->page(), SIGNAL(loadStarted()), this, SLOT(frameLoadStarted()));
+    connect(m_frame->page(), SIGNAL(loadFinished(bool)), this, SLOT(frameLoadFinished()));
+
     if (timeoutSeconds) {
         m_timeoutTimer.setInterval(timeoutSeconds * 1000);
         m_timeoutTimer.setSingleShot(true);
@@ -45,10 +54,10 @@ UrlLoader::UrlLoader(QWebFrame* frame, const QString& inputFileName, int timeout
     if (extraTimeSeconds) {
         m_extraTimeTimer.setInterval(extraTimeSeconds * 1000);
         m_extraTimeTimer.setSingleShot(true);
-        connect(frame, SIGNAL(loadFinished(bool)), &m_extraTimeTimer, SLOT(start()));
+        connect(this, SIGNAL(pageLoadFinished()), &m_extraTimeTimer, SLOT(start()));
         connect(&m_extraTimeTimer, SIGNAL(timeout()), this, SLOT(loadNext()));
     } else
-        connect(frame, SIGNAL(loadFinished(bool)), this, SLOT(loadNext()));
+        connect(this, SIGNAL(pageLoadFinished()), this, SLOT(loadNext()));
     loadUrlList(inputFileName);
 }
 
@@ -56,6 +65,8 @@ void UrlLoader::loadNext()
 {
     m_timeoutTimer.stop();
     m_extraTimeTimer.stop();
+    m_checkIfFinishedTimer.stop();
+    m_numFramesLoading = 0;
     QString qstr;
     if (getUrl(qstr)) {
         QUrl url(qstr, QUrl::StrictMode);
@@ -66,6 +77,27 @@ void UrlLoader::loadNext()
             loadNext();
     } else
         disconnect(m_frame, 0, this, 0);
+}
+
+void UrlLoader::checkIfFinished()
+{
+    if (!m_numFramesLoading)
+        emit pageLoadFinished();
+}
+
+void UrlLoader::frameLoadStarted()
+{
+    ++m_numFramesLoading;
+    m_checkIfFinishedTimer.stop();
+}
+
+void UrlLoader::frameLoadFinished()
+{
+    Q_ASSERT(m_numFramesLoading > 0);
+    --m_numFramesLoading;
+    // Once our frame has finished loading, wait a moment to call loadNext for cases
+    // where a sub-frame starts loading or another frame is loaded through JavaScript.
+    m_checkIfFinishedTimer.start();
 }
 
 void UrlLoader::loadUrlList(const QString& inputFileName)
