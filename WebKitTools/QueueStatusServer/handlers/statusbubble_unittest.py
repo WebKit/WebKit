@@ -53,7 +53,7 @@ class StatusBubbleTest(unittest.TestCase):
         # FIXME: assertDictEqual (in Python 2.7) would be better to use here.
         self.assertEqual(bubble_dict["name"], "mac")
         self.assertEqual(bubble_dict["attachment_id"], 1)
-        self.assertEqual(bubble_dict["queue_position"], "1")
+        self.assertEqual(bubble_dict["queue_position"], 1)
         self.assertEqual(bubble_dict["state"], "none")
         self.assertEqual(bubble_dict["status"], None)
 

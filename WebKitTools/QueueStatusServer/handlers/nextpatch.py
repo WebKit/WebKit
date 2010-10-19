@@ -35,6 +35,8 @@ from model.queues import Queue
 
 
 class NextPatch(webapp.RequestHandler):
+    # FIXME: This should probably be a post, or an explict lock_patch
+    # since GET requests shouldn't really modify the datastore.
     def get(self, queue_name):
         queue = Queue.queue_with_name(queue_name)
         if not queue:

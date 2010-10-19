@@ -547,6 +547,9 @@ class MockStatusServer(object):
             return None
         return self._work_items[0]
 
+    def release_work_item(self, queue_name, patch):
+        log("MOCK: release_work_item: %s %s" % (queue_name, patch.id()))
+
     def update_work_items(self, queue_name, work_items):
         self._work_items = work_items
         log("MOCK: update_work_items: %s %s" % (queue_name, work_items))

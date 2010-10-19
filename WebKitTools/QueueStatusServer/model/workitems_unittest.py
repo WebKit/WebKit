@@ -40,6 +40,14 @@ class WorkItemsTest(unittest.TestCase):
         self.assertEquals(items.display_position_for_attachment(1), 2)
         self.assertEquals(items.display_position_for_attachment(3), None)
 
+    def test_remove_work_item(self):
+        items = WorkItems()
+        items.item_ids = [0, 1, 2]
+        items.remove_work_item(0)
+        self.assertEqual(items.item_ids, [1, 2])
+        items.remove_work_item(4)  # Should not throw
+        self.assertEqual(items.item_ids, [1, 2])
+
 
 if __name__ == '__main__':
     unittest.main()

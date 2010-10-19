@@ -57,9 +57,18 @@ class ActiveWorkItems(db.Model, QueuePropertyMixin):
         self.item_ids.append(pair[0])
         self.item_dates.append(pair[1])
 
-    def expire_item(self, item_id):
+    def _remove_item(self, item_id):
         nonexpired_pairs = [pair for pair in self._item_time_pairs() if pair[0] != item_id]
         self._set_item_time_pairs(nonexpired_pairs)
+
+    @staticmethod
+    def _expire_item(key, item_id):
+        active_work_items = db.get(key)
+        active_work_items._remove_item(item_id)
+        active_work_items.put()
+
+    def expire_item(self, item_id):
+        return db.run_in_transaction(self._expire_item, self.key(), item_id)
 
     def deactivate_expired(self, now):
         one_hour_ago = time.mktime((now - timedelta(minutes=60)).timetuple())

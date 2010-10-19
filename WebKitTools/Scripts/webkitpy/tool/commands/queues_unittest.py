@@ -237,6 +237,7 @@ MOCK: update_status: commit-queue Pass
             "process_work_item": """MOCK: update_status: commit-queue Patch does not apply
 MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'MOCK script error'
 MOCK: update_status: commit-queue Fail
+MOCK: release_work_item: commit-queue 197
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
@@ -318,6 +319,7 @@ MOCK: update_status: commit-queue Pass
 MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Retry
+MOCK: release_work_item: commit-queue 197
 """
         OutputCapture().assert_outputs(self, queue.process_work_item, [MockPatch()], expected_stderr=expected_stderr)
 

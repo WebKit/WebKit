@@ -1,3 +1,22 @@
+2010-10-19  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Fixing typos in my previous commit.
+
+        Make patch release explicit and not a magic part of "retry" status
+        https://bugs.webkit.org/show_bug.cgi?id=47909
+
+        All of these typos again due to our inability to unit
+        test much of this code.  I added one unit test where
+        possible.  activeworkitems_unittest.py will be in a separate patch.
+
+        * QueueStatusServer/handlers/releasepatch.py:
+        * QueueStatusServer/main.py:
+        * QueueStatusServer/model/activeworkitems.py:
+        * QueueStatusServer/model/workitems.py:
+        * QueueStatusServer/model/workitems_unittest.py:
+        * QueueStatusServer/templates/releasepatch.html:
+        * Scripts/webkitpy/common/net/statusserver.py:
+
 2010-10-19  Tony Chang  <tony@chromium.org>
 
         Reviewed by Kent Tamura.
@@ -8,6 +27,35 @@
         * DumpRenderTree/chromium/TestNetscapePlugIn/Info.plist: Added. Forked
             because we're going to name our plugin WebKitTestNetscapePlugIn
             temporarily until the chromium forked plugin goes away.
+
+2010-10-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Make patch release explicit and not a magic part of "retry" status
+        https://bugs.webkit.org/show_bug.cgi?id=47909
+
+        This moves us another step closer to running r+ patches on the EWS bots.
+        Currently all bots just spam /update-work-items with their list of current
+        work items.  queues.webkit.org uses that data for display.  As part of making
+        the EWS run r+ patches, we're moving the official list of patches-to-process
+        into the server, and feeding them out to bots one at a time.  We need to be
+        able to remove patches from the queues one at a time instead of just spamming
+        /update-work-items with a new complete list.  That's what this patch adds.
+
+        * QueueStatusServer/handlers/nextpatch.py:
+        * QueueStatusServer/handlers/queuestatus.py:
+        * QueueStatusServer/handlers/releasepatch.py: Added.
+        * QueueStatusServer/handlers/statusbubble_unittest.py:
+         - Fix a typo causing test failure.  This was not caught by the bots
+           because they don't have AppEngineLauncher installed and thus don't run
+           the QueueStatusServer tests.
+        * QueueStatusServer/handlers/updatestatus.py:
+        * QueueStatusServer/model/activeworkitems.py:
+        * QueueStatusServer/templates/releasepatch.html: Added.
+        * Scripts/webkitpy/common/net/statusserver.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/mocktool.py:
 
 2010-10-19  Eric Seidel  <eric@webkit.org>
 

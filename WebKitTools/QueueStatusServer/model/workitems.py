@@ -58,8 +58,9 @@ class WorkItems(db.Model, QueuePropertyMixin):
     @staticmethod
     def _unguarded_remove(key, attachment_id):
         work_items = db.get(key)
-        # We should never have more than one entry for a work item, so we only need remove the first.
-        work_items.item_ids.remove(attachment_id)
+        if attachment_id in work_items.item_ids:
+            # We should never have more than one entry for a work item, so we only need remove the first.
+            work_items.item_ids.remove(attachment_id)
         work_items.put()
 
     def remove_work_item(self, attachment_id):

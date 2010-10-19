@@ -107,6 +107,18 @@ class StatusServer:
         patch_status_url = "%s/next-patch/%s" % (self.url, queue_name)
         return self._fetch_url(patch_status_url)
 
+    def _post_release_work_item(self, queue_name, patch):
+        release_patch_url = "%s/release-patch/%s" % (self.url, queue_name)
+        self._browser.open(release_patch_url)
+        self._browser.select_form(name="release_patch")
+        self._browser["queue_name"] = queue_name
+        self._browser["attachment_id"] = patch.id()
+        self._browser.submit()
+
+    def release_work_item(self, queue_name, patch):
+        _log.debug("Releasing work item %s from %s" % (patch.id(), queue_name))
+        return NetworkTransaction().run(lambda: self._post_release_work_item(queue_name, patch))
+
     def update_work_items(self, queue_name, work_items):
         _log.debug("Recording work items: %s for %s" % (work_items, queue_name))
         return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, work_items))

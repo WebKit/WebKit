@@ -26,54 +26,39 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from google.appengine.ext import webapp
+from google.appengine.ext import webapp, db
 from google.appengine.ext.webapp import template
 
+from handlers.updatebase import UpdateBase
+from model.attachment import Attachment
 from model.queues import Queue
 
-from model import queuestatus
 
+class ReleasePatch(UpdateBase):
+    def get(self):
+        self.response.out.write(template.render("templates/releasepatch.html", None))
 
-class QueueStatus(webapp.RequestHandler):
-    def _rows_for_work_items(self, queue):
-        queued_items = queue.work_items()
-        active_items = queue.active_work_items()
-        if not queued_items:
-            return []
-        rows = []
-        for item_id in queued_items.item_ids:
-            rows.append({
-                "attachment_id": item_id,
-                "bug_id": 1,
-                "lock_time": active_items and active_items.time_for_item(item_id),
-            })
-        return rows
-
-    def get(self, queue_name):
-        queue_name = queue_name.lower()
+    def post(self):
+        queue_name = self.request.get("queue_name")
+        # FIXME: This queue lookup should be shared between handlers.
         queue = Queue.queue_with_name(queue_name)
         if not queue:
             self.error(404)
             return
 
-        status_groups = []
-        last_patch_id = None
-        synthetic_patch_id_counter = 0
+        attachment_id = self._int_from_request("attachment_id")
+        attachment = Attachment(attachment_id)
+        last_status = attachment.status_for_queue(queue)
+        if not last_status:
+            self.error(404)
+            return
 
-        statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue.name()).order("-date").fetch(15)
-        for status in statuses:
-            patch_id = status.active_patch_id
-            if not patch_id or last_patch_id != patch_id:
-                status_group = []
-                status_groups.append(status_group)
-            else:
-                status_group = status_groups[-1]
-            status_group.append(status)
-            last_patch_id = patch_id
+        # Ideally we should use a transaction for the calls to
+        # WorkItems and ActiveWorkItems.
 
-        template_values = {
-            "display_queue_name": queue.display_name(),
-            "work_item_rows": self._rows_for_work_items(queue),
-            "status_groups": status_groups,
-        }
-        self.response.out.write(template.render("templates/queuestatus.html", template_values))
+        # Only remove it from the queue if the last message is not a retry request.
+        if not last_status.is_retry_request():
+            queue.work_items().remove_work_item(attachment_id)
+
+        # Always release the lock on the item.
+        queue.active_work_items().expire_item(attachment_id)

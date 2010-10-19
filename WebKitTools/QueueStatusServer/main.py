@@ -40,6 +40,7 @@ from handlers.patch import Patch
 from handlers.patchstatus import PatchStatus
 from handlers.queuestatus import QueueStatus
 from handlers.recentstatus import QueuesOverview
+from handlers.releasepatch import ReleasePatch
 from handlers.showresults import ShowResults
 from handlers.statusbubble import StatusBubble
 from handlers.submittoews import SubmitToEWS
@@ -63,6 +64,7 @@ routes = [
     (r'/svn-revision/(.*)', SVNRevision),
     (r'/queue-status/(.*)', QueueStatus),
     (r'/next-patch/(.*)', NextPatch),
+    (r'/release-patch', ReleasePatch),
     ('/update-status', UpdateStatus),
     ('/update-work-items', UpdateWorkItems),
     ('/update-svn-revision', UpdateSVNRevision),

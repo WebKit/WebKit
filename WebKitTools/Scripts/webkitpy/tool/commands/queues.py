@@ -198,6 +198,9 @@ class AbstractPatchQueue(AbstractQueue):
     def _fetch_next_work_item(self):
         return self._tool.status_server.next_work_item(self.name)
 
+    def _release_work_item(self, patch):
+        self._tool.status_server.release_work_item(self.name, patch)
+
     def _did_pass(self, patch):
         self._update_status(self._pass_status, patch)
 
@@ -247,6 +250,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
             validator = CommitterValidator(self._tool.bugs)
             validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task.failure_status_id, e))
             self._did_fail(patch)
+        self._release_work_item(patch)
 
     def _error_message_for_bug(self, status_id, script_error):
         if not script_error.output:
