@@ -424,6 +424,9 @@ bool Cache::makeResourcePurgeable(CachedResource* resource)
     if (!resource->inCache())
         return false;
 
+    if (resource->isPurgeable())
+        return true;
+
     if (!resource->isSafeToMakePurgeable())
         return false;
 
@@ -450,8 +453,9 @@ void Cache::evict(CachedResource* resource)
         removeFromLiveDecodedResourcesList(resource);
 
         // If the resource was purged, it means we had already decremented the size when we made the
-        // resource purgeable in makeResourcePurgeable().
-        if (!Cache::shouldMakeResourcePurgeableOnEviction() || !resource->wasPurged())
+        // resource purgeable in makeResourcePurgeable(). So adjust the size if we are evicting a
+        // resource that was not marked as purgeable.
+        if (!Cache::shouldMakeResourcePurgeableOnEviction() || !resource->isPurgeable())
             adjustSize(resource->hasClients(), -static_cast<int>(resource->size()));
     } else
         ASSERT(m_resources.get(resource->url()) != resource);
