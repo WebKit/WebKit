@@ -1,5 +1,22 @@
 2010-10-19  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.  Will get Adam's commentary after his meeting
+        for now this gets the commit-cluster back running.
+
+        commit-queue gets stuck when release-patch returns 404
+        https://bugs.webkit.org/show_bug.cgi?id=47935
+
+        I taught NetworkTransaction the basics of 404 handling.
+        We'll want to go back and teach it how to handle urllib2 404's too
+        and then deploy it to the places that want it.
+
+        * QueueStatusServer/handlers/releasepatch.py:
+        * Scripts/webkitpy/common/net/buildbot.py:
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        * Scripts/webkitpy/common/net/statusserver.py:
+
+2010-10-19  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Fixing typos in my previous commit.
 
         Make patch release explicit and not a magic part of "retry" status

@@ -117,7 +117,7 @@ class StatusServer:
 
     def release_work_item(self, queue_name, patch):
         _log.debug("Releasing work item %s from %s" % (patch.id(), queue_name))
-        return NetworkTransaction().run(lambda: self._post_release_work_item(queue_name, patch))
+        return NetworkTransaction(convert_404_to_None=True).run(lambda: self._post_release_work_item(queue_name, patch))
 
     def update_work_items(self, queue_name, work_items):
         _log.debug("Recording work items: %s for %s" % (work_items, queue_name))
@@ -132,6 +132,7 @@ class StatusServer:
         return NetworkTransaction().run(lambda: self._post_svn_revision_to_server(svn_revision_number, broken_bot))
 
     def _fetch_url(self, url):
+        # FIXME: This should use NetworkTransaction's 404 handling instead.
         try:
             return urllib2.urlopen(url).read()
         except urllib2.HTTPError, e:

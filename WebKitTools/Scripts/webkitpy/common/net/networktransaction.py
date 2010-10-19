@@ -29,7 +29,7 @@
 import logging
 import time
 
-from webkitpy.thirdparty.autoinstalled.mechanize import HTTPError
+from webkitpy.thirdparty.autoinstalled import mechanize
 from webkitpy.common.system.deprecated_logging import log
 
 
@@ -41,7 +41,7 @@ class NetworkTimeout(Exception):
 
 
 class NetworkTransaction(object):
-    def __init__(self, initial_backoff_seconds=10, grown_factor=1.5, timeout_seconds=10*60):
+    def __init__(self, initial_backoff_seconds=10, grown_factor=1.5, timeout_seconds=(10 * 60), convert_404_to_None=False):
         self._initial_backoff_seconds = initial_backoff_seconds
         self._grown_factor = grown_factor
         self._timeout_seconds = timeout_seconds
@@ -52,7 +52,10 @@ class NetworkTransaction(object):
         while True:
             try:
                 return request()
-            except HTTPError, e:
+            # FIXME: We should catch urllib2.HTTPError here too.
+            except mechanize.HTTPError, e:
+                if convert_404_to_None and e.code == 404:
+                    return None
                 self._check_for_timeout()
                 _log.warn("Received HTTP status %s from server.  Retrying in "
                           "%s seconds..." % (e.code, self._backoff_seconds))

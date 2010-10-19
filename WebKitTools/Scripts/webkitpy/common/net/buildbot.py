@@ -108,6 +108,7 @@ class Builder(object):
 
     def _fetch_revision_to_build_map(self):
         # All _fetch requests go through _buildbot for easier mocking
+        # FIXME: This should use NetworkTransaction's 404 handling instead.
         try:
             # FIXME: This method is horribly slow due to the huge network load.
             # FIXME: This is a poor way to do revision -> build mapping.
@@ -217,7 +218,7 @@ class Build(object):
 
     def _fetch_results_html(self):
         results_html = "%s/results.html" % (self.results_url())
-        # FIXME: We need to move this sort of 404 logic into NetworkTransaction or similar.
+        # FIXME: This should use NetworkTransaction's 404 handling instead.
         try:
             return urllib2.urlopen(results_html)
         except urllib2.HTTPError, error:

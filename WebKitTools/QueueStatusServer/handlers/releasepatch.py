@@ -49,15 +49,13 @@ class ReleasePatch(UpdateBase):
         attachment_id = self._int_from_request("attachment_id")
         attachment = Attachment(attachment_id)
         last_status = attachment.status_for_queue(queue)
-        if not last_status:
-            self.error(404)
-            return
 
         # Ideally we should use a transaction for the calls to
         # WorkItems and ActiveWorkItems.
 
         # Only remove it from the queue if the last message is not a retry request.
-        if not last_status.is_retry_request():
+        # Allow removing it from the queue even if there is no last_status for easier testing.
+        if not last_status or not last_status.is_retry_request():
             queue.work_items().remove_work_item(attachment_id)
 
         # Always release the lock on the item.
