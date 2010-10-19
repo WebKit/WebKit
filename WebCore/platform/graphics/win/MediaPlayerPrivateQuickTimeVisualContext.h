@@ -74,9 +74,12 @@ private:
 
     void load(const String& url);
     void cancelLoad();
+    void loadInternal(const String& url);
+    void resumeLoad();
     
     void play();
     void pause();    
+    void prepareToPlay();
     
     bool paused() const;
     bool seeking() const;
@@ -110,6 +113,8 @@ private:
 
     bool hasClosedCaptions() const;
     void setClosedCaptionsVisible(bool);
+
+    void setPreload(MediaPlayer::Preload);
 
     void updateStates();
     void doSeek();
@@ -189,6 +194,9 @@ private:
     bool m_isStreaming;
     bool m_visible;
     bool m_newFrameAvailable;
+    bool m_delayingLoad;
+    String m_movieURL;
+    MediaPlayer::Preload m_preload;
 #if DRAW_FRAME_RATE
     double m_frameCountWhilePlaying;
     double m_timeStartedPlaying;
