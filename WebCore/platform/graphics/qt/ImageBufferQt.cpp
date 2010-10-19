@@ -69,7 +69,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
     pen.setColor(Qt::black);
     pen.setWidth(1);
     pen.setCapStyle(Qt::FlatCap);
-    pen.setJoinStyle(Qt::MiterJoin);
+    pen.setJoinStyle(Qt::SvgMiterJoin);
     pen.setMiterLimit(10);
     painter->setPen(pen);
     QBrush brush = painter->brush();
