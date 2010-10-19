@@ -48,6 +48,7 @@ function createIndex()
 {
     window.store = evalAndLog("db.createObjectStore('storeName', null)");
     window.indexObject = evalAndLog("store.createIndex('indexName', 'x')");
+    window.indexObject2 = evalAndLog("store.createIndex('indexName2', 'y', false)");
     addData();
 }
 
@@ -93,6 +94,17 @@ function getData()
 }
 
 function getObjectData()
+{
+    verifySuccessEvent(event);
+    shouldBeEqualToString("event.result", "key");
+
+    result = evalAndLog("indexObject2.getKey('zzz')");
+    verifyResult(result);
+    result.onsuccess = getObjectData2;
+    result.onerror = unexpectedErrorCallback;
+}
+
+function getObjectData2()
 {
     verifySuccessEvent(event);
     shouldBeEqualToString("event.result", "key");

@@ -154,15 +154,18 @@ static bool putObjectStoreData(SQLiteDatabase& db, IDBKey* key, SerializedScript
     return true;
 }
 
-static int putIndexData(SQLiteDatabase& db, IDBKey* key, int64_t indexId, int64_t objectStoreDataId)
+static bool deleteIndexData(SQLiteDatabase& db, int64_t objectStoreDataId)
 {
     SQLiteStatement deleteQuery(db, "DELETE FROM IndexData WHERE objectStoreDataId = ?");
     if (deleteQuery.prepare() != SQLResultOk)
         return false;
     deleteQuery.bindInt64(1, objectStoreDataId);
-    if (deleteQuery.step() != SQLResultDone)
-        return false;
 
+    return deleteQuery.step() == SQLResultDone;
+}
+
+static bool putIndexData(SQLiteDatabase& db, IDBKey* key, int64_t indexId, int64_t objectStoreDataId)
+{
     SQLiteStatement putQuery(db, "INSERT INTO IndexData (keyString, keyDate, keyNumber, indexId, objectStoreDataId) VALUES (?, ?, ?, ?, ?)");
     if (putQuery.prepare() != SQLResultOk)
         return false;
@@ -190,6 +193,8 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 {
     RefPtr<SerializedScriptValue> value = prpValue;
     RefPtr<IDBKey> key = prpKey;
+
+    // FIXME: Support auto-increment.
 
     if (!objectStore->m_keyPath.isNull()) {
         if (key) {
@@ -235,6 +240,13 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     int64_t dataRowId = isExistingValue ? getQuery.getColumnInt(0) : -1;
     if (!putObjectStoreData(objectStore->sqliteDatabase(), key.get(), value.get(), objectStore->id(), &dataRowId)) {
+        // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
+        transaction->abort();
+        return;
+    }
+
+    if (!deleteIndexData(objectStore->sqliteDatabase(), dataRowId)) {
         // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
         transaction->abort();
