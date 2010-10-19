@@ -34,3 +34,23 @@ WKTypeID WKErrorGetTypeID()
 {
     return toAPI(WebError::APIType);
 }
+
+WKStringRef WKErrorCopyDomain(WKErrorRef errorRef)
+{
+    return toCopiedAPI(toImpl(errorRef)->domain());
+}
+
+int WKErrorGetErrorCode(WKErrorRef errorRef)
+{
+    return toImpl(errorRef)->errorCode();
+}
+
+WKURLRef WKErrorCopyFailingURL(WKErrorRef errorRef)
+{
+    return toCopiedURLAPI(toImpl(errorRef)->failingURL());
+}
+
+WKStringRef WKErrorCopyLocalizedDescription(WKErrorRef errorRef)
+{
+    return toCopiedAPI(toImpl(errorRef)->localizedDescription());
+}

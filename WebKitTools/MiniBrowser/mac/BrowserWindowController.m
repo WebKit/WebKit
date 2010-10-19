@@ -258,7 +258,7 @@ static void didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, W
     [(BrowserWindowController *)clientInfo didReceiveServerRedirectForProvisionalLoadForFrame:frame];
 }
 
-static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didFailProvisionalLoadWithErrorForFrame:frame];
 }
@@ -278,7 +278,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     LOG(@"didFinishLoadForFrame");
 }
 
-static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+static void didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didFailLoadWithErrorForFrame:frame];
 }
@@ -606,9 +606,15 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
 
 - (void)updateProvisionalURLForFrame:(WKFrameRef)frame
 {
+    static WKURLRef emptyURL = 0;
+    if (!emptyURL)
+        emptyURL = WKURLCreateWithUTF8CString("");
+
     WKURLRef url = WKFrameCopyProvisionalURL(frame);
-    if (!url)
+    if (WKURLIsEqual(url, emptyURL)) {
+        WKRelease(url);
         return;
+    }
 
     CFURLRef cfSourceURL = WKURLCopyCFURL(0, url);
     WKRelease(url);

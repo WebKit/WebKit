@@ -29,6 +29,7 @@
 #include "WKBase.h"
 #include "WKEvent.h"
 #include "WKGeometry.h"
+#include "WebError.h"
 #include "WebEvent.h"
 #include "WebNumber.h"
 #include "WebString.h"
@@ -44,7 +45,6 @@ class MutableArray;
 class MutableDictionary;
 class WebCertificateInfo;
 class WebData;
-class WebError;
 class WebSerializedScriptValue;
 class WebURLRequest;
 class WebURLResponse;
@@ -151,6 +151,10 @@ inline String toWTFString(WKURLRef urlRef)
     return toImpl(urlRef)->string();
 }
 
+inline ProxyingRefPtr<WebError> toAPI(const WebCore::ResourceError& error)
+{
+    return ProxyingRefPtr<WebError>(WebError::create(error));
+}
 
 /* Geometry conversions */
 

@@ -32,6 +32,7 @@
 
 namespace WebCore {
 class DOMWrapperWorld;
+class ResourceError;
 }
 
 namespace WebKit {
@@ -47,11 +48,11 @@ public:
 
     void didStartProvisionalLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
-    void didFailProvisionalLoadWithErrorForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
+    void didFailProvisionalLoadWithErrorForFrame(WebPage*, WebFrame*, const WebCore::ResourceError&, RefPtr<APIObject>& userData);
     void didCommitLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didFinishDocumentLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didFinishLoadForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
-    void didFailLoadWithErrorForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
+    void didFailLoadWithErrorForFrame(WebPage*, WebFrame*, const WebCore::ResourceError&, RefPtr<APIObject>& userData);
     void didReceiveTitleForFrame(WebPage*, const String&, WebFrame*, RefPtr<APIObject>& userData);
     void didFirstLayoutForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPage*, WebFrame*, RefPtr<APIObject>& userData);

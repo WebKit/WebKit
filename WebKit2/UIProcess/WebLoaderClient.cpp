@@ -28,6 +28,8 @@
 #include "WKAPICast.h"
 #include <string.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 WebLoaderClient::WebLoaderClient()
@@ -59,12 +61,12 @@ void WebLoaderClient::didReceiveServerRedirectForProvisionalLoadForFrame(WebPage
     m_pageLoaderClient.didReceiveServerRedirectForProvisionalLoadForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_pageLoaderClient.clientInfo);
 }
 
-void WebLoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPageProxy* page, WebFrameProxy* frame, APIObject* userData)
+void WebLoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPageProxy* page, WebFrameProxy* frame, const ResourceError& error, APIObject* userData)
 {
     if (!m_pageLoaderClient.didFailProvisionalLoadWithErrorForFrame)
         return;
 
-    m_pageLoaderClient.didFailProvisionalLoadWithErrorForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_pageLoaderClient.clientInfo);
+    m_pageLoaderClient.didFailProvisionalLoadWithErrorForFrame(toAPI(page), toAPI(frame), toAPI(error), toAPI(userData), m_pageLoaderClient.clientInfo);
 }
 
 void WebLoaderClient::didCommitLoadForFrame(WebPageProxy* page, WebFrameProxy* frame, APIObject* userData)
@@ -91,12 +93,12 @@ void WebLoaderClient::didFinishLoadForFrame(WebPageProxy* page, WebFrameProxy* f
     m_pageLoaderClient.didFinishLoadForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_pageLoaderClient.clientInfo);
 }
 
-void WebLoaderClient::didFailLoadWithErrorForFrame(WebPageProxy* page, WebFrameProxy* frame, APIObject* userData)
+void WebLoaderClient::didFailLoadWithErrorForFrame(WebPageProxy* page, WebFrameProxy* frame, const ResourceError& error, APIObject* userData)
 {
     if (!m_pageLoaderClient.didFailLoadWithErrorForFrame)
         return;
 
-    m_pageLoaderClient.didFailLoadWithErrorForFrame(toAPI(page), toAPI(frame), toAPI(userData), m_pageLoaderClient.clientInfo);
+    m_pageLoaderClient.didFailLoadWithErrorForFrame(toAPI(page), toAPI(frame), toAPI(error), toAPI(userData), m_pageLoaderClient.clientInfo);
 }
 
 void WebLoaderClient::didReceiveTitleForFrame(WebPageProxy* page, const String& title, WebFrameProxy* frame, APIObject* userData)

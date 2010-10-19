@@ -48,7 +48,7 @@ void qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WK
 {
 }
 
-void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
 }
 
@@ -76,7 +76,7 @@ void qt_wk_didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef use
     QWKPagePrivate::get(toQWKPage(clientInfo))->updateNavigationActions();
 }
 
-void qt_wk_didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
+void qt_wk_didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;

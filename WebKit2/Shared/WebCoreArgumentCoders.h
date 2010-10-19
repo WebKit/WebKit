@@ -34,6 +34,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ViewportArguments.h>
 #include <limits>
@@ -145,6 +146,25 @@ template<> struct ArgumentCoder<WebCore::ResourceRequest> {
     static bool decode(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
     {
         return decodeResourceRequest(decoder, resourceRequest);
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::ResourceError> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
+    {
+        encoder->encode(CoreIPC::In(resourceError.domain(), resourceError.errorCode(), resourceError.failingURL(), resourceError.localizedDescription()));
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
+    {
+        String domain;
+        int errorCode;
+        String failingURL;
+        String localizedDescription;
+        if (!decoder->decode(CoreIPC::Out(domain, errorCode, failingURL, localizedDescription)))
+            return false;
+        resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription);
+        return true;
     }
 };
 

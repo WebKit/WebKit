@@ -1,3 +1,55 @@
+2010-10-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Need to include WKErrorRef in the WKPageDidFail... functions
+        <rdar://problem/8564110>
+        https://bugs.webkit.org/show_bug.cgi?id=47871
+
+        Give WebError a WebCore::ResourceError backing and start passing it over the wire
+        for failure cases.  Also, fill out the WKError API to include domain, errorCode, 
+        failingURL and localizedDescription.
+
+        * Shared/API/c/WKError.cpp:
+        (WKErrorCopyDomain):
+        (WKErrorGetErrorCode):
+        (WKErrorCopyFailingURL):
+        (WKErrorCopyLocalizedDescription):
+        * Shared/API/c/WKError.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebError.h:
+        (WebKit::WebError::create):
+        (WebKit::WebError::domain):
+        (WebKit::WebError::errorCode):
+        (WebKit::WebError::failingURL):
+        (WebKit::WebError::localizedDescription):
+        (WebKit::WebError::platformError):
+        (WebKit::WebError::WebError):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (qt_wk_didFailProvisionalLoadWithErrorForFrame):
+        (qt_wk_didFailLoadWithErrorForFrame):
+        * UIProcess/API/qt/ClientImpl.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::WebLoaderClient::didFailLoadWithErrorForFrame):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFailProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didFailLoadForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+
 2010-10-19  Christian Sejersen  <christian.webkit@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

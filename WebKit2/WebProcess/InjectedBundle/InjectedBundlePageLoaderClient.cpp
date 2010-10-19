@@ -28,6 +28,7 @@
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebError.h"
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -67,13 +68,13 @@ void InjectedBundlePageLoaderClient::didReceiveServerRedirectForProvisionalLoadF
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+void InjectedBundlePageLoaderClient::didFailProvisionalLoadWithErrorForFrame(WebPage* page, WebFrame* frame, const ResourceError& error, RefPtr<APIObject>& userData)
 {
     if (!m_client.didFailProvisionalLoadWithErrorForFrame)
         return;
 
     WKTypeRef userDataToPass = 0;
-    m_client.didFailProvisionalLoadWithErrorForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    m_client.didFailProvisionalLoadWithErrorForFrame(toAPI(page), toAPI(frame), toAPI(error), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 
@@ -107,13 +108,13 @@ void InjectedBundlePageLoaderClient::didFinishLoadForFrame(WebPage* page, WebFra
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+void InjectedBundlePageLoaderClient::didFailLoadWithErrorForFrame(WebPage* page, WebFrame* frame, const ResourceError& error, RefPtr<APIObject>& userData)
 {
     if (!m_client.didFailLoadWithErrorForFrame)
         return;
 
     WKTypeRef userDataToPass = 0;
-    m_client.didFailLoadWithErrorForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    m_client.didFailLoadWithErrorForFrame(toAPI(page), toAPI(frame), toAPI(error), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
 }
 

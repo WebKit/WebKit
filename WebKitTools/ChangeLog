@@ -1,3 +1,23 @@
+2010-10-19  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Need to include WKErrorRef in the WKPageDidFail... functions
+        https://bugs.webkit.org/show_bug.cgi?id=47871
+
+        Update tools for new parameter in failure callbacks.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (didFailProvisionalLoadWithErrorForFrame):
+        (didFailLoadWithErrorForFrame):
+        (-[BrowserWindowController updateProvisionalURLForFrame:]):
+        * TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp:
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::didFailProvisionalLoadWithErrorForFrame):
+        (WTR::InjectedBundlePage::didFailLoadWithErrorForFrame):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h:
+
 2010-10-19  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antti Koivisto.

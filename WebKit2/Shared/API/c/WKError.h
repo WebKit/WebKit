@@ -34,6 +34,11 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKErrorGetTypeID();
 
+WK_EXPORT WKStringRef WKErrorCopyDomain(WKErrorRef error);
+WK_EXPORT int WKErrorGetErrorCode(WKErrorRef error);
+WK_EXPORT WKURLRef WKErrorCopyFailingURL(WKErrorRef error);
+WK_EXPORT WKStringRef WKErrorCopyLocalizedDescription(WKErrorRef error);
+
 #ifdef __cplusplus
 }
 #endif

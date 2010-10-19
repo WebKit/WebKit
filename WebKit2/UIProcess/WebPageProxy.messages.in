@@ -58,8 +58,8 @@ messages -> WebPageProxy {
 
     # Frame load messages.
     DidCommitLoadForFrame(uint64_t frameID, WTF::String mimeType, WebKit::PlatformCertificateInfo certificateInfo, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidFailLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
-    DidFailProvisionalLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
+    DidFailLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
+    DidFailProvisionalLoadForFrame(uint64_t frameID, WebCore::ResourceError error, WebKit::InjectedBundleUserMessageEncoder userData)
     DidFinishDocumentLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
     DidFinishLoadForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
     DidFirstLayoutForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)

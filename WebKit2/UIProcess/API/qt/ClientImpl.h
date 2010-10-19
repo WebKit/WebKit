@@ -29,11 +29,11 @@ extern "C" {
 // loader client
 void qt_wk_didStartProvisionalLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);
 void qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);
-void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);
+void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef, WKErrorRef, WKTypeRef, const void* clientInfo);
 void qt_wk_didCommitLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);
 void qt_wk_didFinishDocumentLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);
 void qt_wk_didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);
-void qt_wk_didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);
+void qt_wk_didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef, WKErrorRef, WKTypeRef, const void* clientInfo);
 void qt_wk_didReceiveTitleForFrame(WKPageRef, WKStringRef title, WKFrameRef, WKTypeRef, const void* clientInfo);
 void qt_wk_didFirstLayoutForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);
 void qt_wk_didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* clientInfo);

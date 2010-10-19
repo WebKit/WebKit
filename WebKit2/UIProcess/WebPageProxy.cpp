@@ -641,7 +641,7 @@ void WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame(uint64_t f
     m_loaderClient.didReceiveServerRedirectForProvisionalLoadForFrame(this, frame, userData.get());
 }
 
-void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
+void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, const ResourceError& error, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
@@ -651,7 +651,7 @@ void WebPageProxy::didFailProvisionalLoadForFrame(uint64_t frameID, CoreIPC::Arg
     WebFrameProxy* frame = process()->webFrame(frameID);
 
     frame->didFailProvisionalLoad();
-    m_loaderClient.didFailProvisionalLoadWithErrorForFrame(this, frame, userData.get());
+    m_loaderClient.didFailProvisionalLoadWithErrorForFrame(this, frame, error, userData.get());
 }
 
 void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeType, const PlatformCertificateInfo& certificateInfo, CoreIPC::ArgumentDecoder* arguments)
@@ -694,7 +694,7 @@ void WebPageProxy::didFinishLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDeco
     m_loaderClient.didFinishLoadForFrame(this, frame, userData.get());
 }
 
-void WebPageProxy::didFailLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecoder* arguments)
+void WebPageProxy::didFailLoadForFrame(uint64_t frameID, const ResourceError& error, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, pageNamespace()->context());
@@ -704,7 +704,7 @@ void WebPageProxy::didFailLoadForFrame(uint64_t frameID, CoreIPC::ArgumentDecode
     WebFrameProxy* frame = process()->webFrame(frameID);
     frame->didFailLoad();
 
-    m_loaderClient.didFailLoadWithErrorForFrame(this, frame, userData.get());
+    m_loaderClient.didFailLoadWithErrorForFrame(this, frame, error, userData.get());
 }
 
 void WebPageProxy::didReceiveTitleForFrame(uint64_t frameID, const String& title, CoreIPC::ArgumentDecoder* arguments)

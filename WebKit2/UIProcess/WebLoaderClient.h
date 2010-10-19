@@ -29,6 +29,10 @@
 #include "WKPage.h"
 #include <wtf/Forward.h>
 
+namespace WebCore {
+class ResourceError;
+}
+
 namespace WebKit {
 
 class APIObject;
@@ -42,11 +46,11 @@ public:
 
     void didStartProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didReceiveServerRedirectForProvisionalLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didFailProvisionalLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, APIObject*);
     void didCommitLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didFinishDocumentLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didFinishLoadForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
-    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didFailLoadWithErrorForFrame(WebPageProxy*, WebFrameProxy*, const WebCore::ResourceError&, APIObject*);
     void didReceiveTitleForFrame(WebPageProxy*, const String&, WebFrameProxy*, APIObject*);
     void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
