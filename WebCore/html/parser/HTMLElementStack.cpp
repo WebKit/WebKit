@@ -113,6 +113,12 @@ inline bool isButtonScopeMarker(Element* element)
         || element->hasTagName(buttonTag);
 }
 
+inline bool isSelectScopeMarker(Element* element)
+{
+    return !element->hasTagName(optgroupTag)
+        && !element->hasTagName(optionTag);
+}
+
 }
 
 HTMLElementStack::ElementRecord::ElementRecord(PassRefPtr<Element> element, PassOwnPtr<ElementRecord> next)
@@ -484,6 +490,17 @@ bool HTMLElementStack::inButtonScope(const QualifiedName& tagName) const
 {
     // FIXME: Is localName() right for non-html elements?
     return inButtonScope(tagName.localName());
+}
+
+bool HTMLElementStack::inSelectScope(const AtomicString& targetTag) const
+{
+    return inScopeCommon<isSelectScopeMarker>(m_top.get(), targetTag);
+}
+
+bool HTMLElementStack::inSelectScope(const QualifiedName& tagName) const
+{
+    // FIXME: Is localName() right for non-html elements?
+    return inSelectScope(tagName.localName());
 }
 
 Element* HTMLElementStack::htmlElement() const
