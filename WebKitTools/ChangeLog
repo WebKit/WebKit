@@ -1,3 +1,14 @@
+2010-10-19  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [chromium] Use webkit's TestNetscapePlugIn in DRT mac
+        https://bugs.webkit.org/show_bug.cgi?id=47850
+
+        * DumpRenderTree/chromium/TestNetscapePlugIn/Info.plist: Added. Forked
+            because we're going to name our plugin WebKitTestNetscapePlugIn
+            temporarily until the chromium forked plugin goes away.
+
 2010-10-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -825,7 +825,6 @@
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
                 '<(chromium_src_dir)/third_party/mesa/mesa.gyp:osmesa',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:blob',
-                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:copy_npapi_layout_test_plugin',
                 '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
@@ -900,8 +899,11 @@
                     ], # actions
                 }],
                 ['OS=="mac"', {
-                    'dependencies': ['LayoutTestHelper', 'copy_mesa'],
-
+                    'dependencies': [
+                        'copy_mesa',
+                        'LayoutTestHelper',
+                        'TestNetscapePlugIn',
+                    ],
                     'mac_bundle_resources': [
                         '<(ahem_path)',
                         '../../WebKitTools/DumpRenderTree/fonts/WebKitWeightWatcher100.ttf',
@@ -917,14 +919,18 @@
                     ],
                     # Workaround for http://code.google.com/p/gyp/issues/detail?id=160
                     'copies': [{
-                        'destination': '<(PRODUCT_DIR)/DumpRenderTree.app/Contents/PlugIns/',
-                        'files': ['<(PRODUCT_DIR)/TestNetscapePlugIn.plugin/'],
+                        'destination': '<(PRODUCT_DIR)/plugins/',
+                        'files': ['<(PRODUCT_DIR)/WebKitTestNetscapePlugIn.plugin/'],
                     }],
                 },{ # OS!="mac"
                     'sources/': [
                         # .mm is already excluded by common.gypi
                         ['exclude', 'Mac\\.cpp$'],
-                    ]
+                    ],
+                    'dependencies': [
+                        # FIXME: Switch to webkit.org's plugin.
+                        '<(chromium_src_dir)/webkit/support/webkit_support.gyp:copy_npapi_layout_test_plugin',
+                    ],
                 }],
                 ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
                     'dependencies': [
@@ -1011,8 +1017,13 @@
                         ]
                     },
                     'xcode_settings': {
-                        'INFOPLIST_FILE': '../../WebKitTools/DumpRenderTree/TestNetscapePlugIn/mac/Info.plist',
-                    }
+                        'GCC_SYMBOLS_PRIVATE_EXTERN': 'NO',
+                        # This is a temporary fork of
+                        # DRT/TestNetscapePlugIn/mac/Info.plist.  Once we get
+                        # rid of our forked plugin in the chromium repo, we
+                        # can share the same Info.plist.
+                        'INFOPLIST_FILE': '../../WebKitTools/DumpRenderTree/chromium/TestNetscapePlugIn/Info.plist',
+                    },
                 }
             ],
         }],
