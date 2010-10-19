@@ -90,7 +90,7 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
         chromium_linux.ChromiumLinuxPort.__init__(self, **kwargs)
 
     def baseline_search_path(self):
-        return ([self._webkit_baseline_path('chromium-gpu-linux')] +
+        return (map(self._webkit_baseline_path, ['chromium-gpu-linux', 'chromium-gpu']) +
                 chromium_linux.ChromiumLinuxPort.baseline_search_path(self))
 
     def path_to_test_expectations_file(self):
@@ -108,7 +108,7 @@ class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
         chromium_mac.ChromiumMacPort.__init__(self, **kwargs)
 
     def baseline_search_path(self):
-        return ([self._webkit_baseline_path('chromium-gpu-mac')] +
+        return (map(self._webkit_baseline_path, ['chromium-gpu-mac', 'chromium-gpu']) +
                 chromium_mac.ChromiumMacPort.baseline_search_path(self))
 
     def path_to_test_expectations_file(self):
@@ -126,7 +126,7 @@ class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
         chromium_win.ChromiumWinPort.__init__(self, **kwargs)
 
     def baseline_search_path(self):
-        return ([self._webkit_baseline_path('chromium-gpu-win')] +
+        return (map(self._webkit_baseline_path, ['chromium-gpu-win', 'chromium-gpu']) +
                 chromium_win.ChromiumWinPort.baseline_search_path(self))
 
     def path_to_test_expectations_file(self):
