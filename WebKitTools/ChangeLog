@@ -1,5 +1,17 @@
 2010-10-19  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.
+
+        commit-queue gets stuck when release-patch returns 404
+        https://bugs.webkit.org/show_bug.cgi?id=47935
+
+        Turns out ClientForm gets upset if passed an int() instead of a string type.
+        Yay for untestable code.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+
+2010-10-19  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.  Will get Adam's commentary after his meeting
         for now this gets the commit-cluster back running.
 

@@ -112,7 +112,7 @@ class StatusServer:
         self._browser.open(release_patch_url)
         self._browser.select_form(name="release_patch")
         self._browser["queue_name"] = queue_name
-        self._browser["attachment_id"] = patch.id()
+        self._browser["attachment_id"] = unicode(patch.id())
         self._browser.submit()
 
     def release_work_item(self, queue_name, patch):
