@@ -208,7 +208,7 @@ public:
         GeolocationPermissionDomain
     };
 
-    class ViewportAttributes {
+    class QWEBKIT_EXPORT ViewportAttributes {
     public:
         ViewportAttributes();
         ViewportAttributes(const QWebPage::ViewportAttributes& other);

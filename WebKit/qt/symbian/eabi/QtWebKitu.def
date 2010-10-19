@@ -820,5 +820,11 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt25dumpVisitedLinksCallbacksEb @ 819 NONAME
 	_ZN23DumpRenderTreeSupportQt9plainTextERK8QVariant @ 820 NONAME
 	_ZNK8QWebPage25viewportAttributesForSizeERK5QSize @ 821 NONAME
-
+	_ZN8QWebPage18ViewportAttributesC1ERKS0_ @ 822 NONAME
+	_ZN8QWebPage18ViewportAttributesC1Ev @ 823 NONAME
+	_ZN8QWebPage18ViewportAttributesC2ERKS0_ @ 824 NONAME
+	_ZN8QWebPage18ViewportAttributesC2Ev @ 825 NONAME
+	_ZN8QWebPage18ViewportAttributesD1Ev @ 826 NONAME
+	_ZN8QWebPage18ViewportAttributesD2Ev @ 827 NONAME
+	_ZN8QWebPage18ViewportAttributesaSERKS0_ @ 828 NONAME
 
