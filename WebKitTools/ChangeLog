@@ -1,3 +1,12 @@
+2010-10-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Tony Chang.
+
+        Regression in run_webkit_tests_unittest from r70017
+        https://bugs.webkit.org/show_bug.cgi?id=47875
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-10-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

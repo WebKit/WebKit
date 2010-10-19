@@ -264,7 +264,7 @@ class MainTest(unittest.TestCase):
 
 def _mocked_open(original_open, file_list):
     def _wrapper(name, mode, encoding):
-        if name.find("-expected.") != -1 and mode == "w":
+        if name.find("-expected.") != -1 and mode.find("w") != -1:
             # we don't want to actually write new baselines, so stub these out
             name.replace('\\', '/')
             file_list.append(name)
