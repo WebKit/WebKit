@@ -27,6 +27,13 @@ win32-msvc*|symbian {
     DOUBLE_ESCAPED_QUOTE = "\\\'"
 }
 
+linux*:contains(QMAKE_HOST.arch, arm): {
+    PYTHON = python2.6
+} else {
+    PYTHON = python
+}
+
+
 DIRS = \
     $$OUTPUT_DIR/include/JavaScriptCore \
     $$OUTPUT_DIR/include/WebCore \

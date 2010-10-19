@@ -1,3 +1,13 @@
+2010-10-19  Christian Sejersen  <christian.webkit@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Scratchbox has an old version of python as the default one, so
+        force it to use version 2.6.
+        https://bugs.webkit.org/show_bug.cgi?id=47895
+
+        * DerivedSources.pro:
+
 2010-10-19  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antti Koivisto.
