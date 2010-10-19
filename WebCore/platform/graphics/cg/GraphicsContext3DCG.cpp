@@ -73,6 +73,26 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (bitsPerPixel % bitsPerComponent)
         return false;
     size_t componentsPerPixel = bitsPerPixel / bitsPerComponent;
+    bool srcByteOrder16Big = false;
+    if (bitsPerComponent == 16) {
+        CGBitmapInfo bitInfo = CGImageGetBitmapInfo(cgImage);
+        switch (bitInfo & kCGBitmapByteOrderMask) {
+        case kCGBitmapByteOrder16Big:
+            srcByteOrder16Big = true;
+            break;
+        case kCGBitmapByteOrder16Little:
+            srcByteOrder16Big = false;
+            break;
+        case kCGBitmapByteOrderDefault:
+            // This is a bug in earlier version of cg where the default endian
+            // is little whereas the decoded 16-bit png image data is actually
+            // Big. Later version (10.6.4) no longer returns ByteOrderDefault.
+            srcByteOrder16Big = true;
+            break;
+        default:
+            return false;
+        }
+    }
     SourceDataFormat srcDataFormat = kSourceFormatRGBA8;
     AlphaOp neededAlphaOp = kAlphaDoNothing;
     switch (CGImageGetAlphaInfo(cgImage)) {
@@ -88,13 +108,13 @@ bool GraphicsContext3D::getImageData(Image* image,
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatAR8;
             else
-                srcDataFormat = kSourceFormatAR16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatAR16Big : kSourceFormatAR16Little;
             break;
         case 4:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatARGB8;
             else
-                srcDataFormat = kSourceFormatARGB16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatARGB16Big : kSourceFormatARGB16Little;
             break;
         default:
             return false;
@@ -109,19 +129,19 @@ bool GraphicsContext3D::getImageData(Image* image,
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatA8;
             else
-                srcDataFormat = kSourceFormatA16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatA16Big : kSourceFormatA16Little;
             break;
         case 2:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatAR8;
             else
-                srcDataFormat = kSourceFormatAR16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatAR16Big : kSourceFormatAR16Little;
             break;
         case 4:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatARGB8;
             else
-                srcDataFormat = kSourceFormatARGB16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatARGB16Big : kSourceFormatARGB16Little;
             break;
         default:
             return false;
@@ -134,13 +154,13 @@ bool GraphicsContext3D::getImageData(Image* image,
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatAR8;
             else
-                srcDataFormat = kSourceFormatAR16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatAR16Big : kSourceFormatAR16Little;
             break;
         case 4:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatARGB8;
             else
-                srcDataFormat = kSourceFormatARGB16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatARGB16Big : kSourceFormatARGB16Little;
             break;
         default:
             return false;
@@ -157,13 +177,13 @@ bool GraphicsContext3D::getImageData(Image* image,
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatRA8;
             else
-                srcDataFormat = kSourceFormatRA16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatRA16Big : kSourceFormatRA16Little;
             break;
         case 4:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatRGBA8;
             else
-                srcDataFormat = kSourceFormatRGBA16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatRGBA16Big : kSourceFormatRGBA16Little;
             break;
         default:
             return false;
@@ -177,19 +197,19 @@ bool GraphicsContext3D::getImageData(Image* image,
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatA8;
             else
-                srcDataFormat = kSourceFormatA16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatA16Big :  kSourceFormatA16Little;
             break;
         case 2:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatRA8;
             else
-                srcDataFormat = kSourceFormatRA16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatRA16Big :  kSourceFormatRA16Little;
             break;
         case 4:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatRGBA8;
             else
-                srcDataFormat = kSourceFormatRGBA16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatRGBA16Big : kSourceFormatRGBA16Little;
             break;
         default:
             return false;
@@ -201,13 +221,13 @@ bool GraphicsContext3D::getImageData(Image* image,
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatRA8;
             else
-                srcDataFormat = kSourceFormatRA16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatRA16Big : kSourceFormatRA16Little;
             break;
         case 4:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatRGBA8;
             else
-                srcDataFormat = kSourceFormatRGBA16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatRGBA16Big :  kSourceFormatRGBA16Little;
             break;
         default:
             return false;
@@ -219,13 +239,13 @@ bool GraphicsContext3D::getImageData(Image* image,
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatR8;
             else
-                srcDataFormat = kSourceFormatR16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatR16Big : kSourceFormatR16Little;
             break;
         case 3:
             if (bitsPerComponent == 8)
                 srcDataFormat = kSourceFormatRGB8;
             else
-                srcDataFormat = kSourceFormatRGB16;
+                srcDataFormat = srcByteOrder16Big ? kSourceFormatRGB16Big : kSourceFormatRGB16Little;
             break;
         default:
             return false;
