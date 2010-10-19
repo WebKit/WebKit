@@ -1,5 +1,17 @@
 2010-10-19  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed, just fixing test-webkitpy.  I'm really on a roll today.
+
+        commit-queue gets stuck when release-patch returns 404
+        https://bugs.webkit.org/show_bug.cgi?id=47935
+
+        Fix test-webkitpy and unittest NetworkTransaction.
+
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        * Scripts/webkitpy/common/net/networktransaction_unittest.py:
+
+2010-10-19  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.
 
         commit-queue gets stuck when release-patch returns 404

@@ -56,21 +56,28 @@ class NetworkTransactionTest(LoggingTestCase):
         self.assertTrue(did_throw_exception)
         self.assertTrue(did_process_exception)
 
-    def _raise_http_error(self):
+    def _raise_500_error(self):
         self._run_count += 1
         if self._run_count < 3:
-            raise HTTPError("http://example.com/", 500, "inteneral server error", None, None)
+            raise HTTPError("http://example.com/", 500, "internal server error", None, None)
         return 42
+
+    def _raise_404_error(self):
+        raise HTTPError("http://foo.com/", 404, "not found", None, None)
 
     def test_retry(self):
         self._run_count = 0
         transaction = NetworkTransaction(initial_backoff_seconds=0)
-        self.assertEqual(transaction.run(lambda: self._raise_http_error()), 42)
+        self.assertEqual(transaction.run(lambda: self._raise_500_error()), 42)
         self.assertEqual(self._run_count, 3)
         self.assertLog(['WARNING: Received HTTP status 500 from server.  '
                         'Retrying in 0 seconds...\n',
                         'WARNING: Received HTTP status 500 from server.  '
                         'Retrying in 0.0 seconds...\n'])
+
+    def test_convert_404_to_None(self):
+        transaction = NetworkTransaction(convert_404_to_None=True)
+        self.assertEqual(transaction.run(lambda: self._raise_404_error()), None)
 
     def test_timeout(self):
         self._run_count = 0
@@ -78,7 +85,7 @@ class NetworkTransactionTest(LoggingTestCase):
         did_process_exception = False
         did_throw_exception = True
         try:
-            transaction.run(lambda: self._raise_http_error())
+            transaction.run(lambda: self._raise_500_error())
             did_throw_exception = False
         except NetworkTimeout, e:
             did_process_exception = True

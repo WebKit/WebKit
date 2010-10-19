@@ -45,6 +45,7 @@ class NetworkTransaction(object):
         self._initial_backoff_seconds = initial_backoff_seconds
         self._grown_factor = grown_factor
         self._timeout_seconds = timeout_seconds
+        self._convert_404_to_None = convert_404_to_None
 
     def run(self, request):
         self._total_sleep = 0
@@ -54,7 +55,7 @@ class NetworkTransaction(object):
                 return request()
             # FIXME: We should catch urllib2.HTTPError here too.
             except mechanize.HTTPError, e:
-                if convert_404_to_None and e.code == 404:
+                if self._convert_404_to_None and e.code == 404:
                     return None
                 self._check_for_timeout()
                 _log.warn("Received HTTP status %s from server.  Retrying in "
