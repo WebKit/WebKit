@@ -27,15 +27,83 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """generic routines to convert platform-specific paths to URIs."""
+from __future__ import with_statement
+
+import atexit
+import subprocess
 import sys
+import threading
 import urllib
 
 
-def abspath_to_uri(path, executive, platform=None):
+def abspath_to_uri(path, platform=None):
     """Converts a platform-specific absolute path to a file: URL."""
     if platform is None:
         platform = sys.platform
-    return "file:" + _escape(_convert_path(path, executive, platform))
+    return "file:" + _escape(_convert_path(path, platform))
+
+
+def cygpath(path):
+    """Converts a cygwin path to Windows path."""
+    return _CygPath.convert_using_singleton(path)
+
+
+# Note that this object is not threadsafe and must only be called
+# from multiple threads under protection of a lock (as is done in cygpath())
+class _CygPath(object):
+    """Manages a long-running 'cygpath' process for file conversion."""
+    _lock = None
+    _singleton = None
+
+    @staticmethod
+    def stop_cygpath_subprocess():
+        if not _CygPath._lock:
+            return
+
+        with _CygPath._lock:
+            if _CygPath._singleton:
+                _CygPath._singleton.stop()
+
+    @staticmethod
+    def convert_using_singleton(path):
+        if not _CygPath._lock:
+            _CygPath._lock = threading.Lock()
+
+        with _CygPath._lock:
+            if not _CygPath._singleton:
+                _CygPath._singleton = _CygPath()
+                # Make sure the cygpath subprocess always gets shutdown cleanly.
+                atexit.register(_CygPath.stop_cygpath_subprocess)
+
+            return _CygPath._singleton.convert(path)
+
+    def __init__(self):
+        self._child_process = None
+
+    def start(self):
+        assert(self._child_process is None)
+        args = ['cygpath', '-f', '-', '-wa']
+        self._child_process = subprocess.Popen(args,
+                                               stdin=subprocess.PIPE,
+                                               stdout=subprocess.PIPE)
+
+    def is_running(self):
+        if not self._child_process:
+            return False
+        return self._child_process.returncode is None
+
+    def stop(self):
+        if self._child_process:
+            self._child_process.stdin.close()
+            self._child_process.wait()
+        self._child_process = None
+
+    def convert(self, path):
+        if not self.is_running():
+            self.start()
+        self._child_process.stdin.write("%s\r\n" % path)
+        self._child_process.stdin.flush()
+        return self._child_process.stdout.readline().rstrip()
 
 
 def _escape(path):
@@ -47,24 +115,18 @@ def _escape(path):
     return urllib.quote(path, safe='/+:')
 
 
-def _convert_path(path, executive, platform):
+def _convert_path(path, platform):
     """Handles any os-specific path separators, mappings, etc."""
     if platform == 'win32':
         return _winpath_to_uri(path)
     if platform == 'cygwin':
-        return _winpath_to_uri(_cygpath(path, executive))
+        return _winpath_to_uri(cygpath(path))
     return _unixypath_to_uri(path)
 
 
 def _winpath_to_uri(path):
     """Converts a window absolute path to a file: URL."""
     return "///" + path.replace("\\", "/")
-
-
-def _cygpath(path, executive):
-    """Converts a cygwin path to Windows path."""
-    return executive.run_command(['cygpath', '-wa', path],
-                                 decode_output=False).rstrip()
 
 
 def _unixypath_to_uri(path):

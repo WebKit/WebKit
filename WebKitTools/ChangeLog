@@ -1,3 +1,30 @@
+2010-10-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Re-submit a revised version of r69638 - enabling new-run-webkit-tests
+        under cygwin. The initial version had a bug in base:uri_to_test_name
+        that was causing tests to fail. This version corrects that bug, but
+        also makes the code safer by calling cygpath more reliably, and
+        leaving a long-running cygpath process open.
+
+        This patch also corrects a couple of minor bugs in http_lock_unittest,
+        chromium_unittest, and dedpulicate_tests_unittest that showed up
+        while testing this.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47220
+
+        * Scripts/webkitpy/common/system/path.py:
+        * Scripts/webkitpy/common/system/path_unittest.py:
+        * Scripts/webkitpy/layout_tests/deduplicate_tests_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/http_lock_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-10-18  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

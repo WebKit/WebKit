@@ -43,6 +43,10 @@ import tempfile
 import time
 import webbrowser
 
+from webkitpy.common.system.executive import Executive
+from webkitpy.common.system.path import cygpath
+from webkitpy.layout_tests.layout_package import test_expectations
+
 import base
 import http_server
 
@@ -344,6 +348,13 @@ class ChromiumPort(base.Port):
             platform = self.name()
         return self.path_from_webkit_base('LayoutTests', 'platform', platform)
 
+    def _convert_path(self, path):
+        """Handles filename conversion for subprocess command line args."""
+        # See note above in diff_image() for why we need this.
+        if sys.platform == 'cygwin':
+            return cygpath(path)
+        return path
+
     def _path_to_image_diff(self):
         binary_name = 'image_diff'
         if self._options.use_drt:
@@ -363,7 +374,9 @@ class ChromiumDriver(base.Driver):
     def _driver_args(self):
         driver_args = []
         if self._image_path:
-            driver_args.append("--pixel-tests=" + self._image_path)
+            # See note above in diff_image() for why we need _convert_path().
+            driver_args.append("--pixel-tests=" +
+                               self._port._convert_path(self._image_path))
 
         if self._options.use_drt:
             driver_args.append('--test-shell')

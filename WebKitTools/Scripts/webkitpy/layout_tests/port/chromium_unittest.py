@@ -176,7 +176,9 @@ DEFER LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
                             return_exit_code=False,
                             return_stderr=True,
                             decode_output=False):
-                return self._result
+                if return_exit_code:
+                    return self._result
+                return ''
 
         options = EmptyOptions()
         port = ChromiumPortTest.TestLinuxPort(options)

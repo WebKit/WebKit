@@ -27,39 +27,34 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+import sys
 
 import path
 
-
 class AbspathTest(unittest.TestCase):
-    def run_command(self, args, **kwargs):
-        self.assertEqual(args[0], 'cygpath')
-        return self.cygpath_result
-
     def assertMatch(self, test_path, expected_uri,
-                    platform, cygpath_result=None):
-        if platform == 'cygwin':
-            self.cygpath_result = cygpath_result
-        self.assertEqual(path.abspath_to_uri(test_path, executive=self,
-                                             platform=platform),
+                    platform=None):
+        if platform == 'cygwin' and sys.platform != 'cygwin':
+            return
+        self.assertEqual(path.abspath_to_uri(test_path, platform=platform),
                          expected_uri)
 
     def test_abspath_to_uri_cygwin(self):
+        if sys.platform != 'cygwin':
+            return
+
         self.assertMatch('/cygdrive/c/foo/bar.html',
-                         'file:///c:/foo/bar.html',
-                         platform='cygwin',
-                         cygpath_result='c:\\foo\\bar.html\n')
+                         'file:///C:/foo/bar.html',
+                         platform='cygwin')
         self.assertEqual(path.abspath_to_uri('/cygdrive/c/foo/bar.html',
-                                             executive=self,
                                              platform='cygwin'),
-                         'file:///c:/foo/bar.html')
+                         'file:///C:/foo/bar.html')
 
     def test_abspath_to_uri_darwin(self):
         self.assertMatch('/foo/bar.html',
                          'file:///foo/bar.html',
                          platform='darwin')
         self.assertEqual(path.abspath_to_uri("/foo/bar.html",
-                                             executive=self,
                                              platform='darwin'),
                          "file:///foo/bar.html")
 
@@ -68,7 +63,6 @@ class AbspathTest(unittest.TestCase):
                          'file:///foo/bar.html',
                          platform='darwin')
         self.assertEqual(path.abspath_to_uri("/foo/bar.html",
-                                             executive=self,
                                              platform='linux2'),
                          "file:///foo/bar.html")
 
@@ -77,7 +71,6 @@ class AbspathTest(unittest.TestCase):
                          'file:///c:/foo/bar.html',
                          platform='win32')
         self.assertEqual(path.abspath_to_uri("c:\\foo\\bar.html",
-                                             executive=self,
                                              platform='win32'),
                          "file:///c:/foo/bar.html")
 
@@ -91,10 +84,22 @@ class AbspathTest(unittest.TestCase):
 
         # Note that you can't have '?' in a filename on windows.
         self.assertMatch('/cygdrive/c/foo/bar + baz%.html',
-                         'file:///c:/foo/bar%20+%20baz%25.html',
-                         platform='cygwin',
-                         cygpath_result='c:\\foo\\bar + baz%.html\n')
+                         'file:///C:/foo/bar%20+%20baz%25.html',
+                         platform='cygwin')
 
+    def test_stop_cygpath_subprocess(self):
+        if sys.platform != 'cygwin':
+            return
+
+        # Call cygpath to ensure the subprocess is running.
+        path.cygpath("/cygdrive/c/foo.txt")
+        self.assertTrue(path._CygPath._singleton.is_running())
+
+        # Stop it.
+        path._CygPath.stop_cygpath_subprocess()
+
+        # Ensure that it is stopped.
+        self.assertFalse(path._CygPath._singleton.is_running())
 
 if __name__ == '__main__':
     unittest.main()

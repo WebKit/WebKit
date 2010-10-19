@@ -43,7 +43,7 @@ class HttpLockTest(unittest.TestCase):
 
     def clean_all_lockfile(self):
         if os.path.exists(self.guard_lock_file):
-            os.unlink(guard_lock_file)
+            os.unlink(self.guard_lock_file)
         lock_list = glob.glob(self.lock_file_path_prefix + '*')
         for file_name in lock_list:
             os.unlink(file_name)

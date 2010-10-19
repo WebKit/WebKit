@@ -33,6 +33,7 @@ import sys
 import tempfile
 import unittest
 
+from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.thirdparty.mock import Mock
 
@@ -244,8 +245,7 @@ class PortTest(unittest.TestCase):
             path = test_file
 
         self.assertEqual(port.filename_to_uri(test_file),
-                         prefix + path)
-
+                         abspath_to_uri(test_file))
 
 
 class VirtualTest(unittest.TestCase):

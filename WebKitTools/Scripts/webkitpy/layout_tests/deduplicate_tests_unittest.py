@@ -205,3 +205,6 @@ class ListDuplicatesTest(unittest.TestCase):
         for expected, inputs in test_cases:
             self.assertEquals(expected,
                               deduplicate_tests.get_relative_test_path(*inputs))
+
+if __name__ == '__main__':
+    unittest.main()
