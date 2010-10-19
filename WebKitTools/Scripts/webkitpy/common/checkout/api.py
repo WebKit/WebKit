@@ -83,13 +83,19 @@ class Checkout(object):
     def bug_id_for_revision(self, revision):
         return self.commit_info_for_revision(revision).bug_id()
 
-    def modified_changelogs(self, git_commit):
+    def _modified_files_matching_predicate(self, git_commit, predicate):
         # SCM returns paths relative to scm.checkout_root
         # Callers (especially those using the ChangeLog class) may
         # expect absolute paths, so this method returns absolute paths.
         changed_files = self._scm.changed_files(git_commit)
         absolute_paths = [os.path.join(self._scm.checkout_root, path) for path in changed_files]
-        return [path for path in absolute_paths if self._is_path_to_changelog(path)]
+        return [path for path in absolute_paths if predicate(path)]
+
+    def modified_changelogs(self, git_commit):
+        return self._modified_files_matching_predicate(git_commit, self._is_path_to_changelog)
+
+    def modified_non_changelogs(self, git_commit):
+        return self._modified_files_matching_predicate(git_commit, lambda path: not self._is_path_to_changelog(path))
 
     def commit_message_for_this_commit(self, git_commit):
         changelog_paths = self.modified_changelogs(git_commit)
@@ -108,6 +114,14 @@ class Checkout(object):
 
         # FIXME: We should sort and label the ChangeLog messages like commit-log-editor does.
         return CommitMessage("".join(changelog_messages).splitlines())
+
+    def suggested_reviewers(self, git_commit):
+        changed_files = self.modified_non_changelogs(git_commit)
+        revisions = set(sum(map(self._scm.revisions_changing_file, changed_files), []))
+        commit_infos = set(map(self.commit_info_for_revision, revisions))
+        reviewers = [commit_info.reviewer() for commit_info in commit_infos if commit_info.reviewer()]
+        reviewers.extend([commit_info.author() for commit_info in commit_infos if commit_info.author() and commit_info.author().can_review])
+        return sorted(set(reviewers))
 
     def bug_id_for_this_commit(self, git_commit):
         try:

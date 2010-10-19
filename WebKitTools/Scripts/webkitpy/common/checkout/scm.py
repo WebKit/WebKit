@@ -668,7 +668,7 @@ class Git(SCM):
 
     def revisions_changing_file(self, path, limit=5):
         commit_ids = self.run(["git", "log", "--pretty=format:%H", "-%s" % limit, path]).splitlines()
-        return map(self.svn_revision_from_git_commit, commit_ids)
+        return filter(lambda revision: revision, map(self.svn_revision_from_git_commit, commit_ids))
 
     def conflicted_files(self):
         # We do not need to pass decode_output for this diff command
@@ -706,7 +706,10 @@ class Git(SCM):
         return git_commit
 
     def svn_revision_from_git_commit(self, commit_id):
-        return int(self.run(['git', 'svn', 'find-rev', commit_id]).rstrip())
+        try:
+            return int(self.run(['git', 'svn', 'find-rev', commit_id]).rstrip())
+        except ValueError, e:
+            return None
 
     def contents_at_revision(self, path, revision):
         """Returns a byte array (str()) containing the contents

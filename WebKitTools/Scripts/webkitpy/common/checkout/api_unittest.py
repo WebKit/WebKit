@@ -173,3 +173,24 @@ class CheckoutTest(unittest.TestCase):
         checkout = Checkout(scm)
         expected_changlogs = ["/foo/bar/ChangeLog", "/foo/bar/relative/path/ChangeLog"]
         self.assertEqual(checkout.modified_changelogs(git_commit=None), expected_changlogs)
+
+    def test_suggested_reviewers(self):
+        def mock_changelog_entries_for_revision(revision):
+            if revision % 2 == 0:
+                return [ChangeLogEntry(_changelog1entry1)]
+            return [ChangeLogEntry(_changelog1entry2)]
+
+        def mock_revisions_changing_file(path, limit=5):
+            if path.endswith("ChangeLog"):
+                return [3]
+            return [4, 8]
+
+        scm = Mock()
+        scm.checkout_root = "/foo/bar"
+        scm.changed_files = lambda git_commit: ["file1", "file2", "relative/path/ChangeLog"]
+        scm.revisions_changing_file = mock_revisions_changing_file
+        checkout = Checkout(scm)
+        checkout.changelog_entries_for_revision = mock_changelog_entries_for_revision
+        reviewers = checkout.suggested_reviewers(git_commit=None)
+        reviewer_names = [reviewer.full_name for reviewer in reviewers]
+        self.assertEqual(reviewer_names, [u'Tor Arne Vestb\xf8'])

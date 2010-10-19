@@ -1,3 +1,24 @@
+2010-10-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement webkit-patch suggest-reviewers
+        https://bugs.webkit.org/show_bug.cgi?id=47866
+
+        * Scripts/webkitpy/common/checkout/api.py:
+            - The main logic.  We look at the last five changes to each
+              modified (non-ChangeLog) file and collect up the reviewers of
+              those changes as well as the authors of those changes who are
+              reviewers.
+        * Scripts/webkitpy/common/checkout/api_unittest.py:
+            - Test the logic with some fun mocks.
+        * Scripts/webkitpy/common/checkout/scm.py:
+            - Fix a bug when you have local git commits.
+        * Scripts/webkitpy/common/checkout/scm_unittest.py:
+            - Test that the bug is fixed.
+        * Scripts/webkitpy/tool/commands/queries.py:
+            - Add the query.
+
 2010-10-18  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Eric Seidel.

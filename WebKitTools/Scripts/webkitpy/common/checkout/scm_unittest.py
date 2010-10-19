@@ -971,6 +971,10 @@ class GitSVNTest(SCMTest):
         self.scm.commit_locally_with_message("another test commit")
         self._two_local_commits()
 
+    def test_revisions_changing_files_with_local_commit(self):
+        self._one_local_commit()
+        self.assertEquals(self.scm.revisions_changing_file('test_file_commit1'), [])
+
     def test_commit_with_message(self):
         self._one_local_commit_plus_working_copy_changes()
         scm = detect_scm_system(self.git_checkout_path)

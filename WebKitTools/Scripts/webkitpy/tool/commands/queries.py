@@ -30,6 +30,8 @@
 
 from optparse import make_option
 
+import webkitpy.tool.steps as steps
+
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.net.buildbot import BuildBot
@@ -39,6 +41,21 @@ from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.layout_tests import port
+
+
+class SuggestReviewers(AbstractDeclarativeCommand):
+    name = "suggest-reviewers"
+    help_text = "Suggest reviewers for a patch based on recent changes to the modified files."
+
+    def __init__(self):
+        options = [
+            steps.Options.git_commit,
+        ]
+        AbstractDeclarativeCommand.__init__(self, options=options)
+
+    def execute(self, options, args, tool):
+        reviewers = tool.checkout().suggested_reviewers(options.git_commit)
+        print "\n".join([reviewer.full_name for reviewer in reviewers])
 
 
 class BugsToCommit(AbstractDeclarativeCommand):
