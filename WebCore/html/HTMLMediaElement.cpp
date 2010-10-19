@@ -1606,7 +1606,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
 
     KURL mediaURL;
     Node* node;
-    HTMLSourceElement* source;
+    HTMLSourceElement* source = 0;
     bool lookingForStartNode = m_nextChildNodeToConsider;
     bool canUse = false;
 
