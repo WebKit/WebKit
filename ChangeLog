@@ -1,3 +1,12 @@
+2010-10-19  Prof. MAAD  <himself@prof-maad.org>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Correct erroneous documentation for webkit_web_navigation_action_get_button()
+        https://bugs.webkit.org/show_bug.cgi?id=46723
+
+        * WebKit/gtk/webkit/webkitwebnavigationaction.cpp:
+
 2010-10-19  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
