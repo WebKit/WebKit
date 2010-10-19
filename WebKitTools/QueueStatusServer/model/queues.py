@@ -40,6 +40,7 @@ class Queue(object):
         "commit-queue",
         "style-queue",
         "chromium-ews",
+        "cr-mac-ews",
         "qt-ews",
         "gtk-ews",
         "mac-ews",
