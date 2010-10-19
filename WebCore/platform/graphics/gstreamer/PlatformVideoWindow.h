@@ -25,6 +25,8 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
+typedef struct _GstMessage GstMessage;
+
 namespace WebCore {
 
 class PlatformVideoWindow : public RefCounted<PlatformVideoWindow> {
@@ -34,6 +36,8 @@ class PlatformVideoWindow : public RefCounted<PlatformVideoWindow> {
         PlatformVideoWindow();
         ~PlatformVideoWindow();
 
+
+        void prepareForOverlay(GstMessage*);
         PlatformWidget window() const { return m_window; }
         unsigned long videoWindowId() const { return m_videoWindowId; }
 

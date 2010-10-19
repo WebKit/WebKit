@@ -35,4 +35,8 @@ PlatformVideoWindow::~PlatformVideoWindow()
     notImplemented();
 }
 
+void PlatformVideoWindow::prepareForOverlay(GstMessage*)
+{
+}
+
 #endif // USE(GSTREAMER)
