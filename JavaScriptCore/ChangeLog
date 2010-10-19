@@ -1,3 +1,13 @@
+2010-10-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        BytecodeGenerator::m_lastOpcodePosition must be initialized in all constructors
+        https://bugs.webkit.org/show_bug.cgi?id=47920
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator): Add missing member initialization.
+
 2010-10-19  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by David Kilzer.
