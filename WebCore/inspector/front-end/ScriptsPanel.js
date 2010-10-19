@@ -435,13 +435,7 @@ WebInspector.ScriptsPanel.prototype = {
         delete this.currentQuery;
         this.searchCanceled();
 
-        if (!this._debuggerEnabled) {
-            this._paused = false;
-            this._waitingToPause = false;
-            this._stepping = false;
-        }
-
-        this._clearInterface();
+        this.debuggerResumed();
 
         this._backForwardList = [];
         this._currentBackForwardIndex = -1;
