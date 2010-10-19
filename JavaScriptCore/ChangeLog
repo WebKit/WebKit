@@ -1,3 +1,16 @@
+2010-10-19  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by David Kilzer.
+
+        RVCT fails to compile DateMath.cpp due to overloaded function pow
+        https://bugs.webkit.org/show_bug.cgi?id=47844
+
+        Choose std::pow(double, double) among multiple overloaded pow functions
+        to fix build for RVCT.
+
+        * wtf/DateMath.cpp:
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+
 2010-10-19  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by David Kilzer.

@@ -639,7 +639,7 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
             return NaN;
         
         long numFracDigits = postParsePosition - currentPosition;
-        seconds += fracSeconds * pow(10, -numFracDigits);
+        seconds += fracSeconds * pow(10.0, static_cast<double>(-numFracDigits));
     }
     currentPosition = postParsePosition;
     
