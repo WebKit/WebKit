@@ -1,11 +1,13 @@
-<script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
-</script>
-<p>This tests that RemoveFormat not only removes style from the selected part of the DOM, but that it also applies the document default style to the selection if that's necessary in order to leave the selected text unstyled.</p>
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/dump-as-markup.js"></script>
 <div id="div" contenteditable="true"><b>This</b> text should look the same as the text above.</div>
-
 <script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpEditingCallbacks();
+
 var sel = window.getSelection();
 var div = document.getElementById("div");
 
@@ -13,4 +15,10 @@ sel.setPosition(div, 0);
 
 sel.modify("extend", "forward", "word");
 document.execCommand("RemoveFormat");
+
+Markup.description("This tests that RemoveFormat not only removes style from the selected part of the DOM, but that it also applies the document default style to the selection if that's necessary in order to leave the selected text unstyled.");
+Markup.dump(div);
+
 </script>
+</body>
+</html>
