@@ -1,4 +1,18 @@
 ================
+WebKitGTK+ 1.3.5
+================
+
+What's new in WebKitGTK+ 1.3.5?
+
+  - Add a HTTP cache implementation. This will be eventually
+    integrated in libsoup itself, but for now it can be accessed from
+    WebKit through the WebKitSoupCache APIs.
+  - Updated to work with GTK+ 3.x 2.91.1.
+  - Add frame-flattening support, used by some mobile browser sto
+    merge all frames in a page into a continuous view.
+  - Many other bugfixes.
+
+================
 WebKitGTK+ 1.3.4
 ================
 

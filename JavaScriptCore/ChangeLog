@@ -1,3 +1,9 @@
+2010-10-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: add missing file.
+
 2010-10-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.

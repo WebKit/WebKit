@@ -573,6 +573,30 @@ WebKitWebResourceClass
 </SECTION>
 
 <SECTION>
+<FILE>soup-cache</FILE>
+<TITLE>WebKitSoupCache</TITLE>
+webkit_soup_cache_new
+webkit_soup_cache_flush
+webkit_soup_cache_clear
+webkit_soup_cache_dump
+webkit_soup_cache_load
+webkit_soup_cache_set_max_size
+webkit_soup_cache_get_max_size
+<SUBSECTION Standard>
+WEBKIT_IS_SOUP_CACHE
+WEBKIT_IS_SOUP_CACHE_CLASS
+WEBKIT_TYPE_SOUP_CACHE
+WEBKIT_SOUP_CACHE
+WEBKIT_SOUP_CACHE_CLASS
+WEBKIT_SOUP_CACHE_GET_CLASS
+<SUBSECTION Private>
+webkit_soup_cache_get_type
+WebKitSoupCachePrivate
+WebKitSoupCache
+WebKitSoupCacheClass
+</SECTION>
+
+<SECTION>
 <FILE>webkitprivate</FILE>
 getViewFromFrame
 kit

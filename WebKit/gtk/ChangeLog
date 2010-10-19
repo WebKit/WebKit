@@ -1,3 +1,10 @@
+2010-10-18  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        * NEWS: update for 1.3.5 release.
+        * docs/webkitgtk-sections.txt: add new APIs.
+
 2010-10-18  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Simon Fraser.

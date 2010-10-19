@@ -840,7 +840,6 @@ webcore_sources += \
 	WebCore/bindings/js/ScriptSourceProvider.h \
 	WebCore/bindings/js/ScriptState.cpp \
 	WebCore/bindings/js/ScriptState.h \
-	WebCore/bindings/js/ScriptString.h \
 	WebCore/bindings/js/ScriptValue.cpp \
 	WebCore/bindings/js/ScriptValue.h \
 	WebCore/bindings/js/ScriptWrappable.h \
@@ -3610,6 +3609,7 @@ webcoregtk_sources += \
 	WebCore/platform/network/soup/cache/soup-requester.h \
 	WebCore/platform/network/soup/cache/webkit/soup-cache.c \
 	WebCore/platform/network/soup/cache/webkit/soup-cache.h \
+	WebCore/platform/network/soup/cache/webkit/soup-cache-private.h \
 	WebCore/plugins/gtk/PluginDataGtk.cpp \
 	WebCore/plugins/gtk/PluginPackageGtk.cpp \
 	WebCore/plugins/gtk/PluginViewGtk.cpp

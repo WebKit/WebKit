@@ -468,6 +468,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/NonCopyingSort.h \
 	JavaScriptCore/wtf/Noncopyable.h \
 	JavaScriptCore/wtf/NotFound.h \
+	JavaScriptCore/wtf/NullPtr.h \
 	JavaScriptCore/wtf/OwnArrayPtr.h \
 	JavaScriptCore/wtf/OwnFastMallocPtr.h \
 	JavaScriptCore/wtf/OwnArrayPtrCommon.h \
