@@ -52,7 +52,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     def check_build(self, needs_http):
         result = chromium.ChromiumPort.check_build(self, needs_http)
         if needs_http:
-            if self._options.use_apache:
+            if self.get_option('use_apache'):
                 result = self._check_apache_install() and result
             else:
                 result = self._check_lighttpd_install() and result
@@ -81,7 +81,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         base = self.path_from_chromium_base()
         if os.path.exists(os.path.join(base, 'sconsbuild')):
             return os.path.join(base, 'sconsbuild', *comps)
-        if os.path.exists(os.path.join(base, 'out', *comps)) or not self._options.use_drt:
+        if os.path.exists(os.path.join(base, 'out', *comps)) or not self.get_option('use_drt'):
             return os.path.join(base, 'out', *comps)
         base = self.path_from_webkit_base()
         if os.path.exists(os.path.join(base, 'sconsbuild')):
@@ -147,9 +147,9 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
 
     def _path_to_driver(self, configuration=None):
         if not configuration:
-            configuration = self._options.configuration
+            configuration = self.get_option('configuration')
         binary_name = 'test_shell'
-        if self._options.use_drt:
+        if self.get_option('use_drt'):
             binary_name = 'DumpRenderTree'
         return self._build_path(configuration, binary_name)
 

@@ -1,5 +1,53 @@
 2010-10-18  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Siedel.
+
+        new-run-webkit-tests: clean up the options-parsing code in the port
+        classes.
+        
+        This change modifies the Port interface to have a get_option() and
+        set_option_default() method for accessing the options argument
+        passed to the constructor. If the constructor is not passed an
+        options argument, we default to a MockOptions() argument from
+        mocktool, which has the same semantics we want.
+
+        Note that there is a disadvantage to port.get_option('foo') over
+        port._options.foo, which is that you lose some of the checking
+        for whether 'foo' is set (typos result in the default value, not
+        an exception being raised. This is desired in this case, since the
+        Port class is not allowed to assume that options does have any
+        particular values set, and so this change ensures that all of
+        the subclasses are following the same, intended, logic.
+
+        Arguably this is the wrong semantics to have, and the Port
+        classes should be able to assume a default set of
+        attributes/arguments, but that change will need to wait for a
+        different CL where we can modify new-run-webkit-tests to pull a
+        list of arguments from the port factory routines.
+
+        Also, add unit tests for webkitpy.tool.mocktool.MockOptions .
+
+        https://bugs.webkit.org/show_bug.cgi?id=47510
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/mocktool_unittest.py: Added.
+
+2010-10-18  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         Re-submit a revised version of r69638 - enabling new-run-webkit-tests

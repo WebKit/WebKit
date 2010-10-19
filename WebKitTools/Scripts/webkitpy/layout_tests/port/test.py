@@ -215,14 +215,11 @@ class TestPort(base.Port):
     def name(self):
         return self._name
 
-    def options(self):
-        return self._options
-
     def _path_to_wdiff(self):
         return None
 
     def results_directory(self):
-        return '/tmp/' + self._options.results_directory
+        return '/tmp/' + self.get_option('results_directory')
 
     def setup_test_run(self):
         pass
@@ -285,7 +282,6 @@ class TestDriver(base.Driver):
     def __init__(self, port, image_path, options, executive):
         self._port = port
         self._image_path = image_path
-        self._options = options
         self._executive = executive
         self._image_written = False
 
@@ -302,7 +298,7 @@ class TestDriver(base.Driver):
         if test.hang:
             time.sleep((float(timeoutms) * 4) / 1000.0)
 
-        if self._port.options().pixel_tests and test.actual_image:
+        if self._port.get_option('pixel_tests') and test.actual_image:
             with open(self._image_path, 'w') as file:
                 file.write(test.actual_image)
 

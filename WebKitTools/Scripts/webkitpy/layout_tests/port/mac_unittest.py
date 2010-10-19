@@ -35,7 +35,7 @@ import port_testcase
 
 
 class MacTest(port_testcase.PortTestCase):
-    def make_port(self, options=port_testcase.MockOptions()):
+    def make_port(self, options=port_testcase.mock_options):
         if sys.platform != 'darwin':
             return None
         port_obj = mac.MacPort(options=options)

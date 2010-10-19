@@ -101,7 +101,6 @@ class DryrunDriver(base.Driver):
 
     def __init__(self, port, image_path, options, executive):
         self._port = port
-        self._options = options
         self._image_path = image_path
         self._executive = executive
         self._layout_tests_dir = None

@@ -88,11 +88,6 @@ class ChromiumPort(base.Port):
 
     def __init__(self, **kwargs):
         base.Port.__init__(self, **kwargs)
-        if 'options' in kwargs:
-            options = kwargs['options']
-            if (options and (not hasattr(options, 'configuration') or
-                             options.configuration is None)):
-                options.configuration = self.default_configuration()
         self._chromium_base_dir = None
 
     def baseline_path(self):
@@ -104,9 +99,9 @@ class ChromiumPort(base.Port):
         dump_render_tree_binary_path = self._path_to_driver()
         result = check_file_exists(dump_render_tree_binary_path,
                                     'test driver') and result
-        if result and self._options.build:
+        if result and self.get_option('build'):
             result = self._check_driver_build_up_to_date(
-                self._options.configuration)
+                self.get_option('configuration'))
         else:
             _log.error('')
 
@@ -115,7 +110,7 @@ class ChromiumPort(base.Port):
             result = check_file_exists(helper_path,
                                        'layout test helper') and result
 
-        if self._options.pixel_tests:
+        if self.get_option('pixel_tests'):
             result = self.check_image_diff(
                 'To override, invoke with --no-pixel-tests') and result
 
@@ -205,10 +200,11 @@ class ChromiumPort(base.Port):
     def results_directory(self):
         try:
             return self.path_from_chromium_base('webkit',
-                self._options.configuration, self._options.results_directory)
+                self.get_option('configuration'),
+                self.get_option('results_directory'))
         except AssertionError:
-            return self._build_path(self._options.configuration,
-                                    self._options.results_directory)
+            return self._build_path(self.get_option('configuration'),
+                                    self.get_option('results_directory'))
 
     def setup_test_run(self):
         # Delete the disk cache if any to ensure a clean test run.
@@ -262,7 +258,7 @@ class ChromiumPort(base.Port):
         # FIXME: This drt_overrides handling should be removed when we switch
         # from tes_shell to DRT.
         drt_overrides = ''
-        if self._options and self._options.use_drt:
+        if self.get_option('use_drt'):
             drt_overrides_path = self.path_from_webkit_base('LayoutTests',
                 'platform', 'chromium', 'drt_expectations.txt')
             if os.path.exists(drt_overrides_path):
@@ -357,9 +353,9 @@ class ChromiumPort(base.Port):
 
     def _path_to_image_diff(self):
         binary_name = 'image_diff'
-        if self._options.use_drt:
+        if self.get_option('use_drt'):
             binary_name = 'ImageDiff'
-        return self._build_path(self._options.configuration, binary_name)
+        return self._build_path(self.get_option('configuration'), binary_name)
 
 
 class ChromiumDriver(base.Driver):
@@ -378,27 +374,27 @@ class ChromiumDriver(base.Driver):
             driver_args.append("--pixel-tests=" +
                                self._port._convert_path(self._image_path))
 
-        if self._options.use_drt:
+        if self._port.get_option('use_drt'):
             driver_args.append('--test-shell')
         else:
             driver_args.append('--layout-tests')
 
-        if self._options.startup_dialog:
+        if self._port.get_option('startup_dialog'):
             driver_args.append('--testshell-startup-dialog')
 
-        if self._options.gp_fault_error_box:
+        if self._port.get_option('gp_fault_error_box'):
             driver_args.append('--gp-fault-error-box')
 
-        if self._options.accelerated_compositing:
+        if self._port.get_option('accelerated_compositing'):
             driver_args.append('--enable-accelerated-compositing')
 
-        if self._options.accelerated_2d_canvas:
+        if self._port.get_option('accelerated_2d_canvas'):
             driver_args.append('--enable-accelerated-2d-canvas')
         return driver_args
 
     def start(self):
         # FIXME: Should be an error to call this method twice.
-        cmd = self._command_wrapper(self._options.wrapper)
+        cmd = self._command_wrapper(self._port.get_option('wrapper'))
         cmd.append(self._port._path_to_driver())
         cmd += self._driver_args()
 

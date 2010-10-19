@@ -32,20 +32,15 @@ import os
 import tempfile
 import unittest
 
-
-class MockOptions(object):
-    def __init__(self,
-                 results_directory='layout-test-results',
-                 use_apache=True,
-                 configuration='Release'):
-        self.results_directory = results_directory
-        self.use_apache = use_apache
-        self.configuration = configuration
+from webkitpy.tool import mocktool
+mock_options = mocktool.MockOptions(results_directory='layout-test-results',
+                                    use_apache=True,
+                                    configuration='Release')
 
 
 class PortTestCase(unittest.TestCase):
     """Tests the WebKit port implementation."""
-    def make_port(self, options=MockOptions()):
+    def make_port(self, options=mock_options):
         """Override in subclass."""
         raise NotImplementedError()
 

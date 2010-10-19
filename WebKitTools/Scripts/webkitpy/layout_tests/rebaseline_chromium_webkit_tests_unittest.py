@@ -33,6 +33,7 @@ import os
 import sys
 import unittest
 
+from webkitpy.tool import mocktool
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import rebaseline_chromium_webkit_tests
 from webkitpy.common.system.executive import Executive, ScriptError
@@ -44,12 +45,6 @@ class MockPort(object):
 
     def check_image_diff(self, override_step, logging):
         return self.image_diff_exists
-
-
-class MockOptions(object):
-    def __init__(self, configuration=None, html_directory=None):
-        self.configuration = configuration
-        self.html_directory = html_directory
 
 
 def get_mock_get(config_expectations):
@@ -64,7 +59,8 @@ class TestGetHostPortObject(unittest.TestCase):
         # that Image diff is (or isn't) present in the two configs.
         port.get = get_mock_get({'Release': release_present,
                                  'Debug': debug_present})
-        options = MockOptions()
+        options = mocktool.MockOptions(configuration=None,
+                                       html_directory=None)
         port_obj = rebaseline_chromium_webkit_tests.get_host_port_object(
             options)
         if valid_port_obj:
@@ -90,7 +86,8 @@ class TestGetHostPortObject(unittest.TestCase):
 
 class TestRebaseliner(unittest.TestCase):
     def make_rebaseliner(self):
-        options = MockOptions()
+        options = mocktool.MockOptions(configuration=None,
+                                       html_directory=None)
         host_port_obj = port.get('test', options)
         target_options = options
         target_port_obj = port.get('test', target_options)
@@ -126,7 +123,8 @@ class TestHtmlGenerator(unittest.TestCase):
     def make_generator(self, tests):
         return rebaseline_chromium_webkit_tests.HtmlGenerator(
             target_port=None,
-            options=MockOptions(html_directory="/tmp"),
+            options=mocktool.MockOptions(configuration=None,
+                                         html_directory='/tmp'),
             platforms=['mac'],
             rebaselining_tests=tests,
             executive=Executive())

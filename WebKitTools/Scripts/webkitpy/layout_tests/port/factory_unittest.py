@@ -29,6 +29,8 @@
 import sys
 import unittest
 
+from webkitpy.tool import mocktool
+
 import chromium_gpu
 import chromium_linux
 import chromium_mac
@@ -52,21 +54,11 @@ class FactoryTest(unittest.TestCase):
     # FIXME: The ports themselves should expose what options they require,
     # instead of passing generic "options".
 
-    class WebKitOptions(object):
-        """Represents the minimum options for WebKit port."""
-        def __init__(self):
-            self.pixel_tests = False
-
-    class ChromiumOptions(WebKitOptions):
-        """Represents minimum options for Chromium port."""
-        def __init__(self):
-            FactoryTest.WebKitOptions.__init__(self)
-            self.chromium = True
-
     def setUp(self):
         self.real_sys_platform = sys.platform
-        self.webkit_options = FactoryTest.WebKitOptions()
-        self.chromium_options = FactoryTest.ChromiumOptions()
+        self.webkit_options = mocktool.MockOptions(pixel_tests=False)
+        self.chromium_options = mocktool.MockOptions(pixel_tests=False,
+                                                    chromium=True)
 
     def tearDown(self):
         sys.platform = self.real_sys_platform

@@ -26,24 +26,22 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import unittest
+import StringIO
+
+from webkitpy.tool import mocktool
+from webkitpy.thirdparty.mock import Mock
+
 import chromium
 import chromium_linux
 import chromium_mac
 import chromium_win
-import unittest
-import StringIO
-import os
-
-from webkitpy.thirdparty.mock import Mock
-
 
 class ChromiumDriverTest(unittest.TestCase):
 
     def setUp(self):
         mock_port = Mock()
-        # FIXME: The Driver should not be grabbing at port._options!
-        mock_port._options = Mock()
-        mock_port._options.wrapper = ""
         self.driver = chromium.ChromiumDriver(mock_port, image_path=None, options=None)
 
     def test_test_shell_command(self):
@@ -106,25 +104,19 @@ class ChromiumPortTest(unittest.TestCase):
             return 'default'
 
     def test_path_to_image_diff(self):
-        class MockOptions:
-            def __init__(self):
-                self.use_drt = True
-
-        port = ChromiumPortTest.TestLinuxPort(options=MockOptions())
+        mock_options = mocktool.MockOptions(use_drt=True)
+        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
         self.assertTrue(port._path_to_image_diff().endswith(
             '/out/default/ImageDiff'), msg=port._path_to_image_diff())
-        port = ChromiumPortTest.TestMacPort(options=MockOptions())
+        port = ChromiumPortTest.TestMacPort(options=mock_options)
         self.assertTrue(port._path_to_image_diff().endswith(
             '/xcodebuild/default/ImageDiff'))
         # FIXME: Figure out how this is going to work on Windows.
         #port = chromium_win.ChromiumWinPort('test-port', options=MockOptions())
 
     def test_skipped_layout_tests(self):
-        class MockOptions:
-            def __init__(self):
-                self.use_drt = True
-
-        port = ChromiumPortTest.TestLinuxPort(options=MockOptions())
+        mock_options = mocktool.MockOptions(use_drt=True)
+        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
 
         fake_test = os.path.join(port.layout_tests_dir(), "fast/js/not-good.js")
 
@@ -138,31 +130,20 @@ DEFER LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
         self.assertTrue("fast/js/not-good.js" in skipped_tests)
 
     def test_default_configuration(self):
-        class EmptyOptions:
-            def __init__(self):
-                pass
-
-        options = EmptyOptions()
-        port = ChromiumPortTest.TestLinuxPort(options)
-        self.assertEquals(options.configuration, 'default')
+        mock_options = mocktool.MockOptions()
+        port = ChromiumPortTest.TestLinuxPort(options=mock_options)
+        self.assertEquals(mock_options.configuration, 'default')
         self.assertTrue(port.default_configuration_called)
 
-        class OptionsWithUnsetConfiguration:
-            def __init__(self):
-                self.configuration = None
-
-        options = OptionsWithUnsetConfiguration()
-        port = ChromiumPortTest.TestLinuxPort(options)
-        self.assertEquals(options.configuration, 'default')
+        mock_options = mocktool.MockOptions(configuration=None)
+        port = ChromiumPortTest.TestLinuxPort(mock_options)
+        self.assertEquals(mock_options.configuration, 'default')
         self.assertTrue(port.default_configuration_called)
 
     def test_diff_image(self):
         class TestPort(ChromiumPortTest.TestLinuxPort):
             def _path_to_image_diff(self):
                 return "/path/to/image_diff"
-
-        class EmptyOptions:
-            use_drt = False
 
         class MockExecute:
             def __init__(self, result):
@@ -180,8 +161,8 @@ DEFER LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
                     return self._result
                 return ''
 
-        options = EmptyOptions()
-        port = ChromiumPortTest.TestLinuxPort(options)
+        mock_options = mocktool.MockOptions(use_drt=False)
+        port = ChromiumPortTest.TestLinuxPort(mock_options)
 
         # Images are different.
         port._executive = MockExecute(0)

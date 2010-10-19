@@ -65,9 +65,7 @@ class WebKitPort(base.Port):
 
         # FIXME: disable pixel tests until they are run by default on the
         # build machines.
-        if self._options and (not hasattr(self._options, "pixel_tests") or
-           self._options.pixel_tests is None):
-            self._options.pixel_tests = False
+        self.set_option_default('pixel_tests', False)
 
     def baseline_path(self):
         return self._webkit_baseline_path(self._name)
@@ -86,7 +84,7 @@ class WebKitPort(base.Port):
     def _build_driver(self):
         exit_code = self._executive.run_command([
             self.script_path("build-dumprendertree"),
-            self.flag_from_configuration(self._options.configuration),
+            self.flag_from_configuration(self.get_option('configuration')),
         ], return_exit_code=True)
         if exit_code != 0:
             _log.error("Failed to build DumpRenderTree")
@@ -101,11 +99,11 @@ class WebKitPort(base.Port):
         return True
 
     def check_build(self, needs_http):
-        if self._options.build and not self._build_driver():
+        if self.get_option('build') and not self._build_driver():
             return False
         if not self._check_driver():
             return False
-        if self._options.pixel_tests:
+        if self.get_option('pixel_tests'):
             if not self.check_image_diff():
                 return False
         if not self._check_port_build():
@@ -184,7 +182,7 @@ class WebKitPort(base.Port):
     def results_directory(self):
         # Results are store relative to the built products to make it easy
         # to have multiple copies of webkit checked out and built.
-        return self._build_path(self._options.results_directory)
+        return self._build_path(self.get_option('results_directory'))
 
     def setup_test_run(self):
         # This port doesn't require any specific configuration.
@@ -360,7 +358,7 @@ class WebKitPort(base.Port):
         if not self._cached_build_root:
             self._cached_build_root = self._webkit_build_directory([
                 "--configuration",
-                self.flag_from_configuration(self._options.configuration),
+                self.flag_from_configuration(self.get_option('configuration')),
             ])
         return os.path.join(self._cached_build_root, *comps)
 
@@ -401,7 +399,6 @@ class WebKitDriver(base.Driver):
     def __init__(self, port, image_path, options, executive=Executive()):
         self._port = port
         self._image_path = image_path
-        self._options = options
         self._executive = executive
         self._driver_tempdir = tempfile.mkdtemp(prefix='DumpRenderTree-')
 
@@ -414,17 +411,17 @@ class WebKitDriver(base.Driver):
         if self._image_path:
             driver_args.append('--pixel-tests')
 
-        if self._options.use_drt:
-            if self._options.accelerated_compositing:
+        if self._port.get_option('use_drt'):
+            if self._port.get_option('accelerated_compositing'):
                 driver_args.append('--enable-accelerated-compositing')
 
-            if self._options.accelerated_2d_canvas:
+            if self._port.get_option('accelerated_2d_canvas'):
                 driver_args.append('--enable-accelerated-2d-canvas')
 
         return driver_args
 
     def start(self):
-        command = self._command_wrapper(self._options.wrapper)
+        command = self._command_wrapper(self._port.get_option('wrapper'))
         command += [self._port._path_to_driver(), '-']
         command += self._driver_args()
 

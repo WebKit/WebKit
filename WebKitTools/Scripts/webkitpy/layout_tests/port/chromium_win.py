@@ -55,9 +55,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         # python executable to run cgi program.
         env["CYGWIN_PATH"] = self.path_from_chromium_base(
             "third_party", "cygwin", "bin")
-        if (sys.platform == "win32" and self._options and
-            hasattr(self._options, "register_cygwin") and
-            self._options.register_cygwin):
+        if (sys.platform == "win32" and self.get_option('register_cygwin')):
             setup_mount = self.path_from_chromium_base("third_party",
                                                        "cygwin",
                                                        "setup_mount.bat")
@@ -113,7 +111,7 @@ class ChromiumWinPort(chromium.ChromiumPort):
         if os.path.exists(p):
             return p
         p = self.path_from_chromium_base('chrome', *comps)
-        if os.path.exists(p) or not self._options.use_drt:
+        if os.path.exists(p) or not self.get_option('use_drt'):
             return p
         return os.path.join(self.path_from_webkit_base(), 'WebKit', 'chromium',
                             *comps)
@@ -141,23 +139,23 @@ class ChromiumWinPort(chromium.ChromiumPort):
 
     def _path_to_driver(self, configuration=None):
         if not configuration:
-            configuration = self._options.configuration
+            configuration = self.get_option('configuration')
         binary_name = 'test_shell.exe'
-        if self._options.use_drt:
+        if self.get_option('use_drt'):
             binary_name = 'DumpRenderTree.exe'
         return self._build_path(configuration, binary_name)
 
     def _path_to_helper(self):
         binary_name = 'layout_test_helper.exe'
-        if self._options.use_drt:
+        if self.get_option('use_drt'):
             binary_name = 'LayoutTestHelper.exe'
-        return self._build_path(self._options.configuration, binary_name)
+        return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_image_diff(self):
         binary_name = 'image_diff.exe'
-        if self._options.use_drt:
+        if self.get_option('use_drt'):
             binary_name = 'ImageDiff.exe'
-        return self._build_path(self._options.configuration, binary_name)
+        return self._build_path(self.get_option('configuration'), binary_name)
 
     def _path_to_wdiff(self):
         return self.path_from_chromium_base('third_party', 'cygwin', 'bin',

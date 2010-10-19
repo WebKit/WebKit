@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import base
+import optparse
 import os
 import StringIO
 import sys
@@ -36,7 +36,9 @@ import unittest
 from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.thirdparty.mock import Mock
+from webkitpy.tool import mocktool
 
+import base
 
 # FIXME: This makes StringIO objects work with "with". Remove
 # when we upgrade to 2.6.
@@ -246,6 +248,41 @@ class PortTest(unittest.TestCase):
 
         self.assertEqual(port.filename_to_uri(test_file),
                          abspath_to_uri(test_file))
+
+    def test_get_option__set(self):
+        options, args = optparse.OptionParser().parse_args()
+        options.foo = 'bar'
+        port = base.Port(options=options)
+        self.assertEqual(port.get_option('foo'), 'bar')
+
+    def test_get_option__unset(self):
+        port = base.Port()
+        self.assertEqual(port.get_option('foo'), None)
+
+    def test_get_option__default(self):
+        port = base.Port()
+        self.assertEqual(port.get_option('foo', 'bar'), 'bar')
+
+    def test_set_option_default__unset(self):
+        port = base.Port()
+        port.set_option_default('foo', 'bar')
+        self.assertEqual(port.get_option('foo'), 'bar')
+
+    def test_set_option_default__set(self):
+        options, args = optparse.OptionParser().parse_args()
+        options.foo = 'bar'
+        port = base.Port(options=options)
+        # This call should have no effect.
+        port.set_option_default('foo', 'new_bar')
+        self.assertEqual(port.get_option('foo'), 'bar')
+
+    def test_name__unset(self):
+        port = base.Port()
+        self.assertEqual(port.name(), None)
+
+    def test_name__set(self):
+        port = base.Port(port_name='foo')
+        self.assertEqual(port.name(), 'foo')
 
 
 class VirtualTest(unittest.TestCase):

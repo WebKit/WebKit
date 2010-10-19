@@ -56,6 +56,22 @@ from webkitpy.common.system.user import User
 _log = logutils.get_logger(__file__)
 
 
+class DummyOptions(object):
+    """Fake implementation of optparse.Values. Cloned from
+    webkitpy.tool.mocktool.MockOptions.
+
+    """
+
+    def __init__(self, **kwargs):
+        # The caller can set option values using keyword arguments. We don't
+        # set any values by default because we don't know how this
+        # object will be used. Generally speaking unit tests should
+        # subclass this or provider wrapper functions that set a common
+        # set of options.
+        for key, value in kwargs.items():
+            self.__dict__[key] = value
+
+
 # FIXME: This class should merge with webkitpy.webkit_port at some point.
 class Port(object):
     """Abstract class for Port-specific hooks for the layout_test package.
@@ -71,7 +87,12 @@ class Port(object):
 
     def __init__(self, **kwargs):
         self._name = kwargs.get('port_name', None)
-        self._options = kwargs.get('options', None)
+        self._options = kwargs.get('options')
+        if self._options is None:
+            # FIXME: Ideally we'd have a package-wide way to get a
+            # well-formed options object that had all of the necessary
+            # options defined on it.
+            self._options = DummyOptions()
         self._executive = kwargs.get('executive', Executive())
         self._user = kwargs.get('user', User())
         self._helper = None
@@ -98,6 +119,9 @@ class Port(object):
         self._pretty_patch_path = self.path_from_webkit_base("BugsSite",
               "PrettyPatch", "prettify.rb")
         self._pretty_patch_available = True
+        self.set_option_default('configuration', None)
+        if self._options.configuration is None:
+            self._options.configuration = self.default_configuration()
 
     def default_child_processes(self):
         """Return the number of DumpRenderTree instances to use for this
@@ -433,6 +457,18 @@ class Port(object):
         may be different (e.g., 'win-xp' instead of 'chromium-win-xp'."""
         return self._name
 
+    def get_option(self, name, default_value=None):
+        # FIXME: Eventually we should not have to do a test for
+        # hasattr(), and we should be able to just do
+        # self.options.value. See additional FIXME in the constructor.
+        if hasattr(self._options, name):
+            return getattr(self._options, name)
+        return default_value
+
+    def set_option_default(self, name, default_value):
+        if not hasattr(self._options, name):
+            return setattr(self._options, name, default_value)
+
     # FIXME: This could be replaced by functions in webkitpy.common.checkout.scm.
     def path_from_webkit_base(self, *comps):
         """Returns the full path to path made by joining the top of the
@@ -497,12 +533,12 @@ class Port(object):
         """Start a web server if it is available. Do nothing if
         it isn't. This routine is allowed to (and may) fail if a server
         is already running."""
-        if self._options.use_apache:
+        if self.get_option('use_apache'):
             self._http_server = apache_http_server.LayoutTestApacheHttpd(self,
-                self._options.results_directory)
+                self.get_option('results_directory'))
         else:
             self._http_server = http_server.Lighttpd(self,
-                self._options.results_directory)
+                self.get_option('results_directory'))
         self._http_server.start()
 
     def start_websocket_server(self):
@@ -510,7 +546,7 @@ class Port(object):
         it isn't. This routine is allowed to (and may) fail if a server
         is already running."""
         self._websocket_server = websocket_server.PyWebSocket(self,
-            self._options.results_directory)
+            self.get_option('results_directory'))
         self._websocket_server.start()
 
     def acquire_http_lock(self):
