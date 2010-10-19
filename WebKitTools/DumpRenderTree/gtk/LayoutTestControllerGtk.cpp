@@ -183,8 +183,16 @@ JSRetainPtr<JSStringRef> LayoutTestController::pageSizeAndMarginsInPixels(int pa
 
 size_t LayoutTestController::webHistoryItemCount()
 {
-    // FIXME: implement
-    return 0;
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    WebKitWebBackForwardList* list = webkit_web_view_get_back_forward_list(webView);
+
+    if (!list)
+        return -1;
+
+    // We do not add the current page to the total count as it's not
+    // considered in DRT tests
+    return webkit_web_back_forward_list_get_back_length(list) +
+            webkit_web_back_forward_list_get_forward_length(list);
 }
 
 unsigned LayoutTestController::workerThreadCount() const

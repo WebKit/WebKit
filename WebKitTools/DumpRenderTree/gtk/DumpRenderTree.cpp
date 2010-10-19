@@ -419,6 +419,9 @@ static void resetDefaultsToConsistentValues()
 
     webkit_reset_origin_access_white_lists();
 
+    WebKitWebBackForwardList* list = webkit_web_view_get_back_forward_list(webView);
+    webkit_web_back_forward_list_clear(list);
+
 #ifdef HAVE_LIBSOUP_2_29_90
     SoupSession* session = webkit_get_default_session();
     SoupCookieJar* jar = reinterpret_cast<SoupCookieJar*>(soup_session_get_feature(session, SOUP_TYPE_COOKIE_JAR));
