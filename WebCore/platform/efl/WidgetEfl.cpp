@@ -206,7 +206,7 @@ void Widget::setFocus(bool focused)
 
 void Widget::applyFallbackCursor()
 {
-#if HAVE_ECORE_X
+#ifdef HAVE_ECORE_X
     if (m_data->m_isUsingEcoreX && !m_data->m_cursorGroup.isNull()) {
         int shape = cursorStringMap.cursor(m_data->m_cursorGroup.utf8().data());
 
