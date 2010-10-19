@@ -297,7 +297,7 @@ webkit_soup_cache_entry_set_freshness (WebKitSoupCacheEntry *entry, SoupMessage 
 		hash = soup_header_parse_param_list (cache_control);
 
 		/* Should we re-validate the entry when it goes stale */
-		entry->must_revalidate = (gboolean)g_hash_table_lookup (hash, "must-revalidate");
+		entry->must_revalidate = g_hash_table_lookup_extended (hash, "must-revalidate", NULL, NULL);
 
 		/* Section 2.3.1 */
 		if (priv->cache_type == WEBKIT_SOUP_CACHE_SHARED) {
@@ -509,7 +509,7 @@ close_ready_cb (GObject *source, GAsyncResult *result, WebKitSoupCacheWritingFix
 		webkit_soup_cache_entry_free (entry, TRUE);
 		entry = NULL;
 	} else if ((soup_message_headers_get_encoding (entry->headers) == SOUP_ENCODING_CHUNKED) ||
-		   entry->length != content_length) {
+		   entry->length != (gsize) content_length) {
 		/** Two options here:
 		 *
 		 * 1. "chunked" data, entry was temporarily added to
