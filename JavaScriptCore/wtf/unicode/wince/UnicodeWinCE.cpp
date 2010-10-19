@@ -99,7 +99,7 @@ int toLower(wchar_t* result, int resultLength, const wchar_t* source, int source
 
     if (sourceIterator < sourceEnd)
         remainingCharacters += sourceEnd - sourceIterator;
-    *isError = (remainingCharacters != 0);
+    *isError = !!remainingCharacters;
     if (resultIterator < resultEnd)
         *resultIterator = 0;
 
@@ -123,7 +123,7 @@ int toUpper(wchar_t* result, int resultLength, const wchar_t* source, int source
 
     if (sourceIterator < sourceEnd)
         remainingCharacters += sourceEnd - sourceIterator;
-    *isError = (remainingCharacters != 0);
+    *isError = !!remainingCharacters;
     if (resultIterator < resultEnd)
         *resultIterator = 0;
 
