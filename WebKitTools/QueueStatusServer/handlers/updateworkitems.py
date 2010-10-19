@@ -40,15 +40,11 @@ class UpdateWorkItems(UpdateBase):
     def get(self):
         self.response.out.write(template.render("templates/updateworkitems.html", None))
 
-    def _work_items_for_queue(self, queue_name):
-        queue = Queue.queue_for_name(queue_name)
-        if queue:
-            self.response.out.write("\"%s\" is not in queues %s" % (queue_name, Queue.all()))
-            return None
-        work_items = WorkItems.all().filter("queue_name =", queue_name).get()
+    def _work_items_for_queue(self, queue):
+        work_items = WorkItems.all().filter("queue_name =", queue.name()).get()
         if not work_items:
             work_items = WorkItems()
-            work_items.queue_name = queue_name
+            work_items.queue = queue
         return work_items
 
     def _parse_work_items_string(self, items_string):
@@ -58,7 +54,12 @@ class UpdateWorkItems(UpdateBase):
 
     def _work_items_from_request(self):
         queue_name = self.request.get("queue_name")
-        work_items = self._work_items_for_queue(queue_name)
+        queue = Queue.queue_for_name(queue_name)
+        if not queue:
+            self.response.out.write("\"%s\" is not in queues %s" % (queue_name, Queue.all()))
+            return None
+
+        work_items = self._work_items_for_queue(queue)
         if not work_items:
             return None
         items_string = self.request.get("work_items")

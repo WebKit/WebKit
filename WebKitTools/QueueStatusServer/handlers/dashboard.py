@@ -41,7 +41,7 @@ class Dashboard(webapp.RequestHandler):
     _header_names = [queue.short_name() for queue in _ordered_queues]
 
     def _build_bubble(self, attachment, queue):
-        queue_status = attachment.status_for_queue(queue.name())
+        queue_status = attachment.status_for_queue(queue)
         bubble = {
             "status_class": attachment.state_from_queue_status(queue_status) if queue_status else "none",
             "status_date": queue_status.date if queue_status else None,

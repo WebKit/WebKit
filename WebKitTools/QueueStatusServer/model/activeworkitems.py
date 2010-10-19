@@ -31,8 +31,10 @@ from google.appengine.ext import db
 from datetime import timedelta, datetime
 import time
 
+from model.queuepropertymixin import QueuePropertyMixin
 
-class ActiveWorkItems(db.Model):
+
+class ActiveWorkItems(db.Model, QueuePropertyMixin):
     queue_name = db.StringProperty()
     item_ids = db.ListProperty(int)
     item_dates = db.ListProperty(float)

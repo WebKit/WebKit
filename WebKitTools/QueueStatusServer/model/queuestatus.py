@@ -27,8 +27,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from google.appengine.ext import db
+from model.queuepropertymixin import QueuePropertyMixin
 
-class QueueStatus(db.Model):
+
+class QueueStatus(db.Model, QueuePropertyMixin):
     author = db.UserProperty()
     queue_name = db.StringProperty()
     bot_id = db.StringProperty()
