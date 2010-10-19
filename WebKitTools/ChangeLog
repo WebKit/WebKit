@@ -1,3 +1,15 @@
+2010-10-19  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/47741> Make sort-Xcode-project-file a little more friendly
+
+        Reviewed by Darin Adler.
+
+        * Scripts/sort-Xcode-project-file:
+        - Don't print an error message about missing arguments when
+          -h|--help is used.
+        - Allow Xcode project files to be specified as Project.xcodeproj
+          instead of Project.xcodeproj/project.pbxproj.
+
 2010-10-18  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Andreas Kling.

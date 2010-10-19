@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 use strict;
 
 use File::Basename;
+use File::Spec;
 use File::Temp qw(tempfile);
 use Getopt::Long;
 
@@ -54,7 +55,7 @@ my $getOptionsResult = GetOptions(
     'w|warnings!'    => \$printWarnings,
 );
 
-if (scalar(@ARGV) == 0) {
+if (scalar(@ARGV) == 0 && !$showHelp) {
     print STDERR "ERROR: No Xcode project files (project.pbxproj) listed on command-line.\n";
     undef $getOptionsResult;
 }
@@ -69,6 +70,10 @@ __END__
 }
 
 for my $projectFile (@ARGV) {
+    if (basename($projectFile) =~ /\.xcodeproj$/) {
+        $projectFile = File::Spec->catfile($projectFile, "project.pbxproj");
+    }
+
     if (basename($projectFile) ne "project.pbxproj") {
         print STDERR "WARNING: Not an Xcode project file: $projectFile\n" if $printWarnings;
         next;
