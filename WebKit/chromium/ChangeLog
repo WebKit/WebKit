@@ -1,5 +1,12 @@
 2010-10-19  Tony Chang  <tony@chromium.org>
 
+        Unreviewed.  Rolling chromium DEPS to 63057 to pick up mac plugin
+        loading in DRT.
+
+        * DEPS: bump chromium DEPS to 63057.
+
+2010-10-19  Tony Chang  <tony@chromium.org>
+
         Reviewed by Kent Tamura.
 
         [chromium] DumpRenderTree shouldn't put '.' in include path
