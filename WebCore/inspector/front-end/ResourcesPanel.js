@@ -757,7 +757,6 @@ WebInspector.ResourcesPanel.prototype = {
     addResource: function(resource)
     {
         this._resources.push(resource);
-        this.refreshResource(resource);
     },
 
     removeResource: function(resource)
@@ -815,18 +814,19 @@ WebInspector.ResourcesPanel.prototype = {
 
     refreshResource: function(resource)
     {
+        this._recreateViewForResourceIfNeeded(resource);
         this.refreshItem(resource);
     },
 
-    recreateViewForResourceIfNeeded: function(resource)
+    _recreateViewForResourceIfNeeded: function(resource)
     {
         if (!resource || !resource._resourcesView)
             return;
 
-        var newView = this._createResourceView(resource);
-        if (newView.__proto__ === resource._resourcesView.__proto__)
+        if (this._resourceViewIsConsistentWithCategory(resource, resource._resourcesView))
             return;
 
+        var newView = this._createResourceView(resource);
         if (!this.currentQuery && resource._itemsTreeElement)
             resource._itemsTreeElement.updateErrorsAndWarnings();
 
@@ -1066,6 +1066,23 @@ WebInspector.ResourcesPanel.prototype = {
         var selectedOption = this.sortingSelectElement[selectedIndex];
         this.sortingFunction = selectedOption.sortingFunction;
         this.calculator = this.summaryBar.calculator = selectedOption.calculator;
+    },
+
+    _resourceViewIsConsistentWithCategory: function(resource, resourceView)
+    {
+        switch (resource.category) {
+            case WebInspector.resourceCategories.documents:
+            case WebInspector.resourceCategories.stylesheets:
+            case WebInspector.resourceCategories.scripts:
+            case WebInspector.resourceCategories.xhr:
+                return resourceView.__proto__ === WebInspector.SourceView.prototype;
+            case WebInspector.resourceCategories.images:
+                return resourceView.__proto__ === WebInspector.ImageView.prototype;
+            case WebInspector.resourceCategories.fonts:
+                return resourceView.__proto__ === WebInspector.FontView.prototype;
+            default:
+                return resourceView.__proto__ === WebInspector.ResourceView.prototype;
+        }
     },
 
     _createResourceView: function(resource)
@@ -1819,7 +1836,8 @@ WebInspector.ResourceGraph = function(resource)
     this._graphElement.className = "resources-graph-side";
     this._graphElement.addEventListener("mouseover", this.refreshLabelPositions.bind(this), false);
 
-    this._cachedChanged();
+    if (this.resource.cached)
+        this._graphElement.addStyleClass("resource-cached");
 
     this._barAreaElement = document.createElement("div");
     this._barAreaElement.className = "resources-graph-bar-area hidden";
@@ -1843,8 +1861,6 @@ WebInspector.ResourceGraph = function(resource)
     this._barAreaElement.appendChild(this._labelRightElement);
 
     this._graphElement.addStyleClass("resources-category-" + resource.category.name);
-
-    resource.addEventListener("cached changed", this._cachedChanged, this);
 }
 
 WebInspector.ResourceGraph.prototype = {
@@ -1968,11 +1984,8 @@ WebInspector.ResourceGraph.prototype = {
         this._labelLeftElement.title = tooltip;
         this._labelRightElement.title = tooltip;
         this._barRightElement.title = tooltip;
-    },
 
-    _cachedChanged: function()
-    {
-        if (this.resource.cached)
+        if (this.resource.cached && !this._graphElement.hasStyleClass("resource-cached"))
             this._graphElement.addStyleClass("resource-cached");
     }
 }

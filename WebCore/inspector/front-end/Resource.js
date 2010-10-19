@@ -119,8 +119,6 @@ WebInspector.Resource.prototype = {
 
     set documentURL(x)
     {
-        if (this._documentURL === x)
-            return;
         this._documentURL = x;
     },
 
@@ -153,13 +151,7 @@ WebInspector.Resource.prototype = {
 
     set startTime(x)
     {
-        if (this._startTime === x)
-            return;
-
         this._startTime = x;
-
-        if (WebInspector.panels.resources)
-            WebInspector.panels.resources.refreshResource(this);
     },
 
     get responseReceivedTime()
@@ -174,13 +166,7 @@ WebInspector.Resource.prototype = {
 
     set responseReceivedTime(x)
     {
-        if (this._responseReceivedTime === x)
-            return;
-
         this._responseReceivedTime = x;
-
-        if (WebInspector.panels.resources)
-            WebInspector.panels.resources.refreshResource(this);
     },
 
     get endTime()
@@ -196,13 +182,7 @@ WebInspector.Resource.prototype = {
         if (x < this.responseReceivedTime)
             this.responseReceivedTime = x;
 
-        if (this._endTime === x)
-            return;
-
         this._endTime = x;
-
-        if (WebInspector.panels.resources)
-            WebInspector.panels.resources.refreshResource(this);
     },
 
     get duration()
@@ -233,13 +213,7 @@ WebInspector.Resource.prototype = {
 
     set resourceSize(x)
     {
-        if (this._resourceSize === x)
-            return;
-
         this._resourceSize = x;
-
-        if (WebInspector.panels.resources)
-            WebInspector.panels.resources.refreshResource(this);
     },
 
     get transferSize()
@@ -255,8 +229,6 @@ WebInspector.Resource.prototype = {
 
     set expectedContentLength(x)
     {
-        if (this._expectedContentLength === x)
-            return;
         this._expectedContentLength = x;
     },
 
@@ -306,11 +278,6 @@ WebInspector.Resource.prototype = {
 
         if (this._category)
             this._category.addResource(this);
-
-        if (WebInspector.panels.resources) {
-            WebInspector.panels.resources.refreshResource(this);
-            WebInspector.panels.resources.recreateViewForResourceIfNeeded(this);
-        }
     },
 
     get cached()
@@ -321,7 +288,6 @@ WebInspector.Resource.prototype = {
     set cached(x)
     {
         this._cached = x;
-        this.dispatchEventToListeners("cached changed");
     },
 
     get mimeType()
@@ -331,9 +297,6 @@ WebInspector.Resource.prototype = {
 
     set mimeType(x)
     {
-        if (this._mimeType === x)
-            return;
-
         this._mimeType = x;
     },
 
@@ -380,16 +343,11 @@ WebInspector.Resource.prototype = {
 
     get requestHeaders()
     {
-        if (this._requestHeaders === undefined)
-            this._requestHeaders = {};
-        return this._requestHeaders;
+        return this._requestHeaders || {};
     },
 
     set requestHeaders(x)
     {
-        if (this._requestHeaders === x)
-            return;
-
         this._requestHeaders = x;
         delete this._sortedRequestHeaders;
 
@@ -427,16 +385,11 @@ WebInspector.Resource.prototype = {
 
     get responseHeaders()
     {
-        if (this._responseHeaders === undefined)
-            this._responseHeaders = {};
-        return this._responseHeaders;
+        return this._responseHeaders || {};
     },
 
     set responseHeaders(x)
     {
-        if (this._responseHeaders === x)
-            return;
-
         this._responseHeaders = x;
         delete this._sortedResponseHeaders;
 

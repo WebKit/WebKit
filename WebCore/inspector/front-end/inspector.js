@@ -1281,6 +1281,7 @@ WebInspector.updateResource = function(payload)
         if (payload.endTime)
             resource.endTime = payload.endTime;
     }
+    this.panels.resources.refreshResource(resource);
 }
 
 WebInspector.domContentEventFired = function(time)
