@@ -1245,6 +1245,7 @@ SET(WebCore_SOURCES
     platform/GeolocationService.cpp
     platform/KURL.cpp
     platform/KillRingNone.cpp
+    platform/Language.cpp
     platform/Length.cpp
     platform/LinkHash.cpp
     platform/Logging.cpp
