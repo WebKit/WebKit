@@ -1,3 +1,12 @@
+2010-10-20  Adam Roben  <aroben@apple.com>
+
+        Fix old-run-webkit-tests when there's a space in the path to DRT
+
+        Reviewed by Jon Honeycutt.
+
+        * Scripts/old-run-webkit-tests: Quote the path to DRT before executing
+        it.
+
 2010-10-20  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.

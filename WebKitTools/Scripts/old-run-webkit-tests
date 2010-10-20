@@ -504,7 +504,7 @@ my $supportedFeaturesResult = "";
 if (isCygwin()) {
     # Collect supported features list
     setPathForRunningWebKitApp(\%ENV);
-    my $supportedFeaturesCommand = $dumpTool . " --print-supported-features 2>&1";
+    my $supportedFeaturesCommand = "\"$dumpTool\" --print-supported-features 2>&1";
     $supportedFeaturesResult = `$supportedFeaturesCommand 2>&1`;
 }
 
