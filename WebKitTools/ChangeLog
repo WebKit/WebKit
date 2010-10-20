@@ -1,3 +1,24 @@
+2010-10-14  Adam Roben  <aroben@apple.com>
+
+        Test that passing a different NPP struct back to the browser doesn't
+        cause an assertion failure
+
+        Test for <http://webkit.org/b/47690> <rdar://problem/8553020>
+        Assertion failure in NetscapePlugin::fromNPP when using Shockwave in
+        WebKit2
+
+        Reviewed by John Sullivan.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp: Copied from WebKitTools/DumpRenderTree/TestNetscapePlugIn/Tests/win/GetValueNetscapeWindow.cpp.
+        (PassDifferentNPPStruct::PassDifferentNPPStruct): Initialize our
+        members.
+        (PassDifferentNPPStruct::NPP_SetWindow): Pass a different NPP to the
+        browser than the one it gave us in NPP_New and see if it works.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        Added PassDifferentNPPStruct.
+
 2010-10-19  Adam Roben  <aroben@apple.com>
 
         Gently nudge old-run-webkit-tests toward working with Win32 Perl

@@ -77,12 +77,8 @@ NetscapePlugin::~NetscapePlugin()
 
 PassRefPtr<NetscapePlugin> NetscapePlugin::fromNPP(NPP npp)
 {
-    if (npp) {
-        NetscapePlugin* plugin = static_cast<NetscapePlugin*>(npp->ndata);
-        ASSERT(npp == &plugin->m_npp);
-        
-        return plugin;
-    }
+    if (npp)
+        return static_cast<NetscapePlugin*>(npp->ndata);
 
     // FIXME: Return the current NetscapePlugin here.
     ASSERT_NOT_REACHED();

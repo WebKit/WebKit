@@ -130,6 +130,7 @@
 		BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */; };
 		BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */; };
 		BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF6C64F0C98E9C000AC063E /* GCController.cpp */; };
+		C06F9ABC1267A7060058E1F6 /* PassDifferentNPPStruct.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */; };
 		E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */; };
 		E1B7816711AF31C3007E1BC2 /* MockGeolocationProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */; };
 /* End PBXBuildFile section */
@@ -302,6 +303,7 @@
 		BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
 		BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityControllerMac.mm; path = mac/AccessibilityControllerMac.mm; sourceTree = "<group>"; };
 		BCF6C64F0C98E9C000AC063E /* GCController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = GCController.cpp; sourceTree = "<group>"; };
+		C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PassDifferentNPPStruct.cpp; sourceTree = "<group>"; };
 		E1B7808511AF1643007E1BC2 /* MockGeolocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MockGeolocationProvider.h; path = mac/MockGeolocationProvider.h; sourceTree = "<group>"; };
 		E1B7808711AF1669007E1BC2 /* MockGeolocationProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MockGeolocationProvider.mm; path = mac/MockGeolocationProvider.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -457,6 +459,7 @@
 				1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */,
 				1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */,
 				1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */,
+				C06F9ABB1267A7060058E1F6 /* PassDifferentNPPStruct.cpp */,
 				1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */,
 			);
 			path = Tests;
@@ -733,6 +736,7 @@
 				1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */,
 				1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */,
 				1A24BAA9120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp in Sources */,
+				C06F9ABC1267A7060058E1F6 /* PassDifferentNPPStruct.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

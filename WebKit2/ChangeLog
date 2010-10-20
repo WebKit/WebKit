@@ -1,3 +1,20 @@
+2010-10-14  Adam Roben  <aroben@apple.com>
+
+        Don't require the plugin to always use the same NPP struct we gave it
+        in NPP_New
+
+        Neither WebCore, nor WebKit/mac, nor Firefox requires this, and
+        Shockwave (at least) seems to use a different NPP struct that contains
+        the same ndata member. So we shouldn't enforce it, either.
+
+        Fixes <http://webkit.org/b/47690> <rdar://problem/8553020> Assertion
+        failure in NetscapePlugin::fromNPP when using Shockwave in WebKit2
+
+        Reviewed by John Sullivan.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::fromNPP): Removed the bogus assertion.
+
 2010-10-20  Anders Carlsson  <andersca@apple.com>
 
         Fix clang++ build.
