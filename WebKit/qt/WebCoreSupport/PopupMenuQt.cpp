@@ -127,7 +127,7 @@ void PopupMenuQt::didHide()
 
 void PopupMenuQt::hide()
 {
-    if (!m_popup)
+    if (m_popup)
         m_popup->hide();
 }
 

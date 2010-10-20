@@ -1,3 +1,15 @@
+2010-10-20  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Wrong null check in PopupMenuQt
+        https://bugs.webkit.org/show_bug.cgi?id=47945
+
+        Wrong null check in PopupMenuQt.
+
+        * WebCoreSupport/PopupMenuQt.cpp:
+        (WebCore::PopupMenuQt::hide):
+
 2010-10-18  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Laszlo Gombos.
