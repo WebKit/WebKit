@@ -1,3 +1,14 @@
+2010-10-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch doesn't get along with git rm
+        https://bugs.webkit.org/show_bug.cgi?id=47940
+
+        Turns out we need to pass "--" to tell git this is a path.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2010-10-20  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.

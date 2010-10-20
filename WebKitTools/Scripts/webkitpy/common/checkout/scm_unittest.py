@@ -1098,6 +1098,20 @@ class GitSVNTest(SCMTest):
         self.assertTrue(re.search(r'test_file_commit2', patch))
         self.assertTrue(re.search(r'test_file_commit1', patch))
 
+    def test_create_patch_with_changed_files(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        patch = scm.create_patch(changed_files=['test_file_commit2'])
+        self.assertTrue(re.search(r'test_file_commit2', patch))
+
+    def test_create_patch_with_rm_and_changed_files(self):
+        self._one_local_commit_plus_working_copy_changes()
+        scm = detect_scm_system(self.git_checkout_path)
+        os.remove('test_file_commit1')
+        patch = scm.create_patch()
+        patch_with_changed_files = scm.create_patch(changed_files=['test_file_commit1', 'test_file_commit2'])
+        self.assertEquals(patch, patch_with_changed_files)
+
     def test_create_patch_git_commit(self):
         self._two_local_commits()
         scm = detect_scm_system(self.git_checkout_path)

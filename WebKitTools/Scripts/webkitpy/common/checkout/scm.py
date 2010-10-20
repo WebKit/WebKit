@@ -694,7 +694,7 @@ class Git(SCM):
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
         # FIXME: This should probably use cwd=self.checkout_root
-        return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit)] + changed_files, decode_output=False)
+        return self.run(['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit), "--"] + changed_files, decode_output=False)
 
     @classmethod
     def git_commit_from_svn_revision(cls, revision):
