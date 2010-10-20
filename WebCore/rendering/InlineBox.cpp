@@ -95,14 +95,14 @@ int InlineBox::logicalHeight() const
     if (renderer()->isText())
         return m_isText ? renderer()->style(m_firstLine)->font().height() : 0;
     if (renderer()->isBox() && parent())
-        return toRenderBox(m_renderer)->height();
+        return m_isVertical ? toRenderBox(m_renderer)->width() : toRenderBox(m_renderer)->height();
 
     ASSERT(isInlineFlowBox());
     RenderBoxModelObject* flowObject = boxModelObject();
     const Font& font = renderer()->style(m_firstLine)->font();
     int result = font.height();
     if (parent())
-        result += flowObject->borderAndPaddingHeight();
+        result += flowObject->borderAndPaddingLogicalHeight();
     return result;
 }
 

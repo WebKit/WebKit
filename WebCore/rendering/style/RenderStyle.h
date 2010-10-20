@@ -751,6 +751,7 @@ public:
 
     WritingMode writingMode() const { return static_cast<WritingMode>(inherited_flags.m_writingMode); }
     bool isHorizontalWritingMode() const { return writingMode() == TopToBottomWritingMode || writingMode() == BottomToTopWritingMode; }
+    bool isFlippedLinesWritingMode() const { return writingMode() == LeftToRightWritingMode || writingMode() == BottomToTopWritingMode; }
 
     ESpeak speak() { return static_cast<ESpeak>(rareInheritedData->speak); }
         

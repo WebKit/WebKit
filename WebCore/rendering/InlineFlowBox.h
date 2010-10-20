@@ -154,12 +154,13 @@ public:
     void determineSpacingForFlowBoxes(bool lastLine, RenderObject* endObject);
     int getFlowSpacingLogicalWidth();
     bool onEndChain(RenderObject* endObject);
-    int placeBoxesInInlineDirection(int x, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
+    int placeBoxesInInlineDirection(int logicalLeft, bool& needsWordSpacing, GlyphOverflowAndFallbackFontsMap&);
     void computeLogicalBoxHeights(int& maxPositionTop, int& maxPositionBottom,
                                   int& maxAscent, int& maxDescent, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
     void adjustMaxAscentAndDescent(int& maxAscent, int& maxDescent,
                                    int maxPositionTop, int maxPositionBottom);
-    void placeBoxesInBlockDirection(int y, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom);
+    void placeBoxesInBlockDirection(int logicalTop, int maxHeight, int maxAscent, bool strictMode, int& lineTop, int& lineBottom);
+    void flipLinesInBlockDirection(int lineTop, int lineBottom);
     void computeBlockDirectionOverflow(int lineTop, int lineBottom, bool strictMode, GlyphOverflowAndFallbackFontsMap&);
 
     void removeChild(InlineBox* child);
