@@ -1,3 +1,19 @@
+2010-10-19  Adam Roben  <aroben@apple.com>
+
+        Teach update-webkit-support-libs about the new versioning of
+        WebKitSupportLibrary
+
+        Fixes <http://webkit.org/b/47915> update-webkit-support-libs should
+        check version numbers instead of modification times
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/update-webkit-support-libs: Fetch the expected version
+        number from developer.apple.com, then compare with the version number
+        of the extracted library and of the zipped library to see if anything
+        needs to be done. Removed code that tracked the modified timestamp of
+        the library, as it is no longer needed.
+
 2010-10-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
