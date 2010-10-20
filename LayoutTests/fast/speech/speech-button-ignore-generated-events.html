@@ -49,7 +49,7 @@ function setupDispatchEventTest() {
 function run() {
     if (window.layoutTestController && window.eventSender) {
         // Running in DRT, test the eventSender case.
-        layoutTestController.setMockSpeechInputResult('Pictures of the moon', '');
+        layoutTestController.setMockSpeechInputResult('Pictures of the moon');
         document.getElementById('speechInput').onwebkitspeechchange = function() {
             shouldBeEqualToString('document.getElementById("speechInput").value', 'Pictures of the moon');
 
