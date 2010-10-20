@@ -1242,7 +1242,6 @@ BUG23498 MAC : editing/selection/unrendered-003.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-004.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-005.html = IMAGE
 BUG23498 MAC : fast/backgrounds/background-inherit-color-bug.html = IMAGE
-BUG23498 MAC : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
 BUG23498 MAC : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
 BUG23498 MAC : fast/block/float/008.html = IMAGE
 BUG23498 MAC : fast/block/float/013.html = IMAGE
@@ -1540,7 +1539,6 @@ BUG23488 MAC RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUG23488 MAC DEBUG SLOW : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUG23488 MAC : fast/block/float/avoidance-percent-width-strict.html = IMAGE
 BUG23488 MAC : fast/block/float/float-avoidance.html = IMAGE
-BUG23488 MAC : fast/borders/border-image-rotate-transform.html = IMAGE
 BUG23488 MAC : fast/borders/inline-mask-overlay-image.html = IMAGE
 BUG23488 MAC : fast/box-shadow/basic-shadows.html = IMAGE
 BUG23488 MAC : fast/box-shadow/inset.html = IMAGE
@@ -3227,6 +3225,8 @@ BUG59671 LINUX : svg/custom/convolution-crash.svg = PASS TEXT
 BUG59671 LINUX : svg/custom/focus-ring.svg = IMAGE+TEXT PASS
 BUG59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
 BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
+
+BUGWK47514 WIN LINUX : fast/transforms/scrollIntoView-transformed.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
