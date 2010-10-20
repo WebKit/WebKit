@@ -591,14 +591,9 @@ bool ChromiumBridge::plugins(bool refresh, Vector<PluginInfo>* results)
 
 NPObject* ChromiumBridge::pluginScriptableObject(Widget* widget)
 {
-    if (!widget)
+    if (!widget || !widget->isPluginContainer())
         return 0;
 
-    ASSERT(!widget->isFrameView());
-
-    // NOTE:  We have to trust that the widget passed to us here is a
-    // WebPluginContainerImpl.  There isn't a way to dynamically verify it,
-    // since the derived class (Widget) has no identifier.
     return static_cast<WebPluginContainerImpl*>(widget)->scriptableObject();
 }
 

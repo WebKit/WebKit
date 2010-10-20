@@ -73,6 +73,7 @@ public:
     virtual void setParentVisible(bool);
     virtual void setParent(WebCore::ScrollView*);
     virtual void widgetPositionsUpdated();
+    virtual bool isPluginContainer() const { return true; }
 
     // WebPluginContainer methods
     virtual WebElement element();
