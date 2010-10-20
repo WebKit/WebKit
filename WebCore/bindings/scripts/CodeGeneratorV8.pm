@@ -187,7 +187,7 @@ sub AddIncludesForSVGAnimatedType
         $implIncludes{"PlatformString.h"} = 1;
     }
 
-    $implIncludes{"SVGAnimatedTemplate.h"} = 1;
+    $implIncludes{"DeprecatedSVGAnimatedTemplate.h"} = 1;
 }
 
 # If the node has a [Conditional=XXX] attribute, returns an "ENABLE(XXX)" string for use in an #if.
@@ -450,7 +450,7 @@ sub GetHeaderClassInclude
         $className =~ s/Abs|Rel//;
     }
     return "" if (AvoidInclusionOfType($className));
-    return "SVGAnimatedTemplate.h" if ($codeGenerator->IsSVGAnimatedType($className));
+    return "DeprecatedSVGAnimatedTemplate.h" if ($codeGenerator->IsSVGAnimatedType($className));
     return "${className}.h";
 }
 

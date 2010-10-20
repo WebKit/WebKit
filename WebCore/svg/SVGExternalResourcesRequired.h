@@ -42,7 +42,7 @@ namespace WebCore {
         bool isKnownAttribute(const QualifiedName&);
 
     protected:
-        virtual void setExternalResourcesRequiredBaseValue(SVGAnimatedPropertyTraits<bool>::PassType) = 0;
+        virtual void setExternalResourcesRequiredBaseValue(DeprecatedSVGAnimatedPropertyTraits<bool>::PassType) = 0;
     };
 
 } // namespace WebCore

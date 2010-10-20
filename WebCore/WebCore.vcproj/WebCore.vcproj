@@ -61151,6 +61151,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\DeprecatedSVGAnimatedProperty.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\DeprecatedSVGAnimatedPropertyTraits.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\DeprecatedSVGAnimatedTemplate.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\ElementTimeControl.h"
 				>
 			</File>
@@ -61180,22 +61192,6 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGAnimatedPoints.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGAnimatedProperty.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGAnimatedPropertySynchronizer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGAnimatedPropertyTraits.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGAnimatedTemplate.h"
 				>
 			</File>
 			<File
@@ -62213,6 +62209,14 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="properties"
+				>
+				<File
+    				RelativePath="..\svg\properties\SVGAnimatedPropertySynchronizer.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

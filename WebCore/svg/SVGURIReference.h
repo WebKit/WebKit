@@ -39,7 +39,7 @@ namespace WebCore {
         static String getTarget(const String& url);
 
     protected:
-        virtual void setHrefBaseValue(SVGAnimatedPropertyTraits<String>::PassType) = 0;
+        virtual void setHrefBaseValue(DeprecatedSVGAnimatedPropertyTraits<String>::PassType) = 0;
     };
 
 } // namespace WebCore

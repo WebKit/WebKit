@@ -588,7 +588,7 @@ sub AddIncludesForType
     }
 
     if ($codeGenerator->IsSVGAnimatedType($type)) {
-        $implIncludes{"SVGAnimatedTemplate.h"} = 1;
+        $implIncludes{"DeprecatedSVGAnimatedTemplate.h"} = 1;
         $implIncludes{"DOM${type}Internal.h"} = 1;
         return;
     }
@@ -983,7 +983,7 @@ sub GenerateHeader
         my $implClassName = GetImplClassName($interfaceName);
 
         if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
-            push(@internalHeaderContent, "#import <WebCore/SVGAnimatedTemplate.h>\n\n");
+            push(@internalHeaderContent, "#import <WebCore/DeprecatedSVGAnimatedTemplate.h>\n\n");
         } else {
             push(@internalHeaderContent, "namespace WebCore {\n");
             $startedNamespace = 1;
@@ -1087,7 +1087,7 @@ sub GenerateImplementation
     $implIncludes{"DOMSVGPathSegInternal.h"} = 1 if $interfaceName =~ /^SVGPathSeg.+/;
 
     if ($codeGenerator->IsSVGAnimatedType($interfaceName)) {
-        $implIncludes{"SVGAnimatedTemplate.h"} = 1;
+        $implIncludes{"DeprecatedSVGAnimatedTemplate.h"} = 1;
     } elsif ($interfaceName =~ /(\w+)(Abs|Rel)$/) {
         $implIncludes{"$1.h"} = 1;
     } else {

@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef SVGAnimatedPropertyTraits_h
-#define SVGAnimatedPropertyTraits_h
+#ifndef DeprecatedSVGAnimatedPropertyTraits_h
+#define DeprecatedSVGAnimatedPropertyTraits_h
 
 #if ENABLE(SVG)
 #include "FloatRect.h"
@@ -34,11 +34,11 @@
 namespace WebCore {
 
 template<typename Type>
-struct SVGAnimatedPropertyTraits : public Noncopyable { };
+struct DeprecatedSVGAnimatedPropertyTraits : public Noncopyable { };
 
 // SVGAnimatedAngle
 template<>
-struct SVGAnimatedPropertyTraits<SVGAngle> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<SVGAngle> : public Noncopyable {
     typedef const SVGAngle& PassType;
     typedef SVGAngle ReturnType;
     typedef SVGAngle StoredType;
@@ -50,7 +50,7 @@ struct SVGAnimatedPropertyTraits<SVGAngle> : public Noncopyable {
 
 // SVGAnimatedBoolean
 template<>
-struct SVGAnimatedPropertyTraits<bool> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<bool> : public Noncopyable {
     typedef const bool& PassType;
     typedef bool ReturnType;
     typedef bool StoredType;
@@ -62,7 +62,7 @@ struct SVGAnimatedPropertyTraits<bool> : public Noncopyable {
 
 // SVGAnimatedEnumeration
 template<>
-struct SVGAnimatedPropertyTraits<int> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<int> : public Noncopyable {
     typedef const int& PassType;
     typedef int ReturnType;
     typedef int StoredType;
@@ -74,7 +74,7 @@ struct SVGAnimatedPropertyTraits<int> : public Noncopyable {
 
 // SVGAnimatedInteger
 template<>
-struct SVGAnimatedPropertyTraits<long> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<long> : public Noncopyable {
     typedef const long& PassType;
     typedef long ReturnType;
     typedef long StoredType;
@@ -86,7 +86,7 @@ struct SVGAnimatedPropertyTraits<long> : public Noncopyable {
 
 // SVGAnimatedLength
 template<>
-struct SVGAnimatedPropertyTraits<SVGLength> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<SVGLength> : public Noncopyable {
     typedef const SVGLength& PassType;
     typedef SVGLength ReturnType;
     typedef SVGLength StoredType;
@@ -98,7 +98,7 @@ struct SVGAnimatedPropertyTraits<SVGLength> : public Noncopyable {
 
 // SVGAnimatedLengthList
 template<>
-struct SVGAnimatedPropertyTraits<SVGLengthList*> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<SVGLengthList*> : public Noncopyable {
     typedef SVGLengthList* PassType;
     typedef SVGLengthList* ReturnType;
     typedef RefPtr<SVGLengthList> StoredType;
@@ -110,7 +110,7 @@ struct SVGAnimatedPropertyTraits<SVGLengthList*> : public Noncopyable {
 
 // SVGAnimatedNumber
 template<>
-struct SVGAnimatedPropertyTraits<float> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<float> : public Noncopyable {
     typedef const float& PassType;
     typedef float ReturnType;
     typedef float StoredType;
@@ -122,7 +122,7 @@ struct SVGAnimatedPropertyTraits<float> : public Noncopyable {
 
 // SVGAnimatedNumberList
 template<>
-struct SVGAnimatedPropertyTraits<SVGNumberList*> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<SVGNumberList*> : public Noncopyable {
     typedef SVGNumberList* PassType;
     typedef SVGNumberList* ReturnType;
     typedef RefPtr<SVGNumberList> StoredType;
@@ -134,7 +134,7 @@ struct SVGAnimatedPropertyTraits<SVGNumberList*> : public Noncopyable {
 
 // SVGAnimatedPreserveAspectRatio
 template<>
-struct SVGAnimatedPropertyTraits<SVGPreserveAspectRatio> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<SVGPreserveAspectRatio> : public Noncopyable {
     typedef const SVGPreserveAspectRatio& PassType;
     typedef SVGPreserveAspectRatio ReturnType;
     typedef SVGPreserveAspectRatio StoredType;
@@ -146,7 +146,7 @@ struct SVGAnimatedPropertyTraits<SVGPreserveAspectRatio> : public Noncopyable {
 
 // SVGAnimatedRect
 template<>
-struct SVGAnimatedPropertyTraits<FloatRect> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<FloatRect> : public Noncopyable {
     typedef const FloatRect& PassType;
     typedef FloatRect ReturnType;
     typedef FloatRect StoredType;
@@ -158,7 +158,7 @@ struct SVGAnimatedPropertyTraits<FloatRect> : public Noncopyable {
 
 // SVGAnimatedString
 template<>
-struct SVGAnimatedPropertyTraits<String> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<String> : public Noncopyable {
     typedef const String& PassType;
     typedef String ReturnType;
     typedef String StoredType;
@@ -170,7 +170,7 @@ struct SVGAnimatedPropertyTraits<String> : public Noncopyable {
 
 // SVGAnimatedTransformList
 template<>
-struct SVGAnimatedPropertyTraits<SVGTransformList*> : public Noncopyable {
+struct DeprecatedSVGAnimatedPropertyTraits<SVGTransformList*> : public Noncopyable {
     typedef SVGTransformList* PassType;
     typedef SVGTransformList* ReturnType;
     typedef RefPtr<SVGTransformList> StoredType;

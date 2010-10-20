@@ -110,7 +110,7 @@ namespace WebCore {
 }
 
 // This file needs to be included after the SVGElement declaration
-#include "SVGAnimatedProperty.h"
+#include "DeprecatedSVGAnimatedProperty.h" // NOLINT
 
 #endif
 #endif

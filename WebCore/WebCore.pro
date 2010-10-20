@@ -2335,20 +2335,20 @@ HEADERS += \
     svg/animation/SMILTime.h \
     svg/animation/SVGSMILElement.h \
     svg/ColorDistance.h \
+    svg/DeprecatedSVGAnimatedProperty.h \
+    svg/DeprecatedSVGAnimatedPropertyTraits.h \
+    svg/DeprecatedSVGAnimatedTemplate.h \
     svg/graphics/filters/SVGFEImage.h \
     svg/graphics/filters/SVGFilterBuilder.h \
     svg/graphics/filters/SVGFilter.h \
     svg/graphics/SVGImage.h \
+    svg/properties/SVGAnimatedPropertySynchronizer.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
     svg/SVGAngle.h \
     svg/SVGAnimateColorElement.h \
     svg/SVGAnimatedPathData.h \
     svg/SVGAnimatedPoints.h \
-    svg/SVGAnimatedProperty.h \
-    svg/SVGAnimatedPropertySynchronizer.h \
-    svg/SVGAnimatedPropertyTraits.h \
-    svg/SVGAnimatedTemplate.h \
     svg/SVGAnimateElement.h \
     svg/SVGAnimateMotionElement.h \
     svg/SVGAnimateTransformElement.h \

@@ -2993,6 +2993,9 @@ webcore_sources += \
 	WebCore/svg/animation/SVGSMILElement.h \
 	WebCore/svg/ColorDistance.cpp \
 	WebCore/svg/ColorDistance.h \
+	WebCore/svg/DeprecatedSVGAnimatedProperty.h \
+	WebCore/svg/DeprecatedSVGAnimatedPropertyTraits.h \
+	WebCore/svg/DeprecatedSVGAnimatedTemplate.h \
 	WebCore/svg/ElementTimeControl.h \
 	WebCore/svg/GradientAttributes.h \
 	WebCore/svg/graphics/filters/SVGFEImage.cpp \
@@ -3005,6 +3008,7 @@ webcore_sources += \
 	WebCore/svg/graphics/SVGImage.h \
 	WebCore/svg/LinearGradientAttributes.h \
 	WebCore/svg/PatternAttributes.h \
+	WebCore/svg/properties/SVGAnimatedPropertySynchronizer.h \
 	WebCore/svg/RadialGradientAttributes.h \
 	WebCore/svg/SVGAElement.cpp \
 	WebCore/svg/SVGAElement.h \
@@ -3018,10 +3022,6 @@ webcore_sources += \
 	WebCore/svg/SVGAnimatedPathData.h \
 	WebCore/svg/SVGAnimatedPoints.cpp \
 	WebCore/svg/SVGAnimatedPoints.h \
-	WebCore/svg/SVGAnimatedProperty.h \
-	WebCore/svg/SVGAnimatedPropertySynchronizer.h \
-	WebCore/svg/SVGAnimatedPropertyTraits.h \
-	WebCore/svg/SVGAnimatedTemplate.h \
 	WebCore/svg/SVGAnimateElement.cpp \
 	WebCore/svg/SVGAnimateElement.h \
 	WebCore/svg/SVGAnimateMotionElement.cpp \
