@@ -1,14 +1,11 @@
 <head>
-<title>Left</title>
+<title>Right</title>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
+<div id="console"></div>
 <script>
-try {
-
-	document.write("escape(window.frameElement.name)='" + escape(window.frameElement.name) + "' (should be '')");
-
-} catch (ex) {
-	document.write('Exception: ' + ex.description);
-}
+shouldBeEqualToString("escape(window.frameElement.name)", "");
 </script>
 </body>
