@@ -1,3 +1,36 @@
+2010-10-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Out of process plug-ins are never asked to initially paint
+        https://bugs.webkit.org/show_bug.cgi?id=47993
+        <rdar://problem/8570342>
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add new callMemberFunction overload.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::paintEntirePlugin):
+        Set the dirty rect to be the entire plug-in rect and then paint the plug-in.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add PaintEntirePlugin message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::PluginProxy):
+        Initialize m_pluginBackingStoreContainsValidData to false.
+
+        (WebKit::PluginProxy::paint):
+        If m_pluginBackingStoreContainsValidData is false, synchronously ask the plug-in to paint,
+        then blit the plug-in backing store into our own backing store.
+
+        (WebKit::PluginProxy::geometryDidChange):
+        Set m_pluginBackingStoreContainsValidData to false.
+
+        (WebKit::PluginProxy::update):
+        Set m_pluginBackingStoreContainsValidData to true if the plug-in has painted its entire area.
+
 2010-10-19  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Geoffrey Garen.

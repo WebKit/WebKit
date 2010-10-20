@@ -112,6 +112,9 @@ private:
     // This is the shared memory backing store that the plug-in paints into. When the plug-in tells us
     // that it's painted something in it, we'll blit from it to our own backing store.
     RefPtr<BackingStore> m_pluginBackingStore;
+    
+    // Whether all of the plug-in backing store contains valid data.
+    bool m_pluginBackingStoreContainsValidData;
 
     bool m_isStarted;
 

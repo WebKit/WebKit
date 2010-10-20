@@ -62,6 +62,9 @@ messages -> PluginControllerProxy {
     # Sent when the update requested by Update has been painted.
     DidUpdate()
 
+    # Paint the entire plug-in.
+    PaintEntirePlugin() -> ()
+    
 #if PLATFORM(MAC)
     # Sent when the containing NSWindow's focus changes
     WindowFocusChanged(bool hasFocus)

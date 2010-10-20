@@ -94,6 +94,7 @@ private:
     void handleMouseEnterEvent(const WebMouseEvent&, bool& handled);
     void handleMouseLeaveEvent(const WebMouseEvent&, bool& handled);
     void handleKeyboardEvent(const WebKeyboardEvent&, bool& handled);
+    void paintEntirePlugin();
     void setFocus(bool);
     void didUpdate();
 #if PLATFORM(MAC)

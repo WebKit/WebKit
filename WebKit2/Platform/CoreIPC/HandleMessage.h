@@ -55,6 +55,12 @@ void callMemberFunction(const Arguments7<P1, P2, P3, P4, P5, P6, P7>& args, C* o
 
 // Dispatch functions with reply arguments.
 
+template<typename C, typename MF>
+void callMemberFunction(const Arguments0&, Arguments0&, C* object, MF function)
+{
+    (object->*function)();
+}
+
 template<typename C, typename MF, typename R1>
 void callMemberFunction(const Arguments0&, Arguments1<R1>& replyArgs, C* object, MF function)
 {

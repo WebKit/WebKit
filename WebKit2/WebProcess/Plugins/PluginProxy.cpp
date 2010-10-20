@@ -57,6 +57,7 @@ PluginProxy::PluginProxy(PassRefPtr<PluginProcessConnection> connection)
     : m_connection(connection)
     , m_pluginInstanceID(generatePluginInstanceID())
     , m_pluginController(0)
+    , m_pluginBackingStoreContainsValidData(false)
     , m_isStarted(false)
     , m_waitingForPaintInResponseToUpdate(false)
 {
@@ -112,6 +113,17 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
 {
     if (!m_backingStore)
         return;
+
+    if (!m_pluginBackingStoreContainsValidData) {
+        m_connection->connection()->sendSync(Messages::PluginControllerProxy::PaintEntirePlugin(), Messages::PluginControllerProxy::PaintEntirePlugin::Reply(), m_pluginInstanceID, CoreIPC::Connection::NoTimeout);
+    
+        // Blit the plug-in backing store into our own backing store.
+        OwnPtr<WebCore::GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
+        
+        m_pluginBackingStore->paint(graphicsContext.get(), IntRect(0, 0, m_frameRect.width(), m_frameRect.height()));
+        
+        m_pluginBackingStoreContainsValidData = true;
+    }
 
     IntRect dirtyRectInPluginCoordinates = dirtyRect;
     dirtyRectInPluginCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
@@ -169,6 +181,8 @@ void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& cli
             m_pluginBackingStore.clear();
             return;
         }
+
+        m_pluginBackingStoreContainsValidData = false;
     }
 
     m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID);
@@ -345,6 +359,9 @@ void PluginProxy::setCookiesForURL(const String& urlString, const String& cookie
     
 void PluginProxy::update(const IntRect& paintedRect)
 {
+    if (paintedRect == m_frameRect)
+        m_pluginBackingStoreContainsValidData = true;
+
     IntRect paintedRectPluginCoordinates = paintedRect;
     paintedRectPluginCoordinates.move(-m_frameRect.x(), -m_frameRect.y());
 
