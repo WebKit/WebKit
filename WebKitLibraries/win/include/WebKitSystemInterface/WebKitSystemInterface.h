@@ -26,8 +26,6 @@
 #ifndef WebKitSystemInterface_h
 #define WebKitSystemInterface_h
 
-#include <CFNetwork/CFURLCredentialPriv.h>
-
 struct CGAffineTransform;
 struct CGPoint;
 struct CGRect;
@@ -63,6 +61,7 @@ typedef CVBufferRef CVImageBufferRef;
 typedef CVImageBufferRef CVPixelBufferRef;
 typedef struct _CAImageQueue *CAImageQueueRef;
 typedef unsigned long CFTypeID;
+typedef struct _CFURLCredential* WKCFURLCredentialRef;
 
 void wkSetFontSmoothingLevel(int type);
 int wkGetFontSmoothingLevel();
@@ -99,7 +98,7 @@ void wkSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumber
 void wkSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 CFHTTPMessageRef wkCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
 
-CFURLCredentialRef wkCopyCredentialFromCFPersistentStorage(CFURLProtectionSpaceRef protectionSpace);
+WKCFURLCredentialRef wkCopyCredentialFromCFPersistentStorage(CFURLProtectionSpaceRef protectionSpace);
 
 CFStringRef wkCFNetworkErrorGetLocalizedDescription(CFIndex errorCode);
 

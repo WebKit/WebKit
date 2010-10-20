@@ -1,3 +1,13 @@
+2010-10-20  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+        Use a WKCFURLCredentialRef type to protect against changes to the
+        definition of CFURLCredentialRef.
+
 2010-10-19  Adam Roben  <aroben@apple.com>
 
         Windows build fix
