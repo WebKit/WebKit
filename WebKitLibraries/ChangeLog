@@ -1,5 +1,12 @@
 2010-10-19  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h: Check in
+        this file that I meant to check in in r70129.
+
+2010-10-19  Adam Roben  <aroben@apple.com>
+
         Add WKCACFContext and related functions
 
         Fixes <http://webkit.org/b/43244>.
