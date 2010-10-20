@@ -43,7 +43,7 @@ public:
 public slots:
     void collect() const;
     void collectOnAlternateThread(bool waitUntilDone) const;
-    size_t getJSObjectCount() const;
+    unsigned int getJSObjectCount() const;
 
 };
 

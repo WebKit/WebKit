@@ -2443,7 +2443,6 @@ fast/box-sizing/percentage-height.html
 fast/css/acid2-pixel.html
 fast/css/acid2.html
 fast/dom/focus-contenteditable.html
-fast/dom/gc-10.html
 fast/dom/isindex-002.html
 # seems to trigger some bugs/missing features in QTextCodec
 fast/encoding/char-encoding.html
