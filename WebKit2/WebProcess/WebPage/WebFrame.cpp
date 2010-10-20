@@ -85,10 +85,12 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
 PassRefPtr<WebFrame> WebFrame::create(WebPage* page, const String& frameName, HTMLFrameOwnerElement* ownerElement)
 {
     RefPtr<WebFrame> frame = adoptRef(new WebFrame(page, frameName, ownerElement));
-    
+
     // Add explict ref() that will be balanced in WebFrameLoaderClient::frameLoaderDestroyed().
     frame->ref();
-    
+
+    frame->coreFrame()->init();
+
     return frame.release();
 }
 
@@ -111,8 +113,6 @@ WebFrame::WebFrame(WebPage* page, const String& frameName, HTMLFrameOwnerElement
         ASSERT(ownerElement->document()->frame());
         ownerElement->document()->frame()->tree()->appendChild(frame);
     }
-
-    frame->init();
 
 #ifndef NDEBUG
     webFrameCounter.increment();
