@@ -1,3 +1,14 @@
+2010-10-19  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by David Kilzer.
+
+        [BREWMP] Turn off JIT for simulator build
+        https://bugs.webkit.org/show_bug.cgi?id=47937
+
+        We don't need to test x86 JIT.
+
+        * wtf/Platform.h:
+
 2010-10-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
