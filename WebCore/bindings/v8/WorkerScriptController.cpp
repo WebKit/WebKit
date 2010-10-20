@@ -75,7 +75,7 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
     }
 
     WorkerContextExecutionState state;
-    ScriptValue result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), WTF::toZeroBasedTextPosition(sourceCode.startPosition()), &state);
+    ScriptValue result = m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startLine() - 1, &state);
     if (state.hadException) {
         if (exception)
             *exception = state.exception;

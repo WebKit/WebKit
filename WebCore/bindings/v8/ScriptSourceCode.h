@@ -35,17 +35,16 @@
 #include "CachedScript.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
 class ScriptSourceCode {
 public:
-    ScriptSourceCode(const String& source, const KURL& url = KURL(), const TextPosition1& startPosition = TextPosition1::minimumPosition())
+    ScriptSourceCode(const String& source, const KURL& url = KURL(), int startLine = 1)
         : m_source(source)
         , m_cachedScript(0)
         , m_url(url)
-        , m_startPosition(startPosition)
+        , m_startLine(startLine)
     {
     }
 
@@ -55,7 +54,7 @@ public:
         : m_source(cs->script())
         , m_cachedScript(cs)
         , m_url(ParsedURLString, cs->url())
-        , m_startPosition(TextPosition1::minimumPosition())
+        , m_startLine(1)
     {
     }
 
@@ -64,14 +63,13 @@ public:
     const String& source() const { return m_source; }
     CachedScript* cachedScript() const { return m_cachedScript.get(); }
     const KURL& url() const { return m_url; }
-    int startLine() const { return m_startPosition.m_line.oneBasedInt(); }
-    const TextPosition1& startPosition() const { return m_startPosition; }
+    int startLine() const { return m_startLine; }
 
 private:
     String m_source;
     CachedResourceHandle<CachedScript> m_cachedScript;
     KURL m_url;
-    TextPosition1 m_startPosition;
+    int m_startLine;
 };
 
 } // namespace WebCore

@@ -560,7 +560,7 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
     , m_pendingScript(0)
-    , m_scriptStartPosition(TextPosition1::belowRangePosition())
+    , m_scriptStartLine(0)
     , m_parsingFragment(false)
     , m_scriptingPermission(FragmentScriptingAllowed)
 {
@@ -587,7 +587,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
     , m_pendingScript(0)
-    , m_scriptStartPosition(TextPosition1::belowRangePosition())
+    , m_scriptStartLine(0)
     , m_parsingFragment(true)
     , m_scriptingPermission(scriptingPermission)
 {
@@ -819,7 +819,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
     ScriptElement* scriptElement = toScriptElement(newElement.get());
     if (scriptElement)
-        m_scriptStartPosition = textPositionOneBased();
+        m_scriptStartLine = lineNumber();
 
     m_currentNode->deprecatedParserAddChild(newElement.get());
 
@@ -910,7 +910,7 @@ void XMLDocumentParser::endElementNs()
             } else
                 m_scriptElement = 0;
         } else
-            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
+            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartLine));
 
         // JavaScript may have detached the parser
         if (isDetached())
@@ -1376,37 +1376,12 @@ void* xmlDocPtrForString(CachedResourceLoader* cachedResourceLoader, const Strin
 
 int XMLDocumentParser::lineNumber() const
 {
-    // FIXME: The implementation probably returns 1-based int, but method should return 0-based.
     return context() ? context()->input->line : 1;
 }
 
 int XMLDocumentParser::columnNumber() const
 {
-    // FIXME: The implementation probably returns 1-based int, but method should return 0-based.
     return context() ? context()->input->col : 1;
-}
-
-TextPosition0 XMLDocumentParser::textPosition() const
-{
-    xmlParserCtxtPtr context = this->context();
-    if (!context)
-        return TextPosition0::minimumPosition();
-    // FIXME: The context probably contains 1-based numbers, but we treat them as 0-based,
-    //        to be consistent with fixme's in lineNumber() and columnNumber
-    //        methods.
-    return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(context->input->line),
-        WTF::ZeroBasedNumber::fromZeroBasedInt(context->input->col));
-}
-
-// This method has a correct implementation, in contrast to textPosition() method.
-// It should replace textPosition().
-TextPosition1 XMLDocumentParser::textPositionOneBased() const
-{
-    xmlParserCtxtPtr context = this->context();
-    if (!context)
-        return TextPosition1::minimumPosition();
-    return TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(context->input->line),
-        WTF::OneBasedNumber::fromOneBasedInt(context->input->col));
 }
 
 void XMLDocumentParser::stopParsing()

@@ -184,7 +184,7 @@ bool WorkerContextExecutionProxy::forgetV8EventObject(Event* event)
     return false;
 }
 
-ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, const TextPosition0& scriptStartPosition, WorkerContextExecutionState* state)
+ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, int baseLine, WorkerContextExecutionState* state)
 {
     v8::HandleScope hs;
 
@@ -196,7 +196,7 @@ ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const St
     v8::TryCatch exceptionCatcher;
 
     v8::Local<v8::String> scriptString = v8ExternalString(script);
-    v8::Handle<v8::Script> compiledScript = V8Proxy::compileScript(scriptString, fileName, scriptStartPosition);
+    v8::Handle<v8::Script> compiledScript = V8Proxy::compileScript(scriptString, fileName, baseLine);
     v8::Local<v8::Value> result = runScript(compiledScript);
 
     if (!exceptionCatcher.CanContinue())
@@ -227,7 +227,7 @@ v8::Local<v8::Value> WorkerContextExecutionProxy::runScript(v8::Handle<v8::Scrip
     // Compute the source string and prevent against infinite recursion.
     if (m_recursion >= kMaxRecursionDepth) {
         v8::Local<v8::String> code = v8ExternalString("throw RangeError('Recursion too deep')");
-        script = V8Proxy::compileScript(code, "", TextPosition0::minimumPosition());
+        script = V8Proxy::compileScript(code, "", 0);
     }
 
     if (V8Proxy::handleOutOfMemory())

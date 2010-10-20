@@ -517,7 +517,6 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/text/StringImpl.cpp \
 	JavaScriptCore/wtf/text/StringImpl.h \
 	JavaScriptCore/wtf/text/StringStatics.cpp \
-	JavaScriptCore/wtf/text/TextPosition.h \
 	JavaScriptCore/wtf/text/WTFString.cpp \
 	JavaScriptCore/wtf/text/WTFString.h \
 	JavaScriptCore/wtf/ThreadIdentifierDataPthreads.cpp \
