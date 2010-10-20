@@ -46,10 +46,10 @@ from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
-from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import Command, TryAgain
+
 
 class AbstractQueue(Command, QueueEngineDelegate):
     watchers = [
@@ -327,6 +327,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         raise TryAgain()
 
 
+# FIXME: All the Rietveld code is no longer used and should be deleted.
 class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     name = "rietveld-upload-queue"
 
@@ -372,41 +373,27 @@ class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         cls._reject_patch(tool, state["patch"].id())
 
 
-class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):
+class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     """This is the base-class for the EWS queues and the style-queue."""
     def __init__(self, options=None):
         AbstractPatchQueue.__init__(self, options)
 
     def review_patch(self, patch):
-        raise NotImplementedError, "subclasses must implement"
-
-    # PersistentPatchCollectionDelegate methods
-
-    def collection_name(self):
-        return self.name
-
-    def fetch_potential_patch_ids(self):
-        return self._tool.bugs.queries.fetch_attachment_ids_from_review_queue()
-
-    def status_server(self):
-        return self._tool.status_server
-
-    def is_terminal_status(self, status):
-        return status == "Pass" or status == "Fail" or status.startswith("Error:")
+        raise NotImplementedError("subclasses must implement")
 
     # AbstractPatchQueue methods
 
     def begin_work_queue(self):
         AbstractPatchQueue.begin_work_queue(self)
-        self._patches = PersistentPatchCollection(self)
 
     def next_work_item(self):
-        patch_id = self._patches.next()
-        if patch_id:
-            return self._tool.bugs.fetch_attachment(patch_id)
+        patch_id = self._fetch_next_work_item()
+        if not patch_id:
+            return None
+        return self._tool.bugs.fetch_attachment(patch_id)
 
     def should_proceed_with_work_item(self, patch):
-        raise NotImplementedError, "subclasses must implement"
+        raise NotImplementedError("subclasses must implement")
 
     def process_work_item(self, patch):
         try:
@@ -418,6 +405,8 @@ class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate,
             if e.exit_code != QueueEngine.handled_error_code:
                 self._did_fail(patch)
             raise e
+        finally:
+            self._release_work_item(patch)
 
     def handle_unexpected_error(self, patch, message):
         log(message)

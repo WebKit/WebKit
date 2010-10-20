@@ -47,6 +47,8 @@ class CommitQueueFeeder(AbstractFeeder):
         self.committer_validator = CommitterValidator(self._tool.bugs)
 
     def _update_work_items(self, item_ids):
+        # FIXME: This is the last use of update_work_items, the commit-queue
+        # should move to feeding patches one at a time like the EWS does.
         self._tool.status_server.update_work_items(self.queue_name, item_ids)
         log("Feeding %s items %s" % (self.queue_name, item_ids))
 

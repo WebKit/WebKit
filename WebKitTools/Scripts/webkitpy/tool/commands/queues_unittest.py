@@ -155,22 +155,6 @@ class AbstractPatchQueueTest(CommandsTest):
         self.assertEquals(queue._fetch_next_work_item(), 2)
 
 
-class AbstractReviewQueueTest(CommandsTest):
-    def test_patch_collection_delegate_methods(self):
-        queue = TestReviewQueue()
-        tool = MockTool()
-        queue.bind_to_tool(tool)
-        queue._options = Mock()
-        queue._options.port = None
-        self.assertEquals(queue.collection_name(), "test-review-queue")
-        self.assertEquals(queue.fetch_potential_patch_ids(), [103])
-        queue.status_server()
-        self.assertTrue(queue.is_terminal_status("Pass"))
-        self.assertTrue(queue.is_terminal_status("Fail"))
-        self.assertTrue(queue.is_terminal_status("Error: Your patch exploded"))
-        self.assertFalse(queue.is_terminal_status("Foo"))
-
-
 class NeedsUpdateSequence(StepSequence):
     def _run(self, tool, options, state):
         raise CheckoutNeedsUpdate([], 1, "", None)
@@ -365,9 +349,9 @@ class StyleQueueTest(QueuesTest):
     def test_style_queue(self):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("style-queue", MockSCM.fake_checkout_root),
-            "next_work_item": "MOCK: update_work_items: style-queue [103]\n",
+            "next_work_item": "",
             "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
-            "process_work_item": "MOCK: update_status: style-queue Pass\n",
+            "process_work_item": "MOCK: update_status: style-queue Pass\nMOCK: release_work_item: style-queue 197\n",
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=142, cc=[]\n--- Begin comment ---\nAttachment 197 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
         }

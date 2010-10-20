@@ -105,4 +105,9 @@ class Queue(object):
         return self._dash_regexp.sub("_", self._name)
 
     def is_ews(self):
-        return self._name.endswith("-ews")
+        # Note: The style-queue is just like an EWS in that it has an EWS
+        # bubble, and it works off of the r? patches.  If at some later
+        # point code wants to not treat the style-queue as an EWS
+        # (e.g. expecting is_ews() queues to have build results?)
+        # then we should fix all callers and change this check.
+        return self._name.endswith("-ews") or self._name == "style-queue"

@@ -48,8 +48,8 @@ class EarlyWarningSytemTest(QueuesTest):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr(ews.name, os.getcwd()),  # FIXME: Use of os.getcwd() is wrong, should be scm.checkout_root
             "handle_unexpected_error": "Mock error message\n",
-            "next_work_item": "MOCK: update_work_items: %(name)s [103]\n" % string_replacemnts,
-            "process_work_item": "MOCK: update_status: %(name)s Pass\n" % string_replacemnts,
+            "next_work_item": "",
+            "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts,
             "handle_script_error": "MOCK: update_status: %(name)s ScriptError error message\nMOCK bug comment: bug_id=142, cc=%(watchers)s\n--- Begin comment ---\nAttachment 197 did not build on %(port)s:\nBuild output: http://dummy_url\n--- End comment ---\n\n" % string_replacemnts,
         }
         return expected_stderr

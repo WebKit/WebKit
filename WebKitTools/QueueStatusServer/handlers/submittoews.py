@@ -39,6 +39,9 @@ class SubmitToEWS(UpdateBase):
         self.response.out.write(template.render("templates/submittoews.html", None))
 
     def _should_add_to_ews_queue(self, queue, attachment):
+        # This assert() is here to make sure we're not submitting to the commit-queue.
+        # The commit-queue clients check each patch anyway, but there is not sense
+        # in adding things to the commit-queue when they won't be processed by it.
         assert(queue.is_ews())
         latest_status = attachment.status_for_queue(queue)
         if not latest_status:
@@ -51,7 +54,7 @@ class SubmitToEWS(UpdateBase):
         return latest_status.is_retry_request()
 
     def _add_attachment_to_ews_queues(self, attachment):
-        for queue in Queue.all_ews():
+        for queue in Queue.all_ews():  # all_ews() currently includes the style-queue
             if self._should_add_to_ews_queue(queue, attachment):
                 queue.work_items().add_work_item(attachment.id)
 

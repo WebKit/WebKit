@@ -78,6 +78,19 @@
 
         Reviewed by Adam Barth.
 
+        EWS should test patches with r+
+        https://bugs.webkit.org/show_bug.cgi?id=35460
+
+        * QueueStatusServer/handlers/submittoews.py:
+        * QueueStatusServer/model/queues.py:
+        * Scripts/webkitpy/tool/bot/patchcollection.py: Removed.
+        * Scripts/webkitpy/tool/bot/patchcollection_unittest.py: Removed.
+        * Scripts/webkitpy/tool/commands/queues.py:
+
+2010-10-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Teach feeder-queue how to feed the EWS bots
         https://bugs.webkit.org/show_bug.cgi?id=47943
 
