@@ -49,6 +49,7 @@
 use strict;
 use warnings;
 
+use Config;
 use Cwd;
 use Data::Dumper;
 use Fcntl qw(F_GETFL F_SETFL O_NONBLOCK);
@@ -157,7 +158,7 @@ my $testHTTP = 1;
 my $testWebSocket = 1;
 my $testMedia = 1;
 my $tmpDir = "/tmp";
-my $testResultsDirectory = File::Spec->catfile($tmpDir, "layout-test-results");
+my $testResultsDirectory = File::Spec->catdir($tmpDir, "layout-test-results");
 my $testsPerDumpTool = 1000;
 my $threaded = 0;
 # DumpRenderTree has an internal timeout of 30 seconds, so this must be > 30.
@@ -179,6 +180,8 @@ if (isWindows() || isMsys()) {
 
 # Default to --no-http for wx for now.
 $testHTTP = 0 if (isWx());
+
+my $perlInterpreter = "perl";
 
 my $expectedTag = "expected";
 my $actualTag = "actual";
@@ -224,7 +227,7 @@ if (isAppleMacWebKit()) {
     $platform = "gtk";
 } elsif (isWx()) {
     $platform = "wx";
-} elsif (isCygwin()) {
+} elsif (isCygwin() || isWindows()) {
     if (isWindowsXP()) {
         $platform = "win-xp";
     } elsif (isWindowsVista()) {
@@ -236,7 +239,7 @@ if (isAppleMacWebKit()) {
     }
 }
 
-if (isQt() || isCygwin()) {
+if (isQt() || isAppleWinWebKit()) {
     my $testfontPath = $ENV{"WEBKIT_TESTFONTS"};
     if (!$testfontPath || !-d "$testfontPath") {
         print "The WEBKIT_TESTFONTS environment variable is not defined or not set properly\n";
@@ -412,8 +415,11 @@ if (!defined($root)) {
 
 my $dumpToolName = $useWebKitTestRunner ? "WebKitTestRunner" : "DumpRenderTree";
 
-$dumpToolName .= "_debug" if isCygwin() && configurationForVisualStudio() !~ /^Release|Debug_Internal$/;
-my $dumpTool = "$productDir/$dumpToolName";
+if (isAppleWinWebKit()) {
+    $dumpToolName .= "_debug" if configurationForVisualStudio() !~ /^Release|Debug_Internal$/;
+    $dumpToolName .= $Config{_exe};
+}
+my $dumpTool = File::Spec->catfile($productDir, $dumpToolName);
 die "can't find executable $dumpToolName (looked in $productDir)\n" unless -x $dumpTool;
 
 my $imageDiffTool = "$productDir/ImageDiff";
@@ -684,7 +690,7 @@ for my $test (@tests) {
     my $suffixExpectedHash = "";
     if ($pixelTests && !$resetResults) {
         my $expectedPixelDir = expectedDirectoryForTest($base, 0, "png");
-        if (open EXPECTEDHASH, "$expectedPixelDir/$base-$expectedTag.checksum") {
+        if (open EXPECTEDHASH, File::Spec->catfile($expectedPixelDir, "$base-$expectedTag.checksum")) {
             my $expectedHash = <EXPECTEDHASH>;
             chomp($expectedHash);
             close EXPECTEDHASH;
@@ -766,7 +772,7 @@ for my $test (@tests) {
     my $isText = isTextOnlyTest($actual);
 
     my $expectedDir = expectedDirectoryForTest($base, $isText, $expectedExtension);
-    $expectedResultPaths{$base} = "$expectedDir/$expectedFileName";
+    $expectedResultPaths{$base} = File::Spec->catfile($expectedDir, $expectedFileName);
 
     unless ($readResults->{status} eq "success") {
         my $crashed = $readResults->{status} eq "crashed";
@@ -780,7 +786,7 @@ for my $test (@tests) {
 
     my $expected;
 
-    if (!$resetResults && open EXPECTED, "<", "$expectedDir/$expectedFileName") {
+    if (!$resetResults && open EXPECTED, "<", $expectedResultPaths{$base}) {
         $expected = "";
         while (<EXPECTED>) {
             next if $stripEditingCallbacks && $_ =~ /^EDITING DELEGATE:/;
@@ -830,12 +836,13 @@ for my $test (@tests) {
 
     if ($actualPNGSize > 0) {
         my $expectedPixelDir = expectedDirectoryForTest($base, 0, "png");
+        my $expectedPNGPath = File::Spec->catfile($expectedPixelDir, "$base-$expectedTag.png");
 
         if (!$resetResults && ($expectedHash ne $actualHash || ($actualHash eq "" && $expectedHash eq ""))) {
-            if (-f "$expectedPixelDir/$base-$expectedTag.png") {
-                my $expectedPNGSize = -s "$expectedPixelDir/$base-$expectedTag.png";
+            if (-f $expectedPNGPath) {
+                my $expectedPNGSize = -s $expectedPNGPath;
                 my $expectedPNG = "";
-                open EXPECTEDPNG, "$expectedPixelDir/$base-$expectedTag.png";
+                open EXPECTEDPNG, $expectedPNGPath;
                 read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
 
                 openDiffTool();
@@ -866,13 +873,14 @@ for my $test (@tests) {
             }
         }
 
-        if ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.png") {
+        if ($resetResults || !-f $expectedPNGPath) {
             mkpath catfile($expectedPixelDir, dirname($base)) if $testDirectory ne $expectedPixelDir;
-            writeToFile("$expectedPixelDir/$base-$expectedTag.png", $actualPNG);
+            writeToFile($expectedPNGPath, $actualPNG);
         }
 
-        if ($actualHash ne "" && ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.checksum")) {
-            writeToFile("$expectedPixelDir/$base-$expectedTag.checksum", $actualHash);
+        my $expectedChecksumPath = File::Spec->catfile($expectedPixelDir, "$base-$expectedTag.checksum");
+        if ($actualHash ne "" && ($resetResults || !-f $expectedChecksumPath)) {
+            writeToFile($expectedChecksumPath, $actualHash);
         }
     }
 
@@ -1009,11 +1017,10 @@ for my $test (@tests) {
     }
 
     if ($error) {
-        my $dir = "$testResultsDirectory/$base";
-        $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
+        my $dir = dirname(File::Spec->catdir($testResultsDirectory, $base));
         mkpath $dir;
         
-        writeToFile("$testResultsDirectory/$base-$errorTag.txt", $error);
+        writeToFile(File::Spec->catfile($testResultsDirectory, "$base-$errorTag.txt"), $error);
         
         $counts{error}++;
         push @{$tests{error}}, $test;
@@ -1121,6 +1128,8 @@ if (isGtk()) {
   system "WebKitTools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
 } elsif (isCygwin()) {
   system "cygstart", $testResults if $launchSafari;
+} elsif (isWindows()) {
+  system "start", $testResults if $launchSafari;
 } else {
   system "WebKitTools/Scripts/run-safari", @configurationArgs, "-NSOpen", $testResults if $launchSafari;
 }
@@ -1322,7 +1331,7 @@ sub launchWithEnv(\@\%)
     unshift @{$args}, "\"$allEnvVars\"";
 
     my $execScript = File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts execAppWithEnv));
-    unshift @{$args}, $execScript;
+    unshift @{$args}, $perlInterpreter, $execScript;
     return @{$args};
 }
 
@@ -1364,7 +1373,7 @@ sub buildDumpTool($)
     }
 
     my @args = argumentsForConfiguration();
-    my $buildProcess = open3($childIn, $childOut, $childErr, "WebKitTools/Scripts/$dumpToolBuildScript", @args) or die "Failed to run build-dumprendertree";
+    my $buildProcess = open3($childIn, $childOut, $childErr, $perlInterpreter, File::Spec->catfile(qw(WebKitTools Scripts), $dumpToolBuildScript), @args) or die "Failed to run build-dumprendertree";
     close($childIn);
     waitpid $buildProcess, 0;
     my $buildResult = $?;
@@ -1507,7 +1516,7 @@ sub configureAndOpenHTTPDIfNeeded()
 sub checkPythonVersion()
 {
     # we have not chdir to sourceDir yet.
-    system sourceDir() . "/WebKitTools/Scripts/ensure-valid-python", "--check-only";
+    system $perlInterpreter, File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts ensure-valid-python)), "--check-only";
     return exitStatus($?) == 0;
 }
 
@@ -1610,12 +1619,12 @@ sub expectedDirectoryForTest($;$;$)
     my ($base, $isText, $expectedExtension) = @_;
 
     my @directories = @platformResultHierarchy;
-    push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-snowleopard mac) if isCygwin();
+    push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-snowleopard mac) if isAppleWinWebKit();
     push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.
     foreach my $directory (@directories) {
-        return $directory if (-f "$directory/$base-$expectedTag.$expectedExtension");
+        return $directory if -f File::Spec->catfile($directory, "$base-$expectedTag.$expectedExtension");
     }
 
     # For cross-platform tests, text-only results should go in the cross-platform directory,
@@ -1631,9 +1640,9 @@ sub countFinishedTest($$$$)
         if ($shouldCheckLeaks) {
             my $fileName;
             if ($testsPerDumpTool == 1) {
-                $fileName = "$testResultsDirectory/$base-leaks.txt";
+                $fileName = File::Spec->catfile($testResultsDirectory, "$base-leaks.txt");
             } else {
-                $fileName = "$testResultsDirectory/" . fileNameWithNumber($dumpToolName, $leaksOutputFileNumber) . "-leaks.txt";
+                $fileName = File::Spec->catfile($testResultsDirectory, fileNameWithNumber($dumpToolName, $leaksOutputFileNumber) . "-leaks.txt");
             }
             my $leakCount = countAndPrintLeaks($dumpToolName, $dumpToolPID, $fileName);
             $totalLeaks += $leakCount;
@@ -1656,14 +1665,13 @@ sub testCrashedOrTimedOut($$$$$)
 
     sampleDumpTool() unless $didCrash;
 
-    my $dir = "$testResultsDirectory/$base";
-    $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
+    my $dir = dirname(File::Spec->catdir($testResultsDirectory, $base));
     mkpath $dir;
 
     deleteExpectedAndActualResults($base);
 
     if (defined($error) && length($error)) {
-        writeToFile("$testResultsDirectory/$base-$errorTag.txt", $error);
+        writeToFile(File::Spec->catfile($testResultsDirectory, "$base-$errorTag.txt"), $error);
     }
 
     recordActualResultsAndDiff($base, $actual);
@@ -1901,8 +1909,8 @@ sub recordActualResultsAndDiff($$)
 
     my $expectedResultPath = $expectedResultPaths{$base};
     my ($expectedResultFileNameMinusExtension, $expectedResultDirectoryPath, $expectedResultExtension) = fileparse($expectedResultPath, qr{\.[^.]+$});
-    my $actualResultsPath = "$testResultsDirectory/$base-$actualTag$expectedResultExtension";
-    my $copiedExpectedResultsPath = "$testResultsDirectory/$base-$expectedTag$expectedResultExtension";
+    my $actualResultsPath = File::Spec->catfile($testResultsDirectory, "$base-$actualTag$expectedResultExtension");
+    my $copiedExpectedResultsPath = File::Spec->catfile($testResultsDirectory, "$base-$expectedTag$expectedResultExtension");
 
     mkpath(dirname($actualResultsPath));
     writeToFile("$actualResultsPath", $actualResults);
@@ -1914,7 +1922,7 @@ sub recordActualResultsAndDiff($$)
         close EMPTY;
     }
 
-    my $diffOuputBasePath = "$testResultsDirectory/$base";
+    my $diffOuputBasePath = File::Spec->catfile($testResultsDirectory, $base);
     my $diffOutputPath = "$diffOuputBasePath-$diffsTag.txt";
     system "diff -u \"$copiedExpectedResultsPath\" \"$actualResultsPath\" > \"$diffOutputPath\"";
 
@@ -2274,7 +2282,7 @@ sub findTestsToRun
     my @testsToRun = ();
 
     for my $test (@ARGV) {
-        $test =~ s/^($layoutTestsName|$testDirectory)\///;
+        $test =~ s/^(\Q$layoutTestsName\E|\Q$testDirectory\E)\///;
         my $fullPath = catfile($testDirectory, $test);
         if (file_name_is_absolute($test)) {
             print "can't run test $test outside $testDirectory\n";

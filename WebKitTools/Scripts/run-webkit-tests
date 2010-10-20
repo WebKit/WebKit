@@ -41,6 +41,7 @@
 use strict;
 use warnings;
 
+use File::Spec;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
@@ -79,5 +80,5 @@ if (useNewRunWebKitTests()) {
     }
 }
 
-my $harnessPath = sprintf("%s/%s", relativeScriptsDir(), $harnessName);
+my $harnessPath = File::Spec->catfile(relativeScriptsDir(), $harnessName);
 exec $harnessPath ($harnessPath, @ARGV) or die "Failed to execute $harnessPath";

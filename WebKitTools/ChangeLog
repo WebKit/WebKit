@@ -1,3 +1,34 @@
+2010-10-19  Adam Roben  <aroben@apple.com>
+
+        Gently nudge old-run-webkit-tests toward working with Win32 Perl
+
+        This makes old-run-webkit-tests able to build DRT and find all the
+        tests to run. It even invokes DRT and passes it the list of tests. But
+        DRT ends up hung blocking on I/O.
+
+        Fixes <http://webkit.org/b/47961> Get old-run-webkit-tests mostly
+        working with Win32 Perl
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+          - Use File::Spec instead of manually concatenating paths
+          - Use dirname instead of manually stripping off the base name
+          - Use isCygwin/isWindows/isAppleWinWebKit more judiciously
+          - Explicitly invoke Perl when running Perl scripts
+          - Quote paths when using them in regular expressions to allow them
+            to include characters that have special meanings in regular
+            expressions
+
+        * Scripts/run-webkit-tests: Use File::Spec instead of manually
+        concatenating paths.
+
+        * Scripts/webkitdirs.pm:
+          - Remove the unused $windowsTmpPath variable
+          - Use isCygwin/isWindows/isAppleWinWebKit more judiciously
+          - Only pass paths to cygpath when using Cygwin Perl
+          - Only use pdevenv when using Cygwin Perl, for now
+
 2010-10-20  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Martin Robinson.

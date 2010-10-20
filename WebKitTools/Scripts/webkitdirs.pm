@@ -71,7 +71,6 @@ my $isInspectorFrontend;
 
 # Variables for Win32 support
 my $vcBuildPath;
-my $windowsTmpPath;
 my $windowsSourceDir;
 my $winVersion;
 my $willUseVCExpressWhenBuilding = 0;
@@ -173,9 +172,6 @@ sub determineBaseProductDir
         my $dosBuildPath = `cygpath --windows \"$baseProductDir\"`;
         chomp $dosBuildPath;
         $ENV{"WEBKITOUTPUTDIR"} = $dosBuildPath;
-    }
-
-    if (isAppleWinWebKit()) {
         my $unixBuildPath = `cygpath --unix \"$baseProductDir\"`;
         chomp $unixBuildPath;
         $baseProductDir = $unixBuildPath;
@@ -289,8 +285,9 @@ sub determineConfigurationForVisualStudio
     $configurationForVisualStudio = $configuration;
     return unless $configuration eq "Debug";
     setupCygwinEnv();
-    chomp(my $dir = `cygpath -ua '$ENV{WEBKITLIBRARIESDIR}'`);
-    $configurationForVisualStudio = "Debug_Internal" if -f "$dir/bin/CoreFoundation_debug.dll";
+    my $dir = $ENV{WEBKITLIBRARIESDIR};
+    chomp($dir = `cygpath -ua '$dir'`) if isCygwin();
+    $configurationForVisualStudio = "Debug_Internal" if -f File::Spec->catfile($dir, "bin", "CoreFoundation_debug.dll");
 }
 
 sub determineConfigurationProductDir
@@ -299,7 +296,7 @@ sub determineConfigurationProductDir
     determineBaseProductDir();
     determineConfiguration();
     if (isAppleWinWebKit() && !isWx()) {
-        $configurationProductDir = "$baseProductDir/bin";
+        $configurationProductDir = File::Spec->catdir($baseProductDir, "bin");
     } else {
         # [Gtk][Efl] We don't have Release/Debug configurations in straight
         # autotool builds (non build-webkit). In this case and if
@@ -529,7 +526,7 @@ sub installedSafariPath
     } elsif (isAppleWinWebKit()) {
         $safariBundle = `"$configurationProductDir/FindSafari.exe"`;
         $safariBundle =~ s/[\r\n]+$//;
-        $safariBundle = `cygpath -u '$safariBundle'`;
+        $safariBundle = `cygpath -u '$safariBundle'` if isCygwin();
         $safariBundle =~ s/[\r\n]+$//;
         $safariBundle .= "Safari.exe";
     }
@@ -624,7 +621,7 @@ sub builtDylibPathForName
 # Check to see that all the frameworks are built.
 sub checkFrameworks # FIXME: This is a poor name since only the Mac calls built WebCore a Framework.
 {
-    return if isCygwin();
+    return if isCygwin() || isWindows();
     my @frameworks = ("JavaScriptCore", "WebCore");
     push(@frameworks, "WebKit") if isAppleMacWebKit(); # FIXME: This seems wrong, all ports should have a WebKit these days.
     for my $framework (@frameworks) {
@@ -873,7 +870,7 @@ sub isAppleMacWebKit()
 
 sub isAppleWinWebKit()
 {
-    return isAppleWebKit() && isCygwin();
+    return isAppleWebKit() && (isCygwin() || isWindows());
 }
 
 sub isPerianInstalled()
@@ -1009,8 +1006,8 @@ sub checkRequiredSystemConfig
 sub determineWindowsSourceDir()
 {
     return if $windowsSourceDir;
-    my $sourceDir = sourceDir();
-    chomp($windowsSourceDir = `cygpath -w '$sourceDir'`);
+    $windowsSourceDir = sourceDir();
+    chomp($windowsSourceDir = `cygpath -w '$windowsSourceDir'`) if isCygwin();
 }
 
 sub windowsSourceDir()
@@ -1070,25 +1067,25 @@ sub setupAppleWinEnv()
 
 sub setupCygwinEnv()
 {
-    return if !isCygwin();
+    return if !isCygwin() && !isWindows();
     return if $vcBuildPath;
 
     my $vsInstallDir;
-    my $programFilesPath = $ENV{'PROGRAMFILES'} || "C:\\Program Files";
+    my $programFilesPath = $ENV{'PROGRAMFILES(X86)'} || $ENV{'PROGRAMFILES'} || "C:\\Program Files";
     if ($ENV{'VSINSTALLDIR'}) {
         $vsInstallDir = $ENV{'VSINSTALLDIR'};
     } else {
-        $vsInstallDir = "$programFilesPath/Microsoft Visual Studio 8";
+        $vsInstallDir = File::Spec->catdir($programFilesPath, "Microsoft Visual Studio 8");
     }
-    $vsInstallDir = `cygpath "$vsInstallDir"`;
-    chomp $vsInstallDir;
-    $vcBuildPath = "$vsInstallDir/Common7/IDE/devenv.com";
+    chomp($vsInstallDir = `cygpath "$vsInstallDir"`) if isCygwin();
+    $vcBuildPath = File::Spec->catfile($vsInstallDir, qw(Common7 IDE devenv.com));
     if (-e $vcBuildPath) {
         # Visual Studio is installed; we can use pdevenv to build.
-        $vcBuildPath = File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts pdevenv));
+        # FIXME: Make pdevenv work with non-Cygwin Perl.
+        $vcBuildPath = File::Spec->catfile(sourceDir(), qw(WebKitTools Scripts pdevenv)) if isCygwin();
     } else {
         # Visual Studio not found, try VC++ Express
-        $vcBuildPath = "$vsInstallDir/Common7/IDE/VCExpress.exe";
+        $vcBuildPath = File::Spec->catfile($vsInstallDir, qw(Common7 IDE VCExpress.exe));
         if (! -e $vcBuildPath) {
             print "*************************************************************\n";
             print "Cannot find '$vcBuildPath'\n";
@@ -1101,7 +1098,7 @@ sub setupCygwinEnv()
         $willUseVCExpressWhenBuilding = 1;
     }
 
-    my $qtSDKPath = "$programFilesPath/QuickTime SDK";
+    my $qtSDKPath = File::Spec->catdir($programFilesPath, "QuickTime SDK");
     if (0 && ! -e $qtSDKPath) {
         print "*************************************************************\n";
         print "Cannot find '$qtSDKPath'\n";
@@ -1111,10 +1108,11 @@ sub setupCygwinEnv()
         die;
     }
     
-    chomp($ENV{'WEBKITLIBRARIESDIR'} = `cygpath -wa "$sourceDir/WebKitLibraries/win"`) unless $ENV{'WEBKITLIBRARIESDIR'};
+    unless ($ENV{WEBKITLIBRARIESDIR}) {
+        $ENV{'WEBKITLIBRARIESDIR'} = File::Spec->catdir($sourceDir, "WebKitLibraries", "win");
+        chomp($ENV{WEBKITLIBRARIESDIR} = `cygpath -wa $ENV{WEBKITLIBRARIESDIR}`) if isCygwin();
+    }
 
-    $windowsTmpPath = `cygpath -w /tmp`;
-    chomp $windowsTmpPath;
     print "Building results into: ", baseProductDir(), "\n";
     print "WEBKITOUTPUTDIR is set to: ", $ENV{"WEBKITOUTPUTDIR"}, "\n";
     print "WEBKITLIBRARIESDIR is set to: ", $ENV{"WEBKITLIBRARIESDIR"}, "\n";
@@ -1197,14 +1195,14 @@ sub buildVisualStudioProject
 
     dieIfWindowsPlatformSDKNotInstalled() if $willUseVCExpressWhenBuilding;
 
-    chomp(my $winProjectPath = `cygpath -w "$project"`);
+    chomp($project = `cygpath -w "$project"`) if isCygwin();
     
     my $action = "/build";
     if ($clean) {
         $action = "/clean";
     }
 
-    my @command = ($vcBuildPath, $winProjectPath, $action, $config);
+    my @command = ($vcBuildPath, $project, $action, $config);
 
     print join(" ", @command), "\n";
     return system @command;
