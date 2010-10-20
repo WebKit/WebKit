@@ -1,3 +1,14 @@
+2010-10-20  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] use gtk_widget_hide instead of gtk_widget_hide_all in the fullscreen video conroller
+        https://bugs.webkit.org/show_bug.cgi?id=47972
+
+        * WebCoreSupport/FullscreenVideoController.cpp:
+        (FullscreenVideoController::hideHud):
+        (FullscreenVideoController::exitFullscreen):
+
 2010-10-19  Joone Hur  <joone@kldp.org>
 
         Reviewed by Martin Robinson.

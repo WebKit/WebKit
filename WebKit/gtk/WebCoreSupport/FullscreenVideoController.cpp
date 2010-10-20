@@ -213,7 +213,7 @@ void FullscreenVideoController::hideHud()
     GdkCursor* cursor = blankCursor();
     gdk_window_set_cursor(window, cursor);
 
-    gtk_widget_hide_all(m_hudWindow);
+    gtk_widget_hide(m_hudWindow);
 
     if (m_progressBarUpdateId) {
         g_source_remove(m_progressBarUpdateId);
@@ -350,7 +350,7 @@ void FullscreenVideoController::exitFullscreen()
     if (m_mediaElement->platformMedia().type == WebCore::PlatformMedia::GStreamerGWorldType)
         m_mediaElement->platformMedia().media.gstreamerGWorld->exitFullscreen();
 
-    gtk_widget_hide_all(m_window);
+    gtk_widget_hide(m_window);
 
     gtk_widget_destroy(m_hudWindow);
     m_hudWindow = 0;
