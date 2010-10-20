@@ -1,3 +1,14 @@
+2010-10-19  Adam Roben  <aroben@apple.com>
+
+        Add WKCACFContext and related functions
+
+        Fixes <http://webkit.org/b/43244>.
+
+        Reviewed by Sam Weinig.
+
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+
 2010-10-14  Ada Chan  <adachan@apple.com>
 
         Rubber-stamped by Adam Roben.

@@ -36,9 +36,7 @@
 #include "WKCACFContextFlusher.h"
 #include "WKCACFLayer.h"
 #include "WebCoreInstanceHandle.h"
-#include <CoreGraphics/CGSRegion.h>
-#include <QuartzCore/CACFContext.h>
-#include <QuartzCore/CARenderOGL.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
@@ -108,7 +106,7 @@ private:
     WKCACFLayerRenderer* m_renderer;
 };
 
-typedef HashMap<CACFContextRef, WKCACFLayerRenderer*> ContextToWindowMap;
+typedef HashMap<WKCACFContext*, WKCACFLayerRenderer*> ContextToWindowMap;
 
 static ContextToWindowMap& windowsForContexts()
 {
@@ -206,7 +204,7 @@ bool WKCACFLayerRenderer::acceleratedCompositingAvailable()
     return available;
 }
 
-void WKCACFLayerRenderer::didFlushContext(CACFContextRef context)
+void WKCACFLayerRenderer::didFlushContext(WKCACFContext* context)
 {
     WKCACFLayerRenderer* window = windowsForContexts().get(context);
     if (!window)
@@ -226,15 +224,13 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
     : m_client(client)
     , m_mightBeAbleToCreateDeviceLater(true)
     , m_rootLayer(WKCACFRootLayer::create(this))
-    , m_context(AdoptCF, CACFContextCreate(0))
-    , m_renderContext(static_cast<CARenderContext*>(CACFContextGetRenderContext(m_context.get())))
-    , m_renderer(0)
+    , m_context(wkCACFContextCreate())
     , m_hostWindow(0)
     , m_renderTimer(this, &WKCACFLayerRenderer::renderTimerFired)
     , m_backingStoreDirty(false)
     , m_mustResetLostDeviceBeforeRendering(false)
 {
-    windowsForContexts().set(m_context.get(), this);
+    windowsForContexts().set(m_context, this);
 
     // Under the root layer, we have a clipping layer to clip the content,
     // that contains a scroll layer that we use for scrolling the content.
@@ -256,7 +252,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
 #endif
 
     if (m_context)
-        m_rootLayer->becomeRootLayerForContext(m_context.get());
+        m_rootLayer->becomeRootLayerForContext(m_context);
 
 #ifndef NDEBUG
     char* printTreeFlag = getenv("CA_PRINT_TREE");
@@ -267,6 +263,7 @@ WKCACFLayerRenderer::WKCACFLayerRenderer(WKCACFLayerRendererClient* client)
 WKCACFLayerRenderer::~WKCACFLayerRenderer()
 {
     destroyRenderer();
+    wkCACFContextDestroy(m_context);
 }
 
 WKCACFLayer* WKCACFLayerRenderer::rootLayer() const
@@ -298,7 +295,7 @@ void WKCACFLayerRenderer::setRootChildLayer(WKCACFLayer* layer)
    
 void WKCACFLayerRenderer::layerTreeDidChange()
 {
-    WKCACFContextFlusher::shared().addContext(m_context.get());
+    WKCACFContextFlusher::shared().addContext(m_context);
     renderSoon();
 }
 
@@ -373,7 +370,7 @@ bool WKCACFLayerRenderer::createRenderer()
 
     initD3DGeometry();
 
-    m_renderer = CARenderOGLNew(&kCARenderDX9Callbacks, m_d3dDevice.get(), 0);
+    wkCACFContextInitializeD3DDevice(m_context, m_d3dDevice.get());
 
     if (IsWindow(m_hostWindow))
         m_rootLayer->setBounds(bounds());
@@ -384,14 +381,10 @@ bool WKCACFLayerRenderer::createRenderer()
 void WKCACFLayerRenderer::destroyRenderer()
 {
     if (m_context) {
-        CACFContextSetLayer(m_context.get(), 0);
-        windowsForContexts().remove(m_context.get());
-        WKCACFContextFlusher::shared().removeContext(m_context.get());
+        windowsForContexts().remove(m_context);
+        WKCACFContextFlusher::shared().removeContext(m_context);
     }
 
-    if (m_renderer)
-        CARenderOGLDestroy(m_renderer);
-    m_renderer = 0;
     m_d3dDevice = 0;
     if (s_d3d)
         s_d3d->Release();
@@ -476,7 +469,7 @@ void WKCACFLayerRenderer::paint()
     render(dirtyRects);
 }
 
-void WKCACFLayerRenderer::render(const Vector<CGRect>& dirtyRects)
+void WKCACFLayerRenderer::render(const Vector<CGRect>& windowDirtyRects)
 {
     ASSERT(m_d3dDevice);
 
@@ -499,31 +492,21 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& dirtyRects)
     CFTimeInterval t = CACurrentMediaTime();
 
     // Give the renderer some space to use. This needs to be valid until the
-    // CARenderUpdateFinish() call below.
+    // wkCACFContextFinishUpdate() call below.
     char space[4096];
-    CARenderUpdate* u = CARenderUpdateBegin(space, sizeof(space), t, 0, 0, &bounds);
-    if (!u)
+    if (!wkCACFContextBeginUpdate(m_context, space, sizeof(space), t, bounds, windowDirtyRects.data(), windowDirtyRects.size()))
         return;
-
-    CARenderContextLock(m_renderContext);
-    CARenderUpdateAddContext(u, m_renderContext);
-    CARenderContextUnlock(m_renderContext);
-
-    for (size_t i = 0; i < dirtyRects.size(); ++i)
-        CARenderUpdateAddRect(u, &dirtyRects[i]);
 
     HRESULT err = S_OK;
     do {
-        CGSRegionObj rgn = CARenderUpdateCopyRegion(u);
-
-        if (!rgn)
-            break;
-
         // FIXME: don't need to clear dirty region if layer tree is opaque.
 
+        WKCACFUpdateRectEnumerator* e = wkCACFContextCopyUpdateRectEnumerator(m_context);
+        if (!e)
+            break;
+
         Vector<D3DRECT, 64> rects;
-        CGSRegionEnumeratorObj e = CGSRegionEnumerator(rgn);
-        for (const CGRect* r = CGSNextRect(e); r; r = CGSNextRect(e)) {
+        for (const CGRect* r = wkCACFUpdateRectEnumeratorNextRect(e); r; r = wkCACFUpdateRectEnumeratorNextRect(e)) {
             D3DRECT rect;
             rect.x1 = r->origin.x;
             rect.x2 = rect.x1 + r->size.width;
@@ -532,8 +515,7 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& dirtyRects)
 
             rects.append(rect);
         }
-        CGSReleaseRegionEnumerator(e);
-        CGSReleaseRegion(rgn);
+        wkCACFUpdateRectEnumeratorRelease(e);
 
         if (rects.isEmpty())
             break;
@@ -541,13 +523,13 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& dirtyRects)
         m_d3dDevice->Clear(rects.size(), rects.data(), D3DCLEAR_TARGET, 0, 1.0f, 0);
 
         m_d3dDevice->BeginScene();
-        CARenderOGLRender(m_renderer, u);
+        wkCACFContextRenderUpdate(m_context);
         m_d3dDevice->EndScene();
 
         err = m_d3dDevice->Present(0, 0, 0, 0);
 
         if (err == D3DERR_DEVICELOST) {
-            CARenderUpdateAddRect(u, &bounds);
+            wkCACFContextAddUpdateRect(m_context, bounds);
             if (!resetDevice(LostDevice)) {
                 // We can't reset the device right now. Try again soon.
                 renderSoon();
@@ -556,7 +538,7 @@ void WKCACFLayerRenderer::render(const Vector<CGRect>& dirtyRects)
         }
     } while (err == D3DERR_DEVICELOST);
 
-    CARenderUpdateFinish(u);
+    wkCACFContextFinishUpdate(m_context);
 
 #ifndef NDEBUG
     if (m_printTree)
@@ -598,7 +580,7 @@ void WKCACFLayerRenderer::initD3DGeometry()
 bool WKCACFLayerRenderer::resetDevice(ResetReason reason)
 {
     ASSERT(m_d3dDevice);
-    ASSERT(m_renderContext);
+    ASSERT(m_context);
 
     HRESULT hr = m_d3dDevice->TestCooperativeLevel();
 
@@ -617,10 +599,10 @@ bool WKCACFLayerRenderer::resetDevice(ResetReason reason)
 
     // We can reset the device.
 
-    // We have to purge the CARenderOGLContext whenever we reset the IDirect3DDevice9 in order to
+    // We have to release the context's D3D resrouces whenever we reset the IDirect3DDevice9 in order to
     // destroy any D3DPOOL_DEFAULT resources that Core Animation has allocated (e.g., textures used
     // for mask layers). See <http://msdn.microsoft.com/en-us/library/bb174425(v=VS.85).aspx>.
-    CARenderOGLPurge(m_renderer);
+    wkCACFContextReleaseD3DResources(m_context);
 
     D3DPRESENT_PARAMETERS parameters = initialPresentationParameters();
     hr = m_d3dDevice->Reset(&parameters);
