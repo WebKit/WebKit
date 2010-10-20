@@ -28,18 +28,15 @@
 
 from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.net.bugzilla import CommitterValidator
+from webkitpy.tool.grammar import pluralize
 
 
 class AbstractFeeder(object):
     def __init__(self, tool):
         self._tool = tool
 
-    def feed(tool):
-        raise NotImplementedError, "subclasses must implement"
-
-    def update_work_items(self, item_ids):
-        self._tool.status_server.update_work_items(self.queue_name, item_ids)
-        log("Feeding %s items %s" % (self.queue_name, item_ids))
+    def feed(self):
+        raise NotImplementedError("subclasses must implement")
 
 
 class CommitQueueFeeder(AbstractFeeder):
@@ -49,11 +46,15 @@ class CommitQueueFeeder(AbstractFeeder):
         AbstractFeeder.__init__(self, tool)
         self.committer_validator = CommitterValidator(self._tool.bugs)
 
+    def _update_work_items(self, item_ids):
+        self._tool.status_server.update_work_items(self.queue_name, item_ids)
+        log("Feeding %s items %s" % (self.queue_name, item_ids))
+
     def feed(self):
         patches = self._validate_patches()
         patches = sorted(patches, self._patch_cmp)
         patch_ids = [patch.id() for patch in patches]
-        self.update_work_items(patch_ids)
+        self._update_work_items(patch_ids)
 
     def _patches_for_bug(self, bug_id):
         return self._tool.bugs.fetch_bug(bug_id).commit_queued_patches(include_invalid=True)
@@ -71,3 +72,17 @@ class CommitQueueFeeder(AbstractFeeder):
         if rollout_cmp != 0:
             return rollout_cmp
         return cmp(a.attach_date(), b.attach_date())
+
+
+class EWSFeeder(AbstractFeeder):
+    def __init__(self, tool):
+        self._ids_sent_to_server = set()
+        AbstractFeeder.__init__(self, tool)
+
+    def feed(self):
+        ids_needing_review = set(self._tool.bugs.queries.fetch_attachment_ids_from_review_queue())
+        new_ids = ids_needing_review.difference(self._ids_sent_to_server)
+        log("Feeding EWS (%s, %s new)" % (pluralize("r? patch", len(ids_needing_review)), len(new_ids)))
+        for attachment_id in new_ids:  # Order doesn't really matter for the EWS.
+            self._tool.status_server.submit_to_ews(attachment_id)
+            self._ids_sent_to_server.add(attachment_id)

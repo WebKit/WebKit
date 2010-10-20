@@ -301,15 +301,14 @@ class BugzillaQueries(object):
         review_queue_url = "buglist.cgi?query_format=advanced&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&field0-0-0=flagtypes.name&type0-0-0=equals&value0-0-0=review?"
         return self._fetch_bug_ids_advanced_query(review_queue_url)
 
+    # This method will make several requests to bugzilla.
     def fetch_patches_from_review_queue(self, limit=None):
         # [:None] returns the whole array.
         return sum([self._fetch_bug(bug_id).unreviewed_patches()
             for bug_id in self._fetch_bug_ids_from_review_queue()[:limit]], [])
 
-    # FIXME: Why do we have both fetch_patches_from_review_queue and
-    # fetch_attachment_ids_from_review_queue??
-    # NOTE: This is also the only client of _fetch_attachment_ids_request_query
-
+    # NOTE: This is the only client of _fetch_attachment_ids_request_query
+    # This method only makes one request to bugzilla.
     def fetch_attachment_ids_from_review_queue(self):
         review_queue_url = "request.cgi?action=queue&type=review&group=type"
         return self._fetch_attachment_ids_request_query(review_queue_url)

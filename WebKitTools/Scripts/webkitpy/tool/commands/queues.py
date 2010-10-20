@@ -45,7 +45,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
-from webkitpy.tool.bot.feeders import CommitQueueFeeder
+from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.patchcollection import PersistentPatchCollection, PersistentPatchCollectionDelegate
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
 from webkitpy.tool.grammar import pluralize
@@ -167,6 +167,7 @@ class FeederQueue(AbstractQueue):
         AbstractQueue.begin_work_queue(self)
         self.feeders = [
             CommitQueueFeeder(self._tool),
+            EWSFeeder(self._tool),
         ]
 
     def next_work_item(self):
@@ -372,6 +373,7 @@ class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
 
 
 class AbstractReviewQueue(AbstractPatchQueue, PersistentPatchCollectionDelegate, StepSequenceErrorHandler):
+    """This is the base-class for the EWS queues and the style-queue."""
     def __init__(self, options=None):
         AbstractPatchQueue.__init__(self, options)
 

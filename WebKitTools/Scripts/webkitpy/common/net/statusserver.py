@@ -102,6 +102,17 @@ class StatusServer:
         self._browser["work_items"] = " ".join(work_items)
         return self._browser.submit().read()
 
+    def _post_work_item_to_ews(self, attachment_id):
+        submit_to_ews_url = "%s/submit-to-ews" % self.url
+        self._browser.open(submit_to_ews_url)
+        self._browser.select_form(name="submit_to_ews")
+        self._browser["attachment_id"] = unicode(attachment_id)
+        self._browser.submit()
+
+    def submit_to_ews(self, attachment_id):
+        _log.info("Submitting attachment %s to EWS queues" % attachment_id)
+        return NetworkTransaction().run(lambda: self._post_work_item_to_ews(attachment_id))
+
     def next_work_item(self, queue_name):
         _log.debug("Fetching next work item for %s" % queue_name)
         patch_status_url = "%s/next-patch/%s" % (self.url, queue_name)

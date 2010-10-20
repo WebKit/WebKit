@@ -554,6 +554,9 @@ class MockStatusServer(object):
         self._work_items = work_items
         log("MOCK: update_work_items: %s %s" % (queue_name, work_items))
 
+    def submit_to_ews(self, patch_id):
+        log("MOCK: submit_to_ews: %s" % (patch_id))
+
     def update_status(self, queue_name, status, patch=None, results_file=None):
         log("MOCK: update_status: %s %s" % (queue_name, status))
         return 187

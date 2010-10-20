@@ -1,5 +1,25 @@
 2010-10-19  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        Teach feeder-queue how to feed the EWS bots
+        https://bugs.webkit.org/show_bug.cgi?id=47943
+
+        queues.webkit.org already knew how to accept EWS submissions
+        via /submit-to-ews.  This teaches the feeder queue how to post
+        to that page with any new r? patches it sees.
+
+        * QueueStatusServer/model/activeworkitems_unitest.py: Added.
+         - More unit testing is always a good thing.
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/statusserver.py:
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-10-19  Eric Seidel  <eric@webkit.org>
+
         Unreviewed, just fixing test-webkitpy.  I'm really on a roll today.
 
         commit-queue gets stuck when release-patch returns 404

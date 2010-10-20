@@ -135,6 +135,8 @@ MOCK setting flag 'commit-queue' to '-' on attachment '128' with comment 'Reject
 - If you have committer rights please correct the error in WebKitTools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
 MOCK: update_work_items: commit-queue [106, 197]
 Feeding commit-queue items [106, 197]
+Feeding EWS (1 r? patch, 1 new)
+MOCK: submit_to_ews: 103
 """,
             "handle_unexpected_error": "Mock error message\n",
         }
