@@ -1,5 +1,12 @@
 2010-10-20  Dirk Schulze  <krit@webkit.org>
 
+        Unreviewed Chromium win build fix.
+
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::TEST):
+
+2010-10-20  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         Merge ColorSpace and ImageColorSpace enums
