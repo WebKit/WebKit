@@ -1,3 +1,17 @@
+2010-10-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Crash closing page with <video> element
+        https://bugs.webkit.org/show_bug.cgi?id=47960
+        <rdar://problem/8573297>
+
+        I couldn't think of a good way to make a layout test for this because the
+        crash isn't triggered by closing an iframe.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::scheduleCompositingLayerSync): NULL check drawingArea().
+
 2010-10-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

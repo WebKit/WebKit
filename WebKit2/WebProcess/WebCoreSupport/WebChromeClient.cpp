@@ -546,7 +546,8 @@ void WebChromeClient::setNeedsOneShotDrawingSynchronization()
 
 void WebChromeClient::scheduleCompositingLayerSync()
 {
-    m_page->drawingArea()->scheduleCompositingLayerSync();
+    if (m_page->drawingArea())
+        m_page->drawingArea()->scheduleCompositingLayerSync();
 }
 
 #endif
