@@ -102,7 +102,7 @@ static Node* enclosingList(const RenderListItem* listItem)
 
 static RenderListItem* previousListItem(Node* list, const RenderListItem* item)
 {
-    for (RenderObject* renderer = item->previousInPreOrder(); renderer != list->renderer(); renderer = renderer->previousInPreOrder()) {
+    for (RenderObject* renderer = item->previousInPreOrder(); renderer && renderer != list->renderer(); renderer = renderer->previousInPreOrder()) {
         if (!renderer->isListItem())
             continue;
         Node* otherList = enclosingList(toRenderListItem(renderer));
