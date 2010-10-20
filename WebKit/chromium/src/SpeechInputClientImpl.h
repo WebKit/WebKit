@@ -33,8 +33,15 @@
 
 #if ENABLE(INPUT_SPEECH)
 
+#include "SpeechInputClient.h"
 #include "WebSpeechInputListener.h"
-#include "page/SpeechInputClient.h"
+#include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+
+namespace WTF {
+class String;
+}
 
 namespace WebCore {
 class SpeechInputListener;
@@ -49,12 +56,12 @@ class SpeechInputClientImpl
     : public WebCore::SpeechInputClient,
       public WebSpeechInputListener {
 public:
-    SpeechInputClientImpl(WebViewClient*);
+    static PassOwnPtr<SpeechInputClientImpl> create(WebViewClient*);
     virtual ~SpeechInputClientImpl();
 
     // SpeechInputClient methods.
     void setListener(WebCore::SpeechInputListener*);
-    bool startRecognition(int, const WebCore::IntRect&);
+    bool startRecognition(int, const String&, const WebCore::IntRect&);
     void stopRecording(int);
     void cancelRecognition(int);
 
@@ -64,6 +71,8 @@ public:
     void didCompleteRecognition(int);
 
 private:
+    SpeechInputClientImpl(WebViewClient*);
+
     WebSpeechInputController* m_controller; // To call into the embedder.
     WebCore::SpeechInputListener* m_listener;
 };

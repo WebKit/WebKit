@@ -3242,3 +3242,6 @@ BUGJAPHET : fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html =
 
 // r69833, JSC/V8 Date parsing differences
 BUGJAPHET : fast/js/date-parse-test.html = TEXT
+
+// Temporarily disabled for a 4-sided patch. Will be enabled again by BUGWK47420.
+BUGWK47089 : fast/speech/input-text-language-tag.html = FAIL

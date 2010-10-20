@@ -56,6 +56,7 @@
 #include "Settings.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
+#include <wtf/ASCIICType.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
@@ -1472,6 +1473,15 @@ AtomicString Element::computeInheritedLanguage() const
         }
 
         n = n->parent();
+    }
+
+    if (!value.isNull() && !value.isEmpty()) {
+        // Only A-Za-z0-9 and '-' are allowed in the language tag (see BCP 47)
+        const char *p = value.string().ascii().data();
+        for (; *p != '\0'; ++p) {
+            if (!isASCIIAlphanumeric(*p) && *p != '-')
+                return AtomicString();
+        }
     }
 
     return value;

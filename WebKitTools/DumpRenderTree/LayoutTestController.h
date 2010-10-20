@@ -94,7 +94,7 @@ public:
     void setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
     void setMockGeolocationError(int code, JSStringRef message);
     void setMockGeolocationPosition(double latitude, double longitude, double accuracy);
-    void setMockSpeechInputResult(JSStringRef result);
+    void setMockSpeechInputResult(JSStringRef result, JSStringRef languageTag);
     void setPersistentUserStyleSheetLocation(JSStringRef path);
     void setPluginsEnabled(bool flag);
     void setPopupBlockingEnabled(bool flag);
