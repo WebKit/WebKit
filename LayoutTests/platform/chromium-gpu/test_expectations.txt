@@ -168,6 +168,13 @@ BUGWK48018 SKIP LINUX : compositing/geometry/outline-change.html = FAIL
 // output from somewhere.
 BUGWK48020 SKIP LINUX : compositing/geometry/object-clip-rects-assertion.html = FAIL
 
+// The following plugin tests are crashing on Mac.
+BUGWK48029 SKIP MAC : compositing/geometry/empty-embed-rects.html = CRASH
+BUGWK48029 SKIP MAC : compositing/geometry/object-clip-rects-assertion.html = CRASH
+BUGWK48029 SKIP MAC : compositing/plugins/1x1-composited-plugin.html = CRASH
+BUGWK48029 SKIP MAC : compositing/plugins/large-to-small-composited-plugin.html = CRASH
+BUGWK48029 SKIP MAC : compositing/plugins/small-to-large-composited-plugin.html = CRASH
+
 BUGWK47241 SKIP : fast/canvas/access-zero-sized-canvas.html = CRASH
 BUGWK47241 SKIP : fast/canvas/canvas-skia-excessive-size.html = CRASH
 BUGWK47241 SKIP : fast/canvas/toDataURL-noData.html = CRASH
