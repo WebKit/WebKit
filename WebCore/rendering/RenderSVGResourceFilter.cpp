@@ -226,7 +226,7 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     absoluteDrawingRegion.scale(scale.width(), scale.height());
 
     OwnPtr<ImageBuffer> sourceGraphic;
-    if (!SVGImageBufferTools::createImageBuffer(absoluteDrawingRegion, absoluteDrawingRegion, sourceGraphic, LinearRGB))
+    if (!SVGImageBufferTools::createImageBuffer(absoluteDrawingRegion, absoluteDrawingRegion, sourceGraphic, ColorSpaceLinearRGB))
         return false;
     
     GraphicsContext* sourceGraphicContext = sourceGraphic->context();
@@ -273,7 +273,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         filterData->savedContext = 0;
 #if !PLATFORM(CG)
         if (filterData->sourceGraphicBuffer)
-            filterData->sourceGraphicBuffer->transformColorSpace(DeviceRGB, LinearRGB);
+            filterData->sourceGraphicBuffer->transformColorSpace(ColorSpaceDeviceRGB, ColorSpaceLinearRGB);
 #endif
     }
 
@@ -289,7 +289,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
 #if !PLATFORM(CG)
             ImageBuffer* resultImage = lastEffect->resultImage();
             if (resultImage)
-                resultImage->transformColorSpace(LinearRGB, DeviceRGB);
+                resultImage->transformColorSpace(ColorSpaceLinearRGB, ColorSpaceDeviceRGB);
 #endif
             filterData->builded = true;
         }

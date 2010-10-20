@@ -64,7 +64,7 @@ void GraphicsContext::drawFocusRing(const Vector<Path>& paths, int width, int of
     
     int radius = (width - 1) / 2;
     offset += radius;
-    CGColorRef colorRef = color.isValid() ? cachedCGColor(color, DeviceColorSpace) : 0;
+    CGColorRef colorRef = color.isValid() ? cachedCGColor(color, ColorSpaceDeviceRGB) : 0;
 
     RetainPtr<CGMutablePathRef> focusRingPath(AdoptCF, CGPathCreateMutable());
     unsigned pathCount = paths.size();
@@ -81,7 +81,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 
     int radius = (width - 1) / 2;
     offset += radius;
-    CGColorRef colorRef = color.isValid() ? cachedCGColor(color, DeviceColorSpace) : 0;
+    CGColorRef colorRef = color.isValid() ? cachedCGColor(color, ColorSpaceDeviceRGB) : 0;
 
     RetainPtr<CGMutablePathRef> focusRingPath(AdoptCF, CGPathCreateMutable());
     unsigned rectCount = rects.size();

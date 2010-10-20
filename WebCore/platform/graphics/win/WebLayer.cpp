@@ -129,7 +129,7 @@ void WebLayer::drawInContext(PlatformGraphicsContext* context)
         font.update(0);
 
         GraphicsContext cg(context);
-        cg.setFillColor(Color::black, DeviceColorSpace);
+        cg.setFillColor(Color::black, ColorSpaceDeviceRGB);
         cg.drawText(font, TextRun(text), IntPoint(aBounds.origin.x + 5, aBounds.origin.y + 17));
 
         CGContextRestoreGState(context);        

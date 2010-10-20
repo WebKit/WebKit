@@ -43,7 +43,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
     , resize(RenderStyle::initialResize())
     , userSelect(RenderStyle::initialUserSelect())
-    , colorSpace(DeviceColorSpace)
+    , colorSpace(ColorSpaceDeviceRGB)
     , speak(SpeakNormal)
     , hyphens(HyphensManual)
 {

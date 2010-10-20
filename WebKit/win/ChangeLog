@@ -1,3 +1,22 @@
+2010-10-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Merge ColorSpace and ImageColorSpace enums
+        https://bugs.webkit.org/show_bug.cgi?id=47922
+
+        Renamed ColorSpace enum entries DeviceColorSpace and sRGBColorSpace to ColorSpaceDeviceRGB and ColorSpaceSRGB
+        to follow webkit style rules.
+
+        * FullscreenVideoController.cpp:
+        (HUDButton::draw):
+        (HUDSlider::draw):
+        (FullscreenVideoController::draw):
+        * WebCoreSupport/WebDragClient.cpp:
+        (WebDragClient::createDragImageForLink):
+        * WebKitGraphics.cpp:
+        (WebDrawText):
+
 2010-10-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Timothy Hatcher.

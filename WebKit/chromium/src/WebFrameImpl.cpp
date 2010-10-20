@@ -1888,7 +1888,7 @@ void WebFrameImpl::paintWithContext(GraphicsContext& gc, const WebRect& rect)
         frameView()->paint(&gc, dirtyRect);
         m_frame->page()->inspectorController()->drawNodeHighlight(gc);
     } else
-        gc.fillRect(dirtyRect, Color::white, DeviceColorSpace);
+        gc.fillRect(dirtyRect, Color::white, ColorSpaceDeviceRGB);
     gc.restore();
 }
 

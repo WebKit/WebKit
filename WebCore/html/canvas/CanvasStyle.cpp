@@ -229,7 +229,7 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
         return;
     switch (m_type) {
     case RGBA:
-        context->setStrokeColor(m_rgba, DeviceColorSpace);
+        context->setStrokeColor(m_rgba, ColorSpaceDeviceRGB);
         break;
     case CMYKA: {
         // FIXME: Do this through platform-independent GraphicsContext API.
@@ -243,7 +243,7 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
         currentPen.setColor(clr);
         context->platformContext()->setPen(currentPen);
 #else
-        context->setStrokeColor(m_rgba, DeviceColorSpace);
+        context->setStrokeColor(m_rgba, ColorSpaceDeviceRGB);
 #endif
         break;
     }
@@ -266,7 +266,7 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
         return;
     switch (m_type) {
     case RGBA:
-        context->setFillColor(m_rgba, DeviceColorSpace);
+        context->setFillColor(m_rgba, ColorSpaceDeviceRGB);
         break;
     case CMYKA: {
         // FIXME: Do this through platform-independent GraphicsContext API.
@@ -280,7 +280,7 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
         currentBrush.setColor(clr);
         context->platformContext()->setBrush(currentBrush);
 #else
-        context->setFillColor(m_rgba, DeviceColorSpace);
+        context->setFillColor(m_rgba, ColorSpaceDeviceRGB);
 #endif
         break;
     }

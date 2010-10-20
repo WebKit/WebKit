@@ -31,6 +31,7 @@
 #include "Base64.h"
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
+#include "GraphicsContextCG.h"
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include <ApplicationServices/ApplicationServices.h>
@@ -55,7 +56,7 @@ ImageBufferData::ImageBufferData(const IntSize&)
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace imageColorSpace, bool& success)
     : m_data(size)
     , m_size(size)
 {
@@ -64,12 +65,11 @@ ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, b
         return;
 
     unsigned bytesPerRow = size.width();
-    if (imageColorSpace != GrayScale) {
-        // Protect against overflow
-        if (bytesPerRow > 0x3FFFFFFF)
-            return;
-        bytesPerRow *= 4;
-    }
+
+    // Protect against overflow
+    if (bytesPerRow > 0x3FFFFFFF)
+        return;
+    bytesPerRow *= 4;
     m_data.m_bytesPerRow = bytesPerRow;
 
     size_t dataSize = size.height() * bytesPerRow;
@@ -79,27 +79,20 @@ ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, b
     ASSERT((reinterpret_cast<size_t>(m_data.m_data) & 2) == 0);
 
     switch(imageColorSpace) {
-        case DeviceRGB:
-            m_data.m_colorSpace.adoptCF(CGColorSpaceCreateDeviceRGB());
-            break;
-        case GrayScale:
-            m_data.m_colorSpace.adoptCF(CGColorSpaceCreateDeviceGray());
-            break;
-#if ((PLATFORM(MAC) || PLATFORM(CHROMIUM)) && !defined(BUILDING_ON_TIGER))
-        case LinearRGB:
-            m_data.m_colorSpace.adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear));
-            break;
-            
-#endif
-        default:
-            m_data.m_colorSpace.adoptCF(CGColorSpaceCreateDeviceRGB());
-            break;
+    case ColorSpaceDeviceRGB:
+        m_data.m_colorSpace = deviceRGBColorSpaceRef();
+        break;
+    case ColorSpaceSRGB:
+        m_data.m_colorSpace = sRGBColorSpaceRef();
+        break;
+    case ColorSpaceLinearRGB:
+        m_data.m_colorSpace = linearRGBColorSpaceRef();
+        break;
     }
 
-    m_data.m_grayScale = imageColorSpace == GrayScale;
-    m_data.m_bitmapInfo = m_data.m_grayScale ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast;
+    m_data.m_bitmapInfo = kCGImageAlphaPremultipliedLast;
     RetainPtr<CGContextRef> cgContext(AdoptCF, CGBitmapContextCreate(m_data.m_data, size.width(), size.height(), 8, bytesPerRow,
-                                                                     m_data.m_colorSpace.get(), m_data.m_bitmapInfo));
+                                                                     m_data.m_colorSpace, m_data.m_bitmapInfo));
     if (!cgContext)
         return;
 
@@ -134,8 +127,8 @@ PassRefPtr<Image> ImageBuffer::copyImage() const
 
 static CGImageRef cgImage(const IntSize& size, const ImageBufferData& data)
 {
-    return CGImageCreate(size.width(), size.height(), 8, data.m_grayScale ? 8 : 32, data.m_bytesPerRow,
-                         data.m_colorSpace.get(), data.m_bitmapInfo, data.m_dataProvider.get(), 0, true, kCGRenderingIntentDefault);
+    return CGImageCreate(size.width(), size.height(), 8, 32, data.m_bytesPerRow,
+                         data.m_colorSpace, data.m_bitmapInfo, data.m_dataProvider.get(), 0, true, kCGRenderingIntentDefault);
 }
 
 void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
@@ -144,7 +137,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
     if (destContext == context()) {
         // We're drawing into our own buffer.  In order for this to work, we need to copy the source buffer first.
         RefPtr<Image> copy = copyImage();
-        destContext->drawImage(copy.get(), DeviceColorSpace, destRect, srcRect, op, useLowQualityScale);
+        destContext->drawImage(copy.get(), ColorSpaceDeviceRGB, destRect, srcRect, op, useLowQualityScale);
     } else {
         RefPtr<Image> imageForRendering = BitmapImage::create(cgImage(m_size, m_data));
         destContext->drawImage(imageForRendering.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);

@@ -82,9 +82,9 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
 
     IntSize imageSize = BitmapImage::size();
     if (size)
-        drawFrameMatchingSourceSize(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), IntSize(*size), DeviceColorSpace, CompositeCopy);
+        drawFrameMatchingSourceSize(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), IntSize(*size), ColorSpaceDeviceRGB, CompositeCopy);
     else
-        draw(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), DeviceColorSpace, CompositeCopy);
+        draw(&gc, FloatRect(0.0f, 0.0f, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, CompositeCopy);
 
     // Do cleanup
     cairo_destroy(targetRef);
@@ -100,7 +100,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
         if (cairo_image_surface_get_height(image) == static_cast<size_t>(srcSize.height()) && cairo_image_surface_get_width(image) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
-            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), DeviceColorSpace, compositeOp);
+            draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), ColorSpaceDeviceRGB, compositeOp);
             m_currentFrame = currentFrame;
             return;
         }
@@ -108,7 +108,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
 
     // No image of the correct size was found, fallback to drawing the current frame
     IntSize imageSize = BitmapImage::size();
-    draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), DeviceColorSpace, compositeOp);
+    draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, compositeOp);
 }
 
 } // namespace WebCore

@@ -96,6 +96,17 @@ CGColorSpaceRef sRGBColorSpaceRef()
 #endif
 }
 
+CGColorSpaceRef linearRGBColorSpaceRef()
+{
+    // FIXME: Windows should be able to use kCGColorSpaceGenericRGBLinear, this is tracked by http://webkit.org/b/31363.
+#if PLATFORM(WIN) || defined(BUILDING_ON_TIGER)
+    return deviceRGBColorSpaceRef();
+#else
+    static CGColorSpaceRef linearRGBSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
+    return linearRGBSpace;
+#endif
+}
+
 GraphicsContext::GraphicsContext(CGContextRef cgContext)
     : m_common(createGraphicsContextPrivate())
     , m_data(new GraphicsContextPlatformPrivate(cgContext))

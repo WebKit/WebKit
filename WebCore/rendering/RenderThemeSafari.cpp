@@ -830,8 +830,8 @@ bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const PaintInfo& pa
 
     paintInfo.context->save();
 
-    paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), DeviceColorSpace);
-    paintInfo.context->setStrokeColor(NoStroke, DeviceColorSpace);
+    paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
+    paintInfo.context->setStrokeColor(NoStroke, ColorSpaceDeviceRGB);
 
     FloatPoint arrow[3];
     arrow[0] = FloatPoint(leftEdge, centerY - arrowHeight / 2.0f);
@@ -851,11 +851,11 @@ bool RenderThemeSafari::paintMenuListButton(RenderObject* o, const PaintInfo& pa
     // Draw the separator to the left of the arrows
     paintInfo.context->setStrokeThickness(1.0f);
     paintInfo.context->setStrokeStyle(SolidStroke);
-    paintInfo.context->setStrokeColor(leftSeparatorColor, DeviceColorSpace);
+    paintInfo.context->setStrokeColor(leftSeparatorColor, ColorSpaceDeviceRGB);
     paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator, bounds.y()),
                                 IntPoint(leftEdgeOfSeparator, bounds.bottom()));
 
-    paintInfo.context->setStrokeColor(rightSeparatorColor, DeviceColorSpace);
+    paintInfo.context->setStrokeColor(rightSeparatorColor, ColorSpaceDeviceRGB);
     paintInfo.context->drawLine(IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.y()),
                                 IntPoint(leftEdgeOfSeparator + separatorSpace, bounds.bottom()));
 

@@ -298,7 +298,7 @@ void ScrollbarThemeComposite::paintScrollCorner(ScrollView* view, GraphicsContex
     Page* page = frameView->frame() ? frameView->frame()->page() : 0;
     if (page && page->settings()->shouldPaintCustomScrollbars() && page->chrome()->client()->paintCustomScrollCorner(context, cornerRect))
         return;
-    context->fillRect(cornerRect, Color::white, DeviceColorSpace);
+    context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
 }
 
 }

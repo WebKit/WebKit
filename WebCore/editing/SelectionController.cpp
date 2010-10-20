@@ -1085,7 +1085,7 @@ void SelectionController::paintCaret(GraphicsContext* context, int tx, int ty, c
         return;
 
     Color caretColor = Color::black;
-    ColorSpace colorSpace = DeviceColorSpace;
+    ColorSpace colorSpace = ColorSpaceDeviceRGB;
     Element* element = rootEditableElement();
     if (element && element->renderer()) {
         caretColor = element->renderer()->style()->visitedDependentColor(CSSPropertyColor);

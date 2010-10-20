@@ -513,7 +513,7 @@ void PopupContainer::paintBorder(GraphicsContext* gc, const IntRect& rect)
     Color borderColor(127, 157, 185);
 
     gc->setStrokeStyle(NoStroke);
-    gc->setFillColor(borderColor, DeviceColorSpace);
+    gc->setFillColor(borderColor, ColorSpaceDeviceRGB);
 
     int tx = x();
     int ty = y();
@@ -857,7 +857,7 @@ void PopupListBox::paint(GraphicsContext* gc, const IntRect& rect)
 
     // Special case for an empty popup.
     if (numItems() == 0)
-        gc->fillRect(r, Color::white, DeviceColorSpace);
+        gc->fillRect(r, Color::white, ColorSpaceDeviceRGB);
 
     gc->restore();
 
@@ -894,23 +894,23 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     // If we have a transparent background, make sure it has a color to blend
     // against.
     if (backColor.hasAlpha())
-        gc->fillRect(rowRect, Color::white, DeviceColorSpace);
+        gc->fillRect(rowRect, Color::white, ColorSpaceDeviceRGB);
 
-    gc->fillRect(rowRect, backColor, DeviceColorSpace);
+    gc->fillRect(rowRect, backColor, ColorSpaceDeviceRGB);
     
     if (m_popupClient->itemIsSeparator(rowIndex)) {
         IntRect separatorRect(
             rowRect.x() + separatorPadding,
             rowRect.y() + (rowRect.height() - separatorHeight) / 2,
             rowRect.width() - 2 * separatorPadding, separatorHeight);
-        gc->fillRect(separatorRect, textColor, DeviceColorSpace);
+        gc->fillRect(separatorRect, textColor, ColorSpaceDeviceRGB);
         return;
     }
     
     if (!style.isVisible())
         return;
 
-    gc->setFillColor(textColor, DeviceColorSpace);
+    gc->setFillColor(textColor, ColorSpaceDeviceRGB);
 
     Font itemFont = getRowFont(rowIndex);
     // FIXME: http://crbug.com/19872 We should get the padding of individual option
@@ -973,7 +973,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
         remainingWidth -= (imageRect.width() + kLabelToIconPadding);
         imageRect.setX(rowRect.width() - rightPadding - imageRect.width());
         imageRect.setY(rowRect.y() + (rowRect.height() - imageRect.height()) / 2);
-        gc->drawImage(image.get(), DeviceColorSpace, imageRect);
+        gc->drawImage(image.get(), ColorSpaceDeviceRGB, imageRect);
     }
 
     // Draw the the label if applicable.
@@ -985,7 +985,7 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     else
         textX = remainingWidth - itemFont.width(labelTextRun);
 
-    gc->setFillColor(labelColor, DeviceColorSpace);
+    gc->setFillColor(labelColor, ColorSpaceDeviceRGB);
     gc->drawBidiText(itemFont, labelTextRun, IntPoint(textX, textY));
 }
 

@@ -75,12 +75,12 @@ void FETile::apply(Filter* filter)
     }
 
     OwnPtr<ImageBuffer> tileImage;
-    if (!SVGImageBufferTools::createImageBuffer(tileRect, tileRect, tileImage, DeviceRGB))
+    if (!SVGImageBufferTools::createImageBuffer(tileRect, tileRect, tileImage, ColorSpaceDeviceRGB))
         return;
 
     GraphicsContext* tileImageContext = tileImage->context();
     tileImageContext->translate(-inMaxEffectLocation.x(), -inMaxEffectLocation.y());
-    tileImageContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, in->absolutePaintRect().location());
+    tileImageContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, in->absolutePaintRect().location());
 
     RefPtr<Pattern> pattern = Pattern::create(tileImage->copyImage(), true, true);
 

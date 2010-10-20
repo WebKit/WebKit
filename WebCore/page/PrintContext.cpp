@@ -271,7 +271,7 @@ void PrintContext::spoolAllPagesWithBoundaries(Frame* frame, GraphicsContext& gr
     int totalHeight = pageRects.size() * (pageSizeInPixels.height() + 1) - 1;
 
     // Fill the whole background by white.
-    graphicsContext.setFillColor(Color(255, 255, 255), DeviceColorSpace);
+    graphicsContext.setFillColor(Color(255, 255, 255), ColorSpaceDeviceRGB);
     graphicsContext.fillRect(FloatRect(0, 0, pageWidth, totalHeight));
 
     graphicsContext.save();
@@ -283,8 +283,8 @@ void PrintContext::spoolAllPagesWithBoundaries(Frame* frame, GraphicsContext& gr
         // Draw a line for a page boundary if this isn't the first page.
         if (pageIndex > 0) {
             graphicsContext.save();
-            graphicsContext.setStrokeColor(Color(0, 0, 255), DeviceColorSpace);
-            graphicsContext.setFillColor(Color(0, 0, 255), DeviceColorSpace);
+            graphicsContext.setStrokeColor(Color(0, 0, 255), ColorSpaceDeviceRGB);
+            graphicsContext.setFillColor(Color(0, 0, 255), ColorSpaceDeviceRGB);
             graphicsContext.drawLine(IntPoint(0, currentHeight),
                                      IntPoint(pageWidth, currentHeight));
             graphicsContext.restore();

@@ -70,8 +70,8 @@ GraphicsContext::GraphicsContext(HDC hdc, bool hasAlpha)
     setPaintingDisabled(!m_data->m_cgContext);
     if (m_data->m_cgContext) {
         // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor(), DeviceColorSpace);
-        setPlatformStrokeColor(strokeColor(), DeviceColorSpace);
+        setPlatformFillColor(fillColor(), ColorSpaceDeviceRGB);
+        setPlatformStrokeColor(strokeColor(), ColorSpaceDeviceRGB);
     }
 }
 
@@ -138,7 +138,7 @@ void GraphicsContext::drawFocusRing(const Vector<IntRect>& rects, int width, int
 
     float radius = (width - 1) / 2.0f;
     offset += radius;
-    CGColorRef colorRef = color.isValid() ? cachedCGColor(color, DeviceColorSpace) : 0;
+    CGColorRef colorRef = color.isValid() ? cachedCGColor(color, ColorSpaceDeviceRGB) : 0;
 
     CGMutablePathRef focusRingPath = CGPathCreateMutable();
     unsigned rectCount = rects.size();

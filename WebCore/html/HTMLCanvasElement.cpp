@@ -260,9 +260,9 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
         ImageBuffer* imageBuffer = buffer();
         if (imageBuffer) {
             if (imageBuffer->drawsUsingCopy())
-                context->drawImage(copiedImage(), DeviceColorSpace, r);
+                context->drawImage(copiedImage(), ColorSpaceDeviceRGB, r);
             else
-                context->drawImageBuffer(imageBuffer, DeviceColorSpace, r);
+                context->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, r);
         }
     }
 }

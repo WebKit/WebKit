@@ -1212,7 +1212,7 @@ void MediaPlayerPrivateGStreamer::paint(GraphicsContext* context, const IntRect&
     if (!gstImage)
         return;
 
-    context->drawImage(reinterpret_cast<Image*>(gstImage->image().get()), sRGBColorSpace,
+    context->drawImage(reinterpret_cast<Image*>(gstImage->image().get()), ColorSpaceSRGB,
                        rect, CompositeCopy, false);
 }
 

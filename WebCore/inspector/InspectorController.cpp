@@ -1838,7 +1838,7 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
 
         context.addPath(quadPath);
         context.setStrokeThickness(outlineThickness);
-        context.setStrokeColor(outlineColor, DeviceColorSpace);
+        context.setStrokeColor(outlineColor, ColorSpaceDeviceRGB);
         context.strokePath();
 
         context.restore();
@@ -1846,7 +1846,7 @@ static void drawOutlinedQuad(GraphicsContext& context, const FloatQuad& quad, co
 
     // Now do the fill
     context.addPath(quadPath);
-    context.setFillColor(fillColor, DeviceColorSpace);
+    context.setFillColor(fillColor, ColorSpaceDeviceRGB);
     context.fillPath();
 }
 
@@ -2028,11 +2028,11 @@ void InspectorController::drawElementTitle(GraphicsContext& context, const IntRe
     if (titleRect.bottom() > overlayRect.bottom())
         dy += overlayRect.bottom() - titleRect.bottom() - borderWidthPx;
     titleRect.move(dx, dy);
-    context.setStrokeColor(tooltipBorderColor, DeviceColorSpace);
+    context.setStrokeColor(tooltipBorderColor, ColorSpaceDeviceRGB);
     context.setStrokeThickness(borderWidthPx);
-    context.setFillColor(tooltipBackgroundColor, DeviceColorSpace);
+    context.setFillColor(tooltipBackgroundColor, ColorSpaceDeviceRGB);
     context.drawRect(titleRect);
-    context.setFillColor(tooltipFontColor, DeviceColorSpace);
+    context.setFillColor(tooltipFontColor, ColorSpaceDeviceRGB);
     context.drawText(font, nodeTitleRun, IntPoint(titleRect.x() + rectInflatePx, titleRect.y() + font.height()));
 }
 

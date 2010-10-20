@@ -315,10 +315,10 @@ TEST(TransparencyWin, OpaqueCompositeLayerPixel)
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), DeviceRGB));
 
     FloatRect fullRect(0, 0, 16, 16);
-    src->context()->fillRect(fullRect, red, DeviceColorSpace);
+    src->context()->fillRect(fullRect, red, ColorSpaceDeviceRGB);
     src->context()->beginTransparencyLayer(0.5);
     FloatRect rightHalf(8, 0, 8, 16);
-    src->context()->fillRect(rightHalf, green, DeviceColorSpace);
+    src->context()->fillRect(rightHalf, green, ColorSpaceDeviceRGB);
 
     // Make a transparency layer inset by one pixel, and fill it inset by
     // another pixel with 50% black.
@@ -330,7 +330,7 @@ TEST(TransparencyWin, OpaqueCompositeLayerPixel)
                     IntRect(1, 1, 14, 14));
 
         FloatRect inner(2, 2, 12, 12);
-        helper.context()->fillRect(inner, Color(0x7f000000), DeviceColorSpace);
+        helper.context()->fillRect(inner, Color(0x7f000000), ColorSpaceDeviceRGB);
         // These coordinates are relative to the layer, whish is inset by 1x1
         // pixels from the top left. So we're actually clearing (2, 2) and
         // (13,13), which are the extreme corners of the black area (and which
@@ -368,7 +368,7 @@ TEST(TransparencyWin, TranslateOpaqueCompositeLayer)
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), DeviceRGB));
     Color white(0xFFFFFFFF);
     FloatRect fullRect(0, 0, 16, 16);
-    src->context()->fillRect(fullRect, white, DeviceColorSpace);
+    src->context()->fillRect(fullRect, white, ColorSpaceDeviceRGB);
 
     // Scroll down by 8 (coordinate system goes up).
     src->context()->save();
@@ -388,7 +388,7 @@ TEST(TransparencyWin, TranslateOpaqueCompositeLayer)
         // Draw a red pixel at (15, 15). This should be the at (15, 7) after
         // the transform.
         FloatRect bottomRight(15, 15, 1, 1);
-        helper.context()->fillRect(bottomRight, green, DeviceColorSpace);
+        helper.context()->fillRect(bottomRight, green, ColorSpaceDeviceRGB);
         helper.composite();
     }
 
@@ -407,7 +407,7 @@ TEST(TransparencyWin, RotateOpaqueCompositeLayer)
     // The background is white.
     Color white(0xFFFFFFFF);
     FloatRect fullRect(0, 0, 16, 16);
-    src->context()->fillRect(fullRect, white, DeviceColorSpace);
+    src->context()->fillRect(fullRect, white, ColorSpaceDeviceRGB);
 
     // Rotate the image by 90 degrees. This matrix is the same as
     // cw90.rotate(90); but avoids rounding errors. Rounding errors can cause
@@ -425,7 +425,7 @@ TEST(TransparencyWin, RotateOpaqueCompositeLayer)
     src->context()->beginTransparencyLayer(0.5);
     FloatRect blackRect(0, -9, 16, 2);
     Color black(0xFF000000);
-    src->context()->fillRect(blackRect, black, DeviceColorSpace);
+    src->context()->fillRect(blackRect, black, ColorSpaceDeviceRGB);
 
     // Now draw 50% red square.
     {
@@ -439,7 +439,7 @@ TEST(TransparencyWin, RotateOpaqueCompositeLayer)
                     IntRect(1, -15, 14, 14));
 
         // Fill with red.
-        helper.context()->fillRect(helper.drawRect(), Color(0x7f7f0000), DeviceColorSpace);
+        helper.context()->fillRect(helper.drawRect(), Color(0x7f7f0000), ColorSpaceDeviceRGB);
         clearTopLayerAlphaChannel(helper.context());
         helper.composite();
     }
@@ -486,10 +486,10 @@ TEST(TransparencyWin, TranslateScaleOpaqueCompositeLayer)
     // The background is white on top with red on bottom.
     Color white(0xFFFFFFFF);
     FloatRect topRect(0, 0, 16, 8);
-    src->context()->fillRect(topRect, white, DeviceColorSpace);
+    src->context()->fillRect(topRect, white, ColorSpaceDeviceRGB);
     Color red(0xFFFF0000);
     FloatRect bottomRect(0, 8, 16, 8);
-    src->context()->fillRect(bottomRect, red, DeviceColorSpace);
+    src->context()->fillRect(bottomRect, red, ColorSpaceDeviceRGB);
 
     src->context()->save();
 
@@ -519,7 +519,7 @@ TEST(TransparencyWin, TranslateScaleOpaqueCompositeLayer)
                     IntRect(1, -15, 14, 14));
 
         // Fill with red.
-        helper.context()->fillRect(helper.drawRect(), Color(0x7f7f0000), DeviceColorSpace);
+        helper.context()->fillRect(helper.drawRect(), Color(0x7f7f0000), ColorSpaceDeviceRGB);
         clearTopLayerAlphaChannel(helper.context());
         helper.composite();
     }
@@ -531,7 +531,7 @@ TEST(TransparencyWin, Scale)
     // Create an opaque white buffer.
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), DeviceRGB));
     FloatRect fullBuffer(0, 0, 16, 16);
-    src->context()->fillRect(fullBuffer, Color::white, DeviceColorSpace);
+    src->context()->fillRect(fullBuffer, Color::white, ColorSpaceDeviceRGB);
 
     // Scale by 2x.
     src->context()->save();
@@ -586,13 +586,13 @@ TEST(TransparencyWin, ScaleTransparency)
     // Create an opaque white buffer.
     OwnPtr<ImageBuffer> src(ImageBuffer::create(IntSize(16, 16), DeviceRGB));
     FloatRect fullBuffer(0, 0, 16, 16);
-    src->context()->fillRect(fullBuffer, Color::white, DeviceColorSpace);
+    src->context()->fillRect(fullBuffer, Color::white, ColorSpaceDeviceRGB);
 
     // Make another layer (which duplicates how WebKit will make this). We fill
     // the top half with red, and have the layer be 50% opaque.
     src->context()->beginTransparencyLayer(0.5);
     FloatRect topHalf(0, 0, 16, 8);
-    src->context()->fillRect(topHalf, Color(0xFFFF0000), DeviceColorSpace);
+    src->context()->fillRect(topHalf, Color(0xFFFF0000), ColorSpaceDeviceRGB);
 
     // Scale by 2x.
     src->context()->save();
@@ -609,7 +609,7 @@ TEST(TransparencyWin, ScaleTransparency)
                     TransparencyWin::ScaleTransform,
                     IntRect(1, 1, 6, 6));
 
-        helper.context()->fillRect(helper.drawRect(), Color(0x7f000000), DeviceColorSpace);
+        helper.context()->fillRect(helper.drawRect(), Color(0x7f000000), ColorSpaceDeviceRGB);
         clearTopLayerAlphaChannel(helper.context());
         helper.composite();
     }
@@ -658,21 +658,21 @@ TEST(TransparencyWin, Text)
         // Write several different squares to simulate ClearType. These should
         // all reduce to 2/3 coverage.
         FloatRect pixel(0, 0, 1, 1);
-        helper.context()->fillRect(pixel, 0xFFFF0000, DeviceColorSpace);
+        helper.context()->fillRect(pixel, 0xFFFF0000, ColorSpaceDeviceRGB);
         pixel.move(1.0f, 0.0f);
-        helper.context()->fillRect(pixel, 0xFF00FF00, DeviceColorSpace);
+        helper.context()->fillRect(pixel, 0xFF00FF00, ColorSpaceDeviceRGB);
         pixel.move(1.0f, 0.0f);
-        helper.context()->fillRect(pixel, 0xFF0000FF, DeviceColorSpace);
+        helper.context()->fillRect(pixel, 0xFF0000FF, ColorSpaceDeviceRGB);
         pixel.move(1.0f, 0.0f);
-        helper.context()->fillRect(pixel, 0xFF008080, DeviceColorSpace);
+        helper.context()->fillRect(pixel, 0xFF008080, ColorSpaceDeviceRGB);
         pixel.move(1.0f, 0.0f);
-        helper.context()->fillRect(pixel, 0xFF800080, DeviceColorSpace);
+        helper.context()->fillRect(pixel, 0xFF800080, ColorSpaceDeviceRGB);
         pixel.move(1.0f, 0.0f);
-        helper.context()->fillRect(pixel, 0xFF808000, DeviceColorSpace);
+        helper.context()->fillRect(pixel, 0xFF808000, ColorSpaceDeviceRGB);
 
         // Try one with 100% coverage (opaque black).
         pixel.move(1.0f, 0.0f);
-        helper.context()->fillRect(pixel, 0xFF000000, DeviceColorSpace);
+        helper.context()->fillRect(pixel, 0xFF000000, ColorSpaceDeviceRGB);
 
         // Now mess with the alpha channel.
         clearTopLayerAlphaChannel(helper.context());

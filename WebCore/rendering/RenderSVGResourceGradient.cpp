@@ -92,7 +92,7 @@ static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& con
         return false;
 
     OwnPtr<ImageBuffer> maskImage;
-    if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, maskImage, DeviceRGB))
+    if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, maskImage, ColorSpaceDeviceRGB))
         return false;
 
     GraphicsContext* maskImageContext = maskImage->context();

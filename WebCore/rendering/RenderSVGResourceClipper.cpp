@@ -178,7 +178,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(RenderObject* object, cons
     FloatRect clampedAbsoluteTargetRect = SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(object, absoluteTargetRect);
 
     if (shouldCreateClipData && !clampedAbsoluteTargetRect.isEmpty()) {
-        if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, clipperData->clipMaskImage, DeviceRGB))
+        if (!SVGImageBufferTools::createImageBuffer(absoluteTargetRect, clampedAbsoluteTargetRect, clipperData->clipMaskImage, ColorSpaceDeviceRGB))
             return false;
 
         GraphicsContext* maskContext = clipperData->clipMaskImage->context();

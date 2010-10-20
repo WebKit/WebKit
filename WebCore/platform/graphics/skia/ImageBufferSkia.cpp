@@ -60,7 +60,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ImageColorSpace imageColorSpace, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, bool& success)
     : m_data(size)
     , m_size(size)
 {

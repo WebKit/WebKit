@@ -5582,7 +5582,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (isInherit) 
             m_style->setColorSpace(m_parentStyle->colorSpace());
         else if (isInitial)
-            m_style->setColorSpace(DeviceColorSpace);
+            m_style->setColorSpace(ColorSpaceDeviceRGB);
         else {
             if (!primitiveValue)
                 return;

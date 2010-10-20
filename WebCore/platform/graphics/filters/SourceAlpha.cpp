@@ -60,7 +60,7 @@ void SourceAlpha::apply(Filter* filter)
     FloatRect imageRect(FloatPoint(), absolutePaintRect().size());
     filterContext->save();
     filterContext->clipToImageBuffer(filter->sourceImage(), imageRect);
-    filterContext->fillRect(imageRect, Color::black, DeviceColorSpace);
+    filterContext->fillRect(imageRect, Color::black, ColorSpaceDeviceRGB);
     filterContext->restore();
 }
 

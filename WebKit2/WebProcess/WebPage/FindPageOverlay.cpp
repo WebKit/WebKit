@@ -112,12 +112,12 @@ void FindPageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& 
     graphicsContext.setCompositeOperation(CompositeCopy);
 
     // Draw the background.
-    graphicsContext.fillRect(paintRect, overlayBackgroundColor(), sRGBColorSpace);
+    graphicsContext.fillRect(paintRect, overlayBackgroundColor(), ColorSpaceSRGB);
 
     graphicsContext.save();
-    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, sRGBColorSpace);
+    graphicsContext.setShadow(FloatSize(shadowOffsetX, shadowOffsetY), shadowBlurRadius, Color::black, ColorSpaceSRGB);
 
-    graphicsContext.setFillColor(Color::white, sRGBColorSpace);
+    graphicsContext.setFillColor(Color::white, ColorSpaceSRGB);
 
     // Draw white frames around the holes.
     for (size_t i = 0; i < rects.size(); ++i) {
@@ -130,7 +130,7 @@ void FindPageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& 
     graphicsContext.restore();
 
     graphicsContext.save();
-    graphicsContext.setFillColor(Color::transparent, sRGBColorSpace);
+    graphicsContext.setFillColor(Color::transparent, ColorSpaceSRGB);
 
     // Clear out the holes.
     for (size_t i = 0; i < rects.size(); ++i)

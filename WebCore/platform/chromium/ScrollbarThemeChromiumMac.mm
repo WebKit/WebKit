@@ -417,8 +417,8 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     if (scrollbar->orientation() == VerticalScrollbar && tickmarks.size()) {
         drawingContext->save();
         drawingContext->setShouldAntialias(false);
-        drawingContext->setStrokeColor(Color(0xCC, 0xAA, 0x00, 0xFF), DeviceColorSpace);
-        drawingContext->setFillColor(Color(0xFF, 0xDD, 0x00, 0xFF), DeviceColorSpace);
+        drawingContext->setStrokeColor(Color(0xCC, 0xAA, 0x00, 0xFF), ColorSpaceDeviceRGB);
+        drawingContext->setFillColor(Color(0xFF, 0xDD, 0x00, 0xFF), ColorSpaceDeviceRGB);
 
         IntRect thumbArea = trackRect(scrollbar, false);
         if (!canDrawDirectly) {
@@ -453,7 +453,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     }
 
     if (!canDrawDirectly)
-        context->drawImageBuffer(imageBuffer.get(), DeviceColorSpace, scrollbar->frameRect().location());
+        context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, scrollbar->frameRect().location());
 
     return true;
 }

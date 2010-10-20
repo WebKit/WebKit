@@ -1081,7 +1081,7 @@ void GraphicsContext::clearRect(const FloatRect& rect)
         return;
     } 
 
-    fillRect(rect, Color(Color::white), DeviceColorSpace);
+    fillRect(rect, Color(Color::white), ColorSpaceDeviceRGB);
 }
 
 void GraphicsContext::strokeRect(const FloatRect& rect, float width)
@@ -1436,7 +1436,7 @@ void GraphicsContext::fillRect(const FloatRect& r, const Gradient* gradient)
     if (numStops == 1) {
         const Gradient::ColorStop& stop = stops.first();
         Color color(stop.red, stop.green, stop.blue, stop.alpha);
-        fillRect(r, color, DeviceColorSpace);
+        fillRect(r, color, ColorSpaceDeviceRGB);
         return;
     } 
     
@@ -1526,7 +1526,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     if (m_common->state.fillGradient)
         fillRect(rect, m_common->state.fillGradient.get());
     else
-        fillRect(rect, fillColor(), DeviceColorSpace);
+        fillRect(rect, fillColor(), ColorSpaceDeviceRGB);
 
     restorePlatformState();
 }

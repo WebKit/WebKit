@@ -34,6 +34,7 @@ namespace WebCore {
 
 CGColorSpaceRef deviceRGBColorSpaceRef();
 CGColorSpaceRef sRGBColorSpaceRef();
+CGColorSpaceRef linearRGBColorSpaceRef();
 
 }
 

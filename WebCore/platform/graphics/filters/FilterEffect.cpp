@@ -92,7 +92,7 @@ GraphicsContext* FilterEffect::effectContext(Filter* filter)
     determineAbsolutePaintRect(filter);
     if (m_absolutePaintRect.isEmpty())
         return 0;
-    m_effectBuffer = ImageBuffer::create(m_absolutePaintRect.size(), LinearRGB);
+    m_effectBuffer = ImageBuffer::create(m_absolutePaintRect.size(), ColorSpaceLinearRGB);
     if (!m_effectBuffer)
         return 0;
     return m_effectBuffer->context();

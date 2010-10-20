@@ -34,7 +34,7 @@ class RenderObject;
 
 class SVGImageBufferTools : public Noncopyable {
 public:
-    static bool createImageBuffer(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ImageColorSpace);
+    static bool createImageBuffer(const FloatRect& absoluteTargetRect, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&, ColorSpace);
     static void renderSubtreeToImageBuffer(ImageBuffer*, RenderObject*, const AffineTransform&);
     static void clipToImageBuffer(GraphicsContext*, const AffineTransform& absoluteTransform, const FloatRect& clampedAbsoluteTargetRect, OwnPtr<ImageBuffer>&);
 

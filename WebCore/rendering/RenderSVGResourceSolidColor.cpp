@@ -52,7 +52,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderObject* object, RenderStyl
     ASSERT(resourceMode != ApplyToDefaultMode);
 
     const SVGRenderStyle* svgStyle = style ? style->svgStyle() : 0;
-    ColorSpace colorSpace = style ? style->colorSpace() : DeviceColorSpace;
+    ColorSpace colorSpace = style ? style->colorSpace() : ColorSpaceDeviceRGB;
 
     if (resourceMode & ApplyToFillMode) {
         context->setAlpha(svgStyle ? svgStyle->fillOpacity() : 1.0f);

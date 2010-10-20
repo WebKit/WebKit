@@ -378,12 +378,12 @@ bool RenderThemeWinCE::paintSearchFieldCancelButton(RenderObject* o, const Paint
     IntRect cancelBounds(IntPoint(x, y), cancelSize);
     paintInfo.context->save();
     paintInfo.context->addRoundedRectClip(cancelBounds, cancelRadius, cancelRadius, cancelRadius, cancelRadius);
-    paintInfo.context->fillRect(cancelBounds, buttonColor, DeviceColorSpace);
+    paintInfo.context->fillRect(cancelBounds, buttonColor, ColorSpaceDeviceRGB);
 
     // Draw the 'x'
     IntSize xSize(3, 3);
     IntRect xBounds(cancelBounds.location() + IntSize(3, 3), xSize);
-    paintInfo.context->setStrokeColor(Color::white, DeviceColorSpace);
+    paintInfo.context->setStrokeColor(Color::white, ColorSpaceDeviceRGB);
     paintInfo.context->drawLine(xBounds.location(),  xBounds.location() + xBounds.size());
     paintInfo.context->drawLine(IntPoint(xBounds.right(), xBounds.y()),  IntPoint(xBounds.x(), xBounds.bottom()));
 
@@ -490,8 +490,8 @@ bool RenderThemeWinCE::paintSliderTrack(RenderObject* o, const PaintInfo& i, con
     bool rc = RenderTheme::paintSliderTrack(o, i, r);
     IntPoint left = IntPoint(r.x() + 2, (r.y() + r.bottom()) / 2);
     i.context->save();
-    i.context->setStrokeColor(Color::gray, DeviceColorSpace);
-    i.context->setFillColor(Color::gray, DeviceColorSpace);
+    i.context->setStrokeColor(Color::gray, ColorSpaceDeviceRGB);
+    i.context->setFillColor(Color::gray, ColorSpaceDeviceRGB);
     i.context->fillRect(r);
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement = mediaElementParent(o->node());
@@ -502,7 +502,7 @@ bool RenderThemeWinCE::paintSliderTrack(RenderObject* o, const PaintInfo& i, con
         left = right;
     }
 #endif
-    i.context->setStrokeColor(Color::black, DeviceColorSpace);
+    i.context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
     i.context->drawLine(left, IntPoint(r.right() - 2, left.y()));
     i.context->restore();
     return rc;
@@ -512,8 +512,8 @@ bool RenderThemeWinCE::paintSliderThumb(RenderObject* o, const PaintInfo& i, con
 {
     bool rc = RenderTheme::paintSliderThumb(o, i, r);
     i.context->save();
-    i.context->setStrokeColor(Color::black, DeviceColorSpace);
-    i.context->setFillColor(Color::black, DeviceColorSpace);
+    i.context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
+    i.context->setFillColor(Color::black, ColorSpaceDeviceRGB);
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement = mediaElementParent(o->node());
     if (mediaElement) {

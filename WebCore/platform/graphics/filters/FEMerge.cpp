@@ -56,7 +56,7 @@ void FEMerge::apply(Filter* filter)
 
     for (unsigned i = 0; i < size; ++i) {
         FilterEffect* in = inputEffect(i);
-        filterContext->drawImageBuffer(in->resultImage(), DeviceColorSpace, drawingRegionOfInputImage(in->absolutePaintRect()));
+        filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
     }
 }
 

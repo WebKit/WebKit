@@ -63,7 +63,7 @@ static bool hasSource(const HTMLMediaElement* mediaElement)
 static bool paintMediaButton(GraphicsContext* context, const IntRect& rect, Image* image)
 {
     IntRect imageRect = image->rect();
-    context->drawImage(image, DeviceColorSpace, rect);
+    context->drawImage(image, ColorSpaceDeviceRGB, rect);
     return true;
 }
 
@@ -120,9 +120,9 @@ static bool paintMediaSlider(RenderObject* object, const PaintInfo& paintInfo, c
     context->save();
     context->setShouldAntialias(true);
     context->setStrokeStyle(SolidStroke);
-    context->setStrokeColor(style->visitedDependentColor(CSSPropertyBorderLeftColor), DeviceColorSpace);
+    context->setStrokeColor(style->visitedDependentColor(CSSPropertyBorderLeftColor), ColorSpaceDeviceRGB);
     context->setStrokeThickness(style->borderLeftWidth());
-    context->setFillColor(style->visitedDependentColor(CSSPropertyBackgroundColor), DeviceColorSpace);
+    context->setFillColor(style->visitedDependentColor(CSSPropertyBackgroundColor), ColorSpaceDeviceRGB);
     context->drawRect(rect);
     context->restore();
 
@@ -189,13 +189,13 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
     GraphicsContext* context = paintInfo.context;
     Color originalColor = context->strokeColor();
     if (originalColor != Color::white)
-        context->setStrokeColor(Color::white, DeviceColorSpace);
+        context->setStrokeColor(Color::white, ColorSpaceDeviceRGB);
 
     int x = rect.x() + rect.width() / 2;
     context->drawLine(IntPoint(x, rect.y()),  IntPoint(x, rect.y() + rect.height()));
 
     if (originalColor != Color::white)
-        context->setStrokeColor(originalColor, DeviceColorSpace);
+        context->setStrokeColor(originalColor, ColorSpaceDeviceRGB);
     return true;
 }
 
@@ -224,17 +224,17 @@ static bool paintMediaTimelineContainer(RenderObject* object, const PaintInfo& p
 
         // Draw the left border using CSS defined width and color.
         context->setStrokeThickness(object->style()->borderLeftWidth());
-        context->setStrokeColor(object->style()->visitedDependentColor(CSSPropertyBorderLeftColor).rgb(), DeviceColorSpace);
+        context->setStrokeColor(object->style()->visitedDependentColor(CSSPropertyBorderLeftColor).rgb(), ColorSpaceDeviceRGB);
         context->drawLine(IntPoint(rect.x() + 1, rect.y()),
                           IntPoint(rect.x() + 1, rect.y() + rect.height()));
 
         // Draw the right border using CSS defined width and color.
         context->setStrokeThickness(object->style()->borderRightWidth());
-        context->setStrokeColor(object->style()->visitedDependentColor(CSSPropertyBorderRightColor).rgb(), DeviceColorSpace);
+        context->setStrokeColor(object->style()->visitedDependentColor(CSSPropertyBorderRightColor).rgb(), ColorSpaceDeviceRGB);
         context->drawLine(IntPoint(rect.x() + rect.width() - 1, rect.y()),
                           IntPoint(rect.x() + rect.width() - 1, rect.y() + rect.height()));
 
-        context->setStrokeColor(originalColor, DeviceColorSpace);
+        context->setStrokeColor(originalColor, ColorSpaceDeviceRGB);
         context->setStrokeThickness(originalThickness);
         context->setStrokeStyle(originalStyle);
     }

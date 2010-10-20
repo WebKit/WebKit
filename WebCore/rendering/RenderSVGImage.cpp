@@ -129,7 +129,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
                 if (imageElement->preserveAspectRatio().align() != SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_NONE)
                     imageElement->preserveAspectRatio().transformRect(destRect, srcRect);
 
-                childPaintInfo.context->drawImage(image, DeviceColorSpace, destRect, srcRect);
+                childPaintInfo.context->drawImage(image, ColorSpaceDeviceRGB, destRect, srcRect);
             }
 
             SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, savedInfo.context);

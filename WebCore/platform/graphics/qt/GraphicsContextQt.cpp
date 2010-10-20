@@ -255,8 +255,8 @@ GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
     setPaintingDisabled(!context);
     if (context) {
         // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor(), DeviceColorSpace);
-        setPlatformStrokeColor(strokeColor(), DeviceColorSpace);
+        setPlatformFillColor(fillColor(), ColorSpaceDeviceRGB);
+        setPlatformStrokeColor(strokeColor(), ColorSpaceDeviceRGB);
 
         // Make sure we start with the correct join mode.
         setLineJoin(MiterJoin);

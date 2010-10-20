@@ -82,9 +82,9 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
 
         IntSize imageSize = BitmapImage::size();
         if (size)
-            drawFrameMatchingSourceSize(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), IntSize(*size), DeviceColorSpace, CompositeCopy);
+            drawFrameMatchingSourceSize(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), IntSize(*size), ColorSpaceDeviceRGB, CompositeCopy);
         else
-            draw(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0, 0, imageSize.width(), imageSize.height()), DeviceColorSpace, CompositeCopy);
+            draw(&gc, FloatRect(0, 0, bmpInfo.bmWidth, bmpInfo.bmHeight), FloatRect(0, 0, imageSize.width(), imageSize.height()), ColorSpaceDeviceRGB, CompositeCopy);
     }
 
     SelectObject(hdc.get(), hOldBmp);

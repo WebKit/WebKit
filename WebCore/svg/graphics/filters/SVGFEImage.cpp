@@ -70,7 +70,7 @@ void FEImage::apply(Filter* filter)
     IntPoint paintLocation = absolutePaintRect().location();
     destRect.move(-paintLocation.x(), -paintLocation.y());
 
-    filterContext->drawImage(m_image.get(), DeviceColorSpace, destRect, srcRect);
+    filterContext->drawImage(m_image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
 }
 
 void FEImage::dump()

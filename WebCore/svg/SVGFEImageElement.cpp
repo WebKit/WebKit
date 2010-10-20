@@ -27,6 +27,7 @@
 #include "Attr.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "ColorSpace.h"
 #include "Document.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
@@ -134,7 +135,7 @@ PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*)
             return 0;
 
         IntRect targetRect = enclosingIntRect(renderer->objectBoundingBox());
-        m_targetImage = ImageBuffer::create(targetRect.size(), LinearRGB);
+        m_targetImage = ImageBuffer::create(targetRect.size(), ColorSpaceLinearRGB);
 
         AffineTransform contentTransformation;
         SVGImageBufferTools::renderSubtreeToImageBuffer(m_targetImage.get(), renderer, contentTransformation);

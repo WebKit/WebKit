@@ -46,9 +46,8 @@ public:
     
     RetainPtr<CGDataProviderRef> m_dataProvider;
     CGBitmapInfo m_bitmapInfo;
-    bool m_grayScale;
     unsigned m_bytesPerRow;
-    RetainPtr<CGColorSpaceRef> m_colorSpace;
+    CGColorSpaceRef m_colorSpace;
 };
 
 }  // namespace WebCore

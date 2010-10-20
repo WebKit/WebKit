@@ -262,7 +262,7 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(RenderObject* 
 
     OwnPtr<ImageBuffer> tileImage;
 
-    if (!SVGImageBufferTools::createImageBuffer(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, tileImage, DeviceRGB))
+    if (!SVGImageBufferTools::createImageBuffer(absoluteTileBoundaries, clampedAbsoluteTileBoundaries, tileImage, ColorSpaceDeviceRGB))
         return PassOwnPtr<ImageBuffer>();
 
     GraphicsContext* tileImageContext = tileImage->context();

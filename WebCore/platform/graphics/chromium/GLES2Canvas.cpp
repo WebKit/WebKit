@@ -97,7 +97,7 @@ void GLES2Canvas::clearRect(const FloatRect& rect)
     } else {
         save();
         setCompositeOperation(CompositeClear);
-        fillRect(rect, Color(RGBA32(0)), DeviceColorSpace);
+        fillRect(rect, Color(RGBA32(0)), ColorSpaceDeviceRGB);
         restore();
     }
 }
@@ -120,7 +120,7 @@ void GLES2Canvas::fillRect(const FloatRect& rect, const Color& color, ColorSpace
 
 void GLES2Canvas::fillRect(const FloatRect& rect)
 {
-    fillRect(rect, m_state->m_fillColor, DeviceColorSpace);
+    fillRect(rect, m_state->m_fillColor, ColorSpaceDeviceRGB);
 }
 
 void GLES2Canvas::setFillColor(const Color& color, ColorSpace colorSpace)

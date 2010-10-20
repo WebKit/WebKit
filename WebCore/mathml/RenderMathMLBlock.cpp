@@ -89,7 +89,7 @@ void RenderMathMLBlock::paint(PaintInfo& info, int tx, int ty)
     
     info.context->setStrokeThickness(1.0f);
     info.context->setStrokeStyle(SolidStroke);
-    info.context->setStrokeColor(Color(0, 0, 255), sRGBColorSpace);
+    info.context->setStrokeColor(Color(0, 0, 255), ColorSpaceSRGB);
     
     info.context->drawLine(IntPoint(tx, ty), IntPoint(tx + offsetWidth(), ty));
     info.context->drawLine(IntPoint(tx + offsetWidth(), ty), IntPoint(tx + offsetWidth(), ty + offsetHeight()));
@@ -98,13 +98,13 @@ void RenderMathMLBlock::paint(PaintInfo& info, int tx, int ty)
     
     int topStart = paddingTop();
     
-    info.context->setStrokeColor(Color(0, 255, 0), sRGBColorSpace);
+    info.context->setStrokeColor(Color(0, 255, 0), ColorSpaceSRGB);
     
     info.context->drawLine(IntPoint(tx, ty + topStart), IntPoint(tx + offsetWidth(), ty + topStart));
     
     int baseline = baselinePosition(true);
     
-    info.context->setStrokeColor(Color(255, 0, 0), sRGBColorSpace);
+    info.context->setStrokeColor(Color(255, 0, 0), ColorSpaceSRGB);
     
     info.context->drawLine(IntPoint(tx, ty + baseline), IntPoint(tx + offsetWidth(), ty + baseline));
     

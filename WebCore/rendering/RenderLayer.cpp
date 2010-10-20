@@ -969,7 +969,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext* p, const RenderLayer*
         p->clip(clipRect);
         p->beginTransparencyLayer(renderer()->opacity());
 #ifdef REVEAL_TRANSPARENCY_LAYERS
-        p->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f), DeviceColorSpace);
+        p->setFillColor(Color(0.0f, 0.0f, 0.5f, 0.2f), ColorSpaceDeviceRGB);
         p->fillRect(clipRect);
 #endif
     }
@@ -2201,9 +2201,9 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
         context->clip(absRect);
         IntRect largerCorner = absRect;
         largerCorner.setSize(IntSize(largerCorner.width() + 1, largerCorner.height() + 1));
-        context->setStrokeColor(Color(makeRGB(217, 217, 217)), DeviceColorSpace);
+        context->setStrokeColor(Color(makeRGB(217, 217, 217)), ColorSpaceDeviceRGB);
         context->setStrokeThickness(1.0f);
-        context->setFillColor(Color::transparent, DeviceColorSpace);
+        context->setFillColor(Color::transparent, ColorSpaceDeviceRGB);
         context->drawRect(largerCorner);
         context->restore();
     }
