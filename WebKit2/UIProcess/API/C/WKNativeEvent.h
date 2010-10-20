@@ -33,6 +33,8 @@ extern "C" {
 #ifdef __APPLE__
 #ifdef __OBJC__
 @class NSEvent;
+#elif __cplusplus
+class NSEvent;
 #else
 struct NSEvent;
 #endif
