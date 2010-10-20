@@ -29,6 +29,7 @@ SET(WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/rendering/style"
     "${WEBCORE_DIR}/storage"
     "${WEBCORE_DIR}/svg"
+    "${WEBCORE_DIR}/svg/properties"
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/ForwardingHeaders"
     "${JAVASCRIPTCORE_DIR}/API"
