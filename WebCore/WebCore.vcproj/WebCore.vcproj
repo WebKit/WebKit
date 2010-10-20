@@ -27425,14 +27425,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\ImageBufferFilter.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\filters\ImageBufferFilter.h"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\filters\LightSource.cpp"
 						>
 					</File>

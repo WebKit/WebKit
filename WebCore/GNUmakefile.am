@@ -2225,8 +2225,6 @@ webcore_sources += \
 	WebCore/platform/graphics/filters/FilterEffect.cpp \
 	WebCore/platform/graphics/filters/FilterEffect.h \
 	WebCore/platform/graphics/filters/Filter.h \
-	WebCore/platform/graphics/filters/ImageBufferFilter.cpp \
-	WebCore/platform/graphics/filters/ImageBufferFilter.h \
 	WebCore/platform/graphics/filters/LightSource.cpp \
 	WebCore/platform/graphics/filters/LightSource.h \
 	WebCore/platform/graphics/filters/PointLightSource.h \

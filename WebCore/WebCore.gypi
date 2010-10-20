@@ -2496,8 +2496,6 @@
             'platform/graphics/filters/Filter.h',
             'platform/graphics/filters/FilterEffect.cpp',
             'platform/graphics/filters/FilterEffect.h',
-            'platform/graphics/filters/ImageBufferFilter.cpp',
-            'platform/graphics/filters/ImageBufferFilter.h',
             'platform/graphics/filters/SourceAlpha.cpp',
             'platform/graphics/filters/SourceAlpha.h',
             'platform/graphics/filters/SourceGraphic.cpp',

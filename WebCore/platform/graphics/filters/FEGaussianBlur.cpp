@@ -99,7 +99,7 @@ static void boxBlur(CanvasPixelArray*& srcPixelArray, CanvasPixelArray*& dstPixe
     }
 }
 
-void FEGaussianBlur::kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight)
+inline void kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight)
 {
     // check http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement for details
     switch (boxBlur) {
