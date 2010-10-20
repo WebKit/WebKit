@@ -2693,11 +2693,6 @@ BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble07.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble09.html = IMAGE
 
-// Need to implement textInputController.hasSpellingMarkers().
-// Note that hasSpellingMarkers() is available for DRT: http://webkit.org/b/45441
-BUGWK41832 : editing/spelling/spelling-textarea.html = FAIL
-BUGWK41832 : editing/spelling/spelling-contenteditable.html = FAIL
-
 // Flaky tests.
 BUG44345 LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE PASS
 BUG44346 LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE PASS
@@ -3212,37 +3207,6 @@ BUG47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
 
 // test_shell's build configuration does not compile webp in
 BUGWK47512 : fast/images/webp-image-decoding.html = TEXT
-
-// Mysteriously changed behavior, being investigated upstream in bug 47629
-BUGWK47629 MAC : editing/deleting/delete-3800834-fix.html = IMAGE
-BUGWK47629 MAC : editing/deleting/merge-unrendered-space.html = IMAGE
-BUGWK47629 MAC : editing/deleting/pruning-after-merge-2.html = IMAGE
-BUGWK47629 MAC : editing/deleting/smart-delete-002.html = IMAGE
-BUGWK47629 MAC : editing/execCommand/4924441.html = IMAGE
-BUGWK47629 MAC : editing/execCommand/5080333-1.html = IMAGE
-BUGWK47629 MAC : editing/execCommand/5080333-2.html = IMAGE
-BUGWK47629 MAC : editing/execCommand/insert-list-and-stitch.html = IMAGE
-BUGWK47629 MAC : editing/execCommand/remove-list-item-1.html = IMAGE
-BUGWK47629 MAC : editing/inserting/insert-div-026.html = IMAGE
-BUGWK47629 MAC : editing/inserting/insert-paragraph-04.html = IMAGE
-BUGWK47629 MAC : editing/inserting/insert-text-with-newlines.html = IMAGE
-BUGWK47629 MAC : editing/inserting/return-key-with-selection-001.html = IMAGE
-BUGWK47629 MAC : editing/inserting/return-key-with-selection-002.html = IMAGE
-BUGWK47629 MAC : editing/pasteboard/5483567.html = IMAGE
-BUGWK47629 MAC : editing/pasteboard/paste-text-019.html = IMAGE
-BUGWK47629 MAC : editing/pasteboard/smart-paste-008.html = IMAGE
-BUGWK47629 MAC : editing/pasteboard/subframe-dragndrop-1.html = IMAGE
-BUGWK47629 MAC : editing/selection/4983858.html = IMAGE
-BUGWK47629 MAC : editing/selection/5057506-2.html = IMAGE
-BUGWK47629 MAC : editing/selection/move-by-character-001.html = IMAGE
-BUGWK47629 MAC : editing/style/5046875-1.html = IMAGE
-BUGWK47629 MAC : editing/style/create-block-for-style-001.html = IMAGE
-BUGWK47629 MAC : editing/style/create-block-for-style-003.html = IMAGE
-BUGWK47629 MAC : editing/style/create-block-for-style-004.html = IMAGE
-BUGWK47629 MAC : editing/style/create-block-for-style-007.html = IMAGE
-BUGWK47629 MAC : editing/style/create-block-for-style-009.html = IMAGE
-BUGWK47629 MAC : editing/style/create-block-for-style-010.html = IMAGE
-BUGWK47629 MAC : editing/style/create-block-for-style-013.html = IMAGE
 
 BUG59647 WIN : svg/dom/length-list-parser.html = PASS CRASH
 
