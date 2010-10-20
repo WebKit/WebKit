@@ -70,6 +70,86 @@ BUGWK47231 SKIP : compositing/self-painting-layers2.html = TIMEOUT
 BUGWK47231 SKIP : compositing/video/video-background-color.html = TIMEOUT
 BUGWK47231 SKIP : compositing/video/video-poster.html = TIMEOUT
 
+// The following compositor tests are currently timing out. Need to
+// investigate why.
+BUGWK47923 SKIP : compositing/checkerboard.html = TIMEOUT
+BUGWK47923 SKIP : compositing/color-matching/image-color-matching.html = TIMEOUT
+BUGWK47923 SKIP : compositing/geometry/abs-position-inside-opacity.html = TIMEOUT
+BUGWK47923 SKIP : compositing/iframes/become-overlapped-iframe.html = TIMEOUT
+BUGWK47923 SKIP : compositing/masks/direct-image-mask.html = TIMEOUT
+BUGWK47923 SKIP : compositing/overflow/ancestor-overflow.html = TIMEOUT
+BUGWK47923 SKIP : compositing/repaint/composited-document-element.html = TIMEOUT
+BUGWK47923 SKIP : compositing/shadows/shadow-drawing.html = TIMEOUT
+BUGWK47923 SKIP : compositing/tiling/constrained-layer-size.html = TIMEOUT
+BUGWK47923 SKIP : compositing/z-order/negative-z-index.html = TIMEOUT
+
+// The following test is flaky; it occasionally times out, but not always.
+BUGWK47924 SKIP : compositing/iframes/composited-iframe-alignment.html = TIMEOUT
+
+// Chromium does not support PDF content in <img> tags.
+WONTFIX SKIP : compositing/color-matching/pdf-image-match.html = FAIL
+WONTFIX SKIP : compositing/images/direct-pdf-image.html = FAIL
+// Chromium does not support PDF or plugin content in layers right now.
+BUGWK47925 SKIP : compositing/plugins/composited-plugin.html = FAIL
+
+// The word "compositing" appears in Chromium's pixel results and not
+// in Safari's; this should probably be fixed.
+BUGWK47926 SKIP: compositing/geometry/composited-html-size.html = FAIL
+
+// These tests are missing an entire layer in the layer tree output.
+BUGWK47927 SKIP : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = FAIL
+
+// The following failure seems suspicious because it does not contain
+// any text; it seems that the layer tree should precisely match
+// Safari's.
+BUGWK47944 SKIP : compositing/geometry/limit-layer-bounds-overflow-root.html = FAIL
+
+// The following failure is missing a tiled layer where Safari has
+// one, in addition to having a layer positioned differently than in
+// Safari.
+BUGWK47946 SKIP : compositing/geometry/limit-layer-bounds-transformed-overflow.html = FAIL
+
+// All of the tests involving masks appear to be failing right now.
+BUGWK47947 SKIP : compositing/masks/masked-ancestor.html = FAIL
+BUGWK47947 SKIP : compositing/masks/multiple-masks.html = FAIL
+BUGWK47947 SKIP : compositing/masks/simple-composited-mask.html = FAIL
+
+// Nearly all tests involving reflections are failing right now.
+BUGWK47949 SKIP : compositing/reflections/animation-inside-reflection.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/compositing-change-inside-reflection.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/deeply-nested-reflections.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/masked-reflection-on-composited.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-anchor-point.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-animated.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-mask-change.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-on-overflow.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-opacity.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-size-change.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-transformed.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-transformed2.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection-transition.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/nested-reflection.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/reflection-on-composited.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/reflection-opacity.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/reflection-ordering.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/reflection-positioning.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/reflection-positioning2.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/simple-composited-reflections.html = FAIL
+BUGWK47949 SKIP : compositing/reflections/transform-inside-reflection.html = FAIL
+
+// Most of the tiling tests are misbehaving in Chrome even though the
+// DRT output looks similar to Safari's. These need to be investigated.
+BUGWK47951 SKIP : compositing/tiling/huge-layer-add-remove-child.html = FAIL
+BUGWK47951 SKIP : compositing/tiling/huge-layer-img.html = FAIL
+BUGWK47951 SKIP : compositing/tiling/huge-layer-with-layer-children.html = FAIL
+BUGWK47951 SKIP : compositing/tiling/huge-layer.html = FAIL
+
+BUGWK47952 SKIP : compositing/transitions/scale-transition-no-start.html = FAIL
+
+// These compositor WebGL tests fail.
+BUGWK47953 SKIP : compositing/webgl/webgl-background-color.html = FAIL
+BUGWK47953 SKIP : compositing/webgl/webgl-reflection.html = FAIL
+
 BUGWK47241 SKIP : fast/canvas/access-zero-sized-canvas.html = CRASH
 BUGWK47241 SKIP : fast/canvas/canvas-skia-excessive-size.html = CRASH
 BUGWK47241 SKIP : fast/canvas/toDataURL-noData.html = CRASH
