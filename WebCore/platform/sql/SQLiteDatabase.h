@@ -139,7 +139,6 @@ private:
     int pageSize();
     
     sqlite3* m_db;
-    int m_lastError;
     int m_pageSize;
     
     bool m_transactionInProgress;

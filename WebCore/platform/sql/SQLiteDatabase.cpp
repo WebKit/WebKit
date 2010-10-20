@@ -65,8 +65,7 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
 {
     close();
 
-    m_lastError = SQLiteFileSystem::openDatabase(filename, &m_db, forWebSQLDatabase);
-    if (m_lastError != SQLITE_OK) {
+    if (SQLiteFileSystem::openDatabase(filename, &m_db, forWebSQLDatabase) != SQLITE_OK) {
         LOG_ERROR("SQLite database failed to load from %s\nCause - %s", filename.ascii().data(),
             sqlite3_errmsg(m_db));
         sqlite3_close(m_db);
