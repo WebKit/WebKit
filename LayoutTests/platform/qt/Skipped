@@ -5434,6 +5434,7 @@ fast/filesystem
 # LayoutTestController::nodesFromRect is not supported.
 fast/dom/nodesFromRect-basic.html
 fast/dom/nodesFromRect-links-and-text.html
+fast/dom/nodesFromRect-inner-documents.html
 
 # It fails, because 3D canvas is disabled by default.
 http/tests/canvas/webgl/origin-clean-conformance.html

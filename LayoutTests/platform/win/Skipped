@@ -1030,6 +1030,7 @@ fast/filesystem
 # LayoutTestController::nodesFromRect is not supported.
 fast/dom/nodesFromRect-basic.html
 fast/dom/nodesFromRect-links-and-text.html
+fast/dom/nodesFromRect-inner-documents.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=46223
 # The WebKit plugin implementation does not support iframe shims.

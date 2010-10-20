@@ -3,7 +3,7 @@ body {
   padding: 0;
 }
 
-h1, div, p, iframe {
+h1, div, p {
   display: block;
   width: 100px;
   height: 30px;

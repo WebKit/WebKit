@@ -1,0 +1,10 @@
+A   PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS All correct nodes found for rect [176,120], [0,0,0,0]
+PASS All correct nodes found for rect [176,120], [10,10,10,10]
+PASS All correct nodes found for rect [14,167], [0,10,0,0]
+PASS All correct nodes found for rect [150,17], [0,0,0,0]
+PASS All correct nodes found for rect [150,17], [0,0,10,0]
+PASS All correct nodes found for rect [150,17], [0,0,25,0]
+

@@ -3,12 +3,15 @@
  *     * Antonio Gomes <tonikitoo@webkit.org>
  **/
 
-function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list)
+function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list, doc)
 {
   if (!window.layoutTestController)
     return;
 
-  var nodes = layoutTestController.nodesFromRect(document, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */);
+  if (!doc)
+    doc = document;
+
+  var nodes = layoutTestController.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */);
   if (!nodes)
     return;
 
