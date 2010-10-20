@@ -144,11 +144,29 @@ BUGWK47951 SKIP : compositing/tiling/huge-layer-img.html = FAIL
 BUGWK47951 SKIP : compositing/tiling/huge-layer-with-layer-children.html = FAIL
 BUGWK47951 SKIP : compositing/tiling/huge-layer.html = FAIL
 
+// This test is flaky on Linux.
+BUGWK48012 SKIP LINUX : compositing/tiling/huge-layer-with-layer-children-resize.html = FAIL
+
 BUGWK47952 SKIP : compositing/transitions/scale-transition-no-start.html = FAIL
 
 // These compositor WebGL tests fail.
 BUGWK47953 SKIP : compositing/webgl/webgl-background-color.html = FAIL
 BUGWK47953 SKIP : compositing/webgl/webgl-reflection.html = FAIL
+
+// These tests are failing on Linux because the layers are differently
+// sized than on Windows. It is unclear why this is happening and it
+// needs to be investigated.
+BUGWK48016 SKIP LINUX : compositing/geometry/limit-layer-bounds-positioned-transition.html = FAIL
+BUGWK48016 SKIP LINUX : compositing/geometry/limit-layer-bounds-transformed.html = FAIL
+BUGWK48016 SKIP LINUX : compositing/geometry/vertical-scroll-composited.html = FAIL
+
+// This test causes an assertion failure in DRT, but apparently not
+// when DRT is run manually.
+BUGWK48018 SKIP LINUX : compositing/geometry/outline-change.html = FAIL
+
+// Linux result contains extra output which looks like debugging
+// output from somewhere.
+BUGWK48020 SKIP LINUX : compositing/geometry/object-clip-rects-assertion.html = FAIL
 
 BUGWK47241 SKIP : fast/canvas/access-zero-sized-canvas.html = CRASH
 BUGWK47241 SKIP : fast/canvas/canvas-skia-excessive-size.html = CRASH
