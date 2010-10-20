@@ -185,7 +185,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         // containing only the portion we want to display. We need to do this because high-quality
         // interpolation smoothes sharp edges, causing pixels from outside the source rect to bleed
         // into the destination rect. See <rdar://problem/6112909>.
-        shouldUseSubimage = (interpolationQuality == kCGInterpolationHigh || interpolationQuality == kCGInterpolationDefault) && srcRect.size() != destRect.size();
+        shouldUseSubimage = (interpolationQuality == kCGInterpolationHigh || interpolationQuality == kCGInterpolationDefault) && (srcRect.size() != destRect.size() || !ctxt->getCTM().isIdentityOrTranslationOrFlipped());
         float xScale = srcRect.width() / destRect.width();
         float yScale = srcRect.height() / destRect.height();
         if (shouldUseSubimage) {
