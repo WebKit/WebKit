@@ -21,6 +21,32 @@ all:
     xcopy /y /d "..\..\API\JSRetainPtr.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\OpaqueJSString.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
     xcopy /y /d "..\..\API\WebKitAvailability.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore"
+    
+    -mkdir 2>NUL "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+
+    xcopy /y /d "..\..\wtf\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\wtf\text\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\wtf\unicode\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\wtf\unicode\icu\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\parser\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\runtime\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\bytecode\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\interpreter\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\assembler\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\jit\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\debugger\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\profiler\*.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\create_hash_table" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\pcre\pcre.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\wtf\text\AtomicString.cpp" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\wtf\text\StringBuilder.cpp" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\wtf\text\StringImpl.cpp" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    xcopy /y /d "..\..\wtf\text\WTFString.cpp" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+
+
+    -mkdir 2>NUL "$(WEBKITOUTPUTDIR)\bin\JavaScriptCore.resources"
+    xcopy /y /d "..\JavaScriptCore.resources\*" "$(WEBKITOUTPUTDIR)\bin\JavaScriptCore.resources"
+    
     -del "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore\stdbool.h" "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore\stdint.h"
     -del "$(WEBKITOUTPUTDIR)\buildfailed"
 
@@ -28,3 +54,5 @@ clean:
     -del "$(WEBKITOUTPUTDIR)\buildfailed"
     -del /s /q "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
     -del /s /q "$(WEBKITOUTPUTDIR)\obj\JavaScriptCore\DerivedSources"
+    -del /s /q "$(WEBKITOUTPUTDIR)\include\private\JavaScriptCore"
+    -del /s /q "$(WEBKITOUTPUTDIR)\bin\JavaScriptCore.resources"

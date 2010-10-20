@@ -1,3 +1,13 @@
+2010-10-20  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix the Windows build after r70165. Move the copying of JavaScript headers from JavaScriptCore's post-build
+        step to JavaScriptCoreGenerated, so the copying is done even when a cpp file in JavaScriptCore is changed.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreCommon.vsprops:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+
 2010-10-20  Dumitru Daniliuc  <dumi@chromium.org>
 
         Unreviewed, fixing the Win build.
