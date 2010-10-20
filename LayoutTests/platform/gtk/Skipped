@@ -42,10 +42,13 @@ dom/xhtml/level3/core/entitygetxmlversion04.xhtml
 dom/xhtml/level3/core/nodegetbaseuri16.xhtml
 dom/xhtml/level3/core/nodegetbaseuri19.xhtml
 dom/xhtml/level3/core/nodegetbaseuri20.xhtml
+http/tests/xmlhttprequest/XMLHttpRequestException.html
+http/tests/xmlhttprequest/connection-error-sync.html
 fast/xmlhttprequest/null-document-xmlhttprequest-open.html
 http/tests/misc/favicon-as-image.html
 media/unsupported-rtsp.html
 security/autocomplete-cleared-on-back.html
+http/tests/security/frameNavigation/cross-origin-opener.html
 
 # Intermittently timing out on Gtk Debug Bot:
 # https://bugs.webkit.org/show_bug.cgi?id=33445
@@ -2952,14 +2955,20 @@ fast/xsl/xslt_unicode.xml
 http/tests/appcache/crash-when-navigating-away-then-back.html
 http/tests/appcache/fallback.html
 http/tests/appcache/foreign-iframe-main.html
+http/tests/appcache/local-content.html
+http/tests/appcache/manifest-redirect-2.html
+http/tests/appcache/offline-access.html
 http/tests/appcache/origin-quota.html
+http/tests/appcache/resource-redirect-2.html
 http/tests/cookies/double-quoted-value-with-semi-colon.html
+http/tests/incremental/slow-utf8-text.pl
 http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
 # Needed to cover the fix for <rdar://problem/6727495>
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
 http/tests/loading/empty-subframe.html
 http/tests/loading/gmail-assert-on-load.html
+http/tests/loading/preload-img-test.html
 http/tests/loading/redirect-with-no-location-crash.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
@@ -2974,6 +2983,7 @@ http/tests/media/video-seekable-stall.html
 http/tests/mime/standard-mode-loads-stylesheet-with-empty-content-type.html
 http/tests/mime/standard-mode-loads-stylesheet-with-text-css-and-invalid-type.html
 http/tests/misc/acid3.html
+http/tests/misc/isindex-formdata.html
 http/tests/misc/policy-delegate-called-twice.html
 http/tests/misc/prefetch-purpose.html
 http/tests/misc/redirect-to-external-url.html
@@ -2983,7 +2993,9 @@ http/tests/navigation/reload-subframe-object.html
 http/tests/plugins/npapi-response-headers.html
 http/tests/plugins/post-url-file.html
 http/tests/security/credentials-in-referer.html
+http/tests/security/cross-frame-access-put.html
 http/tests/security/feed-urls-from-remote.html
+http/tests/security/local-video-source-from-remote.html
 http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html
 http/tests/security/mixedContent/data-url-iframe-in-main-frame.html
 http/tests/security/mixedContent/data-url-script-in-iframe.html
@@ -3014,12 +3026,19 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
 
 http/tests/xmlhttprequest/default-content-type-dashboard.html
+http/tests/xmlhttprequest/frame-load-cancelled-abort.html
+http/tests/xmlhttprequest/frame-unload-abort-crash.html
 http/tests/xmlhttprequest/methods-async.html
 http/tests/xmlhttprequest/methods.html
+http/tests/xmlhttprequest/response-encoding.html
+http/tests/xmlhttprequest/state-after-network-error.html
+http/tests/xmlhttprequest/supported-xml-content-types.html
 http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
 http/tests/xmlhttprequest/upload-onload-event.html
 http/tests/xmlhttprequest/upload-onprogress-event.html
 http/tests/xmlhttprequest/upload-progress-events.html
+http/tests/xmlhttprequest/xml-encoding.html
+http/tests/xmlhttprequest/xmlhttprequest-contenttype-empty.html
 http/tests/xmlhttprequest/workers/methods-async.html
 http/tests/xmlhttprequest/workers/methods.html
 
@@ -3040,10 +3059,15 @@ http/tests/misc/willCacheResponse-delegate-callback.html
 http/tests/multipart/invalid-image-data-standalone.html
 http/tests/multipart/invalid-image-data.html
 http/tests/multipart/policy-ignore-crash.php
+http/tests/navigation/anchor-frames.html
 http/tests/navigation/error404-basic.html
+http/tests/navigation/error404-frames.html
 http/tests/navigation/error404-goback.html
 http/tests/navigation/error404-subframeload.html
 http/tests/navigation/javascriptlink-frames.html
+http/tests/navigation/post-basic.html
+http/tests/navigation/post-frames.html
+http/tests/navigation/post-goback1.html
 http/tests/navigation/postredirect-basic.html
 http/tests/navigation/postredirect-frames.html
 http/tests/navigation/postredirect-goback1.html
