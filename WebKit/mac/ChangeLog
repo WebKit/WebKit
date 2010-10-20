@@ -1,3 +1,21 @@
+2010-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r67568-r67643): Some HTML/CSS renders upside down and backwards on Leopard
+        https://bugs.webkit.org/show_bug.cgi?id=47369
+        
+        r46947 added code that limits the size of the layer-backed view on Leopard when
+        the page height exceeds 4096px (later adjusted to 2048px in r48401).
+        
+        Later, r67576 altered the geometry flipping behavior to push the geometry flipping
+        down into WebKit. However, the code that adjusts the hosting layer's sublayer transform
+        to account for layer-backed view size-limiting was not fixed at the same time.
+        This change corrects that.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _updateLayerHostingViewPosition]):
+
 2010-10-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

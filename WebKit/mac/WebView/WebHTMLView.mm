@@ -5618,8 +5618,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     NSRect layerViewFrame = [self bounds];
 
     if (layerViewFrame.size.height > maxHeight) {
-        CGFloat documentHeight = layerViewFrame.size.height;
-            
         // Clamp the size of the view to <= maxHeight to avoid the bug.
         layerViewFrame.size.height = maxHeight;
         NSRect visibleRect = [[self enclosingScrollView] documentVisibleRect];
@@ -5629,8 +5627,9 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         layerViewFrame.origin.y = topOffset;
 
         // Compensate for the moved view by adjusting the sublayer transform on the view's layer (using flipped coords).
-        CGFloat bottomOffset = documentHeight - layerViewFrame.size.height - topOffset;
-        [[_private->layerHostingView layer] setSublayerTransform:CATransform3DMakeTranslation(0, -bottomOffset, 0)];
+        CATransform3D flipTransform = CATransform3DMakeTranslation(0, topOffset, 0);
+        flipTransform = CATransform3DScale(flipTransform, 1, -1, 1);
+        [[_private->layerHostingView layer] setSublayerTransform:flipTransform];
     }
 
     [_private->layerHostingView _updateLayerGeometryFromView];  // Workaround for <rdar://problem/7071636>
