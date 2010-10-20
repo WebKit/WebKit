@@ -256,6 +256,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/svg/animation \
     $$PWD/svg/graphics \
     $$PWD/svg/graphics/filters \
+    $$PWD/svg/properties \
     $$PWD/websockets \
     $$PWD/wml \
     $$PWD/workers \

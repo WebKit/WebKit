@@ -60,6 +60,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/svg/animation \
 	-I$(srcdir)/WebCore/svg/graphics \
 	-I$(srcdir)/WebCore/svg/graphics/filters \
+	-I$(srcdir)/WebCore/svg/properties \
 	-I$(srcdir)/WebCore/websockets \
 	-I$(srcdir)/WebCore/wml \
 	-I$(srcdir)/WebCore/workers \

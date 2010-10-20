@@ -177,6 +177,7 @@
       '../svg/animation',
       '../svg/graphics',
       '../svg/graphics/filters',
+      '../svg/properties',
       '../websockets',
       '../workers',
       '../xml',
