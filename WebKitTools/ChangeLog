@@ -1,3 +1,12 @@
+2010-10-20  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        chromium_gpu port of new-run-webkit-tests must do Linux -> Win expectations fallback
+        https://bugs.webkit.org/show_bug.cgi?id=48005
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+
 2010-10-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

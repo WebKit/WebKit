@@ -90,7 +90,8 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
         chromium_linux.ChromiumLinuxPort.__init__(self, **kwargs)
 
     def baseline_search_path(self):
-        return (map(self._webkit_baseline_path, ['chromium-gpu-linux', 'chromium-gpu']) +
+        # Mimic the Linux -> Win expectations fallback in the ordinary Chromium port.
+        return (map(self._webkit_baseline_path, ['chromium-gpu-linux', 'chromium-gpu-win', 'chromium-gpu']) +
                 chromium_linux.ChromiumLinuxPort.baseline_search_path(self))
 
     def path_to_test_expectations_file(self):
