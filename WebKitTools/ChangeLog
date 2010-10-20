@@ -1,3 +1,23 @@
+2010-10-20  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Add Git-support to do-file-rename
+        https://bugs.webkit.org/show_bug.cgi?id=48015
+
+        Also, abstracts the SCM move/rename functionality in do-file-rename and
+        do-webcore-rename into a common function VCSUtils::scmMoveOrRenameFile().
+
+        Currently, do-file-rename is hard coded to assume the SCM is Subversion.
+        Instead, we should abstract the rename logic to be SCM-independent. This
+        will allow us to add Git support as well move such functionality into
+        our SCM library VCSUtils, where it can be shared by do-webcore-rename.
+
+        * Scripts/VCSUtils.pm:
+          - Added function scmMoveOrRenameFile.
+        * Scripts/do-file-rename: Modified to call VCSUtils::scmMoveOrRenameFile().
+        * Scripts/do-webcore-rename: Ditto.
+
 2010-10-20  Adam Roben  <aroben@apple.com>
 
         Fix old-run-webkit-tests when there's a space in the path to DRT

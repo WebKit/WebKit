@@ -207,18 +207,11 @@ for my $file (sort @paths) {
     }
 }
 
-
-my $isGit = isGit();
-
 for my $file (sort @paths) {
     if ($newFile{$file}) {
         my $newFile = $newFile{$file};
         print "Renaming $file to $newFile\n";
-        if ($isGit) {
-            system "git mv $file $newFile";
-        } else {
-            system "svn move $file $newFile";
-        }
+        scmMoveOrRenameFile($file, $newFile);
     }
 }
 

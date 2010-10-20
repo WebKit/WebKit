@@ -1,5 +1,6 @@
 # Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
+# Copyright (C) Research In Motion Limited 2010. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -134,6 +135,18 @@ sub toWindowsLineEndings
     my ($text) = @_;
     $text =~ s/\n/\r\n/g;
     return $text;
+}
+
+# Note, this method will not error if the file corresponding to the $source path does not exist.
+sub scmMoveOrRenameFile
+{
+    my ($source, $destination) = @_;
+    return if ! -e $source;
+    if (isSVN()) {
+        system("svn", "move", $source, $destination);
+    } elsif (isGit()) {
+        system("git", "mv", $source, $destination);
+    }
 }
 
 # Note, this method will not error if the file corresponding to the path does not exist.

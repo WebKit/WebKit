@@ -29,10 +29,11 @@
 # Script to do file renaming.
 
 use strict;
+use File::Find;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
-use File::Find;
+use VCSUtils;
 
 setConfiguration();
 chdirWebKit();
@@ -86,7 +87,7 @@ for my $file (sort @paths) {
     if ($newFile{$file}) {
         my $newFile = $newFile{$file};
         print "Renaming $file to $newFile\n";
-        system "svn move $file $newFile";
+        scmMoveOrRenameFile($file, $newFile);
     }
 }
 
