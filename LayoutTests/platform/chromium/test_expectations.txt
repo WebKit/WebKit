@@ -2693,6 +2693,11 @@ BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble07.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble08.html = IMAGE
 BUGWK41311 WIN LINUX : fast/borders/borderRadiusDouble09.html = IMAGE
 
+// Need to implement textInputController.hasSpellingMarkers().
+// Note that hasSpellingMarkers() is available for DRT: http://webkit.org/b/45441
+BUGWK41832 WIN LINUX : editing/spelling/spelling-contenteditable.html = TEXT
+BUGWK41832 WIN LINUX : editing/spelling/spelling-textarea.html = TEXT
+
 // Flaky tests.
 BUG44345 LINUX : svg/zoom/text/zoom-hixie-mixed-009.xml = IMAGE PASS
 BUG44346 LINUX : svg/zoom/page/zoom-hixie-mixed-009.xml = IMAGE PASS
