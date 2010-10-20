@@ -661,9 +661,9 @@ int RenderTableSection::layoutRows(int toAdd)
     return height();
 }
 
-int RenderTableSection::topmostPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderTableSection::topmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
 {
-    int top = RenderBox::topmostPosition(includeOverflowInterior, includeSelf);
+    int top = RenderBox::topmostPosition(includeOverflowInterior, includeSelf, applyTransform);
     if (!includeOverflowInterior && hasOverflowClip())
         return top;
 
@@ -671,7 +671,7 @@ int RenderTableSection::topmostPosition(bool includeOverflowInterior, bool inclu
         for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
             if (curr->isTableCell()) {
                 RenderTableCell* cell = toRenderTableCell(curr);
-                top = min(top, cell->y() + cell->topmostPosition(false));
+                top = min(top, cell->transformedFrameRect().y() + cell->topmostPosition(false));
             }
         }
     }
@@ -679,9 +679,9 @@ int RenderTableSection::topmostPosition(bool includeOverflowInterior, bool inclu
     return top;
 }
 
-int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
 {
-    int bottom = RenderBox::lowestPosition(includeOverflowInterior, includeSelf);
+    int bottom = RenderBox::lowestPosition(includeOverflowInterior, includeSelf, applyTransform);
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
 
@@ -689,7 +689,7 @@ int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includ
         for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
             if (curr->isTableCell()) {
                 RenderTableCell* cell = toRenderTableCell(curr);
-                bottom = max(bottom, cell->y() + cell->lowestPosition(false));
+                bottom = max(bottom, cell->transformedFrameRect().y() + cell->lowestPosition(false));
             }
         }
     }
@@ -697,9 +697,9 @@ int RenderTableSection::lowestPosition(bool includeOverflowInterior, bool includ
     return bottom;
 }
 
-int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
 {
-    int right = RenderBox::rightmostPosition(includeOverflowInterior, includeSelf);
+    int right = RenderBox::rightmostPosition(includeOverflowInterior, includeSelf, applyTransform);
     if (!includeOverflowInterior && hasOverflowClip())
         return right;
 
@@ -707,7 +707,7 @@ int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool inc
         for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
             if (curr->isTableCell()) {
                 RenderTableCell* cell = toRenderTableCell(curr);
-                right = max(right, cell->x() + cell->rightmostPosition(false));
+                right = max(right, cell->transformedFrameRect().x() + cell->rightmostPosition(false));
             }
         }
     }
@@ -715,9 +715,9 @@ int RenderTableSection::rightmostPosition(bool includeOverflowInterior, bool inc
     return right;
 }
 
-int RenderTableSection::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderTableSection::leftmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
 {
-    int left = RenderBox::leftmostPosition(includeOverflowInterior, includeSelf);
+    int left = RenderBox::leftmostPosition(includeOverflowInterior, includeSelf, applyTransform);
     if (!includeOverflowInterior && hasOverflowClip())
         return left;
     
@@ -725,7 +725,7 @@ int RenderTableSection::leftmostPosition(bool includeOverflowInterior, bool incl
         for (RenderObject* curr = row->firstChild(); curr; curr = curr->nextSibling()) {
             if (curr->isTableCell()) {
                 RenderTableCell* cell = toRenderTableCell(curr);
-                left = min(left, cell->x() + cell->leftmostPosition(false));
+                left = min(left, cell->transformedFrameRect().x() + cell->leftmostPosition(false));
             }
         }
     }

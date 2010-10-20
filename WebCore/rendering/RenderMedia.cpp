@@ -34,6 +34,7 @@
 #include "MediaControlElements.h"
 #include "MouseEvent.h"
 #include "Page.h"
+#include "RenderLayer.h"
 #include "RenderTheme.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
@@ -599,40 +600,80 @@ void RenderMedia::forwardEvent(Event* event)
     }
 }
 
-int RenderMedia::topmostPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderMedia::topmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
 {
-    int top = RenderImage::topmostPosition(includeOverflowInterior, includeSelf);
+    int top = RenderImage::topmostPosition(includeOverflowInterior, includeSelf, applyTransform);
     if (!m_controlsShadowRoot || !m_controlsShadowRoot->renderer())
         return top;
     
-    return min(top,  m_controlsShadowRoot->renderBox()->y() + m_controlsShadowRoot->renderBox()->topmostPosition(includeOverflowInterior, includeSelf));
+    top = min(top,  m_controlsShadowRoot->renderBox()->transformedFrameRect().y() + m_controlsShadowRoot->renderBox()->topmostPosition(includeOverflowInterior, includeSelf, applyTransform));
+
+    if (applyTransform == IncludeTransform && includeSelf && layer() && layer()->hasTransform()) {
+        int bottom = lowestPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        int right = rightmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        int left = leftmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        IntRect transformRect = applyLayerTransformToRect(IntRect(left, top, right - left, bottom - top));
+        return transformRect.y();
+    }
+
+    return top;
 }
 
-int RenderMedia::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderMedia::lowestPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
 {
-    int bottom = RenderImage::lowestPosition(includeOverflowInterior, includeSelf);
+    int bottom = RenderImage::lowestPosition(includeOverflowInterior, includeSelf, applyTransform);
     if (!m_controlsShadowRoot || !m_controlsShadowRoot->renderer())
         return bottom;
     
-    return max(bottom,  m_controlsShadowRoot->renderBox()->y() + m_controlsShadowRoot->renderBox()->lowestPosition(includeOverflowInterior, includeSelf));
+    bottom = max(bottom,  m_controlsShadowRoot->renderBox()->transformedFrameRect().y() + m_controlsShadowRoot->renderBox()->lowestPosition(includeOverflowInterior, includeSelf, applyTransform));
+
+    if (applyTransform == IncludeTransform && includeSelf && layer() && layer()->hasTransform()) {
+        int top = topmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        int right = rightmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        int left = leftmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        IntRect transformRect = applyLayerTransformToRect(IntRect(left, top, right - left, bottom - top));
+        return transformRect.height() + transformRect.y();
+    }
+
+    return bottom;
 }
 
-int RenderMedia::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderMedia::rightmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
 {
-    int right = RenderImage::rightmostPosition(includeOverflowInterior, includeSelf);
+    int right = RenderImage::rightmostPosition(includeOverflowInterior, includeSelf, applyTransform);
     if (!m_controlsShadowRoot || !m_controlsShadowRoot->renderer())
         return right;
     
-    return max(right, m_controlsShadowRoot->renderBox()->x() + m_controlsShadowRoot->renderBox()->rightmostPosition(includeOverflowInterior, includeSelf));
+    right = max(right, m_controlsShadowRoot->renderBox()->transformedFrameRect().x() + m_controlsShadowRoot->renderBox()->rightmostPosition(includeOverflowInterior, includeSelf, applyTransform));
+
+    if (applyTransform == IncludeTransform && includeSelf && layer() && layer()->hasTransform()) {
+        int top = rightmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        int bottom = lowestPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        int left = leftmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        IntRect transformRect = applyLayerTransformToRect(IntRect(left, top, right - left, bottom - top));
+        return transformRect.width() + transformRect.x();
+    }
+
+    return right;
 }
 
-int RenderMedia::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
+int RenderMedia::leftmostPosition(bool includeOverflowInterior, bool includeSelf, ApplyTransform applyTransform) const
 {
-    int left = RenderImage::leftmostPosition(includeOverflowInterior, includeSelf);
+    int left = RenderImage::leftmostPosition(includeOverflowInterior, includeSelf, applyTransform);
     if (!m_controlsShadowRoot || !m_controlsShadowRoot->renderer())
         return left;
     
-    return min(left, m_controlsShadowRoot->renderBox()->x() +  m_controlsShadowRoot->renderBox()->leftmostPosition(includeOverflowInterior, includeSelf));
+    left = min(left, m_controlsShadowRoot->renderBox()->transformedFrameRect().x() +  m_controlsShadowRoot->renderBox()->leftmostPosition(includeOverflowInterior, includeSelf, applyTransform));
+
+    if (applyTransform == IncludeTransform && includeSelf && layer() && layer()->hasTransform()) {
+        int top = rightmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        int bottom = lowestPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        int right = rightmostPosition(includeOverflowInterior, includeSelf, ExcludeTransform);
+        IntRect transformRect = applyLayerTransformToRect(IntRect(left, top, right - left, bottom - top));
+        return transformRect.x();
+    }
+
+    return left;
 }
 
 

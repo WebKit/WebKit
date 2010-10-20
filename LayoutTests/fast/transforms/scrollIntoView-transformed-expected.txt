@@ -67,8 +67,8 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 this is a div scroll trigger with a transform
 PASS - Element a and Element b had different scrollTop
 PASS - Element b had scrollTop: 0
-PASS - Element c and Element c-transformed both had the same scrollTop
-PASS - Element d and Element d-transformed both had the same scrollTop
-PASS - Element e and Element e-transformed both had the same scrollTop
-PASS - Element f and Element f-transformed both had the same scrollTop
+FAIL - Element c had scrollTop: 233 and Element c-transformed had scrollTop: 0
+FAIL - Element d had scrollTop: 221 and Element d-transformed had scrollTop: 0
+FAIL - Element e had scrollTop: 238 and Element e-transformed had scrollTop: 0
+FAIL - Element f had scrollTop: 304 and Element f-transformed had scrollTop: 4
 

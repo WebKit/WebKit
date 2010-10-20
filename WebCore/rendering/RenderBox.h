@@ -103,6 +103,9 @@ public:
     IntRect frameRect() const { return m_frameRect; }
     void setFrameRect(const IntRect& rect) { m_frameRect = rect; }
 
+    IntRect transformedFrameRect() const;
+    IntRect applyLayerTransformToRect(const IntRect&) const;
+
     IntRect borderBoxRect() const { return IntRect(0, 0, width(), height()); }
     virtual IntRect borderBoundingBox() const { return borderBoxRect(); } 
     
@@ -259,10 +262,11 @@ public:
     void setInlineBoxWrapper(InlineBox* boxWrapper) { m_inlineBoxWrapper = boxWrapper; }
     void deleteLineBoxWrapper();
 
-    virtual int topmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
-    virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
-    virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
-    virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
+    enum ApplyTransform { IncludeTransform, ExcludeTransform };
+    virtual int topmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
+    virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true,  ApplyTransform = IncludeTransform) const;
+    virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
+    virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);

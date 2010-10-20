@@ -442,6 +442,24 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads)
     quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
 }
 
+IntRect RenderBox::applyLayerTransformToRect(const IntRect& rect) const
+{
+    if (layer() && layer()->hasTransform()) {
+        TransformationMatrix transform;
+        transform.makeIdentity();
+        transform.translate(rect.x(), rect.y());
+        layer()->updateTransform();
+        transform.multLeft(layer()->currentTransform());
+        return transform.mapRect(IntRect(0, 0, rect.width(), rect.height()));
+    }
+    return rect;
+}
+
+IntRect RenderBox::transformedFrameRect() const
+{
+    return applyLayerTransformToRect(frameRect());
+}
+
 IntRect RenderBox::absoluteContentBox() const
 {
     IntRect rect = contentBoxRect();
@@ -2914,9 +2932,10 @@ IntRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, int* extraWid
     return rect;
 }
 
-int RenderBox::topmostPosition(bool /*includeOverflowInterior*/, bool includeSelf) const
+int RenderBox::topmostPosition(bool /*includeOverflowInterior*/, bool includeSelf, ApplyTransform applyTransform) const
 {
-    if (!includeSelf || !width())
+    IntRect transformedRect = applyTransform == IncludeTransform && includeSelf ? transformedFrameRect() : frameRect();
+    if (!includeSelf || !transformedRect.width())
         return 0;
     int top = 0;
     if (isRelPositioned())
@@ -2924,30 +2943,33 @@ int RenderBox::topmostPosition(bool /*includeOverflowInterior*/, bool includeSel
     return top;
 }
 
-int RenderBox::lowestPosition(bool /*includeOverflowInterior*/, bool includeSelf) const
+int RenderBox::lowestPosition(bool /*includeOverflowInterior*/, bool includeSelf, ApplyTransform applyTransform) const
 {
-    if (!includeSelf || !width())
+    IntRect transformedRect = applyTransform == IncludeTransform && includeSelf ? transformedFrameRect() : frameRect();
+    if (!includeSelf || !transformedRect.width())
         return 0;
-    int bottom = height();
+    int bottom = transformedRect.height();
     if (isRelPositioned())
         bottom += relativePositionOffsetY();
     return bottom;
 }
 
-int RenderBox::rightmostPosition(bool /*includeOverflowInterior*/, bool includeSelf) const
+int RenderBox::rightmostPosition(bool /*includeOverflowInterior*/, bool includeSelf, ApplyTransform applyTransform) const
 {
-    if (!includeSelf || !height())
+    IntRect transformedRect = applyTransform == IncludeTransform && includeSelf ? transformedFrameRect() : frameRect();
+    if (!includeSelf || !transformedRect.height())
         return 0;
-    int right = width();
+    int right = transformedRect.width();
     if (isRelPositioned())
         right += relativePositionOffsetX();
     return right;
 }
 
-int RenderBox::leftmostPosition(bool /*includeOverflowInterior*/, bool includeSelf) const
+int RenderBox::leftmostPosition(bool /*includeOverflowInterior*/, bool includeSelf, ApplyTransform applyTransform) const
 {
-    if (!includeSelf || !height())
-        return width();
+    IntRect transformedRect = applyTransform == IncludeTransform && includeSelf ? transformedFrameRect() : frameRect();
+    if (!includeSelf || !transformedRect.height())
+        return transformedRect.width();
     int left = 0;
     if (isRelPositioned())
         left += relativePositionOffsetX();

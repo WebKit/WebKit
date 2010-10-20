@@ -99,10 +99,10 @@ public:
     int logicalRightOffsetForLine(int position, bool firstLine) const { return logicalRightOffsetForLine(position, logicalRightOffsetForContent(), firstLine); }
     int logicalLeftOffsetForLine(int position, bool firstLine) const { return logicalLeftOffsetForLine(position, logicalLeftOffsetForContent(), firstLine); }
 
-    virtual int topmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
-    virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
-    virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
-    virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true) const;
+    virtual int topmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
+    virtual int lowestPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
+    virtual int rightmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
+    virtual int leftmostPosition(bool includeOverflowInterior = true, bool includeSelf = true, ApplyTransform = IncludeTransform) const;
     
     virtual VisiblePosition positionForPoint(const IntPoint&);
     
