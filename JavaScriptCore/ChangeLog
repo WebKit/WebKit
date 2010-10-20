@@ -1,3 +1,9 @@
+2010-10-20  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Unreviewed, fixing the Win build.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+
 2010-10-20  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

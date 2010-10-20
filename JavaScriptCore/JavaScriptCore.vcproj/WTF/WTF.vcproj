@@ -636,6 +636,10 @@
  			RelativePath="..\..\wtf\text\StringImpl.h"
  			>
  		</File>
+ 		<File
+ 			RelativePath="..\..\wtf\text\TextPosition.h"
+ 			>
+ 		</File>
 		<File
  			RelativePath="..\..\wtf\text\WTFString.cpp"
  			>
