@@ -53,6 +53,8 @@ function dumpObject(object, nondeterministicProps, prefix, firstLinePrefix)
         var propValue = object[prop];
         if (nondeterministicProps && prop in nondeterministicProps)
             output(prefixWithName + "<" + typeof propValue + ">");
+        else if (propValue === null)
+            output(prefixWithName + "null");
         else if (typeof propValue === "object")
             dumpObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
         else if (typeof propValue === "string")

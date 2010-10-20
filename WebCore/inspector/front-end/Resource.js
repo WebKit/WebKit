@@ -350,6 +350,7 @@ WebInspector.Resource.prototype = {
     {
         this._requestHeaders = x;
         delete this._sortedRequestHeaders;
+        delete this._requestCookies;
 
         this.dispatchEventToListeners("requestHeaders changed");
     },
@@ -372,6 +373,13 @@ WebInspector.Resource.prototype = {
         return this._headerValue(this.requestHeaders, headerName);
     },
 
+    get requestCookies()
+    {
+        if (!this._requestCookies)
+            this._requestCookies = WebInspector.CookieParser.parseCookie(this.requestHeaderValue("Cookie"));
+        return this._requestCookies;
+    },
+
     get requestFormData()
     {
         return this._requestFormData;
@@ -392,6 +400,7 @@ WebInspector.Resource.prototype = {
     {
         this._responseHeaders = x;
         delete this._sortedResponseHeaders;
+        delete this._responseCookies;
 
         this.dispatchEventToListeners("responseHeaders changed");
     },
@@ -412,6 +421,13 @@ WebInspector.Resource.prototype = {
     responseHeaderValue: function(headerName)
     {
         return this._headerValue(this.responseHeaders, headerName);
+    },
+
+    get responseCookies()
+    {
+        if (!this._responseCookies)
+            this._responseCookies = WebInspector.CookieParser.parseSetCookie(this.responseHeaderValue("Set-Cookie"));
+        return this._responseCookies;
     },
 
     get queryParameters()

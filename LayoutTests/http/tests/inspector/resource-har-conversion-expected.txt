@@ -12,6 +12,35 @@ Page reloaded.
             headers : <object>
             headersSize : -1
             bodySize : <number>
+            cookies : {
+                0 : {
+                    name : "a"
+                    value : "b"
+                    path : "/path"
+                    domain : "example.com"
+                    expires : null
+                    httpOnly : false
+                    secure : false
+                }
+                1 : {
+                    name : "a1"
+                    value : "b1"
+                    path : undefined
+                    domain : undefined
+                    expires : null
+                    httpOnly : false
+                    secure : false
+                }
+                2 : {
+                    name : "c1"
+                    value : "d1"
+                    path : undefined
+                    domain : undefined
+                    expires : null
+                    httpOnly : false
+                    secure : false
+                }
+            }
         }
         response : {
             status : 304
@@ -24,6 +53,35 @@ Page reloaded.
             redirectURL : ""
             headersSize : -1
             bodySize : <number>
+            cookies : {
+                0 : {
+                    name : "x"
+                    value : "y"
+                    path : "/path"
+                    domain : "example.com"
+                    expires : null
+                    httpOnly : true
+                    secure : true
+                }
+                1 : {
+                    name : "x1"
+                    value : "y1"
+                    path : undefined
+                    domain : undefined
+                    expires : null
+                    httpOnly : false
+                    secure : false
+                }
+                2 : {
+                    name : "z2"
+                    value : "y2"
+                    path : undefined
+                    domain : undefined
+                    expires : null
+                    httpOnly : false
+                    secure : false
+                }
+            }
         }
         timings : <object>
     }

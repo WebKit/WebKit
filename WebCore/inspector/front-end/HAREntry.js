@@ -56,7 +56,6 @@ WebInspector.HAREntry.prototype = {
             method: this._resource.requestMethod,
             url: this._resource.url,
             // httpVersion: "HTTP/1.1" -- Not available.
-            // cookies: [] -- Not available.
             headers: this._buildHeaders(this._resource.requestHeaders),
             headersSize: -1, // Not available.
             bodySize: -1 // Not available.
@@ -65,22 +64,26 @@ WebInspector.HAREntry.prototype = {
             res.queryString = this._buildParameters(this._resource.queryParameters);
         if (this._resource.requestFormData)
             res.postData = this._buildPostData();
+        if (this._resource.requestCookies)
+            res.cookies = this._buildCookies(this._resource.requestCookies);
         return res;
     },
 
     _buildResponse: function()
     {
-        return {
+        var res = {
             status: this._resource.statusCode,
             statusText: this._resource.statusText,
             // "httpVersion": "HTTP/1.1" -- Not available.
-            // "cookies": [],  -- Not available.
             headers: this._buildHeaders(this._resource.responseHeaders),
             content: this._buildContent(),
             redirectURL: this._resource.responseHeaderValue("Location") || "",
             headersSize: -1, // Not available.
             bodySize: this._resource.resourceSize
         };
+        if (this._resource.responseCookies)
+            res.cookies = this._buildCookies(this._resource.responseCookies);
+        return res;
     },
 
     _buildContent: function()
@@ -148,6 +151,25 @@ WebInspector.HAREntry.prototype = {
     _buildParameters: function(parameters)
     {
         return parameters.slice();
+    },
+
+    _buildCookies: function(cookies)
+    {
+        return cookies.map(this._buildCookie.bind(this));
+    },
+
+    _buildCookie: function(cookie)
+    {
+        
+        return {
+            name: cookie.name,
+            value: cookie.value,
+            path: cookie.path,
+            domain: cookie.domain,
+            expires: cookie.expires(new Date(this._resource.startTime * 1000)),
+            httpOnly: cookie.httpOnly,
+            secure: cookie.secure
+        };
     },
 
     _interval: function(start, end)

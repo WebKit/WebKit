@@ -20,6 +20,7 @@
     <file>ConsoleView.js</file>
     <file>ContextMenu.js</file>
     <file>CookieItemsView.js</file>
+    <file>CookieParser.js</file>
     <file>CSSCompletions.js</file>
     <file>CSSStyleModel.js</file>
     <file>Database.js</file>

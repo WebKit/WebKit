@@ -61,6 +61,8 @@ InspectorTest.addObject = function(object, nondeterministicProps, prefix, firstL
         var propValue = object[prop];
         if (nondeterministicProps && prop in nondeterministicProps)
             InspectorTest.addResult(prefixWithName + "<" + typeof propValue + ">");
+        else if (propValue === null)
+            InspectorTest.addResult(prefixWithName + "null");
         else if (typeof propValue === "object")
             InspectorTest.addObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);
         else if (typeof propValue === "string")

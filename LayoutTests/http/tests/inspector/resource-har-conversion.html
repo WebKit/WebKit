@@ -12,8 +12,27 @@ var test = function()
         return new WebInspector.HAREntry(WebInspector.resources[id]).build();
     }
 
+    function addCookieHeadersToResource(resource)
+    {
+        resource.requestHeaders = {
+            "Cookie": "a=b; $Path=/path; $Domain=example.com; a1=b1\nc1=d1"
+        };
+        resource.responseHeaders = {
+            "Set-Cookie": "x=y; Path=/path; Domain=example.com; Discard; httpOnly; Secure; Version=1\nx1=y1\nz2=y2"
+        };
+    }
+
+    function findResourceByURL(url)
+    {
+        for (var resource in WebInspector.resources) {
+            if (url.test(WebInspector.resources[resource].url))
+                return WebInspector.resources[resource];
+        }
+    }
+
     InspectorTest.enableResourceTracking(function() {
         InjectedScriptAccess.getDefault().evaluate("doXHR()", "console", function() {
+            addCookieHeadersToResource(findResourceByURL(/inspector-test2\.js$/));
             var resources = Object.keys(WebInspector.resources).map(getHAR).sort(InspectorTest.resourceURLComparer);
             InspectorTest.addObject(resources, InspectorTest.HARNondeterministicPropertiesWithSize);
             InspectorTest.disableResourceTracking();

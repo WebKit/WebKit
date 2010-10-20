@@ -63458,6 +63458,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\CookieItemsView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\CookieParser.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\CSSStyleModel.js"
 					>
 				</File>
