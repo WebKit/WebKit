@@ -37,9 +37,9 @@ layer at (0,0) size 785x754
             text run at (0,0) width 66: "reci"
             text run at (0,41) width 102: "procity"
         RenderBlock {DIV} at (0,246) size 135x82
-          RenderText {#text} at (0,0) size 114x82
-            text run at (0,0) width 114: "recipro"
-            text run at (0,41) width 54: "city"
+          RenderText {#text} at (0,0) size 102x82
+            text run at (0,0) width 66: "reci"
+            text run at (0,41) width 102: "procity"
         RenderBlock {DIV} at (0,328) size 135x41
           RenderText {#text} at (0,0) size 156x41
             text run at (0,0) width 156: "reciprocity"
