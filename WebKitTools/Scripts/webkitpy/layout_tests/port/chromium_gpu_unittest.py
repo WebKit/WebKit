@@ -55,7 +55,11 @@ class ChromiumGpuTest(unittest.TestCase):
         # test that it has the right directories in front of the search path.
         paths = port.baseline_search_path()
         self.assertEqual(port._webkit_baseline_path(port_name), paths[0])
-        self.assertEqual(port._webkit_baseline_path('chromium-gpu'), paths[1])
+        if port_name == 'chromium-gpu-linux':
+            self.assertEqual(port._webkit_baseline_path('chromium-gpu-win'), paths[1])
+            self.assertEqual(port._webkit_baseline_path('chromium-gpu'), paths[2])
+        else:
+            self.assertEqual(port._webkit_baseline_path('chromium-gpu'), paths[1])
 
         # Test that we have the right expectations file.
         self.assertTrue('chromium-gpu' in
