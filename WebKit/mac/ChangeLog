@@ -1,3 +1,20 @@
+2010-10-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/8508422> Compositing layers aren't always displayed correctly in layer-backed WebViews
+        
+        AppKit has some special code to prevent it meddling with view's layers
+        under layer-backed WebViews. When a layer-backed WebView became composited,
+        this caused our layer to remain zero-sized. Fix this by manually
+        setting the geometry for our layer, if the WebHTMLView has a layer.
+        
+        This does not seem to be a problem if the WebView becomes layer-backed, or
+        stops being layer-backed after the WebView starts using compositing.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView attachRootLayer:]):
+
 2010-10-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

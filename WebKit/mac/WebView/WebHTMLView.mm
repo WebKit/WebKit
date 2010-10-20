@@ -5571,6 +5571,14 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [viewLayer setTransform:CATransform3DMakeScale(scaleFactor, scaleFactor, 1)];
 #endif
 
+    if ([self layer]) {
+        // If we are in a layer-backed view, we need to manually initialize the geometry for our layer.
+        [viewLayer setBounds:NSRectToCGRect([_private->layerHostingView bounds])];
+        [viewLayer setAnchorPoint:CGPointMake(0, [self isFlipped] ? 1 : 0)];
+        CGPoint layerPosition = NSPointToCGPoint([self convertPointToBase:[_private->layerHostingView frame].origin]);
+        [viewLayer setPosition:layerPosition];
+    }
+    
     [_private->layerHostingView setLayer:viewLayer];
     [_private->layerHostingView setWantsLayer:YES];
     
