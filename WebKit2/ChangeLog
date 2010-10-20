@@ -1,3 +1,11 @@
+2010-10-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Fix Qt/WebKit2 build, also needs a svg/properties include.
+
+        * WebKit2.pro:
+
 2010-10-19  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

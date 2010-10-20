@@ -85,6 +85,7 @@ INCLUDEPATH = \
     $$PWD/../WebCore/svg/animation \
     $$PWD/../WebCore/svg/graphics \
     $$PWD/../WebCore/svg/graphics/filters \
+    $$PWD/../WebCore/svg/properties \
     $$PWD/../WebCore/websockets \
     $$PWD/../WebCore/wml \
     $$PWD/../WebCore/workers \
