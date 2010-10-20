@@ -3211,6 +3211,7 @@ BUGWK47512 : fast/images/webp-image-decoding.html = TEXT
 // Need investigation
 BUGJAMESR WIN LINUX : editing/spelling/spelling-contenteditable.html = TEXT
 BUGJAMESR WIN LINUX : editing/spelling/spelling-textarea.html = TEXT
+BUGJAMESR DEBUG : fast/css/long-css-selector-matches.html = PASS TIMEOUT
 
 BUG59647 WIN : svg/dom/length-list-parser.html = PASS CRASH
 
