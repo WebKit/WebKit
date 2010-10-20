@@ -3609,7 +3609,7 @@ void Editor::respondToChangedSelection(const VisibleSelection& oldSelection, boo
             }
         }
 
-#if PLATFORM(MAC) && (defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD))
+#if !PLATFORM(MAC) || (PLATFORM(MAC) && (defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)))
         // This only erases markers that are in the first unit (word or sentence) of the selection.
         // Perhaps peculiar, but it matches AppKit on these Mac OSX versions.
         if (RefPtr<Range> wordRange = newAdjacentWords.toNormalizedRange())
