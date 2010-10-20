@@ -50,8 +50,8 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
     if (attr->isNull())
         return 0;
 
-    int lineNumber = 1;
-    int columnNumber = 0;
+    // FIXME: Very strange: we initialize zero-based number with '1'.
+    TextPosition0 position(WTF::ZeroBasedNumber::fromZeroBasedInt(1), WTF::ZeroBasedNumber::base());
     String sourceURL;
 
     if (Frame* frame = node->document()->frame()) {
@@ -64,12 +64,11 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, Attribu
             return 0;
         }
 
-        lineNumber = scriptController->eventHandlerLineNumber();
-        columnNumber = scriptController->eventHandlerColumnNumber();
+        position = scriptController->eventHandlerPosition();
         sourceURL = node->document()->url().string();
     }
 
-    return V8LazyEventListener::create(attr->localName().string(), node->isSVGElement(), attr->value(), sourceURL, lineNumber, columnNumber, WorldContextHandle(UseMainWorld));
+    return V8LazyEventListener::create(attr->localName().string(), node->isSVGElement(), attr->value(), sourceURL, position, WorldContextHandle(UseMainWorld));
 }
 
 PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attribute* attr)
@@ -81,10 +80,6 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
     if (attr->isNull())
         return 0;
 
-    int lineNumber = 1;
-    int columnNumber = 0;
-    String sourceURL;
-
     ScriptController* scriptController = frame->script();
     if (!scriptController->canExecuteScripts(AboutToExecuteScript))
         return 0;
@@ -94,10 +89,9 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, Attri
         return 0;
     }
 
-    lineNumber = scriptController->eventHandlerLineNumber();
-    columnNumber = scriptController->eventHandlerColumnNumber();
-    sourceURL = frame->document()->url().string();
-    return V8LazyEventListener::create(attr->localName().string(), frame->document()->isSVGDocument(), attr->value(), sourceURL, lineNumber, columnNumber, WorldContextHandle(UseMainWorld));
+    TextPosition0 position = scriptController->eventHandlerPosition();
+    String sourceURL = frame->document()->url().string();
+    return V8LazyEventListener::create(attr->localName().string(), frame->document()->isSVGDocument(), attr->value(), sourceURL, position, WorldContextHandle(UseMainWorld));
 }
 
 String eventListenerHandlerBody(Document* document, EventListener* listener)

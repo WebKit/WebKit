@@ -32,6 +32,7 @@
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
 #include "HTMLTokenizer.h"
+#include <wtf/text/TextPosition.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -71,7 +72,7 @@ public:
     void constructTreeFromAtomicToken(AtomicHTMLToken&);
 
     // Must be called when parser is paused before calling the parser again.
-    PassRefPtr<Element> takeScriptToProcess(int& scriptStartLine);
+    PassRefPtr<Element> takeScriptToProcess(TextPosition1& scriptStartPosition);
 
     // Done, close any open tags, etc.
     void finished();
@@ -246,13 +247,12 @@ private:
     HTMLTokenizer* m_tokenizer;
 
     RefPtr<Element> m_scriptToProcess; // <script> tag which needs processing before resuming the parser.
-    int m_scriptToProcessStartLine; // Starting line number of the script tag needing processing.
+    TextPosition1 m_scriptToProcessStartPosition; // Starting line number of the script tag needing processing.
 
     // FIXME: We probably want to remove this member.  Originally, it was
     // created to service the legacy tree builder, but it seems to be used for
     // some other things now.
-    int m_lastScriptElementStartLine;
-    
+    TextPosition0 m_lastScriptElementStartPosition;
     bool m_usePreHTML5ParserQuirks;
 };
 
