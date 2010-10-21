@@ -34,6 +34,13 @@ WebInspector.StoragePanel = function(database)
     this.createSidebar();
     this.sidebarElement.addStyleClass("outline-disclosure filter-all children small");
 
+    if (Preferences.networkPanelEnabled) {
+        this.resourcesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Resources"), "frame-storage-tree-item");
+        this.sidebarTree.appendChild(this.resourcesListTreeElement);
+        this.resourcesListTreeElement.expand();
+        this._treeElementForFrameId = {};
+    }
+
     this.databasesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Databases"), "database-storage-tree-item");
     this.sidebarTree.appendChild(this.databasesListTreeElement);
     this.databasesListTreeElement.expand();
@@ -112,6 +119,53 @@ WebInspector.StoragePanel.prototype = {
             this.sidebarTree.selectedTreeElement.deselect();
     },
 
+    addFrame: function(parentFrameId, frameId, frameResource)
+    {
+        var parentTreeElement = parentFrameId ? this._treeElementForFrameId[parentFrameId] : this.resourcesListTreeElement;
+        if (!parentTreeElement) {
+            console.error("No frame with id:" + parentFrameId + " to route " + displayName + " to.")
+            return;
+        }
+
+        var frameTreeElement = new WebInspector.FrameTreeElement(this, frameId, frameResource);
+        this._treeElementForFrameId[frameId] = frameTreeElement;
+        parentTreeElement.appendChild(frameTreeElement);
+    },
+
+    removeFrame: function(frameId)
+    {
+        var frameTreeElement = this._treeElementForFrameId[frameId];
+        if (!frameTreeElement) {
+            console.error("No frame with id:" + frameId + " to remove.");
+            return;
+        }
+
+        delete this._treeElementForFrameId[frameId];
+        frameTreeElement.parent.removeChild(frameTreeElement);
+    },
+
+    addFrameResource: function(frameId, resource)
+    {
+        var frameTreeElement = this._treeElementForFrameId[frameId];
+        if (!frameTreeElement) {
+            console.error("No frame with id:" + frameId + " to add resource to.");
+            return;
+        }
+
+        var resourceTreeElement = new WebInspector.FrameResourceTreeElement(this, resource);
+        frameTreeElement.appendChild(resourceTreeElement);
+    },
+
+    removeFrameResources: function(frameId)
+    {
+        var frameTreeElement = this._treeElementForFrameId[frameId];
+        if (!frameTreeElement) {
+            console.error("No frame with id:" + frameId + " to remove resources from.");
+            return;
+        }
+        frameTreeElement.removeChildren();
+    },
+
     addDatabase: function(database)
     {
         this._databases.push(database);
@@ -164,6 +218,13 @@ WebInspector.StoragePanel.prototype = {
             this.showDOMStorage(domStorage);
             domStorage._domStorageTreeElement.select();
         }
+    },
+
+    showResource: function(resource)
+    {
+        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
+        view.headersVisible = false;
+        this._innerShowView(view);
     },
 
     showDatabase: function(database, tableName)
@@ -428,9 +489,9 @@ WebInspector.BaseStorageTreeElement.prototype = {
         this.listItemElement.removeChildren();
         this.listItemElement.addStyleClass(this._iconClass);
 
-        var imageElement = document.createElement("img");
-        imageElement.className = "icon";
-        this.listItemElement.appendChild(imageElement);
+        this.imageElement = document.createElement("img");
+        this.imageElement.className = "icon";
+        this.listItemElement.appendChild(this.imageElement);
 
         var titleElement = document.createElement("span");
         titleElement.textContent = this._titleText;
@@ -440,6 +501,12 @@ WebInspector.BaseStorageTreeElement.prototype = {
         var selectionElement = document.createElement("div");
         selectionElement.className = "selection";
         this.listItemElement.appendChild(selectionElement);
+    },
+
+    onreveal: function()
+    {
+        if (this.listItemElement)
+            this.listItemElement.scrollIntoViewIfNeeded(false);
     }
 }
 
@@ -458,6 +525,52 @@ WebInspector.StorageCategoryTreeElement.prototype = {
     }
 }
 WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+
+WebInspector.FrameTreeElement = function(storagePanel, frameId, frameResource)
+{
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, frameResource.displayName, "frame-storage-tree-item");
+    this._frameId = frameId;
+    this._resource = frameResource;
+}
+
+WebInspector.FrameTreeElement.prototype = {
+    onselect: function()
+    {
+        this._storagePanel.showResource(this._resource);
+    }
+}
+WebInspector.FrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+
+WebInspector.FrameResourceTreeElement = function(storagePanel, resource)
+{
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, resource.displayName, "resource-sidebar-tree-item resources-category-" + resource.category.name);
+    this._resource = resource;
+}
+
+WebInspector.FrameResourceTreeElement.prototype = {
+    onselect: function()
+    {
+        this._storagePanel.showResource(this._resource);
+    },
+
+    onattach: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
+
+        if (this._resource.category === WebInspector.resourceCategories.images) {
+            var previewImage = document.createElement("img");
+            previewImage.className = "image-resource-icon-preview";
+            previewImage.src = this._resource.url;
+
+            var iconElement = document.createElement("div");
+            iconElement.className = "icon";
+            iconElement.appendChild(previewImage);
+            this.listItemElement.replaceChild(iconElement, this.imageElement);
+        }
+    }
+}
+
+WebInspector.FrameResourceTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 WebInspector.DatabaseTreeElement = function(storagePanel, database)
 {

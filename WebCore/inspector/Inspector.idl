@@ -112,19 +112,19 @@ module core {
         [handler=Controller] void startTimelineProfiler();
         [handler=Controller] void stopTimelineProfiler();
 
-        [handler=Resource] void cachedResources(out Array resources);
-        [handler=Resource] void resourceContent(in unsigned long frameID, in String url, out String content);
-        [notify] void identifierForInitialRequest(out long identifier, out String url, out unsigned long frameID, out boolean isMainResource);
+        [handler=Resource] void cachedResources(out Object resources);
+        [handler=Resource] void resourceContent(in unsigned long frameId, in String url, out String content);
+        [notify] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out boolean isMainResource);
         [notify] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
         [notify] void markResourceAsCached(out long identifier);
         [notify] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);
         [notify] void didReceiveContentLength(out long identifier, out double time, out long lengthReceived);
         [notify] void didFinishLoading(out long identifier, out double finishTime);
         [notify] void didFailLoading(out long identifier, out double time, out String localizedDescription);
-        [notify] void didLoadResourceFromMemoryCache(out double time, out unsigned long frameID, out Object resource);
+        [notify] void didLoadResourceFromMemoryCache(out double time, out Object resource);
         [notify] void setOverrideContent(out long identifier, out String sourceString, out String type);
-        [notify] void didCommitLoad(out unsigned long frameID);
-        [notify] void frameDetachedFromParent(out unsigned long frameID);
+        [notify] void didCommitLoadForFrame(out Object frameTree, out unsigned long loaderId);
+        [notify] void frameDetachedFromParent(out Object frameTree);
 
         [notify] void didCreateWebSocket(out unsigned long identifier, out String requestURL);
         [notify] void willSendWebSocketHandshakeRequest(out unsigned long identifier, out double time, out Object request);

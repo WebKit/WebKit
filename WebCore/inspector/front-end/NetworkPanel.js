@@ -787,12 +787,9 @@ WebInspector.NetworkPanel.prototype = {
         if (!resource || !resource._resourcesView)
             return;
 
-        if (this._resourceViewTypeMatchesResource(resource, resource._resourcesView))
+        if (WebInspector.ResourceManager.resourceViewTypeMatchesResource(resource, resource._resourcesView))
             return;
-
-        var newView = this._createResourceView(resource);
-        if (newView.__proto__ === resource._resourcesView.__proto__)
-            return;
+        var newView = WebInspector.ResourceManager.createResourceView(resource);
 
         var oldView = resource._resourcesView;
         var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
@@ -831,7 +828,7 @@ WebInspector.NetworkPanel.prototype = {
         if (this.visibleResource && this.visibleResource._resourcesView)
             this.visibleResource._resourcesView.hide();
 
-        var view = this._resourceViewForResource(resource);
+        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
         view.headersVisible = true;
         view.show(this._viewsContainerElement);
 
@@ -861,15 +858,6 @@ WebInspector.NetworkPanel.prototype = {
         this.updateSidebarWidth();
     },
 
-    _resourceViewForResource: function(resource)
-    {
-        if (!resource)
-            return null;
-        if (!resource._resourcesView)
-            resource._resourcesView = this._createResourceView(resource);
-        return resource._resourcesView;
-    },
-
     _toggleLargerResources: function()
     {
         WebInspector.applicationSettings.resourcesLargeRows = !WebInspector.applicationSettings.resourcesLargeRows;
@@ -888,41 +876,6 @@ WebInspector.NetworkPanel.prototype = {
             this._dataGrid.element.removeStyleClass("small");
             this._timelineGrid.element.removeStyleClass("small");
         }
-    },
-
-    _createResourceView: function(resource)
-    {
-        switch (resource.category) {
-            case WebInspector.resourceCategories.documents:
-            case WebInspector.resourceCategories.stylesheets:
-            case WebInspector.resourceCategories.scripts:
-            case WebInspector.resourceCategories.xhr:
-                return new WebInspector.SourceView(resource);
-            case WebInspector.resourceCategories.images:
-                return new WebInspector.ImageView(resource);
-            case WebInspector.resourceCategories.fonts:
-                return new WebInspector.FontView(resource);
-            default:
-                return new WebInspector.ResourceView(resource);
-        }
-    },
-
-    _resourceViewTypeMatchesResource: function(resource, resourceView)
-    {
-        switch (resource.category) {
-            case WebInspector.resourceCategories.documents:
-            case WebInspector.resourceCategories.stylesheets:
-            case WebInspector.resourceCategories.scripts:
-            case WebInspector.resourceCategories.xhr:
-                return resourceView instanceof WebInspector.SourceView;
-            case WebInspector.resourceCategories.images:
-                return resourceView instanceof WebInspector.ImageView;
-            case WebInspector.resourceCategories.fonts:
-                return resourceView instanceof WebInspector.FontView;
-            default:
-                return resourceView instanceof WebInspector.ResourceView;
-        }
-        return false;
     },
 
     _getPopoverAnchor: function(element)

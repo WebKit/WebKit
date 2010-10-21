@@ -826,16 +826,17 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
             pruneResources(resourceMap, loader);
 }
 
-void InspectorController::frameDetachedFromParent(Frame* frame)
+void InspectorController::frameDetachedFromParent(Frame* rootFrame)
 {
     if (!enabled())
         return;
 
     if (m_resourceAgent)
-        m_resourceAgent->frameDetachedFromParent(frame);
+        m_resourceAgent->frameDetachedFromParent(rootFrame);
 
-    if (ResourcesMap* resourceMap = m_frameResources.get(frame))
-        removeAllResources(resourceMap);
+    for (Frame* frame = rootFrame; frame; frame = frame->tree()->traverseNext(rootFrame))
+        if (ResourcesMap* resourceMap = m_frameResources.get(frame))
+            removeAllResources(resourceMap);
 }
 
 void InspectorController::addResource(InspectorResource* resource)

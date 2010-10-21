@@ -4508,6 +4508,7 @@
             'inspector/front-end/Images/excludeButtonGlyph.png',
             'inspector/front-end/Images/focusButtonGlyph.png',
             'inspector/front-end/Images/forward.png',
+            'inspector/front-end/Images/frame.png',
             'inspector/front-end/Images/gearButtonGlyph.png',
             'inspector/front-end/Images/glossyHeader.png',
             'inspector/front-end/Images/glossyHeaderPressed.png',

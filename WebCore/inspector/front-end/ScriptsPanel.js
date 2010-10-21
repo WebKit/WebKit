@@ -587,7 +587,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (scriptOrResource instanceof WebInspector.Resource) {
             if (!WebInspector.panels.resources)
                 return null;
-            view = WebInspector.panels.resources.resourceViewForResource(scriptOrResource);
+            view = WebInspector.ResourceManager.resourceViewForResource(scriptOrResource);
             view.headersVisible = false;
         } else if (scriptOrResource instanceof WebInspector.Script)
             view = this.scriptViewForScript(scriptOrResource);

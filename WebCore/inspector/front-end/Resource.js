@@ -74,11 +74,11 @@ WebInspector.Resource.Type = {
             case this.Script:
                 return "script";
             case this.XHR:
-                return "XHR";
+                return "xhr";
             case this.Media:
                 return "media";
             case this.WebSocket:
-                return "WebSocket";
+                return "websocket";
             case this.Other:
             default:
                 return "other";
@@ -593,11 +593,7 @@ WebInspector.Resource.prototype = {
 
     getContents: function(callback)
     {
-        // FIXME: eventually, cached resources will have no identifiers.
-        if (this.frameID)
-            InspectorBackend.resourceContent(this.frameID, this.url, callback);
-        else
-            InspectorBackend.getResourceContent(this.identifier, false, callback);
+        WebInspector.ResourceManager.getContents(this, callback);
     }
 }
 

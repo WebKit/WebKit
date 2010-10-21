@@ -557,7 +557,7 @@ WebInspector.ResourcesPanel.prototype = {
             var resource = this._resources[i];
             if (!resource._itemsTreeElement || !resource._itemsTreeElement.selectable)
                 continue;
-            var resourceView = this.resourceViewForResource(resource);
+            var resourceView = WebInspector.ResourceManager.resourceViewForResource(resource);
             if (!resourceView.performSearch || resourceView === visibleView)
                 continue;
             views.push(resourceView);
@@ -789,7 +789,7 @@ WebInspector.ResourcesPanel.prototype = {
         if (!this.currentQuery && resource._itemsTreeElement)
             resource._itemsTreeElement.updateErrorsAndWarnings();
 
-        var view = this.resourceViewForResource(resource);
+        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
         if (view.addMessage)
             view.addMessage(msg);
     },
@@ -823,10 +823,10 @@ WebInspector.ResourcesPanel.prototype = {
         if (!resource || !resource._resourcesView)
             return;
 
-        if (this._resourceViewIsConsistentWithCategory(resource, resource._resourcesView))
+        if (WebInspector.ResourceManager.resourceViewTypeMatchesResource(resource, resource._resourcesView))
             return;
+        var newView = WebInspector.ResourceManager.createResourceView(resource);
 
-        var newView = this._createResourceView(resource);
         if (!this.currentQuery && resource._itemsTreeElement)
             resource._itemsTreeElement.updateErrorsAndWarnings();
 
@@ -868,7 +868,7 @@ WebInspector.ResourcesPanel.prototype = {
         if (this.visibleResource && this.visibleResource._resourcesView)
             this.visibleResource._resourcesView.hide();
 
-        var view = this.resourceViewForResource(resource);
+        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
         view.headersVisible = true;
         view.show(this.viewsContainerElement);
 
@@ -909,18 +909,9 @@ WebInspector.ResourcesPanel.prototype = {
         this.updateSidebarWidth();
     },
 
-    resourceViewForResource: function(resource)
-    {
-        if (!resource)
-            return null;
-        if (!resource._resourcesView)
-            resource._resourcesView = this._createResourceView(resource);
-        return resource._resourcesView;
-    },
-
     sourceFrameForResource: function(resource)
     {
-        var view = this.resourceViewForResource(resource);
+        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
         if (!view)
             return null;
 
@@ -1066,40 +1057,6 @@ WebInspector.ResourcesPanel.prototype = {
         var selectedOption = this.sortingSelectElement[selectedIndex];
         this.sortingFunction = selectedOption.sortingFunction;
         this.calculator = this.summaryBar.calculator = selectedOption.calculator;
-    },
-
-    _resourceViewIsConsistentWithCategory: function(resource, resourceView)
-    {
-        switch (resource.category) {
-            case WebInspector.resourceCategories.documents:
-            case WebInspector.resourceCategories.stylesheets:
-            case WebInspector.resourceCategories.scripts:
-            case WebInspector.resourceCategories.xhr:
-                return resourceView.__proto__ === WebInspector.SourceView.prototype;
-            case WebInspector.resourceCategories.images:
-                return resourceView.__proto__ === WebInspector.ImageView.prototype;
-            case WebInspector.resourceCategories.fonts:
-                return resourceView.__proto__ === WebInspector.FontView.prototype;
-            default:
-                return resourceView.__proto__ === WebInspector.ResourceView.prototype;
-        }
-    },
-
-    _createResourceView: function(resource)
-    {
-        switch (resource.category) {
-            case WebInspector.resourceCategories.documents:
-            case WebInspector.resourceCategories.stylesheets:
-            case WebInspector.resourceCategories.scripts:
-            case WebInspector.resourceCategories.xhr:
-                return new WebInspector.SourceView(resource);
-            case WebInspector.resourceCategories.images:
-                return new WebInspector.ImageView(resource);
-            case WebInspector.resourceCategories.fonts:
-                return new WebInspector.FontView(resource);
-            default:
-                return new WebInspector.ResourceView(resource);
-        }
     },
 
     setSidebarWidth: function(width)
