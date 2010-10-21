@@ -174,9 +174,12 @@ AccessibilityUIElement AccessibilityUIElement::titleUIElement()
 
 AccessibilityUIElement AccessibilityUIElement::parentElement()
 {
-    ASSERT(m_element);
-    AtkObject* parent =  atk_object_get_parent(ATK_OBJECT(m_element));
+    if (!m_element)
+        return 0;
 
+    ASSERT(ATK_IS_OBJECT(m_element));
+
+    AtkObject* parent =  atk_object_get_parent(ATK_OBJECT(m_element));
     return parent ? AccessibilityUIElement(parent) : 0;
 }
 
