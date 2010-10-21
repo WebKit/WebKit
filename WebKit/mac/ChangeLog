@@ -1,3 +1,17 @@
+2010-10-20  Dumitru Daniliuc  <dumi@chromium.org>
+
+        Reviewed by David Levin.
+
+        Repost the DatabaseTracker notifications to the main thread, if needed.
+        https://bugs.webkit.org/show_bug.cgi?id=40655
+
+        * Storage/WebDatabaseTrackerClient.mm:
+        (DidModifyOriginData::dispatchToMainThread):
+        (DidModifyOriginData::DidModifyOriginData):
+        (DidModifyOriginData::dispatchDidModifyOriginOnMainThread):
+        (WebDatabaseTrackerClient::dispatchDidModifyOrigin):
+        (WebDatabaseTrackerClient::dispatchDidModifyDatabase):
+
 2010-10-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

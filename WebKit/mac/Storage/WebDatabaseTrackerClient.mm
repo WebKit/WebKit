@@ -32,6 +32,7 @@
 
 #import "WebDatabaseManagerPrivate.h"
 #import "WebSecurityOriginInternal.h"
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <WebCore/SecurityOrigin.h>
 
@@ -50,10 +51,42 @@ WebDatabaseTrackerClient::WebDatabaseTrackerClient()
 WebDatabaseTrackerClient::~WebDatabaseTrackerClient()
 {
 }
-    
+
+class DidModifyOriginData : public Noncopyable {
+public:
+    static void dispatchToMainThread(WebDatabaseTrackerClient* client, SecurityOrigin* origin)
+    {
+        DidModifyOriginData* context = new DidModifyOriginData(client, origin->threadsafeCopy());
+        callOnMainThread(&DidModifyOriginData::dispatchDidModifyOriginOnMainThread, context);
+    }
+
+private:
+    DidModifyOriginData(WebDatabaseTrackerClient* client, PassRefPtr<SecurityOrigin> origin)
+        : client(client)
+        , origin(origin)
+    {
+    }
+
+    static void dispatchDidModifyOriginOnMainThread(void* context)
+    {
+        ASSERT(isMainThread());
+        DidModifyOriginData* info = static_cast<DidModifyOriginData*>(context);
+        info->client->dispatchDidModifyOrigin(info->origin.get());
+        delete info;
+    }
+
+    WebDatabaseTrackerClient* client;
+    RefPtr<SecurityOrigin> origin;
+};
+
 void WebDatabaseTrackerClient::dispatchDidModifyOrigin(SecurityOrigin* origin)
 {
-     RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
+    if (!isMainThread()) {
+        DidModifyOriginData::dispatchToMainThread(this, origin);
+        return;
+    }
+
+    RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebDatabaseDidModifyOriginNotification 
                                                         object:webSecurityOrigin.get()];
@@ -61,6 +94,11 @@ void WebDatabaseTrackerClient::dispatchDidModifyOrigin(SecurityOrigin* origin)
 
 void WebDatabaseTrackerClient::dispatchDidModifyDatabase(SecurityOrigin* origin, const String& databaseIdentifier)
 {
+    if (!isMainThread()) {
+        DidModifyOriginData::dispatchToMainThread(this, origin);
+        return;
+    }
+
     RetainPtr<WebSecurityOrigin> webSecurityOrigin(AdoptNS, [[WebSecurityOrigin alloc] _initWithWebCoreSecurityOrigin:origin]);
     RetainPtr<NSDictionary> userInfo(AdoptNS, [[NSDictionary alloc] 
                                                initWithObjectsAndKeys:(NSString *)databaseIdentifier, WebDatabaseIdentifierKey, nil]);
