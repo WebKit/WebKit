@@ -105,6 +105,9 @@ void TextCodecGtk::registerBaseEncodingNames(EncodingNameRegistrar registrar)
 {
     // Unicode
     registerEncodingNameIfAvailable(registrar, "UTF-8");
+    registerEncodingNameIfAvailable(registrar, "UTF-32");
+    registerEncodingNameIfAvailable(registrar, "UTF-32BE");
+    registerEncodingNameIfAvailable(registrar, "UTF-32LE");
 
     // Western
     if (registerEncodingNameIfAvailable(registrar, "ISO-8859-1")) {
@@ -124,6 +127,9 @@ void TextCodecGtk::registerBaseCodecs(TextCodecRegistrar registrar)
 {
     // Unicode
     registerCodecIfAvailable(registrar, "UTF-8");
+    registerCodecIfAvailable(registrar, "UTF-32");
+    registerCodecIfAvailable(registrar, "UTF-32BE");
+    registerCodecIfAvailable(registrar, "UTF-32LE");
 
     // Western
     registerCodecIfAvailable(registrar, "ISO-8859-1");
