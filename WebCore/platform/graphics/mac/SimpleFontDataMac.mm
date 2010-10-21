@@ -417,9 +417,11 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 {
     FloatRect boundingBox;
 #ifndef BUILDING_ON_TIGER
-    boundingBox = CTFontGetBoundingRectsForGlyphs(m_platformData.ctFont(),
-                    m_platformData.orientation() == Vertical ? kCTFontVerticalOrientation : kCTFontHorizontalOrientation, &glyph, 0, 1);
-    boundingBox.setY(-boundingBox.bottom());
+    CGRect box;
+    CGFontGetGlyphBBoxes(platformData().cgFont(), &glyph, 1, &box);
+    float pointSize = platformData().m_size;
+    CGFloat scale = pointSize / unitsPerEm();
+    boundingBox = CGRectApplyAffineTransform(box, CGAffineTransformMakeScale(scale, -scale));
 #else
     // FIXME: Custom fonts don't have NSFonts, so this function doesn't compute correct bounds for these on Tiger.
     if (!m_platformData.font())
@@ -435,18 +437,14 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
+    NSFont* font = platformData().font();
+    float pointSize = platformData().m_size;
+    CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
     CGSize advance;
-    if (m_platformData.orientation() == Horizontal) {
-        NSFont* font = platformData().font();
-        float pointSize = platformData().m_size;
-        CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
-        if (!wkGetGlyphTransformedAdvances(platformData().cgFont(), font, &m, &glyph, &advance)) {
-            LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
-            advance.width = 0;
-        }
-    } else
-        CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), kCTFontVerticalOrientation, &glyph, &advance, 1);
-
+    if (!wkGetGlyphTransformedAdvances(platformData().cgFont(), font, &m, &glyph, &advance)) {
+        LOG_ERROR("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
+        advance.width = 0;
+    }
     return advance.width + m_syntheticBoldOffset;
 }
 

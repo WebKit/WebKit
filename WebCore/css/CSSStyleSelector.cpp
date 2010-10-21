@@ -5571,14 +5571,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 #endif 
 
     // CSS Text Layout Module Level 3: Vertical writing support
-    case CSSPropertyWebkitWritingMode: {
+    case CSSPropertyWebkitWritingMode:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(writingMode, WritingMode)
-        FontDescription fontDescription = m_style->fontDescription();
-        fontDescription.setOrientation(m_style->isHorizontalWritingMode() ? Horizontal : Vertical);
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
         return;
-    }
+
 #if ENABLE(SVG)
     default:
         // Try the SVG properties

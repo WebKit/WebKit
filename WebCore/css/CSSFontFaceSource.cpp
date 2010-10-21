@@ -162,7 +162,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
                 if (!m_font->ensureCustomFontData())
                     return 0;
 
-                fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic, fontDescription.orientation(), fontDescription.renderingMode()), true, false));
+                fontData.set(new SimpleFontData(m_font->platformDataFromCustomData(fontDescription.computedPixelSize(), syntheticBold, syntheticItalic, fontDescription.renderingMode()), true, false));
             }
         } else {
 #if ENABLE(SVG_FONTS)

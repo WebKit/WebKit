@@ -44,10 +44,9 @@ void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFon
 }
 #endif  // PLATFORM(MAC)
 
-FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
+FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool syntheticOblique)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
-    , m_orientation(orientation)
     , m_font(nsFont)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
@@ -84,7 +83,6 @@ FontPlatformData::FontPlatformData(const FontPlatformData& f)
     m_cgFont = f.m_cgFont;
     m_atsuFontID = f.m_atsuFontID;
     m_isColorBitmapFont = f.m_isColorBitmapFont;
-    m_orientation = f.m_orientation;
 #if USE(CORE_TEXT)
     m_CTFont = f.m_CTFont;
 #endif
@@ -114,7 +112,6 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
         CFRelease(m_font);
     m_font = f.m_font;
     m_isColorBitmapFont = f.m_isColorBitmapFont;
-    m_orientation = f.m_orientation;
 #if USE(CORE_TEXT)
     m_CTFont = f.m_CTFont;
 #endif
@@ -172,7 +169,7 @@ bool FontPlatformData::roundsGlyphAdvances() const
 
 bool FontPlatformData::allowsLigatures() const
 {
-    return m_orientation == Horizontal && ![[m_font coveredCharacterSet] characterIsMember:'a'];
+    return ![[m_font coveredCharacterSet] characterIsMember:'a'];
 }
 
 #if USE(CORE_TEXT)
@@ -190,8 +187,7 @@ CTFontRef FontPlatformData::ctFont() const
 String FontPlatformData::description() const
 {
     RetainPtr<CFStringRef> cgFontDescription(AdoptCF, CFCopyDescription(cgFont()));
-    return String(cgFontDescription.get()) + " " + String::number(m_size)
-            + (m_syntheticBold ? " synthetic bold" : "") + (m_syntheticOblique ? " synthetic oblique" : "") + (m_orientation ? " vertical orientation" : "");
+    return String(cgFontDescription.get()) + " " + String::number(m_size) + (m_syntheticBold ? " synthetic bold" : "") + (m_syntheticOblique ? " synthetic oblique" : "");
 }
 #endif
 
