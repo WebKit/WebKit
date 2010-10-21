@@ -1,3 +1,14 @@
+2010-10-21  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] PluginInfoStore does not set up mime types for plugins
+        https://bugs.webkit.org/show_bug.cgi?id=48063
+
+        * UIProcess/Plugins/qt/PluginInfoStoreQt.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo): Store the mime types
+        that are supported by the plugin into the plugin argument.
+
 2010-10-21  Juha Savolainen  <juha.savolainen@weego.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
