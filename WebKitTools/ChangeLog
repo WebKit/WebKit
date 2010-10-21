@@ -1,4 +1,10 @@
 2010-10-20  Adam Roben  <aroben@apple.com>
+        
+        Windows build fix
+
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp: Added missing #include.
+
+2010-10-20  Adam Roben  <aroben@apple.com>
 
         Qt test fix
 

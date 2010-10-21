@@ -25,6 +25,7 @@
 
 #include "PlatformUtilities.h"
 
+#include <WebKit2/WKStringCF.h>
 #include <WebKit2/WKURLCF.h>
 #include <wtf/RetainPtr.h>
 
