@@ -22,6 +22,7 @@
 #ifndef FontCustomPlatformData_h
 #define FontCustomPlatformData_h
 
+#include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -37,7 +38,7 @@ struct FontCustomPlatformData : Noncopyable {
     // for use with QFontDatabase::addApplicationFont/removeApplicationFont
     int m_handle;
 
-    FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
+    FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal, FontRenderingMode = NormalRenderingMode);
 
     static bool supportsFormat(const String&);
 };
