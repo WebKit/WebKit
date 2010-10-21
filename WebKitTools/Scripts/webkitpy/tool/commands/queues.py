@@ -204,16 +204,20 @@ class AbstractPatchQueue(AbstractQueue):
 
     def _did_pass(self, patch):
         self._update_status(self._pass_status, patch)
+        self._release_work_item(patch)
 
     def _did_fail(self, patch):
         self._update_status(self._fail_status, patch)
+        self._release_work_item(patch)
 
     def _did_retry(self, patch):
         self._update_status(self._retry_status, patch)
+        self._release_work_item(patch)
 
     def _did_error(self, patch, reason):
         message = "%s: %s" % (self._error_status, reason)
         self._update_status(message, patch)
+        self._release_work_item(patch)
 
     def work_item_log_path(self, patch):
         return os.path.join(self._log_directory(), "%s.log" % patch.bug_id())
@@ -251,7 +255,6 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
             validator = CommitterValidator(self._tool.bugs)
             validator.reject_patch_from_commit_queue(patch.id(), self._error_message_for_bug(task.failure_status_id, e))
             self._did_fail(patch)
-        self._release_work_item(patch)
 
     def _error_message_for_bug(self, status_id, script_error):
         if not script_error.output:
@@ -405,8 +408,6 @@ class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
             if e.exit_code != QueueEngine.handled_error_code:
                 self._did_fail(patch)
             raise e
-        finally:
-            self._release_work_item(patch)
 
     def handle_unexpected_error(self, patch, message):
         log(message)

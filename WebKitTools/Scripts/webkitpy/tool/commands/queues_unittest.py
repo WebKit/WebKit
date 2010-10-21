@@ -209,6 +209,7 @@ MOCK: update_status: commit-queue Built patch
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
+MOCK: release_work_item: commit-queue 197
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
@@ -252,6 +253,7 @@ MOCK: update_status: commit-queue Passed tests
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 197]
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
+MOCK: release_work_item: commit-queue 197
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
@@ -275,6 +277,7 @@ MOCK: update_status: commit-queue Passed tests
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 197]
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
+MOCK: release_work_item: commit-queue 197
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
@@ -338,7 +341,7 @@ class RietveldUploadQueueTest(QueuesTest):
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("rietveld-upload-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: rietveld-upload-queue Uploading patch\n",
-            "process_work_item": "MOCK: update_status: rietveld-upload-queue Pass\n",
+            "process_work_item": "MOCK: update_status: rietveld-upload-queue Pass\nMOCK: release_work_item: rietveld-upload-queue 197\n",
             "handle_unexpected_error": "Mock error message\nMOCK setting flag 'in-rietveld' to '-' on attachment '197' with comment 'None' and additional comment 'None'\n",
             "handle_script_error": "ScriptError error message\nMOCK: update_status: rietveld-upload-queue ScriptError error message\nMOCK setting flag 'in-rietveld' to '-' on attachment '197' with comment 'None' and additional comment 'None'\n",
         }

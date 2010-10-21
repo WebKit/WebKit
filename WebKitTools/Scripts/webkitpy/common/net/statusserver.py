@@ -127,7 +127,7 @@ class StatusServer:
         self._browser.submit()
 
     def release_work_item(self, queue_name, patch):
-        _log.debug("Releasing work item %s from %s" % (patch.id(), queue_name))
+        _log.info("Releasing work item %s from %s" % (patch.id(), queue_name))
         return NetworkTransaction(convert_404_to_None=True).run(lambda: self._post_release_work_item(queue_name, patch))
 
     def update_work_items(self, queue_name, work_items):
