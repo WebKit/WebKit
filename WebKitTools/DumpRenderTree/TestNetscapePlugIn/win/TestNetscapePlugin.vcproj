@@ -398,6 +398,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\win\NPNInvalidateRectInvalidatesWindow.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\win\WindowGeometryInitializedBeforeSetWindow.cpp"
 					>
 				</File>

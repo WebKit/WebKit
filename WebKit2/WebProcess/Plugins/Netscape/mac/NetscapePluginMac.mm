@@ -160,6 +160,11 @@ void NetscapePlugin::platformDestroy()
 #endif
 }
 
+bool NetscapePlugin::platformInvalidate(const IntRect&)
+{
+    return false;
+}
+
 void NetscapePlugin::platformGeometryDidChange()
 {
 }

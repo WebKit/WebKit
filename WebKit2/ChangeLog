@@ -1,3 +1,28 @@
+2010-10-21  Adam Roben  <aroben@apple.com>
+
+        Invalidate the plugin's HWND when NPN_InvalidateRect is called
+
+        Fixes <http://webkit.org/b/48086> <rdar://problem/8482944> Silverlight
+        doesn't repaint in WebKit2
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::invalidate): Call platformInvalidate before
+        invalidating via the PluginController.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Added platformInvalidate.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformInvalidate):
+        * WebProcess/Plugins/Netscape/qt/NetscapePluginQt.cpp:
+        (WebKit::NetscapePlugin::platformInvalidate):
+        Stubbed out.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::NetscapePlugin::platformInvalidate): If the plugin is
+        windowed, invalidate its HWND via ::InvalidateRect.
+
 2010-10-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

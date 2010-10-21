@@ -93,6 +93,16 @@ void NetscapePlugin::platformDestroy()
     ::DestroyWindow(m_window);
 }
 
+bool NetscapePlugin::platformInvalidate(const IntRect& invalidRect)
+{
+    if (!m_isWindowed)
+        return false;
+
+    RECT rect = invalidRect;
+    ::InvalidateRect(m_window, &rect, FALSE);
+    return true;
+}
+
 void NetscapePlugin::platformGeometryDidChange()
 {
     if (!m_isWindowed)

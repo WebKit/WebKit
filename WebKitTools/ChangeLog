@@ -1,3 +1,48 @@
+2010-10-21  Adam Roben  <aroben@apple.com>
+
+        Test that the plugin's HWND is invalidated when NPN_InvalidateRect is
+        called
+
+        Test for <http://webkit.org/b/48086> <rdar://problem/8482944>
+        Silverlight doesn't repaint in WebKit2
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPN_InvalidateRect): Added. Calls through to the browser.
+        (executeScript): Added. Asks the browser to evaluate the script.
+
+        (PluginTest::waitUntilDone):
+        (PluginTest::notifyDone):
+        Added. Calls through to layoutTestController.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h: Added
+        * NPN_InvalidateRect and waitUntilDone/notifyDone.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/NPNInvalidateRectInvalidatesWindow.cpp: Added.
+        (TemporaryWindowMover::moveSucceeded):
+        (TemporaryWindowMover::TemporaryWindowMover):
+        (TemporaryWindowMover::~TemporaryWindowMover):
+        This class moves a window on-screen and shows it, then moves it back and hides it.
+
+        (NPNInvalidateRectInvalidatesWindow::NPNInvalidateRectInvalidatesWindow):
+        Initialize our members.
+        (NPNInvalidateRectInvalidatesWindow::~NPNInvalidateRectInvalidatesWindow):
+        Delete our window mover if it hasn't been deleted already.
+        (NPNInvalidateRectInvalidatesWindow::NPP_SetWindow): Subclass the
+        plugin HWND and move the test harness window on screen.
+        (NPNInvalidateRectInvalidatesWindow::wndProc): Call through to onPaint
+        when we get a WM_PAINT message.
+        (NPNInvalidateRectInvalidatesWindow::onPaint): Do the test and tell
+        LayoutTestController we're done.
+        (NPNInvalidateRectInvalidatesWindow::testInvalidateRect): Validate
+        ourselves, invalidate our lower-right quadrant via NPN_InvalidateRect,
+        then check that our HWND's invalid region is the rect that we
+        invalidated.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * Added NPNInvalidateRectInvalidatesWindow.
+
 2010-10-21  Daniel Bates  <dbates@rim.com>
 
         Add Git-support to do-file-rename

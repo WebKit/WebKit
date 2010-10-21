@@ -112,6 +112,7 @@ private:
 
     bool platformPostInitialize();
     void platformDestroy();
+    bool platformInvalidate(const WebCore::IntRect&);
     void platformGeometryDidChange();
     void platformPaint(WebCore::GraphicsContext*, const WebCore::IntRect& dirtyRect);
 
