@@ -68,7 +68,7 @@ static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator
     if (createdIterator)
         g_free(iterator->m_logAttrs);
     iterator->m_logAttrs = g_new0(PangoLogAttr, length + 1);
-    iterator->m_index = -1;
+    iterator->m_index = 0;
     pango_get_log_attrs(utf8.get(), utf8len, -1, 0, iterator->m_logAttrs, length + 1);
 
     return iterator;
