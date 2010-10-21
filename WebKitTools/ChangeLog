@@ -1,5 +1,15 @@
 2010-10-21  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/48051> Move macros from DumpRenderTreeMac.h to config.h
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/config.h: Moved macros to here...
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: ...from here.
+        Addresses a FIXME comment from r28419.
+
+2010-10-21  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/48047> Fix warnings found by check-Xcode-source-file-types
 
         Reviewed by Adam Roben.
