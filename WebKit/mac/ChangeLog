@@ -1,3 +1,27 @@
+2010-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Composited elements drawn twice when WebView is layer-backed
+        https://bugs.webkit.org/show_bug.cgi?id=48024
+        <rdar://problem/7916580>
+        
+        When drawing content in a layer-backed WebView, WebFrame's test
+        for drawing to a bitmap succeeded, causing us to paint flattened
+        compositing layers into the view. They would also be rendered
+        by the normal compositing path, resulting in double rendering.
+        
+        Fix this by detecting when the WebHTMLView is being drawn into
+        a layer, and avoiding flattening in that case.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _showFlattenedCompositingLayers:]):
+        (-[WebFrame _drawRect:contentsOnly:]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawLayer:inContext:]):
+        (-[WebHTMLView _web_isDrawingIntoLayer]):
+        * WebView/WebHTMLViewInternal.h:
+
 2010-10-20  Dumitru Daniliuc  <dumi@chromium.org>
 
         Reviewed by David Levin.

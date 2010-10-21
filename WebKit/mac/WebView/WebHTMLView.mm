@@ -456,6 +456,7 @@ struct WebHTMLViewInterpretKeyEventsParameters {
     
 #if USE(ACCELERATED_COMPOSITING)
     NSView *layerHostingView;
+    BOOL drawingIntoLayer;
 #endif
 
     NSEvent *mouseDownEvent; // Kept after handling the event.
@@ -5636,6 +5637,25 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [_private->layerHostingView setFrame:layerViewFrame];
 }
 #endif // defined(BUILDING_ON_LEOPARD)
+
+- (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
+{
+    if (_private) {
+        ASSERT(!_private->drawingIntoLayer);
+        _private->drawingIntoLayer = YES;
+    }
+
+    [super drawLayer:layer inContext:ctx];
+
+    if (_private)
+        _private->drawingIntoLayer = NO;
+}
+
+- (BOOL)_web_isDrawingIntoLayer
+{
+    return _private->drawingIntoLayer;
+}
+
 #endif // USE(ACCELERATED_COMPOSITING)
 
 @end

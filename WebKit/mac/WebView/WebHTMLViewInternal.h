@@ -66,6 +66,7 @@ namespace WebCore {
 #if USE(ACCELERATED_COMPOSITING)
 - (void)attachRootLayer:(CALayer*)layer;
 - (void)detachRootLayer;
+- (BOOL)_web_isDrawingIntoLayer;
 #endif
 
 #if USE(ACCELERATED_COMPOSITING) && defined(BUILDING_ON_LEOPARD)
