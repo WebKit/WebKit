@@ -178,3 +178,13 @@ WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef)
 {
     return toCopiedAPI(toImpl(preferencesRef)->fantasyFontFamily());
 }
+
+void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setPrivateBrowsingEnabled(enabled);
+}
+
+bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->privateBrowsingEnabled();
+}

@@ -43,6 +43,7 @@ WebPreferencesStore::WebPreferencesStore()
     , acceleratedCompositingEnabled(true)
     , compositingBordersVisible(false)
     , compositingRepaintCountersVisible(false)
+    , privateBrowsingEnabled(false)
     , fontSmoothingLevel(FontSmoothingLevelMedium)
     , minimumFontSize(1)
     , minimumLogicalFontSize(9)
@@ -75,6 +76,7 @@ void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(localStorageEnabled);
     encoder->encode(xssAuditorEnabled);
     encoder->encode(frameFlatteningEnabled);
+    encoder->encode(privateBrowsingEnabled);
     encoder->encode(fontSmoothingLevel);
     encoder->encode(minimumFontSize);
     encoder->encode(minimumLogicalFontSize);
@@ -106,6 +108,8 @@ bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferenc
     if (!decoder->decode(s.xssAuditorEnabled))
         return false;
     if (!decoder->decode(s.frameFlatteningEnabled))
+        return false;
+    if (!decoder->decode(s.privateBrowsingEnabled))
         return false;
     if (!decoder->decode(s.fontSmoothingLevel))
         return false;

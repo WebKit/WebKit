@@ -54,6 +54,8 @@ struct WebPreferencesStore {
     bool compositingBordersVisible;
     bool compositingRepaintCountersVisible;
 
+    bool privateBrowsingEnabled;
+
     uint32_t fontSmoothingLevel;
 
     uint32_t minimumFontSize;

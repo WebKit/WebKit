@@ -108,6 +108,9 @@ public:
 
     void setCompositingRepaintCountersVisible(bool);
     bool compositingRepaintCountersVisible() const;
+
+    void setPrivateBrowsingEnabled(bool);
+    bool privateBrowsingEnabled() const;
     
 private:
     WebPreferences();

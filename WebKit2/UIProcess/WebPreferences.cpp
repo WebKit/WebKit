@@ -130,6 +130,17 @@ bool WebPreferences::frameFlatteningEnabled() const
     return m_store.frameFlatteningEnabled;
 }
 
+void WebPreferences::setPrivateBrowsingEnabled(bool b)
+{
+    m_store.privateBrowsingEnabled = b;
+    update();
+}
+
+bool WebPreferences::privateBrowsingEnabled() const
+{
+    return m_store.privateBrowsingEnabled;
+}
+
 void WebPreferences::setPluginsEnabled(bool b)
 {
     m_store.pluginsEnabled = b;

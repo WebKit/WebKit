@@ -1,3 +1,31 @@
+2010-10-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by John Sullivan.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48083
+        <rdar://problem/8489082> Need WebKit2 API for private browsing
+
+        This just adds glue code for passing the preference from embedder to WebCore. The aspects of
+        private browsing that WebCore is responsible for do work, but cookies are not handled yet.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPrivateBrowsingEnabled):
+        (WKPreferencesGetPrivateBrowsingEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setPrivateBrowsingEnabled):
+        (WebKit::WebPreferences::privateBrowsingEnabled):
+        * UIProcess/WebPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Do what it takes to pass a single boolean from WebKit2 to WebCore. And we aren't even syncing
+        the preference to user defaults yet.
+
 2010-10-20  Adam Roben  <aroben@apple.com>
 
         Ask the UI client to close the page when the WKView receives a WM_CLOSE
