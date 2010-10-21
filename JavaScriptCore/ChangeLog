@@ -1,5 +1,11 @@
 2010-10-20  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix the EFL build.
+
+        * wtf/CMakeLists.txt:
+
+2010-10-20  Simon Fraser  <simon.fraser@apple.com>
+
         Fix Windows build: export needed symbols.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:

@@ -2,6 +2,7 @@ SET(WTF_SOURCES
     Assertions.cpp
     ByteArray.cpp
     CurrentTime.cpp
+    DecimalNumber.cpp
     FastMalloc.cpp
     HashTable.cpp
     MainThread.cpp
