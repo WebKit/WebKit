@@ -1,3 +1,16 @@
+2010-10-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't CC authors of flaky tests
+        https://bugs.webkit.org/show_bug.cgi?id=48038
+
+        Some authors found this too annoying.  We'll look for another way to
+        close the flaky test loop.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-10-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

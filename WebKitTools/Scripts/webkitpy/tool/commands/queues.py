@@ -47,7 +47,7 @@ from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
 from webkitpy.tool.bot.commitqueuetask import CommitQueueTask, CommitQueueTaskDelegate
 from webkitpy.tool.bot.feeders import CommitQueueFeeder, EWSFeeder
 from webkitpy.tool.bot.queueengine import QueueEngine, QueueEngineDelegate
-from webkitpy.tool.grammar import pluralize
+from webkitpy.tool.grammar import pluralize, join_with_separators
 from webkitpy.tool.multicommandtool import Command, TryAgain
 
 
@@ -301,9 +301,9 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
 
     def report_flaky_tests(self, patch, flaky_tests):
         authors = self._author_emails_for_tests(flaky_tests)
-        cc_explaination = "  The author(s) of the test(s) have been CCed on this bug." if authors else ""
-        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n%s\n\nPlease file bugs against the tests.%s  The commit-queue is continuing to process your patch." % (self.name, patch.id(), "\n".join(flaky_tests), cc_explaination)
-        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message, cc=authors)
+        author_nag = "  The author(s) of the test(s) are %s." % join_with_separators(authors) if authors else ""
+        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n%s\n\nPlease file bugs against the tests.%s  The commit-queue is continuing to process your patch." % (self.name, patch.id(), "\n".join(flaky_tests), author_nag)
+        self._tool.bugs.post_comment_to_bug(patch.bug_id(), message)
 
     # StepSequenceErrorHandler methods
 
