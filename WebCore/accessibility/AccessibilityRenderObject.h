@@ -186,7 +186,6 @@ public:
     virtual String textUnderElement() const;
     virtual String text() const;
     virtual int textLength() const;
-    virtual PassRefPtr<Range> ariaSelectedTextDOMRange() const;
     virtual String selectedText() const;
     virtual const AtomicString& accessKey() const;
     virtual const String& actionVerb() const;
@@ -277,6 +276,7 @@ private:
     bool isAllowedChildOfTree() const;
     bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;
+    PlainTextRange ariaSelectedTextRange() const;
 
     Element* menuElementForMenuButton() const;
     Element* menuItemElementForMenu() const;

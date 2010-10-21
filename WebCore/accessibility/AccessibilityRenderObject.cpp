@@ -1916,35 +1916,22 @@ int AccessibilityRenderObject::textLength() const
     return text().length();
 }
 
-PassRefPtr<Range> AccessibilityRenderObject::ariaSelectedTextDOMRange() const
+PlainTextRange AccessibilityRenderObject::ariaSelectedTextRange() const
 {
     Node* node = m_renderer->node();
     if (!node)
-        return 0;
-    
-    RefPtr<Range> currentSelectionRange = selection().toNormalizedRange();
-    if (!currentSelectionRange)
-        return 0;
+        return PlainTextRange();
     
     ExceptionCode ec = 0;
-    if (!currentSelectionRange->intersectsNode(node, ec))
-        return Range::create(currentSelectionRange->ownerDocument());
+    VisibleSelection visibleSelection = selection();
+    RefPtr<Range> currentSelectionRange = visibleSelection.toNormalizedRange();
+    if (!currentSelectionRange || !currentSelectionRange->intersectsNode(node, ec))
+        return PlainTextRange();
     
-    RefPtr<Range> ariaRange = rangeOfContents(node);
-    Position startPosition, endPosition;
+    int start = indexForVisiblePosition(visibleSelection.start());
+    int end = indexForVisiblePosition(visibleSelection.end());
     
-    // Find intersection of currentSelectionRange and ariaRange
-    if (ariaRange->startOffset() > currentSelectionRange->startOffset())
-        startPosition = ariaRange->startPosition();
-    else
-        startPosition = currentSelectionRange->startPosition();
-    
-    if (ariaRange->endOffset() < currentSelectionRange->endOffset())
-        endPosition = ariaRange->endPosition();
-    else
-        endPosition = currentSelectionRange->endPosition();
-    
-    return Range::create(ariaRange->ownerDocument(), startPosition, endPosition);
+    return PlainTextRange(start, end - start);
 }
 
 String AccessibilityRenderObject::selectedText() const
@@ -1962,10 +1949,7 @@ String AccessibilityRenderObject::selectedText() const
     if (ariaRoleAttribute() == UnknownRole)
         return String();
     
-    RefPtr<Range> ariaRange = ariaSelectedTextDOMRange();
-    if (!ariaRange)
-        return String();
-    return ariaRange->text();
+    return doAXStringForRange(ariaSelectedTextRange());
 }
 
 const AtomicString& AccessibilityRenderObject::accessKey() const
@@ -1999,10 +1983,7 @@ PlainTextRange AccessibilityRenderObject::selectedTextRange() const
     if (ariaRole == UnknownRole)
         return PlainTextRange();
     
-    RefPtr<Range> ariaRange = ariaSelectedTextDOMRange();
-    if (!ariaRange)
-        return PlainTextRange();
-    return PlainTextRange(ariaRange->startOffset(), ariaRange->endOffset());
+    return ariaSelectedTextRange();
 }
 
 void AccessibilityRenderObject::setSelectedTextRange(const PlainTextRange& range)
