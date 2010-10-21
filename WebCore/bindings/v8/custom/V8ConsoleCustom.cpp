@@ -33,9 +33,7 @@
 #include "V8Console.h"
 
 #include "Console.h"
-#include "ScriptArguments.h"
 #include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include "ScriptProfile.h"
 #include "V8Binding.h"
 #include "V8Proxy.h"
@@ -64,9 +62,11 @@ v8::Handle<v8::Value> V8Console::traceCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Console.traceCallback");
     Console* imp = V8Console::toNative(args.Holder());
-    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture));
-    OwnPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 0));
-    imp->trace(scriptArguments.release(), callStack.release());
+    v8::HandleScope handleScope;
+    ScriptState* scriptState = ScriptState::current();
+    v8::Local<v8::StackTrace> stackTrace = v8::StackTrace::CurrentStackTrace(ScriptCallStack::maxCallStackSizeToCapture, ScriptCallStack::stackTraceOptions);
+    OwnPtr<ScriptCallStack> callStack(ScriptCallStack::create(scriptState, stackTrace));
+    imp->trace(callStack.get());
     return v8::Handle<v8::Value>();
 }
 
@@ -74,10 +74,9 @@ v8::Handle<v8::Value> V8Console::assertCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Console.assertCallback");
     Console* imp = V8Console::toNative(args.Holder());
-    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture));
+    OwnPtr<ScriptCallStack> callStack(ScriptCallStack::create(args, 1, ScriptCallStack::maxCallStackSizeToCapture));
     bool condition = args[0]->BooleanValue();
-    OwnPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 1));
-    imp->assertCondition(condition, scriptArguments.release(), callStack.release());
+    imp->assertCondition(condition, callStack.get());
     return v8::Handle<v8::Value>();
 }
 

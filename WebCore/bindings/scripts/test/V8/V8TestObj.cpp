@@ -26,9 +26,7 @@
 #include "IDBBindingUtilities.h"
 #include "IDBKey.h"
 #include "RuntimeEnabledFeatures.h"
-#include "ScriptArguments.h"
 #include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
@@ -707,13 +705,11 @@ static v8::Handle<v8::Value> customArgsAndExceptionCallback(const v8::Arguments&
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    OwnPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 1));
-    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
-    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
+    OwnPtr<ScriptCallStack> callStack(ScriptCallStack::create(args, 1));
     if (!callStack)
         return v8::Undefined();
     EXCEPTION_BLOCK(log*, intArg, V8log::HasInstance(args[0]) ? V8log::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
-    imp->customArgsAndException(intArg, scriptArguments.release(), callStack.release(), ec);
+    imp->customArgsAndException(intArg, callStack.get(), ec);
     if (UNLIKELY(ec))
         goto fail;
     return v8::Handle<v8::Value>();

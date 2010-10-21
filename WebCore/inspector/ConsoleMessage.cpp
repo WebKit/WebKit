@@ -33,13 +33,45 @@
 
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
-#include "InspectorFrontend.h"
 #include "InspectorValues.h"
-#include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptValue.h"
 
+#if ENABLE(INSPECTOR)
+#include "InspectorFrontend.h"
+#endif
+
 namespace WebCore {
+
+ConsoleMessage::CallFrame::CallFrame(const ScriptCallFrame& frame)
+    : m_functionName(frame.functionName())
+    , m_sourceURL(frame.sourceURL())
+    , m_lineNumber(frame.lineNumber())
+{
+}
+
+ConsoleMessage::CallFrame::CallFrame()
+    : m_lineNumber(0)
+{
+}
+
+bool ConsoleMessage::CallFrame::isEqual(const ConsoleMessage::CallFrame& o) const
+{
+    return m_functionName == o.m_functionName
+        && m_sourceURL == o.m_sourceURL
+        && m_lineNumber == o.m_lineNumber;
+}
+
+#if ENABLE(INSPECTOR)
+PassRefPtr<InspectorObject> ConsoleMessage::CallFrame::buildInspectorObject() const
+{
+    RefPtr<InspectorObject> frame = InspectorObject::create();
+    frame->setString("functionName", m_functionName);
+    frame->setString("sourceURL", m_sourceURL);
+    frame->setNumber("lineNumber", m_lineNumber);
+    return frame;
+}
+#endif
 
 ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, unsigned li, const String& u, unsigned g)
     : m_source(s)
@@ -53,26 +85,35 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, PassOwnPtr<ScriptArguments> arguments, PassOwnPtr<ScriptCallStack> callStack, unsigned g)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, ScriptCallStack* callStack, unsigned g, bool storeTrace)
     : m_source(s)
     , m_type(t)
     , m_level(l)
     , m_message(m)
-    , m_arguments(arguments)
-    , m_callStack(callStack)
+#if ENABLE(INSPECTOR)
+    , m_arguments(callStack->at(0).argumentCount())
+    , m_scriptState(callStack->globalState())
+#endif
+    , m_frames(storeTrace ? callStack->size() : 0)
     , m_groupLevel(g)
     , m_repeatCount(1)
 {
-    const ScriptCallFrame& lastCaller = m_callStack->at(0);
+    const ScriptCallFrame& lastCaller = callStack->at(0);
     m_line = lastCaller.lineNumber();
     m_url = lastCaller.sourceURL();
 
+    if (storeTrace) {
+        for (unsigned i = 0; i < callStack->size(); ++i)
+            m_frames[i] = ConsoleMessage::CallFrame(callStack->at(i));
+    }
 
-    bool storeTrace = (t == TraceMessageType || t == UncaughtExceptionMessageType || t == AssertMessageType);
-    if (!storeTrace)
-        m_callStack.clear();
+#if ENABLE(INSPECTOR)
+    for (unsigned i = 0; i < lastCaller.argumentCount(); ++i)
+        m_arguments[i] = lastCaller.argumentAt(i);
+#endif
 }
 
+#if ENABLE(INSPECTOR)
 void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHost* injectedScriptHost)
 {
     RefPtr<InspectorObject> jsonObj = InspectorObject::create();
@@ -84,12 +125,12 @@ void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHo
     jsonObj->setNumber("groupLevel", static_cast<int>(m_groupLevel));
     jsonObj->setNumber("repeatCount", static_cast<int>(m_repeatCount));
     jsonObj->setString("message", m_message);
-    if (m_arguments && m_arguments->argumentCount()) {
-        InjectedScript injectedScript = injectedScriptHost->injectedScriptFor(m_arguments->globalState());
+    if (!m_arguments.isEmpty()) {
+        InjectedScript injectedScript = injectedScriptHost->injectedScriptFor(m_scriptState.get());
         if (!injectedScript.hasNoValue()) {
             RefPtr<InspectorArray> jsonArgs = InspectorArray::create();
-            for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                RefPtr<InspectorValue> inspectorValue = injectedScript.wrapForConsole(m_arguments->argumentAt(i));
+            for (unsigned i = 0; i < m_arguments.size(); ++i) {
+                RefPtr<InspectorValue> inspectorValue = injectedScript.wrapForConsole(m_arguments[i]);
                 if (!inspectorValue) {
                     ASSERT_NOT_REACHED();
                     return;
@@ -99,8 +140,12 @@ void ConsoleMessage::addToFrontend(InspectorFrontend* frontend, InjectedScriptHo
             jsonObj->setArray("parameters", jsonArgs);
         }
     }
-    if (m_callStack)
-        jsonObj->setArray("stackTrace", m_callStack->buildInspectorObject());
+    if (!m_frames.isEmpty()) {
+        RefPtr<InspectorArray> frames = InspectorArray::create();
+        for (unsigned i = 0; i < m_frames.size(); i++)
+            frames->pushObject(m_frames.at(i).buildInspectorObject());
+        jsonObj->setArray("stackTrace", frames);
+    }
     frontend->addConsoleMessage(jsonObj);
 }
 
@@ -108,20 +153,32 @@ void ConsoleMessage::updateRepeatCountInConsole(InspectorFrontend* frontend)
 {
     frontend->updateConsoleMessageRepeatCount(m_repeatCount);
 }
+#endif // ENABLE(INSPECTOR)
 
 bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
 {
-    if (m_arguments) {
-        if (!m_arguments->isEqual(msg->m_arguments.get()))
+#if ENABLE(INSPECTOR)
+    if (msg->m_arguments.size() != m_arguments.size())
+        return false;
+    if (!msg->m_scriptState.get() && msg->m_arguments.size()) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    for (size_t i = 0; i < m_arguments.size(); ++i) {
+        if (!m_arguments[i].isEqual(msg->m_scriptState.get(), msg->m_arguments[i]))
             return false;
-    } else if (msg->m_arguments)
+    }
+#endif // ENABLE(INSPECTOR)
+
+    size_t frameCount = msg->m_frames.size();
+    if (frameCount != m_frames.size())
         return false;
 
-    if (m_callStack) {
-        if (!m_callStack->isEqual(msg->m_callStack.get()))
+    for (size_t i = 0; i < frameCount; ++i) {
+        if (!m_frames[i].isEqual(msg->m_frames[i]))
             return false;
-    } else if (msg->m_callStack)
-        return false;
+    }
 
     return msg->m_source == m_source
         && msg->m_type == m_type
