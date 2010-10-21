@@ -38,6 +38,7 @@ typedef void* gpointer;
 
 typedef struct _GAsyncResult GAsyncResult;
 typedef struct _GCancellable GCancellable;
+typedef struct _GCharsetConverter GCharsetConverter;
 typedef struct _GCond GCond;
 typedef struct _GDir GDir;
 typedef struct _GdkAtom* GdkAtom;

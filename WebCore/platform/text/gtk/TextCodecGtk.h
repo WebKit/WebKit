@@ -29,6 +29,7 @@
 #ifndef TextCodecGTK_h
 #define TextCodecGTK_h
 
+#include "GRefPtr.h"
 #include <glib.h>
 #include "TextCodec.h"
 #include "TextEncoding.h"
@@ -56,8 +57,8 @@ namespace WebCore {
         TextEncoding m_encoding;
         size_t m_numBufferedBytes;
         unsigned char m_bufferedBytes[16]; // bigger than any single multi-byte character        
-        mutable GIConv m_iconvDecoder;
-        mutable GIConv m_iconvEncoder;
+        mutable PlatformRefPtr<GCharsetConverter> m_iconvDecoder;
+        mutable PlatformRefPtr<GCharsetConverter> m_iconvEncoder;
     };
 
 } // namespace WebCore
