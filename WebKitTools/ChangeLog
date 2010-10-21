@@ -1,3 +1,16 @@
+2010-10-18  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] mathml flaky tests after adding SystemFonts to the theme
+        https://bugs.webkit.org/show_bug.cgi?id=47727
+
+        The Fontconfig setup in the GTK+ now specifically checks for and
+        loads the STIX fonts for MathML tests.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeFonts): Add hooks for loading the STIX fonts specifically.
+
 2010-10-20  Adam Roben  <aroben@apple.com>
 
         Test that the UI client gets notified when WKView receives a WM_CLOSE

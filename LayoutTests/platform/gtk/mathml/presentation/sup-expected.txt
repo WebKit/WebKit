@@ -4,14 +4,15 @@ layer at (0,0) size 800x53
   RenderBlock {html} at (0,0) size 800x53
     RenderBody {body} at (8,16) size 784x21
       RenderBlock {p} at (0,0) size 784x21
-        RenderText {#text} at (0,1) size 76x20
-          text run at (0,1) width 76: "superscript: "
-        RenderBlock {math} at (76,0) size 23x19
-          RenderBlock {msup} at (1,0) size 21x19
-            RenderInline {mi} at (0,0) size 9x21
-              RenderText {#text} at (0,0) size 9x21
-                text run at (0,0) width 9: "x"
-            RenderInline {mn} at (0,0) size 12x13
-              RenderText {#text} at (9,0) size 12x13
-                text run at (9,0) width 12: "2"
+        RenderText {#text} at (0,0) size 73x19
+          text run at (0,0) width 73: "superscript: "
+        RenderBlock {math} at (73,2) size 15x19
+          RenderBlock {msup} at (1,0) size 13x19
+            RenderBlock {msup} at (0,3) size 7x16
+              RenderInline {mi} at (0,0) size 7x25
+                RenderText {#text} at (0,-4) size 7x25
+                  text run at (0,-4) width 7: "x"
+            RenderInline {mn} at (0,0) size 6x19
+              RenderText {#text} at (7,-3) size 6x19
+                text run at (7,-3) width 6: "2"
         RenderText {#text} at (0,0) size 0x0

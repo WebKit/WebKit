@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x84
-  RenderBlock {html} at (0,0) size 800x84
-    RenderBody {body} at (8,16) size 784x52
-      RenderBlock {p} at (0,0) size 784x52
+layer at (0,0) size 800x100
+  RenderBlock {html} at (0,0) size 800x100
+    RenderBody {body} at (8,16) size 784x68
+      RenderBlock {p} at (0,0) size 784x68
         RenderText {#text} at (0,0) size 0x0
-layer at (8,16) size 28x48 clip at (8,16) size 12x48 scrollHeight 50
-  RenderBlock {math} at (0,0) size 28x48
-    RenderInline {mi} at (0,0) size 8x19
-      RenderText {#text} at (1,-1) size 8x19
-        text run at (1,-1) width 8: "x"
-    RenderBlock {mo} at (1,16) size 10x16
-      RenderBlock {mo} at (0,0) size 9x16
-        RenderText {mo} at (0,-1) size 9x19
-          text run at (0,-1) width 9: "+"
-    RenderInline {mn} at (0,0) size 8x19
-      RenderText {#text} at (1,31) size 8x19
-        text run at (1,31) width 8: "1"
+layer at (8,16) size 29x64 clip at (8,16) size 13x48 scrollWidth 14 scrollHeight 53
+  RenderBlock {math} at (0,0) size 29x64
+    RenderInline {mi} at (0,0) size 7x25
+      RenderText {#text} at (1,-4) size 7x25
+        text run at (1,-4) width 7: "x"
+    RenderBlock {mo} at (1,16) size 12x16
+      RenderBlock {mo} at (0,0) size 11x16
+        RenderText {mo} at (0,-4) size 11x25
+          text run at (0,-4) width 11: "+"
+    RenderInline {mn} at (0,0) size 8x25
+      RenderText {#text} at (1,28) size 8x25
+        text run at (1,28) width 8: "1"

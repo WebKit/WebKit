@@ -5422,9 +5422,6 @@ fast/css/zoom-body-scroll.html
 svg/custom/svg-fonts-with-no-element-reference.html
 svg/filters/parent-children-with-same-filter.svg
 svg/overflow/overflow-on-inner-svg-element.svg
-mathml/presentation/sub.xhtml
-mathml/presentation/sup.xhtml
-mathml/presentation/tables.xhtml
 svg/custom/recursive-filter.svg
 fast/repaint/moving-shadow-on-container.html
 fast/repaint/moving-shadow-on-path.html
@@ -5884,12 +5881,6 @@ editing/pasteboard/dataTransfer-setData-getData.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=47564
 platform/gtk/accessibility/aria-table-hierarchy.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=47727
-mathml/presentation/fenced.xhtml
-mathml/presentation/roots.xhtml
-mathml/presentation/subsup.xhtml
-mathml/presentation/fenced-mi.xhtml
 
 # Requires WebP support.
 fast/images/webp-image-decoding.html
