@@ -1,3 +1,29 @@
+2010-10-21  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Sending a QInputMethodEvent::Selection event forces the
+             Editor to go into Composition mode
+
+        Improve QWebPage handling of input method events:
+         - Selections don't trigger entering composition mode.
+         - Handle multiple selections
+
+        Also remove redundant cancellation of composition in tst_qwebpage.
+        There is no composition in progress at that point.
+
+        Finally, move infiniteLoopJS() to the end of the tst_qwebpage unit
+        tests - so you don't have to wait for it to complete when running
+        other tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=39625
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPage::inputMethodQuery):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods):
+
 2010-10-20  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Antonio Gomes.
