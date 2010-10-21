@@ -1,3 +1,13 @@
+2010-10-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should run run-webkit-tests with --no-new-test-results
+        https://bugs.webkit.org/show_bug.cgi?id=47998
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2010-10-21  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Ojan Vafai.

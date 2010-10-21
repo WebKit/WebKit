@@ -57,6 +57,7 @@ class RunTests(AbstractStep):
         log("Running run-webkit-tests")
         args = self._tool.port().run_webkit_tests_command()
         if self._options.non_interactive:
+            args.append("--no-new-test-results")
             args.append("--no-launch-safari")
             args.append("--exit-after-n-failures=1")
             args.append("--wait-for-httpd")
