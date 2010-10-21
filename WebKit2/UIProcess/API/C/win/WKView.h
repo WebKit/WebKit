@@ -35,14 +35,13 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKViewGetTypeID();
 
-WK_EXPORT WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespace, HWND hostWindow);
+WK_EXPORT WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespace, HWND parentWindow);
 
 WK_EXPORT HWND WKViewGetWindow(WKViewRef view);
-WK_EXPORT HWND WKViewGetHostWindow(WKViewRef view);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 
-WK_EXPORT void WKViewSetHostWindow(WKViewRef view, HWND hostWindow);
+WK_EXPORT void WKViewSetParentWindow(WKViewRef view, HWND parentWindow);
 WK_EXPORT void WKViewWindowAncestryDidChange(WKViewRef view);
 
 #ifdef __cplusplus

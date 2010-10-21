@@ -1,3 +1,35 @@
+2010-10-20  Adam Roben  <aroben@apple.com>
+
+        Remove confusing and redundant "host window" terminology from WKView on
+        Windows
+
+        WKView's "host window" is really just its HWND's parent window. The
+        terminology has been updated to reflect this. The unnecessary
+        WKViewGetHostWindow function has been removed, as it was a synonym for
+        ::GetParent(WKViewGetWindow(view)).
+
+        Fixes <http://webkit.org/b/48039> WKView's "host window" API is
+        confusing
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewCreate):
+        (WKViewSetParentWindow):
+        * UIProcess/API/C/win/WKView.h:
+        Replaced "host window" with "parent window". Removed
+        WKViewGetHostWindow.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::setParentWindow):
+        (WebKit::WebView::windowAncestryDidChange):
+        (WebKit::WebView::close):
+        * UIProcess/win/WebView.h:
+        (WebKit::WebView::create):
+        Replaced "host window" with "parent window". Removed m_hostWindow and
+        hostWindow().
+
 2010-10-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

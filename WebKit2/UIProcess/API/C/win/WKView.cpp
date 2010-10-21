@@ -35,9 +35,9 @@ WKTypeID WKViewGetTypeID()
     return toAPI(APIObject::TypeView);
 }
 
-WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespaceRef, HWND hostWindow)
+WKViewRef WKViewCreate(RECT rect, WKPageNamespaceRef pageNamespaceRef, HWND parentWindow)
 {
-    RefPtr<WebView> view = WebView::create(rect, toImpl(pageNamespaceRef), hostWindow);
+    RefPtr<WebView> view = WebView::create(rect, toImpl(pageNamespaceRef), parentWindow);
     return toAPI(view.release().releaseRef());
 }
 
@@ -46,19 +46,14 @@ HWND WKViewGetWindow(WKViewRef viewRef)
     return toImpl(viewRef)->window();
 }
 
-HWND WKViewGetHostWindow(WKViewRef viewRef)
-{
-    return toImpl(viewRef)->hostWindow();
-}
-
 WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
     return toAPI(toImpl(viewRef)->page());
 }
 
-void WKViewSetHostWindow(WKViewRef viewRef, HWND hostWindow)
+void WKViewSetParentWindow(WKViewRef viewRef, HWND hostWindow)
 {
-    toImpl(viewRef)->setHostWindow(hostWindow);
+    toImpl(viewRef)->setParentWindow(hostWindow);
 }
 
 void WKViewWindowAncestryDidChange(WKViewRef viewRef)
