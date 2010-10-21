@@ -3226,8 +3226,6 @@ BUG59671 LINUX : svg/custom/focus-ring.svg = IMAGE+TEXT PASS
 BUG59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
 BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
-BUGWK47514 WIN LINUX : fast/transforms/scrollIntoView-transformed.html = TEXT
-
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 
