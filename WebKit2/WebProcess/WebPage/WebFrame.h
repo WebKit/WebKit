@@ -104,8 +104,10 @@ public:
     LoadListener* loadListener() const { return m_loadListener; }
 
 private:
-    static PassRefPtr<WebFrame> create(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
-    WebFrame(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
+    static PassRefPtr<WebFrame> create();
+    WebFrame();
+
+    void init(WebPage*, const String& frameName, WebCore::HTMLFrameOwnerElement*);
 
     virtual Type type() const { return APIType; }
 

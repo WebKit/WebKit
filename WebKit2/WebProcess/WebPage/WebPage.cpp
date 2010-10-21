@@ -129,7 +129,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     Settings::setMinDOMTimerInterval(0.004);
 
     m_mainFrame = WebFrame::createMainFrame(this);
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidCreateMainFrame(m_mainFrame->frameID()), m_pageID);
 
 #ifndef NDEBUG
     webPageCounter.increment();

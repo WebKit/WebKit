@@ -23,42 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleController_h
-#define InjectedBundleController_h
+#include "Test.h"
 
-#include <WebKit2/WKBundle.h>
-#include <map>
-#include <string>
+#include "PlatformUtilities.h"
+#include "PlatformWebView.h"
+#include <WebKit2/WebKit2.h>
+#include <WebKit2/WKRetainPtr.h>
 
 namespace TestWebKitAPI {
 
-class InjectedBundleTest;
+static bool done;
 
-class InjectedBundleController {
-public:
-    static InjectedBundleController& shared();
+static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
+{
+    TEST_ASSERT(frame);
+    TEST_ASSERT(WKFrameGetPage(frame) == page);
+    TEST_ASSERT(WKStringIsEqualToUTF8CString(alertText, "an alert"));
 
-    void initialize(WKBundleRef);
+    done = true;
+}
 
-    void dumpTestNames();
-    void initializeTestNamed(WKBundleRef bundle, const std::string&);
+TEST(WebKit2, DocumentStartUserScriptAlertCrashTest)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("DocumentStartUserScriptAlertCrashTest"));
+    WKRetainPtr<WKPageNamespaceRef> pageNamespace(AdoptWK, WKPageNamespaceCreate(context.get()));
+    PlatformWebView webView(pageNamespace.get());
 
-    typedef InjectedBundleTest* (*CreateInjectedBundleTestFunction)(const std::string&);
-    void registerCreateInjectedBundleTestFunction(const std::string&, CreateInjectedBundleTestFunction);
+    WKPageUIClient uiClient;
+    memset(&uiClient, 0, sizeof(uiClient));
+    uiClient.version = 0;
+    uiClient.clientInfo = 0;
+    uiClient.runJavaScriptAlert = runJavaScriptAlert;
+    WKPageSetPageUIClient(webView.page(), &uiClient);
 
-private:
-    InjectedBundleController();
-    ~InjectedBundleController();
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
+    WKPageLoadURL(webView.page(), url.get());
 
-    static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
-    static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
-    static void didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
-
-    std::map<std::string, CreateInjectedBundleTestFunction> m_createInjectedBundleTestFunctions;
-    WKBundleRef m_bundle;
-    InjectedBundleTest* m_currentTest;
-};
+    Util::run(&done);
+}
 
 } // namespace TestWebKitAPI
-
-#endif // InjectedBundleController_h

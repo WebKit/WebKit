@@ -1,3 +1,27 @@
+2010-10-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Null frame passed when running alert from UserScript run at document start
+        <rdar://problem/8573809>
+        https://bugs.webkit.org/show_bug.cgi?id=48036
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::didReceiveMessage):
+        (TestWebKitAPI::InjectedBundleController::initializeTestNamed):
+        * TestWebKitAPI/InjectedBundleController.h:
+        * TestWebKitAPI/InjectedBundleTest.h:
+        (TestWebKitAPI::InjectedBundleTest::initialize):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp: Added.
+        (TestWebKitAPI::runJavaScriptAlert):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp: Added.
+        (TestWebKitAPI::DocumentStartUserScriptAlertCrashTest::DocumentStartUserScriptAlertCrashTest):
+        (TestWebKitAPI::DocumentStartUserScriptAlertCrashTest::initialize):
+        Add test for invoking an alert during a UserScript run at document start.
+
 2010-10-21  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Adam Roben.
@@ -127,8 +151,8 @@
 
         Reviewed by Adam Roben.
 
-        https://bugs.webkit.org/show_bug.cgi?id=48027
         Add ability to test injected bundle API using TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=48027
 
         * TestWebKitAPI/InjectedBundleController.cpp: Added.
         * TestWebKitAPI/InjectedBundleController.h: Added.

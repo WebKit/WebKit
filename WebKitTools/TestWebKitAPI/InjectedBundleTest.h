@@ -34,7 +34,7 @@ class InjectedBundleTest {
 public:
     virtual ~InjectedBundleTest() { }
 
-    virtual void initialize() { }
+    virtual void initialize(WKBundleRef) { }
 
     virtual void didCreatePage(WKBundleRef, WKBundlePageRef) { }
     virtual void willDestroyPage(WKBundleRef, WKBundlePageRef) { }

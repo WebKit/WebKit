@@ -23,42 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleController_h
-#define InjectedBundleController_h
-
-#include <WebKit2/WKBundle.h>
-#include <map>
-#include <string>
+#include "InjectedBundleTest.h"
+#include <WebKit2/WebKit2.h>
+#include <WebKit2/WKBundlePrivate.h>
+#include <WebKit2/WKBundleScriptWorld.h>
+#include <WebKit2/WKRetainPtr.h>
 
 namespace TestWebKitAPI {
 
-class InjectedBundleTest;
-
-class InjectedBundleController {
+class DocumentStartUserScriptAlertCrashTest : public InjectedBundleTest {
 public:
-    static InjectedBundleController& shared();
+    DocumentStartUserScriptAlertCrashTest(const std::string& identifier)
+        : InjectedBundleTest(identifier)
+    {
+    }
 
-    void initialize(WKBundleRef);
-
-    void dumpTestNames();
-    void initializeTestNamed(WKBundleRef bundle, const std::string&);
-
-    typedef InjectedBundleTest* (*CreateInjectedBundleTestFunction)(const std::string&);
-    void registerCreateInjectedBundleTestFunction(const std::string&, CreateInjectedBundleTestFunction);
-
-private:
-    InjectedBundleController();
-    ~InjectedBundleController();
-
-    static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
-    static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
-    static void didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
-
-    std::map<std::string, CreateInjectedBundleTestFunction> m_createInjectedBundleTestFunctions;
-    WKBundleRef m_bundle;
-    InjectedBundleTest* m_currentTest;
+    virtual void initialize(WKBundleRef bundle)
+    {
+        WKRetainPtr<WKStringRef> source(AdoptWK, WKStringCreateWithUTF8CString("alert('an alert');"));
+        WKBundleAddUserScript(bundle, WKBundleScriptWorldNormalWorld(), source.get(), 0, 0, 0, kWKInjectAtDocumentStart, kWKInjectInAllFrames);
+    }
 };
 
-} // namespace TestWebKitAPI
+static InjectedBundleTest::Register<DocumentStartUserScriptAlertCrashTest> registrar("DocumentStartUserScriptAlertCrashTest");
 
-#endif // InjectedBundleController_h
+} // namespace TestWebKitAPI
