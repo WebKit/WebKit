@@ -1,3 +1,30 @@
+2010-10-21  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/48047> Fix warnings found by check-Xcode-source-file-types
+
+        Reviewed by Adam Roben.
+
+        Fixes the following warnings:
+
+            WARNING: Incorrect file type 'sourcecode.cpp.objcpp' for file 'PixelDumpSupport.cpp'.
+            WARNING: Incorrect file type 'sourcecode.cpp.objcpp' for file 'LayoutTestController.cpp'.
+            WARNING: Incorrect file type 'sourcecode.cpp.objcpp' for file 'WorkQueue.cpp'.
+            WARNING: Incorrect file type 'sourcecode.cpp.objcpp' for file 'cg/PixelDumpSupportCG.cpp'.
+            WARNING: Incorrect file type 'sourcecode.cpp.objcpp' for file 'GCController.cpp'.
+            5 issues found for WebKitTools/DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Removed explicit file type for *.cpp files above to make them
+        match other C++ source files.  This exposed the fact that
+        DumpRenderTreeMac.h was not safe to include in C++ source, which
+        caused PixelDumpSupport.cpp and PixelDumpSupportCG.cpp to fail
+        to build.
+        * DumpRenderTree/PixelDumpSupport.cpp: Adjusted header order.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: Made safe to include
+        in C++ source files.  Included CoreFoundation/CoreFoundation.h
+        to make sure all CF types were defined.  Removed CFStringRef
+        typedef.
+
 2010-10-21  Adam Roben  <aroben@apple.com>
 
         Attempt to fix plugins/pass-different-npp-struct.html on GTK.

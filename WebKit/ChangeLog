@@ -1,3 +1,17 @@
+2010-10-21  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/48047> Fix warnings found by check-Xcode-source-file-types
+
+        Reviewed by Adam Roben.
+
+        Fixes the following warning:
+
+            WARNING: Incorrect file type 'sourcecode.cpp.objcpp' for file 'WebStringTruncator.h'.
+            1 issues found for WebKit/WebKit.xcodeproj/project.pbxproj.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed explicit file type
+        for WebStringTruncator.h to make it match other header files.
+
 2010-10-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

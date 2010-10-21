@@ -29,6 +29,8 @@
 #ifndef DumpRenderTreeMac_h
 #define DumpRenderTreeMac_h
 
+#include <CoreFoundation/CoreFoundation.h>
+
 // FIXME: we should add a config.h file for DumpRenderTree.
 #define WTF_PLATFORM_CF 1
 
@@ -40,14 +42,21 @@
 #define BUILDING_ON_SNOW_LEOPARD 1
 #endif
 
+#ifdef __OBJC__
 @class DumpRenderTreeDraggingInfo;
 @class NavigationController;
 @class PolicyDelegate;
 @class WebFrame;
 @class WebScriptWorld;
 @class WebView;
-
-typedef const struct __CFString* CFStringRef;
+#else
+class DumpRenderTreeDraggingInfo;
+class NavigationController;
+class PolicyDelegate;
+class WebFrame;
+class WebScriptWorld;
+class WebView;
+#endif
 
 extern CFMutableArrayRef openWindowsRef;
 extern CFMutableSetRef disallowedURLs;

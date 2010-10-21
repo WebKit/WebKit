@@ -27,9 +27,10 @@
  */
 
 #include "config.h"
+#include "PixelDumpSupport.h"
+
 #include "DumpRenderTree.h"
 #include "LayoutTestController.h"
-#include "PixelDumpSupport.h"
 #include <cstdio>
 #include <wtf/Assertions.h>
 #include <wtf/RefPtr.h>
