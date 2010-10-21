@@ -1,3 +1,11 @@
+2010-10-21  Adam Roben  <aroben@apple.com>
+
+        Attempt to fix plugins/pass-different-npp-struct.html on GTK.
+
+        See <http://webkit.org/b/47690>.
+
+        * GNUmakefile.am: Added PassDifferentNPPStruct.cpp.
+
 2010-10-21  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
