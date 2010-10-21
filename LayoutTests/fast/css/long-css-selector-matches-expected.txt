@@ -1,4 +1,0 @@
-Hello World
-Test case for http://bugs.webkit.org/show_bug.cgi?id=43783
-
-If browser didn't crash, the test passed.

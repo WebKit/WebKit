@@ -939,7 +939,7 @@ EInsideLink CSSStyleSelector::SelectorChecker::determineLinkStateSlowCase(Elemen
 bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* element) const
 {
     PseudoId dynamicPseudo = NOPSEUDO;
-    return checkSelector(sel, element, 0, dynamicPseudo, false, false);
+    return checkSelector(sel, element, 0, dynamicPseudo, false, false) == SelectorMatches;
 }
 
 static const unsigned cStyleSearchThreshold = 10;
@@ -1909,7 +1909,8 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel)
     m_dynamicPseudo = NOPSEUDO;
 
     // Check the selector
-    if (!m_checker.checkSelector(sel, m_element, &m_selectorAttrs, m_dynamicPseudo, false, false, style(), m_parentNode ? m_parentNode->renderStyle() : 0))
+    SelectorMatch match = m_checker.checkSelector(sel, m_element, &m_selectorAttrs, m_dynamicPseudo, false, false, style(), m_parentNode ? m_parentNode->renderStyle() : 0);
+    if (match != SelectorMatches)
         return false;
 
     if (m_checker.m_pseudoStyle != NOPSEUDO && m_checker.m_pseudoStyle != m_dynamicPseudo)
@@ -1918,220 +1919,114 @@ bool CSSStyleSelector::checkSelector(CSSSelector* sel)
     return true;
 }
 
-namespace {
-
-// Internally used from CSSStyleSelector::SelectorChecker::checkSelector.
-struct CallState {
-    enum State {
-        SeekingDescendant, SeekingIndirectAdjacent,
-    };
-
-    State state;
-    CSSSelector* selector;
-    Element* element;
-    bool isSubSelector;
-    bool encounteredLink;
-    RenderStyle* elementStyle;
-    RenderStyle* elementParentStyle;
-
-    CallState(State state, CSSSelector* selector, Element* element, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle)
-        : state(state)
-        , selector(selector)
-        , element(element)
-        , isSubSelector(isSubSelector)
-        , encounteredLink(encounteredLink)
-        , elementStyle(elementStyle)
-        , elementParentStyle(elementParentStyle)
-    {
-    }
-};
-
-class CallStack {
-public:
-    bool isEmpty() const
-    {
-        return m_stack.isEmpty();
-    }
-
-    void push(const CallState& state)
-    {
-        m_stack.append(state);
-    }
-
-    CallState pop()
-    {
-        ASSERT(!isEmpty());
-        CallState state = m_stack.last();
-        m_stack.removeLast();
-        return state;
-    }
-
-private:
-    Vector<CallState, 20> m_stack;
-};
-
-} // anonymous namespace
-
-// Check selectors and combinators.
-bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* selector, Element* element, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
+// Recursive check of selectors and combinators
+// It can return 3 different values:
+// * SelectorMatches         - the selector matches the element e
+// * SelectorFailsLocally    - the selector fails for the element e
+// * SelectorFailsCompletely - the selector fails for e and any sibling or ancestor of e
+CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
-    // We should avoid recursive calls, which might cause stack overflow if the chain of selector is very long.
-    // Therefore we have to maintain a call stack by ourselves so that we can check selectors iteratively.
-    CallStack callStack;
-    while (true) {
 #if ENABLE(SVG)
-        // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
-        // because its contents are not part of the formal document structure.
-        if (element->isSVGElement() && element->isShadowNode())
-            return false;
+    // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
+    // because its contents are not part of the formal document structure.
+    if (e->isSVGElement() && e->isShadowNode())
+        return SelectorFailsCompletely;
 #endif
-        // first selector has to match
-        bool matched = checkOneSelector(selector, element, selectorAttrs, dynamicPseudo, isSubSelector, elementStyle, elementParentStyle);
-        bool needUnwinding = !matched;
 
-        if (matched) {
-            // The rest of the selectors has to match
-            CSSSelector::Relation relation = selector->relation();
+    // first selector has to match
+    if (!checkOneSelector(sel, e, selectorAttrs, dynamicPseudo, isSubSelector, elementStyle, elementParentStyle))
+        return SelectorFailsLocally;
 
-            // Prepare next sel
-            selector = selector->tagHistory();
-            if (!selector)
-                return true;
+    // The rest of the selectors has to match
+    CSSSelector::Relation relation = sel->relation();
 
-            if (relation != CSSSelector::SubSelector)
-                // Bail-out if this selector is irrelevant for the pseudoStyle
-                if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != dynamicPseudo)
-                    return false;
+    // Prepare next sel
+    sel = sel->tagHistory();
+    if (!sel)
+        return SelectorMatches;
 
-            // Check for nested links.
-            if (m_matchVisitedPseudoClass && !isSubSelector) {
-                RenderStyle* currentStyle = elementStyle ? elementStyle : element->renderStyle();
-                if (currentStyle && currentStyle->insideLink() && element->isLink()) {
-                    if (encounteredLink)
-                        m_matchVisitedPseudoClass = false; // This link is not relevant to the style being resolved, so disable matching.
-                    else
-                        encounteredLink = true;
-                }
-            }
+    if (relation != CSSSelector::SubSelector)
+        // Bail-out if this selector is irrelevant for the pseudoStyle
+        if (m_pseudoStyle != NOPSEUDO && m_pseudoStyle != dynamicPseudo)
+            return SelectorFailsCompletely;
 
-            switch (relation) {
-            case CSSSelector::Descendant: {
-                ContainerNode* node = element->parentNode();
-                if (!node || !node->isElementNode())
-                    return false;
-                element = static_cast<Element*>(node);
-                callStack.push(CallState(CallState::SeekingDescendant, selector, element, isSubSelector, encounteredLink, elementStyle, elementParentStyle));
-                isSubSelector = false;
-                elementStyle = 0;
-                elementParentStyle = 0;
-                break;
-            }
-            case CSSSelector::Child: {
-                ContainerNode* node = element->parentNode();
-                if (!node || !node->isElementNode())
-                    return false;
-                element = static_cast<Element*>(node);
-                isSubSelector = false;
-                elementStyle = 0;
-                elementParentStyle = 0;
-                break;
-            }
-            case CSSSelector::DirectAdjacent: {
-                if (!m_collectRulesOnly && element->parentNode() && element->parentNode()->isElementNode()) {
-                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : element->parentNode()->renderStyle();
-                    if (parentStyle)
-                        parentStyle->setChildrenAffectedByDirectAdjacentRules();
-                }
-                Node* node = element->previousSibling();
-                while (node && !node->isElementNode())
-                    node = node->previousSibling();
-                if (!node) {
-                    needUnwinding = true;
-                    break;
-                }
-                element = static_cast<Element*>(node);
-                m_matchVisitedPseudoClass = false;
-                isSubSelector = false;
-                elementStyle = 0;
-                elementParentStyle = 0;
-                break;
-            }
-            case CSSSelector::IndirectAdjacent: {
-                if (!m_collectRulesOnly && element->parentNode() && element->parentNode()->isElementNode()) {
-                    RenderStyle* parentStyle = elementStyle ? elementParentStyle : element->parentNode()->renderStyle();
-                    if (parentStyle)
-                        parentStyle->setChildrenAffectedByForwardPositionalRules();
-                }
-                Node* node = element->previousSibling();
-                while (node && !node->isElementNode())
-                    node = node->previousSibling();
-                if (!node) {
-                    needUnwinding = true;
-                    break;
-                }
-                element = static_cast<Element*>(node);
-                m_matchVisitedPseudoClass = false;
-                callStack.push(CallState(CallState::SeekingIndirectAdjacent, selector, element, isSubSelector, encounteredLink, elementStyle, elementParentStyle));
-                isSubSelector = false;
-                elementStyle = 0;
-                elementParentStyle = 0;
-                break;
-            }
-            case CSSSelector::SubSelector:
-                // a selector is invalid if something follows a pseudo-element
-                // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
-                // to follow the pseudo elements.
-                if ((elementStyle || m_collectRulesOnly) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION
-                    && !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && selector->m_match == CSSSelector::PseudoClass))
-                    return false;
-                isSubSelector = true;
-                break;
-            }
+    // Check for nested links.
+    if (m_matchVisitedPseudoClass && !isSubSelector) {
+        RenderStyle* currentStyle = elementStyle ? elementStyle : e->renderStyle();
+        if (currentStyle && currentStyle->insideLink() && e->isLink()) {
+            if (encounteredLink)
+                m_matchVisitedPseudoClass = false; // This link is not relevant to the style being resolved, so disable matching.
+            else
+                encounteredLink = true;
         }
-        if (!needUnwinding)
-            continue;
-        while (!callStack.isEmpty()) {
-            // Unwinds call stack.
-            CallState callState = callStack.pop();
-            selector = callState.selector;
-            element = callState.element;
-            isSubSelector = callState.isSubSelector;
-            encounteredLink = callState.encounteredLink;
-            elementStyle = callState.elementStyle;
-            elementParentStyle = callState.elementParentStyle;
+    }
 
-            switch (callState.state) {
-            case CallState::SeekingDescendant: {
-                ContainerNode* node = element->parentNode();
-                if (!node || !node->isElementNode())
-                    return false;
-                element = static_cast<Element*>(node);
-                callStack.push(CallState(CallState::SeekingDescendant, selector, element, isSubSelector, encounteredLink, elementStyle, elementParentStyle));
-                isSubSelector = false;
-                elementStyle = 0;
-                elementParentStyle = 0;
-                break;
-            }
-            case CallState::SeekingIndirectAdjacent: {
-                Node* node = element->previousSibling();
-                while (node && !node->isElementNode())
-                    node = node->previousSibling();
-                if (!node)
-                    continue; // Continue to next while loop to unwind callStack further.
-                element = static_cast<Element*>(node);
-                m_matchVisitedPseudoClass = false;
-                callStack.push(CallState(CallState::SeekingIndirectAdjacent, selector, element, isSubSelector, encounteredLink, elementStyle, elementParentStyle));
-                isSubSelector = false;
-                elementStyle = 0;
-                elementParentStyle = 0;
-                break;
-            }
+    switch (relation) {
+        case CSSSelector::Descendant:
+            while (true) {
+                ContainerNode* n = e->parentNode();
+                if (!n || !n->isElementNode())
+                    return SelectorFailsCompletely;
+                e = static_cast<Element*>(n);
+                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
+                if (match != SelectorFailsLocally)
+                    return match;
             }
             break;
+        case CSSSelector::Child:
+        {
+            ContainerNode* n = e->parentNode();
+            if (!n || !n->isElementNode())
+                return SelectorFailsCompletely;
+            e = static_cast<Element*>(n);
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
         }
-        if (callStack.isEmpty())
-            return false;
+        case CSSSelector::DirectAdjacent:
+        {
+            if (!m_collectRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
+                RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
+                if (parentStyle)
+                    parentStyle->setChildrenAffectedByDirectAdjacentRules();
+            }
+            Node* n = e->previousSibling();
+            while (n && !n->isElementNode())
+                n = n->previousSibling();
+            if (!n)
+                return SelectorFailsLocally;
+            e = static_cast<Element*>(n);
+            m_matchVisitedPseudoClass = false;
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink); 
+        }
+        case CSSSelector::IndirectAdjacent:
+            if (!m_collectRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
+                RenderStyle* parentStyle = elementStyle ? elementParentStyle : e->parentNode()->renderStyle();
+                if (parentStyle)
+                    parentStyle->setChildrenAffectedByForwardPositionalRules();
+            }
+            while (true) {
+                Node* n = e->previousSibling();
+                while (n && !n->isElementNode())
+                    n = n->previousSibling();
+                if (!n)
+                    return SelectorFailsLocally;
+                e = static_cast<Element*>(n);
+                m_matchVisitedPseudoClass = false;
+                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
+                if (match != SelectorFailsLocally)
+                    return match;
+            };
+            break;
+        case CSSSelector::SubSelector:
+            // a selector is invalid if something follows a pseudo-element
+            // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
+            // to follow the pseudo elements.
+            if ((elementStyle || m_collectRulesOnly) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION &&
+                !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && sel->m_match == CSSSelector::PseudoClass))
+                return SelectorFailsCompletely;
+            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle);
     }
+
+    return SelectorFailsCompletely;
 }
 
 static void addLocalNameToSet(HashSet<AtomicStringImpl*>* set, const QualifiedName& qName)
