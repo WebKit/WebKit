@@ -701,11 +701,8 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty)
             paintMask(paintInfo, tx, ty);
             return;
         } else {
-            // 1. Paint our background, border and box-shadow.
+            // Paint our background, border and box-shadow.
             paintBoxDecorations(paintInfo, tx, ty);
-
-            // 2. Paint our underline and overline.
-            paintTextDecorations(paintInfo, tx, ty, false);
         }
     }
 
@@ -717,17 +714,13 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty)
     childInfo.phase = paintPhase;
     childInfo.updatePaintingRootForChildren(renderer());
     
-    // 3. Paint our children.
+    // Paint our children.
     if (paintPhase != PaintPhaseSelfOutline) {
         for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
             if (curr->renderer()->isText() || !curr->boxModelObject()->hasSelfPaintingLayer())
                 curr->paint(childInfo, tx, ty);
         }
     }
-
-    // 4. Paint our strike-through
-    if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)
-        paintTextDecorations(paintInfo, tx, ty, true);
 }
 
 void InlineFlowBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, int _tx, int _ty, int w, int h, CompositeOperator op)
@@ -928,163 +921,6 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     
     if (pushTransparencyLayer)
         paintInfo.context->endTransparencyLayer();
-}
-
-static bool shouldDrawTextDecoration(RenderObject* obj)
-{
-    for (RenderObject* curr = obj->firstChild(); curr; curr = curr->nextSibling()) {
-        if (curr->isRenderInline())
-            return true;
-        if (curr->isText() && !curr->isBR()) {
-            if (!curr->style()->collapseWhiteSpace())
-                return true;
-            Node* currElement = curr->node();
-            if (!currElement)
-                return true;
-            if (!currElement->isTextNode())
-                return true;
-            if (!static_cast<Text*>(currElement)->containsOnlyWhitespace())
-                return true;
-        }
-    }
-    return false;
-}
-
-void InlineFlowBox::paintTextDecorations(PaintInfo& paintInfo, int tx, int ty, bool paintedChildren)
-{
-    // Paint text decorations like underlines/overlines. We only do this if we aren't in quirks mode (i.e., in
-    // almost-strict mode or strict mode).
-    if (renderer()->document()->inQuirksMode() || !paintInfo.shouldPaintWithinRoot(renderer()) ||
-        renderer()->style()->visibility() != VISIBLE)
-        return;
-    
-    // We don't want underlines or other decorations when we're trying to draw nothing but the selection as white text.
-    if (paintInfo.phase == PaintPhaseSelection && paintInfo.forceBlackText)
-        return;
-
-    GraphicsContext* context = paintInfo.context;
-    tx += m_x;
-    ty += m_y;
-    RenderStyle* styleToUse = renderer()->style(m_firstLine);
-    int deco = parent() ? styleToUse->textDecoration() : styleToUse->textDecorationsInEffect();
-    if (deco != TDNONE && 
-        ((!paintedChildren && ((deco & UNDERLINE) || (deco & OVERLINE))) || (paintedChildren && (deco & LINE_THROUGH))) &&
-        shouldDrawTextDecoration(renderer())) {
-        int x = m_x + borderLogicalLeft() + paddingLogicalLeft();
-        int w = m_logicalWidth - (borderLogicalLeft() + paddingLogicalLeft() + borderLogicalRight() + paddingLogicalRight());
-        RootInlineBox* rootLine = root();
-        if (rootLine->ellipsisBox()) {
-            int ellipsisX = m_x + rootLine->ellipsisBox()->x();
-            int ellipsisWidth = rootLine->ellipsisBox()->logicalWidth();
-            bool ltr = renderer()->style()->isLeftToRightDirection();
-            if (rootLine == this) {
-                // Trim w and x so that the underline isn't drawn underneath the ellipsis.
-                // ltr: is our right edge farther right than the right edge of the ellipsis.
-                // rtl: is the left edge of our box farther left than the left edge of the ellipsis.
-                bool ltrTruncation = ltr && (x + w >= ellipsisX + ellipsisWidth);
-                bool rtlTruncation = !ltr && (x <= ellipsisX + ellipsisWidth);
-                if (ltrTruncation)
-                    w -= (x + w) - (ellipsisX + ellipsisWidth);
-                else if (rtlTruncation) {
-                    int dx = m_x - ((ellipsisX - m_x) + ellipsisWidth);
-                    tx -= dx;
-                    w += dx;
-                }
-            } else {
-                bool ltrPastEllipsis = ltr && x >= ellipsisX;
-                bool rtlPastEllipsis = !ltr && (x + w) <= (ellipsisX + ellipsisWidth);
-                if (ltrPastEllipsis || rtlPastEllipsis)
-                    return;
-
-                bool ltrTruncation = ltr && x + w >= ellipsisX;
-                bool rtlTruncation = !ltr && x <= ellipsisX;
-                if (ltrTruncation)
-                    w -= (x + w - ellipsisX);
-                else if (rtlTruncation) {
-                    int dx = m_x - ((ellipsisX - m_x) + ellipsisWidth);
-                    tx -= dx;
-                    w += dx;
-                }
-            }
-        }
-
-        // We must have child boxes and have decorations defined.
-        tx += borderLogicalLeft() + paddingLogicalLeft();
-
-        Color underline, overline, linethrough;
-        underline = overline = linethrough = styleToUse->visitedDependentColor(CSSPropertyColor);
-        if (!parent())
-            renderer()->getTextDecorationColors(deco, underline, overline, linethrough);
-
-        bool isPrinting = renderer()->document()->printing();
-        context->setStrokeThickness(1.0f); // FIXME: We should improve this rule and not always just assume 1.
-
-        bool paintUnderline = deco & UNDERLINE && !paintedChildren;
-        bool paintOverline = deco & OVERLINE && !paintedChildren;
-        bool paintLineThrough = deco & LINE_THROUGH && paintedChildren;
-
-        bool linesAreOpaque = !isPrinting && (!paintUnderline || underline.alpha() == 255) && (!paintOverline || overline.alpha() == 255) && (!paintLineThrough || linethrough.alpha() == 255);
-
-        int baselinePos = renderer()->style(m_firstLine)->font().ascent();
-        if (!isRootInlineBox())
-            baselinePos += boxModelObject()->borderTop() + boxModelObject()->paddingTop();
-
-        bool setClip = false;
-        int extraOffset = 0;
-        const ShadowData* shadow = styleToUse->textShadow();
-        if (!linesAreOpaque && shadow && shadow->next()) {
-            IntRect clipRect(tx, ty, w, baselinePos + 2);
-            for (const ShadowData* s = shadow; s; s = s->next()) {
-                IntRect shadowRect(tx, ty, w, baselinePos + 2);
-                shadowRect.inflate(s->blur());
-                shadowRect.move(s->x(), s->y());
-                clipRect.unite(shadowRect);
-                extraOffset = max(extraOffset, max(0, s->y()) + s->blur());
-            }
-            context->save();
-            context->clip(clipRect);
-            extraOffset += baselinePos + 2;
-            ty += extraOffset;
-            setClip = true;
-        }
-
-        ColorSpace colorSpace = renderer()->style()->colorSpace();
-        bool setShadow = false;
-        do {
-            if (shadow) {
-                if (!shadow->next()) {
-                    // The last set of lines paints normally inside the clip.
-                    ty -= extraOffset;
-                    extraOffset = 0;
-                }
-                context->setShadow(IntSize(shadow->x(), shadow->y() - extraOffset), shadow->blur(), shadow->color(), colorSpace);
-                setShadow = true;
-                shadow = shadow->next();
-            }
-
-            if (paintUnderline) {
-                context->setStrokeColor(underline, colorSpace);
-                context->setStrokeStyle(SolidStroke);
-                // Leave one pixel of white between the baseline and the underline.
-                context->drawLineForText(IntPoint(tx, ty + baselinePos + 1), w, isPrinting);
-            }
-            if (paintOverline) {
-                context->setStrokeColor(overline, colorSpace);
-                context->setStrokeStyle(SolidStroke);
-                context->drawLineForText(IntPoint(tx, ty), w, isPrinting);
-            }
-            if (paintLineThrough) {
-                context->setStrokeColor(linethrough, colorSpace);
-                context->setStrokeStyle(SolidStroke);
-                context->drawLineForText(IntPoint(tx, ty + 2 * baselinePos / 3), w, isPrinting);
-            }
-        } while (shadow);
-
-        if (setClip)
-            context->restore();
-        else if (setShadow)
-            context->clearShadow();
-    }
 }
 
 InlineBox* InlineFlowBox::firstLeafChild() const
