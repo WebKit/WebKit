@@ -81,6 +81,7 @@ class Page;
 class ResourceRequest;
 class ResourceResponse;
 class ResourceError;
+class ScriptArguments;
 class ScriptCallStack;
 class ScriptProfile;
 class SharedBuffer;
@@ -145,8 +146,8 @@ public:
     void disconnectFrontend();
 
     void setConsoleMessagesEnabled(bool enabled, bool* newState);
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, ScriptCallStack*, const String& message);
-    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
+    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, PassOwnPtr<ScriptArguments> arguments, PassOwnPtr<ScriptCallStack>);
+    void addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned lineNumber, const String&);
     void clearConsoleMessages();
     const Vector<OwnPtr<ConsoleMessage> >& consoleMessages() const { return m_consoleMessages; }
 
@@ -232,7 +233,7 @@ public:
     void startTiming(const String& title);
     bool stopTiming(const String& title, double& elapsed);
 
-    void startGroup(MessageSource source, ScriptCallStack* callFrame, bool collapsed = false);
+    void startGroup(PassOwnPtr<ScriptArguments>, PassOwnPtr<ScriptCallStack> callFrame, bool collapsed = false);
     void endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL);
 
     void markTimeline(const String& message);

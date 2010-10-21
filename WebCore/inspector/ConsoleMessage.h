@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #define ConsoleMessage_h
 
 #include "Console.h"
-#include "KURL.h"
 #include "ScriptState.h"
 
 #include <wtf/Vector.h>
@@ -41,6 +40,7 @@ namespace WebCore {
 class InjectedScriptHost;
 class InspectorFrontend;
 class InspectorObject;
+class ScriptArguments;
 class ScriptCallFrame;
 class ScriptCallStack;
 class ScriptValue;
@@ -48,12 +48,10 @@ class ScriptValue;
 class ConsoleMessage : public Noncopyable {
 public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, unsigned li, const String& u, unsigned g);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, ScriptCallStack*, unsigned g, bool storeTrace = false);
+    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassOwnPtr<ScriptArguments>, PassOwnPtr<ScriptCallStack>, unsigned g);
 
-#if ENABLE(INSPECTOR)
     void addToFrontend(InspectorFrontend*, InjectedScriptHost*);
     void updateRepeatCountInConsole(InspectorFrontend* frontend);
-#endif
     void incrementCount() { ++m_repeatCount; }
     bool isEqual(ConsoleMessage* msg) const;
 
@@ -61,30 +59,12 @@ public:
     const String& message() const { return m_message; }
 
 private:
-    class CallFrame {
-    public:
-        explicit CallFrame(const ScriptCallFrame& frame);
-        CallFrame();
-        bool isEqual(const CallFrame& o) const;
-#if ENABLE(INSPECTOR)
-        PassRefPtr<InspectorObject> buildInspectorObject() const;
-#endif
-
-    private:
-        String m_functionName;
-        String m_sourceURL;
-        unsigned m_lineNumber;
-    };
-
     MessageSource m_source;
     MessageType m_type;
     MessageLevel m_level;
     String m_message;
-#if ENABLE(INSPECTOR)
-    Vector<ScriptValue> m_arguments;
-    ScriptStateProtectedPtr m_scriptState;
-#endif
-    Vector<CallFrame> m_frames;
+    OwnPtr<ScriptArguments> m_arguments;
+    OwnPtr<ScriptCallStack> m_callStack;
     unsigned m_line;
     String m_url;
     unsigned m_groupLevel;
