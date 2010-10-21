@@ -1436,7 +1436,8 @@ def _set_up_derived_options(port_obj, options):
 
     if not options.child_processes:
         # FIXME: Investigate perf/flakiness impact of using cpu_count + 1.
-        options.child_processes = str(port_obj.default_child_processes())
+        options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
+                                                 str(port_obj.default_child_processes()))
 
     if not options.configuration:
         options.configuration = port_obj.default_configuration()
