@@ -1,3 +1,14 @@
+2010-10-21  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] roll chromium DEPS to include forwarding headers refactor
+        https://bugs.webkit.org/show_bug.cgi?id=48097
+
+        * DEPS: Roll chromium forward to include new forwarding headers script
+        * WebKit.gyp: This dependency always existed, it's just exposed now
+            that the header files are in a different include dir.
+
 2010-10-21  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -961,6 +961,11 @@
                         ['exclude', '(Gtk|Linux)\\.cpp$']
                     ]
                 }],
+                ['inside_chromium_build==0', {
+                    'dependencies': [
+                        '<(chromium_src_dir)/webkit/support/setup_third_party.gyp:third_party_headers',
+                    ]
+                }],
             ],
         },
     ], # targets
