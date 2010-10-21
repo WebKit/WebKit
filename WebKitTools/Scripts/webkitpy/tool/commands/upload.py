@@ -171,6 +171,7 @@ class Post(AbstractPatchUploadingCommand):
         steps.CheckStyle,
         steps.ConfirmDiff,
         steps.ObsoletePatches,
+        steps.SuggestReviewers,
         steps.PostDiff,
     ]
 
@@ -219,6 +220,7 @@ class Upload(AbstractPatchUploadingCommand):
         steps.EditChangeLog,
         steps.ConfirmDiff,
         steps.ObsoletePatches,
+        steps.SuggestReviewers,
         steps.PostDiff,
     ]
     long_help = """upload uploads the current diff to bugs.webkit.org.

@@ -54,5 +54,6 @@ class Options(object):
     request_commit = make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review.")
     review = make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review.")
     reviewer = make_option("-r", "--reviewer", action="store", type="string", dest="reviewer", help="Update ChangeLogs to say Reviewed by REVIEWER.")
+    suggest_reviewers = make_option("--suggest-reviewers", action="store_true", default=False, help="Offer to CC appropriate reviewers.")
     test = make_option("--test", action="store_true", dest="test", default=False, help="Run run-webkit-tests before committing.")
     update = make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory.")

@@ -186,5 +186,6 @@ where ATTACHMENT_ID is the ID of this attachment.
 
     def test_rollout(self):
         expected_stderr = "Preparing rollout for bug 42.\nUpdating working directory\nRunning prepare-ChangeLog\nMOCK: user.open_url: file://...\nBuilding WebKit\n"
-        self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr)
+        expected_stdout = "Was that diff correct?\n"
+        self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stdout=expected_stdout, expected_stderr=expected_stderr)
 

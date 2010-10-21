@@ -236,11 +236,13 @@ class MockBugzillaQueries(Mock):
                 return patches[0]
         raise Exception('No patches in the rietveld queue')
 
+
+_mock_reviewer = Reviewer("Foo Bar", "foo@bar.com")
+
+
 # FIXME: Bugzilla is the wrong Mock-point.  Once we have a BugzillaNetwork
 #        class we should mock that instead.
 # Most of this class is just copy/paste from Bugzilla.
-
-
 class MockBugzilla(Mock):
 
     bug_server_url = "http://example.com"
@@ -258,7 +260,7 @@ class MockBugzilla(Mock):
     def __init__(self):
         Mock.__init__(self)
         self.queries = MockBugzillaQueries(self)
-        self.committers = CommitterList(reviewers=[Reviewer("Foo Bar", "foo@bar.com")])
+        self.committers = CommitterList(reviewers=[_mock_reviewer])
         self._override_patch = None
 
     def create_bug(self,
@@ -491,6 +493,8 @@ class MockCheckout(object):
     def apply_reverse_diff(self, revision):
         pass
 
+    def suggested_reviewers(self, git_commit, changed_files=None):
+        return [_mock_reviewer]
 
 class MockUser(object):
 
@@ -508,6 +512,7 @@ class MockUser(object):
         pass
 
     def confirm(self, message=None, default='y'):
+        print message
         return default == 'y'
 
     def can_open_url(self):

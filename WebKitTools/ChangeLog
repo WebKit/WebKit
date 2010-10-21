@@ -1,3 +1,22 @@
+2010-10-21  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add --suggest-reviewers option to upload to auto-suggest reviewers for your patch
+        https://bugs.webkit.org/show_bug.cgi?id=48088
+
+        This is a first-pass.  Works, but we'll eventually
+        turn this on by default, refine the suggestion algorithm
+        and possibly move it to a different place in the upload step order.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/options.py:
+
 2010-10-21  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.
