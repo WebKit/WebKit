@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,38 +28,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMenuItemInfo_h
-#define WebMenuItemInfo_h
-
-#include "WebCommon.h"
-#include "WebString.h"
-#include "WebVector.h"
+#ifndef WebExternalPopupMenuClient_h
+#define WebExternalPopupMenuClient_h
 
 namespace WebKit {
 
-struct WebMenuItemInfo {
-    enum Type {
-        Option,
-        CheckableOption,
-        Group,
-        Separator,
-    };
+class WebExternalPopupMenuClient {
+public:
+    // Should be called when the currently selected item in the popup menu
+    // changed. Can be -1 if there is no selection.
+    virtual void didChangeSelection(int index) = 0;
 
-    WebMenuItemInfo() 
-        : type(Option)
-        , action(0)
-        , enabled(false)
-        , checked(false)
-    {
-    }
+    // Should be called when an index has been accepted.
+    // Note that it is not safe to access this WebExternalPopupClientMenu after
+    // this has been called as it might not be valid anymore.
+    virtual void didAcceptIndex(int index) = 0;
 
-    WebString label;
-    Type type;
-    unsigned action;
-    bool enabled;
-    bool checked;
+    // Should be called when the popup menu was discarded (closed without a
+    // selection.
+    // Note that it is not safe to access this WebExternalPopupClientMenu after
+    // this has been called as it might not be valid anymore.
+    virtual void didCancel() = 0;
 };
 
 } // namespace WebKit
 
-#endif
+#endif // WebExternalPopupMenuClient_h

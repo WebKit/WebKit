@@ -273,6 +273,10 @@ public:
     // load.
     void didCommitLoad(bool* isNewNavigation);
 
+    // Returns true if popup menus should be rendered by the browser, false if
+    // they should be rendered by WebKit (which is the default).
+    static bool useExternalPopupMenus();
+
     bool contextMenuAllowed() const
     {
         return m_contextMenuAllowed;

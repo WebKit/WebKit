@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,38 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebMenuItemInfo_h
-#define WebMenuItemInfo_h
-
-#include "WebCommon.h"
-#include "WebString.h"
-#include "WebVector.h"
+#ifndef WebExternalPopupMenu_h
+#define WebExternalPopupMenu_h
 
 namespace WebKit {
 
-struct WebMenuItemInfo {
-    enum Type {
-        Option,
-        CheckableOption,
-        Group,
-        Separator,
-    };
+class WebRect;
 
-    WebMenuItemInfo() 
-        : type(Option)
-        , action(0)
-        , enabled(false)
-        , checked(false)
-    {
-    }
-
-    WebString label;
-    Type type;
-    unsigned action;
-    bool enabled;
-    bool checked;
+class WebExternalPopupMenu {
+public:
+    virtual void show(const WebRect& bounds) = 0;
+    virtual void close() = 0;
 };
 
 } // namespace WebKit
 
-#endif
+#endif // WebExternalPopupMenu_h

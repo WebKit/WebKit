@@ -40,6 +40,7 @@
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "ExternalPopupMenu.h"
 #include "FileChooser.h"
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
@@ -833,6 +834,9 @@ bool ChromeClientImpl::selectItemWritingDirectionIsNatural()
 
 PassRefPtr<PopupMenu> ChromeClientImpl::createPopupMenu(PopupMenuClient* client) const
 {
+    if (WebViewImpl::useExternalPopupMenus())
+        return adoptRef(new ExternalPopupMenu(client, m_webView->client()));
+    
     return adoptRef(new PopupMenuChromium(client));
 }
 

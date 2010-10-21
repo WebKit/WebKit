@@ -48,6 +48,8 @@ class WebAccessibilityObject;
 class WebDeviceOrientationClient;
 class WebDragData;
 class WebElement;
+class WebExternalPopupMenu;
+class WebExternalPopupMenuClient;
 class WebFileChooserCompletion;
 class WebFrame;
 class WebGeolocationService;
@@ -87,6 +89,8 @@ public:
     // responsible for rendering the contents of the popup menu.
     virtual WebWidget* createPopupMenu(WebPopupType) { return 0; }
     virtual WebWidget* createPopupMenu(const WebPopupMenuInfo&) { return 0; }
+    virtual WebExternalPopupMenu* createExternalPopupMenu(
+        const WebPopupMenuInfo&, WebExternalPopupMenuClient*) { return 0; }
 
     // Create a session storage namespace object associated with this WebView.
     virtual WebStorageNamespace* createSessionStorageNamespace(unsigned quota) { return 0; }

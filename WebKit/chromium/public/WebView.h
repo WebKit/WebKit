@@ -69,13 +69,13 @@ public:
         UserContentInjectInAllFrames,
         UserContentInjectInTopFrameOnly
     };
-    
+
     // Controls which documents user styles are injected into.
     enum UserStyleInjectionTime {
         UserStyleInjectInExistingDocuments,
         UserStyleInjectInSubsequentDocuments
     };
-    
+
 
     // Initialization ------------------------------------------------------
 
@@ -313,6 +313,12 @@ public:
     // Context menu --------------------------------------------------------
 
     virtual void performCustomContextMenuAction(unsigned action) = 0;
+
+
+    // Popup menu ----------------------------------------------------------
+
+    // Sets whether select popup menus should be rendered by the browser.
+    WEBKIT_API static void setUseExternalPopupMenus(bool);
 
 
     // Visited link state --------------------------------------------------

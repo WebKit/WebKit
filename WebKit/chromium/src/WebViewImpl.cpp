@@ -182,6 +182,8 @@ static const PopupContainerSettings autoFillPopupSettings = {
     PopupContainerSettings::DOMElementDirection,
 };
 
+static bool shouldUseExternalPopupMenus = false;
+
 // WebView ----------------------------------------------------------------
 
 WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devToolsClient)
@@ -191,6 +193,11 @@ WebView* WebView::create(WebViewClient* client, WebDevToolsAgentClient* devTools
 
     // Pass the WebViewImpl's self-reference to the caller.
     return adoptRef(new WebViewImpl(client, devToolsClient)).leakRef();
+}
+
+void WebView::setUseExternalPopupMenus(bool useExternalPopupMenus)
+{
+    shouldUseExternalPopupMenus = useExternalPopupMenus;
 }
 
 void WebView::updateVisitedLinkState(unsigned long long linkHash)
@@ -2105,6 +2112,11 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation)
     m_newNavigationLoader = 0;
 #endif
     m_observedNewNavigation = false;
+}
+
+bool WebViewImpl::useExternalPopupMenus()
+{
+    return shouldUseExternalPopupMenus;
 }
 
 bool WebViewImpl::navigationPolicyFromMouseEvent(unsigned short button,

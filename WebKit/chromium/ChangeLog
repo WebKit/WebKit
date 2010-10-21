@@ -1,3 +1,30 @@
+2010-10-21  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Adding an API that allows external
+        popup menus, without the use of WebCore::PopupMenuChromium.
+        Once this is hooked up in Chromium, the plan is to remove
+        entirely the external case from PopupMenuChromium.
+        https://bugs.webkit.org/show_bug.cgi?id=46016
+
+        * WebKit.gyp:
+        * public/WebExternalPopupMenu.h: Added.
+        * public/WebExternalPopupMenuClient.h: Added.
+        * public/WebMenuItemInfo.h:
+        (WebKit::WebMenuItemInfo::WebMenuItemInfo):
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::createExternalPopupMenu):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createPopupMenu):
+        * src/ExternalPopupMenu.cpp: Added.
+        * src/ExternalPopupMenu.h: Added.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebView::setUseExternalPopupMenus):
+        (WebKit::WebViewImpl::useExternalPopupMenus):
+        * src/WebViewImpl.h:
+
 2010-10-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r70165.
