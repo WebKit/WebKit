@@ -1,3 +1,12 @@
+2010-10-21  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [NRWT] Set ImageDiff path on Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=48052
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+
 2010-10-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

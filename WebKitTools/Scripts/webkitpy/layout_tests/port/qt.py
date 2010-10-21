@@ -92,6 +92,9 @@ class QtPort(WebKitPort):
     def _path_to_driver(self):
         return self._build_path('bin/DumpRenderTree')
 
+    def _path_to_image_diff(self):
+        return self._build_path('bin/ImageDiff')
+
     def _path_to_webcore_library(self):
         return self._build_path('lib/libQtWebKit.so')
 
