@@ -184,6 +184,8 @@ WebView::WebView(RECT rect, WebPageNamespace* pageNamespace, HWND parentWindow)
     , m_topLevelParentWindow(0)
     , m_toolTipWindow(0)
     , m_lastCursorSet(0)
+    , m_webCoreCursor(0)
+    , m_overrideCursor(0)
     , m_trackingMouseLeave(false)
     , m_isBeingDestroyed(false)
 {
@@ -567,14 +569,30 @@ void WebView::toolTipChanged(const String&, const String& newToolTip)
     ::SendMessage(m_toolTipWindow, TTM_ACTIVATE, !newToolTip.isEmpty(), 0);
 }
 
+void WebView::updateNativeCursor()
+{
+    // We only show the override cursor if the default (arrow) cursor is showing.
+    static HCURSOR arrowCursor = ::LoadCursor(0, IDC_ARROW);
+    if (m_overrideCursor && m_webCoreCursor == arrowCursor)
+        m_lastCursorSet = m_overrideCursor;
+    else
+        m_lastCursorSet = m_webCoreCursor;
+
+    ::SetCursor(m_lastCursorSet);
+}
+
 void WebView::setCursor(const WebCore::Cursor& cursor)
 {
-    HCURSOR platformCursor = cursor.platformCursor()->nativeCursor();
-    if (!platformCursor)
+    if (!cursor.platformCursor()->nativeCursor())
         return;
+    m_webCoreCursor = cursor.platformCursor()->nativeCursor();
+    updateNativeCursor();
+}
 
-    m_lastCursorSet = platformCursor;
-    ::SetCursor(platformCursor);
+void WebView::setOverrideCursor(HCURSOR overrideCursor)
+{
+    m_overrideCursor = overrideCursor;
+    updateNativeCursor();
 }
 
 void WebView::setViewportArguments(const WebCore::ViewportArguments&)

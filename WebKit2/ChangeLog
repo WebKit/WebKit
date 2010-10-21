@@ -1,3 +1,39 @@
+2010-10-20  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://problem/8423766> Cursor does not become "busy" when a page is
+        loading with WebKit2
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/win/WKViewPrivate.cpp: Added.
+        (WKViewSetOverrideCursor):
+        Call the WebView's setOverrideCursor().
+
+        * UIProcess/API/C/win/WKViewPrivate.h: Added.
+        Declare WKViewSetOVerrideCursor().
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView):
+        Initialize new member vars to 0.
+        (WebKit::WebView::updateNativeCursor):
+        If there is an override cursor, and the last cursor set from the web
+        process was the arrow cursor, use the override cursor. Otherwise, use
+        the cursor from the web process.
+        (WebKit::WebView::setCursor):
+        Record the web process's cursor, and call updateNativeCursor().
+        (WebKit::WebView::setOverrideCursor):
+        Record the override cursor, and call updateNativeCursor().
+
+        * UIProcess/win/WebView.h:
+        Declare setOverrideCursor() and updateNativeCursor(). Add members to
+        hold the last cursor set from the web process and the override cursor.
+
+        * win/WebKit2.vcproj:
+        Add new files to project.
+
+        * win/WebKit2Generated.make:
+        Copy WKViewPrivate.h with other headers.
+
 2010-10-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

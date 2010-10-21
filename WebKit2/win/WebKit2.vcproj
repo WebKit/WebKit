@@ -1877,6 +1877,14 @@
 							RelativePath="..\UIProcess\API\C\win\WKView.h"
 							>
 						</File>
+						<File
+							RelativePath="..\UIProcess\API\C\win\WKViewPrivate.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\UIProcess\API\C\win\WKViewPrivate.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 				<Filter

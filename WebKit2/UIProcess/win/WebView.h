@@ -52,6 +52,7 @@ public:
     HWND window() const { return m_window; }
     void setParentWindow(HWND);
     void windowAncestryDidChange();
+    void setOverrideCursor(HCURSOR overrideCursor);
 
     WebPageProxy* page() const { return m_page.get(); }
 
@@ -88,6 +89,8 @@ private:
 
     void close();
 
+    void updateNativeCursor();
+
     // PageClient
     virtual void processDidExit();
     virtual void processDidRevive();
@@ -120,6 +123,8 @@ private:
     HWND m_toolTipWindow;
 
     HCURSOR m_lastCursorSet;
+    HCURSOR m_webCoreCursor;
+    HCURSOR m_overrideCursor;
 
     bool m_trackingMouseLeave;
     bool m_isBeingDestroyed;
