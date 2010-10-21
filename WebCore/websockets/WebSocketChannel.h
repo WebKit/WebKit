@@ -84,10 +84,6 @@ namespace WebCore {
         bool processBuffer();
         void resumeTimerFired(Timer<WebSocketChannel>* timer);
 
-#if ENABLE(INSPECTOR)
-        unsigned long identifier();
-#endif
-
         ScriptExecutionContext* m_context;
         WebSocketChannelClient* m_client;
         WebSocketHandshake m_handshake;
@@ -101,9 +97,7 @@ namespace WebCore {
         bool m_shouldDiscardReceivedData;
         unsigned long m_unhandledBufferedAmount;
 
-#if ENABLE(INSPECTOR)
-        unsigned long m_identifier;
-#endif
+        unsigned long m_identifier; // m_identifier == 0 means that we could not obtain a valid identifier.
     };
 
 } // namespace WebCore

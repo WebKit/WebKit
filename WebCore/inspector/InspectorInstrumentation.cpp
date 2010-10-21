@@ -412,6 +412,28 @@ void InspectorInstrumentation::didWriteHTMLImpl(const InspectorInstrumentationCo
         timelineAgent->didWriteHTML(endLine);
 }
 
+#if ENABLE(WEB_SOCKETS)
+void InspectorInstrumentation::didCreateWebSocketImpl(InspectorController* inspectorController, unsigned long identifier, const KURL& requestURL, const KURL& documentURL)
+{
+    inspectorController->didCreateWebSocket(identifier, requestURL, documentURL);
+}
+
+void InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl(InspectorController* inspectorController, unsigned long identifier, const WebSocketHandshakeRequest& request)
+{
+    inspectorController->willSendWebSocketHandshakeRequest(identifier, request);
+}
+
+void InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl(InspectorController* inspectorController, unsigned long identifier, const WebSocketHandshakeResponse& response)
+{
+    inspectorController->didReceiveWebSocketHandshakeResponse(identifier, response);
+}
+
+void InspectorInstrumentation::didCloseWebSocketImpl(InspectorController* inspectorController, unsigned long identifier)
+{
+    inspectorController->didCloseWebSocket(identifier);
+}
+#endif
+
 bool InspectorInstrumentation::hasFrontend(InspectorController* inspectorController)
 {
     return inspectorController->hasFrontend();
