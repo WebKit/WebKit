@@ -1,3 +1,13 @@
+2010-10-21  Daniel Bates  <dbates@rim.com>
+
+        Add Git-support to do-file-rename
+        https://bugs.webkit.org/show_bug.cgi?id=48015
+
+        Fix tools. Export function scmMoveOrRenameFile so that it can be called from
+        do-file-rename and do-webcore-rename. I inadvertently left this out of the patch.
+
+        * Scripts/VCSUtils.pm:
+
 2010-10-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

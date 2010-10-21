@@ -69,6 +69,7 @@ BEGIN {
         &pathRelativeToSVNRepositoryRootForPath
         &prepareParsedPatch
         &runPatchCommand
+        &scmMoveOrRenameFile
         &scmToggleExecutableBit
         &setChangeLogDateAndReviewer
         &svnRevisionForDirectory
