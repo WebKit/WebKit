@@ -27,6 +27,7 @@
 #define CachedFont_h
 
 #include "CachedResource.h"
+#include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include <wtf/Vector.h>
 
@@ -62,7 +63,7 @@ public:
     void beginLoadIfNeeded(CachedResourceLoader* dl);
 
     bool ensureCustomFontData();
-    FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontRenderingMode = NormalRenderingMode);
+    FontPlatformData platformDataFromCustomData(float size, bool bold, bool italic, FontOrientation = Horizontal, FontRenderingMode = NormalRenderingMode);
 
 #if ENABLE(SVG_FONTS)
     bool isSVGFont() const { return m_isSVGFont; }
