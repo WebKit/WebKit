@@ -1389,6 +1389,8 @@ v8 {
         bindings/v8/ScopedDOMDataStore.h \
 #        bindings/v8/ScriptArray.h \
         bindings/v8/ScriptCachedFrameData.h \
+        bindings/v8/ScriptCallFrame.h \
+        bindings/v8/ScriptCallStack.h \
         bindings/v8/ScriptController.h \
         bindings/v8/ScriptEventListener.h \
         bindings/v8/ScriptFunctionCall.h \
@@ -1471,6 +1473,8 @@ v8 {
         bindings/js/JavaScriptCallFrame.h \
         bindings/js/ScheduledAction.h \
         bindings/js/ScriptCachedFrameData.h \
+        bindings/js/ScriptCallFrame.h \
+        bindings/js/ScriptCallStack.h \
         bindings/js/ScriptController.h \
         bindings/js/ScriptEventListener.h \
         bindings/js/ScriptFunctionCall.h \
