@@ -879,6 +879,13 @@ IntRect Frame::tiledBackingStoreVisibleRect()
         return IntRect();
     return m_page->chrome()->client()->visibleRectForTiledBackingStore();
 }
+
+Color Frame::tiledBackingStoreBackgroundColor() const
+{
+    if (!m_view)
+        return Color();
+    return m_view->baseBackgroundColor();
+}
 #endif
 
 String Frame::layerTreeAsText() const

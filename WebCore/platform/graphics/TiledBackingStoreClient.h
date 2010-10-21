@@ -30,6 +30,7 @@ public:
     virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) = 0;
     virtual IntRect tiledBackingStoreContentsRect() = 0;
     virtual IntRect tiledBackingStoreVisibleRect() = 0;
+    virtual Color tiledBackingStoreBackgroundColor() const = 0;
 };
 
 #else

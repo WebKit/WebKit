@@ -97,9 +97,10 @@ void Tile::updateBackBuffer()
         return;
 
     if (!m_backBuffer) {
-        if (!m_buffer)
+        if (!m_buffer) {
             m_backBuffer = new QPixmap(m_backingStore->m_tileSize.width(), m_backingStore->m_tileSize.height());
-        else {
+            m_backBuffer->fill(m_backingStore->m_client->tiledBackingStoreBackgroundColor());
+        } else {
             // Currently all buffers are updated synchronously at the same time so there is no real need
             // to have separate back and front buffers. Just use the existing buffer.
             m_backBuffer = m_buffer;
