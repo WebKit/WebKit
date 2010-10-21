@@ -322,7 +322,3 @@ fast/images/webp-image-decoding.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=47901
 fast/canvas/canvas-getImageData-negative-source.html
-
-# New test written for WebKit2 fails on Snow Leopard.
-# https://bugs.webkit.org/show_bug.cgi?id=47690
-LayoutTests/plugins/pass-different-npp-struct.html
