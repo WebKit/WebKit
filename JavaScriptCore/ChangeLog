@@ -1,3 +1,15 @@
+2010-10-21  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r70174.
+        http://trac.webkit.org/changeset/70174
+        https://bugs.webkit.org/show_bug.cgi?id=41948
+
+        This patch reverts a change that causes
+        http/tests/xmlhttprequest/origin-whitelisting-removal.html to crash.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+
 2010-10-20  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the EFL build.

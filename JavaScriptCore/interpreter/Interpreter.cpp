@@ -676,15 +676,7 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     }
 
     // Shrink the JS stack, in case stack overflow made it huge.
-    Register* highWaterMark = callFrame->registers() + callFrame->codeBlock()->m_numCalleeRegisters;
-    for (CallFrame* callerFrame = callFrame->callerFrame()->removeHostCallFrameFlag(); callerFrame; callerFrame = callerFrame->callerFrame()->removeHostCallFrameFlag()) {
-        CodeBlock* codeBlock = callerFrame->codeBlock();
-        if (!codeBlock)
-            continue;
-        Register* callerHighWaterMark = callerFrame->registers() + codeBlock->m_numCalleeRegisters;
-        highWaterMark = max(highWaterMark, callerHighWaterMark);
-    }
-    m_registerFile.shrink(highWaterMark);
+    m_registerFile.shrink(callFrame->registers() + callFrame->codeBlock()->m_numCalleeRegisters);
 
     // Unwind the scope chain within the exception handler's call frame.
     ScopeChainNode* scopeChain = callFrame->scopeChain();
