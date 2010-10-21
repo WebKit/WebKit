@@ -528,6 +528,7 @@ platform/mac/fast/forms/input-number-click.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
 plugins/resize-from-plugin.html
+plugins/mouse-move-over-plugin-in-frame.html
 scrollbars/overflow-custom-scrollbar-crash.html
 scrollbars/scrollbar-click-does-not-blur-content.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
@@ -1623,6 +1624,7 @@ editing/selection/5195166-1.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42690>
 fast/loader/onload-willSendRequest-null-for-frame.html
 fast/loader/onload-willSendRequest-null-for-script.html
+plugins/plugin-document-willSendRequest-null.html
 
 # WebKitTestRunner needs layoutTestController.setStopProvisionalFrameLoads
 # <https://bugs.webkit.org/show_bug.cgi?id=42691>
