@@ -3242,3 +3242,6 @@ BUGJAPHET : fast/dom/HTMLAnchorElement/set-href-attribute-prevents-rebase.html =
 
 // r69833, JSC/V8 Date parsing differences
 BUGJAPHET : fast/js/date-parse-test.html = TEXT
+
+// Added in WebKit r70190
+BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
