@@ -143,28 +143,27 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     if (!selectedFrame)
         return false;
 
-    IntRect selectionRect = enclosingIntRect(selectedFrame->selection()->bounds());
+    // We want the selection rect in window coordinates.
+    IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(enclosingIntRect(selectedFrame->selection()->bounds()));
+    
     Vector<FloatRect> textRects;
     selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
 
     // Create a backing store and paint the find indicator text into it.
-    RefPtr<BackingStore> findIndicatorTextBackingStore = BackingStore::createSharable(selectionRect.size());
+    RefPtr<BackingStore> findIndicatorTextBackingStore = BackingStore::createSharable(selectionRectInWindowCoordinates.size());
     OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
 
-    graphicsContext->translate(-selectionRect.x(), -selectionRect.y());
+    graphicsContext->translate(-selectionRectInWindowCoordinates.x(), -selectionRectInWindowCoordinates.y());
     selectedFrame->view()->setPaintBehavior(PaintBehaviorSelectionOnly | PaintBehaviorForceBlackText | PaintBehaviorFlattenCompositingLayers);
     selectedFrame->document()->updateLayout();
-    
-    graphicsContext->clip(selectionRect);
-    selectedFrame->view()->paint(graphicsContext.get(), selectionRect);
+
+    graphicsContext->clip(selectionRectInWindowCoordinates);
+    selectedFrame->view()->paint(graphicsContext.get(), selectionRectInWindowCoordinates);
     selectedFrame->view()->setPaintBehavior(PaintBehaviorNormal);
     
     SharedMemory::Handle handle;
     if (!findIndicatorTextBackingStore->createHandle(handle))
         return false;
-
-    // We want the selection rect in window coordinates.
-    IntRect selectionRectInWindowCoordinates = selectedFrame->view()->contentsToWindow(selectionRect);
 
     // We want the text rects in selection rect coordinates.
     Vector<FloatRect> textRectsInSelectionRectCoordinates;
