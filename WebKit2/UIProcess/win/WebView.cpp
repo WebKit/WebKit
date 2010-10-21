@@ -81,6 +81,9 @@ LRESULT WebView::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     bool handled = true;
 
     switch (message) {
+        case WM_CLOSE:
+            m_page->tryClose();
+            break;
         case WM_DESTROY:
             m_isBeingDestroyed = true;
             close();

@@ -1,5 +1,25 @@
 2010-10-20  Adam Roben  <aroben@apple.com>
 
+        Ask the UI client to close the page when the WKView receives a WM_CLOSE
+        message
+
+        Fixes <http://webkit.org/b/48044> <rdar://problem/8488446> Pressing
+        Ctrl+W when viewing a full-page PDF destroys the WKView but doesn't
+        close its parent window
+
+        Reviewed by Jon Honeycutt.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::wndProc): Call through to WebPageProxy::tryClose when
+        we receive a WM_CLOSE message, rather than passing the message along to
+        ::DefWindowProcW. tryClose will end up asking the UI client to close
+        the page, while ::DefWindowProcW would destroy us synchronously without
+        notifying the UI client at all. One case where we'll get sent a
+        WM_CLOSE message is when the user presses Ctrl+W when using the Adobe
+        Reader plugin to view a PDF.
+
+2010-10-20  Adam Roben  <aroben@apple.com>
+
         Remove confusing and redundant "host window" terminology from WKView on
         Windows
 

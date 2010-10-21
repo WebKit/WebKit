@@ -1,5 +1,26 @@
 2010-10-20  Adam Roben  <aroben@apple.com>
 
+        Test that the UI client gets notified when WKView receives a WM_CLOSE
+        message
+
+        Test for <http://webkit.org/b/48044> <rdar://problem/8488446> Pressing
+        Ctrl+W when viewing a full-page PDF destroys the WKView but doesn't
+        close its parent window
+
+        Reviewed by Jon Honeycutt.
+
+        * TestWebKitAPI/Tests/WebKit2/win/WMCloseCallsUIClientClose.cpp: Added.
+        (TestWebKitAPI::close): Record that this function was called.
+        (TestWebKitAPI::WebKit2_WMCloseCallsUIClientClose): Create a WKView,
+        send it a WM_CLOSE message, and test that the UI client's close
+        callback got called. Note that this will hang if the bug is
+        reintroduced; <http://webkit.org/b/48043> covers making TestWebKitAPI
+        able to handle hangs.
+
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added the new test.
+
+2010-10-20  Adam Roben  <aroben@apple.com>
+
         Make prepare-ChangeLog much faster when using git
 
         This change also seems to make it detect renames better in some cases.
