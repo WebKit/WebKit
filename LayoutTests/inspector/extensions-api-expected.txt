@@ -52,9 +52,9 @@ RUNNING TEST: extension_testAPI
             Image : "image"
             Font : "font"
             Script : "script"
-            XHR : "XHR"
+            XHR : "xhr"
             Media : "media"
-            WebSocket : "WebSocket"
+            WebSocket : "websocket"
             Other : "other"
         }
         getAll : <function>
