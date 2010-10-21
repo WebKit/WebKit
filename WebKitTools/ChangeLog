@@ -1,3 +1,18 @@
+2010-10-20  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/47754> New script to verify explicit source file types in Xcode project files
+
+        Reviewed by Darin Adler.
+
+        The script parses an Xcode project file and makes sure the file
+        extension matches the explicit file type set for all source
+        files.  Note that the majority of source files will have their
+        type set by Xcode, so the script doesn't check them since there
+        is no need to second-guess Xcode.
+
+        * Scripts/check-Xcode-source-file-types: Added.  Code borrowed
+        heavily from sort-Xcode-project-file.
+
 2010-10-20  Adam Roben  <aroben@apple.com>
         
         Windows build fix
