@@ -105,7 +105,11 @@ bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, PassOwnPtr<CoreI
         m_pendingMessages.append(CoreIPC::Connection::OutgoingMessage(messageID, arguments));
         return true;
     }
-    
+
+    // If the web process has exited, m_connection will be null here.
+    if (!m_connection)
+        return false;
+
     return m_connection->sendMessage(messageID, arguments);
 }
 

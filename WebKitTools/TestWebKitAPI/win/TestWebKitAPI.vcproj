@@ -417,6 +417,10 @@
 				Name="WebKit2"
 				>
 				<File
+					RelativePath="..\Tests\WebKit2\EvaluateJavaScript.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\FailedLoad.cpp"
 					>
 				</File>

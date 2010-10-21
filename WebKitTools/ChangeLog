@@ -1,3 +1,20 @@
+2010-10-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Crash evaluating JavaScript string that throws an exception
+        https://bugs.webkit.org/show_bug.cgi?id=48092
+        <rdar://problem/8487657>
+
+        Add a test that evaluates a JavaScript string that throws an exception and check that 
+        the callback is called.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/EvaluateJavaScript.cpp: Added.
+        (TestWebKitAPI::didRunJavaScript):
+        (TestWebKitAPI::WebKit2_EvaluateJavaScript):
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2010-10-21  Adam Roben  <aroben@apple.com>
 
         Test that the plugin's HWND is invalidated when NPN_InvalidateRect is

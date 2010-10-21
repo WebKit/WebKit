@@ -1,3 +1,19 @@
+2010-10-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Crash evaluating JavaScript string that throws an exception
+        https://bugs.webkit.org/show_bug.cgi?id=48092
+        <rdar://problem/8487657>
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::sendMessage):
+        m_connection can be null here; just return false if that is the case.
+    
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+        If the JSValue returned is null we just send along a null string.
+
 2010-10-21  Adam Roben  <aroben@apple.com>
 
         Invalidate the plugin's HWND when NPN_InvalidateRect is called
