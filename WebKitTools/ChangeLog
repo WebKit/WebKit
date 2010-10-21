@@ -1,3 +1,21 @@
+2010-10-20  Adam Roben  <aroben@apple.com>
+
+        Make prepare-ChangeLog much faster when using git
+
+        This change also seems to make it detect renames better in some cases.
+
+        Fixes <http://webkit.org/b/48040> prepare-ChangeLog is slow when using
+        git
+
+        Reviewed by David Kilzer.
+
+        * Scripts/prepare-ChangeLog:
+        (statusCommand):
+        (createPatchCommand):
+        Use "-M -C" instead of "-C -C -M" to tell git-diff to detect renames
+        and copies. The two "-C"s were making it read many more files than were
+        necessary.
+
 2010-10-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.

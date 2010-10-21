@@ -1302,7 +1302,7 @@ sub statusCommand(@)
     if ($isSVN) {
         $command = "$SVN stat $filesString";
     } elsif ($isGit) {
-        $command = "$GIT diff -r --name-status -C -C -M " . diffFromToString();
+        $command = "$GIT diff -r --name-status -M -C " . diffFromToString();
         $command .= " -- $filesString" unless $gitCommit;
     }
 
@@ -1317,7 +1317,7 @@ sub createPatchCommand($)
     if ($isSVN) {
         $command = "'$FindBin::Bin/svn-create-patch' $changedFilesString";
     } elsif ($isGit) {
-        $command = "$GIT diff -C -C -M " . diffFromToString();
+        $command = "$GIT diff -M -C " . diffFromToString();
         $command .= " -- $changedFilesString" unless $gitCommit;
     }
 
