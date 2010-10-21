@@ -72,6 +72,12 @@ bool SQLiteDatabase::open(const String& filename, bool forWebSQLDatabase)
         m_db = 0;
         return false;
     }
+    if (sqlite3_extended_result_codes(m_db, 1) != SQLITE_OK) {
+        LOG_ERROR("SQLite database error when enabling extended errors - %s", sqlite3_errmsg(m_db));
+        sqlite3_close(m_db);
+        m_db = 0;
+        return false;
+    }
 
     if (isOpen())
         m_openingThread = currentThread();
