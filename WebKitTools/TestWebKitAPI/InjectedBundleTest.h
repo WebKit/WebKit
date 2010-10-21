@@ -23,29 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#ifndef InjectedBundleTest_h
+#define InjectedBundleTest_h
 
-#include <WebKit2/WebKit2.h>
-#include <string>
+#include "InjectedBundleController.h"
 
 namespace TestWebKitAPI {
-namespace Util {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+class InjectedBundleTest {
+public:
+    virtual ~InjectedBundleTest() { }
 
-WKContextRef createContextForInjectedBundleTest(const std::string&);
+    virtual void initialize() { }
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+    virtual void didCreatePage(WKBundleRef, WKBundlePageRef) { }
+    virtual void willDestroyPage(WKBundleRef, WKBundlePageRef) { }
+    virtual void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody) { }
 
-bool isKeyDown(WKNativeEventPtr);
+    std::string name() const { return m_identifier; }
+    
+    template<typename TestClassTy> class Register {
+    public:
+        Register(const std::string& test)
+        {
+            InjectedBundleController::shared().registerCreateInjectedBundleTestFunction(test, Register::create);
+        }
 
-std::string toSTD(WKStringRef string);
+    private:
+        static InjectedBundleTest* create(const std::string& identifier) 
+        {
+            return new TestClassTy(identifier);
+        }
+    };
 
-} // namespace Util
+protected:
+    InjectedBundleTest(const std::string& identifier)
+        : m_identifier(identifier)
+    {
+    }
+
+    std::string m_identifier;
+};
+
 } // namespace TestWebKitAPI
 
-#endif // PlatformUtilities_h
+#endif // InjectedBundleTest_h

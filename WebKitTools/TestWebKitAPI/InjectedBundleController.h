@@ -23,29 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#ifndef InjectedBundleController_h
+#define InjectedBundleController_h
 
-#include <WebKit2/WebKit2.h>
+#include <WebKit2/WKBundle.h>
+#include <map>
 #include <string>
 
 namespace TestWebKitAPI {
-namespace Util {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+class InjectedBundleTest;
 
-WKContextRef createContextForInjectedBundleTest(const std::string&);
+class InjectedBundleController {
+public:
+    static InjectedBundleController& shared();
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+    void initialize(WKBundleRef);
 
-bool isKeyDown(WKNativeEventPtr);
+    void dumpTestNames();
+    void initializeTestNamed(const std::string&);
 
-std::string toSTD(WKStringRef string);
+    typedef InjectedBundleTest* (*CreateInjectedBundleTestFunction)(const std::string&);
+    void registerCreateInjectedBundleTestFunction(const std::string&, CreateInjectedBundleTestFunction);
 
-} // namespace Util
+private:
+    InjectedBundleController();
+    ~InjectedBundleController();
+
+    static void didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
+    static void willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
+    static void didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void* clientInfo);
+
+    std::map<std::string, CreateInjectedBundleTestFunction> m_createInjectedBundleTestFunctions;
+    WKBundleRef m_bundle;
+    InjectedBundleTest* m_currentTest;
+};
+
 } // namespace TestWebKitAPI
 
-#endif // PlatformUtilities_h
+#endif // InjectedBundleController_h

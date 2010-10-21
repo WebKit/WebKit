@@ -23,29 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "InjectedBundleController.h"
+#include <WebKit2/WKBundleInitialize.h>
 
-#include <WebKit2/WebKit2.h>
-#include <string>
-
-namespace TestWebKitAPI {
-namespace Util {
-
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
-
-WKContextRef createContextForInjectedBundleTest(const std::string&);
-
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
-
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
-
-} // namespace Util
-} // namespace TestWebKitAPI
-
-#endif // PlatformUtilities_h
+#if defined(WIN32) || defined(_WIN32)
+extern "C" __declspec(dllexport) 
+#else
+extern "C"
+#endif
+void WKBundleInitialize(WKBundleRef bundle)
+{
+    TestWebKitAPI::InjectedBundleController::shared().initialize(bundle);
+}

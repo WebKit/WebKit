@@ -23,29 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
-
+#include "InjectedBundleTest.h"
 #include <WebKit2/WebKit2.h>
-#include <string>
+#include <WebKit2/WKRetainPtr.h>
 
 namespace TestWebKitAPI {
-namespace Util {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+class InjectedBundleBasicTest : public InjectedBundleTest {
+public:
+    InjectedBundleBasicTest(const std::string& identifier)
+        : InjectedBundleTest(identifier)
+    {
+    }
 
-WKContextRef createContextForInjectedBundleTest(const std::string&);
+    virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
+    {
+        WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("DoneMessageName"));
+        WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithUTF8CString("DoneMessageBody"));
+        WKBundlePostMessage(bundle, doneMessageName.get(), doneMessageBody.get());
+    }
+};
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
+static InjectedBundleTest::Register<InjectedBundleBasicTest> registrar("InjectedBundleBasicTest");
 
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
-
-} // namespace Util
 } // namespace TestWebKitAPI
-
-#endif // PlatformUtilities_h

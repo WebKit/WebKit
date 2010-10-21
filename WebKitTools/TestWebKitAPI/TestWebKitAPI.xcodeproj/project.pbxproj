@@ -12,6 +12,16 @@
 		BC131885117114B600B69727 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
 		BC131A9B1171316900B69727 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131A9A1171316900B69727 /* main.mm */; };
 		BC131AA9117131FC00B69727 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
+		BC575A90126E74D3006F0F12 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB9E9F011235BDE00A137E0 /* Cocoa.framework */; };
+		BC575A91126E74D3006F0F12 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCA61DB411700EFD00460D1E /* WebKit2.framework */; };
+		BC575A92126E74D3006F0F12 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
+		BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */; };
+		BC575AA2126E7660006F0F12 /* InjectedBundleController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */; };
+		BC575AAD126E83B9006F0F12 /* InjectedBundleBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */; };
+		BC575AB0126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */; };
+		BC575BC0126F5752006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
+		BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
+		BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
 		BC90955D125548AA00083756 /* PlatformWebViewMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC90955C125548AA00083756 /* PlatformWebViewMac.mm */; };
 		BC90964C125561BF00083756 /* VectorBasic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC90964B125561BF00083756 /* VectorBasic.cpp */; };
 		BC90964E1255620C00083756 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC90964D1255620C00083756 /* JavaScriptCore.framework */; };
@@ -29,6 +39,16 @@
 		C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */; };
 		C02B7854126613AE0026BF0F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C02B7853126613AE0026BF0F /* Carbon.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC57597F126E74AF006F0F12 /* InjectedBundle */;
+			remoteInfo = InjectedBundle;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		8DD76F9E0486AA7600D96B5E /* CopyFiles */ = {
@@ -65,6 +85,16 @@
 		BC131A9A1171316900B69727 /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		BC131A9E1171317C00B69727 /* TestWebKitAPIPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWebKitAPIPrefix.h; sourceTree = "<group>"; };
 		BC131AA8117131FC00B69727 /* TestsController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = TestsController.cpp; sourceTree = "<group>"; };
+		BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMain.cpp; sourceTree = "<group>"; };
+		BC575980126E74AF006F0F12 /* InjectedBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InjectedBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC575981126E74AF006F0F12 /* InjectedBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InjectedBundle-Info.plist"; sourceTree = "<group>"; };
+		BC575A9E126E75FB006F0F12 /* InjectedBundleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleTest.h; sourceTree = "<group>"; };
+		BC575A9F126E7657006F0F12 /* InjectedBundleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleController.h; sourceTree = "<group>"; };
+		BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleController.cpp; sourceTree = "<group>"; };
+		BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleBasic.cpp; sourceTree = "<group>"; };
+		BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleBasic_Bundle.cpp; sourceTree = "<group>"; };
+		BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = InjectedBundle.xcconfig; sourceTree = "<group>"; };
+		BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformUtilities.cpp; sourceTree = "<group>"; };
 		BC90951B125533D700083756 /* PlatformWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformWebView.h; sourceTree = "<group>"; };
 		BC90955C125548AA00083756 /* PlatformWebViewMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWebViewMac.mm; sourceTree = "<group>"; };
 		BC90957E12554CF900083756 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
@@ -101,6 +131,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC57597E126E74AF006F0F12 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC575A90126E74D3006F0F12 /* Cocoa.framework in Frameworks */,
+				BC575A91126E74D3006F0F12 /* WebKit2.framework in Frameworks */,
+				BC575A92126E74D3006F0F12 /* JavaScriptCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -112,6 +152,7 @@
 				BC90957D12554CEA00083756 /* Configurations */,
 				08FB779DFE84155DC02AAC07 /* External Frameworks and Libraries */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				BC575981126E74AF006F0F12 /* InjectedBundle-Info.plist */,
 			);
 			name = TestWebKitAPI;
 			sourceTree = "<group>";
@@ -120,7 +161,9 @@
 			isa = PBXGroup;
 			children = (
 				BCA61C3A11700B9400460D1E /* mac */,
+				BC575944126E733C006F0F12 /* InjectedBundle */,
 				BC131A9E1171317C00B69727 /* TestWebKitAPIPrefix.h */,
+				BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */,
 				BC131883117114A800B69727 /* PlatformUtilities.h */,
 				BC90951B125533D700083756 /* PlatformWebView.h */,
 				BCB9E7FA112359A300A137E0 /* Test.h */,
@@ -145,8 +188,20 @@
 			isa = PBXGroup;
 			children = (
 				8DD76FA10486AA7600D96B5E /* TestWebKitAPI */,
+				BC575980126E74AF006F0F12 /* InjectedBundle.bundle */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BC575944126E733C006F0F12 /* InjectedBundle */ = {
+			isa = PBXGroup;
+			children = (
+				BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */,
+				BC575A9E126E75FB006F0F12 /* InjectedBundleTest.h */,
+				BC575A9F126E7657006F0F12 /* InjectedBundleController.h */,
+				BC575AA0126E7657006F0F12 /* InjectedBundleController.cpp */,
+			);
+			name = InjectedBundle;
 			sourceTree = "<group>";
 		};
 		BC90957D12554CEA00083756 /* Configurations */ = {
@@ -154,6 +209,7 @@
 			children = (
 				BC90957E12554CF900083756 /* Base.xcconfig */,
 				BC90957F12554CF900083756 /* DebugRelease.xcconfig */,
+				BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */,
 				BC90958012554CF900083756 /* TestWebKitAPI.xcconfig */,
 			);
 			path = Configurations;
@@ -171,6 +227,8 @@
 				BC90995D12567BC100083756 /* WKString.cpp */,
 				BC9099931256ACF100083756 /* WKStringJSString.cpp */,
 				BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */,
+				BC575AAC126E83B9006F0F12 /* InjectedBundleBasic.cpp */,
+				BC575AAF126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp */,
 			);
 			path = WebKit2;
 			sourceTree = "<group>";
@@ -228,12 +286,30 @@
 			buildRules = (
 			);
 			dependencies = (
+				BC575A96126E74E7006F0F12 /* PBXTargetDependency */,
 			);
 			name = TestWebKitAPI;
 			productInstallPath = "$(HOME)/bin";
 			productName = TestWebKitAPI;
 			productReference = 8DD76FA10486AA7600D96B5E /* TestWebKitAPI */;
 			productType = "com.apple.product-type.tool";
+		};
+		BC57597F126E74AF006F0F12 /* InjectedBundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundle" */;
+			buildPhases = (
+				BC57597C126E74AF006F0F12 /* Resources */,
+				BC57597D126E74AF006F0F12 /* Sources */,
+				BC57597E126E74AF006F0F12 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InjectedBundle;
+			productName = InjectedBundle;
+			productReference = BC575980126E74AF006F0F12 /* InjectedBundle.bundle */;
+			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
@@ -255,9 +331,20 @@
 			projectRoot = "";
 			targets = (
 				8DD76F960486AA7600D96B5E /* TestWebKitAPI */,
+				BC57597F126E74AF006F0F12 /* InjectedBundle */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		BC57597C126E74AF006F0F12 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8DD76F990486AA7600D96B5E /* Sources */ = {
@@ -277,10 +364,32 @@
 				1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */,
 				BCC8B95B12611F4700DE46A4 /* FailedLoad.cpp in Sources */,
 				C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */,
+				BC575AAD126E83B9006F0F12 /* InjectedBundleBasic.cpp in Sources */,
+				BC575BC0126F5752006F0F12 /* PlatformUtilities.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC57597D126E74AF006F0F12 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */,
+				BC575AA2126E7660006F0F12 /* InjectedBundleController.cpp in Sources */,
+				BC575AB0126E83C8006F0F12 /* InjectedBundleBasic_Bundle.cpp in Sources */,
+				BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */,
+				BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		BC575A96126E74E7006F0F12 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC57597F126E74AF006F0F12 /* InjectedBundle */;
+			targetProxy = BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB927508733DD40010E9CD /* Debug */ = {
@@ -314,6 +423,20 @@
 			};
 			name = Release;
 		};
+		BC575984126E74AF006F0F12 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		BC575985126E74AF006F0F12 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC575AE2126E88B1006F0F12 /* InjectedBundle.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -331,6 +454,15 @@
 			buildConfigurations = (
 				1DEB927908733DD40010E9CD /* Debug */,
 				1DEB927A08733DD40010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC575984126E74AF006F0F12 /* Debug */,
+				BC575985126E74AF006F0F12 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

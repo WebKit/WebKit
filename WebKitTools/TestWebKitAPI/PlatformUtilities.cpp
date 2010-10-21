@@ -23,29 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUtilities_h
-#define PlatformUtilities_h
+#include "PlatformUtilities.h"
 
+#include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WebKit2.h>
-#include <string>
+#include <wtf/OwnArrayPtr.h>
+#include <wtf/PassOwnArrayPtr.h>
 
 namespace TestWebKitAPI {
 namespace Util {
 
-// Runs a platform runloop until the 'done' is true. 
-void run(bool* done);
+WKContextRef createContextForInjectedBundleTest(const std::string& testName)
+{
+    WKRetainPtr<WKStringRef> injectedBundlePath(AdoptWK, createInjectedBundlePath());
+    WKContextRef context = WKContextCreateWithInjectedBundlePath(injectedBundlePath.get());
+    
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("BundleTestInstantiator"));
+    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithUTF8CString(testName.c_str()));
 
-WKContextRef createContextForInjectedBundleTest(const std::string&);
+    // Enqueue message to instantiate the bundle test. 
+    WKContextPostMessageToInjectedBundle(context, messageName.get(), messageBody.get());
+    
+    return context;
+}
 
-WKStringRef createInjectedBundlePath();
-WKURLRef createURLForResource(const char* resource, const char* extension);
-WKURLRef URLForNonExistentResource();
-
-bool isKeyDown(WKNativeEventPtr);
-
-std::string toSTD(WKStringRef string);
+std::string toSTD(WKStringRef string)
+{
+    size_t bufferSize = WKStringGetMaximumUTF8CStringSize(string);
+    OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
+    size_t stringLength = WKStringGetUTF8CString(string, buffer.get(), bufferSize);
+    return std::string(buffer.get(), stringLength - 1);
+}
 
 } // namespace Util
 } // namespace TestWebKitAPI
-
-#endif // PlatformUtilities_h

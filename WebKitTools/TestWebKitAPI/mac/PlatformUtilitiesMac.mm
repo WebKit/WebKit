@@ -25,8 +25,10 @@
 
 #include "PlatformUtilities.h"
 
+#include <WebKit2/WKRetainPtr.h>
 #include <WebKit2/WKStringCF.h>
 #include <WebKit2/WKURLCF.h>
+#include <WebKit2/WebKit2.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -37,15 +39,21 @@ void run(bool* done)
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
 }
 
+WKStringRef createInjectedBundlePath()
+{
+    NSString *nsString = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"InjectedBundle.bundle"];
+    return WKStringCreateWithCFString((CFStringRef)nsString);
+}
+
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
-    NSURL* nsURL = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:resource] withExtension:[NSString stringWithUTF8String:extension]];
+    NSURL *nsURL = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:resource] withExtension:[NSString stringWithUTF8String:extension]];
     return WKURLCreateWithCFURL((CFURLRef)nsURL);
 }
 
 WKURLRef URLForNonExistentResource()
 {
-    NSURL* nsURL = [NSURL URLWithString:@"file:///does-not-exist.html"];
+    NSURL *nsURL = [NSURL URLWithString:@"file:///does-not-exist.html"];
     return WKURLCreateWithCFURL((CFURLRef)nsURL);
 }
 

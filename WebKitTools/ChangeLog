@@ -1,3 +1,41 @@
+2010-10-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48027
+        Add ability to test injected bundle API using TestWebKitAPI
+
+        * TestWebKitAPI/InjectedBundleController.cpp: Added.
+        * TestWebKitAPI/InjectedBundleController.h: Added.
+        Shared main object for bundle functionality.
+
+        * TestWebKitAPI/InjectedBundleMain.cpp: Added.
+        Bundle entry point.
+
+        * TestWebKitAPI/InjectedBundleTest.h: Added.
+        Base class for which the bundle portion of a test derives from. 
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/PlatformUtilities.cpp: Added.
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        * TestWebKitAPI/win/PlatformUtilitiesWin.cpp:
+        (TestWebKitAPI::Util::createInjectedBundlePath):
+        (TestWebKitAPI::Util::createURLForResource):
+        (TestWebKitAPI::Util::URLForNonExistentResource):
+        Add helper to create a context with the shared injected bundle,
+        and send the initial message to set up the test.
+
+        * TestWebKitAPI/Configurations/InjectedBundle.xcconfig: Added.
+        * TestWebKitAPI/InjectedBundle-Info.plist: Added.
+        Add mac configuration files.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add the new files.
+
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp: Added.
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic_Bundle.cpp: Added.
+        Add a simple initial bundle test.
+
 2010-10-20  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Fixing /release-patch url used by the EWS bots.

@@ -483,6 +483,10 @@
 			</Filter>
 		</Filter>
 		<File
+			RelativePath="..\PlatformUtilities.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\PlatformUtilities.h"
 			>
 		</File>
