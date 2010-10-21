@@ -1,3 +1,14 @@
+2010-10-20  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Fixing /release-patch url used by the EWS bots.
+
+        EWS should test patches with r+
+        https://bugs.webkit.org/show_bug.cgi?id=35460
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+         - I changed the URL during development, and 404s are
+         intentionally silenced during release_patch.
+
 2010-10-14  Adam Roben  <aroben@apple.com>
 
         Test that passing a different NPP struct back to the browser doesn't

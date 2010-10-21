@@ -119,7 +119,7 @@ class StatusServer:
         return self._fetch_url(patch_status_url)
 
     def _post_release_work_item(self, queue_name, patch):
-        release_patch_url = "%s/release-patch/%s" % (self.url, queue_name)
+        release_patch_url = "%s/release-patch" % (self.url)
         self._browser.open(release_patch_url)
         self._browser.select_form(name="release_patch")
         self._browser["queue_name"] = queue_name
