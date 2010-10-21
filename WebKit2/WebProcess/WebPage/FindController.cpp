@@ -78,14 +78,13 @@ void FindController::findString(const String& string, FindDirection findDirectio
     bool shouldShowOverlay = false;
 
     if (!found) {
-        // And clear the selection.
-        if (!string.isEmpty() && selectedFrame)
+        // Clear the selection.
+        if (selectedFrame)
             selectedFrame->selection()->clear();
 
         hideFindIndicator();
 
         WebProcess::shared().connection()->send(Messages::WebPageProxy::MatchCountDidChange(string, 0), m_webPage->pageID());
-
     } else {
         shouldShowOverlay = findOptions & FindOptionsShowOverlay;
 
