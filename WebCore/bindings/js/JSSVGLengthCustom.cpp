@@ -22,28 +22,24 @@
 #if ENABLE(SVG)
 #include "JSSVGLength.h"
 
+#include "SVGAnimatedProperty.h"
+
 using namespace JSC;
 
 namespace WebCore {
 
 JSValue JSSVGLength::value(ExecState* exec) const
 {
-    JSSVGPODTypeWrapper<SVGLength>* imp = impl();
-    SVGElement* context = JSSVGContextCache::svgContextForDOMObject(const_cast<JSSVGLength*>(this));
-
-    SVGLength podImp(*imp);
-    return jsNumber(exec, podImp.value(context));
+    SVGLength& podImp = impl()->propertyReference();
+    return jsNumber(exec, podImp.value(impl()->contextElement()));
 }
 
 JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
 {
-    JSSVGPODTypeWrapper<SVGLength>* imp = impl();
-    SVGElement* context = JSSVGContextCache::svgContextForDOMObject(this);
+    SVGLength& podImp = impl()->propertyReference();
+    podImp.convertToSpecifiedUnits(exec->argument(0).toInt32(exec), impl()->contextElement());
 
-    SVGLength podImp(*imp);
-    podImp.convertToSpecifiedUnits(exec->argument(0).toInt32(exec), context);
-
-    imp->commitChange(podImp, this);
+    impl()->commitChange();
     return jsUndefined();
 }
 

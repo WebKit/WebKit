@@ -22,6 +22,8 @@
 #define SVGRadialGradientElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGGradientElement.h"
 
 namespace WebCore {
@@ -47,11 +49,11 @@ namespace WebCore {
 
         virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::cxAttr, SVGLength, Cx, cx)
-        DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::cyAttr, SVGLength, Cy, cy)
-        DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::rAttr, SVGLength, R, r)
-        DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::fxAttr, SVGLength, Fx, fx)
-        DECLARE_ANIMATED_PROPERTY(SVGRadialGradientElement, SVGNames::fyAttr, SVGLength, Fy, fy)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::cxAttr, SVGLength, Cx, cx)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::cyAttr, SVGLength, Cy, cy)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::rAttr, SVGLength, R, r)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::fxAttr, SVGLength, Fx, fx)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRadialGradientElement, SVGNames::fyAttr, SVGLength, Fy, fy)
     };
 
 } // namespace WebCore

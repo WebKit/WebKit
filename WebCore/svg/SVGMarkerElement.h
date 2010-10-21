@@ -24,6 +24,8 @@
 #if ENABLE(SVG)
 #include "RenderObject.h"
 #include "SVGAngle.h"
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
@@ -74,10 +76,10 @@ private:
 
     virtual bool selfHasRelativeLengths() const;
 
-    DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::refXAttr, SVGLength, RefX, refX)
-    DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::refYAttr, SVGLength, RefY, refY)
-    DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::markerWidthAttr, SVGLength, MarkerWidth, markerWidth)
-    DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::markerHeightAttr, SVGLength, MarkerHeight, markerHeight)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::refXAttr, SVGLength, RefX, refX)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::refYAttr, SVGLength, RefY, refY)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::markerWidthAttr, SVGLength, MarkerWidth, markerWidth)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::markerHeightAttr, SVGLength, MarkerHeight, markerHeight)
     DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::markerUnitsAttr, int, MarkerUnits, markerUnits)
     DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, SVGOrientTypeAttrIdentifier, int, OrientType, orientType)
     DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, SVGOrientAngleAttrIdentifier, SVGAngle, OrientAngle, orientAngle)

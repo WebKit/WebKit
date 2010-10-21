@@ -34,25 +34,33 @@ namespace WebCore {
 
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document* document)
     : SVGTextContentElement(tagName, document)
-    , m_x(SVGLengthList::create(SVGNames::xAttr))
-    , m_y(SVGLengthList::create(SVGNames::yAttr))
-    , m_dx(SVGLengthList::create(SVGNames::dxAttr))
-    , m_dy(SVGLengthList::create(SVGNames::dyAttr))
     , m_rotate(SVGNumberList::create(SVGNames::rotateAttr))
 {
 }
 
 void SVGTextPositioningElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->parse(attr->value(), LengthModeWidth);
-    else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->parse(attr->value(), LengthModeHeight);
-    else if (attr->name() == SVGNames::dxAttr)
-        dxBaseValue()->parse(attr->value(), LengthModeWidth);
-    else if (attr->name() == SVGNames::dyAttr)
-        dyBaseValue()->parse(attr->value(), LengthModeHeight);
-    else if (attr->name() == SVGNames::rotateAttr)
+    if (attr->name() == SVGNames::xAttr) {
+        SVGLengthList newList;
+        newList.parse(attr->value(), LengthModeWidth);
+        detachAnimatedXListWrappers(newList.size());
+        xBaseValue() = newList;
+    } else if (attr->name() == SVGNames::yAttr) {
+        SVGLengthList newList;
+        newList.parse(attr->value(), LengthModeHeight);
+        detachAnimatedYListWrappers(newList.size());
+        yBaseValue() = newList;
+    } else if (attr->name() == SVGNames::dxAttr) {
+        SVGLengthList newList;
+        newList.parse(attr->value(), LengthModeWidth);
+        detachAnimatedDxListWrappers(newList.size());
+        dxBaseValue() = newList;
+    } else if (attr->name() == SVGNames::dyAttr) {
+        SVGLengthList newList;
+        newList.parse(attr->value(), LengthModeHeight);
+        detachAnimatedDyListWrappers(newList.size());
+        dyBaseValue() = newList;
+    } else if (attr->name() == SVGNames::rotateAttr)
         rotateBaseValue()->parse(attr->value());
     else
         SVGTextContentElement::parseMappedAttribute(attr);
@@ -144,17 +152,11 @@ void SVGTextPositioningElement::synchronizeProperty(const QualifiedName& attrNam
         synchronizeRotate();
 }
 
-static inline bool listContainsRelativeValue(SVGLengthList* list)
+static inline bool listContainsRelativeValue(const SVGLengthList& list)
 {
-    if (!list)
-        return false;
-
-    ExceptionCode ec = 0;
-    int length = list->numberOfItems();
-    for (int i = 0; i < length; ++i) {
-        SVGLength length(list->getItem(i, ec));
-        ASSERT(!ec);
-
+    unsigned size = list.size();
+    for (unsigned i = 0; i < size; ++i) {
+        const SVGLength& length = list.at(i);
         if (length.isRelative())
             return true;
     }
@@ -199,7 +201,6 @@ SVGTextPositioningElement* SVGTextPositioningElement::elementFromRenderer(Render
 
     return static_cast<SVGTextPositioningElement*>(node);
 }
-
 
 }
 

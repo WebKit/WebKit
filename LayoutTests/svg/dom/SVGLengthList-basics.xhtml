@@ -1,0 +1,39 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css"/>
+<script>window.enablePixelTesting = true;</script>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<svg id="svg" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
+    <text id="text1" x="500 1000 1500" y="50">   ABC  </text>
+</svg>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+<![CDATA[
+    description("This is a test of the simple SVGLengthList API parts.");
+
+    var text1 = document.getElementById("text1");
+ 
+    // Spec: The object referenced by animVal will always be distinct from the one referenced by baseVal, even when the attribute is not animated.
+    shouldBeTrue("text1.x.baseVal != text1.x.animVal");
+
+    shouldBe("text1.x.baseVal.numberOfItems", "3");
+    shouldBe("text1.x.animVal.numberOfItems", "3");
+
+    // Spec: SVGAnimatedLengthList::animVal(): "A read only SVGLengthList representing the current animated value of the given attribute"
+    // Spec: SVGLengthList: "An SVGLengthList object can be designated as read only, which means that attempts to modify the object will result in an exception being thrown, as described below."
+    shouldThrow("text1.x.animVal.clear()");
+    shouldBeUndefined("text1.x.baseVal.clear()");
+
+    // Following Mozilla here, this should throw, when given a non SVGLength argument.
+    shouldThrow("text1.x.baseVal.initialize(30)");
+
+    successfullyParsed = true;
+]]>
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

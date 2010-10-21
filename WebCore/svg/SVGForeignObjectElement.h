@@ -21,6 +21,8 @@
 #define SVGForeignObjectElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FOREIGN_OBJECT)
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGTests.h"
 #include "SVGLangSpace.h"
 #include "SVGURIReference.h"
@@ -50,10 +52,10 @@ namespace WebCore {
 
         virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY(SVGForeignObjectElement, SVGNames::xAttr, SVGLength, X, x)
-        DECLARE_ANIMATED_PROPERTY(SVGForeignObjectElement, SVGNames::yAttr, SVGLength, Y, y)
-        DECLARE_ANIMATED_PROPERTY(SVGForeignObjectElement, SVGNames::widthAttr, SVGLength, Width, width)
-        DECLARE_ANIMATED_PROPERTY(SVGForeignObjectElement, SVGNames::heightAttr, SVGLength, Height, height)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::xAttr, SVGLength, X, x)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::yAttr, SVGLength, Y, y)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::widthAttr, SVGLength, Width, width)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGForeignObjectElement, SVGNames::heightAttr, SVGLength, Height, height)
 
         // SVGURIReference
         DECLARE_ANIMATED_PROPERTY(SVGForeignObjectElement, XLinkNames::hrefAttr, String, Href, href)

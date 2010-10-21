@@ -30,7 +30,6 @@ namespace WebCore {
    
     class SVGAngle;
     class SVGElement;
-    class SVGLengthList;
     class SVGNumberList;
     class SVGPreserveAspectRatio;
     class SVGTransformList;
@@ -160,8 +159,6 @@ namespace WebCore {
     typedef DeprecatedSVGAnimatedTemplate<bool> SVGAnimatedBoolean;
     typedef DeprecatedSVGAnimatedTemplate<int> SVGAnimatedEnumeration;
     typedef DeprecatedSVGAnimatedTemplate<long> SVGAnimatedInteger;
-    typedef DeprecatedSVGAnimatedTemplate<SVGLength> SVGAnimatedLength;
-    typedef DeprecatedSVGAnimatedTemplate<SVGLengthList*> SVGAnimatedLengthList;
     typedef DeprecatedSVGAnimatedTemplate<float> SVGAnimatedNumber;
     typedef DeprecatedSVGAnimatedTemplate<SVGNumberList*> SVGAnimatedNumberList; 
     typedef DeprecatedSVGAnimatedTemplate<SVGPreserveAspectRatio> SVGAnimatedPreserveAspectRatio;

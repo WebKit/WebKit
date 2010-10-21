@@ -330,7 +330,9 @@ sub IsSVGTypeNeedingContextParameter
 
     return 0 unless $implClassName =~ /SVG/;
     return 0 if $implClassName =~ /Element/;
-    my @noContextNeeded = ("SVGPaint", "SVGColor", "SVGDocument", "SVGZoomEvent");
+    return 0 if $codeGenerator->IsSVGNewStyleAnimatedType($implClassName);
+
+    my @noContextNeeded = ("SVGLength", "SVGLengthList", "SVGPaint", "SVGColor", "SVGDocument", "SVGZoomEvent");
     foreach (@noContextNeeded) {
         return 0 if $implClassName eq $_;
     }
@@ -672,12 +674,36 @@ sub GenerateHeader
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
     # Get correct pass/store types respecting PODType flag
+    my $implType = $implClassName;
+
+    my $svgPropertyType = $dataNode->extendedAttributes->{"SVGProperty"};    
+    if ($svgPropertyType) {
+        $implType = "SVGPropertyTearOff<$svgPropertyType> ";
+        $headerIncludes{"SVGAnimatedProperty.h"} = 1;
+        $headerIncludes{"SVGPropertyTearOff.h"} = 1;
+        $headerIncludes{"$svgPropertyType.h"} = 1 if $svgPropertyType ne "float";
+    }
+
+    my $svgListPropertyType = $dataNode->extendedAttributes->{"SVGListProperty"};    
+    if ($svgListPropertyType) {
+        $implType = "SVGListPropertyTearOff<$svgListPropertyType> ";
+        $headerIncludes{"SVGAnimatedProperty.h"} = 1;
+        $headerIncludes{"SVGListPropertyTearOff.h"} = 1;
+        $headerIncludes{"$svgListPropertyType.h"} = 1;
+    }
+
+    # FIXME: Old style SVG JS bindings, will vanish soon.
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    my $implType = $podType ? "JSSVGPODTypeWrapper<$podType> " : $implClassName;
+    if ($podType) {
+        $implType = "JSSVGPODTypeWrapper<$podType> ";
+        $headerIncludes{"$podType.h"} = 1 if $podType ne "float";
+        $headerIncludes{"JSSVGPODTypeWrapper.h"} = 1;
+    }
 
-    $headerIncludes{"$podType.h"} = 1 if $podType and $podType ne "float";
-
-    $headerIncludes{"JSSVGPODTypeWrapper.h"} = 1 if $podType;
+    my $svgPropertyOrPodType;
+    $svgPropertyOrPodType = $podType if $podType;
+    $svgPropertyOrPodType = $svgPropertyType if $svgPropertyType;
+    $svgPropertyOrPodType = $svgListPropertyType if $svgListPropertyType;
 
     my $numConstants = @{$dataNode->constants};
     my $numAttributes = @{$dataNode->attributes};
@@ -685,8 +711,11 @@ sub GenerateHeader
 
     push(@headerContent, "\nnamespace WebCore {\n\n");
 
+    my $svgAnimatedPropertyType = $dataNode->extendedAttributes->{"SVGAnimatedProperty"};   
+    $headerIncludes{"$implClassName.h"} = 1 if $svgAnimatedPropertyType;
+
     # Implementation class forward declaration
-    AddClassForwardIfNeeded($implClassName) unless $podType;
+    AddClassForwardIfNeeded($implClassName) unless $svgPropertyOrPodType or $svgAnimatedPropertyType;
     AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
 
     # Class declaration
@@ -875,8 +904,6 @@ sub GenerateHeader
     }
 
     if (!$hasParent) {
-        # Extra space after JSSVGPODTypeWrapper<> to make RefPtr<Wrapper<> > compile.
-        my $implType = $podType ? "JSSVGPODTypeWrapper<$podType> " : $implClassName;
         push(@headerContent, "    $implType* impl() const { return m_impl.get(); }\n\n");
         push(@headerContent, "private:\n");
         push(@headerContent, "    RefPtr<$implType> m_impl;\n");
@@ -936,7 +963,9 @@ sub GenerateHeader
 
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateToJS"} || $dataNode->extendedAttributes->{"CustomToJS"}) {
         if ($podType) {
-            push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, JSSVGPODTypeWrapper<$podType>*, SVGElement*);\n");
+            push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*, SVGElement*);\n");
+        } elsif ($svgPropertyType) {
+            push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
             push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*, SVGElement* context);\n");
         } else {
@@ -944,12 +973,13 @@ sub GenerateHeader
         }
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
+
         if ($podType) {
             push(@headerContent, "$podType to${interfaceName}(JSC::JSValue);\n");
         } elsif ($interfaceName eq "NodeFilter") {
             push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(JSC::JSValue);\n");
         } else {
-            push(@headerContent, "$implClassName* to${interfaceName}(JSC::JSValue);\n");
+            push(@headerContent, "$implType* to${interfaceName}(JSC::JSValue);\n");
         }
     }
     if ($usesToJSNewlyCreated{$interfaceName}) {
@@ -1415,8 +1445,22 @@ sub GenerateImplementation
     push(@implContent, "};\n\n");
 
     # Get correct pass/store types respecting PODType flag
+    my $implType = $implClassName;
+    my $svgPropertyType = $dataNode->extendedAttributes->{"SVGProperty"};    
+    my $svgListPropertyType = $dataNode->extendedAttributes->{"SVGListProperty"};    
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    my $implType = $podType ? "JSSVGPODTypeWrapper<$podType> " : $implClassName;
+    if ($svgPropertyType) {
+        $implType = "SVGPropertyTearOff<$svgPropertyType> ";
+    } elsif ($svgListPropertyType) {
+        $implType = "SVGListPropertyTearOff<$svgListPropertyType> ";
+    } elsif ($podType) {
+        $implType = "JSSVGPODTypeWrapper<$podType> ";
+    }
+
+    my $svgPropertyOrPodType;
+    $svgPropertyOrPodType = $podType if $podType;
+    $svgPropertyOrPodType = $svgPropertyType if $svgPropertyType;
+    $svgPropertyOrPodType = $svgListPropertyType if $svgListPropertyType;
 
     # Constructor
     if ($interfaceName eq "DOMWindow") {
@@ -1540,7 +1584,7 @@ sub GenerateImplementation
                 push(@implContent, "    ${className}* castedThis = static_cast<$className*>(asObject(slotBase));\n");
 
                 my $implClassNameForValueConversion = "";
-                if (!$podType and ($codeGenerator->IsSVGAnimatedType($implClassName) or $attribute->type !~ /^readonly/)) {
+                if (!$svgPropertyOrPodType and ($codeGenerator->IsSVGAnimatedType($implClassName) or $attribute->type !~ /^readonly/)) {
                     $implClassNameForValueConversion = $implClassName;
                 }
 
@@ -1592,9 +1636,13 @@ sub GenerateImplementation
                         push(@implContent, "    if (JSValue cachedValue = castedThis->getAnonymousValue(" . $className . "::" . $attribute->signature->name . "Slot))\n");
                         push(@implContent, "        return cachedValue;\n");
                     }
-                    if ($podType) {
-                        push(@implContent, "    $podType imp(*castedThis->impl());\n");
-                        if ($podType eq "float") { # Special case for JSSVGNumber
+
+                    if ($svgListPropertyType) {
+                        push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "castedThis->impl()->$implGetterFunctionName()", "castedThis") . ";\n");
+                    } elsif ($svgPropertyOrPodType) {
+                        push(@implContent, "    $svgPropertyOrPodType imp(*castedThis->impl());\n") if $podType;
+                        push(@implContent, "    $svgPropertyOrPodType& imp = castedThis->impl()->propertyReference();\n") if !$podType;
+                        if ($svgPropertyOrPodType eq "float") { # Special case for JSSVGNumber
                             push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp", "castedThis") . ";\n");
                         } else {
                             push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName()", "castedThis") . ";\n");
@@ -1605,7 +1653,12 @@ sub GenerateImplementation
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
                         if ($codeGenerator->IsSVGAnimatedType($type)) {
                             push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
-                            push(@implContent, "    JSValue result =  toJS(exec, castedThis->globalObject(), obj.get(), imp);\n");
+
+                            if ($codeGenerator->IsSVGNewStyleAnimatedType($type)) {
+                                push(@implContent, "    JSValue result =  toJS(exec, castedThis->globalObject(), obj.get());\n");
+                            } else {
+                                push(@implContent, "    JSValue result =  toJS(exec, castedThis->globalObject(), obj.get(), imp);\n");
+                            }
                         } else {
                             push(@implContent, "    JSValue result = $jsType;\n");
                         }
@@ -1616,8 +1669,8 @@ sub GenerateImplementation
 
                 } else {
                     push(@implContent, "    ExceptionCode ec = 0;\n");                    
-                    if ($podType) {
-                        push(@implContent, "    $podType imp(*castedThis->impl());\n");
+                    if ($svgPropertyOrPodType) {
+                        push(@implContent, "    $svgPropertyOrPodType imp(*castedThis->impl());\n");
                         push(@implContent, "    JSC::JSValue result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$implGetterFunctionName(ec)", "castedThis") . ";\n");
                     } else {
                         push(@implContent, "    $implClassName* imp = static_cast<$implClassName*>(castedThis->impl());\n");
@@ -1749,14 +1802,16 @@ sub GenerateImplementation
                         } else {
                             push(@implContent, "    $className* castedThis = static_cast<$className*>(thisObject);\n");
                             push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
-                            if ($podType) {
-                                push(@implContent, "    $podType podImp(*imp);\n");
-                                if ($podType eq "float") { # Special case for JSSVGNumber
+                            if ($svgPropertyOrPodType) {
+                                push(@implContent, "    $svgPropertyOrPodType podImp(*imp);\n") if $podType;
+                                push(@implContent, "    $svgPropertyOrPodType& podImp = imp->propertyReference();\n") if !$podType;
+                                if ($svgPropertyOrPodType eq "float") { # Special case for JSSVGNumber
                                     push(@implContent, "    podImp = " . JSValueToNative($attribute->signature, "value") . ";\n");
                                 } else {
                                     push(@implContent, "    podImp.set$implSetterFunctionName(" . JSValueToNative($attribute->signature, "value") . ");\n");
                                 }
-                                push(@implContent, "    imp->commitChange(podImp, castedThis);\n");
+                                push(@implContent, "    imp->commitChange(podImp, castedThis);\n") if $podType;
+                                push(@implContent, "    imp->commitChange();\n") if $svgPropertyType;
                             } else {
                                 my $nativeValue = JSValueToNative($attribute->signature, "value");
                                 my $setterExpressionPrefix = $codeGenerator->SetterExpressionPrefix(\%implIncludes, $interfaceName, $attribute);
@@ -1848,7 +1903,7 @@ sub GenerateImplementation
             # classes, we directly forward the calls to JSSVGPODListCustom, which centralizes the otherwise
             # duplicated code for the JSSVG*List classes mentioned above.
             my $svgPODListType;
-            if ($implClassName =~ /SVG.*List/) {
+            if ($implClassName =~ /SVG.*List/ and !$svgListPropertyType) {
                 $svgPODListType = $implClassName;
                 $svgPODListType =~ s/List$//;
                 $svgPODListType = "" unless $codeGenerator->IsPodType($svgPODListType);
@@ -1867,7 +1922,8 @@ sub GenerateImplementation
                                  . ">(castedThis, exec, to" . $svgPODListType . "));\n");
             } else {
                 push(@implContent, "    $implType* imp = static_cast<$implType*>(castedThis->impl());\n");
-                push(@implContent, "    $podType podImp(*imp);\n") if $podType;
+                push(@implContent, "    $svgPropertyOrPodType podImp(*imp);\n") if $podType;
+                push(@implContent, "    $svgPropertyOrPodType& podImp = imp->propertyReference();\n") if !$podType and $svgPropertyType;
 
                 my $numParameters = @{$function->parameters};
 
@@ -1906,8 +1962,7 @@ sub GenerateImplementation
                 } else {
                     my $argsIndex = 0;
                     my $paramIndex = 0;
-                    my $functionString = ($podType ? "podImp." : "imp->") . $functionImplementationName . "(";
-
+                    my $functionString = (($svgPropertyOrPodType and !$svgListPropertyType) ? "podImp." : "imp->") . $functionImplementationName . "(";
                     my $hasOptionalArguments = 0;
 
                     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
@@ -1948,7 +2003,7 @@ sub GenerateImplementation
                                 $hasOptionalArguments = 1;
                             }
                             push(@implContent, "    if (argsCount <= $argsIndex) {\n");
-                            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $implClassName);
+                            GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    " x 2, $podType, $svgPropertyType, $implClassName);
                             push(@implContent, "    }\n\n");
                         }
 
@@ -2032,7 +2087,7 @@ sub GenerateImplementation
                     }
 
                     push(@implContent, "\n");
-                    GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    ", $podType, $implClassName);
+                    GenerateImplementationFunctionCall($function, $functionString, $paramIndex, "    ", $podType, $svgPropertyType, $implClassName);
                 }
             }
             push(@implContent, "}\n\n");
@@ -2091,16 +2146,18 @@ sub GenerateImplementation
     }
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !$dataNode->extendedAttributes->{"CustomToJS"}) {
-        if ($podType) {
-            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, JSSVGPODTypeWrapper<$podType>* object, SVGElement* context)\n");
-        } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
+        if ($svgPropertyType) {
+            push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* object)\n");
+        } elsif ($podType or IsSVGTypeNeedingContextParameter($implClassName)) {
             push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* object, SVGElement* context)\n");
         } else {
             push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* object)\n");
         }
         push(@implContent, "{\n");
-        if ($podType) {
-            push(@implContent, "    return getDOMObjectWrapper<$className, JSSVGPODTypeWrapper<$podType> >(exec, globalObject, object, context);\n");
+        if ($svgPropertyType) {
+            push(@implContent, "    return getDOMObjectWrapper<$className, $implType>(exec, globalObject, object);\n");
+        } elsif ($podType) {
+            push(@implContent, "    return getDOMObjectWrapper<$className, $implType>(exec, globalObject, object, context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
             push(@implContent, "    return getDOMObjectWrapper<$className>(exec, globalObject, object, context);\n");
         } else {
@@ -2112,18 +2169,15 @@ sub GenerateImplementation
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateNativeConverter"}) and !$dataNode->extendedAttributes->{"CustomNativeConverter"}) {
         if ($podType) {
             push(@implContent, "$podType to${interfaceName}(JSC::JSValue value)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    return value.inherits(&${className}::s_info) ? ($podType) *static_cast<$className*>(asObject(value))->impl() : $podType()");
         } else {
-            push(@implContent, "$implClassName* to${interfaceName}(JSC::JSValue value)\n");
+            push(@implContent, "$implType* to${interfaceName}(JSC::JSValue value)\n");
+            push(@implContent, "{\n");
+            push(@implContent, "    return value.inherits(&${className}::s_info) ? static_cast<$className*>(asObject(value))->impl() : 0");
         }
 
-        push(@implContent, "{\n");
-
-        push(@implContent, "    return value.inherits(&${className}::s_info) ? " . ($podType ? "($podType) *" : "") . "static_cast<$className*>(asObject(value))->impl() : ");
-        if ($podType and $podType ne "float") {
-            push(@implContent, "$podType();\n}\n");
-        } else {
-            push(@implContent, "0;\n}\n");
-        }
+        push(@implContent, ";\n}\n");
     }
 
     push(@implContent, "\n}\n");
@@ -2298,6 +2352,7 @@ sub GenerateImplementationFunctionCall()
     my $paramIndex = shift;
     my $indent = shift;
     my $podType = shift;
+    my $svgPropertyType = shift;
     my $implClassName = shift;
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
@@ -2316,6 +2371,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, $indent . "$functionString;\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
         push(@implContent, $indent . "imp->commitChange(podImp, castedThis);\n") if $podType;
+        push(@implContent, $indent . "imp->commitChange();\n") if $svgPropertyType;
         push(@implContent, $indent . "return JSValue::encode(jsUndefined());\n");
     } else {
         push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, "", $functionString, "castedThis") . ";\n");
@@ -2358,7 +2414,7 @@ my %nativeType = (
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "IDBKey" => "RefPtr<IDBKey>",
     "SVGAngle" => "SVGAngle",
-    "SVGLength" => "SVGLength",
+    "SVGLength" => "SVGPropertyTearOff<SVGLength>*",
     "SVGMatrix" => "AffineTransform",
     "SVGNumber" => "float",
     "SVGPaintType" => "SVGPaint::SVGPaintType",
@@ -2509,6 +2565,12 @@ sub NativeToJSValue
         } else {
             return "toJS(exec, $globalObject, JSSVGDynamicPODTypeWrapperCache<$nativeType, $implClassNameForValueConversion>::lookupOrCreateWrapper(imp, &${implClassNameForValueConversion}::$getter, &${implClassNameForValueConversion}::$setter).get(), JSSVGContextCache::svgContextForDOMObject(castedThis));"
         }
+    } 
+
+    my $svgLivePropertyType = $signature->extendedAttributes->{"SVGLiveProperty"};
+    if ($svgLivePropertyType) {
+        $implIncludes{"JS$type.h"} = 1;
+        return "toJS(exec, $globalObject, SVGPropertyTearOff<$type>::create($value).get())";
     }
 
     if ($type eq "CSSStyleDeclaration") {
@@ -2548,6 +2610,15 @@ sub NativeToJSValue
 
     if ($signature->extendedAttributes->{"ReturnsNew"}) {        
         return "toJSNewlyCreated(exec, $globalObject, WTF::getPtr($value))";
+    }
+
+    # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
+    if ($codeGenerator->IsSVGNewStyleAnimatedType($implClassName)) {
+        if ($implClassName =~ /List$/) {
+            $value = "static_cast<SVGListPropertyTearOff<$type>*>($value)";
+        } else {
+            $value = "static_cast<SVGPropertyTearOff<$type>*>($value)";
+        }
     }
 
     return "toJS(exec, $globalObject, WTF::getPtr($value))";

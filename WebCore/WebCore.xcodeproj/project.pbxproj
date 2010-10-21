@@ -173,6 +173,15 @@
 		088451160F267B63007F139E /* WMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 088451140F267B63007F139E /* WMLInputElement.h */; };
 		0885067F11DA045B00182B98 /* PaintInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0885067D11DA045B00182B98 /* PaintInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0885068011DA045B00182B98 /* PaintPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0885067E11DA045B00182B98 /* PaintPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E04126EF1DB00978F7A /* SVGAnimatedListPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0DFB126EF1DB00978F7A /* SVGAnimatedListPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E05126EF1DB00978F7A /* SVGAnimatedProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0DFC126EF1DB00978F7A /* SVGAnimatedProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E06126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0DFD126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E07126EF1DB00978F7A /* SVGAnimatedPropertyMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0DFE126EF1DB00978F7A /* SVGAnimatedPropertyMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E08126EF1DB00978F7A /* SVGAnimatedPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0DFF126EF1DB00978F7A /* SVGAnimatedPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E09126EF1DB00978F7A /* SVGListPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0E00126EF1DB00978F7A /* SVGListPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E0A126EF1DB00978F7A /* SVGProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0E01126EF1DB00978F7A /* SVGProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E0B126EF1DB00978F7A /* SVGPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0E02126EF1DB00978F7A /* SVGPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		088A0E0C126EF1DB00978F7A /* SVGPropertyTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 088A0E03126EF1DB00978F7A /* SVGPropertyTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		088C2F7912390081003D65CE /* SVGTextLayoutAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 088C2F7512390080003D65CE /* SVGTextLayoutAttributes.cpp */; };
 		088C2F7A12390081003D65CE /* SVGTextLayoutAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */; };
 		088C97120ECB6D92000534BA /* WMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CA3AB490E556F2400E9C0C0 /* WMLNames.cpp */; };
@@ -189,6 +198,8 @@
 		088C976D0ECB6E29000534BA /* WMLPageState.h in Headers */ = {isa = PBXBuildFile; fileRef = 0893E4660ECB68F400A28563 /* WMLPageState.h */; };
 		088C976E0ECB6E29000534BA /* WMLPElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C6B99350E52E37300487BB7 /* WMLPElement.cpp */; };
 		088C976F0ECB6E29000534BA /* WMLPElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4C6B99360E52E37300487BB7 /* WMLPElement.h */; };
+		089021A9126EF5DE0092D5EA /* SVGAnimatedLength.h in Headers */ = {isa = PBXBuildFile; fileRef = 089021A8126EF5DE0092D5EA /* SVGAnimatedLength.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		089021AD126EF5E90092D5EA /* SVGAnimatedLengthList.h in Headers */ = {isa = PBXBuildFile; fileRef = 089021AC126EF5E90092D5EA /* SVGAnimatedLengthList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		089582550E857A7E00F82C83 /* ImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 089582530E857A7E00F82C83 /* ImageLoader.cpp */; };
 		089582560E857A7E00F82C83 /* ImageLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 089582540E857A7E00F82C83 /* ImageLoader.h */; };
 		0897C14C0ED2EBA500AE06DB /* WMLBRElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0897C14A0ED2EBA400AE06DB /* WMLBRElement.cpp */; };
@@ -6157,8 +6168,19 @@
 		088451140F267B63007F139E /* WMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLInputElement.h; sourceTree = "<group>"; };
 		0885067D11DA045B00182B98 /* PaintInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintInfo.h; sourceTree = "<group>"; };
 		0885067E11DA045B00182B98 /* PaintPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaintPhase.h; sourceTree = "<group>"; };
+		088A0DFB126EF1DB00978F7A /* SVGAnimatedListPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedListPropertyTearOff.h; sourceTree = "<group>"; };
+		088A0DFC126EF1DB00978F7A /* SVGAnimatedProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedProperty.h; sourceTree = "<group>"; };
+		088A0DFD126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPropertyDescription.h; sourceTree = "<group>"; };
+		088A0DFE126EF1DB00978F7A /* SVGAnimatedPropertyMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPropertyMacros.h; sourceTree = "<group>"; };
+		088A0DFF126EF1DB00978F7A /* SVGAnimatedPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedPropertyTearOff.h; sourceTree = "<group>"; };
+		088A0E00126EF1DB00978F7A /* SVGListPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGListPropertyTearOff.h; sourceTree = "<group>"; };
+		088A0E01126EF1DB00978F7A /* SVGProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGProperty.h; sourceTree = "<group>"; };
+		088A0E02126EF1DB00978F7A /* SVGPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPropertyTearOff.h; sourceTree = "<group>"; };
+		088A0E03126EF1DB00978F7A /* SVGPropertyTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPropertyTraits.h; sourceTree = "<group>"; };
 		088C2F7512390080003D65CE /* SVGTextLayoutAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextLayoutAttributes.cpp; sourceTree = "<group>"; };
 		088C2F7612390080003D65CE /* SVGTextLayoutAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextLayoutAttributes.h; sourceTree = "<group>"; };
+		089021A8126EF5DE0092D5EA /* SVGAnimatedLength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedLength.h; sourceTree = "<group>"; };
+		089021AC126EF5E90092D5EA /* SVGAnimatedLengthList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedLengthList.h; sourceTree = "<group>"; };
 		0893E4650ECB68F400A28563 /* WMLPageState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WMLPageState.cpp; sourceTree = "<group>"; };
 		0893E4660ECB68F400A28563 /* WMLPageState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WMLPageState.h; sourceTree = "<group>"; };
 		089582530E857A7E00F82C83 /* ImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageLoader.cpp; sourceTree = "<group>"; };
@@ -11663,7 +11685,16 @@
 		081CDFBD126ECFE800D215CA /* properties */ = {
 			isa = PBXGroup;
 			children = (
+				088A0DFB126EF1DB00978F7A /* SVGAnimatedListPropertyTearOff.h */,
+				088A0DFC126EF1DB00978F7A /* SVGAnimatedProperty.h */,
+				088A0DFD126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h */,
+				088A0DFE126EF1DB00978F7A /* SVGAnimatedPropertyMacros.h */,
 				081CDFBE126ECFE800D215CA /* SVGAnimatedPropertySynchronizer.h */,
+				088A0DFF126EF1DB00978F7A /* SVGAnimatedPropertyTearOff.h */,
+				088A0E00126EF1DB00978F7A /* SVGListPropertyTearOff.h */,
+				088A0E01126EF1DB00978F7A /* SVGProperty.h */,
+				088A0E02126EF1DB00978F7A /* SVGPropertyTearOff.h */,
+				088A0E03126EF1DB00978F7A /* SVGPropertyTraits.h */,
 			);
 			path = properties;
 			sourceTree = "<group>";
@@ -15904,7 +15935,9 @@
 				B22277E70D00BF1F0071B782 /* SVGAnimatedBoolean.idl */,
 				B22277E80D00BF1F0071B782 /* SVGAnimatedEnumeration.idl */,
 				B22277E90D00BF1F0071B782 /* SVGAnimatedInteger.idl */,
+				089021A8126EF5DE0092D5EA /* SVGAnimatedLength.h */,
 				B22277EA0D00BF1F0071B782 /* SVGAnimatedLength.idl */,
+				089021AC126EF5E90092D5EA /* SVGAnimatedLengthList.h */,
 				B22277EB0D00BF1F0071B782 /* SVGAnimatedLengthList.idl */,
 				B22277EC0D00BF1F0071B782 /* SVGAnimatedNumber.idl */,
 				B22277ED0D00BF1F0071B782 /* SVGAnimatedNumberList.idl */,
@@ -21093,6 +21126,17 @@
 				081CDFB9126ECFDB00D215CA /* DeprecatedSVGAnimatedPropertyTraits.h in Headers */,
 				081CDFBA126ECFDB00D215CA /* DeprecatedSVGAnimatedTemplate.h in Headers */,
 				081CDFBF126ECFE800D215CA /* SVGAnimatedPropertySynchronizer.h in Headers */,
+				088A0E04126EF1DB00978F7A /* SVGAnimatedListPropertyTearOff.h in Headers */,
+				088A0E05126EF1DB00978F7A /* SVGAnimatedProperty.h in Headers */,
+				088A0E06126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h in Headers */,
+				088A0E07126EF1DB00978F7A /* SVGAnimatedPropertyMacros.h in Headers */,
+				088A0E08126EF1DB00978F7A /* SVGAnimatedPropertyTearOff.h in Headers */,
+				088A0E09126EF1DB00978F7A /* SVGListPropertyTearOff.h in Headers */,
+				088A0E0A126EF1DB00978F7A /* SVGProperty.h in Headers */,
+				088A0E0B126EF1DB00978F7A /* SVGPropertyTearOff.h in Headers */,
+				088A0E0C126EF1DB00978F7A /* SVGPropertyTraits.h in Headers */,
+				089021A9126EF5DE0092D5EA /* SVGAnimatedLength.h in Headers */,
+				089021AD126EF5E90092D5EA /* SVGAnimatedLengthList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -21152,7 +21196,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C284308902B11008A9EFC /* Build configuration list for PBXProject "WebCore" */;
 			compatibilityVersion = "Xcode 2.4";
-			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,

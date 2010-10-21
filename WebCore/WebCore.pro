@@ -2343,11 +2343,22 @@ HEADERS += \
     svg/graphics/filters/SVGFilterBuilder.h \
     svg/graphics/filters/SVGFilter.h \
     svg/graphics/SVGImage.h \
+    svg/properties/SVGAnimatedListPropertyTearOff.h \
+    svg/properties/SVGAnimatedProperty.h \
+    svg/properties/SVGAnimatedPropertyDescription.h \
+    svg/properties/SVGAnimatedPropertyMacros.h \
     svg/properties/SVGAnimatedPropertySynchronizer.h \
+    svg/properties/SVGAnimatedPropertyTearOff.h \
+    svg/properties/SVGListPropertyTearOff.h \
+    svg/properties/SVGProperty.h \
+    svg/properties/SVGPropertyTearOff.h \
+    svg/properties/SVGPropertyTraits.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
     svg/SVGAngle.h \
     svg/SVGAnimateColorElement.h \
+    svg/SVGAnimatedLength.h \
+    svg/SVGAnimatedLengthList.h \
     svg/SVGAnimatedPathData.h \
     svg/SVGAnimatedPoints.h \
     svg/SVGAnimateElement.h \

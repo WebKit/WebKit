@@ -61179,6 +61179,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedLength.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGAnimatedLengthList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedPathData.h"
 				>
 			</File>
@@ -62206,7 +62214,43 @@
 				Name="properties"
 				>
 				<File
+    				RelativePath="..\svg\properties\SVGAnimatedListPropertyTearOff.h"
+					>
+				</File>
+				<File
+    				RelativePath="..\svg\properties\SVGAnimatedProperty.h"
+					>
+				</File>
+				<File
+    				RelativePath="..\svg\properties\SVGAnimatedPropertyDescription.h"
+					>
+				</File>
+				<File
+    				RelativePath="..\svg\properties\SVGAnimatedPropertyMacros.h"
+					>
+				</File>
+				<File
     				RelativePath="..\svg\properties\SVGAnimatedPropertySynchronizer.h"
+					>
+				</File>
+				<File
+    				RelativePath="..\svg\properties\SVGAnimatedPropertyTearOff.h"
+					>
+				</File>
+				<File
+    				RelativePath="..\svg\properties\SVGListPropertyTearOff.h"
+					>
+				</File>
+				<File
+    				RelativePath="..\svg\properties\SVGProperty.h"
+					>
+				</File>
+				<File
+    				RelativePath="..\svg\properties\SVGPropertyTearOff.h"
+					>
+				</File>
+				<File
+    				RelativePath="..\svg\properties\SVGPropertyTraits.h"
 					>
 				</File>
 			</Filter>

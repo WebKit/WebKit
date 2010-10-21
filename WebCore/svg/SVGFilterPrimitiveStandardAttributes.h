@@ -24,6 +24,8 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "FilterEffect.h"
 #include "RenderSVGResource.h"
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGFilterBuilder.h"
 #include "SVGFilterElement.h"
 #include "SVGNames.h"
@@ -60,10 +62,10 @@ private:
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::xAttr, SVGLength, X, x)
-    DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::yAttr, SVGLength, Y, y)
-    DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::widthAttr, SVGLength, Width, width)
-    DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::heightAttr, SVGLength, Height, height)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::xAttr, SVGLength, X, x)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::yAttr, SVGLength, Y, y)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::widthAttr, SVGLength, Width, width)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::heightAttr, SVGLength, Height, height)
     DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::resultAttr, String, Result, result)
 };
 

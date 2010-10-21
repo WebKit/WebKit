@@ -22,6 +22,8 @@
 #define SVGRectElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -49,12 +51,12 @@ namespace WebCore {
 
         virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY(SVGRectElement, SVGNames::xAttr, SVGLength, X, x)
-        DECLARE_ANIMATED_PROPERTY(SVGRectElement, SVGNames::yAttr, SVGLength, Y, y)
-        DECLARE_ANIMATED_PROPERTY(SVGRectElement, SVGNames::widthAttr, SVGLength, Width, width)
-        DECLARE_ANIMATED_PROPERTY(SVGRectElement, SVGNames::heightAttr, SVGLength, Height, height)
-        DECLARE_ANIMATED_PROPERTY(SVGRectElement, SVGNames::rxAttr, SVGLength, Rx, rx)
-        DECLARE_ANIMATED_PROPERTY(SVGRectElement, SVGNames::ryAttr, SVGLength, Ry, ry)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRectElement, SVGNames::xAttr, SVGLength, X, x)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRectElement, SVGNames::yAttr, SVGLength, Y, y)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRectElement, SVGNames::widthAttr, SVGLength, Width, width)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRectElement, SVGNames::heightAttr, SVGLength, Height, height)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRectElement, SVGNames::rxAttr, SVGLength, Rx, rx)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGRectElement, SVGNames::ryAttr, SVGLength, Ry, ry)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGRectElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

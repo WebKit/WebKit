@@ -22,6 +22,8 @@
 #define SVGEllipseElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -49,10 +51,10 @@ namespace WebCore {
 
         virtual bool selfHasRelativeLengths() const;
 
-        DECLARE_ANIMATED_PROPERTY(SVGEllipseElement, SVGNames::cxAttr, SVGLength, Cx, cx)
-        DECLARE_ANIMATED_PROPERTY(SVGEllipseElement, SVGNames::cyAttr, SVGLength, Cy, cy)
-        DECLARE_ANIMATED_PROPERTY(SVGEllipseElement, SVGNames::rxAttr, SVGLength, Rx, rx)
-        DECLARE_ANIMATED_PROPERTY(SVGEllipseElement, SVGNames::ryAttr, SVGLength, Ry, ry)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGEllipseElement, SVGNames::cxAttr, SVGLength, Cx, cx)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGEllipseElement, SVGNames::cyAttr, SVGLength, Cy, cy)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGEllipseElement, SVGNames::rxAttr, SVGLength, Rx, rx)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGEllipseElement, SVGNames::ryAttr, SVGLength, Ry, ry)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_PROPERTY(SVGEllipseElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

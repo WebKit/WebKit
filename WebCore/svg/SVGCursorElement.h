@@ -22,7 +22,8 @@
 #define SVGCursorElement_h
 
 #if ENABLE(SVG)
-#include "SVGLength.h"
+#include "SVGAnimatedLength.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGElement.h"
 #include "SVGTests.h"
 #include "SVGURIReference.h"
@@ -53,8 +54,8 @@ namespace WebCore {
 
         virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
-        DECLARE_ANIMATED_PROPERTY(SVGCursorElement, SVGNames::xAttr, SVGLength, X, x)
-        DECLARE_ANIMATED_PROPERTY(SVGCursorElement, SVGNames::yAttr, SVGLength, Y, y)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGCursorElement, SVGNames::xAttr, SVGLength, X, x)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGCursorElement, SVGNames::yAttr, SVGLength, Y, y)
 
         // SVGURIReference
         DECLARE_ANIMATED_PROPERTY(SVGCursorElement, XLinkNames::hrefAttr, String, Href, href)

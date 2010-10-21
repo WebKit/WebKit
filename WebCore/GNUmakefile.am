@@ -3007,7 +3007,16 @@ webcore_sources += \
 	WebCore/svg/graphics/SVGImage.h \
 	WebCore/svg/LinearGradientAttributes.h \
 	WebCore/svg/PatternAttributes.h \
+	WebCore/svg/properties/SVGAnimatedListPropertyTearOff.h \
+	WebCore/svg/properties/SVGAnimatedProperty.h \
+	WebCore/svg/properties/SVGAnimatedPropertyDescription.h \
+	WebCore/svg/properties/SVGAnimatedPropertyMacros.h \
 	WebCore/svg/properties/SVGAnimatedPropertySynchronizer.h \
+	WebCore/svg/properties/SVGAnimatedPropertyTearOff.h \
+	WebCore/svg/properties/SVGListPropertyTearOff.h \
+	WebCore/svg/properties/SVGProperty.h \
+	WebCore/svg/properties/SVGPropertyTearOff.h \
+	WebCore/svg/properties/SVGPropertyTraits.h \
 	WebCore/svg/RadialGradientAttributes.h \
 	WebCore/svg/SVGAElement.cpp \
 	WebCore/svg/SVGAElement.h \
@@ -3017,6 +3026,8 @@ webcore_sources += \
 	WebCore/svg/SVGAngle.h \
 	WebCore/svg/SVGAnimateColorElement.cpp \
 	WebCore/svg/SVGAnimateColorElement.h \
+	WebCore/svg/SVGAnimatedLength.h \
+	WebCore/svg/SVGAnimatedLengthList.h \
 	WebCore/svg/SVGAnimatedPathData.cpp \
 	WebCore/svg/SVGAnimatedPathData.h \
 	WebCore/svg/SVGAnimatedPoints.cpp \

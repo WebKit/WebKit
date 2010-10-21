@@ -25,8 +25,6 @@
 #include "FloatRect.h"
 #include "PlatformString.h"
 #include "SVGAngle.h"
-#include "SVGLength.h"
-#include "SVGLengthList.h"
 #include "SVGNumberList.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGTransformList.h"
@@ -82,30 +80,6 @@ struct DeprecatedSVGAnimatedPropertyTraits<long> : public Noncopyable {
     static ReturnType null() { return 0l; }
     static ReturnType toReturnType(const StoredType& type) { return type; }
     static String toString(PassType type) { return String::number(type); }
-};
-
-// SVGAnimatedLength
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<SVGLength> : public Noncopyable {
-    typedef const SVGLength& PassType;
-    typedef SVGLength ReturnType;
-    typedef SVGLength StoredType;
-
-    static ReturnType null() { return SVGLength(); }
-    static ReturnType toReturnType(const StoredType& type) { return type; }
-    static String toString(PassType type) { return type.valueAsString(); }
-};
-
-// SVGAnimatedLengthList
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<SVGLengthList*> : public Noncopyable {
-    typedef SVGLengthList* PassType;
-    typedef SVGLengthList* ReturnType;
-    typedef RefPtr<SVGLengthList> StoredType;
-
-    static ReturnType null() { return 0; }
-    static ReturnType toReturnType(const StoredType& type) { return type.get(); }
-    static String toString(PassType type) { return type ? type->valueAsString() : String(); }
 };
 
 // SVGAnimatedNumber

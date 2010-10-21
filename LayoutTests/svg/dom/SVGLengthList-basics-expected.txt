@@ -1,0 +1,16 @@
+ABC
+This is a test of the simple SVGLengthList API parts.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS text1.x.baseVal != text1.x.animVal is true
+PASS text1.x.baseVal.numberOfItems is 3
+PASS text1.x.animVal.numberOfItems is 3
+PASS text1.x.animVal.clear() threw exception Error: NO_MODIFICATION_ALLOWED_ERR: DOM Exception 7.
+PASS text1.x.baseVal.clear() is undefined.
+PASS text1.x.baseVal.initialize(30) threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

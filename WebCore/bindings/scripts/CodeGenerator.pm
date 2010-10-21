@@ -50,10 +50,12 @@ my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1
                          "Date" => 1);
 
 my %podTypeHash = ("SVGNumber" => 1, "SVGTransform" => 1);
-my %podTypesWithWritablePropertiesHash = ("SVGAngle" => 1, "SVGLength" => 1, "SVGMatrix" => 1, "SVGPoint" => 1, "SVGPreserveAspectRatio" => 1, "SVGRect" => 1);
+my %podTypesWithWritablePropertiesHash = ("SVGAngle" => 1, "SVGMatrix" => 1, "SVGPoint" => 1, "SVGPreserveAspectRatio" => 1, "SVGRect" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
+
+my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1);
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
@@ -324,6 +326,16 @@ sub IsNonPointerType
     my $type = shift;
 
     return 1 if $nonPointerTypeHash{$type} or $primitiveTypeHash{$type};
+    return 0;
+}
+
+# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
+sub IsSVGNewStyleAnimatedType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 1 if $svgNewStyleAnimatedTypeHash{$type};
     return 0;
 }
 

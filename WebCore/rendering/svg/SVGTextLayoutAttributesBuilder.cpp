@@ -57,20 +57,17 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree(RenderS
     propagateLayoutAttributes(textRoot, atCharacter, lastCharacter);
 }
 
-static inline void extractFloatValuesFromSVGLengthList(SVGElement* lengthContext, SVGLengthList* list, Vector<float>& floatValues, unsigned textContentLength)
+static inline void extractFloatValuesFromSVGLengthList(SVGElement* lengthContext, const SVGLengthList& list, Vector<float>& floatValues, unsigned textContentLength)
 {
     ASSERT(lengthContext);
-    ASSERT(list);
 
-    unsigned length = list->numberOfItems();
+    unsigned length = list.size();
     if (length > textContentLength)
         length = textContentLength;
     floatValues.reserveCapacity(length);
 
-    ExceptionCode ec = 0;
     for (unsigned i = 0; i < length; ++i) {
-        SVGLength length = list->getItem(i, ec);
-        ASSERT(!ec);
+        const SVGLength& length = list.at(i);
         floatValues.append(length.value(lengthContext));
     }
 }
