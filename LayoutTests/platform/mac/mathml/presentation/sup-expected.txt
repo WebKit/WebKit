@@ -8,9 +8,10 @@ layer at (0,0) size 800x51
           text run at (0,0) width 76: "superscript: "
         RenderBlock {math} at (76,0) size 15x19
           RenderBlock {msup} at (1,0) size 13x19
-            RenderInline {mi} at (0,0) size 7x16
-              RenderText {#text} at (0,3) size 7x16
-                text run at (0,3) width 7: "x"
+            RenderBlock {msup} at (0,0) size 7x19
+              RenderInline {mi} at (0,0) size 7x16
+                RenderText {#text} at (0,3) size 7x16
+                  text run at (0,3) width 7: "x"
             RenderInline {mn} at (0,0) size 6x12
               RenderText {#text} at (7,0) size 6x12
                 text run at (7,0) width 6: "2"

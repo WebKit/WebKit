@@ -118,7 +118,7 @@ inline int getOffsetHeight(RenderObject* obj)
     return 0;
 }
 
-void  RenderMathMLUnderOver::stretchToHeight(int height)
+void RenderMathMLUnderOver::stretchToHeight(int height)
 {
 
     RenderObject* base = firstChild();
@@ -138,9 +138,7 @@ void  RenderMathMLUnderOver::stretchToHeight(int height)
     if (base && base->isRenderMathMLBlock()) {
         RenderMathMLBlock* block = toRenderMathMLBlock(base);
         block->stretchToHeight(height);
-        updateBoxModelInfoFromStyle();
-        setNeedsLayoutAndPrefWidthsRecalc();
-        markContainingBlocksForLayout();
+        setNeedsLayout(true);
     }
 }
 
@@ -241,7 +239,7 @@ void RenderMathMLUnderOver::layout()
         }
         break;
     }
-    setNeedsLayoutAndPrefWidthsRecalc();
+    setNeedsLayout(true);
     RenderBlock::layout();
 }
 
@@ -282,7 +280,17 @@ int RenderMathMLUnderOver::baselinePosition(bool firstLine, LineDirectionMode di
 
 int RenderMathMLUnderOver::nonOperatorHeight() const 
 {
-    return 0;
+    int nonOperators = 0;
+    for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
+        if (current->firstChild()->isRenderMathMLBlock()) {
+            RenderMathMLBlock* block = toRenderMathMLBlock(current->firstChild());
+            if (!block->isRenderMathMLOperator()) 
+                nonOperators += getOffsetHeight(current);
+        } else {
+            nonOperators += getOffsetHeight(current);
+        }
+    }
+    return nonOperators;
 }
 
 }

@@ -67,8 +67,7 @@ void RenderMathMLOperator::stretchToHeight(int height)
     m_stretchHeight = static_cast<int>(height * gOperatorExpansion);
     
     updateBoxModelInfoFromStyle();
-    setNeedsLayoutAndPrefWidthsRecalc();
-    markContainingBlocksForLayout();
+    setNeedsLayout(true);
 }
 
 void RenderMathMLOperator::layout() 

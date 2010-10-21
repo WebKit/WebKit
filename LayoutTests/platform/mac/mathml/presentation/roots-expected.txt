@@ -33,9 +33,10 @@ layer at (0,0) size 800x571
         RenderBlock {math} at (222,0) size 44x22
           RenderBlock {msqrt} at (1,0) size 42x22
             RenderBlock {msup} at (12,3) size 13x19
-              RenderInline {mi} at (0,0) size 7x16
-                RenderText {#text} at (0,3) size 7x16
-                  text run at (0,3) width 7: "x"
+              RenderBlock {msup} at (0,0) size 7x19
+                RenderInline {mi} at (0,0) size 7x16
+                  RenderText {#text} at (0,3) size 7x16
+                    text run at (0,3) width 7: "x"
               RenderInline {mn} at (0,0) size 6x12
                 RenderText {#text} at (7,0) size 6x12
                   text run at (7,0) width 6: "2"
@@ -52,7 +53,7 @@ layer at (0,0) size 800x571
         RenderBlock {math} at (113,0) size 45x46
           RenderBlock {msqrt} at (1,0) size 43x46
             RenderBlock {mfrac} at (12,3) size 31x40
-              RenderBlock {mfrac} at (0,0) size 31x19
+              RenderBlock {mfrac} at (0,0) size 22x19
                 RenderBlock {mrow} at (3,0) size 25x19
                   RenderInline {mi} at (0,0) size 7x16
                     RenderText {#text} at (0,3) size 7x16
@@ -64,7 +65,7 @@ layer at (0,0) size 800x571
                   RenderInline {mn} at (0,0) size 8x16
                     RenderText {#text} at (17,3) size 8x16
                       text run at (17,3) width 8: "1"
-              RenderBlock {mfrac} at (0,19) size 31x21
+              RenderBlock {mfrac} at (0,19) size 22x21
                 RenderBlock {mrow} at (3,2) size 25x19
                   RenderInline {mi} at (0,0) size 7x16
                     RenderText {#text} at (0,3) size 7x16
@@ -210,7 +211,7 @@ layer at (194,265) size 73x46
     RenderBlock {mroot} at (41,27) size 0x0
     RenderBlock {mroot} at (41,3) size 32x40
       RenderBlock {mfrac} at (1,0) size 31x40
-        RenderBlock {mfrac} at (0,0) size 31x19
+        RenderBlock {mfrac} at (0,0) size 22x19
           RenderBlock {mrow} at (3,0) size 25x19
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (0,3) size 7x16
@@ -222,7 +223,7 @@ layer at (194,265) size 73x46
             RenderInline {mn} at (0,0) size 8x16
               RenderText {#text} at (17,3) size 8x16
                 text run at (17,3) width 8: "1"
-        RenderBlock {mfrac} at (0,19) size 31x21
+        RenderBlock {mfrac} at (0,19) size 22x21
           RenderBlock {mrow} at (3,2) size 25x19
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (0,3) size 7x16

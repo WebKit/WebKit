@@ -12,75 +12,84 @@ layer at (0,0) size 800x180
               RenderTableRow {mtr} at (0,0) size 60x22
                 RenderTableCell {mtd} at (0,0) size 20x22 [r=0 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "11"
                 RenderTableCell {mtd} at (20,0) size 20x22 [r=0 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "12"
                 RenderTableCell {mtd} at (40,0) size 20x22 [r=0 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "13"
               RenderTableRow {mtr} at (0,22) size 60x22
                 RenderTableCell {mtd} at (0,22) size 20x22 [r=1 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "21"
                 RenderTableCell {mtd} at (20,22) size 20x22 [r=1 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "22"
                 RenderTableCell {mtd} at (40,22) size 20x22 [r=1 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "23"
               RenderTableRow {mtr} at (0,44) size 60x22
                 RenderTableCell {mtd} at (0,44) size 20x22 [r=2 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "31"
                 RenderTableCell {mtd} at (20,44) size 20x22 [r=2 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "32"
                 RenderTableCell {mtd} at (40,44) size 20x22 [r=2 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "33"
@@ -94,75 +103,84 @@ layer at (0,0) size 800x180
               RenderTableRow {mtr} at (0,0) size 60x22
                 RenderTableCell {mtd} at (0,0) size 20x22 [r=0 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 14x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (8,10) size 6x12
                         text run at (8,10) width 6: "1"
                 RenderTableCell {mtd} at (20,0) size 20x22 [r=0 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "12"
                 RenderTableCell {mtd} at (40,0) size 20x22 [r=0 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "13"
               RenderTableRow {mtr} at (0,22) size 60x22
                 RenderTableCell {mtd} at (0,22) size 20x22 [r=1 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "21"
                 RenderTableCell {mtd} at (20,22) size 20x22 [r=1 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 14x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (8,10) size 6x12
                         text run at (8,10) width 6: "2"
                 RenderTableCell {mtd} at (40,22) size 20x22 [r=1 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "23"
               RenderTableRow {mtr} at (0,44) size 60x22
                 RenderTableCell {mtd} at (0,44) size 20x22 [r=2 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "31"
                 RenderTableCell {mtd} at (20,44) size 20x22 [r=2 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "32"
                 RenderTableCell {mtd} at (40,44) size 20x22 [r=2 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 13x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (7,10) size 6x12
                         text run at (7,10) width 6: "3"
@@ -174,75 +192,84 @@ layer at (0,0) size 800x180
               RenderTableRow {mtr} at (0,0) size 60x22
                 RenderTableCell {mtd} at (0,0) size 20x22 [r=0 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (3,0) size 14x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (8,10) size 6x12
                         text run at (8,10) width 6: "1"
                 RenderTableCell {mtd} at (20,0) size 20x22 [r=0 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "12"
                 RenderTableCell {mtd} at (40,0) size 20x22 [r=0 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "13"
               RenderTableRow {mtr} at (0,22) size 60x22
                 RenderTableCell {mtd} at (0,22) size 20x22 [r=1 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "21"
                 RenderTableCell {mtd} at (20,22) size 20x22 [r=1 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (3,0) size 14x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (8,10) size 6x12
                         text run at (8,10) width 6: "2"
                 RenderTableCell {mtd} at (40,22) size 20x22 [r=1 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "23"
               RenderTableRow {mtr} at (0,44) size 60x22
                 RenderTableCell {mtd} at (0,44) size 20x22 [r=2 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "31"
                 RenderTableCell {mtd} at (20,44) size 20x22 [r=2 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "32"
                 RenderTableCell {mtd} at (40,44) size 20x22 [r=2 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (3,0) size 13x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (7,10) size 6x12
                         text run at (7,10) width 6: "3"
@@ -254,75 +281,84 @@ layer at (0,0) size 800x180
               RenderTableRow {mtr} at (0,0) size 60x22
                 RenderTableCell {mtd} at (0,0) size 20x22 [r=0 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (6,0) size 14x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (8,10) size 6x12
                         text run at (8,10) width 6: "1"
                 RenderTableCell {mtd} at (20,0) size 20x22 [r=0 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "12"
                 RenderTableCell {mtd} at (40,0) size 20x22 [r=0 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "a"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "a"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "13"
               RenderTableRow {mtr} at (0,22) size 60x22
                 RenderTableCell {mtd} at (0,22) size 20x22 [r=1 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "21"
                 RenderTableCell {mtd} at (20,22) size 20x22 [r=1 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (6,0) size 14x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (8,10) size 6x12
                         text run at (8,10) width 6: "2"
                 RenderTableCell {mtd} at (40,22) size 20x22 [r=1 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (0,0) size 20x22
-                    RenderInline {mi} at (0,0) size 8x16
-                      RenderText {#text} at (0,3) size 8x16
-                        text run at (0,3) width 8: "b"
+                    RenderBlock {msub} at (0,0) size 8x19
+                      RenderInline {mi} at (0,0) size 8x16
+                        RenderText {#text} at (0,3) size 8x16
+                          text run at (0,3) width 8: "b"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (8,10) size 12x12
                         text run at (8,10) width 12: "23"
               RenderTableRow {mtr} at (0,44) size 60x22
                 RenderTableCell {mtd} at (0,44) size 20x22 [r=2 c=0 rs=1 cs=1]
                   RenderBlock {msub} at (1,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "31"
                 RenderTableCell {mtd} at (20,44) size 20x22 [r=2 c=1 rs=1 cs=1]
                   RenderBlock {msub} at (1,0) size 19x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 12x12
                       RenderText {#text} at (7,10) size 12x12
                         text run at (7,10) width 12: "32"
                 RenderTableCell {mtd} at (40,44) size 20x22 [r=2 c=2 rs=1 cs=1]
                   RenderBlock {msub} at (7,0) size 13x22
-                    RenderInline {mi} at (0,0) size 7x16
-                      RenderText {#text} at (0,3) size 7x16
-                        text run at (0,3) width 7: "c"
+                    RenderBlock {msub} at (0,0) size 7x19
+                      RenderInline {mi} at (0,0) size 7x16
+                        RenderText {#text} at (0,3) size 7x16
+                          text run at (0,3) width 7: "c"
                     RenderInline {mn} at (0,0) size 6x12
                       RenderText {#text} at (7,10) size 6x12
                         text run at (7,10) width 6: "3"

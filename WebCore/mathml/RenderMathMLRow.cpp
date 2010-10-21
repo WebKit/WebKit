@@ -66,42 +66,27 @@ void RenderMathMLRow::layout()
 {
     RenderBlock::layout();
     
-    // Calculate the maximum height of the row without the operators.
-    int maxHeight = nonOperatorHeight();
-    
-    // Notify contained operators they may need to re-layout their stretched operators.
-    // We need to keep track of the number of children and operators because a row of
-    // operators needs some special handling.
+    int maxHeight = 0;
     int childCount = 0;
     int operatorCount = 0;
+
+    // Calculate the non-operator max height of the row.
+    int operatorHeight = 0;
     for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
         childCount++;
         if (current->isRenderMathMLBlock()) {
             RenderMathMLBlock* block = toRenderMathMLBlock(current);
-            block->stretchToHeight(maxHeight);
-            if (block->isRenderMathMLOperator()) 
-                operatorCount++;
-        }
-    }
-    
-    // Layout the non-operators which have just been stretched.
-    setNeedsLayoutAndPrefWidthsRecalc();
-    markContainingBlocksForLayout();
-    RenderBlock::layout();
-
-    // Make a second pass with the real height of the operators.
-    int operatorHeight = 0;
-    for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
-        if (current->isRenderMathMLBlock()) {
-            RenderMathMLBlock* block = toRenderMathMLBlock(current);
-            if (!block->hasBase() && !block->isRenderMathMLOperator()) {
-                // Check to see if this box has a larger height.
-                if (block->offsetHeight() > maxHeight)
-                    maxHeight = block->offsetHeight();
-            }
-            if (block->isRenderMathMLOperator())
+            // Check to see if the non-operator block has a greater height.
+            if (!block->hasBase() && !block->isRenderMathMLOperator() && block->offsetHeight() > maxHeight)
+                maxHeight = block->offsetHeight();
+            if (block->hasBase() && block->nonOperatorHeight() > maxHeight) 
+                maxHeight = block->nonOperatorHeight();
+            // If the block is an operator, capture the maximum height and increment the count.
+            if (block->isRenderMathMLOperator()) {
                 if (block->offsetHeight() > operatorHeight)
                     operatorHeight = block->offsetHeight();
+                operatorCount++;
+            }
         } else if (current->isBoxModelObject()) {
             RenderBoxModelObject* box = toRenderBoxModelObject(current);
             // Check to see if this box has a larger height.
@@ -115,34 +100,23 @@ void RenderMathMLRow::layout()
         maxHeight = operatorHeight;
     }
     
-    int stretchHeight = maxHeight;
-    
-    // Stretch the operators again and re-calculate the row height.
-    for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
-        if (current->isRenderMathMLBlock()) {
-            RenderMathMLBlock* block = toRenderMathMLBlock(current);
-            if (block->isRenderMathMLOperator()) {
-                RenderMathMLOperator* mathop = toRenderMathMLOperator(block);
-                mathop->stretchToHeight(stretchHeight);
-            } else {
-                block->stretchToHeight(stretchHeight);
-                RenderBoxModelObject* box = toRenderBoxModelObject(current);
-                // Check to see if this box has a larger height
-                if (box->offsetHeight() > maxHeight)
-                    maxHeight = box->offsetHeight();
+    // Stretch everything to the same height (blocks can ignore the request).
+    if (maxHeight > 0) {
+        bool didStretch = false;
+        for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
+            if (current->isRenderMathMLBlock()) {
+                RenderMathMLBlock* block = toRenderMathMLBlock(current);
+                block->stretchToHeight(maxHeight);
+                didStretch = true;
             }
-        } else if (current->isBoxModelObject()) {
-            RenderBoxModelObject* box = toRenderBoxModelObject(current);
-            // Check to see if this box has a larger height
-            if (box->offsetHeight() > maxHeight)
-                maxHeight = box->offsetHeight();
+        }
+        if (didStretch) {
+            setNeedsLayout(true);
+            setPreferredLogicalWidthsDirty(true, false);
+            RenderBlock::layout();
         }
     }
     
-    // Mark outself as needing layout and do the final layout of the row.
-    setNeedsLayoutAndPrefWidthsRecalc();
-    markContainingBlocksForLayout();
-    RenderBlock::layout();
 }    
 
 int RenderMathMLRow::baselinePosition(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const

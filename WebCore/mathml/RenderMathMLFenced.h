@@ -38,9 +38,6 @@ public:
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
     virtual void updateFromElement();
     
-protected:
-    virtual void layout();
-    
 private:
     void makeFences();
     RefPtr<RenderStyle> makeOperatorStyle();

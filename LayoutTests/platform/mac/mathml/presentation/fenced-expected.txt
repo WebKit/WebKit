@@ -4,8 +4,8 @@ layer at (0,0) size 800x103
   RenderBlock {html} at (0,0) size 800x103
     RenderBody {body} at (8,16) size 784x71
       RenderBlock {p} at (0,0) size 784x71
-        RenderBlock {math} at (0,0) size 171x71
-          RenderBlock {mfenced} at (1,0) size 169x71
+        RenderBlock {math} at (0,0) size 170x71
+          RenderBlock {mfenced} at (1,0) size 168x71
             RenderBlock {mfenced} at (1,13) size 6x58
             RenderBlock {div} at (7,22) size 48x48 [bgcolor=#00FF00]
             RenderBlock {mfenced} at (55,35) size 5x16

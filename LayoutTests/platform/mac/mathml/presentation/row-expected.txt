@@ -20,81 +20,75 @@ layer at (0,0) size 785x614
         RenderText {#text} at (0,2) size 40x18
           text run at (0,2) width 40: "16px: "
         RenderBlock {math} at (40,0) size 45x21
-          RenderBlock {mo} at (1,0) size 10x21 [bgcolor=#C8C8C8]
-            RenderBlock {mo} at (0,0) size 9x19
-              RenderText {mo} at (0,-1) size 9x22
-                text run at (0,-1) width 9: "{"
-          RenderInline {mi} at (0,0) size 7x16
-            RenderText {#text} at (11,5) size 7x16
-              text run at (11,5) width 7: "x"
-          RenderBlock {div} at (18,5) size 16x16 [bgcolor=#00FF00]
-          RenderBlock {mo} at (34,0) size 10x21 [bgcolor=#C8C8C8]
-            RenderBlock {mo} at (0,0) size 9x19
-              RenderText {mo} at (0,-1) size 9x22
-                text run at (0,-1) width 9: "}"
+          RenderBlock {mrow} at (1,0) size 43x21
+            RenderBlock {mo} at (0,0) size 10x21 [bgcolor=#C8C8C8]
+              RenderBlock {mo} at (0,0) size 9x19
+                RenderText {mo} at (0,-1) size 9x22
+                  text run at (0,-1) width 9: "{"
+            RenderInline {mi} at (0,0) size 7x16
+              RenderText {#text} at (10,5) size 7x16
+                text run at (10,5) width 7: "x"
+            RenderBlock {div} at (17,5) size 16x16 [bgcolor=#00FF00]
+            RenderBlock {mo} at (33,0) size 10x21 [bgcolor=#C8C8C8]
+              RenderBlock {mo} at (0,0) size 9x19
+                RenderText {mo} at (0,-1) size 9x22
+                  text run at (0,-1) width 9: "}"
         RenderText {#text} at (85,2) size 4x18
           text run at (85,2) width 4: " "
         RenderBlock {math} at (89,0) size 39x21
           RenderBlock {mrow} at (1,0) size 37x21
             RenderBlock {mo} at (0,0) size 7x21 [bgcolor=#C8C8C8]
-              RenderBlock (anonymous) at (0,0) size 6x21
-                RenderBlock {mo} at (0,0) size 6x19
-                  RenderText {mo} at (0,-1) size 6x22
-                    text run at (0,-1) width 6: "["
+              RenderBlock {mo} at (0,0) size 6x19
+                RenderText {mo} at (0,-1) size 6x22
+                  text run at (0,-1) width 6: "["
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (7,5) size 7x16
                 text run at (7,5) width 7: "x"
             RenderBlock {div} at (14,5) size 16x16 [bgcolor=#00FF00]
             RenderBlock {mo} at (30,0) size 7x21 [bgcolor=#C8C8C8]
-              RenderBlock (anonymous) at (0,0) size 6x21
-                RenderBlock {mo} at (0,0) size 6x19
-                  RenderText {mo} at (0,-1) size 6x22
-                    text run at (0,-1) width 6: "]"
+              RenderBlock {mo} at (0,0) size 6x19
+                RenderText {mo} at (0,-1) size 6x22
+                  text run at (0,-1) width 6: "]"
         RenderText {#text} at (128,2) size 4x18
           text run at (128,2) width 4: " "
         RenderBlock {math} at (132,0) size 39x21
           RenderBlock {mrow} at (1,0) size 37x21
             RenderBlock {mo} at (0,0) size 7x21 [bgcolor=#C8C8C8]
-              RenderBlock (anonymous) at (0,0) size 6x21
-                RenderBlock {mo} at (0,0) size 6x19
-                  RenderText {mo} at (0,-1) size 6x22
-                    text run at (0,-1) width 6: "("
+              RenderBlock {mo} at (0,0) size 6x19
+                RenderText {mo} at (0,-1) size 6x22
+                  text run at (0,-1) width 6: "("
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (7,5) size 7x16
                 text run at (7,5) width 7: "x"
             RenderBlock {div} at (14,5) size 16x16 [bgcolor=#00FF00]
             RenderBlock {mo} at (30,0) size 7x21 [bgcolor=#C8C8C8]
-              RenderBlock (anonymous) at (0,0) size 6x21
-                RenderBlock {mo} at (0,0) size 6x19
-                  RenderText {mo} at (0,-1) size 6x22
-                    text run at (0,-1) width 6: ")"
+              RenderBlock {mo} at (0,0) size 6x19
+                RenderText {mo} at (0,-1) size 6x22
+                  text run at (0,-1) width 6: ")"
         RenderText {#text} at (171,2) size 4x18
           text run at (171,2) width 4: " "
         RenderBlock {math} at (175,0) size 35x21
           RenderBlock {mrow} at (1,0) size 33x21
             RenderBlock {mo} at (0,0) size 5x21 [bgcolor=#C8C8C8]
-              RenderBlock (anonymous) at (0,0) size 4x21
-                RenderBlock {mo} at (0,0) size 4x19
-                  RenderText {mo} at (0,-1) size 4x22
-                    text run at (0,-1) width 4: "|"
+              RenderBlock {mo} at (0,0) size 4x19
+                RenderText {mo} at (0,-1) size 4x22
+                  text run at (0,-1) width 4: "|"
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (5,5) size 7x16
                 text run at (5,5) width 7: "x"
             RenderBlock {div} at (12,5) size 16x16 [bgcolor=#00FF00]
             RenderBlock {mo} at (28,0) size 5x21 [bgcolor=#C8C8C8]
-              RenderBlock (anonymous) at (0,0) size 4x21
-                RenderBlock {mo} at (0,0) size 4x19
-                  RenderText {mo} at (0,-1) size 4x22
-                    text run at (0,-1) width 4: "|"
+              RenderBlock {mo} at (0,0) size 4x19
+                RenderText {mo} at (0,-1) size 4x22
+                  text run at (0,-1) width 4: "|"
         RenderText {#text} at (210,2) size 4x18
           text run at (210,2) width 4: " "
         RenderBlock {math} at (214,0) size 31x21
           RenderBlock {mrow} at (1,0) size 29x21
             RenderBlock {mo} at (0,0) size 6x21 [bgcolor=#C8C8C8]
-              RenderBlock (anonymous) at (0,0) size 5x21
-                RenderBlock {mo} at (0,0) size 5x19
-                  RenderText {mo} at (0,-1) size 5x22
-                    text run at (0,-1) width 5: "\x{222B}"
+              RenderBlock {mo} at (0,0) size 5x19
+                RenderText {mo} at (0,-1) size 5x22
+                  text run at (0,-1) width 5: "\x{222B}"
             RenderInline {mi} at (0,0) size 7x16
               RenderText {#text} at (6,5) size 7x16
                 text run at (6,5) width 7: "x"

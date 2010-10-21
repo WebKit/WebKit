@@ -95,10 +95,11 @@ void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild
         RefPtr<RenderStyle> wrapperStyle = RenderStyle::create();
         wrapperStyle->inheritFrom(style());
         wrapperStyle->setDisplay(INLINE_BLOCK);
-        wrapperStyle->setVerticalAlign(TOP);
+        wrapperStyle->setVerticalAlign(BASELINE);
         wrapper->setStyle(wrapperStyle.release());
         RenderMathMLBlock::addChild(wrapper, beforeChild);
         wrapper->addChild(child);
+        
     }
 }
 
@@ -111,6 +112,8 @@ void RenderMathMLSubSup::stretchToHeight(int height)
     if (base->firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* block = toRenderMathMLBlock(base->firstChild());
         block->stretchToHeight(static_cast<int>(gSubSupStretch * height));
+        
+        // Adjust the script placement after we stretch
         if (height > 0 && m_kind == SubSup && m_scripts) {
             RenderObject* script = m_scripts->firstChild();
             if (script) {
@@ -124,31 +127,28 @@ void RenderMathMLSubSup::stretchToHeight(int height)
                     RenderBoxModelObject* topBox = toRenderBoxModelObject(top);
                     topBox->updateBoxModelInfoFromStyle();
                 }
-                m_scripts->setNeedsLayoutAndPrefWidthsRecalc();
-                m_scripts->markContainingBlocksForLayout();
+                m_scripts->setNeedsLayout(true);
+                setNeedsLayout(true);
             }
         }
+        
     }
-    updateBoxModelInfoFromStyle();
-    setNeedsLayoutAndPrefWidthsRecalc();
-    markContainingBlocksForLayout();
 }
 
 int RenderMathMLSubSup::nonOperatorHeight() const 
 {
-    return 0;
+    if (m_kind == SubSup) 
+       return static_cast<int>(style()->fontSize()*gSubSupStretch);
+    return static_cast<int>(style()->fontSize());
 }
 
 void RenderMathMLSubSup::layout() 
 {
-    if (firstChild()) {
-        firstChild()->setNeedsLayoutAndPrefWidthsRecalc();
-        firstChild()->markContainingBlocksForLayout();
-    }
-    if (m_scripts) {
-        m_scripts->setNeedsLayoutAndPrefWidthsRecalc();
-        m_scripts->markContainingBlocksForLayout();
-    }
+    if (firstChild())
+        firstChild()->setNeedsLayout(true);
+    if (m_scripts) 
+        m_scripts->setNeedsLayout(true);
+    
     RenderBlock::layout();
     
     if (m_kind == SubSup) {
@@ -165,10 +165,10 @@ void RenderMathMLSubSup::layout()
             int heightDiff = m_scripts ? (m_scripts->offsetHeight() - maxHeight) / 2 : 0;
             if (heightDiff < 0) 
                 heightDiff = 0;
-            base->style()->setMarginTop(Length(heightDiff, Fixed));
+            base->style()->setPaddingTop(Length(heightDiff, Fixed));
         }
-        setNeedsLayoutAndPrefWidthsRecalc();
-        markContainingBlocksForLayout();
+        setNeedsLayout(true);
+        base->setNeedsLayout(true);
         RenderBlock::layout();
     }    
 }
@@ -178,17 +178,17 @@ int RenderMathMLSubSup::baselinePosition(bool firstLine, LineDirectionMode direc
     RenderObject* base = firstChild();
     if (!base) 
         return offsetHeight();
-    base = base->firstChild();
     
     int baseline = offsetHeight();
     if (!base || !base->isBoxModelObject()) 
         return baseline;
 
-    RenderBoxModelObject* box = toRenderBoxModelObject(base);
-
     switch (m_kind) {
     case SubSup:
-        if (m_scripts) {
+        base = base->firstChild();
+        if (m_scripts && base->isBoxModelObject()) {
+            RenderBoxModelObject* box = toRenderBoxModelObject(base);
+            
             int topAdjust = (m_scripts->offsetHeight() - box->offsetHeight()) / 2;
         
             // FIXME: The last bit of this calculation should be more exact.  Why is the 2-3px scaled for zoom necessary?
@@ -197,22 +197,10 @@ int RenderMathMLSubSup::baselinePosition(bool firstLine, LineDirectionMode direc
             return topAdjust + box->baselinePosition(firstLine, direction, linePositionMode) + static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);
         }
         break;
-    case Sup: {
-        baseline = box->baselinePosition(firstLine, direction, linePositionMode) + 4;
-        // FIXME: The extra amount of the superscript ascending above the base's box
-        // isn't taken into account.  This should be calculated in a more reliable
-        // way.
-        RenderObject* sup = base->nextSibling();
-        if (sup && sup->isBoxModelObject()) {
-            RenderBoxModelObject* box = toRenderBoxModelObject(sup);
-            // we'll take half of the sup's box height into account in the baseline
-            baseline += static_cast<int>(box->offsetHeight() * 0.5);
-        }
-        baseline++;
-        break;
-    }
+    case Sup: 
     case Sub:
-        baseline = box->baselinePosition(true, direction) + 4;
+        RenderBoxModelObject* box = toRenderBoxModelObject(base);
+        baseline = box->baselinePosition(firstLine, direction, linePositionMode);
         break;
     }
     
