@@ -39,7 +39,7 @@ struct QTCVTimeStamp {
 
 class QTMovieVisualContextPriv {
 public:
-    QTMovieVisualContextPriv(QTMovieVisualContext* parent, QTMovieVisualContextClient* client, QTMovieVisualContext::Type contextType);
+    QTMovieVisualContextPriv(QTMovieVisualContext* parent, QTMovieVisualContextClient* client, QTPixelBuffer::Type contextType);
     ~QTMovieVisualContextPriv();
 
     bool isImageAvailableForTime(const QTCVTimeStamp*) const;
@@ -61,61 +61,28 @@ private:
 
 };
 
-static OSStatus SetNumberValue(CFMutableDictionaryRef inDict, CFStringRef inKey, SInt32 inValue)
+static CFDictionaryRef createPixelBufferOptionsDictionary(QTPixelBuffer::Type contextType)
 {
-    CFNumberRef number;
- 
-    number = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &inValue);
-    if (!number) 
-        return coreFoundationUnknownErr;
- 
-    CFDictionarySetValue(inDict, inKey, number);
-    CFRelease(number);
-
-    return noErr;
-}
-
-static CFDictionaryRef createPixelBufferOptionsDictionary(QTMovieVisualContext::Type contextType)
-{
-    static const CFStringRef kDirect3DCompatibilityKey = CFSTR("Direct3DCompatibility");
-
-    CFMutableDictionaryRef pixelBufferOptions = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-
-    CFMutableDictionaryRef pixelBufferAttributes = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-    if (contextType == QTMovieVisualContext::ConfigureForCAImageQueue) {
-        // Ask for D3D compatible pixel buffers so no further work is needed.
-        CFDictionarySetValue(pixelBufferAttributes, kDirect3DCompatibilityKey, kCFBooleanTrue);
-    } else {
-        // Use the k32BGRAPixelFormat, as QuartzCore will be able to use the pixels directly,
-        // without needing an additional copy or rendering pass.
-        SetNumberValue(pixelBufferAttributes, kCVPixelBufferPixelFormatTypeKey, k32BGRAPixelFormat);
-            
-        // Set kCVPixelBufferBytesPerRowAlignmentKey to 16 to ensure that each row of pixels 
-        // starts at a 16 byte aligned address for most efficient data reading.
-        SetNumberValue(pixelBufferAttributes, kCVPixelBufferBytesPerRowAlignmentKey, 16);
-        CFDictionarySetValue(pixelBufferAttributes, kCVPixelBufferCGImageCompatibilityKey, kCFBooleanTrue);
-    }
- 
-    CFDictionarySetValue(pixelBufferOptions, kQTVisualContextPixelBufferAttributesKey, pixelBufferAttributes);
-
-    CFRelease(pixelBufferAttributes);
-
+    const void* key = kQTVisualContextPixelBufferAttributesKey;
+    const void* value = QTPixelBuffer::createPixelBufferAttributesDictionary(contextType);
+    CFDictionaryRef pixelBufferOptions = CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    CFRelease(value);
     return pixelBufferOptions;
 }
 
-static CFDictionaryRef pixelBufferCreationOptions(QTMovieVisualContext::Type contextType)
+static CFDictionaryRef pixelBufferCreationOptions(QTPixelBuffer::Type contextType)
 {
-    if (contextType == QTMovieVisualContext::ConfigureForCAImageQueue) {
+    if (contextType == QTPixelBuffer::ConfigureForCAImageQueue) {
         static CFDictionaryRef imageQueueOptions = createPixelBufferOptionsDictionary(contextType);
         return imageQueueOptions;
     } 
 
-    ASSERT(contextType == QTMovieVisualContext::ConfigureForCGImage);
+    ASSERT(contextType == QTPixelBuffer::ConfigureForCGImage);
     static CFDictionaryRef cgImageOptions = createPixelBufferOptionsDictionary(contextType);
     return cgImageOptions;
 }
 
-QTMovieVisualContextPriv::QTMovieVisualContextPriv(QTMovieVisualContext* parent, QTMovieVisualContextClient* client, QTMovieVisualContext::Type contextType) 
+QTMovieVisualContextPriv::QTMovieVisualContextPriv(QTMovieVisualContext* parent, QTMovieVisualContextClient* client, QTPixelBuffer::Type contextType) 
         : m_parent(parent)
         , m_client(client)
         , m_visualContext(0)
@@ -206,12 +173,12 @@ void QTMovieVisualContextPriv::imageAvailableCallback(QTVisualContextRef visualC
     vc->m_client->imageAvailableForTime(reinterpret_cast<const QTCVTimeStamp*>(timeStamp));
 }
 
-PassRefPtr<QTMovieVisualContext> QTMovieVisualContext::create(QTMovieVisualContextClient* client, Type contextType)
+PassRefPtr<QTMovieVisualContext> QTMovieVisualContext::create(QTMovieVisualContextClient* client, QTPixelBuffer::Type contextType)
 {
     return adoptRef(new QTMovieVisualContext(client, contextType));
 }
 
-QTMovieVisualContext::QTMovieVisualContext(QTMovieVisualContextClient* client, Type contextType) 
+QTMovieVisualContext::QTMovieVisualContext(QTMovieVisualContextClient* client, QTPixelBuffer::Type contextType) 
     : m_private(new QTMovieVisualContextPriv(this, client, contextType))
 {
 }

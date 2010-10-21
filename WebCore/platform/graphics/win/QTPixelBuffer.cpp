@@ -26,12 +26,48 @@
 
 #include "QTPixelBuffer.h"
 
+#include <CFNumber.h>
 #include <CFString.h>
 #include <CGColorSpace.h>
 #include <CGImage.h>
 #include <CVPixelBuffer.h>
 #include <QuickDraw.h>
 #include <memory.h>
+
+static OSStatus SetNumberValue(CFMutableDictionaryRef inDict, CFStringRef inKey, SInt32 inValue)
+{
+    CFNumberRef number;
+ 
+    number = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &inValue);
+    if (!number) 
+        return coreFoundationUnknownErr;
+ 
+    CFDictionarySetValue(inDict, inKey, number);
+    CFRelease(number);
+
+    return noErr;
+}
+
+CFDictionaryRef QTPixelBuffer::createPixelBufferAttributesDictionary(QTPixelBuffer::Type contextType)
+{
+    static const CFStringRef kDirect3DCompatibilityKey = CFSTR("Direct3DCompatibility");
+
+    CFMutableDictionaryRef pixelBufferAttributes = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    if (contextType == QTPixelBuffer::ConfigureForCAImageQueue) {
+        // Ask for D3D compatible pixel buffers so no further work is needed.
+        CFDictionarySetValue(pixelBufferAttributes, kDirect3DCompatibilityKey, kCFBooleanTrue);
+    } else {
+        // Use the k32BGRAPixelFormat, as QuartzCore will be able to use the pixels directly,
+        // without needing an additional copy or rendering pass.
+        SetNumberValue(pixelBufferAttributes, kCVPixelBufferPixelFormatTypeKey, k32BGRAPixelFormat);
+            
+        // Set kCVPixelBufferBytesPerRowAlignmentKey to 16 to ensure that each row of pixels 
+        // starts at a 16 byte aligned address for most efficient data reading.
+        SetNumberValue(pixelBufferAttributes, kCVPixelBufferBytesPerRowAlignmentKey, 16);
+        CFDictionarySetValue(pixelBufferAttributes, kCVPixelBufferCGImageCompatibilityKey, kCFBooleanTrue);
+    }
+    return pixelBufferAttributes;
+}
 
 QTPixelBuffer::QTPixelBuffer() 
     : m_pixelBuffer(0) 

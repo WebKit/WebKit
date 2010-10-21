@@ -318,6 +318,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\graphics\win\QTDecompressionSession.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\graphics\win\QTMovie.cpp"
 				>
 			</File>
@@ -353,6 +357,10 @@
 			>
 			<File
 				RelativePath="..\platform\graphics\win\QTCFDictionary.h"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\graphics\win\QTDecompressionSession.h"
 				>
 			</File>
 			<File

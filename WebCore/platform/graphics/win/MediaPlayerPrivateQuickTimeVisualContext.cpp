@@ -36,6 +36,7 @@
 #include "KURL.h"
 #include "MediaPlayerPrivateTaskTimer.h"
 #include "QTCFDictionary.h"
+#include "QTDecompressionSession.h"
 #include "QTMovie.h"
 #include "QTMovieTask.h"
 #include "QTMovieVisualContext.h"
@@ -728,12 +729,25 @@ void MediaPlayerPrivateQuickTimeVisualContext::paint(GraphicsContext* p, const I
     if (currentMode == MediaRenderingSoftwareRenderer && !m_visualContext)
         return;
 
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_qtVideoLayer)
-        return;
-#endif
     QTPixelBuffer buffer = m_visualContext->imageForTime(0);
     if (buffer.pixelBufferRef()) {
+#if USE(ACCELERATED_COMPOSITING)
+        if (m_qtVideoLayer) {
+            // We are probably being asked to render the video into a canvas, but 
+            // there's a good chance the QTPixelBuffer is not ARGB and thus can't be
+            // drawn using CG.  If so, fire up an ICMDecompressionSession and convert 
+            // the current frame into something which can be rendered by CG.
+            if (!buffer.pixelFormatIs32ARGB() && !buffer.pixelFormatIs32BGRA()) {
+                // The decompression session will only decompress a specific pixelFormat 
+                // at a specific width and height; if these differ, the session must be
+                // recreated with the new parameters.
+                if (!m_decompressionSession || !m_decompressionSession->canDecompress(buffer))
+                    m_decompressionSession = QTDecompressionSession::create(buffer.pixelFormatType(), buffer.width(), buffer.height());
+            }
+
+            buffer = m_decompressionSession->decompress(buffer);
+        }
+#endif
         CGImageRef image = CreateCGImageFromPixelBuffer(buffer);
         
         CGContextRef context = p->platformContext();
@@ -1089,7 +1103,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::setUpVideoRendering()
         m_player->mediaPlayerClient()->mediaPlayerRenderingModeChanged(m_player);
 #endif
 
-    QTMovieVisualContext::Type contextType = requiredDllsAvailable() && preferredMode == MediaRenderingMovieLayer ? QTMovieVisualContext::ConfigureForCAImageQueue : QTMovieVisualContext::ConfigureForCGImage;
+    QTPixelBuffer::Type contextType = requiredDllsAvailable() && preferredMode == MediaRenderingMovieLayer ? QTPixelBuffer::ConfigureForCAImageQueue : QTPixelBuffer::ConfigureForCGImage;
     m_visualContext = QTMovieVisualContext::create(m_visualContextClient.get(), contextType);
     m_visualContext->setMovie(m_movie.get());
 }

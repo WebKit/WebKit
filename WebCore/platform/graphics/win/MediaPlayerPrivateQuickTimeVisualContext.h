@@ -42,6 +42,7 @@
 typedef struct CGImage *CGImageRef;
 class QTMovie;
 class QTMovieVisualContext;
+class QTDecompressionSession;
 
 namespace WebCore {
 
@@ -178,6 +179,7 @@ private:
     RefPtr<WKCACFLayer> m_qtVideoLayer;
     OwnPtr<GraphicsLayer> m_transformLayer;
     OwnPtr<WKCAImageQueue> m_imageQueue;
+    OwnPtr<QTDecompressionSession> m_decompressionSession;
     CGAffineTransform m_movieTransform; 
 #endif
     RefPtr<QTMovieVisualContext> m_visualContext;

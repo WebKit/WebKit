@@ -44,6 +44,9 @@ typedef const struct __CFDictionary * CFDictionaryRef;
 // safe to call within WebKit.
 class QTMOVIEWIN_API QTPixelBuffer {
 public:
+    enum Type { ConfigureForCGImage, ConfigureForCAImageQueue };
+    static CFDictionaryRef createPixelBufferAttributesDictionary(Type);
+
     QTPixelBuffer();
     QTPixelBuffer(const QTPixelBuffer&);
     QTPixelBuffer(CVPixelBufferRef);

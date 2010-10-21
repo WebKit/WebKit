@@ -54,9 +54,7 @@ public:
 
 class QTMOVIEWIN_API QTMovieVisualContext : public RefCounted<QTMovieVisualContext> {
 public:
-    enum Type { ConfigureForCGImage, ConfigureForCAImageQueue };
-
-    static PassRefPtr<QTMovieVisualContext> create(QTMovieVisualContextClient*, Type);
+    static PassRefPtr<QTMovieVisualContext> create(QTMovieVisualContextClient*, QTPixelBuffer::Type);
     ~QTMovieVisualContext();
 
     bool isImageAvailableForTime(const QTCVTimeStamp*) const;
@@ -71,7 +69,7 @@ public:
     static double currentHostTime();
 
 protected:
-    QTMovieVisualContext(QTMovieVisualContextClient*, Type);
+    QTMovieVisualContext(QTMovieVisualContextClient*, QTPixelBuffer::Type);
     void setupVisualContext();
 
     friend class QTMovieVisualContextPriv;
