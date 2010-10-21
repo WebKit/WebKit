@@ -84,6 +84,8 @@ public:
 
     QWKPage* q;
 
+    QWKHistory* history;
+
     QAction* actions[QWKPage::WebActionCount];
     QWKPreferences* preferences;
 

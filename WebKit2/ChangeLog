@@ -1,3 +1,32 @@
+2010-10-21  Juha Savolainen  <juha.savolainen@weego.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This is initial implementation of QWKHistory. The QWKHistory class represents the history of a QWKPage.
+        https://bugs.webkit.org/show_bug.cgi?id=47716
+
+        Each QWKPage instance contains a history of a visited pages that can be accessed by QWKHistory::history().
+        The QWKPagePrivate class creates QWKHistory in constructor.
+
+        * UIProcess/API/qt/qwkhistory.cpp: Added.
+        (QWKHistoryPrivate::QWKHistoryPrivate):
+        (QWKHistoryPrivate::createHistory): Creates history object.
+        (QWKHistoryPrivate::~QWKHistoryPrivate):
+        (QWKHistory::QWKHistory):
+        (QWKHistory::~QWKHistory):
+        (QWKHistory::backListCount): Gets items count in back.
+        (QWKHistory::forwardListCount): Gets items count in forward.
+        (QWKHistory::count): Gets items count.
+        * UIProcess/API/qt/qwkhistory.h: Added.
+        * UIProcess/API/qt/qwkhistory_p.h: Added.
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        (QWKPagePrivate::~QWKPagePrivate):
+        (QWKPage::history): Returns history object.
+        * UIProcess/API/qt/qwkpage.h:
+        * UIProcess/API/qt/qwkpage_p.h: Added history member variable.
+        * WebKit2.pro: Added WKBackForwardList.h, WKBackForwardList.cpp and new files.
+
 2010-10-14  Adam Roben  <aroben@apple.com>
 
         Don't require the plugin to always use the same NPP struct we gave it

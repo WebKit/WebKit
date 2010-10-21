@@ -224,6 +224,7 @@ HEADERS += \
     Shared/WebUserContentURLPattern.h \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/WKAPICast.h \
+    UIProcess/API/C/WKBackForwardList.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKFrame.h \
@@ -239,6 +240,8 @@ HEADERS += \
     UIProcess/API/cpp/qt/WKURLQt.h \
     UIProcess/API/cpp/WKRetainPtr.h \
     UIProcess/API/qt/qgraphicswkview.h \
+    UIProcess/API/qt/qwkhistory.h \
+    UIProcess/API/qt/qwkhistory_p.h \
     UIProcess/API/qt/qwkpage.h \
     UIProcess/API/qt/qwkpage_p.h \
     UIProcess/API/qt/qwkpreferences.h \
@@ -369,6 +372,7 @@ SOURCES += \
     Shared/WebPreferencesStore.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
+    UIProcess/API/C/WKBackForwardList.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
@@ -379,6 +383,7 @@ SOURCES += \
     UIProcess/API/C/WKPreferencesPrivate.cpp \
     UIProcess/API/qt/ClientImpl.cpp \
     UIProcess/API/qt/qgraphicswkview.cpp \
+    UIProcess/API/qt/qwkhistory.cpp \
     UIProcess/API/qt/qwkpage.cpp \
     UIProcess/API/qt/qwkpreferences.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \

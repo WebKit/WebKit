@@ -24,6 +24,8 @@
 #include "qwkpreferences_p.h"
 
 #include "ClientImpl.h"
+#include "qwkhistory.h"
+#include "qwkhistory_p.h"
 #include "FindIndicator.h"
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
@@ -60,11 +62,13 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, WKPageNamespaceRef namespaceRef)
     page = toImpl(namespaceRef)->createWebPage();
     page->setPageClient(this);
     pageNamespaceRef = namespaceRef;
+    history = QWKHistoryPrivate::createHistory(page->backForwardList());
 }
 
 QWKPagePrivate::~QWKPagePrivate()
 {
     page->close();
+    delete history;
 }
 
 void QWKPagePrivate::init(const QSize& viewportSize, PassOwnPtr<DrawingAreaProxy> proxy)
@@ -475,6 +479,11 @@ void QWKPage::setPageZoomFactor(qreal zoomFactor)
 void QWKPage::setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor)
 {
     WKPageSetPageAndTextZoomFactors(pageRef(), pageZoomFactor, textZoomFactor);
+}
+
+QWKHistory* QWKPage::history() const
+{
+    return d->history;
 }
 
 #ifndef QT_NO_ACTION

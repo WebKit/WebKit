@@ -17,6 +17,7 @@ class QWKGraphicsWidget;
 class QWKPreferences;
 class QWKPagePrivate;
 class QtViewportAttributesPrivate;
+class QWKHistory;
 
 class QWEBKIT_EXPORT QWKPage : public QObject {
     Q_OBJECT
@@ -94,6 +95,8 @@ public:
     void setTextZoomFactor(qreal zoomFactor);
     void setPageZoomFactor(qreal zoomFactor);
     void setPageAndTextZoomFactors(qreal pageZoomFactor, qreal textZoomFactor);
+
+    QWKHistory* history() const;
 
 public:
     Q_SIGNAL void statusBarMessage(const QString&);
