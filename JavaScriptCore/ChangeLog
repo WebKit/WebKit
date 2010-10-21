@@ -1,3 +1,9 @@
+2010-10-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix Windows build: export needed symbols.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2010-10-19  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Gavin Barraclough.

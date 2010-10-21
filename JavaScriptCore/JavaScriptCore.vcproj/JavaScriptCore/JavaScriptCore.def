@@ -57,6 +57,7 @@ EXPORTS
     ?ascii@UString@JSC@@QBE?AVCString@WTF@@XZ
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
+    ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
     ?calculatedFunctionName@DebuggerCallFrame@JSC@@QBE?AVUString@2@XZ
     ?call@JSC@@YA?AVJSValue@1@PAVExecState@1@V21@W4CallType@1@ABTCallData@1@1ABVArgList@1@@Z
     ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
@@ -320,6 +321,7 @@ EXPORTS
     ?toPrimitive@JSCell@JSC@@UBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toPrimitive@JSString@JSC@@EBE?AVJSValue@2@PAVExecState@2@W4PreferredPrimitiveType@2@@Z
     ?toStrictThisObject@JSObject@JSC@@UBE?AVJSValue@2@PAVExecState@2@@Z
+    ?toStringDecimal@DecimalNumber@WTF@@QBEIPA_WI@Z
     ?toString@JSCell@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSObject@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
