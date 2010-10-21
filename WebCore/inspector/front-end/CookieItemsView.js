@@ -45,7 +45,7 @@ WebInspector.CookieItemsView = function(treeElement, cookieDomain)
     this._cookieDomain = cookieDomain;
 
     this._emptyMsgElement = document.createElement("div");
-    this._emptyMsgElement.className = "storage-table-empty";
+    this._emptyMsgElement.className = "storage-empty-view";
     this._emptyMsgElement.textContent = WebInspector.UIString("This site has no cookies.");
     this.element.appendChild(this._emptyMsgElement);
 }

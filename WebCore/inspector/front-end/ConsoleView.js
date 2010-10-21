@@ -678,7 +678,7 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageType.Trace:
             case WebInspector.ConsoleMessage.MessageType.UncaughtException:
                 var ol = document.createElement("ol");
-                ol.addStyleClass("stack-trace");
+                ol.className = "outline-disclosure";
                 var treeOutline = new TreeOutline(ol);
                 var messageText;
                 if (this.type === WebInspector.ConsoleMessage.MessageType.Assert)

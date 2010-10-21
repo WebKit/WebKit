@@ -715,11 +715,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
-.console-message.repeated-message > ol.stack-trace {
-    margin-top: -14px;
-    margin-left: 18px;
-}
-
 .console-group-messages .section .header .title {
     color: black;
     font-weight: normal;
@@ -1190,7 +1185,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     margin-left: -12px;
 }
 
-.stack-trace li.parent::before,
 .outline-disclosure li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
     float: left;
@@ -1200,32 +1194,26 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     padding-right: 2px;
 }
 
-.stack-trace li.parent::before,
 .outline-disclosure li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
 }
 
-.stack-trace ol:focus li.parent.selected::before,
 .outline-disclosure ol:focus li.parent.selected::before {
     content: url(Images/treeRightTriangleWhite.png);
 }
 
-.stack-trace li.parent.expanded::before,
 .outline-disclosure li.parent.expanded::before {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
-.stack-trace ol:focus li.parent.expanded.selected::before,
 .outline-disclosure ol:focus li.parent.expanded.selected::before {
     content: url(Images/treeDownTriangleWhite.png);
 }
 
-.stack-trace ol.children,
 .outline-disclosure ol.children {
     display: none;
 }
 
-.stack-trace ol.children.expanded,
 .outline-disclosure ol.children.expanded {
     display: block;
 }
@@ -1430,19 +1418,15 @@ body.inactive .placard.selected {
     padding-bottom: 3px;
 }
 
-.properties-tree ol, .stack-trace ol, ol.stack-trace {
+.properties-tree ol {
     display: none;
     margin: 0;
     -webkit-padding-start: 12px;
     list-style: none;
 }
 
-.properties-tree ol.expanded, .stack-trace ol, ol.stack-trace {
+.properties-tree ol.expanded {
     display: block;
-}
-
-ol.stack-trace {
-    -webkit-padding-start: 0px;
 }
 
 .event-listener-breakpoints .event-category {
@@ -1897,27 +1881,27 @@ body.inactive .sidebar {
     background-color: rgb(232, 232, 232);
 }
 
-.database-sidebar-tree-item .icon {
+.database-storage-tree-item .icon {
     content: url(Images/database.png);
 }
 
-.database-table-sidebar-tree-item .icon {
+.database-table-storage-tree-item .icon {
     content: url(Images/databaseTable.png);
 }
 
-.domstorage-sidebar-tree-item.local-storage .icon {
+.domstorage-storage-tree-item.local-storage .icon {
     content: url(Images/localStorage.png);
 }
 
-.domstorage-sidebar-tree-item.session-storage .icon {
+.domstorage-storage-tree-item.session-storage .icon {
     content: url(Images/sessionStorage.png);
 }
 
-.cookie-sidebar-tree-item .icon {
+.cookie-storage-tree-item .icon {
     content: url(Images/cookie.png);
 }
 
-.application-cache-sidebar-tree-item .icon {
+.application-cache-storage-tree-item .icon {
     content: url(Images/applicationCache.png);
 }
 
@@ -1927,6 +1911,54 @@ body.inactive .sidebar {
     right: 0;
     left: 200px;
     bottom: 0;
+}
+
+.storage.panel .sidebar {
+    border-left: rgb(232, 232, 232);
+    background-color: transparent;
+    overflow-x: auto;
+}
+
+.storage.panel .outline-disclosure > ol {
+    margin-left: -12px;
+    padding-right: 0px !important;
+}
+
+.storage.panel .outline-disclosure li {
+    white-space: nowrap;
+}
+
+.storage.panel .outline-disclosure li .selection {
+    height: 17px;
+    margin-left: -100px;
+    display: inline-block;
+}
+
+.storage.panel .sidebar-resizer-vertical {
+    background: rgb(220, 220, 220);
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+}
+
+.storage-base-tree-element-title {
+    position: relative;
+    bottom: 4px;
+    left: 3px;
+}
+
+.storage.panel .outline-disclosure ol {
+    -webkit-padding-start: 14px;
+}
+
+.storage.panel .outline-disclosure li.selected {
+    color: white;
+    background-color: transparent;
+}
+
+.storage.panel .outline-disclosure .icon {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
 }
 
 .storage-view {
@@ -1952,7 +1984,7 @@ body.inactive .sidebar {
     height: 100%;
 }
 
-.storage-view.table .storage-table-empty, .storage-view.table .storage-table-error {
+.storage-empty-view, .storage-view.table .storage-table-error {
     position: absolute;
     top: 0;
     bottom: 25%;
