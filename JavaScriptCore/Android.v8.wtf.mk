@@ -36,6 +36,7 @@ LOCAL_SRC_FILES := \
 	wtf/ByteArray.cpp \
 	wtf/CurrentTime.cpp \
 	wtf/DateMath.cpp \
+	wtf/DecimalNumber.cpp \
 	wtf/FastMalloc.cpp \
 	wtf/HashTable.cpp \
 	wtf/MainThread.cpp \

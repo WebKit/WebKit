@@ -47,6 +47,7 @@
 		0BDFFAE00FC6192900D69EF4 /* CrossThreadRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
+		0F29479C126E698C00B3ABF5 /* DecimalNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F29479B126E698C00B3ABF5 /* DecimalNumber.cpp */; };
 		14035DB110DBFB2A00FFFFE7 /* WeakGCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC0894D50FAFBA2D00001865 /* JSAPIValueWrapper.cpp */; };
 		140566D1107EC267005DBC8D /* JSStaticScopeObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */; };
@@ -646,6 +647,7 @@
 		0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnFastMallocPtr.h; sourceTree = "<group>"; };
 		0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadRefCounted.h; sourceTree = "<group>"; };
 		0BF28A2811A33DC300638F84 /* SizeLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeLimits.cpp; sourceTree = "<group>"; };
+		0F29479B126E698C00B3ABF5 /* DecimalNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecimalNumber.cpp; sourceTree = "<group>"; };
 		14035DB010DBFB2A00FFFFE7 /* WeakGCPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCPtr.h; sourceTree = "<group>"; };
 		140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBasePrivate.h; sourceTree = "<group>"; };
 		141211020A48780900480255 /* minidom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = minidom.c; path = tests/minidom.c; sourceTree = "<group>"; };
@@ -1488,6 +1490,7 @@
 				41359CF40FDD89CB00206180 /* DateMath.cpp */,
 				41359CF50FDD89CB00206180 /* DateMath.h */,
 				862AF4B512239C7B0024E5B8 /* DecimalNumber.h */,
+				0F29479B126E698C00B3ABF5 /* DecimalNumber.cpp */,
 				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
 				651F6412039D5B5F0078395C /* dtoa.cpp */,
@@ -2803,6 +2806,7 @@
 				90213E3D123A40C200D422F3 /* MemoryStatistics.cpp in Sources */,
 				A730B6131250068F009D25B1 /* StrictEvalActivation.cpp in Sources */,
 				86438FC41265503E00E0DFCA /* StringBuilder.cpp in Sources */,
+				0F29479C126E698C00B3ABF5 /* DecimalNumber.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

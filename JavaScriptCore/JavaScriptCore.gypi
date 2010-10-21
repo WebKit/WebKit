@@ -365,6 +365,7 @@
             'wtf/CurrentTime.h',
             'wtf/DateMath.cpp',
             'wtf/DateMath.h',
+            'wtf/DecimalNumber.cpp',
             'wtf/Deque.h',
             'wtf/DisallowCType.h',
             'wtf/dtoa.cpp',

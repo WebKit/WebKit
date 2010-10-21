@@ -1824,8 +1824,8 @@ unsigned numberToString(double d, NumberToStringBuffer buffer)
     // Convert to decimal with rounding.
     DecimalNumber number(d);
     return number.exponent() >= -6 && number.exponent() < 21
-        ? number.toStringDecimal(buffer)
-        : number.toStringExponential(buffer);
+        ? number.toStringDecimal(buffer, NumberToStringBufferLength)
+        : number.toStringExponential(buffer, NumberToStringBufferLength);
 }
 
 } // namespace WTF

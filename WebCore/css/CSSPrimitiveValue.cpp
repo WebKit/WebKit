@@ -37,6 +37,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/DecimalNumber.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuffer.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -616,9 +617,13 @@ int CSSPrimitiveValue::getIdent()
 
 static String formatNumber(double number)
 {
-    NumberToStringBuffer buffer;
-    unsigned length = DecimalNumber(number).toStringDecimal(buffer);
-    return String(buffer, length);
+    DecimalNumber decimal(number);
+    
+    StringBuffer buffer(decimal.bufferLengthForStringDecimal());
+    unsigned length = decimal.toStringDecimal(buffer.characters(), buffer.length());
+    ASSERT_UNUSED(length, length == buffer.length());
+
+    return String::adopt(buffer);
 }
 
 String CSSPrimitiveValue::cssText() const

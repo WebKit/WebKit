@@ -81,104 +81,16 @@ public:
         ASSERT(m_significand[0] != '0' || !m_exponent);
     }
 
-    unsigned toStringDecimal(NumberToStringBuffer buffer)
-    {
-        // Should always be at least one digit to add to the string!
-        ASSERT(m_precision);
-        UChar* next = buffer;
+    unsigned bufferLengthForStringDecimal() const;
+    unsigned bufferLengthForStringExponential() const;
 
-        // if the exponent is negative the number decimal representation is of the form:
-        // [<sign>]0.[<zeros>]<significand>
-        if (m_exponent < 0) {
-            unsigned zeros = -m_exponent - 1;
+    unsigned toStringDecimal(UChar* buffer, unsigned bufferLength) const;
+    unsigned toStringExponential(UChar* buffer, unsigned bufferLength) const;
 
-            if (m_sign)
-                *next++ = '-';
-            *next++ = '0';
-            *next++ = '.';
-            for (unsigned i = 0; i < zeros; ++i)
-                *next++ = '0';
-            for (unsigned i = 0; i < m_precision; ++i)
-                *next++ = m_significand[i];
-
-            return next - buffer;
-        }
-
-        unsigned digitsBeforeDecimalPoint = m_exponent + 1;
-
-        // If the precision is <= than the number of digits to get up to the decimal
-        // point, then there is no fractional part, number is of the form:
-        // [<sign>]<significand>[<zeros>]
-        if (m_precision <= digitsBeforeDecimalPoint) {
-            if (m_sign)
-                *next++ = '-';
-            for (unsigned i = 0; i < m_precision; ++i)
-                *next++ = m_significand[i];
-            for (unsigned i = 0; i < (digitsBeforeDecimalPoint - m_precision); ++i)
-                *next++ = '0';
-
-            return next - buffer;
-        }
-
-        // If we get here, number starts before the decimal point, and ends after it,
-        // as such is of the form:
-        // [<sign>]<significand-begin>.<significand-end>
-
-        if (m_sign)
-            *next++ = '-';
-        for (unsigned i = 0; i < digitsBeforeDecimalPoint; ++i)
-            *next++ = m_significand[i];
-        *next++ = '.';
-        for (unsigned i = digitsBeforeDecimalPoint; i < m_precision; ++i)
-            *next++ = m_significand[i];
-
-        return next - buffer;
-    }
-
-    unsigned toStringExponential(NumberToStringBuffer buffer)
-    {
-        // Should always be at least one digit to add to the string!
-        ASSERT(m_precision);
-
-        UChar* next = buffer;
-
-        // Add the sign
-        if (m_sign)
-            *next++ = '-';
-
-        // Add the significand
-        *next++ = m_significand[0];
-        if (m_precision > 1) {
-            *next++ = '.';
-            for (unsigned i = 1; i < m_precision; ++i)
-                *next++ = m_significand[i];
-        }
-
-        // Add "e+" or "e-"
-        *next++ = 'e';
-        int exponent;
-        if (m_exponent >= 0) {
-            *next++ = '+';
-            exponent = m_exponent;
-        } else {
-            *next++ = '-';
-            exponent = -m_exponent;
-        }
-
-        // Add the exponent
-        if (exponent >= 100)
-            *next++ = '0' + exponent / 100;
-        if (exponent >= 10)
-            *next++ = '0' + (exponent % 100) / 10;
-        *next++ = '0' + exponent % 10;
-
-        return next - buffer;
-    }
-
-    bool sign() { return m_sign; }
-    int exponent() { return m_exponent; }
-    const char* significand() { return m_significand; } // significand contains precision characters, is not null-terminated.
-    unsigned precision() { return m_precision; }
+    bool sign() const { return m_sign; }
+    int exponent() const { return m_exponent; }
+    const char* significand() const { return m_significand; } // significand contains precision characters, is not null-terminated.
+    unsigned precision() const { return m_precision; }
 
 private:
     bool m_sign;

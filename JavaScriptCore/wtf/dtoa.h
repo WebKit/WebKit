@@ -39,7 +39,8 @@ void dtoaRoundSF(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exp
 void dtoaRoundDP(DtoaBuffer result, double dd, int ndigits, bool& sign, int& exponent, unsigned& precision);
 
 // Size = 80 for sizeof(DtoaBuffer) + some sign bits, decimal point, 'e', exponent digits.
-typedef UChar NumberToStringBuffer[96];
+const unsigned NumberToStringBufferLength = 96;
+typedef UChar NumberToStringBuffer[NumberToStringBufferLength];
 unsigned numberToString(double, NumberToStringBuffer);
 
 } // namespace WTF

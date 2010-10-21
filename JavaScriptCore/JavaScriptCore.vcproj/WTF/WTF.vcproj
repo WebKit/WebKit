@@ -309,6 +309,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\DecimalNumber.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\wtf\DecimalNumber.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\FastAllocBase.h"
 			>
 		</File>

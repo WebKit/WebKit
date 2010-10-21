@@ -6,6 +6,7 @@ SOURCES += \
     wtf/CurrentTime.cpp \
     wtf/DateMath.cpp \
     wtf/dtoa.cpp \
+    wtf/DecimalNumber.cpp \
     wtf/FastMalloc.cpp \
     wtf/HashTable.cpp \
     wtf/MD5.cpp \

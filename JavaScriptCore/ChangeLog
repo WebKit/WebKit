@@ -1,3 +1,44 @@
+2010-10-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=47851
+        
+        Add methods to DecimalNumber to return the buffer length
+        required for decimal and exponential output.
+        
+        Make some of the DecimalNumber code non-inline (no
+        effect on Sunspider), adding DecimalNumber.cpp to various
+        build systems.
+        
+        Make some DecimalNumber methods 'const'.
+
+        * Android.mk:
+        * Android.v8.wtf.mk:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        * wtf/DecimalNumber.cpp: Added.
+        (WTF::DecimalNumber::bufferLengthForStringDecimal):
+        (WTF::DecimalNumber::bufferLengthForStringExponential):
+        (WTF::DecimalNumber::toStringDecimal):
+        (WTF::DecimalNumber::toStringExponential):
+        * wtf/DecimalNumber.h:
+        (WTF::DecimalNumber::sign):
+        (WTF::DecimalNumber::exponent):
+        (WTF::DecimalNumber::significand):
+        (WTF::DecimalNumber::precision):
+        * wtf/dtoa.cpp:
+        (WTF::dtoa):
+        * wtf/dtoa.h:
+        * wtf/wtf.pri:
+
 2010-10-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r70165.

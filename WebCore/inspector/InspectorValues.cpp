@@ -607,7 +607,7 @@ void InspectorBasicValue::writeJSON(Vector<UChar>* output) const
             output->append(falseString, 5);
     } else if (type() == TypeNumber) {
         NumberToStringBuffer buffer;
-        unsigned length = DecimalNumber(m_doubleValue).toStringDecimal(buffer);
+        unsigned length = DecimalNumber(m_doubleValue).toStringDecimal(buffer, WTF::NumberToStringBufferLength);
         output->append(buffer, length);
     }
 }

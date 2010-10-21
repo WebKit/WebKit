@@ -430,6 +430,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/DateMath.cpp \
 	JavaScriptCore/wtf/DateMath.h \
 	JavaScriptCore/wtf/DecimalNumber.h \
+	JavaScriptCore/wtf/DecimalNumber.cpp \
 	JavaScriptCore/wtf/Deque.h \
 	JavaScriptCore/wtf/DisallowCType.h \
 	JavaScriptCore/wtf/dtoa.cpp \
