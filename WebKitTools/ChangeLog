@@ -1,3 +1,14 @@
+2010-10-21  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        TestNetscapePlugIn: Actually call NPP_SetWindow on Unix
+
+        We were just returning NPERR_NO_ERROR previously.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_set_window):
+
 2010-10-21  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/48051> Move macros from DumpRenderTreeMac.h to config.h
