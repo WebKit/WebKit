@@ -5896,3 +5896,7 @@ fast/images/webp-image-decoding.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=47832
 http/tests/inspector/console-xhr-logging.html
+
+# New test written for WebKit2 fails on GTK bots.
+# https://bugs.webkit.org/show_bug.cgi?id=47690
+plugins/pass-different-npp-struct.html
