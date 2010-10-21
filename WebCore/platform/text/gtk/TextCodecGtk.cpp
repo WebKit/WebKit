@@ -45,162 +45,10 @@ namespace WebCore {
 // This can be achieved by specifying the UTF-16 codecs' endianness explicitly when initializing GLib.
 
 #if (G_BYTE_ORDER == G_BIG_ENDIAN)
-    const gchar* WebCore::TextCodecGtk::m_internalEncodingName = "UTF-16BE";
-#else 
-    const gchar* WebCore::TextCodecGtk::m_internalEncodingName = "UTF-16LE";
+static const gchar* internalEncodingName = "UTF-16BE";
+#else
+static const gchar* internalEncodingName = "UTF-16LE";
 #endif
-
-
-// We're specifying the list of text codecs and their aliases here. 
-// For each codec the first entry is the canonical name, remaining ones are used as aliases.
-// Each alias list must be terminated by a 0.
-
-// Unicode
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_UTF_8            = { "UTF-8", 0 }; 
-
-// Western
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_8859_1       = { "ISO-8859-1", "CP819", "IBM819", "ISO-IR-100", "ISO8859-1", "ISO_8859-1", "ISO_8859-1:1987",  "L1", "LATIN1", "CSISOLATIN1", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_MACROMAN         = { "MACROMAN", "MAC", "MACINTOSH", "CSMACINTOSH", 0 };
-
-// Japanese
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_SHIFT_JIS        = { "Shift_JIS", "MS_KANJI", "SHIFT-JIS", "SJIS", "CSSHIFTJIS", 0 };
-    TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_EUC_JP       = { "EUC-JP", "EUC_JP", "EUCJP", "EXTENDED_UNIX_CODE_PACKED_FORMAT_FOR_JAPANESE", "CSEUCPKDFMTJAPANESE", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_2022_JP      = { "ISO-2022-JP", 0 };
-
-// Traditional Chinese
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_BIG5             = { "BIG5", "BIG-5", "BIG-FIVE", "BIG5", "BIGFIVE", "CN-BIG5", "CSBIG5", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_BIG5_HKSCS       = { "BIG5-HKSCS", "BIG5-HKSCS:2004", "BIG5HKSCS", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP950            = { "CP950", 0 };
-
-// Korean
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_2022_KR      = { "ISO-2022-KR", "CSISO2022KR", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP949            = { "CP949", "UHC", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_EUC_KR           = { "EUC-KR", "CSEUCKR", 0 };
-
-// Arabic
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_8859_6       = { "ISO-8859-6", "ARABIC", "ASMO-708", "ECMA-114", "ISO-IR-127", "ISO8859-6", "ISO_8859-6", "ISO_8859-6:1987", "CSISOLATINARABIC", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP1256           = { "windows-1256", "CP1256", "MS-ARAB", 0 }; // rearranged, windows-1256 now declared the canonical name and put to lowercase to fix /fast/encoding/ahram-org-eg.html test case
-
-// Hebrew
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_8859_8       = { "ISO-8859-8", "HEBREW", "ISO-8859-8", "ISO-IR-138", "ISO8859-8", "ISO_8859-8", "ISO_8859-8:1988", "CSISOLATINHEBREW", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP1255           = { "windows-1255", "CP1255", "MS-HEBR", 0 }; // rearranged, moved windows-1255 as canonical and lowercased, fixing /fast/encoding/meta-charset.html
-
-// Greek
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_8859_7       = { "ISO-8859-7", "ECMA-118", "ELOT_928", "GREEK", "GREEK8", "ISO-IR-126", "ISO8859-7", "ISO_8859-7", "ISO_8859-7:1987", "ISO_8859-7:2003", "CSI", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP869            = { "CP869", "869", "CP-GR", "IBM869", "CSIBM869", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_WINDOWS_1253     = { "WINDOWS-1253", 0 };
-
-// Cyrillic
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_8859_5       = { "ISO-8859-5", "CYRILLIC", "ISO-IR-144", "ISO8859-5", "ISO_8859-5", "ISO_8859-5:1988", "CSISOLATINCYRILLIC", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_KOI8_R           = { "KOI8-R", "CSKOI8R", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP866            = { "CP866", "866", "IBM866", "CSIBM866", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_KOI8_U           = { "KOI8-U", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_WINDOWS_1251     = { "windows-1251", "CP1251", 0 }; // CP1251 added to pass /fast/encoding/charset-cp1251.html
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_MACCYRILLIC      = { "mac-cyrillic", "MACCYRILLIC", "x-mac-cyrillic", 0 }; 
-
-// Thai
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP874            = { "CP874", "WINDOWS-874", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_TIS_620          = { "TIS-620", 0 };
-
-// Simplified Chinese
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_GBK              = { "GBK", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_HZ               = { "HZ", "HZ-GB-2312", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_GB18030          = { "GB18030", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_EUC_CN           = { "EUC-CN", "EUCCN", "GB2312", "CN-GB", "CSGB2312", "EUC_CN", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_2312_80          = { "GB_2312-80", "CHINESE", "csISO58GB231280", "GB2312.1980-0", "ISO-IR-58" };
-
-// Central European
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_8859_2       = { "ISO-8859-2", "ISO-IR-101", "ISO8859-2", "ISO_8859-2", "ISO_8859-2:1987", "L2", "LATIN2", "CSISOLATIN2", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP1250           = { "CP1250", "MS-EE", "WINDOWS-1250", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_MACCENTRALEUROPE = { "MAC-CENTRALEUROPE", 0 };
-
-// Vietnamese
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP1258           = { "CP1258", "WINDOWS-1258", 0 };
-
-// Turkish
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP1254           = { "CP1254", "MS-TURK", "WINDOWS-1254", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_8859_9       = { "ISO-8859-9", "ISO-IR-148", "ISO8859-9", "ISO_8859-9", "ISO_8859-9:1989", "L5", "LATIN5", "CSISOLATIN5", 0 };
-
-// Baltic
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_CP1257           = { "CP1257", "WINBALTRIM", "WINDOWS-1257", 0 };
-TextCodecGtk::codecAliasList TextCodecGtk::m_codecAliases_ISO_8859_4       = { "ISO-8859-4", "ISO-IR-110", "ISO8859-4", "ISO_8859-4", "ISO_8859-4:1988", "L4", "LATIN4", "CSISOLATIN4", 0 };
-
-gconstpointer const TextCodecGtk::m_iconvBaseCodecList[] = { 
-    // Unicode
-    &m_codecAliases_UTF_8,
-
-    // Western
-    &m_codecAliases_ISO_8859_1
-};
-
-gconstpointer const TextCodecGtk::m_iconvExtendedCodecList[] = 
-{
-    // Western
-    &m_codecAliases_MACROMAN,
-
-    // Japanese
-    &m_codecAliases_SHIFT_JIS,
-    &m_codecAliases_EUC_JP,
-    &m_codecAliases_ISO_2022_JP,
-
-    // Simplified Chinese
-    &m_codecAliases_BIG5,
-    &m_codecAliases_BIG5_HKSCS,
-    &m_codecAliases_CP950,
-
-    // Korean
-    &m_codecAliases_ISO_2022_KR,
-    &m_codecAliases_CP949,
-    &m_codecAliases_EUC_KR,
-
-    // Arabic
-    &m_codecAliases_ISO_8859_6,
-    &m_codecAliases_CP1256,
-    
-    // Hebrew
-    &m_codecAliases_ISO_8859_8,
-    &m_codecAliases_CP1255,
-    
-    // Greek
-    &m_codecAliases_ISO_8859_7,
-    &m_codecAliases_CP869,
-    &m_codecAliases_WINDOWS_1253,
-    
-    // Cyrillic
-    &m_codecAliases_ISO_8859_5,
-    &m_codecAliases_KOI8_R,
-    &m_codecAliases_CP866,
-    &m_codecAliases_KOI8_U,
-    &m_codecAliases_WINDOWS_1251,
-    &m_codecAliases_MACCYRILLIC,
-    
-    // Thai
-    &m_codecAliases_CP874,
-    &m_codecAliases_TIS_620,
-    
-    // Traditional Chinese
-    &m_codecAliases_GBK,
-    &m_codecAliases_HZ,
-    &m_codecAliases_GB18030,
-    &m_codecAliases_EUC_CN,
-    &m_codecAliases_2312_80,
-    
-    // Central European
-    &m_codecAliases_ISO_8859_2,
-    &m_codecAliases_CP1250,
-    &m_codecAliases_MACCENTRALEUROPE,
-    
-    // Vietnamese
-    &m_codecAliases_CP1258,
-    
-    // Turkish
-    &m_codecAliases_CP1254,
-    &m_codecAliases_ISO_8859_9,
-    
-    // Baltic
-    &m_codecAliases_CP1257,
-    &m_codecAliases_ISO_8859_4
-};
 
 
 const size_t ConversionBufferSize = 16384;
@@ -211,17 +59,17 @@ static PassOwnPtr<TextCodec> newTextCodecGtk(const TextEncoding& encoding, const
     return new TextCodecGtk(encoding);
 }
 
-gboolean TextCodecGtk::isEncodingAvailable(const gchar* encName)
+static bool isEncodingAvailable(const gchar* encodingName)
 {
     GIConv tester;
     // test decoding
-    tester = g_iconv_open(m_internalEncodingName, encName);
+    tester = g_iconv_open(internalEncodingName, encodingName);
     if (tester == reinterpret_cast<GIConv>(-1)) {
         return false;
     } else {
         g_iconv_close(tester);
         // test encoding
-        tester = g_iconv_open(encName, m_internalEncodingName);
+        tester = g_iconv_open(encodingName, internalEncodingName);
         if (tester == reinterpret_cast<GIConv>(-1)) {
             return false;
         } else {
@@ -231,81 +79,326 @@ gboolean TextCodecGtk::isEncodingAvailable(const gchar* encName)
     }
 }
 
-void TextCodecGtk::registerEncodingNames(EncodingNameRegistrar registrar, bool extended)
+static bool registerEncodingNameIfAvailable(EncodingNameRegistrar registrar, const char* canonicalName)
 {
-    const void* const* encodingList;
-    unsigned int listLength = 0;
-    if (extended) {
-        encodingList = m_iconvExtendedCodecList;
-        listLength = sizeof(m_iconvExtendedCodecList)/sizeof(gpointer);
-    } else {
-        encodingList = m_iconvBaseCodecList;
-        listLength = sizeof(m_iconvBaseCodecList)/sizeof(gpointer);
-    }
-
-    for (unsigned int i = 0; i < listLength; ++i) {
-        codecAliasList *codecAliases = static_cast<codecAliasList*>(encodingList[i]);
-        
-        // Our convention is, the first entry in codecAliases is the canonical name, 
-        // see above in the list of declarations. 
-        // Probe GLib for this one first. If it's not available, we skip the whole group of aliases.
-
-        int codecCount = 0;
-        const char *canonicalName;
-        canonicalName = (*codecAliases)[codecCount];
-
-        if (!isEncodingAvailable(canonicalName))
-            continue;
+    if (isEncodingAvailable(canonicalName)) {
         registrar(canonicalName, canonicalName);
-
-        const char *currentAlias;
-        while ((currentAlias = (*codecAliases)[++codecCount])) {
-            if (isEncodingAvailable(currentAlias))
-                registrar(currentAlias, canonicalName);
-        }
-
+        return true;
     }
+
+    return false;
 }
 
-void TextCodecGtk::registerCodecs(TextCodecRegistrar registrar, bool extended)
+static void registerEncodingAliasIfAvailable(EncodingNameRegistrar registrar, const char* canonicalName, const char* aliasName)
 {
-    const void* const* encodingList;
-    unsigned int listLength = 0;
-    if (extended) {
-        encodingList = m_iconvExtendedCodecList;
-        listLength = sizeof(m_iconvExtendedCodecList)/sizeof(gpointer);
-    } else {
-        encodingList = m_iconvBaseCodecList;
-        listLength = sizeof(m_iconvBaseCodecList)/sizeof(gpointer);
-    }
+    if (isEncodingAvailable(aliasName))
+        registrar(aliasName, canonicalName);
+}
 
-    for (unsigned int i = 0; i < listLength; ++i) {
-        codecAliasList *codecAliases = static_cast<codecAliasList*>(encodingList[i]);
-        // by convention, the first "alias" should be the canonical name, see the definition of the alias lists 
-        const gchar *codecName = (*codecAliases)[0];
-        if (isEncodingAvailable(codecName))
-            registrar(codecName, newTextCodecGtk, 0);
-    }
+static void registerCodecIfAvailable(TextCodecRegistrar registrar, const char* codecName)
+{
+    if (isEncodingAvailable(codecName))
+        registrar(codecName, newTextCodecGtk, 0);
 }
 
 void TextCodecGtk::registerBaseEncodingNames(EncodingNameRegistrar registrar)
 {
-    registerEncodingNames(registrar, false);
+    // Unicode
+    registerEncodingNameIfAvailable(registrar, "UTF-8");
+
+    // Western
+    if (registerEncodingNameIfAvailable(registrar, "ISO-8859-1")) {
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "CP819");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "IBM819");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "ISO-IR-100");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "ISO8859-1");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "ISO_8859-1");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "ISO_8859-1:1987");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "L1");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "LATIN1");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-1", "CSISOLATIN1");
+    }
 }
 
 void TextCodecGtk::registerBaseCodecs(TextCodecRegistrar registrar)
 {
-    registerCodecs(registrar, false);
+    // Unicode
+    registerCodecIfAvailable(registrar, "UTF-8");
+
+    // Western
+    registerCodecIfAvailable(registrar, "ISO-8859-1");
 }
 
 void TextCodecGtk::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
 {
-    registerEncodingNames(registrar, true);
+    // Western
+    if (registerEncodingNameIfAvailable(registrar, "MACROMAN")) {
+        registerEncodingAliasIfAvailable(registrar, "MACROMAN", "MAC");
+        registerEncodingAliasIfAvailable(registrar, "MACROMAN", "MACINTOSH");
+        registerEncodingAliasIfAvailable(registrar, "MACROMAN", "CSMACINTOSH");
+    }
+
+    // Japanese
+    if (registerEncodingNameIfAvailable(registrar, "Shift_JIS")) {
+        registerEncodingAliasIfAvailable(registrar, "Shift_JIS", "MS_KANJI");
+        registerEncodingAliasIfAvailable(registrar, "Shift_JIS", "SHIFT-JIS");
+        registerEncodingAliasIfAvailable(registrar, "Shift_JIS", "SJIS");
+        registerEncodingAliasIfAvailable(registrar, "Shift_JIS", "CSSHIFTJIS");
+    }
+    if (registerEncodingNameIfAvailable(registrar, "EUC-JP")) {
+        registerEncodingAliasIfAvailable(registrar, "EUC-JP", "EUC_JP");
+        registerEncodingAliasIfAvailable(registrar, "EUC-JP", "EUCJP");
+        registerEncodingAliasIfAvailable(registrar, "EUC-JP", "EXTENDED_UNIX_CODE_PACKED_FORMAT_FOR_JAPANESE");
+        registerEncodingAliasIfAvailable(registrar, "EUC-JP", "CSEUCPKDFMTJAPANESE");
+    }
+    registerEncodingNameIfAvailable(registrar, "ISO-2022-JP");
+
+    // Traditional Chinese
+    if (registerEncodingNameIfAvailable(registrar, "BIG5")) {
+        registerEncodingAliasIfAvailable(registrar, "BIG5", "BIG-5");
+        registerEncodingAliasIfAvailable(registrar, "BIG5", "BIG-FIVE");
+        registerEncodingAliasIfAvailable(registrar, "BIG5", "BIGFIVE");
+        registerEncodingAliasIfAvailable(registrar, "BIG5", "CN-BIG5");
+        registerEncodingAliasIfAvailable(registrar, "BIG5", "CSBIG5");
+    }
+    if (registerEncodingNameIfAvailable(registrar, "BIG5-HKSCS")) {
+        registerEncodingAliasIfAvailable(registrar, "BIG5-HKSCS", "BIG5-HKSCS:2004");
+        registerEncodingAliasIfAvailable(registrar, "BIG5-HKSCS", "BIG5HKSCS");
+    }
+    registerEncodingNameIfAvailable(registrar, "CP950");
+
+    // Korean
+    if (registerEncodingNameIfAvailable(registrar, "ISO-2022-KR"))
+        registerEncodingAliasIfAvailable(registrar, "ISO-2022-KR", "CSISO2022KR");
+    if (registerEncodingNameIfAvailable(registrar, "CP949"))
+        registerEncodingAliasIfAvailable(registrar, "CP949", "UHC");
+    if (registerEncodingNameIfAvailable(registrar, "EUC-KR"))
+        registerEncodingAliasIfAvailable(registrar, "EUC-KR", "CSEUCKR");
+
+    // Arabic
+    if (registerEncodingNameIfAvailable(registrar, "ISO-8859-6")) {
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-6", "ARABIC");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-6", "ASMO-708");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-6", "ECMA-114");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-6", "ISO-IR-127");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-6", "ISO8859-6");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-6", "ISO_8859-6");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-6", "ISO_8859-6:1987");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-6", "CSISOLATINARABIC");
+    }
+    // rearranged, windows-1256 now declared the canonical name and put to lowercase to fix /fast/encoding/ahram-org-eg.html test case
+    if (registerEncodingNameIfAvailable(registrar, "windows-1256")) {
+        registerEncodingAliasIfAvailable(registrar, "windows-1256", "CP1256");
+        registerEncodingAliasIfAvailable(registrar, "windows-1256", "MS-ARAB");
+    }
+
+    // Hebrew
+    if (registerEncodingNameIfAvailable(registrar, "ISO-8859-8")) {
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-8", "HEBREW");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-8", "ISO-8859-8");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-8", "ISO-IR-138");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-8", "ISO8859-8");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-8", "ISO_8859-8");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-8", "ISO_8859-8:1988");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-8", "CSISOLATINHEBREW");
+    }
+    // rearranged, moved windows-1255 as canonical and lowercased, fixing /fast/encoding/meta-charset.html
+    if (registerEncodingNameIfAvailable(registrar, "windows-1255")) {
+        registerEncodingAliasIfAvailable(registrar, "windows-1255", "CP1255");
+        registerEncodingAliasIfAvailable(registrar, "windows-1255", "MS-HEBR");
+    }
+
+    // Greek
+    if (registerEncodingNameIfAvailable(registrar, "ISO-8859-7")) {
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "ECMA-118");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "ELOT_928");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "GREEK");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "GREEK8");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "ISO-IR-126");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "ISO8859-7");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "ISO_8859-7");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "ISO_8859-7:1987");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "ISO_8859-7:2003");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-7", "CSI");
+    }
+    if (registerEncodingNameIfAvailable(registrar, "CP869")) {
+        registerEncodingAliasIfAvailable(registrar, "CP869", "869");
+        registerEncodingAliasIfAvailable(registrar, "CP869", "CP-GR");
+        registerEncodingAliasIfAvailable(registrar, "CP869", "IBM869");
+        registerEncodingAliasIfAvailable(registrar, "CP869", "CSIBM869");
+    }
+    registerEncodingNameIfAvailable(registrar, "WINDOWS-1253");
+
+    // Cyrillic
+    if (registerEncodingNameIfAvailable(registrar, "ISO-8859-5")) {
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-5", "CYRILLIC");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-5", "ISO-IR-144");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-5", "ISO8859-5");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-5", "ISO_8859-5");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-5", "ISO_8859-5:1988");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-5", "CSISOLATINCYRILLIC");
+    }
+    if (registerEncodingNameIfAvailable(registrar, "KOI8-R"))
+        registerEncodingAliasIfAvailable(registrar, "KOI8-R", "CSKOI8R");
+    if (registerEncodingNameIfAvailable(registrar, "CP866")) {
+        registerEncodingAliasIfAvailable(registrar, "CP866", "866");
+        registerEncodingAliasIfAvailable(registrar, "CP866", "IBM866");
+        registerEncodingAliasIfAvailable(registrar, "CP866", "CSIBM866");
+    }
+    registerEncodingNameIfAvailable(registrar, "KOI8-U");
+    // CP1251 added to pass /fast/encoding/charset-cp1251.html
+    if (registerEncodingNameIfAvailable(registrar, "windows-1251"))
+        registerEncodingAliasIfAvailable(registrar, "windows-1251", "CP1251");
+    if (registerEncodingNameIfAvailable(registrar, "mac-cyrillic")) {
+        registerEncodingAliasIfAvailable(registrar, "mac-cyrillic", "MACCYRILLIC");
+        registerEncodingAliasIfAvailable(registrar, "mac-cyrillic", "x-mac-cyrillic");
+    }
+
+    // Thai
+    if (registerEncodingNameIfAvailable(registrar, "CP874"))
+        registerEncodingAliasIfAvailable(registrar, "CP874", "WINDOWS-874");
+    registerEncodingNameIfAvailable(registrar, "TIS-620");
+
+    // Simplified Chinese
+    registerEncodingNameIfAvailable(registrar, "GBK");
+    if (registerEncodingNameIfAvailable(registrar, "HZ"))
+        registerEncodingAliasIfAvailable(registrar, "HZ", "HZ-GB-2312");
+    registerEncodingNameIfAvailable(registrar, "GB18030");
+    if (registerEncodingNameIfAvailable(registrar, "EUC-CN")) {
+        registerEncodingAliasIfAvailable(registrar, "EUC-CN", "EUCCN");
+        registerEncodingAliasIfAvailable(registrar, "EUC-CN", "GB2312");
+        registerEncodingAliasIfAvailable(registrar, "EUC-CN", "CN-GB");
+        registerEncodingAliasIfAvailable(registrar, "EUC-CN", "CSGB2312");
+        registerEncodingAliasIfAvailable(registrar, "EUC-CN", "EUC_CN");
+    }
+    if (registerEncodingNameIfAvailable(registrar, "GB_2312-80")) {
+        registerEncodingAliasIfAvailable(registrar, "GB_2312-80", "CHINESE");
+        registerEncodingAliasIfAvailable(registrar, "GB_2312-80", "csISO58GB231280");
+        registerEncodingAliasIfAvailable(registrar, "GB_2312-80", "GB2312.1980-0");
+        registerEncodingAliasIfAvailable(registrar, "GB_2312-80", "ISO-IR-58");
+    }
+
+    // Central European
+    if (registerEncodingNameIfAvailable(registrar, "ISO-8859-2")) {
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-2", "ISO-IR-101");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-2", "ISO8859-2");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-2", "ISO_8859-2");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-2", "ISO_8859-2:1987");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-2", "L2");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-2", "LATIN2");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-2", "CSISOLATIN2");
+    }
+    if (registerEncodingNameIfAvailable(registrar, "CP1250")) {
+        registerEncodingAliasIfAvailable(registrar, "CP1250", "MS-EE");
+        registerEncodingAliasIfAvailable(registrar, "CP1250", "WINDOWS-1250");
+    }
+    registerEncodingNameIfAvailable(registrar, "MAC-CENTRALEUROPE");
+
+    // Vietnamese
+    if (registerEncodingNameIfAvailable(registrar, "CP1258"))
+        registerEncodingAliasIfAvailable(registrar, "CP1258", "WINDOWS-1258");
+
+    // Turkish
+    if (registerEncodingNameIfAvailable(registrar, "CP1254")) {
+        registerEncodingAliasIfAvailable(registrar, "CP1254", "MS-TURK");
+        registerEncodingAliasIfAvailable(registrar, "CP1254", "WINDOWS-1254");
+    }
+    if (registerEncodingNameIfAvailable(registrar, "ISO-8859-9")) {
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-9", "ISO-IR-148");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-9", "ISO8859-9");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-9", "ISO_8859-9");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-9", "ISO_8859-9:1989");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-9", "L5");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-9", "LATIN5");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-9", "CSISOLATIN5");
+    }
+
+    // Baltic
+    if (registerEncodingNameIfAvailable(registrar, "CP1257")) {
+        registerEncodingAliasIfAvailable(registrar, "CP1257", "WINBALTRIM");
+        registerEncodingAliasIfAvailable(registrar, "CP1257", "WINDOWS-1257");
+    }
+    if (registerEncodingNameIfAvailable(registrar, "ISO-8859-4")) {
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-4", "ISO-IR-110");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-4", "ISO8859-4");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-4", "ISO_8859-4");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-4", "ISO_8859-4:1988");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-4", "L4");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-4", "LATIN4");
+        registerEncodingAliasIfAvailable(registrar, "ISO-8859-4", "CSISOLATIN4");
+    }
 }
 
 void TextCodecGtk::registerExtendedCodecs(TextCodecRegistrar registrar)
 {
-    registerCodecs(registrar, true);
+    // Western
+    registerCodecIfAvailable(registrar, "MACROMAN");
+
+    // Japanese
+    registerCodecIfAvailable(registrar, "Shift_JIS");
+    registerCodecIfAvailable(registrar, "EUC-JP");
+    registerCodecIfAvailable(registrar, "ISO-2022-JP");
+
+    // Traditional Chinese
+    registerCodecIfAvailable(registrar, "BIG5");
+    registerCodecIfAvailable(registrar, "BIG5-HKSCS");
+    registerCodecIfAvailable(registrar, "CP950");
+
+    // Korean
+    registerCodecIfAvailable(registrar, "ISO-2022-KR");
+    registerCodecIfAvailable(registrar, "CP949");
+    registerCodecIfAvailable(registrar, "EUC-KR");
+
+    // Arabic
+    registerCodecIfAvailable(registrar, "ISO-8859-6");
+    // rearranged, windows-1256 now declared the canonical name and put to lowercase to fix /fast/encoding/ahram-org-eg.html test case
+    registerCodecIfAvailable(registrar, "windows-1256");
+
+    // Hebrew
+    registerCodecIfAvailable(registrar, "ISO-8859-8");
+    // rearranged, moved windows-1255 as canonical and lowercased, fixing /fast/encoding/meta-charset.html
+    registerCodecIfAvailable(registrar, "windows-1255");
+
+    // Greek
+    registerCodecIfAvailable(registrar, "ISO-8859-7");
+    registerCodecIfAvailable(registrar, "CP869");
+    registerCodecIfAvailable(registrar, "WINDOWS-1253");
+
+    // Cyrillic
+    registerCodecIfAvailable(registrar, "ISO-8859-5");
+    registerCodecIfAvailable(registrar, "KOI8-R");
+    registerCodecIfAvailable(registrar, "CP866");
+    registerCodecIfAvailable(registrar, "KOI8-U");
+    // CP1251 added to pass /fast/encoding/charset-cp1251.html
+    registerCodecIfAvailable(registrar, "windows-1251");
+    registerCodecIfAvailable(registrar, "mac-cyrillic");
+
+    // Thai
+    registerCodecIfAvailable(registrar, "CP874");
+    registerCodecIfAvailable(registrar, "TIS-620");
+
+    // Simplified Chinese
+    registerCodecIfAvailable(registrar, "GBK");
+    registerCodecIfAvailable(registrar, "HZ");
+    registerCodecIfAvailable(registrar, "GB18030");
+    registerCodecIfAvailable(registrar, "EUC-CN");
+    registerCodecIfAvailable(registrar, "GB_2312-80");
+
+    // Central European
+    registerCodecIfAvailable(registrar, "ISO-8859-2");
+    registerCodecIfAvailable(registrar, "CP1250");
+    registerCodecIfAvailable(registrar, "MAC-CENTRALEUROPE");
+
+    // Vietnamese
+    registerCodecIfAvailable(registrar, "CP1258");
+
+    // Turkish
+    registerCodecIfAvailable(registrar, "CP1254");
+    registerCodecIfAvailable(registrar, "ISO-8859-9");
+
+    // Baltic
+    registerCodecIfAvailable(registrar, "CP1257");
+    registerCodecIfAvailable(registrar, "ISO-8859-4");
 }
 
 TextCodecGtk::TextCodecGtk(const TextEncoding& encoding)
@@ -332,14 +425,14 @@ void TextCodecGtk::createIConvDecoder() const
 {
     ASSERT(m_iconvDecoder == reinterpret_cast<GIConv>(-1));
 
-    m_iconvDecoder = g_iconv_open(m_internalEncodingName, m_encoding.name());
+    m_iconvDecoder = g_iconv_open(internalEncodingName, m_encoding.name());
 }
 
 void TextCodecGtk::createIConvEncoder() const
 {
     ASSERT(m_iconvDecoder == reinterpret_cast<GIConv>(-1));
 
-    m_iconvEncoder = g_iconv_open(m_encoding.name(), m_internalEncodingName);
+    m_iconvEncoder = g_iconv_open(m_encoding.name(), internalEncodingName);
 }
 
 String TextCodecGtk::decode(const char* bytes, size_t length, bool flush, bool stopOnError, bool& sawError)
