@@ -3,4 +3,6 @@ This tests for a bug where performing the Remove Format operation on content wou
 |   contenteditable="true"
 |   id="div"
 |   style="font-weight: normal; color: black;"
-|   "<#selection-anchor>foo bar baz<#selection-focus>"
+|   "<#selection-anchor>foo "
+|   "bar"
+|   " baz<#selection-focus>"

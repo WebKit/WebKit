@@ -11,7 +11,8 @@ div.focus();
 document.execCommand("SelectAll");
 document.execCommand("RemoveFormat");
 
-Markup.description('This tests to make sure that RemoveFormat destroys lists if they are fully selected.  You should see foo<br>bar below.');
+Markup.description('This tests to make sure that RemoveFormat destroys lists if they are fully selected.'
+ + ' However, because the bug 43017 requires WebKit does not destroy lists, "foo" and "bar" should be in a separate list item.');
 Markup.dump(div);
 
 </script>

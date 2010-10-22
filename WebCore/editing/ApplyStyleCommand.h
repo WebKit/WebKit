@@ -44,6 +44,7 @@ public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
     enum InlineStyleRemovalMode { RemoveIfNeeded, RemoveAlways, RemoveNone };
     enum EAddStyledElement { AddStyledElement, DoNotAddStyledElement };
+    typedef bool (*IsInlineElementToRemoveFunction)(const Element*);
 
     static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
     {
@@ -57,6 +58,10 @@ public:
     {
         return adoptRef(new ApplyStyleCommand(element, removeOnly, action));
     }
+    static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, IsInlineElementToRemoveFunction isInlineElementToRemoveFunction, EditAction action = EditActionChangeAttributes)
+    {
+        return adoptRef(new ApplyStyleCommand(document, style, isInlineElementToRemoveFunction, action));
+    }
 
     static RefPtr<CSSMutableStyleDeclaration> removeNonEditingProperties(CSSStyleDeclaration* style);
     static PassRefPtr<CSSMutableStyleDeclaration> editingStyleAtPosition(Position pos, ShouldIncludeTypingStyle shouldIncludeTypingStyle = IgnoreTypingStyle);
@@ -65,6 +70,7 @@ private:
     ApplyStyleCommand(Document*, CSSStyleDeclaration*, EditAction, EPropertyLevel);
     ApplyStyleCommand(Document*, CSSStyleDeclaration*, const Position& start, const Position& end, EditAction, EPropertyLevel);
     ApplyStyleCommand(PassRefPtr<Element>, bool removeOnly, EditAction);
+    ApplyStyleCommand(Document*, CSSStyleDeclaration*, bool (*isInlineElementToRemove)(const Element*), EditAction);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
@@ -72,6 +78,7 @@ private:
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
     // style-removal helpers
+    bool isStyledInlineElementToRemove(Element*) const;
     bool removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDeclaration* style, Node*& runStart, Node*& runEnd);
     bool removeInlineStyleFromElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded, CSSMutableStyleDeclaration* extractedStyle = 0);
     inline bool shouldRemoveInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
@@ -122,6 +129,7 @@ private:
     bool m_useEndingSelection;
     RefPtr<Element> m_styledInlineElement;
     bool m_removeOnly;
+    IsInlineElementToRemoveFunction m_isInlineElementToRemoveFunction;
 };
 
 bool isStyleSpan(const Node*);

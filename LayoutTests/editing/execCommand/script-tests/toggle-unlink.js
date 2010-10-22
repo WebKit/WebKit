@@ -59,9 +59,9 @@ testSingleToggle("unlink", '<a href="http://webkit.org/" style="background-color
 testSingleToggle("unlink", 'hello<a href="http://webkit.org/" style="background-color: yellow;"><div>world</div></a>WebKit',
     selectAll, 'hello<div style="background-color: yellow; ">world</div><span class="Apple-style-span" style="background-color: yellow;">WebKit</span>');
 testSingleToggle("unlink", '<a href="http://webkit.org/" style="font-weight: bold;"><div>hello</div><div>world WebKit</div></a>',
-    selectLastTwoWords, '<div style="font-weight: bold; "><a href="http://webkit.org/">hello</a></div><div style="font-weight: bold; ">world WebKit</div>');
+    selectLastTwoWords, '<a href="http://webkit.org/"><div style="font-weight: bold; ">hello</div></a><div style="font-weight: bold; ">world WebKit</div>');
 testSingleToggle("unlink", '<a href="http://webkit.org/" style="font-weight: bold;"><div style="font-weight: normal;">hello</div><div>world</div></a>',
-    selectLastWord, '<div style="font-weight: normal; "><a href="http://webkit.org/">hello</a></div><div style="font-weight: bold; ">world</div>');
+    selectLastWord, '<a href="http://webkit.org/"><div style="font-weight: normal; ">hello</div></a><div style="font-weight: bold; ">world</div>');
 
 document.body.removeChild(testContainer);
 
