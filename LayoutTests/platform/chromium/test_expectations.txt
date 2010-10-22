@@ -2258,7 +2258,7 @@ BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 // New flakiness?
 BUG32149 WIN RELEASE : fast/dom/Document/early-document-access.html = TIMEOUT PASS
 
-BUG32195 LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE TEXT
+BUG32195 LINUX : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = PASS IMAGE+TEXT
 BUG32195 WIN : fast/repaint/renderer-destruction-by-invalidateSelection-crash.html = IMAGE+TEXT IMAGE
 
 // Expectations from roll to 53171:53194
@@ -3250,3 +3250,7 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
 // Added in WebKit r70265
 BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = TEXT
+
+// has been flaky for a long time.
+BUGWK48142 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
+BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
