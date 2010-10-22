@@ -1,3 +1,13 @@
+2010-10-22  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed, rolling out r70290.
+        http://trac.webkit.org/changeset/70290
+        https://bugs.webkit.org/show_bug.cgi?id=48111
+
+        Undelete Android build files.
+
+        * Android.mk: Added.
+
 2010-10-22  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
