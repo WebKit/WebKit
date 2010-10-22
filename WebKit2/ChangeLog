@@ -1,3 +1,13 @@
+2010-10-22  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Corrected target dependencies.
+
+        * WebKit2.xcodeproj/project.pbxproj: Made WebKit2 depend on DerivedSources and removed
+        the explicit dependency of All on DerivedSources and WebKit2, since WebProcess depends on
+        them.
+
 2010-10-20  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://problem/8423766> Cursor does not become "busy" when a page is
