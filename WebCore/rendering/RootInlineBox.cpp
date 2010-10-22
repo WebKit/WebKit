@@ -149,7 +149,7 @@ void RootInlineBox::addHighlightOverflow()
     FloatRect rootRect(0, selectionTop(), logicalWidth(), selectionHeight());
     IntRect inflatedRect = enclosingIntRect(page->chrome()->client()->customHighlightRect(renderer()->node(), renderer()->style()->highlight(), rootRect));
     setInlineDirectionOverflowPositions(leftLayoutOverflow(), rightLayoutOverflow(), min(leftVisualOverflow(), inflatedRect.x()), max(rightVisualOverflow(), inflatedRect.right()));
-    setBlockDirectionOverflowPositions(topLayoutOverflow(), bottomLayoutOverflow(), min(topVisualOverflow(), inflatedRect.y()), max(bottomVisualOverflow(), inflatedRect.bottom()), logicalHeight());
+    setBlockDirectionOverflowPositions(topLayoutOverflow(), bottomLayoutOverflow(), min(topVisualOverflow(), inflatedRect.y()), max(bottomVisualOverflow(), inflatedRect.bottom()));
 }
 
 void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, const AtomicString& highlightType)

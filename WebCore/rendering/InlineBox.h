@@ -229,6 +229,7 @@ public:
 
     // The logicalTop[ position is the top edge of the line box in a horizontal line and the left edge in a vertical line.
     int logicalTop() const { return !m_isVertical ? m_y : m_x; }
+    int logicalBottom() const { return logicalTop() + logicalHeight(); }
     void setLogicalTop(int top)
     {
         if (!m_isVertical)
