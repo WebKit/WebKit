@@ -119,51 +119,84 @@ WebInspector.StoragePanel.prototype = {
             this.sidebarTree.selectedTreeElement.deselect();
     },
 
-    addFrame: function(parentFrameId, frameId, frameResource)
+    addOrUpdateFrame: function(parentFrameId, frameId, displayName)
     {
+        var frameTreeElement = this._treeElementForFrameId[frameId];
+        if (frameTreeElement) {
+            frameTreeElement.displayName = displayName;
+            return;
+        }
+
         var parentTreeElement = parentFrameId ? this._treeElementForFrameId[parentFrameId] : this.resourcesListTreeElement;
         if (!parentTreeElement) {
             console.error("No frame with id:" + parentFrameId + " to route " + displayName + " to.")
             return;
         }
 
-        var frameTreeElement = new WebInspector.FrameTreeElement(this, frameId, frameResource);
+        var frameTreeElement = new WebInspector.FrameTreeElement(this, frameId, displayName);
         this._treeElementForFrameId[frameId] = frameTreeElement;
+
+        // Insert in the alphabetical order, first frames, then resources.
+        var children = parentTreeElement.children;
+        for (var i = 0; i < children.length; ++i) {
+            var child = children[i];
+            if (!(child instanceof WebInspector.FrameTreeElement)) {
+                parentTreeElement.insertChild(frameTreeElement, i);
+                return;
+            }
+            if (child.displayName.localeCompare(frameTreeElement.displayName) > 0) {
+                parentTreeElement.insertChild(frameTreeElement, i);
+                return;
+            }
+        }
         parentTreeElement.appendChild(frameTreeElement);
     },
 
     removeFrame: function(frameId)
     {
         var frameTreeElement = this._treeElementForFrameId[frameId];
-        if (!frameTreeElement) {
-            console.error("No frame with id:" + frameId + " to remove.");
+        if (!frameTreeElement)
             return;
-        }
+
+        var children = frameTreeElement.children.slice();
+        for (var i = 0; i < children.length; ++i)
+            this.removeFrame(children[i]._frameId);
 
         delete this._treeElementForFrameId[frameId];
         frameTreeElement.parent.removeChild(frameTreeElement);
     },
 
-    addFrameResource: function(frameId, resource)
+    addResourceToFrame: function(frameId, resource)
     {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (!frameTreeElement) {
-            console.error("No frame with id:" + frameId + " to add resource to.");
+            console.error("No frame to add resource to");
             return;
         }
 
         var resourceTreeElement = new WebInspector.FrameResourceTreeElement(this, resource);
+
+        // Insert in the alphabetical order, first frames, then resources. Document resource goes first.
+        var children = frameTreeElement.children;
+        for (var i = 0; i < children.length; ++i) {
+            var child = children[i];
+            if (!(child instanceof WebInspector.FrameResourceTreeElement))
+                continue;
+
+            if (resource.type === WebInspector.Resource.Type.Document ||
+                    (child._resource.type !== WebInspector.Resource.Type.Document && child._resource.displayName.localeCompare(resource.displayName) > 0)) {
+                frameTreeElement.insertChild(resourceTreeElement, i);
+                return;
+            }
+        }
         frameTreeElement.appendChild(resourceTreeElement);
     },
 
-    removeFrameResources: function(frameId)
+    removeResourcesFromFrame: function(frameId)
     {
         var frameTreeElement = this._treeElementForFrameId[frameId];
-        if (!frameTreeElement) {
-            console.error("No frame with id:" + frameId + " to remove resources from.");
-            return;
-        }
-        frameTreeElement.removeChildren();
+        if (frameTreeElement)
+            frameTreeElement.removeChildren();
     },
 
     addDatabase: function(database)
@@ -493,10 +526,10 @@ WebInspector.BaseStorageTreeElement.prototype = {
         this.imageElement.className = "icon";
         this.listItemElement.appendChild(this.imageElement);
 
-        var titleElement = document.createElement("span");
-        titleElement.textContent = this._titleText;
-        titleElement.className = "storage-base-tree-element-title";
-        this.listItemElement.appendChild(titleElement);
+        this.titleElement = document.createElement("span");
+        this.titleElement.textContent = this._titleText;
+        this.titleElement.className = "storage-base-tree-element-title";
+        this.listItemElement.appendChild(this.titleElement);
 
         var selectionElement = document.createElement("div");
         selectionElement.className = "selection";
@@ -507,6 +540,12 @@ WebInspector.BaseStorageTreeElement.prototype = {
     {
         if (this.listItemElement)
             this.listItemElement.scrollIntoViewIfNeeded(false);
+    },
+
+    set titleText(titleText)
+    {
+        this._titleText = titleText;
+        this.titleElement.textContent = this._titleText;
     }
 }
 
@@ -526,17 +565,28 @@ WebInspector.StorageCategoryTreeElement.prototype = {
 }
 WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
-WebInspector.FrameTreeElement = function(storagePanel, frameId, frameResource)
+WebInspector.FrameTreeElement = function(storagePanel, frameId, displayName)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, frameResource.displayName, "frame-storage-tree-item");
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, displayName, "frame-storage-tree-item");
     this._frameId = frameId;
-    this._resource = frameResource;
+    this._displayName = displayName;
 }
 
 WebInspector.FrameTreeElement.prototype = {
     onselect: function()
     {
-        this._storagePanel.showResource(this._resource);
+        this._storagePanel.showCategoryView(this._displayName);
+    },
+
+    get displayName()
+    {
+        return this._displayName;
+    },
+
+    set displayName(displayName)
+    {
+        this._displayName = displayName;
+        this.titleText = displayName;
     }
 }
 WebInspector.FrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;

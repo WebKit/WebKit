@@ -204,6 +204,7 @@ static PassRefPtr<InspectorObject> buildObjectForDocumentLoader(DocumentLoader* 
     RefPtr<InspectorObject> documentLoaderObject = InspectorObject::create();
     documentLoaderObject->setNumber("frameId", reinterpret_cast<uintptr_t>(loader->frame()));
     documentLoaderObject->setNumber("loaderId", reinterpret_cast<uintptr_t>(loader));
+    documentLoaderObject->setString("url", loader->requestURL().string());
     return documentLoaderObject;
 }
 
@@ -350,6 +351,7 @@ void InspectorResourceAgent::setOverrideContent(unsigned long identifier, const 
 static PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame* frame, bool dumpResources)
 {
     RefPtr<InspectorObject> frameObject = InspectorObject::create();
+    frameObject->setNumber("parentId", reinterpret_cast<uintptr_t>(frame->tree()->parent()));
     frameObject->setNumber("id", reinterpret_cast<uintptr_t>(frame));
     if (dumpResources)
         populateObjectWithFrameResources(frame, frameObject);
@@ -366,14 +368,13 @@ static PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame* frame, bool du
 
 void InspectorResourceAgent::didCommitLoad(DocumentLoader* loader)
 {
-    RefPtr<InspectorObject> frameObject = buildObjectForFrameTree(loader->frame(), false);
-    m_frontend->didCommitLoadForFrame(frameObject, reinterpret_cast<uintptr_t>(loader));
+    Frame* parentFrame = loader->frame()->tree()->parent();
+    m_frontend->didCommitLoadForFrame(reinterpret_cast<uintptr_t>(parentFrame), buildObjectForDocumentLoader(loader));
 }
 
 void InspectorResourceAgent::frameDetachedFromParent(Frame* frame)
 {
-    RefPtr<InspectorObject> frameObject = buildObjectForFrameTree(frame, false);
-    m_frontend->frameDetachedFromParent(frameObject);
+    m_frontend->frameDetachedFromParent(reinterpret_cast<uintptr_t>(frame));
 }
 
 #if ENABLE(WEB_SOCKETS)
