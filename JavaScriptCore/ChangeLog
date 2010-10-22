@@ -1,3 +1,17 @@
+2010-10-22  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        JSC interpreter regressions after r69940
+        https://bugs.webkit.org/show_bug.cgi?id=47839
+
+        Wrong "if": It should test whether the result exists,
+        and not the opposite. It is an interpreter bug, hence
+        the bots does not capture it.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::resolveBase):
+
 2010-10-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
