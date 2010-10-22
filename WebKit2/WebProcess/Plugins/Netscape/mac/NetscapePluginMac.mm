@@ -132,6 +132,7 @@ bool NetscapePlugin::platformPostInitialize()
         // Initialize the fake Carbon window.
         Rect bounds = { 0, 0, 0, 0 };
         CreateNewWindow(kDocumentWindowClass, 0, &bounds, reinterpret_cast<WindowRef*>(&m_npCGContext.window));
+        ASSERT(m_npCGContext.window);
         
         // FIXME: Disable the backing store.
         

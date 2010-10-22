@@ -1,3 +1,33 @@
+2010-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix assert when a NetscapePluginModule loses its last NetscapePlugin.
+        https://bugs.webkit.org/show_bug.cgi?id=48155
+
+        (The assert in question is ASSERT(pluginModuleIndex != notFound) in 
+        NetscapePluginModule::shutdown()).
+
+        * WebProcess/Plugins/Netscape/NetscapePluginModule.cpp:
+        (WebKit::NetscapePluginModule::pluginCreated):
+        If we didn't have any live plug-ins, load the plug-in module.
+
+        (WebKit::NetscapePluginModule::pluginDestroyed):
+        If this was the last plug-in, unload the plug-in module.
+
+        (WebKit::NetscapePluginModule::shutdown):
+        Set m_isInitialized to false.
+
+        (WebKit::NetscapePluginModule::load):
+        Don't do anything if the plug-in module has already been initialized.
+
+        (WebKit::NetscapePluginModule::unload):
+        Assert that we're not initialized.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        Assert that we successfully created the window.
+
 2010-10-22  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Anders Carlsson.
