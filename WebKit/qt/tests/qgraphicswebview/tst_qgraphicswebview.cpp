@@ -35,6 +35,7 @@ private slots:
     void microFocusCoordinates();
     void focusInputTypes();
     void crashOnSetScaleBeforeSetUrl();
+    void widgetsRenderingThroughCache();
 };
 
 void tst_QGraphicsWebView::qgraphicswebview()
@@ -138,6 +139,41 @@ void tst_QGraphicsWebView::crashOnSetScaleBeforeSetUrl()
     QGraphicsWebView* webView = new QGraphicsWebView;
     webView->setScale(2.0);
     delete webView;
+}
+
+void tst_QGraphicsWebView::widgetsRenderingThroughCache()
+{
+    // Widgets should be rendered the same way with and without
+    // intermediate cache (tiling for example).
+    // See bug https://bugs.webkit.org/show_bug.cgi?id=47767 where
+    // widget are rendered as disabled when caching is using.
+
+    QGraphicsWebView* webView = new QGraphicsWebView;
+    webView->setHtml(QLatin1String("<body style=\"background-color: white\"><input type=range></input><input type=checkbox></input><input type=radio></input><input type=file></input></body>"));
+
+    QGraphicsView view;
+    view.show();
+    QGraphicsScene* scene = new QGraphicsScene(&view);
+    view.setScene(scene);
+    scene->addItem(webView);
+    view.setGeometry(QRect(0, 0, 500, 500));
+    QWidget *const widget = &view;
+    QTest::qWaitForWindowShown(widget);
+
+    // 1. Reference without tiling.
+    webView->settings()->setAttribute(QWebSettings::TiledBackingStoreEnabled, false);
+    QPixmap referencePixmap(view.size());
+    widget->render(&referencePixmap);
+
+    // 2. With tiling.
+    webView->settings()->setAttribute(QWebSettings::TiledBackingStoreEnabled, true);
+    QPixmap viewWithTiling(view.size());
+    widget->render(&viewWithTiling);
+    QApplication::processEvents();
+    viewWithTiling.fill();
+    widget->render(&viewWithTiling);
+
+    QCOMPARE(referencePixmap.toImage(), viewWithTiling.toImage());
 }
 
 void tst_QGraphicsWebView::microFocusCoordinates()
