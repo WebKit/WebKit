@@ -1391,8 +1391,13 @@ void LayoutTestController::abortModal()
 {
 }
 
-bool LayoutTestController::hasSpellingMarker(int, int)
+bool LayoutTestController::hasSpellingMarker(int from, int length)
 {
-    // FIXME: Implement this.
-    return false;
+    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
+    if (!framePrivate)
+        return false;
+    BOOL ret = FALSE;
+    if (FAILED(framePrivate->hasSpellingMarker(from, length, &ret)))
+        return false;
+    return ret;
 }

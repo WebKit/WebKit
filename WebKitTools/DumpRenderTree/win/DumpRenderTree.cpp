@@ -1302,6 +1302,7 @@ int main(int argc, char* argv[])
     standardPreferences->setJavaScriptEnabled(TRUE);
     standardPreferences->setDefaultFontSize(16);
     standardPreferences->setAcceleratedCompositingEnabled(true);
+    standardPreferences->setContinuousSpellCheckingEnabled(TRUE);
 
     if (printSupportedFeatures) {
         BOOL acceleratedCompositingAvailable;

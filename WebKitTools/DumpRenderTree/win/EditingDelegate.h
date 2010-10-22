@@ -127,7 +127,7 @@ public:
             /* [in] */ LPCTSTR text,
             /* [in] */ int length,
             /* [out] */ int *misspellingLocation,
-            /* [out] */ int *misspellingLength) { return E_NOTIMPL; }
+            /* [out] */ int *misspellingLength);
         
         virtual HRESULT STDMETHODCALLTYPE checkGrammarOfString( 
             /* [in] */ IWebView *view,

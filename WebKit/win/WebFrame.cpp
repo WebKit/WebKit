@@ -1019,6 +1019,18 @@ HRESULT STDMETHODCALLTYPE WebFrame::unused2()
     return E_NOTIMPL;
 }
 
+HRESULT STDMETHODCALLTYPE WebFrame::hasSpellingMarker(
+        /* [in] */ UINT from,
+        /* [in] */ UINT length,
+        /* [retval][out] */ BOOL* result)
+{
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+    *result = coreFrame->editor()->selectionStartHasSpellingMarkerFor(from, length);
+    return S_OK;
+}
+
 // IWebDocumentText -----------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebFrame::supportsTextEncoding( 

@@ -1,3 +1,23 @@
+2010-10-21  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        [Win][DRT] should have LayoutTestController.hasSpellingMarker()
+        https://bugs.webkit.org/show_bug.cgi?id=47885
+
+        - Implemented LayoutTestController.hasSpellingMarker(),
+        - Added fake spellcheck implementation.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/win/EditingDelegate.cpp:
+        (indexOfFirstWordCharacter):
+        (wordLength):
+        (EditingDelegate::checkSpellingOfString):
+        * DumpRenderTree/win/EditingDelegate.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::hasSpellingMarker):
+
 2010-10-21  Mihai Parparita  <mihaip@chromium.org>
 
         Unreviewed. Re-enable test that was mistakenly disabled by r67974.

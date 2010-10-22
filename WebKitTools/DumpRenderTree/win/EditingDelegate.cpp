@@ -353,3 +353,72 @@ HRESULT STDMETHODCALLTYPE EditingDelegate::webViewDidChangeSelection(
     }
     return S_OK;
 }
+
+static int indexOfFirstWordCharacter(const TCHAR* text)
+{
+    const TCHAR* cursor = text;
+    while (*cursor && !isalpha(*cursor))
+        ++cursor;
+    return *cursor ? (cursor - text) : -1;
+};
+
+static int wordLength(const TCHAR* text)
+{
+    const TCHAR* cursor = text;
+    while (*cursor && isalpha(*cursor))
+        ++cursor;
+    return cursor - text;
+};
+
+HRESULT STDMETHODCALLTYPE EditingDelegate::checkSpellingOfString(
+            /* [in] */ IWebView* view,
+            /* [in] */ LPCTSTR text,
+            /* [in] */ int length,
+            /* [out] */ int* misspellingLocation,
+            /* [out] */ int* misspellingLength)
+{
+    static const TCHAR* misspelledWords[] = {
+        // These words are known misspelled words in webkit tests.
+        // If there are other misspelled words in webkit tests, please add them in
+        // this array.
+        TEXT("foo"),
+        TEXT("Foo"),
+        TEXT("baz"),
+        TEXT("fo"),
+        TEXT("LibertyF"),
+        TEXT("chello"),
+        TEXT("xxxtestxxx"),
+        TEXT("XXxxx"),
+        TEXT("Textx"),
+        TEXT("blockquoted"),
+        TEXT("asd"),
+        TEXT("Lorem"),
+        TEXT("Nunc"),
+        TEXT("Curabitur"),
+        TEXT("eu"),
+        TEXT("adlj"),
+        TEXT("adaasj"),
+        TEXT("sdklj"),
+        TEXT("jlkds"),
+        TEXT("jsaada"),
+        TEXT("jlda"),
+        TEXT("zz"),
+        TEXT("contentEditable"),
+        0,
+    };
+
+    wstring textString(text, length);
+    int wordStart = indexOfFirstWordCharacter(textString.c_str());
+    if (-1 == wordStart)
+        return S_OK;
+    wstring word = textString.substr(wordStart, wordLength(textString.c_str() + wordStart));
+    for (size_t i = 0; misspelledWords[i]; ++i) {
+        if (word == misspelledWords[i]) {
+            *misspellingLocation = wordStart;
+            *misspellingLength = word.size();
+            break;
+        }
+    }
+
+    return S_OK;
+}
