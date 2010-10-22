@@ -92,6 +92,7 @@ BUG24182 SLOW WIN : fast/images/svg-as-background.html = PASS
 BUG24182 SLOW WIN : fast/backgrounds/svg-as-background-5.html = PASS
 BUG24182 WIN DEBUG SLOW: inspector/console-dirxml.html = PASS
 BUG24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
+BUG24182 WIN DEBUG SLOW : fast/parser/block-nesting-cap.html = PASS
 
 // Usually <1s in release, ~1s in debug, but occasionally >5s in release.
 BUG27335 WIN RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
