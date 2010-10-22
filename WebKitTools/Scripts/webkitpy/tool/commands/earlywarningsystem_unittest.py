@@ -31,13 +31,17 @@ import os
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
+from webkitpy.tool.mocktool import MockTool
+
 
 class EarlyWarningSytemTest(QueuesTest):
     def test_failed_builds(self):
         ews = ChromiumLinuxEWS()
+        ews.bind_to_tool(MockTool())
         ews._build = lambda patch, first_run=False: False
         ews._can_build = lambda: True
-        ews.review_patch(Mock())
+        mock_patch = ews._tool.bugs.fetch_attachment(197)
+        ews.review_patch(mock_patch)
 
     def _default_expected_stderr(self, ews):
         string_replacemnts = {
@@ -46,19 +50,28 @@ class EarlyWarningSytemTest(QueuesTest):
             "watchers": ews.watchers,
         }
         expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr(ews.name, os.getcwd()),  # FIXME: Use of os.getcwd() is wrong, should be scm.checkout_root
+            "begin_work_queue": self._default_begin_work_queue_stderr(ews.name, ews._tool.scm().checkout_root),
             "handle_unexpected_error": "Mock error message\n",
             "next_work_item": "",
             "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts,
-            "handle_script_error": "MOCK: update_status: %(name)s ScriptError error message\nMOCK bug comment: bug_id=142, cc=%(watchers)s\n--- Begin comment ---\nAttachment 197 did not build on %(port)s:\nBuild output: http://dummy_url\n--- End comment ---\n\n" % string_replacemnts,
+            "handle_script_error": "MOCK: update_status: %(name)s ScriptError error message\nMOCK bug comment: bug_id=42, cc=%(watchers)s\n--- Begin comment ---\nAttachment 197 did not build on %(port)s:\nBuild output: http://dummy_url\n--- End comment ---\n\n" % string_replacemnts,
         }
         return expected_stderr
 
     def _test_ews(self, ews):
+        ews.bind_to_tool(MockTool())
         expected_exceptions = {
             "handle_script_error": SystemExit,
         }
         self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews), expected_exceptions=expected_exceptions)
+
+    def _test_committer_only_ews(self, ews):
+        ews.bind_to_tool(MockTool())
+        expected_stderr = self._default_expected_stderr(ews)
+        string_replacemnts = {"name": ews.name}
+        expected_stderr["process_work_item"] = "MOCK: update_status: %(name)s Error: %(name)s cannot process patches from non-committers :(\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts
+        expected_exceptions = {"handle_script_error": SystemExit}
+        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
 
     # FIXME: If all EWSes are going to output the same text, we
     # could test them all in one method with a for loop over an array.
@@ -78,19 +91,7 @@ class EarlyWarningSytemTest(QueuesTest):
         self._test_ews(EflEWS())
 
     def test_mac_ews(self):
-        ews = MacEWS()
-        expected_stderr = self._default_expected_stderr(ews)
-        expected_stderr["process_work_item"] = "MOCK: update_status: mac-ews Error: mac-ews cannot process patches from non-committers :(\nMOCK: release_work_item: mac-ews 197\n"
-        expected_exceptions = {
-            "handle_script_error": SystemExit,
-        }
-        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
+        self._test_committer_only_ews(MacEWS())
 
     def test_chromium_mac_ews(self):
-        ews = ChromiumMacEWS()
-        expected_stderr = self._default_expected_stderr(ews)
-        expected_stderr["process_work_item"] = "MOCK: update_status: cr-mac-ews Error: cr-mac-ews cannot process patches from non-committers :(\nMOCK: release_work_item: cr-mac-ews 197\n"
-        expected_exceptions = {
-            "handle_script_error": SystemExit,
-        }
-        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
+        self._test_committer_only_ews(ChromiumMacEWS())

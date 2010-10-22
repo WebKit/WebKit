@@ -34,7 +34,7 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.queues import *
-from webkitpy.tool.commands.queuestest import QueuesTest, MockPatch
+from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.commands.stepsequence import StepSequence
 from webkitpy.tool.mocktool import MockTool, MockSCM, MockStatusServer
 
@@ -49,11 +49,6 @@ class TestReviewQueue(AbstractReviewQueue):
 
 class TestFeederQueue(FeederQueue):
     _sleep_duration = 0
-
-
-class MockRolloutPatch(MockPatch):
-    def is_rollout(self):
-        return True
 
 
 class AbstractQueueTest(CommandsTest):
@@ -263,23 +258,22 @@ MOCK: release_work_item: commit-queue 197
     def test_rollout_lands(self):
         tool = MockTool(log_executive=True)
         tool.buildbot.light_tree_on_fire()
-        rollout_patch = MockRolloutPatch()
+        rollout_patch = tool.bugs.fetch_attachment(106)  # _patch6, a rollout patch.
+        assert(rollout_patch.is_rollout())
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing rollout patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
+            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', '--quiet', 106]
 MOCK: update_status: commit-queue Applied patch
 MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
 MOCK: update_status: commit-queue Built patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
-MOCK: update_status: commit-queue Passed tests
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 197]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 106]
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
-MOCK: release_work_item: commit-queue 197
+MOCK: release_work_item: commit-queue 106
 """,
-            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Rejecting patch 197 from commit-queue.' and additional comment 'Mock error message'\n",
+            "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '106' with comment 'Rejecting patch 106 from commit-queue.' and additional comment 'Mock error message'\n",
             "handle_script_error": "ScriptError error message\n",
         }
         self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr)
@@ -310,12 +304,12 @@ MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Retry
 MOCK: release_work_item: commit-queue 197
 """
-        OutputCapture().assert_outputs(self, queue.process_work_item, [MockPatch()], expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, queue.process_work_item, [QueuesTest.mock_work_item], expected_stderr=expected_stderr)
 
     def test_report_flaky_tests(self):
         queue = CommitQueue()
         queue.bind_to_tool(MockTool())
-        expected_stderr = """MOCK bug comment: bug_id=142, cc=None
+        expected_stderr = """MOCK bug comment: bug_id=42, cc=None
 --- Begin comment ---
 The commit-queue encountered the following flaky tests while processing attachment 197:
 
@@ -326,7 +320,7 @@ Please file bugs against the tests.  The author(s) of the test(s) are abarth@web
 --- End comment ---
 
 """
-        OutputCapture().assert_outputs(self, queue.report_flaky_tests, [MockPatch(), ["foo/bar.html", "bar/baz.html"]], expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, queue.report_flaky_tests, [QueuesTest.mock_work_item, ["foo/bar.html", "bar/baz.html"]], expected_stderr=expected_stderr)
 
     def test_layout_test_results(self):
         queue = CommitQueue()
@@ -356,7 +350,7 @@ class StyleQueueTest(QueuesTest):
             "should_proceed_with_work_item": "MOCK: update_status: style-queue Checking style\n",
             "process_work_item": "MOCK: update_status: style-queue Pass\nMOCK: release_work_item: style-queue 197\n",
             "handle_unexpected_error": "Mock error message\n",
-            "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=142, cc=[]\n--- Begin comment ---\nAttachment 197 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
+            "handle_script_error": "MOCK: update_status: style-queue ScriptError error message\nMOCK bug comment: bug_id=42, cc=[]\n--- Begin comment ---\nAttachment 197 did not pass style-queue:\n\nScriptError error message\n\nIf any of these errors are false positives, please file a bug against check-webkit-style.\n--- End comment ---\n\n",
         }
         expected_exceptions = {
             "handle_script_error": SystemExit,

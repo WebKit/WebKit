@@ -1,3 +1,32 @@
+2010-10-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        EWS does not need to process obsolete patches
+        https://bugs.webkit.org/show_bug.cgi?id=48093
+
+        This was an easy change, but to test it I had to pipe
+        real Attachment objects into the queue testing system.
+        Doing so revealed a whole bunch of bugs in our unit tests,
+        which I fixed as part of this patch.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+         - This is the actual code change.  This will not reduce the
+           backlog in the EWS queues much, but it will make rejections
+           much quicker for obsolete patches or closed bugs.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+         - Test my new code.
+         - Used a real attachment object and got rid of MockPatch
+         - Shared code between the mac-ews and cr-mac-ews tests.
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+         - Can't use MockPatch anymore.
+         - Removing MockPatch found more bugs here!
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+         - MockBugzilla should not be a "Mock" object.  Right now tool.bugs()
+           is allowed, but wrong.  Making it not a Mock will make tool.bugs() correctly fail.
+
 2010-10-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r70301.

@@ -192,6 +192,7 @@ _bug4 = {
 }
 
 
+# FIXME: This should not inherit from Mock
 class MockBugzillaQueries(Mock):
 
     def __init__(self, bugzilla):
@@ -243,6 +244,7 @@ _mock_reviewer = Reviewer("Foo Bar", "foo@bar.com")
 # FIXME: Bugzilla is the wrong Mock-point.  Once we have a BugzillaNetwork
 #        class we should mock that instead.
 # Most of this class is just copy/paste from Bugzilla.
+# FIXME: This should not inherit from Mock
 class MockBugzilla(Mock):
 
     bug_server_url = "http://example.com"
@@ -420,6 +422,7 @@ class MockBuildBot(object):
         return MockFailureMap(self)
 
 
+# FIXME: This should not inherit from Mock
 class MockSCM(Mock):
 
     fake_checkout_root = os.path.realpath("/tmp") # realpath is needed to allow for Mac OS X's /private/tmp
@@ -573,6 +576,7 @@ class MockStatusServer(object):
         return "http://dummy_url"
 
 
+# FIXME: This should not inherit from Mock
 class MockExecute(Mock):
     def __init__(self, should_log):
         self._should_log = should_log
@@ -608,7 +612,7 @@ class MockOptions(object):
             self.__dict__[key] = value
 
 
-class MockRietveld():
+class MockRietveld(object):
 
     def __init__(self, executive, dryrun=False):
         pass
@@ -617,25 +621,25 @@ class MockRietveld():
         log("MOCK: Uploading patch to rietveld")
 
 
-class MockTestPort1():
+class MockTestPort1(object):
 
     def skips_layout_test(self, test_name):
         return test_name in ["media/foo/bar.html", "foo"]
 
 
-class MockTestPort2():
+class MockTestPort2(object):
 
     def skips_layout_test(self, test_name):
         return test_name == "media/foo/bar.html"
 
 
-class MockPortFactory():
+class MockPortFactory(object):
 
     def get_all(self, options=None):
         return {"test_port1": MockTestPort1(), "test_port2": MockTestPort2()}
 
 
-class MockTool():
+class MockTool(object):
 
     def __init__(self, log_executive=False):
         self.wakeup_event = threading.Event()

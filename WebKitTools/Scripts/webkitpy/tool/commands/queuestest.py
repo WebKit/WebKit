@@ -44,25 +44,9 @@ class MockQueueEngine(object):
         pass
 
 
-class MockPatch():
-    def id(self):
-        return 197
-
-    def bug_id(self):
-        return 142
-
-    def is_rollout(self):
-        return False
-
-
 class QueuesTest(unittest.TestCase):
-    # Ids match patch1 in mocktool.py
-    mock_work_item = Attachment({
-        "id": 197,
-        "bug_id": 142,
-        "name": "Patch",
-        "attacher_email": "adam@example.com",
-    }, None)
+    # This is _patch1 in mocktool.py
+    mock_work_item = MockTool().bugs.fetch_attachment(197)
 
     def assert_outputs(self, func, func_name, args, expected_stdout, expected_stderr, expected_exceptions):
         exception = None
@@ -108,4 +92,4 @@ class QueuesTest(unittest.TestCase):
         self.assert_outputs(queue.handle_unexpected_error, "handle_unexpected_error", [work_item, "Mock error message"], expected_stdout, expected_stderr, expected_exceptions)
         # Should we have a different function for testing StepSequenceErrorHandlers?
         if isinstance(queue, StepSequenceErrorHandler):
-            self.assert_outputs(queue.handle_script_error, "handle_script_error", [tool, {"patch": MockPatch()}, ScriptError(message="ScriptError error message", script_args="MockErrorCommand")], expected_stdout, expected_stderr, expected_exceptions)
+            self.assert_outputs(queue.handle_script_error, "handle_script_error", [tool, {"patch": self.mock_work_item}, ScriptError(message="ScriptError error message", script_args="MockErrorCommand")], expected_stdout, expected_stderr, expected_exceptions)
