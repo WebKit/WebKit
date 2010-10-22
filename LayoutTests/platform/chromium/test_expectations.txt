@@ -3248,3 +3248,5 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 
 // Added in WebKit r70190
 BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
+// Added in WebKit r70265
+BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = TEXT
