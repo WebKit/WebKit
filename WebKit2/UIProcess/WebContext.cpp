@@ -141,7 +141,7 @@ void WebContext::languageChanged()
 
 void WebContext::ensureWebProcess()
 {
-    if (hasValidProcess())
+    if (m_process)
         return;
 
     m_process = WebProcessManager::shared().getWebProcess(this);

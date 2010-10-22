@@ -2,6 +2,22 @@
 
         Reviewed by Sam Weinig.
 
+        WebContext::ensureWebProcess shouldn't send multiple InitializeWebProcess messages.
+        https://bugs.webkit.org/show_bug.cgi?id=48158
+        <rdar://problem/8512572>
+
+        If the web process was launching when another call to ensureWebProcess is sent, we
+        would end up sending another InitializeWebProcess message to it which would result
+        in assertions firing. Fix this by only checking for m_process, and not requiring a process
+        to be valid (which it won't be until it's finished launching).
+        
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+
+2010-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Rename revive to relaunch everywhere.
 
         * UIProcess/API/mac/PageClientImpl.h:
