@@ -1,3 +1,14 @@
+2010-10-21  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Kent Tamura.
+
+        [BREWMP] Add a String constructor which takes AECHAR*
+        https://bugs.webkit.org/show_bug.cgi?id=45043
+
+        Add String(const AECHAR*) constructor for convenience.
+
+        * wtf/text/WTFString.h:
+
 2010-10-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
