@@ -1077,7 +1077,6 @@
             ['include', 'platform/graphics/chromium/FontCacheLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/FontPlatformDataLinux\\.cpp$'],
-            ['include', 'platform/graphics/chromium/GlyphPageTreeNodeLinux\\.cpp$'],
             ['include', 'platform/graphics/chromium/SimpleFontDataLinux\\.cpp$'],
           ],
         }],
@@ -1206,6 +1205,10 @@
         ['OS=="win"', {
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
+
+            # The Chromium Win currently uses GlyphPageTreeNodeChromiumWin.cpp from
+            # platform/graphics/chromium, included by regex above, instead.
+            ['exclude', 'platform/graphics/skia/GlyphPageTreeNodeSkia\\.cpp$']
           ],
         }],
         ['"ENABLE_CLIENT_BASED_GEOLOCATION=1" in feature_defines', {
