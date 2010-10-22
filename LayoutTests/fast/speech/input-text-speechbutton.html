@@ -32,7 +32,7 @@ function onWebkitSpeechChange() {
 
 function run() {
     if (window.layoutTestController && window.eventSender) {
-        layoutTestController.setMockSpeechInputResult('Pictures of the moon');
+        layoutTestController.setMockSpeechInputResult('Pictures of the moon', '');
 
         // Clicking the speech button should fill in mock speech-recognized text.
         var input = document.getElementById('speechInput');

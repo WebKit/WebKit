@@ -3248,5 +3248,9 @@ BUGJAPHET : fast/js/date-parse-test.html = TEXT
 
 // Added in WebKit r70190
 BUGWK48034 : plugins/pass-different-npp-struct.html = TEXT
+
 // Added in WebKit r70265
 BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = TEXT
+
+// Temporarily disabled for a 4-sided patch. Will be enabled again by BUGWK47420.
+BUGWK47089 : fast/speech/input-text-language-tag.html = FAIL

@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<meta charset="utf-8">
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+description('Tests for language tag inheritance and validation in speech buttons.');
+
+// Note: test cases are sequential to ensure that no new recognition starts when another recognition recording is active.
+function onChangeNone() {
+    shouldBeEqualToString('document.getElementById("speechInputNone").value', 'error: no result found for language \'\'');
+    setTimeout(function() { speechButtonClick('speechInputElement'); }, 50);
+}
+
+function onChangeElement() {
+    shouldBeEqualToString('document.getElementById("speechInputElement").value', 'Pictures of the moon');
+    setTimeout(function() { speechButtonClick('speechInputInherited'); }, 50);
+}
+
+function onChangeInherited() {
+    shouldBeEqualToString('document.getElementById("speechInputInherited").value', '月の写真');
+    setTimeout(function() { speechButtonClick('speechInputInvalid'); }, 50);
+}
+
+function onChangeInvalid() {
+    shouldBeEqualToString('document.getElementById("speechInputInvalid").value', 'error: no result found for language \'\'');
+    finishJSTest();
+}
+
+function speechButtonClick(elementId) {
+    var element = document.getElementById(elementId);
+    var x = element.offsetLeft + element.offsetWidth - 4;
+    var y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function run() {
+    if (window.layoutTestController && window.eventSender) {
+        layoutTestController.setMockSpeechInputResult('Pictures of the moon', 'en-GB');
+        layoutTestController.setMockSpeechInputResult('月の写真', 'ja');
+        speechButtonClick('speechInputNone');
+    }
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<input id="speechInputNone" x-webkit-speech onwebkitspeechchange="onChangeNone()">
+<input id="speechInputElement" x-webkit-speech onwebkitspeechchange="onChangeElement()" lang="en-GB">
+<div lang="ja"> <input id="speechInputInherited" x-webkit-speech onwebkitspeechchange="onChangeInherited()"> </div>
+<input id="speechInputInvalid" x-webkit-speech onwebkitspeechchange="onChangeInvalid()" lang="1337$þ3λk">
+</body>
+</html>

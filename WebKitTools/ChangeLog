@@ -1,3 +1,28 @@
+2010-10-22  Leandro Gracia Gil  <leandrogracia@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Added a second parameter to setMockSpeechInputResult for
+        the language used in speech input.
+        https://bugs.webkit.org/show_bug.cgi?id=47089
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setMockSpeechInputResultCallback):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+
 2010-10-21  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
@@ -562,22 +587,6 @@
 
         "Build breaks in mac and win" (Requested by satish on
         #webkit).
-
-        * DumpRenderTree/LayoutTestController.cpp:
-        (setMockSpeechInputResultCallback):
-        * DumpRenderTree/LayoutTestController.h:
-        * DumpRenderTree/chromium/LayoutTestController.cpp:
-        (LayoutTestController::setMockSpeechInputResult):
-        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
-        (LayoutTestController::setMockSpeechInputResult):
-
-2010-10-19  Leandro Gracia Gil  <leandrogracia@google.com>
-
-        Reviewed by Jeremy Orlow.
-
-        Added a second parameter to setMockSpeechInputResult for
-        the language used in speech input.
-        https://bugs.webkit.org/show_bug.cgi?id=47089
 
         * DumpRenderTree/LayoutTestController.cpp:
         (setMockSpeechInputResultCallback):
