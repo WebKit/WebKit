@@ -1,3 +1,19 @@
+2010-10-22  Adam Roben  <aroben@apple.com>
+
+        Remove the QuartzCorePresent.h mechanism
+
+        This header was used to detect whether QuartzCore headers were present
+        on the system. Everyone should have these headers now so we no longer
+        need to detect.
+
+        Reviewed by Sam Weinig.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/build-generated-files.sh: Remove
+        code to generate QuartzCorePresent.h.
+
+        * wtf/Platform.h: Stop including QuartzCorePresent.h on Windows and
+        collapse all USE_ACCELERATED_COMPOSITING settings into one #ifdef.
+
 2010-10-22  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r70290.
