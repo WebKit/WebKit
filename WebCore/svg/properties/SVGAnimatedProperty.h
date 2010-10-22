@@ -58,9 +58,9 @@ public:
     }
 
     template<typename TearOffType, typename PropertyType>
-    static PassRefPtr<TearOffType> lookupOrCreateWrapper(SVGElement* element, const QualifiedName& attributeName, PropertyType& property)
+    static PassRefPtr<TearOffType> lookupOrCreateWrapper(SVGElement* element, const QualifiedName& attributeName, const AtomicString& attributeIdentifier, PropertyType& property)
     {
-        SVGAnimatedPropertyDescription key(element, attributeName.localName());
+        SVGAnimatedPropertyDescription key(element, attributeIdentifier);
         RefPtr<SVGAnimatedProperty> wrapper = animatedPropertyCache()->get(key);
         if (!wrapper) {
             wrapper = TearOffType::create(element, attributeName, property);
@@ -71,9 +71,9 @@ public:
     }
 
     template<typename TearOffType>
-    static TearOffType* lookupWrapper(SVGElement* element, const QualifiedName& attributeName)
+    static TearOffType* lookupWrapper(SVGElement* element, const AtomicString& attributeIdentifier)
     {
-        SVGAnimatedPropertyDescription key(element, attributeName.localName());
+        SVGAnimatedPropertyDescription key(element, attributeIdentifier);
         return static_pointer_cast<TearOffType>(animatedPropertyCache()->get(key)).get();
     }
 

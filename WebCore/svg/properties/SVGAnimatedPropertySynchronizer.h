@@ -20,8 +20,6 @@
 #ifndef SVGAnimatedPropertySynchronizer_h
 #define SVGAnimatedPropertySynchronizer_h
 
-#include "DeprecatedSVGAnimatedPropertyTraits.h"
-
 #if ENABLE(SVG)
 namespace WebCore {
 

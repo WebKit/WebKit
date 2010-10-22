@@ -21,12 +21,11 @@
 #define SVGPropertyTearOff_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedProperty.h"
 #include "SVGElement.h"
 #include "SVGProperty.h"
 
 namespace WebCore {
-
-class SVGAnimatedProperty;
 
 template<typename PropertyType>
 class SVGPropertyTearOff : public SVGProperty {
@@ -41,7 +40,7 @@ public:
         return adoptRef(new Self(animatedProperty, value));
     }
 
-    // Used for [SVGLiveProperty] types (for example: SVGSVGElement::createSVGLength()).
+    // Used for non-animated POD types (for example: SVGLength).
     static PassRefPtr<Self> create(const PropertyType& initialValue)
     {
         return adoptRef(new Self(initialValue));

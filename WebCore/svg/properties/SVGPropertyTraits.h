@@ -22,40 +22,90 @@
 #define SVGPropertyTraits_h
 
 #if ENABLE(SVG)
+#include "FloatRect.h"
+#include "SVGAngle.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
+#include "SVGPreserveAspectRatio.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
 template<typename PropertyType>
 struct SVGPropertyTraits { };
 
-// SVGAnimatedLength
+template<>
+struct SVGPropertyTraits<SVGAngle> {
+    static SVGAngle initialValue() { return SVGAngle(); }
+    static String toString(const SVGAngle& type) { return type.valueAsString(); }
+};
+
+template<>
+struct SVGPropertyTraits<bool> {
+    static bool initialValue() { return false; }
+    static String toString(bool type) { return type ? "true" : "false"; }
+};
+
+template<>
+struct SVGPropertyTraits<int> {
+    static int initialValue() { return 0; }
+    static String toString(int type) { return String::number(type); }
+};
+
+template<>
+struct SVGPropertyTraits<long> {
+    static long initialValue() { return 0; }
+    static String toString(long type) { return String::number(type); }
+};
+
 template<>
 struct SVGPropertyTraits<SVGLength> {
-    static SVGLength& initialValue()
-    {
-        DEFINE_STATIC_LOCAL(SVGLength, s_initialValue, ());
-        s_initialValue = SVGLength();
-        return s_initialValue;
-    }
-
+    static SVGLength initialValue() { return SVGLength(); }
     static String toString(const SVGLength& type) { return type.valueAsString(); }
 };
 
-// SVGAnimatedLengthList
 template<>
 struct SVGPropertyTraits<SVGLengthList> {
     typedef SVGLength ListItemType;
 
-    static SVGLengthList& initialValue()
-    {
-        DEFINE_STATIC_LOCAL(SVGLengthList, s_initialValue, ());
-        s_initialValue = SVGLengthList();
-        return s_initialValue;
-    }
-
+    static SVGLengthList initialValue() { return SVGLengthList(); }
     static String toString(const SVGLengthList& type) { return type.valueAsString(); }
+};
+
+template<>
+struct SVGPropertyTraits<float> {
+    static float initialValue() { return 0; }
+    static String toString(float type) { return String::number(type); }
+};
+
+template<>
+struct SVGPropertyTraits<SVGPreserveAspectRatio> {
+    static SVGPreserveAspectRatio initialValue() { return SVGPreserveAspectRatio(); }
+    static String toString(const SVGPreserveAspectRatio& type) { return type.valueAsString(); }
+};
+
+template<>
+struct SVGPropertyTraits<FloatRect> {
+    static FloatRect initialValue() { return FloatRect(); }
+    static String toString(const FloatRect& type)
+    {
+        StringBuilder builder;
+        builder.append(String::number(type.x()));
+        builder.append(' ');
+        builder.append(String::number(type.y()));
+        builder.append(' ');
+        builder.append(String::number(type.width()));
+        builder.append(' ');
+        builder.append(String::number(type.height()));
+        builder.append(' ');
+        return builder.toString();
+    }
+};
+
+template<>
+struct SVGPropertyTraits<String> {
+    static String initialValue() { return String(); }
+    static String toString(const String& type) { return type; }
 };
 
 }
