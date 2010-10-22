@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.dumpAsText();
+            layoutTestController.setCustomPolicyDelegate(true, true, true);
+        }
+
+        window.onload = function() {
+            var result = document.getElementById('result')
+            var frame = document.getElementById('frame')
+            if (!window.layoutTestController) {
+                result.innerText = "This test can only be run in DumpRenderTree.";
+                return;
+            }
+
+            // We shouldn't have any text in the frame since the load was ignored.
+            if (!frame.contentDocument.documentElement.innerText)
+                result.innerText = "PASSED";
+        }
+    </script>
+</head>
+<body>
+    <p>Test for <a href="http://webkit.org/b/48014">Using the decidePolicyForMIMEType delegate message in an asynchronous manner does not work</a>. If the test passes, you should see the word "PASSED" below.</p>
+    <div id=result>FAILED</div>
+    <iframe id="frame" src="data:text/html,Hello, I am a subframe!"></iframe>
+</body>
+</html>

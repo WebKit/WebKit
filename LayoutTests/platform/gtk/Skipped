@@ -1147,6 +1147,7 @@ fast/forms/textfield-onchange-deletion.html
 fast/history/history_reload.html
 fast/history/window-open.html
 fast/html/tab-order.html
+fast/loader/decide-policy-for-mime-type-async.html
 fast/loader/main-document-url-for-non-http-loads.html
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/policy-delegate-action-hit-test-zoomed.html

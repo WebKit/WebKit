@@ -1524,6 +1524,7 @@ fast/dom/Geolocation/timeout-zero.html
 
 # WebKitTestRunner needs layoutTestController.setCustomPolicyDelegate
 # <https://bugs.webkit.org/show_bug.cgi?id=42546>
+fast/loader/decide-policy-for-mime-type-async.html
 fast/loader/javascript-url-hierarchical-execution.html
 fast/loader/onload-policy-ignore-for-frame.html
 fast/loader/reload-policy-delegate.html

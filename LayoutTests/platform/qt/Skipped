@@ -100,6 +100,7 @@ accessibility
 transforms/3d
 compositing
 
+fast/loader/decide-policy-for-mime-type-async.html
 fast/loader/subframe-navigate-during-main-frame-load.html
 
 # Hyphenation is not implemented yet.

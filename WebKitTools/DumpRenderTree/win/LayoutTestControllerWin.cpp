@@ -368,7 +368,7 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     prefsPrivate->setAuthorAndUserStylesEnabled(flag);
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
+void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive , bool callIgnoreInDecidePolicyForMIMETypeAfterOneSecond)
 {
     COMPtr<IWebView> webView;
     if (FAILED(frame->webView(&webView)))

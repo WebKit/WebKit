@@ -1,3 +1,39 @@
+2010-10-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Barth and Darin Adler.
+
+        Using the decidePolicyForMIMEType delegate message in an asynchronous manner does not work
+        https://bugs.webkit.org/show_bug.cgi?id=48014
+        <rdar://problem/8202716>
+        
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setCustomPolicyDelegateCallback):
+        Add callIgnoreInDecidePolicyForMIMETypeAfterOneSecond argument.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        Add callIgnoreInDecidePolicyForMIMETypeAfterOneSecond argument.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setCustomPolicyDelegate):
+        Add callIgnoreInDecidePolicyForMIMETypeAfterOneSecond argument.
+
+        * DumpRenderTree/mac/PolicyDelegate.h:
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:decidePolicyForMIMEType:request:frame:decisionListener:]):
+        If _callIgnoreInDecidePolicyForMIMETypeAfterOneSecond is true, call [listener ignore] after one second.
+
+        (-[PolicyDelegate setCallIgnoreInDecidePolicyForMIMETypeAfterOneSecond:]):
+        Update _callIgnoreInDecidePolicyForMIMETypeAfterOneSecond.
+        
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        Add callIgnoreInDecidePolicyForMIMETypeAfterOneSecond argument.
+
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        Add callIgnoreInDecidePolicyForMIMETypeAfterOneSecond argument.
+
 2010-10-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
