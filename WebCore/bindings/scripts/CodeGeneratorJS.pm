@@ -1966,12 +1966,8 @@ sub GenerateImplementation
                     my $hasOptionalArguments = 0;
 
                     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
-                        push(@implContent, "    OwnPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, $numParameters));\n");
-                        push(@implContent, "    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;\n");
-                        push(@implContent, "    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(exec, maxStackSize));\n");
-                        $implIncludes{"ScriptArguments.h"} = 1;
+                        push(@implContent, "    ScriptCallStack callStack(exec, $numParameters);\n");
                         $implIncludes{"ScriptCallStack.h"} = 1;
-                        $implIncludes{"ScriptCallStackFactory.h"} = 1;
                     }
 
                     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
@@ -2361,8 +2357,8 @@ sub GenerateImplementationFunctionCall()
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
         $functionString .= ", " if $paramIndex;
-        $paramIndex += 2;
-        $functionString .= "scriptArguments.release(), callStack.release()";
+        ++$paramIndex;
+        $functionString .= "&callStack";
     }
 
     if (@{$function->raisesExceptions}) {

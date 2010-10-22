@@ -166,7 +166,8 @@ LOCAL_SRC_FILES += \
 	bindings/js/ScheduledAction.cpp \
 	bindings/js/ScriptArray.cpp \
 	bindings/js/ScriptCachedFrameData.cpp \
-	bindings/js/ScriptCallStackFactory.cpp \
+	bindings/js/ScriptCallFrame.cpp \
+	bindings/js/ScriptCallStack.cpp \
 	bindings/js/ScriptController.cpp \
 	bindings/js/ScriptEventListener.cpp \
 	bindings/js/ScriptFunctionCall.cpp \

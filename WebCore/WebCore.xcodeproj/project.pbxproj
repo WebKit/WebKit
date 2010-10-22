@@ -5460,10 +5460,6 @@
 		F3644AFF1119805900E0D537 /* InjectedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3644AFD1119805900E0D537 /* InjectedScript.cpp */; };
 		F3644B001119805900E0D537 /* InjectedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = F3644AFE1119805900E0D537 /* InjectedScript.h */; };
 		F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */ = {isa = PBXBuildFile; fileRef = F375CC061150D300008DDB81 /* InspectorWorkerResource.h */; };
-		F392249C126F11AE00A926D9 /* ScriptCallStackFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */; };
-		F392249D126F11AE00A926D9 /* ScriptCallStackFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */; };
-		F39BE95B12673BF400E0A674 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F39BE95912673BF400E0A674 /* ScriptArguments.cpp */; };
-		F39BE95C12673BF400E0A674 /* ScriptArguments.h in Headers */ = {isa = PBXBuildFile; fileRef = F39BE95A12673BF400E0A674 /* ScriptArguments.h */; };
 		F3D461481161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3D461461161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp */; };
 		F3D461491161D53200CA0D09 /* JSWorkerContextErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D461471161D53200CA0D09 /* JSWorkerContextErrorHandler.h */; };
 		F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */; };
@@ -11492,10 +11488,6 @@
 		F3644AFD1119805900E0D537 /* InjectedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScript.cpp; sourceTree = "<group>"; };
 		F3644AFE1119805900E0D537 /* InjectedScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScript.h; sourceTree = "<group>"; };
 		F375CC061150D300008DDB81 /* InspectorWorkerResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerResource.h; sourceTree = "<group>"; };
-		F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallStackFactory.cpp; sourceTree = "<group>"; };
-		F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStackFactory.h; sourceTree = "<group>"; };
-		F39BE95912673BF400E0A674 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
-		F39BE95A12673BF400E0A674 /* ScriptArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptArguments.h; sourceTree = "<group>"; };
 		F3D461461161D53200CA0D09 /* JSWorkerContextErrorHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextErrorHandler.cpp; sourceTree = "<group>"; };
 		F3D461471161D53200CA0D09 /* JSWorkerContextErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContextErrorHandler.h; sourceTree = "<group>"; };
 		F4EAF4AC10C742B1009100D3 /* OpenTypeSanitizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OpenTypeSanitizer.cpp; path = opentype/OpenTypeSanitizer.cpp; sourceTree = "<group>"; };
@@ -12268,14 +12260,8 @@
 				F375CC061150D300008DDB81 /* InspectorWorkerResource.h */,
 				1C81BA050E97348300266E07 /* JavaScriptCallFrame.idl */,
 				BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */,
-				F39BE95912673BF400E0A674 /* ScriptArguments.cpp */,
-				F39BE95A12673BF400E0A674 /* ScriptArguments.h */,
 				200B190811C277D900DCCD3A /* ScriptBreakpoint.cpp */,
 				7AFD4A8A1131C2760035B883 /* ScriptBreakpoint.h */,
-				416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */,
-				416E75C90EDF90C700360E1D /* ScriptCallFrame.h */,
-				416E75BD0EDF8FD700360E1D /* ScriptCallStack.cpp */,
-				416E75BC0EDF8FD700360E1D /* ScriptCallStack.h */,
 				7AFD4FF3113277B60035B883 /* ScriptDebugListener.h */,
 				9FA37EEF1172FD4100C4CD55 /* ScriptProfile.idl */,
 				9FA37EF01172FD4100C4CD55 /* ScriptProfileNode.idl */,
@@ -16792,8 +16778,10 @@
 				BCA378BB0D15F64200B793D6 /* ScheduledAction.h */,
 				41F1D21E0EF35C2A00DA8753 /* ScriptCachedFrameData.cpp */,
 				41F1D21D0EF35C2A00DA8753 /* ScriptCachedFrameData.h */,
-				F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */,
-				F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */,
+				416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */,
+				416E75C90EDF90C700360E1D /* ScriptCallFrame.h */,
+				416E75BD0EDF8FD700360E1D /* ScriptCallStack.cpp */,
+				416E75BC0EDF8FD700360E1D /* ScriptCallStack.h */,
 				93B70D5309EB0C7C009D8468 /* ScriptController.cpp */,
 				93B70D5409EB0C7C009D8468 /* ScriptController.h */,
 				A83E1C720E49042B00140B9C /* ScriptControllerMac.mm */,
@@ -20570,7 +20558,6 @@
 				1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */,
 				5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
-				F39BE95C12673BF400E0A674 /* ScriptArguments.h in Headers */,
 				A84D82C111D3474800972990 /* ScriptableDocumentParser.h in Headers */,
 				7AFD4A8B1131C2760035B883 /* ScriptBreakpoint.h in Headers */,
 				41F1D21F0EF35C2A00DA8753 /* ScriptCachedFrameData.h in Headers */,
@@ -21146,7 +21133,6 @@
 				081CDFB9126ECFDB00D215CA /* DeprecatedSVGAnimatedPropertyTraits.h in Headers */,
 				081CDFBA126ECFDB00D215CA /* DeprecatedSVGAnimatedTemplate.h in Headers */,
 				081CDFBF126ECFE800D215CA /* SVGAnimatedPropertySynchronizer.h in Headers */,
-				F392249D126F11AE00A926D9 /* ScriptCallStackFactory.h in Headers */,
 				088A0E04126EF1DB00978F7A /* SVGAnimatedListPropertyTearOff.h in Headers */,
 				088A0E05126EF1DB00978F7A /* SVGAnimatedProperty.h in Headers */,
 				088A0E06126EF1DB00978F7A /* SVGAnimatedPropertyDescription.h in Headers */,
@@ -23202,7 +23188,6 @@
 				5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */,
 				BCEC01BD0C274DAC009F4EC9 /* Screen.cpp in Sources */,
 				A84D82C211D3474800972990 /* ScriptableDocumentParser.cpp in Sources */,
-				F39BE95B12673BF400E0A674 /* ScriptArguments.cpp in Sources */,
 				200B190911C277D900DCCD3A /* ScriptBreakpoint.cpp in Sources */,
 				41F1D2200EF35C2A00DA8753 /* ScriptCachedFrameData.cpp in Sources */,
 				416E75CC0EDF90C700360E1D /* ScriptCallFrame.cpp in Sources */,
@@ -23711,7 +23696,6 @@
 				9728C3131268E4390041E89B /* MarkupAccumulator.cpp in Sources */,
 				E18772F1126E2629003DD586 /* Language.cpp in Sources */,
 				7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */,
-				F392249C126F11AE00A926D9 /* ScriptCallStackFactory.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

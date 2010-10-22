@@ -816,8 +816,10 @@ webcore_sources += \
 	WebCore/bindings/js/ScheduledAction.h \
 	WebCore/bindings/js/ScriptCachedFrameData.cpp \
 	WebCore/bindings/js/ScriptCachedFrameData.h \
-	WebCore/bindings/js/ScriptCallStackFactory.cpp \
-	WebCore/bindings/js/ScriptCallStackFactory.h \
+	WebCore/bindings/js/ScriptCallFrame.cpp \
+	WebCore/bindings/js/ScriptCallFrame.h \
+	WebCore/bindings/js/ScriptCallStack.cpp \
+	WebCore/bindings/js/ScriptCallStack.h \
 	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/ScriptController.h \
 	WebCore/bindings/js/ScriptDebugServer.cpp \
@@ -1850,14 +1852,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorValues.cpp \
 	WebCore/inspector/InspectorValues.h \
 	WebCore/inspector/InspectorWorkerResource.h \
-	WebCore/inspector/ScriptArguments.cpp \
-	WebCore/inspector/ScriptArguments.h \
 	WebCore/inspector/ScriptBreakpoint.cpp \
 	WebCore/inspector/ScriptBreakpoint.h \
-	WebCore/inspector/ScriptCallFrame.cpp \
-	WebCore/inspector/ScriptCallFrame.h \
-	WebCore/inspector/ScriptCallStack.cpp \
-	WebCore/inspector/ScriptCallStack.h \
 	WebCore/inspector/ScriptDebugListener.h \
 	WebCore/inspector/ScriptGCEventListener.h \
 	WebCore/inspector/TimelineRecordFactory.cpp \

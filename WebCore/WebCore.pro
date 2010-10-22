@@ -351,7 +351,8 @@ v8 {
         bindings/v8/ScopedDOMDataStore.cpp \
 #        bindings/v8/ScriptArray.cpp \
         bindings/v8/ScriptCachedFrameData.cpp \
-        bindings/v8/ScriptCallStackFactory.cpp \
+        bindings/v8/ScriptCallFrame.cpp \
+        bindings/v8/ScriptCallStack.cpp \
         bindings/ScriptControllerBase.cpp \
         bindings/v8/ScriptController.cpp \
         bindings/v8/ScriptEventListener.cpp \
@@ -573,7 +574,8 @@ v8 {
         bindings/js/JSPopStateEventCustom.cpp \
         bindings/js/JSWorkerContextErrorHandler.cpp \
         bindings/js/ScriptCachedFrameData.cpp \
-        bindings/js/ScriptCallStackFactory.cpp \
+        bindings/js/ScriptCallFrame.cpp \
+        bindings/js/ScriptCallStack.cpp \
         bindings/js/ScriptController.cpp \
         bindings/js/ScriptDebugServer.cpp \
         bindings/js/ScriptEventListener.cpp \
@@ -1010,10 +1012,7 @@ SOURCES += \
     inspector/InspectorStyleSheet.cpp \
     inspector/InspectorTimelineAgent.cpp \
     inspector/InspectorValues.cpp \
-    inspector/ScriptArguments.cpp \
     inspector/ScriptBreakpoint.cpp \
-    inspector/ScriptCallFrame.cpp \
-    inspector/ScriptCallStack.cpp \
     inspector/TimelineRecordFactory.cpp \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
@@ -1389,6 +1388,8 @@ v8 {
         bindings/v8/ScopedDOMDataStore.h \
 #        bindings/v8/ScriptArray.h \
         bindings/v8/ScriptCachedFrameData.h \
+        bindings/v8/ScriptCallFrame.h \
+        bindings/v8/ScriptCallStack.h \
         bindings/v8/ScriptController.h \
         bindings/v8/ScriptEventListener.h \
         bindings/v8/ScriptFunctionCall.h \
@@ -1471,6 +1472,8 @@ v8 {
         bindings/js/JavaScriptCallFrame.h \
         bindings/js/ScheduledAction.h \
         bindings/js/ScriptCachedFrameData.h \
+        bindings/js/ScriptCallFrame.h \
+        bindings/js/ScriptCallStack.h \
         bindings/js/ScriptController.h \
         bindings/js/ScriptEventListener.h \
         bindings/js/ScriptFunctionCall.h \

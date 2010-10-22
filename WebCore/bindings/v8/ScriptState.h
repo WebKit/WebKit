@@ -95,7 +95,7 @@ public:
             m_context.Clear();
         }
     }
-    ScriptState* get() const { return m_scriptState; }
+    ScriptState* get() { return m_scriptState; }
 private:
     ScriptState* m_scriptState;
     v8::Persistent<v8::Context> m_context;
