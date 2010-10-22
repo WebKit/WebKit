@@ -277,6 +277,11 @@ void SimpleFontData::platformInit()
 #else
         m_xHeight = m_platformData.font() ? [m_platformData.font() xHeight] : 0;
 #endif
+        // CGFontGetXHeight() returns a wrong value for "Apple Symbols" font (a float close to 0, but not strictly 0).
+        // The following code makes a guess for m_xHeight in that case.
+        // The int cast is a workaround for the "almost" zero value returned by CGFontGetXHeight().
+        if (!static_cast<int>(m_xHeight) && fAscent)
+            m_xHeight = 2 * fAscent / 3;
     }
 }
     

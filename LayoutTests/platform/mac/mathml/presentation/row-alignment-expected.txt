@@ -188,13 +188,13 @@ layer at (0,0) size 800x575
         RenderBlock {p} at (0,219) size 784x80
           RenderText {#text} at (0,31) size 27x18
             text run at (0,31) width 27: "text "
-          RenderBlock {math} at (27,0) size 74x80
+          RenderBlock {math} at (27,0) size 92x80
             RenderBlock {mo} at (1,0) size 6x80
-            RenderTable {mtable} at (7,5) size 60x66
-              RenderTableSection (anonymous) at (0,0) size 60x66
-                RenderTableRow {mtr} at (0,0) size 60x22
-                  RenderTableCell {mtd} at (0,0) size 20x22 [r=0 c=0 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 20x22
+            RenderTable {mtable} at (7,5) size 78x66
+              RenderTableSection (anonymous) at (0,0) size 78x66
+                RenderTableRow {mtr} at (0,0) size 78x22
+                  RenderTableCell {mtd} at (0,0) size 26x22 [r=0 c=0 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 20x22
                       RenderBlock {msub} at (0,0) size 8x19
                         RenderInline {mi} at (0,0) size 8x16
                           RenderText {#text} at (0,3) size 8x16
@@ -202,8 +202,8 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (8,10) size 12x12
                           text run at (8,10) width 12: "11"
-                  RenderTableCell {mtd} at (20,0) size 20x22 [r=0 c=1 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 20x22
+                  RenderTableCell {mtd} at (26,0) size 26x22 [r=0 c=1 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 20x22
                       RenderBlock {msub} at (0,0) size 8x19
                         RenderInline {mi} at (0,0) size 8x16
                           RenderText {#text} at (0,3) size 8x16
@@ -211,8 +211,8 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (8,10) size 12x12
                           text run at (8,10) width 12: "12"
-                  RenderTableCell {mtd} at (40,0) size 20x22 [r=0 c=2 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 20x22
+                  RenderTableCell {mtd} at (52,0) size 26x22 [r=0 c=2 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 20x22
                       RenderBlock {msub} at (0,0) size 8x19
                         RenderInline {mi} at (0,0) size 8x16
                           RenderText {#text} at (0,3) size 8x16
@@ -220,9 +220,9 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (8,10) size 12x12
                           text run at (8,10) width 12: "13"
-                RenderTableRow {mtr} at (0,22) size 60x22
-                  RenderTableCell {mtd} at (0,22) size 20x22 [r=1 c=0 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 20x22
+                RenderTableRow {mtr} at (0,22) size 78x22
+                  RenderTableCell {mtd} at (0,22) size 26x22 [r=1 c=0 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 20x22
                       RenderBlock {msub} at (0,0) size 8x19
                         RenderInline {mi} at (0,0) size 8x16
                           RenderText {#text} at (0,3) size 8x16
@@ -230,8 +230,8 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (8,10) size 12x12
                           text run at (8,10) width 12: "21"
-                  RenderTableCell {mtd} at (20,22) size 20x22 [r=1 c=1 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 20x22
+                  RenderTableCell {mtd} at (26,22) size 26x22 [r=1 c=1 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 20x22
                       RenderBlock {msub} at (0,0) size 8x19
                         RenderInline {mi} at (0,0) size 8x16
                           RenderText {#text} at (0,3) size 8x16
@@ -239,8 +239,8 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (8,10) size 12x12
                           text run at (8,10) width 12: "22"
-                  RenderTableCell {mtd} at (40,22) size 20x22 [r=1 c=2 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 20x22
+                  RenderTableCell {mtd} at (52,22) size 26x22 [r=1 c=2 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 20x22
                       RenderBlock {msub} at (0,0) size 8x19
                         RenderInline {mi} at (0,0) size 8x16
                           RenderText {#text} at (0,3) size 8x16
@@ -248,9 +248,9 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (8,10) size 12x12
                           text run at (8,10) width 12: "23"
-                RenderTableRow {mtr} at (0,44) size 60x22
-                  RenderTableCell {mtd} at (0,44) size 20x22 [r=2 c=0 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 19x22
+                RenderTableRow {mtr} at (0,44) size 78x22
+                  RenderTableCell {mtd} at (0,44) size 26x22 [r=2 c=0 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 19x22
                       RenderBlock {msub} at (0,0) size 7x19
                         RenderInline {mi} at (0,0) size 7x16
                           RenderText {#text} at (0,3) size 7x16
@@ -258,8 +258,8 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (7,10) size 12x12
                           text run at (7,10) width 12: "31"
-                  RenderTableCell {mtd} at (20,44) size 20x22 [r=2 c=1 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 19x22
+                  RenderTableCell {mtd} at (26,44) size 26x22 [r=2 c=1 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 19x22
                       RenderBlock {msub} at (0,0) size 7x19
                         RenderInline {mi} at (0,0) size 7x16
                           RenderText {#text} at (0,3) size 7x16
@@ -267,8 +267,8 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (7,10) size 12x12
                           text run at (7,10) width 12: "32"
-                  RenderTableCell {mtd} at (40,44) size 20x22 [r=2 c=2 rs=1 cs=1]
-                    RenderBlock {msub} at (0,0) size 19x22
+                  RenderTableCell {mtd} at (52,44) size 26x22 [r=2 c=2 rs=1 cs=1]
+                    RenderBlock {msub} at (3,0) size 19x22
                       RenderBlock {msub} at (0,0) size 7x19
                         RenderInline {mi} at (0,0) size 7x16
                           RenderText {#text} at (0,3) size 7x16
@@ -276,7 +276,7 @@ layer at (0,0) size 800x575
                       RenderInline {mn} at (0,0) size 12x12
                         RenderText {#text} at (7,10) size 12x12
                           text run at (7,10) width 12: "33"
-            RenderBlock {mo} at (67,0) size 6x80
+            RenderBlock {mo} at (85,0) size 6x80
           RenderText {#text} at (0,0) size 0x0
 layer at (36,310) size 5x10 scrollHeight 15
   RenderBlock {mo} at (0,0) size 5x10
@@ -410,33 +410,33 @@ layer at (36,539) size 5x9 scrollHeight 14
       text run at (0,-3) width 5: "\x{23A2}"
 layer at (36,548) size 5x11 scrollHeight 14
   RenderBlock {mo} at (0,69) size 5x11
-layer at (102,479) size 5x10 scrollHeight 15
+layer at (120,479) size 5x10 scrollHeight 15
   RenderBlock {mo} at (0,0) size 5x10
-layer at (102,489) size 5x10 scrollHeight 14
+layer at (120,489) size 5x10 scrollHeight 14
   RenderBlock {mo} at (0,10) size 5x10
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A5}"
-layer at (102,499) size 5x10 scrollHeight 14
+layer at (120,499) size 5x10 scrollHeight 14
   RenderBlock {mo} at (0,20) size 5x10
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A5}"
-layer at (102,509) size 5x10 scrollHeight 14
+layer at (120,509) size 5x10 scrollHeight 14
   RenderBlock {mo} at (0,30) size 5x10
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A5}"
-layer at (102,519) size 5x10 scrollHeight 14
+layer at (120,519) size 5x10 scrollHeight 14
   RenderBlock {mo} at (0,40) size 5x10
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A5}"
-layer at (102,529) size 5x10 scrollHeight 14
+layer at (120,529) size 5x10 scrollHeight 14
   RenderBlock {mo} at (0,50) size 5x10
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A5}"
-layer at (102,539) size 5x9 scrollHeight 14
+layer at (120,539) size 5x9 scrollHeight 14
   RenderBlock {mo} at (0,60) size 5x9
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A5}"
-layer at (102,548) size 5x11 scrollHeight 14
+layer at (120,548) size 5x11 scrollHeight 14
   RenderBlock {mo} at (0,69) size 5x11
 layer at (36,311) size 5x14 backgroundClip at (36,310) size 5x10 clip at (36,310) size 5x10 outlineClip at (36,310) size 5x10
   RenderBlock (relative positioned) {mo} at (0,0) size 5x11
@@ -478,11 +478,11 @@ layer at (36,545) size 5x14 backgroundClip at (36,548) size 5x11 clip at (36,548
   RenderBlock (relative positioned) {mo} at (0,0) size 5x11
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A3}"
-layer at (102,480) size 5x14 backgroundClip at (102,479) size 5x10 clip at (102,479) size 5x10 outlineClip at (102,479) size 5x10
+layer at (120,480) size 5x14 backgroundClip at (120,479) size 5x10 clip at (120,479) size 5x10 outlineClip at (120,479) size 5x10
   RenderBlock (relative positioned) {mo} at (0,0) size 5x11
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A4}"
-layer at (102,545) size 5x14 backgroundClip at (102,548) size 5x11 clip at (102,548) size 5x11 outlineClip at (102,548) size 5x11
+layer at (120,545) size 5x14 backgroundClip at (120,548) size 5x11 clip at (120,548) size 5x11 outlineClip at (120,548) size 5x11
   RenderBlock (relative positioned) {mo} at (0,0) size 5x11
     RenderText {mo} at (0,-3) size 5x17
       text run at (0,-3) width 5: "\x{23A6}"
