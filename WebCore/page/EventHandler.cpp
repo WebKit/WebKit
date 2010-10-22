@@ -1081,7 +1081,7 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
         for (unsigned i = 0; i < cursors->size(); ++i) {
             const CachedImage* cimage = 0;
             StyleImage* image = (*cursors)[i].image();
-            if (image->isCachedImage())
+            if (image && image->isCachedImage())
                 cimage = static_cast<StyleCachedImage*>(image)->cachedImage();
             if (!cimage)
                 continue;

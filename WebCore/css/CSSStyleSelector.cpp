@@ -6839,10 +6839,12 @@ void CSSStyleSelector::loadPendingImages()
             case CSSPropertyCursor: {
                 if (CursorList* cursorList = m_style->cursors()) {
                     for (size_t i = 0; i < cursorList->size(); ++i) {
-                        CursorData& currentCursor = (*cursorList)[i];
-                        if (currentCursor.image()->isPendingImage()) {
-                            CSSImageValue* imageValue = static_cast<StylePendingImage*>(currentCursor.image())->cssImageValue();
-                            currentCursor.setImage(imageValue->cachedImage(cachedResourceLoader));
+                        CursorData& currentCursor = cursorList->at(i);
+                        if (StyleImage* image = currentCursor.image()) {
+                            if (image->isPendingImage()) {
+                                CSSImageValue* imageValue = static_cast<StylePendingImage*>(image)->cssImageValue();
+                                currentCursor.setImage(imageValue->cachedImage(cachedResourceLoader));
+                            }
                         }
                     }
                 }

@@ -40,6 +40,8 @@ public:
 
     const CursorData& operator[](int i) const { return m_vector[i]; }
     CursorData& operator[](int i) { return m_vector[i]; }
+    const CursorData& at(size_t i) const { return m_vector.at(i); }
+    CursorData& at(size_t i) { return m_vector.at(i); }
 
     bool operator==(const CursorList& o) const { return m_vector == o.m_vector; }
     bool operator!=(const CursorList& o) const { return m_vector != o.m_vector; }
