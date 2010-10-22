@@ -70,4 +70,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ResourceError_h_
+#endif // ResourceError_h

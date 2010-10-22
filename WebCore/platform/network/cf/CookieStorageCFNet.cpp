@@ -24,8 +24,7 @@
  */
 
 #include "config.h"
-
-#include "CookieStorageWin.h"
+#include "CookieStorageCFNet.h"
 
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>

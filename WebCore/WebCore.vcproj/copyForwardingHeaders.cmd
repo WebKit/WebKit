@@ -44,7 +44,6 @@ xcopy /y /d "%ProjectDir%..\platform\text\transcoder\*.h" "%WebKitOutputDir%\inc
 xcopy /y /d "%ProjectDir%..\platform\win\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\network\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\network\%2\*.h" "%WebKitOutputDir%\include\WebCore"
-xcopy /y /d "%ProjectDir%..\platform\network\win\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\sql\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\platform\cairo\cairo\src\*.h" "%WebKitOutputDir%\include\WebCore"
 xcopy /y /d "%ProjectDir%..\bindings\*.h" "%WebKitOutputDir%\include\WebCore"

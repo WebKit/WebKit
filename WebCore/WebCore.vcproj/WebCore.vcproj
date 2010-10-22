@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -27725,6 +27725,50 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath="..\platform\network\cf\CookieJarCFNet.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\network\cf\CookieStorageCFNet.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\network\cf\CookieStorageCFNet.h"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\network\cf\CredentialStorageCFNet.cpp"
 						>
 						<FileConfiguration
@@ -28056,66 +28100,6 @@
 				<Filter
 					Name="win"
 					>
-					<File
-						RelativePath="..\platform\network\win\CookieJarCFNetWin.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\network\win\CookieStorageWin.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\network\win\CookieStorageWin.h"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
 					<File
 						RelativePath="..\platform\network\win\NetworkStateNotifierWin.cpp"
 						>
@@ -42151,6 +42135,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\IgnoreDestructiveWriteCountIncrementer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\InputElement.cpp"
 				>
 				<FileConfiguration
@@ -42201,10 +42189,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\dom\IgnoreDestructiveWriteCountIncrementer.h"
-				>
 			</File>
 			<File
 				RelativePath="..\dom\InputElement.h"
@@ -62218,43 +62202,43 @@
 				Name="properties"
 				>
 				<File
-    				RelativePath="..\svg\properties\SVGAnimatedListPropertyTearOff.h"
+					RelativePath="..\svg\properties\SVGAnimatedListPropertyTearOff.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGAnimatedProperty.h"
+					RelativePath="..\svg\properties\SVGAnimatedProperty.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGAnimatedPropertyDescription.h"
+					RelativePath="..\svg\properties\SVGAnimatedPropertyDescription.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGAnimatedPropertyMacros.h"
+					RelativePath="..\svg\properties\SVGAnimatedPropertyMacros.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGAnimatedPropertySynchronizer.h"
+					RelativePath="..\svg\properties\SVGAnimatedPropertySynchronizer.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGAnimatedPropertyTearOff.h"
+					RelativePath="..\svg\properties\SVGAnimatedPropertyTearOff.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGListPropertyTearOff.h"
+					RelativePath="..\svg\properties\SVGListPropertyTearOff.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGProperty.h"
+					RelativePath="..\svg\properties\SVGProperty.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGPropertyTearOff.h"
+					RelativePath="..\svg\properties\SVGPropertyTearOff.h"
 					>
 				</File>
 				<File
-    				RelativePath="..\svg\properties\SVGPropertyTraits.h"
+					RelativePath="..\svg\properties\SVGPropertyTraits.h"
 					>
 				</File>
 			</Filter>

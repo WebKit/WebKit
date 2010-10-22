@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CookieStorageWin_h
-#define CookieStorageWin_h
+#ifndef CookieStorageCFNet_h
+#define CookieStorageCFNet_h
 
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 
@@ -36,4 +36,4 @@ namespace WebCore {
 
 }
 
-#endif  // CookieStorageWin_h
+#endif  // CookieStorageCFNet_h

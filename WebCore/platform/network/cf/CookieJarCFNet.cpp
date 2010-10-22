@@ -27,7 +27,7 @@
 #include "CookieJar.h"
 
 #include "Cookie.h"
-#include "CookieStorageWin.h"
+#include "CookieStorageCFNet.h"
 #include "Document.h"
 #include "KURL.h"
 #include "PlatformString.h"
@@ -36,7 +36,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windows.h>
-#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 

@@ -62,6 +62,18 @@
 			RelativePath=".\build-generated-files.sh"
 			>
 		</File>
+		<File
+			RelativePath=".\copyForwardingHeaders.cmd"
+			>
+		</File>
+		<File
+			RelativePath=".\copyInspectorFiles.cmd"
+			>
+		</File>
+		<File
+			RelativePath=".\migrate-scripts.sh"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
