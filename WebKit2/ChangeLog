@@ -1,3 +1,38 @@
+2010-10-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Rename processDidExit to processDidCrash
+        https://bugs.webkit.org/show_bug.cgi?id=48146
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::processDidCrash):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _processDidCrash]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::processDidCrash):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::processDidBecomeUnresponsive):
+        (WebKit::WebLoaderClient::processDidBecomeResponsive):
+        (WebKit::WebLoaderClient::processDidCrash):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processDidBecomeUnresponsive):
+        (WebKit::WebPageProxy::processDidBecomeResponsive):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::processDidCrash):
+        * UIProcess/win/WebView.h:
+
 2010-10-22  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

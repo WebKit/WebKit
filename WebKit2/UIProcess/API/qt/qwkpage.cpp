@@ -289,7 +289,7 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         qt_wk_didFinishProgress,
         qt_wk_didBecomeUnresponsive,
         qt_wk_didBecomeResponsive,
-        0,  /* processDidExit */
+        0,  /* processDidCrash */
         0   /* didChangeBackForwardList */
     };
     WKPageSetPageLoaderClient(pageRef(), &loadClient);

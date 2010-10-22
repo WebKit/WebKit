@@ -412,7 +412,7 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
     copyValuesToVector(m_pageMap, pages);
 
     for (size_t i = 0, size = pages.size(); i < size; ++i)
-        pages[i]->processDidExit();
+        pages[i]->processDidCrash();
 
     // This may cause us to be deleted.
     WebProcessManager::shared().processDidClose(this, m_context);

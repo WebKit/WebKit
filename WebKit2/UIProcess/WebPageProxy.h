@@ -195,7 +195,7 @@ public:
 
     void processDidBecomeUnresponsive();
     void processDidBecomeResponsive();
-    void processDidExit();
+    void processDidCrash();
     void processDidRevive();
 
 #if USE(ACCELERATED_COMPOSITING)

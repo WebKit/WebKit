@@ -157,28 +157,28 @@ void WebLoaderClient::didFinishProgress(WebPageProxy* page)
     m_pageLoaderClient.didFinishProgress(toAPI(page), m_pageLoaderClient.clientInfo);
 }
 
-void WebLoaderClient::didBecomeUnresponsive(WebPageProxy* page)
+void WebLoaderClient::processDidBecomeUnresponsive(WebPageProxy* page)
 {
-    if (!m_pageLoaderClient.didBecomeUnresponsive)
+    if (!m_pageLoaderClient.processDidBecomeUnresponsive)
         return;
 
-    m_pageLoaderClient.didBecomeUnresponsive(toAPI(page), m_pageLoaderClient.clientInfo);
+    m_pageLoaderClient.processDidBecomeUnresponsive(toAPI(page), m_pageLoaderClient.clientInfo);
 }
 
-void WebLoaderClient::didBecomeResponsive(WebPageProxy* page)
+void WebLoaderClient::processDidBecomeResponsive(WebPageProxy* page)
 {
-    if (!m_pageLoaderClient.didBecomeResponsive)
+    if (!m_pageLoaderClient.processDidBecomeResponsive)
         return;
 
-    m_pageLoaderClient.didBecomeResponsive(toAPI(page), m_pageLoaderClient.clientInfo);
+    m_pageLoaderClient.processDidBecomeResponsive(toAPI(page), m_pageLoaderClient.clientInfo);
 }
 
-void WebLoaderClient::processDidExit(WebPageProxy* page)
+void WebLoaderClient::processDidCrash(WebPageProxy* page)
 {
-    if (!m_pageLoaderClient.processDidExit)
+    if (!m_pageLoaderClient.processDidCrash)
         return;
 
-    m_pageLoaderClient.processDidExit(toAPI(page), m_pageLoaderClient.clientInfo);
+    m_pageLoaderClient.processDidCrash(toAPI(page), m_pageLoaderClient.clientInfo);
 }
 
 void WebLoaderClient::didChangeBackForwardList(WebPageProxy* page)

@@ -501,7 +501,7 @@ static bool isViewVisible(NSView *view)
 
 @implementation WKView (Internal)
 
-- (void)_processDidExit
+- (void)_processDidCrash
 {
     [self setNeedsDisplay:YES];
 }

@@ -114,9 +114,9 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
-void PageClientImpl::processDidExit()
+void PageClientImpl::processDidCrash()
 {
-    [m_wkView _processDidExit];
+    [m_wkView _processDidCrash];
 }
 
 void PageClientImpl::processDidRevive()

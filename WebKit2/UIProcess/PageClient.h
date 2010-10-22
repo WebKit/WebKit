@@ -46,7 +46,7 @@ class PageClient {
 public:
     virtual ~PageClient() { }
 
-    virtual void processDidExit() = 0;
+    virtual void processDidCrash() = 0;
     virtual void processDidRevive() = 0;
 
     virtual void takeFocus(bool direction) = 0;

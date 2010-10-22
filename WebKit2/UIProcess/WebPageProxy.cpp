@@ -1139,15 +1139,15 @@ void WebPageProxy::didChangeAcceleratedCompositing(bool compositing, DrawingArea
 
 void WebPageProxy::processDidBecomeUnresponsive()
 {
-    m_loaderClient.didBecomeUnresponsive(this);
+    m_loaderClient.processDidBecomeUnresponsive(this);
 }
 
 void WebPageProxy::processDidBecomeResponsive()
 {
-    m_loaderClient.didBecomeResponsive(this);
+    m_loaderClient.processDidBecomeResponsive(this);
 }
 
-void WebPageProxy::processDidExit()
+void WebPageProxy::processDidCrash()
 {
     ASSERT(m_pageClient);
 
@@ -1190,8 +1190,8 @@ void WebPageProxy::processDidExit()
 
     m_estimatedProgress = 0.0;
 
-    m_pageClient->processDidExit();
-    m_loaderClient.processDidExit(this);
+    m_pageClient->processDidCrash();
+    m_loaderClient.processDidCrash(this);
 }
 
 void WebPageProxy::processDidRevive()

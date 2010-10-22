@@ -61,9 +61,9 @@ public:
     void didFinishProgress(WebPageProxy*);
 
     // FIXME: These three functions should not be part of this client.
-    void didBecomeUnresponsive(WebPageProxy*);
-    void didBecomeResponsive(WebPageProxy*);
-    void processDidExit(WebPageProxy*);
+    void processDidBecomeUnresponsive(WebPageProxy*);
+    void processDidBecomeResponsive(WebPageProxy*);
+    void processDidCrash(WebPageProxy*);
 
     void didChangeBackForwardList(WebPageProxy*);
 

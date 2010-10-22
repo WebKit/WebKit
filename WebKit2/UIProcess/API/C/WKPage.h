@@ -69,9 +69,9 @@ typedef void (*WKPageDidFinishProgressCallback)(WKPageRef page, const void *clie
 
 // WebPageNamespace Client
 // FIXME: These three functions should not be part of this client.
-typedef void (*WKPageDidBecomeUnresponsiveCallback)(WKPageRef page, const void *clientInfo);
-typedef void (*WKPageDidBecomeResponsiveCallback)(WKPageRef page, const void *clientInfo);
-typedef void (*WKPageProcessDidExitCallback)(WKPageRef page, const void *clientInfo);
+typedef void (*WKPageProcessDidBecomeUnresponsiveCallback)(WKPageRef page, const void *clientInfo);
+typedef void (*WKPageProcessDidBecomeResponsiveCallback)(WKPageRef page, const void *clientInfo);
+typedef void (*WKPageProcessDidCrashCallback)(WKPageRef page, const void *clientInfo);
 
 typedef void (*WKPageDidChangeBackForwardListCallback)(WKPageRef page, const void *clientInfo);
 
@@ -96,9 +96,9 @@ struct WKPageLoaderClient {
     WKPageDidFinishProgressCallback                                     didFinishProgress;
 
     // FIXME: These three functions should not be part of this client.
-    WKPageDidBecomeUnresponsiveCallback                                 didBecomeUnresponsive;
-    WKPageDidBecomeResponsiveCallback                                   didBecomeResponsive;
-    WKPageProcessDidExitCallback                                        processDidExit;
+    WKPageProcessDidBecomeUnresponsiveCallback                          processDidBecomeUnresponsive;
+    WKPageProcessDidBecomeResponsiveCallback                            processDidBecomeResponsive;
+    WKPageProcessDidCrashCallback                                       processDidCrash;
 
     WKPageDidChangeBackForwardListCallback                              didChangeBackForwardList;
 };
