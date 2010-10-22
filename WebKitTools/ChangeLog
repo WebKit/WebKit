@@ -1,5 +1,18 @@
 2010-10-21  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed fix for rebaseline-chromium-webkit-tests.
+
+        Port.diff_image no longer has a tolerance parameter. Also, use
+        get_option('tolerance') which is safer if the options object doesn't
+        define a tolerance attribute (it doesn't for the one used in
+        rebaseline_chromium_webkit_tests).
+
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
+2010-10-21  Mihai Parparita  <mihaip@chromium.org>
+
         Reviewed by Ojan Vafai.
 
         Add support for --tolerance in NRWT

@@ -137,8 +137,8 @@ class WebKitPort(base.Port):
         # FIXME: use self.get_option('tolerance') and
         # self.set_option_default('tolerance', 0.1) once that behaves correctly
         # with default values.
-        if self._options.tolerance is not None:
-            tolerance = self._options.tolerance
+        if self.get_option('tolerance') is not None:
+            tolerance = self.get_option('tolerance')
         else:
             tolerance = 0.1
         command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]

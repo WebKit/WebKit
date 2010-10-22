@@ -496,7 +496,7 @@ class Rebaseliner(object):
         """
 
         if is_image:
-            return self._port.diff_image(output1, output2, None, 0)
+            return self._port.diff_image(output1, output2, None)
         else:
             return self._port.compare_text(output1, output2)
 
