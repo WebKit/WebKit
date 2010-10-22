@@ -20,7 +20,7 @@
 #ifndef DefaultClientCallbacksQt_h
 #define DefaultClientCallbacksQt_h
 
-#include <WebKit2/WKBase.h>
+#include <WebKit2/WKPage.h>
 
 #ifdef __cplusplus
 extern "C" {
