@@ -1,3 +1,21 @@
+2010-10-21  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        WebKit shouldn't load a plug-in based on file extension if a MIME type
+        is specified.
+        https://bugs.webkit.org/show_bug.cgi?id=48046
+
+        If a MIME type is specified in an object or embed element, and that MIME
+        type isn't supported by an installed plug-in, WebKit shouldn't attempt
+        to find a plug-in based on the file extension of the url attribute.
+        Doing so can lead to cases where a plug-in is loaded that can't handle
+        resources of the MIME type specified by the author.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createPlugin): Only check for a pluginPackage by
+        extension if MIME type is the empty string.
+
 2010-10-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
