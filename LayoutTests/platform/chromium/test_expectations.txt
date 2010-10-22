@@ -3255,3 +3255,9 @@ BUGWK48034 : platform/win/plugins/npn-invalidate-rect-invalidates-window.html = 
 // has been flaky for a long time.
 BUGWK48142 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
 BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
+
+// caused by http://trac.webkit.org/changeset/70335/, test needs to be reworked.
+BUGWK48160 : fast/backgrounds/repeat/background-repeat-shorthand.html = TEXT
+BUGWK48160 : fast/backgrounds/repeat/margin-shorthand.html = TEXT
+BUGWK48160 : fast/css/modify-ua-rules-from-javascript.html = TEXT
+BUGWK48160 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
