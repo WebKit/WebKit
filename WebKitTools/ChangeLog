@@ -1,3 +1,16 @@
+2010-10-22  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        test-webkitpy fails when passed -v (or any other option)
+
+        Fix port/base_unittest to pass an explicit list of arguments
+        rather than accidentally picking up sys.argv.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48071
+
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+
 2010-10-22  Brian Weinstein  <bweinstein@apple.com>
 
         Windows build fix. Update the createNewPage callback to account for the new

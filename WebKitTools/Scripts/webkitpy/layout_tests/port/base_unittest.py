@@ -250,7 +250,7 @@ class PortTest(unittest.TestCase):
                          abspath_to_uri(test_file))
 
     def test_get_option__set(self):
-        options, args = optparse.OptionParser().parse_args()
+        options, args = optparse.OptionParser().parse_args([])
         options.foo = 'bar'
         port = base.Port(options=options)
         self.assertEqual(port.get_option('foo'), 'bar')
@@ -269,7 +269,7 @@ class PortTest(unittest.TestCase):
         self.assertEqual(port.get_option('foo'), 'bar')
 
     def test_set_option_default__set(self):
-        options, args = optparse.OptionParser().parse_args()
+        options, args = optparse.OptionParser().parse_args([])
         options.foo = 'bar'
         port = base.Port(options=options)
         # This call should have no effect.
