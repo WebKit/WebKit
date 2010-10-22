@@ -119,9 +119,9 @@ void PageClientImpl::processDidCrash()
     [m_wkView _processDidCrash];
 }
 
-void PageClientImpl::processDidRevive()
+void PageClientImpl::didRelaunchProcess()
 {
-    [m_wkView _processDidRevive];
+    [m_wkView _didRelaunchProcess];
 }
 
 void PageClientImpl::takeFocus(bool direction)

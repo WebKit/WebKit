@@ -210,7 +210,7 @@ WebPageProxy* WebContext::createWebPage(WebPageNamespace* pageNamespace)
     return m_process->createWebPage(pageNamespace);
 }
 
-void WebContext::reviveIfNecessary()
+void WebContext::relaunchProcessIfNecessary()
 {
     ensureWebProcess();
 }

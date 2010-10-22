@@ -31,7 +31,7 @@ namespace WebKit {
 
 @interface WKView (Internal)
 - (void)_processDidCrash;
-- (void)_processDidRevive;
+- (void)_didRelaunchProcess;
 - (void)_takeFocus:(BOOL)direction;
 - (void)_toolTipChangedFrom:(NSString *)oldToolTip to:(NSString *)newToolTip;
 - (void)_setCursor:(NSCursor *)cursor;

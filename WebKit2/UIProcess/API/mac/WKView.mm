@@ -506,9 +506,9 @@ static bool isViewVisible(NSView *view)
     [self setNeedsDisplay:YES];
 }
 
-- (void)_processDidRevive
+- (void)_didRelaunchProcess
 {
-    _data->_page->reinitializeWebPage(IntSize([self visibleRect].size));
+    _data->_page->reinitializeWebPage(IntSize([self bounds].size));
 
     _data->_page->setActive([[self window] isKeyWindow]);
     _data->_page->setFocused([[self window] firstResponder] == self);

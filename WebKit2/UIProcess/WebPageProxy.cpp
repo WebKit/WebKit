@@ -147,19 +147,19 @@ void WebPageProxy::initializeFindClient(const WKPageFindClient* client)
     m_findClient.initialize(client);
 }
 
-void WebPageProxy::revive()
+void WebPageProxy::relaunch()
 {
     m_valid = true;
-    m_pageNamespace->reviveIfNecessary();
+    m_pageNamespace->context()->relaunchProcessIfNecessary();
     m_pageNamespace->process()->addExistingWebPage(this, m_pageID);
 
-    processDidRevive();
+    m_pageClient->didRelaunchProcess();
 }
 
 void WebPageProxy::initializeWebPage(const IntSize& size)
 {
     if (!isValid()) {
-        revive();
+        relaunch();
         return;
     }
 
@@ -240,7 +240,7 @@ void WebPageProxy::loadURL(const String& url)
 {
     if (!isValid()) {
         puts("loadURL called with a dead WebProcess");
-        revive();
+        relaunch();
     }
 
     process()->send(Messages::WebPage::LoadURL(url), m_pageID);
@@ -250,7 +250,7 @@ void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
 {
     if (!isValid()) {
         puts("loadURLRequest called with a dead WebProcess");
-        revive();
+        relaunch();
     }
 
     process()->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest()), m_pageID);
@@ -1193,12 +1193,6 @@ void WebPageProxy::processDidCrash()
 
     m_pageClient->processDidCrash();
     m_loaderClient.processDidCrash(this);
-}
-
-void WebPageProxy::processDidRevive()
-{
-    ASSERT(m_pageClient);
-    m_pageClient->processDidRevive();
 }
 
 WebPageCreationParameters WebPageProxy::creationParameters(const IntSize& size) const

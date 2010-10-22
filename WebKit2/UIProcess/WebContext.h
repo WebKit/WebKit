@@ -72,7 +72,7 @@ public:
 
     WebPageProxy* createWebPage(WebPageNamespace*);
 
-    void reviveIfNecessary();
+    void relaunchProcessIfNecessary();
 
     WebPageNamespace* createPageNamespace();
     void pageNamespaceWasDestroyed(WebPageNamespace*);

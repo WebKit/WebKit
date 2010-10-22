@@ -47,7 +47,7 @@ public:
     virtual ~PageClient() { }
 
     virtual void processDidCrash() = 0;
-    virtual void processDidRevive() = 0;
+    virtual void didRelaunchProcess() = 0;
 
     virtual void takeFocus(bool direction) = 0;
     virtual void toolTipChanged(const String&, const String&) = 0;

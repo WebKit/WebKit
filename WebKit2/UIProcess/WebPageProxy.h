@@ -114,7 +114,7 @@ public:
     void initializeFormClient(const WKPageFormClient*);
     void initializeUIClient(const WKPageUIClient*);
     void initializeFindClient(const WKPageFindClient*);
-    void revive();
+    void relaunch();
 
     void initializeWebPage(const WebCore::IntSize&);
     void reinitializeWebPage(const WebCore::IntSize&);
@@ -197,7 +197,6 @@ public:
     void processDidBecomeUnresponsive();
     void processDidBecomeResponsive();
     void processDidCrash();
-    void processDidRevive();
 
 #if USE(ACCELERATED_COMPOSITING)
     void didEnterAcceleratedCompositing();

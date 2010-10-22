@@ -1,5 +1,29 @@
 2010-10-22  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Rename revive to relaunch everywhere.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _didRelaunchProcess]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::relaunchProcessIfNecessary):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebPageNamespace.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::relaunch):
+        (WebKit::WebPageProxy::initializeWebPage):
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::loadURLRequest):
+        * UIProcess/WebPageProxy.h:
+
+2010-10-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Fix assert when a NetscapePluginModule loses its last NetscapePlugin.
