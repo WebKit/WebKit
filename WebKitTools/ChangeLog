@@ -1,5 +1,11 @@
 2010-10-21  Mihai Parparita  <mihaip@chromium.org>
 
+        Unreviewed. Re-enable test that was mistakenly disabled by r67974.
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+
+2010-10-21  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed fix for rebaseline-chromium-webkit-tests.
 
         Port.diff_image no longer has a tolerance parameter. Also, use

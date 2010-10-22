@@ -110,7 +110,6 @@ class TestRebaseliner(unittest.TestCase):
                                                      is_image=False))
 
     def test_diff_baselines_png(self):
-        return
         rebaseliner = self.make_rebaseliner()
         image = rebaseliner._port.expected_image(
             os.path.join(rebaseliner._port.layout_tests_dir(),
