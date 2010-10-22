@@ -1,3 +1,18 @@
+2010-10-22  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [WINCE] Implement EditorClient::handleKeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=48118
+
+        Copy the implementation from the EFL port.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::interpretKeyEvent):
+        (WebKit::EditorClientWinCE::handleEditingKeyboardEvent):
+        (WebKit::EditorClientWinCE::handleKeyboardEvent):
+        * WebCoreSupport/EditorClientWinCE.h:
+
 2010-10-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
