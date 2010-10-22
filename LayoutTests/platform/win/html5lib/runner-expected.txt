@@ -31,12 +31,105 @@ resources/tests7.dat: PASS
 
 resources/tests8.dat: PASS
 
-resources/tests9.dat: PASS
+resources/tests9.dat:
+16
 
+Test 16 of 27 in resources/tests9.dat failed. Input:
+<!DOCTYPE html><body><table><caption><math><mi>foo</mi><mi>bar</mi>baz</table><p>quux
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <math math>
+|           <math mi>
+|             "foo"
+|           <math mi>
+|             "bar"
+|           "baz"
+|         <p>
+|           "quux"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <math math>
+|           <math mi>
+|             "foo"
+|           <math mi>
+|             "bar"
+|           "baz"
+|     <p>
+|       "quux"
 resources/tests10.dat:
+15
+36
 38
 51
 52
+
+Test 15 of 52 in resources/tests10.dat failed. Input:
+<!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g>baz</table><p>quux
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <svg svg>
+|           <svg g>
+|             "foo"
+|           <svg g>
+|             "bar"
+|           "baz"
+|         <p>
+|           "quux"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <svg svg>
+|           <svg g>
+|             "foo"
+|           <svg g>
+|             "bar"
+|           "baz"
+|     <p>
+|       "quux"
+
+Test 36 of 52 in resources/tests10.dat failed. Input:
+<math><mi><div><object><div><span></span></div></object></div></mi><mi>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math mi>
+|         <div>
+|           <object>
+|             <div>
+|               <span>
+|       <math mi>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math mi>
+|         <div>
+|           <object>
+|             <div>
+|               <span>
+|       <mi>
 
 Test 38 of 52 in resources/tests10.dat failed. Input:
 <svg><script></script><path>

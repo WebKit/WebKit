@@ -50,12 +50,105 @@ Expected:
 |     <keygen>
 resources/tests8.dat: PASS
 
-resources/tests9.dat: PASS
+resources/tests9.dat:
+16
 
+Test 16 of 27 in resources/tests9.dat failed. Input:
+<!DOCTYPE html><body><table><caption><math><mi>foo</mi><mi>bar</mi>baz</table><p>quux
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <math math>
+|           <math mi>
+|             "foo"
+|           <math mi>
+|             "bar"
+|           "baz"
+|         <p>
+|           "quux"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <math math>
+|           <math mi>
+|             "foo"
+|           <math mi>
+|             "bar"
+|           "baz"
+|     <p>
+|       "quux"
 resources/tests10.dat:
+15
+36
 38
 51
 52
+
+Test 15 of 52 in resources/tests10.dat failed. Input:
+<!DOCTYPE html><body><table><caption><svg><g>foo</g><g>bar</g>baz</table><p>quux
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <svg svg>
+|           <svg g>
+|             "foo"
+|           <svg g>
+|             "bar"
+|           "baz"
+|         <p>
+|           "quux"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <caption>
+|         <svg svg>
+|           <svg g>
+|             "foo"
+|           <svg g>
+|             "bar"
+|           "baz"
+|     <p>
+|       "quux"
+
+Test 36 of 52 in resources/tests10.dat failed. Input:
+<math><mi><div><object><div><span></span></div></object></div></mi><mi>
+Got:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math mi>
+|         <div>
+|           <object>
+|             <div>
+|               <span>
+|       <math mi>
+Expected:
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math mi>
+|         <div>
+|           <object>
+|             <div>
+|               <span>
+|       <mi>
 
 Test 38 of 52 in resources/tests10.dat failed. Input:
 <svg><script></script><path>
@@ -152,7 +245,56 @@ resources/tests17.dat: PASS
 resources/tests18.dat: PASS
 
 resources/tests19.dat:
+31
+32
 63
+78
+
+Test 31 of 97 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mi><p><h1>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|           <p>
+|           <h1>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|     <p>
+|     <h1>
+
+Test 32 of 97 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mi><p><h1>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|           <p>
+|           <h1>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|     <p>
+|     <h1>
 
 Test 63 of 97 in resources/tests19.dat failed. Input:
 <!doctype html><keygen><frameset>
@@ -172,6 +314,30 @@ Expected:
 |   <head>
 |   <body>
 |     <keygen>
+
+Test 78 of 97 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mn><span></p>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mn>
+|           <span>
+|             <p>
+|             "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mn>
+|           <span>
+|     "a"
 resources/tests20.dat: PASS
 
 resources/tests21.dat: PASS

@@ -535,3 +535,40 @@ console.log("FOO<span>BAR</span>BAZ");
 |         "B"
 |         <div>
 |           "C"
+
+#data
+<svg><em><desc></em>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|     <em>
+|       <desc>
+
+#data
+<table><tr><td><svg><desc><td></desc><circle>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <svg svg>
+|               <svg desc>
+|               <svg circle>
+
+#data
+<svg><tfoot></mi><td>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg tfoot>
+|         <svg td>
