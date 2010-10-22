@@ -1,3 +1,11 @@
+2010-10-22  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows build fix. Update the createNewPage callback to account for the new
+        arguments.
+
+        * MiniBrowser/win/BrowserView.cpp:
+        (createNewPage):
+
 2010-10-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
