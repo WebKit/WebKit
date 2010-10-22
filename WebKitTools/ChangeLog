@@ -1,3 +1,22 @@
+2010-10-21  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Add support for --tolerance in NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=47959
+        
+        Add support for the --tolerance flag in NRWT. The Port.diff_image
+        signature shouldn't need a tolerance parameter (it's not set per test),
+        just have ports that use it (currently only WebKitPort) read it from 
+        the options object.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
 2010-10-21  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

@@ -35,7 +35,8 @@ import unittest
 from webkitpy.tool import mocktool
 mock_options = mocktool.MockOptions(results_directory='layout-test-results',
                                     use_apache=True,
-                                    configuration='Release')
+                                    configuration='Release',
+                                    tolerance=None)
 
 
 class PortTestCase(unittest.TestCase):

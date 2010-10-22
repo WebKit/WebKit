@@ -137,7 +137,7 @@ class TestPort(base.Port):
         return True
 
     def diff_image(self, expected_contents, actual_contents,
-                   diff_filename=None, tolerance=0):
+                   diff_filename=None):
         diffed = actual_contents != expected_contents
         if diffed and diff_filename:
             with codecs.open(diff_filename, "w", "utf-8") as diff_fh:

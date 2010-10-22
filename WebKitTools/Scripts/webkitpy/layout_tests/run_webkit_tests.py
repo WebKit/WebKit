@@ -1562,8 +1562,9 @@ def parse_args(args=None):
             dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-pixel-tests", action="store_false",
             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
-        # old-run-webkit-tests allows a specific tolerance: --tolerance t
-        # Ignore image differences less than this percentage (default: 0.1)
+        optparse.make_option("--tolerance",
+            help="Ignore image differences less than this percentage (some "
+                "ports may ignore this option)", type="float"),
         optparse.make_option("--results-directory",
             default="layout-test-results",
             help="Output results directory source dir, relative to Debug or "

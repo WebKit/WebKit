@@ -135,7 +135,7 @@ class ChromiumPort(base.Port):
                                  override_step, logging)
 
     def diff_image(self, expected_contents, actual_contents,
-                   diff_filename=None, tolerance=0):
+                   diff_filename=None):
         executable = self._path_to_image_diff()
 
         tempdir = tempfile.mkdtemp()

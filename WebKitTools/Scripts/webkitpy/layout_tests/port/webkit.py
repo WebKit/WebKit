@@ -122,22 +122,25 @@ class WebKitPort(base.Port):
         return True
 
     def diff_image(self, expected_contents, actual_contents,
-                   diff_filename=None, tolerance=0.1):
+                   diff_filename=None):
         """Return True if the two files are different. Also write a delta
         image of the two images into |diff_filename| if it is not None."""
-
-        # FIXME: either expose the tolerance argument as a command-line
-        # parameter, or make it go away and always use exact matches.
 
         # Handle the case where the test didn't actually generate an image.
         if not actual_contents:
             return True
 
-        sp = self._diff_image_request(expected_contents, actual_contents,
-                                      tolerance)
+        sp = self._diff_image_request(expected_contents, actual_contents)
         return self._diff_image_reply(sp, diff_filename)
 
-    def _diff_image_request(self, expected_contents, actual_contents, tolerance):
+    def _diff_image_request(self, expected_contents, actual_contents):
+        # FIXME: use self.get_option('tolerance') and
+        # self.set_option_default('tolerance', 0.1) once that behaves correctly
+        # with default values.
+        if self._options.tolerance is not None:
+            tolerance = self._options.tolerance
+        else:
+            tolerance = 0.1
         command = [self._path_to_image_diff(), '--tolerance', str(tolerance)]
         sp = server_process.ServerProcess(self, 'ImageDiff', command)
 

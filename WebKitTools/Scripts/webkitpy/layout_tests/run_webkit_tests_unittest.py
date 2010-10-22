@@ -48,6 +48,7 @@ from webkitpy.common.system import user
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
+from webkitpy.layout_tests.port.test import TestPort
 
 from webkitpy.thirdparty.mock import Mock
 
@@ -260,6 +261,31 @@ class MainTest(unittest.TestCase):
                                           tests_included=True)
         self.assertEqual(user.url, '/tmp/foo/results.html')
 
+    def test_tolerance(self):
+        class ImageDiffTestPort(TestPort):
+            def diff_image(self, expected_contents, actual_contents,
+                   diff_filename=None):
+                self.tolerance_used_for_diff_image = self._options.tolerance
+                return True
+
+        def get_port_for_run(args):
+            options, parsed_args = run_webkit_tests.parse_args(args)
+            test_port = ImageDiffTestPort(options=options, user=MockUser())
+            passing_run(args=args, port_obj=test_port, tests_included=True)
+            return test_port
+
+        base_args = ['--pixel-tests', 'failures/expected/*']
+
+        # If we pass in an explicit tolerance argument, then that will be used.
+        test_port = get_port_for_run(base_args + ['--tolerance', '.1'])
+        self.assertEqual(0.1, test_port.tolerance_used_for_diff_image)
+        test_port = get_port_for_run(base_args + ['--tolerance', '0'])
+        self.assertEqual(0, test_port.tolerance_used_for_diff_image)
+
+        # Otherwise the port's default tolerance behavior (including ignoring it)
+        # should be used.
+        test_port = get_port_for_run(base_args)
+        self.assertEqual(None, test_port.tolerance_used_for_diff_image)
 
 
 def _mocked_open(original_open, file_list):
