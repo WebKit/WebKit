@@ -1240,7 +1240,6 @@ BUG23498 MAC : editing/selection/unrendered-001.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-003.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-004.html = IMAGE
 BUG23498 MAC : editing/selection/unrendered-005.html = IMAGE
-BUG23498 MAC : fast/backgrounds/background-inherit-color-bug.html = IMAGE
 BUG23498 MAC : fast/block/basic/fieldset-stretch-to-legend.html = IMAGE
 BUG23498 MAC : fast/block/float/008.html = IMAGE
 BUG23498 MAC : fast/block/float/013.html = IMAGE
@@ -1290,7 +1289,6 @@ BUG23498 MAC : fast/css/nested-floating-relative-position-percentages.html = IMA
 BUG23498 MAC : fast/css/only-child-pseudo-class.html = IMAGE
 BUG23498 MAC : fast/css/only-of-type-pseudo-class.html = IMAGE
 BUG23498 MAC : fast/css/percentage-non-integer.html = IMAGE
-BUG23498 MAC : fast/css/text-overflow-ellipsis-strict.html = IMAGE
 BUG23498 MAC : fast/css/text-overflow-ellipsis.html = IMAGE
 BUG23498 MAC : fast/css/word-space-extra.html = IMAGE
 BUG23498 MAC : fast/css-generated-content/014.html = IMAGE
@@ -1338,7 +1336,6 @@ BUG23498 MAC : fast/overflow/scrollRevealButton.html = IMAGE
 BUG23498 MAC : fast/reflections/reflection-direction.html = IMAGE
 BUG23498 MAC : fast/replaced/005.html = IMAGE
 BUG23498 MAC : fast/replaced/width100percent-image.html = IMAGE
-BUG23498 MAC : fast/selectors/166.html = IMAGE
 BUG23498 MAC : fast/table/023.html = IMAGE
 BUG23498 MAC : fast/table/034.html = IMAGE
 BUG23498 MAC : fast/table/040.html = IMAGE
@@ -1407,7 +1404,6 @@ BUG23498 MAC : tables/mozilla/bugs/bug7112-1.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug7112-2.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug73321.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug92143.html = IMAGE
-BUG23498 MAC : tables/mozilla/collapsing_borders/bug41262-3.html = IMAGE
 BUG23498 MAC : tables/mozilla/core/bloomberg.html = IMAGE
 BUG23498 MAC : tables/mozilla/core/captions.html = IMAGE
 BUG23498 MAC : tables/mozilla/core/cell_heights.html = IMAGE
@@ -1842,7 +1838,6 @@ BUG9798 LINUX DEBUG : transitions/mask-transitions.html = FAIL PASS
 BUG9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PASS
 // This test definitely times out (i.e. is not just slow).
 BUG9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
-BUG9798 LINUX DEBUG : fast/multicol/float-multicol.html = IMAGE PASS
 BUG9798 LINUX : svg/custom/use-property-changes-through-svg-dom.svg = FAIL
 BUG9798 LINUX : svg/custom/js-update-transform-changes.svg = FAIL
 // Occasionally times out. Not just slow.
@@ -3228,6 +3223,13 @@ BUG59671 LINUX : svg/custom/convolution-crash.svg = PASS TEXT
 BUG59671 LINUX : svg/custom/focus-ring.svg = IMAGE+TEXT PASS
 BUG59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
 BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
+
+// Needs investigation
+BUGJAMESR WIN LINUX : fast/blockflow/english-lr-text.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
+BUGJAMESR WIN LINUX : fast/text/international/vertical-text-metrics-test.html = TEXT
+BUGJAMESR MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE
+
 
 // Added in WebKit r69755, failed immediately.
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
