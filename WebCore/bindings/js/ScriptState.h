@@ -32,7 +32,8 @@
 #ifndef ScriptState_h
 #define ScriptState_h
 
-#include "JSDOMBinding.h"
+#include <interpreter/CallFrame.h>
+#include <runtime/JSGlobalObject.h>
 #include <runtime/Protect.h>
 #include <wtf/Noncopyable.h>
 
@@ -52,7 +53,7 @@ class ScriptStateProtectedPtr : public Noncopyable {
 public:
     ScriptStateProtectedPtr() { }
     ScriptStateProtectedPtr(ScriptState* scriptState) : m_globalObject(scriptState->lexicalGlobalObject()) { }
-    ScriptState* get()
+    ScriptState* get() const
     {
         if (m_globalObject)
             return m_globalObject->globalExec();

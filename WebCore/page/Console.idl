@@ -30,10 +30,6 @@ module window {
 
     interface [OmitConstructor] Console {
 
-#if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        readonly attribute [CustomGetter] Array profiles;
-#endif
-    
         [CustomArgumentHandling] void debug();
         [CustomArgumentHandling] void error();
         [CustomArgumentHandling] void info();
@@ -51,8 +47,9 @@ module window {
 #endif
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
-        [CustomArgumentHandling] void profile(in [ConvertUndefinedOrNullToNullString] DOMString title);
-        [CustomArgumentHandling] void profileEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        readonly attribute [CustomGetter] Array profiles;
+        [Custom] void profile(in DOMString title);
+        [Custom] void profileEnd(in DOMString title);
 #endif
 
         void time(in [ConvertUndefinedOrNullToNullString] DOMString title);

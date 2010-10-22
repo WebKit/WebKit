@@ -60398,7 +60398,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\ScriptCallFrame.cpp"
+					RelativePath="..\bindings\js\ScriptCallStackFactory.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -60450,63 +60450,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\ScriptCallFrame.h"
-					>
-				</File>
-				<File
-					RelativePath="..\bindings\js\ScriptCallStack.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Internal|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release_Cairo|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug_All|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\bindings\js\ScriptCallStack.h"
+					RelativePath="..\bindings\js\ScriptCallStackFactory.h"
 					>
 				</File>
 				<File
@@ -63399,11 +63343,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\ScriptArguments.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\ScriptArguments.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\ScriptBreakpoint.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\inspector\ScriptBreakpoint.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\ScriptCallFrame.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\ScriptCallFrame.h"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\ScriptCallStack.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\ScriptCallStack.h"
 				>
 			</File>
 			<File

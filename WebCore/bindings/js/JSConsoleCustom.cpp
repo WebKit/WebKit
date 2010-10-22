@@ -29,8 +29,11 @@
 
 #include "Console.h"
 #include "JSScriptProfile.h"
+#include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "ScriptProfile.h"
 #include <runtime/JSArray.h>
+#include <wtf/OwnPtr.h>
 
 using namespace JSC;
 
@@ -50,6 +53,28 @@ JSValue JSConsole::profiles(ExecState* exec) const
         list.append(toJS(exec, iter->get()));
 
     return constructArray(exec, list);
+}
+
+JSValue JSConsole::profile(ExecState* exec)
+{
+    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(exec, 1));
+    const String& title = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
+    if (exec->hadException())
+        return jsUndefined();
+
+    impl()->profile(title, exec, callStack.release());
+    return jsUndefined();
+}
+
+JSValue JSConsole::profileEnd(ExecState* exec)
+{
+    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(exec, 1));
+    const String& title = valueToStringWithUndefinedOrNullCheck(exec, exec->argument(0));
+    if (exec->hadException())
+        return jsUndefined();
+
+    impl()->profileEnd(title, exec, callStack.release());
+    return jsUndefined();
 }
 
 #endif
