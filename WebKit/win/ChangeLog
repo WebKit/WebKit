@@ -1,3 +1,9 @@
+2010-10-21 MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, touched it to fix the build.
+
+        * Interfaces/WebKit.idl:
+
 2010-10-21  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.
