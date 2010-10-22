@@ -246,20 +246,26 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     if (!firstLineBox())
         return false;
 
+    bool isVertical = firstLineBox()->isVertical();
+    
+    int logicalPointStart = isVertical ? x - result.leftPadding() : y - result.topPadding();
+    int logicalPointEnd = isVertical ? x + result.rightPadding() : y + result.bottomPadding();
+    int offset = isVertical ? tx : ty;
+
     // We can check the first box and last box and avoid hit testing if we don't
     // contain the point.  This is a quick short-circuit that we can take to avoid walking any lines.
     // FIXME: This check is flawed in the following extremely obscure way:
     // if some line in the middle has a huge overflow, it might actually extend below the last line.
-    if (y - result.topPadding() >= ty + lastLineBox()->root()->bottomVisibleOverflow()
-     || y + result.bottomPadding() < ty + firstLineBox()->root()->topVisibleOverflow())
+    if (logicalPointStart >= offset + lastLineBox()->root()->logicalBottomVisibleOverflow()
+        || logicalPointEnd < offset + firstLineBox()->root()->logicalTopVisibleOverflow())
         return false;
 
     // See if our root lines contain the point.  If so, then we hit test
     // them further.  Note that boxes can easily overlap, so we can't make any assumptions
     // based off positions of our first line box or our last line box.
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
-        if (y + result.bottomPadding() >= ty + curr->root()->topVisibleOverflow()
-         && y - result.topPadding() < ty + curr->root()->bottomVisibleOverflow()) {
+        if (logicalPointEnd >= offset + curr->root()->logicalTopVisibleOverflow()
+         && logicalPointStart < offset + curr->root()->logicalBottomVisibleOverflow()) {
             bool inside = curr->nodeAtPoint(request, result, x, y, tx, ty);
             if (inside) {
                 renderer->updateHitTestResult(result, IntPoint(x - tx, y - ty));
