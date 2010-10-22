@@ -277,7 +277,9 @@ bool ResourceHandle::start(NetworkingContext* context)
 
     DWORD flags = INTERNET_FLAG_KEEP_CONNECTION
         | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTPS
-        | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP;
+        | INTERNET_FLAG_IGNORE_REDIRECT_TO_HTTP
+        | INTERNET_FLAG_DONT_CACHE
+        | INTERNET_FLAG_RELOAD;
 
     d->m_connectHandle = InternetConnectW(d->m_internetHandle, firstRequest().url().host().charactersWithNullTermination(), firstRequest().url().port(),
                                           0, 0, INTERNET_SERVICE_HTTP, flags, reinterpret_cast<DWORD_PTR>(this));
