@@ -98,7 +98,7 @@ for (var i = 0; i < elements.length; i++) {
 
     if (!test.firstChild || test.firstChild.nodeType == 3 /*TextNode*/)
         addResult(document.getElementById('removed'), elementName)
-    else if (contains(test, instance) && (instance.innerHTML == "" || instance.innerHTML == "hello=1;"))
+    else if (contains(test, instance) && (instance.innerHTML == "" || instance.innerHTML == "hello=1;" || elementName == "keygen"))
         addResult(document.getElementById('preserved'), elementName);
     else
         addResult(document.getElementById('exceptions'), elementName, test.innerHTML);
