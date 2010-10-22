@@ -1,5 +1,11 @@
 2010-10-22  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * WebCoreSupport/WebChromeClient.h:
+
+2010-10-22  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         WebKit2 needs to pass the current event modifier flags when requesting a new window
