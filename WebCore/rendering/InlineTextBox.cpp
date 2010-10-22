@@ -430,7 +430,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     if (m_isVertical) {
         context->save();
         context->translate(textOrigin.x(), textOrigin.y());
-        context->rotate(deg2rad(90.));
+        context->rotate(static_cast<float>(deg2rad(90.)));
         context->translate(-textOrigin.x(), -textOrigin.y());
     }
     
