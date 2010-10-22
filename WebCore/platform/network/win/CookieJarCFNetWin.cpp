@@ -36,6 +36,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <windows.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
