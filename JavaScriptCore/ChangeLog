@@ -1,3 +1,12 @@
+2010-10-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Remove Android build system
+        https://bugs.webkit.org/show_bug.cgi?id=48111
+
+        * Android.mk: Removed.
+
 2010-10-21  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Kent Tamura.
