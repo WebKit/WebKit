@@ -225,8 +225,80 @@ resources/tests17.dat: PASS
 
 resources/tests18.dat: PASS
 
-resources/tests19.dat: PASS
+resources/tests19.dat:
+31
+32
+78
 
+Test 31 of 97 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mi><p><h1>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|           <p>
+|           <h1>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|     <p>
+|     <h1>
+
+Test 32 of 97 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mi><p><h1>
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|           <p>
+|           <h1>
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mi>
+|     <p>
+|     <h1>
+
+Test 78 of 97 in resources/tests19.dat failed. Input:
+<!doctype html><p><math><mn><span></p>a
+Got:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mn>
+|           <span>
+|             <p>
+|             "a"
+Expected:
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <p>
+|       <math math>
+|         <math mn>
+|           <span>
+|     "a"
 resources/tests20.dat: PASS
 
 resources/tests21.dat: PASS
