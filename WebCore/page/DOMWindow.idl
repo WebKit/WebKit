@@ -147,9 +147,11 @@ module window {
                                              in DOMString pseudoElement);
 
         // WebKit extensions
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         CSSRuleList getMatchedCSSRules(in Element element,
-                                       in DOMString pseudoElement,
-                                       in [Optional] boolean authorOnly);
+                                       in DOMString pseudoElement);
+#endif
+
         attribute [Replaceable] double devicePixelRatio;
         
         WebKitPoint webkitConvertPointFromPageToNode(in Node node, in WebKitPoint p);

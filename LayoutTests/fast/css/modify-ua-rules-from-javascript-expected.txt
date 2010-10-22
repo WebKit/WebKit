@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: line 11: TypeError: Result of expression 'window.getMatchedCSSRules(document.body, "", false)' [null] is not an object.
 PASS

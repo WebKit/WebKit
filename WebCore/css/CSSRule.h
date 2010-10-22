@@ -30,6 +30,11 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
+enum CSSRuleFilter {
+    AllCSSRules,
+    SameOriginCSSRulesOnly
+}; 
+
 class CSSRule : public StyleBase {
 public:
     // FIXME: Change name to Type.

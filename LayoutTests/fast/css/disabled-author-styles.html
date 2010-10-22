@@ -16,7 +16,7 @@
 
         function checkMatchedRules()
         {
-            var matchedRules = getMatchedCSSRules(document.getElementById("test"), "", true);
+            var matchedRules = getMatchedCSSRules(document.getElementById("test"), "");
             if (matchedRules && matchedRules.length)
                 alert(matchedRules.length + " rule(s) were returned from getMatchedCSSRules, expected zero.");
 

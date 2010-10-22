@@ -1,9 +1,9 @@
-Tests that shorthand property value is correct even if background-repeat property is declared before it in the style declaration. It tests regression described in this bug.
+This layouttest was initially there to test that shorthand property value is correct even if background-repeat property is declared before it in the style declaration. It used to test regression described in this bug. Now that access to non author stylesheet is blocked, we should instead get null when accessing the css rules on that object.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS iconMarginValue() is "0px"
+PASS iconMarginValue() threw exception TypeError: Result of expression 'rules[1]' [undefined] is not an object..
 PASS successfullyParsed is true
 
 TEST COMPLETE

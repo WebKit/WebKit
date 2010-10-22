@@ -4,7 +4,7 @@
         if (window.layoutTestController)
             layoutTestController.dumpAsText();
 
-        var rules = getMatchedCSSRules(document.body, "", true);
+        var rules = getMatchedCSSRules(document.body, "");
         if (rules && rules.length) {
             log("FAIL: Expected 0 matched rules, but found " + rules.length + ":");
             for (var i = 0; i < rules.length; ++i)
