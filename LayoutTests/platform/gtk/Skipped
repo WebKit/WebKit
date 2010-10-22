@@ -5615,7 +5615,6 @@ canvas/philip/tests/2d.path.arc.zeroradius.html
 canvas/philip/tests/2d.path.arcTo.collinear.2.html
 canvas/philip/tests/2d.path.arcTo.collinear.3.html
 canvas/philip/tests/2d.path.closePath.nextpoint.html
-canvas/philip/tests/2d.path.isPointInPath.nonfinite.html
 canvas/philip/tests/2d.path.rect.selfintersect.html
 canvas/philip/tests/2d.path.rect.zero.6.html
 canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
