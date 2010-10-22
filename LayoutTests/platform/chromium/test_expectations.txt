@@ -1876,7 +1876,7 @@ BUG11251 WIN LINUX : fast/forms/textarea-metrics.html = FAIL
 
 // We don't draw the spelling markers at all in test shell.
 BUG11577 WIN LINUX : editing/spelling/inline_spelling_markers.html = FAIL
-BUG11577 LINUX : editing/spelling/spellcheck-attribute.html = FAIL
+BUG11577 WIN LINUX : editing/spelling/spellcheck-attribute.html = FAIL
 BUG11577 WIN LINUX : editing/spelling/spelling-linebreak.html = FAIL
 
 // Regresssions from WebKit Merge 43114:43242 that just need to be re-baselined.

@@ -5,6 +5,7 @@
 </head>
 <body>
 <p>This tests if the "spellcheck" attribute is implemented as written in its specification. If this test succeeds, you can see six forms filled with an invalid word 'zz '. Nevertheless, the 'zz ' only in the line 1.1, 1.2, and 2.2 are marked as misspelled.</p>
+<div id="testRoot">
 <div spellcheck="true">
 <label>1.1.</label><input id="test1_1" type="text"></input><br/>
 <label>1.2.</label><input id="test1_2" type="text" spellcheck="true"></input><br/>
@@ -15,20 +16,36 @@
 <label>2.2.</label><input id="test2_2" type="text" spellcheck="true"></input><br/>
 <label>2.3.</label><input id="test2_3" type="text" spellcheck="false"></input><br/>
 </div>
+</div>
+<pre id="console"></pre>
 <script>
-function typeInvalidWord(id) {
+function log(msg) {
+    document.getElementById("console").innerHTML += (msg + "\n");
+}
+
+function testTypingInvalidWord(id, shouldBeMarked) {
     document.getElementById(id).focus();
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, 'z');
     document.execCommand("InsertText", false, ' ');
+    if (shouldBeMarked == layoutTestController.hasSpellingMarker(0, 2))
+        log("PASS:" + id);
+    else
+        log("FAIL:" + id);
 }
 
-typeInvalidWord('test1_1');
-typeInvalidWord('test1_2');
-typeInvalidWord('test1_3');
-typeInvalidWord('test2_1');
-typeInvalidWord('test2_2');
-typeInvalidWord('test2_3');
+testTypingInvalidWord('test1_1', true);
+testTypingInvalidWord('test1_2', true);
+testTypingInvalidWord('test1_3', false);
+testTypingInvalidWord('test2_1', false);
+testTypingInvalidWord('test2_2', true);
+testTypingInvalidWord('test2_3', false);
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    // Cleaning up for expeation text if running on DRT.
+    document.getElementById("testRoot").style.display = "none";
+}
 </script>
 </body>
 </html>
