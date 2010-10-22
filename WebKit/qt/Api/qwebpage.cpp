@@ -323,6 +323,11 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 
 QWebPagePrivate::~QWebPagePrivate()
 {
+    if (inspector && inspectorIsInternalOnly) {
+        // Since we have to delete an internal inspector,
+        // call setInspector(0) directly to prevent potential crashes
+        setInspector(0);
+    }
 #ifndef QT_NO_CONTEXTMENU
     delete currentContextMenu;
 #endif
@@ -332,6 +337,9 @@ QWebPagePrivate::~QWebPagePrivate()
     delete settings;
     delete page;
     
+    if (inspector)
+        inspector->setPage(0);
+
 #if ENABLE(NOTIFICATIONS)
     NotificationPresenterClientQt::notificationPresenter()->removeClient();
 #endif
@@ -1759,14 +1767,6 @@ QWebPage::~QWebPage()
     FrameLoader *loader = d->mainFrame->d->frame->loader();
     if (loader)
         loader->detachFromParent();
-    if (d->inspector) {
-        // Since we have to delete an internal inspector,
-        // call setInspector(0) directly to prevent potential crashes
-        if (d->inspectorIsInternalOnly)
-            d->setInspector(0);
-        else
-            d->inspector->setPage(0);
-    }
     delete d;
 }
 
