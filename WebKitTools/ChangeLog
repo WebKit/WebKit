@@ -1,5 +1,16 @@
 2010-10-22  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.  Just adding a test case.
+
+        The style-queue was not recognizing new patches.  It turns
+        out I had fixed this in an earlier change, but just not
+        deployed to queues.webkit.org.  As part of investigating why it
+        was broken, I wrote a test for my previous change which I'm now landing.
+
+        * QueueStatusServer/model/queues_unittest.py:
+
+2010-10-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         EWS does not need to process obsolete patches

@@ -68,6 +68,13 @@ class QueueTest(unittest.TestCase):
         self._assert_name_with_underscores("chromium-ews", "chromium_ews")
         self._assert_name_with_underscores("commit-queue", "commit_queue")
 
+    def test_style_queue_is_ews(self):
+        # For now we treat the style-queue as an EWS since most users would
+        # describe it as such.  If is_ews() ever needs to mean "builds the patch"
+        # or similar, then we will need to adjust all callers.
+        self.assertTrue(Queue("style-queue").is_ews())
+        self.assertTrue("style-queue" in map(Queue.name, Queue.all_ews()))
+
 
 if __name__ == '__main__':
     unittest.main()
