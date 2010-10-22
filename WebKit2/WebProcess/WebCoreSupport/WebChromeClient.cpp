@@ -112,11 +112,14 @@ void WebChromeClient::focusedNodeChanged(Node*)
     notImplemented();
 }
 
-Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&)
+Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
+    uint32_t modifiers = modifiersForNavigationAction(navigationAction);
+    int32_t mouseButton = mouseButtonForNavigationAction(navigationAction);
+
     uint64_t newPageID = 0;
     WebPageCreationParameters parameters;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::CreateNewPage(),
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, modifiers, mouseButton),
             Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters),
             m_page->pageID(), CoreIPC::Connection::NoTimeout)) {
         return 0;

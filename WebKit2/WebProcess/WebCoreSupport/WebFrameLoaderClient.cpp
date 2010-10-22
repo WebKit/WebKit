@@ -443,14 +443,14 @@ void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
     WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
 }
 
-Frame* WebFrameLoaderClient::dispatchCreatePage()
+Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage)
         return 0;
 
     // Just call through to the chrome client.
-    Page* newPage = webPage->corePage()->chrome()->createWindow(m_frame->coreFrame(), FrameLoadRequest(), WindowFeatures());
+    Page* newPage = webPage->corePage()->chrome()->createWindow(m_frame->coreFrame(), FrameLoadRequest(), WindowFeatures(), navigationAction);
     if (!newPage)
         return 0;
     
@@ -466,7 +466,7 @@ void WebFrameLoaderClient::dispatchShow()
     webPage->show();
 }
 
-static uint32_t modifiersForNavigationAction(const NavigationAction& navigationAction)
+uint32_t modifiersForNavigationAction(const NavigationAction& navigationAction)
 {
     uint32_t modifiers = 0;
     if (const UIEventWithKeyState* keyStateEvent = findEventWithKeyState(const_cast<Event*>(navigationAction.event()))) {
@@ -492,7 +492,7 @@ static const MouseEvent* findMouseEvent(const Event* event)
     return 0;
 }
 
-static int32_t mouseButtonForNavigationAction(const NavigationAction& navigationAction)
+int32_t mouseButtonForNavigationAction(const NavigationAction& navigationAction)
 {
     const MouseEvent* mouseEvent = findMouseEvent(navigationAction.event());
     if (!mouseEvent)
@@ -503,7 +503,6 @@ static int32_t mouseButtonForNavigationAction(const NavigationAction& navigation
 
     return mouseEvent->button();
 }
-
 
 void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String& MIMEType, const ResourceRequest& request)
 {

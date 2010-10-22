@@ -1102,7 +1102,7 @@ void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError& erro
         callErrorPageExtension(error);
 }
 
-WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage()
+WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage(const WebCore::NavigationAction&)
 {
     if (!m_webFrame)
         return 0;

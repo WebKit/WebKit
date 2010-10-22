@@ -163,9 +163,9 @@ void Chrome::focusedNodeChanged(Node* node) const
     m_client->focusedNodeChanged(node);
 }
 
-Page* Chrome::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features) const
+Page* Chrome::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction& action) const
 {
-    Page* newPage = m_client->createWindow(frame, request, features);
+    Page* newPage = m_client->createWindow(frame, request, features, action);
 
 #if ENABLE(DOM_STORAGE)
     if (newPage) {

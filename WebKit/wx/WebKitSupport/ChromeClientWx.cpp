@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "Icon.h"
+#include "NavigationAction.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
@@ -136,7 +137,7 @@ void ChromeClientWx::focusedNodeChanged(Node*)
 {
 }
 
-Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures& features)
+Page* ChromeClientWx::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction&)
 {
     Page* myPage = 0;
     wxWebViewNewWindowEvent wkEvent(m_webView);

@@ -426,7 +426,7 @@ void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
         frameLoadDelegatePrivate->didFirstVisuallyNonEmptyLayoutInFrame(webView, m_webFrame);
 }
 
-Frame* WebFrameLoaderClient::dispatchCreatePage()
+Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction&)
 {
     WebView* webView = m_webFrame->webView();
 

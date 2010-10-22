@@ -103,7 +103,7 @@ public:
 
     virtual void focusedNodeChanged(Node*) { }
 
-    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&) { return 0; }
+    virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) { return 0; }
     virtual void show() { }
 
     virtual bool canRunModal() { return false; }
@@ -259,7 +259,7 @@ public:
     virtual void dispatchDidFirstLayout() { }
     virtual void dispatchDidFirstVisuallyNonEmptyLayout() { }
 
-    virtual Frame* dispatchCreatePage() { return 0; }
+    virtual Frame* dispatchCreatePage(const NavigationAction&) { return 0; }
     virtual void dispatchShow() { }
 
     virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction, const String&, const ResourceRequest&) { }

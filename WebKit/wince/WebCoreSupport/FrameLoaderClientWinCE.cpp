@@ -557,7 +557,7 @@ bool FrameLoaderClientWinCE::canCachePage() const
     return true;
 }
 
-Frame* FrameLoaderClientWinCE::dispatchCreatePage()
+Frame* FrameLoaderClientWinCE::dispatchCreatePage(const NavigationAction&)
 {
     notImplemented();
     return 0;

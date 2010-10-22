@@ -1,3 +1,35 @@
+2010-10-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs to pass the current event modifier flags when requesting a new window
+        https://bugs.webkit.org/show_bug.cgi?id=48140
+
+        In addition to passing modifier flags from the now passed NavigationAction, also pass
+        the WindowFeatures to the UIProcess.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.h:
+        (WebKit::WebEvent::modifiers):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::createNewPage):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::createNewPage):
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::createWindow):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchCreatePage):
+        (WebKit::modifiersForNavigationAction):
+        (WebKit::mouseButtonForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+
 2010-10-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

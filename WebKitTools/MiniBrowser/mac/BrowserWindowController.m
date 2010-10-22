@@ -361,7 +361,7 @@ static void decidePolicyForMIMEType(WKPageRef page, WKStringRef MIMEType, WKURLR
 
 #pragma mark UI Client Callbacks
 
-static WKPageRef createNewPage(WKPageRef page, const void* clientInfo)
+static WKPageRef createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton button, const void* clientInfo)
 {
     LOG(@"createNewPage");
     BrowserWindowController *controller = [[BrowserWindowController alloc] initWithPageNamespace:WKPageGetPageNamespace(page)];

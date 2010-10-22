@@ -25,8 +25,10 @@
 
 #include "WebUIClient.h"
 
+#include "ImmutableDictionary.h"
 #include "NativeWebKeyboardEvent.h"
 #include "WKAPICast.h"
+#include "WebNumber.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntSize.h>
@@ -50,12 +52,30 @@ void WebUIClient::initialize(const WKPageUIClient* client)
         memset(&m_pageUIClient, 0, sizeof(m_pageUIClient));
 }
 
-PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page)
+PassRefPtr<WebPageProxy> WebUIClient::createNewPage(WebPageProxy* page, const WindowFeatures& windowFeatures, WebEvent::Modifiers modifiers, WebMouseEvent::Button button)
 {
     if (!m_pageUIClient.createNewPage)
         return 0;
-    
-    return adoptRef(toImpl(m_pageUIClient.createNewPage(toAPI(page), m_pageUIClient.clientInfo)));
+
+    ImmutableDictionary::MapType map;
+    if (windowFeatures.xSet)
+        map.set("x", WebDouble::create(windowFeatures.x));
+    if (windowFeatures.ySet)
+        map.set("y", WebDouble::create(windowFeatures.y));
+    if (windowFeatures.widthSet)
+        map.set("width", WebDouble::create(windowFeatures.width));
+    if (windowFeatures.heightSet)
+        map.set("height", WebDouble::create(windowFeatures.height));
+    map.set("menuBarVisible", WebBoolean::create(windowFeatures.menuBarVisible));
+    map.set("statusBarVisible", WebBoolean::create(windowFeatures.statusBarVisible));
+    map.set("toolBarVisible", WebBoolean::create(windowFeatures.toolBarVisible));
+    map.set("scrollbarsVisible", WebBoolean::create(windowFeatures.scrollbarsVisible));
+    map.set("resizable", WebBoolean::create(windowFeatures.resizable));
+    map.set("fullscreen", WebBoolean::create(windowFeatures.fullscreen));
+    map.set("dialog", WebBoolean::create(windowFeatures.dialog));
+    RefPtr<ImmutableDictionary> featuresMap = ImmutableDictionary::adopt(map);
+
+    return adoptRef(toImpl(m_pageUIClient.createNewPage(toAPI(page), toAPI(featuresMap.get()), toAPI(modifiers), toAPI(button), m_pageUIClient.clientInfo)));
 } 
 
 void WebUIClient::showPage(WebPageProxy* page)

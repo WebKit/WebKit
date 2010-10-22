@@ -766,7 +766,7 @@ void FrameLoaderClientWx::dispatchDidFailLoad(const ResourceError&)
     notImplemented();
 }
 
-Frame* FrameLoaderClientWx::dispatchCreatePage()
+Frame* FrameLoaderClientWx::dispatchCreatePage(const NavigationAction&)
 {
     notImplemented();
     return false;

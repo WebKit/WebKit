@@ -98,7 +98,7 @@ static void closeOtherPage(WKPageRef page, const void* clientInfo)
     delete view;
 }
 
-static WKPageRef createOtherPage(WKPageRef oldPage, const void*)
+static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
 {
     PlatformWebView* view = new PlatformWebView(WKPageGetPageNamespace(oldPage));
     WKPageRef newPage = view->page();

@@ -54,6 +54,7 @@
 #include "WebProcessProxy.h"
 #include "WebURLRequest.h"
 #include <WebCore/FloatRect.h>
+#include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 
 #ifndef NDEBUG
@@ -829,9 +830,9 @@ void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, cons
 
 // UIClient
 
-void WebPageProxy::createNewPage(uint64_t& newPageID, WebPageCreationParameters& newPageParameters)
+void WebPageProxy::createNewPage(const WindowFeatures& windowFeatures, uint32_t opaqueModifiers, int32_t opaqueMouseButton, uint64_t& newPageID, WebPageCreationParameters& newPageParameters)
 {
-    RefPtr<WebPageProxy> newPage = m_uiClient.createNewPage(this);
+    RefPtr<WebPageProxy> newPage = m_uiClient.createNewPage(this, windowFeatures, static_cast<WebEvent::Modifiers>(opaqueModifiers), static_cast<WebMouseEvent::Button>(opaqueMouseButton));
     if (newPage) {
         // FIXME: Pass the real size.
         newPageID = newPage->pageID();

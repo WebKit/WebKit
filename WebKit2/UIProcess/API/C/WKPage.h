@@ -129,7 +129,7 @@ struct WKPageFormClient {
 typedef struct WKPageFormClient WKPageFormClient;
 
 // UI Client
-typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, const void *clientInfo);
+typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
 typedef void (*WKPageShowPageCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageCloseCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void *clientInfo);

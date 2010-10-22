@@ -60,7 +60,7 @@ namespace WebCore {
 
         void focusedNodeChanged(Node*);
 
-        Page* createWindow(Frame*, const FrameLoadRequest&, const WebCore::WindowFeatures&);
+        Page* createWindow(Frame*, const FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&);
         Page* createModalDialog(Frame*, const FrameLoadRequest&);
         void show();
 

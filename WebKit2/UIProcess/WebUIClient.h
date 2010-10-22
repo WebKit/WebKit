@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class IntSize;
+struct WindowFeatures;
 }
 
 namespace WebKit {
@@ -47,7 +48,7 @@ public:
     WebUIClient();
     void initialize(const WKPageUIClient*);
 
-    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*);
+    PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, const WebCore::WindowFeatures&, WebEvent::Modifiers, WebMouseEvent::Button);
     void showPage(WebPageProxy*);
     void close(WebPageProxy*);
 

@@ -645,7 +645,7 @@ void FrameLoaderClientHaiku::dispatchDidFailLoad(const ResourceError&)
     notImplemented();
 }
 
-Frame* FrameLoaderClientHaiku::dispatchCreatePage()
+Frame* FrameLoaderClientHaiku::dispatchCreatePage(const WebCore::NavigationAction&)
 {
     notImplemented();
     return false;

@@ -92,7 +92,7 @@ private:
     virtual void dispatchDidFirstLayout();
     virtual void dispatchDidFirstVisuallyNonEmptyLayout();
     
-    virtual WebCore::Frame* dispatchCreatePage();
+    virtual WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&);
     virtual void dispatchShow();
     
     virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction, const String& MIMEType, const WebCore::ResourceRequest&);
@@ -210,6 +210,9 @@ private:
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView;
 };
+
+uint32_t modifiersForNavigationAction(const WebCore::NavigationAction&);
+int32_t mouseButtonForNavigationAction(const WebCore::NavigationAction&);
 
 } // namespace WebKit
 

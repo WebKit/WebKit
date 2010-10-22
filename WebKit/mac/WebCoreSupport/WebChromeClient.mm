@@ -60,6 +60,7 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Icon.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/NavigationAction.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformString.h>
@@ -199,7 +200,7 @@ void WebChromeClient::focusedNodeChanged(Node*)
 {
 }
 
-Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features)
+Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction&)
 {
     NSURLRequest *URLRequest = nil;
     if (!request.isEmpty())

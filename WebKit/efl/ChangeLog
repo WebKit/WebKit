@@ -1,3 +1,18 @@
+2010-10-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs to pass the current event modifier flags when requesting a new window
+        https://bugs.webkit.org/show_bug.cgi?id=48140
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::createWindow):
+        * WebCoreSupport/ChromeClientEfl.h:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchCreatePage):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        Add NavigationAction parameter.
+
 2010-10-19  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Eric Seidel.

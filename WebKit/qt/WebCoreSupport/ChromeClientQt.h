@@ -73,7 +73,7 @@ namespace WebCore {
 
         virtual void focusedNodeChanged(Node*);
 
-        virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&);
+        virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&);
         virtual void show();
 
         virtual bool canRunModal();

@@ -37,6 +37,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ViewportArguments.h>
+#include <WebCore/WindowFeatures.h>
 #include <limits>
 
 namespace CoreIPC {
@@ -164,6 +165,66 @@ template<> struct ArgumentCoder<WebCore::ResourceError> {
         if (!decoder->decode(CoreIPC::Out(domain, errorCode, failingURL, localizedDescription)))
             return false;
         resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription);
+        return true;
+    }
+};
+
+
+template<> struct ArgumentCoder<WebCore::WindowFeatures> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::WindowFeatures& windowFeatures)
+    {
+        encoder->encode(windowFeatures.x);
+        encoder->encode(windowFeatures.y);
+        encoder->encode(windowFeatures.width);
+        encoder->encode(windowFeatures.height);
+        encoder->encode(windowFeatures.xSet);
+        encoder->encode(windowFeatures.ySet);
+        encoder->encode(windowFeatures.widthSet);
+        encoder->encode(windowFeatures.heightSet);
+        encoder->encode(windowFeatures.menuBarVisible);
+        encoder->encode(windowFeatures.statusBarVisible);
+        encoder->encode(windowFeatures.toolBarVisible);
+        encoder->encode(windowFeatures.locationBarVisible);
+        encoder->encode(windowFeatures.scrollbarsVisible);
+        encoder->encode(windowFeatures.resizable);
+        encoder->encode(windowFeatures.fullscreen);
+        encoder->encode(windowFeatures.dialog);
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, WebCore::WindowFeatures& windowFeatures)
+    {
+        if (!decoder->decode(windowFeatures.x))
+            return false;
+        if (!decoder->decode(windowFeatures.y))
+            return false;
+        if (!decoder->decode(windowFeatures.width))
+            return false;
+        if (!decoder->decode(windowFeatures.height))
+            return false;
+        if (!decoder->decode(windowFeatures.xSet))
+            return false;
+        if (!decoder->decode(windowFeatures.ySet))
+            return false;
+        if (!decoder->decode(windowFeatures.widthSet))
+            return false;
+        if (!decoder->decode(windowFeatures.heightSet))
+            return false;
+        if (!decoder->decode(windowFeatures.menuBarVisible))
+            return false;
+        if (!decoder->decode(windowFeatures.statusBarVisible))
+            return false;
+        if (!decoder->decode(windowFeatures.toolBarVisible))
+            return false;
+        if (!decoder->decode(windowFeatures.locationBarVisible))
+            return false;
+        if (!decoder->decode(windowFeatures.scrollbarsVisible))
+            return false;
+        if (!decoder->decode(windowFeatures.resizable))
+            return false;
+        if (!decoder->decode(windowFeatures.fullscreen))
+            return false;
+        if (!decoder->decode(windowFeatures.dialog))
+            return false;
         return true;
     }
 };

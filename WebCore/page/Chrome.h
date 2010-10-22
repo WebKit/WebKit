@@ -45,6 +45,7 @@ namespace WebCore {
     class Geolocation;
     class HitTestResult;
     class IntRect;
+    class NavigationAction;
     class Node;
     class Page;
     class PopupMenuClient;
@@ -94,7 +95,7 @@ namespace WebCore {
 
         void focusedNodeChanged(Node*) const;
 
-        Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&) const;
+        Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) const;
         void show() const;
 
         bool canRunModal() const;

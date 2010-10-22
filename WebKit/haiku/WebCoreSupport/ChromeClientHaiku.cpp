@@ -34,6 +34,7 @@
 #include "FrameView.h"
 #include "HitTestResult.h"
 #include "Icon.h"
+#include "NavigationAction.h"
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "SecurityOrigin.h"
@@ -107,7 +108,7 @@ void ChromeClientHaiku::focusedNodeChanged(Node*)
 {
 }
 
-Page* ChromeClientHaiku::createWindow(Frame*, const FrameLoadRequest&, const WebCore::WindowFeatures&)
+Page* ChromeClientHaiku::createWindow(Frame*, const FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&)
 {
     notImplemented();
     return 0;

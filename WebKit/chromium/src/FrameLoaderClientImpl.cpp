@@ -812,11 +812,11 @@ void FrameLoaderClientImpl::dispatchDidFirstVisuallyNonEmptyLayout()
         m_webFrame->client()->didFirstVisuallyNonEmptyLayout(m_webFrame);
 }
 
-Frame* FrameLoaderClientImpl::dispatchCreatePage()
+Frame* FrameLoaderClientImpl::dispatchCreatePage(const NavigationAction& action)
 {
     struct WindowFeatures features;
     Page* newPage = m_webFrame->frame()->page()->chrome()->createWindow(
-        m_webFrame->frame(), FrameLoadRequest(), features);
+        m_webFrame->frame(), FrameLoadRequest(), features, action);
 
     // Make sure that we have a valid disposition.  This should have been set in
     // the preceeding call to dispatchDecidePolicyForNewWindowAction.

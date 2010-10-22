@@ -1200,7 +1200,7 @@ bool FrameLoaderClient::canCachePage() const
     return true;
 }
 
-Frame* FrameLoaderClient::dispatchCreatePage()
+Frame* FrameLoaderClient::dispatchCreatePage(const NavigationAction&)
 {
     WebKitWebView* webView = getViewFromFrame(m_frame);
     WebKitWebView* newWebView = 0;

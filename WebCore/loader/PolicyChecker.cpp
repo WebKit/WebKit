@@ -92,7 +92,7 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, Docume
 void PolicyChecker::checkNewWindowPolicy(const NavigationAction& action, NewWindowPolicyDecisionFunction function,
     const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, void* argument)
 {
-    m_callback.set(request, formState, frameName, function, argument);
+    m_callback.set(request, formState, frameName, action, function, argument);
     m_frame->loader()->client()->dispatchDecidePolicyForNewWindowAction(&PolicyChecker::continueAfterNewWindowPolicy,
         action, request, formState, frameName);
 }

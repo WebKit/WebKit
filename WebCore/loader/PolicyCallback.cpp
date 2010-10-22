@@ -71,11 +71,12 @@ void PolicyCallback::set(const ResourceRequest& request, PassRefPtr<FormState> f
 }
 
 void PolicyCallback::set(const ResourceRequest& request, PassRefPtr<FormState> formState,
-    const String& frameName, NewWindowPolicyDecisionFunction function, void* argument)
+    const String& frameName, const NavigationAction& navigationAction, NewWindowPolicyDecisionFunction function, void* argument)
 {
     m_request = request;
     m_formState = formState;
     m_frameName = frameName;
+    m_navigationAction = navigationAction;
 
     m_navigationFunction = 0;
     m_newWindowFunction = function;
@@ -100,7 +101,7 @@ void PolicyCallback::call(bool shouldContinue)
     if (m_navigationFunction)
         m_navigationFunction(m_argument, m_request, m_formState.get(), shouldContinue);
     if (m_newWindowFunction)
-        m_newWindowFunction(m_argument, m_request, m_formState.get(), m_frameName, shouldContinue);
+        m_newWindowFunction(m_argument, m_request, m_formState.get(), m_frameName, m_navigationAction, shouldContinue);
     ASSERT(!m_contentFunction);
 }
 
@@ -125,7 +126,7 @@ void PolicyCallback::cancel()
     if (m_navigationFunction)
         m_navigationFunction(m_argument, m_request, m_formState.get(), false);
     if (m_newWindowFunction)
-        m_newWindowFunction(m_argument, m_request, m_formState.get(), m_frameName, false);
+        m_newWindowFunction(m_argument, m_request, m_formState.get(), m_frameName, m_navigationAction, false);
     if (m_contentFunction)
         m_contentFunction(m_argument, PolicyIgnore);
 }

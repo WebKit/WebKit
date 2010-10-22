@@ -199,7 +199,7 @@ namespace WebCore {
 
         virtual void dispatchDidFailProvisionalLoad(const ResourceError&);
         virtual void dispatchDidFailLoad(const ResourceError&);
-        virtual Frame* dispatchCreatePage();
+        virtual Frame* dispatchCreatePage(const NavigationAction&);
         virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction,
                                                      const String&,
                                                      const ResourceRequest&);

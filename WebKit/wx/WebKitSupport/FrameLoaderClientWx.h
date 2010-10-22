@@ -190,7 +190,7 @@ namespace WebCore {
 
         virtual void dispatchDidFailProvisionalLoad(const ResourceError&);
         virtual void dispatchDidFailLoad(const ResourceError&);
-        virtual Frame* dispatchCreatePage();
+        virtual Frame* dispatchCreatePage(const WebCore::NavigationAction&);
         virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String&, const ResourceRequest&);
         virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&);
         virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>);

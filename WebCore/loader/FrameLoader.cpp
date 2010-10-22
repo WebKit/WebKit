@@ -2964,20 +2964,20 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
 }
 
 void FrameLoader::callContinueLoadAfterNewWindowPolicy(void* argument,
-    const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, bool shouldContinue)
+    const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue)
 {
     FrameLoader* loader = static_cast<FrameLoader*>(argument);
-    loader->continueLoadAfterNewWindowPolicy(request, formState, frameName, shouldContinue);
+    loader->continueLoadAfterNewWindowPolicy(request, formState, frameName, action, shouldContinue);
 }
 
 void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& request,
-    PassRefPtr<FormState> formState, const String& frameName, bool shouldContinue)
+    PassRefPtr<FormState> formState, const String& frameName, const NavigationAction& action, bool shouldContinue)
 {
     if (!shouldContinue)
         return;
 
     RefPtr<Frame> frame = m_frame;
-    RefPtr<Frame> mainFrame = m_client->dispatchCreatePage();
+    RefPtr<Frame> mainFrame = m_client->dispatchCreatePage(action);
     if (!mainFrame)
         return;
 
@@ -3476,7 +3476,8 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     if (!oldPage)
         return 0;
 
-    Page* page = oldPage->chrome()->createWindow(openerFrame, requestWithReferrer, features);
+    NavigationAction action;
+    Page* page = oldPage->chrome()->createWindow(openerFrame, requestWithReferrer, features, action);
     if (!page)
         return 0;
 

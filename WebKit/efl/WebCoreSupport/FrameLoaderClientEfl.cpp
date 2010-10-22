@@ -860,7 +860,7 @@ bool FrameLoaderClientEfl::canCachePage() const
     return false;
 }
 
-Frame* FrameLoaderClientEfl::dispatchCreatePage()
+Frame* FrameLoaderClientEfl::dispatchCreatePage(const NavigationAction&)
 {
     if (!m_view)
         return 0;
