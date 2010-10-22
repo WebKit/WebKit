@@ -52,13 +52,13 @@
 #include "RenderLayer.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
-#include "SVGStyledLocatableElement.h"
 #include "Settings.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
 #include <wtf/text/CString.h>
 
 #if ENABLE(SVG)
+#include "SVGElement.h"
 #include "SVGNames.h"
 #endif
 
@@ -488,15 +488,12 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
 
     Vector<FloatQuad> quads;
 #if ENABLE(SVG)
-    if (isSVGElement()) {
+    if (isSVGElement() && renderer()) {
         // Get the bounding rectangle from the SVG model.
         const SVGElement* svgElement = static_cast<const SVGElement*>(this);
-        if (svgElement->isStyledLocatable()) {
-            if (renderer()) {
-                const FloatRect& localRect = static_cast<const SVGStyledLocatableElement*>(svgElement)->getBBox();
-                quads.append(renderer()->localToAbsoluteQuad(localRect));
-            }
-        }
+        FloatRect localRect;
+        if (svgElement->boundingBox(localRect))
+            quads.append(renderer()->localToAbsoluteQuad(localRect));
     } else
 #endif
     {
@@ -517,9 +514,7 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect() const
         result.move(-visibleContentRect.x(), -visibleContentRect.y());
     }
 
-    if (renderBoxModelObject())
-        adjustIntRectForAbsoluteZoom(result, renderBoxModelObject());
-
+    adjustIntRectForAbsoluteZoom(result, renderer());
     return ClientRect::create(result);
 }
 

@@ -4048,7 +4048,7 @@
 		B2227A3E0D00BF220071B782 /* SVGList.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278A80D00BF200071B782 /* SVGList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227A3F0D00BF220071B782 /* SVGListTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278A90D00BF200071B782 /* SVGListTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227A400D00BF220071B782 /* SVGLocatable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278AA0D00BF200071B782 /* SVGLocatable.cpp */; };
-		B2227A410D00BF220071B782 /* SVGLocatable.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278AB0D00BF200071B782 /* SVGLocatable.h */; };
+		B2227A410D00BF220071B782 /* SVGLocatable.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278AB0D00BF200071B782 /* SVGLocatable.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B2227A430D00BF220071B782 /* SVGMarkerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278AD0D00BF200071B782 /* SVGMarkerElement.cpp */; };
 		B2227A440D00BF220071B782 /* SVGMarkerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = B22278AE0D00BF200071B782 /* SVGMarkerElement.h */; };
 		B2227A460D00BF220071B782 /* SVGMaskElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B22278B00D00BF200071B782 /* SVGMaskElement.cpp */; };

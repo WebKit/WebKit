@@ -42,6 +42,8 @@
 #include "SVGElementRareData.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
+#include "SVGStyledLocatableElement.h"
+#include "SVGTextElement.h"
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
 #include "ScriptEventListener.h"
@@ -177,6 +179,19 @@ const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
         return emptyInstances;
     }
     return rareSVGData()->elementInstances();
+}
+
+bool SVGElement::boundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy) const
+{
+    if (isStyledLocatable()) {
+        rect = static_cast<const SVGStyledLocatableElement*>(this)->getBBox(styleUpdateStrategy);
+        return true;
+    }
+    if (hasTagName(SVGNames::textTag)) {
+        rect = static_cast<const SVGTextElement*>(this)->getBBox(styleUpdateStrategy);
+        return true;
+    }
+    return false;
 }
 
 void SVGElement::setCursorElement(SVGCursorElement* cursorElement)

@@ -24,6 +24,7 @@
 
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
+#include "SVGLocatable.h"
 #include "StyledElement.h"
 
 namespace WebCore {
@@ -70,6 +71,8 @@ namespace WebCore {
         void invalidateSVGAttributes() { clearAreSVGAttributesValid(); }
 
         const HashSet<SVGElementInstance*>& instancesForElement() const;
+
+        bool boundingBox(FloatRect&, SVGLocatable::StyleUpdateStrategy = SVGLocatable::AllowStyleUpdate) const;
 
         void setCursorElement(SVGCursorElement*);
         void setCursorImageValue(CSSCursorImageValue*);
