@@ -608,15 +608,13 @@ void GraphicsContext::setBitmap(PassRefPtr<SharedBitmap> bmp)
 
 HDC GraphicsContext::getWindowsContext(const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    notImplemented();
-    ASSERT_NOT_REACHED();
-    return 0;
+    // FIXME: Add support for AlphaBlend.
+    ASSERT(!supportAlphaBlend);
+    return m_data->m_dc;
 }
 
 void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, bool supportAlphaBlend, bool mayCreateBitmap)
 {
-    notImplemented();
-    ASSERT_NOT_REACHED();
 }
 
 void GraphicsContext::savePlatformState()
