@@ -28,12 +28,76 @@
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "RenderSVGResourceFilterPrimitive.h"
+#include "SVGFEImage.h"
 
 namespace WebCore {
 
-RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes* filterPrimitiveElement)
-    : RenderSVGHiddenContainer(filterPrimitiveElement)
+FloatRect RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(FilterEffect* effect, SVGFilter* filter)
 {
+    FloatRect uniteRect;
+    FloatRect subregionBoundingBox = effect->effectBoundaries();
+    FloatRect subregion = subregionBoundingBox;
+
+    if (effect->filterEffectType() != FilterEffectTypeTile) {
+        // FETurbulence, FEImage and FEFlood don't have input effects, take the filter region as unite rect.
+        if (unsigned numberOfInputEffects = effect->inputEffects().size()) {
+            for (unsigned i = 0; i < numberOfInputEffects; ++i)
+                uniteRect.unite(determineFilterPrimitiveSubregion(effect->inputEffect(i), filter));
+        } else
+            uniteRect = filter->filterRegionInUserSpace();
+    } else {
+        determineFilterPrimitiveSubregion(effect->inputEffect(0), filter);
+        uniteRect = filter->filterRegionInUserSpace();
+    }
+
+    if (filter->effectBoundingBoxMode()) {
+        subregion = uniteRect;
+        // Avoid the calling of a virtual method several times.
+        FloatRect targetBoundingBox = filter->targetBoundingBox();
+
+        if (effect->hasX())
+            subregion.setX(targetBoundingBox.x() + subregionBoundingBox.x() * targetBoundingBox.width());
+
+        if (effect->hasY())
+            subregion.setY(targetBoundingBox.y() + subregionBoundingBox.y() * targetBoundingBox.height());
+
+        if (effect->hasWidth())
+            subregion.setWidth(subregionBoundingBox.width() * targetBoundingBox.width());
+
+        if (effect->hasHeight())
+            subregion.setHeight(subregionBoundingBox.height() * targetBoundingBox.height());
+    } else {
+        if (!effect->hasX())
+            subregion.setX(uniteRect.x());
+
+        if (!effect->hasY())
+            subregion.setY(uniteRect.y());
+
+        if (!effect->hasWidth())
+            subregion.setWidth(uniteRect.width());
+
+        if (!effect->hasHeight())
+            subregion.setHeight(uniteRect.height());
+    }
+
+    effect->setFilterPrimitiveSubregion(subregion);
+
+    FloatRect absoluteSubregion = filter->mapLocalRectToAbsoluteRect(subregion);
+    FloatSize filterResolution = filter->filterResolution();
+    absoluteSubregion.scale(filterResolution.width(), filterResolution.height());
+
+    // FEImage needs the unclipped subregion in absolute coordinates to determine the correct
+    // destination rect in combination with preserveAspectRatio.
+    if (effect->filterEffectType() == FilterEffectTypeImage)
+        reinterpret_cast<FEImage*>(effect)->setAbsoluteSubregion(absoluteSubregion);
+
+    // Clip every filter effect to the filter region.
+    FloatRect absoluteScaledFilterRegion = filter->filterRegion();
+    absoluteScaledFilterRegion.scale(filterResolution.width(), filterResolution.height());
+    absoluteSubregion.intersect(absoluteScaledFilterRegion);
+
+    effect->setMaxEffectRect(enclosingIntRect(absoluteSubregion));
+    return subregion;
 }
 
 } // namespace WebCore

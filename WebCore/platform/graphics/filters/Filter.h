@@ -52,12 +52,8 @@ namespace WebCore {
         
         virtual FloatPoint mapAbsolutePointToLocalPoint(const FloatPoint&) const { return FloatPoint(); }
 
-        // SVG specific
-        virtual void determineFilterPrimitiveSubregion(FilterEffect*, const FloatRect&) { }
-        
         virtual FloatRect filterRegionInUserSpace() const { return FloatRect(); }
 
-        virtual FloatSize maxImageSize() const = 0;
         virtual bool effectBoundingBoxMode() const = 0;
 
     private:

@@ -99,9 +99,6 @@ public:
     bool hasHeight() const { return m_hasHeight; }
     void setHasHeight(bool value) { m_hasHeight = value; }
 
-    // FIXME: FETile still needs special handling.
-    virtual FloatRect determineFilterPrimitiveSubregion(Filter*);
-
     FloatRect filterPrimitiveSubregion() const { return m_filterPrimitiveSubregion; }
     void setFilterPrimitiveSubregion(const FloatRect& filterPrimitiveSubregion) { m_filterPrimitiveSubregion = filterPrimitiveSubregion; }
 

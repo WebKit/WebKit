@@ -41,14 +41,6 @@ PassRefPtr<FETile> FETile::create()
     return adoptRef(new FETile);
 }
 
-FloatRect FETile::determineFilterPrimitiveSubregion(Filter* filter)
-{
-    inputEffect(0)->determineFilterPrimitiveSubregion(filter);
-
-    filter->determineFilterPrimitiveSubregion(this, filter->filterRegionInUserSpace());
-    return filterPrimitiveSubregion();
-}
-
 void FETile::apply(Filter* filter)
 {
 // FIXME: See bug 47315. This is a hack to work around a compile failure, but is incorrect behavior otherwise.

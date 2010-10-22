@@ -39,23 +39,6 @@ FilterEffect::~FilterEffect()
 {
 }
 
-FloatRect FilterEffect::determineFilterPrimitiveSubregion(Filter* filter)
-{
-    FloatRect uniteRect;
-    unsigned size = m_inputEffects.size();
-
-    // FETurbulence, FEImage and FEFlood don't have input effects, take the filter region as unite rect.
-    if (!size)
-        uniteRect = filter->filterRegionInUserSpace();
-    else {
-        for (unsigned i = 0; i < size; ++i)
-            uniteRect.unite(m_inputEffects.at(i)->determineFilterPrimitiveSubregion(filter));
-    }
-
-    filter->determineFilterPrimitiveSubregion(this, uniteRect);
-    return m_filterPrimitiveSubregion;
-}
-
 void FilterEffect::determineAbsolutePaintRect(Filter*)
 {
     m_absolutePaintRect = IntRect();

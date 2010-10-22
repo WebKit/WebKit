@@ -43,14 +43,13 @@ public:
     virtual FloatRect filterRegion() const { return m_absoluteFilterRegion; }
 
     virtual FloatPoint mapAbsolutePointToLocalPoint(const FloatPoint& point) const { return m_absoluteTransform.inverse().mapPoint(point); }
+    FloatRect mapLocalRectToAbsoluteRect(const FloatRect& rect) const { return m_absoluteTransform.mapRect(rect); }
 
     virtual float applyHorizontalScale(float value) const;
     virtual float applyVerticalScale(float value) const;
 
     virtual FloatRect sourceImageRect() const { return m_absoluteSourceDrawingRegion; }
-    
-    virtual FloatSize maxImageSize() const { return m_maxImageSize; }
-    virtual void determineFilterPrimitiveSubregion(FilterEffect*, const FloatRect&);
+    FloatRect targetBoundingBox() const { return m_targetBoundingBox; }
 
 private:
     SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode);
@@ -61,7 +60,6 @@ private:
     FloatRect m_absoluteFilterRegion;
     FloatRect m_filterRegion;
     bool m_effectBBoxMode;
-    FloatSize m_maxImageSize;
 };
 
 } // namespace WebCore

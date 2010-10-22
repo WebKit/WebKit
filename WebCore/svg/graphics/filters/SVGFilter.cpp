@@ -23,8 +23,6 @@
 #if ENABLE(SVG) && ENABLE(FILTERS)
 #include "SVGFilter.h"
 
-#include "SVGFEImage.h"
-
 namespace WebCore {
 
 SVGFilter::SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode)
@@ -36,64 +34,6 @@ SVGFilter::SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& 
     , m_effectBBoxMode(effectBBoxMode)
 {
     m_absoluteFilterRegion = absoluteTransform.mapRect(filterRegion);
-}
-
-void SVGFilter::determineFilterPrimitiveSubregion(FilterEffect* effect, const FloatRect& unionOfPreviousPrimitiveSubregions)
-{
-    FloatRect subRegionBBox = effect->effectBoundaries();
-    FloatRect newSubRegion = subRegionBBox;
-
-    if (m_effectBBoxMode) {
-        newSubRegion = unionOfPreviousPrimitiveSubregions;
-
-        if (effect->hasX())
-            newSubRegion.setX(m_targetBoundingBox.x() + subRegionBBox.x() * m_targetBoundingBox.width());
-
-       if (effect->hasY())
-            newSubRegion.setY(m_targetBoundingBox.y() + subRegionBBox.y() * m_targetBoundingBox.height());
-
-        if (effect->hasWidth())
-            newSubRegion.setWidth(subRegionBBox.width() * m_targetBoundingBox.width());
-
-        if (effect->hasHeight())
-            newSubRegion.setHeight(subRegionBBox.height() * m_targetBoundingBox.height());
-    } else {
-        if (!effect->hasX())
-            newSubRegion.setX(unionOfPreviousPrimitiveSubregions.x());
-
-        if (!effect->hasY())
-            newSubRegion.setY(unionOfPreviousPrimitiveSubregions.y());
-
-        if (!effect->hasWidth())
-            newSubRegion.setWidth(unionOfPreviousPrimitiveSubregions.width());
-
-        if (!effect->hasHeight())
-            newSubRegion.setHeight(unionOfPreviousPrimitiveSubregions.height());
-    }
-
-    effect->setFilterPrimitiveSubregion(newSubRegion);
-    // TODO: Everything above should be moved to a first phase of layout in RenderSVGResourceFilterPrimitive.
-    // The scaling of the subregion to the repaint rect should be merged with a more intelligent repaint logic
-    // and moved to the second phase of layout in RenderSVGResourceFilterPrimitive.
-    // See bug https://bugs.webkit.org/show_bug.cgi?id=45614.
-    newSubRegion = m_absoluteTransform.mapRect(newSubRegion);
-    newSubRegion.scale(filterResolution().width(), filterResolution().height());
-
-    // FEImage needs the unclipped subregion in absolute coordinates to determine the correct
-    // destination rect in combination with preserveAspectRatio.
-    if (effect->filterEffectType() == FilterEffectTypeImage) {
-        FEImage* imageEffect = static_cast<FEImage*>(effect);
-        imageEffect->setAbsoluteSubregion(newSubRegion);
-    }
-
-    // Clip every filter effect to the filter region.
-    FloatRect absoluteScaledFilterRegion = m_absoluteFilterRegion;
-    absoluteScaledFilterRegion.scale(filterResolution().width(), filterResolution().height());
-    newSubRegion.intersect(absoluteScaledFilterRegion);
-
-    effect->setMaxEffectRect(enclosingIntRect(newSubRegion));
-    if (effect->filterEffectType() != FilterEffectTypeSourceInput)
-        m_maxImageSize = m_maxImageSize.expandedTo(newSubRegion.size()); 
 }
 
 float SVGFilter::applyHorizontalScale(float value) const

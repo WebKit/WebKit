@@ -35,6 +35,7 @@
 #include "ImageData.h"
 #include "IntRect.h"
 #include "RenderSVGResource.h"
+#include "RenderSVGResourceFilterPrimitive.h"
 #include "SVGElement.h"
 #include "SVGFilter.h"
 #include "SVGFilterElement.h"
@@ -205,13 +206,13 @@ bool RenderSVGResourceFilter::applyResource(RenderObject* object, RenderStyle*, 
     if (!lastEffect)
         return false;
 
-    // Determine the filter primitive subregions of every effect.
-    lastEffect->determineFilterPrimitiveSubregion(filterData->filter.get());
-    if (!fitsInMaximumImageSize(filterData->filter->maxImageSize(), scale)) {
-        // At least one FilterEffect has a too big image size,
-        // recalculate the effect sizes with new scale factor.
+    RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(lastEffect, filterData->filter.get());
+    FloatRect subRegion = lastEffect->maxEffectRect();
+    // At least one FilterEffect has a too big image size,
+    // recalculate the effect sizes with new scale factors.
+    if (!fitsInMaximumImageSize(subRegion.size(), scale)) {
         filterData->filter->setFilterResolution(scale);
-        lastEffect->determineFilterPrimitiveSubregion(filterData->filter.get());
+        RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion(lastEffect, filterData->filter.get());
     }
 
     // If the drawingRegion is empty, we have something like <g filter=".."/>.
