@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-class WebRect;
+struct WebRect;
 
 class WebExternalPopupMenu {
 public:

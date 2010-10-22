@@ -1,3 +1,9 @@
+2010-10-21  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed build fix attempt for Chromium Linux Debug Clang
+
+        * public/WebExternalPopupMenu.h:
+
 2010-10-21  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
