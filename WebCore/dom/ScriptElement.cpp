@@ -33,6 +33,7 @@
 #include "FrameLoader.h"
 #include "HTMLNames.h"
 #include "HTMLScriptElement.h"
+#include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "ScriptController.h"
@@ -56,14 +57,6 @@ void ScriptElement::insertedIntoDocument(ScriptElementData& data, const String& 
         return;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#script
-
-    // If the element's Document has an active parser, and the parser's script
-    // nesting level is non-zero, but this script element does not have the
-    // "parser-inserted" flag set, the user agent must set the element's
-    // "write-neutralised" flag.
-    DocumentParser* parser = data.element()->document()->parser();
-    if (parser && parser->hasInsertionPoint())
-        data.setWriteDisabled(true);
 
     if (!sourceUrl.isEmpty()) {
         data.requestScript(sourceUrl);
@@ -142,7 +135,6 @@ ScriptElementData::ScriptElementData(ScriptElement* scriptElement, Element* elem
     , m_element(element)
     , m_cachedScript(0)
     , m_createdByParser(false)
-    , m_writeDisabled(false)
     , m_requested(false)
     , m_evaluated(false)
     , m_firedLoad(false)
@@ -191,7 +183,9 @@ void ScriptElementData::evaluateScript(const ScriptSourceCode& sourceCode)
     if (m_evaluated || sourceCode.isEmpty() || !shouldExecuteAsJavaScript())
         return;
 
-    if (Frame* frame = m_element->document()->frame()) {
+    RefPtr<Document> document = m_element->document();
+    ASSERT(document);
+    if (Frame* frame = document->frame()) {
         if (!frame->script()->canExecuteScripts(AboutToExecuteScript))
             return;
 
@@ -199,25 +193,12 @@ void ScriptElementData::evaluateScript(const ScriptSourceCode& sourceCode)
 
         // http://www.whatwg.org/specs/web-apps/current-work/#script
 
-        // If the script element's "write-neutralised" flag is set, then flag
-        // the Document the script element was in when the "write-neutralised"
-        // flag was set as being itself "write-neutralised". Let neutralised doc
-        // be that Document.
-        if (m_writeDisabled) {
-            ASSERT(!m_element->document()->writeDisabled());
-            m_element->document()->setWriteDisabled(true);
-        }
-
-        // Create a script from the script element node, using the script
-        // block's source and the script block's type.
-        // Note: This is where the script is compiled and actually executed.
-        frame->script()->evaluate(sourceCode);
-
-        // Remove the "write-neutralised" flag from neutralised doc, if it was
-        // set in the earlier step.
-        if (m_writeDisabled) {
-            ASSERT(m_element->document()->writeDisabled());
-            m_element->document()->setWriteDisabled(false);
+        {
+            IgnoreDestructiveWriteCountIncrementer ignoreDesctructiveWriteCountIncrementer(m_requested ? document.get() : 0);
+            // Create a script from the script element node, using the script
+            // block's source and the script block's type.
+            // Note: This is where the script is compiled and actually executed.
+            frame->script()->evaluate(sourceCode);
         }
 
         Document::updateStyleForAllDocuments();

@@ -42203,6 +42203,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\dom\IgnoreDestructiveWriteCountIncrementer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\InputElement.h"
 				>
 			</File>

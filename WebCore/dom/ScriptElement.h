@@ -82,8 +82,6 @@ public:
     Element* element() const { return m_element; }
     bool createdByParser() const { return m_createdByParser; }
     void setCreatedByParser(bool value) { m_createdByParser = value; }
-    bool writeDisabled() const { return m_writeDisabled; }
-    void setWriteDisabled(bool value) { m_writeDisabled = value; }
     bool haveFiredLoadEvent() const { return m_firedLoad; }
     void setHaveFiredLoadEvent(bool firedLoad) { m_firedLoad = firedLoad; }
 
@@ -101,7 +99,6 @@ private:
     Element* m_element;
     CachedResourceHandle<CachedScript> m_cachedScript;
     bool m_createdByParser; // HTML5: "parser-inserted"
-    bool m_writeDisabled; // http://www.whatwg.org/specs/web-apps/current-work/#write-neutralised
     bool m_requested;
     bool m_evaluated; // HTML5: "already started"
     bool m_firedLoad;

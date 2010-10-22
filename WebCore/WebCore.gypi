@@ -1212,6 +1212,7 @@
             'dom/ExceptionCode.cpp',
             'dom/ExceptionCode.h',
             'dom/FragmentScriptingPermission.h',
+            'dom/IgnoreDestructiveWriteCountIncrementer.h',
             'dom/InputElement.cpp',
             'dom/InputElement.h',
             'dom/HashChangeEvent.h',

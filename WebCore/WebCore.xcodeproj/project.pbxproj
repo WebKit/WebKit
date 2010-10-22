@@ -2597,6 +2597,7 @@
 		8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9A587311E84C81008ACFD1 /* JSPerformance.h */; };
 		8A9A588711E84F37008ACFD1 /* JSTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A9A587611E84C98008ACFD1 /* JSTiming.cpp */; };
 		8A9A588811E84F37008ACFD1 /* JSTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A9A587711E84C98008ACFD1 /* JSTiming.h */; };
+		8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */; };
 		8AF4E55511DC5A36000ED3DE /* Navigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4E55211DC5A36000ED3DE /* Navigation.cpp */; };
 		8AF4E55611DC5A36000ED3DE /* Navigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55311DC5A36000ED3DE /* Navigation.h */; };
 		8AF4E55B11DC5A63000ED3DE /* Timing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4E55811DC5A63000ED3DE /* Timing.cpp */; };
@@ -8660,6 +8661,7 @@
 		8A9A587311E84C81008ACFD1 /* JSPerformance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPerformance.h; sourceTree = "<group>"; };
 		8A9A587611E84C98008ACFD1 /* JSTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTiming.cpp; sourceTree = "<group>"; };
 		8A9A587711E84C98008ACFD1 /* JSTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTiming.h; sourceTree = "<group>"; };
+		8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IgnoreDestructiveWriteCountIncrementer.h; sourceTree = "<group>"; };
 		8AF4E55211DC5A36000ED3DE /* Navigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Navigation.cpp; sourceTree = "<group>"; };
 		8AF4E55311DC5A36000ED3DE /* Navigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Navigation.h; sourceTree = "<group>"; };
 		8AF4E55411DC5A36000ED3DE /* Navigation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Navigation.idl; sourceTree = "<group>"; };
@@ -18098,6 +18100,7 @@
 				A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */,
 				2442BBF81194C9D300D49469 /* HashChangeEvent.h */,
 				8482B7441198C32E00BFB005 /* HashChangeEvent.idl */,
+				8AB4BC76126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h */,
 				08700BE60F086C5300919419 /* InputElement.cpp */,
 				08591AA40F085C4E009BACB1 /* InputElement.h */,
 				85031B2D0A44EFC700F992E0 /* KeyboardEvent.cpp */,
@@ -21141,6 +21144,7 @@
 				088A0E0C126EF1DB00978F7A /* SVGPropertyTraits.h in Headers */,
 				089021A9126EF5DE0092D5EA /* SVGAnimatedLength.h in Headers */,
 				089021AD126EF5E90092D5EA /* SVGAnimatedLengthList.h in Headers */,
+				8AB4BC77126FDB7100DEB727 /* IgnoreDestructiveWriteCountIncrementer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1030,9 +1030,6 @@ public:
     void webkitDidExitFullScreenForElement(Element*);
 #endif
 
-    bool writeDisabled() const { return m_writeDisabled; }
-    void setWriteDisabled(bool flag) { m_writeDisabled = flag; }
-
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.
     void incrementLoadEventDelayCount() { ++m_loadEventDelayCount; }
     void decrementLoadEventDelayCount();
@@ -1049,6 +1046,8 @@ protected:
     void clearXMLVersion() { m_xmlVersion = String(); }
 
 private:
+    friend class IgnoreDestructiveWriteCountIncrementer;
+
     void detachParser();
 
     typedef void (*ArgumentsCallback)(const String& keyString, const String& valueString, Document*, void* data);
@@ -1203,8 +1202,8 @@ private:
     bool m_containsValidityStyleRules;
     bool m_updateFocusAppearanceRestoresSelection;
 
-    // http://www.whatwg.org/specs/web-apps/current-work/#write-neutralised
-    bool m_writeDisabled;
+    // http://www.whatwg.org/specs/web-apps/current-work/#ignore-destructive-writes-counter
+    unsigned m_ignoreDestructiveWriteCount;
 
     String m_title;
     String m_rawTitle;

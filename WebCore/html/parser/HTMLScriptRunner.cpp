@@ -35,6 +35,7 @@
 #include "HTMLScriptRunnerHost.h"
 #include "HTMLInputStream.h"
 #include "HTMLNames.h"
+#include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "NestingLevelIncrementer.h"
 #include "NotImplemented.h"
 #include "ScriptElement.h"
@@ -135,6 +136,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
     RefPtr<Element> scriptElement = pendingScript.releaseElementAndClear();
     {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
+        IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_document);
         if (errorOccurred)
             scriptElement->dispatchEvent(createScriptErrorEvent());
         else {

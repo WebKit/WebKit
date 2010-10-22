@@ -1141,6 +1141,7 @@ webcore_sources += \
 	WebCore/dom/ExceptionCode.cpp \
 	WebCore/dom/ExceptionCode.h \
 	WebCore/dom/FragmentScriptingPermission.h \
+	WebCore/dom/IgnoreDestructiveWriteCountIncrementer.h \
 	WebCore/dom/InputElement.cpp \
 	WebCore/dom/InputElement.h \
 	WebCore/dom/HashChangeEvent.h \

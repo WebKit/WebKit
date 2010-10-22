@@ -364,7 +364,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
     , m_frameElementsShouldIgnoreScrolling(false)
     , m_containsValidityStyleRules(false)
     , m_updateFocusAppearanceRestoresSelection(false)
-    , m_writeDisabled(false)
+    , m_ignoreDestructiveWriteCount(0)
     , m_title("")
     , m_rawTitle("")
     , m_titleSetExplicitly(false)
@@ -2129,10 +2129,8 @@ void Document::write(const SegmentedString& text, Document* ownerDocument)
         printf("Beginning a document.write at %d\n", elapsedTime());
 #endif
 
-    // If the insertion point is undefined and the Document has the
-    // "write-neutralised" flag set, then abort these steps.
     bool hasInsertionPoint = m_parser && m_parser->hasInsertionPoint();
-    if (!hasInsertionPoint && writeDisabled())
+    if (!hasInsertionPoint && m_ignoreDestructiveWriteCount)
         return;
 
     if (!hasInsertionPoint)
