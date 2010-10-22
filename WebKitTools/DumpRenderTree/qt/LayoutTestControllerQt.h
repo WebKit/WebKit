@@ -215,7 +215,7 @@ public slots:
     bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }
     bool geolocationPermission() const { return m_geolocationPermission; }
 
-    void setMockSpeechInputResult(const QString& result, const QString& language);
+    void setMockSpeechInputResult(const QString& result);
 
     // Empty stub method to keep parity with object model exposed by global LayoutTestController.
     void abortModal() {}

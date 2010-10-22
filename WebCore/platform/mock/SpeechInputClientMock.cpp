@@ -35,11 +35,6 @@
 
 #include "SpeechInputListener.h"
 
-namespace {
-    // HashMap doesn't support empty strings as keys, so this value (an invalid BCP47 tag) is used for those cases.
-    const String emptyLanguage = "_";
-}
-
 namespace WebCore {
 
 SpeechInputClientMock::SpeechInputClientMock()
@@ -55,13 +50,12 @@ void SpeechInputClientMock::setListener(SpeechInputListener* listener)
     m_listener = listener;
 }
 
-bool SpeechInputClientMock::startRecognition(int requestId, const String& language, const IntRect&)
+bool SpeechInputClientMock::startRecognition(int requestId, const IntRect&)
 {
     if (m_timer.isActive())
         return false;
     m_requestId = requestId;
     m_recording = true;
-    m_language = language;
     m_timer.startOneShot(0);
     return true;
 }
@@ -86,12 +80,9 @@ void SpeechInputClientMock::cancelRecognition(int requestId)
     }
 }
 
-void SpeechInputClientMock::setRecognitionResult(const String& result, const String& language)
+void SpeechInputClientMock::setRecognitionResult(const String& result)
 {
-    if (language.isEmpty())
-        m_recognitionResult.set(emptyLanguage, result);
-    else
-        m_recognitionResult.set(language, result);
+    m_recognitionResult = result;
 }
 
 void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
@@ -101,17 +92,7 @@ void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
         m_listener->didCompleteRecording(m_requestId);
         m_timer.startOneShot(0);
     } else {
-        String language = m_language.isEmpty() ? String(emptyLanguage) : m_language;
-        if (!m_recognitionResult.contains(language)) {
-            // Can't avoid setting a result on empty or invalid language strings.
-            // This would avoid generating the events used to check the results and the test would timeout.
-            String error("error: no result found for language '");
-            error.append(m_language);
-            error.append("'");
-            m_listener->setRecognitionResult(m_requestId, error);
-        } else
-            m_listener->setRecognitionResult(m_requestId, m_recognitionResult.get(language));
-
+        m_listener->setRecognitionResult(m_requestId, m_recognitionResult);
         m_listener->didCompleteRecognition(m_requestId);
         m_requestId = 0;
     }

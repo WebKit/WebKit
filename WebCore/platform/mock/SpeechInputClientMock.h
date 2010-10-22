@@ -34,8 +34,6 @@
 #include "PlatformString.h"
 #include "SpeechInputClient.h"
 #include "Timer.h"
-#include <wtf/HashMap.h>
-#include <wtf/text/StringHash.h>
 
 #if ENABLE(INPUT_SPEECH)
 
@@ -48,11 +46,11 @@ class SpeechInputClientMock : public SpeechInputClient {
 public:
     SpeechInputClientMock();
 
-    void setRecognitionResult(const String& result, const String& language);
+    void setRecognitionResult(const String& result);
 
     // SpeechInputClient methods.
     void setListener(SpeechInputListener*);
-    bool startRecognition(int, const String&, const IntRect&);
+    bool startRecognition(int, const IntRect&);
     void stopRecording(int);
     void cancelRecognition(int);
 
@@ -63,9 +61,7 @@ private:
     Timer<SpeechInputClientMock> m_timer;
     SpeechInputListener* m_listener;
     int m_requestId;
-
-    HashMap<String, String> m_recognitionResult;
-    String m_language;
+    String m_recognitionResult;
 };
 
 } // namespace WebCore

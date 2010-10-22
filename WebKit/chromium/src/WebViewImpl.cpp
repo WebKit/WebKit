@@ -88,7 +88,6 @@
 #include "SecurityOrigin.h"
 #include "SelectionController.h"
 #include "Settings.h"
-#include "SpeechInputClientImpl.h"
 #include "Timer.h"
 #include "TypingCommand.h"
 #include "UserGestureIndicator.h"
@@ -283,7 +282,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     , m_compositorCreationFailed(false)
 #endif
 #if ENABLE(INPUT_SPEECH)
-    , m_speechInputClient(SpeechInputClientImpl::create(client))
+    , m_speechInputClient(client)
 #endif
     , m_deviceOrientationClientProxy(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0))
 {
@@ -306,7 +305,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
     pageClients.dragClient = &m_dragClientImpl;
     pageClients.inspectorClient = &m_inspectorClientImpl;
 #if ENABLE(INPUT_SPEECH)
-    pageClients.speechInputClient = m_speechInputClient.get();
+    pageClients.speechInputClient = &m_speechInputClient;
 #endif
     pageClients.deviceOrientationClient = m_deviceOrientationClientProxy.get();
 
