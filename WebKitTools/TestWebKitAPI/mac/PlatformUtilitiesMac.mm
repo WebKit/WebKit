@@ -41,7 +41,7 @@ void run(bool* done)
 
 WKStringRef createInjectedBundlePath()
 {
-    NSString *nsString = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"InjectedBundle.bundle"];
+    NSString *nsString = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"InjectedBundleTestWebKitAPI.bundle"];
     return WKStringCreateWithCFString((CFStringRef)nsString);
 }
 

@@ -1,3 +1,14 @@
+2010-10-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Rename the InjectedBundle for TestWebKitAPI to InjectedBundleTestWebKitAPI.bundle
+
+        * TestWebKitAPI/Configurations/InjectedBundle.xcconfig:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        (TestWebKitAPI::Util::createInjectedBundlePath):
+
 2010-10-22  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -90,7 +90,7 @@
 		BC131A9E1171317C00B69727 /* TestWebKitAPIPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWebKitAPIPrefix.h; sourceTree = "<group>"; };
 		BC131AA8117131FC00B69727 /* TestsController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; path = TestsController.cpp; sourceTree = "<group>"; };
 		BC575946126E7351006F0F12 /* InjectedBundleMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMain.cpp; sourceTree = "<group>"; };
-		BC575980126E74AF006F0F12 /* InjectedBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InjectedBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InjectedBundleTestWebKitAPI.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC575981126E74AF006F0F12 /* InjectedBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InjectedBundle-Info.plist"; sourceTree = "<group>"; };
 		BC575A9E126E75FB006F0F12 /* InjectedBundleTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleTest.h; sourceTree = "<group>"; };
 		BC575A9F126E7657006F0F12 /* InjectedBundleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleController.h; sourceTree = "<group>"; };
@@ -194,7 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				8DD76FA10486AA7600D96B5E /* TestWebKitAPI */,
-				BC575980126E74AF006F0F12 /* InjectedBundle.bundle */,
+				BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -303,9 +303,9 @@
 			productReference = 8DD76FA10486AA7600D96B5E /* TestWebKitAPI */;
 			productType = "com.apple.product-type.tool";
 		};
-		BC57597F126E74AF006F0F12 /* InjectedBundle */ = {
+		BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundle" */;
+			buildConfigurationList = BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundleTestWebKitAPI" */;
 			buildPhases = (
 				BC57597C126E74AF006F0F12 /* Resources */,
 				BC57597D126E74AF006F0F12 /* Sources */,
@@ -315,9 +315,9 @@
 			);
 			dependencies = (
 			);
-			name = InjectedBundle;
+			name = InjectedBundleTestWebKitAPI;
 			productName = InjectedBundle;
-			productReference = BC575980126E74AF006F0F12 /* InjectedBundle.bundle */;
+			productReference = BC575980126E74AF006F0F12 /* InjectedBundleTestWebKitAPI.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -340,7 +340,7 @@
 			projectRoot = "";
 			targets = (
 				8DD76F960486AA7600D96B5E /* TestWebKitAPI */,
-				BC57597F126E74AF006F0F12 /* InjectedBundle */,
+				BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */,
 			);
 		};
 /* End PBXProject section */
@@ -398,7 +398,7 @@
 /* Begin PBXTargetDependency section */
 		BC575A96126E74E7006F0F12 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BC57597F126E74AF006F0F12 /* InjectedBundle */;
+			target = BC57597F126E74AF006F0F12 /* InjectedBundleTestWebKitAPI */;
 			targetProxy = BC575A95126E74E7006F0F12 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -470,7 +470,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundle" */ = {
+		BC575986126E74AF006F0F12 /* Build configuration list for PBXNativeTarget "InjectedBundleTestWebKitAPI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BC575984126E74AF006F0F12 /* Debug */,
