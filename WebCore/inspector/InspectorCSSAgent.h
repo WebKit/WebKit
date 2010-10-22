@@ -56,7 +56,6 @@ public:
         return adoptRef(new InspectorCSSAgent(domAgent, frontend));
     }
 
-    static PassRefPtr<InspectorObject> buildObjectForStyle(CSSStyleDeclaration*, const String& fullStyleId, CSSStyleSourceData* = 0);
     static CSSStyleSheet* parentStyleSheet(StyleBase*);
     static CSSStyleRule* asCSSStyleRule(StyleBase*);
 
@@ -73,8 +72,8 @@ public:
     void getAllStyles2(RefPtr<InspectorArray>* styles);
     void getStyleSheet2(const String& styleSheetId, RefPtr<InspectorValue>* result);
     void setStyleSheetText2(const String& styleSheetId, const String& text);
-    void setStyleText2(const String& styleId, const String& text, RefPtr<InspectorValue>* result);
-    void toggleProperty2(const String& styleId, long propertyOrdinal, bool disabled);
+    void setPropertyText2(const String& styleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result);
+    void toggleProperty2(const String& styleId, long propertyIndex, bool disable, RefPtr<InspectorValue>* result);
     void setRuleSelector2(const String& ruleId, const String& selector, RefPtr<InspectorValue>* result);
     void addRule2(const long contextNodeId, const String& selector, RefPtr<InspectorValue>* result);
     void getSupportedCSSProperties(RefPtr<InspectorArray>* result);
@@ -82,21 +81,17 @@ public:
 private:
     typedef HashMap<String, RefPtr<InspectorStyleSheet> > IdToInspectorStyleSheet;
     typedef HashMap<CSSStyleSheet*, RefPtr<InspectorStyleSheet> > CSSStyleSheetToInspectorStyleSheet;
-    typedef HashMap<Node*, RefPtr<InspectorStyleSheetForInlineStyle> > NodeToInspectorStyleSheet; // for bogus "stylesheets" with inline node styles
+    typedef HashMap<Node*, RefPtr<InspectorStyleSheetForInlineStyle> > NodeToInspectorStyleSheet; // bogus "stylesheets" with elements' inline styles
     typedef HashMap<RefPtr<Document>, RefPtr<InspectorStyleSheet> > DocumentToViaInspectorStyleSheet; // "via inspector" stylesheets
 
     static Element* inlineStyleElement(CSSStyleDeclaration*);
-    static void populateObjectWithStyleProperties(CSSStyleDeclaration*, InspectorObject* result, Vector<CSSPropertySourceData>* propertyData);
-    static String shorthandValue(CSSStyleDeclaration*, const String& shorthandProperty);
-    static String shorthandPriority(CSSStyleDeclaration*, const String& shorthandProperty);
-    static Vector<String> longhandProperties(CSSStyleDeclaration*, const String& shorthandProperty);
 
     InspectorStyleSheetForInlineStyle* asInspectorStyleSheet(Element* element);
     Element* elementForId(long nodeId);
 
     InspectorStyleSheet* bindStyleSheet(CSSStyleSheet*);
     InspectorStyleSheet* viaInspectorStyleSheet(Document*, bool createIfAbsent);
-    InspectorStyleSheet* styleSheetForId(const String& styleSheetId);
+    InspectorStyleSheet* styleSheetForId(const String&);
     String detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
 
     PassRefPtr<InspectorArray> buildArrayForRuleList(CSSRuleList* ruleList);

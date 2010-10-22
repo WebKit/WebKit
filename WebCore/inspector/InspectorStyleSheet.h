@@ -26,16 +26,14 @@
 #define InspectorStyleSheet_h
 
 #include "CSSPropertySourceData.h"
-#include "Document.h"
 #include "InspectorValues.h"
 #include "PlatformString.h"
 
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/UnusedParam.h>
+#include <wtf/Vector.h>
 
 class ParsedStyleSheet;
 
@@ -43,13 +41,102 @@ namespace WebCore {
 
 class CSSRuleList;
 class CSSStyleDeclaration;
+class CSSStyleSheet;
+class Document;
 class Element;
+class InspectorStyleSheet;
 class Node;
 
 #if ENABLE(INSPECTOR)
 
+class InspectorCSSId {
+public:
+    static InspectorCSSId createFromParts(const String& styleSheetId, const String& ordinal) { return InspectorCSSId(styleSheetId + ":" + ordinal); }
+
+    InspectorCSSId() { }
+    explicit InspectorCSSId(const String& id)
+    {
+        id.split(':', m_idParts);
+        ASSERT(m_idParts.size() == 2);
+    }
+
+    const String& styleSheetId() const { ASSERT(m_idParts.size() == 2); return m_idParts.at(0); }
+    const String& ordinal() const { ASSERT(m_idParts.size() == 2); return m_idParts.at(1); }
+    bool isEmpty() const { return m_idParts.isEmpty(); }
+    String asString() const
+    {
+        if (isEmpty())
+            return String();
+
+        return m_idParts.at(0) + ":" + m_idParts.at(1);
+    }
+
+private:
+    Vector<String> m_idParts;
+};
+
+struct InspectorStyleProperty {
+    InspectorStyleProperty()
+    {
+    }
+
+    InspectorStyleProperty(CSSPropertySourceData sourceData, bool hasSource, bool disabled)
+        : sourceData(sourceData)
+        , hasSource(hasSource)
+        , disabled(disabled)
+    {
+    }
+
+    CSSPropertySourceData sourceData;
+    bool hasSource;
+    bool disabled;
+    String rawText;
+};
+
+class InspectorStyle : public RefCounted<InspectorStyle> {
+public:
+    static PassRefPtr<InspectorStyle> create(const InspectorCSSId& styleId, CSSStyleDeclaration* style, InspectorStyleSheet* parentStyleSheet)
+    {
+        return adoptRef(new InspectorStyle(styleId, style, parentStyleSheet));
+    }
+
+    InspectorStyle(const InspectorCSSId& styleId, CSSStyleDeclaration* style, InspectorStyleSheet* parentStyleSheet)
+        : m_styleId(styleId)
+        , m_style(style)
+        , m_parentStyleSheet(parentStyleSheet)
+    {
+        ASSERT(style);
+    }
+
+    CSSStyleDeclaration* cssStyle() const { return m_style; }
+    PassRefPtr<InspectorObject> buildObjectForStyle() const;
+    bool hasDisabledProperties() const { return !m_disabledProperties.isEmpty(); }
+    bool setPropertyText(unsigned index, const String& text, bool overwrite);
+    bool toggleProperty(unsigned index, bool disable);
+
+private:
+    static unsigned disabledIndexByOrdinal(unsigned ordinal, bool canUseSubsequent, Vector<InspectorStyleProperty>& allProperties);
+
+    bool styleText(String* result);
+    bool disableProperty(unsigned indexToDisable, Vector<InspectorStyleProperty>& allProperties);
+    bool enableProperty(unsigned indexToEnable, Vector<InspectorStyleProperty>& allProperties);
+    bool populateAllProperties(Vector<InspectorStyleProperty>* result) const;
+    void populateObjectWithStyleProperties(InspectorObject* result) const;
+    void shiftDisabledProperties(unsigned fromIndex, long offset);
+    bool replacePropertyInStyleText(const InspectorStyleProperty& property, const String& newText);
+    String shorthandValue(const String& shorthandProperty) const;
+    String shorthandPriority(const String& shorthandProperty) const;
+    Vector<String> longhandProperties(const String& shorthandProperty) const;
+
+    InspectorCSSId m_styleId;
+    CSSStyleDeclaration* m_style;
+    InspectorStyleSheet* m_parentStyleSheet;
+    Vector<InspectorStyleProperty> m_disabledProperties;
+};
+
 class InspectorStyleSheet : public RefCounted<InspectorStyleSheet> {
 public:
+    typedef HashMap<CSSStyleDeclaration*, RefPtr<InspectorStyle> > InspectorStyleMap;
     static PassRefPtr<InspectorStyleSheet> create(const String& id, CSSStyleSheet* pageStyleSheet, const String& origin, const String& documentURL)
     {
         return adoptRef(new InspectorStyleSheet(id, pageStyleSheet, origin, documentURL));
@@ -61,39 +148,45 @@ public:
     const String& id() const { return m_id; }
     CSSStyleSheet* pageStyleSheet() const { return m_pageStyleSheet; }
     bool setText(const String&);
-    bool setRuleSelector(const String& ruleId, const String& selector);
+    bool setRuleSelector(const InspectorCSSId&, const String& selector);
     CSSStyleRule* addRule(const String& selector);
-    CSSStyleRule* ruleForId(const String&) const;
+    CSSStyleRule* ruleForId(const InspectorCSSId&) const;
     PassRefPtr<InspectorObject> buildObjectForStyleSheet();
     PassRefPtr<InspectorObject> buildObjectForRule(CSSStyleRule*);
     PassRefPtr<InspectorObject> buildObjectForStyle(CSSStyleDeclaration*);
-    virtual CSSStyleDeclaration* styleForId(const String&) const;
-    virtual bool setStyleText(const String& styleId, const String& text);
+    bool setPropertyText(const InspectorCSSId&, unsigned propertyIndex, const String& text, bool overwrite);
+    bool toggleProperty(const InspectorCSSId&, unsigned propertyIndex, bool disable);
+
+    virtual CSSStyleDeclaration* styleForId(const InspectorCSSId&) const;
 
 protected:
     bool canBind() const { return m_origin != "userAgent" && m_origin != "user"; }
-    String fullRuleOrStyleId(CSSStyleDeclaration* style) const { return id() + ":" + ruleOrStyleId(style); }
-    String ruleOrStyleId(CSSStyleDeclaration* style) const { unsigned index = ruleIndexByStyle(style); return index == UINT_MAX ? "" : String::number(index); }
+    InspectorCSSId ruleOrStyleId(CSSStyleDeclaration* style) const;
     virtual Document* ownerDocument() const;
     virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const;
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const;
     virtual bool ensureParsedDataReady();
+    virtual PassRefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&);
+    virtual void rememberInspectorStyle(RefPtr<InspectorStyle> inspectorStyle);
+    virtual void forgetInspectorStyle(CSSStyleDeclaration* style);
+
+    // Also accessed by friend class InspectorStyle.
+    virtual bool setStyleText(CSSStyleDeclaration*, const String&);
 
 private:
     bool text(String* result) const;
     bool ensureText() const;
     bool ensureSourceData(Node* ownerNode);
-    void innerSetStyleSheetText(const String& newText);
-    bool innerSetStyleText(CSSStyleDeclaration*, const String&);
     bool styleSheetTextWithChangedStyle(CSSStyleDeclaration*, const String& newStyleText, String* result);
     CSSStyleRule* findPageRuleWithStyle(CSSStyleDeclaration*);
-    String fullRuleId(CSSStyleRule* rule) const;
-    String fullStyleId(CSSStyleDeclaration* style) const { return fullRuleOrStyleId(style); }
+    InspectorCSSId ruleId(CSSStyleRule* rule) const;
+    InspectorCSSId styleId(CSSStyleDeclaration* style) const { return ruleOrStyleId(style); }
     void revalidateStyle(CSSStyleDeclaration*);
-    bool styleSheetText(String* result) const;
+    bool originalStyleSheetText(String* result) const;
     bool resourceStyleSheetText(String* result) const;
     bool inlineStyleSheetText(String* result) const;
     PassRefPtr<InspectorArray> buildArrayForRuleList(CSSRuleList*);
+
 
     String m_id;
     CSSStyleSheet* m_pageStyleSheet;
@@ -101,6 +194,9 @@ private:
     String m_documentURL;
     bool m_isRevalidating;
     ParsedStyleSheet* m_parsedStyleSheet;
+    InspectorStyleMap m_inspectorStyles;
+
+    friend class InspectorStyle;
 };
 
 class InspectorStyleSheetForInlineStyle : public InspectorStyleSheet {
@@ -111,14 +207,19 @@ public:
     }
 
     InspectorStyleSheetForInlineStyle(const String& id, Element* element, const String& origin);
-    virtual CSSStyleDeclaration* styleForId(const String& id) const { ASSERT(id == "0"); UNUSED_PARAM(id); return inlineStyle(); }
-    virtual bool setStyleText(const String& styleId, const String& text);
+    virtual CSSStyleDeclaration* styleForId(const InspectorCSSId& id) const { ASSERT_UNUSED(id, id.ordinal() == "0"); return inlineStyle(); }
 
 protected:
     virtual Document* ownerDocument() const;
-    virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const { ASSERT(style == inlineStyle()); UNUSED_PARAM(style); return m_ruleSourceData; }
+    virtual RefPtr<CSSRuleSourceData> ruleSourceDataFor(CSSStyleDeclaration* style) const { ASSERT_UNUSED(style, style == inlineStyle()); return m_ruleSourceData; }
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const { return 0; }
     virtual bool ensureParsedDataReady();
+    virtual PassRefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&);
+    virtual void rememberInspectorStyle(RefPtr<InspectorStyle>) { }
+    virtual void forgetInspectorStyle(CSSStyleDeclaration*) { }
+
+    // Also accessed by friend class InspectorStyle.
+    virtual bool setStyleText(CSSStyleDeclaration*, const String&);
 
 private:
     CSSStyleDeclaration* inlineStyle() const;
@@ -126,6 +227,7 @@ private:
 
     Element* m_element;
     RefPtr<CSSRuleSourceData> m_ruleSourceData;
+    RefPtr<InspectorStyle> m_inspectorStyle;
 };
 
 #endif

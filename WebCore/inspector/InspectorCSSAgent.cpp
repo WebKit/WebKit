@@ -49,7 +49,8 @@
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
-
+// Currently implemented model:
+//
 // cssProperty = {
 //    name          : <string>,
 //    value         : <string>,
@@ -62,83 +63,55 @@
 //    endOffset     : <number>, // Optional - property text end offset in enclosing style declaration. Absent for computed styles and such.
 // }
 //
+// name + value + priority : present when the property is enabled
+// text                    : present when the property is disabled
+//
+// For disabled properties, startOffset === endOffset === insertion point for the property.
+//
 // status:
 // "disabled" == property disabled by user
 // "active" == property participates in the computed style calculation
 // "inactive" == property does no participate in the computed style calculation (i.e. overridden by a subsequent property with the same name)
 // "style" == property is active and originates from the WebCore CSSStyleDeclaration rather than CSS source code (e.g. implicit longhand properties)
 //
-//
 // cssStyle = {
-//    styleId         : <number>, // Optional
-//    styleSheetId    : <number>, // Parent: -1 for inline styles (<foo style="..">)
-//    cssProperties   : [
+//    styleId            : <string>, // Optional
+//    cssProperties      : [
 //                          #cssProperty,
 //                          ...
 //                          #cssProperty
-//                    ],
-//    shorthandValues : {
+//                         ],
+//    shorthandValues    : {
 //                          shorthandName1 : shorthandValue1,
 //                          shorthandName2 : shorthandValue2
-//                      },
-//    cssText         : <string>, // declaration text
-//    properties      : { } // ???
+//                         },
+//    cssText            : <string>, // Optional - declaration text
+//    properties         : { width, height }
 // }
 //
-// // TODO:
-// // - convert disabledProperties to enabled flag.
-// // - convert width, height to properties
-//
 // cssRule = {
-//    ruleId       : <number>,
-//    selectorText : <string>
-//    sourceURL    : <string>
-//    sourceLine   : <string>
-//    styleSheetId : <number> // also found in style
-//    origin       : <string> // "" || "user-agent" || "user" || "inspector"
+//    ruleId       : <string>, // Optional
+//    selectorText : <string>,
+//    sourceURL    : <string>,
+//    sourceLine   : <string>,
+//    origin       : <string>, // "" || "user-agent" || "user" || "inspector"
 //    style        : #cssStyle
 // }
 //
-// // TODO:
-// // - fix origin
-// // - add sourceURL
-// // - fix parentStyleSheetId
-//
 // cssStyleSheet = {
 //    styleSheetId   : <number>
-//    href           : <string>
+//    sourceURL      : <string>
 //    title          : <string>
 //    disabled       : <boolean>
-//    documentNodeId : <number>
 //    rules          : [
 //                         #cssRule,
 //                         ...
 //                         #cssRule
 //                     ]
+//    text           : <string> // Optional - whenever the text is available for a text-based stylesheet
 // }
 
 namespace WebCore {
-
-// static
-PassRefPtr<InspectorObject> InspectorCSSAgent::buildObjectForStyle(CSSStyleDeclaration* style, const String& fullStyleId, CSSStyleSourceData* sourceData)
-{
-    RefPtr<InspectorObject> result = InspectorObject::create();
-    if (!fullStyleId.isEmpty())
-        result->setString("id", fullStyleId);
-
-    result->setString("width", style->getPropertyValue("width"));
-    result->setString("height", style->getPropertyValue("height"));
-    Vector<CSSPropertySourceData>* propertyData = 0;
-
-    if (sourceData) {
-        result->setNumber("startOffset", sourceData->styleBodyRange.start);
-        result->setNumber("endOffset", sourceData->styleBodyRange.end);
-        propertyData = &sourceData->propertyData;
-    }
-    populateObjectWithStyleProperties(style, result.get(), propertyData);
-
-    return result.release();
-}
 
 // static
 CSSStyleSheet* InspectorCSSAgent::parentStyleSheet(StyleBase* styleBase)
@@ -163,7 +136,6 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(StyleBase* styleBase)
         return 0;
     return static_cast<CSSStyleRule*>(rule);
 }
-
 
 InspectorCSSAgent::InspectorCSSAgent(InspectorDOMAgent* domAgent, InspectorFrontend* frontend)
     : m_domAgent(domAgent)
@@ -246,7 +218,10 @@ void InspectorCSSAgent::getComputedStyleForNode2(long nodeId, RefPtr<InspectorVa
     if (!defaultView)
         return;
 
-    *style = buildObjectForStyle(defaultView->getComputedStyle(element, "").get(), "");
+    RefPtr<CSSStyleDeclaration> computedStyle = defaultView->getComputedStyle(element, "");
+    Vector<InspectorStyleProperty> properties;
+    RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyle.get(), 0);
+    *style = inspectorStyle->buildObjectForStyle();
 }
 
 void InspectorCSSAgent::getInheritedStylesForNode2(long nodeId, RefPtr<InspectorArray>* style)
@@ -263,7 +238,7 @@ void InspectorCSSAgent::getInheritedStylesForNode2(long nodeId, RefPtr<Inspector
         if (parentElement->style() && parentElement->style()->length()) {
             InspectorStyleSheetForInlineStyle* styleSheet = asInspectorStyleSheet(element);
             if (styleSheet)
-                parentStyle->setObject("inlineStyle", styleSheet->buildObjectForStyle(styleSheet->styleForId("0")));
+                parentStyle->setObject("inlineStyle", styleSheet->buildObjectForStyle(styleSheet->styleForId(InspectorCSSId::createFromParts(styleSheet->id(), "0"))));
         }
 
         CSSStyleSelector* parentSelector = parentElement->ownerDocument()->styleSelector();
@@ -308,43 +283,48 @@ void InspectorCSSAgent::setStyleSheetText2(const String& styleSheetId, const Str
     inspectorStyleSheet->setText(text);
 }
 
-void InspectorCSSAgent::setStyleText2(const String& fullStyleId, const String& text, RefPtr<InspectorValue>* result)
+void InspectorCSSAgent::setPropertyText2(const String& fullStyleId, long propertyIndex, const String& text, bool overwrite, RefPtr<InspectorValue>* result)
 {
-    Vector<String> idParts;
-    fullStyleId.split(':', idParts);
-    ASSERT(idParts.size() == 2);
+    InspectorCSSId compoundId(fullStyleId);
+    ASSERT(!compoundId.isEmpty());
 
-    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(idParts.at(0));
+    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(compoundId.styleSheetId());
     if (!inspectorStyleSheet)
         return;
 
-    if (!inspectorStyleSheet->setStyleText(idParts.at(1), text))
-        return;
-
-    *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(idParts.at(1)));
+    bool success = inspectorStyleSheet->setPropertyText(compoundId, propertyIndex, text, overwrite);
+    if (success)
+        *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-void InspectorCSSAgent::toggleProperty2(const String&, long, bool)
+void InspectorCSSAgent::toggleProperty2(const String& fullStyleId, long propertyIndex, bool disable, RefPtr<InspectorValue>* result)
 {
-    // FIXME(apavlov): implement
+    InspectorCSSId compoundId(fullStyleId);
+    ASSERT(!compoundId.isEmpty());
+
+    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(compoundId.styleSheetId());
+    if (!inspectorStyleSheet)
+        return;
+
+    bool success = inspectorStyleSheet->toggleProperty(compoundId, propertyIndex, disable);
+    if (success)
+        *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
 void InspectorCSSAgent::setRuleSelector2(const String& fullRuleId, const String& selector, RefPtr<InspectorValue>* result)
 {
-    Vector<String> idParts;
-    fullRuleId.split(':', idParts);
-    ASSERT(idParts.size() == 2);
+    InspectorCSSId compoundId(fullRuleId);
+    ASSERT(!compoundId.isEmpty());
 
-    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(idParts.at(0));
+    InspectorStyleSheet* inspectorStyleSheet = styleSheetForId(compoundId.styleSheetId());
     if (!inspectorStyleSheet)
         return;
 
-    const String& ruleId = idParts.at(1);
-    bool success = inspectorStyleSheet->setRuleSelector(ruleId, selector);
+    bool success = inspectorStyleSheet->setRuleSelector(compoundId, selector);
     if (!success)
         return;
 
-    *result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(ruleId));
+    *result = inspectorStyleSheet->buildObjectForRule(inspectorStyleSheet->ruleForId(compoundId));
 }
 
 void InspectorCSSAgent::addRule2(const long contextNodeId, const String& selector, RefPtr<InspectorValue>* result)
@@ -377,130 +357,6 @@ Element* InspectorCSSAgent::inlineStyleElement(CSSStyleDeclaration* style)
     if (!node || !node->isStyledElement() || static_cast<StyledElement*>(node)->getInlineStyleDecl() != style)
         return 0;
     return static_cast<Element*>(node);
-}
-
-// static
-void InspectorCSSAgent::populateObjectWithStyleProperties(CSSStyleDeclaration* style, InspectorObject* result, Vector<CSSPropertySourceData>* propertyData)
-{
-    RefPtr<InspectorArray> properties = InspectorArray::create();
-    RefPtr<InspectorObject> shorthandValues = InspectorObject::create();
-    HashMap<String, RefPtr<InspectorObject> > propertyNameToPreviousActiveProperty;
-    HashSet<String> foundShorthands;
-    HashSet<String> sourcePropertyNames;
-    if (propertyData) {
-        for (Vector<CSSPropertySourceData>::const_iterator it = propertyData->begin(); it != propertyData->end(); ++it) {
-            const CSSPropertySourceData& propertyEntry = *it;
-            RefPtr<InspectorObject> property = InspectorObject::create();
-            properties->pushObject(property);
-            const String& name = propertyEntry.name;
-            sourcePropertyNames.add(name);
-            property->setString("name", name);
-            property->setString("value", propertyEntry.value);
-            property->setString("priority", propertyEntry.important ? "important" : "");
-            property->setString("status", "active");
-            property->setBoolean("parsedOk", propertyEntry.parsedOk);
-            property->setNumber("startOffset", propertyEntry.range.start);
-            property->setNumber("endOffset", propertyEntry.range.end);
-            if (propertyEntry.parsedOk) {
-                property->setBoolean("implicit", false);
-                String shorthand = style->getPropertyShorthand(name);
-                property->setString("shorthandName", shorthand);
-                if (!shorthand.isEmpty() && !foundShorthands.contains(shorthand)) {
-                    foundShorthands.add(shorthand);
-                    shorthandValues->setString(shorthand, shorthandValue(style, shorthand));
-                }
-            } else {
-                property->setBoolean("implicit", false);
-                property->setString("shorthandName", "");
-            }
-            HashMap<String, RefPtr<InspectorObject> >::iterator activeIt = propertyNameToPreviousActiveProperty.find(name);
-            if (activeIt != propertyNameToPreviousActiveProperty.end()) {
-                activeIt->second->setString("status", "inactive");
-                activeIt->second->setString("shorthandName", "");
-            }
-            propertyNameToPreviousActiveProperty.set(name, property);
-        }
-    }
-
-    for (int i = 0, size = style->length(); i < size; ++i) {
-        String name = style->item(i);
-        if (sourcePropertyNames.contains(name))
-            continue;
-
-        sourcePropertyNames.add(name);
-        RefPtr<InspectorObject> property = InspectorObject::create();
-        properties->pushObject(property);
-        property->setString("name", name);
-        property->setString("value", style->getPropertyValue(name));
-        property->setString("priority", style->getPropertyPriority("name"));
-        property->setBoolean("implicit", style->isPropertyImplicit(name));
-        property->setBoolean("parsedOk", true);
-        property->setString("status", "style");
-        String shorthand = style->getPropertyShorthand(name);
-        property->setString("shorthandName", shorthand);
-        if (!shorthand.isEmpty() && !foundShorthands.contains(shorthand)) {
-            foundShorthands.add(shorthand);
-            shorthandValues->setString(shorthand, shorthandValue(style, shorthand));
-        }
-    }
-
-    result->setArray("properties", properties);
-    result->setObject("shorthandValues", shorthandValues);
-}
-
-// static
-String InspectorCSSAgent::shorthandValue(CSSStyleDeclaration* style, const String& shorthandProperty)
-{
-    String value = style->getPropertyValue(shorthandProperty);
-    if (value.isEmpty()) {
-        for (unsigned i = 0; i < style->length(); ++i) {
-            String individualProperty = style->item(i);
-            if (style->getPropertyShorthand(individualProperty) != shorthandProperty)
-                continue;
-            if (style->isPropertyImplicit(individualProperty))
-                continue;
-            String individualValue = style->getPropertyValue(individualProperty);
-            if (individualValue == "initial")
-                continue;
-            if (value.length())
-                value.append(" ");
-            value.append(individualValue);
-        }
-    }
-    return value;
-}
-
-// static
-String InspectorCSSAgent::shorthandPriority(CSSStyleDeclaration* style, const String& shorthandProperty)
-{
-    String priority = style->getPropertyPriority(shorthandProperty);
-    if (priority.isEmpty()) {
-        for (unsigned i = 0; i < style->length(); ++i) {
-            String individualProperty = style->item(i);
-            if (style->getPropertyShorthand(individualProperty) != shorthandProperty)
-                continue;
-            priority = style->getPropertyPriority(individualProperty);
-            break;
-        }
-    }
-    return priority;
-}
-
-
-// static
-Vector<String> InspectorCSSAgent::longhandProperties(CSSStyleDeclaration* style, const String& shorthandProperty)
-{
-    Vector<String> properties;
-    HashSet<String> foundProperties;
-    for (unsigned i = 0; i < style->length(); ++i) {
-        String individualProperty = style->item(i);
-        if (foundProperties.contains(individualProperty) || style->getPropertyShorthand(individualProperty) != shorthandProperty)
-            continue;
-
-        foundProperties.add(individualProperty);
-        properties.append(individualProperty);
-    }
-    return properties;
 }
 
 InspectorStyleSheetForInlineStyle* InspectorCSSAgent::asInspectorStyleSheet(Element* element)
@@ -622,7 +478,8 @@ PassRefPtr<InspectorObject> InspectorCSSAgent::buildObjectForAttributeStyles(Ele
         Attribute* attribute = attributes->attributeItem(i);
         if (attribute->style()) {
             String attributeName = attribute->localName();
-            styleAttributes->setObject(attributeName.utf8().data(), buildObjectForStyle(attribute->style(), ""));
+            RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(InspectorCSSId(), attribute->style(), 0);
+            styleAttributes->setObject(attributeName.utf8().data(), inspectorStyle->buildObjectForStyle());
         }
     }
 
