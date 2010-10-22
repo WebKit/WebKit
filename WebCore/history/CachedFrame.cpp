@@ -115,6 +115,8 @@ void CachedFrameBase::restore()
     if (m_document->hasListenerType(Document::TOUCH_LISTENER))
         m_document->page()->chrome()->client()->needTouchEvents(true);
 #endif
+
+    m_document->documentDidBecomeActive();
 }
 
 CachedFrame::CachedFrame(Frame* frame)
