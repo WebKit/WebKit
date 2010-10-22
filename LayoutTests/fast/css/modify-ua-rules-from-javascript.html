@@ -8,12 +8,15 @@ if (window.layoutTestController)
 
 function test()
 {
-    var styleToChange = window.getMatchedCSSRules(document.body, "", false)[0].style;
-    var originalMarginTop = styleToChange.marginTop;
-    styleToChange.marginTop = "200px";
-    styleToChange.marginTop = originalMarginTop;
-
-    document.getElementById("result").innerHTML = "FAIL";
+    var cssRulesList = window.getMatchedCSSRules(document.body, "", false)[0];
+    if (cssRulesList) 
+    {
+        var styleToChange = cssRulesList.style;
+        var originalMarginTop = styleToChange.marginTop;
+        styleToChange.marginTop = "200px";
+        styleToChange.marginTop = originalMarginTop;
+        document.getElementById("result").innerHTML = "FAIL";
+    }
 }
 </script>
 </head>

@@ -10,9 +10,9 @@ function iconMarginValue()
 {
     var iconDiv = document.getElementById('icon');
     var rules = window.getMatchedCSSRules(iconDiv,'',false);
-    return rules[1].style.getPropertyValue('margin');
+    return rules[1] ? rules[1].style.getPropertyValue('margin') : 'null';
 }
 
-shouldThrow('iconMarginValue()', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('iconMarginValue()', '"null"');
 
 var successfullyParsed = true;

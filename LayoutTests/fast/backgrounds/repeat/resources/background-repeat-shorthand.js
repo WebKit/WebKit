@@ -12,41 +12,41 @@ function getShorthand(longhand, iconId)
 {
     var iconDiv = document.getElementById(iconId);
     var rules = window.getMatchedCSSRules(iconDiv,'',false);
-    return rules[1].style.getPropertyShorthand(longhand);
+    return rules[1] ? rules[1].style.getPropertyShorthand(longhand) : 'null';
 }
 
-shouldThrow('getShorthand("background-repeat-x", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("background-repeat-y", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("background-repeat", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('getShorthand("background-repeat-x", "icon1")', '"null"');
+shouldBe('getShorthand("background-repeat-y", "icon1")', '"null"');
+shouldBe('getShorthand("background-repeat", "icon1")', '"null"');
 
-shouldThrow('getShorthand("background-position-x", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("background-position-y", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("background-position", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('getShorthand("background-position-x", "icon1")', '"null"');
+shouldBe('getShorthand("background-position-y", "icon1")', '"null"');
+shouldBe('getShorthand("background-position", "icon1")', '"null"');
 
-shouldThrow('getShorthand("-webkit-mask-repeat-x", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("-webkit-mask-repeat-y", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("-webkit-mask-repeat", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('getShorthand("-webkit-mask-repeat-x", "icon1")', '"null"');
+shouldBe('getShorthand("-webkit-mask-repeat-y", "icon1")', '"null"');
+shouldBe('getShorthand("-webkit-mask-repeat", "icon1")', '"null"');
 
-shouldThrow('getShorthand("-webkit-mask-position-x", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("-webkit-mask-position-y", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("-webkit-mask-repeat", "icon1")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('getShorthand("-webkit-mask-position-x", "icon1")', '"null"');
+shouldBe('getShorthand("-webkit-mask-position-y", "icon1")', '"null"');
+shouldBe('getShorthand("-webkit-mask-repeat", "icon1")', '"null"');
 
 
-shouldThrow('getShorthand("background-repeat-x", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("background-repeat-y", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("background-repeat", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('getShorthand("background-repeat-x", "icon2")', '"null"');
+shouldBe('getShorthand("background-repeat-y", "icon2")', '"null"');
+shouldBe('getShorthand("background-repeat", "icon2")', '"null"');
 
-shouldThrow('getShorthand("background-position-x", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("background-position-y", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("background-position", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('getShorthand("background-position-x", "icon2")', '"null"');
+shouldBe('getShorthand("background-position-y", "icon2")', '"null"');
+shouldBe('getShorthand("background-position", "icon2")', '"null"');
 
-shouldThrow('getShorthand("-webkit-mask-repeat-x", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("-webkit-mask-repeat-y", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("-webkit-mask-repeat", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('getShorthand("-webkit-mask-repeat-x", "icon2")', '"null"');
+shouldBe('getShorthand("-webkit-mask-repeat-y", "icon2")', '"null"');
+shouldBe('getShorthand("-webkit-mask-repeat", "icon2")', '"null"');
 
-shouldThrow('getShorthand("-webkit-mask-position-x", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("-webkit-mask-position-y", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
-shouldThrow('getShorthand("-webkit-mask-repeat", "icon2")', '"TypeError: Result of expression \'rules[1]\' [undefined] is not an object."');
+shouldBe('getShorthand("-webkit-mask-position-x", "icon2")', '"null"');
+shouldBe('getShorthand("-webkit-mask-position-y", "icon2")', '"null"');
+shouldBe('getShorthand("-webkit-mask-repeat", "icon2")', '"null"');
 
 
 var successfullyParsed = true;

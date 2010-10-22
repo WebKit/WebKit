@@ -3,7 +3,7 @@ This layouttest was initially there to test that shorthand property value is cor
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS iconMarginValue() threw exception TypeError: Result of expression 'rules[1]' [undefined] is not an object..
+PASS iconMarginValue() is "null"
 PASS successfullyParsed is true
 
 TEST COMPLETE
