@@ -49,7 +49,7 @@ public:
     void pageDidLeaveAcceleratedCompositing() { }
 #endif // USE(ACCELERATED_COMPOSITING)
     virtual void processDidCrash() { }
-    virtual void processDidRevive() { }
+    virtual void didRelaunchProcess() { }
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
     virtual void takeFocus(bool direction) { }

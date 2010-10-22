@@ -541,7 +541,7 @@ void WebView::processDidCrash()
 {
 }
 
-void WebView::processDidRevive()
+void WebView::didRelaunchProcess()
 {
 }
 

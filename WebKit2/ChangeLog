@@ -1,5 +1,16 @@
 2010-10-22  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * UIProcess/API/qt/qwkpage_p.h:
+        (QWKPagePrivate::didRelaunchProcess):
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::didRelaunchProcess):
+        * UIProcess/win/WebView.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2010-10-22  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         WebContext::ensureWebProcess shouldn't send multiple InitializeWebProcess messages.
