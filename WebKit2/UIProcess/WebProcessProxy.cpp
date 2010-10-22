@@ -414,6 +414,8 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
     for (size_t i = 0, size = pages.size(); i < size; ++i)
         pages[i]->processDidCrash();
 
+    m_context->processDidClose(this);
+
     // This may cause us to be deleted.
     WebProcessManager::shared().processDidClose(this, m_context);
 }

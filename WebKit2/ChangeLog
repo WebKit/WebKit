@@ -1,3 +1,25 @@
+2010-10-22  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Crash in Connection::isValid when called in response to
+        VisitedLinksProvider::pendingVisitedLinksTimerFired after WebProcessProxy::didClose was
+        already called.
+        https://bugs.webkit.org/show_bug.cgi?id=48153
+
+        * UIProcess/VisitedLinkProvider.cpp:
+        (WebKit::VisitedLinkProvider::stopVisitedLinksTimer):
+        * UIProcess/VisitedLinkProvider.h:
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidClose):
+        Stop the pendingVisitedLinksTimer and null out the process.
+        * UIProcess/WebContext.h:
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        Tell the WebContext that the WebProcess did close.
+
 2010-10-22  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.
