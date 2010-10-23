@@ -730,6 +730,11 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
 
 void WebFrameLoaderClient::didTransferChildFrameToNewDocument(Page*)
 {
+    Frame* coreFrame = core(m_webFrame);
+    ASSERT(coreFrame);
+    WebView* webView = kit(coreFrame->page());
+    if (m_webFrame->webView() != webView)
+        m_webFrame->setWebView(webView);
 }
 
 PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)

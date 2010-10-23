@@ -376,6 +376,7 @@ public:
     WebCore::KURL url() const;
 
     WebView* webView() const;
+    void setWebView(WebView*);
 
     COMPtr<IAccessible> accessible() const;
 

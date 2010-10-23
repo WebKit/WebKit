@@ -1,3 +1,18 @@
+2010-10-22  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Windows client needs updating when live iframe element is moved between pages
+        https://bugs.webkit.org/show_bug.cgi?id=46915
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::didTransferChildFrameToNewDocument):
+        Update WebView in WebFrame to match that of the current page.
+        * WebFrame.cpp:
+        (WebFrame::setWebView):
+        Added.
+        * WebFrame.h:
+
 2010-10-22  Sam Weinig  <sam@webkit.org>
 
         Fix windows build.
