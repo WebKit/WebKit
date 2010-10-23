@@ -62,7 +62,8 @@ public:
 
     ~PlatformRefPtr()
     {
-        if (T* ptr = m_ptr)
+        T* ptr = m_ptr;
+        if (ptr && ptr != hashTableDeletedValue())
             derefPlatformPtr(ptr);
     }
 
@@ -70,7 +71,7 @@ public:
     {
         T* ptr = m_ptr;
         m_ptr = 0;
-        if (ptr)
+        if (ptr && ptr != hashTableDeletedValue())
             derefPlatformPtr(ptr);
     }
 
@@ -110,7 +111,7 @@ template <typename T> inline PlatformRefPtr<T>& PlatformRefPtr<T>::operator=(con
         refPlatformPtr(optr);
     T* ptr = m_ptr;
     m_ptr = optr;
-    if (ptr)
+    if (ptr && ptr != hashTableDeletedValue())
         derefPlatformPtr(ptr);
     return *this;
 }
@@ -121,7 +122,7 @@ template <typename T> inline PlatformRefPtr<T>& PlatformRefPtr<T>::operator=(T* 
     if (optr)
         refPlatformPtr(optr);
     m_ptr = optr;
-    if (ptr)
+    if (ptr && ptr != hashTableDeletedValue())
         derefPlatformPtr(ptr);
     return *this;
 }
