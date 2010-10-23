@@ -28,6 +28,7 @@
 
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 
 namespace WebCore {
