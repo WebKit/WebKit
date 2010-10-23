@@ -117,7 +117,7 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
     if (this == &other)
         return *this;
 
-    copyReferenceToBitmapData(other);
+    copyBitmapData(other);
     setRect(other.rect());
     setStatus(other.status());
     setDuration(other.duration());
@@ -128,8 +128,7 @@ RGBA32Buffer& RGBA32Buffer::operator=(const RGBA32Buffer& other)
 
 void RGBA32Buffer::clear()
 {
-    m_backingStore.clear();
-    m_bytes = 0;
+    m_bytes.clear();
     m_status = FrameEmpty;
     // NOTE: Do not reset other members here; clearFrameBufferCache() calls this
     // to free the bitmap data, but other functions like initFrameBuffer() and
@@ -139,16 +138,8 @@ void RGBA32Buffer::clear()
 
 void RGBA32Buffer::zeroFill()
 {
-    memset(m_bytes, 0, m_size.width() * m_size.height() * sizeof(PixelData));
+    m_bytes.fill(0);
     m_hasAlpha = true;
-}
-
-#if !PLATFORM(CF)
-
-void RGBA32Buffer::copyReferenceToBitmapData(const RGBA32Buffer& other)
-{
-    ASSERT(this != &other);
-    copyBitmapData(other);
 }
 
 bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
@@ -156,8 +147,7 @@ bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
     if (this == &other)
         return true;
 
-    m_backingStore = other.m_backingStore;
-    m_bytes = m_backingStore.data();
+    m_bytes = other.m_bytes;
     m_size = other.m_size;
     setHasAlpha(other.m_hasAlpha);
     return true;
@@ -167,8 +157,7 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 {
     // NOTE: This has no way to check for allocation failure if the requested
     // size was too big...
-    m_backingStore.resize(newWidth * newHeight);
-    m_bytes = m_backingStore.data();
+    m_bytes.resize(newWidth * newHeight);
     m_size = IntSize(newWidth, newHeight);
 
     // Zero the image.
@@ -176,8 +165,6 @@ bool RGBA32Buffer::setSize(int newWidth, int newHeight)
 
     return true;
 }
-
-#endif
 
 bool RGBA32Buffer::hasAlpha() const
 {

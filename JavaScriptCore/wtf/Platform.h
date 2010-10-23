@@ -531,10 +531,6 @@
 #endif
 #endif
 
-#if PLATFORM(CHROMIUM)
-#define WTF_USE_WEBKIT_IMAGE_DECODERS 1
-#endif
-
 #if PLATFORM(BREWMP)
 #define WTF_PLATFORM_SKIA 1
 #endif

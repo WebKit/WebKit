@@ -1164,14 +1164,23 @@
             # platform/graphics/chromium, included by regex above, instead.
             ['exclude', 'platform/graphics/chromium/ImageChromium\\.cpp$'],
 
-            # The Mac does not use ImageSourceCG.cpp from platform/graphics/cg
-            # even though it is included by regex above.
-            ['exclude', 'platform/graphics/cg/ImageSourceCG\\.cpp$'],
-            ['exclude', 'platform/graphics/cg/PDFDocumentImage\\.cpp$'],
+            # The Mac uses ImageSourceCG.cpp from platform/graphics/cg, included
+            # by regex above, instead.
+            ['exclude', 'platform/graphics/ImageSource\\.cpp$'],
 
-            # ImageDecoderSkia is not used on mac.  ImageDecoderCG is used instead.
+            # Skia image-decoders are also not used on mac.  CoreGraphics
+            # is used directly instead.
+            ['exclude', 'platform/image-decoders/ImageDecoder\\.h$'],
+            ['exclude', 'platform/image-decoders/bmp/BMPImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/bmp/BMPImageReader\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/gif/GIFImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/gif/GIFImageReader\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/ico/ICOImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/jpeg/JPEGImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/webp/WEBPImageDecoder\\.(cpp|h)$'],
+            ['exclude', 'platform/image-decoders/png/PNGImageDecoder\\.(cpp|h)$'],
             ['exclude', 'platform/image-decoders/skia/ImageDecoderSkia\\.cpp$'],
-            ['include', 'platform/image-decoders/cg/ImageDecoderCG\\.cpp$'],
+            ['exclude', 'platform/image-decoders/xbm/XBMImageDecoder\\.(cpp|h)$'],
 
             # Again, Skia is not used on Mac.
             ['exclude', 'platform/chromium/DragImageChromiumSkia\\.cpp$'],
