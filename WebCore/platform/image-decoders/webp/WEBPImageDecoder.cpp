@@ -103,8 +103,8 @@ bool WEBPImageDecoder::decode(bool onlySize)
     }
     const int stride = width * bytesPerPixel;
     Vector<uint8_t> rgb;
-    rgb.reserveCapacity(height * stride);
-    if (!WebPDecodeBGRInto(dataBytes, dataSize, &rgb[0], height * stride, stride))
+    rgb.resize(height * stride);
+    if (!WebPDecodeBGRInto(dataBytes, dataSize, rgb.data(), rgb.size(), stride))
         return setFailed();
     // FIXME: remove this data copy.
     for (int y = 0; y < height; ++y) {
