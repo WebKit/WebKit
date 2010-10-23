@@ -64,7 +64,7 @@ void BufferedImage::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect
 }
 
 ImageBufferData::ImageBufferData(const IntSize& size)
-: m_bitmap(SharedBitmap::createInstance(false, size.width(), size.height(), false))
+    : m_bitmap(SharedBitmap::create(size, BitmapInfo::BitCount32, false))
 {
     // http://www.w3.org/TR/2009/WD-html5-20090212/the-canvas-element.html#canvaspixelarray
     // "When the canvas is initialized it must be set to fully transparent black."

@@ -283,7 +283,7 @@ public:
                     return 0;
             }
 
-            RefPtr<SharedBitmap> bmp = SharedBitmap::createInstance(alphaPaint == AlphaPaintNone, origRect.width(), origRect.height(), false);
+            RefPtr<SharedBitmap> bmp = SharedBitmap::create(origRect.size(), alphaPaint == AlphaPaintNone ? BitmapInfo::BitCount16 : BitmapInfo::BitCount32, false);
             SetRect(&bmpRect, 0, 0, origRect.width(), origRect.height());
             if (bmp) {
                 switch (alphaPaint) {
@@ -523,7 +523,7 @@ TransparentLayerDC::TransparentLayerDC(GraphicsContextPlatformPrivate* data, Int
             origRect.inflateX(stableRound((width - origRect.width()) * 0.5));
             origRect.inflateY(stableRound((height - origRect.height()) * 0.5));
 
-            m_bitmap = SharedBitmap::createInstance(m_rotatedBitmap->is16bit(), m_origRect.width(), m_origRect.height(), true);
+            m_bitmap = SharedBitmap::create(m_origRect.size(), m_rotatedBitmap->is16bit() ? BitmapInfo::BitCount16 : BitmapInfo::BitCount32, true);
             if (m_bitmap)
                 rotateBitmap(m_bitmap.get(), m_rotatedBitmap.get(), -m_rotation);
             else
@@ -1777,7 +1777,7 @@ void GraphicsContext::drawFrameControl(const IntRect& rect, unsigned type, unsig
     RECT rectWin = trRect;
 
     if ((rectWin.right - rectWin.left) < boxWidthBest) {
-        RefPtr<SharedBitmap> bmp = SharedBitmap::createInstance(true, boxWidthBest, boxHeightBest, true);
+        RefPtr<SharedBitmap> bmp = SharedBitmap::create(IntSize(boxWidthBest, boxHeightBest), BitmapInfo::BitCount16, true);
         SharedBitmap::DCHolder memDC(bmp.get());
         if (memDC.get()) {
             RECT tempRect = {0, 0, boxWidthBest, boxHeightBest};
