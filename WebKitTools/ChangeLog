@@ -1,3 +1,16 @@
+2010-10-23  Dan Bernstein  <mitz@apple.com>
+
+        Build fix. Add stub implementations for required NSDraggingInfo methods.
+
+        * DumpRenderTree/mac/DumpRenderTreeDraggingInfo.mm:
+        (-[DumpRenderTreeDraggingInfo draggingFormation]):
+        (-[DumpRenderTreeDraggingInfo setDraggingFormation:]):
+        (-[DumpRenderTreeDraggingInfo animatesToDestination]):
+        (-[DumpRenderTreeDraggingInfo setAnimatesToDestination:]):
+        (-[DumpRenderTreeDraggingInfo numberOfValidItemsForDrop]):
+        (-[DumpRenderTreeDraggingInfo setNumberOfValidItemsForDrop:]):
+        (-[DumpRenderTreeDraggingInfo enumerateDraggingItemsWithOptions:forView:classes:searchOptions:usingBlock:]):
+
 2010-10-23  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/48186> Remove unneeded WebHTMLRepresentationInternal.h header

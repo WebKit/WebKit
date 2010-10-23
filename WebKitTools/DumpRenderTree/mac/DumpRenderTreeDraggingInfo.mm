@@ -105,5 +105,42 @@
     return nil;
 }
 
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+- (NSDraggingFormation)draggingFormation
+{
+    return NSDraggingFormationDefault;
+}
+
+- (void)setDraggingFormation:(NSDraggingFormation)formation
+{
+    // Ignored.
+}
+
+- (BOOL)animatesToDestination
+{
+    return NO;
+}
+
+- (void)setAnimatesToDestination:(BOOL)flag
+{
+    // Ignored.
+}
+
+- (NSInteger)numberOfValidItemsForDrop
+{
+    return 1;
+}
+
+- (void)setNumberOfValidItemsForDrop:(NSInteger)number
+{
+    // Ignored.
+}
+
+- (void)enumerateDraggingItemsWithOptions:(NSEnumerationOptions)enumOpts forView:(NSView *)view classes:(NSArray *)classArray searchOptions:(NSDictionary *)searchOptions usingBlock:(void (^)(NSDraggingItem *draggingItem, NSInteger idx, BOOL *stop))block
+{
+    // Ignored.
+}
+#endif // !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+
 @end
 
