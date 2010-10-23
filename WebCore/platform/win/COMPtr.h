@@ -30,10 +30,13 @@
 #define NOMINMAX
 #endif
 
-#include <guiddef.h>
 #include <unknwn.h>
-#include <WTF/Assertions.h>
-#include <WTF/HashTraits.h>
+#include <wtf/Assertions.h>
+#include <wtf/HashTraits.h>
+
+#if !OS(WINCE)
+#include <guiddef.h>
+#endif
 
 typedef long HRESULT;
 
