@@ -1,3 +1,29 @@
+2010-10-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r70367.
+        http://trac.webkit.org/changeset/70367
+        https://bugs.webkit.org/show_bug.cgi?id=48176
+
+        It made 8-10 tests crash on Qt bot (Requested by Ossy on
+        #webkit).
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setCustomPolicyDelegateCallback):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setCustomPolicyDelegate):
+        * DumpRenderTree/mac/PolicyDelegate.h:
+        * DumpRenderTree/mac/PolicyDelegate.mm:
+        (-[PolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        (-[PolicyDelegate setPermissive:]):
+        (-[PolicyDelegate setControllerToNotifyDone:]):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setCustomPolicyDelegate):
+
 2010-10-22  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

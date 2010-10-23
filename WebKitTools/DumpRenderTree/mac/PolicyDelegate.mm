@@ -83,28 +83,15 @@
 
     printf("%s\n", [message UTF8String]);
 
-    if (_permissiveDelegate)
+    if (permissiveDelegate)
         [listener use];
     else
         [listener ignore];
 
-    if (_controllerToNotifyDone) {
-        _controllerToNotifyDone->notifyDone();
-        _controllerToNotifyDone = 0;
+    if (controllerToNotifyDone) {
+        controllerToNotifyDone->notifyDone();
+        controllerToNotifyDone = 0;
     }
-}
-
-- (void)webView:(WebView *)webView decidePolicyForMIMEType:(NSString *)type
-                                                   request:(NSURLRequest *)request
-                                                     frame:(WebFrame *)frame
-                                          decisionListener:(id<WebPolicyDecisionListener>)listener
-{
-    if (!_callIgnoreInDecidePolicyForMIMETypeAfterOneSecond) {
-        [listener use];
-        return;
-    }
-
-    [(NSObject *)listener performSelector:@selector(ignore) withObject:nil afterDelay:1.0];
 }
 
 - (void)webView:(WebView *)webView unableToImplementPolicyWithError:(NSError *)error frame:(WebFrame *)frame
@@ -113,19 +100,14 @@
     printf("%s\n", [message UTF8String]);
 }
 
-- (void)setCallIgnoreInDecidePolicyForMIMETypeAfterOneSecond:(BOOL)callIgnoreInDecidePolicyForMIMETypeAfterOneSecond
-{
-    _callIgnoreInDecidePolicyForMIMETypeAfterOneSecond = callIgnoreInDecidePolicyForMIMETypeAfterOneSecond;
-}
-
 - (void)setPermissive:(BOOL)permissive
 {
-    _permissiveDelegate = permissive;
+    permissiveDelegate = permissive;
 }
 
 - (void)setControllerToNotifyDone:(LayoutTestController*)controller
 {
-    _controllerToNotifyDone = controller;
+    controllerToNotifyDone = controller;
 }
 
 @end

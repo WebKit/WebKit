@@ -57,7 +57,6 @@ MainResourceLoader::MainResourceLoader(Frame* frame)
     , m_dataLoadTimer(this, &MainResourceLoader::handleDataLoadNow)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
-    , m_deferLoadingCount(0)
 {
 }
 
@@ -232,10 +231,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
 {
     KURL url = request().url();
     const String& mimeType = r.mimeType();
-
-    // This is balanced by a call to setDefersLoading(true) in didReceiveResponse.
-    setDefersLoading(false);
-
+    
     switch (contentPolicy) {
     case PolicyUse: {
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
@@ -377,10 +373,6 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    // Defer loading while we're waiting for a response. 
-    // This is balanced by a setDefersLoading(false) call in continueAfterContentPolicy.
-    setDefersLoading(true);
-    
     m_documentLoader->setResponse(r);
 
     m_response = r;
@@ -603,16 +595,6 @@ bool MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
 
 void MainResourceLoader::setDefersLoading(bool defers)
 {
-    if (defers) {
-        m_deferLoadingCount++;
-        if (m_deferLoadingCount > 1)
-            return;
-    } else {
-        ASSERT(m_deferLoadingCount);
-        m_deferLoadingCount--;
-        if (m_deferLoadingCount > 0)
-            return;
-    }
     ResourceLoader::setDefersLoading(defers);
 
     if (defers) {

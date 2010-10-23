@@ -1,5 +1,0 @@
-Policy delegate: attempt to load data:text/html,Hello,%20I%20am%20a%20subframe! with navigation type 'other'
-Test for Using the decidePolicyForMIMEType delegate message in an asynchronous manner does not work. If the test passes, you should see the word "PASSED" below.
-
-PASSED
-

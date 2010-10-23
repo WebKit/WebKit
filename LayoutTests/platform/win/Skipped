@@ -1038,6 +1038,3 @@ fast/events/click-focus-control.html
 
 # Requires WebP support.
 fast/images/webp-image-decoding.html
-
-# Needs ovelroad of setCustomPolicyDelegate
-fast/loader/decide-policy-for-mime-type-async.html

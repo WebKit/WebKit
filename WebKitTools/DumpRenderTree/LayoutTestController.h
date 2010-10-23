@@ -84,7 +84,7 @@ public:
     void setApplicationCacheOriginQuota(unsigned long long quota);
     void setAuthorAndUserStylesEnabled(bool);
     void setCacheModel(int);
-    void setCustomPolicyDelegate(bool setDelegate, bool permissive, bool callIgnoreInDecidePolicyForMIMETypeAfterOneSecond);
+    void setCustomPolicyDelegate(bool setDelegate, bool permissive);
     void setDatabaseQuota(unsigned long long quota);
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme);
     void setIconDatabaseEnabled(bool iconDatabaseEnabled);

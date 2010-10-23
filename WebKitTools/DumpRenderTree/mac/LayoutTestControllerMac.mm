@@ -319,10 +319,9 @@ void LayoutTestController::setAuthorAndUserStylesEnabled(bool flag)
     [[[mainFrame webView] preferences] setAuthorAndUserStylesEnabled:flag];
 }
 
-void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive, bool callIgnoreInDecidePolicyForMIMETypeAfterOneSecond)
+void LayoutTestController::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     if (setDelegate) {
-        [policyDelegate setCallIgnoreInDecidePolicyForMIMETypeAfterOneSecond:callIgnoreInDecidePolicyForMIMETypeAfterOneSecond];
         [policyDelegate setPermissive:permissive];
         [[mainFrame webView] setPolicyDelegate:policyDelegate];
     } else

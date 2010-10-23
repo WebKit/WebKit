@@ -31,13 +31,11 @@
 class LayoutTestController;
 
 @interface PolicyDelegate : NSObject {
-    BOOL _permissiveDelegate;
-    BOOL _callIgnoreInDecidePolicyForMIMETypeAfterOneSecond;
-    LayoutTestController* _controllerToNotifyDone;
+    BOOL permissiveDelegate;
+    LayoutTestController* controllerToNotifyDone;
 }
 
 - (void)setPermissive:(BOOL)permissive;
-- (void)setCallIgnoreInDecidePolicyForMIMETypeAfterOneSecond:(BOOL)callIgnoreInDecidePolicyForMIMETypeAfterOneSecond;
 - (void)setControllerToNotifyDone:(LayoutTestController*)controller;
 
 @end

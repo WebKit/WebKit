@@ -971,12 +971,8 @@ static JSValueRef setCustomPolicyDelegateCallback(JSContextRef context, JSObject
     if (argumentCount >= 2)
         permissive = JSValueToBoolean(context, arguments[1]);
 
-    bool callIgnoreInDecidePolicyForMIMETypeAfterOneSecond = false;
-    if (argumentCount >= 3)
-        callIgnoreInDecidePolicyForMIMETypeAfterOneSecond = JSValueToBoolean(context, arguments[2]);
-    
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
-    controller->setCustomPolicyDelegate(JSValueToBoolean(context, arguments[0]), permissive, callIgnoreInDecidePolicyForMIMETypeAfterOneSecond);
+    controller->setCustomPolicyDelegate(JSValueToBoolean(context, arguments[0]), permissive);
 
     return JSValueMakeUndefined(context);
 }
