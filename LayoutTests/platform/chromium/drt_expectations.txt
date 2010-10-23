@@ -117,5 +117,4 @@ BUG_AWESOME MAC : fast/forms/basic-buttons.html = PASS
 BUG_AWESOME MAC : fast/forms/input-number-events.html = PASS
 BUG_AWESOME MAC : fast/forms/input-spinbutton-capturing.html = PASS
 BUG_AWESOME MAC : fast/forms/select-baseline.html = PASS
-BUG_AWESOME MAC : fast/harness/show-modal-dialog.html = PASS
 BUG_AWESOME MAC : fast/overflow/hit-test-overflow-controls.html = PASS
