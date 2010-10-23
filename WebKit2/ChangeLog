@@ -1,3 +1,14 @@
+2010-10-21  Timothy Hatcher  <timothy@apple.com>
+
+        Remove stale stubs that are not longer part of InspectorClient.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48090
+
+        Reviewed by Adam Roben.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+
 2010-10-22  Andy Estes  <aestes@apple.com>
 
         Reviewed by Adam Roben and Sam Weinig.

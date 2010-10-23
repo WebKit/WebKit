@@ -42,60 +42,12 @@ void WebInspectorClient::openInspectorFrontend(InspectorController*)
     notImplemented();
 }
 
-Page* WebInspectorClient::createPage()
-{
-    notImplemented();
-    return 0;
-}
-
-String WebInspectorClient::localizedStringsURL()
-{
-    notImplemented();
-    return String();
-}
-
-String WebInspectorClient::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
-void WebInspectorClient::showWindow()
-{
-    notImplemented();
-}
-
-void WebInspectorClient::closeWindow()
-{
-    notImplemented();
-}
-
-void WebInspectorClient::attachWindow()
-{
-    notImplemented();
-}
-
-void WebInspectorClient::detachWindow()
-{
-    notImplemented();
-}
-
-void WebInspectorClient::setAttachedWindowHeight(unsigned height)
-{
-    notImplemented();
-}
-
 void WebInspectorClient::highlight(Node*)
 {
     notImplemented();
 }
 
 void WebInspectorClient::hideHighlight()
-{
-    notImplemented();
-}
-
-void WebInspectorClient::inspectedURLChanged(const String& newURL)
 {
     notImplemented();
 }
@@ -114,12 +66,6 @@ bool WebInspectorClient::sendMessageToFrontend(const String&)
 {
     notImplemented();
     return false;
-}
-
-
-void WebInspectorClient::inspectorWindowObjectCleared()
-{
-    notImplemented();
 }
 
 } // namespace WebKit
