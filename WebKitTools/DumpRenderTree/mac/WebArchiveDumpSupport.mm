@@ -27,7 +27,7 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit/WebArchive.h>
-#import <WebKit/WebHTMLRepresentationInternal.h>
+#import <WebKit/WebHTMLRepresentation.h>
 
 static void convertMIMEType(NSMutableString *mimeType)
 {

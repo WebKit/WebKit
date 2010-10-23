@@ -1,3 +1,14 @@
+2010-10-23  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/48186> Remove unneeded WebHTMLRepresentationInternal.h header
+
+        Reviewed by Sam Weinig.
+
+        The only method defined in WebHTMLRepresentationInternal.h is
+        also defined in WebHTMLRepresentation.h, so use that instead.
+
+        * WebView/WebHTMLRepresentationInternal.h: Removed.
+
 2010-10-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

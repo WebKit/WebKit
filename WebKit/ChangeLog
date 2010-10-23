@@ -1,3 +1,15 @@
+2010-10-23  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/48186> Remove unneeded WebHTMLRepresentationInternal.h header
+
+        Reviewed by Sam Weinig.
+
+        The only method defined in WebHTMLRepresentationInternal.h is
+        also defined in WebHTMLRepresentation.h, so use that instead.
+
+        * WebKit.xcodeproj/project.pbxproj: Removed references to
+        WebHTMLRepresentationInternal.h.
+
 2010-10-21  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/48047> Fix warnings found by check-Xcode-source-file-types
