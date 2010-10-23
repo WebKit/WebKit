@@ -29,9 +29,25 @@
 import os
 
 from webkitpy.thirdparty.mock import Mock
+from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.tool.bot.queueengine import QueueEngine
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
 from webkitpy.tool.mocktool import MockTool
+
+
+class AbstractEarlyWarningSystemTest(QueuesTest):
+    def test_subprocess_handled_error(self):
+        queue = AbstractReviewQueue()
+        queue.bind_to_tool(MockTool())
+
+        def mock_review_patch(patch):
+            raise ScriptError('MOCK script error', exit_code=QueueEngine.handled_error_code)
+
+        queue.review_patch = mock_review_patch
+        mock_patch = queue._tool.bugs.fetch_attachment(197)
+        expected_stderr = "MOCK: release_work_item: None 197\n"
+        OutputCapture().assert_outputs(self, queue.process_work_item, [mock_patch], expected_stderr=expected_stderr, expected_exception=ScriptError)
 
 
 class EarlyWarningSytemTest(QueuesTest):

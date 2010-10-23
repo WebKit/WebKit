@@ -1,5 +1,15 @@
 2010-10-22  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        EWS never releases patches which fail to apply
+        https://bugs.webkit.org/show_bug.cgi?id=48171
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
+2010-10-22  Eric Seidel  <eric@webkit.org>
+
         Unreviewed.
 
         Make the EWS queues restart themselves more often.

@@ -412,6 +412,10 @@ class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         except ScriptError, e:
             if e.exit_code != QueueEngine.handled_error_code:
                 self._did_fail(patch)
+            else:
+                # The subprocess handled the error, but won't have released the patch, so we do.
+                # FIXME: We need to simplify the rules by which _release_work_item is called.
+                self._release_work_item(patch)
             raise e
 
     def handle_unexpected_error(self, patch, message):
