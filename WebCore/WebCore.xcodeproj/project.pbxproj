@@ -5333,6 +5333,8 @@
 		E1284BD61044A01E00EAEB52 /* DOMPageTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */; };
 		E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = E12EDB7A0B308A78002704B6 /* EventTarget.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E12EDBE90B308E0B002704B6 /* EventTarget.cpp */; };
+		E13F01EB1270E10D00DFBA71 /* CookieStorage.h in Resources */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; };
+		E13F01F11270E19000DFBA71 /* CookieStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */; };
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
 		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
 		E169803D1133542D00894115 /* CRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E169803C1133542D00894115 /* CRuntimeObject.h */; };
@@ -11347,6 +11349,8 @@
 		E1284BD41044A01E00EAEB52 /* DOMPageTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMPageTransitionEvent.h; sourceTree = "<group>"; };
 		E12EDB7A0B308A78002704B6 /* EventTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTarget.h; sourceTree = "<group>"; };
 		E12EDBE90B308E0B002704B6 /* EventTarget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTarget.cpp; sourceTree = "<group>"; };
+		E13F01EA1270E10D00DFBA71 /* CookieStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookieStorage.h; sourceTree = "<group>"; };
+		E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieStorageMac.mm; sourceTree = "<group>"; };
 		E15A36D61104572000B7B639 /* XMLNSNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLNSNames.h; sourceTree = "<group>"; };
 		E15A36D81104572700B7B639 /* XMLNSNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNSNames.cpp; sourceTree = "<group>"; };
 		E169803C1133542D00894115 /* CRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRuntimeObject.h; sourceTree = "<group>"; };
@@ -12954,6 +12958,7 @@
 				2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */,
 				2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */,
 				514C76580CE923A1007EF3CD /* Credential.cpp */,
+				E13F01EA1270E10D00DFBA71 /* CookieStorage.h */,
 				514C76590CE923A1007EF3CD /* Credential.h */,
 				51A052321058774F00CC9E95 /* CredentialStorage.cpp */,
 				51A052311058774F00CC9E95 /* CredentialStorage.h */,
@@ -13001,6 +13006,7 @@
 				934F71430D5A6F5300018D69 /* AuthenticationChallenge.h */,
 				514C76420CE9234E007EF3CD /* AuthenticationMac.h */,
 				514C76430CE9234E007EF3CD /* AuthenticationMac.mm */,
+				E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */,
 				E1B4CD2410B322E200BFFD7E /* CredentialStorageMac.mm */,
 				514C76440CE9234E007EF3CD /* FormDataStreamMac.h */,
 				514C76450CE9234E007EF3CD /* FormDataStreamMac.mm */,
@@ -21267,6 +21273,7 @@
 				85136CA80AED665900F90A3D /* westResizeCursor.png in Resources */,
 				1AB1AE7A0C051FDE00139F4F /* zoomInCursor.png in Resources */,
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
+				E13F01EB1270E10D00DFBA71 /* CookieStorage.h in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23696,6 +23703,7 @@
 				9728C3131268E4390041E89B /* MarkupAccumulator.cpp in Sources */,
 				E18772F1126E2629003DD586 /* Language.cpp in Sources */,
 				7A1F2B52126C61B20006A7E6 /* InspectorClient.cpp in Sources */,
+				E13F01F11270E19000DFBA71 /* CookieStorageMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

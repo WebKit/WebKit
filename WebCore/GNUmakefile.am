@@ -2372,6 +2372,7 @@ webcore_sources += \
 	WebCore/platform/network/BlobResourceHandle.cpp \
 	WebCore/platform/network/BlobResourceHandle.h \
 	WebCore/platform/network/BlobStorageData.h \
+	WebCore/platform/network/CookieStorage.h \
 	WebCore/platform/network/Credential.cpp \
 	WebCore/platform/network/Credential.h \
 	WebCore/platform/network/DNS.h \

@@ -36,6 +36,7 @@
 #include "ContextMenu.h"
 #include "ContextMenuItem.h"
 #include "CookieJar.h"
+#include "CookieStorage.h"
 #include "Cursor.h"
 #include "Database.h"
 #include "DocumentFragment.h"
@@ -496,6 +497,11 @@ OpaqueJSClass::~OpaqueJSClass()
 }
 
 OpaqueJSClassContextData::~OpaqueJSClassContextData()
+{
+    notImplemented();
+}
+
+void setCookieStoragePrivateBrowsingEnabled(bool)
 {
     notImplemented();
 }

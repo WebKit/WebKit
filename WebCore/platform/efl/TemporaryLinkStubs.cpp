@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "AXObjectCache.h"
+#include "CookieStorage.h"
 #include "Editor.h"
 #include "FTPDirectoryDocument.h"
 #include "FrameView.h"
@@ -59,6 +60,11 @@ float userIdleTime()
 {
     notImplemented();
     return FLT_MAX;
+}
+
+void setCookieStoragePrivateBrowsingEnabled(bool)
+{
+    notImplemented();
 }
 
 }

@@ -1,3 +1,18 @@
+2010-10-23  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48083
+        <rdar://problem/8489082> Need WebKit2 API for private browsing (48083)
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+        * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
+        * win/lib/WebKitSystemInterface.lib:
+        * win/lib/WebKitSystemInterface_debug.lib:
+        Updated WebKitSystemInterface with necessary methods.
+
 2010-10-22  Adam Roben  <aroben@apple.com>
 
         Turn on ENABLE_3D_RENDERING on all Windows builds

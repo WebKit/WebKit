@@ -2103,6 +2103,7 @@ HEADERS += \
     platform/network/BlobRegistryImpl.h \
     platform/network/BlobResourceHandle.h \
     platform/network/BlobStorageData.h \
+    platform/network/CookieStorage.h \
     platform/network/Credential.h \
     platform/network/FormDataBuilder.h \
     platform/network/FormData.h \

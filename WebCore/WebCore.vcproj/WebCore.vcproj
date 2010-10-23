@@ -27506,6 +27506,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\CookieStorage.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\Credential.cpp"
 					>
 				</File>

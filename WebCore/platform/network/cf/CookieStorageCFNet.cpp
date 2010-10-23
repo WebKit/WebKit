@@ -36,6 +36,8 @@ static RetainPtr<CFHTTPCookieStorageRef> s_cookieStorage;
 
 CFHTTPCookieStorageRef currentCookieStorage()
 {
+    ASSERT(isMainThread());
+
     if (s_cookieStorage)
         return s_cookieStorage.get();
     return wkGetDefaultHTTPCookieStorage();
@@ -43,7 +45,19 @@ CFHTTPCookieStorageRef currentCookieStorage()
 
 void setCurrentCookieStorage(CFHTTPCookieStorageRef cookieStorage)
 {
+    ASSERT(isMainThread());
+
     s_cookieStorage = cookieStorage;
+}
+
+void setCookieStoragePrivateBrowsingEnabled(bool enabled)
+{
+    ASSERT(isMainThread());
+
+    if (enabled)
+        s_cookieStorage.adoptPtr(wkCreatePrivateHTTPCookieStorage());
+    else
+        s_cookieStorage = 0;
 }
 
 }

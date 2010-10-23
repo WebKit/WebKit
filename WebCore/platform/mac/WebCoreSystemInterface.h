@@ -132,6 +132,7 @@ extern void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
 extern void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
 extern void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 extern void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
+extern void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 extern void (*wkSetDragImage)(NSImage*, NSPoint offset);
 extern void (*wkSetNSURLConnectionDefersCallbacks)(NSURLConnection *, BOOL);
 extern void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);

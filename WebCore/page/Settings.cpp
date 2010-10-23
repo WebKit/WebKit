@@ -28,6 +28,7 @@
 
 #include "BackForwardList.h"
 #include "CachedResourceLoader.h"
+#include "CookieStorage.h"
 #include "DOMTimer.h"
 #include "Database.h"
 #include "Frame.h"
@@ -311,6 +312,9 @@ void Settings::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)
 {
     if (m_privateBrowsingEnabled == privateBrowsingEnabled)
         return;
+
+    // FIXME: We can only enable cookie private browsing mode globally, so it's misleading to have it as a per-page setting.
+    setCookieStoragePrivateBrowsingEnabled(privateBrowsingEnabled);
 
     m_privateBrowsingEnabled = privateBrowsingEnabled;
     m_page->privateBrowsingStateChanged();

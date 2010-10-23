@@ -67,6 +67,7 @@ void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
 void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
 void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
 void (*wkSetCGFontRenderingMode)(CGContextRef, NSFont*);
+void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 void (*wkSetDragImage)(NSImage*, NSPoint offset);
 void (*wkSetPatternBaseCTM)(CGContextRef, CGAffineTransform);
 void (*wkSetPatternPhaseInUserSpace)(CGContextRef, CGPoint point);

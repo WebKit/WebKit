@@ -3014,6 +3014,7 @@
             'platform/network/BlobData.h',
             'platform/network/BlobRegistry.h',
             'platform/network/BlobStorageData.h',
+            'platform/network/CookieStorage.h',
             'platform/network/Credential.cpp',
             'platform/network/Credential.h',
             'platform/network/DNS.h',
