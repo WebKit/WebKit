@@ -1,5 +1,33 @@
 2010-10-21  Timothy Hatcher  <timothy@apple.com>
 
+        Stub out WebInspectorFrontendClient.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48091
+
+        Reviewed by Adam Roben.
+
+        * WebKit2.pro: Added WebInspectorFrontendClient.{cpp,h}.
+        * WebKit2.xcodeproj/project.pbxproj: Added WebInspectorFrontendClient.{cpp,h}.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp: Added.
+        (WebKit::WebInspectorFrontendClient::windowObjectCleared): Added.
+        (WebKit::WebInspectorFrontendClient::frontendLoaded): Added.
+        (WebKit::WebInspectorFrontendClient::moveWindowBy): Added.
+        (WebKit::WebInspectorFrontendClient::localizedStringsURL): Added.
+        (WebKit::WebInspectorFrontendClient::hiddenPanels): Added.
+        (WebKit::WebInspectorFrontendClient::bringToFront): Added.
+        (WebKit::WebInspectorFrontendClient::closeWindow): Added.
+        (WebKit::WebInspectorFrontendClient::disconnectFromBackend): Added.
+        (WebKit::WebInspectorFrontendClient::requestAttachWindow): Added.
+        (WebKit::WebInspectorFrontendClient::requestDetachWindow): Added.
+        (WebKit::WebInspectorFrontendClient::changeAttachedWindowHeight): Added.
+        (WebKit::WebInspectorFrontendClient::inspectedURLChanged): Added.
+        (WebKit::WebInspectorFrontendClient::sendMessageToBackend): Added.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h: Added.
+        (WebKit::WebInspectorFrontendClient::WebInspectorFrontendClient): Added.
+        * win/WebKit2.vcproj: Added WebInspectorFrontendClient.{cpp,h}.
+
+2010-10-21  Timothy Hatcher  <timothy@apple.com>
+
         Remove stale stubs that are not longer part of InspectorClient.
 
         https://bugs.webkit.org/show_bug.cgi?id=48090

@@ -309,6 +309,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebErrors.h \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.h \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
+    WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
     WebProcess/WebCoreSupport/WebPlatformStrategies.h \
@@ -454,6 +455,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebEditorClient.cpp \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorClient.cpp \
+    WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
     WebProcess/WebCoreSupport/WebBackForwardControllerClient.cpp \
     WebProcess/WebCoreSupport/WebPopupMenu.cpp \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
