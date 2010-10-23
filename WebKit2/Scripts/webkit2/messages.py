@@ -227,6 +227,7 @@ def message_to_struct_declaration(message):
 def struct_or_class(namespace, type):
     structs = frozenset([
         'WebCore::ViewportArguments',
+        'WebCore::WindowFeatures',
         'WebKit::WebPageCreationParameters',
         'WebKit::WebPreferencesStore',
         'WebKit::WebProcessCreationParameters',
