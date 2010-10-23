@@ -1,3 +1,10 @@
+2010-10-22  Andy Estes  <aestes@apple.com>
+
+        Fix the Windows build.
+
+        * WebCookieManagerCFNet.cpp: Rename CookieStorageWin.h to CookieStorageCFNet.h.
+        * WebView.cpp: Ditto.
+
 2010-10-22  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Adam Roben.

@@ -73,7 +73,7 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
-#include <WebCore/CookieStorageWin.h>
+#include <WebCore/CookieStorageCFNet.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/Document.h>
 #include <WebCore/DragController.h>
