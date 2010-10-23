@@ -33,5 +33,5 @@ do
   git reset --hard
   git clean -f
   git svn rebase
-  ./WebKitTools/Scripts/webkit-patch $1 --no-confirm --exit-after-iteration 100
+  ./WebKitTools/Scripts/webkit-patch $1 --no-confirm --exit-after-iteration 10
 done

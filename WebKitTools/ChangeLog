@@ -1,5 +1,14 @@
 2010-10-22  Eric Seidel  <eric@webkit.org>
 
+        Unreviewed.
+
+        Make the EWS queues restart themselves more often.
+        This matches the commit-queue.
+
+        * EWSTools/start-queue.sh:
+
+2010-10-22  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Adam Barth.
 
         commit-queue should not pass --quiet to subcommands now that the parent command does the reporting
