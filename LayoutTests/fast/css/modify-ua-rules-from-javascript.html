@@ -8,10 +8,10 @@ if (window.layoutTestController)
 
 function test()
 {
-    var cssRulesList = window.getMatchedCSSRules(document.body, "", false)[0];
+    var cssRulesList = window.getMatchedCSSRules(document.body, "", false);
     if (cssRulesList) 
     {
-        var styleToChange = cssRulesList.style;
+        var styleToChange = cssRulesList[0].style;
         var originalMarginTop = styleToChange.marginTop;
         styleToChange.marginTop = "200px";
         styleToChange.marginTop = originalMarginTop;
