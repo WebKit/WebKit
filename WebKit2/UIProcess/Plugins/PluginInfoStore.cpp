@@ -187,7 +187,7 @@ PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL
 
     // Next, check if any plug-ins claim to support the URL extension.
     String extension = pathExtension(url).lower();
-    if (!extension.isNull()) {
+    if (!extension.isNull() && mimeType.isEmpty()) {
         Plugin plugin = findPluginForExtension(extension, mimeType);
         if (!plugin.path.isNull())
             return plugin;

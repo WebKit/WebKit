@@ -279,26 +279,26 @@ String PluginDatabase::MIMETypeForExtension(const String& extension) const
 
 PluginPackage* PluginDatabase::findPlugin(const KURL& url, String& mimeType)
 {
-    PluginPackage* plugin = pluginForMIMEType(mimeType);
-    String filename = url.string();
-
+    if (!mimeType.isEmpty())
+        return pluginForMIMEType(mimeType);
+    
+    String filename = url.lastPathComponent();
+    if (filename.endsWith("/"))
+        return 0;
+    
+    int extensionPos = filename.reverseFind('.');
+    if (extensionPos == -1)
+        return 0;
+    
+    String mimeTypeForExtension = MIMETypeForExtension(filename.substring(extensionPos + 1));
+    PluginPackage* plugin = pluginForMIMEType(mimeTypeForExtension);
     if (!plugin) {
-        String filename = url.lastPathComponent();
-        if (!filename.endsWith("/")) {
-            int extensionPos = filename.reverseFind('.');
-            if (extensionPos != -1) {
-                String extension = filename.substring(extensionPos + 1);
-
-                String mimeTypeForExtension = MIMETypeForExtension(extension);
-                if ((plugin = pluginForMIMEType(mimeTypeForExtension)))
-                    mimeType = mimeTypeForExtension;
-            }
-        }
+        // FIXME: if no plugin could be found, query Windows for the mime type
+        // corresponding to the extension.
+        return 0;
     }
-
-    // FIXME: if no plugin could be found, query Windows for the mime type
-    // corresponding to the extension.
-
+    
+    mimeType = mimeTypeForExtension;
     return plugin;
 }
 

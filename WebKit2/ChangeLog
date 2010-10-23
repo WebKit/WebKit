@@ -1,3 +1,17 @@
+2010-10-22  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Adam Roben and Sam Weinig.
+
+        WebKit shouldn't load a plug-in based on file extension if a MIME type
+        is specified.
+        https://bugs.webkit.org/show_bug.cgi?id=48046
+
+        The fix landed in r70332 only covered the Mac port. Implement this fix
+        for WebKit2 as well.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::findPlugin):
+
 2010-10-22  Anders Carlsson  <andersca@apple.com>
 
         Fix clang++ build.
