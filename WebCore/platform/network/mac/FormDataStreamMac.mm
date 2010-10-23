@@ -46,6 +46,12 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 
+#if PLATFORM(IOS)
+#import <MacErrors.h>
+#else
+#import <CoreServices/CoreServices.h>
+#endif
+
 namespace WebCore {
 
 typedef HashMap<CFReadStreamRef, RefPtr<FormData> > StreamFormDataMap;
