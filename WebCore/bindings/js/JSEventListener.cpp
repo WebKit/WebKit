@@ -108,10 +108,10 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(event);
 
-        JSGlobalData* globalData = globalObject->globalData();
-        DynamicGlobalObjectScope globalObjectScope(exec, globalData->dynamicGlobalObject ? globalData->dynamicGlobalObject : globalObject);
+        JSGlobalData& globalData = globalObject->globalData();
+        DynamicGlobalObjectScope globalObjectScope(exec, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);
 
-        globalData->timeoutChecker.start();
+        globalData.timeoutChecker.start();
         JSValue retval;
         if (handleEventFunction) {
             retval = scriptExecutionContext->isDocument()
@@ -123,7 +123,7 @@ void JSEventListener::handleEvent(ScriptExecutionContext* scriptExecutionContext
                 ? JSMainThreadExecState::call(exec, jsFunction, callType, callData, currentTarget, args)
                 : JSC::call(exec, jsFunction, callType, callData, currentTarget, args);
         }
-        globalData->timeoutChecker.stop();
+        globalData.timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);
 

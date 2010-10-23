@@ -448,7 +448,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     printf("-----------------------------------------------------------------------------\n");
 
     CodeBlock* codeBlock = callFrame->codeBlock();
-    RegisterFile* registerFile = &callFrame->scopeChain()->globalObject->globalData()->interpreter->registerFile();
+    RegisterFile* registerFile = &callFrame->scopeChain()->globalObject->globalData().interpreter->registerFile();
     const Register* it;
     const Register* end;
     JSValue v;

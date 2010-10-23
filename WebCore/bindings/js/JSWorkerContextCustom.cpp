@@ -57,7 +57,7 @@ void JSWorkerContext::markChildren(MarkStack& markStack)
 {
     Base::markChildren(markStack);
 
-    JSGlobalData& globalData = *this->globalData();
+    JSGlobalData& globalData = this->globalData();
 
     markActiveObjectsForContext(markStack, globalData, scriptExecutionContext());
 

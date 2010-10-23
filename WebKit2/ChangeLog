@@ -1,3 +1,17 @@
+2010-10-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Sam Weinig.
+
+        Unify globalData APIs
+        https://bugs.webkit.org/show_bug.cgi?id=47969
+
+        Adapt code to JSGlobalObject::globalData returning a reference
+        instead of a pointer.
+
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject):
+        (WebKit::NPRuntimeObjectMap::evaluate):
+
 2010-10-23  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Anders Carlsson.

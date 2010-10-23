@@ -116,7 +116,7 @@ JSGlobalObject::~JSGlobalObject()
     for (HashSet<GlobalCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
         (*it)->clearGlobalObject();
         
-    RegisterFile& registerFile = globalData()->interpreter->registerFile();
+    RegisterFile& registerFile = globalData().interpreter->registerFile();
     if (registerFile.clearGlobalObject(this))
         registerFile.setNumGlobals(0);
     d()->destructor(d());
@@ -349,9 +349,9 @@ void JSGlobalObject::markChildren(MarkStack& markStack)
     for (HashSet<GlobalCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
         (*it)->markAggregate(markStack);
 
-    RegisterFile& registerFile = globalData()->interpreter->registerFile();
+    RegisterFile& registerFile = globalData().interpreter->registerFile();
     if (registerFile.globalObject() == this)
-        registerFile.markGlobals(markStack, &globalData()->heap);
+        registerFile.markGlobals(markStack, &globalData().heap);
 
     markIfNeeded(markStack, d()->regExpConstructor);
     markIfNeeded(markStack, d()->errorConstructor);

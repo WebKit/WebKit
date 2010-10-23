@@ -368,7 +368,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
     if (dump)
         BytecodeGenerator::setDumpsGeneratedCode(true);
 
-    JSGlobalData* globalData = globalObject->globalData();
+    JSGlobalData& globalData = globalObject->globalData();
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::start();
@@ -386,7 +386,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
             fileName = "[Command Line]";
         }
 
-        globalData->startSampling();
+        globalData.startSampling();
 
         Completion completion = evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), makeSource(script, fileName));
         success = success && completion.complType() != Throw;
@@ -397,19 +397,19 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
                 printf("End: %s\n", completion.value().toString(globalObject->globalExec()).utf8().data());
         }
 
-        globalData->stopSampling();
+        globalData.stopSampling();
         globalObject->globalExec()->clearException();
     }
 
 #if ENABLE(SAMPLING_FLAGS)
     SamplingFlags::stop();
 #endif
-    globalData->dumpSampleData(globalObject->globalExec());
+    globalData.dumpSampleData(globalObject->globalExec());
 #if ENABLE(SAMPLING_COUNTERS)
     AbstractSamplingCounter::dump();
 #endif
 #if ENABLE(REGEXP_TRACING)
-    globalData->dumpRegExpTrace();
+    globalData.dumpRegExpTrace();
 #endif
     return success;
 }

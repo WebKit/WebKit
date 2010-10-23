@@ -236,7 +236,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     // WebScriptCallFrame. Instead, we need to set the dynamic global object
     // and evaluate the JS in the global object's global call frame.
     JSGlobalObject* globalObject = _private->debugger->globalObject();
-    if (self == _private->debugger->globalCallFrame() && !globalObject->globalData()->dynamicGlobalObject) {
+    if (self == _private->debugger->globalCallFrame() && !globalObject->globalData().dynamicGlobalObject) {
         JSGlobalObject* globalObject = _private->debugger->globalObject();
 
         DynamicGlobalObjectScope globalObjectScope(globalObject->globalExec(), globalObject);

@@ -101,12 +101,12 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     for (size_t i = 0; i < size; ++i)
         args.append(m_args[i]);
 
-    globalObject->globalData()->timeoutChecker.start();
+    globalObject->globalData().timeoutChecker.start();
     if (context->isDocument())
         JSMainThreadExecState::call(exec, m_function, callType, callData, thisValue, args);
     else
         JSC::call(exec, m_function, callType, callData, thisValue, args);
-    globalObject->globalData()->timeoutChecker.stop();
+    globalObject->globalData().timeoutChecker.stop();
 
     if (exec->hadException())
         reportCurrentException(exec);

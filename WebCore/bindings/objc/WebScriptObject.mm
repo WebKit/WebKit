@@ -304,9 +304,9 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
-    [self _rootObject]->globalObject()->globalData()->timeoutChecker.start();
+    [self _rootObject]->globalObject()->globalData().timeoutChecker.start();
     JSValue result = JSMainThreadExecState::call(exec, function, callType, callData, [self _imp], argList);
-    [self _rootObject]->globalObject()->globalData()->timeoutChecker.stop();
+    [self _rootObject]->globalObject()->globalData().timeoutChecker.stop();
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -333,9 +333,9 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     JSValue result;
     JSLock lock(SilenceAssertionsOnly);
     
-    [self _rootObject]->globalObject()->globalData()->timeoutChecker.start();
+    [self _rootObject]->globalObject()->globalData().timeoutChecker.start();
     Completion completion = JSMainThreadExecState::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), makeSource(String(script)), JSC::JSValue());
-    [self _rootObject]->globalObject()->globalData()->timeoutChecker.stop();
+    [self _rootObject]->globalObject()->globalData().timeoutChecker.stop();
     ComplType type = completion.complType();
     
     if (type == Normal) {

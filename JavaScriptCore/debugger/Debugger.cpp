@@ -106,7 +106,7 @@ JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSG
     if (error)
         return error;
 
-    return globalObject->globalData()->interpreter->execute(eval.get(), globalCallFrame, globalObject, globalCallFrame->scopeChain(), &exception);
+    return globalObject->globalData().interpreter->execute(eval.get(), globalCallFrame, globalObject, globalCallFrame->scopeChain(), &exception);
 }
 
 } // namespace JSC

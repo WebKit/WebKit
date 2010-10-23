@@ -84,12 +84,12 @@ namespace JSC {
 
         m_source = &source;
         if (ParsedNode::scopeIsFunction)
-            lexicalGlobalObject->globalData()->lexer->setIsReparsing();
+            lexicalGlobalObject->globalData().lexer->setIsReparsing();
         parse(lexicalGlobalObject, parameters, strictness, ParsedNode::isFunctionNode ? JSParseFunctionCode : JSParseProgramCode, &errLine, &errMsg);
 
         RefPtr<ParsedNode> result;
         if (m_sourceElements) {
-            result = ParsedNode::create(lexicalGlobalObject->globalData(),
+            result = ParsedNode::create(&lexicalGlobalObject->globalData(),
                 m_sourceElements,
                 m_varDeclarations ? &m_varDeclarations->data : 0,
                 m_funcDeclarations ? &m_funcDeclarations->data : 0,
@@ -108,7 +108,7 @@ namespace JSC {
             if (isFunctionBodyNode(static_cast<ParsedNode*>(0)))
                 *exception = createStackOverflowError(lexicalGlobalObject);
             else
-                *exception = addErrorInfo(lexicalGlobalObject->globalData(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, source);
+                *exception = addErrorInfo(&lexicalGlobalObject->globalData(), createSyntaxError(lexicalGlobalObject, errMsg), errLine, source);
         }
 
         m_arena.reset();

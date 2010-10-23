@@ -1,3 +1,43 @@
+2010-10-23  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Sam Weinig.
+
+        Unify globalData APIs
+        https://bugs.webkit.org/show_bug.cgi?id=47969
+
+        Make JSGlobalObject::globalData return a reference and adapt
+        callers. This unifies the API with the existing
+        CallFrame::globalData, which also returns a reference.
+
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * interpreter/CallFrame.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        * jsc.cpp:
+        (runWithScripts):
+        * parser/JSParser.cpp:
+        (JSC::jsParse):
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+        * parser/Parser.h:
+        (JSC::Parser::parse):
+        * runtime/Error.cpp:
+        (JSC::createError):
+        (JSC::createEvalError):
+        (JSC::createRangeError):
+        (JSC::createReferenceError):
+        (JSC::createSyntaxError):
+        (JSC::createTypeError):
+        (JSC::createURIError):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::constructFunction):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+        (JSC::JSGlobalObject::markChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::globalData):
+
 2010-10-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r70369.

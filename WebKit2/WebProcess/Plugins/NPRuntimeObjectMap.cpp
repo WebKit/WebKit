@@ -96,7 +96,7 @@ JSObject* NPRuntimeObjectMap::getOrCreateJSObject(JSGlobalObject* globalObject, 
     if (JSNPObject* jsNPObject = m_jsNPObjects.get(npObject))
         return jsNPObject;
 
-    JSNPObject* jsNPObject = new (globalObject->globalData()) JSNPObject(globalObject, this, npObject);
+    JSNPObject* jsNPObject = new (&globalObject->globalData()) JSNPObject(globalObject, this, npObject);
     m_jsNPObjects.set(npObject, jsNPObject);
 
     return jsNPObject;
@@ -195,9 +195,9 @@ bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String&scriptString,
     JSLock lock(SilenceAssertionsOnly);
     JSValue thisValue = getOrCreateJSObject(globalObject, npObject);
 
-    globalObject->globalData()->timeoutChecker.start();
+    globalObject->globalData().timeoutChecker.start();
     Completion completion = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(UString(scriptString.impl())), thisValue);
-    globalObject->globalData()->timeoutChecker.stop();
+    globalObject->globalData().timeoutChecker.stop();
 
     ComplType completionType = completion.complType();
 
