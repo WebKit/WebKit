@@ -55,7 +55,7 @@ void setCookieStoragePrivateBrowsingEnabled(bool enabled)
     ASSERT(isMainThread());
 
     if (enabled)
-        s_cookieStorage.adoptPtr(wkCreatePrivateHTTPCookieStorage());
+        s_cookieStorage.adoptCF(wkCreatePrivateHTTPCookieStorage());
     else
         s_cookieStorage = 0;
 }
