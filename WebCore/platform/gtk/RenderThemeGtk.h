@@ -5,7 +5,7 @@
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
- * Copyright (C) 2009 Kenneth Rohde Christiansen
+ * Copyright (C) 2010 Igalia S.L.
  * All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -102,8 +102,19 @@ protected:
 
     virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
 
+    int popupInternalPaddingLeft(RenderStyle*) const;
+    int popupInternalPaddingRight(RenderStyle*) const;
+    int popupInternalPaddingTop(RenderStyle*) const;
+    int popupInternalPaddingBottom(RenderStyle*) const;
+
+    // The Mac port differentiates between the "menu list" and the "menu list button."
+    // The former is used when a menu list button has been styled. This is used to ensure
+    // Aqua themed controls whenever possible. We always want to use GTK+ theming, so
+    // we don't maintain this differentiation.
     virtual void adjustMenuListStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListButtonStyle(CSSStyleSelector*, RenderStyle*, Element* e) const;
     virtual bool paintMenuList(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);

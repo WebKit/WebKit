@@ -450,18 +450,66 @@ bool RenderThemeGtk::paintButton(RenderObject* o, const PaintInfo& i, const IntR
     return paintRenderObject(MOZ_GTK_BUTTON, o, i.context, rect, GTK_RELIEF_NORMAL);
 }
 
-void RenderThemeGtk::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, WebCore::Element* e) const
+static void getComboBoxPadding(RenderStyle* style, int& left, int& top, int& right, int& bottom)
 {
-    style->resetBorder();
-    style->resetPadding();
-    style->setHeight(Length(Auto));
-    style->setWhiteSpace(PRE);
-    adjustMozillaStyle(this, style, MOZ_GTK_DROPDOWN);
+    // If this menu list button isn't drawn using the native theme, we
+    // don't add any extra padding beyond what WebCore already uses.
+    if (style->appearance() == NoControlPart)
+        return;
+    moz_gtk_get_widget_border(MOZ_GTK_DROPDOWN, &left, &top, &right, &bottom,
+                              gtkTextDirection(style->direction()), TRUE);
+}
+
+int RenderThemeGtk::popupInternalPaddingLeft(RenderStyle* style) const
+{
+    int left = 0, top = 0, right = 0, bottom = 0;
+    getComboBoxPadding(style, left, top, right, bottom);
+    return left;
+}
+
+int RenderThemeGtk::popupInternalPaddingRight(RenderStyle* style) const
+{
+    int left = 0, top = 0, right = 0, bottom = 0;
+    getComboBoxPadding(style, left, top, right, bottom);
+    return right;
+}
+
+int RenderThemeGtk::popupInternalPaddingTop(RenderStyle* style) const
+{
+    int left = 0, top = 0, right = 0, bottom = 0;
+    getComboBoxPadding(style, left, top, right, bottom);
+    return top;
+}
+
+int RenderThemeGtk::popupInternalPaddingBottom(RenderStyle* style) const
+{
+    int left = 0, top = 0, right = 0, bottom = 0;
+    getComboBoxPadding(style, left, top, right, bottom);
+    return bottom;
+}
+
+void RenderThemeGtk::adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    // The tests check explicitly that select menu buttons ignore line height.
+    style->setLineHeight(RenderStyle::initialLineHeight());
+
+    // We cannot give a proper rendering when border radius is active, unfortunately.
+    style->resetBorderRadius();
+}
+
+void RenderThemeGtk::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
+{
+    adjustMenuListStyle(selector, style, e);
 }
 
 bool RenderThemeGtk::paintMenuList(RenderObject* o, const PaintInfo& i, const IntRect& rect)
 {
     return paintRenderObject(MOZ_GTK_DROPDOWN, o, i.context, rect);
+}
+
+bool RenderThemeGtk::paintMenuListButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    return paintMenuList(object, info, rect);
 }
 
 void RenderThemeGtk::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const
