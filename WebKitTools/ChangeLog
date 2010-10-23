@@ -1,3 +1,14 @@
+2010-10-22  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue should not pass --quiet to subcommands now that the parent command does the reporting
+        https://bugs.webkit.org/show_bug.cgi?id=48165
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+
 2010-10-22  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Adding myself as a committer.

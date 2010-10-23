@@ -85,7 +85,6 @@ class CommitQueueTask(object):
             "apply-attachment",
             "--force-clean",
             "--non-interactive",
-            "--quiet",
             self._patch.id(),
         ],
         "Applied patch",
@@ -97,7 +96,6 @@ class CommitQueueTask(object):
             "--no-clean",
             "--no-update",
             "--build-style=both",
-            "--quiet",
         ],
         "Built patch",
         "Patch does not build")
@@ -108,7 +106,6 @@ class CommitQueueTask(object):
             "--force-clean",
             "--no-update",
             "--build-style=both",
-            "--quiet",
         ],
         "Able to build without patch",
         "Unable to build without patch")
@@ -120,7 +117,6 @@ class CommitQueueTask(object):
             "--no-update",
             # Notice that we don't pass --build, which means we won't build!
             "--test",
-            "--quiet",
             "--non-interactive",
         ],
         "Passed tests",
@@ -133,7 +129,6 @@ class CommitQueueTask(object):
             "--no-update",
             "--build",
             "--test",
-            "--quiet",
             "--non-interactive",
         ],
         "Able to pass tests without patch",
@@ -146,11 +141,11 @@ class CommitQueueTask(object):
         return results.failing_tests()
 
     def _land(self):
+        # Unclear if this should pass --quiet or not.  If --parent-command always does the reporting, then it should.
         return self._run_command([
             "land-attachment",
             "--force-clean",
             "--ignore-builders",
-            "--quiet",
             "--non-interactive",
             "--parent-command=commit-queue",
             self._patch.id(),

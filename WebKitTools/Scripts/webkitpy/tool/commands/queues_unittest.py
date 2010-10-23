@@ -239,13 +239,13 @@ MOCK: release_work_item: commit-queue 197
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', '--quiet', 197]
+            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', 197]
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both']
 MOCK: update_status: commit-queue Built patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--quiet', '--non-interactive']
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build-and-test', '--no-clean', '--no-update', '--test', '--non-interactive']
 MOCK: update_status: commit-queue Passed tests
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 197]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 197]
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 197
@@ -264,11 +264,11 @@ MOCK: release_work_item: commit-queue 197
             "begin_work_queue": self._default_begin_work_queue_stderr("commit-queue", MockSCM.fake_checkout_root),
             "should_proceed_with_work_item": "MOCK: update_status: commit-queue Processing rollout patch\n",
             "next_work_item": "",
-            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', '--quiet', 106]
+            "process_work_item": """MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'apply-attachment', '--force-clean', '--non-interactive', 106]
 MOCK: update_status: commit-queue Applied patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both', '--quiet']
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--no-clean', '--no-update', '--build-style=both']
 MOCK: update_status: commit-queue Built patch
-MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--quiet', '--non-interactive', '--parent-command=commit-queue', 106]
+MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'land-attachment', '--force-clean', '--ignore-builders', '--non-interactive', '--parent-command=commit-queue', 106]
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 106
