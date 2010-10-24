@@ -1822,7 +1822,7 @@ sub GenerateImplementation
                                     push(@implContent, "        return;\n");
                                     push(@implContent, "    };\n");
                                 } elsif ($codeGenerator->IsNumericType($argType)) {
-                                    push(@implContent, "    if (!value.isUndefinedOrNull() && !value.isNumber()) {\n");
+                                    push(@implContent, "    if (!value.isUndefinedOrNull() && !value.isNumber() && !value.isBoolean()) {\n");
                                     push(@implContent, "        throwVMTypeError(exec);\n");
                                     push(@implContent, "        return;\n");
                                     push(@implContent, "    };\n");
@@ -2085,7 +2085,7 @@ sub GenerateImplementation
                                     push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.isString() && !${argValue}.isObject())\n");
                                     push(@implContent, "        return throwVMTypeError(exec);\n");
                                 } elsif ($codeGenerator->IsNumericType($argType)) {
-                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.isNumber())\n");
+                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.isNumber() && !${argValue}.isBoolean())\n");
                                     push(@implContent, "        return throwVMTypeError(exec);\n");
                                 }
                             }

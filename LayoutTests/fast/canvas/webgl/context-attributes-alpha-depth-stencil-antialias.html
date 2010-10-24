@@ -79,7 +79,7 @@ function getWebGL(canvasName, contextAttribs, clearColor, clearDepth, clearStenc
     // Bind attributes
     var attribs = [ "pos", "colorIn" ];
     for (var i in attribs)
-        gl.bindAttribLocation(gl.program, i, attribs[i]);
+        gl.bindAttribLocation(gl.program, parseInt(i), attribs[i]);
 
     // Link the program
     gl.linkProgram(gl.program);

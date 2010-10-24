@@ -953,7 +953,7 @@ sub GenerateNormalAttrSetter
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
         } elsif ($codeGenerator->IsNumericType($argType)) {
-            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsNumber()) {\n");
+            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsNumber() && !value->IsBoolean()) {\n");
             push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
@@ -1417,7 +1417,7 @@ END
                     push(@implContentDecls, "        return notHandledByInterceptor();\n");
                     push(@implContentDecls, "    }\n");
                 } elsif ($codeGenerator->IsNumericType($argType)) {
-                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !${argValue}->IsNumber()) {\n");
+                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !${argValue}->IsNumber() && !${argValue}->IsBoolean()) {\n");
                     push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
                     push(@implContentDecls, "        return notHandledByInterceptor();\n");
                     push(@implContentDecls, "    }\n");

@@ -568,7 +568,7 @@ var setupWebGLWithShaders = function(
 
   // Bind attributes
   for (var i in attribs) {
-    gl.bindAttribLocation (program, i, attribs[i]);
+    gl.bindAttribLocation (program, parseInt(i), attribs[i]);
   }
 
   linkProgram(gl, program);
