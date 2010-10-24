@@ -641,9 +641,7 @@ FloatRect WebChromeClient::customHighlightRect(Node* node, const AtomicString& t
 
     WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
     id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
-    if ([(NSObject *)highlighter respondsToSelector:@selector(highlightRectForLine:representedNode:)])
-        return [highlighter highlightRectForLine:lineRect representedNode:kit(node)];
-    return [highlighter highlightRectForLine:lineRect];
+    return [highlighter highlightRectForLine:lineRect representedNode:kit(node)];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 
@@ -661,10 +659,7 @@ void WebChromeClient::paintCustomHighlight(Node* node, const AtomicString& type,
 
     WebHTMLView *webHTMLView = (WebHTMLView *)documentView;
     id<WebHTMLHighlighter> highlighter = [webHTMLView _highlighterForType:type];
-    if ([(NSObject *)highlighter respondsToSelector:@selector(paintHighlightForBox:onLine:behindText:entireLine:representedNode:)])
-        [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:behindText entireLine:entireLine representedNode:kit(node)];
-    else
-        [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:behindText entireLine:entireLine];
+    [highlighter paintHighlightForBox:boxRect onLine:lineRect behindText:behindText entireLine:entireLine representedNode:kit(node)];
 
     END_BLOCK_OBJC_EXCEPTIONS;
 }

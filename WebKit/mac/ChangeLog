@@ -1,3 +1,16 @@
+2010-10-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Removed deprecated methods from the WebHTMLHighlighter private protocol.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::customHighlightRect): Call -highlightRectForLine:representedNode:
+        unconditionally.
+        (WebChromeClient::paintCustomHighlight): Call
+        -paintHighlightForBox:onLine:behindText:entireLine:representedNode: unconditionally.
+        * WebView/WebHTMLViewPrivate.h:
+
 2010-10-23  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Sam Weinig.
