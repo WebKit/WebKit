@@ -157,14 +157,17 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
     QImage image = m_data.m_pixmap.toImage().convertToFormat(QImage::Format_ARGB32);
     ASSERT(!image.isNull());
 
+    uchar* bits = image.bits();
+    const int bytesPerLine = image.bytesPerLine();
+
     for (int y = 0; y < m_size.height(); ++y) {
-        for (int x = 0; x < m_size.width(); x++) {
-            QRgb value = image.pixel(x, y);
-            value = qRgba(lookUpTable[qRed(value)],
-                          lookUpTable[qGreen(value)],
-                          lookUpTable[qBlue(value)],
-                          qAlpha(value));
-            image.setPixel(x, y, value);
+        quint32* scanLine = reinterpret_cast_ptr<quint32*>(bits + y * bytesPerLine);
+        for (int x = 0; x < m_size.width(); ++x) {
+            QRgb& pixel = scanLine[x];
+            pixel = qRgba(lookUpTable[qRed(pixel)],
+                          lookUpTable[qGreen(pixel)],
+                          lookUpTable[qBlue(pixel)],
+                          qAlpha(pixel));
         }
     }
 
