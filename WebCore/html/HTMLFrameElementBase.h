@@ -70,8 +70,6 @@ private:
     void setNameAndOpenURL();
     void openURL(bool lockHistory = true, bool lockBackForwardList = true);
 
-    static void setNameAndOpenURLCallback(Node*);
-
     AtomicString m_URL;
     AtomicString m_frameName;
 
