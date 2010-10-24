@@ -1811,18 +1811,18 @@ sub GenerateImplementation
                             # a TypeError is thrown instead of casting to null.
                             if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
                                 my $argType = $attribute->signature->type;
-                                if ($codeGenerator->IsStringType($argType)) {
+                                if (!IsNativeType($argType)) {
+                                    push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(&JS${argType}::s_info)) {\n");
+                                    push(@implContent, "        throwVMTypeError(exec);\n");
+                                    push(@implContent, "        return;\n");
+                                    push(@implContent, "    };\n");
+                                } elsif ($codeGenerator->IsStringType($argType)) {
                                     push(@implContent, "    if (!value.isUndefinedOrNull() && !value.isString() && !value.isObject()) {\n");
                                     push(@implContent, "        throwVMTypeError(exec);\n");
                                     push(@implContent, "        return;\n");
                                     push(@implContent, "    };\n");
                                 } elsif ($codeGenerator->IsNumericType($argType)) {
                                     push(@implContent, "    if (!value.isUndefinedOrNull() && !value.isNumber()) {\n");
-                                    push(@implContent, "        throwVMTypeError(exec);\n");
-                                    push(@implContent, "        return;\n");
-                                    push(@implContent, "    };\n");
-                                } elsif (!IsNativeType($argType)) {
-                                    push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(&JS${argType}::s_info)) {\n");
                                     push(@implContent, "        throwVMTypeError(exec);\n");
                                     push(@implContent, "        return;\n");
                                     push(@implContent, "    };\n");
@@ -2078,16 +2078,16 @@ sub GenerateImplementation
                             # a TypeError is thrown instead of casting to null.
                             if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
                                 my $argValue = "exec->argument($argsIndex)";
-                                if ($codeGenerator->IsStringType($argType)) {
+                                if (!IsNativeType($argType)) {
+                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(&JS${argType}::s_info))\n");
+                                    push(@implContent, "        return throwVMTypeError(exec);\n");
+                                } elsif ($codeGenerator->IsStringType($argType)) {
                                     push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.isString() && !${argValue}.isObject())\n");
                                     push(@implContent, "        return throwVMTypeError(exec);\n");
                                 } elsif ($codeGenerator->IsNumericType($argType)) {
                                     push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.isNumber())\n");
                                     push(@implContent, "        return throwVMTypeError(exec);\n");
-                                } elsif (!IsNativeType($argType)) {
-                                    push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(&JS${argType}::s_info))\n");
-                                    push(@implContent, "        return throwVMTypeError(exec);\n");
-                                } 
+                                }
                             }
 
                             push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "exec->argument($argsIndex)") . ";\n");

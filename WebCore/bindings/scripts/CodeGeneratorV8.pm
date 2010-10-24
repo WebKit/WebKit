@@ -942,18 +942,18 @@ sub GenerateNormalAttrSetter
     # a TypeError is thrown instead of casting to null.
     if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
         my $argType = GetTypeFromSignature($attribute->signature);
-        if ($codeGenerator->IsStringType($argType)) {
+        if (IsWrapperType($argType)) {
+            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !V8${argType}::HasInstance(value)) {\n");
+            push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
+            push(@implContentDecls, "        return;\n");
+            push(@implContentDecls, "    }\n");
+        } elsif ($codeGenerator->IsStringType($argType)) {
             push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsString() && !value->IsObject()) {\n");
             push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
         } elsif ($codeGenerator->IsNumericType($argType)) {
             push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsNumber()) {\n");
-            push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
-            push(@implContentDecls, "        return;\n");
-            push(@implContentDecls, "    }\n");
-        } elsif (IsWrapperType($argType)) {
-            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !V8${argType}::HasInstance(value)) {\n");
             push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");
@@ -1406,18 +1406,18 @@ END
             if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
                 my $argValue = "args[$paramIndex]";
                 my $argType = GetTypeFromSignature($parameter);
-                if ($codeGenerator->IsStringType($argType)) {
+                if (IsWrapperType($argType)) {
+                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue)) {\n");
+                    push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
+                    push(@implContentDecls, "        return notHandledByInterceptor();\n");
+                    push(@implContentDecls, "    }\n");
+                } elsif ($codeGenerator->IsStringType($argType)) {
                     push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !${argValue}->IsString() && !${argValue}->IsObject()) {\n");
                     push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
                     push(@implContentDecls, "        return notHandledByInterceptor();\n");
                     push(@implContentDecls, "    }\n");
                 } elsif ($codeGenerator->IsNumericType($argType)) {
                     push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !${argValue}->IsNumber()) {\n");
-                    push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
-                    push(@implContentDecls, "        return notHandledByInterceptor();\n");
-                    push(@implContentDecls, "    }\n");
-                } elsif (IsWrapperType($argType)) {
-                    push(@implContentDecls, "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue)) {\n");
                     push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
                     push(@implContentDecls, "        return notHandledByInterceptor();\n");
                     push(@implContentDecls, "    }\n");
