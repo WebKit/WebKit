@@ -5,6 +5,7 @@
 # Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
 # Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
+# Copyright (C) Research In Motion Limited 2010. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -42,20 +43,22 @@ my $codeGenerator = 0;
 
 my $verbose = 0;
 
-my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
-                         "unsigned int" => 1, "unsigned short" => 1,
-                         "unsigned long" => 1, "unsigned long long" => 1,
-                         "float" => 1, "double" => 1,
-                         "boolean" => 1, "void" => 1,
-                         "Date" => 1);
+my %numericTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
+                       "unsigned int" => 1, "unsigned short" => 1,
+                       "unsigned long" => 1, "unsigned long long" => 1,
+                       "float" => 1, "double" => 1);
+
+my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
 
 my %podTypeHash = ("SVGNumber" => 1, "SVGTransform" => 1);
-my %podTypesWithWritablePropertiesHash = ("SVGAngle" => 1, "SVGMatrix" => 1, "SVGPoint" => 1, "SVGPreserveAspectRatio" => 1, "SVGRect" => 1);
+my %podTypesWithWritablePropertiesHash = ("SVGMatrix" => 1, "SVGPoint" => 1, "SVGPreserveAspectRatio" => 1, "SVGRect" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
 
-my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1);
+my %svgTypeNeedingTearOffHash = ("SVGLength" => 1, "SVGAngle" => 1);
+
+my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1);
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
@@ -283,6 +286,8 @@ sub ParseInterface
 }
 
 # Helpers for all CodeGenerator***.pm modules
+
+# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
 sub IsPodType
 {
     my $object = shift;
@@ -302,12 +307,22 @@ sub IsPodTypeWithWriteableProperties
     return 0;
 }
 
+sub IsNumericType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 1 if $numericTypeHash{$type};
+    return 0;
+}
+
 sub IsPrimitiveType
 {
     my $object = shift;
     my $type = shift;
 
     return 1 if $primitiveTypeHash{$type};
+    return 1 if $numericTypeHash{$type};
     return 0;
 }
 
@@ -325,7 +340,17 @@ sub IsNonPointerType
     my $object = shift;
     my $type = shift;
 
-    return 1 if $nonPointerTypeHash{$type} or $primitiveTypeHash{$type};
+    return 1 if $nonPointerTypeHash{$type} or $primitiveTypeHash{$type} or $numericTypeHash{$type};
+    return 0;
+}
+
+
+sub IsSVGTypeNeedingTearOff
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 1 if $svgTypeNeedingTearOffHash{$type};
     return 0;
 }
 

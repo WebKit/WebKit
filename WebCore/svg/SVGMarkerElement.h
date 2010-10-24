@@ -82,7 +82,7 @@ private:
     DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::markerHeightAttr, SVGLength, MarkerHeight, markerHeight)
     DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::markerUnitsAttr, int, MarkerUnits, markerUnits)
     DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, SVGOrientTypeAttrIdentifier, int, OrientType, orientType)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, SVGOrientAngleAttrIdentifier, SVGAngle, OrientAngle, orientAngle)
+    DECLARE_ANIMATED_PROPERTY_NEW_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, SVGOrientAngleAttrIdentifier, SVGAngle, OrientAngle, orientAngle)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

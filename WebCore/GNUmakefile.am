@@ -3028,6 +3028,7 @@ webcore_sources += \
 	WebCore/svg/SVGAngle.h \
 	WebCore/svg/SVGAnimateColorElement.cpp \
 	WebCore/svg/SVGAnimateColorElement.h \
+	WebCore/svg/SVGAnimatedAngle.h \
 	WebCore/svg/SVGAnimatedLength.h \
 	WebCore/svg/SVGAnimatedLengthList.h \
 	WebCore/svg/SVGAnimatedPathData.cpp \

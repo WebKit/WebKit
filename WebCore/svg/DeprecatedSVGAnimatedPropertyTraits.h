@@ -24,7 +24,6 @@
 #if ENABLE(SVG)
 #include "FloatRect.h"
 #include "PlatformString.h"
-#include "SVGAngle.h"
 #include "SVGNumberList.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGTransformList.h"
@@ -33,18 +32,6 @@ namespace WebCore {
 
 template<typename Type>
 struct DeprecatedSVGAnimatedPropertyTraits : public Noncopyable { };
-
-// SVGAnimatedAngle
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<SVGAngle> : public Noncopyable {
-    typedef const SVGAngle& PassType;
-    typedef SVGAngle ReturnType;
-    typedef SVGAngle StoredType;
-
-    static ReturnType null() { return SVGAngle(); }
-    static ReturnType toReturnType(const StoredType& type) { return type; }
-    static String toString(PassType type) { return type.valueAsString(); }
-};
 
 // SVGAnimatedBoolean
 template<>

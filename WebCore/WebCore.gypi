@@ -3958,6 +3958,7 @@
             'svg/SVGAnimateMotionElement.h',
             'svg/SVGAnimateTransformElement.cpp',
             'svg/SVGAnimateTransformElement.h',
+            'svg/SVGAnimatedAngle.h',
             'svg/SVGAnimatedLength.h',
             'svg/SVGAnimatedLengthList.h',
             'svg/SVGAnimatedPathData.cpp',

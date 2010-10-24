@@ -28,7 +28,6 @@
 
 namespace WebCore {
    
-    class SVGAngle;
     class SVGElement;
     class SVGNumberList;
     class SVGPreserveAspectRatio;
@@ -155,7 +154,6 @@ namespace WebCore {
     }
 
     // Common type definitions, to ease IDL generation.
-    typedef DeprecatedSVGAnimatedTemplate<SVGAngle> SVGAnimatedAngle;
     typedef DeprecatedSVGAnimatedTemplate<bool> SVGAnimatedBoolean;
     typedef DeprecatedSVGAnimatedTemplate<int> SVGAnimatedEnumeration;
     typedef DeprecatedSVGAnimatedTemplate<long> SVGAnimatedInteger;

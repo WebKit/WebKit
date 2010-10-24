@@ -81,7 +81,8 @@ void SVGMarkerElement::parseMappedAttribute(Attribute* attr)
         if (attr->value() == "auto")
             setOrientTypeBaseValue(SVG_MARKER_ORIENT_AUTO);
         else {
-            angle.setValueAsString(attr->value());
+            ExceptionCode ec = 0;
+            angle.setValueAsString(attr->value(), ec);
             setOrientTypeBaseValue(SVG_MARKER_ORIENT_ANGLE);
         }
 

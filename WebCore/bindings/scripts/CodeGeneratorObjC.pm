@@ -6,6 +6,7 @@
 # Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) 2010 Google Inc.
+# Copyright (C) Research In Motion Limited 2010. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -1369,8 +1370,16 @@ sub GenerateImplementation
                 if ($svgPropertyType) {
                     $getterContentHead = "$getterExpressionPrefix";
                     push(@implContent, "    $svgPropertyTypeWithNamespace& podImpl = IMPL->propertyReference();\n");
-                    push(@implContent, "    podImpl.$coreSetterName($arg);\n");
-                    push(@implContent, "    IMPL->commitChange();\n");
+                    my $ec = $hasSetterException ? ", ec" : "";
+                    push(@implContent, "    $exceptionInit\n") if $hasSetterException;
+                    push(@implContent, "    podImpl.$coreSetterName($arg$ec);\n");
+                    if ($hasSetterException) {
+                        push(@implContent, "    if (!ec)\n");
+                        push(@implContent, "        IMPL->commitChange();\n");
+                        push(@implContent, "    $exceptionRaiseOnError\n");
+                    } else {
+                        push(@implContent, "        IMPL->commitChange();\n");
+                    }
                 } elsif ($svgListPropertyType) {
                     $getterContentHead = "$getterExpressionPrefix";
                     push(@implContent, "    IMPL->$coreSetterName($arg);\n");
@@ -1503,6 +1512,35 @@ sub GenerateImplementation
 
             push(@parameterNames, "ec") if $raisesExceptions and !($svgMatrixRotateFromVector || $svgMatrixInverse);
             push(@parameterNames, "0 /* FIXME */") if $svgLengthConvertToSpecifiedUnits; 
+
+            # Handle arguments that are 'SVGProperty' based (SVGAngle/SVGLength). We need to convert from SVGPropertyTearOff<Type>* to Type,
+            # to be able to call the desired WebCore function. If the conversion fails, we can't extract Type and need to raise an exception.
+            my $currentParameter = -1;
+            foreach my $param (@{$function->parameters}) {
+                $currentParameter++;
+
+                my $paramName = $param->name;
+                my $idlType = $codeGenerator->StripModule($param->type);
+                next if not $codeGenerator->IsSVGTypeNeedingTearOff($idlType) or $implClassName =~ /List$/;
+
+                my $implGetter = GetObjCTypeGetter($paramName, $idlType);
+                my $idlTypeWithNamespace = ($idlType eq "float") ? "$idlType" : "WebCore::$idlType";
+
+                push(@functionContent, "    WebCore::SVGPropertyTearOff<$idlTypeWithNamespace>* ${paramName}Core = $implGetter;\n");
+                push(@functionContent, "    if (!${paramName}Core) {\n");
+                push(@functionContent, "        WebCore::ExceptionCode ec = WebCore::TYPE_MISMATCH_ERR;\n");
+                push(@functionContent, "        $exceptionRaiseOnError\n");
+                if ($returnType eq "void") { 
+                    push(@functionContent, "        return;\n");
+                } else {
+                    push(@functionContent, "        return nil;\n");
+                }
+                push(@functionContent, "    }\n");
+
+                # Replace the paramter core() getter, by the cached variable.
+                splice(@parameterNames, $currentParameter, 1, "${paramName}Core->propertyReference()");
+            }
+
             my $content = $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")"; 
 
             if ($svgPropertyType) {
@@ -1554,9 +1592,8 @@ sub GenerateImplementation
                 $content = "foo";
             } else {
                 if (ConversionNeeded($function->signature->type)) {
-                    my $svgLiveProperty = $function->signature->extendedAttributes->{"SVGLiveProperty"};
-                    if ($svgLiveProperty) {
-                        $content = "kit(WebCore::SVGPropertyTearOff<WebCore::" . $function->signature->type . ">::create($content).get())";
+                    if ($codeGenerator->IsSVGTypeNeedingTearOff($function->signature->type) and not $implClassName =~ /List$/) {
+                        $content = "kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::" . $function->signature->type . ">::create($content)))";
                     } elsif ($codeGenerator->IsPodType($function->signature->type)) {
                         $content = "kit($content)";
                     } else {

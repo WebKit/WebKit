@@ -61171,6 +61171,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedAngle.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedLength.h"
 				>
 			</File>

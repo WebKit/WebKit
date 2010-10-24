@@ -23,10 +23,8 @@
 module svg {
 
     interface [Conditional=SVG, PODType=FloatPoint] SVGPoint {
-                 attribute float x
-                     setter raises(DOMException);
-                 attribute float y
-                     setter raises(DOMException);
+        attribute float x;
+        attribute float y;
 
         SVGPoint matrixTransform(in SVGMatrix matrix);
     };

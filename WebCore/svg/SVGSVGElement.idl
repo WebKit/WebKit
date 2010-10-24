@@ -73,7 +73,7 @@ module svg {
         void deselectAll();
 
         SVGNumber createSVGNumber();
-        [SVGLiveProperty] SVGLength createSVGLength();
+        SVGLength createSVGLength();
         SVGAngle createSVGAngle();
         SVGPoint createSVGPoint();
         SVGMatrix createSVGMatrix();

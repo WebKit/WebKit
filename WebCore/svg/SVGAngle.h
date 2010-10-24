@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,44 +23,41 @@
 #define SVGAngle_h
 
 #if ENABLE(SVG)
-#include "PlatformString.h"
+#include "ExceptionCode.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-    class SVGAngle {
-    public:
-        SVGAngle();
+class SVGAngle {
+public:
+    SVGAngle();
 
-        enum SVGAngleType {
-            SVG_ANGLETYPE_UNKNOWN           = 0,
-            SVG_ANGLETYPE_UNSPECIFIED       = 1,
-            SVG_ANGLETYPE_DEG               = 2,
-            SVG_ANGLETYPE_RAD               = 3,
-            SVG_ANGLETYPE_GRAD              = 4
-        };
-
-        SVGAngleType unitType() const { return m_unitType; }
-
-        void setValue(float);
-        float value() const { return m_value; }
-
-        void setValueInSpecifiedUnits(float valueInSpecifiedUnits);
-        float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
-
-        void setValueAsString(const String&);
-        String valueAsString() const;
-
-        void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
-        void convertToSpecifiedUnits(unsigned short unitType);
-
-    private:
-        SVGAngleType m_unitType;
-        float m_value;
-        float m_valueInSpecifiedUnits;
-        mutable String m_valueAsString;
-
-        void calculate();
+    enum SVGAngleType {
+        SVG_ANGLETYPE_UNKNOWN = 0,
+        SVG_ANGLETYPE_UNSPECIFIED = 1,
+        SVG_ANGLETYPE_DEG = 2,
+        SVG_ANGLETYPE_RAD = 3,
+        SVG_ANGLETYPE_GRAD = 4
     };
+
+    SVGAngleType unitType() const { return m_unitType; }
+
+    void setValue(float);
+    float value() const;
+
+    void setValueInSpecifiedUnits(float valueInSpecifiedUnits) { m_valueInSpecifiedUnits = valueInSpecifiedUnits; }
+    float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
+
+    void setValueAsString(const String&, ExceptionCode&);
+    String valueAsString() const;
+
+    void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits, ExceptionCode&);
+    void convertToSpecifiedUnits(unsigned short unitType, ExceptionCode&);
+
+private:
+    SVGAngleType m_unitType;
+    float m_valueInSpecifiedUnits;
+};
 
 } // namespace WebCore
 

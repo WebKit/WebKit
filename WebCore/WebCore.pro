@@ -2358,6 +2358,7 @@ HEADERS += \
     svg/SVGAltGlyphElement.h \
     svg/SVGAngle.h \
     svg/SVGAnimateColorElement.h \
+    svg/SVGAnimatedAngle.h \
     svg/SVGAnimatedLength.h \
     svg/SVGAnimatedLengthList.h \
     svg/SVGAnimatedPathData.h \

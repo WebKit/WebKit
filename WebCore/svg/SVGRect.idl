@@ -23,14 +23,10 @@
 module svg {
 
     interface [Conditional=SVG, PODType=FloatRect] SVGRect {
-                 attribute float x
-                     setter raises(DOMException);
-                 attribute float y
-                     setter raises(DOMException);
-                 attribute float width
-                     setter raises(DOMException);
-                 attribute float height
-                     setter raises(DOMException);
+        attribute float x;
+        attribute float y;
+        attribute float width;
+        attribute float height;
     };
 
 }
