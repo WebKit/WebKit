@@ -1,3 +1,15 @@
+2010-10-24  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/48184> build-webkit: reformat support variables for better maintainability
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/build-webkit: Alphabetized the @features array based
+        on the name of the feature.  Reformatted the list of support
+        variables so that they match the order of @features, and so that
+        each has its own line.  This makes it easy to add new variables
+        in the correct order.
+
 2010-10-23  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
