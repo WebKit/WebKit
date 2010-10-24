@@ -1,3 +1,14 @@
+2010-10-24  Anders Bakken  <agbakken@gmail.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Disable enable_fast_mobile_scrolling for QWS
+        https://bugs.webkit.org/show_bug.cgi?id=48006
+
+        Turning this on breaks the acidtests for QWS/DirectFB and QWS/QVFB
+
+        * WebKit.pri:
+
 2010-10-22  Adam Barth  <abarth@webkit.org>
 
         Unreviewed, rolling out r70290.

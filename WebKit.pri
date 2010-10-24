@@ -96,8 +96,6 @@ symbian|maemo5|maemo6 {
     CONFIG += include_webinspector
 }
 
-embedded: CONFIG += enable_fast_mobile_scrolling
-
 ####
 
 disable_uitools: DEFINES *= QT_NO_UITOOLS
