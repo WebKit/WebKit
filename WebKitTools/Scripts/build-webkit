@@ -84,7 +84,6 @@ my (
     $mathmlSupport,
     $notificationsSupport,
     $offlineWebApplicationSupport,
-    $progressTagSupport,
     $rubySupport,
     $sandboxSupport,
     $sharedWorkersSupport,
@@ -186,9 +185,6 @@ my @features = (
 
     { option => "offline-web-applications", desc => "Toggle Offline Web Application Support",
       define => "ENABLE_OFFLINE_WEB_APPLICATIONS", default => 1, value => \$offlineWebApplicationSupport },
-
-    { option => "progress-tag", desc => "Progress Tag support",
-      define => "ENABLE_PROGRESS_TAG", default => 1, value => \$progressTagSupport },
 
     { option => "ruby", desc => "Toggle HTML5 Ruby support",
       define => "ENABLE_RUBY", default => 1, value => \$rubySupport },
