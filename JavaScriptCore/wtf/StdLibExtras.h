@@ -87,29 +87,29 @@ TypePtr reinterpret_cast_ptr(const void* ptr)
 
 namespace WTF {
 
-    /*
-     * C++'s idea of a reinterpret_cast lacks sufficient cojones.
-     */
-    template<typename TO, typename FROM>
-    TO bitwise_cast(FROM from)
-    {
-        COMPILE_ASSERT(sizeof(TO) == sizeof(FROM), WTF_bitwise_cast_sizeof_casted_types_is_equal);
-        union {
-            FROM from;
-            TO to;
-        } u;
-        u.from = from;
-        return u.to;
-    }
+/*
+ * C++'s idea of a reinterpret_cast lacks sufficient cojones.
+ */
+template<typename TO, typename FROM>
+inline TO bitwise_cast(FROM from)
+{
+    COMPILE_ASSERT(sizeof(TO) == sizeof(FROM), WTF_bitwise_cast_sizeof_casted_types_is_equal);
+    union {
+        FROM from;
+        TO to;
+    } u;
+    u.from = from;
+    return u.to;
+}
 
-    // Returns a count of the number of bits set in 'bits'.
-    inline size_t bitCount(unsigned bits)
-    {
-        bits = bits - ((bits >> 1) & 0x55555555);
-        bits = (bits & 0x33333333) + ((bits >> 2) & 0x33333333);
-        return (((bits + (bits >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
-    }
+// Returns a count of the number of bits set in 'bits'.
+inline size_t bitCount(unsigned bits)
+{
+    bits = bits - ((bits >> 1) & 0x55555555);
+    bits = (bits & 0x33333333) + ((bits >> 2) & 0x33333333);
+    return (((bits + (bits >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
+}
 
 } // namespace WTF
 
-#endif
+#endif // WTF_StdLibExtras_h
