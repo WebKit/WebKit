@@ -1,3 +1,14 @@
+2010-10-24  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Filter example Chiseled from SVG Wow! is slow
+        https://bugs.webkit.org/show_bug.cgi?id=48174
+
+        Added 'using WTF::ByteArray;' at the end of ByteArray.h
+
+        * wtf/ByteArray.h:
+
 2010-10-24  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by David Kilzer.

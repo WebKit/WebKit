@@ -27,10 +27,10 @@
 #if ENABLE(FILTERS)
 #include "FEGaussianBlur.h"
 
-#include "CanvasPixelArray.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
+
 #include <wtf/MathExtras.h>
 
 using std::max;
@@ -72,7 +72,7 @@ void FEGaussianBlur::setStdDeviationY(float y)
     m_stdY = y;
 }
 
-static void boxBlur(CanvasPixelArray*& srcPixelArray, CanvasPixelArray*& dstPixelArray,
+inline void boxBlur(ByteArray* srcPixelArray, ByteArray* dstPixelArray,
                     unsigned dx, int dxLeft, int dxRight, int stride, int strideLine, int effectWidth, int effectHeight, bool alphaImage)
 {
     for (int y = 0; y < effectHeight; ++y) {
@@ -175,7 +175,7 @@ void FEGaussianBlur::apply(Filter* filter)
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<ImageData> srcImageData(in->resultImage()->getPremultipliedImageData(effectDrawingRect));
+    RefPtr<ImageData> srcImageData = in->resultImage()->getPremultipliedImageData(effectDrawingRect);
     IntRect imageRect(IntPoint(), resultImage()->size());
 
     if (!m_stdX && !m_stdY) {
@@ -187,9 +187,9 @@ void FEGaussianBlur::apply(Filter* filter)
     unsigned kernelSizeY = 0;
     calculateKernelSize(filter, kernelSizeX, kernelSizeY, m_stdX, m_stdY);
 
-    CanvasPixelArray* srcPixelArray(srcImageData->data());
+    ByteArray* srcPixelArray = srcImageData->data()->data();
     RefPtr<ImageData> tmpImageData = ImageData::create(imageRect.width(), imageRect.height());
-    CanvasPixelArray* tmpPixelArray(tmpImageData->data());
+    ByteArray* tmpPixelArray = tmpImageData->data()->data();
 
     int stride = 4 * imageRect.width();
     int dxLeft = 0;
@@ -201,7 +201,7 @@ void FEGaussianBlur::apply(Filter* filter)
             kernelPosition(i, kernelSizeX, dxLeft, dxRight);
             boxBlur(srcPixelArray, tmpPixelArray, kernelSizeX, dxLeft, dxRight, 4, stride, imageRect.width(), imageRect.height(), isAlphaImage());
         } else {
-            CanvasPixelArray* auxPixelArray = tmpPixelArray;
+            ByteArray* auxPixelArray = tmpPixelArray;
             tmpPixelArray = srcPixelArray;
             srcPixelArray = auxPixelArray;
         }
@@ -210,7 +210,7 @@ void FEGaussianBlur::apply(Filter* filter)
             kernelPosition(i, kernelSizeY, dyLeft, dyRight);
             boxBlur(tmpPixelArray, srcPixelArray, kernelSizeY, dyLeft, dyRight, stride, 4, imageRect.height(), imageRect.width(), isAlphaImage());
         } else {
-            CanvasPixelArray* auxPixelArray = tmpPixelArray;
+            ByteArray* auxPixelArray = tmpPixelArray;
             tmpPixelArray = srcPixelArray;
             srcPixelArray = auxPixelArray;
         }

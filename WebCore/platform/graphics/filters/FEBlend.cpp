@@ -102,19 +102,23 @@ void FEBlend::apply(Filter* filter)
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<CanvasPixelArray> srcPixelArrayA(in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
+    RefPtr<ImageData> srcImageDataA = in->resultImage()->getPremultipliedImageData(effectADrawingRect);
+    ByteArray* srcPixelArrayA = srcImageDataA->data()->data();
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<CanvasPixelArray> srcPixelArrayB(in2->resultImage()->getPremultipliedImageData(effectBDrawingRect)->data());
+    RefPtr<ImageData> srcImageDataB = in2->resultImage()->getPremultipliedImageData(effectBDrawingRect);
+    ByteArray* srcPixelArrayB = srcImageDataB->data()->data();
 
     IntRect imageRect(IntPoint(), resultImage()->size());
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
+    ByteArray* dstPixelArray = imageData->data()->data();
 
     // Keep synchronized with BlendModeType
     static const BlendType callEffect[] = {unknown, normal, multiply, screen, darken, lighten};
 
-    ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
-    for (unsigned pixelOffset = 0; pixelOffset < srcPixelArrayA->length(); pixelOffset += 4) {
+    unsigned pixelArrayLength = srcPixelArrayA->length();
+    ASSERT(pixelArrayLength == srcPixelArrayB->length());
+    for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
         unsigned char alphaA = srcPixelArrayA->get(pixelOffset + 3);
         unsigned char alphaB = srcPixelArrayB->get(pixelOffset + 3);
         for (unsigned channel = 0; channel < 3; ++channel) {
@@ -122,10 +126,10 @@ void FEBlend::apply(Filter* filter)
             unsigned char colorB = srcPixelArrayB->get(pixelOffset + channel);
 
             unsigned char result = (*callEffect[m_mode])(colorA, colorB, alphaA, alphaB);
-            imageData->data()->set(pixelOffset + channel, result);
+            dstPixelArray->set(pixelOffset + channel, result);
         }
         unsigned char alphaR = 255 - ((255 - alphaA) * (255 - alphaB)) / 255;
-        imageData->data()->set(pixelOffset + 3, alphaR);
+        dstPixelArray->set(pixelOffset + 3, alphaR);
     }
 
     resultImage()->putPremultipliedImageData(imageData.get(), imageRect, IntPoint());

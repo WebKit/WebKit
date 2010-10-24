@@ -26,7 +26,6 @@
 #if ENABLE(FILTERS)
 #include "FEDisplacementMap.h"
 
-#include "CanvasPixelArray.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
@@ -93,13 +92,16 @@ void FEDisplacementMap::apply(Filter* filter)
         return;
 
     IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    RefPtr<CanvasPixelArray> srcPixelArrayA(in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
+    RefPtr<ImageData> srcImageDataA = in->resultImage()->getPremultipliedImageData(effectADrawingRect);
+    ByteArray* srcPixelArrayA = srcImageDataA->data()->data() ;
 
     IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-    RefPtr<CanvasPixelArray> srcPixelArrayB(in2->resultImage()->getUnmultipliedImageData(effectBDrawingRect)->data());
+    RefPtr<ImageData> srcImageDataB = in2->resultImage()->getUnmultipliedImageData(effectBDrawingRect);
+    ByteArray* srcPixelArrayB = srcImageDataB->data()->data();
 
     IntRect imageRect(IntPoint(), resultImage()->size());
     RefPtr<ImageData> imageData = ImageData::create(imageRect.width(), imageRect.height());
+    ByteArray* dstPixelArray = imageData->data()->data();
 
     ASSERT(srcPixelArrayA->length() == srcPixelArrayB->length());
 
@@ -116,10 +118,10 @@ void FEDisplacementMap::apply(Filter* filter)
             int srcY = y + static_cast<int>(scaleY * srcPixelArrayB->get(dstIndex + m_yChannelSelector - 1) + scaleAdjustmentY);
             for (unsigned channel = 0; channel < 4; ++channel) {
                 if (srcX < 0 || srcX >= imageRect.width() || srcY < 0 || srcY >= imageRect.height())
-                    imageData->data()->set(dstIndex + channel, static_cast<unsigned char>(0));
+                    dstPixelArray->set(dstIndex + channel, static_cast<unsigned char>(0));
                 else {
                     unsigned char pixelValue = srcPixelArrayA->get(srcY * stride + srcX * 4 + channel);
-                    imageData->data()->set(dstIndex + channel, pixelValue);
+                    dstPixelArray->set(dstIndex + channel, pixelValue);
                 }
             }
 

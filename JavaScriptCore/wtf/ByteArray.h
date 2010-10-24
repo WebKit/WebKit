@@ -97,6 +97,8 @@ namespace WTF {
         unsigned char m_data[];
 #endif
     };
-}
+} // namespace WTF
+
+using WTF::ByteArray;
 
 #endif

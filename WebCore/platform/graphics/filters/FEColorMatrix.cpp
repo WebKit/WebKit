@@ -25,11 +25,10 @@
 #if ENABLE(FILTERS)
 #include "FEColorMatrix.h"
 
-#include "CanvasPixelArray.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
-#include <math.h>
+
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -112,25 +111,21 @@ inline void huerotate(double& red, double& green, double& blue, const float& hue
 inline void luminance(double& red, double& green, double& blue, double& alpha)
 {
     alpha = 0.2125 * red + 0.7154 * green + 0.0721 * blue;
-    red = 0.;
-    green = 0.;
-    blue = 0.;
+    red = 0;
+    green = 0;
+    blue = 0;
 }
 
 template<ColorMatrixType filterType>
-void effectType(const PassRefPtr<CanvasPixelArray>& srcPixelArray, PassRefPtr<ImageData>& imageData, const Vector<float>& values)
+void effectType(ByteArray* pixelArray, const Vector<float>& values)
 {
-    for (unsigned pixelOffset = 0; pixelOffset < srcPixelArray->length(); pixelOffset++) {
-        unsigned pixelByteOffset = pixelOffset * 4;
+    unsigned pixelArrayLength = pixelArray->length();
+    for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
+        double red = pixelArray->get(pixelByteOffset);
+        double green = pixelArray->get(pixelByteOffset + 1);
+        double blue = pixelArray->get(pixelByteOffset + 2);
+        double alpha = pixelArray->get(pixelByteOffset + 3);
 
-        unsigned char r = 0, g = 0, b = 0, a = 0;
-        srcPixelArray->get(pixelByteOffset, r);
-        srcPixelArray->get(pixelByteOffset + 1, g);
-        srcPixelArray->get(pixelByteOffset + 2, b);
-        srcPixelArray->get(pixelByteOffset + 3, a);
-
-        double red = r, green = g, blue = b, alpha = a;
-        
         switch (filterType) {
             case FECOLORMATRIX_TYPE_MATRIX:
                 matrix(red, green, blue, alpha, values);
@@ -146,10 +141,10 @@ void effectType(const PassRefPtr<CanvasPixelArray>& srcPixelArray, PassRefPtr<Im
                 break;
         }
 
-        imageData->data()->set(pixelByteOffset, red);
-        imageData->data()->set(pixelByteOffset + 1, green);
-        imageData->data()->set(pixelByteOffset + 2, blue);
-        imageData->data()->set(pixelByteOffset + 3, alpha);
+        pixelArray->set(pixelByteOffset, red);
+        pixelArray->set(pixelByteOffset + 1, green);
+        pixelArray->set(pixelByteOffset + 2, blue);
+        pixelArray->set(pixelByteOffset + 3, alpha);
     }
 }
 
@@ -167,23 +162,23 @@ void FEColorMatrix::apply(Filter* filter)
     filterContext->drawImageBuffer(in->resultImage(), ColorSpaceDeviceRGB, drawingRegionOfInputImage(in->absolutePaintRect()));
 
     IntRect imageRect(IntPoint(), resultImage()->size());
-    PassRefPtr<ImageData> imageData(resultImage()->getUnmultipliedImageData(imageRect));
-    PassRefPtr<CanvasPixelArray> srcPixelArray(imageData->data());
+    RefPtr<ImageData> imageData = resultImage()->getUnmultipliedImageData(imageRect);
+    ByteArray* pixelArray = imageData->data()->data();
 
     switch (m_type) {
         case FECOLORMATRIX_TYPE_UNKNOWN:
             break;
         case FECOLORMATRIX_TYPE_MATRIX:
-            effectType<FECOLORMATRIX_TYPE_MATRIX>(srcPixelArray, imageData, m_values);
+            effectType<FECOLORMATRIX_TYPE_MATRIX>(pixelArray, m_values);
             break;
         case FECOLORMATRIX_TYPE_SATURATE: 
-            effectType<FECOLORMATRIX_TYPE_SATURATE>(srcPixelArray, imageData, m_values);
+            effectType<FECOLORMATRIX_TYPE_SATURATE>(pixelArray, m_values);
             break;
         case FECOLORMATRIX_TYPE_HUEROTATE:
-            effectType<FECOLORMATRIX_TYPE_HUEROTATE>(srcPixelArray, imageData, m_values);
+            effectType<FECOLORMATRIX_TYPE_HUEROTATE>(pixelArray, m_values);
             break;
         case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-            effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(srcPixelArray, imageData, m_values);
+            effectType<FECOLORMATRIX_TYPE_LUMINANCETOALPHA>(pixelArray, m_values);
             setIsAlphaImage(true);
             break;
     }

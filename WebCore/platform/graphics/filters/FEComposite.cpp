@@ -26,7 +26,6 @@
 #if ENABLE(FILTERS)
 #include "FEComposite.h"
 
-#include "CanvasPixelArray.h"
 #include "Filter.h"
 #include "GraphicsContext.h"
 #include "ImageData.h"
@@ -98,12 +97,13 @@ void FEComposite::setK4(float k4)
     m_k4 = k4;
 }
 
-inline void arithmetic(const RefPtr<CanvasPixelArray>& srcPixelArrayA, CanvasPixelArray*& srcPixelArrayB,
+inline void arithmetic(const ByteArray* srcPixelArrayA, ByteArray* srcPixelArrayB,
                        float k1, float k2, float k3, float k4)
 {
     float scaledK1 = k1 / 255.f;
     float scaledK4 = k4 * 255.f;
-    for (unsigned pixelOffset = 0; pixelOffset < srcPixelArrayA->length(); pixelOffset += 4) {
+    unsigned pixelArrayLength = srcPixelArrayA->length();
+    for (unsigned pixelOffset = 0; pixelOffset < pixelArrayLength; pixelOffset += 4) {
         for (unsigned channel = 0; channel < 4; ++channel) {
             unsigned char i1 = srcPixelArrayA->get(pixelOffset + channel);
             unsigned char i2 = srcPixelArrayB->get(pixelOffset + channel);
@@ -174,11 +174,12 @@ void FEComposite::apply(Filter* filter)
         break;
     case FECOMPOSITE_OPERATOR_ARITHMETIC: {
         IntRect effectADrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-        RefPtr<CanvasPixelArray> srcPixelArrayA(in->resultImage()->getPremultipliedImageData(effectADrawingRect)->data());
+        RefPtr<ImageData> srcImageData = in->resultImage()->getPremultipliedImageData(effectADrawingRect);
+        ByteArray* srcPixelArrayA = srcImageData->data()->data();
 
         IntRect effectBDrawingRect = requestedRegionOfInputImageData(in2->absolutePaintRect());
-        RefPtr<ImageData> imageData(in2->resultImage()->getPremultipliedImageData(effectBDrawingRect));
-        CanvasPixelArray* srcPixelArrayB(imageData->data());
+        RefPtr<ImageData> imageData = in2->resultImage()->getPremultipliedImageData(effectBDrawingRect);
+        ByteArray* srcPixelArrayB = imageData->data()->data();
 
         arithmetic(srcPixelArrayA, srcPixelArrayB, m_k1, m_k2, m_k3, m_k4);
         resultImage()->putPremultipliedImageData(imageData.get(), IntRect(IntPoint(), resultImage()->size()), IntPoint());
