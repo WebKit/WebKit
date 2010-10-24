@@ -182,7 +182,7 @@ static JSCell* formatLocaleDate(ExecState* exec, DateInstance*, double timeInMil
     // We truncate the string returned from CFDateFormatter if it's absurdly long (> 200 characters).
     // That's not great error handling, but it just won't happen so it doesn't matter.
     UChar buffer[200];
-    const size_t bufferLength = sizeof(buffer) / sizeof(buffer[0]);
+    const size_t bufferLength = WTF_ARRAY_LENGTH(buffer);
     size_t length = CFStringGetLength(string);
     ASSERT(length <= bufferLength);
     if (length > bufferLength)

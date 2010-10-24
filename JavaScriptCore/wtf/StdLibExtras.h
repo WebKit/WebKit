@@ -110,6 +110,10 @@ inline size_t bitCount(unsigned bits)
     return (((bits + (bits >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
+// Macro that returns a compile time constant with the length of an array, but gives an error if passed a non-array.
+template<typename T, size_t Size> char (&ArrayLengthHelperFunction(T (&)[Size]))[Size];
+#define WTF_ARRAY_LENGTH(array) sizeof(::WTF::ArrayLengthHelperFunction(array))
+
 } // namespace WTF
 
 #endif // WTF_StdLibExtras_h

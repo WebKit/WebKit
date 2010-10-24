@@ -950,7 +950,7 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
             }
             haveTZ = true;
         } else {
-            for (int i = 0; i < int(sizeof(known_zones) / sizeof(KnownZone)); i++) {
+            for (size_t i = 0; i < WTF_ARRAY_LENGTH(known_zones); ++i) {
                 if (0 == strncasecmp(dateString, known_zones[i].tzName, strlen(known_zones[i].tzName))) {
                     offset = known_zones[i].tzOffset;
                     dateString += strlen(known_zones[i].tzName);

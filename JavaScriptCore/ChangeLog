@@ -1,3 +1,28 @@
+2010-10-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Add WTF_ARRAY_LENGTH macro to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=32828
+
+        Unify the different implementations and usages.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * runtime/DatePrototype.cpp:
+        (JSC::formatLocaleDate):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendQuotedString):
+        (JSC::Stringifier::toJSON):
+        (JSC::Stringifier::appendStringifiedValue):
+        * runtime/UString.cpp:
+        (JSC::UString::number):
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+        * wtf/StdLibExtras.h:
+
 2010-10-24  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
