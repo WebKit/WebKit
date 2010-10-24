@@ -70,27 +70,13 @@ void LauncherWindow::init()
     resize(800, 600);
 #endif
 
-    initializeView();
-
-    connect(page(), SIGNAL(loadStarted()), this, SLOT(loadStarted()));
-    connect(page(), SIGNAL(loadFinished(bool)), this, SLOT(loadFinished()));
-    connect(page(), SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
-            this, SLOT(showLinkHover(const QString&, const QString&)));
-    connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
-
-    applyPrefs();
-
     m_inspector = new WebInspector(splitter);
 #ifndef QT_NO_PROPERTIES
     if (!m_windowOptions.inspectorUrl.isEmpty())
         m_inspector->setProperty("_q_inspectorUrl", m_windowOptions.inspectorUrl);
 #endif
-    m_inspector->setPage(page());
     m_inspector->hide();
     connect(this, SIGNAL(destroyed()), m_inspector, SLOT(deleteLater()));
-
-    if (m_windowOptions.remoteInspectorPort)
-        page()->setProperty("_q_webInspectorServerPort", m_windowOptions.remoteInspectorPort);
 
     // the zoom values are chosen to be like in Mozilla Firefox 3
     if (!m_zoomLevels.count()) {
@@ -100,6 +86,8 @@ void LauncherWindow::init()
     }
 
     grabZoomKeys(true);
+
+    initializeView();
 }
 
 void LauncherWindow::initializeView()
@@ -132,10 +120,24 @@ void LauncherWindow::initializeView()
         m_view = view;
     }
 
+    m_touchMocking = false;
+
+    connect(page(), SIGNAL(loadStarted()), this, SLOT(loadStarted()));
+    connect(page(), SIGNAL(loadFinished(bool)), this, SLOT(loadFinished()));
+    connect(page(), SIGNAL(linkHovered(const QString&, const QString&, const QString&)),
+            this, SLOT(showLinkHover(const QString&, const QString&)));
+    connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
+
+    applyPrefs();
+
+    m_inspector->setPage(page());
+    m_inspector->hide();
+
+    if (m_windowOptions.remoteInspectorPort)
+        page()->setProperty("_q_webInspectorServerPort", m_windowOptions.remoteInspectorPort);
+
     if (url.isValid())
         page()->mainFrame()->load(url);
-
-    m_touchMocking = false;
 }
 
 void LauncherWindow::applyPrefs()
@@ -672,6 +674,8 @@ void LauncherWindow::toggleWebView(bool graphicsBased)
 {
     m_windowOptions.useGraphicsView = graphicsBased;
     initializeView();
+    menuBar()->clear();
+    createChrome();
 }
 
 void LauncherWindow::toggleAcceleratedCompositing(bool toggle)
