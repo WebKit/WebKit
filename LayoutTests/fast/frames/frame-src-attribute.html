@@ -1,6 +1,12 @@
 <html>
 <head>
 <script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+}
+
 function write(s)
 {
     frames[0].document.getElementById('console').appendChild(document.createTextNode(s));
