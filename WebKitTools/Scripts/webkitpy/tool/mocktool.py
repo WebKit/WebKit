@@ -292,8 +292,10 @@ class MockBugzilla(Mock):
         if self._override_patch:
             return self._override_patch
 
-        # This could be changed to .get() if we wish to allow failed lookups.
-        attachment_dictionary = self.attachment_cache[attachment_id]
+        attachment_dictionary = self.attachment_cache.get(attachment_id)
+        if not attachment_dictionary:
+            print "MOCK: fetch_attachment: %s is not a known attachment id" % attachment_id
+            return None
         bug = self.fetch_bug(attachment_dictionary["bug_id"])
         for attachment in bug.attachments(include_obsolete=True):
             if attachment.id() == int(attachment_id):
@@ -553,7 +555,7 @@ class MockStatusServer(object):
     def next_work_item(self, queue_name):
         if not self._work_items:
             return None
-        return self._work_items[0]
+        return self._work_items.pop(0)
 
     def release_work_item(self, queue_name, patch):
         log("MOCK: release_work_item: %s %s" % (queue_name, patch.id()))

@@ -38,7 +38,7 @@ from datetime import datetime
 from optparse import make_option
 from StringIO import StringIO
 
-from webkitpy.common.net.bugzilla import CommitterValidator
+from webkitpy.common.net.bugzilla import CommitterValidator, Attachment
 from webkitpy.common.net.layouttestresults import path_for_layout_test, LayoutTestResults
 from webkitpy.common.net.statusserver import StatusServer
 from webkitpy.common.system.executive import ScriptError
@@ -201,8 +201,20 @@ class AbstractPatchQueue(AbstractQueue):
     def _update_status(self, message, patch=None, results_file=None):
         return self._tool.status_server.update_status(self.name, message, patch, results_file)
 
-    def _fetch_next_work_item(self):
-        return self._tool.status_server.next_work_item(self.name)
+    def _next_patch(self):
+        patch_id = self._tool.status_server.next_work_item(self.name)
+        if not patch_id:
+            return None
+        patch = self._tool.bugs.fetch_attachment(patch_id)
+        if not patch:
+            # FIXME: Using a fake patch because release_work_item has the wrong API.
+            # We also don't really need to release the lock (although that's fine),
+            # mostly we just need to remove this bogus patch from our queue.
+            # If for some reason bugzilla is just down, then it will be re-fed later.
+            patch = Attachment({'id': patch_id}, None)
+            self._release_work_item(patch)
+            return None
+        return patch
 
     def _release_work_item(self, patch):
         self._tool.status_server.release_work_item(self.name, patch)
@@ -238,10 +250,7 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         self.committer_validator = CommitterValidator(self._tool.bugs)
 
     def next_work_item(self):
-        patch_id = self._fetch_next_work_item()
-        if not patch_id:
-            return None
-        return self._tool.bugs.fetch_attachment(patch_id)
+        return self._next_patch()
 
     def should_proceed_with_work_item(self, patch):
         patch_text = "rollout patch" if patch.is_rollout() else "patch"
@@ -395,10 +404,7 @@ class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
         AbstractPatchQueue.begin_work_queue(self)
 
     def next_work_item(self):
-        patch_id = self._fetch_next_work_item()
-        if not patch_id:
-            return None
-        return self._tool.bugs.fetch_attachment(patch_id)
+        return self._next_patch()
 
     def should_proceed_with_work_item(self, patch):
         raise NotImplementedError("subclasses must implement")

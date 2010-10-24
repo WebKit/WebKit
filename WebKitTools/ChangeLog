@@ -1,3 +1,23 @@
+2010-10-23  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        EWS never removes invalid patch ids
+        https://bugs.webkit.org/show_bug.cgi?id=48173
+
+        This is just sticking another finger in the dam.
+        However this adds more unit testing which will help
+        us make sure we're always releasing patches once we
+        redesign the release_patch API and call these from
+        a more central place.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+         - Added the ability to request invalid patches.
+           Log a warning message to make sure we don't ever have
+           tests use invalid patch fetches by mistake.
+
 2010-10-23  Dan Bernstein  <mitz@apple.com>
 
         Build fix. Add stub implementations for required NSDraggingInfo methods.
