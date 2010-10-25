@@ -1918,9 +1918,10 @@ WebInspector.doPerformSearch = function(query, forceSearch, isBackwardSearch, re
 
         for (var panelName in this.panels) {
             var panel = this.panels[panelName];
-            if (panel.currentQuery && panel.searchCanceled)
-                panel.searchCanceled();
+            var hadCurrentQuery = !!panel.currentQuery;
             delete panel.currentQuery;
+            if (hadCurrentQuery && panel.searchCanceled)
+                panel.searchCanceled();
         }
 
         this.updateSearchMatchesCount();

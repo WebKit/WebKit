@@ -33,9 +33,10 @@ WebInspector.StoragePanel = function(database)
 
     this.createSidebar();
     this.sidebarElement.addStyleClass("outline-disclosure filter-all children small");
+    this.sidebarTreeElement.removeStyleClass("sidebar-tree");
 
     if (Preferences.networkPanelEnabled) {
-        this.resourcesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Resources"), "frame-storage-tree-item");
+        this.resourcesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Frames"), "frame-storage-tree-item");
         this.sidebarTree.appendChild(this.resourcesListTreeElement);
         this.resourcesListTreeElement.expand();
         this._treeElementForFrameId = {};
@@ -114,7 +115,7 @@ WebInspector.StoragePanel.prototype = {
         this.storageViews.removeChildren();
 
         this.storageViewStatusBarItemsContainer.removeChildren();
-        
+
         if (this.sidebarTree.selectedTreeElement)
             this.sidebarTree.selectedTreeElement.deselect();
     },
@@ -157,13 +158,9 @@ WebInspector.StoragePanel.prototype = {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (!frameTreeElement)
             return;
-
-        var children = frameTreeElement.children.slice();
-        for (var i = 0; i < children.length; ++i)
-            this.removeFrame(children[i]._frameId);
-
         delete this._treeElementForFrameId[frameId];
-        frameTreeElement.parent.removeChild(frameTreeElement);
+        if (frameTreeElement.parent)
+            frameTreeElement.parent.removeChild(frameTreeElement);
     },
 
     addResourceToFrame: function(frameId, resource)
@@ -253,7 +250,36 @@ WebInspector.StoragePanel.prototype = {
         }
     },
 
-    showResource: function(resource)
+    canShowSourceLine: function(url, line)
+    {
+        return !!WebInspector.resourceManager.resourceForURL(url);
+    },
+
+    showSourceLine: function(url, line)
+    {
+        this.showResource(WebInspector.resourceManager.resourceForURL(url), line);
+    },
+
+    showResource: function(resource, line)
+    {
+        var resourceTreeElement = this.sidebarTree.findTreeElement(resource);
+        if (resourceTreeElement) {
+            resourceTreeElement.reveal();
+            resourceTreeElement.select();
+        }
+
+        if (line) {
+            var view = WebInspector.ResourceManager.resourceViewForResource(resource);
+            view.selectContentTab(true);
+            if (view.revealLine)
+                view.revealLine(line);
+            if (view.highlightLine)
+                view.highlightLine(line);
+        }
+        return true;
+    },
+
+    _showResourceView: function(resource)
     {
         var view = WebInspector.ResourceManager.resourceViewForResource(resource);
         view.headersVisible = false;
@@ -503,14 +529,84 @@ WebInspector.StoragePanel.prototype = {
         this.storageViews.style.left = width + "px";
         this.storageViewStatusBarItemsContainer.style.left = width + "px";
         this.resize();
+    },
+
+    get searchableViews()
+    {
+        var views = [];
+
+        if (!Preferences.networkPanelEnabled)
+            return views;
+
+        const visibleView = this.visibleView;
+        if (visibleView instanceof WebInspector.ResourceView && visibleView.performSearch)
+            views.push(visibleView);
+
+        function callback(resourceTreeElement)
+        {
+            var resource = resourceTreeElement._resource;
+            var resourceView = WebInspector.ResourceManager.resourceViewForResource(resource);
+            if (resourceView.performSearch && resourceView !== visibleView)
+                views.push(resourceView);
+        }
+        this._forAllResourceTreeElements(callback);
+        return views;
+    },
+
+    _forAllResourceTreeElements: function(callback)
+    {
+        var stop = false;
+        for (var treeElement = this.resourcesListTreeElement; !stop && treeElement; treeElement = treeElement.traverseNextTreeElement(false, this.resourcesListTreeElement, true)) {
+            if (treeElement instanceof WebInspector.FrameResourceTreeElement)
+                stop = callback(treeElement);
+        }
+    },
+
+    searchMatchFound: function(view, matches)
+    {
+        if (!view.resource)
+            return;
+        var treeElement = this.sidebarTree.findTreeElement(view.resource);
+        if (treeElement)
+            treeElement.searchMatchFound(matches);
+    },
+
+    searchCanceled: function(startingNewSearch)
+    {
+        WebInspector.Panel.prototype.searchCanceled.call(this, startingNewSearch);
+
+        if (startingNewSearch)
+            return;
+
+        function callback(resourceTreeElement)
+        {
+            resourceTreeElement._errorsWarningsUpdated();
+        }
+        this._forAllResourceTreeElements(callback);
+    },
+
+    performSearch: function(query)
+    {
+        function callback(resourceTreeElement)
+        {
+            resourceTreeElement._resetBubble();
+        }
+        this._forAllResourceTreeElements(callback);
+        WebInspector.Panel.prototype.performSearch.call(this, query);
+    },
+
+    showView: function(view)
+    {
+        if (view)
+            this.showResource(view.resource);
     }
 }
 
 WebInspector.StoragePanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
-WebInspector.BaseStorageTreeElement = function(storagePanel, title, iconClass, hasChildren)
+WebInspector.BaseStorageTreeElement = function(storagePanel, representedObject, title, iconClass, hasChildren)
 {
-    TreeElement.call(this, "", null, hasChildren);
+    TreeElement.call(this, "", representedObject, hasChildren);
     this._storagePanel = storagePanel;
     this._titleText = title;
     this._iconClass = iconClass;
@@ -526,9 +622,9 @@ WebInspector.BaseStorageTreeElement.prototype = {
         this.imageElement.className = "icon";
         this.listItemElement.appendChild(this.imageElement);
 
-        this.titleElement = document.createElement("span");
+        this.titleElement = document.createElement("div");
+        this.titleElement.className = "base-storage-tree-element-title";
         this.titleElement.textContent = this._titleText;
-        this.titleElement.className = "storage-base-tree-element-title";
         this.listItemElement.appendChild(this.titleElement);
 
         var selectionElement = document.createElement("div");
@@ -546,6 +642,16 @@ WebInspector.BaseStorageTreeElement.prototype = {
     {
         this._titleText = titleText;
         this.titleElement.textContent = this._titleText;
+    },
+
+    isEventWithinDisclosureTriangle: function()
+    {
+        // Override it since we use margin-left in place of treeoutline's text-indent.
+        // Hence we need to take padding into consideration. This all is needed for leading
+        // icons in the tree.
+        const paddingLeft = 14;
+        var left = this.listItemElement.totalOffsetLeft + paddingLeft;
+        return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;
     }
 }
 
@@ -553,7 +659,7 @@ WebInspector.BaseStorageTreeElement.prototype.__proto__ = TreeElement.prototype;
 
 WebInspector.StorageCategoryTreeElement = function(storagePanel, categoryName, iconClass)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, categoryName, iconClass, true);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, categoryName, iconClass, true);
     this._categoryName = categoryName;
 }
 
@@ -567,7 +673,7 @@ WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseS
 
 WebInspector.FrameTreeElement = function(storagePanel, frameId, displayName)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, displayName, "frame-storage-tree-item");
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, displayName, "frame-storage-tree-item");
     this._frameId = frameId;
     this._displayName = displayName;
 }
@@ -593,14 +699,21 @@ WebInspector.FrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTree
 
 WebInspector.FrameResourceTreeElement = function(storagePanel, resource)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, resource.displayName, "resource-sidebar-tree-item resources-category-" + resource.category.name);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, resource, resource.displayName, "resource-sidebar-tree-item resources-category-" + resource.category.name);
     this._resource = resource;
+    this._resource.addEventListener("errors-warnings-updated", this._errorsWarningsUpdated, this);
+    this.tooltip = resource.url;
 }
 
 WebInspector.FrameResourceTreeElement.prototype = {
     onselect: function()
     {
-        this._storagePanel.showResource(this._resource);
+        this._storagePanel._showResourceView(this._resource);
+    },
+
+    ondblclick: function(event)
+    {
+        InspectorBackend.openInInspectedWindow(this._resource.url);
     },
 
     onattach: function()
@@ -617,6 +730,82 @@ WebInspector.FrameResourceTreeElement.prototype = {
             iconElement.appendChild(previewImage);
             this.listItemElement.replaceChild(iconElement, this.imageElement);
         }
+
+        this._statusElement = document.createElement("div");
+        this._statusElement.className = "status";
+        this.listItemElement.insertBefore(this._statusElement, this.titleElement);
+
+        this.listItemElement.draggable = true;
+        this.listItemElement.addEventListener("dragstart", this._ondragstart.bind(this), false);
+    },
+
+    _ondragstart: function(event)
+    {
+        event.dataTransfer.setData("text/plain", this._resource.url);
+        event.dataTransfer.setData("text/uri-list", this._resource.url + "\r\n");
+        event.dataTransfer.effectAllowed = "copy";
+        return true;
+    },
+
+    _setBubbleText: function(x)
+    {
+        if (!this._bubbleElement) {
+            this._bubbleElement = document.createElement("div");
+            this._bubbleElement.className = "bubble";
+            this._statusElement.appendChild(this._bubbleElement);
+        }
+
+        this._bubbleElement.textContent = x;
+    },
+
+    _resetBubble: function()
+    {
+        if (this._bubbleElement) {
+            this._bubbleElement.textContent = "";
+            this._bubbleElement.removeStyleClass("search-matches");
+            this._bubbleElement.removeStyleClass("warning");
+            this._bubbleElement.removeStyleClass("error");
+        }
+    },
+
+    searchMatchFound: function(matches)
+    {
+        this._resetBubble();
+
+        this._setBubbleText(matches);
+        this._bubbleElement.addStyleClass("search-matches");
+
+        // Expand, do not scroll into view.
+        var currentAncestor = this.parent;
+        while (currentAncestor && !currentAncestor.root) {
+            if (!currentAncestor.expanded)
+                currentAncestor.expand();
+            currentAncestor = currentAncestor.parent;
+        }
+    },
+
+    _errorsWarningsUpdated: function()
+    {
+        // FIXME: move to the Script/SourceView.
+        if (!this._resource.warnings && !this._resource.errors) {
+            var view = WebInspector.ResourceManager.existingResourceViewForResource(this._resource);
+            if (view && view.clearMessages)
+                view.clearMessages();
+        }
+
+        if (this._storagePanel.currentQuery)
+            return;
+
+        this._resetBubble();
+
+        if (this._resource.warnings || this._resource.errors)
+            this._setBubbleText(this._resource.warnings + this._resource.errors);
+
+        if (this._resource.warnings)
+            this._bubbleElement.addStyleClass("warning");
+
+        if (this._resource.errors)
+            this._bubbleElement.addStyleClass("error");
     }
 }
 
@@ -624,7 +813,7 @@ WebInspector.FrameResourceTreeElement.prototype.__proto__ = WebInspector.BaseSto
 
 WebInspector.DatabaseTreeElement = function(storagePanel, database)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, database.name, "database-storage-tree-item", true);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, database.name, "database-storage-tree-item", true);
     this._database = database;
 }
 
@@ -659,7 +848,7 @@ WebInspector.DatabaseTreeElement.prototype.__proto__ = WebInspector.BaseStorageT
 
 WebInspector.DatabaseTableTreeElement = function(storagePanel, database, tableName)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, tableName, "database-storage-tree-item");
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, tableName, "database-storage-tree-item");
     this._database = database;
     this._tableName = tableName;
 }
@@ -674,7 +863,7 @@ WebInspector.DatabaseTableTreeElement.prototype.__proto__ = WebInspector.BaseSto
 
 WebInspector.DOMStorageTreeElement = function(storagePanel, domStorage, className)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, domStorage.domain ? domStorage.domain : WebInspector.UIString("Local Files"), "domstorage-storage-tree-item " + className);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, domStorage.domain ? domStorage.domain : WebInspector.UIString("Local Files"), "domstorage-storage-tree-item " + className);
     this._domStorage = domStorage;
 }
 
@@ -688,7 +877,7 @@ WebInspector.DOMStorageTreeElement.prototype.__proto__ = WebInspector.BaseStorag
 
 WebInspector.CookieTreeElement = function(storagePanel, cookieDomain)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, cookieDomain ? cookieDomain : WebInspector.UIString("Local Files"), "cookie-storage-tree-item");
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, cookieDomain ? cookieDomain : WebInspector.UIString("Local Files"), "cookie-storage-tree-item");
     this._cookieDomain = cookieDomain;
 }
 
@@ -702,7 +891,7 @@ WebInspector.CookieTreeElement.prototype.__proto__ = WebInspector.BaseStorageTre
 
 WebInspector.ApplicationCacheTreeElement = function(storagePanel, appcacheDomain)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, appcacheDomain ? appcacheDomain : WebInspector.UIString("Local Files"), "application-cache-storage-tree-item");
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, appcacheDomain ? appcacheDomain : WebInspector.UIString("Local Files"), "application-cache-storage-tree-item");
     this._appcacheDomain = appcacheDomain;
 }
 

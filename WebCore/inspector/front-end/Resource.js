@@ -530,6 +530,7 @@ WebInspector.Resource.prototype = {
     set errors(x)
     {
         this._errors = x;
+        this.dispatchEventToListeners("errors-warnings-updated");
     },
 
     get warnings()
@@ -540,6 +541,14 @@ WebInspector.Resource.prototype = {
     set warnings(x)
     {
         this._warnings = x;
+        this.dispatchEventToListeners("errors-warnings-updated");
+    },
+
+    clearErrorsAndWarnings: function()
+    {
+        this._warnings = 0;
+        this._errors = 0;
+        this.dispatchEventToListeners("errors-warnings-updated");
     },
 
     _mimeTypeIsConsistentWithType: function()

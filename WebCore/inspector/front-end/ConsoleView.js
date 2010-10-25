@@ -230,6 +230,8 @@ WebInspector.ConsoleView.prototype = {
                 if (WebInspector.panels.resources)
                     WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
             }
+            if (WebInspector.resourceManager)
+                WebInspector.resourceManager.addConsoleMessage(msg);
 
             this.commandSincePreviousMessage = false;
             this.previousMessage = msg;
@@ -303,6 +305,8 @@ WebInspector.ConsoleView.prototype = {
     {
         if (WebInspector.panels.resources)
             WebInspector.panels.resources.clearMessages();
+        if (WebInspector.resourceManager)
+            WebInspector.resourceManager.clearConsoleMessages();
 
         this.messages = [];
 

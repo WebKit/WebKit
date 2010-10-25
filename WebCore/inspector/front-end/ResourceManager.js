@@ -48,8 +48,7 @@ WebInspector.ResourceManager = function()
         "didCloseWebSocket");
 
     this._resourcesById = {};
-    this._resourcesByFrameId = {};
-    this._lastCachedId = 0;
+    this._resourceTreeModel = new WebInspector.ResourceTreeModel();
     InspectorBackend.cachedResources(this._processCachedResources.bind(this));
 }
 
@@ -63,8 +62,10 @@ WebInspector.ResourceManager.prototype = {
     identifierForInitialRequest: function(identifier, url, loader, isMainResource)
     {
         var resource = this._createResource(identifier, url, loader);
-        if (isMainResource)
+        if (isMainResource) {
             resource.isMainResource = true;
+            WebInspector.mainResource = resource;
+        }
 
         WebInspector.panels.network.addResource(resource);
     },
@@ -72,15 +73,9 @@ WebInspector.ResourceManager.prototype = {
     _createResource: function(identifier, url, loader)
     {
         var resource = new WebInspector.Resource(identifier, url);
-        this._resourcesById[identifier] = resource;
-
         resource.loader = loader;
-        var resourcesForFrame = this._resourcesByFrameId[loader.frameId];
-        if (!resourcesForFrame) {
-            resourcesForFrame = [];
-            this._resourcesByFrameId[loader.frameId] = resourcesForFrame;
-        }
-        resourcesForFrame.push(resource);
+
+        this._resourcesById[identifier] = resource;
         return resource;
     },
 
@@ -112,12 +107,8 @@ WebInspector.ResourceManager.prototype = {
 
     _appendRedirect: function(identifier, redirectURL)
     {
-        // We always store last redirect by the original id key. Rest of the redirects are referenced from within the last one.
-
         var originalResource = this._resourcesById[identifier];
-        var redirectIdentifier = originalResource.identifier + ":" + (originalResource.redirects ? originalResource.redirects.length : 0);
-        originalResource.identifier = redirectIdentifier;
-        this._resourcesById[redirectIdentifier] = originalResource;
+        originalResource.identifier = null;
 
         var newResource = this._createResource(identifier, redirectURL, originalResource.loader);
         newResource.redirects = originalResource.redirects || [];
@@ -146,7 +137,7 @@ WebInspector.ResourceManager.prototype = {
         resource.responseReceivedTime = time;
 
         WebInspector.panels.network.refreshResource(resource);
-        this._addResourceToStorageFrame(resource.loader.frameId, resource);
+        this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
     },
 
     _updateResourceWithResponse: function(resource, response)
@@ -195,6 +186,7 @@ WebInspector.ResourceManager.prototype = {
         resource.endTime = finishTime;
 
         WebInspector.panels.network.refreshResource(resource);
+        delete this._resourcesById[identifier];
     },
 
     didFailLoading: function(identifier, time, localizedDescription)
@@ -207,18 +199,18 @@ WebInspector.ResourceManager.prototype = {
         resource.endTime = time;
 
         WebInspector.panels.network.refreshResource(resource);
+        delete this._resourcesById[identifier];
     },
 
     didLoadResourceFromMemoryCache: function(time, cachedResource)
     {
-        var identifier = "cached:" + this._lastCachedId++;
-        var resource = this._createResource(identifier, cachedResource.url, cachedResource.loader);
+        var resource = this._createResource(null, cachedResource.url, cachedResource.loader);
         this._updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.startTime = resource.responseReceivedTime = resource.endTime = time;
 
         WebInspector.panels.network.addResource(resource);
-        WebInspector.panels.storage.addResourceToFrame(resource.loader.frameId, resource);
+        this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
     },
 
     _updateResourceWithCachedResource: function(resource, cachedResource)
@@ -242,48 +234,12 @@ WebInspector.ResourceManager.prototype = {
 
     didCommitLoadForFrame: function(parentFrameId, loader)
     {
-        this._clearResources(loader.frameId, loader.loaderId);
-        WebInspector.panels.storage.removeResourcesFromFrame(loader.frameId);
-
-        var tmpResource = new WebInspector.Resource(null, loader.url);
-        WebInspector.panels.storage.addOrUpdateFrame(parentFrameId, loader.frameId, tmpResource.displayName);
-
-        var resourcesForFrame = this._resourcesByFrameId[loader.frameId];
-        for (var i = 0; i < resourcesForFrame.length; ++i)
-            this._addResourceToStorageFrame(loader.frameId, resourcesForFrame[i]);
-    },
-
-    _addResourceToStorageFrame: function(frameId, resource)
-    {
-        // Do not show redirects in resource browser.
-        if (resource.statusCode < 300 || resource.statusCode > 303)
-            WebInspector.panels.storage.addResourceToFrame(frameId, resource);
+        this._resourceTreeModel.didCommitLoadForFrame(parentFrameId, loader);
     },
 
     frameDetachedFromParent: function(frameId)
     {
-        this._clearResources(frameId, 0);
-        WebInspector.panels.storage.removeFrame(frameId);
-    },
-
-    _clearResources: function(frameId, loaderToPreserveId)
-    {
-        var resourcesForFrame = this._resourcesByFrameId[frameId];
-        if (!resourcesForFrame)
-            return;
-
-        var preservedResourcesForFrame = [];
-        for (var i = 0; i < resourcesForFrame.length; ++i) {
-            var resource = resourcesForFrame[i];
-            if (resource.loader.loaderId === loaderToPreserveId) {
-                preservedResourcesForFrame.push(resource);
-                continue;
-            }
-            delete this._resourcesById[id];
-        }
-        delete this._resourcesByFrameId[frameId];
-        if (preservedResourcesForFrame.length)
-            this._resourcesByFrameId[frameId] = preservedResourcesForFrame;
+        this._resourceTreeModel.frameDetachedFromParent(frameId);
     },
 
     didCreateWebSocket: function(identifier, requestURL)
@@ -343,8 +299,8 @@ WebInspector.ResourceManager.prototype = {
     {
         var frameResource = this._createResource(null, framePayload.resource.url, framePayload.resource.loader);
         frameResource.type = WebInspector.Resource.Type["Document"];
-        WebInspector.panels.storage.addOrUpdateFrame(parentFrameId, framePayload.id, frameResource.displayName);
-        WebInspector.panels.storage.addResourceToFrame(framePayload.id, frameResource);
+        this._resourceTreeModel.addOrUpdateFrame(parentFrameId, framePayload.id, frameResource.displayName);
+        this._resourceTreeModel.addResourceToFrame(framePayload.id, frameResource);
 
         for (var i = 0; framePayload.children && i < framePayload.children.length; ++i)
             this._addFramesRecursively(framePayload.id, framePayload.children[i]);
@@ -356,8 +312,42 @@ WebInspector.ResourceManager.prototype = {
             var cachedResource = framePayload.subresources[i];
             var resource = this._createResource(null, cachedResource.url, cachedResource.loader);
             this._updateResourceWithCachedResource(resource, cachedResource);
-            WebInspector.panels.storage.addResourceToFrame(framePayload.id, resource);
+            this._resourceTreeModel.addResourceToFrame(framePayload.id, resource);
         }
+    },
+
+    resourceForURL: function(url)
+    {
+        return this._resourceTreeModel.resourceForURL(url);
+    },
+
+    addConsoleMessage: function(msg)
+    {
+        var resource = this._resourceTreeModel.resourceForURL(msg.url);
+        if (!resource)
+            return;
+
+        switch (msg.level) {
+        case WebInspector.ConsoleMessage.MessageLevel.Warning:
+            resource.warnings += msg.repeatDelta;
+            break;
+        case WebInspector.ConsoleMessage.MessageLevel.Error:
+            resource.errors += msg.repeatDelta;
+            break;
+        }
+
+        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
+        if (view.addMessage)
+            view.addMessage(msg);
+    },
+
+    clearConsoleMessages: function()
+    {
+        function callback(resource)
+        {
+            resource.clearErrorsAndWarnings();
+        }
+        this._resourceTreeModel.forAllResources(callback);
     }
 }
 
@@ -404,6 +394,13 @@ WebInspector.ResourceManager.resourceViewForResource = function(resource)
     return resource._resourcesView;
 }
 
+WebInspector.ResourceManager.existingResourceViewForResource = function(resource)
+{
+    if (!resource)
+        return null;
+    return resource._resourcesView;
+}
+
 WebInspector.ResourceManager.getContents = function(resource, callback)
 {
     if ("overridenContent" in resource) {
@@ -416,4 +413,146 @@ WebInspector.ResourceManager.getContents = function(resource, callback)
         InspectorBackend.resourceContent(resource.loader.frameId, resource.url, callback);
     else
         InspectorBackend.getResourceContent(resource.identifier, false, callback);
+}
+
+WebInspector.ResourceTreeModel = function()
+{
+    this._resourcesByFrameId = {};
+    this._subframes = {};
+    this._resourcesByURL = {};
+}
+
+WebInspector.ResourceTreeModel.prototype = {
+    addOrUpdateFrame: function(parentFrameId, frameId, displayName)
+    {
+        WebInspector.panels.storage.addOrUpdateFrame(parentFrameId, frameId, displayName);
+        var subframes = this._subframes[parentFrameId];
+        if (!subframes) {
+            subframes = {};
+            this._subframes[parentFrameId || 0] = subframes;
+        }
+        subframes[frameId] = true;
+    },
+
+    didCommitLoadForFrame: function(parentFrameId, loader)
+    {
+        this._clearChildFramesAndResources(loader.frameId, loader.loaderId);
+
+        var tmpResource = new WebInspector.Resource(null, loader.url);
+        this.addOrUpdateFrame(parentFrameId, loader.frameId, tmpResource.displayName);
+
+        var resourcesForFrame = this._resourcesByFrameId[loader.frameId];
+        for (var i = 0; resourcesForFrame && i < resourcesForFrame.length; ++i)
+            WebInspector.panels.storage.addResourceToFrame(loader.frameId, resourcesForFrame[i]);
+    },
+
+    frameDetachedFromParent: function(frameId)
+    {
+        this._clearChildFramesAndResources(frameId, 0);
+        WebInspector.panels.storage.removeFrame(frameId);
+    },
+
+    _clearChildFramesAndResources: function(frameId, loaderId)
+    {
+        WebInspector.panels.storage.removeResourcesFromFrame(frameId);
+
+        this._clearResources(frameId, loaderId);
+        var subframes = this._subframes[frameId];
+        if (!subframes)
+            return;
+
+        for (var childFrameId in subframes) {
+            WebInspector.panels.storage.removeFrame(childFrameId);
+            this._clearChildFramesAndResources(childFrameId, loaderId);
+        }
+        delete this._subframes[frameId];
+    },
+
+    addResourceToFrame: function(frameId, resource)
+    {
+        var resourcesForFrame = this._resourcesByFrameId[frameId];
+        if (!resourcesForFrame) {
+            resourcesForFrame = [];
+            this._resourcesByFrameId[frameId] = resourcesForFrame;
+        }
+        resourcesForFrame.push(resource);
+        this._bindResourceURL(resource);
+
+        WebInspector.panels.storage.addResourceToFrame(frameId, resource);
+    },
+
+    _clearResources: function(frameId, loaderToPreserveId)
+    {
+        var resourcesForFrame = this._resourcesByFrameId[frameId];
+        if (!resourcesForFrame)
+            return;
+
+        var preservedResourcesForFrame = [];
+        for (var i = 0; i < resourcesForFrame.length; ++i) {
+            var resource = resourcesForFrame[i];
+            if (resource.loader.loaderId === loaderToPreserveId) {
+                preservedResourcesForFrame.push(resource);
+                continue;
+            }
+            this._unbindResourceURL(resource);
+        }
+
+        delete this._resourcesByFrameId[frameId];
+        if (preservedResourcesForFrame.length)
+            this._resourcesByFrameId[frameId] = preservedResourcesForFrame;
+    },
+
+    _bindResourceURL: function(resource)
+    {
+        var resourceForURL = this._resourcesByURL[resource.url];
+        if (!resourceForURL)
+            this._resourcesByURL[resource.url] = resource;
+        else if (resourceForURL instanceof Array)
+            resourceForURL.push(resource);
+        else
+            this._resourcesByURL[resource.url] = [ resourceForURL ];
+    },
+
+    _unbindResourceURL: function(resource)
+    {
+        var resourceForURL = this._resourcesByURL[resource.url];
+        if (!resourceForURL)
+            return;
+
+        if (resourceForURL instanceof Array) {
+            resourceForURL.remove(resource, true);
+            if (resourceForURL.length === 1)
+                this._resourcesByURL[resource.url] = resourceForURL[0];
+            return;
+        }
+
+        delete this._resourcesByURL[resource.url];
+    },
+
+    resourceForURL: function(url)
+    {
+        // FIXME: receive frameId here.
+        var entry = this._resourcesByURL[url];
+        if (entry instanceof Array)
+            return entry[0];
+        return entry;
+    },
+
+    forAllResources: function(callback)
+    {
+        this._callForFrameResources(0, callback);
+    },
+
+    _callForFrameResources: function(frameId, callback)
+    {
+        var resources = this._resourcesByFrameId[frameId];
+        for (var i = 0; resources && i < resources.length; ++i)
+            callback(resources[i]);
+        
+        var frames = this._subframes[frameId];
+        if (frames) {
+            for (var id in frames)
+                this._callForFrameResources(id, callback);
+        }
+    }
 }
