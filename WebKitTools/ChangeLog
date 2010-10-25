@@ -1,3 +1,13 @@
+2010-10-25  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/48185> build-webkit: add support for --progress-tag switch
+        (Re-landing r70413 after Qt minimal buildfix: r70440.)
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * Scripts/build-webkit: Added support for --progress-tag switch.
+        It should have been added with r57051.
+
 2010-10-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Kilzer.
