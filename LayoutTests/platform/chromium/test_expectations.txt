@@ -1487,7 +1487,6 @@ BUG23498 MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE+TEXT IM
 
 // Missing "misspelled-word" dotted underline
 BUG23497 MAC : editing/selection/unrendered-002.html = IMAGE
-BUG23497 MAC : editing/spelling/spellcheck-attribute.html = IMAGE
 
 // Widget location is just slightly off
 BUG23496 MAC : css1/box_properties/acid_test.html = IMAGE
