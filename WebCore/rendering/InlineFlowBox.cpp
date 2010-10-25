@@ -809,8 +809,10 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     }
     
     // Move x/y to our coordinates.
-    tx += x;
-    ty += y;
+    IntPoint localPoint(x, y);
+    adjustForFlippedBlocksWritingMode(localPoint);
+    tx += localPoint.x();
+    ty += localPoint.y();
     
     GraphicsContext* context = paintInfo.context;
     
@@ -887,8 +889,10 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     }
     
     // Move x/y to our coordinates.
-    tx += x;
-    ty += y;
+    IntPoint localPoint(x, y);
+    adjustForFlippedBlocksWritingMode(localPoint);
+    tx += localPoint.x();
+    ty += localPoint.y();
 
     const NinePieceImage& maskNinePieceImage = renderer()->style()->maskBoxImage();
     StyleImage* maskBoxImage = renderer()->style()->maskBoxImage().image();

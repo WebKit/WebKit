@@ -2269,8 +2269,10 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
             }
         }
 
+        IntPoint childPoint(tx, ty);
+        adjustForFlippedBlocksWritingMode(child, childPoint);
         if (!child->hasSelfPaintingLayer() && !child->isFloating())
-            child->paint(info, tx, ty);
+            child->paint(info, childPoint.x(), childPoint.y());
 
         // Check for page-break-after: always, and if it's set, break and bail.
         bool checkAfterAlways = !childrenInline() && (usePrintRect && child->style()->pageBreakAfter() == PBALWAYS);
@@ -2403,18 +2405,19 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preserv
         if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-            int currentTX = tx + r->left() - r->m_renderer->x() + r->m_renderer->marginLeft();
-            int currentTY = ty + r->top() - r->m_renderer->y() + r->m_renderer->marginTop();
-            r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
+            IntPoint childPoint(tx + r->left() + r->m_renderer->marginLeft() - r->m_renderer->x(),
+                                ty + r->top() + r->m_renderer->marginTop() - r->m_renderer->y());
+            adjustForFlippedBlocksWritingMode(r->m_renderer, childPoint);
+            r->m_renderer->paint(currentPaintInfo, childPoint.x(), childPoint.y());
             if (!preservePhase) {
                 currentPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
-                r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
+                r->m_renderer->paint(currentPaintInfo, childPoint.x(), childPoint.y());
                 currentPaintInfo.phase = PaintPhaseFloat;
-                r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
+                r->m_renderer->paint(currentPaintInfo, childPoint.x(), childPoint.y());
                 currentPaintInfo.phase = PaintPhaseForeground;
-                r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
+                r->m_renderer->paint(currentPaintInfo, childPoint.x(), childPoint.y());
                 currentPaintInfo.phase = PaintPhaseOutline;
-                r->m_renderer->paint(currentPaintInfo, currentTX, currentTY);
+                r->m_renderer->paint(currentPaintInfo, childPoint.x(), childPoint.y());
             }
         }
     }

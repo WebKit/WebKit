@@ -23,7 +23,7 @@
 #include "HitTestResult.h"
 #include "InlineFlowBox.h"
 #include "RenderArena.h"
-#include "RenderBox.h"
+#include "RenderBlock.h"
 #include "RootInlineBox.h"
 
 using namespace std;
@@ -277,6 +277,18 @@ int InlineBox::placeEllipsisBox(bool, int, int, int, bool&)
 {
     // Use -1 to mean "we didn't set the position."
     return -1;
+}
+
+void InlineBox::adjustForFlippedBlocksWritingMode(IntPoint& point)
+{
+    if (!renderer()->style()->isFlippedBlocksWritingMode())
+        return;
+    
+    RenderBlock* block = root()->block();
+    if (block->style()->isHorizontalWritingMode())
+        point.setY(block->height() - height() - point.y());
+    else
+        point.setX(block->width() - width() - point.x());
 }
 
 } // namespace WebCore

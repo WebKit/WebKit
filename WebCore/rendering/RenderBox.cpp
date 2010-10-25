@@ -3188,4 +3188,17 @@ void RenderBox::blockDirectionOverflow(bool isLineVertical, int& logicalTopLayou
     }
 }
 
+void RenderBox::adjustForFlippedBlocksWritingMode(RenderBox* child, IntPoint& point)
+{
+    if (!style()->isFlippedBlocksWritingMode())
+        return;
+    
+    // The child is going to add in its x() and y(), so we have to make sure it ends up in
+    // the right place.
+    if (style()->isHorizontalWritingMode())
+        point.move(0, height() - child->height() - child->y() - child->y());
+    else
+        point.move(width() - child->width() - child->x() - child->x(), 0);
+}
+
 } // namespace WebCore
