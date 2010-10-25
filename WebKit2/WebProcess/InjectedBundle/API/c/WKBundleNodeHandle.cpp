@@ -43,6 +43,11 @@ WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef contextRef, JSObject
     return toAPI(nodeHandle.release().releaseRef());
 }
 
+WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef nodeHandleRef)
+{
+    return toAPI(toImpl(nodeHandleRef)->elementBounds());
+}
+
 void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandleRef, WKStringRef valueRef)
 {
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementValueForUser(toWTFString(valueRef));

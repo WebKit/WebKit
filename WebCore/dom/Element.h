@@ -159,6 +159,8 @@ public:
     virtual int scrollWidth() const;
     virtual int scrollHeight() const;
 
+    IntRect boundsInWindowSpace() const;
+
     PassRefPtr<ClientRectList> getClientRects() const;
     PassRefPtr<ClientRect> getBoundingClientRect() const;
 

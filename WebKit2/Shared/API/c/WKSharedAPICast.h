@@ -174,6 +174,16 @@ inline WKRect toAPI(const WebCore::FloatRect& rect)
     return wkRect;
 }
 
+inline WKRect toAPI(const WebCore::IntRect& rect)
+{
+    WKRect wkRect;
+    wkRect.origin.x = rect.x();
+    wkRect.origin.y = rect.y();
+    wkRect.size.width = rect.width();
+    wkRect.size.height = rect.height();
+    return wkRect;
+}
+
 /* Enum conversions */
 
 inline WKTypeID toAPI(APIObject::Type type)

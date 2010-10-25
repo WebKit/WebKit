@@ -39,11 +39,13 @@ WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCreate(JSContextRef context, J
 
 /* Additional DOM Operations */
 
-/* HTMLInputElement Operations */
+WK_EXPORT WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef nodeHandle);
+
+/* HTMLInputElement Specific Operations */
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htmlInputElementHandle, WKStringRef value);
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandle, bool filled);
 
-/* HTMLTableCellElement Operations */
+/* HTMLTableCellElement Specific Operations */
 WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyHTMLTableCellElementCellAbove(WKBundleNodeHandleRef htmlTableCellElementHandle);
 
 #ifdef __cplusplus

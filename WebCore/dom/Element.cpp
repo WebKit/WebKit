@@ -457,6 +457,41 @@ int Element::scrollHeight() const
     return 0;
 }
 
+IntRect Element::boundsInWindowSpace() const
+{
+    document()->updateLayoutIgnorePendingStylesheets();
+
+    FrameView* view = document()->view();
+    if (!view)
+        return IntRect();
+
+    Vector<FloatQuad> quads;
+#if ENABLE(SVG)
+    if (isSVGElement() && renderer()) {
+        // Get the bounding rectangle from the SVG model.
+        const SVGElement* svgElement = static_cast<const SVGElement*>(this);
+        FloatRect localRect;
+        if (svgElement->boundingBox(localRect))
+            quads.append(renderer()->localToAbsoluteQuad(localRect));
+    } else
+#endif
+    {
+        // Get the bounding rectangle from the box model.
+        if (renderBoxModelObject())
+            renderBoxModelObject()->absoluteQuads(quads);
+    }
+
+    if (quads.isEmpty())
+        return IntRect();
+
+    IntRect result = quads[0].enclosingBoundingBox();
+    for (size_t i = 1; i < quads.size(); ++i)
+        result.unite(quads[i].enclosingBoundingBox());
+
+    result = view->contentsToWindow(result);
+    return result;
+}
+
 PassRefPtr<ClientRectList> Element::getClientRects() const
 {
     document()->updateLayoutIgnorePendingStylesheets();

@@ -27,10 +27,11 @@
 
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/HTMLInputElement.h>
+#include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLTableCellElement.h>
+#include <WebCore/IntRect.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/Node.h>
-#include <WebCore/HTMLNames.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -89,6 +90,14 @@ Node* InjectedBundleNodeHandle::coreNode() const
 
 // Additional DOM Operations
 // Note: These should only be operations that are not exposed to JavaScript.
+
+IntRect InjectedBundleNodeHandle::elementBounds() const
+{
+    if (!m_node->isElementNode())
+        return IntRect();
+
+    return static_cast<Element*>(m_node.get())->boundsInWindowSpace();
+}
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)
 {
