@@ -92,7 +92,7 @@ public:
     static bool openDatabaseSyncEnabled();
 #endif
 
-#if ENABLE(3D_CANVAS)
+#if ENABLE(3D_CANVAS) || ENABLE(BLOB)
     static void setWebGLEnabled(bool isEnabled) { isWebGLEnabled = isEnabled; }
     static bool arrayBufferEnabled() { return isWebGLEnabled; }
     static bool int8ArrayEnabled() { return isWebGLEnabled; }
