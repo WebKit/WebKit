@@ -2070,7 +2070,6 @@ HEADERS += \
     platform/graphics/Pattern.h \
     platform/graphics/Pen.h \
     platform/graphics/qt/FontCustomPlatformData.h \
-    platform/graphics/qt/GraphicsLayerQt.h \
     platform/graphics/qt/ImageDecoderQt.h \
     platform/graphics/qt/StillImageQt.h \
     platform/graphics/qt/TransparencyLayer.h \
@@ -2606,7 +2605,6 @@ SOURCES += \
     platform/graphics/qt/FloatRectQt.cpp \
     platform/graphics/qt/GradientQt.cpp \
     platform/graphics/qt/GraphicsContextQt.cpp \
-    platform/graphics/qt/GraphicsLayerQt.cpp \
     platform/graphics/qt/IconQt.cpp \
     platform/graphics/qt/ImageBufferQt.cpp \
     platform/graphics/qt/ImageDecoderQt.cpp \
@@ -3817,6 +3815,29 @@ win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{
         SOURCES += \
             plugins/win/PaintHooks.asm
     }
+}
+
+# Uncomment this to enable Texture Mapper.
+# CONFIG += texmap
+
+contains(CONFIG, texmap) {
+    DEFINES += WTF_USE_TEXTURE_MAPPER=1
+    HEADERS += \
+        platform/graphics/texmap/TextureMapper.h \
+        platform/graphics/texmap/TextureMapperPlatformLayer.h
+
+    SOURCES += \
+        platform/graphics/qt/TextureMapperQt.cpp \
+        platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
+
+    contains(QT_CONFIG, opengl) {
+        QT += opengl
+        HEADERS += platform/graphics/opengl/TextureMapperGL.h
+        SOURCES += platform/graphics/opengl/TextureMapperGL.cpp
+    }
+} else {
+    HEADERS += platform/graphics/qt/GraphicsLayerQt.h
+    SOURCES += platform/graphics/qt/GraphicsLayerQt.cpp
 }
 
 symbian {
