@@ -609,6 +609,7 @@ void NetscapePlugin::windowFrameChanged(const IntRect& windowFrame)
             // Nothing to do.
             break;
 
+#ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
             Rect bounds;
             bounds.top = windowFrame.y() + windowFrame.height();
@@ -619,6 +620,7 @@ void NetscapePlugin::windowFrameChanged(const IntRect& windowFrame)
             ::SetWindowBounds(windowRef(), kWindowStructureRgn, &bounds);
             break;
         }
+#endif
 
         default:
             ASSERT_NOT_REACHED();
