@@ -988,9 +988,14 @@ void WebPageProxy::setFindIndicator(const FloatRect& selectionRect, const Vector
     m_pageClient->setFindIndicator(findIndicator.release(), fadeOut);
 }
 
-void WebPageProxy::matchCountDidChange(const String& string, uint32_t matchCount)
+void WebPageProxy::didFindString(const String& string, uint32_t matchCount)
 {
-    m_findClient.matchCountDidChange(this, string, matchCount);
+    m_findClient.didFindString(this, string, matchCount);
+}
+
+void WebPageProxy::didFailToFindString(const String& string)
+{
+    m_findClient.didFailToFindString(this, string);
 }
 
 void WebPageProxy::showPopupMenu(const IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex)

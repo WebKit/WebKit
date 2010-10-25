@@ -29,12 +29,21 @@
 
 namespace WebKit {
 
-void WebFindClient::matchCountDidChange(WebPageProxy* page, const String& string, uint32_t matchCount)
+void WebFindClient::didFindString(WebPageProxy* page, const String& string, uint32_t matchCount)
 {
-    if (!m_client.matchCountDidChange)
+    if (!m_client.didFindString)
         return;
 
-    m_client.matchCountDidChange(toAPI(page), toAPI(string.impl()), matchCount, m_client.clientInfo);
+    m_client.didFindString(toAPI(page), toAPI(string.impl()), matchCount, m_client.clientInfo);
+
+}
+
+void WebFindClient::didFailToFindString(WebPageProxy* page, const String& string)
+{
+    if (!m_client.didFailToFindString)
+        return;
+    
+    m_client.didFailToFindString(toAPI(page), toAPI(string.impl()), m_client.clientInfo);
 }
 
 void WebFindClient::didCountStringMatches(WebPageProxy* page, const String& string, uint32_t matchCount)

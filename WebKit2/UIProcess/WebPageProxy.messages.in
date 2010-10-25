@@ -94,7 +94,8 @@ messages -> WebPageProxy {
     # Find.
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, WebKit::SharedMemory::Handle contentImageHandle, bool fadeOut)
-    MatchCountDidChange(WTF::String string, uint32_t matchCount)
+    DidFindString(WTF::String string, uint32_t matchCount)
+    DidFailToFindString(WTF::String string)
 
     # PopupMenu.
     ShowPopupMenu(WebCore::IntRect rect, Vector<WebKit::WebPopupItem> items, int32_t selectedIndex)

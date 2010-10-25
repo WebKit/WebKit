@@ -84,7 +84,7 @@ void FindController::findString(const String& string, FindDirection findDirectio
 
         hideFindIndicator();
 
-        WebProcess::shared().connection()->send(Messages::WebPageProxy::MatchCountDidChange(string, 0), m_webPage->pageID());
+        WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFailToFindString(string), m_webPage->pageID());
     } else {
         shouldShowOverlay = findOptions & FindOptionsShowOverlay;
 
@@ -95,7 +95,7 @@ void FindController::findString(const String& string, FindDirection findDirectio
             if (matchCount > maxMatchCount)
                 shouldShowOverlay = false;
 
-            WebProcess::shared().connection()->send(Messages::WebPageProxy::MatchCountDidChange(string, matchCount), m_webPage->pageID());
+            WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFindString(string, matchCount), m_webPage->pageID());
         }
 
         if (!(findOptions & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay)) {

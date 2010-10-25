@@ -1,5 +1,26 @@
 2010-10-25  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Replace matchCountDidChange with didFindString/didFailToFindString
+        https://bugs.webkit.org/show_bug.cgi?id=48262
+        <rdar://problem/8568928>
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebFindClient.cpp:
+        (WebKit::WebFindClient::didFindString):
+        (WebKit::WebFindClient::didFailToFindString):
+        * UIProcess/WebFindClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFindString):
+        (WebKit::WebPageProxy::didFailToFindString):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+
+2010-10-25  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Add a pageDidScroll BundleUIClient callback

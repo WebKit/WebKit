@@ -288,7 +288,8 @@ private:
     // Find.
     void didCountStringMatches(const String&, uint32_t matchCount);
     void setFindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle, bool fadeOut);
-    void matchCountDidChange(const String&, uint32_t matchCount);
+    void didFindString(const String&, uint32_t matchCount);
+    void didFailToFindString(const String&);
 
     // Popup Menu.
     void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex);

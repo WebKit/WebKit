@@ -36,7 +36,8 @@ class WebPageProxy;
 
 class WebFindClient : public APIClient<WKPageFindClient> {
 public:
-    void matchCountDidChange(WebPageProxy*, const String&, uint32_t matchCount);
+    void didFindString(WebPageProxy*, const String&, uint32_t matchCount);
+    void didFailToFindString(WebPageProxy*, const String&);
     void didCountStringMatches(WebPageProxy*, const String&, uint32_t matchCount);
 };
 
