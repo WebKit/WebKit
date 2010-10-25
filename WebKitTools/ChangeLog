@@ -1,3 +1,15 @@
+2010-10-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        webkit-patch upload fails when the patch removes a file
+        https://bugs.webkit.org/show_bug.cgi?id=48187
+
+        We need to use "--" to separate file names from the rest of the
+        command.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2010-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r70413.

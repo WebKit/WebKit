@@ -667,7 +667,7 @@ class Git(SCM):
         return self._changes_files_for_commit(commit_id)
 
     def revisions_changing_file(self, path, limit=5):
-        commit_ids = self.run(["git", "log", "--pretty=format:%H", "-%s" % limit, path]).splitlines()
+        commit_ids = self.run(["git", "log", "--pretty=format:%H", "-%s" % limit, "--", path]).splitlines()
         return filter(lambda revision: revision, map(self.svn_revision_from_git_commit, commit_ids))
 
     def conflicted_files(self):
