@@ -100,18 +100,6 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
-storage/multiple-transactions-on-different-handles.html
-svg/animations/animate-color-transparent.html
-svg/custom/repaint-on-constant-size-change.svg
-scrollbars/scrollevent-iframe-no-scrolling-wheel.html
-fast/forms/input-file-not-open-without-gesture.html
-fast/forms/render-text-crash.html
-fast/forms/select-listbox-focus-displaynone.html
-fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
-fast/events/click-focus-control.html
-fast/events/mouse-focus-imagemap.html
-fast/css-generated-content/drag-state.html
-fast/css-generated-content/malformed-url.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -221,7 +209,9 @@ editing/undo/undo-smart-delete-reversed-selection.html
 editing/undo/undo-smart-delete-word.html
 fast/block/float/float-in-float-hit-testing.html
 fast/block/float/relative-painted-twice.html
+fast/css-generated-content/drag-state.html
 fast/css-generated-content/hover-style-change.html
+fast/css-generated-content/malformed-url.html
 fast/css-generated-content/positioned-background-hit-test-crash.html
 fast/css-generated-content/spellingToolTip-assert.html
 fast/css/affected-by-hover-after-style-change.html
@@ -238,6 +228,7 @@ fast/css/resize-single-axis.html
 fast/css/universal-hover-quirk.html
 fast/css/user-drag-none.html
 fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-in-zoom-and-scroll.html
+fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
 fast/dom/HTMLTableColElement/resize-table-using-col-width.html
 fast/dom/Node/mutation-blur.html
 fast/dom/replaced-image-map.html
@@ -262,6 +253,7 @@ fast/events/bogus-dropEffect-effectAllowed.html
 fast/events/capture-on-target.html
 fast/events/click-count.html
 fast/events/click-focus-anchor.html
+fast/events/click-focus-control.html
 fast/events/clientXY-in-zoom-and-scroll.html
 fast/events/content-changed-during-drop.html
 fast/events/context-no-deselect.html
@@ -305,6 +297,7 @@ fast/events/keypress-removed-node.html
 fast/events/mouse-click-events.html
 fast/events/mouse-drag-from-frame-to-other-frame.html
 fast/events/mouse-drag-from-frame.html
+fast/events/mouse-focus-imagemap.html
 fast/events/mouseclick-target-and-positioning.html
 fast/events/mousedown-in-subframe-scrollbar.html
 fast/events/mousedown_in_scrollbar.html
@@ -340,6 +333,7 @@ fast/events/recorded-keydown-event.html
 fast/events/related-target.html
 fast/events/remove-child-onscroll.html
 fast/events/right-click-focus.html
+fast/events/scroll-after-click-on-tab-index.html
 fast/events/scroll-to-anchor-in-overflow-hidden.html
 fast/events/scrollbar-double-click.html
 fast/events/select-onchange-crash.html
@@ -373,6 +367,7 @@ fast/forms/focus-selection-textarea.html
 fast/forms/get-file-upload.html
 fast/forms/implicit-submission.html
 fast/forms/input-appearance-preventDefault.html
+fast/forms/input-file-not-open-without-gesture.html
 fast/forms/input-file-re-render.html
 fast/forms/input-live-pseudo-selectors.html
 fast/forms/input-number-crash.html
@@ -408,6 +403,7 @@ fast/forms/password-doubleclick-selection.html
 fast/forms/radio-check-click-and-drag.html
 fast/forms/radio-nested-labels.html
 fast/forms/radio_checked_name.html
+fast/forms/render-text-crash.html
 fast/forms/restore-selection-after-layout.html
 fast/forms/search-abs-pos-cancel-button.html
 fast/forms/search-cancel-button-events.html
@@ -423,6 +419,7 @@ fast/forms/select-accesskey.html
 fast/forms/select-cache-desynchronization.html
 fast/forms/select-double-onchange.html
 fast/forms/select-empty-list.html
+fast/forms/select-listbox-focus-displaynone.html
 fast/forms/select-popup-pagekeys.html
 fast/forms/select-script-onchange.html
 fast/forms/select-type-ahead-list-box-no-selection.html
@@ -535,6 +532,9 @@ scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollbar-middleclick-nopaste.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
 scrollbars/scrollbar-miss-mousemove.html
+scrollbars/scrollevent-iframe-no-scrolling-wheel.html
+storage/multiple-transactions-on-different-handles.html
+svg/animations/animate-color-transparent.html
 svg/animations/animate-gradient-transform.html
 svg/animations/animate-keySplines.html
 svg/animations/animate-points.html
@@ -594,6 +594,7 @@ svg/custom/pointer-events-text.svg
 svg/custom/polyline-hittest.svg
 svg/custom/prevent-default.svg
 svg/custom/relative-sized-content-with-resources.xhtml
+svg/custom/repaint-on-constant-size-change.svg
 svg/custom/repaint-stroke-width-changes.svg
 svg/custom/resource-invalidate-on-target-update.svg
 svg/custom/scroll-hit-test.xhtml
@@ -1345,7 +1346,6 @@ printing/css2.1/page-break-inside-000.html
 printing/no-content-empty-pages.html
 printing/page-break-after-avoid.html
 printing/page-break-always.html
-printing/page-break-always-for-overflow.html
 printing/page-break-avoid.html
 printing/page-break-before-avoid.html
 printing/page-break-display-none.html
