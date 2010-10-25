@@ -29,12 +29,9 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include "Attachment.h"
 #include "WebCoreArgumentCoders.h"
-#include <QDebug>
-#include <QDir>
+#include <QIODevice>
 #include <QImage>
-#include <QTemporaryFile>
 #include <WebCore/FloatRect.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,48 +40,7 @@ using namespace std;
 
 namespace WebKit {
 
-static MappedMemory* mapMemory(size_t size)
-{
-    MappedMemoryPool* pool = MappedMemoryPool::instance();
-    for (unsigned n = 0; n < pool->size(); ++n) {
-        MappedMemory& current = pool->at(n);
-        if (current.dataSize >= size && current.isFree()) {
-            current.markUsed();
-            return &current;
-        }
-    }
-    MappedMemory newMap;
-    newMap.dataSize = size;
-    newMap.file = new QTemporaryFile(QDir::tempPath() + "/WebKit2UpdateChunk");
-    newMap.file->open(QIODevice::ReadWrite);
-    newMap.file->resize(newMap.mapSize());
-    newMap.mappedBytes = newMap.file->map(0, newMap.mapSize());
-    newMap.file->close();
-    newMap.markUsed();
-    return &pool->append(newMap);
-}
-
-static MappedMemory* mapFile(QString fileName, size_t size)
-{
-    MappedMemoryPool* pool = MappedMemoryPool::instance();
-    for (unsigned n = 0; n < pool->size(); ++n) {
-        MappedMemory& current = pool->at(n);
-        if (current.file->fileName() == fileName) {
-            ASSERT(!current.isFree());
-            return &current;
-        }
-    }
-    MappedMemory newMap;
-    newMap.file = new QFile(fileName);
-    if (!newMap.file->open(QIODevice::ReadWrite))
-        return 0;
-    newMap.dataSize = size;
-    newMap.mappedBytes = newMap.file->map(0, newMap.mapSize());
-    ASSERT(!newMap.isFree());
-    newMap.file->close();
-    newMap.file->remove(); // The map stays alive even when the file is unlinked.
-    return &pool->append(newMap);
-}
+static MappedMemoryPool* mappedMemoryPool = MappedMemoryPool::instance();
 
 UpdateChunk::UpdateChunk()
     : m_mappedMemory(0)
@@ -93,7 +49,7 @@ UpdateChunk::UpdateChunk()
 
 UpdateChunk::UpdateChunk(const IntRect& rect)
     : m_rect(rect)
-    , m_mappedMemory(mapMemory(size()))
+    , m_mappedMemory(mappedMemoryPool->mapMemory(size()))
 {
 }
 
@@ -124,12 +80,12 @@ bool UpdateChunk::decode(CoreIPC::ArgumentDecoder* decoder, UpdateChunk& chunk)
     if (!decoder->decode(rect))
         return false;
     chunk.m_rect = rect;
-    
+
     String fileName;
     if (!decoder->decode(fileName))
         return false;
 
-    chunk.m_mappedMemory = mapFile(fileName, chunk.size());
+    chunk.m_mappedMemory = mappedMemoryPool->mapFile(fileName, chunk.size());
 
     return chunk.m_mappedMemory->mappedBytes;
 }
