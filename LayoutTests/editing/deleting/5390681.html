@@ -1,10 +1,11 @@
-<p>This tests for a bug where expansion for smart delete would not consider editable boundaries.  Only 'foo' should be deleted.  You should see ' bar'. <b>There is a bug: while the non-editable space isn't deleted, deletion inserts a placeholder when it shouldn't.</b></p>
+<script src="../../resources/dump-as-markup.js"></script>
 <div contenteditable="true" id="div">foo<span contenteditable="false"> bar</span></div>
-
 <script>
 var div = document.getElementById("div");
 var sel = window.getSelection();
 sel.setPosition(div, 0);
 sel.modify("extend", "forward", "word");
 document.execCommand("Delete");
+Markup.description("This tests for a bug where expansion for smart delete would not consider editable boundaries.  Only 'foo' should be deleted.  You should see ' bar'.  There is a bug: while the non-editable space isn't deleted, deletion inserts a placeholder when it shouldn't.");
+Markup.dump(div);
 </script>
