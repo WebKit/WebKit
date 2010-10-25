@@ -1,3 +1,44 @@
+2010-10-25  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap] [Qt] Texture mapper initial implementation
+        https://bugs.webkit.org/show_bug.cgi?id=47070
+
+        Glue layer (WebCoreSupport) changes to allow connecting TextureMapper to a Qt PageClient, i.e.
+        a QWebView or a QGraphicsWebView. This enables the new type, TextureMapperPlatformLayer, to be recognized both by
+        the compositor and by the page client.
+        Note that this is temporarily an opt-in, under USE(TEXTURE_MAPPER)
+
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        * Api/qwebpage.cpp:
+        (QWebPage::setView):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::attachRootGraphicsLayer):
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PlatformLayerProxyQt::PlatformLayerProxyQt):
+        (WebCore::PlatformLayerProxyQt::~PlatformLayerProxyQt):
+        (WebCore::PlatformLayerProxyQt::setSizeChanged):
+        (WebCore::PlatformLayerProxyQWidget::PlatformLayerProxyQWidget):
+        (WebCore::PlatformLayerProxyQWidget::eventFilter):
+        (WebCore::PlatformLayerProxyQWidget::setNeedsDisplay):
+        (WebCore::PlatformLayerProxyQWidget::setNeedsDisplayInRect):
+        (WebCore::PlatformLayerProxyQGraphicsObject::PlatformLayerProxyQGraphicsWidget):
+        (WebCore::PlatformLayerProxyQGraphicsObject::setNeedsDisplay):
+        (WebCore::PlatformLayerProxyQGraphicsObject::setNeedsDisplayInRect):
+        (WebCore::PageClientQWidget::setRootGraphicsLayer):
+        (WebCore::PageClientQWidget::markForSync):
+        (WebCore::PageClientQWidget::syncLayers):
+        (WebCore::PageClientQGraphicsWidget::updateCompositingScrollPosition):
+        (WebCore::PageClientQGraphicsWidget::createOrDeleteOverlay):
+        (WebCore::PageClientQGraphicsWidget::setRootGraphicsLayer):
+        * WebCoreSupport/PageClientQt.h:
+        (WebCore::PageClientQWidget::PageClientQWidget):
+        (WebCore::PageClientQWidget::allowsAcceleratedCompositing):
+        (WebCore::PageClientQGraphicsWidget::PageClientQGraphicsWidget):
+
 2010-10-25  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Tony Chang.

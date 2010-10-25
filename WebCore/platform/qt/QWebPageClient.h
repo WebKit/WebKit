@@ -30,11 +30,14 @@
 #include <QCursor>
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+#include <GraphicsLayer.h>
+#endif
+
 #include <QPalette>
 #include <QRect>
 
 QT_BEGIN_NAMESPACE
-class QGraphicsItem;
 class QStyle;
 QT_END_NAMESPACE
 
@@ -49,8 +52,7 @@ public:
     virtual void setInputMethodEnabled(bool enable) = 0;
     virtual bool inputMethodEnabled() const = 0;
 #if USE(ACCELERATED_COMPOSITING)
-    // this gets called when we start/stop compositing.
-    virtual void setRootGraphicsLayer(QGraphicsItem* layer) {}
+    virtual void setRootGraphicsLayer(PlatformLayer* layer) { }
 
     // this gets called when the compositor wants us to sync the layers
     // if scheduleSync is true, we schedule a sync ourselves. otherwise,

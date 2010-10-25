@@ -41,15 +41,29 @@
 
 #include <Settings.h>
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+#include "texmap/TextureMapperPlatformLayer.h"
+#endif
+
 namespace WebCore {
 
-class PageClientQWidget : public QWebPageClient {
+class PageClientQWidget : public QWebPageClient
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+        , public virtual TextureMapperLayerClient
+#endif
+{
 public:
-    PageClientQWidget(QWidget* view)
-        : view(view)
+    PageClientQWidget(QWidget* newView, QWebPage* newPage)
+        : view(newView)
+        , page(newPage)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+        , syncTimer(this, &PageClientQWidget::syncLayers)
+        , platformLayerProxy(0)
+#endif
     {
         Q_ASSERT(view);
     }
+    virtual ~PageClientQWidget();
 
     virtual bool isQWidgetClient() const { return true; }
 
@@ -78,6 +92,21 @@ public:
     virtual QRectF windowRect() const;
 
     QWidget* view;
+    QWebPage* page;
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+    virtual void setRootGraphicsLayer(TextureMapperPlatformLayer* layer);
+    virtual void markForSync(bool scheduleSync);
+    void syncLayers(Timer<PageClientQWidget>*);
+#endif
+
+    // QGraphicsWebView can render composited layers
+    virtual bool allowsAcceleratedCompositing() const { return true; }
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+    Timer<PageClientQWidget> syncTimer;
+    PlatformLayerProxyQt* platformLayerProxy;
+#endif
 };
 
 // the overlay is here for one reason only: to have the scroll-bars and other
@@ -114,13 +143,20 @@ class QGraphicsItemOverlay : public QGraphicsObject {
 };
 
 
-class PageClientQGraphicsWidget : public QWebPageClient {
+class PageClientQGraphicsWidget : public QWebPageClient
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+        , public virtual TextureMapperLayerClient
+#endif
+{
 public:
-    PageClientQGraphicsWidget(QGraphicsWebView* v, QWebPage* p)
-        : view(v)
-        , page(p)
+    PageClientQGraphicsWidget(QGraphicsWebView* newView, QWebPage* newPage)
+        : view(newView)
+        , page(newPage)
         , viewResizesToContents(false)
 #if USE(ACCELERATED_COMPOSITING)
+#if USE(TEXTURE_MAPPER)
+        , platformLayerProxy(0)
+#endif
         , shouldSync(false)
 #endif
         , overlay(0)
@@ -168,7 +204,7 @@ public:
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void setRootGraphicsLayer(QGraphicsItem* layer);
+    virtual void setRootGraphicsLayer(PlatformLayer* layer);
     virtual void markForSync(bool scheduleSync);
     void syncLayers();
 
@@ -183,8 +219,11 @@ public:
     bool viewResizesToContents;
 
 #if USE(ACCELERATED_COMPOSITING)
+#if USE(TEXTURE_MAPPER)
+    PlatformLayerProxyQt* platformLayerProxy;
+#else
     QWeakPointer<QGraphicsObject> rootGraphicsLayer;
-
+#endif
     // we have to flush quite often, so we use a meta-method instead of QTimer::singleShot for putting the event in the queue
     QMetaMethod syncMetaMethod;
 

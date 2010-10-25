@@ -1850,7 +1850,7 @@ void QWebPage::setView(QWidget* view)
     }
 
     if (view)
-        d->client = new PageClientQWidget(view);
+        d->client = new PageClientQWidget(view, this);
 }
 
 /*!

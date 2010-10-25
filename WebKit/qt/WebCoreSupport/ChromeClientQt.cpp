@@ -39,7 +39,7 @@
 #include "FrameView.h"
 #include "Geolocation.h"
 #if USE(ACCELERATED_COMPOSITING)
-#include "GraphicsLayerQt.h"
+#include "GraphicsLayer.h"
 #endif
 #include "GeolocationPermissionClientQt.h"
 #include "HitTestResult.h"
@@ -591,7 +591,7 @@ void ChromeClientQt::cancelGeolocationPermissionRequestForFrame(Frame* frame, Ge
 void ChromeClientQt::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
     if (platformPageClient())
-        platformPageClient()->setRootGraphicsLayer(graphicsLayer ? graphicsLayer->nativeLayer() : 0);
+        platformPageClient()->setRootGraphicsLayer(graphicsLayer ? graphicsLayer->platformLayer() : 0);
 }
 
 void ChromeClientQt::setNeedsOneShotDrawingSynchronization()

@@ -57,11 +57,19 @@ typedef WKCACFLayer PlatformLayer;
 typedef void* NativeLayer;
 }
 #elif PLATFORM(QT)
+#if USE(TEXTURE_MAPPER)
+namespace WebCore {
+class TextureMapperPlatformLayer;
+typedef TextureMapperPlatformLayer PlatformLayer;
+typedef TextureMapperPlatformLayer* NativeLayer;
+};
+#else
 QT_BEGIN_NAMESPACE
-class QGraphicsItem;
+class QGraphicsObject;
 QT_END_NAMESPACE
-typedef QGraphicsItem PlatformLayer;
-typedef QGraphicsItem* NativeLayer;
+typedef QGraphicsObject PlatformLayer;
+typedef QGraphicsObject* NativeLayer;
+#endif
 #elif PLATFORM(CHROMIUM)
 namespace WebCore {
 class LayerChromium;

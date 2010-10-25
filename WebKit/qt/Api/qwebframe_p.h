@@ -38,6 +38,7 @@ namespace WebCore {
     class FrameView;
     class HTMLFrameOwnerElement;
     class Scrollbar;
+    class TextureMapperContentLayer;
 }
 class QWebPage;
 
@@ -72,6 +73,9 @@ public:
         , allowsScrolling(true)
         , marginWidth(-1)
         , marginHeight(-1)
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+        , rootGraphicsLayer(0)
+#endif
         , zoomTextOnly(false)
         {}
     void init(QWebFrame* qframe, QWebFrameData* frameData);
@@ -100,6 +104,9 @@ public:
     bool allowsScrolling;
     int marginWidth;
     int marginHeight;
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+    WebCore::TextureMapperContentLayer* rootGraphicsLayer;
+#endif
     bool zoomTextOnly;
 };
 

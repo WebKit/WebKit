@@ -21,12 +21,126 @@
 #include "config.h"
 
 #include "PageClientQt.h"
+#include "texmap/TextureMapperPlatformLayer.h"
 
 #if defined(Q_WS_X11)
 #include <QX11Info>
 #endif
 
+#ifdef QT_OPENGL_LIB
+#include <QGLWidget>
+#endif
 namespace WebCore {
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)    
+class PlatformLayerProxyQt : public QObject, public virtual TextureMapperLayerClient {
+public:
+    PlatformLayerProxyQt(QWebFrame* frame, TextureMapperContentLayer* layer, QObject* object)
+        : QObject(object)
+        , m_frame(frame)
+        , m_layer(layer)
+    {
+        if (m_layer)
+            m_layer->setPlatformLayerClient(this);
+        m_frame->d->rootGraphicsLayer = m_layer;
+    }
+
+    virtual ~PlatformLayerProxyQt()
+    {
+        if (m_layer)
+            m_layer->setPlatformLayerClient(0);
+        if (m_frame->d)
+            m_frame->d->rootGraphicsLayer = 0;
+    }
+
+    // Since we just paint the composited tree and never create a special item for it, we don't have to handle its size changes.
+    void setSizeChanged(const IntSize&) { }
+
+private:
+    QWebFrame* m_frame;
+    TextureMapperContentLayer* m_layer;
+};
+
+class PlatformLayerProxyQWidget : public PlatformLayerProxyQt {
+public:
+    PlatformLayerProxyQWidget(QWebFrame* frame, TextureMapperContentLayer* layer, QWidget* widget)
+        : PlatformLayerProxyQt(frame, layer, widget)
+        , m_widget(widget)
+    {
+        if (m_widget)
+            m_widget->installEventFilter(this);
+    }
+
+    // We don't want a huge region-clip on the compositing layers; instead we unite the rectangles together
+    // and clear them when the paint actually occurs.
+    bool eventFilter(QObject* object, QEvent* event)
+    {
+        if (object == m_widget && event->type() == QEvent::Paint)
+            m_dirtyRect = QRect();
+        return QObject::eventFilter(object, event);
+    }
+
+    void setNeedsDisplay()
+    {
+        if (m_widget)
+            m_widget->update();
+    }
+
+    void setNeedsDisplayInRect(const IntRect& rect)
+    {
+        m_dirtyRect |= rect;
+        m_widget->update(m_dirtyRect);
+    }
+
+private:
+    QRect m_dirtyRect;
+    QWidget* m_widget;
+};
+
+class PlatformLayerProxyQGraphicsObject : public PlatfromLayerProxyQt {
+public:
+    PlatformLayerProxyQGraphicsWidget(QWebFrame* frame, TextureMapperContentLayer* layer, QGraphicsObject* object)
+        : QObject(object)
+        , m_graphicsItem(graphicsObject)
+    {
+    }
+
+    void setNeedsDisplay()
+    {
+        if (m_graphicsItem)
+            m_graphicsItem->update();
+    }
+
+    void setNeedsDisplayInRect(const IntRect& rect)
+    {
+        if (m_graphicsItem)
+            m_graphicsItem->update(QRectF(rect));
+    }
+
+private:
+    QGraphicsItem* m_graphicsItem;
+};
+
+void PageClientQWidget::setRootGraphicsLayer(TextureMapperPlatformLayer* layer)
+{
+    if (layer) {
+        platformLayerProxy = new PlatformLayerProxyQWidget(page->mainFrame(), static_cast<TextureMapperContentLayer*>(layer), view);
+        return;
+    }
+    delete platformLayerProxy;
+    platformLayerProxy = 0;
+}
+
+void PageClientQWidget::markForSync(bool scheduleSync)
+{
+    syncTimer.startOneShot(0);
+}
+
+void PageClientQWidget::syncLayers(Timer<PageClientQWidget>*)
+{
+    QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateRecursive();
+}
+#endif
 
 void PageClientQWidget::scroll(int dx, int dy, const QRect& rectToScroll)
 {
@@ -51,6 +165,13 @@ bool PageClientQWidget::inputMethodEnabled() const
 void PageClientQWidget::setInputMethodHints(Qt::InputMethodHints hints)
 {
     view->setInputMethodHints(hints);
+}
+
+PageClientQWidget::~PageClientQWidget()
+{
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+    delete platformLayerProxy;
+#endif
 }
 
 #ifndef QT_NO_CURSOR
@@ -134,6 +255,8 @@ void PageClientQGraphicsWidget::update(const QRect& dirtyRect)
 
 void PageClientQGraphicsWidget::createOrDeleteOverlay()
 {
+    // We don't use an overlay with TextureMapper. Instead, the overlay is drawn inside QWebFrame.
+#if !USE(TEXTURE_MAPPER)
     bool useOverlay = false;
     if (!viewResizesToContents) {
 #if USE(ACCELERATED_COMPOSITING)
@@ -154,6 +277,7 @@ void PageClientQGraphicsWidget::createOrDeleteOverlay()
         overlay->deleteLater();
         overlay = 0;
     }
+#endif // !USE(TEXTURE_MAPPER)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -165,7 +289,18 @@ void PageClientQGraphicsWidget::syncLayers()
     }
 }
 
-void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsItem* layer)
+#if USE(TEXTURE_MAPPER)
+void PageClientQGraphicsWidget::setRootGraphicsLayer(TextureMapperPlatformLayer* layer)
+{
+    if (layer) {
+        platformLayerProxy = new PlatformLayerProxyQGraphicsObject(page->mainFrame(), static_cast<TextureMapperContentLayer*>(layer), 0, view);
+        return;
+    }
+    delete platformLayerProxy;
+    platformLayerProxy = 0;
+}
+#else
+void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsObject* layer)
 {
     if (rootGraphicsLayer) {
         rootGraphicsLayer.data()->setParentItem(0);
@@ -173,7 +308,7 @@ void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsItem* layer)
         QWebFramePrivate::core(page->mainFrame())->view()->syncCompositingStateRecursive();
     }
 
-    rootGraphicsLayer = layer ? layer->toGraphicsObject() : 0;
+    rootGraphicsLayer = layer;
 
     if (layer) {
         layer->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
@@ -182,6 +317,7 @@ void PageClientQGraphicsWidget::setRootGraphicsLayer(QGraphicsItem* layer)
     }
     createOrDeleteOverlay();
 }
+#endif
 
 void PageClientQGraphicsWidget::markForSync(bool scheduleSync)
 {

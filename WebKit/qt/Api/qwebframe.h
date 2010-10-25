@@ -56,6 +56,7 @@ namespace WebCore {
     class WidgetPrivate;
     class FrameLoaderClientQt;
     class ChromeClientQt;
+    class PlatformLayerProxyQt;
 }
 class QWebFrameData;
 class QWebHitTestResultPrivate;
@@ -231,6 +232,7 @@ private:
     friend class WebCore::WidgetPrivate;
     friend class WebCore::FrameLoaderClientQt;
     friend class WebCore::ChromeClientQt;
+    friend class WebCore::PlatformLayerProxyQt;
     QWebFramePrivate *d;
 };
 
