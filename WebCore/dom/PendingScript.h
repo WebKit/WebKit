@@ -28,6 +28,7 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include <wtf/text/TextPosition.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -43,14 +44,14 @@ class Element;
 class PendingScript : public CachedResourceClient {
 public:
     PendingScript()
-        : m_startingLineNumber(0)
+        : m_startingPosition(TextPosition1::belowRangePosition())
         , m_watchingForLoad(false)
     {
     }
 
     PendingScript(const PendingScript& other)
         : CachedResourceClient(other)
-        , m_startingLineNumber(other.m_startingLineNumber)
+        , m_startingPosition(other.m_startingPosition)
         , m_watchingForLoad(other.m_watchingForLoad)
         , m_element(other.m_element)
     {
@@ -64,7 +65,7 @@ public:
         if (this == &other)
             return *this;
 
-        m_startingLineNumber = other.m_startingLineNumber;
+        m_startingPosition = other.m_startingPosition;
         m_watchingForLoad = other.m_watchingForLoad;
         m_element = other.m_element;
         setCachedScript(other.cachedScript());
@@ -74,7 +75,7 @@ public:
 
     // FIXME: No setter means this is never set to anything other than 0.
     // This is either unnecessary or incorrect.
-    int startingLineNumber() const { return m_startingLineNumber; }
+    TextPosition1 startingPosition() const { return m_startingPosition; }
 
     bool watchingForLoad() const { return m_watchingForLoad; }
     void setWatchingForLoad(bool b) { m_watchingForLoad = b; }
@@ -89,7 +90,7 @@ public:
     virtual void notifyFinished(CachedResource*);
 
 private:
-    int m_startingLineNumber; // Only used for inline script tags.
+    TextPosition1 m_startingPosition; // Only used for inline script tags.
     bool m_watchingForLoad;
     RefPtr<Element> m_element;
     CachedResourceHandle<CachedScript> m_cachedScript;

@@ -1,3 +1,17 @@
+2010-10-25  Peter Rybin  <peter.rybin@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        HTML parser should provide script column position within HTML document to JavaScript engine
+        https://bugs.webkit.org/show_bug.cgi?id=45271
+
+        Replaces script line number with TextPosition structure.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::executeScript):
+        (WebKit::WebFrameImpl::executeScriptInIsolatedWorld):
+        (WebKit::WebFrameImpl::executeScriptAndReturnValue):
+
 2010-10-20  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Jian Li.

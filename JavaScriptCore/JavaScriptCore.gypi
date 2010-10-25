@@ -461,6 +461,7 @@
             'wtf/text/StringImpl.cpp',
             'wtf/text/StringImpl.h',
             'wtf/text/StringStatics.cpp',
+            'wtf/text/TextPosition.h',
             'wtf/text/WTFString.cpp',
             'wtf/text/WTFString.h',
             'wtf/unicode/Collator.h',

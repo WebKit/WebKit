@@ -753,8 +753,9 @@ void WebFrameImpl::bindToWindowObject(const WebString& name, NPObject* object)
 
 void WebFrameImpl::executeScript(const WebScriptSource& source)
 {
+    TextPosition1 position(WTF::OneBasedNumber::fromOneBasedInt(source.startLine), WTF::OneBasedNumber::base());
     m_frame->script()->executeScript(
-        ScriptSourceCode(source.code, source.url, source.startLine));
+        ScriptSourceCode(source.code, source.url, position));
 }
 
 void WebFrameImpl::executeScriptInIsolatedWorld(
@@ -764,8 +765,9 @@ void WebFrameImpl::executeScriptInIsolatedWorld(
     Vector<ScriptSourceCode> sources;
 
     for (unsigned i = 0; i < numSources; ++i) {
+        TextPosition1 position(WTF::OneBasedNumber::fromOneBasedInt(sourcesIn[i].startLine), WTF::OneBasedNumber::base());
         sources.append(ScriptSourceCode(
-            sourcesIn[i].code, sourcesIn[i].url, sourcesIn[i].startLine));
+            sourcesIn[i].code, sourcesIn[i].url, position));
     }
 
     m_frame->script()->evaluateInIsolatedWorld(worldId, sources, extensionGroup);
@@ -817,8 +819,9 @@ void WebFrameImpl::collectGarbage()
 v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(
     const WebScriptSource& source)
 {
+    TextPosition1 position(WTF::OneBasedNumber::fromOneBasedInt(source.startLine), WTF::OneBasedNumber::base());
     return m_frame->script()->executeScript(
-        ScriptSourceCode(source.code, source.url, source.startLine)).v8Value();
+        ScriptSourceCode(source.code, source.url, position)).v8Value();
 }
 
 // Returns the V8 context for this frame, or an empty handle if there is none.

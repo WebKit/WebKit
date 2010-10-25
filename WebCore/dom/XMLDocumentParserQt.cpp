@@ -105,7 +105,7 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
     , m_pendingScript(0)
-    , m_scriptStartLine(0)
+    , m_scriptStartPosition(TextPosition1::belowRangePosition())
     , m_parsingFragment(false)
     , m_scriptingPermission(FragmentScriptingAllowed)
 {
@@ -132,7 +132,7 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_lastErrorLine(0)
     , m_lastErrorColumn(0)
     , m_pendingScript(0)
-    , m_scriptStartLine(0)
+    , m_scriptStartPosition(TextPosition1::belowRangePosition())
     , m_parsingFragment(true)
     , m_scriptingPermission(permission)
 {
@@ -232,6 +232,18 @@ int XMLDocumentParser::lineNumber() const
 int XMLDocumentParser::columnNumber() const
 {
     return m_stream.columnNumber();
+}
+
+TextPosition0 XMLDocumentParser::textPosition() const
+{
+    return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(lineNumber()), WTF::ZeroBasedNumber::fromZeroBasedInt(columnNumber()));
+}
+
+// This method incorrectly reinterprets zero-base lineNumber method as one-based number.
+// FIXME: This error is kept for compatibility. We should fix it eventually. 
+TextPosition1 XMLDocumentParser::textPositionOneBased() const
+{
+    return TextPosition1(WTF::OneBasedNumber::fromOneBasedInt(lineNumber()), WTF::OneBasedNumber::fromOneBasedInt(columnNumber()));
 }
 
 void XMLDocumentParser::stopParsing()
@@ -518,7 +530,7 @@ void XMLDocumentParser::parseStartElement()
 
     ScriptElement* scriptElement = toScriptElement(newElement.get());
     if (scriptElement)
-        m_scriptStartLine = lineNumber();
+        m_scriptStartPosition = textPositionOneBased();
 
     m_currentNode->deprecatedParserAddChild(newElement.get());
 
@@ -595,7 +607,7 @@ void XMLDocumentParser::parseEndElement()
             } else
                 m_scriptElement = 0;
         } else
-            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartLine));
+            m_view->frame()->script()->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), m_scriptStartPosition));
     }
     m_requestingScript = false;
     popCurrentNode();
@@ -716,4 +728,3 @@ void XMLDocumentParser::parseDtd()
 
 }
 }
-

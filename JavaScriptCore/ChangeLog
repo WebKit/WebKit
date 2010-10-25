@@ -1,3 +1,38 @@
+2010-10-25  Peter Rybin  <peter.rybin@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        HTML parser should provide script column position within HTML document to JavaScript engine
+        https://bugs.webkit.org/show_bug.cgi?id=45271
+
+        Adds TextPosition* classes -- a structure that stores line/column/generation
+        level coordinates inside text document. Adds *BasedNumber classes -- typesafe int
+        wrappers that emphasize whether int number is used as zero-based or
+        one-based.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/text/TextPosition.h: Added.
+        (WTF::TextPosition::TextPosition):
+        (WTF::TextPosition::minimumPosition):
+        (WTF::TextPosition::belowRangePosition):
+        (WTF::ZeroBasedNumber::fromZeroBasedInt):
+        (WTF::ZeroBasedNumber::ZeroBasedNumber):
+        (WTF::ZeroBasedNumber::zeroBasedInt):
+        (WTF::ZeroBasedNumber::base):
+        (WTF::ZeroBasedNumber::belowBase):
+        (WTF::OneBasedNumber::fromOneBasedInt):
+        (WTF::OneBasedNumber::OneBasedNumber):
+        (WTF::OneBasedNumber::oneBasedInt):
+        (WTF::OneBasedNumber::convertAsZeroBasedInt):
+        (WTF::OneBasedNumber::convertToZeroBased):
+        (WTF::OneBasedNumber::base):
+        (WTF::OneBasedNumber::belowBase):
+        (WTF::toZeroBasedTextPosition):
+        (WTF::toOneBasedTextPosition):
+        (WTF::ZeroBasedNumber::convertToOneBased):
+
 2010-10-24  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by David Kilzer.

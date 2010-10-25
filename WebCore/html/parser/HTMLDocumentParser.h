@@ -92,7 +92,7 @@ private:
     virtual bool isExecutingScript() const;
     virtual void executeScriptsWaitingForStylesheets();
     virtual int lineNumber() const;
-    virtual int columnNumber() const;
+    virtual TextPosition0 textPosition() const;
 
     // HTMLScriptRunnerHost
     virtual void watchForLoad(CachedResource*);

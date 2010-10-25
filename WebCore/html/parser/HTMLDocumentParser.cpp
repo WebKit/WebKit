@@ -191,12 +191,12 @@ bool HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 {
     ASSERT(m_treeBuilder->isPaused());
 
-    int scriptStartLine = 0;
-    RefPtr<Element> scriptElement = m_treeBuilder->takeScriptToProcess(scriptStartLine);
+    TextPosition1 scriptStartPosition = TextPosition1::belowRangePosition();
+    RefPtr<Element> scriptElement = m_treeBuilder->takeScriptToProcess(scriptStartPosition);
     // We will not have a scriptRunner when parsing a DocumentFragment.
     if (!m_scriptRunner)
         return true;
-    return m_scriptRunner->execute(scriptElement.release(), scriptStartLine);
+    return m_scriptRunner->execute(scriptElement.release(), scriptStartPosition);
 }
 
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
@@ -396,9 +396,13 @@ int HTMLDocumentParser::lineNumber() const
     return m_tokenizer->lineNumber();
 }
 
-int HTMLDocumentParser::columnNumber() const
+TextPosition0 HTMLDocumentParser::textPosition() const
 {
-    return m_tokenizer->columnNumber();
+    int lineZeroBased = m_tokenizer->lineNumber();
+    int columnOneBased = m_tokenizer->columnNumber();
+
+    return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(lineZeroBased),
+        WTF::OneBasedNumber::fromOneBasedInt(columnOneBased).convertToZeroBased());
 }
 
 bool HTMLDocumentParser::isWaitingForScripts() const
