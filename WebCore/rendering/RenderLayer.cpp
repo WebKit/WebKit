@@ -524,8 +524,13 @@ void RenderLayer::setHasVisibleContent(bool b)
         RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
         m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
         m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer);
-        if (!isNormalFlowOnly())
-            dirtyStackingContextZOrderLists();
+        if (!isNormalFlowOnly()) {
+            for (RenderLayer* sc = stackingContext(); sc; sc = sc->stackingContext()) {
+                sc->dirtyZOrderLists();
+                if (sc->hasVisibleContent())
+                    break;
+            }
+        }
     }
     if (parent())
         parent()->childVisibilityChanged(m_hasVisibleContent);
