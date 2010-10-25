@@ -1,3 +1,26 @@
+2010-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update the fake Carbon window when the window frame changes
+        https://bugs.webkit.org/show_bug.cgi?id=48273
+
+        * UIProcess/API/mac/WKView.mm:
+        (screenForWindow):
+        (-[WKView _updateWindowFrame]):
+        Pass the window frame in Carbon coordinates.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::windowFrameChanged):
+        Update the window bounds.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::setWindowFrame):
+        Call the plug-in.
+
+        (WebKit::PluginView::platformLayer):
+        Fix a crash when WebCore asked for the layer before it was initialized.
+
 2010-10-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

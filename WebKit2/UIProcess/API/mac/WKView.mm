@@ -408,11 +408,29 @@ static bool isViewVisible(NSView *view)
         area->setPageIsVisible(isViewVisible(self));
 }
 
+static NSScreen *screenForWindow(NSWindow *window)
+{
+    if (NSScreen *screen = [window screen]) // nil if the window is off-screen
+        return screen;
+    
+    NSArray *screens = [NSScreen screens];
+    if ([screens count] > 0)
+        return [screens objectAtIndex:0]; // screen containing the menubar
+    
+    return nil;
+}
+
 - (void)_updateWindowFrame
 {
-    ASSERT([self window]);
+    NSWindow *window = [self window];
+    ASSERT(window);
 
-    _data->_page->updateWindowFrame(enclosingIntRect([[self window] frame]));
+    // We want the window frame in Carbon coordinates, so flip the Y coordinate.
+    NSRect windowFrame = [window frame];
+    NSScreen *screen = ::screenForWindow(window);
+    windowFrame.origin.y = NSMaxY([screen frame]) - windowFrame.origin.y;
+
+    _data->_page->updateWindowFrame(enclosingIntRect(windowFrame));
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window

@@ -602,9 +602,27 @@ void NetscapePlugin::windowFocusChanged(bool hasFocus)
     }
 }
 
-void NetscapePlugin::windowFrameChanged(const IntRect&)
+void NetscapePlugin::windowFrameChanged(const IntRect& windowFrame)
 {
-    // FIXME: Implement.
+    switch (m_eventModel) {
+        case NPEventModelCocoa:
+            // Nothing to do.
+            break;
+
+        case NPEventModelCarbon: {
+            Rect bounds;
+            bounds.top = windowFrame.y() + windowFrame.height();
+            bounds.left = windowFrame.x();
+            bounds.right = windowFrame.right();
+            bounds.bottom = windowFrame.y();
+            
+            ::SetWindowBounds(windowRef(), kWindowStructureRgn, &bounds);
+            break;
+        }
+
+        default:
+            ASSERT_NOT_REACHED();
+    }
 }
     
 void NetscapePlugin::windowVisibilityChanged(bool)

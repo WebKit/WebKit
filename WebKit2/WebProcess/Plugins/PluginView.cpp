@@ -339,8 +339,8 @@ void PluginView::setWindowFrame(const IntRect& windowFrame)
 {
     if (!m_plugin)
         return;
-        
-    // FIXME: Implement.
+
+    m_plugin->windowFrameChanged(windowFrame);
 }
 
 #endif
@@ -398,6 +398,10 @@ void PluginView::initializePlugin()
 #if PLATFORM(MAC)
 PlatformLayer* PluginView::platformLayer() const
 {
+    // The plug-in can be null here if it failed to initialize or hasn't yet been initialized.
+    if (!m_plugin)
+        return 0;
+        
     return m_plugin->pluginLayer();
 }
 #endif
