@@ -51,9 +51,9 @@ public:
 class QtPixmapWidthField : public Field {
 public:
     static const char* name() { return "width"; }
-    virtual JSValue valueFromInstance(ExecState* exec, const Instance* instance) const
+    virtual JSValue valueFromInstance(ExecState*, const Instance* instance) const
     {
-        return jsNumber(exec, static_cast<const QtPixmapInstance*>(instance)->width());
+        return jsNumber(static_cast<const QtPixmapInstance*>(instance)->width());
     }
     virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const {}
 };
@@ -61,9 +61,9 @@ public:
 class QtPixmapHeightField : public Field {
 public:
     static const char* name() { return "height"; }
-    virtual JSValue valueFromInstance(ExecState* exec, const Instance* instance) const
+    virtual JSValue valueFromInstance(ExecState*, const Instance* instance) const
     {
-        return jsNumber(exec, static_cast<const QtPixmapInstance*>(instance)->height());
+        return jsNumber(static_cast<const QtPixmapInstance*>(instance)->height());
     }
     virtual void setValueToInstance(ExecState*, const Instance*, JSValue) const {}
 };
