@@ -51,6 +51,7 @@ public:
     void willRunJavaScriptConfirm(WebPage*, const String&, WebFrame*);
     void willRunJavaScriptPrompt(WebPage*, const String&, const String&, WebFrame*);
     void mouseDidMoveOverElement(WebPage*, const WebCore::HitTestResult&, WebEvent::Modifiers, RefPtr<APIObject>& userData);
+    void pageDidScroll(WebPage*);
 
 private:
     WKBundlePageUIClient m_client;

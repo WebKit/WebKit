@@ -1,3 +1,26 @@
+2010-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a pageDidScroll BundleUIClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=48260
+        <rdar://problem/8531159>
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::pageDidScroll):
+        Call the pageDidScroll callback.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::invalidateContentsForSlowScroll):
+        (WebKit::WebChromeClient::scroll):
+        Call pageDidScroll.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::pageDidScroll):
+        Hide the find banner UI and call the BundleUIClient pageDidScroll callback.
+
 2010-10-25  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

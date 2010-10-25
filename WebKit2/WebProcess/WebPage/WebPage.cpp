@@ -448,6 +448,14 @@ void WebPage::uninstallPageOverlay()
     m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
 }
 
+void WebPage::pageDidScroll()
+{
+    // Hide the find indicator.
+    m_findController.hideFindIndicator();
+
+    m_uiClient.pageDidScroll(this);
+}
+
 // Events 
 
 static const WebEvent* g_currentEvent = 0;

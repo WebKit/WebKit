@@ -1,3 +1,14 @@
+2010-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a pageDidScroll BundleUIClient callback
+        https://bugs.webkit.org/show_bug.cgi?id=48260
+        <rdar://problem/8531159>
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
 2010-10-25  Johnny Ding  <jnd@chromium.org>
 
         Reviewed by Tony Chang.

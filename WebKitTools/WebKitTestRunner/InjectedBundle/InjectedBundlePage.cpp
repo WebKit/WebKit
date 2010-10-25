@@ -189,7 +189,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         willRunJavaScriptAlert,
         willRunJavaScriptConfirm,
         willRunJavaScriptPrompt,
-        0 /*mouseDidMoveOverElement*/
+        0, /*mouseDidMoveOverElement*/
+        0, /*pageDidScroll*/
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 
