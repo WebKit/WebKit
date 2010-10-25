@@ -1,5 +1,11 @@
 2010-10-24  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * Interfaces/WebKit.idl: Touched.
+
+2010-10-24  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         Expose HitTestResult::absoluteMediaURL() via WebKit API
