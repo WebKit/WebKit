@@ -5358,6 +5358,7 @@ fast/forms/search-cancel-button-events.html
 
 # [Qt] DRT sideeffect revealed by r63657
 # https://bugs.webkit.org/show_bug.cgi?id=42578
+http/tests/security/mixedContent/insecure-css-in-main-frame.html
 http/tests/xmlhttprequest/authorization-header.html
 http/tests/xmlhttprequest/null-auth.php
 
