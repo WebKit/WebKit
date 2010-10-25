@@ -1,5 +1,11 @@
 2010-10-24  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed build fix for chromium.
+
+        * wtf/DateMath.cpp: Added missing include.
+
+2010-10-24  Patrick Gansterer  <paroga@webkit.org>
+
         Reviewed by David Kilzer.
 
         Add WTF_ARRAY_LENGTH macro to WTF

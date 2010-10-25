@@ -76,6 +76,7 @@
 #include "ASCIICType.h"
 #include "CurrentTime.h"
 #include "MathExtras.h"
+#include "StdLibExtras.h.h"
 #include "StringExtras.h"
 
 #include <algorithm>
