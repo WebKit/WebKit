@@ -1,3 +1,17 @@
+2010-10-25  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Fix the WebKit2 build after sheriffbot messed up the rollout patch.
+        https://bugs.webkit.org/show_bug.cgi?id=48238
+
+        * Shared/qt/MappedMemory.h: Renamed from WebKit2/Platform/qt/MappedMemoryPool.h.
+        (WebKit::MappedMemory::mapSize):
+        (WebKit::MappedMemory::markUsed):
+        (WebKit::MappedMemory::markFree):
+        (WebKit::MappedMemory::isFree):
+        (WebKit::MappedMemory::data):
+
 2010-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r70450.
