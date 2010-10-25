@@ -74,6 +74,7 @@ public:
     void abort();
 
     void start();
+    void doAbort();
 
     ReadyState readyState() const;
     PassRefPtr<FileError> error() { return m_error; }
@@ -119,6 +120,7 @@ private:
         Starting,
         Opening,
         Reading,
+        Aborting,
         Completed
     };
 

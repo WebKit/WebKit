@@ -138,10 +138,25 @@ void FileReader::readInternal(Blob* blob, ReadType type)
     m_state = Starting;
 }
 
+static void delayedAbort(ScriptExecutionContext*, FileReader* reader)
+{
+    reader->doAbort();
+}
+
 void FileReader::abort()
 {
     LOG(FileAPI, "FileReader: aborting\n");
 
+    if (m_state == Aborting)
+        return;
+    m_state = Aborting;
+
+    // Schedule to have the abort done later since abort() might be called from the event handler and we do not want the resource loading code to be in the stack.
+    scriptExecutionContext()->postTask(createCallbackTask(&delayedAbort, this));
+}
+
+void FileReader::doAbort()
+{
     terminate();
 
     m_builder.clear();
@@ -247,6 +262,10 @@ void FileReader::didFinishLoading(unsigned long)
 
 void FileReader::didFail(const ResourceError&)
 {
+    // If we're aborting, do not proceed with normal error handling since it is covered in aborting code.
+    if (m_state == Aborting)
+        return;
+
     // Treat as internal error.
     failed(500);
 }
@@ -255,7 +274,7 @@ void FileReader::failed(int httpStatusCode)
 {
     m_state = Completed;
 
-     m_error = FileError::create(httpStatusCodeToErrorCode(httpStatusCode));
+    m_error = FileError::create(httpStatusCodeToErrorCode(httpStatusCode));
     fireEvent(eventNames().errorEvent);
     fireEvent(eventNames().loadendEvent);
 
@@ -288,6 +307,7 @@ FileReader::ReadyState FileReader::readyState() const
         return EMPTY;
     case Opening:
     case Reading:
+    case Aborting:
         return LOADING;
     case Completed:
         return DONE;
