@@ -1,3 +1,12 @@
+2010-10-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch should clean up svn locks when passed --force-clean
+        https://bugs.webkit.org/show_bug.cgi?id=48269
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
 2010-10-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

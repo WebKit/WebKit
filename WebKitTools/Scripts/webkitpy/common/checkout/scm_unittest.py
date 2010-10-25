@@ -760,6 +760,15 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self.do_test_diff_for_file()
         self.assertFalse(os.path.exists(self.bogus_dir))
 
+    def test_svn_lock(self):
+        svn_root_lock_path = ".svn/lock"
+        write_into_file_at_path(svn_root_lock_path, "", "utf-8")
+        # webkit-patch uses a Checkout object and runs update-webkit, just use svn update here.
+        self.assertRaises(ScriptError, run_command, ['svn', 'update'])
+        self.scm.clean_working_directory()
+        self.assertFalse(os.path.exists(svn_root_lock_path))
+        run_command(['svn', 'update'])  # Should succeed and not raise.
+
 
 class GitTest(SCMTest):
 

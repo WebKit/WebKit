@@ -379,6 +379,12 @@ class SVN(SCM):
         return self.run(["svn", "diff"], cwd=self.checkout_root, decode_output=False) == ""
 
     def clean_working_directory(self):
+        # Make sure there are no locks lying around from a previously aborted svn invocation.
+        # This is slightly dangerous, as it's possible the user is running another svn process
+        # on this checkout at the same time.  However, it's much more likely that we're running
+        # under windows and svn just sucks (or the user interrupted svn and it failed to clean up).
+        self.run(["svn", "cleanup"], cwd=self.checkout_root)
+
         # svn revert -R is not as awesome as git reset --hard.
         # It will leave added files around, causing later svn update
         # calls to fail on the bots.  We make this mirror git reset --hard
@@ -432,6 +438,7 @@ class SVN(SCM):
 
     def revisions_changing_file(self, path, limit=5):
         revisions = []
+        # svn log will exit(1) (and thus self.run will raise) if the path does not exist.
         log_command = ['svn', 'log', '--quiet', '--limit=%s' % limit, path]
         for line in self.run(log_command, cwd=self.checkout_root).splitlines():
             match = re.search('^r(?P<revision>\d+) ', line)
