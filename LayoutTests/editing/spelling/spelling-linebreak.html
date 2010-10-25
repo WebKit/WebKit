@@ -11,8 +11,18 @@
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 
 <script>
+function log(msg) {
+    document.getElementById("console").innerHTML += (msg + "\n");
+}
 
 function editingTest() {
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    var elem = document.getElementById("test");
+    var selection = window.getSelection();
+    selection.setPosition(elem, 6);
+
     typeCharacterCommand('z');
     typeCharacterCommand('z');
     typeCharacterCommand(' ');
@@ -21,6 +31,16 @@ function editingTest() {
     typeCharacterCommand('a');
     moveSelectionBackwardByWordCommand();
     insertLineBreakCommand();
+
+    if (window.layoutTestController) {
+        selection.setPosition(elem, 0);
+        if (layoutTestController.hasSpellingMarker(6, 2))
+           log("PASS");
+        else
+           log("FAIL");
+        document.getElementById("root").style.display = "none";
+    }
+
 }
 
 </script>
@@ -30,11 +50,12 @@ function editingTest() {
 <body>
 <div>You should see 'zz a' on the first line below, and 'a' on the second line. 'zz' (and only 'zz') should be marked as misspelled.</div>
 <div contenteditable id="root" class="editing">
-<span id="test"></span>
+<!-- wee need leading "Hello," to preserve the marker even after setPosition() -->
+<span id="test">Hello,</span>
 </div>
-
+<pre id="console"></pre>
 <script>
-runEditingTest();
+editingTest();
 </script>
 
 </body>
