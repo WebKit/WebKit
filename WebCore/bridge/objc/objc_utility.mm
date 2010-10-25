@@ -242,7 +242,7 @@ JSValue convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType typ
             if ((CFBooleanRef)obj == kCFBooleanFalse)
                 return jsBoolean(false);
             if ([obj isKindOfClass:[NSNumber class]])
-                return jsNumber(exec, [obj doubleValue]);
+                return jsNumber([obj doubleValue]);
             if ([obj isKindOfClass:[NSArray class]])
                 return new (exec) RuntimeArray(exec, new ObjcArray(obj, rootObject));
             if ([obj isKindOfClass:webScriptObjectClass()]) {
@@ -256,29 +256,29 @@ JSValue convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType typ
             return ObjcInstance::create(obj, rootObject)->createRuntimeObject(exec);
         }
         case ObjcCharType:
-            return jsNumber(exec, *(char*)buffer);
+            return jsNumber(*(char*)buffer);
         case ObjcUnsignedCharType:
-            return jsNumber(exec, *(unsigned char*)buffer);
+            return jsNumber(*(unsigned char*)buffer);
         case ObjcShortType:
-            return jsNumber(exec, *(short*)buffer);
+            return jsNumber(*(short*)buffer);
         case ObjcUnsignedShortType:
-            return jsNumber(exec, *(unsigned short*)buffer);
+            return jsNumber(*(unsigned short*)buffer);
         case ObjcIntType:
-            return jsNumber(exec, *(int*)buffer);
+            return jsNumber(*(int*)buffer);
         case ObjcUnsignedIntType:
-            return jsNumber(exec, *(unsigned int*)buffer);
+            return jsNumber(*(unsigned int*)buffer);
         case ObjcLongType:
-            return jsNumber(exec, *(long*)buffer);
+            return jsNumber(*(long*)buffer);
         case ObjcUnsignedLongType:
-            return jsNumber(exec, *(unsigned long*)buffer);
+            return jsNumber(*(unsigned long*)buffer);
         case ObjcLongLongType:
-            return jsNumber(exec, *(long long*)buffer);
+            return jsNumber(*(long long*)buffer);
         case ObjcUnsignedLongLongType:
-            return jsNumber(exec, *(unsigned long long*)buffer);
+            return jsNumber(*(unsigned long long*)buffer);
         case ObjcFloatType:
-            return jsNumber(exec, *(float*)buffer);
+            return jsNumber(*(float*)buffer);
         case ObjcDoubleType:
-            return jsNumber(exec, *(double*)buffer);
+            return jsNumber(*(double*)buffer);
         default:
             // Should never get here. Argument types are filtered.
             fprintf(stderr, "%s: invalid type (%d)\n", __PRETTY_FUNCTION__, (int)type);

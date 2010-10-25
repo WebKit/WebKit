@@ -39,7 +39,7 @@ JSOptionConstructor::JSOptionConstructor(ExecState* exec, JSDOMGlobalObject* glo
     : DOMConstructorWithDocument(JSOptionConstructor::createStructure(globalObject->objectPrototype()), globalObject)
 {
     putDirect(exec->propertyNames().prototype, JSHTMLOptionElementPrototype::self(exec, globalObject), None);
-    putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(4), ReadOnly | DontDelete | DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL constructHTMLOptionElement(ExecState* exec)

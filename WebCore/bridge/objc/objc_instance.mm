@@ -447,10 +447,10 @@ JSValue ObjcInstance::stringValue(ExecState* exec) const
     return convertNSStringToString(exec, [getObject() description]);
 }
 
-JSValue ObjcInstance::numberValue(ExecState* exec) const
+JSValue ObjcInstance::numberValue(ExecState*) const
 {
     // FIXME:  Implement something sensible
-    return jsNumber(exec, 0);
+    return jsNumber(0);
 }
 
 JSValue ObjcInstance::booleanValue() const

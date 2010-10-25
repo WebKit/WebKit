@@ -74,7 +74,7 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
     , m_scopeChain(globalObject->globalScopeChain())
 {
     putDirect(exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
-    putDirect(exec->propertyNames().length, jsNumber(exec, length), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 #endif
 
@@ -87,7 +87,7 @@ JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, NonNullPas
 {
     putDirect(exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
 #if ENABLE(JIT)
-    putDirect(exec->propertyNames().length, jsNumber(exec, length), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 #else
     UNUSED_PARAM(length);
     UNUSED_PARAM(func);
@@ -192,11 +192,11 @@ JSValue JSFunction::callerGetter(ExecState* exec, JSValue slotBase, const Identi
     return exec->interpreter()->retrieveCaller(exec, thisObj);
 }
 
-JSValue JSFunction::lengthGetter(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&)
 {
     JSFunction* thisObj = asFunction(slotBase);
     ASSERT(!thisObj->isHostFunction());
-    return jsNumber(exec, thisObj->jsExecutable()->parameterCount());
+    return jsNumber(thisObj->jsExecutable()->parameterCount());
 }
 
 bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -266,7 +266,7 @@ bool JSFunction::getOwnPropertyDescriptor(ExecState* exec, const Identifier& pro
     }
     
     if (propertyName == exec->propertyNames().length) {
-        descriptor.setDescriptor(jsNumber(exec, jsExecutable()->parameterCount()), ReadOnly | DontEnum | DontDelete);
+        descriptor.setDescriptor(jsNumber(jsExecutable()->parameterCount()), ReadOnly | DontEnum | DontDelete);
         return true;
     }
     

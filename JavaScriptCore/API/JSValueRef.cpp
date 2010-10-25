@@ -219,7 +219,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
     if (isnan(value))
         value = NaN;
 
-    return toRef(exec, jsNumber(exec, value));
+    return toRef(exec, jsNumber(value));
 }
 
 JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)

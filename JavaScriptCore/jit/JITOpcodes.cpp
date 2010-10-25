@@ -711,7 +711,7 @@ void JIT::emit_op_jfalse(Instruction* currentInstruction)
     unsigned target = currentInstruction[2].u.operand;
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
-    addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0)))), target);
+    addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsNumber(0)))), target);
     Jump isNonZero = emitJumpIfImmediateInteger(regT0);
 
     addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsBoolean(false)))), target);
@@ -831,7 +831,7 @@ void JIT::emit_op_jtrue(Instruction* currentInstruction)
     unsigned target = currentInstruction[2].u.operand;
     emitGetVirtualRegister(currentInstruction[1].u.operand, regT0);
 
-    Jump isZero = branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0))));
+    Jump isZero = branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsNumber(0))));
     addJump(emitJumpIfImmediateInteger(regT0), target);
 
     addJump(branchPtr(Equal, regT0, ImmPtr(JSValue::encode(jsBoolean(true)))), target);

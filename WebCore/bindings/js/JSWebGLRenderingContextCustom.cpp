@@ -81,15 +81,15 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, const WebG
         return constructArray(exec, list);
     }
     case WebGLGetInfo::kTypeFloat:
-        return jsNumber(exec, info.getFloat());
+        return jsNumber(info.getFloat());
     case WebGLGetInfo::kTypeLong:
-        return jsNumber(exec, info.getLong());
+        return jsNumber(info.getLong());
     case WebGLGetInfo::kTypeNull:
         return jsNull();
     case WebGLGetInfo::kTypeString:
         return jsString(exec, info.getString());
     case WebGLGetInfo::kTypeUnsignedLong:
-        return jsNumber(exec, info.getUnsignedLong());
+        return jsNumber(info.getUnsignedLong());
     case WebGLGetInfo::kTypeWebGLBuffer:
         return toJS(exec, globalObject, info.getWebGLBuffer());
     case WebGLGetInfo::kTypeWebGLFloatArray:

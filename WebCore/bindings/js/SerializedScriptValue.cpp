@@ -1041,12 +1041,12 @@ private:
             int32_t i;
             if (!read(i))
                 return JSValue();
-            return jsNumber(m_exec, i);
+            return jsNumber(i);
         }
         case ZeroTag:
-            return jsNumber(m_exec, 0);
+            return jsNumber(0);
         case OneTag:
-            return jsNumber(m_exec, 1);
+            return jsNumber(1);
         case FalseTag:
             return jsBoolean(false);
         case TrueTag:
@@ -1055,7 +1055,7 @@ private:
             double d;
             if (!read(d))
                 return JSValue();
-            return jsNumber(m_exec, d);
+            return jsNumber(d);
         }
         case DateTag: {
             double d;

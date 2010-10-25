@@ -32,36 +32,36 @@ using namespace JSC;
 
 namespace WebCore {
     
-JSValue JSCoordinates::altitude(ExecState* exec) const
+JSValue JSCoordinates::altitude(ExecState*) const
 {
     Coordinates* imp = impl();
     if (!imp->canProvideAltitude())
         return jsNull();
-    return jsNumber(exec, imp->altitude());
+    return jsNumber(imp->altitude());
 }
 
-JSValue JSCoordinates::altitudeAccuracy(ExecState* exec) const
+JSValue JSCoordinates::altitudeAccuracy(ExecState*) const
 {
     Coordinates* imp = impl();
     if (!imp->canProvideAltitudeAccuracy())
         return jsNull();
-    return jsNumber(exec, imp->altitudeAccuracy());
+    return jsNumber(imp->altitudeAccuracy());
 }
 
-JSValue JSCoordinates::heading(ExecState* exec) const
+JSValue JSCoordinates::heading(ExecState*) const
 {
     Coordinates* imp = impl();
     if (!imp->canProvideHeading())
         return jsNull();
-    return jsNumber(exec, imp->heading());
+    return jsNumber(imp->heading());
 }
 
-JSValue JSCoordinates::speed(ExecState* exec) const
+JSValue JSCoordinates::speed(ExecState*) const
 {
     Coordinates* imp = impl();
     if (!imp->canProvideSpeed())
         return jsNull();
-    return jsNumber(exec, imp->speed());
+    return jsNumber(imp->speed());
 }
 
 } // namespace WebCore

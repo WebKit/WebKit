@@ -86,7 +86,7 @@ void JSWorkerContextErrorHandler::handleEvent(ScriptExecutionContext* scriptExec
         MarkedArgumentBuffer args;
         args.append(jsString(exec, errorEvent->message()));
         args.append(jsString(exec, errorEvent->filename()));
-        args.append(jsNumber(exec, errorEvent->lineno()));
+        args.append(jsNumber(errorEvent->lineno()));
 
         JSGlobalData& globalData = globalObject->globalData();
         DynamicGlobalObjectScope globalObjectScope(exec, globalData.dynamicGlobalObject ? globalData.dynamicGlobalObject : globalObject);

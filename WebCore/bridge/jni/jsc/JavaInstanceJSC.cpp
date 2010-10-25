@@ -99,10 +99,10 @@ JSValue JavaInstance::stringValue(ExecState* exec) const
     return jsString(exec, u);
 }
 
-JSValue JavaInstance::numberValue(ExecState* exec) const
+JSValue JavaInstance::numberValue(ExecState*) const
 {
     jdouble doubleValue = callJNIMethod<jdouble>(m_instance->m_instance, "doubleValue", "()D");
-    return jsNumber(exec, doubleValue);
+    return jsNumber(doubleValue);
 }
 
 JSValue JavaInstance::booleanValue() const
@@ -279,43 +279,43 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
 
     case byte_type:
         {
-            resultValue = jsNumber(exec, result.b);
+            resultValue = jsNumber(result.b);
         }
         break;
 
     case char_type:
         {
-            resultValue = jsNumber(exec, result.c);
+            resultValue = jsNumber(result.c);
         }
         break;
 
     case short_type:
         {
-            resultValue = jsNumber(exec, result.s);
+            resultValue = jsNumber(result.s);
         }
         break;
 
     case int_type:
         {
-            resultValue = jsNumber(exec, result.i);
+            resultValue = jsNumber(result.i);
         }
         break;
 
     case long_type:
         {
-            resultValue = jsNumber(exec, result.j);
+            resultValue = jsNumber(result.j);
         }
         break;
 
     case float_type:
         {
-            resultValue = jsNumber(exec, result.f);
+            resultValue = jsNumber(result.f);
         }
         break;
 
     case double_type:
         {
-            resultValue = jsNumber(exec, result.d);
+            resultValue = jsNumber(result.d);
         }
         break;
 

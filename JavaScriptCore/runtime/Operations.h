@@ -398,7 +398,7 @@ namespace JSC {
     {
         double left = 0.0, right;
         if (v1.getNumber(left) && v2.getNumber(right))
-            return jsNumber(callFrame, left + right);
+            return jsNumber(left + right);
         
         if (v1.isString()) {
             return v2.isString()

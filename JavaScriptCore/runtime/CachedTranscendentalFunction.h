@@ -56,18 +56,18 @@ public:
             fastFree(m_cache);
     }
 
-    JSValue operator() (ExecState* exec, double operand)
+    JSValue operator() (double operand)
     {
         if (UNLIKELY(!m_cache))
             initialize();
         CacheEntry* entry = &m_cache[hash(operand)];
 
         if (entry->operand == operand)
-            return jsDoubleNumber(exec, entry->result);
+            return jsDoubleNumber(entry->result);
         double result = orignalFunction(operand);
         entry->operand = operand;
         entry->result = result;
-        return jsDoubleNumber(exec, result);
+        return jsDoubleNumber(result);
     }
 
 private:

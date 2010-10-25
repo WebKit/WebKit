@@ -164,7 +164,7 @@ JSValue JSObjectKJSValue(JSUserObject* ptr)
                     {
                         double num;
                         CFNumberGetValue((CFNumberRef)cfType, kCFNumberDoubleType, &num);
-                        result = jsNumber(getThreadGlobalExecState(), num);
+                        result = jsNumber(num);
                         handled = true;
                     }
                     else if (typeID == CFBooleanGetTypeID())

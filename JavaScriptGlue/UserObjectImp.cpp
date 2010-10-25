@@ -190,7 +190,7 @@ JSValue UserObjectImp::toPrimitive(ExecState *exec, JSType) const
         } else if (cfType == CFNumberGetTypeID()) {
             double d = 0.0;
             CFNumberGetValue((CFNumberRef)cfValue, kCFNumberDoubleType, &d);
-            result = jsNumber(exec, d);
+            result = jsNumber(d);
         } else if (cfType == CFURLGetTypeID()) {
             CFURLRef absURL = CFURLCopyAbsoluteURL((CFURLRef)cfValue);
             if (absURL) {

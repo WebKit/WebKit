@@ -133,7 +133,7 @@ static inline JSValue unwrapBoxedPrimitive(ExecState* exec, JSValue value)
         return value;
     JSObject* object = asObject(value);
     if (object->inherits(&NumberObject::info))
-        return jsNumber(exec, object->toNumber(exec));
+        return jsNumber(object->toNumber(exec));
     if (object->inherits(&StringObject::info))
         return jsString(exec, object->toString(exec));
     if (object->inherits(&BooleanObject::info))
@@ -189,7 +189,7 @@ JSValue PropertyNameForFunctionCall::value(ExecState* exec) const
         if (m_identifier)
             m_value = jsString(exec, m_identifier->ustring());
         else
-            m_value = jsNumber(exec, m_number);
+            m_value = jsNumber(m_number);
     }
     return m_value;
 }
@@ -868,7 +868,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncStringify(ExecState* exec)
 
 UString JSONStringify(ExecState* exec, JSValue value, unsigned indent)
 {
-    JSValue result = Stringifier(exec, jsNull(), jsNumber(exec, indent)).stringify(value);
+    JSValue result = Stringifier(exec, jsNull(), jsNumber(indent)).stringify(value);
     if (result.isUndefinedOrNull())
         return UString();
     return result.getString(exec);

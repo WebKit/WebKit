@@ -2158,7 +2158,8 @@ sub GenerateImplementation
             if ($constant->type eq "DOMString") {
                 push(@implContent, "    return jsStringOrNull(exec, String(" . $constant->value . "));\n");
             } else {
-                push(@implContent, "    return jsNumber(exec, static_cast<int>(" . $constant->value . "));\n");
+                push(@implContent, "    UNUSED_PARAM(exec);");
+                push(@implContent, "    return jsNumber(static_cast<int>(" . $constant->value . "));\n");
             }
             push(@implContent, "}\n\n");
         }
@@ -2182,9 +2183,9 @@ sub GenerateImplementation
     }
     
     if ($dataNode->extendedAttributes->{"HasNumericIndexGetter"}) {
-        push(@implContent, "\nJSValue ${className}::getByIndex(ExecState* exec, unsigned index)\n");
+        push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return jsNumber(exec, static_cast<$implClassName*>(impl())->item(index));\n");
+        push(@implContent, "    return jsNumber(static_cast<$implClassName*>(impl())->item(index));\n");
         push(@implContent, "}\n");
         if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
             $implIncludes{"JSNode.h"} = 1;
@@ -2573,7 +2574,7 @@ sub NativeToJSValue
     }
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp") {
         $implIncludes{"<runtime/JSNumberCell.h>"} = 1;
-        return "jsNumber(exec, $value)";
+        return "jsNumber($value)";
     }
 
     if ($codeGenerator->IsStringType($type)) {
@@ -2981,7 +2982,7 @@ sub GenerateConstructorDefinition
     } else {
         push(@$outputArray, "    putDirect(exec->propertyNames().prototype, ${protoClassName}::self(exec, globalObject), DontDelete | ReadOnly);\n");
     }
-    push(@$outputArray, "    putDirect(exec->propertyNames().length, jsNumber(exec, ${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
+    push(@$outputArray, "    putDirect(exec->propertyNames().length, jsNumber(${numberOfconstructParameters}), ReadOnly | DontDelete | DontEnum);\n") if $numberOfconstructParameters;
     push(@$outputArray, "}\n\n");
 
     push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)\n");

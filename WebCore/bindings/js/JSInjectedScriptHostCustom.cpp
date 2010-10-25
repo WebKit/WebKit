@@ -95,7 +95,7 @@ ScriptObject InjectedScriptHost::createInjectedScript(const String& source, Scri
     MarkedArgumentBuffer args;
     args.append(toJS(scriptState, globalObject, this));
     args.append(globalThisValue);
-    args.append(jsNumber(scriptState, id));
+    args.append(jsNumber(id));
     args.append(jsString(scriptState, String("JSC")));
     JSValue result = JSC::call(scriptState, functionValue, callType, callData, globalThisValue, args);
     if (result.isObject())
@@ -149,7 +149,7 @@ JSValue JSInjectedScriptHost::pushNodePathToFrontend(ExecState* exec)
 
     bool withChildren = exec->argument(1).toBoolean(exec);
     bool selectInUI = exec->argument(2).toBoolean(exec);
-    return jsNumber(exec, impl()->pushNodePathToFrontend(node, withChildren, selectInUI));
+    return jsNumber(impl()->pushNodePathToFrontend(node, withChildren, selectInUI));
 }
 
 #if ENABLE(DATABASE)

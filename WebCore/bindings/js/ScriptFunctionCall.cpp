@@ -82,31 +82,31 @@ void ScriptCallArgumentHandler::appendArgument(JSC::JSValue argument)
 void ScriptCallArgumentHandler::appendArgument(long argument)
 {
     JSLock lock(SilenceAssertionsOnly);
-    m_arguments.append(jsNumber(m_exec, argument));
+    m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(long long argument)
 {
     JSLock lock(SilenceAssertionsOnly);
-    m_arguments.append(jsNumber(m_exec, argument));
+    m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(unsigned int argument)
 {
     JSLock lock(SilenceAssertionsOnly);
-    m_arguments.append(jsNumber(m_exec, argument));
+    m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(unsigned long argument)
 {
     JSLock lock(SilenceAssertionsOnly);
-    m_arguments.append(jsNumber(m_exec, argument));
+    m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(int argument)
 {
     JSLock lock(SilenceAssertionsOnly);
-    m_arguments.append(jsNumber(m_exec, argument));
+    m_arguments.append(jsNumber(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(bool argument)

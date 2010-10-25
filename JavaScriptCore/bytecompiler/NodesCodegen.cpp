@@ -208,7 +208,7 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     }
 
     if (m_elision) {
-        RegisterID* value = generator.emitLoad(0, jsNumber(generator.globalData(), m_elision + length));
+        RegisterID* value = generator.emitLoad(0, jsNumber(m_elision + length));
         generator.emitPutById(array.get(), generator.propertyNames().length, value);
     }
 

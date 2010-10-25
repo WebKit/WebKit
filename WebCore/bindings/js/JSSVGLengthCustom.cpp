@@ -28,10 +28,10 @@ using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSSVGLength::value(ExecState* exec) const
+JSValue JSSVGLength::value(ExecState*) const
 {
     SVGLength& podImp = impl()->propertyReference();
-    return jsNumber(exec, podImp.value(impl()->contextElement()));
+    return jsNumber(podImp.value(impl()->contextElement()));
 }
 
 JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)

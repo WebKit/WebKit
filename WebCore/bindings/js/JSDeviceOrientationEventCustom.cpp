@@ -40,7 +40,7 @@ JSValue JSDeviceOrientationEvent::alpha(ExecState* exec) const
     DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
     if (!imp->orientation()->canProvideAlpha())
         return jsNull();
-    return jsNumber(exec, imp->orientation()->alpha());
+    return jsNumber(imp->orientation()->alpha());
 }
 
 JSValue JSDeviceOrientationEvent::beta(ExecState* exec) const
@@ -48,7 +48,7 @@ JSValue JSDeviceOrientationEvent::beta(ExecState* exec) const
     DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
     if (!imp->orientation()->canProvideBeta())
         return jsNull();
-    return jsNumber(exec, imp->orientation()->beta());
+    return jsNumber(imp->orientation()->beta());
 }
 
 JSValue JSDeviceOrientationEvent::gamma(ExecState* exec) const
@@ -56,7 +56,7 @@ JSValue JSDeviceOrientationEvent::gamma(ExecState* exec) const
     DeviceOrientationEvent* imp = static_cast<DeviceOrientationEvent*>(impl());
     if (!imp->orientation()->canProvideGamma())
         return jsNull();
-    return jsNumber(exec, imp->orientation()->gamma());
+    return jsNumber(imp->orientation()->gamma());
 }
 
 JSValue JSDeviceOrientationEvent::initDeviceOrientationEvent(ExecState* exec)

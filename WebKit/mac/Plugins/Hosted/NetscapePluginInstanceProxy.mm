@@ -1334,7 +1334,7 @@ bool NetscapePluginInstanceProxy::demarshalValueFromArray(ExecState* exec, NSArr
             result = jsBoolean([[array objectAtIndex:index++] boolValue]);
             return true;
         case DoubleValueType:
-            result = jsNumber(exec, [[array objectAtIndex:index++] doubleValue]);
+            result = jsNumber([[array objectAtIndex:index++] doubleValue]);
             return true;
         case StringValueType: {
             NSString *string = [array objectAtIndex:index++];

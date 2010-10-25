@@ -156,7 +156,7 @@ JSValue JSCSSStyleDeclaration::nameGetter(ExecState* exec, JSValue slotBase, con
     RefPtr<CSSValue> v = thisObj->impl()->getPropertyCSSValue(prop);
     if (v) {
         if (pixelOrPos && v->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-            return jsNumber(exec, static_pointer_cast<CSSPrimitiveValue>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
+            return jsNumber(static_pointer_cast<CSSPrimitiveValue>(v)->getFloatValue(CSSPrimitiveValue::CSS_PX));
         return jsStringOrNull(exec, v->cssText());
     }
 

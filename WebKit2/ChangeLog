@@ -1,3 +1,15 @@
+2010-10-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Remove exec and globalData arguments from jsNumber
+        https://bugs.webkit.org/show_bug.cgi?id=48270
+
+        Mechanical removal of exec parameter to jsNumber
+
+        * WebProcess/Plugins/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::convertNPVariantToJSValue):
+
 2010-10-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

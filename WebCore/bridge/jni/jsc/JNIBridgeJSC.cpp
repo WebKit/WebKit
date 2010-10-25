@@ -132,7 +132,7 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
             jint value;
             jvalue result = dispatchValueFromInstance(exec, instance, "getInt", "(Ljava/lang/Object;)I", int_type);
             value = result.i;
-            jsresult = jsNumber(exec, static_cast<int>(value));
+            jsresult = jsNumber(static_cast<int>(value));
         }
         break;
 
@@ -143,7 +143,7 @@ JSValue JavaField::valueFromInstance(ExecState* exec, const Instance* i) const
             jdouble value;
             jvalue result = dispatchValueFromInstance(exec, instance, "getDouble", "(Ljava/lang/Object;)D", double_type);
             value = result.i;
-            jsresult = jsNumber(exec, static_cast<double>(value));
+            jsresult = jsNumber(static_cast<double>(value));
         }
         break;
     default:
@@ -380,7 +380,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             jbyteArray byteArray = static_cast<jbyteArray>(javaArray());
             jbyte aByte;
             env->GetByteArrayRegion(byteArray, index, 1, &aByte);
-            return jsNumber(exec, aByte);
+            return jsNumber(aByte);
         }
 
     case char_type:
@@ -388,7 +388,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             jcharArray charArray = static_cast<jcharArray>(javaArray());
             jchar aChar;
             env->GetCharArrayRegion(charArray, index, 1, &aChar);
-            return jsNumber(exec, aChar);
+            return jsNumber(aChar);
             break;
         }
 
@@ -397,7 +397,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             jshortArray shortArray = static_cast<jshortArray>(javaArray());
             jshort aShort;
             env->GetShortArrayRegion(shortArray, index, 1, &aShort);
-            return jsNumber(exec, aShort);
+            return jsNumber(aShort);
         }
 
     case int_type:
@@ -405,7 +405,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             jintArray intArray = static_cast<jintArray>(javaArray());
             jint anInt;
             env->GetIntArrayRegion(intArray, index, 1, &anInt);
-            return jsNumber(exec, anInt);
+            return jsNumber(anInt);
         }
 
     case long_type:
@@ -413,7 +413,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             jlongArray longArray = static_cast<jlongArray>(javaArray());
             jlong aLong;
             env->GetLongArrayRegion(longArray, index, 1, &aLong);
-            return jsNumber(exec, aLong);
+            return jsNumber(aLong);
         }
 
     case float_type:
@@ -421,7 +421,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             jfloatArray floatArray = static_cast<jfloatArray>(javaArray());
             jfloat aFloat;
             env->GetFloatArrayRegion(floatArray, index, 1, &aFloat);
-            return jsNumber(exec, aFloat);
+            return jsNumber(aFloat);
         }
 
     case double_type:
@@ -429,7 +429,7 @@ JSValue JavaArray::valueAt(ExecState* exec, unsigned index) const
             jdoubleArray doubleArray = static_cast<jdoubleArray>(javaArray());
             jdouble aDouble;
             env->GetDoubleArrayRegion(doubleArray, index, 1, &aDouble);
-            return jsNumber(exec, aDouble);
+            return jsNumber(aDouble);
         }
     default:
         break;

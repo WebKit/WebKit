@@ -1323,7 +1323,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     // If the remainder is zero and the dividend is negative, the result is -0.
     Jump storeResult1 = branchTest32(NonZero, X86Registers::edx);
     Jump storeResult2 = branchTest32(Zero, X86Registers::ebx, Imm32(0x80000000)); // not negative
-    emitStore(dst, jsNumber(m_globalData, -0.0));
+    emitStore(dst, jsNumber(-0.0));
     Jump end = jump();
 
     storeResult1.link(this);

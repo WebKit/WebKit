@@ -265,10 +265,10 @@ JSValue CInstance::stringValue(ExecState* exec) const
     return jsString(exec, buf);
 }
 
-JSValue CInstance::numberValue(ExecState* exec) const
+JSValue CInstance::numberValue(ExecState*) const
 {
     // FIXME: Implement something sensible.
-    return jsNumber(exec, 0);
+    return jsNumber(0);
 }
 
 JSValue CInstance::booleanValue() const

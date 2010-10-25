@@ -393,7 +393,7 @@ JSValue LiteralParser::parse(ParserState initialState)
                     case TokNumber: {
                         Lexer::LiteralParserToken numberToken = m_lexer.currentToken();
                         m_lexer.next();
-                        lastValue = jsNumber(m_exec, numberToken.numberToken);
+                        lastValue = jsNumber(numberToken.numberToken);
                         break;
                     }
                     case TokNull:

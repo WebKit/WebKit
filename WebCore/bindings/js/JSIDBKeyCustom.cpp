@@ -46,7 +46,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject*, IDBKey* key)
     case IDBKey::NullType:
         return jsNull();
     case IDBKey::NumberType:
-        return jsNumber(exec, key->number());
+        return jsNumber(key->number());
     case IDBKey::StringType:
         return jsString(exec, key->string());
     // FIXME: Implement dates.

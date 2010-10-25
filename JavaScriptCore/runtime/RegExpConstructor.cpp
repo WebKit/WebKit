@@ -103,7 +103,7 @@ RegExpConstructor::RegExpConstructor(ExecState* exec, JSGlobalObject* globalObje
     putDirectWithoutTransition(exec->propertyNames().prototype, regExpPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly | DontDelete | DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
 }
 
 RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpConstructorPrivate* data)
@@ -142,7 +142,7 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
     }
 
     PutPropertySlot slot;
-    JSArray::put(exec, exec->propertyNames().index, jsNumber(exec, d->lastOvector()[0]), slot);
+    JSArray::put(exec, exec->propertyNames().index, jsNumber(d->lastOvector()[0]), slot);
     JSArray::put(exec, exec->propertyNames().input, jsString(exec, d->input), slot);
 
     delete d;

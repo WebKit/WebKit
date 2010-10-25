@@ -37,7 +37,7 @@ NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* 
 {
     NativeErrorPrototype* prototype = new (exec) NativeErrorPrototype(exec, globalObject, prototypeStructure, nameAndMessage, this);
 
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
+    putDirect(exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
     putDirect(exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
     m_errorStructure = ErrorInstance::createStructure(prototype);
 }

@@ -273,10 +273,10 @@ JSValue ProxyInstance::stringValue(ExecState* exec) const
     return jsEmptyString(exec);
 }
 
-JSValue ProxyInstance::numberValue(ExecState* exec) const
+JSValue ProxyInstance::numberValue(ExecState*) const
 {
     // FIXME: Implement something sensible.
-    return jsNumber(exec, 0);
+    return jsNumber(0);
 }
 
 JSValue ProxyInstance::booleanValue() const

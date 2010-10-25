@@ -101,9 +101,9 @@ JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
     return jsString(exec, asRegExpObject(slotBase)->regExp()->pattern());
 }
 
-JSValue regExpObjectLastIndex(ExecState* exec, JSValue slotBase, const Identifier&)
+JSValue regExpObjectLastIndex(ExecState*, JSValue slotBase, const Identifier&)
 {
-    return jsNumber(exec, asRegExpObject(slotBase)->lastIndex());
+    return jsNumber(asRegExpObject(slotBase)->lastIndex());
 }
 
 void RegExpObject::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)

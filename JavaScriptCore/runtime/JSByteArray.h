@@ -36,10 +36,10 @@ namespace JSC {
         friend class JSGlobalData;
     public:
         bool canAccessIndex(unsigned i) { return i < m_storage->length(); }
-        JSValue getIndex(ExecState* exec, unsigned i)
+        JSValue getIndex(ExecState*, unsigned i)
         {
             ASSERT(canAccessIndex(i));
-            return jsNumber(exec, m_storage->data()[i]);
+            return jsNumber(m_storage->data()[i]);
         }
 
         void setIndex(unsigned i, int value)

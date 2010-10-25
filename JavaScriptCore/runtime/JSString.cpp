@@ -236,7 +236,7 @@ bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNam
 bool JSString::getStringPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
     if (propertyName == exec->propertyNames().length) {
-        descriptor.setDescriptor(jsNumber(exec, m_length), DontEnum | DontDelete | ReadOnly);
+        descriptor.setDescriptor(jsNumber(m_length), DontEnum | DontDelete | ReadOnly);
         return true;
     }
     

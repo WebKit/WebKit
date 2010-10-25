@@ -62,7 +62,7 @@ StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObje
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
 #endif
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 }
 
 // ECMA 15.5.2

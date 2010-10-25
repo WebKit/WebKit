@@ -464,7 +464,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
     int32_t radix = exec->argument(1).toInt32(exec);
 
     if (radix != 0 && radix != 10)
-        return JSValue::encode(jsNumber(exec, parseInt(value.toString(exec), radix)));
+        return JSValue::encode(jsNumber(parseInt(value.toString(exec), radix)));
 
     if (value.isInt32())
         return JSValue::encode(value);
@@ -472,18 +472,18 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
     if (value.isDouble()) {
         double d = value.asDouble();
         if (isfinite(d))
-            return JSValue::encode(jsNumber(exec, (d > 0) ? floor(d) : ceil(d)));
+            return JSValue::encode(jsNumber((d > 0) ? floor(d) : ceil(d)));
         if (isnan(d) || isinf(d))
-            return JSValue::encode(jsNaN(exec));
-        return JSValue::encode(jsNumber(exec, 0));
+            return JSValue::encode(jsNaN());
+        return JSValue::encode(jsNumber(0));
     }
 
-    return JSValue::encode(jsNumber(exec, parseInt(value.toString(exec), radix)));
+    return JSValue::encode(jsNumber(parseInt(value.toString(exec), radix)));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
 {
-    return JSValue::encode(jsNumber(exec, parseFloat(exec->argument(0).toString(exec))));
+    return JSValue::encode(jsNumber(parseFloat(exec->argument(0).toString(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)

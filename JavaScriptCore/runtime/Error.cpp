@@ -125,19 +125,19 @@ static void addErrorSourceInfo(JSGlobalData* globalData, JSObject* error, int li
     const UString& sourceURL = source.provider()->url();
 
     if (line != -1)
-        error->putWithAttributes(globalData, Identifier(globalData, linePropertyName), jsNumber(globalData, line), ReadOnly | DontDelete);
+        error->putWithAttributes(globalData, Identifier(globalData, linePropertyName), jsNumber(line), ReadOnly | DontDelete);
     if (sourceID != -1)
-        error->putWithAttributes(globalData, Identifier(globalData, sourceIdPropertyName), jsNumber(globalData, (double)sourceID), ReadOnly | DontDelete);
+        error->putWithAttributes(globalData, Identifier(globalData, sourceIdPropertyName), jsNumber((double)sourceID), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
         error->putWithAttributes(globalData, Identifier(globalData, sourceURLPropertyName), jsString(globalData, sourceURL), ReadOnly | DontDelete);
 }
 
 static void addErrorDivotInfo(JSGlobalData* globalData, JSObject* error, int divotPoint, int startOffset, int endOffset, bool withCaret)
 {
-    error->putWithAttributes(globalData, Identifier(globalData, expressionBeginOffsetPropertyName), jsNumber(globalData, divotPoint - startOffset), ReadOnly | DontDelete);
-    error->putWithAttributes(globalData, Identifier(globalData, expressionEndOffsetPropertyName), jsNumber(globalData, divotPoint + endOffset), ReadOnly | DontDelete);
+    error->putWithAttributes(globalData, Identifier(globalData, expressionBeginOffsetPropertyName), jsNumber(divotPoint - startOffset), ReadOnly | DontDelete);
+    error->putWithAttributes(globalData, Identifier(globalData, expressionEndOffsetPropertyName), jsNumber(divotPoint + endOffset), ReadOnly | DontDelete);
     if (withCaret)
-        error->putWithAttributes(globalData, Identifier(globalData, expressionCaretOffsetPropertyName), jsNumber(globalData, divotPoint), ReadOnly | DontDelete);
+        error->putWithAttributes(globalData, Identifier(globalData, expressionCaretOffsetPropertyName), jsNumber(divotPoint), ReadOnly | DontDelete);
 }
 
 JSObject* addErrorInfo(JSGlobalData* globalData, JSObject* error, int line, const SourceCode& source)

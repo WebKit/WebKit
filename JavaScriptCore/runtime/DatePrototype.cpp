@@ -585,8 +585,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetFullYear(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, 1900 + gregorianDateTime->year));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(1900 + gregorianDateTime->year));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCFullYear(ExecState* exec)
@@ -599,8 +599,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCFullYear(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, 1900 + gregorianDateTime->year));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(1900 + gregorianDateTime->year));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToGMTString(ExecState* exec)
@@ -631,8 +631,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMonth(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->month));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->month));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMonth(ExecState* exec)
@@ -645,8 +645,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMonth(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->month));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->month));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDate(ExecState* exec)
@@ -659,8 +659,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDate(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->monthDay));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->monthDay));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDate(ExecState* exec)
@@ -673,8 +673,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDate(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->monthDay));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->monthDay));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDay(ExecState* exec)
@@ -687,8 +687,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetDay(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->weekDay));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->weekDay));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDay(ExecState* exec)
@@ -701,8 +701,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCDay(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->weekDay));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->weekDay));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetHours(ExecState* exec)
@@ -715,8 +715,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetHours(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->hour));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->hour));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCHours(ExecState* exec)
@@ -729,8 +729,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCHours(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->hour));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->hour));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMinutes(ExecState* exec)
@@ -743,8 +743,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMinutes(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->minute));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->minute));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMinutes(ExecState* exec)
@@ -757,8 +757,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMinutes(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->minute));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->minute));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetSeconds(ExecState* exec)
@@ -771,8 +771,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetSeconds(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->second));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->second));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCSeconds(ExecState* exec)
@@ -785,8 +785,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCSeconds(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->second));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(gregorianDateTime->second));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMilliSeconds(ExecState* exec)
@@ -798,11 +798,11 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMilliSeconds(ExecState* exec)
     DateInstance* thisDateObj = asDateInstance(thisValue); 
     double milli = thisDateObj->internalNumber();
     if (isnan(milli))
-        return JSValue::encode(jsNaN(exec));
+        return JSValue::encode(jsNaN());
 
     double secs = floor(milli / msPerSecond);
     double ms = milli - secs * msPerSecond;
-    return JSValue::encode(jsNumber(exec, ms));
+    return JSValue::encode(jsNumber(ms));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMilliseconds(ExecState* exec)
@@ -814,11 +814,11 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMilliseconds(ExecState* exec)
     DateInstance* thisDateObj = asDateInstance(thisValue); 
     double milli = thisDateObj->internalNumber();
     if (isnan(milli))
-        return JSValue::encode(jsNaN(exec));
+        return JSValue::encode(jsNaN());
 
     double secs = floor(milli / msPerSecond);
     double ms = milli - secs * msPerSecond;
-    return JSValue::encode(jsNumber(exec, ms));
+    return JSValue::encode(jsNumber(ms));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTimezoneOffset(ExecState* exec)
@@ -831,8 +831,8 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetTimezoneOffset(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
-    return JSValue::encode(jsNumber(exec, -gregorianDateTime->utcOffset / minutesPerHour));
+        return JSValue::encode(jsNaN());
+    return JSValue::encode(jsNumber(-gregorianDateTime->utcOffset / minutesPerHour));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncSetTime(ExecState* exec)
@@ -844,7 +844,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetTime(ExecState* exec)
     DateInstance* thisDateObj = asDateInstance(thisValue); 
 
     double milli = timeClip(exec->argument(0).toNumber(exec));
-    JSValue result = jsNumber(exec, milli);
+    JSValue result = jsNumber(milli);
     thisDateObj->setInternalValue(result);
     return JSValue::encode(result);
 }
@@ -859,7 +859,7 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
     double milli = thisDateObj->internalNumber();
     
     if (!exec->argumentCount() || isnan(milli)) {
-        JSValue result = jsNaN(exec);
+        JSValue result = jsNaN();
         thisDateObj->setInternalValue(result);
         return JSValue::encode(result);
     }
@@ -871,17 +871,17 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
         ? thisDateObj->gregorianDateTimeUTC(exec)
         : thisDateObj->gregorianDateTime(exec);
     if (!other)
-        return JSValue::encode(jsNaN(exec));
+        return JSValue::encode(jsNaN());
 
     GregorianDateTime gregorianDateTime;
     gregorianDateTime.copyFrom(*other);
     if (!fillStructuresUsingTimeArgs(exec, numArgsToUse, &ms, &gregorianDateTime)) {
-        JSValue result = jsNaN(exec);
+        JSValue result = jsNaN();
         thisDateObj->setInternalValue(result);
         return JSValue::encode(result);
     } 
     
-    JSValue result = jsNumber(exec, gregorianDateTimeToMS(exec, gregorianDateTime, ms, inputIsUTC));
+    JSValue result = jsNumber(gregorianDateTimeToMS(exec, gregorianDateTime, ms, inputIsUTC));
     thisDateObj->setInternalValue(result);
     return JSValue::encode(result);
 }
@@ -894,7 +894,7 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
 
     DateInstance* thisDateObj = asDateInstance(thisValue);
     if (!exec->argumentCount()) {
-        JSValue result = jsNaN(exec);
+        JSValue result = jsNaN();
         thisDateObj->setInternalValue(result);
         return JSValue::encode(result);
     }      
@@ -911,17 +911,17 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
             ? thisDateObj->gregorianDateTimeUTC(exec)
             : thisDateObj->gregorianDateTime(exec);
         if (!other)
-            return JSValue::encode(jsNaN(exec));
+            return JSValue::encode(jsNaN());
         gregorianDateTime.copyFrom(*other);
     }
     
     if (!fillStructuresUsingDateArgs(exec, numArgsToUse, &ms, &gregorianDateTime)) {
-        JSValue result = jsNaN(exec);
+        JSValue result = jsNaN();
         thisDateObj->setInternalValue(result);
         return JSValue::encode(result);
     } 
            
-    JSValue result = jsNumber(exec, gregorianDateTimeToMS(exec, gregorianDateTime, ms, inputIsUTC));
+    JSValue result = jsNumber(gregorianDateTimeToMS(exec, gregorianDateTime, ms, inputIsUTC));
     thisDateObj->setInternalValue(result);
     return JSValue::encode(result);
 }
@@ -1018,7 +1018,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
 
     DateInstance* thisDateObj = asDateInstance(thisValue);     
     if (!exec->argumentCount()) { 
-        JSValue result = jsNaN(exec);
+        JSValue result = jsNaN();
         thisDateObj->setInternalValue(result);
         return JSValue::encode(result);
     }
@@ -1040,13 +1040,13 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     
     double year = exec->argument(0).toIntegerPreserveNaN(exec);
     if (!isfinite(year)) {
-        JSValue result = jsNaN(exec);
+        JSValue result = jsNaN();
         thisDateObj->setInternalValue(result);
         return JSValue::encode(result);
     }
             
     gregorianDateTime.year = toInt32((year > 99 || year < 0) ? year - 1900 : year);
-    JSValue result = jsNumber(exec, gregorianDateTimeToMS(exec, gregorianDateTime, ms, false));
+    JSValue result = jsNumber(gregorianDateTimeToMS(exec, gregorianDateTime, ms, false));
     thisDateObj->setInternalValue(result);
     return JSValue::encode(result);
 }
@@ -1061,10 +1061,10 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetYear(ExecState* exec)
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTime(exec);
     if (!gregorianDateTime)
-        return JSValue::encode(jsNaN(exec));
+        return JSValue::encode(jsNaN());
 
     // NOTE: IE returns the full year even in getYear.
-    return JSValue::encode(jsNumber(exec, gregorianDateTime->year));
+    return JSValue::encode(jsNumber(gregorianDateTime->year));
 }
 
 EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)

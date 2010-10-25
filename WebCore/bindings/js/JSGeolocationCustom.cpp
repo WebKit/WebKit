@@ -181,7 +181,7 @@ JSValue JSGeolocation::watchPosition(ExecState* exec)
     ASSERT(positionOptions);
 
     int watchID = m_impl->watchPosition(positionCallback.release(), positionErrorCallback.release(), positionOptions.release());
-    return jsNumber(exec, watchID);
+    return jsNumber(watchID);
 }
 
 } // namespace WebCore

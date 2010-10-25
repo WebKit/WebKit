@@ -34,7 +34,7 @@ ErrorConstructor::ErrorConstructor(ExecState* exec, JSGlobalObject* globalObject
 {
     // ECMA 15.11.3.1 Error.prototype
     putDirectWithoutTransition(exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum);
 }
 
 // ECMA 15.9.3

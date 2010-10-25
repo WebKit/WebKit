@@ -910,7 +910,7 @@ JSValue JSDOMWindow::setTimeout(ExecState* exec)
     int result = impl()->setTimeout(action.release(), delay, ec);
     setDOMException(exec, ec);
 
-    return jsNumber(exec, result);
+    return jsNumber(result);
 }
 
 JSValue JSDOMWindow::setInterval(ExecState* exec)
@@ -924,7 +924,7 @@ JSValue JSDOMWindow::setInterval(ExecState* exec)
     int result = impl()->setInterval(action.release(), delay, ec);
     setDOMException(exec, ec);
 
-    return jsNumber(exec, result);
+    return jsNumber(result);
 }
 
 JSValue JSDOMWindow::addEventListener(ExecState* exec)

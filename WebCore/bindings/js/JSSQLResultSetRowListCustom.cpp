@@ -68,7 +68,7 @@ JSValue JSSQLResultSetRowList::item(ExecState* exec)
               jsValue = jsNull();
               break;
           case SQLValue::NumberValue:
-              jsValue = jsNumber(exec, value.number());
+              jsValue = jsNumber(value.number());
               break;
           default:
               ASSERT_NOT_REACHED();

@@ -39,7 +39,7 @@ JSValue JSHTMLInputElement::selectionStart(ExecState* exec) const
     if (!input->canHaveSelection())
         return throwTypeError(exec);
 
-    return jsNumber(exec, input->selectionStart());
+    return jsNumber(input->selectionStart());
 }
 
 void JSHTMLInputElement::setSelectionStart(ExecState* exec, JSValue value)
@@ -57,7 +57,7 @@ JSValue JSHTMLInputElement::selectionEnd(ExecState* exec) const
     if (!input->canHaveSelection())
         return throwTypeError(exec);
 
-    return jsNumber(exec, input->selectionEnd());
+    return jsNumber(input->selectionEnd());
 }
 
 void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValue value)

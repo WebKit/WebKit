@@ -45,7 +45,7 @@ ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject
     putDirectWithoutTransition(exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
-    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
 
     // ES5
     putDirectFunctionWithoutTransition(exec, new (exec) NativeFunctionWrapper(exec, globalObject, prototypeFunctionStructure, 1, exec->propertyNames().isArray, arrayConstructorIsArray), DontEnum);

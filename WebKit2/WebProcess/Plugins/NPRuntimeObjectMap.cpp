@@ -122,10 +122,10 @@ JSValue NPRuntimeObjectMap::convertNPVariantToJSValue(JSC::ExecState* exec, JSC:
         return jsBoolean(variant.value.boolValue);
 
     case NPVariantType_Int32:
-        return jsNumber(exec, variant.value.intValue);
+        return jsNumber(variant.value.intValue);
 
     case NPVariantType_Double:
-        return jsNumber(exec, variant.value.doubleValue);
+        return jsNumber(variant.value.doubleValue);
 
     case NPVariantType_String:
         return jsString(exec, String::fromUTF8WithLatin1Fallback(variant.value.stringValue.UTF8Characters, 

@@ -126,7 +126,7 @@ JSValue JSWorkerContext::setTimeout(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
     int delay = exec->argument(1).toInt32(exec);
-    return jsNumber(exec, impl()->setTimeout(action.release(), delay));
+    return jsNumber(impl()->setTimeout(action.release(), delay));
 }
 
 JSValue JSWorkerContext::setInterval(ExecState* exec)
@@ -135,7 +135,7 @@ JSValue JSWorkerContext::setInterval(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
     int delay = exec->argument(1).toInt32(exec);
-    return jsNumber(exec, impl()->setInterval(action.release(), delay));
+    return jsNumber(impl()->setInterval(action.release(), delay));
 }
 
 

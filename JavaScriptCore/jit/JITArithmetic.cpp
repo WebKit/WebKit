@@ -888,7 +888,7 @@ void JIT::emit_op_mod(Instruction* currentInstruction)
     emitJumpSlowCaseIfNotImmediateInteger(regT0);
     emitJumpSlowCaseIfNotImmediateInteger(regT2);
 
-    addSlowCase(branchPtr(Equal, regT2, ImmPtr(JSValue::encode(jsNumber(m_globalData, 0)))));
+    addSlowCase(branchPtr(Equal, regT2, ImmPtr(JSValue::encode(jsNumber(0)))));
     m_assembler.cdq();
     m_assembler.idivl_r(regT2);
     emitFastArithReTagImmediate(regT1, regT0);

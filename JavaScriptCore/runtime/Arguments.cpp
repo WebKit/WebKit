@@ -191,7 +191,7 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
     }
 
     if (propertyName == exec->propertyNames().length && LIKELY(!d->overrodeLength)) {
-        slot.setValue(jsNumber(exec, d->numArguments));
+        slot.setValue(jsNumber(d->numArguments));
         return true;
     }
 
@@ -222,7 +222,7 @@ bool Arguments::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
     }
     
     if (propertyName == exec->propertyNames().length && LIKELY(!d->overrodeLength)) {
-        descriptor.setDescriptor(jsNumber(exec, d->numArguments), DontEnum);
+        descriptor.setDescriptor(jsNumber(d->numArguments), DontEnum);
         return true;
     }
     
