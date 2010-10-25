@@ -1527,9 +1527,6 @@ BUG23494 MAC : css1/font_properties/font_family.html = IMAGE
 BUG23494 MAC : css2.1/t1503-c522-font-family-00-b.html = IMAGE
 BUG23494 MAC : fast/text/monospace-width-cache.html = IMAGE
 
-// Broken upstream? Layout test should write a "PASS" or "FAIL" line; upstream has neither (ours is "PASS")
-BUG23492 MAC : fast/frames/frame-src-attribute.html = IMAGE
-
 // Actual is just slightly off in color than expected
 BUG23488 MAC RELEASE : fast/backgrounds/size/backgroundSize15.html = IMAGE
 BUG23488 MAC DEBUG SLOW : fast/backgrounds/size/backgroundSize15.html = IMAGE
