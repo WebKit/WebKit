@@ -1,3 +1,14 @@
+2010-10-24  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by David Kilzer.
+
+        Check endianness with __BIG_ENDIAN in RVCT.
+        https://bugs.webkit.org/show_bug.cgi?id=46122
+
+        RVCT defines __BIG_ENDIAN if compiling for a big-endian target.
+
+        * wtf/Platform.h:
+
 2010-10-24  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Dave Kilzer.

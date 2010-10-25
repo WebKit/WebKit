@@ -210,7 +210,7 @@
     || defined(_ARM_)
 #define WTF_CPU_ARM 1
 
-#if defined(__ARMEB__)
+#if defined(__ARMEB__) || (COMPILER(RVCT) && defined(__BIG_ENDIAN))
 #define WTF_CPU_BIG_ENDIAN 1
 
 #elif !defined(__ARM_EABI__) \
