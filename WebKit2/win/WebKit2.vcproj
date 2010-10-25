@@ -1188,6 +1188,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\WebInspector.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebInspector.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebPage.cpp"
 					>
 				</File>
@@ -1669,6 +1677,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebInspectorProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebInspectorProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebLoaderClient.cpp"
 				>
 			</File>
@@ -1816,6 +1832,14 @@
 					</File>
 					<File
 						RelativePath="..\UIProcess\API\C\WKFramePolicyListener.h"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKInspector.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\UIProcess\API\C\WKInspector.h"
 						>
 					</File>
 					<File

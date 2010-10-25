@@ -23,73 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WKInspector_h
+#define WKInspector_h
 
-#include <wtf/RefCounted.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebKit {
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeNull = 0,
-        TypeArray,
-        TypeCertificateInfo,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeSerializedScriptValue,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        TypeURLResponse,
-        TypeUserContentURLPattern,
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-        // Base numeric types
-        TypeBoolean,
-        TypeDouble,
-        TypeUInt64,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeInspector,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+WK_EXPORT WKTypeID WKInspectorGetTypeID();
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundleHitTestResult,
-        TypeBundleNodeHandle,
-        TypeBundlePage,
-        TypeBundleRangeHandle,
-        TypeBundleScriptWorld,
+WK_EXPORT WKPageRef WKInspectorGetPage(WKInspectorRef inspector);
 
-        // Platform specific
-        TypeView
-    };
+#ifdef __cplusplus
+}
+#endif
 
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+#endif // WKInspector_h

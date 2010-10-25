@@ -23,73 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#include "WKInspector.h"
 
-#include <wtf/RefCounted.h>
+#include "WKAPICast.h"
+#include "WebInspectorProxy.h"
 
-namespace WebKit {
+using namespace WebKit;
 
-class APIObject : public RefCounted<APIObject> {
-public:
-    enum Type {
-        // Base types
-        TypeNull = 0,
-        TypeArray,
-        TypeCertificateInfo,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeSerializedScriptValue,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        TypeURLResponse,
-        TypeUserContentURLPattern,
+WKTypeID WKInspectorGetTypeID()
+{
+    return toAPI(WebInspectorProxy::APIType);
+}
 
-        // Base numeric types
-        TypeBoolean,
-        TypeDouble,
-        TypeUInt64,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeInspector,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
-
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundleHitTestResult,
-        TypeBundleNodeHandle,
-        TypeBundlePage,
-        TypeBundleRangeHandle,
-        TypeBundleScriptWorld,
-
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
-};
-
-} // namespace WebKit
-
-#endif // APIObject_h
+WKPageRef WKInspectorGetPage(WKInspectorRef inspectorRef)
+{
+    return toAPI(toImpl(inspectorRef)->page());
+}

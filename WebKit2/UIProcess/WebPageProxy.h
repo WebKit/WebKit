@@ -37,6 +37,7 @@
 #include "WebFormClient.h"
 #include "WebFrameProxy.h"
 #include "WebHistoryClient.h"
+#include "WebInspectorProxy.h"
 #include "WebLoaderClient.h"
 #include "WebPolicyClient.h"
 #include "WebUIClient.h"
@@ -107,6 +108,8 @@ public:
     void setDrawingArea(PassOwnPtr<DrawingAreaProxy>);
 
     WebBackForwardList* backForwardList() { return m_backForwardList.get(); }
+
+    WebInspectorProxy* inspector();
 
     void setPageClient(PageClient*);
     void initializeLoaderClient(const WKPageLoaderClient*);
@@ -323,6 +326,8 @@ private:
     RefPtr<WebPageNamespace> m_pageNamespace;
     RefPtr<WebFrameProxy> m_mainFrame;
     String m_pageTitle;
+
+    RefPtr<WebInspectorProxy> m_inspector;
 
     HashMap<uint64_t, RefPtr<ScriptReturnValueCallback> > m_scriptReturnValueCallbacks;
     HashMap<uint64_t, RefPtr<RenderTreeExternalRepresentationCallback> > m_renderTreeExternalRepresentationCallbacks;

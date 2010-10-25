@@ -23,73 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WebInspectorProxy_h
+#define WebInspectorProxy_h
 
-#include <wtf/RefCounted.h>
+#include "APIObject.h"
+#include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
+class WebPageProxy;
+
+class WebInspectorProxy : public APIObject {
 public:
-    enum Type {
-        // Base types
-        TypeNull = 0,
-        TypeArray,
-        TypeCertificateInfo,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeSerializedScriptValue,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        TypeURLResponse,
-        TypeUserContentURLPattern,
+    static const Type APIType = TypeInspector;
 
-        // Base numeric types
-        TypeBoolean,
-        TypeDouble,
-        TypeUInt64,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeInspector,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
-
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundleHitTestResult,
-        TypeBundleNodeHandle,
-        TypeBundlePage,
-        TypeBundleRangeHandle,
-        TypeBundleScriptWorld,
-
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
+    static PassRefPtr<WebInspectorProxy> create(WebPageProxy* page)
     {
+        return adoptRef(new WebInspectorProxy(page));
     }
 
-    virtual Type type() const = 0;
+    ~WebInspectorProxy();
 
-protected:
-    APIObject()
-    {
-    }
+    void invalidate();
+
+    WebPageProxy* page() { return m_page; }
+
+private:
+    WebInspectorProxy(WebPageProxy* page);
+
+    virtual Type type() const { return APIType; }
+
+    WebPageProxy* m_page;
 };
 
 } // namespace WebKit
 
-#endif // APIObject_h
+#endif // WebInspectorProxy_h

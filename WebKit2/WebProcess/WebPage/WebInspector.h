@@ -23,73 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef WebInspector_h
+#define WebInspector_h
 
-#include <wtf/RefCounted.h>
+#include "Connection.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
+class WebPage;
+
+class WebInspector {
+    WTF_MAKE_NONCOPYABLE(WebInspector);
+
 public:
-    enum Type {
-        // Base types
-        TypeNull = 0,
-        TypeArray,
-        TypeCertificateInfo,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeSerializedScriptValue,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        TypeURLResponse,
-        TypeUserContentURLPattern,
+    explicit WebInspector(WebPage*);
 
-        // Base numeric types
-        TypeBoolean,
-        TypeDouble,
-        TypeUInt64,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeInspector,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
-
-        // Bundle types
-        TypeBundle,
-        TypeBundleFrame,
-        TypeBundleHitTestResult,
-        TypeBundleNodeHandle,
-        TypeBundlePage,
-        TypeBundleRangeHandle,
-        TypeBundleScriptWorld,
-
-        // Platform specific
-        TypeView
-    };
-
-    virtual ~APIObject()
-    {
-    }
-
-    virtual Type type() const = 0;
-
-protected:
-    APIObject()
-    {
-    }
+private:
+    WebPage* m_page;
 };
 
 } // namespace WebKit
 
-#endif // APIObject_h
+#endif // WebInspector_h

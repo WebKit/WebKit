@@ -45,6 +45,7 @@
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebFrame.h"
+#include "WebInspector.h"
 #include "WebInspectorClient.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageProxyMessages.h"
@@ -750,6 +751,13 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     platformPreferencesDidChange(store);
 }
 
+WebInspector* WebPage::inspector()
+{
+    if (!m_inspector)
+        m_inspector = adoptPtr(new WebInspector(this));
+    return m_inspector.get();
+}
+
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 {
     Node* node = evt->target()->toNode();
@@ -770,7 +778,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
         return !command.isTextInsertion() && command.execute(evt);
     }
 
-     if (command.execute(evt))
+    if (command.execute(evt))
         return true;
 
     // Don't insert null or control characters as they can result in unexpected behaviour

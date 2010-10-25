@@ -35,17 +35,19 @@ enum MessageClass {
     MessageClassCoreIPC,
 
     // Messages sent by the UI process to the web process.
-    MessageClassWebProcess,
-    MessageClassInjectedBundle,
-    MessageClassWebPage,
     MessageClassDrawingArea,
+    MessageClassInjectedBundle,
+    MessageClassWebInspector,
+    MessageClassWebPage,
+    MessageClassWebProcess,
 
     // Messages sent by the web process to the UI process.
-    MessageClassWebContext,
-    MessageClassWebProcessProxy,
-    MessageClassWebPageProxy,
     MessageClassDrawingAreaProxy,
-    
+    MessageClassWebContext,
+    MessageClassWebInspectorProxy,
+    MessageClassWebPageProxy,
+    MessageClassWebProcessProxy,
+
     // Messages sent by the UI process to the plug-in process.
     MessageClassPluginProcess,
 

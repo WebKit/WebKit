@@ -229,6 +229,7 @@ HEADERS += \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKFrame.h \
     UIProcess/API/C/WKFramePolicyListener.h \
+    UIProcess/API/C/WKInspector.h \
     UIProcess/API/C/WKNavigationData.h \
     UIProcess/API/C/WKPage.h \
     UIProcess/API/C/WKPageNamespace.h \
@@ -268,6 +269,7 @@ HEADERS += \
     UIProcess/WebFramePolicyListenerProxy.h \
     UIProcess/WebFrameProxy.h \
     UIProcess/WebHistoryClient.h \
+    UIProcess/WebInspectorProxy.h \
     UIProcess/WebLoaderClient.h \
     UIProcess/WebNavigationData.h \
     UIProcess/WebPageNamespace.h \
@@ -321,6 +323,7 @@ HEADERS += \
     WebProcess/WebPage/PageOverlay.h \
     WebProcess/WebPage/WebEditCommand.h \
     WebProcess/WebPage/WebFrame.h \
+    WebProcess/WebPage/WebInspector.h \
     WebProcess/WebPage/WebPage.h \
     WebProcess/WebProcess.h \
     $$WEBKIT2_GENERATED_HEADERS
@@ -377,6 +380,7 @@ SOURCES += \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \
+    UIProcess/API/C/WKInspector.cpp \
     UIProcess/API/C/WKNavigationData.cpp \
     UIProcess/API/C/WKPage.cpp \
     UIProcess/API/C/WKPageNamespace.cpp \
@@ -412,6 +416,7 @@ SOURCES += \
     UIProcess/WebFramePolicyListenerProxy.cpp \
     UIProcess/WebFrameProxy.cpp \
     UIProcess/WebHistoryClient.cpp \
+    UIProcess/WebInspectorProxy.cpp \
     UIProcess/WebLoaderClient.cpp \
     UIProcess/WebNavigationData.cpp \
     UIProcess/WebPageNamespace.cpp \
@@ -469,6 +474,7 @@ SOURCES += \
     WebProcess/WebPage/PageOverlay.cpp \
     WebProcess/WebPage/WebEditCommand.cpp \
     WebProcess/WebPage/WebFrame.cpp \
+    WebProcess/WebPage/WebInspector.cpp \
     WebProcess/WebPage/WebPage.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp \

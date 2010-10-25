@@ -1,3 +1,43 @@
+2010-10-25  Timothy Hatcher  <timothy@apple.com>
+
+        Stub out WebInspector objects and WKInspectorRef API.
+
+        https://webkit.org/b/48265
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/MessageID.h: Added MessageClassWebInspector and MessageClassWebInspectorProxy.
+        * Shared/API/c/WKBase.h: Added WKInspectorRef.
+        * Shared/APIObject.h: Added TypeInspector.
+        * UIProcess/API/C/WKAPICast.h: Added WKInspectorRef to WebInspectorProxy mapping.
+        * UIProcess/API/C/WKInspector.cpp: Added.
+        (WKInspectorGetTypeID):
+        (WKInspectorGetPage):
+        * UIProcess/API/C/WKInspector.h: Added.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetInspector): Added.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebInspectorProxy.cpp: Added.
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        (WebKit::WebInspectorProxy::~WebInspectorProxy):
+        (WebKit::WebInspectorProxy::invalidate):
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::create):
+        (WebKit::WebInspectorProxy::page):
+        (WebKit::WebInspectorProxy::type):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::inspector): Lazily create the WebInspectorProxy.
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.pro: Added new files.
+        * WebKit2.xcodeproj/project.pbxproj: Added new files.
+        * WebProcess/WebPage/WebInspector.cpp: Added.
+        (WebKit::WebInspector::WebInspector):
+        * WebProcess/WebPage/WebInspector.h: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::inspector): Lazily create the WebInspector.
+        * WebProcess/WebPage/WebPage.h:
+        * win/WebKit2.vcproj: Added new files.
+
 2010-10-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
