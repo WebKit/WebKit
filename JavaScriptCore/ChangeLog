@@ -1,3 +1,12 @@
+2010-10-24  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Dave Kilzer.
+
+        Removed empty directories.
+
+        * JavaScriptCore: Removed.
+        * JavaScriptCore/runtime: Removed.
+
 2010-10-24  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed, fix typo of last build fix.
