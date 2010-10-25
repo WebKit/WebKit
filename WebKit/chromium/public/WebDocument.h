@@ -33,10 +33,6 @@
 
 #include "WebNode.h"
 
-// Turning on Chromium side Autocomplete code.
-// FIXME: remove this once the Chromium autocomplete code has been cleaned-up.
-#define WEBKIT_BUG_41283_IS_FIXED
-
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore {
 class Document;
