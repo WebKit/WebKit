@@ -1,3 +1,10 @@
+2010-10-25  Satish Sampath  <satish@chromium.org>
+
+        Unreviewed, fix for a build break caused by my earlier patch.
+
+        * public/WebSpeechInputListener.h:
+        (WebKit::WebSpeechInputListener::setRecognitionResult): Explicitly invoking the correct constructor.
+
 2010-10-21  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Jeremy Orlow.
