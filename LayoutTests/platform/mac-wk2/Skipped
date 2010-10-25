@@ -100,20 +100,18 @@ editing/style/style-boundary-005.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
-svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html
-svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html
-svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html
-svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html
-svg/custom/mouse-move-on-svg-container-standalone.svg
-svg/custom/mouse-move-on-svg-container.xhtml
-svg/custom/mouse-move-on-svg-root-standalone.svg
-svg/custom/mouse-move-on-svg-root.xhtml
-svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr.html
-svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr.html
-svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr.html
-svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop.html
-svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop.html
-svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop.html
+storage/multiple-transactions-on-different-handles.html
+svg/animations/animate-color-transparent.html
+svg/custom/repaint-on-constant-size-change.svg
+scrollbars/scrollevent-iframe-no-scrolling-wheel.html
+fast/forms/input-file-not-open-without-gesture.html
+fast/forms/render-text-crash.html
+fast/forms/select-listbox-focus-displaynone.html
+fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
+fast/events/click-focus-control.html
+fast/events/mouse-focus-imagemap.html
+fast/css-generated-content/drag-state.html
+fast/css-generated-content/malformed-url.html
 compositing/iframes/layout-on-compositing-change.html
 editing/deleting/5390681-2.html
 editing/deleting/5729680.html
@@ -179,6 +177,7 @@ editing/selection/click-in-padding-with-multiple-line-boxes.html
 editing/selection/click-outside-editable-div.html
 editing/selection/click-start-of-line.html
 editing/selection/contains-boundaries.html
+editing/selection/context-menu-on-text.html
 editing/selection/crash-on-drag-with-mutation-events.html
 editing/selection/delete-word-granularity-text-control.html
 editing/selection/doubleclick-beside-cr-span.html
@@ -200,6 +199,7 @@ editing/selection/extend-selection-after-double-click.html
 editing/selection/fake-doubleclick.html
 editing/selection/fake-drag.html
 editing/selection/focus-and-display-none.html
+editing/selection/focus-crash.html
 editing/selection/hit-test-anonymous.html
 editing/selection/inline-closest-leaf-child.html
 editing/selection/last-empty-inline.html
@@ -527,8 +527,8 @@ platform/mac/fast/forms/input-appearance-spinbutton-up.html
 platform/mac/fast/forms/input-number-click.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
-plugins/resize-from-plugin.html
 plugins/mouse-move-over-plugin-in-frame.html
+plugins/resize-from-plugin.html
 scrollbars/overflow-custom-scrollbar-crash.html
 scrollbars/scrollbar-click-does-not-blur-content.html
 scrollbars/scrollbar-iframe-click-does-not-blur-content.html
@@ -584,6 +584,10 @@ svg/custom/marker-strokeWidth-changes.svg
 svg/custom/marker-viewBox-changes.svg
 svg/custom/mask-changes.svg
 svg/custom/mask-child-changes.svg
+svg/custom/mouse-move-on-svg-container-standalone.svg
+svg/custom/mouse-move-on-svg-container.xhtml
+svg/custom/mouse-move-on-svg-root-standalone.svg
+svg/custom/mouse-move-on-svg-root.xhtml
 svg/custom/pointer-events-image.svg
 svg/custom/pointer-events-path.svg
 svg/custom/pointer-events-text.svg
@@ -632,6 +636,42 @@ svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop.html
 svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop.html
 svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop.html
 svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop.html
+svg/dynamic-updates/SVGFEBlendElement-dom-in-attr.html
+svg/dynamic-updates/SVGFEBlendElement-dom-in2-attr.html
+svg/dynamic-updates/SVGFEBlendElement-dom-mode-attr.html
+svg/dynamic-updates/SVGFEBlendElement-svgdom-in-prop.html
+svg/dynamic-updates/SVGFEBlendElement-svgdom-in2-prop.html
+svg/dynamic-updates/SVGFEBlendElement-svgdom-mode-prop.html
+svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html
+svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html
+svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html
+svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html
+svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html
+svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html
+svg/dynamic-updates/SVGFECompositeElement-dom-in-attr.html
+svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr.html
+svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr.html
+svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr.html
+svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr.html
+svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr.html
+svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr.html
+svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop.html
+svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop.html
+svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop.html
+svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop.html
+svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop.html
+svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop.html
+svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html
+svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html
 svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-diffuseConstant-attr.html
 svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-in-attr.html
 svg/dynamic-updates/SVGFEDiffuseLightingElement-dom-lighting-color-attr.html
@@ -640,12 +680,38 @@ svg/dynamic-updates/SVGFEDiffuseLightingElement-lighting-color-css-prop.html
 svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-diffuseConstant-prop.html
 svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-in-prop.html
 svg/dynamic-updates/SVGFEDiffuseLightingElement-svgdom-surfaceScale-prop.html
+svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html
+svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html
+svg/dynamic-updates/SVGFEDistantLightElement-svgdom-azimuth-prop.html
+svg/dynamic-updates/SVGFEDistantLightElement-svgdom-elevation-prop.html
+svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr.html
+svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr.html
+svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop.html
+svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop.html
+svg/dynamic-updates/SVGFEGaussianBlurElement-dom-in-attr.html
+svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-attr.html
+svg/dynamic-updates/SVGFEGaussianBlurElement-dom-stdDeviation-call.html
+svg/dynamic-updates/SVGFEGaussianBlurElement-svgdom-in-prop.html
+svg/dynamic-updates/SVGFEMergeNodeElement-dom-in-attr.html
+svg/dynamic-updates/SVGFEMergeNodeElement-svgdom-in-prop.html
+svg/dynamic-updates/SVGFEMorphologyElement-dom-in-attr.html
+svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr.html
+svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr.html
+svg/dynamic-updates/SVGFEMorphologyElement-svgdom-in-prop.html
+svg/dynamic-updates/SVGFEMorphologyElement-svgdom-operator-prop.html
+svg/dynamic-updates/SVGFEMorphologyElement-svgdom-radius-call.html
 svg/dynamic-updates/SVGFEOffsetElement-dom-dx-attr.html
 svg/dynamic-updates/SVGFEOffsetElement-dom-dy-attr.html
 svg/dynamic-updates/SVGFEOffsetElement-dom-in-attr.html
 svg/dynamic-updates/SVGFEOffsetElement-svgdom-dx-prop.html
 svg/dynamic-updates/SVGFEOffsetElement-svgdom-dy-prop.html
 svg/dynamic-updates/SVGFEOffsetElement-svgdom-in-prop.html
+svg/dynamic-updates/SVGFEPointLightElement-dom-x-attr.html
+svg/dynamic-updates/SVGFEPointLightElement-dom-y-attr.html
+svg/dynamic-updates/SVGFEPointLightElement-dom-z-attr.html
+svg/dynamic-updates/SVGFEPointLightElement-svgdom-x-prop.html
+svg/dynamic-updates/SVGFEPointLightElement-svgdom-y-prop.html
+svg/dynamic-updates/SVGFEPointLightElement-svgdom-z-prop.html
 svg/dynamic-updates/SVGFESpotLightElement-dom-limitingConeAngle-attr.html
 svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtX-attr.html
 svg/dynamic-updates/SVGFESpotLightElement-dom-pointsAtY-attr.html
@@ -662,6 +728,16 @@ svg/dynamic-updates/SVGFESpotLightElement-svgdom-specularExponent-prop.html
 svg/dynamic-updates/SVGFESpotLightElement-svgdom-x-prop.html
 svg/dynamic-updates/SVGFESpotLightElement-svgdom-y-prop.html
 svg/dynamic-updates/SVGFESpotLightElement-svgdom-z-prop.html
+svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html
+svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr.html
+svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr.html
+svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr.html
+svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr.html
+svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html
+svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop.html
+svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop.html
+svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop.html
+svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop.html
 svg/dynamic-updates/SVGFilterElement-dom-filterRes-attr.html
 svg/dynamic-updates/SVGFilterElement-dom-filterUnits-attr.html
 svg/dynamic-updates/SVGFilterElement-dom-height-attr.html
@@ -840,6 +916,13 @@ java
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
 # Get accelerated compositing working with webkit2
 # <https://bugs.webkit.org/show_bug.cgi?id=41084>
+http/tests/navigation/ping-cross-origin-from-https.html
+http/tests/navigation/ping-cross-origin.html
+http/tests/navigation/ping-same-origin.html
+http/tests/canvas/webgl/origin-clean-conformance.html
+fast/canvas/webgl/gl-getstring.html
+fast/canvas/webgl/glsl-conformance.html
+fast/canvas/webgl/object-deletion-behaviour.html
 fast/loader/stateobjects/popstate-fires-with-page-cache.html
 fast/canvas/webgl/gl-teximage.html
 compositing/webgl/webgl-background-color.html
@@ -1121,6 +1204,7 @@ http/tests/navigation/document-location-click-timeout.html
 http/tests/navigation/document-location-click.html
 http/tests/navigation/document-location-mouseover.html
 http/tests/navigation/document-location-onload.html
+http/tests/navigation/document-location-script.html
 http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html
 http/tests/navigation/error404-basic.html
 http/tests/navigation/error404-frames.html
@@ -1159,6 +1243,7 @@ http/tests/navigation/redirect-load-no-form-restoration.html
 http/tests/navigation/redirect302-basic.html
 http/tests/navigation/redirect302-frames.html
 http/tests/navigation/redirect302-goback.html
+http/tests/navigation/redirect302-metaredirect.html
 http/tests/navigation/redirect302-subframeload.html
 http/tests/navigation/relativeanchor-basic.html
 http/tests/navigation/relativeanchor-frames.html
@@ -1342,9 +1427,15 @@ webarchive/loading/test-loading-archive.html
 
 # WebKitTestRunner needs layoutTestController.clearBackForwardList
 # <https://bugs.webkit.org/show_bug.cgi?id=42333>
-fast/history/redirect-via-iframe.html
 fast/dom/location-hash.html
+fast/history/form-submit-in-frame-via-onclick.html
+fast/history/form-submit-in-frame.html
+fast/history/gesture-before-onload-form-submit.html
+fast/history/gesture-before-onload-location-href.html
 fast/history/history-length.html
+fast/history/redirect-via-iframe.html
+fast/history/same-document-iframes-changing-fragment.html
+fast/history/same-document-iframes-changing-pushstate.html
 fast/loader/location-port.html
 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html
 fast/loader/stateobjects/document-destroyed-navigate-back.html
@@ -1360,9 +1451,6 @@ fast/loader/stateobjects/pushstate-within-popstate-handler-assert.html
 fast/loader/stateobjects/pushstate-without-history.html
 fast/loader/stateobjects/replacestate-then-pushstate.html
 http/tests/loading/state-object-security-exception.html
-fast/history/gesture-before-onload-form-submit.html
-fast/history/gesture-before-onload-location-href.html
-
 
 # WebKitTestRunner needs textInputController
 # <https://bugs.webkit.org/show_bug.cgi?id=42337>
@@ -1619,6 +1707,9 @@ plugins/netscape-plugin-setwindow-size-2.html
 # WebKitTestRunner needs layoutTestController.setEditingBehavior
 # <https://bugs.webkit.org/show_bug.cgi?id=42689>
 editing/selection/5195166-1.html
+editing/execCommand/query-command-state.html
+editing/execCommand/query-text-alignment.html
+
 
 # WebKitTestRunner needs layoutTestController.setWillSendRequestReturnsNull
 # <https://bugs.webkit.org/show_bug.cgi?id=42690>
@@ -1642,6 +1733,7 @@ printing/compositing-layer-printing.html
 printing/media-queries-print.html
 printing/page-rule-in-media-query.html
 printing/setPrinting.html
+printing/simultaneous-position-float-change.html
 
 # WebKitTestRunner needs layoutTestController.numberOfPages
 # <https://bugs.webkit.org/show_bug.cgi?id=42694>
@@ -1771,6 +1863,8 @@ fast/events/popup-blocked-from-fake-focus.html
 fast/events/popup-blocked-from-fake-user-gesture.html
 fast/events/popup-blocked-to-post-blank.html
 fast/events/popup-blocked-from-iframe-script.html
+fast/events/popup-blocked-from-history-reload.html
+fast/events/popup-blocked-from-window-open.html
 
 # WebKitTestRunner needs layoutTestController.addDisallowedURL
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
@@ -1780,15 +1874,50 @@ editing/selection/doubleclick-inline-first-last-contenteditable.html
 
 # WebKitTestRunner needs layoutTestController.suspendAnimations
 animations/suspend-resume-animation.html
+animations/suspend-transform-animation.html
+transitions/suspend-transform-transition.html
 
 # WebKitTestRunner needs layoutTestController.pageProperty
 printing/page-rule-selection.html
+
+# WebKitTestRunner needs layoutTestController.hasSpellingMarker
+editing/spelling/design-mode-spellcheck-off.html
+editing/spelling/spellcheck-attribute.html
+editing/spelling/spelling-linebreak.html
+
+# WebKitTestRunner needs layoutTestController.nodesFromRect
+fast/dom/nodesFromRect-basic.html
+fast/dom/nodesFromRect-inner-documents.html
+fast/dom/nodesFromRect-links-and-text.html
+
+# WebKitTestRunner needs layoutTestController.setSpatialNavigationEnabled
+fast/events/spatial-navigation/snav-1st-stop.html
+fast/events/spatial-navigation/snav-clipped-overflowed-content.html
+fast/events/spatial-navigation/snav-div-scrollable-but-without-focusable-content.html
+fast/events/spatial-navigation/snav-fully-aligned-horizontally.html
+fast/events/spatial-navigation/snav-fully-aligned-vertically.html
+fast/events/spatial-navigation/snav-iframe-flattening-simple.html
+fast/events/spatial-navigation/snav-iframe-nested.html
+fast/events/spatial-navigation/snav-iframe-no-focusable-content.html
+fast/events/spatial-navigation/snav-iframe-no-scrollable-content.html
+fast/events/spatial-navigation/snav-iframe-recursive-offset-parent.html
+fast/events/spatial-navigation/snav-multiple-select.html
+fast/events/spatial-navigation/snav-offscreen-content.html
+fast/events/spatial-navigation/snav-only-clipped-overflow-content.html
+fast/events/spatial-navigation/snav-radio-group.html
+fast/events/spatial-navigation/snav-radio.html
+fast/events/spatial-navigation/snav-simple-content-overflow.html
+fast/events/spatial-navigation/snav-single-select.html
+fast/events/spatial-navigation/snav-table-traversal.html
+fast/events/spatial-navigation/snav-tiny-table-traversal.html
+fast/events/spatial-navigation/snav-zero-margin-content.html
 
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
 
 # WebKit2 needs undo/redo support
+editing/undo/replace-by-span-then-remove.html
 editing/undo/remove-css-property-and-remove-style.html
 editing/deleting/delete-and-undo.html
 editing/execCommand/convert-style-elements-to-spans.html
@@ -1970,15 +2099,47 @@ fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Con
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T10.html
 fast/js/sputnik/Conformance/10_Execution_Contexts/10.2_Entering_An_Execution_Context/10.2.2_Eval_Code/S10.2.2_A1.2_T11.html
 
+# Unexplained Java failures
+dom/html/level2/html/HTMLAppletElement01.html
+dom/html/level2/html/HTMLAppletElement02.html
+dom/html/level2/html/HTMLAppletElement03.html
+dom/html/level2/html/HTMLAppletElement04.html
+dom/html/level2/html/HTMLAppletElement05.html
+dom/html/level2/html/HTMLAppletElement06.html
+dom/html/level2/html/HTMLAppletElement07.html
+dom/html/level2/html/HTMLAppletElement08.html
+dom/html/level2/html/HTMLAppletElement09.html
+dom/html/level2/html/HTMLAppletElement10.html
+dom/xhtml/level2/html/HTMLAppletElement01.xhtml
+dom/xhtml/level2/html/HTMLAppletElement02.xhtml
+dom/xhtml/level2/html/HTMLAppletElement03.xhtml
+dom/xhtml/level2/html/HTMLAppletElement04.xhtml
+dom/xhtml/level2/html/HTMLAppletElement05.xhtml
+dom/xhtml/level2/html/HTMLAppletElement06.xhtml
+dom/xhtml/level2/html/HTMLAppletElement07.xhtml
+dom/xhtml/level2/html/HTMLAppletElement08.xhtml
+dom/xhtml/level2/html/HTMLAppletElement09.xhtml
+dom/xhtml/level2/html/HTMLAppletElement10.xhtml
+editing/selection/selection-applet.html
+fast/replaced/applet-disabled-positioned.html
+fast/replaced/applet-rendering-java-disabled.html
+
 # Unexplained failures
+http/tests/history/popstate-fires-with-pending-requests.html
+http/tests/media/reload-after-dialog.html
+svg/dom/fuzz-path-parser.html
+tables/mozilla_expected_failures/bugs/bug8499.html
+canvas/philip/tests/2d.text.draw.fontface.notinpage.html
 fast/dom/beforeload/remove-frame-in-beforeload-listener.html
 fast/dom/css-cached-import-rule.html
 fast/dom/Document/open-with-pending-load.html
 fast/dom/Window/window-appendages-cleared.html
 fast/dynamic/anchor-lock.html
 fast/events/simulated-key-state.html
+fast/frames/frame-element-name.html
 fast/frames/iframe-onload-remove-self-no-crash.html
 fast/frames/location-put-after-removal.html
+fast/frames/sandboxed-iframe-plugins.html
 fast/history/multiple-classes-visited.html
 fast/history/nested-visited-test.html
 fast/history/saves-state-after-fragment-nav.html
@@ -1991,6 +2152,7 @@ fast/loader/goto-anchor-infinite-layout.html
 fast/loader/hashchange-event-async.html
 fast/loader/hashchange-event.html
 fast/loader/onhashchange-attribute-listeners.html
+fast/loader/stateobjects/popstate-fires-on-history-traversal.html
 fast/loader/submit-form-while-parsing-2.html
 fast/overflow/overflow_hidden.html
 fast/overflow/scroll-vertical-not-horizontal.html
@@ -1999,11 +2161,16 @@ fast/regex/test1.html
 fast/regex/test4.html
 fast/table/giantCellspacing.html
 fast/workers/storage/change-version-handle-reuse-sync.html
+fast/workers/storage/executesql-accepts-only-one-statement-sync.html
+fast/workers/storage/interrupt-database-sync.html
+fast/workers/storage/interrupt-database.html
 fast/workers/storage/multiple-databases-garbage-collection.html
-storage/open-database-while-transaction-in-progress.html
+fast/workers/storage/multiple-transactions-on-different-handles-sync.html
+fast/workers/storage/multiple-transactions-on-different-handles.html
 fast/workers/storage/open-database-creation-callback-sync.html
 fast/workers/storage/open-database-inputs-sync.html
 fast/workers/storage/sql-exception-codes-sync.html
+fast/workers/storage/use-same-database-in-page-and-workers.html
 http/tests/appcache/different-https-origin-resource-main.html
 http/tests/appcache/fallback.html
 http/tests/cache/subresource-expiration.html
@@ -2028,6 +2195,7 @@ media/controls-styling.html
 media/video-zoom-controls.html
 platform/mac/fast/loader/non-html-load-event.html
 storage/multiple-databases-garbage-collection.html
+storage/open-database-while-transaction-in-progress.html
 svg/custom/clip-path-referencing-use2.svg
 svg/custom/scrolling-embedded-svg-file-image-repaint-problem.html
 svg/hixie/cascade/002.xml
@@ -2035,7 +2203,7 @@ transitions/color-transition-all.html
 transitions/font-family-during-transition.html
 transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
-fast/loader/stateobjects/popstate-fires-on-history-traversal.html
+http/tests/security/cross-frame-access-put.html
 
 ########################################
 
