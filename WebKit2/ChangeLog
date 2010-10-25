@@ -1,3 +1,15 @@
+2010-10-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Control + Mousewheel shouldn't be handled in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=48253
+        
+        Don't handle a wheel event if Control is pressed, pass the message back to DefWindowProc.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::onWheelEvent):
+
 2010-10-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
