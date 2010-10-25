@@ -57,7 +57,11 @@ static bool isVFPPresent()
     }
 #endif
 
+#if (COMPILER(RVCT) && defined(__TARGET_FPU_VFP)) || (COMPILER(GCC) && defined(__VFP_FP__))
+    return true;
+#else
     return false;
+#endif
 }
 
 const bool MacroAssemblerARM::s_isVFPPresent = isVFPPresent();
