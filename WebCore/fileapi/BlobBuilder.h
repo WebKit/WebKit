@@ -32,14 +32,12 @@
 #define BlobBuilder_h
 
 #include "BlobData.h"
-#include "PlatformString.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
+class ArrayBuffer;
 class Blob;
 class TextEncoding;
 
@@ -49,14 +47,19 @@ class BlobBuilder : public RefCounted<BlobBuilder> {
 public:
     static PassRefPtr<BlobBuilder> create() { return adoptRef(new BlobBuilder()); }
 
-    bool append(PassRefPtr<Blob>);
-    bool append(const String& text, ExceptionCode&);
-    bool append(const String& text, const String& ending, ExceptionCode&);
+    void append(Blob*);
+    void append(const String& text, ExceptionCode&);
+    void append(const String& text, const String& ending, ExceptionCode&);
+#if ENABLE(BLOB)
+    void append(ArrayBuffer*);
+#endif
 
     PassRefPtr<Blob> getBlob(const String& contentType = String());
 
 private:
     BlobBuilder();
+
+    Vector<char>& getBuffer();
 
     long long m_size;
     BlobDataItemList m_items;

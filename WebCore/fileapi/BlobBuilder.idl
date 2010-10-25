@@ -38,6 +38,9 @@ module html {
         Blob getBlob(in [Optional, ConvertUndefinedOrNullToNullString] DOMString contentType);
 #endif
         void append(in Blob blob);
+#if defined(ENABLE_BLOB) && ENABLE_BLOB
+        void append(in ArrayBuffer arrayBuffer);
+#endif
         void append(in DOMString value, in [Optional, ConvertUndefinedOrNullToNullString] DOMString endings) raises (DOMException);
     };
 

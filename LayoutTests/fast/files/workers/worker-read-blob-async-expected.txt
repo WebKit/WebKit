@@ -75,6 +75,15 @@ readyState: 2
 result size: 29
 result: data:type/foo;base64,Rmlyc3Q=
 Received loadend event
+Test reading a blob containing single ArrayBuffer
+readyState: 0
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 9
+result: 0x0 0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
+Received loadend event
 Test reading a blob containing sliced file
 readyState: 0
 Received loadstart event
@@ -92,6 +101,15 @@ Received load event
 readyState: 2
 result size: 4
 result: irst
+Received loadend event
+Test reading a blob containing sliced ArrayBuffer
+readyState: 0
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 8
+result: 0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
 Received loadend event
 Test reading a blob containing multiple files
 readyState: 0
@@ -111,14 +129,23 @@ readyState: 2
 result size: 16
 result: FirstSecondThird
 Received loadend event
+Test reading a blob containing multiple ArrayBuffer
+readyState: 0
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 9
+result: 0x0 0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
+Received loadend event
 Test reading a hybrid blob
 readyState: 0
 Received loadstart event
 readyState: 1
 Received load event
 readyState: 2
-result size: 35
-result: FirstHelloSecondWonderfulWorldThird
+result size: 38
+result: FirstHelloSecondWonderfulWorldThird012
 Received loadend event
 Test reading a sliced hybrid blob
 readyState: 0
@@ -136,7 +163,7 @@ readyState: 1
 Received load event
 readyState: 2
 result size: 30
-result: ondWonderfulWorldThirdFooloSec
+result: ondWonderfulWorldThird012Foolo
 Received loadend event
 DONE
 
