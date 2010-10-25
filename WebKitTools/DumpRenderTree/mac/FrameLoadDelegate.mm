@@ -50,6 +50,7 @@
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebScriptWorld.h>
 #import <WebKit/WebSecurityOriginPrivate.h>
+#import <WebKit/WebViewPrivate.h>
 #import <wtf/Assertions.h>
 
 @interface NSURL (DRTExtras)
@@ -88,6 +89,12 @@
         else
             return @"frame (anonymous)";
     }
+}
+
+- (NSString *)_drt_printFrameUserGestureStatus
+{
+    BOOL isUserGesture = [[self webView] _isProcessingUserGesture];
+    return [NSString stringWithFormat:@"Frame with user gesture \"%@\"", isUserGesture ? @"true" : @"false"];
 }
 @end
 
@@ -146,7 +153,12 @@
         NSString *string = [NSString stringWithFormat:@"%@ - didStartProvisionalLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
-    
+
+    if (!done && gLayoutTestController->dumpUserGestureInFrameLoadCallbacks()) {
+        NSString *string = [NSString stringWithFormat:@"%@ - in didStartProvisionalLoadForFrame", [frame _drt_printFrameUserGestureStatus]];
+        printf ("%s\n", [string UTF8String]);
+    }
+
     ASSERT([frame provisionalDataSource]);
     // Make sure we only set this once per test.  If it gets cleared, and then set again, we might
     // end up doing two dumps for one test.
@@ -166,7 +178,7 @@
         NSString *string = [NSString stringWithFormat:@"%@ - didCommitLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
-    
+
     ASSERT(![frame provisionalDataSource]);
     ASSERT([frame dataSource]);
     
@@ -190,7 +202,7 @@
         ASSERT_NOT_REACHED();
         return;
     }
-    
+
     ASSERT([frame provisionalDataSource]);
     [self webView:sender locationChangeDone:error forDataSource:[frame provisionalDataSource]];
 }
@@ -204,7 +216,7 @@
         NSString *string = [NSString stringWithFormat:@"%@ - didFinishLoadForFrame", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
-    
+
     // FIXME: This call to displayIfNeeded can be removed when <rdar://problem/5092361> is fixed.
     // After that is fixed, we will reenable painting after WebCore is done loading the document, 
     // and this call will no longer be needed.
@@ -220,7 +232,7 @@
         NSString *string = [NSString stringWithFormat:@"%@ - didFailLoadWithError", [frame _drt_descriptionSuitableForTestResult]];
         printf ("%s\n", [string UTF8String]);
     }
-    
+
     ASSERT(![frame provisionalDataSource]);
     ASSERT([frame dataSource]);
     
@@ -233,7 +245,7 @@
         NSString *string = [NSString stringWithFormat:@"?? - windowScriptObjectAvailable"];
         printf ("%s\n", [string UTF8String]);
     }
-    
+
     ASSERT_NOT_REACHED();
 }
 
@@ -314,7 +326,7 @@
         NSString *string = [NSString stringWithFormat:@"%@ - didReceiveTitle: %@", [frame _drt_descriptionSuitableForTestResult], title];
         printf ("%s\n", [string UTF8String]);
     }
-    
+
     if (gLayoutTestController->dumpTitleChanges())
         printf("TITLE CHANGED: %s\n", [title UTF8String]);
 }

@@ -101,6 +101,7 @@ public:
     static QString plainText(const QVariant& rng);
 
     static void dumpFrameLoader(bool b);
+    static void dumpUserGestureInFrameLoader(bool b);
     static void dumpResourceLoadCallbacks(bool b);
     static void dumpResourceResponseMIMETypes(bool b);
     static void dumpResourceLoadCallbacksPath(const QString& path);

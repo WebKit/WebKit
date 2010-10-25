@@ -1,3 +1,24 @@
+2010-10-25  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Dump the gesture status of frame in frame load callbacks in DumpRenderTree
+        by adding a new method dumpUserGestureInFrameLoadCallbacks.
+        Now only dump the gesture status in "DidStartProvisionalLoad" callback.
+        https://bugs.webkit.org/show_bug.cgi?id=47849
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::dumpUserGestureInFrameLoader):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (drtPrintFrameUserGestureStatus):
+        (WebCore::FrameLoaderClientQt::dispatchDidHandleOnloadEvents):
+        (WebCore::FrameLoaderClientQt::dispatchDidPushStateWithinPage):
+        (WebCore::FrameLoaderClientQt::dispatchDidReplaceStateWithinPage):
+        (WebCore::FrameLoaderClientQt::dispatchDidPopStateWithinPage):
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2010-10-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

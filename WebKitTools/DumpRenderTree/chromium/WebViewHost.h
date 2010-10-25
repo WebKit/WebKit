@@ -220,6 +220,9 @@ private:
     // Dumping a frame to the console.
     void printFrameDescription(WebKit::WebFrame*);
 
+    // Dumping the user gesture status to the console.
+    void printFrameUserGestureStatus(WebKit::WebFrame*, const char*);
+
     bool hasWindow() const { return m_hasWindow; }
     void resetScrollRect();
     void discardBackingStore();

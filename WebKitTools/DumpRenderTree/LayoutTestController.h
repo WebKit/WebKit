@@ -154,6 +154,9 @@ public:
 
     bool dumpFrameLoadCallbacks() const { return m_dumpFrameLoadCallbacks; }
     void setDumpFrameLoadCallbacks(bool dumpFrameLoadCallbacks) { m_dumpFrameLoadCallbacks = dumpFrameLoadCallbacks; }
+    
+    bool dumpUserGestureInFrameLoadCallbacks() const { return m_dumpUserGestureInFrameLoadCallbacks; }
+    void setDumpUserGestureInFrameLoadCallbacks(bool dumpUserGestureInFrameLoadCallbacks) { m_dumpUserGestureInFrameLoadCallbacks = dumpUserGestureInFrameLoadCallbacks; }    
 
     bool dumpHistoryDelegateCallbacks() const { return m_dumpHistoryDelegateCallbacks; }
     void setDumpHistoryDelegateCallbacks(bool dumpHistoryDelegateCallbacks) { m_dumpHistoryDelegateCallbacks = dumpHistoryDelegateCallbacks; }
@@ -311,6 +314,7 @@ private:
     bool m_dumpDatabaseCallbacks;
     bool m_dumpEditingCallbacks;
     bool m_dumpFrameLoadCallbacks;
+    bool m_dumpUserGestureInFrameLoadCallbacks;
     bool m_dumpHistoryDelegateCallbacks;
     bool m_dumpResourceLoadCallbacks;
     bool m_dumpResourceResponseMIMETypes;

@@ -233,6 +233,7 @@ public:
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext();
 
     static bool dumpFrameLoaderCallbacks;
+    static bool dumpUserGestureInFrameLoaderCallbacks;
     static bool dumpResourceLoadCallbacks;
     static bool dumpResourceResponseMIMETypes;
     static QString dumpResourceLoadCallbacksPath;

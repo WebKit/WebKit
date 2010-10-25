@@ -1,3 +1,46 @@
+2010-10-25  Johnny Ding  <jnd@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Dump the gesture status of frame in frame load callbacks in DumpRenderTree
+        by adding a new method dumpUserGestureInFrameLoadCallbacks.
+        Now only dump the gesture status in "DidStartProvisionalLoad" callback.
+        https://bugs.webkit.org/show_bug.cgi?id=47849
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpUserGestureInFrameLoadCallbacksCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpUserGestureInFrameLoadCallbacks):
+        (LayoutTestController::setDumpUserGestureInFrameLoadCallbacks):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::dumpUserGestureInFrameLoadCallbacks):
+        (LayoutTestController::reset):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::shouldDumpUserGestureInFrameLoadCallbacks):
+        (LayoutTestController::setShouldDumpUserGestureInFrameLoadCallbacks):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::shouldDumpUserGestureInFrameLoadCallbacks):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didStartProvisionalLoad):
+        (WebViewHost::printFrameUserGestureStatus):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[WebFrame _drt_printFrameUserGestureStatus]):
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didCommitLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[FrameLoadDelegate webView:didFailLoadWithError:forFrame:]):
+        (-[FrameLoadDelegate webView:windowScriptObjectAvailable:]):
+        (-[FrameLoadDelegate webView:didReceiveTitle:forFrame:]):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::reset):
+        (LayoutTestController::dumpUserGestureInFrameLoadCallbacks):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r70442.

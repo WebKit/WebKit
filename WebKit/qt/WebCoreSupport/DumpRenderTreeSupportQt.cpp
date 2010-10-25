@@ -561,6 +561,11 @@ void DumpRenderTreeSupportQt::dumpFrameLoader(bool b)
     FrameLoaderClientQt::dumpFrameLoaderCallbacks = b;
 }
 
+void DumpRenderTreeSupportQt::dumpUserGestureInFrameLoader(bool b)
+{
+    FrameLoaderClientQt::dumpUserGestureInFrameLoaderCallbacks = b;
+}
+
 void DumpRenderTreeSupportQt::dumpResourceLoadCallbacks(bool b)
 {
     FrameLoaderClientQt::dumpResourceLoadCallbacks = b;

@@ -813,6 +813,8 @@ void WebViewHost::didCreateDataSource(WebFrame*, WebDataSource* ds)
 
 void WebViewHost::didStartProvisionalLoad(WebFrame* frame)
 {
+    if (m_shell->shouldDumpUserGestureInFrameLoadCallbacks())
+        printFrameUserGestureStatus(frame, " - in didStartProvisionalLoadForFrame\n");
     if (m_shell->shouldDumpFrameLoadCallbacks()) {
         printFrameDescription(frame);
         fputs(" - didStartProvisionalLoadForFrame\n", stdout);
@@ -1303,6 +1305,12 @@ void WebViewHost::printFrameDescription(WebFrame* webframe)
         return;
     }
     printf("frame \"%s\"", name8.c_str());
+}
+
+void WebViewHost::printFrameUserGestureStatus(WebFrame* webframe, const char* msg)
+{
+    bool isUserGesture = webframe->isProcessingUserGesture();
+    printf("Frame with user gesture \"%s\"%s", isUserGesture ? "true" : "false", msg);
 }
 
 void WebViewHost::printResourceDescription(unsigned identifier)
