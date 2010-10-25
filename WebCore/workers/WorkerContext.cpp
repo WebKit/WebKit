@@ -69,6 +69,7 @@
 #include "DOMFileSystemSync.h"
 #include "ErrorCallback.h"
 #include "FileError.h"
+#include "FileException.h"
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "LocalFileSystem.h"
@@ -355,13 +356,13 @@ void WorkerContext::revokeObjectURL(const String& blobURLString)
 void WorkerContext::requestFileSystem(int type, long long size, PassRefPtr<FileSystemCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem()) {
-        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(SECURITY_ERR));
+        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::SECURITY_ERR));
         return;
     }
 
     AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
     if (fileSystemType != AsyncFileSystem::Temporary && fileSystemType != AsyncFileSystem::Persistent) {
-        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(INVALID_MODIFICATION_ERR));
+        DOMFileSystem::scheduleCallback(this, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
         return;
     }
 
@@ -372,13 +373,13 @@ PassRefPtr<DOMFileSystemSync> WorkerContext::requestFileSystemSync(int type, lon
 {
     ec = 0;
     if (!AsyncFileSystem::isAvailable() || !securityOrigin()->canAccessFileSystem()) {
-        ec = SECURITY_ERR;
+        ec = FileException::SECURITY_ERR;
         return 0;
     }
 
     AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
     if (fileSystemType != AsyncFileSystem::Temporary && fileSystemType != AsyncFileSystem::Persistent) {
-        ec = INVALID_MODIFICATION_ERR;
+        ec = FileException::INVALID_MODIFICATION_ERR;
         return 0;
     }
 

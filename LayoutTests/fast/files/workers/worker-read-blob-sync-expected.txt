@@ -1,9 +1,9 @@
 
 Received files in worker
 Test reading a blob containing non-existent file
-Received exception 8: NOT_FOUND_ERR
+Received exception 1: NOT_FOUND_ERR
 Test reading a blob containing existent and non-existent file
-Received exception 8: NOT_FOUND_ERR
+Received exception 1: NOT_FOUND_ERR
 Test reading a blob containing empty file
 
 Test reading a blob containing empty text
@@ -17,7 +17,7 @@ First
 Test reading a blob containing single text as data URL
 data:base64,Rmlyc3Q=
 Test reading a blob containing single text as data URL (optional content type provided)
-result: data:type/foo;base64,Rmlyc3Q=
+data:type/foo;base64,Rmlyc3Q=
 Test reading a blob containing sliced file
 onder
 Test reading a blob containing sliced text

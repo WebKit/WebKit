@@ -37,6 +37,7 @@
 #include "Base64.h"
 #include "Blob.h"
 #include "BlobURL.h"
+#include "FileException.h"
 #include "FileReader.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
@@ -91,7 +92,7 @@ void FileReaderSyncLoader::start(ScriptExecutionContext* scriptExecutionContext,
 
     ThreadableLoader::loadResourceSynchronously(scriptExecutionContext, request, *this, options);
 
-    ec = (m_httpStatusCode == 200) ? 0 : FileReader::httpStatusCodeToExceptionCode(m_httpStatusCode);
+    ec = (m_httpStatusCode == 200) ? 0 : FileException::ErrorCodeToExceptionCode(FileReader::httpStatusCodeToErrorCode(m_httpStatusCode));
 }
 
 void FileReaderSyncLoader::didReceiveResponse(const ResourceResponse& response)

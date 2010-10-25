@@ -19,26 +19,26 @@ PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry does NOT exist: /a/b
 PASS Verified entry: ENTRY {path:/c/b name:b type:FILE}
 * Running: MoveFileWithEmptyNameToSameDirectory
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:FILE}
 * Running: MoveFileWithSameName
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:FILE}
 * Running: MoveForNonExistentEntry
 PASS Succeeded: "/a/b".remove()
-PASS this.expectedErrorCode + "" is "8"
+PASS this.expectedErrorCode + "" is "1"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/c name:c type:DIRECTORY}
 * Running: MoveEntryToNonExistentDirectory
 PASS Succeeded: "/c".remove()
-PASS this.expectedErrorCode + "" is "8"
+PASS this.expectedErrorCode + "" is "1"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:FILE}
 * Running: MoveEntryToItsChild
-PASS this.expectedErrorCode + "" is "13"
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b/c name:c type:DIRECTORY}

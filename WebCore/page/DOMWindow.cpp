@@ -730,13 +730,13 @@ void DOMWindow::requestFileSystem(int type, long long size, PassRefPtr<FileSyste
         return;
 
     if (!AsyncFileSystem::isAvailable() || !document->securityOrigin()->canAccessFileSystem()) {
-        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(SECURITY_ERR));
+        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::SECURITY_ERR));
         return;
     }
 
     AsyncFileSystem::Type fileSystemType = static_cast<AsyncFileSystem::Type>(type);
     if (fileSystemType != AsyncFileSystem::Temporary && fileSystemType != AsyncFileSystem::Persistent) {
-        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(INVALID_MODIFICATION_ERR));
+        DOMFileSystem::scheduleCallback(document, errorCallback, FileError::create(FileError::INVALID_MODIFICATION_ERR));
         return;
     }
 

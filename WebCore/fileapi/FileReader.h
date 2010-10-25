@@ -80,7 +80,7 @@ public:
     String result();
 
     // Helper methods, also used by FileReaderSync.
-    static ExceptionCode httpStatusCodeToExceptionCode(int httpStatusCode);
+    static FileError::ErrorCode httpStatusCodeToErrorCode(int httpStatusCode);
     static void convertToDataURL(const Vector<char>& rawData, const String& fileType, StringBuilder&);
 
     // ActiveDOMObject

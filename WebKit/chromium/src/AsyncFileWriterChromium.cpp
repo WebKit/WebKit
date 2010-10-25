@@ -85,7 +85,7 @@ void AsyncFileWriterChromium::didTruncate()
 
 void AsyncFileWriterChromium::didFail(WebKit::WebFileError error)
 {
-    m_client->didFail(error);
+    m_client->didFail(static_cast<FileError::ErrorCode>(error));
 }
 
 } // namespace

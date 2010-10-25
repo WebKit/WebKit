@@ -19,26 +19,26 @@ PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:FILE}
 PASS Verified entry: ENTRY {path:/c/b name:b type:FILE}
 * Running: CopyFileWithEmptyNameToSameDirectory
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:FILE}
 * Running: CopyFileWithSameName
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:FILE}
 * Running: CopyForNonExistentEntry
 PASS Succeeded: "/a/b".remove()
-PASS this.expectedErrorCode + "" is "8"
+PASS this.expectedErrorCode + "" is "1"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/c name:c type:DIRECTORY}
 * Running: CopyEntryToNonExistentDirectory
 PASS Succeeded: "/c".remove()
-PASS this.expectedErrorCode + "" is "8"
+PASS this.expectedErrorCode + "" is "1"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:FILE}
 * Running: CopyEntryToItsChild
-PASS this.expectedErrorCode + "" is "13"
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b/c name:c type:DIRECTORY}

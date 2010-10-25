@@ -39,7 +39,7 @@
 #include "EntrySync.h"
 #include "ExceptionCode.h"
 #include "FileEntrySync.h"
-#include "FileError.h"
+#include "FileException.h"
 #include "SyncCallbackHelper.h"
 
 namespace WebCore {
@@ -57,7 +57,7 @@ PassRefPtr<EntryArraySync> DirectoryReaderSync::readEntries(ExceptionCode& ec)
 
     EntriesSyncCallbackHelper helper(m_fileSystem->asyncFileSystem());
     if (!m_fileSystem->readDirectory(this, m_fullPath, helper.successCallback(), helper.errorCallback())) {
-        ec = INVALID_MODIFICATION_ERR;
+        ec = FileException::INVALID_MODIFICATION_ERR;
         setHasMoreEntries(false);
         return 0;
     }

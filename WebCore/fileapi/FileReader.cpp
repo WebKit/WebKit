@@ -145,7 +145,7 @@ void FileReader::abort()
     terminate();
 
     m_builder.clear();
-    m_error = FileError::create(ABORT_ERR);
+    m_error = FileError::create(FileError::ABORT_ERR);
 
     fireEvent(eventNames().errorEvent);
     fireEvent(eventNames().abortEvent);
@@ -255,22 +255,22 @@ void FileReader::failed(int httpStatusCode)
 {
     m_state = Completed;
 
-     m_error = FileError::create(httpStatusCodeToExceptionCode(httpStatusCode));
+     m_error = FileError::create(httpStatusCodeToErrorCode(httpStatusCode));
     fireEvent(eventNames().errorEvent);
     fireEvent(eventNames().loadendEvent);
 
     cleanup();
 }
 
-ExceptionCode FileReader::httpStatusCodeToExceptionCode(int httpStatusCode)
+FileError::ErrorCode FileReader::httpStatusCodeToErrorCode(int httpStatusCode)
 {
     switch (httpStatusCode) {
         case 403:
-            return SECURITY_ERR;
+            return FileError::SECURITY_ERR;
         case 404:
-            return NOT_FOUND_ERR;
+            return FileError::NOT_FOUND_ERR;
         default:
-            return NOT_READABLE_ERR;
+            return FileError::NOT_READABLE_ERR;
     }
 }
 

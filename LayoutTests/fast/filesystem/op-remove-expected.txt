@@ -1,11 +1,11 @@
 * Running: RemoveSimple
 PASS Succeeded: "/a".remove()
 PASS Succeeded: "/b".remove()
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry does NOT exist: /a
 PASS Verified entry does NOT exist: /b
 * Running: RemoveNonRecursiveWithChildren
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/c name:c type:FILE}
@@ -14,7 +14,7 @@ PASS Succeeded: "/a".removeRecursively()
 PASS Verified entry does NOT exist: /a
 * Running: RemoveRecursiveWithChildren
 PASS Succeeded: "/a".removeRecursively()
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry does NOT exist: /a
 Finished running tests.
 PASS successfullyParsed is true

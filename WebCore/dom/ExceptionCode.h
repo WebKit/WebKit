@@ -81,6 +81,9 @@ namespace WebCore {
 #if ENABLE(DATABASE)
         , SQLExceptionType
 #endif
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+        , FileExceptionType
+#endif
     };
 
 

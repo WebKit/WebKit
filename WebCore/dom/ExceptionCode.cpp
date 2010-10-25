@@ -42,6 +42,10 @@
 #include "SQLException.h"
 #endif
 
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+#include "FileException.h"
+#endif
+
 namespace WebCore {
 
 static const char* const exceptionNames[] = {
@@ -173,6 +177,38 @@ static const char* const sqlExceptionDescriptions[] = {
 };
 #endif
 
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+static const char* const fileExceptionNames[] = {
+    "NOT_FOUND_ERR",
+    "SECURITY_ERR",
+    "ABORT_ERR",
+    "NOT_READABLE_ERR",
+    "ENCODING_ERR",
+    "NO_MODIFICATION_ALLOWED_ERR",
+    "INVALID_STATE_ERR",
+    "SYNTAX_ERR",
+    "INVALID_MODIFICATION_ERR",
+    "QUOTA_EXCEEDED_ERR",
+    "TYPE_MISMATCH_ERR",
+    "PATH_EXISTS_ERR"
+};
+
+static const char* const fileExceptionDescriptions[] = {
+    "A requested file or directory could not be found at the time an operation was processed.",
+    "It was determined that certain files are unsafe for access within a Web application, or that too many calls are being made on file resources.",
+    "An ongoing operation was aborted, typically with a call to abort().",
+    "The requested file could not be read, typically due to permission problems that have occured after a reference to a file was acquired.",
+    "A URI supplied to the API was malformed, or the resulting Data URL has exceeded the URL length limitations for Data URLs.",
+    "An attempt was made to write to a file or directory which could not be modified due to the state of the underlying filesystem.",
+    "An operation that depends on state cached in an interface object was made but the state had changed since it was read from disk.",
+    "An invalid or unsupported argument was given, like an invalid line ending specifier.",
+    "The modification request was illegal.",
+    "The operation failed because it would cause the application to exceed its storage quota.",
+    "The path supplied exists, but was not an entry of requested type.",
+    "An attempt was made to create a file or directory where an element already exists."
+};
+#endif
+
 void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& description)
 {
     ASSERT(ec);
@@ -240,6 +276,16 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         descriptionTable = sqlExceptionDescriptions;
         nameTableSize = sizeof(sqlExceptionNames) / sizeof(sqlExceptionNames[0]);
         nameTableOffset = SQLException::UNKNOWN_ERR;
+#endif
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+    } else if (code >= FileException::FileExceptionOffset && code <= FileException::FileExceptionMax) {
+        type = FileExceptionType;
+        typeName = "DOM File";
+        code -= FileException::FileExceptionOffset;
+        nameTable = fileExceptionNames;
+        descriptionTable = fileExceptionDescriptions;
+        nameTableSize = sizeof(fileExceptionNames) / sizeof(fileExceptionNames[0]);
+        nameTableOffset = FileException::NOT_FOUND_ERR;
 #endif
     } else {
         type = DOMExceptionType;

@@ -1,3 +1,15 @@
+2010-10-20  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Renumber FileError/FileException error codes per latest File API spec changes
+        https://bugs.webkit.org/show_bug.cgi?id=47936
+
+        * public/WebFileError.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/AsyncFileWriterChromium.cpp:
+        (WebCore::AsyncFileWriterChromium::didFail):
+
 2010-10-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r70361.

@@ -44,12 +44,30 @@ public:
         return adoptRef(new FileException(description));
     }
 
-    static const int FileExceptionOffset = 100;
-    static const int FileExceptionMax = 199;
+    static const int FileExceptionOffset = 1100;
+    static const int FileExceptionMax = 1199;
 
-    enum EventExceptionCode {
-        UNSPECIFIED_EVENT_TYPE_ERR = FileExceptionOffset
+    enum FileExceptionCode {
+        NOT_FOUND_ERR = FileExceptionOffset + 1,
+        SECURITY_ERR = FileExceptionOffset + 2,
+        ABORT_ERR = FileExceptionOffset + 3,
+        NOT_READABLE_ERR = FileExceptionOffset + 4,
+        ENCODING_ERR = FileExceptionOffset + 5,
+        NO_MODIFICATION_ALLOWED_ERR = FileExceptionOffset + 6,
+        INVALID_STATE_ERR = FileExceptionOffset + 7,
+        SYNTAX_ERR = FileExceptionOffset + 8,
+        INVALID_MODIFICATION_ERR = FileExceptionOffset + 9,
+        QUOTA_EXCEEDED_ERR = FileExceptionOffset + 10,
+        TYPE_MISMATCH_ERR = FileExceptionOffset + 11,
+        PATH_EXISTS_ERR = FileExceptionOffset + 12,
     };
+
+    static int ErrorCodeToExceptionCode(int errorCode)
+    {
+        if (!errorCode)
+            return 0;
+        return errorCode + FileExceptionOffset;
+    }
 
 private:
     FileException(const ExceptionCodeDescription& description)
@@ -63,4 +81,3 @@ private:
 #endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
 #endif // FileException_h
-

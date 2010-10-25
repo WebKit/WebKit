@@ -77,7 +77,7 @@ public:
     // AsyncFileWriterClient
     void didWrite(long long bytes, bool complete);
     void didTruncate();
-    void didFail(ExceptionCode ec);
+    void didFail(FileError::ErrorCode);
 
     // ActiveDOMObject
     virtual bool canSuspend() const;
@@ -97,7 +97,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(writeend);
-    
+
 private:
     FileWriter(ScriptExecutionContext*);
 
@@ -112,6 +112,8 @@ private:
     virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
 
     void fireEvent(const AtomicString& type);
+
+    void setError(FileError::ErrorCode, ExceptionCode&);
 
     RefPtr<FileError> m_error;
     EventTargetData m_eventTargetData;

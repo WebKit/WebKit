@@ -33,7 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "ExceptionCode.h"
+#include "FileError.h"
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ public:
 
     virtual void didWrite(long long bytes, bool complete) = 0;
     virtual void didTruncate() = 0;
-    virtual void didFail(ExceptionCode) = 0;
+    virtual void didFail(FileError::ErrorCode) = 0;
 };
 
 } // namespace

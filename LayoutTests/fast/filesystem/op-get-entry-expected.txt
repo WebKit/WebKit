@@ -24,15 +24,15 @@ PASS Succeeded: "/a".getDirectory("../b")
 PASS Succeeded: "/a".getDirectory("../../b/c")
 PASS Succeeded: "/a".getDirectory("/a/../../d")
 PASS Succeeded: "/a".getDirectory("/a/../../b/./c/../../../../../e")
-PASS this.expectedErrorCode + "" is "13"
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
+PASS this.expectedErrorCode + "" is "9"
 PASS Succeeded: "/a".getFile("./b.txt")
 PASS Succeeded: "/a".getFile("../b.txt")
 PASS Succeeded: "/a".getFile("../../b/c.txt")
 PASS Succeeded: "/a".getFile("/a/../../d.txt")
 PASS Succeeded: "/a".getFile("/a/../../b/./c/../../../../../e.txt")
-PASS this.expectedErrorCode + "" is "13"
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/a/b name:b type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/b name:b type:DIRECTORY}
@@ -66,21 +66,21 @@ PASS this.environment[this.entry.fullPath].isDirectory + "" is "false"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/b name:b type:FILE}
 * Running: GetNonExistent
-PASS this.expectedErrorCode + "" is "8"
-PASS this.expectedErrorCode + "" is "8"
-PASS this.expectedErrorCode + "" is "8"
-PASS this.expectedErrorCode + "" is "8"
+PASS this.expectedErrorCode + "" is "1"
+PASS this.expectedErrorCode + "" is "1"
+PASS this.expectedErrorCode + "" is "1"
+PASS this.expectedErrorCode + "" is "1"
 * Running: GetFileForDirectory
-PASS this.expectedErrorCode + "" is "11"
-PASS this.expectedErrorCode + "" is "11"
+PASS this.expectedErrorCode + "" is "7"
+PASS this.expectedErrorCode + "" is "7"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 * Running: GetDirectoryForFile
-PASS this.expectedErrorCode + "" is "11"
-PASS this.expectedErrorCode + "" is "11"
+PASS this.expectedErrorCode + "" is "7"
+PASS this.expectedErrorCode + "" is "7"
 PASS Verified entry: ENTRY {path:/a name:a type:FILE}
 * Running: CreateWithExclusive
-PASS this.expectedErrorCode + "" is "13"
-PASS this.expectedErrorCode + "" is "13"
+PASS this.expectedErrorCode + "" is "9"
+PASS this.expectedErrorCode + "" is "9"
 PASS Verified entry: ENTRY {path:/a name:a type:DIRECTORY}
 PASS Verified entry: ENTRY {path:/b name:b type:FILE}
 Finished running tests.

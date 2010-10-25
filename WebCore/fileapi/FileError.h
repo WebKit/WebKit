@@ -33,7 +33,6 @@
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
-#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -41,16 +40,31 @@ namespace WebCore {
 
 class FileError : public RefCounted<FileError> {
 public:
-    static PassRefPtr<FileError> create(ExceptionCode code) { return adoptRef(new FileError(code)); }
+    enum ErrorCode {
+        NOT_FOUND_ERR = 1,
+        SECURITY_ERR = 2,
+        ABORT_ERR = 3,
+        NOT_READABLE_ERR = 4,
+        ENCODING_ERR = 5,
+        NO_MODIFICATION_ALLOWED_ERR = 6,
+        INVALID_STATE_ERR = 7,
+        SYNTAX_ERR = 8,
+        INVALID_MODIFICATION_ERR = 9,
+        QUOTA_EXCEEDED_ERR = 10,
+        TYPE_MISMATCH_ERR = 11,
+        PATH_EXISTS_ERR = 12,
+    };
 
-    ExceptionCode code() const { return m_code; }
+    static PassRefPtr<FileError> create(ErrorCode code) { return adoptRef(new FileError(code)); }
+
+    ErrorCode code() const { return m_code; }
 
 private:
-    FileError(ExceptionCode code)
+    FileError(ErrorCode code)
         : m_code(code)
     { }
 
-    ExceptionCode m_code;
+    ErrorCode m_code;
 };
 
 } // namespace WebCore

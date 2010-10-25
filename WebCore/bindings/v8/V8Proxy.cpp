@@ -55,6 +55,7 @@
 #include "V8DOMMap.h"
 #include "V8DOMWindow.h"
 #include "V8EventException.h"
+#include "V8FileException.h"
 #include "V8HiddenPropertyName.h"
 #include "V8IsolatedContext.h"
 #include "V8RangeException.h"
@@ -701,6 +702,11 @@ void V8Proxy::setDOMException(int exceptionCode)
 #if ENABLE(DATABASE)
     case SQLExceptionType:
         exception = toV8(SQLException::create(description));
+        break;
+#endif
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+    case FileExceptionType:
+        exception = toV8(FileException::create(description));
         break;
 #endif
     default:

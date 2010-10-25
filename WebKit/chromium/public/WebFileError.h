@@ -34,15 +34,18 @@ namespace WebKit {
 
 // File-related error code defined in HTML5 File API.
 enum WebFileError {
-    WebFileErrorNoModificationAllowed = 7,
-    WebFileErrorNotFound = 8,
-    WebFileErrorInvalidState = 11,
-    WebFileErrorInvalidModification = 13,
-    WebFileErrorSecurity = 18,
-    WebFileErrorAbort = 20,
-    WebFileErrorQuotaExceeded = 22,
-    WebFileErrorNotReadable = 24,
-    WebFileErrorEncoding = 26,
+    WebFileErrorNotFound = 1,
+    WebFileErrorSecurity = 2,
+    WebFileErrorAbort = 3,
+    WebFileErrorNotReadable = 4,
+    WebFileErrorEncoding = 5,
+    WebFileErrorNoModificationAllowed = 6,
+    WebFileErrorInvalidState = 7,
+    WebFileErrorSyntax = 8,
+    WebFileErrorInvalidModification = 9,
+    WebFileErrorQuotaExceeded = 10,
+    WebFileErrorTypeMismatch = 11,
+    WebFileErrorPathExists = 12,
 };
 
 } // namespace WebKit
