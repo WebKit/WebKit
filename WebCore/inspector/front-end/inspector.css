@@ -1918,35 +1918,45 @@ body.inactive .sidebar {
 }
 
 .storage.panel .sidebar {
-    border-left: rgb(232, 232, 232);
-    background-color: transparent;
-    padding-left: 0px;
+    padding-left: 0;
+    z-index: 10;
 }
 
-.storage.panel .outline-disclosure li {
+.storage.panel .sidebar li {
     height: 17px;
     white-space: nowrap;
     text-indent: 0;
     margin-left: -2px;
 }
 
-.storage.panel .outline-disclosure li.parent {
+.storage.panel .sidebar li.parent {
     text-indent: 0;
     margin-left: -12px;
 }
 
-.storage.panel .outline-disclosure li .selection {
+.storage.panel .sidebar li.selected {
+    color: white;
+    text-shadow: rgba(0, 0, 0, 0.33) 0 1px 0;
+    font-weight: bold;
+}
+
+.storage.panel .sidebar li .selection {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(162, 177, 207)), to(rgb(120, 138, 177)));
+    border-top: 1px solid #979797;
     height: 17px;
-    margin-top: -13px;
 }
 
-.storage.panel .sidebar-resizer-vertical {
-    background: rgb(220, 220, 220);
-    border-left: 1px solid gray;
-    border-right: 1px solid gray;
+.storage.panel .sidebar :focus li .selection {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(92, 147, 213)), to(rgb(21, 83, 170)));
+    border-top: 1px solid rgb(68, 128, 200);
 }
 
-.storage.panel .outline-disclosure .icon {
+body.inactive .storage.panel .sidebar li .selection {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(180, 180, 180)), to(rgb(138, 138, 138)));
+    border-top: 1px solid rgb(151, 151, 151);
+}
+
+.storage.panel .sidebar .icon {
     width: 16px;
     height: 16px;
     float: left;

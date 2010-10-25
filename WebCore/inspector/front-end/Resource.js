@@ -105,9 +105,16 @@ WebInspector.Resource.prototype = {
         this.path = parsedURL ? parsedURL.path : "";
         this.lastPathComponent = "";
         if (parsedURL && parsedURL.path) {
-            var lastSlashIndex = parsedURL.path.lastIndexOf("/");
+            // First cut the query params.
+            var path = parsedURL.path;
+            var indexOfQuery = path.indexOf("?");
+            if (indexOfQuery !== -1)
+                path = path.substring(0, indexOfQuery);
+
+            // Then take last path component.
+            var lastSlashIndex = path.lastIndexOf("/");
             if (lastSlashIndex !== -1)
-                this.lastPathComponent = parsedURL.path.substring(lastSlashIndex + 1);
+                this.lastPathComponent = path.substring(lastSlashIndex + 1);
         }
         this.lastPathComponentLowerCase = this.lastPathComponent.toLowerCase();
     },

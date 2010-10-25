@@ -77,7 +77,7 @@ WebInspector.StoragePanel = function(database)
 WebInspector.StoragePanel.prototype = {
     get toolbarItemLabel()
     {
-        return WebInspector.UIString("Storage");
+        return Preferences.networkPanelEnabled ? WebInspector.UIString("Resources") : WebInspector.UIString("Storage");
     },
 
     get statusBarItems()
@@ -262,7 +262,7 @@ WebInspector.StoragePanel.prototype = {
 
     showResource: function(resource, line)
     {
-        var resourceTreeElement = this.sidebarTree.findTreeElement(resource);
+        var resourceTreeElement = this._findTreeElementForResource(resource);
         if (resourceTreeElement) {
             resourceTreeElement.reveal();
             resourceTreeElement.select();
@@ -566,9 +566,26 @@ WebInspector.StoragePanel.prototype = {
     {
         if (!view.resource)
             return;
-        var treeElement = this.sidebarTree.findTreeElement(view.resource);
+        var treeElement = this._findTreeElementForResource(view.resource);
         if (treeElement)
             treeElement.searchMatchFound(matches);
+    },
+
+    _findTreeElementForResource: function(resource)
+    {
+        function isAncestor(ancestor, object)
+        {
+            console.error("There should be no calls to isAncestor, but there was one for ", object);
+            return false;
+        }
+
+        function getParent(object)
+        {
+            console.error("There should be no calls to getParent, but there was one for ", object);
+            return null;
+        }
+
+        return this.sidebarTree.findTreeElement(resource, isAncestor, getParent);
     },
 
     searchCanceled: function(startingNewSearch)
@@ -618,6 +635,10 @@ WebInspector.BaseStorageTreeElement.prototype = {
         this.listItemElement.removeChildren();
         this.listItemElement.addStyleClass(this._iconClass);
 
+        var selectionElement = document.createElement("div");
+        selectionElement.className = "selection";
+        this.listItemElement.appendChild(selectionElement);
+
         this.imageElement = document.createElement("img");
         this.imageElement.className = "icon";
         this.listItemElement.appendChild(this.imageElement);
@@ -626,10 +647,6 @@ WebInspector.BaseStorageTreeElement.prototype = {
         this.titleElement.className = "base-storage-tree-element-title";
         this.titleElement.textContent = this._titleText;
         this.listItemElement.appendChild(this.titleElement);
-
-        var selectionElement = document.createElement("div");
-        selectionElement.className = "selection";
-        this.listItemElement.appendChild(selectionElement);
     },
 
     onreveal: function()
