@@ -36,7 +36,6 @@
 
 #include "ScriptValue.h"
 #include <v8.h>
-#include <wtf/text/TextPosition.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -67,7 +66,7 @@ namespace WebCore {
         void trackEvent(Event*);
 
         // Evaluate a script file in the current execution environment.
-        ScriptValue evaluate(const String& script, const String& fileName, const TextPosition0& scriptStartPosition, WorkerContextExecutionState*);
+        ScriptValue evaluate(const String& script, const String& fileName, int baseLine, WorkerContextExecutionState*);
 
         // Returns a local handle of the context.
         v8::Local<v8::Context> context() { return v8::Local<v8::Context>::New(m_context); }
