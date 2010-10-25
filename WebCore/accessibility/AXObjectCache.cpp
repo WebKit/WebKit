@@ -323,7 +323,7 @@ void AXObjectCache::remove(RenderObject* renderer)
     m_renderObjectMapping.remove(renderer);
 }
 
-#if !PLATFORM(WIN)
+#if !PLATFORM(WIN) || OS(WINCE)
 AXID AXObjectCache::platformGenerateAXID() const
 {
     static AXID lastUsedID = 0;
