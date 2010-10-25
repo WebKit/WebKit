@@ -403,6 +403,7 @@ NSString *WebElementLinkLabelKey =          @"WebElementLinkLabel";
 NSString *WebElementLinkTargetFrameKey =    @"WebElementTargetFrame";
 NSString *WebElementLinkTitleKey =          @"WebElementLinkTitle";
 NSString *WebElementLinkURLKey =            @"WebElementLinkURL";
+NSString *WebElementMediaURLKey =           @"WebElementMediaURL";
 NSString *WebElementSpellingToolTipKey =    @"WebElementSpellingToolTip";
 NSString *WebElementTitleKey =              @"WebElementTitle";
 NSString *WebElementLinkIsLiveKey =         @"WebElementLinkIsLive";

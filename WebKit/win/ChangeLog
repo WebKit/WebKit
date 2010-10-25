@@ -1,3 +1,14 @@
+2010-10-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Expose HitTestResult::absoluteMediaURL() via WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=48219
+
+        * Interfaces/IWebView.idl: Added WebElementMediaURLKey.
+        * WebElementPropertyBag.cpp:
+        (WebElementPropertyBag::Read): Map WebElementMediaURLKey to absoluteMediaURL().
+
 2010-10-22  Andy Estes  <aestes@apple.com>
 
         Fix the Windows build.

@@ -82,6 +82,7 @@ const LPCOLESTR WebElementImageKey = L"WebElementImageKey";
 const LPCOLESTR WebElementImageRectKey = L"WebElementImageRectKey";
 const LPCOLESTR WebElementImageURLKey = L"WebElementImageURLKey";
 const LPCOLESTR WebElementIsSelectedKey = L"WebElementIsSelectedKey";
+const LPCOLESTR WebElementMediaURLKey = L"WebElementMediaURLKey";
 const LPCOLESTR WebElementSpellingToolTipKey = L"WebElementSpellingToolTipKey";
 const LPCOLESTR WebElementTitleKey = L"WebElementTitleKey";
 const LPCOLESTR WebElementLinkURLKey = L"WebElementLinkURLKey";

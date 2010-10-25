@@ -67,6 +67,7 @@ extern NSString *_WebMainFrameDocumentKey;
 extern NSString *WebElementTitleKey;             // NSString of the title of the element (used by Safari)
 extern NSString *WebElementSpellingToolTipKey;   // NSString of a tooltip representing misspelling or bad grammar (used internally)
 extern NSString *WebElementIsContentEditableKey; // NSNumber indicating whether the inner non-shared node is content editable (used internally)
+extern NSString *WebElementMediaURLKey;          // NSURL of the media element
 
 // other WebElementDictionary keys
 extern NSString *WebElementLinkIsLiveKey;        // NSNumber of BOOL indictating whether the link is live or not

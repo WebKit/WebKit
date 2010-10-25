@@ -1,5 +1,20 @@
 2010-10-24  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        Expose HitTestResult::absoluteMediaURL() via WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=48219
+
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initializeLookupTable]): Map WebElementMediaURLKey to
+        _absoluteMediaURL.
+        (-[WebElementDictionary _absoluteMediaURL]): Added. Returns absoluteMediaURL().
+        * WebKit.exp: Export WebElementMediaURLKey.
+        * WebView/WebView.mm: Define WebElementMediaURLKey.
+        * WebView/WebViewPrivate.h: Declare WebElementMediaURLKey.
+
+2010-10-24  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Simon Fraser.
 
         Removed deprecated methods from the WebHTMLHighlighter private protocol.
