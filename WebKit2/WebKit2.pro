@@ -106,7 +106,6 @@ INCLUDEPATH = \
     $$PWD \
     Platform \
     Platform/CoreIPC \
-    Platform/qt \
     Shared \
     Shared/API/c \
     Shared/CoreIPCSupport \
@@ -175,7 +174,6 @@ HEADERS += \
     Platform/Logging.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
-    Platform/qt/MappedMemoryPool.h \
     Platform/RunLoop.h \
     Platform/SharedMemory.h \
     Platform/WorkItem.h \
@@ -205,6 +203,7 @@ HEADERS += \
     Shared/NativeWebKeyboardEvent.h \
     Shared/NotImplemented.h \
     Shared/StringPairVector.h \
+    Shared/qt/MappedMemory.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
@@ -338,7 +337,6 @@ SOURCES += \
     Platform/Module.cpp \
     Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
-    Platform/qt/MappedMemoryPool.cpp \
     Platform/qt/ModuleQt.cpp \
     Platform/qt/RunLoopQt.cpp \
     Platform/qt/SharedMemoryQt.cpp \
@@ -359,6 +357,7 @@ SOURCES += \
     Shared/MutableArray.cpp \
     Shared/MutableDictionary.cpp \
     Shared/qt/BackingStoreQt.cpp \
+    Shared/qt/MappedMemoryPool.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \

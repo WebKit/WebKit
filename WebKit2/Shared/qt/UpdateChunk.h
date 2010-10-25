@@ -27,7 +27,7 @@
 #ifndef UpdateChunk_h
 #define UpdateChunk_h
 
-#include "MappedMemoryPool.h"
+#include "MappedMemory.h"
 #include <QImage>
 #include <WebCore/IntRect.h>
 
