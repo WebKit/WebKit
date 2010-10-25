@@ -243,8 +243,13 @@ WebInspector.ExtensionServer.prototype = {
         resource = WebInspector.resources[id] || WebInspector.resourceForURL(id);
         if (!resource)
             return this._status.E_NOTFOUND(typeof id + ": " + id);
-        WebInspector.panels.resources.showResource(resource, message.line);
-        WebInspector.showPanel("resources");
+        if (Preferences.networkPanelEnabled) {
+            WebInspector.panels.storage.showResource(resource, message.line);
+            WebInspector.showPanel("storage");
+        } else {
+            WebInspector.panels.resources.showResource(resource, message.line);
+            WebInspector.showPanel("resources");
+        }
     },
 
     _dispatchCallback: function(requestId, port, result)

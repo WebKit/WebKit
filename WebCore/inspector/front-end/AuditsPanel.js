@@ -205,7 +205,7 @@ WebInspector.AuditsPanel.prototype = {
     {
         this._resourceTrackingCallback = callback;
 
-        if (!WebInspector.panels.resources.resourceTrackingEnabled) {
+        if (WebInspector.panels.resources && !WebInspector.panels.resources.resourceTrackingEnabled) {
             InspectorBackend.enableResourceTracking(false);
             this._updateLauncherViewControls(true);
         } else
@@ -256,7 +256,7 @@ WebInspector.AuditsPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        this._updateLauncherViewControls(WebInspector.panels.resources.resourceTrackingEnabled);
+        this._updateLauncherViewControls(!WebInspector.panels.resources || WebInspector.panels.resources.resourceTrackingEnabled);
     },
 
     reset: function()

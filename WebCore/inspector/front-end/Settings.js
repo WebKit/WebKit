@@ -45,7 +45,7 @@ var Preferences = {
     onlineDetectionEnabled: true,
     nativeInstrumentationEnabled: false,
     resourceExportEnabled: false,
-    networkPanelEnabled: true
+    networkPanelEnabled: false
 }
 
 WebInspector.Settings = function(sessionScope)

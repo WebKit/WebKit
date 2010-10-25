@@ -909,23 +909,6 @@ WebInspector.ResourcesPanel.prototype = {
         this.updateSidebarWidth();
     },
 
-    sourceFrameForResource: function(resource)
-    {
-        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
-        if (!view)
-            return null;
-
-        if (!view.setupSourceFrameIfNeeded)
-            return null;
-
-        // Setting up the source frame requires that we be attached.
-        if (!this.element.parentNode)
-            this.attach();
-
-        view.setupSourceFrameIfNeeded();
-        return view.sourceFrame;
-    },
-
     _sortResourcesIfNeeded: function()
     {
         this.sortItems(this.sortingFunction);

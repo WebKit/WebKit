@@ -570,9 +570,22 @@ WebInspector.ScriptsPanel.prototype = {
     _sourceFrameForScriptOrResource: function(scriptOrResource)
     {
         if (scriptOrResource instanceof WebInspector.Resource)
-            return WebInspector.panels.resources.sourceFrameForResource(scriptOrResource);
+            return this._sourceFrameForResource(scriptOrResource);
         if (scriptOrResource instanceof WebInspector.Script)
             return this.sourceFrameForScript(scriptOrResource);
+    },
+
+    _sourceFrameForResource: function(resource)
+    {
+        var view = WebInspector.ResourceManager.resourceViewForResource(resource);
+        if (!view)
+            return null;
+
+        if (!view.setupSourceFrameIfNeeded)
+            return null;
+
+        view.setupSourceFrameIfNeeded();
+        return view.sourceFrame;
     },
 
     _showScriptOrResource: function(scriptOrResource, options)

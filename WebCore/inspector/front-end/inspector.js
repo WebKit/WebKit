@@ -228,8 +228,15 @@ var WebInspector = {
             this.panels.elements = new WebInspector.ElementsPanel();
         if (Preferences.networkPanelEnabled && hiddenPanels.indexOf("network") === -1)
             this.panels.network = new WebInspector.NetworkPanel();
-        if (hiddenPanels.indexOf("resources") === -1)
+
+        if (Preferences.networkPanelEnabled) {
+            if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
+                this.panels.storage = new WebInspector.StoragePanel();
+            if (hiddenPanels.indexOf("network") === -1)
+                this.panels.network = new WebInspector.NetworkPanel();
+        } else if (hiddenPanels.indexOf("resources") === -1)
             this.panels.resources = new WebInspector.ResourcesPanel();
+
         if (hiddenPanels.indexOf("scripts") === -1)
             this.panels.scripts = new WebInspector.ScriptsPanel();
         if (hiddenPanels.indexOf("timeline") === -1)
@@ -240,8 +247,12 @@ var WebInspector = {
             if (Preferences.heapProfilerPresent)
                 this.panels.profiles.registerProfileType(new WebInspector.HeapSnapshotProfileType());
         }
-        if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
-            this.panels.storage = new WebInspector.StoragePanel();
+
+        if (!Preferences.networkPanelEnabled) {
+            if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
+                this.panels.storage = new WebInspector.StoragePanel();
+        }
+
         if (hiddenPanels.indexOf("audits") === -1)
             this.panels.audits = new WebInspector.AuditsPanel();
         if (hiddenPanels.indexOf("console") === -1)
@@ -536,6 +547,11 @@ WebInspector.doLoadedDone = function()
     for (var panelName in this.panels)
         previousToolbarItem = WebInspector.addPanelToolbarIcon(toolbarElement, this.panels[panelName], previousToolbarItem);
 
+    if (Preferences.networkPanelEnabled) {
+        this.panels.storage._toolbarItem.removeStyleClass("storage");
+        this.panels.storage._toolbarItem.addStyleClass("resources");
+    }
+
     this.Tips = {
         ResourceNotCompressed: {id: 0, message: WebInspector.UIString("You could save bandwidth by having your web server compress this transfer with gzip or zlib.")}
     };
@@ -588,10 +604,12 @@ WebInspector.doLoadedDone = function()
         WebInspector.monitoringXHREnabled = inspectorState.monitoringXHREnabled;
         if ("pauseOnExceptionsState" in inspectorState)
             WebInspector.panels.scripts.updatePauseOnExceptionsState(inspectorState.pauseOnExceptionsState);
-        if (inspectorState.resourceTrackingEnabled)
-            WebInspector.panels.resources.resourceTrackingWasEnabled();
-        else
-            WebInspector.panels.resources.resourceTrackingWasDisabled();
+        if (WebInspector.panels.resources) {
+            if (inspectorState.resourceTrackingEnabled)
+                WebInspector.panels.resources.resourceTrackingWasEnabled();
+            else
+                WebInspector.panels.resources.resourceTrackingWasDisabled();
+        }
     }
     InspectorBackend.getInspectorState(populateInspectorState);
 
@@ -794,8 +812,13 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
 {
     var resource = WebInspector.resourceForURL(resourceURL);
     if (inResourcesPanel && resource) {
-        WebInspector.panels.resources.showResource(resource);
-        WebInspector.showPanel("resources");
+        if (Preferences.networkPanelEnabled) {
+            WebInspector.panels.storage.showResource(resource);
+            WebInspector.showPanel("storage");
+        } else {
+            WebInspector.panels.resources.showResource(resource);
+            WebInspector.showPanel("resources");
+        }
     } else
         InspectorBackend.openInInspectedWindow(resource ? resource.url : resourceURL);
 }
@@ -1214,6 +1237,9 @@ WebInspector.selectDOMStorage = function(o)
 
 WebInspector.updateResource = function(payload)
 {
+    if (Preferences.networkPanelEnabled)
+        return;
+
     var identifier = payload.id;
     var resource = this.resources[identifier];
     if (!resource) {
@@ -1286,7 +1312,8 @@ WebInspector.updateResource = function(payload)
 
 WebInspector.domContentEventFired = function(time)
 {
-    this.panels.resources.mainResourceDOMContentTime = time;
+    if (this.panels.resources)
+        this.panels.resources.mainResourceDOMContentTime = time;
     this.panels.audits.mainResourceDOMContentTime = time;
     if (this.panels.network)
         this.panels.network.mainResourceDOMContentTime = time;
@@ -1294,7 +1321,8 @@ WebInspector.domContentEventFired = function(time)
 
 WebInspector.loadEventFired = function(time)
 {
-    this.panels.resources.mainResourceLoadTime = time;
+    if (this.panels.resources)
+        this.panels.resources.mainResourceLoadTime = time;
     this.panels.audits.mainResourceLoadTime = time;
     if (this.panels.network)
         this.panels.network.mainResourceLoadTime = time;
@@ -1302,6 +1330,9 @@ WebInspector.loadEventFired = function(time)
 
 WebInspector.removeResource = function(identifier)
 {
+    if (Preferences.networkPanelEnabled)
+        return;
+
     var resource = this.resources[identifier];
     if (!resource)
         return;
@@ -1669,6 +1700,13 @@ WebInspector.displayNameForURL = function(url)
 {
     if (!url)
         return "";
+
+    if (WebInspector.resourceManager) {
+        var resource = WebInspector.resourceManager.resourceForURL(url);
+        if (resource)
+            return resource.displayName;
+    }
+
     var resource = this.resourceURLMap[url];
     if (resource)
         return resource.displayName;
@@ -1705,10 +1743,13 @@ WebInspector.resourceForURL = function(url)
 WebInspector._choosePanelToShowSourceLine = function(url, line, preferredPanel)
 {
     preferredPanel = preferredPanel || "resources";
+    if (Preferences.networkPanelEnabled && preferredPanel === "resources")
+        preferredPanel = "storage";
+
     var panel = this.panels[preferredPanel];
     if (panel && panel.canShowSourceLine(url, line))
         return panel;
-    panel = this.panels.resources;
+    panel = Preferences.networkPanelEnabled ? this.panels.storage : this.panels.resources;
     return panel.canShowSourceLine(url, line) ? panel : null;
 }
 
