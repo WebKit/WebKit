@@ -29,6 +29,7 @@
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxy.h"
+#include <WebCore/DOMImplementation.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;
@@ -66,6 +67,14 @@ bool WebFrameProxy::isMainFrame() const
 void WebFrameProxy::setCertificateInfo(PassRefPtr<WebCertificateInfo> certificateInfo)
 {
     m_certificateInfo = certificateInfo;
+}
+
+bool WebFrameProxy::canProvideSource() const
+{
+    // FIXME: This check should be moved to somewhere in WebCore. 
+    if (m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_MIMEType))
+        return true;
+    return false;
 }
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)

@@ -1,3 +1,20 @@
+2010-10-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Need WebKit2 API to figure out if a frame can provide source
+        <rdar://problem/8424632>
+        https://bugs.webkit.org/show_bug.cgi?id=48252
+
+        * UIProcess/API/C/WKFrame.cpp:
+        (WKFrameCanProvideSource):
+        * UIProcess/API/C/WKFrame.h:
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::canProvideSource):
+        * UIProcess/WebFrameProxy.h:
+        Add API to figure out if a frame can provide source based on its
+        MIME type.
+
 2010-10-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

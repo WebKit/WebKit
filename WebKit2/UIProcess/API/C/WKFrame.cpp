@@ -85,3 +85,8 @@ WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->certificateInfo());
 }
+
+bool WKFrameCanProvideSource(WKFrameRef frameRef)
+{
+    return toImpl(frameRef)->canProvideSource();
+}
