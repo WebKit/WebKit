@@ -86,10 +86,13 @@ void SpeechInputClientImpl::didCompleteRecognition(int requestId)
     m_listener->didCompleteRecognition(requestId);
 }
 
-void SpeechInputClientImpl::setRecognitionResult(int requestId, const WebString& result)
+void SpeechInputClientImpl::setRecognitionResult(int requestId, const WebSpeechInputResultArray& results)
 {
     ASSERT(m_listener);
-    m_listener->setRecognitionResult(requestId, result);
+    WebCore::SpeechInputResultArray webcoreResults(results.size());
+    for (size_t i = 0; i < results.size(); ++i)
+        webcoreResults[i] = results[i];
+    m_listener->setRecognitionResult(requestId, webcoreResults);
 }
 
 } // namespace WebKit

@@ -425,6 +425,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	page/Settings.cpp \
 	page/SpatialNavigation.cpp \
 	page/SpeechInput.cpp \
+	page/SpeechInputResult.cpp \
 	page/SuspendableTimer.cpp \
 	page/Timing.cpp \
 	page/UserContentURLPattern.cpp \

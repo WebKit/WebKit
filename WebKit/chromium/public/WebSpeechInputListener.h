@@ -31,6 +31,8 @@
 #ifndef WebSpeechInputListener_h
 #define WebSpeechInputListener_h
 
+#include "WebSpeechInputResult.h"
+
 namespace WebKit {
 
 class WebString;
@@ -47,19 +49,28 @@ public:
     // WebSpeechInputController::stopRecording() was called.
     // Typically after this call the listener would update the UI to reflect that recognition is
     // in progress.
-    virtual void didCompleteRecording(int) = 0;
+    virtual void didCompleteRecording(int) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     // Gives results from speech recognition, either partial or the final results.
     // This method can potentially get called multiple times if there are partial results
     // available as the user keeps speaking. If the speech could not be recognized properly
     // or if there was any other errors in the process, this method may never be called.
-    virtual void setRecognitionResult(int, const WebString&) = 0;
+    virtual void setRecognitionResult(int, const WebSpeechInputResultArray&) { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    // FIXME: Remove this once the chromium side is able to send multiple recognition results
+    // using the above call.
+    virtual void setRecognitionResult(int requestId, const WebString& result)
+    {
+        WebSpeechInputResultArray results(1U);
+        results[0].set(result, 1.0);
+        setRecognitionResult(requestId, results);
+    }
 
     // Informs that speech recognition has completed. This gets invoked irrespective of whether
     // recognition was succesful or not, whether setRecognitionResult() was invoked or not. The
     // handler typically frees up any temporary resources allocated and waits for the next speech
     // recognition request.
-    virtual void didCompleteRecognition(int) = 0;
+    virtual void didCompleteRecognition(int) { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:
     ~WebSpeechInputListener() { }

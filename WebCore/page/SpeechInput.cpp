@@ -85,7 +85,7 @@ void SpeechInput::didCompleteRecognition(int listenerId)
         m_listeners.get(listenerId)->didCompleteRecognition(listenerId);
 }
 
-void SpeechInput::setRecognitionResult(int listenerId, const String& result)
+void SpeechInput::setRecognitionResult(int listenerId, const SpeechInputResultArray& result)
 {
     // Don't assert if not present as the element might have been removed by the page while
     // this event was on the way.

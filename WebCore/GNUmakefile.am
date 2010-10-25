@@ -2126,6 +2126,8 @@ webcore_sources += \
 	WebCore/page/SpeechInput.cpp \
 	WebCore/page/SpeechInput.h \
 	WebCore/page/SpeechInputListener.h \
+	WebCore/page/SpeechInputResult.cpp \
+	WebCore/page/SpeechInputResult.h \
 	WebCore/page/SuspendableTimer.cpp \
 	WebCore/page/SuspendableTimer.h \
 	WebCore/page/Timing.cpp \

@@ -92,7 +92,9 @@ void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
         m_listener->didCompleteRecording(m_requestId);
         m_timer.startOneShot(0);
     } else {
-        m_listener->setRecognitionResult(m_requestId, m_recognitionResult);
+        SpeechInputResultArray results;
+        results.append(SpeechInputResult::create(m_recognitionResult, 1.0));
+        m_listener->setRecognitionResult(m_requestId, results);
         m_listener->didCompleteRecognition(m_requestId);
         m_requestId = 0;
     }

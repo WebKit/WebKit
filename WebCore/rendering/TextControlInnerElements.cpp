@@ -471,14 +471,16 @@ void InputFieldSpeechButtonElement::didCompleteRecognition(int)
     setState(Idle);
 }
 
-void InputFieldSpeechButtonElement::setRecognitionResult(int, const String& result)
+void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputResultArray& results)
 {
+    m_results = results;
+
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
     // The call to setValue() below dispatches an event, and an event handler in the page might
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> holdRef(input);
-    input->setValue(result);
+    input->setValue(results.isEmpty() ? "" : results[0]->utterance());
     input->dispatchWebkitSpeechChangeEvent();
     renderer()->repaint();
 }

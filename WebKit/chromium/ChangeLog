@@ -1,3 +1,27 @@
+2010-10-21  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Allow embedder to pass on all the speech recognition results to the input element.
+        https://bugs.webkit.org/show_bug.cgi?id=48068
+
+        * WebKit.gyp: Added new files
+        * public/WebSpeechInputListener.h:
+        * public/WebSpeechInputResult.h: Added, wrapper around WebCore::SpeechInputResult
+        (WebKit::WebSpeechInputResult::WebSpeechInputResult):
+        (WebKit::WebSpeechInputResult::~WebSpeechInputResult):
+        * src/SpeechInputClientImpl.cpp:
+        (WebKit::SpeechInputClientImpl::setRecognitionResult): Accepts an array instead of a single string.
+        * src/SpeechInputClientImpl.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::setRecognitionResult):
+        * src/WebSpeechInputControllerMockImpl.h:
+        * src/WebSpeechInputResult.cpp: Added.
+        (WebKit::WebSpeechInputResult::reset):
+        (WebKit::WebSpeechInputResult::WebSpeechInputResult):
+        (WebKit::WebSpeechInputResult::set):
+        (WebKit::WebSpeechInputResult::operator PassRefPtr<WebCore::SpeechInputResult>):
+
 2010-10-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r70451.

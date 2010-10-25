@@ -2263,6 +2263,8 @@
             'page/SpeechInput.h',
             'page/SpeechInputClient.h',
             'page/SpeechInputListener.h',
+            'page/SpeechInputResult.cpp',
+            'page/SpeechInputResult.h',
             'page/SuspendableTimer.cpp',
             'page/SuspendableTimer.h',
             'page/Timing.cpp',
