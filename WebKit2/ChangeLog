@@ -1,3 +1,14 @@
+2010-10-25  Adam Roben  <aroben@apple.com>
+
+        Stop copying .messages.in files into WebKit2's framework bundle
+
+        Fixes <http://webkit.org/b/48232> Several .messages.in files end up in
+        WebKit2's framework bundle
+
+        Reviewed by Dan Bernstein.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2010-10-25  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

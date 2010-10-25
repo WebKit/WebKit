@@ -44,7 +44,6 @@
 		1A043977124D034800FFBFB5 /* PluginProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043975124D034800FFBFB5 /* PluginProcess.cpp */; };
 		1A043A09124D11A900FFBFB5 /* WebProcessConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043A07124D11A900FFBFB5 /* WebProcessConnection.h */; };
 		1A043A0A124D11A900FFBFB5 /* WebProcessConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043A08124D11A900FFBFB5 /* WebProcessConnection.cpp */; };
-		1A043B4D124D5E3600FFBFB5 /* PluginProcessProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1A043B4C124D5E3600FFBFB5 /* PluginProcessProxy.messages.in */; };
 		1A043B5D124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043B5B124D5E9D00FFBFB5 /* PluginProcessProxyMessageReceiver.cpp */; };
 		1A043B5E124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043B5C124D5E9D00FFBFB5 /* PluginProcessProxyMessages.h */; };
 		1A043CEB124FE38F00FFBFB5 /* PluginProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0EC6BD124BBD9B007EF4A5 /* PluginProcessMessageReceiver.cpp */; };
@@ -52,7 +51,6 @@
 		1A043D7B124FEFC100FFBFB5 /* BackingStore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043D79124FEFC100FFBFB5 /* BackingStore.cpp */; };
 		1A043DC1124FF87500FFBFB5 /* PluginProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043DBF124FF87500FFBFB5 /* PluginProxy.h */; };
 		1A043DC2124FF87500FFBFB5 /* PluginProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043DC0124FF87500FFBFB5 /* PluginProxy.cpp */; };
-		1A043F5A12514CF300FFBFB5 /* WebProcessConnection.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1A043F5912514CF300FFBFB5 /* WebProcessConnection.messages.in */; };
 		1A043F6912514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A043F6712514D8B00FFBFB5 /* WebProcessConnectionMessageReceiver.cpp */; };
 		1A043F6A12514D8B00FFBFB5 /* WebProcessConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A043F6812514D8B00FFBFB5 /* WebProcessConnectionMessages.h */; };
 		1A0EC603124A9F2C007EF4A5 /* PluginProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0EC601124A9F2C007EF4A5 /* PluginProcessManager.h */; };
@@ -109,10 +107,8 @@
 		1A6FBD2911E69BC200DB1371 /* NetscapePlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FBD2711E69BC200DB1371 /* NetscapePlugin.cpp */; };
 		1A8EF4CB1252403700F7067F /* PluginControllerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EF4C91252403700F7067F /* PluginControllerProxy.h */; };
 		1A8EF4CC1252403700F7067F /* PluginControllerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EF4CA1252403700F7067F /* PluginControllerProxy.cpp */; };
-		1A8EF9421252AE8400F7067F /* PluginControllerProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EF9411252AE8400F7067F /* PluginControllerProxy.messages.in */; };
 		1A8EF96E1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */; };
 		1A8EF96F1252AF6B00F7067F /* PluginControllerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EF96D1252AF6B00F7067F /* PluginControllerProxyMessages.h */; };
-		1A8EFA5C1252B7CE00F7067F /* PluginProxy.messages.in in Resources */ = {isa = PBXBuildFile; fileRef = 1A8EFA5B1252B7CE00F7067F /* PluginProxy.messages.in */; };
 		1A8EFA701252B84100F7067F /* PluginProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A8EFA6E1252B84100F7067F /* PluginProxyMessageReceiver.cpp */; };
 		1A8EFA711252B84100F7067F /* PluginProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EFA6F1252B84100F7067F /* PluginProxyMessages.h */; };
 		1A8EFDFA1253CAA200F7067F /* DataReference.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8EFDF91253CAA200F7067F /* DataReference.h */; };
@@ -480,7 +476,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C0CE72851247E66800BC0EC4 /* Derived Sources */;
+			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
 			remoteInfo = "Derived Sources";
 		};
 /* End PBXContainerItemProxy section */
@@ -2156,10 +2152,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
-				1A043B4D124D5E3600FFBFB5 /* PluginProcessProxy.messages.in in Resources */,
-				1A043F5A12514CF300FFBFB5 /* WebProcessConnection.messages.in in Resources */,
-				1A8EF9421252AE8400F7067F /* PluginControllerProxy.messages.in in Resources */,
-				1A8EFA5C1252B7CE00F7067F /* PluginProxy.messages.in in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
