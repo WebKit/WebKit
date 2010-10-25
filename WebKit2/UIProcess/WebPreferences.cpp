@@ -152,6 +152,17 @@ bool WebPreferences::pluginsEnabled() const
     return m_store.pluginsEnabled;
 }
 
+void WebPreferences::setJavaEnabled(bool b)
+{
+    m_store.javaEnabled = b;
+    update();
+}
+
+bool WebPreferences::javaEnabled() const
+{
+    return m_store.javaEnabled;
+}
+
 void WebPreferences::setFontSmoothingLevel(FontSmoothingLevel level)
 {
     m_store.fontSmoothingLevel = level;

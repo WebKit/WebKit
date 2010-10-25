@@ -1,3 +1,39 @@
+2010-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Java applets don't display on the page
+        https://bugs.webkit.org/show_bug.cgi?id=48251
+        <rdar://problem/8483759>
+
+        Add WKPreferencesSetJavaEnabled and initialize it to true by default, matching old WebKit.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::WebPreferencesStore):
+        Initialize javaEnabled.
+
+        (WebKit::WebPreferencesStore::encode):
+        Encode javaEnabled.
+
+        (WebKit::WebPreferencesStore::decode):
+        Decode javaEnabled.
+
+        * Shared/WebPreferencesStore.h:
+        Add javaEnabled.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPReferencesSetJavaEnabled):
+        (WKPReferencesGetJavaEnabled):
+        Call the WebPreferences functions.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createJavaAppletWidget):
+        Just call createPlugin.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Call Settings::setJavaEnabled.
+
 2010-10-25  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by David Kilzer.

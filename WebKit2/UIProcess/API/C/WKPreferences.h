@@ -65,10 +65,14 @@ WK_EXPORT bool WKPreferencesGetXSSAuditorEnabled(WKPreferencesRef preferences);
 WK_EXPORT void WKPreferencesSetFrameFlatteningEnabled(WKPreferencesRef preferences, bool frameFlatteningEnabled);
 WK_EXPORT bool WKPreferencesGetFrameFlatteningEnabled(WKPreferencesRef preferences);
 
-// Default to true.
+// Defaults to true.
 WK_EXPORT void WKPreferencesSetPluginsEnabled(WKPreferencesRef preferences, bool pluginsEnabled);
 WK_EXPORT bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferences);
 
+// Defaults to true.
+WK_EXPORT void WKPReferencesSetJavaEnabled(WKPreferencesRef preferences, bool javaEnabled);
+WK_EXPORT bool WKPReferencesGetJavaEnabled(WKPreferencesRef preferences);
+    
 WK_EXPORT void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family);
 WK_EXPORT WKStringRef WKPreferencesCopyStandardFontFamily(WKPreferencesRef preferencesRef);
 

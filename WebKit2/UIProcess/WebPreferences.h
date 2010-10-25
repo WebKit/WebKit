@@ -79,6 +79,9 @@ public:
     void setPluginsEnabled(bool);
     bool pluginsEnabled() const;
 
+    void setJavaEnabled(bool);
+    bool javaEnabled() const;
+
     void setFontSmoothingLevel(FontSmoothingLevel);
     FontSmoothingLevel fontSmoothingLevel() const;
 

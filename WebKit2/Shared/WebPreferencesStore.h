@@ -45,6 +45,7 @@ struct WebPreferencesStore {
     bool javaScriptEnabled;
     bool loadsImagesAutomatically;
     bool pluginsEnabled;
+    bool javaEnabled;
     bool offlineWebApplicationCacheEnabled;
     bool localStorageEnabled;
     bool xssAuditorEnabled;

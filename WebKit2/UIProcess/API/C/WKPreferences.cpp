@@ -119,6 +119,16 @@ bool WKPreferencesGetPluginsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->pluginsEnabled();
 }
 
+void WKPReferencesSetJavaEnabled(WKPreferencesRef preferencesRef, bool javaEnabled)
+{
+    toImpl(preferencesRef)->setJavaEnabled(javaEnabled);
+}
+
+bool WKPReferencesGetJavaEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->javaEnabled();
+}
+
 void WKPreferencesSetStandardFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
 {
     toImpl(preferencesRef)->setStandardFontFamily(toWTFString(family));

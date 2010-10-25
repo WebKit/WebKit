@@ -51,6 +51,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLAppletElement.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
@@ -1009,10 +1010,9 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
     m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
-PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues)
+PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* appletElement, const KURL& baseURL, const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
-    notImplemented();
-    return 0;
+    return createPlugin(pluginSize, appletElement, KURL(), paramNames, paramValues, "application/x-java-applet", false);
 }
 
 ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const String& mimeTypeIn)

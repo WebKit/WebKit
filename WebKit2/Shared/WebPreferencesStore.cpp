@@ -36,6 +36,7 @@ WebPreferencesStore::WebPreferencesStore()
     : javaScriptEnabled(true)
     , loadsImagesAutomatically(true)
     , pluginsEnabled(true)
+    , javaEnabled(true)
     , offlineWebApplicationCacheEnabled(false)
     , localStorageEnabled(true)
     , xssAuditorEnabled(true)
@@ -72,6 +73,7 @@ void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(javaScriptEnabled);
     encoder->encode(loadsImagesAutomatically);
     encoder->encode(pluginsEnabled);
+    encoder->encode(javaEnabled);
     encoder->encode(offlineWebApplicationCacheEnabled);
     encoder->encode(localStorageEnabled);
     encoder->encode(xssAuditorEnabled);
@@ -100,6 +102,8 @@ bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferenc
     if (!decoder->decode(s.loadsImagesAutomatically))
         return false;
     if (!decoder->decode(s.pluginsEnabled))
+        return false;
+    if (!decoder->decode(s.javaEnabled))
         return false;
     if (!decoder->decode(s.offlineWebApplicationCacheEnabled))
         return false;
