@@ -317,6 +317,9 @@ fast/events/spatial-navigation/snav-iframe-with-offscreen-focusable-element.html
 # https://bugs.webkit.org/show_bug.cgi?id=47449
 fast/events/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=48150
+fast/events/spatial-navigation/snav-single-select.html
+
 # Requires WebP support.
 fast/images/webp-image-decoding.html
 
