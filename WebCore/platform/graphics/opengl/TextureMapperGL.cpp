@@ -190,14 +190,14 @@ TextureMapperGL::TextureMapperGL(GraphicsContext* context)
         return;
     shadersCompiled = true;
 #ifndef TEXMAP_OPENGL_ES2
-#define OES2_PERCISION_DEFINITIONS \
+#define OES2_PRECISION_DEFINITIONS \
     "#define lowp\n#define highp\n"
 #else
-#define OES2_PERCISION_DEFINITIONS
+#define OES2_PRECISION_DEFINITIONS
 #endif
 
     const char* fragmentShaderSourceOpacityAndMask =
-            OES2_PERCISION_DEFINITIONS
+            OES2_PRECISION_DEFINITIONS
 "               uniform sampler2D SourceTexture, MaskTexture;                       \n"
 "               uniform lowp float Opacity;                                         \n"
 "               varying highp vec2 OutTexCoordSource, OutTexCoordMask;              \n"
@@ -210,7 +210,7 @@ TextureMapperGL::TextureMapperGL(GraphicsContext* context)
 "               }                                                                   \n";
 
     const char* vertexShaderSourceOpacityAndMask =
-            OES2_PERCISION_DEFINITIONS
+            OES2_PRECISION_DEFINITIONS
 "               uniform mat4 InMatrix, InSourceMatrix, InMaskMatrix;            \n"
 "               attribute vec4 InVertex;                                        \n"
 "               varying highp vec2 OutTexCoordSource, OutTexCoordMask;          \n"
@@ -222,7 +222,7 @@ TextureMapperGL::TextureMapperGL(GraphicsContext* context)
 "               }                                                               \n";
 
     const char* fragmentShaderSourceSimple =
-            OES2_PERCISION_DEFINITIONS
+            OES2_PRECISION_DEFINITIONS
 "               uniform sampler2D SourceTexture;                                    \n"
 "               uniform lowp float Opacity;                                         \n"
 "               varying highp vec2 OutTexCoordSource;                               \n"
@@ -233,7 +233,7 @@ TextureMapperGL::TextureMapperGL(GraphicsContext* context)
 "               }                                                                   \n";
 
     const char* vertexShaderSourceSimple =
-            OES2_PERCISION_DEFINITIONS
+            OES2_PRECISION_DEFINITIONS
 "               uniform mat4 InMatrix, InSourceMatrix;                      \n"
 "               attribute vec4 InVertex;                                    \n"
 "               varying highp vec2 OutTexCoordSource;                       \n"
@@ -244,7 +244,7 @@ TextureMapperGL::TextureMapperGL(GraphicsContext* context)
 "               }                                                           \n";
 
     const char* fragmentShaderSourceTarget =
-            OES2_PERCISION_DEFINITIONS
+            OES2_PRECISION_DEFINITIONS
 "               uniform sampler2D SourceTexture;                                            \n"
 "               uniform lowp float Opacity;                                                 \n"
 "               varying highp vec2 OutTexCoordSource;                                       \n"
