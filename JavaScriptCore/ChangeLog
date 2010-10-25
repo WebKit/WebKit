@@ -1,5 +1,11 @@
 2010-10-24  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed, fix typo of last build fix.
+
+        * wtf/DateMath.cpp:
+
+2010-10-24  Patrick Gansterer  <paroga@webkit.org>
+
         Unreviewed build fix for chromium.
 
         * wtf/DateMath.cpp: Added missing include.
