@@ -344,7 +344,7 @@ class TestShellThread(WatchableThread):
 
     def cancel(self):
         """Clean up http lock and set a flag telling this thread to quit."""
-        self._stop_http_lock()
+        self._stop_servers_with_lock()
         WatchableThread.cancel(self)
 
     def next_timeout(self):
@@ -392,23 +392,15 @@ class TestShellThread(WatchableThread):
                     self._current_group, self._filename_list = \
                         self._filename_list_queue.get_nowait()
                 except Queue.Empty:
-                    self._stop_http_lock()
+                    self._stop_servers_with_lock()
                     self._kill_dump_render_tree()
                     tests_run_file.close()
                     return
 
-                if self._options.wait_for_httpd:
-                    if self._current_group == "tests_to_http_lock":
-                        self._http_lock_wait_begin = time.time()
-                        self._port.acquire_http_lock()
-
-                        self._port.start_http_server()
-                        self._port.start_websocket_server()
-
-                        self._have_http_lock = True
-                        self._http_lock_wait_end = time.time()
-                    elif self._have_http_lock:
-                        self._stop_http_lock()
+                if self._current_group == "tests_to_http_lock":
+                    self._start_servers_with_lock()
+                elif self._have_http_lock:
+                    self._stop_servers_with_lock()
 
                 self._num_tests_in_current_group = len(self._filename_list)
                 self._current_group_start_time = time.time()
@@ -555,11 +547,26 @@ class TestShellThread(WatchableThread):
                                                     self._options)
             self._driver.start()
 
-    def _stop_http_lock(self):
+    def _start_servers_with_lock(self):
+        """Acquire http lock and start the servers."""
+        self._http_lock_wait_begin = time.time()
+        _log.debug('Acquire http lock ...')
+        self._port.acquire_http_lock()
+        _log.debug('Starting HTTP server ...')
+        self._port.start_http_server()
+        _log.debug('Starting WebSocket server ...')
+        self._port.start_websocket_server()
+        self._http_lock_wait_end = time.time()
+        self._have_http_lock = True
+
+    def _stop_servers_with_lock(self):
         """Stop the servers and release http lock."""
         if self._have_http_lock:
+            _log.debug('Stopping HTTP server ...')
             self._port.stop_http_server()
+            _log.debug('Stopping WebSocket server ...')
             self._port.stop_websocket_server()
+            _log.debug('Release http lock ...')
             self._port.release_http_lock()
             self._have_http_lock = False
 
