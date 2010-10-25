@@ -1,3 +1,22 @@
+2010-10-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Replace _countof with WTF_ARRAY_LENGTH
+        https://bugs.webkit.org/show_bug.cgi?id=48229
+
+        * UIProcess/Launcher/win/ProcessLauncherWin.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::safariPluginsDirectory):
+        (WebKit::addMozillaPluginDirectories):
+        (WebKit::addWindowsMediaPlayerPluginDirectory):
+        (WebKit::addAdobeAcrobatPluginDirectory):
+        (WebKit::addMacromediaPluginDirectories):
+        (WebKit::addPluginPathsFromRegistry):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::WebPage::interpretKeyEvent):
+
 2010-10-25  Adam Roben  <aroben@apple.com>
 
         Stop copying .messages.in files into WebKit2's framework bundle

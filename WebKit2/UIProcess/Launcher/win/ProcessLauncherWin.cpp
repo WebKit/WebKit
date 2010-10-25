@@ -64,7 +64,7 @@ void ProcessLauncher::launchProcess()
         return;
 
     WCHAR pathStr[MAX_PATH];
-    if (!::GetModuleFileNameW(webKitModule, pathStr, _countof(pathStr)))
+    if (!::GetModuleFileNameW(webKitModule, pathStr, WTF_ARRAY_LENGTH(pathStr)))
         return;
 
     ::PathRemoveFileSpecW(pathStr);

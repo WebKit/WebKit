@@ -174,8 +174,8 @@ CString openTemporaryFile(const char*, PlatformFileHandle& handle)
     handle = INVALID_HANDLE_VALUE;
 
     wchar_t tempPath[MAX_PATH];
-    int tempPathLength = ::GetTempPath(_countof(tempPath), tempPath);
-    if (tempPathLength <= 0 || tempPathLength > _countof(tempPath))
+    int tempPathLength = ::GetTempPath(WTF_ARRAY_LENGTH(tempPath), tempPath);
+    if (tempPathLength <= 0 || tempPathLength > WTF_ARRAY_LENGTH(tempPath))
         return CString();
 
     HCRYPTPROV hCryptProv = 0;

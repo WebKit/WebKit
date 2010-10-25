@@ -60,7 +60,7 @@ static bool isPreInspectElementTagSafari(IWebUIDelegate* uiDelegate)
         return false;
 
     TCHAR modulePath[MAX_PATH];
-    DWORD length = ::GetModuleFileName(0, modulePath, _countof(modulePath));
+    DWORD length = ::GetModuleFileName(0, modulePath, WTF_ARRAY_LENGTH(modulePath));
     if (!length)
         return false;
 

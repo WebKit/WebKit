@@ -1,3 +1,15 @@
+2010-10-25  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Replace _countof with WTF_ARRAY_LENGTH
+        https://bugs.webkit.org/show_bug.cgi?id=48229
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (isPreInspectElementTagSafari):
+        * WebView.cpp:
+        (WebView::interpretKeyEvent):
+
 2010-10-24  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
