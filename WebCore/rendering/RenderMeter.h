@@ -23,7 +23,7 @@
 
 #if ENABLE(METER_TAG)
 #include "RenderBlock.h"
-#include "RenderProgress.h" 
+#include "RenderIndicator.h"
 #include "RenderWidget.h"
 
 
