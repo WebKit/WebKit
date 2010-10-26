@@ -1,0 +1,23 @@
+Simple text path
+
+abあ「」。
+abあ「」。
+abあ「」。
+abあ「」。
+
+Complex text path
+
+abあ「」。1⃝
+abあ「」。1⃝
+abあ「」。1⃝
+abあ「」。1⃝
+
+width=64
+width=64
+width=22
+width=22
+width=86
+width=86
+width=22
+width=22
+
