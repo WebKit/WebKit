@@ -1729,9 +1729,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int srcDst = vPC[1].u.operand;
         JSValue v = callFrame->r(srcDst).jsValue();
         if (v.isInt32() && v.asInt32() < INT_MAX)
-            callFrame->r(srcDst) = jsNumber(callFrame, v.asInt32() + 1);
+            callFrame->r(srcDst) = jsNumber(v.asInt32() + 1);
         else {
-            JSValue result = jsNumber(callFrame, v.toNumber(callFrame) + 1);
+            JSValue result = jsNumber(v.toNumber(callFrame) + 1);
             CHECK_FOR_EXCEPTION();
             callFrame->r(srcDst) = result;
         }
@@ -1748,9 +1748,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int srcDst = vPC[1].u.operand;
         JSValue v = callFrame->r(srcDst).jsValue();
         if (v.isInt32() && v.asInt32() > INT_MIN)
-            callFrame->r(srcDst) = jsNumber(callFrame, v.asInt32() - 1);
+            callFrame->r(srcDst) = jsNumber(v.asInt32() - 1);
         else {
-            JSValue result = jsNumber(callFrame, v.toNumber(callFrame) - 1);
+            JSValue result = jsNumber(v.toNumber(callFrame) - 1);
             CHECK_FOR_EXCEPTION();
             callFrame->r(srcDst) = result;
         }
@@ -1769,12 +1769,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int srcDst = vPC[2].u.operand;
         JSValue v = callFrame->r(srcDst).jsValue();
         if (v.isInt32() && v.asInt32() < INT_MAX) {
-            callFrame->r(srcDst) = jsNumber(callFrame, v.asInt32() + 1);
+            callFrame->r(srcDst) = jsNumber(v.asInt32() + 1);
             callFrame->r(dst) = v;
         } else {
             JSValue number = callFrame->r(srcDst).jsValue().toJSNumber(callFrame);
             CHECK_FOR_EXCEPTION();
-            callFrame->r(srcDst) = jsNumber(callFrame, number.uncheckedGetNumber() + 1);
+            callFrame->r(srcDst) = jsNumber(number.uncheckedGetNumber() + 1);
             callFrame->r(dst) = number;
         }
 
@@ -1792,12 +1792,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int srcDst = vPC[2].u.operand;
         JSValue v = callFrame->r(srcDst).jsValue();
         if (v.isInt32() && v.asInt32() > INT_MIN) {
-            callFrame->r(srcDst) = jsNumber(callFrame, v.asInt32() - 1);
+            callFrame->r(srcDst) = jsNumber(v.asInt32() - 1);
             callFrame->r(dst) = v;
         } else {
             JSValue number = callFrame->r(srcDst).jsValue().toJSNumber(callFrame);
             CHECK_FOR_EXCEPTION();
-            callFrame->r(srcDst) = jsNumber(callFrame, number.uncheckedGetNumber() - 1);
+            callFrame->r(srcDst) = jsNumber(number.uncheckedGetNumber() - 1);
             callFrame->r(dst) = number;
         }
 
@@ -1835,9 +1835,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         JSValue src = callFrame->r(vPC[2].u.operand).jsValue();
         if (src.isInt32() && (src.asInt32() & 0x7fffffff)) // non-zero and no overflow
-            callFrame->r(dst) = jsNumber(callFrame, -src.asInt32());
+            callFrame->r(dst) = jsNumber(-src.asInt32());
         else {
-            JSValue result = jsNumber(callFrame, -src.toNumber(callFrame));
+            JSValue result = jsNumber(-src.toNumber(callFrame));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -1856,7 +1856,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
         if (src1.isInt32() && src2.isInt32() && !(src1.asInt32() | (src2.asInt32() & 0xc0000000))) // no overflow
-            callFrame->r(dst) = jsNumber(callFrame, src1.asInt32() + src2.asInt32());
+            callFrame->r(dst) = jsNumber(src1.asInt32() + src2.asInt32());
         else {
             JSValue result = jsAdd(callFrame, src1, src2);
             CHECK_FOR_EXCEPTION();
@@ -1875,9 +1875,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
         if (src1.isInt32() && src2.isInt32() && !(src1.asInt32() | src2.asInt32() >> 15)) // no overflow
-                callFrame->r(dst) = jsNumber(callFrame, src1.asInt32() * src2.asInt32());
+                callFrame->r(dst) = jsNumber(src1.asInt32() * src2.asInt32());
         else {
-            JSValue result = jsNumber(callFrame, src1.toNumber(callFrame) * src2.toNumber(callFrame));
+            JSValue result = jsNumber(src1.toNumber(callFrame) * src2.toNumber(callFrame));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -1896,7 +1896,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue dividend = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue divisor = callFrame->r(vPC[3].u.operand).jsValue();
 
-        JSValue result = jsNumber(callFrame, dividend.toNumber(callFrame) / divisor.toNumber(callFrame));
+        JSValue result = jsNumber(dividend.toNumber(callFrame) / divisor.toNumber(callFrame));
         CHECK_FOR_EXCEPTION();
         callFrame->r(dst) = result;
 
@@ -1915,7 +1915,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue divisor = callFrame->r(vPC[3].u.operand).jsValue();
 
         if (dividend.isInt32() && divisor.isInt32() && divisor.asInt32() != 0) {
-            JSValue result = jsNumber(callFrame, dividend.asInt32() % divisor.asInt32());
+            JSValue result = jsNumber(dividend.asInt32() % divisor.asInt32());
             ASSERT(result);
             callFrame->r(dst) = result;
             vPC += OPCODE_LENGTH(op_mod);
@@ -1926,7 +1926,7 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         // order of argument evaluation is not guaranteed.
         double d1 = dividend.toNumber(callFrame);
         double d2 = divisor.toNumber(callFrame);
-        JSValue result = jsNumber(callFrame, fmod(d1, d2));
+        JSValue result = jsNumber(fmod(d1, d2));
         CHECK_FOR_EXCEPTION();
         callFrame->r(dst) = result;
         vPC += OPCODE_LENGTH(op_mod);
@@ -1943,9 +1943,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
         if (src1.isInt32() && src2.isInt32() && !(src1.asInt32() | (src2.asInt32() & 0xc0000000))) // no overflow
-            callFrame->r(dst) = jsNumber(callFrame, src1.asInt32() - src2.asInt32());
+            callFrame->r(dst) = jsNumber(src1.asInt32() - src2.asInt32());
         else {
-            JSValue result = jsNumber(callFrame, src1.toNumber(callFrame) - src2.toNumber(callFrame));
+            JSValue result = jsNumber(src1.toNumber(callFrame) - src2.toNumber(callFrame));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -1964,9 +1964,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue shift = callFrame->r(vPC[3].u.operand).jsValue();
 
         if (val.isInt32() && shift.isInt32())
-            callFrame->r(dst) = jsNumber(callFrame, val.asInt32() << (shift.asInt32() & 0x1f));
+            callFrame->r(dst) = jsNumber(val.asInt32() << (shift.asInt32() & 0x1f));
         else {
-            JSValue result = jsNumber(callFrame, (val.toInt32(callFrame)) << (shift.toUInt32(callFrame) & 0x1f));
+            JSValue result = jsNumber((val.toInt32(callFrame)) << (shift.toUInt32(callFrame) & 0x1f));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -1986,9 +1986,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue shift = callFrame->r(vPC[3].u.operand).jsValue();
 
         if (val.isInt32() && shift.isInt32())
-            callFrame->r(dst) = jsNumber(callFrame, val.asInt32() >> (shift.asInt32() & 0x1f));
+            callFrame->r(dst) = jsNumber(val.asInt32() >> (shift.asInt32() & 0x1f));
         else {
-            JSValue result = jsNumber(callFrame, (val.toInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
+            JSValue result = jsNumber((val.toInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -2007,9 +2007,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue val = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue shift = callFrame->r(vPC[3].u.operand).jsValue();
         if (val.isUInt32() && shift.isInt32())
-            callFrame->r(dst) = jsNumber(callFrame, val.asInt32() >> (shift.asInt32() & 0x1f));
+            callFrame->r(dst) = jsNumber(val.asInt32() >> (shift.asInt32() & 0x1f));
         else {
-            JSValue result = jsNumber(callFrame, (val.toUInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
+            JSValue result = jsNumber((val.toUInt32(callFrame)) >> (shift.toUInt32(callFrame) & 0x1f));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -2028,9 +2028,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
         if (src1.isInt32() && src2.isInt32())
-            callFrame->r(dst) = jsNumber(callFrame, src1.asInt32() & src2.asInt32());
+            callFrame->r(dst) = jsNumber(src1.asInt32() & src2.asInt32());
         else {
-            JSValue result = jsNumber(callFrame, src1.toInt32(callFrame) & src2.toInt32(callFrame));
+            JSValue result = jsNumber(src1.toInt32(callFrame) & src2.toInt32(callFrame));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -2049,9 +2049,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
         if (src1.isInt32() && src2.isInt32())
-            callFrame->r(dst) = jsNumber(callFrame, src1.asInt32() ^ src2.asInt32());
+            callFrame->r(dst) = jsNumber(src1.asInt32() ^ src2.asInt32());
         else {
-            JSValue result = jsNumber(callFrame, src1.toInt32(callFrame) ^ src2.toInt32(callFrame));
+            JSValue result = jsNumber(src1.toInt32(callFrame) ^ src2.toInt32(callFrame));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -2070,9 +2070,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         JSValue src1 = callFrame->r(vPC[2].u.operand).jsValue();
         JSValue src2 = callFrame->r(vPC[3].u.operand).jsValue();
         if (src1.isInt32() && src2.isInt32())
-            callFrame->r(dst) = jsNumber(callFrame, src1.asInt32() | src2.asInt32());
+            callFrame->r(dst) = jsNumber(src1.asInt32() | src2.asInt32());
         else {
-            JSValue result = jsNumber(callFrame, src1.toInt32(callFrame) | src2.toInt32(callFrame));
+            JSValue result = jsNumber(src1.toInt32(callFrame) | src2.toInt32(callFrame));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -2089,9 +2089,9 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         int dst = vPC[1].u.operand;
         JSValue src = callFrame->r(vPC[2].u.operand).jsValue();
         if (src.isInt32())
-            callFrame->r(dst) = jsNumber(callFrame, ~src.asInt32());
+            callFrame->r(dst) = jsNumber(~src.asInt32());
         else {
-            JSValue result = jsNumber(callFrame, ~src.toInt32(callFrame));
+            JSValue result = jsNumber(~src.toInt32(callFrame));
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         }
@@ -2957,7 +2957,7 @@ skip_id_custom_self:
         JSValue baseValue = callFrame->r(base).jsValue();
         if (LIKELY(isJSArray(globalData, baseValue))) {
             int dst = vPC[1].u.operand;
-            callFrame->r(dst) = jsNumber(callFrame, asArray(baseValue)->length());
+            callFrame->r(dst) = jsNumber(asArray(baseValue)->length());
             vPC += OPCODE_LENGTH(op_get_array_length);
             NEXT_INSTRUCTION();
         }
@@ -2977,7 +2977,7 @@ skip_id_custom_self:
         JSValue baseValue = callFrame->r(base).jsValue();
         if (LIKELY(isJSString(globalData, baseValue))) {
             int dst = vPC[1].u.operand;
-            callFrame->r(dst) = jsNumber(callFrame, asString(baseValue)->length());
+            callFrame->r(dst) = jsNumber(asString(baseValue)->length());
             vPC += OPCODE_LENGTH(op_get_string_length);
             NEXT_INSTRUCTION();
         }
@@ -3195,7 +3195,7 @@ skip_id_custom_self:
             CHECK_FOR_EXCEPTION();
             callFrame->r(dst) = result;
         } else
-            callFrame->r(dst) = jsNumber(callFrame, callFrame->argumentCount());
+            callFrame->r(dst) = jsNumber(callFrame->argumentCount());
 
         vPC += OPCODE_LENGTH(op_get_arguments_length);
         NEXT_INSTRUCTION();

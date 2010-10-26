@@ -1,3 +1,10 @@
+2010-10-26  Oliver Hunt  <oliver@apple.com>
+
+        Interpreter build fix.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2010-10-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
