@@ -260,6 +260,7 @@ sortable
 sortdirection
 span
 x-webkit-speech
+x-webkit-grammar
 spellcheck
 src
 standby

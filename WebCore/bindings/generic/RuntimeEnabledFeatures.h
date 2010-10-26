@@ -139,6 +139,7 @@ public:
     static void setSpeechInputEnabled(bool isEnabled) { isSpeechInputEnabled = isEnabled; }
     static bool speechInputEnabled() { return isSpeechInputEnabled; }
     static bool webkitSpeechEnabled() { return isSpeechInputEnabled; }
+    static bool webkitGrammarEnabled() { return isSpeechInputEnabled; }
 
 #if ENABLE(XHR_RESPONSE_BLOB)
     static bool xhrResponseBlobEnabled() { return isXHRResponseBlobEnabled; }

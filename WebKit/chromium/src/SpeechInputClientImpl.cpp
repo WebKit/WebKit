@@ -56,10 +56,10 @@ void SpeechInputClientImpl::setListener(WebCore::SpeechInputListener* listener)
     m_listener = listener;
 }
 
-bool SpeechInputClientImpl::startRecognition(int requestId, const WebCore::IntRect& elementRect)
+bool SpeechInputClientImpl::startRecognition(int requestId, const WebCore::IntRect& elementRect, const WTF::String& grammar)
 {
     ASSERT(m_listener);
-    return m_controller->startRecognition(requestId, elementRect);
+    return m_controller->startRecognition(requestId, elementRect, grammar);
 }
 
 void SpeechInputClientImpl::stopRecording(int requestId)

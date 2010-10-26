@@ -1,3 +1,24 @@
+2010-10-26  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        Add a 'grammar' attribute for speech input.
+        https://bugs.webkit.org/show_bug.cgi?id=48339
+
+        To differentiate between various types of speech input, we add a 'x-webkit-grammar' attribute to a
+        speech enabled input element. This is passed without validation to the speech recognizer. Typical values
+        could be "builtin:search", "builtin:dictation" and even an externally hosted SRGS grammar XML file URI.
+        It is up to the recognizer to interpret the value and use it as an aid in recognition.
+
+        * public/WebSpeechInputController.h:
+        (WebKit::WebSpeechInputController::startRecognition):
+        * src/SpeechInputClientImpl.cpp:
+        (WebKit::SpeechInputClientImpl::startRecognition):
+        * src/SpeechInputClientImpl.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::startRecognition):
+        * src/WebSpeechInputControllerMockImpl.h:
+
 2010-10-26  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Jeremy Orlow.

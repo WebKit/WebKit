@@ -31,6 +31,8 @@
 #ifndef SpeechInputClient_h
 #define SpeechInputClient_h
 
+#include <wtf/Forward.h>
+
 #if ENABLE(INPUT_SPEECH)
 
 namespace WebCore {
@@ -48,7 +50,7 @@ public:
     virtual void setListener(SpeechInputListener*) = 0;
 
     // Starts speech recognition and audio recording.
-    virtual bool startRecognition(int requestId, const IntRect& elementRect) = 0;
+    virtual bool startRecognition(int requestId, const IntRect& elementRect, const String& grammar) = 0;
 
     // Stops audio recording and performs recognition with the audio recorded until now
     // (does not discard audio).
