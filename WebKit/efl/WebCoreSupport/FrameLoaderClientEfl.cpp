@@ -384,6 +384,10 @@ void FrameLoaderClientEfl::didTransferChildFrameToNewDocument(Page*)
 {
 }
 
+void FrameLoaderClientEfl::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*)
+{
+}
+
 void FrameLoaderClientEfl::redirectDataToPlugin(Widget* pluginWidget)
 {
     ASSERT(!m_pluginView);

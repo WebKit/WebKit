@@ -1385,6 +1385,11 @@ void FrameLoaderClientImpl::didTransferChildFrameToNewDocument(Page*)
     m_webFrame->setClient(newParent->client());
 }
 
+void FrameLoaderClientImpl::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*)
+{
+    notImplemented();
+}
+
 PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
     const IntSize& size, // FIXME: how do we use this?
     HTMLPlugInElement* element,

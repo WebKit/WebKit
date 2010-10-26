@@ -1,3 +1,15 @@
+2010-10-26  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Resource tracking failure when trying to move a frame between documents
+        https://bugs.webkit.org/show_bug.cgi?id=44713
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::transferLoadingResourceFromPage):
+        Empty method.
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+
 2010-10-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

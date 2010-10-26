@@ -863,6 +863,10 @@ void FrameLoaderClientWx::didTransferChildFrameToNewDocument(Page*)
 {
 }
 
+void FrameLoaderClientWx::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*)
+{
+}
+
 ObjectContentType FrameLoaderClientWx::objectContentType(const KURL& url, const String& mimeType)
 {
     notImplemented();

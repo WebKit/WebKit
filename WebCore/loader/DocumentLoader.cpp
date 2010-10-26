@@ -787,6 +787,27 @@ void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loa
         frame->loader()->checkLoadComplete();    
 }
 
+void DocumentLoader::transferLoadingResourcesFromPage(Page* oldPage)
+{
+    ASSERT(oldPage != m_frame->page());
+
+    FrameLoaderClient* frameLoaderClient = frameLoader()->client();
+    const ResourceRequest& request = originalRequest();
+    if (isLoadingMainResource()) {
+        frameLoaderClient->transferLoadingResourceFromPage(
+            m_mainResourceLoader->identifier(), this, request, oldPage);
+    }
+
+    if (isLoadingSubresources()) {
+        ResourceLoaderSet::const_iterator it = m_subresourceLoaders.begin();
+        ResourceLoaderSet::const_iterator end = m_subresourceLoaders.end();
+        for (; it != end; ++it) {
+            frameLoaderClient->transferLoadingResourceFromPage(
+                (*it)->identifier(), this, request, oldPage);
+        }
+    }
+}
+
 void DocumentLoader::iconLoadDecisionAvailable()
 {
     if (m_frame)

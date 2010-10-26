@@ -68,6 +68,7 @@ class HTMLFormElement;
 class IconLoader;
 class NavigationAction;
 class NetworkingContext;
+class Page;
 class ProtectionSpace;
 class ResourceError;
 class ResourceLoader;
@@ -132,6 +133,7 @@ public:
     bool isLoadingMainResource() const { return m_isLoadingMainResource; }
     bool isLoading() const;
     bool frameHasLoaded() const;
+    void transferLoadingResourcesFromPage(Page*);
 
     int numPendingOrLoadingRequests(bool recurse) const;
     String referrer() const;

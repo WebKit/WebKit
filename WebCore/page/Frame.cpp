@@ -744,6 +744,10 @@ void Frame::transferChildFrameToNewDocument()
         // Let external clients update themselves.
         loader()->client()->didTransferChildFrameToNewDocument(oldPage);
 
+        // Update resource tracking now that frame could be in a different page.
+        if (oldPage != newPage)
+            loader()->transferLoadingResourcesFromPage(oldPage);
+
         // Do the same for all the children.
         for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
             child->transferChildFrameToNewDocument();

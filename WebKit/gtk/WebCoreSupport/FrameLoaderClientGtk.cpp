@@ -619,6 +619,10 @@ void FrameLoaderClient::didTransferChildFrameToNewDocument(WebCore::Page*)
     ASSERT(core(getViewFromFrame(m_frame)) == coreFrame->page());
 }
 
+void FrameLoaderClient::transferLoadingResourceFromPage(unsigned long, WebCore::DocumentLoader*, const WebCore::ResourceRequest&, WebCore::Page*)
+{
+}
+
 void FrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
     ASSERT(!m_pluginView);
