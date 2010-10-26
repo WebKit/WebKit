@@ -430,9 +430,9 @@ void tst_QWebElement::frame()
     QWebElement doc = m_mainFrame->documentElement();
     QVERIFY(doc.webFrame() == m_mainFrame);
 
-    m_view->setHtml(QString("data:text/html,<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
-                            "<p>frame1\">"
-                            "<frame src=\"data:text/html,<p>frame2\"></frameset>"), QUrl());
+    m_mainFrame->load(QUrl("data:text/html,<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
+                           "<p>frame1\">"
+                           "<frame src=\"data:text/html,<p>frame2\"></frameset>"));
 
     waitForSignal(m_page, SIGNAL(loadFinished(bool)));
 

@@ -285,9 +285,9 @@ void tst_QWebPage::loadFinished()
     QSignalSpy spyLoadStarted(m_view, SIGNAL(loadStarted()));
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
 
-    m_view->setHtml(QString("data:text/html,<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
-                            "<head><meta http-equiv='refresh' content='1'></head>foo \">"
-                            "<frame src=\"data:text/html,bar\"></frameset>"), QUrl());
+    m_view->page()->mainFrame()->load(QUrl("data:text/html,<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
+                                           "<head><meta http-equiv='refresh' content='1'></head>foo \">"
+                                           "<frame src=\"data:text/html,bar\"></frameset>"));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
 
     QTRY_VERIFY(spyLoadStarted.count() > 1);
@@ -295,8 +295,8 @@ void tst_QWebPage::loadFinished()
 
     spyLoadFinished.clear();
 
-    m_view->setHtml(QString("data:text/html,<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
-                            "foo \"><frame src=\"data:text/html,bar\"></frameset>"), QUrl());
+    m_view->page()->mainFrame()->load(QUrl("data:text/html,<frameset cols=\"25%,75%\"><frame src=\"data:text/html,"
+                                           "foo \"><frame src=\"data:text/html,bar\"></frameset>"));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
     QCOMPARE(spyLoadFinished.count(), 1);
 }
@@ -1882,7 +1882,8 @@ public:
     {
         ErrorPageExtensionReturn* errorPage = static_cast<ErrorPageExtensionReturn*>(output);
 
-        errorPage->content = "data:text/html,error";
+        errorPage->contentType = "text/html";
+        errorPage->content = "error";
         return true;
     }
 };
@@ -1899,7 +1900,7 @@ void tst_QWebPage::errorPageExtension()
 
     page->mainFrame()->setUrl(QUrl("http://non.existent/url"));
     QTRY_COMPARE(spyLoadFinished.count(), 2);
-    QCOMPARE(page->mainFrame()->toPlainText(), QString("data:text/html,error"));
+    QCOMPARE(page->mainFrame()->toPlainText(), QString("error"));
     QCOMPARE(page->history()->count(), 2);
     QCOMPARE(page->history()->currentItem().url(), QUrl("http://non.existent/url"));
     QCOMPARE(page->history()->canGoBack(), true);
@@ -1926,14 +1927,15 @@ void tst_QWebPage::errorPageExtensionInIFrames()
     ErrorPage* page = new ErrorPage;
     m_view->setPage(page);
 
-    m_view->setHtml(QString("data:text/html,"
-                            "<h1>h1</h1>"
-                            "<iframe src='data:text/html,<p/>p'></iframe>"
-                            "<iframe src='non-existent.html'></iframe>"));
+    m_view->page()->mainFrame()->load(QUrl(
+        "data:text/html,"
+        "<h1>h1</h1>"
+        "<iframe src='data:text/html,<p/>p'></iframe>"
+        "<iframe src='http://non.existent/url'></iframe>"));
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
 
-    QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("data:text/html,error"));
+    QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("error"));
 
     m_view->setPage(0);
 }
@@ -1947,7 +1949,7 @@ void tst_QWebPage::errorPageExtensionInFrameset()
 
     QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
     QTRY_COMPARE(spyLoadFinished.count(), 1);
-    QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("data:text/html,error"));
+    QCOMPARE(page->mainFrame()->childFrames()[1]->toPlainText(), QString("error"));
 
     m_view->setPage(0);
 }

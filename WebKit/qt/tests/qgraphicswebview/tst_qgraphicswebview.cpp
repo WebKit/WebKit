@@ -124,11 +124,11 @@ void tst_QGraphicsWebView::crashOnViewlessWebPages()
     // page, so we first connect the signal afterward.
     connect(page->mainFrame(), SIGNAL(initialLayoutCompleted()), page, SLOT(aborting()));
 
-    page->mainFrame()->setHtml(QString("data:text/html,"
-                                            "<frameset cols=\"25%,75%\">"
-                                                "<frame src=\"data:text/html,foo \">"
-                                                "<frame src=\"data:text/html,bar\">"
-                                            "</frameset>"));
+    page->mainFrame()->load(QUrl("data:text/html,"
+                                 "<frameset cols=\"25%,75%\">"
+                                     "<frame src=\"data:text/html,foo \">"
+                                     "<frame src=\"data:text/html,bar\">"
+                                 "</frameset>"));
 
     QVERIFY(waitForSignal(page, SIGNAL(loadFinished(bool))));
     delete page;
