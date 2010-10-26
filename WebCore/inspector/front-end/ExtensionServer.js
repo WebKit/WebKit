@@ -277,7 +277,7 @@ WebInspector.ExtensionServer.prototype = {
         var ids;
         var response = [];
 
-        function onContentAvailable(id, encoded, content)
+        function onContentAvailable(id, content, encoded)
         {
             var resourceContent = {
                 id: id,
@@ -301,10 +301,8 @@ WebInspector.ExtensionServer.prototype = {
             var resource = WebInspector.networkResources[id];
             if (!resource)
                 response.push(this._status.E_NOTFOUND(id));
-            else {
-                var encode = !WebInspector.Resource.Type.isTextType(resource.type);
-                WebInspector.getEncodedResourceContent(id, encode, onContentAvailable.bind(this, id, encode));
-            }
+            else
+                resource.getContent(onContentAvailable.bind(this, id));
         }
         if (response.length === ids.length)
             this._dispatchCallback(message.requestId, port, response);
@@ -451,8 +449,3 @@ WebInspector.addExtensions = function(extensions)
 }
 
 WebInspector.extensionServer = new WebInspector.ExtensionServer();
-
-WebInspector.getEncodedResourceContent = function(identifier, encode, callback)
-{
-    InspectorBackend.getResourceContent(identifier, encode, callback);
-}

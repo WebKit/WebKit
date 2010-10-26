@@ -432,13 +432,15 @@ void InspectorResourceAgent::cachedResources(RefPtr<InspectorObject>* object)
     *object = buildObjectForFrameTree(m_page->mainFrame(), true);
 }
 
-void InspectorResourceAgent::resourceContent(unsigned long frameId, const String& url, String* content)
+void InspectorResourceAgent::resourceContent(unsigned long frameId, const String& url, bool base64Encode, String* content)
 {
-    RefPtr<InspectorArray> frameResources = InspectorArray::create();
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext(m_page->mainFrame())) {
         if (reinterpret_cast<uintptr_t>(frame) != frameId)
             continue;
-        InspectorResourceAgent::resourceContent(frame, KURL(ParsedURLString, url), content);
+        if (base64Encode)
+            InspectorResourceAgent::resourceContentBase64(frame, KURL(ParsedURLString, url), content);
+        else
+            InspectorResourceAgent::resourceContent(frame, KURL(ParsedURLString, url), content);
         break;
     }
 }

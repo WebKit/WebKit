@@ -49,9 +49,13 @@ WebInspector.ImageView.prototype = {
 
         this.imagePreviewElement = document.createElement("img");
         this.imagePreviewElement.addStyleClass("resource-image-view");
-        this.imagePreviewElement.setAttribute("src", this.resource.url);
-
         this._container.appendChild(this.imagePreviewElement);
+
+        function onResourceContent(element, content)
+        {
+            this.imagePreviewElement.setAttribute("src", this.resource.contentURL);
+        }
+        this.resource.getContent(onResourceContent.bind(this));
 
         this._container = document.createElement("div");
         this._container.className = "info";

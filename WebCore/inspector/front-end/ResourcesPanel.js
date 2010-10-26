@@ -1666,7 +1666,15 @@ WebInspector.ResourceSidebarTreeElement.prototype = {
         if (this.resource.category === WebInspector.resourceCategories.images) {
             var previewImage = document.createElement("img");
             previewImage.className = "image-resource-icon-preview";
-            previewImage.src = this.resource.url;
+
+            function onResourceContent()
+            {
+                previewImage.src = this.resource.contentURL;
+            }
+            if (Preferences.useDataURLForResourceImageIcons)
+                this.resource.getContent(onResourceContent.bind(this));
+            else
+                previewImage.src = this.resource.url;
 
             this.iconElement = document.createElement("div");
             this.iconElement.className = "icon";

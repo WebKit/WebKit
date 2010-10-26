@@ -34,6 +34,7 @@ WebInspector.Resource = function(identifier, url)
     this._endTime = -1;
     this._requestMethod = "";
     this._category = WebInspector.resourceCategories.other;
+    this._pendingContentCallbacks = [];
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -254,6 +255,8 @@ WebInspector.Resource.prototype = {
         if (x) {
             this._checkWarnings();
             this.dispatchEventToListeners("finished");
+            if (this._pendingContentCallbacks.length)
+                this._requestContent();
         }
     },
 
@@ -597,9 +600,43 @@ WebInspector.Resource.prototype = {
             WebInspector.console.addMessage(msg);
     },
 
-    getContents: function(callback)
+    getContent: function(callback)
     {
-        WebInspector.ResourceManager.getContents(this, callback);
+        if (this._content) {
+            callback(this._content, this._contentEncoded);
+            return;
+        }
+        this._pendingContentCallbacks.push(callback);
+        if (this.finished)
+            this._requestContent();
+    },
+
+    get contentURL()
+    {
+        const maxDataUrlSize = 1024 * 1024;
+        // If resource content is not available or won't fit a data URL, fall back to using original URL.
+        if (!this._content || this._content.length > maxDataUrlSize)
+            return this.url;
+
+        return "data:" + this.mimeType + (this._contentEncoded ? ";base64," : ",") + this._content;
+    },
+
+    _requestContent: function()
+    {
+        if (this._contentRequested)
+            return;
+        this._contentRequested = true;
+        this._contentEncoded = !WebInspector.Resource.Type.isTextType(this.type);
+
+        function onResourceContent(data)
+        {
+            this._content = data;
+            var callbacks = this._pendingContentCallbacks.slice();
+            for (var i = 0; i < callbacks.length; ++i)
+                callbacks[i](this._content, this._contentEncoded);
+            this._pendingContentCallbacks.length = 0;
+        }
+        WebInspector.ResourceManager.getContent(this, this._contentEncoded, onResourceContent.bind(this));
     }
 }
 

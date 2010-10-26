@@ -83,7 +83,7 @@ WebInspector.SourceView.prototype = {
         this.attach();
 
         delete this._frameNeedsSetup;
-        this.resource.getContents(this._contentLoaded.bind(this));
+        this.resource.getContent(this._contentLoaded.bind(this));
     },
 
     hasContentTab: function()

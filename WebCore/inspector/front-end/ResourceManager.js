@@ -407,7 +407,7 @@ WebInspector.ResourceManager.existingResourceViewForResource = function(resource
     return resource._resourcesView;
 }
 
-WebInspector.ResourceManager.getContents = function(resource, callback)
+WebInspector.ResourceManager.getContent = function(resource, base64Encode, callback)
 {
     if ("overridenContent" in resource) {
         callback(resource.overridenContent);
@@ -416,9 +416,9 @@ WebInspector.ResourceManager.getContents = function(resource, callback)
 
     // FIXME: eventually, cached resources will have no identifiers.
     if (resource.loader)
-        InspectorBackend.resourceContent(resource.loader.frameId, resource.url, callback);
+        InspectorBackend.resourceContent(resource.loader.frameId, resource.url, base64Encode, callback);
     else
-        InspectorBackend.getResourceContent(resource.identifier, false, callback);
+        InspectorBackend.getResourceContent(resource.identifier, base64Encode, callback);
 }
 
 WebInspector.ResourceTreeModel = function()

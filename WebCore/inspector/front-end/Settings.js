@@ -45,7 +45,8 @@ var Preferences = {
     onlineDetectionEnabled: true,
     nativeInstrumentationEnabled: false,
     resourceExportEnabled: false,
-    networkPanelEnabled: false
+    networkPanelEnabled: false,
+    useDataURLForResourceImageIcons: true
 }
 
 WebInspector.Settings = function(sessionScope)

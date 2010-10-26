@@ -98,7 +98,7 @@ public:
 
     // Called from frontend 
     void cachedResources(RefPtr<InspectorObject>*);
-    void resourceContent(unsigned long frameID, const String& url, String* content);
+    void resourceContent(unsigned long frameID, const String& url, bool base64Encode, String* content);
 
 private:
     InspectorResourceAgent(Page* page, InspectorFrontend* frontend);
