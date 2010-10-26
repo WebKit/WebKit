@@ -1046,6 +1046,10 @@ void WebViewImpl::composite(bool finish)
 
     // Put result onscreen.
     m_layerRenderer->present();
+
+    GraphicsContext3D* context = m_layerRenderer->context();
+    if (context->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)
+        reallocateRenderer();
 #endif
 }
 
@@ -2487,6 +2491,22 @@ void WebViewImpl::doComposite()
 
     // Draw the actual layers...
     m_layerRenderer->drawLayers(visibleRect, contentRect);
+}
+
+void WebViewImpl::reallocateRenderer()
+{
+    GraphicsContext3D* context = m_layerRenderer->context();
+    RefPtr<GraphicsContext3D> newContext = GraphicsContext3D::create(context->getContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
+    // GraphicsContext3D::create might fail and return 0, in that case LayerRendererChromium::create will also return 0.
+    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext);
+
+    // Reattach the root layer.  Child layers will get reattached as a side effect of updateLayersRecursive.
+    if (layerRenderer)
+        m_layerRenderer->transferRootLayer(layerRenderer.get());
+    m_layerRenderer = layerRenderer;
+
+    // Enable or disable accelerated compositing and request a refresh.
+    setRootGraphicsLayer(m_layerRenderer ? m_layerRenderer->rootLayer() : 0);
 }
 #endif
 

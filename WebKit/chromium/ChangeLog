@@ -1,3 +1,16 @@
+2010-10-26  Alexey Marinichev  <amarinichev@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Check getGraphicsResetStatusARB and reinitialize the
+        renderer in an error is returned.
+        https://bugs.webkit.org/show_bug.cgi?id=47848
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite): added getGraphicsResetStatusARB check
+        (WebKit::WebViewImpl::reallocateRenderer): added
+        * src/WebViewImpl.h:
+
 2010-10-26  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Andreas Kling.
