@@ -90,6 +90,7 @@ private:
 
     // The order in which this animation appears in the animation-name style.
     int m_index;
+    bool m_startEventDispatched;
 
     // The style just before we started animation
     RefPtr<RenderStyle> m_unanimatedStyle;
