@@ -5,7 +5,7 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="FeatureDefines"
+	Name="FeatureDefinesCairo"
 	>
   <Tool
 		Name="VCCLCompilerTool"

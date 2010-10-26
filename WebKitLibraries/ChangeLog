@@ -1,3 +1,10 @@
+2010-10-26  Adam Roben  <aroben@apple.com>
+
+        Fix duplicate vsprops name
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: Renamed to
+        "FeatureDefinesCairo" to match the filename.
+
 2010-10-23  Alexey Proskuryakov  <ap@apple.com>
 
         Windows build fix.
