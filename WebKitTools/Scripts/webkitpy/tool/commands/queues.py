@@ -314,12 +314,16 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
     def _author_emails_for_tests(self, flaky_tests):
         test_paths = map(path_for_layout_test, flaky_tests)
         commit_infos = self._tool.checkout().recent_commit_infos_for_files(test_paths)
-        return [commit_info.author().bugzilla_email() for commit_info in commit_infos if commit_info.author()]
+        return set([commit_info.author().bugzilla_email() for commit_info in commit_infos if commit_info.author()])
 
     def report_flaky_tests(self, patch, flaky_tests):
-        authors = self._author_emails_for_tests(flaky_tests)
-        author_nag = "  The author(s) of the test(s) are %s." % join_with_separators(authors) if authors else ""
-        message = "The %s encountered the following flaky tests while processing attachment %s:\n\n%s\n\nPlease file bugs against the tests.%s  The commit-queue is continuing to process your patch." % (self.name, patch.id(), "\n".join(flaky_tests), author_nag)
+        message = "The %s encountered the following flaky tests while processing attachment %s:" % (self.name, patch.id())
+        message += "\n\n%s\n\n" % ("\n".join(flaky_tests))
+        message += "Please file bugs against the tests.  "
+        author_emails = self._author_emails_for_tests(flaky_tests)
+        if author_emails:
+            message += "These tests were authored by %s.  " % (join_with_separators(sorted(author_emails)))
+        message += "The commit-queue is continuing to process your patch."
         self._tool.bugs.post_comment_to_bug(patch.bug_id(), message)
 
     # StepSequenceErrorHandler methods

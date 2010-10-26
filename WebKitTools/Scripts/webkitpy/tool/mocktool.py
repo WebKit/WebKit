@@ -501,6 +501,7 @@ class MockCheckout(object):
     def suggested_reviewers(self, git_commit, changed_files=None):
         return [_mock_reviewer]
 
+
 class MockUser(object):
 
     @staticmethod

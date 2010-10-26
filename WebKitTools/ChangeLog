@@ -1,3 +1,21 @@
+2010-10-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue flaky test message can list the same author more than once
+        https://bugs.webkit.org/show_bug.cgi?id=48268
+
+        tonikitoo reported to me over IRC this morning that he's seen
+        the commit-queue report flaky tests with author lists like:
+        "adam, adam and adam", suggesting we're not uniquing authors
+        before writing the message.
+
+        I fixed the uniquing and added a bunch more unit testing.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2010-10-26  Adam Roben  <aroben@apple.com>
 
         Pull in the FeatureDefines*.vsprops files when building DRT

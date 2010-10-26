@@ -29,6 +29,7 @@
 import os
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
+from webkitpy.common.config.committers import Committer
 from webkitpy.common.net.bugzilla import Attachment
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
@@ -197,6 +198,19 @@ class SecondThoughtsCommitQueue(CommitQueue):
         return Attachment(attachment_dictionary, None)
 
 
+# Creating fake CommitInfos is a pain, so we use a mock one here.
+class MockCommitInfo(object):
+    def __init__(self, author_email):
+        self._author_email = author_email
+
+    def author(self):
+        # It's definitely possible to have commits with authors who
+        # are not in our committers.py list.
+        if not self._author_email:
+            return None
+        return Committer("Mock Committer", self._author_email)
+
+
 class CommitQueueTest(QueuesTest):
     def test_commit_queue(self):
         expected_stderr = {
@@ -310,6 +324,19 @@ MOCK: release_work_item: commit-queue 197
 """
         OutputCapture().assert_outputs(self, queue.process_work_item, [QueuesTest.mock_work_item], expected_stderr=expected_stderr)
 
+    def _assert_emails_for_tests(self, emails):
+        queue = CommitQueue()
+        tool = MockTool()
+        queue.bind_to_tool(tool)
+        commit_infos = [MockCommitInfo(email) for email in emails]
+        tool.checkout().recent_commit_infos_for_files = lambda paths: set(commit_infos)
+        self.assertEqual(queue._author_emails_for_tests([]), set(emails))
+
+    def test_author_emails_for_tests(self):
+        self._assert_emails_for_tests([])
+        self._assert_emails_for_tests(["test1@test.com", "test1@test.com"])
+        self._assert_emails_for_tests(["test1@test.com", "test2@test.com"])
+
     def test_report_flaky_tests(self):
         queue = CommitQueue()
         queue.bind_to_tool(MockTool())
@@ -320,7 +347,7 @@ The commit-queue encountered the following flaky tests while processing attachme
 foo/bar.html
 bar/baz.html
 
-Please file bugs against the tests.  The author(s) of the test(s) are abarth@webkit.org.  The commit-queue is continuing to process your patch.
+Please file bugs against the tests.  These tests were authored by abarth@webkit.org.  The commit-queue is continuing to process your patch.
 --- End comment ---
 
 """
