@@ -152,6 +152,11 @@ double WKPageGetEstimatedProgress(WKPageRef pageRef)
     return toImpl(pageRef)->estimatedProgress();
 }
 
+WKStringRef WKPageCopyCustomUserAgent(WKPageRef pageRef)
+{
+    return toCopiedAPI(toImpl(pageRef)->customUserAgent());
+}
+
 void WKPageSetCustomUserAgent(WKPageRef pageRef, WKStringRef userAgentRef)
 {
     toImpl(pageRef)->setCustomUserAgent(toImpl(userAgentRef)->string());

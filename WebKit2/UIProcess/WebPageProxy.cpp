@@ -186,6 +186,7 @@ void WebPageProxy::close()
     process()->disconnectFramesFromPage(this);
     m_mainFrame = 0;
 
+    m_customUserAgent = String();
     m_pageTitle = String();
     m_toolTip = String();
 
@@ -457,6 +458,10 @@ void WebPageProxy::setCustomUserAgent(const String& userAgent)
     if (!isValid())
         return;
 
+    if (m_customUserAgent == userAgent || (m_customUserAgent.isEmpty() && userAgent.isEmpty()))
+        return;
+
+    m_customUserAgent = userAgent;
     process()->send(Messages::WebPage::SetCustomUserAgent(userAgent), m_pageID);
 }
 
@@ -1178,6 +1183,7 @@ void WebPageProxy::processDidCrash()
         m_inspector = 0;
     }
 
+    m_customUserAgent = String();
     m_pageTitle = String();
     m_toolTip = String();
 

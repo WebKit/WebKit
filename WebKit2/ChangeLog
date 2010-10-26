@@ -1,3 +1,26 @@
+2010-10-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Need a way to retrieve custom user agent from a WKPage
+        https://bugs.webkit.org/show_bug.cgi?id=48360
+        <rdar://problem/8466537>
+        
+        Add an exported function on WKPage to get the page's custom user agent.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageCopyCustomUserAgent): Exported function that returns the custom user
+            agent.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Clear the custom user agent string.
+        (WebKit::WebPageProxy::processDidCrash): Ditto.
+        (WebKit::WebPageProxy::setCustomUserAgent): Add a new early return if we're setting
+            the custom user agent to what it was before, and set the custom user agent member
+            variable.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::customUserAgent): Returns the custom user agent.
+
 2010-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
