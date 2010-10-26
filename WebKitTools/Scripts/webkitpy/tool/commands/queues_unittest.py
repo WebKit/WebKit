@@ -361,17 +361,6 @@ Please file bugs against the tests.  These tests were authored by abarth@webkit.
         queue._read_file_contents = lambda path: ""
         self.assertEquals(queue.layout_test_results(), None)
 
-class RietveldUploadQueueTest(QueuesTest):
-    def test_rietveld_upload_queue(self):
-        expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr("rietveld-upload-queue", MockSCM.fake_checkout_root),
-            "should_proceed_with_work_item": "MOCK: update_status: rietveld-upload-queue Uploading patch\n",
-            "process_work_item": "MOCK: update_status: rietveld-upload-queue Pass\nMOCK: release_work_item: rietveld-upload-queue 197\n",
-            "handle_unexpected_error": "Mock error message\nMOCK setting flag 'in-rietveld' to '-' on attachment '197' with comment 'None' and additional comment 'None'\n",
-            "handle_script_error": "ScriptError error message\nMOCK: update_status: rietveld-upload-queue ScriptError error message\nMOCK setting flag 'in-rietveld' to '-' on attachment '197' with comment 'None' and additional comment 'None'\n",
-        }
-        self.assert_queue_outputs(RietveldUploadQueue(), expected_stderr=expected_stderr)
-
 
 class StyleQueueTest(QueuesTest):
     def test_style_queue(self):

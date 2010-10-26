@@ -118,10 +118,6 @@ class DownloadCommandsTest(CommandsTest):
         expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nBuilding WebKit\n"
         self.assert_execute_outputs(BuildAttachment(), [197], options=self._default_options(), expected_stderr=expected_stderr)
 
-    def test_post_attachment_to_rietveld(self):
-        expected_stderr = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 197 from bug 42.\nMOCK: Uploading patch to rietveld\nMOCK setting flag 'in-rietveld' to '+' on attachment '197' with comment 'None' and additional comment 'None'\n"
-        self.assert_execute_outputs(PostAttachmentToRietveld(), [197], options=self._default_options(), expected_stderr=expected_stderr)
-
     def test_land_attachment(self):
         # FIXME: This expected result is imperfect, notice how it's seeing the same patch as still there after it thought it would have cleared the flags.
         expected_stderr = """Processing 1 patch from 1 bug.

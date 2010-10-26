@@ -77,12 +77,6 @@ installer.install(url="http://pypi.python.org/packages/source/p/pep8/pep8-0.5.0.
 installer.install(url="http://www.adambarth.com/webkit/eliza",
                   target_name="eliza.py")
 
-rietveld_dir = os.path.join(autoinstalled_dir, "rietveld")
-installer = AutoInstaller(target_dir=rietveld_dir)
-installer.install(url="http://webkit-rietveld.googlecode.com/svn/trunk/upload_v26/upload.py",
-                  target_name="upload.py")
-
-
 # Since irclib and ircbot are two top-level packages, we need to import
 # them separately.  We group them into an irc package for better
 # organization purposes.

@@ -44,7 +44,6 @@ from webkitpy.tool.steps.ensurebuildersaregreen import EnsureBuildersAreGreen
 from webkitpy.tool.steps.ensurelocalcommitifneeded import EnsureLocalCommitIfNeeded
 from webkitpy.tool.steps.obsoletepatches import ObsoletePatches
 from webkitpy.tool.steps.options import Options
-from webkitpy.tool.steps.postcodereview import PostCodeReview
 from webkitpy.tool.steps.postdiff import PostDiff
 from webkitpy.tool.steps.postdiffforcommit import PostDiffForCommit
 from webkitpy.tool.steps.postdiffforrevert import PostDiffForRevert

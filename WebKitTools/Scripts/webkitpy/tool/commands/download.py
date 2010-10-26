@@ -221,18 +221,6 @@ class BuildAndTestAttachment(AbstractPatchSequencingCommand, ProcessAttachmentsM
     ]
 
 
-class PostAttachmentToRietveld(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
-    name = "post-attachment-to-rietveld"
-    help_text = "Uploads a bugzilla attachment to rietveld"
-    arguments_names = "ATTACHMENTID"
-    main_steps = [
-        steps.CleanWorkingDirectory,
-        steps.Update,
-        steps.ApplyPatch,
-        steps.PostCodeReview,
-    ]
-
-
 class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
     prepare_steps = [
         steps.EnsureLocalCommitIfNeeded,

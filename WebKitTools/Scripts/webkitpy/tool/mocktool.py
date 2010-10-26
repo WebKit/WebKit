@@ -33,7 +33,6 @@ from webkitpy.common.config.committers import CommitterList, Reviewer
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.net.bugzilla import Bug, Attachment
-from webkitpy.common.net.rietveld import Rietveld
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.common.system.deprecated_logging import log
 
@@ -86,7 +85,6 @@ _patch3 = {
     "name": "Patch3",
     "is_obsolete": False,
     "is_patch": True,
-    "in-rietveld": "?",
     "review": "?",
     "attacher_email": "eric@webkit.org",
 }
@@ -113,7 +111,6 @@ _patch5 = {
     "name": "Patch5",
     "is_obsolete": False,
     "is_patch": True,
-    "in-rietveld": "?",
     "review": "+",
     "reviewer_email": "foo@bar.com",
     "attacher_email": "eric@webkit.org",
@@ -127,7 +124,6 @@ _patch6 = { # Valid committer, but no reviewer.
     "name": "ROLLOUT of r3489",
     "is_obsolete": False,
     "is_patch": True,
-    "in-rietveld": "-",
     "commit-queue": "+",
     "committer_email": "foo@bar.com",
     "attacher_email": "eric@webkit.org",
@@ -141,7 +137,6 @@ _patch7 = { # Valid review, patch is marked obsolete.
     "name": "Patch7",
     "is_obsolete": True,
     "is_patch": True,
-    "in-rietveld": "+",
     "review": "+",
     "reviewer_email": "foo@bar.com",
     "attacher_email": "eric@webkit.org",
@@ -229,13 +224,6 @@ class MockBugzillaQueries(Mock):
 
     def fetch_patches_from_pending_commit_list(self):
         return sum([bug.reviewed_patches() for bug in self._all_bugs()], [])
-
-    def fetch_first_patch_from_rietveld_queue(self):
-        for bug in self._all_bugs():
-            patches = bug.in_rietveld_queue_patches()
-            if len(patches):
-                return patches[0]
-        raise Exception('No patches in the rietveld queue')
 
 
 _mock_reviewer = Reviewer("Foo Bar", "foo@bar.com")
@@ -615,15 +603,6 @@ class MockOptions(object):
             self.__dict__[key] = value
 
 
-class MockRietveld(object):
-
-    def __init__(self, executive, dryrun=False):
-        pass
-
-    def post(self, diff, patch_id, codereview_issue, message=None, cc=None):
-        log("MOCK: Uploading patch to rietveld")
-
-
 class MockTestPort1(object):
 
     def skips_layout_test(self, test_name):
@@ -655,7 +634,6 @@ class MockTool(object):
         self._checkout = MockCheckout()
         self.status_server = MockStatusServer()
         self.irc_password = "MOCK irc password"
-        self.codereview = MockRietveld(self.executive)
         self.port_factory = MockPortFactory()
 
     def scm(self):

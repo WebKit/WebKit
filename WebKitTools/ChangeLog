@@ -1,3 +1,29 @@
+2010-10-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        Remove rietveld code now that it's unused
+        https://bugs.webkit.org/show_bug.cgi?id=48359
+
+        Was cool that we added this support, but now that it's
+        not used it makes little sense to keep it around.
+        We can always restore this code from SVN if we need it.
+
+        * Scripts/webkitpy/common/config/__init__.py:
+        * Scripts/webkitpy/common/net/bugzilla.py:
+        * Scripts/webkitpy/common/net/bugzilla_unittest.py:
+        * Scripts/webkitpy/common/net/rietveld.py: Removed.
+        * Scripts/webkitpy/common/net/rietveld_unittest.py: Removed.
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        * Scripts/webkitpy/tool/main.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/postcodereview.py: Removed.
+
 2010-10-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

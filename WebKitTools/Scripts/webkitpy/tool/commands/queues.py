@@ -348,52 +348,6 @@ class CommitQueue(AbstractPatchQueue, StepSequenceErrorHandler, CommitQueueTaskD
         raise TryAgain()
 
 
-# FIXME: All the Rietveld code is no longer used and should be deleted.
-class RietveldUploadQueue(AbstractPatchQueue, StepSequenceErrorHandler):
-    name = "rietveld-upload-queue"
-
-    def __init__(self):
-        AbstractPatchQueue.__init__(self)
-
-    # AbstractPatchQueue methods
-
-    def next_work_item(self):
-        patch_id = self._tool.bugs.queries.fetch_first_patch_from_rietveld_queue()
-        if patch_id:
-            return patch_id
-        self._update_status("Empty queue")
-
-    def should_proceed_with_work_item(self, patch):
-        self._update_status("Uploading patch", patch)
-        return True
-
-    def process_work_item(self, patch):
-        try:
-            self.run_webkit_patch(["post-attachment-to-rietveld", "--force-clean", "--non-interactive", "--parent-command=rietveld-upload-queue", patch.id()])
-            self._did_pass(patch)
-            return True
-        except ScriptError, e:
-            if e.exit_code != QueueEngine.handled_error_code:
-                self._did_fail(patch)
-            raise e
-
-    @classmethod
-    def _reject_patch(cls, tool, patch_id):
-        tool.bugs.set_flag_on_attachment(patch_id, "in-rietveld", "-")
-
-    def handle_unexpected_error(self, patch, message):
-        log(message)
-        self._reject_patch(self._tool, patch.id())
-
-    # StepSequenceErrorHandler methods
-
-    @classmethod
-    def handle_script_error(cls, tool, state, script_error):
-        log(script_error.message_with_output())
-        cls._update_status_for_script_error(tool, state, script_error)
-        cls._reject_patch(tool, state["patch"].id())
-
-
 class AbstractReviewQueue(AbstractPatchQueue, StepSequenceErrorHandler):
     """This is the base-class for the EWS queues and the style-queue."""
     def __init__(self, options=None):
