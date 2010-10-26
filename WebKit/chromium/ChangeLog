@@ -1,3 +1,13 @@
+2010-10-26  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Andreas Kling.
+
+        Valgrind failure in GraphicsContext3DInternal::reshape
+        https://bugs.webkit.org/show_bug.cgi?id=48284
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+
 2010-10-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
