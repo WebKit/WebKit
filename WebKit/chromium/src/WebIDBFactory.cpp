@@ -31,22 +31,23 @@
 #include "config.h"
 #include "WebIDBFactory.h"
 
-#if ENABLE(INDEXED_DATABASE)
-
 #include "IDBFactoryBackendImpl.h"
-#include "SecurityOrigin.h"
+#include "WebSecurityOrigin.h"
+#include <wtf/UnusedParam.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+WebString WebIDBFactory::databaseFileName(const WebSecurityOrigin& origin)
+{
+    return IDBFactoryBackendImpl::databaseFileName(origin.get());
+}
+
 WebString WebIDBFactory::databaseFileName(const WebString& name, const WebSecurityOrigin& origin)
 {
-    RefPtr<SecurityOrigin> securityOrigin;
-    securityOrigin = origin;
-    return IDBFactoryBackendImpl::databaseFileName(name, securityOrigin.get());
+    UNUSED_PARAM(name);
+    return databaseFileName(origin);
 }
 
 }
-
-#endif // ENABLE(INDEXED_DATABASE)

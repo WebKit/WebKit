@@ -33,8 +33,8 @@
 #include "FileSystem.h"
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBDatabaseException.h"
+#include "IDBSQLiteDatabase.h"
 #include "IDBTransactionCoordinator.h"
-#include "SQLiteDatabase.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
@@ -52,7 +52,13 @@ IDBFactoryBackendImpl::~IDBFactoryBackendImpl()
 {
 }
 
-static PassOwnPtr<SQLiteDatabase> openSQLiteDatabase(SecurityOrigin* securityOrigin, String name, const String& pathBase, int64_t maximumSize)
+void IDBFactoryBackendImpl::removeSQLiteDatabase(const String& filePath)
+{
+    ASSERT(m_sqliteDatabaseMap.contains(filePath));
+    m_sqliteDatabaseMap.remove(filePath);
+}
+
+static PassRefPtr<IDBSQLiteDatabase> openSQLiteDatabase(SecurityOrigin* securityOrigin, const String& pathBase, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
 {
     String path = ":memory:";
     if (!pathBase.isEmpty()) {
@@ -62,54 +68,46 @@ static PassOwnPtr<SQLiteDatabase> openSQLiteDatabase(SecurityOrigin* securityOri
             return 0;
         }
 
-        path = pathByAppendingComponent(pathBase, IDBFactoryBackendImpl::databaseFileName(name, securityOrigin));
+        path = pathByAppendingComponent(pathBase, IDBFactoryBackendImpl::databaseFileName(securityOrigin));
     }
 
-    OwnPtr<SQLiteDatabase> sqliteDatabase = adoptPtr(new SQLiteDatabase());
-    if (!sqliteDatabase->open(path)) {
+    RefPtr<IDBSQLiteDatabase> sqliteDatabase = IDBSQLiteDatabase::create(fileIdentifier, factory);
+    if (!sqliteDatabase->db().open(path)) {
         // FIXME: Is there any other thing we could possibly do to recover at this point? If so, do it rather than just erroring out.
         LOG_ERROR("Failed to open database file %s for IndexedDB", path.utf8().data());
         return 0;
     }
 
-    sqliteDatabase->setMaximumSize(maximumSize);
+    // FIXME: Error checking?
+    sqliteDatabase->db().setMaximumSize(maximumSize);
+    sqliteDatabase->db().turnOnIncrementalAutoVacuum();
+
     return sqliteDatabase.release();
 }
 
-static bool createTables(SQLiteDatabase* sqliteDatabase)
+static bool createTables(SQLiteDatabase& sqliteDatabase)
 {
-    // FIXME: Remove all the drop table commands once the on disk structure stabilizes.
     static const char* commands[] = {
-        "DROP TABLE IF EXISTS MetaData",
-        "CREATE TABLE IF NOT EXISTS MetaData (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, version TEXT NOT NULL)",
+        "CREATE TABLE IF NOT EXISTS Databases (id INTEGER PRIMARY KEY, name TEXT NOT NULL, description TEXT NOT NULL, version TEXT NOT NULL)",
+        "CREATE UNIQUE INDEX IF NOT EXISTS Databases_name ON Databases(name)",
 
-        "DROP TABLE IF EXISTS ObjectStores",
-        "CREATE TABLE IF NOT EXISTS ObjectStores (id INTEGER PRIMARY KEY, name TEXT NOT NULL UNIQUE, keyPath TEXT, doAutoIncrement INTEGER NOT NULL)",
-        "DROP INDEX IF EXISTS ObjectStores_name",
-        "CREATE UNIQUE INDEX IF NOT EXISTS ObjectStores_name ON ObjectStores(name)",
+        "CREATE TABLE IF NOT EXISTS ObjectStores (id INTEGER PRIMARY KEY, name TEXT NOT NULL, keyPath TEXT, doAutoIncrement INTEGER NOT NULL, databaseId INTEGER NOT NULL REFERENCES Databases(id))",
+        "CREATE UNIQUE INDEX IF NOT EXISTS ObjectStores_composit ON ObjectStores(databaseId, name)",
 
-        "DROP TABLE IF EXISTS Indexes",
-        "CREATE TABLE IF NOT EXISTS Indexes (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), name TEXT NOT NULL UNIQUE, keyPath TEXT, isUnique INTEGER NOT NULL)",
-        "DROP INDEX IF EXISTS Indexes_composit",
+        "CREATE TABLE IF NOT EXISTS Indexes (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), name TEXT NOT NULL, keyPath TEXT, isUnique INTEGER NOT NULL)",
         "CREATE UNIQUE INDEX IF NOT EXISTS Indexes_composit ON Indexes(objectStoreId, name)",
 
-        "DROP TABLE IF EXISTS ObjectStoreData",
-        "CREATE TABLE IF NOT EXISTS ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT UNIQUE, keyDate INTEGER UNIQUE, keyNumber INTEGER UNIQUE, value TEXT NOT NULL)",
-        "DROP INDEX IF EXISTS ObjectStoreData_composit",
+        "CREATE TABLE IF NOT EXISTS ObjectStoreData (id INTEGER PRIMARY KEY, objectStoreId INTEGER NOT NULL REFERENCES ObjectStore(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, value TEXT NOT NULL)",
         "CREATE UNIQUE INDEX IF NOT EXISTS ObjectStoreData_composit ON ObjectStoreData(keyString, keyDate, keyNumber, objectStoreId)",
 
-        "DROP TABLE IF EXISTS IndexData",
         "CREATE TABLE IF NOT EXISTS IndexData (id INTEGER PRIMARY KEY, indexId INTEGER NOT NULL REFERENCES Indexes(id), keyString TEXT, keyDate INTEGER, keyNumber INTEGER, objectStoreDataId INTEGER NOT NULL REFERENCES ObjectStoreData(id))",
-        "DROP INDEX IF EXISTS IndexData_composit",
         "CREATE INDEX IF NOT EXISTS IndexData_composit ON IndexData(keyString, keyDate, keyNumber, indexId)",
-        "DROP INDEX IF EXISTS IndexData_objectStoreDataId",
         "CREATE INDEX IF NOT EXISTS IndexData_objectStoreDataId ON IndexData(objectStoreDataId)",
-        "DROP INDEX IF EXISTS IndexData_indexId",
         "CREATE INDEX IF NOT EXISTS IndexData_indexId ON IndexData(indexId)"
         };
 
     for (size_t i = 0; i < arraysize(commands); ++i) {
-        if (!sqliteDatabase->executeCommand(commands[i])) {
+        if (!sqliteDatabase.executeCommand(commands[i])) {
             // FIXME: We should try to recover from this situation. Maybe nuke the database and start over?
             LOG_ERROR("Failed to run the following command for IndexedDB: %s", commands[i]);
             return false;
@@ -120,7 +118,9 @@ static bool createTables(SQLiteDatabase* sqliteDatabase)
 
 void IDBFactoryBackendImpl::open(const String& name, const String& description, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize)
 {
-    IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(name);
+    String fileIdentifier = securityOrigin->databaseIdentifier();
+    String uniqueIdentifier = fileIdentifier + "@" + name;
+    IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
     if (it != m_databaseBackendMap.end()) {
         if (!description.isNull())
             it->second->setDescription(description); // The description may have changed.
@@ -130,22 +130,29 @@ void IDBFactoryBackendImpl::open(const String& name, const String& description, 
 
     // FIXME: Everything from now on should be done on another thread.
 
-    OwnPtr<SQLiteDatabase> sqliteDatabase = openSQLiteDatabase(securityOrigin.get(), name, dataDir, maximumSize);
-    if (!sqliteDatabase || !createTables(sqliteDatabase.get())) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
-        return;
+    RefPtr<IDBSQLiteDatabase> sqliteDatabase;
+    SQLiteDatabaseMap::iterator it2 = m_sqliteDatabaseMap.find(fileIdentifier);
+    if (it2 != m_sqliteDatabaseMap.end())
+        sqliteDatabase = it2->second;
+    else {
+        sqliteDatabase = openSQLiteDatabase(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
+
+        if (!sqliteDatabase || !createTables(sqliteDatabase->db())) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+            return;
+        }
+        m_sqliteDatabaseMap.set(fileIdentifier, sqliteDatabase.get());
     }
 
-    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, description, sqliteDatabase.release(), m_transactionCoordinator.get());
+    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, description, sqliteDatabase.get(), m_transactionCoordinator.get());
     callbacks->onSuccess(databaseBackend.get());
-    m_databaseBackendMap.set(name, databaseBackend.release());
+    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.release());
 }
 
-String IDBFactoryBackendImpl::databaseFileName(const String& name, SecurityOrigin* securityOrigin)
+String IDBFactoryBackendImpl::databaseFileName(SecurityOrigin* securityOrigin)
 {
     String databaseIdentifier = securityOrigin->databaseIdentifier();
-    String santizedName = encodeForFileName(name);
-    return databaseIdentifier + "@" + santizedName + ".indexeddb";
+    return databaseIdentifier + ".indexeddb";
 }
 
 } // namespace WebCore

@@ -3852,6 +3852,8 @@
             'storage/IDBPendingTransactionMonitor.h',
             'storage/IDBRequest.cpp',
             'storage/IDBRequest.h',
+            'storage/IDBSQLiteDatabase.cpp',
+            'storage/IDBSQLiteDatabase.h',
             'storage/IDBSuccessEvent.cpp',
             'storage/IDBSuccessEvent.h',
             'storage/IDBTimeoutEvent.cpp',

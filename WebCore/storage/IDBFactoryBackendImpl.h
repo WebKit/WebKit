@@ -39,6 +39,7 @@ namespace WebCore {
 class DOMStringList;
 
 class IDBDatabaseBackendImpl;
+class IDBSQLiteDatabase;
 class IDBTransactionCoordinator;
 
 class IDBFactoryBackendImpl : public IDBFactoryBackendInterface {
@@ -49,18 +50,26 @@ public:
     }
     virtual ~IDBFactoryBackendImpl();
 
+    // IDBSQLiteDatabase's lifetime may be shorter than ours, so we need notification when it dies.
+    void removeSQLiteDatabase(const String& filePath);
+
     virtual void open(const String& name, const String& description, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize);
 
-    static String databaseFileName(const String& name, SecurityOrigin*);
+    static String databaseFileName(SecurityOrigin*);
 
 private:
     IDBFactoryBackendImpl();
 
+    // FIXME: Just hold a weak pointer.
     typedef HashMap<String, RefPtr<IDBDatabaseBackendImpl> > IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;
+
+    typedef HashMap<String, IDBSQLiteDatabase*> SQLiteDatabaseMap;
+    SQLiteDatabaseMap m_sqliteDatabaseMap;
+
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
 
-    // We only create one instance of this class at a time.
+    // Only one instance of the factory should exist at any given time.
     static IDBFactoryBackendImpl* idbFactoryBackendImpl;
 };
 

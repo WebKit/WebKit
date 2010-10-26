@@ -100,6 +100,7 @@ public:
     WebSecurityOrigin(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);
     WebSecurityOrigin& operator=(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);
     operator WTF::PassRefPtr<WebCore::SecurityOrigin>() const;
+    WebCore::SecurityOrigin* get() const;
 #endif
 
 private:

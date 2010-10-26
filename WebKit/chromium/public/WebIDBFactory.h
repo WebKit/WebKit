@@ -58,6 +58,8 @@ public:
     }
 
     // The file name that would be used for persisting a given indexed database on the file system.
+    WEBKIT_API static WebString databaseFileName(const WebSecurityOrigin&);
+    // FIXME: Remove after roll.
     WEBKIT_API static WebString databaseFileName(const WebString& name, const WebSecurityOrigin&);
 };
 

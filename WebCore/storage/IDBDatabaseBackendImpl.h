@@ -36,19 +36,23 @@
 namespace WebCore {
 
 class IDBObjectStoreBackendImpl;
+class IDBSQLiteDatabase;
 class IDBTransactionCoordinator;
 class SQLiteDatabase;
 
 class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, const String& description, PassOwnPtr<SQLiteDatabase> database, IDBTransactionCoordinator* coordinator)
+    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, const String& description, IDBSQLiteDatabase* database, IDBTransactionCoordinator* coordinator)
     {
         return adoptRef(new IDBDatabaseBackendImpl(name, description, database, coordinator));
     }
     virtual ~IDBDatabaseBackendImpl();
 
     void setDescription(const String& description);
-    SQLiteDatabase& sqliteDatabase() const { return *m_sqliteDatabase.get(); }
+    SQLiteDatabase& sqliteDatabase() const;
+
+    static const int64_t InvalidId = 0;
+    int64_t id() const { return m_id; }
 
     virtual String name() const { return m_name; }
     virtual String description() const { return m_description; }
@@ -65,7 +69,7 @@ public:
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
 
 private:
-    IDBDatabaseBackendImpl(const String& name, const String& description, PassOwnPtr<SQLiteDatabase> database, IDBTransactionCoordinator*);
+    IDBDatabaseBackendImpl(const String& name, const String& description, IDBSQLiteDatabase* database, IDBTransactionCoordinator*);
 
     void loadObjectStores();
 
@@ -78,7 +82,8 @@ private:
     static void addObjectStoreToMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>);
     static void resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version);
 
-    OwnPtr<SQLiteDatabase> m_sqliteDatabase;
+    RefPtr<IDBSQLiteDatabase> m_sqliteDatabase;
+    int64 m_id;
     String m_name;
     String m_description;
     String m_version;

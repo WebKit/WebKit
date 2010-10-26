@@ -52,6 +52,7 @@ public:
     }
     virtual ~IDBObjectStoreBackendImpl();
 
+    static const int64_t InvalidId = 0;
     int64_t id() const
     {
         ASSERT(m_id != InvalidId);
@@ -93,8 +94,6 @@ private:
     // These are used as setVersion transaction abort tasks.
     static void removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
     static void addIndexToMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
-
-    static const int64_t InvalidId = 0;
 
     RefPtr<IDBDatabaseBackendImpl> m_database;
 

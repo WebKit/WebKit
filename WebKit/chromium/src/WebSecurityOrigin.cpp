@@ -143,6 +143,11 @@ WebSecurityOrigin::operator WTF::PassRefPtr<WebCore::SecurityOrigin>() const
     return PassRefPtr<SecurityOrigin>(const_cast<WebSecurityOriginPrivate*>(m_private));
 }
 
+SecurityOrigin* WebSecurityOrigin::get() const
+{
+    return m_private;
+}
+
 void WebSecurityOrigin::assign(WebSecurityOriginPrivate* p)
 {
     // p is already ref'd for us by the caller

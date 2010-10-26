@@ -82,7 +82,6 @@ public:
 #endif
 
 private:
-
     WebPrivatePtr<WebCore::IDBKey> m_private;
 };
 

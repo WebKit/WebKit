@@ -90,17 +90,15 @@ function checkQuotaEnforcing()
 function addData()
 {
     if (dataAdded < 5 * 1024 * 1024) {
-        if (dataAdded > 0) {
-            verifySuccessEvent(event);
-            store = evalAndLog("store = event.source");
-        }
+        if (dataAdded > 0)
+            store = event.source;
     } else {
         testFailed("added more than quota");
         done();
         return;
     }
     dataAdded += 65536;
-    result = evalAndLog("store.add({x: data}, dataAdded)");
+    result = store.add({x: data}, dataAdded);
     result.onsuccess = addData;
     result.onerror = logError;
 }
@@ -113,7 +111,7 @@ function logError()
 
 function testComplete()
 {
-    testPassed("Adding data failed due to quota error. Data added was: " + dataAdded / 1024 + " KB");
+    testPassed("Adding data failed due to quota error. Data added was about " + Math.round(dataAdded / 1024 / 1024) + " MB");
     done();
 }
 
