@@ -160,6 +160,7 @@ namespace WebCore {
     typedef DeprecatedSVGAnimatedTemplate<float> SVGAnimatedNumber;
     typedef DeprecatedSVGAnimatedTemplate<SVGNumberList*> SVGAnimatedNumberList; 
     typedef DeprecatedSVGAnimatedTemplate<SVGPreserveAspectRatio> SVGAnimatedPreserveAspectRatio;
+    typedef DeprecatedSVGAnimatedTemplate<FloatRect> SVGAnimatedRect;
     typedef DeprecatedSVGAnimatedTemplate<String> SVGAnimatedString;
     typedef DeprecatedSVGAnimatedTemplate<SVGTransformList*> SVGAnimatedTransformList;
 

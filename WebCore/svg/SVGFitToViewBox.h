@@ -39,7 +39,7 @@ public:
     bool parseMappedAttribute(Document*, Attribute*);
     bool isKnownAttribute(const QualifiedName&);
 
-    virtual void setViewBoxBaseValue(const FloatRect&) = 0;
+    virtual void setViewBoxBaseValue(DeprecatedSVGAnimatedPropertyTraits<FloatRect>::PassType) = 0;
     virtual void setPreserveAspectRatioBaseValue(DeprecatedSVGAnimatedPropertyTraits<SVGPreserveAspectRatio>::PassType) = 0;
 
 private:

@@ -73,8 +73,7 @@ PropertyType& LowerProperty##BaseValue() const \
 void set##UpperProperty##BaseValue(const PropertyType& type) \
 { \
     m_##LowerProperty.value = type; \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    contextElement->invalidateSVGAttributes(); \
+    invalidateSVGAttributes(); \
 } \
 \
 void synchronize##UpperProperty() \
@@ -82,15 +81,13 @@ void synchronize##UpperProperty() \
     if (!m_##LowerProperty.shouldSynchronize) \
          return; \
     AtomicString value(SVGPropertyTraits<PropertyType>::toString(LowerProperty##BaseValue())); \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    SVGAnimatedPropertySynchronizer<IsDerivedFromSVGElement<OwnerType>::value>::synchronize(contextElement, DOMAttribute, value); \
+    SVGAnimatedPropertySynchronizer<IsDerivedFromSVGElement<OwnerType>::value>::synchronize(this, DOMAttribute, value); \
 } \
 \
 PassRefPtr<TearOffType> LowerProperty##Animated() \
 { \
     m_##LowerProperty.shouldSynchronize = true; \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    return SVGAnimatedProperty::lookupOrCreateWrapper<TearOffType, PropertyType>(contextElement, DOMAttribute, SVGDOMAttributeIdentifier, m_##LowerProperty.value); \
+    return SVGAnimatedProperty::lookupOrCreateWrapper<TearOffType, PropertyType>(this, DOMAttribute, SVGDOMAttributeIdentifier, m_##LowerProperty.value); \
 } \
 private: \
     mutable SVGSynchronizableAnimatedProperty<PropertyType> m_##LowerProperty;
@@ -106,8 +103,7 @@ DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.local
 \
 void detachAnimated##UpperProperty##ListWrappers(unsigned newListSize) \
 { \
-    SVGElement* contextElement = GetOwnerElementForType<OwnerType, IsDerivedFromSVGElement<OwnerType>::value>::ownerElement(this); \
-    SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<SVGAnimatedListPropertyTearOff<PropertyType> >(contextElement, DOMAttribute.localName()); \
+    SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<SVGAnimatedListPropertyTearOff<PropertyType> >(this, DOMAttribute.localName()); \
     if (!wrapper) \
         return; \
     static_cast<SVGAnimatedListPropertyTearOff<PropertyType>*>(wrapper)->detachListWrappers(newListSize); \

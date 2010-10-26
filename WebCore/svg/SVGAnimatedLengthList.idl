@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGAnimatedLengthList {
+    interface [Conditional=SVG, SVGAnimatedProperty] SVGAnimatedLengthList {
         readonly attribute SVGLengthList baseVal;
         readonly attribute SVGLengthList animVal;
     };

@@ -88,7 +88,7 @@ private:
     DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
     // SVGFitToViewBox
-    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
+    DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
     DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 };
 

@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-SVGViewSpec::SVGViewSpec(SVGElement* contextElement)
+SVGViewSpec::SVGViewSpec(const SVGSVGElement* contextElement)
     : m_contextElement(contextElement)
     , m_transform(SVGTransformList::create(SVGNames::transformAttr))
 {

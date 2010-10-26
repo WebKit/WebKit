@@ -22,7 +22,7 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGAngle { 
+    interface [Conditional=SVG, SVGProperty=SVGAngle] SVGAngle { 
         // Angle Unit Types
         const unsigned short SVG_ANGLETYPE_UNKNOWN = 0;
         const unsigned short SVG_ANGLETYPE_UNSPECIFIED = 1;

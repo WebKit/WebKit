@@ -3973,7 +3973,6 @@
             'svg/SVGAnimatedPathData.h',
             'svg/SVGAnimatedPoints.cpp',
             'svg/SVGAnimatedPoints.h',
-            'svg/SVGAnimatedRect.h',
             'svg/SVGAnimationElement.cpp',
             'svg/SVGAnimationElement.h',
             'svg/SVGCircleElement.cpp',

@@ -51,12 +51,14 @@ my %numericTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
 my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
 
 my %podTypeHash = ("SVGNumber" => 1, "SVGTransform" => 1);
-my %podTypesWithWritablePropertiesHash = ("SVGMatrix" => 1, "SVGPoint" => 1, "SVGPreserveAspectRatio" => 1);
+my %podTypesWithWritablePropertiesHash = ("SVGMatrix" => 1, "SVGPoint" => 1, "SVGPreserveAspectRatio" => 1, "SVGRect" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
 
-my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1, "SVGAnimatedRect" => 1);
+my %svgTypeNeedingTearOffHash = ("SVGLength" => 1, "SVGAngle" => 1);
+
+my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1);
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
@@ -71,13 +73,6 @@ my %svgAttributesInHTMLHash = ("class" => 1, "id" => 1, "onabort" => 1, "onclick
                                "onmousemove" => 1, "onmouseout" => 1, "onmouseover" => 1,
                                "onmouseup" => 1, "onresize" => 1, "onscroll" => 1,
                                "onunload" => 1);
-
-my %svgNativeType = (
-    "SVGAngle" => "SVGPropertyTearOff<SVGAngle>",
-    "SVGLength" => "SVGPropertyTearOff<SVGLength>",
-    "SVGLengthList" => "SVGListPropertyTearOff<SVGLengthList>",
-    "SVGRect" => "SVGPropertyTearOff<FloatRect>"
-);
 
 # Cache of IDL file pathnames.
 my $idlFiles;
@@ -292,16 +287,6 @@ sub ParseInterface
 
 # Helpers for all CodeGenerator***.pm modules
 
-sub AvoidInclusionOfType
-{
-    my $object = shift;
-    my $type = shift;
-
-    # Special case: SVGRect.h / SVGPoint.h / SVGNumber.h / SVGMatrix.h do not exist.
-    return 1 if $type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber" or $type eq "SVGMatrix";
-    return 0;
-}
-
 # FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
 sub IsPodType
 {
@@ -359,39 +344,14 @@ sub IsNonPointerType
     return 0;
 }
 
+
 sub IsSVGTypeNeedingTearOff
 {
     my $object = shift;
     my $type = shift;
 
-    return 1 if exists $svgNativeType{$type};
+    return 1 if $svgTypeNeedingTearOffHash{$type};
     return 0;
-}
-
-sub GetSVGTypeNeedingTearOff
-{
-    my $object = shift;
-    my $type = shift;
-
-    return $svgNativeType{$type} if exists $svgNativeType{$type};
-    return undef;
-}
-
-sub GetSVGWrappedTypeNeedingTearOff
-{
-    my $object = shift;
-    my $type = shift;
-
-    my $svgNativeType = $object->GetSVGTypeNeedingTearOff($type);
-    return $svgNativeType if not $svgNativeType;
-
-    if ($svgNativeType =~ /SVGPropertyTearOff/) {
-        $svgNativeType =~ s/SVGPropertyTearOff<//;
-    } elsif ($svgNativeType =~ /SVGListPropertyTearOff/) {
-        $svgNativeType =~ s/SVGListPropertyTearOff<//;
-    }
-    $svgNativeType =~ s/>//;
-    return $svgNativeType;
 }
 
 # FIXME: This method will go away once all SVG animated properties are converted to the new scheme.

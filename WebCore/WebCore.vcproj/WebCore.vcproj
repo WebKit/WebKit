@@ -61207,10 +61207,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAnimatedRect.h"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAnimateElement.h"
 				>
 			</File>
