@@ -1000,6 +1000,23 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
     return false;
 }
 
+void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderPart* frameRenderer = m_frame->ownerRenderer()) {
+        if (frameRenderer->containerForRepaint()) {
+            IntRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(),
+                         frameRenderer->borderTop() + frameRenderer->paddingTop(),
+                         visibleWidth(), visibleHeight());
+            frameRenderer->repaintRectangle(rect);
+            return;
+        }
+    }
+#endif
+
+    ScrollView::scrollContentsSlowPath(updateRect);
+}
+
 // Note that this gets called at painting time.
 void FrameView::setIsOverlapped(bool isOverlapped)
 {

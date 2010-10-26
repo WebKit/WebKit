@@ -535,6 +535,8 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     hostWindow()->invalidateWindow(updateRect, false /*immediate*/);
 
     if (m_drawPanScrollIcon) {
+        // FIXME: the pan icon is broken when accelerated compositing is on, since it will draw under the compositing layers.
+        // https://bugs.webkit.org/show_bug.cgi?id=47837
         int panIconDirtySquareSizeLength = 2 * (panIconSizeLength + max(abs(scrollDelta.width()), abs(scrollDelta.height()))); // We only want to repaint what's necessary
         IntPoint panIconDirtySquareLocation = IntPoint(m_panScrollIconPoint.x() - (panIconDirtySquareSizeLength / 2), m_panScrollIconPoint.y() - (panIconDirtySquareSizeLength / 2));
         IntRect panScrollIconDirtyRect = IntRect(panIconDirtySquareLocation , IntSize(panIconDirtySquareSizeLength, panIconDirtySquareSizeLength));
@@ -545,11 +547,11 @@ void ScrollView::scrollContents(const IntSize& scrollDelta)
     if (canBlitOnScroll()) { // The main frame can just blit the WebView window
         // FIXME: Find a way to scroll subframes with this faster path
         if (!scrollContentsFastPath(-scrollDelta, scrollViewRect, clipRect))
-            hostWindow()->invalidateContentsForSlowScroll(updateRect, false);
+            scrollContentsSlowPath(updateRect);
     } else { 
        // We need to go ahead and repaint the entire backing store.  Do it now before moving the
        // windowed plugins.
-       hostWindow()->invalidateContentsForSlowScroll(updateRect, false);
+       scrollContentsSlowPath(updateRect);
     }
 
     // This call will move children with native widgets (plugins) and invalidate them as well.
@@ -563,6 +565,11 @@ bool ScrollView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRec
 {
     hostWindow()->scroll(scrollDelta, rectToScroll, clipRect);
     return true;
+}
+
+void ScrollView::scrollContentsSlowPath(const IntRect& updateRect)
+{
+    hostWindow()->invalidateContentsForSlowScroll(updateRect, false);
 }
 
 IntPoint ScrollView::windowToContents(const IntPoint& windowPoint) const
