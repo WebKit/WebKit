@@ -1,3 +1,17 @@
+2010-10-25  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        spellcheck='' should be the same as spellcheck="true"
+        https://bugs.webkit.org/show_bug.cgi?id=25539
+
+        Followed API rename in WebCore.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::shouldSpellcheckByDefault):
+
 2010-10-25  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, fix for a build break caused by my earlier patch.
