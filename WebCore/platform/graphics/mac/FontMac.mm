@@ -47,10 +47,29 @@ bool Font::canReturnFallbackFontsForComplexText()
     return true;
 }
 
-static void showGlyphsWithAdvances(const FontPlatformData& font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
+static void showGlyphsWithAdvances(const SimpleFontData* font, CGContextRef context, const CGGlyph* glyphs, const CGSize* advances, size_t count)
 {
-    if (!font.isColorBitmapFont())
+    const FontPlatformData& platformData = font->platformData();
+    if (!platformData.isColorBitmapFont()) {
+        CGAffineTransform savedMatrix;
+        bool isVertical = platformData.orientation() == Vertical;
+
+        if (isVertical) {
+            static const CGAffineTransform rotateLeftTransform = {0.0, -1.0, 1.0, 0.0, 0.0, 0.0};
+
+            savedMatrix = CGContextGetTextMatrix(context);
+            CGAffineTransform runMatrix = CGAffineTransformConcat(savedMatrix, rotateLeftTransform);
+            // Move start point to put glyphs into original region.
+            runMatrix.tx = savedMatrix.tx + font->ascent();
+            runMatrix.ty = savedMatrix.ty + font->descent();
+            CGContextSetTextMatrix(context, runMatrix);
+        }
+
         CGContextShowGlyphsWithAdvances(context, glyphs, advances, count);
+
+        if (isVertical)
+            CGContextSetTextMatrix(context, savedMatrix);
+    }
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     else {
         if (!count)
@@ -64,7 +83,7 @@ static void showGlyphsWithAdvances(const FontPlatformData& font, CGContextRef co
             positions[i].x = positions[i - 1].x + advance.width;
             positions[i].y = positions[i - 1].y + advance.height;
         }
-        CTFontDrawGlyphs(font.ctFont(), glyphs, positions.data(), count, context);
+        CTFontDrawGlyphs(platformData.ctFont(), glyphs, positions.data(), count, context);
     }
 #endif
 }
@@ -149,19 +168,19 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
         context->setFillColor(shadowFillColor, fillColorSpace);
         CGContextSetTextPosition(cgContext, point.x() + shadowOffset.width(), point.y() + shadowOffset.height());
-        showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        showGlyphsWithAdvances(font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         if (font->syntheticBoldOffset()) {
             CGContextSetTextPosition(cgContext, point.x() + shadowOffset.width() + font->syntheticBoldOffset(), point.y() + shadowOffset.height());
-            showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+            showGlyphsWithAdvances(font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         }
         context->setFillColor(fillColor, fillColorSpace);
     }
 
     CGContextSetTextPosition(cgContext, point.x(), point.y());
-    showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+    showGlyphsWithAdvances(font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     if (font->syntheticBoldOffset()) {
         CGContextSetTextPosition(cgContext, point.x() + font->syntheticBoldOffset(), point.y());
-        showGlyphsWithAdvances(platformData, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
+        showGlyphsWithAdvances(font, cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     }
 
     if (hasSimpleShadow)

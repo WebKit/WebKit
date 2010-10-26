@@ -47,7 +47,6 @@ void FontPlatformData::loadFont(NSFont* nsFont, float, NSFont*& outNSFont, CGFon
 FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool syntheticOblique, FontOrientation orientation)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
-    , m_orientation(orientation)
     , m_font(nsFont)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
@@ -64,6 +63,26 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, bool syntheticBold, bool synt
     CGFontRef cgFont = 0;
     loadFont(nsFont, m_size, m_font, cgFont, m_atsuFontID);
     
+    if (orientation == Vertical) {
+        // Ignore vertical orientation when the font doesn't support vertical metrics.
+        // The check doesn't look neat but this is what AppKit does for vertical writing...
+        RetainPtr<CFArrayRef> tableTags(AdoptCF, CTFontCopyAvailableTables(ctFont(), kCTFontTableOptionExcludeSynthetic));
+        CFIndex numTables = CFArrayGetCount(tableTags.get());
+        bool found = false;
+        for (CFIndex index = 0; index < numTables; ++index) {
+            CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
+            if (tag == kCTFontTableVhea || tag == kCTFontTableVORG) {
+                found = true;
+                break;
+            }
+        }
+
+        if (found == false)
+            orientation = Horizontal;
+    }
+
+    m_orientation = orientation;
+
     if (m_font)
         CFRetain(m_font);
 
