@@ -108,6 +108,7 @@ fast/text/hyphens.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=43332
 inspector/dom-breakpoints.html
+inspector/audits-panel-functional.html
 
 # =========================================================================== #
 #       Passing HTTP tests - require confirmation on bot.                     #
