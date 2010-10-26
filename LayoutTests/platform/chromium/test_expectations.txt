@@ -17,7 +17,6 @@
 //            WONTFIX should have a BUG annotation.
 // SKIP: Doesn't run the test.
 // SLOW: The test takes a long time to run, but does not timeout indefinitely.
-// DEFER: For tests we'll fix in the future.
 // WONTFIX: For tests that we never intend to pass on a given platform.
 // DEBUG: Expectations apply only to the debug build.
 // RELEASE: Expectations apply only to release build.
@@ -203,7 +202,7 @@ WONTFIX SKIP : inspector/extensions-events.html = FAIL
 WONTFIX SKIP : inspector/extensions-eval.html = FAIL
 
 // Implement java testing harness.
-BUG36681 DEFER SKIP : java = TEXT
+BUG36681 SKIP : java = TEXT
 // Chrome does not support Java LiveConnect.
 WONTFIX SKIP : java/lc3 = TEXT
 
@@ -581,8 +580,6 @@ BUG20551 LINUX WIN : fast/replaced/table-percent-height-text-controls.html = FAI
 // -----------------------------------------------------------------
 
 // Form submission (GET) on non-standard url does not append a query.
-// Defering these tests as the expected behavior is wonky, and shouldn't affect
-// existing apps one way or another.
 // Implicit expectation in this test is that you can "set query" on a data URL,
 // and it should replace the first "?" substring. This makes absolutely no
 // sense.
@@ -664,17 +661,17 @@ WONTFIX SKIP : storage/private-browsing-readonly.html = PASS
 
 // HTML5 datalist element. We don't enable it because WebKit implementation
 // is incomplete.
-BUG20226 DEFER : fast/forms/datalist.html = TEXT
-BUG20226 DEFER : fast/forms/input-list.html = FAIL
-BUG20226 DEFER : fast/forms/input-selectedoption.html = FAIL
+BUG20226 : fast/forms/datalist.html = TEXT
+BUG20226 : fast/forms/input-list.html = FAIL
+BUG20226 : fast/forms/input-selectedoption.html = FAIL
 
 // Generic theme in test_shell doesn't have inner-spin-button support.
 // We need to do rebaseline when we switch to DRT.
 BUGWK38570 WIN : fast/forms/input-appearance-spinbutton-disabled-readonly.html = IMAGE+TEXT
 
 // The feature was disabled due to a compatibility issue.
-BUGWK40520 DEFER : fast/forms/interactive-validation-lost-focusable.html = TEXT
-BUGWK40520 DEFER : fast/forms/interactive-validation-prevented.html = TEXT
+BUGWK40520 : fast/forms/interactive-validation-lost-focusable.html = TEXT
+BUGWK40520 : fast/forms/interactive-validation-prevented.html = TEXT
 
 // Add support for inspector layout tests.
 BUG26734 LINUX MAC SKIP : inspector = PASS
@@ -808,8 +805,6 @@ BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 // SVG TESTS
 // -----------------------------------------------------------------
 
-// These are regressions from 1.0, but deemed DEFERable for 2.0.
-
 BUG8763 LINUX WIN MAC : svg/custom/use-on-g-containing-foreignObject-and-image.svg = IMAGE+TEXT IMAGE
 
 // We show reduced version of the entire SVN image rather than an image
@@ -917,13 +912,12 @@ BUG10310 LINUX : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = FAIL
 // (MSAA, NSAccessibility, ATK). Since we don't have access to these in the
 // sandbox, making these tests pass involves faking interactions with these APIs
 // and doesn't seem like a good use of our time.
-// We DEFER or WONTFIX these, because we need to first identify a good
-// testing strategy for Chromium accessibility. It is possible we won't use
-// these at all.
+// We need to identify a good testing strategy for Chromium accessibility.
+// It is possible we won't use these at all.
 
-BUG10322 DEFER SKIP : accessibility = PASS FAIL
-BUG10322 DEFER SKIP : platform/mac/accessibility = PASS FAIL
-BUG10322 DEFER SKIP : platform/win/accessibility = PASS FAIL
+BUG10322 SKIP : accessibility = PASS FAIL
+BUG10322 SKIP : platform/mac/accessibility = PASS FAIL
+BUG10322 SKIP : platform/win/accessibility = PASS FAIL
 
 // Functionality is supported in DRT but not TestShell
 WONTFIX SKIP : platform/chromium/accessibility = FAIL
@@ -1002,7 +996,7 @@ BUG10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProg
 
 // Linux pixeltest failure: caret is in the wrong place
 // Upstream WebKit also skips this test and Safari with latest WebKit shows
-// same behavior as Chromium. Not required for beta so marking as deferred.
+// same behavior as Chromium.
 BUG10324 LINUX WIN : editing/selection/caret-rtl-2.html = IMAGE
 
 // This test assumes we're using unix paths and looks for a file:///test
@@ -2433,7 +2427,7 @@ BUGUKAI WIN MAC SKIP : fast/text/international/bold-bengali.html = FAIL
 
 // WebKit roll 58400:58523
 // We probably don't want to run these massive amount of new ECMA script conformance tests:
-BUG42875 SKIP DEFER : fast/js/sputnik = TEXT
+BUG42875 SKIP : fast/js/sputnik = TEXT
 // These tests may just need to be rebaselined.
 BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
 BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
@@ -2620,7 +2614,7 @@ BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.htm
 BUG46276 WIN : fast/text/international/khmer-selection.html = IMAGE+TEXT
 
 // HTML5 Geolocation API does not use window.clientInformation.
-BUG11246 DEFER SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
+BUG11246 SKIP : fast/dom/Window/window-properties-geolocation.html = TEXT
 
 BUGWK40740 : svg/W3C-SVG-1.1/fonts-glyph-02-t.svg = CRASH PASS
 
