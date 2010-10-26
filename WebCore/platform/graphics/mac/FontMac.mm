@@ -55,7 +55,7 @@ static void showGlyphsWithAdvances(const SimpleFontData* font, CGContextRef cont
         bool isVertical = platformData.orientation() == Vertical;
 
         if (isVertical) {
-            static const CGAffineTransform rotateLeftTransform = {0.0, -1.0, 1.0, 0.0, 0.0, 0.0};
+            CGAffineTransform rotateLeftTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
 
             savedMatrix = CGContextGetTextMatrix(context);
             CGAffineTransform runMatrix = CGAffineTransformConcat(savedMatrix, rotateLeftTransform);
