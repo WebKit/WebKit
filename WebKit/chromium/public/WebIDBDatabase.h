@@ -37,7 +37,7 @@ class WebIDBCallbacks;
 class WebIDBObjectStore;
 class WebIDBTransaction;
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
+// See comment in WebIDBFactory for a high level overview of these classes.
 class WebIDBDatabase {
 public:
     virtual ~WebIDBDatabase() { }

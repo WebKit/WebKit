@@ -1,3 +1,22 @@
+2010-10-26  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Jeremy Orlow.
+
+        IndexedDB: update stale comments referring to WebIndexedDatabase.
+        https://bugs.webkit.org/show_bug.cgi?id=48325
+
+        WebIndexedDatabase was renamed to WebIDBFactory in
+        http://trac.webkit.org/changeset/64344, but some comments referring to
+        it were left unchanged.
+
+        * public/WebIDBCursor.h:
+        * public/WebIDBDatabase.h:
+        * public/WebIDBDatabaseError.h:
+        * public/WebIDBIndex.h:
+        * public/WebIDBObjectStore.h:
+        * public/WebIDBTransaction.h:
+        * src/WebIDBDatabaseImpl.h:
+
 2010-10-22  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.

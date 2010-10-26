@@ -39,7 +39,7 @@ namespace WebKit {
 class WebIDBObjectStore;
 class WebIDBTransaction;
 
-// See comment in WebIndexedDatabase for a high level overview these classes.
+// See comment in WebIDBFactory for a high level overview these classes.
 class WebIDBDatabaseImpl : public WebIDBDatabase {
 public:
     WebIDBDatabaseImpl(WTF::PassRefPtr<WebCore::IDBDatabaseBackendInterface>);

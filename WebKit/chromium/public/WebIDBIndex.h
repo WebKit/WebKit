@@ -36,7 +36,7 @@ class WebIDBCallbacks;
 class WebIDBKey;
 class WebIDBKeyRange;
 
-// See comment in WebIndexedDatabase for a high level overview of these classes.
+// See comment in WebIDBFactory for a high level overview of these classes.
 class WebIDBIndex {
 public:
     virtual ~WebIDBIndex() { }
