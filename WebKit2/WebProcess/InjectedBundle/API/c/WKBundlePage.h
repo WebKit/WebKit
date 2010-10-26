@@ -100,6 +100,8 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidFirstLayoutForFrame                                  didFirstLayoutForFrame;
     WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrame                  didFirstVisuallyNonEmptyLayoutForFrame;
     WKBundlePageDidRemoveFrameFromHierarchyCallback                     didRemoveFrameFromHierarchy;
+    WKBundlePageDidDisplayInsecureContentForFrameCallback               didDisplayInsecureContentForFrame;
+    WKBundlePageDidRunInsecureContentForFrameCallback                   didRunInsecureContentForFrame;
 
     // FIXME: There are no WKPage equivilent of these functions yet.
     WKBundlePageDidClearWindowObjectForFrameCallback                    didClearWindowObjectForFrame;
@@ -107,8 +109,6 @@ struct WKBundlePageLoaderClient {
     WKBundlePageWillPerformClientRedirectForFrameCallback               willPerformClientRedirectForFrame;
     WKBundlePageDidChangeLocationWithinPageForFrameCallback             didChangeLocationWithinPageForFrame;
     WKBundlePageDidHandleOnloadEventsForFrameCallback                   didHandleOnloadEventsForFrame;
-    WKBundlePageDidDisplayInsecureContentForFrameCallback               didDisplayInsecureContentForFrame;
-    WKBundlePageDidRunInsecureContentForFrameCallback                   didRunInsecureContentForFrame;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
