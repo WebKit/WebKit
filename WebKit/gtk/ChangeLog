@@ -1,3 +1,22 @@
+2010-10-26  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Port to new GtkScrollable interface in GTK+ 3.x
+        https://bugs.webkit.org/show_bug.cgi?id=48202
+
+        Use the new GtkScrollable interface when compiling against GTK+
+        3.x.
+
+        * webkit/webkitwebview.cpp:
+        (setHorizontalAdjustment):
+        (setVerticalAdjustment):
+        (getHorizontalAdjustment):
+        (getVerticalAdjustment):
+        (webkit_web_view_get_property):
+        (webkit_web_view_set_property):
+        (webkit_web_view_class_init):
+
 2010-10-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
