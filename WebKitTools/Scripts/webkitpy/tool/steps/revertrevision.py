@@ -32,3 +32,4 @@ from webkitpy.tool.steps.abstractstep import AbstractStep
 class RevertRevision(AbstractStep):
     def run(self, state):
         self._tool.checkout().apply_reverse_diff(state["revision"])
+        self.did_modify_checkout(state)

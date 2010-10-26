@@ -1,3 +1,14 @@
+2010-10-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        webkit-patch rollout produces incorrect patch when using svn move
+        https://bugs.webkit.org/show_bug.cgi?id=48244
+
+        We need to flush our caches when we modify the working copy.
+
+        * Scripts/webkitpy/tool/steps/revertrevision.py:
+
 2010-10-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
