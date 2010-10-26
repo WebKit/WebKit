@@ -527,6 +527,27 @@ if (isCygwin()) {
 
 if (!$hasAcceleratedCompositing) {
     $ignoredDirectories{'compositing'} = 1;
+
+    # These tests use the -webkit-transform-3d media query, which depends on
+    # accelerated compositing support.
+    $ignoredFiles{'fast/media/mq-transform-02.html'} = 1;
+    $ignoredFiles{'fast/media/mq-transform-03.html'} = 1;
+
+    # This test has slightly different floating-point rounding when accelerated
+    # compositing is enabled.
+    $ignoredFiles{'svg/custom/use-on-symbol-inside-pattern.svg'} = 1;
+
+    if (isAppleWebKit()) {
+        # In Apple's ports, the default controls for <video> contain a "full
+        # screen" button only if accelerated compositing is enabled.
+        $ignoredFiles{'media/controls-after-reload.html'} = 1;
+        $ignoredFiles{'media/controls-drag-timebar.html'} = 1;
+        $ignoredFiles{'media/controls-strict.html'} = 1;
+        $ignoredFiles{'media/controls-styling.html'} = 1;
+        $ignoredFiles{'media/video-controls-rendering.html'} = 1;
+        $ignoredFiles{'media/video-display-toggle.html'} = 1;
+        $ignoredFiles{'media/video-no-audio.html'} = 1;
+    }
 }
 
 if (!$has3DRendering) {

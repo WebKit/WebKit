@@ -1,3 +1,17 @@
+2010-10-26  Adam Roben  <aroben@apple.com>
+
+        Skip more tests that depend on accelerated compositing when accelerated
+        compositing is disabled
+
+        Fixes <http://webkit.org/b/48329> Some tests fail when accelerated
+        compositing is disabled
+
+        Reviewed by John Sullivan.
+
+        * Scripts/old-run-webkit-tests: Added more tests to skip when
+        accelerated compositing is disable. The tests all have output that
+        changes depending on whether accelerated compositing is enabled.
+
 2010-10-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
