@@ -178,6 +178,10 @@ struct WKPageFindClient {
 };
 typedef struct WKPageFindClient WKPageFindClient;
 
+enum {
+    kWKMoreThanMaximumMatchCount = -1
+};
+
 WK_EXPORT WKTypeID WKPageGetTypeID();
 
 WK_EXPORT WKPageNamespaceRef WKPageGetPageNamespace(WKPageRef page);

@@ -1,3 +1,18 @@
+2010-10-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKit2 callbacks for findString() and countMatchesForString() should report whether the match count was exceeded
+        https://bugs.webkit.org/show_bug.cgi?id=48285
+        <rdar://problem/8576318>
+
+        * UIProcess/API/C/WKPage.h:
+        Add a kWKMoreThanMaximumMatchCount constant.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+        If we get back more matches than allowed, send kWKMoreThanMaximumMatchCount as the match constant.
+
 2010-10-25  Dan Bernstein  <mitz@apple.com>
 
         Non-Carbon build fix.
