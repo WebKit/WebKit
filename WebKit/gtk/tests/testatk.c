@@ -46,6 +46,8 @@ static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo<
 
 static const char* formWithTextInputs = "<html><body><form><input type='text' name='entry' /></form></body></html>";
 
+static const char* layoutAndDataTables = "<html><body><table><tr><th>Odd</th><th>Even</th></tr><tr><td>1</td><td>2</td></tr></table><table><tr><td>foo</td><td>bar</td></tr></table></body></html>";
+
 static const char* listsOfItems = "<html><body><ul><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ul><ol><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ol></body></html>";
 
 static const char* textForSelections = "<html><body><p>A paragraph with plain text</p><p>A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p></body></html>";
@@ -596,15 +598,25 @@ static gint compAtkAttributeName(AtkAttribute* a1, AtkAttribute* a2)
     return g_strcmp0(a1->name, a2->name);
 }
 
+static gboolean atkAttributeSetAttributeNameHasValue(AtkAttributeSet* set, const gchar* attributeName, const gchar* value)
+{
+    GSList* element;
+    AtkAttribute at;
+    at.name = (gchar*)attributeName;
+    element = g_slist_find_custom(set, &at, (GCompareFunc)compAtkAttributeName);
+    return element && !g_strcmp0(((AtkAttribute*)(element->data))->value, value);
+}
+
+static gboolean atkAttributeSetContainsAttributeName(AtkAttributeSet* set, const gchar* attributeName)
+{
+    AtkAttribute at;
+    at.name = (gchar*)attributeName;
+    return g_slist_find_custom(set, &at, (GCompareFunc)compAtkAttributeName) ? true : false;
+}
+
 static gboolean atkAttributeSetAttributeHasValue(AtkAttributeSet* set, AtkTextAttribute attribute, const gchar* value)
 {
-    GSList *element;
-    AtkAttribute at;
-    gboolean result;
-    at.name = (gchar *)atk_text_attribute_get_name(attribute);
-    element = g_slist_find_custom(set, &at, (GCompareFunc)compAtkAttributeName);
-    result = element && !g_strcmp0(((AtkAttribute*)(element->data))->value, value);
-    return result;
+    return atkAttributeSetAttributeNameHasValue(set, atk_text_attribute_get_name(attribute), value);
 }
 
 static gboolean atkAttributeSetAreEqual(AtkAttributeSet* set1, AtkAttributeSet* set2)
@@ -964,6 +976,45 @@ static void testWebkitAtkGetExtents(void)
     g_object_unref(webView);
 }
 
+static void testWebkitAtkLayoutAndDataTables(void)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, layoutAndDataTables, 0, 0, 0);
+
+    // Manually spin the main context to get the accessible objects
+    while (g_main_context_pending(0))
+        g_main_context_iteration(0, TRUE);
+
+    AtkObject* obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+
+    // Check the non-layout table (data table)
+
+    AtkObject* table1 = atk_object_ref_accessible_child(obj, 0);
+    g_assert(ATK_IS_TABLE(table1));
+    AtkAttributeSet* set1 = atk_object_get_attributes(table1);
+    g_assert(set1);
+    g_assert(!atkAttributeSetContainsAttributeName(set1, "layout-guess"));
+    atk_attribute_set_free(set1);
+
+    // Check the layout table
+
+    AtkObject* table2 = atk_object_ref_accessible_child(obj, 1);
+    g_assert(ATK_IS_TABLE(table2));
+    AtkAttributeSet* set2 = atk_object_get_attributes(table2);
+    g_assert(set2);
+    g_assert(atkAttributeSetContainsAttributeName(set2, "layout-guess"));
+    g_assert(atkAttributeSetAttributeNameHasValue(set2, "layout-guess", "true"));
+    atk_attribute_set_free(set2);
+
+    g_object_unref(table1);
+    g_object_unref(table2);
+    g_object_unref(webView);
+}
+
 static void testWebkitAtkListsOfItems(void)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
@@ -1116,6 +1167,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/textAttributes", testWebkitAtkTextAttributes);
     g_test_add_func("/webkit/atk/textSelections", testWekitAtkTextSelections);
     g_test_add_func("/webkit/atk/getExtents", testWebkitAtkGetExtents);
+    g_test_add_func("/webkit/atk/layoutAndDataTables", testWebkitAtkLayoutAndDataTables);
     g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);
     g_test_add_func("/webkit/atk/textChangedNotifications", testWebkitAtkTextChangedNotifications);
     return g_test_run ();

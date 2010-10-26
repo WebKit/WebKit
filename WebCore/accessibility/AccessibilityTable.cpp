@@ -67,37 +67,45 @@ PassRefPtr<AccessibilityTable> AccessibilityTable::create(RenderObject* renderer
     return adoptRef(new AccessibilityTable(renderer));
 }
 
-bool AccessibilityTable::isTableExposableThroughAccessibility()
+bool AccessibilityTable::hasARIARole() const
 {
-    // the following is a heuristic used to determine if a
-    // <table> should be exposed as an AXTable. The goal
-    // is to only show "data" tables
-    
-    if (!renderer())
+    if (!m_renderer)
         return false;
     
-    // if the developer assigned an aria role to this, then we shouldn't 
-    // expose it as a table, unless, of course, the aria role is a table
     AccessibilityRole ariaRole = ariaRoleAttribute();
     if (ariaRole != UnknownRole)
+        return true;
+
+    return false;
+}
+
+bool AccessibilityTable::isAccessibilityTable() const
+{
+    if (!m_renderer)
         return false;
     
-    RenderTable* table = toRenderTable(m_renderer);
-    
-    // this employs a heuristic to determine if this table should appear. 
-    // Only "data" tables should be exposed as tables. 
+    return m_isAccessibilityTable;
+}
+
+bool AccessibilityTable::isDataTable() const
+{
+    if (!m_renderer)
+        return false;
+
+    // Do not consider it a data table is it has an ARIA role.
+    if (hasARIARole())
+        return false;
+
+    // This employs a heuristic to determine if this table should appear.
+    // Only "data" tables should be exposed as tables.
     // Unfortunately, there is no good way to determine the difference
-    // between a "layout" table and a "data" table
+    // between a "layout" table and a "data" table.
     
+    RenderTable* table = toRenderTable(m_renderer);
     Node* tableNode = table->node();
     if (!tableNode || !tableNode->hasTagName(tableTag))
         return false;
 
-    // Gtk+ ATs expect all tables to be exposed as tables.
-#if PLATFORM(GTK)
-    return true;
-#endif
-    
     // if there is a caption element, summary, THEAD, or TFOOT section, it's most certainly a data table
     HTMLTableElement* tableElement = static_cast<HTMLTableElement*>(tableNode);
     if (!tableElement->summary().isEmpty() || tableElement->tHead() || tableElement->tFoot() || tableElement->caption())
@@ -242,6 +250,30 @@ bool AccessibilityTable::isTableExposableThroughAccessibility()
     return false;
 }
     
+bool AccessibilityTable::isTableExposableThroughAccessibility() const
+{
+    // The following is a heuristic used to determine if a
+    // <table> should be exposed as an AXTable. The goal
+    // is to only show "data" tables.
+
+    if (!m_renderer)
+        return false;
+
+    // If the developer assigned an aria role to this, then we
+    // shouldn't expose it as a table, unless, of course, the aria
+    // role is a table.
+    if (hasARIARole())
+        return false;
+
+    // Gtk+ ATs expect all tables to be exposed as tables.
+#if PLATFORM(GTK)
+    Node* tableNode = toRenderTable(m_renderer)->node();
+    return tableNode && tableNode->hasTagName(tableTag);
+#endif
+
+    return isDataTable();
+}
+
 void AccessibilityTable::clearChildren()
 {
     AccessibilityRenderObject::clearChildren();
@@ -251,7 +283,7 @@ void AccessibilityTable::clearChildren()
 
 void AccessibilityTable::addChildren()
 {
-    if (!isDataTable()) {
+    if (!isAccessibilityTable()) {
         AccessibilityRenderObject::addChildren();
         return;
     }
@@ -488,7 +520,7 @@ AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column,
 
 AccessibilityRole AccessibilityTable::roleValue() const
 {
-    if (!isDataTable())
+    if (!isAccessibilityTable())
         return AccessibilityRenderObject::roleValue();
 
     return TableRole;
@@ -502,7 +534,7 @@ bool AccessibilityTable::accessibilityIsIgnored() const
     if (decision == IgnoreObject)
         return true;
     
-    if (!isDataTable())
+    if (!isAccessibilityTable())
         return AccessibilityRenderObject::accessibilityIsIgnored();
         
     return false;
@@ -510,7 +542,7 @@ bool AccessibilityTable::accessibilityIsIgnored() const
     
 String AccessibilityTable::title() const
 {
-    if (!isDataTable())
+    if (!isAccessibilityTable())
         return AccessibilityRenderObject::title();
     
     String title;
@@ -530,14 +562,6 @@ String AccessibilityTable::title() const
         title = AccessibilityRenderObject::title();
     
     return title;
-}
-
-bool AccessibilityTable::isDataTable() const
-{
-    if (!m_renderer)
-        return false;
-    
-    return m_isAccessibilityTable;
 }
 
 } // namespace WebCore

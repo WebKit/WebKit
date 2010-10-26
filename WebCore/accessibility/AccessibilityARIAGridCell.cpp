@@ -57,7 +57,7 @@ AccessibilityObject* AccessibilityARIAGridCell::parentTable() const
         return 0;
     
     parent = parent->parentObjectUnignored();
-    if (!parent || !parent->isDataTable())
+    if (!parent || !parent->isAccessibilityTable())
         return 0;
     
     return parent;

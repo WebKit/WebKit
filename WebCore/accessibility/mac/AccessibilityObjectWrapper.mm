@@ -647,7 +647,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
     if (m_object->supportsARIADropping())
         [additional addObject:NSAccessibilityDropEffectsAttribute];
 
-    if (m_object->isDataTable() && static_cast<AccessibilityTable*>(m_object)->supportsSelectedRows())
+    if (m_object->isAccessibilityTable() && static_cast<AccessibilityTable*>(m_object)->supportsSelectedRows())
         [additional addObject:NSAccessibilitySelectedRowsAttribute];        
     
     if (m_object->supportsARIALiveRegion()) {
@@ -948,7 +948,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(AXObjectCache
     else if (m_object->isAnchor() || m_object->isImage() || m_object->isLink())
         objectAttributes = anchorAttrs;
 
-    else if (m_object->isDataTable())
+    else if (m_object->isAccessibilityTable())
         objectAttributes = tableAttrs;
     else if (m_object->isTableColumn())
         objectAttributes = tableColAttrs;
@@ -1636,7 +1636,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }
     }    
     
-    if (m_object->isDataTable()) {
+    if (m_object->isAccessibilityTable()) {
         // TODO: distinguish between visible and non-visible rows
         if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] || 
             [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
@@ -2086,7 +2086,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if (m_object->isTextControl())
         return textParamAttrs;
     
-    if (m_object->isDataTable())
+    if (m_object->isAccessibilityTable())
         return tableParamAttrs;
     
     if (m_object->isMenuRelated())
@@ -2247,7 +2247,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     else if ([attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute]) {
         AccessibilityObject::AccessibilityChildrenVector selectedRows;
         convertToVector(array, selectedRows);
-        if (m_object->isTree() || m_object->isDataTable())
+        if (m_object->isTree() || m_object->isAccessibilityTable())
             m_object->setSelectedRows(selectedRows);
     } else if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
         m_object->setARIAGrabbed([number boolValue]);
@@ -2541,7 +2541,7 @@ static RenderObject* rendererForView(NSView* view)
         return [self textMarkerForVisiblePosition:visiblePosRange.end];
     }
     
-    if (m_object->isDataTable()) {
+    if (m_object->isAccessibilityTable()) {
         if ([attribute isEqualToString:NSAccessibilityCellForColumnAndRowParameterizedAttribute]) {
             if (array == nil || [array count] != 2)
                 return nil;

@@ -68,7 +68,7 @@ AccessibilityRole AccessibilityTableRow::roleValue() const
 bool AccessibilityTableRow::isTableRow() const
 {
     AccessibilityObject* table = parentTable();
-    if (!table || !table->isDataTable())
+    if (!table || !table->isAccessibilityTable())
         return false;
     
     return true;

@@ -1,3 +1,22 @@
+2010-10-26  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [Gtk] Layout tables should indicate that they are not data tables via an object attribute
+        https://bugs.webkit.org/show_bug.cgi?id=35422
+
+        New unit test to check the 'layout-guess' attribute in tables.
+
+        * tests/testatk.c:
+        (atkAttributeSetAttributeNameHasValue): New, looks for a attribute
+        with a specific value, by the name of attribute.
+        (atkAttributeSetContainsAttributeName): New, just checks whether
+        an attribute with a specified name is present in the set.
+        (atkAttributeSetAttributeHasValue): Modified to relay on the new
+        function atkAttributeSetAttributeNameHasValue().
+        (testWebkitAtkLayoutAndDataTables): New test.
+        (main): Added the new test.
+
 2010-10-26  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -85,7 +85,7 @@ void AccessibilityTableHeaderContainer::addChildren()
     ASSERT(!m_haveChildren); 
     
     m_haveChildren = true;
-    if (!m_parentTable || !m_parentTable->isDataTable())
+    if (!m_parentTable || !m_parentTable->isAccessibilityTable())
         return;
     
     static_cast<AccessibilityTable*>(m_parentTable)->columnHeaders(m_children);

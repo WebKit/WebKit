@@ -51,7 +51,9 @@ public:
     static PassRefPtr<AccessibilityTable> create(RenderObject*);
     virtual ~AccessibilityTable();
 
+    virtual bool isAccessibilityTable() const;
     virtual bool isDataTable() const;
+
     virtual AccessibilityRole roleValue() const;
     virtual bool isAriaTable() const { return false; }
     
@@ -86,7 +88,8 @@ protected:
     AccessibilityTableHeaderContainer* m_headerContainer;
     mutable bool m_isAccessibilityTable;
 
-    bool isTableExposableThroughAccessibility();
+    bool hasARIARole() const;
+    bool isTableExposableThroughAccessibility() const;
 };
 
 } // namespace WebCore 

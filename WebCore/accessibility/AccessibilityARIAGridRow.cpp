@@ -65,7 +65,7 @@ void AccessibilityARIAGridRow::disclosedRows(AccessibilityChildrenVector& disclo
     // The contiguous disclosed rows will be the rows in the table that 
     // have an aria-level of plus 1 from this row.
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isDataTable())
+    if (!parent || !parent->isAccessibilityTable())
         return;
     
     // Search for rows that match the correct level. 
@@ -92,7 +92,7 @@ AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
     // The row that discloses this one is the row in the table
     // that is aria-level subtract 1 from this row.
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent || !parent->isDataTable())
+    if (!parent || !parent->isAccessibilityTable())
         return 0;
     
     // If the level is 1 or less, than nothing discloses this row.
@@ -119,7 +119,7 @@ AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
 AccessibilityObject* AccessibilityARIAGridRow::parentTable() const
 {
     AccessibilityObject* parent = parentObjectUnignored();
-    if (!parent->isDataTable())
+    if (!parent->isAccessibilityTable())
         return 0;
     
     return parent;

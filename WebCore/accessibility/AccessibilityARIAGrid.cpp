@@ -83,7 +83,7 @@ void AccessibilityARIAGrid::addChildren()
 {
     ASSERT(!m_haveChildren); 
     
-    if (!isDataTable()) {
+    if (!isAccessibilityTable()) {
         AccessibilityRenderObject::addChildren();
         return;
     }

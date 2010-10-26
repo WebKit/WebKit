@@ -84,7 +84,7 @@ AccessibilityObject* AccessibilityTableCell::parentTable() const
 bool AccessibilityTableCell::isTableCell() const
 {
     AccessibilityObject* table = parentTable();
-    if (!table || !table->isDataTable())
+    if (!table || !table->isAccessibilityTable())
         return false;
     
     return true;

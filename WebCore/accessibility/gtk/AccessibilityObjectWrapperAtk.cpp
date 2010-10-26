@@ -329,14 +329,23 @@ static AtkAttributeSet* addAttributeToSet(AtkAttributeSet* attributeSet, const c
 static AtkAttributeSet* webkit_accessible_get_attributes(AtkObject* object)
 {
     AtkAttributeSet* attributeSet = 0;
-
     attributeSet = addAttributeToSet(attributeSet, "toolkit", "WebKitGtk");
 
-    int headingLevel = core(object)->headingLevel();
+    AccessibilityObject* coreObject = core(object);
+    if (!coreObject)
+        return attributeSet;
+
+    int headingLevel = coreObject->headingLevel();
     if (headingLevel) {
         String value = String::number(headingLevel);
         attributeSet = addAttributeToSet(attributeSet, "level", value.utf8().data());
     }
+
+    // Set the 'layout-guess' attribute to help Assistive
+    // Technologies know when an exposed table is not data table.
+    if (coreObject->isAccessibilityTable() && !coreObject->isDataTable())
+        attributeSet = addAttributeToSet(attributeSet, "layout-guess", "true");
+
     return attributeSet;
 }
 
