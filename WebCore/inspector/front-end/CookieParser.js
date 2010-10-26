@@ -54,7 +54,7 @@ WebInspector.CookieParser.prototype = {
             if (kv.key.charAt(0) === "$" && this._lastCookie)
                 this._lastCookie.addAttribute(kv.key.slice(1), kv.value);
             else if (kv.key.toLowerCase() !== "$version" && typeof kv.value === "string")
-                this._addCookie(kv);
+                this._addCookie(kv, WebInspector.Cookie.Type.Request);
             this._advanceAndCheckCookieDelimiter();
         }
         this._flushCookie();
@@ -69,7 +69,7 @@ WebInspector.CookieParser.prototype = {
             if (this._lastCookie)
                 this._lastCookie.addAttribute(kv.key, kv.value);
             else 
-                this._addCookie(kv);
+                this._addCookie(kv, WebInspector.Cookie.Type.Response);
             if (this._advanceAndCheckCookieDelimiter())
                 this._flushCookie();
         }
@@ -128,14 +128,14 @@ WebInspector.CookieParser.prototype = {
         return match[0].match("\n") !== null;
     },
 
-    _addCookie: function(keyValue)
+    _addCookie: function(keyValue, type)
     {
         if (this._lastCookie)
             this._lastCookie.size = keyValue.position - this._lastCookiePosition;
-        // Mozilla bug 169091: Mozilla, IE and Chrome treat signle token (w/o "=") as
+        // Mozilla bug 169091: Mozilla, IE and Chrome treat single token (w/o "=") as
         // specifying a value for a cookie with empty name.
-        this._lastCookie = keyValue.value ? new WebInspector.Cookie(keyValue.key, keyValue.value) :
-            new WebInspector.Cookie("", keyValue.key);
+        this._lastCookie = keyValue.value ? new WebInspector.Cookie(keyValue.key, keyValue.value, type) :
+            new WebInspector.Cookie("", keyValue.key, type);
         this._lastCookiePosition = keyValue.position;
         this._cookies.push(this._lastCookie);
     }
@@ -151,10 +151,11 @@ WebInspector.CookieParser.parseSetCookie = function(header)
     return (new WebInspector.CookieParser()).parseSetCookie(header);
 }
 
-WebInspector.Cookie = function(name, value)
+WebInspector.Cookie = function(name, value, type)
 {
     this.name = name;
     this.value = value;
+    this.type = type;
     this._attributes = {};
 }
 
@@ -202,3 +203,8 @@ WebInspector.Cookie.prototype = {
         this._attributes[key.toLowerCase()] = value;
     }
 }
+
+WebInspector.Cookie.Type = {
+    Request: 0,
+    Response: 1
+};

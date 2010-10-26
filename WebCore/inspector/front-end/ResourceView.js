@@ -139,14 +139,20 @@ WebInspector.ResourceView.prototype = {
         this._selectTab();
     },
 
+    resize: function()
+    {
+        if (this._cookiesView && !this._cookiesView.element.hasStyleClass("hidden"))
+            this._cookiesView.resize();
+    },
+
     _selectTab: function()
     {
-        if (this._headersVisible) {
-            if (!this.hasContentTab() || WebInspector.applicationSettings.resourceViewTab === "headers")
-                this._selectHeadersTab();
-            else
-                this.selectContentTab();
-        } else
+        var preferredTab = WebInspector.applicationSettings.resourceViewTab;
+        if (this._headersVisible && this._cookiesView && preferredTab === "cookies")
+            this._selectCookiesTab();
+        else if (this._headersVisible && (!this.hasContentTab() || preferredTab === "headers"))
+            this._selectHeadersTab();
+        else
             this._innerSelectContentTab();
     },
 
@@ -170,11 +176,18 @@ WebInspector.ResourceView.prototype = {
         return false;
     },
 
+    _selectCookiesTab: function(updatePrefs)
+    {
+        if (updatePrefs)
+            WebInspector.applicationSettings.resourceViewTab = "cookies";
+        this.tabbedPane.selectTabById("cookies");
+        this._cookiesView.resize();
+    },
+
     _innerSelectContentTab: function()
     {
         this.tabbedPane.selectTabById("content");
-        if ("resize" in this)
-            this.resize();
+        this.resize();
         if (this.hasContentTab())
             this.contentTabSelected();
     },
@@ -283,6 +296,7 @@ WebInspector.ResourceView.prototype = {
             additionalRow = {header: "(Key3)", value: this.resource.webSocketRequestKey3};
         this._refreshHeaders(WebInspector.UIString("Request Headers"), this.resource.sortedRequestHeaders, additionalRow, this.requestHeadersTreeElement);
         this._refreshFormData();
+        this._refreshCookies();
     },
 
     _refreshResponseHeaders: function()
@@ -291,6 +305,7 @@ WebInspector.ResourceView.prototype = {
         if (typeof this.resource.webSocketChallengeResponse !== "undefined")
             additionalRow = {header: "(Challenge Response)", value: this.resource.webSocketChallengeResponse};
         this._refreshHeaders(WebInspector.UIString("Response Headers"), this.resource.sortedResponseHeaders, additionalRow, this.responseHeadersTreeElement);
+        this._refreshCookies();
     },
 
     _refreshHTTPInformation: function()
@@ -347,7 +362,80 @@ WebInspector.ResourceView.prototype = {
             headerTreeElement.selectable = false;
             headersTreeElement.appendChild(headerTreeElement);
         }
+    },
+
+    _refreshCookies: function()
+    {
+        if (!this._cookiesView) {
+            if (!this.resource.requestCookies && !this.resource.responseCookies)
+                return;
+            this._cookiesView = new WebInspector.ResourceCookiesTab();
+            this.tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView.element, this._selectCookiesTab.bind(this, true));
+        }
+        this._cookiesView.requestCookies = this.resource.requestCookies;
+        this._cookiesView.responseCookies = this.resource.responseCookies;
     }
 }
 
 WebInspector.ResourceView.prototype.__proto__ = WebInspector.View.prototype;
+
+WebInspector.ResourceCookiesTab = function()
+{
+    WebInspector.CookiesTable.call(this);
+    this.element.addStyleClass("resource-view-cookies");
+    this._requestCookies = [];
+    this._responseCookies = [];
+    this._createDataGrid(true);
+    this._requestCookiesNode = this._createFolder(WebInspector.UIString("Request Cookies"));
+    this._responseCookiesNode = this._createFolder(WebInspector.UIString("Response Cookies"));
+}
+
+WebInspector.ResourceCookiesTab.prototype = {
+    set requestCookies(cookies)
+    {
+        if (this._requestCookies === cookies)
+            return;
+        this._requestCookies = cookies;
+        this._populateCookies(this._requestCookiesNode, this._requestCookies);
+    },
+
+    set responseCookies(cookies)
+    {
+        if (this._responseCookies === cookies)
+            return;
+        this._responseCookies = cookies;
+        this._populateCookies(this._responseCookiesNode, this._responseCookies);
+    },
+
+    _populateDataGrid: function()
+    {
+        this._populateCookies(this._requestCookiesNode, this._requestCookies);
+        this._populateCookies(this._responseCookiesNode, this._responseCookies);
+    },
+
+    _populateCookies: function(parentNode, cookies)
+    {
+        WebInspector.CookiesTable.prototype._populateCookies.call(this, parentNode, cookies);
+        var totalSize = 0;
+        if (cookies) {
+            for (var i = 0; i < cookies.length; ++i)
+                totalSize += cookies[i].size;
+        }
+        parentNode.expanded = true;
+        parentNode.data[5] = totalSize;
+        parentNode.refresh();
+    },
+
+    _createFolder: function(name)
+    {
+        var data = [ name, "", "", "", "", 0, "", "" ];
+        var node = new WebInspector.DataGridNode(data);
+        node.selectable = true;
+        node.expanded = true;
+        this._dataGrid.appendChild(node);
+        node.element.addStyleClass("row-group");
+        return node;
+    }
+};
+
+WebInspector.ResourceCookiesTab.prototype.__proto__ = WebInspector.CookiesTable.prototype;

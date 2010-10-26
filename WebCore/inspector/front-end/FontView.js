@@ -69,6 +69,7 @@ WebInspector.FontView.prototype = {
     resize: function()
     {
         this.updateFontPreviewSize();
+        WebInspector.ResourceView.prototype.resize.call(this);
     },
 
     updateFontPreviewSize: function()

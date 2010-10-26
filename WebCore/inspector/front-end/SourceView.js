@@ -73,6 +73,7 @@ WebInspector.SourceView.prototype = {
             this.sourceFrame.resize();
         if (this.localSourceFrame)
             this.localSourceFrame.resize();
+        WebInspector.ResourceView.prototype.resize.call(this);
     },
 
     setupSourceFrameIfNeeded: function()

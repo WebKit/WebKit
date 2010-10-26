@@ -308,7 +308,7 @@ WebInspector.DataGrid.prototype = {
         return this._dataTableBody;
     },
 
-    autoSizeColumns: function(minPercent, maxPercent)
+    autoSizeColumns: function(minPercent, maxPercent, maxDescentLevel)
     {
         if (minPercent)
             minPercent = Math.min(minPercent, Math.floor(100 / this._columnCount));
@@ -317,8 +317,9 @@ WebInspector.DataGrid.prototype = {
         for (var columnIdentifier in columns)
             widths[columnIdentifier] = (columns[columnIdentifier].title || "").length;
 
-        for (var i = 0; i < this.children.length; ++i) {
-            var node = this.children[i];
+        var children = maxDescentLevel ? this._enumerateChildren(this, [], maxDescentLevel + 1) : this.children;
+        for (var i = 0; i < children.length; ++i) {
+            var node = children[i];
             for (var columnIdentifier in columns) {
                 var text = node.data[columnIdentifier] || "";
                 if (text.length > widths[columnIdentifier])
@@ -371,6 +372,17 @@ WebInspector.DataGrid.prototype = {
         this.updateWidths();
     },
 
+    _enumerateChildren: function(rootNode, result, maxLevel)
+    {
+        if (!rootNode.root)
+            result.push(rootNode);
+        if (!maxLevel)
+            return;
+        for (var i = 0; i < rootNode.children.length; ++i)
+            this._enumerateChildren(rootNode.children[i], result, maxLevel - 1);
+        return result;
+    },
+
     // Updates the widths of the table, including the positions of the column
     // resizers.
     //
@@ -388,7 +400,8 @@ WebInspector.DataGrid.prototype = {
         var tableWidth = this._dataTable.offsetWidth;
         var numColumns = headerTableColumns.length;
         
-        if (!this._columnWidthsInitialized) {
+        // Do not attempt to use offsetes if we're not attached to the document tree yet.
+        if (!this._columnWidthsInitialized && this.element.offsetWidth) {
             // Give all the columns initial widths now so that during a resize,
             // when the two columns that get resized get a percent value for
             // their widths, all the other columns already have percent values

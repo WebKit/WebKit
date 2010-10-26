@@ -898,6 +898,29 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     top: 20px;
 }
 
+.resource-view .resource-view-cookies {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    overflow: auto;
+    padding: 12px;
+}
+
+.resource-view.headers-visible .resource-view-cookies {
+    top: 20px;
+}
+
+.resource-view-cookies.table .data-grid {
+    height: 100%;
+}
+
+.resource-view-cookies .data-grid .row-group {
+    font-weight: bold;
+    font-size: 11px;
+}
+
 .webkit-line-gutter-backdrop {
     /* Keep this in sync with view-source.css (.webkit-line-gutter-backdrop) */
     width: 31px;
