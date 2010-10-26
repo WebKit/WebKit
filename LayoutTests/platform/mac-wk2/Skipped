@@ -37,49 +37,10 @@ platform/mac/accessibility
 # <https://bugs.webkit.org/show_bug.cgi?id=42139>
 fast/loader/null-request-after-willSendRequest.html
 
-# Support layoutTestController.layerTreeAsText in WebKitTestRunner
-# <https://bugs.webkit.org/show_bug.cgi?id=42145>
-compositing/layer-creation/scroll-partial-update.html
-compositing/animation/animation-compositing.html
-compositing/geometry/clip.html
-compositing/geometry/limit-layer-bounds-clipping-ancestor.html
-compositing/geometry/limit-layer-bounds-fixed-positioned.html
-compositing/geometry/limit-layer-bounds-overflow-root.html
-compositing/geometry/limit-layer-bounds-positioned-transition.html
-compositing/geometry/limit-layer-bounds-positioned.html
-compositing/geometry/limit-layer-bounds-transformed-overflow.html
-compositing/geometry/limit-layer-bounds-transformed.html
-compositing/geometry/preserve-3d-switching.html
-compositing/iframes/become-overlapped-iframe.html
-compositing/iframes/composited-parent-iframe.html
-compositing/iframes/connect-compositing-iframe-delayed.html
-compositing/iframes/connect-compositing-iframe.html
-compositing/iframes/connect-compositing-iframe2.html
-compositing/iframes/connect-compositing-iframe3.html
-compositing/iframes/enter-compositing-iframe.html
-compositing/iframes/iframe-resize.html
+# Some compositing tests flakey
+# https://bugs.webkit.org/show_bug.cgi?id=48354
 compositing/iframes/iframe-size-from-zero.html
-compositing/iframes/iframe-size-to-zero.html
-compositing/iframes/iframe-src-change.html
-compositing/iframes/leave-compositing-iframe.html
-compositing/iframes/overlapped-iframe.html
-compositing/iframes/scrolling-iframe.html
-compositing/images/clip-on-directly-composited-image.html
-compositing/layer-creation/overflow-scroll-overlap.html
-compositing/overflow/clip-descendents.html
-compositing/overflow/resize-painting.html
-compositing/plugins/1x1-composited-plugin.html
-compositing/plugins/composited-plugin.html
-compositing/plugins/large-to-small-composited-plugin.html
-compositing/plugins/small-to-large-composited-plugin.html
-compositing/tiling/crash-reparent-tiled-layer.html
-compositing/tiling/huge-layer-add-remove-child.html
-compositing/tiling/huge-layer-resize.html
-compositing/tiling/huge-layer-with-layer-children-resize.html
-compositing/tiling/huge-layer-with-layer-children.html
-compositing/tiling/huge-layer.html
-compositing/tiling/huge-layer-img.html
-compositing/video/video-poster.html
+compositing/iframes/iframe-src-change.html 
 
 # Uncategorized editing failures
 editing/deleting/delete-by-word-001.html

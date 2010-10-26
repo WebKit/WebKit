@@ -148,6 +148,13 @@ bool LayoutTestController::pauseAnimationAtTimeOnElementWithId(JSStringRef anima
     return WKBundleFramePauseAnimationOnElementWithId(mainFrame, toWK(animationName).get(), toWK(elementId).get(), time);
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::layerTreeAsText() const
+{
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
+    WKRetainPtr<WKStringRef> text(AdoptWK, WKBundleFrameCopyLayerTreeAsText(mainFrame));
+    return toJS(text);
+}
+
 void LayoutTestController::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
 {
     WKRetainPtr<WKStringRef> sourceWK = toWK(source);

@@ -87,10 +87,11 @@ public:
     static String counterValue(JSObjectRef element);
     static String markerText(JSObjectRef element);
 
-    unsigned numberOfActiveAnimations();
+    unsigned numberOfActiveAnimations() const;
     bool pauseAnimationOnElementWithId(const String& animationName, const String& elementID, double time);
-
-    unsigned pendingUnloadCount();
+    String layerTreeAsText() const;
+    
+    unsigned pendingUnloadCount() const;
 
     // Simple listener class used by plug-ins to know when frames finish or fail loading.
     class LoadListener {

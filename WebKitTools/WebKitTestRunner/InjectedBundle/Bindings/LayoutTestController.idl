@@ -66,6 +66,9 @@ module WTR {
         // UserContent testing.
         void addUserScript(in DOMString source, in boolean runAtStart, in boolean allFrames);
         void addUserStyleSheet(in DOMString source, in boolean allFrames);
+        
+        // Compositing testing.
+        DOMString layerTreeAsText();
     };
 
 }

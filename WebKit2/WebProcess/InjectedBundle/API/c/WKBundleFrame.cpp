@@ -118,3 +118,8 @@ WKBundlePageRef WKBundleFrameGetPage(WKBundleFrameRef frameRef)
 {
     return toAPI(toImpl(frameRef)->page());
 }
+
+WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frameRef)
+{
+    return toCopiedAPI(toImpl(frameRef)->layerTreeAsText());
+}
