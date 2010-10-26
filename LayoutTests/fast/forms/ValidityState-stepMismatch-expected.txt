@@ -131,12 +131,12 @@ PASS stepMismatchFor("-3", "-2", "-4") is false
 PASS stepMismatchFor("-3", null, "-4") is false
 PASS stepMismatchFor("-3", undefined, "-4") is false
 Huge numbers and small step; uncomparable
-PASS stepMismatchFor("1.7976931348623157e+308", "3", "") is false
-PASS stepMismatchFor("1.7976931348623156e+308", "3", "") is false
-PASS stepMismatchFor("1.7976931348623155e+308", "3", "") is false
+PASS stepMismatchFor("3.40282347e+38", "3", "") is false
+PASS stepMismatchFor("3.40282346e+38", "3", "") is false
+PASS stepMismatchFor("3.40282345e+38", "3", "") is false
 Huge numbers and huge step
-PASS stepMismatchFor("1.60e+308", "0.20e+308", "") is false
-PASS stepMismatchFor("1.60e+308", "0.22e+308", "") is true
+PASS stepMismatchFor("3.20e+38", "0.20e+38", "") is false
+PASS stepMismatchFor("3.20e+38", "0.22e+38", "") is true
 Fractional numbers
 PASS stepMismatchFor("0.9", "0.1", "") is false
 PASS stepMismatchFor("0.9", "0.1000001", "") is true
@@ -157,12 +157,12 @@ PASS stepMismatchFor("-3", "-2", "-4") is false
 PASS stepMismatchFor("-3", null, "-4") is false
 PASS stepMismatchFor("-3", undefined, "-4") is false
 Huge numbers and small step; uncomparable
-PASS stepMismatchFor("1.7976931348623157e+308", "3", "") is false
-PASS stepMismatchFor("1.7976931348623156e+308", "3", "") is false
-PASS stepMismatchFor("1.7976931348623155e+308", "3", "") is false
+PASS stepMismatchFor("3.40282347e+38", "3", "") is false
+PASS stepMismatchFor("3.40282346e+38", "3", "") is false
+PASS stepMismatchFor("3.40282345e+38", "3", "") is false
 Huge numbers and huge step
-PASS stepMismatchFor("1.60e+308", "0.20e+308", "") is false
-PASS stepMismatchFor("1.60e+308", "0.22e+308", "") is false
+PASS stepMismatchFor("3.20e+38", "0.20e+38", "") is false
+PASS stepMismatchFor("3.20e+38", "0.22e+38", "") is false
 Fractional numbers
 PASS stepMismatchFor("0.9", "0.1", "") is false
 PASS stepMismatchFor("0.9", "0.1000001", "") is false

@@ -21,7 +21,7 @@ shouldBe('valueAsNumberFor("-1.2")', '-1.2');
 shouldBe('valueAsNumberFor("1.2E10")', '1.2E10');
 shouldBe('valueAsNumberFor("1.2E-10")', '1.2E-10');
 shouldBe('valueAsNumberFor("1.2E+10")', '1.2E10');
-shouldBe('valueAsNumberFor("12345678901234567890123456789012345678901234567890")', '1.2345678901234567E+49');
+shouldBe('valueAsNumberFor("123456789012345678901234567890123456789")', '1.2345678901234568E+38');
 shouldBe('valueAsNumberFor("0.12345678901234567890123456789012345678901234567890")', '0.123456789012345678');
 
 debug('valueAsNumber for invalid string values:');
@@ -51,7 +51,11 @@ shouldBe('setValueAsNumberAndGetValue(-0)', '"0"');
 shouldBe('setValueAsNumberAndGetValue(-1.2)', '"-1.2"');
 shouldBe('setValueAsNumberAndGetValue(1.2e10)', '"12000000000"');
 shouldBe('setValueAsNumberAndGetValue(1.2e-10)', '"1.2e-10"');
-shouldBe('setValueAsNumberAndGetValue(1.2345678901234567e+49)', '"1.2345678901234567e+49"');
+shouldBe('setValueAsNumberAndGetValue(1.2345678901234567e+38)', '"1.2345678901234567e+38"');
+shouldBe('setValueAsNumberAndGetValue("-3.40282346e+38")', '"-3.40282346e+38"');
+shouldThrow('setValueAsNumberAndGetValue("-3.40282348e+38")', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
+shouldBe('setValueAsNumberAndGetValue("3.40282346e+38")', '"3.40282346e+38"');
+shouldThrow('setValueAsNumberAndGetValue("3.40282348e+38")', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('setValueAsNumberAndGetValue(null)', '"0"');

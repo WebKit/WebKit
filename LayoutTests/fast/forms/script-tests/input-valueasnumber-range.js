@@ -26,7 +26,7 @@ shouldBe('valueAsNumberFor("-1.2")', '0');
 shouldBe('valueAsNumberFor("1.2E10")', '100');
 shouldBe('valueAsNumberFor("1.2E-10")', '0');
 shouldBe('valueAsNumberFor("1.2E+10")', '100');
-shouldBe('valueAsNumberFor("12345678901234567890123456789012345678901234567890")', '100');
+shouldBe('valueAsNumberFor("123456789012345678901234567890123456789")', '100');
 shouldBe('valueAsNumberFor("0.12345678901234567890123456789012345678901234567890")', '0');
 
 debug('valueAsNumber for invalid string values:');
@@ -56,7 +56,7 @@ shouldBe('setValueAsNumberAndGetValue(-0)', '"0"');
 shouldBe('setValueAsNumberAndGetValue(-1.2)', '"0"');
 shouldBe('setValueAsNumberAndGetValue(1.2e10)', '"100"');
 shouldBe('setValueAsNumberAndGetValue(1.2e-10)', '"0"');
-shouldBe('setValueAsNumberAndGetValue(1.2345678901234567e+49)', '"100"');
+shouldBe('setValueAsNumberAndGetValue(1.2345678901234567e+38)', '"100"');
 
 debug('Tests to set invalid values to valueAsNumber:');
 shouldBe('setValueAsNumberAndGetValue(null)', '"0"');

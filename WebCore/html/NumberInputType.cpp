@@ -43,11 +43,8 @@ namespace WebCore {
 using namespace HTMLNames;
 using namespace std;
 
-// FIXME: Number values should be in the range of IEEE 754 single-precision
-// floating point number.
-// http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#real-numbers
-static const double numberDefaultMinimum = -DBL_MAX;
-static const double numberDefaultMaximum = DBL_MAX;
+static const double numberDefaultMinimum = -FLT_MAX;
+static const double numberDefaultMaximum = FLT_MAX;
 
 static const double numberDefaultStep = 1.0;
 static const double numberStepScaleFactor = 1.0;
@@ -67,8 +64,16 @@ double NumberInputType::valueAsNumber() const
     return parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());
 }
 
-void NumberInputType::setValueAsNumber(double newValue, ExceptionCode&) const
+void NumberInputType::setValueAsNumber(double newValue, ExceptionCode& ec) const
 {
+    if (newValue < numberDefaultMinimum) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+    if (newValue > numberDefaultMaximum) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
     element()->setValue(serialize(newValue));
 }
 

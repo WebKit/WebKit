@@ -83,6 +83,11 @@ bool parseToDoubleForNumberType(const String& string, double* result)
     if (!isfinite(value))
         return false;
 
+    // Numbers are considered finite IEEE 754 single-precision floating point values.
+    // See HTML5 2.4.4.3 `Real numbers.'
+    if (-FLT_MAX > value || value > FLT_MAX)
+        return false;
+
     if (result) {
         // The following expression converts -0 to +0.
         *result = value ? value : 0;
