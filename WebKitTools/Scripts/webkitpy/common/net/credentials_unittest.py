@@ -34,6 +34,21 @@ from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 
+
+# FIXME: Other unit tests probably want this class.
+class _TemporaryDirectory(object):
+    def __init__(self, **kwargs):
+        self._kwargs = kwargs
+        self._directory_path = None
+
+    def __enter__(self):
+        self._directory_path = tempfile.mkdtemp(**self._kwargs)
+        return self._directory_path
+
+    def __exit__(self, type, value, traceback):
+        os.rmdir(self._directory_path)
+
+
 class CredentialsTest(unittest.TestCase):
     example_security_output = """keychain: "/Users/test/Library/Keychains/login.keychain"
 class: "inet"
@@ -101,40 +116,59 @@ password: "SECRETSAUCE"
         self._assert_security_call()
         self._assert_security_call(username="foo")
 
+    def test_credentials_from_environment(self):
+        executive_mock = Mock()
+        credentials = Credentials("example.com", executive=executive_mock)
+
+        saved_environ = os.environ.copy()
+        os.environ['WEBKIT_BUGZILLA_USERNAME'] = "foo"
+        os.environ['WEBKIT_BUGZILLA_PASSWORD'] = "bar"
+        username, password = credentials._credentials_from_environment()
+        self.assertEquals(username, "foo")
+        self.assertEquals(password, "bar")
+        os.environ = saved_environ
+
     def test_read_credentials_without_git_repo(self):
+        # FIXME: This should share more code with test_keyring_without_git_repo
         class FakeCredentials(Credentials):
             def _is_mac_os_x(self):
                 return True
-            def _credentials_from_keychain(self, username):
-                return ["test@webkit.org", "SECRETSAUCE"]
 
-        temp_dir_path = tempfile.mkdtemp(suffix="not_a_git_repo")
-        credentials = FakeCredentials("bugs.webkit.org", cwd=temp_dir_path)
-        self.assertEqual(credentials.read_credentials(), ["test@webkit.org", "SECRETSAUCE"])
-        os.rmdir(temp_dir_path)
+            def _credentials_from_keychain(self, username):
+                return ("test@webkit.org", "SECRETSAUCE")
+
+            def _credentials_from_environment(self):
+                return (None, None)
+
+        with _TemporaryDirectory(suffix="not_a_git_repo") as temp_dir_path:
+            credentials = FakeCredentials("bugs.webkit.org", cwd=temp_dir_path)
+            # FIXME: Using read_credentials here seems too broad as higher-priority
+            # credential source could be affected by the user's environment.
+            self.assertEqual(credentials.read_credentials(), ("test@webkit.org", "SECRETSAUCE"))
+
 
     def test_keyring_without_git_repo(self):
+        # FIXME: This should share more code with test_read_credentials_without_git_repo
         class MockKeyring(object):
             def get_password(self, host, username):
                 return "NOMNOMNOM"
 
         class FakeCredentials(Credentials):
-            def __init__(self, cwd):
-                Credentials.__init__(self, "fake.hostname", cwd=cwd,
-                                     keyring=MockKeyring())
-
             def _is_mac_os_x(self):
                 return True
 
             def _credentials_from_keychain(self, username):
                 return ("test@webkit.org", None)
 
-        temp_dir_path = tempfile.mkdtemp(suffix="not_a_git_repo")
-        credentials = FakeCredentials(temp_dir_path)
-        try:
-            self.assertEqual(credentials.read_credentials(), ["test@webkit.org", "NOMNOMNOM"])
-        finally:
-            os.rmdir(temp_dir_path)
+            def _credentials_from_environment(self):
+                return (None, None)
+
+        with _TemporaryDirectory(suffix="not_a_git_repo") as temp_dir_path:
+            credentials = FakeCredentials("fake.hostname", cwd=temp_dir_path, keyring=MockKeyring())
+            # FIXME: Using read_credentials here seems too broad as higher-priority
+            # credential source could be affected by the user's environment.
+            self.assertEqual(credentials.read_credentials(), ("test@webkit.org", "NOMNOMNOM"))
+
 
 if __name__ == '__main__':
     unittest.main()

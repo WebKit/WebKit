@@ -591,11 +591,12 @@ class Bugzilla(object):
             self.authenticated = True
             return
 
+        credentials = Credentials(self.bug_server_host, git_prefix="bugzilla")
+
         attempts = 0
         while not self.authenticated:
             attempts += 1
-            (username, password) = Credentials(
-                self.bug_server_host, git_prefix="bugzilla").read_credentials()
+            username, password = credentials.read_credentials()
 
             log("Logging in as %s..." % username)
             self.browser.open(self.bug_server_url +

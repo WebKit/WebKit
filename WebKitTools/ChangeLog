@@ -1,3 +1,19 @@
+2010-10-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        Teach webkit-patch how to read credentials from the environment
+        https://bugs.webkit.org/show_bug.cgi?id=48275
+
+        This makes it possible for svn users to have their bugzilla credentials
+        stored in their environment instead of typing them every time.
+
+        We need this for making it easy to run the win-ews bot (which currently
+        uses svn instead of git).
+
+        * Scripts/webkitpy/common/net/credentials.py:
+        * Scripts/webkitpy/common/net/credentials_unittest.py:
+
 2010-10-26  Kenichi Ishibashi  <bashi@google.com>
 
         Reviewed by Kent Tamura.

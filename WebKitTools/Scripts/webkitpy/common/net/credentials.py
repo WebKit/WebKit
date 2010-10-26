@@ -48,6 +48,7 @@ except ImportError:
 
 
 class Credentials(object):
+    _environ_prefix = "webkit_bugzilla_"
 
     def __init__(self, host, git_prefix=None, executive=None, cwd=os.getcwd(),
                  keyring=keyring):
@@ -58,8 +59,17 @@ class Credentials(object):
         self._keyring = keyring
 
     def _credentials_from_git(self):
-        return [Git.read_git_config(self.git_prefix + "username"),
-                Git.read_git_config(self.git_prefix + "password")]
+        if not Git.in_working_directory(self.cwd):
+            return (None, None)
+        try:
+            return (Git.read_git_config(self.git_prefix + "username"),
+                    Git.read_git_config(self.git_prefix + "password"))
+        except OSError, e:
+            # Catch and ignore OSError exceptions such as "no such file
+            # or directory" (OSError errno 2), which imply that the Git
+            # command cannot be found/is not installed.
+            pass
+        return (None, None)
 
     def _keychain_value_with_label(self, label, source_text):
         match = re.search("%s\"(?P<value>.+)\"" % label,
@@ -110,21 +120,28 @@ class Credentials(object):
         else:
             return [None, None]
 
+    def _read_environ(self, key):
+        environ_key = self._environ_prefix + key
+        return os.environ.get(environ_key.upper())
+
+    def _credentials_from_environment(self):
+        return (self._read_environ("username"), self._read_environ("password"))
+
+    def _offer_to_store_credentials_in_keyring(self, username, password):
+        if not self._keyring:
+            return
+        if not User().confirm("Store password in system keyring?", User.DEFAULT_NO):
+            return
+        self._keyring.set_password(self.host, username, password)
+
     def read_credentials(self):
-        username = None
-        password = None
-
-        try:
-            if Git.in_working_directory(self.cwd):
-                (username, password) = self._credentials_from_git()
-        except OSError, e:
-            # Catch and ignore OSError exceptions such as "no such file 
-            # or directory" (OSError errno 2), which imply that the Git
-            # command cannot be found/is not installed.
-            pass
-
+        username, password = self._credentials_from_environment()
+        # FIXME: We don't currently support pulling the username from one
+        # source and the password from a separate source.
         if not username or not password:
-            (username, password) = self._credentials_from_keychain(username)
+            username, password = self._credentials_from_git()
+        if not username or not password:
+            username, password = self._credentials_from_keychain(username)
 
         if username and not password and self._keyring:
             password = self._keyring.get_password(self.host, username)
@@ -132,13 +149,7 @@ class Credentials(object):
         if not username:
             username = User.prompt("%s login: " % self.host)
         if not password:
-            password = getpass.getpass("%s password for %s: " % (self.host,
-                                                                 username))
+            password = getpass.getpass("%s password for %s: " % (self.host, username))
+            self._offer_to_store_credentials_in_keyring(username, password)
 
-            if self._keyring:
-                store_password = User().confirm(
-                    "Store password in system keyring?", User.DEFAULT_NO)
-                if store_password:
-                    self._keyring.set_password(self.host, username, password)
-
-        return [username, password]
+        return (username, password)
