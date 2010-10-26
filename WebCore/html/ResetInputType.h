@@ -31,16 +31,16 @@
 #ifndef ResetInputType_h
 #define ResetInputType_h
 
-#include "InputType.h"
+#include "BaseButtonInputType.h"
 
 namespace WebCore {
 
-class ResetInputType : public InputType {
+class ResetInputType : public BaseButtonInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    ResetInputType(HTMLInputElement* element) : InputType(element) { }
+    ResetInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const;
     virtual bool supportsValidation() const;
 };

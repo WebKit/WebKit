@@ -28,24 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HiddenInputType_h
-#define HiddenInputType_h
+#ifndef BaseButtonInputType_h
+#define BaseButtonInputType_h
 
 #include "InputType.h"
 
 namespace WebCore {
 
-class HiddenInputType : public InputType {
-public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+// Base of button, file, image, reset, and submit types.
+class BaseButtonInputType : public InputType {
+protected:
+    BaseButtonInputType(HTMLInputElement* element) : InputType(element) { }
 
 private:
-    HiddenInputType(HTMLInputElement* element) : InputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool supportsValidation() const;
+    virtual bool appendFormData(FormDataList&, bool) const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
 };
 
 } // namespace WebCore
 
-#endif // HiddenInputType_h
+#endif // BaseButtonInputType_h

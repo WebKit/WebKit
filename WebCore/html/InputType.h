@@ -38,24 +38,42 @@
 namespace WebCore {
 
 class DateComponents;
+class FormDataList;
 class HTMLInputElement;
+class RenderArena;
+class RenderObject;
+class RenderStyle;
 
+// An InputType object represents the type-specific part of an HTMLInputElement.
+// Do not expose instances of InputType and classes derived from it to classes
+// other than HTMLInputElement.
 class InputType : public Noncopyable {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*, const AtomicString&);
     static PassOwnPtr<InputType> createText(HTMLInputElement*);
     virtual ~InputType();
 
+    // Type query functions
+
     virtual bool isTextField() const;
     virtual bool isTextType() const;
     virtual const AtomicString& formControlType() const = 0;
+
+    // Form value functions
+
+    virtual bool saveFormControlState(String&) const;
+    virtual void restoreFormControlState(const String&) const;
+    virtual bool isFormDataAppendable() const;
+    virtual bool appendFormData(FormDataList&, bool multipart) const;
+
+    // DOM property functions
 
     virtual double valueAsDate() const;
     virtual void setValueAsDate(double, ExceptionCode&) const;
     virtual double valueAsNumber() const;
     virtual void setValueAsNumber(double, ExceptionCode&) const;
 
-    // Validation-related functions
+    // Validation functions
 
     virtual bool supportsValidation() const;
     virtual bool typeMismatchFor(const String&) const;
@@ -76,6 +94,10 @@ public:
     virtual double stepScaleFactor() const;
     virtual bool parsedStepValueShouldBeInteger() const;
     virtual bool scaledStepValeuShouldBeInteger() const;
+
+    // Miscellaneous functions
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
 
     // Parses the specified string for the type, and return
     // the double value for the parsing result if the parsing

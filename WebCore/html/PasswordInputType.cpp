@@ -31,6 +31,7 @@
 #include "config.h"
 #include "PasswordInputType.h"
 
+#include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -43,6 +44,18 @@ PassOwnPtr<InputType> PasswordInputType::create(HTMLInputElement* element)
 const AtomicString& PasswordInputType::formControlType() const
 {
     return InputTypeNames::password();
+}
+
+bool PasswordInputType::saveFormControlState(String&) const
+{
+    // Should never save/restore password fields.
+    return false;
+}
+
+void PasswordInputType::restoreFormControlState(const String&) const
+{
+    // Should never save/restore password fields.
+    ASSERT_NOT_REACHED();
 }
 
 } // namespace WebCore

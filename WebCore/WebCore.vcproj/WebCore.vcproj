@@ -48007,6 +48007,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\BaseButtonInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\BaseButtonInputType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\BaseCheckableInputType.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\BaseCheckableInputType.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\BaseDateAndTimeInputType.cpp"
 				>
 			</File>

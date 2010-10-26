@@ -42,6 +42,8 @@ public:
 private:
     PasswordInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool saveFormControlState(String&) const;
+    virtual void restoreFormControlState(const String&) const;
 };
 
 } // namespace WebCore

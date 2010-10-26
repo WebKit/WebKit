@@ -49,4 +49,10 @@ bool HiddenInputType::supportsValidation() const
     return false;
 }
 
+RenderObject* HiddenInputType::createRenderer(RenderArena*, RenderStyle*) const
+{
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 } // namespace WebCore

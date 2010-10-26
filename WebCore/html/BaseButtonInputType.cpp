@@ -28,24 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HiddenInputType_h
-#define HiddenInputType_h
+#include "config.h"
+#include "BaseButtonInputType.h"
 
-#include "InputType.h"
+#include "HTMLInputElement.h"
+#include "RenderButton.h"
 
 namespace WebCore {
 
-class HiddenInputType : public InputType {
-public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+bool BaseButtonInputType::appendFormData(FormDataList&, bool) const
+{
+    // Buttons except overridden types are never successful.
+    return false;
+}
 
-private:
-    HiddenInputType(HTMLInputElement* element) : InputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool supportsValidation() const;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
-};
+RenderObject* BaseButtonInputType::createRenderer(RenderArena* arena, RenderStyle*) const
+{
+    return new (arena) RenderButton(element());
+}
 
 } // namespace WebCore
-
-#endif // HiddenInputType_h

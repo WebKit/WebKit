@@ -31,18 +31,21 @@
 #ifndef ImageInputType_h
 #define ImageInputType_h
 
-#include "InputType.h"
+#include "BaseButtonInputType.h"
 
 namespace WebCore {
 
-class ImageInputType : public InputType {
+class ImageInputType : public BaseButtonInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    ImageInputType(HTMLInputElement* element) : InputType(element) { }
+    ImageInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool isFormDataAppendable() const;
+    virtual bool appendFormData(FormDataList&, bool) const;
     virtual bool supportsValidation() const;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
 };
 
 } // namespace WebCore

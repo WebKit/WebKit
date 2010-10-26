@@ -28,24 +28,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HiddenInputType_h
-#define HiddenInputType_h
+#include "config.h"
+#include "BaseCheckableInputType.h"
 
-#include "InputType.h"
+#include "FormDataList.h"
+#include "HTMLInputElement.h"
+#include "HTMLNames.h"
+#include "RegularExpression.h"
 
 namespace WebCore {
 
-class HiddenInputType : public InputType {
-public:
-    static PassOwnPtr<InputType> create(HTMLInputElement*);
+bool BaseCheckableInputType::saveFormControlState(String& result) const
+{
+    result = element()->checked() ? "on" : "off";
+    return true;
+}
 
-private:
-    HiddenInputType(HTMLInputElement* element) : InputType(element) { }
-    virtual const AtomicString& formControlType() const;
-    virtual bool supportsValidation() const;
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
-};
+void BaseCheckableInputType::restoreFormControlState(const String& state) const
+{
+    element()->setChecked(state == "on");
+}
+
+bool BaseCheckableInputType::appendFormData(FormDataList& encoding, bool) const
+{
+    if (!element()->checked())
+        return false;
+    encoding.appendData(element()->name(), element()->value());
+    return true;
+}
 
 } // namespace WebCore
-
-#endif // HiddenInputType_h

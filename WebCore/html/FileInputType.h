@@ -31,18 +31,20 @@
 #ifndef FileInputType_h
 #define FileInputType_h
 
-#include "InputType.h"
+#include "BaseButtonInputType.h"
 
 namespace WebCore {
 
-class FileInputType : public InputType {
+class FileInputType : public BaseButtonInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    FileInputType(HTMLInputElement* element) : InputType(element) { }
+    FileInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool appendFormData(FormDataList&, bool) const;
     virtual bool valueMissing(const String&) const;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
 };
 
 } // namespace WebCore

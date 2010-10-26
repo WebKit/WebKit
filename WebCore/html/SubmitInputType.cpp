@@ -31,6 +31,8 @@
 #include "config.h"
 #include "SubmitInputType.h"
 
+#include "FormDataList.h"
+#include "HTMLInputElement.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -43,6 +45,14 @@ PassOwnPtr<InputType> SubmitInputType::create(HTMLInputElement* element)
 const AtomicString& SubmitInputType::formControlType() const
 {
     return InputTypeNames::submit();
+}
+
+bool SubmitInputType::appendFormData(FormDataList& encoding, bool) const
+{
+    if (!element()->isActivatedSubmit())
+        return false;
+    encoding.appendData(element()->name(), element()->valueWithDefault());
+    return true;
 }
 
 bool SubmitInputType::supportsValidation() const

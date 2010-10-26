@@ -31,17 +31,18 @@
 #ifndef SubmitInputType_h
 #define SubmitInputType_h
 
-#include "InputType.h"
+#include "BaseButtonInputType.h"
 
 namespace WebCore {
 
-class SubmitInputType : public InputType {
+class SubmitInputType : public BaseButtonInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    SubmitInputType(HTMLInputElement* element) : InputType(element) { }
+    SubmitInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
     virtual const AtomicString& formControlType() const;
+    virtual bool appendFormData(FormDataList&, bool) const;
     virtual bool supportsValidation() const;
 };
 

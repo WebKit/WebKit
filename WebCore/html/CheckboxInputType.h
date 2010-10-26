@@ -31,16 +31,16 @@
 #ifndef CheckboxInputType_h
 #define CheckboxInputType_h
 
-#include "InputType.h"
+#include "BaseCheckableInputType.h"
 
 namespace WebCore {
 
-class CheckboxInputType : public InputType {
+class CheckboxInputType : public BaseCheckableInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    CheckboxInputType(HTMLInputElement* element) : InputType(element) { }
+    CheckboxInputType(HTMLInputElement* element) : BaseCheckableInputType(element) { }
     virtual const AtomicString& formControlType() const;
     virtual bool valueMissing(const String&) const;
 };

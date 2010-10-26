@@ -56,11 +56,9 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "RenderButton.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
 #include "RenderSlider.h"
-#include "RenderText.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
@@ -529,79 +527,12 @@ const AtomicString& HTMLInputElement::formControlType() const
 
 bool HTMLInputElement::saveFormControlState(String& result) const
 {
-    switch (deprecatedInputType()) {
-    case BUTTON:
-    case COLOR:
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case MONTH:
-    case NUMBER:
-    case RANGE:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case TIME:
-    case URL:
-    case WEEK: {
-        String currentValue = value();
-        if (currentValue == defaultValue())
-            return false;
-        result = currentValue;
-        return true;
-    }
-    case CHECKBOX:
-    case RADIO:
-        result = checked() ? "on" : "off";
-        return true;
-    case PASSWORD:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
+    return m_inputType->saveFormControlState(result);
 }
 
 void HTMLInputElement::restoreFormControlState(const String& state)
 {
-    ASSERT(deprecatedInputType() != PASSWORD); // should never save/restore password fields
-    switch (deprecatedInputType()) {
-    case BUTTON:
-    case COLOR:
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case EMAIL:
-    case FILE:
-    case HIDDEN:
-    case IMAGE:
-    case ISINDEX:
-    case MONTH:
-    case NUMBER:
-    case RANGE:
-    case RESET:
-    case SEARCH:
-    case SUBMIT:
-    case TELEPHONE:
-    case TEXT:
-    case TIME:
-    case URL:
-    case WEEK:
-        setValue(state);
-        break;
-    case CHECKBOX:
-    case RADIO:
-        setChecked(state == "on");
-        break;
-    case PASSWORD:
-        break;
-    }
+    m_inputType->restoreFormControlState(state);
 }
 
 bool HTMLInputElement::canStartSelection() const
@@ -796,46 +727,9 @@ bool HTMLInputElement::rendererIsNeeded(RenderStyle *style)
     return HTMLFormControlElementWithState::rendererIsNeeded(style);
 }
 
-RenderObject* HTMLInputElement::createRenderer(RenderArena *arena, RenderStyle *style)
+RenderObject* HTMLInputElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
-    switch (deprecatedInputType()) {
-    case BUTTON:
-    case RESET:
-    case SUBMIT:
-        return new (arena) RenderButton(this);
-    case CHECKBOX:
-    case RADIO:
-        return RenderObject::createObject(this, style);
-    case FILE:
-        return new (arena) RenderFileUploadControl(this);
-    case HIDDEN:
-        break;
-    case IMAGE: {
-        RenderImage* image = new (arena) RenderImage(this);
-        image->setImageResource(RenderImageResource::create());
-        return image;
-    }
-    case RANGE:
-        return new (arena) RenderSlider(this);
-    case COLOR:
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case EMAIL:
-    case ISINDEX:
-    case MONTH:
-    case NUMBER:
-    case PASSWORD:
-    case SEARCH:
-    case TELEPHONE:
-    case TEXT:
-    case TIME:
-    case URL:
-    case WEEK:
-        return new (arena) RenderTextControlSingleLine(this, placeholderShouldBeVisible());
-    }
-    ASSERT(false);
-    return 0;
+    return m_inputType->createRenderer(arena, style);
 }
 
 void HTMLInputElement::attach()
@@ -912,93 +806,7 @@ void HTMLInputElement::setActivatedSubmit(bool flag)
 
 bool HTMLInputElement::appendFormData(FormDataList& encoding, bool multipart)
 {
-    // image generates its own names, but for other types there is no form data unless there's a name
-    if (name().isEmpty() && deprecatedInputType() != IMAGE)
-        return false;
-
-    switch (deprecatedInputType()) {
-    case COLOR:
-    case DATE:
-    case DATETIME:
-    case DATETIMELOCAL:
-    case EMAIL:
-    case HIDDEN:
-    case ISINDEX:
-    case MONTH:
-    case NUMBER:
-    case PASSWORD:
-    case RANGE:
-    case SEARCH:
-    case TELEPHONE:
-    case TEXT:
-    case TIME:
-    case URL:
-    case WEEK:
-        // always successful
-        encoding.appendData(name(), value());
-        return true;
-
-    case CHECKBOX:
-    case RADIO:
-        if (checked()) {
-            encoding.appendData(name(), value());
-            return true;
-        }
-        break;
-
-    case BUTTON:
-    case RESET:
-        // these types of buttons are never successful
-        return false;
-
-    case IMAGE:
-        if (m_activeSubmit) {
-            encoding.appendData(name().isEmpty() ? "x" : (name() + ".x"), m_xPos);
-            encoding.appendData(name().isEmpty() ? "y" : (name() + ".y"), m_yPos);
-            if (!name().isEmpty() && !value().isEmpty())
-                encoding.appendData(name(), value());
-            return true;
-        }
-        break;
-
-    case SUBMIT:
-        if (m_activeSubmit) {
-            String encstr = valueWithDefault();
-            encoding.appendData(name(), encstr);
-            return true;
-        }
-        break;
-
-    case FILE: {
-        unsigned numFiles = m_fileList->length();
-        if (!multipart) {
-            // Send only the basenames.
-            // 4.10.16.4 and 4.10.16.6 sections in HTML5.
-    
-            // Unlike the multipart case, we have no special
-            // handling for the empty fileList because Netscape
-            // doesn't support for non-multipart submission of
-            // file inputs, and Firefox doesn't add "name=" query
-            // parameter.
-
-            for (unsigned i = 0; i < numFiles; ++i) 
-                encoding.appendData(name(), m_fileList->item(i)->fileName());
-            return true;
-        }
-
-        // If no filename at all is entered, return successful but empty.
-        // Null would be more logical, but Netscape posts an empty file. Argh.
-        if (!numFiles) {
-            encoding.appendBlob(name(), File::create(""));
-            return true;
-        }
-
-        for (unsigned i = 0; i < numFiles; ++i)
-            encoding.appendBlob(name(), m_fileList->item(i));
-        return true;
-        }
-    }
-    return false;
+    return m_inputType->isFormDataAppendable() && m_inputType->appendFormData(encoding, multipart);
 }
 
 void HTMLInputElement::reset()

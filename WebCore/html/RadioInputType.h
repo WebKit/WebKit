@@ -31,16 +31,16 @@
 #ifndef RadioInputType_h
 #define RadioInputType_h
 
-#include "InputType.h"
+#include "BaseCheckableInputType.h"
 
 namespace WebCore {
 
-class RadioInputType : public InputType {
+class RadioInputType : public BaseCheckableInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    RadioInputType(HTMLInputElement* element) : InputType(element) { }
+    RadioInputType(HTMLInputElement* element) : BaseCheckableInputType(element) { }
     virtual const AtomicString& formControlType() const;
     virtual bool valueMissing(const String&) const;
 };

@@ -34,6 +34,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "RenderSlider.h"
 #include <limits>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
@@ -124,6 +125,11 @@ double RangeInputType::defaultStep() const
 double RangeInputType::stepScaleFactor() const
 {
     return rangeStepScaleFactor;
+}
+
+RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const
+{
+    return new (arena) RenderSlider(element());
 }
 
 double RangeInputType::parseToDouble(const String& src, double defaultValue) const
