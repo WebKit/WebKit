@@ -1,3 +1,21 @@
+2010-10-26  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Post any pending messages to the Injected Bundle in WebContext::processDidFinishLaunching
+        instead of in WebContext::ensureWebProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=48367
+
+        Send pending injected bundle messages after the process finished launching instead of of
+        directly after creating it.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        Move the logic to dispatch pending injected bundle messages from here ...
+        (WebKit::WebContext::processDidFinishLaunching):
+        ... to here.
+        Also use a reference instead of a pointer when sending the pending messages.
+
 2010-10-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
