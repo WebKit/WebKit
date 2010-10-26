@@ -25,46 +25,49 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MappedMemory_h
-#define MappedMemory_h
+#ifndef MappedMemoryPool_h
+#define MappedMemoryPool_h
 
-#include <QCoreApplication>
 #include <QFile>
 #include <wtf/Vector.h>
 
 namespace WebKit {
-struct MappedMemory {
-    QFile* file;
-    struct Data {
-        uint32_t isFree; // keep bytes aligned
-        uchar bytes;
-    };
-    union {
-        uchar* mappedBytes;
-        Data* dataPtr;
-    };
-    size_t dataSize;
 
-    size_t mapSize() const { return dataSize + sizeof(Data); }
-    void markUsed() { dataPtr->isFree = false; }
-    void markFree() { dataPtr->isFree = true; }
-    bool isFree() const { return dataPtr->isFree; }
-    uchar* data() const { return &dataPtr->bytes; }
-};
-
-class MappedMemoryPool : public QObject {
-    Q_OBJECT
+class MappedMemoryPool {
 public:
     static MappedMemoryPool* instance();
-    size_t size() const;
-    MappedMemory& at(size_t i);
-    MappedMemory& append(const MappedMemory&);
+
+    struct MappedMemory {
+        QFile* file;
+        struct Data {
+            uint32_t isFree; // keep bytes aligned
+            uchar bytes;
+        };
+        union {
+            uchar* mappedBytes;
+            Data* dataPtr;
+        };
+        size_t dataSize;
+
+        size_t mapSize() const { return dataSize + sizeof(Data); }
+        void markUsed() { dataPtr->isFree = false; }
+        void markFree() { dataPtr->isFree = true; }
+        bool isFree() const { return dataPtr->isFree; }
+        uchar* data() const { return &dataPtr->bytes; }
+    };
+
+    MappedMemory* mapMemory(size_t size, QIODevice::OpenMode openMode = QIODevice::ReadWrite);
+    MappedMemory* mapFile(QString fileName, size_t size, QIODevice::OpenMode openMode = QIODevice::ReadWrite);
+    MappedMemory* searchForMappedMemory(uchar* p);
 
 private:
-    MappedMemoryPool();
-    Q_SLOT void cleanUp();
+    MappedMemoryPool() { };
 
     Vector<MappedMemory> m_pool;
 };
+
+typedef MappedMemoryPool::MappedMemory MappedMemory;
+
 } // namespace WebKit
-#endif // MappedMemory_h
+
+#endif // MappedMemoryPool_h

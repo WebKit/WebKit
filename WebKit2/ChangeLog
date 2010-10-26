@@ -1,3 +1,50 @@
+2010-10-26  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement SharedMemory for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=47345
+
+        Implement unimplemented functions in SharedMemoryQt.cpp.
+        Rename MappedMemory.h to MappedMemoryPool.h, move MappedMemoryPool.{h|cpp} from
+        Shared/qt to Platform/qt. Modify affected lines of WebKit2.pro.
+        Move MappedMemory implementation into MappedMemoryPool. Remove unnecessary 
+        methods of MappedMemoryPool.
+
+        * Platform/SharedMemory.h: Add a handle member for Qt.
+        * Platform/qt/MappedMemoryPool.cpp: Copied from WebKit2/Shared/qt/MappedMemoryPool.cpp.
+        (WebKit::MappedMemoryPool::searchForMappedMemory):
+        (WebKit::MappedMemoryPool::mapMemory):
+        (WebKit::MappedMemoryPool::mapFile):
+        * Platform/qt/MappedMemoryPool.h: Copied from WebKit2/Shared/qt/MappedMemory.h.
+        (WebKit::MappedMemoryPool::MappedMemory::mapSize):
+        (WebKit::MappedMemoryPool::MappedMemory::markUsed):
+        (WebKit::MappedMemoryPool::MappedMemory::markFree):
+        (WebKit::MappedMemoryPool::MappedMemory::isFree):
+        (WebKit::MappedMemoryPool::MappedMemory::data):
+        (WebKit::MappedMemoryPool::MappedMemoryPool):
+        Move MappedMemory implementation into MappedMemoryPool.
+        * Platform/qt/SharedMemoryQt.cpp:
+        (WebKit::SharedMemory::Handle::Handle): Implement.
+        (WebKit::SharedMemory::Handle::~Handle):
+        (WebKit::SharedMemory::Handle::isNull): Implement.
+        (WebKit::SharedMemory::Handle::encode): Implement.
+        (WebKit::SharedMemory::Handle::decode): Implement.
+        (WebKit::SharedMemory::create): Implement.
+        (WebKit::mapProtection): Added.
+        (WebKit::SharedMemory::~SharedMemory): Implement.
+        (WebKit::SharedMemory::createHandle): Implement.
+        (WebKit::SharedMemory::systemPageSize): Implement.
+        * Shared/qt/MappedMemory.h: Removed.
+        * Shared/qt/MappedMemoryPool.cpp: Removed.
+        * Shared/qt/UpdateChunk.cpp:
+        (WebKit::UpdateChunk::UpdateChunk):
+        (WebKit::UpdateChunk::decode):
+        Modify to use MappedMemoryPool.
+        * Shared/qt/UpdateChunk.h:
+        * WebKit2.pro:
+        Modify affected lines.
+
 2010-10-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

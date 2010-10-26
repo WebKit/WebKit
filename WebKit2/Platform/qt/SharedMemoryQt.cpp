@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (c) 2010 University of Szeged
+ * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,57 +27,128 @@
 
 #include "SharedMemory.h"
 
-#include "NotImplemented.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+#include "MappedMemoryPool.h"
+#include "WebCoreArgumentCoders.h"
+#include <QIODevice>
+#include <unistd.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
+static MappedMemoryPool* mappedMemoryPool = MappedMemoryPool::instance();
+
 SharedMemory::Handle::Handle()
+    : m_fileName()
+    , m_size(0)
 {
-    notImplemented();
 }
 
 SharedMemory::Handle::~Handle()
 {
-    notImplemented();
+}
+
+bool SharedMemory::Handle::isNull() const
+{
+    return m_fileName.isNull();
 }
 
 void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    notImplemented();
+    encoder->encodeUInt64(m_size);
+    encoder->encode(m_fileName);
+    m_fileName = String();
 }
 
 bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
 {
-    notImplemented();
-    return false;
+    ASSERT(!handle.m_size);
+    ASSERT(handle.m_fileName.isEmpty());
+
+    uint64_t size;
+    if (!decoder->decodeUInt64(size))
+        return false;
+
+    String fileName;
+    if (!decoder->decode(fileName))
+       return false;
+
+    handle.m_size = size;
+    handle.m_fileName = fileName;
+
+    return true;
 }
 
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
-    notImplemented();
-    return 0;
+    MappedMemory* mm = mappedMemoryPool->mapMemory(size, QIODevice::ReadWrite);
+
+    RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
+    sharedMemory->m_size = size;
+    sharedMemory->m_data = reinterpret_cast<void*>(mm->data());
+
+    return sharedMemory.release();
+}
+
+static inline QIODevice::OpenMode mapProtection(SharedMemory::Protection protection)
+{
+    switch (protection) {
+    case SharedMemory::ReadOnly:
+        return QIODevice::ReadOnly;
+    case SharedMemory::ReadWrite:
+        return QIODevice::ReadWrite;
+    }
+
+    ASSERT_NOT_REACHED();
+    return QIODevice::NotOpen;
 }
 
 PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
 {
-    notImplemented();
-    return 0;    
+    if (handle.isNull())
+        return 0;
+
+    QIODevice::OpenMode openMode = mapProtection(protection);
+
+    MappedMemory* mm = mappedMemoryPool->mapFile(QString(handle.m_fileName), handle.m_size, openMode);
+
+    RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
+    sharedMemory->m_size = handle.m_size;
+    sharedMemory->m_data = reinterpret_cast<void*>(mm->data());
+
+    return sharedMemory.release();
 }
 
 SharedMemory::~SharedMemory()
 {
-    notImplemented();
+    MappedMemory* mappedMemory = mappedMemoryPool->searchForMappedMemory(reinterpret_cast<uchar*>(m_data));
+    if (mappedMemory)
+        mappedMemory->markFree();
 }
-    
+
 bool SharedMemory::createHandle(Handle& handle, Protection protection)
 {
-    notImplemented();
-    return false;
+    ASSERT(handle.m_fileName.isNull());
+    ASSERT(!handle.m_size);
+
+    MappedMemory* mm = mappedMemoryPool->searchForMappedMemory(reinterpret_cast<uchar*>(m_data));
+
+    if (!mm)
+        return false;
+
+    handle.m_fileName = mm->file->fileName();
+    handle.m_size = m_size;
+
+    return true;
 }
 
 unsigned SharedMemory::systemPageSize()
 {
     static unsigned pageSize = 0;
+
+    if (!pageSize)
+        pageSize = getpagesize();
 
     return pageSize;
 }
