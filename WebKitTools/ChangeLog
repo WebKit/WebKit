@@ -1,3 +1,17 @@
+2010-10-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        pageDidScroll callback should be on the UI process client rather than (or in addition to) the web process client
+        https://bugs.webkit.org/show_bug.cgi?id=48366
+        <rdar://problem/8595202>
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+
 2010-10-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tony Chang.

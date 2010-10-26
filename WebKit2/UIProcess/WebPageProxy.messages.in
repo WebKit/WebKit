@@ -41,6 +41,7 @@ messages -> WebPageProxy {
     GetWindowFrame() -> (WebCore::FloatRect windowFrame)
     CanRunBeforeUnloadConfirmPanel() -> (bool canRun)
     RunBeforeUnloadConfirmPanel(WTF::String message, uint64_t frameID) -> (bool shouldClose)
+    PageDidScroll()
 
     # Policy messages.
     DecidePolicyForMIMEType(uint64_t frameID, WTF::String MIMEType, WTF::String url, uint64_t listenerID)

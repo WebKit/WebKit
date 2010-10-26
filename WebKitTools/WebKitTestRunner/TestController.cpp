@@ -121,7 +121,8 @@ static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModi
         getWindowFrameOtherPage,
         setWindowFrameOtherPage,
         0, // runBeforeUnloadConfirmPanel
-        0 // didDraw
+        0, // didDraw
+        0  // pageDidScroll
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -206,7 +207,8 @@ void TestController::initialize(int argc, const char* argv[])
         getWindowFrameMainPage,
         setWindowFrameMainPage,
         0, // runBeforeUnloadConfirmPanel
-        0 // didDraw
+        0, // didDraw
+        0  // pageDidScroll
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 

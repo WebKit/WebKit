@@ -274,6 +274,7 @@ private:
     void canRunBeforeUnloadConfirmPanel(bool& canRun);
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
     void didChangeViewportData(const WebCore::ViewportArguments&);
+    void pageDidScroll();
 
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);

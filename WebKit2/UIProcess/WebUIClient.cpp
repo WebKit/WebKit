@@ -191,8 +191,15 @@ void WebUIClient::didDraw(WebPageProxy* page)
     if (!m_pageUIClient.didDraw)
         return;
 
-    return m_pageUIClient.didDraw(toAPI(page), m_pageUIClient.clientInfo);
+    m_pageUIClient.didDraw(toAPI(page), m_pageUIClient.clientInfo);
 }
 
+void WebUIClient::pageDidScroll(WebPageProxy* page)
+{
+    if (!m_pageUIClient.pageDidScroll)
+        return;
+
+    m_pageUIClient.pageDidScroll(toAPI(page), m_pageUIClient.clientInfo);
+}
 
 } // namespace WebKit

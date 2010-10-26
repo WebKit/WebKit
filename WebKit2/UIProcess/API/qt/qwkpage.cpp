@@ -310,7 +310,8 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         0,  /* getWindowFrame */
         0,  /* setWindowFrame */
         0,  /* runBeforeUnloadConfirmPanel */
-        0   /* didDraw */
+        0,  /* didDraw */
+        0   /* pageDidScroll */
     };
     WKPageSetPageUIClient(pageRef(), &uiClient);
 }
