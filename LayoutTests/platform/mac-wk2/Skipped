@@ -1798,6 +1798,52 @@ http/tests/loading/simple-subframe.html
 http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
 
+# NPRuntime support for out-of-process plug-ins
+# <https://bugs.webkit.org/show_bug.cgi?id=48346>
+http/tests/plugins/cross-frame-object-access.html
+http/tests/plugins/get-url.html
+http/tests/plugins/geturlnotify-from-npp-destroystream.html
+http/tests/plugins/interrupted-get-url.html
+http/tests/plugins/local-geturl-from-remote.html
+http/tests/plugins/npapi-response-headers.html
+plugins/destroy-during-npp-new.html
+plugins/destroy-stream-twice.html
+plugins/embed-inside-object.html
+plugins/get-empty-url.html
+plugins/get-file-url.html
+plugins/get-javascript-url.html
+plugins/get-url-with-iframe-target.html
+plugins/geturl-replace-query.html
+plugins/inner-html-display-none.html
+plugins/instance-available-before-stylesheets-loaded-object.html
+plugins/instance-available-before-stylesheets-loaded.html
+plugins/netscape-plugin-map-data-to-src.html
+plugins/netscape-plugin-setwindow-size.html
+plugins/override-node-method.html
+plugins/pass-different-npp-struct.html
+plugins/plugin-remove-subframe.html
+plugins/reentrant-update-widget-positions.html
+plugins/reloadplugins-no-pages.html
+plugins/return-error-from-new-stream-doesnt-invoke-destroy-stream.html
+plugins/return-negative-one-from-write.html
+plugins/set-status.html
+plugins/update-widgets-crash.html
+plugins/window-open.html
+plugins/npruntime/embed-property.html
+plugins/npruntime/enumerate.html
+plugins/npruntime/evaluate.html
+plugins/npruntime/get-int-identifier-special-values.html
+plugins/npruntime/get-property-return-value.html
+plugins/npruntime/identifier-conversion.html
+plugins/npruntime/invoke-browserfuncs.html
+plugins/npruntime/invoke-default.html
+plugins/npruntime/invoke.html
+plugins/npruntime/npruntime.html
+plugins/npruntime/object-from-destroyed-plugin.html
+plugins/npruntime/plugin-scriptable-object-invoke-default.html
+plugins/npruntime/round-trip-npobject.html
+plugins/npruntime/set-property.html
+ 
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
@@ -2194,6 +2240,7 @@ media/controls-after-reload.html
 media/controls-styling.html
 media/video-zoom-controls.html
 platform/mac/fast/loader/non-html-load-event.html
+plugins/embed-attributes-style.html
 storage/multiple-databases-garbage-collection.html
 storage/open-database-while-transaction-in-progress.html
 svg/custom/clip-path-referencing-use2.svg

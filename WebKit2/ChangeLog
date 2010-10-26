@@ -1,3 +1,17 @@
+2010-10-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Enable the plug-in process on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=48350
+
+        * WebKit2Prefix.h:
+        Flip the switch and enable the plug-in process on Mac.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformDestroy):
+        Fix a bogus assert.
+
 2010-10-26  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

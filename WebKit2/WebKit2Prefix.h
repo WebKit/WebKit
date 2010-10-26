@@ -59,8 +59,7 @@ static const type& name() \
 #define ENABLE_WEB_PROCESS_SANDBOX 1
 #endif
 
-// FIXME: Enable once this works well enough.
-#define ENABLE_PLUGIN_PROCESS 0
+#define ENABLE_PLUGIN_PROCESS 1
 
 #import <CoreGraphics/CoreGraphics.h>
 
