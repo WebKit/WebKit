@@ -79,6 +79,8 @@ WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl()
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
     , m_boundFBO(0)
+    , m_boundTexture(0)
+    , m_copyTextureToParentTextureFBO(0)
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     , m_scanline(0)
 #endif
@@ -103,6 +105,7 @@ WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl()
                 glDeleteRenderbuffersEXT(1, &m_depthStencilBuffer);
         }
         glDeleteTextures(1, &m_texture);
+        glDeleteFramebuffersEXT(1, &m_copyTextureToParentTextureFBO);
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
         if (m_scanline)
             delete[] m_scanline;
@@ -172,6 +175,8 @@ bool WebGraphicsContext3DDefaultImpl::initialize(WebGraphicsContext3D::Attribute
         angleDestroyCompilers();
         return false;
     }
+
+    glGenFramebuffersEXT(1, &m_copyTextureToParentTextureFBO);
 
     m_initialized = true;
     return true;
@@ -560,12 +565,33 @@ void WebGraphicsContext3DDefaultImpl::unmapTexSubImage2DCHROMIUM(const void* mem
 
 bool WebGraphicsContext3DDefaultImpl::supportsCopyTextureToParentTextureCHROMIUM()
 {
-    // We don't claim support for this extension at this time
-    return false;
+    // This extension requires this desktopGL-only function (GLES2 doesn't
+    // support it), so check for its existence here.
+    return glGetTexLevelParameteriv;
 }
 
 void WebGraphicsContext3DDefaultImpl::copyTextureToParentTextureCHROMIUM(unsigned id, unsigned id2)
 {
+    makeContextCurrent();
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_copyTextureToParentTextureFBO);
+    glFramebufferTexture2DEXT(GL_FRAMEBUFFER,
+                              GL_COLOR_ATTACHMENT0,
+                              GL_TEXTURE_2D,
+                              id,
+                              0); // level
+    glBindTexture(GL_TEXTURE_2D, id2);
+    GLsizei width, height;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+    glCopyTexImage2D(GL_TEXTURE_2D,
+                     0, // level
+                     GL_RGBA,
+                     0, 0, // x, y
+                     width,
+                     height,
+                     0); // border
+    glBindTexture(GL_TEXTURE_2D, m_boundTexture);
+    glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 }
 
 // Helper macros to reduce the amount of code.
@@ -690,7 +716,12 @@ void WebGraphicsContext3DDefaultImpl::bindFramebuffer(unsigned long target, WebG
 
 DELEGATE_TO_GL_2(bindRenderbuffer, BindRenderbufferEXT, unsigned long, WebGLId)
 
-DELEGATE_TO_GL_2(bindTexture, BindTexture, unsigned long, WebGLId)
+void WebGraphicsContext3DDefaultImpl::bindTexture(unsigned long target, WebGLId texture)
+{
+    makeContextCurrent();
+    glBindTexture(target, texture);
+    m_boundTexture = texture;
+}
 
 DELEGATE_TO_GL_4(blendColor, BlendColor, double, double, double, double)
 

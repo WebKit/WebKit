@@ -288,6 +288,12 @@ private:
     // For tracking which FBO is bound
     unsigned int m_boundFBO;
 
+    // For tracking which texture is bound
+    unsigned int m_boundTexture;
+    
+    // FBO used for copying child texture to parent texture.
+    unsigned m_copyTextureToParentTextureFBO;
+
 #ifdef FLIP_FRAMEBUFFER_VERTICALLY
     unsigned char* m_scanline;
     void flipVertically(unsigned char* framebuffer,

@@ -2523,10 +2523,8 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
         else {
             GraphicsContext3D::Attributes attributes;
             m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(GraphicsContext3D::Attributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-#if OS(DARWIN)
             if (m_temporaryOnscreenGraphicsContext3D)
                 m_temporaryOnscreenGraphicsContext3D->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
-#endif
             context = m_temporaryOnscreenGraphicsContext3D.get();
         }
         return GraphicsContext3DInternal::extractWebGraphicsContext3D(context);

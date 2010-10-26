@@ -1,3 +1,42 @@
+2010-10-22  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Implement copy-texture-to-parent-texture API for WebGraphicsContext3DDefaultImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=48152
+        
+        This allows the in-process implementation to do accelerated canvas and
+        accelerated compositing together.  It requires some changes landed
+        in chromium 63528, so this patch also rolls chromium DEPS to 63722
+        (current LKGR).
+
+        Covered by fast/canvas/arc360.html, and many more when run with
+        --accelerated-compositing and --accelerated-2d-canvas.
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::WebGraphicsContext3DDefaultImpl):
+        Add member vars to save the currently-bound texture and for the
+        texture-to-texture FBO.
+        (WebKit::WebGraphicsContext3DDefaultImpl::~WebGraphicsContext3DDefaultImpl):
+        Delete the texture-to-texture FBO on destruction.
+
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+        Generate the texture-to-texture FBO.
+        (WebKit::WebGraphicsContext3DDefaultImpl::supportsCopyTextureToParentTextureCHROMIUM):
+        Check for support of the glGetTexLevelParameteriv function (required
+        for this implementation).
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTextureToParentTextureCHROMIUM):
+        Implement the extension:  bind the FBO, bind the child texture, then
+        do a glCopyTexImage2D() into the parent texture.
+        (WebKit::WebGraphicsContext3DDefaultImpl::bindTexture):
+        Record the newly-bound texture in m_boundTexture.
+        * src/WebGraphicsContext3DDefaultImpl.h:
+        Add the two new member variables.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::graphicsContext3D):
+        Make sure the graphics context is reshaped to the correct size on all
+        platforms.
+
 2010-10-26  Alexey Marinichev  <amarinichev@chromium.org>
 
         Reviewed by Kenneth Russell.
