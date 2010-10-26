@@ -1,3 +1,42 @@
+2010-10-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Pass a downloadID to the web process whenever a download is requested
+        https://bugs.webkit.org/show_bug.cgi?id=48380
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::generateDownloadID):
+        Generate a unique download ID.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        Pass along a download ID if needed.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::startDownload):
+        Call the web frame member function.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::WebFrame):
+        Initialize m_policyDownloadID.
+
+        (WebKit::WebFrame::invalidatePolicyListener):
+        Reset m_policyDownloadID.
+
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        Set m_policyDownloadID.
+
+        (WebKit::WebFrame::startDownload):
+        Assert that m_policyDownloadID is not zero.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceivePolicyDecision):
+        Pass along the download ID.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add the download ID.
+
 2010-10-26  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Sam Weinig.

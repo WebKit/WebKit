@@ -109,6 +109,7 @@ WebFrame::WebFrame()
     : m_coreFrame(0)
     , m_policyListenerID(0)
     , m_policyFunction(0)
+    , m_policyDownloadID(0)
     , m_frameLoaderClient(this)
     , m_loadListener(0)
     , m_frameID(generateFrameID())
@@ -177,11 +178,12 @@ void WebFrame::invalidatePolicyListener()
     if (!m_policyListenerID)
         return;
 
+    m_policyDownloadID = 0;
     m_policyListenerID = 0;
     m_policyFunction = 0;
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t downloadID)
 {
     if (!m_coreFrame)
         return;
@@ -198,7 +200,16 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
 
     invalidatePolicyListener();
 
+    m_policyDownloadID = downloadID;
+
     (m_coreFrame->loader()->policyChecker()->*function)(action);
+}
+
+void WebFrame::startDownload(const WebCore::ResourceRequest&)
+{
+    ASSERT(m_policyDownloadID);
+
+    m_policyDownloadID = 0;
 }
 
 String WebFrame::source() const 

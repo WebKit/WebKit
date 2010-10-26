@@ -445,12 +445,16 @@ void WebPageProxy::handleTouchEvent(const WebTouchEvent& event)
 }
 #endif
 
-void WebPageProxy::receivedPolicyDecision(WebCore::PolicyAction action, WebFrameProxy* frame, uint64_t listenerID)
+void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* frame, uint64_t listenerID)
 {
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action), m_pageID);
+    uint64_t downloadID = 0;
+    if (action == PolicyDownload)
+        downloadID = pageNamespace()->context()->generateDownloadID();
+
+    process()->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, downloadID), m_pageID);
 }
 
 void WebPageProxy::setCustomUserAgent(const String& userAgent)

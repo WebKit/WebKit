@@ -43,7 +43,7 @@ messages -> WebPage {
     Reload(bool reloadFromOrigin)
     StopLoading()
 
-    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction)
+    DidReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
 
     GetRenderTreeExternalRepresentation(uint64_t callbackID)
 

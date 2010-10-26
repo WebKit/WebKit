@@ -657,9 +657,9 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool)
     notImplemented();
 }
 
-void WebFrameLoaderClient::startDownload(const ResourceRequest&)
+void WebFrameLoaderClient::startDownload(const ResourceRequest& request)
 {
-    notImplemented();
+    m_frame->startDownload(request);
 }
 
 void WebFrameLoaderClient::willChangeTitle(DocumentLoader*)

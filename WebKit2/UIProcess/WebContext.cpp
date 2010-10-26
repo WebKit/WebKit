@@ -384,6 +384,12 @@ void WebContext::setCacheModel(CacheModel cacheModel)
     m_process->send(Messages::WebProcess::SetCacheModel(static_cast<uint32_t>(m_cacheModel)), 0);
 }
 
+uint64_t WebContext::generateDownloadID()
+{
+    static uint64_t uniqueDownloadID = 0;
+    return ++uniqueDownloadID;
+}
+
 void WebContext::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     switch (messageID.get<WebContextMessage::Kind>()) {
