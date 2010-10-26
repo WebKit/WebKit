@@ -3258,3 +3258,6 @@ BUGWK48341 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH PASS
 BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 // needs assignment.
 BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
+
+// Chromium-mac-specific test
+BUGWK46868 WONTFIX LINUX WIN : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = TEXT
