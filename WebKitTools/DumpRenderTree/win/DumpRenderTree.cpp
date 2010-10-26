@@ -1307,11 +1307,14 @@ int main(int argc, char* argv[])
     if (printSupportedFeatures) {
         BOOL acceleratedCompositingAvailable;
         standardPreferences->acceleratedCompositingEnabled(&acceleratedCompositingAvailable);
-        BOOL threeDRenderingAvailable = 
+
 #if ENABLE(3D_RENDERING)
-            true;
+        // In theory, we could have a software-based 3D rendering implementation that we use when
+        // hardware-acceleration is not available. But we don't have any such software
+        // implementation, so 3D rendering is only available when hardware-acceleration is.
+        BOOL threeDRenderingAvailable = acceleratedCompositingAvailable;
 #else
-            false;
+        BOOL threeDRenderingAvailable = FALSE;
 #endif
 
         printf("SupportedFeatures:%s %s\n", acceleratedCompositingAvailable ? "AcceleratedCompositing" : "", threeDRenderingAvailable ? "3DRendering" : "");

@@ -1,3 +1,25 @@
+2010-10-26  Adam Roben  <aroben@apple.com>
+
+        Clear up confusion between "3D rendering" and "accelerated compositing"
+
+        WebKit has no software-based 3D rendering implementation, so 3D
+        rendering can only be enabled when accelerated compositing is. But DRT
+        was falsely reporting that 3D rendering was available on machines that
+        don't support accelerated compositing, leading to much confusion.
+
+        Reviewed by Darin Adler.
+
+        Fixes <http://webkit.org/b/48370> REGRESSION (r70540): Many
+        transforms/3d tests are failing on the XP bots
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (main): When ENABLE(3D_RENDERING) is turned on, only report that 3D
+        rendering is available when acclerated compositing is also available.
+
+        * Scripts/old-run-webkit-tests: Skip tests that use the
+        -webkit-transform-3d media query when 3D rendering is disabled,
+        rather than when accelerated compositing is disabled.
+
 2010-10-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ojan Vafai.
