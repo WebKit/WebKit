@@ -1,3 +1,21 @@
+2010-10-26  Adam Roben  <aroben@apple.com>
+
+        Pull in the FeatureDefines*.vsprops files when building DRT
+
+        This ensures that various ENABLE() macros will get set correctly.
+        (Prior to r70320 we were picking up the ENABLE(3D_RENDERING) flag
+        through wtf/Platform.h.)
+
+        Fixes <http://webkit.org/b/48343> REGRESSION (r70320): DumpRenderTree
+        says 3D_RENDERING is disabled even when it is enabled
+
+        Reviewed by Ada Chan.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Added
+        FeaturesDefines*.vsprops to all configurations.
+
+        * DumpRenderTree/win/DumpRenderTreeWin.h: Touched to force a rebuild.
+
 2010-10-26  Søren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Dimitri Glazkov.
