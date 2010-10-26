@@ -43,7 +43,7 @@ PASS event.target.readyState is event.target.DONE
 trans = event.result
 PASS trans !== null is true
 Deleted all object stores.
-creatObjectStore():
+createObjectStore():
 store = db.createObjectStore('storeName', null)
 storeNames = db.objectStores
 PASS store.name is "storeName"
