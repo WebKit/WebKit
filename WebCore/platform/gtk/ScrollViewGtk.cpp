@@ -149,11 +149,11 @@ void ScrollView::setVerticalAdjustment(GtkAdjustment* vadj, bool resetValues)
     // able to report correct values.
     int verticalPageStep = max(max<int>(frameRect().width() * Scrollbar::minFractionToStepWhenPaging(), frameRect().width() - Scrollbar::maxOverlapBetweenPages()), 1);
     gtk_adjustment_configure(m_verticalAdjustment.get(),
-                             resetValues ? 0 : scrollOffset().width(), 0,
-                             resetValues ? 0 : contentsSize().width(),
+                             resetValues ? 0 : scrollOffset().height(), 0,
+                             resetValues ? 0 : contentsSize().height(),
                              resetValues ? 0 : Scrollbar::pixelsPerLineStep(),
                              resetValues ? 0 : verticalPageStep,
-                             resetValues ? 0 : frameRect().width());
+                             resetValues ? 0 : frameRect().height());
 }
 
 void ScrollView::setGtkAdjustments(GtkAdjustment* hadj, GtkAdjustment* vadj, bool resetValues)
