@@ -3259,5 +3259,5 @@ BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 // needs assignment.
 BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
 
-// Chromium-mac-specific test
-BUGWK46868 WONTFIX LINUX WIN : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = TEXT
+// Chromium-mac-specific test, and only runs in DRT.
+BUGWK46868 : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = TEXT
