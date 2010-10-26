@@ -1186,7 +1186,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
             {
                 var container = document.createDocumentFragment();
                 container.appendChild(document.createTextNode("url("));
-                container.appendChild(WebInspector.linkifyURLAsNode(url, url, null, (url in WebInspector.resourceURLMap)));
+                var hasResource = !!WebInspector.resourceForURL(url);
+                container.appendChild(WebInspector.linkifyURLAsNode(url, url, null, hasResource));
                 container.appendChild(document.createTextNode(")"));
                 return container;
             }

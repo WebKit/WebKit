@@ -225,12 +225,14 @@ WebInspector.ConsoleView.prototype = {
             this._incrementErrorWarningCount(msg);
 
             // Add message to the resource panel
-            if (msg.url in WebInspector.resourceURLMap) {
-                msg.resource = WebInspector.resourceURLMap[msg.url];
-                if (WebInspector.panels.resources)
-                    WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
-            }
-            if (WebInspector.resourceManager)
+            if (!Preferences.networkPanelEnabled) {
+                var resource = WebInspector.resourceForURL(msg.url);
+                if (resource) {
+                    msg.resource = resource;
+                    if (WebInspector.panels.resources)
+                        WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
+                }
+            } else
                 WebInspector.resourceManager.addConsoleMessage(msg);
 
             this.commandSincePreviousMessage = false;

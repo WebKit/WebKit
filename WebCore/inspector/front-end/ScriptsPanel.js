@@ -241,7 +241,7 @@ WebInspector.ScriptsPanel.prototype = {
         var script = new WebInspector.Script(sourceID, sourceURL, source, startingLine, errorLine, errorMessage, scriptWorldType);
         this._sourceIDMap[sourceID] = script;
 
-        var resource = WebInspector.resourceURLMap[sourceURL];
+        var resource = WebInspector.resourceForURL(sourceURL);
         if (resource) {
             if (resource.finished) {
                 // Resource is finished, bind the script right away.
@@ -269,6 +269,7 @@ WebInspector.ScriptsPanel.prototype = {
     _resourceLoadingFinished: function(e)
     {
         var resource = e.target;
+        WebInspector.log("_resourceLoadingFinished:" + resource.url);
         for (var i = 0; i < resource._scriptsPendingResourceLoad.length; ++i) {
             // Bind script to resource.
             var script = resource._scriptsPendingResourceLoad[i];
@@ -289,7 +290,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         var sourceFrame;
         if (breakpoint.url) {
-            var resource = WebInspector.resourceURLMap[breakpoint.url];
+            var resource = WebInspector.resourceForURL(breakpoint.url);
             if (resource && resource.finished)
                 sourceFrame = this._sourceFrameForScriptOrResource(resource);
         }

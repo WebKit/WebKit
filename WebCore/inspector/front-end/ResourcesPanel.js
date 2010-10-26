@@ -30,7 +30,7 @@
 WebInspector.ResourcesPanel = function()
 {
     WebInspector.Panel.call(this, "resources");
-
+    this.resourceURLMap = {};
     this._items = [];
     this._staleItems = [];
 
@@ -752,10 +752,12 @@ WebInspector.ResourcesPanel.prototype = {
             this.sortingSelectElement.addStyleClass("hidden");
             this.panelEnablerView.visible = true;
         }
+        this.resourceURLMap = {};
     },
 
     addResource: function(resource)
     {
+        this.resourceURLMap[resource.url] = resource;
         this._resources.push(resource);
     },
 
@@ -770,6 +772,7 @@ WebInspector.ResourcesPanel.prototype = {
         resource.errors = 0;
 
         delete resource._resourcesView;
+        delete this.resourceURLMap[resource.url];
     },
 
     addMessageToResource: function(resource, msg)
@@ -1082,7 +1085,7 @@ WebInspector.ResourcesPanel.prototype = {
             this.largerResourcesButton.visible = false;
             this.sortingSelectElement.visible = false;
             WebInspector.resources = {};
-            WebInspector.resourceURLMap = {};
+            this.resourceURLMap = {};
             InspectorBackend.setResourceTrackingEnabled(false, true, callback);
         } else {
             this.largerResourcesButton.visible = true;

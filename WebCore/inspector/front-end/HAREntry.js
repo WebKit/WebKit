@@ -180,7 +180,7 @@ WebInspector.HAREntry.prototype = {
         var startTime = timing[start];
         return typeof startTime !== "number" || startTime === -1 ? -1 : Math.round(timing[end] - startTime);
     }
-};
+}
 
 WebInspector.HAREntry._toMilliseconds = function(time)
 {
@@ -203,7 +203,7 @@ WebInspector.HARLog.prototype = {
                 version: webKitVersion ? webKitVersion[1] : "n/a"
             },
             pages: this._buildPages(),
-            entries: Object.keys(WebInspector.resources).map(this._convertResource)
+            entries: Object.keys(WebInspector.networkResources).map(this._convertResource)
         }
     },
 
@@ -221,17 +221,15 @@ WebInspector.HARLog.prototype = {
 
     buildMainResourceTimings: function()
     {
-        var resourcesPanel = WebInspector.panels.resources;
-        var startTime = WebInspector.mainResource.startTime;
         return {
-             onContentLoad: this._pageEventTime(resourcesPanel.mainResourceDOMContentTime),
-             onLoad: this._pageEventTime(resourcesPanel.mainResourceLoadTime),
+             onContentLoad: this._pageEventTime(WebInspector.mainResourceDOMContentTime),
+             onLoad: this._pageEventTime(WebInspector.mainResourceLoadTime),
         }
     },
 
     _convertResource: function(id)
     {
-        return (new WebInspector.HAREntry(WebInspector.resources[id])).build();
+        return (new WebInspector.HAREntry(WebInspector.networkResources[id])).build();
     },
 
     _pageEventTime: function(time)
@@ -241,4 +239,4 @@ WebInspector.HARLog.prototype = {
             return -1;
         return WebInspector.HAREntry._toMilliseconds(time - startTime);
     }
-};
+}

@@ -277,17 +277,7 @@ WebInspector.Resource.prototype = {
 
     set category(x)
     {
-        if (this._category === x)
-            return;
-
-        var oldCategory = this._category;
-        if (oldCategory)
-            oldCategory.removeResource(this);
-
         this._category = x;
-
-        if (this._category)
-            this._category.addResource(this);
     },
 
     get cached()
