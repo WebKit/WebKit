@@ -130,8 +130,8 @@ WebInspector.AuditsPanel.prototype = {
     _executeAudit: function(categories, resultCallback)
     {
         var resources = [];
-        for (var id in WebInspector.resources)
-            resources.push(WebInspector.resources[id]);
+        for (var id in WebInspector.networkResources)
+            resources.push(WebInspector.networkResources[id]);
 
         var rulesRemaining = 0;
         for (var i = 0; i < categories.length; ++i)
