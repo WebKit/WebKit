@@ -3047,8 +3047,9 @@ BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 // This should pass once mesa is upgraded to 7.9 (need to verify now).
 BUGWEBGL : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT PASS
 
-// These two were not fixed by the Mesa 7.9 upgrade. Need to investigate.
+// These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT FAIL
+BUG60651 : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 BUG60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
 
 // Pre-HTML5 parser quirks only apply to the mac port for now.
