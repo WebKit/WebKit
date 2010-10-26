@@ -198,20 +198,24 @@ void InjectedBundlePageLoaderClient::didHandleOnloadEventsForFrame(WebPage* page
     m_client.didHandleOnloadEventsForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
 }
 
-void InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame(WebPage* page, WebFrame* frame)
+void InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
 {
     if (!m_client.didDisplayInsecureContentForFrame)
         return;
 
-    m_client.didDisplayInsecureContentForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
+    WKTypeRef userDataToPass = 0;
+    m_client.didDisplayInsecureContentForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page, WebFrame* frame)
+void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
 {
     if (!m_client.didRunInsecureContentForFrame)
         return;
 
-    m_client.didRunInsecureContentForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
+    WKTypeRef userDataToPass = 0;
+    m_client.didRunInsecureContentForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
 }
 
 } // namespace WebKit

@@ -226,6 +226,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didFirstLayoutForFrame
         0, // didFirstVisuallyNonEmptyLayoutForFrame
         0, // didRemoveFrameFromHierarchy
+        0, // didDisplayInsecureContentForFrame
+        0, // didRunInsecureContentForFrame
         0, // didStartProgress
         0, // didChangeProgress
         0, // didFinishProgress

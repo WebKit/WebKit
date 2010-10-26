@@ -284,6 +284,8 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         qt_wk_didFirstLayoutForFrame,
         qt_wk_didFirstVisuallyNonEmptyLayoutForFrame,
         qt_wk_didRemoveFrameFromHierarchy,
+        0, /* didDisplayInsecureContentForFrame */
+        0, /* didRunInsecureContentForFrame */
         qt_wk_didStartProgress,
         qt_wk_didChangeProgress,
         qt_wk_didFinishProgress,

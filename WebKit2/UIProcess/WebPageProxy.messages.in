@@ -69,6 +69,8 @@ messages -> WebPageProxy {
     DidRemoveFrameFromHierarchy(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
     DidStartProvisionalLoadForFrame(uint64_t frameID, WTF::String url, bool loadingSubstituteDataForUnreachableURL, WebKit::InjectedBundleUserMessageEncoder userData)
     DidReceiveTitleForFrame(uint64_t frameID, WTF::String title, WebKit::InjectedBundleUserMessageEncoder userData)
+    DidDisplayInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
+    DidRunInsecureContentForFrame(uint64_t frameID, WebKit::InjectedBundleUserMessageEncoder userData)
 
     # Forms messages.
     WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WebKit::StringPairVector textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData)

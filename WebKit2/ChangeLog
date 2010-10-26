@@ -1,3 +1,35 @@
+2010-10-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48375
+        <rdar://problem/8392724> Need delegate calls in PageLoaderClient to indicate if we have
+        loaded insecure content
+
+        Added the delegate. Just like the bundle version, it misses WebOrigin parameter that Mac
+        delegate call used to have. It doesn't seem necessary for clients.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::QWKPage):
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didDisplayInsecureContentForFrame):
+        (WebKit::WebLoaderClient::didRunInsecureContentForFrame):
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didDisplayInsecureContentForFrame):
+        (WebKit::WebPageProxy::didRunInsecureContentForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didDisplayInsecureContentForFrame):
+        (WebKit::InjectedBundlePageLoaderClient::didRunInsecureContentForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebKit::WebFrameLoaderClient::didRunInsecureContent):
+
 2010-10-26  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

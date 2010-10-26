@@ -171,13 +171,13 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0,
         0,
         0,
+        didDisplayInsecureContentForFrame,
+        didRunInsecureContentForFrame,
         didClearWindowForFrame,
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,
         didChangeLocationWithinPageForFrame,
-        didHandleOnloadEventsForFrame,
-        didDisplayInsecureContentForFrame,
-        didRunInsecureContentForFrame
+        didHandleOnloadEventsForFrame
     };
     WKBundlePageSetLoaderClient(m_page, &loaderClient);
 
@@ -297,12 +297,12 @@ void InjectedBundlePage::didHandleOnloadEventsForFrame(WKBundlePageRef page, WKB
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didHandleOnloadEventsForFrame(frame);
 }
 
-void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+void InjectedBundlePage::didDisplayInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didDisplayInsecureContentForFrame(frame);
 }
 
-void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo)
+void InjectedBundlePage::didRunInsecureContentForFrame(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef*, const void* clientInfo)
 {
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->didRunInsecureContentForFrame(frame);
 }

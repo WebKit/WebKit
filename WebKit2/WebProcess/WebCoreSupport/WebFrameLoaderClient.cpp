@@ -779,8 +779,11 @@ void WebFrameLoaderClient::didDisplayInsecureContent()
     if (!webPage)
         return;
 
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didDisplayInsecureContentForFrame(webPage, m_frame);
+    RefPtr<APIObject> userData;
+
+    webPage->injectedBundleLoaderClient().didDisplayInsecureContentForFrame(webPage, m_frame, userData);
+
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidDisplayInsecureContentForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
 }
 
 void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
@@ -789,8 +792,11 @@ void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
     if (!webPage)
         return;
 
-    // Notify the bundle client.
-    webPage->injectedBundleLoaderClient().didRunInsecureContentForFrame(webPage, m_frame);
+    RefPtr<APIObject> userData;
+
+    webPage->injectedBundleLoaderClient().didRunInsecureContentForFrame(webPage, m_frame, userData);
+
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidRunInsecureContentForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
 }
 
 ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request)

@@ -55,6 +55,8 @@ public:
     void didFirstLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didFirstVisuallyNonEmptyLayoutForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
     void didRemoveFrameFromHierarchy(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didDisplayInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
+    void didRunInsecureContentForFrame(WebPageProxy*, WebFrameProxy*, APIObject*);
 
     void didStartProgress(WebPageProxy*);
     void didChangeProgress(WebPageProxy*);

@@ -305,6 +305,16 @@ static void didRemoveFrameFromHierarchy(WKPageRef page, WKFrameRef frame, WKType
     LOG(@"didRemoveFrameFromHierarchy");
 }
 
+static void didDisplayInsecureContentForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+{
+    LOG(@"didDisplayInsecureContentForFrame");
+}
+
+static void didRunInsecureContentForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void *clientInfo)
+{
+    LOG(@"didRunInsecureContentForFrame");
+}
+
 static void didStartProgress(WKPageRef page, const void *clientInfo)
 {
     [(BrowserWindowController *)clientInfo didStartProgress];
@@ -547,6 +557,8 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
         didFirstLayoutForFrame,
         didFirstVisuallyNonEmptyLayoutForFrame,
         didRemoveFrameFromHierarchy,
+        didDisplayInsecureContentForFrame,
+        didRunInsecureContentForFrame,
         didStartProgress,
         didChangeProgress,
         didFinishProgress,
