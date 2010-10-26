@@ -1,3 +1,33 @@
+2010-10-26  Søren Gjesse  <sgjesse@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Added options --multiple-loads and --js-flags to chromium DumpRenderTree. The option --multiple-loads=X
+        is used to have DumpRenderTree load each test it runs X times. To be able to have more fine-grained control
+        of how the JavaScript engine behaves for each load the flag --js-flags can specify a list of flag-sets like this
+
+          --js-flags="--xxx,--noxxx --yyy,--noyyy"
+
+        First load will run with --xxx, the second with --yyy and the third without any (the 'no' prefix is handled by
+        V8 to turn off the flag).
+
+        The changes to the Python test runner will be in a separate change.
+
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (runTest):
+        (main):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::runFileTest):
+        (TestShell::testFinished):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::loadCount):
+        (TestShell::setLoadCount):
+        (TestShell::javaScriptFlagsForLoad):
+        (TestShell::setJavaScriptFlags):
+        (TestShell::setDumpWhenFinished):
+
 2010-10-26  Adam Roben  <aroben@apple.com>
 
         Skip more tests that depend on accelerated compositing when accelerated

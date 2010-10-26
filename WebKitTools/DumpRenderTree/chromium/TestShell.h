@@ -67,7 +67,7 @@ struct TestParams {
     bool dumpPixels;
     bool printSeparators;
     WebKit::WebURL testUrl;
-    // Resultant image file name. Reqruired only if the test_shell mode.
+    // Resultant image file name. Required only if the test_shell mode.
     std::string pixelFileName;
     std::string pixelHash;
 
@@ -137,6 +137,20 @@ public:
     int layoutTestTimeoutForWatchDog() { return layoutTestTimeout() + 1000; }
     void setLayoutTestTimeout(int timeout) { m_timeout = timeout; }
 
+    // Number of times to load each URL.
+    int loadCount() { return m_loadCount; }
+    void setLoadCount(int loadCount) { m_loadCount = loadCount; }
+
+    // The JavaScript flags are specified as a vector of strings. Each element of the vector is full flags string
+    // which can contain multiple flags (e.g. "--xxx --yyy"). With multiple load testing it is possible to specify
+    // separate sets of flags to each load.
+    std::string javaScriptFlagsForLoad(size_t load) { return (load >= 0 && load < m_javaScriptFlags.size()) ? m_javaScriptFlags[load] : ""; }
+    void setJavaScriptFlags(Vector<std::string> javaScriptFlags) { m_javaScriptFlags = javaScriptFlags; }
+
+    // Set whether to dump when the loaded page has finished processing. This is used with multiple load
+    // testing where we only want to have the output from the last load.
+    void setDumpWhenFinished(bool dumpWhenFinished) { m_dumpWhenFinished = dumpWhenFinished; }
+
     WebViewHost* createWebView();
     WebViewHost* createNewWindow(const WebKit::WebURL&);
     void closeWindow(WebViewHost*);
@@ -183,6 +197,10 @@ private:
     bool m_acceleratedCompositingEnabled;
     bool m_accelerated2dCanvasEnabled;
     WebPreferences m_prefs;
+    int m_loadCount;
+    Vector<std::string> m_javaScriptFlags;
+    bool m_dumpWhenFinished;
+
 
     // List of all windows in this process.
     // The main window should be put into windowList[0].

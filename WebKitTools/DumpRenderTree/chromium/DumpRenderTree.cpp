@@ -32,6 +32,7 @@
 
 #include "TestShell.h"
 #include "webkit/support/webkit_support.h"
+#include <v8/include/v8.h>
 #include <wtf/Vector.h>
 
 using namespace std;
@@ -50,6 +51,9 @@ static const char optionStartupDialog[] = "--testshell-startup-dialog";
 static const char optionCheckLayoutTestSystemDeps[] = "--check-layout-test-sys-deps";
 static const char optionEnableAcceleratedCompositing[] = "--enable-accelerated-compositing";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
+
+static const char optionMultipleLoads[] = "--multiple-loads=";
+static const char optionJavaScriptFlags[] = "--js-flags=";
 
 static void runTest(TestShell& shell, TestParams& params, const string& testName, bool testShellMode)
 {
@@ -78,8 +82,14 @@ static void runTest(TestShell& shell, TestParams& params, const string& testName
     }
     params.testUrl = webkit_support::CreateURLForPathOrURL(pathOrURL);
     webkit_support::SetCurrentDirectoryForFileURL(params.testUrl);
-    shell.resetTestController();
-    shell.runFileTest(params);
+    for (int i = 0; i < shell.loadCount(); i++) {
+        string javaScriptFlags = shell.javaScriptFlagsForLoad(i);
+        v8::V8::SetFlagsFromString(javaScriptFlags.data(), static_cast<int>(javaScriptFlags.size()));
+        bool isLastLoad = (i == (shell.loadCount() - 1));
+        shell.setDumpWhenFinished(isLastLoad);
+        shell.resetTestController();
+        shell.runFileTest(params);
+    }
     shell.setLayoutTestTimeout(oldTimeoutMsec);
 }
 
@@ -96,6 +106,8 @@ int main(int argc, char* argv[])
     bool startupDialog = false;
     bool acceleratedCompositingEnabled = false;
     bool accelerated2DCanvasEnabled = false;
+    int loadCount = 1;
+    string javaScriptFlags;
     for (int i = 1; i < argc; ++i) {
         string argument(argv[i]);
         if (argument == "-")
@@ -120,7 +132,12 @@ int main(int argc, char* argv[])
             acceleratedCompositingEnabled = true;
         else if (argument == optionEnableAccelerated2DCanvas)
             accelerated2DCanvasEnabled = true;
-        else if (argument.size() && argument[0] == '-')
+        else if (!argument.find(optionMultipleLoads)) {
+            string multipleLoadsStr = argument.substr(strlen(optionMultipleLoads));
+            loadCount = atoi(multipleLoadsStr.c_str());
+        } else if (!argument.find(optionJavaScriptFlags)) {
+            javaScriptFlags = argument.substr(strlen(optionJavaScriptFlags));
+        } else if (argument.size() && argument[0] == '-')
             fprintf(stderr, "Unknown option: %s\n", argv[i]);
         else
             tests.append(argument);
@@ -128,6 +145,30 @@ int main(int argc, char* argv[])
     if (testShellMode && params.dumpPixels && params.pixelFileName.empty()) {
         fprintf(stderr, "--pixel-tests with --test-shell requires a file name.\n");
         return EXIT_FAILURE;
+    }
+    if (loadCount < 1) {
+        fprintf(stderr, "--multiple-loads requires a positive numeric argument.\n");
+        return EXIT_FAILURE;
+    }
+
+    // The test runner might send a quoted string which needs to be unquoted before further processing.
+    if (javaScriptFlags.length() > 1 && javaScriptFlags[0] == '"' && javaScriptFlags[javaScriptFlags.length() - 1] == '"')
+        javaScriptFlags = javaScriptFlags.substr(1, javaScriptFlags.length() - 2);
+    // Split the JavaScript flags into a list.
+    Vector<string> flagsList;
+    size_t start = 0;
+    while (true) {
+        size_t commaPos = javaScriptFlags.find_first_of(',', start);
+        string flags;
+        if (commaPos == string::npos)
+            flags = javaScriptFlags.substr(start, javaScriptFlags.length() - start);
+        else {
+            flags = javaScriptFlags.substr(start, commaPos - start);
+            start = commaPos + 1;
+        }
+        flagsList.append(flags);
+        if (commaPos == string::npos)
+            break;
     }
 
     if (startupDialog)
@@ -138,6 +179,8 @@ int main(int argc, char* argv[])
         shell.setAllowExternalPages(allowExternalPages);
         shell.setAcceleratedCompositingEnabled(acceleratedCompositingEnabled);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
+        shell.setLoadCount(loadCount);
+        shell.setJavaScriptFlags(flagsList);
         if (serverMode && !tests.size()) {
             params.printSeparators = true;
             char testString[2048]; // 2048 is the same as the sizes of other platforms.

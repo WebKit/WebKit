@@ -86,6 +86,8 @@ TestShell::TestShell(bool testShellMode)
     , m_allowExternalPages(false)
     , m_acceleratedCompositingEnabled(false)
     , m_accelerated2dCanvasEnabled(false)
+    , m_loadCount(1)
+    , m_dumpWhenFinished(true)
 {
     WebRuntimeFeatures::enableGeolocation(true);
     WebRuntimeFeatures::enableIndexedDatabase(true);
@@ -181,7 +183,8 @@ void TestShell::runFileTest(const TestParams& params)
     if (inspectorTestMode)
         showDevTools();
 
-    m_printer->handleTestHeader(testUrl.c_str());
+    if (m_dumpWhenFinished)
+        m_printer->handleTestHeader(testUrl.c_str());
     loadURL(m_params.testUrl);
 
     m_testIsPreparing = false;
@@ -270,7 +273,8 @@ void TestShell::testFinished()
     if (!m_testIsPending)
         return;
     m_testIsPending = false;
-    dump();
+    if (m_dumpWhenFinished)
+        dump();
     webkit_support::QuitMessageLoop();
 }
 
