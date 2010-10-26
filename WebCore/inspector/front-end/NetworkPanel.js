@@ -36,8 +36,6 @@ WebInspector.NetworkPanel = function()
     this.sidebarElement.className = "network-sidebar";
 
     this._resources = [];
-    this._resourcesById = {};
-    this._lastIdentifier = 0;
     this._staleResources = [];
     this._resourceGridNodes = {};
     this._mainResourceLoadTime = -1;
@@ -760,7 +758,6 @@ WebInspector.NetworkPanel.prototype = {
             this._calculator.reset();
 
         this._resources = [];
-        this._resourcesById = {};
         this._staleResources = [];
         this._resourceGridNodes = {};
 
@@ -776,17 +773,9 @@ WebInspector.NetworkPanel.prototype = {
         this._resetSummaryBar();
     },
 
-    get resources()
-    {
-        return this._resourcesById;
-    },
-
     addResource: function(resource)
     {
         this._resources.push(resource);
-        if (!resource.identifier)
-            resource.identifier = "network:" + this._lastIdentifier++;
-        this._resourcesById[resource.identifier] = resource;
         this.refreshResource(resource);
     },
 

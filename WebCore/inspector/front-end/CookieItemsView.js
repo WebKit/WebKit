@@ -120,13 +120,12 @@ WebInspector.CookieItemsView.prototype = {
         var resourceURLsForDocumentURL = [];
         this._totalSize = 0;
 
-        function populateResourcesForDocuments(resource)
-        {
+        for (var id in WebInspector.resources) {
+            var resource = WebInspector.resources[id];
             var url = resource.documentURL.asParsedURL();
             if (url && url.host == this._cookieDomain)
                 resourceURLsForDocumentURL.push(resource.url);
         }
-        WebInspector.forAllResources(populateResourcesForDocuments);
 
         for (var i = 0; i < allCookies.length; ++i) {
             var pushed = false;

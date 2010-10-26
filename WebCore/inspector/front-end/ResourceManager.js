@@ -68,7 +68,6 @@ WebInspector.ResourceManager.prototype = {
         }
 
         WebInspector.panels.network.addResource(resource);
-        WebInspector.panels.audits.resourceStarted(resource);
     },
 
     _createResource: function(identifier, url, loader)
@@ -100,10 +99,9 @@ WebInspector.ResourceManager.prototype = {
         resource.requestFormData = request.requestFormData;
         resource.startTime = time;
 
-        if (isRedirect) {
+        if (isRedirect)
             WebInspector.panels.network.addResource(resource);
-            WebInspector.panels.audits.resourceStarted(resource);
-        } else 
+        else
             WebInspector.panels.network.refreshResource(resource);
     },
 
@@ -188,7 +186,6 @@ WebInspector.ResourceManager.prototype = {
         resource.endTime = finishTime;
 
         WebInspector.panels.network.refreshResource(resource);
-        WebInspector.panels.audits.resourceFinished(resource);
         delete this._resourcesById[identifier];
     },
 
@@ -202,7 +199,6 @@ WebInspector.ResourceManager.prototype = {
         resource.endTime = time;
 
         WebInspector.panels.network.refreshResource(resource);
-        WebInspector.panels.audits.resourceFinished(resource);
         delete this._resourcesById[identifier];
     },
 
@@ -214,8 +210,6 @@ WebInspector.ResourceManager.prototype = {
         resource.startTime = resource.responseReceivedTime = resource.endTime = time;
 
         WebInspector.panels.network.addResource(resource);
-        WebInspector.panels.audits.resourceStarted(resource);
-        WebInspector.panels.audits.resourceFinished(resource);
         this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
     },
 
@@ -235,7 +229,7 @@ WebInspector.ResourceManager.prototype = {
         resource.type = WebInspector.Resource.Type[type];
         resource.overridenContent = sourceString;
 
-        WebInspector.panels.network.refreshResource(resource);
+        WebInspector.panels.network.addResource(resource);
     },
 
     didCommitLoadForFrame: function(parentFrameId, loader)
@@ -552,18 +546,13 @@ WebInspector.ResourceTreeModel.prototype = {
     _callForFrameResources: function(frameId, callback)
     {
         var resources = this._resourcesByFrameId[frameId];
-        for (var i = 0; resources && i < resources.length; ++i) {
-            if (callback(resources[i]))
-                return true;
-        }
+        for (var i = 0; resources && i < resources.length; ++i)
+            callback(resources[i]);
         
         var frames = this._subframes[frameId];
         if (frames) {
-            for (var id in frames) {
-                if (this._callForFrameResources(id, callback))
-                    return true;
-            }
+            for (var id in frames)
+                this._callForFrameResources(id, callback);
         }
-        return false;
     }
 }

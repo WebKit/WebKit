@@ -33,14 +33,7 @@ function doit()
 
 function frontend_runAudits(testController)
 {
-    if (Preferences.networkPanelEnabled) {
-        if (!WebInspector.panels.network._pageWasReloaded) {
-            WebInspector.panels.network._pageWasReloaded = true;
-            WebInspector.panels.network._reset();
-            InspectorBackend.reloadPage();
-            return "refreshing";
-        }
-    } else if (!WebInspector.panels.resources.resourceTrackingEnabled) {
+    if (!WebInspector.panels.resources.resourceTrackingEnabled) {
         WebInspector.panels.resources._toggleResourceTracking();
         return "refreshing";
     }
@@ -59,8 +52,7 @@ function frontend_runAudits(testController)
             // Audits are done, check results.
             var output = frontend_collectAuditResults();
             // Avoid influencing tests that require resource tracking to be disabled.
-            if (!Preferences.networkPanelEnabled)
-                WebInspector.panels.resources._toggleResourceTracking();
+            WebInspector.panels.resources._toggleResourceTracking();
             testController.runAfterPendingDispatches(function() {
                 testController.notifyDone(output.join("\n"));
             });

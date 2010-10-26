@@ -50,6 +50,7 @@
 
 var WebInspector = {
     resources: {},
+    resourceURLMap: {},
     cookieDomains: {},
     applicationCacheDomains: {},
     missingLocalizedStrings: {},
@@ -451,33 +452,6 @@ var WebInspector = {
     {
         this.currentPanel = this.panels.elements;
         this.panels.elements.updateFocusedNode(nodeId);
-    },
-
-    get networkResources()
-    {
-        if (Preferences.networkPanelEnabled)
-            return this.panels.network.resources;
-        else
-            return this.resources;
-    },
-
-    forAllResources: function(callback)
-    {
-        if (Preferences.networkPanelEnabled)
-            WebInspector.resourceManager.forAllResources(callback);
-        else {
-            for (var id in WebInspector.panels.resources.resources) {
-                if (callback(WebInspector.panels.resources.resources[id]))
-                    return;
-            }
-        }
-    },
-
-    resourceForURL: function(url)
-    {
-        if (Preferences.networkPanelEnabled)
-            return this.resourceManager.resourceForURL(url);
-        return this.panels.resources.resourceURLMap[url];
     }
 }
 
@@ -1271,6 +1245,7 @@ WebInspector.updateResource = function(payload)
     if (!resource) {
         resource = new WebInspector.Resource(identifier, payload.url);
         this.resources[identifier] = resource;
+        this.resourceURLMap[resource.url] = resource;
         this.panels.resources.addResource(resource);
         this.panels.audits.resourceStarted(resource);
     }
@@ -1342,7 +1317,6 @@ WebInspector.domContentEventFired = function(time)
     this.panels.audits.mainResourceDOMContentTime = time;
     if (this.panels.network)
         this.panels.network.mainResourceDOMContentTime = time;
-    this.mainResourceDOMContentTime = time;
 }
 
 WebInspector.loadEventFired = function(time)
@@ -1352,7 +1326,6 @@ WebInspector.loadEventFired = function(time)
     this.panels.audits.mainResourceLoadTime = time;
     if (this.panels.network)
         this.panels.network.mainResourceLoadTime = time;
-    this.mainResourceLoadTime = time;
 }
 
 WebInspector.removeResource = function(identifier)
@@ -1364,6 +1337,8 @@ WebInspector.removeResource = function(identifier)
     if (!resource)
         return;
 
+    resource.category.removeResource(resource);
+    delete this.resourceURLMap[resource.url];
     delete this.resources[identifier];
 
     if (this.panels.resources)
@@ -1507,13 +1482,16 @@ WebInspector.reset = function()
 
     this.sessionSettings.reset();
 
+    for (var category in this.resourceCategories)
+        this.resourceCategories[category].removeAllResources();
+
     this.resources = {};
+    this.resourceURLMap = {};
     this.cookieDomains = {};
     this.applicationCacheDomains = {};
     this.highlightDOMNode(0);
 
-    if (!Preferences.networkPanelEnabled)
-        delete this.mainResource;
+    delete this.mainResource;
 
     this.console.clearMessages();
     this.extensionServer.notifyInspectorReset();
@@ -1723,7 +1701,13 @@ WebInspector.displayNameForURL = function(url)
     if (!url)
         return "";
 
-    var resource = this.resourceForURL(url);
+    if (WebInspector.resourceManager) {
+        var resource = WebInspector.resourceManager.resourceForURL(url);
+        if (resource)
+            return resource.displayName;
+    }
+
+    var resource = this.resourceURLMap[url];
     if (resource)
         return resource.displayName;
 
@@ -1739,6 +1723,21 @@ WebInspector.displayNameForURL = function(url)
     }
 
     return url.trimURL(WebInspector.mainResource.domain);
+}
+
+WebInspector.resourceForURL = function(url)
+{
+    if (url in this.resourceURLMap)
+        return this.resourceURLMap[url];
+
+    // No direct match found. Search for resources that contain
+    // a substring of the URL.
+    for (var resourceURL in this.resourceURLMap) {
+        if (resourceURL.hasSubstring(url))
+            return this.resourceURLMap[resourceURL];
+    }
+
+    return null;
 }
 
 WebInspector._choosePanelToShowSourceLine = function(url, line, preferredPanel)
@@ -1789,8 +1788,7 @@ WebInspector.linkifyStringAsFragment = function(string)
             title = WebInspector.panels.profiles.displayTitleForProfileLink(profileStringMatches[2], profileStringMatches[1]);
 
         var realURL = (linkString.indexOf("www.") === 0 ? "http://" + linkString : linkString);
-        var hasResourceWithURL = !!WebInspector.resourceForURL(realURL);
-        container.appendChild(WebInspector.linkifyURLAsNode(realURL, title, null, hasResourceWithURL));
+        container.appendChild(WebInspector.linkifyURLAsNode(realURL, title, null, (realURL in WebInspector.resourceURLMap)));
         string = string.substring(linkIndex + linkString.length, string.length);
     }
 
@@ -1858,17 +1856,13 @@ WebInspector.resourceURLForRelatedNode = function(node, url)
     }
 
     // documentURL not found or has bad value
-    var resourceURL = url;
-    function callback(resource)
-    {
-        if (resource.path === url) {
-            resourceURL = resource.url;
-            return true;
-        }
+    for (var resourceURL in WebInspector.resourceURLMap) {
+        var parsedURL = resourceURL.asParsedURL();
+        if (parsedURL && parsedURL.path === url)
+            return resourceURL;
     }
-    WebInspector.forAllResources(callback);
-    return resourceURL;
-}
+    return url;
+},
 
 WebInspector.completeURL = function(baseURL, href)
 {

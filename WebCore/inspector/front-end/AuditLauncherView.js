@@ -269,7 +269,6 @@ WebInspector.AuditLauncherView.prototype = {
         this._selectAllClicked(this._selectAllCheckboxElement.checked);
         this.updateResourceTrackingState();
         this._updateButton();
-        this._updateResourceProgress();
     },
 
     _updateResourceProgress: function()

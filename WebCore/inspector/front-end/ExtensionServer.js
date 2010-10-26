@@ -240,7 +240,7 @@ WebInspector.ExtensionServer.prototype = {
         var id = message.id;
         var resource = null;
 
-        resource = WebInspector.networkResources[id] || WebInspector.resourceForURL(id);
+        resource = WebInspector.resources[id] || WebInspector.resourceForURL(id);
         if (!resource)
             return this._status.E_NOTFOUND(typeof id + ": " + id);
         if (Preferences.networkPanelEnabled) {
@@ -261,14 +261,14 @@ WebInspector.ExtensionServer.prototype = {
     {
         function resourceWrapper(id)
         {
-            return WebInspector.extensionServer._convertResource(WebInspector.networkResources[id]);
+            return WebInspector.extensionServer._convertResource(WebInspector.resources[id]);
         }
 
         var response;
         if (request.id)
-            response = WebInspector.networkResources[request.id] ? resourceWrapper(request.id) : this._status.E_NOTFOUND(request.id);
+            response = WebInspector.resources[request.id] ? resourceWrapper(request.id) : this._status.E_NOTFOUND(request.id);
         else
-            response = Object.keys(WebInspector.networkResources).map(resourceWrapper);
+            response = Object.keys(WebInspector.resources).map(resourceWrapper);
         return response;
     },
 
@@ -298,7 +298,7 @@ WebInspector.ExtensionServer.prototype = {
 
         for (var i = 0; i < ids.length; ++i) {
             var id = ids[i];
-            var resource = WebInspector.networkResources[id];
+            var resource = WebInspector.resources[id];
             if (!resource)
                 response.push(this._status.E_NOTFOUND(id));
             else
