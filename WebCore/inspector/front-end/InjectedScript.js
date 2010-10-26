@@ -268,7 +268,7 @@ InjectedScript.prototype = {
         // We don't want local variables to be shadowed by global ones when evaluating on CallFrame.
         if (!isEvalOnCallFrame)
             expression = "with (window) {\n" + expression + "\n} ";
-        expression = "with (window.console._commandLineAPI) {\n" + expression + "\n}";
+        expression = "with (window ? window.console._commandLineAPI : {}) {\n" + expression + "\n}";
         var value = evalFunction.call(object, expression);
     
         delete inspectedWindow.console._commandLineAPI;
