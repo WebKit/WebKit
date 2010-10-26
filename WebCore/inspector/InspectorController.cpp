@@ -576,8 +576,6 @@ void InspectorController::disconnectFrontend()
     if (!m_frontend)
         return;
 
-    setConsoleMessagesEnabled(false);
-
     m_frontend.clear();
 
     InspectorInstrumentation::frontendDeleted();
