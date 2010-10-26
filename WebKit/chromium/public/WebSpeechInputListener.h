@@ -57,15 +57,6 @@ public:
     // or if there was any other errors in the process, this method may never be called.
     virtual void setRecognitionResult(int, const WebSpeechInputResultArray&) { WEBKIT_ASSERT_NOT_REACHED(); }
 
-    // FIXME: Remove this once the chromium side is able to send multiple recognition results
-    // using the above call.
-    virtual void setRecognitionResult(int requestId, const WebString& result)
-    {
-        WebSpeechInputResultArray results(static_cast<size_t>(1));
-        results[0].set(result, 1.0);
-        setRecognitionResult(requestId, results);
-    }
-
     // Informs that speech recognition has completed. This gets invoked irrespective of whether
     // recognition was succesful or not, whether setRecognitionResult() was invoked or not. The
     // handler typically frees up any temporary resources allocated and waits for the next speech

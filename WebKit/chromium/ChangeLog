@@ -1,3 +1,12 @@
+2010-10-26  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Remove obsolete public/API methods in chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=48330
+
+        * public/WebSpeechInputListener.h:
+
 2010-10-26  Jeremy Orlow  <jorlow@chromium.org>
 
         Reviewed by Steve Block.
