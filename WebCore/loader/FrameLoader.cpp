@@ -1435,6 +1435,9 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
 
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState)
 {
+    // Retain because dispatchBeforeLoadEvent may release the last reference to it.
+    RefPtr<Frame> protect(m_frame);
+
     ASSERT(m_client->hasWebView());
 
     // Unfortunately the view must be non-nil, this is ultimately due
