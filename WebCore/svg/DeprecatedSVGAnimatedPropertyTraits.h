@@ -105,18 +105,6 @@ struct DeprecatedSVGAnimatedPropertyTraits<SVGPreserveAspectRatio> : public Nonc
     static String toString(PassType type) { return type.valueAsString(); }
 };
 
-// SVGAnimatedRect
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<FloatRect> : public Noncopyable {
-    typedef const FloatRect& PassType;
-    typedef FloatRect ReturnType;
-    typedef FloatRect StoredType;
-
-    static ReturnType null() { return FloatRect(); }
-    static ReturnType toReturnType(const StoredType& type) { return type; }
-    static String toString(PassType type) { return String::format("%f %f %f %f", type.x(), type.y(), type.width(), type.height()); }
-};
-
 // SVGAnimatedString
 template<>
 struct DeprecatedSVGAnimatedPropertyTraits<String> : public Noncopyable {

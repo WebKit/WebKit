@@ -227,15 +227,6 @@ sub GetCallbackClassName
     return "JS$className";
 }
 
-sub AvoidInclusionOfType
-{
-    my $type = shift;
-
-    # Special case: SVGRect.h / SVGPoint.h / SVGNumber.h / SVGMatrix.h do not exist.
-    return 1 if $type eq "SVGRect" or $type eq "SVGPoint" or $type eq "SVGNumber" or $type eq "SVGMatrix";
-    return 0;
-}
-
 sub IndexGetterReturnsStrings
 {
     my $type = shift;
@@ -251,7 +242,7 @@ sub AddIncludesForType
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
-    if ($codeGenerator->IsPrimitiveType($type) or AvoidInclusionOfType($type)
+    if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->AvoidInclusionOfType($type)
         or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array") {
     } elsif ($type =~ /SVGPathSeg/) {
         $joinedName = $type;
@@ -284,6 +275,7 @@ sub AddIncludesForType
     }
 }
 
+# FIXME: This method will go away once all SVG animated properties are converted to the new scheme.
 sub AddIncludesForSVGAnimatedType
 {
     my $type = shift;
@@ -334,8 +326,9 @@ sub IsSVGTypeNeedingContextParameter
     return 0 unless $implClassName =~ /SVG/;
     return 0 if $implClassName =~ /Element/;
     return 0 if $codeGenerator->IsSVGNewStyleAnimatedType($implClassName);
+    return 0 if $codeGenerator->IsSVGTypeNeedingTearOff($implClassName);
 
-    my @noContextNeeded = ("SVGAngle", "SVGLength", "SVGLengthList", "SVGPaint", "SVGColor", "SVGDocument", "SVGZoomEvent");
+    my @noContextNeeded = ("SVGColor", "SVGDocument", "SVGPaint", "SVGZoomEvent");
     foreach (@noContextNeeded) {
         return 0 if $implClassName eq $_;
     }
@@ -673,27 +666,11 @@ sub GenerateHeader
     }
     
     $headerIncludes{"<runtime/JSObjectWithGlobalObject.h>"} = 1;
-
     $headerIncludes{"SVGElement.h"} = 1 if $className =~ /^JSSVG/;
 
-    # Get correct pass/store types respecting PODType flag
     my $implType = $implClassName;
-
-    my $svgPropertyType = $dataNode->extendedAttributes->{"SVGProperty"};    
-    if ($svgPropertyType) {
-        $implType = "SVGPropertyTearOff<$svgPropertyType> ";
-        $headerIncludes{"SVGAnimatedProperty.h"} = 1;
-        $headerIncludes{"SVGPropertyTearOff.h"} = 1;
-        $headerIncludes{"$svgPropertyType.h"} = 1 if $svgPropertyType ne "float";
-    }
-
-    my $svgListPropertyType = $dataNode->extendedAttributes->{"SVGListProperty"};    
-    if ($svgListPropertyType) {
-        $implType = "SVGListPropertyTearOff<$svgListPropertyType> ";
-        $headerIncludes{"SVGAnimatedProperty.h"} = 1;
-        $headerIncludes{"SVGListPropertyTearOff.h"} = 1;
-        $headerIncludes{"$svgListPropertyType.h"} = 1;
-    }
+    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implType);
+    $implType = $svgNativeType if $svgNativeType;
 
     # FIXME: Old style SVG JS bindings, will vanish soon.
     my $podType = $dataNode->extendedAttributes->{"PODType"};
@@ -714,11 +691,13 @@ sub GenerateHeader
 
     push(@headerContent, "\nnamespace WebCore {\n\n");
 
-    my $svgAnimatedPropertyType = $dataNode->extendedAttributes->{"SVGAnimatedProperty"};   
-    $headerIncludes{"$implClassName.h"} = 1 if $svgAnimatedPropertyType;
+    if ($codeGenerator->IsSVGNewStyleAnimatedType($implClassName)) {
+        $headerIncludes{"$implClassName.h"} = 1;
+    } else {
+        # Implementation class forward declaration
+        AddClassForwardIfNeeded($implClassName) unless $svgPropertyOrPodType;
+    }
 
-    # Implementation class forward declaration
-    AddClassForwardIfNeeded($implClassName) unless $svgPropertyOrPodType or $svgAnimatedPropertyType;
     AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
 
     # Class declaration
@@ -1447,16 +1426,12 @@ sub GenerateImplementation
     }
     push(@implContent, "};\n\n");
 
-    # Get correct pass/store types respecting PODType flag
     my $implType = $implClassName;
-    my $svgPropertyType = $dataNode->extendedAttributes->{"SVGProperty"};    
-    my $svgListPropertyType = $dataNode->extendedAttributes->{"SVGListProperty"};    
+    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implType);
+    $implType = $svgNativeType if $svgNativeType;
+
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    if ($svgPropertyType) {
-        $implType = "SVGPropertyTearOff<$svgPropertyType> ";
-    } elsif ($svgListPropertyType) {
-        $implType = "SVGListPropertyTearOff<$svgListPropertyType> ";
-    } elsif ($podType) {
+    if ($podType) {
         $implType = "JSSVGPODTypeWrapper<$podType> ";
     }
 
@@ -1810,6 +1785,8 @@ sub GenerateImplementation
                             # For setters with "StrictTypeChecking", if an input parameter's type does not match the signature,
                             # a TypeError is thrown instead of casting to null.
                             if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
+                                $implIncludes{"<runtime/Error.h>"} = 1;
+
                                 my $argType = $attribute->signature->type;
                                 if (!IsNativeType($argType)) {
                                     push(@implContent, "    if (!value.isUndefinedOrNull() && !value.inherits(&JS${argType}::s_info)) {\n");
@@ -2077,6 +2054,8 @@ sub GenerateImplementation
                             # For functions with "StrictTypeChecking", if an input parameter's type does not match the signature,
                             # a TypeError is thrown instead of casting to null.
                             if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
+                                $implIncludes{"<runtime/Error.h>"} = 1;
+
                                 my $argValue = "exec->argument($argsIndex)";
                                 if (!IsNativeType($argType)) {
                                     push(@implContent, "    if (exec->argumentCount() > $argsIndex && !${argValue}.isUndefinedOrNull() && !${argValue}.inherits(&JS${argType}::s_info))\n");
@@ -2470,8 +2449,6 @@ my %nativeType = (
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "IDBKey" => "RefPtr<IDBKey>",
-    "SVGAngle" => "SVGPropertyTearOff<SVGAngle>*",
-    "SVGLength" => "SVGPropertyTearOff<SVGLength>*",
     "SVGMatrix" => "AffineTransform",
     "SVGNumber" => "float",
     "SVGPaintType" => "SVGPaint::SVGPaintType",
@@ -2493,10 +2470,42 @@ sub GetNativeType
 {
     my $type = shift;
 
+    my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
+    return "${svgNativeType}*" if $svgNativeType;
     return $nativeType{$type} if exists $nativeType{$type};
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
+}
+
+sub GetSVGPropertyTypes
+{
+    my $implType = shift;
+
+    my $svgPropertyType;
+    my $svgListPropertyType;
+    my $svgNativeType;
+
+    return ($svgPropertyType, $svgListPropertyType, $svgNativeType) if not $implType =~ /SVG/;
+    
+    $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($implType);
+    return ($svgPropertyType, $svgListPropertyType, $svgNativeType) if not $svgNativeType;
+
+    # Append space to avoid compilation errors when using  PassRefPtr<$svgNativeType>
+    $svgNativeType = "$svgNativeType ";
+
+    my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implType);
+    if ($svgNativeType =~ /SVGPropertyTearOff/) {
+        $svgPropertyType = $svgWrappedNativeType;
+        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
+        $headerIncludes{"SVGPropertyTearOff.h"} = 1;
+    } elsif ($svgNativeType =~ /SVGListPropertyTearOff/) {
+        $svgListPropertyType = $svgWrappedNativeType;
+        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
+        $headerIncludes{"SVGListPropertyTearOff.h"} = 1;
+    }
+
+    return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
 }
 
 sub IsNativeType
@@ -2649,7 +2658,7 @@ sub NativeToJSValue
     } else {
         # Default, include header with same name.
         $implIncludes{"JS$type.h"} = 1;
-        $implIncludes{"$type.h"} = 1;
+        $implIncludes{"$type.h"} = 1 if not $codeGenerator->AvoidInclusionOfType($type);
     }
 
     return $value if $codeGenerator->IsSVGAnimatedType($type);
@@ -2665,13 +2674,9 @@ sub NativeToJSValue
 
     if ($codeGenerator->IsSVGNewStyleAnimatedType($implClassName)) {
         # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
-        if ($implClassName =~ /List$/) {
-            $value = "static_cast<SVGListPropertyTearOff<$type>*>($value)";
-        } else {
-            $value = "static_cast<SVGPropertyTearOff<$type>*>($value)";
-        }
+        $value = "static_cast<" . GetNativeType($type) . ">($value)";
     } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $implClassName =~ /List$/) {
-        $value = "SVGPropertyTearOff<$type>::create($value)";
+        $value = $codeGenerator->GetSVGTypeNeedingTearOff($type) . "::create($value)";
     }
 
     return "toJS(exec, $globalObject, WTF::getPtr($value))";

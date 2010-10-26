@@ -146,7 +146,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGSVGElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
         // SVGFitToViewBox
-        DECLARE_ANIMATED_PROPERTY(SVGSVGElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGSVGElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
         DECLARE_ANIMATED_PROPERTY(SVGSVGElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
  
         virtual void documentWillBecomeInactive();

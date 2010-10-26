@@ -25,7 +25,7 @@
 
 module svg {
 
-    interface [Conditional=SVG, SVGAnimatedProperty] SVGAnimatedAngle {
+    interface [Conditional=SVG] SVGAnimatedAngle {
         readonly attribute SVGAngle baseVal;
         readonly attribute SVGAngle animVal;
     };
