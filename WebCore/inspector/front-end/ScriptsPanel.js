@@ -269,7 +269,6 @@ WebInspector.ScriptsPanel.prototype = {
     _resourceLoadingFinished: function(e)
     {
         var resource = e.target;
-        WebInspector.log("_resourceLoadingFinished:" + resource.url);
         for (var i = 0; i < resource._scriptsPendingResourceLoad.length; ++i) {
             // Bind script to resource.
             var script = resource._scriptsPendingResourceLoad[i];
@@ -599,8 +598,6 @@ WebInspector.ScriptsPanel.prototype = {
 
         var view;
         if (scriptOrResource instanceof WebInspector.Resource) {
-            if (!WebInspector.panels.resources)
-                return null;
             view = WebInspector.ResourceManager.resourceViewForResource(scriptOrResource);
             view.headersVisible = false;
         } else if (scriptOrResource instanceof WebInspector.Script)

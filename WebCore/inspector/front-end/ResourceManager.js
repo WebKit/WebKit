@@ -318,6 +318,7 @@ WebInspector.ResourceManager.prototype = {
             var cachedResource = framePayload.subresources[i];
             var resource = this._createResource(null, cachedResource.url, cachedResource.loader);
             this._updateResourceWithCachedResource(resource, cachedResource);
+            resource.finished = true;
             this._resourceTreeModel.addResourceToFrame(framePayload.id, resource);
         }
     },
