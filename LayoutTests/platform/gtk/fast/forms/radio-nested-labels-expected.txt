@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 779x38
+          text run at (0,0) width 568: "This tests our ability to correctly select radio buttons when we have nested label tags. This test "
+          text run at (568,0) width 211: "only works in DumpRenderTree. It"
+          text run at (0,19) width 376: "can be tested manually outside of DRT just by clicking around."
+      RenderBlock {FORM} at (0,54) size 784x40
+        RenderBlock (anonymous) at (0,0) size 784x21
+          RenderBlock {INPUT} at (4,3) size 15x15
+          RenderInline {LABEL} at (0,0) size 180x19
+            RenderText {#text} at (23,1) size 26x19
+              text run at (23,1) width 26: "one "
+            RenderBlock {INPUT} at (53,3) size 15x15
+            RenderInline {LABEL} at (0,0) size 131x19
+              RenderText {#text} at (72,1) size 27x19
+                text run at (72,1) width 27: "two "
+              RenderBlock {INPUT} at (103,3) size 15x15
+              RenderInline {LABEL} at (0,0) size 81x19
+                RenderText {#text} at (122,1) size 34x19
+                  text run at (122,1) width 34: "three "
+                RenderBlock {INPUT} at (160,3) size 15x15
+                RenderInline {LABEL} at (0,0) size 24x19
+                  RenderText {#text} at (179,1) size 24x19
+                    text run at (179,1) width 24: "four"
+        RenderBlock (anonymous) at (0,21) size 784x19
+          RenderBlock {DIV} at (0,0) size 784x19
+            RenderText {#text} at (0,0) size 102x19
+              text run at (0,0) width 102: "Test Succeeded!"
+        RenderBlock (anonymous) at (0,40) size 784x0
+          RenderInline {LABEL} at (0,0) size 0x0
+            RenderInline {LABEL} at (0,0) size 0x0
+              RenderInline {LABEL} at (0,0) size 0x0
+                RenderInline {LABEL} at (0,0) size 0x0

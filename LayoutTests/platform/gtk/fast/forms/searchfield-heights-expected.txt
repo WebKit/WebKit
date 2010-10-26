@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderText {#text} at (0,0) size 351x19
+        text run at (0,0) width 351: "This tests that aqua-style search fields do not honor height."
+      RenderBR {BR} at (351,15) size 0x0
+      RenderTextControl {INPUT} at (0,31) size 71x20 [bgcolor=#FFFFFF]
+        RenderBlock {DIV} at (3,2) size 65x16
+          RenderBlock {DIV} at (0,14) size 0x0
+          RenderBlock {DIV} at (51,0) size 14x14
+      RenderText {#text} at (71,32) size 4x19
+        text run at (71,32) width 4: " "
+      RenderTextControl {INPUT} at (77,30) size 174x24 [bgcolor=#FFFFFF]
+        RenderBlock {DIV} at (3,3) size 168x18
+          RenderBlock {DIV} at (0,14) size 0x0
+          RenderBlock {DIV} at (154,0) size 14x14
+      RenderText {#text} at (253,32) size 4x19
+        text run at (253,32) width 4: " "
+      RenderTextControl {INPUT} at (259,19) size 318x37 [bgcolor=#FFFFFF]
+        RenderBlock {DIV} at (3,3) size 312x31
+          RenderBlock {DIV} at (0,25) size 0x0
+          RenderBlock {DIV} at (298,11) size 14x14
+      RenderText {#text} at (0,0) size 0x0
+layer at (11,49) size 51x8
+  RenderBlock {DIV} at (0,8) size 51x8
+    RenderText {#text} at (1,0) size 10x8
+      text run at (1,0) width 10: "mini"
+layer at (88,41) size 154x18
+  RenderBlock {DIV} at (0,0) size 154x18
+    RenderText {#text} at (1,0) size 35x18
+      text run at (1,0) width 35: "small"
+layer at (270,30) size 298x31
+  RenderBlock {DIV} at (0,0) size 298x31
+    RenderText {#text} at (1,0) size 84x31
+      text run at (1,0) width 84: "regular"

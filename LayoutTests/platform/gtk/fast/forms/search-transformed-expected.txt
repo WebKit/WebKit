@@ -1,0 +1,31 @@
+layer at (0,0) size 842x581
+  RenderView at (0,0) size 800x581
+layer at (0,0) size 800x581
+  RenderBlock {HTML} at (0,0) size 800x581
+    RenderBody {BODY} at (8,8) size 784x557
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 51x19
+          text run at (0,0) width 51: "Test for "
+        RenderInline {A} at (0,0) size 291x19 [color=#0000EE]
+          RenderText {#text} at (51,0) size 291x19
+            text run at (51,0) width 291: "https://bugs.webkit.org/show_bug.cgi?id=22190"
+        RenderText {#text} at (342,0) size 3x19
+          text run at (342,0) width 3: ":"
+        RenderBR {BR} at (345,15) size 0x0
+        RenderText {#text} at (0,19) size 376x19
+          text run at (0,19) width 376: "Tests drawing and event handling on transformed search fields."
+      RenderBlock {P} at (0,143) size 784x19
+        RenderText {#text} at (0,0) size 38x19
+          text run at (0,0) width 38: "PASS"
+layer at (8,62) size 784x29
+  RenderBlock {P} at (0,54) size 784x29
+    RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF]
+      RenderBlock {DIV} at (3,3) size 188x19
+        RenderBlock {DIV} at (0,1) size 14x14
+        RenderBlock {DIV} at (174,1) size 14x14
+    RenderText {#text} at (0,0) size 0x0
+layer at (27,67) size 160x19
+  RenderBlock {DIV} at (14,0) size 160x19
+    RenderText {#text} at (1,0) size 109x19
+      text run at (1,0) width 109: "Some other text"
+caret: position 15 of child 0 {#text} of child 1 {DIV} of child 0 {DIV} of child 1 {INPUT} of child 3 {P} of body
