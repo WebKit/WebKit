@@ -408,6 +408,8 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML, con
 #endif
     , m_loadEventDelayCount(0)
     , m_loadEventDelayTimer(this, &Document::loadEventDelayTimerFired)
+    , m_directionSetOnDocumentElement(false)
+    , m_writingModeSetOnDocumentElement(false)
 {
     m_document = this;
 

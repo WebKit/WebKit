@@ -819,6 +819,10 @@ inline void CSSStyleSelector::initElement(Element* e)
         m_element = e;
         m_styledElement = m_element && m_element->isStyledElement() ? static_cast<StyledElement*>(m_element) : 0;
         m_elementLinkState = m_checker.determineLinkState(m_element);
+        if (e && e == e->document()->documentElement()) {
+            e->document()->setDirectionSetOnDocumentElement(false);
+            e->document()->setWritingModeSetOnDocumentElement(false);
+        }
     }
 }
 
@@ -1110,11 +1114,20 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
     documentStyle->setZoom(frame ? frame->pageZoomFactor() : 1);
     
     Element* docElement = document->documentElement();
-    if (docElement && docElement->renderer()) {
-        // Use the direction and block-flow of the document element to set the
-        // viewport's direction and block-flow.
-        documentStyle->setWritingMode(docElement->renderer()->style()->writingMode());
-        documentStyle->setDirection(docElement->renderer()->style()->direction());
+    RenderObject* docElementRenderer = docElement ? docElement->renderer() : 0;
+    if (docElementRenderer) {
+        // Use the direction and writing-mode of the body to set the
+        // viewport's direction and writing-mode unless the property is set on the document element.
+        // If there is no body, then use the document element.
+        RenderObject* bodyRenderer = document->body() ? document->body()->renderer() : 0;
+        if (bodyRenderer && !document->writingModeSetOnDocumentElement())
+            documentStyle->setWritingMode(bodyRenderer->style()->writingMode());
+        else
+            documentStyle->setWritingMode(docElementRenderer->style()->writingMode());
+        if (bodyRenderer && !document->directionSetOnDocumentElement())
+            documentStyle->setDirection(bodyRenderer->style()->direction());
+        else
+            documentStyle->setDirection(docElementRenderer->style()->direction());
     }
 
     FontDescription fontDescription;
@@ -3231,6 +3244,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyDirection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(direction, Direction)
+        if (!isInherit && !isInitial && m_element && m_element == m_element->document()->documentElement())
+            m_element->document()->setDirectionSetOnDocumentElement(true);
         return;
     case CSSPropertyDisplay:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(display, Display)
@@ -5580,6 +5595,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     // CSS Text Layout Module Level 3: Vertical writing support
     case CSSPropertyWebkitWritingMode: {
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(writingMode, WritingMode)
+        if (!isInherit && !isInitial && m_element && m_element == m_element->document()->documentElement())
+            m_element->document()->setWritingModeSetOnDocumentElement(true);
         FontDescription fontDescription = m_style->fontDescription();
         fontDescription.setOrientation(m_style->isHorizontalWritingMode() ? Horizontal : Vertical);
         if (m_style->setFontDescription(fontDescription))

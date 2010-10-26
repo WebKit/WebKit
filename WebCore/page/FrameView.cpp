@@ -498,8 +498,6 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
                 vMode = ScrollbarAlwaysOff;
                 hMode = ScrollbarAlwaysOff;
             } else if (body->hasTagName(bodyTag)) {
-                if (!m_firstLayout && m_size.height() != layoutHeight() && body->renderer()->enclosingBox()->stretchesToViewport())
-                    body->renderer()->setChildNeedsLayout(true);
                 // It's sufficient to just check the X overflow,
                 // since it's illegal to have visible in only one direction.
                 RenderObject* o = rootRenderer->style()->overflowX() == OVISIBLE && document->documentElement()->hasTagName(htmlTag) ? body->renderer() : rootRenderer;
@@ -754,8 +752,17 @@ void FrameView::layout(bool allowSubtree)
 
         m_size = IntSize(layoutWidth(), layoutHeight());
 
-        if (oldSize != m_size)
+        if (oldSize != m_size) {
             m_doFullRepaint = true;
+            if (!m_firstLayout) {
+                RenderBox* rootRenderer = document->documentElement() ? document->documentElement()->renderBox() : 0;
+                RenderBox* bodyRenderer = rootRenderer && document->body() ? document->body()->renderBox() : 0;
+                if (bodyRenderer && bodyRenderer->stretchesToViewport())
+                    bodyRenderer->setChildNeedsLayout(true);
+                else if (rootRenderer && rootRenderer->stretchesToViewport())
+                    rootRenderer->setChildNeedsLayout(true);
+            }
+        }
     }
 
     RenderLayer* layer = root->enclosingLayer();

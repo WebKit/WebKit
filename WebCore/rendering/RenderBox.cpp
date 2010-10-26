@@ -302,19 +302,29 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         }
     }
 
+    bool isBodyRenderer = isBody();
+    bool isRootRenderer = isRoot();
+
     // Set the text color if we're the body.
-    if (isBody())
+    if (isBodyRenderer)
         document()->setTextColor(style()->visitedDependentColor(CSSPropertyColor));
-    else if (isRoot() && (!oldStyle || oldStyle->writingMode() != style()->writingMode() || oldStyle->direction() != style()->direction())) {
-        // Propagate the new block flow and direction up to the RenderView.
-        // FIXME: WinIE seems to propagate from the <body> as well.  We may want to consider doing that at some point.
+    
+    if ((isRootRenderer || isBodyRenderer) && (!oldStyle || oldStyle->writingMode() != style()->writingMode() || oldStyle->direction() != style()->direction())) {
+        // Propagate the new writing mode and direction up to the RenderView.
         RenderView* viewRenderer = view();
         RenderStyle* viewStyle = viewRenderer->style();
-        if (viewStyle->writingMode() != style()->writingMode() || viewStyle->direction() != style()->direction()) {
-            viewStyle->setWritingMode(style()->writingMode());
+        if (isRootRenderer || !document()->directionSetOnDocumentElement()) {
             viewStyle->setDirection(style()->direction());
-            viewRenderer->setNeedsLayoutAndPrefWidthsRecalc();
+            if (isBodyRenderer)
+                document()->documentElement()->renderer()->style()->setDirection(style()->direction());
         }
+        
+        if (isRootRenderer || !document()->writingModeSetOnDocumentElement()) {
+            viewStyle->setWritingMode(style()->writingMode());
+            if (isBodyRenderer)
+                document()->documentElement()->renderer()->style()->setWritingMode(style()->writingMode());
+        }
+        setNeedsLayoutAndPrefWidthsRecalc();
     }
 }
 
