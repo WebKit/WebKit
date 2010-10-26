@@ -3139,8 +3139,6 @@ BUG57934 WIN : http/tests/appcache/fail-on-update-2.html = TIMEOUT
 // Flaky since 2010-09-17?
 BUG57950 WIN LINUX : svg/batik/text/verticalText.svg = CRASH PASS
 
-BUG57957 LINUX DEBUG : fast/blockflow/block-level-images.html = IMAGE PASS
-
 // Failing since r69181. Verified as legitimate by looking at the results
 // of the SVG rendering.
 BUG58194 LINUX : svg/filters/sourceAlpha.svg = IMAGE
@@ -3257,5 +3255,6 @@ BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
 BUGWK48256 : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
 BUGWK48263 : media/adopt-node-crash.html = TIMEOUT PASS
 BUGWK48341 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH PASS
+BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 // needs assignment.
 BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
