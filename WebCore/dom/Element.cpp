@@ -1708,37 +1708,4 @@ void Element::webkitRequestFullScreen(unsigned short flags)
 }
 #endif    
 
-SpellcheckAttributeState Element::spellcheckAttributeState() const
-{
-    if (!hasAttribute(HTMLNames::spellcheckAttr))
-        return SpellcheckAttributeDefault;
-
-    const AtomicString& value = getAttribute(HTMLNames::spellcheckAttr);
-    if (equalIgnoringCase(value, "true") || equalIgnoringCase(value, ""))
-        return SpellcheckAttributeTrue;
-    if (equalIgnoringCase(value, "false"))
-        return SpellcheckAttributeFalse;
-
-    return SpellcheckAttributeDefault;
-}
-
-bool Element::isSpellCheckingEnabled() const
-{
-    const Element* element = this;
-    while (element) {
-        switch (element->spellcheckAttributeState()) {
-        case SpellcheckAttributeTrue:
-            return true;
-        case SpellcheckAttributeFalse:
-            return false;
-        case SpellcheckAttributeDefault:
-            break;
-        }
-
-        element = element->parentElement();
-    }
-
-    return true;
-}
-
 } // namespace WebCore

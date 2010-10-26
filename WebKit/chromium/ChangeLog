@@ -1,3 +1,16 @@
+2010-10-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r70512.
+        http://trac.webkit.org/changeset/70512
+        https://bugs.webkit.org/show_bug.cgi?id=48314
+
+        crashes many tests (Requested by inferno-sec on #webkit).
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::shouldSpellcheckByDefault):
+
 2010-10-25  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

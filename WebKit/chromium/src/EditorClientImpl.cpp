@@ -124,7 +124,7 @@ bool EditorClientImpl::shouldSpellcheckByDefault()
     const Editor* editor = frame->editor();
     if (!editor)
         return false;
-    if (editor->isSpellCheckingEnabledInFocusedNode())
+    if (editor->spellCheckingEnabledInFocusedNode())
         return true;
     const Document* document = frame->document();
     if (!document)
