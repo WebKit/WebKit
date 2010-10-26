@@ -1,3 +1,18 @@
+2010-10-26  Kenichi Ishibashi  <bashi@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Input Method inserts conversion candidates unexpectedly
+        https://bugs.webkit.org/show_bug.cgi?id=46868
+
+        Adds setComposition() to TextInputController to make DRT emulate
+        an input method behavior.
+
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        (TextInputController::TextInputController):
+        (TextInputController::setComposition): Added.
+        * DumpRenderTree/chromium/TextInputController.h:
+
 2010-10-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
