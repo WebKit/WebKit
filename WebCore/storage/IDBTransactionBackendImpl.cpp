@@ -147,7 +147,7 @@ void IDBTransactionBackendImpl::taskTimerFired(Timer<IDBTransactionBackendImpl>*
 
     TaskQueue queue;
     queue.swap(m_taskQueue);
-    while (!queue.isEmpty()) {
+    while (!queue.isEmpty() && m_state != Finished) {
         OwnPtr<ScriptExecutionContext::Task> task(queue.first().release());
         queue.removeFirst();
         m_pendingEvents++;

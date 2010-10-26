@@ -68,7 +68,7 @@ trans = db.transaction()
 Creating 'data' which contains 64K of data
 PASS data.length is 65536
 store = trans.objectStore('test123')
-Error function called: (0) Error writing data to stable storage.
+Error function called: (1) Error writing data to stable storage.
 Error event fired:
 PASS 'result' in event is false
 PASS 'code' in event is true

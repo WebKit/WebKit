@@ -300,6 +300,10 @@ PASS 'readyState' in event.target is true
 PASS event.target.readyState is event.target.DONE
 
 PASS event.result === null is true
+Passing an invalid key into indexObject.get().
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into indexObject.getKey().
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
 PASS successfullyParsed is true
 
 TEST COMPLETE

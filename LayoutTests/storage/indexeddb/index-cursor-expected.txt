@@ -2058,6 +2058,44 @@ PASS event.result.key is testData[7]
 PASS event.result.value is expectedIndex
 PASS event.result.key is testData[6]
 PASS event.result is null
+
+Next test: null key path sorted ascending.
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[0]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[1]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[2]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[3]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[4]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[5]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[6]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[7]
+PASS event.result is null
+
+Next test: null key path sorted descending.
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[7]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[6]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[5]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[4]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[3]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[2]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[1]
+PASS event.result.value is expectedIndex
+PASS event.result.key is testData[0]
+PASS event.result is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

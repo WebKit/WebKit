@@ -219,6 +219,21 @@ function last()
     verifySuccessEvent(event);
     shouldBeTrue("event.result === null");
 
+    try {
+        debug("Passing an invalid key into indexObject.get().");
+        indexObject.get([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
+    try {
+        debug("Passing an invalid key into indexObject.getKey().");
+        indexObject.getKey([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
     done();
 }
 

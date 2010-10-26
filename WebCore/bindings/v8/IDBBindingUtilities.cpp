@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBDatabaseException.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "SerializedScriptValue.h"
@@ -45,7 +46,8 @@ PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value)
     if (value->IsString())
         return IDBKey::create(v8ValueToWebCoreString(value));
     // FIXME: Implement dates.
-    return 0;
+
+    return 0; // Signals type error.
 }
 
 template<typename T>

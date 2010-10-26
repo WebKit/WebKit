@@ -41,6 +41,14 @@ function cursorSuccess()
     shouldBe("event.result.key", "'myKey'");
     shouldBe("event.result.value", "'myValue'");
     debug("");
+    try {
+        debug("Passing an invalid key into .continue().");
+        event.result.continue([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+    debug("");
     openEmptyCursor();
 }
 

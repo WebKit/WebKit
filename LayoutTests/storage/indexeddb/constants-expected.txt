@@ -8,7 +8,7 @@ PASS webkitIDBKeyRange.LEFT_OPEN is 1
 PASS webkitIDBKeyRange.RIGHT_OPEN is 2
 PASS webkitIDBKeyRange.LEFT_BOUND is 4
 PASS webkitIDBKeyRange.RIGHT_BOUND is 8
-PASS webkitIDBDatabaseException.UNKNOWN_ERR is 0
+PASS webkitIDBDatabaseException.UNKNOWN_ERR is 1
 PASS webkitIDBDatabaseException.NON_TRANSIENT_ERR is 1
 PASS webkitIDBDatabaseException.NOT_FOUND_ERR is 2
 PASS webkitIDBDatabaseException.CONSTRAINT_ERR is 3

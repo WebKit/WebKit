@@ -394,11 +394,14 @@ void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, uns
 
 void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, unsigned short tmpDirection, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendInterface> transaction)
 {
+    bool leftBound = range && (range->flags() & IDBKeyRange::LEFT_BOUND || range->flags() == IDBKeyRange::SINGLE);
+    bool rightBound = range && (range->flags() & IDBKeyRange::RIGHT_BOUND || range->flags() == IDBKeyRange::SINGLE);
+
     // Several files depend on this order of selects.
     String sql = "SELECT id, keyString, keyDate, keyNumber, value FROM ObjectStoreData WHERE ";
-    if (range->flags() & IDBKeyRange::LEFT_BOUND || range->flags() == IDBKeyRange::SINGLE)
+    if (leftBound)
         sql += range->left()->leftCursorWhereFragment(range->leftWhereClauseComparisonOperator());
-    if (range->flags() & IDBKeyRange::RIGHT_BOUND || range->flags() == IDBKeyRange::SINGLE)
+    if (rightBound)
         sql += range->right()->rightCursorWhereFragment(range->rightWhereClauseComparisonOperator());
     sql += "objectStoreId = ? ORDER BY ";
 
@@ -413,9 +416,9 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
 
     int currentColumn = 1;
-    if (range->flags() & IDBKeyRange::LEFT_BOUND || range->flags() == IDBKeyRange::SINGLE)
+    if (leftBound)
         currentColumn += range->left()->bind(*query, currentColumn);
-    if (range->flags() & IDBKeyRange::RIGHT_BOUND || range->flags() == IDBKeyRange::SINGLE)
+    if (rightBound)
         currentColumn += range->right()->bind(*query, currentColumn);
     query->bindInt64(currentColumn, objectStore->id());
 

@@ -59,15 +59,6 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
 
 IDBRequest::~IDBRequest()
 {
-    // The transaction pointer is used to notify the transaction once the JS events were
-    // dispatched by this request object. If no new tasks were added by the event JS callbacks,
-    // the transaction can commit. Otherwise, it can continue executing the new tasks.
-    // It is important to guarantee that the transaction is notified after the events are
-    // dispatched, as the transaction cannot commit or execute new tasks in the absence
-    // of these notifications. We clear the transaction pointer once the events have dispatched,
-    // so having a non-zero pointer at IDBRequest destruction time shows that the events have not
-    // yet fired and there is a transaction waiting to be notified. This is an error.
-    ASSERT(!m_transaction);
 }
 
 bool IDBRequest::resetReadyState(IDBTransactionBackendInterface* transaction)
@@ -159,6 +150,7 @@ void IDBRequest::timerFired(Timer<IDBRequest>*)
 {
     ASSERT(m_selfRef);
     ASSERT(m_pendingEvents.size());
+    // FIXME: We should handle the stop event and stop any timers when we see it. We can then assert here that scriptExecutionContext is non-null.
 
     // We need to keep self-referencing ourself, otherwise it's possible we'll be deleted.
     // But in some cases, suspend() could be called while we're dispatching an event, so we
@@ -172,6 +164,10 @@ void IDBRequest::timerFired(Timer<IDBRequest>*)
     Vector<PendingEvent> pendingEvents;
     pendingEvents.swap(m_pendingEvents);
     for (size_t i = 0; i < pendingEvents.size(); ++i) {
+        // It's possible we've navigated in which case we'll crash.
+        if (!scriptExecutionContext())
+            return;
+
         if (pendingEvents[i].m_error) {
             ASSERT(!pendingEvents[i].m_result);
             dispatchEvent(IDBErrorEvent::create(m_source, *pendingEvents[i].m_error));

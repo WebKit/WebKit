@@ -112,6 +112,53 @@ function test()
     checkBoundKeyRange("'aae'", "'abe'", true, false);
     checkBoundKeyRange("'aaf'", "'abf'", true, true);
 
+    try {
+        debug("Passing an invalid key into only([])");
+        webkitIDBKeyRange.only([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
+    try {
+        debug("Passing an invalid key into rightBound([])");
+        webkitIDBKeyRange.rightBound([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+ 
+    try {
+        debug("Passing an invalid key into leftBound([])");
+        webkitIDBKeyRange.leftBound([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
+    try {
+        debug("Passing an invalid key into bound(null, [])");
+        webkitIDBKeyRange.bound(null, []);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
+    try {
+        debug("Passing an invalid key into bound([],null)");
+        webkitIDBKeyRange.bound([], null);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
+    try {
+        debug("Passing an invalid key into bound([], [])");
+        webkitIDBKeyRange.bound([], []);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
 }
 
 test();

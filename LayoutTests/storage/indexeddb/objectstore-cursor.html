@@ -105,7 +105,7 @@ function scheduleTests()
 function runNextTest()
 {
     if (!scheduledTests.length) {
-        done();
+        testNullKeyRange();
         return;
     }
  
@@ -164,8 +164,7 @@ function runNextTest()
     else
         keyRange = webkitIDBKeyRange.rightBound(testData[upper], upperIsOpen);
  
-    // FIXME: Should be webkitIDBCursor.NEXT : webkitIDBCursor.PREV, but we can't do that yet.
-    var request = objectStore.openCursor(keyRange, ascending ? 0 : 2);
+    var request = objectStore.openCursor(keyRange, ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV);
     request.onsuccess = cursorIteration;
     request.onerror = unexpectedErrorCallback;
 }
@@ -202,6 +201,38 @@ function cursorIteration()
     testWithinBounds();
 
     event.result.continue();
+}
+ 
+window.nullKeyRangeStep = 0;
+function testNullKeyRange()
+{
+    window.lower = 0;
+    window.lowerIsOpen = false;
+    window.upper = testData.length-1;
+    window.upperIsOpen = false;
+
+    str = "Next test: null key path ";
+    if (window.nullKeyRangeStep == 0) {
+        str += "sorted ascending.";
+        window.ascending = true;
+        window.expectedIndex = lower;
+        window.nullKeyRangeStep = 1;
+    } else if (window.nullKeyRangeStep == 1) {
+        str += "sorted descending.";
+        window.ascending = false;
+        window.expectedIndex = upper;
+        window.nullKeyRangeStep = 2;
+    } else {
+        done();
+        return;
+    }
+
+    debug("");
+    debug(str);
+ 
+    var request = objectStore.openCursor(null, ascending ? webkitIDBCursor.NEXT : webkitIDBCursor.PREV);
+    request.onsuccess = cursorIteration;
+    request.onerror = unexpectedErrorCallback;
 }
  
 openDatabase(); // The first step.

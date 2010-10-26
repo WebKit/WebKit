@@ -3012,6 +3012,7 @@ sub TypeCanFailConversion
     $implIncludes{"ExceptionCode.h"} = 1 if $type eq "Attr";
     return 1 if $type eq "Attr";
     return 1 if $type eq "VoidCallback";
+    return 1 if $type eq "IDBKey";
     return BasicTypeCanFailConversion($signature);
 }
 

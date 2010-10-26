@@ -1,3 +1,17 @@
+2010-10-26  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Fix IndexedDB crashes
+        https://bugs.webkit.org/show_bug.cgi?id=48266
+
+        Make WebIDBObjectStoreImpl match the way that WebIDBIndexImpl passes
+        in cursor parameters (which is the correct way). KeyRange knows how
+        to convert itself to a WebCore type--even if the value is null.
+
+        * src/WebIDBObjectStoreImpl.cpp:
+        (WebKit::WebIDBObjectStoreImpl::openCursor):
+
 2010-10-26  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.

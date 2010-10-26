@@ -104,7 +104,7 @@ void WebIDBObjectStoreImpl::removeIndex(const WebString& name, const WebIDBTrans
 
 void WebIDBObjectStoreImpl::openCursor(const WebIDBKeyRange& keyRange, unsigned short direction, WebIDBCallbacks* callbacks, const WebIDBTransaction& transaction, WebExceptionCode& ec)
 {
-    m_objectStore->openCursor(IDBKeyRange::create(keyRange.left(), keyRange.right(), keyRange.flags()), direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
+    m_objectStore->openCursor(keyRange, direction, IDBCallbacksProxy::create(callbacks), transaction.getIDBTransactionBackendInterface(), ec);
 }
 
 } // namespace WebCore

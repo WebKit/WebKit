@@ -141,6 +141,18 @@ PASS keyRange.left is 'aaf'
 PASS keyRange.right is 'abf'
 PASS leftFlags is keyRange.LEFT_OPEN | keyRange.LEFT_BOUND
 PASS rightFlags is keyRange.RIGHT_OPEN | keyRange.RIGHT_BOUND
+Passing an invalid key into only([])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into rightBound([])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into leftBound([])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into bound(null, [])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into bound([],null)
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
+Passing an invalid key into bound([], [])
+PASS Caught exception: Error: TYPE_MISMATCH_ERR: DOM Exception 17
 PASS successfullyParsed is true
 
 TEST COMPLETE

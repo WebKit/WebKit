@@ -28,7 +28,8 @@ module storage {
     interface [
         Conditional=INDEXED_DATABASE
     ] IDBDatabaseException {
-        const unsigned short UNKNOWN_ERR = 0;
+        // FIXME: These error codes conflict with others.
+        const unsigned short UNKNOWN_ERR = 1;
         const unsigned short NON_TRANSIENT_ERR = 1;
         const unsigned short NOT_FOUND_ERR = 2;
         const unsigned short CONSTRAINT_ERR = 3;

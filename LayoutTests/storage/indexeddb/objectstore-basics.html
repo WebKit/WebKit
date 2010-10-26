@@ -47,7 +47,7 @@ function setVersionSuccess()
 
 function createObjectStore()
 {
-    debug("creatObjectStore():");
+    debug("createObjectStore():");
     window.store = evalAndLog("store = db.createObjectStore('storeName', null)");
     var storeNames = evalAndLog("storeNames = db.objectStores");
 
@@ -195,6 +195,40 @@ function removeSuccess()
     debug("removeSuccess():");
     verifySuccessEvent(event);
     shouldBeNull("event.result");
+    var store = evalAndLog("store = event.source");
+
+    try {
+        debug("Passing an invalid key into store.get().");
+        store.get([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
+    try {
+        debug("Passing an invalid key into store.remove().");
+        store.remove([]);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
+    try {
+        debug("Passing an invalid key into store.add().");
+        store.add(null, []);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
+    try {
+        debug("Passing an invalid key into store.put().");
+        store.put(null, []);
+        testFailed("No exception thrown");
+    } catch (e) {
+        testPassed("Caught exception: " + e.toString());
+    }
+
     done();
 }
 

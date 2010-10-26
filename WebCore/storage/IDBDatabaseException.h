@@ -42,9 +42,8 @@ public:
     }
     ~IDBDatabaseException() { }
 
-    // Keep in sync with what's in the .idl file.
     enum ErrorCode {
-        UNKNOWN_ERR = 0,
+        UNKNOWN_ERR = 1,
         NON_TRANSIENT_ERR = 1,
         NOT_FOUND_ERR = 2,
         CONSTRAINT_ERR = 3,
