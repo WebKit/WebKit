@@ -3218,8 +3218,6 @@ BUG59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
 BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
 // Needs investigation
-BUGJAMESR MAC : fast/blockflow/english-lr-text.html = IMAGE
-BUGJAMESR WIN LINUX : fast/blockflow/english-lr-text.html = IMAGE+TEXT
 BUGJAMESR : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
 BUGJAMESR : fast/text/international/vertical-text-metrics-test.html = TEXT
 
