@@ -1,3 +1,10 @@
+2010-10-27  Brian Weinstein  <bweinstein@apple.com>
+
+        Windows build fix.
+
+        * jit/JITStubs.cpp:
+        (JSC::jitThrow):
+
 2010-10-27  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

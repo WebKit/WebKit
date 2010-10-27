@@ -1078,7 +1078,8 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
 
     void* catchRoutine = handler ? handler->nativeCode.executableAddress() : FunctionPtr(ctiOpThrowNotCaught).value();
     ASSERT(catchRoutine);
-    return (ExceptionHandler){ catchRoutine, callFrame };
+    ExceptionHandler exceptionHandler = { catchRoutine, callFrame };
+    return exceptionHandler;
 }
 
 #if CPU(ARM_THUMB2)
