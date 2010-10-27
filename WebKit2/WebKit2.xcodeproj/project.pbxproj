@@ -91,6 +91,9 @@
 		1A594ABB112A1FB6009DE7C7 /* WebUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */; };
 		1A61614F127798B5003ACD86 /* DownloadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A61614D127798B5003ACD86 /* DownloadManager.cpp */; };
 		1A616150127798B5003ACD86 /* DownloadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A61614E127798B5003ACD86 /* DownloadManager.h */; };
+		1A6161D41278981C003ACD86 /* Download.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6161D21278981C003ACD86 /* Download.h */; };
+		1A6161D51278981C003ACD86 /* Download.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6161D31278981C003ACD86 /* Download.cpp */; };
+		1A61639612789B2F003ACD86 /* DownloadMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A61639512789B2F003ACD86 /* DownloadMac.mm */; };
 		1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */; };
 		1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */; };
 		1A6FA01E11E1526300DB1371 /* WebProcessMainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */; };
@@ -570,6 +573,9 @@
 		1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUIClient.h; sourceTree = "<group>"; };
 		1A61614D127798B5003ACD86 /* DownloadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadManager.cpp; sourceTree = "<group>"; };
 		1A61614E127798B5003ACD86 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadManager.h; sourceTree = "<group>"; };
+		1A6161D21278981C003ACD86 /* Download.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Download.h; sourceTree = "<group>"; };
+		1A6161D31278981C003ACD86 /* Download.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Download.cpp; sourceTree = "<group>"; };
+		1A61639512789B2F003ACD86 /* DownloadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DownloadMac.mm; sourceTree = "<group>"; };
 		1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandLine.h; sourceTree = "<group>"; };
 		1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandLineMac.cpp; sourceTree = "<group>"; };
 		1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessMainMac.mm; sourceTree = "<group>"; };
@@ -1113,10 +1119,21 @@
 		1A61614C127798B5003ACD86 /* Downloads */ = {
 			isa = PBXGroup;
 			children = (
+				1A61639412789B2F003ACD86 /* mac */,
+				1A6161D31278981C003ACD86 /* Download.cpp */,
+				1A6161D21278981C003ACD86 /* Download.h */,
 				1A61614D127798B5003ACD86 /* DownloadManager.cpp */,
 				1A61614E127798B5003ACD86 /* DownloadManager.h */,
 			);
 			path = Downloads;
+			sourceTree = "<group>";
+		};
+		1A61639412789B2F003ACD86 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				1A61639512789B2F003ACD86 /* DownloadMac.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		1A6FA01C11E1526300DB1371 /* mac */ = {
@@ -2128,6 +2145,7 @@
 				1C8E28341275D73800BC7BD0 /* WebInspectorProxy.h in Headers */,
 				1C8E293912761E5B00BC7BD0 /* WKInspector.h in Headers */,
 				1A616150127798B5003ACD86 /* DownloadManager.h in Headers */,
+				1A6161D41278981C003ACD86 /* Download.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2442,6 +2460,8 @@
 				1C8E28351275D73800BC7BD0 /* WebInspectorProxy.cpp in Sources */,
 				1C8E293A12761E5B00BC7BD0 /* WKInspector.cpp in Sources */,
 				1A61614F127798B5003ACD86 /* DownloadManager.cpp in Sources */,
+				1A6161D51278981C003ACD86 /* Download.cpp in Sources */,
+				1A61639612789B2F003ACD86 /* DownloadMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

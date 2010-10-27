@@ -284,6 +284,7 @@ HEADERS += \
     UIProcess/WebUIClient.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
     WebProcess/Downloads/DownloadManager.h \
+    WebProcess/Downloads/Download.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
@@ -430,7 +431,9 @@ SOURCES += \
     UIProcess/WebProcessManager.cpp \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebUIClient.cpp \
+    WebProcess/Downloads/Download.cpp \
     WebProcess/Downloads/DownloadManager.cpp \
+    WebProcess/Downloads/qt/DownloadQt.cpp \
     WebProcess/InjectedBundle/API/c/WKBundle.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \

@@ -1236,6 +1236,14 @@
 				Name="Downloads"
 				>
 				<File
+					RelativePath="..\WebProcess\Downloads\Download.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Downloads\Download.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\Downloads\DownloadManager.cpp"
 					>
 				</File>
@@ -1243,6 +1251,14 @@
 					RelativePath="..\WebProcess\Downloads\DownloadManager.h"
 					>
 				</File>
+				<Filter
+    				Name="cf"
+    				>
+    				<File
+    					RelativePath="..\WebProcess\Downloads\cf\DownloadCFNet.cpp"
+    					>
+    				</File>
+    			</Filter>
 			</Filter>
 			<Filter
 				Name="InjectedBundle"

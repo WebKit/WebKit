@@ -28,6 +28,10 @@
 
 #include <wtf/Noncopyable.h>
 
+namespace WebCore {
+    class ResourceRequest;
+}
+
 namespace WebKit {
 
 class DownloadManager {
@@ -35,6 +39,8 @@ class DownloadManager {
 
 public:
     static DownloadManager& shared();
+
+    void startDownload(uint64_t downloadID, const WebCore::ResourceRequest&);
 
 private:
     DownloadManager();

@@ -76,6 +76,8 @@ static const type& name() \
 #define JS_EXPORTCLASS
 #define WEBKIT_EXPORTDATA
 
+#include <WebCore/EmptyProtocolDefinitions.h>
+
 #elif defined(WIN32) || defined(_WIN32)
 
 #ifndef _WIN32_WINNT

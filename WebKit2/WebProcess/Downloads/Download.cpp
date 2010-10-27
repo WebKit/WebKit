@@ -23,30 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DownloadManager.h"
-
 #include "Download.h"
-#include "NotImplemented.h"
-#include <wtf/StdLibExtras.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-DownloadManager& DownloadManager::shared()
+PassOwnPtr<Download> Download::create(uint64_t downloadID, const ResourceRequest& request)
 {
-    DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, ());
-    return downloadManager;
+    return adoptPtr(new Download(downloadID, request));
 }
 
-DownloadManager::DownloadManager()
+Download::Download(uint64_t downloadID, const ResourceRequest& request)
+    : m_downloadID(downloadID)
+    , m_request(request)
 {
+    ASSERT(m_downloadID);
 }
 
-void DownloadManager::startDownload(uint64_t downloadID, const ResourceRequest& request)
+Download::~Download()
 {
-    // FIXME: Implement.
-    notImplemented();
 }
 
 } // namespace WebKit

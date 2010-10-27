@@ -25,6 +25,7 @@
 
 #include "WebFrame.h"
 
+#include "DownloadManager.h"
 #include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "InjectedBundleScriptWorld.h"
@@ -205,9 +206,11 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     (m_coreFrame->loader()->policyChecker()->*function)(action);
 }
 
-void WebFrame::startDownload(const WebCore::ResourceRequest&)
+void WebFrame::startDownload(const WebCore::ResourceRequest& request)
 {
     ASSERT(m_policyDownloadID);
+
+    DownloadManager::shared().startDownload(m_policyDownloadID, request);
 
     m_policyDownloadID = 0;
 }

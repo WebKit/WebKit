@@ -23,30 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "DownloadManager.h"
+#ifndef Download_h
+#define Download_h
 
-#include "Download.h"
-#include "NotImplemented.h"
-#include <wtf/StdLibExtras.h>
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#ifdef __OBJC__
+@class NSURLDownload;
+@class WKDownloadAsDelegate;
+#else
+class NSURLDownload;
+class WKDownloadAsDelegate;
+#endif
+#endif
 
-using namespace WebCore;
+#include <WebCore/ResourceRequest.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
-DownloadManager& DownloadManager::shared()
-{
-    DEFINE_STATIC_LOCAL(DownloadManager, downloadManager, ());
-    return downloadManager;
-}
+class Download {
+    WTF_MAKE_NONCOPYABLE(Download);
 
-DownloadManager::DownloadManager()
-{
-}
+public:
+    static PassOwnPtr<Download> create(uint64_t downloadID, const WebCore::ResourceRequest&);
+    ~Download();
 
-void DownloadManager::startDownload(uint64_t downloadID, const ResourceRequest& request)
-{
-    // FIXME: Implement.
-    notImplemented();
-}
+    void start();
+
+private:
+    Download(uint64_t downloadID, const WebCore::ResourceRequest&);
+
+    uint64_t m_downloadID;
+    WebCore::ResourceRequest m_request;
+
+#if PLATFORM(MAC)
+    RetainPtr<NSURLDownload> m_nsURLDownload;
+    RetainPtr<WKDownloadAsDelegate> m_delegate;
+#endif
+};
 
 } // namespace WebKit
+
+#endif // Download_h

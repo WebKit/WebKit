@@ -1,3 +1,36 @@
+2010-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Begin stubbing out the Download class
+        https://bugs.webkit.org/show_bug.cgi?id=48447
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+        
+        * WebKit2Prefix.h:
+        Include WebCore/EmptyProtocolDefinitions.h
+        
+        * WebProcess/Downloads/Download.cpp: Added.
+        * WebProcess/Downloads/Download.h: Added.
+
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        Create a Download object and start it.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm: Added.
+        (WebKit::Download::start):
+        Create an NSURLDownload.
+    
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::startDownload):
+        Ask the download manager to start downloading.
+
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+        Add new files.
+
 2010-10-27  Adam Roben  <aroben@apple.com>
 
         Don't allow setting NetscapePlugin::m_isWindowed after NPP_New has
