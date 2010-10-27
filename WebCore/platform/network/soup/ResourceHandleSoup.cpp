@@ -672,6 +672,15 @@ bool ResourceHandle::start(NetworkingContext* context)
     if (context && !context->isValid())
         return false;
 
+    if (!(d->m_user.isEmpty() || d->m_pass.isEmpty())) {
+        // If credentials were specified for this request, add them to the url,
+        // so that they will be passed to NetworkRequest.
+        KURL urlWithCredentials(firstRequest().url());
+        urlWithCredentials.setUser(d->m_user);
+        urlWithCredentials.setPass(d->m_pass);
+        d->m_firstRequest.setURL(urlWithCredentials);
+    }
+
     KURL url = firstRequest().url();
     String urlString = url.string();
     String protocol = url.protocol();

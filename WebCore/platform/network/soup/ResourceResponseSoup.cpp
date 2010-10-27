@@ -25,6 +25,7 @@
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
+#include "SoupURIUtils.h"
 #include <wtf/text/CString.h>
 
 using namespace std;
@@ -56,9 +57,7 @@ SoupMessage* ResourceResponse::toSoupMessage() const
 
 void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
 {
-    SoupURI* soupURI = soup_message_get_uri(soupMessage);
-    GOwnPtr<gchar> uri(soup_uri_to_string(soupURI, FALSE));
-    m_url = KURL(KURL(), String::fromUTF8(uri.get()));
+    m_url = soupURIToKURL(soup_message_get_uri(soupMessage));
 
     m_httpStatusCode = soupMessage->status_code;
 

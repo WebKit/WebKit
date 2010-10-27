@@ -25,6 +25,7 @@
 #include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
+#include "SoupURIUtils.h"
 #include <wtf/text/CString.h>
 
 #include <libsoup/soup.h>
@@ -88,9 +89,7 @@ SoupMessage* ResourceRequest::toSoupMessage() const
 
 void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 {
-    SoupURI* soupURI = soup_message_get_uri(soupMessage);
-    GOwnPtr<gchar> uri(soup_uri_to_string(soupURI, FALSE));
-    m_url = KURL(KURL(), String::fromUTF8(uri.get()));
+    m_url = soupURIToKURL(soup_message_get_uri(soupMessage));
 
     m_httpMethod = String::fromUTF8(soupMessage->method);
 
@@ -107,10 +106,8 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 
 #ifdef HAVE_LIBSOUP_2_29_90
     SoupURI* firstParty = soup_message_get_first_party(soupMessage);
-    if (firstParty) {
-        GOwnPtr<gchar> firstPartyURI(soup_uri_to_string(firstParty, FALSE));
-        m_firstPartyForCookies = KURL(KURL(), String::fromUTF8(firstPartyURI.get()));
-    }
+    if (firstParty)
+        m_firstPartyForCookies = soupURIToKURL(firstParty);
 #endif
 
     m_soupFlags = soup_message_get_flags(soupMessage);
