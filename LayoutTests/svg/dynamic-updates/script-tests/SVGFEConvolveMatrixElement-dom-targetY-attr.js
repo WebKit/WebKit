@@ -8,7 +8,6 @@ var convolveMatrixElement = createSVGElement("feConvolveMatrix");
 convolveMatrixElement.setAttribute("in", "SourceGraphic");
 convolveMatrixElement.setAttribute("order", "3.9");
 convolveMatrixElement.setAttribute("kernelMatrix", "3 0 3 0 0 0 3 0 3");
-convolveMatrixElement.setAttribute("preserveToAlpha", "true");
 convolveMatrixElement.setAttribute("targetY", "2");
 
 var filterElement = createSVGElement("filter");
