@@ -1,3 +1,9 @@
+2010-10-26  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * WebKit.xcodeproj/project.pbxproj: Allow deprecated methods to be used in NetscapePluginHostProxy.mm.
+
 2010-10-23  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/48186> Remove unneeded WebHTMLRepresentationInternal.h header

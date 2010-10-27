@@ -51,7 +51,7 @@
 		1AAF5CEA0EDDE1FE008D883D /* NetscapePluginHostManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF5CE40EDDE1FE008D883D /* NetscapePluginHostManager.h */; };
 		1AAF5CEB0EDDE1FE008D883D /* NetscapePluginHostManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF5CE50EDDE1FE008D883D /* NetscapePluginHostManager.mm */; };
 		1AAF5CEC0EDDE1FE008D883D /* NetscapePluginHostProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF5CE60EDDE1FE008D883D /* NetscapePluginHostProxy.h */; };
-		1AAF5CED0EDDE1FE008D883D /* NetscapePluginHostProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF5CE70EDDE1FE008D883D /* NetscapePluginHostProxy.mm */; };
+		1AAF5CED0EDDE1FE008D883D /* NetscapePluginHostProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF5CE70EDDE1FE008D883D /* NetscapePluginHostProxy.mm */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		1AAF5CEE0EDDE1FE008D883D /* NetscapePluginInstanceProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AAF5CE80EDDE1FE008D883D /* NetscapePluginInstanceProxy.h */; };
 		1AAF5CEF0EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF5CE90EDDE1FE008D883D /* NetscapePluginInstanceProxy.mm */; };
 		1AAF5CF10EDDE586008D883D /* WebKitPluginHost.defs in Sources */ = {isa = PBXBuildFile; fileRef = 1AAF588D0EDCCEA3008D883D /* WebKitPluginHost.defs */; };
