@@ -57,6 +57,8 @@ struct WebPreferencesStore {
 
     bool privateBrowsingEnabled;
 
+    bool developerExtrasEnabled;
+
     uint32_t fontSmoothingLevel;
 
     uint32_t minimumFontSize;

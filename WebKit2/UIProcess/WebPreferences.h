@@ -114,7 +114,10 @@ public:
 
     void setPrivateBrowsingEnabled(bool);
     bool privateBrowsingEnabled() const;
-    
+
+    void setDeveloperExtrasEnabled(bool);
+    bool developerExtrasEnabled() const;
+
 private:
     WebPreferences();
     WebPreferences(WebPreferences*);

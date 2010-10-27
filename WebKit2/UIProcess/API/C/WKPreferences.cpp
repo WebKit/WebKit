@@ -198,3 +198,13 @@ bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->privateBrowsingEnabled();
 }
+
+void WKPreferencesSetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setDeveloperExtrasEnabled(enabled);
+}
+
+bool WKPreferencesGetDeveloperExtrasEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->developerExtrasEnabled();
+}

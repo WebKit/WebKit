@@ -141,6 +141,17 @@ bool WebPreferences::privateBrowsingEnabled() const
     return m_store.privateBrowsingEnabled;
 }
 
+void WebPreferences::setDeveloperExtrasEnabled(bool b)
+{
+    m_store.developerExtrasEnabled = b;
+    update();
+}
+
+bool WebPreferences::developerExtrasEnabled() const
+{
+    return m_store.developerExtrasEnabled;
+}
+
 void WebPreferences::setPluginsEnabled(bool b)
 {
     m_store.pluginsEnabled = b;
