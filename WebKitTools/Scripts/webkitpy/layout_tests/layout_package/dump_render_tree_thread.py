@@ -152,6 +152,13 @@ def _milliseconds_to_seconds(msecs):
     return float(msecs) / 1000.0
 
 
+def _image_hash(test_info, test_args, options):
+    """Returns the image hash of the test if it's needed, otherwise None."""
+    if (test_args.new_baseline or test_args.reset_results or not options.pixel_tests):
+        return None
+    return test_info.image_hash()
+
+
 class TestResult(object):
 
     def __init__(self, filename, failures, test_run_time,
@@ -196,10 +203,11 @@ class SingleTestThread(threading.Thread):
         self._driver = self._port.create_driver(self._test_args.png_path,
                                                 self._options)
         self._driver.start()
+        image_hash = _image_hash(test_info, self._test_args, self._options)
         start = time.time()
         crash, timeout, actual_checksum, output, error = \
             self._driver.run_test(test_info.uri.strip(), test_info.timeout,
-                                  test_info.image_hash())
+                                  image_hash)
         end = time.time()
         self._test_result = _process_output(self._port, self._options,
             test_info, self._test_types, self._test_args,
@@ -518,11 +526,7 @@ class TestShellThread(WatchableThread):
         # checksums match, so it should be set to a blank value if we
         # are generating a new baseline.  (Otherwise, an image from a
         # previous run will be copied into the baseline.)
-        image_hash = test_info.image_hash()
-        if (image_hash and
-            (self._test_args.new_baseline or self._test_args.reset_results or
-            not self._options.pixel_tests)):
-            image_hash = ""
+        image_hash = _image_hash(test_info, self._test_args, self._options)
         start = time.time()
 
         thread_timeout = _milliseconds_to_seconds(
