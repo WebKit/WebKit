@@ -1080,13 +1080,13 @@ static bool isChildTypeAllowed(Node* newParent, Node* child)
     if (child->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
         if (!newParent->childTypeAllowed(child->nodeType()))
             return false;
+        return true;
     }
     
     for (Node *n = child->firstChild(); n; n = n->nextSibling()) {
         if (!newParent->childTypeAllowed(n->nodeType()))
             return false;
     }
-
     return true;
 }
 
