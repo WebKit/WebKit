@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,19 +23,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebArchiveDumpSupport_h
-#define WebArchiveDumpSupport_h
+#import "WebArchiveDumpSupport.h"
 
-#include <CoreFoundation/CoreFoundation.h>
+#import <WebKit/WebHTMLRepresentation.h>
 
-@class NSString;
-@class WebArchive;
-
-NSString *serializeWebArchiveToXML(WebArchive *webArchive);
-
-#pragma mark -
-#pragma mark Platform-specific methods
-
-CFArrayRef supportedNonImageMIMETypes();
-
-#endif /* WebArchiveDumpSupport_h */
+CFArrayRef supportedNonImageMIMETypes()
+{
+    return (CFArrayRef)[WebHTMLRepresentation supportedNonImageMIMETypes];
+}

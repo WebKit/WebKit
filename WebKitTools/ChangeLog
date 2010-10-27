@@ -1,3 +1,27 @@
+2010-10-26  David Kilzer  <ddkilzer@apple.com>
+
+        Extract call to -[WebHTMLRepresentation supportedNonImageMIMETypes] from WebArchiveDumpSupport.mm
+
+        Reviewed by Adam Roben.
+
+        Part 1 of 4: <http://webkit.org/b/48278> Convert DumpRenderTree webarchive code to CoreFoundation
+
+        The call to -[WebHTMLRepresentation supportedNonImageMIMETypes]
+        is not cross-platform between Mac and Windows, so extract it
+        into a platform-specific source file.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added
+        WebArchiveDumpSupportMac.mm to the project.
+        * DumpRenderTree/mac/WebArchiveDumpSupport.h:
+        (supportedNonImageMIMETypes): Added declaration.
+        * DumpRenderTree/mac/WebArchiveDumpSupport.mm:
+        (convertWebResourceDataToString): Replaced call to
+        -[WebHTMLRepresentation supportedNonImageMIMETypes] with
+        supportedNonImageMIMETypes().
+        * DumpRenderTree/mac/WebArchiveDumpSupportMac.mm: Added.
+        (supportedNonImageMIMETypes): Added.  Extracted from
+        WebArchiveDumpSupport.mm.
+
 2010-10-26  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Martin Robinson.

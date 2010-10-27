@@ -27,7 +27,6 @@
 
 #import <Foundation/Foundation.h>
 #import <WebKit/WebArchive.h>
-#import <WebKit/WebHTMLRepresentation.h>
 
 static void convertMIMEType(NSMutableString *mimeType)
 {
@@ -46,7 +45,7 @@ static void convertWebResourceDataToString(NSMutableDictionary *resource)
     NSMutableString *mimeType = [resource objectForKey:@"WebResourceMIMEType"];
     convertMIMEType(mimeType);
 
-    if ([mimeType hasPrefix:@"text/"] || [[WebHTMLRepresentation supportedNonImageMIMETypes] containsObject:mimeType]) {
+    if ([mimeType hasPrefix:@"text/"] || [(NSArray *)supportedNonImageMIMETypes() containsObject:mimeType]) {
         NSString *textEncodingName = [resource objectForKey:@"WebResourceTextEncodingName"];
         NSStringEncoding stringEncoding;
         if ([textEncodingName length] > 0)
