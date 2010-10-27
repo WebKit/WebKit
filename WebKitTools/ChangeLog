@@ -1,3 +1,14 @@
+2010-10-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r70674.
+        http://trac.webkit.org/changeset/70674
+        https://bugs.webkit.org/show_bug.cgi?id=48053
+
+        Broke Chromium Windows build.
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-10-25  Tony Chang  <tony@chromium.org>
 
         Reviewed by Anders Carlsson.

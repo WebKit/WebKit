@@ -740,6 +740,17 @@ class TestRunner:
         if not result_summary:
             return None
 
+        # Do not start when http locking is enabled.
+        if not self._options.wait_for_httpd:
+            if self.needs_http():
+                self._printer.print_update('Starting HTTP server ...')
+                self._port.start_http_server()
+
+            if self.needs_websocket():
+                self._printer.print_update('Starting WebSocket server ...')
+                self._port.start_websocket_server()
+                # self._websocket_secure_server.Start()
+
         return result_summary
 
     def run(self, result_summary):
@@ -829,6 +840,11 @@ class TestRunner:
         sys.stdout.flush()
         _log.debug("flushing stderr")
         sys.stderr.flush()
+        if not self._options.wait_for_httpd:
+            _log.debug("stopping http server")
+            self._port.stop_http_server()
+            _log.debug("stopping websocket server")
+            self._port.stop_websocket_server()
         _log.debug("stopping helper")
         self._port.stop_helper()
 
@@ -1578,6 +1594,9 @@ def parse_args(args=None):
         optparse.make_option("--no-record-results", action="store_false",
             default=True, dest="record_results",
             help="Don't record the results."),
+        optparse.make_option("--wait-for-httpd", action="store_true",
+            default=False, dest="wait_for_httpd",
+            help="Wait for http locks."),
         # old-run-webkit-tests also has HTTP toggle options:
         # --[no-]http                     Run (or do not run) http tests
         #                                 (default: run)
