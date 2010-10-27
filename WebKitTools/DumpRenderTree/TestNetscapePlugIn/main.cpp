@@ -26,6 +26,7 @@
 #include "PluginObject.h"
 
 #include "PluginTest.h"
+#include <cstdlib>
 #include <string>
 
 #if !defined(NP_NO_CARBON) && defined(QD_HEADERS_ARE_PRIVATE) && QD_HEADERS_ARE_PRIVATE
@@ -54,9 +55,17 @@ static inline int strcasecmp(const char* s1, const char* s2)
 #define STDCALL
 #endif
 
+extern "C" {
+NPError STDCALL NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
+}
+
 // Entry points
 extern "C"
-NPError STDCALL NP_Initialize(NPNetscapeFuncs *browserFuncs)
+NPError STDCALL NP_Initialize(NPNetscapeFuncs *browserFuncs
+#ifdef XP_UNIX
+                              , NPPluginFuncs *pluginFuncs
+#endif
+                              )
 {
     initializeWasCalled = true;
 
@@ -67,7 +76,12 @@ NPError STDCALL NP_Initialize(NPNetscapeFuncs *browserFuncs)
 #endif
 
     browser = browserFuncs;
+
+#ifdef XP_UNIX
+    return NP_GetEntryPoints(pluginFuncs);
+#else
     return NPERR_NO_ERROR;
+#endif
 }
 
 extern "C"
@@ -248,7 +262,12 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
 
     obj->pluginTest = PluginTest::create(instance, testIdentifier);
 
+#ifdef XP_UNIX
+    // On Unix, plugins only get events if they are windowless.
+    return browser->setvalue(instance, NPPVpluginWindowBool, 0);
+#else
     return NPERR_NO_ERROR;
+#endif
 }
 
 NPError NPP_Destroy(NPP instance, NPSavedData **save)
@@ -578,6 +597,17 @@ void NPP_URLNotify(NPP instance, const char *url, NPReason reason, void *notifyD
 
 NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 {
+#ifdef XP_UNIX
+    if (variable == NPPVpluginNameString) {
+        *((char **)value) = const_cast<char*>("WebKit Test PlugIn");
+        return NPERR_NO_ERROR;
+    }
+    if (variable == NPPVpluginDescriptionString) {
+        *((char **)value) = const_cast<char*>("Simple Netscape plug-in that handles test content for WebKit");
+        return NPERR_NO_ERROR;
+    }
+#endif
+
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
 
     // First, check if the PluginTest object supports getting this value.
@@ -602,7 +632,7 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
         return NPERR_NO_ERROR;
     }
 #endif
-    
+
     return NPERR_GENERIC_ERROR;
 }
 
@@ -618,3 +648,17 @@ NPError NPP_SetValue(NPP instance, NPNVariable variable, void *value)
             return NPERR_GENERIC_ERROR;
     }
 }
+
+#ifdef XP_UNIX
+extern "C"
+const char* NP_GetMIMEDescription(void)
+{
+    return "application/x-webkit-test-netscape:testnetscape:test netscape content";
+}
+
+extern "C"
+NPError NP_GetValue(NPP instance, NPPVariable variable, void* value)
+{
+    return NPP_GetValue(instance, variable, value);
+}
+#endif

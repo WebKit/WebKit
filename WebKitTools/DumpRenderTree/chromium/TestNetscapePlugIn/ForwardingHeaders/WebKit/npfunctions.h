@@ -1,3 +1,4 @@
+#include "npapi.h"
 #include "bindings/npfunctions.h"
 
 // Non-standard event types can be passed to HandleEvent.

@@ -1,3 +1,19 @@
+2010-10-25  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Anders Carlsson.
+
+        compile TestNetscapePlugIn on chromium linux
+        https://bugs.webkit.org/show_bug.cgi?id=48274
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NP_Initialize): On Linux, plugin funcs are set in initialize.
+        (NPP_New): Mark the plugin as windowless.
+        (NPP_GetValue): Handle mime type values.
+        (NP_GetMIMEDescription):
+        (NP_GetValue):
+        * DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders/WebKit/npapi.h: define TRUE and FALSE, which are in webkit's npapi.h.
+        * DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders/WebKit/npfunctions.h: Pull in npapi.h to get TRUE/FALSE (matches webkit's npfunctions.h)
+
 2010-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Anders Carlsson.
