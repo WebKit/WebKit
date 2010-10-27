@@ -66,10 +66,13 @@ SVGStyledElement::~SVGStyledElement()
 
 String SVGStyledElement::title() const
 {
-    // According to spec, we should not return titles when hovering over <svg> elements (those 
+    // According to spec, we should not return titles when hovering over root <svg> elements (those
     // <title> elements are the title of the document, not a tooltip) so we instantly return.
-    if (hasTagName(SVGNames::svgTag))
-        return String();
+    if (hasTagName(SVGNames::svgTag)) {
+        const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(this);
+        if (svg->isOutermostSVG())
+            return String();
+    }
     
     // Walk up the tree, to find out whether we're inside a <use> shadow tree, to find the right title.
     Node* parent = const_cast<SVGStyledElement*>(this);
