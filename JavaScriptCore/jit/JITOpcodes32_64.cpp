@@ -1386,15 +1386,17 @@ void JIT::emit_op_push_new_scope(Instruction* currentInstruction)
 
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
-    unsigned exception = currentInstruction[1].u.operand;
-
-    // This opcode only executes after a return from cti_op_throw.
-
-    // cti_op_throw may have taken us to a call frame further up the stack; reload
-    // the call frame pointer to adjust.
-    peek(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
+    // cti_op_throw returns the callFrame for the handler.
+    move(regT0, callFrameRegister);
 
     // Now store the exception returned by cti_op_throw.
+    loadPtr(Address(stackPointerRegister, OBJECT_OFFSETOF(struct JITStackFrame, globalData)), regT3);
+    load32(Address(regT3, OBJECT_OFFSETOF(JSGlobalData, exception) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+    load32(Address(regT3, OBJECT_OFFSETOF(JSGlobalData, exception) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+    store32(Imm32(JSValue().payload()), Address(regT3, OBJECT_OFFSETOF(JSGlobalData, exception) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+    store32(Imm32(JSValue().tag()), Address(regT3, OBJECT_OFFSETOF(JSGlobalData, exception) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+
+    unsigned exception = currentInstruction[1].u.operand;
     emitStore(exception, regT1, regT0);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_catch), exception, regT1, regT0);
 }

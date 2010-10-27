@@ -1,3 +1,72 @@
+2010-10-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 48365 - Remove output parameters from JITStackFrame
+
+        The JIT stub functions presently use the stackframe to provide a couple of additional return values.
+          * In the case of uncaught exceptions the exception value is returned on the stackframe.exception property.
+          * In the case of caught exceptions the updated value for the callFrame register is returned on the stackframe.callFrame property.
+
+        Change exception returns such that exceptions are always returned on JSGlobalData::exception.
+        Change op_catch such that the new CallFrame value is returned from op_throw / vm_throw in regT0.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * debugger/Debugger.cpp:
+        (JSC::evaluateInGlobalCallFrame):
+        * debugger/DebuggerCallFrame.cpp:
+        (JSC::DebuggerCallFrame::evaluate):
+        * interpreter/CachedCall.h:
+        (JSC::CachedCall::CachedCall):
+        (JSC::CachedCall::call):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::exception):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::Interpreter):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        * jit/JITCode.h:
+        (JSC::JITCode::execute):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_catch):
+        * jit/JITStubs.cpp:
+        (JSC::ctiTrampoline):
+        (JSC::jitThrow):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncFilter):
+        (JSC::arrayProtoFuncMap):
+        (JSC::arrayProtoFuncEvery):
+        (JSC::arrayProtoFuncForEach):
+        (JSC::arrayProtoFuncSome):
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+        * runtime/CallData.cpp:
+        (JSC::call):
+        * runtime/Completion.cpp:
+        (JSC::evaluate):
+        * runtime/ConstructData.cpp:
+        (JSC::construct):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createErrorForInvalidGlobalAssignment):
+        (JSC::throwOutOfMemoryError):
+        (JSC::throwStackOverflowError):
+        * runtime/ExceptionHelpers.h:
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::sort):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+
 2010-10-27  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Oliver Hunt.

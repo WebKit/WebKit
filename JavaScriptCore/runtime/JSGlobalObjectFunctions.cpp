@@ -455,7 +455,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     if (error)
         return throwVMError(exec, error);
 
-    return JSValue::encode(exec->interpreter()->execute(eval.get(), exec, thisObject, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node(), exec->exceptionSlot()));
+    return JSValue::encode(exec->interpreter()->execute(eval.get(), exec, thisObject, static_cast<JSGlobalObject*>(unwrappedObject)->globalScopeChain().node()));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)

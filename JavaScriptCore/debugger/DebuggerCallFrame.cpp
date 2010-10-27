@@ -93,7 +93,14 @@ JSValue DebuggerCallFrame::evaluate(const UString& script, JSValue& exception) c
     if (error)
         return error;
 
-    return m_callFrame->scopeChain()->globalData->interpreter->execute(eval.get(), m_callFrame, thisObject(), m_callFrame->scopeChain(), &exception);
+    JSGlobalData& globalData = m_callFrame->globalData();
+    JSValue result = globalData.interpreter->execute(eval.get(), m_callFrame, thisObject(), m_callFrame->scopeChain());
+    if (globalData.exception) {
+        exception = globalData.exception;
+        globalData.exception = JSValue();
+    }
+    ASSERT(result);
+    return result;
 }
 
 } // namespace JSC

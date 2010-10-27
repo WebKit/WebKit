@@ -186,7 +186,7 @@ ALWAYS_INLINE void JIT::restoreReturnAddressBeforeReturn(Address address)
 ALWAYS_INLINE void JIT::restoreArgumentReference()
 {
     move(stackPointerRegister, firstArgumentRegister);
-    poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
+    poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 }
 
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()

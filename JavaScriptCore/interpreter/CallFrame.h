@@ -76,7 +76,6 @@ namespace JSC  {
 
         void clearException() { globalData().exception = JSValue(); }
         JSValue exception() const { return globalData().exception; }
-        JSValue* exceptionSlot() { return &globalData().exception; }
         bool hadException() const { return globalData().exception; }
 
         const CommonIdentifiers& propertyNames() const { return *globalData().propertyNames; }

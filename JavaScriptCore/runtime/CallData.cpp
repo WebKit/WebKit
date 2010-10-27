@@ -35,7 +35,7 @@ namespace JSC {
 JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
     ASSERT(callType == CallTypeJS || callType == CallTypeHost);
-    return exec->interpreter()->executeCall(exec, asObject(functionObject), callType, callData, thisValue, args, exec->exceptionSlot());
+    return exec->interpreter()->executeCall(exec, asObject(functionObject), callType, callData, thisValue, args);
 }
 
 } // namespace JSC

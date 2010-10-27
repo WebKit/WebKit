@@ -1064,7 +1064,10 @@ void JIT::emit_op_push_new_scope(Instruction* currentInstruction)
 void JIT::emit_op_catch(Instruction* currentInstruction)
 {
     killLastResultRegister(); // FIXME: Implicitly treat op_catch as a labeled statement, and remove this line of code.
-    peek(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof (void*));
+    move(regT0, callFrameRegister);
+    peek(regT3, OBJECT_OFFSETOF(struct JITStackFrame, globalData) / sizeof(void*));
+    loadPtr(Address(regT3, OBJECT_OFFSETOF(JSGlobalData, exception)), regT0);
+    storePtr(ImmPtr(JSValue::encode(JSValue())), Address(regT3, OBJECT_OFFSETOF(JSGlobalData, exception)));
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
@@ -1286,7 +1289,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
 
 void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
 {
-    peek(regT1, OBJECT_OFFSETOF(JITStackFrame, enabledProfilerReference) / sizeof (void*));
+    peek(regT1, OBJECT_OFFSETOF(JITStackFrame, enabledProfilerReference) / sizeof(void*));
     Jump noProfiler = branchTestPtr(Zero, Address(regT1));
 
     JITStubCall stubCall(this, cti_op_profile_will_call);
@@ -1298,7 +1301,7 @@ void JIT::emit_op_profile_will_call(Instruction* currentInstruction)
 
 void JIT::emit_op_profile_did_call(Instruction* currentInstruction)
 {
-    peek(regT1, OBJECT_OFFSETOF(JITStackFrame, enabledProfilerReference) / sizeof (void*));
+    peek(regT1, OBJECT_OFFSETOF(JITStackFrame, enabledProfilerReference) / sizeof(void*));
     Jump noProfiler = branchTestPtr(Zero, Address(regT1));
 
     JITStubCall stubCall(this, cti_op_profile_did_call);

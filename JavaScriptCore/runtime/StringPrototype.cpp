@@ -326,7 +326,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
             // reg->numSubpatterns() + 1 for pattern args, + 2 for match start and sourceValue
             int argCount = reg->numSubpatterns() + 1 + 2;
             JSFunction* func = asFunction(replacement);
-            CachedCall cachedCall(exec, func, argCount, exec->exceptionSlot());
+            CachedCall cachedCall(exec, func, argCount);
             if (exec->hadException())
                 return JSValue::encode(jsNull());
             while (true) {

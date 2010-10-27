@@ -187,14 +187,19 @@ JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error,
     return exception;
 }
 
-JSValue throwOutOfMemoryError(ExecState* exec)
-{
-    return throwError(exec, createError(exec, "Out of memory"));
-}
-
 JSObject* createErrorForInvalidGlobalAssignment(ExecState* exec, const UString& propertyName)
 {
     return createReferenceError(exec, makeUString("Strict mode forbids implicit creation of global property '", propertyName, "'"));
 }    
+
+JSObject* throwOutOfMemoryError(ExecState* exec)
+{
+    return throwError(exec, createError(exec, "Out of memory"));
+}
+
+JSObject* throwStackOverflowError(ExecState* exec)
+{
+    return throwError(exec, createStackOverflowError(exec));
+}
 
 } // namespace JSC

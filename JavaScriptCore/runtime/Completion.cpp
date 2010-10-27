@@ -59,10 +59,12 @@ Completion evaluate(ExecState* exec, ScopeChain& scopeChain, const SourceCode& s
 
     JSObject* thisObj = (!thisValue || thisValue.isUndefinedOrNull()) ? exec->dynamicGlobalObject() : thisValue.toObject(exec);
 
-    JSValue exception;
-    JSValue result = exec->interpreter()->execute(program.get(), exec, scopeChain.node(), thisObj, &exception);
+    JSValue result = exec->interpreter()->execute(program.get(), exec, scopeChain.node(), thisObj);
 
-    if (exception) {
+    if (exec->hadException()) {
+        JSValue exception = exec->exception();
+        exec->clearException();
+
         ComplType exceptionType = Throw;
         if (exception.isObject())
             exceptionType = asObject(exception)->exceptionType();
