@@ -1,3 +1,17 @@
+2010-10-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r70335): Incorrect article layout in Safari Reader
+        https://bugs.webkit.org/show_bug.cgi?id=48436
+
+        * Misc/WebKitVersionChecks.h: Added WEBKIT_FIRST_VERSION_WITH_GET_MATCHED_CSS_RULES_RESTRICTIONS.
+        * WebView/WebView.mm:
+        (-[WebView _needsUnrestrictedGetMatchedCSSRules]): Added. Returns YES for Safari linked against
+        versions of WebKit that did not have the cross-origin restrictions in getMatchedCSSRules().
+        (-[WebView _preferencesChangedNotification:]): Call Settings::setCrossOriginCheckInGetMatchedCSSRulesDisabled()
+        based on the above.
+
 2010-10-18  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.

@@ -149,6 +149,7 @@ Settings::Settings(Page* page)
     , m_interactiveFormValidation(false)
     , m_usePreHTML5ParserQuirks(false)
     , m_hyperlinkAuditingEnabled(false)
+    , m_crossOriginCheckInGetMatchedCSSRulesDisabled(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.

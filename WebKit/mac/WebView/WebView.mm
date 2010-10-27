@@ -1398,6 +1398,12 @@ static bool fastDocumentTeardownEnabled()
         || [[self preferences] usePreHTML5ParserQuirks];
 }
 
+- (BOOL)_needsUnrestrictedGetMatchedCSSRules
+{
+    static bool needsUnrestrictedGetMatchedCSSRules = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_GET_MATCHED_CSS_RULES_RESTRICTIONS) && applicationIsSafari();
+    return needsUnrestrictedGetMatchedCSSRules;
+}
+
 - (void)_preferencesChangedNotification:(NSNotification *)notification
 {
     WebPreferences *preferences = (WebPreferences *)[notification object];
@@ -1496,6 +1502,7 @@ static bool fastDocumentTeardownEnabled()
     settings->setMemoryInfoEnabled([preferences memoryInfoEnabled]);
     settings->setHyperlinkAuditingEnabled([preferences hyperlinkAuditingEnabled]);
     settings->setUsePreHTML5ParserQuirks([self _needsPreHTML5ParserQuirks]);
+    settings->setCrossOriginCheckInGetMatchedCSSRulesDisabled([self _needsUnrestrictedGetMatchedCSSRules]);
 
     // Application Cache Preferences are stored on the global cache storage manager, not in Settings.
     [WebApplicationCache setDefaultOriginQuota:[preferences applicationCacheDefaultOriginQuota]];

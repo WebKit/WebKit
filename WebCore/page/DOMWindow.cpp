@@ -1254,8 +1254,8 @@ PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* elt, const String
     if (!m_frame)
         return 0;
 
-    Document* doc = m_frame->document();
-    return doc->styleSelector()->styleRulesForElement(elt, authorOnly, false, SameOriginCSSRulesOnly);
+    Settings* settings = m_frame->settings();
+    return m_frame->document()->styleSelector()->styleRulesForElement(elt, authorOnly, false, settings && settings->crossOriginCheckInGetMatchedCSSRulesDisabled() ? AllCSSRules : SameOriginCSSRulesOnly);
 }
 
 PassRefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* p) const
