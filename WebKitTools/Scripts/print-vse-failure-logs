@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+# Copyright (c) 2010 Google Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+# 
+#     * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#     * Neither the name of Google Inc. nor the names of its
+# contributors may be used to endorse or promote products derived from
+# this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# This is a very simple script designed to crawl the build directory
+# for visual studio express build logs and print them to stdout.
+
+from __future__ import with_statement
+
+import codecs
+import os.path
+import os
+
+from webkitpy.common.system.executive import Executive
+
+
+# This is just enough to make the win-ews bot useable.  Others who
+# actually use Windows should feel encouraged to improve this class,
+# including just printing the text instead of the raw html.
+class PrintVisualStudioExpressLogs(object):
+    def __init__(self):
+        self._executive = Executive()
+
+    def _find_buildlogs(self, build_directory):
+        build_log_paths = []
+        # FIXME: Walking the obj/ root under the build directory might be faster.
+        for dirpath, dirnames, filenames in os.walk(build_directory):
+            for file_name in filenames:
+                if file_name == "BuildLog.htm":
+                    file_path = os.path.join(dirpath, file_name)
+                    build_log_paths.append(file_path)
+        return build_log_paths
+
+    def main(self):
+        # FIXME: ports/webkit.py should provide the build directory in a nice API.
+        build_directory = self._executive.run_command(["webkit-build-directory", "--configuration"]).rstrip()
+        build_log_paths = self._find_buildlogs(build_directory)
+
+        print "Found %s Visual Studio Express Build Logs:%s" % (len(build_log_paths), "\n".join(build_log_paths))
+
+        for build_log_path in build_log_paths:
+            print "%s:\n" % build_log_path
+            with codecs.open(build_log_path, "r", "utf-16") as build_log:
+                print build_log.read()
+
+
+if __name__ == '__main__':
+    PrintVisualStudioExpressLogs().main()

@@ -1,3 +1,14 @@
+2010-10-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        build-webkit should collect Visual Studio Express logs and display them
+        https://bugs.webkit.org/show_bug.cgi?id=39199
+
+        * Scripts/build-webkit:
+        * Scripts/print-vse-failure-logs: Added.
+        * Scripts/webkitdirs.pm:
+
 2010-10-26  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/48224> build-webkit: add support for --meter-tag switch

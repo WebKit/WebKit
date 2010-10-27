@@ -1186,6 +1186,12 @@ sub buildXCodeProject($$@)
     return system "xcodebuild", "-project", "$project.xcodeproj", @extraOptions;
 }
 
+sub usingVisualStudioExpress()
+{
+    determineConfigurationForVisualStudio();
+    return $willUseVCExpressWhenBuilding;
+}
+
 sub buildVisualStudioProject
 {
     my ($project, $clean) = @_;
