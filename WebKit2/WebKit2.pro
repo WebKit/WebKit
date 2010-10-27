@@ -120,6 +120,8 @@ INCLUDEPATH = \
     UIProcess/Plugins \
     UIProcess/qt \
     WebProcess \
+    WebProcess/Downloads \
+    WebProcess/Downloads/qt \
     WebProcess/InjectedBundle \
     WebProcess/InjectedBundle/DOM \
     WebProcess/InjectedBundle/API/c \
@@ -281,6 +283,7 @@ HEADERS += \
     UIProcess/WebProcessProxy.h \
     UIProcess/WebUIClient.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
+    WebProcess/Downloads/DownloadManager.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
@@ -427,6 +430,7 @@ SOURCES += \
     UIProcess/WebProcessManager.cpp \
     UIProcess/WebProcessProxy.cpp \
     UIProcess/WebUIClient.cpp \
+    WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/InjectedBundle/API/c/WKBundle.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \

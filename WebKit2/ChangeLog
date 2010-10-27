@@ -107,6 +107,26 @@
 
         Reviewed by Sam Weinig.
 
+        Add DownloadManager class
+        https://bugs.webkit.org/show_bug.cgi?id=48388
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Downloads/DownloadManager.cpp: Added.
+        (WebKit::DownloadManager::shared):
+        (WebKit::DownloadManager::DownloadManager):
+        * WebProcess/Downloads/DownloadManager.h: Added.
+
+        * win/WebKit2.vcproj:
+        * win/WebKit2Common.vsprops:
+        Add new files.
+
+2010-10-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Pass a downloadID to the web process whenever a download is requested
         https://bugs.webkit.org/show_bug.cgi?id=48380
 

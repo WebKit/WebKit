@@ -1233,6 +1233,18 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="Downloads"
+				>
+				<File
+					RelativePath="..\WebProcess\Downloads\DownloadManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\Downloads\DownloadManager.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="InjectedBundle"
 				>
 				<File
