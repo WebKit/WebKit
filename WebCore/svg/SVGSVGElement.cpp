@@ -186,7 +186,7 @@ void SVGSVGElement::setUseCurrentView(bool currentView)
 SVGViewSpec* SVGSVGElement::currentView() const
 {
     if (!m_viewSpec)
-        m_viewSpec = adoptPtr(new SVGViewSpec(this));
+        m_viewSpec = adoptPtr(new SVGViewSpec(const_cast<SVGSVGElement*>(this)));
     return m_viewSpec.get();
 }
 
@@ -580,9 +580,9 @@ void SVGSVGElement::inheritViewAttributes(SVGViewElement* viewElement)
 {
     setUseCurrentView(true);
     if (viewElement->hasAttribute(SVGNames::viewBoxAttr))
-        currentView()->setViewBox(viewElement->viewBox());
+        currentView()->setViewBoxBaseValue(viewElement->viewBox());
     else
-        currentView()->setViewBox(viewBox());
+        currentView()->setViewBoxBaseValue(viewBox());
 
     SVGPreserveAspectRatio aspectRatio;
     if (viewElement->hasAttribute(SVGNames::preserveAspectRatioAttr))

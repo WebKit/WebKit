@@ -3041,6 +3041,7 @@ webcore_sources += \
 	WebCore/svg/SVGAnimatedPathData.h \
 	WebCore/svg/SVGAnimatedPoints.cpp \
 	WebCore/svg/SVGAnimatedPoints.h \
+	WebCore/svg/SVGAnimatedRect.h \
 	WebCore/svg/SVGAnimateElement.cpp \
 	WebCore/svg/SVGAnimateElement.h \
 	WebCore/svg/SVGAnimateMotionElement.cpp \

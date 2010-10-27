@@ -22,11 +22,11 @@
 
 module svg {
 
-    interface [Conditional=SVG, PODType=FloatRect] SVGRect {
-        attribute float x;
-        attribute float y;
-        attribute float width;
-        attribute float height;
+    interface [Conditional=SVG] SVGRect {
+        attribute [StrictTypeChecking] float x;
+        attribute [StrictTypeChecking] float y;
+        attribute [StrictTypeChecking] float width;
+        attribute [StrictTypeChecking] float height;
     };
 
 }

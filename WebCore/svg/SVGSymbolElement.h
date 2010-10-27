@@ -22,6 +22,7 @@
 #define SVGSymbolElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
@@ -50,7 +51,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGSymbolElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
  
         // SVGFitToViewBox
-        DECLARE_ANIMATED_PROPERTY(SVGSymbolElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGSymbolElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
         DECLARE_ANIMATED_PROPERTY(SVGSymbolElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio) 
     };
 

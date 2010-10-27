@@ -600,12 +600,6 @@ sub AddIncludesForType
         return;
     }
 
-    if ($type eq "SVGRect") {
-        $implIncludes{"FloatRect.h"} = 1;
-        $implIncludes{"DOMSVGRectInternal.h"} = 1;
-        return;
-    }
-
     if ($type eq "SVGPoint") {
         $implIncludes{"FloatPoint.h"} = 1;
         $implIncludes{"DOMSVGPointInternal.h"} = 1;
@@ -658,8 +652,37 @@ sub AddIncludesForType
     $implIncludes{"NameNodeList.h"} = 1 if $type eq "NodeList";
 
     # Default, include the same named file (the implementation) and the same name prefixed with "DOM". 
-    $implIncludes{"$type.h"} = 1;
+    $implIncludes{"$type.h"} = 1 if not $codeGenerator->AvoidInclusionOfType($type);
     $implIncludes{"DOM${type}Internal.h"} = 1;
+}
+
+sub GetSVGPropertyTypes
+{
+    my $implType = shift;
+
+    my $svgPropertyType;
+    my $svgListPropertyType;
+    my $svgNativeType;
+
+    return ($svgPropertyType, $svgListPropertyType, $svgNativeType) if not $implType =~ /SVG/;
+
+    $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($implType);
+    return ($svgPropertyType, $svgListPropertyType, $svgNativeType) if not $svgNativeType;
+
+    # Append space to avoid compilation errors when using  PassRefPtr<$svgNativeType>
+    $svgNativeType = "WebCore::$svgNativeType ";
+    $svgNativeType =~ s/</\<WebCore::/;
+
+    my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implType);
+    if ($svgNativeType =~ /SVGPropertyTearOff/) {
+        $svgPropertyType = "WebCore::$svgWrappedNativeType";
+        $svgPropertyType =~ s/</\<WebCore::/;
+    } elsif ($svgNativeType =~ /SVGListPropertyTearOff/) {
+        $svgListPropertyType = "WebCore::$svgWrappedNativeType";
+        $svgListPropertyType =~ s/</\<WebCore::/;
+    }
+
+    return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
 }
 
 sub GenerateHeader
@@ -974,23 +997,16 @@ sub GenerateHeader
     unless ($isProtocol) {
         # Generate internal interfaces
         my $podType = $dataNode->extendedAttributes->{"PODType"};
-        my $svgPropertyType = $dataNode->extendedAttributes->{"SVGProperty"};
-        my $svgListPropertyType = $dataNode->extendedAttributes->{"SVGListProperty"};
         my $podTypeWithNamespace;
-        my $svgPropertyTypeWithNamespace;
-        my $svgListPropertyTypeWithNamespace;
         my $implClassName = GetImplClassName($interfaceName);
         my $implClassNameWithNamespace = "WebCore::" . $implClassName;
 
         my $implType = $implClassNameWithNamespace;
+        my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implClassName);
+        $implType = $svgNativeType if $svgNativeType;
+
         if ($podType) {
             $podTypeWithNamespace = ($podType eq "float") ? "$podType" : "WebCore::$podType";
-        } elsif ($svgPropertyType) {
-            $implType = "WebCore::SVGPropertyTearOff<$implType>";
-            $svgPropertyTypeWithNamespace = ($svgPropertyType eq "float") ? "$svgPropertyType" : "WebCore::$svgPropertyType";
-        } elsif ($svgListPropertyType) {
-            $implType = "WebCore::SVGListPropertyTearOff<$implType>";
-            $svgListPropertyTypeWithNamespace = "WebCore::$svgListPropertyType";
         }
  
         # Generate interface definitions. 
@@ -1017,10 +1033,6 @@ sub GenerateHeader
             $startedNamespace = 1;
             if ($podType and $podType ne "float") {
                 push(@internalHeaderContent, "    class $podType;\n");
-            } elsif ($svgPropertyType and $svgPropertyType ne "float") {
-                push(@internalHeaderContent, "    class $svgPropertyType;\n");
-            } elsif ($svgListPropertyType) {
-                push(@internalHeaderContent, "    class $svgListPropertyType;\n");
             } elsif ($interfaceName eq "Node") {
                 push(@internalHeaderContent, "    class EventTarget;\n    class Node;\n");
             } else {
@@ -1072,21 +1084,14 @@ sub GenerateImplementation
     my $numFunctions = @{$dataNode->functions};
 
     my $podType = $dataNode->extendedAttributes->{"PODType"};
-    my $svgPropertyType = $dataNode->extendedAttributes->{"SVGProperty"};
-    my $svgListPropertyType = $dataNode->extendedAttributes->{"SVGListProperty"};
     my $podTypeWithNamespace;
-    my $svgPropertyTypeWithNamespace;
-    my $svgListPropertyTypeWithNamespace;
     my $implType = $implClassNameWithNamespace;
+
+    my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implClassName);
+    $implType = $svgNativeType if $svgNativeType;
 
     if ($podType) {
         $podTypeWithNamespace = ($podType eq "float") ? "$podType" : "WebCore::$podType";
-    } elsif ($svgPropertyType) {
-        $implType = "WebCore::SVGPropertyTearOff<$implType>";
-        $svgPropertyTypeWithNamespace = ($svgPropertyType eq "float") ? "$svgPropertyType" : "WebCore::$svgPropertyType";
-    } elsif ($svgListPropertyType) {
-        $implType = "WebCore::SVGListPropertyTearOff<$implType>";
-        $svgListPropertyTypeWithNamespace = "WebCore::$svgListPropertyType";
     }
 
     # - Add default header template.
@@ -1123,7 +1128,7 @@ sub GenerateImplementation
         $implIncludes{"$1.h"} = 1;
     } else {
         if (!$podType) {
-            $implIncludes{"$implClassName.h"} = 1;
+            $implIncludes{"$implClassName.h"} = 1 if not $codeGenerator->AvoidInclusionOfType($implClassName);
         } else {
             $implIncludes{"$podType.h"} = 1 unless $podType eq "float";
         }
@@ -1227,12 +1232,11 @@ sub GenerateImplementation
             my $getterContentHead = "IMPL->$getterExpressionPrefix";
             my $getterContentTail = ")";
 
-            my $svgAnimatedPropertyType = $dataNode->extendedAttributes->{"SVGAnimatedProperty"};
             if ($svgPropertyType) {
                 $getterContentHead = "$getterExpressionPrefix";
 
                 # TODO: Handle special case for DOMSVGLength. We do need Custom code support for this.
-                if ($svgPropertyType eq "SVGLength" and $attributeName eq "value") {
+                if ($svgPropertyType eq "WebCore::SVGLength" and $attributeName eq "value") {
                     $getterContentHead = "value(0 /* FIXME */";
                 }
             } else {
@@ -1285,12 +1289,10 @@ sub GenerateImplementation
                 $getterContentTail .= ")";
             } elsif ($svgPropertyType) {
                 $getterContentHead = "IMPL->propertyReference().$getterContentHead";
-            } elsif ($svgAnimatedPropertyType) {
-                if ($idlType =~ /List$/) {
-                    $getterContentHead = "kit(static_cast<WebCore::SVGListPropertyTearOff<WebCore::$idlType>*>($getterContentHead)";
-                } else {
-                    $getterContentHead = "kit(static_cast<WebCore::SVGPropertyTearOff<WebCore::$idlType>*>($getterContentHead)";
-                }
+            } elsif ($codeGenerator->IsSVGNewStyleAnimatedType($implClassName)) {
+                my $idlTypeWithNamespace = "WebCore::" . $codeGenerator->GetSVGTypeNeedingTearOff($idlType);
+                $idlTypeWithNamespace =~ s/</\<WebCore::/;
+                $getterContentHead = "kit(static_cast<$idlTypeWithNamespace*>($getterContentHead)";
                 $getterContentTail .= ")";
             } elsif (IsProtocolType($idlType) and $idlType ne "EventTarget") {
                 $getterContentHead = "kit($getterContentHead";
@@ -1302,8 +1304,16 @@ sub GenerateImplementation
                 $getterContentHead = "$getterContentHead";
                 $getterContentTail .= "->toString()";                
             } elsif (ConversionNeeded($attribute->signature->type)) {
-                $getterContentHead = "kit(WTF::getPtr($getterContentHead";
-                $getterContentTail .= "))";
+                if ($codeGenerator->IsSVGTypeNeedingTearOff($attribute->signature->type) and not $implClassName =~ /List$/) {
+                    my $idlType = $attribute->signature->type;
+                    my $idlTypeWithNamespace = "WebCore::" . $codeGenerator->GetSVGTypeNeedingTearOff($idlType);
+                    $idlTypeWithNamespace =~ s/</\<WebCore::/;
+                    $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($getterContentHead";
+                    $getterContentTail .= ")))";
+                } else {
+                    $getterContentHead = "kit(WTF::getPtr($getterContentHead";
+                    $getterContentTail .= "))";
+                }
             }
 
             my $getterContent;
@@ -1369,7 +1379,7 @@ sub GenerateImplementation
 
                 if ($svgPropertyType) {
                     $getterContentHead = "$getterExpressionPrefix";
-                    push(@implContent, "    $svgPropertyTypeWithNamespace& podImpl = IMPL->propertyReference();\n");
+                    push(@implContent, "    $svgPropertyType& podImpl = IMPL->propertyReference();\n");
                     my $ec = $hasSetterException ? ", ec" : "";
                     push(@implContent, "    $exceptionInit\n") if $hasSetterException;
                     push(@implContent, "    podImpl.$coreSetterName($arg$ec);\n");
@@ -1508,7 +1518,7 @@ sub GenerateImplementation
             # FIXME! We need [Custom] support for ObjC, to move these hacks into DOMSVGLength/MatrixCustom.mm
             my $svgMatrixRotateFromVector = ($podType and $podType eq "AffineTransform" and $functionName eq "rotateFromVector");
             my $svgMatrixInverse = ($podType and $podType eq "AffineTransform" and $functionName eq "inverse");
-            my $svgLengthConvertToSpecifiedUnits = ($svgPropertyType and $svgPropertyType eq "SVGLength" and $functionName eq "convertToSpecifiedUnits");
+            my $svgLengthConvertToSpecifiedUnits = ($svgPropertyType and $svgPropertyType eq "WebCore::SVGLength" and $functionName eq "convertToSpecifiedUnits");
 
             push(@parameterNames, "ec") if $raisesExceptions and !($svgMatrixRotateFromVector || $svgMatrixInverse);
             push(@parameterNames, "0 /* FIXME */") if $svgLengthConvertToSpecifiedUnits; 
@@ -1524,9 +1534,10 @@ sub GenerateImplementation
                 next if not $codeGenerator->IsSVGTypeNeedingTearOff($idlType) or $implClassName =~ /List$/;
 
                 my $implGetter = GetObjCTypeGetter($paramName, $idlType);
-                my $idlTypeWithNamespace = ($idlType eq "float") ? "$idlType" : "WebCore::$idlType";
+                my $idlTypeWithNamespace = "WebCore::" . $codeGenerator->GetSVGTypeNeedingTearOff($idlType);
+                $idlTypeWithNamespace =~ s/</\<WebCore::/;
 
-                push(@functionContent, "    WebCore::SVGPropertyTearOff<$idlTypeWithNamespace>* ${paramName}Core = $implGetter;\n");
+                push(@functionContent, "    $idlTypeWithNamespace* ${paramName}Core = $implGetter;\n");
                 push(@functionContent, "    if (!${paramName}Core) {\n");
                 push(@functionContent, "        WebCore::ExceptionCode ec = WebCore::TYPE_MISMATCH_ERR;\n");
                 push(@functionContent, "        $exceptionRaiseOnError\n");
@@ -1544,7 +1555,7 @@ sub GenerateImplementation
             my $content = $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")"; 
 
             if ($svgPropertyType) {
-                push(@functionContent, "    $svgPropertyTypeWithNamespace& podImpl = IMPL->propertyReference();\n");
+                push(@functionContent, "    $svgPropertyType& podImpl = IMPL->propertyReference();\n");
                 $content = "podImpl.$content;\n    IMPL->commitChange()"; 
             } else {
                 $content = $caller . "->$content";
@@ -1593,7 +1604,10 @@ sub GenerateImplementation
             } else {
                 if (ConversionNeeded($function->signature->type)) {
                     if ($codeGenerator->IsSVGTypeNeedingTearOff($function->signature->type) and not $implClassName =~ /List$/) {
-                        $content = "kit(WTF::getPtr(WebCore::SVGPropertyTearOff<WebCore::" . $function->signature->type . ">::create($content)))";
+                        my $idlType = $function->signature->type;
+                        my $idlTypeWithNamespace = "WebCore::" . $codeGenerator->GetSVGTypeNeedingTearOff($idlType);
+                        $idlTypeWithNamespace =~ s/</\<WebCore::/;
+                        $content = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($content)))";
                     } elsif ($codeGenerator->IsPodType($function->signature->type)) {
                         $content = "kit($content)";
                     } else {
