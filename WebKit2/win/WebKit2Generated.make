@@ -46,6 +46,7 @@ all:
     xcopy /y /d "..\UIProcess\API\C\win\WKViewPrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\UIProcess\API\cpp\WKRetainPtr.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundle.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
+    xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleBackForwardList.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleFrame.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleFramePrivate.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
     xcopy /y /d "..\WebProcess\InjectedBundle\API\c\WKBundleHitTestResult.h" "$(WEBKITOUTPUTDIR)\include\WebKit2"
