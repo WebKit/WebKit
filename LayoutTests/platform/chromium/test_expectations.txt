@@ -475,6 +475,27 @@ WONTFIX BUG37684 SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FA
 // <progress> on Mac is always animated.
 WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = IMAGE PASS
 
+// We do not use Safari's private browsing
+WONTFIX SKIP : storage/private-browsing-readonly.html = PASS
+
+// These tests are WONTFIX because they use codecs Chromium doesn't support.
+BUG16779 WONTFIX SKIP : media/audio-mpeg-supported.html = FAIL TIMEOUT
+BUG16779 WONTFIX SKIP : media/audio-data-url.html = FAIL TIMEOUT
+BUG16779 WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
+BUG16779 WONTFIX SKIP : media/video-can-play-type.html = FAIL TIMEOUT
+BUG16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
+BUG16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
+BUGWK45102 WONTFIX SKIP : media/media-can-play-mpeg4-video.html = TEXT
+
+// Chromium does not use the icon loader in WebCore for loading notifications.
+WONTFIX SKIP : http/tests/notifications = FAIL
+
+// Doesn't apply to Chromium (QuickTime-specific behavior)
+WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
+
+// Pre-HTML5 parser quirks only apply to the mac port for now.
+WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
+
 // -----------------------------------------------------------------
 // CHROME REWRITTEN TESTS
 // -----------------------------------------------------------------
@@ -656,8 +677,6 @@ BUG33211 MAC LINUX : http/tests/loading/deleted-host-in-resource-load-delegate-c
 
 // HTML5 DB layout tests
 BUG27697 SKIP : storage/hash-change-with-xhr.html = PASS
-// We do not use Safari's private browsing
-WONTFIX SKIP : storage/private-browsing-readonly.html = PASS
 
 // HTML5 datalist element. We don't enable it because WebKit implementation
 // is incomplete.
@@ -738,15 +757,6 @@ BUG13907 : media/video-replaces-poster.html = IMAGE PASS
 
 // These tests are failing because they use position-dependent mouse clicks.
 BUG13907 BUG25375 : media/video-controls-transformed.html = FAIL
-
-// These tests are WONTFIX because they use codecs Chromium doesn't support.
-BUG16779 WONTFIX SKIP : media/audio-mpeg-supported.html = FAIL TIMEOUT
-BUG16779 WONTFIX SKIP : media/audio-data-url.html = FAIL TIMEOUT
-BUG16779 WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
-BUG16779 WONTFIX SKIP : media/video-can-play-type.html = FAIL TIMEOUT
-BUG16779 WONTFIX SKIP : media/video-document-types.html = FAIL TIMEOUT
-BUG16779 WONTFIX SKIP : media/video-size-intrinsic-scale.html = FAIL TIMEOUT
-BUGWK45102 WONTFIX SKIP : media/media-can-play-mpeg4-video.html = TEXT
 
 // We haven't implemented the WebKit fullscreen extension.
 BUG16735 : media/media-fullscreen-inline.html = TIMEOUT
@@ -2605,9 +2615,6 @@ BUG45106 WIN : svg/text/text-text-05-t.svg = PASS CRASH
 
 BUG45720 WIN LINUX : http/tests/websocket/tests/reload-crash.html = PASS CRASH
 
-// Chromium does not use the icon loader in WebCore for loading notifications.
-WONTFIX SKIP : http/tests/notifications = FAIL
-
 // Chromium does not support cancel for notifications permissions.
 BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.html = FAIL
 
@@ -2959,9 +2966,6 @@ BUGWK44770 WIN LINUX : svg/repaint/filter-repaint.svg = IMAGE+TEXT CRASH
 // Full Screen JS API is not yet enabled.
 BUGWK44797 : fullscreen = FAIL
 
-// Doesn't apply to Chromium (QuickTime-specific behavior)
-WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
-
 // Passes in Chromium DRT.
 BUGWK44961 : fast/notifications/notifications-click-event.html = TIMEOUT
 
@@ -3045,9 +3049,6 @@ BUGWEBGL : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT P
 BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT FAIL
 BUG60651 : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 BUG60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
-
-// Pre-HTML5 parser quirks only apply to the mac port for now.
-WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 
 // Regressions after r67771
 BUG56246 : printing/css2.1/page-break-after-000.html = TEXT
