@@ -213,11 +213,6 @@ class GlobalVariablesTest(unittest.TestCase):
                     "build/include")
         assertNoCheck("WebKitTools/WebKitAPITest/main.cpp",
                       "build/include")
-        assertNoCheck("WebKit/qt/QGVLauncher/main.cpp",
-                      "build/include")
-        assertNoCheck("WebKit/qt/QGVLauncher/main.cpp",
-                      "readability/streams")
-
         assertCheck("random_path.cpp",
                     "readability/naming")
         assertNoCheck("WebKit/gtk/webkit/webkit.h",

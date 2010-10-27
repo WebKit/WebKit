@@ -115,8 +115,7 @@ _PATH_RULES_SPECIFIER = [
     # Files in these directories are consumers of the WebKit
     # API and therefore do not follow the same header including
     # discipline as WebCore.
-    (["WebKitTools/WebKitAPITest/",
-      "WebKit/qt/QGVLauncher/"],
+    (["WebKitTools/WebKitAPITest/"],
      ["-build/include",
       "-readability/streams"]),
     ([# The EFL APIs use EFL naming style, which includes

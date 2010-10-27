@@ -1,3 +1,15 @@
+2010-10-27  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Remove references to ancient QGVLauncher and QtLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=48430
+
+        QtTestBrowser substitutes both and has checks enabled.
+
+        * Scripts/webkitpy/style/checker.py: remove references
+        * Scripts/webkitpy/style/checker_unittest.py: ditto
+
 2010-10-27  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Ojan Vafai.
