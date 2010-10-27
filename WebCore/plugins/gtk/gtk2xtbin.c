@@ -322,13 +322,14 @@ gtk_xtbin_realize (GtkWidget *widget)
 
 
 GtkWidget*
-gtk_xtbin_new (GdkWindow *parent_window, String * f)
+gtk_xtbin_new (GtkWidget *parent_widget, String *f)
 {
   GtkXtBin *xtbin;
   gpointer user_data;
   GdkScreen *screen;
   GdkVisual* visual;
   Colormap colormap;
+  GdkWindow* parent_window = gtk_widget_get_window(parent_widget);
 
   assert(parent_window != NULL);
   xtbin = g_object_new (GTK_TYPE_XTBIN, NULL);
@@ -342,7 +343,7 @@ gtk_xtbin_new (GdkWindow *parent_window, String * f)
   /* Initialize the Xt toolkit */
   xtbin->parent_window = parent_window;
 
-  screen = gtk_widget_get_screen(GTK_WIDGET(parent_window));
+  screen = gtk_widget_get_screen(parent_widget);
   visual = gdk_screen_get_system_visual(screen);
   colormap = XCreateColormap(GDK_DISPLAY_XDISPLAY(gdk_screen_get_display(screen)),
                              GDK_WINDOW_XWINDOW(gdk_screen_get_root_window(screen)),

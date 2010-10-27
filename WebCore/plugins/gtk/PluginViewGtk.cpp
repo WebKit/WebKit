@@ -790,7 +790,7 @@ bool PluginView::platformStart()
             g_signal_connect(platformPluginWidget(), "plug-added", G_CALLBACK(plugAddedCallback), this);
             g_signal_connect(platformPluginWidget(), "plug-removed", G_CALLBACK(plugRemovedCallback), NULL);
         } else
-            setPlatformWidget(gtk_xtbin_new(gtk_widget_get_window(pageClient), 0));
+            setPlatformWidget(gtk_xtbin_new(pageClient, 0));
 #else
         setPlatformWidget(gtk_socket_new());
         gtk_container_add(GTK_CONTAINER(pageClient), platformPluginWidget());
