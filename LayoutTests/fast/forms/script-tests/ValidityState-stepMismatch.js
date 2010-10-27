@@ -159,6 +159,8 @@ shouldBe('stepMismatchFor("0.9", "0.1", "")', 'false');
 shouldBe('stepMismatchFor("0.9", "0.1000001", "")', 'true');
 shouldBe('stepMismatchFor("0.9", "0.1000000000000001", "")', 'false');
 shouldBe('stepMismatchFor("1.0", "0.3333333333333333", "")', 'false');
+debug('Rounding');
+shouldBe('stepMismatchFor("5.005", "0.005", "4")', 'false');
 
 debug('');
 debug('Range type');

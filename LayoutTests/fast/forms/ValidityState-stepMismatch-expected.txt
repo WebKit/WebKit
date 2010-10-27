@@ -142,6 +142,8 @@ PASS stepMismatchFor("0.9", "0.1", "") is false
 PASS stepMismatchFor("0.9", "0.1000001", "") is true
 PASS stepMismatchFor("0.9", "0.1000000000000001", "") is false
 PASS stepMismatchFor("1.0", "0.3333333333333333", "") is false
+Rounding
+PASS stepMismatchFor("5.005", "0.005", "4") is false
 
 Range type
 Empty values

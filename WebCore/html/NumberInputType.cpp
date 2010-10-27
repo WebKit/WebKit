@@ -121,12 +121,17 @@ bool NumberInputType::stepMismatch(const String& value, double step) const
     if (isinf(doubleValue))
         return false;
     // double's fractional part size is DBL_MAN_DIG-bit. If the current value
-    // is greater than step*2^DBL_MANT_DIG, the following fmod() makes no sense.
+    // is greater than step*2^DBL_MANT_DIG, the following computation for
+    // remainder makes no sense.
     if (doubleValue / pow(2.0, DBL_MANT_DIG) > step)
         return false;
-    double remainder = fmod(doubleValue, step);
-    // Accepts errors in lower 7-bit.
-    double acceptableError = step / pow(2.0, DBL_MANT_DIG - 7);
+    // The computation follows HTML5 4.10.7.2.10 `The step attribute' :
+    // ... that number subtracted from the step base is not an integral multiple
+    // of the allowed value step, the element is suffering from a step mismatch.
+    double remainder = fabs(doubleValue - step * round(doubleValue / step));
+    // Accepts erros in lower fractional part which IEEE 754 single-precision
+    // can't represent.
+    double acceptableError = step / pow(2.0, FLT_MANT_DIG);
     return acceptableError < remainder && remainder < (step - acceptableError);
 }
 
