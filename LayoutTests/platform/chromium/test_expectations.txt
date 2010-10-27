@@ -657,6 +657,90 @@ BUG10273 LINUX : http/tests/navigation/javascriptlink-frames.html = FAIL
 BUG20844 LINUX WIN RELEASE : editing/selection/designmode-no-caret.html = FAIL
 BUG20844 LINUX WIN DEBUG : editing/selection/designmode-no-caret.html = FAIL
 
+// Regression from merge 41268:41286
+BUG10435 MAC : editing/selection/designmode-no-caret.html = FAIL
+
+// Issue 3273: TextInputController::firstRectForCharacterRange not implemented.
+BUG3273 : editing/selection/move-left-right.html = FAIL
+BUG3273 MAC : platform/mac/editing/input/caret-primary-bidi.html = FAIL PASS
+BUG3273 MAC : platform/mac/editing/input/firstrectforcharacterrange-plain.html = FAIL PASS
+BUG3273 MAC : platform/mac/editing/input/range-for-empty-document.html = FAIL PASS
+BUGWK38100 : editing/inserting/caret-position.html = TEXT PASS
+
+// WebKit 50358:50395
+BUG3273 WIN LINUX : fast/text/international/thai-cursor-position.html = TEXT
+// WebKit roll 51512:51524
+BUG3273 : editing/selection/5825350-1.html = FAIL
+BUG3273 : editing/selection/5825350-2.html = FAIL
+BUG3273 : editing/selection/mixed-editability-10.html = FAIL
+
+// Linux pixeltest failure: caret is in the wrong place
+// Upstream WebKit also skips this test and Safari with latest WebKit shows
+// same behavior as Chromium.
+BUG10324 LINUX WIN : editing/selection/caret-rtl-2.html = IMAGE
+
+// selection
+BUG10369 MAC : editing/selection/5109817.html = FAIL
+BUG10369 LINUX : editing/selection/5354455-2.html = FAIL
+
+// Missing "misspelled-word" dotted underline
+BUG23497 MAC : editing/selection/unrendered-002.html = IMAGE
+
+// We don't draw the spelling markers at all in test shell.
+BUG11577 WIN LINUX : editing/spelling/inline_spelling_markers.html = FAIL
+BUG11577 WIN LINUX : editing/spelling/spellcheck-attribute.html = FAIL
+BUG11577 WIN LINUX : editing/spelling/spelling-linebreak.html = FAIL
+
+// TODO(erg): Attempted to rebaseline these tests as part of the above
+// 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned
+// tree red. May be more involved then just rebaselining.
+BUG11613 LINUX : editing/deleting/5168598.html = FAIL
+BUG11613 LINUX : editing/inserting/5607069-2.html = FAIL
+
+BUG14832 : editing/selection/user-drag-element-and-user-select-none.html = FAIL
+
+// Fails due to textInputController.setInputMethod not implemented for Mac.
+BUG19665 MAC : platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html = FAIL
+BUG19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html = FAIL
+
+// This only crashes on the old buildbot slave.
+// FIXME: Once we transition over to the new buildbot slaves, remove this line.
+BUG26344 LINUX DEBUG : platform/mac/editing/deleting/backward-delete.html = CRASH TEXT
+
+// New tests. Failures from merge 51210:51325.
+BUG28646 : editing/selection/transformed-selection-rects.html = FAIL
+
+// New failures from merge 51412:51455.
+BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
+
+// Flaky
+BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
+
+BUG38376 WIN : editing/deleting/5390681-2.html = IMAGE+TEXT
+BUG38653 MAC : editing/selection/find-yensign-and-backslash.html = TEXT
+
+BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
+BUG39855 LINUX RELEASE : editing/selection/extend-selection.html = PASS TIMEOUT
+
+// Need to dump context menu items on eventSender.contextClick(true).
+BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
+
+BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
+BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
+
+// Selection is wrong.
+BUG10292 MAC : editing/selection/5354455-1.html = FAIL
+
+// Tests added in r69269.
+// Apple-Mac port corrects "notationl" to "notational" automatically?
+BUG58254 MAC : platform/mac/editing/spelling/autocorrection-delete.html = IMAGE+TEXT
+BUG58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html = IMAGE+TEXT
+BUG58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
+BUG58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAGE+TEXT
+
+BUGJAMESR WIN LINUX : editing/spelling/spelling-contenteditable.html = TEXT
+BUGJAMESR WIN LINUX : editing/spelling/spelling-textarea.html = TEXT
+
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
 // Low priority, unclear if test expectations are correct (see bug)
@@ -968,20 +1052,6 @@ BUG22700 LINUX WIN : fast/canvas/canvas-getImageData.html = FAIL
 // and gif, which is a low priority.
 BUG10318 WIN LINUX : fast/canvas/toDataURL-supportedTypes.html = FAIL
 
-// Issue 3273: TextInputController::firstRectForCharacterRange not implemented.
-BUG3273 : editing/selection/move-left-right.html = FAIL
-BUG3273 MAC : platform/mac/editing/input/caret-primary-bidi.html = FAIL PASS
-BUG3273 MAC : platform/mac/editing/input/firstrectforcharacterrange-plain.html = FAIL PASS
-BUG3273 MAC : platform/mac/editing/input/range-for-empty-document.html = FAIL PASS
-BUGWK38100 : editing/inserting/caret-position.html = TEXT PASS
-
-// WebKit 50358:50395
-BUG3273 WIN LINUX : fast/text/international/thai-cursor-position.html = TEXT
-// WebKit roll 51512:51524
-BUG3273 : editing/selection/5825350-1.html = FAIL
-BUG3273 : editing/selection/5825350-2.html = FAIL
-BUG3273 : editing/selection/mixed-editability-10.html = FAIL
-
 // Regression from the 41362:41402 merge.
 BUG8402 MAC : fast/forms/drag-out-of-textarea.html = FAIL
 
@@ -1003,11 +1073,6 @@ BUG30536 : http/tests/misc/favicon-as-image.html = FAIL
 BUG10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onProgress.html = FAIL
 
 // Post-MERGE failures: these will all need to be fixed one day
-
-// Linux pixeltest failure: caret is in the wrong place
-// Upstream WebKit also skips this test and Safari with latest WebKit shows
-// same behavior as Chromium.
-BUG10324 LINUX WIN : editing/selection/caret-rtl-2.html = IMAGE
 
 // This test assumes we're using unix paths and looks for a file:///test
 // path.  We correctly return file:///C:/test on Windows.  We should fix
@@ -1150,10 +1215,6 @@ BUG10364 MAC : http/tests/navigation/reload-subframe-object.html = FAIL
 
 // bad key event handling
 BUG10366 MAC : fast/events/option-tab.html = FAIL CRASH
-
-// selection
-BUG10369 MAC : editing/selection/5109817.html = FAIL
-BUG10369 LINUX : editing/selection/5354455-2.html = FAIL
 
 // The test says you should see numbers, but we display letters.
 // It looks like we are missing the WebKit "WeightWatcher" fonts,
@@ -1489,9 +1550,6 @@ BUG23498 MAC : tables/mozilla_expected_failures/marvin/table_overflow_style_refl
 BUG23498 MAC : tables/mozilla_expected_failures/other/empty_cells.html = IMAGE
 BUG23498 MAC : tables/mozilla_expected_failures/other/test4.html = IMAGE+TEXT IMAGE
 
-// Missing "misspelled-word" dotted underline
-BUG23497 MAC : editing/selection/unrendered-002.html = IMAGE
-
 // Widget location is just slightly off
 BUG23496 MAC : css1/box_properties/acid_test.html = IMAGE
 BUG23496 MAC : css2.1/t09-c5526c-display-00-e.html = IMAGE
@@ -1739,10 +1797,6 @@ BUG10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 // New failures from Merge 41078:41149
 BUG10430 LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
-// Regression from merge 41268:41286
-// See above comment about this test on linux/win.
-BUG10435 MAC : editing/selection/designmode-no-caret.html = FAIL
-
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
 BUG10441 WIN DEBUG : transitions/transition-end-event-transform.html = FAIL PASS
@@ -1873,13 +1927,6 @@ BUG11251 LINUX WIN DEBUG : fast/forms/text-control-intrinsic-widths.html = FAIL
 BUG11251 WIN LINUX : svg/custom/svg-fonts-in-text-controls.html = FAIL
 BUG11251 WIN LINUX : fast/forms/textarea-metrics.html = FAIL
 
-// Unimplemented test shell features causing editing tests to fail
-
-// We don't draw the spelling markers at all in test shell.
-BUG11577 WIN LINUX : editing/spelling/inline_spelling_markers.html = FAIL
-BUG11577 WIN LINUX : editing/spelling/spellcheck-attribute.html = FAIL
-BUG11577 WIN LINUX : editing/spelling/spelling-linebreak.html = FAIL
-
 // Regresssions from WebKit Merge 43114:43242 that just need to be re-baselined.
 BUG11483 LINUX : fast/forms/input-text-double-click.html = FAIL
 BUG11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
@@ -1887,12 +1934,6 @@ BUG11483 LINUX : svg/text/foreignObject-repaint.xml = FAIL
 // Regressions from WebKit merge 43242:43321.  These just need to re-baselining:
 BUG24229 LINUX : fast/forms/select-dirty-parent-pref-widths.html = FAIL
 BUG24229 LINUX : svg/transforms/animated-path-inside-transformed-html.xhtml = FAIL
-
-// TODO(erg): Attempted to rebaseline these tests as part of the above
-// 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned
-// tree red. May be more involved then just rebaselining.
-BUG11613 LINUX : editing/deleting/5168598.html = FAIL
-BUG11613 LINUX : editing/inserting/5607069-2.html = FAIL
 
 // Already baselined for chromium-win, may need to be done for mac/linux as well.
 BUG11796 LINUX : fast/forms/search-styled.html = FAIL
@@ -1911,8 +1952,6 @@ BUG32231 WIN DEBUG : tables/mozilla/bugs/bug28341.html = IMAGE PASS
 
 // Newly added test http://trac.webkit.org/changeset/44816
 BUG18733 WIN SLOW : http/tests/xmlhttprequest/cross-origin-no-authorization.html = PASS
-
-BUG14832 : editing/selection/user-drag-element-and-user-select-none.html = FAIL
 
 // WebKit 45017:45086
 BUG15217 : fast/js/dictionary-no-cache.html = FAIL
@@ -1962,10 +2001,6 @@ BUG26737 : fast/js/prototypes.html = FAIL
 
 // WebKit roll r47417:47528
 BUG19766 LINUX : fast/replaced/width100percent-menulist.html = FAIL
-
-// Fails due to textInputController.setInputMethod not implemented for Mac.
-BUG19665 MAC : platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html = FAIL
-BUG19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html = FAIL
 
 // WebKit 47777:47790 - getOwnPropertyDescriptor
 BUG20345 : fast/js/getOwnPropertyDescriptor.html = FAIL
@@ -2051,9 +2086,6 @@ BUG25884 WIN LINUX : fast/dom/Document/CaretRangeFromPoint/caretRangeFromPoint-i
 // This only crashes on the old buildbot slave. It fails image, like the other slaves, on the new one.
 // FIXME: Make this just be IMAGE after we move over to the new bots.
 BUG26344 LINUX DEBUG : fast/text/atsui-partial-selection.html = CRASH IMAGE
-// This only crashes on the old buildbot slave.
-// FIXME: Once we transition over to the new buildbot slaves, remove this line.
-BUG26344 LINUX DEBUG : platform/mac/editing/deleting/backward-delete.html = CRASH TEXT
 
 BUGWK45957 : fast/multicol/column-rules-stacking.html = FAIL
 
@@ -2151,12 +2183,6 @@ BUG2844 SKIP : http/tests/appcache/non-html.xhtml = TIMEOUT PASS
 BUG29018 : plugins/reloadplugins-no-pages.html = TEXT
 BUG29018 : plugins/reloadplugins-and-pages.html = TIMEOUT
 
-// New tests. Failures from merge 51210:51325.
-BUG28646 : editing/selection/transformed-selection-rects.html = FAIL
-
-// New failures from merge 51412:51455.
-BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
-
 
 // New failures from WebKit r51577
 BUG29164 WIN LINUX MAC : fast/frames/sandboxed-iframe-plugins.html = TEXT
@@ -2245,9 +2271,6 @@ BUG31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 // WebKit roll 52852 -> 52867
 BUG32018 : http/tests/websocket/tests/frame-lengths.html = PASS TIMEOUT
 BUG32018 DEBUG : http/tests/websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
-
-// Flaky
-BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
 
 // from http://trac.webkit.org/changeset/53086
 BUG32153 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE+TEXT
@@ -2343,7 +2366,6 @@ BUG37962 MAC : plugins/iframe-shims.html = TEXT PASS
 BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
 
 BUG38375 : plugins/npruntime/round-trip-npobject.html = TEXT
-BUG38376 WIN : editing/deleting/5390681-2.html = IMAGE+TEXT
 
 // The touch targeting logic was recently changed.
 BUG36415 : fast/events/touch/touch-target.html = TEXT
@@ -2364,7 +2386,6 @@ BUG38578 : plugins/override-node-method.html = TEXT
 
 // WebKit roll 56197:56239.
 // Needs layoutTestController.setMediaType() (implemented on Qt only)
-BUG38653 MAC : editing/selection/find-yensign-and-backslash.html = TEXT
 BUG38656 : fast/media/print-restores-previous-mediatype.html = TEXT
 
 // Needs layoutTestController.setViewModeMediaFeature() (implemented on Qt only)
@@ -2443,9 +2464,6 @@ BUGWK38360 WIN LINUX : fast/images/svg-background-partial-redraw.html = FAIL
 BUGWK38360 WIN LINUX : svg/carto.net/tabgroup.svg = FAIL
 
 BUG42895 : media/media-document-audio-size.html = TIMEOUT
-
-BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
-BUG39855 LINUX RELEASE : editing/selection/extend-selection.html = PASS TIMEOUT
 
 // Failing a few times, flak dashboard seems to agree.
 BUG41973 MAC : svg/text/text-text-05-t.svg = IMAGE
@@ -2599,9 +2617,6 @@ BUG45991 MAC RELEASE : canvas/philip/tests/2d.imageData.get.source.outside.html 
 
 // This seems to be failing on windows only.
 BUG45991 WIN : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
-
-// Need to dump context menu items on eventSender.contextClick(true).
-BUGWK39105 : editing/spelling/context-menu-suggestions.html = TEXT
 
 // Flaky tests
 BUG44229 WIN LINUX : fast/loader/recursive-before-unload-crash.html = PASS TEXT
@@ -2988,8 +3003,6 @@ BUGWK45209 WIN DEBUG SLOW : inspector/debugger-autocontinue-on-syntax-error.html
 BUGWK45209 WIN DEBUG SLOW : inspector/debugger-breakpoints-not-activated-on-reload.html = PASS
 BUGWK45209 WIN DEBUG SLOW : inspector/dom-breakpoints.html = PASS
 
-BUGWK45438 : editing/spelling/spelling-backspace-between-lines.html = TEXT
-
 // WebKit r67068
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html = IMAGE
@@ -3030,8 +3043,6 @@ BUGDPRANKE LINUX DEBUG : http/tests/incremental/slow-utf8-text.pl = TIMEOUT PASS
 BUGDPRANKE LINUX DEBUG : fast/forms/restore-selection-after-layout.html = TEXT
 
 BUGDPRANKE WIN LINUX : media/video-poster.html = PASS TEXT
-
-BUGWK45898 : editing/selection/context-menu-on-text.html = TEXT
 
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas-repaint.html = IMAGE
 BUGWEBGL : fast/canvas/webgl/css-webkit-canvas.html = IMAGE
@@ -3109,9 +3120,6 @@ BUGWK44406 : http/tests/appcache/foreign-fallback.html = PASS FAIL CRASH
 // This test starts to timeout during build bots were down between 68880:68920
 BUG_HCLAM WIN : fast/css/acid2-pixel.html = TIMEOUT PASS
 
-// Selection is wrong.
-BUG10292 MAC : editing/selection/5354455-1.html = FAIL
-
 // Started to fail at WebKit r68975 Chromium r61295-61296.
 BUG9798 DEBUG : http/tests/loading/preload-img-test.html = TIMEOUT
 
@@ -3149,13 +3157,6 @@ BUG58333 WIN LINUX : fast/css/font-face-download-error.html = TEXT PASS
 // Flakiness first seen
 // http://build.chromium.org/buildbot/waterfall.fyi/builders/Webkit%20%28webkit.org%29/builds/35995
 BUG58212 WIN : http/tests/appcache/main-resource-redirect.html = TEXT TIMEOUT PASS
-
-// Tests added in r69269.
-// Apple-Mac port corrects "notationl" to "notational" automatically?
-BUG58254 MAC : platform/mac/editing/spelling/autocorrection-delete.html = IMAGE+TEXT
-BUG58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html = IMAGE+TEXT
-BUG58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
-BUG58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAGE+TEXT
 
 BUG58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TEXT TIMEOUT
 
@@ -3198,8 +3199,6 @@ BUG47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
 BUGWK47512 : fast/images/webp-image-decoding.html = TEXT
 
 // Need investigation
-BUGJAMESR WIN LINUX : editing/spelling/spelling-contenteditable.html = TEXT
-BUGJAMESR WIN LINUX : editing/spelling/spelling-textarea.html = TEXT
 BUGJAMESR DEBUG : fast/css/long-css-selector-matches.html = PASS TIMEOUT
 
 BUG59647 WIN : svg/dom/length-list-parser.html = PASS CRASH
