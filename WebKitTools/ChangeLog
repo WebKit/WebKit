@@ -1,5 +1,18 @@
 2010-10-26  David Kilzer  <ddkilzer@apple.com>
 
+        Rename WebArchiveDumpSupport.mm to WebArchiveDumpSupport.cpp
+
+        Reviewed by Adam Roben.
+
+        Part 4 of 4: <http://webkit.org/b/48278> Convert DumpRenderTree webarchive code to CoreFoundation
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        Updated for file moves and renames.
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp: Renamed from DumpRenderTree/mac/WebArchiveDumpSupport.mm.
+        * DumpRenderTree/cf/WebArchiveDumpSupport.h: Renamed from DumpRenderTree/mac/WebArchiveDumpSupport.h.
+
+2010-10-26  David Kilzer  <ddkilzer@apple.com>
+
         Convert WebArchiveDumpSupport.mm from NS objects to CF types
 
         Reviewed by Adam Roben.
