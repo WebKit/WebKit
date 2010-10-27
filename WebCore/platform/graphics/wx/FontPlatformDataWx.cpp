@@ -111,20 +111,25 @@ FontPlatformData::FontPlatformData(const FontDescription& desc, const AtomicStri
     m_size = desc.computedPixelSize();
     m_fontState = VALID;
     m_size = desc.computedPixelSize();
-     
 }
 
-unsigned FontPlatformData::computeHash() const {
-        wxFont* thisFont = m_font->font();
-        ASSERT(thisFont && thisFont->IsOk());
-        
-        // make a hash that is unique for this font, but not globally unique - that is,
-        // a font whose properties are equal should generate the same hash
-        uintptr_t hashCodes[6] = { thisFont->GetPointSize(), thisFont->GetFamily(), thisFont->GetStyle(), 
-                                    thisFont->GetWeight(), thisFont->GetUnderlined(), 
-                                    StringImpl::computeHash(thisFont->GetFaceName().utf8_str()) };
-        
-        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+unsigned FontPlatformData::computeHash() const
+{
+    wxFont* thisFont = m_font->font();
+    ASSERT(thisFont && thisFont->IsOk());
+
+    // make a hash that is unique for this font, but not globally unique - that is,
+    // a font whose properties are equal should generate the same hash
+    uintptr_t hashCodes[6] = {
+        thisFont->GetPointSize(),
+        thisFont->GetFamily(),
+        thisFont->GetStyle(),
+        thisFont->GetWeight(),
+        thisFont->GetUnderlined(), 
+        StringImpl::computeHash(thisFont->GetFaceName().utf8_str())
+    };
+
+    return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
 }
 
 FontPlatformData::~FontPlatformData()

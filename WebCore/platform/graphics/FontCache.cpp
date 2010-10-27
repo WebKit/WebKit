@@ -96,7 +96,7 @@ inline unsigned computeHash(const FontPlatformDataCacheKey& fontKey)
         fontKey.m_weight,
         static_cast<unsigned>(fontKey.m_orientation) << 3 | static_cast<unsigned>(fontKey.m_italic) << 2 | static_cast<unsigned>(fontKey.m_printerFont) << 1 | static_cast<unsigned>(fontKey.m_renderingMode)
     };
-    return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+    return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
 }
 
 struct FontPlatformDataCacheKeyHash {

@@ -43,7 +43,7 @@ struct SecurityOriginHash {
             origin->host().impl() ? origin->host().impl()->hash() : 0,
             origin->port()
         };
-        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+        return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
     }
     static unsigned hash(const RefPtr<SecurityOrigin>& origin)
     {

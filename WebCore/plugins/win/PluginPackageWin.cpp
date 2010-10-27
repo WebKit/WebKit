@@ -312,7 +312,7 @@ unsigned PluginPackage::hash() const
         m_mimeToExtensions.size()
     };
 
-    return StringImpl::computeHash(reinterpret_cast<const UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+    return WTF::StringHasher::createBlobHash<sizeof(hashCodes)>(hashCodes);
 }
 
 bool PluginPackage::equal(const PluginPackage& a, const PluginPackage& b)

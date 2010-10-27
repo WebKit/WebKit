@@ -323,7 +323,7 @@ struct PODTypeWrapperCacheInfoHash {
 
     static unsigned hash(const CacheInfo& info)
     {
-        return StringImpl::computeHash(reinterpret_cast<const UChar*>(&info), sizeof(CacheInfo) / sizeof(UChar));
+        return WTF::StringHasher::createBlobHash<sizeof(CacheInfo)>(&info);
     }
 
     static bool equal(const CacheInfo& a, const CacheInfo& b)
