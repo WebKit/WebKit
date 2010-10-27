@@ -41,33 +41,63 @@ void FontCache::platformInit()
         ASSERT_NOT_REACHED();
 }
 
-const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+FcPattern* createFontConfigPatternForCharacters(const UChar* characters, int length)
 {
-    FcResult fresult;
-    FontPlatformData* prim = const_cast<FontPlatformData*>(&font.primaryFont()->platformData());
+    FcPattern* pattern = FcPatternCreate();
 
-    // FIXME: This should not happen, apparently. We are null-checking
-    // for now just to avoid crashing.
-    if (!prim || !prim->m_pattern)
+    FcCharSet* fontConfigCharSet = FcCharSetCreate();
+    for (int i = 0; i < length; ++i) {
+        if (U16_IS_SURROGATE(characters[i]) && U16_IS_SURROGATE_LEAD(characters[i])
+                && i != length - 1 && U16_IS_TRAIL(characters[i + 1])) {
+            FcCharSetAddChar(fontConfigCharSet, U16_GET_SUPPLEMENTARY(characters[i], characters[i+1]));
+            i++;
+        } else
+            FcCharSetAddChar(fontConfigCharSet, characters[i]);
+    }
+    FcPatternAddCharSet(pattern, FC_CHARSET, fontConfigCharSet);
+    FcCharSetDestroy(fontConfigCharSet);
+
+    FcPatternAddBool(pattern, FC_SCALABLE, FcTrue);
+    FcConfigSubstitute(0, pattern, FcMatchPattern);
+    FcDefaultSubstitute(pattern);
+    return pattern;
+}
+
+FcPattern* findBestFontGivenFallbacks(const FontPlatformData& fontData, FcPattern* pattern)
+{
+    if (!fontData.m_pattern)
         return 0;
 
-    if (!prim->m_fallbacks)
-        prim->m_fallbacks = FcFontSort(0, prim->m_pattern.get(), FcTrue, 0, &fresult);
-
-    FcFontSet* fs = prim->m_fallbacks;
-
-    for (int i = 0; i < fs->nfont; i++) {
-        PlatformRefPtr<FcPattern> fin = adoptPlatformRef(FcFontRenderPrepare(0, prim->m_pattern.get(), fs->fonts[i]));
-        cairo_font_face_t* fontFace = cairo_ft_font_face_create_for_pattern(fin.get());
-        FontPlatformData alternateFont(fontFace, font.fontDescription().computedPixelSize(), false, false);
-        cairo_font_face_destroy(fontFace);
-        alternateFont.m_pattern = fin;
-        SimpleFontData* sfd = getCachedFontData(&alternateFont);
-        if (sfd->containsCharacters(characters, length))
-            return sfd;
+    if (!fontData.m_fallbacks) {
+        FcResult fontConfigResult;
+        fontData.m_fallbacks = FcFontSort(0, fontData.m_pattern.get(), FcTrue, 0, &fontConfigResult);
     }
 
-    return 0;
+    if (!fontData.m_fallbacks)
+        return 0;
+
+    FcFontSet* sets[] = { fontData.m_fallbacks };
+    FcResult fontConfigResult;
+    return FcFontSetMatch(0, sets, 1, pattern, &fontConfigResult);
+}
+
+const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
+{
+    PlatformRefPtr<FcPattern> pattern = adoptPlatformRef(createFontConfigPatternForCharacters(characters, length));
+    const FontPlatformData& fontData = font.primaryFont()->platformData();
+
+    PlatformRefPtr<FcPattern> fallbackPattern = adoptPlatformRef(findBestFontGivenFallbacks(fontData, pattern.get()));
+    if (fallbackPattern) {
+        FontPlatformData alternateFontData(fallbackPattern.get(), font.fontDescription());
+        return getCachedFontData(&alternateFontData);
+    }
+
+    FcResult fontConfigResult;
+    PlatformRefPtr<FcPattern> resultPattern = adoptPlatformRef(FcFontMatch(0, pattern.get(), &fontConfigResult));
+    if (!resultPattern)
+        return 0;
+    FontPlatformData alternateFontData(resultPattern.get(), font.fontDescription());
+    return getCachedFontData(&alternateFontData);
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
