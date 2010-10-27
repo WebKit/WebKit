@@ -3252,7 +3252,3 @@ BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html
 
 // Chromium-mac-specific test, and only runs in DRT.
 BUGWK46868 : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = TEXT
-
-// Will rebaseline once rebaselining tool is working again.
-BUG_DGLAZKOV WIN MAC : fast/blockflow/japanese-lr-text.html = FAIL
-BUG_DGLAZKOV WIN MAC : fast/blockflow/japanese-rl-text.html = FAIL
