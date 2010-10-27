@@ -10,6 +10,7 @@
 		1A02C84F125D4A8400E3F4BD /* Find.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A02C84E125D4A8400E3F4BD /* Find.cpp */; };
 		1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 1A02C84B125D4A5E00E3F4BD /* find.html */; };
 		1A5FEFDD1270E2A3000E2921 /* EvaluateJavaScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */; };
+		333B9CE21277F23100FEFCE3 /* PreventEmptyUserAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */; };
 		BC131885117114B600B69727 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
 		BC131A9B1171316900B69727 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131A9A1171316900B69727 /* main.mm */; };
 		BC131AA9117131FC00B69727 /* TestsController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC131AA8117131FC00B69727 /* TestsController.cpp */; };
@@ -83,6 +84,7 @@
 		1A02C84B125D4A5E00E3F4BD /* find.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = find.html; sourceTree = "<group>"; };
 		1A02C84E125D4A8400E3F4BD /* Find.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Find.cpp; sourceTree = "<group>"; };
 		1A5FEFDC1270E2A3000E2921 /* EvaluateJavaScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EvaluateJavaScript.cpp; sourceTree = "<group>"; };
+		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* TestWebKitAPI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestWebKitAPI; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC131883117114A800B69727 /* PlatformUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformUtilities.h; sourceTree = "<group>"; };
 		BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformUtilitiesMac.mm; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				BCBD370F125AA2EB00D2C29F /* FrameMIMETypeHTML.cpp */,
 				BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */,
 				BC909779125571AB00083756 /* PageLoadBasic.cpp */,
+				333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */,
 				C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */,
 				BC90995D12567BC100083756 /* WKString.cpp */,
 				BC9099931256ACF100083756 /* WKStringJSString.cpp */,
@@ -377,6 +380,7 @@
 				BC575BC0126F5752006F0F12 /* PlatformUtilities.cpp in Sources */,
 				BCB68040126FBFE100642A61 /* DocumentStartUserScriptAlertCrash.cpp in Sources */,
 				1A5FEFDD1270E2A3000E2921 /* EvaluateJavaScript.cpp in Sources */,
+				333B9CE21277F23100FEFCE3 /* PreventEmptyUserAgent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

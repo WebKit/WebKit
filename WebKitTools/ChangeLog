@@ -1,3 +1,20 @@
+2010-10-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 shouldn't try to send an empty user agent
+        https://bugs.webkit.org/show_bug.cgi?id=48397
+        
+        Add a test that when we set our custom user agent to an empty string, we don't send
+        an empty user agent.
+
+        * TestWebKitAPI/Tests/WebKit2/PreventEmptyUserAgent.cpp: Added.
+        (TestWebKitAPI::didRunJavaScript): Make sure that the result of navigator.userAgent isn't empty.
+        (TestWebKitAPI::TEST): Set our custom user agent to the empty string, and run navigator.userAgent.
+        
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add the new file.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj: Ditto.
+
 2010-10-27  Adam Roben  <aroben@apple.com>
 
         Check in file I forgot in r70653

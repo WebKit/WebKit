@@ -664,7 +664,7 @@ void WebPage::setCustomUserAgent(const String& customUserAgent)
 
 String WebPage::userAgent() const
 {
-    if (!m_customUserAgent.isNull())
+    if (!m_customUserAgent.isEmpty())
         return m_customUserAgent;
 
     // FIXME: This should be based on an application name.

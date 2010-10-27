@@ -1,3 +1,18 @@
+2010-10-26  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 shouldn't try to send an empty user agent
+        https://bugs.webkit.org/show_bug.cgi?id=48397
+        
+        Change the check of the custom user agent to an empty check instead of a null check. When the client application
+        sets a custom user agent and then resets it, the custom user agent is set to an empty string. If all we do
+        is check for a null string, then we will think we have a custom user agent (which is empty) and send an empty
+        user agent.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::userAgent):
+
 2010-10-27  Adam Roben  <aroben@apple.com>
 
         Don't call NPP_GetValue if the plugin didn't provide an implementation

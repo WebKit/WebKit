@@ -449,6 +449,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WebKit2\PreventEmptyUserAgent.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\simple.html"
 					>
 				</File>
