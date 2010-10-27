@@ -111,7 +111,7 @@ class TestExpectationsTestCase(unittest.TestCase):
             ["BUG1234 DEBUG MAC : passes/text.html = TIMEOUT PASS"],
             "")
         self.assert_lines_lint(
-            ["SLOW DEFER BUG1234 : passes/text.html = PASS"],
+            ["SLOW BUG1234 : passes/text.html = PASS"],
             "")
         self.assert_lines_lint(
             ["WONTFIX SKIP : passes/text.html = TIMEOUT"],
@@ -126,10 +126,6 @@ class TestExpectationsTestCase(unittest.TestCase):
             ["SKIP : passes/text.html = PASS"],
             "Test lacks BUG modifier. "
             "passes/text.html  [test/expectations] [2]")
-        self.assert_lines_lint(
-            ["WONTFIX DEFER : passes/text.html = PASS"],
-            "Test cannot be both DEFER and WONTFIX. "
-            "passes/text.html  [test/expectations] [5]")
 
     def test_expectation_errors(self):
         self.assert_lines_lint(

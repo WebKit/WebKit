@@ -121,7 +121,7 @@ class ChromiumPortTest(unittest.TestCase):
         fake_test = os.path.join(port.layout_tests_dir(), "fast/js/not-good.js")
 
         port.test_expectations = lambda: """BUG_TEST SKIP : fast/js/not-good.js = TEXT
-DEFER LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
+LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
         port.test_expectations_overrides = lambda: ''
         port.tests = lambda paths: set()
         port.path_exists = lambda test: True

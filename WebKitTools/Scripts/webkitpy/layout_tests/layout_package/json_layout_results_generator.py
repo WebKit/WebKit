@@ -42,7 +42,6 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
     # Additional JSON fields.
     WONTFIX = "wontfixCounts"
-    DEFERRED = "deferredCounts"
 
     # Note that we omit test_expectations.FAIL from this list because
     # it should never show up (it's a legacy input expectation, never
@@ -166,9 +165,6 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         self._insert_item_into_raw_list(results_for_builder,
             len(self._expectations.get_tests_with_timeline(
                 test_expectations.NOW)), self.ALL_FIXABLE_COUNT)
-        self._insert_item_into_raw_list(results_for_builder,
-            self._get_failure_summary_entry(test_expectations.DEFER),
-            self.DEFERRED)
         self._insert_item_into_raw_list(results_for_builder,
             self._get_failure_summary_entry(test_expectations.WONTFIX),
             self.WONTFIX)

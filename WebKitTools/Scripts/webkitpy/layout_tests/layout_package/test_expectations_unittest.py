@@ -134,17 +134,12 @@ class TestExpectationsTest(Base):
             self.get_test('failures/expected/text.html')),
             set([TEXT, CRASH]))
 
-    def test_defer(self):
-        self.parse_exp('BUGX DEFER : failures/expected/text.html = TEXT')
-        self.assertEqual(self._exp.get_options(
-            self.get_test('failures/expected/text.html')), ['bugx', 'defer'])
-
     def test_precedence(self):
         # This tests handling precedence of specific lines over directories
         # and tests expectations covering entire directories.
         exp_str = """
 BUGX : failures/expected/text.html = TEXT
-BUGX DEFER : failures/expected = IMAGE
+BUGX WONTFIX : failures/expected = IMAGE
 """
         self.parse_exp(exp_str)
         self.assert_exp('failures/expected/text.html', TEXT)
@@ -226,11 +221,6 @@ BUGX DEFER : failures/expected = IMAGE
         # A test cannot be SLOW and expected to TIMEOUT.
         self.assertRaises(SyntaxError, self.parse_exp,
             'BUG_TEST SLOW : failures/expected/timeout.html = TIMEOUT')
-
-    def test_semantic_wontfix_defer(self):
-        # A test cannot be WONTFIX and DEFER.
-        self.assertRaises(SyntaxError, self.parse_exp,
-            'BUG_TEST WONTFIX DEFER : failures/expected/text.html = TEXT')
 
     def test_semantic_rebaseline(self):
         # Can't lint a file w/ 'REBASELINE' in it.

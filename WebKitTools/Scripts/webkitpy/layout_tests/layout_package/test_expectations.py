@@ -43,7 +43,7 @@ _log = logging.getLogger("webkitpy.layout_tests.layout_package."
 
 # Test expectation and modifier constants.
 (PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, TIMEOUT, CRASH, SKIP, WONTFIX,
- DEFER, SLOW, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(16)
+ SLOW, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(15)
 
 # Test expectation file update action constants
 (NO_CHANGE, REMOVE_TEST, REMOVE_PLATFORM, ADD_PLATFORMS_EXCEPT_THIS) = range(4)
@@ -228,12 +228,11 @@ class TestExpectationsFile:
       DEBUG : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
       DEBUG SKIP : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
       LINUX DEBUG SKIP : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
-      DEFER LINUX WIN : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
+      LINUX WIN : LayoutTests/fast/js/no-good.js = TIMEOUT PASS
 
     SKIP: Doesn't run the test.
     SLOW: The test takes a long time to run, but does not timeout indefinitely.
     WONTFIX: For tests that we never intend to pass on a given platform.
-    DEFER: Test does not count in our statistics for the current release.
     DEBUG: Expectations apply only to the debug build.
     RELEASE: Expectations apply only to release build.
     LINUX/WIN/WIN-XP/WIN-VISTA/WIN-7/MAC: Expectations apply only to these
@@ -241,7 +240,6 @@ class TestExpectationsFile:
 
     Notes:
       -A test cannot be both SLOW and TIMEOUT
-      -A test cannot be both DEFER and WONTFIX
       -A test should only be one of IMAGE, TEXT, IMAGE+TEXT, or FAIL. FAIL is
        a migratory state that currently means either IMAGE, TEXT, or
        IMAGE+TEXT. Once we have finished migrating the expectations, we will
@@ -249,7 +247,7 @@ class TestExpectationsFile:
        identifier.
       -A test can be included twice, but not via the same path.
       -If a test is included twice, then the more precise path wins.
-      -CRASH tests cannot be DEFER or WONTFIX
+      -CRASH tests cannot be WONTFIX
     """
 
     EXPECTATIONS = {'pass': PASS,
@@ -282,14 +280,12 @@ class TestExpectationsFile:
 
     MODIFIERS = {'skip': SKIP,
                  'wontfix': WONTFIX,
-                 'defer': DEFER,
                  'slow': SLOW,
                  'rebaseline': REBASELINE,
                  'none': NONE}
 
     TIMELINES = {'wontfix': WONTFIX,
-                 'now': NOW,
-                 'defer': DEFER}
+                 'now': NOW}
 
     RESULT_TYPES = {'skip': SKIP,
                     'pass': PASS,
@@ -621,10 +617,6 @@ class TestExpectationsFile:
             if not self._is_debug_mode and 'release' not in options:
                 return False
 
-        if 'wontfix' in options and 'defer' in options:
-            self._add_error(lineno, 'Test cannot be both DEFER and WONTFIX.',
-                test_and_expectations)
-
         if self._is_lint_mode and 'rebaseline' in options:
             self._add_error(lineno,
                 'REBASELINE should only be used for running rebaseline.py. '
@@ -773,8 +765,6 @@ class TestExpectationsFile:
 
         if 'wontfix' in modifiers:
             self._timeline_to_tests[WONTFIX].add(test)
-        elif 'defer' in modifiers:
-            self._timeline_to_tests[DEFER].add(test)
         else:
             self._timeline_to_tests[NOW].add(test)
 

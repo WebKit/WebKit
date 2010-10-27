@@ -1011,16 +1011,13 @@ class TestRunner:
         tests = self._expectations.get_tests_with_result_type(result_type)
         now = result_summary.tests_by_timeline[test_expectations.NOW]
         wontfix = result_summary.tests_by_timeline[test_expectations.WONTFIX]
-        defer = result_summary.tests_by_timeline[test_expectations.DEFER]
 
         # We use a fancy format string in order to print the data out in a
         # nicely-aligned table.
-        fmtstr = ("Expect: %%5d %%-8s (%%%dd now, %%%dd defer, %%%dd wontfix)"
-                  % (self._num_digits(now), self._num_digits(defer),
-                  self._num_digits(wontfix)))
+        fmtstr = ("Expect: %%5d %%-8s (%%%dd now, %%%dd wontfix)"
+                  % (self._num_digits(now), self._num_digits(wontfix)))
         self._printer.print_expected(fmtstr %
-            (len(tests), result_type_str, len(tests & now),
-             len(tests & defer), len(tests & wontfix)))
+            (len(tests), result_type_str, len(tests & now), len(tests & wontfix)))
 
     def _num_digits(self, num):
         """Returns the number of digits needed to represent the length of a
@@ -1241,12 +1238,7 @@ class TestRunner:
                      (passed, total, pct_passed))
         self._printer.print_actual("")
         self._print_result_summary_entry(result_summary,
-            test_expectations.NOW, "Tests to be fixed for the current release")
-
-        self._printer.print_actual("")
-        self._print_result_summary_entry(result_summary,
-            test_expectations.DEFER,
-            "Tests we'll fix in the future if they fail (DEFER)")
+            test_expectations.NOW, "Tests to be fixed")
 
         self._printer.print_actual("")
         self._print_result_summary_entry(result_summary,
