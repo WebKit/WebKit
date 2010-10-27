@@ -1,3 +1,9 @@
+2010-10-26  Ariya Hidayat  <ariya@sencha.com>
+
+        Unreviewed, change the order of my emails for bugzilla autocompletion.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-10-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Kilzer.
