@@ -446,19 +446,15 @@ WebInspector.ResourcesPanel.prototype = {
     {
         this.largerResourcesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Use small resource rows."), "resources-larger-resources-status-bar-item");
 
-        WebInspector.applicationSettings.addEventListener("loaded", this._settingsLoaded, this);
-        this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
-        this.sortingSelectElement = document.createElement("select");
-        this.sortingSelectElement.className = "status-bar-item";
-        this.sortingSelectElement.addEventListener("change", this._changeSortingFunction.bind(this), false);
-    },
-
-    _settingsLoaded: function()
-    {
         this.largerResourcesButton.toggled = WebInspector.applicationSettings.resourcesLargeRows;
         if (!WebInspector.applicationSettings.resourcesLargeRows)
             this._setLargerResources(WebInspector.applicationSettings.resourcesLargeRows);
         this._loadSortOptions();
+
+        this.largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
+        this.sortingSelectElement = document.createElement("select");
+        this.sortingSelectElement.className = "status-bar-item";
+        this.sortingSelectElement.addEventListener("change", this._changeSortingFunction.bind(this), false);
     },
 
     _loadSortOptions: function()

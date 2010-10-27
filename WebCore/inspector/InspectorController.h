@@ -124,10 +124,6 @@ public:
     Page* inspectedPage() const { return m_inspectedPage; }
     void reloadPage();
 
-    void saveApplicationSettings(const String& settings);
-    void saveSessionSettings(const String&);
-    void getSettings(RefPtr<InspectorObject>*);
-
     void restoreInspectorStateFromCookie(const String& inspectorCookie);
 
     void inspect(Node*);
@@ -374,9 +370,6 @@ private:
 #endif
     String m_showAfterVisible;
     RefPtr<Node> m_highlightedNode;
-#if ENABLE(INSPECTOR)
-    RefPtr<InspectorValue> m_sessionSettings;
-#endif
     unsigned m_groupLevel;
     ConsoleMessage* m_previousMessage;
     bool m_settingsLoaded;

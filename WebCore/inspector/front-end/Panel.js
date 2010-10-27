@@ -34,7 +34,7 @@ WebInspector.Panel = function(name)
     this.element.addStyleClass(name);
     this._panelName = name;
 
-    WebInspector.applicationSettings.installSetting(this._sidebarWidthSettingName(), this._panelName + "-sidebar-width", undefined);
+    WebInspector.applicationSettings.installApplicationSetting(this._sidebarWidthSettingName(), undefined);
 }
 
 // Should by in sync with style declarations.

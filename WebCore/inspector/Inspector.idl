@@ -94,12 +94,8 @@ module core {
         // This method is going to be broken down into smaller parts.
         [handler=Controller] void populateScriptObjects();
 
-        [handler=Controller] void getSettings(out Object settings);
         [handler=Controller] void getInspectorState(out Object state);
         [handler=Controller] void storeLastActivePanel(in String panelName);
-
-        [handler=Controller] void saveApplicationSettings(in String settings);
-        [handler=Controller] void saveSessionSettings(in String settings);
 
         [handler=Controller] void setSearchingForNode(in boolean enabled, out boolean newState);
 

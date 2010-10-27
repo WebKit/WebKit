@@ -611,15 +611,10 @@ WebInspector.NetworkPanel.prototype = {
         this._clearButton.addEventListener("click", this._reset.bind(this), false);
 
         this._largerResourcesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Use small resource rows."), "network-larger-resources-status-bar-item");
-        WebInspector.applicationSettings.addEventListener("loaded", this._settingsLoaded, this);
-        this._largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
-    },
-
-    _settingsLoaded: function()
-    {
         this._largerResourcesButton.toggled = WebInspector.applicationSettings.resourcesLargeRows;
         if (!WebInspector.applicationSettings.resourcesLargeRows)
             this._setLargerResources(WebInspector.applicationSettings.resourcesLargeRows);
+        this._largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
     },
 
     set mainResourceLoadTime(x)

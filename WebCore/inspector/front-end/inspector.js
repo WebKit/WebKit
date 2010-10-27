@@ -530,8 +530,8 @@ WebInspector.doLoadedDone = function()
     document.body.addStyleClass("port-" + port);
 
     InspectorFrontendHost.loaded();
-    WebInspector.Settings.initialize();
-    
+    WebInspector.applicationSettings = new WebInspector.Settings();
+
     this._registerShortcuts();
 
     // set order of some sections explicitly
@@ -1504,8 +1504,6 @@ WebInspector.reset = function()
         if ("reset" in panel)
             panel.reset();
     }
-
-    this.sessionSettings.reset();
 
     this.resources = {};
     this.cookieDomains = {};

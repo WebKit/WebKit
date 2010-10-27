@@ -45,7 +45,6 @@ InspectorState::InspectorState(InspectorClient* client)
     registerBoolean(timelineProfilerEnabled, false, "timelineProfilerEnabled", (const char*)0);
     registerBoolean(searchingForNode, false, "searchingForNodeEnabled", (const char*)0);
     registerBoolean(profilerAlwaysEnabled, false, (const char*)0, "profilerEnabled");
-    registerString(frontendSettings, "", (const char*)0, "frontendSettings");
     registerBoolean(debuggerAlwaysEnabled, false, (const char*)0, "debuggerEnabled");
     registerString(lastActivePanel, InspectorController::LastActivePanel, (const char*)0, "lastActivePanel");
     registerBoolean(inspectorStartsAttached, true, (const char*)0, "InspectorStartsAttached");

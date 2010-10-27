@@ -60,7 +60,13 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
 
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
-    WebInspector.applicationSettings.addEventListener("loaded", this._settingsLoaded, this);
+    var format = WebInspector.applicationSettings.colorFormat;
+    if (format === "hex")
+        this.settingsSelectElement[0].selected = true;
+    else if (format === "rgb")
+        this.settingsSelectElement[1].selected = true;
+    else if (format === "hsl")
+        this.settingsSelectElement[2].selected = true;
 
     this.titleElement.appendChild(this.settingsSelectElement);
     this._computedStylePane = computedStylePane;
@@ -95,17 +101,6 @@ WebInspector.StylesSidebarPane.PseudoIdNames = [
 ];
 
 WebInspector.StylesSidebarPane.prototype = {
-    _settingsLoaded: function()
-    {
-        var format = WebInspector.applicationSettings.colorFormat;
-        if (format === "hex")
-            this.settingsSelectElement[0].selected = true;
-        if (format === "rgb")
-            this.settingsSelectElement[1].selected = true;
-        if (format === "hsl")
-            this.settingsSelectElement[2].selected = true;
-    },
-
     _contextMenuEventFired: function(event)
     {
         var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
@@ -590,15 +585,10 @@ WebInspector.ComputedStyleSidebarPane = function()
     var showInheritedCheckbox = new WebInspector.Checkbox(WebInspector.UIString("Show inherited"), "sidebar-pane-subtitle");
     this.titleElement.appendChild(showInheritedCheckbox.element);
 
-    function settingsLoaded()
-    {
-        if (WebInspector.applicationSettings.showInheritedComputedStyleProperties) {
-            this.bodyElement.addStyleClass("show-inherited");
-            showInheritedCheckbox.checked = true;
-        }
+    if (WebInspector.applicationSettings.showInheritedComputedStyleProperties) {
+        this.bodyElement.addStyleClass("show-inherited");
+        showInheritedCheckbox.checked = true;
     }
-
-    WebInspector.applicationSettings.addEventListener("loaded", settingsLoaded.bind(this));
 
     function showInheritedToggleFunction(event)
     {

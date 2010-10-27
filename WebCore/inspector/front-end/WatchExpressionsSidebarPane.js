@@ -31,11 +31,11 @@
 WebInspector.WatchExpressionsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Watch Expressions"));
-    WebInspector.applicationSettings.addEventListener("loaded", this._settingsLoaded, this);
+    this.reset();
 }
 
 WebInspector.WatchExpressionsSidebarPane.prototype = {
-    _settingsLoaded: function()
+    reset: function()
     {
         this.bodyElement.removeChildren();
 
