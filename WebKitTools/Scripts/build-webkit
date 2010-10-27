@@ -523,6 +523,8 @@ for my $dir (@projects) {
             $result = buildVisualStudioProject("win/WebKit.vcproj/WebKit.sln", $clean);
         }
     }
+    # Various build* calls above may change the CWD.
+    chdirWebKit();
 
     if (exitStatus($result)) {
         my $scriptDir = relativeScriptsDir();
@@ -539,7 +541,6 @@ for my $dir (@projects) {
         }
         exit exitStatus($result);
     }
-    chdirWebKit();
 }
 
 # Don't report the "WebKit is now built" message after a clean operation.

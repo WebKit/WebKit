@@ -48,7 +48,6 @@ class PrintVisualStudioExpressLogs(object):
 
     def _find_buildlogs(self, build_directory):
         build_log_paths = []
-        # FIXME: Walking the obj/ root under the build directory might be faster.
         for dirpath, dirnames, filenames in os.walk(build_directory):
             for file_name in filenames:
                 if file_name == "BuildLog.htm":
@@ -56,12 +55,20 @@ class PrintVisualStudioExpressLogs(object):
                     build_log_paths.append(file_path)
         return build_log_paths
 
-    def main(self):
+    def _obj_directory(self):
+        scripts_directory = os.path.dirname(__file__)
+        build_directory_script_path = os.path.join(scripts_directory, "webkit-build-directory")
         # FIXME: ports/webkit.py should provide the build directory in a nice API.
-        build_directory = self._executive.run_command(["webkit-build-directory", "--configuration"]).rstrip()
-        build_log_paths = self._find_buildlogs(build_directory)
+        # NOTE: The windows VSE build does not seem to use different directories
+        # for Debug and Release.
+        build_directory = self._executive.run_command([build_directory_script_path, "--top-level"]).rstrip()
+        return os.path.join(build_directory, "obj")
 
-        print "Found %s Visual Studio Express Build Logs:%s" % (len(build_log_paths), "\n".join(build_log_paths))
+    def main(self):
+        obj_directory = self._obj_directory()
+        build_log_paths = self._find_buildlogs(obj_directory)
+
+        print "Found %s Visual Studio Express Build Logs:\n%s" % (len(build_log_paths), "\n".join(build_log_paths))
 
         for build_log_path in build_log_paths:
             print "%s:\n" % build_log_path

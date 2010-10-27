@@ -1,3 +1,20 @@
+2010-10-27  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.
+
+        build-webkit should collect Visual Studio Express logs and display them
+        https://bugs.webkit.org/show_bug.cgi?id=39199
+
+        It turns out my previous patch wasn't actually working on the win-ews
+        machine.  So I've fixed my mistakes from before.
+
+        * Scripts/build-webkit:
+         - Windows VSE builds change the CWD while building.  Why?  Who knows.
+        * Scripts/print-vse-failure-logs:
+         - windows VSE builds don't use Debug/Release as I expected, so I've
+           moved off of --configuration to --top-level and added the /obj
+           optimization while I was there.
+
 2010-10-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r70674.
