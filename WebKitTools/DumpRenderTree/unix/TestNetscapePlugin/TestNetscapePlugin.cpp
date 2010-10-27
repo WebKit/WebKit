@@ -386,6 +386,7 @@ NP_Initialize (NPNetscapeFuncs *aMozillaVTable, NPPluginFuncs *aPluginVTable)
         return NPERR_INVALID_FUNCTABLE_ERROR;
 
     browser = aMozillaVTable;
+    pluginFunctions = aPluginVTable;
 
         aPluginVTable->size           = sizeof (NPPluginFuncs);
         aPluginVTable->version        = (NP_VERSION_MAJOR << 8) + NP_VERSION_MINOR;

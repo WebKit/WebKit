@@ -1,5 +1,13 @@
 2010-10-27  Adam Roben  <aroben@apple.com>
 
+        Check in file I forgot in r70653
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (NP_Initialize): Save the NPPluginFuncs struct the browser passed to us
+        so we can be naughty and modify it later.
+
+2010-10-27  Adam Roben  <aroben@apple.com>
+
         Test that WebKit doesn't crash if the plugin passes 0 for its
         NPP_GetValue pointer
 
