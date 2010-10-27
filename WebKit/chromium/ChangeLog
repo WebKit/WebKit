@@ -1,3 +1,16 @@
+2010-10-27  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] WebGL does not work with the compositor in test_shell
+        https://bugs.webkit.org/show_bug.cgi?id=48470
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::resolveMultisampledFramebuffer):
+         - Properly restore the draw framebuffer after resolving.
+        (WebKit::WebGraphicsContext3DDefaultImpl::prepareTexture):
+         - Make the context current before calling resolveMultisampledFramebuffer.
+
 2010-10-27  Stuart Morgan  <stuartmorgan@chromium.org>
 
         Reviewed by David Levin.
