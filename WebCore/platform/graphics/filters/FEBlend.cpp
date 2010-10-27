@@ -95,7 +95,7 @@ void FEBlend::apply(Filter* filter)
     if (!in->resultImage() || !in2->resultImage())
         return;
 
-    if (m_mode == FEBLEND_MODE_UNKNOWN)
+    if (m_mode <= FEBLEND_MODE_UNKNOWN || m_mode > FEBLEND_MODE_LIGHTEN)
         return;
 
     if (!effectContext(filter))

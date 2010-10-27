@@ -1,0 +1,1 @@
+PASS: Invalid blend modes do not trigger a crash. 
