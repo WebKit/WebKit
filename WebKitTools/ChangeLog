@@ -1,5 +1,28 @@
 2010-10-26  David Kilzer  <ddkilzer@apple.com>
 
+        Extract use of NSKeyedUnarchiver from WebArchiveDumpSupport.mm
+
+        Reviewed by Adam Roben.
+
+        Part 2 of 4: <http://webkit.org/b/48278> Convert DumpRenderTree webarchive code to CoreFoundation
+
+        There is no equivalent to NSKeyedUnarchiver in CoreFoundation,
+        so extract it into a platform-specific source file.
+
+        * DumpRenderTree/mac/WebArchiveDumpSupport.h:
+        (unarchiveNSURLResponseFromResponseData): Added declaration.
+        * DumpRenderTree/mac/WebArchiveDumpSupport.mm:
+        (convertWebResourceResponseToDictionary): Extracted code to
+        unarchiveNSURLResponseFromResponseData() in
+        WebArchiveDumpSupportMac.mm.  Updated logic to return early if
+        nil is returned from unarchiveNSURLResponseFromResponseData().
+        * DumpRenderTree/mac/WebArchiveDumpSupportMac.mm:
+        (unarchiveNSURLResponseFromResponseData): Added.  Extracted
+        code from convertWebResourceResponseToDictionary() in
+        WebArchiveDumpSupport.mm.
+
+2010-10-26  David Kilzer  <ddkilzer@apple.com>
+
         Extract call to -[WebHTMLRepresentation supportedNonImageMIMETypes] from WebArchiveDumpSupport.mm
 
         Reviewed by Adam Roben.

@@ -28,7 +28,9 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
+@class NSData;
 @class NSString;
+@class NSURLResponse;
 @class WebArchive;
 
 NSString *serializeWebArchiveToXML(WebArchive *webArchive);
@@ -36,6 +38,7 @@ NSString *serializeWebArchiveToXML(WebArchive *webArchive);
 #pragma mark -
 #pragma mark Platform-specific methods
 
+NSURLResponse *unarchiveNSURLResponseFromResponseData(NSData *responseData);
 CFArrayRef supportedNonImageMIMETypes();
 
 #endif /* WebArchiveDumpSupport_h */

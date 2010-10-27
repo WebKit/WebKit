@@ -25,7 +25,19 @@
 
 #import "WebArchiveDumpSupport.h"
 
+#import <Foundation/Foundation.h>
 #import <WebKit/WebHTMLRepresentation.h>
+#import <wtf/RetainPtr.h>
+
+NSURLResponse *unarchiveNSURLResponseFromResponseData(NSData *responseData)
+{
+    // Decode NSURLResponse
+    RetainPtr<NSKeyedUnarchiver> unarchiver(AdoptNS, [[NSKeyedUnarchiver alloc] initForReadingWithData:responseData]);
+    NSURLResponse *response = [unarchiver.get() decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
+    [unarchiver.get() finishDecoding];
+
+    return response;
+}
 
 CFArrayRef supportedNonImageMIMETypes()
 {

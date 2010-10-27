@@ -92,15 +92,13 @@ static void normalizeWebResourceURL(NSMutableString *webResourceURL)
 
 static void convertWebResourceResponseToDictionary(NSMutableDictionary *propertyList)
 {
-    NSURLResponse *response = nil;
     NSData *responseData = [propertyList objectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
-    if ([responseData isKindOfClass:[NSData class]]) {
-        // Decode NSURLResponse
-        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:responseData];
-        response = [unarchiver decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
-        [unarchiver finishDecoding];
-        [unarchiver release];
-    }        
+    if (![responseData isKindOfClass:[NSData class]])
+        return;
+
+    NSURLResponse *response = unarchiveNSURLResponseFromResponseData(responseData);
+    if (!response)
+        return;
 
     NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] init];
 
