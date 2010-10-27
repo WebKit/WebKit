@@ -80,6 +80,7 @@
         'ENABLE_TOUCH_EVENTS=1',
         'ENABLE_V8_SCRIPT_DEBUG_SERVER=1',
         'ENABLE_VIDEO=1',
+        'ENABLE_WEB_AUDIO=0',
         'ENABLE_WEB_SOCKETS=1',
         'ENABLE_WEB_TIMING=1',
         'ENABLE_WORKERS=1',
