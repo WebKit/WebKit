@@ -69,6 +69,8 @@ messages -> WebPage {
     SetPageZoomFactor(double zoomFactor)
     SetTextZoomFactor(double zoomFactor)
 
+    ScaleWebView(double scale)
+
     # Find.
     FindString(WTF::String string, uint32_t findDirection, uint32_t findOptions, unsigned maxMatchCount)
     HideFindUI()

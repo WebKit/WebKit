@@ -159,6 +159,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     , m_lifeSupportTimer(this, &Frame::lifeSupportTimerFired)
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
+    , m_pageScaleFactor(1)
 #if ENABLE(ORIENTATION_EVENTS)
     , m_orientation(0)
 #endif
@@ -956,6 +957,28 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
 
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->setPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor);
+
+    if (FrameView* view = this->view()) {
+        if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
+            view->layout();
+    }
+}
+
+void Frame::scalePage(float scale)
+{
+    if (m_pageScaleFactor == scale)
+        return;
+
+    m_pageScaleFactor = scale;
+
+    Document* document = this->document();
+    if (!document)
+        return;
+
+    if (document->renderer())
+        document->renderer()->setNeedsLayout(true);
+
+    document->recalcStyle(Node::Force);
 
     if (FrameView* view = this->view()) {
         if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())

@@ -208,6 +208,16 @@ void WKPageSetPageAndTextZoomFactors(WKPageRef pageRef, double pageZoomFactor, d
     toImpl(pageRef)->setPageAndTextZoomFactors(pageZoomFactor, textZoomFactor);
 }
 
+void WKPageScaleWebView(WKPageRef pageRef, double scale)
+{
+    toImpl(pageRef)->scaleWebView(scale);
+}
+
+double WKPageGetViewScaleFactor(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->viewScaleFactor();
+}
+
 void WKPageFindString(WKPageRef pageRef, WKStringRef string, WKFindDirection findDirection, WKFindOptions findOptions, unsigned maxMatchCount)
 {
     toImpl(pageRef)->findString(toImpl(string)->string(), toFindDirection(findDirection), toFindOptions(findOptions), maxMatchCount);

@@ -184,6 +184,9 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
+    void scaleWebView(double scale);
+    double viewScaleFactor() const { return m_viewScaleFactor; }
+
     // Find.
     void findString(const String&, FindDirection, FindOptions, unsigned maxMatchCount);
     void hideFindUI();
@@ -361,6 +364,7 @@ private:
 
     double m_textZoomFactor;
     double m_pageZoomFactor;
+    double m_viewScaleFactor;
     
     // If the process backing the web page is alive and kicking.
     bool m_isValid;

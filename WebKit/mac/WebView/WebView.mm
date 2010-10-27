@@ -144,6 +144,7 @@
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/ProgressTracker.h>
+#import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -2623,6 +2624,24 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
 + (void)_registerURLSchemeAsSecure:(NSString *)scheme
 {
     SchemeRegistry::registerURLSchemeAsSecure(scheme);
+}
+
+- (void)_scaleWebView:(float)scale
+{
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (!coreFrame)
+        return;
+
+    coreFrame->scalePage(scale);
+}
+
+- (float)_viewScaleFactor
+{
+    Frame* coreFrame = [self _mainCoreFrame];
+    if (!coreFrame)
+        return 1;
+
+    return coreFrame->pageScaleFactor();
 }
 
 @end

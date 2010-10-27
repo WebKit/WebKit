@@ -83,6 +83,7 @@ WebPageProxy::WebPageProxy(WebPageNamespace* pageNamespace, uint64_t pageID)
     , m_backForwardList(WebBackForwardList::create(this))
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
+    , m_viewScaleFactor(1)
     , m_isValid(true)
     , m_isClosed(false)
     , m_pageID(pageID)
@@ -529,6 +530,18 @@ void WebPageProxy::setPageAndTextZoomFactors(double pageZoomFactor, double textZ
     m_pageZoomFactor = pageZoomFactor;
     m_textZoomFactor = textZoomFactor;
     process()->send(Messages::WebPage::SetPageAndTextZoomFactors(m_pageZoomFactor, m_textZoomFactor), m_pageID); 
+}
+
+void WebPageProxy::scaleWebView(double scale)
+{
+    if (!isValid())
+        return;
+
+    if (m_viewScaleFactor == scale)
+        return;
+
+    m_viewScaleFactor = scale;
+    process()->send(Messages::WebPage::ScaleWebView(scale), m_pageID);
 }
 
 void WebPageProxy::findString(const String& string, FindDirection findDirection, FindOptions findOptions, unsigned maxMatchCount)

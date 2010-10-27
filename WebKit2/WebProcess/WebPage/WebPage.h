@@ -145,6 +145,9 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
 
+    void scaleWebView(double scale);
+    double viewScaleFactor() const;
+
     void stopLoading();
 
 #if USE(ACCELERATED_COMPOSITING)
