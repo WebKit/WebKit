@@ -1,3 +1,15 @@
+2010-10-27  David Kilzer  <ddkilzer@apple.com>
+
+        Fix leak of CFMutableDictionaryRef in createXMLStringFromWebArchiveData()
+
+        Reviewed by Adam Roben.
+
+        Follow-up fix for: <https://bugs.webkit.org/show_bug.cgi?id=48278>
+
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp:
+        (createXMLStringFromWebArchiveData): Use RetainPtr<> to fix a
+        leak introduced in r70613.
+
 2010-10-27  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

@@ -161,10 +161,10 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
     CFIndex bytesCount = CFDataGetLength(webArchiveData);
     RetainPtr<CFReadStreamRef> readStream(AdoptCF, CFReadStreamCreateWithBytesNoCopy(kCFAllocatorDefault, CFDataGetBytePtr(webArchiveData), bytesCount, kCFAllocatorNull));
     CFReadStreamOpen(readStream.get());
-    CFMutableDictionaryRef propertyList = (CFMutableDictionaryRef)CFPropertyListCreateFromStream(kCFAllocatorDefault, readStream.get(), bytesCount, kCFPropertyListMutableContainersAndLeaves, &format, 0);
+    RetainPtr<CFMutableDictionaryRef> propertyList(AdoptCF, (CFMutableDictionaryRef)CFPropertyListCreateFromStream(kCFAllocatorDefault, readStream.get(), bytesCount, kCFPropertyListMutableContainersAndLeaves, &format, 0));
     CFReadStreamClose(readStream.get());
 #else
-    CFMutableDictionaryRef propertyList = (CFMutableDictionaryRef)CFPropertyListCreateWithData(kCFAllocatorDefault, webArchiveData, kCFPropertyListMutableContainersAndLeaves, &format, &error);
+    RetainPtr<CFMutableDictionaryRef> propertyList(AdoptCF, (CFMutableDictionaryRef)CFPropertyListCreateWithData(kCFAllocatorDefault, webArchiveData, kCFPropertyListMutableContainersAndLeaves, &format, &error));
 #endif
 
     if (!propertyList) {
@@ -174,7 +174,7 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
     }
 
     RetainPtr<CFMutableArrayRef> resources(AdoptCF, CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
-    CFArrayAppendValue(resources.get(), propertyList);
+    CFArrayAppendValue(resources.get(), propertyList.get());
 
     while (CFArrayGetCount(resources.get())) {
         RetainPtr<CFMutableDictionaryRef> resourcePropertyList = (CFMutableDictionaryRef)CFArrayGetValueAtIndex(resources.get(), 0);
@@ -208,9 +208,9 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
     error = 0;
 
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
-    RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateXMLData(kCFAllocatorDefault, propertyList));
+    RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateXMLData(kCFAllocatorDefault, propertyList.get()));
 #else
-    RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateData(kCFAllocatorDefault, propertyList, kCFPropertyListXMLFormat_v1_0, 0, &error));
+    RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateData(kCFAllocatorDefault, propertyList.get(), kCFPropertyListXMLFormat_v1_0, 0, &error));
 #endif
 
     if (!xmlData) {
