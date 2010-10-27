@@ -34,6 +34,8 @@
 #include "AudioChannelSplitter.h"
 #include "AudioGainNode.h"
 #include "AudioListener.h"
+#include "AudioNodeInput.h"
+#include "AudioNodeOutput.h"
 #include "AudioPannerNode.h"
 #include "CachedAudio.h"
 #include "ConvolverNode.h"
@@ -390,12 +392,12 @@ void AudioContext::unlock()
     m_contextGraphMutex.unlock();
 }
 
-bool AudioContext::isAudioThread()
+bool AudioContext::isAudioThread() const
 {
     return currentThread() == m_audioThread;
 }
 
-bool AudioContext::isGraphOwner()
+bool AudioContext::isGraphOwner() const
 {
     return currentThread() == m_graphOwnerThread;
 }
@@ -404,6 +406,23 @@ void AudioContext::addDeferredFinishDeref(AudioNode* node, AudioNode::RefType re
 {
     ASSERT(isAudioThread());
     m_deferredFinishDerefList.append(AudioContext::RefInfo(node, refType));
+}
+
+void AudioContext::handlePreRenderTasks()
+{
+    ASSERT(isAudioThread());
+ 
+    // At the beginning of every render quantum, try to update the internal rendering graph state (from main thread changes).
+    // It's OK if the tryLock() fails, we'll just take slightly longer to pick up the changes.
+    bool mustReleaseLock;
+    if (tryLock(mustReleaseLock)) {
+        // Fixup the state of any dirty AudioNodeInputs and AudioNodeOutputs.
+        handleDirtyAudioNodeInputs();
+        handleDirtyAudioNodeOutputs();
+        
+        if (mustReleaseLock)
+            unlock();
+    }
 }
 
 void AudioContext::handlePostRenderTasks()
@@ -424,6 +443,10 @@ void AudioContext::handlePostRenderTasks()
         // Finally actually delete.
         deleteMarkedNodes();
 
+        // Fixup the state of any dirty AudioNodeInputs and AudioNodeOutputs.
+        handleDirtyAudioNodeInputs();
+        handleDirtyAudioNodeOutputs();
+        
         if (mustReleaseLock)
             unlock();
     }
@@ -456,6 +479,18 @@ void AudioContext::deleteMarkedNodes()
     while (size_t n = m_nodesToDelete.size()) {
         AudioNode* node = m_nodesToDelete[n - 1];
         m_nodesToDelete.removeLast();
+
+        // Before deleting the node, clear out any AudioNodeInputs from m_dirtyAudioNodeInputs.
+        unsigned numberOfInputs = node->numberOfInputs();
+        for (unsigned i = 0; i < numberOfInputs; ++i)
+            m_dirtyAudioNodeInputs.remove(node->input(i));
+
+        // Before deleting the node, clear out any AudioNodeOutputs from m_dirtyAudioNodeOutputs.
+        unsigned numberOfOutputs = node->numberOfOutputs();
+        for (unsigned i = 0; i < numberOfOutputs; ++i)
+            m_dirtyAudioNodeOutputs.remove(node->output(i));
+
+        // Finally, delete it.
         delete node;
 
         // Don't delete too many nodes per render quantum since we don't want to do too much work in the realtime audio thread.
@@ -463,6 +498,39 @@ void AudioContext::deleteMarkedNodes()
             break;
     }
 }
+
+void AudioContext::markAudioNodeInputDirty(AudioNodeInput* input)
+{
+    ASSERT(isGraphOwner());    
+    m_dirtyAudioNodeInputs.add(input);
+}
+
+void AudioContext::markAudioNodeOutputDirty(AudioNodeOutput* output)
+{
+    ASSERT(isGraphOwner());    
+    m_dirtyAudioNodeOutputs.add(output);
+}
+
+void AudioContext::handleDirtyAudioNodeInputs()
+{
+    ASSERT(isGraphOwner());    
+
+    for (HashSet<AudioNodeInput*>::iterator i = m_dirtyAudioNodeInputs.begin(); i != m_dirtyAudioNodeInputs.end(); ++i)
+        (*i)->updateRenderingState();
+
+    m_dirtyAudioNodeInputs.clear();
+}
+
+void AudioContext::handleDirtyAudioNodeOutputs()
+{
+    ASSERT(isGraphOwner());    
+
+    for (HashSet<AudioNodeOutput*>::iterator i = m_dirtyAudioNodeOutputs.begin(); i != m_dirtyAudioNodeOutputs.end(); ++i)
+        (*i)->updateRenderingState();
+
+    m_dirtyAudioNodeOutputs.clear();
+}
+
 
 } // namespace WebCore
 
