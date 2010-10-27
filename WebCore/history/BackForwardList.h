@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2009 Google, Inc. All rights reserved.
  *
@@ -36,8 +36,16 @@ namespace WebCore {
 
 class HistoryItem;
 
+// FIXME: Remove this and rely on the typedef in BackForwardListImpl
+// instead, after removing the virtual functions at the bottom
+// of this class.
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 
+// FIXME: Move this class out of this file and into BackForwardListImpl.
+// FIXME: Consider replacing this BackForwardListClient concept with a
+// function that creates a BackForwardList object. The functions in
+// BackForwardList are now almost identical to this, and there is no
+// need for the extra level of indirection.
 #if PLATFORM(CHROMIUM)
 // In the Chromium port, the back/forward list is managed externally.
 // See BackForwardListChromium.cpp
@@ -54,49 +62,62 @@ public:
 };
 #endif
 
+// FIXME: Rename this class to BackForwardClient, and rename the
+// getter in Page accordingly.
 class BackForwardList : public RefCounted<BackForwardList> {
 public: 
     virtual ~BackForwardList()
     {
     }
 
-    virtual bool isBackForwardListImpl() const { return false; }
-
+    // FIXME: Move this function to BackForwardListImpl, or eliminate
+    // it (see comment at definition of BackForwardListClient class).
 #if PLATFORM(CHROMIUM)
     // Must be called before any other methods. 
     virtual void setClient(BackForwardListClient*) = 0;
 #endif
 
     virtual void addItem(PassRefPtr<HistoryItem>) = 0;
-    virtual void goBack() = 0;
-    virtual void goForward() = 0;
+
     virtual void goToItem(HistoryItem*) = 0;
         
-    virtual HistoryItem* backItem() = 0;
-    virtual HistoryItem* currentItem() = 0;
-    virtual HistoryItem* forwardItem() = 0;
     virtual HistoryItem* itemAtIndex(int) = 0;
-
-    virtual void backListWithLimit(int, HistoryItemVector&) = 0;
-    virtual void forwardListWithLimit(int, HistoryItemVector&) = 0;
-
-    virtual int capacity() = 0;
-    virtual void setCapacity(int) = 0;
-    virtual bool enabled() = 0;
-    virtual void setEnabled(bool) = 0;
     virtual int backListCount() = 0;
     virtual int forwardListCount() = 0;
-    virtual bool containsItem(HistoryItem*) = 0;
+
+    virtual bool isActive() = 0;
 
     virtual void close() = 0;
-    virtual bool closed() = 0;
-    
-    virtual void removeItem(HistoryItem*)  = 0;
-    virtual HistoryItemVector& entries()  = 0;
-    
+
+    // FIXME: Rename this to just "clear" and change it so it's not
+    // WML-specific. This is the same operation as clearBackForwardList
+    // in the layout test controller; it would be reasonable to have it
+    // here even though HTML DOM interfaces don't require it.
 #if ENABLE(WML)
     virtual void clearWMLPageHistory()  = 0;
 #endif
+
+    HistoryItem* backItem() { return itemAtIndex(-1); }
+    HistoryItem* currentItem() { return itemAtIndex(0); }
+    HistoryItem* forwardItem() { return itemAtIndex(1); }
+
+    // FIXME: Remove these functions once all call sites are calling them
+    // directly on BackForwardListImpl instead of on BackForwardList.
+    // There is no need for any of these to be virtual functions and no
+    // need to implement them in classes other than BackForwardListImpl.
+    // Also remove the HistoryItemVector typedef in this file once this is done.
+    virtual void goBack() { }
+    virtual void goForward() { }
+    virtual void backListWithLimit(int, HistoryItemVector&) { }
+    virtual void forwardListWithLimit(int, HistoryItemVector&) { }
+    virtual int capacity() { return 0; }
+    virtual void setCapacity(int) { }
+    virtual bool enabled() { return false; }
+    virtual void setEnabled(bool) { }
+    virtual bool containsItem(HistoryItem*) { return false; }
+    virtual bool closed() { return false; }
+    virtual void removeItem(HistoryItem*) { }
+    virtual HistoryItemVector& entries() { HistoryItemVector* bogus = 0; return *bogus; }
 
 protected:
     BackForwardList()

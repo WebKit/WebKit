@@ -997,24 +997,6 @@ void WebPageProxy::backForwardGoToItem(uint64_t itemID)
     m_backForwardList->goToItem(process()->webBackForwardItem(itemID));
 }
 
-void WebPageProxy::backForwardBackItem(uint64_t& itemID)
-{
-    WebBackForwardListItem* backItem = m_backForwardList->backItem();
-    itemID = backItem ? backItem->itemID() : 0;
-}
-
-void WebPageProxy::backForwardCurrentItem(uint64_t& itemID)
-{
-    WebBackForwardListItem* currentItem = m_backForwardList->currentItem();
-    itemID = currentItem ? currentItem->itemID() : 0;
-}
-
-void WebPageProxy::backForwardForwardItem(uint64_t& itemID)
-{
-    WebBackForwardListItem* forwardItem = m_backForwardList->forwardItem();
-    itemID = forwardItem ? forwardItem->itemID() : 0;
-}
-
 void WebPageProxy::backForwardItemAtIndex(int32_t index, uint64_t& itemID)
 {
     WebBackForwardListItem* item = m_backForwardList->itemAtIndex(index);
@@ -1297,5 +1279,10 @@ void WebPageProxy::didLeaveAcceleratedCompositing()
     m_pageClient->pageDidLeaveAcceleratedCompositing();
 }
 #endif // USE(ACCELERATED_COMPOSITING)
+
+void WebPageProxy::backForwardClear()
+{
+    m_backForwardList->clear();
+}
 
 } // namespace WebKit

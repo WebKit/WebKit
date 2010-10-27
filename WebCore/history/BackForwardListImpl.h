@@ -33,35 +33,34 @@
 
 namespace WebCore {
 
-class HistoryItem;
 class Page;
 
 typedef Vector<RefPtr<HistoryItem> > HistoryItemVector;
 typedef HashSet<RefPtr<HistoryItem> > HistoryItemHashSet;
 
+// FIXME: After renaming BackForwardList to BackForwardClient,
+// rename this to BackForwardList.
 class BackForwardListImpl : public BackForwardList {
 public: 
     static PassRefPtr<BackForwardListImpl> create(Page* page) { return adoptRef(new BackForwardListImpl(page)); }
-    ~BackForwardListImpl();
-
-    bool isBackForwardListImpl() const { return true; }
+    virtual ~BackForwardListImpl();
 
 #if PLATFORM(CHROMIUM)
     // Must be called before any other methods. 
-    void setClient(BackForwardListClient* client) { m_client = client; }
+    virtual void setClient(BackForwardListClient* client) { m_client = client; }
 #endif
     
     Page* page() { return m_page; }
     
-    void addItem(PassRefPtr<HistoryItem>);
+    virtual void addItem(PassRefPtr<HistoryItem>);
     void goBack();
     void goForward();
-    void goToItem(HistoryItem*);
+    virtual void goToItem(HistoryItem*);
         
     HistoryItem* backItem();
     HistoryItem* currentItem();
     HistoryItem* forwardItem();
-    HistoryItem* itemAtIndex(int);
+    virtual HistoryItem* itemAtIndex(int);
 
     void backListWithLimit(int, HistoryItemVector&);
     void forwardListWithLimit(int, HistoryItemVector&);
@@ -70,23 +69,25 @@ public:
     void setCapacity(int);
     bool enabled();
     void setEnabled(bool);
-    int backListCount();
-    int forwardListCount();
+    virtual int backListCount();
+    virtual int forwardListCount();
     bool containsItem(HistoryItem*);
 
-    void close();
+    virtual void close();
     bool closed();
     
     void removeItem(HistoryItem*);
     HistoryItemVector& entries();
     
 #if ENABLE(WML)
-    void clearWMLPageHistory();
+    virtual void clearWMLPageHistory();
 #endif
 
 private:
     BackForwardListImpl(Page*);
-    
+
+    virtual bool isActive() { return enabled() && capacity(); }
+
     Page* m_page;
 #if PLATFORM(CHROMIUM) 
     BackForwardListClient* m_client;

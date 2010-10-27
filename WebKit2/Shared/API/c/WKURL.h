@@ -36,6 +36,8 @@ WK_EXPORT WKTypeID WKURLGetTypeID();
 
 WK_EXPORT WKURLRef WKURLCreateWithUTF8CString(const char* string);
 
+WK_EXPORT WKStringRef WKURLCopyString(WKURLRef URL);
+
 WK_EXPORT bool WKURLIsEqual(WKURLRef a, WKURLRef b);
 
 #ifdef __cplusplus

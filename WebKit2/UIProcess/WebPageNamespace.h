@@ -46,7 +46,7 @@ public:
         return adoptRef(new WebPageNamespace(context));
     }
 
-    ~WebPageNamespace();
+    virtual ~WebPageNamespace();
 
     WebPageProxy* createWebPage();    
 

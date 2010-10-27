@@ -30,9 +30,9 @@
 #include "GCController.h"
 #include "LayoutTestController.h"
 #include <WebKit2/WKBase.h>
-#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 #include <sstream>
 
@@ -53,9 +53,11 @@ public:
     GCController* gcController() { return m_gcController.get(); }
     EventSendingController* eventSendingController() { return m_eventSendingController.get(); }
 
-    InjectedBundlePage* page() { return m_mainPage.get(); }
-    size_t pageCount() { return !!m_mainPage + m_otherPages.size(); }
+    InjectedBundlePage* page() const;
+    size_t pageCount() const { return m_pages.size(); }
     void closeOtherPages();
+
+    void dumpBackForwardListsForAllPages();
 
     void done();
     std::ostringstream& os() { return m_outputStream; }
@@ -66,19 +68,18 @@ private:
     InjectedBundle();
     ~InjectedBundle();
 
-    static void _didCreatePage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
-    static void _willDestroyPage(WKBundleRef bundle, WKBundlePageRef page, const void* clientInfo);
-    static void _didReceiveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
+    static void didCreatePage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
+    static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
+    static void didReceiveMessage(WKBundleRef, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 
-    void didCreatePage(WKBundlePageRef page);
-    void willDestroyPage(WKBundlePageRef page);
+    void didCreatePage(WKBundlePageRef);
+    void willDestroyPage(WKBundlePageRef);
     void didReceiveMessage(WKStringRef messageName, WKTypeRef messageBody);
 
     void beginTesting();
 
     WKBundleRef m_bundle;
-    HashMap<WKBundlePageRef, InjectedBundlePage*> m_otherPages;
-    OwnPtr<InjectedBundlePage> m_mainPage;
+    Vector<OwnPtr<InjectedBundlePage> > m_pages;
 
     RefPtr<LayoutTestController> m_layoutTestController;
     RefPtr<GCController> m_gcController;

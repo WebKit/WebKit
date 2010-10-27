@@ -110,7 +110,7 @@
 #import <JavaScriptCore/JSValueRef.h>
 #import <WebCore/AbstractDatabase.h>
 #import <WebCore/ApplicationCacheStorage.h>
-#import <WebCore/BackForwardList.h>
+#import <WebCore/BackForwardListImpl.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/CSSComputedStyleDeclaration.h>
@@ -3006,7 +3006,7 @@ static bool needsWebViewInitThreadWorkaround()
 
         LOG(Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)useBackForwardList);
         [result _commonInitializationWithFrameName:frameName groupName:groupName usesDocumentViews:YES];
-        [result page]->backForwardList()->setEnabled(useBackForwardList);
+        static_cast<BackForwardListImpl*>([result page]->backForwardList())->setEnabled(useBackForwardList);
         result->_private->allowsUndo = allowsUndo;
         if (preferences)
             [result setPreferences:preferences];
@@ -3030,7 +3030,7 @@ static bool needsWebViewInitThreadWorkaround()
     // Restore the subviews we set aside.
     _subviews = originalSubviews;
 
-    BOOL useBackForwardList = _private->page && _private->page->backForwardList()->enabled();
+    BOOL useBackForwardList = _private->page && static_cast<BackForwardListImpl*>(_private->page->backForwardList())->enabled();
     if ([encoder allowsKeyedCoding]) {
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
@@ -3341,16 +3341,17 @@ static bool needsWebViewInitThreadWorkaround()
 {
     if (!_private->page)
         return nil;
-    if (!_private->page->backForwardList()->enabled())
+    BackForwardListImpl* list = static_cast<BackForwardListImpl*>(_private->page->backForwardList());
+    if (!list->enabled())
         return nil;
-    return kit(_private->page->backForwardList());
+    return kit(list);
 }
 
 - (void)setMaintainsBackForwardList:(BOOL)flag
 {
     if (!_private->page)
         return;
-    _private->page->backForwardList()->setEnabled(flag);
+    static_cast<BackForwardListImpl*>(_private->page->backForwardList())->setEnabled(flag);
 }
 
 - (BOOL)goBack

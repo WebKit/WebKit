@@ -283,8 +283,10 @@ HEADERS += \
     UIProcess/WebProcessProxy.h \
     UIProcess/WebUIClient.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
-    WebProcess/Downloads/DownloadManager.h \
     WebProcess/Downloads/Download.h \
+    WebProcess/Downloads/DownloadManager.h \
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.h \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h \
@@ -435,6 +437,8 @@ SOURCES += \
     WebProcess/Downloads/DownloadManager.cpp \
     WebProcess/Downloads/qt/DownloadQt.cpp \
     WebProcess/InjectedBundle/API/c/WKBundle.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
+    WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.cpp \
     WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp \
@@ -443,11 +447,13 @@ SOURCES += \
     WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp \
     WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp \
     WebProcess/InjectedBundle/InjectedBundle.cpp \
+    WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp \
+    WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp \
     WebProcess/InjectedBundle/InjectedBundleHitTestResult.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp \
-    WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp \
+    WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
     WebProcess/Plugins/JSNPObject.cpp \

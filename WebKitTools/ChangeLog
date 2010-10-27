@@ -1,3 +1,84 @@
+2010-10-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.dumpBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42322
+        rdar://problem/8193631
+
+        WebKitTestRunner needs to support layoutTestController.clearBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42333
+        rdar://problem/8193643
+
+        * WebKitTestRunner/Configurations/InjectedBundle.xcconfig:
+        Renamed the product to WebKitTestRunnerInjectedBundle to avoid
+        name conflicts in the build directory.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        Added dumpBackForwardList and clearBackForwardList.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::InjectedBundle): Removed initialization of m_mainPage.
+        (WTR::InjectedBundle::didCreatePage): Removed unneeded underscore.
+        (WTR::InjectedBundle::willDestroyPage): Ditto.
+        (WTR::InjectedBundle::didReceiveMessage): Ditto.
+        (WTR::InjectedBundle::initialize): Ditto.
+        (WTR::InjectedBundle::didCreatePage): Changed code to use m_pages
+        instead of m_mainPage and m_otherPages.
+        (WTR::InjectedBundle::willDestroyPage): Ditto.
+        (WTR::InjectedBundle::page): Ditto.
+        (WTR::InjectedBundle::beginTesting): Ditto.
+        (WTR::InjectedBundle::done): Ditto.
+        (WTR::InjectedBundle::closeOtherPages): Ditto.
+        (WTR::InjectedBundle::dumpBackForwardListsForAllPages): Added.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.h: Changed
+        page function to longer be inline, and pageCount function
+        to use m_pages. Added dumpBackForwardListsForAllPages, and
+        removed some underscores. Replaced m_mainPage and m_otherPageas
+        with m_pages.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::adoptWK): Added.
+        (WTR::hasPrefix): Added.
+        (WTR::InjectedBundlePage::reset): Added code to set up
+        m_previousTestBackForwardListItem.
+        (WTR::InjectedBundlePage::dump): Added code to call
+        dumpBackForwardListsForAllPages.
+        (WTR::compareByTargetName): Added.
+        (WTR::dumpBackForwardListItem): Added.
+        (WTR::InjectedBundlePage::dumpBackForwardList): Added.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.h: Added
+        dumpBackForwardList and m_previousTestBackForwardListItem.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        (WTR::LayoutTestController::LayoutTestController): Initialize
+        m_shouldDumpBackForwardListsForAllWindows to false.
+        (WTR::LayoutTestController::clearBackForwardList): Added.
+
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        Added dumpBackForwardList, clearBackForwardList,
+        shouldDumpBackForwardListsForAllWindows, and
+        m_shouldDumpBackForwardListsForAllWindows.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize): Set up
+        didReceiveSynchronousMessageFromInjectedBundle.
+        (WTR::TestController::didReceiveSynchronousMessageFromInjectedBundle):
+        Added.
+        * WebKitTestRunner/TestController.h: Ditto.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        Added.
+        * WebKitTestRunner/TestInvocation.h: Ditto.
+
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj:
+        Renamed bundle to WebKitTestRunnerInjectedBundle (see above).
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::initializeInjectedBundlePath): Ditto.
+
 2010-10-27  Chris Rogers  <crogers@google.com>
 
         Reviewed by Chris Marrin.

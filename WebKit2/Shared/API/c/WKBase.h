@@ -73,6 +73,8 @@ typedef const struct OpaqueWKPreferences* WKPreferencesRef;
 /* WebKit2 Bundle types */
 
 typedef const struct OpaqueWKBundle* WKBundleRef;
+typedef const struct OpaqueWKBundleBackForwardList* WKBundleBackForwardListRef;
+typedef const struct OpaqueWKBundleBackForwardListItem* WKBundleBackForwardListItemRef;
 typedef const struct OpaqueWKBundleFrame* WKBundleFrameRef;
 typedef const struct OpaqueWKBundleHitTestResult* WKBundleHitTestResultRef;
 typedef const struct OpaqueWKBundleNodeHandle* WKBundleNodeHandleRef;

@@ -23,39 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleScriptWorld_h
-#define InjectedBundleScriptWorld_h
+#include "WKBundleBackForwardList.h"
 
-#include "APIObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "InjectedBundleBackForwardList.h"
+#include "InjectedBundleBackForwardListItem.h"
+#include "WKBundleAPICast.h"
 
-namespace WebCore {
-    class DOMWrapperWorld;
+using namespace WebKit;
+
+WKTypeID WKBundleBackForwardListGetTypeID()
+{
+    return toAPI(InjectedBundleBackForwardList::APIType);
 }
 
-namespace WebKit {
+WKBundleBackForwardListItemRef WKBundleBackForwardListCopyItemAtIndex(WKBundleBackForwardListRef listRef, int index)
+{
+    return toAPI(toImpl(listRef)->itemAtIndex(index).leakRef());
+}
 
-class InjectedBundleScriptWorld : public APIObject {
-public:
-    static const Type APIType = TypeBundleScriptWorld;
+unsigned WKBundleBackForwardListGetBackListCount(WKBundleBackForwardListRef listRef)
+{
+    return toImpl(listRef)->backListCount();
+}
 
-    static PassRefPtr<InjectedBundleScriptWorld> create();
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
-    static InjectedBundleScriptWorld* normalWorld();
+unsigned WKBundleBackForwardListGetForwardListCount(WKBundleBackForwardListRef listRef)
+{
+    return toImpl(listRef)->forwardListCount();
+}
 
-    virtual ~InjectedBundleScriptWorld();
-
-    WebCore::DOMWrapperWorld* coreWorld() const;
-
-private:
-    InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
-
-    virtual Type type() const { return APIType; }
-
-    RefPtr<WebCore::DOMWrapperWorld> m_world;
-};
-
-} // namespace WebKit
-
-#endif // InjectedBundleScriptWorld_h
+void WKBundleBackForwardListClear(WKBundleBackForwardListRef listRef)
+{
+    return toImpl(listRef)->clear();
+}

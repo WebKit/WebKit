@@ -26,6 +26,7 @@
 #include "WKBundlePage.h"
 #include "WKBundlePagePrivate.h"
 
+#include "InjectedBundleBackForwardList.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebPage.h"
@@ -118,4 +119,9 @@ double WKBundlePageGetPageZoomFactor(WKBundlePageRef pageRef)
 void WKBundlePageSetPageZoomFactor(WKBundlePageRef pageRef, double zoomFactor)
 {
     toImpl(pageRef)->setPageZoomFactor(zoomFactor);
+}
+
+WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->backForwardList());
 }

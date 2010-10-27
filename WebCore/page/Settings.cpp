@@ -424,9 +424,10 @@ void Settings::setUsesPageCache(bool usesPageCache)
         
     m_usesPageCache = usesPageCache;
     if (!m_usesPageCache) {
-        HistoryItemVector& historyItems = m_page->backForwardList()->entries();
-        for (unsigned i = 0; i < historyItems.size(); i++)
-            pageCache()->remove(historyItems[i].get());
+        int first = -m_page->backForwardList()->backListCount();
+        int last = m_page->backForwardList()->forwardListCount();
+        for (int i = first; i <= last; i++)
+            pageCache()->remove(m_page->backForwardList()->itemAtIndex(i));
         pageCache()->releaseAutoreleasedPagesNow();
     }
 }

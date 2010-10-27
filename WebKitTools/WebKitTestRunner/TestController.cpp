@@ -181,7 +181,7 @@ void TestController::initialize(int argc, const char* argv[])
         0,
         this,
         didReceiveMessageFromInjectedBundle,
-        0
+        didReceiveSynchronousMessageFromInjectedBundle
     };
     WKContextSetInjectedBundleClient(m_context.get(), &injectedBundleClient);
 
@@ -314,9 +314,19 @@ void TestController::didReceiveMessageFromInjectedBundle(WKContextRef context, W
     static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveMessageFromInjectedBundle(messageName, messageBody);
 }
 
+void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKContextRef context, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void* clientInfo)
+{
+    *returnData = static_cast<TestController*>(const_cast<void*>(clientInfo))->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody).leakRef();
+}
+
 void TestController::didReceiveMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
 {
     m_currentInvocation->didReceiveMessageFromInjectedBundle(messageName, messageBody);
+}
+
+WKRetainPtr<WKTypeRef> TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef messageName, WKTypeRef messageBody)
+{
+    return m_currentInvocation->didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody);
 }
 
 // WKPageLoaderClient

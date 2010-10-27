@@ -23,39 +23,43 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleScriptWorld_h
-#define InjectedBundleScriptWorld_h
+#ifndef InjectedBundleBackForwardList_h
+#define InjectedBundleBackForwardList_h
 
 #include "APIObject.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-    class DOMWrapperWorld;
-}
 
 namespace WebKit {
 
-class InjectedBundleScriptWorld : public APIObject {
+class WebPage;
+
+class InjectedBundleBackForwardListItem;
+
+class InjectedBundleBackForwardList : public APIObject {
 public:
-    static const Type APIType = TypeBundleScriptWorld;
+    static const Type APIType = TypeBundleBackForwardList;
 
-    static PassRefPtr<InjectedBundleScriptWorld> create();
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
-    static InjectedBundleScriptWorld* normalWorld();
+    static PassRefPtr<InjectedBundleBackForwardList> create(WebPage* page)
+    {
+        return adoptRef(new InjectedBundleBackForwardList(page));
+    }
 
-    virtual ~InjectedBundleScriptWorld();
+    void detach() { m_page = 0; }
 
-    WebCore::DOMWrapperWorld* coreWorld() const;
+    void clear();
+
+    PassRefPtr<InjectedBundleBackForwardListItem> itemAtIndex(int) const;
+    int backListCount() const;
+    int forwardListCount() const;
 
 private:
-    InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
+    InjectedBundleBackForwardList(WebPage* page) : m_page(page) { }
 
     virtual Type type() const { return APIType; }
 
-    RefPtr<WebCore::DOMWrapperWorld> m_world;
+    WebPage* m_page;
 };
 
 } // namespace WebKit
 
-#endif // InjectedBundleScriptWorld_h
+#endif // InjectedBundleBackForwardList_h

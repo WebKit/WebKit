@@ -192,12 +192,8 @@ static void logCanCachePageDecision(Page* page)
     bool cannotCache = !logCanCacheFrameDecision(page->mainFrame(), 1);
     
     FrameLoadType loadType = page->mainFrame()->loader()->loadType();
-    if (!page->backForwardList()->enabled()) {
-        PCLOG("   -The back/forward list is disabled");
-        cannotCache = true;
-    }
-    if (!(page->backForwardList()->capacity() > 0)) {
-        PCLOG("   -The back/forward list has a 0 capacity");
+    if (!page->backForwardList()->isActive()) {
+        PCLOG("   -The back/forward list is disabled or has 0 capacity");
         cannotCache = true;
     }
     if (!page->settings()->usesPageCache()) {
@@ -307,8 +303,7 @@ bool PageCache::canCache(Page* page)
     FrameLoadType loadType = page->mainFrame()->loader()->loadType();
     
     return canCachePageContainingThisFrame(page->mainFrame())
-        && page->backForwardList()->enabled()
-        && page->backForwardList()->capacity() > 0
+        && page->backForwardList()->isActive()
         && page->settings()->usesPageCache()
 #if ENABLE(DEVICE_ORIENTATION)
         && !(page->deviceMotionController() && page->deviceMotionController()->isActive())

@@ -55,7 +55,7 @@ public:
     {
         return adoptRef(new WebFrameProxy(page, frameID));
     }
-    ~WebFrameProxy();
+    virtual ~WebFrameProxy();
 
     enum LoadState {
         LoadStateProvisional,

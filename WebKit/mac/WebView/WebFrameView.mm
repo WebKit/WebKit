@@ -55,7 +55,7 @@
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
 #import <Foundation/NSURLRequest.h>
-#import <WebCore/BackForwardList.h>
+#import <WebCore/BackForwardListImpl.h>
 #import <WebCore/DragController.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
@@ -708,7 +708,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     int index, count;
     BOOL callSuper = YES;
     Frame* coreFrame = [self _web_frame];
-    BOOL maintainsBackForwardList = coreFrame && coreFrame->page()->backForwardList()->enabled() ? YES : NO;
+    BOOL maintainsBackForwardList = coreFrame && static_cast<BackForwardListImpl*>(coreFrame->page()->backForwardList())->enabled() ? YES : NO;
     
     count = [characters length];
     for (index = 0; index < count; ++index) {

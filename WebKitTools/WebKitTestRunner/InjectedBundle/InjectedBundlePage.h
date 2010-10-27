@@ -45,6 +45,8 @@ public:
 
     void reset();
 
+    void dumpBackForwardList();
+
 private:
     // Loader Client
     static void didStartProvisionalLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void*);
@@ -119,6 +121,7 @@ private:
 
     WKBundlePageRef m_page;
     WKRetainPtr<WKBundleScriptWorldRef> m_world;
+    WKRetainPtr<WKBundleBackForwardListItemRef> m_previousTestBackForwardListItem;
     bool m_isLoading;
 };
 

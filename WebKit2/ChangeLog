@@ -1,3 +1,110 @@
+2010-10-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.dumpBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42322
+        rdar://problem/8193631
+
+        WebKitTestRunner needs to support layoutTestController.clearBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42333
+        rdar://problem/8193643
+
+        * Shared/API/c/WKBase.h: Added WKBundleBackForwardListRef and
+        WKBundleBackForwardListItemRef.
+
+        * Shared/API/c/WKURL.cpp:
+        (WKURLCopyString): Added.
+        * Shared/API/c/WKURL.h: Added WKURLCopyString.
+
+        * Shared/API/c/cf/WKURLCF.h: Fixed incorrect argument name.
+
+        * Shared/APIObject.h: Added TypeBundleBackForwardList and
+        TypeBundleBackForwardListItem.
+
+        * Shared/ImmutableArray.h: Marked destructor virtual explicitly.
+        * Shared/ImmutableDictionary.h: Ditto.
+        * UIProcess/WebBackForwardListItem.h: Ditto.
+        * UIProcess/WebContext.h: Ditto.
+        * UIProcess/WebFrameProxy.h: Ditto.
+        * UIProcess/WebNavigationData.h: Ditto.
+        * UIProcess/WebPageNamespace.h: Ditto.
+        * UIProcess/WebPreferences.h: Ditto.
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h: Ditto.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h: Ditto.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h: Ditto.
+
+        * UIProcess/WebBackForwardList.cpp: Removed unneeded backListWithLimit
+        and forwardListWithLimit functions.
+        (WebKit::WebBackForwardList::clear): Added.
+        * UIProcess/WebBackForwardList.h: Marked destructor virtual explicitly.
+        Added clear, removed backListWithLimit and forwardListWithLimit functions.
+
+        * UIProcess/WebPageProxy.cpp: Removed unneeded backForwardBackItem,
+        backForwardCurrentItem, and backForwardForwardItem functions.
+        (WebKit::WebPageProxy::backForwardClear): Added.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebPageProxy.messages.in: Ditto.
+
+        * WebKit2.pro: Added new files.
+        * WebKit2.xcodeproj/project.pbxproj: Ditto.
+        * win/WebKit2.vcproj: Ditto.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleAPICast.h: Added
+        WKBundleBackForwardListRef and WKBundleBackForwardListItemRef.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp:
+        Started with a copy of from WebKit2/UIProcess/API/C/WKBackForwardList.cpp.
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h:
+        Started with a copy of WebKit2/UIProcess/API/C/WKBackForwardList.h.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp:
+        Started with a copy of WebKit2/UIProcess/API/C/WKBackForwardListItem.cpp.
+        * WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h:
+        Started with a copy of WebKit2/UIProcess/API/C/WKBackForwardListItem.h.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetBackForwardList): Added.
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Ditto.
+
+
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.cpp:
+        Started with a copy of WebKit2/UIProcess/WebBackForwardList.cpp.
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.h:
+        Started with a copy of WebKit2/UIProcess/WebBackForwardList.h.
+
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.cpp:
+        Started with a copy of WebKit2/UIProcess/WebBackForwardListItem.cpp.
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.h:
+        Started with a copy of WebKit2/UIProcess/WebBackForwardListItem.h.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp: Removed
+        many unneeded functions.
+        (WebKit::WebBackForwardListProxy::WebBackForwardListProxy):
+        Removed unneeded initialization of m_closed.
+        (WebKit::WebBackForwardListProxy::addItem): Added a check for
+        the case of a capacity of 0.
+        (WebKit::WebBackForwardListProxy::goToItem): Added a check for
+        when the proxy outlives its page.
+        (WebKit::WebBackForwardListProxy::itemAtIndex): Ditto.
+        (WebKit::WebBackForwardListProxy::backListCount): Ditto.
+        (WebKit::WebBackForwardListProxy::forwardListCount): Ditto.
+        (WebKit::WebBackForwardListProxy::close): Removed unneeded code
+        setting m_closed.
+        (WebKit::WebBackForwardListProxy::isActive): Added.
+        (WebKit::WebBackForwardListProxy::clear): Added.
+
+        * WebProcess/WebPage/WebBackForwardListProxy.h: Added clear,
+        isActive, and detach functions. Removed many other unneeded
+        function and data members.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::~WebPage): Added call to detach on the
+        back/forward list.
+        (WebKit::WebPage::backForwardList): Added.
+        * WebProcess/WebPage/WebPage.h: Added backForwardList function
+        and m_backForwardList data member.
+
 2010-10-27  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin Adler.

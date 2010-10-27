@@ -23,39 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleScriptWorld_h
-#define InjectedBundleScriptWorld_h
+#ifndef WKBundleBackForwardListItem_h
+#define WKBundleBackForwardListItem_h
 
-#include "APIObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebCore {
-    class DOMWrapperWorld;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKTypeID WKBundleBackForwardListItemGetTypeID();
+
+WK_EXPORT bool WKBundleBackForwardListItemIsSame(WKBundleBackForwardListItemRef item1, WKBundleBackForwardListItemRef item2);
+
+WK_EXPORT WKURLRef WKBundleBackForwardListItemCopyOriginalURL(WKBundleBackForwardListItemRef item);
+WK_EXPORT WKURLRef WKBundleBackForwardListItemCopyURL(WKBundleBackForwardListItemRef item);
+WK_EXPORT WKStringRef WKBundleBackForwardListItemCopyTitle(WKBundleBackForwardListItemRef item);
+
+WK_EXPORT WKStringRef WKBundleBackForwardListItemCopyTarget(WKBundleBackForwardListItemRef item);
+WK_EXPORT bool WKBundleBackForwardListItemIsTargetItem(WKBundleBackForwardListItemRef item);
+
+WK_EXPORT WKArrayRef WKBundleBackForwardListItemCopyChildren(WKBundleBackForwardListItemRef item);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-class InjectedBundleScriptWorld : public APIObject {
-public:
-    static const Type APIType = TypeBundleScriptWorld;
-
-    static PassRefPtr<InjectedBundleScriptWorld> create();
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
-    static InjectedBundleScriptWorld* normalWorld();
-
-    virtual ~InjectedBundleScriptWorld();
-
-    WebCore::DOMWrapperWorld* coreWorld() const;
-
-private:
-    InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
-
-    virtual Type type() const { return APIType; }
-
-    RefPtr<WebCore::DOMWrapperWorld> m_world;
-};
-
-} // namespace WebKit
-
-#endif // InjectedBundleScriptWorld_h
+#endif /* WKBundleBackForwardListItem_h */

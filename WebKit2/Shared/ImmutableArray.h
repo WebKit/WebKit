@@ -52,7 +52,7 @@ public:
         return adoptRef(new ImmutableArray(entries));
     }
 
-    ~ImmutableArray();
+    virtual ~ImmutableArray();
 
     template<typename T>
     T* at(size_t i) { if (m_entries[i]->type() != T::APIType) return 0; return static_cast<T*>(m_entries[i].get()); }

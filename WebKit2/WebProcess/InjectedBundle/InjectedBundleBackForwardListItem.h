@@ -23,39 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleScriptWorld_h
-#define InjectedBundleScriptWorld_h
+#ifndef InjectedBundleBackForwardListItem_h
+#define InjectedBundleBackForwardListItem_h
 
 #include "APIObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
-
-namespace WebCore {
-    class DOMWrapperWorld;
-}
+#include <WebCore/HistoryItem.h>
 
 namespace WebKit {
 
-class InjectedBundleScriptWorld : public APIObject {
+class ImmutableArray;
+class WebPageProxy;
+
+class InjectedBundleBackForwardListItem : public APIObject {
 public:
-    static const Type APIType = TypeBundleScriptWorld;
+    static const Type APIType = TypeBundleBackForwardListItem;
 
-    static PassRefPtr<InjectedBundleScriptWorld> create();
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
-    static InjectedBundleScriptWorld* normalWorld();
+    static PassRefPtr<InjectedBundleBackForwardListItem> create(PassRefPtr<WebCore::HistoryItem> item)
+    {
+        if (!item)
+            return 0;
+        return adoptRef(new InjectedBundleBackForwardListItem(item));
+    }
 
-    virtual ~InjectedBundleScriptWorld();
+    WebCore::HistoryItem* item() const { return m_item.get(); }
 
-    WebCore::DOMWrapperWorld* coreWorld() const;
+    const String& originalURL() const { return m_item->originalURLString(); }
+    const String& url() const { return m_item->urlString(); }
+    const String& title() const { return m_item->title(); }
+
+    const String& target() const { return m_item->target(); }
+    bool isTargetItem() const { return m_item->isTargetItem(); }
+
+    PassRefPtr<ImmutableArray> children() const;
 
 private:
-    InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
+    InjectedBundleBackForwardListItem(PassRefPtr<WebCore::HistoryItem> item) : m_item(item) { }
 
     virtual Type type() const { return APIType; }
 
-    RefPtr<WebCore::DOMWrapperWorld> m_world;
+    RefPtr<WebCore::HistoryItem> m_item;
 };
 
 } // namespace WebKit
 
-#endif // InjectedBundleScriptWorld_h
+#endif // InjectedBundleBackForwardListItem_h

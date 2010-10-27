@@ -64,6 +64,7 @@ namespace WebCore {
 namespace WebKit {
 
 class DrawingArea;
+class InjectedBundleBackForwardList;
 class PageOverlay;
 class PluginView;
 class WebEvent;
@@ -73,18 +74,21 @@ class WebKeyboardEvent;
 class WebMouseEvent;
 class WebPopupMenu;
 class WebWheelEvent;
+
+struct WebPageCreationParameters;
+struct WebPreferencesStore;
+
 #if ENABLE(TOUCH_EVENTS)
 class WebTouchEvent;
 #endif
-struct WebPageCreationParameters;
-struct WebPreferencesStore;
 
 class WebPage : public APIObject {
 public:
     static const Type APIType = TypeBundlePage;
 
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
-    ~WebPage();
+
+    virtual ~WebPage();
 
     void close();
 
@@ -94,8 +98,8 @@ public:
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_viewSize; }
 
+    InjectedBundleBackForwardList* backForwardList();
     DrawingArea* drawingArea() const { return m_drawingArea.get(); }
-
     WebInspector* inspector();
 
     // -- Called by the DrawingArea.
@@ -243,6 +247,7 @@ private:
 
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
+    RefPtr<InjectedBundleBackForwardList> m_backForwardList;
 
     String m_customUserAgent;
 

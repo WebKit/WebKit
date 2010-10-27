@@ -1,3 +1,33 @@
+2010-10-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs to support layoutTestController.dumpBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42322
+        rdar://problem/8193631
+
+        WebKitTestRunner needs to support layoutTestController.clearBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42333
+        rdar://problem/8193643
+
+        * History/WebBackForwardList.mm:
+        (core): Return BackForwardListImpl.
+        (kit): Take BackForwardListImpl.
+        (-[WebBackForwardList initWithBackForwardList:]): Use BackForwardListImpl.
+        (-[WebBackForwardList dealloc]): Ditto.
+        (-[WebBackForwardList finalize]): Ditto.
+        (-[WebBackForwardList description]): Ditto.
+        (-[WebBackForwardList setPageCacheSize:]): Ditto.
+        (-[WebBackForwardList pageCacheSize]): Ditto.
+        * History/WebBackForwardListInternal.h: Ditto.
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView keyDown:]): Ditto.
+        * WebView/WebView.mm:
+        (-[WebView initWithCoder:]): Ditto.
+        (-[WebView encodeWithCoder:]): Ditto.
+        (-[WebView backForwardList]): Ditto.
+        (-[WebView setMaintainsBackForwardList:]): Ditto.
+
 2010-10-27  Chris Rogers  <crogers@google.com>
 
         Reviewed by Chris Marrin.

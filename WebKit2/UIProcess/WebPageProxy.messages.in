@@ -85,12 +85,10 @@ messages -> WebPageProxy {
     # BackForward messages.
     BackForwardAddItem(uint64_t itemID)
     BackForwardGoToItem(uint64_t itemID)
-    BackForwardBackItem() -> (uint64_t itemID)
-    BackForwardCurrentItem() -> (uint64_t itemID)
-    BackForwardForwardItem() -> (uint64_t itemID)
-    BackForwardItemAtIndex(uint64_t itemID) -> (uint64_t itemID)
-    BackForwardBackListCount() -> (int32_t itemID)
-    BackForwardForwardListCount() -> (int32_t itemID)
+    BackForwardItemAtIndex(int32_t itemIndex) -> (uint64_t itemID)
+    BackForwardBackListCount() -> (int32_t count)
+    BackForwardForwardListCount() -> (int32_t count)
+    BackForwardClear()
 
     # Undo/Redo messages.
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)

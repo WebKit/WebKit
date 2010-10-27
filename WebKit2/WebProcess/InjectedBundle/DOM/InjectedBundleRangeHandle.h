@@ -43,7 +43,8 @@ public:
     static const Type APIType = TypeBundleRangeHandle;
 
     static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);
-    ~InjectedBundleRangeHandle();
+
+    virtual ~InjectedBundleRangeHandle();
 
     WebCore::Range* coreRange() const;
 

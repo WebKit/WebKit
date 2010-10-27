@@ -28,6 +28,7 @@
 #include "Arguments.h"
 #include "DrawingArea.h"
 #include "InjectedBundle.h"
+#include "InjectedBundleBackForwardList.h"
 #include "MessageID.h"
 #include "NetscapePlugin.h"
 #include "PageOverlay.h"
@@ -138,7 +139,11 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
 WebPage::~WebPage()
 {
+    if (m_backForwardList)
+        m_backForwardList->detach();
+
     ASSERT(!m_page);
+
 #if PLATFORM(MAC)
     ASSERT(m_pluginViews.isEmpty());
 #endif
@@ -925,6 +930,13 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     }
 
     didReceiveWebPageMessage(connection, messageID, arguments);
+}
+
+InjectedBundleBackForwardList* WebPage::backForwardList()
+{
+    if (!m_backForwardList)
+        m_backForwardList = InjectedBundleBackForwardList::create(this);
+    return m_backForwardList.get();
 }
 
 } // namespace WebKit

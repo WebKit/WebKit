@@ -3114,7 +3114,7 @@ void FrameLoader::checkDidPerformFirstNavigation()
     if (!page)
         return;
 
-    if (!m_didPerformFirstNavigation && page->backForwardList()->entries().size() == 1) {
+    if (!m_didPerformFirstNavigation && page->backForwardList()->currentItem() && !page->backForwardList()->backItem() && !page->backForwardList()->forwardItem()) {
         m_didPerformFirstNavigation = true;
         m_client->didPerformFirstNavigation();
     }

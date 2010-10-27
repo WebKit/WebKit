@@ -23,39 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleScriptWorld_h
-#define InjectedBundleScriptWorld_h
+#include "InjectedBundleBackForwardListItem.h"
 
-#include "APIObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "ImmutableArray.h"
 
-namespace WebCore {
-    class DOMWrapperWorld;
-}
+using namespace WebCore;
 
 namespace WebKit {
 
-class InjectedBundleScriptWorld : public APIObject {
-public:
-    static const Type APIType = TypeBundleScriptWorld;
-
-    static PassRefPtr<InjectedBundleScriptWorld> create();
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
-    static InjectedBundleScriptWorld* normalWorld();
-
-    virtual ~InjectedBundleScriptWorld();
-
-    WebCore::DOMWrapperWorld* coreWorld() const;
-
-private:
-    InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
-
-    virtual Type type() const { return APIType; }
-
-    RefPtr<WebCore::DOMWrapperWorld> m_world;
-};
+PassRefPtr<ImmutableArray> InjectedBundleBackForwardListItem::children() const
+{
+    const HistoryItemVector& children = m_item->children();
+    size_t size = children.size();
+    Vector<RefPtr<APIObject> > vector(size);
+    for (size_t i = 0; i < size; ++i)
+        vector[i] = InjectedBundleBackForwardListItem::create(children[i]);
+    return ImmutableArray::adopt(vector);
+}
 
 } // namespace WebKit
-
-#endif // InjectedBundleScriptWorld_h

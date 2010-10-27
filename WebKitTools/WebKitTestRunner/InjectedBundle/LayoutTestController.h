@@ -60,6 +60,7 @@ public:
     void notifyDone();
 
     // Other dumping.
+    void dumpBackForwardList() { m_shouldDumpBackForwardListsForAllWindows = true; }
     void dumpChildFrameScrollPositions() { m_shouldDumpAllFrameScrollPositions = true; }
     void dumpEditingCallbacks() { m_dumpEditingCallbacks = true; }
     void dumpSelectionRect() { } // Will need to do something when we support pixel tests.
@@ -72,14 +73,15 @@ public:
     void setCanOpenWindows(bool);
     void setCloseRemainingWindowsWhenComplete(bool value) { m_shouldCloseExtraWindows = value; }
     void setXSSAuditorEnabled(bool);
-    unsigned windowCount();
 
     // Special DOM functions.
     JSValueRef computedStyleIncludingVisitedInfo(JSValueRef element);
     JSRetainPtr<JSStringRef> counterValueForElementById(JSStringRef elementId);
-    JSRetainPtr<JSStringRef> markerTextForListItem(JSValueRef element);
+    void clearBackForwardList();
     void execCommand(JSStringRef name, JSStringRef argument);
     bool isCommandEnabled(JSStringRef name);
+    JSRetainPtr<JSStringRef> markerTextForListItem(JSValueRef element);
+    unsigned windowCount();
 
     // Repaint testing.
     void testRepaint() { m_testRepaint = true; }
@@ -101,9 +103,9 @@ public:
     WhatToDump whatToDump() const { return m_whatToDump; }
 
     bool shouldDumpAllFrameScrollPositions() const { return m_shouldDumpAllFrameScrollPositions; }
+    bool shouldDumpBackForwardListsForAllWindows() const { return m_shouldDumpBackForwardListsForAllWindows; }
     bool shouldDumpEditingCallbacks() const { return m_dumpEditingCallbacks; }
     bool shouldDumpMainFrameScrollPosition() const { return m_whatToDump == RenderTree; }
-
     bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
     bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
 
@@ -125,6 +127,7 @@ private:
 
     WhatToDump m_whatToDump;
     bool m_shouldDumpAllFrameScrollPositions;
+    bool m_shouldDumpBackForwardListsForAllWindows;
 
     bool m_shouldAllowEditing;
     bool m_shouldCloseExtraWindows;

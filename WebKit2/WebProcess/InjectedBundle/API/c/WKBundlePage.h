@@ -190,6 +190,8 @@ WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClien
 
 WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page);
 
+WK_EXPORT WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef page);
+
 #ifdef __cplusplus
 }
 #endif

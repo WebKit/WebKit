@@ -42,6 +42,8 @@ namespace WebCore {
 namespace WebKit {
 
 class InjectedBundle;
+class InjectedBundleBackForwardList;
+class InjectedBundleBackForwardListItem;
 class InjectedBundleHitTestResult;
 class InjectedBundleNodeHandle;
 class InjectedBundleRangeHandle;
@@ -49,6 +51,8 @@ class InjectedBundleScriptWorld;
 class WebFrame;
 class WebPage;
 
+WK_ADD_API_MAPPING(WKBundleBackForwardListRef, InjectedBundleBackForwardList)
+WK_ADD_API_MAPPING(WKBundleBackForwardListItemRef, InjectedBundleBackForwardListItem)
 WK_ADD_API_MAPPING(WKBundleCSSStyleDeclarationRef, WebCore::CSSStyleDeclaration)
 WK_ADD_API_MAPPING(WKBundleFrameRef, WebFrame)
 WK_ADD_API_MAPPING(WKBundleHitTestResultRef, InjectedBundleHitTestResult)

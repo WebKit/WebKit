@@ -169,6 +169,14 @@
 		762B74AF120BC94F00819339 /* WKPreferencesPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 762B749D120BC8EA00819339 /* WKPreferencesPrivate.cpp */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		935EEB9E127761AC003322B8 /* WKBundleBackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */; };
+		935EEB9F127761AC003322B8 /* WKBundleBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB961277616D003322B8 /* WKBundleBackForwardList.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		935EEBA0127761AC003322B8 /* WKBundleBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EEB971277616D003322B8 /* WKBundleBackForwardListItem.cpp */; };
+		935EEBA1127761CC003322B8 /* InjectedBundleBackForwardList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EEB8F1277615D003322B8 /* InjectedBundleBackForwardList.cpp */; };
+		935EEBA2127761D0003322B8 /* InjectedBundleBackForwardList.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB901277615D003322B8 /* InjectedBundleBackForwardList.h */; };
+		935EEBA3127761D3003322B8 /* InjectedBundleBackForwardListItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 935EEB911277615D003322B8 /* InjectedBundleBackForwardListItem.cpp */; };
+		935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB921277615D003322B8 /* InjectedBundleBackForwardListItem.h */; };
 		9391F2CA121B679A00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */; };
 		9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */; };
 		BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC0092F5115837A300E0AE2A /* RunLoopMac.mm */; };
@@ -659,6 +667,14 @@
 		762B749D120BC8EA00819339 /* WKPreferencesPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPreferencesPrivate.cpp; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* WebKit2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebKit2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		935EEB8F1277615D003322B8 /* InjectedBundleBackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleBackForwardList.cpp; sourceTree = "<group>"; };
+		935EEB901277615D003322B8 /* InjectedBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleBackForwardList.h; sourceTree = "<group>"; };
+		935EEB911277615D003322B8 /* InjectedBundleBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleBackForwardListItem.cpp; sourceTree = "<group>"; };
+		935EEB921277615D003322B8 /* InjectedBundleBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundleBackForwardListItem.h; sourceTree = "<group>"; };
+		935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleBackForwardList.cpp; sourceTree = "<group>"; };
+		935EEB961277616D003322B8 /* WKBundleBackForwardList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardList.h; sourceTree = "<group>"; };
+		935EEB971277616D003322B8 /* WKBundleBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleBackForwardListItem.cpp; sourceTree = "<group>"; };
+		935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleBackForwardListItem.h; sourceTree = "<group>"; };
 		9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameNetworkingContext.h; sourceTree = "<group>"; };
 		9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameNetworkingContext.mm; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* WebSerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSerializedScriptValue.h; sourceTree = "<group>"; };
@@ -1633,6 +1649,10 @@
 				BC4BEE96120A091700FBA0C7 /* DOM */,
 				BC204EE011C83E98008F3375 /* InjectedBundle.cpp */,
 				BC204EE111C83E98008F3375 /* InjectedBundle.h */,
+				935EEB8F1277615D003322B8 /* InjectedBundleBackForwardList.cpp */,
+				935EEB901277615D003322B8 /* InjectedBundleBackForwardList.h */,
+				935EEB911277615D003322B8 /* InjectedBundleBackForwardListItem.cpp */,
+				935EEB921277615D003322B8 /* InjectedBundleBackForwardListItem.h */,
 				BC498617124D10E200D834E1 /* InjectedBundleHitTestResult.cpp */,
 				BC498616124D10E200D834E1 /* InjectedBundleHitTestResult.h */,
 				E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */,
@@ -1672,6 +1692,10 @@
 				BC204EE911C83EC8008F3375 /* WKBundle.cpp */,
 				BC204EEA11C83EC8008F3375 /* WKBundle.h */,
 				BC204EEB11C83EC8008F3375 /* WKBundleAPICast.h */,
+				935EEB951277616D003322B8 /* WKBundleBackForwardList.cpp */,
+				935EEB961277616D003322B8 /* WKBundleBackForwardList.h */,
+				935EEB971277616D003322B8 /* WKBundleBackForwardListItem.cpp */,
+				935EEB981277616D003322B8 /* WKBundleBackForwardListItem.h */,
 				BCD25F1611D6BDE100169B0E /* WKBundleFrame.cpp */,
 				BCD25F1511D6BDE100169B0E /* WKBundleFrame.h */,
 				BCF049E411FE20F600F86A58 /* WKBundleFramePrivate.h */,
@@ -2144,6 +2168,10 @@
 				1C8E28201275D15400BC7BD0 /* WebInspector.h in Headers */,
 				1C8E28341275D73800BC7BD0 /* WebInspectorProxy.h in Headers */,
 				1C8E293912761E5B00BC7BD0 /* WKInspector.h in Headers */,
+				935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */,
+				935EEB9F127761AC003322B8 /* WKBundleBackForwardList.h in Headers */,
+				935EEBA2127761D0003322B8 /* InjectedBundleBackForwardList.h in Headers */,
+				935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */,
 				1A616150127798B5003ACD86 /* DownloadManager.h in Headers */,
 				1A6161D41278981C003ACD86 /* Download.h in Headers */,
 			);
@@ -2459,6 +2487,10 @@
 				1C8E28211275D15400BC7BD0 /* WebInspector.cpp in Sources */,
 				1C8E28351275D73800BC7BD0 /* WebInspectorProxy.cpp in Sources */,
 				1C8E293A12761E5B00BC7BD0 /* WKInspector.cpp in Sources */,
+				935EEB9E127761AC003322B8 /* WKBundleBackForwardList.cpp in Sources */,
+				935EEBA0127761AC003322B8 /* WKBundleBackForwardListItem.cpp in Sources */,
+				935EEBA1127761CC003322B8 /* InjectedBundleBackForwardList.cpp in Sources */,
+				935EEBA3127761D3003322B8 /* InjectedBundleBackForwardListItem.cpp in Sources */,
 				1A61614F127798B5003ACD86 /* DownloadManager.cpp in Sources */,
 				1A6161D51278981C003ACD86 /* Download.cpp in Sources */,
 				1A61639612789B2F003ACD86 /* DownloadMac.mm in Sources */,

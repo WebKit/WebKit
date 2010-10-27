@@ -67,6 +67,8 @@ public:
 
         // Bundle types
         TypeBundle,
+        TypeBundleBackForwardList,
+        TypeBundleBackForwardListItem,
         TypeBundleFrame,
         TypeBundleHitTestResult,
         TypeBundleNodeHandle,

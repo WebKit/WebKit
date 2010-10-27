@@ -42,10 +42,10 @@ class InjectedBundleNodeHandle : public APIObject {
 public:
     static const Type APIType = TypeBundleNodeHandle;
 
-    static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef context, JSObjectRef object);
+    static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);
 
-    ~InjectedBundleNodeHandle();
+    virtual ~InjectedBundleNodeHandle();
 
     WebCore::Node* coreNode() const;
 

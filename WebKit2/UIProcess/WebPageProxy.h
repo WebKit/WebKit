@@ -98,7 +98,8 @@ public:
     static const Type APIType = TypePage;
 
     static PassRefPtr<WebPageProxy> create(WebPageNamespace*, uint64_t pageID);
-    ~WebPageProxy();
+
+    virtual ~WebPageProxy();
 
     uint64_t pageID() const { return m_pageID; }
 
@@ -286,12 +287,10 @@ private:
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);
     void backForwardGoToItem(uint64_t itemID);
-    void backForwardBackItem(uint64_t& itemID);
-    void backForwardCurrentItem(uint64_t& itemID);
-    void backForwardForwardItem(uint64_t& itemID);
     void backForwardItemAtIndex(int32_t index, uint64_t& itemID);
     void backForwardBackListCount(int32_t& count);
     void backForwardForwardListCount(int32_t& count);
+    void backForwardClear();
 
     // Undo management
     void registerEditCommandForUndo(uint64_t commandID, uint32_t editAction);

@@ -23,39 +23,55 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleScriptWorld_h
-#define InjectedBundleScriptWorld_h
+#include "InjectedBundleBackForwardList.h"
 
-#include "APIObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "InjectedBundleBackForwardListItem.h"
+#include "WebBackForwardListProxy.h"
+#include "WebPage.h"
+#include <WebCore/Page.h>
 
-namespace WebCore {
-    class DOMWrapperWorld;
-}
+using namespace WebCore;
 
 namespace WebKit {
 
-class InjectedBundleScriptWorld : public APIObject {
-public:
-    static const Type APIType = TypeBundleScriptWorld;
+PassRefPtr<InjectedBundleBackForwardListItem> InjectedBundleBackForwardList::itemAtIndex(int index) const
+{
+    if (!m_page)
+        return 0;
+    Page* page = m_page->corePage();
+    if (!page)
+        return 0;
+    return InjectedBundleBackForwardListItem::create(page->backForwardList()->itemAtIndex(index));
+}
 
-    static PassRefPtr<InjectedBundleScriptWorld> create();
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
-    static InjectedBundleScriptWorld* normalWorld();
+int InjectedBundleBackForwardList::backListCount() const
+{
+    if (!m_page)
+        return 0;
+    Page* page = m_page->corePage();
+    if (!page)
+        return 0;
+    return page->backForwardList()->backListCount();
+}
 
-    virtual ~InjectedBundleScriptWorld();
+int InjectedBundleBackForwardList::forwardListCount() const
+{
+    if (!m_page)
+        return 0;
+    Page* page = m_page->corePage();
+    if (!page)
+        return 0;
+    return page->backForwardList()->forwardListCount();
+}
 
-    WebCore::DOMWrapperWorld* coreWorld() const;
-
-private:
-    InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
-
-    virtual Type type() const { return APIType; }
-
-    RefPtr<WebCore::DOMWrapperWorld> m_world;
-};
+void InjectedBundleBackForwardList::clear()
+{
+    if (!m_page)
+        return;
+    Page* page = m_page->corePage();
+    if (!page)
+        return;
+    static_cast<WebBackForwardListProxy*>(page->backForwardList())->clear();
+}
 
 } // namespace WebKit
-
-#endif // InjectedBundleScriptWorld_h

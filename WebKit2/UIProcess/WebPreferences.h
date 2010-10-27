@@ -51,7 +51,8 @@ public:
     {
         return adoptRef(new WebPreferences(preferences));
     }
-    ~WebPreferences();
+
+    virtual ~WebPreferences();
 
     void addContext(WebContext*);
     void removeContext(WebContext*);

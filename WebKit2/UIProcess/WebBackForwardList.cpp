@@ -137,35 +137,6 @@ int WebBackForwardList::forwardListCount()
     return m_current == NoCurrentItemIndex ? 0 : static_cast<int>(m_entries.size()) - (m_current + 1);
 }
 
-BackForwardListItemVector WebBackForwardList::backListWithLimit(unsigned limit)
-{
-    BackForwardListItemVector list;
-    unsigned size = std::min(backListCount(), static_cast<int>(limit));
-    if (!size)
-        return list;
-
-    list.resize(size);
-    for (unsigned i = std::max(m_current - limit, 0U), j = 0; i < m_current; ++i, ++j)
-        list[j] = m_entries[i];
-
-    return list;
-}
-
-BackForwardListItemVector WebBackForwardList::forwardListWithLimit(unsigned limit)
-{
-    BackForwardListItemVector list;
-    unsigned size = std::min(forwardListCount(), static_cast<int>(limit));
-    if (!size)
-        return list;
-
-    list.resize(size);
-    unsigned last = std::min(m_current + limit, static_cast<unsigned>(m_entries.size() - 1));
-    for (unsigned i = m_current + 1, j = 0; i <= last; ++i, ++j)
-        list[j] = m_entries[i];
-
-    return list;
-}
-
 PassRefPtr<ImmutableArray> WebBackForwardList::backListAsImmutableArrayWithLimit(unsigned limit)
 {
     unsigned backListSize = static_cast<unsigned>(backListCount());
@@ -198,6 +169,21 @@ PassRefPtr<ImmutableArray> WebBackForwardList::forwardListAsImmutableArrayWithLi
         vector.uncheckedAppend(m_entries[i].get());
 
     return ImmutableArray::adopt(vector);
+}
+
+void WebBackForwardList::clear()
+{
+    if (m_entries.size() <= 1)
+        return;
+
+    RefPtr<WebBackForwardListItem> item = currentItem();
+    m_entries.resize(1);
+    m_entries[0] = item.release();
+
+    m_current = 0;
+
+    if (m_page)
+        m_page->didChangeBackForwardList();
 }
 
 } // namespace WebKit

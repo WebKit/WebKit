@@ -95,7 +95,7 @@
 		BC14E4E8120E03D800826C0C /* JSGCController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSGCController.cpp; path = DerivedSources/WebKitTestRunner/JSGCController.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC14E4E9120E03D800826C0C /* JSGCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSGCController.h; path = DerivedSources/WebKitTestRunner/JSGCController.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC25184611D15767002EBC01 /* InjectedBundleMain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleMain.cpp; sourceTree = "<group>"; };
-		BC25186211D15D54002EBC01 /* InjectedBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InjectedBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebKitTestRunnerInjectedBundle.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC25186311D15D54002EBC01 /* InjectedBundle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InjectedBundle-Info.plist"; sourceTree = "<group>"; };
 		BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = InjectedBundle.xcconfig; sourceTree = "<group>"; };
 		BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitTestRunnerPrefix.h; sourceTree = "<group>"; };
@@ -203,7 +203,7 @@
 			isa = PBXGroup;
 			children = (
 				8DD76FA10486AA7600D96B5E /* WebKitTestRunner */,
-				BC25186211D15D54002EBC01 /* InjectedBundle.bundle */,
+				BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -343,9 +343,9 @@
 			productReference = 8DD76FA10486AA7600D96B5E /* WebKitTestRunner */;
 			productType = "com.apple.product-type.tool";
 		};
-		BC25186111D15D54002EBC01 /* InjectedBundle */ = {
+		BC25186111D15D54002EBC01 /* WebKitTestRunnerInjectedBundle */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BC25186611D15D55002EBC01 /* Build configuration list for PBXNativeTarget "InjectedBundle" */;
+			buildConfigurationList = BC25186611D15D55002EBC01 /* Build configuration list for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */;
 			buildPhases = (
 				BC25185E11D15D54002EBC01 /* Resources */,
 				BC25185F11D15D54002EBC01 /* Sources */,
@@ -356,9 +356,9 @@
 			dependencies = (
 				BC952ED711F3C38B003398B4 /* PBXTargetDependency */,
 			);
-			name = InjectedBundle;
+			name = WebKitTestRunnerInjectedBundle;
 			productName = InjectedBundle;
-			productReference = BC25186211D15D54002EBC01 /* InjectedBundle.bundle */;
+			productReference = BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -381,7 +381,7 @@
 			projectRoot = "";
 			targets = (
 				8DD76F960486AA7600D96B5E /* WebKitTestRunner */,
-				BC25186111D15D54002EBC01 /* InjectedBundle */,
+				BC25186111D15D54002EBC01 /* WebKitTestRunnerInjectedBundle */,
 				BC952D7711F3BF5D003398B4 /* Derived Sources */,
 			);
 		};
@@ -462,7 +462,7 @@
 /* Begin PBXTargetDependency section */
 		BC25194211D15D94002EBC01 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BC25186111D15D54002EBC01 /* InjectedBundle */;
+			target = BC25186111D15D54002EBC01 /* WebKitTestRunnerInjectedBundle */;
 			targetProxy = BC25194111D15D94002EBC01 /* PBXContainerItemProxy */;
 		};
 		BC952ED711F3C38B003398B4 /* PBXTargetDependency */ = {
@@ -558,7 +558,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BC25186611D15D55002EBC01 /* Build configuration list for PBXNativeTarget "InjectedBundle" */ = {
+		BC25186611D15D55002EBC01 /* Build configuration list for PBXNativeTarget "WebKitTestRunnerInjectedBundle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BC25186411D15D55002EBC01 /* Debug */,

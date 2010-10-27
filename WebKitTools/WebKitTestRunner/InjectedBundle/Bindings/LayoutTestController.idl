@@ -33,6 +33,7 @@ module WTR {
         void notifyDone();
 
         // Other dumping.
+        void dumpBackForwardList();
         void dumpChildFrameScrollPositions();
         void dumpEditingCallbacks();
         void dumpSelectionRect();
@@ -45,14 +46,15 @@ module WTR {
         void setCanOpenWindows(in boolean value);
         void setCloseRemainingWindowsWhenComplete(in boolean value);
         void setXSSAuditorEnabled(in boolean value);
-        unsigned long windowCount();
 
         // Special DOM functions.
+        void clearBackForwardList();
         object computedStyleIncludingVisitedInfo(in object element);
         DOMString counterValueForElementById(in DOMString elementId);
-        DOMString markerTextForListItem(in object element);
         void execCommand(in DOMString name, in DOMString argument);
         boolean isCommandEnabled(in DOMString name);
+        DOMString markerTextForListItem(in object element);
+        unsigned long windowCount();
 
         // Repaint testing.
         void testRepaint();

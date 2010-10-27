@@ -23,39 +23,51 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleScriptWorld_h
-#define InjectedBundleScriptWorld_h
+#include "WKBundleBackForwardListItem.h"
 
-#include "APIObject.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include "ImmutableArray.h"
+#include "InjectedBundleBackForwardListItem.h"
+#include "WKBundleAPICast.h"
 
-namespace WebCore {
-    class DOMWrapperWorld;
+using namespace WebKit;
+
+WKTypeID WKBundleBackForwardListItemGetTypeID()
+{
+    return toAPI(InjectedBundleBackForwardListItem::APIType);
 }
 
-namespace WebKit {
+bool WKBundleBackForwardListItemIsSame(WKBundleBackForwardListItemRef itemRef1, WKBundleBackForwardListItemRef itemRef2)
+{
+    return toImpl(itemRef1)->item() == toImpl(itemRef2)->item();
+}
 
-class InjectedBundleScriptWorld : public APIObject {
-public:
-    static const Type APIType = TypeBundleScriptWorld;
+WKURLRef WKBundleBackForwardListItemCopyOriginalURL(WKBundleBackForwardListItemRef itemRef)
+{
+    return toCopiedURLAPI(toImpl(itemRef)->originalURL());
+}
 
-    static PassRefPtr<InjectedBundleScriptWorld> create();
-    static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
-    static InjectedBundleScriptWorld* normalWorld();
+WKURLRef WKBundleBackForwardListItemCopyURL(WKBundleBackForwardListItemRef itemRef)
+{
+    return toCopiedURLAPI(toImpl(itemRef)->url());
+}
 
-    virtual ~InjectedBundleScriptWorld();
+WKStringRef WKBundleBackForwardListItemCopyTitle(WKBundleBackForwardListItemRef itemRef)
+{
+    return toCopiedAPI(toImpl(itemRef)->title());
+}
 
-    WebCore::DOMWrapperWorld* coreWorld() const;
+WKStringRef WKBundleBackForwardListItemCopyTarget(WKBundleBackForwardListItemRef itemRef)
+{
+    return toCopiedAPI(toImpl(itemRef)->target());
+}
 
-private:
-    InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
+bool WKBundleBackForwardListItemIsTargetItem(WKBundleBackForwardListItemRef itemRef)
+{
+    return toImpl(itemRef)->isTargetItem();
+}
 
-    virtual Type type() const { return APIType; }
+WKArrayRef WKBundleBackForwardListItemCopyChildren(WKBundleBackForwardListItemRef itemRef)
+{
+    return toAPI(toImpl(itemRef)->children().leakRef());
+}
 
-    RefPtr<WebCore::DOMWrapperWorld> m_world;
-};
-
-} // namespace WebKit
-
-#endif // InjectedBundleScriptWorld_h

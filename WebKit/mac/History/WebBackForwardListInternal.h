@@ -30,12 +30,12 @@
 #import <wtf/PassRefPtr.h>
 
 namespace WebCore {
-    class BackForwardList;
+    class BackForwardListImpl;
 }
 
-WebCore::BackForwardList* core(WebBackForwardList *);
-WebBackForwardList *kit(WebCore::BackForwardList*);
+WebCore::BackForwardListImpl* core(WebBackForwardList *);
+WebBackForwardList *kit(WebCore::BackForwardListImpl*);
 
 @interface WebBackForwardList (WebBackForwardListInternal)
-- (id)initWithBackForwardList:(PassRefPtr<WebCore::BackForwardList>)backForwardList;
+- (id)initWithBackForwardList:(PassRefPtr<WebCore::BackForwardListImpl>)backForwardList;
 @end

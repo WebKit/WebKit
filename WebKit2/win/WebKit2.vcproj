@@ -1272,6 +1272,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleBackForwardList.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleBackForwardList.h"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleBackForwardListItem.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleBackForwardListItem.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\InjectedBundle\InjectedBundleHitTestResult.cpp"
 					>
 				</File>
@@ -1339,6 +1355,22 @@
 						</File>
 						<File
 							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleAPICast.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleBackForwardList.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleBackForwardList.h"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleBackForwardListItem.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\InjectedBundle\API\c\WKBundleBackForwardListItem.h"
 							>
 						</File>
 						<File

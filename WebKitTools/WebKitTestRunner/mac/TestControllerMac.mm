@@ -36,7 +36,7 @@ void TestController::platformInitialize()
 
 void TestController::initializeInjectedBundlePath()
 {
-    NSString *nsBundlePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"InjectedBundle.bundle"];
+    NSString *nsBundlePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"WebKitTestRunnerInjectedBundle.bundle"];
     m_injectedBundlePath.adopt(WKStringCreateWithCFString((CFStringRef)nsBundlePath));
 }
 

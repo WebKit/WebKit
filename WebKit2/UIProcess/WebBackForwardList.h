@@ -55,10 +55,12 @@ public:
     {
         return adoptRef(new WebBackForwardList(page));
     }
-    ~WebBackForwardList();
+
+    virtual ~WebBackForwardList();
 
     void addItem(WebBackForwardListItem*);
     void goToItem(WebBackForwardListItem*);
+    void clear();
 
     WebBackForwardListItem* currentItem();
     WebBackForwardListItem* backItem();
@@ -67,9 +69,6 @@ public:
 
     int backListCount();
     int forwardListCount();
-
-    BackForwardListItemVector backListWithLimit(unsigned limit);
-    BackForwardListItemVector forwardListWithLimit(unsigned limit);
 
     PassRefPtr<ImmutableArray> backListAsImmutableArrayWithLimit(unsigned limit);
     PassRefPtr<ImmutableArray> forwardListAsImmutableArrayWithLimit(unsigned limit);

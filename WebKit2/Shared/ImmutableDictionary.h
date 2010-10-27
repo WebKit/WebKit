@@ -52,7 +52,8 @@ public:
     {
         return adoptRef(new ImmutableDictionary(map));
     }
-    ~ImmutableDictionary();
+
+    virtual ~ImmutableDictionary();
 
     virtual bool isMutable() { return false; }
 

@@ -59,7 +59,7 @@ public:
 
     static PassRefPtr<WebContext> create(const String& injectedBundlePath);
 
-    ~WebContext();
+    virtual ~WebContext();
 
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
     void initializeHistoryClient(const WKContextHistoryClient*);
