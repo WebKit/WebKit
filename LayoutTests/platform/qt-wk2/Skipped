@@ -2123,3 +2123,27 @@ svg/custom/bug45331.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 http/tests/security/mixedContent/insecure-css-in-main-frame.html
 http/tests/websocket/tests/bad-sub-protocol-non-ascii.html
+
+# EventSender.mouseMoveTo is not yet supported
+svg/dynamic-updates
+
+# layoutTestController.dumpConfigurationForViewport is unimplemented
+fast/viewport
+
+# layoutTestController.setSpatialNavigationEnabled is unimplemented
+fast/events/spatial-navigation
+
+# eventSender.clearTouchPoints is unimplemented
+fast/events/touch
+
+# layoutTestController.ignoreDesktopNotificationPermissionRequests  is unimplemented
+fast/notifications
+
+# layoutTestController.grantDesktopNotificationPermission  is unimplemented
+http/tests/notifications
+
+# Worker caught exception: Error: INVALID_STATE_ERR: DOM Exception 11
+fast/workers/storage
+
+# FAIL: Timed out waiting for notifyDone to be called
+http/tests/appcache
