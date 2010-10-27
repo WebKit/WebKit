@@ -61,6 +61,7 @@
 #include "RenderSlider.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
+#include "RuntimeEnabledFeatures.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
 #include "StepRange.h"
@@ -1951,7 +1952,7 @@ bool HTMLInputElement::isSpeechEnabled() const
     case SEARCH:
     case TELEPHONE:
     case TEXT:
-        return hasAttribute(webkitspeechAttr);
+        return RuntimeEnabledFeatures::speechInputEnabled() && hasAttribute(webkitspeechAttr);
     case BUTTON:
     case CHECKBOX:
     case COLOR:
