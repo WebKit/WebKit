@@ -1,3 +1,14 @@
+2010-10-27  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Multiple WebPlatformStrategy initialization triggers assert in WebCore/PlatformStrategies. 
+        Remove the code for now, as it is not used at all.
+        https://bugs.webkit.org/show_bug.cgi?id=48327
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+
 2010-10-26  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build fix.
