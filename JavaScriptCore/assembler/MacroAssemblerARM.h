@@ -400,8 +400,13 @@ public:
         if (right.m_isPointer) {
             m_assembler.ldr_un_imm(ARMRegisters::S0, right.m_value);
             m_assembler.cmp_r(left, ARMRegisters::S0);
-        } else
-            m_assembler.cmp_r(left, m_assembler.getImm(right.m_value, ARMRegisters::S0));
+        } else {
+            ARMWord tmp = m_assembler.getOp2(-right.m_value);
+            if (tmp != ARMAssembler::INVALID_IMM)
+                m_assembler.cmn_r(left, tmp);
+            else
+                m_assembler.cmp_r(left, m_assembler.getImm(right.m_value, ARMRegisters::S0));
+        }
         return Jump(m_assembler.jmp(ARMCondition(cond), useConstantPool));
     }
 

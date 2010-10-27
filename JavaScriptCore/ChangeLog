@@ -1,3 +1,16 @@
+2010-10-27  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add cmn to branch32(reg, imm) on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=48062
+
+        The conditional comparison can be done with cmn if the imm value is
+        negative and can fit into the cmn instruction.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branch32):
+
 2010-10-26  Oliver Hunt  <oliver@apple.com>
 
         Interpreter build fix.
