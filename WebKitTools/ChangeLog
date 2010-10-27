@@ -1,3 +1,12 @@
+2010-10-27  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Chris Marrin.
+
+        Add ENABLE_WEB_AUDIO feature enable flag (initially disabled) to build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=48279
+
+        * Scripts/build-webkit:
+
 2010-10-27  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.

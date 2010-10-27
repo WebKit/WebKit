@@ -100,6 +100,7 @@ my (
     $tiledBackingStoreSupport,
     $videoSupport,
     $wcssSupport,
+    $webAudioSupport,
     $webSocketsSupport,
     $webTimingSupport,
     $wmlSupport,
@@ -235,6 +236,9 @@ my @features = (
 
     { option => "wcss", desc => "Toggle WCSS support",
       define => "ENABLE_WCSS", default => 0, value => \$wcssSupport },
+
+    { option => "web-audio", desc => "Toggle Web Audio support",
+      define => "ENABLE_WEB_AUDIO", default => 0, value=> \$webAudioSupport },
 
     { option => "web-sockets", desc => "Toggle Web Sockets support",
       define => "ENABLE_WEB_SOCKETS", default => 1, value=> \$webSocketsSupport },
