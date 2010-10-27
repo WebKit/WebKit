@@ -1,3 +1,18 @@
+2010-10-27  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Type mismatch while serializing/deserializing message id size
+        https://bugs.webkit.org/show_bug.cgi?id=48401
+
+        Use correct types when reading data from connection buffer.
+
+        The message id is written as uint32_t, thus the buffer size should be
+        calculated based on sizeof(uint32_t) and not sizeof(MessageID).
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::readyReadHandler):
+
 2010-10-27  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.

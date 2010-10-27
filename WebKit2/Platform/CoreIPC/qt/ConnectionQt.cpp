@@ -72,8 +72,8 @@ void Connection::readyReadHandler()
         ASSERT_UNUSED(numberOfBytesRead, numberOfBytesRead);
 
         // The messageID is encoded at the end of the buffer.
-        size_t realBufferSize = m_currentMessageSize - sizeof(MessageID);
-        unsigned messageID = *reinterpret_cast<unsigned*>(m_readBuffer.data() + realBufferSize);
+        size_t realBufferSize = m_currentMessageSize - sizeof(uint32_t);
+        uint32_t messageID = *reinterpret_cast<uint32_t*>(m_readBuffer.data() + realBufferSize);
 
         processIncomingMessage(MessageID::fromInt(messageID), adoptPtr(new ArgumentDecoder(m_readBuffer.data(), realBufferSize)));
 
