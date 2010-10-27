@@ -19,7 +19,7 @@ function test()
 {
     WebInspector.showPanel("storage");
 
-    InspectorTest.evaluateInConsole("populateDOMStorage()", function(result) {
+    InspectorTest.evaluateInPage("populateDOMStorage()", function(result) {
         InspectorTest.addResult("Populated local and session storage");
     });
     function name(storage) {
