@@ -743,9 +743,8 @@ void MediaPlayerPrivateQuickTimeVisualContext::paint(GraphicsContext* p, const I
                 // recreated with the new parameters.
                 if (!m_decompressionSession || !m_decompressionSession->canDecompress(buffer))
                     m_decompressionSession = QTDecompressionSession::create(buffer.pixelFormatType(), buffer.width(), buffer.height());
+                buffer = m_decompressionSession->decompress(buffer);
             }
-
-            buffer = m_decompressionSession->decompress(buffer);
         }
 #endif
         CGImageRef image = CreateCGImageFromPixelBuffer(buffer);
