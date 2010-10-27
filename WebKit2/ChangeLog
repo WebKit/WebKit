@@ -1,5 +1,11 @@
 2010-10-27  Brian Weinstein  <bweinstein@apple.com>
 
+        More Windows build fixage. Copy another new header into WebKitOutputDir.
+
+        * win/WebKit2Generated.make:
+
+2010-10-27  Brian Weinstein  <bweinstein@apple.com>
+
         Windows build fix. Copy a new header into WebKitOutputDir.
 
         * win/WebKit2Generated.make:

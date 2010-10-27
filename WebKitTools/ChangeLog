@@ -1,3 +1,10 @@
+2010-10-27  Brian Weinstein  <bweinstein@apple.com>
+
+        More Windows build fixage. Rename a variable that was named string.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::hasPrefix):
+
 2010-10-27  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dimitri Glazkov.

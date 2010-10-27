@@ -46,9 +46,9 @@ template<typename T> static inline WKRetainPtr<T> adoptWK(T item)
     return WKRetainPtr<T>(AdoptWK, item);
 }
 
-static bool hasPrefix(const string& string, const string& prefix)
+static bool hasPrefix(const string& searchString, const string& prefix)
 {
-    return string.length() >= prefix.length() && string.substr(0, prefix.length()) == prefix;
+    return searchString.length() >= prefix.length() && searchString.substr(0, prefix.length()) == prefix;
 }
 
 static JSValueRef propertyValue(JSContextRef context, JSObjectRef object, const char* propertyName)
