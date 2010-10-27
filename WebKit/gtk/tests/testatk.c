@@ -1223,6 +1223,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/textSelections", testWekitAtkTextSelections);
     g_test_add_func("/webkit/atk/getExtents", testWebkitAtkGetExtents);
     g_test_add_func("/webkit/atk/layoutAndDataTables", testWebkitAtkLayoutAndDataTables);
+    g_test_add_func("/webkit/atk/linksWithInlineImages", testWebkitAtkLinksWithInlineImages);
     g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);
     g_test_add_func("/webkit/atk/textChangedNotifications", testWebkitAtkTextChangedNotifications);
     return g_test_run ();
