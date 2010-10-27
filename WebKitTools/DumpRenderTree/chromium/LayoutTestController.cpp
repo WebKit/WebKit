@@ -1534,10 +1534,10 @@ void LayoutTestController::abortModal(const CppArgumentList& arguments, CppVaria
 void LayoutTestController::setMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isString())
+    if (arguments.size() < 1 || !arguments[0].isString())
         return;
 
-    m_speechInputControllerMock->setMockRecognitionResult(cppVariantToWebString(arguments[0]), cppVariantToWebString(arguments[1]));
+    m_speechInputControllerMock->setMockRecognitionResult(cppVariantToWebString(arguments[0]));
 }
 
 WebKit::WebSpeechInputController* LayoutTestController::speechInputController(WebKit::WebSpeechInputListener* listener)

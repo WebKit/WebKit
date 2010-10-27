@@ -61,7 +61,7 @@ public:
     void unregisterListener(int);
 
     // Methods invoked by the input elements.
-    bool startRecognition(int listenerId, const String& language, const IntRect& elementRect, const String& grammar);
+    bool startRecognition(int listenerId, const IntRect& elementRect, const String& grammar);
     void stopRecording(int);
     void cancelRecognition(int);
 

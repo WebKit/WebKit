@@ -49,6 +49,7 @@
 #include "IntRect.h"
 #include "LayerRendererChromium.h"
 #include "NotificationPresenterImpl.h"
+#include "SpeechInputClientImpl.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -73,7 +74,6 @@ class AutoFillPopupMenuClient;
 class ContextMenuClientImpl;
 class DeviceOrientationClientProxy;
 class DragScrollTimer;
-class SpeechInputClientImpl;
 class WebAccessibilityObject;
 class WebDevToolsAgentClient;
 class WebDevToolsAgentPrivate;
@@ -548,7 +548,7 @@ private:
     static const WebInputEvent* m_currentInputEvent;
 
 #if ENABLE(INPUT_SPEECH)
-    OwnPtr<SpeechInputClientImpl> m_speechInputClient;
+    SpeechInputClientImpl m_speechInputClient;
 #endif
     // If we attempt to fetch the on-screen GraphicsContext3D before
     // the compositor has been turned on, we need to instantiate it

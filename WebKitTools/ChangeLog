@@ -1,3 +1,28 @@
+2010-10-27  Satish Sampath  <satish@chromium.org>
+
+        Unreviewed, rolling out r70665.
+        http://trac.webkit.org/changeset/70665
+        https://bugs.webkit.org/show_bug.cgi?id=47089
+
+        Need to address Alexey's review comments.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setMockSpeechInputResultCallback):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::setMockSpeechInputResult):
+
 2010-10-27  Leandro Gracia Gil  <leandrogracia@google.com>
 
         Reviewed by Jeremy Orlow.
