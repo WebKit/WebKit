@@ -1,3 +1,16 @@
+2010-10-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Fix tst_QWebFrame::popupFocus().
+        https://bugs.webkit.org/show_bug.cgi?id=48432
+
+        - Call setFocus() before show() to work around a but in Qt.
+        - Remove the check on combo at the end since hidePopup() leads
+          indirectly to its destruction and segfault.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-10-26  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

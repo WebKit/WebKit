@@ -2603,9 +2603,10 @@ void tst_QWebFrame::popupFocus()
                  "    </body>"
                  "</html>");
     view.resize(400, 100);
+    // Call setFocus before show to work around http://bugreports.qt.nokia.com/browse/QTBUG-14762
+    view.setFocus();
     view.show();
     QTest::qWaitForWindowShown(&view);
-    view.setFocus();
     QTRY_VERIFY(view.hasFocus());
 
     // open the popup by clicking. check if focus is on the popup
@@ -2618,7 +2619,7 @@ void tst_QWebFrame::popupFocus()
 
     // hide the popup and check if focus is on the page
     combo->hidePopup();
-    QTRY_VERIFY(view.hasFocus() && !combo->view()->hasFocus()); // Focus should be back on the WebView
+    QTRY_VERIFY(view.hasFocus()); // Focus should be back on the WebView
 }
 #endif
 
