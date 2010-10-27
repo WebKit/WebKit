@@ -73,7 +73,6 @@
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
-#include <WebCore/CookieStorageCFNet.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/Document.h>
 #include <WebCore/DragController.h>
@@ -148,6 +147,7 @@
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
+#include <WebCore/CookieStorageCFNet.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h> 
 #endif
 

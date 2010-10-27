@@ -1,3 +1,12 @@
+2010-10-26  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build fix.
+
+        * WebView.cpp: Conditionalize includes for CFNetwork-specific
+        Cookie implementation.
+        * WebView.h: Conditionalize includes for ACCELERATED_COMPOSITION.
+        WinCairo doesn't use CoreAnimation.
+
 2010-10-26  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

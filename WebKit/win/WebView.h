@@ -35,11 +35,14 @@
 #include <WebCore/RefCountedGDIHandle.h>
 #include <WebCore/SuspendableTimer.h>
 #include <WebCore/WindowMessageListener.h>
-#include <WebCore/WKCACFLayer.h>
-#include <WebCore/WKCACFLayerRenderer.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+
+#if USE(ACCELERATED_COMPOSITING)
+#include <WebCore/WKCACFLayer.h>
+#include <WebCore/WKCACFLayerRenderer.h>
+#endif
 
 class FullscreenVideoController;
 class WebBackForwardList;

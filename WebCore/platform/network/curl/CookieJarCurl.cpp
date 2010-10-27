@@ -61,4 +61,9 @@ void deleteCookie(const Document*, const KURL&, const String&)
     // FIXME: Not yet implemented
 }
 
+void setCookieStoragePrivateBrowsingEnabled(bool enabled)
+{
+    // FIXME: Not yet implemented
+}
+
 }
