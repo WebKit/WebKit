@@ -1,3 +1,27 @@
+2010-10-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41948
+        REGRESSION(r60392): Registerfile can be unwound too far following an exception
+        
+        SunSpider reports no change.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException): Walk the stack to calculate the high
+        water mark currently in use. It's not safe to assume that the current
+        CallFrame's high water mark is the highest high water mark because
+        calls do not always set up at the end of a CallFrame. A large caller
+        CallFrame can encompass a small callee CallFrame.
+
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::privateCompileCTINativeCall):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::privateCompileCTINativeCall): Make sure to set a 0 CodeBlock
+        in the CallFrame of a host call, like the Interpreter does, instead of
+        leaving the CodeBlock field uninitialized. The backtracing code requires
+        a valid CodeBlock field in each CallFrame.
+
 2010-10-27  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

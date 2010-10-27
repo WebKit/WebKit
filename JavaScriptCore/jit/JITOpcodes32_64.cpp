@@ -198,6 +198,8 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 
     Label nativeCallThunk = align();
 
+    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
+
 #if CPU(X86)
     // Load caller frame's scope chain into this callframe so that whatever we call can
     // get to its global data.
@@ -311,6 +313,8 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
 {
     Call nativeCall;
     Label nativeCallThunk = align();
+
+    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
 
 #if CPU(X86)
     // Load caller frame's scope chain into this callframe so that whatever we call can

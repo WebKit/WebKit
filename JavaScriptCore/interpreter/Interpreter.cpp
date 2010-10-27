@@ -676,7 +676,15 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     }
 
     // Shrink the JS stack, in case stack overflow made it huge.
-    m_registerFile.shrink(callFrame->registers() + callFrame->codeBlock()->m_numCalleeRegisters);
+    Register* highWaterMark = 0;
+    for (CallFrame* callerFrame = callFrame; callerFrame; callerFrame = callerFrame->callerFrame()->removeHostCallFrameFlag()) {
+        CodeBlock* codeBlock = callerFrame->codeBlock();
+        if (!codeBlock)
+            continue;
+        Register* callerHighWaterMark = callerFrame->registers() + codeBlock->m_numCalleeRegisters;
+        highWaterMark = max(highWaterMark, callerHighWaterMark);
+    }
+    m_registerFile.shrink(highWaterMark);
 
     // Unwind the scope chain within the exception handler's call frame.
     ScopeChainNode* scopeChain = callFrame->scopeChain();
@@ -1001,7 +1009,6 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
         m_registerFile.shrink(oldEnd);
         return CallFrameClosure();
     }
-    // a 0 codeBlock indicates a built-in caller
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), argc, function);  
     CallFrameClosure result = { callFrame, newCallFrame, function, FunctionExecutable, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argc };
     return result;
@@ -1121,7 +1128,6 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSObjec
 
     CallFrame* newCallFrame = CallFrame::create(m_registerFile.start() + globalRegisterOffset);
 
-    // a 0 codeBlock indicates a built-in caller
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), codeBlock->m_numParameters, 0);
     newCallFrame->r(newCallFrame->hostThisRegister()) = JSValue(thisObj);

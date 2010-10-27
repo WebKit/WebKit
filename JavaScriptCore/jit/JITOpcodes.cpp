@@ -198,6 +198,8 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
     int executableOffsetToFunction = isConstruct ? OBJECT_OFFSETOF(NativeExecutable, m_constructor) : OBJECT_OFFSETOF(NativeExecutable, m_function);
 
     Label nativeCallThunk = align();
+    
+    emitPutImmediateToCallFrameHeader(0, RegisterFile::CodeBlock);
 
 #if CPU(X86_64)
     // Load caller frame's scope chain into this callframe so that whatever we call can
