@@ -116,7 +116,6 @@ static WKPageRef createOtherPage(WKPageRef oldPage, WKDictionaryRef, WKEventModi
         0, // runJavaScriptPrompt
         0, // setStatusText
         0, // mouseDidMoveOverElement
-        0, // contentsSizeChanged
         0, // didNotHandleKeyEvent
         getWindowFrameOtherPage,
         setWindowFrameOtherPage,
@@ -202,7 +201,6 @@ void TestController::initialize(int argc, const char* argv[])
         0, // runJavaScriptPrompt
         0, // setStatusText
         0, // mouseDidMoveOverElement
-        0, // contentsSizeChanged
         0, // didNotHandleKeyEvent
         getWindowFrameMainPage,
         setWindowFrameMainPage,

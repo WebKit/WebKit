@@ -270,13 +270,15 @@ private:
     void runJavaScriptPrompt(uint64_t frameID, const String&, const String&, String& result);
     void setStatusText(const String&);
     void mouseDidMoveOverElement(uint32_t modifiers, CoreIPC::ArgumentDecoder*);
-    void contentsSizeChanged(uint64_t frameID, const WebCore::IntSize&);
     void setWindowFrame(const WebCore::FloatRect&);
     void getWindowFrame(WebCore::FloatRect&);
     void canRunBeforeUnloadConfirmPanel(bool& canRun);
     void runBeforeUnloadConfirmPanel(const String& message, uint64_t frameID, bool& shouldClose);
     void didChangeViewportData(const WebCore::ViewportArguments&);
     void pageDidScroll();
+#if PLATFORM(QT)
+    void didChangeContentsSize(const WebCore::IntSize&);
+#endif
 
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);

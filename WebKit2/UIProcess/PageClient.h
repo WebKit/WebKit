@@ -52,6 +52,10 @@ public:
     virtual void takeFocus(bool direction) = 0;
     virtual void toolTipChanged(const String&, const String&) = 0;
 
+#if PLATFORM(QT)
+    virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
+#endif
+
     virtual void setCursor(const WebCore::Cursor&) = 0;
     virtual void setViewportArguments(const WebCore::ViewportArguments&) = 0;
 

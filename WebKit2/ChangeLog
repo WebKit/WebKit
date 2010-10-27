@@ -1,3 +1,27 @@
+2010-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Move contentsSizeChange from the UIClient into the PageClient and
+        and make it a private Qt-only API in the process.
+
+        Make WKPageContentsSizeChangedCallback be a private API
+        https://bugs.webkit.org/show_bug.cgi?id=48409
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::didChangeContentsSize):
+        (QWKPage::QWKPage):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didChangeContentsSize):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+
 2010-10-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

@@ -141,7 +141,6 @@ typedef bool (*WKPageRunJavaScriptConfirmCallback)(WKPageRef page, WKStringRef m
 typedef WKStringRef (*WKPageRunJavaScriptPromptCallback)(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageSetStatusTextCallback)(WKPageRef page, WKStringRef text, const void *clientInfo);
 typedef void (*WKPageMouseDidMoveOverElementCallback)(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
-typedef void (*WKPageContentsSizeChangedCallback)(WKPageRef page, int width, int height, WKFrameRef frame, const void *clientInfo);
 typedef void (*WKPageDidNotHandleKeyEventCallback)(WKPageRef page, WKNativeEventPtr event, const void *clientInfo);
 typedef WKRect (*WKPageGetWindowFrameCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageSetWindowFrameCallback)(WKPageRef page, WKRect frame, const void *clientInfo);
@@ -161,7 +160,6 @@ struct WKPageUIClient {
     WKPageRunJavaScriptPromptCallback                                   runJavaScriptPrompt;
     WKPageSetStatusTextCallback                                         setStatusText;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
-    WKPageContentsSizeChangedCallback                                   contentsSizeChanged;
     WKPageDidNotHandleKeyEventCallback                                  didNotHandleKeyEvent;
     WKPageGetWindowFrameCallback                                        getWindowFrame;
     WKPageSetWindowFrameCallback                                        setWindowFrame;

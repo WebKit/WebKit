@@ -355,9 +355,14 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 
 void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
+#if PLATFORM(QT)
     WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::ContentsSizeChanged(webFrame->frameID(), size), m_page->pageID());
+    if (!m_page->mainFrame() || m_page->mainFrame() != webFrame)
+        return;
+
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidChangeContentsSize(size), m_page->pageID());
+#endif
 }
 
 void WebChromeClient::scrollRectIntoView(const IntRect&, const ScrollView*) const

@@ -141,15 +141,6 @@ void WebUIClient::mouseDidMoveOverElement(WebPageProxy* page, WebEvent::Modifier
     m_pageUIClient.mouseDidMoveOverElement(toAPI(page), toAPI(modifiers), toAPI(userData), m_pageUIClient.clientInfo);
 }
 
-
-void WebUIClient::contentsSizeChanged(WebPageProxy* page, const IntSize& size, WebFrameProxy* frame)
-{
-    if (!m_pageUIClient.contentsSizeChanged)
-        return;
-
-    m_pageUIClient.contentsSizeChanged(toAPI(page), size.width(), size.height(), toAPI(frame), m_pageUIClient.clientInfo);
-}
-
 void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboardEvent& event)
 {
     if (!m_pageUIClient.didNotHandleKeyEvent)

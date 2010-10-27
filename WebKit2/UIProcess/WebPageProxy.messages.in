@@ -29,7 +29,6 @@ messages -> WebPageProxy {
     RunJavaScriptConfirm(uint64_t frameID, WTF::String message) -> (bool result)
     RunJavaScriptPrompt(uint64_t frameID, WTF::String message, WTF::String defaultValue) -> (WTF::String result)
     MouseDidMoveOverElement(uint32_t modifiers, WebKit::InjectedBundleUserMessageEncoder userData);
-    ContentsSizeChanged(uint64_t frameID, WebCore::IntSize newSize)
     DidChangeViewportData(WebCore::ViewportArguments arguments)
     DidReceiveEvent(uint32_t type, bool handled)
     DidValidateMenuItem(WTF::String commandName, bool isEnabled, int32_t state)
@@ -42,6 +41,9 @@ messages -> WebPageProxy {
     CanRunBeforeUnloadConfirmPanel() -> (bool canRun)
     RunBeforeUnloadConfirmPanel(WTF::String message, uint64_t frameID) -> (bool shouldClose)
     PageDidScroll()
+#if PLATFORM(QT)
+    DidChangeContentsSize(WebCore::IntSize newSize)
+#endif
 
     # Policy messages.
     DecidePolicyForMIMEType(uint64_t frameID, WTF::String MIMEType, WTF::String url, uint64_t listenerID)

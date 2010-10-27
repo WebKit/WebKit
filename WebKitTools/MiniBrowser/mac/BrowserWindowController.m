@@ -489,11 +489,6 @@ static void mouseDidMoveOverElement(WKPageRef page, WKEventModifiers modifiers, 
     LOG(@"mouseDidMoveOverElement");
 }
 
-static void contentsSizeChanged(WKPageRef page, int width, int height, WKFrameRef frame, const void *clientInfo)
-{
-    LOG(@"contentsSizeChanged");
-}
-
 static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
 {
     NSRect rect = [[(BrowserWindowController *)clientInfo window] frame];
@@ -589,7 +584,6 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
         runJavaScriptPrompt,
         setStatusText,
         mouseDidMoveOverElement,
-        contentsSizeChanged,
         0,          /* didNotHandleKeyEvent */
         getWindowFrame,
         setWindowFrame,

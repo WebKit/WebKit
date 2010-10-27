@@ -917,11 +917,6 @@ void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::Ar
     m_uiClient.mouseDidMoveOverElement(this, modifiers, userData.get());
 }
 
-void WebPageProxy::contentsSizeChanged(uint64_t frameID, const WebCore::IntSize& size)
-{
-    m_uiClient.contentsSizeChanged(this, size, process()->webFrame(frameID));
-}
-
 void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
 {
     m_uiClient.setWindowFrame(this, m_pageClient->convertToDeviceSpace(newWindowFrame));
@@ -951,6 +946,13 @@ void WebPageProxy::pageDidScroll()
 {
     m_uiClient.pageDidScroll(this);
 }
+
+#if PLATFORM(QT)
+void WebPageProxy::didChangeContentsSize(const WebCore::IntSize& size)
+{
+    m_pageClient->didChangeContentsSize(size);
+}
+#endif
 
 void WebPageProxy::didDraw()
 {

@@ -1,3 +1,21 @@
+2010-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove contentSizeChanged callbacks as it is no longer
+        part of the public UIClient.
+
+        Make WKPageContentsSizeChangedCallback be a private API
+        https://bugs.webkit.org/show_bug.cgi?id=48409
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * MiniBrowser/win/BrowserView.cpp:
+        (BrowserView::create):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::createOtherPage):
+        (WTR::TestController::initialize):
+
 2010-10-27  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Ojan Vafai.
