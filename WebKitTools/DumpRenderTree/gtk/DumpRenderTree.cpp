@@ -38,6 +38,7 @@
 #include "GOwnPtr.h"
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
+#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include <JavaScriptCore/JavaScript.h>
@@ -443,6 +444,8 @@ static void resetDefaultsToConsistentValues()
 #endif
 
     setlocale(LC_ALL, "");
+
+    DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(true);
 }
 
 static bool useLongRunningServerMode(int argc, char *argv[])
@@ -993,6 +996,8 @@ static void webViewLoadStatusNotified(WebKitWebView* view, gpointer user_data)
 static WebKitWebView* createWebView()
 {
     WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+
+    DumpRenderTreeSupportGtk::setDumpRenderTreeModeEnabled(true);
 
     // From bug 11756: Use a frame group name for all WebViews created by
     // DumpRenderTree to allow testing of cross-page frame lookup.

@@ -4654,7 +4654,6 @@ webarchive/test-xml-stylesheet.xml
 # Tests that failed because we don't have an eventSender implementation
 editing/input/scroll-viewport-page-up-down.html
 fast/events/popup-when-select-change.html
-fast/events/tab-focus-anchor.html
 http/tests/misc/slow-loading-mask.html
 http/tests/plugins/plugin-document-has-focus.html
 

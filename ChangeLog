@@ -1,3 +1,14 @@
+2010-10-26  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement DumpRenderTreeSupportGtk (similarly to DumpRenderTreeSupportQt idea)
+        https://bugs.webkit.org/show_bug.cgi?id=48199
+
+        * GNUmakefile.am: Added WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.cpp|h to GTK+'s build system;
+        * autotools/symbols.filter: Added DumpRenderTreeSupportGtk symbols to symbols.filter so they do not get
+          filtered and get visible by DRT.
+
 2010-10-24  Anders Bakken  <agbakken@gmail.com>
 
         Reviewed by Simon Hausmann.

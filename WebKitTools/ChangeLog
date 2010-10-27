@@ -1,3 +1,19 @@
+2010-10-26  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement DumpRenderTreeSupportGtk (similarly to DumpRenderTreeSupportQt idea)
+        https://bugs.webkit.org/show_bug.cgi?id=48199
+
+        Implements support to WebKitTabToLinksPreferenceKey through LayoutTestController::overridePreference.
+        The corresponding DumpRenderTreeSupportGtk method is called in the DRT context only.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        (createWebView):
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::overridePreference):
+
 2010-10-26  Ariya Hidayat  <ariya@sencha.com>
 
         Unreviewed, change the order of my emails for bugzilla autocompletion.

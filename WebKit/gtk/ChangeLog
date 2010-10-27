@@ -1,3 +1,30 @@
+2010-10-26  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement DumpRenderTreeSupportGtk (similarly to DumpRenderTreeSupportQt idea)
+        https://bugs.webkit.org/show_bug.cgi?id=48199
+
+        Implemented an initial version of the DumpRenderTreeSupportGtk class.
+        The main idea is that it groups together the bodies of many LayoutTestController
+        methods, so they can directly access WebCore features. This way we eliminate the
+        need of adding APIs to WebKitGTK just to expand its test coverage through DRT.
+
+        The DumpRenderTreeSupportGtk class so far includes a getter and setter for the WebKitTabToLinksPreferenceKey
+        property as a sample implementation. Also it makes it possible to unskip fast/events/tab-focus-anchor.html and
+        to fix stderr messages from all 22 spatial-navigation tests in fast/events/spatial-navigation.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::tabsToLinks):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp: Added.
+        (DumpRenderTreeSupportGtk::DumpRenderTreeSupportGtk):
+        (DumpRenderTreeSupportGtk::~DumpRenderTreeSupportGtk):
+        (DumpRenderTreeSupportGtk::setDumpRenderTreeModeEnabled):
+        (DumpRenderTreeSupportGtk::dumpRenderTreeModeEnabled): Getter to the WebKitTabToLinksPreferenceKey property.
+        (DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain): Setter to the WebKitTabToLinksPreferenceKey property.
+        (DumpRenderTreeSupportGtk::linksIncludedInFocusChain):
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h: Added.
+
 2010-10-26  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

@@ -33,6 +33,7 @@
 #include "config.h"
 #include "LayoutTestController.h"
 
+#include "../../../WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include "DumpRenderTree.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
@@ -683,10 +684,13 @@ void LayoutTestController::overridePreference(JSStringRef key, JSStringRef value
     else if (g_str_equal(originalName.get(), "WebKitUsesPageCachePreferenceKey"))
         propertyName = "enable-page-cache";
     else if (g_str_equal(originalName.get(), "WebKitPluginsEnabled"))
-         propertyName = "enable-plugins";
+        propertyName = "enable-plugins";
     else if (g_str_equal(originalName.get(), "WebKitHyperlinkAuditingEnabled"))
-         propertyName = "enable-hyperlink-auditing";
-    else {
+        propertyName = "enable-hyperlink-auditing";
+    else if (g_str_equal(originalName.get(), "WebKitTabToLinksPreferenceKey")) {
+        DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(!g_ascii_strcasecmp(valueAsString.get(), "true") || !g_ascii_strcasecmp(valueAsString.get(), "1"));
+        return;
+    } else {
         fprintf(stderr, "LayoutTestController::overridePreference tried to override "
                 "unknown preference '%s'.\n", originalName.get());
         return;
