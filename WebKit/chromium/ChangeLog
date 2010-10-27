@@ -1,3 +1,13 @@
+2010-10-27  ZHenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Must enable GL_POINT_SPRITE in GraphicsContext3D implementations
+        https://bugs.webkit.org/show_bug.cgi?id=45908
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Enable for chromium --in-process-webgl port.
+        (WebKit::WebGraphicsContext3DDefaultImpl::initialize):
+
 2010-10-27  Leandro Gracia Gil  <leandrogracia@google.com>
 
         Reviewed by Jeremy Orlow.

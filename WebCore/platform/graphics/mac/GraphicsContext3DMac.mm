@@ -210,6 +210,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     m_compiler.setResources(ANGLEResources);
     
     ::glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+    ::glEnable(GL_POINT_SPRITE);
+
     ::glClearColor(0, 0, 0, 0);
 }
 
