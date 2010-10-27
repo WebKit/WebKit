@@ -102,6 +102,7 @@ IF (WTF_USE_SOUP)
     platform/network/soup/ResourceRequestSoup.cpp
     platform/network/soup/ResourceResponseSoup.cpp
     platform/network/soup/SocketStreamHandleSoup.cpp
+    platform/network/soup/SoupURIUtils.cpp
 
     platform/network/soup/cache/soup-directory-input-stream.c
     platform/network/soup/cache/soup-http-input-stream.c
