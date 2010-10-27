@@ -28,17 +28,14 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-@class NSData;
-@class NSString;
-@class NSURLResponse;
-@class WebArchive;
+typedef struct _CFURLResponse* CFURLResponseRef;
 
-NSString *serializeWebArchiveToXML(WebArchive *webArchive);
+CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData);
 
 #pragma mark -
 #pragma mark Platform-specific methods
 
-NSURLResponse *unarchiveNSURLResponseFromResponseData(NSData *responseData);
+CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData);
 CFArrayRef supportedNonImageMIMETypes();
 
 #endif /* WebArchiveDumpSupport_h */

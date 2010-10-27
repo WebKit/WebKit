@@ -25,173 +25,191 @@
 
 #import "WebArchiveDumpSupport.h"
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WebArchive.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import <CFNetwork/CFNetwork.h>
+#import <wtf/RetainPtr.h>
 
-static void convertMIMEType(NSMutableString *mimeType)
+extern "C" {
+
+CFURLRef CFURLResponseGetURL(CFURLResponseRef response);
+CFStringRef CFURLResponseGetMIMEType(CFURLResponseRef response);
+CFStringRef CFURLResponseGetTextEncodingName(CFURLResponseRef response);
+SInt64 CFURLResponseGetExpectedContentLength(CFURLResponseRef response);
+CFHTTPMessageRef CFURLResponseGetHTTPResponse(CFURLResponseRef response);
+
+CFTypeID CFURLResponseGetTypeID(void);
+
+}
+
+static void convertMIMEType(CFMutableStringRef mimeType)
 {
 #ifdef BUILDING_ON_LEOPARD
     // Workaround for <rdar://problem/5539824> on Leopard
-    if ([mimeType isEqualToString:@"text/xml"])
-        [mimeType setString:@"application/xml"];
+    if (CFStringCompare(mimeType, CFSTR("text/xml"), kCFCompareAnchored | kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+        CFStringReplaceAll(mimeType, CFSTR("application/xml"));
 #endif
     // Workaround for <rdar://problem/6234318> with Dashcode 2.0
-    if ([mimeType isEqualToString:@"application/x-javascript"])
-        [mimeType setString:@"text/javascript"];
+    if (CFStringCompare(mimeType, CFSTR("application/x-javascript"), kCFCompareAnchored | kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+        CFStringReplaceAll(mimeType, CFSTR("text/javascript"));
 }
 
-static void convertWebResourceDataToString(NSMutableDictionary *resource)
+static void convertWebResourceDataToString(CFMutableDictionaryRef resource)
 {
-    NSMutableString *mimeType = [resource objectForKey:@"WebResourceMIMEType"];
+    CFMutableStringRef mimeType = (CFMutableStringRef)CFDictionaryGetValue(resource, CFSTR("WebResourceMIMEType"));
+    CFStringLowercase(mimeType, CFLocaleGetSystem());
     convertMIMEType(mimeType);
 
-    if ([mimeType hasPrefix:@"text/"] || [(NSArray *)supportedNonImageMIMETypes() containsObject:mimeType]) {
-        NSString *textEncodingName = [resource objectForKey:@"WebResourceTextEncodingName"];
-        NSStringEncoding stringEncoding;
-        if ([textEncodingName length] > 0)
-            stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)textEncodingName));
+    CFArrayRef supportedMIMETypes = supportedNonImageMIMETypes();
+    if (CFStringHasPrefix(mimeType, CFSTR("text/")) || CFArrayContainsValue(supportedMIMETypes, CFRangeMake(0, CFArrayGetCount(supportedMIMETypes)), mimeType)) {
+        CFStringRef textEncodingName = static_cast<CFStringRef>(CFDictionaryGetValue(resource, CFSTR("WebResourceTextEncodingName")));
+        CFStringEncoding stringEncoding;
+        if (textEncodingName && CFStringGetLength(textEncodingName))
+            stringEncoding = CFStringConvertIANACharSetNameToEncoding(textEncodingName);
         else
-            stringEncoding = NSUTF8StringEncoding;
+            stringEncoding = kCFStringEncodingUTF8;
 
-        NSData *data = [resource objectForKey:@"WebResourceData"];
-        NSString *dataAsString = [[NSString alloc] initWithData:data encoding:stringEncoding];
+        CFDataRef data = static_cast<CFDataRef>(CFDictionaryGetValue(resource, CFSTR("WebResourceData")));
+        RetainPtr<CFStringRef> dataAsString(AdoptCF, CFStringCreateFromExternalRepresentation(kCFAllocatorDefault, data, stringEncoding));
         if (dataAsString)
-            [resource setObject:dataAsString forKey:@"WebResourceData"];
-        [dataAsString release];
+            CFDictionarySetValue(resource, CFSTR("WebResourceData"), dataAsString.get());
     }
 }
 
-static void normalizeHTTPResponseHeaderFields(NSMutableDictionary *fields)
+static void normalizeHTTPResponseHeaderFields(CFMutableDictionaryRef fields)
 {
     // Normalize headers
-    if ([fields objectForKey:@"Date"])
-        [fields setObject:@"Sun, 16 Nov 2008 17:00:00 GMT" forKey:@"Date"];
-    if ([fields objectForKey:@"Last-Modified"])
-        [fields setObject:@"Sun, 16 Nov 2008 16:55:00 GMT" forKey:@"Last-Modified"];
-    if ([fields objectForKey:@"Etag"])
-        [fields setObject:@"\"301925-21-45c7d72d3e780\"" forKey:@"Etag"];
-    if ([fields objectForKey:@"Server"])
-        [fields setObject:@"Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6" forKey:@"Server"];
+    if (CFDictionaryContainsKey(fields, CFSTR("Date")))
+        CFDictionarySetValue(fields, CFSTR("Date"), CFSTR("Sun, 16 Nov 2008 17:00:00 GMT"));
+    if (CFDictionaryContainsKey(fields, CFSTR("Last-Modified")))
+        CFDictionarySetValue(fields, CFSTR("Last-Modified"), CFSTR("Sun, 16 Nov 2008 16:55:00 GMT"));
+    if (CFDictionaryContainsKey(fields, CFSTR("Etag")))
+        CFDictionarySetValue(fields, CFSTR("Etag"), CFSTR("\"301925-21-45c7d72d3e780\""));
+    if (CFDictionaryContainsKey(fields, CFSTR("Server")))
+        CFDictionarySetValue(fields, CFSTR("Server"), CFSTR("Apache/2.2.9 (Unix) mod_ssl/2.2.9 OpenSSL/0.9.7l PHP/5.2.6"));
 
     // Remove headers
-    if ([fields objectForKey:@"Connection"])
-        [fields removeObjectForKey:@"Connection"];
-    if ([fields objectForKey:@"Keep-Alive"])
-        [fields removeObjectForKey:@"Keep-Alive"];
+    CFDictionaryRemoveValue(fields, CFSTR("Connection"));
+    CFDictionaryRemoveValue(fields, CFSTR("Keep-Alive"));
 }
 
-static void normalizeWebResourceURL(NSMutableString *webResourceURL)
+static void normalizeWebResourceURL(CFMutableStringRef webResourceURL)
 {
-    static int fileUrlLength = [(NSString *)@"file://" length];
-    NSRange layoutTestsWebArchivePathRange = [webResourceURL rangeOfString:@"/LayoutTests/" options:NSBackwardsSearch];
-    if (layoutTestsWebArchivePathRange.location == NSNotFound)
+    static CFIndex fileUrlLength = CFStringGetLength(CFSTR("file://"));
+    CFRange layoutTestsWebArchivePathRange = CFStringFind(webResourceURL, CFSTR("/LayoutTests/"), kCFCompareBackwards);
+    if (layoutTestsWebArchivePathRange.location == kCFNotFound)
         return;
-    NSRange currentWorkingDirectoryRange = NSMakeRange(fileUrlLength, layoutTestsWebArchivePathRange.location - fileUrlLength);
-    [webResourceURL replaceCharactersInRange:currentWorkingDirectoryRange withString:@""];
+    CFRange currentWorkingDirectoryRange = CFRangeMake(fileUrlLength, layoutTestsWebArchivePathRange.location - fileUrlLength);
+    CFStringReplace(webResourceURL, currentWorkingDirectoryRange, CFSTR(""));
 }
 
-static void convertWebResourceResponseToDictionary(NSMutableDictionary *propertyList)
+static void convertWebResourceResponseToDictionary(CFMutableDictionaryRef propertyList)
 {
-    NSData *responseData = [propertyList objectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
-    if (![responseData isKindOfClass:[NSData class]])
+    CFDataRef responseData = static_cast<CFDataRef>(CFDictionaryGetValue(propertyList, CFSTR("WebResourceResponse"))); // WebResourceResponseKey in WebResource.m
+    if (CFGetTypeID(responseData) != CFDataGetTypeID())
         return;
 
-    NSURLResponse *response = unarchiveNSURLResponseFromResponseData(responseData);
+    RetainPtr<CFURLResponseRef> response(AdoptCF, createCFURLResponseFromResponseData(responseData));
     if (!response)
         return;
 
-    NSMutableDictionary *responseDictionary = [[NSMutableDictionary alloc] init];
+    RetainPtr<CFMutableDictionaryRef> responseDictionary(AdoptCF, CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
-    NSMutableString *urlString = [[[response URL] description] mutableCopy];
-    normalizeWebResourceURL(urlString);
-    [responseDictionary setObject:urlString forKey:@"URL"];
-    [urlString release];
+    RetainPtr<CFMutableStringRef> urlString(AdoptCF, CFStringCreateMutableCopy(kCFAllocatorDefault, 0, CFURLGetString(CFURLResponseGetURL(response.get()))));
+    normalizeWebResourceURL(urlString.get());
+    CFDictionarySetValue(responseDictionary.get(), CFSTR("URL"), urlString.get());
 
-    NSMutableString *mimeTypeString = [[response MIMEType] mutableCopy];
-    convertMIMEType(mimeTypeString);
-    [responseDictionary setObject:mimeTypeString forKey:@"MIMEType"];
-    [mimeTypeString release];
+    RetainPtr<CFMutableStringRef> mimeTypeString(AdoptCF, CFStringCreateMutableCopy(kCFAllocatorDefault, 0, CFURLResponseGetMIMEType(response.get())));
+    convertMIMEType(mimeTypeString.get());
+    CFDictionarySetValue(responseDictionary.get(), CFSTR("MIMEType"), mimeTypeString.get());
 
-    NSString *textEncodingName = [response textEncodingName];
+    CFStringRef textEncodingName = CFURLResponseGetTextEncodingName(response.get());
     if (textEncodingName)
-        [responseDictionary setObject:textEncodingName forKey:@"textEncodingName"];
-    [responseDictionary setObject:[NSNumber numberWithLongLong:[response expectedContentLength]] forKey:@"expectedContentLength"];
+        CFDictionarySetValue(responseDictionary.get(), CFSTR("textEncodingName"), textEncodingName);
 
-    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+    SInt64 expectedContentLength = CFURLResponseGetExpectedContentLength(response.get());
+    RetainPtr<CFNumberRef> expectedContentLengthNumber(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &expectedContentLength));
+    CFDictionarySetValue(responseDictionary.get(), CFSTR("expectedContentLength"), expectedContentLengthNumber.get());
 
-        NSMutableDictionary *allHeaderFields = [[httpResponse allHeaderFields] mutableCopy];
-        normalizeHTTPResponseHeaderFields(allHeaderFields);
-        [responseDictionary setObject:allHeaderFields forKey:@"allHeaderFields"];
-        [allHeaderFields release];
+    if (CFHTTPMessageRef httpMessage = CFURLResponseGetHTTPResponse(response.get())) {
+        RetainPtr<CFDictionaryRef> allHeaders(AdoptCF, CFHTTPMessageCopyAllHeaderFields(httpMessage));
+        RetainPtr<CFMutableDictionaryRef> allHeaderFields(AdoptCF, CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, allHeaders.get()));
+        normalizeHTTPResponseHeaderFields(allHeaderFields.get());
+        CFDictionarySetValue(responseDictionary.get(), CFSTR("allHeaderFields"), allHeaderFields.get());
 
-        [responseDictionary setObject:[NSNumber numberWithInt:[httpResponse statusCode]] forKey:@"statusCode"];
+        CFIndex statusCode = CFHTTPMessageGetResponseStatusCode(httpMessage);
+        RetainPtr<CFNumberRef> statusCodeNumber(AdoptCF, CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &statusCode));
+        CFDictionarySetValue(responseDictionary.get(), CFSTR("statusCode"), statusCodeNumber.get());
     }
 
-    [propertyList setObject:responseDictionary forKey:@"WebResourceResponse"];
-    [responseDictionary release];
+    CFDictionarySetValue(propertyList, CFSTR("WebResourceResponse"), responseDictionary.get());
 }
 
-static NSInteger compareResourceURLs(id resource1, id resource2, void *context)
+static CFComparisonResult compareResourceURLs(const void *val1, const void *val2, void *context)
 {
-    NSString *url1 = [resource1 objectForKey:@"WebResourceURL"];
-    NSString *url2 = [resource2 objectForKey:@"WebResourceURL"];
+    CFStringRef url1 = static_cast<CFStringRef>(CFDictionaryGetValue(static_cast<CFDictionaryRef>(val1), CFSTR("WebResourceURL")));
+    CFStringRef url2 = static_cast<CFStringRef>(CFDictionaryGetValue(static_cast<CFDictionaryRef>(val2), CFSTR("WebResourceURL")));
  
-    return [url1 compare:url2];
+    return CFStringCompare(url1, url2, kCFCompareAnchored);
 }
 
-NSString *serializeWebArchiveToXML(WebArchive *webArchive)
+CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 {
-    NSString *errorString;
-    NSMutableDictionary *propertyList = [NSPropertyListSerialization propertyListFromData:[webArchive data]
-                                                                         mutabilityOption:NSPropertyListMutableContainersAndLeaves
-                                                                                   format:NULL
-                                                                         errorDescription:&errorString];
-    if (!propertyList)
-        return errorString;
+    CFErrorRef error = 0;
+    CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0;
+    CFMutableDictionaryRef propertyList = (CFMutableDictionaryRef)CFPropertyListCreateWithData(kCFAllocatorDefault, webArchiveData, kCFPropertyListMutableContainersAndLeaves, &format, &error);
 
-    NSMutableArray *resources = [NSMutableArray arrayWithCapacity:1];
-    [resources addObject:propertyList];
+    if (!propertyList) {
+        if (error)
+            return CFErrorCopyDescription(error);
+        return static_cast<CFStringRef>(CFRetain(CFSTR("An unknown error occurred converting data to property list.")));
+    }
 
-    while ([resources count]) {
-        NSMutableDictionary *resourcePropertyList = [resources objectAtIndex:0];
-        [resources removeObjectAtIndex:0];
+    RetainPtr<CFMutableArrayRef> resources(AdoptCF, CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
+    CFArrayAppendValue(resources.get(), propertyList);
 
-        NSMutableDictionary *mainResource = [resourcePropertyList objectForKey:@"WebMainResource"];
-        normalizeWebResourceURL([mainResource objectForKey:@"WebResourceURL"]);
+    while (CFArrayGetCount(resources.get())) {
+        RetainPtr<CFMutableDictionaryRef> resourcePropertyList = (CFMutableDictionaryRef)CFArrayGetValueAtIndex(resources.get(), 0);
+        CFArrayRemoveValueAtIndex(resources.get(), 0);
+
+        CFMutableDictionaryRef mainResource = (CFMutableDictionaryRef)CFDictionaryGetValue(resourcePropertyList.get(), CFSTR("WebMainResource"));
+        normalizeWebResourceURL((CFMutableStringRef)CFDictionaryGetValue(mainResource, CFSTR("WebResourceURL")));
         convertWebResourceDataToString(mainResource);
 
         // Add subframeArchives to list for processing
-        NSMutableArray *subframeArchives = [resourcePropertyList objectForKey:@"WebSubframeArchives"]; // WebSubframeArchivesKey in WebArchive.m
+        CFMutableArrayRef subframeArchives = (CFMutableArrayRef)CFDictionaryGetValue(resourcePropertyList.get(), CFSTR("WebSubframeArchives")); // WebSubframeArchivesKey in WebArchive.m
         if (subframeArchives)
-            [resources addObjectsFromArray:subframeArchives];
+            CFArrayAppendArray(resources.get(), subframeArchives, CFRangeMake(0, CFArrayGetCount(subframeArchives)));
 
-        NSMutableArray *subresources = [resourcePropertyList objectForKey:@"WebSubresources"]; // WebSubresourcesKey in WebArchive.m
-        NSEnumerator *enumerator = [subresources objectEnumerator];
-        NSMutableDictionary *subresourcePropertyList;
-        while ((subresourcePropertyList = [enumerator nextObject])) {
-            normalizeWebResourceURL([subresourcePropertyList objectForKey:@"WebResourceURL"]);
+        CFMutableArrayRef subresources = (CFMutableArrayRef)CFDictionaryGetValue(resourcePropertyList.get(), CFSTR("WebSubresources")); // WebSubresourcesKey in WebArchive.m
+        if (!subresources)
+            continue;
+
+        CFIndex subresourcesCount = CFArrayGetCount(subresources);
+        for (CFIndex i = 0; i < subresourcesCount; ++i) {
+            CFMutableDictionaryRef subresourcePropertyList = (CFMutableDictionaryRef)CFArrayGetValueAtIndex(subresources, i);
+            normalizeWebResourceURL((CFMutableStringRef)CFDictionaryGetValue(subresourcePropertyList, CFSTR("WebResourceURL")));
             convertWebResourceResponseToDictionary(subresourcePropertyList);
             convertWebResourceDataToString(subresourcePropertyList);
         }
-        
+
         // Sort the subresources so they're always in a predictable order for the dump
-        if (NSArray *sortedSubresources = [subresources sortedArrayUsingFunction:compareResourceURLs context:nil])
-            [resourcePropertyList setObject:sortedSubresources forKey:@"WebSubresources"];
+        CFArraySortValues(subresources, CFRangeMake(0, CFArrayGetCount(subresources)), compareResourceURLs, 0);
     }
 
-    NSData *xmlData = [NSPropertyListSerialization dataFromPropertyList:propertyList
-                                                                 format:NSPropertyListXMLFormat_v1_0
-                                                       errorDescription:&errorString];
-    if (!xmlData)
-        return errorString;
+    error = 0;
+    RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateData(kCFAllocatorDefault, propertyList, kCFPropertyListXMLFormat_v1_0, 0, &error));
 
-    NSMutableString *string = [[[NSMutableString alloc] initWithData:xmlData encoding:NSUTF8StringEncoding] autorelease];
+    if (!xmlData) {
+        if (error)
+            return CFErrorCopyDescription(error);
+        return static_cast<CFStringRef>(CFRetain(CFSTR("An unknown error occurred converting property list to data.")));
+    }
+
+    RetainPtr<CFStringRef> xmlString(AdoptCF, CFStringCreateFromExternalRepresentation(kCFAllocatorDefault, xmlData.get(), kCFStringEncodingUTF8));
+    RetainPtr<CFMutableStringRef> string(AdoptCF, CFStringCreateMutableCopy(kCFAllocatorDefault, 0, xmlString.get()));
 
     // Replace "Apple Computer" with "Apple" in the DTD declaration.
-    NSRange range = [string rangeOfString:@"-//Apple Computer//"];
-    if (range.location != NSNotFound)
-        [string replaceCharactersInRange:range withString:@"-//Apple//"];
-    
-    return string;
+    CFStringFindAndReplace(string.get(), CFSTR("-//Apple Computer//"), CFSTR("-//Apple//"), CFRangeMake(0, CFStringGetLength(string.get())), 0);
+
+    return string.releaseRef();
 }

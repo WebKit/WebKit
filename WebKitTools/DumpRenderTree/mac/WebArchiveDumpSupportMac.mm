@@ -25,18 +25,49 @@
 
 #import "WebArchiveDumpSupport.h"
 
+#import <CFNetwork/CFHTTPMessage.h>
 #import <Foundation/Foundation.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <wtf/RetainPtr.h>
 
-NSURLResponse *unarchiveNSURLResponseFromResponseData(NSData *responseData)
+extern "C" {
+
+enum CFURLCacheStoragePolicy {
+  kCFURLCacheStorageAllowed = 0,
+  kCFURLCacheStorageAllowedInMemoryOnly = 1,
+  kCFURLCacheStorageNotAllowed = 2
+};
+typedef enum CFURLCacheStoragePolicy CFURLCacheStoragePolicy;
+
+extern const CFStringRef kCFHTTPVersion1_1;
+
+CFURLResponseRef CFURLResponseCreate(CFAllocatorRef alloc, CFURLRef URL, CFStringRef mimeType, SInt64 expectedContentLength, CFStringRef textEncodingName, CFURLCacheStoragePolicy recommendedPolicy);
+CFURLResponseRef CFURLResponseCreateWithHTTPResponse(CFAllocatorRef alloc, CFURLRef URL, CFHTTPMessageRef httpResponse, CFURLCacheStoragePolicy recommendedPolicy);
+void CFURLResponseSetExpectedContentLength(CFURLResponseRef response, SInt64 length);
+void CFURLResponseSetMIMEType(CFURLResponseRef response, CFStringRef mimeType);
+
+}
+
+CFURLResponseRef createCFURLResponseFromResponseData(CFDataRef responseData)
 {
     // Decode NSURLResponse
-    RetainPtr<NSKeyedUnarchiver> unarchiver(AdoptNS, [[NSKeyedUnarchiver alloc] initForReadingWithData:responseData]);
+    RetainPtr<NSKeyedUnarchiver> unarchiver(AdoptNS, [[NSKeyedUnarchiver alloc] initForReadingWithData:(NSData *)responseData]);
     NSURLResponse *response = [unarchiver.get() decodeObjectForKey:@"WebResourceResponse"]; // WebResourceResponseKey in WebResource.m
     [unarchiver.get() finishDecoding];
 
-    return response;
+    if (![response isKindOfClass:[NSHTTPURLResponse class]])
+        return CFURLResponseCreate(kCFAllocatorDefault, (CFURLRef)[response URL], (CFStringRef)[response MIMEType], [response expectedContentLength], (CFStringRef)[response textEncodingName], kCFURLCacheStorageAllowed);
+
+    NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response;
+
+    // NSURLResponse is not toll-free bridged to CFURLResponse.
+    RetainPtr<CFHTTPMessageRef> httpMessage(AdoptCF, CFHTTPMessageCreateResponse(kCFAllocatorDefault, [httpResponse statusCode], 0, kCFHTTPVersion1_1));
+
+    NSDictionary *headerFields = [httpResponse allHeaderFields];
+    for (NSString *headerField in [headerFields keyEnumerator])
+        CFHTTPMessageSetHeaderFieldValue(httpMessage.get(), (CFStringRef)headerField, (CFStringRef)[headerFields objectForKey:headerField]);
+
+    return CFURLResponseCreateWithHTTPResponse(kCFAllocatorDefault, (CFURLRef)[response URL], httpMessage.get(), kCFURLCacheStorageAllowed);
 }
 
 CFArrayRef supportedNonImageMIMETypes()

@@ -1,5 +1,43 @@
 2010-10-26  David Kilzer  <ddkilzer@apple.com>
 
+        Convert WebArchiveDumpSupport.mm from NS objects to CF types
+
+        Reviewed by Adam Roben.
+
+        Part 3 of 4: <http://webkit.org/b/48278> Convert DumpRenderTree webarchive code to CoreFoundation
+
+        In order to share WebArchive code between the Mac and Windows
+        ports, the code in WebArchiveDumpSupport.mm was converted from
+        Cocoa to C++ using CoreFoundation (CF) types.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump): Renamed serializeWebArchiveToXML() to
+        createXMLStringFromWebArchiveData() and added HardAutorelease()
+        to prevent leaks.
+        * DumpRenderTree/mac/WebArchiveDumpSupport.h:
+        (createXMLStringFromWebArchiveData): Renamed from
+        serializeWebArchiveToXML().  Changed to use CF types.
+        (createCFURLResponseFromResponseData): Renamed from
+        unarchiveNSURLResponseFromResponseData().  Changed to use CF
+        types for its parameter and return type.
+        * DumpRenderTree/mac/WebArchiveDumpSupport.mm: Replaced use of
+        NS objects with CF types.  It will be renamed to *.cpp in a
+        future commit.
+        (convertMIMEType): Changed to use case-insensitive string
+        comparisons.
+        (convertWebResourceDataToString):
+        (normalizeHTTPResponseHeaderFields):
+        (normalizeWebResourceURL):
+        (convertWebResourceResponseToDictionary):
+        (compareResourceURLs):
+        (createXMLStringFromWebArchiveData):
+        * DumpRenderTree/mac/WebArchiveDumpSupportMac.mm:
+        (createCFURLResponseFromResponseData): Renamed from
+        unarchiveNSURLResponseFromResponseData().  Changed to use CF
+        types for its parameter and return type.
+
+2010-10-26  David Kilzer  <ddkilzer@apple.com>
+
         Extract use of NSKeyedUnarchiver from WebArchiveDumpSupport.mm
 
         Reviewed by Adam Roben.
