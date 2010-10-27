@@ -33,8 +33,8 @@
 #include "config.h"
 #include "LayoutTestController.h"
 
-#include "../../../WebKit/gtk/WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include "DumpRenderTree.h"
+#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include <JavaScriptCore/JSRetainPtr.h>

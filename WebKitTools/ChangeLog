@@ -1,3 +1,14 @@
+2010-10-26  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Remove the absolute path used to include DumpRenderTreeSupportGtk.h from LayoutTestController.h
+
+        It turns out this is rather unneeded since WebKitTools/GNUMakefile.am has WebKit/gtk/ in its include
+        path, and then we can just do #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+
 2010-10-26  David Kilzer  <ddkilzer@apple.com>
 
         Rename WebArchiveDumpSupport.mm to WebArchiveDumpSupport.cpp
