@@ -25,7 +25,7 @@ function doit()
 function frontend_runTest(testController)
 {
     if (!Preferences.networkPanelEnabled && !WebInspector.panels.resources.resourceTrackingEnabled) {
-        WebInspector.panels.resources._toggleResourceTracking();
+        WebInspector.panels.resources.toggleResourceTracking();
         return "refreshing";
     }
 

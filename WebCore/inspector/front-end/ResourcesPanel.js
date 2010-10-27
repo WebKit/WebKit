@@ -439,7 +439,7 @@ WebInspector.ResourcesPanel.prototype = {
         this.element.appendChild(this.panelEnablerView.element);
 
         this.enableToggleButton = new WebInspector.StatusBarButton("", "enable-toggle-status-bar-item");
-        this.enableToggleButton.addEventListener("click", this._toggleResourceTracking.bind(this), false);
+        this.enableToggleButton.addEventListener("click", this.toggleResourceTracking.bind(this), false);
     },
 
     _createStatusbarButtons: function()
@@ -1065,10 +1065,10 @@ WebInspector.ResourcesPanel.prototype = {
     {
         if (this._resourceTrackingEnabled)
             return;
-        this._toggleResourceTracking(this.panelEnablerView.alwaysEnabled);
+        this.toggleResourceTracking(this.panelEnablerView.alwaysEnabled);
     },
 
-    _toggleResourceTracking: function(optionalAlways)
+    toggleResourceTracking: function(optionalAlways)
     {
         function callback(newState) {
             if (newState)

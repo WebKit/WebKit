@@ -206,7 +206,7 @@ WebInspector.AuditsPanel.prototype = {
         this._resourceTrackingCallback = callback;
 
         if (WebInspector.panels.resources && !WebInspector.panels.resources.resourceTrackingEnabled) {
-            InspectorBackend.enableResourceTracking(false);
+            WebInspector.panels.resources.toggleResourceTracking(false);
             this._updateLauncherViewControls(true);
         } else
             InspectorBackend.reloadPage();
