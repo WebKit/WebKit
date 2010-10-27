@@ -1,3 +1,35 @@
+2010-10-27  Leandro Gracia Gil  <leandrogracia@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Patch the current speech input implementation to use the nearest
+        language tag. The language is now passed to the startRecognition
+        methods so that language-specific recognition could be used. Also added
+        a second parameter to setMockSpeechInputResult for the language used in
+        speech recognition.
+        https://bugs.webkit.org/show_bug.cgi?id=47089
+
+        This is the 2nd of a 4-sided patch in Chromium and WebKit. For more
+        details see http://codereview.chromium.org/3615005/show and
+        http://codereview.chromium.org/3595018/show. The last of the 4 patches
+        depends also on the language tag validation provided by this patch:
+        https://bugs.webkit.org/show_bug.cgi?id=48225.
+
+        * public/WebSpeechInputController.h:
+        (WebKit::WebSpeechInputController::startRecognition):
+        * public/WebSpeechInputControllerMock.h:
+        * src/SpeechInputClientImpl.cpp:
+        (WebKit::SpeechInputClientImpl::create):
+        (WebKit::SpeechInputClientImpl::startRecognition):
+        * src/SpeechInputClientImpl.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::setMockRecognitionResult):
+        (WebKit::WebSpeechInputControllerMockImpl::startRecognition):
+        * src/WebSpeechInputControllerMockImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+
 2010-10-26  Victoria Kirst  <vrk@google.com>
 
         Reviewed by David Levin.
@@ -336,7 +368,7 @@
 2010-10-22  Leandro Gracia Gil  <leandrogracia@google.com>
 
         Reviewed by Jeremy Orlow.
- 
+
         Patch the current speech input implementation to use and validate the
         nearest language tag. The language is now passed to the startRecognition
         methods so that language-specific recognition could be used. Also added
@@ -475,6 +507,36 @@
         (WebKit::WebSpeechInputController::startRecognition):
         * public/WebSpeechInputControllerMock.h:
         * src/SpeechInputClientImpl.cpp:
+        (WebKit::SpeechInputClientImpl::startRecognition):
+        * src/SpeechInputClientImpl.h:
+        * src/WebSpeechInputControllerMockImpl.cpp:
+        (WebKit::WebSpeechInputControllerMockImpl::setMockRecognitionResult):
+        (WebKit::WebSpeechInputControllerMockImpl::startRecognition):
+        * src/WebSpeechInputControllerMockImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * src/WebViewImpl.h:
+
+2010-10-20  Leandro Gracia Gil  <leandrogracia@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Patch the current speech input implementation to use and validate the
+        nearest language tag. The language is now passed to the startRecognition
+        methods so that language-specific recognition could be used. Also added
+        a second parameter to setMockSpeechInputResult for the language used in
+        speech recognition.
+        https://bugs.webkit.org/show_bug.cgi?id=47089
+
+        This is the 2nd of a 4-sided patch in Chromium and WebKit. For more
+        details see http://codereview.chromium.org/3615005/show and
+        http://codereview.chromium.org/3595018/show.
+
+        * public/WebSpeechInputController.h:
+        (WebKit::WebSpeechInputController::startRecognition):
+        * public/WebSpeechInputControllerMock.h:
+        * src/SpeechInputClientImpl.cpp:
+        (WebKit::SpeechInputClientImpl::create):
         (WebKit::SpeechInputClientImpl::startRecognition):
         * src/SpeechInputClientImpl.h:
         * src/WebSpeechInputControllerMockImpl.cpp:

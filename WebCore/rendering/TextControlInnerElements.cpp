@@ -21,9 +21,9 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include "config.h"
 #include "TextControlInnerElements.h"
 
@@ -107,18 +107,18 @@ void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<Render
         setRenderer(renderer);
         renderer->setStyle(style);
     }
-    
+
     // Set these explicitly since this normally happens during an attach()
     setAttached();
     setInDocument();
-    
+
     // For elements without a shadow parent, add the node to the DOM normally.
     if (!m_shadowParent) {
         // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
         //        We shouldn't be calling parser API methods outside of the parser!
         parent->deprecatedParserAddChild(this);
     }
- 
+
     // Add the renderer to the render tree
     if (renderer)
         parent->renderer()->addChild(renderer);
@@ -208,7 +208,7 @@ void SearchFieldCancelButtonElement::detach()
 {
     if (m_capturing) {
         if (Frame* frame = document()->frame())
-            frame->eventHandler()->setCapturingMouseEventsNode(0);      
+            frame->eventHandler()->setCapturingMouseEventsNode(0);
     }
     TextControlInnerElement::detach();
 }
@@ -281,9 +281,9 @@ void SpinButtonElement::defaultEventHandler(Event* event)
     if (!box) {
         if (!event->defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
-        return;        
+        return;
     }
-    
+
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
     if (input->disabled() || input->isReadOnlyFormControl()) {
         if (!event->defaultHandled())
@@ -431,7 +431,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
     if (event->type() == eventNames().clickEvent) {
         switch (m_state) {
         case Idle:
-            if (speechInput()->startRecognition(m_listenerId, input->renderer()->absoluteBoundingBoxRect(), input->getAttribute(webkitgrammarAttr)))
+            if (speechInput()->startRecognition(m_listenerId, input->computeInheritedLanguage(), input->renderer()->absoluteBoundingBoxRect(), input->getAttribute(webkitgrammarAttr)))
                 setState(Recording);
             break;
         case Recording:
@@ -489,7 +489,7 @@ void InputFieldSpeechButtonElement::detach()
 {
     if (m_capturing) {
         if (Frame* frame = document()->frame())
-            frame->eventHandler()->setCapturingMouseEventsNode(0);      
+            frame->eventHandler()->setCapturingMouseEventsNode(0);
     }
 
     if (m_state != Idle)
