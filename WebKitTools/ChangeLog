@@ -1,3 +1,12 @@
+2010-10-27  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Tony Chang.
+
+        [NRWT] Fix http lock on Windows platform
+        https://bugs.webkit.org/show_bug.cgi?id=48321
+
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+
 2010-10-27  Satish Sampath  <satish@chromium.org>
 
         Unreviewed, rolling out r70665.

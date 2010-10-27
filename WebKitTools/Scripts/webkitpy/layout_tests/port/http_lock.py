@@ -71,13 +71,15 @@ class HttpLock(object):
         return self._extract_lock_number(lock_list[-1]) + 1
 
     def _check_pid(self, current_pid):
-        """Return True if pid is alive, otherwise return False."""
-        try:
-            os.kill(current_pid, 0)
-        except OSError:
-            return False
-        else:
-            return True
+        """Return True if pid is alive, otherwise return False.
+        FIXME: os.kill() doesn't work on Windows for checking if
+        a pid is alive, so always return True"""
+        if sys.platform in ('darwin', 'linux2'):
+            try:
+                os.kill(current_pid, 0)
+            except OSError:
+                return False
+        return True
 
     def _curent_lock_pid(self):
         """Return with the current lock pid. If the lock is not valid
@@ -89,9 +91,7 @@ class HttpLock(object):
             current_lock_file = open(lock_list[0], 'r')
             current_pid = current_lock_file.readline()
             current_lock_file.close()
-            if not (current_pid and
-              sys.platform in ('darwin', 'linux2') and
-              self._check_pid(int(current_pid))):
+            if not (current_pid and self._check_pid(int(current_pid))):
                 os.unlink(lock_list[0])
                 return
         except IOError, OSError:
@@ -104,9 +104,7 @@ class HttpLock(object):
         numbers are sequential."""
         while(True):
             try:
-                sequential_guard_lock = os.open(self._guard_lock_file,
-                                                os.O_CREAT | os.O_NONBLOCK | os.O_EXCL)
-
+                sequential_guard_lock = os.open(self._guard_lock_file, os.O_CREAT | os.O_EXCL)
                 self._process_lock_file_name = (self._lock_file_path_prefix +
                                                 str(self._next_lock_number()))
                 lock_file = open(self._process_lock_file_name, 'w')
