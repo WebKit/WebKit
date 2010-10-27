@@ -68,7 +68,7 @@ public:
     void loadURL(const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields,
                  const Vector<uint8_t>& httpBody, bool sendNotification, void* notificationData);
     NPError destroyStream(NPStream*, NPReason);
-    void setIsWindowed(bool windowed) { m_isWindowed = windowed; }
+    void setIsWindowed(bool);
     void setStatusbarText(const String&);
     static void setException(const String&);
     bool evaluate(NPObject*, const String&scriptString, NPVariant* result);

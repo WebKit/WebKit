@@ -151,6 +151,17 @@ NPError NetscapePlugin::destroyStream(NPStream* stream, NPReason reason)
     return pluginStream->destroy(reason);
 }
 
+void NetscapePlugin::setIsWindowed(bool isWindowed)
+{
+    // Once the plugin has started, it's too late to change whether the plugin is windowed or not.
+    // (This is true in Firefox and Chrome, too.) Disallow setting m_isWindowed in that case to
+    // keep our internal state consistent.
+    if (m_isStarted)
+        return;
+
+    m_isWindowed = isWindowed;
+}
+
 void NetscapePlugin::setStatusbarText(const String& statusbarText)
 {
     m_pluginController->setStatusbarText(statusbarText);

@@ -1,3 +1,25 @@
+2010-10-27  Adam Roben  <aroben@apple.com>
+
+        Don't allow setting NetscapePlugin::m_isWindowed after NPP_New has
+        completed
+
+        In Firefox, Chrome, and WebKit1 trying to set this value after NPP_New
+        does not actually affect whether the plugin is windowed.
+
+        Fixes <http://webkit.org/b/46673> <rdar://problem/8484211> Assertion
+        failure in NetscapePlugin::platformDestroy when running
+        plugins/mouse-events.html in WebKit2 on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::setIsWindowed): Moved here from the header.
+        Bail out if m_isStarted is true, indicating that NPP_New has already
+        finished.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: Removed the
+        implementation of setIsWindowed.
+
 2010-10-27  Timothy Hatcher  <timothy@apple.com>
 
         Add API for enabling the developer extras (Web Inspector).
