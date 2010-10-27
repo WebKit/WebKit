@@ -103,6 +103,7 @@ static NPObject* pluginAllocate(NPP npp, NPClass*);
 static void pluginDeallocate(NPObject*);
 
 NPNetscapeFuncs* browser;
+NPPluginFuncs* pluginFunctions;
 
 static NPClass pluginClass = {
     NP_CLASS_STRUCT_VERSION,

@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\NullNPPGetValuePointer.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\PassDifferentNPPStruct.cpp"
 				>
 			</File>

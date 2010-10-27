@@ -81,6 +81,8 @@ NPError STDCALL NP_GetEntryPoints(NPPluginFuncs *pluginFuncs)
         CRASH();
 #endif
 
+    pluginFunctions = pluginFuncs;
+
     pluginFuncs->version = (NP_VERSION_MAJOR << 8) | NP_VERSION_MINOR;
     pluginFuncs->size = sizeof(pluginFuncs);
     pluginFuncs->newp = NPP_New;

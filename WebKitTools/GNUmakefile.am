@@ -169,6 +169,7 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp \
+	WebKitTools/DumpRenderTree/TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/Tests/PluginScriptableNPObjectInvokeDefault.cpp \
 	WebKitTools/DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp \

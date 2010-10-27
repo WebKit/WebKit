@@ -1,3 +1,17 @@
+2010-10-27  Adam Roben  <aroben@apple.com>
+
+        Don't call NPP_GetValue if the plugin didn't provide an implementation
+
+        Fixes <http://webkit.org/b/48433> Crash in
+        NetscapePlugin::shouldLoadSrcURL when using Shockwave Director 10.3 in
+        WebKit2 on Windows
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NPP_GetValue): Null-check the getvalue pointer
+        before using it to call NPP_GetValue.
+
 2010-10-27  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

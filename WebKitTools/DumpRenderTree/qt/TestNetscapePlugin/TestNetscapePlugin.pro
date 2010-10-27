@@ -31,6 +31,7 @@ SOURCES = PluginObject.cpp \
           Tests/DocumentOpenInDestroyStream.cpp \
           Tests/NPRuntimeObjectFromDestroyedPlugin.cpp \
           Tests/NPRuntimeRemoveProperty.cpp \
+          Tests/NullNPPGetValuePointer.cpp \
           Tests/PassDifferentNPPStruct.cpp \
           Tests/PluginScriptableNPObjectInvokeDefault.cpp
 

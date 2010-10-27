@@ -1,3 +1,36 @@
+2010-10-27  Adam Roben  <aroben@apple.com>
+
+        Test that WebKit doesn't crash if the plugin passes 0 for its
+        NPP_GetValue pointer
+
+        Test for <http://webkit.org/b/48433> Crash in
+        NetscapePlugin::shouldLoadSrcURL when using Shockwave Director 10.3 in
+        WebKit2 on Windows
+
+        Reviewed by Eric Carlson.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+        Added NullNPPGetValuePointer.cpp.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.h:
+        Set up a place to store the NPPluginFuncs struct the browser passed to us.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp: Added.
+        (NullNPPGetValuePointer::NullNPPGetValuePointer): Null out the
+        NPP_GetValue pointer we passed to the browser to simulate a plugin that
+        doesn't implement NPP_GetValue.
+        (NullNPPGetValuePointer::NPP_GetValue): Print an error message. If this
+        function is called, it means that WebKit has changed in a way that
+        makes this test invalid.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NP_GetEntryPoints): Save the NPPluginFuncs struct the browser passed
+        to us so we can be naughty and modify it later.
+
 2010-10-27  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Andreas Kling.

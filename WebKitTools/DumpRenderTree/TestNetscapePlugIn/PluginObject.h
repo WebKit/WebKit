@@ -38,6 +38,7 @@
 class PluginTest;
 
 extern NPNetscapeFuncs *browser;
+extern NPPluginFuncs* pluginFunctions;
 
 typedef struct {
     NPObject header;
