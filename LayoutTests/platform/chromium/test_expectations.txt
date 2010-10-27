@@ -3251,4 +3251,7 @@ BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
 
 // Chromium-mac-specific test, and only runs in DRT.
-BUGWK46868 : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = TEXT
+BUGWK46868 WONTFIX : platform/chromium/fast/text/chromium-mac-duplicate-ime-composition.html = TEXT
+
+// Vertical text needs to be implemented in platforms other than OS X.
+BUGWK48459 WIN LINUX : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
