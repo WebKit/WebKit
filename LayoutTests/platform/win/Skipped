@@ -324,6 +324,29 @@ svg/dom/SVGScriptElement/script-load-and-error-events.svg
 # Times out in Release builds http://webkit.org/b/47091
 http/tests/misc/copy-resolves-urls.html
 
+# Actual values are sometimes slightly out of range of expected values http://webkit.org/b/48451
+animations/combo-transform-translate+scale.html
+animations/play-state.html
+animations/suspend-resume-animation.html
+animations/3d/transform-origin-vs-functions.html
+
+# Sometimes fail http://webkit.org/b/48452
+compositing/reflections/animation-inside-reflection.html
+compositing/reflections/nested-reflection-animated.html
+
+# Sometimes fail http://webkit.org/b/48454
+compositing/tiling/huge-layer-resize.html
+compositing/tiling/huge-layer-with-layer-children-resize.html
+
+# http://webkit.org/b/48455
+transitions/cancel-transition.html
+
+# http://webkit.org/b/48456
+transitions/change-values-during-transition.html
+
+# Sometimes times out http://webkit.org/b/48457
+fast/workers/storage/use-same-database-in-page-and-workers.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
