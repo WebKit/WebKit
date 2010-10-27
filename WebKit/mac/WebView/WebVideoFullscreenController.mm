@@ -414,11 +414,11 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     if (rate && !_isEndingFullscreen) {
         [self _disableIdleSystemSleep];
         [self _disableIdleDisplaySleep];
-        [self _disableTickleTimer];
+        [self _enableTickleTimer];
     } else {
         [self _enableIdleSystemSleep];
         [self _enableIdleDisplaySleep];
-        [self _enableTickleTimer];
+        [self _disableTickleTimer];
     }
 #endif
 }
