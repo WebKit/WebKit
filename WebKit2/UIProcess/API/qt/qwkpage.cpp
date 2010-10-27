@@ -49,11 +49,22 @@
 using namespace WebKit;
 using namespace WebCore;
 
+static inline void initializePlatformStrategiesIfNeeded()
+{
+    static bool initialized = false;
+    if (initialized)
+        return;
+
+    WebPlatformStrategies::initialize();
+    initialized = true;
+}
+
 QWKPagePrivate::QWKPagePrivate(QWKPage* qq, WKPageNamespaceRef namespaceRef)
     : q(qq)
     , preferences(0)
     , createNewPageFn(0)
 {
+    initializePlatformStrategiesIfNeeded();
     memset(actions, 0, sizeof(actions));
     page = toImpl(namespaceRef)->createWebPage();
     page->setPageClient(this);

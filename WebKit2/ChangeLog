@@ -1,3 +1,18 @@
+2010-10-27  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Assert due to multiple initialization of WebPlatformStrategies
+        https://bugs.webkit.org/show_bug.cgi?id=48327
+
+        We are using the LocalizationStrategy in the UI process
+        so the previous attempt to fix this (http://trac.webkit.org/changeset/70620)
+        was wrong.
+        * UIProcess/API/qt/qwkpage.cpp:
+        (initializePlatformStrategiesIfNeeded):
+        Call WebPlatformStrategies::initialize exactly once.
+        (QWKPagePrivate::QWKPagePrivate):
+
 2010-10-27  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
 
         Reviewed by Andreas Kling.
