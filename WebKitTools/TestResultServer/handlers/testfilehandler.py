@@ -36,6 +36,7 @@ from google.appengine.ext.webapp import template
 from model.jsonresults import JsonResults
 from model.testfile import TestFile
 
+PARAM_MASTER = "master"
 PARAM_BUILDER = "builder"
 PARAM_DIR = "dir"
 PARAM_FILE = "file"
@@ -51,25 +52,26 @@ class DeleteFile(webapp.RequestHandler):
 
     def get(self):
         key = self.request.get(PARAM_KEY)
+        master = self.request.get(PARAM_MASTER)
         builder = self.request.get(PARAM_BUILDER)
         test_type = self.request.get(PARAM_TEST_TYPE)
         name = self.request.get(PARAM_NAME)
 
         logging.debug(
-            "Deleting File, builder: %s, test_type: %s, name: %s, key: %s.",
-            builder, test_type, name, key)
+            "Deleting File, master: %s, builder: %s, test_type: %s, name: %s, key: %s.",
+            master, builder, test_type, name, key)
 
-        TestFile.delete_file(key, builder, test_type, name, 100)
+        TestFile.delete_file(key, master, builder, test_type, name, 100)
 
         # Display file list after deleting the file.
-        self.redirect("/testfile?builder=%s&testtype=%s&name=%s"
-            % (builder, test_type, name))
+        self.redirect("/testfile?master=%s&builder=%s&testtype=%s&name=%s"
+            % (master, builder, test_type, name))
 
 
 class GetFile(webapp.RequestHandler):
     """Get file content or list of files for given builder and name."""
 
-    def _get_file_list(self, builder, test_type, name):
+    def _get_file_list(self, master, builder, test_type, name):
         """Get and display a list of files that matches builder and file name.
 
         Args:
@@ -79,15 +81,16 @@ class GetFile(webapp.RequestHandler):
         """
 
         files = TestFile.get_files(
-            builder, test_type, name, load_data=False, limit=100)
+            master, builder, test_type, name, load_data=False, limit=100)
         if not files:
-            logging.info("File not found, builder: %s, test_type: %s, name: %s.",
-                         builder, test_type, name)
+            logging.info("File not found, master: %s, builder: %s, test_type: %s, name: %s.",
+                         master, builder, test_type, name)
             self.response.out.write("File not found")
             return
 
         template_values = {
             "admin": users.is_current_user_admin(),
+            "master": master,
             "builder": builder,
             "test_type": test_type,
             "name": name,
@@ -96,7 +99,7 @@ class GetFile(webapp.RequestHandler):
         self.response.out.write(template.render("templates/showfilelist.html",
                                                 template_values))
 
-    def _get_file_content(self, builder, test_type, name):
+    def _get_file_content(self, master, builder, test_type, name):
         """Return content of the file that matches builder and file name.
 
         Args:
@@ -106,15 +109,15 @@ class GetFile(webapp.RequestHandler):
         """
 
         files = TestFile.get_files(
-            builder, test_type, name, load_data=True, limit=1)
+            master, builder, test_type, name, load_data=True, limit=1)
         if not files:
-            logging.info("File not found, builder: %s, test_type: %s, name: %s.",
-                         builder, test_type, name)
+            logging.info("File not found, master %s, builder: %s, test_type: %s, name: %s.",
+                         master, builder, test_type, name)
             return None
 
         return files[0].data
 
-    def _get_test_list_json(self, builder, test_type):
+    def _get_test_list_json(self, master, builder, test_type):
         """Return json file with test name list only, do not include test
            results and other non-test-data .
 
@@ -123,13 +126,14 @@ class GetFile(webapp.RequestHandler):
             test_type: type of test results.
         """
 
-        json = self._get_file_content(builder, test_type, "results.json")
+        json = self._get_file_content(master, builder, test_type, "results.json")
         if not json:
             return None
 
         return JsonResults.get_test_list(builder, json)
 
     def get(self):
+        master = self.request.get(PARAM_MASTER)
         builder = self.request.get(PARAM_BUILDER)
         test_type = self.request.get(PARAM_TEST_TYPE)
         name = self.request.get(PARAM_NAME)
@@ -137,19 +141,19 @@ class GetFile(webapp.RequestHandler):
         test_list_json = self.request.get(PARAM_TEST_LIST_JSON)
 
         logging.debug(
-            "Getting files, builder: %s, test_type: %s, name: %s.",
-            builder, test_type, name)
+            "Getting files, master %s, builder: %s, test_type: %s, name: %s.",
+            master, builder, test_type, name)
 
         # If parameter "dir" is specified or there is no builder or filename
         # specified in the request, return list of files, otherwise, return
         # file content.
         if dir or not builder or not name:
-            return self._get_file_list(builder, test_type, name)
+            return self._get_file_list(master, builder, test_type, name)
 
         if name == "results.json" and test_list_json:
-            json = self._get_test_list_json(builder, test_type)
+            json = self._get_test_list_json(master, builder, test_type)
         else:
-            json = self._get_file_content(builder, test_type, name)
+            json = self._get_file_content(master, builder, test_type, name)
 
         if json:
             self.response.headers["Content-Type"] = "text/plain; charset=utf-8"
@@ -170,12 +174,13 @@ class Upload(webapp.RequestHandler):
             self.response.out.write("FAIL: missing builder parameter.")
             return
 
+        master = self.request.get(PARAM_MASTER)
         test_type = self.request.get(PARAM_TEST_TYPE)
         incremental = self.request.get(PARAM_INCREMENTAL)
 
         logging.debug(
-            "Processing upload request, builder: %s, test_type: %s.",
-            builder, test_type)
+            "Processing upload request, master: %s, builder: %s, test_type: %s.",
+            master, builder, test_type)
 
         # There are two possible types of each file_params in the request:
         # one file item or a list of file items.
@@ -193,15 +198,15 @@ class Upload(webapp.RequestHandler):
             if ((incremental and filename == "results.json") or
                 (filename == "incremental_results.json")):
                 # Merge incremental json results.
-                saved_file = JsonResults.update(builder, test_type, file.value)
+                saved_file = JsonResults.update(master, builder, test_type, file.value)
             else:
                 saved_file = TestFile.update(
-                    builder, test_type, file.filename, file.value)
+                    master, builder, test_type, file.filename, file.value)
 
             if not saved_file:
                 errors.append(
-                    "Upload failed, builder: %s, test_type: %s, name: %s." %
-                    (builder, test_type, file.filename))
+                    "Upload failed, master: %s, builder: %s, test_type: %s, name: %s." %
+                    (master, builder, test_type, file.filename))
 
         if errors:
             messages = "FAIL: " + "; ".join(errors)

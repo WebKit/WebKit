@@ -25,6 +25,15 @@ indexes:
 - kind: TestFile
   properties:
   - name: builder
+  - name: master
+  - name: name
+  - name: test_type
+  - name: date
+    direction: desc
+
+- kind: TestFile
+  properties:
+  - name: builder
   - name: name
   - name: date
     direction: desc
@@ -34,6 +43,12 @@ indexes:
   - name: builder
   - name: name
   - name: test_type
+  - name: date
+    direction: desc
+
+- kind: TestFile
+  properties:
+  - name: master
   - name: date
     direction: desc
 

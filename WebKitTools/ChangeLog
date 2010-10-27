@@ -1,3 +1,24 @@
+2010-10-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] Make the test results server store which master the bot is on
+        https://bugs.webkit.org/show_bug.cgi?id=48478
+
+        The chromium bots recently changed so that there are multiple slaves with
+        the same name on different masters. Up till now, the test results server
+        assumed slave names were unique. Adds a master field to the file in order
+        to distinguish.
+
+        Also, for files that currently lack a master or testtype, set them appropriately.
+
+        * TestResultServer/handlers/testfilehandler.py:
+        * TestResultServer/index.yaml:
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/testfile.py:
+        * TestResultServer/templates/showfilelist.html:
+        * TestResultServer/templates/uploadform.html:
+
 2010-10-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

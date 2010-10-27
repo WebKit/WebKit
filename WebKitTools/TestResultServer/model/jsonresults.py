@@ -391,7 +391,7 @@ class JsonResults(object):
         return cls._generate_file_data(aggregated_json, sort_keys)
 
     @classmethod
-    def update(cls, builder, test_type, incremental):
+    def update(cls, master, builder, test_type, incremental):
         """Update datastore json file data by merging it with incremental json
            file.
 
@@ -405,13 +405,23 @@ class JsonResults(object):
             None on failure.
         """
 
-        files = TestFile.get_files(builder, test_type, JSON_RESULTS_FILE)
+        files = TestFile.get_files(master, builder, test_type, JSON_RESULTS_FILE)
         if files:
             file = files[0]
+
+            # FIXME: This is here to fill in the missing master/test_type for the already uploaded
+            # results files, which all are layout_tests from the chromium master.
+            # Remove this once all the builders upload with the master/test_type field set.
+            if not file.master:
+                file.master = "chromium"
+            if not file.test_type:
+                file.test_type = "layout-tests"
+
             new_results = cls.merge(builder, file.data, incremental)
         else:
             # Use the incremental data if there is no aggregated file to merge.
             file = TestFile()
+            file.master = master
             file.builder = builder
             file.test_type = test_type
             file.name = JSON_RESULTS_FILE

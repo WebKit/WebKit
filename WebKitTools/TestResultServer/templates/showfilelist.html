@@ -13,6 +13,7 @@
 <div>
     <table>
         <tr>
+            <th>Master</th>
             <th>Builder</th>
             <th>Test Type</th>
             <th>File</th>
@@ -22,6 +23,10 @@
             {% endif %}
         {% for file in files %}
         <tr>{% if file.builder and file.name %}
+            <td><a href="/testfile?master={{ file.master }}" >
+                {{ file.master }}
+                </a>
+            </td>
             <td><a href="/testfile?builder={{ file.builder }}" >
                 {{ file.builder }}
                 </a>

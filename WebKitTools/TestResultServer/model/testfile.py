@@ -35,11 +35,12 @@ from model.datastorefile import DataStoreFile
 
 
 class TestFile(DataStoreFile):
+    master = db.StringProperty()
     builder = db.StringProperty()
     test_type = db.StringProperty()
 
     @classmethod
-    def delete_file(cls, key, builder, test_type, name, limit):
+    def delete_file(cls, key, master, builder, test_type, name, limit):
         if key:
             file = db.get(key)
             if not file:
@@ -48,10 +49,10 @@ class TestFile(DataStoreFile):
 
             file._delete_all()
         else:
-            files = cls.get_files(builder, test_type, name, limit)
+            files = cls.get_files(master, builder, test_type, name, limit)
             if not files:
                 logging.warning(
-                    "File not found, builder: %s, test_type:%s, name: %s.",
+                    "File not found, master: %s, builder: %s, test_type:%s, name: %s.",
                     builder, test_type, name)
                 return False
 
@@ -61,8 +62,10 @@ class TestFile(DataStoreFile):
         return True
 
     @classmethod
-    def get_files(cls, builder, test_type, name, load_data=True, limit=1):
+    def get_files(cls, master, builder, test_type, name, load_data=True, limit=1):
         query = TestFile.all()
+        if master:
+            query = query.filter("master =", master)
         if builder:
             query = query.filter("builder =", builder)
         if test_type:
@@ -78,8 +81,9 @@ class TestFile(DataStoreFile):
         return files
 
     @classmethod
-    def add_file(cls, builder, test_type, name, data):
+    def add_file(cls, master, builder, test_type, name, data):
         file = TestFile()
+        file.master = master
         file.builder = builder
         file.test_type = test_type
         file.name = name
@@ -88,24 +92,33 @@ class TestFile(DataStoreFile):
             return None
 
         logging.info(
-            "File saved, builder: %s, test_type: %s, name: %s, key: %s.",
-            builder, test_type, file.name, str(file.data_keys))
+            "File saved, master: %s, builder: %s, test_type: %s, name: %s, key: %s.",
+            master, builder, test_type, file.name, str(file.data_keys))
 
         return file
 
     @classmethod
-    def update(cls, builder, test_type, name, data):
-        files = cls.get_files(builder, test_type, name)
+    def update(cls, master, builder, test_type, name, data):
+        files = cls.get_files(master, builder, test_type, name)
         if not files:
-            return cls.add_file(builder, test_type, name, data)
+            return cls.add_file(master, builder, test_type, name, data)
 
         file = files[0]
+
+        # FIXME: This is here to fill in the missing master/test_type for the already uploaded
+        # results files, which all are layout_tests from the chromium master.
+        # Remove this once all the builders upload with the master/test_type field set.
+        if not file.master:
+            file.master = "chromium"
+        if not file.test_type:
+            file.test_type = "layout-tests"
+
         if not file.save(data):
             return None
 
         logging.info(
-            "File replaced, builder: %s, test_type: %s, name: %s, data key: %s.",
-            builder, test_type, file.name, str(file.data_keys))
+            "File replaced, master: %s, builder: %s, test_type: %s, name: %s, data key: %s.",
+            master, builder, test_type, file.name, str(file.data_keys))
 
         return file
 
