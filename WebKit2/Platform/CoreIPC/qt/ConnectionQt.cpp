@@ -51,6 +51,7 @@ void Connection::platformInitialize(Identifier identifier)
 void Connection::platformInvalidate()
 {
     delete m_socket;
+    m_socket = 0;
 }
 
 void Connection::readyReadHandler()
@@ -119,11 +120,18 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
 
     // Write message size first
     // FIXME: Should  just do a single write.
-    m_socket->write(reinterpret_cast<char*>(&bufferSize), sizeof(bufferSize));
+    qint64 bytesWrittenForSize = m_socket->write(reinterpret_cast<char*>(&bufferSize), sizeof(bufferSize));
+    if (bytesWrittenForSize != sizeof(bufferSize)) {
+        connectionDidClose();
+        return false;
+    }
 
-    qint64 bytesWritten = m_socket->write(reinterpret_cast<char*>(arguments->buffer()), arguments->bufferSize());
+    qint64 bytesWrittenForBuffer = m_socket->write(reinterpret_cast<char*>(arguments->buffer()), arguments->bufferSize());
+    if (bytesWrittenForBuffer != arguments->bufferSize()) {
+        connectionDidClose();
+        return false;
+    }
 
-    ASSERT_UNUSED(bytesWritten, bytesWritten == arguments->bufferSize());
     return true;
 }
 

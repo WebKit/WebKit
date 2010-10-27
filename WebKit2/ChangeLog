@@ -2,6 +2,26 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] WebKit2 UI process crashes if web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=48400
+
+        Check the success of socket write operations.
+        Avoids crashing the UI process if web process has crashed.
+        Qt socket code segfaults when write is called for a socket
+        that has had an error.
+
+        * Platform/CoreIPC/qt/ConnectionQt.cpp:
+        (CoreIPC::Connection::platformInvalidate):
+        Reset m_socket after deletion.
+
+        (CoreIPC::Connection::sendOutgoingMessage):
+        Check error status of write operations and
+        invalidate socket if writes fail.
+
+2010-10-27  Kimmo Kinnunen  <kimmo.t.kinnunen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
         [Qt] Type mismatch while serializing/deserializing message id size
         https://bugs.webkit.org/show_bug.cgi?id=48401
 
