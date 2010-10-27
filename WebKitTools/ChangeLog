@@ -1,3 +1,12 @@
+2010-10-27  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [NRWT] Add platform specific baseline search paths for Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=48428
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+
 2010-10-27  Adam Roben  <aroben@apple.com>
 
         Catch exceptions when checking if we're inside a git working directory
