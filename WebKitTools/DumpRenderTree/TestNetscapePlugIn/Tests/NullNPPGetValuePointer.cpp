@@ -36,19 +36,31 @@ public:
     NullNPPGetValuePointer(NPP, const string& identifier);
 
 private:
+    virtual NPError NPP_Destroy(NPSavedData**);
     virtual NPError NPP_GetValue(NPPVariable, void* value);
+
+    NPP_GetValueProcPtr m_originalNPPGetValuePointer;
 };
 
 static PluginTest::Register<NullNPPGetValuePointer> registrar("null-npp-getvalue-pointer");
 
 NullNPPGetValuePointer::NullNPPGetValuePointer(NPP npp, const string& identifier)
     : PluginTest(npp, identifier)
+    , m_originalNPPGetValuePointer(pluginFunctions->getvalue)
 {
     // Be sneaky and null out the getvalue pointer the browser is holding. This simulates a plugin
     // that doesn't implement NPP_GetValue (like Shockwave Director 10.3 on Windows). Note that if
     // WebKit copies the NPPluginFuncs struct this technique will have no effect and WebKit will
     // call into our NPP_GetValue implementation.
     pluginFunctions->getvalue = 0;
+}
+
+NPError NullNPPGetValuePointer::NPP_Destroy(NPSavedData**)
+{
+    // Set the NPP_GetValue pointer back the way it was before we mucked with it so we don't mess
+    // up future uses of the plugin module.
+    pluginFunctions->getvalue = m_originalNPPGetValuePointer;
+    return NPERR_NO_ERROR;
 }
 
 NPError NullNPPGetValuePointer::NPP_GetValue(NPPVariable, void*)

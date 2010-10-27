@@ -1,3 +1,31 @@
+2010-10-27  Adam Roben  <aroben@apple.com>
+
+        Reset TestNetscapePlugIn's NPP_GetValue pointer when
+        NullNPPGetValuePointer finishes running
+
+        Fixes <http://webkit.org/b/48435> REGRESSION (r70655): Many plugins
+        tests are failing on Qt
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::NPP_Destroy):
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h:
+        Added a do-nothing NPP_Destroy implementation.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NullNPPGetValuePointer.cpp:
+        (NullNPPGetValuePointer::NullNPPGetValuePointer): Save the original
+        NPP_GetValue pointer in m_originalNPPGetValuePointer so we can restore
+        it later.
+        (NullNPPGetValuePointer::NPP_Destroy): Added. Restores the original
+        NPP_GetValue pointer so it can be used in other tests.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_Destroy):
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_destroy_instance):
+        Call through to the PluginTest when NPP_Destroy is called.
+
 2010-10-26  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

@@ -283,6 +283,8 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
             CFRelease(obj->coreAnimationLayer);
 #endif
 
+        obj->pluginTest->NPP_Destroy(save);
+
         browser->releaseobject(&obj->header);
     }
     return NPERR_NO_ERROR;
