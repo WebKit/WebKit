@@ -100,6 +100,7 @@ void RenderSVGImage::updateFromElement()
         m_updateCachedRepaintRect = true;
         setNeedsLayout(true);
     }
+    RenderSVGModelObject::updateFromElement();
 }
 
 void RenderSVGImage::paint(PaintInfo& paintInfo, int, int)
