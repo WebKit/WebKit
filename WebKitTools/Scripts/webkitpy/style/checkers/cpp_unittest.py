@@ -1313,6 +1313,19 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_multi_line_lint('#include "config.h"\n#import <foo/bar.h>\n',
                                     '')
 
+    def test_operator_methods(self):
+        self.assert_lint('String operator+(const String&, const String&);', '')
+        self.assert_lint('bool operator==(const String&, const String&);', '')
+        self.assert_lint('String& operator-=(const String&, const String&);', '')
+        self.assert_lint('String& operator+=(const String&, const String&);', '')
+        self.assert_lint('String& operator*=(const String&, const String&);', '')
+        self.assert_lint('String& operator%=(const String&, const String&);', '')
+        self.assert_lint('String& operator&=(const String&, const String&);', '')
+        self.assert_lint('String& operator<<=(const String&, const String&);', '')
+        self.assert_lint('String& operator>>=(const String&, const String&);', '')
+        self.assert_lint('String& operator|=(const String&, const String&);', '')
+        self.assert_lint('String& operator^=(const String&, const String&);', '')
+
     def test_spacing_before_last_semicolon(self):
         self.assert_lint('call_function() ;',
                          'Extra space before last semicolon. If this should be an '
