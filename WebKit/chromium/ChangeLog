@@ -1,3 +1,15 @@
+2010-10-27  Stuart Morgan  <stuartmorgan@chromium.org>
+
+        Reviewed by David Levin.
+
+        Include caps lock state when converting NSEvent modifiers to
+        WebInputEvent
+
+        https://bugs.webkit.org/show_bug.cgi?id=47917
+
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::modifiersFromEvent):
+
 2010-10-27  Chris Rogers  <crogers@google.com>
 
         Reviewed by James Robinson.

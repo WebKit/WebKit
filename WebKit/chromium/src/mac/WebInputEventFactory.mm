@@ -856,6 +856,8 @@ static inline int modifiersFromEvent(NSEvent* event) {
         modifiers |= WebInputEvent::AltKey;
     if ([event modifierFlags] & NSCommandKeyMask)
         modifiers |= WebInputEvent::MetaKey;
+    if ([event modifierFlags] & NSAlphaShiftKeyMask)
+        modifiers |= WebInputEvent::CapsLockOn;
     // TODO(port): Set mouse button states
 
     return modifiers;
