@@ -1,3 +1,29 @@
+2010-10-27  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix the WebKit2 API tests.
+        https://bugs.webkit.org/show_bug.cgi?id=48461
+
+        The API tests were failing because the tests expect to be able to send messages before the
+        WebProcess finishes launching.
+
+        Instead of dispatching the pending messages in processDidFinishLaunching, dispatch them in
+        ensureWebProcess but do not make messages pending if the process is launching.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::processDidFinishLaunching):
+        Move dispatching the pending messages back from here ...
+        (WebKit::WebContext::ensureWebProcess):
+        ... to here.
+        (WebKit::WebContext::postMessageToInjectedBundle):
+        Check whether the process can send messages in order to determine if a message needs to be
+        sent later.
+
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::canSendMessage):
+        The WebProcessProxy can send a message if it is valid or if it is launching.
+
 2010-10-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

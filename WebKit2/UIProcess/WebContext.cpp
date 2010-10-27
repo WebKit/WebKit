@@ -178,6 +178,12 @@ void WebContext::ensureWebProcess()
     platformInitializeWebProcess(parameters);
 
     m_process->send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
+
+    for (size_t i = 0; i != m_pendingMessagesToPostToInjectedBundle.size(); ++i) {
+        pair<String, RefPtr<APIObject> >& message = m_pendingMessagesToPostToInjectedBundle[i];
+        m_process->send(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(message.first, WebContextUserMessageEncoder(message.second.get())));
+    }
+    m_pendingMessagesToPostToInjectedBundle.clear();
 }
 
 void WebContext::processDidFinishLaunching(WebProcessProxy* process)
@@ -186,12 +192,6 @@ void WebContext::processDidFinishLaunching(WebProcessProxy* process)
     ASSERT(process == m_process);
 
     m_visitedLinkProvider.populateVisitedLinksIfNeeded();
-
-    for (size_t i = 0; i != m_pendingMessagesToPostToInjectedBundle.size(); ++i) {
-        pair<String, RefPtr<APIObject> >& message = m_pendingMessagesToPostToInjectedBundle[i];
-        m_process->send(InjectedBundleMessage::PostMessage, 0, CoreIPC::In(message.first, WebContextUserMessageEncoder(message.second.get())));
-    }
-    m_pendingMessagesToPostToInjectedBundle.clear();
 }
 
 void WebContext::processDidClose(WebProcessProxy* process)
@@ -260,7 +260,7 @@ void WebContext::preferencesDidChange()
 
 void WebContext::postMessageToInjectedBundle(const String& messageName, APIObject* messageBody)
 {
-    if (!hasValidProcess()) {
+    if (!m_process || !m_process->canSendMessage()) {
         m_pendingMessagesToPostToInjectedBundle.append(make_pair(messageName, messageBody));
         return;
     }
