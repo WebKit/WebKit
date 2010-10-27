@@ -59,9 +59,9 @@ class Credentials(object):
         self._keyring = keyring
 
     def _credentials_from_git(self):
-        if not Git.in_working_directory(self.cwd):
-            return (None, None)
         try:
+            if not Git.in_working_directory(self.cwd):
+                return (None, None)
             return (Git.read_git_config(self.git_prefix + "username"),
                     Git.read_git_config(self.git_prefix + "password"))
         except OSError, e:

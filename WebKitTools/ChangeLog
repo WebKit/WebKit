@@ -1,3 +1,18 @@
+2010-10-27  Adam Roben  <aroben@apple.com>
+
+        Catch exceptions when checking if we're inside a git working directory
+
+        Fixes <http://webkit.org/b/48420> REGRESSION (r70562): test-webkitpy
+        fails on systems without git installed
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/common/net/credentials.py:
+        (Credentials._credentials_from_git): Put the call to
+        Git.in_working_directory inside the try/except since it, too, attempts
+        to execute git and thus will throw on systems that don't have git
+        installed.
+
 2010-10-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by David Kilzer.
