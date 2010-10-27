@@ -323,6 +323,7 @@ public:
 
     // Precise but slow index validation -- only done if conservative checks fail
     bool validateIndexArrayPrecise(unsigned long count, unsigned long type, long offset, long& numElementsRequired);
+    // If numElements <= 0, we only check if each enabled vertex attribute is bound to a buffer.
     bool validateRenderingState(long numElements);
 
     bool validateWebGLObject(WebGLObject* object);

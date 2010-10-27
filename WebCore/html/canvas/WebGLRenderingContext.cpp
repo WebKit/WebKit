@@ -878,6 +878,9 @@ bool WebGLRenderingContext::validateRenderingState(long numElementsRequired)
             return false;
     }
 
+    if (numElementsRequired <= 0)
+        return true;
+
     // Look in each consumed vertex attrib (by the current program) and find the smallest buffer size
     long smallestNumElements = LONG_MAX;
     int numActiveAttribLocations = m_currentProgram->numActiveAttribLocations();
@@ -939,6 +942,11 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
             return;
         }
+    } else {
+        if (!validateRenderingState(0)) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return;
+        }
     }
 
     bool vertexAttrib0Simulated = false;
@@ -989,6 +997,11 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
                 m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
                 return;
             }
+        }
+    } else {
+        if (!validateRenderingState(0)) {
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+            return;
         }
     }
 
