@@ -48,6 +48,8 @@ static const char* formWithTextInputs = "<html><body><form><input type='text' na
 
 static const char* layoutAndDataTables = "<html><body><table><tr><th>Odd</th><th>Even</th></tr><tr><td>1</td><td>2</td></tr></table><table><tr><td>foo</td><td>bar</td></tr></table></body></html>";
 
+static const char* linksWithInlineImages = "<html><head><style>a.http:before {content: url(no-image.png);}</style><body><p><a class='http' href='foo'>foo</a> bar baz</p><p>foo <a class='http' href='bar'>bar</a> baz</p><p>foo bar <a class='http' href='baz'>baz</a></p></body></html>";
+
 static const char* listsOfItems = "<html><body><ul><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ul><ol><li>text only</li><li><a href='foo'>link only</a></li><li>text and a <a href='bar'>link</a></li></ol></body></html>";
 
 static const char* textForSelections = "<html><body><p>A paragraph with plain text</p><p>A paragraph with <a href='http://webkit.org'>a link</a> in the middle</p></body></html>";
@@ -1012,6 +1014,59 @@ static void testWebkitAtkLayoutAndDataTables(void)
 
     g_object_unref(table1);
     g_object_unref(table2);
+    g_object_unref(webView);
+}
+
+static void testWebkitAtkLinksWithInlineImages(void)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, linksWithInlineImages, 0, 0, 0);
+
+    // Manually spin the main context to get the accessible objects
+    while (g_main_context_pending(0))
+        g_main_context_iteration(0, TRUE);
+
+    AtkObject* object = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(object);
+
+    // First paragraph (link at the beginning)
+    AtkObject* paragraph = atk_object_ref_accessible_child(object, 0);
+    g_assert(ATK_IS_TEXT(paragraph));
+    gint startOffset;
+    gint endOffset;
+    gchar* text = atk_text_get_text_at_offset(ATK_TEXT(paragraph), 0, ATK_TEXT_BOUNDARY_LINE_START, &startOffset, &endOffset);
+    g_assert(text);
+    g_assert_cmpstr(text, ==, "foo bar baz");
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 11);
+    g_free(text);
+    g_object_unref(paragraph);
+
+    // Second paragraph (link in the middle)
+    paragraph = atk_object_ref_accessible_child(object, 1);
+    g_assert(ATK_IS_TEXT(paragraph));
+    text = atk_text_get_text_at_offset(ATK_TEXT(paragraph), 0, ATK_TEXT_BOUNDARY_LINE_START, &startOffset, &endOffset);
+    g_assert(text);
+    g_assert_cmpstr(text, ==, "foo bar baz");
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 11);
+    g_free(text);
+    g_object_unref(paragraph);
+
+    // Third paragraph (link at the end)
+    paragraph = atk_object_ref_accessible_child(object, 2);
+    g_assert(ATK_IS_TEXT(paragraph));
+    text = atk_text_get_text_at_offset(ATK_TEXT(paragraph), 0, ATK_TEXT_BOUNDARY_LINE_START, &startOffset, &endOffset);
+    g_assert(text);
+    g_assert_cmpstr(text, ==, "foo bar baz");
+    g_assert_cmpint(startOffset, ==, 0);
+    g_assert_cmpint(endOffset, ==, 11);
+    g_free(text);
+    g_object_unref(paragraph);
+
     g_object_unref(webView);
 }
 

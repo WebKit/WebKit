@@ -870,6 +870,59 @@ static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int fro
     return g_string_free(ret, FALSE);
 }
 
+gchar* textForRenderer(RenderObject* renderer)
+{
+    GString* resultText = g_string_new(0);
+
+    if (!renderer)
+        return g_string_free(resultText, FALSE);
+
+    // For RenderBlocks, piece together the text from the RenderText objects they contain.
+    for (RenderObject* object = renderer->firstChild(); object; object = object->nextSibling()) {
+        if (object->isBR()) {
+            g_string_append(resultText, "\n");
+            continue;
+        }
+
+        RenderText* renderText;
+        if (object->isText())
+            renderText = toRenderText(object);
+        else {
+            // We need to check children, if any, to consider when
+            // current object is not a text object but some of its
+            // children are, in order not to miss those portions of
+            // text by not properly handling those situations
+            if (object->firstChild())
+                g_string_append(resultText, textForRenderer(object));
+
+            continue;
+        }
+
+        InlineTextBox* box = renderText->firstTextBox();
+        while (box) {
+            gchar* text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
+            g_string_append(resultText, text);
+            // Newline chars in the source result in separate text boxes, so check
+            // before adding a newline in the layout. See bug 25415 comment #78.
+            // If the next sibling is a BR, we'll add the newline when we examine that child.
+            if (!box->nextOnLineExists() && (!object->nextSibling() || !object->nextSibling()->isBR()))
+                g_string_append(resultText, "\n");
+            box = box->nextTextBox();
+        }
+    }
+
+    // Insert the text of the marker for list item in the right place, if present
+    if (renderer->isListItem()) {
+        String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
+        if (renderer->style()->direction() == LTR)
+            g_string_prepend(resultText, markerText.utf8().data());
+        else
+            g_string_append(resultText, markerText.utf8().data());
+    }
+
+    return g_string_free(resultText, FALSE);
+}
+
 gchar* textForObject(AccessibilityRenderObject* accObject)
 {
     GString* str = g_string_new(0);
@@ -888,48 +941,9 @@ gchar* textForObject(AccessibilityRenderObject* accObject)
             g_string_append(str, "\n");
             range = accObject->doAXRangeForLine(++lineNumber);
         }
-    } else {
-        RenderObject* renderer = accObject->renderer();
-        if (!renderer)
-            return g_string_free(str, FALSE);
-
-        // For RenderBlocks, piece together the text from the RenderText objects they contain.
-        for (RenderObject* obj = renderer->firstChild(); obj; obj = obj->nextSibling()) {
-            if (obj->isBR()) {
-                g_string_append(str, "\n");
-                continue;
-            }
-
-            RenderText* renderText;
-            if (obj->isText())
-                renderText = toRenderText(obj);
-            else if (obj->firstChild() && obj->firstChild()->isText()) {
-                // Handle RenderInlines (and any other similiar RenderObjects).
-                renderText = toRenderText(obj->firstChild());
-            } else
-                continue;
-
-            InlineTextBox* box = renderText->firstTextBox();
-            while (box) {
-                gchar* text = convertUniCharToUTF8(renderText->characters(), renderText->textLength(), box->start(), box->end());
-                g_string_append(str, text);
-                // Newline chars in the source result in separate text boxes, so check
-                // before adding a newline in the layout. See bug 25415 comment #78.
-                // If the next sibling is a BR, we'll add the newline when we examine that child.
-                if (!box->nextOnLineExists() && (!obj->nextSibling() || !obj->nextSibling()->isBR()))
-                    g_string_append(str, "\n");
-                box = box->nextTextBox();
-            }
-        }
-
-        // Insert the text of the marker for list item in the right place, if present
-        if (renderer->isListItem()) {
-            String markerText = toRenderListItem(renderer)->markerTextWithSuffix();
-            if (renderer->style()->direction() == LTR)
-                g_string_prepend(str, markerText.utf8().data());
-            else
-                g_string_append(str, markerText.utf8().data());
-        }
+    } else if (accObject->isAccessibilityRenderObject()) {
+        GOwnPtr<gchar> rendererText(textForRenderer(accObject->renderer()));
+        g_string_append(str, rendererText.get());
     }
 
     return g_string_free(str, FALSE);

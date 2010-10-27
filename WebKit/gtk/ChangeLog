@@ -1,3 +1,16 @@
+2010-10-27  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        getTextAtOffset returns incorrect results if a link includes text and an image
+        https://bugs.webkit.org/show_bug.cgi?id=47365
+
+        New test to make sure this bug is actually fixed.
+
+        * tests/testatk.c:
+        (testWebkitAtkLinksWithInlineImages): New test.
+        (main): Added new test.
+
 2010-10-26  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Martin Robinson.
