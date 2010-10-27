@@ -1,5 +1,21 @@
 2010-10-27  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        WebPageProxy::isValid should return false if the page has been explicitly closed
+        https://bugs.webkit.org/show_bug.cgi?id=48458
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::isValid):
+        (WebKit::WebPageProxy::relaunch):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::processDidCrash):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::isClosed):
+
+2010-10-27  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Begin stubbing out the Download class

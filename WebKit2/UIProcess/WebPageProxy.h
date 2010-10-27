@@ -124,7 +124,7 @@ public:
 
     void close();
     bool tryClose();
-    bool isClosed() const { return m_closed; }
+    bool isClosed() const { return m_isClosed; }
 
     void loadURL(const String&);
     void loadURLRequest(WebURLRequest*);
@@ -362,8 +362,11 @@ private:
     double m_textZoomFactor;
     double m_pageZoomFactor;
     
-    bool m_valid;
-    bool m_closed;
+    // If the process backing the web page is alive and kicking.
+    bool m_isValid;
+
+    // Whether WebPageProxy::close() has been called on this page.
+    bool m_isClosed;
 
     uint64_t m_pageID;
 
