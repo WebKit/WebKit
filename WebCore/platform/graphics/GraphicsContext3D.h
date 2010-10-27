@@ -540,7 +540,7 @@ public:
     // uploading. This enum must be public because it is accessed
     // by non-member functions.
     enum SourceDataFormat {
-        kSourceFormatRGBA8,
+        kSourceFormatRGBA8 = 0,
         kSourceFormatRGBA16Little,
         kSourceFormatRGBA16Big,
         kSourceFormatRGB8,
@@ -566,7 +566,8 @@ public:
         kSourceFormatAR16Big,
         kSourceFormatA8,
         kSourceFormatA16Little,
-        kSourceFormatA16Big
+        kSourceFormatA16Big,
+        kSourceFormatNumFormats
     };
 
     //----------------------------------------------------------------------

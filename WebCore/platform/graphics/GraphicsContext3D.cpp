@@ -945,6 +945,8 @@ static void doPacking(const void* sourceData,
         doUnpackingAndPacking<uint16_t, DestType, unpackA16BigToRGBA8, packingFunc>(static_cast<const uint16_t*>(sourceData), width, height, sourceElementsPerPixel, sourceElementsPerRow, destinationData, destinationElementsPerPixel);
         break;
     }
+    default:
+        ASSERT(false);
     }
 }
 

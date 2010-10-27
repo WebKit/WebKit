@@ -41,6 +41,56 @@
 
 namespace WebCore {
 
+enum SourceDataFormatBase {
+    SourceFormatBaseR = 0,
+    SourceFormatBaseA,
+    SourceFormatBaseRA,
+    SourceFormatBaseAR,
+    SourceFormatBaseRGB,
+    SourceFormatBaseRGBA,
+    SourceFormatBaseARGB,
+    SourceFormatBaseNumFormats
+};
+
+enum AlphaFormat {
+    AlphaFormatNone = 0,
+    AlphaFormatFirst,
+    AlphaFormatLast,
+    AlphaFormatNumFormats
+};
+
+// This returns kSourceFormatNumFormats if the combination of input parameters is unsupported.
+static GraphicsContext3D::SourceDataFormat getSourceDataFormat(unsigned int componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
+{
+    const static SourceDataFormatBase formatTableBase[4][AlphaFormatNumFormats] = { // componentsPerPixel x AlphaFormat
+        // AlphaFormatNone            AlphaFormatFirst            AlphaFormatLast
+        { SourceFormatBaseR,          SourceFormatBaseA,          SourceFormatBaseA          }, // 1 componentsPerPixel
+        { SourceFormatBaseNumFormats, SourceFormatBaseAR,         SourceFormatBaseRA         }, // 2 componentsPerPixel
+        { SourceFormatBaseRGB,        SourceFormatBaseNumFormats, SourceFormatBaseNumFormats }, // 3 componentsPerPixel
+        { SourceFormatBaseNumFormats, SourceFormatBaseARGB,       SourceFormatBaseRGBA        } // 4 componentsPerPixel
+    };
+    const static GraphicsContext3D::SourceDataFormat formatTable[SourceFormatBaseNumFormats][3] = { // SourceDataFormatBase x bitsPerComponentAndEndian
+        // 8bits                                 16bits, little endian                         16bits, big endian
+        { GraphicsContext3D::kSourceFormatR8,    GraphicsContext3D::kSourceFormatR16Little,    GraphicsContext3D::kSourceFormatR16Big },
+        { GraphicsContext3D::kSourceFormatA8,    GraphicsContext3D::kSourceFormatA16Little,    GraphicsContext3D::kSourceFormatA16Big },
+        { GraphicsContext3D::kSourceFormatRA8,   GraphicsContext3D::kSourceFormatRA16Little,   GraphicsContext3D::kSourceFormatRA16Big },
+        { GraphicsContext3D::kSourceFormatAR8,   GraphicsContext3D::kSourceFormatAR16Little,   GraphicsContext3D::kSourceFormatAR16Big },
+        { GraphicsContext3D::kSourceFormatRGB8,  GraphicsContext3D::kSourceFormatRGB16Little,  GraphicsContext3D::kSourceFormatRGB16Big },
+        { GraphicsContext3D::kSourceFormatRGBA8, GraphicsContext3D::kSourceFormatRGBA16Little, GraphicsContext3D::kSourceFormatRGBA16Big },
+        { GraphicsContext3D::kSourceFormatARGB8, GraphicsContext3D::kSourceFormatARGB16Little, GraphicsContext3D::kSourceFormatARGB16Big }
+    };
+
+    ASSERT(componentsPerPixel <= 4 && componentsPerPixel > 0);
+    SourceDataFormatBase formatBase = formatTableBase[componentsPerPixel - 1][alphaFormat];
+    if (formatBase == SourceFormatBaseNumFormats)
+        return GraphicsContext3D::kSourceFormatNumFormats;
+    if (!is16BitFormat)
+        return formatTable[formatBase][0];
+    if (!bigEndian)
+        return formatTable[formatBase][1];
+    return formatTable[formatBase][2];
+}
+
 bool GraphicsContext3D::getImageData(Image* image,
                                      unsigned int format,
                                      unsigned int type,
@@ -62,6 +112,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         cgImage = image->nativeImageForCurrentFrame();
     if (!cgImage)
         return false;
+
     size_t width = CGImageGetWidth(cgImage);
     size_t height = CGImageGetHeight(cgImage);
     if (!width || !height)
@@ -73,6 +124,7 @@ bool GraphicsContext3D::getImageData(Image* image,
     if (bitsPerPixel % bitsPerComponent)
         return false;
     size_t componentsPerPixel = bitsPerPixel / bitsPerComponent;
+
     bool srcByteOrder16Big = false;
     if (bitsPerComponent == 16) {
         CGBitmapInfo bitInfo = CGImageGetBitmapInfo(cgImage);
@@ -93,8 +145,9 @@ bool GraphicsContext3D::getImageData(Image* image,
             return false;
         }
     }
-    SourceDataFormat srcDataFormat = kSourceFormatRGBA8;
+
     AlphaOp neededAlphaOp = kAlphaDoNothing;
+    AlphaFormat alphaFormat = AlphaFormatNone;
     switch (CGImageGetAlphaInfo(cgImage)) {
     case kCGImageAlphaPremultipliedFirst:
         // This path is only accessible for MacOS earlier than 10.6.4.
@@ -103,68 +156,17 @@ bool GraphicsContext3D::getImageData(Image* image,
         ASSERT(!image->data());
         if (!premultiplyAlpha)
             neededAlphaOp = kAlphaDoUnmultiply;
-        switch (componentsPerPixel) {
-        case 2:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatAR8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatAR16Big : kSourceFormatAR16Little;
-            break;
-        case 4:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatARGB8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatARGB16Big : kSourceFormatARGB16Little;
-            break;
-        default:
-            return false;
-        }
+        alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaFirst:
         // This path is only accessible for MacOS earlier than 10.6.4.
         if (premultiplyAlpha)
             neededAlphaOp = kAlphaDoPremultiply;
-        switch (componentsPerPixel) {
-        case 1:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatA8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatA16Big : kSourceFormatA16Little;
-            break;
-        case 2:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatAR8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatAR16Big : kSourceFormatAR16Little;
-            break;
-        case 4:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatARGB8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatARGB16Big : kSourceFormatARGB16Little;
-            break;
-        default:
-            return false;
-        }
+        alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaNoneSkipFirst:
         // This path is only accessible for MacOS earlier than 10.6.4.
-        switch (componentsPerPixel) {
-        case 2:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatAR8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatAR16Big : kSourceFormatAR16Little;
-            break;
-        case 4:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatARGB8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatARGB16Big : kSourceFormatARGB16Little;
-            break;
-        default:
-            return false;
-        }
+        alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaPremultipliedLast:
         // This is a special case for texImage2D with HTMLCanvasElement input,
@@ -172,88 +174,26 @@ bool GraphicsContext3D::getImageData(Image* image,
         ASSERT(!image->data());
         if (!premultiplyAlpha)
             neededAlphaOp = kAlphaDoUnmultiply;
-        switch (componentsPerPixel) {
-        case 2:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatRA8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatRA16Big : kSourceFormatRA16Little;
-            break;
-        case 4:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatRGBA8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatRGBA16Big : kSourceFormatRGBA16Little;
-            break;
-        default:
-            return false;
-        }
+        alphaFormat = AlphaFormatLast;
         break;
     case kCGImageAlphaLast:
         if (premultiplyAlpha)
             neededAlphaOp = kAlphaDoPremultiply;
-        switch (componentsPerPixel) {
-        case 1:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatA8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatA16Big :  kSourceFormatA16Little;
-            break;
-        case 2:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatRA8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatRA16Big :  kSourceFormatRA16Little;
-            break;
-        case 4:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatRGBA8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatRGBA16Big : kSourceFormatRGBA16Little;
-            break;
-        default:
-            return false;
-        }
+        alphaFormat = AlphaFormatLast;
         break;
     case kCGImageAlphaNoneSkipLast:
-        switch (componentsPerPixel) {
-        case 2:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatRA8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatRA16Big : kSourceFormatRA16Little;
-            break;
-        case 4:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatRGBA8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatRGBA16Big :  kSourceFormatRGBA16Little;
-            break;
-        default:
-            return false;
-        }
+        alphaFormat = AlphaFormatLast;
         break;
     case kCGImageAlphaNone:
-        switch (componentsPerPixel) {
-        case 1:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatR8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatR16Big : kSourceFormatR16Little;
-            break;
-        case 3:
-            if (bitsPerComponent == 8)
-                srcDataFormat = kSourceFormatRGB8;
-            else
-                srcDataFormat = srcByteOrder16Big ? kSourceFormatRGB16Big : kSourceFormatRGB16Little;
-            break;
-        default:
-            return false;
-        }
+        alphaFormat = AlphaFormatNone;
         break;
     default:
         return false;
     }
+    SourceDataFormat srcDataFormat = getSourceDataFormat(componentsPerPixel, alphaFormat, bitsPerComponent == 16, srcByteOrder16Big);
+    if (srcDataFormat == kSourceFormatNumFormats)
+        return false;
+
     RetainPtr<CFDataRef> pixelData;
     pixelData.adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(cgImage)));
     if (!pixelData)
