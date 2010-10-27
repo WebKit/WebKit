@@ -1,3 +1,16 @@
+2010-10-26  Victoria Kirst  <vrk@google.com>
+
+        Reviewed by David Levin.
+
+        Fix compile when ACCELERATED_COMPOSITING flag is not set
+        https://bugs.webkit.org/show_bug.cgi?id=48373
+
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        (WebKit::WebMediaPlayerClientImpl::load):
+        * src/WebMediaPlayerClientImpl.h:
+
 2010-10-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
