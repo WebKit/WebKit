@@ -1,3 +1,10 @@
+2010-10-27  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction.
+
+        * wtf/Platform.h: Make sure ACCELERATED_COMPOSITING is
+        turned off in the WinCairo port.  This isn't supported (yet.)
+
 2010-10-27  Chris Rogers  <crogers@google.com>
 
         Reviewed by Chris Marrin.
