@@ -156,7 +156,16 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
 {
     CFErrorRef error = 0;
     CFPropertyListFormat format = kCFPropertyListBinaryFormat_v1_0;
+
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    CFIndex bytesCount = CFDataGetLength(webArchiveData);
+    RetainPtr<CFReadStreamRef> readStream(AdoptCF, CFReadStreamCreateWithBytesNoCopy(kCFAllocatorDefault, CFDataGetBytePtr(webArchiveData), bytesCount, kCFAllocatorNull));
+    CFReadStreamOpen(readStream.get());
+    CFMutableDictionaryRef propertyList = (CFMutableDictionaryRef)CFPropertyListCreateFromStream(kCFAllocatorDefault, readStream.get(), bytesCount, kCFPropertyListMutableContainersAndLeaves, &format, 0);
+    CFReadStreamClose(readStream.get());
+#else
     CFMutableDictionaryRef propertyList = (CFMutableDictionaryRef)CFPropertyListCreateWithData(kCFAllocatorDefault, webArchiveData, kCFPropertyListMutableContainersAndLeaves, &format, &error);
+#endif
 
     if (!propertyList) {
         if (error)
@@ -197,7 +206,12 @@ CFStringRef createXMLStringFromWebArchiveData(CFDataRef webArchiveData)
     }
 
     error = 0;
+
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateXMLData(kCFAllocatorDefault, propertyList));
+#else
     RetainPtr<CFDataRef> xmlData(AdoptCF, CFPropertyListCreateData(kCFAllocatorDefault, propertyList, kCFPropertyListXMLFormat_v1_0, 0, &error));
+#endif
 
     if (!xmlData) {
         if (error)

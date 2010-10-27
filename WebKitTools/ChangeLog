@@ -1,3 +1,19 @@
+2010-10-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by David Kilzer.
+
+        Convert DumpRenderTree webarchive code to CoreFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=48278
+
+        CFPropertyListCreateWithData and CFPropertyListCreateData are only available in 10.6+.
+        Replace CFPropertyListCreateWithData by a combination of CFReadStreamCreateWithBytesNoCopy and CFPropertyListCreateFromStream.
+        Replace CFPropertyListCreateData by CFPropertyListCreateXMLData.
+
+        These changes are wrapped in BUILDING_ON_LEOPARD, as the methods are deprecated on 10.6+.
+
+        * DumpRenderTree/cf/WebArchiveDumpSupport.cpp:
+        (createXMLStringFromWebArchiveData):
+
 2010-10-26  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Martin Robinson.
