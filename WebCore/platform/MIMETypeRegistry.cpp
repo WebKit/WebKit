@@ -329,7 +329,7 @@ static MediaMIMETypeMap& mediaMIMETypeMap()
 
             // If there is a system specific type for this extension, add it as the first type so
             // getMediaMIMETypeForExtension will always return it.
-            String systemType = MIMETypeRegistry::getMIMETypeForExtension(pairs[ndx].type);
+            String systemType = MIMETypeRegistry::getMIMETypeForExtension(pairs[ndx].extension);
             if (!systemType.isEmpty() && pairs[ndx].type != systemType)
                 synonyms->append(systemType);
             synonyms->append(pairs[ndx].type);
