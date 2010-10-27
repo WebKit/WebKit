@@ -677,7 +677,7 @@ void RenderLayer::updateLayerPosition()
                 setHeight(box->bottomLayoutOverflow());
         }
         
-        localPoint += box->locationOffset();
+        localPoint += box->locationOffsetIncludingFlipping();
     }
 
     // Clear our cached clip rect information.
@@ -691,13 +691,13 @@ void RenderLayer::updateLayerPosition()
             if (curr->isBox() && !curr->isTableRow()) {
                 // Rows and cells share the same coordinate space (that of the section).
                 // Omit them when computing our xpos/ypos.
-                localPoint += toRenderBox(curr)->locationOffset();
+                localPoint += toRenderBox(curr)->locationOffsetIncludingFlipping();
             }
             curr = curr->parent();
         }
         if (curr->isBox() && curr->isTableRow()) {
             // Put ourselves into the row coordinate space.
-            localPoint -= toRenderBox(curr)->locationOffset();
+            localPoint -= toRenderBox(curr)->locationOffsetIncludingFlipping();
         }
     }
     

@@ -377,7 +377,9 @@ public:
     virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
-    void adjustForFlippedBlocksWritingMode(RenderBox* child, IntPoint&);
+    enum FlippingAdjustment { ChildToParentFlippingAdjustment, ParentToChildFlippingAdjustment };
+    void adjustForFlippedBlocksWritingMode(RenderBox* child, IntPoint&, FlippingAdjustment);
+    IntSize locationOffsetIncludingFlipping();
 
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
