@@ -4040,14 +4040,10 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
     // We also clear floats if we are too big to sit on the same line as a float (and wish to avoid floats by default).
     int result = clearSet ? max(0, bottom - yPos) : 0;
     if (!result && child->avoidsFloats()) {
-        int availableWidth = availableLogicalWidth();
-        if (child->minPreferredLogicalWidth() > availableWidth)
-            return 0;
-
         int y = yPos;
         while (true) {
             int widthAtY = availableLogicalWidthForLine(y, false);
-            if (widthAtY == availableWidth)
+            if (widthAtY == availableLogicalWidth())
                 return y - yPos;
 
             int oldChildY = child->y();
