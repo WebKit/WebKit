@@ -927,11 +927,8 @@ void JIT::emit_op_jeq_null(Instruction* currentInstruction)
     // Now handle the immediate cases - undefined & null
     isImmediate.link(this);
 
-    set32(Equal, regT1, Imm32(JSValue::NullTag), regT2);
-    set32(Equal, regT1, Imm32(JSValue::UndefinedTag), regT1);
-    or32(regT2, regT1);
-
-    addJump(branchTest32(NonZero, regT1), target);
+    ASSERT((JSValue::UndefinedTag + 1 == JSValue::NullTag) && !(JSValue::NullTag + 1));
+    addJump(branch32(AboveOrEqual, regT1, Imm32(JSValue::UndefinedTag)), target);
 
     wasNotImmediate.link(this);
 }
@@ -954,11 +951,8 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
     // Now handle the immediate cases - undefined & null
     isImmediate.link(this);
 
-    set32(Equal, regT1, Imm32(JSValue::NullTag), regT2);
-    set32(Equal, regT1, Imm32(JSValue::UndefinedTag), regT1);
-    or32(regT2, regT1);
-
-    addJump(branchTest32(Zero, regT1), target);
+    ASSERT((JSValue::UndefinedTag + 1 == JSValue::NullTag) && !(JSValue::NullTag + 1));
+    addJump(branch32(Below, regT1, Imm32(JSValue::UndefinedTag)), target);
 
     wasNotImmediate.link(this);
 }

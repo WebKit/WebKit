@@ -223,12 +223,12 @@ namespace JSC {
         JSObject* synthesizeObject(ExecState*) const;
 
 #if USE(JSVALUE32_64)
-        enum { Int32Tag =        0xffffffff };
-        enum { CellTag =         0xfffffffe };
-        enum { TrueTag =         0xfffffffd };
-        enum { FalseTag =        0xfffffffc };
-        enum { NullTag =         0xfffffffb };
-        enum { UndefinedTag =    0xfffffffa };
+        enum { NullTag =         0xffffffff };
+        enum { UndefinedTag =    0xfffffffe };
+        enum { Int32Tag =        0xfffffffd };
+        enum { CellTag =         0xfffffffc };
+        enum { TrueTag =         0xfffffffb };
+        enum { FalseTag =        0xfffffffa };
         enum { EmptyValueTag =   0xfffffff9 };
         enum { DeletedValueTag = 0xfffffff8 };
         

@@ -1,3 +1,20 @@
+2010-10-27  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48060
+        Speed up op_jeq_null and op_jneq_null.
+
+        For both opcodes the NullTag and UndefinedTag are checked to control the
+        jump. These values can be simply checked by AboveOrEqual or Below
+        condition if they are the two highest unsigned integers from JSValue's
+        Tag field.
+
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        * runtime/JSValue.h:
+
 2010-10-25  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
