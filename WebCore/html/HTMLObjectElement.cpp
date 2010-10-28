@@ -217,6 +217,18 @@ bool HTMLObjectElement::hasFallbackContent() const
     }
     return false;
 }
+    
+static bool objectHasSupportedClassId(HTMLObjectElement* object)
+{
+#if PLATFORM(QT)
+    // Qt plug-ins use classid to specify which QObject to load.
+    ASSERT(object);
+    return equalsIgnoringCase(object->serviceType(), "application/x-qt-plugin");
+#else
+    ASSERT_UNUSED(object, object);
+    return false;
+#endif
+}
 
 // FIXME: This should be unified with HTMLEmbedElement::updateWidget and
 // moved down into HTMLPluginImageElement.cpp
@@ -263,10 +275,10 @@ void HTMLObjectElement::updateWidget(bool onlyCreateNonNetscapePlugins)
 
     // HTML5 says that fallback content should be rendered if a non-empty
     // classid is specified for which the UA can't find a suitable plug-in.
-    bool hasEmptyClassId = classId().isEmpty();
+    bool hasValidClassId = classId().isEmpty() || objectHasSupportedClassId(this);
 
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
-    bool success = beforeLoadAllowedLoad && hasEmptyClassId && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
+    bool success = beforeLoadAllowedLoad && hasValidClassId && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
 
     if (!success && fallbackContent)
         renderFallbackContent();
