@@ -1,3 +1,14 @@
+2010-10-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Added UniCharProvider-based ways to create a CTTypeSetter and a CTLine, to be used in an
+        upcoming ComplexTextController patch.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2010-10-28  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Mark Rowe.
