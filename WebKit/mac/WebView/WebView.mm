@@ -5308,6 +5308,11 @@ static WebFrameView *containingFrameView(NSView *view)
 
 @implementation WebView (WebFileInternal)
 
+static inline uint64_t roundUpToPowerOf2(uint64_t num)
+{
+    return powf(2.0, ceilf(log2f(num)));
+}
+
 + (void)_setCacheModel:(WebCacheModel)cacheModel
 {
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
@@ -5317,9 +5322,7 @@ static WebFrameView *containingFrameView(NSView *view)
     if (!nsurlCacheDirectory)
         nsurlCacheDirectory = NSHomeDirectory();
 
-    // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
-    // count doesn't align exactly to a megabyte boundary.
-    uint64_t memSize = WebMemorySize() / 1024 / 1000;
+    static uint64_t memSize = roundUpToPowerOf2(WebMemorySize() / 1024 / 1024);
     unsigned long long diskFreeSize = WebVolumeFreeSize(nsurlCacheDirectory) / 1024 / 1000;
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 
@@ -5339,10 +5342,10 @@ static WebFrameView *containingFrameView(NSView *view)
         pageCacheCapacity = 0;
 
         // Object cache capacities (in bytes)
-        if (memSize >= 2048)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 128 * 1024 * 1024;
+        else if (memSize >= 2048)
             cacheTotalCapacity = 96 * 1024 * 1024;
-        else if (memSize >= 1536)
-            cacheTotalCapacity = 64 * 1024 * 1024;
         else if (memSize >= 1024)
             cacheTotalCapacity = 32 * 1024 * 1024;
         else if (memSize >= 512)
@@ -5371,10 +5374,10 @@ static WebFrameView *containingFrameView(NSView *view)
             pageCacheCapacity = 0;
 
         // Object cache capacities (in bytes)
-        if (memSize >= 2048)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 128 * 1024 * 1024;
+        else if (memSize >= 2048)
             cacheTotalCapacity = 96 * 1024 * 1024;
-        else if (memSize >= 1536)
-            cacheTotalCapacity = 64 * 1024 * 1024;
         else if (memSize >= 1024)
             cacheTotalCapacity = 32 * 1024 * 1024;
         else if (memSize >= 512)
@@ -5423,10 +5426,10 @@ static WebFrameView *containingFrameView(NSView *view)
         // (Testing indicates that value / MB depends heavily on content and
         // browsing pattern. Even growth above 128MB can have substantial 
         // value / MB for some content / browsing patterns.)
-        if (memSize >= 2048)
+        if (memSize >= 4096)
+            cacheTotalCapacity = 192 * 1024 * 1024;
+        else if (memSize >= 2048)
             cacheTotalCapacity = 128 * 1024 * 1024;
-        else if (memSize >= 1536)
-            cacheTotalCapacity = 96 * 1024 * 1024;
         else if (memSize >= 1024)
             cacheTotalCapacity = 64 * 1024 * 1024;
         else if (memSize >= 512)

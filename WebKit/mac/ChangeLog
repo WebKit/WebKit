@@ -1,3 +1,15 @@
+2010-10-27  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Improve memSize calculation in [WebView _setCacheModel]
+        https://bugs.webkit.org/show_bug.cgi?id=48484
+
+        * WebView/WebView.mm:
+        (roundUpToPowerOf2): Added. Utility function to calculate the nearest power of 2.
+        (+[WebView _setCacheModel:]): Update memSize calculation to set it to the next
+        bigger power of 2. Also update WebCore cache settings.
+
 2010-10-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
