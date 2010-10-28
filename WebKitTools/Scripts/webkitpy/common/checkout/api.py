@@ -32,6 +32,7 @@ import StringIO
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.checkout.commitinfo import CommitInfo
 from webkitpy.common.checkout.scm import CommitMessage
+from webkitpy.common.memoized import memoized
 from webkitpy.common.net.bugzilla import parse_bug_id
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.common.system.deprecated_logging import log
@@ -59,6 +60,7 @@ class Checkout(object):
         changed_files = self._scm.changed_files_for_revision(revision)
         return [self._latest_entry_for_changelog_at_revision(path, revision) for path in changed_files if self._is_path_to_changelog(path)]
 
+    @memoized
     def commit_info_for_revision(self, revision):
         committer_email = self._scm.committer_email_for_revision(revision)
         changelog_entries = self.changelog_entries_for_revision(revision)
