@@ -1,5 +1,12 @@
 2010-10-28  Xan Lopez  <xlopez@igalia.com>
 
+        Try to fix Snow Leopard build.
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::testPrototype):
+
+2010-10-28  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Oliver Hunt.
 
         Do not have two different asCell APIs in JSValue
