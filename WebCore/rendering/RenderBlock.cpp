@@ -256,7 +256,6 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         updateBeforeAfterContent(BEFORE);
         updateBeforeAfterContent(AFTER);
     }
-    updateFirstLetter();
 }
 
 void RenderBlock::updateBeforeAfterContent(PseudoId pseudoId)
