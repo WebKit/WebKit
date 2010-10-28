@@ -683,7 +683,6 @@ void TextureMapperNode::uploadTextureFromContent(TextureMapper* textureMapper, c
         || (!m_currentContent.needsDisplay && m_currentContent.needsDisplayRect.isEmpty() && !needsReset))
         return;
 
-    WTF::StopWatch stopWatch;
     IntRect dirtyRect = IntRect(0, 0, m_size.width(), m_size.height());
     if (!needsReset && !m_currentContent.needsDisplay)
         dirtyRect.intersect(m_currentContent.needsDisplayRect);
@@ -701,15 +700,6 @@ void TextureMapperNode::uploadTextureFromContent(TextureMapper* textureMapper, c
         m_layer->paintGraphicsLayerContents(context, dirtyRect);
     }
     m_texture->endPaint();
-    {
-#if 0
-        LOG("[TextureMapper] Re-render(%d) layer(%p) %d::%d::%d (%dx%d) [%dms]\n", ++renderCount, this,
-               needsReset, m_currentContent.needsDisplay, !m_currentContent.needsDisplayRect.isEmpty(),
-               dirtyRect.width(), dirtyRect.height(), int(stopWatch.elapsed() * 1000));
-        static int renderCount = 0;
-        m_texture->save(String().format("/tmp/layer_%d.png", renderCount));
-#endif
-    }
     m_currentContent.needsDisplay = false;
 
 }
@@ -739,8 +729,6 @@ void TextureMapperNode::paintSelf(const TexmapPaintOptions& options)
 
 void TextureMapperNode::paintRecursive(TexmapPaintOptions options)
 {
-    WTF::StopWatch stopWatch;
-
     bool isDirty = m_state.dirty;
     m_state.dirty = false;
 

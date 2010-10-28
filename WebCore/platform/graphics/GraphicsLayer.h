@@ -40,6 +40,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
+#if USE(TEXTURE_MAPPER)
+#include "texmap/TextureMapperPlatformLayer.h"
+#endif
+
 #if PLATFORM(MAC)
 #ifdef __OBJC__
 @class WebLayer;
@@ -67,8 +71,10 @@ typedef TextureMapperPlatformLayer* NativeLayer;
 QT_BEGIN_NAMESPACE
 class QGraphicsObject;
 QT_END_NAMESPACE
+namespace WebCore {
 typedef QGraphicsObject PlatformLayer;
 typedef QGraphicsObject* NativeLayer;
+}
 #endif
 #elif PLATFORM(CHROMIUM)
 namespace WebCore {

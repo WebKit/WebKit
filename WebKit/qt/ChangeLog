@@ -1,3 +1,18 @@
+2010-10-28  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Ariya Hidayat.
+
+        [Texmap] [Qt] Texture mapper initial implementation
+        https://bugs.webkit.org/show_bug.cgi?id=47070
+
+        Build fix,
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PlatformLayerProxyQGraphicsObject::PlatformLayerProxyQGraphicsObject):
+        (WebCore::PageClientQGraphicsWidget::~PageClientQGraphicsWidget):
+        (WebCore::PageClientQGraphicsWidget::setRootGraphicsLayer):
+        * WebCoreSupport/PageClientQt.h:
+
 2010-10-28  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Andreas Kling.

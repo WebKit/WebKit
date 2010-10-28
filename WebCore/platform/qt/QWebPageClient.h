@@ -52,7 +52,7 @@ public:
     virtual void setInputMethodEnabled(bool enable) = 0;
     virtual bool inputMethodEnabled() const = 0;
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void setRootGraphicsLayer(PlatformLayer* layer) { }
+    virtual void setRootGraphicsLayer(WebCore::PlatformLayer* layer) { }
 
     // this gets called when the compositor wants us to sync the layers
     // if scheduleSync is true, we schedule a sync ourselves. otherwise,

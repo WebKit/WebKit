@@ -29,7 +29,7 @@
 
 #if defined(TEXMAP_OPENGL_ES_2)
 #include <GLES2/gl2.h>
-#elif PLATFORM(MAC)
+#elif OS(MAC_OS_X)
 #include <gl.h>
 #else
 #include <GL/gl.h>
@@ -65,7 +65,7 @@ extern "C" {
     void glBufferSubData(GLenum, GLsizeiptr, GLsizeiptr, const GLvoid*);
     void glGetProgramInfoLog(GLuint program, GLsizei, GLsizei*, GLchar*);
 
-#if !PLATFORM(MAC)
+#if !OS(MAC_OS_X)
     GLint glGetUniformLocation(GLuint, const GLchar*);
     GLint glBindAttribLocation(GLuint, GLuint, const GLchar*);
 #endif
@@ -459,7 +459,7 @@ void BitmapTextureGL::setContentsToImage(Image* image)
         m_image = nativeImage;
         if (!found) {
             GraphicsContext context(beginPaint(IntRect(0, 0, m_textureSize.width(), m_textureSize.height())));
-            context.drawImage(image, DeviceColorSpace, IntPoint(0, 0), CompositeCopy);
+            context.drawImage(image, ColorSpaceDeviceRGB, IntPoint(0, 0), CompositeCopy);
             endPaint();
         }
     }
