@@ -27,9 +27,6 @@ BUG_DRT WIN : http/tests/inspector/change-iframe-src.html = CRASH
 // random TIMEOUTs.  Is this issue DRT-specific?
 BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
-// Filesystem failures
-BUG47643 : fast/filesystem = TEXT TIMEOUT
-
 // File API failures
 BUG48498 WIN : http/tests/local/send-sliced-dragged-file.html = TEXT
 
