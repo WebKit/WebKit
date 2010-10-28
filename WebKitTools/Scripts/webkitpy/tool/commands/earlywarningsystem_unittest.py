@@ -33,10 +33,29 @@ from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.bot.queueengine import QueueEngine
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.queuestest import QueuesTest
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockTool, MockOptions
 
 
 class AbstractEarlyWarningSystemTest(QueuesTest):
+    def test_can_build(self):
+        # Needed to define port_name, used in AbstractEarlyWarningSystem.__init__
+        class TestEWS(AbstractEarlyWarningSystem):
+            port_name = "win"  # Needs to be a port which port/factory understands.
+
+        queue = TestEWS()
+        queue.bind_to_tool(MockTool(log_executive=True))
+        queue._options = MockOptions(port=None)
+        expected_stderr = "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--port=win', '--build-style=release', '--force-clean', '--no-update']\n"
+        OutputCapture().assert_outputs(self, queue._can_build, [], expected_stderr=expected_stderr)
+
+        def mock_run_webkit_patch(args):
+            raise ScriptError("MOCK script error")
+
+        queue.run_webkit_patch = mock_run_webkit_patch
+        expected_stderr = "MOCK: update_status: None Unable to perform a build\n"
+        OutputCapture().assert_outputs(self, queue._can_build, [], expected_stderr=expected_stderr)
+
+    # FIXME: This belongs on an AbstractReviewQueueTest object in queues_unittest.py
     def test_subprocess_handled_error(self):
         queue = AbstractReviewQueue()
         queue.bind_to_tool(MockTool())

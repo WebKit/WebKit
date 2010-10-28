@@ -50,8 +50,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue):
                 self.port.flag(),
                 "--build-style=%s" % self._build_style,
                 "--force-clean",
-                "--no-update",
-                "--quiet"])
+                "--no-update"])
             return True
         except ScriptError, e:
             failure_log = self._log_from_script_error_for_upload(e)

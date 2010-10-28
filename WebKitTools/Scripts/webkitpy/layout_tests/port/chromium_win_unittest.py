@@ -51,7 +51,7 @@ class ChromiumWinTest(unittest.TestCase):
 
     def test_setup_environ_for_server(self):
         port = chromium_win.ChromiumWinPort()
-        port._executive = mocktool.MockExecute(True)
+        port._executive = mocktool.MockExecutive(should_log=True)
         port.path_from_chromium_base = self._mock_path_from_chromium_base
         output = outputcapture.OutputCapture()
         orig_environ = os.environ.copy()
@@ -63,7 +63,7 @@ class ChromiumWinTest(unittest.TestCase):
         sys.platform = "win32"
         port = chromium_win.ChromiumWinPort(
             options=ChromiumWinTest.RegisterCygwinOption())
-        port._executive = mocktool.MockExecute(True)
+        port._executive = mocktool.MockExecutive(should_log=True)
         port.path_from_chromium_base = self._mock_path_from_chromium_base
         setup_mount = self._mock_path_from_chromium_base("third_party",
                                                          "cygwin",
