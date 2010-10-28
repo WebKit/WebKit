@@ -117,12 +117,6 @@ inline ProxyingRefPtr<WebString> toAPI(StringImpl* string)
     return ProxyingRefPtr<WebString>(WebString::create(String(impl)));
 }
 
-inline ProxyingRefPtr<WebURL> toURLRef(StringImpl* string)
-{
-    StringImpl* impl = string ? string : StringImpl::empty();
-    return ProxyingRefPtr<WebURL>(WebURL::create(String(impl)));
-}
-
 inline WKStringRef toCopiedAPI(const String& string)
 {
     StringImpl* impl = string.impl() ? string.impl() : StringImpl::empty();
@@ -130,10 +124,18 @@ inline WKStringRef toCopiedAPI(const String& string)
     return toAPI(webString.release().releaseRef());
 }
 
+inline ProxyingRefPtr<WebURL> toURLRef(StringImpl* string)
+{
+    if (!string)
+        ProxyingRefPtr<WebURL>(0);
+    return ProxyingRefPtr<WebURL>(WebURL::create(String(string)));
+}
+
 inline WKURLRef toCopiedURLAPI(const String& string)
 {
-    StringImpl* impl = string.impl() ? string.impl() : StringImpl::empty();
-    RefPtr<WebURL> webURL = WebURL::create(String(impl));
+    if (!string)
+        return 0;
+    RefPtr<WebURL> webURL = WebURL::create(string);
     return toAPI(webURL.release().releaseRef());
 }
 

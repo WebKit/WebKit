@@ -2,6 +2,19 @@
 
         Reviewed by Anders Carlsson.
 
+        WKURLRefs should be allowed to be null
+        <rdar://problem/8575621>
+        https://bugs.webkit.org/show_bug.cgi?id=48535
+
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toURLRef):
+        (WebKit::toCopiedURLAPI):
+        Turn a null WTF::String into a null WKURLRef.
+
+2010-10-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         Add WebKit2 API for window feature getter/setters
         <rdar://problem/8590373>
         https://bugs.webkit.org/show_bug.cgi?id=48496

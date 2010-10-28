@@ -256,8 +256,8 @@
 		BC90977B125571AE00083756 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				BCBD372E125ABBE600D2C29F /* icon.png */,
 				1A02C84B125D4A5E00E3F4BD /* find.html */,
+				BCBD372E125ABBE600D2C29F /* icon.png */,
 				BC909778125571AB00083756 /* simple.html */,
 				C02B7882126615410026BF0F /* spacebar-scrolling.html */,
 			);

@@ -1,3 +1,18 @@
+2010-10-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WKURLRefs should be allowed to be null
+        <rdar://problem/8575621>
+        https://bugs.webkit.org/show_bug.cgi?id=48535
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        (TestWebKitAPI::didStartProvisionalLoadForFrame):
+        (TestWebKitAPI::didCommitLoadForFrame):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        Test that URLs are null pointers when unset.
+
 2010-10-28  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Adele Peterson.
