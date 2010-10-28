@@ -31,6 +31,18 @@
 #include <wtf/text/CString.h>
 #include <windows.h>
 
+#if OS(WINCE)
+#ifndef MFS_DISABLED
+#define MFS_DISABLED MF_GRAYED
+#endif
+#ifndef MIIM_FTYPE
+#define MIIM_FTYPE MIIM_TYPE
+#endif
+#ifndef MIIM_STRING
+#define MIIM_STRING 0
+#endif
+#endif
+
 namespace WebCore {
 
 ContextMenuItem::ContextMenuItem(LPMENUITEMINFO item)
