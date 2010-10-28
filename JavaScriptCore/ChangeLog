@@ -1,3 +1,15 @@
+2010-10-28  Herczeg Zoltan  <zherczeg@webkit.org>
+
+        Rubber stamped by Csaba Osztrogonác.
+
+        Try to fix interpreter build.
+
+        Needed parentheses around assignment to avoid GCC warning after
+        http://trac.webkit.org/changeset/70703
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+
 2010-10-28  Peter Varga  <pvarga@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

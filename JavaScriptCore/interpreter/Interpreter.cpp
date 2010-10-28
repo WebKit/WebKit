@@ -3798,7 +3798,7 @@ skip_id_custom_self:
 
         if (thisValue == globalObject && funcVal == globalObject->evalFunction()) {
             JSValue result = callEval(callFrame, registerFile, argv, argCount, registerOffset);
-            if (exceptionValue = globalData->exception)
+            if ((exceptionValue = globalData->exception))
                 goto vm_throw;
             functionReturnValue = result;
 
