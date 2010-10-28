@@ -1,3 +1,25 @@
+2010-10-28  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove unused experimental proxied panel interface.
+        <rdar://problem/7237059>
+
+        * Plugins/Hosted/NetscapePluginHostManager.h:
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::hostForPlugin):
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        * Plugins/Hosted/WebKitPluginClient.defs:
+        * Plugins/Hosted/WebKitPluginHost.defs:
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferencesPrivate.h:
+
 2010-10-27  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by Darin Adler.

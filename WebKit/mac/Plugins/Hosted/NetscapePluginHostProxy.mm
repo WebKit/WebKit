@@ -1120,61 +1120,6 @@ kern_return_t WKPCResolveURL(mach_port_t clientPort, uint32_t pluginID, data_t u
     return KERN_SUCCESS;
 }
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-kern_return_t WKPCRunSyncOpenPanel(mach_port_t clientPort, data_t panelData, mach_msg_type_number_t panelDataLength)
-{
-    DataDeallocator panelDataDeallocator(panelData, panelDataLength);
-
-    NetscapePluginHostProxy* hostProxy = pluginProxyMap().get(clientPort);
-    if (!hostProxy)
-        return KERN_FAILURE;
-
-    NSOpenPanel *sheet = [NSOpenPanel openPanel];
-    NSDictionary *panelState = [NSPropertyListSerialization propertyListFromData:[NSData dataWithBytes:panelData length:panelDataLength]
-                                                                mutabilityOption:NSPropertyListImmutable
-                                                                          format:NULL
-                                                                errorDescription:nil];
-    
-    [sheet setCanChooseFiles:[[panelState objectForKey:@"canChooseFiles"] boolValue]];
-    [sheet setCanChooseDirectories:[[panelState objectForKey:@"canChooseDirectories"] boolValue]];
-    [sheet setResolvesAliases:[[panelState objectForKey:@"resolvesAliases"] boolValue]];
-    [sheet setAllowsMultipleSelection:[[panelState objectForKey:@"allowsMultipleSelection"] boolValue]];
-    [sheet setCanCreateDirectories:[[panelState objectForKey:@"canCreateDirectories"] boolValue]];
-    [sheet setShowsHiddenFiles:[[panelState objectForKey:@"showsHiddenFiles"] boolValue]];
-    [sheet setExtensionHidden:[[panelState objectForKey:@"isExtensionHidden"] boolValue]];
-    [sheet setCanSelectHiddenExtension:[[panelState objectForKey:@"canSelectHiddenExtension"] boolValue]];
-    [sheet setAllowsOtherFileTypes:[[panelState objectForKey:@"allowsOtherFileTypes"] boolValue]];
-    [sheet setTreatsFilePackagesAsDirectories:[[panelState objectForKey:@"treatsFilePackagesAsDirectories"] boolValue]];
-    [sheet setPrompt:[panelState objectForKey:@"prompt"]];
-    [sheet setNameFieldLabel:[panelState objectForKey:@"nameFieldLabel"]];
-    [sheet setMessage:[panelState objectForKey:@"message"]];
-    [sheet setAllowedFileTypes:[panelState objectForKey:@"allowedFileTypes"]];
-    [sheet setRequiredFileType:[panelState objectForKey:@"requiredFileType"]];    
-    [sheet setTitle:[panelState objectForKey:@"title"]];
-    [sheet runModal];
-
-    NetscapePluginHostProxy* newHostProxy = pluginProxyMap().get(clientPort);
-    if (newHostProxy != hostProxy)
-        return KERN_FAILURE;
-
-    NSDictionary *ret = [NSDictionary dictionaryWithObjectsAndKeys:
-                         [sheet filenames], @"filenames",
-                         WKNoteOpenPanelFiles([sheet filenames]), @"extensions",
-                         nil];
-    
-    RetainPtr<NSData*> data = [NSPropertyListSerialization dataFromPropertyList:ret format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
-    ASSERT(data);
-
-    _WKPHSyncOpenPanelReply(hostProxy->port(), const_cast<char *>(static_cast<const char*>([data.get() bytes])), [data.get() length]);
-    return KERN_SUCCESS;
-}
-#else
-kern_return_t WKPCRunSyncOpenPanel(mach_port_t clientPort, data_t panelData, mach_msg_type_number_t panelDataLength)
-{
-    return KERN_FAILURE;
-}
-#endif // !defined(BUILDING_ON_SNOW_LEOPARD)
-
 kern_return_t WKPCSetException(mach_port_t clientPort, data_t message, mach_msg_type_number_t messageCnt)
 {
     DataDeallocator deallocator(message, messageCnt);

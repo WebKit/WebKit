@@ -240,9 +240,6 @@ simpleroutine PHPluginInstancePrivateBrowsingModeDidChange(pluginHostPort :mach_
                                                            pluginID :uint32_t;
                                                            privateBrowsingEnabled :boolean_t);
 
-simpleroutine PHSyncOpenPanelReply(pluginHostPort :mach_port_t;
-                                   filenames :data_t);
-
 simpleroutine PHPluginInstanceSnapshot(pluginHostPort :mach_port_t;
                                     pluginID :uint32_t;
                                     requestID :uint32_t;

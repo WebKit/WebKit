@@ -193,9 +193,6 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)paginateDuringLayoutEnabled;
 - (void)setPaginateDuringLayoutEnabled:(BOOL)flag;
 
-- (BOOL)usesProxiedOpenPanel;
-- (void)setUsesProxiedOpenPanel:(BOOL)enabled;
-
 - (BOOL)memoryInfoEnabled;
 - (void)setMemoryInfoEnabled:(BOOL)enabled;
 

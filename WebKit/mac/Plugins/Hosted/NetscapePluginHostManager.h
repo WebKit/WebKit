@@ -53,12 +53,12 @@ public:
     void didCreateWindow();
     
 private:
-    NetscapePluginHostProxy* hostForPlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const WTF::String& bundleIdentifier, bool useProxiedOpenPanel);
+    NetscapePluginHostProxy* hostForPlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const WTF::String& bundleIdentifier);
 
     NetscapePluginHostManager();
     ~NetscapePluginHostManager();
     
-    bool spawnPluginHost(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN, bool useProxiedOpenPanel);
+    bool spawnPluginHost(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN);
     
     bool initializeVendorPort();
     

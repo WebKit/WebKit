@@ -31,10 +31,7 @@
 #import "NetscapePluginInstanceProxy.h"
 #import "WebLocalizableStrings.h"
 #import "WebKitSystemInterface.h"
-#import "WebHostedNetscapePluginView.h"
 #import "WebNetscapePluginPackage.h"
-#import "WebPreferencesPrivate.h"
-#import "WebView.h"
 #import <mach/mach_port.h>
 #import <servers/bootstrap.h>
 #import <spawn.h>
@@ -70,7 +67,7 @@ NetscapePluginHostManager::~NetscapePluginHostManager()
 {
 }
 
-NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, bool useProxiedOpenPanel)
+NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier)
 {
     pair<PluginHostMap::iterator, bool> result = m_pluginHosts.add(pluginPath, 0);
     
@@ -86,7 +83,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::Str
     
     mach_port_t pluginHostPort;
     ProcessSerialNumber pluginHostPSN;
-    if (!spawnPluginHost(pluginPath, pluginArchitecture, clientPort, pluginHostPort, pluginHostPSN, useProxiedOpenPanel)) {
+    if (!spawnPluginHost(pluginPath, pluginArchitecture, clientPort, pluginHostPort, pluginHostPSN)) {
         mach_port_destroy(mach_task_self(), clientPort);
         m_pluginHosts.remove(result.first);
         return 0;
@@ -103,7 +100,7 @@ NetscapePluginHostProxy* NetscapePluginHostManager::hostForPlugin(const WTF::Str
     return hostProxy;
 }
 
-bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN, bool useProxiedOpenPanel)
+bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_type_t pluginArchitecture, mach_port_t clientPort, mach_port_t& pluginHostPort, ProcessSerialNumber& pluginHostPSN)
 {
     if (m_pluginVendorPort == MACH_PORT_NULL) {
         if (!initializeVendorPort())
@@ -123,7 +120,6 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
                                       pluginHostAppExecutablePath, @"pluginHostPath",
                                       [NSNumber numberWithInt:pluginArchitecture], @"cpuType",
                                       localization.get(), @"localization",
-                                      [NSNumber numberWithBool:useProxiedOpenPanel], @"useProxiedOpenPanel",
                                       nil];
 
     NSData *data = [NSPropertyListSerialization dataFromPropertyList:launchProperties format:NSPropertyListBinaryFormat_v1_0 errorDescription:0];
@@ -217,8 +213,7 @@ void NetscapePluginHostManager::pluginHostDied(NetscapePluginHostProxy* pluginHo
 
 PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin(const String& pluginPath, cpu_type_t pluginArchitecture, const String& bundleIdentifier, WebHostedNetscapePluginView *pluginView, NSString *mimeType, NSArray *attributeKeys, NSArray *attributeValues, NSString *userAgent, NSURL *sourceURL, bool fullFrame, bool isPrivateBrowsingEnabled, bool isAcceleratedCompositingEnabled)
 {
-    WebPreferences *preferences = [[pluginView webView] preferences];
-    NetscapePluginHostProxy* hostProxy = hostForPlugin(pluginPath, pluginArchitecture, bundleIdentifier, [preferences usesProxiedOpenPanel]);
+    NetscapePluginHostProxy* hostProxy = hostForPlugin(pluginPath, pluginArchitecture, bundleIdentifier);
     if (!hostProxy)
         return 0;
 
@@ -257,7 +252,7 @@ PassRefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePl
         pluginHostDied(hostProxy);
 
         // Try to spawn it again.
-        hostProxy = hostForPlugin(pluginPath, pluginArchitecture, bundleIdentifier, [preferences usesProxiedOpenPanel]);
+        hostProxy = hostForPlugin(pluginPath, pluginArchitecture, bundleIdentifier);
         
         // Create a new instance.
         instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView, fullFrame);

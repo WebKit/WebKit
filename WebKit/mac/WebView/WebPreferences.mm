@@ -362,7 +362,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitShowRepaintCounterPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebGLEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitAccelerated2dCanvasEnabledPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitUsesProxiedOpenPanelPreferenceKey,
         [NSNumber numberWithUnsignedInt:4], WebKitPluginAllowedRunTimePreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitFrameFlatteningEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitSpatialNavigationEnabledPreferenceKey,
@@ -1282,16 +1281,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setAccelerated2dCanvasEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitAccelerated2dCanvasEnabledPreferenceKey];
-}
-
-- (BOOL)usesProxiedOpenPanel
-{
-    return [self _boolValueForKey:WebKitUsesProxiedOpenPanelPreferenceKey];
-}
-
-- (void)setUsesProxiedOpenPanel:(BOOL)enabled
-{
-    [self _setBoolValue:enabled forKey:WebKitUsesProxiedOpenPanelPreferenceKey];
 }
 
 - (unsigned)pluginAllowedRunTime

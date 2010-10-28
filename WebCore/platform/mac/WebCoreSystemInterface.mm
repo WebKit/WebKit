@@ -114,9 +114,7 @@ BOOL (*wkSupportsMultipartXMixedReplace)(NSMutableURLRequest *);
 #endif
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-NSMutableArray *(*wkNoteOpenPanelFiles)(NSArray *);
 void* wkGetHyphenationLocationBeforeIndex;
 #else
-void* wkNoteOpenPanelFiles;
 CFIndex (*wkGetHyphenationLocationBeforeIndex)(CFStringRef string, CFIndex index);
 #endif

@@ -1,3 +1,12 @@
+2010-10-28  Ivan Krstić  <ike@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Remove unused experimental proxied panel interface.
+        <rdar://problem/7237059>
+
+        * WebKitSystemInterface.h:
+
 2010-10-27  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

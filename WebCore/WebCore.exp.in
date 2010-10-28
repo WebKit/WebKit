@@ -1169,7 +1169,6 @@ _wkInitializeMaximumHTTPConnectionCountPerHost
 _wkIsLatchingWheelEvent
 _wkMeasureMediaUIPart
 _wkMediaControllerThemeAvailable
-_wkNoteOpenPanelFiles
 _wkPopupMenu
 _wkQTIncludeOnlyModernMediaFileTypes
 _wkQTMovieDataRate

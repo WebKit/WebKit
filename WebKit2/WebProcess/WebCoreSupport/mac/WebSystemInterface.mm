@@ -90,10 +90,6 @@ void InitWebCoreSystemInterface(void)
         INIT(SignalCFReadStreamError);
         INIT(SignalCFReadStreamHasBytes);
 
-    #if !defined(BUILDING_ON_SNOW_LEOPARD)
-        INIT(NoteOpenPanelFiles);
-    #endif
-
     #if defined(BUILDING_ON_SNOW_LEOPARD)
         INIT(GetHyphenationLocationBeforeIndex);
     #endif
