@@ -1,3 +1,15 @@
+2010-10-27  Chao-ying Fu  <fu@mips.com>
+
+        Reviewed by Oliver Hunt.
+
+        Support emit_op_mod() for MIPS on JSVALUE32_64
+        https://bugs.webkit.org/show_bug.cgi?id=46511
+
+        This patch uses MIPS div instructions for op_mod to improve performance.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_mod):
+
 2010-10-27  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed build correction.
