@@ -165,7 +165,7 @@ namespace JSC {
             VMRS_APSR = 0x0ef1fa10,
 #if WTF_ARM_ARCH_AT_LEAST(5)
             CLZ = 0x016f0f10,
-            BKPT = 0xe120070,
+            BKPT = 0xe1200070,
             BLX = 0x012fff30,
 #endif
 #if WTF_ARM_ARCH_AT_LEAST(7)
@@ -206,7 +206,7 @@ namespace JSC {
         enum {
             padForAlign8  = 0x00,
             padForAlign16 = 0x0000,
-            padForAlign32 = 0xee120070,
+            padForAlign32 = 0xe12fff7f // 'bkpt 0xffff' instruction.
         };
 
         static const ARMWord INVALID_IMM = 0xf0000000;

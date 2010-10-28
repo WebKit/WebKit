@@ -1,3 +1,15 @@
+2010-10-28  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Wrong instruction form for BKPT
+        https://bugs.webkit.org/show_bug.cgi?id=48427
+
+        One '0' is missing from BKPT instruction.
+        Thanks for Jacob Bramley for reporting this error.
+
+        * assembler/ARMAssembler.h:
+
 2010-10-28  Xan Lopez  <xlopez@igalia.com>
 
         Try to fix Snow Leopard build.
