@@ -26,6 +26,7 @@
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleRule.h"
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "FrameView.h"
@@ -852,8 +853,8 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
         // by importance and inheritance order. This include external CSS
         // declarations, as well as embedded and inline style declarations.
 
-        DOMWindow* domWindow = m_element->document()->frame()->domWindow();
-        if (RefPtr<CSSRuleList> rules = domWindow->getMatchedCSSRules(m_element, "")) {
+        Document* doc = m_element->document();
+        if (RefPtr<CSSRuleList> rules = doc->styleSelector()->styleRulesForElement(m_element, /*authorOnly*/ true)) {
             for (int i = rules->length(); i > 0; --i) {
                 CSSStyleRule* rule = static_cast<CSSStyleRule*>(rules->item(i - 1));
 

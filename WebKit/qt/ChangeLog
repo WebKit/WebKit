@@ -1,3 +1,21 @@
+2010-10-28  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QWebElement: Don't retrieve CSS rules through DOMWindow.
+        https://bugs.webkit.org/show_bug.cgi?id=48519
+
+        JavaScript is prevented from retrieving cross-domain CSS rules since r70335.
+        This patch allow QWebElement to retrive style without this limitation
+        by asking the Document directly instead of going through DOMWindow.
+
+        Fixes:
+        - tst_QWebFrame::setHtmlWithResource()
+        - tst_QWebElement::style()
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+
 2010-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.
