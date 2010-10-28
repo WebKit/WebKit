@@ -31,6 +31,7 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import "RunLoop.h"
+#import "WebKitSystemInterface.h"
 
 @class WKView;
 @class WebFindIndicatorWindowAnimation;
@@ -57,9 +58,15 @@ private:
     void fadeOutAnimationCallback(double);
     void fadeOutAnimationDidEnd();
 
+    void bounceAnimationCallback(double);
+    void bounceAnimationDidEnd();
+
     WKView* m_wkView;
     RefPtr<FindIndicator> m_findIndicator;
     RetainPtr<NSWindow> m_findIndicatorWindow;
+
+    WKWindowBounceAnimationContextRef m_bounceAnimationContext;
+    RetainPtr<WebFindIndicatorWindowAnimation> m_bounceAnimation;
 
     RunLoop::Timer<FindIndicatorWindow> m_startFadeOutTimer;
     RetainPtr<WebFindIndicatorWindowAnimation> m_fadeOutAnimation;

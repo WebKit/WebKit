@@ -1,3 +1,17 @@
+2010-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Find indicators do not bounce
+        https://bugs.webkit.org/show_bug.cgi?id=48490
+        <rdar://problem/8564276>
+
+        Add bounce animation context functions.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2010-10-26  Adam Roben  <aroben@apple.com>
 
         Fix duplicate vsprops name

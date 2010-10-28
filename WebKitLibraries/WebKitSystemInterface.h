@@ -290,6 +290,12 @@ uint32_t WKCARemoteLayerClientGetClientId(WKCARemoteLayerClientRef);
 void WKCARemoteLayerClientSetLayer(WKCARemoteLayerClientRef, CALayer *);
 CALayer *WKCARemoteLayerClientGetLayer(WKCARemoteLayerClientRef);
 
+typedef struct __WKWindowBounceAnimationContext *WKWindowBounceAnimationContextRef;
+
+WKWindowBounceAnimationContextRef WKWindowBounceAnimationContextCreate(NSWindow *window);
+void WKWindowBounceAnimationContextDestroy(WKWindowBounceAnimationContextRef context);
+void WKWindowBounceAnimationSetAnimationProgress(WKWindowBounceAnimationContextRef context, double animationProgress);
+
 #if defined(__x86_64__)
 #import <mach/mig.h>
 
