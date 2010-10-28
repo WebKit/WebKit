@@ -29,7 +29,9 @@ BUG_DRT WIN DEBUG SLOW : inspector = PASS
 
 // Filesystem failures
 BUG47643 : fast/filesystem = TEXT TIMEOUT
-BUG47643 WIN : http/tests/local/send-sliced-dragged-file.html = TEXT
+
+// File API failures
+BUG_DRT WIN : http/tests/local/send-sliced-dragged-file.html = TEXT
 
 // Background color is wrong.
 BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
