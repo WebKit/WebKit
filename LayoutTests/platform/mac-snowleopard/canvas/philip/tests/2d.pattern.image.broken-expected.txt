@@ -1,0 +1,7 @@
+< [index] >
+2d.pattern.image.broken
+References: 2d.pattern.incomplete.image
+Actual output:
+Failed assertion img.complete === false (got true[boolean], expected false[boolean])
+Aborted with exception: Can't find variable: NULL
+

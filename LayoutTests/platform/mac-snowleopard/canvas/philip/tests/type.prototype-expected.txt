@@ -1,0 +1,7 @@
+< [index] >
+type.prototype
+window.HTMLCanvasElement has prototype, which is { ReadOnly, DontDelete }. prototype has getContext, which is not
+References: canvas.type
+Defined in "Language Bindings for DOM Specifications" (draft)
+Actual output:
+Failed assertion window.HTMLCanvasElement.prototype.getContext === undefined (got 1[number], expected [undefined])

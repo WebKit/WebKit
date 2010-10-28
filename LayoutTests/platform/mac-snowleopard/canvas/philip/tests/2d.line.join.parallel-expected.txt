@@ -1,0 +1,11 @@
+< [index] >
+2d.line.join.parallel
+Line joins are drawn at 180-degree joins
+References: 2d.lineJoin.joins
+Actual output:
+Expected output:
+
+Failed assertion: got pixel [255,0,0,255] at (1,1), expected [0,255,0,255]
+Failed assertion: got pixel [255,0,0,255] at (48,1), expected [0,255,0,255]
+Failed assertion: got pixel [255,0,0,255] at (48,48), expected [0,255,0,255]
+Failed assertion: got pixel [255,0,0,255] at (1,48), expected [0,255,0,255]
