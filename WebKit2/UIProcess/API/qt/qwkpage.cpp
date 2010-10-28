@@ -66,9 +66,8 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, WKPageNamespaceRef namespaceRef)
 {
     initializePlatformStrategiesIfNeeded();
     memset(actions, 0, sizeof(actions));
-    page = toImpl(namespaceRef)->createWebPage();
+    page = toImpl(namespaceRef)->createWebPage(); // Page gets a ref to namespace.
     page->setPageClient(this);
-    pageNamespaceRef = namespaceRef;
     history = QWKHistoryPrivate::createHistory(page->backForwardList());
 }
 
@@ -422,7 +421,7 @@ WKPageRef QWKPage::pageRef() const
 QWKPreferences* QWKPage::preferences() const
 {
     if (!d->preferences) {
-        WKContextRef contextRef = WKPageNamespaceGetContext(d->pageNamespaceRef);
+        WKContextRef contextRef = WKPageNamespaceGetContext(toAPI(d->page->pageNamespace()));
         d->preferences = QWKPreferencesPrivate::createPreferences(contextRef);
     }
 

@@ -1,3 +1,16 @@
+2010-10-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Remove the reference to the pageNamespace in the QWKPagePrivate.
+        Access it though the WebPageProxy instead which holds a strong
+        ref to it.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        (QWKPage::preferences):
+        * UIProcess/API/qt/qwkpage_p.h:
+
 2010-10-27  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.
