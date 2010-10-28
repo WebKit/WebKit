@@ -47,22 +47,17 @@
 #include "RenderBox.h"
 #include "ScrollBehavior.h"
 #include "ScrollbarClient.h"
-#include "Timer.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
-class CachedResource;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
-class RenderFrameSet;
 class RenderMarquee;
 class RenderReplica;
 class RenderScrollbarPart;
 class RenderStyle;
-class RenderTable;
-class RenderText;
 class RenderView;
 class Scrollbar;
 class TransformationMatrix;
