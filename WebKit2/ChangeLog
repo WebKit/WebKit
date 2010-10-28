@@ -1,5 +1,11 @@
 2010-10-28  Dan Bernstein  <mitz@apple.com>
 
+        Build fix.
+
+        * win/WebKit2Common.vsprops:
+
+2010-10-28  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Adam Roben.
 
         No longer soft-link zlib
