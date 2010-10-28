@@ -655,19 +655,21 @@ BUG20844 LINUX WIN DEBUG : editing/selection/designmode-no-caret.html = FAIL
 // Regression from merge 41268:41286
 BUG10435 MAC : editing/selection/designmode-no-caret.html = FAIL
 
-// Issue 3273: TextInputController::firstRectForCharacterRange not implemented.
+// Issue 3273: TextInputController::firstRectForCharacterRange not returning
+// the correct values for bidi/rtl text.
 BUG3273 : editing/selection/move-left-right.html = FAIL
 BUG3273 MAC : platform/mac/editing/input/caret-primary-bidi.html = FAIL PASS
 BUG3273 MAC : platform/mac/editing/input/firstrectforcharacterrange-plain.html = FAIL PASS
 BUG3273 MAC : platform/mac/editing/input/range-for-empty-document.html = FAIL PASS
 BUGWK38100 : editing/inserting/caret-position.html = TEXT PASS
+// These tests also use firstRectForCharacterRange, but they generate slightly
+// different values.
+BUG3273 : editing/selection/5825350-1.html = TEXT
+BUG3273 : editing/selection/5825350-2.html = TEXT
+BUG3273 : editing/selection/mixed-editability-10.html = TEXT
 
 // WebKit 50358:50395
 BUG3273 WIN LINUX : fast/text/international/thai-cursor-position.html = TEXT
-// WebKit roll 51512:51524
-BUG3273 : editing/selection/5825350-1.html = FAIL
-BUG3273 : editing/selection/5825350-2.html = FAIL
-BUG3273 : editing/selection/mixed-editability-10.html = FAIL
 
 // Linux pixeltest failure: caret is in the wrong place
 // Upstream WebKit also skips this test and Safari with latest WebKit shows
