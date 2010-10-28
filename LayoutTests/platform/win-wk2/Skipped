@@ -75,10 +75,6 @@ storage
 # http://webkit.org/b/46672
 plugins/embed-attributes-style.html
 
-# Assertion failure in NetscapePlugin::platformDestroy
-# http://webkit.org/b/46673
-plugins/mouse-events.html
-
 # http://webkit.org/b/46711
 platform/win/plugins/plugin-delayed-destroy.html
 
