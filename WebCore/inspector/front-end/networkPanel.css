@@ -419,6 +419,10 @@
     background-color: rgba(0, 0, 255, 0.5);
 }
 
+.network.panel .resources-dividers {
+    z-index: 0;
+}
+
 .network.panel .resources-dividers-label-bar {
     background-color: transparent;
     border: none;

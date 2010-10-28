@@ -274,10 +274,10 @@ InspectorResourceAgent::~InspectorResourceAgent()
 {
 }
 
-void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifier, const KURL& url, DocumentLoader* loader, bool isMainResource)
+void InspectorResourceAgent::identifierForInitialRequest(unsigned long identifier, const KURL& url, DocumentLoader* loader)
 {
     RefPtr<InspectorObject> loaderObject = buildObjectForDocumentLoader(loader);
-    m_frontend->identifierForInitialRequest(identifier, url.string(), loaderObject, isMainResource);
+    m_frontend->identifierForInitialRequest(identifier, url.string(), loaderObject);
 }
 
 void InspectorResourceAgent::willSendRequest(unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)

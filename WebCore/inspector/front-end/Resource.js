@@ -600,6 +600,11 @@ WebInspector.Resource.prototype = {
             WebInspector.console.addMessage(msg);
     },
 
+    set content(content)
+    {
+        this._content = content;
+    },
+
     getContent: function(callback)
     {
         if (this._content) {

@@ -48,6 +48,7 @@ WebInspector.ResourceManager = function()
         "didCloseWebSocket");
 
     this._resourcesById = {};
+    this._resourcesByURL = {};
     this._resourceTreeModel = new WebInspector.ResourceTreeModel();
     InspectorBackend.cachedResources(this._processCachedResources.bind(this));
 }
@@ -59,13 +60,16 @@ WebInspector.ResourceManager.prototype = {
             WebInspector[arguments[i]] = this[arguments[i]].bind(this);
     },
 
-    identifierForInitialRequest: function(identifier, url, loader, isMainResource)
+    identifierForInitialRequest: function(identifier, url, loader)
     {
         var resource = this._createResource(identifier, url, loader);
-        if (isMainResource) {
+        if (loader.url === url) {
             resource.isMainResource = true;
             WebInspector.mainResource = resource;
         }
+
+        // It is important to bind resource url early (before scripts compile).
+        this._bindResourceURL(resource);
 
         WebInspector.panels.network.addResource(resource);
         WebInspector.panels.audits.resourceStarted(resource);
@@ -75,6 +79,7 @@ WebInspector.ResourceManager.prototype = {
     {
         var resource = new WebInspector.Resource(identifier, url);
         resource.loader = loader;
+        resource.documentURL = loader.url;
 
         this._resourcesById[identifier] = resource;
         return resource;
@@ -95,9 +100,7 @@ WebInspector.ResourceManager.prototype = {
             resource = this._appendRedirect(resource.identifier, request.url);
         }
 
-        resource.requestMethod = request.httpMethod;
-        resource.requestHeaders = request.httpHeaderFields;
-        resource.requestFormData = request.requestFormData;
+        this._updateResourceWithRequest(resource, request);
         resource.startTime = time;
 
         if (isRedirect) {
@@ -105,6 +108,13 @@ WebInspector.ResourceManager.prototype = {
             WebInspector.panels.audits.resourceStarted(resource);
         } else 
             WebInspector.panels.network.refreshResource(resource);
+    },
+
+    _updateResourceWithRequest: function(resource, request)
+    {
+        resource.requestMethod = request.httpMethod;
+        resource.requestHeaders = request.httpHeaderFields;
+        resource.requestFormData = request.requestFormData;
     },
 
     _appendRedirect: function(identifier, redirectURL)
@@ -189,6 +199,7 @@ WebInspector.ResourceManager.prototype = {
 
         WebInspector.panels.network.refreshResource(resource);
         WebInspector.panels.audits.resourceFinished(resource);
+        WebInspector.extensionServer.notifyResourceFinished(resource);
         delete this._resourcesById[identifier];
     },
 
@@ -199,10 +210,12 @@ WebInspector.ResourceManager.prototype = {
             return;
 
         resource.failed = true;
+        resource.finished = true;
         resource.endTime = time;
 
         WebInspector.panels.network.refreshResource(resource);
         WebInspector.panels.audits.resourceFinished(resource);
+        WebInspector.extensionServer.notifyResourceFinished(resource);
         delete this._resourcesById[identifier];
     },
 
@@ -228,13 +241,12 @@ WebInspector.ResourceManager.prototype = {
 
     setOverrideContent: function(identifier, sourceString, type)
     {
-        var resource = this._resourcesById[identifier];
+        var resource = WebInspector.panels.network.resources[identifier];
         if (!resource)
             return;
 
         resource.type = WebInspector.Resource.Type[type];
-        resource.overridenContent = sourceString;
-
+        resource.content = sourceString;
         WebInspector.panels.network.refreshResource(resource);
     },
 
@@ -298,13 +310,20 @@ WebInspector.ResourceManager.prototype = {
 
     _processCachedResources: function(mainFramePayload)
     {
-        this._addFramesRecursively(null, mainFramePayload);
+        var mainResource = this._addFramesRecursively(null, mainFramePayload);
+        WebInspector.mainResource = mainResource;
+        mainResource.isMainResource = true;
     },
 
     _addFramesRecursively: function(parentFrameId, framePayload)
     {
         var frameResource = this._createResource(null, framePayload.resource.url, framePayload.resource.loader);
+        this._updateResourceWithRequest(frameResource, framePayload.resource.request);
+        this._updateResourceWithResponse(frameResource, framePayload.resource.response);
         frameResource.type = WebInspector.Resource.Type["Document"];
+        frameResource.finished = true;
+        this._bindResourceURL(frameResource);
+
         this._resourceTreeModel.addOrUpdateFrame(parentFrameId, framePayload.id, frameResource.displayName);
         this._resourceTreeModel.addResourceToFrame(framePayload.id, frameResource);
 
@@ -319,18 +338,24 @@ WebInspector.ResourceManager.prototype = {
             var resource = this._createResource(null, cachedResource.url, cachedResource.loader);
             this._updateResourceWithCachedResource(resource, cachedResource);
             resource.finished = true;
+            this._bindResourceURL(resource);
             this._resourceTreeModel.addResourceToFrame(framePayload.id, resource);
         }
+        return frameResource;
     },
 
     resourceForURL: function(url)
     {
-        return this._resourceTreeModel.resourceForURL(url);
+        // FIXME: receive frameId here.
+        var entry = this._resourcesByURL[url];
+        if (entry instanceof Array)
+            return entry[0];
+        return entry;
     },
 
     addConsoleMessage: function(msg)
     {
-        var resource = this._resourceTreeModel.resourceForURL(msg.url);
+        var resource = this.resourceForURL(msg.url);
         if (!resource)
             return;
 
@@ -355,6 +380,38 @@ WebInspector.ResourceManager.prototype = {
             resource.clearErrorsAndWarnings();
         }
         this._resourceTreeModel.forAllResources(callback);
+    },
+
+    forAllResources: function(callback)
+    {
+        this._resourceTreeModel.forAllResources(callback);
+    },
+
+    _bindResourceURL: function(resource)
+    {
+        var resourceForURL = this._resourcesByURL[resource.url];
+        if (!resourceForURL)
+            this._resourcesByURL[resource.url] = resource;
+        else if (resourceForURL instanceof Array)
+            resourceForURL.push(resource);
+        else
+            this._resourcesByURL[resource.url] = [resourceForURL];
+    },
+
+    _unbindResourceURL: function(resource)
+    {
+        var resourceForURL = this._resourcesByURL[resource.url];
+        if (!resourceForURL)
+            return;
+
+        if (resourceForURL instanceof Array) {
+            resourceForURL.remove(resource, true);
+            if (resourceForURL.length === 1)
+                this._resourcesByURL[resource.url] = resourceForURL[0];
+            return;
+        }
+
+        delete this._resourcesByURL[resource.url];
     }
 }
 
@@ -410,11 +467,6 @@ WebInspector.ResourceManager.existingResourceViewForResource = function(resource
 
 WebInspector.ResourceManager.getContent = function(resource, base64Encode, callback)
 {
-    if ("overridenContent" in resource) {
-        callback(resource.overridenContent);
-        return;
-    }
-
     // FIXME: eventually, cached resources will have no identifiers.
     if (resource.loader)
         InspectorBackend.resourceContent(resource.loader.frameId, resource.url, base64Encode, callback);
@@ -426,7 +478,6 @@ WebInspector.ResourceTreeModel = function()
 {
     this._resourcesByFrameId = {};
     this._subframes = {};
-    this._resourcesByURL = {};
 }
 
 WebInspector.ResourceTreeModel.prototype = {
@@ -449,8 +500,10 @@ WebInspector.ResourceTreeModel.prototype = {
         this.addOrUpdateFrame(parentFrameId, loader.frameId, tmpResource.displayName);
 
         var resourcesForFrame = this._resourcesByFrameId[loader.frameId];
-        for (var i = 0; resourcesForFrame && i < resourcesForFrame.length; ++i)
+        for (var i = 0; resourcesForFrame && i < resourcesForFrame.length; ++i) {
+            WebInspector.resourceManager._bindResourceURL(resourcesForFrame[i]);
             WebInspector.panels.storage.addResourceToFrame(loader.frameId, resourcesForFrame[i]);
+        }
     },
 
     frameDetachedFromParent: function(frameId)
@@ -483,7 +536,6 @@ WebInspector.ResourceTreeModel.prototype = {
             this._resourcesByFrameId[frameId] = resourcesForFrame;
         }
         resourcesForFrame.push(resource);
-        this._bindResourceURL(resource);
 
         WebInspector.panels.storage.addResourceToFrame(frameId, resource);
     },
@@ -501,48 +553,12 @@ WebInspector.ResourceTreeModel.prototype = {
                 preservedResourcesForFrame.push(resource);
                 continue;
             }
-            this._unbindResourceURL(resource);
+            WebInspector.resourceManager._unbindResourceURL(resource);
         }
 
         delete this._resourcesByFrameId[frameId];
         if (preservedResourcesForFrame.length)
             this._resourcesByFrameId[frameId] = preservedResourcesForFrame;
-    },
-
-    _bindResourceURL: function(resource)
-    {
-        var resourceForURL = this._resourcesByURL[resource.url];
-        if (!resourceForURL)
-            this._resourcesByURL[resource.url] = resource;
-        else if (resourceForURL instanceof Array)
-            resourceForURL.push(resource);
-        else
-            this._resourcesByURL[resource.url] = [ resourceForURL ];
-    },
-
-    _unbindResourceURL: function(resource)
-    {
-        var resourceForURL = this._resourcesByURL[resource.url];
-        if (!resourceForURL)
-            return;
-
-        if (resourceForURL instanceof Array) {
-            resourceForURL.remove(resource, true);
-            if (resourceForURL.length === 1)
-                this._resourcesByURL[resource.url] = resourceForURL[0];
-            return;
-        }
-
-        delete this._resourcesByURL[resource.url];
-    },
-
-    resourceForURL: function(url)
-    {
-        // FIXME: receive frameId here.
-        var entry = this._resourcesByURL[url];
-        if (entry instanceof Array)
-            return entry[0];
-        return entry;
     },
 
     forAllResources: function(callback)

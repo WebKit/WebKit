@@ -130,7 +130,7 @@ WebInspector.StoragePanel.prototype = {
 
         var parentTreeElement = parentFrameId ? this._treeElementForFrameId[parentFrameId] : this.resourcesListTreeElement;
         if (!parentTreeElement) {
-            console.error("No frame with id:" + parentFrameId + " to route " + displayName + " to.")
+            console.warning("No frame with id:" + parentFrameId + " to route " + displayName + " to.")
             return;
         }
 

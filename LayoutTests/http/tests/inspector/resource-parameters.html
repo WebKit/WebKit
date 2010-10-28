@@ -32,7 +32,14 @@ function onIframeLoad()
 
 function frontend_enableResourceTracking(testController)
 {
-    if (!WebInspector.panels.resources.resourceTrackingEnabled) {
+    if (Preferences.networkPanelEnabled) {
+        if (!WebInspector.panels.network._pageWasReloaded) {
+            WebInspector.panels.network._pageWasReloaded = true;
+            WebInspector.panels.network._reset();
+            InspectorBackend.reloadPage();
+            return "enabling";
+        }
+    } else if (!WebInspector.panels.resources.resourceTrackingEnabled) {
         WebInspector.panels.resources.toggleResourceTracking();
         return "enabling";
     }
@@ -43,7 +50,8 @@ function frontend_dumpFormData(testController)
 {
     var resource = WebInspector.resourceForURL("http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=");
 
-    WebInspector.panels.resources.toggleResourceTracking();
+    if (!Preferences.networkPanelEnabled)
+        WebInspector.panels.resources.toggleResourceTracking();
 
     if (!resource) {
         testController.notifyDone("No resource found");

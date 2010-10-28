@@ -110,7 +110,7 @@ module core {
 
         [handler=Resource] void cachedResources(out Object resources);
         [handler=Resource] void resourceContent(in unsigned long frameId, in String url, in boolean base64Encode, out String content);
-        [notify] void identifierForInitialRequest(out long identifier, out String url, out Object loader, out boolean isMainResource);
+        [notify] void identifierForInitialRequest(out long identifier, out String url, out Object loader);
         [notify] void willSendRequest(out long identifier, out double time, out Object request, out Object redirectResponse);
         [notify] void markResourceAsCached(out long identifier);
         [notify] void didReceiveResponse(out long identifier, out double time, out String resourceType, out Object response);

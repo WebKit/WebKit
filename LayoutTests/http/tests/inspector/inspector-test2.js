@@ -84,15 +84,15 @@ InspectorTest.reloadPage = function(callback)
 
 InspectorTest.reloadPageIfNeeded = function(callback)
 {
-    if (!InspectorTest._pageWasReloaded)
+    if (!InspectorTest._pageWasReloaded) {
+        InspectorTest._pageWasReloaded = true;
         InspectorTest.reloadPage(callback);
-    else
+    } else
         callback();
 }
 
 InspectorTest.pageReloaded = function()
 {
-    InspectorTest._pageWasReloaded = true;
     resultsSynchronized = false;
     InspectorTest.addResult("Page reloaded.");
     if (InspectorTest._reloadPageCallback) {

@@ -299,6 +299,7 @@ WebInspector.ExtensionServer.prototype = {
         for (var i = 0; i < ids.length; ++i) {
             var id = ids[i];
             var resource = WebInspector.networkResources[id];
+ 
             if (!resource)
                 response.push(this._status.E_NOTFOUND(id));
             else
