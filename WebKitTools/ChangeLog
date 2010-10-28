@@ -2,6 +2,32 @@
 
         Reviewed by Adam Barth.
 
+        webkit-patch upload calls changed_files more often than it should
+        https://bugs.webkit.org/show_bug.cgi?id=48567
+
+        Passing changed_files around everywhere isn't a very elegant solution
+        but it's the one we have for the moment.  I think keeping an explicit
+        cache on Checkout (or making StepState() a real class) is a better
+        long-term option.
+
+        Previously bug_id_for_this_commit was calling changed_files and the
+        result was never getting cached on the state.  Now we're explicitly
+        caching the result on the state and passing that to the bug_id_for_this_commit call.
+
+        I looked into building unit tests for this.  Doing so would require
+        using a real Checkout object with a MockSCM and overriding the appropriate
+        calls on SCM to count how often we're stating the file system.
+        That's a useful set of tests to build for a separate change.
+
+        * Scripts/webkitpy/common/checkout/api.py:
+        * Scripts/webkitpy/tool/commands/download.py:
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-10-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Make suggest-reviewers slightly faster
         https://bugs.webkit.org/show_bug.cgi?id=48562
 

@@ -475,7 +475,7 @@ class MockCheckout(object):
         # that LandDiff will try to actually read the patch from disk!
         return []
 
-    def commit_message_for_this_commit(self, git_commit):
+    def commit_message_for_this_commit(self, git_commit, changed_files=None):
         commit_message = Mock()
         commit_message.message = lambda:"This is a fake commit message that is at least 50 characters."
         return commit_message

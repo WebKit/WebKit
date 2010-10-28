@@ -114,7 +114,7 @@ class CommitMessageForThisCommitTest(unittest.TestCase):
     # ChangeLog is difficult to mock at current.
     def test_commit_message_for_this_commit(self):
         checkout = Checkout(None)
-        checkout.modified_changelogs = lambda git_commit: ["ChangeLog1", "ChangeLog2"]
+        checkout.modified_changelogs = lambda git_commit, changed_files=None: ["ChangeLog1", "ChangeLog2"]
         output = OutputCapture()
         expected_stderr = "Parsing ChangeLog: ChangeLog1\nParsing ChangeLog: ChangeLog2\n"
         commit_message = output.assert_outputs(self, checkout.commit_message_for_this_commit,
@@ -163,7 +163,7 @@ class CheckoutTest(unittest.TestCase):
     def test_bug_id_for_this_commit(self):
         scm = Mock()
         checkout = Checkout(scm)
-        checkout.commit_message_for_this_commit = lambda git_commit: CommitMessage(ChangeLogEntry(_changelog1entry1).contents().splitlines())
+        checkout.commit_message_for_this_commit = lambda git_commit, changed_files=None: CommitMessage(ChangeLogEntry(_changelog1entry1).contents().splitlines())
         self.assertEqual(checkout.bug_id_for_this_commit(git_commit=None), 36629)
 
     def test_modified_changelogs(self):

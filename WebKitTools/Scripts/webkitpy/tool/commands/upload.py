@@ -152,7 +152,9 @@ class AbstractPatchUploadingCommand(AbstractSequencedCommand):
         # Perfer a bug id passed as an argument over a bug url in the diff (i.e. ChangeLogs).
         bug_id = args and args[0]
         if not bug_id:
-            bug_id = tool.checkout().bug_id_for_this_commit(options.git_commit)
+            changed_files = self._tool.scm().changed_files(options.git_commit)
+            state["changed_files"] = changed_files
+            bug_id = tool.checkout().bug_id_for_this_commit(options.git_commit, changed_files)
         return bug_id
 
     def _prepare_state(self, options, args, tool):

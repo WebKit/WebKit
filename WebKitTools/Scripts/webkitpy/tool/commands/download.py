@@ -106,8 +106,10 @@ land will NOT build and run the tests before committing, but you can use the --b
 If a bug id is provided, or one can be found in the ChangeLog land will update the bug after committing."""
 
     def _prepare_state(self, options, args, tool):
+        changed_files = self._tool.scm().changed_files(options.git_commit)
         return {
-            "bug_id": (args and args[0]) or tool.checkout().bug_id_for_this_commit(options.git_commit),
+            "changed_files": changed_files,
+            "bug_id": (args and args[0]) or tool.checkout().bug_id_for_this_commit(options.git_commit, changed_files),
         }
 
 

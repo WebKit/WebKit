@@ -100,8 +100,8 @@ class Checkout(object):
     def modified_non_changelogs(self, git_commit, changed_files=None):
         return self._modified_files_matching_predicate(git_commit, lambda path: not self._is_path_to_changelog(path), changed_files=changed_files)
 
-    def commit_message_for_this_commit(self, git_commit):
-        changelog_paths = self.modified_changelogs(git_commit)
+    def commit_message_for_this_commit(self, git_commit, changed_files=None):
+        changelog_paths = self.modified_changelogs(git_commit, changed_files)
         if not len(changelog_paths):
             raise ScriptError(message="Found no modified ChangeLogs, cannot create a commit message.\n"
                               "All changes require a ChangeLog.  See:\n"
@@ -129,9 +129,9 @@ class Checkout(object):
         reviewers.extend([commit_info.author() for commit_info in commit_infos if commit_info.author() and commit_info.author().can_review])
         return sorted(set(reviewers))
 
-    def bug_id_for_this_commit(self, git_commit):
+    def bug_id_for_this_commit(self, git_commit, changed_files=None):
         try:
-            return parse_bug_id(self.commit_message_for_this_commit(git_commit).message())
+            return parse_bug_id(self.commit_message_for_this_commit(git_commit, changed_files).message())
         except ScriptError, e:
             pass # We might not have ChangeLogs.
 
