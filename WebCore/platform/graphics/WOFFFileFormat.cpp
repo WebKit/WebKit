@@ -25,16 +25,16 @@
 
 #include "config.h"
 #include "WOFFFileFormat.h"
+#include <zlib.h>
 
 #if !ENABLE(OPENTYPE_SANITIZER)
 
 #include "SharedBuffer.h"
 
-#if !PLATFORM(WIN)
 #if OS(UNIX)
 #include <netinet/in.h>
 #endif
-#include <zlib.h>
+
 #if PLATFORM(BREWMP)
 #include <AEEStdLib.h>
 #define htonl(x) HTONL(x)
@@ -42,17 +42,8 @@
 #define ntohl(x) NTOHL(x)
 #define ntohs(x) NTOHS(x)
 #endif
-#else
-#include "SoftLinking.h"
 
-typedef unsigned char Bytef;
-typedef unsigned long uLong;
-typedef unsigned long uLongf;
-#define Z_OK 0
-
-SOFT_LINK_LIBRARY(zlib1);
-SOFT_LINK(zlib1, uncompress, int, __cdecl, (Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen), (dest, destLen, source, sourceLen));
-
+#if PLATFORM(WIN)
 #if CPU(BIG_ENDIAN)
 #define ntohs(x) ((uint16_t)(x))
 #define htons(x) ((uint16_t)(x))
@@ -70,7 +61,6 @@ SOFT_LINK(zlib1, uncompress, int, __cdecl, (Bytef *dest, uLongf *destLen, const 
                  (((uint32_t)(x) & 0x0000ff00) <<  8) | (((uint32_t)(x) & 0x000000ff) << 24)))
 #define htonl(x) ntohl(x)
 #endif
-
 #endif // PLATFORM(WIN)
 
 namespace WebCore {
@@ -123,10 +113,6 @@ bool isWOFF(SharedBuffer* buffer)
 
 bool convertWOFFToSfnt(SharedBuffer* woff, Vector<char>& sfnt)
 {
-#if PLATFORM(WINDOWS)
-    if (!zlib1Library())
-        return false;
-#endif
     ASSERT_ARG(sfnt, sfnt.isEmpty());
 
     size_t offset = 0;

@@ -1,3 +1,12 @@
+2010-10-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        No longer soft-link zlib
+        https://bugs.webkit.org/show_bug.cgi?id=48004
+
+        * win/WebKit2Common.vsprops: Added zlib.lib to AdditionalDependencies.
+
 2010-10-28  Adam Roben  <aroben@apple.com>
 
         Make PluginView retain its HTMLPlugInElement
@@ -128,7 +137,7 @@
         Reviewed by Andreas Kling.
 
         Remove the reference to the pageNamespace in the QWKPagePrivate.
-        Access it though the WebPageProxy instead which holds a strong
+        Access it through the WebPageProxy instead which holds a strong
         ref to it.
 
         * UIProcess/API/qt/qwkpage.cpp:

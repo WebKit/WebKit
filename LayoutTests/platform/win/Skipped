@@ -896,9 +896,6 @@ fast/overflow/scrollbar-restored-and-then-locked.html
 # <http://webkit.org/b/37096> http/tests/security/xss-DENIED-iframe-src-alias.html sometimes times out on Windows
 http/tests/security/xss-DENIED-iframe-src-alias.html
 
-# Doesn't support WOFF yet.
-fast/css/font-face-woff.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=38376
 media/media-document-audio-size.html
 
