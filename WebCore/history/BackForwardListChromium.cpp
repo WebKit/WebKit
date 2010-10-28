@@ -64,23 +64,6 @@ void BackForwardListImpl::goToItem(HistoryItem* item)
     m_client->goToItem(item);
 }
 
-HistoryItem* BackForwardListImpl::backItem()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-HistoryItem* BackForwardListImpl::forwardItem()
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-HistoryItem* BackForwardListImpl::currentItem()
-{
-    return m_client->currentItem();
-}
-
 int BackForwardListImpl::capacity()
 {
     return m_capacity;

@@ -84,14 +84,15 @@ void BackForwardListClientImpl::goToItem(HistoryItem* item)
         m_pendingHistoryItem = 0;
 }
 
-HistoryItem* BackForwardListClientImpl::currentItem()
-{
-    return m_currentItem.get();
-}
-
 HistoryItem* BackForwardListClientImpl::itemAtIndex(int index)
 {
-    if (!m_webView->client() || index > forwardListCount() || -index > backListCount())
+    if (!m_webView->client())
+        return 0;
+
+    if (!index)
+        return m_currentItem.get();
+
+    if (index > forwardListCount() || -index > backListCount())
         return 0;
 
     // Since we don't keep the entire back/forward list, we have no way to

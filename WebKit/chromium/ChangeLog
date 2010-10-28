@@ -1,3 +1,28 @@
+2010-10-28  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        [Chromium] History related tests REGRESSED after r70723
+        https://bugs.webkit.org/show_bug.cgi?id=48513
+
+        Since r70723 made BackForwardList::currentItem no longer be virtual,
+        we were not reaching the implementation in Chromium's 
+        BackForwardListClientImpl, and for Chromium currentItem is not the same
+        as itemAtIndex(0).
+        
+        The fix is to make itemAtIndex(0) have the currentItem() behavior, which
+        lets us keep currentItem as non-virtual (and remove its implementation
+        from the Chromium side).
+        
+        This also switches Chromium to use the default implementation of 
+        backItem() and forwardItem() (vs. the old stubs that just had
+        ASSERT_NOT_REACHED) since they're actually reacheable with Chromium
+        code thanks to the calls in FrameLoader::checkDidPerformFirstNavigation.
+
+        * src/BackForwardListClientImpl.cpp:
+        (WebKit::BackForwardListClientImpl::itemAtIndex):
+        * src/BackForwardListClientImpl.h:
+
 2010-10-28  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
