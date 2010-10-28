@@ -1,3 +1,16 @@
+2010-10-28  Peter Varga  <pvarga@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        resetAssertionMatches() is an unused function in YARR Interpreter
+        https://bugs.webkit.org/show_bug.cgi?id=48503
+
+        The resetAssertionMatches() function is removed from YARR Interpreter
+        because it's never called.
+
+        * yarr/RegexInterpreter.cpp:
+        (JSC::Yarr::Interpreter::resetMatches):
+
 2010-10-28  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Reviewed by Andreas Kling.

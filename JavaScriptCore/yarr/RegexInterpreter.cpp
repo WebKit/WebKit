@@ -591,13 +591,6 @@ public:
         unsigned count = term.atom.parenthesesDisjunction->m_numSubpatterns;
         context->restoreOutput(output, firstSubpatternId, count);
     }
-    void resetAssertionMatches(ByteTerm& term)
-    {
-        unsigned firstSubpatternId = term.atom.subpatternId;
-        unsigned count = term.atom.parenthesesDisjunction->m_numSubpatterns;
-        for (unsigned i = 0; i < (count << 1); ++i)
-            output[(firstSubpatternId << 1) + i] = -1;
-    }
     bool parenthesesDoBacktrack(ByteTerm& term, BackTrackInfoParentheses* backTrack)
     {
         while (backTrack->matchAmount) {
