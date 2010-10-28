@@ -66,6 +66,9 @@ public:
     virtual bool draggable() const;
     void setDraggable(bool);
 
+    bool spellcheck() const;
+    void setSpellcheck(bool);
+
     void click();
 
     virtual void accessKeyAction(bool sendToAnyElement);

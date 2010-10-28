@@ -690,6 +690,7 @@ BUG23497 MAC : editing/selection/unrendered-002.html = IMAGE
 BUG11577 WIN LINUX : editing/spelling/inline_spelling_markers.html = FAIL
 BUG11577 WIN LINUX : editing/spelling/spellcheck-attribute.html = FAIL
 BUG11577 WIN LINUX : editing/spelling/spelling-linebreak.html = FAIL
+BUG11577 WIN LINUX : editing/spelling/spelling-attribute-change.html  = FAIL
 
 // TODO(erg): Attempted to rebaseline these tests as part of the above
 // 43346:43361 rebaseling from http://trac.webkit.org/changeset/43355. Turned

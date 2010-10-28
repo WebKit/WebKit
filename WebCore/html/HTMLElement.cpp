@@ -725,6 +725,17 @@ void HTMLElement::setDraggable(bool value)
     setAttribute(draggableAttr, value ? "true" : "false");
 }
 
+bool HTMLElement::spellcheck() const
+{
+    return isSpellCheckingEnabled();
+}
+
+void HTMLElement::setSpellcheck(bool enable)
+{
+    setAttribute(spellcheckAttr, enable ? "true" : "false");
+}
+
+
 void HTMLElement::click()
 {
     dispatchSimulatedClick(0, false, false);
