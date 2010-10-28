@@ -39,7 +39,7 @@ namespace WebCore {
 
 class AsyncFileSystem;
 class AsyncFileWriter;
-class FileMetadata;
+struct FileMetadata;
 
 class AsyncFileSystemCallbacks : public Noncopyable {
 public:

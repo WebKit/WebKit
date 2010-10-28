@@ -47,7 +47,7 @@ class ErrorCallback;
 class EntriesCallback;
 class EntryArray;
 class EntryCallback;
-class FileMetadata;
+struct FileMetadata;
 class FileSystemCallback;
 class FileWriter;
 class FileWriterCallback;
