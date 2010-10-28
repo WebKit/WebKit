@@ -1638,6 +1638,8 @@ String Editor::Command::value(Event* triggeringEvent) const
 {
     if (!isSupported() || !m_frame)
         return String();
+    if (m_command->value == valueNull && m_command->state != stateNone)
+        return m_command->state(m_frame.get(), triggeringEvent) == TrueTriState ? "true" : "false";
     return m_command->value(m_frame.get(), triggeringEvent);
 }
 

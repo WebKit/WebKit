@@ -9,11 +9,14 @@ function testQueryCommandState(command, contents, selector, expectedState)
     testContainer.innerHTML = contents;
     var selected = selector(testContainer);
     var actualState = document.queryCommandState(command);
+    var actualValue = document.queryCommandValue(command);
     var action = 'queryCommandState("' + command + '") returns ' + actualState + ' when selecting ' + selected + ' of "' + contents + '"';
-    if (actualState === expectedState)
-        testPassed(action);
-    else
+    if (actualState != expectedState)
         testFailed(action + ', expected ' + expectedState + '');
+    else if (actualValue != actualState.toString())
+        testFailed(action + ' but queryCommandValue returned ' + actualValue);
+    else
+        testPassed(action);
 }
 
 function selectAll(container) {

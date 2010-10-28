@@ -12,15 +12,22 @@ function queryTextAlignment(selector, content, expected)
     var full = document.queryCommandState('justifyFull');
     var left = document.queryCommandState('justifyLeft');
     var right = document.queryCommandState('justifyRight');
+    var centerValue = document.queryCommandValue('justifyCenter');
+    var fullValue = document.queryCommandValue('justifyFull');
+    var leftValue = document.queryCommandValue('justifyLeft');
+    var rightValue = document.queryCommandValue('justifyRight');
     if ((center && full) || (full && left) || (left && right) || (right && center))
         testFailed('Inconsistent state when selecting ' + selected + ' of "' + content + '".  More than one of justifyCenter, justifyFull, justifyRight, and justifyLeft returned true.')
 
     var actual = center ? 'center' : full ? 'full' : left ? 'left' : right ? 'right' : '';
     var action = "queryCommand('format') returns \"" + actual + '" when selecting ' + selected + ' of "' + content + '"';
-    if (actual == expected)
-        testPassed(action);
-    else
+    if (actual != expected)
         testFailed(action + ' but expected "' + expected + '"');
+    else if (centerValue != center.toString() || fullValue != full.toString()
+        || leftValue != left.toString() || rightValue != right.toString())
+        testFailed(action + ' but values returned by queryCommandState and queryCommandValue did not match');
+    else
+        testPassed(action);
 }
 
 function selectFirstPosition(container) {
