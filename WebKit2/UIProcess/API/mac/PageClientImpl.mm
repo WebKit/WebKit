@@ -35,7 +35,7 @@
 #import <WebCore/Cursor.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FoundationExtras.h>
-#import <webCore/KeyboardEvent.h>
+#import <WebCore/KeyboardEvent.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
@@ -44,7 +44,7 @@ using namespace WebCore;
 
 @interface WebEditCommandObjC : NSObject
 {
-    RefPtr<WebKit::WebEditCommandProxy> m_command;   
+    RefPtr<WebKit::WebEditCommandProxy> m_command;
 }
 
 - (id)initWithWebEditCommandProxy:(PassRefPtr<WebKit::WebEditCommandProxy>)command;
