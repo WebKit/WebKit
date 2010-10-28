@@ -412,7 +412,7 @@ namespace JSC {
 
     inline size_t normalizePrototypeChain(CallFrame* callFrame, JSValue base, JSValue slotBase, const Identifier& propertyName, size_t& slotOffset)
     {
-        JSCell* cell = asCell(base);
+        JSCell* cell = base.asCell();
         size_t count = 0;
 
         while (slotBase != cell) {
@@ -424,7 +424,7 @@ namespace JSC {
             if (v.isNull())
                 return 0;
 
-            cell = asCell(v);
+            cell = v.asCell();
 
             // Since we're accessing a prototype in a loop, it's a good bet that it
             // should not be treated as a dictionary.
@@ -449,7 +449,7 @@ namespace JSC {
             if (v.isNull())
                 return count;
 
-            base = asCell(v);
+            base = v.asCell();
 
             // Since we're accessing a prototype in a loop, it's a good bet that it
             // should not be treated as a dictionary.

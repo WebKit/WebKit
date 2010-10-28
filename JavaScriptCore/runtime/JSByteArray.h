@@ -106,7 +106,7 @@ namespace JSC {
     JSByteArray* asByteArray(JSValue value);
     inline JSByteArray* asByteArray(JSValue value)
     {
-        return static_cast<JSByteArray*>(asCell(value));
+        return static_cast<JSByteArray*>(value.asCell());
     }
 
     inline bool isJSByteArray(JSGlobalData* globalData, JSValue v) { return v.isCell() && v.asCell()->vptr() == globalData->jsByteArrayVPtr; }

@@ -52,13 +52,13 @@ namespace JSC {
     inline void gcProtect(JSValue value)
     {
         if (value && value.isCell())
-            gcProtect(asCell(value));
+            gcProtect(value.asCell());
     }
 
     inline void gcUnprotect(JSValue value)
     {
         if (value && value.isCell())
-            gcUnprotect(asCell(value));
+            gcUnprotect(value.asCell());
     }
 
     // FIXME: Share more code with RefPtr template? The only differences are the ref/deref operation

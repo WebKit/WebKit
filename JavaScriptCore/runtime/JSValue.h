@@ -357,14 +357,6 @@ namespace JSC {
     inline bool operator!=(const JSValue a, const JSCell* b) { return a != JSValue(b); }
     inline bool operator!=(const JSCell* a, const JSValue b) { return JSValue(a) != b; }
 
-    // FIXME: We should deprecate this and just use JSValue::asCell() instead.
-    JSCell* asCell(JSValue);
-
-    inline JSCell* asCell(JSValue value)
-    {
-        return value.asCell();
-    }
-
     ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const
     {
         if (isInt32())

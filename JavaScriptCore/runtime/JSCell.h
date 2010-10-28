@@ -216,14 +216,14 @@ namespace JSC {
 
     inline CallType getCallData(JSValue value, CallData& callData)
     {
-        CallType result = value.isCell() ? asCell(value)->getCallData(callData) : CallTypeNone;
+        CallType result = value.isCell() ? value.asCell()->getCallData(callData) : CallTypeNone;
         ASSERT(result == CallTypeNone || value.isValidCallee());
         return result;
     }
 
     inline ConstructType getConstructData(JSValue value, ConstructData& constructData)
     {
-        ConstructType result = value.isCell() ? asCell(value)->getConstructData(constructData) : ConstructTypeNone;
+        ConstructType result = value.isCell() ? value.asCell()->getConstructData(constructData) : ConstructTypeNone;
         ASSERT(result == ConstructTypeNone || value.isValidCallee());
         return result;
     }

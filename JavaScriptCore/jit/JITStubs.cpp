@@ -848,7 +848,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
         return;
     }
     
-    JSCell* baseCell = asCell(baseValue);
+    JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
 
     if (structure->isUncacheableDictionary()) {
@@ -916,7 +916,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
         return;
     }
 
-    JSCell* baseCell = asCell(baseValue);
+    JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
 
     if (structure->isUncacheableDictionary()) {
@@ -1561,7 +1561,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_method_check)
     JSObject* slotBaseObject;
     if (baseValue.isCell()
         && slot.isCacheableValue()
-        && !(structure = asCell(baseValue)->structure())->isUncacheableDictionary()
+        && !(structure = baseValue.asCell()->structure())->isUncacheableDictionary()
         && (slotBaseObject = asObject(slot.slotBase()))->getPropertySpecificValue(callFrame, ident, specific)
         && specific
         ) {
@@ -1635,7 +1635,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
 
     if (baseValue.isCell()
         && slot.isCacheable()
-        && !asCell(baseValue)->structure()->isUncacheableDictionary()
+        && !baseValue.asCell()->structure()->isUncacheableDictionary()
         && slot.slotBase() == baseValue) {
 
         CodeBlock* codeBlock = callFrame->codeBlock();
@@ -1656,7 +1656,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
         }
         if (listIndex < POLYMORPHIC_LIST_CACHE_SIZE) {
             stubInfo->u.getByIdSelfList.listSize++;
-            JIT::compileGetByIdSelfList(callFrame->scopeChain()->globalData, codeBlock, stubInfo, polymorphicStructureList, listIndex, asCell(baseValue)->structure(), ident, slot, slot.cachedOffset());
+            JIT::compileGetByIdSelfList(callFrame->scopeChain()->globalData, codeBlock, stubInfo, polymorphicStructureList, listIndex, baseValue.asCell()->structure(), ident, slot, slot.cachedOffset());
 
             if (listIndex == (POLYMORPHIC_LIST_CACHE_SIZE - 1))
                 ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_generic));
@@ -1740,12 +1740,12 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
 
     CHECK_FOR_EXCEPTION();
 
-    if (!baseValue.isCell() || !slot.isCacheable() || asCell(baseValue)->structure()->isDictionary()) {
+    if (!baseValue.isCell() || !slot.isCacheable() || baseValue.asCell()->structure()->isDictionary()) {
         ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
         return JSValue::encode(result);
     }
 
-    Structure* structure = asCell(baseValue)->structure();
+    Structure* structure = baseValue.asCell()->structure();
     CodeBlock* codeBlock = callFrame->codeBlock();
     StructureStubInfo* stubInfo = &codeBlock->getStubInfo(STUB_RETURN_ADDRESS);
 
@@ -1756,8 +1756,8 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
 
     if (slot.slotBase() == baseValue)
         ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
-    else if (slot.slotBase() == asCell(baseValue)->structure()->prototypeForLookup(callFrame)) {
-        ASSERT(!asCell(baseValue)->structure()->isDictionary());
+    else if (slot.slotBase() == baseValue.asCell()->structure()->prototypeForLookup(callFrame)) {
+        ASSERT(!baseValue.asCell()->structure()->isDictionary());
         // Since we're accessing a prototype in a loop, it's a good bet that it
         // should not be treated as a dictionary.
         if (slotBaseObject->structure()->isDictionary()) {
@@ -1774,7 +1774,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
                 ctiPatchCallByReturnAddress(codeBlock, STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_list_full));
         }
     } else if (size_t count = normalizePrototypeChain(callFrame, baseValue, slot.slotBase(), propertyName, offset)) {
-        ASSERT(!asCell(baseValue)->structure()->isDictionary());
+        ASSERT(!baseValue.asCell()->structure()->isDictionary());
         int listIndex;
         PolymorphicAccessStructureList* prototypeStructureList = getPolymorphicAccessStructureListSlot(stubInfo, listIndex);
         
@@ -2365,10 +2365,10 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
 
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
         Identifier propertyName(callFrame, asString(subscript)->value(callFrame));
-        PropertySlot slot(asCell(baseValue));
+        PropertySlot slot(baseValue.asCell());
         // JSString::value may have thrown, but we shouldn't find a property with a null identifier,
         // so we should miss this case and wind up in the CHECK_FOR_EXCEPTION_AT_END, below.
-        if (asCell(baseValue)->fastGetOwnPropertySlot(callFrame, propertyName, slot)) {
+        if (baseValue.asCell()->fastGetOwnPropertySlot(callFrame, propertyName, slot)) {
             JSValue result = slot.getValue(callFrame, propertyName);
             CHECK_FOR_EXCEPTION();
             return JSValue::encode(result);
@@ -2901,14 +2901,14 @@ DEFINE_STUB_FUNCTION(int, op_eq)
     start:
     if (src2.isUndefined()) {
         return src1.isNull() || 
-               (src1.isCell() && asCell(src1)->structure()->typeInfo().masqueradesAsUndefined()) ||
-               src1.isUndefined();
+               (src1.isCell() && src1.asCell()->structure()->typeInfo().masqueradesAsUndefined())
+               || src1.isUndefined();
     }
     
     if (src2.isNull()) {
         return src1.isUndefined() || 
-               (src1.isCell() && asCell(src1)->structure()->typeInfo().masqueradesAsUndefined()) ||
-               src1.isNull();
+               (src1.isCell() && src1.asCell()->structure()->typeInfo().masqueradesAsUndefined())
+               || src1.isNull();
     }
 
     if (src1.isInt32()) {
@@ -2944,12 +2944,12 @@ DEFINE_STUB_FUNCTION(int, op_eq)
     }
     
     if (src1.isUndefined())
-        return src2.isCell() && asCell(src2)->structure()->typeInfo().masqueradesAsUndefined();
+        return src2.isCell() && src2.asCell()->structure()->typeInfo().masqueradesAsUndefined();
     
     if (src1.isNull())
-        return src2.isCell() && asCell(src2)->structure()->typeInfo().masqueradesAsUndefined();
+        return src2.isCell() && src2.asCell()->structure()->typeInfo().masqueradesAsUndefined();
 
-    JSCell* cell1 = asCell(src1);
+    JSCell* cell1 = src1.asCell();
 
     if (cell1->isString()) {
         if (src2.isInt32())
@@ -2964,7 +2964,7 @@ DEFINE_STUB_FUNCTION(int, op_eq)
         if (src2.isFalse())
             return jsToNumber(static_cast<JSString*>(cell1)->value(stackFrame.callFrame)) == 0.0;
 
-        JSCell* cell2 = asCell(src2);
+        JSCell* cell2 = src2.asCell();
         if (cell2->isString())
             return static_cast<JSString*>(cell1)->value(stackFrame.callFrame) == static_cast<JSString*>(cell2)->value(stackFrame.callFrame);
 

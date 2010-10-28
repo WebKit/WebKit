@@ -1,3 +1,40 @@
+2010-10-28  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        Do not have two different asCell APIs in JSValue
+        https://bugs.webkit.org/show_bug.cgi?id=47979
+
+        Remove JSCell* asCell(JSValue) in favor of only using
+        JSValue::asCell().
+
+        * API/APICast.h:
+        (toRef):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::testPrototype):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/GetterSetter.h:
+        (JSC::asGetterSetter):
+        * runtime/JSByteArray.h:
+        (JSC::asByteArray):
+        * runtime/JSCell.h:
+        (JSC::JSCell::getCallData):
+        (JSC::JSCell::getConstructData):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::appendValueInConstructAndIncrementLength):
+        (JSC::asString):
+        * runtime/JSValue.h:
+        * runtime/Operations.cpp:
+        (JSC::jsIsObjectType):
+        * runtime/Operations.h:
+        (JSC::normalizePrototypeChain):
+        * runtime/Protect.h:
+        (JSC::gcProtect):
+        (JSC::gcUnprotect):
+
 2010-10-27  Chao-ying Fu  <fu@mips.com>
 
         Reviewed by Oliver Hunt.
