@@ -565,6 +565,9 @@ WebInspector.Resource.prototype = {
          || this.type === WebInspector.Resource.Type.WebSocket)
             return true;
 
+        if (!this.mimeType)
+            return true; // Might be not known for cached resources with null responses.
+
         if (this.mimeType in WebInspector.MIMETypes)
             return this.type in WebInspector.MIMETypes[this.mimeType];
 
@@ -582,7 +585,7 @@ WebInspector.Resource.prototype = {
         var msg;
         switch (warning.id) {
             case WebInspector.Warnings.IncorrectMIMEType.id:
-                if (!this._mimeTypeIsConsistentWithType())
+                if (!this._mimeTypeIsConsistentWithType()) {
                     msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
                         WebInspector.ConsoleMessage.MessageType.Log, 
                         WebInspector.ConsoleMessage.MessageLevel.Warning,
@@ -593,6 +596,35 @@ WebInspector.Resource.prototype = {
                         String.sprintf(WebInspector.Warnings.IncorrectMIMEType.message, WebInspector.Resource.Type.toUIString(this.type), this.mimeType),
                         null,
                         null);
+                }
+                break;
+            case WebInspector.Warnings.FailedToLoad.id:
+                if (this.failed) {
+                    msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
+                        WebInspector.ConsoleMessage.MessageType.Log, 
+                        WebInspector.ConsoleMessage.MessageLevel.Error,
+                        -1,
+                        this.url,
+                        null,
+                        1,
+                        String.sprintf(WebInspector.Warnings.FailedToLoad.message, this.localizedFailDescription),
+                        null,
+                        null);
+                }
+                break;
+            case WebInspector.Warnings.FailedToLoadWithStatus.id:
+                if (this.statusCode >= 400) {
+                    msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
+                        WebInspector.ConsoleMessage.MessageType.Log, 
+                        WebInspector.ConsoleMessage.MessageLevel.Error,
+                        -1,
+                        this.url,
+                        null,
+                        1,
+                        String.sprintf(WebInspector.Warnings.FailedToLoadWithStatus.message, this.statusCode, this.statusText),
+                        null,
+                        null);
+                }
                 break;
         }
 

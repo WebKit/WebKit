@@ -67,7 +67,6 @@ class InspectorFrontend;
 class InspectorFrontendClient;
 class InspectorObject;
 class InspectorProfilerAgent;
-class InspectorResource;
 class InspectorResourceAgent;
 class InspectorState;
 class InspectorStorageAgent;
@@ -87,6 +86,12 @@ class SharedBuffer;
 class Storage;
 class StorageArea;
 
+#define LEGACY_RESOURCE_TRACKING_ENABLED 1
+
+#if LEGACY_RESOURCE_TRACKING_ENABLED
+class InspectorResource;
+#endif
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 class InspectorApplicationCacheAgent;
 #endif
@@ -98,8 +103,10 @@ class WebSocketHandshakeResponse;
 
 class InspectorController : public Noncopyable {
 public:
+#if LEGACY_RESOURCE_TRACKING_ENABLED
     typedef HashMap<unsigned long, RefPtr<InspectorResource> > ResourcesMap;
     typedef HashMap<RefPtr<Frame>, ResourcesMap*> FrameResourcesMap;
+#endif
     typedef HashMap<int, RefPtr<InspectorDatabaseResource> > DatabaseResourcesMap;
     typedef HashMap<int, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
 
@@ -169,9 +176,11 @@ public:
     void resourceRetrievedByXMLHttpRequest(unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     void scriptImported(unsigned long identifier, const String& sourceString);
 
-    void setResourceTrackingEnabled(bool enabled);
     void setResourceTrackingEnabled(bool enabled, bool always, bool* newState);
+#if LEGACY_RESOURCE_TRACKING_ENABLED
+    void setResourceTrackingEnabled(bool enabled);
     bool resourceTrackingEnabled() const;
+#endif
 
     void ensureSettingsLoaded();
 
@@ -214,9 +223,10 @@ public:
     void didCloseWebSocket(unsigned long identifier);
 #endif
 
+#if LEGACY_RESOURCE_TRACKING_ENABLED
     const ResourcesMap& resources() const { return m_resources; }
-    InspectorResource* resourceForURL(const String& url);
-    bool resourceContentForURL(const KURL& url, Document* loaderDocument, String* result);
+#endif
+
     bool hasFrontend() const { return m_frontend; }
 
     void drawNodeHighlight(GraphicsContext&) const;
@@ -316,13 +326,14 @@ private:
 
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 
+#if LEGACY_RESOURCE_TRACKING_ENABLED
     void addResource(InspectorResource*);
     void removeResource(InspectorResource*);
     InspectorResource* getTrackedResource(unsigned long identifier);
-    void getResourceContent(unsigned long identifier, bool encode, String* content);
-
     void pruneResources(ResourcesMap*, DocumentLoader* loaderToKeep = 0);
     void removeAllResources(ResourcesMap* map) { pruneResources(map); }
+#endif
+    void getResourceContent(unsigned long identifier, bool encode, String* content);
 
     bool isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl);
 
@@ -341,7 +352,6 @@ private:
     bool m_openingFrontend;
     OwnPtr<InspectorFrontend> m_frontend;
     RefPtr<InspectorDOMAgent> m_domAgent;
-    RefPtr<InspectorResourceAgent> m_resourceAgent;
     RefPtr<InspectorStorageAgent> m_storageAgent;
     OwnPtr<InspectorCSSStore> m_cssStore;
     OwnPtr<InspectorTimelineAgent> m_timelineAgent;
@@ -350,12 +360,15 @@ private:
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     OwnPtr<InspectorApplicationCacheAgent> m_applicationCacheAgent;
 #endif
-
     RefPtr<Node> m_nodeToFocus;
+#if LEGACY_RESOURCE_TRACKING_ENABLED
     RefPtr<InspectorResource> m_mainResource;
     ResourcesMap m_resources;
     HashSet<String> m_knownResources;
     FrameResourcesMap m_frameResources;
+#endif
+    RefPtr<InspectorResourceAgent> m_resourceAgent;
+    unsigned long m_mainResourceIdentifier;
     double m_loadEventTime;
     double m_domContentEventTime;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;

@@ -208,7 +208,6 @@ WebInspector.CookieItemsView.prototype = {
             this._filterCookiesForDomain(allCookies);
         else
             this._cookies = allCookies;
-
         if (!this._cookies.length) {
             // Nothing to show.
             this._emptyMsgElement.removeStyleClass("hidden");
@@ -255,7 +254,7 @@ WebInspector.CookieItemsView.prototype = {
             if (url && url.host == this._cookieDomain)
                 resourceURLsForDocumentURL.push(resource.url);
         }
-        WebInspector.forAllResources(populateResourcesForDocuments);
+        WebInspector.forAllResources(populateResourcesForDocuments.bind(this));
 
         for (var i = 0; i < allCookies.length; ++i) {
             var pushed = false;
