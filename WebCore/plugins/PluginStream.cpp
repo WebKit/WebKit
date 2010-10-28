@@ -413,7 +413,6 @@ void PluginStream::didReceiveResponse(NetscapePlugInStreamLoader* loader, const 
 void PluginStream::didReceiveData(NetscapePlugInStreamLoader* loader, const char* data, int length)
 {
     ASSERT(loader == m_loader);
-    ASSERT(length > 0);
     ASSERT(m_streamState == StreamStarted);
 
     // If the plug-in cancels the stream in deliverData it could be deleted, 
