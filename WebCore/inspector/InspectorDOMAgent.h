@@ -207,7 +207,6 @@ namespace WebCore {
 
         PassRefPtr<InspectorObject> buildObjectForStyle(CSSStyleDeclaration*, bool bind);
         void populateObjectWithStyleProperties(CSSStyleDeclaration*, InspectorObject* result);
-        PassRefPtr<InspectorArray> buildArrayForDisabledStyleProperties(DisabledStyleDeclaration*);
         PassRefPtr<InspectorObject> buildObjectForRule(Document* ownerDocument, CSSStyleRule*);
         PassRefPtr<InspectorObject> buildObjectForStyleSheet(Document* ownerDocument, CSSStyleSheet*);
         Vector<String> longhandProperties(CSSStyleDeclaration*, const String& shorthandProperty);

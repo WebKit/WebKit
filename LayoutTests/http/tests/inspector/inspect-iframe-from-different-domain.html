@@ -77,7 +77,7 @@ function frontend_dumpIFrameBackground(testController)
                 }
 
                 for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
-                    var rule = WebInspector.CSSStyleDeclaration.parseRule(styles.matchedCSSRules[i]);
+                    var rule = WebInspector.CSSRule.parsePayload(styles.matchedCSSRules[i]);
                     if (rule.isUser || rule.isUserAgent)
                         continue;
                     var bg = rule.style.getShorthandValue("background");

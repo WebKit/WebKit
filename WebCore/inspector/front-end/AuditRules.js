@@ -286,8 +286,8 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
             var testedSelectors = {};
             for (var i = 0; i < styleSheets.length; ++i) {
                 var styleSheet = styleSheets[i];
-                for (var curRule = 0; curRule < styleSheet.cssRules.length; ++curRule) {
-                    var rule = styleSheet.cssRules[curRule];
+                for (var curRule = 0; curRule < styleSheet.rules.length; ++curRule) {
+                    var rule = styleSheet.rules[curRule];
                     if (rule.selectorText.match(pseudoSelectorRegexp))
                         continue;
                     selectors.push(rule.selectorText);
@@ -307,9 +307,10 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     var stylesheetSize = 0;
                     var unusedStylesheetSize = 0;
                     var unusedRules = [];
-                    for (var curRule = 0; curRule < styleSheet.cssRules.length; ++curRule) {
-                        var rule = styleSheet.cssRules[curRule];
-                        var textLength = rule.cssText ? rule.cssText.length : 0;
+                    for (var curRule = 0; curRule < styleSheet.rules.length; ++curRule) {
+                        var rule = styleSheet.rules[curRule];
+                        // FIXME: replace this by an exact computation once source ranges are available
+                        var textLength = rule.style.cssText ? rule.style.cssText.length + rule.selectorText.length : 0;
                         stylesheetSize += textLength;
                         if (!testedSelectors[rule.selectorText] || foundSelectors[rule.selectorText])
                             continue;
@@ -322,7 +323,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     if (!unusedRules.length)
                         continue;
 
-                    var url = styleSheet.href ? WebInspector.AuditRuleResult.linkifyDisplayName(styleSheet.href) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
+                    var url = styleSheet.sourceURL ? WebInspector.AuditRuleResult.linkifyDisplayName(styleSheet.sourceURL) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
                     var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
                     if (!summary)
                         summary = result.addChild("", true);
@@ -657,7 +658,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             if (completeSrc)
                 src = completeSrc;
 
-            const computedStyle = new WebInspector.CSSStyleDeclaration(styles.computedStyle);
+            const computedStyle = WebInspector.CSSStyleDeclaration.parsePayload(styles.computedStyle);
             if (computedStyle.getPropertyValue("position") === "absolute") {
                 if (!context.imagesLeft)
                     doneCallback(context);
@@ -668,7 +669,7 @@ WebInspector.AuditRules.ImageDimensionsRule.prototype = {
             var heightFound = "height" in styles.styleAttributes;
 
             for (var i = styles.matchedCSSRules.length - 1; i >= 0 && !(widthFound && heightFound); --i) {
-                var style = WebInspector.CSSStyleDeclaration.parseRule(styles.matchedCSSRules[i]).style;
+                var style = WebInspector.CSSRule.parsePayload(styles.matchedCSSRules[i]).style;
                 if (style.getPropertyValue("width") !== "")
                     widthFound = true;
                 if (style.getPropertyValue("height") !== "")

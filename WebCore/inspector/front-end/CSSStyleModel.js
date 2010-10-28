@@ -32,15 +32,84 @@ WebInspector.CSSStyleModel = function()
 {
 }
 
+WebInspector.CSSStyleModel.parseRuleArrayPayload = function(ruleArray)
+{
+    var result = [];
+    for (var i = 0; i < ruleArray.length; ++i)
+        result.push(WebInspector.CSSRule.parsePayload(ruleArray[i]));
+    return result;
+}
+
 WebInspector.CSSStyleModel.prototype = {
-    getStylesAsync: function(nodeId, authOnly, userCallback)
+    getStylesAsync: function(nodeId, userCallback)
     {
-        InspectorBackend.getStyles(nodeId, authOnly, userCallback);
+        function callback(userCallback, payload)
+        {
+            if (!payload) {
+                if (userCallback)
+                    userCallback(null);
+                return;
+            }
+
+            var result = {};
+            if ("inlineStyle" in payload)
+                result.inlineStyle = WebInspector.CSSStyleDeclaration.parsePayload(payload.inlineStyle);
+
+            result.computedStyle = WebInspector.CSSStyleDeclaration.parsePayload(payload.computedStyle);
+            result.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(payload.matchedCSSRules);
+
+            result.styleAttributes = {};
+            for (var name in payload.styleAttributes)
+                result.styleAttributes[name] = WebInspector.CSSStyleDeclaration.parsePayload(payload.styleAttributes[name]);
+
+            result.pseudoElements = [];
+            for (var i = 0; i < payload.pseudoElements.length; ++i) {
+                var entryPayload = payload.pseudoElements[i];
+                result.pseudoElements.push({ pseudoId: entryPayload.pseudoId, rules: WebInspector.CSSStyleModel.parseRuleArrayPayload(entryPayload.rules) });
+            }
+
+            result.inherited = [];
+            for (var i = 0; i < payload.inherited.length; ++i) {
+                var entryPayload = payload.inherited[i];
+                var entry = {};
+                if ("inlineStyle" in entryPayload)
+                    entry.inlineStyle = WebInspector.CSSStyleDeclaration.parsePayload(entryPayload.inlineStyle);
+                if ("matchedCSSRules" in entryPayload)
+                    entry.matchedCSSRules = WebInspector.CSSStyleModel.parseRuleArrayPayload(entryPayload.matchedCSSRules);
+                result.inherited.push(entry);
+            }
+
+            if (userCallback)
+                userCallback(result);
+        }
+
+        InspectorBackend.getStyles(nodeId, false, callback.bind(null, userCallback));
     },
 
     getComputedStyleAsync: function(nodeId, userCallback)
     {
-        InspectorBackend.getComputedStyle(nodeId, userCallback);
+        function callback(userCallback, stylePayload)
+        {
+            if (!stylePayload)
+                userCallback(null);
+            else
+                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(stylePayload));
+        }
+
+        InspectorBackend.getComputedStyle(nodeId, callback.bind(null, userCallback));
+    },
+
+    getInlineStyleAsync: function(nodeId, userCallback)
+    {
+        function callback(userCallback, stylePayload)
+        {
+            if (!stylePayload)
+                userCallback(null);
+            else
+                userCallback(WebInspector.CSSStyleDeclaration.parsePayload(stylePayload));
+        }
+
+        InspectorBackend.getInlineStyle(nodeId, callback.bind(null, userCallback));
     },
 
     setRuleSelector: function(ruleId, newContent, nodeId, successCallback, failureCallback)
@@ -73,39 +142,8 @@ WebInspector.CSSStyleModel.prototype = {
         InspectorBackend.addRule(newContent, nodeId, callback);
     },
 
-    toggleStyleEnabled: function(styleId, propertyName, disabled, userCallback)
-    {
-        function callback(newPayload)
-        {
-            if (!newPayload) {
-                userCallback(null);
-                return;
-            }
-
-            var newStyle = WebInspector.CSSStyleDeclaration.parseStyle(newPayload);
-            userCallback(newStyle);
-        }
-
-        InspectorBackend.toggleStyleEnabled(styleId, propertyName, disabled, callback);
-    },
-
     setCSSText: function(styleId, cssText)
     {
         InspectorBackend.setStyleText(styleId, cssText);
-    },
-
-    applyStyleText: function(styleId, styleText, propertyName, successCallback, failureCallback)
-    {
-        function callback(success, newPayload)
-        {
-            if (!success)
-                failureCallback();
-            else {
-                var newStyle = newPayload ? WebInspector.CSSStyleDeclaration.parseStyle(newPayload) : null;
-                successCallback(newStyle);
-            }
-        }
-
-        InspectorBackend.applyStyleText(styleId, styleText, propertyName, callback);
     }
 }
