@@ -1151,7 +1151,20 @@ void WebGLRenderingContext::generateMipmap(unsigned long target)
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
+    // generateMipmap won't work properly if minFilter is not NEAREST_MIPMAP_LINEAR
+    // on Mac.  Remove the hack once this driver bug is fixed.
+#if OS(DARWIN)
+    bool needToResetMinFilter = false;
+    if (tex->getMinFilter() != GraphicsContext3D::NEAREST_MIPMAP_LINEAR) {
+        m_context->texParameteri(target, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::NEAREST_MIPMAP_LINEAR);
+        needToResetMinFilter = true;
+    }
+#endif
     m_context->generateMipmap(target);
+#if OS(DARWIN)
+    if (needToResetMinFilter)
+        m_context->texParameteri(target, GraphicsContext3D::TEXTURE_MIN_FILTER, tex->getMinFilter());
+#endif
     tex->generateMipmapLevelInfo();
     cleanupAfterGraphicsCall(false);
 }

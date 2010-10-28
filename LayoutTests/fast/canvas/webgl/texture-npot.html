@@ -188,11 +188,10 @@ gl.generateMipmap(gl.TEXTURE_CUBE_MAP);
 glErrorShouldBe(gl, gl.NO_ERROR,
     "gl.generateMipmap with POT texture should return succeed");
 
-// FIXME: add the test back once the bug is fixed.
-//wtu.drawQuad(gl);
-//wtu.checkCanvas(
-//    gl, [0, 192, 128, 255],
-//    "POT cubemap with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw.");
+wtu.drawQuad(gl);
+wtu.checkCanvas(
+    gl, [0, 192, 128, 255],
+    "POT cubemap with TEXTURE_MIN_FILTER set to LINEAR_MIPMAP_LINEAR should draw.");
 
 successfullyParsed = true;
 
