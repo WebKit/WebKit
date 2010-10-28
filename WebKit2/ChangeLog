@@ -1,3 +1,43 @@
+2010-10-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add WebKit2 API for window feature getter/setters
+        <rdar://problem/8590373>
+        https://bugs.webkit.org/show_bug.cgi?id=48496
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setToolbarsAreVisible):
+        (WebKit::WebPageProxy::getToolbarsAreVisible):
+        (WebKit::WebPageProxy::setMenuBarIsVisible):
+        (WebKit::WebPageProxy::getMenuBarIsVisible):
+        (WebKit::WebPageProxy::setStatusBarIsVisible):
+        (WebKit::WebPageProxy::getStatusBarIsVisible):
+        (WebKit::WebPageProxy::setIsResizable):
+        (WebKit::WebPageProxy::getIsResizable):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::toolbarsAreVisible):
+        (WebKit::WebUIClient::setToolbarsAreVisible):
+        (WebKit::WebUIClient::menuBarIsVisible):
+        (WebKit::WebUIClient::setMenuBarIsVisible):
+        (WebKit::WebUIClient::statusBarIsVisible):
+        (WebKit::WebUIClient::setStatusBarIsVisible):
+        (WebKit::WebUIClient::isResizable):
+        (WebKit::WebUIClient::setIsResizable):
+        * UIProcess/WebUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setToolbarsVisible):
+        (WebKit::WebChromeClient::toolbarsVisible):
+        (WebKit::WebChromeClient::setStatusbarVisible):
+        (WebKit::WebChromeClient::statusbarVisible):
+        (WebKit::WebChromeClient::setMenubarVisible):
+        (WebKit::WebChromeClient::menubarVisible):
+        (WebKit::WebChromeClient::setResizable):
+        Plumb through the calls.
+
 2010-10-28  Dan Bernstein  <mitz@apple.com>
 
         Build fix.

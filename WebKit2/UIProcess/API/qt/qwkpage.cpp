@@ -319,6 +319,14 @@ QWKPage::QWKPage(WKPageNamespaceRef namespaceRef)
         0,  /* setStatusText */
         0,  /* mouseDidMoveOverElement */
         0,  /* didNotHandleKeyEvent */
+        0,  /* toolbarsAreVisible */
+        0,  /* setToolbarsAreVisible */
+        0,  /* menuBarIsVisible */
+        0,  /* setMenuBarIsVisible */
+        0,  /* statusBarIsVisible */
+        0,  /* setStatusBarIsVisible */
+        0,  /* isResizable */
+        0,  /* setIsResizable */
         0,  /* getWindowFrame */
         0,  /* setWindowFrame */
         0,  /* runBeforeUnloadConfirmPanel */

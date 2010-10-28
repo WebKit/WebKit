@@ -585,6 +585,14 @@ static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKF
         setStatusText,
         mouseDidMoveOverElement,
         0,          /* didNotHandleKeyEvent */
+        0,          /* toolbarsAreVisible */
+        0,          /* setToolbarsAreVisible */
+        0,          /* menuBarIsVisible */
+        0,          /* setMenuBarIsVisible */
+        0,          /* statusBarIsVisible */
+        0,          /* setStatusBarIsVisible */
+        0,          /* isResizable */
+        0,          /* setIsResizable */
         getWindowFrame,
         setWindowFrame,
         runBeforeUnloadConfirmPanel,

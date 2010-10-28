@@ -148,6 +148,62 @@ void WebUIClient::didNotHandleKeyEvent(WebPageProxy* page, const NativeWebKeyboa
     m_pageUIClient.didNotHandleKeyEvent(toAPI(page), event.nativeEvent(), m_pageUIClient.clientInfo);
 }
 
+bool WebUIClient::toolbarsAreVisible(WebPageProxy* page)
+{
+    if (!m_pageUIClient.toolbarsAreVisible)
+        return true;
+    return m_pageUIClient.toolbarsAreVisible(toAPI(page), m_pageUIClient.clientInfo);
+
+}
+void WebUIClient::setToolbarsAreVisible(WebPageProxy* page, bool visible)
+{
+    if (!m_pageUIClient.setToolbarsAreVisible)
+        return;
+    m_pageUIClient.setToolbarsAreVisible(toAPI(page), visible, m_pageUIClient.clientInfo);
+}
+
+bool WebUIClient::menuBarIsVisible(WebPageProxy* page)
+{
+    if (!m_pageUIClient.menuBarIsVisible)
+        return true;
+    return m_pageUIClient.menuBarIsVisible(toAPI(page), m_pageUIClient.clientInfo);
+}
+
+void WebUIClient::setMenuBarIsVisible(WebPageProxy* page, bool visible)
+{
+    if (!m_pageUIClient.setMenuBarIsVisible)
+        return;
+    m_pageUIClient.setMenuBarIsVisible(toAPI(page), visible, m_pageUIClient.clientInfo);
+}
+
+bool WebUIClient::statusBarIsVisible(WebPageProxy* page)
+{
+    if (!m_pageUIClient.statusBarIsVisible)
+        return true;
+    return m_pageUIClient.statusBarIsVisible(toAPI(page), m_pageUIClient.clientInfo);
+}
+
+void WebUIClient::setStatusBarIsVisible(WebPageProxy* page, bool visible)
+{
+    if (!m_pageUIClient.setStatusBarIsVisible)
+        return;
+    m_pageUIClient.setStatusBarIsVisible(toAPI(page), visible, m_pageUIClient.clientInfo);
+}
+
+bool WebUIClient::isResizable(WebPageProxy* page)
+{
+    if (!m_pageUIClient.isResizable)
+        return true;
+    return m_pageUIClient.isResizable(toAPI(page), m_pageUIClient.clientInfo);
+}
+
+void WebUIClient::setIsResizable(WebPageProxy* page, bool resizable)
+{
+    if (!m_pageUIClient.setIsResizable)
+        return;
+    m_pageUIClient.setIsResizable(toAPI(page), resizable, m_pageUIClient.clientInfo);
+}
+
 void WebUIClient::setWindowFrame(WebPageProxy* page, const FloatRect& frame)
 {
     if (!m_pageUIClient.setWindowFrame)

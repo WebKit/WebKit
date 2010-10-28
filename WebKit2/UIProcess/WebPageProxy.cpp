@@ -941,6 +941,46 @@ void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::Ar
     m_uiClient.mouseDidMoveOverElement(this, modifiers, userData.get());
 }
 
+void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
+{
+    m_uiClient.setToolbarsAreVisible(this, toolbarsAreVisible);
+}
+
+void WebPageProxy::getToolbarsAreVisible(bool& toolbarsAreVisible)
+{
+    toolbarsAreVisible = m_uiClient.toolbarsAreVisible(this);
+}
+
+void WebPageProxy::setMenuBarIsVisible(bool menuBarIsVisible)
+{
+    m_uiClient.setMenuBarIsVisible(this, menuBarIsVisible);
+}
+
+void WebPageProxy::getMenuBarIsVisible(bool& menuBarIsVisible)
+{
+    menuBarIsVisible = m_uiClient.menuBarIsVisible(this);
+}
+
+void WebPageProxy::setStatusBarIsVisible(bool statusBarIsVisible)
+{
+    m_uiClient.setStatusBarIsVisible(this, statusBarIsVisible);
+}
+
+void WebPageProxy::getStatusBarIsVisible(bool& statusBarIsVisible)
+{
+    statusBarIsVisible = m_uiClient.statusBarIsVisible(this);
+}
+
+void WebPageProxy::setIsResizable(bool isResizable)
+{
+    m_uiClient.setIsResizable(this, isResizable);
+}
+
+void WebPageProxy::getIsResizable(bool& isResizable)
+{
+    isResizable = m_uiClient.isResizable(this);
+}
+
 void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
 {
     m_uiClient.setWindowFrame(this, m_pageClient->convertToDeviceSpace(newWindowFrame));

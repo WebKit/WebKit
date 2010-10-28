@@ -36,6 +36,14 @@ messages -> WebPageProxy {
     SetStatusText(WTF::String statusText)
     SetToolTip(WTF::String toolTip)
     TakeFocus(bool direction)
+    SetToolbarsAreVisible(bool toolbarsAreVisible)
+    GetToolbarsAreVisible() -> (bool toolbarsAreVisible)
+    SetMenuBarIsVisible(bool menuBarIsVisible);
+    GetMenuBarIsVisible() -> (bool menuBarIsVisible);
+    SetStatusBarIsVisible(bool statusBarIsVisible)
+    GetStatusBarIsVisible() -> (bool statusBarIsVisible)
+    SetIsResizable(bool isResizable)
+    GetIsResizable() -> (bool isResizable)
     SetWindowFrame(WebCore::FloatRect windowFrame)
     GetWindowFrame() -> (WebCore::FloatRect windowFrame)
     CanRunBeforeUnloadConfirmPanel() -> (bool canRun)

@@ -275,6 +275,14 @@ private:
     void runJavaScriptPrompt(uint64_t frameID, const String&, const String&, String& result);
     void setStatusText(const String&);
     void mouseDidMoveOverElement(uint32_t modifiers, CoreIPC::ArgumentDecoder*);
+    void setToolbarsAreVisible(bool toolbarsAreVisible);
+    void getToolbarsAreVisible(bool& toolbarsAreVisible);
+    void setMenuBarIsVisible(bool menuBarIsVisible);
+    void getMenuBarIsVisible(bool& menuBarIsVisible);
+    void setStatusBarIsVisible(bool statusBarIsVisible);
+    void getStatusBarIsVisible(bool& statusBarIsVisible);
+    void setIsResizable(bool isResizable);
+    void getIsResizable(bool& isResizable);
     void setWindowFrame(const WebCore::FloatRect&);
     void getWindowFrame(WebCore::FloatRect&);
     void canRunBeforeUnloadConfirmPanel(bool& canRun);

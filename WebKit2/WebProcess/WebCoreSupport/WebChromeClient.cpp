@@ -148,26 +148,36 @@ void WebChromeClient::runModal()
     notImplemented();
 }
 
-void WebChromeClient::setToolbarsVisible(bool)
+void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)
 {
-    notImplemented();
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetToolbarsAreVisible(toolbarsAreVisible), m_page->pageID());
 }
 
 bool WebChromeClient::toolbarsVisible()
 {
-    notImplemented();
-    return true;
+    bool toolbarsAreVisible = true;
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetToolbarsAreVisible(),
+            Messages::WebPageProxy::GetToolbarsAreVisible::Reply(toolbarsAreVisible),
+            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+        return true;
+
+    return toolbarsAreVisible;
 }
 
-void WebChromeClient::setStatusbarVisible(bool)
+void WebChromeClient::setStatusbarVisible(bool statusBarIsVisible)
 {
-    notImplemented();
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetStatusBarIsVisible(statusBarIsVisible), m_page->pageID());
 }
 
 bool WebChromeClient::statusbarVisible()
 {
-    notImplemented();
-    return true;
+    bool statusBarIsVisible = true;
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetStatusBarIsVisible(),
+            Messages::WebPageProxy::GetStatusBarIsVisible::Reply(statusBarIsVisible),
+            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+        return true;
+
+    return statusBarIsVisible;
 }
 
 void WebChromeClient::setScrollbarsVisible(bool)
@@ -181,20 +191,25 @@ bool WebChromeClient::scrollbarsVisible()
     return true;
 }
 
-void WebChromeClient::setMenubarVisible(bool)
+void WebChromeClient::setMenubarVisible(bool menuBarVisible)
 {
-    notImplemented();
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetMenuBarIsVisible(menuBarVisible), m_page->pageID());
 }
 
 bool WebChromeClient::menubarVisible()
 {
-    notImplemented();
-    return true;
+    bool menuBarIsVisible = true;
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetMenuBarIsVisible(),
+            Messages::WebPageProxy::GetMenuBarIsVisible::Reply(menuBarIsVisible),
+            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+        return true;
+
+    return menuBarIsVisible;
 }
 
-void WebChromeClient::setResizable(bool)
+void WebChromeClient::setResizable(bool resizable)
 {
-    notImplemented();
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetIsResizable(resizable), m_page->pageID());
 }
 
 void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID)
