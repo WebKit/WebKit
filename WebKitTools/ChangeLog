@@ -1,5 +1,24 @@
 2010-10-27  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Barth.
+
+        webkit-patch suggest-reviewers -g 260550a6e30b7bf34f16bdb4a5396cf26264fc1c is very slow
+        https://bugs.webkit.org/show_bug.cgi?id=48500
+
+        This doesn't fix the problem, but it makes things slightly better.
+        Each git svn find-rev call takes about .25 seconds on my desktop.
+        This patch uses a new memoized class to avoid those calls when possible.
+
+        The real slowness is still git log on some files, like:
+        git log --pretty=format:%H -5 -- /Projects/WebKit/WebCore/platform/wx/SearchPopupMenuWx.h
+        I'm not yet sure how to make the pathological git logs better.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+        * Scripts/webkitpy/common/memoized.py: Added.
+        * Scripts/webkitpy/common/memoized_unittest.py: Added.
+
+2010-10-27  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Ojan Vafai.
 
         EWS bots should not use --quiet when running build-webkit
