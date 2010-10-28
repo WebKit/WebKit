@@ -140,11 +140,11 @@ function testAlpha(alpha)
     else
         shouldBeNonNull("webGL = getWebGL('alphaOff', { alpha: false, depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 0 ], 1, 0)");
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBeNonNull("contextAttribs.alpha");
-    shouldBeNonNull("contextAttribs.depth");
-    shouldBeNonNull("contextAttribs.stencil");
-    shouldBeNonNull("contextAttribs.antialias");
-    shouldBeNonNull("contextAttribs.premultipliedAlpha");
+    shouldBeDefined("contextAttribs.alpha");
+    shouldBeDefined("contextAttribs.depth");
+    shouldBeDefined("contextAttribs.stencil");
+    shouldBeDefined("contextAttribs.antialias");
+    shouldBeDefined("contextAttribs.premultipliedAlpha");
 
     var buf = new Uint8Array(1 * 1 * 4);
     webGL.readPixels(0, 0, 1, 1, webGL.RGBA, webGL.UNSIGNED_BYTE, buf);
@@ -164,11 +164,11 @@ function testDepth(depth)
     else
         shouldBeNonNull("webGL = getWebGL('depthOff', { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBeNonNull("contextAttribs.depth");
-    shouldBeNonNull("contextAttribs.alpha");
-    shouldBeNonNull("contextAttribs.stencil");
-    shouldBeNonNull("contextAttribs.antialias");
-    shouldBeNonNull("contextAttribs.premultipliedAlpha");
+    shouldBeDefined("contextAttribs.depth");
+    shouldBeDefined("contextAttribs.alpha");
+    shouldBeDefined("contextAttribs.stencil");
+    shouldBeDefined("contextAttribs.antialias");
+    shouldBeDefined("contextAttribs.premultipliedAlpha");
 
     webGL.depthFunc(webGL.NEVER);
 
@@ -204,11 +204,11 @@ function testStencil(stencil)
     else
         shouldBeNonNull("webGL = getWebGL('stencilOff', { depth: false, stencil: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBeNonNull("contextAttribs.depth");
-    shouldBeNonNull("contextAttribs.alpha");
-    shouldBeNonNull("contextAttribs.stencil");
-    shouldBeNonNull("contextAttribs.antialias");
-    shouldBeNonNull("contextAttribs.premultipliedAlpha");
+    shouldBeDefined("contextAttribs.depth");
+    shouldBeDefined("contextAttribs.alpha");
+    shouldBeDefined("contextAttribs.stencil");
+    shouldBeDefined("contextAttribs.antialias");
+    shouldBeDefined("contextAttribs.premultipliedAlpha");
 
     webGL.depthFunc(webGL.ALWAYS);
 
@@ -247,11 +247,11 @@ function testAntialias(antialias)
     else
         shouldBeNonNull("webGL = getWebGL('antialiasOff', { depth: false, stencil: false, alpha: false, antialias: false }, [ 0, 0, 0, 1 ], 1, 0)");
     shouldBeNonNull("contextAttribs = webGL.getContextAttributes()");
-    shouldBeNonNull("contextAttribs.depth");
-    shouldBeNonNull("contextAttribs.alpha");
-    shouldBeNonNull("contextAttribs.stencil");
-    shouldBeNonNull("contextAttribs.antialias");
-    shouldBeNonNull("contextAttribs.premultipliedAlpha");
+    shouldBeDefined("contextAttribs.depth");
+    shouldBeDefined("contextAttribs.alpha");
+    shouldBeDefined("contextAttribs.stencil");
+    shouldBeDefined("contextAttribs.antialias");
+    shouldBeDefined("contextAttribs.premultipliedAlpha");
 
     var vertices = new Float32Array([
          1.0, 1.0, 0.0,

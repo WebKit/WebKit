@@ -219,6 +219,24 @@ function shouldBeUndefined(_a)
     testFailed(_a + " should be undefined. Was " + _av);
 }
 
+function shouldBeDefined(_a)
+{
+  var exception;
+  var _av;
+  try {
+     _av = eval(_a);
+  } catch (e) {
+     exception = e;
+  }
+
+  if (exception)
+    testFailed(_a + " should be defined. Threw exception " + exception);
+  else if (_av !== undefined)
+    testPassed(_a + " is defined.");
+  else
+    testFailed(_a + " should be defined. Was " + _av);
+}
+
 function shouldBeGreaterThanOrEqual(_a, _b) {
     if (typeof _a != "string" || typeof _b != "string")
         debug("WARN: shouldBeGreaterThanOrEqual expects string arguments");
