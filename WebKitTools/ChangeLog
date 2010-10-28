@@ -1,3 +1,16 @@
+2010-10-27  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] add a master-name flag to new-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=48488
+
+        The test results server now allows adding a master name to
+        the uploaded files. This lets us distinguish bots that have
+        the same name, but are on different masters.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-10-28  Adam Roben  <aroben@apple.com>
 
         Don't append a newline to the test output if the frame has no document

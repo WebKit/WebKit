@@ -950,7 +950,12 @@ class TestRunner:
         _log.info("Uploading JSON files for builder: %s",
                    self._options.builder_name)
 
-        attrs = [("builder", self._options.builder_name)]
+        attrs = [("builder", self._options.builder_name), ("testtype", "layout-tests")]
+        # FIXME: master_name should be required if test_results_server is set.
+        # Throw an error if master_name isn't set.
+        if self._options.master_name:
+            attrs.append(("master", self._options.master_name))
+
         json_files = ["expectations.json"]
         if self._options.upload_full_results:
             json_files.append("results.json")
@@ -1680,6 +1685,7 @@ def parse_args(args=None):
 
     # FIXME: Move these into json_results_generator.py
     results_json_options = [
+        optparse.make_option("--master-name", help="The name of the buildbot master."),
         optparse.make_option("--builder-name", default="DUMMY_BUILDER_NAME",
             help=("The name of the builder shown on the waterfall running "
                   "this script e.g. WebKit.")),
