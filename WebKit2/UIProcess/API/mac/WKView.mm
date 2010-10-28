@@ -47,6 +47,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/KeyboardEvent.h>
 #import <WebCore/PlatformScreen.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
@@ -87,6 +88,11 @@ struct EditCommandState {
     HashMap<String, EditCommandState> _menuMap;
 
     OwnPtr<FindIndicatorWindow> _findIndicatorWindow;
+    // We keep here the event when resending it to
+    // the application to distinguish the case of a new event from one 
+    // that has been already sent to WebCore.
+    NSEvent *_keyDownEventBeingResent;
+    Vector<KeypressCommand> _commandsList;
 }
 @end
 
@@ -260,7 +266,7 @@ WEBCORE_COMMAND(selectAll)
         return info.m_isEnabled;
     }
 
-    return NO;
+    return YES;
 }
 
 // Events
@@ -295,6 +301,86 @@ EVENT_HANDLER(otherMouseDragged, Mouse)
 EVENT_HANDLER(scrollWheel, Wheel)
 
 #undef EVENT_HANDLER
+
+- (void)doCommandBySelector:(SEL)selector
+{
+    if (selector != @selector(noop:))
+        _data->_commandsList.append(KeypressCommand(commandNameForSelector(selector)));
+}
+
+- (void)insertText:(id)string
+{
+    _data->_commandsList.append(KeypressCommand("insertText", string));
+}
+
+- (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
+{
+    if (([event modifierFlags] & NSDeviceIndependentModifierFlagsMask) != NSCommandKeyMask)
+        return NO;
+    
+    // Here we special case cmd+b and cmd+i but not cmd+u, for historic reason.
+    // This should not be changed, since it could break some Mac applications that
+    // rely on this inherent behavior.
+    // See https://bugs.webkit.org/show_bug.cgi?id=24943
+    
+    NSString *string = [event characters];
+    if ([string caseInsensitiveCompare:@"b"] == NSOrderedSame) {
+        _data->_page->executeEditCommand("ToggleBold");
+        return YES;
+    }
+    if ([string caseInsensitiveCompare:@"i"] == NSOrderedSame) {
+        _data->_page->executeEditCommand("ToggleItalic");
+        return YES;
+    }
+    
+    return NO;
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent *)event
+{
+    // There's a chance that responding to this event will run a nested event loop, and
+    // fetching a new event might release the old one. Retaining and then autoreleasing
+    // the current event prevents that from causing a problem inside WebKit or AppKit code.
+    [[event retain] autorelease];
+    
+    BOOL eventWasSentToWebCore = (_data->_keyDownEventBeingResent == event);
+    BOOL ret = NO;
+    
+    [_data->_keyDownEventBeingResent release];
+    _data->_keyDownEventBeingResent = nil;
+    
+    [self retain];
+    
+    // Pass key combos through WebCore if there is a key binding available for
+    // this event. This lets web pages have a crack at intercepting key-modified keypresses.
+    // But don't do it if we have already handled the event.
+    // Pressing Esc results in a fake event being sent - don't pass it to WebCore.
+    if (!eventWasSentToWebCore && event == [NSApp currentEvent] && self == [[self window] firstResponder]) {
+        _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, self));
+        return YES;
+    }
+    
+    ret = [self _handleStyleKeyEquivalent:event] || [super performKeyEquivalent:event];
+    
+    [self release];
+    
+    return ret;
+}
+
+- (void)_setEventBeingResent:(NSEvent *)event
+{
+    _data->_keyDownEventBeingResent = [event retain];
+}
+
+- (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent
+{
+    _data->_commandsList.clear();
+    // interpretKeyEvents will trigger one or more calls to doCommandBySelector or setText
+    // that will populate the commandsList vector.
+    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    
+    return _data->_commandsList;
+}
 
 - (void)keyUp:(NSEvent *)theEvent
 {

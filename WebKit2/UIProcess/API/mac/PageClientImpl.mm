@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "NativeWebKeyboardEvent.h"
 #import "PageClientImpl.h"
 
 #import "FindIndicator.h"
@@ -34,6 +35,7 @@
 #import <WebCore/Cursor.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/FoundationExtras.h>
+#import <webCore/KeyboardEvent.h>
 #import <wtf/PassOwnPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
@@ -214,6 +216,11 @@ void PageClientImpl::setEditCommandState(const String& commandName, bool isEnabl
     [m_wkView _setUserInterfaceItemState:nsStringFromWebCoreString(commandName) enabled:isEnabled state:newState];
 }
 
+void PageClientImpl::interceptKeyEvent(const NativeWebKeyboardEvent& event, Vector<WebCore::KeypressCommand>& commandsList)
+{
+    commandsList = [m_wkView _interceptKeyEvent:event.nativeEvent()];
+}
+
 FloatRect PageClientImpl::convertToDeviceSpace(const FloatRect& rect)
 {
     return [m_wkView _convertToDeviceSpace:rect];
@@ -224,8 +231,13 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
     return [m_wkView _convertToUserSpace:rect];
 }
 
-void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
+void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
 {
+    NSEvent* nativeEvent = event.nativeEvent();
+    if ([nativeEvent type] == NSKeyDown) {
+        [m_wkView _setEventBeingResent:nativeEvent];
+        [[NSApplication sharedApplication] sendEvent:nativeEvent];
+    }
 }
 
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy()

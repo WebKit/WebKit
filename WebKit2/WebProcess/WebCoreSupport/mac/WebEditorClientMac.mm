@@ -34,11 +34,14 @@
 
 #include "WebPage.h"
 #include "WebFrame.h"
+#include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/DocumentFragment.h>
 #include <WebCore/DOMDocumentFragmentInternal.h>
 #include <WebCore/DOMDocumentInternal.h>
 #include <WebCore/Frame.h>
+#include <WebCore/KeyboardEvent.h>
 #include <WebKit/WebResource.h>
 #include <WebKit/WebNSURLExtras.h>
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -58,6 +61,18 @@ using namespace WTF;
 
 namespace WebKit {
 
+void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
+{
+    if (m_page->interceptEditingKeyboardEvent(event, false))
+        event->setDefaultHandled();
+}
+
+void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
+{
+    if (m_page->interceptEditingKeyboardEvent(event, true))
+        event->setDefaultHandled();
+}
+    
 NSString *WebEditorClient::userVisibleString(NSURL *url)
 {
     return [url _web_userVisibleString];

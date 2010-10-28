@@ -1,3 +1,52 @@
+2010-10-27  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Support Appkit key bindings and custom key bindings in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=48271
+        <rdar://problem/7660723>
+        
+        We need to support AppKit key bindings and custom key bindings in WebKit2.
+        Every keyboard event is first sent to the WebProcess and we inform AppKit that
+        we don't need further processing. When the event is processed by the WebProcess and no handler consumes it,
+        we send a synchronous message back to the UI process to let AppKit perform the key bindings.
+        This operation can result in one or more editing commands to execute or a noop.
+        The WebProcess then replies back to the UI process to inform whether further processing is required, in
+        which case the event is sent back to the application to be mapped.
+        There is a potential for a race condition: in case the WebProcess is very slow to process the key events, the UI
+        process could be in a completely different state when the event is being resent (for example it might not have the
+        keyboard focus anymore) and the command could be lost. We should look out for user experience impact.
+
+        * Scripts/webkit2/messages.py: Added header file in the generated file.
+        * Shared/WebCoreArgumentCoders.h: Added encoder/decoder for KeypressCommand.
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::interceptKeyEvent): Pass-through call to WKView.
+        (WebKit::PageClientImpl::didNotHandleKeyEvent): Added logic to resend the event to the application.
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validateUserInterfaceItem:]): Changed the default return value to YES, otherwise no menu shortcut is performed.
+        (-[WKView doCommandBySelector:]): Added.
+        (-[WKView insertText:]): Added.
+        (-[WKView _handleStyleKeyEquivalent:]): Added to handle command-B and command-I.
+        (-[WKView performKeyEquivalent:]): Added to intercept key binding sequences.
+        (-[WKView _setEventBeingResent:]):
+        (-[WKView _interceptKeyEvent:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::interpretKeyEvent):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm:
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm: Moved handleKeyboardEvent and handleInputMethodKeydown
+        to the Mac specific implementation.
+        (WebKit::WebPage::interceptEditingKeyboardEvent): Added.
+
 2010-10-27  Brian Weinstein  <bweinstein@apple.com>
 
         More Windows build fixage. Copy another new header into WebKitOutputDir.

@@ -26,6 +26,8 @@
 #include "WebPage.h"
 
 #include "WebEvent.h"
+#include "WebPageProxyMessages.h"
+#include "WebProcess.h"
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KeyboardEvent.h>
@@ -46,139 +48,56 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore&)
 {
 }
 
-// FIXME: Editor commands should not be hard coded and instead should come from AppKit.  
-
-static const unsigned CtrlKey   = 1 << 0;
-static const unsigned AltKey    = 1 << 1;
-static const unsigned ShiftKey  = 1 << 2;
-static const unsigned MetaKey   = 1 << 3;
-
-// Keys with special meaning. These will be delegated to the editor using
-// the execCommand() method
-struct KeyDownEntry {
-    unsigned virtualKey;
-    unsigned modifiers;
-    const char* name;
-};
-
-struct KeyPressEntry {
-    unsigned charCode;
-    unsigned modifiers;
-    const char* name;
-};
-
-static const KeyDownEntry keyDownEntries[] = {
-    { VK_LEFT,     0,                   "MoveLeft"                                      },
-    { VK_LEFT,     ShiftKey,            "MoveLeftAndModifySelection"                    },
-    { VK_LEFT,     AltKey,              "MoveWordLeft"                                  },
-    { VK_LEFT,     AltKey | ShiftKey,   "MoveWordLeftAndModifySelection"                },
-    { VK_RIGHT,    0,                   "MoveRight"                                     },
-    { VK_RIGHT,    ShiftKey,            "MoveRightAndModifySelection"                   },
-    { VK_RIGHT,    AltKey,              "MoveWordRight"                                 },
-    { VK_RIGHT,    AltKey | ShiftKey,   "MoveWordRightAndModifySelection"               },
-    { VK_UP,       0,                   "MoveUp"                                        },
-    { VK_UP,       ShiftKey,            "MoveUpAndModifySelection"                      },
-    { VK_PRIOR,    ShiftKey,            "MovePageUpAndModifySelection"                  },
-    { VK_DOWN,     0,                   "MoveDown"                                      },
-    { VK_DOWN,     ShiftKey,            "MoveDownAndModifySelection"                    },
-    { VK_NEXT,     ShiftKey,            "MovePageDownAndModifySelection"                },
-    { VK_PRIOR,    0,                   "MovePageUp"                                    },
-    { VK_NEXT,     0,                   "MovePageDown"                                  },
-
-    { VK_HOME,     0,                   "MoveToBeginningOfLine"                         },
-    { VK_HOME,     ShiftKey,            "MoveToBeginningOfLineAndModifySelection"       },
-    { VK_LEFT,     MetaKey,             "MoveToBeginningOfLine"                         },
-    { VK_LEFT,     MetaKey | ShiftKey,  "MoveToBeginningOfLineAndModifySelection"       },
-    { VK_UP,       MetaKey,             "MoveToBeginningOfDocument"                     },
-    { VK_UP,       MetaKey | ShiftKey,  "MoveToBeginningOfDocumentAndModifySelection"   },
-
-    { VK_END,      0,                   "MoveToEndOfLine"                               },
-    { VK_END,      ShiftKey,            "MoveToEndOfLineAndModifySelection"             },
-    { VK_DOWN,     MetaKey,             "MoveToEndOfDocument"                           },
-    { VK_DOWN,     MetaKey | ShiftKey,  "MoveToEndOfDocumentAndModifySelection"         },
-    { VK_RIGHT,    MetaKey,             "MoveToEndOfLine"                               },
-    { VK_RIGHT,    MetaKey | ShiftKey,  "MoveToEndOfLineAndModifySelection"             },
-
-    { VK_BACK,     0,                   "DeleteBackward"                                },
-    { VK_BACK,     ShiftKey,            "DeleteBackward"                                },
-    { VK_DELETE,   0,                   "DeleteForward"                                 },
-    { VK_BACK,     AltKey,              "DeleteWordBackward"                            },
-    { VK_DELETE,   AltKey,              "DeleteWordForward"                             },
-
-    { 'B',         CtrlKey,             "ToggleBold"                                    },
-    { 'I',         CtrlKey,             "ToggleItalic"                                  },
-
-    { VK_ESCAPE,   0,                   "Cancel"                                        },
-    { VK_OEM_PERIOD, CtrlKey,           "Cancel"                                        },
-    { VK_TAB,      0,                   "InsertTab"                                     },
-    { VK_TAB,      ShiftKey,            "InsertBacktab"                                 },
-    { VK_RETURN,   0,                   "InsertNewline"                                 },
-    { VK_RETURN,   CtrlKey,             "InsertNewline"                                 },
-    { VK_RETURN,   AltKey,              "InsertNewline"                                 },
-    { VK_RETURN,   AltKey | ShiftKey,   "InsertNewline"                                 },
-    { VK_RETURN,   ShiftKey,            "InsertLineBreak"                               },
-
-    { 'C',         MetaKey,             "Copy"                                          },
-    { 'V',         MetaKey,             "Paste"                                         },
-    { 'X',         MetaKey,             "Cut"                                           },
-    { 'A',         MetaKey,             "SelectAll"                                     },
-    { VK_INSERT,   CtrlKey,             "Copy"                                          },
-    { VK_INSERT,   ShiftKey,            "Paste"                                         },
-    { VK_DELETE,   ShiftKey,            "Cut"                                           },
-    { 'Z',         MetaKey,             "Undo"                                          },
-    { 'Z',         MetaKey | ShiftKey,  "Redo"                                          },
-};
-
-static const KeyPressEntry keyPressEntries[] = {
-    { '\t',        0,                   "InsertTab"                                     },
-    { '\t',        ShiftKey,            "InsertBacktab"                                 },
-    { '\r',        0,                   "InsertNewline"                                 },
-    { '\r',        CtrlKey,             "InsertNewline"                                 },
-    { '\r',        ShiftKey,            "InsertLineBreak"                               },
-    { '\r',        AltKey,              "InsertNewline"                                 },
-    { '\r',        AltKey | ShiftKey,   "InsertNewline"                                 },
-};
-
-const char* WebPage::interpretKeyEvent(const KeyboardEvent* evt)
+// FIXME: need to add support for input methods
+    
+bool WebPage::interceptEditingKeyboardEvent(KeyboardEvent* evt, bool shouldSaveCommand)
 {
+    Node* node = evt->target()->toNode();
+    ASSERT(node);
+    Frame* frame = node->document()->frame();
+    ASSERT(frame);
+    
     const PlatformKeyboardEvent* keyEvent = evt->keyEvent();
-    ASSERT(keyEvent);
-
-    static HashMap<int, const char*>* keyDownCommandsMap = 0;
-    static HashMap<int, const char*>* keyPressCommandsMap = 0;
-
-    if (!keyDownCommandsMap) {
-        keyDownCommandsMap = new HashMap<int, const char*>;
-        keyPressCommandsMap = new HashMap<int, const char*>;
-
-        for (unsigned i = 0; i < (sizeof(keyDownEntries) / sizeof(keyDownEntries[0])); i++) {
-            keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey,
-                                    keyDownEntries[i].name);
+    if (!keyEvent)
+        return false;
+    const Vector<KeypressCommand>& commands = evt->keypressCommands();
+    bool hasKeypressCommand = !commands.isEmpty();
+    
+    bool eventWasHandled = false;
+    
+    if (shouldSaveCommand && !hasKeypressCommand) {
+        Vector<KeypressCommand> commandsList;        
+        if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(keyEvent->type()), 
+                                                         Messages::WebPageProxy::InterpretKeyEvent::Reply(commandsList),
+                                                         m_pageID, CoreIPC::Connection::NoTimeout))
+            return false;
+        for (size_t i = 0; i < commandsList.size(); i++)
+            evt->keypressCommands().append(commandsList[i]);
+    } else {
+        size_t size = commands.size();
+        // Are there commands that would just cause text insertion if executed via Editor?
+        // WebKit doesn't have enough information about mode to decide how they should be treated, so we leave it upon WebCore
+        // to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
+        // (e.g. Tab that inserts a Tab character, or Enter).
+        bool haveTextInsertionCommands = false;
+        for (size_t i = 0; i < size; ++i) {
+            if (frame->editor()->command(commands[i].commandName).isTextInsertion())
+                haveTextInsertionCommands = true;
         }
-
-        for (unsigned i = 0; i < (sizeof(keyPressEntries) / sizeof(keyPressEntries[0])); i++) {
-            keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode,
-                                     keyPressEntries[i].name);
+        if (!haveTextInsertionCommands || keyEvent->type() == PlatformKeyboardEvent::Char) {
+            for (size_t i = 0; i < size; ++i) {
+                if (commands[i].commandName == "insertText") {
+                    // Don't insert null or control characters as they can result in unexpected behaviour
+                    if (evt->charCode() < ' ')
+                        return false;
+                    eventWasHandled = frame->editor()->insertText(commands[i].text, evt);
+                } else
+                    if (frame->editor()->command(commands[i].commandName).isSupported())
+                        eventWasHandled = frame->editor()->command(commands[i].commandName).execute(evt);
+            }
         }
     }
-
-    unsigned modifiers = 0;
-    if (keyEvent->shiftKey())
-        modifiers |= ShiftKey;
-    if (keyEvent->altKey())
-        modifiers |= AltKey;
-    if (keyEvent->ctrlKey())
-        modifiers |= CtrlKey;
-    if (keyEvent->metaKey())
-        modifiers |= MetaKey;
-
-    if (keyEvent->type() == PlatformKeyboardEvent::RawKeyDown) {
-        int mapKey = modifiers << 16 | evt->keyCode();
-        return mapKey ? keyDownCommandsMap->get(mapKey) : 0;
-    }
-
-    int mapKey = modifiers << 16 | evt->charCode();
-    return mapKey ? keyPressCommandsMap->get(mapKey) : 0;
+    return eventWasHandled;
 }
 
 static inline void scroll(Page* page, ScrollDirection direction, ScrollGranularity granularity)

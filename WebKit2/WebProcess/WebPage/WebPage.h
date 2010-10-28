@@ -108,7 +108,9 @@ public:
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
+#if !PLATFORM(MAC)
     bool handleEditingKeyboardEvent(WebCore::KeyboardEvent*);
+#endif
     void show();
     String userAgent() const;
     WebCore::IntRect windowResizerRect() const;
@@ -167,6 +169,7 @@ public:
     bool windowIsVisible() const { return m_windowIsVisible; }
     const WebCore::IntRect& windowFrame() const { return m_windowFrame; }
     bool windowIsFocused() const;
+    bool interceptEditingKeyboardEvent(WebCore::KeyboardEvent*, bool);
 #elif PLATFORM(WIN)
     HWND nativeWindow() const { return m_nativeWindow; }
 #endif

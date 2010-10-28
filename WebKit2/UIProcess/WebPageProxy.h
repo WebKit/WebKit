@@ -43,6 +43,7 @@
 #include "WebUIClient.h"
 #include <WebCore/EditAction.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/KeyboardEvent.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
@@ -296,6 +297,11 @@ private:
     void registerEditCommandForUndo(uint64_t commandID, uint32_t editAction);
     void clearAllEditCommands();
 
+#if PLATFORM(MAC)
+    // Keyboard handling
+    void interpretKeyEvent(uint32_t eventType, Vector<WebCore::KeypressCommand>&);
+#endif
+    
     // Find.
     void didCountStringMatches(const String&, uint32_t matchCount);
     void setFindIndicator(const WebCore::FloatRect& selectionRect, const Vector<WebCore::FloatRect>& textRects, const SharedMemory::Handle& contentImageHandle, bool fadeOut);

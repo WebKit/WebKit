@@ -245,6 +245,7 @@ void WebEditorClient::redo()
     notImplemented();
 }
 
+#if !PLATFORM(MAC)
 void WebEditorClient::handleKeyboardEvent(KeyboardEvent* event)
 {
     if (m_page->handleEditingKeyboardEvent(event))
@@ -255,6 +256,7 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent*)
 {
     notImplemented();
 }
+#endif
 
 void WebEditorClient::textFieldDidBeginEditing(Element* element)
 {

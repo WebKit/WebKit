@@ -33,6 +33,7 @@
 #include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
@@ -229,6 +230,20 @@ template<> struct ArgumentCoder<WebCore::WindowFeatures> {
     }
 };
 
+#if PLATFORM(MAC)
+template<> struct ArgumentCoder<WebCore::KeypressCommand> {
+    static void encode(ArgumentEncoder* encoder, const WebCore::KeypressCommand& keypressCommand)
+    {
+        encoder->encode(CoreIPC::In(keypressCommand.commandName, keypressCommand.text));
+    }
+    
+    static bool decode(ArgumentDecoder* decoder, WebCore::KeypressCommand& keypressCommand)
+    {
+        return decoder->decode(CoreIPC::Out(keypressCommand.commandName, keypressCommand.text));
+    }
+};
+#endif
+    
 } // namespace CoreIPC
 
 #endif // WebCoreArgumentCoders_h

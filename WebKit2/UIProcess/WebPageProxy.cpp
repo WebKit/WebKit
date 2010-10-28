@@ -619,6 +619,13 @@ void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIP
     didReceiveSyncWebPageProxyMessage(connection, messageID, arguments, reply);
 }
 
+#if PLATFORM(MAC)
+void WebPageProxy::interpretKeyEvent(uint32_t type, Vector<KeypressCommand>& commandsList)
+{
+    m_pageClient->interceptKeyEvent(m_keyEventQueue.first(), commandsList);
+}
+#endif
+
 void WebPageProxy::didCreateMainFrame(uint64_t frameID)
 {
     ASSERT(!m_mainFrame);
