@@ -102,7 +102,7 @@ PassRefPtr<EntrySync> EntrySync::getParent() const
     return DirectoryEntrySync::create(m_fileSystem, parentPath);
 }
 
-EntrySync::EntrySync(DOMFileSystemBase* fileSystem, const String& fullPath)
+EntrySync::EntrySync(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
     : EntryBase(fileSystem, fullPath)
 {
 }

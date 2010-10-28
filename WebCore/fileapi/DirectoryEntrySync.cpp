@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-DirectoryEntrySync::DirectoryEntrySync(DOMFileSystemBase* fileSystem, const String& fullPath)
+DirectoryEntrySync::DirectoryEntrySync(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
     : EntrySync(fileSystem, fullPath)
 {
 }

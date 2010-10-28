@@ -35,6 +35,7 @@
 
 #include "DOMFilePath.h"
 #include "DirectoryEntry.h"
+#include "DirectoryReaderBase.h"
 #include "EntriesCallback.h"
 #include "EntryArray.h"
 #include "EntryBase.h"
@@ -190,7 +191,7 @@ bool DOMFileSystemBase::getDirectory(const EntryBase* base, const String& path, 
     return true;
 }
 
-bool DOMFileSystemBase::readDirectory(DirectoryReaderBase* reader, const String& path, PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+bool DOMFileSystemBase::readDirectory(PassRefPtr<DirectoryReaderBase> reader, const String& path, PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     ASSERT(DOMFilePath::isAbsolute(path));
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(path);

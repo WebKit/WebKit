@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-DirectoryReaderSync::DirectoryReaderSync(DOMFileSystemBase* fileSystem, const String& fullPath)
+DirectoryReaderSync::DirectoryReaderSync(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
     : DirectoryReaderBase(fileSystem, fullPath)
 {
 }

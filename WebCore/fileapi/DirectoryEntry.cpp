@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-DirectoryEntry::DirectoryEntry(DOMFileSystemBase* fileSystem, const String& fullPath)
+DirectoryEntry::DirectoryEntry(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
     : Entry(fileSystem, fullPath)
 {
 }

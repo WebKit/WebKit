@@ -43,7 +43,7 @@ class DOMFileSystemBase;
 
 class FileEntry : public Entry {
 public:
-    static PassRefPtr<FileEntry> create(DOMFileSystemBase* fileSystem, const String& fullPath)
+    static PassRefPtr<FileEntry> create(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
     {
         return adoptRef(new FileEntry(fileSystem, fullPath));
     }
@@ -54,7 +54,7 @@ public:
     virtual bool isFile() const { return true; }
 
 private:
-    FileEntry(DOMFileSystemBase* fileSystem, const String& fullPath);
+    FileEntry(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath);
 };
 
 } // namespace

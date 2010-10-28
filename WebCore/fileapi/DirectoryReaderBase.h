@@ -42,18 +42,18 @@ namespace WebCore {
 
 class DirectoryReaderBase : public RefCounted<DirectoryReaderBase> {
 public:
-    DOMFileSystemBase* filesystem() const { return m_fileSystem; }
+    DOMFileSystemBase* filesystem() const { return m_fileSystem.get(); }
     void setHasMoreEntries(bool hasMoreEntries) { m_hasMoreEntries = hasMoreEntries; }
 
 protected:
-    DirectoryReaderBase(DOMFileSystemBase* fileSystem, const String& fullPath)
+    DirectoryReaderBase(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
         : m_fileSystem(fileSystem)
         , m_fullPath(fullPath)
         , m_hasMoreEntries(true)
     {
     }
 
-    DOMFileSystemBase* m_fileSystem;
+    RefPtr<DOMFileSystemBase> m_fileSystem;
 
     // This is a virtual path.
     String m_fullPath;

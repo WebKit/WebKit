@@ -48,7 +48,7 @@ class EntryBase : public RefCounted<EntryBase> {
 public:
     virtual ~EntryBase() { }
 
-    DOMFileSystemBase* filesystem() const { return m_fileSystem; }
+    DOMFileSystemBase* filesystem() const { return m_fileSystem.get(); }
 
     virtual bool isFile() const { return false; }
     virtual bool isDirectory() const { return false; }
@@ -57,7 +57,7 @@ public:
     const String& name() const { return m_name; }
 
 protected:
-    EntryBase(DOMFileSystemBase* fileSystem, const String& fullPath)
+    EntryBase(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
         : m_fileSystem(fileSystem)
         , m_fullPath(fullPath)
         , m_name(DOMFilePath::getName(fullPath))
@@ -66,7 +66,7 @@ protected:
 
     friend class EntrySync;
 
-    DOMFileSystemBase* m_fileSystem;
+    RefPtr<DOMFileSystemBase> m_fileSystem;
 
     // This is a virtual path.
     String m_fullPath;

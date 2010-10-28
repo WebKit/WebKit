@@ -43,7 +43,7 @@ namespace WebCore {
 
 class DirectoryReaderSync : public DirectoryReaderBase {
 public:
-    static PassRefPtr<DirectoryReaderSync> create(DOMFileSystemBase* fileSystem, const String& fullPath)
+    static PassRefPtr<DirectoryReaderSync> create(PassRefPtr<DOMFileSystemBase> fileSystem, const String& fullPath)
     {
         return adoptRef(new DirectoryReaderSync(fileSystem, fullPath));
     }
@@ -51,7 +51,7 @@ public:
     PassRefPtr<EntryArraySync> readEntries(ExceptionCode&);
 
 private:
-    DirectoryReaderSync(DOMFileSystemBase*, const String& fullPath);
+    DirectoryReaderSync(PassRefPtr<DOMFileSystemBase>, const String& fullPath);
 };
 
 } // namespace

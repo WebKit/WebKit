@@ -72,7 +72,7 @@ public:
     bool getParent(const EntryBase*, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     bool getFile(const EntryBase*, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
     bool getDirectory(const EntryBase*, const String& path, PassRefPtr<Flags>, PassRefPtr<EntryCallback>, PassRefPtr<ErrorCallback>);
-    bool readDirectory(DirectoryReaderBase*, const String& path, PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>);
+    bool readDirectory(PassRefPtr<DirectoryReaderBase>, const String& path, PassRefPtr<EntriesCallback>, PassRefPtr<ErrorCallback>);
 
 protected:
     DOMFileSystemBase(const String& name, PassOwnPtr<AsyncFileSystem>);
