@@ -3189,9 +3189,6 @@ BUG47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
 // test_shell's build configuration does not compile webp in
 BUGWK47512 : fast/images/webp-image-decoding.html = TEXT
 
-// Need investigation
-BUGJAMESR DEBUG : fast/css/long-css-selector-matches.html = PASS TIMEOUT
-
 BUG59647 WIN : svg/dom/length-list-parser.html = PASS CRASH
 
 BUGWK47901 MAC : fast/canvas/canvas-getImageData-negative-source.html = TEXT
