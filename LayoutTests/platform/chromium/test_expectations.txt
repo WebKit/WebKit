@@ -61,8 +61,6 @@
 BUG24182 SLOW : fast/js/regexp-overflow.html = PASS
 BUG24182 SLOW RELEASE : http/tests/misc/DOMContentLoaded-event.html = PASS
 BUG24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
-BUG24182 SLOW LINUX MAC RELEASE : http/tests/navigation/multiple-back-forward-entries.html = PASS
-BUG24182 SLOW LINUX DEBUG : http/tests/navigation/multiple-back-forward-entries.html = PASS
 BUG24182 SLOW : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUG24182 SLOW WIN MAC : svg/custom/invisible-text-after-scrolling.xhtml = PASS
 BUG24182 SLOW : tables/mozilla/other/slashlogo.html = PASS
@@ -647,9 +645,6 @@ BUG24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 // -----------------------------------------------------------------
 // Other
 // -----------------------------------------------------------------
-
-// Pixeltest failure: Form control metrics incorrect
-BUG10273 LINUX : http/tests/navigation/javascriptlink-frames.html = FAIL
 
 // Mac Safari under certain circumstances automatically places
 // a caret in editable document even when none was requested programatically.
@@ -1430,7 +1425,6 @@ BUG23498 MAC : fonts/fantasy.html = IMAGE
 BUG23498 MAC : fonts/monospace.html = IMAGE
 BUG23498 MAC : fonts/sans-serif.html = IMAGE
 BUG23498 MAC : fonts/serif.html = IMAGE
-BUG23498 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug101674.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug10269-2.html = IMAGE
@@ -1576,7 +1570,6 @@ BUG23496 MAC : fast/replaced/replaced-breaking.html = IMAGE
 BUG23496 MAC DEBUG : fast/text/textIteratorNilRenderer.html = IMAGE
 BUG23496 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE
 BUG23496 MAC : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
-BUG23496 MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE
 BUG23496 MAC : tables/mozilla_expected_failures/core/captions1.html = IMAGE
 BUG23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
 
@@ -3030,9 +3023,6 @@ BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-128.html = TIMEOUT TEXT
 
-// Regressions from r67349?
-BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
-
 BUGWK45667 LINUX : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
 
@@ -3218,7 +3208,8 @@ BUG59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
 BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
 // Needs investigation
-BUGJAMESR : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
+BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
+BUGJAMESR MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE
 BUGJAMESR : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
@@ -3310,7 +3301,7 @@ BUGWK48513 : http/tests/navigation/document-location-script.html = TEXT
 BUGWK48513 : http/tests/navigation/dynamic-iframe-dynamic-form-back-entry.html = TEXT
 BUGWK48513 : http/tests/navigation/error404-basic.html = TEXT
 BUGWK48513 : http/tests/navigation/error404-frames.html = TEXT
-BUGWK48513 : http/tests/navigation/error404-goback.html = TEXT
+BUGWK48513 WIN : http/tests/navigation/error404-goback.html = TEXT
 BUGWK48513 WIN LINUX : http/tests/navigation/error404-subframeload.html = TEXT
 BUGWK48513 MAC : http/tests/navigation/error404-subframeload.html = IMAGE+TEXT
 BUGWK48513 : http/tests/navigation/javascriptlink-basic.html = TEXT
@@ -3370,3 +3361,4 @@ BUGWK48513 : http/tests/navigation/timerredirect-goback.html = TEXT
 BUGWK48513 : http/tests/navigation/timerredirect-subframeload.html = TEXT
 BUGWK48513 : http/tests/navigation/window-open-adds-history-item.html = TEXT
 BUGWK48513 : http/tests/navigation/window-open-adds-history-item2.html = TEXT
+
