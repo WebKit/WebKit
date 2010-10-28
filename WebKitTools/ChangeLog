@@ -1,5 +1,22 @@
 2010-10-28  Adam Roben  <aroben@apple.com>
 
+        Don't append a newline to the test output if the frame has no document
+        element in WebKitTestRunner
+
+        Fixes <http://webkit.org/b/48526> Extra trailing newline when running
+        plugins/document-open.html in WebKitTestRunner
+
+        Reviewed by Anders Carlsson.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::toJS): Added. Turns a UTF-8 C string into a JSStringRef.
+        (WTR::hasDocumentElement): Added. Uses the JSC API to figure out
+        whether the frame has a document element.
+        (WTR::dumpFrameText): Match DRT by bailing (rather than appending an
+        empty string and a newline) if the frame has no document element.
+
+2010-10-28  Adam Roben  <aroben@apple.com>
+
         Skip npn-invalidate-rect-invalidates-window.html on headless XP
         machines
 

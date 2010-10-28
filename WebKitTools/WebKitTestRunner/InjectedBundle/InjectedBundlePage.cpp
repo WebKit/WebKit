@@ -377,8 +377,38 @@ void InjectedBundlePage::dumpAllFrameScrollPositions()
     dumpDescendantFrameScrollPositions(frame);
 }
 
+static JSRetainPtr<JSStringRef> toJS(const char* string)
+{
+    return JSRetainPtr<JSStringRef>(Adopt, JSStringCreateWithUTF8CString(string));
+}
+
+static bool hasDocumentElement(WKBundleFrameRef frame)
+{
+    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContext(frame);
+    JSObjectRef globalObject = JSContextGetGlobalObject(context);
+
+    JSValueRef documentValue = JSObjectGetProperty(context, globalObject, toJS("document").get(), 0);
+    if (!documentValue)
+        return false;
+
+    ASSERT(JSValueIsObject(context, documentValue));
+    JSObjectRef document = JSValueToObject(context, documentValue, 0);
+
+    JSValueRef documentElementValue = JSObjectGetProperty(context, document, toJS("documentElement").get(), 0);
+    if (!documentElementValue)
+        return false;
+
+    return JSValueToBoolean(context, documentElementValue);
+}
+
 static void dumpFrameText(WKBundleFrameRef frame)
 {
+    // If the frame doesn't have a document element, its inner text will be an empty string, so
+    // we'll end up just appending a single newline below. But DumpRenderTree doesn't append
+    // anything in this case, so we shouldn't either.
+    if (!hasDocumentElement(frame))
+        return;
+
     WKRetainPtr<WKStringRef> text(AdoptWK, WKBundleFrameCopyInnerText(frame));
     InjectedBundle::shared().os() << text << "\n";
 }
