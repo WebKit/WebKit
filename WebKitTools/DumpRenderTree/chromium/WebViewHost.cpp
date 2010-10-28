@@ -1053,6 +1053,11 @@ bool WebViewHost::allowScript(WebFrame*, bool enabledPerSettings)
     return enabledPerSettings;
 }
 
+void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks)
+{
+    webkit_support::OpenFileSystem(frame, type, size, create, callbacks);
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

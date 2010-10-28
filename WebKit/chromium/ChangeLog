@@ -1,3 +1,17 @@
+2010-10-28  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Support FileSystem in chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=47643
+        Update the chromium DEPS to pick up corresponding webkit_support change.
+        Also add a temporary glue implementation with FIXME comment to
+        WebFrameClient::openFileSystem.
+
+        * DEPS:
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::openFileSystem):
+
 2010-10-28  Satish Sampath  <satish@chromium.org>
 
         Reviewed by Steve Block.

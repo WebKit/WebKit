@@ -355,10 +355,8 @@ public:
         WebFrame*, WebFileSystem::Type, long long size,
         bool create, WebFileSystemCallbacks*) { }
 
-    // This method will be deleted once chromium uses the new method above.
-    virtual void openFileSystem(
-        WebFrame*, WebFileSystem::Type, long long size,
-        WebFileSystemCallbacks*) { }
+    // FIXME: This method should be deleted once chromium implements the new method above.
+    virtual void openFileSystem(WebFrame* frame, WebFileSystem::Type type, long long size, WebFileSystemCallbacks* callbacks) { return openFileSystem(frame, type, size, true, callbacks); }
 
 protected:
     ~WebFrameClient() { }
