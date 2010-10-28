@@ -177,7 +177,8 @@ void WebGLFramebuffer::initializeRenderbuffers()
 
     float colorClearValue[] = {0, 0, 0, 0}, depthClearValue = 0;
     int stencilClearValue = 0;
-    unsigned char colorMask[] = {1, 1, 1, 1}, depthMask = 1, stencilMask = 1;
+    unsigned char colorMask[] = {1, 1, 1, 1}, depthMask = 1;
+    unsigned int stencilMask = 0xffffffff;
     bool isScissorEnabled = false;
     bool isDitherEnabled = false;
     if (initColor) {
@@ -194,9 +195,9 @@ void WebGLFramebuffer::initializeRenderbuffers()
     }
     if (initStencil) {
         g3d->getIntegerv(GraphicsContext3D::STENCIL_CLEAR_VALUE, &stencilClearValue);
-        g3d->getBooleanv(GraphicsContext3D::STENCIL_WRITEMASK, &stencilMask);
+        g3d->getIntegerv(GraphicsContext3D::STENCIL_WRITEMASK, reinterpret_cast<int*>(&stencilMask));
         g3d->clearStencil(0);
-        g3d->stencilMask(true);
+        g3d->stencilMask(0xffffffff);
     }
     isScissorEnabled = g3d->isEnabled(GraphicsContext3D::SCISSOR_TEST);
     g3d->disable(GraphicsContext3D::SCISSOR_TEST);
