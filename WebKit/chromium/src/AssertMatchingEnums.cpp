@@ -38,6 +38,7 @@
 #include "AsyncFileSystem.h"
 #include "EditorInsertAction.h"
 #include "FileError.h"
+#include "FileMetadata.h"
 #include "FontDescription.h"
 #include "FontSmoothingMode.h"
 #include "HTMLInputElement.h"
@@ -58,6 +59,7 @@
 #include "WebCursorInfo.h"
 #include "WebEditingAction.h"
 #include "WebFileError.h"
+#include "WebFileInfo.h"
 #include "WebFileSystem.h"
 #include "WebFontDescription.h"
 #include "WebIDBKey.h"
@@ -363,6 +365,9 @@ COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NumberType, IDBKey::NumberType);
 #if ENABLE(FILE_SYSTEM)
 COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypeTemporary, AsyncFileSystem::Temporary);
 COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypePersistent, AsyncFileSystem::Persistent);
+COMPILE_ASSERT_MATCHING_ENUM(WebFileInfo::TypeUnknown, FileMetadata::TypeUnknown);
+COMPILE_ASSERT_MATCHING_ENUM(WebFileInfo::TypeFile, FileMetadata::TypeFile);
+COMPILE_ASSERT_MATCHING_ENUM(WebFileInfo::TypeDirectory, FileMetadata::TypeDirectory);
 #endif
 
 COMPILE_ASSERT_MATCHING_ENUM(WebFileErrorNotFound, FileError::NOT_FOUND_ERR);

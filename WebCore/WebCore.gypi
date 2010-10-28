@@ -3292,6 +3292,7 @@
             'platform/EventLoop.h',
             'platform/FileChooser.cpp',
             'platform/FileChooser.h',
+            'platform/FileMetadata.h',
             'platform/FileStream.cpp',
             'platform/FileStream.h',
             'platform/FileStreamClient.h',

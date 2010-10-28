@@ -24244,6 +24244,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\FileMetadata.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\FileStream.cpp"
 				>
 			</File>

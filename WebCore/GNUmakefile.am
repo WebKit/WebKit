@@ -2180,6 +2180,7 @@ webcore_sources += \
 	WebCore/platform/EventLoop.h \
 	WebCore/platform/FileChooser.cpp \
 	WebCore/platform/FileChooser.h \
+	WebCore/platform/FileMetadata.h \
 	WebCore/platform/FileStreamClient.h \
 	WebCore/platform/FileStream.cpp \
 	WebCore/platform/FileStream.h \

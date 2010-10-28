@@ -47,6 +47,7 @@ class ErrorCallback;
 class EntriesCallback;
 class EntryArray;
 class EntryCallback;
+class FileMetadata;
 class FileSystemCallback;
 class FileWriter;
 class FileWriterCallback;
@@ -65,7 +66,7 @@ public:
     virtual void didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem>);
 
     // For MetadataCallbacks.
-    virtual void didReadMetadata(double modificationTime);
+    virtual void didReadMetadata(const FileMetadata&);
 
     // For EntriesCallbacks. didReadDirectoryEntry is called each time the API reads an entry, and didReadDirectoryDone is called when a chunk of entries have been read (i.e. good time to call back to the application).  If hasMore is true there can be more chunks.
     virtual void didReadDirectoryEntry(const String& name, bool isDirectory);
@@ -125,7 +126,7 @@ private:
 class MetadataCallbacks : public FileSystemCallbacksBase {
 public:
     static PassOwnPtr<MetadataCallbacks> create(PassRefPtr<MetadataCallback>, PassRefPtr<ErrorCallback>);
-    virtual void didReadMetadata(double modificationTime);
+    virtual void didReadMetadata(const FileMetadata&);
 
 private:
     MetadataCallbacks(PassRefPtr<MetadataCallback>, PassRefPtr<ErrorCallback>);

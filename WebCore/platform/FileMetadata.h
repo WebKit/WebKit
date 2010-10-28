@@ -28,47 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AsyncFileSystemCallbacks_h
-#define AsyncFileSystemCallbacks_h
+#ifndef FileMetadata_h
+#define FileMetadata_h
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "PlatformString.h"
-
 namespace WebCore {
 
-class AsyncFileSystem;
-class AsyncFileWriter;
-class FileMetadata;
+struct FileMetadata {
+    // The last modification time of the file, in seconds.
+    // The value 0.0 means that the time is not set.
+    double modificationTime;
 
-class AsyncFileSystemCallbacks : public Noncopyable {
-public:
-    // Called when a requested operation is completed successfully.
-    virtual void didSucceed() = 0;
+    // The length of the file in bytes.
+    // The value -1 means that the length is not set.
+    long long length;
 
-    // Called when a requested file system is opened.
-    virtual void didOpenFileSystem(const String& name, PassOwnPtr<AsyncFileSystem>) = 0;
+    enum Type {
+        TypeUnknown = 0,
+        TypeFile,
+        TypeDirectory
+    };
 
-    // Called when a file metadata is read successfully.
-    virtual void didReadMetadata(const FileMetadata&) = 0;
+    Type type;
 
-    // Called when a directory entry is read.
-    virtual void didReadDirectoryEntry(const String& name, bool isDirectory) = 0;
-
-    // Called after a chunk of directory entries have been read (i.e. indicates it's good time to call back to the application).  If hasMore is true there can be more chunks.
-    virtual void didReadDirectoryEntries(bool hasMore) = 0;
-
-    // Called when an AsyncFileWrter has been created successfully.
-    virtual void didCreateFileWriter(PassOwnPtr<AsyncFileWriter> writer, long long length) = 0;
-
-    // Called when there was an error.
-    virtual void didFail(int code) = 0;
-
-    virtual ~AsyncFileSystemCallbacks() { }
+    FileMetadata() : modificationTime(0.0), length(-1), type(TypeUnknown) { }
 };
 
-} // namespace
+} // namespace WebCore
 
 #endif // ENABLE(FILE_SYSTEM)
 
-#endif // AsyncFileSystemCallbacks_h
+#endif // FileMetadata_h

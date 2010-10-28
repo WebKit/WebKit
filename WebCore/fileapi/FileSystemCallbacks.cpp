@@ -45,6 +45,7 @@
 #include "ErrorCallback.h"
 #include "FileEntry.h"
 #include "FileError.h"
+#include "FileMetadata.h"
 #include "FileSystemCallback.h"
 #include "FileWriter.h"
 #include "FileWriterCallback.h"
@@ -76,7 +77,7 @@ void FileSystemCallbacksBase::didOpenFileSystem(const String&, PassOwnPtr<AsyncF
     ASSERT_NOT_REACHED();
 }
 
-void FileSystemCallbacksBase::didReadMetadata(double)
+void FileSystemCallbacksBase::didReadMetadata(const FileMetadata&)
 {
     // Each subclass must implement an appropriate one.
     ASSERT_NOT_REACHED();
@@ -204,10 +205,10 @@ MetadataCallbacks::MetadataCallbacks(PassRefPtr<MetadataCallback> successCallbac
 {
 }
 
-void MetadataCallbacks::didReadMetadata(double modificationTime)
+void MetadataCallbacks::didReadMetadata(const FileMetadata& metadata)
 {
     if (m_successCallback)
-        m_successCallback->handleEvent(Metadata::create(modificationTime).get());
+        m_successCallback->handleEvent(Metadata::create(metadata.modificationTime).get());
     m_successCallback.clear();
 }
 

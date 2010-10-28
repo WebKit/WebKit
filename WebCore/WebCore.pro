@@ -3031,7 +3031,8 @@ contains(DEFINES, ENABLE_FILE_SYSTEM=1) {
         fileapi/Metadata.h \
         fileapi/MetadataCallback.h \
         platform/AsyncFileSystem.h \
-        platform/AsyncFileSystemCallbacks.h
+        platform/AsyncFileSystemCallbacks.h \
+        platform/FileMetadata.h
 
     SOURCES += \
         bindings/js/JSDirectoryEntryCustom.cpp \

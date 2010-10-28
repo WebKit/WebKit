@@ -1,3 +1,14 @@
+2010-10-27  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by David Levin.
+
+        [Chromium] Metadata queries should return full file info, not just modification time
+        https://bugs.webkit.org/show_bug.cgi?id=48098
+
+        * src/AssertMatchingEnums.cpp: Ensure WebFileInfo and FileMetadata use the same values for file/directory indicators.
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::didReadMetadata): Pass through the new information.
+
 2010-10-27  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Dimitri Glazkov.
