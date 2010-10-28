@@ -45,15 +45,33 @@
 #define QWEBKIT_EXPORT
 #endif
 #endif
+#ifndef NDEBUG
+#include <QDebug>
+#endif
 
 using namespace WebCore;
 
 namespace WebKit {
+#ifndef NDEBUG
+#if OS(WINDOWS)
+static void sleep(unsigned seconds)
+{
+    ::Sleep(seconds * 1000);
+}
+#endif
+#endif
+
 
 QWEBKIT_EXPORT int WebProcessMainQt(int argc, char** argv)
 {
     QApplication::setGraphicsSystem("raster");
     QApplication* app = new QApplication(argc, argv);
+#ifndef NDEBUG
+    if (!qgetenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH").isEmpty()) {
+        qDebug() << "Waiting 3 seconds for debugger";
+        sleep(3);
+    }
+#endif
 
 #if USE(MEEGOTOUCH)
     new MComponentData(argc, argv);
