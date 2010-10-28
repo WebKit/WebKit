@@ -1,3 +1,13 @@
+2010-10-28  Satish Sampath  <satish@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Remove obsolete public/API methods in chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=48504
+
+        * public/WebSpeechInputController.h:
+        (WebKit::WebSpeechInputController::startRecognition):
+
 2010-10-27  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by David Levin.
