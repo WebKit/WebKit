@@ -1,3 +1,26 @@
+2010-10-28  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Bug 46927 - Sunspider 0.9 web site should prominently link to Sunspider 0.9.1
+        Notes: 
+            -Created a new sunspider "landing" page which lists current and previous versions of SunSpider.
+            -Edited the .htaccess file to redirect the old pages to the new landing page.
+            -This should keep our search engine page rankings effective.
+        Potentially breaking:
+            -This COULD potentially break the SunSpider benchmark.
+            -Local testing with relative links seems to function as expected.
+            -The .htaccess 301 redirects are UNTESTED.
+            
+
+        * .htaccess:
+        * perf/sunspider: Added.
+        * perf/sunspider-0.9.1/sunspider.html: Removed.
+        * perf/sunspider-0.9.1/versions.html: Removed.
+        * perf/sunspider-0.9/sunspider.html: Removed.
+        * perf/sunspider/sunspider.css: Added.
+        * perf/sunspider/sunspider.html: Added.
+
 2010-10-19  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by David Levin.
