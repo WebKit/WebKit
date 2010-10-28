@@ -86,14 +86,15 @@ bool WEBPImageDecoder::decode(bool onlySize)
         return true;
     if (!WebPGetInfo(dataBytes, dataSize, &width, &height))
         return setFailed();
+    if (!ImageDecoder::isSizeAvailable() && !setSize(width, height))
+        return setFailed();
     if (onlySize)
-        return setSize(width, height) || setFailed();
+        return true;
 
     // FIXME: Add support for progressive decoding.
     if (!isAllDataReceived())
         return true;
-    if (m_frameBufferCache.isEmpty())
-        return true;
+    ASSERT(!m_frameBufferCache.isEmpty());
     RGBA32Buffer& buffer = m_frameBufferCache[0];
     if (buffer.status() == RGBA32Buffer::FrameEmpty) {
         ASSERT(width == size().width());
