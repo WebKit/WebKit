@@ -52,8 +52,14 @@ public:
 
     void start();
 
+    void didBegin();
+    void didReceiveData(uint64_t length);
+    void didFinish();
+
 private:
     Download(uint64_t downloadID, const WebCore::ResourceRequest&);
+
+    void platformInvalidate();
 
     uint64_t m_downloadID;
     WebCore::ResourceRequest m_request;

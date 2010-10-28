@@ -48,6 +48,16 @@ void Download::start()
     m_nsURLDownload.adoptNS([[NSURLDownload alloc] initWithRequest:m_request.nsURLRequest() delegate:m_delegate.get()]);
 }
 
+void Download::platformInvalidate()
+{
+    ASSERT(m_nsURLDownload);
+    ASSERT(m_delegate);
+
+    [m_delegate.get() invalidate];
+    m_delegate = nullptr;
+    m_nsURLDownload = nullptr;
+}
+
 } // namespace WebKit
 
 @implementation WKDownloadAsDelegate
@@ -69,8 +79,8 @@ void Download::start()
 
 - (void)downloadDidBegin:(NSURLDownload *)download
 {
-    // FIXME: Implement.
-    notImplemented();
+    if (_download)
+        _download->didBegin();
 }
 
 - (NSURLRequest *)download:(NSURLDownload *)download willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
@@ -118,8 +128,8 @@ void Download::start()
 
 - (void)download:(NSURLDownload *)download didReceiveDataOfLength:(NSUInteger)length
 {
-    // FIXME: Implement.
-    notImplemented();
+    if (_download)
+        _download->didReceiveData(length);
 }
 
 - (BOOL)download:(NSURLDownload *)download shouldDecodeSourceDataOfMIMEType:(NSString *)encodingType
@@ -143,8 +153,8 @@ void Download::start()
 
 - (void)downloadDidFinish:(NSURLDownload *)download
 {
-    // FIXME: Implement.
-    notImplemented();
+    if (_download)
+        _download->didFinish();
 }
 
 - (void)download:(NSURLDownload *)download didFailWithError:(NSError *)error

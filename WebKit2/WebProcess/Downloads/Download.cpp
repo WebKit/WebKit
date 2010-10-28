@@ -43,6 +43,22 @@ Download::Download(uint64_t downloadID, const ResourceRequest& request)
 
 Download::~Download()
 {
+    platformInvalidate();
+}
+
+void Download::didBegin()
+{
+    // FIXME: Implement.
+}
+
+void Download::didReceiveData(uint64_t length)
+{
+    // FIXME: Implement.
+}
+
+void Download::didFinish()
+{
+    // FIXME: Implement.
 }
 
 } // namespace WebKit

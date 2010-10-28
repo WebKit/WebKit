@@ -36,4 +36,9 @@ void Download::start()
     notImplemented();
 }
 
+void Download::platformInvalidate()
+{
+    notImplemented();
+}
+
 } // namespace WebKit

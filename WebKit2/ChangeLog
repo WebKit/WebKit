@@ -226,6 +226,47 @@
 
         Reviewed by Sam Weinig.
 
+        More work on downloads
+        https://bugs.webkit.org/show_bug.cgi?id=48480
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::~Download):
+        Call platformInvalidate().
+
+        (WebKit::Download::didBegin):
+        (WebKit::Download::didReceiveData):
+        (WebKit::Download::didFinish):
+        Add empty stubs.
+
+        * WebProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        Create a Download object and insert it into the m_downloads map.
+
+        * WebProcess/Downloads/cf/DownloadCFNet.cpp:
+        (WebKit::Download::platformInvalidate):
+        Add empty stub.
+        
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::platformInvalidate):
+        Tell the WKDownloadAsDelegate object that we're being invalidated.
+
+        (-[WKDownloadAsDelegate downloadDidBegin:]):
+        Call Download::didBegin.
+
+        (-[WKDownloadAsDelegate download:didReceiveDataOfLength:]):
+        Call Download::didReceiveData.
+
+        (-[WKDownloadAsDelegate downloadDidFinish:]):
+        Call Download::didFinish.
+
+        * WebProcess/Downloads/qt/DownloadQt.cpp:
+        (WebKit::Download::platformInvalidate):
+        Add empty stub.
+
+2010-10-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         WebPageProxy::isValid should return false if the page has been explicitly closed
         https://bugs.webkit.org/show_bug.cgi?id=48458
 
