@@ -738,6 +738,14 @@ void QTMovie::setClosedCaptionsVisible(bool visible)
     QTSetTrackProperty(ccTrack, closedCaptionTrackType, closedCaptionDisplayPropertyID, sizeof(doDisplay), &doDisplay);
 }
 
+long QTMovie::timeScale() const 
+{
+    if (!m_private->m_movie)
+        return 0;
+
+    return GetMovieTimeScale(m_private->m_movie);
+}
+
 static void initializeSupportedTypes() 
 {
     if (gSupportedTypes)
