@@ -1,3 +1,10 @@
+2010-10-28  Mark Rowe  <mrowe@apple.com>
+
+        Stop allowing deprecated methods to be used in NetscapePluginHostProxy.mm now
+        that deprecated methods are no longer used.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2010-10-26  Dan Bernstein  <mitz@apple.com>
 
         Build fix.
