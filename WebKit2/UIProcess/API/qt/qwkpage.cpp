@@ -384,14 +384,17 @@ QWKPage::ViewportAttributes QWKPage::viewportAttributesForSize(QSize availableSi
     static int desktopWidth = 980;
     static int deviceDPI = 160;
 
+    ViewportAttributes result;
+
+     if (availableSize.isEmpty())
+         return result; // Returns an invalid instance.
+
     // FIXME: Add a way to get these data via the platform plugin and fall back
     // to the size of the view.
     int deviceWidth = 480;
     int deviceHeight = 864;
 
     WebCore::ViewportAttributes conf = WebCore::computeViewportAttributes(d->viewportArguments, desktopWidth, deviceWidth, deviceHeight, deviceDPI, availableSize);
-
-    ViewportAttributes result;
 
     result.m_isValid = true;
     result.m_size = conf.layoutSize;

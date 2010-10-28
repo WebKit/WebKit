@@ -1,3 +1,16 @@
+2010-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Make Qt viewportAttributesForSize not assert on (0, 0) size
+        https://bugs.webkit.org/show_bug.cgi?id=48524
+
+        We now return an invalid (isValid() == false) ViewportAttributes
+        instance when the supplied size is (0, 0).
+
+        * Api/qwebpage.cpp:
+        (QWebPage::viewportAttributesForSize):
+
 2010-10-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

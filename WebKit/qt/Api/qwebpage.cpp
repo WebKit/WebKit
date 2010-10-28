@@ -2293,6 +2293,9 @@ static QSize queryDeviceSizeForScreenContainingWidget(const QWidget* widget)
     automatically. For testing purposes the size can be overridden by setting two
     environment variables QTWEBKIT_DEVICE_WIDTH and QTWEBKIT_DEVICE_HEIGHT, which
     both needs to be set.
+
+    An invalid instance will be returned in the case an empty size is passed to the
+    method.
 */
 
 QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& availableSize) const
@@ -2301,6 +2304,9 @@ QWebPage::ViewportAttributes QWebPage::viewportAttributesForSize(const QSize& av
     static int deviceDPI = 160;
 
     ViewportAttributes result;
+
+     if (availableSize.isEmpty())
+         return result; // Returns an invalid instance.
 
     int deviceWidth = getintenv("QTWEBKIT_DEVICE_WIDTH");
     int deviceHeight = getintenv("QTWEBKIT_DEVICE_HEIGHT");
