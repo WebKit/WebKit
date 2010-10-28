@@ -2789,11 +2789,9 @@ http/tests/loading/bad-scheme-subframe.html
 http/tests/loading/bad-server-subframe.html
 # Needed to cover the fix for <rdar://problem/6727495>
 http/tests/loading/deleted-host-in-resource-load-delegate-callback.html
-http/tests/loading/empty-subframe.html
 http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/preload-img-test.html
 http/tests/loading/redirect-with-no-location-crash.html
-http/tests/loading/slow-parsing-subframe.html
 http/tests/loading/text-content-type-with-binary-extension.html
 http/tests/local/blob/send-data-blob.html
 http/tests/local/blob/send-hybrid-blob.html

@@ -1,3 +1,17 @@
+2010-10-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] WebKitWebFrame's load-status is not properly notified to the tests
+        https://bugs.webkit.org/show_bug.cgi?id=48048
+
+        "frame-created" signal must be issued before loading any data,
+        that way clients can correctly capture all the loading related
+        signals for that frame.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame):
+
 2010-10-27  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

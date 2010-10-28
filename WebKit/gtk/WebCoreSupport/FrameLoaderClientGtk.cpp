@@ -592,13 +592,14 @@ PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& 
     if (!childFrame->page())
         return 0;
 
+    g_signal_emit_by_name(webView, "frame-created", kitFrame);
+
     childFrame->loader()->loadURLIntoChildFrame(url, referrer, childFrame.get());
 
     // The frame's onload handler may have removed it from the document.
     if (!childFrame->tree()->parent())
         return 0;
 
-    g_signal_emit_by_name(webView, "frame-created", kitFrame);
     return childFrame.release();
 }
 
