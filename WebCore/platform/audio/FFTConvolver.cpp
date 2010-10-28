@@ -32,10 +32,12 @@
 
 #include "FFTConvolver.h"
 
-#include "Accelerate.h"
+#include "VectorMath.h"
 
 namespace WebCore {
 
+using namespace VectorMath;
+    
 FFTConvolver::FFTConvolver(size_t fftSize)
     : m_frame(fftSize)
     , m_readWriteIndex(0)

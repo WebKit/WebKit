@@ -32,7 +32,7 @@
 
 #include "AudioBus.h"
 
-#include "Accelerate.h"
+#include "VectorMath.h"
 #include <algorithm>
 #include <assert.h>
 #include <math.h>
@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+using namespace VectorMath;
+    
 AudioBus::AudioBus(unsigned numberOfChannels, size_t length, bool allocate)
     : m_length(length)
     , m_busGain(1.0)

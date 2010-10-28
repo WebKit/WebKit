@@ -32,11 +32,14 @@
 
 #include "Biquad.h"
 
-#include "Accelerate.h"
 #include <algorithm>
 #include <float.h>
 #include <math.h>
 #include <stdio.h>
+
+#if OS(DARWIN)
+#include <Accelerate/Accelerate.h>
+#endif
 
 namespace WebCore {
 

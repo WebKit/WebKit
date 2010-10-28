@@ -29,7 +29,7 @@
 #ifndef ReverbConvolver_h
 #define ReverbConvolver_h
 
-#include "AudioFloatArray.h"
+#include "AudioArray.h"
 #include "FFTConvolver.h"
 #include "ReverbAccumulationBuffer.h"
 #include "ReverbConvolverStage.h"

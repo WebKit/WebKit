@@ -32,9 +32,11 @@
 
 #include "ReverbAccumulationBuffer.h"
 
-#include "Accelerate.h"
+#include "VectorMath.h"
 
 namespace WebCore {
+
+using namespace VectorMath;
 
 ReverbAccumulationBuffer::ReverbAccumulationBuffer(size_t length)
     : m_buffer(length)

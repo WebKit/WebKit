@@ -45,7 +45,7 @@ PassOwnPtr<Panner> Panner::create(PanningModel model, double sampleRate)
 
     switch (model) {
     case PanningModelEqualPower:
-        panner = adoptPtr(new EqualPowerPanner());
+        panner = adoptPtr(new EqualPowerPanner(sampleRate));
         break;
 
     case PanningModelHRTF:

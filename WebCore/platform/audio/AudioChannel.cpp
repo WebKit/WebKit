@@ -32,12 +32,14 @@
 
 #include "AudioChannel.h"
 
-#include "Accelerate.h"
+#include "VectorMath.h"
 #include <algorithm>
 #include <math.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
+
+using namespace VectorMath;
 
 void AudioChannel::scale(double scale)
 {

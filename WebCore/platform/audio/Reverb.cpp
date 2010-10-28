@@ -56,12 +56,12 @@ static double calculateNormalizationScale(AudioBus* response)
 {
     // Normalize by RMS power
     size_t numberOfChannels = response->numberOfChannels();
-    size_t frameSize = response->frameSize();
+    size_t length = response->length();
 
     double power = 0.0;
 
     for (size_t i = 0; i < numberOfChannels; ++i) {
-        int n = frameSize;
+        int n = length;
         float* p = response->channel(i)->data();
 
         while (n--) {
@@ -70,7 +70,7 @@ static double calculateNormalizationScale(AudioBus* response)
         }
     }
 
-    power = sqrt(power / (numberOfChannels * frameSize));
+    power = sqrt(power / (numberOfChannels * length));
 
     // Protect against accidental overload
     if (isinf(power) || isnan(power) || power < MinPower)
@@ -102,7 +102,7 @@ Reverb::Reverb(AudioBus* impulseResponse, size_t renderSliceSize, size_t maxFFTS
 
 void Reverb::initialize(AudioBus* impulseResponseBuffer, size_t renderSliceSize, size_t maxFFTSize, size_t numberOfChannels, bool useBackgroundThreads)
 {
-    m_impulseResponseLength = impulseResponseBuffer->frameSize();
+    m_impulseResponseLength = impulseResponseBuffer->length();
 
     // The reverb can handle a mono impulse response and still do stereo processing
     size_t numResponseChannels = impulseResponseBuffer->numberOfChannels();
@@ -112,8 +112,8 @@ void Reverb::initialize(AudioBus* impulseResponseBuffer, size_t renderSliceSize,
     for (size_t i = 0; i < numResponseChannels; ++i) {
         AudioChannel* channel = impulseResponseBuffer->channel(i);
 
-        ReverbConvolver* convolver = new ReverbConvolver(channel, renderSliceSize, maxFFTSize, convolverRenderPhase, useBackgroundThreads);
-        m_convolvers.append(convolver);
+        OwnPtr<ReverbConvolver> convolver = adoptPtr(new ReverbConvolver(channel, renderSliceSize, maxFFTSize, convolverRenderPhase, useBackgroundThreads));
+        m_convolvers.append(convolver.release());
 
         convolverRenderPhase += renderSliceSize;
     }
@@ -129,7 +129,7 @@ void Reverb::process(AudioBus* sourceBus, AudioBus* destinationBus, size_t frame
     // Do a fairly comprehensive sanity check.
     // If these conditions are satisfied, all of the source and destination pointers will be valid for the various matrixing cases.
     bool isSafeToProcess = sourceBus && destinationBus && sourceBus->numberOfChannels() > 0 && destinationBus->numberOfChannels() > 0
-        && framesToProcess <= MaxFrameSize && framesToProcess <= sourceBus->frameSize() && framesToProcess <= destinationBus->frameSize(); 
+        && framesToProcess <= MaxFrameSize && framesToProcess <= sourceBus->length() && framesToProcess <= destinationBus->length(); 
     
     ASSERT(isSafeToProcess);
     if (!isSafeToProcess)
@@ -167,7 +167,7 @@ void Reverb::process(AudioBus* sourceBus, AudioBus* destinationBus, size_t frame
 
         // simply copy L -> R
         AudioChannel* destinationChannelR = destinationBus->channel(1);
-        bool isCopySafe = destinationChannelL->data() && destinationChannelR->data() && destinationChannelL->frameSize() >= framesToProcess && destinationChannelR->frameSize() >= framesToProcess;
+        bool isCopySafe = destinationChannelL->data() && destinationChannelR->data() && destinationChannelL->length() >= framesToProcess && destinationChannelR->length() >= framesToProcess;
         ASSERT(isCopySafe);
         if (!isCopySafe)
             return;

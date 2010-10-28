@@ -29,7 +29,7 @@
 #ifndef ReverbAccumulationBuffer_h
 #define ReverbAccumulationBuffer_h
 
-#include "AudioFloatArray.h"
+#include "AudioArray.h"
 
 namespace WebCore {
 

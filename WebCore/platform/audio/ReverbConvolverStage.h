@@ -29,7 +29,7 @@
 #ifndef ReverbConvolverStage_h
 #define ReverbConvolverStage_h
 
-#include "AudioFloatArray.h"
+#include "AudioArray.h"
 #include "FFTFrame.h"
 #include <wtf/OwnPtr.h>
 
