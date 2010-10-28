@@ -1,3 +1,19 @@
+2010-10-28  Ojan Vafai  <ojan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] add a result-small.json file for the test dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=48547
+
+        Output both a results.json file and a results-small.json file.
+        The dashboard will load results-small.json by default so it loads faster.
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+        Added a bunch of sys.path hackery. Unforunately, this uses hardcoded
+        paths. That obviously needs to be fixed, but at least this way it
+        clearly documents what paths are necessary.
+
 2010-10-28  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

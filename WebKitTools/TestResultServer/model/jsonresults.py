@@ -33,6 +33,7 @@ import logging
 from model.testfile import TestFile
 
 JSON_RESULTS_FILE = "results.json"
+JSON_RESULTS_FILE_SMALL = "results-small.json"
 JSON_RESULTS_PREFIX = "ADD_RESULTS("
 JSON_RESULTS_SUFFIX = ");"
 JSON_RESULTS_VERSION_KEY = "version"
@@ -45,6 +46,7 @@ JSON_RESULTS_NO_DATA = "N"
 JSON_RESULTS_MIN_TIME = 1
 JSON_RESULTS_VERSION = 3
 JSON_RESULTS_MAX_BUILDS = 1500
+JSON_RESULTS_MAX_BUILDS_SMALL = 200
 
 
 class JsonResults(object):
@@ -106,7 +108,7 @@ class JsonResults(object):
             return None
 
     @classmethod
-    def _merge_json(cls, aggregated_json, incremental_json):
+    def _merge_json(cls, aggregated_json, incremental_json, num_runs):
         """Merge incremental json into aggregated json results.
 
         Args:
@@ -120,19 +122,19 @@ class JsonResults(object):
 
         # Merge non tests property data.
         # Tests properties are merged in _merge_tests.
-        if not cls._merge_non_test_data(aggregated_json, incremental_json):
+        if not cls._merge_non_test_data(aggregated_json, incremental_json, num_runs):
             return False
 
         # Merge tests results and times
         incremental_tests = incremental_json[JSON_RESULTS_TESTS]
         if incremental_tests:
             aggregated_tests = aggregated_json[JSON_RESULTS_TESTS]
-            cls._merge_tests(aggregated_tests, incremental_tests)
+            cls._merge_tests(aggregated_tests, incremental_tests, num_runs)
 
         return True
 
     @classmethod
-    def _merge_non_test_data(cls, aggregated_json, incremental_json):
+    def _merge_non_test_data(cls, aggregated_json, incremental_json, num_runs):
         """Merge incremental non tests property data into aggregated json results.
 
         Args:
@@ -173,13 +175,13 @@ class JsonResults(object):
                 return False
 
             # Merge this build into aggreagated results.
-            cls._merge_one_build(aggregated_json, incremental_json, index)
+            cls._merge_one_build(aggregated_json, incremental_json, index, num_runs)
 
         return True
 
     @classmethod
     def _merge_one_build(cls, aggregated_json, incremental_json,
-                         incremental_index):
+                         incremental_index, num_runs):
         """Merge one build of incremental json into aggregated json results.
 
         Args:
@@ -198,12 +200,12 @@ class JsonResults(object):
                 aggregated_json[key].insert(
                     0, incremental_json[key][incremental_index])
                 aggregated_json[key] = \
-                    aggregated_json[key][:JSON_RESULTS_MAX_BUILDS]
+                    aggregated_json[key][:num_runs]
             else:
                 aggregated_json[key] = incremental_json[key]
 
     @classmethod
-    def _merge_tests(cls, aggregated_json, incremental_json):
+    def _merge_tests(cls, aggregated_json, incremental_json, num_runs):
         """Merge "tests" properties:results, times.
 
         Args:
@@ -225,15 +227,15 @@ class JsonResults(object):
                     times = [[1, 0]]
 
                 cls._insert_item_run_length_encoded(
-                    results, aggregated_test[JSON_RESULTS_RESULTS])
+                    results, aggregated_test[JSON_RESULTS_RESULTS], num_runs)
                 cls._insert_item_run_length_encoded(
-                    times, aggregated_test[JSON_RESULTS_TIMES])
+                    times, aggregated_test[JSON_RESULTS_TIMES], num_runs)
                 cls._normalize_results_json(test_name, aggregated_json)
             else:
                 aggregated_json[test_name] = incremental_json[test_name]
 
     @classmethod
-    def _insert_item_run_length_encoded(cls, incremental_item, aggregated_item):
+    def _insert_item_run_length_encoded(cls, incremental_item, aggregated_item, num_runs):
         """Inserts the incremental run-length encoded results into the aggregated
            run-length encoded results.
 
@@ -245,7 +247,7 @@ class JsonResults(object):
         for item in incremental_item:
             if len(aggregated_item) and item[1] == aggregated_item[0][1]:
                 aggregated_item[0][0] = min(
-                    aggregated_item[0][0] + item[0], JSON_RESULTS_MAX_BUILDS)
+                    aggregated_item[0][0] + item[0], num_runs)
             else:
                 aggregated_item.insert(0, item)
 
@@ -340,7 +342,7 @@ class JsonResults(object):
         return True
 
     @classmethod
-    def merge(cls, builder, aggregated, incremental, sort_keys=False):
+    def merge(cls, builder, aggregated, incremental, num_runs, sort_keys=False):
         """Merge incremental json file data with aggregated json file data.
 
         Args:
@@ -378,9 +380,7 @@ class JsonResults(object):
 
         logging.info("Merging json results...")
         try:
-            if not cls._merge_json(
-                aggregated_json[builder],
-                incremental_json[builder]):
+            if not cls._merge_json(aggregated_json[builder], incremental_json[builder], num_runs):
                 return None
         except Exception, err:
             logging.error("Failed to merge json results: %s", str(err))
@@ -393,45 +393,46 @@ class JsonResults(object):
     @classmethod
     def update(cls, master, builder, test_type, incremental):
         """Update datastore json file data by merging it with incremental json
-           file.
+           file. Writes the large file and a small file. The small file just stores
+           fewer runs.
 
         Args:
+            master: master name.
             builder: builder name.
             test_type: type of test results.
             incremental: incremental json file data to merge.
 
         Returns:
-            TestFile object if update succeeds or
+            Large TestFile object if update succeeds or
             None on failure.
         """
+        small_file = cls.update_file(master, builder, test_type, incremental, JSON_RESULTS_FILE_SMALL, JSON_RESULTS_MAX_BUILDS_SMALL)
+        large_file = cls.update_file(master, builder, test_type, incremental, JSON_RESULTS_FILE, JSON_RESULTS_MAX_BUILDS)
 
-        files = TestFile.get_files(master, builder, test_type, JSON_RESULTS_FILE)
+        if small_file and large_file:
+            return large_file
+        return None
+
+    @classmethod
+    def update_file(cls, master, builder, test_type, incremental, filename, num_runs):
+        files = TestFile.get_files(master, builder, test_type, filename)
         if files:
             file = files[0]
-
-            # FIXME: This is here to fill in the missing master/test_type for the already uploaded
-            # results files, which all are layout_tests from the chromium master.
-            # Remove this once all the builders upload with the master/test_type field set.
-            if not file.master:
-                file.master = "chromium"
-            if not file.test_type:
-                file.test_type = "layout-tests"
-
-            new_results = cls.merge(builder, file.data, incremental)
+            new_results = cls.merge(builder, file.data, incremental, num_runs)
         else:
             # Use the incremental data if there is no aggregated file to merge.
-            file = TestFile()
+            file = TestFile()            
             file.master = master
             file.builder = builder
             file.test_type = test_type
-            file.name = JSON_RESULTS_FILE
+            file.name = filename
             new_results = incremental
             logging.info("No existing json results, incremental json is saved.")
 
-        if not new_results:
-            return None
-
-        if not file.save(new_results):
+        if not new_results or not file.save(new_results):
+            logging.info(
+                "Update failed, master: %s, builder: %s, test_type: %s, name: %s." %
+                (master, builder, test_type, filename))
             return None
 
         return file

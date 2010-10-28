@@ -104,15 +104,6 @@ class TestFile(DataStoreFile):
             return cls.add_file(master, builder, test_type, name, data)
 
         file = files[0]
-
-        # FIXME: This is here to fill in the missing master/test_type for the already uploaded
-        # results files, which all are layout_tests from the chromium master.
-        # Remove this once all the builders upload with the master/test_type field set.
-        if not file.master:
-            file.master = "chromium"
-        if not file.test_type:
-            file.test_type = "layout-tests"
-
         if not file.save(data):
             return None
 

@@ -26,10 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import jsonresults
+try:
+    import jsonresults
+    from jsonresults import JsonResults
+except ImportError:
+    print "ERROR: Add the TestResultServer, google_appengine and yaml/lib directories to your PYTHONPATH"
+
 import unittest
 
-from jsonresults import JsonResults
 
 JSON_RESULTS_TEMPLATE = (
     '{"Webkit":{'
@@ -118,7 +122,8 @@ class JsonResultsTest(unittest.TestCase):
         aggregated_results = self._make_test_json(aggregated_data)
         incremental_results = self._make_test_json(incremental_data)
         merged_results = JsonResults.merge(self._builder,
-            aggregated_results, incremental_results, sort_keys=True)
+            aggregated_results, incremental_results, jsonresults.JSON_RESULTS_MAX_BUILDS,
+            sort_keys=True)
 
         if expected_data:
             expected_results = self._make_test_json(expected_data)
