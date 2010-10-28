@@ -466,8 +466,8 @@ var WebInspector = {
         if (Preferences.networkPanelEnabled)
             WebInspector.resourceManager.forAllResources(callback);
         else {
-            for (var id in this.resources) {
-                if (callback(this.resources[id]))
+            for (var id in WebInspector.panels.resources.resources) {
+                if (callback(WebInspector.panels.resources.resources[id]))
                     return;
             }
         }
@@ -583,9 +583,7 @@ WebInspector.doLoadedDone = function()
     };
 
     this.Warnings = {
-        IncorrectMIMEType: {id: 0, message: WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.")},
-        FailedToLoad: {id: 1, message: WebInspector.UIString("Failed to load resource: %s")},
-        FailedToLoadWithStatus: {id: 2, message: WebInspector.UIString("Failed to load resource: the server responded with a status of %s (%s)")}
+        IncorrectMIMEType: {id: 0, message: WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.")}
     };
 
     this.addMainEventListeners(document);
@@ -1320,7 +1318,6 @@ WebInspector.updateResource = function(payload)
 
     if (payload.didCompletionChange) {
         resource.failed = payload.failed;
-        resource.localizedFailDescription = payload.localizedFailDescription;
         resource.finished = payload.finished;
         if (this.panels.audits)
             this.panels.audits.resourceFinished(resource);

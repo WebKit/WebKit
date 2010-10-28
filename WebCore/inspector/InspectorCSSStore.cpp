@@ -44,7 +44,6 @@
 #include "HTMLHeadElement.h"
 #include "InspectorController.h"
 #include "InspectorResource.h"
-#include "InspectorResourceAgent.h"
 #include "Node.h"
 #include "PlatformString.h"
 #include "SharedBuffer.h"
@@ -143,7 +142,7 @@ String InspectorCSSStore::styleSheetText(long styleSheetId)
 
 bool InspectorCSSStore::resourceStyleSheetText(CSSStyleSheet* styleSheet, String* result)
 {
-    return InspectorResourceAgent::resourceContent(styleSheet->document()->frame(), styleSheet->finalURL(), result);
+    return m_inspectorController->resourceContentForURL(styleSheet->finalURL(), styleSheet->document(), result);
 }
 
 String InspectorCSSStore::inlineStyleSheetText(CSSStyleSheet* styleSheet)

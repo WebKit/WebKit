@@ -154,9 +154,6 @@ WebInspector.ResourceManager.prototype = {
 
     _updateResourceWithResponse: function(resource, response)
     {
-        if (resource.isNull)
-            return;
-
         resource.mimeType = response.mimeType;
         resource.expectedContentLength = response.expectedContentLength;
         resource.textEncodingName = response.textEncodingName;
@@ -213,7 +210,6 @@ WebInspector.ResourceManager.prototype = {
             return;
 
         resource.failed = true;
-        resource.localizedFailDescription = localizedDescription;
         resource.finished = true;
         resource.endTime = time;
 

@@ -116,7 +116,7 @@ namespace WebCore {
         void startTiming();
         void endTiming(double actualEndTime);
 
-        void markFailed(const String& localizedDescription);
+        void markFailed();
         void addLength(int lengthReceived);
 
     private:
@@ -175,7 +175,6 @@ namespace WebCore {
         bool m_cached;
         bool m_finished;
         bool m_failed;
-        String m_localizedFailDescription;
         int m_length;
         int m_responseStatusCode;
         String m_responseStatusText;
