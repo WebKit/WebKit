@@ -1,3 +1,29 @@
+2010-10-28  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        AX: multi select group option does not handle setting of AXSelectedChildren correctly
+        https://bugs.webkit.org/show_bug.cgi?id=48464
+
+        Add support for querying information about selected children to DRT, including:
+           selectedChildAtIndex
+           selectedChildrenCount
+           setSelectedChild
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (selectedChildAtIndexCallback):
+        (setSelectedChildCallback):
+        (selectedChildrenCountCallback):
+        (AccessibilityUIElement::setSelectedChild):
+        (AccessibilityUIElement::selectedChildrenCount):
+        (AccessibilityUIElement::selectedChildAtIndex):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::selectedChildAtIndex):
+        (AccessibilityUIElement::selectedChildrenCount):
+        (AccessibilityUIElement::setSelectedChild):
+
 2010-10-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

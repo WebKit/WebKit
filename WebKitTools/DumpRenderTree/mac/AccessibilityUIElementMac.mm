@@ -381,6 +381,26 @@ AccessibilityUIElement AccessibilityUIElement::disclosedRowAtIndex(unsigned inde
     return 0;
 }
 
+AccessibilityUIElement AccessibilityUIElement::selectedChildAtIndex(unsigned index) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* array = [m_element accessibilityAttributeValue:NSAccessibilitySelectedChildrenAttribute];
+    if (index < [array count])
+        return [array objectAtIndex:index];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
+unsigned AccessibilityUIElement::selectedChildrenCount() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    return [m_element accessibilityArrayAttributeCount:NSAccessibilitySelectedChildrenAttribute];
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::selectedRowAtIndex(unsigned index)
 {
     BEGIN_AX_OBJC_EXCEPTIONS
@@ -1101,6 +1121,14 @@ void AccessibilityUIElement::press()
     BEGIN_AX_OBJC_EXCEPTIONS
     [m_element accessibilityPerformAction:NSAccessibilityPressAction];
     END_AX_OBJC_EXCEPTIONS
+}
+
+void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray* array = [NSArray arrayWithObject:element->platformUIElement()];
+    [m_element accessibilitySetValue:array forAttribute:NSAccessibilitySelectedChildrenAttribute];
+    END_AX_OBJC_EXCEPTIONS    
 }
 
 JSStringRef AccessibilityUIElement::accessibilityValue() const
