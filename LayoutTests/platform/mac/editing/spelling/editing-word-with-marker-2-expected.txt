@@ -1,0 +1,6 @@
+The test verified that when appending a whitespace before or after a word, its Spelling and Autocorrection markers are remain. When manully testing, type "it's a meagesga", then add whitespace before or after "meagesga". You should see the underline on "meagesga".
+
+
+SUCCESS
+SUCCESS
+

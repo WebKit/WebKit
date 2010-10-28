@@ -46,10 +46,11 @@ public:
     void addMarker(Range*, DocumentMarker::MarkerType, String description = String());
     void addMarker(Node*, DocumentMarker);
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
+    bool hasMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers);
     void removeMarkers(Range*, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void removeMarkers(Node*, unsigned startOffset, int length, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void removeMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
-    void removeMarkers(Node*);
+    void removeMarkers(Node*, DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void repaintMarkers(DocumentMarker::MarkerType = DocumentMarker::AllMarkers);
     void setRenderedRectForMarker(Node*, const DocumentMarker&, const IntRect&);
     void invalidateRenderedRectsForMarkersInRect(const IntRect&);
@@ -65,6 +66,7 @@ private:
     typedef std::pair<Vector<DocumentMarker>, Vector<IntRect> > MarkerMapVectorPair;
     typedef HashMap<RefPtr<Node>, MarkerMapVectorPair*> MarkerMap;
     MarkerMap m_markers;
+    void removeMarkersFromMarkerMapVectorPair(Node*, MarkerMapVectorPair*, DocumentMarker::MarkerType);
 };
 
 } // namespace WebCore

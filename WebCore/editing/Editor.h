@@ -34,6 +34,17 @@
 #include "EditorInsertAction.h"
 #include "SelectionController.h"
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+// Some platforms provide UI for suggesting autocorrection.
+#define SUPPORT_AUTOCORRECTION_PANEL 1
+// Some platforms use spelling and autocorrection markers to provide visual cue.
+// On such platform, if word with marker is edited, we need to remove the marker.
+#define REMOVE_MARKERS_UPON_EDITING 1
+#else
+#define SUPPORT_AUTOCORRECTION_PANEL 0
+#define REMOVE_MARKERS_UPON_EDITING 0
+#endif /* #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) */
+
 #if PLATFORM(MAC) && !defined(__OBJC__)
 class NSDictionary;
 typedef int NSWritingDirection;
@@ -362,6 +373,7 @@ public:
 #endif
 
     bool selectionStartHasSpellingMarkerFor(int from, int length) const;
+    void removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemoveIfSelectionAtWordBoundary);
 
 private:
     Frame* m_frame;

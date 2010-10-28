@@ -468,9 +468,13 @@ void Editor::respondToChangedContents(const VisibleSelection& endingSelection)
         if (node)
             m_frame->document()->axObjectCache()->postNotification(node->renderer(), AXObjectCache::AXValueChanged, false);
     }
-    
+
+#if REMOVE_MARKERS_UPON_EDITING
+    removeSpellAndCorrectionMarkersFromWordsToBeEdited(true);
+#endif
+
     if (client())
-        client()->respondToChangedContents();  
+        client()->respondToChangedContents();
 }
 
 const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
@@ -1154,6 +1158,9 @@ void Editor::cut()
     }
     RefPtr<Range> selection = selectedRange();
     if (shouldDeleteRange(selection.get())) {
+#if REMOVE_MARKERS_UPON_EDITING
+        removeSpellAndCorrectionMarkersFromWordsToBeEdited(true);
+#endif
         if (isNodeInTextFormControl(m_frame->selection()->start().node()))
             Pasteboard::generalPasteboard()->writePlainText(selectedText());
         else
@@ -1192,6 +1199,9 @@ void Editor::paste()
         return; // DHTML did the whole operation
     if (!canPaste())
         return;
+#if REMOVE_MARKERS_UPON_EDITING
+    removeSpellAndCorrectionMarkersFromWordsToBeEdited(false);
+#endif
     CachedResourceLoader* loader = m_frame->document()->cachedResourceLoader();
     loader->setAllowStaleResources(true);
     if (m_frame->selection()->isContentRichlyEditable())
@@ -1207,6 +1217,9 @@ void Editor::pasteAsPlainText()
         return;
     if (!canPaste())
         return;
+#if REMOVE_MARKERS_UPON_EDITING
+    removeSpellAndCorrectionMarkersFromWordsToBeEdited(false);
+#endif
     pasteAsPlainTextWithPasteboard(Pasteboard::generalPasteboard());
 }
 
@@ -2900,6 +2913,101 @@ bool Editor::isShowingCorrectionPanel()
         return client()->isShowingCorrectionPanel();
 #endif
     return false;
+}
+
+void Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemoveIfSelectionAtWordBoundary)
+{
+    // We want to remove the markers from a word if an editing command will change the word. This can happen in one of
+    // several scenarios:
+    // 1. Insert in the middle of a word.
+    // 2. Appending non whitespace at the beginning of word.
+    // 3. Appending non whitespace at the end of word.
+    // Note that, appending only whitespaces at the beginning or end of word won't change the word, so we don't need to
+    // remove the markers on that word.
+    // Of course, if current selection is a range, we potentially will edit two words that fall on the boundaries of
+    // selection, and remove words between the selection boundaries.
+    //
+    VisiblePosition startOfSelection = frame()->selection()->selection().start();
+    VisiblePosition endOfSelection = frame()->selection()->selection().end();
+    if (startOfSelection.isNull())
+        return;
+    // First word is the word that ends after or on the start of selection.
+    VisiblePosition startOfFirstWord = startOfWord(startOfSelection, LeftWordIfOnBoundary);
+    VisiblePosition endOfFirstWord = endOfWord(startOfSelection, LeftWordIfOnBoundary);
+    // Last word is the word that begins before or on the end of selection
+    VisiblePosition startOfLastWord = startOfWord(endOfSelection, RightWordIfOnBoundary);
+    VisiblePosition endOfLastWord = endOfWord(endOfSelection, RightWordIfOnBoundary);
+
+    // This can be the case if the end of selection is at the end of document.
+    if (endOfLastWord.deepEquivalent().anchorType() != Position::PositionIsOffsetInAnchor) {
+        startOfLastWord = startOfWord(frame()->selection()->selection().start(), LeftWordIfOnBoundary);
+        endOfLastWord = endOfWord(frame()->selection()->selection().start(), LeftWordIfOnBoundary);
+    }
+
+    // If doNotRemoveIfSelectionAtWordBoundary is true, and first word ends at the start of selection,
+    // we choose next word as the first word.
+    if (doNotRemoveIfSelectionAtWordBoundary && endOfFirstWord == startOfSelection) {
+        startOfFirstWord = nextWordPosition(startOfFirstWord);
+        if (startOfFirstWord == endOfSelection)
+            return;
+        endOfFirstWord = endOfWord(startOfFirstWord, RightWordIfOnBoundary);
+        if (endOfFirstWord.deepEquivalent().anchorType() != Position::PositionIsOffsetInAnchor)
+            return;
+    }
+
+    // If doNotRemoveIfSelectionAtWordBoundary is true, and last word begins at the end of selection,
+    // we choose previous word as the last word.
+    if (doNotRemoveIfSelectionAtWordBoundary && startOfLastWord == endOfSelection) {
+        startOfLastWord = previousWordPosition(startOfLastWord);
+        endOfLastWord = endOfWord(startOfLastWord, RightWordIfOnBoundary);
+        if (endOfLastWord == startOfFirstWord)
+            return;
+    }
+
+    // Now we remove markers on everything between startOfFirstWord and endOfLastWord.
+    // However, if an autocorrection change a single word to multiple words, we want to remove correction mark from all the
+    // resulted words even we only edit one of them. For example, assuming autocorrection changes "avantgarde" to "avant
+    // garde", we will have CorrectionIndicator marker on both words and on the whitespace between them. If we then edit garde,
+    // we would like to remove the marker from word "avant" and whitespace as well. So we need to get the continous range of
+    // of marker that contains the word in question, and remove marker on that whole range.
+    Document* document = m_frame->document();
+    RefPtr<Range> wordRange = Range::create(document, startOfFirstWord.deepEquivalent(), endOfLastWord.deepEquivalent());
+    RefPtr<Range> rangeOfFirstWord = Range::create(document, startOfFirstWord.deepEquivalent(), endOfFirstWord.deepEquivalent());
+    RefPtr<Range> rangeOfLastWord = Range::create(document, startOfLastWord.deepEquivalent(), endOfLastWord.deepEquivalent());
+
+    typedef pair<RefPtr<Range>, DocumentMarker::MarkerType> RangeMarkerPair;
+    // It's probably unsafe to remove marker while iterating a vector of markers. So we store the markers and ranges that we want to remove temporarily. Then remove them at the end of function.
+    // To avoid allocation on the heap, Give markersToRemove a small inline capacity
+    Vector<RangeMarkerPair, 16> markersToRemove;
+    for (TextIterator textIterator(wordRange.get()); !textIterator.atEnd(); textIterator.advance()) {
+        Node* node = textIterator.node();
+        if (node == startOfFirstWord.deepEquivalent().containerNode() || node == endOfLastWord.deepEquivalent().containerNode()) {
+            // First word and last word can belong to the same node
+            bool processFirstWord = node == startOfFirstWord.deepEquivalent().containerNode() && document->markers()->hasMarkers(rangeOfFirstWord.get(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator);
+            bool processLastWord = node == endOfLastWord.deepEquivalent().containerNode() && document->markers()->hasMarkers(rangeOfLastWord.get(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator);
+            // Take note on the markers whose range overlaps with the range of the first word or the last word.
+            Vector<DocumentMarker> markers = document->markers()->markersForNode(node);
+            for (size_t i = 0; i < markers.size(); ++i) {
+                DocumentMarker marker = markers[i];
+                if (processFirstWord && static_cast<int>(marker.endOffset) > startOfFirstWord.deepEquivalent().offsetInContainerNode() && (marker.type == DocumentMarker::Spelling || marker.type == DocumentMarker::CorrectionIndicator)) {
+                    RefPtr<Range> markerRange = Range::create(document, node, marker.startOffset, node, marker.endOffset);
+                    markersToRemove.append(std::make_pair(markerRange, marker.type));
+                }
+                if (processLastWord && static_cast<int>(marker.startOffset) <= endOfLastWord.deepEquivalent().offsetInContainerNode() && (marker.type == DocumentMarker::Spelling || marker.type == DocumentMarker::CorrectionIndicator)) {
+                    RefPtr<Range> markerRange = Range::create(document, node, marker.startOffset, node, marker.endOffset);
+                    markersToRemove.append(std::make_pair(markerRange, marker.type));
+                }
+            }
+        } else {
+            document->markers()->removeMarkers(node, DocumentMarker::Spelling);
+            document->markers()->removeMarkers(node, DocumentMarker::CorrectionIndicator);
+        }
+    }
+
+    // Actually remove the markers.
+    Vector<RangeMarkerPair>::const_iterator pairEnd = markersToRemove.end();
+    for (Vector<RangeMarkerPair>::const_iterator pairIterator = markersToRemove.begin(); pairIterator != pairEnd; ++pairIterator)
+        document->markers()->removeMarkers(pairIterator->first.get(), pairIterator->second);
 }
 
 PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)

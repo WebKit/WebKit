@@ -1,0 +1,7 @@
+The test verified that when multiple words are modified by one editing command, their Spelling and Autocorrection markers are removed. When manully testing, type "it's a meagesga meagesga", then select and delete "esga meag", you should see the remaing text without any underline.
+
+
+SUCCESS
+SUCCESS
+SUCCESS
+
