@@ -122,6 +122,11 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
 
 SharedMemory::~SharedMemory()
 {
+    if (!m_data) {
+        // Ownership of the mapped memory has been passed.
+        return;
+    }
+
     MappedMemory* mappedMemory = mappedMemoryPool->searchForMappedMemory(reinterpret_cast<uchar*>(m_data));
     if (mappedMemory)
         mappedMemory->markFree();
@@ -139,6 +144,9 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
 
     handle.m_fileName = mm->file->fileName();
     handle.m_size = m_size;
+
+    // Hand off ownership of the mapped memory to the receiving process.
+    m_data = 0;
 
     return true;
 }
