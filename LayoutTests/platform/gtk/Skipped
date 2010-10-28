@@ -1248,6 +1248,7 @@ fast/block/float/avoidance-percent-width-strict.html
 fast/block/float/br-with-clear-2.html
 fast/block/float/br-with-clear.html
 fast/block/float/clamped-right-float.html
+fast/block/float/clear-element-too-wide-for-containing-block.html
 fast/block/float/dynamic-unfloat-pref-width.html
 fast/block/float/editable-text-overlapping-float.html
 fast/block/float/float-avoidance.html
@@ -1273,7 +1274,6 @@ fast/block/float/overlapping-floats-with-overflow-hidden.html
 fast/block/float/relative-painted-twice.html
 fast/block/float/shrink-to-fit-width.html
 fast/block/float/table-relayout.html
-fast/block/float/tableshifting.html
 fast/block/float/vertical-move-relayout.html
 fast/block/float/width-update-after-clear.html
 fast/block/margin-collapse/001.html
