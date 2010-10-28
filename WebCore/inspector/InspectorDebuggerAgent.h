@@ -106,6 +106,7 @@ private:
     bool m_breakpointsLoaded;
     static InspectorDebuggerAgent* s_debuggerAgentOnBreakpoint;
     RefPtr<InspectorObject> m_breakProgramDetails;
+    bool m_javaScriptPauseScheduled;
 };
 
 } // namespace WebCore
