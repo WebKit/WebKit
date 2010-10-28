@@ -755,23 +755,26 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, tx, ty, w, h, this, op);
     else {
         // We have a fill image that spans multiple lines.
-        // We need to adjust _tx and _ty by the width of all previous lines.
+        // We need to adjust tx and ty by the width of all previous lines.
         // Think of background painting on inlines as though you had one long line, a single continuous
         // strip.  Even though that strip has been broken up across multiple lines, you still paint it
         // as though you had one single line.  This means each line has to pick up the background where
         // the previous line left off.
         // FIXME: What the heck do we do with RTL here? The math we're using is obviously not right,
         // but it isn't even clear how this should work at all.
-        int xOffsetOnLine = 0;
+        int logicalOffsetOnLine = 0;
         for (InlineFlowBox* curr = prevLineBox(); curr; curr = curr->prevLineBox())
-            xOffsetOnLine += curr->logicalWidth();
-        int startX = tx - xOffsetOnLine;
-        int totalWidth = xOffsetOnLine;
+            logicalOffsetOnLine += curr->logicalWidth();
+        int totalLogicalWidth = logicalOffsetOnLine;
         for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
-            totalWidth += curr->logicalWidth();
+            totalLogicalWidth += curr->logicalWidth();
+        int stripX = tx - (isVertical() ? 0 : logicalOffsetOnLine);
+        int stripY = ty - (isVertical() ? logicalOffsetOnLine : 0);
+        int stripWidth = isVertical() ? width() : totalLogicalWidth;
+        int stripHeight = isVertical() ? totalLogicalWidth : height();
         paintInfo.context->save();
-        paintInfo.context->clip(IntRect(tx, ty, logicalWidth(), logicalHeight()));
-        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, startX, ty, totalWidth, h, this, op);
+        paintInfo.context->clip(IntRect(tx, ty, width(), height()));
+        boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, stripX, stripY, stripWidth, stripHeight, this, op);
         paintInfo.context->restore();
     }
 }
