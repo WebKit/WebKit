@@ -288,7 +288,7 @@ void SVGFontFaceElement::rebuildFontFace()
             list = srcElement->srcValue();
     }
 
-    if (!list)
+    if (!list || !list->length())
         return;
 
     // Parse in-memory CSS rules
