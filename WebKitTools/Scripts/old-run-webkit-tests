@@ -543,6 +543,12 @@ if (!$hasAcceleratedCompositing) {
         $ignoredFiles{'media/video-display-toggle.html'} = 1;
         $ignoredFiles{'media/video-no-audio.html'} = 1;
     }
+
+    # Here we're using !$hasAcceleratedCompositing as a proxy for "is a headless XP machine" (like
+    # our test slaves). Headless XP machines can neither support accelerated compositing nor pass
+    # this test, so skipping the test here is expedient, if a little sloppy. See
+    # <http://webkit.org/b/48333>.
+    $ignoredFiles{'platform/win/plugins/npn-invalidate-rect-invalidates-window.html'} = 1 if isAppleWinWebKit();
 }
 
 if (!$has3DRendering) {

@@ -1,3 +1,17 @@
+2010-10-28  Adam Roben  <aroben@apple.com>
+
+        Skip npn-invalidate-rect-invalidates-window.html on headless XP
+        machines
+
+        TestNetscapePlugIn never receives a WM_PAINT message on headless XP
+        machines, so this test times out. Fixing the test is covered by
+        <http://webkit.org/b/48333>.
+
+        * Scripts/old-run-webkit-tests: Skip
+        npn-invalidate-rect-invalidates-window.html on Windows if accelerated
+        compositing support is disabled, which likely means we're on a headless
+        XP machine.
+
 2010-10-28  Kimmo Kinnunen  <kimmok@iki.fi>
 
         Adding myself as a committer.
