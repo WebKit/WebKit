@@ -1,3 +1,28 @@
+2010-10-28  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        webkit-patch suggest-reviewers -g 260550a6e30b7bf34f16bdb4a5396cf26264fc1c is still very slow
+        https://bugs.webkit.org/show_bug.cgi?id=48536
+
+        This patch makes it about 40 seconds faster, but it still
+        takes 1:40.  This will require more refinement.
+
+        The suggested reviewers list appears to be the same.
+
+        I think the next step may be to have it stop the search after
+        5 reviewers are found.  We never want to suggest 30 people.
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+         - Using --remove-empty to theoretically stop lookups past
+           when a file is removed.  I'm not entirely clear that the option
+           does what it says it does.  Example:
+           git log --pretty=format:%H -5 --remove-empty -- /Projects/WebKit/WebCore/platform/wx/SearchPopupMenuWx.h
+           returns only one commit
+           vs.
+           git log --pretty=format:%H -5 -- /Projects/WebKit/WebCore/platform/wx/SearchPopupMenuWx.h
+           which returns 5.  I was not aware that wx files were ever removed from the repository?
+
 2010-10-28  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.
