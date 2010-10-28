@@ -130,17 +130,17 @@ bool NetscapePlugin::platformPostInitialize()
 #ifndef NP_NO_CARBON
     if (m_eventModel == NPEventModelCarbon) {
         // Initialize the fake Carbon window.
-        Rect bounds = { 0, 0, 0, 0 };
+        ::Rect bounds = { 0, 0, 0, 0 };
         CreateNewWindow(kDocumentWindowClass, 0, &bounds, reinterpret_cast<WindowRef*>(&m_npCGContext.window));
         ASSERT(m_npCGContext.window);
-        
+
         // FIXME: Disable the backing store.
-        
+
         m_npWindow.window = &m_npCGContext;
 
         // Start the null event timer.
         // FIXME: Throttle null events when the plug-in isn't visible on screen.
-        m_nullEventTimer.startRepeating(nullEventIntervalActive);        
+        m_nullEventTimer.startRepeating(nullEventIntervalActive);
     }
 #endif
 
@@ -611,12 +611,12 @@ void NetscapePlugin::windowFrameChanged(const IntRect& windowFrame)
 
 #ifndef NP_NO_CARBON
         case NPEventModelCarbon: {
-            Rect bounds;
+            ::Rect bounds;
             bounds.top = windowFrame.y() + windowFrame.height();
             bounds.left = windowFrame.x();
             bounds.right = windowFrame.right();
             bounds.bottom = windowFrame.y();
-            
+
             ::SetWindowBounds(windowRef(), kWindowStructureRgn, &bounds);
             break;
         }

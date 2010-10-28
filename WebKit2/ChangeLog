@@ -1,3 +1,13 @@
+2010-10-28  Mark Rowe  <mrowe@apple.com>
+
+        32-bit build fix.
+
+        Qualify references to Rect to avoid ambiguity between WebCore::Rect and Carbon's Rect.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        (WebKit::NetscapePlugin::windowFrameChanged):
+
 2010-10-28  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Mark Rowe.
