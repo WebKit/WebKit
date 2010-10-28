@@ -116,31 +116,6 @@ void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
         HTMLPlugInImageElement::parseMappedAttribute(attr);
 }
 
-typedef HashMap<String, String, CaseFoldingHash> ClassIdToTypeMap;
-
-static ClassIdToTypeMap* createClassIdToTypeMap()
-{
-    ClassIdToTypeMap* map = new ClassIdToTypeMap;
-    map->add("clsid:D27CDB6E-AE6D-11CF-96B8-444553540000", "application/x-shockwave-flash");
-    map->add("clsid:CFCDAA03-8BE4-11CF-B84B-0020AFBBCCFA", "audio/x-pn-realaudio-plugin");
-    map->add("clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B", "video/quicktime");
-    map->add("clsid:166B1BCA-3F9C-11CF-8075-444553540000", "application/x-director");
-    map->add("clsid:6BF52A52-394A-11D3-B153-00C04F79FAA6", "application/x-mplayer2");
-    map->add("clsid:22D6F312-B0F6-11D0-94AB-0080C74C7E95", "application/x-mplayer2");
-    return map;
-}
-
-static String serviceTypeForClassId(const String& classId)
-{
-    // Return early if classId is empty (since we won't do anything below).
-    // Furthermore, if classId is null, calling get() below will crash.
-    if (classId.isEmpty())
-        return String();
-    
-    static ClassIdToTypeMap* map = createClassIdToTypeMap();
-    return map->get(classId);
-}
-
 static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)
 {
     // Some plugins don't understand the "data" attribute of the OBJECT tag (i.e. Real and WMP
@@ -255,14 +230,9 @@ void HTMLObjectElement::updateWidget(bool onlyCreateNonNetscapePlugins)
     // FIXME: This should ASSERT isFinishedParsingChildren() instead.
     if (!isFinishedParsingChildren())
         return;
-
-    String url = this->url();
     
-    // If the object does not specify a MIME type via a type attribute, but does
-    // contain a classid attribute, try to map the classid to a MIME type.
+    String url = this->url();
     String serviceType = this->serviceType();
-    if (serviceType.isEmpty())
-        serviceType = serviceTypeForClassId(classId());
 
     // FIXME: These should be joined into a PluginParameters class.
     Vector<String> paramNames;
@@ -291,8 +261,12 @@ void HTMLObjectElement::updateWidget(bool onlyCreateNonNetscapePlugins)
     if (!renderer())
         return;
 
+    // HTML5 says that fallback content should be rendered if a non-empty
+    // classid is specified for which the UA can't find a suitable plug-in.
+    bool hasEmptyClassId = classId().isEmpty();
+
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
-    bool success = beforeLoadAllowedLoad && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
+    bool success = beforeLoadAllowedLoad && hasEmptyClassId && loader->requestObject(this, url, getAttribute(nameAttr), serviceType, paramNames, paramValues);
 
     if (!success && fallbackContent)
         renderFallbackContent();
