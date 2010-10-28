@@ -78,9 +78,6 @@ plugins/embed-attributes-style.html
 # http://webkit.org/b/46711
 platform/win/plugins/plugin-delayed-destroy.html
 
-# http://webkit.org/b/46712
-plugins/document-open.html
-
 # http://webkit.org/b/46715
 plugins/npruntime/invoke-failure.html
 

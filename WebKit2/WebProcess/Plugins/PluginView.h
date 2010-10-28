@@ -47,10 +47,7 @@ namespace WebKit {
 
 class PluginView : public WebCore::PluginViewBase, WebCore::MediaCanStartListener, PluginController, WebFrame::LoadListener {
 public:
-    static PassRefPtr<PluginView> create(WebCore::HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
-    {
-        return adoptRef(new PluginView(pluginElement, plugin, parameters));
-    }
+    static PassRefPtr<PluginView> create(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters&);
 
     WebCore::Frame* frame();
 
@@ -68,7 +65,7 @@ public:
 #endif
 
 private:
-    PluginView(WebCore::HTMLPlugInElement*, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
+    PluginView(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters& parameters);
     virtual ~PluginView();
 
     void initializePlugin();
@@ -137,7 +134,7 @@ private:
     virtual void didFinishLoad(WebFrame*);
     virtual void didFailLoad(WebFrame*, bool wasCancelled);
 
-    WebCore::HTMLPlugInElement* m_pluginElement;
+    RefPtr<WebCore::HTMLPlugInElement> m_pluginElement;
     RefPtr<Plugin> m_plugin;
     WebPage* m_webPage;
     Plugin::Parameters m_parameters;

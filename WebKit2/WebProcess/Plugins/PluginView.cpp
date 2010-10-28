@@ -235,12 +235,17 @@ static inline WebPage* webPage(HTMLPlugInElement* pluginElement)
 
     return webPage;
 }
-        
-PluginView::PluginView(HTMLPlugInElement* pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
+
+PassRefPtr<PluginView> PluginView::create(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
+{
+    return adoptRef(new PluginView(pluginElement, plugin, parameters));
+}
+
+PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<Plugin> plugin, const Plugin::Parameters& parameters)
     : PluginViewBase(0)
     , m_pluginElement(pluginElement)
     , m_plugin(plugin)
-    , m_webPage(webPage(pluginElement))
+    , m_webPage(webPage(m_pluginElement.get()))
     , m_parameters(parameters)
     , m_isInitialized(false)
     , m_isWaitingUntilMediaCanStart(false)
@@ -784,7 +789,7 @@ NPObject* PluginView::pluginElementNPObject()
         return 0;
 
     // FIXME: Handle JavaScript being disabled.
-    JSObject* object = frame()->script()->jsObjectForPluginElement(m_pluginElement);
+    JSObject* object = frame()->script()->jsObjectForPluginElement(m_pluginElement.get());
     ASSERT(object);
 
     return m_npRuntimeObjectMap.getOrCreateNPObject(object);

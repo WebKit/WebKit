@@ -1,3 +1,29 @@
+2010-10-28  Adam Roben  <aroben@apple.com>
+
+        Make PluginView retain its HTMLPlugInElement
+
+        This matches WebKit/mac's WebBaseNetscapePluginView. WebCore didn't do
+        this, but had a very different mechanism for implementing NPRuntime
+        that didn't require it.
+
+        Fixes <http://webkit.org/b/46672> <rdar://problem/8484208> Crash
+        (preceded by assertion) in Node::document when running
+        plugins/document-open.html in WebKit2 on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::create): Moved here from the header file so that
+        clients of the header file won't have to pull in HTMLPlugInElement.h.
+        Changed to take a PassRefPtr<HTMLPlugInElement>.
+        (WebKit::PluginView::PluginView): Changed to take a
+        PassRefPtr<HTMLPlugInElement> and to use m_pluginElement later (because
+        the parameter to the function will be nulled-out after assigning into
+        m_pluginElement).
+        (WebKit::PluginView::pluginElementNPObject): Updated for change to m_pluginElement.
+
+        * WebProcess/Plugins/PluginView.h: Made m_pluginElement a RefPtr.
+
 2010-10-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by Andreas Kling.
