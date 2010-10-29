@@ -200,6 +200,7 @@ public:
     TransformationMatrix m_transformRelativeToRootLayer;
     bool m_transformAnimationRunning;
     bool m_opacityAnimationRunning;
+    bool m_blockNotifySyncRequired;
 #ifndef QT_NO_GRAPHICSEFFECT
     QWeakPointer<MaskEffectQt> m_maskEffect;
 #endif
@@ -300,6 +301,7 @@ GraphicsLayerQtImpl::GraphicsLayerQtImpl(GraphicsLayerQt* newLayer)
     , m_layer(newLayer)
     , m_transformAnimationRunning(false)
     , m_opacityAnimationRunning(false)
+    , m_blockNotifySyncRequired(false)
     , m_changeMask(NoChanges)
 #if ENABLE(3D_CANVAS)
     , m_gc3D(0)
@@ -593,6 +595,8 @@ void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsIte
 
 void GraphicsLayerQtImpl::notifySyncRequired()
 {
+    m_blockNotifySyncRequired = false;
+
     if (m_layer->client())
         m_layer->client()->notifySyncRequired(m_layer);
 }
@@ -600,8 +604,14 @@ void GraphicsLayerQtImpl::notifySyncRequired()
 void GraphicsLayerQtImpl::notifyChange(ChangeMask changeMask)
 {
     m_changeMask |= changeMask;
+
+    if (m_blockNotifySyncRequired)
+        return;
+
     static QMetaMethod syncMethod = staticMetaObject.method(staticMetaObject.indexOfMethod("notifySyncRequired()"));
     syncMethod.invoke(this, Qt::QueuedConnection);
+
+    m_blockNotifySyncRequired = true;
 }
 
 void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform)
