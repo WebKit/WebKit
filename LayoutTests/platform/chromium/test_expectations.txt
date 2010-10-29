@@ -3044,7 +3044,6 @@ BUGWEBGL WIN MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html 
 
 // These three failures are due to Mesa bugs
 BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
-BUGWEBGL : fast/canvas/webgl/object-deletion-behaviour.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 
 // This should pass once mesa is upgraded to 7.9 (need to verify now).
@@ -3403,10 +3402,6 @@ BUGWK48634 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 BUGWK48634 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = TEXT
 BUGWK48634 MAC : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 BUGWK48634 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT
-
-// Tests fail on Mac (after r70867).
-BUGWK48635 MAC : fast/canvas/webgl/draw-arrays-out-of-bounds.html = TEXT
-BUGWK48635 MAC : fast/canvas/webgl/draw-elements-out-of-bounds.html = TEXT
 
 // No tests, introduced in r70887.
 BUGWK48644 : storage/indexeddb/tutorial.html = MISSING
