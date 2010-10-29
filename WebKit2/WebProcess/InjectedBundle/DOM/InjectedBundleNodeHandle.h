@@ -53,6 +53,7 @@ public:
     // Note: These should only be operations that are not exposed to JavaScript.
     WebCore::IntRect elementBounds() const;
     void setHTMLInputElementValueForUser(const String&);
+    bool isHTMLInputElementAutofilled() const;
     void setHTMLInputElementAutofilled(bool);
     PassRefPtr<InjectedBundleNodeHandle> copyHTMLTableCellElementCellAbove();
 

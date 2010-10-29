@@ -53,6 +53,11 @@ void WKBundleNodeHandleSetHTMLInputElementValueForUser(WKBundleNodeHandleRef htm
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementValueForUser(toWTFString(valueRef));
 }
 
+bool WKBundleNodeHandleGetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandleRef)
+{
+    return toImpl(htmlInputElementHandleRef)->isHTMLInputElementAutofilled();
+}
+
 void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandleRef htmlInputElementHandleRef, bool filled)
 {
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutofilled(filled);
