@@ -2291,7 +2291,6 @@ BUG32670 LINUX : fast/css/zoom-body-scroll.html = TEXT
 BUG32673 WIN LINUX : fast/forms/textarea-scrollbar-height.html = TEXT
 
 // Flaky tests found during the roll.
-BUG32688 MAC DEBUG : fast/lists/inlineBoxWrapperNullCheck.html = TEXT PASS
 BUG32689 MAC LINUX DEBUG : http/tests/security/mixedContent/about-blank-iframe-in-main-frame.html = TEXT PASS
 BUG32693 MAC DEBUG : svg/dom/SVGRectElement/rect-modify-rx.svg = TEXT PASS
 
@@ -3408,3 +3407,6 @@ BUGWK48634 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html =
 // Tests fail on Mac (after r70867).
 BUGWK48635 MAC : fast/canvas/webgl/draw-arrays-out-of-bounds.html = TEXT
 BUGWK48635 MAC : fast/canvas/webgl/draw-elements-out-of-bounds.html = TEXT
+
+// No tests, introduced in r70887.
+BUGWK48644 : storage/indexeddb/tutorial.html = MISSING
