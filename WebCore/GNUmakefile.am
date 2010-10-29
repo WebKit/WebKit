@@ -1352,6 +1352,8 @@ webcore_sources += \
 	WebCore/editing/SplitTextNodeContainingElementCommand.cpp \
 	WebCore/editing/SplitTextNodeContainingElementCommand.h \
 	WebCore/editing/TextAffinity.h \
+	WebCore/editing/TextCheckingHelper.cpp \
+	WebCore/editing/TextCheckingHelper.h \
 	WebCore/editing/TextGranularity.h \
 	WebCore/editing/TextIterator.cpp \
 	WebCore/editing/TextIterator.h \
