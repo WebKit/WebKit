@@ -11,6 +11,14 @@ function buildBlob(items, contentType, builder)
 }
 
 // Reads a blob either asynchronously or synchronously.
+function readBlobAsArrayBuffer(testFiles, blob)
+{
+    if (isReadAsAsync())
+        _readBlobAsArrayBufferAsync(testFiles, blob);
+    else
+        _readBlobAsArrayBufferSync(testFiles, blob);
+}
+
 function readBlobAsBinaryString(testFiles, blob)
 {
     if (isReadAsAsync())
@@ -36,6 +44,12 @@ function readBlobAsDataURL(testFiles, blob)
 }
 
 // Reads a blob asynchronously.
+function _readBlobAsArrayBufferAsync(testFiles, blob)
+{
+    var reader = createReaderAsync(testFiles);
+    reader.readAsArrayBuffer(blob)
+}
+
 function _readBlobAsBinaryStringAsync(testFiles, blob)
 {
     var reader = createReaderAsync(testFiles);
@@ -55,12 +69,25 @@ function _readBlobAsDataURLAsync(testFiles, blob)
 }
 
 // Reads a blob synchronously.
+function _readBlobAsArrayBufferSync(testFiles, blob)
+{
+    var reader = createReaderSync();
+    try {
+        var result = reader.readAsArrayBuffer(blob);
+        logResult(result);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+
+    runNextTest(testFiles);
+}
+
 function _readBlobAsBinaryStringSync(testFiles, blob)
 {
     var reader = createReaderSync();
     try {
         var result = reader.readAsBinaryString(blob);
-        log(result);
+        logResult(result);
     } catch (error) {
         log("Received exception " + error.code + ": " + error.name);
     }
@@ -73,7 +100,7 @@ function _readBlobAsTextSync(testFiles, blob, encoding)
     var reader = createReaderSync();
     try {
         var result = reader.readAsText(blob, encoding);
-        log(result);
+        logResult(result);
     } catch (error) {
         log("Received exception " + error.code + ": " + error.name);
     }
@@ -86,7 +113,7 @@ function _readBlobAsDataURLSync(testFiles, blob)
     var reader = createReaderSync();
     try {
         var result = reader.readAsDataURL(blob);
-        log(result);
+        logResult(result);
     } catch (error) {
         log("Received exception " + error.code + ": " + error.name);
     }
@@ -115,6 +142,19 @@ function createReaderSync()
     return new FileReaderSync();
 }
 
+// 'result' can be either an ArrayBuffer object or a string.
+function logResult(result)
+{
+    if (typeof result == 'object') {
+        log("result size: " + result.byteLength);
+        result = new Uint8Array(result, 0, result.byteLength);
+    } else
+        log("result size: " + result.length);
+
+    var resultOutput = _isASCIIString(result) ? _toString(result) : _toHexadecimal(result);
+    log("result: " + resultOutput);
+}
+
 function logEvent(event)
 {
     log("Received " + event.type + " event");
@@ -130,11 +170,9 @@ function loaded(event)
 {
     logEvent(event);
     log("readyState: " + event.target.readyState);
-    log("result size: " + event.target.result.length);
 
     var result = event.target.result;
-    var resultOutput = _isASCIIString(result) ? result : _toHexadecimal(result);
-    log("result: " + resultOutput);
+    logResult(result);
 }
 
 function loadFailed(event)
@@ -151,23 +189,42 @@ function loadEnded(testFiles, event)
 }
 
 // Helper functions.
-function _isASCIIString(str)
+
+// 'value' can be either an ArrayBufferView object or a string.
+function _toString(value)
 {
-    for (var i = 0; i < str.length; ++i) {
-        if (str.charCodeAt(i) >= 128)
+    if (typeof value == 'string')
+        return value;
+    var result = "";
+    for (var i = 0; i < value.length; ++i)
+        result += String.fromCharCode(value[i]);
+    return result;
+}
+
+// 'value' can be either an ArrayBufferView object or a string.
+function _isASCIIString(value)
+{
+    for (var i = 0; i < value.length; ++i) {
+        if (_getElementAt(value, i) >= 128)
             return false;
     }
     return true;
 }
 
-function _toHexadecimal(str)
+// 'value' can be either an ArrayBufferView object or a string.
+function _toHexadecimal(value)
 {
     var result = "";
-    for (var i = 0; i < str.length; ++i) {
-        var hex = "0x" + (str.charCodeAt(i) & 0xFF).toString(16);
+    for (var i = 0; i < value.length; ++i) {
+        var hex = "0x" + (_getElementAt(value, i) & 0xFF).toString(16);
         if (i > 0)
             result += " ";
         result += hex;
     }
     return result;
+}
+
+function _getElementAt(value, i)
+{
+    return (typeof value == 'string') ? value.charCodeAt(i) : value[i];
 }

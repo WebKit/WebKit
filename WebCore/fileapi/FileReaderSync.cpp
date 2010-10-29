@@ -34,162 +34,66 @@
 
 #include "FileReaderSync.h"
 
-#include "Base64.h"
+#include "ArrayBuffer.h"
 #include "Blob.h"
 #include "BlobURL.h"
 #include "FileException.h"
-#include "FileReader.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "ScriptExecutionContext.h"
-#include "TextEncoding.h"
-#include "TextResourceDecoder.h"
-#include "ThreadableBlobRegistry.h"
-#include "ThreadableLoader.h"
+#include "FileReaderLoader.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-class FileReaderSyncLoader : public ThreadableLoaderClient {
-public:
-    // If the output result is provided, use it. Otherwise, save it as the raw data.
-    FileReaderSyncLoader(StringBuilder*);
-
-    // Returns the http status code.
-    void start(ScriptExecutionContext*, const ResourceRequest&, ExceptionCode&);
-
-    // ThreadableLoaderClient
-    virtual void didReceiveResponse(const ResourceResponse&);
-    virtual void didReceiveData(const char*, int);
-    virtual void didFinishLoading(unsigned long identifier);
-    virtual void didFail(const ResourceError&);
-
-    const Vector<char>& rawData() const { return m_rawData; }
-
-private:
-    // The output result. The caller provides this in order to load the binary data directly.
-    StringBuilder* m_builder;
-
-    // The raw data. The caller does not provide the above output result and we need to save it here.
-    Vector<char> m_rawData;
-
-    int m_httpStatusCode;    
-};
-
-FileReaderSyncLoader::FileReaderSyncLoader(StringBuilder* builder)
-    : m_builder(builder)
-    , m_httpStatusCode(0)
+FileReaderSync::FileReaderSync()
 {
 }
 
-void FileReaderSyncLoader::start(ScriptExecutionContext* scriptExecutionContext, const ResourceRequest& request, ExceptionCode& ec)
+PassRefPtr<ArrayBuffer> FileReaderSync::readAsArrayBuffer(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ExceptionCode& ec)
 {
-    ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = true;
-    options.sniffContent = false;
-    options.forcePreflight = false;
-    options.allowCredentials = true;
-    options.crossOriginRequestPolicy = DenyCrossOriginRequests;
+    if (!blob)
+        return 0;
 
-    ThreadableLoader::loadResourceSynchronously(scriptExecutionContext, request, *this, options);
+    FileReaderLoader loader(FileReaderLoader::ReadAsArrayBuffer, 0);
+    startLoading(scriptExecutionContext, loader, blob, ec);
 
-    ec = (m_httpStatusCode == 200) ? 0 : FileException::ErrorCodeToExceptionCode(FileReader::httpStatusCodeToErrorCode(m_httpStatusCode));
-}
-
-void FileReaderSyncLoader::didReceiveResponse(const ResourceResponse& response)
-{
-    m_httpStatusCode = response.httpStatusCode();
-}
-
-void FileReaderSyncLoader::didReceiveData(const char* data, int lengthReceived)
-{
-    if (m_builder)
-        m_builder->append(data, static_cast<unsigned>(lengthReceived));
-    else
-        m_rawData.append(data, static_cast<unsigned>(lengthReceived));
-}
-
-void FileReaderSyncLoader::didFinishLoading(unsigned long)
-{
-}
-
-void FileReaderSyncLoader::didFail(const ResourceError&)
-{
-    // Treat as internal error.
-    m_httpStatusCode = 500;
+    return loader.arrayBufferResult();
 }
 
 String FileReaderSync::readAsBinaryString(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ExceptionCode& ec)
 {
     if (!blob)
-        return m_builder.toString();
+        return String();
 
-    read(scriptExecutionContext, blob, ReadAsBinaryString, ec);
-    return m_builder.toString();
+    FileReaderLoader loader(FileReaderLoader::ReadAsBinaryString, 0);
+    startLoading(scriptExecutionContext, loader, blob, ec);
+    return loader.stringResult();
 }
 
 String FileReaderSync::readAsText(ScriptExecutionContext* scriptExecutionContext, Blob* blob, const String& encoding, ExceptionCode& ec)
 {
     if (!blob)
-        return m_builder.toString();
+        return String();
 
-    m_encoding = encoding;
-    read(scriptExecutionContext, blob, ReadAsText, ec);
-    return m_builder.toString();
+    FileReaderLoader loader(FileReaderLoader::ReadAsText, 0);
+    loader.setEncoding(encoding);
+    startLoading(scriptExecutionContext, loader, blob, ec);
+    return loader.stringResult();
 }
 
 String FileReaderSync::readAsDataURL(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ExceptionCode& ec)
 {
     if (!blob)
-        return m_builder.toString();
+        return String();
 
-    read(scriptExecutionContext, blob, ReadAsDataURL, ec);
-    return m_builder.toString();
+    FileReaderLoader loader(FileReaderLoader::ReadAsDataURL, 0);
+    loader.setDataType(blob->type());
+    startLoading(scriptExecutionContext, loader, blob, ec);
+    return loader.stringResult();
 }
 
-void FileReaderSync::read(ScriptExecutionContext* scriptExecutionContext, Blob* blob, ReadType readType, ExceptionCode& ec)
+void FileReaderSync::startLoading(ScriptExecutionContext* scriptExecutionContext, FileReaderLoader& loader, Blob* blob, ExceptionCode& ec)
 {
-    // The blob is read by routing through the request handling layer given the temporary public url.
-    KURL urlForReading = BlobURL::createPublicURL(scriptExecutionContext->securityOrigin());
-    ThreadableBlobRegistry::registerBlobURL(urlForReading, blob->url());
-
-    ResourceRequest request(urlForReading);
-    request.setHTTPMethod("GET");
-
-    FileReaderSyncLoader loader((readType == ReadAsBinaryString) ? &m_builder : 0);
-    loader.start(scriptExecutionContext, request, ec);
-    ThreadableBlobRegistry::unregisterBlobURL(urlForReading);
-    if (ec)
-        return;
-
-    switch (readType) {
-    case ReadAsBinaryString:
-        // Nothing to do since we need no conversion.
-        return;
-    case ReadAsText:
-        convertToText(loader.rawData().data(), loader.rawData().size(), m_builder);
-        return;
-    case ReadAsDataURL:
-        FileReader::convertToDataURL(loader.rawData(), blob->type(), m_builder);
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-void FileReaderSync::convertToText(const char* data, int size, StringBuilder& builder)
-{
-    if (!size)
-        return;
-
-    // Decode the data.
-    // The File API spec says that we should use the supplied encoding if it is valid. However, we choose to ignore this
-    // requirement in order to be consistent with how WebKit decodes the web content: always have the BOM override the
-    // provided encoding.     
-    // FIXME: consider supporting incremental decoding to improve the perf.
-    RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("text/plain", m_encoding.isEmpty() ? UTF8Encoding() : TextEncoding(m_encoding));
-    builder.clear();
-    builder.append(decoder->decode(data, size));
-    builder.append(decoder->flush());
+    loader.start(scriptExecutionContext, blob);
+    ec = FileException::ErrorCodeToExceptionCode(loader.errorCode());
 }
 
 } // namespace WebCore

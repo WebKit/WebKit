@@ -34,21 +34,17 @@
 
 #include "FileReader.h"
 
-#include "Base64.h"
+#include "ArrayBuffer.h"
 #include "Blob.h"
-#include "BlobURL.h"
 #include "CrossThreadTask.h"
 #include "File.h"
 #include "Logging.h"
 #include "ProgressEvent.h"
-#include "ResourceError.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
-#include "TextResourceDecoder.h"
-#include "ThreadableBlobRegistry.h"
-#include "ThreadableLoader.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -57,10 +53,7 @@ const double progressNotificationIntervalMS = 50;
 FileReader::FileReader(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_state(None)
-    , m_readType(ReadFileAsBinaryString)
-    , m_isRawDataConverted(false)
-    , m_bytesLoaded(0)
-    , m_totalBytes(0)
+    , m_readType(FileReaderLoader::ReadAsBinaryString)
     , m_lastProgressNotificationTimeMS(0)
 {
 }
@@ -86,6 +79,16 @@ void FileReader::stop()
     terminate();
 }
 
+void FileReader::readAsArrayBuffer(Blob* blob)
+{
+    if (!blob)
+        return;
+
+    LOG(FileAPI, "FileReader: reading as array buffer: %s %s\n", blob->url().string().utf8().data(), blob->isFile() ? static_cast<File*>(blob)->path().utf8().data() : "");
+
+    readInternal(blob, FileReaderLoader::ReadAsArrayBuffer);
+}
+
 void FileReader::readAsBinaryString(Blob* blob)
 {
     if (!blob)
@@ -93,7 +96,7 @@ void FileReader::readAsBinaryString(Blob* blob)
 
     LOG(FileAPI, "FileReader: reading as binary: %s %s\n", blob->url().string().utf8().data(), blob->isFile() ? static_cast<File*>(blob)->path().utf8().data() : "");
 
-    readInternal(blob, ReadFileAsBinaryString);
+    readInternal(blob, FileReaderLoader::ReadAsBinaryString);
 }
 
 void FileReader::readAsText(Blob* blob, const String& encoding)
@@ -103,9 +106,8 @@ void FileReader::readAsText(Blob* blob, const String& encoding)
 
     LOG(FileAPI, "FileReader: reading as text: %s %s\n", blob->url().string().utf8().data(), blob->isFile() ? static_cast<File*>(blob)->path().utf8().data() : "");
 
-    if (!encoding.isEmpty())
-        m_encoding = TextEncoding(encoding);
-    readInternal(blob, ReadFileAsText);
+    m_encoding = encoding;
+    readInternal(blob, FileReaderLoader::ReadAsText);
 }
 
 void FileReader::readAsDataURL(Blob* blob)
@@ -115,8 +117,7 @@ void FileReader::readAsDataURL(Blob* blob)
 
     LOG(FileAPI, "FileReader: reading as data URL: %s %s\n", blob->url().string().utf8().data(), blob->isFile() ? static_cast<File*>(blob)->path().utf8().data() : "");
 
-    m_fileType = blob->type();
-    readInternal(blob, ReadFileAsDataURL);
+    readInternal(blob, FileReaderLoader::ReadAsDataURL);
 }
 
 static void delayedStart(ScriptExecutionContext*, FileReader* reader)
@@ -124,7 +125,7 @@ static void delayedStart(ScriptExecutionContext*, FileReader* reader)
     reader->start();
 }
 
-void FileReader::readInternal(Blob* blob, ReadType type)
+void FileReader::readInternal(Blob* blob, FileReaderLoader::ReadType type)
 {
     // readAs*** methods() can be called multiple times. Only the last call before the actual reading happens is processed.
     if (m_state != None && m_state != Starting)
@@ -159,7 +160,6 @@ void FileReader::doAbort()
 {
     terminate();
 
-    m_builder.clear();
     m_error = FileError::create(FileError::ABORT_ERR);
 
     fireEvent(eventNames().errorEvent);
@@ -171,75 +171,29 @@ void FileReader::terminate()
 {
     if (m_loader) {
         m_loader->cancel();
-        cleanup();
+        m_loader = 0;
     }
     m_state = Completed;
-}
-
-void FileReader::cleanup()
-{
-    m_loader = 0;
-    ThreadableBlobRegistry::unregisterBlobURL(m_urlForReading);
-    m_urlForReading = KURL();
 }
 
 void FileReader::start()
 {
     m_state = Opening;
 
-    // The blob is read by routing through the request handling layer given a temporary public url.
-    m_urlForReading = BlobURL::createPublicURL(scriptExecutionContext()->securityOrigin());
-    ThreadableBlobRegistry::registerBlobURL(m_urlForReading, m_blob->url());
-
-    ResourceRequest request(m_urlForReading);
-    request.setHTTPMethod("GET");
-
-    ThreadableLoaderOptions options;
-    options.sendLoadCallbacks = true;
-    options.sniffContent = false;
-    options.forcePreflight = false;
-    options.allowCredentials = true;
-    options.crossOriginRequestPolicy = DenyCrossOriginRequests;
-
-    m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);
+    m_loader = adoptPtr(new FileReaderLoader(m_readType, this));
+    m_loader->setEncoding(m_encoding);
+    m_loader->setDataType(m_blob->type());
+    m_loader->start(scriptExecutionContext(), m_blob.get());
 }
 
-void FileReader::didReceiveResponse(const ResourceResponse& response)
+void FileReader::didStartLoading()
 {
-    if (response.httpStatusCode() != 200) {
-        failed(response.httpStatusCode());
-        return;
-    }
-
     m_state = Reading;
     fireEvent(eventNames().loadstartEvent);
-
-    m_totalBytes = response.expectedContentLength();
 }
 
-void FileReader::didReceiveData(const char* data, int lengthReceived)
+void FileReader::didReceiveData()
 {
-    ASSERT(data && lengthReceived);
-
-    // Bail out if we have aborted the reading.
-    if (m_state == Completed)
-        return;
-
-    switch (m_readType) {
-    case ReadFileAsBinaryString:
-        m_builder.append(data, static_cast<unsigned>(lengthReceived));
-        break;
-    case ReadFileAsText:
-    case ReadFileAsDataURL:
-        m_rawData.append(data, static_cast<unsigned>(lengthReceived));
-        m_isRawDataConverted = false;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    m_bytesLoaded += lengthReceived;
-
     // Fire the progress event at least every 50ms.
     double now = WTF::currentTimeMS();
     if (!m_lastProgressNotificationTimeMS)
@@ -250,53 +204,33 @@ void FileReader::didReceiveData(const char* data, int lengthReceived)
     }
 }
 
-void FileReader::didFinishLoading(unsigned long)
+void FileReader::didFinishLoading()
 {
     m_state = Completed;
 
     fireEvent(eventNames().loadEvent);
     fireEvent(eventNames().loadendEvent);
-
-    cleanup();
 }
 
-void FileReader::didFail(const ResourceError&)
+void FileReader::didFail(int errorCode)
 {
     // If we're aborting, do not proceed with normal error handling since it is covered in aborting code.
     if (m_state == Aborting)
         return;
 
-    // Treat as internal error.
-    failed(500);
-}
-
-void FileReader::failed(int httpStatusCode)
-{
     m_state = Completed;
 
-    m_error = FileError::create(httpStatusCodeToErrorCode(httpStatusCode));
+    m_error = FileError::create(static_cast<FileError::ErrorCode>(errorCode));
     fireEvent(eventNames().errorEvent);
     fireEvent(eventNames().loadendEvent);
-
-    cleanup();
-}
-
-FileError::ErrorCode FileReader::httpStatusCodeToErrorCode(int httpStatusCode)
-{
-    switch (httpStatusCode) {
-        case 403:
-            return FileError::SECURITY_ERR;
-        case 404:
-            return FileError::NOT_FOUND_ERR;
-        default:
-            return FileError::NOT_READABLE_ERR;
-    }
 }
 
 void FileReader::fireEvent(const AtomicString& type)
 {
     // FIXME: the current ProgressEvent uses "unsigned long" for total and loaded attributes. Need to talk with the spec writer to resolve the issue.
-    dispatchEvent(ProgressEvent::create(type, true, static_cast<unsigned>(m_bytesLoaded), static_cast<unsigned>(m_totalBytes)));
+    unsigned bytesLoaded = m_loader ? m_loader->bytesLoaded() : 0;
+    unsigned totalBytes = m_loader ? m_loader->totalBytes() : 0;
+    dispatchEvent(ProgressEvent::create(type, true, bytesLoaded, totalBytes));
 }
 
 FileReader::ReadyState FileReader::readyState() const
@@ -316,65 +250,14 @@ FileReader::ReadyState FileReader::readyState() const
     return EMPTY;
 }
 
-String FileReader::result()
+PassRefPtr<ArrayBuffer> FileReader::arrayBufferResult() const
 {
-    // If reading as binary string, we can return the result immediately.
-    if (m_readType == ReadFileAsBinaryString)
-        return m_builder.toString();
-
-    // If we already convert the raw data received so far, we can return the result now.
-    if (m_isRawDataConverted)
-        return m_builder.toString();
-    m_isRawDataConverted = true;
-
-    if (m_readType == ReadFileAsText)
-        convertToText();
-    // For data URL, we only do the coversion until we receive all the raw data.
-    else if (m_readType == ReadFileAsDataURL && m_state == Completed)
-        convertToDataURL(m_rawData, m_fileType, m_builder);
-
-    return m_builder.toString();
+    return m_loader ? m_loader->arrayBufferResult() : 0;
 }
 
-void FileReader::convertToText()
+String FileReader::stringResult()
 {
-    if (!m_rawData.size()) {
-        m_builder.clear();
-        return;
-    }
-
-    // Decode the data.
-    // The File API spec says that we should use the supplied encoding if it is valid. However, we choose to ignore this
-    // requirement in order to be consistent with how WebKit decodes the web content: always has the BOM override the
-    // provided encoding.     
-    // FIXME: consider supporting incremental decoding to improve the perf.
-    if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("text/plain", m_encoding.isValid() ? m_encoding : UTF8Encoding());
-    m_builder.clear();
-    m_builder.append(m_decoder->decode(&m_rawData.at(0), m_rawData.size()));
-
-    if (m_state == Completed && !m_error)
-        m_builder.append(m_decoder->flush());
-}
-
-void FileReader::convertToDataURL(const Vector<char>& rawData, const String& fileType, StringBuilder& builder)
-{
-    builder.clear();
-    builder.append("data:");
-
-    if (!rawData.size())
-        return;
-
-    if (!fileType.isEmpty()) {
-        builder.append(fileType);
-        builder.append(";base64,");
-    } else
-        builder.append("base64,");
-
-    Vector<char> out;
-    base64Encode(rawData, out);
-    out.append('\0');
-    builder.append(out.data());
+    return m_loader ? m_loader->stringResult() : "";
 }
 
 } // namespace WebCore

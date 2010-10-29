@@ -29,9 +29,13 @@
  */
 
 #include "config.h"
+
+#if ENABLE(BLOB)
+
 #include "V8FileReader.h"
 
 #include "ScriptExecutionContext.h"
+#include "V8ArrayBuffer.h"
 #include "V8Binding.h"
 
 namespace WebCore {
@@ -57,4 +61,16 @@ v8::Handle<v8::Value> V8FileReader::constructorCallback(const v8::Arguments& arg
     return args.Holder();
 }
 
+v8::Handle<v8::Value> V8FileReader::resultAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.FileReader.result._get");
+    v8::Handle<v8::Object> holder = info.Holder();
+    FileReader* imp = V8FileReader::toNative(holder);
+    if (imp->readType() == FileReader::ReadFileAsArrayBuffer)
+        return toV8(imp->arrayBufferResult());
+    return v8StringOrNull(imp->stringResult());
+}
+
 } // namespace WebCore
+
+#endif // ENABLE(BLOB)

@@ -5,38 +5,55 @@ Received exception 1: NOT_FOUND_ERR
 Test reading a blob containing existent and non-existent file
 Received exception 1: NOT_FOUND_ERR
 Test reading a blob containing empty file
-
+result size: 0
+result: 
 Test reading a blob containing empty text
-
+result size: 0
+result: 
 Test reading a blob containing empty files and empty texts
-
+result size: 0
+result: 
 Test reading a blob containing single file
-Hello
+result size: 5
+result: Hello
 Test reading a blob containing single text
-First
+result size: 5
+result: First
 Test reading a blob containing single text as data URL
-data:base64,Rmlyc3Q=
+result size: 20
+result: data:base64,Rmlyc3Q=
 Test reading a blob containing single text as data URL (optional content type provided)
-data:type/foo;base64,Rmlyc3Q=
+result size: 29
+result: data:type/foo;base64,Rmlyc3Q=
 Test reading a blob containing single ArrayBuffer
-0x0 0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
+result size: 9
+result: 0x0 0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
 Test reading a blob containing sliced file
-onder
+result size: 5
+result: onder
 Test reading a blob containing sliced text
-irst
+result size: 4
+result: irst
 Test reading a blob containing sliced ArrayBuffer
-0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
+result size: 8
+result: 0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
 Test reading a blob containing multiple files
-HelloWonderfulWorld
+result size: 19
+result: HelloWonderfulWorld
 Test reading a blob containing multiple texts
-FirstSecondThird
+result size: 16
+result: FirstSecondThird
 Test reading a blob containing multiple ArrayBuffer
-0x0 0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
+result size: 9
+result: 0x0 0x1 0x2 0x80 0x81 0x82 0xfd 0xfe 0xff
 Test reading a hybrid blob
-FirstHelloSecondWonderfulWorldThird012
+result size: 38
+result: FirstHelloSecondWonderfulWorldThird012
 Test reading a sliced hybrid blob
-lloSecondWon
+result size: 12
+result: lloSecondWon
 Test reading a triple-sliced hybrid blob
-ondWonderfulWorldThird012Foolo
+result size: 30
+result: ondWonderfulWorldThird012Foolo
 DONE
 

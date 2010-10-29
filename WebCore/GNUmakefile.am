@@ -728,6 +728,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSEventTarget.h \
 	WebCore/bindings/js/JSExceptionBase.cpp \
 	WebCore/bindings/js/JSExceptionBase.h \
+	WebCore/bindings/js/JSFileReaderCustom.cpp \
 	WebCore/bindings/js/JSGeolocationCustom.cpp \
 	WebCore/bindings/js/JSHistoryCustom.cpp \
 	WebCore/bindings/js/JSHistoryCustom.h \
@@ -1420,6 +1421,9 @@ webcore_sources += \
 	WebCore/fileapi/FileList.h \
 	WebCore/fileapi/FileReader.cpp \
 	WebCore/fileapi/FileReader.h \
+	WebCore/fileapi/FileReaderLoader.cpp \
+	WebCore/fileapi/FileReaderLoader.h \
+	WebCore/fileapi/FileReaderLoaderClient.h \
 	WebCore/fileapi/FileReaderSync.cpp \
 	WebCore/fileapi/FileReaderSync.h \
 	WebCore/fileapi/FileStreamProxy.cpp \

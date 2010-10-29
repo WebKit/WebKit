@@ -48836,6 +48836,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\fileapi\FileReaderLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileReaderLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\fileapi\FileReaderLoaderClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\fileapi\FileReaderSync.cpp"
 				>
 			</File>
@@ -56376,6 +56388,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSExceptionBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSFileReaderCustom.cpp"
 					>
 				</File>
 				<File

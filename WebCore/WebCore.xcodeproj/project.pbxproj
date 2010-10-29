@@ -749,6 +749,10 @@
 		2E4346550F546A8200B0F1BA /* WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346430F546A8200B0F1BA /* WorkerThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2E4346580F546A9900B0F1BA /* CrossThreadCopier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */; };
 		2E4346590F546A9900B0F1BA /* CrossThreadCopier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */; };
+		2E7582EE12764F260062628B /* JSFileReaderCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */; };
+		2E75841D12779ADA0062628B /* FileReaderLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E75841A12779ADA0062628B /* FileReaderLoader.cpp */; };
+		2E75841E12779ADA0062628B /* FileReaderLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E75841B12779ADA0062628B /* FileReaderLoader.h */; };
+		2E75841F12779ADA0062628B /* FileReaderLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */; };
 		2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E94F439119207DA00B7F75D /* JSFileReader.cpp */; };
 		2E94F43C119207DA00B7F75D /* JSFileReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E94F43A119207DA00B7F75D /* JSFileReader.h */; };
 		2EA768040FE7126400AB9C8A /* WorkerScriptLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */; };
@@ -6799,6 +6803,10 @@
 		2E4346430F546A8200B0F1BA /* WorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerThread.h; path = workers/WorkerThread.h; sourceTree = "<group>"; };
 		2E4346560F546A9900B0F1BA /* CrossThreadCopier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CrossThreadCopier.cpp; sourceTree = "<group>"; };
 		2E4346570F546A9900B0F1BA /* CrossThreadCopier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadCopier.h; sourceTree = "<group>"; };
+		2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReaderCustom.cpp; sourceTree = "<group>"; };
+		2E75841A12779ADA0062628B /* FileReaderLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileReaderLoader.cpp; path = fileapi/FileReaderLoader.cpp; sourceTree = "<group>"; };
+		2E75841B12779ADA0062628B /* FileReaderLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReaderLoader.h; path = fileapi/FileReaderLoader.h; sourceTree = "<group>"; };
+		2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileReaderLoaderClient.h; path = fileapi/FileReaderLoaderClient.h; sourceTree = "<group>"; };
 		2E94F439119207DA00B7F75D /* JSFileReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileReader.cpp; sourceTree = "<group>"; };
 		2E94F43A119207DA00B7F75D /* JSFileReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFileReader.h; sourceTree = "<group>"; };
 		2EA768030FE7126400AB9C8A /* WorkerScriptLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerScriptLoaderClient.h; path = workers/WorkerScriptLoaderClient.h; sourceTree = "<group>"; };
@@ -15031,6 +15039,9 @@
 				4689F1AE1267BAE100E8D380 /* FileMetadata.h */,
 				976D6C69122B8A3D001FD1F7 /* FileReader.cpp */,
 				976D6C6A122B8A3D001FD1F7 /* FileReader.h */,
+				2E75841A12779ADA0062628B /* FileReaderLoader.cpp */,
+				2E75841B12779ADA0062628B /* FileReaderLoader.h */,
+				2E75841C12779ADA0062628B /* FileReaderLoaderClient.h */,
 				2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */,
 				2EDF369B122C94B4002F7D4E /* FileReaderSync.h */,
 				976D6C6C122B8A3D001FD1F7 /* FileStreamProxy.cpp */,
@@ -16973,6 +16984,7 @@
 				893C485212499B06002B3D86 /* JSEntrySyncCustom.cpp */,
 				BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */,
 				BC275B8011C5D2B400C9206C /* JSEventSourceCustom.cpp */,
+				2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */,
 				49EECF7210508D9C00099FAB /* JSFloat32ArrayCustom.cpp */,
 				FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
@@ -19515,6 +19527,8 @@
 				976D6C86122B8A3D001FD1F7 /* FileList.h in Headers */,
 				4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */,
 				976D6C89122B8A3D001FD1F7 /* FileReader.h in Headers */,
+				2E75841E12779ADA0062628B /* FileReaderLoader.h in Headers */,
+				2E75841F12779ADA0062628B /* FileReaderLoaderClient.h in Headers */,
 				2EDF369D122C94B4002F7D4E /* FileReaderSync.h in Headers */,
 				2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */,
 				2EF1BFF9121CB0CE00C27627 /* FileStreamClient.h in Headers */,
@@ -22137,6 +22151,7 @@
 				F55B3DBD1251F12D003EF269 /* FileInputType.cpp in Sources */,
 				976D6C85122B8A3D001FD1F7 /* FileList.cpp in Sources */,
 				976D6C88122B8A3D001FD1F7 /* FileReader.cpp in Sources */,
+				2E75841D12779ADA0062628B /* FileReaderLoader.cpp in Sources */,
 				2EDF369C122C94B4002F7D4E /* FileReaderSync.cpp in Sources */,
 				2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */,
 				976D6C8B122B8A3D001FD1F7 /* FileStreamProxy.cpp in Sources */,
@@ -22569,6 +22584,7 @@
 				898785F0122E1E87003AABDA /* JSFileException.cpp in Sources */,
 				BC00F0160E0A189500FD04E3 /* JSFileList.cpp in Sources */,
 				2E94F43B119207DA00B7F75D /* JSFileReader.cpp in Sources */,
+				2E7582EE12764F260062628B /* JSFileReaderCustom.cpp in Sources */,
 				898785F4122E1EAC003AABDA /* JSFileReaderSync.cpp in Sources */,
 				898785B2122CA2A7003AABDA /* JSFileSystemCallback.cpp in Sources */,
 				46DA844D1224A0710060D006 /* JSFileWriter.cpp in Sources */,

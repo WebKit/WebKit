@@ -620,6 +620,7 @@ SET(WebCore_SOURCES
     bindings/js/JSEventSourceCustom.cpp
     bindings/js/JSEventTarget.cpp
     bindings/js/JSExceptionBase.cpp
+    bindings/js/JSFileReaderCustom.cpp
     bindings/js/JSGeolocationCustom.cpp
     bindings/js/JSHistoryCustom.cpp
     bindings/js/JSIDBAnyCustom.cpp
@@ -1596,6 +1597,7 @@ SET(WebCore_SOURCES
 IF (ENABLE_BLOB)
     LIST(APPEND WebCore_SOURCES
         fileapi/FileReader.cpp
+        fileapi/FileReaderLoader.cpp
         fileapi/FileThread.cpp
         fileapi/FileStreamProxy.cpp
         platform/FileStream.cpp

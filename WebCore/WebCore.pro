@@ -420,6 +420,7 @@ v8 {
         bindings/v8/custom/V8ElementCustom.cpp \
         bindings/v8/custom/V8EventCustom.cpp \
         bindings/v8/custom/V8EventSourceConstructor.cpp \
+        bindings/v8/custom/V8FileReaderCustom.cpp \
         bindings/v8/custom/V8HTMLAllCollectionCustom.cpp
 
     contains(DEFINES, ENABLE_VIDEO=1) {
@@ -519,6 +520,7 @@ v8 {
         bindings/js/JSEventSourceCustom.cpp \
         bindings/js/JSEventTarget.cpp \
         bindings/js/JSExceptionBase.cpp \
+        bindings/js/JSFileReaderCustom.cpp \
         bindings/js/JSGeolocationCustom.cpp \
         bindings/js/JSHistoryCustom.cpp \
         bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -829,6 +831,7 @@ SOURCES += \
     fileapi/File.cpp \
     fileapi/FileList.cpp \
     fileapi/FileReader.cpp \
+    fileapi/FileReaderLoader.cpp \
     fileapi/FileReaderSync.cpp \
     fileapi/FileStreamProxy.cpp \
     fileapi/FileThread.cpp \
@@ -1736,6 +1739,8 @@ HEADERS += \
     fileapi/FileException.h \
     fileapi/FileList.h \
     fileapi/FileReader.h \
+    fileapi/FileReaderLoader.h \
+    fileapi/FileReaderLoaderClient.h \
     fileapi/FileReaderSync.h \
     fileapi/FileStreamProxy.h \
     fileapi/FileThread.h \

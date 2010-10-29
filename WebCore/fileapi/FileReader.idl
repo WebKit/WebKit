@@ -44,6 +44,7 @@ module html {
         readonly attribute unsigned short readyState;
 
         // async read methods
+        void readAsArrayBuffer(in Blob blob);
         void readAsBinaryString(in Blob blob);
         void readAsText(in Blob blob, in [Optional] DOMString encoding);
         void readAsDataURL(in Blob blob);
@@ -51,7 +52,7 @@ module html {
         void abort();
 
         // file data
-        readonly attribute [ConvertScriptString] DOMString result;
+        readonly attribute [Custom] DOMObject result;
 
         readonly attribute FileError error;
 

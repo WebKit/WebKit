@@ -1,11 +1,15 @@
 var testCases = [
+    "testReadingNonExistentFileAsArrayBuffer",
     "testReadingNonExistentFileAsBinaryString",
     "testReadingNonExistentFileAsText",
     "testReadingNonExistentFileAsDataURL",
+    "testReadingEmptyFileAsArrayBuffer",
     "testReadingEmptyFileAsBinaryString",
     "testReadingEmptyFileAsText",
     "testReadingEmptyFileAsDataURL",
+    "testReadingUTF8EncodedFileAsArrayBuffer",
     "testReadingUTF8EncodedFileAsBinaryString",
+    "testReadingBinaryFileAsArrayBuffer",
     "testReadingBinaryFileAsBinaryString",
     "testReadingUTF8EncodedFileAsText",
     "testReadingUTF16BEBOMEncodedFileAsText",
@@ -29,6 +33,12 @@ function runNextTest(testFiles)
     }
 }
 
+function testReadingNonExistentFileAsArrayBuffer(testFiles)
+{
+    log("Test reading a non-existent file as array buffer");
+    readBlobAsArrayBuffer(testFiles, testFiles['non-existent']);
+}
+
 function testReadingNonExistentFileAsBinaryString(testFiles)
 {
     log("Test reading a non-existent file as binary string");
@@ -45,6 +55,12 @@ function testReadingNonExistentFileAsDataURL(testFiles)
 {
     log("Test reading a non-existent file as data URL");
     readBlobAsDataURL(testFiles, testFiles['non-existent']);
+}
+
+function testReadingEmptyFileAsArrayBuffer(testFiles)
+{
+    log("Test reading an empty file as array buffer");
+    readBlobAsArrayBuffer(testFiles, testFiles['empty-file']);
 }
 
 function testReadingEmptyFileAsBinaryString(testFiles)
@@ -65,10 +81,22 @@ function testReadingEmptyFileAsDataURL(testFiles)
     readBlobAsDataURL(testFiles, testFiles['empty-file']);
 }
 
+function testReadingUTF8EncodedFileAsArrayBuffer(testFiles)
+{
+    log("Test reading a UTF-8 file as array buffer");
+    readBlobAsArrayBuffer(testFiles, testFiles['UTF8-file']);
+}
+
 function testReadingUTF8EncodedFileAsBinaryString(testFiles)
 {
     log("Test reading a UTF-8 file as binary string");
     readBlobAsBinaryString(testFiles, testFiles['UTF8-file']);
+}
+
+function testReadingBinaryFileAsArrayBuffer(testFiles)
+{
+    log("Test reading a binary file as array buffer");
+    readBlobAsArrayBuffer(testFiles, testFiles['binary-file']);
 }
 
 function testReadingBinaryFileAsBinaryString(testFiles)
@@ -135,6 +163,7 @@ function testMultipleReads(testFiles)
 
     log("Test calling multiple read methods and only last one is processed");
     var reader = createReaderAsync();
+    reader.readAsArrayBuffer(testFiles['UTF8-file']);
     reader.readAsBinaryString(testFiles['UTF8-file']);
     reader.readAsText(testFiles['UTF8-file']);
     reader.readAsDataURL(testFiles['UTF8-file']);

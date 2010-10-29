@@ -35,6 +35,7 @@ class ArrayBuffer : public RefCounted<ArrayBuffer> {
   public:
     static PassRefPtr<ArrayBuffer> create(unsigned numElements, unsigned elementByteSize);
     static PassRefPtr<ArrayBuffer> create(ArrayBuffer*);
+    static PassRefPtr<ArrayBuffer> create(void* source, unsigned byteLength);
 
     void* data();
     const void* data() const;

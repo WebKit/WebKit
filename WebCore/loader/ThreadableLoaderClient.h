@@ -31,6 +31,8 @@
 #ifndef ThreadableLoaderClient_h
 #define ThreadableLoaderClient_h
 
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
     class ResourceError;
