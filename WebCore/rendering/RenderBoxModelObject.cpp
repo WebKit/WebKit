@@ -524,10 +524,23 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         IntSize topLeft, topRight, bottomLeft, bottomRight;
         style()->getBorderRadiiForRect(borderRect, topLeft, topRight, bottomLeft, bottomRight);
 
-        context->addRoundedRectClip(borderRect, includeLeftEdge ? topLeft : IntSize(),
-                                                includeRightEdge ? topRight : IntSize(),
-                                                includeLeftEdge ? bottomLeft : IntSize(),
-                                                includeRightEdge ? bottomRight : IntSize());
+        if (!includeLeftEdge) {
+            topLeft = IntSize();
+            if (box->isVertical())
+                topRight = IntSize();
+            else
+                bottomLeft = IntSize();
+        }
+        
+        if (!includeRightEdge) {
+            if (box->isVertical())
+                bottomLeft = IntSize();
+            else
+                topRight = IntSize();
+            bottomRight = IntSize();
+        }
+        
+        context->addRoundedRectClip(borderRect, topLeft, topRight, bottomLeft, bottomRight);
         clippedToBorderRadius = true;
     }
 
