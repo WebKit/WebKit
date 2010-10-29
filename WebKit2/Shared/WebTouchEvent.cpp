@@ -27,6 +27,8 @@
 
 #include "WebEvent.h"
 
+#include "ArgumentCoders.h"
+
 namespace WebKit {
 
 WebTouchEvent::WebTouchEvent(WebEvent::Type type, Vector<WebPlatformTouchPoint> touchPoints, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, Modifiers modifiers, double timestamp)

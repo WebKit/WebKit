@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import collections
+import itertools
 import re
 
 
@@ -56,10 +57,8 @@ class MessageReceiver(object):
         self.condition = condition
 
     def iterparameters(self):
-        return (parameter for message in self.messages for parameter in message.parameters)
-
-    def iterreplyparameters(self):
-        return (reply_parameter for message in self.messages for reply_parameter in message.reply_parameters)
+        return itertools.chain((parameter for message in self.messages for parameter in message.parameters),
+            (reply_parameter for message in self.messages if message.reply_parameters for reply_parameter in message.reply_parameters))
 
     @classmethod
     def parse(cls, file):
@@ -381,6 +380,7 @@ def headers_for_type(type):
 
     special_cases = {
         'WTF::String': '<wtf/text/WTFString.h>',
+        'WebCore::KeypressCommand': '<WebCore/KeyboardEvent.h>',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',
         'WebKit::WebMouseEvent': '"WebEvent.h"',
         'WebKit::WebWheelEvent': '"WebEvent.h"',

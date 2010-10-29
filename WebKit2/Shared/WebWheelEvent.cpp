@@ -25,6 +25,9 @@
 
 #include "WebEvent.h"
 
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+
 namespace WebKit {    
 
 WebWheelEvent::WebWheelEvent(Type type, int x, int y, int globalX, int globalY, float deltaX, float deltaY, float wheelTicksX, float wheelTicksY, Granularity granularity, Modifiers modifiers, double timestamp)

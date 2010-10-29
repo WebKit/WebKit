@@ -34,6 +34,7 @@
 #include "WebNumber.h"
 #include "WebString.h"
 #include "WebURL.h"
+#include <WebCore/IntRect.h>
 #include <WebCore/FloatRect.h>
 #include <wtf/TypeTraits.h>
 

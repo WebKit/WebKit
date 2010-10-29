@@ -29,6 +29,7 @@
 #include "WebEvent.h"
 
 #if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
 #ifdef __OBJC__
 @class NSView;
 #else

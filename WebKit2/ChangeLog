@@ -1,3 +1,43 @@
+2010-10-28  Adam Roben  <aroben@apple.com>
+
+        Remove unnecessary #includes from WebEvent.h
+
+        Fixes <http://webkit.org/b/48609> WebEvent.h #includes things it
+        doesn't need
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/webkit2/messages.py:
+        (MessageReceiver.iterparameters): Merged iterreplyparameters into this
+        function. All callers to iterparameters are really interested in the
+        reply parameters, too. This will cause us to, e.g., add
+        forward-declarations for types used in sync replies.
+        (headers_for_type): Added a special case for WebCore::KeypressCommand.
+
+        * Scripts/webkit2/messages_unittest.py: Added a test to cover the
+        failing case that inspired the above changes.
+
+        * Shared/WebEvent.h: Replaced #includes with forward-declarations.
+
+        * Shared/API/c/WKSharedAPICast.h:
+        * Shared/NativeWebKeyboardEvent.h:
+        * Shared/WebEvent.cpp:
+        * Shared/WebKeyboardEvent.cpp:
+        * Shared/WebMouseEvent.cpp:
+        * Shared/WebPlatformTouchPoint.cpp:
+        * Shared/WebTouchEvent.cpp:
+        * Shared/WebWheelEvent.cpp:
+        * Shared/qt/WebEventFactoryQt.cpp:
+        * Shared/win/WebEventFactory.cpp:
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/LayerBackedDrawingAreaProxy.cpp:
+        * UIProcess/WebUIClient.cpp:
+        * UIProcess/WebUIClient.h:
+        * UIProcess/win/WebView.cpp:
+        * WebProcess/WebPage/FindController.cpp:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        Added now-needed #includes and declarations.
+
 2010-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Roben and David Kilzer.

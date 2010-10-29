@@ -32,8 +32,9 @@
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-class IntSize;
-struct WindowFeatures;
+    class FloatRect;
+    class IntSize;
+    struct WindowFeatures;
 }
 
 namespace WebKit {

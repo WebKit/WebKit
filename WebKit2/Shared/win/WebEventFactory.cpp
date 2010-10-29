@@ -29,8 +29,6 @@
 #include <windowsx.h>
 #include <wtf/ASCIICType.h>
 
-using namespace WebCore;
-
 namespace WebKit {
 
 static const unsigned short HIGH_BIT_MASK_SHORT = 0x8000;

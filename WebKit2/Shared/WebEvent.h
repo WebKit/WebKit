@@ -29,10 +29,12 @@
 // FIXME: We should probably move to makeing the WebCore/PlatformFooEvents trivial classes so that
 // we can use them as the event type.
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
-#include "WebCoreArgumentCoders.h"
 #include <wtf/text/WTFString.h>
+
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 

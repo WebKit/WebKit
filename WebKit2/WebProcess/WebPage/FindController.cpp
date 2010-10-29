@@ -28,6 +28,7 @@
 #include "BackingStore.h"
 #include "FindPageOverlay.h"
 #include "WKPage.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"

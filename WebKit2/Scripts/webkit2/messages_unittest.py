@@ -67,6 +67,11 @@ messages -> WebPage {
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) delayed
 
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
+
+#if PLATFORM(MAC)
+    # Keyboard support
+    InterpretKeyEvent(uint32_t type) -> (Vector<WebCore::KeypressCommand> commandName)
+#endif
 }
 
 #endif
@@ -174,6 +179,16 @@ _expected_results = {
             ),
             'condition': None,
         },
+        {
+            'name': 'InterpretKeyEvent',
+            'parameters': (
+                ('uint32_t', 'type'),
+            ),
+            'reply_parameters': (
+                ('Vector<WebCore::KeypressCommand>', 'commandName'),
+            ),
+            'condition': 'PLATFORM(MAC)',
+        },
     ),
 }
 
@@ -236,8 +251,11 @@ _expected_header = """/*
 #if ENABLE(WEBKIT2)
 
 #include "Arguments.h"
+#include "Connection.h"
 #include "MessageID.h"
 #include "Plugin.h"
+#include <WebCore/KeyboardEvent.h>
+#include <WebCore/PluginInfo.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {
@@ -272,6 +290,9 @@ enum Kind {
     GetPluginsID,
     GetPluginProcessConnectionID,
     DidCreateWebProcessConnectionID,
+#if PLATFORM(MAC)
+    InterpretKeyEventID,
+#endif
 };
 
 struct LoadURL : CoreIPC::Arguments1<const WTF::String&> {
@@ -384,6 +405,18 @@ struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPo
     }
 };
 
+#if PLATFORM(MAC)
+struct InterpretKeyEvent : CoreIPC::Arguments1<uint32_t> {
+    static const Kind messageID = InterpretKeyEventID;
+    typedef CoreIPC::Arguments1<Vector<WebCore::KeypressCommand>&> Reply;
+    typedef CoreIPC::Arguments1<uint32_t> DecodeType;
+    explicit InterpretKeyEvent(uint32_t type)
+        : CoreIPC::Arguments1<uint32_t>(type)
+    {
+    }
+};
+#endif
+
 } // namespace WebPage
 
 } // namespace Messages
@@ -493,6 +526,11 @@ CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection
     case Messages::WebPage::GetPluginProcessConnectionID:
         CoreIPC::handleMessage<Messages::WebPage::GetPluginProcessConnection>(arguments, reply, this, &WebPage::getPluginProcessConnection);
         return CoreIPC::AutomaticReply;
+#if PLATFORM(MAC)
+    case Messages::WebPage::InterpretKeyEventID:
+        CoreIPC::handleMessage<Messages::WebPage::InterpretKeyEvent>(arguments, reply, this, &WebPage::interpretKeyEvent);
+        return CoreIPC::AutomaticReply;
+#endif
     default:
         break;
     }

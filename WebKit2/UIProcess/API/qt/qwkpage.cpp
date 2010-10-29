@@ -42,6 +42,7 @@
 #include <QStyle>
 #include <QTouchEvent>
 #include <QtDebug>
+#include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
 #include <WebKit2/WKFrame.h>
 #include <WebKit2/WKRetainPtr.h>

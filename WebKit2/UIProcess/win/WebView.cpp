@@ -35,6 +35,7 @@
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyWin.h"
 #include <Commctrl.h>
+#include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/WebCoreInstanceHandle.h>

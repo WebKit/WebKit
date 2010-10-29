@@ -25,6 +25,8 @@
 
 #include "WebEvent.h"
 
+#include "WebCoreArgumentCoders.h"
+
 namespace WebKit {
 
 WebKeyboardEvent::WebKeyboardEvent(Type type, const String& text, const String& unmodifiedText, const String& keyIdentifier, int windowsVirtualKeyCode, int nativeVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, Modifiers modifiers, double timestamp)

@@ -25,6 +25,9 @@
 
 #include "WebEvent.h"
 
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+
 namespace WebKit {
 
 WebEvent::WebEvent(Type type, Modifiers modifiers, double timestamp)

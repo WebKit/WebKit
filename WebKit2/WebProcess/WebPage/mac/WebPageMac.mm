@@ -25,6 +25,7 @@
 
 #include "WebPage.h"
 
+#include "WebCoreArgumentCoders.h"
 #include "WebEvent.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"

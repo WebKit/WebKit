@@ -28,6 +28,8 @@
 #include <qgraphicssceneevent.h>
 #include <QApplication>
 #include <QKeyEvent>
+#include <WebCore/IntPoint.h>
+#include <WebCore/FloatPoint.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/CurrentTime.h>

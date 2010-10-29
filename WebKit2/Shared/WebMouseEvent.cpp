@@ -25,6 +25,9 @@
 
 #include "WebEvent.h"
 
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+
 namespace WebKit {
 
 WebMouseEvent::WebMouseEvent(Type type, Button button, int x, int y, int globalX, int globalY, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers modifiers, double timestamp)

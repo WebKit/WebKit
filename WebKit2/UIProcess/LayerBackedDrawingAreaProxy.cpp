@@ -30,6 +30,7 @@
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
 #include "MessageID.h"
+#include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 

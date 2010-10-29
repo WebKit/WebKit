@@ -32,6 +32,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/WindowFeatures.h>
 #include <string.h>
 #include <wtf/text/WTFString.h>
 
