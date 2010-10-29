@@ -1,3 +1,9 @@
+2010-10-29  Adam Roben  <aroben@apple.com>
+
+        Touch WebKit2Prefix.h to fix incremental builds on Windows
+
+        * WebKit2Prefix.h:
+
 2010-10-28  Adam Roben  <aroben@apple.com>
 
         Remove unnecessary #includes from WebEvent.h
