@@ -179,9 +179,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
 
     if (!WebProcess::shared().connection()->sendSync(WebProcessProxyMessage::GetPluginPath, 0, 
                                                      CoreIPC::In(parameters.mimeType, parameters.url.string()), 
-                                                     CoreIPC::Out(pluginPath), 
-                                                     CoreIPC::Connection::NoTimeout))
-        return 0;
+                                                     CoreIPC::Out(pluginPath)))
 
     if (pluginPath.isNull())
         return 0;
@@ -242,9 +240,7 @@ void WebPage::changeAcceleratedCompositingMode(WebCore::GraphicsLayer* layer)
     // drawing area types.
     DrawingArea::DrawingAreaInfo newDrawingAreaInfo;
 
-    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::DidChangeAcceleratedCompositing(compositing),
-        Messages::WebPageProxy::DidChangeAcceleratedCompositing::Reply(newDrawingAreaInfo),
-        m_pageID, CoreIPC::Connection::NoTimeout);
+    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::DidChangeAcceleratedCompositing(compositing), Messages::WebPageProxy::DidChangeAcceleratedCompositing::Reply(newDrawingAreaInfo), m_pageID);
     
     if (newDrawingAreaInfo.type != drawingArea()->info().type) {
         m_drawingArea = 0;

@@ -131,11 +131,8 @@ HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
         return 0;
 
     uint64_t itemID = 0;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex),
-             Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID),
-             m_page->pageID(), CoreIPC::Connection::NoTimeout)) {
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardItemAtIndex(itemIndex), Messages::WebPageProxy::BackForwardItemAtIndex::Reply(itemID), m_page->pageID()))
         return 0;
-    }
 
     if (!itemID)
         return 0;
@@ -150,11 +147,8 @@ int WebBackForwardListProxy::backListCount()
         return 0;
 
     int backListCount = 0;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(),
-             Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount),
-             m_page->pageID(), CoreIPC::Connection::NoTimeout)) {
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardBackListCount(), Messages::WebPageProxy::BackForwardBackListCount::Reply(backListCount), m_page->pageID()))
         return 0;
-    }
 
     return backListCount;
 }
@@ -165,11 +159,8 @@ int WebBackForwardListProxy::forwardListCount()
         return 0;
 
     int forwardListCount = 0;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(),
-             Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount),
-             m_page->pageID(), CoreIPC::Connection::NoTimeout)) {
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::BackForwardForwardListCount(), Messages::WebPageProxy::BackForwardForwardListCount::Reply(forwardListCount), m_page->pageID()))
         return 0;
-    }
 
     return forwardListCount;
 }

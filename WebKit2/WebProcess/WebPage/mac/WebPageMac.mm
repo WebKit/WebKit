@@ -68,9 +68,7 @@ bool WebPage::interceptEditingKeyboardEvent(KeyboardEvent* evt, bool shouldSaveC
     
     if (shouldSaveCommand && !hasKeypressCommand) {
         Vector<KeypressCommand> commandsList;        
-        if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(keyEvent->type()), 
-                                                         Messages::WebPageProxy::InterpretKeyEvent::Reply(commandsList),
-                                                         m_pageID, CoreIPC::Connection::NoTimeout))
+        if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(keyEvent->type()), Messages::WebPageProxy::InterpretKeyEvent::Reply(commandsList), m_pageID))
             return false;
         for (size_t i = 0; i < commandsList.size(); i++)
             evt->keypressCommands().append(commandsList[i]);

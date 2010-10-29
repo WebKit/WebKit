@@ -83,9 +83,7 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
     // Ask the plug-in process to create a plug-in.
     bool result = false;
 
-    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled()),
-                                              Messages::WebProcessConnection::CreatePlugin::Reply(result),
-                                              0, CoreIPC::Connection::NoTimeout))
+    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled()), Messages::WebProcessConnection::CreatePlugin::Reply(result), 0))
         return false;
 
     if (!result)
@@ -101,9 +99,7 @@ void PluginProxy::destroy()
 {
     ASSERT(m_isStarted);
 
-    m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID),
-                                         Messages::WebProcessConnection::DestroyPlugin::Reply(),
-                                         0, CoreIPC::Connection::NoTimeout);
+    m_connection->connection()->sendSync(Messages::WebProcessConnection::DestroyPlugin(m_pluginInstanceID), Messages::WebProcessConnection::DestroyPlugin::Reply(), 0);
 
     m_isStarted = false;
     m_connection->removePluginProxy(this);
@@ -115,7 +111,7 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
         return;
 
     if (!m_pluginBackingStoreContainsValidData) {
-        m_connection->connection()->sendSync(Messages::PluginControllerProxy::PaintEntirePlugin(), Messages::PluginControllerProxy::PaintEntirePlugin::Reply(), m_pluginInstanceID, CoreIPC::Connection::NoTimeout);
+        m_connection->connection()->sendSync(Messages::PluginControllerProxy::PaintEntirePlugin(), Messages::PluginControllerProxy::PaintEntirePlugin::Reply(), m_pluginInstanceID);
     
         // Blit the plug-in backing store into our own backing store.
         OwnPtr<WebCore::GraphicsContext> graphicsContext = m_backingStore->createGraphicsContext();
@@ -246,9 +242,7 @@ void PluginProxy::manualStreamDidFail(bool wasCancelled)
 bool PluginProxy::handleMouseEvent(const WebMouseEvent& mouseEvent)
 {
     bool handled = false;
-    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleMouseEvent(mouseEvent),
-                                              Messages::PluginControllerProxy::HandleMouseEvent::Reply(handled),
-                                              m_pluginInstanceID, CoreIPC::Connection::NoTimeout))
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleMouseEvent(mouseEvent), Messages::PluginControllerProxy::HandleMouseEvent::Reply(handled), m_pluginInstanceID))
         return false;
 
     return handled;
@@ -257,9 +251,7 @@ bool PluginProxy::handleMouseEvent(const WebMouseEvent& mouseEvent)
 bool PluginProxy::handleWheelEvent(const WebWheelEvent& wheelEvent)
 {
     bool handled = false;
-    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleWheelEvent(wheelEvent),
-                                              Messages::PluginControllerProxy::HandleWheelEvent::Reply(handled),
-                                              m_pluginInstanceID, CoreIPC::Connection::NoTimeout))
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleWheelEvent(wheelEvent), Messages::PluginControllerProxy::HandleWheelEvent::Reply(handled), m_pluginInstanceID))
         return false;
 
     return handled;
@@ -268,9 +260,7 @@ bool PluginProxy::handleWheelEvent(const WebWheelEvent& wheelEvent)
 bool PluginProxy::handleMouseEnterEvent(const WebMouseEvent& mouseEnterEvent)
 {
     bool handled = false;
-    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleMouseEnterEvent(mouseEnterEvent),
-                                              Messages::PluginControllerProxy::HandleMouseEnterEvent::Reply(handled),
-                                              m_pluginInstanceID, CoreIPC::Connection::NoTimeout))
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleMouseEnterEvent(mouseEnterEvent), Messages::PluginControllerProxy::HandleMouseEnterEvent::Reply(handled), m_pluginInstanceID))
         return false;
     
     return handled;
@@ -279,9 +269,7 @@ bool PluginProxy::handleMouseEnterEvent(const WebMouseEvent& mouseEnterEvent)
 bool PluginProxy::handleMouseLeaveEvent(const WebMouseEvent& mouseLeaveEvent)
 {
     bool handled = false;
-    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleMouseLeaveEvent(mouseLeaveEvent),
-                                              Messages::PluginControllerProxy::HandleMouseLeaveEvent::Reply(handled),
-                                              m_pluginInstanceID, CoreIPC::Connection::NoTimeout))
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleMouseLeaveEvent(mouseLeaveEvent), Messages::PluginControllerProxy::HandleMouseLeaveEvent::Reply(handled), m_pluginInstanceID))
         return false;
     
     return handled;
@@ -290,9 +278,7 @@ bool PluginProxy::handleMouseLeaveEvent(const WebMouseEvent& mouseLeaveEvent)
 bool PluginProxy::handleKeyboardEvent(const WebKeyboardEvent& keyboardEvent)
 {
     bool handled = false;
-    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleKeyboardEvent(keyboardEvent),
-                                              Messages::PluginControllerProxy::HandleKeyboardEvent::Reply(handled),
-                                              m_pluginInstanceID, CoreIPC::Connection::NoTimeout))
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::HandleKeyboardEvent(keyboardEvent), Messages::PluginControllerProxy::HandleKeyboardEvent::Reply(handled), m_pluginInstanceID))
         return false;
     
     return handled;

@@ -81,10 +81,7 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, APIObject
     RefPtr<APIObject> returnDataTmp;
     InjectedBundleUserMessageDecoder messageDecoder(returnDataTmp);
     
-    bool succeeded = WebProcess::shared().connection()->sendSync(WebContextMessage::PostSynchronousMessage, 0,
-                                                CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)),
-                                                CoreIPC::Out(messageDecoder),
-                                                CoreIPC::Connection::NoTimeout);
+    bool succeeded = WebProcess::shared().connection()->sendSync(WebContextMessage::PostSynchronousMessage, 0, CoreIPC::In(messageName, InjectedBundleUserMessageEncoder(messageBody)), CoreIPC::Out(messageDecoder));
 
     if (!succeeded)
         return;

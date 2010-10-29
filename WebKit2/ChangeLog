@@ -1,3 +1,52 @@
+2010-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Change the Connection::sendSync timeout parameter to have the NoTimeout argument as a default
+        argument and update all the call sites.
+
+        * Platform/CoreIPC/Connection.h:
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::proxiesForURL):
+        (WebKit::PluginControllerProxy::cookiesForURL):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::postSynchronousMessage):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        (WebKit::PluginProxy::destroy):
+        (WebKit::PluginProxy::paint):
+        (WebKit::PluginProxy::handleMouseEvent):
+        (WebKit::PluginProxy::handleWheelEvent):
+        (WebKit::PluginProxy::handleMouseEnterEvent):
+        (WebKit::PluginProxy::handleMouseLeaveEvent):
+        (WebKit::PluginProxy::handleKeyboardEvent):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::windowRect):
+        (WebKit::WebChromeClient::createWindow):
+        (WebKit::WebChromeClient::toolbarsVisible):
+        (WebKit::WebChromeClient::statusbarVisible):
+        (WebKit::WebChromeClient::menubarVisible):
+        (WebKit::WebChromeClient::canRunBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runBeforeUnloadConfirmPanel):
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::itemAtIndex):
+        (WebKit::WebBackForwardListProxy::backListCount):
+        (WebKit::WebBackForwardListProxy::forwardListCount):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::changeAcceleratedCompositingMode):
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::attachCompositingContext):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::interceptEditingKeyboardEvent):
+
 2010-10-29  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders Carlsson.

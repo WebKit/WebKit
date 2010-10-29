@@ -66,9 +66,7 @@ FloatRect WebChromeClient::windowRect()
 {
     FloatRect newWindowFrame;
 
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetWindowFrame(),
-            Messages::WebPageProxy::GetWindowFrame::Reply(newWindowFrame),
-            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetWindowFrame(), Messages::WebPageProxy::GetWindowFrame::Reply(newWindowFrame), m_page->pageID()))
         return FloatRect();
 
     return newWindowFrame;
@@ -119,11 +117,8 @@ Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const Windo
 
     uint64_t newPageID = 0;
     WebPageCreationParameters parameters;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, modifiers, mouseButton),
-            Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters),
-            m_page->pageID(), CoreIPC::Connection::NoTimeout)) {
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::CreateNewPage(windowFeatures, modifiers, mouseButton), Messages::WebPageProxy::CreateNewPage::Reply(newPageID, parameters), m_page->pageID()))
         return 0;
-    }
 
     if (!newPageID)
         return 0;
@@ -156,9 +151,7 @@ void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)
 bool WebChromeClient::toolbarsVisible()
 {
     bool toolbarsAreVisible = true;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetToolbarsAreVisible(),
-            Messages::WebPageProxy::GetToolbarsAreVisible::Reply(toolbarsAreVisible),
-            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetToolbarsAreVisible(), Messages::WebPageProxy::GetToolbarsAreVisible::Reply(toolbarsAreVisible), m_page->pageID()))
         return true;
 
     return toolbarsAreVisible;
@@ -172,9 +165,7 @@ void WebChromeClient::setStatusbarVisible(bool statusBarIsVisible)
 bool WebChromeClient::statusbarVisible()
 {
     bool statusBarIsVisible = true;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetStatusBarIsVisible(),
-            Messages::WebPageProxy::GetStatusBarIsVisible::Reply(statusBarIsVisible),
-            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetStatusBarIsVisible(), Messages::WebPageProxy::GetStatusBarIsVisible::Reply(statusBarIsVisible), m_page->pageID()))
         return true;
 
     return statusBarIsVisible;
@@ -199,9 +190,7 @@ void WebChromeClient::setMenubarVisible(bool menuBarVisible)
 bool WebChromeClient::menubarVisible()
 {
     bool menuBarIsVisible = true;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetMenuBarIsVisible(),
-            Messages::WebPageProxy::GetMenuBarIsVisible::Reply(menuBarIsVisible),
-            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetMenuBarIsVisible(), Messages::WebPageProxy::GetMenuBarIsVisible::Reply(menuBarIsVisible), m_page->pageID()))
         return true;
 
     return menuBarIsVisible;
@@ -223,9 +212,7 @@ void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLev
 bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
 {
     bool canRun = false;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::CanRunBeforeUnloadConfirmPanel(),
-            Messages::WebPageProxy::CanRunBeforeUnloadConfirmPanel::Reply(canRun),
-            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::CanRunBeforeUnloadConfirmPanel(), Messages::WebPageProxy::CanRunBeforeUnloadConfirmPanel::Reply(canRun), m_page->pageID()))
         return false;
 
     return canRun;
@@ -236,9 +223,7 @@ bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* 
     WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
     bool shouldClose = false;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()),
-            Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose),
-            m_page->pageID(), CoreIPC::Connection::NoTimeout))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()), Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose), m_page->pageID()))
         return false;
 
     return shouldClose;
@@ -270,8 +255,7 @@ void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptAlert(m_page, alertText, webFrame);
 
-    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), alertText),
-        Messages::WebPageProxy::RunJavaScriptAlert::Reply(), m_page->pageID(), CoreIPC::Connection::NoTimeout);
+    WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunJavaScriptAlert(webFrame->frameID(), alertText), Messages::WebPageProxy::RunJavaScriptAlert::Reply(), m_page->pageID());
 }
 
 bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
@@ -282,8 +266,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
     m_page->injectedBundleUIClient().willRunJavaScriptConfirm(m_page, message, webFrame);
 
     bool result = false;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), message),
-             Messages::WebPageProxy::RunJavaScriptConfirm::Reply(result), m_page->pageID(), CoreIPC::Connection::NoTimeout))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunJavaScriptConfirm(webFrame->frameID(), message), Messages::WebPageProxy::RunJavaScriptConfirm::Reply(result), m_page->pageID()))
         return false;
 
     return result;
@@ -296,8 +279,7 @@ bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, c
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptPrompt(m_page, message, defaultValue, webFrame);
 
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), message, defaultValue),
-             Messages::WebPageProxy::RunJavaScriptPrompt::Reply(result), m_page->pageID(), CoreIPC::Connection::NoTimeout))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), message, defaultValue), Messages::WebPageProxy::RunJavaScriptPrompt::Reply(result), m_page->pageID()))
         return false;
 
     return !result.isNull();
