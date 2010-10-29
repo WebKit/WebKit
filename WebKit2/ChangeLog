@@ -1,3 +1,23 @@
+2010-10-29  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        ASSERTION FAILURE in WebProcessProxy::frameDestroyed when a Page is closed before it can send
+        the DidCreateMainFrame messsage to the UIProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=48654
+
+        WebProcessProxy::frameDestroyed was asserting that the frameID it was called with was
+        registered in WebProcessProxy::frameCreated (which is called when the WebPageProxy is
+        created). However, in the case where we close the page before it's had the chance to send
+        the DidCreateMainFrame message back to the UI process, the UI Process will get the
+        DidDestroyFrame message because it's sent directly to the WebProcessProxy and doesn't go
+        through WebPageProxy.
+
+        Remove the assert because it is invalid in this case.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::frameDestroyed):
+
 2010-10-29  Adam Roben  <aroben@apple.com>
 
         Build fix when Carbon plugins are disabled

@@ -485,7 +485,9 @@ void WebProcessProxy::frameCreated(uint64_t frameID, WebFrameProxy* frameProxy)
 
 void WebProcessProxy::frameDestroyed(uint64_t frameID)
 {
-    ASSERT(m_frameMap.contains(frameID));
+    // If the page is closed before it has had the chance to send the DidCreateMainFrame message
+    // back to the UIProcess, then the frameDestroyed message will still be received because it
+    // gets sent directly to the WebProcessProxy.
     m_frameMap.remove(frameID);
 }
 
