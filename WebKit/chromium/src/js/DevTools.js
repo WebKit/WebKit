@@ -46,6 +46,8 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.canEditScriptSource = true;
     Preferences.onlineDetectionEnabled = false;
     Preferences.nativeInstrumentationEnabled = true;
+    // FIXME: Turn this to whatever the value of --enable-file-system for chrome.
+    Preferences.fileSystemEnabled = false;
 })();
 
 var devtools = devtools || {};

@@ -52,6 +52,7 @@ var WebInspector = {
     resources: {},
     cookieDomains: {},
     applicationCacheDomains: {},
+    fileSystemOrigins: {},
     missingLocalizedStrings: {},
     pendingDispatches: 0,
 
@@ -1297,6 +1298,9 @@ WebInspector.updateResource = function(payload)
         if (parsedURL) {
             this._addCookieDomain(parsedURL.host);
             this._addAppCacheDomain(parsedURL.host);
+            if (Preferences.fileSystemEnabled)
+                // This should match the SecurityOrigin::toString(). FIXME: Add a test for this.
+                this._addFileSystemOrigin(parsedURL.scheme + "://" + parsedURL.host + (parsedURL.port ? (":" + parsedURL.port) : ""));
         }
     }
 
@@ -1413,6 +1417,18 @@ WebInspector._addAppCacheDomain = function(domain)
     this.panels.storage.addApplicationCache(domain);
 }
 
+WebInspector._addFileSystemOrigin = function(origin)
+{
+    if (!this.panels.storage)
+        return;
+    // Eliminate duplicate origins.
+    // FIXME: Move appcache/cookies/filesystem domain dup checks in StoragePanel.js
+    if (origin in this.fileSystemOrigins)
+        return;
+    this.fileSystemOrigins[origin] = true;
+    this.panels.storage.addFileSystem(origin);
+}
+
 WebInspector.addDOMStorage = function(payload)
 {
     if (!this.panels.storage)
@@ -1432,6 +1448,16 @@ WebInspector.updateDOMStorage = function(storageId)
 WebInspector.updateApplicationCacheStatus = function(status)
 {
     this.panels.storage.updateApplicationCacheStatus(status);
+}
+
+WebInspector.didGetFileSystemPath = function(root, type, origin)
+{
+    this.panels.storage.updateFileSystemPath(root, type, origin);
+}
+
+WebInspector.didGetFileSystemError = function(type, origin)
+{
+    this.panels.storage.updateFileSystemError(type, origin);
 }
 
 WebInspector.updateNetworkState = function(isNowOnline)
@@ -1515,6 +1541,7 @@ WebInspector.reset = function()
     this.resources = {};
     this.cookieDomains = {};
     this.applicationCacheDomains = {};
+    this.fileSystemOrigins = {};
     this.highlightDOMNode(0);
 
     if (!Preferences.networkPanelEnabled)

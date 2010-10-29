@@ -46,6 +46,7 @@ var Preferences = {
     nativeInstrumentationEnabled: false,
     resourceExportEnabled: false,
     networkPanelEnabled: false,
+    fileSystemEnabled: false,
     useDataURLForResourceImageIcons: true
 }
 

@@ -1,3 +1,16 @@
+2010-10-29  Kavita Kanetkar  <kkanetkar@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: FileSystem integration
+        https://bugs.webkit.org/show_bug.cgi?id=45982
+
+        * public/WebFileUtilities.h:
+        (WebKit::WebFileUtilities::revealFolderInOS):
+        * src/ChromiumBridge.cpp:
+        (WebCore::ChromiumBridge::revealFolderInOS):
+
+
 2010-10-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

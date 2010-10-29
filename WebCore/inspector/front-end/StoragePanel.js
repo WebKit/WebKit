@@ -62,6 +62,12 @@ WebInspector.StoragePanel = function(database)
     this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
     this.applicationCacheListTreeElement.expand();
 
+    if (Preferences.fileSystemEnabled) {
+        this.fileSystemListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("File System"), "file-system-storage-tree-item");
+        this.sidebarTree.appendChild(this.fileSystemListTreeElement);
+        this.fileSystemListTreeElement.expand();
+    }
+       
     this.storageViews = document.createElement("div");
     this.storageViews.id = "storage-views";
     this.element.appendChild(this.storageViews);
@@ -102,7 +108,9 @@ WebInspector.StoragePanel.prototype = {
         this._domStorage = [];
 
         this._cookieViews = {};
-
+        
+        this._fileSystemView = null;
+        
         this._applicationCacheView = null;
         delete this._cachedApplicationCacheViewStatus;
 
@@ -111,7 +119,8 @@ WebInspector.StoragePanel.prototype = {
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
         this.applicationCacheListTreeElement.removeChildren();
-
+        if (Preferences.fileSystemEnabled)
+            this.fileSystemListTreeElement.removeChildren();
         this.storageViews.removeChildren();
 
         this.storageViewStatusBarItemsContainer.removeChildren();
@@ -229,6 +238,12 @@ WebInspector.StoragePanel.prototype = {
         this.applicationCacheListTreeElement.appendChild(applicationCacheTreeElement);
     },
 
+    addFileSystem: function(origin)
+    {
+        var fileSystemTreeElement = new WebInspector.FileSystemTreeElement(this, origin);
+        this.fileSystemListTreeElement.appendChild(fileSystemTreeElement);
+    },
+    
     selectDatabase: function(databaseId)
     {
         var database;
@@ -352,6 +367,12 @@ WebInspector.StoragePanel.prototype = {
             this._applicationCacheView.updateStatus(this._cachedApplicationCacheViewStatus);
     },
 
+    showFileSystem: function(treeElement, fileSystemDomain)
+    {
+        this._fileSystemView =  new WebInspector.FileSystemView(treeElement, fileSystemDomain);
+        this._innerShowView(this._fileSystemView);
+    },
+    
     showCategoryView: function(categoryName)
     {
         if (!this._categoryView)
@@ -498,6 +519,18 @@ WebInspector.StoragePanel.prototype = {
         this._cachedApplicationCacheViewStatus = status;
         if (this._applicationCacheView && this._applicationCacheView === this.visibleView)
             this._applicationCacheView.updateStatus(status);
+    },
+
+    updateFileSystemPath: function(root, type, origin)
+    {
+        if (this._fileSystemView && this._fileSystemView === this.visibleView)
+            this._fileSystemView.updateFileSystemPath(root, type, origin);  
+    },
+  
+    updateFileSystemError: function(type, origin)
+    {
+        if (this._fileSystemView && this._fileSystemView === this.visibleView)
+            this._fileSystemView.updateFileSystemError(type, origin);  
     },
 
     updateNetworkState: function(isNowOnline)
@@ -921,6 +954,21 @@ WebInspector.ApplicationCacheTreeElement.prototype = {
 }
 WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
+WebInspector.FileSystemTreeElement = function(storagePanel, fileSystemDomain)
+{
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, fileSystemDomain ? fileSystemDomain : WebInspector.UIString("Local Files"), "file-system-storage-tree-item");
+    this._fileSystemDomain = fileSystemDomain;
+}
+
+WebInspector.FileSystemTreeElement.prototype = {
+    onselect: function()
+    {
+        this._storagePanel.showFileSystem(this, this._fileSystemDomain);
+    }
+}
+ 
+WebInspector.FileSystemTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
+ 
 WebInspector.StorageCategoryView = function()
 {
     WebInspector.View.call(this);

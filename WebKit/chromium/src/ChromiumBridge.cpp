@@ -345,6 +345,11 @@ bool ChromiumBridge::getFileSize(const String& path, long long& result)
     return webKitClient()->fileUtilities()->getFileSize(path, result);
 }
 
+void ChromiumBridge::revealFolderInOS(const String& path)
+{
+    webKitClient()->fileUtilities()->revealFolderInOS(path);
+}
+
 bool ChromiumBridge::getFileModificationTime(const String& path, time_t& result)
 {
     double modificationTime;

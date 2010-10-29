@@ -1844,6 +1844,8 @@ webcore_sources += \
 	WebCore/inspector/InspectorDOMAgent.h \
 	WebCore/inspector/InspectorDOMStorageResource.cpp \
 	WebCore/inspector/InspectorDOMStorageResource.h \
+    WebCore/inspector/InspectorFileSystemAgent.cpp \
+    WebCore/inspector/InspectorFileSystemAgent.h \
 	WebCore/inspector/InspectorFrontendClient.h \
 	WebCore/inspector/InspectorFrontendClientLocal.cpp \
 	WebCore/inspector/InspectorFrontendClientLocal.h \

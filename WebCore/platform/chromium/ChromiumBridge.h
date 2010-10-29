@@ -121,6 +121,7 @@ namespace WebCore {
         static void prefetchDNS(const String& hostname);
 
         // File ---------------------------------------------------------------
+        static void revealFolderInOS(const String&);
         static bool fileExists(const String&);
         static bool deleteFile(const String&);
         static bool deleteEmptyDirectory(const String&);

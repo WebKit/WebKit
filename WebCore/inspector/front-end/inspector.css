@@ -1932,6 +1932,11 @@ body.inactive .sidebar {
     content: url(Images/applicationCache.png);
 }
 
+/* FIXME: Make separate png for file-system */
+.file-system-storage-tree-item .icon {
+    content: url(Images/applicationCache.png);
+}
+
 #storage-views {
     position: absolute;
     top: 0;

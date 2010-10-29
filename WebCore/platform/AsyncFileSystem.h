@@ -128,6 +128,9 @@ public:
     // Converts a given absolute virtual path to a platform path that starts with the platform root path of this file system.
     virtual String virtualToPlatformPath(const String& path) const;
 
+    // Getter for this file system's root path.
+    String root() const { return m_platformRootPath; }
+
 protected:
     AsyncFileSystem(const String& platformRootPath)
         : m_platformRootPath(platformRootPath)

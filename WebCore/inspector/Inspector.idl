@@ -217,6 +217,13 @@ module core {
         [handler=ApplicationCache] void getApplicationCaches(out Value applicationCaches);
 #endif
 
+#if defined(ENABLE_FILE_SYSTEM) && ENABLE_FILE_SYSTEM
+        [handler=FileSystem] void getFileSystemPathAsync(in unsigned int type, in String origin);
+        [handler=FileSystem] void revealFolderInOS(in String path);
+        [notify] void didGetFileSystemPath(out String root, out int type, out String origin);
+        [notify] void didGetFileSystemError(out int type, out String origin);
+#endif
+
         [handler=Backend] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
         [handler=Controller] void didEvaluateForTestInFrontend(in long testCallId, in String jsonResult);
 

@@ -144,6 +144,7 @@ static const char PlatformFilePathSeparator = '\\';
 static const char PlatformFilePathSeparator = '/';
 #endif
 
+void revealFolderInOS(const String&);
 bool fileExists(const String&);
 bool deleteFile(const String&);
 bool deleteEmptyDirectory(const String&);

@@ -41,6 +41,7 @@
     <file>ExtensionPanel.js</file>
     <file>ExtensionRegistryStub.js</file>
     <file>ExtensionServer.js</file>
+    <file>FileSystemView.js</file>
     <file>FontView.js</file>
     <file>GoToLineDialog.js</file>
     <file>HAREntry.js</file>
