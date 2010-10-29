@@ -114,7 +114,7 @@ void Download::platformInvalidate()
     return YES;
 }
 
-- (void)download:(NSURLDownload *)download didReceiveResponse:(NSURLResponse *)response;
+- (void)download:(NSURLDownload *)download didReceiveResponse:(NSURLResponse *)response
 {
     // FIXME: Implement.
     notImplemented();

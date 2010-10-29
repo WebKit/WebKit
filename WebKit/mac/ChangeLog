@@ -1,3 +1,13 @@
+2010-10-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        LLVM compiler build fix
+
+        * Misc/WebDownload.mm:
+        (-[WebDownload initWithRequest:delegate:]): Changed the delegate type from id to
+        id<NSURLDownloadDelegate> to match the method signature in NSURLDownload.
+
 2010-10-28  Ivan Krstić  <ike@apple.com>
 
         Reviewed by Mark Rowe.
