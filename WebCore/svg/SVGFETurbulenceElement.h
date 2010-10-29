@@ -27,9 +27,6 @@
 
 namespace WebCore {
 
-extern char SVGBaseFrequencyXIdentifier[];
-extern char SVGBaseFrequencyYIdentifier[];
-
 enum SVGStitchOptions {
     SVG_STITCHTYPE_UNKNOWN  = 0,
     SVG_STITCHTYPE_STITCH   = 1,
@@ -48,12 +45,15 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, SVGBaseFrequencyXIdentifier, float, BaseFrequencyX, baseFrequencyX)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, SVGBaseFrequencyYIdentifier, float, BaseFrequencyY, baseFrequencyY)
-    DECLARE_ANIMATED_PROPERTY(SVGFETurbulenceElement, SVGNames::numOctavesAttr, long, NumOctaves, numOctaves)
+    static const AtomicString& baseFrequencyXIdentifier();
+    static const AtomicString& baseFrequencyYIdentifier();
+
+    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, baseFrequencyXIdentifier(), float, BaseFrequencyX, baseFrequencyX)
+    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFETurbulenceElement, SVGNames::baseFrequencyAttr, baseFrequencyYIdentifier(), float, BaseFrequencyY, baseFrequencyY)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFETurbulenceElement, SVGNames::numOctavesAttr, long, NumOctaves, numOctaves)
     DECLARE_ANIMATED_PROPERTY(SVGFETurbulenceElement, SVGNames::seedAttr, float, Seed, seed)
-    DECLARE_ANIMATED_PROPERTY(SVGFETurbulenceElement, SVGNames::stitchTilesAttr, int, StitchTiles, stitchTiles)
-    DECLARE_ANIMATED_PROPERTY(SVGFETurbulenceElement, SVGNames::typeAttr, int, Type, type)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFETurbulenceElement, SVGNames::stitchTilesAttr, int, StitchTiles, stitchTiles)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFETurbulenceElement, SVGNames::typeAttr, int, Type, type)
 };
 
 } // namespace WebCore

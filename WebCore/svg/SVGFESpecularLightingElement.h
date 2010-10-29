@@ -28,9 +28,6 @@
 
 namespace WebCore {
 
-extern char SVGKernelUnitLengthXIdentifier[];
-extern char SVGKernelUnitLengthYIdentifier[];
-
 class SVGFESpecularLightingElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFESpecularLightingElement> create(const QualifiedName&, Document*);
@@ -42,12 +39,15 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
+    static const AtomicString& kernelUnitLengthXIdentifier();
+    static const AtomicString& kernelUnitLengthYIdentifier();
+
     DECLARE_ANIMATED_PROPERTY(SVGFESpecularLightingElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFESpecularLightingElement, SVGNames::specularConstantAttr, float, SpecularConstant, specularConstant)
     DECLARE_ANIMATED_PROPERTY(SVGFESpecularLightingElement, SVGNames::specularExponentAttr, float, SpecularExponent, specularExponent)
     DECLARE_ANIMATED_PROPERTY(SVGFESpecularLightingElement, SVGNames::surfaceScaleAttr, float, SurfaceScale, surfaceScale)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFESpecularLightingElement, SVGNames::kernelUnitLengthAttr, SVGKernelUnitLengthXIdentifier, float, KernelUnitLengthX, kernelUnitLengthX)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFESpecularLightingElement, SVGNames::kernelUnitLengthAttr, SVGKernelUnitLengthYIdentifier, float, KernelUnitLengthY, kernelUnitLengthY)
+    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFESpecularLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), float, KernelUnitLengthX, kernelUnitLengthX)
+    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFESpecularLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), float, KernelUnitLengthY, kernelUnitLengthY)
 
     PassRefPtr<LightSource> findLights() const;
 };

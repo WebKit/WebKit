@@ -99,8 +99,11 @@ private: \
 #define DECLARE_ANIMATED_PROPERTY_NEW(OwnerType, DOMAttribute, PropertyType, UpperProperty, LowerProperty) \
 DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
 
-#define DECLARE_ANIMATED_PROPERTY_NEW_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, PropertyType, UpperProperty, LowerProperty) \
+#define DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS_NEW(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, PropertyType, UpperProperty, LowerProperty) \
 DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
+
+#define DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, PropertyType, UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedStaticPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
 
 #define DECLARE_ANIMATED_STATIC_PROPERTY_NEW(OwnerType, DOMAttribute, PropertyType, UpperProperty, LowerProperty) \
 DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedStaticPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)

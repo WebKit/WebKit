@@ -26,8 +26,7 @@
 module svg {
 
     interface [Conditional=SVG] SVGAnimatedEnumeration {
-                 attribute unsigned short baseVal
-                     /*setter raises(DOMException)*/;
+        attribute unsigned short baseVal;
         readonly attribute unsigned short animVal;
     };
 

@@ -68,8 +68,8 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::yAttr, SVGLength, Y, y)
         DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::widthAttr, SVGLength, Width, width)
         DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::heightAttr, SVGLength, Height, height)
-        DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::patternUnitsAttr, int, PatternUnits, patternUnits)
-        DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::patternContentUnitsAttr, int, PatternContentUnits, patternContentUnits)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::patternUnitsAttr, int, PatternUnits, patternUnits)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::patternContentUnitsAttr, int, PatternContentUnits, patternContentUnits)
         DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::patternTransformAttr, SVGTransformList*, PatternTransform, patternTransform)
 
         // SVGURIReference

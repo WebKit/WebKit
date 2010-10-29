@@ -32,9 +32,6 @@
 
 namespace WebCore {
 
-char SVGKernelUnitLengthXIdentifier[] = "SVGKernelUnitLengthX";
-char SVGKernelUnitLengthYIdentifier[] = "SVGKernelUnitLengthY";
-
 inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_diffuseConstant(1)
@@ -45,6 +42,18 @@ inline SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedN
 PassRefPtr<SVGFEDiffuseLightingElement> SVGFEDiffuseLightingElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGFEDiffuseLightingElement(tagName, document));
+}
+
+const AtomicString& SVGFEDiffuseLightingElement::kernelUnitLengthXIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGKernelUnitLengthX"));
+    return s_identifier;    
+}
+
+const AtomicString& SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGKernelUnitLengthY"));
+    return s_identifier;    
 }
 
 void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)

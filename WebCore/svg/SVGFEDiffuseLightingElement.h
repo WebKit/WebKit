@@ -28,9 +28,6 @@
 
 namespace WebCore {
 
-extern char SVGKernelUnitLengthXIdentifier[];
-extern char SVGKernelUnitLengthYIdentifier[];
-
 class FEDiffuseLighting;
 class SVGColor;
 
@@ -46,11 +43,14 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
+    static const AtomicString& kernelUnitLengthXIdentifier();
+    static const AtomicString& kernelUnitLengthYIdentifier();
+
     DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::diffuseConstantAttr, float, DiffuseConstant, diffuseConstant)
     DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::surfaceScaleAttr, float, SurfaceScale, surfaceScale)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, SVGKernelUnitLengthXIdentifier, float, KernelUnitLengthX, kernelUnitLengthX)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, SVGKernelUnitLengthYIdentifier, float, KernelUnitLengthY, kernelUnitLengthY)
+    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), float, KernelUnitLengthX, kernelUnitLengthX)
+    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), float, KernelUnitLengthY, kernelUnitLengthY)
 
     PassRefPtr<LightSource> findLights() const;
 };

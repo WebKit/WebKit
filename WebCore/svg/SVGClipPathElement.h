@@ -22,7 +22,6 @@
 #define SVGClipPathElement_h
 
 #if ENABLE(SVG)
-#include "RenderObject.h"
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
@@ -30,6 +29,8 @@
 #include "SVGTests.h"
 
 namespace WebCore {
+
+class RenderObject;
 
 class SVGClipPathElement : public SVGStyledTransformableElement,
                            public SVGTests,
@@ -51,7 +52,7 @@ private:
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-    DECLARE_ANIMATED_PROPERTY(SVGClipPathElement, SVGNames::clipPathUnitsAttr, int, ClipPathUnits, clipPathUnits)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGClipPathElement, SVGNames::clipPathUnitsAttr, int, ClipPathUnits, clipPathUnits)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGClipPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

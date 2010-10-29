@@ -28,9 +28,6 @@
 
 namespace WebCore {
 
-char SVGBaseFrequencyXIdentifier[] = "SVGBaseFrequencyX";
-char SVGBaseFrequencyYIdentifier[] = "SVGBaseFrequencyY";
-
 inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_numOctaves(1)
@@ -42,6 +39,18 @@ inline SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagNa
 PassRefPtr<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGFETurbulenceElement(tagName, document));
+}
+
+const AtomicString& SVGFETurbulenceElement::baseFrequencyXIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyX"));
+    return s_identifier;    
+}
+
+const AtomicString& SVGFETurbulenceElement::baseFrequencyYIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGBaseFrequencyY"));
+    return s_identifier;    
 }
 
 void SVGFETurbulenceElement::parseMappedAttribute(Attribute* attr)

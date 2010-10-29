@@ -1,4 +1,4 @@
-# 
+#
 # Copyright (C) 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>

@@ -41,7 +41,7 @@ private:
 
     DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::in2Attr, String, In2, in2)
-    DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::operatorAttr, int, _operator, _operator)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFECompositeElement, SVGNames::operatorAttr, int, _operator, _operator)
     DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::k1Attr, float, K1, k1)
     DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::k2Attr, float, K2, k2)
     DECLARE_ANIMATED_PROPERTY(SVGFECompositeElement, SVGNames::k3Attr, float, K3, k3)

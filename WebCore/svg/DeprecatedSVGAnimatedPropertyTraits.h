@@ -22,7 +22,6 @@
 #define DeprecatedSVGAnimatedPropertyTraits_h
 
 #if ENABLE(SVG)
-#include "FloatRect.h"
 #include "PlatformString.h"
 #include "SVGNumberList.h"
 #include "SVGPreserveAspectRatio.h"
@@ -32,42 +31,6 @@ namespace WebCore {
 
 template<typename Type>
 struct DeprecatedSVGAnimatedPropertyTraits : public Noncopyable { };
-
-// SVGAnimatedBoolean
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<bool> : public Noncopyable {
-    typedef const bool& PassType;
-    typedef bool ReturnType;
-    typedef bool StoredType;
-
-    static ReturnType null() { return false; }
-    static ReturnType toReturnType(const StoredType& type) { return type; }
-    static String toString(PassType type) { return type ? "true" : "false"; }
-};
-
-// SVGAnimatedEnumeration
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<int> : public Noncopyable {
-    typedef const int& PassType;
-    typedef int ReturnType;
-    typedef int StoredType;
-
-    static ReturnType null() { return 0; }
-    static ReturnType toReturnType(const StoredType& type) { return type; }
-    static String toString(PassType type) { return String::number(type); }
-};
-
-// SVGAnimatedInteger
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<long> : public Noncopyable {
-    typedef const long& PassType;
-    typedef long ReturnType;
-    typedef long StoredType;
-
-    static ReturnType null() { return 0l; }
-    static ReturnType toReturnType(const StoredType& type) { return type; }
-    static String toString(PassType type) { return String::number(type); }
-};
 
 // SVGAnimatedNumber
 template<>

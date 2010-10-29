@@ -61616,6 +61616,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedEnumeration.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGAnimatedInteger.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedLength.h"
 				>
 			</File>

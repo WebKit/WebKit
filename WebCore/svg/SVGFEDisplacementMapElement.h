@@ -41,8 +41,8 @@ private:
     
     DECLARE_ANIMATED_PROPERTY(SVGFEDisplacementMapElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_PROPERTY(SVGFEDisplacementMapElement, SVGNames::in2Attr, String, In2, in2)
-    DECLARE_ANIMATED_PROPERTY(SVGFEDisplacementMapElement, SVGNames::xChannelSelectorAttr, int, XChannelSelector, xChannelSelector)
-    DECLARE_ANIMATED_PROPERTY(SVGFEDisplacementMapElement, SVGNames::yChannelSelectorAttr, int, YChannelSelector, yChannelSelector)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDisplacementMapElement, SVGNames::xChannelSelectorAttr, int, XChannelSelector, xChannelSelector)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDisplacementMapElement, SVGNames::yChannelSelectorAttr, int, YChannelSelector, yChannelSelector)
     DECLARE_ANIMATED_PROPERTY(SVGFEDisplacementMapElement, SVGNames::scaleAttr, float, Scale, scale)
 };
 
