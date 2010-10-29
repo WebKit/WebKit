@@ -1633,7 +1633,6 @@ BUG22777 MAC : fast/css/resize-corner-tracking-transformed.html = IMAGE+TEXT
 BUG22777 MAC : fast/overflow/hit-test-overflow-controls.html = IMAGE+TEXT
 
 // Disagreeing XML parsing error messages
-BUG23475 MAC : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUG23475 MAC : fast/parser/xhtml-alternate-entities.xml = IMAGE
 BUG23475 MAC : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
 
@@ -2331,7 +2330,6 @@ BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-defaults.svg = IMA
 BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-1.svg = IMAGE
 BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2.svg = IMAGE
 BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg = IMAGE
-BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml = IMAGE
 
 // Due to not building TestNetscapePlugin.cpp.
 BUG35387 : platform/win/plugins/plugin-delayed-destroy.html = TIMEOUT
