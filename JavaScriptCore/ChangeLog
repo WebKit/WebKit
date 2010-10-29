@@ -1,3 +1,14 @@
+2010-10-28  Kwang Yul Seo  <skyul@company100.net>
+
+        Reviewed by Darin Adler.
+
+        Include stddef.h unconditionally in Assertions.h
+        https://bugs.webkit.org/show_bug.cgi?id=48573
+
+        There is no reason to have stddef.h include be MSVC-only.
+
+        * wtf/Assertions.h:
+
 2010-10-28  Herczeg Zoltan  <zherczeg@webkit.org>
 
         Rubber stamped by Csaba Osztrogonác.

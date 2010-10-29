@@ -44,9 +44,9 @@
 
 #include "Platform.h"
 
-#if COMPILER(MSVC)
 #include <stddef.h>
-#else
+
+#if !COMPILER(MSVC)
 #include <inttypes.h>
 #endif
 
