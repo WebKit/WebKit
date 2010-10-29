@@ -1025,13 +1025,8 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
     }
 
     RenderObject* renderer = 0;
-    RenderTextControl* renderTextControl = 0;
-
     if (frame->selection()->rootEditableElement())
         renderer = frame->selection()->rootEditableElement()->shadowAncestorNode()->renderer();
-
-    if (renderer && renderer->isTextControl())
-        renderTextControl = toRenderTextControl(renderer);
 
     Vector<CompositionUnderline> underlines;
     bool hasSelection = false;
@@ -1059,10 +1054,8 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         case QInputMethodEvent::Selection: {
             hasSelection = true;
             // A selection in the inputMethodEvent is always reflected in the visible text
-            if (renderTextControl) {
-                renderTextControl->setSelectionStart(qMin(a.start, (a.start + a.length)));
-                renderTextControl->setSelectionEnd(qMax(a.start, (a.start + a.length)));
-            }
+            if (renderer && renderer->node())
+                setSelectionRange(renderer->node(), qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
 
             if (!ev->preeditString().isEmpty()) {
                 editor->setComposition(ev->preeditString(), underlines,

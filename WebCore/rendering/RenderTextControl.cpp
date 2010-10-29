@@ -216,49 +216,43 @@ int RenderTextControl::selectionEnd()
     return indexForVisiblePosition(frame->selection()->end());
 }
 
-void RenderTextControl::setSelectionStart(int start)
+bool RenderTextControl::hasVisibleTextArea() const
 {
-    HTMLTextFormControlElement* element = static_cast<HTMLTextFormControlElement*>(node());
-    setSelectionRange(start, max(start, element->selectionEnd()));
+    return style()->visibility() == HIDDEN || !m_innerText || !m_innerText->renderer() || !m_innerText->renderBox()->height();
 }
 
-void RenderTextControl::setSelectionEnd(int end)
+void setSelectionRange(Node* node, int start, int end)
 {
-    HTMLTextFormControlElement* element = static_cast<HTMLTextFormControlElement*>(node());
-    setSelectionRange(min(end, element->selectionStart()), end);
-}
+    ASSERT(node);
+    node->document()->updateLayoutIgnorePendingStylesheets();
 
-void RenderTextControl::select()
-{
-    setSelectionRange(0, text().length());
-}
+    if (!node->renderer() || !node->renderer()->isTextControl())
+        return;
 
-void RenderTextControl::setSelectionRange(int start, int end)
-{
     end = max(end, 0);
     start = min(max(start, 0), end);
 
-    ASSERT(!document()->childNeedsAndNotInStyleRecalc());
+    RenderTextControl* control = toRenderTextControl(node->renderer());
 
-    if (style()->visibility() == HIDDEN || !m_innerText || !m_innerText->renderer() || !m_innerText->renderBox()->height()) {
-        cacheSelection(start, end);
+    if (control->hasVisibleTextArea()) {
+        control->cacheSelection(start, end);
         return;
     }
-    VisiblePosition startPosition = visiblePositionForIndex(start);
+    VisiblePosition startPosition = control->visiblePositionForIndex(start);
     VisiblePosition endPosition;
     if (start == end)
         endPosition = startPosition;
     else
-        endPosition = visiblePositionForIndex(end);
+        endPosition = control->visiblePositionForIndex(end);
 
     // startPosition and endPosition can be null position for example when
     // "-webkit-user-select: none" style attribute is specified.
     if (startPosition.isNotNull() && endPosition.isNotNull()) {
-        ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node() && endPosition.deepEquivalent().node()->shadowAncestorNode() == node());
+        ASSERT(startPosition.deepEquivalent().node()->shadowAncestorNode() == node && endPosition.deepEquivalent().node()->shadowAncestorNode() == node);
     }
     VisibleSelection newSelection = VisibleSelection(startPosition, endPosition);
 
-    if (Frame* frame = this->frame())
+    if (Frame* frame = node->document()->frame())
         frame->selection()->setSelection(newSelection);
 }
 

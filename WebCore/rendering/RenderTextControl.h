@@ -42,10 +42,6 @@ public:
 
     int selectionStart();
     int selectionEnd();
-    void setSelectionStart(int);
-    void setSelectionEnd(int);
-    void select();
-    void setSelectionRange(int start, int end);
     PassRefPtr<Range> selection(int start, int end) const;
 
     virtual void subtreeHasChanged();
@@ -109,10 +105,15 @@ private:
 
     String finishText(Vector<UChar>&) const;
 
+    bool hasVisibleTextArea() const;
+    friend void setSelectionRange(Node*, int start, int end);
+
     bool m_wasChangedSinceLastChangeEvent;
     bool m_lastChangeWasUserEdit;
     RefPtr<TextControlInnerTextElement> m_innerText;
 };
+
+void setSelectionRange(Node*, int start, int end);
 
 inline RenderTextControl* toRenderTextControl(RenderObject* object)
 { 

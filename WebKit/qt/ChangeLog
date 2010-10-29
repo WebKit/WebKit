@@ -1,3 +1,15 @@
+2010-10-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove RenderTextControl::setSelectionRange
+        https://bugs.webkit.org/show_bug.cgi?id=47870
+
+        Converted RenderTextControll::setSelectionRange to a global function.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent): Calls setSelectionRange.
+
 2010-10-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -46,11 +46,13 @@
 #include "RenderTheme.h"
 #include "ScriptEventListener.h"
 #include "ValidityState.h"
+#include <limits>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+using namespace std;
 
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : HTMLElement(tagName, document)
@@ -548,26 +550,22 @@ RenderTextControl* HTMLTextFormControlElement::textRendererAfterUpdateLayout()
 
 void HTMLTextFormControlElement::setSelectionStart(int start)
 {
-    if (RenderTextControl* renderer = textRendererAfterUpdateLayout())
-        renderer->setSelectionStart(start);
+    setSelectionRange(start, max(start, selectionEnd()));
 }
 
 void HTMLTextFormControlElement::setSelectionEnd(int end)
 {
-    if (RenderTextControl* renderer = textRendererAfterUpdateLayout())
-        renderer->setSelectionEnd(end);
+    setSelectionRange(min(end, selectionStart()), end);
 }
 
 void HTMLTextFormControlElement::select()
 {
-    if (RenderTextControl* renderer = textRendererAfterUpdateLayout())
-        renderer->select();
+    setSelectionRange(0, numeric_limits<int>::max());
 }
 
 void HTMLTextFormControlElement::setSelectionRange(int start, int end)
 {
-    if (RenderTextControl* renderer = textRendererAfterUpdateLayout())
-        renderer->setSelectionRange(start, end);
+    WebCore::setSelectionRange(this, start, end);
 }
 
 int HTMLTextFormControlElement::selectionStart()
