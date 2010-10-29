@@ -1,3 +1,17 @@
+2010-10-28  Adam Roben  <aroben@apple.com>
+
+        Switch the Windows WebKit2 bot to the Release configuration
+
+        We only have one machine testing WebKit2 on Windows right now, and
+        Debug is just too slow for it to keep up.
+
+        Fixes (hopefully!) <http://webkit.org/b/48615> Windows WebKit2 bot is
+        always way behind
+
+        Reviewed by Jon Honeycutt.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2010-10-29  Leandro Gracia Gil  <leandrogracia@google.com>
 
         Reviewed by Jeremy Orlow.
