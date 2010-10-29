@@ -3245,3 +3245,16 @@ BUGWK46868 WONTFIX : platform/chromium/fast/text/chromium-mac-duplicate-ime-comp
 
 // Vertical text needs to be implemented in platforms other than OS X.
 BUGWK48459 WIN LINUX : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
+
+// New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
+BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
+BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
+BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
+
+// New test, introduced by http://trac.webkit.org/changeset/70816 with only platform/mac baselines.
+BUGWK61164 LINUX WIN : fast/blockflow/background-horizontal-bt.html = IMAGE+TEXT
+BUGWK61164 LINUX WIN : fast/blockflow/background-vertical-lr.html = IMAGE+TEXT
+BUGWK61164 LINUX WIN : fast/blockflow/background-vertical-rl.html = IMAGE+TEXT
+
+// New test, added in http://trac.webkit.org/changeset/70814.
+BUGWK61166 LINUX MAC : media/video-seek-by-small-increment.html = TEXT
