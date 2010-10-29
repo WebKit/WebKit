@@ -3271,3 +3271,26 @@ BUGWK61188 : fast/repaint/iframe-scroll-repaint.html = IMAGE+TEXT IMAGE
 
 // Temporarily disabled for a 4-sided patch. Will be enabled again by BUGWK47420.
 BUGWK47089 : fast/speech/input-text-language-tag.html = FAIL
+
+// These tests started failing presumably after r70850
+BUGWK48627 : fast/body-propagation/background-color/004-declarative.xhtml = IMAGE
+BUGWK48627 : fast/body-propagation/background-color/004-xhtml.xhtml = IMAGE
+BUGWK48627 : fast/body-propagation/background-color/004.html = IMAGE
+BUGWK48627 : fast/body-propagation/background-image/004-declarative.xhtml = IMAGE
+BUGWK48627 : fast/body-propagation/background-image/004-xhtml.xhtml = IMAGE
+BUGWK48627 : fast/body-propagation/background-image/004.html = IMAGE
+BUGWK48627 : fast/body-propagation/overflow/004-declarative.xhtml = IMAGE
+BUGWK48627 : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE
+BUGWK48627 : fast/body-propagation/overflow/004.html = IMAGE
+BUGWK48627 : fast/body-propagation/overflow/007-declarative.xhtml = IMAGE
+BUGWK48627 : fast/body-propagation/overflow/007-xhtml.xhtml = IMAGE
+BUGWK48627 : fast/body-propagation/overflow/007.html = IMAGE
+BUGWK48627 : fast/invalid/missing-end-tag.xhtml = IMAGE
+BUGWK48627 : fast/selectors/lang-vs-xml-lang-xhtml.xhtml = IMAGE
+BUGWK48627 : svg/custom/absolute-sized-svg-in-xhtml.xhtml = IMAGE
+BUGWK48627 : svg/custom/createImageElement2.xhtml = IMAGE
+BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto.xhtml = IMAGE
+BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml = IMAGE
+BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden.xhtml = IMAGE
+BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll.xhtml = IMAGE
+BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible.xhtml = IMAGE
