@@ -505,6 +505,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebEvent.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebEvent.h"
 				>
 			</File>
@@ -514,6 +518,14 @@
 			</File>
 			<File
 				RelativePath="..\Shared\WebEventConversion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebKeyboardEvent.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebMouseEvent.cpp"
 				>
 			</File>
 			<File
@@ -530,6 +542,10 @@
 			</File>
 			<File
 				RelativePath="..\Shared\WebPageCreationParameters.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebPlatformTouchPoint.cpp"
 				>
 			</File>
 			<File
@@ -565,6 +581,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebTouchEvent.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebURL.h"
 				>
 			</File>
@@ -586,6 +606,10 @@
 			</File>
 			<File
 				RelativePath="..\Shared\WebUserContentURLPattern.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebWheelEvent.cpp"
 				>
 			</File>
 			<Filter

@@ -376,13 +376,19 @@ SOURCES += \
     Shared/qt/WebURLResponseQt.cpp \
     Shared/VisitedLinkTable.cpp \
     Shared/WebError.cpp \
+    Shared/WebEvent.cpp \
     Shared/WebEventConversion.cpp \
+    Shared/WebKeyboardEvent.cpp \
+    Shared/WebMouseEvent.cpp \
     Shared/WebPageCreationParameters.cpp \
+    Shared/WebPlatformTouchPoint.cpp \
     Shared/WebPopupItem.cpp \
-    Shared/WebProcessCreationParameters.cpp \
     Shared/WebPreferencesStore.cpp \
+    Shared/WebProcessCreationParameters.cpp \
+    Shared/WebTouchEvent.cpp \
     Shared/WebURLRequest.cpp \
     Shared/WebURLResponse.cpp \
+    Shared/WebWheelEvent.cpp \
     UIProcess/API/C/WKBackForwardList.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \

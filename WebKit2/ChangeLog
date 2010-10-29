@@ -1,3 +1,30 @@
+2010-10-28  Adam Roben  <aroben@apple.com>
+
+        Move some function definitions from WebEvent.h into new .cpp files
+
+        Someday maybe we'll split the classes into their own header files,
+        too.
+
+        Fixes <http://webkit.org/b/48604>.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebEvent.h: Moved code from here...
+
+        * Shared/WebEvent.cpp: Added.
+        * Shared/WebKeyboardEvent.cpp: Added.
+        * Shared/WebMouseEvent.cpp: Added.
+        * Shared/WebPlatformTouchPoint.cpp: Added.
+        * Shared/WebTouchEvent.cpp: Added.
+        * Shared/WebWheelEvent.cpp: Added.
+        ...to here. Also changed WebTouchEvent::touchPoints not to copy the
+        Vector.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Added the new files.
+
 2010-10-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
