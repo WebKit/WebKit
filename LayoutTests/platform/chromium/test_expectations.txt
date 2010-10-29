@@ -3269,4 +3269,4 @@ BUGWK61164 LINUX WIN : fast/blockflow/background-vertical-rl.html = IMAGE+TEXT
 //BUGWK61166 LINUX MAC WIN : media/video-seek-by-small-increment.html = TEXT
 
 // New test added by http://trac.webkit.org/changeset/70840.
-BUGWK61188 : fast/repaint/iframe-scroll-repaint.html = IMAGE+TEXT PASS
+BUGWK61188 : fast/repaint/iframe-scroll-repaint.html = IMAGE+TEXT IMAGE
