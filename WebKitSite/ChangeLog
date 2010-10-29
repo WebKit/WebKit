@@ -1,3 +1,21 @@
+2010-10-29  Adam Roben  <aroben@apple.com>
+
+        Instruct developers to install the Feburary 2010 DirectX SDK, not just
+        any version
+
+        The February 2010 SDK is the last one with support for Visual Studio
+        2005.
+
+        I also removed some unnecessary instructions regarding the DirectX
+        SDK.
+
+        Fixes <http://webkit.org/b/48642> webkit.org should recommend a
+        specific version of the DirectX SDK
+
+        Reviewed by Steve Falkenburg.
+
+        * building/tools.html:
+
 2010-10-28  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Geoffrey Garen.
