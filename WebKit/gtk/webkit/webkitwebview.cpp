@@ -201,7 +201,9 @@ enum {
 #else
     PROP_VIEW_MODE,
     PROP_HADJUSTMENT,
-    PROP_VADJUSTMENT
+    PROP_VADJUSTMENT,
+    PROP_HSCROLL_POLICY,
+    PROP_VSCROLL_POLICY
 #endif
 };
 
@@ -430,6 +432,29 @@ static GtkAdjustment* getVerticalAdjustment(WebKitWebView* webView)
 {
     return webView->priv->verticalAdjustment.get();
 }
+
+static void setHorizontalScrollPolicy(WebKitWebView* webView, GtkScrollablePolicy policy)
+{
+    webView->priv->horizontalScrollingPolicy = policy;
+    gtk_widget_queue_resize(GTK_WIDGET(webView));
+}
+
+static void setVerticalScrollPolicy(WebKitWebView* webView, GtkScrollablePolicy policy)
+{
+    webView->priv->verticalScrollingPolicy = policy;
+    gtk_widget_queue_resize(GTK_WIDGET(webView));
+}
+
+static GtkScrollablePolicy getHorizontalScrollPolicy(WebKitWebView* webView)
+{
+    return webView->priv->horizontalScrollingPolicy;
+}
+
+static GtkScrollablePolicy getVerticalScrollPolicy(WebKitWebView* webView)
+{
+    return webView->priv->verticalScrollingPolicy;
+}
+
 #endif
 
 static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
@@ -498,6 +523,12 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
     case PROP_VADJUSTMENT:
         g_value_set_object(value, getVerticalAdjustment(webView));
         break;
+    case PROP_HSCROLL_POLICY:
+        g_value_set_enum(value, getHorizontalScrollPolicy(webView));
+        break;
+    case PROP_VSCROLL_POLICY:
+        g_value_set_enum(value, getVerticalScrollPolicy(webView));
+        break;
 #endif
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -539,6 +570,12 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
         break;
     case PROP_VADJUSTMENT:
         setVerticalAdjustment(webView, static_cast<GtkAdjustment*>(g_value_get_object(value)));
+        break;
+    case PROP_HSCROLL_POLICY:
+        setHorizontalScrollPolicy(webView, static_cast<GtkScrollablePolicy>(g_value_get_enum(value)));
+        break;
+    case PROP_VSCROLL_POLICY:
+        setVerticalScrollPolicy(webView, static_cast<GtkScrollablePolicy>(g_value_get_enum(value)));
         break;
 #endif
     default:
@@ -2603,6 +2640,8 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
 #else
     g_object_class_override_property(objectClass, PROP_HADJUSTMENT, "hadjustment");
     g_object_class_override_property(objectClass, PROP_VADJUSTMENT, "vadjustment");
+    g_object_class_override_property(objectClass, PROP_HSCROLL_POLICY, "hscroll-policy");
+    g_object_class_override_property(objectClass, PROP_VSCROLL_POLICY, "vscroll-policy");
 #endif
 
     /*

@@ -154,6 +154,13 @@ extern "C" {
         PlatformRefPtr<GtkAdjustment> horizontalAdjustment;
         PlatformRefPtr<GtkAdjustment> verticalAdjustment;
 
+#ifndef GTK_API_VERSION_2
+        // GtkScrollablePolicy needs to be checked when
+        // driving the scrollable adjustment values
+        GtkScrollablePolicy horizontalScrollingPolicy;
+        GtkScrollablePolicy verticalScrollingPolicy;
+#endif
+
         gboolean zoomFullContent;
         WebKitLoadStatus loadStatus;
         CString encoding;
