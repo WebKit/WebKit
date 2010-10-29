@@ -1,3 +1,12 @@
+2010-10-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [Chromium/DRT] Add master-name flag to new-run-webkit-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=48649
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: Added flag.
+
 2010-10-29  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
 
         Reviewed by Martin Robinson.
