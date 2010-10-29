@@ -2231,8 +2231,10 @@ DEFINE_STUB_FUNCTION(void, op_tear_off_activation)
     ASSERT(stackFrame.callFrame->codeBlock()->needsFullScopeChain());
     JSValue activationValue = stackFrame.args[0].jsValue();
     if (!activationValue) {
-        if (JSValue v = stackFrame.args[1].jsValue())
-            asArguments(v)->copyRegisters();
+        if (JSValue v = stackFrame.args[1].jsValue()) {
+            if (!stackFrame.callFrame->codeBlock()->isStrictMode())
+                asArguments(v)->copyRegisters();
+        }
         return;
     }
     JSActivation* activation = asActivation(stackFrame.args[0].jsValue());

@@ -1,3 +1,26 @@
+2010-10-29  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION: r69429-r69611: Crash in JSC::Interpreter::privateExecute
+        https://bugs.webkit.org/show_bug.cgi?id=47573
+
+        I think the interpreter portion of this was introduced by
+        an incorrect but silent merge when I updated prior to committing.
+        The JIT change is basically just a correctness fix, but it is
+        needed to prevent the testcase from asserting in debug builds.
+
+        The basic problem is incorrectly setting the activation object
+        on an arguments object.  The crash was due to us setting a null
+        activation in the interpreter, in the jit we were setting the
+        activation of a strict mode arguments object.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * wtf/Platform.h:
+
 2010-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Roben and David Kilzer.
