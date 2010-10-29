@@ -874,16 +874,6 @@ fast/dom/HTMLProgressElement/progress-element.html
 fast/dom/HTMLProgressElement/set-progress-properties.html
 fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
 
-# meter element is not supported
-fast/dom/HTMLMeterElement/meter-element.html
-fast/dom/HTMLMeterElement/set-meter-properties.html
-fast/dom/HTMLMeterElement/meter-appearances-capacity.html
-fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
-fast/dom/HTMLMeterElement/meter-optimums.html
-fast/dom/HTMLMeterElement/meter-percent-size.html
-fast/dom/HTMLMeterElement/meter-styles.html
-fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
-
 # view mode media feature
 fast/media/view-mode-media-feature.html
 
