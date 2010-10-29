@@ -646,6 +646,9 @@ BUG24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 // Other
 // -----------------------------------------------------------------
 
+// Pixeltest failure: Form control metrics incorrect 
+BUG10273 LINUX : http/tests/navigation/javascriptlink-frames.html = IMAGE+TEXT
+
 // Mac Safari under certain circumstances automatically places
 // a caret in editable document even when none was requested programatically.
 // We don't intend to copy this feature (at least not for Beta).
@@ -1427,6 +1430,7 @@ BUG23498 MAC : fonts/fantasy.html = IMAGE
 BUG23498 MAC : fonts/monospace.html = IMAGE
 BUG23498 MAC : fonts/sans-serif.html = IMAGE
 BUG23498 MAC : fonts/serif.html = IMAGE
+BUG23498 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug101674.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug10269-2.html = IMAGE
@@ -1574,6 +1578,7 @@ BUG23496 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE
 BUG23496 MAC : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
 BUG23496 MAC : tables/mozilla_expected_failures/core/captions1.html = IMAGE
 BUG23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
+BUG23496 MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE
 
 // Big button widgets are broken
 BUG23495 MAC : fast/forms/basic-buttons.html = IMAGE
@@ -3023,6 +3028,9 @@ BUGWK45652 SKIP : fast/viewport/viewport-87.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-128.html = TIMEOUT TEXT
+
+// Regressions from r67349? 
+BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
 
 BUGWK45667 LINUX : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
