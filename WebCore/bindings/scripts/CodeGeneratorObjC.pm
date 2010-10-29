@@ -1013,9 +1013,8 @@ sub GenerateHeader
         @internalHeaderContent = split("\r", $implementationLicenseTemplate);
 
         push(@internalHeaderContent, "\n#import <WebCore/$className.h>\n\n");
-        push(@internalHeaderContent, "#import <WebCore/SVGAnimatedProperty.h>\n\n") if $svgPropertyType or $svgListPropertyType;
-        push(@internalHeaderContent, "#import <WebCore/SVGPropertyTearOff.h>\n\n") if $svgPropertyType;
-        push(@internalHeaderContent, "#import <WebCore/SVGListPropertyTearOff.h>\n\n") if $svgListPropertyType;
+        push(@internalHeaderContent, "#import <WebCore/SVGAnimatedPropertyTearOff.h>\n\n") if $svgPropertyType;
+        push(@internalHeaderContent, "#import <WebCore/SVGAnimatedListPropertyTearOff.h>\n\n") if $svgListPropertyType;
         push(@internalHeaderContent, $interfaceAvailabilityVersionCheck) if length $interfaceAvailabilityVersion;
 
         if ($interfaceName eq "Node") {

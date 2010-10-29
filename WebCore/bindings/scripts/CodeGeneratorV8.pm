@@ -231,10 +231,10 @@ sub GetSVGPropertyTypes
     my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implType);
     if ($svgNativeType =~ /SVGPropertyTearOff/) {
         $svgPropertyType = $svgWrappedNativeType;
-        $implIncludes{"SVGPropertyTearOff.h"} = 1,
+        $implIncludes{"SVGAnimatedPropertyTearOff.h"} = 1,
     } elsif ($svgNativeType =~ /SVGListPropertyTearOff/) {
         $svgListPropertyType = $svgWrappedNativeType;
-        $implIncludes{"SVGListPropertyTearOff.h"} = 1,
+        $implIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1,
     }
 
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType);

@@ -43,11 +43,7 @@ public:
         m_contextElement->svgAttributeChanged(m_attributeName);
     }
 
-    virtual int removeItemFromList(SVGProperty*, bool)
-    {
-        ASSERT_NOT_REACHED();
-        return -1;
-    }
+    virtual bool isAnimatedListTearOff() const { return false; }
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, RefPtr<SVGAnimatedProperty>, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;

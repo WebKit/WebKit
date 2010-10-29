@@ -46,7 +46,9 @@ public:
         return m_animVal.get();
     }
 
-    virtual int removeItemFromList(SVGProperty* property, bool shouldSynchronizeWrappers)
+    virtual bool isAnimatedListTearOff() const { return true; }
+
+    int removeItemFromList(SVGProperty* property, bool shouldSynchronizeWrappers)
     {
         // FIXME: No animVal support.
         if (!m_baseVal)
