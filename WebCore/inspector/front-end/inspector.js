@@ -181,7 +181,7 @@ var WebInspector = {
 
         for (var panelName in WebInspector.panels) {
             if (WebInspector.panels[panelName] === x) {
-                InspectorBackend.storeLastActivePanel(panelName);
+                WebInspector.applicationSettings.lastActivePanel = panelName;
                 this._panelHistory.setPanel(panelName);
             }
         }
@@ -639,7 +639,13 @@ WebInspector.doLoadedDone = function()
     }
     InspectorBackend.getInspectorState(populateInspectorState);
 
-    InspectorBackend.populateScriptObjects();
+    function onPopulateScriptObjects()
+    {
+        if (!WebInspector.currentPanel)
+            WebInspector.showPanel(WebInspector.applicationSettings.lastActivePanel);
+    }
+    InspectorBackend.populateScriptObjects(onPopulateScriptObjects);
+
     InspectorBackend.setConsoleMessagesEnabled(true);
 
     // As a DOMAgent method, this needs to happen after the frontend has loaded and the agent is available.
@@ -812,7 +818,7 @@ WebInspector.documentClick = function(event)
             if (parsedURL.host === "show-panel") {
                 var panel = parsedURL.path.substring(1);
                 if (WebInspector.panels[panel])
-                    WebInspector.currentPanel = WebInspector.panels[panel];
+                    WebInspector.showPanel(panel);
             }
             return;
         }

@@ -127,8 +127,6 @@ static const char* const domNativeBreakpointType = "DOM";
 static const char* const eventListenerNativeBreakpointType = "EventListener";
 static const char* const xhrNativeBreakpointType = "XHR";
 
-// FIXME: move last panel setting to the front-end
-const char* const InspectorController::LastActivePanel = "lastActivePanel";
 const char* const InspectorController::ElementsPanel = "elements";
 const char* const InspectorController::ConsolePanel = "console";
 const char* const InspectorController::ScriptsPanel = "scripts";
@@ -148,7 +146,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_loadEventTime(-1.0)
     , m_domContentEventTime(-1.0)
     , m_expiredConsoleMessageCount(0)
-    , m_showAfterVisible(LastActivePanel)
     , m_groupLevel(0)
     , m_previousMessage(0)
     , m_settingsLoaded(false)
@@ -266,10 +263,8 @@ void InspectorController::inspect(Node* node)
         node = node->parentNode();
     m_nodeToFocus = node;
 
-    if (!m_frontend) {
-        m_showAfterVisible = ElementsPanel;
+    if (!m_frontend)
         return;
-    }
 
     focusNode();
 }
@@ -403,11 +398,6 @@ void InspectorController::markTimeline(const String& message)
 {
     if (timelineAgent())
         timelineAgent()->didMarkTimeline(message);
-}
-
-void InspectorController::storeLastActivePanel(const String& panelName)
-{
-    m_state->setString(InspectorState::lastActivePanel, panelName);
 }
 
 void InspectorController::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
@@ -549,10 +539,6 @@ void InspectorController::showPanel(const String& panel)
         m_showAfterVisible = panel;
         return;
     }
-
-    if (panel == LastActivePanel)
-        return;
-
     m_frontend->showPanel(panel);
 }
 
@@ -586,8 +572,6 @@ void InspectorController::disconnectFrontend()
     setSearchingForNode(false);
     unbindAllResources();
     stopTimelineProfiler();
-
-    m_showAfterVisible = LastActivePanel;
 
     hideHighlight();
 
@@ -629,10 +613,10 @@ void InspectorController::populateScriptObjects()
     if (!m_frontend)
         return;
 
-    if (m_showAfterVisible == LastActivePanel)
-        m_showAfterVisible = m_state->getString(InspectorState::lastActivePanel);
-
-    showPanel(m_showAfterVisible);
+    if (!m_showAfterVisible.isEmpty()) {
+        showPanel(m_showAfterVisible);
+        m_showAfterVisible = "";
+    }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (m_profilerAgent->enabled())

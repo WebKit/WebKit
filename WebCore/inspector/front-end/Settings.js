@@ -61,6 +61,7 @@ WebInspector.Settings = function()
     this.installApplicationSetting("showInheritedComputedStyleProperties", false);
     this.installApplicationSetting("showUserAgentStyles", true);
     this.installApplicationSetting("watchExpressions", []);
+    this.installApplicationSetting("lastActivePanel", "elements");
 
     this.installProjectSetting("breakpoints", {});
 }

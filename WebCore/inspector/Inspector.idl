@@ -95,7 +95,6 @@ module core {
         [handler=Controller] void populateScriptObjects();
 
         [handler=Controller] void getInspectorState(out Object state);
-        [handler=Controller] void storeLastActivePanel(in String panelName);
 
         [handler=Controller] void setSearchingForNode(in boolean enabled, out boolean newState);
 
