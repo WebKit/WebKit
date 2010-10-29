@@ -597,6 +597,7 @@ media/video-autoplay.html
 media/video-buffered.html
 media/video-canvas.html-disabled
 media/video-canvas-source.html
+media/video-canvas-alpha.html
 media/video-click-dblckick-standalone.html
 media/video-controls.html
 media/video-controls-rendering.html
