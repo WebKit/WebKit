@@ -1,3 +1,22 @@
+2010-10-29  Adam Roben  <aroben@apple.com>
+
+        Use only CoreIPC-sanctioned types in WebEvent subclasses
+
+        Fixes <http://webkit.org//48694> WebEvent subclasses should not use
+        architecture-dependent types
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebEvent.h:
+        (WebKit::WebEvent::type):
+        (WebKit::WebMouseEvent::button):
+        (WebKit::WebMouseEvent::clickCount):
+        (WebKit::WebWheelEvent::granularity):
+        (WebKit::WebPlatformTouchPoint::id):
+        (WebKit::WebPlatformTouchPoint::state):
+        Replaced enums, ints, and unsigneds with uint32_ts, int32_ts, and
+        uint32_ts, respectively.
+
 2010-10-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

@@ -72,7 +72,7 @@ public:
         MetaKey     = 1 << 3,
     };
 
-    Type type() const { return (Type)m_type; }
+    Type type() const { return static_cast<Type>(m_type); }
 
     bool shiftKey() const { return m_modifiers & ShiftKey; }
     bool controlKey() const { return m_modifiers & ControlKey; }
@@ -109,13 +109,13 @@ public:
 
     WebMouseEvent(Type, Button, const WebCore::IntPoint& position, const WebCore::IntPoint& globalPosition, float deltaX, float deltaY, float deltaZ, int clickCount, Modifiers, double timestamp);
 
-    Button button() const { return m_button; }
+    Button button() const { return static_cast<Button>(m_button); }
     const WebCore::IntPoint& position() const { return m_position; }
     const WebCore::IntPoint& globalPosition() const { return m_globalPosition; }
     float deltaX() const { return m_deltaX; }
     float deltaY() const { return m_deltaY; }
     float deltaZ() const { return m_deltaZ; }
-    int clickCount() const { return m_clickCount; }
+    int32_t clickCount() const { return m_clickCount; }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebMouseEvent&);
@@ -123,13 +123,13 @@ public:
 private:
     static bool isMouseEventType(Type);
 
-    Button m_button;
+    uint32_t m_button;
     WebCore::IntPoint m_position;
     WebCore::IntPoint m_globalPosition;
     float m_deltaX;
     float m_deltaY;
     float m_deltaZ;
-    int m_clickCount;
+    int32_t m_clickCount;
 };
 
 // FIXME: Move this class to its own header file.
@@ -148,7 +148,7 @@ public:
     const WebCore::IntPoint globalPosition() const { return m_globalPosition; }
     const WebCore::FloatSize delta() const { return m_delta; }
     const WebCore::FloatSize wheelTicks() const { return m_wheelTicks; }
-    Granularity granularity() const { return (Granularity)m_granularity; }
+    Granularity granularity() const { return static_cast<Granularity>(m_granularity); }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, WebWheelEvent&);
@@ -160,7 +160,7 @@ private:
     WebCore::IntPoint m_globalPosition;
     WebCore::FloatSize m_delta;
     WebCore::FloatSize m_wheelTicks;
-    unsigned m_granularity; // Granularity
+    uint32_t m_granularity; // Granularity
 };
 
 // FIXME: Move this class to its own header file.
@@ -212,10 +212,10 @@ public:
 
     WebPlatformTouchPoint() { }
 
-    WebPlatformTouchPoint(unsigned id, TouchPointState, const WebCore::IntPoint& screenPosition, const WebCore::IntPoint& position);
+    WebPlatformTouchPoint(uint32_t id, TouchPointState, const WebCore::IntPoint& screenPosition, const WebCore::IntPoint& position);
 
-    unsigned id() const { return m_id; }
-    TouchPointState state() const { return m_state; }
+    uint32_t id() const { return m_id; }
+    TouchPointState state() const { return static_cast<TouchPointState>(m_state); }
 
     const WebCore::IntPoint& screenPosition() const { return m_screenPosition; }
     const WebCore::IntPoint& position() const { return m_position; }
@@ -226,8 +226,8 @@ public:
     static bool decode(CoreIPC::ArgumentDecoder*, WebPlatformTouchPoint&);
 
 private:
-    unsigned m_id;
-    TouchPointState m_state;
+    uint32_t m_id;
+    uint32_t m_state;
     WebCore::IntPoint m_screenPosition;
     WebCore::IntPoint m_position;
 
