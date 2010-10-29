@@ -312,6 +312,38 @@ void Connection::sendOutgoingMessages()
     }
 }
 
+void Connection::dispatchSyncMessage(MessageID messageID, ArgumentDecoder* arguments)
+{
+    ASSERT(messageID.isSync());
+
+    // Decode the sync request ID.
+    uint64_t syncRequestID = 0;
+
+    if (!arguments->decodeUInt64(syncRequestID) || !syncRequestID) {
+        // We received an invalid sync message.
+        arguments->markInvalid();
+        return;
+    }
+
+    // Create our reply encoder.
+    ArgumentEncoder* replyEncoder = new ArgumentEncoder(syncRequestID);
+    
+    // Hand off both the decoder and encoder to the client..
+    SyncReplyMode syncReplyMode = m_client->didReceiveSyncMessage(this, messageID, arguments, replyEncoder);
+
+    // FIXME: If the message was invalid, we should send back a SyncMessageError.
+    ASSERT(!arguments->isInvalid());
+
+    if (syncReplyMode == ManualReply) {
+        // The client will take ownership of the reply encoder and send it at some point in the future.
+        // We won't do anything here.
+        return;
+    }
+
+    // Send the reply.
+    sendSyncReply(replyEncoder);
+}
+
 void Connection::dispatchMessages()
 {
     Vector<IncomingMessage> incomingMessages;
@@ -330,32 +362,9 @@ void Connection::dispatchMessages()
         IncomingMessage& message = incomingMessages[i];
         OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
 
-        if (message.messageID().isSync()) {
-            // Decode the sync request ID.
-            uint64_t syncRequestID = 0;
-
-            if (!arguments->decodeUInt64(syncRequestID)) {
-                // FIXME: Handle this case.
-                ASSERT_NOT_REACHED();
-            }
-
-            // Create our reply encoder.
-            ArgumentEncoder* replyEncoder = new ArgumentEncoder(syncRequestID);
-            
-            // Hand off both the decoder and encoder to the client..
-            SyncReplyMode syncReplyMode = m_client->didReceiveSyncMessage(this, message.messageID(), arguments.get(), replyEncoder);
-            
-            // FIXME: If the message was invalid, we should send back a SyncMessageError.
-            ASSERT(!arguments->isInvalid());
-
-            if (syncReplyMode == AutomaticReply) {
-                // Send the reply.
-                sendSyncReply(replyEncoder);
-            } else {
-                // The client will take ownership of the reply encoder and send it at some point in the future.
-                // We won't do anything here.
-            }
-        } else
+        if (message.messageID().isSync())
+            dispatchSyncMessage(message.messageID(), arguments.get());
+        else
             m_client->didReceiveMessage(this, message.messageID(), arguments.get());
 
         if (arguments->isInvalid())
