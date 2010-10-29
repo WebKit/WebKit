@@ -82,6 +82,7 @@ enum SerializationTag {
     ArrayTag = '[',
     ObjectTag = '{',
     SparseArrayTag = '@',
+    RegExpTag = 'R',
 };
 
 static bool shouldCheckForCycles(int depth)
@@ -219,6 +220,14 @@ public:
         doWriteUint32(pixelDataLength);
         append(pixelData, pixelDataLength);
     }
+    
+    void writeRegExp(v8::Local<v8::String> pattern, v8::RegExp::Flags flags)
+    {
+        append(RegExpTag);
+        v8::String::Utf8Value patternUtf8Value(pattern);
+        doWriteString(*patternUtf8Value, patternUtf8Value.length());
+        doWriteUint32(static_cast<uint32_t>(flags));
+    }    
 
     void writeArray(uint32_t length)
     {
@@ -605,6 +614,12 @@ private:
         WTF::ByteArray* pixelArray = imageData->data()->data();
         m_writer.writeImageData(imageData->width(), imageData->height(), pixelArray->data(), pixelArray->length());
     }
+    
+    void writeRegExp(v8::Handle<v8::Value> value)
+    {
+        v8::Handle<v8::RegExp> regExp = value.As<v8::RegExp>();
+        m_writer.writeRegExp(regExp->GetSource(), regExp->GetFlags());
+    }
 
     static StateBase* newArrayState(v8::Handle<v8::Array> array, StateBase* next)
     {
@@ -656,6 +671,8 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         writeFileList(value);
     else if (V8ImageData::HasInstance(value))
         writeImageData(value);
+    else if (value->IsRegExp())
+        writeRegExp(value);
     else if (value->IsObject())
         return push(newObjectState(value.As<v8::Object>(), next));
     return 0;
@@ -751,6 +768,10 @@ public:
                 return false;
             break;
         }
+        case RegExpTag:
+            if (!readRegExp(value))
+                return false;
+            break;
         case ObjectTag: {
             uint32_t numProperties;
             if (!doReadUint32(&numProperties))
@@ -865,6 +886,18 @@ private:
         memcpy(pixelArray->data(), m_buffer + m_position, pixelDataLength);
         m_position += pixelDataLength;
         *value = toV8(imageData);
+        return true;
+    }
+    
+    bool readRegExp(v8::Handle<v8::Value>* value)
+    {
+        v8::Handle<v8::Value> pattern;
+        if (!readString(&pattern))
+            return false;
+        uint32_t flags;
+        if (!doReadUint32(&flags))
+            return false;
+        *value = v8::RegExp::New(pattern.As<v8::String>(), static_cast<v8::RegExp::Flags>(flags));
         return true;
     }
 
