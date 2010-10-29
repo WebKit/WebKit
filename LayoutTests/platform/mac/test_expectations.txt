@@ -105,7 +105,6 @@ BUG36620 : css2.1/t1503-c522-font-family-00-b.html = IMAGE
 BUG36620 : fast/backgrounds/animated-svg-as-background.html = IMAGE
 BUG36620 : fast/backgrounds/animated-svg-as-mask.html = IMAGE
 BUG36620 : fast/backgrounds/svg-as-background-2.html = IMAGE
-BUG36620 : fast/block/float/float-avoidance.html = IMAGE
 BUG36620 : fast/borders/border-image-rotate-transform.html = IMAGE
 BUG36620 : fast/borders/svg-as-border-image-2.html = IMAGE
 BUG36620 : fast/borders/svg-as-border-image.html = IMAGE
