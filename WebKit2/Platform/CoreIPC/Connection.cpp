@@ -176,7 +176,9 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
     // First send the message.
     sendMessage(messageID, encoder);
     
-    // Then wait for a reply.
+    // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
+    // keep an extra reference to the connection here in case it's invalidated.
+    RefPtr<Connection> protect(this);
     OwnPtr<ArgumentDecoder> reply = waitForSyncReply(syncRequestID, timeout);
 
     // Finally, pop the pending sync reply information.
@@ -184,6 +186,20 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
         MutexLocker locker(m_syncReplyStateMutex);
         ASSERT(m_pendingSyncReplies.last().syncRequestID == syncRequestID);
         m_pendingSyncReplies.removeLast();
+
+        if (m_pendingSyncReplies.isEmpty()) {
+            // This was the bottom-most sendSyncMessage call in the stack. If we have any pending incoming
+            // sync messages, they need to be dispatched.
+            if (!m_syncMessagesReceivedWhileWaitingForSyncReply.isEmpty()) {
+                // Add the messages.
+                MutexLocker locker(m_incomingMessagesLock);
+                m_incomingMessages.append(m_syncMessagesReceivedWhileWaitingForSyncReply);
+                m_syncMessagesReceivedWhileWaitingForSyncReply.clear();
+
+                // Schedule for the messages to be sent.
+                m_clientRunLoop->scheduleWork(WorkItem::create(this, &Connection::dispatchMessages));
+            }
+        }
     }
     
     return reply.release();
@@ -198,7 +214,25 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
         {
             MutexLocker locker(m_syncReplyStateMutex);
 
-            // First, check if there is a sync reply at the top of the stack.
+            // First, check if we have any incoming sync messages that we need to process.
+            Vector<IncomingMessage> syncMessagesReceivedWhileWaitingForSyncReply;
+            m_syncMessagesReceivedWhileWaitingForSyncReply.swap(syncMessagesReceivedWhileWaitingForSyncReply);
+
+            if (!syncMessagesReceivedWhileWaitingForSyncReply.isEmpty()) {
+                // Make sure to unlock the mutex here because we're calling out to client code which could in turn send
+                // another sync message and we don't want that to deadlock.
+                m_syncReplyStateMutex.unlock();
+                
+                for (size_t i = 0; i < syncMessagesReceivedWhileWaitingForSyncReply.size(); ++i) {
+                    IncomingMessage& message = syncMessagesReceivedWhileWaitingForSyncReply[i];
+                    OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
+
+                    dispatchSyncMessage(message.messageID(), arguments.get());
+                }
+                m_syncReplyStateMutex.lock();
+            }
+
+            // Second, check if there is a sync reply at the top of the stack.
             ASSERT(!m_pendingSyncReplies.isEmpty());
             
             PendingSyncReply& pendingSyncReply = m_pendingSyncReplies.last();
@@ -233,7 +267,21 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<Argument
         m_waitForSyncReplySemaphore.signal();
         return;
     }
-    
+
+    // Check if this is a sync message. If it is, and we're waiting for a sync reply this message
+    // needs to be dispatched. If we don't we'll end up with a deadlock where both sync message senders are
+    // stuck waiting for a reply.
+    if (messageID.isSync()) {
+        MutexLocker locker(m_syncReplyStateMutex);
+        if (!m_pendingSyncReplies.isEmpty()) {
+            m_syncMessagesReceivedWhileWaitingForSyncReply.append(IncomingMessage(messageID, arguments));
+
+            // The message has been added, now wake up the client thread.
+            m_waitForSyncReplySemaphore.signal();
+            return;
+        }
+    }
+        
     // Check if we're waiting for this message.
     {
         MutexLocker locker(m_waitForMessageMutex);

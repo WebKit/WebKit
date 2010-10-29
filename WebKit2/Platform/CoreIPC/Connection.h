@@ -232,6 +232,7 @@ private:
     Mutex m_syncReplyStateMutex;
     bool m_shouldWaitForSyncReplies;
     Vector<PendingSyncReply> m_pendingSyncReplies;
+    Vector<IncomingMessage> m_syncMessagesReceivedWhileWaitingForSyncReply;
 
 #if PLATFORM(MAC)
     // Called on the connection queue.
