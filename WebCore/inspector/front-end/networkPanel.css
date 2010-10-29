@@ -544,6 +544,19 @@
     left: 0;
 }
 
+.network-close-button {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background-image: url(Images/closeButtons.png);
+    background-position: 0 0;
+    background-color: transparent;
+    border: 0 none transparent;
+    top: 4px;
+    right: 5px;
+    z-index: 10;
+}
+
 .network.panel .data-grid.full-grid-mode .viewer-column {
     display: none;
 }

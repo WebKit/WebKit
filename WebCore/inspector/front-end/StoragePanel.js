@@ -167,7 +167,8 @@ WebInspector.StoragePanel.prototype = {
     {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (!frameTreeElement) {
-            console.error("No frame to add resource to");
+            // This is a frame's main resource, it will be retained
+            // and re-added by the resource manager;
             return;
         }
 

@@ -53,8 +53,12 @@ WebInspector.NetworkPanel = function()
     this._viewsContainerElement = document.createElement("div");
     this._viewsContainerElement.id = "network-views";
     this._viewsContainerElement.className = "hidden";
-
     this.element.appendChild(this._viewsContainerElement);
+
+    var closeButtonElement = document.createElement("button");
+    closeButtonElement.className = "network-close-button";
+    closeButtonElement.addEventListener("click", this._toggleGridMode.bind(this), false);
+    this._viewsContainerElement.appendChild(closeButtonElement);
 
     this._createSortingFunctions();
     this._createTable();

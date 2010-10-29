@@ -225,8 +225,6 @@ var WebInspector = {
         var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
         if (hiddenPanels.indexOf("elements") === -1)
             this.panels.elements = new WebInspector.ElementsPanel();
-        if (Preferences.networkPanelEnabled && hiddenPanels.indexOf("network") === -1)
-            this.panels.network = new WebInspector.NetworkPanel();
 
         if (Preferences.networkPanelEnabled) {
             if (hiddenPanels.indexOf("storage") === -1 && hiddenPanels.indexOf("databases") === -1)
@@ -236,6 +234,8 @@ var WebInspector = {
         } else if (hiddenPanels.indexOf("resources") === -1)
             this.panels.resources = new WebInspector.ResourcesPanel();
 
+        if (Preferences.networkPanelEnabled && hiddenPanels.indexOf("network") === -1)
+            this.panels.network = new WebInspector.NetworkPanel();
         if (hiddenPanels.indexOf("scripts") === -1)
             this.panels.scripts = new WebInspector.ScriptsPanel();
         if (hiddenPanels.indexOf("timeline") === -1)

@@ -498,7 +498,8 @@ WebInspector.ResourceTreeModel.prototype = {
 
     didCommitLoadForFrame: function(parentFrameId, loader)
     {
-        this._clearChildFramesAndResources(loader.frameId, loader.loaderId);
+        // parentFrameId === 0 is when main frame navigation happens.
+        this._clearChildFramesAndResources(parentFrameId ? loader.frameId : 0, loader.loaderId);
 
         var tmpResource = new WebInspector.Resource(null, loader.url);
         this.addOrUpdateFrame(parentFrameId, loader.frameId, tmpResource.displayName);
