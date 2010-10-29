@@ -1,0 +1,33 @@
+Test that dragging the timebar thumb causes seeks.
+
+EVENT(canplaythrough)
+EVENT(seeking)
+EVENT(seeked)
+EXPECTED (previousTime != 'video.currentTime') OK
+
+Dragging mouse 12 pixels right
+EVENT(seeking)
+EVENT(seeked)
+EXPECTED (previousTime != 'video.currentTime') OK
+
+Dragging mouse 14 pixels left
+EVENT(seeking)
+EVENT(seeked)
+EXPECTED (previousTime != 'video.currentTime') OK
+
+Dragging mouse 16 pixels right
+EVENT(seeking)
+EVENT(seeked)
+EXPECTED (previousTime != 'video.currentTime') OK
+
+Dragging mouse 18 pixels left
+EVENT(seeking)
+EVENT(seeked)
+EXPECTED (previousTime != 'video.currentTime') OK
+
+Dragging mouse 20 pixels right
+EVENT(seeking)
+EVENT(seeked)
+EXPECTED (previousTime != 'video.currentTime') OK
+END OF TEST
+

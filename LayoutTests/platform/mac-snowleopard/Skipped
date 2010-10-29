@@ -55,9 +55,6 @@ media/video-controls-zoomed.html
 media/video-zoom-controls.html
 media/video-display-toggle.html
 
-#<rdar://problem/7144385> - media/controls-drag-timebar.html fails
-media/controls-drag-timebar.html
-
 # This test requires ogg codecs
 media/media-can-play-ogg.html
 
