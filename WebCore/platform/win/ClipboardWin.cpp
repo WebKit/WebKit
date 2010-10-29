@@ -56,6 +56,7 @@
 #include <wininet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringConcatenate.h> 
 #include <wtf/text/StringHash.h>
 
 using namespace std;
@@ -63,9 +64,6 @@ using namespace std;
 namespace WebCore {
 
 using namespace HTMLNames;
-
-// format string for 
-static const char szShellDotUrlTemplate[] = "[InternetShortcut]\r\nURL=%s\r\n";
 
 // We provide the IE clipboard types (URL and Text), and the clipboard types specified in the WHATWG Web Applications 1.0 draft
 // see http://www.whatwg.org/specs/web-apps/current-work/ Section 6.3.5.3
@@ -163,36 +161,19 @@ static String filesystemPathFromUrlOrTitle(const String& url, const String& titl
     return result;
 }
 
-static HGLOBAL createGlobalURLContent(const String& url, int estimatedFileSize)
+static HGLOBAL createGlobalURLContent(const CString& content)
 {
     HRESULT hr = S_OK;
     HGLOBAL memObj = 0;
 
     char* fileContents;
-    char ansiUrl[INTERNET_MAX_URL_LENGTH + 1];
-    // Used to generate the buffer. This is null terminated whereas the fileContents won't be.
-    char contentGenerationBuffer[INTERNET_MAX_URL_LENGTH + ARRAYSIZE(szShellDotUrlTemplate) + 1];
-    
-    if (estimatedFileSize > 0 && estimatedFileSize > ARRAYSIZE(contentGenerationBuffer))
-        return 0;
 
-    int ansiUrlSize = ::WideCharToMultiByte(CP_ACP, 0, (LPCWSTR)url.characters(), url.length(), ansiUrl, ARRAYSIZE(ansiUrl) - 1, 0, 0);
-    if (!ansiUrlSize)
-        return 0;
-
-    ansiUrl[ansiUrlSize] = 0;
-    
-    int fileSize = (int) (ansiUrlSize+strlen(szShellDotUrlTemplate)-2); // -2 to remove the %s
-    ASSERT(estimatedFileSize < 0 || fileSize == estimatedFileSize);
-
-    memObj = GlobalAlloc(GPTR, fileSize);
+    memObj = GlobalAlloc(GPTR, content.length());
     if (!memObj) 
         return 0;
 
     fileContents = (PSTR)GlobalLock(memObj);
-
-    sprintf_s(contentGenerationBuffer, ARRAYSIZE(contentGenerationBuffer), szShellDotUrlTemplate, ansiUrl);
-    CopyMemory(fileContents, contentGenerationBuffer, fileSize);
+    CopyMemory(fileContents, content.data(), content.length());
     
     GlobalUnlock(memObj);
     
@@ -277,7 +258,7 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
     return memObj;
 }
 
-static HGLOBAL createGlobalUrlFileDescriptor(const String& url, const String& title, int& /*out*/ estimatedSize)
+static HGLOBAL createGlobalUrlFileDescriptor(const String& url, const String& title, const CString& content)
 {
     HRESULT hr = S_OK;
     HGLOBAL memObj = 0;
@@ -290,10 +271,7 @@ static HGLOBAL createGlobalUrlFileDescriptor(const String& url, const String& ti
     memset(fgd, 0, sizeof(FILEGROUPDESCRIPTOR));
     fgd->cItems = 1;
     fgd->fgd[0].dwFlags = FD_FILESIZE;
-    int fileSize = ::WideCharToMultiByte(CP_ACP, 0, url.characters(), url.length(), 0, 0, 0, 0);
-    fileSize += strlen(szShellDotUrlTemplate) - 2; // -2 is for getting rid of %s in the template string
-    fgd->fgd[0].nFileSizeLow = fileSize;
-    estimatedSize = fileSize;
+    fgd->fgd[0].nFileSizeLow = content.length();
     fsPath = filesystemPathFromUrlOrTitle(url, title, L".URL", true);
 
     if (fsPath.length() <= 0) {
@@ -744,13 +722,15 @@ void ClipboardWin::writeURL(const KURL& kurl, const String& titleStr, Frame*)
          return;
     WebCore::writeURL(m_writableDataObject.get(), kurl, titleStr, true, true);
 
-    int estimatedSize = 0;
     String url = kurl.string();
+    ASSERT(url.containsOnlyASCII()); // KURL::string() is URL encoded.
 
-    HGLOBAL urlFileDescriptor = createGlobalUrlFileDescriptor(url, titleStr, estimatedSize);
+    CString content = makeString("[InternetShortcut]\r\nURL=", url, "\r\n").ascii();
+
+    HGLOBAL urlFileDescriptor = createGlobalUrlFileDescriptor(url, titleStr, content);
     if (!urlFileDescriptor)
         return;
-    HGLOBAL urlFileContent = createGlobalURLContent(url, estimatedSize);
+    HGLOBAL urlFileContent = createGlobalURLContent(content);
     if (!urlFileContent) {
         GlobalFree(urlFileDescriptor);
         return;
