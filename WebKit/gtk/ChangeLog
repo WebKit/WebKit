@@ -1,3 +1,10 @@
+2010-10-29  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix for GTK+ after BackForwardListImpl introduction.
+
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_new_with_web_view):
+
 2010-10-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
