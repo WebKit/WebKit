@@ -38,6 +38,7 @@
 #include "DocumentLoader.h"
 #include "DOMApplicationCache.h"
 #include "DOMSelection.h"
+#include "DOMSettableTokenList.h"
 #include "DOMStringList.h"
 #include "DOMTimer.h"
 #include "DOMTokenList.h"

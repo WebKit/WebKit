@@ -92,6 +92,7 @@
 #include "JSDOMPlugin.cpp"
 #include "JSDOMPluginArray.cpp"
 #include "JSDOMSelection.cpp"
+#include "JSDOMSettableTokenList.cpp"
 #include "JSDOMStringList.cpp"
 #include "JSDOMStringMap.cpp"
 #include "JSDOMTokenList.cpp"

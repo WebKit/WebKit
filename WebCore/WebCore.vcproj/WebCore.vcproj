@@ -3960,6 +3960,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMSettableTokenList.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Internal|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMSettableTokenList.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSDOMStringList.cpp"
 				>
 				<FileConfiguration
@@ -48476,6 +48532,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\ClassList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\ClassList.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\CollectionCache.cpp"
 				>
 				<FileConfiguration
@@ -48637,6 +48701,14 @@
 			</File>
 			<File
 				RelativePath="..\html\DOMFormData.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMSettableTokenList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\DOMSettableTokenList.h"
 				>
 			</File>
 			<File

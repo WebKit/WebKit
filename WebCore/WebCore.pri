@@ -207,6 +207,7 @@ IDL_BINDINGS += \
     html/DataGridColumn.idl \
     html/DataGridColumnList.idl \
     html/DOMFormData.idl \
+    html/DOMSettableTokenList.idl \
     html/DOMTokenList.idl \
     html/HTMLAllCollection.idl \
     html/HTMLAudioElement.idl \

@@ -403,6 +403,7 @@ v8 {
         bindings/v8/custom/V8InjectedScriptHostCustom.cpp \
         bindings/v8/custom/V8InspectorFrontendHostCustom.cpp \
         bindings/v8/custom/V8CustomEventListener.cpp \
+        bindings/v8/custom/V8DOMSettableTokenListCustom.cpp \
         bindings/v8/custom/V8DOMStringMapCustom.cpp \
         bindings/v8/custom/V8DOMTokenListCustom.cpp
 
@@ -846,10 +847,12 @@ SOURCES += \
     html/BaseTextInputType.cpp \
     html/ButtonInputType.cpp \
     html/CheckboxInputType.cpp \
+    html/ClassList.cpp \
     html/CollectionCache.cpp \
     html/ColorInputType.cpp \
     html/DOMDataGridDataSource.cpp \
     html/DOMFormData.cpp \
+    html/DOMSettableTokenList.cpp \
     html/DOMTokenList.cpp \
     html/DataGridColumn.cpp \
     html/DataGridColumnList.cpp \
@@ -1752,12 +1755,14 @@ HEADERS += \
     html/canvas/CanvasRenderingContext.h \
     html/canvas/CanvasRenderingContext2D.h \
     html/canvas/CanvasStyle.h \
+    html/ClassList.h \
     html/CollectionCache.h \
     html/DataGridColumn.h \
     html/DataGridColumnList.h \
     html/DateComponents.h \
     html/DOMDataGridDataSource.h \
     html/DOMFormData.h \
+    html/DOMSettableTokenList.h \
     html/DOMTokenList.h \
     html/FormDataList.h \
     html/FTPDirectoryDocument.h \

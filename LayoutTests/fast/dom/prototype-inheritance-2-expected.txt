@@ -226,6 +226,7 @@ Never found CanvasGradient
 Never found CharacterData
 Never found Clipboard
 Never found DOMParser
+Never found DOMSettableTokenList
 Never found DOMStringList
 Never found Document
 Never found DocumentFragment

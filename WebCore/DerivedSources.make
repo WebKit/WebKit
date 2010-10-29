@@ -125,6 +125,7 @@ DOM_CLASSES = \
     DOMSelection \
     DOMStringList \
     DOMStringMap \
+    DOMSettableTokenList \
     DOMTokenList \
     DOMWindow \
     Database \

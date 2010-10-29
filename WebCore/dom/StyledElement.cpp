@@ -25,6 +25,7 @@
 #include "StyledElement.h"
 
 #include "Attribute.h"
+#include "ClassList.h"
 #include "CSSStyleSelector.h"
 #include "CSSStyleSheet.h"
 #include "CSSValueKeywords.h"
@@ -222,7 +223,7 @@ void StyledElement::classAttributeChanged(const AtomicString& newClassString)
     if (hasClass) {
         attributes()->setClass(newClassString);
         if (DOMTokenList* classList = optionalClassList())
-            classList->reset(newClassString);
+            static_cast<ClassList*>(classList)->reset(newClassString);
     } else if (attributeMap())
         attributeMap()->clearClass();
     setNeedsStyleRecalc();

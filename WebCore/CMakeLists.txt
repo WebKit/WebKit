@@ -207,6 +207,7 @@ SET(WebCore_IDL_FILES
     html/DataGridColumn.idl
     html/DataGridColumnList.idl
     html/DOMFormData.idl
+    html/DOMSettableTokenList.idl
     html/DOMTokenList.idl
     html/HTMLAllCollection.idl
     html/HTMLAnchorElement.idl
@@ -956,10 +957,12 @@ SET(WebCore_SOURCES
     html/BaseTextInputType.cpp
     html/ButtonInputType.cpp
     html/CheckboxInputType.cpp
+    html/ClassList.cpp
     html/CollectionCache.cpp
     html/ColorInputType.cpp
     html/DOMDataGridDataSource.cpp
     html/DOMFormData.cpp
+    html/DOMSettableTokenList.cpp
     html/DOMTokenList.cpp
     html/DataGridColumn.cpp
     html/DataGridColumnList.cpp

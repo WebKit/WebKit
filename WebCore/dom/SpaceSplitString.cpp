@@ -23,6 +23,7 @@
 
 #include "HTMLParserIdioms.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/text/StringBuilder.h>
 
 using namespace WTF;
 
@@ -88,6 +89,39 @@ bool SpaceSplitStringData::containsAll(SpaceSplitStringData& other)
             return false;
     }
     return true;
+}
+
+void SpaceSplitStringData::add(const AtomicString& string)
+{
+    if (contains(string))
+        return;
+
+    m_vector.append(string);
+}
+
+void SpaceSplitStringData::remove(const AtomicString& string)
+{
+    ensureVector();
+
+    size_t position = 0;
+    while (position < m_vector.size()) {
+        if (m_vector[position] == string)
+            m_vector.remove(position);
+        else
+            ++position;
+    }
+}
+
+void SpaceSplitString::add(const AtomicString& string)
+{
+    if (m_data)
+        m_data->add(string);
+}
+
+void SpaceSplitString::remove(const AtomicString& string)
+{
+    if (m_data)
+        m_data->remove(string);
 }
 
 } // namespace WebCore

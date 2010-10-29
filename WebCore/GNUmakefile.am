@@ -221,6 +221,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMPlugin.h \
 	DerivedSources/WebCore/JSDOMSelection.cpp \
 	DerivedSources/WebCore/JSDOMSelection.h \
+	DerivedSources/WebCore/JSDOMSettableTokenList.cpp \
+	DerivedSources/WebCore/JSDOMSettableTokenList.h \
 	DerivedSources/WebCore/JSDOMStringList.cpp \
 	DerivedSources/WebCore/JSDOMStringList.h \
 	DerivedSources/WebCore/JSDOMStringMap.cpp \
@@ -1478,10 +1480,14 @@ webcore_sources += \
 	WebCore/html/canvas/CanvasRenderingContext.h \
 	WebCore/html/canvas/CanvasStyle.cpp \
 	WebCore/html/canvas/CanvasStyle.h \
+	WebCore/html/DOMSettableTokenList.cpp \
+	WebCore/html/DOMSettableTokenList.h \
 	WebCore/html/DOMTokenList.cpp \
 	WebCore/html/DOMTokenList.h \
 	WebCore/html/CheckboxInputType.cpp \
 	WebCore/html/CheckboxInputType.h \
+	WebCore/html/ClassList.cpp \
+	WebCore/html/ClassList.h \
 	WebCore/html/CollectionCache.cpp \
 	WebCore/html/CollectionCache.h \
 	WebCore/html/CollectionType.h \

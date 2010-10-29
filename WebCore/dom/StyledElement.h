@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class Attribute;
-class ClassList;
 class CSSMappedAttributeDeclaration;
 
 class StyledElement : public Element {

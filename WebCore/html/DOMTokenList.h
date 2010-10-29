@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,9 @@
 #define DOMTokenList_h
 
 #include "ExceptionCode.h"
-#include "SpaceSplitString.h"
+#include <wtf/text/AtomicString.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -36,37 +36,25 @@ class Element;
 
 class DOMTokenList : public Noncopyable {
 public:
-    static PassOwnPtr<DOMTokenList> create(Element* element)
-    {
-        return adoptPtr(new DOMTokenList(element));
-    }
+    virtual ~DOMTokenList() {};
 
-    void ref();
-    void deref();
+    virtual void ref() = 0;
+    virtual void deref() = 0;
 
-    unsigned length() const;
-    const AtomicString item(unsigned index) const;
-    bool contains(const AtomicString&, ExceptionCode&) const;
-    void add(const AtomicString&, ExceptionCode&);
-    void remove(const AtomicString&, ExceptionCode&);
-    bool toggle(const AtomicString&, ExceptionCode&);
-    String toString() const;
+    virtual unsigned length() const = 0;
+    virtual const AtomicString item(unsigned index) const = 0;
+    virtual bool contains(const AtomicString&, ExceptionCode&) const = 0;
+    virtual void add(const AtomicString&, ExceptionCode&) = 0;
+    virtual void remove(const AtomicString&, ExceptionCode&) = 0;
+    virtual bool toggle(const AtomicString&, ExceptionCode&) = 0;
+    virtual String toString() const = 0;
 
-    void reset(const String&);
+    virtual Element* element() { return 0; }
 
-    Element* element() { return m_element; }
-
-private:
-    DOMTokenList(Element*);
-
-    void addInternal(const AtomicString&) const;
-    bool containsInternal(const AtomicString&) const;
-    void removeInternal(const AtomicString&) const;
-
-    const SpaceSplitString& classNames() const;
-
-    Element* m_element;
-    SpaceSplitString m_classNamesForQuirksMode;
+protected:
+    static bool validateToken(const AtomicString&, ExceptionCode&);
+    static String addToken(const AtomicString&, const AtomicString&);
+    static String removeToken(const AtomicString&, const AtomicString&);
 };
 
 } // namespace WebCore

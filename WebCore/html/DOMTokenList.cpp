@@ -25,17 +25,12 @@
 #include "config.h"
 #include "DOMTokenList.h"
 
-#include "Element.h"
-#include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "SpaceSplitString.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
-static bool validateToken(const AtomicString& token, ExceptionCode& ec)
+bool DOMTokenList::validateToken(const AtomicString& token, ExceptionCode& ec)
 {
     if (token.isEmpty()) {
         ec = SYNTAX_ERR;
@@ -53,86 +48,23 @@ static bool validateToken(const AtomicString& token, ExceptionCode& ec)
     return true;
 }
 
-DOMTokenList::DOMTokenList(Element* element)
-    : m_element(element)
+String DOMTokenList::addToken(const AtomicString& input, const AtomicString& token)
 {
-    if (m_element->document()->inQuirksMode())
-        m_classNamesForQuirksMode.set(m_element->fastGetAttribute(classAttr), false);
+    if (input.isEmpty())
+        return token;
+
+    StringBuilder builder;
+    builder.append(input);
+    if (input[input.length()-1] != ' ')
+        builder.append(' ');
+    builder.append(token);
+    return builder.toString();
 }
 
-void DOMTokenList::ref()
+String DOMTokenList::removeToken(const AtomicString& input, const AtomicString& token)
 {
-    m_element->ref();
-}
-
-void DOMTokenList::deref()
-{
-    m_element->deref();
-}
-
-unsigned DOMTokenList::length() const
-{
-    return m_element->hasClass() ? classNames().size() : 0;
-}
-
-const AtomicString DOMTokenList::item(unsigned index) const
-{
-    if (index >= length())
-        return AtomicString();
-    return classNames()[index];
-}
-
-bool DOMTokenList::contains(const AtomicString& token, ExceptionCode& ec) const
-{
-    if (!validateToken(token, ec))
-        return false;
-    return containsInternal(token);
-}
-
-bool DOMTokenList::containsInternal(const AtomicString& token) const
-{
-    return m_element->hasClass() && classNames().contains(token);
-}
-
-void DOMTokenList::add(const AtomicString& token, ExceptionCode& ec)
-{
-    if (!validateToken(token, ec))
-        return;
-    addInternal(token);
-}
-
-void DOMTokenList::addInternal(const AtomicString& token) const
-{
-    const AtomicString& oldClassName(m_element->fastGetAttribute(classAttr));
-    if (oldClassName.isEmpty())
-        m_element->setAttribute(classAttr, token);
-    else if (!containsInternal(token)) {
-        StringBuilder builder;
-        builder.append(oldClassName);
-        if (oldClassName[oldClassName.length() - 1] != ' ')
-            builder.append(' ');
-        builder.append(token);
-        m_element->setAttribute(classAttr, builder.toString());
-    }
-}
-
-void DOMTokenList::remove(const AtomicString& token, ExceptionCode& ec)
-{
-    if (!validateToken(token, ec))
-        return;
-    removeInternal(token);
-}
-
-void DOMTokenList::removeInternal(const AtomicString& token) const
-{
-    // Check using contains first since it uses AtomicString comparisons instead
-    // of character by character testing.
-    if (!containsInternal(token))
-        return;
-
     // Algorithm defined at http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#remove-a-token-from-a-string
 
-    const AtomicString& input = m_element->fastGetAttribute(classAttr);
     unsigned inputLength = input.length();
     Vector<UChar> output; // 3
     output.reserveCapacity(inputLength);
@@ -170,39 +102,7 @@ void DOMTokenList::removeInternal(const AtomicString& token) const
     }
 
     output.shrinkToFit();
-    m_element->setAttribute(classAttr, String::adopt(output));
-}
-
-bool DOMTokenList::toggle(const AtomicString& token, ExceptionCode& ec)
-{
-    if (!validateToken(token, ec))
-        return false;
-
-    if (containsInternal(token)) {
-        removeInternal(token);
-        return false;
-    }
-    addInternal(token);
-    return true;
-}
-
-String DOMTokenList::toString() const
-{
-    return m_element->fastGetAttribute(classAttr);
-}
-
-void DOMTokenList::reset(const String& newClassName)
-{
-    if (!m_classNamesForQuirksMode.isNull())
-        m_classNamesForQuirksMode.set(newClassName, false);
-}
-
-const SpaceSplitString& DOMTokenList::classNames() const
-{
-    ASSERT(m_element->hasClass());
-    if (!m_classNamesForQuirksMode.isNull())
-        return m_classNamesForQuirksMode;
-    return m_element->attributeMap()->classNames();
+    return String::adopt(output);
 }
 
 } // namespace WebCore
