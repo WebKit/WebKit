@@ -46,7 +46,7 @@
 #include <webkit/webkitsecurityorigin.h>
 
 #include "ArchiveResource.h"
-#include "BackForwardList.h"
+#include "BackForwardListImpl.h"
 #include "DataObjectGtk.h"
 #include "DragActions.h"
 #include "Frame.h"
@@ -92,7 +92,7 @@ namespace WebKit {
     WebCore::HistoryItem* core(WebKitWebHistoryItem*);
     WebKitWebHistoryItem* kit(PassRefPtr<WebCore::HistoryItem>);
 
-    WebCore::BackForwardList* core(WebKitWebBackForwardList*);
+    WebCore::BackForwardListImpl* core(WebKitWebBackForwardList*);
 
     WebKitWebNavigationReason kit(WebCore::NavigationType type);
     WebCore::NavigationType core(WebKitWebNavigationReason reason);

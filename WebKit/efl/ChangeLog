@@ -1,3 +1,20 @@
+2010-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Change BackForwardList clients to use BackForwardListImpl to prepare for further refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=48574
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_new):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_history_enable_get):
+        (ewk_view_history_enable_set):
+        (ewk_view_history_get):
+        Use BackForwardListImpl.
+
 2010-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

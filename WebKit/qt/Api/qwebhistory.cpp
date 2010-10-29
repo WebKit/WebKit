@@ -256,8 +256,8 @@ QWebHistory::~QWebHistory()
 */
 void QWebHistory::clear()
 {
-    //shortcut to private BackForwardList
-    WebCore::BackForwardList* lst = d->lst;
+    //shortcut to private BackForwardListImpl
+    WebCore::BackForwardListImpl* lst = d->lst;
 
     //clear visited links
     WebCore::Page* page = static_cast<WebCore::BackForwardListImpl*>(lst)->page();

@@ -31,7 +31,7 @@
 #ifndef BackForwardListClientImpl_h
 #define BackForwardListClientImpl_h
 
-#include "BackForwardList.h"
+#include "BackForwardListImpl.h"
 
 namespace WebKit {
 class WebViewImpl;

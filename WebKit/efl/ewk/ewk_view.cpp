@@ -22,6 +22,7 @@
 #include "config.h"
 #include "ewk_view.h"
 
+#include "BackForwardListImpl.h"
 #include "Chrome.h"
 #include "ChromeClientEfl.h"
 #include "ContextMenuClientEfl.h"
@@ -634,7 +635,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
         goto error_main_frame;
     }
 
-    priv->history = ewk_history_new(priv->page->backForwardList());
+    priv->history = ewk_history_new(static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList()));
     if (!priv->history) {
         CRITICAL("Could not create history instance for view.");
         goto error_history;
@@ -1762,7 +1763,7 @@ Eina_Bool ewk_view_history_enable_get(const Evas_Object* o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    return priv->page->backForwardList()->enabled();
+    return static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->enabled();
 }
 
 /**
@@ -1778,7 +1779,7 @@ Eina_Bool ewk_view_history_enable_set(Evas_Object* o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
-    priv->page->backForwardList()->setEnabled(enable);
+    static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->setEnabled(enable);
     return EINA_TRUE;
 }
 
@@ -1802,7 +1803,7 @@ Ewk_History* ewk_view_history_get(const Evas_Object* o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
-    if (!priv->page->backForwardList()->enabled()) {
+    if (!static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->enabled()) {
         ERR("asked history, but it's disabled! Returning 0!");
         return 0;
     }

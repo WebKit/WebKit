@@ -32,7 +32,7 @@
 #include "WebKit.h"
 #include "WebPreferences.h"
 
-#include <WebCore/BackForwardList.h>
+#include <WebCore/BackForwardListImpl.h>
 #include <WebCore/HistoryItem.h>
 
 using std::min;
@@ -40,13 +40,15 @@ using namespace WebCore;
 
 // WebBackForwardList ----------------------------------------------------------------
 
-static HashMap<BackForwardList*, WebBackForwardList*>& backForwardListWrappers()
+// FIXME: Instead of this we could just create a class derived from BackForwardListImpl
+// with a pointer to a WebBackForwardList in it.
+static HashMap<BackForwardListImpl*, WebBackForwardList*>& backForwardListWrappers()
 {
-    static HashMap<BackForwardList*, WebBackForwardList*> staticBackForwardListWrappers;
+    static HashMap<BackForwardListImpl*, WebBackForwardList*> staticBackForwardListWrappers;
     return staticBackForwardListWrappers;
 }
 
-WebBackForwardList::WebBackForwardList(PassRefPtr<BackForwardList> backForwardList)
+WebBackForwardList::WebBackForwardList(PassRefPtr<BackForwardListImpl> backForwardList)
     : m_refCount(0)
     , m_backForwardList(backForwardList)
 {
@@ -68,7 +70,7 @@ WebBackForwardList::~WebBackForwardList()
     gClassNameCount.remove("WebBackForwardList");
 }
 
-WebBackForwardList* WebBackForwardList::createInstance(PassRefPtr<BackForwardList> backForwardList)
+WebBackForwardList* WebBackForwardList::createInstance(PassRefPtr<BackForwardListImpl> backForwardList)
 {
     WebBackForwardList* instance;
 

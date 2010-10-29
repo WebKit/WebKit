@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "BackForwardList.h"
+
 #include "Document.h"
 #include "Editor.h"
 #include "Element.h"
@@ -318,16 +318,16 @@ bool wxWebFrame::GoForward()
 
 bool wxWebFrame::CanGoBack()
 {
-    if (m_impl->frame && m_impl->frame->page() && m_impl->frame->page()->backForwardList())
-        return m_impl->frame->page()->backForwardList()->backItem() != NULL;
+    if (m_impl->frame && m_impl->frame->page())
+        return m_impl->frame->page()->canGoBackOrForward(-1);
 
     return false;
 }
 
 bool wxWebFrame::CanGoForward()
 {
-    if (m_impl->frame && m_impl->frame->page() && m_impl->frame->page()->backForwardList())
-        return m_impl->frame->page()->backForwardList()->forwardItem() != NULL;
+    if (m_impl->frame && m_impl->frame->page())
+        return m_impl->frame->page()->canGoBackOrForward(1);
 
     return false;
 }

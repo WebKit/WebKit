@@ -1,3 +1,17 @@
+2010-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Change BackForwardList clients to use BackForwardListImpl to prepare for further refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=48574
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::clear):
+        * Api/qwebhistory_p.h:
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        Use BackForwardListImpl.
+
 2010-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

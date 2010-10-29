@@ -21,7 +21,7 @@
 #ifndef ewk_private_h
 #define ewk_private_h
 
-#include "BackForwardList.h"
+#include "BackForwardListImpl.h"
 #include "EWebKit.h"
 #include "Frame.h"
 #include "Page.h"
@@ -108,7 +108,7 @@ void ewk_view_download_request(Evas_Object *o, Ewk_Download *download);
 
 int ewk_view_dpi_get();
 
-Ewk_History *ewk_history_new(WebCore::BackForwardList *history);
+Ewk_History *ewk_history_new(WebCore::BackForwardListImpl *history);
 void ewk_history_free(Ewk_History *history);
 
 Ewk_Context_Menu *ewk_context_menu_new(Evas_Object *view, WebCore::ContextMenuController *controller);

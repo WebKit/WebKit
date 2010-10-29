@@ -33,6 +33,7 @@
 
 #include "AutoFillPopupMenuClient.h"
 #include "AXObjectCache.h"
+#include "BackForwardListImpl.h"
 #include "Chrome.h"
 #include "ColorSpace.h"
 #include "CompositionUnderlineVectorBuilder.h"
@@ -312,7 +313,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client, WebDevToolsAgentClient* devTools
 
     m_page.set(new Page(pageClients));
 
-    m_page->backForwardList()->setClient(&m_backForwardListClientImpl);
+    static_cast<BackForwardListImpl*>(m_page->backForwardList())->setClient(&m_backForwardListClientImpl);
     m_page->setGroupName(pageGroupName);
 
     m_inspectorSettingsMap.set(new SettingsMap);

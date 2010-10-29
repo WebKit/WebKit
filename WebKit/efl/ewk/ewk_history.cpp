@@ -21,7 +21,7 @@
 #include "config.h"
 #include "ewk_history.h"
 
-#include "BackForwardList.h"
+#include "BackForwardListImpl.h"
 #include "EWebKit.h"
 #include "HistoryItem.h"
 #include "Image.h"
@@ -32,7 +32,7 @@
 #include <eina_safety_checks.h>
 
 struct _Ewk_History {
-    WebCore::BackForwardList *core;
+    WebCore::BackForwardListImpl *core;
 };
 
 #define EWK_HISTORY_CORE_GET_OR_RETURN(history, core_, ...)      \
@@ -48,7 +48,7 @@ struct _Ewk_History {
         ERR("history->core is disabled!.");                      \
         return __VA_ARGS__;                                      \
     }                                                            \
-    WebCore::BackForwardList *core_ = (history)->core
+    WebCore::BackForwardListImpl *core_ = (history)->core
 
 
 struct _Ewk_History_Item {
@@ -666,11 +666,11 @@ Eina_Bool ewk_history_item_visit_last_failed(const Ewk_History_Item* item)
  * Creates history for given view. Called internally by ewk_view and
  * should never be called from outside.
  *
- * @param core WebCore::BackForwardList instance to use internally.
+ * @param core WebCore::BackForwardListImpl instance to use internally.
  *
  * @return newly allocated history instance or @c NULL on errors.
  */
-Ewk_History* ewk_history_new(WebCore::BackForwardList* core)
+Ewk_History* ewk_history_new(WebCore::BackForwardListImpl* core)
 {
     Ewk_History* history;
     EINA_SAFETY_ON_NULL_RETURN_VAL(core, 0);

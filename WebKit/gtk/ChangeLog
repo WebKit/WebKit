@@ -1,3 +1,36 @@
+2010-10-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Change BackForwardList clients to use BackForwardListImpl to prepare for further refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=48574
+
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebbackforwardlist.cpp:
+        (webkit_web_back_forward_list_dispose):
+        (webkit_web_back_forward_list_new_with_web_view):
+        (webkit_web_back_forward_list_go_forward):
+        (webkit_web_back_forward_list_go_back):
+        (webkit_web_back_forward_list_contains_item):
+        (webkit_web_back_forward_list_go_to_item):
+        (webkit_web_back_forward_list_get_forward_list_with_limit):
+        (webkit_web_back_forward_list_get_back_list_with_limit):
+        (webkit_web_back_forward_list_get_back_item):
+        (webkit_web_back_forward_list_get_current_item):
+        (webkit_web_back_forward_list_get_forward_item):
+        (webkit_web_back_forward_list_get_nth_item):
+        (webkit_web_back_forward_list_get_back_length):
+        (webkit_web_back_forward_list_get_forward_length):
+        (webkit_web_back_forward_list_get_limit):
+        (webkit_web_back_forward_list_set_limit):
+        (webkit_web_back_forward_list_add_item):
+        (webkit_web_back_forward_list_clear):
+        (WebKit::core):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_set_maintains_back_forward_list):
+        (webkit_web_view_get_back_forward_list):
+        Use BackForwardListImpl.
+
 2010-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
