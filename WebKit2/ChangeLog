@@ -19,6 +19,16 @@
 
         Reviewed by Adam Roben.
 
+        Add the plug-in proxy to the map before sending the CreatePlugin message
+        https://bugs.webkit.org/show_bug.cgi?id=48678
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+
+2010-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add GetWindowScriptNPObject message
         https://bugs.webkit.org/show_bug.cgi?id=48670
 

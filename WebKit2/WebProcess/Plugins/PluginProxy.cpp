@@ -80,17 +80,19 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
 
     m_pluginController = pluginController;
 
+    // Add the plug-in proxy before creating the plug-in; it needs to be in the map because CreatePlugin
+    // can call back out to the plug-in proxy.
+    m_connection->addPluginProxy(this);
+
     // Ask the plug-in process to create a plug-in.
     bool result = false;
 
-    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled()), Messages::WebProcessConnection::CreatePlugin::Reply(result), 0))
+    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled()), Messages::WebProcessConnection::CreatePlugin::Reply(result), 0) || !result) {
+        m_connection->removePluginProxy(this);
         return false;
-
-    if (!result)
-        return false;
+    }
 
     m_isStarted = true;
-    m_connection->addPluginProxy(this);
 
     return true;
 }
