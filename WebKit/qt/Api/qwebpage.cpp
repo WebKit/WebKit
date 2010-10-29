@@ -2824,6 +2824,7 @@ bool QWebPage::event(QEvent *ev)
 #endif
     case QEvent::InputMethod:
         d->inputMethodEvent(static_cast<QInputMethodEvent*>(ev));
+        break;
     case QEvent::ShortcutOverride:
         d->shortcutOverrideEvent(static_cast<QKeyEvent*>(ev));
         break;

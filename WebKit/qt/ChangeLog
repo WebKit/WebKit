@@ -1,3 +1,13 @@
+2010-10-29  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Ariya Hidayat.
+
+        [Qt] QWebPage's InputMethod event handling calls ShortcutOverride handler too
+        https://bugs.webkit.org/show_bug.cgi?id=48692
+
+        * Api/qwebpage.cpp:
+        (QWebPage::event): Add missing break statement.
+
 2010-10-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
