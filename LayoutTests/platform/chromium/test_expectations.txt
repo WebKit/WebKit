@@ -3402,3 +3402,11 @@ BUGWK48644 : storage/indexeddb/tutorial.html = MISSING
 // New test, seems V8 differs from JSC here.
 // Added by http://trac.webkit.org/changeset/70910
 BUGWK61246 : fast/js/interpreter-no-activation.html = TEXT
+
+// New test, added in http://trac.webkit.org/changeset/70922
+BUGWK61260 : media/media-can-play-wav-audio.html = TEXT
+
+// The http://trac.webkit.org/changeset/70917 regressed this, see upstream
+// bug https://bugs.webkit.org/show_bug.cgi?id=48444
+BUGWK48444 : fast/blockflow/english-rl-text.html = IMAGE
+
