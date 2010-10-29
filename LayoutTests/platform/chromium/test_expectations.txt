@@ -304,9 +304,9 @@ WONTFIX SKIP : platform/mac/plugins/root-object-premature-delete-crash.html = FA
 WONTFIX SKIP : platform/mac/plugins/undefined-property-crash.html = FAIL
 
 // Ignore test because it tries to load .pdf files in <img> tags.
-WONTFIX LINUX WIN : fast/images/pdf-as-image-landscape.html = FAIL
-WONTFIX LINUX WIN : fast/images/pdf-as-image.html = FAIL
-WONTFIX LINUX WIN : fast/replaced/pdf-as-image.html = FAIL
+WONTFIX : fast/images/pdf-as-image-landscape.html = FAIL
+WONTFIX : fast/images/pdf-as-image.html = FAIL
+WONTFIX : fast/replaced/pdf-as-image.html = FAIL
 
 // These tests try to print a PDF file as the expected result.  I don't think
 // we plan on supporting this anytime soon.
@@ -1383,7 +1383,6 @@ BUG23498 BUG26044 SLOW MAC DEBUG : fast/frames/invalid.html = IMAGE
 BUG23498 MAC DEBUG : fast/frames/valid.html = IMAGE
 BUG23498 MAC RELEASE : fast/frames/valid.html = IMAGE CRASH
 BUG23498 MAC : fast/gradients/background-clipped.html = IMAGE
-BUG23498 MAC : fast/images/pdf-as-image-landscape.html = IMAGE
 BUG23498 MAC : fast/inline/inline-borders-with-bidi-override.html = IMAGE
 BUG23498 MAC : fast/inline/inline-continuation-borders.html = IMAGE
 BUG23498 MAC : fast/inline/long-wrapped-line.html = IMAGE
@@ -2113,13 +2112,13 @@ BUG27418 MAC RELEASE SLOW : http/tests/plugins/interrupted-get-url.html = PASS
 // The ColorSpace was only implemented for CG, more port implementation
 // required in order for Chromium to support color correction.
 BUG28005 : fast/css/color-correction-backgrounds-and-text.html = FAIL
-BUG28005 LINUX WIN : fast/css/color-correction-on-backgrounds.html = FAIL
-BUG28005 LINUX WIN : fast/css/color-correction-on-text.html = FAIL
-BUG28005 LINUX WIN : fast/css/color-correction.html = FAIL
-BUG28005 WIN LINUX : fast/css/color-correction-on-box-shadow.html = IMAGE+TEXT
-BUG28005 WIN LINUX : fast/css/color-correction-on-text-shadow.html = IMAGE+TEXT
+BUG28005 : fast/css/color-correction-on-backgrounds.html = FAIL
+BUG28005 : fast/css/color-correction-on-text.html = FAIL
+BUG28005 : fast/css/color-correction.html = FAIL
+BUG28005 : fast/css/color-correction-on-box-shadow.html = IMAGE+TEXT
+BUG28005 : fast/css/color-correction-on-text-shadow.html = IMAGE+TEXT
 BUG28005 : fast/css/color-correction-on-background-image.html = FAIL
-BUG28005 LINUX WIN : fast/css/color-correction-untagged-images.html = FAIL
+BUG28005 : fast/css/color-correction-untagged-images.html = FAIL
 
 // May also be related to r50760, but not as confident.
 BUG27551 WIN : fast/css/shadow-multiple.html = IMAGE
