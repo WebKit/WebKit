@@ -26,10 +26,10 @@ shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(co
 shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 10000)");
 shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 0, 10000000000000)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, -1)");
-shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 1, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 1, 0)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 0)");
 shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 0, 0)");
-shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 100, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 100, 0)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 1, -1)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 1)");
 
@@ -45,7 +45,7 @@ shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(co
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 0, -1)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 0)");
 shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 0, 0)");
-shouldGenerateGLError(context, context.INVALID_OPERATION, "context.drawArrays(context.TRIANGLES, 100, 0)");
+shouldGenerateGLError(context, context.NO_ERROR, "context.drawArrays(context.TRIANGLES, 100, 0)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, 1, -1)");
 shouldGenerateGLError(context, context.INVALID_VALUE, "context.drawArrays(context.TRIANGLES, -1, 1)");
 

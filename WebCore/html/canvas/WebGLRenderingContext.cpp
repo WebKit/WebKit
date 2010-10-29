@@ -933,6 +933,9 @@ void WebGLRenderingContext::drawArrays(unsigned long mode, long first, long coun
         return;
     }
 
+    if (!count)
+        return;
+
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
         // Ensure we have a valid rendering state
         CheckedInt<int32_t> checkedFirst(first);
@@ -982,6 +985,9 @@ void WebGLRenderingContext::drawElements(unsigned long mode, long count, unsigne
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
+
+    if (!count)
+        return;
 
     long numElements = 0;
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {

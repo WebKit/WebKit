@@ -7,10 +7,10 @@ PASS context.drawArrays(context.TRIANGLES, 0, 1) generated expected GL error: IN
 PASS context.drawArrays(context.TRIANGLES, 0, 10000) generated expected GL error: INVALID_OPERATION.
 PASS context.drawArrays(context.TRIANGLES, 0, 10000000000000) generated expected GL error: INVALID_OPERATION.
 PASS context.drawArrays(context.TRIANGLES, 0, -1) generated expected GL error: INVALID_VALUE.
-PASS context.drawArrays(context.TRIANGLES, 1, 0) generated expected GL error: INVALID_OPERATION.
+PASS context.drawArrays(context.TRIANGLES, 1, 0) generated expected GL error: NO_ERROR.
 PASS context.drawArrays(context.TRIANGLES, -1, 0) generated expected GL error: INVALID_VALUE.
 PASS context.drawArrays(context.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
-PASS context.drawArrays(context.TRIANGLES, 100, 0) generated expected GL error: INVALID_OPERATION.
+PASS context.drawArrays(context.TRIANGLES, 100, 0) generated expected GL error: NO_ERROR.
 PASS context.drawArrays(context.TRIANGLES, 1, -1) generated expected GL error: INVALID_VALUE.
 PASS context.drawArrays(context.TRIANGLES, -1, 1) generated expected GL error: INVALID_VALUE.
 
@@ -23,7 +23,7 @@ PASS context.drawArrays(context.TRIANGLES, 0, 10000000000000) generated expected
 PASS context.drawArrays(context.TRIANGLES, 0, -1) generated expected GL error: INVALID_VALUE.
 PASS context.drawArrays(context.TRIANGLES, -1, 0) generated expected GL error: INVALID_VALUE.
 PASS context.drawArrays(context.TRIANGLES, 0, 0) generated expected GL error: NO_ERROR.
-PASS context.drawArrays(context.TRIANGLES, 100, 0) generated expected GL error: INVALID_OPERATION.
+PASS context.drawArrays(context.TRIANGLES, 100, 0) generated expected GL error: NO_ERROR.
 PASS context.drawArrays(context.TRIANGLES, 1, -1) generated expected GL error: INVALID_VALUE.
 PASS context.drawArrays(context.TRIANGLES, -1, 1) generated expected GL error: INVALID_VALUE.
 
