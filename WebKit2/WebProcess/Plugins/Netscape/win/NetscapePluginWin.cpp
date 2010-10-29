@@ -165,7 +165,7 @@ NPEvent toNP(const WebMouseEvent& event)
     if (event.shiftKey())
         npEvent.wParam |= MK_SHIFT;
 
-    npEvent.lParam = MAKELPARAM(event.positionX(), event.positionY());
+    npEvent.lParam = MAKELPARAM(event.position().x(), event.position().y());
 
     switch (event.type()) {
     case WebEvent::MouseMove:

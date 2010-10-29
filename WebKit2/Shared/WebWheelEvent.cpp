@@ -28,18 +28,16 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 
+using namespace WebCore;
+
 namespace WebKit {    
 
-WebWheelEvent::WebWheelEvent(Type type, int x, int y, int globalX, int globalY, float deltaX, float deltaY, float wheelTicksX, float wheelTicksY, Granularity granularity, Modifiers modifiers, double timestamp)
+WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, Modifiers modifiers, double timestamp)
     : WebEvent(type, modifiers, timestamp)
-    , m_positionX(x)
-    , m_positionY(y)
-    , m_globalPositionX(globalX)
-    , m_globalPositionY(globalY)
-    , m_deltaX(deltaX)
-    , m_deltaY(deltaY)
-    , m_wheelTicksX(wheelTicksX)
-    , m_wheelTicksY(wheelTicksY)
+    , m_position(position)
+    , m_globalPosition(globalPosition)
+    , m_delta(delta)
+    , m_wheelTicks(wheelTicks)
     , m_granularity(granularity)
 {
     ASSERT(isWheelEventType(type));

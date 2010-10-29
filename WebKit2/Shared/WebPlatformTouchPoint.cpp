@@ -30,15 +30,15 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
-WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state, int screenPosX, int screenPosY, int posX, int posY)
+WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state, const IntPoint& screenPosition, const IntPoint& position)
     : m_id(id)
     , m_state(state)
-    , m_screenPosX(screenPosX)
-    , m_screenPosY(screenPosY)
-    , m_posX(posX)
-    , m_posY(posY)
+    , m_screenPosition(screenPosition)
+    , m_position(position)
 {
 }
 

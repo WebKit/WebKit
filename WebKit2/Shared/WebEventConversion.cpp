@@ -65,8 +65,8 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        m_position = WebCore::IntPoint(webEvent.positionX(), webEvent.positionY());
-        m_globalPosition = WebCore::IntPoint(webEvent.globalPositionX(), webEvent.globalPositionY());
+        m_position = webEvent.position();
+        m_globalPosition = webEvent.globalPosition();
         m_clickCount = webEvent.clickCount();
         m_timestamp = webEvent.timestamp();
         m_shiftKey = webEvent.shiftKey();
@@ -95,12 +95,12 @@ class WebKit2PlatformWheelEvent : public WebCore::PlatformWheelEvent {
 public:
     WebKit2PlatformWheelEvent(const WebWheelEvent& webEvent)
     {
-        m_position = WebCore::IntPoint(webEvent.positionX(), webEvent.positionY());
-        m_globalPosition = WebCore::IntPoint(webEvent.globalPositionX(), webEvent.globalPositionY());
-        m_deltaX = webEvent.deltaX();
-        m_deltaY = webEvent.deltaY();
-        m_wheelTicksX = webEvent.wheelTicksX();
-        m_wheelTicksY = webEvent.wheelTicksY();
+        m_position = webEvent.position();
+        m_globalPosition = webEvent.globalPosition();
+        m_deltaX = webEvent.delta().width();
+        m_deltaY = webEvent.delta().height();
+        m_wheelTicksX = webEvent.wheelTicks().width();
+        m_wheelTicksY = webEvent.wheelTicks().height();
         m_granularity = (webEvent.granularity() == WebWheelEvent::ScrollByPageWheelEvent) ? WebCore::ScrollByPageWheelEvent : WebCore::ScrollByPixelWheelEvent;
         m_shiftKey = webEvent.shiftKey();
         m_ctrlKey = webEvent.controlKey();
@@ -183,11 +183,8 @@ public:
             ASSERT_NOT_REACHED();
         }
 
-        WebCore::IntPoint screen(webTouchPoint.screenPosX(), webTouchPoint.screenPosY());
-        WebCore::IntPoint position(webTouchPoint.posX(), webTouchPoint.posY());
-
-        m_screenPos = screen;
-        m_pos = position;
+        m_screenPos = webTouchPoint.screenPosition();
+        m_pos = webTouchPoint.position();
     }
 };
 

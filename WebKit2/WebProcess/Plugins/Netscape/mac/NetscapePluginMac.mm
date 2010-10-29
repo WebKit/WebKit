@@ -329,8 +329,8 @@ static int32_t buttonNumber(WebMouseEvent::Button button)
 static void fillInCocoaEventFromMouseEvent(NPCocoaEvent& event, const WebMouseEvent& mouseEvent, const WebCore::IntPoint& pluginLocation)
 {
     event.data.mouse.modifierFlags = modifierFlags(mouseEvent);
-    event.data.mouse.pluginX = mouseEvent.positionX() - pluginLocation.x();
-    event.data.mouse.pluginY = mouseEvent.positionY() - pluginLocation.y();
+    event.data.mouse.pluginX = mouseEvent.position().x() - pluginLocation.x();
+    event.data.mouse.pluginY = mouseEvent.position().y() - pluginLocation.y();
     event.data.mouse.buttonNumber = buttonNumber(mouseEvent.button());
     event.data.mouse.clickCount = mouseEvent.clickCount();
     event.data.mouse.deltaX = mouseEvent.deltaX();
@@ -413,12 +413,12 @@ bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& wheelEvent)
             NPCocoaEvent event = initializeEvent(NPCocoaEventScrollWheel);
             
             event.data.mouse.modifierFlags = modifierFlags(wheelEvent);
-            event.data.mouse.pluginX = wheelEvent.positionX() - m_frameRect.x();
-            event.data.mouse.pluginY = wheelEvent.positionY() - m_frameRect.y();
+            event.data.mouse.pluginX = wheelEvent.position().x() - m_frameRect.x();
+            event.data.mouse.pluginY = wheelEvent.position().y() - m_frameRect.y();
             event.data.mouse.buttonNumber = 0;
             event.data.mouse.clickCount = 0;
-            event.data.mouse.deltaX = wheelEvent.deltaX();
-            event.data.mouse.deltaY = wheelEvent.deltaY();
+            event.data.mouse.deltaX = wheelEvent.delta().width();
+            event.data.mouse.deltaY = wheelEvent.delta().height();
             event.data.mouse.deltaZ = 0;
             return NPP_HandleEvent(&event);
         }

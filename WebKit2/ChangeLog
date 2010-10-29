@@ -1,3 +1,28 @@
+2010-10-28  Adam Roben  <aroben@apple.com>
+
+        Use IntPoint/FloatSize in WebEvent subclasses
+
+        This is nicer than passing around pairs of ints/floats.
+
+        Fixes <http://webkit.org/b/48611>.
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebEvent.h:
+        * Shared/WebMouseEvent.cpp:
+        * Shared/WebPlatformTouchPoint.cpp:
+        * Shared/WebWheelEvent.cpp:
+        Changed all x/y pairs to either use IntPoint or FloatSize, as
+        appropriate.
+
+        * Shared/WebEventConversion.cpp:
+        * Shared/mac/WebEventFactory.mm:
+        * Shared/qt/WebEventFactoryQt.cpp:
+        * Shared/win/WebEventFactory.cpp:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        Updated for WebEvent changes.
+
 2010-10-29  Adam Roben  <aroben@apple.com>
 
         Touch WebKit2Prefix.h to fix incremental builds on Windows

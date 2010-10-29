@@ -956,10 +956,6 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windo
 
     WebEvent::Type type                     = mouseEventTypeForEvent(event);
     WebMouseEvent::Button button            = mouseButtonForEvent(event);
-    int positionX                           = position.x;
-    int positionY                           = position.y;
-    int globalPositionX                     = globalPosition.x;
-    int globalPositionY                     = globalPosition.y;
     float deltaX                            = [event deltaX];
     float deltaY                            = [event deltaY];
     float deltaZ                            = [event deltaZ];
@@ -967,7 +963,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSView *windo
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
     double timestamp                        = [event timestamp];
 
-    return WebMouseEvent(type, button, positionX, positionY, globalPositionX, globalPositionY, deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp);
+    return WebMouseEvent(type, button, IntPoint(position), IntPoint(globalPosition), deltaX, deltaY, deltaZ, clickCount, modifiers, timestamp);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windowView)
@@ -975,10 +971,6 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     NSPoint position = pointForEvent(event, windowView);
     NSPoint globalPosition = globalPointForEvent(event);
 
-    int positionX                           = position.x;
-    int positionY                           = position.y;
-    int globalPositionX                     = globalPosition.x;
-    int globalPositionY                     = globalPosition.y;
     WebWheelEvent::Granularity granularity  = WebWheelEvent::ScrollByPixelWheelEvent;
 
     BOOL continuous;
@@ -1004,7 +996,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
     double timestamp                        = [event timestamp];
 
-    return WebWheelEvent(WebEvent::Wheel, positionX, positionY, globalPositionX, globalPositionY, deltaX, deltaY, wheelTicksX, wheelTicksY, granularity, modifiers, timestamp);
+    return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, modifiers, timestamp);
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, NSView *)
