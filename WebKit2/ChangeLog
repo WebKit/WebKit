@@ -1,5 +1,12 @@
 2010-10-29  Adam Roben  <aroben@apple.com>
 
+        Build fix when Carbon plugins are disabled
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleMouseEvent):
+
+2010-10-29  Adam Roben  <aroben@apple.com>
+
         Move NPRuntime-related files into WebProcess/Plugins/Netscape
 
         Fixes <http://webkit.org/b/48645>.

@@ -393,8 +393,8 @@ bool NetscapePlugin::platformHandleMouseEvent(const WebMouseEvent& mouseEvent)
             }
 
             EventRecord event = initializeEventRecord(eventKind);
-            event.where.h = mouseEvent.globalPositionX();
-            event.where.v = mouseEvent.globalPositionY();
+            event.where.h = mouseEvent.globalPosition().x();
+            event.where.v = mouseEvent.globalPosition().y();
             return NPP_HandleEvent(&event);
         }
 #endif
