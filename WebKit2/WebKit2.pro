@@ -299,14 +299,14 @@ HEADERS += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.h \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.h \
     WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h \
-    WebProcess/Plugins/JSNPObject.h \
-    WebProcess/Plugins/JSNPMethod.h \
-    WebProcess/Plugins/NPJSObject.h \
-    WebProcess/Plugins/NPRuntimeObjectMap.h \
-    WebProcess/Plugins/NPRuntimeUtilities.h \
     WebProcess/Plugins/Plugin.h \
     WebProcess/Plugins/PluginController.h \
     WebProcess/Plugins/PluginView.h \
+    WebProcess/Plugins/Netscape/JSNPObject.h \
+    WebProcess/Plugins/Netscape/JSNPMethod.h \
+    WebProcess/Plugins/Netscape/NPJSObject.h \
+    WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h \
+    WebProcess/Plugins/Netscape/NPRuntimeUtilities.h \
     WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
     WebProcess/Plugins/Netscape/NetscapePlugin.h \
     WebProcess/Plugins/Netscape/NetscapePluginModule.h \
@@ -462,13 +462,13 @@ SOURCES += \
     WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp \
     WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp \
     WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp \
-    WebProcess/Plugins/JSNPObject.cpp \
-    WebProcess/Plugins/JSNPMethod.cpp \
-    WebProcess/Plugins/NPJSObject.cpp \
-    WebProcess/Plugins/NPRuntimeObjectMap.cpp \
-    WebProcess/Plugins/NPRuntimeUtilities.cpp \
     WebProcess/Plugins/Plugin.cpp \
     WebProcess/Plugins/PluginView.cpp \
+    WebProcess/Plugins/Netscape/JSNPObject.cpp \
+    WebProcess/Plugins/Netscape/JSNPMethod.cpp \
+    WebProcess/Plugins/Netscape/NPJSObject.cpp \
+    WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp \
+    WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
     WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp \
     WebProcess/Plugins/Netscape/NetscapePlugin.cpp \
     WebProcess/Plugins/Netscape/NetscapePluginModule.cpp \
