@@ -796,11 +796,6 @@ sub addIncludeInBody {
     }
 }
 
-# Some methods' body (only the body, since the public API can't be
-# conditional) should be guarded by #ifdefs depending on whether
-# certain features in WebKit are enabled.
-my %conditionalMethods = ("webkit_dom_geolocation_clear_watch" => "GEOLOCATION");
-
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix) = @_;
 
@@ -879,18 +874,11 @@ sub GenerateFunction {
         $functionSig .= ", GError **error";
     }
 
-    push(@hBody, "#if ${conditionalString}\n") if $conditionalString;
     push(@hBody, "WEBKIT_API $returnType\n$functionName($functionSig);\n");
-    push(@hBody, "#endif /* ${conditionalString} */\n") if $conditionalString;
     push(@hBody, "\n");
 
-    push(@cBody, "#if ${conditionalString}\n") if $conditionalString;
     push(@cBody, "$returnType\n$functionName($functionSig)\n{\n");
-    push(@cBody, "    WebCore::JSMainThreadNullState state;\n");
-
-    if ($conditionalMethods{$functionName}) {
-        push(@cBody, "#if ENABLE($conditionalMethods{$functionName})\n");
-    }
+    push(@cBody, "#if ${conditionalString}\n") if $conditionalString;
 
     if ($returnType ne "void") {
         # TODO: return proper default result
@@ -898,6 +886,8 @@ sub GenerateFunction {
     } else {
         push(@cBody, "    g_return_if_fail(self);\n");
     }
+
+    push(@cBody, "    WebCore::JSMainThreadNullState state;\n");
 
     # The WebKit::core implementations check for NULL already; no need to
     # duplicate effort.
@@ -1050,13 +1040,19 @@ EOF
         }
     }
 
-    if ($conditionalMethods{$functionName}) {
-        push(@cBody, "#endif\n");
+    if ($conditionalString) {
+        if ($returnType ne "void") {
+            push(@cBody, "#else\n");
+            if ($codeGenerator->IsNonPointerType($functionSigType)) {
+                push(@cBody, "    return static_cast<${returnType}>(0);\n");
+            } else {
+                push(@cBody, "    return NULL;\n");
+            }
+        }
+        push(@cBody, "#endif /* ${conditionalString} */\n") if $conditionalString;
     }
 
-    push(@cBody, "}\n");
-    push(@cBody, "#endif /* ${conditionalString} */\n") if $conditionalString;
-    push(@cBody, "\n");
+    push(@cBody, "}\n\n");
 }
 
 sub ClassHasFunction {
