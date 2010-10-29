@@ -787,7 +787,7 @@ WebInspector.StylePropertiesSection.prototype = {
     {
         var style = this.styleRule.style;
         var property = new WebInspector.CSSProperty(style, style.allProperties.length, "", "", "", "style", true, false, false, undefined);
-        var item = new WebInspector.StylePropertyTreeElement(this.styleRule, style, "", false, false, false, false);
+        var item = new WebInspector.StylePropertyTreeElement(this.styleRule, style, property, false, false, false);
         this.propertiesTreeOutline.appendChild(item);
         item.listItemElement.textContent = "";
         item._newProperty = true;
@@ -951,7 +951,7 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
         for (var i = 0; i < uniqueProperties.length; ++i) {
             var property = uniqueProperties[i];
             var inherited = this._isPropertyInherited(property.name);
-            var item = new WebInspector.StylePropertyTreeElement(this.styleRule, style, property, false, inherited, false, false);
+            var item = new WebInspector.StylePropertyTreeElement(this.styleRule, style, property, false, inherited, false);
             this.propertiesTreeOutline.appendChild(item);
             this._propertyTreeElements[property.name] = item;
         }

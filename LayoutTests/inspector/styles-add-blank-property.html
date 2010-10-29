@@ -1,0 +1,70 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script src="elements-tests.js"></script>
+<script>
+
+function doit()
+{
+    function callback(result)
+    {
+        dumpArray(result);
+        notifyDone();
+    }
+    evaluateInWebInspector("frontend_runTest", callback);
+}
+
+// Frontend functions.
+
+function frontend_runTest(testController)
+{
+    testController.waitUntilDone();
+    frontend_expandDOMSubtreeAndRun(testController, null, frontend_selectInspectedElement);
+}
+
+function frontend_selectInspectedElement(testController)
+{
+    frontend_selectElementAndRun(testController, "inspected", frontend_dumpInspectedStyle);
+}
+
+function frontend_dumpInspectedStyle(testController)
+{
+    testController.results.push("Before append:");
+    testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
+
+    var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][1];
+    section.expand();
+    var treeElement = section.addNewBlankProperty();
+    treeElement.startEditing();
+
+    var evt = document.createEvent("KeyboardEvent");
+    evt.initKeyboardEvent("keydown", true /* can bubble */, true /* can cancel */, null /* view */, "Enter", "");
+    treeElement.listItemElement.textContent = "text-decoration: none";
+    treeElement.listItemElement.dispatchEvent(evt);
+
+    testController.runAfterPendingDispatches(frontend_dumpResults.bind(this, testController));
+}
+
+function frontend_dumpResults(testController)
+{
+    function reportResults()
+    {
+        testController.results.push("After append:");
+        testController.results = testController.results.concat(frontend_getSelectedElementStyles(true));
+        testController.notifyDone(testController.results);
+    }
+    frontend_selectElementAndRun(testController, "inspected", reportResults);
+}
+
+</script>
+</head>
+
+<body onload="onload()">
+<p>
+Tests that adding a new blank property works.
+</p>
+
+<div id="inspected" style="font-size: 12px">Text</div>
+
+</body>
+</html>
