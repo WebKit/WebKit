@@ -171,7 +171,7 @@ static inline Qt::FillRule toQtFillRule(WindRule rule)
 
 class GraphicsContextPlatformPrivate : public Noncopyable {
 public:
-    GraphicsContextPlatformPrivate(QPainter* painter);
+    GraphicsContextPlatformPrivate(QPainter*, const QColor& initialSolidColor);
     ~GraphicsContextPlatformPrivate();
 
     inline QPainter* p() const
@@ -225,42 +225,42 @@ private:
 };
 
 
-GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p)
+GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate(QPainter* p, const QColor& initialSolidColor)
+    : antiAliasingForRectsAndLines(false)
+    , layerCount(0)
+    , solidColor(initialSolidColor)
+    , imageInterpolationQuality(InterpolationDefault)
+    , painter(p)
 {
-    painter = p;
-    layerCount = 0;
+    if (!painter)
+        return;
 
-    solidColor = QBrush(Qt::black);
+    // Use the default the QPainter was constructed with.
+    antiAliasingForRectsAndLines = painter->testRenderHint(QPainter::Antialiasing);
 
-    imageInterpolationQuality = InterpolationDefault;
-
-    if (painter) {
-        // use the default the QPainter was constructed with
-        antiAliasingForRectsAndLines = painter->testRenderHint(QPainter::Antialiasing);
-        // FIXME: Maybe only enable in SVG mode?
-        painter->setRenderHint(QPainter::Antialiasing, true);
-        painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
-    } else
-        antiAliasingForRectsAndLines = false;
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
 }
 
 GraphicsContextPlatformPrivate::~GraphicsContextPlatformPrivate()
 {
 }
 
-GraphicsContext::GraphicsContext(PlatformGraphicsContext* context)
+GraphicsContext::GraphicsContext(PlatformGraphicsContext* painter)
     : m_common(createGraphicsContextPrivate())
-    , m_data(new GraphicsContextPlatformPrivate(context))
+    , m_data(new GraphicsContextPlatformPrivate(painter, fillColor()))
 {
-    setPaintingDisabled(!context);
-    if (context) {
-        // Make sure the context starts in sync with our state.
-        setPlatformFillColor(fillColor(), ColorSpaceDeviceRGB);
-        setPlatformStrokeColor(strokeColor(), ColorSpaceDeviceRGB);
+    setPaintingDisabled(!painter);
 
-        // Make sure we start with the correct join mode.
-        setLineJoin(MiterJoin);
-    }
+    if (!painter)
+        return;
+
+    // solidColor is initialized with the fillColor().
+    painter->setBrush(m_data->solidColor);
+
+    QPen pen(painter->pen());
+    pen.setColor(strokeColor());
+    pen.setJoinStyle(toQtLineJoin(MiterJoin));
+    painter->setPen(pen);
 }
 
 GraphicsContext::~GraphicsContext()
