@@ -134,7 +134,6 @@ public:
 
     bool shouldUpdateWhileOffscreen() const;
     void setShouldUpdateWhileOffscreen(bool);
-    bool shouldUpdate(bool = false) const;
 
     void adjustViewSize();
     
