@@ -965,6 +965,13 @@ class TestRunner:
         files = [(file, os.path.join(self._options.results_directory, file))
             for file in json_files]
 
+        # FIXME: Remove this. This is temporary debug logging.
+        if self._options.builder_name.startswith("Webkit Linux"):
+            for filename in files:
+                _log.debug(filename[1])
+                with codecs.open(filename[1], "r") as results_file:
+                    _log.debug("%s:\n%s" % (filename[0], results_file.read()))
+
         uploader = test_results_uploader.TestResultsUploader(
             self._options.test_results_server)
         try:
