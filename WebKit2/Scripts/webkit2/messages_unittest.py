@@ -388,7 +388,27 @@ struct GetPlugins : CoreIPC::Arguments1<bool> {
 
 struct GetPluginProcessConnection : CoreIPC::Arguments1<const WTF::String&> {
     static const Kind messageID = GetPluginProcessConnectionID;
-    typedef CoreIPC::Arguments1<CoreIPC::Connection::Handle&> Reply;
+    struct DelayedReply {
+        DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentDecoder> arguments)
+            : m_connection(connection)
+            , m_arguments(arguments)
+        {
+        }
+
+        bool send(const CoreIPC::Connection::Handle& connectionHandle)
+        {
+            ASSERT(m_arguments);
+            m_arguments->encode(connectionHandle);
+            bool result = m_connection->sendSyncReply(m_arguments.release());
+            m_connection = nullptr;
+            return result;
+        }
+
+    private:
+        RefPtr<CoreIPC::Connection> m_connection;
+        OwnPtr<CoreIPC::ArgumentDecoder> m_arguments;
+    };
+
     typedef CoreIPC::Arguments1<const WTF::String&> DecodeType;
     explicit GetPluginProcessConnection(const WTF::String& pluginPath)
         : CoreIPC::Arguments1<const WTF::String&>(pluginPath)

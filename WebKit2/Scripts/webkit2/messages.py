@@ -211,7 +211,30 @@ def message_to_struct_declaration(message):
     result.append(' {\n')
     result.append('    static const Kind messageID = %s;\n' % message.id())
     if message.reply_parameters != None:
-        result.append('    typedef %s Reply;\n' % reply_type(message))
+        if message.delayed:
+            send_parameters = [(function_parameter_type(x.type), x.name) for x in message.reply_parameters]
+            result.append('    struct DelayedReply {\n')
+            result.append('        DelayedReply(PassRefPtr<CoreIPC::Connection> connection, PassOwnPtr<CoreIPC::ArgumentDecoder> arguments)\n')
+            result.append('            : m_connection(connection)\n')
+            result.append('            , m_arguments(arguments)\n')
+            result.append('        {\n')
+            result.append('        }\n')
+            result.append('\n')
+            result.append('        bool send(%s)\n' % ', '.join([' '.join(x) for x in send_parameters]))
+            result.append('        {\n')
+            result.append('            ASSERT(m_arguments);\n')
+            result += ['            m_arguments->encode(%s);\n' % x.name for x in message.reply_parameters]
+            result.append('            bool result = m_connection->sendSyncReply(m_arguments.release());\n')
+            result.append('            m_connection = nullptr;\n')
+            result.append('            return result;\n')
+            result.append('        }\n')
+            result.append('\n')
+            result.append('    private:\n')
+            result.append('        RefPtr<CoreIPC::Connection> m_connection;\n')
+            result.append('        OwnPtr<CoreIPC::ArgumentDecoder> m_arguments;\n')
+            result.append('    };\n\n')
+        else:
+            result.append('    typedef %s Reply;\n' % reply_type(message))
 
     result.append('    typedef %s DecodeType;\n' % decode_type(message))
     if len(function_parameters):
