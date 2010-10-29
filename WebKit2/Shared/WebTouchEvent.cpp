@@ -33,7 +33,6 @@ namespace WebKit {
 
 WebTouchEvent::WebTouchEvent(WebEvent::Type type, Vector<WebPlatformTouchPoint> touchPoints, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, Modifiers modifiers, double timestamp)
     : WebEvent(type, modifiers, timestamp)
-    , m_type(type)
     , m_touchPoints(touchPoints)
     , m_ctrlKey(ctrlKey)
     , m_altKey(altKey)

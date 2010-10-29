@@ -249,13 +249,11 @@ public:
 private:
     static bool isTouchEventType(Type);
 
-    Type m_type;
     Vector<WebPlatformTouchPoint> m_touchPoints;
     bool m_ctrlKey;
     bool m_altKey;
     bool m_shiftKey;
     bool m_metaKey;
-    double m_timestamp;
 };
 
 #endif // ENABLE(TOUCH_EVENTS)
