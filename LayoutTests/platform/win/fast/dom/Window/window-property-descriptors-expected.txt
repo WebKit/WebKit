@@ -98,6 +98,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMarqueeElement') is 'ob
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMediaElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMenuElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMetaElement') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLMeterElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLModElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLOListElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLObjectElement') is 'object'

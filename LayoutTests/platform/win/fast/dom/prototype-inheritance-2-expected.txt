@@ -262,6 +262,7 @@ Never found HTMLMarqueeElement
 Never found HTMLMediaElement
 Never found HTMLMenuElement
 Never found HTMLMetaElement
+Never found HTMLMeterElement
 Never found HTMLModElement
 Never found HTMLOListElement
 Never found HTMLObjectElement
