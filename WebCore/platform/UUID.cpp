@@ -44,8 +44,11 @@
 #endif
 #elif OS(DARWIN)
 #include <CoreFoundation/CoreFoundation.h>
-#elif OS(LINUX)
+#elif OS(LINUX) && !PLATFORM(CHROMIUM)
 #include <stdio.h>
+#elif OS(LINUX) && PLATFORM(CHROMIUM)
+#include <wtf/RandomNumber.h>
+#include <wtf/text/StringBuilder.h>
 #endif
 
 namespace WebCore {
@@ -80,7 +83,8 @@ String createCanonicalUUIDString()
     String canonicalUuidStr = uuidStr.lower(); // make it lower.
     ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
     return canonicalUuidStr;
-#elif OS(LINUX)
+#elif OS(LINUX) && !PLATFORM(CHROMIUM)
+    // This does not work for the linux system that turns on sandbox.
     FILE* fptr = fopen("/proc/sys/kernel/random/uuid", "r");
     if (!fptr)
         return String();
@@ -92,10 +96,29 @@ String createCanonicalUUIDString()
     String canonicalUuidStr = String(uuidStr).lower(); // make it lower.
     ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);
     return canonicalUuidStr;
+#elif OS(LINUX) && PLATFORM(CHROMIUM)
+    unsigned randomData[4];
+    for (size_t i = 0; i < sizeof(randomData) / sizeof(randomData[0]); ++i)
+        randomData[i] = static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0));
+
+    // Format as Version 4 UUID.
+    StringBuilder builder;
+    builder.append(String::format("%08x", randomData[0]));
+    builder.append("-");
+    builder.append(String::format("%04x", randomData[1] >> 16));
+    builder.append("-4");
+    builder.append(String::format("%03x", randomData[1] & 0x00000fff));
+    builder.append("-");
+    builder.append(String::format("%x", (randomData[2] >> 30) | 0x8)); // Condense this byte to 8, 9, a, and b.
+    builder.append(String::format("%03x", (randomData[2] >> 16) & 0x00000fff));
+    builder.append("-");
+    builder.append(String::format("%04x", randomData[2] & 0x0000ffff));
+    builder.append(String::format("%08x", randomData[3]));
+    return builder.toString();
 #else
     notImplemented();
     return String();
-#endif    
+#endif
 }
 
 }
