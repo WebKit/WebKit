@@ -208,12 +208,14 @@ void HTMLFrameSetElement::recalcStyle(StyleChange ch)
 
 void HTMLFrameSetElement::insertedIntoDocument()
 {
+    HTMLElement::insertedIntoDocument();
     if (Frame* frame = document()->frame())
         frame->loader()->client()->dispatchDidBecomeFrameset(document()->isFrameSet());
 }
 
 void HTMLFrameSetElement::removedFromDocument()
 {
+    HTMLElement::removedFromDocument();
     if (Frame* frame = document()->frame())
         frame->loader()->client()->dispatchDidBecomeFrameset(document()->isFrameSet());
 }
