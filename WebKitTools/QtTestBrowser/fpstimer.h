@@ -37,7 +37,7 @@ class FpsTimer : public QObject {
 
 public:
     FpsTimer(QObject* parent = 0);
-    int numFrames(int spanMillis = 1000);
+    int numFrames(int spanMillis = 1000) const;
 
 public Q_SLOTS:
     void start();

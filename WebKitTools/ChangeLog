@@ -1,3 +1,20 @@
+2010-10-29  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] QtTestBrowser: Fix uninitialized read in FpsTimer
+        https://bugs.webkit.org/show_bug.cgi?id=48675
+
+        FpsTimer::m_timer was never initialized and passed to QObject::killTimer()
+        on startup with in -graphicsbased mode.
+
+        * QtTestBrowser/fpstimer.cpp:
+        (FpsTimer::FpsTimer):
+        (FpsTimer::numFrames):
+        (FpsTimer::stop):
+        (FpsTimer::timerEvent):
+        * QtTestBrowser/fpstimer.h:
+
 2010-10-29  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

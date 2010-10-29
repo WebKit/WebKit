@@ -37,11 +37,12 @@
 #define FPS_MEASURE_INTERVAL 1000 / 60
 
 FpsTimer::FpsTimer(QObject* parent)
-        : QObject(parent)
+    : QObject(parent)
+    , m_timer(0)
 {
 }
 
-int FpsTimer::numFrames(int spanMillis)
+int FpsTimer::numFrames(int spanMillis) const
 {
     const QTime now = QTime::currentTime();
 
@@ -63,13 +64,15 @@ void FpsTimer::start()
 
 void FpsTimer::stop()
 {
+    if (!m_timer)
+        return;
     killTimer(m_timer);
     m_frames.clear();
 }
 
 void FpsTimer::timerEvent(QTimerEvent* event)
 {
-    if (event->timerId() !=  m_timer)
+    if (event->timerId() != m_timer)
         return;
     m_frames.append(QTime::currentTime());
     if (m_frames.length() > MAX_FRAMES_SAVED)
