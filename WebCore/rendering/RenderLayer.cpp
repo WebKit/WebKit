@@ -2444,7 +2444,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     if (paintingRoot && !renderer()->isDescendantOf(paintingRoot))
         paintingRootForRenderer = paintingRoot;
 
-    if (overlapTestRequests)
+    if (overlapTestRequests && isSelfPaintingLayer())
         performOverlapTests(*overlapTestRequests, layerBounds);
 
     // We want to paint our layer, but only if we intersect the damage rect.

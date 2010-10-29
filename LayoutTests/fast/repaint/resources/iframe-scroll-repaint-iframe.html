@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html style="background-color:#eeeeee; overflow:hidden">
+<div style="height:500px">
+<script>
+if (window.layoutTestController)
+  layoutTestController.waitUntilDone()
+
+window.setTimeout(function() {
+  if (window.layoutTestController)
+    layoutTestController.display();
+
+  document.body.scrollTop = 20;
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+}, 50);
+</script>
