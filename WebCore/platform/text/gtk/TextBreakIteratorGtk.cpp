@@ -3,6 +3,7 @@
  * Copyright (C) 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Jürg Billeter <j@bitron.ch>
  * Copyright (C) 2008 Dominik Röttsches <dominik.roettsches@access-company.com>
+ * Copyright (C) 2010 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,12 +23,159 @@
  */
 
 #include "config.h"
-#include "GOwnPtr.h"
+
 #include "TextBreakIterator.h"
 
+#include "GOwnPtr.h"
 #include <pango/pango.h>
+using namespace std;
+
+#define UTF8_IS_SURROGATE(character) (character >= 0x10000 && character <= 0x10FFFF)
 
 namespace WebCore {
+
+class CharacterIterator {
+public:
+    bool setText(const UChar* string, int length);
+    const gchar* getText() { return m_utf8.get(); }
+    int getLength() { return m_length; }
+    glong getSize() { return m_size; }
+    void setIndex(int index);
+    int getIndex() { return m_index; }
+    void setUTF16Index(int index);
+    int getUTF16Index() { return m_utf16Index; }
+    int getUTF16Length() { return m_utf16Length; }
+    int first();
+    int last();
+    int next();
+    int previous();
+private:
+    int characterSize(int index);
+
+    GOwnPtr<char> m_utf8;
+    int m_length;
+    long m_size;
+    int m_index;
+    int m_utf16Index;
+    int m_utf16Length;
+};
+
+int CharacterIterator::characterSize(int index)
+{
+    if (index == m_length || index < 0)
+        return 0;
+    if (m_length == m_utf16Length)
+        return 1;
+
+    gchar* indexPtr = g_utf8_offset_to_pointer(m_utf8.get(), index);
+    gunichar character = g_utf8_get_char(indexPtr);
+    return UTF8_IS_SURROGATE(character) ? 2 : 1;
+}
+
+bool CharacterIterator::setText(const UChar* string, int length)
+{
+    long utf8Size = 0;
+    m_utf8.set(g_utf16_to_utf8(string, length, 0, &utf8Size, 0));
+    if (!utf8Size)
+        return false;
+
+    m_utf16Length = length;
+    m_length = g_utf8_strlen(m_utf8.get(), utf8Size);
+    m_size = utf8Size;
+    m_index = 0;
+    m_utf16Index = 0;
+
+    return true;
+}
+
+void CharacterIterator::setIndex(int index)
+{
+    if (index == m_index)
+        return;
+    if (index <= 0)
+        m_index = m_utf16Index = 0;
+    else if (index >= m_length) {
+        m_index = m_length;
+        m_utf16Index = m_utf16Length;
+    } else if (m_length == m_utf16Length)
+        m_index = m_utf16Index = index;
+    else {
+        m_index = index;
+        int utf16Index = 0;
+        int utf8Index = 0;
+        while (utf8Index < index) {
+            utf16Index += characterSize(utf8Index);
+            utf8Index++;
+        }
+        m_utf16Index = utf16Index;
+    }
+}
+
+void CharacterIterator::setUTF16Index(int index)
+{
+    if (index == m_utf16Index)
+        return;
+    if (index <= 0)
+        m_utf16Index = m_index = 0;
+    else if (index >= m_utf16Length) {
+        m_utf16Index = m_utf16Length;
+        m_index = m_length;
+    } else if (m_length == m_utf16Length)
+        m_utf16Index = m_index = index;
+    else {
+        m_utf16Index = index;
+        int utf16Index = 0;
+        int utf8Index = 0;
+        while (utf16Index < index) {
+            utf16Index += characterSize(utf8Index);
+            utf8Index++;
+        }
+        m_index = utf8Index;
+    }
+}
+
+int CharacterIterator::first()
+{
+    m_index = m_utf16Index = 0;
+    return m_index;
+}
+
+int CharacterIterator::last()
+{
+    m_index = m_length;
+    m_utf16Index = m_utf16Length;
+    return m_index;
+}
+
+int CharacterIterator::next()
+{
+    int next = m_index + 1;
+
+    if (next <= m_length) {
+        m_utf16Index = min(m_utf16Index + characterSize(m_index), m_utf16Length);
+        m_index = next;
+    } else {
+        m_index = TextBreakDone;
+        m_utf16Index = TextBreakDone;
+    }
+
+    return m_index;
+}
+
+int CharacterIterator::previous()
+{
+    int previous = m_index - 1;
+
+    if (previous >= 0) {
+        m_utf16Index = max(m_utf16Index - characterSize(previous), 0);
+        m_index = previous;
+    } else {
+        m_index = TextBreakDone;
+        m_utf16Index = TextBreakDone;
+    }
+
+    return m_index;
+}
 
 enum UBreakIteratorType {
     UBRK_CHARACTER,
@@ -39,9 +187,8 @@ enum UBreakIteratorType {
 class TextBreakIterator {
 public:
     UBreakIteratorType m_type;
-    int m_length;
     PangoLogAttr* m_logAttrs;
-    int m_index;
+    CharacterIterator m_charIterator;
 };
 
 static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator*& iterator,
@@ -57,19 +204,17 @@ static TextBreakIterator* setUpIterator(bool& createdIterator, TextBreakIterator
     if (!iterator)
         return 0;
 
-    long utf8len;
-    GOwnPtr<char> utf8;
-    utf8.set(g_utf16_to_utf8(string, length, 0, &utf8len, 0));
+    if (!iterator->m_charIterator.setText(string, length))
+        return 0;
 
-    // FIXME: assumes no surrogate pairs
+    int charLength = iterator->m_charIterator.getLength();
 
     iterator->m_type = type;
-    iterator->m_length = length;
     if (createdIterator)
         g_free(iterator->m_logAttrs);
-    iterator->m_logAttrs = g_new0(PangoLogAttr, length + 1);
-    iterator->m_index = 0;
-    pango_get_log_attrs(utf8.get(), utf8len, -1, 0, iterator->m_logAttrs, length + 1);
+    iterator->m_logAttrs = g_new0(PangoLogAttr, charLength + 1);
+    pango_get_log_attrs(iterator->m_charIterator.getText(), iterator->m_charIterator.getSize(),
+                        -1, 0, iterator->m_logAttrs, charLength + 1);
 
     return iterator;
 }
@@ -108,21 +253,13 @@ TextBreakIterator* sentenceBreakIterator(const UChar* string, int length)
     return setUpIterator(createdSentenceBreakIterator, staticSentenceBreakIterator, UBRK_SENTENCE, string, length);
 }
 
-int textBreakFirst(TextBreakIterator* bi)
+int textBreakFirst(TextBreakIterator* iterator)
 {
-    // see textBreakLast
-    
-    int firstCursorPosition = -1;
-    int pos = 0;
-    while (pos <= bi->m_length && (firstCursorPosition < 0)) {
-        if (bi->m_logAttrs[pos].is_cursor_position)
-            firstCursorPosition = pos;
-    }
-    bi->m_index = firstCursorPosition;
-    return firstCursorPosition;
+    iterator->m_charIterator.first();
+    return iterator->m_charIterator.getUTF16Index();
 }
 
-int textBreakLast(TextBreakIterator* bi)
+int textBreakLast(TextBreakIterator* iterator)
 {
     // TextBreakLast is not meant to find just any break according to bi->m_type 
     // but really the one near the last character.
@@ -137,81 +274,92 @@ int textBreakLast(TextBreakIterator* bi)
     // Otherwise return m_length, as "the first character beyond the last" is outside our string.
     
     bool whiteSpaceAtTheEnd = true;
-    int nextWhiteSpacePos = bi->m_length;
-    
-    int pos = bi->m_length;
+    int nextWhiteSpacePos = iterator->m_charIterator.getLength();
+
+    int pos = iterator->m_charIterator.last();
     while (pos >= 0 && whiteSpaceAtTheEnd) {
-        if (bi->m_logAttrs[pos].is_cursor_position) {
-            if (whiteSpaceAtTheEnd = bi->m_logAttrs[pos].is_white)
+        if (iterator->m_logAttrs[pos].is_cursor_position) {
+            if (whiteSpaceAtTheEnd = iterator->m_logAttrs[pos].is_white)
                 nextWhiteSpacePos = pos;
         }
-        pos--;
+        pos = iterator->m_charIterator.previous();
     }
-    bi->m_index = nextWhiteSpacePos;
-    return nextWhiteSpacePos;
+    iterator->m_charIterator.setIndex(nextWhiteSpacePos);
+    return iterator->m_charIterator.getUTF16Index();
 }
 
-int textBreakNext(TextBreakIterator* bi)
+int textBreakNext(TextBreakIterator* iterator)
 {
-    for (int i = bi->m_index + 1; i <= bi->m_length; i++) {
+    while (iterator->m_charIterator.next() != TextBreakDone) {
+        int index = iterator->m_charIterator.getIndex();
 
         // FIXME: UBRK_WORD case: Single multibyte characters (i.e. white space around them), such as the euro symbol €, 
         // are not marked as word_start & word_end as opposed to the way ICU does it.
         // This leads to - for example - different word selection behaviour when right clicking.
 
-        if ((bi->m_type == UBRK_LINE && bi->m_logAttrs[i].is_line_break)
-            || (bi->m_type == UBRK_WORD && (bi->m_logAttrs[i].is_word_start || bi->m_logAttrs[i].is_word_end))
-            || (bi->m_type == UBRK_CHARACTER && bi->m_logAttrs[i].is_cursor_position)
-            || (bi->m_type == UBRK_SENTENCE && (bi->m_logAttrs[i].is_sentence_start || bi->m_logAttrs[i].is_sentence_end)) ) {
-            bi->m_index = i;
-            return i;
+        if ((iterator->m_type == UBRK_LINE && iterator->m_logAttrs[index].is_line_break)
+            || (iterator->m_type == UBRK_WORD && (iterator->m_logAttrs[index].is_word_start || iterator->m_logAttrs[index].is_word_end))
+            || (iterator->m_type == UBRK_CHARACTER && iterator->m_logAttrs[index].is_cursor_position)
+            || (iterator->m_type == UBRK_SENTENCE && (iterator->m_logAttrs[index].is_sentence_start || iterator->m_logAttrs[index].is_sentence_end)) ) {
+            break;
         }
     }
-    return TextBreakDone;
+    return iterator->m_charIterator.getUTF16Index();
 }
 
-int textBreakPrevious(TextBreakIterator* bi)
+int textBreakPrevious(TextBreakIterator* iterator)
 {
-    for (int i = bi->m_index - 1; i >= 0; i--) {
-        if ((bi->m_type == UBRK_LINE && bi->m_logAttrs[i].is_line_break)
-            || (bi->m_type == UBRK_WORD && (bi->m_logAttrs[i].is_word_start || bi->m_logAttrs[i].is_word_end))
-            || (bi->m_type == UBRK_CHARACTER && bi->m_logAttrs[i].is_cursor_position)
-            || (bi->m_type == UBRK_SENTENCE && (bi->m_logAttrs[i].is_sentence_start || bi->m_logAttrs[i].is_sentence_end)) ) {
-            bi->m_index = i;
-            return i;
+    while (iterator->m_charIterator.previous() != TextBreakDone) {
+        int index = iterator->m_charIterator.getIndex();
+
+        if ((iterator->m_type == UBRK_LINE && iterator->m_logAttrs[index].is_line_break)
+            || (iterator->m_type == UBRK_WORD && (iterator->m_logAttrs[index].is_word_start || iterator->m_logAttrs[index].is_word_end))
+            || (iterator->m_type == UBRK_CHARACTER && iterator->m_logAttrs[index].is_cursor_position)
+            || (iterator->m_type == UBRK_SENTENCE && (iterator->m_logAttrs[index].is_sentence_start || iterator->m_logAttrs[index].is_sentence_end)) ) {
+            break;
         }
     }
-    return textBreakFirst(bi);
+    return iterator->m_charIterator.getUTF16Index();
 }
 
-int textBreakPreceding(TextBreakIterator* bi, int pos)
+int textBreakPreceding(TextBreakIterator* iterator, int offset)
 {
-    bi->m_index = pos;
-    return textBreakPrevious(bi);
+    if (offset > iterator->m_charIterator.getUTF16Length())
+        return TextBreakDone;
+    if (offset < 0)
+        return 0;
+    iterator->m_charIterator.setUTF16Index(offset);
+    return textBreakPrevious(iterator);
 }
 
-int textBreakFollowing(TextBreakIterator* bi, int pos)
+int textBreakFollowing(TextBreakIterator* iterator, int offset)
 {
-    if (pos < 0)
-        pos = -1;
-    bi->m_index = pos;
-    return textBreakNext(bi);
+    if (offset > iterator->m_charIterator.getUTF16Length())
+        return TextBreakDone;
+    if (offset < 0)
+        return 0;
+    iterator->m_charIterator.setUTF16Index(offset);
+    return textBreakNext(iterator);
 }
 
-int textBreakCurrent(TextBreakIterator* bi)
+int textBreakCurrent(TextBreakIterator* iterator)
 {
-    return bi->m_index;
+    return iterator->m_charIterator.getUTF16Index();
 }
 
-bool isTextBreak(TextBreakIterator* bi, int pos)
+bool isTextBreak(TextBreakIterator* iterator, int offset)
 {
-    if (bi->m_index < 0)
+    if (!offset)
+        return true;
+    if (offset > iterator->m_charIterator.getUTF16Length())
         return false;
 
-    return ((bi->m_type == UBRK_LINE && bi->m_logAttrs[bi->m_index].is_line_break)
-        || (bi->m_type == UBRK_WORD && bi->m_logAttrs[bi->m_index].is_word_end)
-        || (bi->m_type == UBRK_CHARACTER && bi->m_logAttrs[bi->m_index].is_char_break)
-        || (bi->m_type == UBRK_SENTENCE && bi->m_logAttrs[bi->m_index].is_sentence_end) );
+    iterator->m_charIterator.setUTF16Index(offset);
+
+    int index = iterator->m_charIterator.getIndex();
+    iterator->m_charIterator.previous();
+    textBreakNext(iterator);
+    return iterator->m_charIterator.getIndex() == index;
 }
 
 }
