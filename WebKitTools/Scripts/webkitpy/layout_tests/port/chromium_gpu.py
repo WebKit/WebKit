@@ -69,6 +69,8 @@ def _set_gpu_options(options):
             options.accelerated_compositing = True
         if options.accelerated_2d_canvas is None:
             options.accelerated_2d_canvas = True
+        if options.builder_name is not None:
+            options.builder_name = options.builder_name + ' - GPU'
 
 
 def _gpu_overrides(port):

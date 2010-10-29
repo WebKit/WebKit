@@ -1,3 +1,21 @@
+2010-10-29  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: need to provide separate dashboard results for GPU tests
+        https://bugs.webkit.org/show_bug.cgi?id=48687
+
+        Modify the steps to upload the JSON files to the dashboards so
+        that the GPU tests don't conflict with the regular tests on a
+        port. We do this by modifying the --builder-name parameter to
+        append " - GPU", which should cause the app to treat the results
+        as a completely new builder. This is a little non-obvious, but
+        keeps us from having to restructure the app.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-10-29  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.
