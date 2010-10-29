@@ -1634,7 +1634,7 @@ static inline void uniformlyExpandBorderRadii(int delta, IntSize& topLeft, IntSi
     bottomRight.clampNegativeToZero();
 }
 
-void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int ty, int w, int h, const RenderStyle* s, ShadowStyle shadowStyle, bool begin, bool end)
+void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int ty, int w, int h, const RenderStyle* s, ShadowStyle shadowStyle, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     // FIXME: Deal with border-image.  Would be great to use border-image as a mask.
 
@@ -1648,36 +1648,53 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
     IntSize bottomRight;
 
     bool hasBorderRadius = s->hasBorderRadius();
-    if (hasBorderRadius && (begin || end)) {
+    bool isHorizontal = s->isHorizontalWritingMode();
+    if (hasBorderRadius && (includeLogicalLeftEdge || includeLogicalRightEdge)) {
         IntSize topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius;
         s->getBorderRadiiForRect(rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 
-        if (begin) {
+        if (includeLogicalLeftEdge) {
             if (shadowStyle == Inset) {
                 topLeftRadius.expand(-borderLeft(), -borderTop());
                 topLeftRadius.clampNegativeToZero();
-                bottomLeftRadius.expand(-borderLeft(), -borderBottom());
-                bottomLeftRadius.clampNegativeToZero();
+                if (isHorizontal) {
+                    bottomLeftRadius.expand(-borderLeft(), -borderBottom());
+                    bottomLeftRadius.clampNegativeToZero();
+                } else {
+                    topRightRadius.expand(-borderRight(), -borderTop());
+                    topRightRadius.clampNegativeToZero();
+                }
             }
             topLeft = topLeftRadius;
-            bottomLeft = bottomLeftRadius;
+            if (isHorizontal)
+                bottomLeft = bottomLeftRadius;
+            else
+                topRight = topRightRadius;
         }
-        if (end) {
+        if (includeLogicalRightEdge) {
             if (shadowStyle == Inset) {
-                topRightRadius.expand(-borderRight(), -borderTop());
-                topRightRadius.clampNegativeToZero();
+                if (isHorizontal) {
+                    topRightRadius.expand(-borderRight(), -borderTop());
+                    topRightRadius.clampNegativeToZero();
+                } else {
+                    bottomLeftRadius.expand(-borderLeft(), -borderBottom());
+                    bottomLeftRadius.clampNegativeToZero();
+                }
                 bottomRightRadius.expand(-borderRight(), -borderBottom());
                 bottomRightRadius.clampNegativeToZero();
             }
-            topRight = topRightRadius;
+            if (isHorizontal)
+                topRight = topRightRadius;
+            else
+                bottomLeft = bottomLeftRadius;
             bottomRight = bottomRightRadius;
         }
     }
 
     if (shadowStyle == Inset) {
-        rect.move(begin ? borderLeft() : 0, borderTop());
-        rect.setWidth(rect.width() - (begin ? borderLeft() : 0) - (end ? borderRight() : 0));
-        rect.setHeight(rect.height() - borderTop() - borderBottom());
+        rect.move(includeLogicalLeftEdge || !isHorizontal ? borderLeft() : 0, includeLogicalLeftEdge || isHorizontal ? borderTop() : 0);
+        rect.setWidth(rect.width() - ((includeLogicalLeftEdge || !isHorizontal) ? borderLeft() : 0) - ((includeLogicalRightEdge || !isHorizontal) ? borderRight() : 0));
+        rect.setHeight(rect.height() - ((includeLogicalLeftEdge || isHorizontal) ? borderTop() : 0) - ((includeLogicalRightEdge || isHorizontal) ? borderBottom() : 0));
     }
 
     bool hasOpaqueBackground = s->visitedDependentColor(CSSPropertyBackgroundColor).isValid() && s->visitedDependentColor(CSSPropertyBackgroundColor).alpha() == 255;
@@ -1763,12 +1780,22 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, int tx, int 
                     context->fillRect(rect, shadowColor, s->colorSpace());
                 continue;
             }
-            if (!begin) {
-                holeRect.move(-max(shadowOffset.width(), 0) - shadowBlur, 0);
-                holeRect.setWidth(holeRect.width() + max(shadowOffset.width(), 0) + shadowBlur);
+
+            if (!includeLogicalLeftEdge) {
+                if (isHorizontal) {
+                    holeRect.move(-max(shadowOffset.width(), 0) - shadowBlur, 0);
+                    holeRect.setWidth(holeRect.width() + max(shadowOffset.width(), 0) + shadowBlur);
+                } else {
+                    holeRect.move(0, -max(shadowOffset.height(), 0) - shadowBlur);
+                    holeRect.setHeight(holeRect.height() + max(shadowOffset.height(), 0) + shadowBlur);
+                }
             }
-            if (!end)
-                holeRect.setWidth(holeRect.width() - min(shadowOffset.width(), 0) + shadowBlur);
+            if (!includeLogicalRightEdge) {
+                if (isHorizontal)
+                    holeRect.setWidth(holeRect.width() - min(shadowOffset.width(), 0) + shadowBlur);
+                else
+                    holeRect.setHeight(holeRect.height() - min(shadowOffset.height(), 0) + shadowBlur);
+            }
 
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
 

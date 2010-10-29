@@ -430,22 +430,23 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     GraphicsContext* context = paintInfo.context;
 
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
-    int baseline = styleToUse->font().ascent();
-    ty -= styleToUse->isHorizontalWritingMode() ? 0 : baseline;
     
+    ty -= styleToUse->isHorizontalWritingMode() ? 0 : logicalHeight();
+
     IntPoint boxOrigin(m_x, m_y);
     adjustForFlippedBlocksWritingMode(boxOrigin);
     boxOrigin.move(tx, ty);
     
-    IntPoint textOrigin = IntPoint(boxOrigin.x(), boxOrigin.y() + baseline);
+    IntPoint textOrigin = IntPoint(boxOrigin.x(), boxOrigin.y() + styleToUse->font().ascent());
     IntRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
 
     if (m_isVertical) {
         context->save();
-        context->translate(textOrigin.x(), textOrigin.y());
+        context->translate(boxRect.x(), boxRect.bottom());
         context->rotate(static_cast<float>(deg2rad(90.)));
-        context->translate(-textOrigin.x(), -textOrigin.y());
+        context->translate(-boxRect.x(), -boxRect.bottom());
     }
+    
     
     // Determine whether or not we have composition underlines to draw.
     bool containsComposition = renderer()->node() && renderer()->frame()->editor()->compositionNode() == renderer()->node();
