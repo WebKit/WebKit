@@ -1045,6 +1045,7 @@ public:
     PassRefPtr<TouchList> createTouchList(ExceptionCode&) const;
 #endif
 
+    bool mayCauseFlashOfUnstyledContent() const;
 protected:
     Document(Frame*, const KURL& url, bool isXHTML, bool isHTML, const KURL& baseURL = KURL());
 
