@@ -1,3 +1,12 @@
+2010-10-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Adam Roben and David Kilzer.
+
+        Fix and cleanup of build systems
+        https://bugs.webkit.org/show_bug.cgi?id=48342
+
+        * Configurations/FeatureDefines.xcconfig: Add missing ENABLE_FULLSCREEN_API
+
 2010-10-28  Kwang Yul Seo  <skyul@company100.net>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,14 @@
+2010-10-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Adam Roben and David Kilzer.
+
+        Fix and cleanup of build systems
+        https://bugs.webkit.org/show_bug.cgi?id=48342
+
+        * Scripts/build-webkit:
+         - Remove unnecessary ENABLE_SANDBOX option.
+         - Add ENABLE_FULLSCREEN_API option.
+
 2010-10-28  Adam Roben  <aroben@apple.com>
 
         Switch the Windows WebKit2 bot to the Release configuration

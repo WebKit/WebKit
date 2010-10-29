@@ -74,6 +74,7 @@ my (
     $eventsourceSupport,
     $fileSystemSupport,
     $filtersSupport,
+    $fullscreenAPISupport,
     $geolocationSupport,
     $iconDatabaseSupport,
     $imageResizerSupport,
@@ -87,7 +88,6 @@ my (
     $offlineWebApplicationSupport,
     $progressTagSupport,
     $rubySupport,
-    $sandboxSupport,
     $sharedWorkersSupport,
     $svgSupport,
     $svgAnimationSupport,
@@ -159,6 +159,9 @@ my @features = (
     { option => "filters", desc => "Toggle Filters support",
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl()), value => \$filtersSupport },
 
+    { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
+      define => "ENABLE_FULLSCREEN_API", default => isAppleMacWebKit(), value => \$fullscreenAPISupport },
+
     { option => "geolocation", desc => "Toggle Geolocation support",
       define => "ENABLE_GEOLOCATION", default => (isAppleWebKit() || isGtk()), value => \$geolocationSupport },
 
@@ -200,9 +203,6 @@ my @features = (
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
       define => "USE_SYSTEM_MALLOC", default => 0, value => \$systemMallocSupport },
-
-    { option => "sandbox", desc => "Toggle HTML5 Sandboxed iframe support",
-      define => "ENABLE_SANDBOX", default => 1, value => \$sandboxSupport },
 
     { option => "shared-workers", desc => "Toggle SharedWorkers support",
       define => "ENABLE_SHARED_WORKERS", default => (isAppleWebKit() || isGtk()), value => \$sharedWorkersSupport },

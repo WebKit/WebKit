@@ -1,3 +1,16 @@
+2010-10-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Adam Roben and David Kilzer.
+
+        Fix and cleanup of build systems
+        https://bugs.webkit.org/show_bug.cgi?id=48342
+
+        Remove unnecessary ENABLE_SANDBOX.
+        Add missing features to converge to FeatureDefines.xcconfig.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
 2010-10-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
