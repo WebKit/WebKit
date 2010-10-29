@@ -167,9 +167,6 @@ static struct TexmapShaderInfo {
         GL_CMD(glBindAttribLocation(programID, 0, "InVertex"))
         GL_CMD(glLinkProgram(programID))
         programs[index].id = programID;
-        char infoLog[1024];
-        int len;
-        GL_CMD(glGetProgramInfoLog(programID, 1024, &len, infoLog));
     }
 
     ProgramInfo programs[NumPrograms];
