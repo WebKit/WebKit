@@ -215,6 +215,7 @@ void LauncherWindow::createChrome()
 
     QMenu* windowMenu = menuBar()->addMenu("&Window");
     QAction* toggleFullScreen = windowMenu->addAction("Toggle FullScreen", this, SIGNAL(enteredFullScreenMode(bool)));
+    toggleFullScreen->setShortcut(Qt::Key_F11);
     toggleFullScreen->setCheckable(true);
     toggleFullScreen->setChecked(false);
     // When exit fullscreen mode by clicking on the exit area (bottom right corner) we must
