@@ -97,7 +97,8 @@ private:
     void proxiesForURL(const String& urlString, String& proxyString);
     void cookiesForURL(const String& urlString, String& cookieString);
     void setCookiesForURL(const String& urlString, const String& cookieString);
-    
+    void getWindowScriptNPObject(uint64_t& windowScriptNPObjectID);
+
     RefPtr<PluginProcessConnection> m_connection;
     uint64_t m_pluginInstanceID;
 

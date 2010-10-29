@@ -161,6 +161,15 @@ void PluginControllerProxy::cancelManualStreamLoad()
 
 NPObject* PluginControllerProxy::windowScriptNPObject()
 {
+    uint64_t windowScriptNPObjectID = 0;
+
+    if (!m_connection->connection()->sendSync(Messages::PluginProxy::GetWindowScriptNPObject(), Messages::PluginProxy::GetWindowScriptNPObject::Reply(windowScriptNPObjectID), m_pluginInstanceID))
+        return 0;
+
+    if (!windowScriptNPObjectID)
+        return 0;
+
+    // FIXME: Do something with the windowScriptNPObjectID.
     notImplemented();
     return 0;
 }

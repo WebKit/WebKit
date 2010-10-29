@@ -1,5 +1,23 @@
 2010-10-29  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Add GetWindowScriptNPObject message
+        https://bugs.webkit.org/show_bug.cgi?id=48670
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::windowScriptNPObject):
+        Send the GetWindowScriptNPObject message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::getWindowScriptNPObject):
+        Add stub.
+
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Add GetWindowScriptNPObject message.
+
+2010-10-29  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Change the Connection::sendSync timeout parameter to have the NoTimeout argument as a default
