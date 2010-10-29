@@ -35,6 +35,7 @@
 
 namespace WebKit {
 
+class WebString;
 struct WebRect;
 class WebString;
 
@@ -44,7 +45,7 @@ public:
     // Starts speech recognition. Speech will get recorded until the endpointer detects silence,
     // runs to the limit or stopRecording is called. Progress indications and the recognized
     // text are returned via the listener interface.
-    virtual bool startRecognition(int requestId, const WebRect& elementRect, const WebString& grammar)
+    virtual bool startRecognition(int requestId, const WebRect& elementRect, const WebString& language, const WebString& grammar)
     {
         WEBKIT_ASSERT_NOT_REACHED();
         return false;

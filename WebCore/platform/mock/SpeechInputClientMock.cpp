@@ -50,12 +50,13 @@ void SpeechInputClientMock::setListener(SpeechInputListener* listener)
     m_listener = listener;
 }
 
-bool SpeechInputClientMock::startRecognition(int requestId, const IntRect& elementRect, const String& grammar)
+bool SpeechInputClientMock::startRecognition(int requestId, const IntRect& elementRect, const AtomicString& language, const String& grammar)
 {
     if (m_timer.isActive())
         return false;
     m_requestId = requestId;
     m_recording = true;
+    m_language = language;
     m_timer.startOneShot(0);
     return true;
 }
@@ -80,9 +81,12 @@ void SpeechInputClientMock::cancelRecognition(int requestId)
     }
 }
 
-void SpeechInputClientMock::setRecognitionResult(const String& result)
+void SpeechInputClientMock::setRecognitionResult(const String& result, const AtomicString& language)
 {
-    m_recognitionResult = result;
+    if (language.isEmpty())
+        m_resultForEmptyLanguage = result;
+    else
+        m_recognitionResult.set(language, result);
 }
 
 void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
@@ -93,7 +97,30 @@ void SpeechInputClientMock::timerFired(WebCore::Timer<SpeechInputClientMock>*)
         m_timer.startOneShot(0);
     } else {
         SpeechInputResultArray results;
-        results.append(SpeechInputResult::create(m_recognitionResult, 1.0));
+        bool noResultsFound = false;
+
+        // Empty language case must be handled separately to avoid problems with HashMap and empty keys.
+        if (m_language.isEmpty()) {
+            if (!m_resultForEmptyLanguage.isNull())
+                results.append(SpeechInputResult::create(m_resultForEmptyLanguage, 1.0));
+            else
+                noResultsFound = true;
+        } else {
+            if (m_recognitionResult.contains(m_language))
+                results.append(SpeechInputResult::create(m_recognitionResult.get(m_language), 1.0));
+            else
+                noResultsFound = true;
+        }
+
+        if (noResultsFound) {
+            // Can't avoid setting a result even if no result was set for the given language.
+            // This would avoid generating the events used to check the results and the test would timeout.
+            String error("error: no result found for language '");
+            error.append(m_language);
+            error.append("'");
+            results.append(SpeechInputResult::create(error, 1.0));
+        }
+
         m_listener->setRecognitionResult(m_requestId, results);
         m_listener->didCompleteRecognition(m_requestId);
         m_requestId = 0;
