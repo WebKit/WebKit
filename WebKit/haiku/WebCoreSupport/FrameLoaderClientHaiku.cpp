@@ -857,4 +857,8 @@ void FrameLoaderClientHaiku::transitionToCommittedForNewPage()
         m_frame->view()->setScrollbarModes(owner->scrollingMode(), owner->scrollingMode());
 }
 
+void FrameLoaderClientHaiku::dispatchDidBecomeFrameset(bool)
+{
+}
+
 } // namespace WebCore

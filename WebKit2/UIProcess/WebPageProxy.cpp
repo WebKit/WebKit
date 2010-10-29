@@ -713,6 +713,7 @@ void WebPageProxy::didCommitLoadForFrame(uint64_t frameID, const String& mimeTyp
     WebFrameProxy* frame = process()->webFrame(frameID);
 
     frame->setMIMEType(mimeType);
+    frame->setIsFrameSet(false);
     frame->setCertificateInfo(WebCertificateInfo::create(certificateInfo));
     frame->didCommitLoad();
     m_loaderClient.didCommitLoadForFrame(this, frame, userData.get());
@@ -832,6 +833,13 @@ void WebPageProxy::didRunInsecureContentForFrame(uint64_t frameID, CoreIPC::Argu
     WebFrameProxy* frame = process()->webFrame(frameID);
 
     m_loaderClient.didRunInsecureContentForFrame(this, frame, userData.get());
+}
+
+void WebPageProxy::frameDidBecomeFrameSet(uint64_t frameID, bool value)
+{
+    WebFrameProxy* frame = process()->webFrame(frameID);
+
+    frame->setIsFrameSet(value);
 }
 
 // PolicyClient

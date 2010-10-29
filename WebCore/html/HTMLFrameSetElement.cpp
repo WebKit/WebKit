@@ -29,6 +29,8 @@
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
+#include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "HTMLNames.h"
 #include "Length.h"
 #include "MouseEvent.h"
@@ -202,6 +204,18 @@ void HTMLFrameSetElement::recalcStyle(StyleChange ch)
         clearNeedsStyleRecalc();
     }
     HTMLElement::recalcStyle(ch);
+}
+
+void HTMLFrameSetElement::insertedIntoDocument()
+{
+    if (Frame* frame = document()->frame())
+        frame->loader()->client()->dispatchDidBecomeFrameset(document()->isFrameSet());
+}
+
+void HTMLFrameSetElement::removedFromDocument()
+{
+    if (Frame* frame = document()->frame())
+        frame->loader()->client()->dispatchDidBecomeFrameset(document()->isFrameSet());
 }
 
 } // namespace WebCore

@@ -90,3 +90,8 @@ bool WKFrameCanProvideSource(WKFrameRef frameRef)
 {
     return toImpl(frameRef)->canProvideSource();
 }
+
+bool WKFrameIsFrameSet(WKFrameRef frameRef)
+{
+    return toImpl(frameRef)->isFrameSet();
+}

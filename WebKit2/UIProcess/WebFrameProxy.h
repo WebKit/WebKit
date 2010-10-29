@@ -69,6 +69,10 @@ public:
     void disconnect();
 
     bool isMainFrame() const;
+
+    void setIsFrameSet(bool value) { m_isFrameSet = value; }
+    bool isFrameSet() const { return m_isFrameSet; }
+
     LoadState loadState() const { return m_loadState; }
 
     const String& url() const { return m_url; }
@@ -108,6 +112,7 @@ private:
     String m_provisionalURL;
     String m_unreachableURL;
     String m_MIMEType;
+    bool m_isFrameSet;
     RefPtr<WebCertificateInfo> m_certificateInfo;
     RefPtr<WebFrameListenerProxy> m_activeListener;
     uint64_t m_frameID;

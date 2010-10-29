@@ -1,3 +1,31 @@
+2010-10-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48576
+        Let WebKit2 client know when a frame is a frameset
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::WebFrameProxy):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::setIsFrameSet):
+        (WebKit::WebFrameProxy::isFrameSet):
+        Remember whether the frame is currently a frameset.
+
+        * UIProcess/API/C/WKFrame.cpp: (WKFrameIsFrameSet):
+        * UIProcess/API/C/WKFrame.h:
+        Added client API.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didCommitLoadForFrame):
+        (WebKit::WebPageProxy::frameDidBecomeFrameSet):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidBecomeFrameset):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        Pass notification from web process to UI process.
+
 2010-10-28  Adam Roben  <aroben@apple.com>
 
         Use IntPoint/FloatSize in WebEvent subclasses

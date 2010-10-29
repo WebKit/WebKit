@@ -77,7 +77,10 @@ private:
     virtual void defaultEventHandler(Event*);
 
     virtual void recalcStyle(StyleChange);
-    
+
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+
     OwnArrayPtr<Length> m_rowLengths;
     OwnArrayPtr<Length> m_colLengths;
 

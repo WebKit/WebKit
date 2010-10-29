@@ -62,6 +62,7 @@
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HashChangeEvent.h"
@@ -3862,6 +3863,9 @@ void Document::documentDidBecomeActive()
     if (renderer())
         renderView()->didMoveOnscreen();
 #endif
+
+    ASSERT(m_frame);
+    m_frame->loader()->client()->dispatchDidBecomeFrameset(isFrameSet());
 }
 
 void Document::registerForDocumentActivationCallbacks(Element* e)

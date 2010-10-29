@@ -60,6 +60,8 @@ WK_EXPORT WKCertificateInfoRef WKFrameGetCertificateInfo(WKFrameRef frame);
 
 WK_EXPORT bool WKFrameCanProvideSource(WKFrameRef frame);
 
+WK_EXPORT bool WKFrameIsFrameSet(WKFrameRef frame);
+
 #ifdef __cplusplus
 }
 #endif

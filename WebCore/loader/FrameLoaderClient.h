@@ -224,6 +224,8 @@ namespace WebCore {
         virtual void transitionToCommittedFromCachedFrame(CachedFrame*) = 0;
         virtual void transitionToCommittedForNewPage() = 0;
 
+        virtual void dispatchDidBecomeFrameset(bool) = 0; // Can change due to navigation or DOM modification.
+
         virtual bool canCachePage() const = 0;
         virtual void download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&) = 0;
 

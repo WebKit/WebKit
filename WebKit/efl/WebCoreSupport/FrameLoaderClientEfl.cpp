@@ -923,6 +923,10 @@ void FrameLoaderClientEfl::transitionToCommittedForNewPage()
         ewk_view_frame_main_cleared(m_view);
 }
 
+void FrameLoaderClientEfl::dispatchDidBecomeFrameset(bool)
+{
+}
+
 PassRefPtr<FrameNetworkingContext> FrameLoaderClientEfl::createNetworkingContext()
 {
     return FrameNetworkingContextEfl::create(ewk_frame_core_get(m_frame));

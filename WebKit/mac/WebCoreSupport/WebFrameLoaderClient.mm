@@ -1253,6 +1253,10 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     }
 }
 
+void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool)
+{
+}
+
 RetainPtr<WebFramePolicyListener> WebFrameLoaderClient::setUpPolicyListener(FramePolicyFunction function)
 {
     // FIXME: <rdar://5634381> We need to support multiple active policy listeners.

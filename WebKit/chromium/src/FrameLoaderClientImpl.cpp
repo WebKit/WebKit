@@ -1342,6 +1342,10 @@ void FrameLoaderClientImpl::transitionToCommittedForNewPage()
     makeDocumentView();
 }
 
+void FrameLoaderClientImpl::dispatchDidBecomeFrameset(bool)
+{
+}
+
 bool FrameLoaderClientImpl::canCachePage() const
 {
     // Since we manage the cache, always report this page as non-cacheable to

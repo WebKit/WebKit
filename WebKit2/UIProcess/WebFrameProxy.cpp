@@ -39,6 +39,7 @@ namespace WebKit {
 WebFrameProxy::WebFrameProxy(WebPageProxy* page, uint64_t frameID)
     : m_page(page)
     , m_loadState(LoadStateFinished)
+    , m_isFrameSet(false)
     , m_frameID(frameID)
 {
 }

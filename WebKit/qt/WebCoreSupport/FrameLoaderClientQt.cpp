@@ -282,6 +282,9 @@ void FrameLoaderClientQt::transitionToCommittedForNewPage()
                         vScrollbar, vLock);
 }
 
+void FrameLoaderClientQt::dispatchDidBecomeFrameset(bool)
+{
+}
 
 void FrameLoaderClientQt::makeRepresentation(DocumentLoader*)
 {

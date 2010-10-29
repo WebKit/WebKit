@@ -1313,6 +1313,10 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
     postCommitFrameViewSetup(m_frame, frame->view(), true);
 }
 
+void FrameLoaderClient::dispatchDidBecomeFrameset(bool)
+{
+}
+
 PassRefPtr<FrameNetworkingContext> FrameLoaderClient::createNetworkingContext()
 {
     return FrameNetworkingContextGtk::create(core(m_frame));

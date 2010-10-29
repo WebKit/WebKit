@@ -966,6 +966,10 @@ void FrameLoaderClientWx::transitionToCommittedForNewPage()
         m_frame->createView(size, backgroundColor, transparent, IntSize(), false); 
 }
 
+void FrameLoaderClientWx::dispatchDidBecomeFrameset(bool)
+{
+}
+
 bool FrameLoaderClientWx::shouldUsePluginDocument(const String &mimeType) const
 {
     // NOTE: Plugin Documents are used for viewing PDFs, etc. inline, and should

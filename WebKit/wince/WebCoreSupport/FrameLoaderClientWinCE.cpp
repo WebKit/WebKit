@@ -630,6 +630,10 @@ void FrameLoaderClientWinCE::transitionToCommittedForNewPage()
         m_frame->ownerRenderer()->setWidget(frameView);
 }
 
+void FrameLoaderClientWinCE::dispatchDidBecomeFrameset(bool)
+{
+}
+
 PassRefPtr<WebCore::FrameNetworkingContext> FrameLoaderClientWinCE::createNetworkingContext()
 {
     return FrameNetworkingContextWinCE::create(m_frame, userAgent(KURL()));
