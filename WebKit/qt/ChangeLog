@@ -1,3 +1,18 @@
+2010-10-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix tst_QWebFrame on XVFB.
+        https://bugs.webkit.org/show_bug.cgi?id=48637
+
+        These tests relied on a window manager to activate the window.
+
+        Fixes:
+        - tst_QWebFrame::popupFocus()
+        - tst_QwebFrame::inputFieldFocus()
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2010-10-28  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Ariya Hidayat.
