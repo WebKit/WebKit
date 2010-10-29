@@ -263,10 +263,8 @@ static void populateObjectWithFrameResources(Frame* frame, PassRefPtr<InspectorO
     CachedResourceLoader::DocumentResourceMap::const_iterator end = allResources.end();
     for (CachedResourceLoader::DocumentResourceMap::const_iterator it = allResources.begin(); it != end; ++it) {
         CachedResource* cachedResource = it->second.get();
-        if (cachedResource) {
-            RefPtr<InspectorObject> cachedResourceObject = buildObjectForCachedResource(frame->loader()->documentLoader(), *cachedResource);
-            subresources->pushValue(cachedResourceObject);
-        }
+        RefPtr<InspectorObject> cachedResourceObject = buildObjectForCachedResource(frame->loader()->documentLoader(), *cachedResource);
+        subresources->pushValue(cachedResourceObject);
     }
 }
 

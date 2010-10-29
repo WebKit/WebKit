@@ -466,8 +466,8 @@ var WebInspector = {
         if (Preferences.networkPanelEnabled)
             WebInspector.resourceManager.forAllResources(callback);
         else {
-            for (var id in WebInspector.panels.resources.resources) {
-                if (callback(WebInspector.panels.resources.resources[id]))
+            for (var id in this.resources) {
+                if (callback(this.resources[id]))
                     return;
             }
         }
@@ -1318,6 +1318,7 @@ WebInspector.updateResource = function(payload)
 
     if (payload.didCompletionChange) {
         resource.failed = payload.failed;
+        resource.localizedFailDescription = payload.localizedFailDescription;
         resource.finished = payload.finished;
         if (this.panels.audits)
             this.panels.audits.resourceFinished(resource);

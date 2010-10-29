@@ -565,6 +565,9 @@ WebInspector.Resource.prototype = {
          || this.type === WebInspector.Resource.Type.WebSocket)
             return true;
 
+        if (!this.mimeType)
+            return true; // Might be not known for cached resources with null responses.
+
         if (this.mimeType in WebInspector.MIMETypes)
             return this.type in WebInspector.MIMETypes[this.mimeType];
 
@@ -584,7 +587,7 @@ WebInspector.Resource.prototype = {
             case WebInspector.Warnings.IncorrectMIMEType.id:
                 if (!this._mimeTypeIsConsistentWithType())
                     msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
-                        WebInspector.ConsoleMessage.MessageType.Log, 
+                        WebInspector.ConsoleMessage.MessageType.Log,
                         WebInspector.ConsoleMessage.MessageLevel.Warning,
                         -1,
                         this.url,

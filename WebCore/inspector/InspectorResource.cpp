@@ -302,6 +302,7 @@ void InspectorResource::updateScriptObject(InspectorFrontend* frontend)
 
     if (m_changes.hasChange(CompletionChange)) {
         jsonObject->setBoolean("failed", m_failed);
+        jsonObject->setString("localizedFailDescription", m_localizedFailDescription);
         jsonObject->setBoolean("finished", m_finished);
         jsonObject->setBoolean("didCompletionChange", true);
     }
@@ -436,9 +437,10 @@ void InspectorResource::endTiming(double actualEndTime)
     m_changes.set(CompletionChange);
 }
 
-void InspectorResource::markFailed()
+void InspectorResource::markFailed(const String& localizedDescription)
 {
     m_failed = true;
+    m_localizedFailDescription = localizedDescription;
     m_changes.set(CompletionChange);
 }
 
