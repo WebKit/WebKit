@@ -236,12 +236,7 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     SkPaint paint;
     paint.setXfermodeMode(compOp);
     paint.setFilterBitmap(true);
-    int alpha = roundf(platformContext->getAlpha() * 256);
-    if (alpha > 255)
-        alpha = 255;
-    else if (alpha < 0)
-        alpha = 0;
-    paint.setAlpha(alpha);
+    paint.setAlpha(platformContext->getNormalizedAlpha());
 
     skia::PlatformCanvas* canvas = platformContext->canvas();
 

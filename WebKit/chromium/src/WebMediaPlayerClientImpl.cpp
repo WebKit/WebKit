@@ -402,7 +402,14 @@ void WebMediaPlayerClientImpl::paint(GraphicsContext* context, const IntRect& re
     // check.
     if (m_webMediaPlayer.get() && !context->paintingDisabled()) {
 #if WEBKIT_USING_SKIA
-        m_webMediaPlayer->paint(context->platformContext()->canvas(), rect);
+        PlatformGraphicsContext* platformContext = context->platformContext();
+        WebCanvas* canvas = platformContext->canvas();
+
+        canvas->saveLayerAlpha(0, platformContext->getNormalizedAlpha());
+
+        m_webMediaPlayer->paint(canvas, rect);
+
+        canvas->restore();
 #elif WEBKIT_USING_CG
         m_webMediaPlayer->paint(context->platformContext(), rect);
 #else

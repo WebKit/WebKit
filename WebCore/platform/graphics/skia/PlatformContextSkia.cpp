@@ -510,6 +510,16 @@ float PlatformContextSkia::getAlpha() const
     return m_state->m_alpha;
 }
 
+int PlatformContextSkia::getNormalizedAlpha() const
+{
+    int alpha = roundf(m_state->m_alpha * 256);
+    if (alpha > 255)
+        alpha = 255;
+    else if (alpha < 0)
+        alpha = 0;
+    return alpha;
+}
+
 void PlatformContextSkia::setTextDrawingMode(int mode)
 {
     // cTextClip is never used, so we assert that it isn't set:

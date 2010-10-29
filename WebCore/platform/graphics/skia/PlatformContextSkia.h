@@ -134,6 +134,7 @@ public:
     float getStrokeThickness() const;
     int getTextDrawingMode() const;
     float getAlpha() const;
+    int getNormalizedAlpha() const;
 
     void beginPath();
     void addPath(const SkPath&);
