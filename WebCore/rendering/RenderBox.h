@@ -379,6 +379,7 @@ public:
 
     enum FlippingAdjustment { ChildToParentFlippingAdjustment, ParentToChildFlippingAdjustment };
     void adjustForFlippedBlocksWritingMode(RenderBox* child, IntPoint&, FlippingAdjustment);
+    int convertFromFlippedWritingMode(int position);
     IntSize locationOffsetIncludingFlipping();
 
 protected:

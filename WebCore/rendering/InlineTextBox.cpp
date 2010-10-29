@@ -392,11 +392,15 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
 
     // FIXME: Technically we're potentially incorporating other visual overflow that had nothing to do with us.
     // Would it be simpler to just check our own shadow and stroke overflow by hand here?
-    int leftOverflow = parent()->x() - parent()->leftVisualOverflow();
-    int rightOverflow = parent()->rightVisualOverflow() - (parent()->x() + parent()->logicalWidth());
-    int xPos = tx + m_x - leftOverflow;
-    int w = logicalWidth() + leftOverflow + rightOverflow;
-    if (xPos >= paintInfo.rect.right() || xPos + w <= paintInfo.rect.x())
+    int logicalLeftOverflow = parent()->logicalLeft() - parent()->logicalLeftVisualOverflow();
+    int logicalRightOverflow = parent()->logicalRightVisualOverflow() - (parent()->logicalLeft() + parent()->logicalWidth());
+    int logicalStart = logicalLeft() - logicalLeftOverflow + (isVertical() ? ty : tx);
+    int logicalExtent = logicalWidth() + logicalLeftOverflow + logicalRightOverflow;
+    
+    int paintEnd = isVertical() ? paintInfo.rect.bottom() : paintInfo.rect.right();
+    int paintStart = isVertical() ? paintInfo.rect.y() : paintInfo.rect.x();
+    
+    if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
 
     bool isPrinting = textRenderer()->document()->printing();

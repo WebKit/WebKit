@@ -291,6 +291,18 @@ void InlineBox::adjustForFlippedBlocksWritingMode(IntPoint& point)
         point.setX(block->width() - width() - point.x());
 }
 
+void InlineBox::adjustForFlippedBlocksWritingMode(IntRect& rect)
+{
+    if (!renderer()->style()->isFlippedBlocksWritingMode())
+        return;
+    
+    RenderBlock* block = root()->block();
+    if (block->style()->isHorizontalWritingMode())
+        rect.setY(block->height() - rect.bottom());
+    else
+        rect.setX(block->width() - rect.right());
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

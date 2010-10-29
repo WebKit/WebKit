@@ -291,6 +291,7 @@ public:
     }
 
     void adjustForFlippedBlocksWritingMode(IntPoint&);
+    void adjustForFlippedBlocksWritingMode(IntRect&);
 
 private:
     InlineBox* m_next; // The next element on the same line as us.
