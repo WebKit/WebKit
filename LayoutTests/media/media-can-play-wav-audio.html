@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <script src=video-test.js></script>
+        <script>
+            function start()
+            {
+                audio = document.getElementsByTagName('audio')[0];
+
+                testExpected("audio.canPlayType('audio/wav')", "maybe");
+                testExpected("audio.canPlayType('audio/x-wav')", "maybe");
+
+                endTest();
+            }
+        </script>
+
+    </head>
+    <body onload="start()">
+
+        <audio controls ></audio>
+
+        <p>Test HTMLMediaElement <em>canPlayType()</em> method with multiple .wav MIME types.</p>
+
+    </body>
+</html>

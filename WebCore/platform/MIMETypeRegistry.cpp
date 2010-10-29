@@ -311,7 +311,10 @@ static MediaMIMETypeMap& mediaMIMETypeMap()
 
         // CoreAudio File
         { "audio/x-caf", "caf" },
-        { "audio/x-gsm", "gsm" }
+        { "audio/x-gsm", "gsm" },
+
+        // ADPCM
+        { "audio/x-wav", "wav" }
     };
 
     DEFINE_STATIC_LOCAL(MediaMIMETypeMap, mediaMIMETypeForExtensionMap, ());
