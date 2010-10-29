@@ -1,3 +1,14 @@
+2010-10-28  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by ap.
+
+        [Chrome] Fix an appcache regression introduced in r69226
+        https://bugs.webkit.org/show_bug.cgi?id=48592
+        Provide a noop method body ApplicationCacheHost::maybeLoadMainResourceForRedirect.
+
+        * src/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::maybeLoadMainResourceForRedirect):
+
 2010-10-29  Aaron Colwell  <acolwell@chromium.org>
 
         Reviewed by James Robinson.

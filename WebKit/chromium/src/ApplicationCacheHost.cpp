@@ -113,6 +113,11 @@ void ApplicationCacheHost::selectCacheWithManifest(const KURL& manifestURL)
     }
 }
 
+void ApplicationCacheHost::maybeLoadMainResourceForRedirect(ResourceRequest&, SubstituteData&)
+{
+    // N/A to the chromium port
+}
+
 bool ApplicationCacheHost::maybeLoadFallbackForMainResponse(const ResourceRequest&, const ResourceResponse& response)
 {
     if (m_internal) {

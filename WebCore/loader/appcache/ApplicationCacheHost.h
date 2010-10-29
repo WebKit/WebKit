@@ -122,6 +122,7 @@ namespace WebCore {
         void selectCacheWithManifest(const KURL& manifestURL);
 
         void maybeLoadMainResource(ResourceRequest&, SubstituteData&);
+        void maybeLoadMainResourceForRedirect(ResourceRequest&, SubstituteData&);
         bool maybeLoadFallbackForMainResponse(const ResourceRequest&, const ResourceResponse&);
         bool maybeLoadFallbackForMainError(const ResourceRequest&, const ResourceError&);
         void mainResourceDataReceived(const char* data, int length, long long lengthReceived, bool allAtOnce);
