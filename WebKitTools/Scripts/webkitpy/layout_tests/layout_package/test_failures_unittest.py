@@ -28,12 +28,25 @@
 
 """"Tests code paths not covered by the regular unit tests."""
 
-from webkitpy.layout_tests.layout_package.test_failures import *
 import unittest
+
+from webkitpy.layout_tests.layout_package.test_failures import *
+
 
 class Test(unittest.TestCase):
     def assertResultHtml(self, failure_obj):
         self.assertNotEqual(failure_obj.result_html_output('foo'), None)
+
+    def assert_loads(self, cls):
+        failure_obj = cls()
+        s = failure_obj.dumps()
+        new_failure_obj = TestFailure.loads(s)
+        self.assertTrue(isinstance(new_failure_obj, cls))
+
+        self.assertEqual(failure_obj, new_failure_obj)
+
+        # Also test that != is implemented.
+        self.assertFalse(failure_obj != new_failure_obj)
 
     def test_crash(self):
         self.assertResultHtml(FailureCrash())
@@ -63,6 +76,9 @@ class Test(unittest.TestCase):
         self.assertRaises(NotImplementedError, failure_obj.result_html_output,
                           "foo.txt")
 
+    def test_loads(self):
+        for c in ALL_FAILURE_CLASSES:
+            self.assert_loads(c)
 
 if __name__ == '__main__':
     unittest.main()

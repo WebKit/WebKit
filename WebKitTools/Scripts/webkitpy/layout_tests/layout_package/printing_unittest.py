@@ -40,7 +40,7 @@ from webkitpy.common import array_stream
 from webkitpy.common.system import logtesting
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.layout_package import printing
-from webkitpy.layout_tests.layout_package import dump_render_tree_thread
+from webkitpy.layout_tests.layout_package import test_results
 from webkitpy.layout_tests.layout_package import test_expectations
 from webkitpy.layout_tests.layout_package import test_failures
 from webkitpy.layout_tests import run_webkit_tests
@@ -141,9 +141,9 @@ class  Testprinter(unittest.TestCase):
         elif result_type == test_expectations.CRASH:
             failures = [test_failures.FailureCrash()]
         path = os.path.join(self._port.layout_tests_dir(), test)
-        return dump_render_tree_thread.TestResult(path, failures, run_time,
-                                                  total_time_for_all_diffs=0,
-                                                  time_for_diffs=0)
+        return test_results.TestResult(path, failures, run_time,
+                                       total_time_for_all_diffs=0,
+                                       time_for_diffs=0)
 
     def get_result_summary(self, tests, expectations_str):
         test_paths = [os.path.join(self._port.layout_tests_dir(), test) for

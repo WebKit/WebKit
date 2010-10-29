@@ -69,6 +69,7 @@ from layout_package import json_layout_results_generator
 from layout_package import printing
 from layout_package import test_expectations
 from layout_package import test_failures
+from layout_package import test_results
 from layout_package import test_results_uploader
 from test_types import image_diff
 from test_types import text_diff
@@ -457,7 +458,7 @@ class TestRunner:
             # subtracted out of self._test_files, above), but we stub out the
             # results here so the statistics can remain accurate.
             for test in skip_chunk:
-                result = dump_render_tree_thread.TestResult(test,
+                result = test_results.TestResult(test,
                     failures=[], test_run_time=0, total_time_for_all_diffs=0,
                     time_for_diffs=0)
                 result.type = test_expectations.SKIP
@@ -852,7 +853,7 @@ class TestRunner:
         """Update the summary and print results with any completed tests."""
         while True:
             try:
-                result = self._result_queue.get_nowait()
+                result = test_results.TestResult.loads(self._result_queue.get_nowait())
             except Queue.Empty:
                 return
 
@@ -1305,7 +1306,8 @@ class TestRunner:
             page += u"<p><a href='%s'>%s</a><br />\n" % (test_url, test_name)
             test_failures = failures.get(test_file, [])
             for failure in test_failures:
-                page += u"&nbsp;&nbsp;%s<br/>" % failure.result_html_output(test_name)
+                page += (u"&nbsp;&nbsp;%s<br/>" %
+                         failure.result_html_output(test_name))
             page += "</p>\n"
         page += "</body></html>\n"
         return page

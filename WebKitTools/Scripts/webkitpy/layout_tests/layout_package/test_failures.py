@@ -32,6 +32,8 @@
 import os
 import test_expectations
 
+import cPickle
+
 
 def determine_result_type(failure_list):
     """Takes a set of test_failures and returns which result type best fits
@@ -71,9 +73,24 @@ class TestFailure(object):
     """Abstract base class that defines the failure interface."""
 
     @staticmethod
+    def loads(s):
+        """Creates a TestFailure object from the specified string."""
+        return cPickle.loads(s)
+
+    @staticmethod
     def message():
         """Returns a string describing the failure in more detail."""
         raise NotImplementedError
+
+    def __eq__(self, other):
+        return self.__class__.__name__ == other.__class__.__name__
+
+    def __ne__(self, other):
+        return self.__class__.__name__ != other.__class__.__name__
+
+    def dumps(self):
+        """Returns the string/JSON representation of a TestFailure."""
+        return cPickle.dumps(self)
 
     def result_html_output(self, filename):
         """Returns an HTML string to be included on the results.html page."""
@@ -112,7 +129,7 @@ class FailureWithType(TestFailure):
         TestFailure.__init__(self)
 
     # Filename suffixes used by ResultHtmlOutput.
-    OUT_FILENAMES = []
+    OUT_FILENAMES = ()
 
     def output_links(self, filename, out_names):
         """Returns a string holding all applicable output file links.
@@ -128,6 +145,10 @@ class FailureWithType(TestFailure):
         # FIXME: Seems like a bad idea to separate the display name data
         # from the path data by hard-coding the display name here
         # and passing in the path information via out_names.
+        #
+        # FIXME: Also, we don't know for sure that these files exist,
+        # and we shouldn't be creating links to files that don't exist
+        # (for example, if we don't actually have wdiff output).
         links = ['']
         uris = [self.relative_output_filename(filename, fn) for
                 fn in out_names]
@@ -170,7 +191,7 @@ class FailureCrash(TestFailure):
         return "Test shell crashed"
 
     def result_html_output(self, filename):
-        # TODO(tc): create a link to the minidump file
+        # FIXME: create a link to the minidump file
         stack = self.relative_output_filename(filename, "-stack.txt")
         return "<strong>%s</strong> <a href=%s>stack</a>" % (self.message(),
                                                              stack)
@@ -181,7 +202,7 @@ class FailureCrash(TestFailure):
 
 class FailureMissingResult(FailureWithType):
     """Expected result was missing."""
-    OUT_FILENAMES = ["-actual.txt"]
+    OUT_FILENAMES = ("-actual.txt",)
 
     @staticmethod
     def message():
@@ -196,14 +217,8 @@ class FailureTextMismatch(FailureWithType):
     """Text diff output failed."""
     # Filename suffixes used by ResultHtmlOutput.
     # FIXME: Why don't we use the constants from TestTypeBase here?
-    OUT_FILENAMES = ["-actual.txt", "-expected.txt", "-diff.txt"]
-    OUT_FILENAMES_WDIFF = ["-actual.txt", "-expected.txt", "-diff.txt",
-                           "-wdiff.html", "-pretty-diff.html"]
-
-    def __init__(self, has_wdiff):
-        FailureWithType.__init__(self)
-        if has_wdiff:
-            self.OUT_FILENAMES = self.OUT_FILENAMES_WDIFF
+    OUT_FILENAMES = ("-actual.txt", "-expected.txt", "-diff.txt",
+                     "-wdiff.html", "-pretty-diff.html")
 
     @staticmethod
     def message():
@@ -214,7 +229,6 @@ class FailureMissingImageHash(FailureWithType):
     """Actual result hash was missing."""
     # Chrome doesn't know to display a .checksum file as text, so don't bother
     # putting in a link to the actual result.
-    OUT_FILENAMES = []
 
     @staticmethod
     def message():
@@ -226,7 +240,7 @@ class FailureMissingImageHash(FailureWithType):
 
 class FailureMissingImage(FailureWithType):
     """Actual result image was missing."""
-    OUT_FILENAMES = ["-actual.png"]
+    OUT_FILENAMES = ("-actual.png",)
 
     @staticmethod
     def message():
@@ -239,7 +253,7 @@ class FailureMissingImage(FailureWithType):
 
 class FailureImageHashMismatch(FailureWithType):
     """Image hashes didn't match."""
-    OUT_FILENAMES = ["-actual.png", "-expected.png", "-diff.png"]
+    OUT_FILENAMES = ("-actual.png", "-expected.png", "-diff.png")
 
     @staticmethod
     def message():
@@ -252,7 +266,6 @@ class FailureImageHashIncorrect(FailureWithType):
     """Actual result hash is incorrect."""
     # Chrome doesn't know to display a .checksum file as text, so don't bother
     # putting in a link to the actual result.
-    OUT_FILENAMES = []
 
     @staticmethod
     def message():
@@ -260,3 +273,10 @@ class FailureImageHashIncorrect(FailureWithType):
 
     def result_html_output(self, filename):
         return "<strong>%s</strong>" % self.message()
+
+# Convenient collection of all failure classes for anything that might
+# need to enumerate over them all.
+ALL_FAILURE_CLASSES = (FailureTimeout, FailureCrash, FailureMissingResult,
+                       FailureTextMismatch, FailureMissingImageHash,
+                       FailureMissingImage, FailureImageHashMismatch,
+                       FailureImageHashIncorrect)
