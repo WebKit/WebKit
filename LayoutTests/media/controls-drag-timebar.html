@@ -7,7 +7,6 @@
         <script>
             var x;
             var y;
-            var previousTime;
             var seekCount;
             var moveCount;
 
@@ -16,7 +15,6 @@
 
             function test()
             {
-                previousTime = video.currentTime;
                 seekCount = 0;
                 moveCount = 0;
 
@@ -40,24 +38,16 @@
                 ++moveCount;
 
                 var delta = (10 + moveCount * 2) * (moveCount % 2 ? 1 : -1);
-                consoleWrite("");
-                consoleWrite("Dragging mouse " + Math.abs(delta) + " pixels " + (delta > 0 ? "right" : "left"));
 
                 if (window.eventSender) {
                     x += delta;
                     eventSender.mouseMoveTo(x, y);
-                } else if (moveCount > 6 )
-                    endTest();  // to allow testing without DRT
-
-                previousTime = video.currentTime;
-                window.setTimeout("move()", 100);
+                    window.setTimeout("move()", 100);
+                }
             }
 
             function seeked()
             {
-                // Don't use "testExpected()" so we won't log the times as the floating point result will differ with different engines.
-                reportExpected(previousTime != video.currentTime, "previousTime", "!=", "video.currentTime", previousTime);
-
                 if (++seekCount == 6) {
                     if (window.eventSender)
                         eventSender.mouseUp();
@@ -69,7 +59,6 @@
             {
                 findMediaElement();
                 waitForEvent('canplaythrough', test);
-                waitForEvent('seeking');
                 waitForEvent('seeked', seeked);
                 video.src = findMediaFile("video", "content/test");
             }    
