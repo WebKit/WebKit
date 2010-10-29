@@ -27,6 +27,7 @@
 #define visible_units_h
 
 #include "Document.h"
+#include "Position.h"
 #include "TextAffinity.h"
 
 namespace WebCore {
@@ -60,14 +61,14 @@ VisiblePosition logicalStartOfLine(const VisiblePosition &);
 VisiblePosition logicalEndOfLine(const VisiblePosition &);
 
 // paragraphs (perhaps a misnomer, can be divided by line break elements)
-VisiblePosition startOfParagraph(const VisiblePosition&);
-VisiblePosition endOfParagraph(const VisiblePosition&);
+VisiblePosition startOfParagraph(const VisiblePosition&, Position::EditingBoundaryCrossingRule = Position::CannotCrossEditingBoundary);
+VisiblePosition endOfParagraph(const VisiblePosition&, Position::EditingBoundaryCrossingRule = Position::CannotCrossEditingBoundary);
 VisiblePosition startOfNextParagraph(const VisiblePosition&);
 VisiblePosition previousParagraphPosition(const VisiblePosition &, int x);
 VisiblePosition nextParagraphPosition(const VisiblePosition &, int x);
+bool isStartOfParagraph(const VisiblePosition &, Position::EditingBoundaryCrossingRule = Position::CannotCrossEditingBoundary);
+bool isEndOfParagraph(const VisiblePosition &, Position::EditingBoundaryCrossingRule = Position::CannotCrossEditingBoundary);
 bool inSameParagraph(const VisiblePosition &, const VisiblePosition &);
-bool isStartOfParagraph(const VisiblePosition &);
-bool isEndOfParagraph(const VisiblePosition &);
 
 // blocks (true paragraphs; line break elements don't break blocks)
 VisiblePosition startOfBlock(const VisiblePosition &);

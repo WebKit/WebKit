@@ -1,5 +1,4 @@
-This tests for a bug where expansion for smart delete would not consider editable boundaries.  Only 'foo' should be deleted.  You should see ' bar'.  There is a bug: while the non-editable space isn't deleted, deletion inserts a placeholder when it shouldn't.
-| <br>
+This tests for a bug where expansion for smart delete would not consider editable boundaries.  Only 'foo' should be deleted.  You should see ' bar'.
 | <span>
 |   contenteditable="false"
 |   " bar"

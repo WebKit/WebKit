@@ -6,6 +6,6 @@ var sel = window.getSelection();
 sel.setPosition(div, 0);
 sel.modify("extend", "forward", "word");
 document.execCommand("Delete");
-Markup.description("This tests for a bug where expansion for smart delete would not consider editable boundaries.  Only 'foo' should be deleted.  You should see ' bar'.  There is a bug: while the non-editable space isn't deleted, deletion inserts a placeholder when it shouldn't.");
+Markup.description("This tests for a bug where expansion for smart delete would not consider editable boundaries.  Only 'foo' should be deleted.  You should see ' bar'.");
 Markup.dump(div);
 </script>

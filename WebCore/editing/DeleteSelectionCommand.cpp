@@ -756,9 +756,9 @@ void DeleteSelectionCommand::doApply()
     EAffinity affinity = m_selectionToDelete.affinity();
     
     Position downstreamEnd = m_selectionToDelete.end().downstream();
-    m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart()) &&
-                        isEndOfParagraph(m_selectionToDelete.visibleEnd()) &&
-                        !lineBreakExistsAtVisiblePosition(m_selectionToDelete.visibleEnd());
+    m_needPlaceholder = isStartOfParagraph(m_selectionToDelete.visibleStart(), Position::CanCrossEditingBoundary)
+            && isEndOfParagraph(m_selectionToDelete.visibleEnd(), Position::CanCrossEditingBoundary)
+            && !lineBreakExistsAtVisiblePosition(m_selectionToDelete.visibleEnd());
     if (m_needPlaceholder) {
         // Don't need a placeholder when deleting a selection that starts just before a table
         // and ends inside it (we do need placeholders to hold open empty cells, but that's
