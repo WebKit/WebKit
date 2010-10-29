@@ -66,7 +66,7 @@ v8::Handle<v8::Value> V8FileReader::resultAccessorGetter(v8::Local<v8::String> n
     INC_STATS("DOM.FileReader.result._get");
     v8::Handle<v8::Object> holder = info.Holder();
     FileReader* imp = V8FileReader::toNative(holder);
-    if (imp->readType() == FileReader::ReadFileAsArrayBuffer)
+    if (imp->readType() == FileReaderLoader::ReadAsArrayBuffer)
         return toV8(imp->arrayBufferResult());
     return v8StringOrNull(imp->stringResult());
 }
