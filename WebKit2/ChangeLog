@@ -1,5 +1,49 @@
 2010-10-29  Adam Roben  <aroben@apple.com>
 
+        Stop using encode/decodeBytes for WebEvent subclasses
+
+        The use of encode/decodeBytes was making these classes sensitive to
+        differences in padding on different architectures (e.g., 32-bit vs.
+        64-bit). By encoding each data member explicitly we remove this
+        sensitivity, allowing these classes to be passed between processes
+        with different padding.
+
+        Fixes <http://webkit.org/b/48552> <rdar://problem/8606571> Mouse
+        events never reach Flash in WebKit2 on Mac (asserts in Debug builds)
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/Arguments.h:
+        (CoreIPC::Arguments8::Arguments8):
+        (CoreIPC::Arguments8::encode):
+        (CoreIPC::Arguments8::decode):
+        (CoreIPC::In):
+        (CoreIPC::Out):
+        Added Arguments8, the biggest Arguments yet.
+
+        * Shared/WebEvent.cpp:
+        (WebKit::WebEvent::encode):
+        (WebKit::WebEvent::decode):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::encode):
+        (WebKit::WebKeyboardEvent::decode):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::encode):
+        (WebKit::WebMouseEvent::decode):
+        * Shared/WebPlatformTouchPoint.cpp:
+        (WebKit::WebPlatformTouchPoint::encode):
+        (WebKit::WebPlatformTouchPoint::decode):
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::encode):
+        (WebKit::WebTouchEvent::decode):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::encode):
+        (WebKit::WebWheelEvent::decode):
+        Changed all encode/decode function to use CoreIPC::In/Out to
+        encode/decode data members individually.
+
+2010-10-29  Adam Roben  <aroben@apple.com>
+
         Use only CoreIPC-sanctioned types in WebEvent subclasses
 
         Fixes <http://webkit.org//48694> WebEvent subclasses should not use

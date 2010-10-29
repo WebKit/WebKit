@@ -25,8 +25,8 @@
 
 #include "WebEvent.h"
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Arguments.h"
+#include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;
 
@@ -45,12 +45,17 @@ WebWheelEvent::WebWheelEvent(Type type, const IntPoint& position, const IntPoint
 
 void WebWheelEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encodeBytes(reinterpret_cast<const uint8_t*>(this), sizeof(*this));
+    WebEvent::encode(encoder);
+
+    encoder->encode(CoreIPC::In(m_position, m_globalPosition, m_delta, m_wheelTicks, m_granularity));
 }
 
 bool WebWheelEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebWheelEvent& t)
 {
-    return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(t));
+    if (!WebEvent::decode(decoder, t))
+        return false;
+
+    return decoder->decode(CoreIPC::Out(t.m_position, t.m_globalPosition, t.m_delta, t.m_wheelTicks, t.m_granularity));
 }
 
 bool WebWheelEvent::isWheelEventType(Type type)

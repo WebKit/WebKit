@@ -25,8 +25,8 @@
 
 #include "WebEvent.h"
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Arguments.h"
+#include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;
 
@@ -47,12 +47,17 @@ WebMouseEvent::WebMouseEvent(Type type, Button button, const IntPoint& position,
 
 void WebMouseEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encodeBytes(reinterpret_cast<const uint8_t*>(this), sizeof(*this));
+    WebEvent::encode(encoder);
+
+    encoder->encode(CoreIPC::In(m_button, m_position, m_globalPosition, m_deltaX, m_deltaY, m_deltaZ, m_clickCount));
 }
 
 bool WebMouseEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebMouseEvent& t)
 {
-    return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(t));
+    if (!WebEvent::decode(decoder, t))
+        return false;
+
+    return decoder->decode(CoreIPC::Out(t.m_button, t.m_position, t.m_globalPosition, t.m_deltaX, t.m_deltaY, t.m_deltaZ, t.m_clickCount));
 }
 
 bool WebMouseEvent::isMouseEventType(Type type)

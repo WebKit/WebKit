@@ -27,8 +27,8 @@
 
 #include "WebEvent.h"
 
-#include "ArgumentDecoder.h"
-#include "ArgumentEncoder.h"
+#include "Arguments.h"
+#include "WebCoreArgumentCoders.h"
 
 using namespace WebCore;
 
@@ -44,12 +44,12 @@ WebPlatformTouchPoint::WebPlatformTouchPoint(unsigned id, TouchPointState state,
 
 void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encodeBytes(reinterpret_cast<const uint8_t*>(this), sizeof(*this));
+    encoder->encode(CoreIPC::In(m_id, m_state, m_screenPosition, m_position));
 }
 
 bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder* decoder, WebPlatformTouchPoint& t)
 {
-    return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(t));
+    return decoder->decode(CoreIPC::Out(m_id, m_state, m_screenPosition, m_position));
 }
 
 } // namespace WebKit
