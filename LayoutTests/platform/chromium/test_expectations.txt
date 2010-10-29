@@ -1575,9 +1575,10 @@ BUG23496 MAC : tables/mozilla_expected_failures/core/captions1.html = IMAGE
 BUG23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
 
 // These should not be pixel tests, they're not testing anything
-// layout/rendering-specific.
+// layout/rendering-specific. They also dump layout tree, so depending on which baselines
+// are around either or both text or image may mismatch.
 BUGWK48651 LINUX MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE IMAGE+TEXT
-BUGWK48651 LINUX MAC : http/tests/navigation/error404-goback.html = IMAGE IMAGE+TEXT
+BUGWK48651 LINUX MAC : http/tests/navigation/error404-goback.html = IMAGE IMAGE+TEXT TEXT
 BUGWK48651 LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE IMAGE+TEXT
 BUGWK48651 LINUX MAC : http/tests/navigation/error404-subframeload.html = IMAGE IMAGE+TEXT
 
@@ -3397,3 +3398,7 @@ BUGWK48634 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html =
 
 // No tests, introduced in r70887.
 BUGWK48644 : storage/indexeddb/tutorial.html = MISSING
+
+// New test, seems V8 differs from JSC here.
+// Added by http://trac.webkit.org/changeset/70910
+BUGWK61246 : fast/js/interpreter-no-activation.html = TEXT
