@@ -1,3 +1,21 @@
+2010-10-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Full screen video in Safari (still) exits full-screen if you switch to another 
+        app on a multi-display system.
+        https://bugs.webkit.org/show_bug.cgi?id=47364
+        <rdar://problem/8382299>
+        
+        The FullScreen window does not technically close when it deactivates, but the 
+        two NSWindows that make up the FullScreen feature should not hide when deactivated.
+        
+        * WebView/WebVideoFullscreenController.mm:
+        (createBackgroundFullscreenWindow): Do not set hidesOnDeactivate.
+        (-[WebVideoFullscreenWindow initWithContentRect:styleMask:backing:defer:]): Ditto.
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindow initWithContentRect:styleMask:backing:defer:]): Ditto.
+
 2010-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

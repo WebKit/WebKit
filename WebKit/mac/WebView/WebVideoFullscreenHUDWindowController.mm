@@ -91,7 +91,6 @@ static inline CGFloat webkit_CGFloor(CGFloat value)
     [self setAcceptsMouseMovedEvents:YES];
     [self setIgnoresMouseEvents:NO];
     [self setMovableByWindowBackground:YES];
-    [self setHidesOnDeactivate:YES];
 
     return self;
 }

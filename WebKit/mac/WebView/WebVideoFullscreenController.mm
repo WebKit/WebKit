@@ -246,7 +246,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     [window setOpaque:YES];
     [window setBackgroundColor:[NSColor blackColor]];
     [window setLevel:level];
-    [window setHidesOnDeactivate:YES];
     [window setReleasedWhenClosed:NO];
     return window;
 }
@@ -475,7 +474,6 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
         return nil;
     [self setOpaque:NO];
     [self setBackgroundColor:[NSColor clearColor]];
-    [self setHidesOnDeactivate:YES];
     [self setIgnoresMouseEvents:NO];
     [self setAcceptsMouseMovedEvents:YES];
     return self;
