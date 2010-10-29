@@ -1,3 +1,9 @@
+2010-10-29  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebKitPrefix.h: Touched to force a rebuild.
+
 2010-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

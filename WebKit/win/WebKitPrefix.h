@@ -34,7 +34,7 @@
 #define WINVER 0x0500
 #endif
 
-// If we don't define these, they get defined in windef.h. 
+// If we don't define these, they get defined in windef.h.
 // We want to use std::min and std::max.
 #ifndef max
 #define max max
