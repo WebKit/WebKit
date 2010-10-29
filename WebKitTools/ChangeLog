@@ -1,3 +1,34 @@
+2010-10-29  Nicolas Dufresne  <nicolas.dufresne@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        Enable popup window in GtkLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=48335
+
+        The GtkLauncher application does not support opening new window when
+        a link with "target=_blank" is clicked or similar call to
+        window.open(). Instead, GtkLauncher does nothing which breaks
+        navigation of some websites.
+
+        * GtkLauncher/main.c:
+        (activate_uri_entry_cb):
+        (update_title):
+        (link_hover_cb):
+        (notify_title_cb):
+        (notify_load_status_cb):
+        (notify_progress_cb):
+        (destroy_cb):
+        (go_back_cb):
+        (go_forward_cb):
+        (create_web_view_cb):
+        (web_view_ready_cb):
+        (close_web_view_cb):
+        (create_browser):
+        (create_statusbar):
+        (create_toolbar):
+        (create_window):
+        (main):
+
 2010-10-29  Adam Roben  <aroben@apple.com>
 
         Teach check-webkit-style about WebKit2's idiosyncracies
