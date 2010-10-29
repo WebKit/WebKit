@@ -2200,7 +2200,6 @@ BUG33287 WIN LINUX : fast/canvas/set-colors.html = TEXT
 
 // Failures from WebKit merge 51711:51724
 BUG32003 : fast/js/string-property-deletion.html = TEXT
-BUG31997 DEBUG WIN : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE+TEXT PASS
 
 // Regression from Webkit merge 51772 -> 51784
 BUG35329 WIN : http/tests/appcache/resource-redirect-2.html = TIMEOUT PASS
