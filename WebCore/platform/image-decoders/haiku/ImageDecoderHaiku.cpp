@@ -36,7 +36,7 @@ NativeImagePtr RGBA32Buffer::asNewNativeImage() const
     int bytesPerRow = width() * sizeof(PixelData);
     OwnPtr<BBitmap> bitmap(new BBitmap(BRect(0, 0, width() - 1, height() - 1), 0, B_RGBA32, bytesPerRow));
 
-    const uint8* source = reinterpret_cast<const uint8*>(m_bytes.data());
+    const uint8* source = reinterpret_cast<const uint8*>(m_bytes);
     uint8* destination = reinterpret_cast<uint8*>(bitmap->Bits());
     int h = height();
     int w = width();

@@ -89,6 +89,7 @@
         'ENABLE_XSLT=1',
         'WTF_USE_ACCELERATED_COMPOSITING=1',
         'WTF_USE_WEBP=1',
+        'WTF_USE_WEBKIT_IMAGE_DECODERS=1',
       ],
 
       'use_accelerated_compositing%': 1,

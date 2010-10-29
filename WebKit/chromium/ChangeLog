@@ -1,3 +1,16 @@
+2010-10-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel, Peter Kasting, and Darin Fisher.
+        (Eric reviewed the CoreGraphics interactions, Peter reviewed the image
+        decoder interaction, and Darin Fisher SGTMed the policy decision.)
+
+        [chromium] Chromium Mac should use WebKit's image decoders
+        https://bugs.webkit.org/show_bug.cgi?id=47974
+
+        Enable WebKit's image decoders.
+
+        * features.gypi:
+
 2010-10-28  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Darin Adler.

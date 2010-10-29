@@ -59,7 +59,7 @@ NativeImagePtr RGBA32Buffer::asNewNativeImage() const
                 tileRect.width(), tileRect.height(), VG_IMAGE_QUALITY_FASTER);
             ASSERT_VG_NO_ERROR();
 
-            PixelData* pixelData = const_cast<PixelData*>(m_bytes.data());
+            PixelData* pixelData = const_cast<PixelData*>(m_bytes);
             pixelData += (tileRect.y() * width()) + tileRect.x();
 
             vgImageSubData(image, reinterpret_cast<unsigned char*>(pixelData),
