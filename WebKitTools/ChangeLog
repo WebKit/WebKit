@@ -1,3 +1,16 @@
+2010-10-29  Adam Roben  <aroben@apple.com>
+
+        Teach check-webkit-style about WebKit2's idiosyncracies
+
+        Fixes <http://webkit.org/b/48638> Style bot complains about a number
+        of WebKit2 conventions
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/webkitpy/style/checker.py: Excluded some rules for various
+        WebKit2-related files. Also updated the excluded rules for
+        WebKitAPITest to match the current code.
+
 2010-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Roben and David Kilzer.
