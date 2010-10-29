@@ -59,7 +59,7 @@ void WebChromeClient::chromeDestroyed()
 
 void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetWindowFrame(windowFrame), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::SetWindowFrame(windowFrame));
 }
 
 FloatRect WebChromeClient::windowRect()
@@ -102,7 +102,7 @@ bool WebChromeClient::canTakeFocus(FocusDirection)
 
 void WebChromeClient::takeFocus(FocusDirection direction)
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::TakeFocus(direction == FocusDirectionForward ? true : false), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::TakeFocus(direction == FocusDirectionForward ? true : false));
 }
 
 void WebChromeClient::focusedNodeChanged(Node*)
@@ -145,7 +145,7 @@ void WebChromeClient::runModal()
 
 void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetToolbarsAreVisible(toolbarsAreVisible), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::SetToolbarsAreVisible(toolbarsAreVisible));
 }
 
 bool WebChromeClient::toolbarsVisible()
@@ -159,7 +159,7 @@ bool WebChromeClient::toolbarsVisible()
 
 void WebChromeClient::setStatusbarVisible(bool statusBarIsVisible)
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetStatusBarIsVisible(statusBarIsVisible), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::SetStatusBarIsVisible(statusBarIsVisible));
 }
 
 bool WebChromeClient::statusbarVisible()
@@ -184,7 +184,7 @@ bool WebChromeClient::scrollbarsVisible()
 
 void WebChromeClient::setMenubarVisible(bool menuBarVisible)
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetMenuBarIsVisible(menuBarVisible), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::SetMenuBarIsVisible(menuBarVisible));
 }
 
 bool WebChromeClient::menubarVisible()
@@ -198,7 +198,7 @@ bool WebChromeClient::menubarVisible()
 
 void WebChromeClient::setResizable(bool resizable)
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetIsResizable(resizable), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::SetIsResizable(resizable));
 }
 
 void WebChromeClient::addMessageToConsole(MessageSource, MessageType, MessageLevel, const String& message, unsigned int lineNumber, const String& sourceID)
@@ -290,7 +290,7 @@ void WebChromeClient::setStatusbarText(const String& statusbarText)
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willSetStatusbarText(m_page, statusbarText);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetStatusText(statusbarText), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::SetStatusText(statusbarText));
 }
 
 bool WebChromeClient::shouldInterruptJavaScript()
@@ -358,7 +358,7 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
     if (!m_page->mainFrame() || m_page->mainFrame() != webFrame)
         return;
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidChangeContentsSize(size), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
 #endif
 }
 
@@ -380,7 +380,7 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     m_page->injectedBundleUIClient().mouseDidMoveOverElement(m_page, hitTestResult, static_cast<WebEvent::Modifiers>(modifierFlags), userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::MouseDidMoveOverElement(modifierFlags, InjectedBundleUserMessageEncoder(userData.get())), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::MouseDidMoveOverElement(modifierFlags, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
@@ -391,7 +391,7 @@ void WebChromeClient::setToolTip(const String& toolTip, TextDirection)
         return;
     m_cachedToolTip = toolTip;
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetToolTip(m_cachedToolTip), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::SetToolTip(m_cachedToolTip));
 }
 
 void WebChromeClient::print(Frame*)
@@ -491,7 +491,7 @@ void WebChromeClient::chooseIconForFiles(const Vector<String>&, FileChooser*)
 void WebChromeClient::setCursor(const Cursor& cursor)
 {
 #if USE(LAZY_NATIVE_CURSOR)
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetCursor(cursor), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::SetCursor(cursor));
 #endif
 }
 
@@ -574,7 +574,7 @@ void WebChromeClient::setLastSetCursorToCurrentCursor()
 
 void WebChromeClient::dispatchViewportDataDidChange(const ViewportArguments& args) const
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidChangeViewportData(args), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::DidChangeViewportData(args));
 }
 
 } // namespace WebKit

@@ -112,7 +112,7 @@ void WebBackForwardListProxy::addItem(PassRefPtr<HistoryItem> prpItem)
 
     RefPtr<HistoryItem> item = prpItem;
     uint64_t itemID = historyItemToIDMap().get(item);
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::BackForwardAddItem(itemID), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::BackForwardAddItem(itemID));
 }
 
 void WebBackForwardListProxy::goToItem(HistoryItem* item)
@@ -121,8 +121,7 @@ void WebBackForwardListProxy::goToItem(HistoryItem* item)
         return;
 
     uint64_t itemID = historyItemToIDMap().get(item);
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::BackForwardGoToItem(itemID), m_page->pageID());
-
+    m_page->send(Messages::WebPageProxy::BackForwardGoToItem(itemID));
 }
 
 HistoryItem* WebBackForwardListProxy::itemAtIndex(int itemIndex)
@@ -178,7 +177,7 @@ bool WebBackForwardListProxy::isActive()
 
 void WebBackForwardListProxy::clear()
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::BackForwardClear(), m_page->pageID());
+    m_page->send(Messages::WebPageProxy::BackForwardClear());
 }
 
 #if ENABLE(WML)

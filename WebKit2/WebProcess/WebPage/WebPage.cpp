@@ -299,7 +299,7 @@ void WebPage::tryClose()
 
 void WebPage::sendClose()
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::ClosePage(), m_pageID);
+    send(Messages::WebPageProxy::ClosePage());
 }
 
 void WebPage::loadURL(const String& url)
@@ -478,7 +478,7 @@ void WebPage::pageDidScroll()
 
     m_uiClient.pageDidScroll(this);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::PageDidScroll(), m_pageID);
+    send(Messages::WebPageProxy::PageDidScroll());
 }
 
 // Events 
@@ -546,7 +546,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
         handled = handleMouseEvent(mouseEvent, m_page.get());
     }
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled), m_pageID);
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(mouseEvent.type()), handled));
 }
 
 static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
@@ -564,7 +564,7 @@ void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
     CurrentEvent currentEvent(wheelEvent);
 
     bool handled = handleWheelEvent(wheelEvent, m_page.get());
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled), m_pageID);
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
 }
 
 static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
@@ -583,7 +583,7 @@ void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
     if (!handled)
         handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled), m_pageID);
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
 }
 
 void WebPage::validateMenuItem(const String& commandName)
@@ -597,7 +597,7 @@ void WebPage::validateMenuItem(const String& commandName)
         isEnabled = command.isSupported() && command.isEnabled();
     }
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidValidateMenuItem(commandName, isEnabled, state), m_pageID);
+    send(Messages::WebPageProxy::DidValidateMenuItem(commandName, isEnabled, state));
 }
 
 void WebPage::executeEditCommand(const String& commandName)
@@ -621,7 +621,7 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 
     bool handled = handleTouchEvent(touchEvent, m_page.get());
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(touchEvent.type()), handled), m_pageID);
+    send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(touchEvent.type()), handled));
 }
 #endif
 
@@ -676,7 +676,7 @@ void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, ui
 
 void WebPage::show()
 {
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::ShowPage(), m_pageID);
+    send(Messages::WebPageProxy::ShowPage());
 }
 
 void WebPage::setCustomUserAgent(const String& customUserAgent)
@@ -719,13 +719,13 @@ void WebPage::runJavaScriptInMainFrame(const String& script, uint64_t callbackID
     if (resultValue)
         resultString = ustringToString(resultValue.toString(m_mainFrame->coreFrame()->script()->globalObject(mainThreadNormalWorld())->globalExec()));
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidRunJavaScriptInMainFrame(resultString, callbackID), m_pageID);
+    send(Messages::WebPageProxy::DidRunJavaScriptInMainFrame(resultString, callbackID));
 }
 
 void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
 {
     String resultString = renderTreeExternalRepresentation();
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidGetRenderTreeExternalRepresentation(resultString, callbackID), m_pageID);
+    send(Messages::WebPageProxy::DidGetRenderTreeExternalRepresentation(resultString, callbackID));
 }
 
 void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
@@ -734,7 +734,7 @@ void WebPage::getSourceForFrame(uint64_t frameID, uint64_t callbackID)
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID))
        resultString = frame->source();
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidGetSourceForFrame(resultString, callbackID), m_pageID);
+    send(Messages::WebPageProxy::DidGetSourceForFrame(resultString, callbackID));
 }
 
 void WebPage::preferencesDidChange(const WebPreferencesStore& store)

@@ -2,6 +2,73 @@
 
         Reviewed by Adam Roben.
 
+        Use WebPage::send in a couple of more places.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setWindowRect):
+        (WebKit::WebChromeClient::takeFocus):
+        (WebKit::WebChromeClient::setToolbarsVisible):
+        (WebKit::WebChromeClient::setStatusbarVisible):
+        (WebKit::WebChromeClient::setMenubarVisible):
+        (WebKit::WebChromeClient::setResizable):
+        (WebKit::WebChromeClient::setStatusbarText):
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        (WebKit::WebChromeClient::mouseDidMoveOverElement):
+        (WebKit::WebChromeClient::setToolTip):
+        (WebKit::WebChromeClient::setCursor):
+        (WebKit::WebChromeClient::dispatchViewportDataDidChange):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::registerCommandForUndo):
+        (WebKit::WebEditorClient::clearUndoRedoOperations):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveTitle):
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFailLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishDocumentLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstLayout):
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForMIMEType):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        (WebKit::WebFrameLoaderClient::postProgressStartedNotification):
+        (WebKit::WebFrameLoaderClient::postProgressEstimateChangedNotification):
+        (WebKit::WebFrameLoaderClient::postProgressFinishedNotification):
+        (WebKit::WebFrameLoaderClient::didDisplayInsecureContent):
+        (WebKit::WebFrameLoaderClient::didRunInsecureContent):
+        (WebKit::WebFrameLoaderClient::dispatchDidBecomeFrameset):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::findString):
+        (WebKit::FindController::hideFindIndicator):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::WebBackForwardListProxy::addItem):
+        (WebKit::WebBackForwardListProxy::goToItem):
+        (WebKit::WebBackForwardListProxy::clear):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::createMainFrame):
+        (WebKit::WebFrame::createSubframe):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendClose):
+        (WebKit::WebPage::pageDidScroll):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::WebPage::keyEvent):
+        (WebKit::WebPage::validateMenuItem):
+        (WebKit::WebPage::touchEvent):
+        (WebKit::WebPage::show):
+        (WebKit::WebPage::runJavaScriptInMainFrame):
+        (WebKit::WebPage::getRenderTreeExternalRepresentation):
+        (WebKit::WebPage::getSourceForFrame):
+
+2010-10-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add a MessageSender class template
         https://bugs.webkit.org/show_bug.cgi?id=48683
 

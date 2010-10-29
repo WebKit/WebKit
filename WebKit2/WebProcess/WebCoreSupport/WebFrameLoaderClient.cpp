@@ -127,7 +127,7 @@ void WebFrameLoaderClient::detachedFromParent2()
     webPage->injectedBundleLoaderClient().didRemoveFrameFromHierarchy(webPage, m_frame, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidRemoveFrameFromHierarchy(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidRemoveFrameFromHierarchy(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
 }
 
@@ -226,7 +226,7 @@ void WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad()
     webPage->injectedBundleLoaderClient().didReceiveServerRedirectForProvisionalLoadForFrame(webPage, m_frame, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame(m_frame->frameID(), url, InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidReceiveServerRedirectForProvisionalLoadForFrame(m_frame->frameID(), url, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidCancelClientRedirect()
@@ -303,7 +303,7 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
     bool loadingSubstituteDataForUnreachableURL = !provisionalLoader->unreachableURL().isNull();
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), url, loadingSubstituteDataForUnreachableURL, InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidStartProvisionalLoadForFrame(m_frame->frameID(), url, loadingSubstituteDataForUnreachableURL, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
@@ -318,7 +318,7 @@ void WebFrameLoaderClient::dispatchDidReceiveTitle(const String& title)
     webPage->injectedBundleLoaderClient().didReceiveTitleForFrame(webPage, title, m_frame, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title, InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidReceiveTitleForFrame(m_frame->frameID(), title, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidChangeIcons()
@@ -339,7 +339,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     webPage->injectedBundleLoaderClient().didCommitLoadForFrame(webPage, m_frame, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
@@ -354,7 +354,7 @@ void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& e
     webPage->injectedBundleLoaderClient().didFailProvisionalLoadWithErrorForFrame(webPage, m_frame, error, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), error, InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->frameID(), error, InjectedBundleUserMessageEncoder(userData.get())));
     
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
@@ -373,7 +373,7 @@ void WebFrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     webPage->injectedBundleLoaderClient().didFailLoadWithErrorForFrame(webPage, m_frame, error, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFailLoadForFrame(m_frame->frameID(), error, InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidFailLoadForFrame(m_frame->frameID(), error, InjectedBundleUserMessageEncoder(userData.get())));
 
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
@@ -392,7 +392,7 @@ void WebFrameLoaderClient::dispatchDidFinishDocumentLoad()
     webPage->injectedBundleLoaderClient().didFinishDocumentLoadForFrame(webPage, m_frame, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFinishDocumentLoadForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidFinishDocumentLoadForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidFinishLoad()
@@ -407,7 +407,7 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     webPage->injectedBundleLoaderClient().didFinishLoadForFrame(webPage, m_frame, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFinishLoadForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidFinishLoadForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
@@ -426,7 +426,7 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
     webPage->injectedBundleLoaderClient().didFirstLayoutForFrame(webPage, m_frame, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
@@ -441,7 +441,7 @@ void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
     webPage->injectedBundleLoaderClient().didFirstVisuallyNonEmptyLayoutForFrame(webPage, m_frame, userData);
 
     // Notify the UIProcess.
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction)
@@ -521,7 +521,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
     const String& url = request.url().string(); // FIXME: Pass entire request.
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DecidePolicyForMIMEType(m_frame->frameID(), MIMEType, url, listenerID), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DecidePolicyForMIMEType(m_frame->frameID(), MIMEType, url, listenerID));
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState>, const String& frameName)
@@ -540,7 +540,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
     uint32_t modifiers = modifiersForNavigationAction(navigationAction);
     int32_t mouseButton = mouseButtonForNavigationAction(navigationAction);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), navigationType, modifiers, mouseButton, url, listenerID), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DecidePolicyForNewWindowAction(m_frame->frameID(), navigationType, modifiers, mouseButton, url, listenerID));
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& navigationAction, const ResourceRequest& request, PassRefPtr<FormState>)
@@ -565,7 +565,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     uint32_t modifiers = modifiersForNavigationAction(navigationAction);
     int32_t mouseButton = mouseButtonForNavigationAction(navigationAction);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), navigationType, modifiers, mouseButton, url, listenerID), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), navigationType, modifiers, mouseButton, url, listenerID));
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()
@@ -598,7 +598,7 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
     StringPairVector valuesVector(values);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::WillSubmitForm(m_frame->frameID(), sourceFrame->frameID(), valuesVector, listenerID, InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::WillSubmitForm(m_frame->frameID(), sourceFrame->frameID(), valuesVector, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::dispatchDidLoadMainResource(DocumentLoader*)
@@ -634,14 +634,14 @@ void WebFrameLoaderClient::didChangeEstimatedProgress()
 void WebFrameLoaderClient::postProgressStartedNotification()
 {
     if (WebPage* webPage = m_frame->page())
-        WebProcess::shared().connection()->send(Messages::WebPageProxy::DidStartProgress(), webPage->pageID());
+        webPage->send(Messages::WebPageProxy::DidStartProgress());
 }
 
 void WebFrameLoaderClient::postProgressEstimateChangedNotification()
 {
     if (WebPage* webPage = m_frame->page()) {
         double progress = webPage->corePage()->progress()->estimatedProgress();
-        WebProcess::shared().connection()->send(Messages::WebPageProxy::DidChangeProgress(progress), webPage->pageID());
+        webPage->send(Messages::WebPageProxy::DidChangeProgress(progress));
 
     }
 }
@@ -649,7 +649,7 @@ void WebFrameLoaderClient::postProgressEstimateChangedNotification()
 void WebFrameLoaderClient::postProgressFinishedNotification()
 {
     if (WebPage* webPage = m_frame->page())
-        WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFinishProgress(), webPage->pageID());
+        webPage->send(Messages::WebPageProxy::DidFinishProgress());
 }
 
 void WebFrameLoaderClient::setMainFrameDocumentReady(bool)
@@ -783,7 +783,7 @@ void WebFrameLoaderClient::didDisplayInsecureContent()
 
     webPage->injectedBundleLoaderClient().didDisplayInsecureContentForFrame(webPage, m_frame, userData);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidDisplayInsecureContentForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidDisplayInsecureContentForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
@@ -796,7 +796,7 @@ void WebFrameLoaderClient::didRunInsecureContent(SecurityOrigin*)
 
     webPage->injectedBundleLoaderClient().didRunInsecureContentForFrame(webPage, m_frame, userData);
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidRunInsecureContentForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::DidRunInsecureContentForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 ResourceError WebFrameLoaderClient::cancelledError(const ResourceRequest& request)
@@ -946,7 +946,7 @@ void WebFrameLoaderClient::dispatchDidBecomeFrameset(bool value)
     if (!webPage)
         return;
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::FrameDidBecomeFrameSet(m_frame->frameID(), value), webPage->pageID());
+    webPage->send(Messages::WebPageProxy::FrameDidBecomeFrameSet(m_frame->frameID(), value));
 }
 
 bool WebFrameLoaderClient::canCachePage() const

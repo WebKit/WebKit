@@ -78,7 +78,7 @@ PassRefPtr<WebFrame> WebFrame::createMainFrame(WebPage* page)
 {
     RefPtr<WebFrame> frame = create();
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()), page->pageID());
+    page->send(Messages::WebPageProxy::DidCreateMainFrame(frame->frameID()));
 
     frame->init(page, String(), 0);
 
@@ -89,7 +89,7 @@ PassRefPtr<WebFrame> WebFrame::createSubframe(WebPage* page, const String& frame
 {
     RefPtr<WebFrame> frame = create();
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidCreateSubFrame(frame->frameID()), page->pageID());
+    page->send(Messages::WebPageProxy::DidCreateSubFrame(frame->frameID()));
 
     frame->init(page, frameName, ownerElement);
 
