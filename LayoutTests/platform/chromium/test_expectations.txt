@@ -646,8 +646,6 @@ BUG24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 // Other
 // -----------------------------------------------------------------
 
-// Pixeltest failure: Form control metrics incorrect 
-BUG10273 LINUX : http/tests/navigation/javascriptlink-frames.html = IMAGE+TEXT
 
 // Mac Safari under certain circumstances automatically places
 // a caret in editable document even when none was requested programatically.
@@ -1212,7 +1210,6 @@ BUG10363 MAC : tables/mozilla/bugs/bug9024.html = FAIL
 // than rebasing, we'll wait for the upstream (which ojan said should happen
 // early in Jan 09).
 BUG10364 MAC : fast/css/resize-corner-tracking.html = FAIL
-BUG10364 MAC : http/tests/navigation/reload-subframe-object.html = FAIL
 
 // bad key event handling
 BUG10366 MAC : fast/events/option-tab.html = FAIL CRASH
@@ -1429,7 +1426,6 @@ BUG23498 MAC : fonts/fantasy.html = IMAGE
 BUG23498 MAC : fonts/monospace.html = IMAGE
 BUG23498 MAC : fonts/sans-serif.html = IMAGE
 BUG23498 MAC : fonts/serif.html = IMAGE
-BUG23498 MAC : http/tests/navigation/error404-subframeload.html = IMAGE
 BUG23498 MAC : svg/text/multichar-glyph.svg = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug101674.html = IMAGE
 BUG23498 MAC : tables/mozilla/bugs/bug10269-2.html = IMAGE
@@ -1577,7 +1573,18 @@ BUG23496 SLOW MAC RELEASE : fast/text/textIteratorNilRenderer.html = IMAGE
 BUG23496 MAC : fast/text/whitespace/normal-after-nowrap-breaking.html = IMAGE
 BUG23496 MAC : tables/mozilla_expected_failures/core/captions1.html = IMAGE
 BUG23496 MAC : tables/mozilla_expected_failures/core/captions2.html = IMAGE
-BUG23496 MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE
+
+// These should not be pixel tests, they're not testing anything
+// layout/rendering-specific.
+BUGWK48651 LINUX MAC : http/tests/navigation/javascriptlink-frames.html = IMAGE IMAGE+TEXT
+BUGWK48651 LINUX MAC : http/tests/navigation/error404-goback.html = IMAGE IMAGE+TEXT
+BUGWK48651 LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE IMAGE+TEXT
+BUGWK48651 LINUX MAC : http/tests/navigation/error404-subframeload.html = IMAGE IMAGE+TEXT
+
+BUG26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html = PASS
+BUG9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = TIMEOUT PASS
+// Regressions from r67349? 
+BUG10364 MAC : http/tests/navigation/reload-subframe-object.html = FAIL
 
 // Big button widgets are broken
 BUG23495 MAC : fast/forms/basic-buttons.html = IMAGE
@@ -1754,13 +1761,6 @@ BUG23560 MAC : fast/images/animated-svg-as-image.html = IMAGE PASS
 // coming out with with a slightly-less-than-100% red channel. This test fails
 // because we enforce non-transparent color in Font::drawGlyphs.
 BUG24191 LINUX : fast/css/hsla-color.html = FAIL
-
-// Failed with r6844 (dglazkov)
-BUG10392 LINUX MAC : http/tests/navigation/error404-goback.html = FAIL
-
-// Skipped as this tests window.sessionStorage, which we don't
-// support. Enable once we turn on DOM_STORAGE.
-BUG4360 SKIP : http/tests/navigation/post-goback-repost-policy.html = TIMEOUT
 
 // Merge 39309:39335 Regressions (RenderButton::setupInnerStyle regression).
 BUG5737 LINUX : fast/forms/001.html = FAIL
@@ -2066,7 +2066,6 @@ BUG28409 : http/tests/xmlhttprequest/logout.html = FAIL
 BUG24966 SLOW MAC DEBUG : fast/frames/calculate-fixed.html = PASS
 
 // WebKit Roll 49640:49684
-BUG26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html = PASS
 BUG25202 LINUX WIN : svg/W3C-SVG-1.1/masking-path-02-b.svg = FAIL
 BUG25208 LINUX WIN : svg/W3C-SVG-1.1/masking-path-05-f.svg = FAIL
 BUG_JEREMY MAC : fast/frames/onlyCommentInIFrame.html = FAIL
@@ -2094,7 +2093,6 @@ BUG26291 MAC : transforms/2d/hindi-rotated.html = IMAGE
 
 // Flaky since at least WebKit 50258.
 BUG32098 : fast/dom/defaultView.html = MISSING PASS
-BUG9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = TIMEOUT PASS
 
 // more test flakiness
 BUG27334 MAC : http/tests/security/xssAuditor/object-embed-tag.html = PASS
@@ -3022,9 +3020,6 @@ BUGWK45652 SKIP : fast/viewport/viewport-87.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-126.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-127.html = TEXT
 BUGWK45652 SKIP : fast/viewport/viewport-128.html = TIMEOUT TEXT
-
-// Regressions from r67349? 
-BUGDPRANKE LINUX MAC : http/tests/navigation/postredirect-frames.html = IMAGE
 
 BUGWK45667 LINUX : fast/files/read-file-async.html = CRASH PASS
 BUGWK45667 LINUX : fast/files/read-blob-async.html = CRASH PASS
