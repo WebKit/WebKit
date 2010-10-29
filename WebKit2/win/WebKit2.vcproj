@@ -2247,6 +2247,10 @@
 					RelativePath="..\Platform\CoreIPC\MessageID.h"
 					>
 				</File>
+				<File
+					RelativePath="..\Platform\CoreIPC\MessageSender.h"
+					>
+				</File>
 				<Filter
 					Name="win"
 					>

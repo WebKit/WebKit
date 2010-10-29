@@ -53,7 +53,7 @@ void FindController::countStringMatches(const String& string, bool caseInsensiti
     unsigned matchCount = m_webPage->corePage()->markAllMatchesForText(string, caseInsensitive ? TextCaseInsensitive : TextCaseSensitive, false, maxMatchCount);
     m_webPage->corePage()->unmarkAllTextMatches();
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::DidCountStringMatches(string, matchCount), m_webPage->pageID());
+    m_webPage->send(Messages::WebPageProxy::DidCountStringMatches(string, matchCount));
 }
 
 static Frame* frameWithSelection(Page* page)
@@ -99,7 +99,7 @@ void FindController::findString(const String& string, FindDirection findDirectio
                 matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
             }
 
-            WebProcess::shared().connection()->send(Messages::WebPageProxy::DidFindString(string, matchCount), m_webPage->pageID());
+            m_webPage->send(Messages::WebPageProxy::DidFindString(string, matchCount));
         }
 
         if (!(findOptions & FindOptionsShowFindIndicator) || !updateFindIndicator(selectedFrame, shouldShowOverlay)) {
@@ -179,7 +179,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
         textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
     }            
     
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, handle, !isShowingOverlay), m_webPage->pageID());
+    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, handle, !isShowingOverlay));
     m_isShowingFindIndicator = true;
 
     return true;

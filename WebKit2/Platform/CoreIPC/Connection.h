@@ -58,7 +58,7 @@ enum SyncReplyMode {
     AutomaticReply,
     ManualReply
 };
-    
+
 class Connection : public ThreadSafeShared<Connection> {
 public:
     class MessageReceiver {

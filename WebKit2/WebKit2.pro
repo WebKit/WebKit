@@ -174,6 +174,7 @@ HEADERS += \
     Platform/CoreIPC/DataReference.h \
     Platform/CoreIPC/HandleMessage.h \
     Platform/CoreIPC/MessageID.h \
+    Platform/CoreIPC/MessageSender.h \
     Platform/Logging.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \

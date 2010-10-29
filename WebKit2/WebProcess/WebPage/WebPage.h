@@ -33,6 +33,7 @@
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageLoaderClient.h"
 #include "InjectedBundlePageUIClient.h"
+#include "MessageSender.h"
 #include "Plugin.h"
 #include "WebEditCommand.h"
 #include <WebCore/FrameLoaderTypes.h>
@@ -82,13 +83,16 @@ struct WebPreferencesStore;
 class WebTouchEvent;
 #endif
 
-class WebPage : public APIObject {
+class WebPage : public APIObject, public CoreIPC::MessageSender<WebPage> {
 public:
     static const Type APIType = TypeBundlePage;
 
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
-
     virtual ~WebPage();
+
+    // Used by MessageSenderWithDestinationID.
+    CoreIPC::Connection* connection() const;
+    uint64_t destinationID() const { return pageID(); }
 
     void close();
 

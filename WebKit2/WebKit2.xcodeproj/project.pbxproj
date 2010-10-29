@@ -68,6 +68,7 @@
 		1A0F29CC120B37160053D1B9 /* VisitedLinkTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */; };
 		1A0F29E3120B44420053D1B9 /* VisitedLinkProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */; };
 		1A0F29E4120B44420053D1B9 /* VisitedLinkProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */; };
+		1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A119A94127B796200A9ECB1 /* MessageSender.h */; };
 		1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
 		1A1FA253127A0E4F0050E709 /* NPRemoteObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA252127A0E4F0050E709 /* NPRemoteObjectMap.cpp */; };
@@ -564,6 +565,7 @@
 		1A0F29CA120B37160053D1B9 /* VisitedLinkTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTable.h; sourceTree = "<group>"; };
 		1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisitedLinkProvider.cpp; sourceTree = "<group>"; };
 		1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkProvider.h; sourceTree = "<group>"; };
+		1A119A94127B796200A9ECB1 /* MessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageSender.h; sourceTree = "<group>"; };
 		1A1C648611F415B700553C19 /* WebContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMac.mm; sourceTree = "<group>"; };
 		1A1FA251127A0E4F0050E709 /* NPRemoteObjectMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPRemoteObjectMap.h; sourceTree = "<group>"; };
 		1A1FA252127A0E4F0050E709 /* NPRemoteObjectMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRemoteObjectMap.cpp; sourceTree = "<group>"; };
@@ -1353,6 +1355,7 @@
 				BC131BC811726C2800B69727 /* CoreIPCMessageKinds.h */,
 				C0CE72AC1247E78D00BC0EC4 /* HandleMessage.h */,
 				BC032DA410F437D10058C15A /* MessageID.h */,
+				1A119A94127B796200A9ECB1 /* MessageSender.h */,
 			);
 			path = CoreIPC;
 			sourceTree = "<group>";
@@ -2215,6 +2218,7 @@
 				935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */,
 				1A616150127798B5003ACD86 /* DownloadManager.h in Headers */,
 				1A6161D41278981C003ACD86 /* Download.h in Headers */,
+				1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
