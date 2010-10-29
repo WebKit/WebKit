@@ -90,7 +90,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGUseElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGUseElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGUseElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
         // Instance tree handling
         void buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundCycle);

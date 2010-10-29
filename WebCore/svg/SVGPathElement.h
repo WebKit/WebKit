@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedPathData.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -107,7 +108,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGPathElement, SVGNames::pathLengthAttr, float, PathLength, pathLength)
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

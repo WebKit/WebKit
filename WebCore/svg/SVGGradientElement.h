@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 #include "Gradient.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGStyledElement.h"
 #include "SVGTransformList.h"
@@ -56,7 +57,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGGradientElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGGradientElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGGradientElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

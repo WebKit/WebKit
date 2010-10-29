@@ -919,7 +919,7 @@ END
         }
     }
 
-    if ($codeGenerator->IsSVGNewStyleAnimatedType($implClassName)) {
+    if ($codeGenerator->IsSVGNewStyleAnimatedType($implClassName) and $codeGenerator->IsSVGTypeNeedingTearOff($attrType)) {
         $implIncludes{"V8$attrType.h"} = 1;
         my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($attrType);
         # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
@@ -972,6 +972,11 @@ sub GenerateNormalAttrSetter
             push(@implContentDecls, "    }\n");
         } elsif ($codeGenerator->IsNumericType($argType)) {
             push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsNumber() && !value->IsBoolean()) {\n");
+            push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
+            push(@implContentDecls, "        return;\n");
+            push(@implContentDecls, "    }\n");
+        } elsif ($argType eq "boolean") {
+            push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !value->IsBoolean()) {\n");
             push(@implContentDecls, "        V8Proxy::throwTypeError();\n");
             push(@implContentDecls, "        return;\n");
             push(@implContentDecls, "    }\n");

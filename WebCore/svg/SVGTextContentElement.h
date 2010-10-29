@@ -75,7 +75,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGTextContentElement, SVGNames::lengthAdjustAttr, int, LengthAdjust, lengthAdjust)
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGTextContentElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired) 
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTextContentElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired) 
     };
 
 } // namespace WebCore

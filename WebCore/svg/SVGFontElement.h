@@ -23,6 +23,7 @@
 #define SVGFontElement_h
 
 #if ENABLE(SVG_FONTS)
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGGlyphElement.h"
 #include "SVGGlyphMap.h"
@@ -74,7 +75,7 @@ private:
     void ensureGlyphCache() const;
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_PROPERTY(SVGFontElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFontElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
     mutable KerningPairVector m_horizontalKerningPairs;
     mutable KerningPairVector m_verticalKerningPairs;

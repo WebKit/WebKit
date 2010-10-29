@@ -62,7 +62,7 @@ private:
     DECLARE_ANIMATED_PROPERTY(SVGFEImageElement, XLinkNames::hrefAttr, String, Href, href)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_PROPERTY(SVGFEImageElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEImageElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
     CachedResourceHandle<CachedImage> m_cachedImage;
     OwnPtr<ImageBuffer> m_targetImage;

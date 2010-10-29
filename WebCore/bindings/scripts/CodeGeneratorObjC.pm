@@ -1289,7 +1289,7 @@ sub GenerateImplementation
                 $getterContentTail .= ")";
             } elsif ($svgPropertyType) {
                 $getterContentHead = "IMPL->propertyReference().$getterContentHead";
-            } elsif ($codeGenerator->IsSVGNewStyleAnimatedType($implClassName)) {
+            } elsif ($codeGenerator->IsSVGNewStyleAnimatedType($implClassName) and $codeGenerator->IsSVGTypeNeedingTearOff($idlType)) {
                 my $idlTypeWithNamespace = "WebCore::" . $codeGenerator->GetSVGTypeNeedingTearOff($idlType);
                 $idlTypeWithNamespace =~ s/</\<WebCore::/;
                 $getterContentHead = "kit(static_cast<$idlTypeWithNamespace*>($getterContentHead)";

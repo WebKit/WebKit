@@ -22,10 +22,11 @@
 #define SVGScriptElement_h
 
 #if ENABLE(SVG)
-#include "ScriptElement.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGElement.h"
-#include "SVGURIReference.h"
 #include "SVGExternalResourcesRequired.h"
+#include "SVGURIReference.h"
+#include "ScriptElement.h"
 
 namespace WebCore {
 
@@ -78,7 +79,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGScriptElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGScriptElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGScriptElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
         ScriptElementData m_data;
         String m_type;

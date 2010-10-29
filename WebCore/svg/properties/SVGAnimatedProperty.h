@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "QualifiedName.h"
 #include "SVGAnimatedPropertyDescription.h"
+#include "SVGElement.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -34,6 +35,13 @@ class SVGAnimatedProperty : public RefCounted<SVGAnimatedProperty> {
 public:
     SVGElement* contextElement() const { return m_contextElement.get(); }
     const QualifiedName& attributeName() const { return m_attributeName; }
+
+    void commitChange()
+    {
+        ASSERT(m_contextElement);
+        m_contextElement->invalidateSVGAttributes();
+        m_contextElement->svgAttributeChanged(m_attributeName);
+    }
 
     virtual int removeItemFromList(SVGProperty*, bool)
     {
@@ -83,9 +91,6 @@ protected:
         , m_attributeName(attributeName)
     {
     }
-
-    RefPtr<SVGProperty> m_baseVal;
-    RefPtr<SVGProperty> m_animVal;
 
 private:
     static Cache* animatedPropertyCache()

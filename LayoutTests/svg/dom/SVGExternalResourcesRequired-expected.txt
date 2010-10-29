@@ -1,0 +1,34 @@
+This test checks the SVGExternalResourcesRequired API
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial SVGExternalResourcesRequired value
+PASS rectElement.externalResourcesRequired.baseVal is false
+
+Set value to true
+PASS rectElement.externalResourcesRequired.baseVal = true is true
+
+Caching baseVal in local variable
+PASS baseVal is true
+
+Modify local baseVal variable to true
+PASS baseVal = false is false
+
+Assure that rectElement.externalResourcesRequired has not been changed, but the local baseVal variable
+PASS baseVal is false
+PASS rectElement.externalResourcesRequired.baseVal is true
+
+Check assigning invalid values
+PASS rectElement.externalResourcesRequired.baseVal = rectElement.externalResourcesRequired threw exception TypeError: Type error.
+PASS rectElement.externalResourcesRequired.baseVal = null is null
+PASS rectElement.externalResourcesRequired.baseVal = 'aString' threw exception TypeError: Type error.
+PASS rectElement.externalResourcesRequired.baseVal = rectElement threw exception TypeError: Type error.
+
+Check that the value is now false
+PASS rectElement.externalResourcesRequired.baseVal is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

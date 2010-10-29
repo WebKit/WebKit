@@ -61612,6 +61612,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedBoolean.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedLength.h"
 				>
 			</File>
@@ -62672,6 +62676,10 @@
 				</File>
 				<File
 					RelativePath="..\svg\properties\SVGAnimatedPropertyTearOff.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGAnimatedStaticPropertyTearOff.h"
 					>
 				</File>
 				<File

@@ -22,6 +22,7 @@
 #define SVGGElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
@@ -53,7 +54,7 @@ namespace WebCore {
         virtual bool rendererIsNeeded(RenderStyle*);
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGGElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGGElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

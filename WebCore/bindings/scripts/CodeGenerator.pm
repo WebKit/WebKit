@@ -56,7 +56,7 @@ my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
 
-my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1, "SVGAnimatedRect" => 1);
+my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1, "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1, "SVGAnimatedRect" => 1);
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,

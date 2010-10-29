@@ -22,7 +22,6 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedProperty.h"
-#include "SVGAnimatedPropertyDescription.h"
 #include "SVGPropertyTearOff.h"
 
 namespace WebCore {
@@ -44,10 +43,6 @@ public:
         return m_animVal.get();
     }
 
-    // FIXME: No animVal support.
-    void setBaseVal(const PropertyType& property) { m_property = property; }
-    void setAnimVal(const PropertyType&) { }
-
 private:
     friend class SVGAnimatedProperty;
 
@@ -65,6 +60,9 @@ private:
 
 private:
     PropertyType& m_property;
+
+    RefPtr<SVGProperty> m_baseVal;
+    RefPtr<SVGProperty> m_animVal;
 };
 
 }

@@ -3030,6 +3030,7 @@ webcore_sources += \
 	WebCore/svg/properties/SVGAnimatedPropertyMacros.h \
 	WebCore/svg/properties/SVGAnimatedPropertySynchronizer.h \
 	WebCore/svg/properties/SVGAnimatedPropertyTearOff.h \
+	WebCore/svg/properties/SVGAnimatedStaticPropertyTearOff.h \
 	WebCore/svg/properties/SVGListPropertyTearOff.h \
 	WebCore/svg/properties/SVGProperty.h \
 	WebCore/svg/properties/SVGPropertyTearOff.h \
@@ -3044,6 +3045,7 @@ webcore_sources += \
 	WebCore/svg/SVGAnimateColorElement.cpp \
 	WebCore/svg/SVGAnimateColorElement.h \
 	WebCore/svg/SVGAnimatedAngle.h \
+	WebCore/svg/SVGAnimatedBoolean.h \
 	WebCore/svg/SVGAnimatedLength.h \
 	WebCore/svg/SVGAnimatedLengthList.h \
 	WebCore/svg/SVGAnimatedPathData.cpp \

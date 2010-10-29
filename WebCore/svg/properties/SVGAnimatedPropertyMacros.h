@@ -24,6 +24,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedListPropertyTearOff.h"
+#include "SVGAnimatedStaticPropertyTearOff.h"
 #include "SVGAnimatedPropertySynchronizer.h"
 #include "SVGAnimatedPropertyTearOff.h"
 #include "SVGNames.h" // FIXME: Temporary hack, until we expand the macros in all files, so we don't need a global SVGNames.h include
@@ -100,6 +101,9 @@ DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.local
 
 #define DECLARE_ANIMATED_PROPERTY_NEW_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, PropertyType, UpperProperty, LowerProperty) \
 DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
+
+#define DECLARE_ANIMATED_STATIC_PROPERTY_NEW(OwnerType, DOMAttribute, PropertyType, UpperProperty, LowerProperty) \
+DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedStaticPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty)
 
 #define DECLARE_ANIMATED_LIST_PROPERTY_NEW(OwnerType, DOMAttribute, PropertyType, UpperProperty, LowerProperty) \
 DECLARE_ANIMATED_PROPERTY_NEW_SHARED(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedListPropertyTearOff<PropertyType>, PropertyType, UpperProperty, LowerProperty) \

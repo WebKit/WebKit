@@ -24,10 +24,10 @@
 #ifndef SVGAnimationElement_h
 #define SVGAnimationElement_h
 #if ENABLE(SVG_ANIMATION)
-
 #include "ElementTimeControl.h"
 #include "Path.h"
 #include "SMILTime.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGSMILElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGStringList.h"
@@ -106,7 +106,7 @@ namespace WebCore {
         float calculatePercentForSpline(float percent, unsigned splineIndex) const;
         
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGAnimationElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAnimationElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
         bool m_animationValid;
 

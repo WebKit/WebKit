@@ -59,7 +59,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY_NEW(SVGRectElement, SVGNames::ryAttr, SVGLength, Ry, ry)
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGRectElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGRectElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

@@ -65,7 +65,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY_NEW(SVGMaskElement, SVGNames::heightAttr, SVGLength, Height, height)
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMaskElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 }

@@ -76,7 +76,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY(SVGPatternElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPatternElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
         // SVGPatternElement
         DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)

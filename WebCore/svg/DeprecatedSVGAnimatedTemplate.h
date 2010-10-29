@@ -154,7 +154,6 @@ namespace WebCore {
     }
 
     // Common type definitions, to ease IDL generation.
-    typedef DeprecatedSVGAnimatedTemplate<bool> SVGAnimatedBoolean;
     typedef DeprecatedSVGAnimatedTemplate<int> SVGAnimatedEnumeration;
     typedef DeprecatedSVGAnimatedTemplate<long> SVGAnimatedInteger;
     typedef DeprecatedSVGAnimatedTemplate<float> SVGAnimatedNumber;

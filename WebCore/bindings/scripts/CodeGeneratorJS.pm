@@ -1803,6 +1803,11 @@ sub GenerateImplementation
                                     push(@implContent, "        throwVMTypeError(exec);\n");
                                     push(@implContent, "        return;\n");
                                     push(@implContent, "    };\n");
+                                } elsif ($argType eq "boolean") {
+                                    push(@implContent, "    if (!value.isUndefinedOrNull() && !value.isBoolean()) {\n");
+                                    push(@implContent, "        throwVMTypeError(exec);\n");
+                                    push(@implContent, "        return;\n");
+                                    push(@implContent, "    };\n");
                                 }
                             }
 

@@ -85,7 +85,7 @@ private:
     DECLARE_ANIMATED_PROPERTY_NEW_MULTIPLE_WRAPPERS(SVGMarkerElement, SVGNames::orientAttr, SVGOrientAngleAttrIdentifier, SVGAngle, OrientAngle, orientAngle)
 
     // SVGExternalResourcesRequired
-    DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMarkerElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
 
     // SVGFitToViewBox
     DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
