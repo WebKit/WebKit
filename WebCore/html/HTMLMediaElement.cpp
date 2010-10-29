@@ -1113,18 +1113,6 @@ void HTMLMediaElement::seek(float time, ExceptionCode& ec)
     float earliestTime = m_player->startTime();
     time = max(time, earliestTime);
 
-    // Ask the media engine for the time value in the movie's time scale before comparing with current time. This
-    // is necessary because if the seek time is not equal to currentTime but the delta is less than the movie's
-    // time scale, we will ask the media engine to "seek" to the current movie time, which may be a noop and
-    // not generate a timechanged callback. This means m_seeking will never be cleared and we will never 
-    // fire a 'seeked' event.
-#if !LOG_DISABLED
-    float mediaTime = m_player->mediaTimeForTimeValue(time);
-    if (time != mediaTime)
-        LOG(Media, "HTMLMediaElement::seek(%f) - media timeline equivalent is %f", time, mediaTime);
-#endif
-    time = m_player->mediaTimeForTimeValue(time);
-
     // 7 - If the (possibly now changed) new playback position is not in one of the ranges given in the 
     // seekable attribute, then let it be the position in one of the ranges given in the seekable attribute 
     // that is the nearest to the new playback position. ... If there are no ranges given in the seekable

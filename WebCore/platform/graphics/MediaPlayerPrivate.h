@@ -125,10 +125,6 @@ public:
 
     virtual void prepareForRendering() { }
 
-    // Time value in the movie's time scale. It is only necessary to override this if the media
-    // engine uses rational numbers to represent media time.
-    virtual float mediaTimeForTimeValue(float timeValue) const { return timeValue; }
-
 };
 
 }

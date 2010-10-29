@@ -1540,15 +1540,6 @@ void MediaPlayerPrivate::setPreload(MediaPlayer::Preload preload)
         resumeLoad();
 }
 
-float MediaPlayerPrivate::mediaTimeForTimeValue(float timeValue) const
-{
-    if (!metaDataAvailable())
-        return timeValue;
-
-    QTTime qttime = createQTTime(timeValue);
-    return static_cast<float>(qttime.timeValue) / qttime.timeScale;
-}
-
 } // namespace WebCore
 
 @implementation WebCoreMovieObserver

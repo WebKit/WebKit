@@ -643,11 +643,6 @@ MediaPlayer::MovieLoadType MediaPlayer::movieLoadType() const
     return m_private->movieLoadType();
 }
 
-float MediaPlayer::mediaTimeForTimeValue(float timeValue) const
-{
-    return m_private->mediaTimeForTimeValue(timeValue);
-}
-
 // Client callbacks.
 void MediaPlayer::networkStateChanged()
 {

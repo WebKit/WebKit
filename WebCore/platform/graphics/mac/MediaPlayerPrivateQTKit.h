@@ -173,8 +173,6 @@ private:
 
     bool isReadyForVideoSetup() const;
     
-    virtual float mediaTimeForTimeValue(float) const;
-
     MediaPlayer* m_player;
     RetainPtr<QTMovie> m_qtMovie;
     RetainPtr<QTMovieView> m_qtMovieView;
