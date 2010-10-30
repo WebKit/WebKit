@@ -2,11 +2,12 @@
 <head>
     <title></title>
     <script type="text/javascript">
-        var fired = false;
+        var success;
+        var target;
 
         function selectStart(event)
         {
-            fired = true;
+            success = event.target == target;
         }
 
         function test()
@@ -15,7 +16,7 @@
                 return;
             layoutTestController.dumpAsText();
 
-            var target = document.getElementById("target");
+            target = document.getElementById("target");
             var x = target.offsetLeft + target.offsetWidth / 2;
             var y = target.offsetTop + target.offsetHeight / 2;
 
@@ -23,7 +24,7 @@
             eventSender.mouseDown();
             eventSender.mouseUp();
 
-            document.getElementById("result").innerText = fired ? "FAIL" : "PASS";
+            document.getElementById("result").innerText = !success ? "FAIL" : "PASS";
         }
 
         addEventListener("selectstart", selectStart, true);

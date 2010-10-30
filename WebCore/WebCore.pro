@@ -713,6 +713,7 @@ SOURCES += \
     dom/EntityReference.cpp \
     dom/ErrorEvent.cpp \
     dom/Event.cpp \
+    dom/EventContext.cpp \
     dom/EventNames.cpp \
     dom/EventTarget.cpp \
     dom/ExceptionBase.cpp \
@@ -773,6 +774,7 @@ SOURCES += \
     dom/WebKitAnimationEvent.cpp \
     dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
+    dom/WindowEventContext.cpp \
     dom/XMLDocumentParser.cpp \
     dom/XMLDocumentParserQt.cpp \
     dom/default/PlatformMessagePortChannel.cpp \
