@@ -715,7 +715,6 @@ BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
 // Flaky
 BUG31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
 
-BUG38376 WIN : editing/deleting/5390681-2.html = IMAGE+TEXT
 BUG38653 MAC : editing/selection/find-yensign-and-backslash.html = TEXT
 
 BUG39855 SLOW DEBUG : editing/selection/extend-selection.html = PASS
@@ -3180,9 +3179,6 @@ BUG58942 : fast/dom/prototype-inheritance.html = TEXT
 // Started failing at Webkit r69628.
 BUG47578 : printing/simultaneous-position-float-change.html = IMAGE+TEXT
 
-// test_shell's build configuration does not compile webp in
-BUGWK47512 : fast/images/webp-image-decoding.html = TEXT
-
 BUG59647 WIN : svg/dom/length-list-parser.html = PASS CRASH
 
 BUGWK47901 MAC : fast/canvas/canvas-getImageData-negative-source.html = TEXT
@@ -3260,27 +3256,9 @@ BUGWK61188 : fast/repaint/iframe-scroll-repaint.html = IMAGE+TEXT IMAGE
 BUGWK47089 : fast/speech/input-text-language-tag.html = FAIL
 
 // These tests started failing presumably after r70850
-BUGWK48627 : fast/body-propagation/background-color/004-declarative.xhtml = IMAGE
-BUGWK48627 : fast/body-propagation/background-color/004-xhtml.xhtml = IMAGE
-BUGWK48627 : fast/body-propagation/background-color/004.html = IMAGE
-BUGWK48627 : fast/body-propagation/background-image/004-declarative.xhtml = IMAGE
-BUGWK48627 : fast/body-propagation/background-image/004-xhtml.xhtml = IMAGE
-BUGWK48627 : fast/body-propagation/background-image/004.html = IMAGE
-BUGWK48627 : fast/body-propagation/overflow/004-declarative.xhtml = IMAGE
-BUGWK48627 : fast/body-propagation/overflow/004-xhtml.xhtml = IMAGE
-BUGWK48627 : fast/body-propagation/overflow/004.html = IMAGE
-BUGWK48627 : fast/body-propagation/overflow/007-declarative.xhtml = IMAGE
-BUGWK48627 : fast/body-propagation/overflow/007-xhtml.xhtml = IMAGE
-BUGWK48627 : fast/body-propagation/overflow/007.html = IMAGE
-BUGWK48627 : fast/invalid/missing-end-tag.xhtml = IMAGE
-BUGWK48627 : fast/selectors/lang-vs-xml-lang-xhtml.xhtml = IMAGE
-BUGWK48627 : svg/custom/absolute-sized-svg-in-xhtml.xhtml = IMAGE
-BUGWK48627 : svg/custom/createImageElement2.xhtml = IMAGE
-BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-auto.xhtml = IMAGE
-BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml = IMAGE
-BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-hidden.xhtml = IMAGE
-BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-scroll.xhtml = IMAGE
-BUGWK48627 : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-visible.xhtml = IMAGE
+BUGWK48627 MAC : fast/invalid/missing-end-tag.xhtml = IMAGE
+BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
+BUGWK48627 MAC : svg/overflow/overflow-on-outermost-svg-element-in-xhtml-defaults.xhtml = IMAGE
 
 // For these tests, a strange "shadow" appears on image, presumably after r70846
 BUGWK48634 MAC : fast/css/input-search-padding.html = IMAGE
