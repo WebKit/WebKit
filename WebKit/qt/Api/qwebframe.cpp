@@ -758,7 +758,7 @@ QIcon QWebFrame::icon() const
 */
 QString QWebFrame::frameName() const
 {
-    return d->frame->tree()->name();
+    return d->frame->tree()->uniqueName();
 }
 
 /*!

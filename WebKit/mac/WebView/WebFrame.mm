@@ -1406,7 +1406,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
-    return coreFrame->tree()->name();
+    return coreFrame->tree()->uniqueName();
 }
 
 - (WebFrameView *)frameView

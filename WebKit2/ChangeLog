@@ -1,3 +1,15 @@
+2010-10-29  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        For unnamed frames, window.name returns a generated name
+        https://bugs.webkit.org/show_bug.cgi?id=6751
+
+        Modified WebKit2 to use FrameTree::uniqueName().
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::name):
+
 2010-10-29  Sam Weinig  <weinig@apple.com>
 
         Reviewed by Simon Fraser.
