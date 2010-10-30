@@ -1,3 +1,9 @@
+2010-10-29  Dan Bernstein  <mitz@apple.com>
+
+        Leopard PowerPC build fix.
+
+        * libWebKitSystemInterfaceLeopard.a:
+
 2010-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Roben and David Kilzer.
