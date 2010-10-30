@@ -1,5 +1,11 @@
 2010-10-29  Dan Bernstein  <mitz@apple.com>
 
+        Snow Leopard PowerPC build fix.
+
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
+2010-10-29  Dan Bernstein  <mitz@apple.com>
+
         Leopard PowerPC build fix.
 
         * libWebKitSystemInterfaceLeopard.a:
