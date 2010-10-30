@@ -1437,8 +1437,6 @@
             'editing/SplitTextNodeContainingElementCommand.cpp',
             'editing/SplitTextNodeContainingElementCommand.h',
             'editing/TextAffinity.h',
-            'editing/TextCheckingHelper.cpp',
-            'editing/TextCheckingHelper.h',
             'editing/TextGranularity.h',
             'editing/TextIterator.cpp',
             'editing/TextIterator.h',
