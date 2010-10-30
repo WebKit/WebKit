@@ -1,3 +1,17 @@
+2010-10-29  Sam Weinig  <weinig@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Implement WebProcess::platformSetCacheModel for windows
+        <rdar://problem/8605796>
+        https://bugs.webkit.org/show_bug.cgi?id=48703
+
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::memorySize):
+        (WebKit::volumeFreeSize):
+        (WebKit::WebProcess::platformSetCacheModel):
+        Add implemenation based on the version in WebKit/win/WebView.cpp.
+
 2010-10-29  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Anders Carlsson.
