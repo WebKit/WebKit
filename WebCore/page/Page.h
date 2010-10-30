@@ -39,7 +39,6 @@ namespace JSC {
 namespace WebCore {
 
     class BackForwardController;
-    class BackForwardControllerClient;
     class BackForwardList;
     class Chrome;
     class ChromeClient;
@@ -95,20 +94,9 @@ namespace WebCore {
         static void scheduleForcedStyleRecalcForAllPages();
 
         // It is up to the platform to ensure that non-null clients are provided where required.
-        struct PageClients {
-            PageClients()
-                : chromeClient(0)
-                , contextMenuClient(0)
-                , editorClient(0)
-                , dragClient(0)
-                , inspectorClient(0)
-                , pluginHalterClient(0)
-                , geolocationControllerClient(0)
-                , deviceMotionClient(0)
-                , deviceOrientationClient(0)
-                , backForwardControllerClient(0)
-                , speechInputClient(0)
-            { }
+        struct PageClients : Noncopyable {
+            PageClients();
+            ~PageClients();
 
             ChromeClient* chromeClient;
             ContextMenuClient* contextMenuClient;
@@ -119,7 +107,7 @@ namespace WebCore {
             GeolocationControllerClient* geolocationControllerClient;
             DeviceMotionClient* deviceMotionClient;
             DeviceOrientationClient* deviceOrientationClient;
-            BackForwardControllerClient* backForwardControllerClient;
+            RefPtr<BackForwardList> backForwardClient;
             SpeechInputClient* speechInputClient;
         };
 
@@ -145,18 +133,15 @@ namespace WebCore {
         bool openedByDOM() const;
         void setOpenedByDOM();
 
+        // DEPRECATED. Use backForward() instead of the following 6 functions.
         BackForwardList* backForwardList() const;
-
-        // FIXME: The following three methods don't fall under the responsibilities of the Page object
-        // They seem to fit a hypothetical Page-controller object that would be akin to the 
-        // Frame-FrameLoader relationship.  They have to live here now, but should move somewhere that
-        // makes more sense when that class exists.
         bool goBack();
         bool goForward();
         bool canGoBackOrForward(int distance) const;
         void goBackOrForward(int distance);
-        void goToItem(HistoryItem*, FrameLoadType);
         int getHistoryLength();
+
+        void goToItem(HistoryItem*, FrameLoadType);
 
         HistoryItem* globalHistoryItem() const { return m_globalHistoryItem.get(); }
         void setGlobalHistoryItem(HistoryItem*);
@@ -195,7 +180,7 @@ namespace WebCore {
 #endif
         Settings* settings() const { return m_settings.get(); }
         ProgressTracker* progress() const { return m_progress.get(); }
-
+        BackForwardController* backForward() const { return m_backForwardController.get(); }
 
         enum ViewMode {
             ViewModeInvalid,

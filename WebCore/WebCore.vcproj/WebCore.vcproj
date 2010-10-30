@@ -62992,10 +62992,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\history\BackForwardControllerClient.h"
-				>
-			</File>
-			<File
 				RelativePath="..\history\BackForwardList.h"
 				>
 			</File>

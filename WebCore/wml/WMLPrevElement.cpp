@@ -64,7 +64,7 @@ void WMLPrevElement::executeTask()
     if (WMLTimerElement* eventTimer = card->eventTimer())
         eventTimer->stop();
 
-    pageState->page()->goBack();
+    pageState->page()->backForward()->goBack();
 }
 
 }

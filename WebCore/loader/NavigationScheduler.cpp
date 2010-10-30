@@ -32,7 +32,7 @@
 #include "config.h"
 #include "NavigationScheduler.h"
 
-#include "BackForwardList.h"
+#include "BackForwardController.h"
 #include "DOMWindow.h"
 #include "DocumentLoader.h"
 #include "Event.h"
@@ -177,7 +177,7 @@ public:
         }
         // go(i!=0) from a frame navigates into the history of the frame only,
         // in both IE and NS (but not in Mozilla). We can't easily do that.
-        frame->page()->goBackOrForward(m_historySteps);
+        frame->page()->backForward()->goBackOrForward(m_historySteps);
     }
 
 private:
@@ -352,7 +352,7 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
 
     // Invalid history navigations (such as history.forward() during a new load) have the side effect of cancelling any scheduled
     // redirects. We also avoid the possibility of cancelling the current load by avoiding the scheduled redirection altogether.
-    HistoryItem* specifiedEntry = m_frame->page()->backForwardList()->itemAtIndex(steps);
+    HistoryItem* specifiedEntry = m_frame->page()->backForward()->itemAtIndex(steps);
     if (!specifiedEntry) {
         cancel();
         return;

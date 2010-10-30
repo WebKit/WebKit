@@ -64,8 +64,8 @@ void WMLPageState::reset()
     m_variables.clear();
 
     // Clear the navigation history state 
-    if (BackForwardList* list = m_page ? m_page->backForwardList() : 0)
-        list->clearWMLPageHistory();
+    if (m_page)
+        m_page->backForward()->client()->clearWMLPageHistory();
 }
 
 static inline String normalizedHostName(const String& passedHost)
@@ -121,15 +121,11 @@ static bool tryAccessHistoryURLs(Page* page, KURL& previousURL, KURL& currentURL
     if (!frame || !frame->document())    
         return false;
 
-    BackForwardList* list = page->backForwardList();
-    if (!list)
-        return false;
-
-    HistoryItem* previousItem = list->backItem();
+    HistoryItem* previousItem = page->backForward()->backItem();
     if (!previousItem)
         return false;
 
-    HistoryItem* currentItem = list->currentItem();
+    HistoryItem* currentItem = page->backForward()->currentItem();
     if (!currentItem)
         return false;
 

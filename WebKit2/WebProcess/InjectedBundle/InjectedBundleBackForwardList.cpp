@@ -28,6 +28,7 @@
 #include "InjectedBundleBackForwardListItem.h"
 #include "WebBackForwardListProxy.h"
 #include "WebPage.h"
+#include <WebCore/BackForwardController.h>
 #include <WebCore/Page.h>
 
 using namespace WebCore;
@@ -41,7 +42,7 @@ PassRefPtr<InjectedBundleBackForwardListItem> InjectedBundleBackForwardList::ite
     Page* page = m_page->corePage();
     if (!page)
         return 0;
-    return InjectedBundleBackForwardListItem::create(page->backForwardList()->itemAtIndex(index));
+    return InjectedBundleBackForwardListItem::create(page->backForward()->itemAtIndex(index));
 }
 
 int InjectedBundleBackForwardList::backListCount() const
@@ -51,7 +52,7 @@ int InjectedBundleBackForwardList::backListCount() const
     Page* page = m_page->corePage();
     if (!page)
         return 0;
-    return page->backForwardList()->backListCount();
+    return page->backForward()->backCount();
 }
 
 int InjectedBundleBackForwardList::forwardListCount() const
@@ -61,7 +62,7 @@ int InjectedBundleBackForwardList::forwardListCount() const
     Page* page = m_page->corePage();
     if (!page)
         return 0;
-    return page->backForwardList()->forwardListCount();
+    return page->backForward()->forwardCount();
 }
 
 void InjectedBundleBackForwardList::clear()
@@ -71,7 +72,7 @@ void InjectedBundleBackForwardList::clear()
     Page* page = m_page->corePage();
     if (!page)
         return;
-    static_cast<WebBackForwardListProxy*>(page->backForwardList())->clear();
+    static_cast<WebBackForwardListProxy*>(page->backForward()->client())->clear();
 }
 
 } // namespace WebKit

@@ -36,7 +36,6 @@
 #include "PluginProcessConnectionManager.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
-#include "WebBackForwardControllerClient.h"
 #include "WebBackForwardListProxy.h"
 #include "WebChromeClient.h"
 #include "WebContextMenuClient.h"
@@ -120,7 +119,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     pageClients.editorClient = new WebEditorClient(this);
     pageClients.dragClient = new WebDragClient(this);
     pageClients.inspectorClient = new WebInspectorClient(this);
-    pageClients.backForwardControllerClient = new WebBackForwardControllerClient(this);
+    pageClients.backForwardClient = WebBackForwardListProxy::create(this);
     m_page = adoptPtr(new Page(pageClients));
 
     updatePreferences(parameters.store);

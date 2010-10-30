@@ -27,6 +27,7 @@
 #define WebBackForwardListProxy_h
 
 #include <WebCore/BackForwardList.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 

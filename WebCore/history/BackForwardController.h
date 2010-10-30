@@ -26,27 +26,49 @@
 #ifndef BackForwardController_h
 #define BackForwardController_h
 
-#include "BackForwardList.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
+class BackForwardList;
+class HistoryItem;
 class Page;
-class BackForwardControllerClient;
 
 class BackForwardController : public Noncopyable {
 public:
-    BackForwardController(Page*, BackForwardControllerClient*);
+    BackForwardController(Page*, PassRefPtr<BackForwardList>);
     ~BackForwardController();
 
-    BackForwardControllerClient* client() const { return m_client; }
-    BackForwardList* list() const { return m_list.get(); }
+    BackForwardList* client() const { return m_client.get(); }
+
+    bool canGoBackOrForward(int distance) const;
+    void goBackOrForward(int distance);
+
+    bool goBack();
+    bool goForward();
+
+    void addItem(PassRefPtr<HistoryItem>);
+    void setCurrentItem(HistoryItem*);
+        
+    int count() const;
+    int backCount() const;
+    int forwardCount() const;
+
+    HistoryItem* itemAtIndex(int);
+
+    bool isActive();
+
+    void close();
+
+    HistoryItem* backItem() { return itemAtIndex(-1); }
+    HistoryItem* currentItem() { return itemAtIndex(0); }
+    HistoryItem* forwardItem() { return itemAtIndex(1); }
 
 private:
     Page* m_page;
-    BackForwardControllerClient* m_client;
-    RefPtr<BackForwardList> m_list;
+    RefPtr<BackForwardList> m_client;
 };
 
 } // namespace WebCore

@@ -1535,7 +1535,6 @@
             'history/mac/HistoryItemMac.mm',
             'history/BackForwardController.cpp',
             'history/BackForwardController.h',
-            'history/BackForwardControllerClient.h',
             'history/BackForwardList.h',
             'history/BackForwardListImpl.cpp',
             'history/BackForwardListImpl.h',

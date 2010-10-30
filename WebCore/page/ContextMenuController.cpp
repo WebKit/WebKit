@@ -222,11 +222,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         break;
     case ContextMenuItemTagGoBack:
         if (Page* page = frame->page())
-            page->goBackOrForward(-1);
+            page->backForward()->goBackOrForward(-1);
         break;
     case ContextMenuItemTagGoForward:
         if (Page* page = frame->page())
-            page->goBackOrForward(1);
+            page->backForward()->goBackOrForward(1);
         break;
     case ContextMenuItemTagStop:
         frame->loader()->stop();

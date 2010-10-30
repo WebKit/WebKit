@@ -1747,7 +1747,6 @@ HEADERS += \
     fileapi/FileThread.h \
     fileapi/FileThreadTask.h \
     history/BackForwardController.h \
-    history/BackForwardControllerClient.h \
     history/BackForwardListImpl.h \
     history/BackForwardList.h \
     history/CachedFrame.h \

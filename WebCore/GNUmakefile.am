@@ -1444,7 +1444,6 @@ webcore_sources += \
 	WebCore/fileapi/Metadata.h \
 	WebCore/fileapi/ThreadableBlobRegistry.cpp \
 	WebCore/fileapi/ThreadableBlobRegistry.h \
-	WebCore/history/BackForwardControllerClient.h \
 	WebCore/history/BackForwardController.cpp \
 	WebCore/history/BackForwardController.h \
 	WebCore/history/BackForwardList.h \

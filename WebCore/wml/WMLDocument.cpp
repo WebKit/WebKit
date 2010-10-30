@@ -68,11 +68,7 @@ void WMLDocument::finishedParsing()
         if (!page)
             return;
 
-        BackForwardList* list = page->backForwardList();
-        if (!list)
-            return;
-
-        HistoryItem* item = list->backItem();
+        HistoryItem* item = page->backForward()->backItem();
         if (!item)
             return;
 

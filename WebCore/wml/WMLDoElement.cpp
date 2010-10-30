@@ -90,7 +90,7 @@ void WMLDoElement::defaultEventHandler(Event* event)
                 eventTimer->stop();
         }
 
-        pageState->page()->goBack();
+        pageState->page()->backForward()->goBack();
     } else if (m_type == "reset") {
         WMLPageState* pageState = wmlPageStateForDocument(document());
         if (!pageState)

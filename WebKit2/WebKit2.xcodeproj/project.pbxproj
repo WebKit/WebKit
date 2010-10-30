@@ -369,8 +369,6 @@
 		BCA8C6A911E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6A711E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h */; };
 		BCA8C6AF11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C6AD11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp */; };
 		BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */; };
-		BCA8C9DC11E4086500812FB7 /* WebBackForwardControllerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C9DA11E4086500812FB7 /* WebBackForwardControllerClient.h */; };
-		BCA8C9DD11E4086500812FB7 /* WebBackForwardControllerClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA8C9DB11E4086500812FB7 /* WebBackForwardControllerClient.cpp */; };
 		BCB0AD33122F285800B1341E /* MutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC8049D122F0D6B00103529 /* MutableArray.cpp */; };
 		BCB0AD34122F285800B1341E /* MutableArray.h in Headers */ = {isa = PBXBuildFile; fileRef = BCC8049E122F0D6B00103529 /* MutableArray.h */; };
 		BCB0AEE9122F53E300B1341E /* MutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB0AEE7122F53E300B1341E /* MutableDictionary.h */; };
@@ -882,8 +880,6 @@
 		BCA8C6A711E3BA5F00812FB7 /* InjectedBundlePageLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageLoaderClient.h; sourceTree = "<group>"; };
 		BCA8C6AD11E3C08700812FB7 /* InjectedBundlePageUIClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageUIClient.cpp; sourceTree = "<group>"; };
 		BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageUIClient.h; sourceTree = "<group>"; };
-		BCA8C9DA11E4086500812FB7 /* WebBackForwardControllerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBackForwardControllerClient.h; sourceTree = "<group>"; };
-		BCA8C9DB11E4086500812FB7 /* WebBackForwardControllerClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBackForwardControllerClient.cpp; sourceTree = "<group>"; };
 		BCB0AEE7122F53E300B1341E /* MutableDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableDictionary.h; sourceTree = "<group>"; };
 		BCB0AEE8122F53E300B1341E /* MutableDictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableDictionary.cpp; sourceTree = "<group>"; };
 		BCB0B0DB12305A2500B1341E /* WebContextUserMessageCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextUserMessageCoders.h; sourceTree = "<group>"; };
@@ -1427,8 +1423,6 @@
 			isa = PBXGroup;
 			children = (
 				BC111ADE112F5B9A00337BAB /* mac */,
-				BCA8C9DB11E4086500812FB7 /* WebBackForwardControllerClient.cpp */,
-				BCA8C9DA11E4086500812FB7 /* WebBackForwardControllerClient.h */,
 				BC111A53112F4FBB00337BAB /* WebChromeClient.cpp */,
 				BC032D6010F4378D0058C15A /* WebChromeClient.h */,
 				BC111A54112F4FBB00337BAB /* WebContextMenuClient.cpp */,
@@ -2031,7 +2025,6 @@
 				1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */,
 				BC2E6E881141971500A63B1E /* RunLoop.h in Headers */,
 				BC9E95D311449B0300870E71 /* UpdateChunk.h in Headers */,
-				BCA8C9DC11E4086500812FB7 /* WebBackForwardControllerClient.h in Headers */,
 				BC72BA1E11E64907001EB4EA /* WebBackForwardList.h in Headers */,
 				BC646BFA11DD377B006455B0 /* WebBackForwardListItem.h in Headers */,
 				BC72B9FB11E6476B001EB4EA /* WebBackForwardListProxy.h in Headers */,
@@ -2379,7 +2372,6 @@
 				BC2E6E871141971500A63B1E /* RunLoop.cpp in Sources */,
 				BC0092F7115837A300E0AE2A /* RunLoopMac.mm in Sources */,
 				BC9E95D411449B0300870E71 /* UpdateChunk.cpp in Sources */,
-				BCA8C9DD11E4086500812FB7 /* WebBackForwardControllerClient.cpp in Sources */,
 				BC72BA1D11E64907001EB4EA /* WebBackForwardList.cpp in Sources */,
 				BC646BF911DD377B006455B0 /* WebBackForwardListItem.cpp in Sources */,
 				BC72B9FA11E6476B001EB4EA /* WebBackForwardListProxy.cpp in Sources */,

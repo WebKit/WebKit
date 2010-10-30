@@ -36,14 +36,14 @@
 #include "ApplicationCacheHost.h"
 #include "Archive.h"
 #include "ArchiveFactory.h"
-#include "BackForwardList.h"
+#include "BackForwardController.h"
 #include "BeforeUnloadEvent.h"
 #include "Cache.h"
 #include "CachedPage.h"
+#include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"
-#include "CachedResourceLoader.h"
 #include "Document.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
@@ -63,9 +63,6 @@
 #include "FrameView.h"
 #include "HTMLAnchorElement.h"
 #include "HTMLFormElement.h"
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-#include "HTMLMediaElement.h"
-#endif
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTTPParsers.h"
@@ -101,6 +98,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringConcatenate.h>
+
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "HTMLMediaElement.h"
+#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
@@ -1952,30 +1953,28 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
         case FrameLoadTypeBack:
         case FrameLoadTypeBackWMLDeckNotAccessible:
         case FrameLoadTypeIndexedBackForward:
-            if (Page* page = m_frame->page()) {
-                if (page->backForwardList()) {
-                    // If the first load within a frame is a navigation within a back/forward list that was attached
-                    // without any of the items being loaded then we need to update the history in a similar manner as
-                    // for a standard load with the exception of updating the back/forward list (<rdar://problem/8091103>).
-                    if (!m_stateMachine.committedFirstRealDocumentLoad())
-                        history()->updateForStandardLoad(HistoryController::UpdateAllExceptBackForwardList);
+            if (m_frame->page()) {
+                // If the first load within a frame is a navigation within a back/forward list that was attached
+                // without any of the items being loaded then we need to update the history in a similar manner as
+                // for a standard load with the exception of updating the back/forward list (<rdar://problem/8091103>).
+                if (!m_stateMachine.committedFirstRealDocumentLoad())
+                    history()->updateForStandardLoad(HistoryController::UpdateAllExceptBackForwardList);
 
-                    history()->updateForBackForwardNavigation();
+                history()->updateForBackForwardNavigation();
 
-                    // For cached pages, CachedFrame::restore will take care of firing the popstate event with the history item's state object
-                    if (history()->currentItem() && !cachedPage)
-                        m_pendingStateObject = history()->currentItem()->stateObject();
+                // For cached pages, CachedFrame::restore will take care of firing the popstate event with the history item's state object
+                if (history()->currentItem() && !cachedPage)
+                    m_pendingStateObject = history()->currentItem()->stateObject();
 
-                    // Create a document view for this document, or used the cached view.
-                    if (cachedPage) {
-                        DocumentLoader* cachedDocumentLoader = cachedPage->documentLoader();
-                        ASSERT(cachedDocumentLoader);
-                        cachedDocumentLoader->setFrame(m_frame);
-                        m_client->transitionToCommittedFromCachedFrame(cachedPage->cachedMainFrame());
+                // Create a document view for this document, or used the cached view.
+                if (cachedPage) {
+                    DocumentLoader* cachedDocumentLoader = cachedPage->documentLoader();
+                    ASSERT(cachedDocumentLoader);
+                    cachedDocumentLoader->setFrame(m_frame);
+                    m_client->transitionToCommittedFromCachedFrame(cachedPage->cachedMainFrame());
 
-                    } else
-                        m_client->transitionToCommittedForNewPage();
-                }
+                } else
+                    m_client->transitionToCommittedForNewPage();
             }
             break;
 
@@ -2381,7 +2380,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             }
             if (shouldReset && item)
                 if (Page* page = m_frame->page()) {
-                    page->backForwardList()->goToItem(item.get());
+                    page->backForward()->setCurrentItem(item.get());
                     Settings* settings = m_frame->settings();
                     page->setGlobalHistoryItem((!settings || settings->privateBrowsingEnabled()) ? 0 : item.get());
                 }
@@ -2402,9 +2401,10 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             m_client->forceLayoutForNonHTML();
              
             // If the user had a scroll point, scroll to it, overriding the anchor point if any.
-            if (Page* page = m_frame->page())
-                if ((isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadTypeReload || m_loadType == FrameLoadTypeReloadFromOrigin) && page->backForwardList())
+            if (m_frame->page()) {
+                if (isBackForwardLoadType(m_loadType) || m_loadType == FrameLoadTypeReload || m_loadType == FrameLoadTypeReloadFromOrigin)
                     history()->restoreScrollPositionAndViewState();
+            }
 
             if (m_stateMachine.creatingInitialEmptyDocument() || !m_stateMachine.committedFirstRealDocumentLoad())
                 return;
@@ -2466,9 +2466,8 @@ void FrameLoader::continueLoadAfterWillSubmitForm()
 
 void FrameLoader::didFirstLayout()
 {
-    if (Page* page = m_frame->page())
-        if (isBackForwardLoadType(m_loadType) && page->backForwardList())
-            history()->restoreScrollPositionAndViewState();
+    if (m_frame->page() && isBackForwardLoadType(m_loadType))
+        history()->restoreScrollPositionAndViewState();
 
     if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
         m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
@@ -2933,7 +2932,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest&, Pass
             if (Page* page = m_frame->page()) {
                 Frame* mainFrame = page->mainFrame();
                 if (HistoryItem* resetItem = mainFrame->loader()->history()->currentItem()) {
-                    page->backForwardList()->goToItem(resetItem);
+                    page->backForward()->setCurrentItem(resetItem);
                     Settings* settings = m_frame->settings();
                     page->setGlobalHistoryItem((!settings || settings->privateBrowsingEnabled()) ? 0 : resetItem);
                 }
@@ -3114,7 +3113,7 @@ void FrameLoader::checkDidPerformFirstNavigation()
     if (!page)
         return;
 
-    if (!m_didPerformFirstNavigation && page->backForwardList()->currentItem() && !page->backForwardList()->backItem() && !page->backForwardList()->forwardItem()) {
+    if (!m_didPerformFirstNavigation && page->backForward()->currentItem() && !page->backForward()->backItem() && !page->backForward()->forwardItem()) {
         m_didPerformFirstNavigation = true;
         m_client->didPerformFirstNavigation();
     }
