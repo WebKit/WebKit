@@ -70,12 +70,11 @@ void LauncherWindow::init()
     resize(800, 600);
 #endif
 
-    m_inspector = new WebInspector(splitter);
+    m_inspector = new WebInspector;
 #ifndef QT_NO_PROPERTIES
     if (!m_windowOptions.inspectorUrl.isEmpty())
         m_inspector->setProperty("_q_inspectorUrl", m_windowOptions.inspectorUrl);
 #endif
-    m_inspector->hide();
     connect(this, SIGNAL(destroyed()), m_inspector, SLOT(deleteLater()));
 
     // the zoom values are chosen to be like in Mozilla Firefox 3
@@ -130,6 +129,7 @@ void LauncherWindow::initializeView()
 
     applyPrefs();
 
+    splitter->addWidget(m_inspector);
     m_inspector->setPage(page());
     m_inspector->hide();
 
