@@ -1,3 +1,18 @@
+2010-10-30  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] IM: Don't manipulate selection via RenderTextControl
+        https://bugs.webkit.org/show_bug.cgi?id=48700
+
+        Go directly through the Frame's SelectionController instead.
+
+        No new tests, this is covered by tst_QWebPage::inputMethods.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPage::inputMethodQuery):
+
 2010-10-29  Daniel Bates  <dbates@rim.com>
 
         No review, rolling out 70971.

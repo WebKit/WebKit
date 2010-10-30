@@ -1024,9 +1024,9 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         return;
     }
 
-    RenderObject* renderer = 0;
+    Node* node = 0;
     if (frame->selection()->rootEditableElement())
-        renderer = frame->selection()->rootEditableElement()->shadowAncestorNode()->renderer();
+        node = frame->selection()->rootEditableElement()->shadowAncestorNode();
 
     Vector<CompositionUnderline> underlines;
     bool hasSelection = false;
@@ -1054,8 +1054,8 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
         case QInputMethodEvent::Selection: {
             hasSelection = true;
             // A selection in the inputMethodEvent is always reflected in the visible text
-            if (renderer && renderer->node())
-                setSelectionRange(renderer->node(), qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
+            if (node)
+                setSelectionRange(node, qMin(a.start, (a.start + a.length)), qMax(a.start, (a.start + a.length)));
 
             if (!ev->preeditString().isEmpty()) {
                 editor->setComposition(ev->preeditString(), underlines,
@@ -1319,14 +1319,11 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
             return QVariant(QFont());
         }
         case Qt::ImCursorPosition: {
-            if (renderTextControl) {
-                if (editor->hasComposition()) {
-                    RefPtr<Range> range = editor->compositionRange();
-                    return QVariant(renderTextControl->selectionEnd() - TextIterator::rangeLength(range.get()));
-                }
-                return QVariant(frame->selection()->extent().offsetInContainerNode());
+            if (editor->hasComposition()) {
+                RefPtr<Range> range = editor->compositionRange();
+                return QVariant(frame->selection()->end().offsetInContainerNode() - TextIterator::rangeLength(range.get()));
             }
-            return QVariant();
+            return QVariant(frame->selection()->extent().offsetInContainerNode());
         }
         case Qt::ImSurroundingText: {
             if (renderTextControl) {
@@ -1340,23 +1337,20 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
         }
         case Qt::ImCurrentSelection: {
             if (renderTextControl) {
-                int start = renderTextControl->selectionStart();
-                int end = renderTextControl->selectionEnd();
+                int start = frame->selection()->start().offsetInContainerNode();
+                int end = frame->selection()->end().offsetInContainerNode();
                 if (end > start)
-                    return QVariant(QString(renderTextControl->text()).mid(start,end-start));
+                    return QVariant(QString(renderTextControl->text()).mid(start, end - start));
             }
             return QVariant();
 
         }
         case Qt::ImAnchorPosition: {
-            if (renderTextControl) {
-                if (editor->hasComposition()) {
-                    RefPtr<Range> range = editor->compositionRange();
-                    return QVariant(renderTextControl->selectionStart() - TextIterator::rangeLength(range.get()));
-                }
-                return QVariant(frame->selection()->base().offsetInContainerNode());
+            if (editor->hasComposition()) {
+                RefPtr<Range> range = editor->compositionRange();
+                return QVariant(frame->selection()->start().offsetInContainerNode() - TextIterator::rangeLength(range.get()));
             }
-            return QVariant();
+            return QVariant(frame->selection()->base().offsetInContainerNode());
         }
         case Qt::ImMaximumTextLength: {
             if (frame->selection()->isContentEditable()) {
