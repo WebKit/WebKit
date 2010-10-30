@@ -24,45 +24,39 @@
 #include "SVGNumberList.h"
 
 #include "SVGParserUtilities.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-SVGNumberList::SVGNumberList(const QualifiedName& attributeName)
-    : SVGPODList<float>(attributeName)
-{
-}
-
 void SVGNumberList::parse(const String& value)
 {
-    ExceptionCode ec = 0;
-    clear(ec);
+    clear();
 
-    float number = 0.0f;
-   
+    float number = 0;
     const UChar* ptr = value.characters();
     const UChar* end = ptr + value.length();
+
     // The spec strangely doesn't allow leading whitespace.  We might choose to violate that intentionally. (section 4.1)
     while (ptr < end) {
         if (!parseNumber(ptr, end, number))
             return;
-        appendItem(number, ec);
+        append(number);
     }
 }
 
 String SVGNumberList::valueAsString() const
 {
-    String result;
+    StringBuilder builder;
 
-    ExceptionCode ec = 0;
-    for (unsigned int i = 0; i < numberOfItems(); ++i) {
+    unsigned size = this->size();
+    for (unsigned i = 0; i < size; ++i) {
         if (i > 0)
-            result += ", ";
+            builder.append(", ");
 
-        result += String::number(getItem(i, ec));
-        ASSERT(ec == 0);
+        builder.append(String::number(at(i)));
     }
 
-    return result;
+    return builder.toString();
 }
 
 }

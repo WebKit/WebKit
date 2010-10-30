@@ -22,23 +22,18 @@
 #define SVGNumberList_h
 
 #if ENABLE(SVG)
-#include "SVGList.h"
-#include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-    class SVGNumberList : public SVGPODList<float> {
-    public:
-        static PassRefPtr<SVGNumberList> create(const QualifiedName& attributeName) { return adoptRef(new SVGNumberList(attributeName)); }
+class SVGNumberList : public Vector<float> {
+public:
+    SVGNumberList() { }
 
-        void parse(const String& value);
- 
-        String valueAsString() const;
-
-    private:
-        SVGNumberList(const QualifiedName&);
-    };
+    void parse(const String&);
+    String valueAsString() const;
+};
 
 } // namespace WebCore
 

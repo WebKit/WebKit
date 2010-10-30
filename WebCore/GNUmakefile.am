@@ -3053,6 +3053,8 @@ webcore_sources += \
 	WebCore/svg/SVGAnimatedInteger.h \
 	WebCore/svg/SVGAnimatedLength.h \
 	WebCore/svg/SVGAnimatedLengthList.h \
+	WebCore/svg/SVGAnimatedNumber.h \
+	WebCore/svg/SVGAnimatedNumberList.h \
 	WebCore/svg/SVGAnimatedPathData.cpp \
 	WebCore/svg/SVGAnimatedPathData.h \
 	WebCore/svg/SVGAnimatedPoints.cpp \

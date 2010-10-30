@@ -40,8 +40,8 @@ private:
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
     DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::dxAttr, float, Dx, dx)
-    DECLARE_ANIMATED_PROPERTY(SVGFEOffsetElement, SVGNames::dyAttr, float, Dy, dy)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEOffsetElement, SVGNames::dxAttr, float, Dx, dx)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEOffsetElement, SVGNames::dyAttr, float, Dy, dy)
 };
 
 } // namespace WebCore

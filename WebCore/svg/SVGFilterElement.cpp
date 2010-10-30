@@ -63,13 +63,13 @@ PassRefPtr<SVGFilterElement> SVGFilterElement::create(const QualifiedName& tagNa
 const AtomicString& SVGFilterElement::filterResXIdentifier()
 {
     DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGFilterResX"));
-    return s_identifier;    
+    return s_identifier;
 }
 
 const AtomicString& SVGFilterElement::filterResYIdentifier()
 {
     DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGFilterResY"));
-    return s_identifier;    
+    return s_identifier;
 }
 
 void SVGFilterElement::setFilterRes(unsigned long filterResX, unsigned long filterResY)

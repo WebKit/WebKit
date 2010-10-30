@@ -33,7 +33,6 @@ namespace WebCore {
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
     , m_type(FECOMPONENTTRANSFER_TYPE_UNKNOWN)
-    , m_tableValues(SVGNumberList::create(SVGNames::tableValuesAttr))
     , m_slope(1)
     , m_amplitude(1)
     , m_exponent(1)
@@ -54,10 +53,12 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(Attribute* attr)
             setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_LINEAR);
         else if (value == "gamma")
             setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_GAMMA);
-    }
-    else if (attr->name() == SVGNames::tableValuesAttr)
-        tableValuesBaseValue()->parse(value);
-    else if (attr->name() == SVGNames::slopeAttr)
+    } else if (attr->name() == SVGNames::tableValuesAttr) {
+        SVGNumberList newList;
+        newList.parse(value);
+        detachAnimatedTableValuesListWrappers(newList.size());
+        tableValuesBaseValue() = newList;
+    } else if (attr->name() == SVGNames::slopeAttr)
         setSlopeBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::interceptAttr)
         setInterceptBaseValue(value.toFloat());
@@ -105,18 +106,13 @@ void SVGComponentTransferFunctionElement::synchronizeProperty(const QualifiedNam
 ComponentTransferFunction SVGComponentTransferFunctionElement::transferFunction() const
 {
     ComponentTransferFunction func;
-    func.type = (ComponentTransferType) type();
+    func.type = static_cast<ComponentTransferType>(type());
     func.slope = slope();
     func.intercept = intercept();
     func.amplitude = amplitude();
     func.exponent = exponent();
     func.offset = offset();
-    SVGNumberList* numbers = tableValues();
-
-    ExceptionCode ec = 0;
-    unsigned int nr = numbers->numberOfItems();
-    for (unsigned int i = 0; i < nr; i++)
-        func.tableValues.append(numbers->getItem(i, ec));
+    func.tableValues = tableValues();
     return func;
 }
 

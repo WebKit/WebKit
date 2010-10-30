@@ -171,10 +171,10 @@ shouldBeEqualToString("luminanceToAlphaElement.getAttribute('type')", "matrix");
 function executeTest() {
     matrixElement.type.baseVal = SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX;
 
-    var matrixArray = new Array("0.33", "0.33", "0.33", "0", "0", "0.33", "0.33", "0.33", "0", "0", "0.33", "0.33", "0.33", "0", "0", "0.33", "0.33", "0.33", "0", "0");
+    var matrixArray = new Array(0.33, 0.33, 0.33, 0, 0, 0.33, 0.33, 0.33, 0, 0, 0.33, 0.33, 0.33, 0, 0, 0.33, 0.33, 0.33, 0, 0);
     matrixElement.values.baseVal.clear();
-    var number = rootSVGElement.createSVGNumber();
     for (var i = 0; i < matrixArray.length; ++i) {
+        var number = rootSVGElement.createSVGNumber();
         number.value = matrixArray[i];
         matrixElement.values.baseVal.appendItem(number, i);
     }
@@ -182,6 +182,7 @@ function executeTest() {
     saturateElement.type.baseVal = SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE;
 
     hueRotateElement.type.baseVal = SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_HUEROTATE;
+    var number = rootSVGElement.createSVGNumber();
     number.value = 90;
     hueRotateElement.values.baseVal.appendItem(number, 0);
 

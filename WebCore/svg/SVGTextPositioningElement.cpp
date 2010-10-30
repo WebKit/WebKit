@@ -34,7 +34,6 @@ namespace WebCore {
 
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document* document)
     : SVGTextContentElement(tagName, document)
-    , m_rotate(SVGNumberList::create(SVGNames::rotateAttr))
 {
 }
 
@@ -60,9 +59,12 @@ void SVGTextPositioningElement::parseMappedAttribute(Attribute* attr)
         newList.parse(attr->value(), LengthModeHeight);
         detachAnimatedDyListWrappers(newList.size());
         dyBaseValue() = newList;
-    } else if (attr->name() == SVGNames::rotateAttr)
-        rotateBaseValue()->parse(attr->value());
-    else
+    } else if (attr->name() == SVGNames::rotateAttr) {
+        SVGNumberList newList;
+        newList.parse(attr->value());
+        detachAnimatedRotateListWrappers(newList.size());
+        rotateBaseValue() = newList;
+    } else
         SVGTextContentElement::parseMappedAttribute(attr);
 }
 

@@ -2455,7 +2455,6 @@ my %nativeType = (
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "IDBKey" => "RefPtr<IDBKey>",
     "SVGMatrix" => "AffineTransform",
-    "SVGNumber" => "float",
     "SVGPaintType" => "SVGPaint::SVGPaintType",
     "SVGPreserveAspectRatio" => "SVGPreserveAspectRatio",
     "SVGPoint" => "FloatPoint",
@@ -2528,7 +2527,7 @@ sub JSValueToNative
 
     return "$value.toBoolean(exec)" if $type eq "boolean";
     return "$value.toNumber(exec)" if $type eq "double";
-    return "$value.toFloat(exec)" if $type eq "float" or $type eq "SVGNumber";
+    return "$value.toFloat(exec)" if $type eq "float";
     return "$value.toInt32(exec)" if $type eq "long";
     return "$value.toUInt32(exec)" if $type eq "unsigned long" or $type eq "unsigned short";
     return "static_cast<$type>($value.toInteger(exec))" if $type eq "long long" or $type eq "unsigned long long";

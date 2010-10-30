@@ -32,7 +32,6 @@ namespace WebCore {
 inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m_type(FECOLORMATRIX_TYPE_UNKNOWN)
-    , m_values(SVGNumberList::create(SVGNames::valuesAttr))
 {
 }
 
@@ -56,9 +55,12 @@ void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)
     }
     else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
-    else if (attr->name() == SVGNames::valuesAttr)
-        valuesBaseValue()->parse(value);
-    else
+    else if (attr->name() == SVGNames::valuesAttr) {
+        SVGNumberList newList;
+        newList.parse(value);
+        detachAnimatedValuesListWrappers(newList.size());
+        valuesBaseValue() = newList;
+    } else
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
@@ -99,7 +101,6 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
         return 0;
 
     Vector<float> filterValues;
-    SVGNumberList* numbers = values();
     const ColorMatrixType filterType(static_cast<ColorMatrixType>(type()));
 
     // Use defaults if values is empty (SVG 1.1 15.10).
@@ -119,12 +120,8 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
             break;
         }
     } else {
-        size_t size = numbers->numberOfItems();
-        for (size_t i = 0; i < size; i++) {
-            ExceptionCode ec = 0;
-            filterValues.append(numbers->getItem(i, ec));
-        }
-        size = filterValues.size();
+        filterValues = values();
+        unsigned size = filterValues.size();
 
         if ((filterType == FECOLORMATRIX_TYPE_MATRIX && size != 20)
             || (filterType == FECOLORMATRIX_TYPE_HUEROTATE && size != 1)

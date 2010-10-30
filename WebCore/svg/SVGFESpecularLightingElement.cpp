@@ -48,13 +48,13 @@ PassRefPtr<SVGFESpecularLightingElement> SVGFESpecularLightingElement::create(co
 const AtomicString& SVGFESpecularLightingElement::kernelUnitLengthXIdentifier()
 {
     DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGKernelUnitLengthX"));
-    return s_identifier;    
+    return s_identifier;
 }
 
 const AtomicString& SVGFESpecularLightingElement::kernelUnitLengthYIdentifier()
 {
     DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGKernelUnitLengthY"));
-    return s_identifier;    
+    return s_identifier;
 }
 
 void SVGFESpecularLightingElement::parseMappedAttribute(Attribute* attr)

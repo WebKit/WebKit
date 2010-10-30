@@ -46,7 +46,7 @@ namespace WebCore {
         DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::yAttr, SVGLengthList, Y, y)
         DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::dxAttr, SVGLengthList, Dx, dx)
         DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::dyAttr, SVGLengthList, Dy, dy)
-        DECLARE_ANIMATED_PROPERTY(SVGTextPositioningElement, SVGNames::rotateAttr, SVGNumberList*, Rotate, rotate)
+        DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGTextPositioningElement, SVGNames::rotateAttr, SVGNumberList, Rotate, rotate)
     };
 
 } // namespace WebCore

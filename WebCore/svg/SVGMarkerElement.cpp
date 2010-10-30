@@ -55,13 +55,13 @@ PassRefPtr<SVGMarkerElement> SVGMarkerElement::create(const QualifiedName& tagNa
 const AtomicString& SVGMarkerElement::orientTypeIdentifier()
 {
     DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrientType"));
-    return s_identifier;    
+    return s_identifier;
 }
 
 const AtomicString& SVGMarkerElement::orientAngleIdentifier()
 {
     DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGOrientAngle"));
-    return s_identifier;    
+    return s_identifier;
 }
 
 AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const

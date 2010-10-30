@@ -45,8 +45,8 @@ private:
     static const AtomicString& stdDeviationYIdentifier();
 
     DECLARE_ANIMATED_PROPERTY(SVGFEGaussianBlurElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, stdDeviationXIdentifier(), float, StdDeviationX, stdDeviationX)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, stdDeviationYIdentifier(), float, StdDeviationY, stdDeviationY)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, stdDeviationXIdentifier(), float, StdDeviationX, stdDeviationX)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEGaussianBlurElement, SVGNames::stdDeviationAttr, stdDeviationYIdentifier(), float, StdDeviationY, stdDeviationY)
 };
 
 } // namespace WebCore

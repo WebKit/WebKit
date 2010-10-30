@@ -22,7 +22,7 @@
 #define SVGStopElement_h
 
 #if ENABLE(SVG)
-#include "SVGNames.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
@@ -44,7 +44,7 @@ namespace WebCore {
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
-        DECLARE_ANIMATED_PROPERTY(SVGStopElement, SVGNames::offsetAttr, float, Offset, offset)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGStopElement, SVGNames::offsetAttr, float, Offset, offset)
     };
 
 } // namespace WebCore

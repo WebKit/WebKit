@@ -181,18 +181,25 @@ shouldBe("Math.round(saturateElement.values.baseVal.getItem(0).value * 1000)", "
 shouldBe("Math.round(hueRotateElement.values.baseVal.getItem(0).value * 1000)", "10000");
 
 function executeTest() {
-    var number = rootSVGElement.createSVGNumber();
+    var number1 = rootSVGElement.createSVGNumber();
+    number1.value = 0.33;
+    matrixElement.values.baseVal.replaceItem(number1, 0);
 
-    number.value = 0.33;
-    matrixElement.values.baseVal.replaceItem(number, 0);
-    matrixElement.values.baseVal.replaceItem(number, 1);
-    matrixElement.values.baseVal.replaceItem(number, 2);
+    var number2 = rootSVGElement.createSVGNumber();
+    number2.value = 0.33;
+    matrixElement.values.baseVal.replaceItem(number2, 1);
 
-    number.value = 0.25;
-    saturateElement.values.baseVal.replaceItem(number, 0);
+    var number3 = rootSVGElement.createSVGNumber();
+    number3.value = 0.33;
+    matrixElement.values.baseVal.replaceItem(number3, 2);
 
-    number.value = 90;
-    hueRotateElement.values.baseVal.replaceItem(number, 0);
+    var number4 = rootSVGElement.createSVGNumber();
+    number4.value = 0.25;
+    saturateElement.values.baseVal.replaceItem(number4, 0);
+
+    var number5 = rootSVGElement.createSVGNumber();
+    number5.value = 90;
+    hueRotateElement.values.baseVal.replaceItem(number5, 0);
 
     shouldBeEqualToString("SVGNumberListToString(matrixElement.values.baseVal)", "0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 ");
     shouldBe("saturateElement.values.baseVal.getItem(0).value", "0.25");

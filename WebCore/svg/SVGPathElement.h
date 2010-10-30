@@ -105,7 +105,7 @@ namespace WebCore {
 
         mutable RefPtr<SVGPathSegList> m_pathSegList;
 
-        DECLARE_ANIMATED_PROPERTY(SVGPathElement, SVGNames::pathLengthAttr, float, PathLength, pathLength)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPathElement, SVGNames::pathLengthAttr, float, PathLength, pathLength)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

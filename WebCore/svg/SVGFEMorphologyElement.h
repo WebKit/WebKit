@@ -26,9 +26,6 @@
 
 namespace WebCore {
 
-extern char SVGRadiusXAttrIdentifier[];
-extern char SVGRadiusYAttrIdentifier[];
-
 class SVGFEMorphologyElement : public SVGFilterPrimitiveStandardAttributes {
 public:
     static PassRefPtr<SVGFEMorphologyElement> create(const QualifiedName&, Document*);
@@ -48,8 +45,8 @@ private:
 
     DECLARE_ANIMATED_PROPERTY(SVGFEMorphologyElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEMorphologyElement, SVGNames::operatorAttr, int, _operator, _operator)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEMorphologyElement, SVGNames::radiusAttr, SVGRadiusXAttrIdentifier, float, RadiusX, radiusX)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEMorphologyElement, SVGNames::radiusAttr, SVGRadiusYAttrIdentifier, float, RadiusY, radiusY)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEMorphologyElement, SVGNames::radiusAttr, radiusXIdentifier(), float, RadiusX, radiusX)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEMorphologyElement, SVGNames::radiusAttr, radiusYIdentifier(), float, RadiusY, radiusY)
 };
 
 } // namespace WebCore

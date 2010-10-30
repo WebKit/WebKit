@@ -35,12 +35,8 @@
 
 namespace WebCore {
 
-char SVGKernelUnitLengthXAttrIdentifier[] = "SVGKernelUnitLengthXAttr";
-char SVGKernelUnitLengthYAttrIdentifier[] = "SVGKernelUnitLengthYAttr";
-
 inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
-    , m_kernelMatrix(SVGNumberList::create(SVGNames::kernelMatrixAttr))
     , m_edgeMode(EDGEMODE_DUPLICATE)
 {
 }
@@ -48,6 +44,18 @@ inline SVGFEConvolveMatrixElement::SVGFEConvolveMatrixElement(const QualifiedNam
 PassRefPtr<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGFEConvolveMatrixElement(tagName, document));
+}
+
+const AtomicString& SVGFEConvolveMatrixElement::kernelUnitLengthXIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGKernelUnitLengthX"));
+    return s_identifier;
+}
+
+const AtomicString& SVGFEConvolveMatrixElement::kernelUnitLengthYIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGKernelUnitLengthY"));
+    return s_identifier;
 }
 
 void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
@@ -68,9 +76,12 @@ void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
             setEdgeModeBaseValue(EDGEMODE_WRAP);
         else if (value == "none")
             setEdgeModeBaseValue(EDGEMODE_NONE);
-    } else if (attr->name() == SVGNames::kernelMatrixAttr)
-        kernelMatrixBaseValue()->parse(value);
-    else if (attr->name() == SVGNames::divisorAttr)
+    } else if (attr->name() == SVGNames::kernelMatrixAttr) {
+        SVGNumberList newList;
+        newList.parse(value);
+        detachAnimatedKernelMatrixListWrappers(newList.size());
+        kernelMatrixBaseValue() = newList;
+    } else if (attr->name() == SVGNames::divisorAttr)
         setDivisorBaseValue(value.toFloat());
     else if (attr->name() == SVGNames::biasAttr)
         setBiasBaseValue(value.toFloat());
@@ -131,22 +142,16 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
     if (!input1)
         return 0;
 
-    Vector<float> kernelMatrixValues;
-    SVGNumberList* numbers = kernelMatrix();
-
-    ExceptionCode ec = 0;
-    int numberOfItems = numbers->numberOfItems();
-    for (int i = 0; i < numberOfItems; ++i)
-        kernelMatrixValues.append(numbers->getItem(i, ec));
-
     int orderXValue = orderX();
     int orderYValue = orderY();
     if (!hasAttribute(SVGNames::orderAttr)) {
         orderXValue = 3;
         orderYValue = 3;
     }
+    SVGNumberList& kernelMatrix = this->kernelMatrix();
+    int kernelMatrixSize = kernelMatrix.size();
     // The spec says this is a requirement, and should bail out if fails
-    if (orderXValue * orderYValue != numberOfItems)
+    if (orderXValue * orderYValue != kernelMatrixSize)
         return 0;
 
     int targetXValue = targetX();
@@ -166,8 +171,8 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
     if (hasAttribute(SVGNames::divisorAttr) && !divisorValue)
         return 0;
     if (!hasAttribute(SVGNames::divisorAttr)) {
-        for (int i = 0; i < numberOfItems; ++i)
-            divisorValue += kernelMatrixValues[i];
+        for (int i = 0; i < kernelMatrixSize; ++i)
+            divisorValue += kernelMatrix.at(i);
         if (!divisorValue)
             divisorValue = 1;
     }
@@ -175,7 +180,7 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
     RefPtr<FilterEffect> effect = FEConvolveMatrix::create(
                     IntSize(orderXValue, orderYValue), divisorValue,
                     bias(), IntPoint(targetXValue, targetYValue), static_cast<EdgeModeType>(edgeMode()),
-                    FloatPoint(kernelUnitLengthX(), kernelUnitLengthX()), preserveAlpha(), kernelMatrixValues);
+                    FloatPoint(kernelUnitLengthX(), kernelUnitLengthX()), preserveAlpha(), kernelMatrix);
     effect->inputEffects().append(input1);
     return effect.release();
 }

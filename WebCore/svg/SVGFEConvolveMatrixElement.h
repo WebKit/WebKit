@@ -41,17 +41,20 @@ private:
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
+    static const AtomicString& kernelUnitLengthXIdentifier();
+    static const AtomicString& kernelUnitLengthYIdentifier();
+
     DECLARE_ANIMATED_PROPERTY(SVGFEConvolveMatrixElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::orderXAttr, long, OrderX, orderX)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::orderYAttr, long, OrderY, orderY)
-    DECLARE_ANIMATED_PROPERTY(SVGFEConvolveMatrixElement, SVGNames::kernelMatrixAttr, SVGNumberList*, KernelMatrix, kernelMatrix)
-    DECLARE_ANIMATED_PROPERTY(SVGFEConvolveMatrixElement, SVGNames::divisorAttr, float, Divisor, divisor)
-    DECLARE_ANIMATED_PROPERTY(SVGFEConvolveMatrixElement, SVGNames::biasAttr, float, Bias, bias)
+    DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::kernelMatrixAttr, SVGNumberList, KernelMatrix, kernelMatrix)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::divisorAttr, float, Divisor, divisor)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::biasAttr, float, Bias, bias)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::targetXAttr, long, TargetX, targetX)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::targetYAttr, long, TargetY, targetY)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::operatorAttr, int, EdgeMode, edgeMode)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEConvolveMatrixElement, SVGNames::kernelUnitLengthAttr, SVGKernelUnitLengthXIdentifier, float, KernelUnitLengthX, kernelUnitLengthX)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEConvolveMatrixElement, SVGNames::kernelUnitLengthAttr, SVGKernelUnitLengthYIdentifier, float, KernelUnitLengthY, kernelUnitLengthY)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEConvolveMatrixElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), float, KernelUnitLengthX, kernelUnitLengthX)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEConvolveMatrixElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), float, KernelUnitLengthY, kernelUnitLengthY)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEConvolveMatrixElement, SVGNames::preserveAlphaAttr, bool, PreserveAlpha, preserveAlpha)
 };
 

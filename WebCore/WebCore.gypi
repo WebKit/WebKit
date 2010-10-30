@@ -3986,6 +3986,8 @@
             'svg/SVGAnimatedInteger.h',
             'svg/SVGAnimatedLength.h',
             'svg/SVGAnimatedLengthList.h',
+            'svg/SVGAnimatedNumber.h',
+            'svg/SVGAnimatedNumberList.h',
             'svg/SVGAnimatedPathData.cpp',
             'svg/SVGAnimatedPathData.h',
             'svg/SVGAnimatedPoints.cpp',

@@ -31,7 +31,7 @@ rectElement.setAttribute("height", "200");
 rectElement.setAttribute("filter", "url(#myFilter)");
 rootSVGElement.appendChild(rectElement);
 
-<!-- We should multiply and round the value of baseFrequency otherwise the expected value cannot be precisely represented as a floating point number and the comparison will fail.-->
+// We should multiply and round the value of baseFrequency otherwise the expected value cannot be precisely represented as a floating point number and the comparison will fail.
 shouldBe("Math.round(turbulence.baseFrequencyX.baseVal * 1000)", "70");
 shouldBe("Math.round(turbulence.baseFrequencyY.baseVal * 1000)", "70");
 

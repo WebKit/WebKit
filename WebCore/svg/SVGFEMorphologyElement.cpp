@@ -28,9 +28,6 @@
 
 namespace WebCore {
 
-char SVGRadiusXAttrIdentifier[] = "SVGRadiusXAttr";
-char SVGRadiusYAttrIdentifier[] = "SVGRadiusYAttr";
-
 inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
     , m__operator(FEMORPHOLOGY_OPERATOR_ERODE)
@@ -40,6 +37,18 @@ inline SVGFEMorphologyElement::SVGFEMorphologyElement(const QualifiedName& tagNa
 PassRefPtr<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& tagName, Document* document)
 {
     return adoptRef(new SVGFEMorphologyElement(tagName, document));
+}
+
+const AtomicString& SVGFEMorphologyElement::radiusXIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGRadiusX"));
+    return s_identifier;
+}
+
+const AtomicString& SVGFEMorphologyElement::radiusYIdentifier()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, s_identifier, ("SVGRadiusY"));
+    return s_identifier;
 }
 
 void SVGFEMorphologyElement::setRadius(float x, float y)

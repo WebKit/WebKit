@@ -22,9 +22,9 @@
 #define SVGComponentTransferFunctionElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "FEComponentTransfer.h"
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGNumberList.h"
-#include "FEComponentTransfer.h"
 
 namespace WebCore {
 
@@ -40,12 +40,12 @@ namespace WebCore {
         
     private:
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::typeAttr, int, Type, type)
-        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::tableValuesAttr, SVGNumberList*, TableValues, tableValues)
-        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::slopeAttr, float, Slope, slope)
-        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::interceptAttr, float, Intercept, intercept)
-        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::amplitudeAttr, float, Amplitude, amplitude)
-        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::exponentAttr, float, Exponent, exponent)
-        DECLARE_ANIMATED_PROPERTY(SVGComponentTransferFunctionElement, SVGNames::offsetAttr, float, Offset, offset)
+        DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::tableValuesAttr, SVGNumberList, TableValues, tableValues)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::slopeAttr, float, Slope, slope)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::interceptAttr, float, Intercept, intercept)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::amplitudeAttr, float, Amplitude, amplitude)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::exponentAttr, float, Exponent, exponent)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGComponentTransferFunctionElement, SVGNames::offsetAttr, float, Offset, offset)
     };
 
 } // namespace WebCore

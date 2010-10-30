@@ -26,6 +26,7 @@
 #include "SVGAngle.h"
 #include "SVGLength.h"
 #include "SVGLengthList.h"
+#include "SVGNumberList.h"
 #include "SVGPreserveAspectRatio.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -76,6 +77,14 @@ template<>
 struct SVGPropertyTraits<float> {
     static float initialValue() { return 0; }
     static String toString(float type) { return String::number(type); }
+};
+
+template<>
+struct SVGPropertyTraits<SVGNumberList> {
+    typedef float ListItemType;
+
+    static SVGNumberList initialValue() { return SVGNumberList(); }
+    static String toString(const SVGNumberList& type) { return type.valueAsString(); }
 };
 
 template<>

@@ -2378,6 +2378,8 @@ HEADERS += \
     svg/SVGAnimatedInteger.h \
     svg/SVGAnimatedLength.h \
     svg/SVGAnimatedLengthList.h \
+    svg/SVGAnimatedNumber.h \
+    svg/SVGAnimatedNumberList.h \
     svg/SVGAnimatedPathData.h \
     svg/SVGAnimatedPoints.h \
     svg/SVGAnimatedRect.h \

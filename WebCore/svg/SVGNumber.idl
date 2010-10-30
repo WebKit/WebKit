@@ -22,8 +22,8 @@
 
 module svg {
 
-    interface [Conditional=SVG, PODType=float] SVGNumber {
-        attribute float value;
+    interface [Conditional=SVG] SVGNumber {
+        attribute [StrictTypeChecking] float value;
     };
 
 }

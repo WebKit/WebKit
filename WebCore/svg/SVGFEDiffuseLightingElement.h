@@ -47,10 +47,10 @@ private:
     static const AtomicString& kernelUnitLengthYIdentifier();
 
     DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::inAttr, String, In1, in1)
-    DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::diffuseConstantAttr, float, DiffuseConstant, diffuseConstant)
-    DECLARE_ANIMATED_PROPERTY(SVGFEDiffuseLightingElement, SVGNames::surfaceScaleAttr, float, SurfaceScale, surfaceScale)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), float, KernelUnitLengthX, kernelUnitLengthX)
-    DECLARE_ANIMATED_PROPERTY_MULTIPLE_WRAPPERS(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), float, KernelUnitLengthY, kernelUnitLengthY)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDiffuseLightingElement, SVGNames::diffuseConstantAttr, float, DiffuseConstant, diffuseConstant)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEDiffuseLightingElement, SVGNames::surfaceScaleAttr, float, SurfaceScale, surfaceScale)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), float, KernelUnitLengthX, kernelUnitLengthX)
+    DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFEDiffuseLightingElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), float, KernelUnitLengthY, kernelUnitLengthY)
 
     PassRefPtr<LightSource> findLights() const;
 };
