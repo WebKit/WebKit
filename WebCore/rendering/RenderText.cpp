@@ -1237,18 +1237,22 @@ IntRect RenderText::linesBoundingBox() const
     ASSERT(!firstTextBox() == !lastTextBox());  // Either both are null or both exist.
     if (firstTextBox() && lastTextBox()) {
         // Return the width of the minimal left side and the maximal right side.
-        int leftSide = 0;
-        int rightSide = 0;
+        int logicalLeftSide = 0;
+        int logicalRightSide = 0;
         for (InlineTextBox* curr = firstTextBox(); curr; curr = curr->nextTextBox()) {
-            if (curr == firstTextBox() || curr->x() < leftSide)
-                leftSide = curr->x();
-            if (curr == firstTextBox() || curr->x() + curr->logicalWidth() > rightSide)
-                rightSide = curr->x() + curr->logicalWidth();
+            if (curr == firstTextBox() || curr->logicalLeft() < logicalLeftSide)
+                logicalLeftSide = curr->logicalLeft();
+            if (curr == firstTextBox() || curr->logicalRight() > logicalRightSide)
+                logicalRightSide = curr->logicalRight();
         }
-        result.setWidth(rightSide - leftSide);
-        result.setX(leftSide);
-        result.setHeight(lastTextBox()->y() + lastTextBox()->logicalHeight() - firstTextBox()->y());
-        result.setY(firstTextBox()->y());
+        
+        bool isHorizontal = style()->isHorizontalWritingMode();
+        
+        int x = isHorizontal ? logicalLeftSide : firstTextBox()->x();
+        int y = isHorizontal ? firstTextBox()->y() : logicalLeftSide;
+        int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastTextBox()->logicalBottom() - x;
+        int height = isHorizontal ? lastTextBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
+        result = IntRect(x, y, width, height);
     }
 
     return result;

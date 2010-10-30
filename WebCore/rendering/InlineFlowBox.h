@@ -182,15 +182,17 @@ public:
     int bottomVisibleOverflow() const { return std::max(bottomLayoutOverflow(), bottomVisualOverflow()); }
     int leftVisibleOverflow() const { return std::min(leftLayoutOverflow(), leftVisualOverflow()); }
     int rightVisibleOverflow() const { return std::max(rightLayoutOverflow(), rightVisualOverflow()); }
+    int logicalLeftVisibleOverflow() const { return std::min(logicalLeftLayoutOverflow(), logicalLeftVisualOverflow()); }
+    int logicalRightVisibleOverflow() const { return std::max(logicalRightLayoutOverflow(), logicalRightVisualOverflow()); }
     int logicalTopVisibleOverflow() const { return std::min(logicalTopLayoutOverflow(), logicalTopVisualOverflow()); }
     int logicalBottomVisibleOverflow() const { return std::max(logicalBottomLayoutOverflow(), logicalBottomVisualOverflow()); }
 
     IntRect visibleOverflowRect() const { return m_overflow ? m_overflow->visibleOverflowRect() : IntRect(m_x, m_y, width(), height());  }
 
     int topLayoutOverflow() const { return m_overflow ? m_overflow->topLayoutOverflow() : m_y; }
-    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : m_y + logicalHeight(); }
+    int bottomLayoutOverflow() const { return m_overflow ? m_overflow->bottomLayoutOverflow() : m_y + height(); }
     int leftLayoutOverflow() const { return m_overflow ? m_overflow->leftLayoutOverflow() : m_x; }
-    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : m_x + m_logicalWidth; }
+    int rightLayoutOverflow() const { return m_overflow ? m_overflow->rightLayoutOverflow() : m_x + width(); }
     IntRect layoutOverflowRect() const { return m_overflow ? m_overflow->layoutOverflowRect() : IntRect(m_x, m_y, width(), height()); }
     int logicalLeftLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? leftLayoutOverflow() : topLayoutOverflow(); }
     int logicalRightLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? rightLayoutOverflow() : bottomLayoutOverflow(); }
@@ -198,9 +200,9 @@ public:
     int logicalBottomLayoutOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? bottomLayoutOverflow() : rightLayoutOverflow(); }
 
     int topVisualOverflow() const { return m_overflow ? m_overflow->topVisualOverflow() : m_y; }
-    int bottomVisualOverflow() const { return m_overflow ? m_overflow->bottomVisualOverflow() : m_y + logicalHeight(); }
+    int bottomVisualOverflow() const { return m_overflow ? m_overflow->bottomVisualOverflow() : m_y + height(); }
     int leftVisualOverflow() const { return m_overflow ? m_overflow->leftVisualOverflow() : m_x; }
-    int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : m_x + m_logicalWidth; }
+    int rightVisualOverflow() const { return m_overflow ? m_overflow->rightVisualOverflow() : m_x + width(); }
     IntRect visualOverflowRect() const { return m_overflow ? m_overflow->visualOverflowRect() : IntRect(m_x, m_y, width(), height()); }
     int logicalLeftVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? leftVisualOverflow() : topVisualOverflow(); }
     int logicalRightVisualOverflow() const { return renderer()->style()->isHorizontalWritingMode() ? rightVisualOverflow() : bottomVisualOverflow(); }
