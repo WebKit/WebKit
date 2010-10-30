@@ -1,3 +1,22 @@
+2010-10-30  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Use new width for height APIs in GTK+ 3.x
+        https://bugs.webkit.org/show_bug.cgi?id=48709
+
+        Use the new width for height APIs in GTK+ 3.x, since size-request
+        is deprecated.
+
+        For now we just return the same value for preferred and minimum
+        width/height, which should match the 2.x behavior. Probably we
+        could do something smarter for the minimum values.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_get_preferred_width): return our preferred width.
+        (webkit_web_view_get_preferred_height): return our preferred height.
+        (webkit_web_view_class_init): hook the new default handlers.
+
 2010-10-29  Daniel Bates  <dbates@rim.com>
 
         No review, rolling out 70971.
