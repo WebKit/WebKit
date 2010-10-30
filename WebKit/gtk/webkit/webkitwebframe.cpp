@@ -480,7 +480,7 @@ G_CONST_RETURN gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
     if (!coreFrame)
         return "";
 
-    String string = coreFrame->tree()->uniqueName();
+    String string = coreFrame->tree()->name();
     priv->name = g_strdup(string.utf8().data());
     return priv->name;
 }

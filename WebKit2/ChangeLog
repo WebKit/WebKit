@@ -1,5 +1,19 @@
 2010-10-29  Daniel Bates  <dbates@rim.com>
 
+        No review, rolling out 70971.
+        http://trac.webkit.org/changeset/70971
+        https://bugs.webkit.org/show_bug.cgi?id=6751
+
+        Rolling out changeset 70971 <http://trac.webkit.org/changeset/70971> since
+        it caused layout test failures on all bots. In particular, the
+        child count in a generated frame name differs after this patch. We need
+        to look into this further.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::name):
+
+2010-10-29  Daniel Bates  <dbates@rim.com>
+
         Reviewed by Adam Barth.
 
         For unnamed frames, window.name returns a generated name

@@ -486,7 +486,7 @@ WebFrame* WebFrame::fromFrameOwnerElement(const WebElement& element)
 
 WebString WebFrameImpl::name() const
 {
-    return m_frame->tree()->uniqueName();
+    return m_frame->tree()->name();
 }
 
 void WebFrameImpl::setName(const WebString& name)

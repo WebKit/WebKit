@@ -4,12 +4,10 @@
 Frame: 'left'
 --------
 PASS escape(window.frameElement.name) is "left"
-PASS escape(window.name) is "left"
 
 
 --------
 Frame: '<!--framePath //<!--frame1-->-->'
 --------
 PASS escape(window.frameElement.name) is ""
-PASS escape(window.name) is ""
 

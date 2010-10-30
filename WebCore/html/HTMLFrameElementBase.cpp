@@ -92,6 +92,8 @@ bool HTMLFrameElementBase::isURLAllowed() const
 
 void HTMLFrameElementBase::openURL(bool lockHistory, bool lockBackForwardList)
 {
+    ASSERT(!m_frameName.isEmpty());
+
     if (!isURLAllowed())
         return;
 
@@ -153,6 +155,9 @@ void HTMLFrameElementBase::setName()
     m_frameName = getAttribute(nameAttr);
     if (m_frameName.isNull())
         m_frameName = getIdAttribute();
+    
+    if (Frame* parentFrame = document()->frame())
+        m_frameName = parentFrame->tree()->uniqueChildName(m_frameName);
 }
 
 void HTMLFrameElementBase::setNameAndOpenURL()

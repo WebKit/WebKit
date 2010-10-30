@@ -71,7 +71,7 @@ private:
     void openURL(bool lockHistory = true, bool lockBackForwardList = true);
 
     AtomicString m_URL;
-    AtomicString m_frameName; // The actual frame name (may be empty).
+    AtomicString m_frameName;
 
     ScrollbarMode m_scrolling;
 

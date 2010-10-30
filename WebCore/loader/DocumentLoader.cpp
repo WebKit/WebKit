@@ -491,7 +491,7 @@ PassRefPtr<ArchiveResource> DocumentLoader::mainResource() const
     if (!mainResourceBuffer)
         mainResourceBuffer = SharedBuffer::create();
         
-    return ArchiveResource::create(mainResourceBuffer, r.url(), r.mimeType(), r.textEncodingName(), frame()->tree()->uniqueName());
+    return ArchiveResource::create(mainResourceBuffer, r.url(), r.mimeType(), r.textEncodingName(), frame()->tree()->name());
 }
 
 PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const

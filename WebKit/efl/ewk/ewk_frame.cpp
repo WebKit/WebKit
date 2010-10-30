@@ -474,7 +474,7 @@ const char* ewk_frame_name_get(const Evas_Object* o)
         return 0;
     }
 
-    WTF::String s = sd->frame->tree()->uniqueName();
+    WTF::String s = sd->frame->tree()->name();
     WTF::CString cs = s.utf8();
     sd->name = eina_stringshare_add_length(cs.data(), cs.length());
     return sd->name;

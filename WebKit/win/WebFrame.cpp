@@ -438,7 +438,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::name(
     if (!coreFrame)
         return E_FAIL;
 
-    *frameName = BString(coreFrame->tree()->uniqueName()).release();
+    *frameName = BString(coreFrame->tree()->name()).release();
     return S_OK;
 }
 
