@@ -29,6 +29,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "BackForwardController.h"
 #include "Chrome.h"
 #include "ContextMenu.h"
 #include "ContextMenuClient.h"

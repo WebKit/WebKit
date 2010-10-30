@@ -26,6 +26,7 @@
 #include "config.h"
 #include "History.h"
 
+#include "BackForwardController.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"

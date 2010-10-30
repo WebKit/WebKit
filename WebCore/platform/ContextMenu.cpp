@@ -30,6 +30,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "BackForwardController.h"
 #include "ContextMenuController.h"
 #include "ContextMenuClient.h"
 #include "CSSComputedStyleDeclaration.h"

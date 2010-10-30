@@ -27,6 +27,7 @@
 #include "DOMWindow.h"
 
 #include "AbstractDatabase.h"
+#include "BackForwardController.h"
 #include "Base64.h"
 #include "BarInfo.h"
 #include "BeforeUnloadEvent.h"
