@@ -49,7 +49,7 @@ void WebPlatformTouchPoint::encode(CoreIPC::ArgumentEncoder* encoder) const
 
 bool WebPlatformTouchPoint::decode(CoreIPC::ArgumentDecoder* decoder, WebPlatformTouchPoint& t)
 {
-    return decoder->decode(CoreIPC::Out(m_id, m_state, m_screenPosition, m_position));
+    return decoder->decode(CoreIPC::Out(t.m_id, t.m_state, t.m_screenPosition, t.m_position));
 }
 
 } // namespace WebKit
