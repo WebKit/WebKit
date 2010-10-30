@@ -1,3 +1,15 @@
+2010-10-28  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Ojan Vafai.
+
+        Needs a "LinuxEditingBehavior", perhaps with a better name
+        https://bugs.webkit.org/show_bug.cgi?id=36627
+
+        Adding support to Qt's DRTSupport class to test the newly introduced Unix editing behavior.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setEditingBehavior):
+
 2010-10-29  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Barth.

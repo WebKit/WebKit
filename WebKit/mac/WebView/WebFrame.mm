@@ -203,6 +203,8 @@ WebCore::EditingBehaviorType core(WebKitEditingBehavior behavior)
             return WebCore::EditingMacBehavior;
         case WebKitEditingWinBehavior:
             return WebCore::EditingWindowsBehavior;
+        case WebKitEditingUnixBehavior:
+            return WebCore::EditingUnixBehavior;
     }
     ASSERT_NOT_REACHED();
     return WebCore::EditingMacBehavior;

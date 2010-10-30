@@ -64,6 +64,27 @@ bool Settings::gShouldPaintNativeControls = true;
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
 
+// NOTEs
+//  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well QtWebKit and Chromium when built on Mac;
+//  2) EditingWindowsBehavior comprises Win32 and WinCE builds, as well as QtWebKit and Chromium when built on Windows;
+//  3) EditingUnixBehavior comprises all unix-based systems, but Darwin/MacOS (and then abusing the terminology);
+// 99) MacEditingBehavior is used a fallback.
+static EditingBehaviorType editingBehaviorTypeForPlatform()
+{
+    return
+#if OS(DARWIN)
+    EditingMacBehavior
+#elif OS(WINDOWS)
+    EditingWindowsBehavior
+#elif OS(UNIX)
+    EditingUnixBehavior
+#else
+    // Fallback
+    EditingMacBehavior
+#endif
+    ;
+}
+
 Settings::Settings(Page* page)
     : m_page(page)
     , m_editableLinkBehavior(EditableLinkDefaultBehavior)
@@ -120,14 +141,7 @@ Settings::Settings(Page* page)
     , m_enforceCSSMIMETypeInNoQuirksMode(true)
     , m_usesEncodingDetector(false)
     , m_allowScriptsToCloseWindows(false)
-    , m_editingBehaviorType(
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
-        // (PLATFORM(MAC) is always false in Chromium, hence the extra condition.)
-        EditingMacBehavior
-#else
-        EditingWindowsBehavior
-#endif
-        )
+    , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     // FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
     // they can't use by. Leaving enabled for now to not change existing behavior.
     , m_downloadableBinaryFontsEnabled(true)

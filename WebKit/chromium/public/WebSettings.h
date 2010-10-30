@@ -45,7 +45,8 @@ class WebSettings {
 public:
     enum EditingBehavior {
         EditingBehaviorMac,
-        EditingBehaviorWin
+        EditingBehaviorWin,
+        EditingBehaviorUnix
     };
 
     virtual void setStandardFontFamily(const WebString&) = 0;

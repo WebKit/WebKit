@@ -1486,6 +1486,9 @@ void LayoutTestController::setEditingBehavior(const CppArgumentList& arguments, 
     } else if (key == "win") {
         m_shell->preferences()->editingBehavior = WebSettings::EditingBehaviorWin;
         m_shell->applyPreferences();
+    } else if (key == "unix") {
+        m_shell->preferences()->editingBehavior = WebSettings::EditingBehaviorUnix;
+        m_shell->applyPreferences();
     } else
         logErrorToConsole("Passed invalid editing behavior. Should be 'mac' or 'win'.");
 }

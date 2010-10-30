@@ -45,7 +45,8 @@ typedef enum {
 
 typedef enum {
     WebKitEditingMacBehavior,
-    WebKitEditingWinBehavior
+    WebKitEditingWinBehavior,
+    WebKitEditingUnixBehavior
 } WebKitEditingBehavior;
 
 extern NSString *WebPreferencesChangedNotification;

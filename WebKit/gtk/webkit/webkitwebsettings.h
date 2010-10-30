@@ -36,7 +36,8 @@ G_BEGIN_DECLS
 
 typedef enum {
     WEBKIT_EDITING_BEHAVIOR_MAC,
-    WEBKIT_EDITING_BEHAVIOR_WINDOWS
+    WEBKIT_EDITING_BEHAVIOR_WINDOWS,
+    WEBKIT_EDITING_BEHAVIOR_UNIX
 } WebKitEditingBehavior;
 
 typedef struct _WebKitWebSettingsPrivate WebKitWebSettingsPrivate;

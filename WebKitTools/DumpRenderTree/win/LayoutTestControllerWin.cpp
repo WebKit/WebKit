@@ -1383,8 +1383,10 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
     string behaviorString(editingBehavior);
     if (behaviorString == "mac")
         preferences->setEditingBehavior(WebKitEditingMacBehavior);
-    if (behaviorString == "win")
+    else if (behaviorString == "win")
         preferences->setEditingBehavior(WebKitEditingWinBehavior);
+    else if (behaviorString == "unix")
+        preferences->setEditingBehavior(WebKitEditingUnixBehavior);
 }
 
 void LayoutTestController::abortModal()

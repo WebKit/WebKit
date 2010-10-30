@@ -935,8 +935,10 @@ void LayoutTestController::setEditingBehavior(const char* editingBehavior)
     NSString* editingBehaviorNS = [[NSString alloc] initWithUTF8String:editingBehavior];
     if ([editingBehaviorNS isEqualToString:@"mac"])
         [[WebPreferences standardPreferences] setEditingBehavior:WebKitEditingMacBehavior];
-    if ([editingBehaviorNS isEqualToString:@"win"])
+    else if ([editingBehaviorNS isEqualToString:@"win"])
         [[WebPreferences standardPreferences] setEditingBehavior:WebKitEditingWinBehavior];
+    else if ([editingBehaviorNS isEqualToString:@"unix"])
+        [[WebPreferences standardPreferences] setEditingBehavior:WebKitEditingUnixBehavior];
     [editingBehaviorNS release];
 }
 
