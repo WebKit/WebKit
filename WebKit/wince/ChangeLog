@@ -1,3 +1,10 @@
+2010-10-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed, build fix after r70574.
+
+        * WebCoreSupport/FrameLoaderClientWinCE.cpp:
+        (WebKit::FrameLoaderClientWinCE::transferLoadingResourceFromPage):
+
 2010-10-29  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

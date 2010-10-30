@@ -43,7 +43,7 @@ namespace WebCore {
 
 NativeImagePtr RGBA32Buffer::asNewNativeImage() const
 {
-    return SharedBitmap::create(m_bytes, m_size, hasAlpha());
+    return SharedBitmap::create(m_backingStore, m_size, hasAlpha());
 }
 
 bool FrameData::clear(bool clearMetaData)
