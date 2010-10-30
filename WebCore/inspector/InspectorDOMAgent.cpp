@@ -51,7 +51,6 @@
 #include "Document.h"
 #include "DocumentType.h"
 #include "Event.h"
-#include "EventContext.h"
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
@@ -608,13 +607,13 @@ void InspectorDOMAgent::getEventListenersForNode(long nodeId, long* outNodeId, R
         return;
 
     // The Node's Event Ancestors (not including self)
-    Vector<EventContext> ancestors;
-    node->getEventAncestors(ancestors, node);
+    Vector<RefPtr<ContainerNode> > ancestors;
+    node->eventAncestors(ancestors);
 
     // Nodes and their Listeners for the concerned event types (order is top to bottom)
     Vector<EventListenerInfo> eventInformation;
     for (size_t i = ancestors.size(); i; --i) {
-        Node* ancestor = ancestors[i - 1].node();
+        ContainerNode* ancestor = ancestors[i - 1].get();
         for (size_t j = 0; j < eventTypesLength; ++j) {
             AtomicString& type = eventTypes[j];
             if (ancestor->hasEventListeners(type))

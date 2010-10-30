@@ -239,11 +239,10 @@ bool Text::rendererIsNeeded(RenderStyle *style)
 
 RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    Node* parentOrHost = parentOrHostNode();
 #if ENABLE(SVG)
-    if (parentOrHost->isSVGElement()
+    if (parentNode()->isSVGElement()
 #if ENABLE(SVG_FOREIGN_OBJECT)
-        && !parentOrHost->hasTagName(SVGNames::foreignObjectTag)
+        && !parentNode()->hasTagName(SVGNames::foreignObjectTag)
 #endif
     )
         return new (arena) RenderSVGInlineText(this, dataImpl());

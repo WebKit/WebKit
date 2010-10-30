@@ -35,7 +35,6 @@
 
 #include "DOMWindow.h"
 #include "Event.h"
-#include "EventContext.h"
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorDebuggerAgent.h"
@@ -54,7 +53,7 @@ static const char* const timerFiredEventName = "timerFired";
 
 int InspectorInstrumentation::s_frontendCounter = 0;
 
-static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors)
+static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors)
 {
     if (window && window->hasEventListeners(eventType))
         return true;
@@ -63,7 +62,7 @@ static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, 
         return true;
 
     for (size_t i = 0; i < ancestors.size(); i++) {
-        Node* ancestor = ancestors[i].node();
+        ContainerNode* ancestor = ancestors[i].get();
         if (ancestor->hasEventListeners(eventType))
             return true;
     }
@@ -140,6 +139,7 @@ void InspectorInstrumentation::characterDataModifiedImpl(InspectorController* in
         domAgent->characterDataModified(characterData);
 }
 
+
 void InspectorInstrumentation::willSendXMLHttpRequestImpl(InspectorController* inspectorController, const String& url)
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -213,7 +213,7 @@ void InspectorInstrumentation::didChangeXHRReadyStateImpl(const InspectorInstrum
         timelineAgent->didChangeXHRReadyState();
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(InspectorController* inspectorController, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors)
+InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEventImpl(InspectorController* inspectorController, const Event& event, DOMWindow* window, Node* node, const Vector<RefPtr<ContainerNode> >& ancestors)
 {
     pauseOnNativeEventIfNeeded(inspectorController, listenerEventCategoryType, event.type(), false);
 

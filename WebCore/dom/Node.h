@@ -49,7 +49,6 @@ class Document;
 class DynamicNodeList;
 class Element;
 class Event;
-class EventContext;
 class EventListener;
 class FloatPoint;
 class Frame;
@@ -205,14 +204,16 @@ public:
     Node* shadowAncestorNode();
     Node* shadowTreeRootNode();
     bool isInShadowTree();
-    // Node's parent or shadow tree host.
-    ContainerNode* parentOrHostNode();
+
+    // The node's parent for the purpose of event capture and bubbling.
+    virtual ContainerNode* eventParentNode();
 
     // Returns the enclosing event parent node (or self) that, when clicked, would trigger a navigation.
     Node* enclosingLinkEventParentOrSelf();
 
     // Node ancestors when concerned about event flow.
-    void getEventAncestors(Vector<EventContext>& ancestors, EventTarget*);
+    // FIXME: Should be named getEventAncestors.
+    void eventAncestors(Vector<RefPtr<ContainerNode> > &ancestors);
 
     bool isBlockFlow() const;
     bool isBlockFlowOrBlockTable() const;
@@ -690,13 +691,6 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
 {
     if (!url.isNull())
         urls.add(url);
-}
-
-inline ContainerNode* Node::parentOrHostNode()
-{
-    if (ContainerNode* parent = parentNode())
-        return parent;
-    return shadowParentNode();
 }
 
 } //namespace

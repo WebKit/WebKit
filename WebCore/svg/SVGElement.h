@@ -99,6 +99,8 @@ namespace WebCore {
 
         virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 
+        virtual ContainerNode* eventParentNode();
+
         virtual bool needsPendingResourceHandling() const { return true; }
         virtual void buildPendingResource() { }
 
