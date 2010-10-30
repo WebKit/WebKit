@@ -241,7 +241,7 @@
                       "builderNames": ["Windows Debug (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-debug-tests-wk2",
-                      "builderNames": ["Windows Debug (WebKit2 Tests)"]
+                      "builderNames": ["Windows Release (WebKit2 Tests)"]
                     }
                   ]
 }
