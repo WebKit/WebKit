@@ -2565,7 +2565,6 @@ BUG45991 : canvas/philip/tests/2d.fillStyle.parse.current.basic.html = TEXT PASS
 BUG45991 : canvas/philip/tests/2d.fillStyle.parse.current.changed.html = TEXT PASS
 BUG45991 : canvas/philip/tests/2d.fillStyle.parse.current.removed.html = TEXT PASS
 BUG45991 : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT PASS
-BUG45991 : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT PASS
 BUG45991 : canvas/philip/tests/2d.path.rect.winding.html = TEXT PASS
 BUG45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT PASS
 BUG45991 : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT PASS

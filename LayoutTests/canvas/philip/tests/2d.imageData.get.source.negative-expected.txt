@@ -4,6 +4,3 @@ getImageData() works with negative width and height, and returns top-to-bottom l
 References: 2d.imageData.get.basic 2d.pixelarray.order
 Actual output:
 Passed
-
-
-
