@@ -1180,28 +1180,6 @@ void GraphicsContext::clipOut(const IntRect& rect)
     }
 }
 
-void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
-{
-    if (paintingDisabled())
-        return;
-
-    QPainter* p = m_data->p();
-    QPainterPath newClip;
-    newClip.setFillRule(Qt::OddEvenFill);
-    if (p->hasClipping()) {
-        newClip.addRect(m_data->clipBoundingRect());
-        newClip.addEllipse(QRect(rect));
-        p->setClipPath(newClip, Qt::IntersectClip);
-    } else {
-        QRect clipOutRect(rect);
-        QRect window(p->window());
-        clipOutRect &= window;
-        newClip.addRect(window);
-        newClip.addEllipse(clipOutRect);
-        p->setClipPath(newClip);
-    }
-}
-
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect,
                                               int thickness)
 {

@@ -669,17 +669,6 @@ void GraphicsContext::clipOut(const IntRect& rect)
     CGContextEOClip(platformContext());
 }
 
-void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
-{
-    if (paintingDisabled())
-        return;
-
-    CGContextBeginPath(platformContext());
-    CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
-    CGContextAddEllipseInRect(platformContext(), rect);
-    CGContextEOClip(platformContext());
-}
-
 void GraphicsContext::clipPath(WindRule clipRule)
 {
     if (paintingDisabled())

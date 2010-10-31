@@ -440,14 +440,6 @@ void GraphicsContext::clipOut(const IntRect& rect)
     notImplemented();
 }
 
-void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
-{
-    if (paintingDisabled())
-        return;
-
-    notImplemented();
-}
-
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
 {
     if (paintingDisabled())

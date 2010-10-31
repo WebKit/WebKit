@@ -1084,16 +1084,6 @@ void GraphicsContext::clipOut(const IntRect& r)
     cairo_set_fill_rule(cr, savedFillRule);
 }
 
-void GraphicsContext::clipOutEllipseInRect(const IntRect& r)
-{
-    if (paintingDisabled())
-        return;
-
-    Path p;
-    p.addEllipse(r);
-    clipOut(p);
-}
-
 static inline FloatPoint getPhase(const FloatRect& dest, const FloatRect& tile)
 {
     FloatPoint phase = dest.location();

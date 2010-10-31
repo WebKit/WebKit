@@ -1209,11 +1209,6 @@ void GraphicsContext::clipOut(const Path&)
     notImplemented();
 }
 
-void GraphicsContext::clipOutEllipseInRect(const IntRect&)
-{
-    notImplemented();
-}
-
 static inline IntPoint rectCenterPoint(const RECT& rect)
 {
     return IntPoint(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2);

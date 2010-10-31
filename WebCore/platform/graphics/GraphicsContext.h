@@ -253,7 +253,6 @@ namespace WebCore {
         void addRoundedRectClip(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
         void addInnerRoundedRectClip(const IntRect&, int thickness);
         void clipOut(const IntRect&);
-        void clipOutEllipseInRect(const IntRect&);
         void clipOutRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight);
         void clipPath(WindRule);
         void clipConvexPolygon(size_t numPoints, const FloatPoint*, bool antialias = true);

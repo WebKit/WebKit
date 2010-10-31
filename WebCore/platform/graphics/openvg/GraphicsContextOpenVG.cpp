@@ -454,16 +454,6 @@ void GraphicsContext::clipOut(const IntRect& rect)
     m_data->clipPath(path, PainterOpenVG::SubtractClip, m_common->state.fillRule);
 }
 
-void GraphicsContext::clipOutEllipseInRect(const IntRect& rect)
-{
-    if (paintingDisabled())
-        return;
-
-    Path path;
-    path.addEllipse(rect);
-    m_data->clipPath(path, PainterOpenVG::SubtractClip, m_common->state.fillRule);
-}
-
 void GraphicsContext::clipToImageBuffer(const FloatRect& rect, const ImageBuffer* imageBuffer)
 {
     if (paintingDisabled())
