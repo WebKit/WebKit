@@ -504,7 +504,18 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
     for (size_t i = 1; i < numPoints; ++i)
         path.lineTo(points[i]);
     path.setFillRule(Qt::WindingFill);
-    m_data->p()->setClipPath(path, Qt::IntersectClip);
+
+    QPainter* p = m_data->p();
+
+    bool painterWasAntialiased = p->testRenderHint(QPainter::Antialiasing);
+
+    if (painterWasAntialiased != antialiased)
+        p->setRenderHint(QPainter::Antialiasing, antialiased);
+
+    p->setClipPath(path, Qt::IntersectClip);
+
+    if (painterWasAntialiased != antialiased)
+        p->setRenderHint(QPainter::Antialiasing, painterWasAntialiased);
 }
 
 void GraphicsContext::fillPath()
