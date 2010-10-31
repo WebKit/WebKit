@@ -225,7 +225,6 @@ namespace WebCore {
 
         void clearRect(const FloatRect&);
 
-        void strokeRect(const FloatRect&);
         void strokeRect(const FloatRect&, float lineWidth);
 
         void drawImage(Image*, ColorSpace styleColorSpace, const IntPoint&, CompositeOperator = CompositeSourceOver);

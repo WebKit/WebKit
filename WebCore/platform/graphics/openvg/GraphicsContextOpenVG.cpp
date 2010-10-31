@@ -340,14 +340,6 @@ void GraphicsContext::clearRect(const FloatRect& rect)
     m_data->setCompositeOperation(op);
 }
 
-void GraphicsContext::strokeRect(const FloatRect& rect)
-{
-    if (paintingDisabled())
-        return;
-
-    m_data->drawRect(rect, VG_STROKE_PATH);
-}
-
 void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
 {
     if (paintingDisabled())
