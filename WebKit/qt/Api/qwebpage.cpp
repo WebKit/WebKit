@@ -2418,7 +2418,10 @@ bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &
 QString QWebPage::selectedText() const
 {
     d->createMainFrame();
-    return d->page->focusController()->focusedOrMainFrame()->editor()->selectedText();
+    WebCore::Frame* frame = d->page->focusController()->focusedOrMainFrame();
+    if (frame->selection()->selection().selectionType() == VisibleSelection::NoSelection)
+        return QString();
+    return frame->editor()->selectedText();
 }
 
 #ifndef QT_NO_ACTION
