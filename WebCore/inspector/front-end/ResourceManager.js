@@ -71,7 +71,7 @@ WebInspector.ResourceManager.prototype = {
         // It is important to bind resource url early (before scripts compile).
         this._bindResourceURL(resource);
 
-        WebInspector.panels.network.addResource(resource);
+        WebInspector.panels.network.refreshResource(resource);
         WebInspector.panels.audits.resourceStarted(resource);
     },
 
@@ -104,7 +104,7 @@ WebInspector.ResourceManager.prototype = {
         resource.startTime = time;
 
         if (isRedirect) {
-            WebInspector.panels.network.addResource(resource);
+            WebInspector.panels.network.refreshResource(resource);
             WebInspector.panels.audits.resourceStarted(resource);
         } else 
             WebInspector.panels.network.refreshResource(resource);
@@ -230,7 +230,7 @@ WebInspector.ResourceManager.prototype = {
         resource.cached = true;
         resource.startTime = resource.responseReceivedTime = resource.endTime = time;
 
-        WebInspector.panels.network.addResource(resource);
+        WebInspector.panels.network.refreshResource(resource);
         WebInspector.panels.audits.resourceStarted(resource);
         WebInspector.panels.audits.resourceFinished(resource);
         this._resourceTreeModel.addResourceToFrame(resource.loader.frameId, resource);
@@ -251,6 +251,7 @@ WebInspector.ResourceManager.prototype = {
 
         resource.type = WebInspector.Resource.Type[type];
         resource.content = sourceString;
+        WebInspector.panels.storage.refreshResource(resource);
         WebInspector.panels.network.refreshResource(resource);
     },
 
@@ -270,7 +271,7 @@ WebInspector.ResourceManager.prototype = {
         var resource = this._resourcesById[identifier];
         resource.type = WebInspector.Resource.Type.WebSocket;
 
-        WebInspector.panels.network.addResource(resource);
+        WebInspector.panels.network.refreshResource(resource);
     },
 
     willSendWebSocketHandshakeRequest: function(identifier, time, request)

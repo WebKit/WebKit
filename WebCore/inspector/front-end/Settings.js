@@ -70,6 +70,9 @@ WebInspector.Settings = function()
 WebInspector.Settings.prototype = {
     installApplicationSetting: function(key, defaultValue)
     {
+        if (key in this)
+            return;
+
         this.__defineGetter__(key, this._get.bind(this, key, defaultValue));
         this.__defineSetter__(key, this._set.bind(this, key));
     },

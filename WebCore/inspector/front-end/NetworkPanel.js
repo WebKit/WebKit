@@ -83,7 +83,7 @@ WebInspector.NetworkPanel.prototype = {
 
     get statusBarItems()
     {
-        return [this._largerResourcesButton.element, this._clearButton.element, this._filterBarElement];
+        return [this._largerResourcesButton.element, this._preserveLogToggle.element, this._clearButton.element, this._filterBarElement];
     },
 
     isCategoryVisible: function(categoryName)
@@ -126,13 +126,9 @@ WebInspector.NetworkPanel.prototype = {
     _positionSummaryBar: function()
     {
         // Position the total bar.
-        const rowHeight = 22;
-        const summaryBarHeight = 22;
-        var offsetHeight = this.element.offsetHeight;
 
-        var parentElement = this._summaryBarElement.parentElement;
-
-        if (this._summaryBarElement.parentElement !== this.element && offsetHeight > (this._dataGrid.children.length - 1) * rowHeight + summaryBarHeight) {
+        var fillerRow = this._dataGrid.dataTableBody.lastChild;
+        if (this._summaryBarElement.parentElement !== this.element && fillerRow.offsetHeight > 0) {
             // Glue status to bottom.
             if (this._summaryBarRowNode) {
                 this._dataGrid.removeChild(this._summaryBarRowNode);
@@ -144,7 +140,7 @@ WebInspector.NetworkPanel.prototype = {
             return;
         }
 
-        if (!this._summaryBarRowNode && offsetHeight - summaryBarHeight < this._dataGrid.children.length * rowHeight) {
+        if (!this._summaryBarRowNode && !fillerRow.offsetHeight) {
             // Glue status to table.
             this._summaryBarRowNode = new WebInspector.NetworkTotalGridNode(this._summaryBarElement);
             this._summaryBarElement.removeStyleClass("network-summary-bar-bottom");
@@ -427,9 +423,7 @@ WebInspector.NetworkPanel.prototype = {
             selectMultiple = true;
 
         this._filter(e.target, selectMultiple);
-
-        var searchField = document.getElementById("search");
-        WebInspector.doPerformSearch(searchField.value, WebInspector.shortSearchWasForcedByKeyEvent, false, true);
+        this._positionSummaryBar();
     },
 
     _filter: function(target, selectMultiple)
@@ -611,6 +605,9 @@ WebInspector.NetworkPanel.prototype = {
 
     _createStatusbarButtons: function()
     {
+        this._preserveLogToggle = new WebInspector.StatusBarButton(WebInspector.UIString("Preserve Log upon Navigation"), "record-profile-status-bar-item");
+        this._preserveLogToggle.addEventListener("click", this._onPreserveLogClicked.bind(this), false);
+
         this._clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "clear-status-bar-item");
         this._clearButton.addEventListener("click", this._reset.bind(this), false);
 
@@ -747,6 +744,17 @@ WebInspector.NetworkPanel.prototype = {
         this._dataGrid.updateWidths();
     },
 
+    _onPreserveLogClicked: function(e)
+    {
+        this._preserveLogToggle.toggled = !this._preserveLogToggle.toggled;
+    },
+
+    reset: function()
+    {
+        if (!this._preserveLogToggle.toggled)
+            this._reset();
+    },
+
     _reset: function()
     {
         this._popoverHelper.hidePopup();
@@ -780,17 +788,22 @@ WebInspector.NetworkPanel.prototype = {
         return this._resourcesById;
     },
 
-    addResource: function(resource)
-    {
-        this._resources.push(resource);
-        if (!resource.identifier)
-            resource.identifier = "network:" + this._lastIdentifier++;
-        this._resourcesById[resource.identifier] = resource;
-        this.refreshResource(resource);
-    },
-
     refreshResource: function(resource)
     {
+        if (!resource.identifier)
+            resource.identifier = "network:" + this._lastIdentifier++;
+
+        if (!this._resourcesById[resource.identifier]) {
+            this._resources.push(resource);
+            this._resourcesById[resource.identifier] = resource;
+
+            // Pull all the redirects of the main resource upon commit load.
+            if (resource.redirects) {
+                for (var i = 0; i < resource.redirects.length; ++i)
+                    this.refreshResource(resource.redirects[i]);
+            }
+        }
+
         this._staleResources.push(resource);
         this._scheduleRefresh();
 

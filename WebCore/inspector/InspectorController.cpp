@@ -908,6 +908,8 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
     if (!enabled())
         return;
 
+    ensureSettingsLoaded();
+
 #if LEGACY_RESOURCE_TRACKING_ENABLED
     // If the resource URL is already known, we don't need to add it again since this is just a cached load.
     if (m_knownResources.contains(cachedResource->url()))
@@ -915,7 +917,6 @@ void InspectorController::didLoadResourceFromMemoryCache(DocumentLoader* loader,
 
     ASSERT(m_inspectedPage);
     bool isMainResource = isMainResourceLoader(loader, KURL(ParsedURLString, cachedResource->url()));
-    ensureSettingsLoaded();
     if (!isMainResource && !resourceTrackingEnabled())
         return;
 
@@ -946,9 +947,9 @@ void InspectorController::identifierForInitialRequest(unsigned long identifier, 
     if (isMainResource)
         m_mainResourceIdentifier = identifier;
 
-#if LEGACY_RESOURCE_TRACKING_ENABLED
-
     ensureSettingsLoaded();
+
+#if LEGACY_RESOURCE_TRACKING_ENABLED
     if (!isMainResource && !resourceTrackingEnabled())
         return;
 
