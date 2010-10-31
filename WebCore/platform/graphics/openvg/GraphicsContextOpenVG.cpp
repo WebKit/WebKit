@@ -452,15 +452,6 @@ void GraphicsContext::translate(float dx, float dy)
     m_data->translate(dx, dy);
 }
 
-IntPoint GraphicsContext::origin()
-{
-    if (paintingDisabled())
-        return IntPoint();
-
-    AffineTransform transformation = m_data->transformation();
-    return IntPoint(roundf(transformation.e()), roundf(transformation.f()));
-}
-
 void GraphicsContext::clipOut(const IntRect& rect)
 {
     if (paintingDisabled())

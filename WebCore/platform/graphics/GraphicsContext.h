@@ -320,7 +320,6 @@ namespace WebCore {
         void rotate(float angleInRadians);
         void translate(const FloatSize& size) { translate(size.width(), size.height()); }
         void translate(float x, float y);
-        IntPoint origin();
 
         void setURLForRect(const KURL&, const IntRect&);
 

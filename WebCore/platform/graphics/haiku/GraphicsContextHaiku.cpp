@@ -416,12 +416,6 @@ void GraphicsContext::translate(float x, float y)
     notImplemented();
 }
 
-IntPoint GraphicsContext::origin()
-{
-    notImplemented();
-    return IntPoint(0, 0);
-}
-
 void GraphicsContext::rotate(float radians)
 {
     if (paintingDisabled())

@@ -766,14 +766,6 @@ void GraphicsContext::translate(float x, float y)
     m_data->translate(x, y);
 }
 
-IntPoint GraphicsContext::origin()
-{
-    cairo_matrix_t matrix;
-    cairo_t* cr = m_data->cr;
-    cairo_get_matrix(cr, &matrix);
-    return IntPoint(static_cast<int>(matrix.x0), static_cast<int>(matrix.y0));
-}
-
 void GraphicsContext::setPlatformFillColor(const Color& col, ColorSpace colorSpace)
 {
     // Cairo contexts can't hold separate fill and stroke colors

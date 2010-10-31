@@ -194,11 +194,6 @@ public:
             restore();
     }
 
-    IntPoint origin() const
-    {
-        return IntPoint(stableRound(-m_transform.e()), stableRound(-m_transform.f()));
-    }
-
     void translate(float x, float y)
     {
         m_transform.translate(x, y);
@@ -1157,11 +1152,6 @@ void GraphicsContext::translate(float x, float y)
 void GraphicsContext::rotate(float radians)
 {
     m_data->rotate(radians);
-}
-
-IntPoint GraphicsContext::origin()
-{
-    return m_data->origin();
 }
 
 void GraphicsContext::scale(const FloatSize& size)

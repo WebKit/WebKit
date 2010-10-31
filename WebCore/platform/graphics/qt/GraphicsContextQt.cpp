@@ -1119,14 +1119,6 @@ void GraphicsContext::translate(float x, float y)
     }
 }
 
-IntPoint GraphicsContext::origin()
-{
-    if (paintingDisabled())
-        return IntPoint();
-    const QTransform &transform = m_data->p()->transform();
-    return IntPoint(qRound(transform.dx()), qRound(transform.dy()));
-}
-
 void GraphicsContext::rotate(float radians)
 {
     if (paintingDisabled())
