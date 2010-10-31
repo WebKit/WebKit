@@ -1943,9 +1943,6 @@ BUG12361 LINUX MAC DEBUG : http/tests/cookies/double-quoted-value-with-semi-colo
 BUG12361 LINUX RELEASE : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
 BUG12361 SLOW MAC RELEASE : http/tests/cookies/double-quoted-value-with-semi-colon.html = FAIL
 
-// WebKit 44438:44544
-BUG13721 LINUX : fast/dynamic/positioned-movement-with-positioned-children.html = FAIL
-
 BUG14207 LINUX : tables/mozilla/bugs/bug28341.html = FAIL
 BUG32231 WIN DEBUG : tables/mozilla/bugs/bug28341.html = IMAGE PASS
 
