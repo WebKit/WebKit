@@ -134,10 +134,10 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
     ASSERT(applier);
 
     QPainterPathStroker stroke;
-    GraphicsContext* gc = scratchContext();
-    applier->strokeStyle(gc);
+    GraphicsContext* context = scratchContext();
+    applier->strokeStyle(context);
 
-    QPen pen = gc->pen();
+    QPen pen = context->platformContext()->pen();
     stroke.setWidth(pen.widthF());
     stroke.setCapStyle(pen.capStyle());
     stroke.setJoinStyle(pen.joinStyle());
@@ -162,12 +162,12 @@ FloatRect Path::boundingRect() const
 
 FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier)
 {
-    GraphicsContext* gc = scratchContext();
+    GraphicsContext* context = scratchContext();
     QPainterPathStroker stroke;
     if (applier) {
-        applier->strokeStyle(gc);
+        applier->strokeStyle(context);
 
-        QPen pen = gc->pen();
+        QPen pen = context->platformContext()->pen();
         stroke.setWidth(pen.widthF());
         stroke.setCapStyle(pen.capStyle());
         stroke.setJoinStyle(pen.joinStyle());
