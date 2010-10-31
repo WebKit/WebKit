@@ -189,17 +189,17 @@ void WebContext::ensureWebProcess()
 void WebContext::processDidFinishLaunching(WebProcessProxy* process)
 {
     // FIXME: Once we support multiple processes per context, this assertion won't hold.
-    ASSERT(process == m_process);
+    ASSERT_UNUSED(process, process == m_process);
 
-    m_visitedLinkProvider.populateVisitedLinksIfNeeded();
+    m_visitedLinkProvider.processDidFinishLaunching();
 }
 
 void WebContext::processDidClose(WebProcessProxy* process)
 {
     // FIXME: Once we support multiple processes per context, this assertion won't hold.
-    ASSERT(process == m_process);
+    ASSERT_UNUSED(process, process == m_process);
 
-    m_visitedLinkProvider.stopVisitedLinksTimer();
+    m_visitedLinkProvider.processDidClose();
 
     m_process = 0;
 }

@@ -41,16 +41,17 @@ class VisitedLinkProvider : Noncopyable {
 public:
     explicit VisitedLinkProvider(WebContext*);
 
-    void populateVisitedLinksIfNeeded();
     void addVisitedLink(WebCore::LinkHash);
 
-    void stopVisitedLinksTimer();
+    void processDidFinishLaunching();
+    void processDidClose();
 
 private:
     void pendingVisitedLinksTimerFired();
 
     WebContext* m_context;
     bool m_visitedLinksPopulated;
+    bool m_webProcessHasVisitedLinkState;
 
     unsigned m_keyCount;
     unsigned m_tableSize;
