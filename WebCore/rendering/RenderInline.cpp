@@ -559,22 +559,18 @@ IntRect RenderInline::linesBoundingBox() const
     ASSERT(!firstLineBox() == !lastLineBox());  // Either both are null or both exist.
     if (firstLineBox() && lastLineBox()) {
         // Return the width of the minimal left side and the maximal right side.
-        int logicalLeftSide = 0;
-        int logicalRightSide = 0;
+        int leftSide = 0;
+        int rightSide = 0;
         for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-            if (curr == firstLineBox() || curr->logicalLeft() < logicalLeftSide)
-                logicalLeftSide = curr->logicalLeft();
-            if (curr == firstLineBox() || curr->logicalRight() > logicalRightSide)
-                logicalRightSide = curr->logicalRight();
+            if (curr == firstLineBox() || curr->x() < leftSide)
+                leftSide = curr->x();
+            if (curr == firstLineBox() || curr->x() + curr->logicalWidth() > rightSide)
+                rightSide = curr->x() + curr->logicalWidth();
         }
-        
-        bool isHorizontal = style()->isHorizontalWritingMode();
-        
-        int x = isHorizontal ? logicalLeftSide : firstLineBox()->x();
-        int y = isHorizontal ? firstLineBox()->y() : logicalLeftSide;
-        int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->logicalBottom() - x;
-        int height = isHorizontal ? lastLineBox()->logicalBottom() - y : logicalRightSide - logicalLeftSide;
-        result = IntRect(x, y, width, height);
+        result.setWidth(rightSide - leftSide);
+        result.setX(leftSide);
+        result.setHeight(lastLineBox()->y() + lastLineBox()->logicalHeight() - firstLineBox()->y());
+        result.setY(firstLineBox()->y());
     }
 
     return result;
@@ -586,20 +582,15 @@ IntRect RenderInline::linesVisibleOverflowBoundingBox() const
         return IntRect();
 
     // Return the width of the minimal left side and the maximal right side.
-    int logicalLeftSide = numeric_limits<int>::max();
-    int logicalRightSide = numeric_limits<int>::min();
+    int leftSide = numeric_limits<int>::max();
+    int rightSide = numeric_limits<int>::min();
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-        logicalLeftSide = min(logicalLeftSide, curr->logicalLeftVisibleOverflow());
-        logicalRightSide = max(logicalRightSide, curr->logicalRightVisibleOverflow());
+        leftSide = min(leftSide, curr->leftVisibleOverflow());
+        rightSide = max(rightSide, curr->rightVisibleOverflow());
     }
 
-    bool isHorizontal = style()->isHorizontalWritingMode();
-        
-    int x = isHorizontal ? logicalLeftSide : firstLineBox()->topVisibleOverflow();
-    int y = isHorizontal ? firstLineBox()->leftVisibleOverflow() : logicalLeftSide;
-    int width = isHorizontal ? logicalRightSide - logicalLeftSide : lastLineBox()->rightVisibleOverflow() - firstLineBox()->leftVisibleOverflow();
-    int height = isHorizontal ? lastLineBox()->bottomVisibleOverflow() - firstLineBox()->topVisibleOverflow() : logicalRightSide - logicalLeftSide;
-    return IntRect(x, y, width, height);
+    return IntRect(leftSide, firstLineBox()->topVisibleOverflow(), rightSide - leftSide,
+        lastLineBox()->bottomVisibleOverflow() - firstLineBox()->topVisibleOverflow());
 }
 
 IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
@@ -628,8 +619,6 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
     }
 
     IntRect r(-ow + left, -ow + top, boundingBox.width() + ow * 2, boundingBox.height() + ow * 2);
-    cb->adjustForFlippedBlocksWritingMode(r);
-
     if (cb->hasColumns())
         cb->adjustRectForColumns(r);
 

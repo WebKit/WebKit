@@ -8,7 +8,7 @@ layer at (0,0) size 785x635
           text run at (0,5) width 161: "Simple text path"
       RenderBlock (anonymous) at (0,53) size 769x235
         RenderBlock {SPAN} at (0,0) size 32x226
-          RenderText {#text} at (5,0) size 21x226
+          RenderText {#text} at (5,0) size 226x21
             text run at (5,0) width 226: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {HR} at (0,298) size 769x2 [border: (1px inset #000000)]
@@ -17,6 +17,6 @@ layer at (0,0) size 785x635
           text run at (0,5) width 181: "Complex text path"
       RenderBlock (anonymous) at (0,374) size 769x232
         RenderBlock {SPAN} at (0,0) size 32x223
-          RenderText {#text} at (5,0) size 21x223
+          RenderText {#text} at (5,0) size 223x21
             text run at (5,0) width 223: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderText {#text} at (0,0) size 0x0
