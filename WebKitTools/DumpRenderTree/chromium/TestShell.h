@@ -144,7 +144,7 @@ public:
     // The JavaScript flags are specified as a vector of strings. Each element of the vector is full flags string
     // which can contain multiple flags (e.g. "--xxx --yyy"). With multiple load testing it is possible to specify
     // separate sets of flags to each load.
-    std::string javaScriptFlagsForLoad(size_t load) { return (load >= 0 && load < m_javaScriptFlags.size()) ? m_javaScriptFlags[load] : ""; }
+    std::string javaScriptFlagsForLoad(size_t load) { return (load < m_javaScriptFlags.size()) ? m_javaScriptFlags[load] : ""; }
     void setJavaScriptFlags(Vector<std::string> javaScriptFlags) { m_javaScriptFlags = javaScriptFlags; }
 
     // Set whether to dump when the loaded page has finished processing. This is used with multiple load

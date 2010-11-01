@@ -1,3 +1,14 @@
+2010-11-01  Søren Gjesse  <sgjesse@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix warning when compiling the chromium port of DumpRenderShell
+        with clang.
+        https://bugs.webkit.org/show_bug.cgi?id=48414
+
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::javaScriptFlagsForLoad):
+
 2010-11-01  Adam Roben  <aroben@apple.com>
 
         Fix typo from r71022
