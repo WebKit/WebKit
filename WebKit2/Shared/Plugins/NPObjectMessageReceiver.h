@@ -28,6 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "Connection.h"
 #include <WebCore/npruntime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
@@ -43,6 +44,10 @@ public:
     
 private:
     explicit NPObjectMessageReceiver(NPObject* npObject);
+
+    // Message handlers.
+    CoreIPC::SyncReplyMode didReceiveSyncNPObjectMessageReceiverMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
+    void deallocate();
 
     NPObject* m_npObject;
 };

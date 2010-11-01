@@ -2,6 +2,28 @@
 
         Reviewed by Adam Roben.
 
+        Add NPObjectMessageReceiver.messages.in
+        https://bugs.webkit.org/show_bug.cgi?id=48782
+
+        * DerivedSources.make:
+        Add NPObjectMessageReceiver.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add MessageClassNPObjectMessageReceiver message class.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::deallocate):
+        Add stubbed out deallocate member function.
+
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in: Added.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add NPObjectMessageReceiver.messages.in.
+
+2010-11-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Start stubbing out NPClass functions in NPObjectProxy
         https://bugs.webkit.org/show_bug.cgi?id=48778
 

@@ -1,5 +1,6 @@
 VPATH = \
     $(WebKit2)/PluginProcess \
+    $(WebKit2)/Shared/Plugins \
     $(WebKit2)/WebProcess/Plugins \
     $(WebKit2)/WebProcess/WebPage \
     $(WebKit2)/WebProcess \
@@ -8,6 +9,7 @@ VPATH = \
 #
 
 MESSAGE_RECEIVERS = \
+    NPObjectMessageReceiver \
     PluginControllerProxy \
     PluginProcess \
     PluginProcessProxy \
