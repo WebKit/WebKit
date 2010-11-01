@@ -2413,8 +2413,6 @@ BUG41817 MAC : svg/text/text-intro-05-t.svg = IMAGE
 BUG42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
 // might have been flaky
-BUGJAMESR MAC : svg/custom/resource-invalidate-on-target-update.svg = IMAGE PASS
-BUGJAMESR LINUX : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
 BUGJAMESR WIN LINUX : svg/filters/filter-clip.svg = IMAGE
 BUGJAMESR : svg/filters/filter-source-position.svg = IMAGE
 BUGJAMESR BUG30048 BUG29737 WIN LINUX : svg/filters/shadow-on-rect-with-filter.svg = IMAGE
@@ -2906,9 +2904,6 @@ BUG51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 // Slow test introduced in r64817
 BUG51571 WIN : http/tests/misc/bad-charset-alias.html = TIMEOUT PASS
 
-// Probably rebaseline, but want to make sure before doing so
-BUGJAPHET WIN : svg/custom/resource-invalidate-on-target-update.svg = IMAGE
-
 BUG51869 : http/tests/websocket/tests/frame-length-overflow.html = TEXT PASS
 
 BUG51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
@@ -3241,9 +3236,6 @@ BUGWK61164 LINUX WIN : fast/blockflow/background-vertical-rl.html = IMAGE+TEXT
 // New test, added in http://trac.webkit.org/changeset/70814.
 // This test was removed by revert of r70814, but keep it for now.
 //BUGWK61166 LINUX MAC WIN : media/video-seek-by-small-increment.html = TEXT
-
-// New test added by http://trac.webkit.org/changeset/70840.
-BUGWK61188 : fast/repaint/iframe-scroll-repaint.html = IMAGE+TEXT IMAGE
 
 // These tests started failing presumably after r70850
 BUGWK48627 MAC : fast/invalid/missing-end-tag.xhtml = IMAGE

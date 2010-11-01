@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x175
+  RenderBlock {HTML} at (0,0) size 800x175
+layer at (8,8) size 784x159
+  RenderBody {BODY} at (8,8) size 784x159
+    RenderPartObject {IFRAME} at (0,0) size 304x154 [border: (2px inset #000000)]
+      layer at (0,0) size 300x516
+        RenderView at (0,0) size 300x150
+      layer at (0,0) size 300x516
+        RenderBlock {HTML} at (0,0) size 300x516 [bgcolor=#EEEEEE]
+          RenderBody {BODY} at (8,8) size 284x500
+            RenderBlock {DIV} at (0,0) size 284x500
