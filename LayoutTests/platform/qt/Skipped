@@ -5458,3 +5458,7 @@ fast/media/color-does-not-include-alpha.html
 
 # Requires WebP support.
 fast/images/webp-image-decoding.html
+
+# [Qt] DRT sideeffect revealed by r71004
+# https://bugs.webkit.org/show_bug.cgi?id=48758
+fast/dom/nodesFromRect-basic.html
