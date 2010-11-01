@@ -677,12 +677,17 @@ void WebFrameLoaderClient::committedLoad(DocumentLoader* loader, const char* dat
     if (!m_pluginView)
         loader->commitData(data, length);
 
+    // If the document is a stand-alone media document, now is the right time to cancel the WebKit load.
+    // FIXME: This code should be shared across all ports. <http://webkit.org/b/48762>.
+    if (m_frame->coreFrame()->document()->isMediaDocument())
+        loader->cancelMainResourceLoad(pluginWillHandleLoadError(loader->response()));
+
     // Calling commitData did not create the plug-in view.
     if (!m_pluginView)
         return;
 
     if (!m_hasSentResponseToPluginView) {
-        m_pluginView->manualLoadDidReceiveResponse(m_frame->coreFrame()->loader()->documentLoader()->response());
+        m_pluginView->manualLoadDidReceiveResponse(loader->response());
         // manualLoadDidReceiveResponse sets up a new stream to the plug-in. on a full-page plug-in, a failure in
         // setting up this stream can cause the main document load to be cancelled, setting m_pluginView
         // to null
@@ -829,16 +834,23 @@ ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse
     return WebKit::fileDoesNotExistError(response);
 }
 
-ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse&)
+ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response)
 {
-    notImplemented();
-    return ResourceError();
+    return WebKit::pluginWillHandleLoadError(response);
 }
 
-bool WebFrameLoaderClient::shouldFallBack(const ResourceError&)
+bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
 {
-    notImplemented();
-    return false;
+    DEFINE_STATIC_LOCAL(const ResourceError, cancelledError, (this->cancelledError(ResourceRequest())));
+    DEFINE_STATIC_LOCAL(const ResourceError, pluginWillHandleLoadError, (this->pluginWillHandleLoadError(ResourceResponse())));
+
+    if (error.errorCode() == cancelledError.errorCode() && error.domain() == cancelledError.domain())
+        return false;
+
+    if (error.errorCode() == pluginWillHandleLoadError.errorCode() && error.domain() == pluginWillHandleLoadError.domain())
+        return false;
+
+    return true;
 }
 
 bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest&) const

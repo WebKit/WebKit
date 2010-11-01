@@ -169,4 +169,9 @@ ResourceError fileDoesNotExistError(const ResourceResponse& response)
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:response.url()];    
 }
 
+ResourceError pluginWillHandleLoadError(const ResourceResponse& response)
+{
+    return [NSError _webKitErrorWithDomain:WebError::webKitErrorDomain() code:kWKErrorCodePlugInWillHandleLoad URL:response.url()];
+}
+
 } // namespace WebKit

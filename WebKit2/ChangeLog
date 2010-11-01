@@ -1,3 +1,36 @@
+2010-11-01  Adam Roben  <aroben@apple.com>
+
+        Cancel main resource loads after we hand them off to the media engine
+
+        This is the WebKit2 equivalent of r51104. Clearly this code should be
+        moved to a cross-platform location someday.
+
+        Fixes <http://webkit.org/b/48561> <rdar://problem/8606679> Assertion
+        failure in DocumentLoader::commitData when loading a media document in
+        WebKit2
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/WebCoreSupport/WebErrors.h: Added pluginWillHandleLoadError.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::committedLoad): Cancel the main resource load
+        after handing off the load to the media engine. This code originally
+        came from -[WebHTMLRepresentation receivedData:withDataSource:].
+        (WebKit::WebFrameLoaderClient::pluginWillHandleLoadError): Call through to WebErrors.
+        (WebKit::WebFrameLoaderClient::shouldFallBack): Implemented. We fall
+        back for all errors except when the load was cancelled or we handed it
+        off to the media engine or a plugin.
+
+        * WebProcess/WebCoreSupport/mac/WebErrorsMac.mm:
+        (WebKit::pluginWillHandleLoadError): Implemented.
+
+        * WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp:
+        (WebKit::pluginWillHandleLoadError): Stubbed out.
+
+        * WebProcess/WebCoreSupport/win/WebErrorsWin.cpp:
+        (WebKit::pluginWillHandleLoadError): Implemented.
+
 2010-11-01  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

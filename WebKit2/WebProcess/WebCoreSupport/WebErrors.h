@@ -38,6 +38,7 @@ WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
 WebCore::ResourceError interruptForPolicyChangeError(const WebCore::ResourceRequest&);
 WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
 WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
+WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
 
 } // namespace WebKit
 
