@@ -53,6 +53,7 @@
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
 
+#include <wtf/CurrentTime.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringBuffer.h>
