@@ -2261,9 +2261,6 @@ BUG31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 BUG32018 : http/tests/websocket/tests/frame-lengths.html = PASS TIMEOUT
 BUG32018 DEBUG : http/tests/websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
 
-// from http://trac.webkit.org/changeset/53086
-BUG32153 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE+TEXT
-
 // a bunch of tests broken before the flakiness fix, i will deal with these
 // after the major flakiness goes away
 BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
@@ -3384,3 +3381,10 @@ BUGWK61260 : media/media-can-play-wav-audio.html = TEXT
 // bug https://bugs.webkit.org/show_bug.cgi?id=48444
 BUGWK48444 : fast/blockflow/english-rl-text.html = IMAGE
 
+// Failures after WebKit roll 70949:71000
+BUGWK71000 MAC : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT
+BUG61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
+BUG61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
+BUG61406 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+// from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
+BUG32153and61406 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
