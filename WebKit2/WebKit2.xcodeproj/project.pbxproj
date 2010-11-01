@@ -71,7 +71,6 @@
 		1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A119A94127B796200A9ECB1 /* MessageSender.h */; };
 		1A1C4EC810D06099005E67E7 /* WebCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1C79A100E7FC50078DEBC /* WebCore.framework */; };
 		1A1C649B11F4174200553C19 /* WebContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1C648611F415B700553C19 /* WebContextMac.mm */; };
-		1A1FA253127A0E4F0050E709 /* NPRemoteObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA252127A0E4F0050E709 /* NPRemoteObjectMap.cpp */; };
 		1A1FA285127A13BC0050E709 /* NPObjectProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA284127A13BC0050E709 /* NPObjectProxy.cpp */; };
 		1A1FA35D127A45BF0050E709 /* NPObjectMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */; };
 		1A2161B011F37664008AD0F5 /* NPRuntimeObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2161AE11F37664008AD0F5 /* NPRuntimeObjectMap.h */; };
@@ -82,6 +81,12 @@
 		1A24B5F311F531E800C38269 /* MachUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24B5F111F531E800C38269 /* MachUtilities.h */; };
 		1A24BED5120894D100FBB059 /* SharedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A24BED3120894D100FBB059 /* SharedMemory.h */; };
 		1A24BF3A120896A600FBB059 /* SharedMemoryMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BF39120896A600FBB059 /* SharedMemoryMac.cpp */; };
+		1A2D82A4127F4EAB001EB962 /* NPObjectMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */; };
+		1A2D82A5127F4EAB001EB962 /* NPObjectMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FA35B127A45BF0050E709 /* NPObjectMessageReceiver.h */; };
+		1A2D82A6127F4EAB001EB962 /* NPObjectProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA284127A13BC0050E709 /* NPObjectProxy.cpp */; };
+		1A2D82A7127F4EAB001EB962 /* NPObjectProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FA283127A13BC0050E709 /* NPObjectProxy.h */; };
+		1A2D82A8127F4EAB001EB962 /* NPRemoteObjectMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1FA252127A0E4F0050E709 /* NPRemoteObjectMap.cpp */; };
+		1A2D82A9127F4EAB001EB962 /* NPRemoteObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FA251127A0E4F0050E709 /* NPRemoteObjectMap.h */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */; };
@@ -2240,6 +2245,9 @@
 				51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */,
 				1A119A95127B796200A9ECB1 /* MessageSender.h in Headers */,
 				51871B5C127CB89D00F76232 /* WebContextMenu.h in Headers */,
+				1A2D82A5127F4EAB001EB962 /* NPObjectMessageReceiver.h in Headers */,
+				1A2D82A7127F4EAB001EB962 /* NPObjectProxy.h in Headers */,
+				1A2D82A9127F4EAB001EB962 /* NPRemoteObjectMap.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2353,7 +2361,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A6FA31111E3921E00DB1371 /* MainMac.cpp in Sources */,
-				1A1FA253127A0E4F0050E709 /* NPRemoteObjectMap.cpp in Sources */,
 				1A1FA285127A13BC0050E709 /* NPObjectProxy.cpp in Sources */,
 				1A1FA35D127A45BF0050E709 /* NPObjectMessageReceiver.cpp in Sources */,
 			);
@@ -2572,6 +2579,9 @@
 				C0337DDD127A521C008FF4F4 /* WebPlatformTouchPoint.cpp in Sources */,
 				51871B5B127CB89D00F76232 /* WebContextMenu.cpp in Sources */,
 				51A84CE3127F386B00CA6EA4 /* WebContextMenuProxy.cpp in Sources */,
+				1A2D82A4127F4EAB001EB962 /* NPObjectMessageReceiver.cpp in Sources */,
+				1A2D82A6127F4EAB001EB962 /* NPObjectProxy.cpp in Sources */,
+				1A2D82A8127F4EAB001EB962 /* NPRemoteObjectMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

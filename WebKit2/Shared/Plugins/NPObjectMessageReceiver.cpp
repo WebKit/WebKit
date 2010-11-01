@@ -23,18 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(PLUGIN_PROCESS)
+
 #include "NPObjectMessageReceiver.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#include "NPRuntimeUtilities.h"
 
 namespace WebKit {
 
-NPObjectMessageReceiver::NPObjectMessageReceiver()
+PassOwnPtr<NPObjectMessageReceiver> NPObjectMessageReceiver::create(NPObject* npObject)
 {
+    return adoptPtr(new NPObjectMessageReceiver(npObject));
+}
+
+NPObjectMessageReceiver::NPObjectMessageReceiver(NPObject* npObject)
+    : m_npObject(npObject)
+{
+    retainNPObject(m_npObject);
 }
 
 NPObjectMessageReceiver::~NPObjectMessageReceiver()
 {
+    releaseNPObject(m_npObject);
 }
 
 } // namespace WebKit

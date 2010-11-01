@@ -44,8 +44,9 @@ WebProcessConnection::~WebProcessConnection()
 }
     
 WebProcessConnection::WebProcessConnection(CoreIPC::Connection::Identifier connectionIdentifier)
+    : m_connection(CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main()))
+    , m_npRemoteObjectMap(m_connection.get())
 {
-    m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
     m_connection->open();
 }
 

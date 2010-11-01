@@ -28,16 +28,23 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include <WebCore/npruntime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebKit {
 
 class NPObjectMessageReceiver {
     WTF_MAKE_NONCOPYABLE(NPObjectMessageReceiver);
 
-private:
-    NPObjectMessageReceiver();
+public:
+    static PassOwnPtr<NPObjectMessageReceiver> create(NPObject* npObject);
     ~NPObjectMessageReceiver();
+    
+private:
+    explicit NPObjectMessageReceiver(NPObject* npObject);
+
+    NPObject* m_npObject;
 };
     
 } // namespace WebKit

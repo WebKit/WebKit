@@ -28,6 +28,8 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include <WebCore/npruntime.h>
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 
 namespace CoreIPC {
@@ -36,14 +38,27 @@ namespace CoreIPC {
 
 namespace WebKit {
 
+class NPObjectMessageReceiver;
+class NPObjectProxy;
+
 class NPRemoteObjectMap {
     WTF_MAKE_NONCOPYABLE(NPRemoteObjectMap);
 
 public:
     explicit NPRemoteObjectMap(CoreIPC::Connection*);
 
+    // Creates an NPObjectProxy wrapper for the remote object with the given remote object ID.
+    NPObjectProxy* getOrCreateNPObjectProxy(uint64_t remoteObjectID);
+
+    // Expose the given NPObject as a remote object. Returns the objectID.
+    uint64_t registerNPObject(NPObject*);
+
 private:
     CoreIPC::Connection* m_connection;
+
+    // A map of NPObjectMessageReceiver classes, wrapping objects that we export to the
+    // other end of the connection.
+    HashMap<uint64_t, NPObjectMessageReceiver*> m_registeredNPObjects;
 };
 
 } // namespace WebKit

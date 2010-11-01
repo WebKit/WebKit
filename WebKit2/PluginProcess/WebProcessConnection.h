@@ -29,6 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "Connection.h"
+#include "NPRemoteObjectMap.h"
 #include "Plugin.h"
 #include <wtf/RefCounted.h>
 
@@ -44,6 +45,8 @@ public:
     virtual ~WebProcessConnection();
 
     CoreIPC::Connection* connection() const { return m_connection.get(); }
+
+    NPRemoteObjectMap& npRemoteObjectMap() { return m_npRemoteObjectMap; }
 
 private:
     WebProcessConnection(CoreIPC::Connection::Identifier);
@@ -67,7 +70,7 @@ private:
     RefPtr<CoreIPC::Connection> m_connection;
 
     HashMap<uint64_t, PluginControllerProxy*> m_pluginControllers;
-
+    NPRemoteObjectMap m_npRemoteObjectMap;
 };
 
 } // namespace WebKit

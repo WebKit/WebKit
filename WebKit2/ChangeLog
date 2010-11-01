@@ -1,3 +1,49 @@
+2010-11-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Both the WebProcessConnection and PluginProcessConnection should have NPRemoteObjectMaps
+        https://bugs.webkit.org/show_bug.cgi?id=48775
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::windowScriptNPObject):
+        Ask for an NPObjectProxy for the window script NPObject.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::WebProcessConnection):
+        Initialize m_npRemoteObjectMap.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::create):
+        Add a create member function that takes an NPObject.
+
+        (WebKit::NPObjectMessageReceiver::NPObjectMessageReceiver):
+        Retain the NPObject.
+
+        (WebKit::NPObjectMessageReceiver::~NPObjectMessageReceiver):
+        Release the NPObject.
+
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::generateNPObjectID):
+        Generate a unique 64-bit NPObject ID.
+
+        (WebKit::NPRemoteObjectMap::getOrCreateNPObjectProxy):
+        Add stub.
+
+        (WebKit::NPRemoteObjectMap::registerNPObject):
+        Create a NPObjectMessageReceiver and add it to the map.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Set the correct target for NPRuntime related files.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        Initialize m_npRemoteObjectMap
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::getWindowScriptNPObject):
+        Ask the real plug-in controller for the window script NPObject and register it.
+
 2010-11-01  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -29,6 +29,7 @@
 
 #include "BackingStore.h"
 #include "DataReference.h"
+#include "NPObjectProxy.h"
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
 #include "PluginProcess.h"
@@ -169,9 +170,7 @@ NPObject* PluginControllerProxy::windowScriptNPObject()
     if (!windowScriptNPObjectID)
         return 0;
 
-    // FIXME: Do something with the windowScriptNPObjectID.
-    notImplemented();
-    return 0;
+    return m_connection->npRemoteObjectMap().getOrCreateNPObjectProxy(windowScriptNPObjectID);
 }
 
 NPObject* PluginControllerProxy::pluginElementNPObject()

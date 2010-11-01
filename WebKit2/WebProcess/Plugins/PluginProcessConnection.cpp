@@ -36,8 +36,9 @@ namespace WebKit {
 PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier)
     : m_pluginProcessConnectionManager(pluginProcessConnectionManager)
     , m_pluginPath(pluginPath)
+    , m_connection(CoreIPC::Connection::createClientConnection(connectionIdentifier, this, WebProcess::shared().runLoop()))
+    , m_npRemoteObjectMap(m_connection.get())
 {
-    m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, WebProcess::shared().runLoop());
     m_connection->open();
 }
 
@@ -96,7 +97,6 @@ void PluginProcessConnection::didClose(CoreIPC::Connection*)
 
         pluginProxy->pluginProcessCrashed();
     }
-    
 }
 
 void PluginProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
