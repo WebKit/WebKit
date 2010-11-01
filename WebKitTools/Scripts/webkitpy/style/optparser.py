@@ -145,6 +145,7 @@ class CommandOptionValues(object):
     def __init__(self,
                  filter_rules=None,
                  git_commit=None,
+                 diff_files=None,
                  is_verbose=False,
                  min_confidence=1,
                  output_format="emacs"):
@@ -163,6 +164,7 @@ class CommandOptionValues(object):
 
         self.filter_rules = filter_rules
         self.git_commit = git_commit
+        self.diff_files = diff_files
         self.is_verbose = is_verbose
         self.min_confidence = min_confidence
         self.output_format = output_format
@@ -173,6 +175,8 @@ class CommandOptionValues(object):
         if self.filter_rules != other.filter_rules:
             return False
         if self.git_commit != other.git_commit:
+            return False
+        if self.diff_files != other.diff_files:
             return False
         if self.is_verbose != other.is_verbose:
             return False
@@ -214,6 +218,8 @@ class ArgumentPrinter(object):
             flags['filter'] = ",".join(filter_rules)
         if options.git_commit:
             flags['git-commit'] = options.git_commit
+        if options.diff_files:
+            flags['diff_files'] = options.diff_files
 
         flag_string = ''
         # Alphabetizing lets us unit test this method.
@@ -307,6 +313,9 @@ class ArgumentParser(object):
                            "Use 'commit_id..' to check all changes after commmit_id")
         parser.add_option("-g", "--git-diff", "--git-commit",
                           metavar="COMMIT", dest="git_commit", help=git_commit_help,)
+
+        diff_files_help = "diff the files passed on the command line rather than checking the style of every line"
+        parser.add_option("--diff-files", action="store_true", dest="diff_files", default=False, help=diff_files_help)
 
         min_confidence_help = ("set the minimum confidence of style errors "
                                "to report.  Can be an integer 1-5, with 1 "
@@ -409,6 +418,7 @@ class ArgumentParser(object):
 
         filter_value = options.filter_value
         git_commit = options.git_commit
+        diff_files = options.diff_files
         is_verbose = options.is_verbose
         min_confidence = options.min_confidence
         output_format = options.output_format
@@ -419,10 +429,6 @@ class ArgumentParser(object):
             self._exit_with_categories()
 
         # Validate user-provided values.
-
-        if paths and git_commit:
-            self._parse_error('You cannot provide both paths and a git '
-                              'commit at the same time.')
 
         min_confidence = int(min_confidence)
         if (min_confidence < 1) or (min_confidence > 5):
@@ -442,6 +448,7 @@ class ArgumentParser(object):
 
         options = CommandOptionValues(filter_rules=filter_rules,
                                       git_commit=git_commit,
+                                      diff_files=diff_files,
                                       is_verbose=is_verbose,
                                       min_confidence=min_confidence,
                                       output_format=output_format)

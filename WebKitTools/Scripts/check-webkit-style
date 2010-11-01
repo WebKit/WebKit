@@ -112,10 +112,11 @@ def main():
 
     file_reader = TextFileReader(style_processor)
 
-    if paths:
+    if paths and not options.diff_files:
         file_reader.process_paths(paths)
     else:
-        patch = checkout.create_patch(options.git_commit)
+        changed_files = paths if options.diff_files else None
+        patch = checkout.create_patch(options.git_commit, changed_files=changed_files)
         patch_checker = PatchReader(file_reader)
         patch_checker.check(patch)
 

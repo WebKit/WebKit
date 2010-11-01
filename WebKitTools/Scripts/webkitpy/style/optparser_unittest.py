@@ -136,11 +136,6 @@ class ArgumentParserTest(LoggingTestCase):
         self.assertLog(['ERROR: Invalid filter rule "build": '
                         'every rule must start with + or -.\n'])
         parse(['--filter=+build']) # works
-        # Pass files and git-commit at the same time.
-        self.assertRaises(SystemExit, parse, ['--git-commit=committish',
-                                              'file.txt'])
-        self.assertLog(['ERROR: You cannot provide both paths and '
-                        'a git commit at the same time.\n'])
 
     def test_parse_default_arguments(self):
         parse = self._parse
@@ -151,6 +146,7 @@ class ArgumentParserTest(LoggingTestCase):
 
         self.assertEquals(options.filter_rules, [])
         self.assertEquals(options.git_commit, None)
+        self.assertEquals(options.diff_files, False)
         self.assertEquals(options.is_verbose, False)
         self.assertEquals(options.min_confidence, 3)
         self.assertEquals(options.output_format, 'vs7')
@@ -171,6 +167,8 @@ class ArgumentParserTest(LoggingTestCase):
         self.assertEquals(options.git_commit, 'commit')
         (files, options) = parse(['--verbose'])
         self.assertEquals(options.is_verbose, True)
+        (files, options) = parse(['--diff-files', 'file.txt'])
+        self.assertEquals(options.diff_files, True)
 
         # Pass user_rules.
         (files, options) = parse(['--filter=+build,-whitespace'])
