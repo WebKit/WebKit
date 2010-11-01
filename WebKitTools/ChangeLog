@@ -1,5 +1,11 @@
 2010-11-01  Adam Roben  <aroben@apple.com>
 
+        Fix typo from r71022
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
+2010-11-01  Adam Roben  <aroben@apple.com>
+
         Trigger the Windows Release WebKit2 tests when a Release build
         finishes, not when a Debug build finishes
 
