@@ -372,7 +372,9 @@ webkit_test_plugin_set_value(NPP instance, NPNVariable variable, void* value)
 char *
 NP_GetMIMEDescription(void)
 {
-    return const_cast<char*>("application/x-webkit-test-netscape:testnetscape:test netscape content");
+    // We sentence-case the mime-type here to ensure that ports are not
+    // case-sensitive when loading plugins. See https://webkit.org/b/36815
+    return const_cast<char*>("application/x-Webkit-Test-Netscape:testnetscape:test netscape content");
 }
 
 NPError
