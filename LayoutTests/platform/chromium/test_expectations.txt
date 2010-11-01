@@ -3189,8 +3189,7 @@ BUG59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
 BUG59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
 // Needs investigation
-BUGJAMESR LINUX WIN : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
-BUGJAMESR MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE
+BUGJAMESR LINUX WIN MAC : fast/text/international/vertical-text-glyph-test.html = IMAGE+TEXT
 BUGJAMESR : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
