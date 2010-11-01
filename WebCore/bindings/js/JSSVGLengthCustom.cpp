@@ -22,22 +22,64 @@
 #if ENABLE(SVG)
 #include "JSSVGLength.h"
 
+#include <runtime/Error.h>
 #include "SVGAnimatedProperty.h"
+#include "SVGException.h"
 
 using namespace JSC;
 
 namespace WebCore {
 
-JSValue JSSVGLength::value(ExecState*) const
+JSValue JSSVGLength::value(ExecState* exec) const
 {
     SVGLength& podImp = impl()->propertyReference();
-    return jsNumber(podImp.value(impl()->contextElement()));
+    ExceptionCode ec = 0;
+    float value = podImp.value(impl()->contextElement(), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
+
+    return jsNumber(value);
+}
+
+void JSSVGLength::setValue(ExecState* exec, JSValue value)
+{
+    if (!value.isUndefinedOrNull() && !value.isNumber() && !value.isBoolean()) {
+        throwVMTypeError(exec);
+        return;
+    }
+
+    SVGLength& podImp = impl()->propertyReference();
+
+    ExceptionCode ec = 0;
+    podImp.setValue(value.toFloat(exec), impl()->contextElement(), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return;
+    }
+
+    impl()->commitChange();
 }
 
 JSValue JSSVGLength::convertToSpecifiedUnits(ExecState* exec)
 {
     SVGLength& podImp = impl()->propertyReference();
-    podImp.convertToSpecifiedUnits(exec->argument(0).toInt32(exec), impl()->contextElement());
+
+    // Mimic the behaviour of RequiresAllArguments=Raise.
+    if (exec->argumentCount() < 1)
+        return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
+
+    unsigned short unitType = exec->argument(0).toUInt32(exec);
+    if (exec->hadException())
+        return jsUndefined();
+
+    ExceptionCode ec = 0;
+    podImp.convertToSpecifiedUnits(unitType, impl()->contextElement(), ec);
+    if (ec) {
+        setDOMException(exec, ec);
+        return jsUndefined();
+    }
 
     impl()->commitChange();
     return jsUndefined();

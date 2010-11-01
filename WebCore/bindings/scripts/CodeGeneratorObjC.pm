@@ -1,4 +1,4 @@
-#
+# 
 # Copyright (C) 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com> 
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
@@ -1246,7 +1246,7 @@ sub GenerateImplementation
 
                 # TODO: Handle special case for DOMSVGLength. We do need Custom code support for this.
                 if ($svgPropertyType eq "WebCore::SVGLength" and $attributeName eq "value") {
-                    $getterContentHead = "value(0 /* FIXME */";
+                    $getterContentHead = "value(IMPL->contextElement(), ";
                 }
             }
 
@@ -1393,7 +1393,12 @@ sub GenerateImplementation
                     if ($svgPropertyType eq "float") {
                         push(@implContent, "    podImpl = $arg;\n");
                     } else {
-                        push(@implContent, "    podImpl.$coreSetterName($arg$ec);\n");
+                        # FIXME: Special case for DOMSVGLength. We do need Custom code support for this.
+                        if ($svgPropertyType eq "WebCore::SVGLength" and $attributeName eq "value") {
+                            push(@implContent, "    podImpl.$coreSetterName($arg, IMPL->contextElement()$ec);\n");
+                        } else {
+                            push(@implContent, "    podImpl.$coreSetterName($arg$ec);\n");
+                        }
                     }
 
                     if ($hasSetterException) {
@@ -1528,8 +1533,8 @@ sub GenerateImplementation
             my $svgMatrixInverse = ($podType and $podType eq "AffineTransform" and $functionName eq "inverse");
             my $svgLengthConvertToSpecifiedUnits = ($svgPropertyType and $svgPropertyType eq "WebCore::SVGLength" and $functionName eq "convertToSpecifiedUnits");
 
+            push(@parameterNames, "IMPL->contextElement()") if $svgLengthConvertToSpecifiedUnits; 
             push(@parameterNames, "ec") if $raisesExceptions and !($svgMatrixRotateFromVector || $svgMatrixInverse);
-            push(@parameterNames, "0 /* FIXME */") if $svgLengthConvertToSpecifiedUnits; 
 
             # Handle arguments that are 'SVGProperty' based (SVGAngle/SVGLength). We need to convert from SVGPropertyTearOff<Type>* to Type,
             # to be able to call the desired WebCore function. If the conversion fails, we can't extract Type and need to raise an exception.

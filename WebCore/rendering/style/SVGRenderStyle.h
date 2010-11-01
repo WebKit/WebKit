@@ -92,28 +92,36 @@ public:
     static SVGLength initialBaselineShiftValue()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0);
+        ExceptionCode ec = 0;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ec);
+        ASSERT(!ec);
         return length;
     }
 
     static SVGLength initialKerning()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0);
+        ExceptionCode ec = 0;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ec);
+        ASSERT(!ec);
         return length;
     }
 
     static SVGLength initialStrokeDashOffset()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0);
+        ExceptionCode ec = 0;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ec);
+        ASSERT(!ec);
         return length;
     }
 
     static SVGLength initialStrokeWidth()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 1);
+        ExceptionCode ec = 0;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 1, ec);
+        ASSERT(!ec);
         return length;
     }
 

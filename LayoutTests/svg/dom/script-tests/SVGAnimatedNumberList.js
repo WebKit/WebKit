@@ -17,7 +17,7 @@ shouldBe("numRef.getItem(0).value", "100");
 shouldBe("textElement.rotate.baseVal.getItem(0).value", "100");
 
 debug("");
-debug("Check assigning to baseVal has no effect, as no setter is defined");
+debug("Check that assigning to baseVal has no effect, as no setter is defined");
 shouldBe("textElement.rotate.baseVal = -1", "-1");
 shouldBeEqualToString("textElement.rotate.baseVal = 'aString'", "aString");
 shouldBe("textElement.rotate.baseVal = textElement", "textElement");

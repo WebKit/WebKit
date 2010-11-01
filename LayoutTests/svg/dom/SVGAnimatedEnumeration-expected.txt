@@ -1,0 +1,28 @@
+This test checks the SVGAnimatedEnumeration API - utilizing the clipPathUnits property of SVGClipPathElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial clipPathUnits value
+PASS clipPathElement.clipPathUnits.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(clipPathElement.clipPathUnits.baseVal) is "number"
+PASS clipPathElement.clipPathUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+
+Check that enumerations are static, caching value in a local variable and modifying it, should have no effect
+PASS enumRef is SVGUnitTypes.SVG_UNIT_TYPE_UNKNOWN
+PASS clipPathElement.clipPathUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+
+Check assigning various valid and invalid values
+FAIL clipPathElement.clipPathUnits.baseVal = 3 should throw an exception. Was 3.
+PASS clipPathElement.clipPathUnits.baseVal = 2 is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+FAIL clipPathElement.clipPathUnits.baseVal = -1 should throw an exception. Was -1.
+PASS clipPathElement.clipPathUnits.baseVal = 'aString' threw exception TypeError: Type error.
+PASS clipPathElement.clipPathUnits.baseVal = clipPathElement threw exception TypeError: Type error.
+
+Check that the clipPathUnits value remained objectBBox
+PASS clipPathElement.clipPathUnits.baseVal = 2 is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

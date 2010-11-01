@@ -13,7 +13,7 @@ Check that number lists are dynamic, caching value in a local variable and modif
 PASS numRef.getItem(0).value is 100
 PASS textElement.rotate.baseVal.getItem(0).value is 100
 
-Check assigning to baseVal has no effect, as no setter is defined
+Check that assigning to baseVal has no effect, as no setter is defined
 PASS textElement.rotate.baseVal = -1 is -1
 PASS textElement.rotate.baseVal = 'aString' is "aString"
 PASS textElement.rotate.baseVal = textElement is textElement

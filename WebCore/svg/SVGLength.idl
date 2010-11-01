@@ -37,14 +37,20 @@ module svg {
         const unsigned short SVG_LENGTHTYPE_PC         = 10;
 
         readonly attribute unsigned short unitType;
-        attribute [CustomGetter] float value;
-        attribute float valueInSpecifiedUnits;
-        attribute [ConvertNullToNullString] DOMString valueAsString;
+        attribute [Custom, StrictTypeChecking] float value
+            setter raises(DOMException),
+            getter raises(DOMException);
 
-        void newValueSpecifiedUnits(in unsigned short unitType, 
-                                    in float valueInSpecifiedUnits);
+        attribute [StrictTypeChecking] float valueInSpecifiedUnits;
+        attribute [ConvertNullToNullString, StrictTypeChecking] DOMString valueAsString
+            setter raises(DOMException);
 
-        [Custom] void convertToSpecifiedUnits(in unsigned short unitType);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void newValueSpecifiedUnits(in unsigned short unitType, 
+                                                         in float valueInSpecifiedUnits)
+            raises(DOMException);
+
+        [Custom, StrictTypeChecking, RequiresAllArguments=Raise] void convertToSpecifiedUnits(in unsigned short unitType)
+            raises(DOMException);
     };
 
 }

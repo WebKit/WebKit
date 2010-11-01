@@ -27,7 +27,7 @@ module svg {
 
     interface [Conditional=SVG] SVGAnimatedBoolean {
         attribute [StrictTypeChecking] boolean baseVal;
-        readonly attribute [StrictTypeChecking] boolean animVal;
+        readonly attribute boolean animVal;
     };
 
 }

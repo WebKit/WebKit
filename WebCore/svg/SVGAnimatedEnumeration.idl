@@ -26,7 +26,7 @@
 module svg {
 
     interface [Conditional=SVG] SVGAnimatedEnumeration {
-        attribute unsigned short baseVal;
+        attribute [StrictTypeChecking] unsigned short baseVal;
         readonly attribute unsigned short animVal;
     };
 

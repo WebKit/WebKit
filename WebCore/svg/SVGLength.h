@@ -22,7 +22,8 @@
 #define SVGLength_h
 
 #if ENABLE(SVG)
-#include "PlatformString.h"
+#include "ExceptionCode.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -76,30 +77,41 @@ public:
     bool operator!=(const SVGLength&) const;
 
     float value(const SVGElement* context) const;
-    void setValue(float);
+    float value(const SVGElement* context, ExceptionCode&) const;
+    void setValue(float, const SVGElement* context, ExceptionCode&);
 
-    float valueInSpecifiedUnits() const;
-    void setValueInSpecifiedUnits(float);
-    
+    float valueInSpecifiedUnits() const { return m_valueInSpecifiedUnits; }
+    void setValueInSpecifiedUnits(float value) { m_valueInSpecifiedUnits = value; }
+
     float valueAsPercentage() const;
 
     String valueAsString() const;
-    bool setValueAsString(const String&);
+    void setValueAsString(const String&, ExceptionCode&);
 
-    void newValueSpecifiedUnits(unsigned short, float valueInSpecifiedUnits);
-    void convertToSpecifiedUnits(unsigned short, const SVGElement* context);
+    void newValueSpecifiedUnits(unsigned short, float valueInSpecifiedUnits, ExceptionCode&);
+    void convertToSpecifiedUnits(unsigned short, const SVGElement* context, ExceptionCode&);
 
     // Helper functions
-    static float PercentageOfViewport(float value, const SVGElement* context, SVGLengthMode);
-
     inline bool isRelative() const
     {
         SVGLengthType type = unitType();
-        return (type == LengthTypePercentage || type == LengthTypeEMS || type == LengthTypeEXS);
+        return type == LengthTypePercentage || type == LengthTypeEMS || type == LengthTypeEXS;
     }
 
     static SVGLength fromCSSPrimitiveValue(CSSPrimitiveValue*);
     static PassRefPtr<CSSPrimitiveValue> toCSSPrimitiveValue(const SVGLength&);
+
+private:
+    bool determineViewport(const SVGElement* context, float& width, float& height) const;
+
+    float convertValueFromPercentageToUserUnits(float value, const SVGElement* context, ExceptionCode&) const;
+    float convertValueFromUserUnitsToPercentage(float value, const SVGElement* context, ExceptionCode&) const;
+
+    float convertValueFromUserUnitsToEMS(float value, const SVGElement* context, ExceptionCode&) const;
+    float convertValueFromEMSToUserUnits(float value, const SVGElement* context, ExceptionCode&) const;
+
+    float convertValueFromUserUnitsToEXS(float value, const SVGElement* context, ExceptionCode&) const;
+    float convertValueFromEXSToUserUnits(float value, const SVGElement* context, ExceptionCode&) const;
 
 private:
     float m_valueInSpecifiedUnits;

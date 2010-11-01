@@ -31,6 +31,7 @@ namespace WebCore {
 void SVGLengthList::parse(const String& value, SVGLengthMode mode)
 {
     clear();
+    ExceptionCode ec = 0;
 
     const UChar* ptr = value.characters();
     const UChar* end = ptr + value.length();
@@ -40,8 +41,13 @@ void SVGLengthList::parse(const String& value, SVGLengthMode mode)
             ptr++;
         if (ptr == start)
             break;
+
         SVGLength length(mode);
-        if (!length.setValueAsString(String(start, ptr - start)))
+        String valueString(start, ptr - start);
+        if (valueString.isEmpty())
+            return;
+        length.setValueAsString(valueString, ec);
+        if (ec)
             return;
         append(length);
         skipOptionalSpacesOrDelimiter(ptr, end);
