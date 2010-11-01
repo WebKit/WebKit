@@ -189,11 +189,6 @@ void RGBA32Buffer::setHasAlpha(bool alpha)
     m_hasAlpha = alpha;
 }
 
-void RGBA32Buffer::setColorProfile(const ColorProfile& colorProfile)
-{
-    m_colorProfile = colorProfile;
-}
-
 void RGBA32Buffer::setStatus(FrameStatus status)
 {
     m_status = status;
