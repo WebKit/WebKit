@@ -155,7 +155,7 @@ public:
     void addOverflowFromChild(RenderBox* child, const IntSize& delta);
     void clearLayoutOverflow();
 
-    void blockDirectionOverflow(bool isLineVertical, int& logicalTopLayoutOverflow, int& logicalBottomLayoutOverflow,
+    void blockDirectionOverflow(bool isLineHorizontal, int& logicalTopLayoutOverflow, int& logicalBottomLayoutOverflow,
                                 int& logicalTopVisualOverflow, int& logicalBottomVisualOverflow);
 
     int contentWidth() const { return clientWidth() - paddingLeft() - paddingRight(); }

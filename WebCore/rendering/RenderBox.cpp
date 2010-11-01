@@ -3185,20 +3185,20 @@ int RenderBox::baselinePosition(bool /*firstLine*/, LineDirectionMode direction,
     return 0;
 }
 
-void RenderBox::blockDirectionOverflow(bool isLineVertical, int& logicalTopLayoutOverflow, int& logicalBottomLayoutOverflow,
+void RenderBox::blockDirectionOverflow(bool isLineHorizontal, int& logicalTopLayoutOverflow, int& logicalBottomLayoutOverflow,
                                        int& logicalTopVisualOverflow, int& logicalBottomVisualOverflow)
 {
-    if (isLineVertical) {
-        logicalTopLayoutOverflow = leftLayoutOverflow();
-        logicalBottomLayoutOverflow = rightLayoutOverflow();
-        logicalTopVisualOverflow = leftVisualOverflow();
-        logicalBottomVisualOverflow = rightVisualOverflow();
-    } else {
+    if (isLineHorizontal) {
         logicalTopLayoutOverflow = topLayoutOverflow();
         logicalBottomLayoutOverflow = bottomLayoutOverflow();
         logicalTopVisualOverflow = topVisualOverflow();
         logicalBottomVisualOverflow = bottomVisualOverflow();
-    }
+    } else {
+        logicalTopLayoutOverflow = leftLayoutOverflow();
+        logicalBottomLayoutOverflow = rightLayoutOverflow();
+        logicalTopVisualOverflow = leftVisualOverflow();
+        logicalBottomVisualOverflow = rightVisualOverflow();
+    } 
 }
 
 void RenderBox::adjustForFlippedBlocksWritingMode(RenderBox* child, IntPoint& point, FlippingAdjustment adjustment)

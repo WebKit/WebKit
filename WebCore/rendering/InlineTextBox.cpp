@@ -162,9 +162,9 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     else if (r.right() > m_logicalWidth)
         logicalWidth = m_logicalWidth - r.x();
     
-    IntPoint topPoint = m_isVertical ? IntPoint(tx + selTop, ty + m_y + r.x()) : IntPoint(tx + m_x + r.x(), ty + selTop);
-    int width = m_isVertical ? selHeight : logicalWidth;
-    int height = m_isVertical ? logicalWidth : selHeight;
+    IntPoint topPoint = isHorizontal() ? IntPoint(tx + m_x + r.x(), ty + selTop) : IntPoint(tx + selTop, ty + m_y + r.x());
+    int width = isHorizontal() ? logicalWidth : selHeight;
+    int height = isHorizontal() ? selHeight : logicalWidth;
     
     return IntRect(topPoint, IntSize(width, height));
 }
@@ -321,14 +321,14 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, in
     return false;
 }
 
-FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, const ShadowData* shadow, const FloatRect& textRect, bool stroked, bool opaque, bool vertical)
+FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, const ShadowData* shadow, const FloatRect& textRect, bool stroked, bool opaque, bool horizontal)
 {
     if (!shadow)
         return FloatSize();
 
     FloatSize extraOffset;
-    int shadowX = vertical ? shadow->y() : shadow->x();
-    int shadowY = vertical ? -shadow->x() : shadow->y();
+    int shadowX = horizontal ? shadow->x() : shadow->y();
+    int shadowY = horizontal ? shadow->y() : -shadow->x();
     FloatSize shadowOffset(shadowX, shadowY);
     int shadowBlur = shadow->blur();
     const Color& shadowColor = shadow->color();
@@ -349,7 +349,7 @@ FloatSize InlineTextBox::applyShadowToGraphicsContext(GraphicsContext* context, 
 }
 
 static void paintTextWithShadows(GraphicsContext* context, const Font& font, const TextRun& textRun, int startOffset, int endOffset, int truncationPoint, const IntPoint& textOrigin,
-                                 const IntRect& boxRect, const ShadowData* shadow, bool stroked, bool vertical)
+                                 const IntRect& boxRect, const ShadowData* shadow, bool stroked, bool horizontal)
 {
     Color fillColor = context->fillColor();
     ColorSpace fillColorSpace = context->fillColorSpace();
@@ -360,7 +360,7 @@ static void paintTextWithShadows(GraphicsContext* context, const Font& font, con
     do {
         IntSize extraOffset;
         if (shadow)
-            extraOffset = roundedIntSize(InlineTextBox::applyShadowToGraphicsContext(context, shadow, boxRect, stroked, opaque, vertical));
+            extraOffset = roundedIntSize(InlineTextBox::applyShadowToGraphicsContext(context, shadow, boxRect, stroked, opaque, horizontal));
         else if (!opaque)
             context->setFillColor(fillColor, fillColorSpace);
 
@@ -397,11 +397,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     // Would it be simpler to just check our own shadow and stroke overflow by hand here?
     int logicalLeftOverflow = parent()->logicalLeft() - parent()->logicalLeftVisualOverflow();
     int logicalRightOverflow = parent()->logicalRightVisualOverflow() - (parent()->logicalLeft() + parent()->logicalWidth());
-    int logicalStart = logicalLeft() - logicalLeftOverflow + (isVertical() ? ty : tx);
+    int logicalStart = logicalLeft() - logicalLeftOverflow + (isHorizontal() ? tx : ty);
     int logicalExtent = logicalWidth() + logicalLeftOverflow + logicalRightOverflow;
     
-    int paintEnd = isVertical() ? paintInfo.rect.bottom() : paintInfo.rect.right();
-    int paintStart = isVertical() ? paintInfo.rect.y() : paintInfo.rect.x();
+    int paintEnd = isHorizontal() ? paintInfo.rect.right() : paintInfo.rect.bottom();
+    int paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
     
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
@@ -427,7 +427,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
             int widthOfVisibleText = toRenderText(renderer())->width(m_start, m_truncation, textPos(), m_firstLine);
             int widthOfHiddenText = m_logicalWidth - widthOfVisibleText;
             // FIXME: The hit testing logic also needs to take this translation int account.
-            if (!m_isVertical)
+            if (isHorizontal())
                 tx += isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText;
             else
                 ty += isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText;
@@ -447,7 +447,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     IntPoint textOrigin = IntPoint(boxOrigin.x(), boxOrigin.y() + styleToUse->font().ascent());
     IntRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
 
-    if (m_isVertical) {
+    if (!isHorizontal()) {
         context->save();
         context->translate(boxRect.x(), boxRect.bottom());
         context->rotate(static_cast<float>(deg2rad(90.)));
@@ -574,9 +574,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
         updateGraphicsContext(context, textFillColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
         if (!paintSelectedTextSeparately || ePos <= sPos) {
             // FIXME: Truncate right-to-left text correctly.
-            paintTextWithShadows(context, font, textRun, 0, length, length, textOrigin, boxRect, textShadow, textStrokeWidth > 0, m_isVertical);
+            paintTextWithShadows(context, font, textRun, 0, length, length, textOrigin, boxRect, textShadow, textStrokeWidth > 0, isHorizontal());
         } else
-            paintTextWithShadows(context, font, textRun, ePos, sPos, length, textOrigin, boxRect, textShadow, textStrokeWidth > 0, m_isVertical);
+            paintTextWithShadows(context, font, textRun, ePos, sPos, length, textOrigin, boxRect, textShadow, textStrokeWidth > 0, isHorizontal());
 
         if (textStrokeWidth > 0)
             context->restore();
@@ -588,7 +588,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
             context->save();
 
         updateGraphicsContext(context, selectionFillColor, selectionStrokeColor, selectionStrokeWidth, styleToUse->colorSpace());
-        paintTextWithShadows(context, font, textRun, sPos, ePos, length, textOrigin, boxRect, selectionShadow, selectionStrokeWidth > 0, m_isVertical);
+        paintTextWithShadows(context, font, textRun, sPos, ePos, length, textOrigin, boxRect, selectionShadow, selectionStrokeWidth > 0, isHorizontal());
 
         if (selectionStrokeWidth > 0)
             context->restore();
@@ -629,7 +629,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
         }
     }
     
-    if (m_isVertical)
+    if (!isHorizontal())
         context->restore();
 }
 
@@ -772,8 +772,8 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const IntPoint& bo
         for (const ShadowData* s = shadow; s; s = s->next()) {
             IntRect shadowRect(localOrigin, IntSize(width, baseline + 2));
             shadowRect.inflate(s->blur());
-            int shadowX = m_isVertical ? s->y() : s->x();
-            int shadowY = m_isVertical ? -s->x() : s->y();
+            int shadowX = isHorizontal() ? s->x() : s->y();
+            int shadowY = isHorizontal() ? s->y() : -s->x();
             shadowRect.move(shadowX, shadowY);
             clipRect.unite(shadowRect);
             extraOffset = max(extraOffset, max(0, shadowY) + s->blur());
@@ -795,8 +795,8 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const IntPoint& bo
                 localOrigin.move(0, -extraOffset);
                 extraOffset = 0;
             }
-            int shadowX = m_isVertical ? shadow->y() : shadow->x();
-            int shadowY = m_isVertical ? -shadow->x() : shadow->y();
+            int shadowX = isHorizontal() ? shadow->x() : shadow->y();
+            int shadowY = isHorizontal() ? shadow->y() : -shadow->x();
             context->setShadow(IntSize(shadowX, shadowY - extraOffset), shadow->blur(), shadow->color(), colorSpace);
             setShadow = true;
             shadow = shadow->next();

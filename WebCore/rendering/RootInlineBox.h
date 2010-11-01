@@ -88,8 +88,8 @@ public:
 
     virtual void clearTruncation();
 
-    virtual int baselinePosition() const { return boxModelObject()->baselinePosition(m_firstLine, m_isVertical ? VerticalLine : HorizontalLine, PositionOfInteriorLineBoxes); }
-    virtual int lineHeight() const { return boxModelObject()->lineHeight(m_firstLine, m_isVertical ? VerticalLine : HorizontalLine, PositionOfInteriorLineBoxes); }
+    virtual int baselinePosition() const { return boxModelObject()->baselinePosition(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes); }
+    virtual int lineHeight() const { return boxModelObject()->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes); }
 
 #if PLATFORM(MAC)
     void addHighlightOverflow();

@@ -80,7 +80,7 @@ void InlineFlowBox::addToLine(InlineBox* child)
         m_lastChild = child;
     }
     child->setFirstLineStyleBit(m_firstLine);
-    child->setIsVertical(m_isVertical);
+    child->setIsHorizontal(isHorizontal());
     if (child->isText())
         m_hasTextChildren = true;
 
@@ -328,22 +328,22 @@ int InlineFlowBox::placeBoxesInInlineDirection(int logicalLeft, bool& needsWordS
             } else if (!curr->renderer()->isListMarker() || toRenderListMarker(curr->renderer())->isInside()) {
                 // The box can have a different writing-mode than the overall line, so this is a bit complicated.
                 // Just get all the physical margin and overflow values by hand based off |isVertical|.
-                int logicalLeftMargin = !isVertical() ? curr->boxModelObject()->marginLeft() : curr->boxModelObject()->marginTop();
-                int logicalRightMargin = !isVertical() ? curr->boxModelObject()->marginRight() : curr->boxModelObject()->marginBottom();
+                int logicalLeftMargin = isHorizontal() ? curr->boxModelObject()->marginLeft() : curr->boxModelObject()->marginTop();
+                int logicalRightMargin = isHorizontal() ? curr->boxModelObject()->marginRight() : curr->boxModelObject()->marginBottom();
                 
                 logicalLeft += logicalLeftMargin;
                 curr->setLogicalLeft(logicalLeft);
                        
                 RenderBox* box = toRenderBox(curr->renderer());
 
-                int childOverflowLogicalLeft = box->hasOverflowClip() ? 0 : (!isVertical() ? box->leftLayoutOverflow() : box->topLayoutOverflow());
-                int childOverflowLogicalRight = box->hasOverflowClip() ? curr->logicalWidth() : (!isVertical() ? box->rightLayoutOverflow() : box->bottomLayoutOverflow());
+                int childOverflowLogicalLeft = box->hasOverflowClip() ? 0 : (isHorizontal() ? box->leftLayoutOverflow() : box->topLayoutOverflow());
+                int childOverflowLogicalRight = box->hasOverflowClip() ? curr->logicalWidth() : (isHorizontal() ? box->rightLayoutOverflow() : box->bottomLayoutOverflow());
                 
                 logicalLeftLayoutOverflow = min(logicalLeft + childOverflowLogicalLeft, logicalLeftLayoutOverflow);
                 logicalRightLayoutOverflow = max(logicalLeft + childOverflowLogicalRight, logicalRightLayoutOverflow);
 
-                logicalLeftVisualOverflow = min(logicalLeft + (!isVertical() ? box->leftVisualOverflow() : box->topVisualOverflow()), logicalLeftVisualOverflow);
-                logicalRightVisualOverflow = max(logicalLeft + (!isVertical() ? box->rightVisualOverflow() : box->bottomVisualOverflow()), logicalRightVisualOverflow);
+                logicalLeftVisualOverflow = min(logicalLeft + (isHorizontal() ? box->leftVisualOverflow() : box->topVisualOverflow()), logicalLeftVisualOverflow);
+                logicalRightVisualOverflow = max(logicalLeft + (isHorizontal() ? box->rightVisualOverflow() : box->bottomVisualOverflow()), logicalRightVisualOverflow);
                
                 logicalLeft += curr->logicalWidth() + logicalRightMargin;
             }
@@ -633,7 +633,7 @@ void InlineFlowBox::computeBlockDirectionOverflow(int lineTop, int lineBottom, b
             int childBottomVisualOverflow;
             
             RenderBox* box = toRenderBox(curr->renderer());
-            box->blockDirectionOverflow(isVertical(), childTopLayoutOverflow, childBottomLayoutOverflow,
+            box->blockDirectionOverflow(isHorizontal(), childTopLayoutOverflow, childBottomLayoutOverflow,
                                         childTopVisualOverflow, childBottomVisualOverflow);
             
             if (box->hasOverflowClip()) {
@@ -773,10 +773,10 @@ void InlineFlowBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, c
         int totalLogicalWidth = logicalOffsetOnLine;
         for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
             totalLogicalWidth += curr->logicalWidth();
-        int stripX = tx - (isVertical() ? 0 : logicalOffsetOnLine);
-        int stripY = ty - (isVertical() ? logicalOffsetOnLine : 0);
-        int stripWidth = isVertical() ? width() : totalLogicalWidth;
-        int stripHeight = isVertical() ? totalLogicalWidth : height();
+        int stripX = tx - (isHorizontal() ? logicalOffsetOnLine : 0);
+        int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
+        int stripWidth = isHorizontal() ? totalLogicalWidth : width();
+        int stripHeight = isHorizontal() ? height() : totalLogicalWidth;
         paintInfo.context->save();
         paintInfo.context->clip(IntRect(tx, ty, width(), height()));
         boxModelObject()->paintFillLayerExtended(paintInfo, c, fillLayer, stripX, stripY, stripWidth, stripHeight, this, op);
@@ -802,15 +802,15 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 
     int x = m_x;
     int y = m_y;
-    int w = m_isVertical ? logicalHeight() : logicalWidth();
-    int h = m_isVertical ? logicalWidth() : logicalHeight();
+    int w = width();
+    int h = height();
 
     // Constrain our background/border painting to the line top and bottom if necessary.
     bool noQuirksMode = renderer()->document()->inNoQuirksMode();
     if (!hasTextChildren() && !noQuirksMode) {
         RootInlineBox* rootBox = root();
-        int& top = m_isVertical ? x : y;
-        int& logicalHeight = m_isVertical ? w : h;
+        int& top = isHorizontal() ? y : x;
+        int& logicalHeight = isHorizontal() ? h : w;
         int bottom = min(rootBox->lineBottom(), top + logicalHeight);
         top = max(rootBox->lineTop(), top);
         logicalHeight = bottom - top;
@@ -865,10 +865,10 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
                 int totalLogicalWidth = logicalOffsetOnLine;
                 for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
                     totalLogicalWidth += curr->logicalWidth();
-                int stripX = tx - (isVertical() ? 0 : logicalOffsetOnLine);
-                int stripY = ty - (isVertical() ? logicalOffsetOnLine : 0);
-                int stripWidth = isVertical() ? w : totalLogicalWidth;
-                int stripHeight = isVertical() ? totalLogicalWidth : h;
+                int stripX = tx - (isHorizontal() ? logicalOffsetOnLine : 0);
+                int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
+                int stripWidth = isHorizontal() ? totalLogicalWidth : w;
+                int stripHeight = isHorizontal() ? h : totalLogicalWidth;
                 context->save();
                 context->clip(IntRect(tx, ty, w, h));
                 boxModelObject()->paintBorder(context, stripX, stripY, stripWidth, stripHeight, renderer()->style());
@@ -885,15 +885,15 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
 
     int x = m_x;
     int y = m_y;
-    int w = m_isVertical ? logicalHeight() : logicalWidth();
-    int h = m_isVertical ? logicalWidth() : logicalHeight();
+    int w = width();
+    int h = height();
 
     // Constrain our background/border painting to the line top and bottom if necessary.
     bool noQuirksMode = renderer()->document()->inNoQuirksMode();
     if (!hasTextChildren() && !noQuirksMode) {
         RootInlineBox* rootBox = root();
-        int& top = m_isVertical ? x : y;
-        int& logicalHeight = m_isVertical ? w : h;
+        int& top = isHorizontal() ? y : x;
+        int& logicalHeight = isHorizontal() ? h : w;
         int bottom = min(rootBox->lineBottom(), top + logicalHeight);
         top = max(rootBox->lineTop(), top);
         logicalHeight = bottom - top;
@@ -943,10 +943,10 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
         int totalLogicalWidth = logicalOffsetOnLine;
         for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
             totalLogicalWidth += curr->logicalWidth();
-        int stripX = tx - (isVertical() ? 0 : logicalOffsetOnLine);
-        int stripY = ty - (isVertical() ? logicalOffsetOnLine : 0);
-        int stripWidth = isVertical() ? w : totalLogicalWidth;
-        int stripHeight = isVertical() ? totalLogicalWidth : h;
+        int stripX = tx - (isHorizontal() ? logicalOffsetOnLine : 0);
+        int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
+        int stripWidth = isHorizontal() ? totalLogicalWidth : w;
+        int stripHeight = isHorizontal() ? h : totalLogicalWidth;
         paintInfo.context->save();
         paintInfo.context->clip(IntRect(tx, ty, w, h));
         boxModelObject()->paintNinePieceImage(paintInfo.context, stripX, stripY, stripWidth, stripHeight, renderer()->style(), maskNinePieceImage, compositeOp);

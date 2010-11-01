@@ -127,7 +127,7 @@ public:
     bool containsCaretOffset(int offset) const; // false for offset after line break
 
     // Needs to be public, so the static paintTextWithShadows() function can use it.
-    static FloatSize applyShadowToGraphicsContext(GraphicsContext*, const ShadowData*, const FloatRect& textRect, bool stroked, bool opaque, bool vertical);
+    static FloatSize applyShadowToGraphicsContext(GraphicsContext*, const ShadowData*, const FloatRect& textRect, bool stroked, bool opaque, bool horizontal);
 
 private:
     InlineTextBox* m_prevTextBox; // The previous box that also uses our RenderObject

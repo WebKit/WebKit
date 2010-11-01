@@ -48,7 +48,7 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_paginationStrut(0)
     , m_blockLogicalHeight(0)
 {
-    setIsVertical(!block->style()->isHorizontalWritingMode());
+    setIsHorizontal(block->style()->isHorizontalWritingMode());
 }
 
 
@@ -99,7 +99,7 @@ void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, in
     // Create an ellipsis box.
     EllipsisBox* ellipsisBox = new (renderer()->renderArena()) EllipsisBox(renderer(), ellipsisStr, this,
                                                               ellipsisWidth - (markupBox ? markupBox->logicalWidth() : 0), logicalHeight(),
-                                                              y(), !prevRootBox(), isVertical(), markupBox);
+                                                              y(), !prevRootBox(), isHorizontal(), markupBox);
     
     if (!gEllipsisBoxMap)
         gEllipsisBoxMap = new EllipsisBoxMap();
