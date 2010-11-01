@@ -27,6 +27,7 @@
 
 #include "NPObjectMessageReceiver.h"
 
+#include "NPIdentifierData.h"
 #include "NPRuntimeUtilities.h"
 #include "NotImplemented.h"
 
@@ -51,6 +52,12 @@ NPObjectMessageReceiver::~NPObjectMessageReceiver()
 void NPObjectMessageReceiver::deallocate()
 {
     notImplemented();
+}
+
+void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameData, bool& returnValue, NPVariantData& result)
+{
+    notImplemented();
+    returnValue = false;
 }
 
 } // namespace WebKit

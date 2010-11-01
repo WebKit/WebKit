@@ -46,7 +46,7 @@ NPRemoteObjectMap::NPRemoteObjectMap(CoreIPC::Connection* connection)
 
 NPObjectProxy* NPRemoteObjectMap::createNPObjectProxy(uint64_t remoteObjectID)
 {
-    return NPObjectProxy::create(remoteObjectID);
+    return NPObjectProxy::create(this, remoteObjectID);
 }
 
 uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject)
@@ -55,6 +55,15 @@ uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject)
     m_registeredNPObjects.set(npObjectID, NPObjectMessageReceiver::create(npObject).leakPtr());
 
     return npObjectID;
+}
+
+CoreIPC::SyncReplyMode NPRemoteObjectMap::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+{
+    NPObjectMessageReceiver* messageReceiver = m_registeredNPObjects.get(arguments->destinationID());
+    if (!messageReceiver)
+        return CoreIPC::AutomaticReply;
+
+    return messageReceiver->didReceiveSyncNPObjectMessageReceiverMessage(connection, messageID, arguments, reply);
 }
 
 } // namespace WebKit

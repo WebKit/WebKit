@@ -89,6 +89,10 @@
 		1A2D82A9127F4EAB001EB962 /* NPRemoteObjectMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1FA251127A0E4F0050E709 /* NPRemoteObjectMap.h */; };
 		1A2D8439127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */; };
 		1A2D843A127F65D5001EB962 /* NPObjectMessageReceiverMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */; };
+		1A2D848B127F6A49001EB962 /* NPIdentifierData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D8489127F6A49001EB962 /* NPIdentifierData.h */; };
+		1A2D848C127F6A49001EB962 /* NPIdentifierData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D848A127F6A49001EB962 /* NPIdentifierData.cpp */; };
+		1A2D84A3127F6AD1001EB962 /* NPVariantData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D84A1127F6AD1001EB962 /* NPVariantData.h */; };
+		1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D84A2127F6AD1001EB962 /* NPVariantData.cpp */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */; };
@@ -597,6 +601,10 @@
 		1A2D8411127F64E8001EB962 /* NPObjectMessageReceiver.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NPObjectMessageReceiver.messages.in; sourceTree = "<group>"; };
 		1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPObjectMessageReceiverMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPObjectMessageReceiverMessages.h; sourceTree = "<group>"; };
+		1A2D8489127F6A49001EB962 /* NPIdentifierData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPIdentifierData.h; sourceTree = "<group>"; };
+		1A2D848A127F6A49001EB962 /* NPIdentifierData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPIdentifierData.cpp; sourceTree = "<group>"; };
+		1A2D84A1127F6AD1001EB962 /* NPVariantData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPVariantData.h; sourceTree = "<group>"; };
+		1A2D84A2127F6AD1001EB962 /* NPVariantData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPVariantData.cpp; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
 		1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFindClient.cpp; sourceTree = "<group>"; };
@@ -1347,6 +1355,8 @@
 		1AAE058C1279DCD400852418 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				1A2D848A127F6A49001EB962 /* NPIdentifierData.cpp */,
+				1A2D8489127F6A49001EB962 /* NPIdentifierData.h */,
 				1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */,
 				1A1FA35B127A45BF0050E709 /* NPObjectMessageReceiver.h */,
 				1A2D8411127F64E8001EB962 /* NPObjectMessageReceiver.messages.in */,
@@ -1354,6 +1364,8 @@
 				1A1FA283127A13BC0050E709 /* NPObjectProxy.h */,
 				1A1FA252127A0E4F0050E709 /* NPRemoteObjectMap.cpp */,
 				1A1FA251127A0E4F0050E709 /* NPRemoteObjectMap.h */,
+				1A2D84A2127F6AD1001EB962 /* NPVariantData.cpp */,
+				1A2D84A1127F6AD1001EB962 /* NPVariantData.h */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -2257,6 +2269,8 @@
 				1A2D82A7127F4EAB001EB962 /* NPObjectProxy.h in Headers */,
 				1A2D82A9127F4EAB001EB962 /* NPRemoteObjectMap.h in Headers */,
 				1A2D843A127F65D5001EB962 /* NPObjectMessageReceiverMessages.h in Headers */,
+				1A2D848B127F6A49001EB962 /* NPIdentifierData.h in Headers */,
+				1A2D84A3127F6AD1001EB962 /* NPVariantData.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2592,6 +2606,8 @@
 				1A2D82A6127F4EAB001EB962 /* NPObjectProxy.cpp in Sources */,
 				1A2D82A8127F4EAB001EB962 /* NPRemoteObjectMap.cpp in Sources */,
 				1A2D8439127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp in Sources */,
+				1A2D848C127F6A49001EB962 /* NPIdentifierData.cpp in Sources */,
+				1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

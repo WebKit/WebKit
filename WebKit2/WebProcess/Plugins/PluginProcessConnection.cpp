@@ -82,9 +82,12 @@ void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection,
 
 CoreIPC::SyncReplyMode PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
+    if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>())
+        return m_npRemoteObjectMap.didReceiveSyncMessage(connection, messageID, arguments, reply);
+
     if (PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID()))
         return pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, arguments, reply);
-    
+
     ASSERT_NOT_REACHED();
     return CoreIPC::AutomaticReply;
 }

@@ -25,6 +25,9 @@
 messages -> NPObjectMessageReceiver {
     # Deallocate the NPObject.
     Deallocate() -> ()
+
+    # Get the given property.
+    GetProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue, WebKit::NPVariantData result)
 }
 
 #endif

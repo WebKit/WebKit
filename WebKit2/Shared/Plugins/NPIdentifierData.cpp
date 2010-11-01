@@ -23,47 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NPRemoteObjectMap_h
-#define NPRemoteObjectMap_h
-
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "Connection.h"
-#include <WebCore/npruntime.h>
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
+#include "NPIdentifierData.h"
+
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+#include "NotImplemented.h"
+#include "WebCoreArgumentCoders.h"
+#include <WebCore/IdentifierRep.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class NPObjectMessageReceiver;
-class NPObjectProxy;
+NPIdentifierData::NPIdentifierData()
+    : m_isString(false)
+    , m_number(0)
+{
+}
 
-class NPRemoteObjectMap {
-    WTF_MAKE_NONCOPYABLE(NPRemoteObjectMap);
 
-public:
-    explicit NPRemoteObjectMap(CoreIPC::Connection*);
+NPIdentifierData NPIdentifierData::fromNPIdentifier(NPIdentifier npIdentifier)
+{
+    NPIdentifierData npIdentifierData;
 
-    // Creates an NPObjectProxy wrapper for the remote object with the given remote object ID.
-    NPObjectProxy* createNPObjectProxy(uint64_t remoteObjectID);
+    IdentifierRep* identifierRep = static_cast<IdentifierRep*>(npIdentifier);
+    npIdentifierData.m_isString = identifierRep->isString();
 
-    // Expose the given NPObject as a remote object. Returns the objectID.
-    uint64_t registerNPObject(NPObject*);
+    if (npIdentifierData.m_isString)
+        npIdentifierData.m_string = identifierRep->string();
+    else
+        npIdentifierData.m_number = identifierRep->number();
 
-    CoreIPC::Connection* connection() const { return m_connection; }
+    return npIdentifierData;
+}
 
-    CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);
+void NPIdentifierData::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(m_isString);
+    if (m_isString)
+        encoder->encode(m_string);
+    else
+        encoder->encodeInt32(m_number);
+}
 
-private:
-    CoreIPC::Connection* m_connection;
+bool NPIdentifierData::decode(CoreIPC::ArgumentDecoder* decoder, NPIdentifierData& result)
+{
+    if (!decoder->decode(result.m_isString))
+        return false;
+        
+    if (result.m_isString)
+        return decoder->decode(result.m_string);
 
-    // A map of NPObjectMessageReceiver classes, wrapping objects that we export to the
-    // other end of the connection.
-    HashMap<uint64_t, NPObjectMessageReceiver*> m_registeredNPObjects;
-};
+    return decoder->decodeInt32(result.m_number);
+}
 
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)
-
-#endif // NPRemoteObjectMap_h

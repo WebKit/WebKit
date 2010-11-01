@@ -27,21 +27,27 @@
 
 #include "NPObjectProxy.h"
 
-#include "NotImplemented.h"
+#include "Connection.h"
+#include "NPIdentifierData.h"
+#include "NPObjectMessageReceiverMessages.h"
+#include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"
+#include "NPVariantData.h"
+#include "NotImplemented.h"
 
 namespace WebKit {
 
-NPObjectProxy* NPObjectProxy::create(uint64_t npObjectID)
+NPObjectProxy* NPObjectProxy::create(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID)
 {
     NPObjectProxy* npObjectProxy = toNPObjectProxy(createNPObject(0, npClass()));
-    npObjectProxy->initialize(npObjectID);
+    npObjectProxy->initialize(npRemoteObjectMap, npObjectID);
 
     return npObjectProxy;
 }
 
 NPObjectProxy::NPObjectProxy()
-    : m_npObjectID(0)
+    : m_npRemoteObjectMap(0)
+    , m_npObjectID(0)
 {
 }
 
@@ -54,10 +60,33 @@ bool NPObjectProxy::isNPObjectProxy(NPObject* npObject)
     return npObject->_class == npClass();
 }
     
-void NPObjectProxy::initialize(uint64_t npObjectID)
+void NPObjectProxy::initialize(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID)
 {
+    ASSERT(!m_npRemoteObjectMap);
     ASSERT(!m_npObjectID);
+
+    ASSERT(npRemoteObjectMap);
+    ASSERT(npObjectID);
+
+    m_npRemoteObjectMap = npRemoteObjectMap;
     m_npObjectID = npObjectID;
+}
+
+bool NPObjectProxy::getProperty(NPIdentifier propertyName, NPVariant* result)
+{
+    if (!m_npRemoteObjectMap)
+        return false;
+
+    NPIdentifierData propertyNameData = NPIdentifierData::fromNPIdentifier(propertyName);
+
+    bool returnValue = false;
+    NPVariantData resultData;
+    
+    if (!m_npRemoteObjectMap->connection()->sendSync(Messages::NPObjectMessageReceiver::GetProperty(propertyNameData), Messages::NPObjectMessageReceiver::GetProperty::Reply(returnValue, resultData), m_npObjectID))
+        return false;
+
+    notImplemented();    
+    return false;
 }
 
 NPClass* NPObjectProxy::npClass()
@@ -118,10 +147,9 @@ bool NPObjectProxy::NP_HasProperty(NPObject*, NPIdentifier propertyName)
     return false;
 }
 
-bool NPObjectProxy::NP_GetProperty(NPObject*, NPIdentifier propertyName, NPVariant* result)
+bool NPObjectProxy::NP_GetProperty(NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
 {
-    notImplemented();
-    return false;
+    return toNPObjectProxy(npObject)->getProperty(propertyName, result);
 }
 
 bool NPObjectProxy::NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVariant* value)

@@ -23,47 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NPRemoteObjectMap_h
-#define NPRemoteObjectMap_h
+#ifndef NPIdentifierData_h
+#define NPIdentifierData_h
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "Connection.h"
 #include <WebCore/npruntime.h>
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/text/CString.h>
+
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class ArgumentEncoder;
+}
 
 namespace WebKit {
 
-class NPObjectMessageReceiver;
-class NPObjectProxy;
+// The CoreIPC representation of an NPIdentifier.
 
-class NPRemoteObjectMap {
-    WTF_MAKE_NONCOPYABLE(NPRemoteObjectMap);
-
+class NPIdentifierData {
 public:
-    explicit NPRemoteObjectMap(CoreIPC::Connection*);
+    NPIdentifierData();
+    
+    static NPIdentifierData fromNPIdentifier(NPIdentifier);
 
-    // Creates an NPObjectProxy wrapper for the remote object with the given remote object ID.
-    NPObjectProxy* createNPObjectProxy(uint64_t remoteObjectID);
-
-    // Expose the given NPObject as a remote object. Returns the objectID.
-    uint64_t registerNPObject(NPObject*);
-
-    CoreIPC::Connection* connection() const { return m_connection; }
-
-    CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);
+    void encode(CoreIPC::ArgumentEncoder*) const;
+    static bool decode(CoreIPC::ArgumentDecoder*, NPIdentifierData&);
 
 private:
-    CoreIPC::Connection* m_connection;
-
-    // A map of NPObjectMessageReceiver classes, wrapping objects that we export to the
-    // other end of the connection.
-    HashMap<uint64_t, NPObjectMessageReceiver*> m_registeredNPObjects;
+    bool m_isString;
+    CString m_string;
+    int m_number;
 };
 
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)
-
-#endif // NPRemoteObjectMap_h
+    
+#endif // NPIdentifierData_h
