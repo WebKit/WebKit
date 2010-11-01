@@ -1,3 +1,15 @@
+2010-10-31  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Support nodesFromRect in DRT
+
+        https://bugs.webkit.org/show_bug.cgi?id=48716
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::nodesFromRect):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2010-10-30  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antonio Gomes.

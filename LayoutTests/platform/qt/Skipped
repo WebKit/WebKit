@@ -5434,8 +5434,7 @@ fast/parser/pre-html5-parser-quirks.html
 # FileSystem API is not supported.
 fast/filesystem
 
-# LayoutTestController::nodesFromRect is not supported.
-fast/dom/nodesFromRect-basic.html
+# Needs more investigation.
 fast/dom/nodesFromRect-links-and-text.html
 fast/dom/nodesFromRect-inner-documents.html
 

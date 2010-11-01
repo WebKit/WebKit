@@ -47,6 +47,7 @@
 #include "HistoryItem.h"
 #include "HTMLInputElement.h"
 #include "InspectorController.h"
+#include "NodeList.h"
 #include "NotificationPresenterClientQt.h"
 #include "Page.h"
 #include "PageGroup.h"
@@ -778,6 +779,26 @@ QString DumpRenderTreeSupportQt::plainText(const QVariant& range)
     map = startContainer.toMap();
 
     return map.value("innerText").toString();
+}
+
+QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
+{
+    QVariantList res;
+    WebCore::Element* webElement = document.m_element;
+    if (!webElement)
+        return res;
+
+    Document* doc = webElement->document();
+    if (!doc)
+        return res;
+    RefPtr<NodeList> nodes = doc->nodesFromRect(x, y, top, right, bottom, left, ignoreClipping);
+    for (int i = 0; i < nodes->length(); i++) {
+        QVariant v;
+        // QWebElement will be null if the Node is not an HTML Element
+        v.setValue(QWebElement(nodes->item(i)));
+        res << v;
+    }
+    return res;
 }
 
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
