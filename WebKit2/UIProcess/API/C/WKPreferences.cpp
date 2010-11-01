@@ -189,6 +189,16 @@ WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef)
     return toCopiedAPI(toImpl(preferencesRef)->fantasyFontFamily());
 }
 
+void WKPreferencesSetMinimumFontSize(WKPreferencesRef preferencesRef, uint32_t size)
+{
+    toImpl(preferencesRef)->setMinimumFontSize(size);
+}
+
+uint32_t WKPreferencesGetMinimumFontSize(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->minimumFontSize();
+}
+
 void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setPrivateBrowsingEnabled(enabled);

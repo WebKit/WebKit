@@ -1,3 +1,28 @@
+2010-11-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48774
+        minimFontSize preference needs to be exposed in WebKit2
+
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::setMinimumFontSize):
+        New function, parallel to existing functions for other preferences.
+        (WebKit::WebPreferences::minimumFontSize):
+        Ditto.
+
+        * UIProcess/WebPreferences.h:
+        Declared new function.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetMinimumFontSize):
+        New UI process wrapper for new function.
+        (WKPreferencesGetMinimumFontSize):
+        Ditto.
+
+        * UIProcess/API/C/WKPreferences.h:
+        Declared new functions.
+
 2010-11-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

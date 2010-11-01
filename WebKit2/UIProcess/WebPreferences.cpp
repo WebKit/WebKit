@@ -251,6 +251,17 @@ const String& WebPreferences::fantasyFontFamily() const
     return m_store.fantasyFontFamily;
 }
 
+void WebPreferences::setMinimumFontSize(uint32_t size)
+{
+    m_store.minimumFontSize = size;
+    update();
+}
+
+uint32_t WebPreferences::minimumFontSize() const
+{
+    return m_store.minimumFontSize;
+}
+
 void WebPreferences::setAcceleratedCompositingEnabled(bool flag)
 {
     m_store.acceleratedCompositingEnabled = flag;

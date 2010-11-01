@@ -91,6 +91,10 @@ WK_EXPORT WKStringRef WKPreferencesCopyCursiveFontFamily(WKPreferencesRef prefer
 WK_EXPORT void WKPreferencesSetFantasyFontFamily(WKPreferencesRef preferencesRef, WKStringRef family);
 WK_EXPORT WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef);
 
+// Defaults to 1, which means "no minimum".
+WK_EXPORT void WKPreferencesSetMinimumFontSize(WKPreferencesRef preferencesRef, uint32_t);
+WK_EXPORT uint32_t WKPreferencesGetMinimumFontSize(WKPreferencesRef preferencesRef);
+
 // Defaults to false.
 WK_EXPORT void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef);
