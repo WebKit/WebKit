@@ -24,8 +24,10 @@
 // goal of teaching people IndexedDB. That said, it does have a good amount of coverage and
 // serves as a living document describing what's expected to work and how within WebKit so it
 // seems well worth having checked in.
-if (window.layoutTestController)
-    layoutTestController.dumpAsText(true);
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 
 
 function setup()
@@ -51,7 +53,7 @@ function setup()
 
 function log(txt)
 {
-    document.write(txt + "<br>");
+    document.getElementById("logger").innerHTML += txt + "<br>";
 }
 
 function logError(txt)
@@ -394,6 +396,7 @@ function onIndexGetSuccess()
 function onAllDone()
 {
     log("Everything worked!");
+    layoutTestController.notifyDone();
 }
 
 // The way setVersion is supposed to work:
@@ -429,5 +432,6 @@ function onAllDone()
 </script>
 <body onload="start()">
 Please view source for more information on what this is doing and why...<br><br>
+<div id="logger"></div>
 </body>
 </html>
