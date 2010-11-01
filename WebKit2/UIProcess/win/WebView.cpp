@@ -29,6 +29,7 @@
 #include "FindIndicator.h"
 #include "RunLoop.h"
 #include "NativeWebKeyboardEvent.h"
+#include "WebContextMenuProxy.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventFactory.h"
 #include "WebPageNamespace.h"

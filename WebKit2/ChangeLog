@@ -1,5 +1,11 @@
 2010-11-01  Brady Eidson  <beidson@apple.com>
 
+        Windows build fix.
+
+        * UIProcess/win/WebView.cpp:
+
+2010-11-01  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders Carlsson.
 
         <rdar://problem/7660547> and https://bugs.webkit.org/show_bug.cgi?id=48699
