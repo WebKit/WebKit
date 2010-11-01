@@ -37,11 +37,9 @@ WebInspector.StoragePanel = function(database)
     this.sidebarElement.addStyleClass("outline-disclosure filter-all children small");
     this.sidebarTreeElement.removeStyleClass("sidebar-tree");
 
-    if (Preferences.networkPanelEnabled) {
-        this.resourcesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Frames"), "Frames", "frame-storage-tree-item");
-        this.sidebarTree.appendChild(this.resourcesListTreeElement);
-        this._treeElementForFrameId = {};
-    }
+    this.resourcesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Frames"), "Frames", "frame-storage-tree-item");
+    this.sidebarTree.appendChild(this.resourcesListTreeElement);
+    this._treeElementForFrameId = {};
 
     this.databasesListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("Databases"), "Databases", "database-storage-tree-item");
     this.sidebarTree.appendChild(this.databasesListTreeElement);
@@ -81,7 +79,7 @@ WebInspector.StoragePanel = function(database)
 WebInspector.StoragePanel.prototype = {
     get toolbarItemLabel()
     {
-        return Preferences.networkPanelEnabled ? WebInspector.UIString("Resources") : WebInspector.UIString("Storage");
+        return WebInspector.UIString("Resources");
     },
 
     get statusBarItems()
@@ -631,9 +629,6 @@ WebInspector.StoragePanel.prototype = {
     get searchableViews()
     {
         var views = [];
-
-        if (!Preferences.networkPanelEnabled)
-            return views;
 
         const visibleView = this.visibleView;
         if (visibleView instanceof WebInspector.ResourceView && visibleView.performSearch)

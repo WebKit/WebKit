@@ -60,16 +60,18 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
     seq : 4
     success : false
     errors : {
-        0 : "Protocol Error: Argument 'identifier' with type 'Number' was not found."
-        1 : "Protocol Error: Argument 'encode' with type 'Boolean' was not found."
+        0 : "Protocol Error: Argument 'frameId' with type 'Number' was not found."
+        1 : "Protocol Error: Argument 'url' with type 'String' was not found."
+        2 : "Protocol Error: Argument 'base64Encode' with type 'Boolean' was not found."
     }
 }
 {
     seq : 5
     success : false
     errors : {
-        0 : "Protocol Error: Argument 'identifier' has wrong type. It should be 'Number'."
-        1 : "Protocol Error: Argument 'encode' with type 'Boolean' was not found."
+        0 : "Protocol Error: Argument 'frameId' with type 'Number' was not found."
+        1 : "Protocol Error: Argument 'url' with type 'String' was not found."
+        2 : "Protocol Error: Argument 'base64Encode' with type 'Boolean' was not found."
     }
 }
 {

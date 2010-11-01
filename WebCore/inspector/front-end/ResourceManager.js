@@ -472,11 +472,7 @@ WebInspector.ResourceManager.existingResourceViewForResource = function(resource
 
 WebInspector.ResourceManager.getContent = function(resource, base64Encode, callback)
 {
-    // FIXME: eventually, cached resources will have no identifiers.
-    if (Preferences.networkPanelEnabled)
-        InspectorBackend.resourceContent(resource.loader.frameId, resource.url, base64Encode, callback);
-    else
-        InspectorBackend.getResourceContent(resource.identifier, base64Encode, callback);
+    InspectorBackend.resourceContent(resource.loader.frameId, resource.url, base64Encode, callback);
 }
 
 WebInspector.ResourceTreeModel = function()

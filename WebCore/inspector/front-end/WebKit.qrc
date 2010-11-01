@@ -71,7 +71,6 @@
     <file>Resource.js</file>
     <file>ResourceCategory.js</file>
     <file>ResourceManager.js</file>
-    <file>ResourcesPanel.js</file>
     <file>ResourceView.js</file>
     <file>ScopeChainSidebarPane.js</file>
     <file>Script.js</file>

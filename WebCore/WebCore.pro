@@ -1015,7 +1015,6 @@ SOURCES += \
     inspector/InspectorFrontendHost.cpp \
     inspector/InspectorInstrumentation.cpp \
     inspector/InspectorProfilerAgent.cpp \
-    inspector/InspectorResource.cpp \
     inspector/InspectorResourceAgent.cpp \
     inspector/InspectorState.cpp \
     inspector/InspectorStorageAgent.cpp \

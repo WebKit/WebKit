@@ -43,7 +43,6 @@
 #include "InspectorController.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorFrontend.h"
-#include "InspectorResource.h"
 #include "Pasteboard.h"
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

@@ -243,13 +243,9 @@ WebInspector.ExtensionServer.prototype = {
         resource = WebInspector.networkResources[id] || WebInspector.resourceForURL(id);
         if (!resource)
             return this._status.E_NOTFOUND(typeof id + ": " + id);
-        if (Preferences.networkPanelEnabled) {
-            WebInspector.panels.storage.showResource(resource, message.line);
-            WebInspector.showPanel("storage");
-        } else {
-            WebInspector.panels.resources.showResource(resource, message.line);
-            WebInspector.showPanel("resources");
-        }
+
+        WebInspector.panels.storage.showResource(resource, message.line);
+        WebInspector.showPanel("storage");
     },
 
     _dispatchCallback: function(requestId, port, result)

@@ -6,15 +6,8 @@
 <script>
 function doit()
 {
-    function callback(result)
-    {
-        if (result === "enabling")
-            return;
-        window.submitCalled = true;
-        document.getElementById("submit").click();
-    }
-
-    evaluateInWebInspector("frontend_enableResourceTracking", callback);
+    window.submitCalled = true;
+    document.getElementById("submit").click();
 }
 
 function onIframeLoad()
@@ -30,28 +23,9 @@ function onIframeLoad()
     evaluateInWebInspector("frontend_dumpFormData", callback);
 }
 
-function frontend_enableResourceTracking(testController)
-{
-    if (Preferences.networkPanelEnabled) {
-        if (!WebInspector.panels.network._pageWasReloaded) {
-            WebInspector.panels.network._pageWasReloaded = true;
-            WebInspector.panels.network._reset();
-            InspectorBackend.reloadPage();
-            return "enabling";
-        }
-    } else if (!WebInspector.panels.resources.resourceTrackingEnabled) {
-        WebInspector.panels.resources.toggleResourceTracking();
-        return "enabling";
-    }
-    return "enabled";
-}
-
 function frontend_dumpFormData(testController)
 {
     var resource = WebInspector.resourceForURL("http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=");
-
-    if (!Preferences.networkPanelEnabled)
-        WebInspector.panels.resources.toggleResourceTracking();
 
     if (!resource) {
         testController.notifyDone("No resource found");

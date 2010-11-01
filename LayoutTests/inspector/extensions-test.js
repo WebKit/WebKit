@@ -41,10 +41,9 @@ InspectorTest.runExtensionTests = function()
         });
     } 
     InspectorTest.dispatchOnMessage("extension-tests-done", function() {
-        InspectorTest.disableResourceTracking();
         InspectorTest.completeTest();
     });
-    InspectorTest.enableResourceTracking(addExtension);
+    InspectorTest.reloadPageIfNeeded(addExtension);
 }
 
 }

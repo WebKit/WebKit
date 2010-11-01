@@ -47,7 +47,6 @@
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
 #include "InspectorController.h"
-#include "InspectorResource.h"
 #include "InspectorValues.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowCustom.h"

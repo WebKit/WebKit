@@ -109,7 +109,6 @@ private:
     WebViewImpl* m_webViewImpl;
     OwnPtr<DebuggerAgentImpl> m_debuggerAgentImpl;
     bool m_apuAgentEnabled;
-    bool m_resourceTrackingWasEnabled;
     bool m_attached;
 };
 

@@ -43,7 +43,6 @@
 #include "Frame.h"
 #include "HTMLHeadElement.h"
 #include "InspectorController.h"
-#include "InspectorResource.h"
 #include "InspectorResourceAgent.h"
 #include "Node.h"
 #include "PlatformString.h"

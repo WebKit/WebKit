@@ -42,7 +42,6 @@
 #include "HitTestResult.h"
 #include "HTMLFrameOwnerElement.h"
 #include "InspectorFrontendClient.h"
-#include "InspectorResource.h"
 #include "Page.h"
 #include "Pasteboard.h"
 #include "ScriptFunctionCall.h"

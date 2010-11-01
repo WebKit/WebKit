@@ -329,21 +329,9 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
     m_frontend->didLoadResourceFromMemoryCache(currentTime(), buildObjectForCachedResource(loader, *resource));
 }
 
-void InspectorResourceAgent::setOverrideContent(unsigned long identifier, const String& sourceString, InspectorResource::Type type)
+void InspectorResourceAgent::setOverrideContent(unsigned long identifier, const String& sourceString, const String& type)
 {
-    String typeString;
-    switch (type) {
-    case InspectorResource::XHR:
-        typeString = "XHR";
-        break;
-    case InspectorResource::Script:
-        typeString = "Script";
-        break;
-    default:
-        typeString = "Other";
-    }
-
-    m_frontend->setOverrideContent(identifier, sourceString, typeString);
+    m_frontend->setOverrideContent(identifier, sourceString, type);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForFrameTree(Frame* frame, bool dumpResources)

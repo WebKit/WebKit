@@ -218,18 +218,7 @@ WebInspector.ConsoleView.prototype = {
     {
         if (msg instanceof WebInspector.ConsoleMessage && !(msg instanceof WebInspector.ConsoleCommandResult)) {
             this._incrementErrorWarningCount(msg);
-
-            // Add message to the resource panel
-            if (!Preferences.networkPanelEnabled) {
-                var resource = WebInspector.resourceForURL(msg.url);
-                if (resource) {
-                    msg.resource = resource;
-                    if (WebInspector.panels.resources)
-                        WebInspector.panels.resources.addMessageToResource(msg.resource, msg);
-                }
-            } else
-                WebInspector.resourceManager.addConsoleMessage(msg);
-
+            WebInspector.resourceManager.addConsoleMessage(msg);
             this.commandSincePreviousMessage = false;
             this.previousMessage = msg;
         } else if (msg instanceof WebInspector.ConsoleCommand) {
@@ -300,10 +289,7 @@ WebInspector.ConsoleView.prototype = {
 
     clearMessages: function()
     {
-        if (WebInspector.panels.resources)
-            WebInspector.panels.resources.clearMessages();
-        if (WebInspector.resourceManager)
-            WebInspector.resourceManager.clearConsoleMessages();
+        WebInspector.resourceManager.clearConsoleMessages();
 
         this.messages = [];
 

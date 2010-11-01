@@ -1854,8 +1854,6 @@ webcore_sources += \
 	WebCore/inspector/InspectorInstrumentation.h \
 	WebCore/inspector/InspectorProfilerAgent.cpp \
 	WebCore/inspector/InspectorProfilerAgent.h \
-	WebCore/inspector/InspectorResource.cpp \
-	WebCore/inspector/InspectorResource.h \
 	WebCore/inspector/InspectorResourceAgent.cpp \
 	WebCore/inspector/InspectorResourceAgent.h \
 	WebCore/inspector/InspectorState.cpp \

@@ -107,30 +107,6 @@ InspectorTest.runAfterPendingDispatches = function(callback)
     WebInspector.TestController.prototype.runAfterPendingDispatches(callback);
 }
 
-InspectorTest.enableResourceTracking = function(callback)
-{
-    if (Preferences.networkPanelEnabled) {
-        InspectorTest.reloadPageIfNeeded(callback);
-        return;
-    }
-
-    if (WebInspector.panels.resources.resourceTrackingEnabled)
-        callback();
-    else {
-        InspectorTest._reloadPageCallback = callback;
-        WebInspector.panels.resources.toggleResourceTracking();
-    }
-}
-
-InspectorTest.disableResourceTracking = function()
-{
-    if (Preferences.networkPanelEnabled)
-        return;
-
-    if (WebInspector.panels.resources.resourceTrackingEnabled)
-        WebInspector.panels.resources.toggleResourceTracking();
-}
-
 InspectorTest.findDOMNode = function(root, filter, callback)
 {
     var found = false;

@@ -63816,14 +63816,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\inspector\InspectorResource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\InspectorResource.h"
-				>
-			</File>
-			<File
 				RelativePath="..\inspector\InspectorResourceAgent.cpp"
 				>
 			</File>
@@ -64200,10 +64192,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ResourceManager.js"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\ResourcesPanel.js"
 					>
 				</File>
 				<File
