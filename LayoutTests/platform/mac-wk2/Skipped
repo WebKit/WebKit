@@ -1828,6 +1828,7 @@ editing/selection/doubleclick-inline-first-last-contenteditable.html
 
 # WebKitTestRunner needs layoutTestController.suspendAnimations
 animations/suspend-resume-animation.html
+animations/suspend-resume-animation-events.html
 animations/suspend-transform-animation.html
 transitions/suspend-transform-transition.html
 
@@ -1837,6 +1838,7 @@ printing/page-rule-selection.html
 # WebKitTestRunner needs layoutTestController.hasSpellingMarker
 editing/spelling/design-mode-spellcheck-off.html
 editing/spelling/spellcheck-attribute.html
+editing/spelling/spelling-attribute-change.html
 editing/spelling/spelling-linebreak.html
 
 # WebKitTestRunner needs layoutTestController.nodesFromRect
