@@ -177,7 +177,6 @@ WebDevToolsAgentImpl::WebDevToolsAgentImpl(
     , m_client(client)
     , m_webViewImpl(webViewImpl)
     , m_apuAgentEnabled(false)
-    , m_resourceTrackingWasEnabled(false)
     , m_attached(false)
 {
     DebuggerAgentManager::setExposeV8DebuggerProtocol(

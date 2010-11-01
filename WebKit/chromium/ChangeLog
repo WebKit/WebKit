@@ -1,5 +1,12 @@
 2010-11-01  Pavel Feldman  <pfeldman@chromium.org>
 
+        Not reviewed: Chromium build fix.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::WebDevToolsAgentImpl):
+
+2010-11-01  Pavel Feldman  <pfeldman@chromium.org>
+
         Reviewed by Timothy Hatcher.
 
         Web Inspector: remove old resources panel.
