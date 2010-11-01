@@ -700,6 +700,20 @@ static PassRefPtr<CSSValue> fillRepeatToCSSValue(EFillRepeat xRepeat, EFillRepea
     return list.release();
 }
 
+static PassRefPtr<CSSValue> fillSizeToCSSValue(const FillSize& fillSize)
+{
+    if (fillSize.type == Contain)
+        return CSSPrimitiveValue::createIdentifier(CSSValueContain);
+
+    if (fillSize.type == Cover)
+        return CSSPrimitiveValue::createIdentifier(CSSValueCover);
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    list->append(CSSPrimitiveValue::create(fillSize.size.width()));
+    list->append(CSSPrimitiveValue::create(fillSize.size.height()));
+    return list.release();
+}
+
 static void logUnimplementedPropertyID(int propertyID)
 {
     DEFINE_STATIC_LOCAL(HashSet<int>, propertyIDSet, ());
@@ -743,47 +757,141 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyBackgroundColor:
             return CSSPrimitiveValue::createColor(m_allowVisitedStyle? style->visitedDependentColor(CSSPropertyBackgroundColor).rgb() : style->backgroundColor().rgb());
         case CSSPropertyBackgroundImage:
-            // FIXME: Broken for multiple backgrounds. https://bugs.webkit.org/show_bug.cgi?id=44853
-            if (style->backgroundImage())
-                return style->backgroundImage()->cssValue();
-            return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-        case CSSPropertyBackgroundSize:
-        case CSSPropertyWebkitBackgroundSize: {
-            EFillSizeType size = style->backgroundSizeType();
-            if (size == Contain)
-                return CSSPrimitiveValue::createIdentifier(CSSValueContain);
-            if (size == Cover)
-                return CSSPrimitiveValue::createIdentifier(CSSValueCover);
-            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            list->append(CSSPrimitiveValue::create(style->backgroundSizeLength().width()));
-            list->append(CSSPrimitiveValue::create(style->backgroundSizeLength().height()));
+        case CSSPropertyWebkitMaskImage: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskImage ? style->maskLayers() : style->backgroundLayers();
+            if (!layers)
+                return CSSPrimitiveValue::createIdentifier(CSSValueNone);
+
+            if (!layers->next()) {
+                if (layers->image())
+                    return layers->image()->cssValue();
+
+                return CSSPrimitiveValue::createIdentifier(CSSValueNone);
+            }
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
+                if (currLayer->image())
+                    list->append(currLayer->image()->cssValue());
+                else
+                    list->append(CSSPrimitiveValue::createIdentifier(CSSValueNone));
+            }
             return list.release();
-        }  
+        }
+        case CSSPropertyBackgroundSize:
+        case CSSPropertyWebkitBackgroundSize:
+        case CSSPropertyWebkitMaskSize: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskSize ? style->maskLayers() : style->backgroundLayers();
+            if (!layers->next())
+                return fillSizeToCSSValue(layers->size());
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
+                list->append(fillSizeToCSSValue(currLayer->size()));
+
+            return list.release();
+        }
         case CSSPropertyBackgroundRepeat:
-            return fillRepeatToCSSValue(style->backgroundRepeatX(), style->backgroundRepeatY());
+        case CSSPropertyWebkitMaskRepeat: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskRepeat ? style->maskLayers() : style->backgroundLayers();
+            if (!layers->next())
+                return fillRepeatToCSSValue(layers->repeatX(), layers->repeatY());
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
+                list->append(fillRepeatToCSSValue(currLayer->repeatX(), currLayer->repeatY()));
+
+            return list.release();
+        }
         case CSSPropertyWebkitBackgroundComposite:
-            return CSSPrimitiveValue::create(style->backgroundComposite());
+        case CSSPropertyWebkitMaskComposite: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskComposite ? style->maskLayers() : style->backgroundLayers();
+            if (!layers->next())
+                return CSSPrimitiveValue::create(layers->composite());
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
+                list->append(CSSPrimitiveValue::create(currLayer->composite()));
+
+            return list.release();
+        }
         case CSSPropertyBackgroundAttachment:
-            return CSSPrimitiveValue::create(style->backgroundAttachment());
+        case CSSPropertyWebkitMaskAttachment: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskAttachment ? style->maskLayers() : style->backgroundLayers();
+            if (!layers->next())
+                return CSSPrimitiveValue::create(layers->attachment());
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
+                list->append(CSSPrimitiveValue::create(currLayer->attachment()));
+
+            return list.release();
+        }
         case CSSPropertyBackgroundClip:
         case CSSPropertyBackgroundOrigin:
         case CSSPropertyWebkitBackgroundClip:
-        case CSSPropertyWebkitBackgroundOrigin: {
-            EFillBox box = (propertyID == CSSPropertyWebkitBackgroundClip || propertyID == CSSPropertyBackgroundClip) ? style->backgroundClip() : style->backgroundOrigin();
-            return CSSPrimitiveValue::create(box);
-        }
-        case CSSPropertyBackgroundPosition: {
-            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+        case CSSPropertyWebkitBackgroundOrigin:
+        case CSSPropertyWebkitMaskClip:
+        case CSSPropertyWebkitMaskOrigin: {
+            const FillLayer* layers = (propertyID == CSSPropertyWebkitMaskClip || propertyID == CSSPropertyWebkitMaskOrigin) ? style->maskLayers() : style->backgroundLayers();
+            bool isClip = propertyID == CSSPropertyBackgroundClip || propertyID == CSSPropertyWebkitBackgroundClip || propertyID == CSSPropertyWebkitMaskClip;
+            if (!layers->next()) {
+                EFillBox box = isClip ? layers->clip() : layers->origin();
+                return CSSPrimitiveValue::create(box);
+            }
+            
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
+                EFillBox box = isClip ? currLayer->clip() : currLayer->origin();
+                list->append(CSSPrimitiveValue::create(box));
+            }
 
-            list->append(CSSPrimitiveValue::create(style->backgroundXPosition()));
-            list->append(CSSPrimitiveValue::create(style->backgroundYPosition()));
+            return list.release();
+        }
+        case CSSPropertyBackgroundPosition:
+        case CSSPropertyWebkitMaskPosition: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskPosition ? style->maskLayers() : style->backgroundLayers();
+            if (!layers->next()) {
+                RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+                list->append(CSSPrimitiveValue::create(layers->xPosition()));
+                list->append(CSSPrimitiveValue::create(layers->yPosition()));
+                return list.release();
+            }
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next()) {
+                RefPtr<CSSValueList> positionList = CSSValueList::createSpaceSeparated();
+                positionList->append(CSSPrimitiveValue::create(currLayer->xPosition()));
+                positionList->append(CSSPrimitiveValue::create(currLayer->yPosition()));
+                list->append(positionList);
+            }
 
             return list.release();
         }
         case CSSPropertyBackgroundPositionX:
-            return CSSPrimitiveValue::create(style->backgroundXPosition());
+        case CSSPropertyWebkitMaskPositionX: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskPositionX ? style->maskLayers() : style->backgroundLayers();
+            if (!layers->next())
+                return CSSPrimitiveValue::create(layers->xPosition());
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
+                list->append(CSSPrimitiveValue::create(currLayer->xPosition()));
+
+            return list.release();
+        }
         case CSSPropertyBackgroundPositionY:
-            return CSSPrimitiveValue::create(style->backgroundYPosition());
+        case CSSPropertyWebkitMaskPositionY: {
+            const FillLayer* layers = propertyID == CSSPropertyWebkitMaskPositionY ? style->maskLayers() : style->backgroundLayers();
+            if (!layers->next())
+                return CSSPrimitiveValue::create(layers->yPosition());
+
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (const FillLayer* currLayer = layers; currLayer; currLayer = currLayer->next())
+                list->append(CSSPrimitiveValue::create(currLayer->yPosition()));
+
+            return list.release();
+        }
         case CSSPropertyBorderCollapse:
             if (style->borderCollapse())
                 return CSSPrimitiveValue::createIdentifier(CSSValueCollapse);
@@ -1032,44 +1140,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->marqueeLoopCount(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitMarqueeStyle:
             return CSSPrimitiveValue::create(style->marqueeBehavior());
-        case CSSPropertyWebkitMaskImage:
-            if (style->maskImage())
-                return style->maskImage()->cssValue();
-            return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-        case CSSPropertyWebkitMaskSize: {
-            EFillSizeType size = style->maskSizeType();
-            if (size == Contain)
-                return CSSPrimitiveValue::createIdentifier(CSSValueContain);
-            if (size == Cover)
-                return CSSPrimitiveValue::createIdentifier(CSSValueCover);
-            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-            list->append(CSSPrimitiveValue::create(style->maskSizeLength().width()));
-            list->append(CSSPrimitiveValue::create(style->maskSizeLength().height()));
-            return list.release();
-        }  
-        case CSSPropertyWebkitMaskRepeat:
-            return fillRepeatToCSSValue(style->maskRepeatX(), style->maskRepeatY());
-        case CSSPropertyWebkitMaskAttachment:
-            return CSSPrimitiveValue::create(style->maskAttachment());
-        case CSSPropertyWebkitMaskComposite:
-            return CSSPrimitiveValue::create(style->maskComposite());
-        case CSSPropertyWebkitMaskClip:
-        case CSSPropertyWebkitMaskOrigin: {
-            EFillBox box = (propertyID == CSSPropertyWebkitMaskClip ? style->maskClip() : style->maskOrigin());
-            return CSSPrimitiveValue::create(box);
-        }
-        case CSSPropertyWebkitMaskPosition: {
-            RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-
-            list->append(CSSPrimitiveValue::create(style->maskXPosition()));
-            list->append(CSSPrimitiveValue::create(style->maskYPosition()));
-
-            return list.release();
-        }
-        case CSSPropertyWebkitMaskPositionX:
-            return CSSPrimitiveValue::create(style->maskXPosition());
-        case CSSPropertyWebkitMaskPositionY:
-            return CSSPrimitiveValue::create(style->maskYPosition());
         case CSSPropertyWebkitUserModify:
             return CSSPrimitiveValue::create(style->userModify());
         case CSSPropertyMaxHeight: {
@@ -1327,9 +1397,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             const AnimationList* t = style->animations();
             if (t) {
-                for (size_t i = 0; i < t->size(); ++i) {
+                for (size_t i = 0; i < t->size(); ++i)
                     list->append(CSSPrimitiveValue::create(t->animation(i)->name(), CSSPrimitiveValue::CSS_STRING));
-                }
             } else
                 list->append(CSSPrimitiveValue::createIdentifier(CSSValueNone));
             return list.release();
