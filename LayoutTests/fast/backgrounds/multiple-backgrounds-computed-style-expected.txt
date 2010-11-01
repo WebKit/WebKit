@@ -1,13 +1,11 @@
-Blocked access to external URL http://example.com/foo.png
-Blocked access to external URL http://example.com/bar.png
 This tests checks that all of the input values for background-repeat parse correctly.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS test("backgroundImage", "background: none 10px 10px, url(http://example.com/foo.png) 20px 20px;") is "none, url(http://example.com/foo.png)"
-PASS test("backgroundPosition", "background: none 10px 10px, url(http://example.com/foo.png) 20px 20px;") is "10px 10px, 20px 20px"
-PASS test("backgroundImage", "background-image: url(http://example.com/foo.png), none, url(http://example.com/bar.png);") is "url(http://example.com/foo.png), none, url(http://example.com/bar.png)"
+PASS test("backgroundImage", "background: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;") is "none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"
+PASS test("backgroundPosition", "background: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;") is "10px 10px, 20px 20px"
+PASS test("backgroundImage", "background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC), none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)") is "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC), none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"
 PASS test("backgroundRepeat", "background-repeat: repeat-x, repeat-y, repeat, no-repeat;") is "repeat-x, repeat-y, repeat, no-repeat"
 PASS test("backgroundSize", "background-size: contain, cover, 20px 10%;") is "contain, cover, 20px 10%"
 PASS test("webkitBackgroundSize", "-webkit-background-size: contain, cover, 20px 10%;") is "contain, cover, 20px 10%"
@@ -20,9 +18,9 @@ PASS test("webkitBackgroundOrigin", "-webkit-background-origin: border-box, padd
 PASS test("backgroundPosition", "background-position: 20px 30px, 10% 90%, top, left, center;") is "20px 30px, 10% 90%, 50% 0%, 0% 50%, 50% 50%"
 PASS test("backgroundPositionX", "background-position-x: 20px, 10%, right, left, center;") is "20px, 10%, 100%, 0%, 50%"
 PASS test("backgroundPositionY", "background-position-y: 20px, 10%, bottom, top, center;") is "20px, 10%, 100%, 0%, 50%"
-PASS test("webkitMaskImage", "-webkit-mask: none 10px 10px, url(http://example.com/foo.png) 20px 20px;") is "none, url(http://example.com/foo.png)"
-PASS test("webkitMaskPosition", "-webkit-mask: none 10px 10px, url(http://example.com/foo.png) 20px 20px;") is "10px 10px, 20px 20px"
-PASS test("webkitMaskImage", "-webkit-mask-image: none, url(http://example.com/bar.png);") is "none, url(http://example.com/bar.png)"
+PASS test("webkitMaskImage", "-webkit-mask: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;") is "none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"
+PASS test("webkitMaskPosition", "-webkit-mask: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;") is "10px 10px, 20px 20px"
+PASS test("webkitMaskImage", "-webkit-mask-image: none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC);") is "none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"
 PASS test("webkitMaskSize", "-webkit-mask-size: contain, cover, 20px 10%;") is "contain, cover, 20px 10%"
 PASS test("webkitMaskRepeat", "-webkit-mask-repeat: repeat-x, repeat-y, repeat, no-repeat;") is "repeat-x, repeat-y, repeat, no-repeat"
 PASS test("webkitMaskClip", "-webkit-mask-clip: border-box, padding-box;") is "border-box, padding-box"

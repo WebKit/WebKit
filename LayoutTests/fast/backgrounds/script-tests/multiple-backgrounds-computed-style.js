@@ -12,11 +12,13 @@ function test(property, value)
 }
 
 // shorthands
-shouldBe('test("backgroundImage", "background: none 10px 10px, url(http://example.com/foo.png) 20px 20px;")', '"none, url(http://example.com/foo.png)"');
-shouldBe('test("backgroundPosition", "background: none 10px 10px, url(http://example.com/foo.png) 20px 20px;")', '"10px 10px, 20px 20px"');
+shouldBe('test("backgroundImage", "background: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;")',
+  '"none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"');
+shouldBe('test("backgroundPosition", "background: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;")', '"10px 10px, 20px 20px"');
 
 // background longhands
-shouldBe('test("backgroundImage", "background-image: url(http://example.com/foo.png), none, url(http://example.com/bar.png);")', '"url(http://example.com/foo.png), none, url(http://example.com/bar.png)"');
+shouldBe('test("backgroundImage", "background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC), none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)")',
+  '"url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC), none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"');
 shouldBe('test("backgroundRepeat", "background-repeat: repeat-x, repeat-y, repeat, no-repeat;")', '"repeat-x, repeat-y, repeat, no-repeat"');
 shouldBe('test("backgroundSize", "background-size: contain, cover, 20px 10%;")', '"contain, cover, 20px 10%"');
 shouldBe('test("webkitBackgroundSize", "-webkit-background-size: contain, cover, 20px 10%;")', '"contain, cover, 20px 10%"');
@@ -31,11 +33,11 @@ shouldBe('test("backgroundPositionX", "background-position-x: 20px, 10%, right, 
 shouldBe('test("backgroundPositionY", "background-position-y: 20px, 10%, bottom, top, center;")', '"20px, 10%, 100%, 0%, 50%"');
 
 // mask shorthands
-shouldBe('test("webkitMaskImage", "-webkit-mask: none 10px 10px, url(http://example.com/foo.png) 20px 20px;")', '"none, url(http://example.com/foo.png)"');
-shouldBe('test("webkitMaskPosition", "-webkit-mask: none 10px 10px, url(http://example.com/foo.png) 20px 20px;")', '"10px 10px, 20px 20px"');
+shouldBe('test("webkitMaskImage", "-webkit-mask: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;")', '"none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"');
+shouldBe('test("webkitMaskPosition", "-webkit-mask: none 10px 10px, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC) 20px 20px;")', '"10px 10px, 20px 20px"');
 
 // mask longhands
-shouldBe('test("webkitMaskImage", "-webkit-mask-image: none, url(http://example.com/bar.png);")', '"none, url(http://example.com/bar.png)"');
+shouldBe('test("webkitMaskImage", "-webkit-mask-image: none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC);")', '"none, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mP4%2F58BAAT%2FAf9jgNErAAAAAElFTkSuQmCC)"');
 shouldBe('test("webkitMaskSize", "-webkit-mask-size: contain, cover, 20px 10%;")', '"contain, cover, 20px 10%"');
 shouldBe('test("webkitMaskRepeat", "-webkit-mask-repeat: repeat-x, repeat-y, repeat, no-repeat;")', '"repeat-x, repeat-y, repeat, no-repeat"');
 shouldBe('test("webkitMaskClip", "-webkit-mask-clip: border-box, padding-box;")', '"border-box, padding-box"');
