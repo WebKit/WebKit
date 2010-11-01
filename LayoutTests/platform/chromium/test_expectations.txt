@@ -3382,3 +3382,6 @@ BUG61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = I
 BUG61406 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
 BUG32153and61406 : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
+
+// This started to crash on Debug Mac 10.5 bots after recent rolls.
+BUG61478 DEBUG MAC : fast/images/svg-as-background.html = CRASH
