@@ -784,7 +784,7 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
 
 void PluginView::invalidateRect(const IntRect& rect)
 {
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !USE(TEXTURE_MAPPER)
     if (m_platformLayer) {
         m_platformLayer->update(QRectF(rect));
         return;
@@ -918,7 +918,7 @@ bool PluginView::platformStart()
         setPlatformWidget(0);
         m_pluginDisplay = getPluginDisplay();
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !USE(TEXTURE_MAPPER)
         if (m_parentFrame->page()->chrome()->client()->allowsAcceleratedCompositing()
             && m_parentFrame->page()->settings() 
             && m_parentFrame->page()->settings()->acceleratedCompositingEnabled()) {
