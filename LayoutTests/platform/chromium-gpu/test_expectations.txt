@@ -200,6 +200,38 @@ BUGWK47901 MAC : fast/canvas/canvas-getImageData-negative-source.html = TEXT
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
 // END OF DUPLICATED SECTION
 
+// These tests time out in test_shell, but are ok in DumpRenderTree.  Once
+// we've phased out test_shell, these lines should be removed.
+BUGNONE : compositing/animation/animation-compositing.html = TIMEOUT PASS
+BUGNONE : compositing/geometry/clip.html = TIMEOUT PASS
+BUGNONE : compositing/geometry/limit-layer-bounds-fixed-positioned.html = TIMEOUT PASS
+BUGNONE : compositing/geometry/limit-layer-bounds-positioned.html = TIMEOUT PASS
+BUGNONE WIN MAC : compositing/geometry/limit-layer-bounds-positioned-transition.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/composited-parent-iframe.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/connect-compositing-iframe-delayed.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/connect-compositing-iframe.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/connect-compositing-iframe2.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/connect-compositing-iframe3.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/enter-compositing-iframe.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/iframe-resize.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/iframe-size-from-zero.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/iframe-size-to-zero.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/iframe-src-change.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/leave-compositing-iframe.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/overlapped-iframe.html = TIMEOUT PASS
+BUGNONE : compositing/iframes/scrolling-iframe.html = TIMEOUT PASS
+BUGNONE : compositing/images/clip-on-directly-composited-image.html = TIMEOUT PASS
+BUGNONE : compositing/layer-creation/overflow-scroll-overlap.html = TIMEOUT PASS
+BUGNONE : compositing/layer-creation/scroll-partial-update.html = TIMEOUT PASS
+BUGNONE : compositing/overflow/clip-descendents.html = TIMEOUT PASS
+BUGNONE WIN LINUX : compositing/plugins/1x1-composited-plugin.html = TIMEOUT PASS
+BUGNONE WIN LINUX : compositing/plugins/large-to-small-composited-plugin.html = TIMEOUT PASS
+BUGNONE WIN LINUX: compositing/plugins/small-to-large-composited-plugin.html = TIMEOUT PASS
+BUGNONE : compositing/tiling/crash-reparent-tiled-layer.html = TIMEOUT PASS
+BUGNONE : compositing/tiling/huge-layer-img.html = TIMEOUT PASS
+BUGNONE : compositing/tiling/huge-layer-resize.html = TIMEOUT PASS
+BUGNONE WIN MAC : compositing/tiling/huge-layer-with-layer-children-resize.html = TIMEOUT PASS
+
 // All (?) video-related compositor tests are failing in
 // DumpRenderTree right now.
 BUGWK47231 SKIP : compositing/geometry/clipped-video-controller.html = TIMEOUT
@@ -241,14 +273,16 @@ BUGWK47925 : compositing/plugins/composited-plugin.html = FAIL
 BUGWK47926 : compositing/geometry/composited-html-size.html = FAIL
 
 // These tests are missing an entire layer in the layer tree output.
-BUGWK47927 : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = FAIL
+// Timing out in test_shell; remove "TIMEOUT" below once we've switched to DRT.
+BUGWK47927 : compositing/geometry/limit-layer-bounds-clipping-ancestor.html = TIMEOUT FAIL
 
 BUG60962 : compositing/geometry/limit-layer-bounds-overflow-repaint.html = TIMEOUT PASS
 
 // The following failure seems suspicious because it does not contain
 // any text; it seems that the layer tree should precisely match
 // Safari's.
-BUGWK47944 : compositing/geometry/limit-layer-bounds-overflow-root.html = FAIL
+// Timing out in test_shell; remove "TIMEOUT" below once we've switched to DRT.
+BUGWK47944 : compositing/geometry/limit-layer-bounds-overflow-root.html = TIMEOUT FAIL
 
 // The following failure is missing a tiled layer where Safari has
 // one, in addition to having a layer positioned differently than in
@@ -285,12 +319,14 @@ BUGWK47949 : compositing/reflections/transform-inside-reflection.html = FAIL
 
 // Most of the tiling tests are misbehaving in Chrome even though the
 // DRT output looks similar to Safari's. These need to be investigated.
-BUGWK47951 : compositing/tiling/huge-layer-add-remove-child.html = FAIL
-BUGWK47951 : compositing/tiling/huge-layer-with-layer-children.html = FAIL
-BUGWK47951 : compositing/tiling/huge-layer.html = FAIL
+// Timing out in test_shell; remove "TIMEOUT" below once we've switched to DRT.
+BUGWK47951 : compositing/tiling/huge-layer-add-remove-child.html = TIMEOUT FAIL
+BUGWK47951 : compositing/tiling/huge-layer-with-layer-children.html = TIMEOUT FAIL
+BUGWK47951 : compositing/tiling/huge-layer.html = TIMEOUT FAIL
 
 // This test is flaky on Linux.
-BUGWK48012 LINUX : compositing/tiling/huge-layer-with-layer-children-resize.html = FAIL PASS
+// Timing out in test_shell; remove "TIMEOUT" below once we've switched to DRT.
+BUGWK48012 LINUX : compositing/tiling/huge-layer-with-layer-children-resize.html = TIMEOUT FAIL PASS
 
 BUGWK47952 : compositing/transitions/scale-transition-no-start.html = FAIL
 
@@ -301,8 +337,9 @@ BUGWK47953 : compositing/webgl/webgl-reflection.html = FAIL
 // These tests are failing on Linux because the layers are differently
 // sized than on Windows. It is unclear why this is happening and it
 // needs to be investigated.
-BUGWK48016 LINUX : compositing/geometry/limit-layer-bounds-positioned-transition.html = FAIL
-BUGWK48016 LINUX : compositing/geometry/limit-layer-bounds-transformed.html = FAIL
+// Timing out in test_shell; remove "TIMEOUT" below once we've switched to DRT.
+BUGWK48016 LINUX : compositing/geometry/limit-layer-bounds-positioned-transition.html = TIMEOUT FAIL
+BUGWK48016 LINUX : compositing/geometry/limit-layer-bounds-transformed.html = TIMEOUT FAIL
 BUGWK48016 LINUX : compositing/geometry/vertical-scroll-composited.html = FAIL
 
 // This test causes an assertion failure in DRT, but apparently not
