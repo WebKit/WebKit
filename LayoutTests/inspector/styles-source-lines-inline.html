@@ -39,12 +39,7 @@ function frontend_selectElementContinuation(testController)
 function frontend_selectElementContinuation2(testController)
 {
     var result = frontend_getSelectedElementStyles(true);
-    function dumpSelectedElementStyles()
-    {
-        result = result.concat(frontend_getSelectedElementStyles(true));
-        testController.notifyDone(result);
-    }
-    frontend_selectElementAndRun(testController, "bar", dumpSelectedElementStyles);
+    testController.notifyDone(result);
 }
 
 </script>
