@@ -3364,9 +3364,6 @@ BUGWK48634 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = 
 BUGWK48634 MAC : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 BUGWK48634 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT
 
-// No tests, introduced in r70887.
-BUGWK48644 : storage/indexeddb/tutorial.html = MISSING
-
 // New test, seems V8 differs from JSC here.
 // Added by http://trac.webkit.org/changeset/70910
 BUGWK61246 : fast/js/interpreter-no-activation.html = TEXT
