@@ -349,7 +349,8 @@ void RenderWidget::updateWidgetPosition()
     // content size is wrong) we have to do a layout to set the right widget size
     if (m_widget && m_widget->isFrameView()) {
         FrameView* frameView = static_cast<FrameView*>(m_widget.get());
-        if (boundsChanged || frameView->needsLayout())
+        // Check the frame's page to make sure that the frame isn't in the process of being destroyed.
+        if ((boundsChanged || frameView->needsLayout()) && frameView->frame()->page())
             frameView->layout();
     }
 }
