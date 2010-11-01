@@ -1,3 +1,69 @@
+2010-11-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Cleanup needed in testatk.c file
+        https://bugs.webkit.org/show_bug.cgi?id=48759
+
+        Cleanup done in testatk.c, mainly addressing the following issues:
+
+        - Removed any trace of extra main loops in tests, so now we just
+        spin the original main loop in all of them to get the a11y
+        objects.
+
+        - As we no longer use the extra main loops, removed the bail_out
+        function, used along with g_idle_add() to stop those extra loops.
+
+        - As we now spin the loop in every test, created a new function
+        waitForAccessibilityObjects() to write the loop just once.
+
+        - Fixed name in incorrectly named test testWekitAtkTextSelections.
+
+        - Alphabetically sorted the list of includes.
+
+        - Renamed all identifiers to camel Case notation.
+
+        - Declare variables when needed only (instead of declaring all of
+        them at the beginning of the function).
+
+        - Don't declare two variables of the same type in the same line.
+
+        - No more short names like 'obj', 'textObj' or 'alloc'. Use names
+        like 'object', 'textObject' and 'allocation' instead.
+
+        - Fixed indentation.
+
+        - Make sure all comments finish with '.'
+
+        - Replace NULL's with 0's.
+
+        * tests/testatk.c:
+        (waitForAccessibleObjects): New, manually spins the main context
+        to make sure accessible objects are created before continuing.
+        (testGetTextFunction): Fixed this function to be compliant with
+        the WebKit's coding style.
+        (runGetTextTests): Ditto.
+        (testWebkitAtkGetTextAtOffsetForms): Ditto.
+        (testWebkitAtkGetTextAtOffset): Ditto.
+        (testWebkitAtkGetTextAtOffsetNewlines): Ditto.
+        (testWebkitAtkGetTextAtOffsetTextarea): Ditto.
+        (testWebkitAtkGetTextAtOffsetTextInput): Ditto.
+        (testWebkitAtkGetTextInParagraphAndBodySimple): Ditto.
+        (testWebkitAtkGetTextInParagraphAndBodyModerate): Ditto.
+        (testWebkitAtkGetTextInTable): Ditto.
+        (testWebkitAtkGetHeadersInTable): Ditto.
+        (compAtkAttribute): Ditto.
+        (atkAttributeSetAttributeNameHasValue): Ditto.
+        (testWebkitAtkTextAttributes): Ditto.
+        (testWebkitAtkTextSelections): Ditto.
+        (testWebkitAtkGetExtents): Ditto.
+        (testWebkitAtkLayoutAndDataTables): Ditto.
+        (testWebkitAtkLinksWithInlineImages): Ditto.
+        (testWebkitAtkHypertextAndHyperlinks): Ditto.
+        (testWebkitAtkListsOfItems): Ditto.
+        (testWebkitAtkTextChangedNotifications): Ditto.
+        (main): Ditto.
+
 2010-11-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.
