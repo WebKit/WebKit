@@ -105,6 +105,8 @@ WebContext::~WebContext()
     ASSERT(m_pageNamespaces.isEmpty());
     m_preferences->removeContext(this);
     removeLanguageChangeObserver(this);
+
+    WebProcessManager::shared().contextWasDestroyed(this);
     
 #ifndef NDEBUG
     webContextCounter.decrement();
@@ -286,25 +288,33 @@ void WebContext::didReceiveSynchronousMessageFromInjectedBundle(const String& me
 
 void WebContext::didNavigateWithNavigationData(WebFrameProxy* frame, const WebNavigationDataStore& store) 
 {
-    ASSERT(frame->page());
+    if (!frame->page())
+        return;
+    
     m_historyClient.didNavigateWithNavigationData(this, frame->page(), store, frame);
 }
 
 void WebContext::didPerformClientRedirect(WebFrameProxy* frame, const String& sourceURLString, const String& destinationURLString)
 {
-    ASSERT(frame->page());
+    if (!frame->page())
+        return;
+    
     m_historyClient.didPerformClientRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
 }
 
 void WebContext::didPerformServerRedirect(WebFrameProxy* frame, const String& sourceURLString, const String& destinationURLString)
 {
-    ASSERT(frame->page());
+    if (!frame->page())
+        return;
+    
     m_historyClient.didPerformServerRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
 }
 
 void WebContext::didUpdateHistoryTitle(WebFrameProxy* frame, const String& title, const String& url)
 {
-    ASSERT(frame->page());
+    if (!frame->page())
+        return;
+
     m_historyClient.didUpdateHistoryTitle(this, frame->page(), title, url, frame);
 }
 

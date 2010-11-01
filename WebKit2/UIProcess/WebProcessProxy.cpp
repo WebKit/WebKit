@@ -63,7 +63,10 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
 
 WebProcessProxy::~WebProcessProxy()
 {
-    ASSERT(!m_connection);
+    ASSERT(m_pageMap.isEmpty());
+
+    if (m_connection)
+        m_connection->invalidate();
     
     for (size_t i = 0; i < m_pendingMessages.size(); ++i)
         m_pendingMessages[i].releaseArguments();

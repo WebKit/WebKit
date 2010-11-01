@@ -1,3 +1,14 @@
+2010-11-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Tear down the related WebProcessProxy when a WebContext is deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=48769
+
+        * TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp:
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrame):
+        We don't support empty URLs anymore, update test to expect a null URL instead.
+
 2010-11-01  Søren Gjesse  <sgjesse@chromium.org>
 
         Reviewed by Andreas Kling.

@@ -1,3 +1,30 @@
+2010-11-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Tear down the related WebProcessProxy when a WebContext is deallocated
+        https://bugs.webkit.org/show_bug.cgi?id=48769
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::~WebContext):
+        Call WebProcessManager::contextWasDestroyed.
+
+        (WebKit::WebContext::didNavigateWithNavigationData):
+        (WebKit::WebContext::didPerformClientRedirect):
+        (WebKit::WebContext::didPerformServerRedirect):
+        (WebKit::WebContext::didUpdateHistoryTitle):
+        It is valid for a frame to have a null page here, if the frame has outlived
+        its page.
+
+        * UIProcess/WebProcessManager.cpp:
+        (WebKit::WebProcessManager::contextWasDestroyed):
+        Remove the context from the map.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        It's OK for the connection to be non-null here if the process goes away because
+        the context has been deallocated.
+
 2010-11-01  Brady Eidson  <beidson@apple.com>
 
         Windows build fix.
