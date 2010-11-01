@@ -48,7 +48,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     OwnPtr<NativeImageSkia> pixels;
     NativeImageSkia* skiaImage = 0;
-    AlphaOp neededAlphaOp = kAlphaDoNothing;
+    AlphaOp neededAlphaOp = AlphaDoNothing;
     if (image->data()) {
         ImageSource decoder(false);
         decoder.setData(image->data(), true);
@@ -63,12 +63,12 @@ bool GraphicsContext3D::getImageData(Image* image,
             return false;
         skiaImage = pixels.get();
         if (hasAlpha && premultiplyAlpha)
-            neededAlphaOp = kAlphaDoPremultiply;
+            neededAlphaOp = AlphaDoPremultiply;
     } else {
         // This is a special case for texImage2D with HTMLCanvasElement input.
         skiaImage = image->nativeImageForCurrentFrame();
         if (!premultiplyAlpha)
-            neededAlphaOp = kAlphaDoUnmultiply;
+            neededAlphaOp = AlphaDoUnmultiply;
     }
     if (!skiaImage)
         return false;
@@ -77,7 +77,7 @@ bool GraphicsContext3D::getImageData(Image* image,
     ASSERT(skiaImage->rowBytes() == skiaImage->width() * 4);
     outputVector.resize(skiaImage->rowBytes() * skiaImage->height());
     return packPixels(reinterpret_cast<const uint8_t*>(skiaImage->getPixels()),
-                      kSourceFormatBGRA8, skiaImage->width(), skiaImage->height(), 0,
+                      SourceFormatBGRA8, skiaImage->width(), skiaImage->height(), 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 

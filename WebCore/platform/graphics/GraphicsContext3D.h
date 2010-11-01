@@ -540,34 +540,34 @@ public:
     // uploading. This enum must be public because it is accessed
     // by non-member functions.
     enum SourceDataFormat {
-        kSourceFormatRGBA8 = 0,
-        kSourceFormatRGBA16Little,
-        kSourceFormatRGBA16Big,
-        kSourceFormatRGB8,
-        kSourceFormatRGB16Little,
-        kSourceFormatRGB16Big,
-        kSourceFormatBGRA8,
-        kSourceFormatBGRA16Little,
-        kSourceFormatBGRA16Big,
-        kSourceFormatARGB8,
-        kSourceFormatARGB16Little,
-        kSourceFormatARGB16Big,
-        kSourceFormatRGBA5551,
-        kSourceFormatRGBA4444,
-        kSourceFormatRGB565,
-        kSourceFormatR8,
-        kSourceFormatR16Little,
-        kSourceFormatR16Big,
-        kSourceFormatRA8,
-        kSourceFormatRA16Little,
-        kSourceFormatRA16Big,
-        kSourceFormatAR8,
-        kSourceFormatAR16Little,
-        kSourceFormatAR16Big,
-        kSourceFormatA8,
-        kSourceFormatA16Little,
-        kSourceFormatA16Big,
-        kSourceFormatNumFormats
+        SourceFormatRGBA8 = 0,
+        SourceFormatRGBA16Little,
+        SourceFormatRGBA16Big,
+        SourceFormatRGB8,
+        SourceFormatRGB16Little,
+        SourceFormatRGB16Big,
+        SourceFormatBGRA8,
+        SourceFormatBGRA16Little,
+        SourceFormatBGRA16Big,
+        SourceFormatARGB8,
+        SourceFormatARGB16Little,
+        SourceFormatARGB16Big,
+        SourceFormatRGBA5551,
+        SourceFormatRGBA4444,
+        SourceFormatRGB565,
+        SourceFormatR8,
+        SourceFormatR16Little,
+        SourceFormatR16Big,
+        SourceFormatRA8,
+        SourceFormatRA16Little,
+        SourceFormatRA16Big,
+        SourceFormatAR8,
+        SourceFormatAR16Little,
+        SourceFormatAR16Big,
+        SourceFormatA8,
+        SourceFormatA16Little,
+        SourceFormatA16Big,
+        SourceFormatNumFormats
     };
 
     //----------------------------------------------------------------------
@@ -832,9 +832,9 @@ public:
     // pixel packing. FIXME: kAlphaDoUnmultiply is lossy and must
     // be removed.
     enum AlphaOp {
-        kAlphaDoNothing = 0,
-        kAlphaDoPremultiply = 1,
-        kAlphaDoUnmultiply = 2
+        AlphaDoNothing = 0,
+        AlphaDoPremultiply = 1,
+        AlphaDoUnmultiply = 2
     };
 
     // Helper for getImageData which implements packing of pixel

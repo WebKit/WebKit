@@ -59,7 +59,7 @@ enum AlphaFormat {
     AlphaFormatNumFormats
 };
 
-// This returns kSourceFormatNumFormats if the combination of input parameters is unsupported.
+// This returns SourceFormatNumFormats if the combination of input parameters is unsupported.
 static GraphicsContext3D::SourceDataFormat getSourceDataFormat(unsigned int componentsPerPixel, AlphaFormat alphaFormat, bool is16BitFormat, bool bigEndian)
 {
     const static SourceDataFormatBase formatTableBase[4][AlphaFormatNumFormats] = { // componentsPerPixel x AlphaFormat
@@ -70,20 +70,20 @@ static GraphicsContext3D::SourceDataFormat getSourceDataFormat(unsigned int comp
         { SourceFormatBaseNumFormats, SourceFormatBaseARGB,       SourceFormatBaseRGBA        } // 4 componentsPerPixel
     };
     const static GraphicsContext3D::SourceDataFormat formatTable[SourceFormatBaseNumFormats][3] = { // SourceDataFormatBase x bitsPerComponentAndEndian
-        // 8bits                                 16bits, little endian                         16bits, big endian
-        { GraphicsContext3D::kSourceFormatR8,    GraphicsContext3D::kSourceFormatR16Little,    GraphicsContext3D::kSourceFormatR16Big },
-        { GraphicsContext3D::kSourceFormatA8,    GraphicsContext3D::kSourceFormatA16Little,    GraphicsContext3D::kSourceFormatA16Big },
-        { GraphicsContext3D::kSourceFormatRA8,   GraphicsContext3D::kSourceFormatRA16Little,   GraphicsContext3D::kSourceFormatRA16Big },
-        { GraphicsContext3D::kSourceFormatAR8,   GraphicsContext3D::kSourceFormatAR16Little,   GraphicsContext3D::kSourceFormatAR16Big },
-        { GraphicsContext3D::kSourceFormatRGB8,  GraphicsContext3D::kSourceFormatRGB16Little,  GraphicsContext3D::kSourceFormatRGB16Big },
-        { GraphicsContext3D::kSourceFormatRGBA8, GraphicsContext3D::kSourceFormatRGBA16Little, GraphicsContext3D::kSourceFormatRGBA16Big },
-        { GraphicsContext3D::kSourceFormatARGB8, GraphicsContext3D::kSourceFormatARGB16Little, GraphicsContext3D::kSourceFormatARGB16Big }
+        // 8bits                                16bits, little endian                        16bits, big endian
+        { GraphicsContext3D::SourceFormatR8,    GraphicsContext3D::SourceFormatR16Little,    GraphicsContext3D::SourceFormatR16Big },
+        { GraphicsContext3D::SourceFormatA8,    GraphicsContext3D::SourceFormatA16Little,    GraphicsContext3D::SourceFormatA16Big },
+        { GraphicsContext3D::SourceFormatRA8,   GraphicsContext3D::SourceFormatRA16Little,   GraphicsContext3D::SourceFormatRA16Big },
+        { GraphicsContext3D::SourceFormatAR8,   GraphicsContext3D::SourceFormatAR16Little,   GraphicsContext3D::SourceFormatAR16Big },
+        { GraphicsContext3D::SourceFormatRGB8,  GraphicsContext3D::SourceFormatRGB16Little,  GraphicsContext3D::SourceFormatRGB16Big },
+        { GraphicsContext3D::SourceFormatRGBA8, GraphicsContext3D::SourceFormatRGBA16Little, GraphicsContext3D::SourceFormatRGBA16Big },
+        { GraphicsContext3D::SourceFormatARGB8, GraphicsContext3D::SourceFormatARGB16Little, GraphicsContext3D::SourceFormatARGB16Big }
     };
 
     ASSERT(componentsPerPixel <= 4 && componentsPerPixel > 0);
     SourceDataFormatBase formatBase = formatTableBase[componentsPerPixel - 1][alphaFormat];
     if (formatBase == SourceFormatBaseNumFormats)
-        return GraphicsContext3D::kSourceFormatNumFormats;
+        return GraphicsContext3D::SourceFormatNumFormats;
     if (!is16BitFormat)
         return formatTable[formatBase][0];
     if (!bigEndian)
@@ -146,7 +146,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         }
     }
 
-    AlphaOp neededAlphaOp = kAlphaDoNothing;
+    AlphaOp neededAlphaOp = AlphaDoNothing;
     AlphaFormat alphaFormat = AlphaFormatNone;
     switch (CGImageGetAlphaInfo(cgImage)) {
     case kCGImageAlphaPremultipliedFirst:
@@ -155,13 +155,13 @@ bool GraphicsContext3D::getImageData(Image* image,
         // in which case image->data() should be null.
         ASSERT(!image->data());
         if (!premultiplyAlpha)
-            neededAlphaOp = kAlphaDoUnmultiply;
+            neededAlphaOp = AlphaDoUnmultiply;
         alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaFirst:
         // This path is only accessible for MacOS earlier than 10.6.4.
         if (premultiplyAlpha)
-            neededAlphaOp = kAlphaDoPremultiply;
+            neededAlphaOp = AlphaDoPremultiply;
         alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaNoneSkipFirst:
@@ -173,12 +173,12 @@ bool GraphicsContext3D::getImageData(Image* image,
         // in which case image->data() should be null.
         ASSERT(!image->data());
         if (!premultiplyAlpha)
-            neededAlphaOp = kAlphaDoUnmultiply;
+            neededAlphaOp = AlphaDoUnmultiply;
         alphaFormat = AlphaFormatLast;
         break;
     case kCGImageAlphaLast:
         if (premultiplyAlpha)
-            neededAlphaOp = kAlphaDoPremultiply;
+            neededAlphaOp = AlphaDoPremultiply;
         alphaFormat = AlphaFormatLast;
         break;
     case kCGImageAlphaNoneSkipLast:
@@ -191,7 +191,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     }
     SourceDataFormat srcDataFormat = getSourceDataFormat(componentsPerPixel, alphaFormat, bitsPerComponent == 16, srcByteOrder16Big);
-    if (srcDataFormat == kSourceFormatNumFormats)
+    if (srcDataFormat == SourceFormatNumFormats)
         return false;
 
     RetainPtr<CFDataRef> pixelData;
