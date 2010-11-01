@@ -122,6 +122,7 @@ canvas/philip/tests/2d.gradient.radial.inside3.html
 canvas/philip/tests/2d.gradient.radial.outside1.html
 canvas/philip/tests/2d.imageData.create1.type.html
 canvas/philip/tests/2d.imageData.create2.type.html
+canvas/philip/tests/2d.imageData.get.source.negative.html
 canvas/philip/tests/2d.imageData.get.source.outside.html
 canvas/philip/tests/2d.imageData.get.type.html
 canvas/philip/tests/2d.line.cap.closed.html
