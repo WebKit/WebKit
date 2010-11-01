@@ -20,7 +20,7 @@ rootSVGElement.appendChild(foreignObjectElement);
 shouldBe("foreignObjectElement.height.baseVal.value", "2");
 
 function executeTest() {
-    foreignObjectElement.height.baseVal.value = "150";
+    foreignObjectElement.height.baseVal.value = 150;
     shouldBe("foreignObjectElement.height.baseVal.value", "150");
 
     completeTest();

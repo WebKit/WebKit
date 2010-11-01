@@ -20,7 +20,7 @@ rootSVGElement.appendChild(foreignObjectElement);
 shouldBe("foreignObjectElement.x.baseVal.value", "-100");
 
 function executeTest() {
-    foreignObjectElement.x.baseVal.value = "100";
+    foreignObjectElement.x.baseVal.value = 100;
     shouldBe("foreignObjectElement.x.baseVal.value", "100");
 
     completeTest();

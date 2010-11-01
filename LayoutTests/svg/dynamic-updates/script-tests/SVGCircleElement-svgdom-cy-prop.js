@@ -14,7 +14,7 @@ rootSVGElement.appendChild(circleElement);
 shouldBe("circleElement.cy.baseVal.value", "-50");
 
 function executeTest() {
-    circleElement.cy.baseVal.value = "150";
+    circleElement.cy.baseVal.value = 150;
     shouldBe("circleElement.cy.baseVal.value", "150");
 
     completeTest();

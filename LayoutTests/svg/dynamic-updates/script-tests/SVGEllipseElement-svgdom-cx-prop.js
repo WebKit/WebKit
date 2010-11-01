@@ -15,7 +15,7 @@ rootSVGElement.appendChild(ellipseElement);
 shouldBe("ellipseElement.cx.baseVal.value", "-50");
 
 function executeTest() {
-    ellipseElement.cx.baseVal.value = "150";
+    ellipseElement.cx.baseVal.value = 150;
     shouldBe("ellipseElement.cx.baseVal.value", "150");
 
     completeTest();
