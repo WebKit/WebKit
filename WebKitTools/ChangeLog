@@ -1,3 +1,9 @@
+2010-11-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Adding my IRC nickname to the list of committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-10-31  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.
