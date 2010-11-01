@@ -45,7 +45,7 @@ var Preferences = {
     onlineDetectionEnabled: true,
     nativeInstrumentationEnabled: false,
     resourceExportEnabled: false,
-    networkPanelEnabled: false,
+    networkPanelEnabled: true,
     fileSystemEnabled: false,
     useDataURLForResourceImageIcons: true
 }

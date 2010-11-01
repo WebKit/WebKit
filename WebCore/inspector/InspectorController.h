@@ -86,7 +86,7 @@ class SharedBuffer;
 class Storage;
 class StorageArea;
 
-#define LEGACY_RESOURCE_TRACKING_ENABLED 1
+#define LEGACY_RESOURCE_TRACKING_ENABLED 0
 
 #if LEGACY_RESOURCE_TRACKING_ENABLED
 class InspectorResource;

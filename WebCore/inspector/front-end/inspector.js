@@ -50,9 +50,6 @@
 
 var WebInspector = {
     resources: {},
-    cookieDomains: {},
-    applicationCacheDomains: {},
-    fileSystemOrigins: {},
     missingLocalizedStrings: {},
     pendingDispatches: 0,
 
@@ -556,7 +553,7 @@ WebInspector.doLoadedDone = function()
         scripts: new WebInspector.ResourceCategory("scripts", WebInspector.UIString("Scripts"), "rgb(255,121,0)"),
         xhr: new WebInspector.ResourceCategory("xhr", WebInspector.UIString("XHR"), "rgb(231,231,10)"),
         fonts: new WebInspector.ResourceCategory("fonts", WebInspector.UIString("Fonts"), "rgb(255,82,62)"),
-        websocket: new WebInspector.ResourceCategory("websockets", WebInspector.UIString("WebSocket"), "rgb(186,186,186)"), // FIXME: Decide the color.
+        websockets: new WebInspector.ResourceCategory("websockets", WebInspector.UIString("WebSocket"), "rgb(186,186,186)"), // FIXME: Decide the color.
         other: new WebInspector.ResourceCategory("other", WebInspector.UIString("Other"), "rgb(186,186,186)")
     };
 
@@ -1294,14 +1291,7 @@ WebInspector.updateResource = function(payload)
         if (resource.mainResource)
             this.mainResource = resource;
 
-        var parsedURL = payload.documentURL.asParsedURL();
-        if (parsedURL) {
-            this._addCookieDomain(parsedURL.host);
-            this._addAppCacheDomain(parsedURL.host);
-            if (Preferences.fileSystemEnabled)
-                // This should match the SecurityOrigin::toString(). FIXME: Add a test for this.
-                this._addFileSystemOrigin(parsedURL.scheme + "://" + parsedURL.host + (parsedURL.port ? (":" + parsedURL.port) : ""));
-        }
+        this.panels.storage.addDocumentURL(payload.documentURL);
     }
 
     if (payload.didResponseChange) {
@@ -1391,42 +1381,6 @@ WebInspector.addDatabase = function(payload)
         payload.name,
         payload.version);
     this.panels.storage.addDatabase(database);
-}
-
-WebInspector._addCookieDomain = function(domain)
-{
-    // Eliminate duplicate domains from the list.
-    if (domain in this.cookieDomains)
-        return;
-    this.cookieDomains[domain] = true;
-
-    if (!this.panels.storage)
-        return;
-    this.panels.storage.addCookieDomain(domain);
-}
-
-WebInspector._addAppCacheDomain = function(domain)
-{
-    // Eliminate duplicate domains from the list.
-    if (domain in this.applicationCacheDomains)
-        return;
-    this.applicationCacheDomains[domain] = true;
-
-    if (!this.panels.storage)
-        return;
-    this.panels.storage.addApplicationCache(domain);
-}
-
-WebInspector._addFileSystemOrigin = function(origin)
-{
-    if (!this.panels.storage)
-        return;
-    // Eliminate duplicate origins.
-    // FIXME: Move appcache/cookies/filesystem domain dup checks in StoragePanel.js
-    if (origin in this.fileSystemOrigins)
-        return;
-    this.fileSystemOrigins[origin] = true;
-    this.panels.storage.addFileSystem(origin);
 }
 
 WebInspector.addDOMStorage = function(payload)

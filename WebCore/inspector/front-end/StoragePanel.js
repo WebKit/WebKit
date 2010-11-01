@@ -59,7 +59,7 @@ WebInspector.StoragePanel = function(database)
     this.sidebarTree.appendChild(this.applicationCacheListTreeElement);
 
     if (Preferences.fileSystemEnabled) {
-        this.fileSystemListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("File System"), "file-system-storage-tree-item");
+        this.fileSystemListTreeElement = new WebInspector.StorageCategoryTreeElement(this, WebInspector.UIString("File System"), "FileSystem", "file-system-storage-tree-item");
         this.sidebarTree.appendChild(this.fileSystemListTreeElement);
         this.fileSystemListTreeElement.expand();
     }
@@ -74,6 +74,7 @@ WebInspector.StoragePanel = function(database)
     this._databases = [];
     this._domStorage = [];
     this._cookieViews = {};
+    this._origins = {};
     this._domains = {};
 }
 
@@ -88,9 +89,21 @@ WebInspector.StoragePanel.prototype = {
         return [this.storageViewStatusBarItemsContainer];
     },
 
+    elementsToRestoreScrollPositionsFor: function()
+    {
+        return [this.sidebarElement];
+    },
+
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
+
+        if (this.visibleView instanceof WebInspector.ResourceView) {
+            // SourceViews are shared between the panels.
+            this.visibleView.headersVisible = true;
+            this.visibleView.show(this.storageViews);
+        }
+
         if (this._initializedDefaultSelection)
             return;
 
@@ -116,6 +129,7 @@ WebInspector.StoragePanel.prototype = {
 
     reset: function()
     {
+        this._origins = {};
         this._domains = {};
         for (var i = 0; i < this._databases.length; ++i) {
             var database = this._databases[i];
@@ -198,11 +212,7 @@ WebInspector.StoragePanel.prototype = {
 
     addResourceToFrame: function(frameId, resource)
     {
-        if (!this._domains[resource.domain]) {
-            this._domains[resource.domain] = true;
-            this.addCookieDomain(resource.domain);
-            this.addApplicationCache(resource.domain);
-        }
+        this.addDocumentURL(resource.documentURL);
 
         if (resource.statusCode >= 301 && resource.statusCode <= 303)
             return;
@@ -244,7 +254,8 @@ WebInspector.StoragePanel.prototype = {
         // FIXME: do not add XHR in the first place based on the native instrumentation.
         if (resource.type === WebInspector.Resource.Type.XHR) {
             var resourceTreeElement = this._findTreeElementForResource(resource);
-            resourceTreeElement.parent.removeChild(resourceTreeElement);
+            if (resourceTreeElement)
+                resourceTreeElement.parent.removeChild(resourceTreeElement);
         }
     },
 
@@ -256,11 +267,33 @@ WebInspector.StoragePanel.prototype = {
         database._databasesTreeElement = databaseTreeElement;
         this.databasesListTreeElement.appendChild(databaseTreeElement);
     },
-    
-    addCookieDomain: function(domain)
+
+    addDocumentURL: function(url)
     {
-        var cookieDomainTreeElement = new WebInspector.CookieTreeElement(this, domain);
-        this.cookieListTreeElement.appendChild(cookieDomainTreeElement);
+        var parsedURL = url.asParsedURL();
+        if (!parsedURL)
+            return;
+
+        var domain = parsedURL.host;
+        if (!this._domains[domain]) {
+            this._domains[domain] = true;
+
+            var cookieDomainTreeElement = new WebInspector.CookieTreeElement(this, domain);
+            this.cookieListTreeElement.appendChild(cookieDomainTreeElement);
+
+            var applicationCacheTreeElement = new WebInspector.ApplicationCacheTreeElement(this, domain);
+            this.applicationCacheListTreeElement.appendChild(applicationCacheTreeElement);
+        }
+
+        if (Preferences.fileSystemEnabled) {
+            // FIXME: This should match the SecurityOrigin::toString(), add a test for this.
+            var securityOrigin = parsedURL.scheme + "://" + parsedURL.host + (parsedURL.port ? (":" + parsedURL.port) : "");
+            if (!this._origins[securityOrigin]) {
+                this._origins[securityOrigin] = true;
+                var fileSystemTreeElement = new WebInspector.FileSystemTreeElement(this, securityOrigin);
+                this.fileSystemListTreeElement.appendChild(fileSystemTreeElement);
+            }
+        }
     },
 
     addDOMStorage: function(domStorage)
@@ -274,18 +307,6 @@ WebInspector.StoragePanel.prototype = {
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
     },
 
-    addApplicationCache: function(domain)
-    {
-        var applicationCacheTreeElement = new WebInspector.ApplicationCacheTreeElement(this, domain);
-        this.applicationCacheListTreeElement.appendChild(applicationCacheTreeElement);
-    },
-
-    addFileSystem: function(origin)
-    {
-        var fileSystemTreeElement = new WebInspector.FileSystemTreeElement(this, origin);
-        this.fileSystemListTreeElement.appendChild(fileSystemTreeElement);
-    },
-    
     selectDatabase: function(databaseId)
     {
         var database;
@@ -409,9 +430,9 @@ WebInspector.StoragePanel.prototype = {
             this._applicationCacheView.updateStatus(this._cachedApplicationCacheViewStatus);
     },
 
-    showFileSystem: function(treeElement, fileSystemDomain)
+    showFileSystem: function(treeElement, origin)
     {
-        this._fileSystemView =  new WebInspector.FileSystemView(treeElement, fileSystemDomain);
+        this._fileSystemView = new WebInspector.FileSystemView(treeElement, origin);
         this._innerShowView(this._fileSystemView);
     },
     
@@ -651,13 +672,13 @@ WebInspector.StoragePanel.prototype = {
     {
         function isAncestor(ancestor, object)
         {
-            console.error("There should be no calls to isAncestor, but there was one for ", object);
+            // Redirects, XHRs do not belong to the tree, it is fine to silently return false here.
             return false;
         }
 
         function getParent(object)
         {
-            console.error("There should be no calls to getParent, but there was one for ", object);
+            // Redirects, XHRs do not belong to the tree, it is fine to silently return false here.
             return null;
         }
 
@@ -1070,16 +1091,22 @@ WebInspector.ApplicationCacheTreeElement.prototype = {
 }
 WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
-WebInspector.FileSystemTreeElement = function(storagePanel, fileSystemDomain)
+WebInspector.FileSystemTreeElement = function(storagePanel, origin)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, fileSystemDomain ? fileSystemDomain : WebInspector.UIString("Local Files"), "file-system-storage-tree-item");
-    this._fileSystemDomain = fileSystemDomain;
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, origin, "file-system-storage-tree-item");
+    this._origin = origin;
 }
 
 WebInspector.FileSystemTreeElement.prototype = {
+    get itemURL()
+    {
+        return "file-system://" + encodeURI(this._origin);
+    },
+
     onselect: function()
     {
-        this._storagePanel.showFileSystem(this, this._fileSystemDomain);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        this._storagePanel.showFileSystem(this, this._origin);
     }
 }
  

@@ -1,3 +1,13 @@
+2010-10-31  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Timothy Hatcher.
+
+        Web Inspector: unhide new network and resources panels.
+        https://bugs.webkit.org/show_bug.cgi?id=48725
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setApuAgentEnabled):
+
 2010-10-29  Daniel Bates  <dbates@rim.com>
 
         No review, rolling out 70971.

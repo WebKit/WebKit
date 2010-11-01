@@ -22,7 +22,7 @@
     -webkit-background-size: 1px 42px;
 }
 
-.network.panel .data-grid td {
+.network.panel .data-grid td:not(.network-summary) {
     line-height: 17px;
     height: 37px;
     border-right: 1px solid rgb(210, 210, 210);
@@ -487,7 +487,7 @@
     height: 20px;
     font-size: 11px;
     font-weight: bold;
-    padding-top: 1px;
+    padding-top: 3px;
     padding-left: 10px;
     z-index: 2000;
     white-space: pre;
@@ -544,7 +544,7 @@
     left: 0;
 }
 
-.network-close-button {
+#network-close-button {
     position: absolute;
     width: 14px;
     height: 14px;
@@ -555,6 +555,11 @@
     top: 4px;
     right: 5px;
     z-index: 10;
+    display: none;
+}
+
+.network.panel.viewing-resource #network-close-button  {
+    display: block;
 }
 
 .network.panel .data-grid.full-grid-mode .viewer-column {

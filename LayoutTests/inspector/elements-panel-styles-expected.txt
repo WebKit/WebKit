@@ -2,36 +2,36 @@ Tests that elements panel shows proper styles in the sidebar panel.
 
 [expanded]  ()
 color: blue;
-    .foo, .foo::before - blue resources/elements-panel-styles.css:15
-    /-- overloaded --/ .foo - black resources/elements-panel-styles.css:10
+    .foo, .foo::before - blue elements-panel-styles.css:15
+    /-- overloaded --/ .foo - black elements-panel-styles.css:10
 display: none;
     element.style - none 
     /-- overloaded --/ div - block user agent stylesheet
 font-family: serif;
-    #container - serif resources/elements-panel-styles.css:5
+    #container - serif elements-panel-styles.css:5
 font-size: 14px;
-    #container - 14px resources/elements-panel-styles.css:5
-    /-- overloaded --/ body - 12px resources/elements-panel-styles.css:1
+    #container - 14px elements-panel-styles.css:5
+    /-- overloaded --/ body - 12px elements-panel-styles.css:1
 margin-bottom: 2px;
-    .foo - 2px resources/elements-panel-styles.css:10
+    .foo - 2px elements-panel-styles.css:10
 margin-left: 0px;
-    .foo - 0px resources/elements-panel-styles.css:10
+    .foo - 0px elements-panel-styles.css:10
 margin-right: 0px;
-    .foo - 0px resources/elements-panel-styles.css:10
+    .foo - 0px elements-panel-styles.css:10
 margin-top: 10px;
-    .foo - 10px resources/elements-panel-styles.css:10
+    .foo - 10px elements-panel-styles.css:10
 
 [expanded] element.style { ()
 display: none;
 
 ======== Matched CSS Rules ========
-[expanded] .foo { (resources/elements-panel-styles.css:33)
+[expanded] .foo { (elements-panel-styles.css:33)
 
-[expanded] .foo, .foo::before { (resources/elements-panel-styles.css:15)
+[expanded] .foo, .foo::before { (elements-panel-styles.css:15)
 color: blue;
 content: '[before Foo]';
 
-[expanded] .foo { (resources/elements-panel-styles.css:10)
+[expanded] .foo { (elements-panel-styles.css:10)
 /-- overloaded --/ color: black;
 margin: 10px 0px 2px;
     margin-top: 10px;
@@ -43,32 +43,32 @@ margin: 10px 0px 2px;
 /-- overloaded --/ display: block;
 
 ======== Inherited from div#container ========
-[expanded] #container { (resources/elements-panel-styles.css:5)
+[expanded] #container { (elements-panel-styles.css:5)
 font-family: serif;
 font-size: 14px;
 
 ======== Inherited from body ========
-[expanded] body { (resources/elements-panel-styles.css:1)
+[expanded] body { (elements-panel-styles.css:1)
 /-- overloaded --/ font-size: 12px;
 
 
 ======== Pseudo ::before element ========
-[expanded] .foo::before { (resources/elements-panel-styles.css:37)
+[expanded] .foo::before { (elements-panel-styles.css:37)
 
-[expanded] .foo::before { (resources/elements-panel-styles.css:20)
+[expanded] .foo::before { (elements-panel-styles.css:20)
 color: red;
 
-[expanded] .foo, .foo::before { (resources/elements-panel-styles.css:15)
+[expanded] .foo, .foo::before { (elements-panel-styles.css:15)
 /-- overloaded --/ color: blue;
 content: '[before Foo]';
 
 
 ======== Pseudo ::after element ========
-[expanded] .foo::after { (resources/elements-panel-styles.css:28)
+[expanded] .foo::after { (elements-panel-styles.css:28)
 content: '[after Foo 2]';
 font-family: courier;
 
-[expanded] .foo::after { (resources/elements-panel-styles.css:24)
+[expanded] .foo::after { (elements-panel-styles.css:24)
 color: green;
 /-- overloaded --/ content: '[after Foo]';
 

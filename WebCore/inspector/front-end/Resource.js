@@ -25,7 +25,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 WebInspector.Resource = function(identifier, url)
 {
     this.identifier = identifier;
@@ -332,7 +331,7 @@ WebInspector.Resource.prototype = {
                 this.category = WebInspector.resourceCategories.xhr;
                 break;
             case WebInspector.Resource.Type.WebSocket:
-                this.category = WebInspector.resourceCategories.websocket;
+                this.category = WebInspector.resourceCategories.websockets;
                 break;
             case WebInspector.Resource.Type.Other:
             default:
@@ -643,6 +642,7 @@ WebInspector.Resource.prototype = {
             for (var i = 0; i < callbacks.length; ++i)
                 callbacks[i](this._content, this._contentEncoded);
             this._pendingContentCallbacks.length = 0;
+            delete this._contentRequested;
         }
         WebInspector.ResourceManager.getContent(this, this._contentEncoded, onResourceContent.bind(this));
     }

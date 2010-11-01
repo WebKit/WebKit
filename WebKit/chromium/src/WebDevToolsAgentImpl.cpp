@@ -264,19 +264,26 @@ void WebDevToolsAgentImpl::setApuAgentEnabled(bool enabled)
     if (enabled) {
         if (!ic->hasFrontend())
             connectFrontend(true);
+
+#if LEGACY_RESOURCE_TRACKING_ENABLED
         m_resourceTrackingWasEnabled = ic->resourceTrackingEnabled();
+#endif
         ic->startTimelineProfiler();
+#if LEGACY_RESOURCE_TRACKING_ENABLED
         if (!m_resourceTrackingWasEnabled) {
             // TODO(knorton): Introduce some kind of agents dependency here so that
             // user could turn off resource tracking while apu agent is on.
             ic->setResourceTrackingEnabled(true);
         }
+#endif
         m_debuggerAgentImpl->setAutoContinueOnException(true);
     } else {
       ic->stopTimelineProfiler();
+#if LEGACY_RESOURCE_TRACKING_ENABLED        
       if (!m_resourceTrackingWasEnabled)
           ic->setResourceTrackingEnabled(false);
       m_resourceTrackingWasEnabled = false;
+#endif
     }
     m_client->runtimePropertyChanged(
         kApuAgentFeatureName,

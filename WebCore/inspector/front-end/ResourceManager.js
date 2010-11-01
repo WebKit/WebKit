@@ -79,7 +79,8 @@ WebInspector.ResourceManager.prototype = {
     {
         var resource = new WebInspector.Resource(identifier, url);
         resource.loader = loader;
-        resource.documentURL = loader.url;
+        if (loader)
+            resource.documentURL = loader.url;
 
         this._resourcesById[identifier] = resource;
         return resource;
@@ -136,6 +137,7 @@ WebInspector.ResourceManager.prototype = {
             return;
 
         resource.cached = true;
+        delete resource.timing;
         WebInspector.panels.network.refreshResource(resource);
     },
 
@@ -267,10 +269,8 @@ WebInspector.ResourceManager.prototype = {
 
     didCreateWebSocket: function(identifier, requestURL)
     {
-        this.identifierForInitialRequest(identifier, requestURL);
-        var resource = this._resourcesById[identifier];
+        var resource = this._createResource(identifier, requestURL);
         resource.type = WebInspector.Resource.Type.WebSocket;
-
         WebInspector.panels.network.refreshResource(resource);
     },
 
@@ -473,7 +473,7 @@ WebInspector.ResourceManager.existingResourceViewForResource = function(resource
 WebInspector.ResourceManager.getContent = function(resource, base64Encode, callback)
 {
     // FIXME: eventually, cached resources will have no identifiers.
-    if (resource.loader)
+    if (Preferences.networkPanelEnabled)
         InspectorBackend.resourceContent(resource.loader.frameId, resource.url, base64Encode, callback);
     else
         InspectorBackend.getResourceContent(resource.identifier, base64Encode, callback);

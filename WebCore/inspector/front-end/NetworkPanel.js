@@ -56,9 +56,9 @@ WebInspector.NetworkPanel = function()
     this.element.appendChild(this._viewsContainerElement);
 
     var closeButtonElement = document.createElement("button");
-    closeButtonElement.className = "network-close-button";
+    closeButtonElement.id = "network-close-button";
     closeButtonElement.addEventListener("click", this._toggleGridMode.bind(this), false);
-    this._viewsContainerElement.appendChild(closeButtonElement);
+    this.element.appendChild(closeButtonElement);
 
     this._createSortingFunctions();
     this._createTable();
@@ -66,6 +66,9 @@ WebInspector.NetworkPanel = function()
     this._createStatusbarButtons();
     this._createFilterStatusBarItems();
     this._createSummaryBar();
+
+    if (!WebInspector.applicationSettings.resourcesLargeRows)
+        this._setLargerResources(WebInspector.applicationSettings.resourcesLargeRows);
 
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
 
@@ -613,8 +616,6 @@ WebInspector.NetworkPanel.prototype = {
 
         this._largerResourcesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Use small resource rows."), "network-larger-resources-status-bar-item");
         this._largerResourcesButton.toggled = WebInspector.applicationSettings.resourcesLargeRows;
-        if (!WebInspector.applicationSettings.resourcesLargeRows)
-            this._setLargerResources(WebInspector.applicationSettings.resourcesLargeRows);
         this._largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
     },
 
@@ -901,6 +902,7 @@ WebInspector.NetworkPanel.prototype = {
             this._timelineGrid.element.removeStyleClass("small");
             this._viewsContainerElement.removeStyleClass("small");
         }
+        this._positionSummaryBar();
     },
 
     _getPopoverAnchor: function(element)
