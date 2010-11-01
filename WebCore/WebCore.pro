@@ -817,6 +817,7 @@ SOURCES += \
     editing/SplitElementCommand.cpp \
     editing/SplitTextNodeCommand.cpp \
     editing/SplitTextNodeContainingElementCommand.cpp \
+    editing/TextCheckingHelper.cpp \
     editing/TextIterator.cpp \
     editing/TypingCommand.cpp \
     editing/UnlinkCommand.cpp \
