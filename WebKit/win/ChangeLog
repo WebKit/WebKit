@@ -1,3 +1,26 @@
+2010-11-01  Adam Roben  <aroben@apple.com>
+
+        Cancel main resource loads after we hand them off to the media engine
+
+        This is the Windows equivalent of r51104. Clearly this code should be
+        moved to a cross-platform location someday.
+
+        Fixes <http://webkit.org/b/48531> <rdar://problem/8606635> Assertion
+        failure in DocumentLoader::commitData when loading a media document in
+        WebKit1 on Windows
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::committedLoad): Cancel the main resource load
+        after handing off the load to the media engine. This code originally
+        came from -[WebHTMLRepresentation receivedData:withDataSource:].
+
+        * WebFrame.cpp:
+        (WebFrame::shouldFallBack): Don't fall back when handing the resource
+        load off to the media engine or a plugin. Added error domain checking
+        so that we don't rely on error codes being unique.
+
 2010-10-29  Daniel Bates  <dbates@rim.com>
 
         No review, rolling out 70971.
