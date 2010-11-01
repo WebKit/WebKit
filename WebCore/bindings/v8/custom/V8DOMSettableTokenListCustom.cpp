@@ -34,8 +34,9 @@ namespace WebCore {
 
 v8::Handle<v8::Value> V8DOMSettableTokenList::indexedPropertyGetter(uint32_t index, const v8::AccessorInfo& info)
 {
-    // FIXME: Implement this function.
-    return v8String("");
+    INC_STATS("DOM.DOMSettableTokenList.IndexedPropertyGetter");
+    DOMSettableTokenList* list = V8DOMSettableTokenList::toNative(info.Holder());
+    return v8String(list->item(index));
 }
 
 } // namespace WebCore
