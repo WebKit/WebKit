@@ -3246,9 +3246,6 @@ BUGWK61164 LINUX WIN : fast/blockflow/background-vertical-rl.html = IMAGE+TEXT
 // New test added by http://trac.webkit.org/changeset/70840.
 BUGWK61188 : fast/repaint/iframe-scroll-repaint.html = IMAGE+TEXT IMAGE
 
-// Temporarily disabled for a 4-sided patch. Will be enabled again by BUGWK47420.
-BUGWK47089 : fast/speech/input-text-language-tag.html = FAIL
-
 // These tests started failing presumably after r70850
 BUGWK48627 MAC : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE

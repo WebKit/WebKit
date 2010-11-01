@@ -55,11 +55,6 @@ WebSpeechInputControllerMockImpl::~WebSpeechInputControllerMockImpl()
     m_webcoreMock->setListener(0);
 }
 
-void WebSpeechInputControllerMockImpl::setMockRecognitionResult(const WebString& result)
-{
-    m_webcoreMock->setRecognitionResult(result, WebString::fromUTF8(""));
-}
-
 void WebSpeechInputControllerMockImpl::setMockRecognitionResult(const WebString& result, const WebString &language)
 {
     m_webcoreMock->setRecognitionResult(result, language);

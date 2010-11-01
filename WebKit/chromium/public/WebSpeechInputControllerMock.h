@@ -45,10 +45,6 @@ public:
     virtual ~WebSpeechInputControllerMock() { }
 
     virtual void setMockRecognitionResult(const WebString& result, const WebString& language) = 0;
-
-    // FIXME: this is a fix for a two-sided patch. Delete as soon as the chromium side is patched.
-    // Chromium patch not uploaded yet, but will depend on http://codereview.chromium.org/3615005/show patch.
-    virtual void setMockRecognitionResult(const WebString& result) = 0;
 };
 
 } // namespace WebKit
