@@ -66,6 +66,7 @@ private:
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
 
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy();
+    virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
 
     void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
 

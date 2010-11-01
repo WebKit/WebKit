@@ -68,6 +68,8 @@ class DrawingArea;
 class InjectedBundleBackForwardList;
 class PageOverlay;
 class PluginView;
+class WebContextMenu;
+class WebContextMenuItem;
 class WebEvent;
 class WebFrame;
 class WebInspector;
@@ -186,6 +188,8 @@ public:
     FindController& findController() { return m_findController; }
 
     void pageDidScroll();
+    
+    WebContextMenu* contextMenu();
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
@@ -252,6 +256,10 @@ private:
 
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
 
+#if ENABLE(CONTEXT_MENUS)
+    void didSelectItemFromActiveContextMenu(const WebContextMenuItem&);
+#endif
+
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
     RefPtr<InjectedBundleBackForwardList> m_backForwardList;
@@ -293,6 +301,8 @@ private:
     OwnPtr<WebInspector> m_inspector;
 
     RefPtr<WebPopupMenu> m_activePopupMenu;
+
+    RefPtr<WebContextMenu> m_contextMenu;
 
     uint64_t m_pageID;
 };

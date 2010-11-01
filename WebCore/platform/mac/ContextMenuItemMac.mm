@@ -154,6 +154,11 @@ bool ContextMenuItem::enabled() const
     return [m_platformDescription.get() isEnabled];
 }
 
+bool ContextMenuItem::checked() const
+{
+    return [m_platformDescription.get() state] == NSOnState;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CONTEXT_MENUS)

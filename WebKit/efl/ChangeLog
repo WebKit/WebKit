@@ -1,3 +1,13 @@
+2010-11-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7660547> and https://bugs.webkit.org/show_bug.cgi?id=48699
+        Context menu support for WebKit 2.
+
+        * WebCoreSupport/ChromeClientEfl.h:
+        (WebCore::ChromeClientEfl::showContextMenu):
+
 2010-10-29  Daniel Bates  <dbates@rim.com>
 
         No review, rolling out 70971.

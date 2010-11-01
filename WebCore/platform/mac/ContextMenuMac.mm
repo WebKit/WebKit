@@ -153,6 +153,19 @@ NSMutableArray* ContextMenu::releasePlatformDescription()
     return m_platformDescription.releaseRef();
 }
 
+Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription menu)
+{
+    Vector<ContextMenuItem> items;
+    unsigned count = [menu count];
+    if (menu)
+        items.reserveCapacity(count);
+    
+    for (unsigned i = 0; i < count; ++i)
+        items.append(ContextMenuItem([menu objectAtIndex:i]));
+    
+    return items;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CONTEXT_MENUS)

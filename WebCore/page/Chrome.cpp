@@ -502,4 +502,11 @@ PassRefPtr<SearchPopupMenu> Chrome::createSearchPopupMenu(PopupMenuClient* clien
     return m_client->createSearchPopupMenu(client);
 }
 
+#if ENABLE(CONTEXT_MENUS)
+void Chrome::showContextMenu()
+{
+    m_client->showContextMenu();
+}
+#endif
+
 } // namespace WebCore

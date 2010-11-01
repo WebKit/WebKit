@@ -104,6 +104,12 @@ void ContextMenuItem::setChecked(bool on)
     m_platformDescription.checked = on;
 }
 
+bool ContextMenuItem::checked() const
+{
+    // FIXME - Implement
+    return false;
+}
+
 void ContextMenuItem::setEnabled(bool on)
 {
     m_platformDescription.enabled = on;

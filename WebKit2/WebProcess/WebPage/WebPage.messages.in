@@ -78,6 +78,9 @@ messages -> WebPage {
 
     # Popup menu.
     DidChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
+    
+    # Context menu.
+    DidSelectItemFromActiveContextMenu(WebKit::WebContextMenuItem menuItem);
 
     SetWindowResizerSize(WebCore::IntSize intersectsView)
 

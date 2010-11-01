@@ -32,6 +32,7 @@
 #include "GenericCallback.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
+#include "WebContextMenuItem.h"
 #include "WebEvent.h"
 #include "WebFindClient.h"
 #include "WebFormClient.h"
@@ -77,6 +78,7 @@ class PlatformCertificateInfo;
 class StringPairVector;
 class WebBackForwardList;
 class WebBackForwardListItem;
+class WebContextMenuProxy;
 class WebData;
 class WebEditCommandProxy;
 class WebKeyboardEvent;
@@ -231,6 +233,8 @@ public:
 
     void getStatistics(WKContextStatistics*);
 
+    void contextMenuItemSelected(const WebContextMenuItem&);
+
 private:
     WebPageProxy(WebPageNamespace*, uint64_t pageID);
 
@@ -321,6 +325,9 @@ private:
     void showPopupMenu(const WebCore::IntRect& rect, const Vector<WebPopupItem>& items, int32_t selectedIndex);
     void hidePopupMenu();
 
+    // Context Menu.
+    void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItem>& items);
+
     void takeFocus(bool direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
@@ -361,6 +368,7 @@ private:
     HashSet<WebEditCommandProxy*> m_editCommandSet;
 
     RefPtr<WebPopupMenuProxy> m_activePopupMenu;
+    RefPtr<WebContextMenuProxy> m_activeContextMenu;
 
     double m_estimatedProgress;
 

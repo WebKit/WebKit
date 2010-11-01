@@ -184,6 +184,12 @@ void ContextMenuItem::setChecked(bool checked)
     }
 }
 
+bool ContextMenuItem::checked() const
+{
+    // FIXME - Implement
+    return false;
+}
+
 void ContextMenuItem::setEnabled(bool enabled)
 {
     m_platformDescription->fMask |= MIIM_STATE;

@@ -38,6 +38,7 @@
 #include "PluginView.h"
 #include "WebBackForwardListProxy.h"
 #include "WebChromeClient.h"
+#include "WebContextMenu.h"
 #include "WebContextMenuClient.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebDragClient.h"
@@ -53,6 +54,8 @@
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessageKinds.h"
+#include <WebCore/Chrome.h>
+#include <WebCore/ContextMenuController.h>
 #include <WebCore/EventHandler.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
@@ -480,6 +483,13 @@ void WebPage::pageDidScroll()
     send(Messages::WebPageProxy::PageDidScroll());
 }
 
+WebContextMenu* WebPage::contextMenu()
+{
+    if (!m_contextMenu)
+        m_contextMenu = WebContextMenu::create(this);
+    return m_contextMenu.get();
+}
+
 // Events 
 
 static const WebEvent* g_currentEvent = 0;
@@ -519,7 +529,20 @@ static bool handleMouseEvent(const WebMouseEvent& mouseEvent, Page* page)
 
     switch (platformMouseEvent.eventType()) {
         case WebCore::MouseEventPressed:
-            return frame->eventHandler()->handleMousePressEvent(platformMouseEvent);
+        {
+            if (platformMouseEvent.button() == WebCore::RightButton)
+                page->contextMenuController()->clearContextMenu();
+            
+            bool handled = frame->eventHandler()->handleMousePressEvent(platformMouseEvent);
+            
+            if (platformMouseEvent.button() == WebCore::RightButton) {
+                handled = frame->eventHandler()->sendContextMenuEvent(platformMouseEvent);
+                if (handled)
+                    page->chrome()->showContextMenu();
+            }
+
+            return handled;
+        }
         case WebCore::MouseEventReleased:
             return frame->eventHandler()->handleMouseReleaseEvent(platformMouseEvent);
         case WebCore::MouseEventMoved:
@@ -881,6 +904,13 @@ void WebPage::didChangeSelectedIndexForActivePopupMenu(int32_t newIndex)
 
     m_activePopupMenu->didChangeSelectedIndex(newIndex);
     m_activePopupMenu = 0;
+}
+
+void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItem& item)
+{
+    ASSERT(m_contextMenu);
+    m_contextMenu->itemSelected(item);
+    m_contextMenu = 0;
 }
 
 #if PLATFORM(MAC)

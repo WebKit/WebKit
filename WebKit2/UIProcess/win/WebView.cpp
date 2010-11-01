@@ -625,6 +625,12 @@ PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy()
     return WebPopupMenuProxyWin::create();
 }
 
+PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
+{
+    // FIXME: Implement.
+    return 0;
+}
+
 void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
 {
     // FIXME: Implement.

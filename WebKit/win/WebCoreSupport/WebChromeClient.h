@@ -122,6 +122,10 @@ public:
     virtual void reachedApplicationCacheOriginQuota(WebCore::SecurityOrigin*);
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
+    virtual void showContextMenu() { }
+#endif
+
     virtual void populateVisitedLinks();
 
     virtual bool paintCustomScrollbar(WebCore::GraphicsContext*, const WebCore::FloatRect&, WebCore::ScrollbarControlSize, 

@@ -1,3 +1,13 @@
+2010-11-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7660547> and https://bugs.webkit.org/show_bug.cgi?id=48699
+        Context menu support for WebKit 2.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient::showContextMenu):
+
 2010-11-01  Adam Roben  <aroben@apple.com>
 
         Cancel main resource loads after we hand them off to the media engine

@@ -214,6 +214,7 @@ HEADERS += \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \
     Shared/WebCertificateInfo.h \
+    Shared/WebContextMenuItem.h \
     Shared/WebEvent.h \
     Shared/WebError.h \
     Shared/WebEventConversion.h \
@@ -264,6 +265,7 @@ HEADERS += \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebContext.h \
     UIProcess/WebContextInjectedBundleClient.h \
+    UIProcess/WebContextMenuProxy.h \
     UIProcess/WebContextUserMessageCoders.h \
     UIProcess/WebEditCommandProxy.h \
     UIProcess/WebFindClient.h \
@@ -329,6 +331,7 @@ HEADERS += \
     WebProcess/WebPage/FindController.h \
     WebProcess/WebPage/FindPageOverlay.h \
     WebProcess/WebPage/PageOverlay.h \
+    WebProcess/WebPage/WebContextMenu.h \
     WebProcess/WebPage/WebEditCommand.h \
     WebProcess/WebPage/WebFrame.h \
     WebProcess/WebPage/WebInspector.h \
@@ -376,6 +379,7 @@ SOURCES += \
     Shared/qt/WebURLRequestQt.cpp \
     Shared/qt/WebURLResponseQt.cpp \
     Shared/VisitedLinkTable.cpp \
+    Shared/WebContextMenuItem.cpp \
     Shared/WebError.cpp \
     Shared/WebEvent.cpp \
     Shared/WebEventConversion.cpp \
@@ -421,6 +425,7 @@ SOURCES += \
     UIProcess/WebBackForwardList.cpp \
     UIProcess/WebBackForwardListItem.cpp \
     UIProcess/WebContext.cpp \
+    UIProcess/WebContextMenuProxy.cpp \
     UIProcess/WebContextInjectedBundleClient.cpp \
     UIProcess/WebEditCommandProxy.cpp \
     UIProcess/WebFindClient.cpp \
@@ -492,6 +497,7 @@ SOURCES += \
     WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/FindPageOverlay.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
+    WebProcess/WebPage/WebContextMenu.cpp \
     WebProcess/WebPage/WebEditCommand.cpp \
     WebProcess/WebPage/WebFrame.cpp \
     WebProcess/WebPage/WebInspector.cpp \

@@ -489,6 +489,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\WebContextMenuItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\WebContextMenuItem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\WebCoreArgumentCoders.h"
 				>
 			</File>
@@ -1188,6 +1196,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\WebContextMenu.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\WebProcess\WebPage\WebContextMenu.h"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebEditCommand.cpp"
 					>
 				</File>
@@ -1682,6 +1698,14 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\WebContextInjectedBundleClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebContextMenuProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebContextMenuProxy.h"
 				>
 			</File>
 			<File

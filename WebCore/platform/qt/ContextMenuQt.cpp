@@ -74,6 +74,11 @@ PlatformMenuDescription ContextMenu::releasePlatformDescription()
     return PlatformMenuDescription();
 }
 
+Vector<ContextMenuItem> contextMenuItemVector(PlatformMenuDescription)
+{
+    // FIXME - Implement    
+    return Vector<ContextMenuItem>();
+}
 
 }
 // vim: ts=4 sw=4 et

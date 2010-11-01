@@ -36,6 +36,7 @@
 #include "WebBackForwardListItem.h"
 #include "WebCertificateInfo.h"
 #include "WebContext.h"
+#include "WebContextMenuProxy.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebData.h"
@@ -1122,6 +1123,21 @@ void WebPageProxy::hidePopupMenu()
 
     m_activePopupMenu->hidePopupMenu();
     m_activePopupMenu = 0;
+}
+
+void WebPageProxy::showContextMenu(const WebCore::IntPoint& menuLocation, const Vector<WebContextMenuItem>& items)
+{
+    if (m_activeContextMenu)
+        m_activeContextMenu->hideContextMenu();
+    else
+        m_activeContextMenu = m_pageClient->createContextMenuProxy(this);
+      
+    m_activeContextMenu->showContextMenu(menuLocation, items);
+}
+
+void WebPageProxy::contextMenuItemSelected(const WebContextMenuItem& item)
+{
+    process()->send(Messages::WebPage::DidSelectItemFromActiveContextMenu(item), m_pageID);
 }
 
 void WebPageProxy::registerEditCommand(PassRefPtr<WebEditCommandProxy> commandProxy, UndoOrRedo undoOrRedo)

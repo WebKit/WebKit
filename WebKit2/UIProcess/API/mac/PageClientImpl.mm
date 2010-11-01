@@ -30,6 +30,7 @@
 #import "WKAPICast.h"
 #import "WKStringCF.h"
 #import "WKViewInternal.h"
+#import "WebContextMenuProxyMac.h"
 #import "WebEditCommandProxy.h"
 #import "WebPopupMenuProxyMac.h"
 #import <WebCore/Cursor.h>
@@ -243,6 +244,11 @@ void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy()
 {
     return WebPopupMenuProxyMac::create(m_wkView);
+}
+
+PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy* page)
+{
+    return WebContextMenuProxyMac::create(m_wkView, page);
 }
 
 void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator> findIndicator, bool fadeOut)

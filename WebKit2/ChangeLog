@@ -1,3 +1,84 @@
+2010-11-01  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/7660547> and https://bugs.webkit.org/show_bug.cgi?id=48699
+        Context menu support for WebKit 2.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+        * Shared/WebContextMenuItem.cpp: Added.
+        (WebKit::WebContextMenuItem::WebContextMenuItem):
+        (WebKit::WebContextMenuItem::encode):
+        (WebKit::WebContextMenuItem::decode):
+        (WebKit::kitItems):
+        * Shared/WebContextMenuItem.h: Added.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::createContextMenuProxy): Stub to keep the build working.
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+
+        * UIProcess/WebContextMenuProxy.cpp: Added.
+        (WebKit::WebContextMenuProxy::~WebContextMenuProxy):
+        (WebKit::WebContextMenuProxy::WebContextMenuProxy):
+        * UIProcess/WebContextMenuProxy.h: Added.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu): Shows the menu after receiving the message from the WebProcess.
+        (WebKit::WebPageProxy::contextMenuItemSelected): Sends info about the selected menu item to the WebProcess
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        * UIProcess/mac/WebContextMenuProxyMac.h: Added.
+        (WebKit::WebContextMenuProxyMac::create):
+        * UIProcess/mac/WebContextMenuProxyMac.mm: Added.
+        (+[WebMenuTarget sharedMenuTarget]):
+        (-[WebMenuTarget WebKit::]):
+        (-[WebMenuTarget setMenuProxy:WebKit::]):
+        (-[WebMenuTarget forwardContextMenuAction:]):
+        (WebKit::WebContextMenuProxyMac::WebContextMenuProxyMac):
+        (WebKit::WebContextMenuProxyMac::~WebContextMenuProxyMac):
+        (WebKit::WebContextMenuProxyMac::contextMenuItemSelected):
+        (WebKit::populateNSMenu):
+        (WebKit::nsMenuItemVector):
+        (WebKit::WebContextMenuProxyMac::populate):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        (WebKit::WebContextMenuProxyMac::hideContextMenu):
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::createContextMenuProxy): Stub for now.
+        * UIProcess/win/WebView.h:
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::showContextMenu):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::getCustomMenuFromDefaultItems): Return the WebCore-provided default
+          menu for now. Embedding app customization will come later (see bug 48720)
+
+        * WebProcess/WebPage/WebContextMenu.cpp: Added.
+        (WebKit::WebContextMenu::WebContextMenu):
+        (WebKit::WebContextMenu::~WebContextMenu):
+        (WebKit::WebContextMenu::show):
+        (WebKit::WebContextMenu::itemSelected):
+        * WebProcess/WebPage/WebContextMenu.h: Added.
+        (WebKit::WebContextMenu::create):
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::contextMenu):
+        (WebKit::handleMouseEvent): Pass right mouse presses along to WebCore as both a mouse event and context menu event, 
+          the same way WebKit1 does.
+        (WebKit::WebPage::didSelectItemFromActiveContextMenu):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2010-11-01  Adam Roben  <aroben@apple.com>
 
         Cancel main resource loads after we hand them off to the media engine

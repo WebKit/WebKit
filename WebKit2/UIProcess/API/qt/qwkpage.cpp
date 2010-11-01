@@ -30,6 +30,7 @@
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
 #include "WebContext.h"
+#include "WebContextMenuProxy.h"
 #include "WebEventFactoryQt.h"
 #include "WebPlatformStrategies.h"
 #include "WebPopupMenuProxyQt.h"
@@ -132,6 +133,12 @@ void QWKPagePrivate::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
 PassRefPtr<WebPopupMenuProxy> QWKPagePrivate::createPopupMenuProxy()
 {
     return WebPopupMenuProxyQt::create();
+}
+
+PassRefPtr<WebContextMenuProxy> QWKPagePrivate::createContextMenuProxy(WebPageProxy*)
+{
+    // FIXME: Implement;
+    return 0;
 }
 
 void QWKPagePrivate::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
