@@ -48,7 +48,7 @@ public:
     explicit NPRemoteObjectMap(CoreIPC::Connection*);
 
     // Creates an NPObjectProxy wrapper for the remote object with the given remote object ID.
-    NPObjectProxy* getOrCreateNPObjectProxy(uint64_t remoteObjectID);
+    NPObjectProxy* createNPObjectProxy(uint64_t remoteObjectID);
 
     // Expose the given NPObject as a remote object. Returns the objectID.
     uint64_t registerNPObject(NPObject*);

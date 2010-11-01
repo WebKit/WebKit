@@ -23,18 +23,129 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if ENABLE(PLUGIN_PROCESS)
+
 #include "NPObjectProxy.h"
 
-#if ENABLE(PLUGIN_PROCESS)
+#include "NotImplemented.h"
+#include "NPRuntimeUtilities.h"
 
 namespace WebKit {
 
+NPObjectProxy* NPObjectProxy::create(uint64_t npObjectID)
+{
+    NPObjectProxy* npObjectProxy = toNPObjectProxy(createNPObject(0, npClass()));
+    npObjectProxy->initialize(npObjectID);
+
+    return npObjectProxy;
+}
+
 NPObjectProxy::NPObjectProxy()
+    : m_npObjectID(0)
 {
 }
 
 NPObjectProxy::~NPObjectProxy()
 {
+}
+
+bool NPObjectProxy::isNPObjectProxy(NPObject* npObject)
+{
+    return npObject->_class == npClass();
+}
+    
+void NPObjectProxy::initialize(uint64_t npObjectID)
+{
+    ASSERT(!m_npObjectID);
+    m_npObjectID = npObjectID;
+}
+
+NPClass* NPObjectProxy::npClass()
+{
+    static NPClass npClass = {
+        NP_CLASS_STRUCT_VERSION,
+        NP_Allocate,
+        NP_Deallocate,
+        0,
+        NP_HasMethod,
+        NP_Invoke,
+        NP_InvokeDefault,
+        NP_HasProperty,
+        NP_GetProperty,
+        NP_SetProperty,
+        NP_RemoveProperty,
+        NP_Enumerate,
+        NP_Construct
+    };
+
+    return &npClass;
+}
+
+NPObject* NPObjectProxy::NP_Allocate(NPP npp, NPClass*)
+{
+    ASSERT_UNUSED(npp, !npp);
+
+    return new NPObjectProxy;
+}
+
+void NPObjectProxy::NP_Deallocate(NPObject* npObject)
+{
+    NPObjectProxy* npObjectProxy = toNPObjectProxy(npObject);
+    delete npObjectProxy;
+}
+
+bool NPObjectProxy::NP_HasMethod(NPObject*, NPIdentifier methodName)
+{
+    notImplemented();
+    return false;
+}
+
+bool NPObjectProxy::NP_Invoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+{
+    notImplemented();
+    return false;
+}
+
+bool NPObjectProxy::NP_InvokeDefault(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+{
+    notImplemented();
+    return false;
+}
+
+bool NPObjectProxy::NP_HasProperty(NPObject*, NPIdentifier propertyName)
+{
+    notImplemented();
+    return false;
+}
+
+bool NPObjectProxy::NP_GetProperty(NPObject*, NPIdentifier propertyName, NPVariant* result)
+{
+    notImplemented();
+    return false;
+}
+
+bool NPObjectProxy::NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVariant* value)
+{
+    notImplemented();
+    return false;
+}
+
+bool NPObjectProxy::NP_RemoveProperty(NPObject*, NPIdentifier propertyName)
+{
+    notImplemented();
+    return false;
+}
+
+bool NPObjectProxy::NP_Enumerate(NPObject*, NPIdentifier** identifiers, uint32_t* identifierCount)
+{
+    notImplemented();
+    return false;
+}
+
+bool NPObjectProxy::NP_Construct(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+{
+    notImplemented();
+    return false;
 }
 
 } // namespace WebKit

@@ -36,9 +36,37 @@ namespace WebKit {
 class NPObjectProxy : public NPObject {
     WTF_MAKE_NONCOPYABLE(NPObjectProxy);
 
+public:
+    static NPObjectProxy* create(uint64_t npObjectID);
+
+    static bool isNPObjectProxy(NPObject*);
+    
+    static NPObjectProxy* toNPObjectProxy(NPObject* npObject)
+    {
+        ASSERT(isNPObjectProxy(npObject));
+        return static_cast<NPObjectProxy*>(npObject);
+    }
+    
 private:
     NPObjectProxy();
     ~NPObjectProxy();
+
+    void initialize(uint64_t npObjectID);
+
+    static NPClass* npClass();
+    static NPObject* NP_Allocate(NPP, NPClass*);
+    static void NP_Deallocate(NPObject*);
+    static bool NP_HasMethod(NPObject*, NPIdentifier methodName);
+    static bool NP_Invoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
+    static bool NP_InvokeDefault(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
+    static bool NP_HasProperty(NPObject*, NPIdentifier propertyName);
+    static bool NP_GetProperty(NPObject*, NPIdentifier propertyName, NPVariant* result);
+    static bool NP_SetProperty(NPObject*, NPIdentifier propertyName, const NPVariant* value);
+    static bool NP_RemoveProperty(NPObject*, NPIdentifier propertyName);
+    static bool NP_Enumerate(NPObject*, NPIdentifier** identifiers, uint32_t* identifierCount);
+    static bool NP_Construct(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
+
+    uint64_t m_npObjectID;
 };
     
 } // namespace WebKit

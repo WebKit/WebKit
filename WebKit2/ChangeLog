@@ -2,6 +2,59 @@
 
         Reviewed by Adam Roben.
 
+        Start stubbing out NPClass functions in NPObjectProxy
+        https://bugs.webkit.org/show_bug.cgi?id=48778
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::windowScriptNPObject):
+        getOrCreateNPObjectProxy is now createNPObjectProxy.
+
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::create):
+        Allocate and initialize an NPObjectProxy object.
+
+        (WebKit::NPObjectProxy::NPObjectProxy):
+        Initialize m_npObjectID to 0.
+
+        (WebKit::NPObjectProxy::isNPObjectProxy):
+        Check the class.
+
+        (WebKit::NPObjectProxy::initialize):
+        Set m_npObjectID.
+
+        (WebKit::NPObjectProxy::npClass):
+        Return the NPClass with all functions filled in.
+
+        (WebKit::NPObjectProxy::NP_Allocate):
+        Create a new NPObjectProxy object.
+
+        (WebKit::NPObjectProxy::NP_Deallocate):
+        Deallocate the NPObjectProxy object.
+
+        (WebKit::NPObjectProxy::NP_HasMethod):
+        (WebKit::NPObjectProxy::NP_Invoke):
+        (WebKit::NPObjectProxy::NP_InvokeDefault):
+        (WebKit::NPObjectProxy::NP_HasProperty):
+        (WebKit::NPObjectProxy::NP_GetProperty):
+        (WebKit::NPObjectProxy::NP_SetProperty):
+        (WebKit::NPObjectProxy::NP_RemoveProperty):
+        (WebKit::NPObjectProxy::NP_Enumerate):
+        (WebKit::NPObjectProxy::NP_Construct):
+        Add stubs.
+
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::createNPObjectProxy):
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        Rename getOrCreateNPObjectProxy to createNPObjectProxy.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::NP_Allocate):
+        Remove unused parameter.
+
+2010-11-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Both the WebProcessConnection and PluginProcessConnection should have NPRemoteObjectMaps
         https://bugs.webkit.org/show_bug.cgi?id=48775
 
