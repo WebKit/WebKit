@@ -1,0 +1,10 @@
+<script src="resources/repaint.js"></script>
+<script>
+    function repaintTest()
+    {
+        document.getElementById("target").style.webkitTextStrokeColor = "green";
+    }
+</script>
+<body onload="runRepaintTest()" style="padding: 50px; -webkit-writing-mode:vertical-rl">
+    <div><span id="target" style="font-family: Ahem; font-size: 50px; -webkit-text-stroke: 50px red;">A&nbsp;&nbsp;B</span></div>
+</body>

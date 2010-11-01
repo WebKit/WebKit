@@ -1427,6 +1427,9 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
         return;
     }
     
+    if (o->isBox())
+        toRenderBox(o)->adjustForFlippedBlocksWritingMode(rect);
+    
     o->computeRectForRepaint(repaintContainer, rect, fixed);
 }
 
@@ -3209,6 +3212,17 @@ void RenderBox::adjustForFlippedBlocksWritingMode(RenderBox* child, IntPoint& po
         point.move(0, height() - child->height() - child->y() - (adjustment == ParentToChildFlippingAdjustment ? child->y() : 0));
     else
         point.move(width() - child->width() - child->x() - (adjustment == ParentToChildFlippingAdjustment ? child->x() : 0), 0);
+}
+
+void RenderBox::adjustForFlippedBlocksWritingMode(IntRect& rect)
+{
+    if (!style()->isFlippedBlocksWritingMode())
+        return;
+    
+    if (style()->isHorizontalWritingMode())
+        rect.setY(height() - rect.bottom());
+    else
+        rect.setX(width() - rect.right());
 }
 
 int RenderBox::convertFromFlippedWritingMode(int logicalPosition)

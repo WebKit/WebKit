@@ -4150,10 +4150,12 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
     DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects);
     for (it.toLast(); (floatingObject = it.current()); --it) {
         if (floatingObject->m_shouldPaint && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
-            int xOffset = tx + floatingObject->left() + floatingObject->m_renderer->marginLeft() - floatingObject->m_renderer->x();
-            int yOffset =  ty + floatingObject->top() + floatingObject->m_renderer->marginTop() - floatingObject->m_renderer->y();
-            if (floatingObject->m_renderer->hitTest(request, result, IntPoint(x, y), xOffset, yOffset)) {
-                updateHitTestResult(result, IntPoint(x - xOffset, y - yOffset));
+            int xOffset = floatingObject->left() + floatingObject->m_renderer->marginLeft() - floatingObject->m_renderer->x();
+            int yOffset =  floatingObject->top() + floatingObject->m_renderer->marginTop() - floatingObject->m_renderer->y();
+            IntPoint childPoint(tx + xOffset, ty + yOffset);
+            adjustForFlippedBlocksWritingMode(floatingObject->m_renderer, childPoint, ParentToChildFlippingAdjustment);
+            if (floatingObject->m_renderer->hitTest(request, result, IntPoint(x, y), childPoint.x(), childPoint.y())) {
+                updateHitTestResult(result, IntPoint(x - childPoint.x(), y - childPoint.y()));
                 return true;
             }
         }
@@ -4208,7 +4210,9 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
         if (hitTestAction == HitTestChildBlockBackgrounds)
             childHitTest = HitTestChildBlockBackground;
         for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
-            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, x, y, tx, ty, childHitTest))
+            IntPoint childPoint(tx, ty);
+            adjustForFlippedBlocksWritingMode(child, childPoint, ParentToChildFlippingAdjustment);
+            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, x, y, childPoint.x(), childPoint.y(), childHitTest))
                 return true;
         }
     }

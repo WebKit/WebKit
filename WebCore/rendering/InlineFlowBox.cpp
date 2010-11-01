@@ -654,6 +654,7 @@ void InlineFlowBox::computeBlockDirectionOverflow(int lineTop, int lineBottom, b
 bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
 {
     IntRect overflowRect(visibleOverflowRect());
+    adjustForFlippedBlocksWritingMode(overflowRect);
     overflowRect.move(tx, ty);
     if (!overflowRect.intersects(result.rectForPoint(x, y)))
         return false;
@@ -667,7 +668,10 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     }
 
     // Now check ourselves.
-    IntRect rect(tx + m_x, ty + m_y, width(), height());
+    IntPoint boxOrigin(m_x, m_y);
+    adjustForFlippedBlocksWritingMode(boxOrigin);
+    boxOrigin.move(tx, ty);
+    IntRect rect(boxOrigin, IntSize(width(), height()));
     if (visibleToHitTesting() && rect.intersects(result.rectForPoint(x, y))) {
         renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty)); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), x, y, rect))

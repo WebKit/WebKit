@@ -295,12 +295,7 @@ void InlineBox::adjustForFlippedBlocksWritingMode(IntRect& rect)
 {
     if (!renderer()->style()->isFlippedBlocksWritingMode())
         return;
-    
-    RenderBlock* block = root()->block();
-    if (block->style()->isHorizontalWritingMode())
-        rect.setY(block->height() - rect.bottom());
-    else
-        rect.setX(block->width() - rect.right());
+    return root()->block()->adjustForFlippedBlocksWritingMode(rect);
 }
 
 } // namespace WebCore
