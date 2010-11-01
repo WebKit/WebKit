@@ -4579,7 +4579,6 @@
             'inspector/front-end/Images/resourcePlainIcon.png',
             'inspector/front-end/Images/resourcePlainIconSmall.png',
             'inspector/front-end/Images/resourcesIcon.png',
-            'inspector/front-end/Images/resourcesSilhouette.png',
             'inspector/front-end/Images/resourcesSizeGraphIcon.png',
             'inspector/front-end/Images/resourcesTimeGraphIcon.png',
             'inspector/front-end/Images/scriptsIcon.png',

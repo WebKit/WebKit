@@ -2499,10 +2499,6 @@ body.inactive .panel-enabler-view button:not(.status-bar-item), .panel-enabler-v
                 -webkit-gradient(linear, left top, left bottom, from(rgb(252, 252, 252)), to(rgb(223, 223, 223)));
 }
 
-.panel-enabler-view.resources img {
-    content: url(Images/resourcesSilhouette.png);
-}
-
 .panel-enabler-view.scripts img {
     content: url(Images/scriptsSilhouette.png);
 }
