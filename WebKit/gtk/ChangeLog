@@ -1,3 +1,15 @@
+2010-11-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Pasting markup into Thunderbird compose window produces no text
+        https://bugs.webkit.org/show_bug.cgi?id=43737
+
+        Added a test verifying that the meta tag prefix on markup data exists.
+
+        * tests/testcopyandpaste.c:
+        (load_status_cb): Add a check for the meta tag prefix.
+
 2010-11-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

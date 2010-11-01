@@ -38,6 +38,16 @@ static GdkAtom textPlainAtom = gdk_atom_intern("text/plain;charset=utf-8", FALSE
 static GdkAtom markupAtom = gdk_atom_intern("text/html", FALSE);
 static GdkAtom netscapeURLAtom = gdk_atom_intern("_NETSCAPE_URL", FALSE);
 static GdkAtom uriListAtom = gdk_atom_intern("text/uri-list", FALSE);
+static String gMarkupPrefix = "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">";
+
+static void removeMarkupPrefix(String& markup)
+{
+
+    // The markup prefix is not harmful, but we remove it from the string anyway, so that
+    // we can have consistent results with other ports during the layout tests.
+    if (markup.startsWith(gMarkupPrefix))
+        markup.remove(0, gMarkupPrefix.length());
+}
 
 PasteboardHelper::PasteboardHelper()
     : m_targetList(gtk_target_list_new(0, 0))
@@ -112,7 +122,9 @@ void PasteboardHelper::getClipboardContents(GtkClipboard* clipboard)
 
     if (gtk_clipboard_wait_is_target_available(clipboard, markupAtom)) {
         if (GtkSelectionData* data = gtk_clipboard_wait_for_contents(clipboard, markupAtom)) {
-            dataObject->setMarkup(selectionDataToUTF8String(data));
+            String markup(selectionDataToUTF8String(data));
+            removeMarkupPrefix(markup);
+            dataObject->setMarkup(markup);
             gtk_selection_data_free(data);
         }
     }
@@ -131,9 +143,11 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
         gtk_selection_data_set_text(selectionData, dataObject->text().utf8().data(), -1);
 
     else if (info == getIdForTargetType(TargetTypeMarkup)) {
-        GOwnPtr<gchar> markup(g_strdup(dataObject->markup().utf8().data()));
+        // Some Linux applications refuse to accept pasted markup unless it is
+        // prefixed by a content-type meta tag.
+        CString markup = (gMarkupPrefix + dataObject->markup()).utf8();
         gtk_selection_data_set(selectionData, markupAtom, 8,
-            reinterpret_cast<const guchar*>(markup.get()), strlen(markup.get()) + 1);
+            reinterpret_cast<const guchar*>(markup.data()), markup.length() + 1);
 
     } else if (info == getIdForTargetType(TargetTypeURIList)) {
         CString uriList = dataObject->uriList().utf8();
@@ -187,9 +201,11 @@ void PasteboardHelper::fillDataObjectFromDropData(GtkSelectionData* data, guint 
     GdkAtom target = gtk_selection_data_get_target(data);
     if (target == textPlainAtom)
         dataObject->setText(selectionDataToUTF8String(data));
-    else if (target == markupAtom)
-        dataObject->setMarkup(selectionDataToUTF8String(data));
-    else if (target == uriListAtom) {
+    else if (target == markupAtom) {
+        String markup(selectionDataToUTF8String(data));
+        removeMarkupPrefix(markup);
+        dataObject->setMarkup(markup);
+    } else if (target == uriListAtom) {
         dataObject->setURIList(selectionDataToUTF8String(data));
     } else if (target == netscapeURLAtom) {
         String urlWithLabel(selectionDataToUTF8String(data));

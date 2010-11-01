@@ -92,6 +92,17 @@ static void load_status_cb(WebKitWebView* webView, GParamSpec* spec, gpointer da
     g_assert(!text || !strcmp(text, fixture->info->expectedContent));
     g_free(text);
 
+    // Verify that the markup starts with the proper content-type meta tag prefix.
+    GtkSelectionData* selectionData = gtk_clipboard_wait_for_contents(clipboard, gdk_atom_intern("text/html", FALSE));
+    if (selectionData) {
+        static const char* markupPrefix = "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">";
+        char* markup = g_strndup((const char*) gtk_selection_data_get_data(selectionData),
+            gtk_selection_data_get_length(selectionData));
+        g_assert(strlen(markupPrefix) <= strlen(markup));
+        g_assert(!strncmp(markupPrefix, markup, strlen(markupPrefix)));
+        g_free(markup);
+    }
+
     g_assert(!gtk_clipboard_wait_is_uris_available(clipboard));
     g_assert(!gtk_clipboard_wait_is_image_available(clipboard));
 
