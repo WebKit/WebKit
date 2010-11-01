@@ -15,7 +15,7 @@ color: blue;
 [expanded] element.style { ()
 
 ======== Matched CSS Rules ========
-[expanded] .bar { (resources/styles-source-lines-inline-iframe.html:4)
+[expanded] .bar { (styles-source-lines-inline-iframe.html:4)
 color: red;
 
 [expanded] div { (user agent stylesheet)
