@@ -1,3 +1,16 @@
+2010-11-01  Adam Roben  <aroben@apple.com>
+
+        Trigger the Windows Release WebKit2 tests when a Release build
+        finishes, not when a Debug build finishes
+
+        Fixes <http://webkit.org/b/48754> Windows Release WebKit2 tests are
+        triggered at the wrong time
+
+        Reviewed by Sam Weinig.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Fixed
+        triggerable name and trigger.
+
 2010-11-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Adding my IRC nickname to the list of committers.
