@@ -528,7 +528,8 @@ SMILTime SVGSMILElement::repeatDur() const
         return m_cachedRepeatDur;
     const AtomicString& value = getAttribute(SVGNames::repeatDurAttr);
     SMILTime clockValue = parseClockValue(value);
-    return m_cachedRepeatDur = clockValue < 0 ? SMILTime::unresolved() : clockValue;
+    m_cachedRepeatDur = clockValue <= 0 ? SMILTime::unresolved() : clockValue;
+    return m_cachedRepeatDur;
 }
     
 // So a count is not really a time but let just all pretend we did not notice.
