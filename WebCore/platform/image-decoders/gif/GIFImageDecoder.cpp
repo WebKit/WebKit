@@ -96,21 +96,24 @@ int GIFImageDecoder::repetitionCount() const
     // This value can arrive at any point in the image data stream.  Most GIFs
     // in the wild declare it near the beginning of the file, so it usually is
     // set by the time we've decoded the size, but (depending on the GIF and the
-    // packets sent back by the webserver) not always.  Our caller is
-    // responsible for waiting until image decoding has finished to ask this if
-    // it needs an authoritative answer.  In the meantime, we should default to
-    // "loop once".
-    if (m_reader) {
-        // Added wrinkle: ImageSource::clear() may destroy the reader, making
-        // the result from the reader _less_ authoritative on future calls.  To
-        // detect this, the reader returns cLoopCountNotSeen (-2) instead of
-        // cAnimationLoopOnce (0) when its current incarnation hasn't actually
-        // seen a loop count yet; in this case we return our previously-cached
-        // value.
-        const int repetitionCount = m_reader->loop_count;
-        if (repetitionCount != cLoopCountNotSeen)
-            m_repetitionCount = repetitionCount;
-    }
+    // packets sent back by the webserver) not always.  If the reader hasn't
+    // seen a loop count yet, it will return cLoopCountNotSeen, in which case we
+    // should default to looping once (the initial value for
+    // |m_repetitionCount|).
+    //
+    // There are two additional wrinkles here.  First, ImageSource::clear() may
+    // destroy the reader, making the result from the reader _less_
+    // authoritative on future calls if the recreated reader hasn't seen the
+    // loop count.  We don't need to special-case this because in this case the
+    // new reader will once again return cLoopCountNotSeen, and we won't
+    // overwrite the cached correct value.
+    //
+    // Second, a GIF might never set a loop count at all, in which case we
+    // should continue to treat it as a "loop once" animation.  We don't need
+    // special code here either, because in this case we'll never change
+    // |m_repetitionCount| from its default value.
+    if (m_reader && (m_reader->loop_count != cLoopCountNotSeen))
+        m_repetitionCount = m_reader->loop_count;
     return m_repetitionCount;
 }
 
@@ -295,8 +298,10 @@ bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
 
 void GIFImageDecoder::gifComplete()
 {
-    if (m_reader)
-        m_repetitionCount = m_reader->loop_count;
+    // Cache the repetition count, which is now as authoritative as it's ever
+    // going to be.
+    repetitionCount();
+
     m_reader.clear();
 }
 
