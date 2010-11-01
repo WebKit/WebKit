@@ -80,7 +80,7 @@ public:
     QString title() const;
 
     void setViewportSize(const QSize&);
-    ViewportAttributes viewportAttributesForSize(QSize availableSize) const;
+    ViewportAttributes viewportAttributesForSize(const QSize& availableSize) const;
 
     QAction* action(WebAction action) const;
     void triggerAction(WebAction action, bool checked = false);

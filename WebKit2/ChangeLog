@@ -1,3 +1,15 @@
+2010-11-01  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Cleanup viewportAttributesForSize API
+
+        Change QSize argument to a const QSize&.
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::viewportAttributesForSize):
+        * UIProcess/API/qt/qwkpage.h:
+
 2010-10-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
