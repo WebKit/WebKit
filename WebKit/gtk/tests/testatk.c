@@ -46,6 +46,8 @@ static const char* contentsInTableWithHeaders = "<html><body><table><tr><th>foo<
 
 static const char* formWithTextInputs = "<html><body><form><input type='text' name='entry' /></form></body></html>";
 
+static const char* hypertextAndHyperlinks = "<html><body><p>A paragraph with no links at all</p><p><a href='http://foo.bar.baz/'>A line</a> with <a href='http://bar.baz.foo/'>a link in the middle</a> as well as at the beginning and <a href='http://baz.foo.bar/'>at the end</a></p></body></html>";
+
 static const char* layoutAndDataTables = "<html><body><table><tr><th>Odd</th><th>Even</th></tr><tr><td>1</td><td>2</td></tr></table><table><tr><td>foo</td><td>bar</td></tr></table></body></html>";
 
 static const char* linksWithInlineImages = "<html><head><style>a.http:before {content: url(no-image.png);}</style><body><p><a class='http' href='foo'>foo</a> bar baz</p><p>foo <a class='http' href='bar'>bar</a> baz</p><p>foo bar <a class='http' href='baz'>baz</a></p></body></html>";
@@ -1070,6 +1072,81 @@ static void testWebkitAtkLinksWithInlineImages(void)
     g_object_unref(webView);
 }
 
+static void testWebkitAtkHypertextAndHyperlinks(void)
+{
+    WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    g_object_ref_sink(webView);
+    GtkAllocation alloc = { 0, 0, 800, 600 };
+    gtk_widget_size_allocate(GTK_WIDGET(webView), &alloc);
+    webkit_web_view_load_string(webView, hypertextAndHyperlinks, 0, 0, 0);
+
+    // Manually spin the main context to get the accessible objects
+    while (g_main_context_pending(0))
+        g_main_context_iteration(0, TRUE);
+
+    AtkObject* obj = gtk_widget_get_accessible(GTK_WIDGET(webView));
+    g_assert(obj);
+
+    AtkObject* paragraph1 = atk_object_ref_accessible_child(obj, 0);
+    g_assert(ATK_OBJECT(paragraph1));
+    g_assert(atk_object_get_role(paragraph1) == ATK_ROLE_PARAGRAPH);
+    g_assert(ATK_IS_HYPERTEXT(paragraph1));
+
+    // No links in the first paragraph
+    gint nLinks = atk_hypertext_get_n_links(ATK_HYPERTEXT(paragraph1));
+    g_assert_cmpint(nLinks, ==, 0);
+
+    AtkObject* paragraph2 = atk_object_ref_accessible_child(obj, 1);
+    g_assert(ATK_OBJECT(paragraph2));
+    g_assert(atk_object_get_role(paragraph2) == ATK_ROLE_PARAGRAPH);
+    g_assert(ATK_IS_HYPERTEXT(paragraph2));
+
+    // Check links in the second paragraph
+    nLinks = atk_hypertext_get_n_links(ATK_HYPERTEXT(paragraph2));
+    g_assert_cmpint(nLinks, ==, 3);
+
+    AtkHyperlink* hLink1 = atk_hypertext_get_link(ATK_HYPERTEXT(paragraph2), 0);
+    g_assert(ATK_HYPERLINK(hLink1));
+    AtkObject* hLinkObject1 = atk_hyperlink_get_object(hLink1, 0);
+    g_assert(ATK_OBJECT(hLinkObject1));
+    g_assert(atk_object_get_role(hLinkObject1) == ATK_ROLE_LINK);
+    g_assert_cmpint(atk_hyperlink_get_start_index(hLink1), ==, 0);
+    g_assert_cmpint(atk_hyperlink_get_end_index(hLink1), ==, 6);
+    g_assert_cmpint(atk_hyperlink_get_n_anchors(hLink1), ==, 1);
+    g_assert_cmpstr(atk_hyperlink_get_uri(hLink1, 0), ==, "http://foo.bar.baz/");
+
+    AtkHyperlink* hLink2 = atk_hypertext_get_link(ATK_HYPERTEXT(paragraph2), 1);
+    g_assert(ATK_HYPERLINK(hLink2));
+    AtkObject* hLinkObject2 = atk_hyperlink_get_object(hLink2, 0);
+    g_assert(ATK_OBJECT(hLinkObject2));
+    g_assert(atk_object_get_role(hLinkObject2) == ATK_ROLE_LINK);
+    g_assert_cmpint(atk_hyperlink_get_start_index(hLink2), ==, 12);
+    g_assert_cmpint(atk_hyperlink_get_end_index(hLink2), ==, 32);
+    g_assert_cmpint(atk_hyperlink_get_n_anchors(hLink2), ==, 1);
+    g_assert_cmpstr(atk_hyperlink_get_uri(hLink2, 0), ==, "http://bar.baz.foo/");
+
+    AtkHyperlink* hLink3 = atk_hypertext_get_link(ATK_HYPERTEXT(paragraph2), 2);
+    g_assert(ATK_HYPERLINK(hLink3));
+    AtkObject* hLinkObject3 = atk_hyperlink_get_object(hLink3, 0);
+    g_assert(ATK_OBJECT(hLinkObject3));
+    g_assert(atk_object_get_role(hLinkObject3) == ATK_ROLE_LINK);
+    g_assert_cmpint(atk_hyperlink_get_start_index(hLink3), ==, 65);
+    g_assert_cmpint(atk_hyperlink_get_end_index(hLink3), ==, 75);
+    g_assert_cmpint(atk_hyperlink_get_n_anchors(hLink3), ==, 1);
+    g_assert_cmpstr(atk_hyperlink_get_uri(hLink3, 0), ==, "http://baz.foo.bar/");
+
+    // Finally check the AtkAction interface for a given AtkHyperlink
+    g_assert(ATK_IS_ACTION(hLink1));
+    g_assert_cmpint(atk_action_get_n_actions(ATK_ACTION(hLink1)), ==, 1);
+    g_assert_cmpstr(atk_action_get_keybinding(ATK_ACTION(hLink1), 0), ==, "");
+    g_assert_cmpstr(atk_action_get_name(ATK_ACTION(hLink1), 0), ==, "jump");
+    g_assert(atk_action_do_action(ATK_ACTION(hLink1), 0));
+
+    g_object_unref(paragraph1);
+    g_object_unref(paragraph2);
+    g_object_unref(webView);
+}
+
 static void testWebkitAtkListsOfItems(void)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
@@ -1222,6 +1299,7 @@ int main(int argc, char** argv)
     g_test_add_func("/webkit/atk/textAttributes", testWebkitAtkTextAttributes);
     g_test_add_func("/webkit/atk/textSelections", testWekitAtkTextSelections);
     g_test_add_func("/webkit/atk/getExtents", testWebkitAtkGetExtents);
+    g_test_add_func("/webkit/atk/hypertextAndHyperlinks", testWebkitAtkHypertextAndHyperlinks);
     g_test_add_func("/webkit/atk/layoutAndDataTables", testWebkitAtkLayoutAndDataTables);
     g_test_add_func("/webkit/atk/linksWithInlineImages", testWebkitAtkLinksWithInlineImages);
     g_test_add_func("/webkit/atk/listsOfItems", testWebkitAtkListsOfItems);

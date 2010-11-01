@@ -60,14 +60,15 @@
 #include "RenderText.h"
 #include "TextEncoding.h"
 #include "TextIterator.h"
-#include <wtf/text/CString.h>
-#include <wtf/text/AtomicString.h>
+#include "WebKitAccessibleHyperlink.h"
 
 #include <atk/atk.h>
 #include <glib.h>
 #include <glib/gprintf.h>
 #include <libgail-util/gail-util.h>
 #include <pango/pango.h>
+#include <wtf/text/AtomicString.h>
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -141,6 +142,11 @@ static AccessibilityObject* core(AtkImage* image)
 static AccessibilityObject* core(AtkTable* table)
 {
     return core(ATK_OBJECT(table));
+}
+
+static AccessibilityObject* core(AtkHypertext* hypertext)
+{
+    return core(ATK_OBJECT(hypertext));
 }
 
 static AccessibilityObject* core(AtkDocument* document)
@@ -1954,6 +1960,89 @@ static void atk_table_interface_init(AtkTableIface* iface)
     iface->get_row_description = webkit_accessible_table_get_row_description;
 }
 
+static AtkHyperlink* webkitAccessibleHypertextGetLink(AtkHypertext* hypertext, gint index)
+{
+    AccessibilityObject::AccessibilityChildrenVector children = core(hypertext)->children();
+    if (index < 0 || static_cast<unsigned>(index) >= children.size())
+        return 0;
+
+    gint currentLink = -1;
+    for (unsigned i = 0; i < children.size(); i++) {
+        AccessibilityObject* coreChild = children.at(i).get();
+        if (!coreChild->accessibilityIsIgnored() && coreChild->isLink()) {
+            currentLink++;
+            if (index != currentLink)
+                continue;
+
+            AtkObject* axObject = coreChild->wrapper();
+            if (!axObject || !ATK_IS_HYPERLINK_IMPL(axObject))
+                return 0;
+
+            return atk_hyperlink_impl_get_hyperlink(ATK_HYPERLINK_IMPL(axObject));
+        }
+    }
+
+    return 0;
+}
+
+static gint webkitAccessibleHypertextGetNLinks(AtkHypertext* hypertext)
+{
+    AccessibilityObject::AccessibilityChildrenVector children = core(hypertext)->children();
+    if (!children.size())
+        return 0;
+
+    gint linksFound = 0;
+    for (size_t i = 0; i < children.size(); i++) {
+        AccessibilityObject* coreChild = children.at(i).get();
+        if (!coreChild->accessibilityIsIgnored() && coreChild->isLink())
+            linksFound++;
+    }
+
+    return linksFound;
+}
+
+static gint webkitAccessibleHypertextGetLinkIndex(AtkHypertext* hypertext, gint charIndex)
+{
+    size_t linksCount = webkitAccessibleHypertextGetNLinks(hypertext);
+    if (!linksCount)
+        return -1;
+
+    for (size_t i = 0; i < linksCount; i++) {
+        AtkHyperlink* hyperlink = ATK_HYPERLINK(webkitAccessibleHypertextGetLink(hypertext, i));
+        gint startIndex = atk_hyperlink_get_start_index(hyperlink);
+        gint endIndex = atk_hyperlink_get_end_index(hyperlink);
+
+        // Check if the char index in the link's offset range
+        if (startIndex <= charIndex && charIndex < endIndex)
+            return i;
+    }
+
+    // Not found if reached
+    return -1;
+}
+
+static void atkHypertextInterfaceInit(AtkHypertextIface* iface)
+{
+    iface->get_link = webkitAccessibleHypertextGetLink;
+    iface->get_n_links = webkitAccessibleHypertextGetNLinks;
+    iface->get_link_index = webkitAccessibleHypertextGetLinkIndex;
+}
+
+static AtkHyperlink* webkitAccessibleHyperlinkImplGetHyperlink(AtkHyperlinkImpl* hyperlink)
+{
+    AtkHyperlink* hyperlinkObject = ATK_HYPERLINK(g_object_get_data(G_OBJECT(hyperlink), "hyperlink-object"));
+    if (!hyperlinkObject) {
+        hyperlinkObject = ATK_HYPERLINK(webkitAccessibleHyperlinkNew(hyperlink));
+        g_object_set_data(G_OBJECT(hyperlink), "hyperlink-object", hyperlinkObject);
+    }
+    return hyperlinkObject;
+}
+
+static void atkHyperlinkImplInterfaceInit(AtkHyperlinkImplIface* iface)
+{
+    iface->get_hyperlink = webkitAccessibleHyperlinkImplGetHyperlink;
+}
+
 static const gchar* documentAttributeValue(AtkDocument* document, const gchar* attribute)
 {
     Document* coreDocument = core(document)->document();
@@ -2025,6 +2114,10 @@ static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
      (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atk_table_interface_init,
      (GInterfaceFinalizeFunc) 0, 0},
+    {(GInterfaceInitFunc)atkHypertextInterfaceInit,
+     (GInterfaceFinalizeFunc) 0, 0},
+    {(GInterfaceInitFunc)atkHyperlinkImplInterfaceInit,
+     (GInterfaceFinalizeFunc) 0, 0},
     {(GInterfaceInitFunc)atk_document_interface_init,
      (GInterfaceFinalizeFunc) 0, 0}
 };
@@ -2037,31 +2130,37 @@ enum WAIType {
     WAI_COMPONENT,
     WAI_IMAGE,
     WAI_TABLE,
+    WAI_HYPERTEXT,
+    WAI_HYPERLINK,
     WAI_DOCUMENT
 };
 
 static GType GetAtkInterfaceTypeFromWAIType(WAIType type)
 {
-  switch (type) {
-  case WAI_ACTION:
-      return ATK_TYPE_ACTION;
-  case WAI_SELECTION:
-      return ATK_TYPE_SELECTION;
-  case WAI_EDITABLE_TEXT:
-      return ATK_TYPE_EDITABLE_TEXT;
-  case WAI_TEXT:
-      return ATK_TYPE_TEXT;
-  case WAI_COMPONENT:
-      return ATK_TYPE_COMPONENT;
-  case WAI_IMAGE:
-      return ATK_TYPE_IMAGE;
-  case WAI_TABLE:
-      return ATK_TYPE_TABLE;
-  case WAI_DOCUMENT:
-      return ATK_TYPE_DOCUMENT;
-  }
+    switch (type) {
+    case WAI_ACTION:
+        return ATK_TYPE_ACTION;
+    case WAI_SELECTION:
+        return ATK_TYPE_SELECTION;
+    case WAI_EDITABLE_TEXT:
+        return ATK_TYPE_EDITABLE_TEXT;
+    case WAI_TEXT:
+        return ATK_TYPE_TEXT;
+    case WAI_COMPONENT:
+        return ATK_TYPE_COMPONENT;
+    case WAI_IMAGE:
+        return ATK_TYPE_IMAGE;
+    case WAI_TABLE:
+        return ATK_TYPE_TABLE;
+    case WAI_HYPERTEXT:
+        return ATK_TYPE_HYPERTEXT;
+    case WAI_HYPERLINK:
+        return ATK_TYPE_HYPERLINK_IMPL;
+    case WAI_DOCUMENT:
+        return ATK_TYPE_DOCUMENT;
+    }
 
-  return G_TYPE_INVALID;
+    return G_TYPE_INVALID;
 }
 
 static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
@@ -2071,20 +2170,24 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
     // Component interface is always supported
     interfaceMask |= 1 << WAI_COMPONENT;
 
+    AccessibilityRole role = coreObject->roleValue();
+
     // Action
-    if (!coreObject->actionVerb().isEmpty())
+    if (!coreObject->actionVerb().isEmpty()) {
         interfaceMask |= 1 << WAI_ACTION;
+
+        if (!coreObject->accessibilityIsIgnored() && coreObject->isLink())
+            interfaceMask |= 1 << WAI_HYPERLINK;
+    }
 
     // Selection
     if (coreObject->isListBox())
         interfaceMask |= 1 << WAI_SELECTION;
 
     // Text & Editable Text
-    AccessibilityRole role = coreObject->roleValue();
-
     if (role == StaticTextRole)
         interfaceMask |= 1 << WAI_TEXT;
-    else if (coreObject->isAccessibilityRenderObject())
+    else if (coreObject->isAccessibilityRenderObject()) {
         if (coreObject->isTextControl()) {
             interfaceMask |= 1 << WAI_TEXT;
             if (!coreObject->isReadOnly())
@@ -2092,11 +2195,15 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         } else {
             AccessibilityRenderObject* axRenderObject = static_cast<AccessibilityRenderObject*>(coreObject);
             RenderObject* renderer = axRenderObject->renderer();
-            if (role != TableRole && renderer && renderer->childrenInline())
-                interfaceMask |= 1 << WAI_TEXT;
-            else if (role == ListItemRole) {
-                // Add the TEXT interface for list items whose
-                // first accessible child has a text renderer
+            if (role != TableRole) {
+                interfaceMask |= 1 << WAI_HYPERTEXT;
+                if (renderer && renderer->childrenInline())
+                    interfaceMask |= 1 << WAI_TEXT;
+            }
+
+            // Add the TEXT interface for list items whose
+            // first accessible child has a text renderer
+            if (role == ListItemRole) {
                 AccessibilityObject::AccessibilityChildrenVector children = axRenderObject->children();
                 if (children.size()) {
                     AccessibilityObject* axRenderChild = children.at(0).get();
@@ -2104,6 +2211,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
                 }
             }
         }
+    }
 
     // Image
     if (coreObject->isImage())

@@ -3496,6 +3496,8 @@ webcoregtk_sources += \
 	WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.cpp \
 	WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.h \
 	WebCore/accessibility/gtk/AXObjectCacheAtk.cpp \
+	WebCore/accessibility/gtk/WebKitAccessibleHyperlink.h \
+	WebCore/accessibility/gtk/WebKitAccessibleHyperlink.cpp \
 	WebCore/bindings/js/ScriptControllerGtk.cpp \
 	WebCore/page/gtk/DragControllerGtk.cpp \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
