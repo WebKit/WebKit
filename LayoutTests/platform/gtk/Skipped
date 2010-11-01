@@ -5061,6 +5061,7 @@ fast/events/platform-wheelevent-in-scrolling-div.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 
 # meter element is not supported
+# http://bugs.webkit.org/show_bug.cgi?id=48713
 fast/dom/HTMLMeterElement/meter-element.html
 fast/dom/HTMLMeterElement/set-meter-properties.html
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html
