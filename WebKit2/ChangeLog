@@ -1,5 +1,38 @@
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Add some support for remote and local NPObjects to NPRemoteObjectMap
+        https://bugs.webkit.org/show_bug.cgi?id=48864
+
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::npVariantToNPVariantData):
+        If the NPVariant contains an NPObject that isn't an NPObjectProxy, register it
+        and return its ID.
+
+        (WebKit::NPRemoteObjectMap::npVariantDataToNPVariant):
+        If the NPVariantData contains a remote object, create an NPObjectProxy and return it.
+
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::NPVariantData):
+        Initialize m_localNPObjectIDValue and m_remoteNPObjectIDValue.
+
+        (WebKit::NPVariantData::makeLocalNPObjectID):
+        Create an NPVariantData that contains a local NPObject ID.
+
+        (WebKit::NPVariantData::encode):
+        Handle local and remote NPObject IDs.
+
+        (WebKit::NPVariantData::decode):
+        Decode local and remote NPObject IDs and "swap them" so an encoded remote NPObject ID is
+        decoded as a local NPObjectID (and vice versa).
+
+        * Shared/Plugins/NPVariantData.h:
+        (WebKit::NPVariantData::localNPObjectIDValue):
+        (WebKit::NPVariantData::remoteNPObjectIDValue):
+
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
         Attempt to fix a GCC release only warning.
 
         * Shared/Plugins/NPVariantData.cpp:

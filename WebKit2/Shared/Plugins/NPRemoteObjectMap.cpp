@@ -102,9 +102,21 @@ NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& varia
     case NPVariantType_Null:
     case NPVariantType_Int32:
     case NPVariantType_String:
-    case NPVariantType_Object:
         notImplemented();
         return NPVariantData::makeVoid();
+
+    case NPVariantType_Object: {
+        NPObject* npObject = variant.value.objectValue;
+        if (NPObjectProxy::isNPObjectProxy(npObject)) {
+            // FIXME: Handle this.
+            notImplemented();
+            return NPVariantData::makeVoid();
+        }
+
+        uint64_t npObjectID = registerNPObject(npObject);
+        return NPVariantData::makeLocalNPObjectID(npObjectID);
+    }
+
     }
 
     ASSERT_NOT_REACHED();
@@ -125,6 +137,15 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
     case NPVariantData::Double:
         DOUBLE_TO_NPVARIANT(npVariantData.doubleValue(), npVariant);
         break;
+    case NPVariantData::LocalNPObjectID:
+        notImplemented();
+        VOID_TO_NPVARIANT(npVariant);
+        break;
+    case NPVariantData::RemoteNPObjectID: {
+        NPObject* npObjectProxy = createNPObjectProxy(npVariantData.remoteNPObjectIDValue());
+        OBJECT_TO_NPVARIANT(npObjectProxy, npVariant);
+        break;
+    }
     }
 
     return npVariant;
