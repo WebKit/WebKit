@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+  "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>WebGL GLES2 difference test.</title>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+var wtu = WebGLTestUtils;
+description("Tests the a few differences between WebGL and GLES2");
+
+var gl = wtu.create3DContext();
+
+gl.blendFunc(gl.CONSTANT_COLOR, gl.CONSTANT_ALPHA);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFunc(gl.ONE_MINUS_CONSTANT_COLOR, gl.CONSTANT_ALPHA);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFunc(gl.CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFunc(gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFunc(gl.CONSTANT_ALPHA, gl.CONSTANT_COLOR);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFunc(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFunc(gl.ONE_MINUS_CONSTANT_ALPHA, gl.CONSTANT_COLOR);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFunc(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+
+gl.blendFuncSeparate(gl.CONSTANT_COLOR, gl.CONSTANT_ALPHA, gl.ONE, gl.ZERO);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_COLOR, gl.CONSTANT_ALPHA, gl.ONE, gl.ZERO);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFuncSeparate(gl.CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE, gl.ZERO);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE, gl.ZERO);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFuncSeparate(gl.CONSTANT_ALPHA, gl.CONSTANT_COLOR, gl.ONE, gl.ZERO);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFuncSeparate(gl.CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE, gl.ZERO);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.CONSTANT_COLOR, gl.ONE, gl.ZERO);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, gl.ONE, gl.ZERO);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
+
+/*
+gl.depthRange(20, 10);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "depthRange should generate INVALID_OPERATION if zNear is greater than zFar");
+
+gl.stencilMask(255);
+glErrorShouldBe(gl, gl.NO_ERROR,
+    "stencilMask should generate no error");
+gl.stencilMaskSeparate(gl.FRONT, 1);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "a different mask value for front and back facing is illegal");
+gl.stencilMaskSeparate(gl.BACK, 1);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "a different mask value for front and back facing is illegal");
+
+gl.stencilFunc(gl.ALWAYS, 0, 255);
+glErrorShouldBe(gl, gl.NO_ERROR,
+    "stencilFunc should generate no error");
+gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 1, 255);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "a different reference value for front and back facing is illegal");
+gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 1, 255);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "a different reference value for front and back facing is illegal");
+gl.stencilFuncSeparate(gl.FRONT, gl.ALWAYS, 0, 1);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "a different mask value for front and back facing is illegal");
+gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 0, 1);
+glErrorShouldBe(gl, gl.INVALID_OPERATION,
+    "a different mask value for front and back facing is illegal");
+*/
+
+successfullyParsed = true;
+</script>
+
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

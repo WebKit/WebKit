@@ -495,6 +495,9 @@ public:
     // Helper function to validate blend equation mode.
     bool validateBlendEquation(unsigned long);
 
+    // Helper function to validate blend func factors.
+    bool validateBlendFuncFactors(unsigned long src, unsigned long dst);
+
     // Helper function to validate a GL capability.
     bool validateCapability(unsigned long);
 

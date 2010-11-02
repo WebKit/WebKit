@@ -353,12 +353,16 @@ void WebGLRenderingContext::blendEquationSeparate(unsigned long modeRGB, unsigne
 
 void WebGLRenderingContext::blendFunc(unsigned long sfactor, unsigned long dfactor)
 {
+    if (!validateBlendFuncFactors(sfactor, dfactor))
+        return;
     m_context->blendFunc(sfactor, dfactor);
     cleanupAfterGraphicsCall(false);
 }       
 
 void WebGLRenderingContext::blendFuncSeparate(unsigned long srcRGB, unsigned long dstRGB, unsigned long srcAlpha, unsigned long dstAlpha)
 {
+    if (!validateBlendFuncFactors(srcRGB, dstRGB))
+        return;
     m_context->blendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
     cleanupAfterGraphicsCall(false);
 }
@@ -3391,6 +3395,18 @@ bool WebGLRenderingContext::validateBlendEquation(unsigned long mode)
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return false;
     }
+}
+
+bool WebGLRenderingContext::validateBlendFuncFactors(unsigned long src, unsigned long dst)
+{
+    if (((src == GraphicsContext3D::CONSTANT_COLOR || src == GraphicsContext3D::ONE_MINUS_CONSTANT_COLOR)
+         && (dst == GraphicsContext3D::CONSTANT_ALPHA || dst == GraphicsContext3D::ONE_MINUS_CONSTANT_ALPHA))
+        || ((dst == GraphicsContext3D::CONSTANT_COLOR || dst == GraphicsContext3D::ONE_MINUS_CONSTANT_COLOR)
+            && (src == GraphicsContext3D::CONSTANT_ALPHA || src == GraphicsContext3D::ONE_MINUS_CONSTANT_ALPHA))) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return false;
+    }
+    return true;
 }
 
 bool WebGLRenderingContext::validateCapability(unsigned long cap)
