@@ -347,6 +347,10 @@ void Page::goToItem(HistoryItem* item, FrameLoadType type)
 {
     if (defersLoading())
         return;
+
+    // stopAllLoaders may end up running onload handlers, which could cause further history traversals that may lead to the passed in HistoryItem
+    // being deref()-ed. Make sure we can still use it with HistoryController::goToItem later.
+    RefPtr<HistoryItem> protector(item);
     
     // Abort any current load unless we're navigating the current document to a new state object
     HistoryItem* currentItem = m_mainFrame->loader()->history()->currentItem();
