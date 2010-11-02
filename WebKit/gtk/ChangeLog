@@ -1,3 +1,18 @@
+2010-11-01  Jennifer Braithwaite  <jennb@google.com>
+
+        Reviewed by Martin Robinson.
+
+        GTK: Update resource tracking when moving a frame between documents
+        https://bugs.webkit.org/show_bug.cgi?id=48362
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::transferLoadingResourceFromPage):
+        Assign resource id to current web view and remove from former web view.
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_remove_resource):
+        Added.
+
 2010-11-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
