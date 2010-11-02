@@ -256,9 +256,9 @@ WebInspector.ResourceManager.prototype = {
         WebInspector.panels.network.refreshResource(resource);
     },
 
-    didCommitLoadForFrame: function(parentFrameId, loader)
+    didCommitLoadForFrame: function(frame, loader)
     {
-        this._resourceTreeModel.didCommitLoadForFrame(parentFrameId, loader);
+        this._resourceTreeModel.didCommitLoadForFrame(frame, loader);
     },
 
     frameDetachedFromParent: function(frameId)
@@ -314,12 +314,12 @@ WebInspector.ResourceManager.prototype = {
 
     _processCachedResources: function(mainFramePayload)
     {
-        var mainResource = this._addFramesRecursively(null, mainFramePayload);
+        var mainResource = this._addFramesRecursively(mainFramePayload);
         WebInspector.mainResource = mainResource;
         mainResource.isMainResource = true;
     },
 
-    _addFramesRecursively: function(parentFrameId, framePayload)
+    _addFramesRecursively: function(framePayload)
     {
         var frameResource = this._createResource(null, framePayload.resource.url, framePayload.resource.loader);
         this._updateResourceWithRequest(frameResource, framePayload.resource.request);
@@ -328,11 +328,11 @@ WebInspector.ResourceManager.prototype = {
         frameResource.finished = true;
         this._bindResourceURL(frameResource);
 
-        this._resourceTreeModel.addOrUpdateFrame(parentFrameId, framePayload.id, frameResource.displayName);
+        this._resourceTreeModel.addOrUpdateFrame(framePayload);
         this._resourceTreeModel.addResourceToFrame(framePayload.id, frameResource);
 
         for (var i = 0; framePayload.children && i < framePayload.children.length; ++i)
-            this._addFramesRecursively(framePayload.id, framePayload.children[i]);
+            this._addFramesRecursively(framePayload.children[i]);
 
         if (!framePayload.subresources)
             return;
@@ -481,29 +481,29 @@ WebInspector.ResourceTreeModel = function()
 }
 
 WebInspector.ResourceTreeModel.prototype = {
-    addOrUpdateFrame: function(parentFrameId, frameId, displayName)
+    addOrUpdateFrame: function(frame)
     {
-        WebInspector.panels.storage.addOrUpdateFrame(parentFrameId, frameId, displayName);
-        var subframes = this._subframes[parentFrameId];
+        var tmpResource = new WebInspector.Resource(null, frame.url);
+        WebInspector.panels.storage.addOrUpdateFrame(frame.parentId, frame.id, frame.name, tmpResource.displayName);
+        var subframes = this._subframes[frame.parentId];
         if (!subframes) {
             subframes = {};
-            this._subframes[parentFrameId || 0] = subframes;
+            this._subframes[frame.parentId || 0] = subframes;
         }
-        subframes[frameId] = true;
+        subframes[frame.id] = true;
     },
 
-    didCommitLoadForFrame: function(parentFrameId, loader)
+    didCommitLoadForFrame: function(frame, loader)
     {
-        // parentFrameId === 0 is when main frame navigation happens.
-        this._clearChildFramesAndResources(parentFrameId ? loader.frameId : 0, loader.loaderId);
+        // frame.parentId === 0 is when main frame navigation happens.
+        this._clearChildFramesAndResources(frame.parentId ? frame.id : 0, loader.loaderId);
 
-        var tmpResource = new WebInspector.Resource(null, loader.url);
-        this.addOrUpdateFrame(parentFrameId, loader.frameId, tmpResource.displayName);
+        this.addOrUpdateFrame(frame);
 
-        var resourcesForFrame = this._resourcesByFrameId[loader.frameId];
+        var resourcesForFrame = this._resourcesByFrameId[frame.id];
         for (var i = 0; resourcesForFrame && i < resourcesForFrame.length; ++i) {
             WebInspector.resourceManager._bindResourceURL(resourcesForFrame[i]);
-            WebInspector.panels.storage.addResourceToFrame(loader.frameId, resourcesForFrame[i]);
+            WebInspector.panels.storage.addResourceToFrame(frame.id, resourcesForFrame[i]);
         }
     },
 

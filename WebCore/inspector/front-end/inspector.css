@@ -1978,6 +1978,16 @@ body.inactive .storage.panel .sidebar li.selected .selection {
     top: 1px;
 }
 
+li.selected .base-storage-tree-element-subtitle {
+    color: white;
+}
+
+.base-storage-tree-element-subtitle {
+    padding-left: 2px;
+    color: rgb(80, 80, 80);
+    text-shadow: none;
+}
+
 .storage.panel .status {
     float: right;
     height: 16px;

@@ -168,11 +168,11 @@ WebInspector.StoragePanel.prototype = {
             this.sidebarTree.selectedTreeElement.deselect();
     },
 
-    addOrUpdateFrame: function(parentFrameId, frameId, displayName)
+    addOrUpdateFrame: function(parentFrameId, frameId, title, subtitle)
     {
         var frameTreeElement = this._treeElementForFrameId[frameId];
         if (frameTreeElement) {
-            frameTreeElement.displayName = displayName;
+            frameTreeElement.setTitles(title, subtitle);
             return;
         }
 
@@ -182,7 +182,7 @@ WebInspector.StoragePanel.prototype = {
             return;
         }
 
-        var frameTreeElement = new WebInspector.FrameTreeElement(this, frameId, displayName);
+        var frameTreeElement = new WebInspector.FrameTreeElement(this, frameId, title, subtitle);
         this._treeElementForFrameId[frameId] = frameTreeElement;
 
         // Insert in the alphabetical order, first frames, then resources.
@@ -193,7 +193,7 @@ WebInspector.StoragePanel.prototype = {
                 parentTreeElement.insertChild(frameTreeElement, i);
                 return;
             }
-            if (child.displayName.localeCompare(frameTreeElement.displayName) > 0) {
+            if (child.nameForSorting.localeCompare(frameTreeElement.nameForSorting) > 0) {
                 parentTreeElement.insertChild(frameTreeElement, i);
                 return;
             }
@@ -790,6 +790,11 @@ WebInspector.BaseStorageTreeElement.prototype = {
             this.listItemElement.scrollIntoViewIfNeeded(false);
     },
 
+    get titleText()
+    {
+        return this._titleText;
+    },
+
     set titleText(titleText)
     {
         this._titleText = titleText;
@@ -848,17 +853,27 @@ WebInspector.StorageCategoryTreeElement.prototype = {
 }
 WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
-WebInspector.FrameTreeElement = function(storagePanel, frameId, displayName)
+WebInspector.FrameTreeElement = function(storagePanel, frameId, title, subtitle)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, displayName, "frame-storage-tree-item");
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, "", "frame-storage-tree-item");
     this._frameId = frameId;
-    this._displayName = displayName;
+    this.setTitles(title, subtitle);
 }
 
 WebInspector.FrameTreeElement.prototype = {
     get itemURL()
     {
         return "frame://" + encodeURI(this._displayName);
+    },
+
+    onattach: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
+        if (this._titleToSetOnAttach || this._subtitleToSetOnAttach) {
+            this.setTitles(this._titleToSetOnAttach, this._subtitleToSetOnAttach);
+            delete this._titleToSetOnAttach;
+            delete this._subtitleToSetOnAttach;
+        }
     },
 
     onselect: function()
@@ -870,15 +885,27 @@ WebInspector.FrameTreeElement.prototype = {
         InspectorBackend.hideFrameHighlight();
     },
 
-    get displayName()
+    get nameForSorting()
     {
-        return this._displayName;
+        return this._nameForSorting;
     },
 
-    set displayName(displayName)
+    setTitles: function(title, subtitle)
     {
-        this._displayName = displayName;
-        this.titleText = displayName;
+        this._nameForSorting = (title ? title : "") + (subtitle ? subtitle : "");
+        if (this.parent) {
+            if (title)
+                this.titleElement.textContent = title;
+            if (subtitle) {
+                var subtitleElement = document.createElement("span");
+                subtitleElement.className = "base-storage-tree-element-subtitle";
+                subtitleElement.textContent = "(" + subtitle + ")";
+                this.titleElement.appendChild(subtitleElement);
+            }
+        } else {
+            this._titleToSetOnAttach = title;
+            this._subtitleToSetOnAttach = subtitle;
+        }
     },
 
     set hovered(hovered)

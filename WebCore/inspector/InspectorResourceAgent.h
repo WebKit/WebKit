@@ -96,6 +96,8 @@ public:
     void didCloseWebSocket(unsigned long identifier);
 #endif
 
+    Frame* frameForId(unsigned long);
+
     // Called from frontend 
     void cachedResources(RefPtr<InspectorObject>*);
     void resourceContent(unsigned long frameID, const String& url, bool base64Encode, String* content);
