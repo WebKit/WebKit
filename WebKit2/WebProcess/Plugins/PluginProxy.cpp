@@ -295,8 +295,15 @@ void PluginProxy::setFocus(bool hasFocus)
 
 NPObject* PluginProxy::pluginScriptableNPObject()
 {
-    notImplemented();
-    return 0;
+    uint64_t pluginScriptableNPObjectID = 0;
+    
+    if (!m_connection->connection()->sendSync(Messages::PluginControllerProxy::GetPluginScriptableNPObject(), Messages::PluginControllerProxy::GetPluginScriptableNPObject::Reply(pluginScriptableNPObjectID), m_pluginInstanceID))
+        return 0;
+
+    if (!pluginScriptableNPObjectID)
+        return 0;
+
+    return m_connection->npRemoteObjectMap()->createNPObjectProxy(pluginScriptableNPObjectID);
 }
 
 #if PLATFORM(MAC)

@@ -64,7 +64,10 @@ messages -> PluginControllerProxy {
 
     # Paint the entire plug-in.
     PaintEntirePlugin() -> ()
-    
+
+    # Get a reference to the plug-in's scriptable NPObject.
+    GetPluginScriptableNPObject() -> (uint64_t pluginScriptableNPObjectID)
+
 #if PLATFORM(MAC)
     # Sent when the containing NSWindow's focus changes
     WindowFocusChanged(bool hasFocus)

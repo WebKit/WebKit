@@ -30,6 +30,7 @@
 #include "BackingStore.h"
 #include "DataReference.h"
 #include "NPRemoteObjectMap.h"
+#include "NPRuntimeUtilities.h"
 #include "NetscapePlugin.h"
 #include "NotImplemented.h"
 #include "PluginProcess.h"
@@ -311,6 +312,18 @@ void PluginControllerProxy::didUpdate()
 {
     m_waitingForDidUpdate = false;
     startPaintTimer();
+}
+
+void PluginControllerProxy::getPluginScriptableNPObject(uint64_t& pluginScriptableNPObjectID)
+{
+    NPObject* pluginScriptableNPObject = m_plugin->pluginScriptableNPObject();
+    if (!pluginScriptableNPObject) {
+        pluginScriptableNPObjectID = 0;
+        return;
+    }
+    
+    pluginScriptableNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginScriptableNPObject);
+    releaseNPObject(pluginScriptableNPObject);
 }
 
 #if PLATFORM(MAC)

@@ -1,5 +1,23 @@
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Implement PluginProxy::pluginScriptableNPObject
+        https://bugs.webkit.org/show_bug.cgi?id=48874
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::getPluginScriptableNPObject):
+        Ask the plug-in for its scriptable NPObject, register it with the map and return its object ID.
+
+        * PluginProcess/PluginControllerProxy.messages.in:
+        Add GetPluginScriptableNPObject message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::pluginScriptableNPObject):
+        Send the GetPluginScriptableNPObject message.
+
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Add strings to NPVariantData
