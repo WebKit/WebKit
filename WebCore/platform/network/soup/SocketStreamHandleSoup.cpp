@@ -48,25 +48,34 @@
 namespace WebCore {
 
 // These functions immediately call the similarly named SocketStreamHandle methods.
-static void connectedCallback(GSocketClient*, GAsyncResult*, SocketStreamHandle*);
-static void readReadyCallback(GInputStream*, GAsyncResult*, SocketStreamHandle*);
-static gboolean writeReadyCallback(GSocket*, GIOCondition, SocketStreamHandle*);
+static void connectedCallback(GSocketClient*, GAsyncResult*, void*);
+static void readReadyCallback(GInputStream*, GAsyncResult*, void*);
+static gboolean writeReadyCallback(GSocket*, GIOCondition, void*);
 
 // Having a list of active handles means that we do not have to worry about WebCore
 // reference counting in GLib callbacks. Once the handle is off the active handles list
 // we just ignore it in the callback. We avoid a lot of extra checks and tricky
 // situations this way.
-static Vector<SocketStreamHandle*> gActiveHandles;
-bool isActiveHandle(SocketStreamHandle* handle)
+static HashMap<void*, SocketStreamHandle*> gActiveHandles;
+static SocketStreamHandle* getHandleFromId(void* id)
 {
-    return gActiveHandles.find(handle) != notFound;
+    if (!gActiveHandles.contains(id))
+        return 0;
+    return gActiveHandles.get(id);
 }
 
-void deactivateHandle(SocketStreamHandle* handle)
+static void deactivateHandle(SocketStreamHandle* handle)
 {
-    size_t handleIndex = gActiveHandles.find(handle);
-    if (handleIndex != notFound)
-        gActiveHandles.remove(handleIndex);
+    gActiveHandles.remove(handle->id());
+}
+
+static void* activateHandle(SocketStreamHandle* handle)
+{
+    // The first id cannot be 0, because it conflicts with the HashMap emptyValue.
+    static gint currentHandleId = 1;
+    void* id = GINT_TO_POINTER(currentHandleId++);
+    gActiveHandles.set(id, handle);
+    return id;
 }
 
 SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient* client)
@@ -78,10 +87,10 @@ SocketStreamHandle::SocketStreamHandle(const KURL& url, SocketStreamHandleClient
         return;
     unsigned int port = url.hasPort() ? url.port() : 80;
 
-    gActiveHandles.append(this);
+    m_id = activateHandle(this);
     PlatformRefPtr<GSocketClient> socketClient = adoptPlatformRef(g_socket_client_new());
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, 0,
-        reinterpret_cast<GAsyncReadyCallback>(connectedCallback), this);
+        reinterpret_cast<GAsyncReadyCallback>(connectedCallback), m_id);
 }
 
 SocketStreamHandle::~SocketStreamHandle()
@@ -104,7 +113,7 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
 
     m_readBuffer = new char[READ_BUFFER_SIZE];
     g_input_stream_read_async(m_inputStream.get(), m_readBuffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, 0,
-        reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), this);
+        reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), m_id);
 
     // The client can close the handle, potentially removing the last reference.
     RefPtr<SocketStreamHandle> protect(this); 
@@ -131,7 +140,7 @@ void SocketStreamHandle::readBytes(signed long bytesRead, GError* error)
     m_client->didReceiveData(this, m_readBuffer, bytesRead);
     if (m_inputStream) // The client may have closed the connection.
         g_input_stream_read_async(m_inputStream.get(), m_readBuffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, 0,
-            reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), this);
+            reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), m_id);
 }
 
 void SocketStreamHandle::writeReady()
@@ -215,7 +224,7 @@ void SocketStreamHandle::beginWaitingForSocketWritability()
 
     m_writeReadySource = adoptPlatformRef(g_socket_create_source(
         g_socket_connection_get_socket(m_socketConnection.get()), static_cast<GIOCondition>(G_IO_OUT), 0));
-    g_source_set_callback(m_writeReadySource.get(), reinterpret_cast<GSourceFunc>(writeReadyCallback), this, 0);
+    g_source_set_callback(m_writeReadySource.get(), reinterpret_cast<GSourceFunc>(writeReadyCallback), m_id, 0);
     g_source_attach(m_writeReadySource.get(), 0);
 }
 
@@ -228,14 +237,15 @@ void SocketStreamHandle::stopWaitingForSocketWritability()
     m_writeReadySource = 0;
 }
 
-static void connectedCallback(GSocketClient* client, GAsyncResult* result, SocketStreamHandle* handle)
+static void connectedCallback(GSocketClient* client, GAsyncResult* result, void* id)
 {
     // Always finish the connection, even if this SocketStreamHandle was deactivated earlier.
     GOwnPtr<GError> error;
     GSocketConnection* socketConnection = g_socket_client_connect_to_host_finish(client, result, &error.outPtr());
 
     // The SocketStreamHandle has been deactivated, so just close the connection, ignoring errors.
-    if (!isActiveHandle(handle)) {
+    SocketStreamHandle* handle = getHandleFromId(id);
+    if (!handle) {
         g_io_stream_close(G_IO_STREAM(socketConnection), 0, &error.outPtr());
         return;
     }
@@ -243,20 +253,23 @@ static void connectedCallback(GSocketClient* client, GAsyncResult* result, Socke
     handle->connected(socketConnection, error.get());
 }
 
-static void readReadyCallback(GInputStream* stream, GAsyncResult* result, SocketStreamHandle* handle)
+static void readReadyCallback(GInputStream* stream, GAsyncResult* result, void* id)
 {
     // Always finish the read, even if this SocketStreamHandle was deactivated earlier.
     GOwnPtr<GError> error;
     gssize bytesRead = g_input_stream_read_finish(stream, result, &error.outPtr());
 
-    if (!isActiveHandle(handle))
+    SocketStreamHandle* handle = getHandleFromId(id);
+    if (!handle)
         return;
+
     handle->readBytes(bytesRead, error.get());
 }
 
-static gboolean writeReadyCallback(GSocket*, GIOCondition condition, SocketStreamHandle* handle)
+static gboolean writeReadyCallback(GSocket*, GIOCondition condition, void* id)
 {
-    if (!isActiveHandle(handle))
+    SocketStreamHandle* handle = getHandleFromId(id);
+    if (!handle)
         return FALSE;
 
     // G_IO_HUP and G_IO_ERR are are always active. See:
