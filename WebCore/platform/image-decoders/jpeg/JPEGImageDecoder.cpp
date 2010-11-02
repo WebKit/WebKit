@@ -51,7 +51,13 @@
 #endif
 
 extern "C" {
+
 #include "jpeglib.h"
+
+#if USE(ICCJPEG)
+#include "iccjpeg.h"
+#endif
+
 }
 
 #include <setjmp.h>
@@ -85,6 +91,24 @@ struct decoder_source_mgr {
 
     JPEGImageReader* decoder;
 };
+
+static ColorProfile readColorProfile(jpeg_decompress_struct* info)
+{
+#if USE(ICCJPEG)
+    JOCTET* profile;
+    unsigned int profileLength;
+
+    if (!read_icc_profile(info, &profile, &profileLength))
+        return ColorProfile();
+
+    ColorProfile colorProfile;
+    colorProfile.append(reinterpret_cast<char*>(profile), profileLength);
+    free(profile);
+    return colorProfile;
+#else
+    return ColorProfile();
+#endif
+}
 
 class JPEGImageReader
 {
@@ -123,6 +147,11 @@ public:
         src->pub.resync_to_restart = jpeg_resync_to_restart;
         src->pub.term_source = term_source;
         src->decoder = this;
+
+        // Enable these markers for the ICC color profile.
+        // Apparently there are 16 of these markers.  I don't see anywhere in the header with this constant.
+        for (unsigned i = 0; i < 0xF; ++i)
+            jpeg_save_markers(&m_info, JPEG_APP0 + i, 0xFFFF);
     }
 
     ~JPEGImageReader()
@@ -211,6 +240,8 @@ public:
             // We can fill in the size now that the header is available.
             if (!m_decoder->setSize(m_info.image_width, m_info.image_height))
                 return false;
+
+            m_decoder->setColorProfile(readColorProfile(info()));              
 
             if (m_decodingSizeOnly) {
                 // We can stop here.  Reduce our buffer length and available
@@ -421,6 +452,7 @@ bool JPEGImageDecoder::outputScanlines()
             return setFailed();
         buffer.setStatus(RGBA32Buffer::FramePartial);
         buffer.setHasAlpha(false);
+        buffer.setColorProfile(m_colorProfile);
 
         // For JPEGs, the frame always fills the entire image.
         buffer.setRect(IntRect(IntPoint(), size()));
