@@ -49,6 +49,8 @@ from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
 from webkitpy.layout_tests.port.test import TestPort
+from webkitpy.python24.versioning import compare_version
+from webkitpy.test.skip import skip_if
 
 from webkitpy.thirdparty.mock import Mock
 
@@ -286,6 +288,8 @@ class MainTest(unittest.TestCase):
         # should be used.
         test_port = get_port_for_run(base_args)
         self.assertEqual(None, test_port.tolerance_used_for_diff_image)
+
+MainTest = skip_if(MainTest, sys.platform == 'cygwin' and compare_version(sys, '2.6')[0] < 0, 'new-run-webkit-tests tests hang on Cygwin Python 2.5.2')
 
 
 def _mocked_open(original_open, file_list):

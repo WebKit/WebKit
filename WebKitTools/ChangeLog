@@ -1,3 +1,38 @@
+2010-11-02  Adam Roben  <aroben@apple.com>
+
+        Skip webkitpy.layout_tests.run_webkit_tests_unittest.MainTest on Cygwin
+        Python 2.5.x
+
+        It is known to hang on that version of Python. See
+        <http://webkit.org/b/48614>.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py: Use
+        skip_if to skip MainTest on Cygwin Python 2.5.x.
+
+        * Scripts/webkitpy/test/skip.py: Added.
+        (skip_if): If the passed-in condition is false, find all the test_*
+        methods of the given class and replace them with a function that just
+        logs that we're skipping these tests. This is loosely based on the
+        unittest.skip_if decorator added in Python 3.1.
+        (_skipped_method): Returns a function that just logs that the tests are
+        being skipped. This is used in place of the actual test_* functions.
+
+        * Scripts/webkitpy/test/skip_unittest.py: Added.
+        (SkipTest.setUp): Create a logger for ourselves and give it a handler
+        that logs to a private stream.
+        (SkipTest.tearDown): Reset the logger.
+        (SkipTest.create_fixture_class): Returns a class that we use to test
+        skip_if. It has a single test_* method, test_foo, that just calls
+        through to a callback.
+        (SkipTest.foo_callback): Record that test_foo was called.
+        (SkipTest.test_skip_if_false): Pass skip_if a False condition and test
+        that test_foo does get called.
+        (SkipTest.test_skip_if_true): Pass skip_if a True condition and test
+        that test_foo does not get called and the appropriate message gets
+        logged.
+
 2010-11-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
