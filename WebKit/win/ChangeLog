@@ -1,3 +1,22 @@
+2010-11-02  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Martin Robinson.
+
+        Set frame name before appending it to the frame tree in the Apple Windows,
+        GTK, and EFL ports
+        https://bugs.webkit.org/show_bug.cgi?id=48806
+
+        Make the frame creation process in the Apple Windows-port consistent
+        with the Mac, Qt, and Haiku ports. In particular, set the name of
+        the new frame before it's appended to the frame tree.
+
+        At this time we cannot test this change since it is being masked by
+        HTMLFrameElementBase::setName() <http://trac.webkit.org/browser/trunk/WebCore/html/HTMLFrameElementBase.cpp?rev=70976#L160>.
+        We'll be able to test this once we fix bug #6751.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createFrame):
+
 2010-11-01  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Adam Roben.

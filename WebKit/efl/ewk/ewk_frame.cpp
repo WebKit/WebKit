@@ -1623,11 +1623,11 @@ Evas_Object* ewk_frame_child_add(Evas_Object* o, WTF::PassRefPtr<WebCore::Frame>
     }
 
     cf = child.get();
-    sd->frame->tree()->appendChild(child);
     if (cf->tree())
         cf->tree()->setName(name);
     else
         ERR("no tree for child object");
+    sd->frame->tree()->appendChild(child);
 
     if (!ewk_frame_init(frame, sd->view, cf)) {
         evas_object_del(frame);

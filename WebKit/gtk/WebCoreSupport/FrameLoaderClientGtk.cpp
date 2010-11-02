@@ -584,8 +584,8 @@ PassRefPtr<Frame> FrameLoaderClient::createFrame(const KURL& url, const String& 
     RefPtr<Frame> childFrame = Frame::create(page, ownerElement, new FrameLoaderClient(kitFrame));
     framePrivate->coreFrame = childFrame.get();
 
-    parentFrame->tree()->appendChild(childFrame);
     childFrame->tree()->setName(name);
+    parentFrame->tree()->appendChild(childFrame);
     childFrame->init();
 
     // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
