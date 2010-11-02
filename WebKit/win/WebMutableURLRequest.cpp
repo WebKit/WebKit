@@ -320,10 +320,10 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setMainDocumentURL(
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setTimeoutInterval( 
-    /* [in] */ double /*timeoutInterval*/)
+    /* [in] */ double timeoutInterval)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    m_request.setTimeoutInterval(timeoutInterval);
+    return S_OK;
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setURL( 
