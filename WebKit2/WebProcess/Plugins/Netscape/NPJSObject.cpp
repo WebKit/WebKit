@@ -238,8 +238,7 @@ bool NPJSObject::enumerate(NPIdentifier** identifiers, uint32_t* identifierCount
     PropertyNameArray propertyNames(exec);
     m_jsObject->getPropertyNames(exec, propertyNames);
 
-    // This should use NPN_MemAlloc, but we know that it uses malloc under the hood.
-    NPIdentifier* nameIdentifiers = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier) * propertyNames.size()));
+    NPIdentifier* nameIdentifiers = npnMemNewArray<NPIdentifier>(propertyNames.size());
 
     for (size_t i = 0; i < propertyNames.size(); ++i)
         nameIdentifiers[i] = static_cast<NPIdentifier>(IdentifierRep::get(propertyNames[i].ustring().utf8().data()));

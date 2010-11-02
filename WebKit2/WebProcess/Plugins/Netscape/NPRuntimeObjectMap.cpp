@@ -165,13 +165,8 @@ void NPRuntimeObjectMap::convertJSValueToNPVariant(ExecState* exec, JSValue valu
     }
 
     if (value.isString()) {
-        CString utf8String = value.toString(exec).utf8();
-
-        // This should use NPN_MemAlloc, but we know that it uses malloc under the hood.
-        char* utf8Characters = static_cast<char*>(malloc(utf8String.length()));
-        memcpy(utf8Characters, utf8String.data(), utf8String.length());
-        
-        STRINGN_TO_NPVARIANT(utf8Characters, utf8String.length(), variant);
+        NPString npString = createNPString(value.toString(exec).utf8());
+        STRINGN_TO_NPVARIANT(npString.UTF8Characters, npString.UTF8Length, variant);
         return;
     }
 

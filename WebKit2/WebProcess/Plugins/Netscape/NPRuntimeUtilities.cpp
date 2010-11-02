@@ -25,7 +25,35 @@
 
 #include "NPRuntimeUtilities.h"
 
+#include <wtf/text/CString.h>
+
 namespace WebKit {
+
+void* npnMemAlloc(uint32_t size)
+{
+    // We could use fastMalloc here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
+    // so having them be equivalent seems like a good idea.
+    return malloc(size);
+}
+
+void npnMemFree(void* ptr)
+{
+    // We could use fastFree here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
+    // so having them be equivalent seems like a good idea.
+    free(ptr);
+}
+
+NPString createNPString(const CString& string)
+{
+    char* utf8Characters = npnMemNewArray<char>(string.length());
+    memcpy(utf8Characters, string.data(), string.length());
+
+    NPString npString;
+    npString.UTF8Characters = utf8Characters;
+    npString.UTF8Length = string.length();
+
+    return npString;
+}
 
 NPObject* createNPObject(NPP npp, NPClass* npClass)
 {
@@ -34,10 +62,8 @@ NPObject* createNPObject(NPP npp, NPClass* npClass)
     NPObject* npObject;
     if (npClass->allocate)
         npObject = npClass->allocate(npp, npClass);
-    else {
-        // This should use NPN_MemAlloc, but we know that it uses malloc under the hood.
-        npObject = static_cast<NPObject*>(malloc(sizeof(NPObject)));
-    }
+    else
+        npObject = npnMemNew<NPObject>();
 
     npObject->_class = npClass;
     npObject->referenceCount = 1;
@@ -53,11 +79,8 @@ void deallocateNPObject(NPObject* npObject)
 
     if (npObject->_class->deallocate)
         npObject->_class->deallocate(npObject);
-    else {
-        // This should really call NPN_MemFree, but we know that it uses free
-        // under the hood so it's fine.
-        free(npObject);
-    }
+    else
+        npnMemFree(npObject);
 }
 
 void retainNPObject(NPObject* npObject)
@@ -95,7 +118,7 @@ void releaseNPVariantValue(NPVariant* variant)
         break;
         
     case NPVariantType_String:
-        free(const_cast<NPUTF8*>(variant->value.stringValue.UTF8Characters));
+        npnMemFree(const_cast<NPUTF8*>(variant->value.stringValue.UTF8Characters));
         variant->value.stringValue.UTF8Characters = 0;
         variant->value.stringValue.UTF8Length = 0;
         break;

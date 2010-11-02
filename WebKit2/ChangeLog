@@ -1,3 +1,62 @@
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Add convenience functions for allocating NPAPI memory
+        https://bugs.webkit.org/show_bug.cgi?id=48870
+
+        Add npnMemAlloc, npnMemFree and createNPString functions and 
+        npnMemNew, npnMemNewArray function templates.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::getOwnPropertyNames):
+        Use npnMemFree.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::enumerate):
+        Use npnMemNewArray.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::convertJSValueToNPVariant):
+        Use createNPString.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp:
+        (WebKit::npnMemAlloc):
+        Call malloc.
+
+        (WebKit::npnMemFree):
+        Call free.
+
+        (WebKit::createNPString):
+        Allocate the characters for a new NPString.
+
+        (WebKit::createNPObject):
+        Call npnMemNew.
+
+        (WebKit::deallocateNPObject):
+        Call npnMemFree.
+
+        (WebKit::releaseNPVariantValue):
+        Call npnMemFree.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeUtilities.h:
+        (WebKit::npnMemNew):
+        (WebKit::npnMemNewArray):
+        Add new functions.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_MemAlloc):
+        Call npnMemAlloc.
+
+        (WebKit::NPN_MemFree):
+        Call npnMemFree.
+
+        (WebKit::NPN_UTF8FromIdentifier):
+        Call npnMemNewArray.
+
+        (WebKit::copyCString):
+        Call npnMemNewArray. Correctly initialize the "len" out parameter.
+
 2010-11-02  Jessie Berlin  <jberlin@apple.com>
 
         Windows build fix. Unreviewed.

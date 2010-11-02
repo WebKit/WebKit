@@ -27,11 +27,27 @@
 #define NPRuntimeUtilities_h
 
 #include <WebCore/npruntime_internal.h>
+#include <wtf/Forward.h>
 
 struct NPClass;
 struct NPObject;
 
 namespace WebKit {
+
+void* npnMemAlloc(uint32_t);
+void npnMemFree(void*);
+
+template<typename T> T* npnMemNew()
+{
+    return static_cast<T*>(npnMemAlloc(sizeof(T)));
+}
+
+template<typename T> T* npnMemNewArray(size_t count)
+{
+    return static_cast<T*>(npnMemAlloc(sizeof(T) * count));
+}
+
+NPString createNPString(const CString&);
 
 NPObject* createNPObject(NPP, NPClass*);
 void deallocateNPObject(NPObject*);

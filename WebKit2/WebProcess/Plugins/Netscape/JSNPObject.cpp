@@ -355,8 +355,7 @@ void JSNPObject::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
         propertyNameArray.add(identifier);
     }
 
-    // This should use NPN_MemFree, but we know that it uses free under the hood.
-    free(identifiers);
+    npnMemFree(identifiers);
 }
 
 JSValue JSNPObject::propertyGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)

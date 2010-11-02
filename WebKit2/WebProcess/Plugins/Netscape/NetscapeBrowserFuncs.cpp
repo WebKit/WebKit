@@ -336,16 +336,12 @@ static const char* NPN_UserAgent(NPP npp)
 
 static void* NPN_MemAlloc(uint32_t size)
 {
-    // We could use fastMalloc here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
-    // so having them be equivalent seems like a good idea.
-    return malloc(size);
+    return npnMemAlloc(size);
 }
 
 static void NPN_MemFree(void* ptr)
 {
-    // We could use fastFree here, but there might be plug-ins that mix NPN_MemAlloc/NPN_MemFree with malloc and free,
-    // so having them be equivalent seems like a good idea.
-    free(ptr);
+    npnMemFree(ptr);
 }
 
 static uint32_t NPN_MemFlush(uint32_t size)
@@ -548,7 +544,7 @@ static NPUTF8 *NPN_UTF8FromIdentifier(NPIdentifier identifier)
         return 0;
 
     uint32_t stringLength = strlen(string);
-    char* utf8String = static_cast<char*>(NPN_MemAlloc(stringLength + 1));
+    char* utf8String = npnMemNewArray<char>(stringLength + 1);
     memcpy(utf8String, string, stringLength);
     utf8String[stringLength] = '\0';
     
@@ -687,11 +683,12 @@ static NPError copyCString(const CString& string, char** value, uint32_t* len)
     ASSERT(value);
     ASSERT(len);
 
-    *value = static_cast<char*>(NPN_MemAlloc(string.length()));
+    *value = npnMemNewArray<char>(string.length());
     if (!*value)
         return NPERR_GENERIC_ERROR;
 
     memcpy(*value, string.data(), string.length());
+    *len = string.length();
     return NPERR_NO_ERROR;
 }
 
