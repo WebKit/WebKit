@@ -56,7 +56,7 @@
 #include <wininet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h> 
+#include <wtf/text/StringConcatenate.h>
 #include <wtf/text/StringHash.h>
 
 using namespace std;
@@ -161,25 +161,6 @@ static String filesystemPathFromUrlOrTitle(const String& url, const String& titl
     return result;
 }
 
-static HGLOBAL createGlobalURLContent(const CString& content)
-{
-    HRESULT hr = S_OK;
-    HGLOBAL memObj = 0;
-
-    char* fileContents;
-
-    memObj = GlobalAlloc(GPTR, content.length());
-    if (!memObj) 
-        return 0;
-
-    fileContents = (PSTR)GlobalLock(memObj);
-    CopyMemory(fileContents, content.data(), content.length());
-    
-    GlobalUnlock(memObj);
-    
-    return memObj;
-}
-
 static HGLOBAL createGlobalImageFileContent(SharedBuffer* data)
 {
     HGLOBAL memObj = GlobalAlloc(GPTR, data->size());
@@ -257,36 +238,6 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
     
     return memObj;
 }
-
-static HGLOBAL createGlobalUrlFileDescriptor(const String& url, const String& title, const CString& content)
-{
-    HRESULT hr = S_OK;
-    HGLOBAL memObj = 0;
-    String fsPath;
-    memObj = GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
-    if (!memObj)
-        return 0;
-
-    FILEGROUPDESCRIPTOR* fgd = (FILEGROUPDESCRIPTOR*)GlobalLock(memObj);
-    memset(fgd, 0, sizeof(FILEGROUPDESCRIPTOR));
-    fgd->cItems = 1;
-    fgd->fgd[0].dwFlags = FD_FILESIZE;
-    fgd->fgd[0].nFileSizeLow = content.length();
-    fsPath = filesystemPathFromUrlOrTitle(url, title, L".URL", true);
-
-    if (fsPath.length() <= 0) {
-        GlobalUnlock(memObj);
-        GlobalFree(memObj);
-        return 0;
-    }
-
-    int maxSize = min(fsPath.length(), ARRAYSIZE(fgd->fgd[0].cFileName));
-    CopyMemory(fgd->fgd[0].cFileName, (LPCWSTR)fsPath.characters(), maxSize * sizeof(UChar));
-    GlobalUnlock(memObj);
-    
-    return memObj;
-}
-
 
 static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& title, CachedImage* image)
 {
@@ -725,16 +676,36 @@ void ClipboardWin::writeURL(const KURL& kurl, const String& titleStr, Frame*)
     String url = kurl.string();
     ASSERT(url.containsOnlyASCII()); // KURL::string() is URL encoded.
 
+    String fsPath = filesystemPathFromUrlOrTitle(url, titleStr, L".URL", true);
     CString content = makeString("[InternetShortcut]\r\nURL=", url, "\r\n").ascii();
 
-    HGLOBAL urlFileDescriptor = createGlobalUrlFileDescriptor(url, titleStr, content);
+    if (fsPath.length() <= 0)
+        return;
+
+    HGLOBAL urlFileDescriptor = GlobalAlloc(GPTR, sizeof(FILEGROUPDESCRIPTOR));
     if (!urlFileDescriptor)
         return;
-    HGLOBAL urlFileContent = createGlobalURLContent(content);
+
+    HGLOBAL urlFileContent = GlobalAlloc(GPTR, content.length());
     if (!urlFileContent) {
         GlobalFree(urlFileDescriptor);
         return;
     }
+
+    FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(GlobalLock(urlFileDescriptor));
+    ZeroMemory(fgd, sizeof(FILEGROUPDESCRIPTOR));
+    fgd->cItems = 1;
+    fgd->fgd[0].dwFlags = FD_FILESIZE;
+    fgd->fgd[0].nFileSizeLow = content.length();
+
+    unsigned maxSize = min(fsPath.length(), ARRAYSIZE(fgd->fgd[0].cFileName));
+    CopyMemory(fgd->fgd[0].cFileName, fsPath.characters(), maxSize * sizeof(UChar));
+    GlobalUnlock(urlFileDescriptor);
+
+    char* fileContents = static_cast<char*>(GlobalLock(urlFileContent));
+    CopyMemory(fileContents, content.data(), content.length());
+    GlobalUnlock(urlFileContent);
+
     writeFileToDataObject(m_writableDataObject.get(), urlFileDescriptor, urlFileContent, 0);
 }
 
