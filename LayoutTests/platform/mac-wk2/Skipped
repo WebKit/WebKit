@@ -1838,6 +1838,7 @@ printing/page-rule-selection.html
 # WebKitTestRunner needs layoutTestController.hasSpellingMarker
 editing/spelling/design-mode-spellcheck-off.html
 editing/spelling/spellcheck-attribute.html
+editing/spelling/spelling-attribute-at-child.html
 editing/spelling/spelling-attribute-change.html
 editing/spelling/spelling-linebreak.html
 
