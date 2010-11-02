@@ -762,7 +762,15 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
             else if (keyIdentifier == "Up")
                 endIndex = previousSelectableListIndex(data, element, data.activeSelectionEndIndex());    
         }
-        
+
+        if (Frame* frame = element->document()->frame()) {
+            if (frame->settings() && frame->settings()->isSpatialNavigationEnabled()) {
+                // Check if the selection moves to the boundary.
+                if (keyIdentifier == "Left" || keyIdentifier == "Right" || ((keyIdentifier == "Down" || keyIdentifier == "Up") && endIndex == data.activeSelectionEndIndex()))
+                    return;
+            }
+        }
+
         if (keyIdentifier == "Down" || keyIdentifier == "Up") {
             // Save the selection so it can be compared to the new selection when dispatching change events immediately after making the new selection.
             saveLastSelection(data, element);
