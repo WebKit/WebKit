@@ -12,8 +12,7 @@ function finish()
 
     testPassed("Received the timer beat from the adopted iframe - exiting.")
     window2.close();
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
+    finishJSTest();
 }
 
 function page1Unloaded()
@@ -52,4 +51,5 @@ if (window.layoutTestController) {
 window1 = window.open("resources/iframe-reparenting-new-page-1.html", "_blank");
 window1.addEventListener("load", window1Loaded, false);
 
+var jsTestIsAsync = true;
 var successfullyParsed = true;
