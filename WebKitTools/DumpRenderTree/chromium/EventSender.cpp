@@ -873,6 +873,7 @@ void EventSender::sendCurrentTouchEvent(const WebInputEvent::Type type)
     WebTouchEvent touchEvent;
     touchEvent.type = type;
     touchEvent.modifiers = touchModifiers;
+    touchEvent.timeStampSeconds = getCurrentEventTimeSec();
     touchEvent.touchPointsLength = touchPoints.size();
     for (unsigned i = 0; i < touchPoints.size(); ++i)
         touchEvent.touchPoints[i] = touchPoints[i];
