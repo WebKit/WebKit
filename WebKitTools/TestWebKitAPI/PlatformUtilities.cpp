@@ -39,7 +39,7 @@ WKContextRef createContextForInjectedBundleTest(const std::string& testName)
     WKContextRef context = WKContextCreateWithInjectedBundlePath(injectedBundlePath.get());
 
     WKRetainPtr<WKStringRef> testNameString(AdoptWK, WKStringCreateWithUTF8CString(testName.c_str()));
-    WKContextSetInitialObjectForInjectedBundle(context, testNameString.get());
+    WKContextSetInitializationUserDataForInjectedBundle(context, testNameString.get());
 
     return context;
 }

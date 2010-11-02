@@ -1,3 +1,10 @@
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::createContextForInjectedBundleTest):
+
 2010-11-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
