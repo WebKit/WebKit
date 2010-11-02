@@ -1,3 +1,10 @@
+2010-11-02  Jessie Berlin  <jberlin@apple.com>
+
+        Windows build fix. Unreviewed.
+
+        * win/WebKit2Generated.make:
+        Add WKInspector.h so that it is copied over to the WebKitBuild directory.
+
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
