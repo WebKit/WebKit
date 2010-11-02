@@ -1,3 +1,22 @@
+2010-11-02  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r71127
+
+        MSVC isn't smart enough to figure out that the definition of the global
+        nullptr variable isn't needed, so we provide one for it.
+
+        Fixes <http://webkit.org/b/48862> Windows build is broken due to
+        undefined symbol nullptr
+
+        Reviewed by Anders Carlsson.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Export nullptr.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Added NullPtr.cpp and let VS
+        resort the files.
+
+        * wtf/NullPtr.cpp: Added.
+
 2010-11-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.

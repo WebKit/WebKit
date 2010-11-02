@@ -228,6 +228,7 @@ EXPORTS
     ?name@JSFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?nonInlineNaN@JSC@@YANXZ
+    ?nullptr@@3Vnullptr_t@std@@A
     ?number@UString@JSC@@SA?AV12@H@Z
     ?number@UString@JSC@@SA?AV12@I@Z
     ?number@UString@JSC@@SA?AV12@N@Z
