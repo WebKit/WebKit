@@ -216,7 +216,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::identifierForInitialRequest(
     /* [in] */ IWebDataSource* dataSource,
     /* [in] */ unsigned long identifier)
 { 
-    if (!done) {
+    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         BSTR urlStr;
         if (FAILED(request->URL(&urlStr)))
             return E_FAIL;
@@ -232,10 +232,7 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::removeIdentifierForRequest(
     /* [in] */ IWebView* webView,
     /* [in] */ unsigned long identifier)
 {
-    if (!done) {
-        ASSERT(urlMap().contains(identifier));
-        urlMap().remove(identifier);
-    }
+    urlMap().remove(identifier);
 
     return S_OK;
 }

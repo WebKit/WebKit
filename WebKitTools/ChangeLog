@@ -1,3 +1,27 @@
+2010-11-02  Adam Roben  <aroben@apple.com>
+
+        Only track resource identifiers in DRT when dumpResourceLoadCallbacks
+        is on
+
+        This reverts Windows to our pre-r71097 behavior. That patch made us
+        track all resource identifiers, including the main resource, so the
+        main resource's URL started appearing in test output instead of
+        "<unknown>". Arguably having the main resource's URL is better, but all
+        other platforms print "<unknown>" and we want to match.
+
+        Fixes <http://webkit.org/b/48837> <rdar://problem/8620351> REGRESSION
+        (r71097): Many http tests failing on Windows
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::identifierForInitialRequest): Don't add the
+        identifier to the URL map if we're not supposed to dump resource load
+        callbacks.
+        (ResourceLoadDelegate::removeIdentifierForRequest): Always remove the
+        identifier from the URL map even if we're already "done". There's no
+        point in keeping out-of-date identifiers around.
+
 2010-11-01  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Adam Roben.
