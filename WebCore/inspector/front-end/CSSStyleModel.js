@@ -119,7 +119,7 @@ WebInspector.CSSStyleModel.prototype = {
             if (!newRulePayload)
                 failureCallback();
             else
-                successCallback(WebInspector.CSSStyleDeclaration.parseRule(newRulePayload), doesAffectSelectedNode);
+                successCallback(WebInspector.CSSRule.parsePayload(newRulePayload), doesAffectSelectedNode);
         }
 
         InspectorBackend.setRuleSelector(ruleId, newContent, nodeId, callback);
@@ -133,7 +133,7 @@ WebInspector.CSSStyleModel.prototype = {
                 // Invalid syntax for a selector
                 failureCallback();
             } else {
-                var styleRule = WebInspector.CSSStyleDeclaration.parseRule(rule);
+                var styleRule = WebInspector.CSSRule.parsePayload(rule);
                 styleRule.rule = rule;
                 successCallback(styleRule, doesAffectSelectedNode);
             }

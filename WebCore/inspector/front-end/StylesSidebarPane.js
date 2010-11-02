@@ -1010,8 +1010,9 @@ WebInspector.BlankStylePropertiesSection.prototype = {
     editingSelectorCommitted: function(element, newContent, oldContent, context)
     {
         var self = this;
-        function successCallback(styleRule, doesSelectorAffectSelectedNode)
+        function successCallback(newRule, doesSelectorAffectSelectedNode)
         {
+            var styleRule = { section: self, style: newRule.style, selectorText: newRule.selectorText, sourceURL: newRule.sourceURL, rule: newRule };
             self.makeNormal(styleRule);
 
             if (!doesSelectorAffectSelectedNode) {
