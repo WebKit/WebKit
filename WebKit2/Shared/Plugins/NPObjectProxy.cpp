@@ -56,12 +56,20 @@ NPObjectProxy::~NPObjectProxy()
     if (!m_npRemoteObjectMap)
         return;
 
+    m_npRemoteObjectMap->npObjectProxyDestroyed(this);
     m_npRemoteObjectMap->connection()->sendSync(Messages::NPObjectMessageReceiver::Deallocate(), Messages::NPObjectMessageReceiver::Deallocate::Reply(), m_npObjectID);
 }
 
 bool NPObjectProxy::isNPObjectProxy(NPObject* npObject)
 {
     return npObject->_class == npClass();
+}
+
+void NPObjectProxy::invalidate()
+{
+    ASSERT(m_npRemoteObjectMap);
+
+    m_npRemoteObjectMap = 0;
 }
     
 void NPObjectProxy::initialize(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID)

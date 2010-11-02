@@ -48,7 +48,9 @@ public:
         ASSERT(isNPObjectProxy(npObject));
         return static_cast<NPObjectProxy*>(npObject);
     }
-    
+
+    void invalidate();
+
 private:
     NPObjectProxy();
     ~NPObjectProxy();

@@ -1,3 +1,34 @@
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Invalidate the NPRemoteObjectMap
+        https://bugs.webkit.org/show_bug.cgi?id=48856
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::~NPObjectMessageReceiver):
+        Remove FIXME. The NPRemoteObjectMap always outlives the NPObjectMessageReceiver.
+
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::~NPObjectProxy):
+        Call npObjectProxyDestroyed here.
+
+        (WebKit::NPObjectProxy::invalidate):
+        Null out m_npRemoteObjectMap.
+
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::~NPRemoteObjectMap):
+        Add assertions.
+
+        (WebKit::NPRemoteObjectMap::createNPObjectProxy):
+        Keep track of the NPObjectProxy by adding it to the m_npObjectProxies set.
+
+        (WebKit::NPRemoteObjectMap::npObjectProxyDestroyed):
+        Remove the NPObjectProxy from the m_npObjectProxies set.
+
+        (WebKit::NPRemoteObjectMap::invalidate):
+        Delete all NPObjectMessageReceivers. Iterate over all NPObjectProxy objects and invalidate them.
+
 2010-11-02  Mike Thole  <mthole@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -50,7 +50,6 @@ NPObjectMessageReceiver::NPObjectMessageReceiver(NPRemoteObjectMap* npRemoteObje
 
 NPObjectMessageReceiver::~NPObjectMessageReceiver()
 {
-    // FIXME: The remote object map might be destroyed here.
     m_npRemoteObjectMap->unregisterNPObject(m_npObjectID);
 
     releaseNPObject(m_npObject);
