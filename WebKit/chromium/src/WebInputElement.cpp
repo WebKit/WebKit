@@ -95,9 +95,9 @@ int WebInputElement::size() const
     return constUnwrap<HTMLInputElement>()->size();
 }
 
-void WebInputElement::setValue(const WebString& value)
+void WebInputElement::setValue(const WebString& value, bool sendChangeEvent)
 {
-    unwrap<HTMLInputElement>()->setValue(value);
+    unwrap<HTMLInputElement>()->setValue(value, sendChangeEvent);
 }
 
 WebString WebInputElement::value() const

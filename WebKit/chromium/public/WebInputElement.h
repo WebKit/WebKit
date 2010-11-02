@@ -66,7 +66,7 @@ namespace WebKit {
         WEBKIT_API bool isActivatedSubmit() const;
         WEBKIT_API void setActivatedSubmit(bool);
         WEBKIT_API int size() const;
-        WEBKIT_API void setValue(const WebString&);
+        WEBKIT_API void setValue(const WebString&, bool sendChangeEvent = false);
         WEBKIT_API WebString value() const;
         WEBKIT_API void setSuggestedValue(const WebString&);
         WEBKIT_API WebString suggestedValue() const;

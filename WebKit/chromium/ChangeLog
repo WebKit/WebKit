@@ -1,3 +1,15 @@
+2010-11-02  Ilya Sherman  <isherman@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Expose the sendChangeEvent parameter in WebInputElement::setValue() API,
+        primarily so that chromium form autofill can fire the onChange event.
+        https://bugs.webkit.org/show_bug.cgi?id=48177
+
+        * public/WebInputElement.h:
+        * src/WebInputElement.cpp:
+        (WebKit::WebInputElement::setValue):
+
 2010-11-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Timothy Hatcher.
