@@ -46,6 +46,9 @@
 
 namespace WebCore {
 
+    // FIXME: Do we want better encapsulation?
+    typedef Vector<char> ColorProfile;
+
     // The RGBA32Buffer object represents the decoded image data in RGBA32
     // format.  This buffer is what all decoders write a single frame into.
     // Frames are then instantiated for drawing by being handed this buffer.
@@ -125,6 +128,7 @@ namespace WebCore {
         bool premultiplyAlpha() const { return m_premultiplyAlpha; }
 
         void setHasAlpha(bool alpha);
+        void setColorProfile(const ColorProfile&);
         void setRect(const IntRect& r) { m_rect = r; }
         void setStatus(FrameStatus status);
         void setDuration(unsigned duration) { m_duration = duration; }
@@ -192,6 +196,7 @@ namespace WebCore {
                         // same as ImageDecoder::m_size.
         bool m_hasAlpha; // Whether or not any of the pixels in the buffer
                          // have transparency.
+        ColorProfile m_colorProfile;
 #endif
         IntRect m_rect; // The rect of the original specified frame within
                         // the overall buffer.  This will always just be
@@ -344,6 +349,7 @@ namespace WebCore {
 
         RefPtr<SharedBuffer> m_data; // The encoded data.
         Vector<RGBA32Buffer> m_frameBufferCache;
+        ColorProfile m_colorProfile;
         bool m_scaled;
         Vector<int> m_scaledColumns;
         Vector<int> m_scaledRows;

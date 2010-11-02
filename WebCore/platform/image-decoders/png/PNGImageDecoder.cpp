@@ -220,6 +220,22 @@ bool PNGImageDecoder::setFailed()
     return ImageDecoder::setFailed();
 }
 
+static ColorProfile readColorProfile(png_structp png, png_infop info)
+{
+#ifdef PNG_iCCP_SUPPORTED
+    char* profileName;
+    int compressionType;
+    char* profile;
+    png_uint_32 profileLength;
+    if (png_get_iCCP(png, info, &profileName, &compressionType, &profile, &profileLength)) {
+        ColorProfile colorProfile;
+        colorProfile.append(profile, profileLength);
+        return colorProfile;
+    }
+#endif
+    return ColorProfile();
+}
+
 void PNGImageDecoder::headerAvailable()
 {
     png_structp png = m_reader->pngPtr();
@@ -248,6 +264,8 @@ void PNGImageDecoder::headerAvailable()
 
     int bitDepth, colorType, interlaceType, compressionType, filterType, channels;
     png_get_IHDR(png, info, &width, &height, &bitDepth, &colorType, &interlaceType, &compressionType, &filterType);
+
+    m_colorProfile = readColorProfile(png, info);
 
     // The options we set here match what Mozilla does.
 
@@ -311,6 +329,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         }
         buffer.setStatus(RGBA32Buffer::FramePartial);
         buffer.setHasAlpha(false);
+        buffer.setColorProfile(m_colorProfile);
 
         // For PNGs, the frame always fills the entire image.
         buffer.setRect(IntRect(IntPoint(), size()));
