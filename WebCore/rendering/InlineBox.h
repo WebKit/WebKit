@@ -290,8 +290,9 @@ public:
         return 0;
     }
 
-    void adjustForFlippedBlocksWritingMode(IntPoint&);
-    void adjustForFlippedBlocksWritingMode(IntRect&);
+    IntPoint locationIncludingFlipping();
+    void flipForWritingMode(IntRect&);
+    IntPoint flipForWritingMode(const IntPoint&);
 
 private:
     InlineBox* m_next; // The next element on the same line as us.

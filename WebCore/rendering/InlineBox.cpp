@@ -279,23 +279,29 @@ int InlineBox::placeEllipsisBox(bool, int, int, int, bool&)
     return -1;
 }
 
-void InlineBox::adjustForFlippedBlocksWritingMode(IntPoint& point)
+IntPoint InlineBox::locationIncludingFlipping()
 {
     if (!renderer()->style()->isFlippedBlocksWritingMode())
-        return;
-    
+        return IntPoint(x(), y());
     RenderBlock* block = root()->block();
     if (block->style()->isHorizontalWritingMode())
-        point.setY(block->height() - height() - point.y());
+        return IntPoint(x(), block->height() - height() - y());
     else
-        point.setX(block->width() - width() - point.x());
+        return IntPoint(block->width() - width() - x(), y());
 }
 
-void InlineBox::adjustForFlippedBlocksWritingMode(IntRect& rect)
+void InlineBox::flipForWritingMode(IntRect& rect)
 {
     if (!renderer()->style()->isFlippedBlocksWritingMode())
         return;
-    return root()->block()->adjustForFlippedBlocksWritingMode(rect);
+    root()->block()->flipForWritingMode(rect);
+}
+
+IntPoint InlineBox::flipForWritingMode(const IntPoint& point)
+{
+    if (!renderer()->style()->isFlippedBlocksWritingMode())
+        return point;
+    return root()->block()->flipForWritingMode(point);
 }
 
 } // namespace WebCore

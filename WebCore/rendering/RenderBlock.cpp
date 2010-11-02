@@ -2268,8 +2268,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
             }
         }
 
-        IntPoint childPoint(tx, ty);
-        adjustForFlippedBlocksWritingMode(child, childPoint, ParentToChildFlippingAdjustment);
+        IntPoint childPoint = flipForWritingMode(child, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
         if (!child->hasSelfPaintingLayer() && !child->isFloating())
             child->paint(info, childPoint.x(), childPoint.y());
 
@@ -2404,9 +2403,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preserv
         if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-            IntPoint childPoint(tx + r->left() + r->m_renderer->marginLeft() - r->m_renderer->x(),
-                                ty + r->top() + r->m_renderer->marginTop() - r->m_renderer->y());
-            adjustForFlippedBlocksWritingMode(r->m_renderer, childPoint, ParentToChildFlippingAdjustment);
+            IntPoint childPoint = flipForWritingMode(r->m_renderer, IntPoint(tx + r->left() + r->m_renderer->marginLeft() - r->m_renderer->x(), ty + r->top() + r->m_renderer->marginTop() - r->m_renderer->y()), ParentToChildFlippingAdjustment);
             r->m_renderer->paint(currentPaintInfo, childPoint.x(), childPoint.y());
             if (!preservePhase) {
                 currentPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
@@ -4152,8 +4149,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
         if (floatingObject->m_shouldPaint && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
             int xOffset = floatingObject->left() + floatingObject->m_renderer->marginLeft() - floatingObject->m_renderer->x();
             int yOffset =  floatingObject->top() + floatingObject->m_renderer->marginTop() - floatingObject->m_renderer->y();
-            IntPoint childPoint(tx + xOffset, ty + yOffset);
-            adjustForFlippedBlocksWritingMode(floatingObject->m_renderer, childPoint, ParentToChildFlippingAdjustment);
+            IntPoint childPoint= flipForWritingMode(floatingObject->m_renderer, IntPoint(tx + xOffset, ty + yOffset), ParentToChildFlippingAdjustment);
             if (floatingObject->m_renderer->hitTest(request, result, IntPoint(x, y), childPoint.x(), childPoint.y())) {
                 updateHitTestResult(result, IntPoint(x - childPoint.x(), y - childPoint.y()));
                 return true;
@@ -4210,8 +4206,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
         if (hitTestAction == HitTestChildBlockBackgrounds)
             childHitTest = HitTestChildBlockBackground;
         for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
-            IntPoint childPoint(tx, ty);
-            adjustForFlippedBlocksWritingMode(child, childPoint, ParentToChildFlippingAdjustment);
+            IntPoint childPoint = flipForWritingMode(child, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
             if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, x, y, childPoint.x(), childPoint.y(), childHitTest))
                 return true;
         }

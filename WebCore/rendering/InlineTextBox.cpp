@@ -166,7 +166,9 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     int width = isHorizontal() ? logicalWidth : selHeight;
     int height = isHorizontal() ? selHeight : logicalWidth;
     
-    return IntRect(topPoint, IntSize(width, height));
+    IntRect result = IntRect(topPoint, IntSize(width, height));
+    flipForWritingMode(result);
+    return result;
 }
 
 void InlineTextBox::deleteLine(RenderArena* arena)
@@ -309,12 +311,11 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, in
     if (isLineBreak())
         return false;
 
-    IntPoint boxOrigin(m_x, m_y);
-    adjustForFlippedBlocksWritingMode(boxOrigin);
+    IntPoint boxOrigin = locationIncludingFlipping();
     boxOrigin.move(tx, ty);
     IntRect rect(boxOrigin, IntSize(width(), height()));
     if (m_truncation != cFullTruncation && visibleToHitTesting() && rect.intersects(result.rectForPoint(x, y))) {
-        renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
+        renderer()->updateHitTestResult(result, flipForWritingMode(IntPoint(x - tx, y - ty)));
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), x, y, rect))
             return true;
     }
@@ -440,12 +441,10 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty)
     
     ty -= styleToUse->isHorizontalWritingMode() ? 0 : logicalHeight();
 
-    IntPoint boxOrigin(m_x, m_y);
-    adjustForFlippedBlocksWritingMode(boxOrigin);
-    boxOrigin.move(tx, ty);
-    
-    IntPoint textOrigin = IntPoint(boxOrigin.x(), boxOrigin.y() + styleToUse->font().ascent());
+    IntPoint boxOrigin = locationIncludingFlipping();
+    boxOrigin.move(tx, ty);    
     IntRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
+    IntPoint textOrigin = IntPoint(boxOrigin.x(), boxOrigin.y() + styleToUse->font().ascent());
 
     if (!isHorizontal()) {
         context->save();
@@ -1083,15 +1082,13 @@ unsigned InlineTextBox::caretMaxRenderedOffset() const
 
 int InlineTextBox::textPos() const
 {
-    if (x() == 0)
+    if (logicalLeft() == 0)
         return 0;
-        
     RenderBlock* blockElement = renderer()->containingBlock();
-    return !isLeftToRightDirection() ? x() - blockElement->borderRight() - blockElement->paddingRight()
-                      : x() - blockElement->borderLeft() - blockElement->paddingLeft();
+    return logicalLeft() - blockElement->borderStart() - blockElement->paddingStart();
 }
 
-int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
+int InlineTextBox::offsetForPosition(int lineOffset, bool includePartialGlyphs) const
 {
     if (isLineBreak())
         return 0;
@@ -1100,7 +1097,7 @@ int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs) const
     RenderStyle* style = text->style(m_firstLine);
     const Font* f = &style->font();
     return f->offsetForPosition(TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride || style->visuallyOrdered()),
-                                _x - m_x, includePartialGlyphs);
+                                lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
 int InlineTextBox::positionForOffset(int offset) const
@@ -1109,7 +1106,7 @@ int InlineTextBox::positionForOffset(int offset) const
     ASSERT(offset <= m_start + m_len);
 
     if (isLineBreak())
-        return m_x;
+        return logicalLeft();
 
     RenderText* text = toRenderText(renderer());
     const Font& f = text->style(m_firstLine)->font();
@@ -1117,7 +1114,7 @@ int InlineTextBox::positionForOffset(int offset) const
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
     return enclosingIntRect(f.selectionRectForText(TextRun(text->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_toAdd, !isLeftToRightDirection(), m_dirOverride),
-                                                   IntPoint(m_x, 0), 0, from, to)).right();
+                                                   IntPoint(logicalLeft(), 0), 0, from, to)).right();
 }
 
 bool InlineTextBox::containsCaretOffset(int offset) const

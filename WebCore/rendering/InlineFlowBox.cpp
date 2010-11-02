@@ -654,7 +654,7 @@ void InlineFlowBox::computeBlockDirectionOverflow(int lineTop, int lineBottom, b
 bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
 {
     IntRect overflowRect(visibleOverflowRect());
-    adjustForFlippedBlocksWritingMode(overflowRect);
+    flipForWritingMode(overflowRect);
     overflowRect.move(tx, ty);
     if (!overflowRect.intersects(result.rectForPoint(x, y)))
         return false;
@@ -668,12 +668,11 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     }
 
     // Now check ourselves.
-    IntPoint boxOrigin(m_x, m_y);
-    adjustForFlippedBlocksWritingMode(boxOrigin);
+    IntPoint boxOrigin = locationIncludingFlipping();
     boxOrigin.move(tx, ty);
     IntRect rect(boxOrigin, IntSize(width(), height()));
     if (visibleToHitTesting() && rect.intersects(result.rectForPoint(x, y))) {
-        renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty)); // Don't add in m_x or m_y here, we want coords in the containing block's space.
+        renderer()->updateHitTestResult(result, flipForWritingMode(IntPoint(x - tx, y - ty))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), x, y, rect))
             return true;
     }
@@ -685,7 +684,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     IntRect overflowRect(visibleOverflowRect());
     overflowRect.inflate(renderer()->maximalOutlineSize(paintInfo.phase));
-    adjustForFlippedBlocksWritingMode(overflowRect);
+    flipForWritingMode(overflowRect);
     overflowRect.move(tx, ty);
     
     if (!paintInfo.rect.intersects(overflowRect))
@@ -817,10 +816,10 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     }
     
     // Move x/y to our coordinates.
-    IntPoint localPoint(x, y);
-    adjustForFlippedBlocksWritingMode(localPoint);
-    tx += localPoint.x();
-    ty += localPoint.y();
+    IntRect localRect(x, y, w, h);
+    flipForWritingMode(localRect);
+    tx += localRect.x();
+    ty += localRect.y();
     
     GraphicsContext* context = paintInfo.context;
     
@@ -900,10 +899,10 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     }
     
     // Move x/y to our coordinates.
-    IntPoint localPoint(x, y);
-    adjustForFlippedBlocksWritingMode(localPoint);
-    tx += localPoint.x();
-    ty += localPoint.y();
+    IntRect localRect(x, y, w, h);
+    flipForWritingMode(localRect);
+    tx += localRect.x();
+    ty += localRect.y();
 
     const NinePieceImage& maskNinePieceImage = renderer()->style()->maskBoxImage();
     StyleImage* maskBoxImage = renderer()->style()->maskBoxImage().image();

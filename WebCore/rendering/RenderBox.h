@@ -51,9 +51,11 @@ public:
     void setHeight(int height) { m_frameRect.setHeight(height); }
 
     int logicalLeft() const { return style()->isHorizontalWritingMode() ? x() : y(); }
+    int logicalRight() const { return logicalLeft() + logicalWidth(); }
     int logicalTop() const { return style()->isHorizontalWritingMode() ? y() : x(); }
     int logicalWidth() const { return style()->isHorizontalWritingMode() ? width() : height(); }
     int logicalHeight() const { return style()->isHorizontalWritingMode() ? height() : width(); }
+
     void setLogicalLeft(int left)
     {
         if (style()->isHorizontalWritingMode())
@@ -378,9 +380,10 @@ public:
     virtual int baselinePosition(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
 
     enum FlippingAdjustment { ChildToParentFlippingAdjustment, ParentToChildFlippingAdjustment };
-    void adjustForFlippedBlocksWritingMode(RenderBox* child, IntPoint&, FlippingAdjustment);
-    void adjustForFlippedBlocksWritingMode(IntRect&); // Unflips a rect in our coordinate space.
-    int convertFromFlippedWritingMode(int position);
+    IntPoint flipForWritingMode(RenderBox* child, const IntPoint&, FlippingAdjustment);
+    int flipForWritingMode(int position);
+    IntPoint flipForWritingMode(const IntPoint&);
+    void flipForWritingMode(IntRect&);
     IntSize locationOffsetIncludingFlipping();
 
 protected:

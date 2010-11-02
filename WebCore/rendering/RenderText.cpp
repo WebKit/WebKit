@@ -418,38 +418,41 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
     // Get the offset for the position, since this will take rtl text into account.
     int offset;
 
+    int pointLineDirection = firstTextBox()->isHorizontal() ? point.x() : point.y();
+    int pointBlockDirection = firstTextBox()->isHorizontal() ? point.y() : point.x();
+    
     // FIXME: We should be able to roll these special cases into the general cases in the loop below.
-    if (firstTextBox() && point.y() <  firstTextBox()->root()->lineBottom() && point.x() < firstTextBox()->m_x) {
+    if (firstTextBox() && pointBlockDirection <  firstTextBox()->root()->lineBottom() && pointLineDirection < firstTextBox()->logicalLeft()) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left of the first text box left edge
-        offset = firstTextBox()->offsetForPosition(point.x());
+        offset = firstTextBox()->offsetForPosition(pointLineDirection);
         return createVisiblePosition(offset + firstTextBox()->start(), DOWNSTREAM);
     }
-    if (lastTextBox() && point.y() >= lastTextBox()->root()->lineTop() && point.x() >= lastTextBox()->m_x + lastTextBox()->logicalWidth()) {
+    if (lastTextBox() && pointBlockDirection >= lastTextBox()->root()->lineTop() && pointLineDirection >= lastTextBox()->logicalRight()) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right of the last text box right edge
-        offset = lastTextBox()->offsetForPosition(point.x());
+        offset = lastTextBox()->offsetForPosition(pointLineDirection);
         return createVisiblePosition(offset + lastTextBox()->start(), VP_UPSTREAM_IF_POSSIBLE);
     }
 
     InlineTextBox* lastBoxAbove = 0;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (point.y() >= box->root()->lineTop()) {
+        if (pointBlockDirection >= box->root()->lineTop()) {
             int bottom = box->root()->nextRootBox() ? box->root()->nextRootBox()->lineTop() : box->root()->lineBottom();
-            if (point.y() < bottom) {
-                offset = box->offsetForPosition(point.x());
+            if (pointBlockDirection < bottom) {
+                offset = box->offsetForPosition(pointLineDirection);
 
-                if (point.x() == box->m_x)
+                if (pointLineDirection == box->logicalLeft())
                     // the x coordinate is equal to the left edge of this box
                     // the affinity must be downstream so the position doesn't jump back to the previous line
                     return createVisiblePosition(offset + box->start(), DOWNSTREAM);
 
-                if (point.x() < box->m_x + box->logicalWidth())
+                if (pointLineDirection < box->logicalRight())
                     // and the x coordinate is to the left of the right edge of this box
                     // check to see if position goes in this box
                     return createVisiblePosition(offset + box->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
 
-                if (!box->prevOnLine() && point.x() < box->m_x)
+                if (!box->prevOnLine() && pointLineDirection < box->logicalLeft())
                     // box is first on line
                     // and the x coordinate is to the left of the first text box left edge
                     return createVisiblePosition(offset + box->start(), DOWNSTREAM);
@@ -488,7 +491,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     left -= caretWidthLeftOfOffset;
     int caretWidthRightOfOffset = caretWidth - caretWidthLeftOfOffset;
 
-    int rootLeft = box->root()->x();
+    int rootLeft = box->root()->logicalLeft();
     int rootRight = rootLeft + box->root()->logicalWidth();
     // FIXME: should we use the width of the root inline box or the
     // width of the containing block for this?
@@ -500,11 +503,11 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
     int leftEdge;
     int rightEdge;
     if (style()->autoWrap()) {
-        leftEdge = cb->x();
-        rightEdge = cb->frameRect().right();
+        leftEdge = cb->logicalLeft();
+        rightEdge = cb->logicalRight();
     } else {
-        leftEdge = min(cb->x(), rootLeft);
-        rightEdge = max(cb->frameRect().right(), rootRight);
+        leftEdge = min(cb->logicalLeft(), rootLeft);
+        rightEdge = max(cb->logicalRight(), rootRight);
     }
 
     bool rightAligned = false;
@@ -532,7 +535,7 @@ IntRect RenderText::localCaretRect(InlineBox* inlineBox, int caretOffset, int* e
         left = max(left, rootLeft);
     }
 
-    return IntRect(left, top, caretWidth, height);
+    return style()->isHorizontalWritingMode() ? IntRect(left, top, caretWidth, height) : IntRect(top, left, height, caretWidth);
 }
 
 ALWAYS_INLINE int RenderText::widthFromCache(const Font& f, int start, int len, int xPos, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
