@@ -25,6 +25,8 @@
 
 #include "WebInspectorFrontendClient.h"
 
+#include "WebPage.h"
+#include <WebCore/Page.h>
 #include <wtf/text/WTFString.h>
 
 #define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
@@ -34,19 +36,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebInspectorFrontendClient::windowObjectCleared()
+WebInspectorFrontendClient::WebInspectorFrontendClient(WebPage* page, WebPage* inspectorPage)
+    : InspectorFrontendClientLocal(page->corePage()->inspectorController(), inspectorPage->corePage())
+    , m_page(page)
 {
-    notImplemented();
-}
-
-void WebInspectorFrontendClient::frontendLoaded()
-{
-    notImplemented();
-}
-
-void WebInspectorFrontendClient::moveWindowBy(float, float)
-{
-    notImplemented();
 }
 
 String WebInspectorFrontendClient::localizedStringsURL()
@@ -76,17 +69,17 @@ void WebInspectorFrontendClient::disconnectFromBackend()
     notImplemented();
 }
 
-void WebInspectorFrontendClient::requestAttachWindow()
+void WebInspectorFrontendClient::attachWindow()
 {
     notImplemented();
 }
 
-void WebInspectorFrontendClient::requestDetachWindow()
+void WebInspectorFrontendClient::detachWindow()
 {
     notImplemented();
 }
 
-void WebInspectorFrontendClient::changeAttachedWindowHeight(unsigned)
+void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned)
 {
     notImplemented();
 }

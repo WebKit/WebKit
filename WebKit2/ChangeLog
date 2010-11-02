@@ -1,3 +1,22 @@
+2010-11-02  Timothy Hatcher  <timothy@apple.com>
+
+        Make WebInspectorFrontendClient inherit from InspectorFrontendClientLocal.
+
+        We can do this since the Web Inspector WebPage will share the same process
+        with the inspected WebPage.
+
+        https://webkit.org/b/48652
+
+        Reviewed by Pavel Feldman.
+
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::WebInspectorFrontendClient):
+        Call the InspectorFrontendClientLocal constructor.
+        (WebKit::WebInspectorFrontendClient::attachWindow): Added.
+        (WebKit::WebInspectorFrontendClient::detachWindow): Added.
+        (WebKit::WebInspectorFrontendClient::setAttachedWindowHeight): Added.
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h:
+
 2010-11-01  Juha Savolainen  <juha.savolainen@weego.fi>
 
         Reviewed by Kenneth Rohde Christiansen.
