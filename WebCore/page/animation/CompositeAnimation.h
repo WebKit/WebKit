@@ -64,7 +64,7 @@ public:
 
     void suspendAnimations();
     void resumeAnimations();
-    bool isSuspended() const { return m_isSuspended; }
+    bool suspended() const { return m_suspended; }
     
     bool hasAnimations() const  { return !m_transitions.isEmpty() || !m_keyframeAnimations.isEmpty(); }
 
@@ -84,7 +84,7 @@ private:
     CompositeAnimation(AnimationControllerPrivate* animationController)
         : m_animationController(animationController)
         , m_numStyleAvailableWaiters(0)
-        , m_isSuspended(false)
+        , m_suspended(false)
     {
     }
 
@@ -99,7 +99,7 @@ private:
     AnimationNameMap m_keyframeAnimations;
     Vector<AtomicStringImpl*> m_keyframeAnimationOrderMap;
     unsigned m_numStyleAvailableWaiters;
-    bool m_isSuspended;
+    bool m_suspended;
 };
 
 } // namespace WebCore

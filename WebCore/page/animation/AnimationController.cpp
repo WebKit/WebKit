@@ -81,7 +81,7 @@ bool AnimationControllerPrivate::clear(RenderObject* renderer)
     if (!animation)
         return false;
     animation->clearRenderer();
-    return animation->isSuspended();
+    return animation->suspended();
 }
 
 void AnimationControllerPrivate::updateAnimationTimer(bool callSetChanged/* = false*/)
@@ -92,7 +92,7 @@ void AnimationControllerPrivate::updateAnimationTimer(bool callSetChanged/* = fa
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
         CompositeAnimation* compAnim = it->second.get();
-        if (!compAnim->isSuspended() && compAnim->hasAnimations()) {
+        if (!compAnim->suspended() && compAnim->hasAnimations()) {
             double t = compAnim->timeToNextService();
             if (t != -1 && (t < needsService || needsService == -1))
                 needsService = t;

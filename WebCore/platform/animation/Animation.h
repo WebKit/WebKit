@@ -93,7 +93,7 @@ public:
     enum { IterationCountInfinite = -1 };
     int iterationCount() const { return m_iterationCount; }
     const String& name() const { return m_name; }
-    unsigned playState() const { return m_playState; }
+    EAnimPlayState playState() const { return static_cast<EAnimPlayState>(m_playState); }
     int property() const { return m_property; }
     const PassRefPtr<TimingFunction> timingFunction() const { return m_timingFunction; }
 
@@ -103,7 +103,7 @@ public:
     void setFillMode(unsigned f) { m_fillMode = f; m_fillModeSet = true; }
     void setIterationCount(int c) { m_iterationCount = c; m_iterationCountSet = true; }
     void setName(const String& n) { m_name = n; m_nameSet = true; }
-    void setPlayState(unsigned d) { m_playState = d; m_playStateSet = true; }
+    void setPlayState(EAnimPlayState d) { m_playState = d; m_playStateSet = true; }
     void setProperty(int t) { m_property = t; m_propertySet = true; }
     void setTimingFunction(PassRefPtr<TimingFunction> f) { m_timingFunction = f; m_timingFunctionSet = true; }
 
@@ -155,7 +155,7 @@ public:
     static unsigned initialAnimationFillMode() { return AnimationFillModeNone; }
     static int initialAnimationIterationCount() { return 1; }
     static String initialAnimationName() { return String("none"); }
-    static unsigned initialAnimationPlayState() { return AnimPlayStatePlaying; }
+    static EAnimPlayState initialAnimationPlayState() { return AnimPlayStatePlaying; }
     static int initialAnimationProperty() { return cAnimateAll; }
     static PassRefPtr<TimingFunction> initialAnimationTimingFunction() { return CubicBezierTimingFunction::create(); }
 };
