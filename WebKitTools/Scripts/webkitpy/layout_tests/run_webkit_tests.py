@@ -948,14 +948,15 @@ class TestRunner:
         if not self._options.test_results_server:
             return
 
+        if not self._options.master_name:
+            _log.error("--test-results-server was set, but --master-name was not. Not uploading JSON files.")
+            return
+
         _log.info("Uploading JSON files for builder: %s",
                    self._options.builder_name)
 
-        attrs = [("builder", self._options.builder_name), ("testtype", "layout-tests")]
-        # FIXME: master_name should be required if test_results_server is set.
-        # Throw an error if master_name isn't set.
-        if self._options.master_name:
-            attrs.append(("master", self._options.master_name))
+        attrs = [("builder", self._options.builder_name), ("testtype", "layout-tests"),
+            ("master", self._options.master_name)]
 
         json_files = ["expectations.json"]
         if self._options.upload_full_results:
@@ -965,13 +966,6 @@ class TestRunner:
 
         files = [(file, os.path.join(self._options.results_directory, file))
             for file in json_files]
-
-        # FIXME: Remove this. This is temporary debug logging.
-        if self._options.builder_name.startswith("Webkit Linux"):
-            for filename in files:
-                _log.debug(filename[1])
-                with codecs.open(filename[1], "r") as results_file:
-                    _log.debug("%s:\n%s" % (filename[0], results_file.read()))
 
         uploader = test_results_uploader.TestResultsUploader(
             self._options.test_results_server)
