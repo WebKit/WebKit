@@ -1137,7 +1137,12 @@ sub GenerateImplementation
         $implIncludes{"$1.h"} = 1;
     } else {
         if (!$podType) {
-            $implIncludes{"$implClassName.h"} = 1 if not $codeGenerator->AvoidInclusionOfType($implClassName);
+            if (!$codeGenerator->AvoidInclusionOfType($implClassName)) {
+                $implIncludes{"$implClassName.h"} = 1 ;
+            } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($implClassName)) {
+                my $includeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implClassName);
+                $implIncludes{"${includeType}.h"} = 1;
+            }
         } else {
             $implIncludes{"$podType.h"} = 1 unless $podType eq "float";
         }

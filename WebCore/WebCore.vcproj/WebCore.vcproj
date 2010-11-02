@@ -61664,6 +61664,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedPreserveAspectRatio.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimatedRect.h"
 				>
 			</File>

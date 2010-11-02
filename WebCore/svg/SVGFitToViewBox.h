@@ -22,12 +22,16 @@
 #define SVGFitToViewBox_h
 
 #if ENABLE(SVG)
-#include "SVGElement.h"
-#include "SVGPreserveAspectRatio.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class AffineTransform;
+class Attribute;
+class Document;
+class FloatRect;
+class QualifiedName;
+class SVGPreserveAspectRatio;
 
 class SVGFitToViewBox {
 public:
@@ -40,7 +44,7 @@ public:
     bool isKnownAttribute(const QualifiedName&);
 
     virtual void setViewBoxBaseValue(const FloatRect&) = 0;
-    virtual void setPreserveAspectRatioBaseValue(DeprecatedSVGAnimatedPropertyTraits<SVGPreserveAspectRatio>::PassType) = 0;
+    virtual void setPreserveAspectRatioBaseValue(const SVGPreserveAspectRatio&) = 0;
 
 private:
     bool parseViewBox(Document*, const String&, FloatRect&);

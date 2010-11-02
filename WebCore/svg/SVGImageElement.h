@@ -70,7 +70,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::yAttr, SVGLength, Y, y)
         DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::widthAttr, SVGLength, Width, width)
         DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::heightAttr, SVGLength, Height, height)
-        DECLARE_ANIMATED_PROPERTY(SVGImageElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGImageElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
         // SVGURIReference
         DECLARE_ANIMATED_PROPERTY(SVGImageElement, XLinkNames::hrefAttr, String, Href, href)

@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 #include "Path.h"
+#include "SVGAnimatedPropertyMacros.h"
 #include "SVGStyledLocatableElement.h"
 #include "SVGTransformable.h"
 

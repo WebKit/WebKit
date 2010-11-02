@@ -23,25 +23,12 @@
 
 #if ENABLE(SVG)
 #include "PlatformString.h"
-#include "SVGPreserveAspectRatio.h"
 #include "SVGTransformList.h"
 
 namespace WebCore {
 
 template<typename Type>
 struct DeprecatedSVGAnimatedPropertyTraits : public Noncopyable { };
-
-// SVGAnimatedPreserveAspectRatio
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<SVGPreserveAspectRatio> : public Noncopyable {
-    typedef const SVGPreserveAspectRatio& PassType;
-    typedef SVGPreserveAspectRatio ReturnType;
-    typedef SVGPreserveAspectRatio StoredType;
-
-    static ReturnType null() { return SVGPreserveAspectRatio(); }
-    static ReturnType toReturnType(const StoredType& type) { return type; }
-    static String toString(PassType type) { return type.valueAsString(); }
-};
 
 // SVGAnimatedString
 template<>

@@ -3992,6 +3992,7 @@
             'svg/SVGAnimatedPathData.h',
             'svg/SVGAnimatedPoints.cpp',
             'svg/SVGAnimatedPoints.h',
+            'svg/SVGAnimatedPreserveAspectRatio.h',
             'svg/SVGAnimatedRect.h',
             'svg/SVGAnimationElement.cpp',
             'svg/SVGAnimationElement.h',

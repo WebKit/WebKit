@@ -2972,7 +2972,6 @@ sub GetNativeType
     return "FloatPoint" if $type eq "SVGPoint";
     return "AffineTransform" if $type eq "SVGMatrix";
     return "SVGTransform" if $type eq "SVGTransform";
-    return "SVGPreserveAspectRatio" if $type eq "SVGPreserveAspectRatio";
     return "SVGPaint::SVGPaintType" if $type eq "SVGPaintType";
     return "DOMTimeStamp" if $type eq "DOMTimeStamp";
     return "unsigned" if $type eq "unsigned int";
@@ -3024,7 +3023,6 @@ sub BasicTypeCanFailConversion
 
     return 1 if $type eq "SVGMatrix";
     return 1 if $type eq "SVGPoint";
-    return 1 if $type eq "SVGPreserveAspectRatio";
     return 1 if $type eq "SVGTransform";
     return 0;
 }

@@ -80,7 +80,7 @@ namespace WebCore {
 
         // SVGPatternElement
         DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-        DECLARE_ANIMATED_PROPERTY(SVGPatternElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio) 
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGPatternElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio) 
     };
 
 } // namespace WebCore

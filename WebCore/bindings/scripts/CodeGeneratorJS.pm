@@ -2456,7 +2456,6 @@ my %nativeType = (
     "IDBKey" => "RefPtr<IDBKey>",
     "SVGMatrix" => "AffineTransform",
     "SVGPaintType" => "SVGPaint::SVGPaintType",
-    "SVGPreserveAspectRatio" => "SVGPreserveAspectRatio",
     "SVGPoint" => "FloatPoint",
     "SVGRect" => "FloatRect",
     "SVGTransform" => "SVGTransform",

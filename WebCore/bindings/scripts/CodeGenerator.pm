@@ -51,7 +51,7 @@ my %numericTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1,
 my %primitiveTypeHash = ( "boolean" => 1, "void" => 1, "Date" => 1);
 
 my %podTypeHash = ("SVGTransform" => 1);
-my %podTypesWithWritablePropertiesHash = ("SVGMatrix" => 1, "SVGPoint" => 1, "SVGPreserveAspectRatio" => 1);
+my %podTypesWithWritablePropertiesHash = ("SVGMatrix" => 1, "SVGPoint" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
@@ -60,7 +60,7 @@ my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean"
                                    "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
                                    "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
                                    "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1,
-                                   "SVGAnimatedRect" => 1);
+                                   "SVGAnimatedPreserveAspectRatio" => 1, "SVGAnimatedRect" => 1);
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
@@ -82,6 +82,7 @@ my %svgNativeType = (
     "SVGLengthList" => "SVGListPropertyTearOff<SVGLengthList>",
     "SVGNumber" => "SVGPropertyTearOff<float>",
     "SVGNumberList" => "SVGListPropertyTearOff<SVGNumberList>",
+    "SVGPreserveAspectRatio" => "SVGPropertyTearOff<SVGPreserveAspectRatio>",
     "SVGRect" => "SVGPropertyTearOff<FloatRect>"
 );
 

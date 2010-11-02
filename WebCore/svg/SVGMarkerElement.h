@@ -89,7 +89,7 @@ private:
 
     // SVGFitToViewBox
     DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-    DECLARE_ANIMATED_PROPERTY(SVGMarkerElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+    DECLARE_ANIMATED_PROPERTY_NEW(SVGMarkerElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 };
 
 }

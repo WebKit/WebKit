@@ -59,7 +59,7 @@ namespace WebCore {
 
         // SVGFitToViewBox
         DECLARE_ANIMATED_PROPERTY_NEW(SVGViewSpec, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
-        DECLARE_ANIMATED_PROPERTY(SVGViewSpec, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+        DECLARE_ANIMATED_PROPERTY_NEW(SVGViewSpec, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
         mutable RefPtr<SVGTransformList> m_transform;
         String m_viewTargetString;

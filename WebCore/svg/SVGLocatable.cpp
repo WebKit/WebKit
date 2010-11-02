@@ -26,8 +26,9 @@
 #include "SVGLocatable.h"
 
 #include "RenderObject.h"
-#include "SVGStyledLocatableElement.h"
 #include "SVGException.h"
+#include "SVGNames.h"
+#include "SVGStyledLocatableElement.h"
 
 namespace WebCore {
 

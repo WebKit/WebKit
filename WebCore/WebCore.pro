@@ -2382,6 +2382,7 @@ HEADERS += \
     svg/SVGAnimatedNumberList.h \
     svg/SVGAnimatedPathData.h \
     svg/SVGAnimatedPoints.h \
+    svg/SVGAnimatedPreserveAspectRatio.h \
     svg/SVGAnimatedRect.h \
     svg/SVGAnimateElement.h \
     svg/SVGAnimateMotionElement.h \
