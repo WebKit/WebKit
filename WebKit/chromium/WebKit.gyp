@@ -741,7 +741,6 @@
                 'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
             }],
         },
-
         {
             'target_name': 'webkit_unit_tests',
             'type': 'executable',
@@ -826,6 +825,7 @@
             'dependencies': [
                 'ImageDiff',
                 'inspector_resources',
+                'TestNetscapePlugIn',
                 'webkit',
                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf_config',
                 '<(chromium_src_dir)/third_party/icu/icu.gyp:icuuc',
@@ -880,9 +880,6 @@
                 },{ # OS!="win"
                     'sources/': [
                         ['exclude', 'Win\\.cpp$'],
-                    ],
-                    'dependencies': [
-                        'TestNetscapePlugIn',
                     ],
                     'actions': [
                         {
@@ -972,6 +969,63 @@
                 }],
             ],
         },
+        {
+            'target_name': 'TestNetscapePlugIn',
+            'type': 'loadable_module',
+            'sources': [ '<@(test_plugin_files)' ],
+            'dependencies': [
+                '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+            ],
+            'include_dirs': [
+                '<(chromium_src_dir)',
+                '../../WebKitTools/DumpRenderTree/TestNetscapePlugIn',
+                '../../WebKitTools/DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders',
+            ],
+            'conditions': [
+                ['OS=="mac"', {
+                    'mac_bundle': 1,
+                    # It would be nice to name this
+                    # TestNetscapePlugIn, but that name is already
+                    # used by the fork of this plugin in Chromium.
+                    'product_name': 'WebKitTestNetscapePlugIn',
+                    'product_extension': 'plugin',
+                    'link_settings': {
+                        'libraries': [
+                            '$(SDKROOT)/System/Library/Frameworks/Carbon.framework',
+                            '$(SDKROOT)/System/Library/Frameworks/Cocoa.framework',
+                            '$(SDKROOT)/System/Library/Frameworks/QuartzCore.framework',
+                        ]
+                    },
+                    'xcode_settings': {
+                        'GCC_SYMBOLS_PRIVATE_EXTERN': 'NO',
+                        # This is a temporary fork of
+                        # DRT/TestNetscapePlugIn/mac/Info.plist.  Once
+                        # we get rid of our forked plugin in the
+                        # chromium repo, we can share the same
+                        # Info.plist.
+                        'INFOPLIST_FILE': '../../WebKitTools/DumpRenderTree/chromium/TestNetscapePlugIn/Info.plist',
+                    },
+                }],
+                ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
+                    'cflags': [
+                        '-fvisibility=default',
+                    ],
+                }],
+                ['OS=="win"', {
+                    'defines': [
+                        # This seems like a hack, but this is what Safari Win does.
+                        'snprintf=_snprintf',
+                    ],
+                    'sources': [
+                        '../../WebKitTools/DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.def',
+                        '../../WebKitTools/DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc',
+                    ],
+                    # The .rc file requires that the name of the dll is npTestNetscapePlugin.dll.
+                    # This adds the 'np' to the dll name.
+                    'product_prefix': 'np',
+                }],
+            ],
+        },
     ], # targets
     'conditions': [
         ['OS=="win"', {
@@ -980,54 +1034,6 @@
                 'type': 'executable',
                 'sources': ['../../WebKitTools/DumpRenderTree/chromium/LayoutTestHelperWin.cpp'],
             }],
-        }, {  # OS!="win"
-            'targets': [
-                {
-                    'target_name': 'TestNetscapePlugIn',
-                    'type': 'loadable_module',
-                    'sources': [ '<@(test_plugin_files)' ],
-                    'dependencies': [
-                        '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
-                    ],
-                    'include_dirs': [
-                        '<(chromium_src_dir)',
-                        '../../WebKitTools/DumpRenderTree/TestNetscapePlugIn',
-                        '../../WebKitTools/DumpRenderTree/chromium/TestNetscapePlugIn/ForwardingHeaders',
-                    ],
-
-                    'conditions': [
-                        ['OS=="mac"', {
-                            'mac_bundle': 1,
-                            # It would be nice to name this
-                            # TestNetscapePlugIn, but that name is already
-                            # used by the fork of this plugin in Chromium.
-                            'product_name': 'WebKitTestNetscapePlugIn',
-                            'product_extension': 'plugin',
-                            'link_settings': {
-                                'libraries': [
-                                    '$(SDKROOT)/System/Library/Frameworks/Carbon.framework',
-                                    '$(SDKROOT)/System/Library/Frameworks/Cocoa.framework',
-                                    '$(SDKROOT)/System/Library/Frameworks/QuartzCore.framework',
-                                ]
-                            },
-                            'xcode_settings': {
-                                'GCC_SYMBOLS_PRIVATE_EXTERN': 'NO',
-                                # This is a temporary fork of
-                                # DRT/TestNetscapePlugIn/mac/Info.plist.  Once
-                                # we get rid of our forked plugin in the
-                                # chromium repo, we can share the same
-                                # Info.plist.
-                                'INFOPLIST_FILE': '../../WebKitTools/DumpRenderTree/chromium/TestNetscapePlugIn/Info.plist',
-                            },
-                        }],
-                        ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
-                            'cflags': [
-                                '-fvisibility=default',
-                            ],
-                        }],
-                    ],
-                },
-            ],
         }],
         ['OS=="mac"', {
             'targets': [
