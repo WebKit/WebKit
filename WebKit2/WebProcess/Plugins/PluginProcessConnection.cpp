@@ -46,6 +46,8 @@ PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager*
 
 PluginProcessConnection::~PluginProcessConnection()
 {
+    ASSERT(!m_connection);
+    ASSERT(!m_npRemoteObjectMap);
 }
 
 void PluginProcessConnection::addPluginProxy(PluginProxy* plugin)
@@ -62,6 +64,10 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
     if (!m_plugins.isEmpty())
         return;
 
+    // Invalidate our remote object map.
+    m_npRemoteObjectMap->invalidate();
+    m_npRemoteObjectMap = 0;
+    
     // We have no more plug-ins, invalidate the connection to the plug-in process.
     ASSERT(m_connection);
     m_connection->invalidate();

@@ -1,3 +1,96 @@
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        More NPRuntime work
+        https://bugs.webkit.org/show_bug.cgi?id=48847
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::~WebProcessConnection):
+        Add assertions.
+
+        (WebKit::WebProcessConnection::removePluginControllerProxy):
+        If we have no more plug-in controller proxies, invalidate the remote object map.
+
+        * Shared/Plugins/NPIdentifierData.cpp:
+        (WebKit::NPIdentifierData::createNPIdentifier):
+        Create an NPIdentifier from the given NPIdentifierData.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::create):
+        (WebKit::NPObjectMessageReceiver::NPObjectMessageReceiver):
+        This now takes the NPRemoteObjectMap as well as the npObjectID of the object.
+
+        (WebKit::NPObjectMessageReceiver::~NPObjectMessageReceiver):
+        Unregister the object.
+
+        (WebKit::NPObjectMessageReceiver::deallocate):
+        Delete the object.
+
+        (WebKit::NPObjectMessageReceiver::getProperty):
+        Ask the NPObject for the property and convert it back to an NPVariantData.
+
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::~NPObjectProxy):
+        Send a Deallocate message to the corresponding message receiver on the other side.
+
+        (WebKit::NPObjectProxy::getProperty):
+        Convert the NPVariantData back to an NPVariant and return it.
+
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::registerNPObject):
+        Pass the NPRemoteObjectMap and the npObjectID to NPObjectMessageReceiver::create.
+
+        (WebKit::NPRemoteObjectMap::unregisterNPObject):
+        Remove the given object from the map of registered objects.
+
+        (WebKit::NPRemoteObjectMap::npVariantToNPVariantData):
+        Given an NPVariant, create an NPVariantData. Only supports void and double types right now.
+
+        (WebKit::NPRemoteObjectMap::npVariantDataToNPVariant):
+        Given an NPVariantData, create an NPVariant. Only supports void and double types right now.
+
+        (WebKit::NPRemoteObjectMap::invalidate):
+        Add stub.
+
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::NPVariantData):
+        Set the type to void by default.
+
+        (WebKit::NPVariantData::makeVoid):
+        Return a void NPVariantData.
+
+        (WebKit::NPVariantData::makeDouble):
+        Return an NPVariantData that contains a double value.
+
+        (WebKit::NPVariantData::encode):
+        Encode the NPVariantData.
+
+        (WebKit::NPVariantData::decode):
+        Decode the NPVariantData.
+
+        * Shared/Plugins/NPVariantData.h:
+        (WebKit::NPVariantData::type):
+        Return the type of the NPVariantData.
+
+        (WebKit::NPVariantData::doubleValue):
+        Return the double value of the NPVariantData.
+        
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        Use nullptr instead of 0.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::~PluginProcessConnection):
+        Assert that the connection and the remote object map are both null.
+
+        (WebKit::PluginProcessConnection::removePluginProxy):
+        If this was the last plug-in proxy, invalidate the remote object map.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shutdown):
+        Use nullptr instead of 0.
+
 2010-11-02  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed Qt buildfix.

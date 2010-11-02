@@ -53,6 +53,10 @@ NPObjectProxy::NPObjectProxy()
 
 NPObjectProxy::~NPObjectProxy()
 {
+    if (!m_npRemoteObjectMap)
+        return;
+
+    m_npRemoteObjectMap->connection()->sendSync(Messages::NPObjectMessageReceiver::Deallocate(), Messages::NPObjectMessageReceiver::Deallocate::Reply(), m_npObjectID);
 }
 
 bool NPObjectProxy::isNPObjectProxy(NPObject* npObject)
@@ -85,8 +89,11 @@ bool NPObjectProxy::getProperty(NPIdentifier propertyName, NPVariant* result)
     if (!m_npRemoteObjectMap->connection()->sendSync(Messages::NPObjectMessageReceiver::GetProperty(propertyNameData), Messages::NPObjectMessageReceiver::GetProperty::Reply(returnValue, resultData), m_npObjectID))
         return false;
 
-    notImplemented();    
-    return false;
+    if (!returnValue)
+        return false;
+
+    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData);
+    return true;
 }
 
 NPClass* NPObjectProxy::npClass()

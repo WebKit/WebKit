@@ -39,9 +39,29 @@ namespace WebKit {
 
 class NPVariantData {
 public:
+    enum Type {
+        Void,
+        Double,
+    };
+    NPVariantData();
+
+    static NPVariantData makeVoid();
+    static NPVariantData makeDouble(double value);
+
+    Type type() const { return static_cast<Type>(m_type); }
+
+    double doubleValue() const
+    {
+        ASSERT(type() == NPVariantData::Double);
+        return m_doubleValue;
+    }
+
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, NPVariantData&);
-    
+
+private:
+    uint32_t m_type;
+    double m_doubleValue;
 };
 
 } // namespace WebKit

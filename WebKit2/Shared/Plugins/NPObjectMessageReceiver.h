@@ -36,24 +36,27 @@
 namespace WebKit {
 
 class NPIdentifierData;
+class NPRemoteObjectMap;
 class NPVariantData;
 
 class NPObjectMessageReceiver {
     WTF_MAKE_NONCOPYABLE(NPObjectMessageReceiver);
 
 public:
-    static PassOwnPtr<NPObjectMessageReceiver> create(NPObject* npObject);
+    static PassOwnPtr<NPObjectMessageReceiver> create(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID, NPObject* npObject);
     ~NPObjectMessageReceiver();
 
     CoreIPC::SyncReplyMode didReceiveSyncNPObjectMessageReceiverMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
     
 private:
-    explicit NPObjectMessageReceiver(NPObject* npObject);
+    NPObjectMessageReceiver(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID, NPObject* npObject);
 
     // Message handlers.
     void deallocate();
-    void getProperty(const NPIdentifierData&, bool& returnValue, NPVariantData& result);
+    void getProperty(const NPIdentifierData&, bool& returnValue, NPVariantData& resultData);
 
+    NPRemoteObjectMap* m_npRemoteObjectMap;
+    uint64_t m_npObjectID;
     NPObject* m_npObject;
 };
     

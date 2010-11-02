@@ -37,6 +37,7 @@ namespace WebKit {
 
 class NPObjectMessageReceiver;
 class NPObjectProxy;
+class NPVariantData;
 
 class NPRemoteObjectMap : public RefCounted<NPRemoteObjectMap> {
 public:
@@ -48,8 +49,17 @@ public:
 
     // Expose the given NPObject as a remote object. Returns the objectID.
     uint64_t registerNPObject(NPObject*);
+    void unregisterNPObject(uint64_t);
+
+    // Given an NPVariant, creates an NPVariantData object (a CoreIPC representation of an NPVariant).
+    NPVariantData npVariantToNPVariantData(const NPVariant&);
+
+    // Given an NPVariantData, creates an NPVariant object.
+    NPVariant npVariantDataToNPVariant(const NPVariantData&);
 
     CoreIPC::Connection* connection() const { return m_connection; }
+
+    void invalidate();
 
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);
 

@@ -27,19 +27,57 @@
 
 #include "NPVariantData.h"
 
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
 #include "NotImplemented.h"
 
 namespace WebKit {
 
-void NPVariantData::encode(CoreIPC::ArgumentEncoder*) const
+NPVariantData::NPVariantData()
+    : m_type(NPVariantData::Void)
 {
-    notImplemented();
 }
 
-bool NPVariantData::decode(CoreIPC::ArgumentDecoder*, NPVariantData&)
+NPVariantData NPVariantData::makeVoid()
 {
-    notImplemented();
-    return false;
+    return NPVariantData();
+}
+
+NPVariantData NPVariantData::makeDouble(double value)
+{
+    NPVariantData npVariantData;
+
+    npVariantData.m_type = NPVariantData::Double;
+    npVariantData.m_doubleValue = value;
+
+    return npVariantData;
+}
+
+void NPVariantData::encode(CoreIPC::ArgumentEncoder* encoder) const
+{
+    encoder->encode(m_type);
+
+    switch (type()) {
+    case NPVariantData::Void:
+        break;
+    case NPVariantData::Double:
+        encoder->encode(m_doubleValue);
+    }
+}
+
+bool NPVariantData::decode(CoreIPC::ArgumentDecoder* decoder, NPVariantData& result)
+{
+    if (!decoder->decode(result.m_type))
+        return false;
+
+    switch (result.m_type) {
+    case NPVariantData::Void:
+        return true;
+    case NPVariantData::Double:
+        return decoder->decode(result.m_doubleValue);
+    default:
+        return false;
+    }
 }
 
 } // namespace WebKit

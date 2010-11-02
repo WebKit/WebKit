@@ -59,6 +59,14 @@ NPIdentifierData NPIdentifierData::fromNPIdentifier(NPIdentifier npIdentifier)
     return npIdentifierData;
 }
 
+NPIdentifier NPIdentifierData::createNPIdentifier() const
+{
+    if (m_isString)
+        return static_cast<NPIdentifier>(IdentifierRep::get(m_string.data()));
+    
+    return static_cast<NPIdentifier>(IdentifierRep::get(m_number));
+}
+
 void NPIdentifierData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_isString);

@@ -28,36 +28,53 @@
 #include "NPObjectMessageReceiver.h"
 
 #include "NPIdentifierData.h"
+#include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"
+#include "NPVariantData.h"
 #include "NotImplemented.h"
 
 namespace WebKit {
 
-PassOwnPtr<NPObjectMessageReceiver> NPObjectMessageReceiver::create(NPObject* npObject)
+PassOwnPtr<NPObjectMessageReceiver> NPObjectMessageReceiver::create(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID, NPObject* npObject)
 {
-    return adoptPtr(new NPObjectMessageReceiver(npObject));
+    return adoptPtr(new NPObjectMessageReceiver(npRemoteObjectMap, npObjectID, npObject));
 }
 
-NPObjectMessageReceiver::NPObjectMessageReceiver(NPObject* npObject)
-    : m_npObject(npObject)
+NPObjectMessageReceiver::NPObjectMessageReceiver(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID, NPObject* npObject)
+    : m_npRemoteObjectMap(npRemoteObjectMap)
+    , m_npObjectID(npObjectID)
+    , m_npObject(npObject)
 {
     retainNPObject(m_npObject);
 }
 
 NPObjectMessageReceiver::~NPObjectMessageReceiver()
 {
+    // FIXME: The remote object map might be destroyed here.
+    m_npRemoteObjectMap->unregisterNPObject(m_npObjectID);
+
     releaseNPObject(m_npObject);
 }
 
 void NPObjectMessageReceiver::deallocate()
 {
-    notImplemented();
+    delete this;
 }
 
-void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameData, bool& returnValue, NPVariantData& result)
+void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameData, bool& returnValue, NPVariantData& resultData)
 {
-    notImplemented();
-    returnValue = false;
+    if (!m_npObject->_class->getProperty) {
+        returnValue = false;
+        return;
+    }
+
+    NPVariant result;
+    returnValue = m_npObject->_class->getProperty(m_npObject, propertyNameData.createNPIdentifier(), &result);
+    if (!returnValue)
+        return;
+
+    // Convert the NPVariant to an NPVariantData.
+    resultData = m_npRemoteObjectMap->npVariantToNPVariantData(result);
 }
 
 } // namespace WebKit

@@ -29,6 +29,8 @@
 
 #include "NPObjectMessageReceiver.h"
 #include "NPObjectProxy.h"
+#include "NPVariantData.h"
+#include "NotImplemented.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebKit {
@@ -61,9 +63,58 @@ NPObject* NPRemoteObjectMap::createNPObjectProxy(uint64_t remoteObjectID)
 uint64_t NPRemoteObjectMap::registerNPObject(NPObject* npObject)
 {
     uint64_t npObjectID = generateNPObjectID();
-    m_registeredNPObjects.set(npObjectID, NPObjectMessageReceiver::create(npObject).leakPtr());
+    m_registeredNPObjects.set(npObjectID, NPObjectMessageReceiver::create(this, npObjectID, npObject).leakPtr());
 
     return npObjectID;
+}
+
+void NPRemoteObjectMap::unregisterNPObject(uint64_t npObjectID)
+{
+    m_registeredNPObjects.remove(npObjectID);
+}
+
+NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& variant)
+{
+    switch (variant.type) {
+    case NPVariantType_Void:
+        return NPVariantData::makeVoid();
+
+    case NPVariantType_Double:
+        return NPVariantData::makeDouble(variant.value.doubleValue);
+            
+    case NPVariantType_Null:
+    case NPVariantType_Bool:
+    case NPVariantType_Int32:
+    case NPVariantType_String:
+    case NPVariantType_Object:
+        notImplemented();
+        return NPVariantData::makeVoid();
+    }
+
+    ASSERT_NOT_REACHED();
+    return NPVariantData::makeVoid();
+}
+
+NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVariantData)
+{
+    NPVariant npVariant;
+
+    switch (npVariantData.type()) {
+    case NPVariantData::Void:
+        VOID_TO_NPVARIANT(npVariant);
+        break;
+    case NPVariantData::Double:
+        DOUBLE_TO_NPVARIANT(npVariantData.doubleValue(), npVariant);
+        break;
+    }
+
+    return npVariant;
+}
+
+void NPRemoteObjectMap::invalidate()
+{
+    // FIXME: Invalidate NPObjectProxy and NPObjectMessageReceiver objects.
+    notImplemented();
 }
 
 CoreIPC::SyncReplyMode NPRemoteObjectMap::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
