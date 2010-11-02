@@ -1,5 +1,32 @@
 2010-11-01  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Make NPRemoteObjectMap a ref counted object
+        https://bugs.webkit.org/show_bug.cgi?id=48808
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::windowScriptNPObject):
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::WebProcessConnection):
+        (WebKit::WebProcessConnection::didReceiveSyncMessage):
+        * PluginProcess/WebProcessConnection.h:
+        (WebKit::WebProcessConnection::npRemoteObjectMap):
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::create):
+        (WebKit::NPRemoteObjectMap::~NPRemoteObjectMap):
+        (WebKit::NPRemoteObjectMap::createNPObjectProxy):
+        * Shared/Plugins/NPRemoteObjectMap.h:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::PluginProcessConnection):
+        (WebKit::PluginProcessConnection::didReceiveSyncMessage):
+        * WebProcess/Plugins/PluginProcessConnection.h:
+        (WebKit::PluginProcessConnection::npRemoteObjectMap):
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::getWindowScriptNPObject):
+
+2010-11-01  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Respond to NP_GetProperty by sending a GetProperty message

@@ -31,21 +31,20 @@
 #include "Connection.h"
 #include <WebCore/npruntime.h>
 #include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebKit {
 
 class NPObjectMessageReceiver;
 class NPObjectProxy;
 
-class NPRemoteObjectMap {
-    WTF_MAKE_NONCOPYABLE(NPRemoteObjectMap);
-
+class NPRemoteObjectMap : public RefCounted<NPRemoteObjectMap> {
 public:
-    explicit NPRemoteObjectMap(CoreIPC::Connection*);
+    static PassRefPtr<NPRemoteObjectMap> create(CoreIPC::Connection*);
+    ~NPRemoteObjectMap();
 
     // Creates an NPObjectProxy wrapper for the remote object with the given remote object ID.
-    NPObjectProxy* createNPObjectProxy(uint64_t remoteObjectID);
+    NPObject* createNPObjectProxy(uint64_t remoteObjectID);
 
     // Expose the given NPObject as a remote object. Returns the objectID.
     uint64_t registerNPObject(NPObject*);
@@ -55,6 +54,7 @@ public:
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);
 
 private:
+    explicit NPRemoteObjectMap(CoreIPC::Connection*);
     CoreIPC::Connection* m_connection;
 
     // A map of NPObjectMessageReceiver classes, wrapping objects that we export to the

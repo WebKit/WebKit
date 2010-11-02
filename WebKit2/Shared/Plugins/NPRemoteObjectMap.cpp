@@ -38,13 +38,22 @@ static uint64_t generateNPObjectID()
     static uint64_t generateNPObjectID;
     return ++generateNPObjectID;
 }
-    
+
+PassRefPtr<NPRemoteObjectMap> NPRemoteObjectMap::create(CoreIPC::Connection* connection)
+{
+    return adoptRef(new NPRemoteObjectMap(connection));
+}
+
 NPRemoteObjectMap::NPRemoteObjectMap(CoreIPC::Connection* connection)
     : m_connection(connection)
 {
 }
 
-NPObjectProxy* NPRemoteObjectMap::createNPObjectProxy(uint64_t remoteObjectID)
+NPRemoteObjectMap::~NPRemoteObjectMap()
+{
+}
+
+NPObject* NPRemoteObjectMap::createNPObjectProxy(uint64_t remoteObjectID)
 {
     return NPObjectProxy::create(this, remoteObjectID);
 }

@@ -29,7 +29,6 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "Connection.h"
-#include "NPRemoteObjectMap.h"
 #include "Plugin.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -38,6 +37,7 @@
 
 namespace WebKit {
 
+class NPRemoteObjectMap;
 class PluginProcessConnectionManager;
 class PluginProxy;
     
@@ -56,7 +56,7 @@ public:
     void addPluginProxy(PluginProxy*);
     void removePluginProxy(PluginProxy*);
 
-    NPRemoteObjectMap& npRemoteObjectMap() { return m_npRemoteObjectMap; }
+    NPRemoteObjectMap* npRemoteObjectMap() const { return m_npRemoteObjectMap.get(); }
 
 private:
     PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier);
@@ -76,7 +76,7 @@ private:
     // The plug-ins. We use a weak reference to the plug-in proxies because the plug-in view holds the strong reference.
     HashMap<uint64_t, PluginProxy*> m_plugins;
 
-    NPRemoteObjectMap m_npRemoteObjectMap;
+    RefPtr<NPRemoteObjectMap> m_npRemoteObjectMap;
 };
 
 } // namespace WebKit

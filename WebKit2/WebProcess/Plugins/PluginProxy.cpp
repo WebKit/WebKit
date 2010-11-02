@@ -29,6 +29,7 @@
 
 #include "BackingStore.h"
 #include "DataReference.h"
+#include "NPRemoteObjectMap.h"
 #include "NPRuntimeUtilities.h"
 #include "NotImplemented.h"
 #include "PluginController.h"
@@ -354,7 +355,7 @@ void PluginProxy::getWindowScriptNPObject(uint64_t& windowScriptNPObjectID)
         return;
     }
 
-    windowScriptNPObjectID = m_connection->npRemoteObjectMap().registerNPObject(windowScriptNPObject);
+    windowScriptNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(windowScriptNPObject);
     releaseNPObject(windowScriptNPObject);
 }
 
