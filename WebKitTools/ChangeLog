@@ -1,3 +1,17 @@
+2010-11-01  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        add plugin event logging for linux
+        https://bugs.webkit.org/show_bug.cgi?id=48779
+
+        This is taken from Chromium's fork of the layout test plugin:
+        http://git.chromium.org/gitweb/?p=chromium.git/.git;a=blob;f=webkit/tools/npapi_layout_test_plugin/main.cpp;h=3ebdada2f049b3624756438cff852364f86a2ede;hb=HEAD#l348
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventX11):
+        (NPP_HandleEvent):
+
 2010-11-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by James Robinson.

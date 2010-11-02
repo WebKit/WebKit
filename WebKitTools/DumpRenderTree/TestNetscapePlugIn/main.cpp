@@ -29,6 +29,10 @@
 #include <cstdlib>
 #include <string>
 
+#ifdef XP_UNIX
+#include <X11/Xlib.h>
+#endif
+
 #if !defined(NP_NO_CARBON) && defined(QD_HEADERS_ARE_PRIVATE) && QD_HEADERS_ARE_PRIVATE
 extern "C" void GlobalToLocal(Point*);
 #endif
@@ -565,6 +569,54 @@ static int16_t handleEventCocoa(NPP instance, PluginObject* obj, NPCocoaEvent* e
 
 #endif // XP_MACOSX
 
+#ifdef XP_UNIX
+static int16_t handleEventX11(NPP instance, PluginObject* obj, XEvent* event)
+{
+    XButtonPressedEvent* buttonPressEvent = reinterpret_cast<XButtonPressedEvent*>(event);
+    XButtonReleasedEvent* buttonReleaseEvent = reinterpret_cast<XButtonReleasedEvent*>(event);
+    switch (event->type) {
+    case ButtonPress:
+        pluginLog(instance, "mouseDown at (%d, %d)", buttonPressEvent->x, buttonPressEvent->y);
+        if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
+            executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
+        break;
+    case ButtonRelease:
+        pluginLog(instance, "mouseUp at (%d, %d)", buttonReleaseEvent->x, buttonReleaseEvent->y);
+        break;
+    case KeyPress:
+        // FIXME: extract key code
+        pluginLog(instance, "NOTIMPLEMENTED: keyDown '%c'", ' ');
+        if (obj->evaluateScriptOnMouseDownOrKeyDown && !obj->mouseDownForEvaluateScript)
+            executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
+        break;
+    case KeyRelease:
+        // FIXME: extract key code
+        pluginLog(instance, "NOTIMPLEMENTED: keyUp '%c'", ' ');
+        break;
+    case GraphicsExpose:
+        pluginLog(instance, "updateEvt");
+        break;
+    // NPAPI events
+    case FocusIn:
+        pluginLog(instance, "getFocusEvent");
+        break;
+    case FocusOut:
+        pluginLog(instance, "loseFocusEvent");
+        break;
+    case EnterNotify:
+    case LeaveNotify:
+    case MotionNotify:
+        pluginLog(instance, "adjustCursorEvent");
+        break;
+    default:
+        pluginLog(instance, "event %d", event->type);
+    }
+
+    fflush(stdout);
+    return 0;
+}
+#endif // XP_UNIX
+
 int16_t NPP_HandleEvent(NPP instance, void *event)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
@@ -579,6 +631,8 @@ int16_t NPP_HandleEvent(NPP instance, void *event)
 
     assert(obj->eventModel == NPEventModelCocoa);
     return handleEventCocoa(instance, obj, static_cast<NPCocoaEvent*>(event));
+#elif defined(XP_UNIX)
+    return handleEventX11(instance, obj, static_cast<XEvent*>(event));
 #else
     // FIXME: Implement for other platforms.
     return 0;
