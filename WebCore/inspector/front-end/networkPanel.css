@@ -558,6 +558,14 @@
     display: none;
 }
 
+#network-close-button:hover {
+    background-position: 14px 0;
+}
+
+#network-close-button:active {
+    background-position: 28px 0;
+}
+
 .network.panel.viewing-resource #network-close-button  {
     display: block;
 }
