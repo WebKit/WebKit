@@ -1,3 +1,18 @@
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Assertion hit in WebProcessProxy::~WebProcessProxy()
+        https://bugs.webkit.org/show_bug.cgi?id=48849
+        <rdar://problem/8617676>
+
+        It is perfectly valid for the page map to contain pages if the web process proxy
+        goes away, this can happen if the process crashes for example.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        Remove the assertion.
+
 2010-11-02  Christian Sejersen  <christian.webkit@gmail.com>
 
         Reviewed by Andreas Kling.

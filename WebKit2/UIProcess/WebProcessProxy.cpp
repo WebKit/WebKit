@@ -63,8 +63,6 @@ WebProcessProxy::WebProcessProxy(WebContext* context)
 
 WebProcessProxy::~WebProcessProxy()
 {
-    ASSERT(m_pageMap.isEmpty());
-
     if (m_connection)
         m_connection->invalidate();
     
