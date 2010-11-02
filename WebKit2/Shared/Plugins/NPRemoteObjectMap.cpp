@@ -29,6 +29,7 @@
 
 #include "NPObjectMessageReceiver.h"
 #include "NPObjectProxy.h"
+#include "NPRuntimeUtilities.h"
 #include "NPVariantData.h"
 #include "NotImplemented.h"
 #include <wtf/OwnPtr.h>
@@ -98,10 +99,12 @@ NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& varia
 
     case NPVariantType_Double:
         return NPVariantData::makeDouble(variant.value.doubleValue);
-            
+
+    case NPVariantType_String:
+        return NPVariantData::makeString(variant.value.stringValue.UTF8Characters, variant.value.stringValue.UTF8Length);
+
     case NPVariantType_Null:
     case NPVariantType_Int32:
-    case NPVariantType_String:
         notImplemented();
         return NPVariantData::makeVoid();
 
@@ -137,6 +140,11 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
     case NPVariantData::Double:
         DOUBLE_TO_NPVARIANT(npVariantData.doubleValue(), npVariant);
         break;
+    case NPVariantData::String: {
+        NPString npString = createNPString(npVariantData.stringValue());
+        STRINGN_TO_NPVARIANT(npString.UTF8Characters, npString.UTF8Length, npVariant);
+        break;
+    }
     case NPVariantData::LocalNPObjectID:
         notImplemented();
         VOID_TO_NPVARIANT(npVariant);

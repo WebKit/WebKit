@@ -30,6 +30,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "NotImplemented.h"
+#include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
 
@@ -67,6 +68,16 @@ NPVariantData NPVariantData::makeDouble(double value)
     return npVariantData;
 }
 
+NPVariantData NPVariantData::makeString(const char* string, unsigned length)
+{
+    NPVariantData npVariantData;
+    
+    npVariantData.m_type = NPVariantData::String;
+    npVariantData.m_stringValue = CString(string, length);
+    
+    return npVariantData;
+}
+
 NPVariantData NPVariantData::makeLocalNPObjectID(uint64_t value)
 {
     NPVariantData npVariantData;
@@ -89,6 +100,9 @@ void NPVariantData::encode(CoreIPC::ArgumentEncoder* encoder) const
         break;
     case NPVariantData::Double:
         encoder->encode(doubleValue());
+        break;
+    case NPVariantData::String:
+        encoder->encode(stringValue());
         break;
     case NPVariantData::LocalNPObjectID:
         encoder->encode(localNPObjectIDValue());
@@ -123,6 +137,8 @@ bool NPVariantData::decode(CoreIPC::ArgumentDecoder* decoder, NPVariantData& res
         return decoder->decode(result.m_boolValue);
     case NPVariantData::Double:
         return decoder->decode(result.m_doubleValue);
+    case NPVariantData::String:
+        return decoder->decode(result.m_stringValue);
     case NPVariantData::LocalNPObjectID:
         return decoder->decode(result.m_localNPObjectIDValue);
     case NPVariantData::RemoteNPObjectID:
