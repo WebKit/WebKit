@@ -192,7 +192,7 @@ WebInspector.NetworkPanel.prototype = {
         columns.size.width = "10%";
         columns.size.aligned = "right";
 
-        columns.time.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Time"), WebInspector.UIString("Duration"));
+        columns.time.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Time"), WebInspector.UIString("Latency"));
         columns.time.sortable = true;
         columns.time.width = "10%";
         columns.time.aligned = "right";
