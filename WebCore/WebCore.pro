@@ -1897,7 +1897,6 @@ HEADERS += \
     inspector/InspectorFrontendHost.h \
     inspector/InspectorInstrumentation.h \
     inspector/InspectorProfilerAgent.h \
-    inspector/InspectorResource.h \
     inspector/InspectorResourceAgent.h \
     inspector/InspectorState.h \
     inspector/InspectorStorageAgent.h \
