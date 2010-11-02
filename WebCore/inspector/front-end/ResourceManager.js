@@ -137,7 +137,6 @@ WebInspector.ResourceManager.prototype = {
             return;
 
         resource.cached = true;
-        delete resource.timing;
         WebInspector.panels.network.refreshResource(resource);
     },
 

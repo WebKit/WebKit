@@ -287,6 +287,20 @@ WebInspector.Resource.prototype = {
     set cached(x)
     {
         this._cached = x;
+        if (x)
+            delete this._timing;
+    },
+
+
+    get timing()
+    {
+        return this._timing;
+    },
+
+    set timing(x)
+    {
+        if (!this._cached)
+            this._timing = x;
     },
 
     get mimeType()
