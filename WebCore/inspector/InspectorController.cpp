@@ -287,6 +287,17 @@ void InspectorController::highlightDOMNode(long nodeId)
         highlight(node);
 }
 
+void InspectorController::highlightFrame(unsigned long frameId)
+{
+    Frame* mainFrame = m_inspectedPage->mainFrame();
+    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext(mainFrame)) {
+        if (reinterpret_cast<uintptr_t>(frame) == frameId && frame->ownerElement()) {
+            highlight(frame->ownerElement());
+            return;
+        }
+    }
+}
+
 void InspectorController::hideHighlight()
 {
     if (!enabled())

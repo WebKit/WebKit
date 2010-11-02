@@ -74,6 +74,9 @@ WebInspector.StoragePanel = function(database)
     this._cookieViews = {};
     this._origins = {};
     this._domains = {};
+
+    this.sidebarElement.addEventListener("mousemove", this._onmousemove.bind(this), false);
+    this.sidebarElement.addEventListener("mouseout", this._onmouseout.bind(this), false);
 }
 
 WebInspector.StoragePanel.prototype = {
@@ -708,6 +711,39 @@ WebInspector.StoragePanel.prototype = {
     {
         if (view)
             this.showResource(view.resource);
+    },
+
+    _onmousemove: function(event)
+    {
+        var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
+        if (!nodeUnderMouse)
+            return;
+
+        var listNode = nodeUnderMouse.enclosingNodeOrSelfWithNodeName("li");
+        if (!listNode)
+            return;
+
+        var element = listNode.treeElement;
+        if (this._previousHoveredElement === element)
+            return;
+
+        if (this._previousHoveredElement) {
+            this._previousHoveredElement.hovered = false;
+            delete this._previousHoveredElement;
+        }
+
+        if (element instanceof WebInspector.FrameTreeElement) {
+            this._previousHoveredElement = element;
+            element.hovered = true;
+        }
+    },
+
+    _onmouseout: function(event)
+    {
+        if (this._previousHoveredElement) {
+            this._previousHoveredElement.hovered = false;
+            delete this._previousHoveredElement;
+        }
     }
 }
 
@@ -829,6 +865,9 @@ WebInspector.FrameTreeElement.prototype = {
     {
         WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
         this._storagePanel.showCategoryView(this._displayName);
+
+        this.listItemElement.removeStyleClass("hovered");
+        InspectorBackend.hideFrameHighlight();
     },
 
     get displayName()
@@ -840,6 +879,17 @@ WebInspector.FrameTreeElement.prototype = {
     {
         this._displayName = displayName;
         this.titleText = displayName;
+    },
+
+    set hovered(hovered)
+    {
+        if (hovered) {
+            this.listItemElement.addStyleClass("hovered");
+            InspectorBackend.highlightFrame(this._frameId);
+        } else {
+            this.listItemElement.removeStyleClass("hovered");
+            InspectorBackend.hideFrameHighlight();
+        }
     }
 }
 WebInspector.FrameTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;

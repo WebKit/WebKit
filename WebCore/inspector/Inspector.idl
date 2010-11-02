@@ -192,6 +192,9 @@ module core {
         [handler=Controller] void hideDOMNodeHighlight();
         [handler=Controller] void openInInspectedWindow(in String url);
 
+        [handler=Controller] void highlightFrame(in unsigned long frameId);
+        [handler=Controller] void hideFrameHighlight();
+
         [handler=DOM] void getStyles(in long nodeId, in boolean authOnly, out Value styles);
         [handler=DOM] void getAllStyles(out Array styles);
         [handler=DOM] void getInlineStyle(in long nodeId, out Value style);

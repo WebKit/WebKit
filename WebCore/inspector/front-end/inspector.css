@@ -1968,18 +1968,18 @@ body.inactive .sidebar {
     font-weight: bold;
 }
 
-.storage.panel .sidebar li .selection {
+.storage.panel .sidebar li.selected .selection {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(162, 177, 207)), to(rgb(120, 138, 177)));
     border-top: 1px solid #979797;
     height: 17px;
 }
 
-.storage.panel .sidebar :focus li .selection {
+.storage.panel .sidebar :focus li.selected .selection {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(92, 147, 213)), to(rgb(21, 83, 170)));
     border-top: 1px solid rgb(68, 128, 200);
 }
 
-body.inactive .storage.panel .sidebar li .selection {
+body.inactive .storage.panel .sidebar li.selected .selection {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(180, 180, 180)), to(rgb(138, 138, 138)));
     border-top: 1px solid rgb(151, 151, 151);
 }
