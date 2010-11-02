@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-bool InjectedBundle::load()
+bool InjectedBundle::load(APIObject* initializationUserData)
 {
 #if ENABLE(WEB_PROCESS_SANDBOX)
     if (!m_sandboxToken.isEmpty()) {
@@ -82,7 +82,7 @@ bool InjectedBundle::load()
         return false;
     }
 
-    initializeFunction(toAPI(this));
+    initializeFunction(toAPI(this), toAPI(initializationUserData));
     return true;
 }
 

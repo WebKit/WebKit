@@ -1,3 +1,27 @@
+2010-11-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add a way to send startup messages on the context which can be posted when a process launches
+        <rdar://problem/8617928>
+        https://bugs.webkit.org/show_bug.cgi?id=48838
+
+        * MiniBrowser/mac/WebBundle/WebBundleMain.m:
+        (WKBundleInitialize):
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::initialize):
+        (TestWebKitAPI::InjectedBundleController::didReceiveMessage):
+        * TestWebKitAPI/InjectedBundleController.h:
+        * TestWebKitAPI/InjectedBundleMain.cpp:
+        (WKBundleInitialize):
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::createContextForInjectedBundleTest):
+        * WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp:
+        (WKBundleInitialize):
+        Update implementations of WKBundleInitialize to take an initial userData
+        argument.  Change TestWebKitAPI to use the new initial userData to initialize
+        each test's bundle.
+
 2010-11-02  Benjamin Kalman  <kalman@google.com>
 
         Reviewed by Ojan Vafai.

@@ -86,6 +86,11 @@ void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryCl
     toImpl(contextRef)->initializeHistoryClient(wkClient);
 }
 
+void WKContextSetInitializationUserDataForInjectedBundle(WKContextRef contextRef,  WKTypeRef userDataRef)
+{
+    toImpl(contextRef)->setInjectedBundleInitializationUserData(toImpl(userDataRef));
+}
+
 void WKContextPostMessageToInjectedBundle(WKContextRef contextRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)
 {
     toImpl(contextRef)->postMessageToInjectedBundle(toImpl(messageNameRef)->string(), toImpl(messageBodyRef));

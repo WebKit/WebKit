@@ -27,6 +27,7 @@
 
 #include "InjectedBundle.h"
 #include "InjectedBundleMessageKinds.h"
+#include "InjectedBundleUserMessageCoders.h"
 #include "RunLoop.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
@@ -114,23 +115,28 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
     startRandomCrashThreadIfRequested();
 }
 
-void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters)
+void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::ArgumentDecoder* arguments)
 {
     ASSERT(m_pageMap.isEmpty());
 
-    if (!parameters.applicationCacheDirectory.isEmpty())
-        cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
+    RefPtr<APIObject> injectedBundleInitializationUserData;
+    InjectedBundleUserMessageDecoder messageDecoder(injectedBundleInitializationUserData);
+    if (!arguments->decode(messageDecoder))
+        return;
 
     if (!parameters.injectedBundlePath.isEmpty()) {
         m_injectedBundle = InjectedBundle::create(parameters.injectedBundlePath);
 #if ENABLE(WEB_PROCESS_SANDBOX)
         m_injectedBundle->setSandboxToken(parameters.injectedBundlePathToken);
 #endif
-        if (!m_injectedBundle->load()) {
+        if (!m_injectedBundle->load(injectedBundleInitializationUserData.get())) {
             // Don't keep around the InjectedBundle reference if the load fails.
             m_injectedBundle.clear();
         }
     }
+
+    if (!parameters.applicationCacheDirectory.isEmpty())
+        cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
 
     setShouldTrackVisitedLinks(parameters.shouldTrackVisitedLinks);
     setCacheModel(static_cast<uint32_t>(parameters.cacheModel));

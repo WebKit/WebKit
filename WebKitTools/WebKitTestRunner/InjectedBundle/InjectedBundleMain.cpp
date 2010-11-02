@@ -31,7 +31,7 @@ extern "C" __declspec(dllexport)
 #else
 extern "C"
 #endif
-void WKBundleInitialize(WKBundleRef bundle)
+void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
     WTR::InjectedBundle::shared().initialize(bundle);
 }

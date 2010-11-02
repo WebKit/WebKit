@@ -38,7 +38,7 @@ class InjectedBundleController {
 public:
     static InjectedBundleController& shared();
 
-    void initialize(WKBundleRef);
+    void initialize(WKBundleRef, WKTypeRef);
 
     void dumpTestNames();
     void initializeTestNamed(WKBundleRef bundle, const std::string&);

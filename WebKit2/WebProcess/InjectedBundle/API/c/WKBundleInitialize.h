@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
 // NOTE: Must be implemented by InjectedBundle's as a function named "WKBundleInitialize".
-typedef void (*WKBundleInitializeFunctionPtr)(WKBundleRef);
+typedef void (*WKBundleInitializeFunctionPtr)(WKBundleRef, WKTypeRef);
 
 #ifdef __cplusplus
 }

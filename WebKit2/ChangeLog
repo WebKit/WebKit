@@ -1,3 +1,39 @@
+2010-11-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add a way to send startup messages on the context which can be posted when a process launches
+        <rdar://problem/8617928>
+        https://bugs.webkit.org/show_bug.cgi?id=48838
+
+        Adds WKContextSetInitializationUserDataForInjectedBundle which sets an
+        APIObject on WebContext to be sent to the InjectedBundle's WKBundleInitialize
+        function each time a process starts up. This can help in cases where
+        the WebProcess dies, and will be helpful in the world where there are
+        multiple WebProcess's per context.
+
+        * Scripts/webkit2/messages.py:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetInitializationUserDataForInjectedBundle):
+        * UIProcess/API/C/WKContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::setInjectedBundleInitializationUserData):
+        (WebKit::WebContext::injectedBundleInitializationUserData):
+        * WebProcess/InjectedBundle/API/c/WKBundleInitialize.h:
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/InjectedBundle/mac/InjectedBundleMac.cpp:
+        (WebKit::InjectedBundle::load):
+        * WebProcess/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WebKit::InjectedBundle::load):
+        * WebProcess/InjectedBundle/win/InjectedBundleWin.cpp:
+        (WebKit::InjectedBundle::load):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

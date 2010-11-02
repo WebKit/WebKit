@@ -88,7 +88,7 @@ void didRecieveMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef me
     CFRelease(cfMessageName);
 }
 
-void WKBundleInitialize(WKBundleRef bundle)
+void WKBundleInitialize(WKBundleRef bundle, WKTypeRef initializationUserData)
 {
     globalBundle = bundle;
 

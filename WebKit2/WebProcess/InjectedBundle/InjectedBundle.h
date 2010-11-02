@@ -67,7 +67,7 @@ public:
     }
     ~InjectedBundle();
 
-    bool load();
+    bool load(APIObject* initializationUserData);
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
     void setSandboxToken(const String& sandboxToken) { m_sandboxToken = sandboxToken; }

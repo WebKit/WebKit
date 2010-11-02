@@ -149,6 +149,7 @@ def messages_to_kind_enum(messages):
 def parameter_type_is_variadic(type):
     variadic_types = frozenset([
         'WebKit::InjectedBundleUserMessageEncoder',
+        'WebKit::WebContextUserMessageEncoder',
     ])
 
     return type in variadic_types
@@ -380,6 +381,7 @@ def argument_coder_headers_for_type(type):
     special_cases = {
         'WTF::String': '"ArgumentCoders.h"',
         'WebKit::InjectedBundleUserMessageEncoder': '"InjectedBundleUserMessageCoders.h"',
+        'WebKit::WebContextUserMessageEncoder': '"WebContextUserMessageCoders.h"',
     }
 
     if type in special_cases:

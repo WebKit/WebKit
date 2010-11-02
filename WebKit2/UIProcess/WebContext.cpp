@@ -179,7 +179,7 @@ void WebContext::ensureWebProcess()
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
 
-    m_process->send(Messages::WebProcess::InitializeWebProcess(parameters), 0);
+    m_process->send(Messages::WebProcess::InitializeWebProcess(parameters, WebContextUserMessageEncoder(m_injectedBundleInitializationUserData.get())), 0);
 
     for (size_t i = 0; i != m_pendingMessagesToPostToInjectedBundle.size(); ++i) {
         pair<String, RefPtr<APIObject> >& message = m_pendingMessagesToPostToInjectedBundle[i];

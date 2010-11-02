@@ -37,13 +37,10 @@ WKContextRef createContextForInjectedBundleTest(const std::string& testName)
 {
     WKRetainPtr<WKStringRef> injectedBundlePath(AdoptWK, createInjectedBundlePath());
     WKContextRef context = WKContextCreateWithInjectedBundlePath(injectedBundlePath.get());
-    
-    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("BundleTestInstantiator"));
-    WKRetainPtr<WKStringRef> messageBody(AdoptWK, WKStringCreateWithUTF8CString(testName.c_str()));
 
-    // Enqueue message to instantiate the bundle test. 
-    WKContextPostMessageToInjectedBundle(context, messageName.get(), messageBody.get());
-    
+    WKRetainPtr<WKStringRef> testNameString(AdoptWK, WKStringCreateWithUTF8CString(testName.c_str()));
+    WKContextSetInitialObjectForInjectedBundle(context, testNameString.get());
+
     return context;
 }
 
