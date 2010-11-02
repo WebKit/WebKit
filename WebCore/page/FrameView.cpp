@@ -573,10 +573,15 @@ bool FrameView::isEnclosedInCompositingLayer() const
 {
 #if USE(ACCELERATED_COMPOSITING)
     RenderObject* frameOwnerRenderer = m_frame->ownerRenderer();
-    return frameOwnerRenderer && frameOwnerRenderer->containerForRepaint();
-#else
-    return false;
+    if (frameOwnerRenderer && frameOwnerRenderer->containerForRepaint())
+        return true;
+
+    if (Frame* parentFrame = m_frame->tree()->parent()) {
+        if (FrameView* parentView = parentFrame->view())
+            return parentView->isEnclosedInCompositingLayer();
+    }
 #endif
+    return false;
 }
 
 bool FrameView::syncCompositingStateRecursive()
