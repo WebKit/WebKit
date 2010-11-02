@@ -1,3 +1,24 @@
+2010-11-02  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] SharedMemory is broken
+        https://bugs.webkit.org/show_bug.cgi?id=48520
+
+        Implement SharedMemory with QSharedMemory to correctly handle
+        ownership and to avoid extra allocation for page size requests.
+        * Platform/SharedMemory.h:
+        * Platform/qt/SharedMemoryQt.cpp:
+        (WebKit::SharedMemory::Handle::Handle):
+        (WebKit::SharedMemory::Handle::isNull):
+        (WebKit::SharedMemory::Handle::encode):
+        (WebKit::SharedMemory::Handle::decode):
+        (WebKit::createUniqueKey):
+        (WebKit::SharedMemory::create):
+        (WebKit::accessMode):
+        (WebKit::SharedMemory::~SharedMemory):
+        (WebKit::SharedMemory::createHandle):
+
 2010-11-02  Timothy Hatcher  <timothy@apple.com>
 
         Add WKInspector public APIs.

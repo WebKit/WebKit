@@ -29,18 +29,19 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
-#include "MappedMemoryPool.h"
 #include "WebCoreArgumentCoders.h"
-#include <QIODevice>
 #include <unistd.h>
-#include <wtf/text/WTFString.h>
+#include <QLatin1String>
+#include <QSharedMemory>
+#include <QString>
+#include <QUuid>
+#include <wtf/Assertions.h>
+#include <wtf/CurrentTime.h>
 
 namespace WebKit {
 
-static MappedMemoryPool* mappedMemoryPool = MappedMemoryPool::instance();
-
 SharedMemory::Handle::Handle()
-    : m_fileName()
+    : m_key()
     , m_size(0)
 {
 }
@@ -51,57 +52,64 @@ SharedMemory::Handle::~Handle()
 
 bool SharedMemory::Handle::isNull() const
 {
-    return m_fileName.isNull();
+    return m_key.isNull();
 }
 
 void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encodeUInt64(m_size);
-    encoder->encode(m_fileName);
-    m_fileName = String();
+    encoder->encode(m_key);
+    m_key = String();
 }
 
 bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
 {
-    ASSERT(!handle.m_size);
-    ASSERT(handle.m_fileName.isEmpty());
+    ASSERT_ARG(handle, !handle.m_size);
+    ASSERT_ARG(handle, handle.m_key.isNull());
 
     uint64_t size;
     if (!decoder->decodeUInt64(size))
         return false;
 
-    String fileName;
-    if (!decoder->decode(fileName))
+    String key;
+    if (!decoder->decode(key))
        return false;
 
     handle.m_size = size;
-    handle.m_fileName = fileName;
+    handle.m_key = key;
 
     return true;
 }
 
+static QString createUniqueKey()
+{
+    return QLatin1String("QWKSharedMemoryKey") + QUuid::createUuid().toString();
+}
+
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
-    MappedMemory* mm = mappedMemoryPool->mapMemory(size, QIODevice::ReadWrite);
-
     RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
+    QSharedMemory* impl = new QSharedMemory(createUniqueKey());
+    bool created = impl->create(size);
+    ASSERT_UNUSED(created, created);
+    sharedMemory->m_impl = impl;
     sharedMemory->m_size = size;
-    sharedMemory->m_data = reinterpret_cast<void*>(mm->data());
+    sharedMemory->m_data = impl->data();
 
     return sharedMemory.release();
 }
 
-static inline QIODevice::OpenMode mapProtection(SharedMemory::Protection protection)
+static inline QSharedMemory::AccessMode accessMode(SharedMemory::Protection protection)
 {
     switch (protection) {
     case SharedMemory::ReadOnly:
-        return QIODevice::ReadOnly;
+        return QSharedMemory::ReadOnly;
     case SharedMemory::ReadWrite:
-        return QIODevice::ReadWrite;
+        return QSharedMemory::ReadWrite;
     }
 
     ASSERT_NOT_REACHED();
-    return QIODevice::NotOpen;
+    return QSharedMemory::ReadWrite;
 }
 
 PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection protection)
@@ -109,44 +117,35 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
     if (handle.isNull())
         return 0;
 
-    QIODevice::OpenMode openMode = mapProtection(protection);
-
-    MappedMemory* mm = mappedMemoryPool->mapFile(QString(handle.m_fileName), handle.m_size, openMode);
-
     RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
+    QSharedMemory* impl = new QSharedMemory(QString(handle.m_key));
+    bool attached = impl->attach(accessMode(protection));
+    ASSERT_UNUSED(attached, attached);
+    sharedMemory->m_impl = impl;
+    ASSERT(handle.m_size == impl->size());
     sharedMemory->m_size = handle.m_size;
-    sharedMemory->m_data = reinterpret_cast<void*>(mm->data());
+    sharedMemory->m_data = impl->data();
 
     return sharedMemory.release();
 }
 
 SharedMemory::~SharedMemory()
 {
-    if (!m_data) {
-        // Ownership of the mapped memory has been passed.
-        return;
-    }
-
-    MappedMemory* mappedMemory = mappedMemoryPool->searchForMappedMemory(reinterpret_cast<uchar*>(m_data));
-    if (mappedMemory)
-        mappedMemory->markFree();
+    // m_impl must be non-null and it must point to a valid QSharedMemory object.
+    ASSERT(qobject_cast<QSharedMemory*>(m_impl));
+    delete m_impl;
 }
 
 bool SharedMemory::createHandle(Handle& handle, Protection protection)
 {
-    ASSERT(handle.m_fileName.isNull());
-    ASSERT(!handle.m_size);
+    ASSERT_ARG(handle, handle.m_key.isNull());
+    ASSERT_ARG(handle, !handle.m_size);
 
-    MappedMemory* mm = mappedMemoryPool->searchForMappedMemory(reinterpret_cast<uchar*>(m_data));
-
-    if (!mm)
+    QString key = m_impl->key();
+    if (key.isNull())
         return false;
-
-    handle.m_fileName = mm->file->fileName();
+    handle.m_key = String(key);
     handle.m_size = m_size;
-
-    // Hand off ownership of the mapped memory to the receiving process.
-    m_data = 0;
 
     return true;
 }
