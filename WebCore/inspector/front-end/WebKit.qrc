@@ -167,7 +167,6 @@
     <file>Images/goArrow.png</file>
     <file>Images/graphLabelCalloutLeft.png</file>
     <file>Images/graphLabelCalloutRight.png</file>
-    <file>Images/grayConnectorPoint.png</file>
     <file>Images/largerResourcesButtonGlyph.png</file>
     <file>Images/localStorage.png</file>
     <file>Images/networkIcon.png</file>
@@ -272,7 +271,6 @@
     <file>Images/warningMediumIcon.png</file>
     <file>Images/warningOrangeDot.png</file>
     <file>Images/warningsErrors.png</file>
-    <file>Images/whiteConnectorPoint.png</file>
     <file alias="DebuggerScript.js">../../bindings/v8/DebuggerScript.js</file>
 </qresource>
 </RCC>

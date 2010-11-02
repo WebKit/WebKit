@@ -4549,7 +4549,6 @@
             'inspector/front-end/Images/goArrow.png',
             'inspector/front-end/Images/graphLabelCalloutLeft.png',
             'inspector/front-end/Images/graphLabelCalloutRight.png',
-            'inspector/front-end/Images/grayConnectorPoint.png',
             'inspector/front-end/Images/largerResourcesButtonGlyph.png',
             'inspector/front-end/Images/localStorage.png',
             'inspector/front-end/Images/networkIcon.png',
@@ -4653,8 +4652,7 @@
             'inspector/front-end/Images/warningIcon.png',
             'inspector/front-end/Images/warningOrangeDot.png',
             'inspector/front-end/Images/warningMediumIcon.png',
-            'inspector/front-end/Images/warningsErrors.png',
-            'inspector/front-end/Images/whiteConnectorPoint.png'
+            'inspector/front-end/Images/warningsErrors.png'
         ],
     }
 }
