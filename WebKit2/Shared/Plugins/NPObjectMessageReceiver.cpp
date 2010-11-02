@@ -60,6 +60,43 @@ void NPObjectMessageReceiver::deallocate()
     delete this;
 }
 
+void NPObjectMessageReceiver::hasMethod(const NPIdentifierData& methodNameData, bool& returnValue)
+{
+    if (!m_npObject->_class->hasMethod) {
+        returnValue = false;
+        return;
+    }
+    
+    returnValue = m_npObject->_class->hasMethod(m_npObject, methodNameData.createNPIdentifier());
+}
+
+void NPObjectMessageReceiver::invoke(const NPIdentifierData& methodNameData, const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData)
+{
+    if (!m_npObject->_class->invoke) {
+        returnValue = false;
+        return;
+    }
+
+    Vector<NPVariant> arguments;
+    for (size_t i = 0; i < argumentsData.size(); ++i)
+        arguments.append(m_npRemoteObjectMap->npVariantDataToNPVariant(argumentsData[i]));
+
+    NPVariant result;
+    returnValue = m_npObject->_class->invoke(m_npObject, methodNameData.createNPIdentifier(), arguments.data(), arguments.size(), &result);
+    if (!returnValue)
+        return;
+    
+    // Convert the NPVariant to an NPVariantData.
+    resultData = m_npRemoteObjectMap->npVariantToNPVariantData(result);
+
+    // Release all arguments.
+    for (size_t i = 0; i < argumentsData.size(); ++i)
+        releaseNPVariantValue(&arguments[i]);
+    
+    // And release the result.
+    releaseNPVariantValue(&result);
+}
+
 void NPObjectMessageReceiver::hasProperty(const NPIdentifierData& propertyNameData, bool& returnValue)
 {
     if (!m_npObject->_class->hasProperty) {
@@ -84,6 +121,9 @@ void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameDa
 
     // Convert the NPVariant to an NPVariantData.
     resultData = m_npRemoteObjectMap->npVariantToNPVariantData(result);
+
+    // And release the result.
+    releaseNPVariantValue(&result);
 }
 
 } // namespace WebKit

@@ -24,6 +24,8 @@
 
 messages -> NPObjectMessageReceiver {
     Deallocate() -> ()
+    HasMethod(WebKit::NPIdentifierData methodName) -> (bool returnValue)
+    Invoke(WebKit::NPIdentifierData methodName, Vector<WebKit::NPVariantData> argumentsData) -> (bool returnValue, WebKit::NPVariantData resultData)
     HasProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue)
     GetProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue, WebKit::NPVariantData resultData)
 }

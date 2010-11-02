@@ -1,5 +1,42 @@
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Add support for NP_HasMethod and NP_Invoke
+        https://bugs.webkit.org/show_bug.cgi?id=48882
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add new overload.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::hasMethod):
+        Call hasMethod and return the result.
+
+        (WebKit::NPObjectMessageReceiver::invoke):
+        Convert the arguments, call invoke and return the result.
+
+        (WebKit::NPObjectMessageReceiver::getProperty):
+        Release the converted variant.
+
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in:
+        Add HasMethod and Invoke messages.
+        
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::hasMethod):
+        Send the HasMethod message.
+
+        (WebKit::NPObjectProxy::invoke):
+        Send the Invoke message.
+
+        (WebKit::NPObjectProxy::NP_HasMethod):
+        Call hasMethod.
+
+        (WebKit::NPObjectProxy::NP_Invoke):
+        Call invoke.
+
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Implement NP_HasProperty for NPObjectProxy

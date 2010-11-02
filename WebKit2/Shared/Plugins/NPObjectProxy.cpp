@@ -27,6 +27,7 @@
 
 #include "NPObjectProxy.h"
 
+#include "ArgumentCoders.h"
 #include "Connection.h"
 #include "NPIdentifierData.h"
 #include "NPObjectMessageReceiverMessages.h"
@@ -82,6 +83,44 @@ void NPObjectProxy::initialize(NPRemoteObjectMap* npRemoteObjectMap, uint64_t np
 
     m_npRemoteObjectMap = npRemoteObjectMap;
     m_npObjectID = npObjectID;
+}
+
+bool NPObjectProxy::hasMethod(NPIdentifier methodName)
+{
+    if (!m_npRemoteObjectMap)
+        return false;
+    
+    NPIdentifierData methodNameData = NPIdentifierData::fromNPIdentifier(methodName);
+    
+    bool returnValue = false;
+    
+    if (!m_npRemoteObjectMap->connection()->sendSync(Messages::NPObjectMessageReceiver::HasMethod(methodNameData), Messages::NPObjectMessageReceiver::HasMethod::Reply(returnValue), m_npObjectID))
+        return false;
+    
+    return returnValue;
+}
+
+bool NPObjectProxy::invoke(NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+{
+    if (!m_npRemoteObjectMap)
+        return false;
+
+    NPIdentifierData methodNameData = NPIdentifierData::fromNPIdentifier(methodName);
+    Vector<NPVariantData> argumentsData;
+    for (uint32_t i = 0; i < argumentCount; ++i)
+        argumentsData.append(m_npRemoteObjectMap->npVariantToNPVariantData(arguments[i]));
+
+    bool returnValue = false;
+    NPVariantData resultData;
+    
+    if (!m_npRemoteObjectMap->connection()->sendSync(Messages::NPObjectMessageReceiver::Invoke(methodNameData, argumentsData), Messages::NPObjectMessageReceiver::Invoke::Reply(returnValue, resultData), m_npObjectID))
+        return false;
+    
+    if (!returnValue)
+        return false;
+    
+    *result = m_npRemoteObjectMap->npVariantDataToNPVariant(resultData);
+    return true;
 }
 
 bool NPObjectProxy::hasProperty(NPIdentifier propertyName)
@@ -153,16 +192,14 @@ void NPObjectProxy::NP_Deallocate(NPObject* npObject)
     delete npObjectProxy;
 }
 
-bool NPObjectProxy::NP_HasMethod(NPObject*, NPIdentifier methodName)
+bool NPObjectProxy::NP_HasMethod(NPObject* npObject, NPIdentifier methodName)
 {
-    notImplemented();
-    return false;
+    return toNPObjectProxy(npObject)->hasMethod(methodName);
 }
 
-bool NPObjectProxy::NP_Invoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+bool NPObjectProxy::NP_Invoke(NPObject* npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
-    notImplemented();
-    return false;
+    return toNPObjectProxy(npObject)->invoke(methodName, arguments, argumentCount, result);
 }
 
 bool NPObjectProxy::NP_InvokeDefault(NPObject*, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)

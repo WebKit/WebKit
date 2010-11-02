@@ -1717,8 +1717,6 @@ http/tests/plugins/npapi-response-headers.html
 plugins/destroy-during-npp-new.html
 plugins/destroy-stream-twice.html
 plugins/embed-inside-object.html
-plugins/get-empty-url.html
-plugins/get-file-url.html
 plugins/get-javascript-url.html
 plugins/get-url-with-iframe-target.html
 plugins/geturl-replace-query.html
@@ -1744,7 +1742,6 @@ plugins/npruntime/get-property-return-value.html
 plugins/npruntime/identifier-conversion.html
 plugins/npruntime/invoke-browserfuncs.html
 plugins/npruntime/invoke-default.html
-plugins/npruntime/invoke.html
 plugins/npruntime/npruntime.html
 plugins/npruntime/object-from-destroyed-plugin.html
 plugins/npruntime/plugin-scriptable-object-invoke-default.html
