@@ -1,3 +1,19 @@
+2010-11-02  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        WebProcessManager informed about crashes too late (pages may have already tried to load a new URL)
+        https://bugs.webkit.org/show_bug.cgi?id=48853
+
+        This also fixes: <rdar://problem/8610451> Webkit2: Crash in WebKit!WebKit::WebProcessProxy::sendMessage opening google.com page
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        Removed invalid assertion that is hit when the WebProcess dies unexpectedly.
+        (WebKit::WebProcessProxy::didClose):
+        Reordered so that the individual pages are informed that the processDidCrash() after the shared
+        WebProcessManager has been. This allows the pages to properly trigger a new process to be launched.
+
 2010-11-02  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by Alexey Proskuryakov.
