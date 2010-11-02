@@ -1,3 +1,19 @@
+2010-11-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Remove special handling of HashTableDeletedValue in PlatformRefPtr and manually manage memory that cannot be controlled by HashTraits
+        https://bugs.webkit.org/show_bug.cgi?id=48841
+
+        Remove special handling of HashTableDeletedValue in PlatformRefPtr.
+        This is better handled on a case-by-case basis, when HashTraits
+        cannot account for it.
+
+        * wtf/PlatformRefPtr.h:
+        (WTF::PlatformRefPtr::~PlatformRefPtr):
+        (WTF::PlatformRefPtr::clear):
+        (WTF::::operator):
+
 2010-10-29  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
