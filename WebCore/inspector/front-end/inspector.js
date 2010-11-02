@@ -190,7 +190,7 @@ var WebInspector = {
         var pane = new WebInspector.BreakpointsSidebarPane(WebInspector.UIString("Breakpoints"));
         function breakpointAdded(event)
         {
-            pane.addBreakpoint(new WebInspector.JSBreakpointItem(event.data));
+            pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
         }
         WebInspector.breakpointManager.addEventListener("breakpoint-added", breakpointAdded);
         return pane;
@@ -201,7 +201,7 @@ var WebInspector = {
         var pane = new WebInspector.BreakpointsSidebarPane(WebInspector.UIString("DOM Breakpoints"));
         function breakpointAdded(event)
         {
-            pane.addBreakpoint(new WebInspector.BreakpointItem(event.data));
+            pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
         }
         WebInspector.breakpointManager.addEventListener("dom-breakpoint-added", breakpointAdded);
         return pane;
@@ -212,7 +212,7 @@ var WebInspector = {
         var pane = new WebInspector.XHRBreakpointsSidebarPane();
         function breakpointAdded(event)
         {
-            pane.addBreakpoint(new WebInspector.BreakpointItem(event.data));
+            pane.addBreakpointItem(new WebInspector.BreakpointItem(event.data));
         }
         WebInspector.breakpointManager.addEventListener("xhr-breakpoint-added", breakpointAdded);
         return pane;

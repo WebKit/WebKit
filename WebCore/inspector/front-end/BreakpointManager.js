@@ -347,7 +347,7 @@ WebInspector.Breakpoint.prototype = {
     set sourceText(text)
     {
         this._sourceText = text;
-        this.dispatchEventToListeners("text-changed");
+        this.dispatchEventToListeners("label-changed");
     },
 
     get id()
@@ -372,6 +372,11 @@ WebInspector.Breakpoint.prototype = {
         this.dispatchEventToListeners("condition-changed");
     },
 
+    click: function(event)
+    {
+        WebInspector.panels.scripts.showSourceLine(this.url, this.line);
+    },
+
     compareTo: function(other)
     {
         if (this.url != other.url)
@@ -379,6 +384,18 @@ WebInspector.Breakpoint.prototype = {
         if (this.line != other.line)
             return this.line < other.line ? -1 : 1;
         return 0;
+    },
+
+    populateLabelElement: function(element)
+    {
+        var displayName = this.url ? WebInspector.displayNameForURL(this.url) : WebInspector.UIString("(program)");
+        var labelElement = document.createTextNode(displayName + ":" + this.line);
+        element.appendChild(labelElement);
+
+        var sourceTextElement = document.createElement("div");
+        sourceTextElement.textContent = this.sourceText;
+        sourceTextElement.className = "source-text monospace";
+        element.appendChild(sourceTextElement);
     },
 
     remove: function()
@@ -567,6 +584,11 @@ WebInspector.XHRBreakpoint.prototype = {
     compareTo: function(other)
     {
         return this._compare(this._url, other._url);
+    },
+
+    populateEditElement: function(element)
+    {
+        element.textContent = this._url;
     },
 
     populateLabelElement: function(element)
