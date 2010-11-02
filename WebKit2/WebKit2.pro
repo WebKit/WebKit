@@ -230,6 +230,7 @@ HEADERS += \
     UIProcess/API/C/WebKit2.h \
     UIProcess/API/C/WKAPICast.h \
     UIProcess/API/C/WKBackForwardList.h \
+    UIProcess/API/C/WKBackForwardListItem.h \
     UIProcess/API/C/WKContext.h \
     UIProcess/API/C/WKContextPrivate.h \
     UIProcess/API/C/WKFrame.h \
@@ -395,6 +396,7 @@ SOURCES += \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
     UIProcess/API/C/WKBackForwardList.cpp \
+    UIProcess/API/C/WKBackForwardListItem.cpp \
     UIProcess/API/C/WKContext.cpp \
     UIProcess/API/C/WKFrame.cpp \
     UIProcess/API/C/WKFramePolicyListener.cpp \

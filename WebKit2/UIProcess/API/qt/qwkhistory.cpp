@@ -26,10 +26,54 @@
 #include "qwkhistory.h"
 
 #include "WKBackForwardList.h"
+#include "WKBackForwardListItem.h"
+#include "WKStringQt.h"
+#include "WKURL.h"
+#include "WKURLQt.h"
 #include "WebBackForwardList.h"
 #include "qwkhistory_p.h"
+#include <QString>
+#include <QUrl>
+#include <WebKit2/WKRetainPtr.h>
 
 using namespace WebKit;
+
+QWKHistoryItemPrivate::QWKHistoryItemPrivate(WKBackForwardListItemRef listItem)
+    : m_backForwardListItem(listItem)
+{
+}
+
+QWKHistoryItem::QWKHistoryItem()
+{
+}
+
+QWKHistoryItem::~QWKHistoryItem()
+{
+}
+
+QString QWKHistoryItem::title() const
+{
+    if (!d->m_backForwardListItem)
+        return QString();
+    WKRetainPtr<WKStringRef> title = WKBackForwardListItemCopyTitle(d->m_backForwardListItem.get());
+    return WKStringCopyQString(title.get());
+}
+
+QUrl QWKHistoryItem::url() const
+{
+    if (!d->m_backForwardListItem)
+        return QUrl();
+    WKRetainPtr<WKURLRef> url = WKBackForwardListItemCopyURL(d->m_backForwardListItem.get());
+    return WKURLCopyQUrl(url.get());
+}
+
+QUrl QWKHistoryItem::originalUrl() const
+{
+    if (!d->m_backForwardListItem)
+        return QUrl();
+    WKRetainPtr<WKURLRef> url = WKBackForwardListItemCopyOriginalURL(d->m_backForwardListItem.get());
+    return WKURLCopyQUrl(url.get());
+}
 
 QWKHistoryPrivate::QWKHistoryPrivate(WebKit::WebBackForwardList* list)
     : m_backForwardList(list)

@@ -29,10 +29,29 @@
 #include <QObject>
 
 class QWKHistoryPrivate;
+class QWKHistoryItemPrivate;
+class QUrl;
+class QString;
 
 namespace WebKit {
 class WebBackForwardList;
 }
+
+class QWEBKIT_EXPORT QWKHistoryItem {
+public:
+    ~QWKHistoryItem();
+    QString title() const;
+    QUrl url() const;
+    QUrl originalUrl() const;
+
+private:
+    QWKHistoryItem();
+
+    QWKHistoryItemPrivate* d;
+
+    friend class QWKHistory;
+    friend class QWKHistoryItemPrivate;
+};
 
 class QWEBKIT_EXPORT QWKHistory : public QObject {
     Q_OBJECT

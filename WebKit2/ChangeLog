@@ -1,3 +1,23 @@
+2010-11-01  Juha Savolainen  <juha.savolainen@weego.fi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Initial implementation of QWKHistoryItem.
+        https://bugs.webkit.org/show_bug.cgi?id=48620
+
+        The QWkHistoryItem represents one item in the history of QWKPage.
+
+        * UIProcess/API/qt/qwkhistory.cpp:
+        (QWKHistoryItemPrivate::QWKHistoryItemPrivate):
+        (QWKHistoryItem::QWKHistoryItem):
+        (QWKHistoryItem::~QWKHistoryItem):
+        (QWKHistoryItem::title): The page title
+        (QWKHistoryItem::url): The URL of the page.
+        (QWKHistoryItem::originalUrl): The URL used to access the page.
+        * UIProcess/API/qt/qwkhistory.h:
+        * UIProcess/API/qt/qwkhistory_p.h:
+        * WebKit2.pro: Added WKBackForwardListItem.h and WKBackForwardListItem.cpp
+
 2010-11-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.

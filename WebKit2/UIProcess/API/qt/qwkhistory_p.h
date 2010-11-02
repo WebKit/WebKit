@@ -26,12 +26,25 @@
 #define qwkhistory_p_h
 
 #include "qwebkitglobal.h"
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKRetainPtr.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 class WebBackForwardList;
 }
 
 class QWKHistory;
+
+class QWEBKIT_EXPORT QWKHistoryItemPrivate {
+private:
+    QWKHistoryItemPrivate(WKBackForwardListItemRef listItem);
+
+    WKRetainPtr<WKBackForwardListItemRef> m_backForwardListItem;
+
+    friend class QWKHistory;
+    friend class QWKHistoryItem;
+};
 
 class QWEBKIT_EXPORT QWKHistoryPrivate {
 public:
