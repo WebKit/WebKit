@@ -49,6 +49,7 @@ public:
 
     virtual void invalidate() = 0;
     virtual void invalidateRect(const WebRect&) = 0;
+    virtual void scrollRect(int dx, int dy, const WebRect&) = 0;
 
     // Causes the container to report its current geometry via
     // WebPlugin::updateGeometry.

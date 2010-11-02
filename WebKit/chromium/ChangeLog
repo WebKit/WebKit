@@ -1,3 +1,15 @@
+2010-10-29  John Abd-El-Malek  <jam@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium]: Allow plugins to use optimized scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=48660
+
+        * public/WebPluginContainer.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::scrollRect):
+        * src/WebPluginContainerImpl.h:
+
 2010-11-02  Marc-Antoine Ruel  <maruel@chromium.org>
 
         Reviewed by Dimitri Glazkov.

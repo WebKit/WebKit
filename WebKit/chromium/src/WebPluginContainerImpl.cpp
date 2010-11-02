@@ -275,6 +275,25 @@ void WebPluginContainerImpl::invalidateRect(const WebRect& rect)
     invalidateRect(static_cast<IntRect>(rect));
 }
 
+void WebPluginContainerImpl::scrollRect(int dx, int dy, const WebRect& rect)
+{
+    Widget* parentWidget = parent();
+    if (parentWidget->isFrameView()) {
+        FrameView* parentFrameView = static_cast<FrameView*>(parentWidget);
+        if (!parentFrameView->isOverlapped()) {
+            IntRect damageRect = convertToContainingWindow(static_cast<IntRect>(rect));
+            IntSize scrollDelta(dx, dy);
+            // scroll() only uses the second rectangle, clipRect, and ignores the first
+            // rectangle.
+            parent()->hostWindow()->scroll(scrollDelta, damageRect, damageRect);
+            return;
+        }
+    }
+
+    // Use slow scrolling instead.
+    invalidateRect(rect);
+}
+
 void WebPluginContainerImpl::reportGeometry()
 {
     if (!parent())
