@@ -125,6 +125,10 @@ public:
     virtual void reachedMaxAppCacheSize(int64_t spaceNeeded) = 0;
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
+    virtual void showContextMenu() { }
+#endif
+
 #if ENABLE(NOTIFICATIONS)
     virtual WebCore::NotificationPresenter* notificationPresenter() const = 0;
 #endif
