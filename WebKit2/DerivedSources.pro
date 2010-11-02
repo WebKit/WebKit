@@ -27,7 +27,8 @@ win32-msvc*|symbian {
     DOUBLE_ESCAPED_QUOTE = "\\\'"
 }
 
-linux*:contains(QMAKE_HOST.arch, arm): {
+SBOX_CHECK = $$(_SBOX_DIR)
+!isEmpty(SBOX_CHECK) {
     PYTHON = python2.6
 } else {
     PYTHON = python

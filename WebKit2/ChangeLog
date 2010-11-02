@@ -1,3 +1,13 @@
+2010-11-02  Christian Sejersen  <christian.webkit@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        The previous patch only took into account arm targets. This one
+        now checks whether the build is done inside Scratchbox.
+        https://bugs.webkit.org/show_bug.cgi?id=47895
+
+        * DerivedSources.pro:
+
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.
