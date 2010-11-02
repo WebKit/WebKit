@@ -179,7 +179,7 @@ var WebInspector = {
 
         for (var panelName in WebInspector.panels) {
             if (WebInspector.panels[panelName] === x) {
-                WebInspector.applicationSettings.lastActivePanel = panelName;
+                WebInspector.settings.lastActivePanel = panelName;
                 this._panelHistory.setPanel(panelName);
             }
         }
@@ -504,7 +504,7 @@ WebInspector.doLoadedDone = function()
     document.body.addStyleClass("port-" + port);
 
     InspectorFrontendHost.loaded();
-    WebInspector.applicationSettings = new WebInspector.Settings();
+    WebInspector.settings = new WebInspector.Settings();
 
     this._registerShortcuts();
 
@@ -608,7 +608,7 @@ WebInspector.doLoadedDone = function()
     function onPopulateScriptObjects()
     {
         if (!WebInspector.currentPanel)
-            WebInspector.showPanel(WebInspector.applicationSettings.lastActivePanel);
+            WebInspector.showPanel(WebInspector.settings.lastActivePanel);
     }
     InspectorBackend.populateScriptObjects(onPopulateScriptObjects);
 
@@ -1373,6 +1373,8 @@ WebInspector.reset = function()
 
     this.console.clearMessages();
     this.extensionServer.notifyInspectorReset();
+
+    this.breakpointManager.restoreBreakpoints();
 }
 
 WebInspector.resetProfilesPanel = function()
@@ -1389,7 +1391,12 @@ WebInspector.bringToFront = function()
 WebInspector.inspectedURLChanged = function(url)
 {
     InspectorFrontendHost.inspectedURLChanged(url);
+    this.settings.inspectedURLChanged(url);
     this.extensionServer.notifyInspectedURLChanged();
+    if (!this._breakpointsRestored) {
+        this.breakpointManager.restoreBreakpoints();
+        this._breakpointsRestored = true;
+    }
 }
 
 WebInspector.didCommitLoad = function()

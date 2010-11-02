@@ -569,6 +569,7 @@ void InspectorController::disconnectFrontend()
     bool debuggerWasEnabled = debuggerEnabled();
     disableDebugger();
     m_attachDebuggerWhenShown = debuggerWasEnabled;
+    clearNativeBreakpoints();
 #endif
     setSearchingForNode(false);
     unbindAllResources();
@@ -728,10 +729,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         if (m_debuggerAgent)
             m_debuggerAgent->clearForPageNavigation();
 
-        m_nativeBreakpoints.clear();
-        m_eventListenerBreakpoints.clear();
-        m_XHRBreakpoints.clear();
-        m_lastBreakpointId = 0;
+        clearNativeBreakpoints();
 #endif
 
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
@@ -1462,6 +1460,14 @@ String InspectorController::findXHRBreakpoint(const String& url)
             return it->first;
     }
     return "";
+}
+
+void InspectorController::clearNativeBreakpoints()
+{
+    m_nativeBreakpoints.clear();
+    m_eventListenerBreakpoints.clear();
+    m_XHRBreakpoints.clear();
+    m_lastBreakpointId = 0;
 }
 #endif
 

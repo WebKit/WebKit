@@ -60,7 +60,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
 
     this.settingsSelectElement.addEventListener("click", function(event) { event.stopPropagation() }, false);
     this.settingsSelectElement.addEventListener("change", this._changeSetting.bind(this), false);
-    var format = WebInspector.applicationSettings.colorFormat;
+    var format = WebInspector.settings.colorFormat;
     if (format === "hex")
         this.settingsSelectElement[0].selected = true;
     else if (format === "rgb")
@@ -465,7 +465,7 @@ WebInspector.StylesSidebarPane.prototype = {
         // Select the correct color format setting again, since it needs to be selected.
         var selectedIndex = 0;
         for (var i = 0; i < options.length; ++i) {
-            if (options[i].value === WebInspector.applicationSettings.colorFormat) {
+            if (options[i].value === WebInspector.settings.colorFormat) {
                 selectedIndex = i;
                 break;
             }
@@ -477,7 +477,7 @@ WebInspector.StylesSidebarPane.prototype = {
     _changeColorFormat: function(event)
     {
         var selectedOption = this.settingsSelectElement[this.settingsSelectElement.selectedIndex];
-        WebInspector.applicationSettings.colorFormat = selectedOption.value;
+        WebInspector.settings.colorFormat = selectedOption.value;
 
         for (var pseudoId in this.sections) {
             var sections = this.sections[pseudoId];
@@ -562,15 +562,15 @@ WebInspector.ComputedStyleSidebarPane = function()
     var showInheritedCheckbox = new WebInspector.Checkbox(WebInspector.UIString("Show inherited"), "sidebar-pane-subtitle");
     this.titleElement.appendChild(showInheritedCheckbox.element);
 
-    if (WebInspector.applicationSettings.showInheritedComputedStyleProperties) {
+    if (WebInspector.settings.showInheritedComputedStyleProperties) {
         this.bodyElement.addStyleClass("show-inherited");
         showInheritedCheckbox.checked = true;
     }
 
     function showInheritedToggleFunction(event)
     {
-        WebInspector.applicationSettings.showInheritedComputedStyleProperties = showInheritedCheckbox.checked;
-        if (WebInspector.applicationSettings.showInheritedComputedStyleProperties)
+        WebInspector.settings.showInheritedComputedStyleProperties = showInheritedCheckbox.checked;
+        if (WebInspector.settings.showInheritedComputedStyleProperties)
             this.bodyElement.addStyleClass("show-inherited");
         else
             this.bodyElement.removeStyleClass("show-inherited");
@@ -1200,9 +1200,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 var format;
                 if (Preferences.showColorNicknames && color.nickname)
                     format = "nickname";
-                else if (WebInspector.applicationSettings.colorFormat === "rgb")
+                else if (WebInspector.settings.colorFormat === "rgb")
                     format = (color.simple ? "rgb" : "rgba");
-                else if (WebInspector.applicationSettings.colorFormat === "hsl")
+                else if (WebInspector.settings.colorFormat === "hsl")
                     format = (color.simple ? "hsl" : "hsla");
                 else if (color.simple)
                     format = (color.hasShortHex() ? "shorthex" : "hex");

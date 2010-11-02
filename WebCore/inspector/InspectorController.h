@@ -299,6 +299,7 @@ private:
 
     String findEventListenerBreakpoint(const String& eventName);
     String findXHRBreakpoint(const String& url);
+    void clearNativeBreakpoints();
 #endif
 #if ENABLE(DATABASE)
     void selectDatabase(Database* database);

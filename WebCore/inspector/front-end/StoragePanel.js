@@ -31,7 +31,7 @@ WebInspector.StoragePanel = function(database)
 {
     WebInspector.Panel.call(this, "storage");
 
-    WebInspector.applicationSettings.installApplicationSetting("resourcesLastSelectedItem", {});
+    WebInspector.settings.installApplicationSetting("resourcesLastSelectedItem", {});
 
     this.createSidebar();
     this.sidebarElement.addStyleClass("outline-disclosure filter-all children small");
@@ -109,7 +109,7 @@ WebInspector.StoragePanel.prototype = {
             return;
 
         this._initializedDefaultSelection = true;
-        var itemURL = WebInspector.applicationSettings.resourcesLastSelectedItem;
+        var itemURL = WebInspector.settings.resourcesLastSelectedItem;
         if (itemURL) {
             for (var treeElement = this.sidebarTree.children[0]; treeElement; treeElement = treeElement.traverseNextTreeElement(false, this.sidebarTree, true)) {
                 if (treeElement.itemURL === itemURL) {
@@ -781,7 +781,7 @@ WebInspector.BaseStorageTreeElement.prototype = {
     {
         var itemURL = this.itemURL;
         if (itemURL)
-            WebInspector.applicationSettings.resourcesLastSelectedItem = itemURL;
+            WebInspector.settings.resourcesLastSelectedItem = itemURL;
     },
 
     onreveal: function()
@@ -813,7 +813,7 @@ WebInspector.StorageCategoryTreeElement = function(storagePanel, categoryName, s
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, categoryName, iconClass, true);
     this._expandedSettingKey = "resources" + settingsKey + "Expanded";
-    WebInspector.applicationSettings.installApplicationSetting(this._expandedSettingKey, settingsKey === "Frames");
+    WebInspector.settings.installApplicationSetting(this._expandedSettingKey, settingsKey === "Frames");
     this._categoryName = categoryName;
 }
 
@@ -832,18 +832,18 @@ WebInspector.StorageCategoryTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
-        if (WebInspector.applicationSettings[this._expandedSettingKey])
+        if (WebInspector.settings[this._expandedSettingKey])
             this.expand();
     },
 
     onexpand: function()
     {
-        WebInspector.applicationSettings[this._expandedSettingKey] = true;
+        WebInspector.settings[this._expandedSettingKey] = true;
     },
 
     oncollapse: function()
     {
-        WebInspector.applicationSettings[this._expandedSettingKey] = false;
+        WebInspector.settings[this._expandedSettingKey] = false;
     }
 }
 WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;

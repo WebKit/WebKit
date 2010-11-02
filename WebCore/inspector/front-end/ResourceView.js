@@ -147,7 +147,7 @@ WebInspector.ResourceView.prototype = {
 
     _selectTab: function()
     {
-        var preferredTab = WebInspector.applicationSettings.resourceViewTab;
+        var preferredTab = WebInspector.settings.resourceViewTab;
         if (this._headersVisible && this._cookiesView && preferredTab === "cookies")
             this._selectCookiesTab();
         else if (this._headersVisible && (!this.hasContentTab() || preferredTab === "headers"))
@@ -159,14 +159,14 @@ WebInspector.ResourceView.prototype = {
     _selectHeadersTab: function(updatePrefs)
     {
         if (updatePrefs)
-            WebInspector.applicationSettings.resourceViewTab = "headers";
+            WebInspector.settings.resourceViewTab = "headers";
         this.tabbedPane.selectTabById("headers");
     },
 
     selectContentTab: function(updatePrefs)
     {
         if (updatePrefs)
-            WebInspector.applicationSettings.resourceViewTab = "content";
+            WebInspector.settings.resourceViewTab = "content";
         this._innerSelectContentTab();
     },
 
@@ -179,7 +179,7 @@ WebInspector.ResourceView.prototype = {
     _selectCookiesTab: function(updatePrefs)
     {
         if (updatePrefs)
-            WebInspector.applicationSettings.resourceViewTab = "cookies";
+            WebInspector.settings.resourceViewTab = "cookies";
         this.tabbedPane.selectTabById("cookies");
         this._cookiesView.resize();
     },

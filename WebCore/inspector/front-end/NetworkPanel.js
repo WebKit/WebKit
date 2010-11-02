@@ -67,8 +67,8 @@ WebInspector.NetworkPanel = function()
     this._createFilterStatusBarItems();
     this._createSummaryBar();
 
-    if (!WebInspector.applicationSettings.resourcesLargeRows)
-        this._setLargerResources(WebInspector.applicationSettings.resourcesLargeRows);
+    if (!WebInspector.settings.resourcesLargeRows)
+        this._setLargerResources(WebInspector.settings.resourcesLargeRows);
 
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
 
@@ -615,7 +615,7 @@ WebInspector.NetworkPanel.prototype = {
         this._clearButton.addEventListener("click", this._reset.bind(this), false);
 
         this._largerResourcesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Use small resource rows."), "network-larger-resources-status-bar-item");
-        this._largerResourcesButton.toggled = WebInspector.applicationSettings.resourcesLargeRows;
+        this._largerResourcesButton.toggled = WebInspector.settings.resourcesLargeRows;
         this._largerResourcesButton.addEventListener("click", this._toggleLargerResources.bind(this), false);
     },
 
@@ -884,8 +884,8 @@ WebInspector.NetworkPanel.prototype = {
 
     _toggleLargerResources: function()
     {
-        WebInspector.applicationSettings.resourcesLargeRows = !WebInspector.applicationSettings.resourcesLargeRows;
-        this._setLargerResources(WebInspector.applicationSettings.resourcesLargeRows);
+        WebInspector.settings.resourcesLargeRows = !WebInspector.settings.resourcesLargeRows;
+        this._setLargerResources(WebInspector.settings.resourcesLargeRows);
     },
 
     _setLargerResources: function(enabled)

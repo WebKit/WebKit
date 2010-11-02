@@ -1463,6 +1463,7 @@ body.inactive .placard.selected {
 }
 
 .event-listener-breakpoints .checkbox-elem {
+    font-size: 10px;
     float: left;
     margin-top: 1px;
     margin-left: 0px;
@@ -4129,7 +4130,7 @@ ol.breakpoint-list {
     margin: 2px 0 0px 20px;
 }
 
-.breakpoint-list .breakpoint-hit {
+.pane .breakpoint-hit {
     background-color: yellow;
 }
 
