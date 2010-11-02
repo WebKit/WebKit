@@ -1,14 +1,5 @@
 2010-11-01  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Sam Weinig.
-
-        Add ArgumentCoder specialization for WTF::CString
-        https://bugs.webkit.org/show_bug.cgi?id=48796
-
-        * Platform/CoreIPC/ArgumentCoders.h:
-
-2010-11-01  Anders Carlsson  <andersca@apple.com>
-
         Reviewed by John Sullivan.
 
         Respond to NP_GetProperty by sending a GetProperty message
