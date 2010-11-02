@@ -52,9 +52,9 @@ PASS gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T) is gl.CLAMP_TO_EDGE
 PASS gl.getProgramParameter(boolProgram, gl.LINK_STATUS) is true
 PASS getError was expected value: NO_ERROR : 
 PASS gl.getUniform(boolProgram, bvalLoc) is true
-PASS gl.getUniform(boolProgram, bval2Loc) is [1, 0]
-PASS gl.getUniform(boolProgram, bval3Loc) is [1, 0, 1]
-PASS gl.getUniform(boolProgram, bval4Loc) is [1, 0, 1, 0]
+PASS gl.getUniform(boolProgram, bval2Loc) is [true, false]
+PASS gl.getUniform(boolProgram, bval3Loc) is [true, false, true]
+PASS gl.getUniform(boolProgram, bval4Loc) is [true, false, true, false]
 PASS gl.getProgramParameter(intProgram, gl.LINK_STATUS) is true
 PASS getError was expected value: NO_ERROR : 
 PASS gl.getUniform(intProgram, ivalLoc) is 1

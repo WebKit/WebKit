@@ -1755,20 +1755,20 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
                     return WebGLGetInfo(Float32Array::create(value, length));
                 }
                 case GraphicsContext3D::INT: {
-                    int value[16] = {0};
+                    int value[4] = {0};
                     m_context->getUniformiv(objectOrZero(program), location, value);
                     if (length == 1)
                         return WebGLGetInfo(static_cast<long>(value[0]));
                     return WebGLGetInfo(Int32Array::create(value, length));
                 }
                 case GraphicsContext3D::BOOL: {
-                    int value[16] = {0};
+                    int value[4] = {0};
                     m_context->getUniformiv(objectOrZero(program), location, value);
                     if (length > 1) {
-                        unsigned char boolValue[16] = {0};
+                        bool boolValue[16] = {0};
                         for (unsigned j = 0; j < length; j++)
                             boolValue[j] = static_cast<bool>(value[j]);
-                        return WebGLGetInfo(Uint8Array::create(boolValue, length));
+                        return WebGLGetInfo(boolValue, length);
                     }
                     return WebGLGetInfo(static_cast<bool>(value[0]));
                 }

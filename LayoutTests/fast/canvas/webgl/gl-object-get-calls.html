@@ -150,9 +150,9 @@ gl.uniform3i(bval3Loc, 1, 0, 1);
 gl.uniform4i(bval4Loc, 1, 0, 1, 0);
 glErrorShouldBe(gl, gl.NO_ERROR);
 shouldBe('gl.getUniform(boolProgram, bvalLoc)', 'true');
-shouldBe('gl.getUniform(boolProgram, bval2Loc)', '[1, 0]');
-shouldBe('gl.getUniform(boolProgram, bval3Loc)', '[1, 0, 1]');
-shouldBe('gl.getUniform(boolProgram, bval4Loc)', '[1, 0, 1, 0]');
+shouldBe('gl.getUniform(boolProgram, bval2Loc)', '[true, false]');
+shouldBe('gl.getUniform(boolProgram, bval3Loc)', '[true, false, true]');
+shouldBe('gl.getUniform(boolProgram, bval4Loc)', '[true, false, true, false]');
 // Integer uniform variables
 var intProgram = loadProgram(gl, "resources/intUniformShader.vert", "resources/noopUniformShader.frag");
 shouldBe('gl.getProgramParameter(intProgram, gl.LINK_STATUS)', 'true');
