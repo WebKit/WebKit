@@ -54,6 +54,8 @@ namespace WebCore {
         bool outputScanlines();
         void jpegComplete();
 
+        void setColorProfile(const ColorProfile& colorProfile) { m_colorProfile = colorProfile; }
+
     private:
         // Decodes the image.  If |onlySize| is true, stops decoding after
         // calculating the image size.  If decoding fails but there is no more
