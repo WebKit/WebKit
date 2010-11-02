@@ -1,5 +1,12 @@
 2010-11-02  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Unreviewed Qt buildfix.
+
+        * DerivedSources.pro: Add WebInspector to the list of
+        message recievers.
+
+2010-11-02  Balazs Kelemen  <kbalazs@webkit.org>
+
         Reviewed by Andreas Kling.
 
         [Qt][WK2] SharedMemory is broken
