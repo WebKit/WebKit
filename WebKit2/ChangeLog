@@ -1,5 +1,24 @@
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by John Sullivan.
+
+        Add Null and Int32 to NPVariantData
+        https://bugs.webkit.org/show_bug.cgi?id=48887
+
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::npVariantToNPVariantData):
+        (WebKit::NPRemoteObjectMap::npVariantDataToNPVariant):
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::NPVariantData):
+        (WebKit::NPVariantData::makeNull):
+        (WebKit::NPVariantData::makeInt32):
+        (WebKit::NPVariantData::encode):
+        (WebKit::NPVariantData::decode):
+        * Shared/Plugins/NPVariantData.h:
+        (WebKit::NPVariantData::int32Value):
+
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Add support for NP_HasMethod and NP_Invoke

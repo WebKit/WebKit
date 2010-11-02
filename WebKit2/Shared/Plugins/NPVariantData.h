@@ -43,7 +43,9 @@ class NPVariantData {
 public:
     enum Type {
         Void,
+        Null,
         Bool,
+        Int32,
         Double,
         String,
         LocalNPObjectID,
@@ -52,7 +54,9 @@ public:
     NPVariantData();
 
     static NPVariantData makeVoid();
+    static NPVariantData makeNull();
     static NPVariantData makeBool(bool value);
+    static NPVariantData makeInt32(int32_t value);
     static NPVariantData makeDouble(double value);
     static NPVariantData makeString(const char* string, unsigned length);
     static NPVariantData makeLocalNPObjectID(uint64_t value);
@@ -63,6 +67,12 @@ public:
     {
         ASSERT(type() == NPVariantData::Bool);
         return m_boolValue;
+    }
+
+    int32_t int32Value() const
+    {
+        ASSERT(type() == NPVariantData::Int32);
+        return m_int32Value;
     }
 
     double doubleValue() const
@@ -95,6 +105,7 @@ public:
 private:
     uint32_t m_type;
     bool m_boolValue;
+    int32_t m_int32Value;
     double m_doubleValue;
     CString m_stringValue;
     uint64_t m_localNPObjectIDValue;

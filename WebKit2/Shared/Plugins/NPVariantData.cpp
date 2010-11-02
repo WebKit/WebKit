@@ -37,6 +37,7 @@ namespace WebKit {
 NPVariantData::NPVariantData()
     : m_type(NPVariantData::Void)
     , m_boolValue(false)
+    , m_int32Value(0)
     , m_doubleValue(0)
     , m_localNPObjectIDValue(0)
     , m_remoteNPObjectIDValue(0)
@@ -48,6 +49,15 @@ NPVariantData NPVariantData::makeVoid()
     return NPVariantData();
 }
 
+NPVariantData NPVariantData::makeNull()
+{
+    NPVariantData npVariantData;
+    
+    npVariantData.m_type = NPVariantData::Null;
+    
+    return npVariantData;
+}
+    
 NPVariantData NPVariantData::makeBool(bool value)
 {
     NPVariantData npVariantData;
@@ -57,6 +67,16 @@ NPVariantData NPVariantData::makeBool(bool value)
 
     return npVariantData;
 }
+
+NPVariantData NPVariantData::makeInt32(int32_t value)
+{
+    NPVariantData npVariantData;
+
+    npVariantData.m_type = NPVariantData::Int32;
+    npVariantData.m_int32Value = value;
+
+    return npVariantData;
+}    
 
 NPVariantData NPVariantData::makeDouble(double value)
 {
@@ -94,9 +114,13 @@ void NPVariantData::encode(CoreIPC::ArgumentEncoder* encoder) const
 
     switch (type()) {
     case NPVariantData::Void:
+    case NPVariantData::Null:
         break;
     case NPVariantData::Bool:
         encoder->encode(boolValue());
+        break;
+    case NPVariantData::Int32:
+        encoder->encode(int32Value());
         break;
     case NPVariantData::Double:
         encoder->encode(doubleValue());
@@ -132,9 +156,12 @@ bool NPVariantData::decode(CoreIPC::ArgumentDecoder* decoder, NPVariantData& res
 
     switch (result.m_type) {
     case NPVariantData::Void:
+    case NPVariantData::Null:
         return true;
     case NPVariantData::Bool:
         return decoder->decode(result.m_boolValue);
+    case NPVariantData::Int32:
+        return decoder->decode(result.m_int32Value);
     case NPVariantData::Double:
         return decoder->decode(result.m_doubleValue);
     case NPVariantData::String:
@@ -143,9 +170,9 @@ bool NPVariantData::decode(CoreIPC::ArgumentDecoder* decoder, NPVariantData& res
         return decoder->decode(result.m_localNPObjectIDValue);
     case NPVariantData::RemoteNPObjectID:
         return decoder->decode(result.m_remoteNPObjectIDValue);
-    default:
-        return false;
     }
+
+    return false;
 }
 
 } // namespace WebKit
