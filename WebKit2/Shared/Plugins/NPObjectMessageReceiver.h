@@ -53,6 +53,7 @@ private:
 
     // Message handlers.
     void deallocate();
+    void hasProperty(const NPIdentifierData&, bool& returnValue);
     void getProperty(const NPIdentifierData&, bool& returnValue, NPVariantData& resultData);
 
     NPRemoteObjectMap* m_npRemoteObjectMap;

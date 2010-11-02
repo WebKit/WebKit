@@ -23,10 +23,8 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> NPObjectMessageReceiver {
-    # Deallocate the NPObject.
     Deallocate() -> ()
-
-    # Get the given property.
+    HasProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue)
     GetProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue, WebKit::NPVariantData resultData)
 }
 

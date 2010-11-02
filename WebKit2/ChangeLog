@@ -1,3 +1,25 @@
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement NP_HasProperty for NPObjectProxy
+        https://bugs.webkit.org/show_bug.cgi?id=48876
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::hasProperty):
+        Call The hasProperty callback function.
+
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in:
+        Add HasProperty message.
+
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::hasProperty):
+        Send the HasProperty message.
+
+        (WebKit::NPObjectProxy::NP_HasProperty):
+        Call hasProperty.
+
+
 2010-11-02  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -1737,7 +1737,6 @@ plugins/return-negative-one-from-write.html
 plugins/set-status.html
 plugins/update-widgets-crash.html
 plugins/window-open.html
-plugins/npruntime/embed-property.html
 plugins/npruntime/enumerate.html
 plugins/npruntime/evaluate.html
 plugins/npruntime/get-int-identifier-special-values.html

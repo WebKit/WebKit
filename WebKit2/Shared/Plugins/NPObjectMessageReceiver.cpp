@@ -60,6 +60,16 @@ void NPObjectMessageReceiver::deallocate()
     delete this;
 }
 
+void NPObjectMessageReceiver::hasProperty(const NPIdentifierData& propertyNameData, bool& returnValue)
+{
+    if (!m_npObject->_class->hasProperty) {
+        returnValue = false;
+        return;
+    }
+
+    returnValue = m_npObject->_class->hasProperty(m_npObject, propertyNameData.createNPIdentifier());
+}
+
 void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameData, bool& returnValue, NPVariantData& resultData)
 {
     if (!m_npObject->_class->getProperty) {

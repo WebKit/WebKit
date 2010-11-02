@@ -57,6 +57,7 @@ private:
 
     void initialize(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID);
 
+    bool hasProperty(NPIdentifier propertyName);
     bool getProperty(NPIdentifier propertyName, NPVariant* result);
 
     static NPClass* npClass();

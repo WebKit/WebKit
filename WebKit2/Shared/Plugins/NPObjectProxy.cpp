@@ -84,6 +84,21 @@ void NPObjectProxy::initialize(NPRemoteObjectMap* npRemoteObjectMap, uint64_t np
     m_npObjectID = npObjectID;
 }
 
+bool NPObjectProxy::hasProperty(NPIdentifier propertyName)
+{
+    if (!m_npRemoteObjectMap)
+        return false;
+    
+    NPIdentifierData propertyNameData = NPIdentifierData::fromNPIdentifier(propertyName);
+
+    bool returnValue = false;
+    
+    if (!m_npRemoteObjectMap->connection()->sendSync(Messages::NPObjectMessageReceiver::HasProperty(propertyNameData), Messages::NPObjectMessageReceiver::HasProperty::Reply(returnValue), m_npObjectID))
+        return false;
+
+    return returnValue;
+}
+
 bool NPObjectProxy::getProperty(NPIdentifier propertyName, NPVariant* result)
 {
     if (!m_npRemoteObjectMap)
@@ -156,10 +171,9 @@ bool NPObjectProxy::NP_InvokeDefault(NPObject*, const NPVariant* arguments, uint
     return false;
 }
 
-bool NPObjectProxy::NP_HasProperty(NPObject*, NPIdentifier propertyName)
+bool NPObjectProxy::NP_HasProperty(NPObject* npObject, NPIdentifier propertyName)
 {
-    notImplemented();
-    return false;
+    return toNPObjectProxy(npObject)->hasProperty(propertyName);
 }
 
 bool NPObjectProxy::NP_GetProperty(NPObject* npObject, NPIdentifier propertyName, NPVariant* result)
