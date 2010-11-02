@@ -30,8 +30,10 @@
 #define ResourceLoadDelegate_h
 
 #include <WebKit/WebKit.h>
+#include <string>
+#include <wtf/HashMap.h>
 
-class ResourceLoadDelegate : public IWebResourceLoadDelegate {
+class ResourceLoadDelegate : public IWebResourceLoadDelegate, public IWebResourceLoadDelegatePrivate2 {
 public:
     ResourceLoadDelegate();
     virtual ~ResourceLoadDelegate();
@@ -95,8 +97,22 @@ public:
         /* [in] */ IWebView *webView,
         /* [in] */ IWebError *error,
         /* [in] */ IWebDataSource *dataSource) { return E_NOTIMPL; }
+
+    // IWebResourceLoadDelegatePrivate2
+    virtual HRESULT STDMETHODCALLTYPE removeIdentifierForRequest(
+        /* [in] */ IWebView *webView,
+        /* [in] */ unsigned long identifier);
     
-protected:
+private:
+    static std::wstring descriptionSuitableForTestResult(IWebURLRequest*);
+    static std::wstring descriptionSuitableForTestResult(IWebURLResponse*);
+    std::wstring descriptionSuitableForTestResult(unsigned long) const;
+    std::wstring descriptionSuitableForTestResult(IWebError*, unsigned long) const;
+
+    typedef HashMap<unsigned long, std::wstring> IdentifierMap;
+    IdentifierMap& urlMap() { return m_urlMap; }
+    IdentifierMap m_urlMap;
+
     ULONG m_refCount;
 };
 

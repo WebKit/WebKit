@@ -117,6 +117,7 @@ import "ocidl.idl";
 #include "IWebResource.idl"
 #include "IWebResourceLoadDelegate.idl"
 #include "IWebResourceLoadDelegatePrivate.idl"
+#include "IWebResourceLoadDelegatePrivate2.idl"
 #include "IWebScriptWorld.idl"
 #include "IWebScrollBarDelegatePrivate.idl"
 #include "IWebScrollBarPrivate.idl"

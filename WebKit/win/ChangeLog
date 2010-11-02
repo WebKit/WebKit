@@ -1,3 +1,17 @@
+2010-11-01  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Windows: Update resource tracking when moving a frame between documents
+        https://bugs.webkit.org/show_bug.cgi?id=48364
+
+        * Interfaces/IWebResourceLoadDelegatePrivate2.idl:Added
+        Added removeIdentifierForRequest.
+        * Interfaces/WebKit.idl:
+        Added IWebResourceLoadDelegatePrivate2.idl.
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::transferLoadingResourceFromPage):
+
 2010-11-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

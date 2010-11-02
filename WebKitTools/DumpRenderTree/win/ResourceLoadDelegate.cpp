@@ -35,7 +35,6 @@
 #include <comutil.h>
 #include <sstream>
 #include <tchar.h>
-#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
 using namespace std;
@@ -60,26 +59,17 @@ static inline BSTR BSTRFromString(const string& str)
     return result;
 }
 
-typedef HashMap<unsigned long, wstring> IdentifierMap;
-
-IdentifierMap& urlMap()
+wstring ResourceLoadDelegate::descriptionSuitableForTestResult(unsigned long identifier) const
 {
-    static IdentifierMap urlMap;
-
-    return urlMap;
-}
-
-static wstring descriptionSuitableForTestResult(unsigned long identifier)
-{
-    IdentifierMap::iterator it = urlMap().find(identifier);
+    IdentifierMap::const_iterator it = m_urlMap.find(identifier);
     
-    if (it == urlMap().end())
+    if (it == m_urlMap.end())
         return L"<unknown>";
 
     return urlSuitableForTestResult(it->second);
 }
 
-static wstring descriptionSuitableForTestResult(IWebURLRequest* request)
+wstring ResourceLoadDelegate::descriptionSuitableForTestResult(IWebURLRequest* request)
 {
     if (!request)
         return L"(null)";
@@ -108,7 +98,7 @@ static wstring descriptionSuitableForTestResult(IWebURLRequest* request)
     return L"<NSURLRequest URL " + url + L", main document URL " + mainDocumentURL + L", http method " + httpMethod + L">";
 }
 
-static wstring descriptionSuitableForTestResult(IWebURLResponse* response)
+wstring ResourceLoadDelegate::descriptionSuitableForTestResult(IWebURLResponse* response)
 {
     if (!response)
         return L"(null)";
@@ -128,7 +118,7 @@ static wstring descriptionSuitableForTestResult(IWebURLResponse* response)
     return L"<NSURLResponse " + url + L", http status code " + wstringFromInt(statusCode) + L">";
 }
 
-static wstring descriptionSuitableForTestResult(IWebError* error, unsigned long identifier)
+wstring ResourceLoadDelegate::descriptionSuitableForTestResult(IWebError* error, unsigned long identifier) const
 {
     wstring result = L"<NSError ";
 
@@ -197,6 +187,8 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::QueryInterface(REFIID riid, void
         *ppvObject = static_cast<IWebResourceLoadDelegate*>(this);
     else if (IsEqualGUID(riid, IID_IWebResourceLoadDelegate))
         *ppvObject = static_cast<IWebResourceLoadDelegate*>(this);
+    else if (IsEqualGUID(riid, IID_IWebResourceLoadDelegatePrivate2))
+        *ppvObject = static_cast<IWebResourceLoadDelegatePrivate2*>(this);
     else
         return E_NOINTERFACE;
 
@@ -224,12 +216,25 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::identifierForInitialRequest(
     /* [in] */ IWebDataSource* dataSource,
     /* [in] */ unsigned long identifier)
 { 
-    if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
+    if (!done) {
         BSTR urlStr;
         if (FAILED(request->URL(&urlStr)))
             return E_FAIL;
 
+        ASSERT(!urlMap().contains(identifier));
         urlMap().set(identifier, wstringFromBSTR(urlStr));
+    }
+
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::removeIdentifierForRequest(
+    /* [in] */ IWebView* webView,
+    /* [in] */ unsigned long identifier)
+{
+    if (!done) {
+        ASSERT(urlMap().contains(identifier));
+        urlMap().remove(identifier);
     }
 
     return S_OK;
@@ -351,11 +356,12 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didFinishLoadingFromDataSource(
 {
     if (!done && gLayoutTestController->dumpResourceLoadCallbacks()) {
         printf("%S - didFinishLoading\n",
-            descriptionSuitableForTestResult(identifier).c_str()),
-       urlMap().remove(identifier);
+            descriptionSuitableForTestResult(identifier).c_str());
     }
 
-   return S_OK;
+    removeIdentifierForRequest(webView, identifier);
+
+    return S_OK;
 }
         
 HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didFailLoadingWithError( 
@@ -368,8 +374,9 @@ HRESULT STDMETHODCALLTYPE ResourceLoadDelegate::didFailLoadingWithError(
         printf("%S - didFailLoadingWithError: %S\n", 
             descriptionSuitableForTestResult(identifier).c_str(),
             descriptionSuitableForTestResult(error, identifier).c_str());
-        urlMap().remove(identifier);
     }
+
+    removeIdentifierForRequest(webView, identifier);
 
     return S_OK;
 }

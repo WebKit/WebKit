@@ -1,3 +1,31 @@
+2010-11-01  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Adam Roben.
+
+        Windows: Update resource tracking when moving a frame between documents
+        https://bugs.webkit.org/show_bug.cgi?id=48364
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (createWebViewAndOffscreenWindow):
+        (main):
+        Give each WebView its own ResourceLoadDelegate instance in order to
+        make assertions about resource ids on a particular WebView.
+        * DumpRenderTree/win/ResourceLoadDelegate.cpp:
+        (ResourceLoadDelegate::identifierForInitialRequest):
+        Always add id to the map.
+        (ResourceLoadDelegate::removeIdentifierForRequest):
+        Added.
+        (ResourceLoadDelegate::willSendRequest):
+        (ResourceLoadDelegate::didReceiveAuthenticationChallenge):
+        (ResourceLoadDelegate::didReceiveResponse):
+        (ResourceLoadDelegate::didFinishLoadingFromDataSource):
+        (ResourceLoadDelegate::didFailLoadingWithError):
+        (ResourceLoadDelegate::descriptionSuitableForTestResult):
+        Replace static descriptionSuitableForTestResult with static member function to access identifier map.
+        * DumpRenderTree/win/ResourceLoadDelegate.h:
+        (ResourceLoadDelegate::urlMap):
+        Moved within class so that each WebView has its own id map.
+
 2010-11-01  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Dimitri Glazkov.
