@@ -47,15 +47,9 @@ WebInspector.ImageView.prototype = {
         this._container.className = "image";
         this.contentElement.appendChild(this._container);
 
-        this.imagePreviewElement = document.createElement("img");
-        this.imagePreviewElement.addStyleClass("resource-image-view");
-        this._container.appendChild(this.imagePreviewElement);
-
-        function onResourceContent(element, content)
-        {
-            this.imagePreviewElement.setAttribute("src", this.resource.contentURL);
-        }
-        this.resource.getContent(onResourceContent.bind(this));
+        var imagePreviewElement = document.createElement("img");
+        imagePreviewElement.addStyleClass("resource-image-view");
+        this._container.appendChild(imagePreviewElement);
 
         this._container = document.createElement("div");
         this._container.className = "info";
@@ -69,18 +63,33 @@ WebInspector.ImageView.prototype = {
         var infoListElement = document.createElement("dl");
         infoListElement.className = "infoList";
 
-        var imageProperties = [
-            { name: WebInspector.UIString("Dimensions"), value: WebInspector.UIString("%d × %d", this.imagePreviewElement.naturalWidth, this.imagePreviewElement.height) },
-            { name: WebInspector.UIString("File size"), value: Number.bytesToString(this.resource.resourceSize, WebInspector.UIString) },
-            { name: WebInspector.UIString("MIME type"), value: this.resource.mimeType }
-        ];
+        function onResourceContent(element, content)
+        {
+            imagePreviewElement.setAttribute("src", this.resource.contentURL);
+        }
+        this.resource.getContent(onResourceContent.bind(this));
 
-        var listHTML = '';
-        for (var i = 0; i < imageProperties.length; ++i)
-            listHTML += "<dt>" + imageProperties[i].name + "</dt><dd>" + imageProperties[i].value + "</dd>";
 
-        infoListElement.innerHTML = listHTML;
-        this._container.appendChild(infoListElement);
+        function onImageLoad()
+        {
+            var imageProperties = [
+                { name: WebInspector.UIString("Dimensions"), value: WebInspector.UIString("%d × %d", imagePreviewElement.naturalWidth, imagePreviewElement.height) },
+                { name: WebInspector.UIString("File size"), value: Number.bytesToString(this.resource.resourceSize, WebInspector.UIString) },
+                { name: WebInspector.UIString("MIME type"), value: this.resource.mimeType }
+            ];
+    
+            infoListElement.removeChildren();
+            for (var i = 0; i < imageProperties.length; ++i) {
+                var dt = document.createElement("dt");
+                dt.textContent = imageProperties[i].name;
+                infoListElement.appendChild(dt);
+                var dd = document.createElement("dd");
+                dd.textContent = imageProperties[i].value;
+                infoListElement.appendChild(dd);
+            }
+            this._container.appendChild(infoListElement);
+        }
+        imagePreviewElement.addEventListener("load", onImageLoad.bind(this), false);
     }
 }
 
