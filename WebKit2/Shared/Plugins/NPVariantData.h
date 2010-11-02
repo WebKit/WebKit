@@ -41,14 +41,22 @@ class NPVariantData {
 public:
     enum Type {
         Void,
+        Bool,
         Double,
     };
     NPVariantData();
 
     static NPVariantData makeVoid();
+    static NPVariantData makeBool(bool value);
     static NPVariantData makeDouble(double value);
 
     Type type() const { return static_cast<Type>(m_type); }
+
+    bool boolValue() const
+    {
+        ASSERT(type() == NPVariantData::Bool);
+        return m_boolValue;
+    }
 
     double doubleValue() const
     {
@@ -61,6 +69,7 @@ public:
 
 private:
     uint32_t m_type;
+    bool m_boolValue;
     double m_doubleValue;
 };
 

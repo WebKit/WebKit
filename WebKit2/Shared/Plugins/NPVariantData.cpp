@@ -43,6 +43,16 @@ NPVariantData NPVariantData::makeVoid()
     return NPVariantData();
 }
 
+NPVariantData NPVariantData::makeBool(bool value)
+{
+    NPVariantData npVariantData;
+
+    npVariantData.m_type = NPVariantData::Bool;
+    npVariantData.m_boolValue = value;
+
+    return npVariantData;
+}
+
 NPVariantData NPVariantData::makeDouble(double value)
 {
     NPVariantData npVariantData;
@@ -60,8 +70,12 @@ void NPVariantData::encode(CoreIPC::ArgumentEncoder* encoder) const
     switch (type()) {
     case NPVariantData::Void:
         break;
+    case NPVariantData::Bool:
+        encoder->encode(m_boolValue);
+        break;
     case NPVariantData::Double:
         encoder->encode(m_doubleValue);
+        break;
     }
 }
 
@@ -73,6 +87,8 @@ bool NPVariantData::decode(CoreIPC::ArgumentDecoder* decoder, NPVariantData& res
     switch (result.m_type) {
     case NPVariantData::Void:
         return true;
+    case NPVariantData::Bool:
+        return decoder->decode(result.m_boolValue);
     case NPVariantData::Double:
         return decoder->decode(result.m_doubleValue);
     default:

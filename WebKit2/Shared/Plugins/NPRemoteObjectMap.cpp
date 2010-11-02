@@ -79,11 +79,13 @@ NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& varia
     case NPVariantType_Void:
         return NPVariantData::makeVoid();
 
+    case NPVariantType_Bool:
+        return NPVariantData::makeBool(variant.value.boolValue);
+
     case NPVariantType_Double:
         return NPVariantData::makeDouble(variant.value.doubleValue);
             
     case NPVariantType_Null:
-    case NPVariantType_Bool:
     case NPVariantType_Int32:
     case NPVariantType_String:
     case NPVariantType_Object:
@@ -102,6 +104,9 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
     switch (npVariantData.type()) {
     case NPVariantData::Void:
         VOID_TO_NPVARIANT(npVariant);
+        break;
+    case NPVariantData::Bool:
+        BOOLEAN_TO_NPVARIANT(npVariantData.boolValue(), npVariant);
         break;
     case NPVariantData::Double:
         DOUBLE_TO_NPVARIANT(npVariantData.doubleValue(), npVariant);

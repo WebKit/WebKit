@@ -21,6 +21,23 @@
 
         Reviewed by John Sullivan.
 
+        Handle boolean values in NPVariant and NPVariantData
+        https://bugs.webkit.org/show_bug.cgi?id=48852
+
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::npVariantToNPVariantData):
+        (WebKit::NPRemoteObjectMap::npVariantDataToNPVariant):
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::makeBool):
+        (WebKit::NPVariantData::encode):
+        (WebKit::NPVariantData::decode):
+        * Shared/Plugins/NPVariantData.h:
+        (WebKit::NPVariantData::boolValue):
+
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by John Sullivan.
+
         Assertion hit in WebProcessProxy::~WebProcessProxy()
         https://bugs.webkit.org/show_bug.cgi?id=48849
         <rdar://problem/8617676>
