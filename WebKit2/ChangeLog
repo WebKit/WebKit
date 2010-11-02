@@ -1,3 +1,22 @@
+2010-11-02  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebKit2: Repeated cmd-key presses lead to unusable UI state
+        https://bugs.webkit.org/show_bug.cgi?id=48811
+        <rdar://problem/8611924>
+
+        Given the asynchronous nature of every interaction with the WebProcess,
+        we could re-send a keyDown event to AppKit that maps to an
+        action that is currently disabled and therefore will not trigger an action
+        but a call to the keyDown method of the NSView. We need to detect this
+        situation to avoid an infinite loop.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView performKeyEquivalent:]): Delay the release of the last processed event
+        to the moment we receive another event.
+        (-[WKView keyDown:]): Added early return in case the event is one we have re-sent.
+
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.

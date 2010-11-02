@@ -346,9 +346,6 @@ EVENT_HANDLER(scrollWheel, Wheel)
     BOOL eventWasSentToWebCore = (_data->_keyDownEventBeingResent == event);
     BOOL ret = NO;
     
-    [_data->_keyDownEventBeingResent release];
-    _data->_keyDownEventBeingResent = nil;
-    
     [self retain];
     
     // Pass key combos through WebCore if there is a key binding available for
@@ -356,6 +353,9 @@ EVENT_HANDLER(scrollWheel, Wheel)
     // But don't do it if we have already handled the event.
     // Pressing Esc results in a fake event being sent - don't pass it to WebCore.
     if (!eventWasSentToWebCore && event == [NSApp currentEvent] && self == [[self window] firstResponder]) {
+        [_data->_keyDownEventBeingResent release];
+        _data->_keyDownEventBeingResent = nil;
+        
         _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(event, self));
         return YES;
     }
@@ -389,6 +389,15 @@ EVENT_HANDLER(scrollWheel, Wheel)
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+    // We could be receiving a key down from AppKit if we have re-sent an event
+    // that maps to an action that is currently unavailable (for example a copy when
+    // there is no range selection).
+    // If this is the case we should ignore the key down.
+    if (_data->_keyDownEventBeingResent == theEvent) {
+        [_data->_keyDownEventBeingResent release];
+        _data->_keyDownEventBeingResent = nil;
+        return;
+    }
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
 }
 
