@@ -1,3 +1,14 @@
+2010-11-02  Marc-Antoine Ruel  <maruel@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Disable incremental linking for webkit_unit_test and DumpRenderTRee on x86 Windows on chromium build.
+        https://bugs.webkit.org/show_bug.cgi?id=48836
+
+        It fails to link otherwise due to lack of virtual address space.
+
+        * WebKit.gyp:
+
 2010-11-02  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Kent Tamura.

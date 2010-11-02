@@ -800,6 +800,17 @@
                         }],
                     ],
                 }],
+                ['inside_chromium_build==1 and OS=="win" and component!="shared_library"', {
+                    'configurations': {
+                        'Debug_Base': {
+                            'msvs_settings': {
+                                'VCLinkerTool': {
+                                    'LinkIncremental': '<(msvs_large_module_debug_link_mode)',
+                                },
+                            },
+                        },
+                    },
+                }],
             ],
         },
         {
@@ -871,6 +882,17 @@
                             'dependencies': [
                                 '../../JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp:wtf',
                             ],
+                        }],
+                        ['inside_chromium_build==1', {
+                            'configurations': {
+                                'Debug_Base': {
+                                    'msvs_settings': {
+                                        'VCLinkerTool': {
+                                            'LinkIncremental': '<(msvs_large_module_debug_link_mode)',
+                                        },
+                                    },
+                                },
+                            },
                         }],
                     ],
                     'copies': [{
