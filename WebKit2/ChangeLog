@@ -1,5 +1,12 @@
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
+        Attempt to fix a GCC release only warning.
+
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::NPVariantData):
+
+2010-11-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by John Sullivan.
 
         Invalidate the NPRemoteObjectMap

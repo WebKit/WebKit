@@ -35,6 +35,8 @@ namespace WebKit {
 
 NPVariantData::NPVariantData()
     : m_type(NPVariantData::Void)
+    , m_boolValue(false)
+    , m_doubleValue(0)
 {
 }
 
