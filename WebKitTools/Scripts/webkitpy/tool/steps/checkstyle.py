@@ -52,6 +52,9 @@ class CheckStyle(AbstractStep):
             args.append("--git-commit")
             args.append(self._options.git_commit)
 
+        args.append("--diff-files")
+        args.extend(self._changed_files(state))
+
         try:
             self._run_script("check-webkit-style", args)
         except ScriptError, e:

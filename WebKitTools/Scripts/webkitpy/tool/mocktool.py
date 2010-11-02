@@ -424,6 +424,9 @@ class MockSCM(Mock):
         # will actually be the root.  Since getcwd() is wrong, use a globally fake root for now.
         self.checkout_root = self.fake_checkout_root
 
+    def changed_files(self, git_commit=None):
+        return ["MockFile1"]
+
     def create_patch(self, git_commit, changed_files=None):
         return "Patch1"
 
