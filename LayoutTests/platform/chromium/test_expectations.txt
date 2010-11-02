@@ -891,9 +891,6 @@ BUG28183 LINUX WIN : fast/repaint/box-shadow-v.html = IMAGE
 BUG20507 : http/tests/uri/resolve-encoding-relative.html = FAIL
 
 
-// Flaky: fails about 5% of the time.
-BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
-
 // -----------------------------------------------------------------
 // SVG TESTS
 // -----------------------------------------------------------------
@@ -3383,3 +3380,7 @@ BUG61478 DEBUG MAC : fast/images/svg-as-background.html = CRASH
 // Should be converted to dumpAsText() t oavoid grabbing useless baselines.
 BUGDIMICH : svg/animations/repeatDur-zero.xhtml = MISSING
 
+// Flaky: fails about 5% of the time.
+//BUG31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
+// Now fails all the time on Win and Linux, see bug for details.
+BUG61655 WIN LINUX : security/block-test-no-port.html = TEXT
