@@ -1,3 +1,14 @@
+2010-11-01  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][Symbian] QtTestBrowser runs out of memory with most of javascript benchmarks.
+        https://bugs.webkit.org/show_bug.cgi?id=48730
+
+        Increase the maximum heap size on Symbian to 256 MB.
+
+        * WebKit.pri:
+
 2010-10-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Adam Roben and David Kilzer.

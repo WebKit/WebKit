@@ -37,7 +37,7 @@ building-libs {
                     "$${LITERAL_HASH}ifdef WINSCW" \
                         "EPOCHEAPSIZE  0x40000 0x2000000 // Min 256kB, Max 32MB" \
                     "$${LITERAL_HASH}else" \
-                        "EPOCHEAPSIZE  0x40000 0x6000000 // Min 256kB, Max 96MB" \
+                        "EPOCHEAPSIZE  0x40000 0x10000000 // Min 256kB, Max 256MB" \
                     "$${LITERAL_HASH}endif"
                     MMP_RULES += heapSizeRule
                 }
