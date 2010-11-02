@@ -52,7 +52,6 @@ InjectedScript.prototype = {
             var objectId;
             if (typeof object === "object" || typeof object === "function" || this._isHTMLAllCollection(object)) {
                 var id = this._lastBoundObjectId++;
-                objectId = id;
                 this._idToWrappedObject[id] = object;
     
                 var group = this._objectGroups[objectGroupName];

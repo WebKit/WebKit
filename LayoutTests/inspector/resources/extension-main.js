@@ -40,6 +40,19 @@ function runTest(test, name)
     }
 }
 
+function dispatchOnFrontend(message, callback)
+{
+    function callbackWrapper()
+    {
+        channel.port1.removeEventListener("message", callbackWrapper, false);
+        callback();
+    }
+    var channel = new MessageChannel();
+    channel.port1.start();
+    channel.port1.addEventListener("message", callbackWrapper, false);
+    top.postMessage(message, [ channel.port2 ], "*");
+}
+
 function callbackAndNextTest(callback, nextTest)
 {
     function callbackWrapper()

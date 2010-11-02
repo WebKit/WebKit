@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 670: [object HTMLParagraphElement]
+CONSOLE MESSAGE: line 669: [object HTMLParagraphElement]
 Tests WebInspector extension API
 
 Page reloaded.

@@ -25,6 +25,58 @@ function extension_testCreateSidebar(nextTest)
     webInspector.panels.scripts.createSidebarPane("Test Sidebar", "extension-sidebar.html", callbackAndNextTest(onSidebarCreated, nextTest));
 }
 
+function extension_dumpSidebarContent(nextTest)
+{
+    dispatchOnFrontend("dump-sidebar-content", nextTest);
+}
+
+function extension_testExtensionWatchSidebarObject(nextTest)
+{
+    function onSidebarCreated(sidebar)
+    {
+        output("Watch sidebar created, callback arguments dump follows:");
+        dumpObject(Array.prototype.slice.call(arguments));
+        sidebar.onUpdated.addListener(bind(extension_dumpSidebarContent, this, nextTest));
+        sidebar.setObject({
+            f0: "object",
+            f1: undefined,
+            f2: null,
+            f3: {},
+            f4: [],
+            f5: ["aa", "bb", "cc"],
+            f6: { f60: 42, f61: "foo", f62: [] },
+            f7: 42
+        });
+    }
+    webInspector.panels.scripts.createWatchExpressionSidebarPane("Watch Test: Object", onSidebarCreated);
+}
+
+function extension_testExtensionWatchSidebarExpression(nextTest)
+{
+    function onSidebarCreated(sidebar)
+    {
+        sidebar.onUpdated.addListener(bind(extension_dumpSidebarContent, this, nextTest));
+        function expression()
+        {
+            return {
+                f0: 'expression',
+                f1: undefined,
+                f2: null,
+                f3: {},
+                f4: [],
+                f5: ["aa", "bb", "cc"],
+                f6: { f60: 42, f61: "foo", f62: [] },
+                f7: 42,
+                f8: window.location,
+                f9: document.body.children,
+                f10: function() {}
+            };
+        }
+        sidebar.setExpression("(" + expression.toString() + ")();", "title");
+    }
+    webInspector.panels.scripts.createWatchExpressionSidebarPane("Watch Test: Expression", onSidebarCreated);
+}
+
 </script>
 </head>
 <body onload="runTest()">

@@ -27,6 +27,7 @@ RUNNING TEST: extension_testAPI
     panels : {
         elements : {
             createSidebarPane : <function>
+            createWatchExpressionSidebarPane : <function>
             onSelectionChanged : {
                 addListener : <function>
                 removeListener : <function>
@@ -34,6 +35,7 @@ RUNNING TEST: extension_testAPI
         }
         scripts : {
             createSidebarPane : <function>
+            createWatchExpressionSidebarPane : <function>
             onSelectionChanged : {
                 addListener : <function>
                 removeListener : <function>

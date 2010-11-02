@@ -17,14 +17,17 @@ function extensionFunctions()
 var initialize_ExtensionsTest = function()
 {
 
-InspectorTest.dispatchOnMessage = function(messageId, callback)
+InspectorTest.dispatchOnMessage = function(messageId, callback, recurring)
 {
     function onMessage(event)
     {
-        if (event.data === messageId) {
+        if (event.data !== messageId)
+            return;
+        if (!recurring)
             window.removeEventListener("message", onMessage, false);
-            callback();
-        }
+        callback();
+        if (event.ports && event.ports[0])
+            event.ports[0].postMessage("");
     }
     window.addEventListener("message", onMessage, false);
 }
@@ -45,6 +48,16 @@ InspectorTest.runExtensionTests = function()
     });
     InspectorTest.reloadPageIfNeeded(addExtension);
 }
+
+InspectorTest.dumpSidebarContent = function()
+{
+    var sidebarPanes = WebInspector.panels.scripts.sidebarPanes;
+    // the sidebar of interest is presumed to always be last.
+    var sidebar = sidebarPanes[Object.keys(sidebarPanes).pop()];
+    InspectorTest.addResult("Sidebar content: " + sidebar.bodyElement.textContent);
+}
+
+InspectorTest.dispatchOnMessage("dump-sidebar-content", InspectorTest.dumpSidebarContent, true);
 
 }
 

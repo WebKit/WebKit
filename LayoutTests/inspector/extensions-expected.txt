@@ -8,6 +8,7 @@ done createPanel
 Panel created
 {
     createSidebarPane : <function>
+    createWatchExpressionSidebarPane : <function>
     onSelectionChanged : {
         addListener : <function>
         removeListener : <function>
@@ -23,5 +24,22 @@ Sidebar created
     setHeight : <function>
     setExpanded : <function>
 }
+RUNNING TEST: extension_testExtensionWatchSidebarExpression
+Sidebar content: titlef0: "expression"f1: undefinedf2: nullf3: Objectf4: Array[0]f5: Array[3]f6: Objectf7: 42f8: Locationf9: HTMLCollection[26]f10: function () {}__proto__: Object
+RUNNING TEST: extension_testExtensionWatchSidebarObject
+Watch sidebar created, callback arguments dump follows:
+{
+    0 : {
+        setHeight : <function>
+        setExpanded : <function>
+        setExpression : <function>
+        setObject : <function>
+        onUpdated : {
+            addListener : <function>
+            removeListener : <function>
+        }
+    }
+}
+Sidebar content: f0: "object"f1: undefinedf2: nullf3: { }f4: [0]f5: [3]f6: {...}f7: 42
 All tests done.
 
