@@ -508,7 +508,7 @@ body.drawer-visible #drawer {
 }
 
 .monospace {
-    font-size: 10px;
+    font-size: 10px !important;
     font-family: monospace;
 }
 
@@ -519,17 +519,17 @@ body.platform-mac .monospace, body.platform-mac .source-code {
 /* Keep .platform-mac to make the rule more specific than the general one above. */
 body.platform-mac.platform-mac-snowleopard .monospace,
 body.platform-mac.platform-mac-snowleopard .source-code {
-    font-size: 11px;
+    font-size: 11px !important;
     font-family: Menlo, monospace;
 }
 
 body.platform-windows .monospace, body.platform-windows .source-code {
-    font-size: 12px;
+    font-size: 12px !important;
     font-family: Consolas, Lucida Console, monospace;
 }
 
 body.platform-linux .monospace, body.platform-linux .source-code {
-    font-size: 11px;
+    font-size: 11px !important;
     font-family: dejavu sans mono, monospace;
 }
 
@@ -1176,7 +1176,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 .source-code {
     font-family: monospace;
-    font-size: 10px;
+    font-size: 10px !important;
     white-space: pre-wrap;
 }
 
@@ -1324,7 +1324,7 @@ body.inactive .placard.selected {
 }
 
 .section .header {
-    color: rgb(50, 50, 50);
+    color: black;
     padding: 0 8px 0 18px;
     min-height: 18px;
     white-space: nowrap;
@@ -1347,10 +1347,10 @@ body.inactive .placard.selected {
 }
 
 .section .header .title, .event-bar .header .title {
-    font-weight: bold;
+    font-weight: normal;
     word-wrap: break-word;
     white-space: normal;
-    font-size: 12px;
+    line-height: 18px;
 }
 
 .section .header .title.blank-title {
@@ -1367,7 +1367,6 @@ body.inactive .placard.selected {
 
 .section .header .subtitle, .event-bar .header .subtitle {
     float: right;
-    font-size: 12px;
     margin-left: 5px;
     max-width: 55%;
     text-overflow: ellipsis;
@@ -1499,7 +1498,7 @@ body.inactive .placard.selected {
 
 .event-bars .event-bar .header::before {
     position: absolute;
-    top: 0;
+    top: 2px;
     left: 7px;
     width: 8px;
     height: 8px;
