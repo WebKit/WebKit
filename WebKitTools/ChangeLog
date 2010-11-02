@@ -1,3 +1,12 @@
+2010-11-02  Benjamin Kalman  <kalman@google.com>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests doesn't strip "LayoutTests/" from prefix, unlike old-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=48794
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: Strip the "LayoutTests/" prefix from test argument paths.
+
 2010-11-02  Adam Roben  <aroben@apple.com>
 
         Skip webkitpy.layout_tests.run_webkit_tests_unittest.MainTest on Cygwin

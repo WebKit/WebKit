@@ -85,6 +85,8 @@ _log = logging.getLogger("webkitpy.layout_tests.run_webkit_tests")
 # Builder base URL where we have the archived test results.
 BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
 
+LAYOUT_TESTS_DIRECTORY = "LayoutTests" + os.sep
+
 TestExpectationsFile = test_expectations.TestExpectationsFile
 
 
@@ -283,11 +285,16 @@ class TestRunner:
           last_unexpected_results: list of unexpected results to retest, if any
 
         """
-        paths = [arg for arg in args if arg and arg != '']
+        paths = [self._strip_test_dir_prefix(arg) for arg in args if arg and arg != '']
         paths += last_unexpected_results
         if self._options.test_list:
             paths += read_test_files(self._options.test_list)
         self._test_files = self._port.tests(paths)
+
+    def _strip_test_dir_prefix(self, path):
+        if path.startswith(LAYOUT_TESTS_DIRECTORY):
+            return path[len(LAYOUT_TESTS_DIRECTORY):]
+        return path
 
     def lint(self):
         # Creating the expecations for each platform/configuration pair does
@@ -470,9 +477,9 @@ class TestRunner:
     def _get_dir_for_test_file(self, test_file):
         """Returns the highest-level directory by which to shard the given
         test file."""
-        index = test_file.rfind(os.sep + 'LayoutTests' + os.sep)
+        index = test_file.rfind(os.sep + LAYOUT_TESTS_DIRECTORY)
 
-        test_file = test_file[index + len('LayoutTests/'):]
+        test_file = test_file[index + len(LAYOUT_TESTS_DIRECTORY):]
         test_file_parts = test_file.split(os.sep, 1)
         directory = test_file_parts[0]
         test_file = test_file_parts[1]
