@@ -61,9 +61,11 @@ void deleteCookie(const Document*, const KURL&, const String&)
     // FIXME: Not yet implemented
 }
 
+#if !PLATFORM(EFL)
 void setCookieStoragePrivateBrowsingEnabled(bool enabled)
 {
     // FIXME: Not yet implemented
 }
+#endif
 
 }
