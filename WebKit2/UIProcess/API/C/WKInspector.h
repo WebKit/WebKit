@@ -40,6 +40,25 @@ WK_EXPORT WKTypeID WKInspectorGetTypeID();
 
 WK_EXPORT WKPageRef WKInspectorGetPage(WKInspectorRef inspector);
 
+WK_EXPORT bool WKInspectorIsVisible(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorShow(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorClose(WKInspectorRef inspector);
+
+WK_EXPORT void WKInspectorShowConsole(WKInspectorRef inspector);
+
+WK_EXPORT bool WKInspectorIsAttached(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorAttach(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorDetach(WKInspectorRef inspector);
+
+WK_EXPORT bool WKInspectorIsDebuggingJavaScript(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorToggleJavaScriptDebugging(WKInspectorRef inspector);
+
+WK_EXPORT bool WKInspectorIsProfilingJavaScript(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorToggleJavaScriptProfiling(WKInspectorRef inspector);
+
+WK_EXPORT bool WKInspectorIsProfilingPage(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorTogglePageProfiling(WKInspectorRef inspector);
+
 #ifdef __cplusplus
 }
 #endif

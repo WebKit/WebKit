@@ -280,6 +280,8 @@ void WebPage::close()
     if (WebProcess::shared().injectedBundle())
         WebProcess::shared().injectedBundle()->willDestroyPage(this);
 
+    m_inspector = 0;
+
     if (m_activePopupMenu) {
         m_activePopupMenu->disconnectFromPage();
         m_activePopupMenu = 0;
@@ -800,6 +802,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
 
 WebInspector* WebPage::inspector()
 {
+    if (m_isClosed)
+        return 0;
     if (!m_inspector)
         m_inspector = adoptPtr(new WebInspector(this));
     return m_inspector.get();
@@ -958,6 +962,12 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     if (messageID.is<CoreIPC::MessageClassDrawingArea>()) {
         if (m_drawingArea)
             m_drawingArea->didReceiveMessage(connection, messageID, arguments);
+        return;
+    }
+
+    if (messageID.is<CoreIPC::MessageClassWebInspector>()) {
+        if (WebInspector* inspector = this->inspector())
+            inspector->didReceiveWebInspectorMessage(connection, messageID, arguments);
         return;
     }
 

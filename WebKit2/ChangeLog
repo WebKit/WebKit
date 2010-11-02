@@ -1,5 +1,71 @@
 2010-11-02  Timothy Hatcher  <timothy@apple.com>
 
+        Add WKInspector public APIs.
+
+        https://webkit.org/b/48718
+
+        Reviewed by Pavel Feldman.
+
+        * DerivedSources.make: Added WebInspector to MESSAGE_RECEIVERS section.
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorIsVisible): Added.
+        (WKInspectorShow): Added.
+        (WKInspectorClose): Added.
+        (WKInspectorShowConsole): Added.
+        (WKInspectorIsAttached): Added.
+        (WKInspectorAttach): Added.
+        (WKInspectorDetach): Added.
+        (WKInspectorIsDebuggingJavaScript): Added.
+        (WKInspectorToggleJavaScriptDebugging): Added.
+        (WKInspectorIsProfilingJavaScript): Added.
+        (WKInspectorToggleJavaScriptProfiling): Added.
+        (WKInspectorIsProfilingPage): Added.
+        (WKInspectorTogglePageProfiling): Added.
+        * UIProcess/API/C/WKInspector.h: Added new functions.
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy): Initialize new booleans.
+        (WebKit::WebInspectorProxy::invalidate): Reset new booleans.
+        (WebKit::WebInspectorProxy::show): Added.
+        (WebKit::WebInspectorProxy::close): Added.
+        (WebKit::WebInspectorProxy::showConsole): Added.
+        (WebKit::WebInspectorProxy::attach): Added.
+        (WebKit::WebInspectorProxy::detach): Added.
+        (WebKit::WebInspectorProxy::toggleJavaScriptDebugging): Added.
+        (WebKit::WebInspectorProxy::toggleJavaScriptProfiling): Added.
+        (WebKit::WebInspectorProxy::togglePageProfiling): Added.
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::isVisible): Added.
+        (WebKit::WebInspectorProxy::isAttached): Added.
+        (WebKit::WebInspectorProxy::isDebuggingJavaScript): Added.
+        (WebKit::WebInspectorProxy::isProfilingJavaScript): Added.
+        (WebKit::WebInspectorProxy::isProfilingPage): Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close): Invalidate the WebInspectorProxy.
+        (WebKit::WebPageProxy::inspector): Return 0 if closed or invalid.
+        * WebKit2.pro: Added new files.
+        * WebKit2.xcodeproj/project.pbxproj: Added new Files.
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::show): Added.
+        (WebKit::WebInspector::close): Added.
+        (WebKit::WebInspector::showConsole): Added.
+        (WebKit::WebInspector::startJavaScriptDebugging): Added.
+        (WebKit::WebInspector::stopJavaScriptDebugging): Added.
+        (WebKit::WebInspector::startJavaScriptProfiling): Added.
+        (WebKit::WebInspector::stopJavaScriptProfiling): Added.
+        (WebKit::WebInspector::startPageProfiling): Added.
+        (WebKit::WebInspector::stopPageProfiling): Added.
+        * WebProcess/WebPage/WebInspector.h:
+        (WebKit::WebInspector::page): Added.
+        * WebProcess/WebPage/WebInspector.messages.in: Added.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close): Destroy the WebInspector.
+        (WebKit::WebPage::inspector): Return 0 if closed.
+        (WebKit::WebPage::didReceiveMessage): Send the message to the WebInspector
+        if the message class is MessageClassWebInspector.
+        * win/WebKit2.vcproj: Added new files.
+
+2010-11-02  Timothy Hatcher  <timothy@apple.com>
+
         Make WebInspectorFrontendClient inherit from InspectorFrontendClientLocal.
 
         We can do this since the Web Inspector WebPage will share the same process

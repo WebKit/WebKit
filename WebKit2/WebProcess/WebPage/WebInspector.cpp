@@ -26,6 +26,8 @@
 #include "WebInspector.h"
 
 #include "WebPage.h"
+#include <WebCore/InspectorController.h>
+#include <WebCore/Page.h>
 
 using namespace WebCore;
 
@@ -34,6 +36,55 @@ namespace WebKit {
 WebInspector::WebInspector(WebPage* page)
     : m_page(page)
 {
+}
+
+// Called by WebInspector messages
+void WebInspector::show()
+{
+    m_page->corePage()->inspectorController()->show();
+}
+
+void WebInspector::close()
+{
+    m_page->corePage()->inspectorController()->close();
+}
+
+void WebInspector::showConsole()
+{
+    m_page->corePage()->inspectorController()->showPanel(InspectorController::ConsolePanel);
+}
+
+void WebInspector::startJavaScriptDebugging()
+{
+    m_page->corePage()->inspectorController()->showPanel(InspectorController::ScriptsPanel);
+    m_page->corePage()->inspectorController()->enableDebugger();
+}
+
+void WebInspector::stopJavaScriptDebugging()
+{
+    m_page->corePage()->inspectorController()->disableDebugger();
+}
+
+void WebInspector::startJavaScriptProfiling()
+{
+    m_page->corePage()->inspectorController()->startUserInitiatedProfiling();
+}
+
+void WebInspector::stopJavaScriptProfiling()
+{
+    m_page->corePage()->inspectorController()->stopUserInitiatedProfiling();
+    m_page->corePage()->inspectorController()->showPanel(InspectorController::ProfilesPanel);
+}
+
+void WebInspector::startPageProfiling()
+{
+    m_page->corePage()->inspectorController()->startTimelineProfiler();
+}
+
+void WebInspector::stopPageProfiling()
+{
+    m_page->corePage()->inspectorController()->stopTimelineProfiler();
+    // FIXME: show the Timeline panel.
 }
 
 } // namespace WebKit

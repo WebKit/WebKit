@@ -39,3 +39,68 @@ WKPageRef WKInspectorGetPage(WKInspectorRef inspectorRef)
 {
     return toAPI(toImpl(inspectorRef)->page());
 }
+
+bool WKInspectorIsVisible(WKInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->isVisible();
+}
+
+void WKInspectorShow(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->show();
+}
+
+void WKInspectorClose(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->close();
+}
+
+void WKInspectorShowConsole(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->showConsole();
+}
+
+bool WKInspectorIsAttached(WKInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->isAttached();
+}
+
+void WKInspectorAttach(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->attach();
+}
+
+void WKInspectorDetach(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->detach();
+}
+
+bool WKInspectorIsDebuggingJavaScript(WKInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->isDebuggingJavaScript();
+}
+
+void WKInspectorToggleJavaScriptDebugging(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->toggleJavaScriptDebugging();
+}
+
+bool WKInspectorIsProfilingJavaScript(WKInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->isProfilingJavaScript();
+}
+
+void WKInspectorToggleJavaScriptProfiling(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->toggleJavaScriptProfiling();
+}
+
+bool WKInspectorIsProfilingPage(WKInspectorRef inspectorRef)
+{
+    return toImpl(inspectorRef)->isProfilingPage();
+}
+
+void WKInspectorTogglePageProfiling(WKInspectorRef inspectorRef)
+{
+    toImpl(inspectorRef)->togglePageProfiling();
+}

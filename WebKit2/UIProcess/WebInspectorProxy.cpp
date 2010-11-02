@@ -25,7 +25,12 @@
 
 #include "WebInspectorProxy.h"
 
+#include "WebInspectorMessages.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
+
+#define DISABLE_NOT_IMPLEMENTED_WARNINGS 1
+#include "NotImplemented.h"
 
 using namespace WebCore;
 
@@ -33,6 +38,11 @@ namespace WebKit {
 
 WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     : m_page(page)
+    , m_isVisible(false)
+    , m_isAttached(false)
+    , m_isDebuggingJavaScript(false)
+    , m_isProfilingJavaScript(false)
+    , m_isProfilingPage(false)
 {
 }
 
@@ -43,6 +53,86 @@ WebInspectorProxy::~WebInspectorProxy()
 void WebInspectorProxy::invalidate()
 {
     m_page = 0;
+    m_isDebuggingJavaScript = false;
+    m_isProfilingJavaScript = false;
+    m_isProfilingPage = false;
+}
+
+// Public APIs
+void WebInspectorProxy::show()
+{
+    if (!m_page)
+        return;
+
+    m_page->process()->send(Messages::WebInspector::Show(), m_page->pageID());
+}
+
+void WebInspectorProxy::close()
+{
+    if (!m_page)
+        return;
+
+    m_page->process()->send(Messages::WebInspector::Close(), m_page->pageID());
+}
+
+void WebInspectorProxy::showConsole()
+{
+    if (!m_page)
+        return;
+
+    m_page->process()->send(Messages::WebInspector::ShowConsole(), m_page->pageID());
+}
+
+void WebInspectorProxy::attach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::detach()
+{
+    notImplemented();
+}
+
+void WebInspectorProxy::toggleJavaScriptDebugging()
+{
+    if (!m_page)
+        return;
+
+    if (m_isDebuggingJavaScript)
+        m_page->process()->send(Messages::WebInspector::StopJavaScriptDebugging(), m_page->pageID());
+    else
+        m_page->process()->send(Messages::WebInspector::StartJavaScriptDebugging(), m_page->pageID());
+
+    // FIXME: have the WebProcess notify us on state changes.
+    m_isDebuggingJavaScript = !m_isDebuggingJavaScript;
+}
+
+void WebInspectorProxy::toggleJavaScriptProfiling()
+{
+    if (!m_page)
+        return;
+
+    if (m_isProfilingJavaScript)
+        m_page->process()->send(Messages::WebInspector::StopJavaScriptProfiling(), m_page->pageID());
+    else
+        m_page->process()->send(Messages::WebInspector::StartJavaScriptProfiling(), m_page->pageID());
+
+    // FIXME: have the WebProcess notify us on state changes.
+    m_isProfilingJavaScript = !m_isProfilingJavaScript;
+}
+
+void WebInspectorProxy::togglePageProfiling()
+{
+    if (!m_page)
+        return;
+
+    if (m_isProfilingPage)
+        m_page->process()->send(Messages::WebInspector::StopPageProfiling(), m_page->pageID());
+    else
+        m_page->process()->send(Messages::WebInspector::StartPageProfiling(), m_page->pageID());
+
+    // FIXME: have the WebProcess notify us on state changes.
+    m_isProfilingPage = !m_isProfilingPage;
 }
 
 } // namespace WebKit

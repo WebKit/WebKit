@@ -193,6 +193,12 @@ void WebPageProxy::close()
     m_mainFrame = 0;
 
     m_customUserAgent = String();
+
+    if (m_inspector) {
+        m_inspector->invalidate();
+        m_inspector = 0;
+    }
+
     m_pageTitle = String();
     m_toolTip = String();
 
@@ -1036,6 +1042,8 @@ void WebPageProxy::didDraw()
 
 WebInspectorProxy* WebPageProxy::inspector()
 {
+    if (isClosed() || !isValid())
+        return 0;
     if (!m_inspector)
         m_inspector = WebInspectorProxy::create(this);
     return m_inspector.get();

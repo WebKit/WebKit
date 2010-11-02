@@ -148,6 +148,7 @@ WEBKIT2_GENERATED_HEADERS = \
     $$OUTPUT_DIR/WebKit2/generated/PluginProcessMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/PluginProcessProxyMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/PluginProxyMessages.h \
+    $$OUTPUT_DIR/WebKit2/generated/WebInspectorMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebPageMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/WebProcessConnectionMessages.h \
@@ -158,6 +159,7 @@ WEBKIT2_GENERATED_SOURCES = \
     $$OUTPUT_DIR/WebKit2/generated/PluginProcessMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/PluginProcessProxyMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/PluginProxyMessageReceiver.cpp \
+    $$OUTPUT_DIR/WebKit2/generated/WebInspectorMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebPageMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebPageProxyMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/WebProcessConnectionMessageReceiver.cpp \

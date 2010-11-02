@@ -40,7 +40,27 @@ class WebInspector {
 public:
     explicit WebInspector(WebPage*);
 
+    WebPage* page() const { return m_page; }
+
+    // Implemented in generated WebInspectorMessageReceiver.cpp
+    void didReceiveWebInspectorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
 private:
+    // Called by WebInspector messages
+    void show();
+    void close();
+
+    void showConsole();
+
+    void startJavaScriptDebugging();
+    void stopJavaScriptDebugging();
+
+    void startJavaScriptProfiling();
+    void stopJavaScriptProfiling();
+
+    void startPageProfiling();
+    void stopPageProfiling();
+
     WebPage* m_page;
 };
 

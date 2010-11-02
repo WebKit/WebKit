@@ -1228,6 +1228,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\WebProcess\WebPage\WebInspector.messages.in"
+					>
+				</File>
+				<File
 					RelativePath="..\WebProcess\WebPage\WebPage.cpp"
 					>
 				</File>
@@ -2392,6 +2396,14 @@
 		<Filter
 			Name="Derived Sources"
 			>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebInspectorMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebInspectorMessages.h"
+				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebPageMessageReceiver.cpp"
 				>
