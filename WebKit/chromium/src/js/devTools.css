@@ -37,11 +37,6 @@ body.platform-linux #scripts-files {
     line-height: 12px;
 }
 
-.section > .header {
-    border: 1px solid rgb(92, 116, 157);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(105, 133, 180)), to(rgb(92, 116, 157)));
-}
-
 .console-group-messages .section > .header {
     padding: 0 8px 0 0;
     background-image: none;

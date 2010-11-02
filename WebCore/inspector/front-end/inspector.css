@@ -1311,50 +1311,46 @@ body.inactive .placard.selected {
     margin-top: 1px;
 }
 
-.section:nth-last-of-type(1), .event-bar:nth-last-of-type(1) {
-    margin-bottom: 1px;
-}
-
 .watch-expressions-buttons-container {
     text-align: center;
+}
+
+.events-pane .section:not(:nth-of-type(1)) {
+    border-top: 1px solid rgb(191, 191, 191);
 }
 
 .event-bar:first-child {
     margin-top: 1px;
 }
 
-.event-bar:nth-last-of-type(1) .header {
-    border-bottom: 1px solid rgb(163, 163, 163);
-}
-
 .section .header {
-    padding: 2px 8px 4px 18px;
-    border-top: 1px solid rgb(145, 160, 192);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(162, 177, 207)), to(rgb(120, 138, 177)));
+    color: rgb(50, 50, 50);
+    padding: 0 8px 0 18px;
     min-height: 18px;
     white-space: nowrap;
     -webkit-background-origin: padding;
     -webkit-background-clip: padding;
+    opacity: 0.8;
 }
 
 .section .header::before {
     position: absolute;
-    top: 4px;
+    top: 2px;
     left: 7px;
     width: 8px;
     height: 8px;
-    content: url(Images/treeRightTriangleWhite.png);
+    content: url(Images/treeRightTriangleBlack.png);
 }
 
 .section.expanded .header::before {
-    content: url(Images/treeDownTriangleWhite.png);
+    content: url(Images/treeDownTriangleBlack.png);
 }
 
 .section .header .title, .event-bar .header .title {
-    color: white;
     font-weight: bold;
     word-wrap: break-word;
     white-space: normal;
+    font-size: 12px;
 }
 
 .section .header .title.blank-title {
@@ -1371,10 +1367,9 @@ body.inactive .placard.selected {
 
 .section .header .subtitle, .event-bar .header .subtitle {
     float: right;
-    font-size: 10px;
+    font-size: 12px;
     margin-left: 5px;
     max-width: 55%;
-    color: rgba(255, 255, 255, 0.7);
     text-overflow: ellipsis;
     overflow: hidden;
 }
@@ -1389,6 +1384,7 @@ body.inactive .placard.selected {
 
 .section.expanded .properties, .event-bar.expanded .event-properties {
     display: block;
+    padding-left: 18px;
 }
 
 .section.no-affect .properties li {
@@ -1401,7 +1397,7 @@ body.inactive .placard.selected {
 
 .properties-tree {
     margin: 0;
-    padding: 2px 6px 3px;
+    padding: 0 6px 2px;
     list-style: none;
     min-height: 18px;
 }
@@ -1479,37 +1475,20 @@ body.inactive .placard.selected {
 
 .event-bar {
     position: relative;
-}
-
-.event-bar-connector {
-    position: absolute;
-    left: 75%;
-    bottom: -7px;
-    margin-left: -7px;
-    content: url(Images/grayConnectorPoint.png);
-    z-index: 3;
-}
-
-.event-bar.expanded .event-bar-connector {
-    content: url(Images/whiteConnectorPoint.png);
+    left: 12px;
 }
 
 .event-bars .event-bar .header {
-    padding: 2px 8px 4px 18px;
-    border-top: 1px solid rgb(163, 163, 163);
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(243, 243, 243)), to(rgb(207, 207, 207)));
-    min-height: 18px;
+    padding: 0 8px 0 18px;
+    min-height: 16px;
+    opacity: 1.0;
     white-space: nowrap;
     -webkit-background-origin: padding;
     -webkit-background-clip: padding;
 }
 
-.event-bars .event-bar.expanded .header {
-    border-bottom: 1px solid rgb(163, 163, 163);
-}
-
 .event-bars .event-bar .header .title {
-    font-weight: bold;
+    font-weight: normal;
     color: #333;
     text-shadow: white 0 1px 0; 
 }
@@ -1520,7 +1499,7 @@ body.inactive .placard.selected {
 
 .event-bars .event-bar .header::before {
     position: absolute;
-    top: 4px;
+    top: 0;
     left: 7px;
     width: 8px;
     height: 8px;

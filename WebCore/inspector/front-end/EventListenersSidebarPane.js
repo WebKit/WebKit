@@ -151,12 +151,6 @@ WebInspector.EventListenersSection.prototype = {
         for (var i = 0; i < length; ++i) {
             var eventListener = filteredEventListeners[i];
             var eventListenerBar = new WebInspector.EventListenerBar(eventListener, this._nodeId);
-            if (i < length - 1) {
-                var connector = document.createElement("div");
-                connector.className = "event-bar-connector";
-                eventListenerBar.element.appendChild(connector);
-            }
-
             this.eventBars.appendChild(eventListenerBar.element);
         }
     },
@@ -178,6 +172,7 @@ WebInspector.EventListenerBar = function(eventListener, nodeId)
     this._setFunctionSubtitle();
     this.editable = false;
     this.element.className = "event-bar"; /* Changed from "section" */
+    this.headerElement.addStyleClass("source-code");
     this.propertiesElement.className = "event-properties properties-tree source-code"; /* Changed from "properties" */
 }
 
