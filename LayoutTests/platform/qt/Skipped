@@ -2250,6 +2250,7 @@ editing/spelling/spelling-textarea.html
 editing/spelling/spelling-backspace-between-lines.html
 
 editing/spelling/spelling-attribute-change.html
+editing/spelling/spelling-attribute-at-child.html
 
 # ============================================================================= #
 # failing editing/style tests
