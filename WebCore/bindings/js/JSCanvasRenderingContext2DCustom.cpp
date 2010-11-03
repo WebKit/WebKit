@@ -343,8 +343,10 @@ JSValue JSCanvasRenderingContext2D::createPattern(ExecState* exec)
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
 
     JSValue value = exec->argument(0);
-    if (!value.isObject())
-        return throwTypeError(exec);
+    if (!value.isObject()) {
+        setDOMException(exec, TYPE_MISMATCH_ERR);
+        return jsUndefined();
+    }
     JSObject* o = asObject(value);
 
     if (o->inherits(&JSHTMLImageElement::s_info)) {

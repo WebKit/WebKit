@@ -134,8 +134,6 @@ canvas/philip/tests/2d.path.clip.empty.html
 canvas/philip/tests/2d.path.rect.winding.html
 canvas/philip/tests/2d.pattern.image.broken.html
 canvas/philip/tests/2d.pattern.image.incomplete.html
-canvas/philip/tests/2d.pattern.image.null.html
-canvas/philip/tests/2d.pattern.image.undefined.html
 canvas/philip/tests/2d.shadow.enable.blur.html
 canvas/philip/tests/2d.shadow.enable.x.html
 canvas/philip/tests/2d.shadow.enable.y.html
