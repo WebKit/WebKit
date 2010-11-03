@@ -29,11 +29,13 @@
 
 namespace WebCore {
 
+class TextureMapperGLData;
+
 // An OpenGL-ES2 implementation of TextureMapper.
 class TextureMapperGL : public TextureMapper {
 public:
-    TextureMapperGL(GraphicsContext* gc);
-    virtual ~TextureMapperGL() {}
+    TextureMapperGL();
+    virtual ~TextureMapperGL();
 
     // reimps from TextureMapper
     virtual void drawTexture(const BitmapTexture& texture, const IntRect&, const TransformationMatrix& transform, float opacity, const BitmapTexture* maskTexture);
@@ -43,11 +45,13 @@ public:
     virtual bool allowSurfaceForRoot() const { return true; }
     virtual PassRefPtr<BitmapTexture> createTexture();
     virtual const char* type() const;
-    virtual void cleanup();
+    void obtainCurrentContext();
+    bool makeContextCurrent();
 
 private:
-    TransformationMatrix m_projectionMatrix;
-    int m_currentProgram;
+    inline TextureMapperGLData& data() { return *m_data; }
+    TextureMapperGLData* m_data;
+    friend class BitmapTextureGL;
 };
 
 // An offscreen buffer to be rendered by software.

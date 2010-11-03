@@ -30,8 +30,12 @@
 #if defined(TEXMAP_OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #elif OS(MAC_OS_X)
+#include <AGL/agl.h>
 #include <gl.h>
 #else
+#if OS(UNIX)
+#include <GL/glx.h>
+#endif
 #include <GL/gl.h>
 #endif
 
@@ -90,6 +94,132 @@ inline static void debugGLCommand(const char* command, int line)
 #define GL_CMD(x) x
 #endif
 
+static const GLuint gInVertexAttributeIndex = 0;
+
+struct TextureMapperGLData {
+    static struct ShaderInfo {
+        enum ShaderProgramIndex {
+            SimpleProgram,
+            OpacityAndMaskProgram,
+            TargetProgram,
+
+            ProgramCount
+        };
+
+        enum ShaderVariableIndex {
+            InMatrixVariable,
+            InSourceMatrixVariable,
+            InMaskMatrixVariable,
+            OpacityVariable,
+            SourceTextureVariable,
+            MaskTextureVariable,
+
+            VariableCount
+        };
+
+        struct ProgramInfo {
+            GLuint id;
+            GLint vars[VariableCount];
+        };
+
+        GLint getUniformLocation(ShaderProgramIndex prog, ShaderVariableIndex var, const char* name)
+        {
+            return programs[prog].vars[var] = glGetUniformLocation(programs[prog].id, name);
+        }
+
+        void createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource, ShaderProgramIndex index)
+        {
+            GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+            GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+            GL_CMD(glShaderSource(vertexShader, 1, &vertexShaderSource, 0))
+            GL_CMD(glShaderSource(fragmentShader, 1, &fragmentShaderSource, 0))
+            GLuint programID = glCreateProgram();
+            GL_CMD(glCompileShader(vertexShader))
+            GL_CMD(glCompileShader(fragmentShader))
+            GL_CMD(glAttachShader(programID, vertexShader))
+            GL_CMD(glAttachShader(programID, fragmentShader))
+            GL_CMD(glBindAttribLocation(programID, gInVertexAttributeIndex, "InVertex"))
+            GL_CMD(glLinkProgram(programID))
+            programs[index].id = programID;
+#ifdef PRINT_PROGRAM_INFO_LOG
+            char infoLog[1024];
+            int len;
+            GL_CMD(glGetProgramInfoLog(programID, 1024, &len, infoLog));
+            LOG(Graphics, "Compiled program for texture mapper. Log: %s\n", infoLog);
+#endif
+        }
+
+        ProgramInfo programs[ProgramCount];
+
+    } shaderInfo;
+
+    struct DirectlyCompositedImageRepository {
+        struct Entry {
+            GLuint texture;
+            int refCount;
+        };
+        HashMap<NativeImagePtr, Entry> imageToTexture;
+
+        GLuint findOrCreate(NativeImagePtr image, bool& found)
+        {
+            HashMap<NativeImagePtr, Entry>::iterator it = imageToTexture.find(image);
+            found = false;
+            if (it != imageToTexture.end()) {
+                it->second.refCount++;
+                found = true;
+                return it->second.texture;
+            }
+            Entry entry;
+            GL_CMD(glGenTextures(1, &entry.texture));
+            entry.refCount = 1;
+            imageToTexture.add(image, entry);
+            return entry.texture;
+        }
+
+        bool deref(NativeImagePtr image)
+        {
+            HashMap<NativeImagePtr, Entry>::iterator it = imageToTexture.find(image);
+            if (it != imageToTexture.end()) {
+                if (it->second.refCount < 2) {
+                    imageToTexture.remove(it);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        DirectlyCompositedImageRepository()
+        {
+        }
+
+        ~DirectlyCompositedImageRepository()
+        {
+            for (HashMap<NativeImagePtr, Entry>::iterator it = imageToTexture.begin(); it != imageToTexture.end(); ++it) {
+                GLuint texture = it->second.texture;
+                if (texture)
+                    GL_CMD(glDeleteTextures(1, &texture));
+            }
+
+        }
+    } directlyCompositedImages;
+
+    TextureMapperGLData()
+        : currentProgram(TextureMapperGLData::ShaderInfo::TargetProgram)
+    { }
+
+    TransformationMatrix projectionMatrix;
+    int currentProgram;
+
+#if OS(MAC_OS_X)
+    AGLContext aglContext;
+#elif OS(UNIX)
+    Drawable glxDrawable;
+    GLXContext glxContext;
+#endif
+};
+
+TextureMapperGLData::ShaderInfo TextureMapperGLData::shaderInfo;
+
 class BitmapTextureGL : public BitmapTexture {
 public:
     virtual void destroy();
@@ -111,6 +241,7 @@ private:
     GLuint m_fbo;
     IntSize m_actualSize;
     bool m_surfaceNeedsReset;
+    RefPtr<TextureMapperGL> m_textureMapper;
     BitmapTextureGL()
         : m_id(0)
         , m_image(0)
@@ -123,64 +254,15 @@ private:
     friend class TextureMapperGL;
 };
 
-static struct TexmapShaderInfo {
-    enum ShaderProgramIndex {
-        SimpleProgram,
-        OpacityAndMaskProgram,
-        TargetProgram,
-        NumPrograms
-    };
-
-    enum ShaderVariableIndex {
-        InMatrixVariable,
-        InSourceMatrixVariable,
-        InMaskMatrixVariable,
-        InVertexVariable,
-
-        OpacityVariable,
-        SourceTextureVariable,
-        MaskTextureVariable,
-        NumVariables
-    };
-
-    struct ProgramInfo {
-        GLuint id;
-        GLint vars[NumVariables];
-    };
-
-    GLint getUniformLocation(ShaderProgramIndex prog, ShaderVariableIndex var, const char* name)
-    {
-        return programs[prog].vars[var] = glGetUniformLocation(programs[prog].id, name);
-    }
-
-    void createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource, ShaderProgramIndex index)
-    {
-        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        GL_CMD(glShaderSource(vertexShader, 1, &vertexShaderSource, 0))
-        GL_CMD(glShaderSource(fragmentShader, 1, &fragmentShaderSource, 0))
-        GLuint programID = glCreateProgram();
-        GL_CMD(glCompileShader(vertexShader))
-        GL_CMD(glCompileShader(fragmentShader))
-        GL_CMD(glAttachShader(programID, vertexShader))
-        GL_CMD(glAttachShader(programID, fragmentShader))
-        GL_CMD(glBindAttribLocation(programID, 0, "InVertex"))
-        GL_CMD(glLinkProgram(programID))
-        programs[index].id = programID;
-    }
-
-    ProgramInfo programs[NumPrograms];
-
-} gShaderInfo;
-
 #define TEXMAP_GET_SHADER_VAR_LOCATION(prog, var) \
-            if (gShaderInfo.getUniformLocation(TexmapShaderInfo::prog##Program, TexmapShaderInfo::var##Variable, #var) < 0) \
-                    LOG_ERROR("Couldn't find variable "#var" in program "#prog"\n");
-#define TEXMAP_BUILD_SHADER(program) gShaderInfo.createShaderProgram(vertexShaderSource##program, fragmentShaderSource##program, TexmapShaderInfo::program##Program);
+    if (TextureMapperGLData::shaderInfo.getUniformLocation(TextureMapperGLData::shaderInfo.prog##Program, TextureMapperGLData::shaderInfo.var##Variable, #var) < 0) \
+            LOG_ERROR("Couldn't find variable "#var" in program "#prog"\n");
 
-TextureMapperGL::TextureMapperGL(GraphicsContext* context)
-    : TextureMapper(context)
-    , m_currentProgram(TexmapShaderInfo::TargetProgram)
+#define TEXMAP_BUILD_SHADER(program) \
+    TextureMapperGLData::shaderInfo.createShaderProgram(vertexShaderSource##program, fragmentShaderSource##program, TextureMapperGLData::shaderInfo.program##Program);
+
+TextureMapperGL::TextureMapperGL()
+    : m_data(new TextureMapperGLData)
 {
     static bool shadersCompiled = false;
     if (shadersCompiled)
@@ -282,18 +364,18 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const IntRect& t
 
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
 
-    TexmapShaderInfo::ShaderProgramIndex program;
+    TextureMapperGLData::ShaderInfo::ShaderProgramIndex program;
     if (maskTexture)
-        program = TexmapShaderInfo::OpacityAndMaskProgram;
+        program = TextureMapperGLData::ShaderInfo::OpacityAndMaskProgram;
     else
-        program = TexmapShaderInfo::SimpleProgram;
+        program = TextureMapperGLData::ShaderInfo::SimpleProgram;
 
-    const TexmapShaderInfo::ProgramInfo& programInfo = gShaderInfo.programs[program];
-    if (m_currentProgram != program) {
+    const TextureMapperGLData::ShaderInfo::ProgramInfo& programInfo = data().shaderInfo.programs[program];
+    if (data().currentProgram != program) {
         GL_CMD(glUseProgram(programInfo.id))
-        GL_CMD(glDisableVertexAttribArray(gShaderInfo.programs[m_currentProgram].vars[TexmapShaderInfo::InVertexVariable]))
-        m_currentProgram = program;
-        GL_CMD(glEnableVertexAttribArray(programInfo.vars[TexmapShaderInfo::InVertexVariable]))
+        GL_CMD(glDisableVertexAttribArray(gInVertexAttributeIndex))
+        data().currentProgram = program;
+        GL_CMD(glEnableVertexAttribArray(gInVertexAttributeIndex))
     }
 
     GL_CMD(glDisable(GL_DEPTH_TEST))
@@ -305,7 +387,7 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const IntRect& t
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
     GL_CMD(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
 
-    TransformationMatrix matrix = TransformationMatrix(m_projectionMatrix).multLeft(modelViewMatrix).multLeft(TransformationMatrix(
+    TransformationMatrix matrix = TransformationMatrix(data().projectionMatrix).multLeft(modelViewMatrix).multLeft(TransformationMatrix(
             targetRect.width(), 0, 0, 0,
             0, targetRect.height(), 0, 0,
             0, 0, 1, 0,
@@ -321,10 +403,10 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const IntRect& t
                                      0, textureGL.m_relativeSize.height(), 0, 0,
                                      0, 0, 1, 0,
                                      0, 0, 0, 1};
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TexmapShaderInfo::InMatrixVariable], 1, GL_FALSE, m4))
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TexmapShaderInfo::InSourceMatrixVariable], 1, GL_FALSE, m4src))
-    GL_CMD(glUniform1i(programInfo.vars[TexmapShaderInfo::SourceTextureVariable], 0))
-    GL_CMD(glUniform1f(programInfo.vars[TexmapShaderInfo::OpacityVariable], opacity))
+    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::ShaderInfo::InMatrixVariable], 1, GL_FALSE, m4))
+    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::ShaderInfo::InSourceMatrixVariable], 1, GL_FALSE, m4src))
+    GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::ShaderInfo::SourceTextureVariable], 0))
+    GL_CMD(glUniform1f(programInfo.vars[TextureMapperGLData::ShaderInfo::OpacityVariable], opacity))
 
     if (maskTexture && maskTexture->isValid()) {
         const BitmapTextureGL* maskTextureGL = static_cast<const BitmapTextureGL*>(maskTexture);
@@ -334,8 +416,8 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const IntRect& t
                                          0, maskTextureGL->m_relativeSize.height(), 0, 0,
                                          0, 0, 1, 0,
                                          0, 0, 0, 1};
-        glUniformMatrix4fv(programInfo.vars[TexmapShaderInfo::InMaskMatrixVariable], 1, GL_FALSE, m4mask);
-        GL_CMD(glUniform1i(programInfo.vars[TexmapShaderInfo::MaskTextureVariable], 1))
+        glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::ShaderInfo::InMaskMatrixVariable], 1, GL_FALSE, m4mask);
+        GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::ShaderInfo::MaskTextureVariable], 1))
         GL_CMD(glActiveTexture(GL_TEXTURE0))
     }
 
@@ -399,43 +481,6 @@ void BitmapTextureGL::endPaint()
     m_buffer.clear();
 }
 
-struct TexmapGLShaderTextures {
-    struct Entry {
-        GLuint texture;
-        int refCount;
-    };
-    HashMap<NativeImagePtr, Entry> imageToTexture;
-    GLuint findOrCreate(NativeImagePtr image, bool& found)
-    {
-        HashMap<NativeImagePtr, Entry>::iterator it = imageToTexture.find(image);
-        found = false;
-        if (it != imageToTexture.end()) {
-            it->second.refCount++;
-            found = true;
-            return it->second.texture;
-        }
-        Entry entry;
-        GL_CMD(glGenTextures(1, &entry.texture));
-        entry.refCount = 1;
-        imageToTexture.add(image, entry);
-        return entry.texture;
-    }
-
-    bool deref(NativeImagePtr image)
-    {
-        HashMap<NativeImagePtr, Entry>::iterator it = imageToTexture.find(image);
-        if (it != imageToTexture.end()) {
-            if (it->second.refCount < 2) {
-                imageToTexture.remove(it);
-                return false;
-            }
-        }
-        return true;
-    }
-};
-
-static TexmapGLShaderTextures gTextureRepository;
-
 void BitmapTextureGL::setContentsToImage(Image* image)
 {
     NativeImagePtr nativeImage = image ? image->nativeImageForCurrentFrame() : 0;
@@ -448,7 +493,7 @@ void BitmapTextureGL::setContentsToImage(Image* image)
     if (nativeImage == m_image)
         return;
     bool found = false;
-    GLuint newTextureID = gTextureRepository.findOrCreate(nativeImage, found);
+    GLuint newTextureID = m_textureMapper->data().directlyCompositedImages.findOrCreate(nativeImage, found);
     if (newTextureID != m_id) {
         destroy();
         m_id = newTextureID;
@@ -464,7 +509,7 @@ void BitmapTextureGL::setContentsToImage(Image* image)
 
 void BitmapTextureGL::destroy()
 {
-    if (m_id && (!m_image || !gTextureRepository.deref(m_image)))
+    if (m_id && (!m_image || !m_textureMapper->data().directlyCompositedImages.deref(m_image)))
         GL_CMD(glDeleteTextures(1, &m_id))
     if (m_fbo)
         GL_CMD(glDeleteFramebuffers(1, &m_fbo))
@@ -493,8 +538,32 @@ static inline TransformationMatrix createProjectionMatrix(const IntSize& size, b
                                 -1, flip ? 1 : -1, 0, 1);
 }
 
-void TextureMapperGL::cleanup()
+TextureMapperGL::~TextureMapperGL()
 {
+    makeContextCurrent();
+    delete m_data;
+}
+
+bool TextureMapperGL::makeContextCurrent()
+{
+#if OS(MAC_OS_X)
+    return aglSetCurrentContext(data().aglContext);
+#elif OS(UNIX)
+    Display* display = XOpenDisplay(0);
+    if (!display)
+        return false;
+    return glXMakeCurrent(display, data().glxDrawable, data().glxContext);
+#endif
+}
+
+void TextureMapperGL::obtainCurrentContext()
+{
+#if OS(MAC_OS_X)
+    data().aglContext = aglGetCurrentContext();
+#elif OS(UNIX)
+    data().glxDrawable = glXGetCurrentDrawable();
+    data().glxContext = glXGetCurrentContext();
+#endif
 }
 
 void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
@@ -503,6 +572,7 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
 
     if (!surface)
         return;
+
     TransformationMatrix matrix = createProjectionMatrix(surface->size(), false);
     matrix.translate(-surface->offset().x(), -surface->offset().y());
 
@@ -520,7 +590,7 @@ void TextureMapperGL::bindSurface(BitmapTexture *surfacePointer)
     }
 
     GL_CMD(glViewport(0, 0, surface->size().width(), surface->size().height()))
-    m_projectionMatrix = matrix;
+    data().projectionMatrix = matrix;
 }
 
 void TextureMapperGL::setClip(const IntRect& rect)
@@ -540,8 +610,7 @@ void TextureMapperGL::paintToTarget(const BitmapTexture& aSurface, const IntSize
                         surface.m_actualSize.width(), 0, 0, 0,
                         0, surface.m_actualSize.height(), 0, 0,
                         0, 0, 1, 0,
-                        surface.offset().x(), surface.offset().y(), 0, 1
-                )
+                        surface.offset().x(), surface.offset().y(), 0, 1)
             );
 
     const GLfloat m4[] = {
@@ -557,18 +626,18 @@ void TextureMapperGL::paintToTarget(const BitmapTexture& aSurface, const IntSize
                                      0, 0, 0, 1};
 
     // We already blended the alpha in; the result is premultiplied.
-    GL_CMD(glUseProgram(gShaderInfo.programs[TexmapShaderInfo::TargetProgram].id))
+    GL_CMD(glUseProgram(data().shaderInfo.programs[TextureMapperGLData::ShaderInfo::TargetProgram].id))
     GL_CMD(glBindFramebuffer(GL_FRAMEBUFFER, 0))
     GL_CMD(glViewport(0, 0, surfaceSize.width(), surfaceSize.height()))
     GL_CMD(glDisable(GL_STENCIL_TEST))
-    const TexmapShaderInfo::ProgramInfo& programInfo = gShaderInfo.programs[TexmapShaderInfo::TargetProgram];
-    GL_CMD(glUniform1f(programInfo.vars[TexmapShaderInfo::OpacityVariable], opacity))
+    const TextureMapperGLData::ShaderInfo::ProgramInfo& programInfo = data().shaderInfo.programs[TextureMapperGLData::ShaderInfo::TargetProgram];
+    GL_CMD(glUniform1f(programInfo.vars[TextureMapperGLData::ShaderInfo::OpacityVariable], opacity))
     GL_CMD(glActiveTexture(GL_TEXTURE0))
     GL_CMD(glBindTexture(GL_TEXTURE_2D, surface.m_id))
-    GL_CMD(glUniform1i(programInfo.vars[TexmapShaderInfo::SourceTextureVariable], 0))
-    GL_CMD(glEnableVertexAttribArray(programInfo.vars[TexmapShaderInfo::InVertexVariable]))
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TexmapShaderInfo::InMatrixVariable], 1, GL_FALSE, m4))
-    GL_CMD(glUniformMatrix4fv(programInfo.vars[TexmapShaderInfo::InSourceMatrixVariable], 1, GL_FALSE, m4src))
+    GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::ShaderInfo::SourceTextureVariable], 0))
+    GL_CMD(glEnableVertexAttribArray(gInVertexAttributeIndex))
+    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::ShaderInfo::InMatrixVariable], 1, GL_FALSE, m4))
+    GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::ShaderInfo::InSourceMatrixVariable], 1, GL_FALSE, m4src))
     GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0))
     const GLfloat unitRect[] = {0, 0, 1, 0, 1, 1, 0, 1};
     GL_CMD(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, unitRect))
@@ -577,15 +646,17 @@ void TextureMapperGL::paintToTarget(const BitmapTexture& aSurface, const IntSize
     setClip(visibleRect);
 
     GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
-    GL_CMD(glDisableVertexAttribArray(programInfo.vars[TexmapShaderInfo::InVertexVariable]))
+    GL_CMD(glDisableVertexAttribArray(0))
     GL_CMD(glUseProgram(0))
     GL_CMD(glBindBuffer(GL_ARRAY_BUFFER, 0))
-    m_currentProgram = TexmapShaderInfo::TargetProgram;
+    data().currentProgram = TextureMapperGLData::ShaderInfo::TargetProgram;
 }
 
 PassRefPtr<BitmapTexture> TextureMapperGL::createTexture()
 {
-    return adoptRef(new BitmapTextureGL());
+    BitmapTextureGL* texture = new BitmapTextureGL();
+    texture->m_textureMapper = this;
+    return adoptRef(texture);
 }
 
 };

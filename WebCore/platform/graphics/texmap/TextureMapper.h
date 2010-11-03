@@ -97,20 +97,30 @@ public:
         drawTexture(texture, IntRect(0, 0, texture.contentSize().width(), texture.contentSize().height()), matrix, opacity, 0);
     }
 
+    virtual void setGraphicsContext(GraphicsContext*) { }
     virtual void setClip(const IntRect&) = 0;
     virtual bool allowSurfaceForRoot() const = 0;
     virtual PassRefPtr<BitmapTexture> createTexture() = 0;
     virtual const char* type() const = 0;
     virtual void cleanup() {}
 
-    GraphicsContext* graphicsContext() const
-    {
-        return m_gc;
-    }
+    void setImageInterpolationQuality(InterpolationQuality quality) { m_interpolationQuality = quality; }
+    void setTextDrawingMode(int mode) { m_textDrawingMode = mode; }
+
+    InterpolationQuality imageInterpolationQuality() const { return m_interpolationQuality; }
+    int textDrawingMode() const { return m_textDrawingMode; }
+
+    void setViewportSize(const IntSize&);
 
 protected:
-    TextureMapper(GraphicsContext* gc) : m_gc(gc) {}
-    GraphicsContext* m_gc;
+    TextureMapper()
+        : m_interpolationQuality(InterpolationDefault)
+        , m_textDrawingMode(cTextFill)
+    {}
+
+private:
+    InterpolationQuality m_interpolationQuality;
+    int m_textDrawingMode;
 };
 
 };

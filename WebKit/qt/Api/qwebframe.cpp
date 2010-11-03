@@ -97,6 +97,7 @@
 #include "runtime_root.h"
 #endif
 #if USE(TEXTURE_MAPPER)
+#include "texmap/TextureMapper.h"
 #include "texmap/TextureMapperPlatformLayer.h"
 #endif
 #include "wtf/HashMap.h"
@@ -294,16 +295,38 @@ void QWebFramePrivate::renderFromTiledBackingStore(GraphicsContext* context, con
 
         painter->restore();
     }
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    // TextureMapper might use raw OpenGL or some other backend that requires native painting. On raster this doesn't have any effect.
-    if (rootGraphicsLayer) {
-        painter->beginNativePainting();
-        rootGraphicsLayer->paint(context, view->size(), view->frameRect(), IntRect(clip.boundingRect()), TransformationMatrix(), painter->opacity());
-        painter->endNativePainting();
-    }
 
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+    renderCompositedLayers(context, IntRect(clip.boundingRect()));
     renderRelativeCoords(context, (QWebFrame::RenderLayer)(QWebFrame::ScrollBarLayer | QWebFrame::PanIconLayer), clip);
 #endif
+}
+#endif
+
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
+void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const IntRect& clip)
+{
+    if (!rootGraphicsLayer)
+        return;
+
+    if (!textureMapper)
+        textureMapper = TextureMapper::create(context);
+
+    textureMapper->setGraphicsContext(context);
+    textureMapper->setImageInterpolationQuality(context->imageInterpolationQuality());
+    textureMapper->setTextDrawingMode(context->textDrawingMode());
+    QPainter* painter = context->platformContext();
+    FrameView* view = frame->view();
+    painter->save();
+    painter->beginNativePainting();
+    TextureMapperContentLayer::PaintOptions options;
+    options.visibleRect = clip;
+    options.targetRect = view->frameRect();
+    options.viewportSize = view->size();
+    options.opacity = painter->opacity();
+    rootGraphicsLayer->paint(textureMapper.get(), options);
+    painter->endNativePainting();
+    painter->restore();
 }
 #endif
 
@@ -349,16 +372,8 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QWebFrame:
             context->restore();
         }
         painter->restore();
-
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-        if (rootGraphicsLayer) {
-            painter->save();
-            painter->beginNativePainting();
-            rootGraphicsLayer->paint(context, view->size(), view->frameRect(), IntRect(clip.boundingRect()),
-                                     TransformationMatrix(), context->platformContext()->opacity());
-            painter->endNativePainting();
-            painter->restore();
-        }
+        renderCompositedLayers(context, IntRect(clip.boundingRect()));
 #endif
     }
     if (layer & (QWebFrame::PanIconLayer | QWebFrame::ScrollBarLayer)) {
