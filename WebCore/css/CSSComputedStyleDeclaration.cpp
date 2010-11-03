@@ -211,6 +211,7 @@ static const int computedProperties[] = {
     CSSPropertyWebkitPerspective,
     CSSPropertyWebkitPerspectiveOrigin,
     CSSPropertyWebkitRtlOrdering,
+    CSSPropertyWebkitTextCombine,
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextFillColor,
     CSSPropertyWebkitTextSecurity,
@@ -1533,6 +1534,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->colorSpace());
         case CSSPropertyWebkitWritingMode:
             return CSSPrimitiveValue::create(style->writingMode());
+        case CSSPropertyWebkitTextCombine:
+            return CSSPrimitiveValue::create(style->textCombine());
         
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:

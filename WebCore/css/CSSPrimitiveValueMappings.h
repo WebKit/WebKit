@@ -2040,6 +2040,38 @@ template<> inline CSSPrimitiveValue::operator WritingMode() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextCombine e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case TextCombineNone:
+        m_value.ident = CSSValueNone;
+        break;
+    case TextCombineCluster:
+        m_value.ident = CSSValueCluster;
+        break;
+    case TextCombineUpright:
+        m_value.ident = CSSValueUpright;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextCombine() const
+{
+    switch (m_value.ident) {
+    case CSSValueNone:
+        return TextCombineNone;
+    case CSSValueCluster:
+        return TextCombineCluster;
+    case CSSValueUpright:
+        return TextCombineUpright;
+    default:
+        ASSERT_NOT_REACHED();
+        return TextCombineNone;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EPointerEvents e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

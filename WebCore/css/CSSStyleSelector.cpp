@@ -5604,6 +5604,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_fontDirty = true;
         return;
     }
+
+    case CSSPropertyWebkitTextCombine:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textCombine, TextCombine)
+        return;
+
 #if ENABLE(SVG)
     default:
         // Try the SVG properties

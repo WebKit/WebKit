@@ -133,6 +133,10 @@ enum WritingMode {
     TopToBottomWritingMode, RightToLeftWritingMode, LeftToRightWritingMode, BottomToTopWritingMode
 };
 
+enum TextCombine {
+    TextCombineNone, TextCombineCluster, TextCombineUpright
+};
+
 enum EFillAttachment {
     ScrollBackgroundAttachment, LocalBackgroundAttachment, FixedBackgroundAttachment
 };

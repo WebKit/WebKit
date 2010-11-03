@@ -764,3 +764,7 @@ horizontal-tb
 vertical-rl
 vertical-lr
 horizontal-bt
+
+# -webkit-text-combine
+cluster
+upright
