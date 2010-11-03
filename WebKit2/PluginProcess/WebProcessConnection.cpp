@@ -145,7 +145,7 @@ void WebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIP
     // FIXME: Implement.
 }
 
-void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters& parameters, const String& userAgent, bool isPrivateBrowsingEnabled, bool& result)
+void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin::Parameters& parameters, const String& userAgent, bool isPrivateBrowsingEnabled, bool& result, uint32_t& remoteLayerClientID)
 {
     OwnPtr<PluginControllerProxy> pluginControllerProxy = PluginControllerProxy::create(this, pluginInstanceID, userAgent, isPrivateBrowsingEnabled);
 
@@ -158,10 +158,13 @@ void WebProcessConnection::createPlugin(uint64_t pluginInstanceID, const Plugin:
     // Now try to initialize the plug-in.
     result = pluginControllerProxyPtr->initialize(parameters);
 
-    if (!result) {
-        // We failed to initialize, remove the plug-in controller. This could cause us to be deleted.
-        removePluginControllerProxy(pluginControllerProxyPtr);
+    if (result) {
+        remoteLayerClientID = pluginControllerProxyPtr->remoteLayerClientID();
+        return;
     }
+
+    // We failed to initialize, remove the plug-in controller. This could cause us to be deleted.
+    removePluginControllerProxy(pluginControllerProxyPtr);
 }
 
 } // namespace WebKit

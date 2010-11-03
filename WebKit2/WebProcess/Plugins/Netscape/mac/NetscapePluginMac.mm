@@ -123,7 +123,7 @@ bool NetscapePlugin::platformPostInitialize()
         // Get the Core Animation layer.
         if (NPP_GetValue(NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
             ASSERT(!m_pluginLayer);
-            m_pluginLayer = reinterpret_cast<CALayer*>(value);
+            m_pluginLayer = reinterpret_cast<CALayer *>(value);
         }
     }
 

@@ -31,6 +31,15 @@
 #include "Connection.h"
 #include "Plugin.h"
 
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+#ifdef __OBJC__
+@class CALayer;
+#else
+class CALayer;
+#endif
+#endif
+
 namespace WebCore {
     class HTTPHeaderMap;
 }
@@ -91,6 +100,8 @@ private:
 
     virtual PluginController* controller();
 
+    bool needsBackingStore() const;
+
     // Message handlers.
     void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups);
     void update(const WebCore::IntRect& paintedRect);
@@ -121,6 +132,13 @@ private:
 
     // Whether we're called invalidate in response to an update call, and are now waiting for a paint call.
     bool m_waitingForPaintInResponseToUpdate;
+
+    // The client ID for the CA layer in the plug-in process. Will be 0 if the plug-in is not a CA plug-in.
+    uint32_t m_remoteLayerClientID;
+
+#if PLATFORM(MAC)
+    RetainPtr<CALayer> m_pluginLayer;
+#endif
 };
 
 } // namespace WebKit

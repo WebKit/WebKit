@@ -61,7 +61,7 @@ void LayerBackedDrawingArea::platformClear()
 
 #if HAVE(HOSTED_CORE_ANIMATION)
     WKCARemoteLayerClientInvalidate(m_remoteLayerRef.get());
-    m_remoteLayerRef = 0;
+    m_remoteLayerRef = nullptr;
 #endif
 
     m_attached = false;

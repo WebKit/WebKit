@@ -96,6 +96,8 @@
 		1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D90BA1281C931001EB962 /* PluginProcessProxyMac.mm */; };
 		1A2D90D21281C966001EB962 /* PluginProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D90D01281C966001EB962 /* PluginProcessCreationParameters.h */; };
 		1A2D90D31281C966001EB962 /* PluginProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D90D11281C966001EB962 /* PluginProcessCreationParameters.cpp */; };
+		1A2D91A61281D739001EB962 /* PluginControllerProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D91A51281D739001EB962 /* PluginControllerProxyMac.mm */; };
+		1A2D92211281DC1B001EB962 /* PluginProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */; };
@@ -613,6 +615,8 @@
 		1A2D90BA1281C931001EB962 /* PluginProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessProxyMac.mm; sourceTree = "<group>"; };
 		1A2D90D01281C966001EB962 /* PluginProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessCreationParameters.h; sourceTree = "<group>"; };
 		1A2D90D11281C966001EB962 /* PluginProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessCreationParameters.cpp; sourceTree = "<group>"; };
+		1A2D91A51281D739001EB962 /* PluginControllerProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginControllerProxyMac.mm; sourceTree = "<group>"; };
+		1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProxyMac.mm; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
 		1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFindClient.cpp; sourceTree = "<group>"; };
@@ -1175,6 +1179,7 @@
 		1A0EC7FD124BD402007EF4A5 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				1A2D91A51281D739001EB962 /* PluginControllerProxyMac.mm */,
 				1A0EC802124BD41E007EF4A5 /* PluginProcessMainMac.mm */,
 			);
 			path = mac;
@@ -1275,6 +1280,7 @@
 			isa = PBXGroup;
 			children = (
 				1AE5B7F911E7AED200BA6767 /* NetscapePluginMac.mm */,
+				1A2D92201281DC1B001EB962 /* PluginProxyMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -2630,6 +2636,8 @@
 				1C8E2A351277852400BC7BD0 /* WebInspectorMessageReceiver.cpp in Sources */,
 				1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */,
 				1A2D90D31281C966001EB962 /* PluginProcessCreationParameters.cpp in Sources */,
+				1A2D91A61281D739001EB962 /* PluginControllerProxyMac.mm in Sources */,
+				1A2D92211281DC1B001EB962 /* PluginProxyMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

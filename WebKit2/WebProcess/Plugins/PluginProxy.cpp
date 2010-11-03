@@ -62,6 +62,7 @@ PluginProxy::PluginProxy(PassRefPtr<PluginProcessConnection> connection)
     , m_pluginBackingStoreContainsValidData(false)
     , m_isStarted(false)
     , m_waitingForPaintInResponseToUpdate(false)
+    , m_remoteLayerClientID(0)
 {
 }
 
@@ -89,11 +90,13 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
     // Ask the plug-in process to create a plug-in.
     bool result = false;
 
-    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled()), Messages::WebProcessConnection::CreatePlugin::Reply(result), 0) || !result) {
+    uint32_t remoteLayerClientID = 0;
+    if (!m_connection->connection()->sendSync(Messages::WebProcessConnection::CreatePlugin(m_pluginInstanceID, parameters, pluginController->userAgent(), pluginController->isPrivateBrowsingEnabled()), Messages::WebProcessConnection::CreatePlugin::Reply(result, remoteLayerClientID), 0) || !result) {
         m_connection->removePluginProxy(this);
         return false;
     }
 
+    m_remoteLayerClientID = remoteLayerClientID;
     m_isStarted = true;
 
     return true;
@@ -111,7 +114,7 @@ void PluginProxy::destroy()
 
 void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRect)
 {
-    if (!m_backingStore)
+    if (!needsBackingStore() || !m_backingStore)
         return;
 
     if (!m_pluginBackingStoreContainsValidData) {
@@ -142,19 +145,17 @@ void PluginProxy::paint(GraphicsContext* graphicsContext, const IntRect& dirtyRe
     }
 }
 
-#if PLATFORM(MAC)
-PlatformLayer* PluginProxy::pluginLayer()
-{
-    notImplemented();
-    return 0;
-}
-#endif
-
 void PluginProxy::geometryDidChange(const IntRect& frameRect, const IntRect& clipRect)
 {
     ASSERT(m_isStarted);
 
     m_frameRect = frameRect;
+
+    if (!needsBackingStore()) {
+        SharedMemory::Handle pluginBackingStoreHandle;
+        m_connection->connection()->send(Messages::PluginControllerProxy::GeometryDidChange(frameRect, clipRect, pluginBackingStoreHandle), m_pluginInstanceID);
+        return;
+    }
 
     bool didUpdateBackingStore = false;
     if (!m_backingStore) {

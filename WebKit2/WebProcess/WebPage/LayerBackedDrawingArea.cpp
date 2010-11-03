@@ -42,9 +42,6 @@ namespace WebKit {
 LayerBackedDrawingArea::LayerBackedDrawingArea(DrawingAreaID identifier, WebPage* webPage)
     : DrawingArea(LayerBackedDrawingAreaType, identifier, webPage)
     , m_syncTimer(WebProcess::shared().runLoop(), this, &LayerBackedDrawingArea::syncCompositingLayers)
-#if PLATFORM(MAC) && HAVE(HOSTED_CORE_ANIMATION)
-    , m_remoteLayerRef(0)
-#endif
     , m_attached(false)
     , m_shouldPaint(true)
 {

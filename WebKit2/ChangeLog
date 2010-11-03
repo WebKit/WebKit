@@ -2,6 +2,83 @@
 
         Reviewed by Simon Fraser.
 
+        Out of process plug-ins don't support the CA drawing model
+        https://bugs.webkit.org/show_bug.cgi?id=48950
+        <rdar://problem/8626019>
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add new overload.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::initialize):
+        Call platformInitialize().
+
+        (WebKit::PluginControllerProxy::destroy):
+        Call platformDestroy().
+
+        (WebKit::PluginControllerProxy::isAcceleratedCompositingEnabled):
+        Assume that accelerated compositing is available if we have a render server port.
+
+        (WebKit::PluginControllerProxy::geometryDidChange):
+        Call platformGeometryDidChange().
+
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin):
+        Pass back the remote layer client ID.
+
+        * PluginProcess/WebProcessConnection.messages.in:
+        Add a remoteLayerClientID out parameter to CreatePlugin.
+
+        * PluginProcess/mac/PluginControllerProxyMac.mm: Added.
+        (WebKit::PluginControllerProxy::platformInitialize):
+        If the plug-in has a layer, create a remote layer client and associate it with the layer.
+
+        (WebKit::PluginControllerProxy::platformDestroy):
+        Invalidate the remote layer client.
+
+        (WebKit::PluginControllerProxy::remoteLayerClientID):
+        Return the remote layer client ID if one exists.
+
+        (WebKit::PluginControllerProxy::platformGeometryDidChange):
+        Update the layer bounds.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm: Added.
+        (WebKit::PluginProxy::pluginLayer):
+        Create a render layer if needed.
+
+        (WebKit::PluginProxy::needsBackingStore):
+        Return whether the plug-in needs a backing store. (It doesn't need a backing store if it's a CA plug-in).
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::PluginProxy):
+        Initialize m_remoteLayerClientID.
+
+        (WebKit::PluginProxy::initialize):
+        Set m_remoteLayerClientID.
+
+        (WebKit::PluginProxy::paint):
+        Bail if the plug-in doesn't need a backing store.
+
+        (WebKit::PluginProxy::geometryDidChange):
+        Don't create a backing store if the plug-in doesn't need one.
+
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::LayerBackedDrawingArea):
+        Remove RetainPtr initialization.
+
+        * WebProcess/WebPage/mac/LayerBackedDrawingAreaMac.mm:
+        (WebKit::LayerBackedDrawingArea::platformClear):
+        Use nullptr instead of 0.
+
+2010-11-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
         Crash when layout in response to setSize changes the drawing area
         https://bugs.webkit.org/show_bug.cgi?id=48947
 
