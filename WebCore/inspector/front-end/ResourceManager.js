@@ -469,7 +469,7 @@ WebInspector.ResourceManager.existingResourceViewForResource = function(resource
     return resource._resourcesView;
 }
 
-WebInspector.ResourceManager.getContent = function(resource, base64Encode, callback)
+WebInspector.ResourceManager.requestContent = function(resource, base64Encode, callback)
 {
     InspectorBackend.resourceContent(resource.loader.frameId, resource.url, base64Encode, callback);
 }

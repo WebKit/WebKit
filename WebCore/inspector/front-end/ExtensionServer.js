@@ -332,7 +332,7 @@ WebInspector.ExtensionServer.prototype = {
             if (!resource)
                 response.push(this._status.E_NOTFOUND(id));
             else
-                resource.getContent(onContentAvailable.bind(this, id));
+                resource.requestContent(onContentAvailable.bind(this, id));
         }
         if (response.length === ids.length)
             this._dispatchCallback(message.requestId, port, response);

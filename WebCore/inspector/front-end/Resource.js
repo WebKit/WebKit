@@ -255,7 +255,7 @@ WebInspector.Resource.prototype = {
             this._checkWarnings();
             this.dispatchEventToListeners("finished");
             if (this._pendingContentCallbacks.length)
-                this._requestContent();
+                this._innerRequestContent();
         }
     },
 
@@ -616,12 +616,17 @@ WebInspector.Resource.prototype = {
             WebInspector.console.addMessage(msg);
     },
 
+    get content()
+    {
+        return this._content;
+    },
+
     set content(content)
     {
         this._content = content;
     },
 
-    getContent: function(callback)
+    requestContent: function(callback)
     {
         if (this._content) {
             callback(this._content, this._contentEncoded);
@@ -629,7 +634,7 @@ WebInspector.Resource.prototype = {
         }
         this._pendingContentCallbacks.push(callback);
         if (this.finished)
-            this._requestContent();
+            this._innerRequestContent();
     },
 
     get contentURL()
@@ -642,7 +647,7 @@ WebInspector.Resource.prototype = {
         return "data:" + this.mimeType + (this._contentEncoded ? ";base64," : ",") + this._content;
     },
 
-    _requestContent: function()
+    _innerRequestContent: function()
     {
         if (this._contentRequested)
             return;
@@ -658,7 +663,7 @@ WebInspector.Resource.prototype = {
             this._pendingContentCallbacks.length = 0;
             delete this._contentRequested;
         }
-        WebInspector.ResourceManager.getContent(this, this._contentEncoded, onResourceContent.bind(this));
+        WebInspector.ResourceManager.requestContent(this, this._contentEncoded, onResourceContent.bind(this));
     }
 }
 

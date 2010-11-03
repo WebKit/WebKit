@@ -67,14 +67,20 @@ WebInspector.ImageView.prototype = {
         {
             imagePreviewElement.setAttribute("src", this.resource.contentURL);
         }
-        this.resource.getContent(onResourceContent.bind(this));
+        this.resource.requestContent(onResourceContent.bind(this));
 
 
         function onImageLoad()
         {
+            var content = this.resource.content;
+            if (content)
+                var resourceSize = this._base64ToSize(content);
+            else
+                var resourceSize = this.resource.resourceSize;
+
             var imageProperties = [
-                { name: WebInspector.UIString("Dimensions"), value: WebInspector.UIString("%d × %d", imagePreviewElement.naturalWidth, imagePreviewElement.height) },
-                { name: WebInspector.UIString("File size"), value: Number.bytesToString(this.resource.resourceSize, WebInspector.UIString) },
+                { name: WebInspector.UIString("Dimensions"), value: WebInspector.UIString("%d × %d", imagePreviewElement.naturalWidth, imagePreviewElement.naturalHeight) },
+                { name: WebInspector.UIString("File size"), value: Number.bytesToString(resourceSize, WebInspector.UIString) },
                 { name: WebInspector.UIString("MIME type"), value: this.resource.mimeType }
             ];
     
@@ -90,6 +96,18 @@ WebInspector.ImageView.prototype = {
             this._container.appendChild(infoListElement);
         }
         imagePreviewElement.addEventListener("load", onImageLoad.bind(this), false);
+    },
+
+    _base64ToSize: function(content)
+    {
+        if (!content.length)
+            return 0;
+        var size = (content.length || 0) * 3 / 4;
+        if (content.length > 0 && content[content.length - 1] === "=")
+            size--;
+        if (content.length > 1 && content[content.length - 2] === "=")
+            size--;
+        return size;
     }
 }
 

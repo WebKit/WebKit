@@ -1482,7 +1482,7 @@ WebInspector.NetworkDataGridNode.prototype = {
                 previewImage.src = this._resource.contentURL;
             }
             if (Preferences.useDataURLForResourceImageIcons)
-                this._resource.getContent(onResourceContent.bind(this));
+                this._resource.requestContent(onResourceContent.bind(this));
             else
                 previewImage.src = this._resource.url;
 
