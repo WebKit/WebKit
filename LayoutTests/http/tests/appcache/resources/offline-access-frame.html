@@ -17,14 +17,5 @@ applicationCache.onobsolete = function() { log("obsolete") }
 applicationCache.oncached = function() { log("cached"); test() }
 applicationCache.onnoupdate = function() { log("noupdate"); test() }
 applicationCache.onerror = function() { log("error"); test() }
-
-if (applicationCache.status == applicationCache.IDLE) {
-    // Update finished while we were waiting for offline-access.js to load.
-    applicationCache.oncached = function() { log("cached") }
-    applicationCache.onnoupdate = function() { log("noupdate") }
-    applicationCache.onerror = function() { log("error") }
-    test();
-}
-
 </script>
 </html>

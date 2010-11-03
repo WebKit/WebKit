@@ -2,7 +2,7 @@
 require_once 'portabilityLayer.php';
 
 // This script acts as a stateful proxy for retrieving files. When the state is set to
-// offline, it simulates a network error by redirecting to itself.
+// offline, it simulates a network error with a nonsense response.
 
 if (!sys_get_temp_dir()) {
     echo "FAIL: No temp dir was returned.\n";
@@ -59,9 +59,12 @@ function generateResponse($path)
     global $stateFile;
     $state = getState($stateFile);
     if ($state == "Offline") {
+        # Simulate a network error by replying with a nonsense response.
         header('HTTP/1.1 307 Temporary Redirect');
-        # Simulate a network error by redirecting to self.
-        header('Location: ' . $_SERVER['REQUEST_URI']);
+        header('Location: ' . $_SERVER['REQUEST_URI']); # Redirect to self.
+        header('Content-Length: 1');
+        header('Content-Length: 5', false); # Multiple content-length headers, some network stacks can detect this condition faster.
+        echo "Intentionally incorrect response.";
     } else {
         // A little securuty checking can't hurt.
         if (strstr($path, ".."))
@@ -70,7 +73,7 @@ function generateResponse($path)
         if ($path[0] == '/')
             $path = '..' . $path;
 
-        generateNoCacheHTTPHeader();    
+        generateNoCacheHTTPHeader();
 
         if (file_exists($path)) {
             header("Last-Modified: " . gmdate("D, d M Y H:i:s T", filemtime($path)));

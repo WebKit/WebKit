@@ -29,18 +29,6 @@ function setNetworkEnabled(state)
     }
 }
 
-function canLoad(url)
-{
-    try {
-        var req = new XMLHttpRequest();
-        req.open("GET", url, false);
-        req.send("");
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
 function load(url)
 {
     try {
@@ -49,8 +37,9 @@ function load(url)
         req.send("");
         return req.responseText;
     } catch (ex) {
-        alert("Unexpected error loading " + url + ": " + ex);
+        log("FAIL: Cannot load " + url + ", ex = " + ex);
         hadError = true;
+        return ""; // This value should not be expected as the responseText for a url presented to this function.
     }
 }
 
@@ -65,17 +54,17 @@ function test()
     
     setNetworkEnabled(true);
 
-    if (!canLoad(testURL) || !/not in the cache/.test(load(testURL))) {
+    if (!/not in the cache/.test(load(testURL))) {
         log("FAIL: Cannot load an URL from fallback namespace when network is enabled");
         hadError = true;
     }
 
-    if (!canLoad(nonexistentURL) || load(nonexistentURL) != "Hello, World!") {
+    if (load(nonexistentURL) != "Hello, World!") {
         log("FAIL: Fallback resource wasn't used for a 404 response");
         hadError = true;
     }
 
-    if (!canLoad(redirectURL) || load(redirectURL) != "Hello, World!") {
+    if (load(redirectURL) != "Hello, World!") {
         log("FAIL: Fallback resource wasn't used for a redirect to a resource with another origin");
         hadError = true;
     }
@@ -147,10 +136,7 @@ function test6()
 {
     setNetworkEnabled(false);
 
-    if (!canLoad(testURL)) {
-        log("FAIL: Cannot load an URL from fallback namespace when network is disabled");
-        hadError = true;
-    } else if (load(testURL) != load("resources/simple.txt")) {
+    if (load(testURL) != load("resources/simple.txt")) {
         log("FAIL: Loading an URL from fallback namespace when network is disabled returned unexpected response");
         hadError = true;
     }
