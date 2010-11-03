@@ -71,6 +71,8 @@ using namespace std;
 
 LayoutTestController::LayoutTestController(TestShell* shell)
     : m_shell(shell)
+    , m_closeRemainingWindows(false)
+    , m_deferMainResourceDataLoad(false)
     , m_workQueue(this)
 {
 
