@@ -2526,7 +2526,7 @@ bool RenderBlock::isSelectionRoot() const
         
     if (isBody() || isRoot() || hasOverflowClip() || isRelPositioned() ||
         isFloatingOrPositioned() || isTableCell() || isInlineBlockOrInlineTable() || hasTransform() ||
-        hasReflection() || hasMask())
+        hasReflection() || hasMask() || isWritingModeRoot())
         return true;
     
     if (view() && view()->selectionStart()) {
@@ -2833,43 +2833,43 @@ void RenderBlock::getSelectionGapInfo(SelectionState state, bool& leftGap, bool&
                (state == RenderObject::SelectionEnd && !ltr);
 }
 
-int RenderBlock::logicalLeftSelectionOffset(RenderBlock* rootBlock, int yPos)
+int RenderBlock::logicalLeftSelectionOffset(RenderBlock* rootBlock, int position)
 {
-    int left = logicalLeftOffsetForLine(yPos, false);
-    if (left == borderLeft() + paddingLeft()) {
+    int logicalLeft = logicalLeftOffsetForLine(position, false);
+    if (logicalLeft == logicalLeftOffsetForContent()) {
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
-            return containingBlock()->logicalLeftSelectionOffset(rootBlock, yPos + y());
-        return left;
+            return containingBlock()->logicalLeftSelectionOffset(rootBlock, position + logicalTop());
+        return logicalLeft;
     }
     else {
         RenderBlock* cb = this;
         while (cb != rootBlock) {
-            left += cb->x();
+            logicalLeft += cb->logicalLeft();
             cb = cb->containingBlock();
         }
     }
     
-    return left;
+    return logicalLeft;
 }
 
-int RenderBlock::logicalRightSelectionOffset(RenderBlock* rootBlock, int yPos)
+int RenderBlock::logicalRightSelectionOffset(RenderBlock* rootBlock, int position)
 {
-    int right = logicalRightOffsetForLine(yPos, false);
-    if (right == (contentWidth() + (borderLeft() + paddingLeft()))) {
+    int logicalRight = logicalRightOffsetForLine(position, false);
+    if (logicalRight == logicalRightOffsetForContent()) {
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
-            return containingBlock()->logicalRightSelectionOffset(rootBlock, yPos + y());
-        return right;
+            return containingBlock()->logicalRightSelectionOffset(rootBlock, position + logicalTop());
+        return logicalRight;
     }
     else {
         RenderBlock* cb = this;
         while (cb != rootBlock) {
-            right += cb->x();
+            logicalRight += cb->logicalLeft();
             cb = cb->containingBlock();
         }
     }
-    return right;
+    return logicalRight;
 }
 
 void RenderBlock::insertPositionedObject(RenderBox* o)

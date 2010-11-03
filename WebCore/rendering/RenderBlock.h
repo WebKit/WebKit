@@ -539,8 +539,8 @@ private:
                                     int& lastTop, int& lastLeft, int& lastRight, const PaintInfo*);
     IntRect fillBlockSelectionGap(int lastTop, int lastLeft, int lastRight, int bottomY, RenderBlock* rootBlock,
                                   int blockX, int blockY, const PaintInfo*);
-    int logicalLeftSelectionOffset(RenderBlock* rootBlock, int y);
-    int logicalRightSelectionOffset(RenderBlock* rootBlock, int y);
+    int logicalLeftSelectionOffset(RenderBlock* rootBlock, int position);
+    int logicalRightSelectionOffset(RenderBlock* rootBlock, int position);
 
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
