@@ -66,8 +66,8 @@ public:
     // Creates and returns a new platform-specific AsyncFileSystem instance if the platform has its own implementation.
     static PassOwnPtr<AsyncFileSystem> create(const String& rootPath);
 
-    // Opens a new file system.
-    static void openFileSystem(const String& basePath, const String& storageIdentifier, Type, PassOwnPtr<AsyncFileSystemCallbacks>);
+    // Opens a new file system. The create parameter specifies whether or not to create the path if it does not already exists.
+    static void openFileSystem(const String& basePath, const String& storageIdentifier, Type, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
 
     // Moves a file or directory from srcPath to destPath.
     // AsyncFileSystemCallbacks::didSucceed() is called when the operation is completed successfully.

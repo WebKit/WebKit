@@ -53,7 +53,7 @@ PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(const String&)
 }
 
 // Default implementation.
-void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, Type type, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
+void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, Type type, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     String typeString = (type == Persistent) ? "Persistent" : "Temporary";
 

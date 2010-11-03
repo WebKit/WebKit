@@ -52,6 +52,9 @@ public:
     // calling this one.
     static LocalFileSystem& localFileSystem();
 
+    // Does not create the root path for file system, just reads it if available.
+    void readFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, long long size, PassOwnPtr<AsyncFileSystemCallbacks>);
+
     void requestFileSystem(ScriptExecutionContext*, AsyncFileSystem::Type, long long size, PassOwnPtr<AsyncFileSystemCallbacks>, bool synchronous = false);
 
 #if !PLATFORM(CHROMIUM)

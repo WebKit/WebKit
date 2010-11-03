@@ -1,3 +1,14 @@
+2010-11-02  Kavita Kanetkar  <kkanetkar@chromium.org>
+
+        Reviewed by Dumitru Daniliuc.
+
+        [FileSystem] Support not creating directories when queried by inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=48169
+
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::LocalFileSystem::readFileSystem):
+        (WebCore::LocalFileSystem::requestFileSystem):
+
 2010-11-02  Chris Guillory  <chris.guillory@google.com>
 
         Reviewed by Chris Fleizach.
