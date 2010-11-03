@@ -59,6 +59,7 @@ namespace WebCore {
 static NSString *createHTTPStyleLanguageCode(NSString *languageCode)
 {
     ASSERT(isMainThread());
+    NSString *httpStyleLanguageCode = nil;
 
     // Look up the language code using CFBundle.
     CFStringRef preferredLanguageCode = wkCopyCFLocalizationPreferredName((CFStringRef)languageCode);
@@ -70,16 +71,18 @@ static NSString *createHTTPStyleLanguageCode(NSString *languageCode)
     NSString *lowercaseLanguageCode = [languageCode lowercaseString];
     
     // Turn a '_' into a '-' if it appears after a 2-letter language code.
-    if ([lowercaseLanguageCode length] < 3 || [lowercaseLanguageCode characterAtIndex:2] != '_')
-        return lowercaseLanguageCode;
-
-    NSMutableString *result = [lowercaseLanguageCode mutableCopy];
-    [result replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
-
+    if ([lowercaseLanguageCode length] >= 3 && [lowercaseLanguageCode characterAtIndex:2] == '_') {
+        NSMutableString *mutableLanguageCode = [lowercaseLanguageCode mutableCopy];
+        [mutableLanguageCode replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
+        httpStyleLanguageCode = mutableLanguageCode;
+    }
+    else
+        httpStyleLanguageCode = [lowercaseLanguageCode retain];
+    
     if (preferredLanguageCode)
         CFRelease(preferredLanguageCode);
 
-    return result;
+    return httpStyleLanguageCode;
 }
 
 String platformDefaultLanguage()
