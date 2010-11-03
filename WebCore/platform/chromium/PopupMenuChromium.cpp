@@ -927,15 +927,16 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     // Prepare text to be drawn.
     String itemText = m_popupClient->itemText(rowIndex);
     String itemLabel = m_popupClient->itemLabel(rowIndex);
+    String itemIcon = m_popupClient->itemIcon(rowIndex);
     if (m_settings.restrictWidthOfListBox) { // Truncate strings to fit in.
         // FIXME: We should leftTruncate for the rtl case.
         // StringTruncator::leftTruncate would have to be implemented.
         String str = StringTruncator::rightTruncate(itemText, maxWidth, itemFont);
         if (str != itemText) {
             itemText = str;
-            // Don't display the label, we already don't have enough room for the
-            // item text.
+            // Don't display the label or icon, we already don't have enough room for the item text.
             itemLabel = "";
+            itemIcon = "";
         } else if (!itemLabel.isEmpty()) {
             int availableWidth = maxWidth - kTextToLabelPadding -
                 StringTruncator::width(itemText, itemFont);
@@ -966,7 +967,6 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     int remainingWidth = rowRect.width() - rightPadding;
 
     // Draw the icon if applicable.
-    String itemIcon = m_popupClient->itemIcon(rowIndex);
     RefPtr<Image> image(Image::loadPlatformResource(itemIcon.utf8().data()));
     if (image && !image->isNull()) {
         IntRect imageRect = image->rect();
@@ -1089,7 +1089,13 @@ int PopupListBox::getRowHeight(int index)
     if (index < 0)
         return 0;
 
-    return getRowFont(index).height();
+    String icon = m_popupClient->itemIcon(index);
+    RefPtr<Image> image(Image::loadPlatformResource(icon.utf8().data()));
+
+    int fontHeight = getRowFont(index).height();
+    int iconHeight = (image && !image->isNull()) ? image->rect().height() : 0;
+
+    return max(fontHeight, iconHeight);
 }
 
 IntRect PopupListBox::getRowBounds(int index)
@@ -1257,6 +1263,8 @@ void PopupListBox::layout()
         // Ensure the popup is wide enough to fit this item.
         String text = m_popupClient->itemText(i);
         String label = m_popupClient->itemLabel(i);
+        String icon = m_popupClient->itemIcon(i);
+        RefPtr<Image> iconImage(Image::loadPlatformResource(icon.utf8().data()));
         int width = 0;
         if (!text.isEmpty())
             width = itemFont.width(TextRun(text));
@@ -1265,6 +1273,12 @@ void PopupListBox::layout()
                 width += kTextToLabelPadding;
             width += itemFont.width(TextRun(label));
         }
+        if (iconImage && !iconImage->isNull()) {
+            if (width > 0)
+                width += kLabelToIconPadding;
+            width += iconImage->rect().width();
+        }
+
         baseWidth = max(baseWidth, width);
         // FIXME: http://b/1210481 We should get the padding of individual option elements.
         paddingWidth = max(paddingWidth,
