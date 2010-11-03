@@ -1,0 +1,19 @@
+<html>
+<head>
+    <script type="text/javascript">
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    function init()
+    {
+        var ctx = document.getElementById("canvas").getContext("2d");
+        ctx.font = "font-family: Helvetica; font-size: 48pt; font-color: #000000";
+        ctx.fillText("Hello world", 10, 200);
+    }
+    </script>
+</head>
+<body onload="init()">
+    <p>This test should not crash.</p>
+    <canvas id="canvas" height="300" width="300"></canvas>
+</body>
+</html>

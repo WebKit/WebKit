@@ -3093,7 +3093,8 @@ void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue *value, RenderStyle
     initElement(0);
     initForStyleResolve(0, style);
     m_style = style;
-    applyProperty(id, value);
+    if (value)
+        applyProperty(id, value);
 }
 
 inline bool isValidVisitedLinkProperty(int id)
