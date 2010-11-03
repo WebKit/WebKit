@@ -2537,6 +2537,8 @@ void Editor::removeSpellAndCorrectionMarkersFromWordsToBeEdited(bool doNotRemove
     Vector<RangeMarkerPair, 16> markersToRemove;
     for (TextIterator textIterator(wordRange.get()); !textIterator.atEnd(); textIterator.advance()) {
         Node* node = textIterator.node();
+        if (!node)
+            continue;
         if (node == startOfFirstWord.deepEquivalent().containerNode() || node == endOfLastWord.deepEquivalent().containerNode()) {
             // First word and last word can belong to the same node
             bool processFirstWord = node == startOfFirstWord.deepEquivalent().containerNode() && document->markers()->hasMarkers(rangeOfFirstWord.get(), DocumentMarker::Spelling | DocumentMarker::CorrectionIndicator);
