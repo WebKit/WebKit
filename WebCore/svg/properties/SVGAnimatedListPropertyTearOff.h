@@ -32,17 +32,21 @@ class SVGPropertyTearOff;
 template<typename PropertyType>
 class SVGAnimatedListPropertyTearOff : public SVGAnimatedProperty {
 public:
+    typedef typename SVGPropertyTraits<PropertyType>::ListItemType ListItemType;
+    typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
+    typedef Vector<RefPtr<ListItemTearOff> > ListWrapperCache;
+
     SVGProperty* baseVal()
     {
         if (!m_baseVal)
-            m_baseVal = SVGListPropertyTearOff<PropertyType>::create(this, BaseValRole, m_property);
+            m_baseVal = SVGListPropertyTearOff<PropertyType>::create(this, BaseValRole);
         return m_baseVal.get();
     }
 
     SVGProperty* animVal()
     {
         if (!m_animVal)
-            m_animVal = SVGListPropertyTearOff<PropertyType>::create(this, AnimValRole, m_property);
+            m_animVal = SVGListPropertyTearOff<PropertyType>::create(this, AnimValRole);
         return m_animVal.get();
     }
 
@@ -50,39 +54,56 @@ public:
 
     int removeItemFromList(SVGProperty* property, bool shouldSynchronizeWrappers)
     {
-        // FIXME: No animVal support.
-        if (!m_baseVal)
-            return -1;
-
+        // This should ever be called for our baseVal, as animVal can't modify the list.
         typedef SVGPropertyTearOff<typename SVGPropertyTraits<PropertyType>::ListItemType> ListItemTearOff;
         return static_pointer_cast<SVGListPropertyTearOff<PropertyType> >(m_baseVal)->removeItemFromList(static_cast<ListItemTearOff*>(property), shouldSynchronizeWrappers);
     }
 
     void detachListWrappers(unsigned newListSize)
     {
-        if (m_baseVal)
-            static_pointer_cast<SVGListPropertyTearOff<PropertyType> >(m_baseVal)->detachListWrappers(newListSize);
-        if (m_animVal)
-            static_pointer_cast<SVGListPropertyTearOff<PropertyType> >(m_animVal)->detachListWrappers(newListSize);
+        // See SVGPropertyTearOff::detachWrapper() for an explaination what's happening here.
+        unsigned size = m_wrappers.size();
+        ASSERT(size == m_values.size());
+        for (unsigned i = 0; i < size; ++i) {
+            RefPtr<ListItemTearOff>& item = m_wrappers.at(i);
+            if (!item)
+                continue;
+            item->detachWrapper();
+        }
+
+        // Reinitialize the wrapper cache to be equal to the new values size, after the XML DOM changed the list.
+        if (newListSize)
+            m_wrappers.fill(0, newListSize);
+        else
+            m_wrappers.clear();
     }
+
+    PropertyType& values() { return m_values; }
+    ListWrapperCache& wrappers() { return m_wrappers; }
 
 private:
     friend class SVGAnimatedProperty;
 
-    static PassRefPtr<SVGAnimatedListPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
+    static PassRefPtr<SVGAnimatedListPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& values)
     {
         ASSERT(contextElement);
-        return adoptRef(new SVGAnimatedListPropertyTearOff<PropertyType>(contextElement, attributeName, property));
+        return adoptRef(new SVGAnimatedListPropertyTearOff<PropertyType>(contextElement, attributeName, values));
     }
 
-    SVGAnimatedListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
+    SVGAnimatedListPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& values)
         : SVGAnimatedProperty(contextElement, attributeName)
-        , m_property(property)
+        , m_values(values)
     {
+        if (!values.isEmpty())
+            m_wrappers.fill(0, values.size());
     }
 
 private:
-    PropertyType& m_property;
+    PropertyType& m_values;
+
+    // FIXME: The list wrapper cache is shared between baseVal/animVal. If we implement animVal,
+    // we need two seperated wrapper caches if the attribute gets animated.
+    ListWrapperCache m_wrappers;
 
     RefPtr<SVGProperty> m_baseVal;
     RefPtr<SVGProperty> m_animVal;
