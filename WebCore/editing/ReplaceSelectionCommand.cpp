@@ -484,17 +484,6 @@ void ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance()
                 e->getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueInline);
             if (e->renderer() && e->renderer()->style()->floating() != FNONE)
                 e->getInlineStyleDecl()->setProperty(CSSPropertyFloat, CSSValueNone);
-
-            // Undo the effects of page zoom if we have an absolute font size.  When we copy, we
-            // compute the new font size as an absolute size so pasting will cause the zoom to be
-            // applied twice.
-            if (e->renderer() && e->renderer()->style() && e->renderer()->style()->effectiveZoom() != 1.0
-                && e->renderer()->style()->fontDescription().isAbsoluteSize()) {
-                float newSize = e->renderer()->style()->fontDescription().specifiedSize() / e->renderer()->style()->effectiveZoom();
-                ExceptionCode ec = 0;
-                e->style()->setProperty(CSSPropertyFontSize, String::number(newSize), false, ec);
-                ASSERT(!ec);
-            }
         }
         if (node == m_lastLeafInserted)
             break;
