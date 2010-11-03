@@ -33,6 +33,7 @@
 
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
+#include "PluginLayerChromium.h"
 #include "WebClipboard.h"
 #include "WebCursorInfo.h"
 #include "WebDataSourceImpl.h"
@@ -306,6 +307,14 @@ void WebPluginContainerImpl::reportGeometry()
     m_webPlugin->updateGeometry(windowRect, clipRect, cutOutRects, isVisible());
 }
 
+void WebPluginContainerImpl::commitBackingTexture()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (platformLayer())
+        platformLayer()->setNeedsDisplay();
+#endif
+}
+
 void WebPluginContainerImpl::clearScriptObjects()
 {
     Frame* frame = m_element->document()->frame();
@@ -412,7 +421,32 @@ void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver
     m_pluginLoadObservers.remove(pos);
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
+{
+    // FIXME: In the event of a context lost, the texture needs to be recreated on the compositor's
+    // context and rebound to the platform layer here.
+    unsigned backingTextureId = m_webPlugin->getBackingTextureId();
+    if (!backingTextureId)
+        return 0;
+
+    m_platformLayer->setTextureId(backingTextureId);
+
+    return m_platformLayer.get();
+}
+#endif
+
 // Private methods -------------------------------------------------------------
+
+WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* element, WebPlugin* webPlugin)
+    : WebCore::PluginViewBase(0)
+    , m_element(element)
+    , m_webPlugin(webPlugin)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_platformLayer(PluginLayerChromium::create(0))
+#endif
+{
+}
 
 WebPluginContainerImpl::~WebPluginContainerImpl()
 {

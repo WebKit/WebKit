@@ -370,6 +370,7 @@ void LayerChromium::setNeedsDisplay()
 {
     m_dirtyRect.setSize(m_bounds);
     m_contentsDirty = true;
+    setNeedsCommit();
 }
 
 void LayerChromium::resetNeedsDisplay()

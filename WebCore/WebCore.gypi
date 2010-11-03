@@ -2455,6 +2455,8 @@
             'platform/graphics/chromium/LayerRendererChromium.h',
             'platform/graphics/chromium/MediaPlayerPrivateChromium.h',
             'platform/graphics/chromium/PlatformIcon.h',
+            'platform/graphics/chromium/PluginLayerChromium.cpp',
+            'platform/graphics/chromium/PluginLayerChromium.h',
             'platform/graphics/chromium/SimpleFontDataChromiumWin.cpp',
             'platform/graphics/chromium/SimpleFontDataLinux.cpp',
             'platform/graphics/chromium/TransparencyWin.cpp',

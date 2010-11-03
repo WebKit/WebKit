@@ -730,7 +730,10 @@ bool LayerRendererChromium::initializeSharedObjects()
     m_contentLayerSharedValues = adoptPtr(new ContentLayerChromium::SharedValues(m_context.get()));
     m_canvasLayerSharedValues = adoptPtr(new CanvasLayerChromium::SharedValues(m_context.get()));
     m_videoLayerSharedValues = adoptPtr(new VideoLayerChromium::SharedValues(m_context.get()));
-    if (!m_layerSharedValues->initialized() || !m_contentLayerSharedValues->initialized() || !m_canvasLayerSharedValues->initialized() || !m_videoLayerSharedValues->initialized()) {
+    m_pluginLayerSharedValues = adoptPtr(new PluginLayerChromium::SharedValues(m_context.get()));
+
+    if (!m_layerSharedValues->initialized() || !m_contentLayerSharedValues->initialized() || !m_canvasLayerSharedValues->initialized()
+        || !m_videoLayerSharedValues->initialized() || !m_pluginLayerSharedValues->initialized()) {
         cleanupSharedObjects();
         return false;
     }
@@ -746,6 +749,7 @@ void LayerRendererChromium::cleanupSharedObjects()
     m_contentLayerSharedValues.clear();
     m_canvasLayerSharedValues.clear();
     m_videoLayerSharedValues.clear();
+    m_pluginLayerSharedValues.clear();
 
     if (m_scrollShaderProgram) {
         GLC(m_context, m_context->deleteProgram(m_scrollShaderProgram));

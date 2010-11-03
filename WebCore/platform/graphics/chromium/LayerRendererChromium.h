@@ -38,6 +38,7 @@
 #include "ContentLayerChromium.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
+#include "PluginLayerChromium.h"
 #include "SkBitmap.h"
 #include "VideoLayerChromium.h"
 #include <wtf/HashMap.h>
@@ -107,6 +108,7 @@ public:
     const ContentLayerChromium::SharedValues* contentLayerSharedValues() const { return m_contentLayerSharedValues.get(); }
     const CanvasLayerChromium::SharedValues* canvasLayerSharedValues() const { return m_canvasLayerSharedValues.get(); }
     const VideoLayerChromium::SharedValues* videoLayerSharedValues() const { return m_videoLayerSharedValues.get(); }
+    const PluginLayerChromium::SharedValues* pluginLayerSharedValues() const { return m_pluginLayerSharedValues.get(); }
 
     void resizeOnscreenContent(const IntSize&);
 
@@ -180,6 +182,7 @@ private:
     OwnPtr<ContentLayerChromium::SharedValues> m_contentLayerSharedValues;
     OwnPtr<CanvasLayerChromium::SharedValues> m_canvasLayerSharedValues;
     OwnPtr<VideoLayerChromium::SharedValues> m_videoLayerSharedValues;
+    OwnPtr<PluginLayerChromium::SharedValues> m_pluginLayerSharedValues;
 
     RefPtr<GraphicsContext3D> m_context;
 };

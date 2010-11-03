@@ -1,3 +1,21 @@
+2010-11-02  Al Patrick  <apatrick@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Plugin instances can propagate the ID of the OpenGL texture they render to.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48032
+
+        * public/WebPlugin.h:
+        (WebKit::WebPlugin::getBackingTextureId):
+        * public/WebPluginContainer.h:
+        (WebKit::WebPluginContainer::commitBackingTexture):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::commitBackingTexture):
+        (WebKit::WebPluginContainerImpl::platformLayer):
+        (WebKit::WebPluginContainerImpl::WebPluginContainerImpl):
+        * src/WebPluginContainerImpl.h:
+
 2010-11-02  Kavita Kanetkar  <kkanetkar@chromium.org>
 
         Reviewed by Dumitru Daniliuc.
