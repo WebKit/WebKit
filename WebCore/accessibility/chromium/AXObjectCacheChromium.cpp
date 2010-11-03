@@ -27,9 +27,11 @@
 #include "config.h"
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
+#include "AccessibilityScrollbar.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "FrameView.h"
+#include "Scrollbar.h"
 
 namespace WebCore {
 
@@ -47,6 +49,17 @@ void AXObjectCache::attachWrapper(AccessibilityObject*)
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotification notification)
 {
+    if (obj->isAccessibilityScrollbar() && notification == AXValueChanged) {
+        // Send document value changed on scrollbar value changed notification.
+        Scrollbar* scrollBar = static_cast<AccessibilityScrollbar*>(obj)->scrollbar();
+        if (!scrollBar || !scrollBar->parent() || !scrollBar->parent()->isFrameView())
+            return;
+        Document* document = static_cast<FrameView*>(scrollBar->parent())->frame()->document();
+        if (document != document->topDocument())
+            return;
+        obj = get(document->renderer());
+    }
+    
     if (!obj || !obj->document() || !obj->documentFrameView() || !obj->documentFrameView()->frame() || !obj->documentFrameView()->frame()->page())
         return;
 

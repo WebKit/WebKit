@@ -259,6 +259,7 @@ public:
     typedef Vector<RefPtr<AccessibilityObject> > AccessibilityChildrenVector;
     
     virtual bool isAccessibilityRenderObject() const { return false; }
+    virtual bool isAccessibilityScrollbar() const { return false; }
     virtual bool isAnchor() const { return false; }
     virtual bool isAttachment() const { return false; }
     virtual bool isHeading() const { return false; }

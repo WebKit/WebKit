@@ -2,11 +2,16 @@
 <head>
 <script>
     function testNotification() {
-        document.getElementById("text-for-ValueChanged").value = "button"
+        // Scroll the window which should generate an accessibility value changed
+        // notification for top document's vertical scrollbar.
+        if (window.eventSender)
+            window.eventSender.keyDown("pageDown");
+
+        document.getElementById("text-for-ValueChanged").value = "button";
     }
 </script>
 </head>
-<body onload="test()">
+<body onload="test()" style="height:200%;">
 This tests that chromium correctly recieves the ValueChanged notification.
 
 <input id="text-for-ValueChanged" aria-help="text-for-ValueChanged" type="text" value="value" />

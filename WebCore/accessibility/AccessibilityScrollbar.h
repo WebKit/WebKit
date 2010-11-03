@@ -41,6 +41,10 @@ public:
 
     void setScrollbar(Scrollbar* scrollbar) { m_scrollbar = scrollbar; }
 
+    Scrollbar* scrollbar() const { return m_scrollbar; }
+
+    virtual bool isAccessibilityScrollbar() const { return true; }
+
     virtual AccessibilityRole roleValue() const { return ScrollBarRole; }
 
     virtual float valueForRange() const;

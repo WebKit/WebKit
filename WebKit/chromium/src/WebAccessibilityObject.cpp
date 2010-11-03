@@ -351,7 +351,7 @@ WebRect WebAccessibilityObject::boundingBoxRect() const
         return WebRect();
 
     m_private->updateBackingStore();
-    return m_private->documentFrameView()->contentsToWindow(m_private->boundingBoxRect());
+    return m_private->boundingBoxRect();
 }
 
 WebString WebAccessibilityObject::helpText() const
