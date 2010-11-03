@@ -275,7 +275,11 @@ sub GenerateHeader
     push(@headerContent, "\nnamespace WebCore {\n");
     push(@headerContent, "\ntemplate<typename PODType> class V8SVGPODTypeWrapper;\n") if $podType;
     push(@headerContent, "\ntemplate<typename PropertyType> class SVGPropertyTearOff;\n") if $svgPropertyType;
-    push(@headerContent, "\ntemplate<typename PropertyType> class SVGListPropertyTearOff;\n") if $svgListPropertyType;
+    if ($svgListPropertyType eq "SVGStringList") {
+        push(@headerContent, "\nclass SVGStringListPropertyTearOff;\n");
+    } else {
+        push(@headerContent, "\ntemplate<typename PropertyType> class SVGListPropertyTearOff;\n");
+    }
     push(@headerContent, "\nclass $className {\n");
 
     my $nativeType = GetNativeTypeForConversions($dataNode, $interfaceName);
