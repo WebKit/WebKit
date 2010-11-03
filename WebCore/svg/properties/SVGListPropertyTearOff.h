@@ -111,7 +111,7 @@ public:
         ASSERT(values.size() == wrappers.size());
 
         // Spec: If the inserted item is already in a list, it is removed from its previous list before it is inserted into this list.
-        removeItemFromListIfNeeded(newItem.get(), 0);
+        processIncomingListItem(newItem, 0);
 
         // Spec: Clears all existing current items from the list and re-initializes the list to hold the single item specified by the parameter.
         m_animatedProperty->detachListWrappers(0);
@@ -173,7 +173,7 @@ public:
         ASSERT(values.size() == wrappers.size());
 
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
-        removeItemFromListIfNeeded(newItem.get(), &index);
+        processIncomingListItem(newItem, &index);
 
         // Spec: Inserts a new item into the list at the specified position. The index of the item before which the new item is to be
         // inserted. The first item is number 0. If the index is equal to 0, then the new item is inserted at the front of the list.
@@ -211,7 +211,7 @@ public:
 
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         // Spec: If the item is already in this list, note that the index of the item to replace is before the removal of the item.
-        removeItemFromListIfNeeded(newItem.get(), &index);
+        processIncomingListItem(newItem, &index);
 
         // Detach the existing wrapper.
         RefPtr<ListItemTearOff>& oldItem = wrappers.at(index);
@@ -275,7 +275,7 @@ public:
         ASSERT(values.size() == wrappers.size());
 
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
-        removeItemFromListIfNeeded(newItem.get(), 0);
+        processIncomingListItem(newItem, 0);
 
         // Append the value and wrapper at the end of the list.
         values.append(newItem->propertyReference());
@@ -313,16 +313,31 @@ private:
         m_animatedProperty->commitChange();
     }
 
-    void removeItemFromListIfNeeded(ListItemTearOff* newItem, unsigned* indexToModify)
+    void processIncomingListItem(RefPtr<ListItemTearOff>& newItem, unsigned* indexToModify)
     {
-        // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         SVGAnimatedProperty* animatedPropertyOfItem = newItem->animatedProperty();
-        if (!animatedPropertyOfItem || !animatedPropertyOfItem->isAnimatedListTearOff())
+
+        // newItem has been created manually, it doesn't belong to any SVGElement.
+        // (for example: "textElement.x.baseVal.appendItem(svgsvgElement.createSVGLength())")
+        if (!animatedPropertyOfItem)
             return;
 
+        // newItem belongs to a SVGElement, but its associated SVGAnimatedProperty is not an animated list tear off.
+        // (for example: "textElement.x.baseVal.appendItem(rectElement.width.baseVal)")
+        if (!animatedPropertyOfItem->isAnimatedListTearOff()) {
+            // We have to copy the incoming newItem, as we're not allowed to insert this tear off as is into our wrapper cache.
+            // Otherwhise we'll end up having two SVGAnimatedPropertys that operate on the same SVGPropertyTearOff. Consider the example above:
+            // SVGRectElements SVGAnimatedLength 'width' property baseVal points to the same tear off object
+            // that's inserted into SVGTextElements SVGAnimatedLengthList 'x'. textElement.x.baseVal.getItem(0).value += 150 would
+            // mutate the rectElement width _and_ the textElement x list. That's obviously wrong, take care of that.
+            newItem = ListItemTearOff::create(newItem->propertyReference());
+            return;
+        }
+
+        // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         // 'newItem' is already living in another list. If it's not our list, synchronize the other lists wrappers after the removal.
         bool livesInOtherList = animatedPropertyOfItem != m_animatedProperty;
-        int removedIndex = static_cast<SVGAnimatedListPropertyTearOff<PropertyType>*>(animatedPropertyOfItem)->removeItemFromList(newItem, livesInOtherList);
+        int removedIndex = static_cast<SVGAnimatedListPropertyTearOff<PropertyType>*>(animatedPropertyOfItem)->removeItemFromList(newItem.get(), livesInOtherList);
         ASSERT(removedIndex != -1);
 
         if (!indexToModify)

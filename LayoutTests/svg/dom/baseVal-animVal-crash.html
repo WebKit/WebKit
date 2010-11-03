@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function go() {
+    var oSVGAltGlyphElement = document.createElementNS("http://www.w3.org/2000/svg", "altGlyph");
+    var oSvgMaskElement = document.createElementNS("http://www.w3.org/2000/svg", "mask");
+    var oSvgLengthList = oSVGAltGlyphElement.dy.baseVal;
+    oSvgLengthList.appendItem(oSvgMaskElement.width.animVal);
+    gc();
+    oSvgLengthList.appendItem(oSvgMaskElement.width.animVal);
+    gc();
+    oSvgLengthList.removeItem(0);
+    gc();
+    oSvgLengthList.appendItem(oSvgMaskElement.width.animVal);
+    gc(); 
+}
+</script>
+</head>
+<body onload="go()">
+This test passes if it doesn't crash.
+</body>
+</html>
