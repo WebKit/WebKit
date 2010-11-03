@@ -100,10 +100,6 @@ public:
 
     bool supportsBGRA();
 
-    // GL_CHROMIUM_copy_texture_to_parent_texture
-    bool supportsCopyTextureToParentTextureCHROMIUM();
-    void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
-
     // Creates a texture associated with the given image.  Is owned by this context's
     // TextureHashMap.
     Texture* createTexture(NativeImagePtr, Texture::Format, int width, int height);

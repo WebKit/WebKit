@@ -52,6 +52,7 @@
 #include "DragData.h"
 #include "Editor.h"
 #include "EventHandler.h"
+#include "Extensions3D.h"
 #include "FocusController.h"
 #include "FontDescription.h"
 #include "FrameLoader.h"
@@ -1050,7 +1051,7 @@ void WebViewImpl::composite(bool finish)
     m_layerRenderer->present();
 
     GraphicsContext3D* context = m_layerRenderer->context();
-    if (context->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)
+    if (context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)
         reallocateRenderer();
 #endif
 }

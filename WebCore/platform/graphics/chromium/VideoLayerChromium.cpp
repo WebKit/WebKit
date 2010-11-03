@@ -33,6 +33,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "VideoLayerChromium.h"
 
+#include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "RenderLayerBacking.h"
@@ -302,10 +303,10 @@ void VideoLayerChromium::updateTexture(GraphicsContext3D* context, unsigned text
 {
     ASSERT(context);
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
-    void* mem = context->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, dimensions.width(), dimensions.height(), format, GraphicsContext3D::UNSIGNED_BYTE, GraphicsContext3D::WRITE_ONLY);
+    void* mem = static_cast<Extensions3DChromium*>(context->getExtensions())->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, dimensions.width(), dimensions.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY);
     if (mem) {
         memcpy(mem, data, dimensions.width() * dimensions.height());
-        GLC(context, context->unmapTexSubImage2DCHROMIUM(mem));
+        GLC(context, static_cast<Extensions3DChromium*>(context->getExtensions())->unmapTexSubImage2DCHROMIUM(mem));
     } else {
         // FIXME: We should have some sort of code to handle the case when
         // mapTexSubImage2D fails.

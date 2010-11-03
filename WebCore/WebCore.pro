@@ -3677,7 +3677,9 @@ HEADERS += \
         html/canvas/Uint8Array.h \
         html/canvas/Uint32Array.h \
         html/canvas/Uint16Array.h \
-        platform/graphics/GraphicsContext3D.h
+        platform/graphics/Extensions3D.h \
+        platform/graphics/GraphicsContext3D.h \
+        platform/graphics/qt/Extensions3DQt.h
 
     !v8 {
         SOURCES += \
@@ -3715,6 +3717,7 @@ SOURCES += \
         html/canvas/Uint32Array.cpp \
         html/canvas/Uint16Array.cpp \
         platform/graphics/GraphicsContext3D.cpp \
+        platform/graphics/qt/Extensions3DQt.cpp \
         platform/graphics/qt/GraphicsContext3DQt.cpp
 
 }

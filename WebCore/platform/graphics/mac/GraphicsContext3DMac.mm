@@ -36,6 +36,7 @@
 #include "ArrayBufferView.h"
 #include "CanvasRenderingContext.h"
 #include <CoreGraphics/CGBitmapContext.h>
+#include "Extensions3DOpenGL.h"
 #include "Float32Array.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"

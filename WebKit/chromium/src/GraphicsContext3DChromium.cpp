@@ -39,6 +39,7 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
+#include "Extensions3DChromium.h"
 #include "GraphicsContext3DInternal.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -83,6 +84,7 @@ namespace WebCore {
 
 GraphicsContext3DInternal::GraphicsContext3DInternal()
     : m_webViewImpl(0)
+    , m_initializedAvailableExtensions(false)
 #if PLATFORM(SKIA)
 #elif PLATFORM(CG)
     , m_renderOutput(0)
@@ -675,13 +677,31 @@ DELEGATE_TO_IMPL_1(deleteShader, unsigned)
 DELEGATE_TO_IMPL_1(deleteTexture, unsigned)
 
 DELEGATE_TO_IMPL_1(synthesizeGLError, unsigned long)
-DELEGATE_TO_IMPL_R(supportsBGRA, bool)
-DELEGATE_TO_IMPL_R(supportsMapSubCHROMIUM, bool)
+
+Extensions3D* GraphicsContext3DInternal::getExtensions()
+{
+    if (!m_extensions)
+        m_extensions = adoptPtr(new Extensions3DChromium(this));
+    return m_extensions.get();
+}
+
+bool GraphicsContext3DInternal::supportsExtension(const String& name)
+{
+    if (!m_initializedAvailableExtensions) {
+        String extensionsString = getString(GraphicsContext3D::EXTENSIONS);
+        Vector<String> availableExtensions;
+        extensionsString.split(" ", availableExtensions);
+        for (size_t i = 0; i < availableExtensions.size(); ++i)
+            m_availableExtensions.add(availableExtensions[i]);
+        m_initializedAvailableExtensions = true;
+    }
+    return m_availableExtensions.contains(name);
+}
+
 DELEGATE_TO_IMPL_4R(mapBufferSubDataCHROMIUM, unsigned, int, int, unsigned, void*)
 DELEGATE_TO_IMPL_1(unmapBufferSubDataCHROMIUM, const void*)
 DELEGATE_TO_IMPL_9R(mapTexSubImage2DCHROMIUM, unsigned, int, int, int, int, int, unsigned, unsigned, unsigned, void*)
 DELEGATE_TO_IMPL_1(unmapTexSubImage2DCHROMIUM, const void*)
-DELEGATE_TO_IMPL_R(supportsCopyTextureToParentTextureCHROMIUM, bool)
 DELEGATE_TO_IMPL_2(copyTextureToParentTextureCHROMIUM, unsigned, unsigned)
 
 //----------------------------------------------------------------------
@@ -1023,14 +1043,7 @@ DELEGATE_TO_INTERNAL_1(deleteShader, unsigned)
 DELEGATE_TO_INTERNAL_1(deleteTexture, unsigned)
 
 DELEGATE_TO_INTERNAL_1(synthesizeGLError, unsigned long)
-DELEGATE_TO_INTERNAL_R(supportsBGRA, bool)
-DELEGATE_TO_INTERNAL_R(supportsMapSubCHROMIUM, bool)
-DELEGATE_TO_INTERNAL_4R(mapBufferSubDataCHROMIUM, unsigned, int, int, unsigned, void*)
-DELEGATE_TO_INTERNAL_1(unmapBufferSubDataCHROMIUM, const void*)
-DELEGATE_TO_INTERNAL_9R(mapTexSubImage2DCHROMIUM, unsigned, int, int, int, int, int, unsigned, unsigned, unsigned, void*)
-DELEGATE_TO_INTERNAL_1(unmapTexSubImage2DCHROMIUM, const void*)
-DELEGATE_TO_INTERNAL_R(supportsCopyTextureToParentTextureCHROMIUM, bool)
-DELEGATE_TO_INTERNAL_2(copyTextureToParentTextureCHROMIUM, unsigned, unsigned)
+DELEGATE_TO_INTERNAL_R(getExtensions, Extensions3D*)
 
 bool GraphicsContext3D::isGLES2Compliant() const
 {
@@ -1045,11 +1058,6 @@ bool GraphicsContext3D::isGLES2NPOTStrict() const
 bool GraphicsContext3D::isErrorGeneratedOnOutOfBoundsAccesses() const
 {
     return m_internal->isErrorGeneratedOnOutOfBoundsAccesses();
-}
-
-int GraphicsContext3D::getGraphicsResetStatusARB()
-{
-    return NO_ERROR;
 }
 
 } // namespace WebCore

@@ -1,3 +1,13 @@
+2010-11-03  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Chris Marrin.
+
+        Redesign extension mechanism in GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=46894
+
+        * JavaScriptCore.exp:
+         - Exposed String::split(const String&, Vector<String>).
+
 2010-11-03  Adam Roben  <aroben@apple.com>
 
         Bring WTF.vcproj up to date

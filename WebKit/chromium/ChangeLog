@@ -1,3 +1,57 @@
+2010-11-03  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Chris Marrin.
+
+        Redesign extension mechanism in GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=46894
+
+        Upon request, factored out extension support from GraphicsContext3D
+        into a new Extensions3D class. (The plural was chosen because the
+        class and subclasses hold multiple extensions.)
+
+        Unlike GraphicsContext3D, Extensions3D contains only pure virtual
+        methods. This was done because Extensions3D's inheritance diagram
+        and usage pattern is very different from that of GraphicsContext3D,
+        and the concrete subclasses need to decide how to implement the
+        various entry points. Requiring them to be placed at the
+        Extensions3D level will cause implementation details to leak into
+        the base class, which is highly undesirable. Any virtual call
+        overhead to these entry points will be negligible.
+
+        Changed call sites utilizing these extensions to call through the
+        Extensions3D object or its subclasses.
+
+        Tested:
+         - Chromium on Linux with accelerated 2D canvas and HTML5 video
+         - Chromium on Mac OS X with WebGL and CSS 3D content
+         - Safari on Mac OS X with WebGL and CSS 3D content
+
+        No new tests. Covered by existing tests.
+
+        * WebKit.gyp:
+        * public/WebGraphicsContext3D.h:
+        * src/Extensions3DChromium.cpp: Added.
+        (WebCore::Extensions3DChromium::Extensions3DChromium):
+        (WebCore::Extensions3DChromium::~Extensions3DChromium):
+        (WebCore::Extensions3DChromium::supports):
+        (WebCore::Extensions3DChromium::getGraphicsResetStatusARB):
+        (WebCore::Extensions3DChromium::mapBufferSubDataCHROMIUM):
+        (WebCore::Extensions3DChromium::unmapBufferSubDataCHROMIUM):
+        (WebCore::Extensions3DChromium::mapTexSubImage2DCHROMIUM):
+        (WebCore::Extensions3DChromium::unmapTexSubImage2DCHROMIUM):
+        (WebCore::Extensions3DChromium::copyTextureToParentTextureCHROMIUM):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::getExtensions):
+        (WebCore::GraphicsContext3DInternal::supportsExtension):
+        * src/GraphicsContext3DInternal.h:
+        * src/WebGraphicsContext3DDefaultImpl.cpp:
+        (WebKit::WebGraphicsContext3DDefaultImpl::copyTextureToParentTextureCHROMIUM):
+        (WebKit::WebGraphicsContext3DDefaultImpl::getString):
+        * src/WebGraphicsContext3DDefaultImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::composite):
+
 2010-11-03  Daniel Bates  <dbates@rim.com>
 
         For unnamed frames, window.name returns a generated name

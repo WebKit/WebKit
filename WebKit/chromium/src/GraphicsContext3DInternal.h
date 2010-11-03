@@ -27,6 +27,7 @@
 #define GraphicsContext3DInternal_h
 
 #include "GraphicsContext3D.h"
+#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #if PLATFORM(SKIA)
 #include "SkBitmap.h"
@@ -39,6 +40,7 @@ class WebViewImpl;
 
 namespace WebCore {
 
+class Extensions3DChromium;
 #if USE(ACCELERATED_COMPOSITING)
 class WebGLLayerChromium;
 #endif
@@ -260,7 +262,9 @@ public:
 
     void synthesizeGLError(unsigned long error);
 
-    void swapBuffers();
+    // Extensions3D support.
+    Extensions3D* getExtensions();
+    bool supportsExtension(const String& name);
 
     // EXT_texture_format_BGRA8888
     bool supportsBGRA();
@@ -278,7 +282,10 @@ public:
 
 private:
     OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
+    OwnPtr<Extensions3DChromium> m_extensions;
     WebKit::WebViewImpl* m_webViewImpl;
+    bool m_initializedAvailableExtensions;
+    HashSet<String> m_availableExtensions;
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<WebGLLayerChromium> m_compositingLayer;
 #endif

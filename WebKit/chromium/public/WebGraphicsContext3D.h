@@ -134,18 +134,13 @@ public:
     // getError in the order they were added.
     virtual void synthesizeGLError(unsigned long error) = 0;
 
-    // EXT_texture_format_BGRA8888
-    virtual bool supportsBGRA() = 0;
-
     // GL_CHROMIUM_map_sub
-    virtual bool supportsMapSubCHROMIUM() = 0;
     virtual void* mapBufferSubDataCHROMIUM(unsigned target, int offset, int size, unsigned access) = 0;
     virtual void unmapBufferSubDataCHROMIUM(const void*) = 0;
     virtual void* mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access) = 0;
     virtual void unmapTexSubImage2DCHROMIUM(const void*) = 0;
 
     // GL_CHROMIUM_copy_texture_to_parent_texture
-    virtual bool supportsCopyTextureToParentTextureCHROMIUM() = 0;
     virtual void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture) = 0;
 
     // The entry points below map directly to the OpenGL ES 2.0 API.

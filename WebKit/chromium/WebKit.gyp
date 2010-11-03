@@ -328,6 +328,7 @@
                 'src/EditorClientImpl.h',
                 'src/EventListenerWrapper.cpp',
                 'src/EventListenerWrapper.h',
+                'src/Extensions3DChromium.cpp',
                 'src/ExternalPopupMenu.cpp',
                 'src/ExternalPopupMenu.h',
                 'src/FrameLoaderClientImpl.cpp',

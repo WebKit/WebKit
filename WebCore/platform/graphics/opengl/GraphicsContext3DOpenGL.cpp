@@ -33,6 +33,7 @@
 #include "ArrayBufferView.h"
 #include "WebGLObject.h"
 #include "CanvasRenderingContext.h"
+#include "Extensions3DOpenGL.h"
 #include "Float32Array.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
@@ -1445,9 +1446,11 @@ void GraphicsContext3D::synthesizeGLError(unsigned long error)
     m_syntheticErrors.add(error);
 }
 
-int GraphicsContext3D::getGraphicsResetStatusARB()
+Extensions3D* GraphicsContext3D::getExtensions()
 {
-    return NO_ERROR;
+    if (!m_extensions)
+        m_extensions = adoptPtr(new Extensions3DOpenGL);
+    return m_extensions.get();
 }
 
 }
