@@ -347,6 +347,13 @@ void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
     clearIsSynchronizingSVGAttributes();
 }
 
+ContainerNode* SVGElement::eventParentNode()
+{
+    if (ContainerNode* shadowParent = shadowParentNode())
+        return shadowParent;
+    return StyledElement::eventParentNode();
+}
+
 }
 
 #endif // ENABLE(SVG)

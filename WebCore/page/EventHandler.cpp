@@ -1766,6 +1766,8 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         // If the target node is a text node, dispatch on the parent node - rdar://4196646
         if (result && result->isTextNode())
             result = result->parentNode();
+        if (result)
+            result = result->shadowAncestorNode();
     }
     m_nodeUnderMouse = result;
 #if ENABLE(SVG)

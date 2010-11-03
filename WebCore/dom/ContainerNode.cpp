@@ -1005,8 +1005,7 @@ static void notifyChildInserted(Node* child)
     RefPtr<Node> c = child;
     RefPtr<Document> document = child->document();
 
-    Node* parentOrHostNode = c->parentOrHostNode();
-    if (parentOrHostNode && parentOrHostNode->inDocument())
+    if (c->parentNode() && c->parentNode()->inDocument())
         c->insertedIntoDocument();
     else
         c->insertedIntoTree(true);

@@ -1132,10 +1132,8 @@ webcore_sources += \
 	WebCore/dom/ErrorEvent.cpp \
 	WebCore/dom/ErrorEvent.h \
 	WebCore/dom/Event.cpp \
-	WebCore/dom/Event.h \
-	WebCore/dom/EventContext.cpp \
-	WebCore/dom/EventContext.h \
 	WebCore/dom/EventException.h \
+	WebCore/dom/Event.h \
 	WebCore/dom/EventListener.h \
 	WebCore/dom/EventNames.cpp \
 	WebCore/dom/EventNames.h \
@@ -1263,8 +1261,6 @@ webcore_sources += \
 	WebCore/dom/WebKitTransitionEvent.h \
 	WebCore/dom/WheelEvent.cpp \
 	WebCore/dom/WheelEvent.h \
-	WebCore/dom/WindowEventContext.cpp \
-	WebCore/dom/WindowEventContext.h \
 	WebCore/dom/XMLDocumentParser.cpp \
 	WebCore/dom/XMLDocumentParser.h \
 	WebCore/dom/XMLDocumentParserLibxml2.cpp \

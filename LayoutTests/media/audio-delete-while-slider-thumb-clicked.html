@@ -50,11 +50,11 @@
 
                 var audio = document.getElementById('audio');
 
-                var center = audio.offsetLeft + (audio.offsetWidth / 2);
-                var middle = audio.offsetTop + (audio.offsetHeight / 2);
+                var middle = audio.offsetLeft + (audio.offsetWidth / 2);
+                var bottom = audio.offsetTop + audio.offsetHeight;
                 
-                var x = center + 16 + 16 + 8;
-                var y = middle;
+                var x = middle + 16 + 16 + 8;
+                var y = bottom - 8;
 
                 // drag slider, leave the mouse down
                 log("clicking in controller");
