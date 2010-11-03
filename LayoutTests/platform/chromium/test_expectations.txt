@@ -2317,7 +2317,6 @@ BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-2
 BUG35238 MAC : svg/overflow/overflow-on-outermost-svg-element-ignore-attribute-3.svg = IMAGE
 
 // Due to not building TestNetscapePlugin.cpp.
-BUG35387 : platform/win/plugins/plugin-delayed-destroy.html = TIMEOUT
 BUG35387 : plugins/reentrant-update-widget-positions.html = TIMEOUT
 BUG35387 : plugins/update-widgets-crash.html = TIMEOUT
 
@@ -3387,3 +3386,6 @@ BUG61655 WIN LINUX : security/block-test-no-port.html = TEXT
 
 // Started failing after http://trac.webkit.org/changeset/71190
 BUGWEBGL WIN : fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
+
+// Added in http://trac.webkit.org/changeset/71249
+BUG61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
