@@ -46,7 +46,7 @@
 #include "NotImplemented.h"
 #include "Path.h"
 #include "Pattern.h"
-#include "PlatformRefPtrCairo.h"
+#include "RefPtrCairo.h"
 #include "SimpleFontData.h"
 #include <cairo.h>
 #include <math.h>

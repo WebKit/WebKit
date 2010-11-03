@@ -32,7 +32,7 @@
 
 #include "Image.h"
 #include "IntPoint.h"
-#include "PlatformRefPtrCairo.h"
+#include "RefPtrCairo.h"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <wtf/Assertions.h>
@@ -47,10 +47,10 @@ static PlatformRefPtr<GdkCursor> createNamedCursor(CustomCursorType cursorType)
         return c;
 
     IntSize cursorSize = IntSize(32, 32);
-    PlatformRefPtr<cairo_surface_t> source = adoptPlatformRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.bits), CAIRO_FORMAT_A1, 32, 32, 4));
-    PlatformRefPtr<cairo_surface_t> mask = adoptPlatformRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.mask_bits), CAIRO_FORMAT_A1, 32, 32, 4));
-    PlatformRefPtr<cairo_surface_t> surface = adoptPlatformRef(cairo_image_surface_create(CAIRO_FORMAT_A1, 32, 32));
-    PlatformRefPtr<cairo_t> cr = adoptPlatformRef(cairo_create(surface.get()));
+    RefPtr<cairo_surface_t> source = adoptRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.bits), CAIRO_FORMAT_A1, 32, 32, 4));
+    RefPtr<cairo_surface_t> mask = adoptRef(cairo_image_surface_create_for_data(const_cast<unsigned char*>(cursor.mask_bits), CAIRO_FORMAT_A1, 32, 32, 4));
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A1, 32, 32));
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(surface.get()));
 
     cairo_set_source_surface(cr.get(), source.get(), cursor.hot_x, cursor.hot_y);
     cairo_mask_surface(cr.get(), mask.get(), cursor.hot_x, cursor.hot_y);

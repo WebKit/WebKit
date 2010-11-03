@@ -29,7 +29,7 @@
 #include "FontDescription.h"
 #include "GlyphBuffer.h"
 #include "HashFunctions.h"
-#include "PlatformRefPtrCairo.h"
+#include "RefPtrCairo.h"
 #include <wtf/Forward.h>
 
 typedef struct _FcFontSet FcFontSet;
@@ -86,7 +86,7 @@ public:
     String description() const;
 #endif
 
-    PlatformRefPtr<FcPattern> m_pattern;
+    RefPtr<FcPattern> m_pattern;
     mutable FcFontSet* m_fallbacks; // Initialized lazily.
     float m_size;
     bool m_syntheticBold;

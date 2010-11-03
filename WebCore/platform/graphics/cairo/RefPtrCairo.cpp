@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "PlatformRefPtrCairo.h"
+#include "RefPtrCairo.h"
 
 #include <cairo.h>
 
@@ -28,71 +28,67 @@
 
 namespace WTF {
 
-template <> cairo_t* refPlatformPtr(cairo_t* ptr)
+template<> void refIfNotNull(cairo_t* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         cairo_reference(ptr);
-    return ptr;
 }
 
-template <> void derefPlatformPtr(cairo_t* ptr)
+template<> void derefIfNotNull(cairo_t* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         cairo_destroy(ptr);
 }
 
-template <> cairo_surface_t* refPlatformPtr(cairo_surface_t* ptr)
+template<> void refIfNotNull(cairo_surface_t* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         cairo_surface_reference(ptr);
-    return ptr;
 }
 
-template <> void derefPlatformPtr(cairo_surface_t* ptr)
+template<> void derefIfNotNull(cairo_surface_t* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         cairo_surface_destroy(ptr);
 }
 
-template <> cairo_font_face_t* refPlatformPtr(cairo_font_face_t* ptr)
+template<> void refIfNotNull(cairo_font_face_t* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         cairo_font_face_reference(ptr);
-    return ptr;
 }
 
-template <> void derefPlatformPtr(cairo_font_face_t* ptr)
+template<> void derefIfNotNull(cairo_font_face_t* ptr)
 {
-    if (ptr)
-        cairo_font_face_destroy(ptr);
+    if (LIKELY(ptr != 0))
+        cairo_font_face_reference(ptr);
 }
 
-template <> cairo_scaled_font_t* refPlatformPtr(cairo_scaled_font_t* ptr)
+template<> void refIfNotNull(cairo_scaled_font_t* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         cairo_scaled_font_reference(ptr);
-    return ptr;
 }
 
-template <> void derefPlatformPtr(cairo_scaled_font_t* ptr)
+template<> void derefIfNotNull(cairo_scaled_font_t* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         cairo_scaled_font_destroy(ptr);
 }
 
 #if defined(USE_FREETYPE)
-template <> FcPattern* refPlatformPtr(FcPattern* ptr)
+template<> void refIfNotNull(FcPattern* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         FcPatternReference(ptr);
-    return ptr;
 }
 
-template <> void derefPlatformPtr(FcPattern* ptr)
+template<> void derefIfNotNull(FcPattern* ptr)
 {
-    if (ptr)
+    if (LIKELY(ptr != 0))
         FcPatternDestroy(ptr);
 }
+
 #endif
 
 }

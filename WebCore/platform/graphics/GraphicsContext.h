@@ -40,7 +40,6 @@
 #if PLATFORM(CG)
 typedef struct CGContext PlatformGraphicsContext;
 #elif PLATFORM(CAIRO)
-#include "PlatformRefPtrCairo.h"
 namespace WebCore {
 class ContextShadow;
 }

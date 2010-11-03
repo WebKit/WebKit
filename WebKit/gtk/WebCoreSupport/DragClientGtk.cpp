@@ -44,7 +44,7 @@ namespace WebKit {
 #ifdef GTK_API_VERSION_2
 static gboolean dragIconWindowDrawEventCallback(GtkWidget* widget, GdkEventExpose* event, DragClient* client)
 {
-    PlatformRefPtr<cairo_t> context = adoptPlatformRef(gdk_cairo_create(event->window));
+    RefPtr<cairo_t> context = adoptRef(gdk_cairo_create(event->window));
     client->drawDragIconWindow(widget, context.get());
     return TRUE;
 }

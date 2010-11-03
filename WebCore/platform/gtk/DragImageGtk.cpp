@@ -21,7 +21,7 @@
 
 #include "CachedImage.h"
 #include "Image.h"
-#include "PlatformRefPtrCairo.h"
+#include "RefPtrCairo.h"
 #include <cairo.h>
 
 namespace WebCore {
@@ -49,7 +49,7 @@ DragImageRef scaleDragImage(DragImageRef image, FloatSize scale)
     int newHeight = scale.height() * cairo_image_surface_get_height(image);
     cairo_surface_t* scaledSurface = cairo_surface_create_similar(image, CAIRO_CONTENT_COLOR_ALPHA, newWidth, newHeight);
 
-    PlatformRefPtr<cairo_t> context = adoptPlatformRef(cairo_create(scaledSurface));
+    RefPtr<cairo_t> context = adoptRef(cairo_create(scaledSurface));
     cairo_scale(context.get(), scale.width(), scale.height());
     cairo_pattern_set_extend(cairo_get_source(context.get()), CAIRO_EXTEND_PAD);
     cairo_pattern_set_filter(cairo_get_source(context.get()), CAIRO_FILTER_BEST);
@@ -66,7 +66,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
     if (!image)
         return 0;
 
-    PlatformRefPtr<cairo_t> context = adoptPlatformRef(cairo_create(image));
+    RefPtr<cairo_t> context = adoptRef(cairo_create(image));
     cairo_set_operator(context.get(), CAIRO_OPERATOR_DEST_IN);
     cairo_set_source_rgba(context.get(), 0, 0, 0, fraction);
     cairo_paint(context.get());

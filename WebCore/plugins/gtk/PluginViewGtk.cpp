@@ -66,6 +66,7 @@
 #include <gtk/gtk.h>
 
 #if defined(XP_UNIX)
+#include "RefPtrCairo.h"
 #include "gtk2xtbin.h"
 #define Bool int // this got undefined somewhere
 #define Status int // ditto
@@ -195,18 +196,18 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     exposedRect.intersect(frameRect());
     exposedRect.move(-frameRect().x(), -frameRect().y());
 
-    PlatformRefPtr<cairo_surface_t> drawableSurface = adoptPlatformRef(cairo_xlib_surface_create(display,
-                                                                                                 m_drawable,
-                                                                                                 m_visual,
-                                                                                                 m_windowRect.width(),
-                                                                                                 m_windowRect.height()));
+    RefPtr<cairo_surface_t> drawableSurface = adoptRef(cairo_xlib_surface_create(display,
+                                                       m_drawable,
+                                                       m_visual,
+                                                       m_windowRect.width(),
+                                                       m_windowRect.height()));
 
     if (m_isTransparent) {
         // If we have a 32 bit drawable and the plugin wants transparency,
         // we'll clear the exposed area to transparent first.  Otherwise,
         // we'd end up with junk in there from the last paint, or, worse,
         // uninitialized data.
-        PlatformRefPtr<cairo_t> cr = adoptPlatformRef(cairo_create(drawableSurface.get()));
+        RefPtr<cairo_t> cr = adoptRef(cairo_create(drawableSurface.get()));
 
         if (!(cairo_surface_get_content(drawableSurface.get()) & CAIRO_CONTENT_ALPHA)) {
             // Attempt to fake it when we don't have an alpha channel on our

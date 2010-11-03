@@ -1,3 +1,17 @@
+2010-11-02  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        [Cairo] Remove PlatformRefPtrCairo
+        https://bugs.webkit.org/show_bug.cgi?id=48192
+
+        Replace instances of PlatformRefPtr smart pointers that wrap Cairo
+        types with RefPtrs.
+
+        * WebCoreSupport/DragClientGtk.cpp: Use RefPtr instead of PlatformRefPtr.
+        (WebKit::dragIconWindowDrawEventCallback):
+        * WebCoreSupport/DragClientGtk.h: Ditto.
+
 2010-11-02  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Martin Robinson.

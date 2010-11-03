@@ -35,10 +35,10 @@
 #include "Color.h"
 #include "ContextShadow.h"
 #include "FloatRect.h"
-#include "PlatformRefPtrCairo.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "ImageObserver.h"
+#include "RefPtrCairo.h"
 #include <cairo.h>
 #include <math.h>
 #include <wtf/OwnPtr.h>

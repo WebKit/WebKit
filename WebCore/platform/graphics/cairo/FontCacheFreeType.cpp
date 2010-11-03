@@ -25,7 +25,7 @@
 #include "CString.h"
 #include "Font.h"
 #include "OwnPtrCairo.h"
-#include "PlatformRefPtrCairo.h"
+#include "RefPtrCairo.h"
 #include "SimpleFontData.h"
 #include <cairo-ft.h>
 #include <cairo.h>
@@ -83,17 +83,17 @@ FcPattern* findBestFontGivenFallbacks(const FontPlatformData& fontData, FcPatter
 
 const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
-    PlatformRefPtr<FcPattern> pattern = adoptPlatformRef(createFontConfigPatternForCharacters(characters, length));
+    RefPtr<FcPattern> pattern = adoptRef(createFontConfigPatternForCharacters(characters, length));
     const FontPlatformData& fontData = font.primaryFont()->platformData();
 
-    PlatformRefPtr<FcPattern> fallbackPattern = adoptPlatformRef(findBestFontGivenFallbacks(fontData, pattern.get()));
+    RefPtr<FcPattern> fallbackPattern = adoptRef(findBestFontGivenFallbacks(fontData, pattern.get()));
     if (fallbackPattern) {
         FontPlatformData alternateFontData(fallbackPattern.get(), font.fontDescription());
         return getCachedFontData(&alternateFontData);
     }
 
     FcResult fontConfigResult;
-    PlatformRefPtr<FcPattern> resultPattern = adoptPlatformRef(FcFontMatch(0, pattern.get(), &fontConfigResult));
+    RefPtr<FcPattern> resultPattern = adoptRef(FcFontMatch(0, pattern.get(), &fontConfigResult));
     if (!resultPattern)
         return 0;
     FontPlatformData alternateFontData(resultPattern.get(), font.fontDescription());
@@ -147,7 +147,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
     // says that we must find an exact match for font family, slant (italic or oblique can be used)
     // and font weight (we only match bold/non-bold here).
-    PlatformRefPtr<FcPattern> pattern = adoptPlatformRef(FcPatternCreate());
+    RefPtr<FcPattern> pattern = adoptRef(FcPatternCreate());
     String familyNameString(getFamilyNameStringFromFontDescriptionAndFamily(fontDescription, family));
     if (!FcPatternAddString(pattern.get(), FC_FAMILY, reinterpret_cast<const FcChar8*>(familyNameString.utf8().data())))
         return 0;
@@ -174,7 +174,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     String familyNameAfterConfiguration = String::fromUTF8(reinterpret_cast<char*>(fontConfigFamilyNameAfterConfiguration));
 
     FcResult fontConfigResult;
-    PlatformRefPtr<FcPattern> resultPattern = adoptPlatformRef(FcFontMatch(0, pattern.get(), &fontConfigResult));
+    RefPtr<FcPattern> resultPattern = adoptRef(FcFontMatch(0, pattern.get(), &fontConfigResult));
     if (!resultPattern) // No match.
         return 0;
 

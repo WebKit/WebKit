@@ -27426,7 +27426,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\cairo\PlatformRefPtrCairo.cpp"
+						RelativePath="..\platform\graphics\cairo\RefPtrCairo.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -27462,7 +27462,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\cairo\PlatformRefPtrCairo.h"
+						RelativePath="..\platform\graphics\cairo\RefPtrCairo.h"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"

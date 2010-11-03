@@ -34,7 +34,7 @@
 #include "IntRect.h"
 #include "OwnPtrCairo.h"
 #include "Path.h"
-#include "PlatformRefPtrCairo.h"
+#include "RefPtrCairo.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -126,11 +126,11 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
 
     cairo_save(cr);
 
-    PlatformRefPtr<cairo_surface_t> clippedImageSurface = 0;
+    RefPtr<cairo_surface_t> clippedImageSurface = 0;
     if (tileRect.size() != imageSize) {
         IntRect imageRect = enclosingIntRect(tileRect);
-        clippedImageSurface = adoptPlatformRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, imageRect.width(), imageRect.height()));
-        PlatformRefPtr<cairo_t> clippedImageContext(cairo_create(clippedImageSurface.get()));
+        clippedImageSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, imageRect.width(), imageRect.height()));
+        RefPtr<cairo_t> clippedImageContext(cairo_create(clippedImageSurface.get()));
         cairo_set_source_surface(clippedImageContext.get(), image, -tileRect.x(), -tileRect.y());
         cairo_paint(clippedImageContext.get());
         image = clippedImageSurface.get();

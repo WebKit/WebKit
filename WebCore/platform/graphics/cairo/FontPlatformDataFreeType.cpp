@@ -122,7 +122,7 @@ FontPlatformData::FontPlatformData(FcPattern* pattern, const FontDescription& fo
     , m_fixedWidth(false)
     , m_scaledFont(0)
 {
-    PlatformRefPtr<cairo_font_face_t> fontFace = adoptPlatformRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
+    RefPtr<cairo_font_face_t> fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(m_pattern.get()));
     initializeWithFontFace(fontFace.get());
 
     int spacing;
