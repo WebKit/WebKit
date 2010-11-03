@@ -2295,7 +2295,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
             while (1) {
                 if (nodeRecord->element()->hasLocalName(token.name())) {
                     m_tree.openElements()->popUntilPopped(nodeRecord->element());
-                    break;
+                    resetForeignInsertionMode();
+                    return;
                 }
                 nodeRecord = nodeRecord->next();
                 if (nodeRecord->element()->namespaceURI() == xhtmlNamespaceURI)

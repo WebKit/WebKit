@@ -572,3 +572,18 @@ console.log("FOO<span>BAR</span>BAZ");
 |     <svg svg>
 |       <svg tfoot>
 |         <svg td>
+
+#data
+<math><mrow><mrow><mn>1</mn></mrow><mi>a</mi></mrow></math>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <math math>
+|       <math mrow>
+|         <math mrow>
+|           <math mn>
+|             "1"
+|         <math mi>
+|           "a"
