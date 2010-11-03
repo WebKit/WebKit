@@ -365,7 +365,7 @@ http/tests/security/window-properties-clear-port.html
 animations/play-state-suspend.html
 
 # Assertion failure http://webkit.org/b/48910
-http/tests/media/reload-after-dialog.html
+http/tests/media/pdf-served-as-pdf.html
 http/tests/media/video-cancel-load.html
 
 ################################################################################
