@@ -349,8 +349,6 @@ private:
     RefPtr<Node> m_nodeToFocus;
     RefPtr<InspectorResourceAgent> m_resourceAgent;
     unsigned long m_mainResourceIdentifier;
-    double m_loadEventTime;
-    double m_domContentEventTime;
     Vector<OwnPtr<ConsoleMessage> > m_consoleMessages;
     unsigned m_expiredConsoleMessageCount;
     HashMap<String, double> m_times;

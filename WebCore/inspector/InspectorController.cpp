@@ -143,8 +143,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* client)
     , m_openingFrontend(false)
     , m_cssStore(new InspectorCSSStore(this))
     , m_mainResourceIdentifier(0)
-    , m_loadEventTime(-1.0)
-    , m_domContentEventTime(-1.0)
     , m_expiredConsoleMessageCount(0)
     , m_groupLevel(0)
     , m_previousMessage(0)
@@ -629,11 +627,6 @@ void InspectorController::populateScriptObjects()
         m_frontend->profilerWasEnabled();
 #endif
 
-    if (m_domContentEventTime != -1.0)
-        m_frontend->domContentEventFired(m_domContentEventTime);
-    if (m_loadEventTime != -1.0)
-        m_frontend->loadEventFired(m_loadEventTime);
-
     m_domAgent->setDocument(m_inspectedPage->mainFrame()->document());
 
     if (m_nodeToFocus)
@@ -804,11 +797,10 @@ void InspectorController::mainResourceFiredDOMContentEvent(DocumentLoader* loade
     if (!enabled() || !isMainResourceLoader(loader, url))
         return;
 
-    m_domContentEventTime = currentTime();
     if (m_timelineAgent)
         m_timelineAgent->didMarkDOMContentEvent();
     if (m_frontend)
-        m_frontend->domContentEventFired(m_domContentEventTime);
+        m_frontend->domContentEventFired(currentTime());
 }
 
 void InspectorController::mainResourceFiredLoadEvent(DocumentLoader* loader, const KURL& url)
@@ -816,11 +808,10 @@ void InspectorController::mainResourceFiredLoadEvent(DocumentLoader* loader, con
     if (!enabled() || !isMainResourceLoader(loader, url))
         return;
 
-    m_loadEventTime = currentTime();
     if (m_timelineAgent)
         m_timelineAgent->didMarkLoadEvent();
     if (m_frontend)
-        m_frontend->loadEventFired(m_loadEventTime);
+        m_frontend->loadEventFired(currentTime());
 }
 
 bool InspectorController::isMainResourceLoader(DocumentLoader* loader, const KURL& requestUrl)
