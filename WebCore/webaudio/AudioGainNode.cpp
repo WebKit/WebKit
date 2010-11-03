@@ -101,10 +101,11 @@ void AudioGainNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
         uninitialize();
     }
 
-    // This will propagate the channel count to any nodes connected further downstream in the graph.
-    output(0)->setNumberOfChannels(numberOfChannels);
-
-    initialize();
+    if (!isInitialized()) {
+        // This will propagate the channel count to any nodes connected further downstream in the graph.
+        output(0)->setNumberOfChannels(numberOfChannels);
+        initialize();
+    }
 }
 
 } // namespace WebCore
