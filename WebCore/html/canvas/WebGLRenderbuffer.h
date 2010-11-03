@@ -39,7 +39,12 @@ public:
 
     static PassRefPtr<WebGLRenderbuffer> create(WebGLRenderingContext*);
 
-    void setInternalFormat(unsigned long internalformat) { m_internalFormat = internalformat; }
+    void setInternalFormat(unsigned long internalformat)
+    {
+        m_internalFormat = internalformat;
+        m_initialized = false;
+    }
+
     unsigned long getInternalFormat() const { return m_internalFormat; }
 
     bool isInitialized() const { return m_initialized; }

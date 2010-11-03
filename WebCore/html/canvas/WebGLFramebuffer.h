@@ -39,27 +39,21 @@ public:
 
     static PassRefPtr<WebGLFramebuffer> create(WebGLRenderingContext*);
 
-    bool isDepthAttached() const { return (m_depthAttachment && m_depthAttachment->object()); }
-    bool isStencilAttached() const { return (m_stencilAttachment && m_stencilAttachment->object()); }
-    bool isDepthStencilAttached() const { return (m_depthStencilAttachment && m_depthStencilAttachment->object()); }
-
     void setAttachment(unsigned long, WebGLObject*);
     // If an object is attached to the framebuffer, remove it.
     void removeAttachment(WebGLObject*);
 
-    // This function is called right after a framebuffer is bound.
-    // Because renderbuffers and textures attached to the framebuffer might
-    // have changed and the framebuffer might have become complete when it
-    // isn't bound, so we need to clear un-initialized renderbuffers.
-    void onBind();
+    unsigned long getColorBufferFormat() const;
 
-    // When a texture or a renderbuffer changes, we need to check the
-    // current bound framebuffer; if the newly changed object is attached
-    // to the framebuffer and the framebuffer becomes complete, we need to
-    // clear un-initialized renderbuffers.
-    void onAttachedObjectChange(WebGLObject*);
+    // This should always be called before drawArray, drawElements, clear,
+    // readPixels, copyTexImage2D, copyTexSubImage2D if this framebuffer is
+    // currently bound.
+    // Return false if the framebuffer is incomplete; otherwise initialize
+    // the buffers if they haven't been initialized.
+    bool onAccess();
 
-    unsigned long getColorBufferFormat();
+    // Return false does not mean COMPLETE, might still be INCOMPLETE.
+    bool isIncomplete() const;
 
 protected:
     WebGLFramebuffer(WebGLRenderingContext*);
@@ -69,9 +63,13 @@ protected:
 private:
     virtual bool isFramebuffer() const { return true; }
 
-    bool isUninitialized(WebGLObject*);
-    void setInitialized(WebGLObject*);
-    void initializeRenderbuffers();
+    // Return false if framebuffer is incomplete.
+    bool initializeRenderbuffers();
+
+    bool isColorAttached() const { return (m_colorAttachment && m_colorAttachment->object()); }
+    bool isDepthAttached() const { return (m_depthAttachment && m_depthAttachment->object()); }
+    bool isStencilAttached() const { return (m_stencilAttachment && m_stencilAttachment->object()); }
+    bool isDepthStencilAttached() const { return (m_depthStencilAttachment && m_depthStencilAttachment->object()); }
 
     RefPtr<WebGLObject> m_colorAttachment;
     RefPtr<WebGLObject> m_depthAttachment;

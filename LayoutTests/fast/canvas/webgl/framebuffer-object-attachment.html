@@ -23,25 +23,29 @@ function testAttachment(attachment, buffer, isConflicted)
 {
     shouldBeNonNull("fbo = gl.createFramebuffer()");
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, colorBuffer);
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment, gl.RENDERBUFFER, buffer);
-    shouldBe("gl.getError()", isConflicted ? "gl.INVALID_OPERATION" : "gl.NO_ERROR");
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    if (isConflicted) {
+        shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_UNSUPPORTED");
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        shouldBe("gl.getError()", "gl.INVALID_FRAMEBUFFER_OPERATION");
+        gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(width * height * 4));
+        shouldBe("gl.getError()", "gl.INVALID_FRAMEBUFFER_OPERATION");
+    }
 }
 
 function testAttachments(attachment0, buffer0, attachment1, buffer1, isConflicted)
 {
     shouldBeNonNull("fbo = gl.createFramebuffer()");
     gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.RENDERBUFFER, colorBuffer);
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment0, gl.RENDERBUFFER, buffer0);
     shouldBe("gl.getError()", "gl.NO_ERROR");
     gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment1, gl.RENDERBUFFER, buffer1);
-    shouldBe("gl.getError()", isConflicted ? "gl.INVALID_OPERATION" : "gl.NO_ERROR");
-    if (isConflicted) {
-        // Detach buffer0 first using a null object, then attaching buffer1 should succeed.
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment0, gl.RENDERBUFFER, null);
-        shouldBe("gl.getError()", "gl.NO_ERROR");
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, attachment1, gl.RENDERBUFFER, buffer1);
-        shouldBe("gl.getError()", "gl.NO_ERROR");
-    }
+    shouldBe("gl.getError()", "gl.NO_ERROR");
+    if (isConflicted)
+        shouldBe("gl.checkFramebufferStatus(gl.FRAMEBUFFER)", "gl.FRAMEBUFFER_UNSUPPORTED");
 }
 
 function testColorRenderbuffer(internalformat)
@@ -57,6 +61,10 @@ description("Test framebuffer object attachment behaviors");
 
 debug("Create renderbuffers");
 shouldBeNonNull("gl = create3DContext()");
+shouldBeNonNull("colorBuffer = gl.createRenderbuffer()");
+gl.bindRenderbuffer(gl.RENDERBUFFER, colorBuffer);
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.RGBA4, width, height);
+shouldBe("gl.getError()", "gl.NO_ERROR");
 shouldBeNonNull("depthBuffer = gl.createRenderbuffer()");
 gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
 gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
