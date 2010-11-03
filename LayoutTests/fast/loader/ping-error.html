@@ -1,0 +1,18 @@
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=46579">bug 46579</a>:
+Reproducible crash in appcache code when closing pgatour.com</p>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    layoutTestController.setCanOpenWindows();
+}
+
+function done()
+{
+    if (window.layoutTestController) 
+        setTimeout('layoutTestController.notifyDone()', 0);
+}
+
+window.open("resources/ping-error-window.html");
+</script>

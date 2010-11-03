@@ -2583,9 +2583,12 @@ void FrameLoader::detachFromParent()
     RefPtr<Frame> protect(m_frame);
 
     closeURL();
-    stopAllLoaders();
     history()->saveScrollPositionAndViewStateToItem(history()->currentItem());
     detachChildren();
+    // stopAllLoaders() needs to be called after detachChildren(), because detachedChildren()
+    // will trigger the unload event handlers of any child frames, and those event
+    // handlers might start a new subresource load in this frame.
+    stopAllLoaders();
 
 #if ENABLE(INSPECTOR)
     if (Page* page = m_frame->page())
