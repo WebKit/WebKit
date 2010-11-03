@@ -349,6 +349,16 @@ void FrameView::setMarginHeight(int h)
     m_margins.setHeight(h);
 }
 
+bool FrameView::delegatesScrolling()
+{
+    ASSERT(m_frame);
+
+    if (parent())
+        return false;
+
+    return m_frame->settings() && m_frame->settings()->shouldDelegateScrolling();
+}
+
 bool FrameView::avoidScrollbarCreation()
 {
     ASSERT(m_frame);

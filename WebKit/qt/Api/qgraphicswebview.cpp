@@ -821,6 +821,7 @@ void QGraphicsWebView::setResizesToContents(bool enabled)
     if (d->resizesToContents == enabled)
         return;
     d->resizesToContents = enabled;
+    d->page->d->page->settings()->setShouldDelegateScrolling(enabled);
     if (d->page)
         d->updateResizesToContentsForPage();
 }

@@ -114,6 +114,7 @@ Settings::Settings(Page* page)
     , m_javaScriptCanOpenWindowsAutomatically(false)
     , m_javaScriptCanAccessClipboard(false)
     , m_shouldPrintBackgrounds(false)
+    , m_shouldDelegateScrolling(false)
     , m_textAreasAreResizable(false)
 #if ENABLE(DASHBOARD_SUPPORT)
     , m_usesDashboardBackwardCompatibilityMode(false)
@@ -363,6 +364,11 @@ void Settings::setUserStyleSheetLocation(const KURL& userStyleSheetLocation)
 void Settings::setShouldPrintBackgrounds(bool shouldPrintBackgrounds)
 {
     m_shouldPrintBackgrounds = shouldPrintBackgrounds;
+}
+
+void Settings::setShouldDelegateScrolling(bool shouldDelegateScrolling)
+{
+    m_shouldDelegateScrolling = shouldDelegateScrolling;
 }
 
 void Settings::setTextAreasAreResizable(bool textAreasAreResizable)
