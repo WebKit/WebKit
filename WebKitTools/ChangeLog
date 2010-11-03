@@ -1,3 +1,9 @@
+2010-11-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed: Add myself to the list of Committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
