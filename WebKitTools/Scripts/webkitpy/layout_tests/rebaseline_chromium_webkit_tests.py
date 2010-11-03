@@ -819,9 +819,8 @@ def get_host_port_object(options):
     return port_obj
 
 
-def main(executive=Executive()):
-    """Main function to produce new baselines."""
-
+def parse_options(args):
+    """Parse options and return a pair of host options and target options."""
     option_parser = optparse.OptionParser()
     option_parser.add_option('-v', '--verbose',
                              action='store_true',
@@ -874,7 +873,20 @@ def main(executive=Executive()):
                              help=('The target platform to rebaseline '
                                    '("mac", "chromium", "qt", etc.). Defaults '
                                    'to "chromium".'))
-    options = option_parser.parse_args()[0]
+    options = option_parser.parse_args(args)[0]
+
+    target_options = copy.copy(options)
+    if options.target_platform == 'chromium':
+        target_options.chromium = True
+    options.tolerance = 0
+
+    return (options, target_options)
+
+
+def main(executive=Executive()):
+    """Main function to produce new baselines."""
+
+    (options, target_options) = parse_options(sys.argv[1:])
 
     # We need to create three different Port objects over the life of this
     # script. |target_port_obj| is used to determine configuration information:
@@ -882,9 +894,6 @@ def main(executive=Executive()):
     # |port_obj| is used for runtime functionality like actually diffing
     # Then we create a rebaselining port to actual find and manage the
     # baselines.
-    target_options = copy.copy(options)
-    if options.target_platform == 'chromium':
-        target_options.chromium = True
     target_port_obj = port.get(None, target_options)
 
     # Set up our logging format.

@@ -95,6 +95,15 @@ class TestRebaseliner(unittest.TestCase):
         return rebaseline_chromium_webkit_tests.Rebaseliner(
             host_port_obj, target_port_obj, platform, options)
 
+    def test_parse_options(self):
+        (options, target_options) = rebaseline_chromium_webkit_tests.parse_options([])
+        self.assertTrue(target_options.chromium)
+        self.assertEqual(options.tolerance, 0)
+
+        (options, target_options) = rebaseline_chromium_webkit_tests.parse_options(['--target-platform', 'qt'])
+        self.assertFalse(hasattr(target_options, 'chromium'))
+        self.assertEqual(options.tolerance, 0)
+
     def test_noop(self):
         # this method tests that was can at least instantiate an object, even
         # if there is nothing to do.

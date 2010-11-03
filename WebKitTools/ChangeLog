@@ -1,3 +1,17 @@
+2010-11-03  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION: rebaseline-chromium-webkit-tests uses non-zero tolerance for
+        image dup detection
+        https://bugs.webkit.org/show_bug.cgi?id=48744
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+         - Make a function for option parsing for ease of test
+         - Set 0 to options.tolerance
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests_unittest.py:
+         - Add a test for this change
+
 2010-11-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed: Add myself to the list of Committers.
