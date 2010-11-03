@@ -926,7 +926,6 @@ Color GraphicsLayerQtImpl::tiledBackingStoreBackgroundColor() const
     // We return a transparent color so that the tiles initialize with alpha.
     return Color(0, 0, 0, 0);
 }
-#endif
 
 IntRect GraphicsLayerQtImpl::tiledBackingStoreVisibleRect()
 {
@@ -937,6 +936,7 @@ IntRect GraphicsLayerQtImpl::tiledBackingStoreVisibleRect()
     // All we get is the viewport's visible region. We have to map it to the scene and then to item coordinates.
     return mapFromScene(view->mapToScene(view->viewport()->visibleRegion().boundingRect()).boundingRect()).boundingRect().toAlignedRect();
 }
+#endif
 
 void GraphicsLayerQtImpl::notifyAnimationStarted()
 {
