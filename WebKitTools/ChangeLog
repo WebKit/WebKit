@@ -1,3 +1,13 @@
+2010-11-03  Victor Wang  <victorw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] update buildbot names in chromium rebaseline tool.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48881
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2010-11-03  Darin Adler  <darin@apple.com>
 
         Updated Xcode projects by opening them with Xcode 3.2.4.

@@ -70,11 +70,11 @@ _log = logging.getLogger("webkitpy.layout_tests."
 
 BASELINE_SUFFIXES = ['.txt', '.png', '.checksum']
 REBASELINE_PLATFORM_ORDER = ['mac', 'win', 'win-xp', 'win-vista', 'linux']
-ARCHIVE_DIR_NAME_DICT = {'win': 'webkit-rel',
+ARCHIVE_DIR_NAME_DICT = {'win': 'Webkit_Win',
                          'win-vista': 'webkit-dbg-vista',
-                         'win-xp': 'webkit-rel',
-                         'mac': 'webkit-rel-mac5',
-                         'linux': 'webkit-rel-linux',
+                         'win-xp': 'Webkit_Win',
+                         'mac': 'Webkit_Mac10_5',
+                         'linux': 'webkit-rel-linux64',
                          'win-canary': 'webkit-rel-webkit-org',
                          'win-vista-canary': 'webkit-dbg-vista',
                          'win-xp-canary': 'webkit-rel-webkit-org',
