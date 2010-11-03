@@ -51,6 +51,7 @@ public:
         // SVGFELighting also use them
         FloatPoint3D lightVector;
         FloatPoint3D colorVector;
+        float lightVectorLength;
         // Private members
         FloatPoint3D directionVector;
         FloatPoint3D privateColorVector;

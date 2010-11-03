@@ -113,8 +113,8 @@ public:
         return result;
     }
 
-    float length() const;
     float lengthSquared() const { return this->dot(*this); }
+    float length() const { return sqrtf(lengthSquared()); }
 
 private:
     float m_x;

@@ -32,13 +32,11 @@
 #include "Filter.h"
 #include "FilterEffect.h"
 #include "LightSource.h"
-#include <wtf/AlwaysInline.h>
+#include <wtf/ByteArray.h>
 
 // Common base class for FEDiffuseLighting and FESpecularLighting
 
 namespace WebCore {
-
-class CanvasPixelArray;
 
 class FELighting : public FilterEffect {
 public:
@@ -53,31 +51,33 @@ protected:
     };
 
     struct LightingData {
-        FloatPoint3D normalVector;
-        CanvasPixelArray* pixels;
-        float lightStrength;
+        // This structure contains only read-only (SMP safe) data
+        ByteArray* pixels;
         float surfaceScale;
-        int offset;
         int widthMultipliedByPixelSize;
         int widthDecreasedByOne;
         int heightDecreasedByOne;
 
-        ALWAYS_INLINE int upLeftPixelValue();
-        ALWAYS_INLINE int upPixelValue();
-        ALWAYS_INLINE int upRightPixelValue();
-        ALWAYS_INLINE int leftPixelValue();
-        ALWAYS_INLINE int centerPixelValue();
-        ALWAYS_INLINE int rightPixelValue();
-        ALWAYS_INLINE int downLeftPixelValue();
-        ALWAYS_INLINE int downPixelValue();
-        ALWAYS_INLINE int downRightPixelValue();
+        inline void topLeft(int offset, IntPoint& normalVector);
+        inline void topRow(int offset, IntPoint& normalVector);
+        inline void topRight(int offset, IntPoint& normalVector);
+        inline void leftColumn(int offset, IntPoint& normalVector);
+        inline void interior(int offset, IntPoint& normalVector);
+        inline void rightColumn(int offset, IntPoint& normalVector);
+        inline void bottomLeft(int offset, IntPoint& normalVector);
+        inline void bottomRow(int offset, IntPoint& normalVector);
+        inline void bottomRight(int offset, IntPoint& normalVector);
     };
 
     FELighting(LightingType, const Color&, float, float, float, float, float, float, PassRefPtr<LightSource>);
 
-    bool drawLighting(CanvasPixelArray*, int, int);
-    ALWAYS_INLINE void setPixel(LightingData&, LightSource::PaintingData&,
-        int lightX, int lightY, float factorX, int normalX, float factorY, int normalY);
+    bool drawLighting(ByteArray*, int, int);
+    inline void inlineSetPixel(int offset, LightingData&, LightSource::PaintingData&,
+                               int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector);
+
+    // Not worth to inline every occurence of setPixel.
+    void setPixel(int offset, LightingData&, LightSource::PaintingData&,
+                  int lightX, int lightY, float factorX, float factorY, IntPoint& normalVector);
 
     LightingType m_lightingType;
     RefPtr<LightSource> m_lightSource;
