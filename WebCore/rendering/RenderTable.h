@@ -108,7 +108,7 @@ public:
         return c;
     }
 
-    int bordersPaddingAndSpacing() const
+    int bordersPaddingAndSpacingInRowDirection() const
     {
         return borderLeft() + borderRight() +
                (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols() + 1) * hBorderSpacing()));

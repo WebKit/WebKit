@@ -36,7 +36,7 @@ public:
     virtual void computePreferredLogicalWidths(int& minWidth, int& maxWidth);
     virtual void layout();
 
-protected:
+private:
     int calcWidthArray(int tableWidth);
 
     Vector<Length> m_width;

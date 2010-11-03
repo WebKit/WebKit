@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2008, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,7 +34,7 @@ namespace WebCore {
 AutoTableLayout::AutoTableLayout(RenderTable* table)
     : TableLayout(table)
     , m_hasPercent(false)
-    , m_effWidthDirty(true)
+    , m_effectiveLogicalWidthDirty(true)
 {
 }
 
@@ -42,21 +42,14 @@ AutoTableLayout::~AutoTableLayout()
 {
 }
 
-/* recalculates the full structure needed to do layouting and minmax calculations.
-   This is usually calculated on the fly, but needs to be done fully when table cells change
-   dynamically
-*/
 void AutoTableLayout::recalcColumn(int effCol)
 {
-    Layout &l = m_layoutStruct[effCol];
-
-    RenderObject* child = m_table->firstChild();
-    // first we iterate over all rows.
+    Layout& columnLayout = m_layoutStruct[effCol];
 
     RenderTableCell* fixedContributor = 0;
     RenderTableCell* maxContributor = 0;
 
-    while (child) {
+    for (RenderObject* child = m_table->firstChild(); child; child = child->nextSibling()) {
         if (child->isTableCol())
             toRenderTableCol(child)->computePreferredLogicalWidths();
         else if (child->isTableSection()) {
@@ -68,141 +61,131 @@ void AutoTableLayout::recalcColumn(int effCol)
                 
                 bool cellHasContent = cell && !current.inColSpan && (cell->firstChild() || cell->style()->hasBorder() || cell->style()->hasPadding());
                 if (cellHasContent)
-                    l.emptyCellsOnly = false;
+                    columnLayout.emptyCellsOnly = false;
                     
-                if (current.inColSpan)
+                if (current.inColSpan || !cell)
                     continue;
-                if (cell && cell->colSpan() == 1) {
+
+                if (cell->colSpan() == 1) {
                     // A cell originates in this column.  Ensure we have
                     // a min/max width of at least 1px for this column now.
-                    l.minWidth = max(l.minWidth, cellHasContent ? 1 : 0);
-                    l.maxWidth = max(l.maxWidth, 1);
+                    columnLayout.minLogicalWidth = max(columnLayout.minLogicalWidth, cellHasContent ? 1 : 0);
+                    columnLayout.maxLogicalWidth = max(columnLayout.maxLogicalWidth, 1);
                     if (cell->preferredLogicalWidthsDirty())
                         cell->computePreferredLogicalWidths();
-                    l.minWidth = max(cell->minPreferredLogicalWidth(), l.minWidth);
-                    if (cell->maxPreferredLogicalWidth() > l.maxWidth) {
-                        l.maxWidth = cell->maxPreferredLogicalWidth();
+                    columnLayout.minLogicalWidth = max(cell->minPreferredLogicalWidth(), columnLayout.minLogicalWidth);
+                    if (cell->maxPreferredLogicalWidth() > columnLayout.maxLogicalWidth) {
+                        columnLayout.maxLogicalWidth = cell->maxPreferredLogicalWidth();
                         maxContributor = cell;
                     }
 
-                    Length w = cell->styleOrColLogicalWidth();
+                    Length cellLogicalWidth = cell->styleOrColLogicalWidth();
                     // FIXME: What is this arbitrary value?
-                    if (w.rawValue() > 32760)
-                        w.setRawValue(32760);
-                    if (w.isNegative())
-                        w.setValue(0);
-                    switch (w.type()) {
+                    if (cellLogicalWidth.rawValue() > 32760)
+                        cellLogicalWidth.setRawValue(32760);
+                    if (cellLogicalWidth.isNegative())
+                        cellLogicalWidth.setValue(0);
+                    switch (cellLogicalWidth.type()) {
                     case Fixed:
                         // ignore width=0
-                        if (w.value() > 0 && (int)l.width.type() != Percent) {
-                            int wval = cell->computeBorderBoxLogicalWidth(w.value());
-                            if (l.width.isFixed()) {
+                        if (cellLogicalWidth.value() > 0 && columnLayout.logicalWidth.type() != Percent) {
+                            int logicalWidth = cell->computeBorderBoxLogicalWidth(cellLogicalWidth.value());
+                            if (columnLayout.logicalWidth.isFixed()) {
                                 // Nav/IE weirdness
-                                if ((wval > l.width.value()) ||
-                                    ((l.width.value() == wval) && (maxContributor == cell))) {
-                                    l.width.setValue(wval);
+                                if ((logicalWidth > columnLayout.logicalWidth.value()) ||
+                                    ((columnLayout.logicalWidth.value() == logicalWidth) && (maxContributor == cell))) {
+                                    columnLayout.logicalWidth.setValue(logicalWidth);
                                     fixedContributor = cell;
                                 }
                             } else {
-                                l.width.setValue(Fixed, wval);
+                                columnLayout.logicalWidth.setValue(Fixed, logicalWidth);
                                 fixedContributor = cell;
                             }
                         }
                         break;
                     case Percent:
                         m_hasPercent = true;
-                        if (w.isPositive() && (!l.width.isPercent() || w.rawValue() > l.width.rawValue()))
-                            l.width = w;
+                        if (cellLogicalWidth.isPositive() && (!columnLayout.logicalWidth.isPercent() || cellLogicalWidth.rawValue() > columnLayout.logicalWidth.rawValue()))
+                            columnLayout.logicalWidth = cellLogicalWidth;
                         break;
                     case Relative:
                         // FIXME: Need to understand this case and whether it makes sense to compare values
                         // which are not necessarily of the same type.
-                        if (w.isAuto() || (w.isRelative() && w.value() > l.width.rawValue()))
-                            l.width = w;
+                        if (cellLogicalWidth.isAuto() || (cellLogicalWidth.isRelative() && cellLogicalWidth.value() > columnLayout.logicalWidth.rawValue()))
+                            columnLayout.logicalWidth = cellLogicalWidth;
                     default:
                         break;
                     }
-                } else {
-                    if (cell && (!effCol || section->primaryCellAt(i, effCol-1) != cell)) {
-                        // This spanning cell originates in this column.  Ensure we have
-                        // a min/max width of at least 1px for this column now.
-                        l.minWidth = max(l.minWidth, cellHasContent ? 1 : 0);
-                        l.maxWidth = max(l.maxWidth, 1);
-                        insertSpanCell(cell);
-                    }
+                } else if (!effCol || section->primaryCellAt(i, effCol - 1) != cell) {
+                    // This spanning cell originates in this column.  Ensure we have
+                    // a min/max width of at least 1px for this column now.
+                    columnLayout.minLogicalWidth = max(columnLayout.minLogicalWidth, cellHasContent ? 1 : 0);
+                    columnLayout.maxLogicalWidth = max(columnLayout.maxLogicalWidth, 1);
+                    insertSpanCell(cell);
                 }
             }
         }
-        child = child->nextSibling();
     }
 
     // Nav/IE weirdness
-    if (l.width.isFixed()) {
-        if (m_table->document()->inQuirksMode() && l.maxWidth > l.width.value() && fixedContributor != maxContributor) {
-            l.width = Length();
+    if (columnLayout.logicalWidth.isFixed()) {
+        if (m_table->document()->inQuirksMode() && columnLayout.maxLogicalWidth > columnLayout.logicalWidth.value() && fixedContributor != maxContributor) {
+            columnLayout.logicalWidth = Length();
             fixedContributor = 0;
         }
     }
 
-    l.maxWidth = max(l.maxWidth, l.minWidth);
-
-    // ### we need to add col elements as well
+    columnLayout.maxLogicalWidth = max(columnLayout.maxLogicalWidth, columnLayout.minLogicalWidth);
 }
 
 void AutoTableLayout::fullRecalc()
 {
     m_hasPercent = false;
-    m_effWidthDirty = true;
+    m_effectiveLogicalWidthDirty = true;
 
     int nEffCols = m_table->numEffCols();
     m_layoutStruct.resize(nEffCols);
     m_layoutStruct.fill(Layout());
     m_spanCells.fill(0);
 
-    RenderObject *child = m_table->firstChild();
-    Length grpWidth;
-    int cCol = 0;
-    while (child) {
-        if (child->isTableCol()) {
-            RenderTableCol *col = toRenderTableCol(child);
-            int span = col->span();
-            if (col->firstChild()) {
-                grpWidth = col->style()->width();
-            } else {
-                Length w = col->style()->width();
-                if (w.isAuto())
-                    w = grpWidth;
-                if ((w.isFixed() || w.isPercent()) && w.isZero())
-                    w = Length();
-                int cEffCol = m_table->colToEffCol(cCol);
-                if (!w.isAuto() && span == 1 && cEffCol < nEffCols) {
-                    if (m_table->spanOfEffCol(cEffCol) == 1) {
-                        m_layoutStruct[cEffCol].width = w;
-                        if (w.isFixed() && m_layoutStruct[cEffCol].maxWidth < w.value())
-                            m_layoutStruct[cEffCol].maxWidth = w.value();
-                    }
-                }
-                cCol += span;
+    RenderObject* child = m_table->firstChild();
+    Length groupLogicalWidth;
+    int currentColumn = 0;
+    while (child && child->isTableCol()) {
+        RenderTableCol* col = toRenderTableCol(child);
+        int span = col->span();
+        if (col->firstChild())
+            groupLogicalWidth = col->style()->logicalWidth();
+        else {
+            Length colLogicalWidth = col->style()->logicalWidth();
+            if (colLogicalWidth.isAuto())
+                colLogicalWidth = groupLogicalWidth;
+            if ((colLogicalWidth.isFixed() || colLogicalWidth.isPercent()) && colLogicalWidth.isZero())
+                colLogicalWidth = Length();
+            int effCol = m_table->colToEffCol(currentColumn);
+            if (!colLogicalWidth.isAuto() && span == 1 && effCol < nEffCols && m_table->spanOfEffCol(effCol) == 1) {
+                m_layoutStruct[effCol].logicalWidth = colLogicalWidth;
+                if (colLogicalWidth.isFixed() && m_layoutStruct[effCol].maxLogicalWidth < colLogicalWidth.value())
+                    m_layoutStruct[effCol].maxLogicalWidth = colLogicalWidth.value();
             }
-        } else {
-            break;
+            currentColumn += span;
         }
 
-        RenderObject *next = child->firstChild();
+        RenderObject* next = child->firstChild();
         if (!next)
             next = child->nextSibling();
         if (!next && child->parent()->isTableCol()) {
             next = child->parent()->nextSibling();
-            grpWidth = Length();
+            groupLogicalWidth = Length();
         }
         child = next;
     }
-
 
     for (int i = 0; i < nEffCols; i++)
         recalcColumn(i);
 }
 
+// FIXME: This needs to be adapted for vertical writing modes.
 static bool shouldScaleColumns(RenderTable* table)
 {
     // A special case.  If this table is not fixed width and contained inside
@@ -240,7 +223,7 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
 {
     fullRecalc();
 
-    int spanMaxWidth = calcEffectiveWidth();
+    int spanMaxLogicalWidth = calcEffectiveLogicalWidth();
     minWidth = 0;
     maxWidth = 0;
     float maxPercent = 0;
@@ -252,17 +235,17 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
     const int epsilon = 1;
 
     int remainingPercent = 100 * percentScaleFactor;
-    for (unsigned int i = 0; i < m_layoutStruct.size(); i++) {
-        minWidth += m_layoutStruct[i].effMinWidth;
-        maxWidth += m_layoutStruct[i].effMaxWidth;
+    for (size_t i = 0; i < m_layoutStruct.size(); ++i) {
+        minWidth += m_layoutStruct[i].effectiveMinLogicalWidth;
+        maxWidth += m_layoutStruct[i].effectiveMaxLogicalWidth;
         if (scaleColumns) {
-            if (m_layoutStruct[i].effWidth.isPercent()) {
-                int percent = min(m_layoutStruct[i].effWidth.rawValue(), remainingPercent);
-                float pw = static_cast<float>(m_layoutStruct[i].effMaxWidth) * 100 * percentScaleFactor / max(percent, epsilon);
-                maxPercent = max(pw,  maxPercent);
+            if (m_layoutStruct[i].effectiveLogicalWidth.isPercent()) {
+                int percent = min(m_layoutStruct[i].effectiveLogicalWidth.rawValue(), remainingPercent);
+                float logicalWidth = static_cast<float>(m_layoutStruct[i].effectiveMaxLogicalWidth) * 100 * percentScaleFactor / max(percent, epsilon);
+                maxPercent = max(logicalWidth,  maxPercent);
                 remainingPercent -= percent;
             } else
-                maxNonPercent += m_layoutStruct[i].effMaxWidth;
+                maxNonPercent += m_layoutStruct[i].effectiveMaxLogicalWidth;
         }
     }
 
@@ -272,15 +255,15 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
         maxWidth = max(maxWidth, static_cast<int>(min(maxPercent, INT_MAX / 2.0f)));
     }
 
-    maxWidth = max(maxWidth, spanMaxWidth);
-    
-    int bs = m_table->bordersPaddingAndSpacing();
-    minWidth += bs;
-    maxWidth += bs;
+    maxWidth = max(maxWidth, spanMaxLogicalWidth);
 
-    Length tw = m_table->style()->width();
-    if (tw.isFixed() && tw.value() > 0) {
-        minWidth = max(minWidth, tw.value());
+    int bordersPaddingAndSpacing = m_table->bordersPaddingAndSpacingInRowDirection();
+    minWidth += bordersPaddingAndSpacing;
+    maxWidth += bordersPaddingAndSpacing;
+
+    Length tableLogicalWidth = m_table->style()->logicalWidth();
+    if (tableLogicalWidth.isFixed() && tableLogicalWidth.value() > 0) {
+        minWidth = max(minWidth, tableLogicalWidth.value());
         maxWidth = minWidth;
     }
 }
@@ -289,50 +272,52 @@ void AutoTableLayout::computePreferredLogicalWidths(int& minWidth, int& maxWidth
   This method takes care of colspans.
   effWidth is the same as width for cells without colspans. If we have colspans, they get modified.
  */
-int AutoTableLayout::calcEffectiveWidth()
+int AutoTableLayout::calcEffectiveLogicalWidth()
 {
-    float tMaxWidth = 0;
+    float maxLogicalWidth = 0;
 
-    unsigned int nEffCols = m_layoutStruct.size();
-    int hspacing = m_table->hBorderSpacing();
+    size_t nEffCols = m_layoutStruct.size();
+    int spacingInRowDirection = m_table->hBorderSpacing();
 
-    for (unsigned int i = 0; i < nEffCols; i++) {
-        m_layoutStruct[i].effWidth = m_layoutStruct[i].width;
-        m_layoutStruct[i].effMinWidth = m_layoutStruct[i].minWidth;
-        m_layoutStruct[i].effMaxWidth = m_layoutStruct[i].maxWidth;
+    for (size_t i = 0; i < nEffCols; ++i) {
+        m_layoutStruct[i].effectiveLogicalWidth = m_layoutStruct[i].logicalWidth;
+        m_layoutStruct[i].effectiveMinLogicalWidth = m_layoutStruct[i].minLogicalWidth;
+        m_layoutStruct[i].effectiveMaxLogicalWidth = m_layoutStruct[i].maxLogicalWidth;
     }
 
-    for (unsigned int i = 0; i < m_spanCells.size(); i++) {
-        RenderTableCell *cell = m_spanCells[i];
+    for (size_t i = 0; i < m_spanCells.size(); ++i) {
+        RenderTableCell* cell = m_spanCells[i];
         if (!cell)
             break;
+
         int span = cell->colSpan();
 
-        Length w = cell->styleOrColLogicalWidth();
-        if (!w.isRelative() && w.isZero())
-            w = Length(); // make it Auto
+        Length cellLogicalWidth = cell->styleOrColLogicalWidth();
+        if (!cellLogicalWidth.isRelative() && cellLogicalWidth.isZero())
+            cellLogicalWidth = Length(); // make it Auto
 
-        int col = m_table->colToEffCol(cell->col());
-        unsigned int lastCol = col;
-        int cMinWidth = cell->minPreferredLogicalWidth() + hspacing;
-        float cMaxWidth = cell->maxPreferredLogicalWidth() + hspacing;
+        int effCol = m_table->colToEffCol(cell->col());
+        size_t lastCol = effCol;
+        int cellMinLogicalWidth = cell->minPreferredLogicalWidth() + spacingInRowDirection;
+        float cellMaxLogicalWidth = cell->maxPreferredLogicalWidth() + spacingInRowDirection;
         int totalPercent = 0;
-        int minWidth = 0;
-        float maxWidth = 0;
+        int spanMinLogicalWidth = 0;
+        float spanMaxLogicalWidth = 0;
         bool allColsArePercent = true;
         bool allColsAreFixed = true;
         bool haveAuto = false;
         bool spanHasEmptyCellsOnly = true;
         int fixedWidth = 0;
         while (lastCol < nEffCols && span > 0) {
-            switch (m_layoutStruct[lastCol].width.type()) {
+            Layout& columnLayout = m_layoutStruct[lastCol];
+            switch (columnLayout.logicalWidth.type()) {
             case Percent:
-                totalPercent += m_layoutStruct[lastCol].width.rawValue();
+                totalPercent += columnLayout.logicalWidth.rawValue();
                 allColsAreFixed = false;
                 break;
             case Fixed:
-                if (m_layoutStruct[lastCol].width.value() > 0) {
-                    fixedWidth += m_layoutStruct[lastCol].width.value();
+                if (columnLayout.logicalWidth.value() > 0) {
+                    fixedWidth += columnLayout.logicalWidth.value();
                     allColsArePercent = false;
                     // IE resets effWidth to Auto here, but this breaks the konqueror about page and seems to be some bad
                     // legacy behaviour anyway. mozilla doesn't do this so I decided we don't neither.
@@ -350,116 +335,112 @@ int AutoTableLayout::calcEffectiveWidth()
                 //   <tr><td>1</td><td colspan=2>2-3</tr>
                 //   <tr><td>1</td><td colspan=2 width=100%>2-3</td></tr>
                 // </table>
-                if (!m_layoutStruct[lastCol].effWidth.isPercent()) {
-                    m_layoutStruct[lastCol].effWidth = Length();
+                if (!columnLayout.effectiveLogicalWidth.isPercent()) {
+                    columnLayout.effectiveLogicalWidth = Length();
                     allColsArePercent = false;
-                }
-                else
-                    totalPercent += m_layoutStruct[lastCol].effWidth.rawValue();
+                } else
+                    totalPercent += columnLayout.effectiveLogicalWidth.rawValue();
                 allColsAreFixed = false;
             }
-            if (!m_layoutStruct[lastCol].emptyCellsOnly)
+            if (!columnLayout.emptyCellsOnly)
                 spanHasEmptyCellsOnly = false;
             span -= m_table->spanOfEffCol(lastCol);
-            minWidth += m_layoutStruct[lastCol].effMinWidth;
-            maxWidth += m_layoutStruct[lastCol].effMaxWidth;
+            spanMinLogicalWidth += columnLayout.effectiveMinLogicalWidth;
+            spanMaxLogicalWidth += columnLayout.effectiveMaxLogicalWidth;
             lastCol++;
-            cMinWidth -= hspacing;
-            cMaxWidth -= hspacing;
+            cellMinLogicalWidth -= spacingInRowDirection;
+            cellMaxLogicalWidth -= spacingInRowDirection;
         }
 
         // adjust table max width if needed
-        if (w.isPercent()) {
-            if (totalPercent > w.rawValue() || allColsArePercent) {
+        if (cellLogicalWidth.isPercent()) {
+            if (totalPercent > cellLogicalWidth.rawValue() || allColsArePercent) {
                 // can't satify this condition, treat as variable
-                w = Length();
+                cellLogicalWidth = Length();
             } else {
-                float spanMax = max(maxWidth, cMaxWidth);
-                tMaxWidth = max(tMaxWidth, spanMax * 100 * percentScaleFactor / w.rawValue());
+                maxLogicalWidth = max(maxLogicalWidth, max(spanMaxLogicalWidth, cellMaxLogicalWidth) * 100 * percentScaleFactor / cellLogicalWidth.rawValue());
 
                 // all non percent columns in the span get percent values to sum up correctly.
-                int percentMissing = w.rawValue() - totalPercent;
+                int percentMissing = cellLogicalWidth.rawValue() - totalPercent;
                 float totalWidth = 0;
-                for (unsigned int pos = col; pos < lastCol; pos++) {
-                    if (!(m_layoutStruct[pos].effWidth.isPercent()))
-                        totalWidth += m_layoutStruct[pos].effMaxWidth;
+                for (unsigned pos = effCol; pos < lastCol; ++pos) {
+                    if (!m_layoutStruct[pos].effectiveLogicalWidth.isPercent())
+                        totalWidth += m_layoutStruct[pos].effectiveMaxLogicalWidth;
                 }
 
-                for (unsigned int pos = col; pos < lastCol && totalWidth > 0; pos++) {
-                    if (!(m_layoutStruct[pos].effWidth.isPercent())) {
-                        int percent = static_cast<int>(percentMissing * static_cast<float>(m_layoutStruct[pos].effMaxWidth) / totalWidth);
-                        totalWidth -= m_layoutStruct[pos].effMaxWidth;
+                for (unsigned pos = effCol; pos < lastCol && totalWidth > 0; ++pos) {
+                    if (!m_layoutStruct[pos].effectiveLogicalWidth.isPercent()) {
+                        int percent = static_cast<int>(percentMissing * static_cast<float>(m_layoutStruct[pos].effectiveMaxLogicalWidth) / totalWidth);
+                        totalWidth -= m_layoutStruct[pos].effectiveMaxLogicalWidth;
                         percentMissing -= percent;
                         if (percent > 0)
-                            m_layoutStruct[pos].effWidth.setRawValue(Percent, percent);
+                            m_layoutStruct[pos].effectiveLogicalWidth.setRawValue(Percent, percent);
                         else
-                            m_layoutStruct[pos].effWidth = Length();
+                            m_layoutStruct[pos].effectiveLogicalWidth = Length();
                     }
                 }
-
             }
         }
 
         // make sure minWidth and maxWidth of the spanning cell are honoured
-        if (cMinWidth > minWidth) {
+        if (cellMinLogicalWidth > spanMinLogicalWidth) {
             if (allColsAreFixed) {
-                for (unsigned int pos = col; fixedWidth > 0 && pos < lastCol; pos++) {
-                    int w = max(m_layoutStruct[pos].effMinWidth, cMinWidth * m_layoutStruct[pos].width.value() / fixedWidth);
-                    fixedWidth -= m_layoutStruct[pos].width.value();
-                    cMinWidth -= w;
-                    m_layoutStruct[pos].effMinWidth = w;
+                for (unsigned pos = effCol; fixedWidth > 0 && pos < lastCol; ++pos) {
+                    int cellLogicalWidth = max(m_layoutStruct[pos].effectiveMinLogicalWidth, cellMinLogicalWidth * m_layoutStruct[pos].logicalWidth.value() / fixedWidth);
+                    fixedWidth -= m_layoutStruct[pos].logicalWidth.value();
+                    cellMinLogicalWidth -= cellLogicalWidth;
+                    m_layoutStruct[pos].effectiveMinLogicalWidth = cellLogicalWidth;
                 }
-
             } else {
-                float maxw = maxWidth;
-                int minw = minWidth;
+                float remainingMaxLogicalWidth = spanMaxLogicalWidth;
+                int remainingMinLogicalWidth = spanMinLogicalWidth;
                 
                 // Give min to variable first, to fixed second, and to others third.
-                for (unsigned int pos = col; maxw >= 0 && pos < lastCol; pos++) {
-                    if (m_layoutStruct[pos].width.isFixed() && haveAuto && fixedWidth <= cMinWidth) {
-                        int w = max(m_layoutStruct[pos].effMinWidth, m_layoutStruct[pos].width.value());
-                        fixedWidth -= m_layoutStruct[pos].width.value();
-                        minw -= m_layoutStruct[pos].effMinWidth;
-                        maxw -= m_layoutStruct[pos].effMaxWidth;
-                        cMinWidth -= w;
-                        m_layoutStruct[pos].effMinWidth = w;
+                for (unsigned pos = effCol; remainingMaxLogicalWidth >= 0 && pos < lastCol; ++pos) {
+                    if (m_layoutStruct[pos].logicalWidth.isFixed() && haveAuto && fixedWidth <= cellMinLogicalWidth) {
+                        int colMinLogicalWidth = max(m_layoutStruct[pos].effectiveMinLogicalWidth, m_layoutStruct[pos].logicalWidth.value());
+                        fixedWidth -= m_layoutStruct[pos].logicalWidth.value();
+                        remainingMinLogicalWidth -= m_layoutStruct[pos].effectiveMinLogicalWidth;
+                        remainingMaxLogicalWidth -= m_layoutStruct[pos].effectiveMaxLogicalWidth;
+                        cellMinLogicalWidth -= colMinLogicalWidth;
+                        m_layoutStruct[pos].effectiveMinLogicalWidth = colMinLogicalWidth;
                     }
                 }
 
-                for (unsigned int pos = col; maxw >= 0 && pos < lastCol && minw < cMinWidth; pos++) {
-                    if (!(m_layoutStruct[pos].width.isFixed() && haveAuto && fixedWidth <= cMinWidth)) {
-                        int w = max(m_layoutStruct[pos].effMinWidth, static_cast<int>(maxw ? cMinWidth * static_cast<float>(m_layoutStruct[pos].effMaxWidth) / maxw : cMinWidth));
-                        w = min(m_layoutStruct[pos].effMinWidth+(cMinWidth-minw), w);
-                                                
-                        maxw -= m_layoutStruct[pos].effMaxWidth;
-                        minw -= m_layoutStruct[pos].effMinWidth;
-                        cMinWidth -= w;
-                        m_layoutStruct[pos].effMinWidth = w;
+                for (unsigned pos = effCol; remainingMaxLogicalWidth >= 0 && pos < lastCol && remainingMinLogicalWidth < cellMinLogicalWidth; ++pos) {
+                    if (!(m_layoutStruct[pos].logicalWidth.isFixed() && haveAuto && fixedWidth <= cellMinLogicalWidth)) {
+                        int colMinLogicalWidth = max(m_layoutStruct[pos].effectiveMinLogicalWidth, static_cast<int>(remainingMaxLogicalWidth ? cellMinLogicalWidth * static_cast<float>(m_layoutStruct[pos].effectiveMaxLogicalWidth) / remainingMaxLogicalWidth : cellMinLogicalWidth));
+                        colMinLogicalWidth = min(m_layoutStruct[pos].effectiveMinLogicalWidth + (cellMinLogicalWidth - remainingMinLogicalWidth), colMinLogicalWidth);
+                        remainingMaxLogicalWidth -= m_layoutStruct[pos].effectiveMaxLogicalWidth;
+                        remainingMinLogicalWidth -= m_layoutStruct[pos].effectiveMinLogicalWidth;
+                        cellMinLogicalWidth -= colMinLogicalWidth;
+                        m_layoutStruct[pos].effectiveMinLogicalWidth = colMinLogicalWidth;
                     }
                 }
             }
         }
-        if (!(w.isPercent())) {
-            if (cMaxWidth > maxWidth) {
-                for (unsigned int pos = col; maxWidth >= 0 && pos < lastCol; pos++) {
-                    int w = max(m_layoutStruct[pos].effMaxWidth, static_cast<int>(maxWidth ? cMaxWidth * static_cast<float>(m_layoutStruct[pos].effMaxWidth) / maxWidth : cMaxWidth));
-                    maxWidth -= m_layoutStruct[pos].effMaxWidth;
-                    cMaxWidth -= w;
-                    m_layoutStruct[pos].effMaxWidth = w;
+        if (!cellLogicalWidth.isPercent()) {
+            if (cellMaxLogicalWidth > spanMaxLogicalWidth) {
+                for (unsigned pos = effCol; spanMaxLogicalWidth >= 0 && pos < lastCol; ++pos) {
+                    int colMaxLogicalWidth = max(m_layoutStruct[pos].effectiveMaxLogicalWidth, static_cast<int>(spanMaxLogicalWidth ? cellMaxLogicalWidth * static_cast<float>(m_layoutStruct[pos].effectiveMaxLogicalWidth) / spanMaxLogicalWidth : cellMaxLogicalWidth));
+                    spanMaxLogicalWidth -= m_layoutStruct[pos].effectiveMaxLogicalWidth;
+                    cellMaxLogicalWidth -= colMaxLogicalWidth;
+                    m_layoutStruct[pos].effectiveMaxLogicalWidth = colMaxLogicalWidth;
                 }
             }
         } else {
-            for (unsigned int pos = col; pos < lastCol; pos++)
-                m_layoutStruct[pos].maxWidth = max(m_layoutStruct[pos].maxWidth, m_layoutStruct[pos].minWidth);
+            for (unsigned pos = effCol; pos < lastCol; ++pos)
+                m_layoutStruct[pos].maxLogicalWidth = max(m_layoutStruct[pos].maxLogicalWidth, m_layoutStruct[pos].minLogicalWidth);
         }
         // treat span ranges consisting of empty cells only as if they had content
-        if (spanHasEmptyCellsOnly)
-            for (unsigned int pos = col; pos < lastCol; pos++)
+        if (spanHasEmptyCellsOnly) {
+            for (unsigned pos = effCol; pos < lastCol; ++pos)
                 m_layoutStruct[pos].emptyCellsOnly = false;
+        }
     }
-    m_effWidthDirty = false;
+    m_effectiveLogicalWidthDirty = false;
 
-    return static_cast<int>(min(tMaxWidth, INT_MAX / 2.0f));
+    return static_cast<int>(min(maxLogicalWidth, INT_MAX / 2.0f));
 }
 
 /* gets all cells that originate in a column and have a cellspan > 1
@@ -467,6 +448,7 @@ int AutoTableLayout::calcEffectiveWidth()
 */
 void AutoTableLayout::insertSpanCell(RenderTableCell *cell)
 {
+    ASSERT_ARG(cell, cell && cell->colSpan() != 1);
     if (!cell || cell->colSpan() == 1)
         return;
 
@@ -491,17 +473,17 @@ void AutoTableLayout::insertSpanCell(RenderTableCell *cell)
 void AutoTableLayout::layout()
 {
     // table layout based on the values collected in the layout structure.
-    int tableWidth = m_table->width() - m_table->bordersPaddingAndSpacing();
-    int available = tableWidth;
-    int nEffCols = m_table->numEffCols();
+    int tableLogicalWidth = m_table->logicalWidth() - m_table->bordersPaddingAndSpacingInRowDirection();
+    int available = tableLogicalWidth;
+    size_t nEffCols = m_table->numEffCols();
 
-    if (nEffCols != (int)m_layoutStruct.size()) {
+    if (nEffCols != m_layoutStruct.size()) {
         fullRecalc();
         nEffCols = m_table->numEffCols();
     }
 
-    if (m_effWidthDirty)
-        calcEffectiveWidth();
+    if (m_effectiveLogicalWidthDirty)
+        calcEffectiveLogicalWidth();
 
     bool havePercent = false;
     int totalRelative = 0;
@@ -511,35 +493,35 @@ void AutoTableLayout::layout()
     float totalFixed = 0;
     int totalPercent = 0;
     int allocAuto = 0;
-    int numAutoEmptyCellsOnly = 0;
+    unsigned numAutoEmptyCellsOnly = 0;
 
     // fill up every cell with its minWidth
-    for (int i = 0; i < nEffCols; i++) {
-        int w = m_layoutStruct[i].effMinWidth;
-        m_layoutStruct[i].calcWidth = w;
-        available -= w;
-        Length& width = m_layoutStruct[i].effWidth;
-        switch (width.type()) {
+    for (size_t i = 0; i < nEffCols; ++i) {
+        int cellLogicalWidth = m_layoutStruct[i].effectiveMinLogicalWidth;
+        m_layoutStruct[i].computedLogicalWidth = cellLogicalWidth;
+        available -= cellLogicalWidth;
+        Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+        switch (logicalWidth.type()) {
         case Percent:
             havePercent = true;
-            totalPercent += width.rawValue();
+            totalPercent += logicalWidth.rawValue();
             break;
         case Relative:
-            totalRelative += width.value();
+            totalRelative += logicalWidth.value();
             break;
         case Fixed:
             numFixed++;
-            totalFixed += m_layoutStruct[i].effMaxWidth;
+            totalFixed += m_layoutStruct[i].effectiveMaxLogicalWidth;
             // fall through
             break;
         case Auto:
         case Static:
-            if (m_layoutStruct[i].emptyCellsOnly) 
-                numAutoEmptyCellsOnly++;            
+            if (m_layoutStruct[i].emptyCellsOnly)
+                numAutoEmptyCellsOnly++;
             else {
                 numAuto++;
-                totalAuto += m_layoutStruct[i].effMaxWidth;
-                allocAuto += w;
+                totalAuto += m_layoutStruct[i].effectiveMaxLogicalWidth;
+                allocAuto += cellLogicalWidth;
             }
             break;
         default:
@@ -549,26 +531,26 @@ void AutoTableLayout::layout()
 
     // allocate width to percent cols
     if (available > 0 && havePercent) {
-        for (int i = 0; i < nEffCols; i++) {
-            Length &width = m_layoutStruct[i].effWidth;
-            if (width.isPercent()) {
-                int w = max(int(m_layoutStruct[i].effMinWidth), width.calcMinValue(tableWidth));
-                available += m_layoutStruct[i].calcWidth - w;
-                m_layoutStruct[i].calcWidth = w;
+        for (size_t i = 0; i < nEffCols; ++i) {
+            Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+            if (logicalWidth.isPercent()) {
+                int cellLogicalWidth = max(m_layoutStruct[i].effectiveMinLogicalWidth, logicalWidth.calcMinValue(tableLogicalWidth));
+                available += m_layoutStruct[i].computedLogicalWidth - cellLogicalWidth;
+                m_layoutStruct[i].computedLogicalWidth = cellLogicalWidth;
             }
         }
         if (totalPercent > 100 * percentScaleFactor) {
             // remove overallocated space from the last columns
-            int excess = tableWidth*(totalPercent - 100 * percentScaleFactor) / (100 * percentScaleFactor);
-            for (int i = nEffCols-1; i >= 0; i--) {
-                if (m_layoutStruct[i].effWidth.isPercent()) {
-                    int w = m_layoutStruct[i].calcWidth;
-                    int reduction = min(w,  excess);
+            int excess = tableLogicalWidth * (totalPercent - 100 * percentScaleFactor) / (100 * percentScaleFactor);
+            for (int i = nEffCols - 1; i >= 0; --i) {
+                if (m_layoutStruct[i].effectiveLogicalWidth.isPercent()) {
+                    int cellLogicalWidth = m_layoutStruct[i].computedLogicalWidth;
+                    int reduction = min(cellLogicalWidth,  excess);
                     // the lines below might look inconsistent, but that's the way it's handled in mozilla
                     excess -= reduction;
-                    int newWidth = max(static_cast<int>(m_layoutStruct[i].effMinWidth), w - reduction);
-                    available += w - newWidth;
-                    m_layoutStruct[i].calcWidth = newWidth;
+                    int newLogicalWidth = max(m_layoutStruct[i].effectiveMinLogicalWidth, cellLogicalWidth - reduction);
+                    available += cellLogicalWidth - newLogicalWidth;
+                    m_layoutStruct[i].computedLogicalWidth = newLogicalWidth;
                 }
             }
         }
@@ -576,24 +558,24 @@ void AutoTableLayout::layout()
     
     // then allocate width to fixed cols
     if (available > 0) {
-        for (int i = 0; i < nEffCols; ++i) {
-            Length &width = m_layoutStruct[i].effWidth;
-            if (width.isFixed() && width.value() > m_layoutStruct[i].calcWidth) {
-                available += m_layoutStruct[i].calcWidth - width.value();
-                m_layoutStruct[i].calcWidth = width.value();
+        for (size_t i = 0; i < nEffCols; ++i) {
+            Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+            if (logicalWidth.isFixed() && logicalWidth.value() > m_layoutStruct[i].computedLogicalWidth) {
+                available += m_layoutStruct[i].computedLogicalWidth - logicalWidth.value();
+                m_layoutStruct[i].computedLogicalWidth = logicalWidth.value();
             }
         }
     }
 
     // now satisfy relative
     if (available > 0) {
-        for (int i = 0; i < nEffCols; i++) {
-            Length &width = m_layoutStruct[i].effWidth;
-            if (width.isRelative() && width.value() != 0) {
+        for (size_t i = 0; i < nEffCols; ++i) {
+            Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+            if (logicalWidth.isRelative() && logicalWidth.value() != 0) {
                 // width=0* gets effMinWidth.
-                int w = width.value() * tableWidth / totalRelative;
-                available += m_layoutStruct[i].calcWidth - w;
-                m_layoutStruct[i].calcWidth = w;
+                int cellLogicalWidth = logicalWidth.value() * tableLogicalWidth / totalRelative;
+                available += m_layoutStruct[i].computedLogicalWidth - cellLogicalWidth;
+                m_layoutStruct[i].computedLogicalWidth = cellLogicalWidth;
             }
         }
     }
@@ -601,42 +583,41 @@ void AutoTableLayout::layout()
     // now satisfy variable
     if (available > 0 && numAuto) {
         available += allocAuto; // this gets redistributed
-        for (int i = 0; i < nEffCols; i++) {
-            Length &width = m_layoutStruct[i].effWidth;
-            if (width.isAuto() && totalAuto != 0 && !m_layoutStruct[i].emptyCellsOnly) {
-                int w = max(m_layoutStruct[i].calcWidth, static_cast<int>(available * static_cast<float>(m_layoutStruct[i].effMaxWidth) / totalAuto));
-                available -= w;
-                totalAuto -= m_layoutStruct[i].effMaxWidth;
-                m_layoutStruct[i].calcWidth = w;
+        for (size_t i = 0; i < nEffCols; ++i) {
+            Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+            if (logicalWidth.isAuto() && totalAuto && !m_layoutStruct[i].emptyCellsOnly) {
+                int cellLogicalWidth = max(m_layoutStruct[i].computedLogicalWidth, static_cast<int>(available * static_cast<float>(m_layoutStruct[i].effectiveMaxLogicalWidth) / totalAuto));
+                available -= cellLogicalWidth;
+                totalAuto -= m_layoutStruct[i].effectiveMaxLogicalWidth;
+                m_layoutStruct[i].computedLogicalWidth = cellLogicalWidth;
             }
         }
     }
 
     // spread over fixed columns
     if (available > 0 && numFixed) {
-        // still have some width to spread, distribute to fixed columns
-        for (int i = 0; i < nEffCols; i++) {
-            Length &width = m_layoutStruct[i].effWidth;
-            if (width.isFixed()) {
-                int w = static_cast<int>(available * static_cast<float>(m_layoutStruct[i].effMaxWidth) / totalFixed);
-                available -= w;
-                totalFixed -= m_layoutStruct[i].effMaxWidth;
-                m_layoutStruct[i].calcWidth += w;
+        for (size_t i = 0; i < nEffCols; ++i) {
+            Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+            if (logicalWidth.isFixed()) {
+                int cellLogicalWidth = static_cast<int>(available * static_cast<float>(m_layoutStruct[i].effectiveMaxLogicalWidth) / totalFixed);
+                available -= cellLogicalWidth;
+                totalFixed -= m_layoutStruct[i].effectiveMaxLogicalWidth;
+                m_layoutStruct[i].computedLogicalWidth += cellLogicalWidth;
             }
         }
     }
 
     // spread over percent colums
     if (available > 0 && m_hasPercent && totalPercent < 100 * percentScaleFactor) {
-        // still have some width to spread, distribute weighted to percent columns
-        for (int i = 0; i < nEffCols; i++) {
-            Length &width = m_layoutStruct[i].effWidth;
-            if (width.isPercent()) {
-                int w = available * width.rawValue() / totalPercent;
-                available -= w;
-                totalPercent -= width.rawValue();
-                m_layoutStruct[i].calcWidth += w;
-                if (!available || !totalPercent) break;
+        for (size_t i = 0; i < nEffCols; ++i) {
+            Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+            if (logicalWidth.isPercent()) {
+                int cellLogicalWidth = available * logicalWidth.rawValue() / totalPercent;
+                available -= cellLogicalWidth;
+                totalPercent -= logicalWidth.rawValue();
+                m_layoutStruct[i].computedLogicalWidth += cellLogicalWidth;
+                if (!available || !totalPercent)
+                    break;
             }
         }
     }
@@ -645,15 +626,14 @@ void AutoTableLayout::layout()
     if (available > 0 && nEffCols > numAutoEmptyCellsOnly) {
         int total = nEffCols - numAutoEmptyCellsOnly;
         // still have some width to spread
-        int i = nEffCols;
-        while (i--) {
+        for (int i = nEffCols - 1; i >= 0; --i) {
             // variable columns with empty cells only don't get any width
-            if (m_layoutStruct[i].effWidth.isAuto() && m_layoutStruct[i].emptyCellsOnly)
+            if (m_layoutStruct[i].effectiveLogicalWidth.isAuto() && m_layoutStruct[i].emptyCellsOnly)
                 continue;
-            int w = available / total;
-            available -= w;
+            int cellLogicalWidth = available / total;
+            available -= cellLogicalWidth;
             total--;
-            m_layoutStruct[i].calcWidth += w;
+            m_layoutStruct[i].computedLogicalWidth += cellLogicalWidth;
         }
     }
 
@@ -667,21 +647,21 @@ void AutoTableLayout::layout()
         // (4) Percent
         // This is basically the reverse of how we grew the cells.
         if (available < 0) {
-            int mw = 0;
-            for (int i = nEffCols-1; i >= 0; i--) {
-                Length &width = m_layoutStruct[i].effWidth;
-                if (width.isAuto())
-                    mw += m_layoutStruct[i].calcWidth - m_layoutStruct[i].effMinWidth;
+            int logicalWidthBeyondMin = 0;
+            for (int i = nEffCols - 1; i >= 0; --i) {
+                Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+                if (logicalWidth.isAuto())
+                    logicalWidthBeyondMin += m_layoutStruct[i].computedLogicalWidth - m_layoutStruct[i].effectiveMinLogicalWidth;
             }
             
-            for (int i = nEffCols-1; i >= 0 && mw > 0; i--) {
-                Length &width = m_layoutStruct[i].effWidth;
-                if (width.isAuto()) {
-                    int minMaxDiff = m_layoutStruct[i].calcWidth-m_layoutStruct[i].effMinWidth;
-                    int reduce = available * minMaxDiff / mw;
-                    m_layoutStruct[i].calcWidth += reduce;
+            for (int i = nEffCols - 1; i >= 0 && logicalWidthBeyondMin > 0; --i) {
+                Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+                if (logicalWidth.isAuto()) {
+                    int minMaxDiff = m_layoutStruct[i].computedLogicalWidth - m_layoutStruct[i].effectiveMinLogicalWidth;
+                    int reduce = available * minMaxDiff / logicalWidthBeyondMin;
+                    m_layoutStruct[i].computedLogicalWidth += reduce;
                     available -= reduce;
-                    mw -= minMaxDiff;
+                    logicalWidthBeyondMin -= minMaxDiff;
                     if (available >= 0)
                         break;
                 }
@@ -689,21 +669,21 @@ void AutoTableLayout::layout()
         }
 
         if (available < 0) {
-            int mw = 0;
-            for (int i = nEffCols-1; i >= 0; i--) {
-                Length& width = m_layoutStruct[i].effWidth;
-                if (width.isRelative())
-                    mw += m_layoutStruct[i].calcWidth - m_layoutStruct[i].effMinWidth;
+            int logicalWidthBeyondMin = 0;
+            for (int i = nEffCols - 1; i >= 0; --i) {
+                Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+                if (logicalWidth.isRelative())
+                    logicalWidthBeyondMin += m_layoutStruct[i].computedLogicalWidth - m_layoutStruct[i].effectiveMinLogicalWidth;
             }
             
-            for (int i = nEffCols-1; i >= 0 && mw > 0; i--) {
-                Length& width = m_layoutStruct[i].effWidth;
-                if (width.isRelative()) {
-                    int minMaxDiff = m_layoutStruct[i].calcWidth-m_layoutStruct[i].effMinWidth;
-                    int reduce = available * minMaxDiff / mw;
-                    m_layoutStruct[i].calcWidth += reduce;
+            for (int i = nEffCols - 1; i >= 0 && logicalWidthBeyondMin > 0; --i) {
+                Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+                if (logicalWidth.isRelative()) {
+                    int minMaxDiff = m_layoutStruct[i].computedLogicalWidth - m_layoutStruct[i].effectiveMinLogicalWidth;
+                    int reduce = available * minMaxDiff / logicalWidthBeyondMin;
+                    m_layoutStruct[i].computedLogicalWidth += reduce;
                     available -= reduce;
-                    mw -= minMaxDiff;
+                    logicalWidthBeyondMin -= minMaxDiff;
                     if (available >= 0)
                         break;
                 }
@@ -711,21 +691,21 @@ void AutoTableLayout::layout()
         }
 
         if (available < 0) {
-            int mw = 0;
-            for (int i = nEffCols-1; i >= 0; i--) {
-                Length& width = m_layoutStruct[i].effWidth;
-                if (width.isFixed())
-                    mw += m_layoutStruct[i].calcWidth - m_layoutStruct[i].effMinWidth;
+            int logicalWidthBeyondMin = 0;
+            for (int i = nEffCols - 1; i >= 0; --i) {
+                Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+                if (logicalWidth.isFixed())
+                    logicalWidthBeyondMin += m_layoutStruct[i].computedLogicalWidth - m_layoutStruct[i].effectiveMinLogicalWidth;
             }
             
-            for (int i = nEffCols-1; i >= 0 && mw > 0; i--) {
-                Length& width = m_layoutStruct[i].effWidth;
-                if (width.isFixed()) {
-                    int minMaxDiff = m_layoutStruct[i].calcWidth-m_layoutStruct[i].effMinWidth;
-                    int reduce = available * minMaxDiff / mw;
-                    m_layoutStruct[i].calcWidth += reduce;
+            for (int i = nEffCols - 1; i >= 0 && logicalWidthBeyondMin > 0; --i) {
+                Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+                if (logicalWidth.isFixed()) {
+                    int minMaxDiff = m_layoutStruct[i].computedLogicalWidth - m_layoutStruct[i].effectiveMinLogicalWidth;
+                    int reduce = available * minMaxDiff / logicalWidthBeyondMin;
+                    m_layoutStruct[i].computedLogicalWidth += reduce;
                     available -= reduce;
-                    mw -= minMaxDiff;
+                    logicalWidthBeyondMin -= minMaxDiff;
                     if (available >= 0)
                         break;
                 }
@@ -733,21 +713,21 @@ void AutoTableLayout::layout()
         }
 
         if (available < 0) {
-            int mw = 0;
-            for (int i = nEffCols-1; i >= 0; i--) {
-                Length& width = m_layoutStruct[i].effWidth;
-                if (width.isPercent())
-                    mw += m_layoutStruct[i].calcWidth - m_layoutStruct[i].effMinWidth;
+            int logicalWidthBeyondMin = 0;
+            for (int i = nEffCols - 1; i >= 0; --i) {
+                Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+                if (logicalWidth.isPercent())
+                    logicalWidthBeyondMin += m_layoutStruct[i].computedLogicalWidth - m_layoutStruct[i].effectiveMinLogicalWidth;
             }
             
-            for (int i = nEffCols-1; i >= 0 && mw > 0; i--) {
-                Length& width = m_layoutStruct[i].effWidth;
-                if (width.isPercent()) {
-                    int minMaxDiff = m_layoutStruct[i].calcWidth-m_layoutStruct[i].effMinWidth;
-                    int reduce = available * minMaxDiff / mw;
-                    m_layoutStruct[i].calcWidth += reduce;
+            for (int i = nEffCols-1; i >= 0 && logicalWidthBeyondMin > 0; i--) {
+                Length& logicalWidth = m_layoutStruct[i].effectiveLogicalWidth;
+                if (logicalWidth.isPercent()) {
+                    int minMaxDiff = m_layoutStruct[i].computedLogicalWidth - m_layoutStruct[i].effectiveMinLogicalWidth;
+                    int reduce = available * minMaxDiff / logicalWidthBeyondMin;
+                    m_layoutStruct[i].computedLogicalWidth += reduce;
                     available -= reduce;
-                    mw -= minMaxDiff;
+                    logicalWidthBeyondMin -= minMaxDiff;
                     if (available >= 0)
                         break;
                 }
@@ -756,9 +736,9 @@ void AutoTableLayout::layout()
     }
 
     int pos = 0;
-    for (int i = 0; i < nEffCols; i++) {
+    for (size_t i = 0; i < nEffCols; ++i) {
         m_table->columnPositions()[i] = pos;
-        pos += m_layoutStruct[i].calcWidth + m_table->hBorderSpacing();
+        pos += m_layoutStruct[i].computedLogicalWidth + m_table->hBorderSpacing();
     }
     m_table->columnPositions()[m_table->columnPositions().size() - 1] = pos;
 }
