@@ -1,3 +1,17 @@
+2010-11-02  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by Adam Barth.
+
+        For unnamed frames, window.name returns a generated name
+        https://bugs.webkit.org/show_bug.cgi?id=6751
+
+        Part 1 of 2.
+
+        Substitute FrameTree::uniqueName() for FrameTree::name() in the Mac port. 
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame name]):
+
 2010-11-01  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

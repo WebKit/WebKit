@@ -149,7 +149,7 @@ void HistoryController::saveDocumentState()
     ASSERT(document);
     
     if (item->isCurrentDocument(document)) {
-        LOG(Loading, "WebCoreLoading %s: saving form state to %p", m_frame->tree()->name().string().utf8().data(), item);
+        LOG(Loading, "WebCoreLoading %s: saving form state to %p", m_frame->tree()->uniqueName().string().utf8().data(), item);
         item->setDocumentState(document->formElementsState());
     }
 }
@@ -188,7 +188,7 @@ void HistoryController::restoreDocumentState()
     if (!itemToRestore)
         return;
 
-    LOG(Loading, "WebCoreLoading %s: restoring form state from %p", m_frame->tree()->name().string().utf8().data(), itemToRestore);
+    LOG(Loading, "WebCoreLoading %s: restoring form state from %p", m_frame->tree()->uniqueName().string().utf8().data(), itemToRestore);
     doc->setStateForNewFormElements(itemToRestore->documentState());
 }
 
@@ -480,10 +480,10 @@ PassRefPtr<HistoryItem> HistoryController::createItem(bool useOriginal)
         originalURL = blankURL();
     
     Frame* parentFrame = m_frame->tree()->parent();
-    String parent = parentFrame ? parentFrame->tree()->name() : "";
+    String parent = parentFrame ? parentFrame->tree()->uniqueName() : "";
     String title = documentLoader ? documentLoader->title() : "";
 
-    RefPtr<HistoryItem> item = HistoryItem::create(url, m_frame->tree()->name(), parent, title);
+    RefPtr<HistoryItem> item = HistoryItem::create(url, m_frame->tree()->uniqueName(), parent, title);
     item->setOriginalURLString(originalURL.string());
 
     if (!unreachableURL.isEmpty() || !documentLoader || documentLoader->response().httpStatusCode() >= 400)
@@ -598,7 +598,7 @@ void HistoryController::recursiveGoToItem(HistoryItem* item, HistoryItem* fromIt
 // Helper method that determines whether the current frame tree matches given history item's.
 bool HistoryController::currentFramesMatchItem(HistoryItem* item) const
 {
-    if ((!m_frame->tree()->name().isEmpty() || !item->target().isEmpty()) && m_frame->tree()->name() != item->target())
+    if ((!m_frame->tree()->uniqueName().isEmpty() || !item->target().isEmpty()) && m_frame->tree()->uniqueName() != item->target())
         return false;
         
     const HistoryItemVector& childItems = item->children();
