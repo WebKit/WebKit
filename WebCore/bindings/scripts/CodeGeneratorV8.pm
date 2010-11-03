@@ -228,7 +228,6 @@ sub GetSVGPropertyTypes
         $implIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
     } elsif ($svgNativeType =~ /SVGStringListPropertyTearOff/) {
         $svgListPropertyType = "SVGStringList";
-        $implIncludes{"SVGStringListPropertyTearOff.h"} = 1;
         $implIncludes{"$svgWrappedNativeType.h"} = 1;
     }
 
@@ -275,10 +274,12 @@ sub GenerateHeader
     push(@headerContent, "\nnamespace WebCore {\n");
     push(@headerContent, "\ntemplate<typename PODType> class V8SVGPODTypeWrapper;\n") if $podType;
     push(@headerContent, "\ntemplate<typename PropertyType> class SVGPropertyTearOff;\n") if $svgPropertyType;
-    if ($svgListPropertyType eq "SVGStringList") {
-        push(@headerContent, "\nclass SVGStringListPropertyTearOff;\n");
-    } else {
-        push(@headerContent, "\ntemplate<typename PropertyType> class SVGListPropertyTearOff;\n");
+    if ($svgListPropertyType) {
+        if ($svgListPropertyType eq "SVGStringList") {
+            push(@headerContent, "\nclass SVGStringListPropertyTearOff;\n");
+        } else {
+            push(@headerContent, "\ntemplate<typename PropertyType> class SVGListPropertyTearOff;\n");
+        }
     }
     push(@headerContent, "\nclass $className {\n");
 
@@ -751,7 +752,7 @@ END
         }
     } elsif ($svgNativeType) {
         my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($implClassName);
-        if ($svgWrappedNativeType =~ /List$/) {
+        if ($svgWrappedNativeType =~ /List$/ or $implClassName eq "SVGStringList") {
             push(@implContentDecls, <<END);
     $svgNativeType* imp = V8${implClassName}::toNative(info.Holder());
 END
@@ -931,6 +932,7 @@ END
         $implIncludes{"V8$attrType.h"} = 1;
         my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($attrType);
         if ($tearOffType eq "SVGStringListPropertyTearOff") {
+            $implIncludes{"SVGStringListPropertyTearOff.h"} = 1;
             my $extraImp = "GetOwnerElementForType<$implClassName, IsDerivedFromSVGElement<$implClassName>::value>::ownerElement(imp), ";
             push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($extraImp$result)));\n");
         } else {
