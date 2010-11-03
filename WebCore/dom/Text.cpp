@@ -239,8 +239,8 @@ bool Text::rendererIsNeeded(RenderStyle *style)
 
 RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle*)
 {
-    Node* parentOrHost = parentOrHostNode();
 #if ENABLE(SVG)
+    Node* parentOrHost = parentOrHostNode();
     if (parentOrHost->isSVGElement()
 #if ENABLE(SVG_FOREIGN_OBJECT)
         && !parentOrHost->hasTagName(SVGNames::foreignObjectTag)
