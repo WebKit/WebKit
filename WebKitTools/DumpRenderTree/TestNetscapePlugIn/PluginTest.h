@@ -68,6 +68,8 @@ public:
     NPObject* NPN_CreateObject(NPClass*);
     bool NPN_RemoveProperty(NPObject*, NPIdentifier propertyName);
     
+    void executeScript(const char*);
+
     template<typename TestClassTy> class Register {
     public:
         Register(const std::string& identifier)

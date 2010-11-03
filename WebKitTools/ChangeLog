@@ -1,3 +1,51 @@
+2010-11-03  Adam Roben  <aroben@apple.com>
+
+        Add a plugin test that evaluates JS after removing the plugin element
+        from the document
+
+        This test replaces platform/win/plugins/plugin-delayed-destroy.html.
+        That test was made to prevent a crash very similar to this one, but
+        unfortunately tested only the mechanism that prevented the crash and
+        not whether the crash itself was prevented. Since WebKit2 uses a
+        different mechanism to prevent the crash, the test was failing even
+        though WebKit2 was not vulnerable to the crash. This new test crashes
+        if there is no mechanism in place to prevent it and passes in both
+        WebKit1 and WebKit2.
+
+        Fixes <http://webkit.org/b/46711> <rdar://problem/8485903>
+        platform/win/plugins/plugin-delayed-destroy.html fails in WebKit2
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+        Added new file.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (pluginDeallocate): Make sure we delete the PluginTest object. This
+        prevents a leak and also allows us to test the crash.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.cpp:
+        (PluginTest::executeScript): Made this into a non-static member
+        function.
+
+        (PluginTest::waitUntilDone):
+        (PluginTest::notifyDone):
+        Updated for changes to executeScript.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginTest.h: Added executeScript.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp: Added.
+        (EvaluateJSAfterRemovingPluginElement::EvaluateJSAfterRemovingPluginElement):
+        Initialize ourselves and tell the test harness to wait.
+        (EvaluateJSAfterRemovingPluginElement::NPP_DestroyStream): Remove our
+        plugin element from the document, then execute some JavaScript. If
+        WebKit does not have appropriate mechanisms in place, we'll be
+        destroyed inside the first call to executeScript and crash on the
+        second call.
+
 2010-11-02  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Tony Chang.

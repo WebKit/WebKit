@@ -375,6 +375,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\EvaluateJSAfterRemovingPluginElement.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
 				>
 			</File>

@@ -27,6 +27,7 @@
 
 #include "PluginObject.h"
 
+#include "PluginTest.h"
 #include "TestObject.h"
 #include <assert.h>
 #include <stdarg.h>
@@ -990,6 +991,7 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
 static void pluginDeallocate(NPObject* header)
 {
     PluginObject* plugin = reinterpret_cast<PluginObject*>(header);
+    delete plugin->pluginTest;
     if (plugin->testObject)
         browser->releaseobject(plugin->testObject);
     if (plugin->rememberedObject)

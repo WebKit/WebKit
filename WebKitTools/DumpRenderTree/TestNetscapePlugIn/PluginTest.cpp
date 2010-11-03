@@ -101,28 +101,28 @@ bool PluginTest::NPN_RemoveProperty(NPObject* npObject, NPIdentifier propertyNam
     return browser->removeproperty(m_npp, npObject, propertyName);
 }
 
-static void executeScript(NPP npp, const char* script)
+void PluginTest::executeScript(const char* script)
 {
     NPObject* windowScriptObject;
-    browser->getvalue(npp, NPNVWindowNPObject, &windowScriptObject);
+    browser->getvalue(m_npp, NPNVWindowNPObject, &windowScriptObject);
 
     NPString npScript;
     npScript.UTF8Characters = script;
     npScript.UTF8Length = strlen(script);
 
     NPVariant browserResult;
-    browser->evaluate(npp, windowScriptObject, &npScript, &browserResult);
+    browser->evaluate(m_npp, windowScriptObject, &npScript, &browserResult);
     browser->releasevariantvalue(&browserResult);
 }
 
 void PluginTest::waitUntilDone()
 {
-    executeScript(m_npp, "layoutTestController.waitUntilDone()");
+    executeScript("layoutTestController.waitUntilDone()");
 }
 
 void PluginTest::notifyDone()
 {
-    executeScript(m_npp, "layoutTestController.notifyDone()");
+    executeScript("layoutTestController.notifyDone()");
 }
 
 void PluginTest::registerCreateTestFunction(const string& identifier, CreateTestFunction createTestFunction)
