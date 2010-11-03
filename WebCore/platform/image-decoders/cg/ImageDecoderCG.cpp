@@ -31,11 +31,16 @@
 
 namespace WebCore {
 
+static RGBA32Buffer::PixelData* getPtrAsPixelData(CFMutableDataRef data)
+{
+    return data ? reinterpret_cast<RGBA32Buffer::PixelData*>(CFDataGetMutableBytePtr(data)) : 0;
+}
+   
 void RGBA32Buffer::copyReferenceToBitmapData(const RGBA32Buffer& other)
 {
     ASSERT(this != &other);
     m_backingStore = other.m_backingStore;
-    m_bytes = reinterpret_cast<PixelData*>(CFDataGetMutableBytePtr(m_backingStore.get()));
+    m_bytes = getPtrAsPixelData(m_backingStore.get());
     // FIXME: The rest of this function seems redundant with RGBA32Buffer::copyBitmapData.
     m_size = other.m_size;
     setHasAlpha(other.m_hasAlpha);
@@ -47,7 +52,7 @@ bool RGBA32Buffer::copyBitmapData(const RGBA32Buffer& other)
         return true;
 
     m_backingStore.adoptCF(CFDataCreateMutableCopy(kCFAllocatorDefault, 0, other.m_backingStore.get()));
-    m_bytes = reinterpret_cast<PixelData*>(CFDataGetMutableBytePtr(m_backingStore.get()));
+    m_bytes = getPtrAsPixelData(m_backingStore.get());
     m_size = other.m_size;
     setHasAlpha(other.m_hasAlpha);
     return true;
