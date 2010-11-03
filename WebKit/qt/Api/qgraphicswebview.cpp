@@ -140,6 +140,7 @@ void QGraphicsWebViewPrivate::updateResizesToContentsForPage()
         QObject::disconnect(page->mainFrame(), SIGNAL(contentsSizeChanged(QSize)),
                          q, SLOT(_q_contentsSizeChanged(const QSize&)));
     }
+    page->d->page->settings()->setShouldDelegateScrolling(resizesToContents);
 }
 
 void QGraphicsWebViewPrivate::_q_contentsSizeChanged(const QSize& size)
@@ -410,6 +411,8 @@ void QGraphicsWebViewPrivate::detachCurrentPage()
 {
     if (!page)
         return;
+
+    page->d->page->settings()->setShouldDelegateScrolling(false);
 
     page->d->view.clear();
 
@@ -821,7 +824,6 @@ void QGraphicsWebView::setResizesToContents(bool enabled)
     if (d->resizesToContents == enabled)
         return;
     d->resizesToContents = enabled;
-    d->page->d->page->settings()->setShouldDelegateScrolling(enabled);
     if (d->page)
         d->updateResizesToContentsForPage();
 }
