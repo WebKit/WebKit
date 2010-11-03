@@ -23,6 +23,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAnimatedPropertyMacros.h"
+#include "SVGStringList.h"
 #include "SVGStyledElement.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
@@ -30,7 +31,6 @@
 
 namespace WebCore {
 
-    class SVGStringList;
     class SVGViewElement : public SVGStyledElement,
                            public SVGExternalResourcesRequired,
                            public SVGFitToViewBox,
@@ -38,7 +38,7 @@ namespace WebCore {
     public:
         static PassRefPtr<SVGViewElement> create(const QualifiedName&, Document*);
 
-        SVGStringList* viewTarget() const;
+        SVGStringList& viewTarget() { return m_viewTarget; }
 
     private:
         SVGViewElement(const QualifiedName&, Document*);
@@ -54,8 +54,8 @@ namespace WebCore {
         // SVGFitToViewBox
         DECLARE_ANIMATED_PROPERTY_NEW(SVGViewElement, SVGNames::viewBoxAttr, FloatRect, ViewBox, viewBox)
         DECLARE_ANIMATED_PROPERTY_NEW(SVGViewElement, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
- 
-        mutable RefPtr<SVGStringList> m_viewTarget;
+
+        SVGStringList m_viewTarget;
     };
 
 } // namespace WebCore

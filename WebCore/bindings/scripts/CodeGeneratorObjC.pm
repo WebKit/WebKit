@@ -690,6 +690,8 @@ sub GetSVGPropertyTypes
     } elsif ($svgNativeType =~ /SVGListPropertyTearOff/) {
         $svgListPropertyType = "WebCore::$svgWrappedNativeType";
         $svgListPropertyType =~ s/</\<WebCore::/;
+    } elsif ($svgNativeType =~ /SVGStringListPropertyTearOff/) {
+        $svgListPropertyType = "WebCore::SVGStringList";
     }
 
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
@@ -1024,7 +1026,13 @@ sub GenerateHeader
 
         push(@internalHeaderContent, "\n#import <WebCore/$className.h>\n\n");
         push(@internalHeaderContent, "#import <WebCore/SVGAnimatedPropertyTearOff.h>\n\n") if $svgPropertyType;
-        push(@internalHeaderContent, "#import <WebCore/SVGAnimatedListPropertyTearOff.h>\n\n") if $svgListPropertyType;
+        if ($svgListPropertyType) {
+            if ($svgListPropertyType eq "WebCore::SVGStringList") {
+                push(@internalHeaderContent, "#import <WebCore/SVGStringListPropertyTearOff.h>\n\n");
+            } else {
+                push(@internalHeaderContent, "#import <WebCore/SVGAnimatedListPropertyTearOff.h>\n\n");
+            }
+        }
         push(@internalHeaderContent, $interfaceAvailabilityVersionCheck) if length $interfaceAvailabilityVersion;
 
         if ($interfaceName eq "Node") {
@@ -1319,7 +1327,12 @@ sub GenerateImplementation
             } elsif (ConversionNeeded($attribute->signature->type)) {
                 if ($codeGenerator->IsSVGTypeNeedingTearOff($attribute->signature->type) and not $implClassName =~ /List$/) {
                     my $idlTypeWithNamespace = GetSVGTypeWithNamespace($attribute->signature->type);
-                    $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($getterContentHead";
+                    if ($idlTypeWithNamespace eq "WebCore::SVGStringListPropertyTearOff") {
+                        my $extraImp = "WebCore::GetOwnerElementForType<$implClassNameWithNamespace, WebCore::IsDerivedFromSVGElement<$implClassNameWithNamespace>::value>::ownerElement(IMPL), ";
+                        $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($extraImp$getterContentHead";
+                    } else {
+                        $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($getterContentHead";
+                    }
                     $getterContentTail .= ")))";
                 } else {
                     $getterContentHead = "kit(WTF::getPtr($getterContentHead";

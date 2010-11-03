@@ -66,7 +66,7 @@ private:
     DECLARE_ANIMATED_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::yAttr, SVGLength, Y, y)
     DECLARE_ANIMATED_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::widthAttr, SVGLength, Width, width)
     DECLARE_ANIMATED_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::heightAttr, SVGLength, Height, height)
-    DECLARE_ANIMATED_PROPERTY(SVGFilterPrimitiveStandardAttributes, SVGNames::resultAttr, String, Result, result)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterPrimitiveStandardAttributes, SVGNames::resultAttr, String, Result, result)
 };
 
 } // namespace WebCore

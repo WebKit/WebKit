@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,23 +22,32 @@
 #define SVGStringList_h
 
 #if ENABLE(SVG)
-#include "PlatformString.h"
-#include "SVGList.h"
+#include "QualifiedName.h"
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-    class SVGStringList : public SVGList<String> {
-    public:
-        static PassRefPtr<SVGStringList> create(const QualifiedName& attributeName) { return adoptRef(new SVGStringList(attributeName)); }
+class SVGElement;
 
-        void reset(const String& str);
-        void parse(const String& data, UChar delimiter = ',');
-        
-    private:
-        SVGStringList(const QualifiedName&);
-    };
+class SVGStringList : public Vector<String> {
+public:
+    SVGStringList(const QualifiedName& attributeName)
+        : m_attributeName(attributeName)
+    {
+    }
+
+    void reset(const String&);
+    void parse(const String&, UChar delimiter = ',');
+
+    // Only used by SVGStringListPropertyTearOff.
+    void commitChange(SVGElement* contextElement);
+
+private:
+    const QualifiedName& m_attributeName;
+};
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
-#endif // SVGStringList_h
+#endif

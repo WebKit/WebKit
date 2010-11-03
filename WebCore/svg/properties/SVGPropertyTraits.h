@@ -28,6 +28,7 @@
 #include "SVGLengthList.h"
 #include "SVGNumberList.h"
 #include "SVGPreserveAspectRatio.h"
+#include "SVGStringList.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -115,6 +116,11 @@ template<>
 struct SVGPropertyTraits<String> {
     static String initialValue() { return String(); }
     static String toString(const String& type) { return type; }
+};
+
+template<>
+struct SVGPropertyTraits<SVGStringList> {
+    typedef String ListItemType;
 };
 
 }

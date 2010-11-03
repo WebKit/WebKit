@@ -58,7 +58,7 @@ namespace WebCore {
         DECLARE_ANIMATED_PROPERTY_NEW(SVGCursorElement, SVGNames::yAttr, SVGLength, Y, y)
 
         // SVGURIReference
-        DECLARE_ANIMATED_PROPERTY(SVGCursorElement, XLinkNames::hrefAttr, String, Href, href)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGCursorElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGCursorElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

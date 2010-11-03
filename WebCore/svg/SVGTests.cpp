@@ -26,63 +26,41 @@
 #include "Attribute.h"
 #include "DOMImplementation.h"
 #include "Language.h"
-#include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
 
 namespace WebCore {
 
 SVGTests::SVGTests()
+    : m_features(SVGNames::requiredFeaturesAttr)
+    , m_extensions(SVGNames::requiredExtensionsAttr)
+    , m_systemLanguage(SVGNames::systemLanguageAttr)
 {
 }
 
-SVGTests::~SVGTests()
+bool SVGTests::hasExtension(const String&) const
 {
-}
-
-SVGStringList* SVGTests::requiredFeatures() const
-{
-    if (!m_features)
-        m_features = SVGStringList::create(SVGNames::requiredFeaturesAttr);
-
-    return m_features.get();
-}
-
-SVGStringList* SVGTests::requiredExtensions() const
-{
-    if (!m_extensions)
-        m_extensions = SVGStringList::create(SVGNames::requiredExtensionsAttr);
-
-    return m_extensions.get();
-}
-
-SVGStringList* SVGTests::systemLanguage() const
-{
-    if (!m_systemLanguage)
-        m_systemLanguage = SVGStringList::create(SVGNames::systemLanguageAttr);
-
-    return m_systemLanguage.get();
+    // FIXME: Implement me!
+    return false;
 }
 
 bool SVGTests::isValid() const
 {
-    ExceptionCode ec = 0;
-
-    if (m_features) {
-        for (unsigned long i = 0; i < m_features->numberOfItems(); i++) {
-            String value = m_features->getItem(i, ec);
-            if (value.isEmpty() || !DOMImplementation::hasFeature(value, String()))
-                return false;
-        }
+    unsigned featuresSize = m_features.size();
+    for (unsigned i = 0; i < featuresSize; ++i) {
+        String value = m_features.at(i);
+        if (value.isEmpty() || !DOMImplementation::hasFeature(value, String()))
+            return false;
     }
 
-    if (m_systemLanguage) {
-        for (unsigned long i = 0; i < m_systemLanguage->numberOfItems(); i++)
-            if (m_systemLanguage->getItem(i, ec) != defaultLanguage().substring(0, 2))
-                return false;
+    unsigned systemLanguageSize = m_systemLanguage.size();
+    for (unsigned i = 0; i < systemLanguageSize; ++i) {
+        String value = m_systemLanguage.at(i);
+        if (value != defaultLanguage().substring(0, 2))
+            return false;
     }
 
-    if (m_extensions && m_extensions->numberOfItems() > 0)
+    if (!m_extensions.isEmpty())
         return false;
 
     return true;
@@ -91,13 +69,13 @@ bool SVGTests::isValid() const
 bool SVGTests::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::requiredFeaturesAttr) {
-        requiredFeatures()->reset(attr->value());
+        m_features.reset(attr->value());
         return true;
     } else if (attr->name() == SVGNames::requiredExtensionsAttr) {
-        requiredExtensions()->reset(attr->value());
+        m_extensions.reset(attr->value());
         return true;
     } else if (attr->name() == SVGNames::systemLanguageAttr) {
-        systemLanguage()->reset(attr->value());
+        m_systemLanguage.reset(attr->value());
         return true;
     }
     
@@ -106,9 +84,9 @@ bool SVGTests::parseMappedAttribute(Attribute* attr)
 
 bool SVGTests::isKnownAttribute(const QualifiedName& attrName)
 {
-    return (attrName == SVGNames::requiredFeaturesAttr ||
-            attrName == SVGNames::requiredExtensionsAttr ||
-            attrName == SVGNames::systemLanguageAttr);
+    return attrName == SVGNames::requiredFeaturesAttr
+        || attrName == SVGNames::requiredExtensionsAttr
+        || attrName == SVGNames::systemLanguageAttr;
 }
 
 }

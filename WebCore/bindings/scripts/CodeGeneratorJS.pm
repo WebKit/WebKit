@@ -2506,6 +2506,9 @@ sub GetSVGPropertyTypes
         $svgListPropertyType = $svgWrappedNativeType;
         $headerIncludes{"$svgWrappedNativeType.h"} = 1;
         $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
+    } elsif ($svgNativeType =~ /SVGStringListPropertyTearOff/) {
+        $svgListPropertyType = "SVGStringList";
+        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
     }
 
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
@@ -2679,7 +2682,13 @@ sub NativeToJSValue
         # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
         $value = "static_cast<" . GetNativeType($type) . ">($value)";
     } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $implClassName =~ /List$/) {
-        $value = $codeGenerator->GetSVGTypeNeedingTearOff($type) . "::create($value)";
+        my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
+        if ($tearOffType eq "SVGStringListPropertyTearOff") {
+            my $extraImp = "GetOwnerElementForType<$implClassName, IsDerivedFromSVGElement<$implClassName>::value>::ownerElement(imp), ";
+            $value = $codeGenerator->GetSVGTypeNeedingTearOff($type) . "::create($extraImp$value)";
+        } else {
+            $value = $codeGenerator->GetSVGTypeNeedingTearOff($type) . "::create($value)";
+        }
     }
 
     return "toJS(exec, $globalObject, WTF::getPtr($value))";

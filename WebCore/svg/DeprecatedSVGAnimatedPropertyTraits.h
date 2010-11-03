@@ -30,18 +30,6 @@ namespace WebCore {
 template<typename Type>
 struct DeprecatedSVGAnimatedPropertyTraits : public Noncopyable { };
 
-// SVGAnimatedString
-template<>
-struct DeprecatedSVGAnimatedPropertyTraits<String> : public Noncopyable {
-    typedef const String& PassType;
-    typedef String ReturnType;
-    typedef String StoredType;
-
-    static ReturnType null() { return String(); }
-    static ReturnType toReturnType(const StoredType& type) { return type; }
-    static String toString(PassType type) { return type; }
-};
-
 // SVGAnimatedTransformList
 template<>
 struct DeprecatedSVGAnimatedPropertyTraits<SVGTransformList*> : public Noncopyable {

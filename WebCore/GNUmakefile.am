@@ -3038,6 +3038,7 @@ webcore_sources += \
 	WebCore/svg/properties/SVGProperty.h \
 	WebCore/svg/properties/SVGPropertyTearOff.h \
 	WebCore/svg/properties/SVGPropertyTraits.h \
+	WebCore/svg/properties/SVGStringListPropertyTearOff.h \
 	WebCore/svg/RadialGradientAttributes.h \
 	WebCore/svg/SVGAElement.cpp \
 	WebCore/svg/SVGAElement.h \
@@ -3061,6 +3062,7 @@ webcore_sources += \
 	WebCore/svg/SVGAnimatedPoints.h \
 	WebCore/svg/SVGAnimatedPreserveAspectRatio.h \
 	WebCore/svg/SVGAnimatedRect.h \
+	WebCore/svg/SVGAnimatedString.h \
 	WebCore/svg/SVGAnimateElement.cpp \
 	WebCore/svg/SVGAnimateElement.h \
 	WebCore/svg/SVGAnimateMotionElement.cpp \

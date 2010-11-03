@@ -76,7 +76,7 @@ namespace WebCore {
         virtual void dispatchErrorEvent();
 
         // SVGURIReference
-        DECLARE_ANIMATED_PROPERTY(SVGScriptElement, XLinkNames::hrefAttr, String, Href, href)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGScriptElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGScriptElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

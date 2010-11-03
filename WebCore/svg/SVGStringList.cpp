@@ -23,29 +23,31 @@
 #if ENABLE(SVG)
 #include "SVGStringList.h"
 
+#include "SVGElement.h"
 #include "SVGParserUtilities.h"
 
 namespace WebCore {
 
-SVGStringList::SVGStringList(const QualifiedName& attributeName)
-    : SVGList<String>(attributeName)
+void SVGStringList::commitChange(SVGElement* contextElement)
 {
+    ASSERT(contextElement);
+    contextElement->invalidateSVGAttributes();
+    contextElement->svgAttributeChanged(m_attributeName);
 }
 
-void SVGStringList::reset(const String& str)
+void SVGStringList::reset(const String& string)
 {
-    ExceptionCode ec = 0;
+    parse(string, ' ');
 
-    parse(str, ' ');
-    if (numberOfItems() == 0)
-        appendItem(String(""), ec); // Create empty string...
+    // Add empty string, if list is empty.
+    if (isEmpty())
+        append(String(""));
 }
 
 void SVGStringList::parse(const String& data, UChar delimiter)
 {
     // TODO : more error checking/reporting
-    ExceptionCode ec = 0;
-    clear(ec);
+    clear();
 
     const UChar* ptr = data.characters();
     const UChar* end = ptr + data.length();
@@ -55,7 +57,7 @@ void SVGStringList::parse(const String& data, UChar delimiter)
             ptr++;
         if (ptr == start)
             break;
-        appendItem(String(start, ptr - start), ec);
+        append(String(start, ptr - start));
         skipOptionalSpacesOrDelimiter(ptr, end, delimiter);
     }
 }

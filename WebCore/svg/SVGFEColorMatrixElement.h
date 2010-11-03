@@ -40,7 +40,7 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-    DECLARE_ANIMATED_PROPERTY(SVGFEColorMatrixElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEColorMatrixElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEColorMatrixElement, SVGNames::typeAttr, int, Type, type)
     DECLARE_ANIMATED_LIST_PROPERTY_NEW(SVGFEColorMatrixElement, SVGNames::valuesAttr, SVGNumberList, Values, values)
 };

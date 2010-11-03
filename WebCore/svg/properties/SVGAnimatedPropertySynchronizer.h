@@ -23,42 +23,6 @@
 #if ENABLE(SVG)
 namespace WebCore {
 
-class SVGElement;
-
-// GetOwnerElementForType implementation
-template<typename OwnerType, bool isDerivedFromSVGElement>
-struct GetOwnerElementForType;
-
-template<typename OwnerType>
-struct GetOwnerElementForType<OwnerType, true> : public Noncopyable {
-    static SVGElement* ownerElement(OwnerType* type)
-    {
-        return type;
-    }
-};
-
-template<typename OwnerType>
-struct GetOwnerElementForType<OwnerType, false> : public Noncopyable {    
-    static SVGElement* ownerElement(OwnerType* type)
-    {
-        SVGElement* context = type->contextElement();
-        ASSERT(context);
-        return context;
-    }
-};
-
-// IsDerivedFromSVGElement implementation
-template<typename OwnerType>
-struct IsDerivedFromSVGElement : public Noncopyable {
-    static const bool value = true;
-};
-
-class SVGViewSpec;
-template<>
-struct IsDerivedFromSVGElement<SVGViewSpec> : public Noncopyable {
-    static const bool value = false;
-};
-
 // Helper template used for synchronizing SVG <-> XML properties
 template<bool isDerivedFromSVGElement>
 struct SVGAnimatedPropertySynchronizer {

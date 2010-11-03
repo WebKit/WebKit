@@ -60,7 +60,8 @@ my %svgNewStyleAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean"
                                    "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
                                    "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
                                    "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1,
-                                   "SVGAnimatedPreserveAspectRatio" => 1, "SVGAnimatedRect" => 1);
+                                   "SVGAnimatedPreserveAspectRatio" => 1, "SVGAnimatedRect" => 1,
+                                   "SVGAnimatedString" => 1);
 
 my %svgAnimatedTypeHash = ("SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1,
                            "SVGAnimatedEnumeration" => 1, "SVGAnimatedInteger" => 1,
@@ -83,7 +84,8 @@ my %svgNativeType = (
     "SVGNumber" => "SVGPropertyTearOff<float>",
     "SVGNumberList" => "SVGListPropertyTearOff<SVGNumberList>",
     "SVGPreserveAspectRatio" => "SVGPropertyTearOff<SVGPreserveAspectRatio>",
-    "SVGRect" => "SVGPropertyTearOff<FloatRect>"
+    "SVGRect" => "SVGPropertyTearOff<FloatRect>",
+    "SVGStringList" => "SVGStringListPropertyTearOff"
 );
 
 # Cache of IDL file pathnames.
@@ -480,13 +482,18 @@ sub AttributeNameForGetterAndSetter
     my ($generator, $attribute) = @_;
 
     my $attributeName = $attribute->signature->name;
+    my $attributeType = $generator->StripModule($attribute->signature->type);
 
     # Avoid clash with C++ keyword.
     $attributeName = "_operator" if $attributeName eq "operator";
 
+    # SVGAElement defines a non-virtual "String& target() const" method which clashes with "virtual String target() const" in Element.
+    # To solve this issue the SVGAElement method was renamed to "svgTarget", take care of that when calling this method.
+    $attributeName = "svgTarget" if $attributeName eq "target" and $attributeType eq "SVGAnimatedString";
+
     # SVG animated types need to use a special attribute name.
     # The rest of the special casing for SVG animated types is handled in the language-specific code generators.
-    $attributeName .= "Animated" if $generator->IsSVGAnimatedType($generator->StripModule($attribute->signature->type));
+    $attributeName .= "Animated" if $generator->IsSVGAnimatedType($attributeType);
 
     return $attributeName;
 }

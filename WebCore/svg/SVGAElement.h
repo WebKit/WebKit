@@ -46,6 +46,7 @@ namespace WebCore {
         virtual bool isValid() const { return SVGTests::isValid(); }
         
         virtual String title() const;
+        virtual String target() const { return svgTarget(); }
 
         virtual void parseMappedAttribute(Attribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
@@ -62,10 +63,13 @@ namespace WebCore {
 
         virtual bool childShouldCreateRenderer(Node*) const;
 
-        DECLARE_ANIMATED_PROPERTY(SVGAElement, SVGNames::targetAttr, String, Target, target)
+        // This defines a non-virtual "String& target() const" method before, that would clash with "virtual String target() const"
+        // in Element. That's why it's now named "String& svgTarget() const", to avoid the clash. The CodeGenerators take care
+        // of calling svgTargetAnimated() instead of targetAnimated(), see CodeGenerator.pm.
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAElement, SVGNames::targetAttr, String, SVGTarget, svgTarget)
 
         // SVGURIReference
-        DECLARE_ANIMATED_PROPERTY(SVGAElement, XLinkNames::hrefAttr, String, Href, href)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGAElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

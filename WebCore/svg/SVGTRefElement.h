@@ -45,7 +45,7 @@ namespace WebCore {
         void updateReferencedText();
 
         // SVGURIReference
-        DECLARE_ANIMATED_PROPERTY(SVGTRefElement, XLinkNames::hrefAttr, String, Href, href)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGTRefElement, XLinkNames::hrefAttr, String, Href, href)
     };
 
 } // namespace WebCore

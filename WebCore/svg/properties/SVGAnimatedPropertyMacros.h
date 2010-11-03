@@ -32,6 +32,42 @@
 
 namespace WebCore {
 
+class SVGElement;
+
+// GetOwnerElementForType implementation
+template<typename OwnerType, bool isDerivedFromSVGElement>
+struct GetOwnerElementForType;
+
+template<typename OwnerType>
+struct GetOwnerElementForType<OwnerType, true> {
+    static SVGElement* ownerElement(OwnerType* type)
+    {
+        return type;
+    }
+};
+
+template<typename OwnerType>
+struct GetOwnerElementForType<OwnerType, false> {    
+    static SVGElement* ownerElement(OwnerType* type)
+    {
+        SVGElement* context = type->contextElement();
+        ASSERT(context);
+        return context;
+    }
+};
+
+// IsDerivedFromSVGElement implementation
+template<typename OwnerType>
+struct IsDerivedFromSVGElement {
+    static const bool value = true;
+};
+
+class SVGViewSpec;
+template<>
+struct IsDerivedFromSVGElement<SVGViewSpec> {
+    static const bool value = false;
+};
+
 template<typename PropertyType>
 struct SVGSynchronizableAnimatedProperty {
     SVGSynchronizableAnimatedProperty()

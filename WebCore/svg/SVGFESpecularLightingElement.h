@@ -42,7 +42,7 @@ private:
     static const AtomicString& kernelUnitLengthXIdentifier();
     static const AtomicString& kernelUnitLengthYIdentifier();
 
-    DECLARE_ANIMATED_PROPERTY(SVGFESpecularLightingElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFESpecularLightingElement, SVGNames::inAttr, String, In1, in1)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFESpecularLightingElement, SVGNames::specularConstantAttr, float, SpecularConstant, specularConstant)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFESpecularLightingElement, SVGNames::specularExponentAttr, float, SpecularExponent, specularExponent)
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFESpecularLightingElement, SVGNames::surfaceScaleAttr, float, SurfaceScale, surfaceScale)

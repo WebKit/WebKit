@@ -38,7 +38,7 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*);
 
-    DECLARE_ANIMATED_PROPERTY(SVGFEComponentTransferElement, SVGNames::inAttr, String, In1, in1)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFEComponentTransferElement, SVGNames::inAttr, String, In1, in1)
 };
 
 } // namespace WebCore

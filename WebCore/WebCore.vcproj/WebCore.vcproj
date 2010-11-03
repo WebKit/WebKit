@@ -61672,6 +61672,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedString.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimateElement.h"
 				>
 			</File>
@@ -62732,6 +62736,10 @@
 				</File>
 				<File
 					RelativePath="..\svg\properties\SVGPropertyTraits.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGStringListPropertyTearOff.h"
 					>
 				</File>
 			</Filter>

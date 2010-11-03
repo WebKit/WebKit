@@ -44,7 +44,7 @@ namespace WebCore {
         virtual void synchronizeProperty(const QualifiedName&);
         
         // SVGURIReference
-        DECLARE_ANIMATED_PROPERTY(SVGMPathElement, XLinkNames::hrefAttr, String, Href, href)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMPathElement, XLinkNames::hrefAttr, String, Href, href)
 
         // SVGExternalResourcesRequired
         DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGMPathElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

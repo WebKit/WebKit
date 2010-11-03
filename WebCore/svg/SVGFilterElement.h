@@ -72,7 +72,7 @@ private:
     DECLARE_ANIMATED_STATIC_PROPERTY_MULTIPLE_WRAPPERS_NEW(SVGFilterElement, SVGNames::filterResAttr, filterResYIdentifier(), long, FilterResY, filterResY)
 
     // SVGURIReference
-    DECLARE_ANIMATED_PROPERTY(SVGFilterElement, XLinkNames::hrefAttr, String, Href, href)
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterElement, XLinkNames::hrefAttr, String, Href, href)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGFilterElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)

@@ -71,7 +71,7 @@ String SVGAElement::title() const
 void SVGAElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::targetAttr)
-        setTargetBaseValue(attr->value());
+        setSVGTargetBaseValue(attr->value());
     else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;
@@ -105,14 +105,14 @@ void SVGAElement::synchronizeProperty(const QualifiedName& attrName)
     SVGStyledTransformableElement::synchronizeProperty(attrName);
 
     if (attrName == anyQName()) {
-        synchronizeTarget();
+        synchronizeSVGTarget();
         synchronizeHref();
         synchronizeExternalResourcesRequired();
         return;
     }
 
     if (attrName == SVGNames::targetAttr)
-        synchronizeTarget();
+        synchronizeSVGTarget();
     else if (SVGURIReference::isKnownAttribute(attrName))
         synchronizeHref();
     else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))

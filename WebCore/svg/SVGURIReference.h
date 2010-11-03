@@ -27,20 +27,20 @@
 
 namespace WebCore {
 
-    class Attribute;
+class Attribute;
 
-    class SVGURIReference {
-    public:
-        virtual ~SVGURIReference() { }
+class SVGURIReference {
+public:
+    virtual ~SVGURIReference() { }
 
-        bool parseMappedAttribute(Attribute*);
-        bool isKnownAttribute(const QualifiedName&);
+    bool parseMappedAttribute(Attribute*);
+    bool isKnownAttribute(const QualifiedName&);
 
-        static String getTarget(const String& url);
+    static String getTarget(const String& url);
 
-    protected:
-        virtual void setHrefBaseValue(DeprecatedSVGAnimatedPropertyTraits<String>::PassType) = 0;
-    };
+protected:
+    virtual void setHrefBaseValue(const String&) = 0;
+};
 
 } // namespace WebCore
 

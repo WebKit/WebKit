@@ -22,8 +22,8 @@
 #define SVGStyledElement_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedPropertyMacros.h"
 #include "HTMLNames.h"
-#include "SVGElement.h"
 #include "SVGLocatable.h"
 #include "SVGStylable.h"
 #include <wtf/HashSet.h>
@@ -83,7 +83,7 @@ namespace WebCore {
 
         HashSet<SVGStyledElement*> m_elementsWithRelativeLengths;
 
-        DECLARE_ANIMATED_PROPERTY(SVGStyledElement, HTMLNames::classAttr, String, ClassName, className)
+        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGStyledElement, HTMLNames::classAttr, String, ClassName, className)
     };
 
 } // namespace WebCore
