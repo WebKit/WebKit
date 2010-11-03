@@ -1,3 +1,27 @@
+2010-11-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Crash in Function.prototype.call.apply
+        https://bugs.webkit.org/show_bug.cgi?id=48485
+
+        The problem here was op_load_varargs failing to ensure that
+        there was sufficient space for the entire callframe prior to
+        op_call_varargs.  This meant that when we then re-entered the
+        VM it was possible to stomp over an earlier portion of the
+        stack, so causing sub-optimal behaviour.
+
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoadVarargs):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ApplyFunctionCallDotNode::emitBytecode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_load_varargs):
+
 2010-11-03  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Chris Marrin.

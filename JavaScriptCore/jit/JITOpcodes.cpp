@@ -1666,6 +1666,9 @@ void JIT::emit_op_load_varargs(Instruction* currentInstruction)
 {
     int argCountDst = currentInstruction[1].u.operand;
     int argsOffset = currentInstruction[2].u.operand;
+    int registerOffset = currentInstruction[3].u.operand;
+    ASSERT(argsOffset <= registerOffset);
+    
     int expectedParams = m_codeBlock->m_numParameters - 1;
     // Don't do inline copying if we aren't guaranteed to have a single stream
     // of arguments
@@ -1695,6 +1698,7 @@ void JIT::emit_op_load_varargs(Instruction* currentInstruction)
     
     // Bounds check the registerfile
     addPtr(regT2, regT3);
+    addPtr(Imm32((registerOffset - argsOffset) * sizeof(Register)), regT3);
     addSlowCase(branchPtr(Below, AbsoluteAddress(&m_globalData->interpreter->registerFile().m_end), regT3));
 
     sub32(Imm32(1), regT0);
