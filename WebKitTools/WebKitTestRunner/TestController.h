@@ -53,22 +53,24 @@ public:
     WKPageNamespaceRef pageNamespace() { return m_pageNamespace.get(); }
     WKContextRef context() { return m_context.get(); }
 
-    // Helper
-    static void runUntil(bool& done);
+    // Runs the run loop until `done` is true or the timeout elapses.
+    enum TimeoutDuration { ShortTimeout, LongTimeout };
+    void runUntil(bool& done, TimeoutDuration);
 
 private:
     void initialize(int argc, const char* argv[]);
     void run();
 
     void runTestingServerLoop();
-    void runTest(const char* pathOrURL);
+    bool runTest(const char* pathOrURL);
 
     void platformInitialize();
     void platformInitializeContext();
+    void platformRunUntil(bool& done, double timeout);
     void initializeInjectedBundlePath();
     void initializeTestPluginDirectory();
 
-    void resetStateToConsistentValues();
+    bool resetStateToConsistentValues();
 
     // WKContextInjectedBundleClient
     static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef messageBody, const void*);
@@ -102,6 +104,9 @@ private:
     };
     State m_state;
     bool m_doneResetting;
+
+    double m_longTimeout;
+    double m_shortTimeout;
 };
 
 } // namespace WTR

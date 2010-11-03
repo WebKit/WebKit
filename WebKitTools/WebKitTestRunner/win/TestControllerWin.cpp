@@ -120,15 +120,25 @@ void TestController::initializeTestPluginDirectory()
     m_testPluginDirectory.adopt(WKStringCreateWithCFString(testPluginDirectoryPath.get()));
 }
 
-void TestController::runUntil(bool& done)
+void TestController::platformRunUntil(bool& done, double timeout)
 {
+    DWORD end = ::GetTickCount() + timeout * 1000;
     while (!done) {
-        MSG msg;
-        BOOL result = GetMessage(&msg, 0, 0, 0);
-        if (result == -1)
+        DWORD now = ::GetTickCount();
+        if (now > end)
             return;
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+
+        DWORD result = ::MsgWaitForMultipleObjectsEx(0, 0, end - now, QS_ALLINPUT, 0);
+        if (result == WAIT_TIMEOUT)
+            return;
+
+        ASSERT(result == WAIT_OBJECT_0);
+        // There are messages in the queue. Process them.
+        MSG msg;
+        while (::PeekMessageW(&msg, 0, 0, 0, PM_REMOVE)) {
+            ::TranslateMessage(&msg);
+            ::DispatchMessageW(&msg);
+        }
     }
 }
 

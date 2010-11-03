@@ -1,5 +1,69 @@
 2010-11-03  Adam Roben  <aroben@apple.com>
 
+        Stop waiting for messages from the web process after a timeout elapses
+
+        TestController::runUntil now takes a timeout parameter that specifies
+        how long to wait for the condition to become true. WebKitTestRunner
+        takes a --timeout flag that specifies how long the timeout should be.
+        run-webkit-tests passes this flag to WebKitTestRunner so its timeout
+        will be similar to run-webkit-tests.
+
+        Fixes <http://webkit.org/b/43047> <rdar://problem/8365833>
+        WebKitTestRunner waits forever if the web process crashes
+
+        Reviewed by Darin Adler and Anders Carlsson.
+
+        * Scripts/old-run-webkit-tests:
+        (top level): Moved the GuardMalloc timeout adjustment here from
+        readFromDumpToolWithTimer.
+        (openDumpTool): Make WTR use a timeout similar to but slightly shorter
+        than the one that was specified on the command line.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::TestController): Initialize our timeout values.
+        (WTR::TestController::initialize): Parse the --timeout flag and use it
+        to modify our timeout values.
+        (WTR::TestController::resetStateToConsistentValues): Changed to use a
+        short timeout while waiting for the web process to reset and to return
+        a boolean indicating whether we were able to reset the web process.
+        Uses a 5-second timeout while waiting for the process to be reset.
+        (WTR::TestController::runTest): Changed to return a boolean indicating
+        whether we were able to reset the web process (and thus run the test).
+        (WTR::TestController::runUntil): Call through to platformRunUntil.
+
+        (WTR::TestController::runTestingServerLoop):
+        (WTR::TestController::run):
+        Changed to bail if any test can't be run. This will cause the process
+        to exit. (Unfortunately this will make run-webkit-tests think we
+        crashed; see <http://webkit.org/b/48943>.)
+
+        * WebKitTestRunner/TestController.h: Added platformRunUntil,
+        m_longTimeout, and m_shortTimeout.
+
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::invoke): Use a short timeout when waiting for the
+        initial response and a long timeout when waiting for the test to
+        complete. Check whether runUntil timed out and print an error message
+        if so.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformRunUntil): Renamed from runUntil. Pass
+        [NSDate distantPast] to -[NSRunLoop runMode:beforeDate:] so that we
+        won't block waiting for the run loop. Only loop until the timeout
+        elapses.
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::TestController::platformRunUntil): Renamed from runUntil. Added a
+        FIXME about honoring the timeout.
+
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformRunUntil): Renamed from runUntil. Use
+        ::MsgWaitForMultipleObjectsEx to implement the timeout. Changed to use
+        ::PeekMessageW so that we don't block waiting for messages to become
+        available.
+
+2010-11-03  Adam Roben  <aroben@apple.com>
+
         Add a plugin test that evaluates JS after removing the plugin element
         from the document
 

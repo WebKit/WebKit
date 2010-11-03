@@ -45,10 +45,11 @@ void TestController::initializeTestPluginDirectory()
     m_testPluginDirectory.adopt(WKStringCreateWithCFString((CFStringRef)[[NSBundle mainBundle] bundlePath]));
 }
 
-void TestController::runUntil(bool& done)
+void TestController::platformRunUntil(bool& done, double timeout)
 {
-    while (!done)
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]];
+    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent() + timeout;
+    while (!done && CFAbsoluteTimeGetCurrent() < end)
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantPast]];
 }
 
 void TestController::platformInitializeContext()

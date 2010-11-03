@@ -35,6 +35,9 @@
 
 namespace WTR {
 
+static const double defaultLongTimeout = 30;
+static const double defaultShortTimeout = 5;
+
 static WKURLRef blankURL()
 {
     static WKURLRef staticBlankURL = WKURLCreateWithUTF8CString("about:blank");
@@ -56,6 +59,8 @@ TestController::TestController(int argc, const char* argv[])
     , m_usingServerMode(false)
     , m_state(Initial)
     , m_doneResetting(false)
+    , m_longTimeout(defaultLongTimeout)
+    , m_shortTimeout(defaultShortTimeout)
 {
     initialize(argc, argv);
     controller = this;
@@ -146,6 +151,12 @@ void TestController::initialize(int argc, const char* argv[])
     for (int i = 1; i < argc; ++i) {
         std::string argument(argv[i]);
 
+        if (argument == "--timeout" && i + 1 < argc) {
+            m_longTimeout = atoi(argv[++i]);
+            // Scale up the short timeout to match.
+            m_shortTimeout = defaultShortTimeout * m_longTimeout / defaultLongTimeout;
+            continue;
+        }
         if (argument == "--pixel-tests") {
             m_dumpPixels = true;
             continue;
@@ -253,7 +264,7 @@ void TestController::initialize(int argc, const char* argv[])
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 }
 
-void TestController::resetStateToConsistentValues()
+bool TestController::resetStateToConsistentValues()
 {
     m_state = Resetting;
 
@@ -285,17 +296,21 @@ void TestController::resetStateToConsistentValues()
     m_doneResetting = false;
 
     WKPageLoadURL(m_mainWebView->page(), blankURL());
-    TestController::runUntil(m_doneResetting);
+    runUntil(m_doneResetting, ShortTimeout);
+    return m_doneResetting;
 }
 
-void TestController::runTest(const char* test)
+bool TestController::runTest(const char* test)
 {
-    resetStateToConsistentValues();
+    if (!resetStateToConsistentValues())
+        return false;
 
     m_state = RunningTest;
     m_currentInvocation.set(new TestInvocation(test));
     m_currentInvocation->invoke();
     m_currentInvocation.clear();
+
+    return true;
 }
 
 void TestController::runTestingServerLoop()
@@ -309,7 +324,8 @@ void TestController::runTestingServerLoop()
         if (strlen(filenameBuffer) == 0)
             continue;
 
-        runTest(filenameBuffer);
+        if (!runTest(filenameBuffer))
+            break;
     }
 }
 
@@ -318,9 +334,16 @@ void TestController::run()
     if (m_usingServerMode)
         runTestingServerLoop();
     else {
-        for (size_t i = 0; i < m_paths.size(); ++i)
-            runTest(m_paths[i].c_str());
+        for (size_t i = 0; i < m_paths.size(); ++i) {
+            if (!runTest(m_paths[i].c_str()))
+                break;
+        }
     }
+}
+
+void TestController::runUntil(bool& done, TimeoutDuration timeoutDuration)
+{
+    platformRunUntil(done, timeoutDuration == ShortTimeout ? m_shortTimeout : m_longTimeout);
 }
 
 // WKContextInjectedBundleClient
