@@ -51,6 +51,8 @@ typedef CFBundleRef PlatformBundle;
 typedef HMODULE PlatformBundle;
 #elif PLATFORM(QT)
 typedef QLibrary PlatformBundle;
+#elif PLATFORM(GTK)
+typedef void* PlatformBundle;
 #endif
 
 class ImmutableArray;
