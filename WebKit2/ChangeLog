@@ -1,3 +1,15 @@
+2010-11-03  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Add the webkit2 library to LIBS instead of QMAKE_LFLAGS
+
+        Otherwise the library order will get messed up and cause
+        missing symbols on Mac OS X.
+
+        * WebKit2.pri:
+        * WebKit2.pro:
+
 2010-11-02  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Barth.

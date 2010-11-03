@@ -30,8 +30,8 @@ defineTest(_addWebKit2Lib_common) {
 defineTest(addWebKit2Lib) {
     _addWebKit2Lib_common($$ARGS)
 
-    QMAKE_LFLAGS += -l$$WEBKIT2_TARGET
-    export(QMAKE_LFLAGS)
+    LIBS += -l$$WEBKIT2_TARGET
+    export(LIBS)
 
     return(true)
 }
@@ -40,9 +40,9 @@ defineTest(addWebKit2LibWholeArchive) {
     _addWebKit2Lib_common($$ARGS)
 
     # -whole-archive makes all objects, even if unreferenced, included in the linked target.
-    mac:QMAKE_LFLAGS += -Wl,-all_load -l$$WEBKIT2_TARGET
-    else:QMAKE_LFLAGS += -Wl,-whole-archive -l$$WEBKIT2_TARGET -Wl,-no-whole-archive
-    export(QMAKE_LFLAGS)
+    mac: LIBS += -Wl,-all_load -l$$WEBKIT2_TARGET
+    else: LIBS += -Wl,-whole-archive -l$$WEBKIT2_TARGET -Wl,-no-whole-archive
+    export(LIBS)
 
     return(true)
 }
