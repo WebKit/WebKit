@@ -284,7 +284,7 @@ var fillTexture = function(gl, tex, width, height, color, opt_level) {
  */
 var createColoredTexture = function(gl, width, height, color) {
   var tex = gl.createTexture();
-  fillTexture(gl, text, width, height, color);
+  fillTexture(gl, tex, width, height, color);
   return tex;
 };
 
