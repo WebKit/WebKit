@@ -63,10 +63,6 @@ WebInspector.ResourceManager.prototype = {
     identifierForInitialRequest: function(identifier, url, loader)
     {
         var resource = this._createResource(identifier, url, loader);
-        if (loader.url === url) {
-            resource.isMainResource = true;
-            WebInspector.mainResource = resource;
-        }
 
         // It is important to bind resource url early (before scripts compile).
         this._bindResourceURL(resource);
@@ -259,6 +255,13 @@ WebInspector.ResourceManager.prototype = {
     didCommitLoadForFrame: function(frame, loader)
     {
         this._resourceTreeModel.didCommitLoadForFrame(frame, loader);
+        if (!frame.parentId) {
+            var mainResource = this.resourceForURL(frame.url);
+            if (mainResource) {
+                WebInspector.mainResource = mainResource;
+                mainResource.isMainResource = true;
+            }
+        }
     },
 
     frameDetachedFromParent: function(frameId)
