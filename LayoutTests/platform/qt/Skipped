@@ -5464,3 +5464,8 @@ fast/images/webp-image-decoding.html
 # [Qt] DRT sideeffect revealed by r71004
 # https://bugs.webkit.org/show_bug.cgi?id=48758
 fast/dom/nodesFromRect-basic.html
+
+# [Qt] DRT sideeffect revealed by r71268
+# https://bugs.webkit.org/show_bug.cgi?id=48958
+canvas/philip/tests/2d.pattern.image.null.html
+canvas/philip/tests/2d.pattern.image.undefined.html
