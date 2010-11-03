@@ -1,3 +1,13 @@
+2010-11-03  Darin Adler  <darin@apple.com>
+
+        Updated Xcode projects by opening them with Xcode 3.2.4.
+        Updated svn:ignore for Xcode projects.
+
+        * ANGLE.xcodeproj: Added property svn:ignore.
+        * ANGLE.xcodeproj/project.pbxproj: Updated with Xcode 3.2.4.
+        * src/build_angle.xcodeproj: Added property svn:ignore.
+        * src/build_angle.xcodeproj/project.pbxproj: Updated with Xcode 3.2.4.
+
 2010-09-01  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.

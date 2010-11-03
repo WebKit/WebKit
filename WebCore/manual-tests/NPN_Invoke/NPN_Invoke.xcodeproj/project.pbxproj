@@ -113,7 +113,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 149C298708902C53008A9EFC /* Build configuration list for PBXProject "NPN_Invoke" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 089C166AFE841209C02AAC07 /* NetscapeMoviePlugIn */;
 			projectDirPath = "";
 			projectRoot = "";

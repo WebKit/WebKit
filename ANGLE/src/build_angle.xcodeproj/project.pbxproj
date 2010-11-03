@@ -373,7 +373,14 @@
 			};
 			buildConfigurationList = 0E59F8FE4A8099E8DDCA4CE7 /* Build configuration list for PBXProject "build_angle" */;
 			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 5BBEFF9B91738297B95C568D;
 			projectDirPath = "";
 			projectRoot = "";

@@ -1,3 +1,17 @@
+2010-11-03  Darin Adler  <darin@apple.com>
+
+        Updated Xcode projects by opening them with Xcode 3.2.4.
+        Updated svn:ignore for Xcode projects.
+
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj: Added property svn:ignore.
+        * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj: Updated with Xcode 3.2.4.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj: Added property svn:ignore.
+        * NetscapeCoreAnimationMoviePlugin/NetscapeCoreAnimationMoviePlugin.xcodeproj/project.pbxproj:
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj: Added property svn:ignore.
+        * NetscapeCoreAnimationPlugin/NetscapeCoreAnimationPlugin.xcodeproj/project.pbxproj:
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj: Added property svn:ignore.
+        * NetscapeInputMethodPlugin/NetscapeInputMethodPlugin.xcodeproj/project.pbxproj: Updated with Xcode 3.2.4.
+
 2010-06-16  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

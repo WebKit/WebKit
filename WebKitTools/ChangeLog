@@ -1,3 +1,13 @@
+2010-11-03  Darin Adler  <darin@apple.com>
+
+        Updated Xcode projects by opening them with Xcode 3.2.4.
+        Updated svn:ignore for Xcode projects.
+
+        * MiniBrowser/MiniBrowser.xcodeproj: Added property svn:ignore.
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj: Added property svn:ignore.
+        * WebKitLauncher/WebKitLauncher.xcodeproj: Modified property svn:ignore.
+        * WebKitLauncher/WebKitLauncher.xcodeproj/project.pbxproj: Updated with Xcode 3.2.4.
+
 2010-11-03  Adam Roben  <aroben@apple.com>
 
         Stop waiting for messages from the web process after a timeout elapses
