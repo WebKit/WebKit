@@ -472,11 +472,6 @@ WebInspector.DOMBreakpoint = function(manager, frontendId, nodeId, domEventType)
 }
 
 WebInspector.DOMBreakpoint.prototype = {
-    click: function()
-    {
-        WebInspector.updateFocusedNode(this._nodeId);
-    },
-
     compareTo: function(other)
     {
         return this._compare(this._domEventType, other._domEventType);
@@ -484,9 +479,14 @@ WebInspector.DOMBreakpoint.prototype = {
 
     populateLabelElement: function(element)
     {
-        element.appendChild(WebInspector.panels.elements.linkifyNodeById(this._nodeId));
-        element.appendChild(document.createTextNode(" - "));
-        element.appendChild(document.createTextNode(WebInspector.domBreakpointTypeLabel(this._domEventType)));
+        // FIXME: this should belong to the view, not the manager.
+        var linkifiedNode = WebInspector.panels.elements.linkifyNodeById(this._nodeId);
+        linkifiedNode.addStyleClass("monospace");
+        element.appendChild(linkifiedNode);
+        var description = document.createElement("div");
+        description.className = "source-text";
+        description.textContent = WebInspector.domBreakpointTypeLabel(this._domEventType);
+        element.appendChild(description);
     },
 
     populateStatusMessageElement: function(element, eventData)
@@ -599,6 +599,7 @@ WebInspector.XHRBreakpoint.prototype = {
         else
             label = WebInspector.UIString("URL contains \"%s\"", this._url);
         element.appendChild(document.createTextNode(label));
+        element.addStyleClass("cursor-auto");
     },
 
     populateStatusMessageElement: function(element)

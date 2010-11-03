@@ -1330,7 +1330,6 @@ body.inactive .placard.selected {
     white-space: nowrap;
     -webkit-background-origin: padding;
     -webkit-background-clip: padding;
-    opacity: 0.8;
 }
 
 .section .header::before {
@@ -1340,6 +1339,7 @@ body.inactive .placard.selected {
     width: 8px;
     height: 8px;
     content: url(Images/treeRightTriangleBlack.png);
+    opacity: 0.8;
 }
 
 .section.expanded .header::before {
@@ -1383,7 +1383,7 @@ body.inactive .placard.selected {
 
 .section.expanded .properties, .event-bar.expanded .event-properties {
     display: block;
-    padding-left: 18px;
+    padding-left: 16px;
 }
 
 .section.no-affect .properties li {
@@ -1448,20 +1448,23 @@ body.inactive .placard.selected {
 }
 
 .event-listener-breakpoints .event-category {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
-    color: rgb(110, 110, 110);
+    color: rgb(96, 96, 96);
+    padding-top: 2px;
 }
 
 .event-listener-breakpoints.properties-tree .children li {
-    margin-left: 17px;
+    margin-left: 12px;
+    height: 16px;
 }
 
 .event-listener-breakpoints .checkbox-elem {
     font-size: 10px;
     float: left;
-    margin-top: 1px;
-    margin-left: 0px;
+    top: -2px;
+    position: relative;
+    left: -1px;
 }
 
 .section .event-bars {
@@ -1474,7 +1477,7 @@ body.inactive .placard.selected {
 
 .event-bar {
     position: relative;
-    left: 12px;
+    left: 10px;
 }
 
 .event-bars .event-bar .header {
@@ -1488,7 +1491,7 @@ body.inactive .placard.selected {
 
 .event-bars .event-bar .header .title {
     font-weight: normal;
-    color: #333;
+    color: black;
     text-shadow: white 0 1px 0; 
 }
 
@@ -1723,11 +1726,12 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     font-style: italic;
     font-size: 10px;
     padding: 6px;
-    color: gray;
+    color: black;
 }
 
 .pane > .body .placard + .info {
-    border-top: 1px solid gray
+    border-top: 1px solid rgb(189, 189, 189);
+    background-color: rgb(255, 255, 194);
 }
 
 .pane.expanded > .body, .pane.expanded > .growbar {
@@ -4085,7 +4089,7 @@ button.enable-toggle-status-bar-item .glyph {
 }
 
 ol.breakpoint-list {
-    -webkit-padding-start: 2px;
+    -webkit-padding-start: 0;
     list-style: none;
     margin: 0;
 }
@@ -4094,9 +4098,8 @@ ol.breakpoint-list {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    margin: 4px 0;
-    color: rgb(33%, 33%, 33%);
-    cursor: pointer;
+    padding: 2px 0;
+    color: black;
 }
 
 .breakpoint-list li:hover {
@@ -4119,7 +4122,7 @@ ol.breakpoint-list {
 }
 
 .pane .breakpoint-hit {
-    background-color: yellow;
+    background-color: rgb(255, 255, 194);
 }
 
 .webkit-html-js-node, .webkit-html-css-node {
@@ -4380,4 +4383,12 @@ a.worker-item:hover {
 .node-link {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-auto {
+    cursor: auto;
 }

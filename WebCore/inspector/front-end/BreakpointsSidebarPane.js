@@ -63,13 +63,11 @@ WebInspector.BreakpointsSidebarPane.prototype = {
         }
         this._addListElement(element, currentElement);
 
-        element.addEventListener("click", this._breakpointItemClicked.bind(this, breakpointItem), false);
+        if (breakpointItem.click) {
+            element.addStyleClass("cursor-pointer");
+            element.addEventListener("click", breakpointItem.click.bind(breakpointItem), false);
+        }
         element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this, breakpointItem), true);
-    },
-
-    _breakpointItemClicked: function(breakpointItem, event)
-    {
-        breakpointItem.click(event);
     },
 
     _contextMenuEventFired: function(breakpointItem, event)
@@ -121,6 +119,12 @@ WebInspector.XHRBreakpointsSidebarPane = function()
 }
 
 WebInspector.XHRBreakpointsSidebarPane.prototype = {
+    addBreakpointItem: function(breakpointItem)
+    {
+        WebInspector.BreakpointsSidebarPane.prototype.addBreakpointItem.call(this, breakpointItem);
+        breakpointItem._labelElement.addEventListener("dblclick", this._startEditingBreakpoint.bind(this, breakpointItem), false);
+    },
+
     _startEditingBreakpoint: function(breakpointItem)
     {
         if (this._editingBreakpoint)
@@ -154,11 +158,6 @@ WebInspector.XHRBreakpointsSidebarPane.prototype = {
             WebInspector.breakpointManager.createXHRBreakpoint(inputElement.textContent.toLowerCase());
         } else if (breakpointItem)
             breakpointItem.element.removeStyleClass("hidden");
-    },
-
-    _breakpointItemClicked: function(breakpointItem, event)
-    {
-        this._startEditingBreakpoint(breakpointItem);
     }
 }
 
@@ -183,6 +182,8 @@ WebInspector.BreakpointItem = function(breakpoint)
     this._breakpoint.addEventListener("hit-state-changed", this._hitStateChanged, this);
     this._breakpoint.addEventListener("label-changed", this._labelChanged, this);
     this._breakpoint.addEventListener("removed", this.dispatchEventToListeners.bind(this, "removed"));
+    if (breakpoint.click)
+        this.click = breakpoint.click.bind(breakpoint);
 }
 
 WebInspector.BreakpointItem.prototype = {
@@ -194,11 +195,6 @@ WebInspector.BreakpointItem.prototype = {
     compareTo: function(other)
     {
         return this._breakpoint.compareTo(other._breakpoint);
-    },
-
-    click: function(event)
-    {
-        this._breakpoint.click(event);
     },
 
     populateEditElement: function(element)
