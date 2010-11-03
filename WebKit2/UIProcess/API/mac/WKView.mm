@@ -396,6 +396,7 @@ EVENT_HANDLER(scrollWheel, Wheel)
     if (_data->_keyDownEventBeingResent == theEvent) {
         [_data->_keyDownEventBeingResent release];
         _data->_keyDownEventBeingResent = nil;
+        [super keyDown:theEvent];
         return;
     }
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));

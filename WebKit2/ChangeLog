@@ -1,3 +1,13 @@
+2010-11-02  Jing Jin  <jjin@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Key down calls are not being sent to the application.
+        https://bugs.webkit.org/show_bug.cgi?id=48867
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView keyDown:]): Call super when ignoring a key down.
+
 2010-11-02  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by John Sullivan.
