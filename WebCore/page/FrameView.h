@@ -255,6 +255,7 @@ private:
     friend class RenderWidget;
     bool useSlowRepaints() const;
     bool useSlowRepaintsIfNotOverlapped() const;
+    void updateCanBlitOnScrollRecursively();
 
     bool hasFixedObjects() const { return m_fixedObjectCount > 0; }
 

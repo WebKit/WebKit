@@ -831,7 +831,7 @@ void FrameView::layout(bool allowSubtree)
 
     ASSERT(!root->needsLayout());
 
-    setCanBlitOnScroll(!useSlowRepaints());
+    updateCanBlitOnScrollRecursively();
 
     if (document->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(layoutWidth() < contentsWidth(),
@@ -912,24 +912,48 @@ void FrameView::adjustMediaTypeForPrinting(bool printing)
 
 bool FrameView::useSlowRepaints() const
 {
-    return m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || m_isOverlapped || !m_contentIsOpaque;
+    if (m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || m_isOverlapped || !m_contentIsOpaque)
+        return true;
+
+    if (Frame* parentFrame = m_frame->tree()->parent()) {
+        if (FrameView* parentView = parentFrame->view())
+            return parentView->useSlowRepaints();
+    }
+
+    return false;
 }
 
 bool FrameView::useSlowRepaintsIfNotOverlapped() const
 {
-    return m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || !m_contentIsOpaque;
+    if (m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || !m_contentIsOpaque)
+        return true;
+
+    if (Frame* parentFrame = m_frame->tree()->parent()) {
+        if (FrameView* parentView = parentFrame->view())
+            return parentView->useSlowRepaintsIfNotOverlapped();
+    }
+
+    return false;
+}
+
+void FrameView::updateCanBlitOnScrollRecursively()
+{
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+        if (FrameView* view = frame->view())
+            view->setCanBlitOnScroll(!view->useSlowRepaints());
+    }
 }
 
 void FrameView::setUseSlowRepaints()
 {
     m_useSlowRepaints = true;
-    setCanBlitOnScroll(false);
+    updateCanBlitOnScrollRecursively();
 }
 
 void FrameView::addSlowRepaintObject()
 {
     if (!m_slowRepaintObjectCount)
-        setCanBlitOnScroll(false);
+        updateCanBlitOnScrollRecursively();
     m_slowRepaintObjectCount++;
 }
 
@@ -938,13 +962,13 @@ void FrameView::removeSlowRepaintObject()
     ASSERT(m_slowRepaintObjectCount > 0);
     m_slowRepaintObjectCount--;
     if (!m_slowRepaintObjectCount)
-        setCanBlitOnScroll(!useSlowRepaints());
+        updateCanBlitOnScrollRecursively();
 }
 
 void FrameView::addFixedObject()
 {
     if (!m_fixedObjectCount && platformWidget())
-        setCanBlitOnScroll(false);
+        updateCanBlitOnScrollRecursively();
     ++m_fixedObjectCount;
 }
 
@@ -953,7 +977,7 @@ void FrameView::removeFixedObject()
     ASSERT(m_fixedObjectCount > 0);
     --m_fixedObjectCount;
     if (!m_fixedObjectCount)
-        setCanBlitOnScroll(!useSlowRepaints());
+        updateCanBlitOnScrollRecursively();
 }
 
 bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
@@ -1036,7 +1060,7 @@ void FrameView::setIsOverlapped(bool isOverlapped)
         return;
 
     m_isOverlapped = isOverlapped;
-    setCanBlitOnScroll(!useSlowRepaints());
+    updateCanBlitOnScrollRecursively();
     
 #if USE(ACCELERATED_COMPOSITING)
     // Overlap can affect compositing tests, so if it changes, we need to trigger
@@ -1059,7 +1083,7 @@ void FrameView::setContentIsOpaque(bool contentIsOpaque)
         return;
 
     m_contentIsOpaque = contentIsOpaque;
-    setCanBlitOnScroll(!useSlowRepaints());
+    updateCanBlitOnScrollRecursively();
 }
 
 void FrameView::restoreScrollbar()
@@ -1526,12 +1550,10 @@ void FrameView::setBaseBackgroundColor(Color bc)
 void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool transparent)
 {
     for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
-        FrameView* view = frame->view();
-        if (!view)
-            continue;
-
-        view->setTransparent(transparent);
-        view->setBaseBackgroundColor(backgroundColor);
+        if (FrameView* view = frame->view()) {
+            view->setTransparent(transparent);
+            view->setBaseBackgroundColor(backgroundColor);
+        }
     }
 }
 
