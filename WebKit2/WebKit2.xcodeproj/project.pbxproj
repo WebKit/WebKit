@@ -93,6 +93,9 @@
 		1A2D848C127F6A49001EB962 /* NPIdentifierData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D848A127F6A49001EB962 /* NPIdentifierData.cpp */; };
 		1A2D84A3127F6AD1001EB962 /* NPVariantData.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D84A1127F6AD1001EB962 /* NPVariantData.h */; };
 		1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D84A2127F6AD1001EB962 /* NPVariantData.cpp */; };
+		1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D90BA1281C931001EB962 /* PluginProcessProxyMac.mm */; };
+		1A2D90D21281C966001EB962 /* PluginProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D90D01281C966001EB962 /* PluginProcessCreationParameters.h */; };
+		1A2D90D31281C966001EB962 /* PluginProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D90D11281C966001EB962 /* PluginProcessCreationParameters.cpp */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */; };
@@ -607,6 +610,9 @@
 		1A2D848A127F6A49001EB962 /* NPIdentifierData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPIdentifierData.cpp; sourceTree = "<group>"; };
 		1A2D84A1127F6AD1001EB962 /* NPVariantData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NPVariantData.h; sourceTree = "<group>"; };
 		1A2D84A2127F6AD1001EB962 /* NPVariantData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPVariantData.cpp; sourceTree = "<group>"; };
+		1A2D90BA1281C931001EB962 /* PluginProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessProxyMac.mm; sourceTree = "<group>"; };
+		1A2D90D01281C966001EB962 /* PluginProcessCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessCreationParameters.h; sourceTree = "<group>"; };
+		1A2D90D11281C966001EB962 /* PluginProcessCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessCreationParameters.cpp; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
 		1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFindClient.cpp; sourceTree = "<group>"; };
@@ -1360,6 +1366,8 @@
 		1AAE058C1279DCD400852418 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				1A2D90D11281C966001EB962 /* PluginProcessCreationParameters.cpp */,
+				1A2D90D01281C966001EB962 /* PluginProcessCreationParameters.h */,
 				1A2D848A127F6A49001EB962 /* NPIdentifierData.cpp */,
 				1A2D8489127F6A49001EB962 /* NPIdentifierData.h */,
 				1A1FA35C127A45BF0050E709 /* NPObjectMessageReceiver.cpp */,
@@ -1421,6 +1429,7 @@
 			isa = PBXGroup;
 			children = (
 				1AEFCCBC11D02C5E008219D3 /* PluginInfoStoreMac.mm */,
+				1A2D90BA1281C931001EB962 /* PluginProcessProxyMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -2280,6 +2289,7 @@
 				1A2D848B127F6A49001EB962 /* NPIdentifierData.h in Headers */,
 				1A2D84A3127F6AD1001EB962 /* NPVariantData.h in Headers */,
 				1C8E2A361277852400BC7BD0 /* WebInspectorMessages.h in Headers */,
+				1A2D90D21281C966001EB962 /* PluginProcessCreationParameters.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2618,6 +2628,8 @@
 				1A2D848C127F6A49001EB962 /* NPIdentifierData.cpp in Sources */,
 				1A2D84A4127F6AD1001EB962 /* NPVariantData.cpp in Sources */,
 				1C8E2A351277852400BC7BD0 /* WebInspectorMessageReceiver.cpp in Sources */,
+				1A2D90BB1281C931001EB962 /* PluginProcessProxyMac.mm in Sources */,
+				1A2D90D31281C966001EB962 /* PluginProcessCreationParameters.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -252,6 +252,7 @@ def struct_or_class(namespace, type):
         'WebCore::KeypressCommand',
         'WebCore::ViewportArguments',
         'WebCore::WindowFeatures',
+        'WebKit::PluginProcessCreationParameters',
         'WebKit::WebPageCreationParameters',
         'WebKit::WebPreferencesStore',
         'WebKit::WebProcessCreationParameters',

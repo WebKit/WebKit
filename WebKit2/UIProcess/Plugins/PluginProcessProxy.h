@@ -40,9 +40,10 @@ namespace CoreIPC {
 
 namespace WebKit {
 
+class PluginProcessCreationParameters;
 class PluginProcessManager;
 class WebProcessProxy;
-    
+
 class PluginProcessProxy : CoreIPC::Connection::Client, ProcessLauncher::Client {
 public:
     static PassOwnPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginInfoStore::Plugin&);
@@ -70,6 +71,8 @@ private:
     // Message handlers
     void didReceivePluginProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didCreateWebProcessConnection(const CoreIPC::MachPort&);
+
+    void platformInitializePluginProcess(PluginProcessCreationParameters& parameters);
 
     // The plug-in host process manager.
     PluginProcessManager* m_pluginProcessManager;

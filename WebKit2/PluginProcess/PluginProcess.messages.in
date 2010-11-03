@@ -23,8 +23,8 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 messages -> PluginProcess {
-    # Initializes the plug-in and specifies the path to the plug-in module.
-    Initialize(WTF::String pluginPath)
+    # Initializes the plug-in.
+    Initialize(WebKit::PluginProcessCreationParameters processCreationParameters)
     
     # Creates a web process connection. When the connection has been created,
     # The plug-in process sends back a DidCreateWebProcessConnection message with

@@ -28,6 +28,7 @@
 #include "PluginProcessProxy.h"
 
 #include "MachPort.h"
+#include "PluginProcessCreationParameters.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessMessages.h"
 #include "RunLoop.h"
@@ -118,8 +119,14 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
     m_connection->open();
     
+    PluginProcessCreationParameters parameters;
+
+    parameters.pluginPath = m_pluginInfo.path;
+
+    platformInitializePluginProcess(parameters);
+
     // Initialize the plug-in host process.
-    m_connection->send(Messages::PluginProcess::Initialize(m_pluginInfo.path), 0);
+    m_connection->send(Messages::PluginProcess::Initialize(parameters), 0);
 
     // Send all our pending requests.
     for (unsigned i = 0; i < m_numPendingConnectionRequests; ++i)
