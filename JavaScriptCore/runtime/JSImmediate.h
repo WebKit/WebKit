@@ -39,7 +39,6 @@ namespace JSC {
 
     class ExecState;
     class JSCell;
-    class JSFastMath;
     class JSGlobalData;
     class JSObject;
     class UString;
@@ -133,7 +132,6 @@ namespace JSC {
     private:
         friend class JIT;
         friend class JSValue;
-        friend class JSFastMath;
         friend class JSInterfaceJIT;
         friend class SpecializedThunkJIT;
         friend JSValue jsNumber(ExecState* exec, double d);
@@ -562,98 +560,6 @@ namespace JSC {
         ASSERT(isUInt32());
         return JSImmediate::getTruncatedUInt32(asValue());
     }
-
-    class JSFastMath {
-    public:
-        static ALWAYS_INLINE bool canDoFastBitwiseOperations(JSValue v1, JSValue v2)
-        {
-            return JSImmediate::areBothImmediateIntegerNumbers(v1, v2);
-        }
-
-        static ALWAYS_INLINE JSValue equal(JSValue v1, JSValue v2)
-        {
-            ASSERT(canDoFastBitwiseOperations(v1, v2));
-            return jsBoolean(v1 == v2);
-        }
-
-        static ALWAYS_INLINE JSValue notEqual(JSValue v1, JSValue v2)
-        {
-            ASSERT(canDoFastBitwiseOperations(v1, v2));
-            return jsBoolean(v1 != v2);
-        }
-
-        static ALWAYS_INLINE JSValue andImmediateNumbers(JSValue v1, JSValue v2)
-        {
-            ASSERT(canDoFastBitwiseOperations(v1, v2));
-            return JSImmediate::makeValue(JSImmediate::rawValue(v1) & JSImmediate::rawValue(v2));
-        }
-
-        static ALWAYS_INLINE JSValue xorImmediateNumbers(JSValue v1, JSValue v2)
-        {
-            ASSERT(canDoFastBitwiseOperations(v1, v2));
-            return JSImmediate::makeValue((JSImmediate::rawValue(v1) ^ JSImmediate::rawValue(v2)) | JSImmediate::TagTypeNumber);
-        }
-
-        static ALWAYS_INLINE JSValue orImmediateNumbers(JSValue v1, JSValue v2)
-        {
-            ASSERT(canDoFastBitwiseOperations(v1, v2));
-            return JSImmediate::makeValue(JSImmediate::rawValue(v1) | JSImmediate::rawValue(v2));
-        }
-
-        static ALWAYS_INLINE bool canDoFastRshift(JSValue v1, JSValue v2)
-        {
-            return JSImmediate::areBothImmediateIntegerNumbers(v1, v2);
-        }
-
-        static ALWAYS_INLINE bool canDoFastUrshift(JSValue v1, JSValue v2)
-        {
-            return JSImmediate::areBothImmediateIntegerNumbers(v1, v2) && !(JSImmediate::rawValue(v1) & JSImmediate::signBit);
-        }
-
-        static ALWAYS_INLINE JSValue rightShiftImmediateNumbers(JSValue val, JSValue shift)
-        {
-            ASSERT(canDoFastRshift(val, shift) || canDoFastUrshift(val, shift));
-            return JSImmediate::makeValue(static_cast<intptr_t>(static_cast<uint32_t>(static_cast<int32_t>(JSImmediate::rawValue(val)) >> ((JSImmediate::rawValue(shift) >> JSImmediate::IntegerPayloadShift) & 0x1f))) | JSImmediate::TagTypeNumber);
-        }
-
-        static ALWAYS_INLINE bool canDoFastAdditiveOperations(JSValue v)
-        {
-            // Number is non-negative and an operation involving two of these can't overflow.
-            // Checking for allowed negative numbers takes more time than it's worth on SunSpider.
-            return (JSImmediate::rawValue(v) & (JSImmediate::TagTypeNumber + (JSImmediate::signBit | (JSImmediate::signBit >> 1)))) == JSImmediate::TagTypeNumber;
-        }
-
-        static ALWAYS_INLINE bool canDoFastAdditiveOperations(JSValue v1, JSValue v2)
-        {
-            // Number is non-negative and an operation involving two of these can't overflow.
-            // Checking for allowed negative numbers takes more time than it's worth on SunSpider.
-            return canDoFastAdditiveOperations(v1) && canDoFastAdditiveOperations(v2);
-        }
-
-        static ALWAYS_INLINE JSValue addImmediateNumbers(JSValue v1, JSValue v2)
-        {
-            ASSERT(canDoFastAdditiveOperations(v1, v2));
-            return JSImmediate::makeValue(JSImmediate::rawValue(v1) + JSImmediate::rawValue(v2) - JSImmediate::TagTypeNumber);
-        }
-
-        static ALWAYS_INLINE JSValue subImmediateNumbers(JSValue v1, JSValue v2)
-        {
-            ASSERT(canDoFastAdditiveOperations(v1, v2));
-            return JSImmediate::makeValue(JSImmediate::rawValue(v1) - JSImmediate::rawValue(v2) + JSImmediate::TagTypeNumber);
-        }
-
-        static ALWAYS_INLINE JSValue incImmediateNumber(JSValue v)
-        {
-            ASSERT(canDoFastAdditiveOperations(v));
-            return JSImmediate::makeValue(JSImmediate::rawValue(v) + (1 << JSImmediate::IntegerPayloadShift));
-        }
-
-        static ALWAYS_INLINE JSValue decImmediateNumber(JSValue v)
-        {
-            ASSERT(canDoFastAdditiveOperations(v));
-            return JSImmediate::makeValue(JSImmediate::rawValue(v) - (1 << JSImmediate::IntegerPayloadShift));
-        }
-    };
 
 } // namespace JSC
 
