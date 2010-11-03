@@ -126,6 +126,22 @@ void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameDa
     releaseNPVariantValue(&result);
 }
 
+void NPObjectMessageReceiver::setProperty(const NPIdentifierData& propertyNameData, const NPVariantData& propertyValueData, bool& returnValue)
+{
+    if (!m_npObject->_class->setProperty) {
+        returnValue = false;
+        return;
+    }
+
+    NPVariant propertyValue = m_npRemoteObjectMap->npVariantDataToNPVariant(propertyValueData);
+
+    // Set the property.
+    returnValue = m_npObject->_class->setProperty(m_npObject, propertyNameData.createNPIdentifier(), &propertyValue);
+
+    // And release the value.
+    releaseNPVariantValue(&propertyValue);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

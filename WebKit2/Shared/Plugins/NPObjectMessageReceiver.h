@@ -57,6 +57,7 @@ private:
     void invoke(const NPIdentifierData&, const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData);
     void hasProperty(const NPIdentifierData&, bool& returnValue);
     void getProperty(const NPIdentifierData&, bool& returnValue, NPVariantData& resultData);
+    void setProperty(const NPIdentifierData&, const NPVariantData& propertyValueData, bool& returnValue);
 
     NPRemoteObjectMap* m_npRemoteObjectMap;
     uint64_t m_npObjectID;

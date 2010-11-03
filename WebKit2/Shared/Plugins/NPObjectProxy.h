@@ -61,6 +61,7 @@ private:
     bool invoke(NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
     bool hasProperty(NPIdentifier propertyName);
     bool getProperty(NPIdentifier propertyName, NPVariant* result);
+    bool setProperty(NPIdentifier propertyName, const NPVariant* value);
 
     static NPClass* npClass();
     static NPObject* NP_Allocate(NPP, NPClass*);
