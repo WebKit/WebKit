@@ -2884,6 +2884,8 @@
 		93F19B1508245E59001E9ABC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5C2869502846DCD018635CA /* Cocoa.framework */; };
 		93F19B1608245E59001E9ABC /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8216299029F4FB501000131 /* JavaScriptCore.framework */; };
 		93F19B1708245E59001E9ABC /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F1D31A0558CC5C00821BC0 /* libicucore.dylib */; };
+		93F6F1ED127F70B10055CB06 /* WebGLContextEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */; };
+		93F6F1EE127F70B10055CB06 /* WebGLContextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */; };
 		93F925430F7EF5B8007E37C9 /* CheckedRadioButtons.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F925410F7EF5B8007E37C9 /* CheckedRadioButtons.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93F925440F7EF5B8007E37C9 /* CheckedRadioButtons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93F925420F7EF5B8007E37C9 /* CheckedRadioButtons.cpp */; };
 		93F9B6570BA0F35E00854064 /* DOMHTMLCanvasElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93F9B6540BA0F35E00854064 /* DOMHTMLCanvasElement.mm */; };
@@ -8968,6 +8970,9 @@
 		93F19B1908245E59001E9ABC /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		93F19B1A08245E5A001E9ABC /* WebCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		93F1D31A0558CC5C00821BC0 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
+		93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLContextEvent.cpp; path = canvas/WebGLContextEvent.cpp; sourceTree = "<group>"; };
+		93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLContextEvent.h; path = canvas/WebGLContextEvent.h; sourceTree = "<group>"; };
+		93F6F1EC127F70B10055CB06 /* WebGLContextEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WebGLContextEvent.idl; path = canvas/WebGLContextEvent.idl; sourceTree = "<group>"; };
 		93F8B3050A300FE100F61AB8 /* CodeGenerator.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGenerator.pm; path = scripts/CodeGenerator.pm; sourceTree = "<group>"; };
 		93F8B3060A300FEA00F61AB8 /* CodeGeneratorJS.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = CodeGeneratorJS.pm; path = ../scripts/CodeGeneratorJS.pm; sourceTree = "<group>"; wrapsLines = 0; };
 		93F8B3070A300FEA00F61AB8 /* generate-bindings.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; name = "generate-bindings.pl"; path = "scripts/generate-bindings.pl"; sourceTree = "<group>"; };
@@ -12583,6 +12588,9 @@
 				6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */,
 				6E4E91AA10F7FB3100A2779C /* WebGLContextAttributes.h */,
 				6E4E91AB10F7FB3100A2779C /* WebGLContextAttributes.idl */,
+				93F6F1EA127F70B10055CB06 /* WebGLContextEvent.cpp */,
+				93F6F1EB127F70B10055CB06 /* WebGLContextEvent.h */,
+				93F6F1EC127F70B10055CB06 /* WebGLContextEvent.idl */,
 				49C7B9AE1042D32E0009D447 /* WebGLFramebuffer.cpp */,
 				49C7B9AF1042D32E0009D447 /* WebGLFramebuffer.h */,
 				49C7B9B01042D32E0009D447 /* WebGLFramebuffer.idl */,
@@ -21276,6 +21284,7 @@
 				97DD4D870FDF4D6E00ECF9A4 /* XSSAuditor.h in Headers */,
 				6E67D2A71280E8A4008758F7 /* Extensions3DOpenGL.h in Headers */,
 				6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */,
+ 				93F6F1EE127F70B10055CB06 /* WebGLContextEvent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -23839,6 +23848,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				97DD4D860FDF4D6E00ECF9A4 /* XSSAuditor.cpp in Sources */,
 				6E67D2A61280E8A4008758F7 /* Extensions3DOpenGL.cpp in Sources */,
+ 				93F6F1ED127F70B10055CB06 /* WebGLContextEvent.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

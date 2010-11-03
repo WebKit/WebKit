@@ -168,7 +168,11 @@ namespace WebCore {
     \
     macro(webkitfullscreenchange) \
     \
-    macro(webkitspeechchange)
+    macro(webkitspeechchange) \
+    \
+    macro(webglcontextlost) \
+    macro(webglcontextrestored) \
+    macro(webglcontextcreationerror) \
     \
 // end of DOM_EVENT_NAMES_FOR_EACH
 

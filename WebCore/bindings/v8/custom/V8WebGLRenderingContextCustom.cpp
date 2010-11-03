@@ -236,10 +236,10 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
     bool succeed = context->getAttachedShaders(program, shaders, ec);
     if (ec) {
         V8Proxy::setDOMException(ec);
-        return v8::Undefined();
+        return v8::Null();
     }
     if (!succeed)
-        return v8::Undefined();
+        return v8::Null();
     v8::Local<v8::Array> array = v8::Array::New(shaders.size());
     for (size_t ii = 0; ii < shaders.size(); ++ii)
         array->Set(v8::Integer::New(ii), toV8(shaders[ii]));
