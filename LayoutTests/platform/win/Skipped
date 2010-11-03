@@ -359,6 +359,14 @@ inspector/console-log-syntax-error.html
 
 # Sometimes times out http://webkit.org/b/48753
 http/tests/security/window-events-clear-port.html
+http/tests/security/window-properties-clear-port.html
+
+# Sometimes fails http://webkit.org/b/48909
+animations/play-state-suspend.html
+
+# Assertion failure http://webkit.org/b/48910
+http/tests/media/reload-after-dialog.html
+http/tests/media/video-cancel-load.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################
