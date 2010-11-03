@@ -1,5 +1,19 @@
 2010-11-03  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Crash when layout in response to setSize changes the drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=48947
+
+        This is tested by compositing/plugins/small-to-large-composited-plugin.html.
+
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp:
+        (WebKit::ChunkedUpdateDrawingArea::setSize):
+        * WebProcess/WebPage/LayerBackedDrawingArea.cpp:
+        (WebKit::LayerBackedDrawingArea::setSize):
+
+2010-11-03  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Pass the accelerated compositing render server port to the plug-in process at startup

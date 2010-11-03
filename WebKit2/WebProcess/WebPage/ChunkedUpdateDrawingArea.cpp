@@ -127,10 +127,16 @@ void ChunkedUpdateDrawingArea::setSize(const IntSize& viewSize)
     // We don't want to wait for an update until we display.
     m_isWaitingForUpdate = false;
     
-    m_webPage->setSize(viewSize);
+    // Laying out the page can cause the drawing area to change so we keep an extra reference.
+    RefPtr<ChunkedUpdateDrawingArea> protect(this);
 
-    // Layout if necessary.
+    m_webPage->setSize(viewSize);
     m_webPage->layoutIfNeeded();
+
+    if (m_webPage->drawingArea() != this) {
+        // The drawing area changed, return early.
+        return;
+    }
 
     if (m_paintingIsSuspended) {
         ASSERT(!m_displayTimer.isActive());
