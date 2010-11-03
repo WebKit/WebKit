@@ -1,3 +1,15 @@
+2010-11-03  Daniel Bates  <dbates@rim.com>
+
+        For unnamed frames, window.name returns a generated name
+        https://bugs.webkit.org/show_bug.cgi?id=6751
+
+        Part 1 of 2.
+
+        Substitute FrameTree::uniqueName() for FrameTree::name() in the Chromium port.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::name):
+
 2010-11-02  Al Patrick  <apatrick@chromium.org>
 
         Reviewed by Kenneth Russell.

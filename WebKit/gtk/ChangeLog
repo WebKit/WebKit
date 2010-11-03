@@ -1,3 +1,15 @@
+2010-11-03  Daniel Bates  <dbates@rim.com>
+
+        For unnamed frames, window.name returns a generated name
+        https://bugs.webkit.org/show_bug.cgi?id=6751
+
+        Part 1 of 2.
+
+        Substitute FrameTree::uniqueName() for FrameTree::name() in the GTK port.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_get_name):
+
 2010-11-02  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Adam Barth.
