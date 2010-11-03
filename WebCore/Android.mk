@@ -132,6 +132,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/EntityReference.cpp \
 	dom/ErrorEvent.cpp \
 	dom/Event.cpp \
+	dom/EventContext.cpp \
 	dom/EventNames.cpp \
 	dom/EventTarget.cpp \
 	dom/ExceptionBase.cpp \
@@ -192,6 +193,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	dom/WebKitAnimationEvent.cpp \
 	dom/WebKitTransitionEvent.cpp \
 	dom/WheelEvent.cpp \
+	dom/WindowEventContext.cpp \
 	dom/XMLDocumentParser.cpp \
 	dom/XMLDocumentParserLibxml2.cpp \
 	dom/XMLDocumentParserScope.cpp \
