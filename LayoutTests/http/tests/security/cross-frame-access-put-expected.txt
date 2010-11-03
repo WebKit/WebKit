@@ -484,7 +484,7 @@ ALERT: PASS: window.innerWidth should be '300' and is.
 ALERT: PASS: window.length should be '0' and is.
 ALERT: PASS: window.locationbar should be '[object BarInfo]' and is.
 ALERT: PASS: window.menubar should be '[object BarInfo]' and is.
-ALERT: PASS: window.name should be '<!--framePath //<!--frame0-->-->' and is.
+ALERT: PASS: window.name should be '' and is.
 ALERT: PASS: window.navigator should be '[object Navigator]' and is.
 ALERT: PASS: window.offscreenBuffering should be 'true' and is.
 ALERT: PASS: window.onabort should be 'null' and is.

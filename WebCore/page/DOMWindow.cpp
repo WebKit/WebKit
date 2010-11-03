@@ -1136,7 +1136,7 @@ String DOMWindow::name() const
     if (!m_frame)
         return String();
 
-    return m_frame->tree()->uniqueName();
+    return m_frame->tree()->name();
 }
 
 void DOMWindow::setName(const String& string)

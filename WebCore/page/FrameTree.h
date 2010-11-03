@@ -38,6 +38,7 @@ namespace WebCore {
         }
         ~FrameTree();
 
+        const AtomicString& name() const { return m_name; }
         const AtomicString& uniqueName() const { return m_uniqueName; }
         void setName(const AtomicString&);
         void clearName();
@@ -73,6 +74,7 @@ namespace WebCore {
         Frame* m_thisFrame;
 
         Frame* m_parent;
+        AtomicString m_name; // The actual frame name (may be empty).
         AtomicString m_uniqueName;
 
         // FIXME: use ListRefPtr?

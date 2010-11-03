@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2006 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +41,7 @@ FrameTree::~FrameTree()
 
 void FrameTree::setName(const AtomicString& name) 
 {
+    m_name = name;
     if (!parent()) {
         m_uniqueName = name;
         return;
@@ -50,6 +52,7 @@ void FrameTree::setName(const AtomicString& name)
 
 void FrameTree::clearName()
 {
+    m_name = AtomicString();
     m_uniqueName = AtomicString();
 }
 
