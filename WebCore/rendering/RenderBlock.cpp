@@ -2554,8 +2554,8 @@ GapRects RenderBlock::selectionGapRectsForRepaint(RenderBoxModelObject* repaintC
         offsetFromRepaintContainer -= layer()->scrolledContentOffset();
 
     int lastTop = 0;
-    int lastLeft = leftSelectionOffset(this, lastTop);
-    int lastRight = rightSelectionOffset(this, lastTop);
+    int lastLeft = logicalLeftSelectionOffset(this, lastTop);
+    int lastRight = logicalRightSelectionOffset(this, lastTop);
     
     return fillSelectionGaps(this, offsetFromRepaintContainer.x(), offsetFromRepaintContainer.y(), offsetFromRepaintContainer.x(), offsetFromRepaintContainer.y(), lastTop, lastLeft, lastRight);
 }
@@ -2564,8 +2564,8 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
 {
     if (shouldPaintSelectionGaps() && paintInfo.phase == PaintPhaseForeground) {
         int lastTop = 0;
-        int lastLeft = leftSelectionOffset(this, lastTop);
-        int lastRight = rightSelectionOffset(this, lastTop);
+        int lastLeft = logicalLeftSelectionOffset(this, lastTop);
+        int lastRight = logicalRightSelectionOffset(this, lastTop);
         paintInfo.context->save();
         IntRect gapRectsBounds = fillSelectionGaps(this, tx, ty, tx, ty, lastTop, lastLeft, lastRight, &paintInfo);
         if (!gapRectsBounds.isEmpty()) {
@@ -2629,8 +2629,8 @@ GapRects RenderBlock::fillSelectionGaps(RenderBlock* rootBlock, int blockX, int 
     if (hasColumns() || hasTransform() || style()->columnSpan()) {
         // FIXME: We should learn how to gap fill multiple columns and transforms eventually.
         lastTop = (ty - blockY) + height();
-        lastLeft = leftSelectionOffset(rootBlock, height());
-        lastRight = rightSelectionOffset(rootBlock, height());
+        lastLeft = logicalLeftSelectionOffset(rootBlock, height());
+        lastRight = logicalRightSelectionOffset(rootBlock, height());
         return result;
     }
 
@@ -2641,8 +2641,8 @@ GapRects RenderBlock::fillSelectionGaps(RenderBlock* rootBlock, int blockX, int 
 
     // Go ahead and fill the vertical gap all the way to the bottom of our block if the selection extends past our block.
     if (rootBlock == this && (selectionState() != SelectionBoth && selectionState() != SelectionEnd))
-        result.uniteCenter(fillVerticalSelectionGap(lastTop, lastLeft, lastRight, ty + height(),
-                                                    rootBlock, blockX, blockY, paintInfo));
+        result.uniteCenter(fillBlockSelectionGap(lastTop, lastLeft, lastRight, ty + height(),
+                                                 rootBlock, blockX, blockY, paintInfo));
     return result;
 }
 
@@ -2658,8 +2658,8 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
             // Go ahead and update our lastY to be the bottom of the block.  <hr>s or empty blocks with height can trip this
             // case.
             lastTop = (ty - blockY) + height();
-            lastLeft = leftSelectionOffset(rootBlock, height());
-            lastRight = rightSelectionOffset(rootBlock, height());
+            lastLeft = logicalLeftSelectionOffset(rootBlock, height());
+            lastRight = logicalRightSelectionOffset(rootBlock, height());
         }
         return result;
     }
@@ -2675,8 +2675,8 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
 
         if (!containsStart && !lastSelectedLine &&
             selectionState() != SelectionStart && selectionState() != SelectionBoth)
-            result.uniteCenter(fillVerticalSelectionGap(lastTop, lastLeft, lastRight, ty + selTop,
-                                                        rootBlock, blockX, blockY, paintInfo));
+            result.uniteCenter(fillBlockSelectionGap(lastTop, lastLeft, lastRight, ty + selTop,
+                                                     rootBlock, blockX, blockY, paintInfo));
 
         if (!paintInfo || (ty + selTop < paintInfo->rect.bottom() && ty + selTop + selHeight > paintInfo->rect.y()))
             result.unite(curr->fillLineSelectionGap(selTop, selHeight, rootBlock, blockX, blockY, tx, ty, paintInfo));
@@ -2691,8 +2691,8 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
     if (lastSelectedLine && selectionState() != SelectionEnd && selectionState() != SelectionBoth) {
         // Go ahead and update our lastY to be the bottom of the last selected line.
         lastTop = (ty - blockY) + lastSelectedLine->selectionBottom();
-        lastLeft = leftSelectionOffset(rootBlock, lastSelectedLine->selectionBottom());
-        lastRight = rightSelectionOffset(rootBlock, lastSelectedLine->selectionBottom());
+        lastLeft = logicalLeftSelectionOffset(rootBlock, lastSelectedLine->selectionBottom());
+        lastRight = logicalRightSelectionOffset(rootBlock, lastSelectedLine->selectionBottom());
     }
     return result;
 }
@@ -2728,8 +2728,8 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
             // We need to fill the vertical gap above this object.
             if (childState == SelectionEnd || childState == SelectionInside)
                 // Fill the gap above the object.
-                result.uniteCenter(fillVerticalSelectionGap(lastTop, lastLeft, lastRight, 
-                                                            ty + curr->y(), rootBlock, blockX, blockY, paintInfo));
+                result.uniteCenter(fillBlockSelectionGap(lastTop, lastLeft, lastRight, 
+                                                         ty + curr->y(), rootBlock, blockX, blockY, paintInfo));
 
             // Only fill side gaps for objects that paint their own selection if we know for sure the selection is going to extend all the way *past*
             // our object.  We know this if the selection did not end inside our object.
@@ -2738,19 +2738,19 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
 
             // Fill side gaps on this object based off its state.
             bool leftGap, rightGap;
-            getHorizontalSelectionGapInfo(childState, leftGap, rightGap);
+            getSelectionGapInfo(childState, leftGap, rightGap);
 
             if (leftGap)
-                result.uniteLeft(fillLeftSelectionGap(this, curr->x(), curr->y(), curr->height(), rootBlock, blockX, blockY, tx, ty, paintInfo));
+                result.uniteLeft(fillLogicalLeftSelectionGap(this, curr->x(), curr->y(), curr->height(), rootBlock, blockX, blockY, tx, ty, paintInfo));
             if (rightGap)
-                result.uniteRight(fillRightSelectionGap(this, curr->x() + curr->width(), curr->y(), curr->height(), rootBlock, blockX, blockY, tx, ty, paintInfo));
+                result.uniteRight(fillLogicalRightSelectionGap(this, curr->x() + curr->width(), curr->y(), curr->height(), rootBlock, blockX, blockY, tx, ty, paintInfo));
 
             // Update lastTop to be just underneath the object.  lastLeft and lastRight extend as far as
             // they can without bumping into floating or positioned objects.  Ideally they will go right up
             // to the border of the root selection block.
             lastTop = (ty - blockY) + (curr->y() + curr->height());
-            lastLeft = leftSelectionOffset(rootBlock, curr->y() + curr->height());
-            lastRight = rightSelectionOffset(rootBlock, curr->y() + curr->height());
+            lastLeft = logicalLeftSelectionOffset(rootBlock, curr->y() + curr->height());
+            lastRight = logicalRightSelectionOffset(rootBlock, curr->y() + curr->height());
         } else if (childState != SelectionNone)
             // We must be a block that has some selected object inside it.  Go ahead and recur.
             result.unite(toRenderBlock(curr)->fillSelectionGaps(rootBlock, blockX, blockY, tx + curr->x(), ty + curr->y(), 
@@ -2759,7 +2759,7 @@ GapRects RenderBlock::fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX,
     return result;
 }
 
-IntRect RenderBlock::fillHorizontalSelectionGap(RenderObject* selObj, int xPos, int yPos, int width, int height, const PaintInfo* paintInfo)
+IntRect RenderBlock::fillLineSelectionGap(RenderObject* selObj, int xPos, int yPos, int width, int height, const PaintInfo* paintInfo)
 {
     if (width <= 0 || height <= 0)
         return IntRect();
@@ -2769,8 +2769,8 @@ IntRect RenderBlock::fillHorizontalSelectionGap(RenderObject* selObj, int xPos, 
     return gapRect;
 }
 
-IntRect RenderBlock::fillVerticalSelectionGap(int lastTop, int lastLeft, int lastRight, int bottomY, RenderBlock* rootBlock,
-                                              int blockX, int blockY, const PaintInfo* paintInfo)
+IntRect RenderBlock::fillBlockSelectionGap(int lastTop, int lastLeft, int lastRight, int bottomY, RenderBlock* rootBlock,
+                                           int blockX, int blockY, const PaintInfo* paintInfo)
 {
     int top = blockY + lastTop;
     int height = bottomY - top;
@@ -2778,8 +2778,8 @@ IntRect RenderBlock::fillVerticalSelectionGap(int lastTop, int lastLeft, int las
         return IntRect();
 
     // Get the selection offsets for the bottom of the gap
-    int left = blockX + max(lastLeft, leftSelectionOffset(rootBlock, bottomY));
-    int right = blockX + min(lastRight, rightSelectionOffset(rootBlock, bottomY));
+    int left = blockX + max(lastLeft, logicalLeftSelectionOffset(rootBlock, bottomY));
+    int right = blockX + min(lastRight, logicalRightSelectionOffset(rootBlock, bottomY));
     int width = right - left;
     if (width <= 0)
         return IntRect();
@@ -2790,12 +2790,12 @@ IntRect RenderBlock::fillVerticalSelectionGap(int lastTop, int lastLeft, int las
     return gapRect;
 }
 
-IntRect RenderBlock::fillLeftSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock,
-                                          int blockX, int /*blockY*/, int tx, int ty, const PaintInfo* paintInfo)
+IntRect RenderBlock::fillLogicalLeftSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock,
+                                                 int blockX, int /*blockY*/, int tx, int ty, const PaintInfo* paintInfo)
 {
     int top = yPos + ty;
-    int left = blockX + max(leftSelectionOffset(rootBlock, yPos), leftSelectionOffset(rootBlock, yPos + height));
-    int right = min(xPos + tx, blockX + min(rightSelectionOffset(rootBlock, yPos), rightSelectionOffset(rootBlock, yPos + height)));
+    int left = blockX + max(logicalLeftSelectionOffset(rootBlock, yPos), logicalLeftSelectionOffset(rootBlock, yPos + height));
+    int right = min(xPos + tx, blockX + min(logicalRightSelectionOffset(rootBlock, yPos), logicalRightSelectionOffset(rootBlock, yPos + height)));
     int width = right - left;
     if (width <= 0)
         return IntRect();
@@ -2806,12 +2806,12 @@ IntRect RenderBlock::fillLeftSelectionGap(RenderObject* selObj, int xPos, int yP
     return gapRect;
 }
 
-IntRect RenderBlock::fillRightSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock,
-                                           int blockX, int /*blockY*/, int tx, int ty, const PaintInfo* paintInfo)
+IntRect RenderBlock::fillLogicalRightSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock,
+                                                  int blockX, int /*blockY*/, int tx, int ty, const PaintInfo* paintInfo)
 {
-    int left = max(xPos + tx, blockX + max(leftSelectionOffset(rootBlock, yPos), leftSelectionOffset(rootBlock, yPos + height)));
+    int left = max(xPos + tx, blockX + max(logicalLeftSelectionOffset(rootBlock, yPos), logicalLeftSelectionOffset(rootBlock, yPos + height)));
     int top = yPos + ty;
-    int right = blockX + min(rightSelectionOffset(rootBlock, yPos), rightSelectionOffset(rootBlock, yPos + height));
+    int right = blockX + min(logicalRightSelectionOffset(rootBlock, yPos), logicalRightSelectionOffset(rootBlock, yPos + height));
     int width = right - left;
     if (width <= 0)
         return IntRect();
@@ -2822,7 +2822,7 @@ IntRect RenderBlock::fillRightSelectionGap(RenderObject* selObj, int xPos, int y
     return gapRect;
 }
 
-void RenderBlock::getHorizontalSelectionGapInfo(SelectionState state, bool& leftGap, bool& rightGap)
+void RenderBlock::getSelectionGapInfo(SelectionState state, bool& leftGap, bool& rightGap)
 {
     bool ltr = style()->isLeftToRightDirection();
     leftGap = (state == RenderObject::SelectionInside) ||
@@ -2833,13 +2833,13 @@ void RenderBlock::getHorizontalSelectionGapInfo(SelectionState state, bool& left
                (state == RenderObject::SelectionEnd && !ltr);
 }
 
-int RenderBlock::leftSelectionOffset(RenderBlock* rootBlock, int yPos)
+int RenderBlock::logicalLeftSelectionOffset(RenderBlock* rootBlock, int yPos)
 {
     int left = logicalLeftOffsetForLine(yPos, false);
     if (left == borderLeft() + paddingLeft()) {
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
-            return containingBlock()->leftSelectionOffset(rootBlock, yPos + y());
+            return containingBlock()->logicalLeftSelectionOffset(rootBlock, yPos + y());
         return left;
     }
     else {
@@ -2853,13 +2853,13 @@ int RenderBlock::leftSelectionOffset(RenderBlock* rootBlock, int yPos)
     return left;
 }
 
-int RenderBlock::rightSelectionOffset(RenderBlock* rootBlock, int yPos)
+int RenderBlock::logicalRightSelectionOffset(RenderBlock* rootBlock, int yPos)
 {
     int right = logicalRightOffsetForLine(yPos, false);
     if (right == (contentWidth() + (borderLeft() + paddingLeft()))) {
         if (rootBlock != this)
             // The border can potentially be further extended by our containingBlock().
-            return containingBlock()->rightSelectionOffset(rootBlock, yPos + y());
+            return containingBlock()->logicalRightSelectionOffset(rootBlock, yPos + y());
         return right;
     }
     else {

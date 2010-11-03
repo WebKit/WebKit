@@ -249,26 +249,25 @@ int RootInlineBox::alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAn
     return heightOfBlock + maxHeight;
 }
 
-GapRects RootInlineBox::fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
-                                             const PaintInfo* paintInfo)
+GapRects RootInlineBox::fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty, const PaintInfo* paintInfo)
 {
     RenderObject::SelectionState lineState = selectionState();
 
     bool leftGap, rightGap;
-    block()->getHorizontalSelectionGapInfo(lineState, leftGap, rightGap);
+    block()->getSelectionGapInfo(lineState, leftGap, rightGap);
 
     GapRects result;
 
     InlineBox* firstBox = firstSelectedBox();
     InlineBox* lastBox = lastSelectedBox();
     if (leftGap)
-        result.uniteLeft(block()->fillLeftSelectionGap(firstBox->parent()->renderer(),
-                                                       firstBox->x(), selTop, selHeight,
-                                                       rootBlock, blockX, blockY, tx, ty, paintInfo));
+        result.uniteLeft(block()->fillLogicalLeftSelectionGap(firstBox->parent()->renderer(),
+                                                              firstBox->x(), selTop, selHeight,
+                                                              rootBlock, blockX, blockY, tx, ty, paintInfo));
     if (rightGap)
-        result.uniteRight(block()->fillRightSelectionGap(lastBox->parent()->renderer(),
-                                                         lastBox->x() + lastBox->logicalWidth(), selTop, selHeight,
-                                                         rootBlock, blockX, blockY, tx, ty, paintInfo));
+        result.uniteRight(block()->fillLogicalRightSelectionGap(lastBox->parent()->renderer(),
+                                                                lastBox->x() + lastBox->logicalWidth(), selTop, selHeight,
+                                                                rootBlock, blockX, blockY, tx, ty, paintInfo));
 
     // When dealing with bidi text, a non-contiguous selection region is possible.
     // e.g. The logical text aaaAAAbbb (capitals denote RTL text and non-capitals LTR) is layed out
@@ -284,9 +283,9 @@ GapRects RootInlineBox::fillLineSelectionGap(int selTop, int selHeight, RenderBl
         for (InlineBox* box = firstBox->nextLeafChild(); box; box = box->nextLeafChild()) {
             if (box->selectionState() != RenderObject::SelectionNone) {
                 if (isPreviousBoxSelected)  // VisibleSelection may be non-contiguous, see comment above.
-                    result.uniteCenter(block()->fillHorizontalSelectionGap(box->parent()->renderer(),
-                                                                           lastX + tx, selTop + ty,
-                                                                           box->x() - lastX, selHeight, paintInfo));
+                    result.uniteCenter(block()->fillLineSelectionGap(box->parent()->renderer(),
+                                                                     lastX + tx, selTop + ty,
+                                                                     box->x() - lastX, selHeight, paintInfo));
                 lastX = box->x() + box->logicalWidth();
             }
             if (box == lastBox)
