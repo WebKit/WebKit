@@ -158,7 +158,7 @@ int FixedTableLayout::calcWidthArray(int)
                 if (cell->preferredLogicalWidthsDirty())
                     cell->computePreferredLogicalWidths();
 
-                Length w = cell->styleOrColWidth();
+                Length w = cell->styleOrColLogicalWidth();
                 int span = cell->colSpan();
                 int effWidth = 0;
                 if (w.isFixed() && w.isPositive())

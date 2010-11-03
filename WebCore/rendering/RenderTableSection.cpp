@@ -281,7 +281,7 @@ void RenderTableSection::setCellWidths()
                     }
                     cell->repaint();
                 }
-                cell->updateWidth(w);
+                cell->updateLogicalWidth(w);
             }
         }
     }

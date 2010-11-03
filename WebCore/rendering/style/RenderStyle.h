@@ -404,6 +404,11 @@ public:
     const BorderValue& borderTop() const { return surround->border.top(); }
     const BorderValue& borderBottom() const { return surround->border.bottom(); }
 
+    const BorderValue& borderBefore() const;
+    const BorderValue& borderAfter() const;
+    const BorderValue& borderStart() const;
+    const BorderValue& borderEnd() const;
+
     const NinePieceImage& borderImage() const { return surround->border.image(); }
 
     const LengthSize& borderTopLeftRadius() const { return surround->border.topLeft(); }

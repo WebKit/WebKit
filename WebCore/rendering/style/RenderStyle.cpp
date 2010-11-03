@@ -1148,6 +1148,52 @@ Length RenderStyle::logicalMaxHeight() const
     return maxWidth();
 }
 
+const BorderValue& RenderStyle::borderBefore() const
+{
+    switch (writingMode()) {
+    case TopToBottomWritingMode:
+        return borderTop();
+    case BottomToTopWritingMode:
+        return borderBottom();
+    case LeftToRightWritingMode:
+        return borderLeft();
+    case RightToLeftWritingMode:
+        return borderRight();
+    }
+    ASSERT_NOT_REACHED();
+    return borderTop();
+}
+
+const BorderValue& RenderStyle::borderAfter() const
+{
+    switch (writingMode()) {
+    case TopToBottomWritingMode:
+        return borderBottom();
+    case BottomToTopWritingMode:
+        return borderTop();
+    case LeftToRightWritingMode:
+        return borderRight();
+    case RightToLeftWritingMode:
+        return borderLeft();
+    }
+    ASSERT_NOT_REACHED();
+    return borderBottom();
+}
+
+const BorderValue& RenderStyle::borderStart() const
+{
+    if (isHorizontalWritingMode())
+        return isLeftToRightDirection() ? borderLeft() : borderRight();
+    return isLeftToRightDirection() ? borderTop() : borderBottom();
+}
+
+const BorderValue& RenderStyle::borderEnd() const
+{
+    if (isHorizontalWritingMode())
+        return isLeftToRightDirection() ? borderRight() : borderLeft();
+    return isLeftToRightDirection() ? borderBottom() : borderTop();
+}
+
 unsigned short RenderStyle::borderBeforeWidth() const
 {
     switch (writingMode()) {
