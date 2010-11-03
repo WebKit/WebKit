@@ -203,8 +203,7 @@ BUG60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
 BUGWK47901 MAC : fast/canvas/canvas-getImageData-negative-source.html = TEXT
 BUGJAPHET WIN LINUX : fast/canvas/canvas-currentColor.html = TEXT
-// Passes on the GPU, but leaving this here for reference.
-// BUGWK48142 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
+BUGWK48142 : fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html = CRASH PASS
 BUGWK48634 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
 BUGWK48634 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = TEXT
 BUGWK48634 MAC : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
