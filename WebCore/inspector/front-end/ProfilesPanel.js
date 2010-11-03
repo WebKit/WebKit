@@ -443,12 +443,12 @@ WebInspector.ProfilesPanel.prototype = {
             if (!(titleKey in this._profileGroupsForLinks))
                 this._profileGroupsForLinks[titleKey] = 0;
 
-            groupNumber = ++this._profileGroupsForLinks[titleKey];
+            var groupNumber = ++this._profileGroupsForLinks[titleKey];
 
             if (groupNumber > 2)
                 // The title is used in the console message announcing that a profile has started so it gets
                 // incremented twice as often as it's displayed
-                title += " " + WebInspector.UIString("Run %d", groupNumber / 2);
+                title += " " + WebInspector.UIString("Run %d", (groupNumber + 1) / 2);
         }
         
         return title;

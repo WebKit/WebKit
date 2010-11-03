@@ -95,7 +95,7 @@ void InspectorProfilerAgent::addProfileFinishedMessageToConsole(PassRefPtr<Scrip
 
 void InspectorProfilerAgent::addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL)
 {
-    String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), "#0 \" started.");
+    String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), "#0\" started.");
     m_inspectorController->addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lineNumber, sourceURL);
 }
 
