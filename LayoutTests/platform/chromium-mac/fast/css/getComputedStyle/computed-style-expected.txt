@@ -157,6 +157,7 @@ zoom: 1;
 -webkit-perspective: none;
 -webkit-perspective-origin: 392px 288px;
 -webkit-rtl-ordering: logical;
+-webkit-text-combine: none;
 -webkit-text-decorations-in-effect: none;
 -webkit-text-fill-color: rgb(0, 0, 0);
 -webkit-text-security: none;
