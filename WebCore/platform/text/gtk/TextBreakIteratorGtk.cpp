@@ -300,7 +300,7 @@ int textBreakNext(TextBreakIterator* iterator)
         if ((iterator->m_type == UBRK_LINE && iterator->m_logAttrs[index].is_line_break)
             || (iterator->m_type == UBRK_WORD && (iterator->m_logAttrs[index].is_word_start || iterator->m_logAttrs[index].is_word_end))
             || (iterator->m_type == UBRK_CHARACTER && iterator->m_logAttrs[index].is_cursor_position)
-            || (iterator->m_type == UBRK_SENTENCE && (iterator->m_logAttrs[index].is_sentence_start || iterator->m_logAttrs[index].is_sentence_end)) ) {
+            || (iterator->m_type == UBRK_SENTENCE && iterator->m_logAttrs[index].is_sentence_boundary)) {
             break;
         }
     }
@@ -315,7 +315,7 @@ int textBreakPrevious(TextBreakIterator* iterator)
         if ((iterator->m_type == UBRK_LINE && iterator->m_logAttrs[index].is_line_break)
             || (iterator->m_type == UBRK_WORD && (iterator->m_logAttrs[index].is_word_start || iterator->m_logAttrs[index].is_word_end))
             || (iterator->m_type == UBRK_CHARACTER && iterator->m_logAttrs[index].is_cursor_position)
-            || (iterator->m_type == UBRK_SENTENCE && (iterator->m_logAttrs[index].is_sentence_start || iterator->m_logAttrs[index].is_sentence_end)) ) {
+            || (iterator->m_type == UBRK_SENTENCE && iterator->m_logAttrs[index].is_sentence_boundary)) {
             break;
         }
     }
