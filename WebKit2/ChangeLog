@@ -1,3 +1,13 @@
+2010-11-04  Adam Roben  <aroben@apple.com>
+
+        Remove lame puts()s from WebPageProxy
+
+        Rubber-stamped by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadURL):
+        (WebKit::WebPageProxy::loadURLRequest):
+
 2010-11-03  Alice Liu  <alice.liu@apple.com>
 
         Fix clang++ build 

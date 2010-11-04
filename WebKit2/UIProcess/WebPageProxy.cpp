@@ -251,20 +251,16 @@ bool WebPageProxy::tryClose()
 
 void WebPageProxy::loadURL(const String& url)
 {
-    if (!isValid()) {
-        puts("loadURL called with a dead WebProcess");
+    if (!isValid())
         relaunch();
-    }
 
     process()->send(Messages::WebPage::LoadURL(url), m_pageID);
 }
 
 void WebPageProxy::loadURLRequest(WebURLRequest* urlRequest)
 {
-    if (!isValid()) {
-        puts("loadURLRequest called with a dead WebProcess");
+    if (!isValid())
         relaunch();
-    }
 
     process()->send(Messages::WebPage::LoadURLRequest(urlRequest->resourceRequest()), m_pageID);
 }
