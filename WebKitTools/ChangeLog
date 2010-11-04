@@ -1,3 +1,10 @@
+2010-11-04  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rollout r71340, because it broke Chromium Windows bot.
+
+        * Scripts/webkitpy/layout_tests/layout_package/dump_render_tree_thread.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-11-04  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Ojan Vafai.
