@@ -44,7 +44,7 @@ def abspath_to_uri(path, platform=None):
 
 
 def cygpath(path):
-    """Converts a cygwin path to Windows path."""
+    """Converts an absolute cygwin path to an absolute Windows path."""
     return _CygPath.convert_using_singleton(path)
 
 
@@ -103,7 +103,11 @@ class _CygPath(object):
             self.start()
         self._child_process.stdin.write("%s\r\n" % path)
         self._child_process.stdin.flush()
-        return self._child_process.stdout.readline().rstrip()
+        windows_path = self._child_process.stdout.readline().rstrip()
+        # Some versions of cygpath use lowercase drive letters while others
+        # use uppercase. We always convert to uppercase for consistency.
+        windows_path = '%s%s' % (windows_path[0].upper(), windows_path[1:])
+        return windows_path
 
 
 def _escape(path):

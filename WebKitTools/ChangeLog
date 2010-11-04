@@ -1,3 +1,21 @@
+2010-11-03  Adam Roben  <aroben@apple.com>
+
+        Always use uppercase drive names in strings returned by abspath_to_uri
+
+        Some versions of cygpath use lowercase drive letters while others use
+        uppercase, which makes it hard to test the output of code that uses
+        cygpath.
+
+        Fixes <http://webkit.org/b/48914> webkitpy.common.system.path_unittest
+        fails with Cygwin 1.5
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/system/path.py:
+        (cygpath): Updated the docstring to indicate that only absolute paths
+        should be passed for now (though relative paths will work fine).
+        (_Cygpath.convert): Upper-case the first letter of the converted Windows path.
+
 2010-11-03  George Guo  <George.Guo@Nokia.com>
 
         Reviewed by Andreas Kling.
