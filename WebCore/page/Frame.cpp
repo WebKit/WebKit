@@ -502,6 +502,9 @@ void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
 {
     if (!m_page)
         return;
+
+    if (loader()->stateMachine()->creatingInitialEmptyDocument())
+        return;
     
     // Walk the hashtable. Inject by world.
     const UserScriptMap* userScripts = m_page->group().userScripts();

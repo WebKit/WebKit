@@ -3,8 +3,8 @@
 <script>
 if (window.layoutTestController) {
     window.layoutTestController.dumpAsText();
-    window.layoutTestController.addUserScript("console.log('Start Script')", true, true);
-    window.layoutTestController.addUserScript("console.log('End Script')", false, true);
+    window.layoutTestController.addUserScript("console.log('Start Script: ' + document.location.href)", true, true);
+    window.layoutTestController.addUserScript("console.log('End Script: ' + document.location.href)", false, true);
 }
 </script>
 </head>
