@@ -2364,11 +2364,12 @@ HEADERS += \
     svg/properties/SVGAnimatedPropertySynchronizer.h \
     svg/properties/SVGAnimatedPropertyTearOff.h \
     svg/properties/SVGAnimatedStaticPropertyTearOff.h \
+    svg/properties/SVGListProperty.h \
     svg/properties/SVGListPropertyTearOff.h \
     svg/properties/SVGProperty.h \
     svg/properties/SVGPropertyTearOff.h \
     svg/properties/SVGPropertyTraits.h \
-    svg/properties/SVGStringListPropertyTearOff.h \
+    svg/properties/SVGStaticListPropertyTearOff.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
     svg/SVGAngle.h \

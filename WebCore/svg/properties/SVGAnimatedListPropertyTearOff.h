@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGAnimatedProperty.h"
 #include "SVGListPropertyTearOff.h"
+#include "SVGStaticListPropertyTearOff.h"
 
 namespace WebCore {
 

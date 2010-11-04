@@ -687,11 +687,9 @@ sub GetSVGPropertyTypes
             $svgPropertyType = "WebCore::$svgWrappedNativeType";
             $svgPropertyType =~ s/</\<WebCore::/;
         }
-    } elsif ($svgNativeType =~ /SVGListPropertyTearOff/) {
+    } elsif ($svgNativeType =~ /SVGListPropertyTearOff/ or $svgNativeType =~ /SVGStaticListPropertyTearOff/) {
         $svgListPropertyType = "WebCore::$svgWrappedNativeType";
         $svgListPropertyType =~ s/</\<WebCore::/;
-    } elsif ($svgNativeType =~ /SVGStringListPropertyTearOff/) {
-        $svgListPropertyType = "WebCore::SVGStringList";
     }
 
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
@@ -1026,13 +1024,7 @@ sub GenerateHeader
 
         push(@internalHeaderContent, "\n#import <WebCore/$className.h>\n\n");
         push(@internalHeaderContent, "#import <WebCore/SVGAnimatedPropertyTearOff.h>\n\n") if $svgPropertyType;
-        if ($svgListPropertyType) {
-            if ($svgListPropertyType eq "WebCore::SVGStringList") {
-                push(@internalHeaderContent, "#import <WebCore/SVGStringListPropertyTearOff.h>\n\n");
-            } else {
-                push(@internalHeaderContent, "#import <WebCore/SVGAnimatedListPropertyTearOff.h>\n\n");
-            }
-        }
+        push(@internalHeaderContent, "#import <WebCore/SVGAnimatedListPropertyTearOff.h>\n\n") if $svgListPropertyType;
         push(@internalHeaderContent, $interfaceAvailabilityVersionCheck) if length $interfaceAvailabilityVersion;
 
         if ($interfaceName eq "Node") {
@@ -1327,7 +1319,7 @@ sub GenerateImplementation
             } elsif (ConversionNeeded($attribute->signature->type)) {
                 if ($codeGenerator->IsSVGTypeNeedingTearOff($attribute->signature->type) and not $implClassName =~ /List$/) {
                     my $idlTypeWithNamespace = GetSVGTypeWithNamespace($attribute->signature->type);
-                    if ($idlTypeWithNamespace eq "WebCore::SVGStringListPropertyTearOff") {
+                    if ($idlTypeWithNamespace =~ /SVGStaticListPropertyTearOff/) {
                         my $extraImp = "WebCore::GetOwnerElementForType<$implClassNameWithNamespace, WebCore::IsDerivedFromSVGElement<$implClassNameWithNamespace>::value>::ownerElement(IMPL), ";
                         $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($extraImp$getterContentHead";
                     } else {

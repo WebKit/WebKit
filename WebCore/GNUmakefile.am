@@ -3037,11 +3037,12 @@ webcore_sources += \
 	WebCore/svg/properties/SVGAnimatedPropertySynchronizer.h \
 	WebCore/svg/properties/SVGAnimatedPropertyTearOff.h \
 	WebCore/svg/properties/SVGAnimatedStaticPropertyTearOff.h \
+	WebCore/svg/properties/SVGListProperty.h \
 	WebCore/svg/properties/SVGListPropertyTearOff.h \
 	WebCore/svg/properties/SVGProperty.h \
 	WebCore/svg/properties/SVGPropertyTearOff.h \
 	WebCore/svg/properties/SVGPropertyTraits.h \
-	WebCore/svg/properties/SVGStringListPropertyTearOff.h \
+	WebCore/svg/properties/SVGStaticListPropertyTearOff.h \
 	WebCore/svg/RadialGradientAttributes.h \
 	WebCore/svg/SVGAElement.cpp \
 	WebCore/svg/SVGAElement.h \

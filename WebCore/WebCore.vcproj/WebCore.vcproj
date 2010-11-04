@@ -62735,6 +62735,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\svg\properties\SVGListProperty.h"
+					>
+				</File>
+				<File
 					RelativePath="..\svg\properties\SVGListPropertyTearOff.h"
 					>
 				</File>
@@ -62751,7 +62755,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\svg\properties\SVGStringListPropertyTearOff.h"
+					RelativePath="..\svg\properties\SVGStaticListPropertyTearOff.h"
 					>
 				</File>
 			</Filter>

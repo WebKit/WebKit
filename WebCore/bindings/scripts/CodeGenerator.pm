@@ -85,7 +85,7 @@ my %svgNativeType = (
     "SVGNumberList" => "SVGListPropertyTearOff<SVGNumberList>",
     "SVGPreserveAspectRatio" => "SVGPropertyTearOff<SVGPreserveAspectRatio>",
     "SVGRect" => "SVGPropertyTearOff<FloatRect>",
-    "SVGStringList" => "SVGStringListPropertyTearOff"
+    "SVGStringList" => "SVGStaticListPropertyTearOff<SVGStringList>"
 );
 
 # Cache of IDL file pathnames.
@@ -398,7 +398,10 @@ sub GetSVGWrappedTypeNeedingTearOff
         $svgNativeType =~ s/SVGPropertyTearOff<//;
     } elsif ($svgNativeType =~ /SVGListPropertyTearOff/) {
         $svgNativeType =~ s/SVGListPropertyTearOff<//;
+    } elsif ($svgNativeType =~ /SVGStaticListPropertyTearOff/) {
+        $svgNativeType =~ s/SVGStaticListPropertyTearOff<//;
     }
+
     $svgNativeType =~ s/>//;
     return $svgNativeType;
 }

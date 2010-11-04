@@ -2502,13 +2502,10 @@ sub GetSVGPropertyTypes
         $svgPropertyType = $svgWrappedNativeType;
         $headerIncludes{"$svgWrappedNativeType.h"} = 1;
         $headerIncludes{"SVGAnimatedPropertyTearOff.h"} = 1;
-    } elsif ($svgNativeType =~ /SVGListPropertyTearOff/) {
+    } elsif ($svgNativeType =~ /SVGListPropertyTearOff/ or $svgNativeType =~ /SVGStaticListPropertyTearOff/) {
         $svgListPropertyType = $svgWrappedNativeType;
         $headerIncludes{"$svgWrappedNativeType.h"} = 1;
         $headerIncludes{"SVGAnimatedListPropertyTearOff.h"} = 1;
-    } elsif ($svgNativeType =~ /SVGStringListPropertyTearOff/) {
-        $svgListPropertyType = "SVGStringList";
-        $headerIncludes{"$svgWrappedNativeType.h"} = 1;
     }
 
     return ($svgPropertyType, $svgListPropertyType, $svgNativeType);
@@ -2683,11 +2680,11 @@ sub NativeToJSValue
         $value = "static_cast<" . GetNativeType($type) . ">($value)";
     } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $implClassName =~ /List$/) {
         my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
-        if ($tearOffType eq "SVGStringListPropertyTearOff") {
+        if ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
             my $extraImp = "GetOwnerElementForType<$implClassName, IsDerivedFromSVGElement<$implClassName>::value>::ownerElement(imp), ";
-            $value = $codeGenerator->GetSVGTypeNeedingTearOff($type) . "::create($extraImp$value)";
+            $value = "${tearOffType}::create($extraImp$value)";
         } else {
-            $value = $codeGenerator->GetSVGTypeNeedingTearOff($type) . "::create($value)";
+            $value = "${tearOffType}::create($value)";
         }
     }
 

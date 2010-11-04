@@ -21,20 +21,14 @@
 #define SVGListPropertyTearOff_h
 
 #if ENABLE(SVG)
-#include "ExceptionCode.h"
-#include "SVGAnimatedProperty.h"
-#include "SVGPropertyTearOff.h"
-#include "SVGPropertyTraits.h"
+#include "SVGListProperty.h"
 
 namespace WebCore {
 
 template<typename PropertyType>
-class SVGAnimatedListPropertyTearOff;
-
-template<typename PropertyType>
-class SVGListPropertyTearOff : public SVGProperty {
+class SVGListPropertyTearOff : public SVGListProperty<PropertyType> {
 public:
-    typedef SVGListPropertyTearOff<PropertyType> Self;
+    typedef SVGListProperty<PropertyType> Base;
 
     typedef typename SVGPropertyTraits<PropertyType>::ListItemType ListItemType;
     typedef SVGPropertyTearOff<ListItemType> ListItemTearOff;
@@ -42,10 +36,10 @@ public:
     typedef SVGAnimatedListPropertyTearOff<PropertyType> AnimatedListPropertyTearOff;
     typedef typename SVGAnimatedListPropertyTearOff<PropertyType>::ListWrapperCache ListWrapperCache;
 
-    static PassRefPtr<Self> create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role)
+    static PassRefPtr<SVGListPropertyTearOff<PropertyType> > create(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role)
     {
         ASSERT(animatedProperty);
-        return adoptRef(new Self(animatedProperty, role));
+        return adoptRef(new SVGListPropertyTearOff<PropertyType>(animatedProperty, role));
     }
 
     int removeItemFromList(ListItemTearOff* removeItem, bool shouldSynchronizeWrappers)
@@ -77,224 +71,52 @@ public:
     // SVGList API
     void clear(ExceptionCode& ec)
     {
-        if (m_role == AnimValRole) {
-            ec = NO_MODIFICATION_ALLOWED_ERR;
-            return;
-        }
-
-        m_animatedProperty->detachListWrappers(0);
-        m_animatedProperty->values().clear();
+        Base::clearValuesAndWrappers(m_animatedProperty.get(), ec);
     }
 
     unsigned numberOfItems() const
     {
-        return m_animatedProperty->values().size();
+        return Base::numberOfItemsValuesAndWrappers(m_animatedProperty.get());
     }
 
     PassListItemTearOff initialize(PassListItemTearOff passNewItem, ExceptionCode& ec)
     {
-        if (m_role == AnimValRole) {
-            ec = NO_MODIFICATION_ALLOWED_ERR;
-            return 0;
-        }
-
-        // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!passNewItem) {
-            ec = TYPE_MISMATCH_ERR;
-            return 0;
-        }
-
-        PropertyType& values = m_animatedProperty->values();
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
-
-        RefPtr<ListItemTearOff> newItem = passNewItem;
-        ASSERT(values.size() == wrappers.size());
-
-        // Spec: If the inserted item is already in a list, it is removed from its previous list before it is inserted into this list.
-        processIncomingListItem(newItem, 0);
-
-        // Spec: Clears all existing current items from the list and re-initializes the list to hold the single item specified by the parameter.
-        m_animatedProperty->detachListWrappers(0);
-        values.clear();
-
-        values.append(newItem->propertyReference());
-        wrappers.append(newItem);
-
-        commitChange();
-        return newItem.release();
+        return Base::initializeValuesAndWrappers(m_animatedProperty.get(), passNewItem, ec);
     }
 
     PassListItemTearOff getItem(unsigned index, ExceptionCode& ec)
     {
-        PropertyType& values = m_animatedProperty->values();
-        if (index >= values.size()) {
-            ec = INDEX_SIZE_ERR;
-            return 0;
-        }
-
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
-
-        // Spec: Returns the specified item from the list. The returned item is the item itself and not a copy.
-        // Any changes made to the item are immediately reflected in the list.
-        ASSERT(values.size() == wrappers.size());
-        RefPtr<ListItemTearOff> wrapper = wrappers.at(index);
-        if (!wrapper) {
-            // Create new wrapper, which is allowed to directly modify the item in the list, w/o copying and cache the wrapper in our map.
-            // It is also associated with our animated property, so it can notify the SVG Element which holds the SVGAnimated*List
-            // that it has been modified (and thus can call svgAttributeChanged(associatedAttributeName)).
-            wrapper = ListItemTearOff::create(m_animatedProperty.get(), UndefinedRole, values.at(index));
-            wrappers.at(index) = wrapper;
-        }
-
-        return wrapper.release();
+        return Base::getItemValuesAndWrappers(m_animatedProperty.get(), index, ec);
     }
 
     PassListItemTearOff insertItemBefore(PassListItemTearOff passNewItem, unsigned index, ExceptionCode& ec)
     {
-        if (m_role == AnimValRole) {
-            ec = NO_MODIFICATION_ALLOWED_ERR;
-            return 0;
-        }
-
-        // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!passNewItem) {
-            ec = TYPE_MISMATCH_ERR;
-            return 0;
-        }
-
-        PropertyType& values = m_animatedProperty->values();
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
-
-        // Spec: If the index is greater than or equal to numberOfItems, then the new item is appended to the end of the list.
-        if (index > values.size())
-             index = values.size();
-
-        RefPtr<ListItemTearOff> newItem = passNewItem;
-        ASSERT(values.size() == wrappers.size());
-
-        // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
-        processIncomingListItem(newItem, &index);
-
-        // Spec: Inserts a new item into the list at the specified position. The index of the item before which the new item is to be
-        // inserted. The first item is number 0. If the index is equal to 0, then the new item is inserted at the front of the list.
-        values.insert(index, newItem->propertyReference());
-
-        // Store new wrapper at position 'index', change its underlying value, so mutations of newItem, directly affect the item in the list.
-        wrappers.insert(index, newItem);
-
-        commitChange();
-        return newItem.release();
+        return Base::insertItemBeforeValuesAndWrappers(m_animatedProperty.get(), passNewItem, index, ec);
     }
 
     PassListItemTearOff replaceItem(PassListItemTearOff passNewItem, unsigned index, ExceptionCode& ec)
     {
-        if (m_role == AnimValRole) {
-            ec = NO_MODIFICATION_ALLOWED_ERR;
-            return 0;
-        }
-
-        PropertyType& values = m_animatedProperty->values();
-        if (index >= values.size()) {
-            ec = INDEX_SIZE_ERR;
-            return 0;
-        }
-
-        // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!passNewItem) {
-            ec = TYPE_MISMATCH_ERR;
-            return 0;
-        }
-
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
-        ASSERT(values.size() == wrappers.size());
-        RefPtr<ListItemTearOff> newItem = passNewItem;
-
-        // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
-        // Spec: If the item is already in this list, note that the index of the item to replace is before the removal of the item.
-        processIncomingListItem(newItem, &index);
-
-        // Detach the existing wrapper.
-        RefPtr<ListItemTearOff>& oldItem = wrappers.at(index);
-        if (oldItem)
-            oldItem->detachWrapper();
-
-        // Update the value and the wrapper at the desired position 'index'. 
-        values.at(index) = newItem->propertyReference();
-        wrappers.at(index) = newItem;
-
-        commitChange();
-        return newItem.release();
+        return Base::replaceItemValuesAndWrappers(m_animatedProperty.get(), passNewItem, index, ec);
     }
 
     PassListItemTearOff removeItem(unsigned index, ExceptionCode& ec)
     {
-        if (m_role == AnimValRole) {
-            ec = NO_MODIFICATION_ALLOWED_ERR;
-            return 0;
-        }
-
-        PropertyType& values = m_animatedProperty->values();
-        if (index >= values.size()) {
-            ec = INDEX_SIZE_ERR;
-            return 0;
-        }
-
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
-        ASSERT(values.size() == wrappers.size());
-
-        // Detach the existing wrapper.
-        RefPtr<ListItemTearOff>& oldItem = wrappers.at(index);
-        if (oldItem) {
-            oldItem->detachWrapper();
-            wrappers.remove(index);
-        }
-
-        values.remove(index);
-
-        commitChange();
-        return oldItem.release();
+        return Base::removeItemValuesAndWrappers(m_animatedProperty.get(), index, ec);
     }
 
     PassListItemTearOff appendItem(PassListItemTearOff passNewItem, ExceptionCode& ec)
     {
-        if (m_role == AnimValRole) {
-            ec = NO_MODIFICATION_ALLOWED_ERR;
-            return 0;
-        }
-
-        // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!passNewItem) {
-            ec = TYPE_MISMATCH_ERR;
-            return 0;
-        }
-
-        PropertyType& values = m_animatedProperty->values();
-        ListWrapperCache& wrappers = m_animatedProperty->wrappers();
-
-        RefPtr<ListItemTearOff> newItem = passNewItem;
-        ASSERT(values.size() == wrappers.size());
-
-        // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
-        processIncomingListItem(newItem, 0);
-
-        // Append the value and wrapper at the end of the list.
-        values.append(newItem->propertyReference());
-        wrappers.append(newItem);
-
-        commitChange();
-        return newItem.release();
+        return Base::appendItemValuesAndWrappers(m_animatedProperty.get(), passNewItem, ec);
     }
 
 private:
     SVGListPropertyTearOff(AnimatedListPropertyTearOff* animatedProperty, SVGPropertyRole role)
-        : m_animatedProperty(animatedProperty)
-        , m_role(role)
+        : SVGListProperty<PropertyType>(role)
+        , m_animatedProperty(animatedProperty)
     {
-        ASSERT(animatedProperty);
-        ASSERT(role != UndefinedRole);
     }
 
-    void commitChange()
+    virtual void commitChange()
     {
         PropertyType& values = m_animatedProperty->values();
         ListWrapperCache& wrappers = m_animatedProperty->wrappers();
@@ -313,7 +135,12 @@ private:
         m_animatedProperty->commitChange();
     }
 
-    void processIncomingListItem(RefPtr<ListItemTearOff>& newItem, unsigned* indexToModify)
+    virtual void processIncomingListItemValue(const ListItemType&, unsigned*)
+    {
+        ASSERT_NOT_REACHED();
+    }
+
+    virtual void processIncomingListItemWrapper(RefPtr<ListItemTearOff>& newItem, unsigned* indexToModify)
     {
         SVGAnimatedProperty* animatedPropertyOfItem = newItem->animatedProperty();
 
@@ -337,7 +164,7 @@ private:
         // Spec: If newItem is already in a list, it is removed from its previous list before it is inserted into this list.
         // 'newItem' is already living in another list. If it's not our list, synchronize the other lists wrappers after the removal.
         bool livesInOtherList = animatedPropertyOfItem != m_animatedProperty;
-        int removedIndex = static_cast<SVGAnimatedListPropertyTearOff<PropertyType>*>(animatedPropertyOfItem)->removeItemFromList(newItem.get(), livesInOtherList);
+        int removedIndex = static_cast<AnimatedListPropertyTearOff*>(animatedPropertyOfItem)->removeItemFromList(newItem.get(), livesInOtherList);
         ASSERT(removedIndex != -1);
 
         if (!indexToModify)
@@ -356,9 +183,6 @@ private:
     // Back pointer to the animated property that created us
     // For example (text.x.baseVal): m_animatedProperty points to the 'x' SVGAnimatedLengthList object
     RefPtr<AnimatedListPropertyTearOff> m_animatedProperty;
-
-    // The role of this property (baseVal or animVal)
-    SVGPropertyRole m_role;
 };
 
 }
