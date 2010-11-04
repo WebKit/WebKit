@@ -147,6 +147,11 @@ void PageClientImpl::setViewportArguments(const WebCore::ViewportArguments&)
 
 }
 
+void PageClientImpl::selectionChanged(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
+{
+    [m_wkView _selectionChanged:isNone isEditable:isContentEditable isPassword:isPasswordField hasMarkedText:hasComposition];
+}
+
 static NSString* nameForEditAction(EditAction editAction)
 {
     // FIXME: Use localized strings.

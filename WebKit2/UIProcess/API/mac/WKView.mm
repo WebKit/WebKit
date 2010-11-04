@@ -52,6 +52,15 @@
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 
+extern "C" {
+    
+    // Need to declare this attribute name because AppKit exports it but does not make it available in API or SPI headers.
+    // <rdar://problem/8631468> tracks the request to make it available. This code should be removed when the bug is closed.
+    
+    extern NSString *NSTextInputReplacementRangeAttributeName;
+    
+}
+
 using namespace WebKit;
 using namespace WebCore;
 
@@ -93,6 +102,10 @@ struct EditCommandState {
     // that has been already sent to WebCore.
     NSEvent *_keyDownEventBeingResent;
     Vector<KeypressCommand> _commandsList;
+    BOOL _isSelectionNone;
+    BOOL _isSelectionEditable;
+    BOOL _isSelectionInPasswordField;
+    BOOL _hasMarkedText;
 }
 @end
 
@@ -128,7 +141,11 @@ struct EditCommandState {
     
     _data->_menuEntriesCount = 0;
     _data->_isPerformingUpdate = false;
-
+    _data->_isSelectionNone = YES;
+    _data->_isSelectionEditable = NO;
+    _data->_isSelectionInPasswordField = NO;
+    _data->_hasMarkedText = NO;
+    
     return self;
 }
 
@@ -372,6 +389,14 @@ EVENT_HANDLER(scrollWheel, Wheel)
     _data->_keyDownEventBeingResent = [event retain];
 }
 
+- (void)_selectionChanged:(BOOL)isNone isEditable:(BOOL)isContentEditable isPassword:(BOOL)isPasswordField hasMarkedText:(BOOL)hasComposition
+{
+    _data->_isSelectionNone = isNone;
+    _data->_isSelectionEditable = isContentEditable;
+    _data->_isSelectionInPasswordField = isPasswordField;
+    _data->_hasMarkedText = hasComposition;
+}
+
 - (Vector<KeypressCommand>&)_interceptKeyEvent:(NSEvent *)theEvent
 {
     _data->_commandsList.clear();
@@ -400,6 +425,72 @@ EVENT_HANDLER(scrollWheel, Wheel)
         return;
     }
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
+}
+
+- (NSRange)selectedRange
+{
+    return NSMakeRange(NSNotFound, 0);
+}
+
+- (BOOL)hasMarkedText
+{
+    return _data->_hasMarkedText;
+}
+
+- (void)unmarkText
+{
+    // Not implemented
+}
+
+- (NSArray *)validAttributesForMarkedText
+{
+    static NSArray *validAttributes;
+    if (!validAttributes) {
+        validAttributes = [[NSArray alloc] initWithObjects:
+                           NSUnderlineStyleAttributeName, NSUnderlineColorAttributeName,
+                           NSMarkedClauseSegmentAttributeName, NSTextInputReplacementRangeAttributeName, nil];
+        // NSText also supports the following attributes, but it's
+        // hard to tell which are really required for text input to
+        // work well; I have not seen any input method make use of them yet.
+        //     NSFontAttributeName, NSForegroundColorAttributeName,
+        //     NSBackgroundColorAttributeName, NSLanguageAttributeName.
+        CFRetain(validAttributes);
+    }
+    return validAttributes;
+}
+
+- (void)setMarkedText:(id)string selectedRange:(NSRange)newSelRange
+{
+    // Not implemented
+}
+
+- (NSRange)markedRange
+{
+    // Not implemented
+    return NSMakeRange(0, 0);
+}
+
+- (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
+{
+    // Not implemented
+    return nil;
+}
+
+- (NSInteger)conversationIdentifier
+{
+    return (NSInteger)self;
+}
+
+- (NSUInteger)characterIndexForPoint:(NSPoint)thePoint
+{
+    // Not implemented
+    return NSNotFound;
+}
+
+- (NSRect)firstRectForCharacterRange:(NSRange)theRange
+{ 
+    // Not implemented
+    return NSMakeRect(0, 0, 0, 0);
 }
 
 - (void)_updateActiveState

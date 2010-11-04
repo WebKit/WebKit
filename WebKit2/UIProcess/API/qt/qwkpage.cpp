@@ -126,6 +126,10 @@ FloatRect QWKPagePrivate::convertToUserSpace(const FloatRect& rect)
     return rect;
 }
 
+void QWKPagePrivate::selectionChanged(bool, bool, bool, bool)
+{
+}
+
 void QWKPagePrivate::didNotHandleKeyEvent(const NativeWebKeyboardEvent&)
 {
 }

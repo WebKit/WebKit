@@ -108,6 +108,9 @@ messages -> WebPageProxy {
     # Undo/Redo messages.
     RegisterEditCommandForUndo(uint64_t commandID, uint32_t editAction)
     ClearAllEditCommands()
+    
+    # Selection messages.
+    DidSelectionChange(bool isNone, bool isContentEditable, bool isPasswordField, bool hasComposition)
 
     # Find.
     DidCountStringMatches(WTF::String string, uint32_t matchCount)

@@ -220,6 +220,7 @@ public:
     void addEditCommand(WebEditCommandProxy*);
     void removeEditCommand(WebEditCommandProxy*);
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
+    void didSelectionChange(bool, bool, bool, bool);
 
     WebProcessProxy* process() const;
     WebPageNamespace* pageNamespace() const { return m_pageNamespace.get(); }

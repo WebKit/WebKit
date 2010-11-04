@@ -614,6 +614,11 @@ FloatRect WebView::convertToUserSpace(const FloatRect& rect)
     return rect;
 }
 
+void WebView::selectionChanged(bool, bool, bool, bool)
+{
+    // FIXME: Implement.
+}
+
 void WebView::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
 {
     // Calling ::DefWindowProcW will ensure that pressing the Alt key will generate a WM_SYSCOMMAND

@@ -64,6 +64,7 @@ private:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
 
     virtual void didNotHandleKeyEvent(const NativeWebKeyboardEvent&);
+    virtual void selectionChanged(bool, bool, bool, bool);
 
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy();
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);

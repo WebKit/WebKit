@@ -1,3 +1,50 @@
+2010-11-03  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Need a way to test in WebKit2 whether a form field contains marked text
+        <rdar://problem/8555293>
+        https://bugs.webkit.org/show_bug.cgi?id=48969
+        
+        Added a selection changed notification from the Web process to the UI process.
+        The message being sent contains information about the current selection.
+        Event though for this specific bug the only information required is the marked text,
+        I've added other selection information that will be needed to support IME.
+        All the stubbed methods are required methods by the NSTextInput protocol.
+        
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::selectionChanged): Added.
+        * UIProcess/API/mac/WKView.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView initWithFrame:pageNamespaceRef:]): Added initialization of new members.
+        (-[WKView _selectionChanged:isEditable:isPassword:hasMarkedText:]): Stores the values from
+        the selection changed message.
+        (-[WKView selectedRange]): Added stub.
+        (-[WKView hasMarkedText]): Implemented.
+        (-[WKView unmarkText]): Added stub.
+        (-[WKView validAttributesForMarkedText]): Added stub.
+        (-[WKView setMarkedText:selectedRange:]): Added stub.
+        (-[WKView markedRange]): Added stub.
+        (-[WKView attributedSubstringFromRange:]): Added stub.
+        (-[WKView conversationIdentifier]): Added stub.
+        (-[WKView characterIndexForPoint:]): Added stub.
+        (-[WKView firstRectForCharacterRange:]): Added stub.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::selectionChanged): Added.
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didSelectionChange): New message handler.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::selectionChanged): Added.
+        * UIProcess/win/WebView.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection): Added implementation.
+
 2010-11-04  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.

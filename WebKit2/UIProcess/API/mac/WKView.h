@@ -29,7 +29,7 @@
 @class WKViewData;
 
 WK_EXPORT
-@interface WKView : NSView {
+@interface WKView : NSView <NSTextInput> {
     WKViewData *_data;
 }
 
