@@ -61,10 +61,14 @@ NPClass *getTestClass(void)
 
 static bool identifiersInitialized = false;
 
-#define ID_OBJECT_POINTER 2
-
 #define NUM_ENUMERATABLE_TEST_IDENTIFIERS 2
-#define NUM_TEST_IDENTIFIERS 3
+
+enum {
+    ID_PROPERTY_FOO = 0,
+    ID_PROPERTY_BAR,
+    ID_PROPERTY_OBJECT_POINTER,
+    NUM_TEST_IDENTIFIERS,
+};
 
 static NPIdentifier testIdentifiers[NUM_TEST_IDENTIFIERS];
 static const NPUTF8 *testIdentifierNames[NUM_TEST_IDENTIFIERS] = {
@@ -134,7 +138,13 @@ static bool testHasProperty(NPObject*, NPIdentifier name)
 
 static bool testGetProperty(NPObject* npobj, NPIdentifier name, NPVariant* result)
 {
-    if (name == testIdentifiers[ID_OBJECT_POINTER]) {
+    if (name == testIdentifiers[ID_PROPERTY_FOO]) {
+        char* mem = static_cast<char*>(browser->memalloc(4));
+        strcpy(mem, "foo");
+        STRINGZ_TO_NPVARIANT(mem, *result);
+        return true;
+    }
+    if (name == testIdentifiers[ID_PROPERTY_OBJECT_POINTER]) {
         int32_t objectPointer = static_cast<int32_t>(reinterpret_cast<long long>(npobj));
 
         INT32_TO_NPVARIANT(objectPointer, *result);

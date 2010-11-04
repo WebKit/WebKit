@@ -1,3 +1,17 @@
+2010-11-04  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        make platform/chromium/plugins/multiple-plugins.html pass on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=49026
+
+        Have the testObject.bar property return the string "bar".  This lets
+        us run and pass platform/chromium/plugins/multiple-plugins.html on all
+        platforms.
+
+        * DumpRenderTree/TestNetscapePlugIn/TestObject.cpp:
+        (testGetProperty):
+
 2010-11-04  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
