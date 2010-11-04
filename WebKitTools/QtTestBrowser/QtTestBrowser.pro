@@ -49,6 +49,7 @@ linux-* {
 symbian {
     TARGET.UID3 = 0xA000E543
     TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices Location
+    MMP_RULES *= pageddata
 }
 
 contains(QT_CONFIG, opengl) {
