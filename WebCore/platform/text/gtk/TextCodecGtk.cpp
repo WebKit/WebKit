@@ -543,9 +543,28 @@ CString TextCodecGtk::encode(const UChar* characters, size_t length, Unencodable
                             &error.outPtr());
         input += bytesRead;
         inputLength -= bytesRead;
-        result.grow(size + bytesWritten);
-        memcpy(result.data() + size, buffer, bytesWritten);
-        size += bytesWritten;
+        if (bytesWritten > 0) {
+            result.grow(size + bytesWritten);
+            memcpy(result.data() + size, buffer, bytesWritten);
+            size += bytesWritten;
+        }
+
+        if (error && g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_INVALID_DATA)) {
+            UChar codePoint = reinterpret_cast<const UChar*>(input)[0];
+            UnencodableReplacementArray replacement;
+            int replacementLength = TextCodec::getUnencodableReplacement(codePoint, handling, replacement);
+
+            // Consume the invalid character.
+            input += sizeof(UChar);
+            inputLength -= sizeof(UChar);
+
+            // Append replacement string to result buffer.
+            result.grow(size + replacementLength);
+            memcpy(result.data() + size, replacement, replacementLength);
+            size += replacementLength;
+
+            error.clear();
+        }
     } while (inputLength && !error.get());
 
     if (error) {
