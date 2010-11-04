@@ -4,7 +4,7 @@ function testProperty(data)
 {
     var prop = data[0];
     if (data.length == 1)
-        data.push('5px');
+        data.push('20px');
 
     for (var i = 1; i < data.length; i++) {
         testPropertyValue(prop, data[i]);
@@ -15,8 +15,8 @@ function testPropertyValue(prop, value)
 {
     var el = document.createElement('div');
     el.style.cssText = 'position: absolute; width: 100px; height: 100px;' +
-                       'overflow: hidden; border: 1px solid red;' +
-                       'outline: 1px solid blue;-webkit-column-rule: 1px solid red';
+                       'overflow: hidden; border: 20px solid red;' +
+                       'outline: 20px solid blue;-webkit-column-rule: 20px solid red';
     el.style.setProperty(prop, value, '');
 
     document.body.style.zoom = '';
@@ -25,26 +25,28 @@ function testPropertyValue(prop, value)
     var value1 = getComputedStyle(el, null).getPropertyValue(prop);
     document.body.style.zoom = 2;
     var value2 = getComputedStyle(el, null).getPropertyValue(prop);
+    document.body.style.zoom = .5;
+    var value3 = getComputedStyle(el, null).getPropertyValue(prop);
 
     document.body.removeChild(el);
     document.body.style.zoom = '';
 
-    if (typeof value1 === 'string' && value1 === value2)
+    if (typeof value1 === 'string' && value1 === value2 && value2 == value3)
         testPassed(prop + ', value: "' + value1 + '"');
     else
-        testFailed(prop + ', value1: "' + value1 + '", value2: "' + value2 + '"');
+        testFailed(prop + ', value1: "' + value1 + '", value2: "' + value2 + '", value3: "' + value3 + '"');
 }
 
 var testData = [
     ['-webkit-border-horizontal-spacing'],
     ['-webkit-border-vertical-spacing'],
-    ['-webkit-box-reflect', 'below 5px -webkit-gradient(linear, left top, left bottom, from(transparent), to(white))'],
-    ['-webkit-box-shadow', '5px 5px 5px 5px red'],
-    ['-webkit-column-rule-width', '5px'],
-    ['-webkit-perspective-origin', '5px 5px'],
+    ['-webkit-box-reflect', 'below 20px -webkit-gradient(linear, left top, left bottom, from(transparent), to(white))'],
+    ['-webkit-box-shadow', '20px 20px 20px 20px red'],
+    ['-webkit-column-rule-width', '20px'],
+    ['-webkit-perspective-origin', '20px 20px'],
     ['-webkit-text-stroke-width'],
-    ['-webkit-transform', 'translate(5px, 5px)', 'translate3d(5px, 5px, 5px)'],
-    ['-webkit-transform-origin', '5px 5px'],
+    ['-webkit-transform', 'translate(20px, 20px)', 'translate3d(20px, 20px, 20px)'],
+    ['-webkit-transform-origin', '20px 20px', '-20px -20px'],
     ['border-bottom-left-radius'],
     ['border-bottom-right-radius'],
     ['border-bottom-width'],
@@ -54,30 +56,29 @@ var testData = [
     ['border-top-left-radius'],
     ['border-top-right-radius'],
     ['border-top-width'],
-    ['bottom'],
-    ['clip', 'rect(5px 95px 95px 5px)'],
-    ['font-size', '5px', 'medium'],
+    ['bottom', '20px', '-20px'],
+    ['clip', 'rect(20px 80px 80px 20px)'],
+    ['font-size', '20px', 'large'],
     ['height'],
-    ['left'],
-    ['letter-spacing'],
+    ['left', '20px', '-20px'],
+    ['letter-spacing', '20px', '-20px'],
     ['line-height'],
-    ['margin-bottom'],
-    ['margin-left'],
-    ['margin-right'],
-    ['margin-top'],
+    ['margin-bottom', '20px', '-20px'],
+    ['margin-left', '20px', '-20px'],
+    ['margin-right', '20px', '-20px'],
+    ['margin-top', '20px', '-20px'],
     ['outline-width'],
     ['padding-bottom'],
     ['padding-left'],
     ['padding-right'],
     ['padding-top'],
-    ['right'],
-    ['text-shadow', '5px 5px 5px red'],
-    ['top'],
+    ['right', '20px', '-20px'],
+    ['text-shadow', '20px 20px 20px red'],
+    ['top', '20px', '-20px'],
     ['width'],
-    ['word-spacing'],
+    ['word-spacing', '20px', '-20px'],
 ];
 
 testData.forEach(testProperty);
 
 successfullyParsed = true;
-

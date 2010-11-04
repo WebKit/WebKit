@@ -1319,8 +1319,12 @@ inline int adjustForAbsoluteZoom(int value, const RenderStyle* style)
     if (zoomFactor == 1)
         return value;
     // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
-    if (zoomFactor > 1)
-        value++;
+    if (zoomFactor > 1) {
+        if (value < 0)
+            value--;
+        else 
+            value++;
+    }
 
     return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(value / zoomFactor);
 }
