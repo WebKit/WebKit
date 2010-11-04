@@ -33,6 +33,7 @@ import sys
 import unittest
 
 from webkitpy.common.system.executive import Executive, run_command, ScriptError
+from webkitpy.test import cat, echo
 
 
 class ExecutiveTest(unittest.TestCase):
@@ -46,8 +47,8 @@ class ExecutiveTest(unittest.TestCase):
         executive = Executive()
         self.assertRaises(AssertionError, executive.run_command, "echo")
         self.assertRaises(AssertionError, executive.run_command, u"echo")
-        executive.run_command(["echo", "foo"])
-        executive.run_command(("echo", "foo"))
+        executive.run_command(echo.command_arguments('foo'))
+        executive.run_command(tuple(echo.command_arguments('foo')))
 
     def test_run_command_with_unicode(self):
         """Validate that it is safe to pass unicode() objects
@@ -57,24 +58,24 @@ class ExecutiveTest(unittest.TestCase):
         unicode_tor = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
         utf8_tor = unicode_tor.encode("utf-8")
 
-        output = executive.run_command(["cat"], input=unicode_tor)
+        output = executive.run_command(cat.command_arguments(), input=unicode_tor)
         self.assertEquals(output, unicode_tor)
 
-        output = executive.run_command(["echo", "-n", unicode_tor])
+        output = executive.run_command(echo.command_arguments("-n", unicode_tor))
         self.assertEquals(output, unicode_tor)
 
-        output = executive.run_command(["echo", "-n", unicode_tor], decode_output=False)
+        output = executive.run_command(echo.command_arguments("-n", unicode_tor), decode_output=False)
         self.assertEquals(output, utf8_tor)
 
         # Make sure that str() input also works.
-        output = executive.run_command(["cat"], input=utf8_tor, decode_output=False)
+        output = executive.run_command(cat.command_arguments(), input=utf8_tor, decode_output=False)
         self.assertEquals(output, utf8_tor)
 
         # FIXME: We should only have one run* method to test
-        output = executive.run_and_throw_if_fail(["echo", "-n", unicode_tor], quiet=True)
+        output = executive.run_and_throw_if_fail(echo.command_arguments("-n", unicode_tor), quiet=True)
         self.assertEquals(output, unicode_tor)
 
-        output = executive.run_and_throw_if_fail(["echo", "-n", unicode_tor], quiet=True, decode_output=False)
+        output = executive.run_and_throw_if_fail(echo.command_arguments("-n", unicode_tor), quiet=True, decode_output=False)
         self.assertEquals(output, utf8_tor)
 
     def test_kill_process(self):

@@ -1,3 +1,58 @@
+2010-11-02  Adam Roben  <aroben@apple.com>
+
+        Reduce our dependence on coreutils when running Python tests
+
+        This patch introduces versions of the standard echo and cat utilities
+        implemented in Python. They are probably missing features of their
+        coreutils equivalents, but they can do what's necessary for our Python
+        tests. This is useful on Windows, where these utilities typically
+        aren't available.
+
+        Fixes <http://webkit.org/b/48883> executive_unittest relies on echo
+        and cat utilities from coreutils, which are not present on Windows
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py: Changed to use
+        our Python-based echo and cat.
+
+        * Scripts/webkitpy/common/system/fileutils.py: Added.
+        (make_stdout_binary): On Windows, puts sys.stdout into binary mode so
+        that \n won't be translated into \r\n. I couldn't think of a good way
+        to test this directly without touching the filesystem, but it is tested
+        indirectly by echo_unittest.
+
+        * Scripts/webkitpy/test/cat.py: Added.
+        (command_arguments): Returns a list for invoking cat with the given arguments.
+        (main): Acts like a simplified version of the coreutils cat utility.
+
+        * Scripts/webkitpy/test/cat_unittest.py: Added.
+        (CatTest.assert_cat): Runs cat with the given input and ensures the
+        output matches the input.
+        (CatTest.test_basic): Performs a simple test of cat.
+        (CatTest.test_no_newline): Tests what happens when the input string
+        doesn't have a trailing newline.
+        (CatTest.test_unicode): Tests passing a unicode string to cat.
+        (CatTest.test_as_command): Tests running cat as a separate command.
+
+        * Scripts/webkitpy/test/echo.py: Added.
+        (command_arguments): Returns a list for invoking echo with the given arguments.
+        (main): Acts like a simplified version of the coreutils echo utility.
+
+        * Scripts/webkitpy/test/echo_unittest.py: Added.
+        (EchoTest.test_basic): Performs a simple test of echo.
+        (EchoTest.test_no_newline): Tests passing -n to echo to suppress the
+        trailing newline.
+        (EchoTest.test_unicode): Tests passing unicode and non-unicode strings
+        to echo.
+        (EchoTest.test_argument_order): Tests what happens when -n is not the
+        first argument.
+        (EchoTest.test_empty_arguments): Tests what happens when you pass [] to
+        echo.main.
+        (EchoTest.test_no_arguments): Tests what happens when you call
+        echo.main with no arguments.
+        (EchoTest.test_as_command): Tests running echo as a separate command.
+
 2010-11-04  Renata Hodovan  <reni@inf.u-szeged.hu>
 
         Unreviewed: Add myself to the list of Committers.
