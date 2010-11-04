@@ -1630,8 +1630,10 @@ WebGLGetInfo WebGLRenderingContext::getProgramParameter(WebGLProgram* program, u
 String WebGLRenderingContext::getProgramInfoLog(WebGLProgram* program, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLost() || !validateWebGLObject(program))
+    if (isContextLost())
         return String();
+    if (!validateWebGLObject(program))
+        return "";
     WebGLStateRestorer(this, false);
     return m_context->getProgramInfoLog(objectOrZero(program));
 }
@@ -1699,8 +1701,10 @@ WebGLGetInfo WebGLRenderingContext::getShaderParameter(WebGLShader* shader, unsi
 String WebGLRenderingContext::getShaderInfoLog(WebGLShader* shader, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLost() || !validateWebGLObject(shader))
+    if (isContextLost())
         return String();
+    if (!validateWebGLObject(shader))
+        return "";
     WebGLStateRestorer(this, false);
     return m_context->getShaderInfoLog(objectOrZero(shader));
 }
@@ -1708,8 +1712,10 @@ String WebGLRenderingContext::getShaderInfoLog(WebGLShader* shader, ExceptionCod
 String WebGLRenderingContext::getShaderSource(WebGLShader* shader, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);
-    if (isContextLost() || !validateWebGLObject(shader))
+    if (isContextLost())
         return String();
+    if (!validateWebGLObject(shader))
+        return "";
     WebGLStateRestorer(this, false);
     return m_context->getShaderSource(objectOrZero(shader));
 }
