@@ -20,6 +20,9 @@ DESTDIR = $$WEBKIT2_DESTDIR
     DEFINES += NDEBUG
 }
 
+# Build both debug and release configurations
+mac: CONFIG += build_all
+
 INCLUDEPATH = \
     $$PWD/.. \
     $$PWD/../JavaScriptCore \

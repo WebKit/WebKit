@@ -1,3 +1,14 @@
+2010-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Andreas Kling..
+
+        [Qt] Build Webkit2 both in debug and release on Mac
+
+        On Mac OS X we build QtWebKit in both debug and release, so
+        we need to also build the webkit2 library in both configs.
+
+        * WebKit2.pro:
+
 2010-11-04  Adam Roben  <aroben@apple.com>
 
         Remove lame puts()s from WebPageProxy
