@@ -110,6 +110,7 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs, 
     webAttributes.stencil = attrs.stencil;
     webAttributes.antialias = attrs.antialias;
     webAttributes.premultipliedAlpha = attrs.premultipliedAlpha;
+    webAttributes.canRecoverFromContextLoss = attrs.canRecoverFromContextLoss;
     WebKit::WebGraphicsContext3D* webContext = WebKit::webKitClient()->createGraphicsContext3D();
     if (!webContext)
         return false;

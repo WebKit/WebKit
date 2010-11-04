@@ -1,3 +1,22 @@
+2010-11-03  Vincent Scheib  <scheib@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] GraphicsContext3D creation attributes include canRecoverFromContextLoss option
+        https://bugs.webkit.org/show_bug.cgi?id=48850
+
+        Implementations of GraphicsContext3D may respect the creation attribute
+        canRecoverFromContextLoss being false, and then only succeeding initialization if
+        the context can satisfy that request of never being lost. DX9 on XP can not satisfy
+        such a request.
+
+        Test by use of accelerated canvas 2d in Chromium with ANGLE on XP machines.
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::Attributes::Attributes):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::initialize):
+
 2010-11-03  Jenn Braithwaite  <jennb@chromium.org>
 
         Reviewed by Dmitry Titov.

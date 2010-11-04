@@ -416,6 +416,7 @@ public:
             , stencil(false)
             , antialias(true)
             , premultipliedAlpha(true)
+            , canRecoverFromContextLoss(true)
         {
         }
 
@@ -424,6 +425,7 @@ public:
         bool stencil;
         bool antialias;
         bool premultipliedAlpha;
+        bool canRecoverFromContextLoss;
     };
 
     enum RenderStyle {

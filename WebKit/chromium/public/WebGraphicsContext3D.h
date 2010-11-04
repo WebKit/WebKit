@@ -64,6 +64,7 @@ public:
             , stencil(true)
             , antialias(true)
             , premultipliedAlpha(true)
+            , canRecoverFromContextLoss(true)
         {
         }
 
@@ -72,6 +73,7 @@ public:
         bool stencil;
         bool antialias;
         bool premultipliedAlpha;
+        bool canRecoverFromContextLoss;
     };
 
     // This destructor needs to be public so that using classes can destroy instances if initialization fails.
