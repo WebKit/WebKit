@@ -291,6 +291,7 @@ HEADERS += \
     UIProcess/WebProcessManager.h \
     UIProcess/WebProcessProxy.h \
     UIProcess/WebUIClient.h \
+    UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
     WebProcess/Downloads/Download.h \
     WebProcess/Downloads/DownloadManager.h \
@@ -515,6 +516,7 @@ SOURCES += \
     WebProcess/WebProcess.cpp \
     UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
+    UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebPopupMenuProxyQt.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \
     WebProcess/qt/WebProcessQt.cpp \
