@@ -197,6 +197,11 @@ void ScriptController::clearWindowShell(bool goingIntoPageCache)
         windowShell->window()->willRemoveFromWindowShell();
         windowShell->setWindow(m_frame->domWindow());
 
+        // An m_cacheableBindingRootObject persists between page navigations
+        // so needs to know about the new JSDOMWindow.
+        if (m_cacheableBindingRootObject)
+            m_cacheableBindingRootObject->updateGlobalObject(windowShell->window());
+
         if (Page* page = m_frame->page()) {
             attachDebugger(windowShell, page->debugger());
             windowShell->window()->setProfileGroup(page->group().identifier());
