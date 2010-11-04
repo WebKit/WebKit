@@ -172,6 +172,7 @@ committers_unable_to_review = [
     Committer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org"], "philn-tp"),
     Committer("Pierre d'Herbemont", ["pdherbemont@free.fr", "pdherbemont@apple.com"], "pdherbemont"),
     Committer("Pierre-Olivier Latour", "pol@apple.com", "pol"),
+    Committer("Renata Hodovan", "reni@webkit.org", "reni"),
     Committer("Robert Hogan", ["robert@webkit.org", "robert@roberthogan.net", "lists@roberthogan.net"], "mwenge"),
     Committer("Roland Steiner", "rolandsteiner@chromium.org"),
     Committer("Ryosuke Niwa", "rniwa@webkit.org", "rniwa"),
