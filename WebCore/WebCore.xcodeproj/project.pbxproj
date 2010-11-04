@@ -5551,6 +5551,8 @@
 		F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F55B3DAC1251F12D003EF269 /* WeekInputType.h */; };
 		F59C95FF1255B23F000623C0 /* BaseDateAndTimeInputType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */; };
 		F59C96001255B23F000623C0 /* BaseDateAndTimeInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */; };
+		F5A154271279534D00D0B0C0 /* ValidationMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */; };
+		F5A154281279534D00D0B0C0 /* ValidationMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A154261279534D00D0B0C0 /* ValidationMessage.h */; };
 		F5C041DA0FFCA7CE00839D4A /* HTMLDataListElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */; };
 		F5C041DB0FFCA7CE00839D4A /* HTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */; };
 		F5C041E30FFCA96D00839D4A /* DOMHTMLDataListElement.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C041DE0FFCA96D00839D4A /* DOMHTMLDataListElement.h */; };
@@ -11636,6 +11638,8 @@
 		F587869902DE3B8601EA4122 /* DeprecatedPtrList.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = DeprecatedPtrList.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F59C95FD1255B23F000623C0 /* BaseDateAndTimeInputType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BaseDateAndTimeInputType.cpp; sourceTree = "<group>"; };
 		F59C95FE1255B23F000623C0 /* BaseDateAndTimeInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseDateAndTimeInputType.h; sourceTree = "<group>"; };
+		F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidationMessage.cpp; sourceTree = "<group>"; };
+		F5A154261279534D00D0B0C0 /* ValidationMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidationMessage.h; sourceTree = "<group>"; };
 		F5C041D70FFCA7CE00839D4A /* HTMLDataListElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLDataListElement.cpp; sourceTree = "<group>"; };
 		F5C041D80FFCA7CE00839D4A /* HTMLDataListElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLDataListElement.h; sourceTree = "<group>"; };
 		F5C041D90FFCA7CE00839D4A /* HTMLDataListElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLDataListElement.idl; sourceTree = "<group>"; };
@@ -14988,6 +14992,8 @@
 				E446139F0CD6331000FADA75 /* TimeRanges.idl */,
 				F55B3DA91251F12D003EF269 /* URLInputType.cpp */,
 				F55B3DAA1251F12D003EF269 /* URLInputType.h */,
+				F5A154251279534D00D0B0C0 /* ValidationMessage.cpp */,
+				F5A154261279534D00D0B0C0 /* ValidationMessage.h */,
 				15C7708B100D3C6A005BA267 /* ValidityState.cpp */,
 				15C7708A100D3C6A005BA267 /* ValidityState.h */,
 				15C77089100D3C6A005BA267 /* ValidityState.idl */,
@@ -21122,6 +21128,7 @@
 				BC8BF15A1058141800A40A07 /* UserStyleSheetTypes.h in Headers */,
 				BCDF317C11F8D683003C5BF8 /* UserTypingGestureIndicator.h in Headers */,
 				2E3BBF081162DA1100B9409A /* UUID.h in Headers */,
+				F5A154281279534D00D0B0C0 /* ValidationMessage.h in Headers */,
 				15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */,
 				CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */,
 				93309E1E099E64920056E581 /* visible_units.h in Headers */,
@@ -23701,6 +23708,7 @@
 				2542F4DA1166C25A00E89A86 /* UserGestureIndicator.cpp in Sources */,
 				BCDF317B11F8D683003C5BF8 /* UserTypingGestureIndicator.cpp in Sources */,
 				2E3BBF071162DA1100B9409A /* UUID.cpp in Sources */,
+				F5A154271279534D00D0B0C0 /* ValidationMessage.cpp in Sources */,
 				15C7708E100D3C6B005BA267 /* ValidityState.cpp in Sources */,
 				CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */,
 				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,

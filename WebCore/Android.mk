@@ -315,6 +315,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/TimeInputType.cpp \
 	html/TimeRanges.cpp \
 	html/URLInputType.cpp \
+	html/ValidationMessage.cpp \
 	html/ValidityState.cpp \
 	html/WeekInputType.cpp \
 	\

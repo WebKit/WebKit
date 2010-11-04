@@ -1822,6 +1822,8 @@
             'html/TimeRanges.h',
             'html/URLInputType.cpp',
             'html/URLInputType.h',
+            'html/ValidationMessage.cpp',
+            'html/ValidationMessage.h',
             'html/ValidityState.cpp',
             'html/ValidityState.h',
             'html/VoidCallback.h',

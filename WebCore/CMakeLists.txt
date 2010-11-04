@@ -1081,6 +1081,7 @@ SET(WebCore_SOURCES
     html/TextInputType.cpp
     html/TimeInputType.cpp
     html/URLInputType.cpp
+    html/ValidationMessage.cpp
     html/ValidityState.cpp
     html/WeekInputType.cpp
     html/canvas/CanvasGradient.cpp

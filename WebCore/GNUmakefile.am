@@ -1785,6 +1785,8 @@ webcore_sources += \
 	WebCore/html/TimeRanges.h \
 	WebCore/html/URLInputType.cpp \
 	WebCore/html/URLInputType.h \
+	WebCore/html/ValidationMessage.cpp \
+	WebCore/html/ValidationMessage.h \
 	WebCore/html/ValidityState.cpp \
 	WebCore/html/ValidityState.h \
 	WebCore/html/VoidCallback.h \

@@ -205,6 +205,9 @@ bool HTMLFormElement::validateInteractively(Event* event)
     if (submitElement && submitElement->formNoValidate())
         return true;
 
+    for (unsigned i = 0; i < m_associatedElements.size(); ++i)
+        m_associatedElements[i]->hideVisibleValidationMessage();
+
     Vector<RefPtr<HTMLFormControlElement> > unhandledInvalidControls;
     collectUnhandledInvalidControls(unhandledInvalidControls);
     if (unhandledInvalidControls.isEmpty())
@@ -212,7 +215,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
     // If the form has invalid controls, abort submission.
 
     RefPtr<HTMLFormElement> protector(this);
-    // Focus on the first focusable control.
+    // Focus on the first focusable control and show a validation message.
     for (unsigned i = 0; i < unhandledInvalidControls.size(); ++i) {
         HTMLFormControlElement* unhandled = unhandledInvalidControls[i].get();
         if (unhandled->isFocusable() && unhandled->inDocument()) {
@@ -223,6 +226,7 @@ bool HTMLFormElement::validateInteractively(Event* event)
             // moved to another document.
             if (unhandled->isFocusable() && unhandled->inDocument() && originalDocument == unhandled->document()) {
                 unhandled->focus();
+                unhandled->updateVisibleValidationMessage();
                 break;
             }
         }
