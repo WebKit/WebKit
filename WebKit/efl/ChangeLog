@@ -1,3 +1,15 @@
+2010-11-04  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Adam Barth.
+
+        [EFL] Reflect latest EFL changes related to stride.
+        https://bugs.webkit.org/show_bug.cgi?id=48971
+
+        Remove adjustment code to compare stride of cairo_image_surfece and evas_object_image, as following changes of latest EFL.
+
+        * ewk/ewk_util.cpp:
+        (ewk_util_image_from_cairo_surface_add):
+
 2010-11-03  Daniel Bates  <dbates@rim.com>
 
         For unnamed frames, window.name returns a generated name

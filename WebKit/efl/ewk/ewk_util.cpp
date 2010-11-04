@@ -81,9 +81,9 @@ Evas_Object* ewk_util_image_from_cairo_surface_add(Evas* canvas, cairo_surface_t
     evas_object_image_size_set(image, w, h);
     evas_object_image_alpha_set(image, format == CAIRO_FORMAT_ARGB32);
 
-    if (evas_object_image_stride_get(image) * 4 != stride) {
+    if (evas_object_image_stride_get(image) != stride) {
         ERR("evas' stride %d diverges from cairo's %d.",
-            evas_object_image_stride_get(image) * 4, stride);
+            evas_object_image_stride_get(image), stride);
         evas_object_del(image);
         return 0;
     }
