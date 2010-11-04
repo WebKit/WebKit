@@ -5506,6 +5506,7 @@ fast/dom/navigation-type-navigate.html
 fast/dom/navigation-type-reload.html
 fast/dom/webtiming.html
 fast/dom/webtiming-navigate-within-document.html
+fast/dom/webtiming-document-open.html
 http/tests/misc/webtiming-one-redirect.php
 http/tests/misc/webtiming-two-redirects.php
 
@@ -5690,3 +5691,4 @@ http/tests/inspector/console-xhr-logging.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=47727
 mathml/presentation
+
