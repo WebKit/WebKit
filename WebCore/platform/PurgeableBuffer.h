@@ -26,6 +26,7 @@
 #ifndef PurgeableBuffer_h
 #define PurgeableBuffer_h
 
+#include "PurgePriority.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
@@ -35,7 +36,6 @@ namespace WebCore {
     class PurgeableBuffer : public Noncopyable {
     public:
         static PassOwnPtr<PurgeableBuffer> create(const char* data, size_t);
-        static PassOwnPtr<PurgeableBuffer> create(const Vector<char>& vector) { return create(vector.data(), vector.size()); }
         
         ~PurgeableBuffer();
 
@@ -43,9 +43,8 @@ namespace WebCore {
         const char* data() const;
         size_t size() const { return m_size; }
         
-        enum PurgePriority { PurgeLast, PurgeMiddle, PurgeFirst, PurgeDefault = PurgeMiddle };
         PurgePriority purgePriority() const { return m_purgePriority; }
-        void setPurgePriority(PurgePriority);
+        void setPurgePriority(PurgePriority priority) { m_purgePriority = priority; }
         
         bool isPurgeable() const { return m_state != NonVolatile; }
         bool wasPurged() const;
@@ -67,7 +66,6 @@ namespace WebCore {
     inline PassOwnPtr<PurgeableBuffer> PurgeableBuffer::create(const char*, size_t) { return PassOwnPtr<PurgeableBuffer>(); }
     inline PurgeableBuffer::~PurgeableBuffer() { }
     inline const char* PurgeableBuffer::data() const { return 0; }
-    inline void PurgeableBuffer::setPurgePriority(PurgePriority) { }
     inline bool PurgeableBuffer::wasPurged() const { return false; }
     inline bool PurgeableBuffer::makePurgeable(bool) { return false; }
 #endif

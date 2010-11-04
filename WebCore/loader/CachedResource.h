@@ -26,6 +26,7 @@
 #include "CachePolicy.h"
 #include "FrameLoaderTypes.h"
 #include "PlatformString.h"
+#include "PurgePriority.h"
 #include "ResourceResponse.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -42,8 +43,8 @@ class CachedResourceHandleBase;
 class CachedResourceLoader;
 class Frame;
 class InspectorResource;
-class Request;
 class PurgeableBuffer;
+class Request;
 
 // A resource that is held in the cache. Classes who want to use this object should derive
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
@@ -229,6 +230,7 @@ private:
     void switchClientsToRevalidatedResource();
     void clearResourceToRevalidate();
     void updateResponseAfterRevalidation(const ResourceResponse& validatingResponse);
+    virtual PurgePriority purgePriority() const { return PurgeDefault; }
 
     double currentAge() const;
     double freshnessLifetime() const;

@@ -517,17 +517,13 @@ bool CachedResource::makePurgeable(bool purgeable)
         if (!m_data->hasOneRef())
             return false;
         
-        // Purgeable buffers are allocated in multiples of the page size (4KB in common CPUs) so it does not make sense for very small buffers.
-        const size_t purgeableThreshold = 4 * 4096;
-        if (m_data->size() < purgeableThreshold)
-            return false;
-        
         if (m_data->hasPurgeableBuffer()) {
             m_purgeableData = m_data->releasePurgeableBuffer();
         } else {
             m_purgeableData = PurgeableBuffer::create(m_data->data(), m_data->size());
             if (!m_purgeableData)
                 return false;
+            m_purgeableData->setPurgePriority(purgePriority());
         }
         
         m_purgeableData->makePurgeable(true);

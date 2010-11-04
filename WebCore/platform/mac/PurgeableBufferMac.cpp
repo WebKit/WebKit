@@ -35,7 +35,9 @@
 
 namespace WebCore {
 
-static const size_t minPurgeableBufferSize = 4096; // one page
+// Purgeable buffers are allocated in multiples of the page size (4KB in common CPUs) so
+// it does not make sense for very small buffers. Set our minimum size to 16KB.
+static const size_t minPurgeableBufferSize = 4 * 4096;
 
 PurgeableBuffer::PurgeableBuffer(char* data, size_t size)
     : m_data(data)
@@ -143,17 +145,6 @@ bool PurgeableBuffer::wasPurged() const
     return false;
 }
 
-void PurgeableBuffer::setPurgePriority(PurgePriority priority)
-{
-    if (priority == m_purgePriority)
-        return;
-    m_purgePriority = priority;
-    if (m_state != Volatile)
-        return;
-    m_state = NonVolatile;
-    makePurgeable(true);
-}
-    
 const char* PurgeableBuffer::data() const
 {
     ASSERT(m_state == NonVolatile);

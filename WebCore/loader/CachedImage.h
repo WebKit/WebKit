@@ -93,6 +93,7 @@ private:
     // If not null, changeRect is the changed part of the image.
     void notifyObservers(const IntRect* changeRect = 0);
     void decodedDataDeletionTimerFired(Timer<CachedImage>*);
+    virtual PurgePriority purgePriority() const { return PurgeFirst; }
 
     RefPtr<Image> m_image;
     Timer<CachedImage> m_decodedDataDeletionTimer;
