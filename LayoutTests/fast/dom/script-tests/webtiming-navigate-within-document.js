@@ -5,7 +5,9 @@ var timing = performance.timing || {};
 
 function checkTimingNotChanged()
 {
-    for (var property in timing) {
+    properties = Object.keys(timing).sort();
+    for (var i = 0; i < properties.length; ++i) {
+        property = properties[i];
         if (timing[property] === initialTiming[property])
             testPassed(property + " is unchanged.");
         else

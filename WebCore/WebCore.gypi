@@ -1188,6 +1188,7 @@
             'dom/DocumentMarkerController.h',
             'dom/DocumentParser.cpp',
             'dom/DocumentParser.h',
+            'dom/DocumentTiming.h',
             'dom/DocumentType.cpp',
             'dom/DocumentType.h',
             'dom/DynamicNodeList.cpp',

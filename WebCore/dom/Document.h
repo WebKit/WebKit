@@ -33,6 +33,7 @@
 #include "Color.h"
 #include "ContainerNode.h"
 #include "DocumentMarkerController.h"
+#include "DocumentTiming.h"
 #include "QualifiedName.h"
 #include "ScriptExecutionContext.h"
 #include "Timer.h"
@@ -1045,6 +1046,8 @@ public:
     PassRefPtr<TouchList> createTouchList(ExceptionCode&) const;
 #endif
 
+    const DocumentTiming* timing() const { return &m_documentTiming; }
+
 protected:
     Document(Frame*, const KURL& url, bool isXHTML, bool isHTML, const KURL& baseURL = KURL());
 
@@ -1338,9 +1341,11 @@ private:
     Timer<Document> m_loadEventDelayTimer;
 
     ViewportArguments m_viewportArguments;
-    
+
     bool m_directionSetOnDocumentElement;
     bool m_writingModeSetOnDocumentElement;
+
+    DocumentTiming m_documentTiming;
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

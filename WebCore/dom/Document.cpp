@@ -989,6 +989,22 @@ void Document::setReadyState(ReadyState readyState)
 {
     if (readyState == m_readyState)
         return;
+
+    switch (readyState) {
+    case Loading:
+        if (!m_documentTiming.domLoading)
+            m_documentTiming.domLoading = currentTime();
+        break;
+    case Interactive:
+        if (!m_documentTiming.domInteractive)
+            m_documentTiming.domInteractive = currentTime();
+        break;
+    case Complete:
+        if (!m_documentTiming.domComplete)
+            m_documentTiming.domComplete = currentTime();
+        break;
+    }
+
     m_readyState = readyState;
     dispatchEvent(Event::create(eventNames().readystatechangeEvent, false, false));
 }
@@ -4139,6 +4155,8 @@ void Document::finishedParsing()
     ASSERT(!scriptableDocumentParser() || !m_parser->isParsing());
     ASSERT(!scriptableDocumentParser() || m_readyState != Loading);
     setParsing(false);
+    if (!m_documentTiming.domContentLoaded)
+        m_documentTiming.domContentLoaded = currentTime();
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, true, false));
 
     if (Frame* f = frame()) {

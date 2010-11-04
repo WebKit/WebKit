@@ -41628,6 +41628,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DocumentTiming.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\DocumentType.cpp"
 				>
 				<FileConfiguration

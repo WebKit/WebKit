@@ -1109,6 +1109,7 @@ webcore_sources += \
 	WebCore/dom/DocumentMarker.h \
 	WebCore/dom/DocumentParser.cpp \
 	WebCore/dom/DocumentParser.h \
+	WebCore/dom/DocumentTiming.h \
 	WebCore/dom/DocumentType.cpp \
 	WebCore/dom/DocumentType.h \
 	WebCore/dom/DOMCoreException.h \
