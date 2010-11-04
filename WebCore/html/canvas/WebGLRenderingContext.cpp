@@ -34,6 +34,7 @@
 #include "CheckedInt.h"
 #include "Console.h"
 #include "DOMWindow.h"
+#include "Extensions3D.h"
 #include "FrameView.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -155,6 +156,12 @@ void WebGLRenderingContext::initializeNewContext()
         createFallbackBlackTextures1x1();
     if (!isGLES2Compliant())
         initVertexAttrib0();
+
+    if (isGLES2Compliant())
+        m_isDepthStencilSupported = m_context->getExtensions()->supports("GL_OES_packed_depth_stencil");
+    else
+        m_isDepthStencilSupported = m_context->getExtensions()->supports("GL_EXT_packed_depth_stencil");
+
     m_context->reshape(canvas()->width(), canvas()->height());
     m_context->viewport(0, 0, canvas()->width(), canvas()->height());
 }
@@ -1651,6 +1658,42 @@ WebGLGetInfo WebGLRenderingContext::getRenderbufferParameter(unsigned long targe
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
         return WebGLGetInfo();
     }
+    if (!m_renderbufferBinding || !m_renderbufferBinding->object()) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return WebGLGetInfo();
+    }
+
+    if (m_renderbufferBinding->getInternalFormat() == GraphicsContext3D::DEPTH_STENCIL
+        && !m_renderbufferBinding->isValid()) {
+        ASSERT(!m_isDepthStencilSupported);
+        long value = 0;
+        switch (pname) {
+        case GraphicsContext3D::RENDERBUFFER_WIDTH:
+            value = static_cast<long>(m_renderbufferBinding->getWidth());
+            break;
+        case GraphicsContext3D::RENDERBUFFER_HEIGHT:
+            value = static_cast<long>(m_renderbufferBinding->getHeight());
+            break;
+        case GraphicsContext3D::RENDERBUFFER_RED_SIZE:
+        case GraphicsContext3D::RENDERBUFFER_GREEN_SIZE:
+        case GraphicsContext3D::RENDERBUFFER_BLUE_SIZE:
+        case GraphicsContext3D::RENDERBUFFER_ALPHA_SIZE:
+            value = 0;
+            break;
+        case GraphicsContext3D::RENDERBUFFER_DEPTH_SIZE:
+            value = 24;
+            break;
+        case GraphicsContext3D::RENDERBUFFER_STENCIL_SIZE:
+            value = 8;
+            break;
+        case GraphicsContext3D::RENDERBUFFER_INTERNAL_FORMAT:
+            return WebGLGetInfo(m_renderbufferBinding->getInternalFormat());
+        default:
+            m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+            return WebGLGetInfo();
+        }
+        return WebGLGetInfo(value);
+    }
 
     WebGLStateRestorer(this, false);
     int value = 0;
@@ -1666,10 +1709,6 @@ WebGLGetInfo WebGLRenderingContext::getRenderbufferParameter(unsigned long targe
         m_context->getRenderbufferParameteriv(target, pname, &value);
         return WebGLGetInfo(static_cast<long>(value));
     case GraphicsContext3D::RENDERBUFFER_INTERNAL_FORMAT:
-        if (!m_renderbufferBinding) {
-            m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
-            return WebGLGetInfo();
-        }
         return WebGLGetInfo(m_renderbufferBinding->getInternalFormat());
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
@@ -2184,17 +2223,33 @@ void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned l
 {
     if (isContextLost())
         return;
+    if (target != GraphicsContext3D::RENDERBUFFER) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);
+        return;
+    }
+    if (!m_renderbufferBinding || !m_renderbufferBinding->object()) {
+        m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
+        return;
+    }
     switch (internalformat) {
     case GraphicsContext3D::DEPTH_COMPONENT16:
     case GraphicsContext3D::RGBA4:
     case GraphicsContext3D::RGB5_A1:
     case GraphicsContext3D::RGB565:
     case GraphicsContext3D::STENCIL_INDEX8:
-    case GraphicsContext3D::DEPTH_STENCIL:
         m_context->renderbufferStorage(target, internalformat, width, height);
-        if (m_renderbufferBinding)
-            m_renderbufferBinding->setInternalFormat(internalformat);
+        m_renderbufferBinding->setInternalFormat(internalformat);
+        m_renderbufferBinding->setIsValid(true);
         cleanupAfterGraphicsCall(false);
+        break;
+    case GraphicsContext3D::DEPTH_STENCIL:
+        if (m_isDepthStencilSupported) {
+            m_context->renderbufferStorage(target, internalformat, width, height);
+            cleanupAfterGraphicsCall(false);
+        } else
+            m_renderbufferBinding->setSize(width, height);
+        m_renderbufferBinding->setIsValid(m_isDepthStencilSupported);
+        m_renderbufferBinding->setInternalFormat(internalformat);
         break;
     default:
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_ENUM);

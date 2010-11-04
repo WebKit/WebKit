@@ -5,103 +5,118 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Create renderbuffers
 PASS gl = create3DContext() is non-null.
 PASS colorBuffer = gl.createRenderbuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS depthBuffer = gl.createRenderbuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS stencilBuffer = gl.createRenderbuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS depthStencilBuffer = gl.createRenderbuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 Attach depth using DEPTH_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 Attach depth using STENCIL_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
 Attach depth using DEPTH_STENCIL_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
 Attach stencil using STENCIL_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 Attach stencil using DEPTH_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
 Attach stencil using DEPTH_STENCIL_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
 Attach depthStencil using DEPTH_STENCIL_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 Attach depthStencil using DEPTH_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
 Attach depthStencil using STENCIL_ATTACHMENT
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
-PASS gl.getError() is gl.INVALID_FRAMEBUFFER_OPERATION
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
+PASS getError was expected value: INVALID_FRAMEBUFFER_OPERATION : 
 Attach depth, then stencil, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
 Attach stencil, then depth, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
 Attach depth, then depthStencil, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
 Attach depthStencil, then depth, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
 Attach stencil, then depthStencil, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
 Attach depthStencil, then stencil, causing conflict
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
+PASS getError was expected value: NO_ERROR : 
 PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_UNSUPPORTED
 Attach color renderbuffer with internalformat == RGBA4
 PASS colorBuffer = gl.createRenderbuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 Attach color renderbuffer with internalformat == RGB5_A1
 PASS colorBuffer = gl.createRenderbuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 Attach color renderbuffer with internalformat == RGB565
 PASS colorBuffer = gl.createRenderbuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
 PASS fbo = gl.createFramebuffer() is non-null.
-PASS gl.getError() is gl.NO_ERROR
+PASS getError was expected value: NO_ERROR : 
+Create and attach depthStencil renderbuffer
+PASS depthStencilBuffer = gl.createRenderbuffer() is non-null.
+PASS getError was expected value: NO_ERROR : 
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH) is width
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_HEIGHT) is height
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_INTERNAL_FORMAT) is gl.DEPTH_STENCIL
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_RED_SIZE) is 0
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_GREEN_SIZE) is 0
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_BLUE_SIZE) is 0
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_ALPHA_SIZE) is 0
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_DEPTH_SIZE) > 0 is true
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_STENCIL_SIZE) > 0 is true
+PASS getError was expected value: NO_ERROR : 
+PASS fbo = gl.createFramebuffer() is non-null.
+PASS getError was expected value: NO_ERROR : 
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -431,6 +431,8 @@ public:
     long m_stencilFuncRef; // Note that this is the user specified value, not the internal clamped value.
     unsigned long m_stencilFuncMask;
 
+    bool m_isDepthStencilSupported;
+
     // Helpers for getParameter and others
     WebGLGetInfo getBooleanParameter(unsigned long pname);
     WebGLGetInfo getBooleanArrayParameter(unsigned long pname);

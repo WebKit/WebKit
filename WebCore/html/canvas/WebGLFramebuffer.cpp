@@ -57,6 +57,15 @@ namespace {
             (reinterpret_cast<WebGLRenderbuffer*>(attachedObject))->setInitialized();
     }
 
+    bool isValid(WebGLObject* attachedObject)
+    {
+        if (attachedObject && attachedObject->object() && attachedObject->isRenderbuffer()) {
+            if (!(reinterpret_cast<WebGLRenderbuffer*>(attachedObject))->isValid())
+                return false;
+        }
+        return true;
+    }
+
 } // anonymous namespace
 
 PassRefPtr<WebGLFramebuffer> WebGLFramebuffer::create(WebGLRenderingContext* ctx)
@@ -142,7 +151,8 @@ bool WebGLFramebuffer::isIncomplete() const
         count++;
     }
     if (isDepthStencilAttached()) {
-        if (getInternalFormat(m_depthStencilAttachment.get()) != GraphicsContext3D::DEPTH_STENCIL)
+        if (getInternalFormat(m_depthStencilAttachment.get()) != GraphicsContext3D::DEPTH_STENCIL
+            || !isValid(m_depthStencilAttachment.get()))
             return true;
         count++;
     }

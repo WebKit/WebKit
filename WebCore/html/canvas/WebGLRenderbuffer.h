@@ -44,8 +44,18 @@ public:
         m_internalFormat = internalformat;
         m_initialized = false;
     }
-
     unsigned long getInternalFormat() const { return m_internalFormat; }
+
+    void setSize(unsigned long width, unsigned long height)
+    {
+        m_width = width;
+        m_height = height;
+    }
+    unsigned long getWidth() const { return m_width; }
+    unsigned long getHeight() const { return m_height; }
+
+    void setIsValid(bool isValid) { m_isValid = isValid; }
+    bool isValid() const { return m_isValid; }
 
     bool isInitialized() const { return m_initialized; }
     void setInitialized() { m_initialized = true; }
@@ -60,6 +70,8 @@ private:
 
     unsigned long m_internalFormat;
     bool m_initialized;
+    unsigned long m_width, m_height;
+    bool m_isValid; // This is only false if internalFormat is DEPTH_STENCIL and packed_depth_stencil is not supported.
 };
 
 } // namespace WebCore
