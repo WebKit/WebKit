@@ -3389,3 +3389,7 @@ BUG61799 : plugins/evaluate-js-after-removing-plugin-element.html = TEXT
 
 // Fails because of http://trac.webkit.org/changeset/71268
 BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
+
+// Test added in WK r71288 crashes on Windows and Linux
+BUG48973 WIN LINUX : editing/style/iframe-onload-crash.html = CRASH
+
