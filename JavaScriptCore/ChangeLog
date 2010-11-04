@@ -1,3 +1,20 @@
+2010-11-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Gavin Barraclough.
+
+        REGRESSION(49798): Crash in HTMLObjectElement::parseMappedAttribute
+        https://bugs.webkit.org/show_bug.cgi?id=48789
+
+        The contract for all String/AtomicString methods seems to be that it's
+        safe to call them, even when the String is null (impl() returns 0).
+        This contract was broken by r49798 (unintentionally) when optimizing
+        for dromeo.
+        This patch adds a null check to AtomicString::lower() fixing this
+        crash and preventing future confusion.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::lower):
+
 2010-11-04  Adam Barth  <abarth@webkit.org>
 
         Enabled ICCJPEG on Chromium Mac
