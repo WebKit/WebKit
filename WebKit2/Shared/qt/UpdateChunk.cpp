@@ -29,6 +29,7 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
+#include "MappedMemoryPool.h"
 #include "WebCoreArgumentCoders.h"
 #include <QIODevice>
 #include <QImage>
@@ -40,7 +41,6 @@ using namespace std;
 
 namespace WebKit {
 
-static MappedMemoryPool* mappedMemoryPool = MappedMemoryPool::instance();
 
 UpdateChunk::UpdateChunk()
     : m_mappedMemory(0)
@@ -49,7 +49,7 @@ UpdateChunk::UpdateChunk()
 
 UpdateChunk::UpdateChunk(const IntRect& rect)
     : m_rect(rect)
-    , m_mappedMemory(mappedMemoryPool->mapMemory(size()))
+    , m_mappedMemory(MappedMemoryPool::instance()->mapMemory(size()))
 {
 }
 
@@ -59,40 +59,38 @@ UpdateChunk::~UpdateChunk()
         m_mappedMemory->markFree();
 }
 
-uint8_t* UpdateChunk::data()
-{
-    ASSERT(m_mappedMemory);
-    ASSERT(m_mappedMemory->mappedBytes);
-    return reinterpret_cast<uint8_t*>(m_mappedMemory->data());
-}
-
 void UpdateChunk::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_rect);
-    encoder->encode(String(m_mappedMemory->file->fileName()));
+    encoder->encode(String(m_mappedMemory->mappedFile()->fileName()));
 
     m_mappedMemory = 0;
 }
 
 bool UpdateChunk::decode(CoreIPC::ArgumentDecoder* decoder, UpdateChunk& chunk)
 {
+    ASSERT_ARG(chunk, chunk.isEmpty());
+
     IntRect rect;
     if (!decoder->decode(rect))
         return false;
     chunk.m_rect = rect;
 
+    if (chunk.isEmpty())
+        return true; // Successfully decoded empty chunk.
+
     String fileName;
     if (!decoder->decode(fileName))
         return false;
 
-    chunk.m_mappedMemory = mappedMemoryPool->mapFile(fileName, chunk.size());
-
-    return chunk.m_mappedMemory->mappedBytes;
+    chunk.m_mappedMemory = MappedMemoryPool::instance()->mapFile(fileName, chunk.size());
+    return true;
 }
 
-QImage UpdateChunk::createImage()
+QImage UpdateChunk::createImage() const
 {
-    return QImage(data(), m_rect.width(), m_rect.height(), m_rect.width() * 4, QImage::Format_RGB32);
+    ASSERT(m_mappedMemory);
+    return QImage(m_mappedMemory->data(), m_rect.width(), m_rect.height(), m_rect.width() * 4, QImage::Format_RGB32);
 }
 
 } // namespace WebKit

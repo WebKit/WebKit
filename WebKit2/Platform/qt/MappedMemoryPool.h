@@ -29,44 +29,76 @@
 #define MappedMemoryPool_h
 
 #include <QFile>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace WebKit {
 
-class MappedMemoryPool {
-public:
-    static MappedMemoryPool* instance();
+class MappedMemoryPool;
 
-    struct MappedMemory {
-        QFile* file;
-        struct Data {
-            uint32_t isFree; // keep bytes aligned
-            uchar bytes;
-        };
-        union {
-            uchar* mappedBytes;
-            Data* dataPtr;
-        };
-        size_t dataSize;
+struct MappedMemory {
 
-        size_t mapSize() const { return dataSize + sizeof(Data); }
-        void markUsed() { dataPtr->isFree = false; }
-        void markFree() { dataPtr->isFree = true; }
-        bool isFree() const { return dataPtr->isFree; }
-        uchar* data() const { return &dataPtr->bytes; }
+    QFile* mappedFile() const
+    {
+        return file;
+    }
+
+    void markFree()
+    {
+        ASSERT(mappedBytes);
+        dataPtr->isFree = true;
+    }
+
+    uchar* data() const
+    {
+        ASSERT(mappedBytes);
+        return dataPtr->bytes;
+    }
+
+private:
+    friend class MappedMemoryPool;
+
+    MappedMemory()
+        : file(0)
+        , mappedBytes(0)
+        , dataSize(0)
+    {
+    }
+
+    void markUsed() { dataPtr->isFree = false; }
+
+    size_t mapSize() const { return dataSize + sizeof(Data); }
+    bool isFree() const { return dataPtr->isFree; }
+
+    struct Data {
+        uint32_t isFree; // keep bytes aligned
+        uchar bytes[];
     };
 
-    MappedMemory* mapMemory(size_t size, QIODevice::OpenMode openMode = QIODevice::ReadWrite);
-    MappedMemory* mapFile(QString fileName, size_t size, QIODevice::OpenMode openMode = QIODevice::ReadWrite);
-    MappedMemory* searchForMappedMemory(uchar* p);
+    QFile* file;
+    union {
+        uchar* mappedBytes;
+        Data* dataPtr;
+    };
+    size_t dataSize;
+};
+
+class MappedMemoryPool {
+public:
+    static MappedMemoryPool* instance()
+    {
+        DEFINE_STATIC_LOCAL(MappedMemoryPool, singleton, ());
+        return &singleton;
+    }
+
+    MappedMemory* mapMemory(size_t size);
+    MappedMemory* mapFile(QString fileName, size_t size);
 
 private:
     MappedMemoryPool() { };
 
     Vector<MappedMemory> m_pool;
 };
-
-typedef MappedMemoryPool::MappedMemory MappedMemory;
 
 } // namespace WebKit
 

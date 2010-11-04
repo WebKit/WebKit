@@ -27,7 +27,6 @@
 #ifndef UpdateChunk_h
 #define UpdateChunk_h
 
-#include "MappedMemoryPool.h"
 #include <QImage>
 #include <WebCore/IntRect.h>
 
@@ -38,21 +37,22 @@ class ArgumentDecoder;
 
 namespace WebKit {
 
+class MappedMemory;
+
 class UpdateChunk {
 public:
     UpdateChunk();
     UpdateChunk(const WebCore::IntRect&);
     ~UpdateChunk();
 
-    uint8_t* data();
     const WebCore::IntRect& rect() const { return m_rect; }
     bool isEmpty() const { return m_rect.isEmpty(); }
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, UpdateChunk&);
-    
-    QImage createImage();
-    
+
+    QImage createImage() const;
+
 private:
     size_t size() const { return m_rect.width() * 4 * m_rect.height(); }
 

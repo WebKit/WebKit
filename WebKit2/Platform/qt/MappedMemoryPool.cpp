@@ -34,23 +34,7 @@
 
 namespace WebKit {
 
-MappedMemoryPool* MappedMemoryPool::instance()
-{
-    DEFINE_STATIC_LOCAL(MappedMemoryPool, singleton, ());
-    return &singleton;
-}
-
-MappedMemory* MappedMemoryPool::searchForMappedMemory(uchar* p)
-{
-    for (unsigned n = 0; n < m_pool.size(); ++n) {
-        MappedMemory& current = m_pool.at(n);
-        if (current.data() == p)
-            return reinterpret_cast<MappedMemory*>(&current);
-    }
-    return 0;
-}
-
-MappedMemory* MappedMemoryPool::mapMemory(size_t size, QIODevice::OpenMode openMode)
+MappedMemory* MappedMemoryPool::mapMemory(size_t size)
 {
     for (unsigned n = 0; n < m_pool.size(); ++n) {
         MappedMemory& current = m_pool.at(n);
@@ -59,10 +43,11 @@ MappedMemory* MappedMemoryPool::mapMemory(size_t size, QIODevice::OpenMode openM
             return &current;
         }
     }
+
     MappedMemory newMap;
     newMap.dataSize = size;
     newMap.file = new QTemporaryFile(QDir::tempPath() + "/WebKit2UpdateChunk");
-    newMap.file->open(openMode);
+    newMap.file->open(QIODevice::ReadWrite);
     newMap.file->resize(newMap.mapSize());
     newMap.mappedBytes = newMap.file->map(0, newMap.mapSize());
     newMap.file->close();
@@ -71,7 +56,7 @@ MappedMemory* MappedMemoryPool::mapMemory(size_t size, QIODevice::OpenMode openM
     return &m_pool.last();
 }
 
-MappedMemory* MappedMemoryPool::mapFile(QString fileName, size_t size, QIODevice::OpenMode openMode)
+MappedMemory* MappedMemoryPool::mapFile(QString fileName, size_t size)
 {
     for (unsigned n = 0; n < m_pool.size(); ++n) {
         MappedMemory& current = m_pool.at(n);
@@ -80,12 +65,15 @@ MappedMemory* MappedMemoryPool::mapFile(QString fileName, size_t size, QIODevice
             return &current;
         }
     }
+
     MappedMemory newMap;
     newMap.file = new QFile(fileName);
-    if (!newMap.file->open(openMode))
-        return 0;
     newMap.dataSize = size;
+    ASSERT(newMap.file->exists());
+    ASSERT(newMap.file->size() == newMap.mapSize());
+    newMap.file->open(QIODevice::ReadWrite);
     newMap.mappedBytes = newMap.file->map(0, newMap.mapSize());
+    ASSERT(newMap.mappedBytes);
     ASSERT(!newMap.isFree());
     newMap.file->close();
     newMap.file->remove(); // The map stays alive even when the file is unlinked.
