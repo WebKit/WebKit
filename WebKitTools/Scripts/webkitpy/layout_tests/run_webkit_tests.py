@@ -1530,7 +1530,7 @@ def parse_args(args=None):
             default=False,
             help="Don't check the system dependencies (themes)"),
         optparse.make_option("--use-drt", action="store_true",
-            default=False,
+            default=None,
             help="Use DumpRenderTree instead of test_shell"),
         optparse.make_option("--accelerated-compositing",
             action="store_true",

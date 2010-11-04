@@ -1,3 +1,19 @@
+2010-11-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by James Robinson.
+
+        new-run-webkit-tests wasn't using DRT by default for
+        --platform chromium-gpu
+
+        The default value was set to False instead of None, which meant
+        that the platform specific logic wasn't firing to change the
+        value to True (b/c we were afraid we'd be overriding the user
+        preference).
+
+        https://bugs.webkit.org/show_bug.cgi?id=49038
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2010-11-04  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.
