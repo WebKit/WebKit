@@ -1,3 +1,13 @@
+2010-11-04  Mike Thole  <mthole@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Title for images should use localized numerals
+        https://bugs.webkit.org/show_bug.cgi?id=49017
+
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::imageTitle): Use localized numerals on Snow Leopard or newer.
+
 2010-11-02  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Barth.

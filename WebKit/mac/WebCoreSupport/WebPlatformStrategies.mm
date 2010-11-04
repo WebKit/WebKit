@@ -660,7 +660,13 @@ String WebPlatformStrategies::unknownFileSizeText()
 
 String WebPlatformStrategies::imageTitle(const String& filename, const IntSize& size)
 {
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    NSString *widthString = [NSNumberFormatter localizedStringFromNumber:[NSNumber numberWithInt:size.width()] numberStyle:NSNumberFormatterDecimalStyle];
+    NSString *heightString = [NSNumberFormatter localizedStringFromNumber:[NSNumber numberWithInt:size.height()] numberStyle:NSNumberFormatterDecimalStyle];
+    return [NSString localizedStringWithFormat:UI_STRING("%@ %@×%@ pixels", "window title for a standalone image (uses multiplication symbol, not x)"), (NSString *)filename, widthString, heightString];
+#else
     return [NSString stringWithFormat:UI_STRING("%@ %d×%d pixels", "window title for a standalone image (uses multiplication symbol, not x)"), (NSString *)filename, size.width(), size.height()];
+#endif
 }
 
 String WebPlatformStrategies::mediaElementLoadingStateText()
