@@ -3396,3 +3396,6 @@ BUG48973 WIN LINUX : editing/style/iframe-onload-crash.html = CRASH
 
 // started to ASSERT somewhere between WebKit r71224 and r71305
 BUG48979 WIN MAC DEBUG : svg/dom/baseVal-animVal-crash.html = CRASH
+
+// Added in r71317
+BUG61978 WIN MAC : svg/animations/animate-path-nested-transforms.html = CRASH PASS
