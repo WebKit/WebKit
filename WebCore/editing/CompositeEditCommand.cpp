@@ -206,6 +206,8 @@ void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned
 
 void CompositeEditCommand::removeNode(PassRefPtr<Node> node)
 {
+    if (!node || !node->parentNode())
+        return;
     applyCommandToComposite(RemoveNodeCommand::create(node));
 }
 

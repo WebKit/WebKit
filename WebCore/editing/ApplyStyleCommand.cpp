@@ -1150,9 +1150,9 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(CSSMutableStyleDeclaration* 
     if (m_removeOnly)
         return;
 
-    for (Node* next; node && node != pastEndNode; node = next) {
+    for (RefPtr<Node> next; node && node != pastEndNode; node = next.get()) {
         next = node->traverseNextNode();
-        
+
         if (!node->renderer() || !node->isContentEditable())
             continue;
         
@@ -1183,7 +1183,8 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(CSSMutableStyleDeclaration* 
             }
         }
 
-        Node* runEnd = node;
+        RefPtr<Node> runStart = node;
+        RefPtr<Node> runEnd = node;
         Node* sibling = node->nextSibling();
         while (sibling && sibling != pastEndNode && !sibling->contains(pastEndNode)
                && (!isBlock(sibling) || sibling->hasTagName(brTag))
@@ -1193,9 +1194,9 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(CSSMutableStyleDeclaration* 
         }
         next = runEnd->traverseNextSibling();
 
-        if (!removeStyleFromRunBeforeApplyingStyle(style, node, runEnd))
+        if (!removeStyleFromRunBeforeApplyingStyle(style, runStart, runEnd))
             continue;
-        addInlineStyleIfNeeded(style, node, runEnd, AddStyledElement);
+        addInlineStyleIfNeeded(style, runStart.get(), runEnd.get(), AddStyledElement);
     }
 }
 
@@ -1205,12 +1206,12 @@ bool ApplyStyleCommand::isStyledInlineElementToRemove(Element* element) const
         || (m_isInlineElementToRemoveFunction && m_isInlineElementToRemoveFunction(element));
 }
 
-bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDeclaration* style, Node*& runStart, Node*& runEnd)
+bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDeclaration* style, RefPtr<Node>& runStart, RefPtr<Node>& runEnd)
 {
     ASSERT(runStart && runEnd && runStart->parentNode() == runEnd->parentNode());
-    Node* pastEndNode = runEnd->traverseNextSibling();
+    RefPtr<Node> pastEndNode = runEnd->traverseNextSibling();
     bool needToApplyStyle = false;
-    for (Node* node = runStart; node && node != pastEndNode; node = node->traverseNextNode()) {
+    for (Node* node = runStart.get(); node && node != pastEndNode.get(); node = node->traverseNextNode()) {
         if (node->childNodeCount())
             continue;
         // We don't consider m_isInlineElementToRemoveFunction here because we never apply style when m_isInlineElementToRemoveFunction is specified
@@ -1223,16 +1224,16 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDec
     if (!needToApplyStyle)
         return false;
 
-    Node* next;
-    for (Node* node = runStart; node && node != pastEndNode; node = next) {
+    RefPtr<Node> next = runStart;
+    for (RefPtr<Node> node = next; node && node->inDocument() && node != pastEndNode; node = next) {
         next = node->traverseNextNode();
         if (!node->isHTMLElement())
             continue;
-        
-        Node* previousSibling = node->previousSibling();
-        Node* nextSibling = node->nextSibling();
-        ContainerNode* parent = node->parentNode();
-        removeInlineStyleFromElement(style, static_cast<HTMLElement*>(node), RemoveAlways);
+
+        RefPtr<Node> previousSibling = node->previousSibling();
+        RefPtr<Node> nextSibling = node->nextSibling();
+        RefPtr<ContainerNode> parent = node->parentNode();
+        removeInlineStyleFromElement(style, static_cast<HTMLElement*>(node.get()), RemoveAlways);
         if (!node->inDocument()) {
             // FIXME: We might need to update the start and the end of current selection here but need a test.
             if (runStart == node)
@@ -1245,7 +1246,7 @@ bool ApplyStyleCommand::removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDec
     return true;
 }
 
-bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
+bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration* style, PassRefPtr<HTMLElement> element, InlineStyleRemovalMode mode, CSSMutableStyleDeclaration* extractedStyle)
 {
     ASSERT(style);
     ASSERT(element);
@@ -1253,7 +1254,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration*
     if (!element->parentNode() || !element->parentNode()->isContentEditable())
         return false;
 
-    if (isStyledInlineElementToRemove(element)) {
+    if (isStyledInlineElementToRemove(element.get())) {
         if (mode == RemoveNone)
             return true;
         ASSERT(extractedStyle);
@@ -1264,7 +1265,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration*
     }
 
     bool removed = false;
-    if (removeImplicitlyStyledElement(style, element, mode, extractedStyle))
+    if (removeImplicitlyStyledElement(style, element.get(), mode, extractedStyle))
         removed = true;
 
     if (!element->inDocument())
@@ -1272,7 +1273,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(CSSMutableStyleDeclaration*
 
     // If the node was converted to a span, the span may still contain relevant
     // styles which must be removed (e.g. <b style='font-weight: bold'>)
-    if (removeCSSStyle(style, element, mode, extractedStyle))
+    if (removeCSSStyle(style, element.get(), mode, extractedStyle))
         removed = true;
 
     return removed;

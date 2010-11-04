@@ -79,8 +79,8 @@ private:
 
     // style-removal helpers
     bool isStyledInlineElementToRemove(Element*) const;
-    bool removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDeclaration* style, Node*& runStart, Node*& runEnd);
-    bool removeInlineStyleFromElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode = RemoveIfNeeded, CSSMutableStyleDeclaration* extractedStyle = 0);
+    bool removeStyleFromRunBeforeApplyingStyle(CSSMutableStyleDeclaration* style, RefPtr<Node>& runStart, RefPtr<Node>& runEnd);
+    bool removeInlineStyleFromElement(CSSMutableStyleDeclaration*, PassRefPtr<HTMLElement>, InlineStyleRemovalMode = RemoveIfNeeded, CSSMutableStyleDeclaration* extractedStyle = 0);
     inline bool shouldRemoveInlineStyleFromElement(CSSMutableStyleDeclaration* style, HTMLElement* element) {return removeInlineStyleFromElement(style, element, RemoveNone);}
     bool removeImplicitlyStyledElement(CSSMutableStyleDeclaration*, HTMLElement*, InlineStyleRemovalMode, CSSMutableStyleDeclaration* extractedStyle);
     void replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*&);
