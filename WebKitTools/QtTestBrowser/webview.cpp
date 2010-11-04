@@ -59,7 +59,24 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
 void WebViewGraphicsBased::setPage(QWebPage* page)
 {
     connect(page->mainFrame(), SIGNAL(contentsSizeChanged(const QSize&)), SLOT(contentsSizeChanged(const QSize&)));
+    connect(page, SIGNAL(scrollRequested(int, int, const QRect&)), SLOT(scrollRequested(int, int)));
     graphicsWebView()->setPage(page);
+}
+
+void WebViewGraphicsBased::scrollRequested(int x, int y)
+{
+    if (!m_resizesToContents)
+        return;
+
+    // Turn off interactive mode while scrolling, or QGraphicsView will replay the
+    // last mouse event which may cause WebKit to initiate a drag operation.
+    bool interactive = isInteractive();
+    setInteractive(false);
+
+    verticalScrollBar()->setValue(-y);
+    horizontalScrollBar()->setValue(-x);
+
+    setInteractive(interactive);
 }
 
 void WebViewGraphicsBased::contentsSizeChanged(const QSize& size)

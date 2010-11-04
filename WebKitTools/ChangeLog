@@ -1,3 +1,21 @@
+2010-11-04  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Hook into QWebPage::scrollRequested for resizes-to-contents mode
+
+        In RTC mode the QGraphicsWebView item is the size of the contents,
+        scrolling works a bit differently  (we need to react to scrollRequested.)
+
+        Normally QGraphicsView will replay the last mouse event when scrolling,
+        so to prevent WebKit from getting confused by this we temporarily make
+        the QGraphicsView non-interactive.
+
+        * QtTestBrowser/webview.cpp:
+        (WebViewGraphicsBased::setPage):
+        (WebViewGraphicsBased::scrollRequested):
+        * QtTestBrowser/webview.h:
+
 2010-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         Reviewed by Andreas Kling.
