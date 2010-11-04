@@ -411,9 +411,8 @@ class TestRunner:
 
             # If we reached the end and we don't have enough tests, we run some
             # from the beginning.
-            if (self._options.run_chunk and
-                (slice_end - slice_start < chunk_len)):
-                extra = 1 + chunk_len - (slice_end - slice_start)
+            if slice_end - slice_start < chunk_len:
+                extra = chunk_len - (slice_end - slice_start)
                 extra_msg = ('   last chunk is partial, appending [0:%d]' %
                             extra)
                 self._printer.print_expected(extra_msg)

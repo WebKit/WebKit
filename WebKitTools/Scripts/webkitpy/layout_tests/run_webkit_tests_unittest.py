@@ -31,6 +31,7 @@
 """Unit tests for run_webkit_tests."""
 
 import codecs
+import itertools
 import logging
 import os
 import Queue
@@ -48,7 +49,7 @@ from webkitpy.common.system import user
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.layout_package import dump_render_tree_thread
-from webkitpy.layout_tests.port.test import TestPort
+from webkitpy.layout_tests.port.test import TestPort, TestDriver
 from webkitpy.python24.versioning import compare_version
 from webkitpy.test.skip import skip_if
 
@@ -63,41 +64,44 @@ class MockUser():
         self.url = url
 
 
-def passing_run(args=[], port_obj=None, record_results=False,
+def passing_run(extra_args=None, port_obj=None, record_results=False,
                 tests_included=False):
-    new_args = ['--print', 'nothing']
-    if not '--platform' in args:
-        new_args.extend(['--platform', 'test'])
+    extra_args = extra_args or []
+    args = ['--print', 'nothing']
+    if not '--platform' in extra_args:
+        args.extend(['--platform', 'test'])
     if not record_results:
-        new_args.append('--no-record-results')
-    new_args.extend(args)
+        args.append('--no-record-results')
+    args.extend(extra_args)
     if not tests_included:
         # We use the glob to test that globbing works.
-        new_args.extend(['passes',
-                         'http/tests',
-                         'http/tests/websocket/tests',
-                         'failures/expected/*'])
-    options, parsed_args = run_webkit_tests.parse_args(new_args)
-    if port_obj is None:
+        args.extend(['passes',
+                     'http/tests',
+                     'http/tests/websocket/tests',
+                     'failures/expected/*'])
+    options, parsed_args = run_webkit_tests.parse_args(args)
+    if not port_obj:
         port_obj = port.get(port_name=options.platform, options=options,
                             user=MockUser())
     res = run_webkit_tests.run(port_obj, options, parsed_args)
     return res == 0
 
 
-def logging_run(args=[], tests_included=False):
-    new_args = ['--no-record-results']
-    if not '--platform' in args:
-        new_args.extend(['--platform', 'test'])
-    new_args.extend(args)
+def logging_run(extra_args=None, port_obj=None, tests_included=False):
+    extra_args = extra_args or []
+    args = ['--no-record-results']
+    if not '--platform' in extra_args:
+        args.extend(['--platform', 'test'])
+    args.extend(extra_args)
     if not tests_included:
-        new_args.extend(['passes',
-                         'http/tests',
-                         'http/tests/websocket/tests',
-                         'failures/expected/*'])
-    options, parsed_args = run_webkit_tests.parse_args(new_args)
+        args.extend(['passes',
+                     'http/tests',
+                     'http/tests/websocket/tests',
+                     'failures/expected/*'])
+    options, parsed_args = run_webkit_tests.parse_args(args)
     user = MockUser()
-    port_obj = port.get(port_name=options.platform, options=options, user=user)
+    if not port_obj:
+        port_obj = port.get(port_name=options.platform, options=options, user=user)
     buildbot_output = array_stream.ArrayStream()
     regular_output = array_stream.ArrayStream()
     res = run_webkit_tests.run(port_obj, options, parsed_args,
@@ -105,6 +109,54 @@ def logging_run(args=[], tests_included=False):
                                regular_output=regular_output)
     return (res, buildbot_output, regular_output, user)
 
+
+def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
+    extra_args = extra_args or []
+    args = [
+        '--print', 'nothing',
+        '--platform', 'test',
+        '--no-record-results',
+        '--child-processes', '1']
+    args.extend(extra_args)
+    if not tests_included:
+        # Not including http tests since they get run out of order (that
+        # behavior has its own test, see test_get_test_file_queue)
+        args.extend(['passes', 'failures'])
+    options, parsed_args = run_webkit_tests.parse_args(args)
+    user = MockUser()
+
+    test_batches = []
+
+    class RecordingTestDriver(TestDriver):
+        def __init__(self, port, image_path, options):
+            TestDriver.__init__(self, port, image_path, options, executive=None)
+            self._current_test_batch = None
+
+        def poll(self):
+            # So that we don't create a new driver for every test
+            return None
+
+        def stop(self):
+            self._current_test_batch = None
+
+        def run_test(self, uri, timeoutms, image_hash):
+            if self._current_test_batch is None:
+                self._current_test_batch = []
+                test_batches.append(self._current_test_batch)
+            self._current_test_batch.append(self._port.uri_to_test_name(uri))
+            return TestDriver.run_test(self, uri, timeoutms, image_hash)
+
+    class RecordingTestPort(TestPort):
+        def create_driver(self, image_path, options):
+            return RecordingTestDriver(self, image_path, options)
+
+    recording_port = RecordingTestPort(options=options, user=user)
+    logging_run(extra_args=args, port_obj=recording_port, tests_included=True)
+
+    if flatten_batches:
+        return list(itertools.chain.from_iterable(test_batches))
+
+    return test_batches
 
 class MainTest(unittest.TestCase):
     def test_accelerated_compositing(self):
@@ -121,8 +173,9 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run())
 
     def test_batch_size(self):
-        # FIXME: verify # of tests run
-        self.assertTrue(passing_run(['--batch-size', '2']))
+        batch_tests_run = get_tests_run(['--batch-size', '2'])
+        for batch in batch_tests_run:
+            self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
     def test_child_process_1(self):
         (res, buildbot_output, regular_output, user) = logging_run(
@@ -196,8 +249,15 @@ class MainTest(unittest.TestCase):
         self.assertTrue(passing_run(['--randomize-order']))
 
     def test_run_chunk(self):
-        # FIXME: verify # of tests run
-        self.assertTrue(passing_run(['--run-chunk', '1:4']))
+        # Test that we actually select the right chunk
+        all_tests_run = get_tests_run(flatten_batches=True)
+        chunk_tests_run = get_tests_run(['--run-chunk', '1:4'], flatten_batches=True)
+        self.assertEquals(all_tests_run[4:8], chunk_tests_run)
+
+        # Test that we wrap around if the number of tests is not evenly divisible by the chunk size
+        tests_to_run = ['passes/error.html', 'passes/image.html', 'passes/platform_image.html', 'passes/text.html']
+        chunk_tests_run = get_tests_run(['--run-chunk', '1:3'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/text.html', 'passes/error.html', 'passes/image.html'], chunk_tests_run)
 
     def test_run_force(self):
         # This raises an exception because we run
@@ -205,23 +265,33 @@ class MainTest(unittest.TestCase):
         self.assertRaises(ValueError, logging_run, ['--force'])
 
     def test_run_part(self):
-        # FIXME: verify # of tests run
-        self.assertTrue(passing_run(['--run-part', '1:2']))
+        # Test that we actually select the right part
+        tests_to_run = ['passes/error.html', 'passes/image.html', 'passes/platform_image.html', 'passes/text.html']
+        tests_run = get_tests_run(['--run-part', '1:2'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/error.html', 'passes/image.html'], tests_run)
+
+        # Test that we wrap around if the number of tests is not evenly divisible by the chunk size
+        # (here we end up with 3 parts, each with 2 tests, and we only have 4 tests total, so the
+        # last part repeats the first two tests).
+        chunk_tests_run = get_tests_run(['--run-part', '3:3'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/error.html', 'passes/image.html'], chunk_tests_run)
 
     def test_run_singly(self):
-        self.assertTrue(passing_run(['--run-singly']))
+        batch_tests_run = get_tests_run(['--run-singly'])
+        for batch in batch_tests_run:
+            self.assertEquals(len(batch), 1, '%s had too many tests' % ', '.join(batch))
 
     def test_single_file(self):
-        # FIXME: verify # of tests run
-        self.assertTrue(passing_run(['passes/text.html'], tests_included=True))
+        tests_run = get_tests_run(['passes/text.html'], tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/text.html'], tests_run)
 
     def test_test_list(self):
         filename = tempfile.mktemp()
         tmpfile = file(filename, mode='w+')
         tmpfile.write('passes/text.html')
         tmpfile.close()
-        self.assertTrue(passing_run(['--test-list=%s' % filename],
-                                    tests_included=True))
+        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True)
+        self.assertEquals(['passes/text.html'], tests_run)
         os.remove(filename)
         res, out, err, user = logging_run(['--test-list=%s' % filename],
                                           tests_included=True)
@@ -273,7 +343,7 @@ class MainTest(unittest.TestCase):
         def get_port_for_run(args):
             options, parsed_args = run_webkit_tests.parse_args(args)
             test_port = ImageDiffTestPort(options=options, user=MockUser())
-            passing_run(args=args, port_obj=test_port, tests_included=True)
+            passing_run(args, port_obj=test_port, tests_included=True)
             return test_port
 
         base_args = ['--pixel-tests', 'failures/expected/*']

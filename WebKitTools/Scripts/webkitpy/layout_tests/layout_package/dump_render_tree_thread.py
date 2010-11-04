@@ -440,7 +440,7 @@ class TestShellThread(WatchableThread):
                            self._port.relative_test_filename(filename)))
             self._result_queue.put(result.dumps())
 
-            if batch_size > 0 and batch_count > batch_size:
+            if batch_size > 0 and batch_count >= batch_size:
                 # Bounce the shell and reset count.
                 self._kill_dump_render_tree()
                 batch_count = 0
