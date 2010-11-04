@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import signal
 import subprocess
 import sys
@@ -121,3 +122,9 @@ class ExecutiveTest(unittest.TestCase):
         self.assertEqual(process.wait(), expected_exit_code)
         # Killing again should fail silently.
         executive.kill_all("yes")
+
+    def test_check_running_pid(self):
+        executive = Executive()
+        self.assertTrue(executive.check_running_pid(os.getpid()))
+        # Maximum pid number on Linux is 32768 by default
+        self.assertFalse(executive.check_running_pid(100000))

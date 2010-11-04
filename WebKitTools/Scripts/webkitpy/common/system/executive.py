@@ -33,6 +33,7 @@ try:
 except ImportError:
     multiprocessing = None
 
+import ctypes
 import errno
 import logging
 import os
@@ -204,6 +205,55 @@ class Executive(object):
                     _log.warn("Called kill_process with a non-existant pid %s" % pid)
                     return
                 raise
+
+    def _win32_check_running_pid(self):
+
+        class PROCESSENTRY32(ctypes.Structure):
+            _fields_ = [("dwSize", ctypes.c_ulong),
+                        ("cntUsage", ctypes.c_ulong),
+                        ("th32ProcessID", ctypes.c_ulong),
+                        ("th32DefaultHeapID", ctypes.c_ulong),
+                        ("th32ModuleID", ctypes.c_ulong),
+                        ("cntThreads", ctypes.c_ulong),
+                        ("th32ParentProcessID", ctypes.c_ulong),
+                        ("pcPriClassBase", ctypes.c_ulong),
+                        ("dwFlags", ctypes.c_ulong),
+                        ("szExeFile", ctypes.c_char * 260)]
+
+        CreateToolhelp32Snapshot = ctypes.windll.kernel32.CreateToolhelp32Snapshot
+        Process32First = ctypes.windll.kernel32.Process32First
+        Process32Next = ctypes.windll.kernel32.Process32Next
+        CloseHandle = ctypes.windll.kernel32.CloseHandle
+        TH32CS_SNAPPROCESS = 0x00000002  # win32 magic number
+        hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)
+        pe32 = PROCESSENTRY32()
+        pe32.dwSize = ctypes.sizeof(PROCESSENTRY32)
+        result = False
+        if not Process32First(hProcessSnap, ctypes.byref(pe32)):
+            _log.debug("Failed getting first process.")
+            CloseHandle(hProcessSnap)
+            return result
+        while True:
+            if pe32.th32ProcessID == pid:
+                result = True
+                break
+            if not Process32Next(hProcessSnap, ctypes.byref(pe32)):
+                break
+        CloseHandle(hProcessSnap)
+        return result
+
+    def check_running_pid(self, pid):
+        """Return True if pid is alive, otherwise return False."""
+        if sys.platform in ('darwin', 'linux2', 'cygwin'):
+            try:
+                os.kill(pid, 0)
+                return True
+            except OSError:
+                return False
+        elif sys.platform == 'win32':
+            return self._win32_check_running_pid()
+
+        assert(False)
 
     def _windows_image_name(self, process_name):
         name, extension = os.path.splitext(process_name)

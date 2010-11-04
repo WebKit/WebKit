@@ -29,10 +29,16 @@
 http and websocket tests in a same time."""
 
 import glob
+import logging
 import os
 import sys
 import tempfile
 import time
+
+from webkitpy.common.system.executive import Executive
+
+
+_log = logging.getLogger("webkitpy.layout_tests.port.http_lock")
 
 
 class HttpLock(object):
@@ -46,10 +52,12 @@ class HttpLock(object):
                                                    self._lock_file_prefix)
         self._guard_lock_file = os.path.join(self._lock_path, guard_lock)
         self._process_lock_file_name = ""
+        self._executive = Executive()
 
     def cleanup_http_lock(self):
         """Delete the lock file if exists."""
         if os.path.exists(self._process_lock_file_name):
+            _log.debug("Removing lock file: %s" % self._process_lock_file_name)
             os.unlink(self._process_lock_file_name)
 
     def _extract_lock_number(self, lock_file_name):
@@ -70,17 +78,6 @@ class HttpLock(object):
             return 0
         return self._extract_lock_number(lock_list[-1]) + 1
 
-    def _check_pid(self, current_pid):
-        """Return True if pid is alive, otherwise return False.
-        FIXME: os.kill() doesn't work on Windows for checking if
-        a pid is alive, so always return True"""
-        if sys.platform in ('darwin', 'linux2'):
-            try:
-                os.kill(current_pid, 0)
-            except OSError:
-                return False
-        return True
-
     def _curent_lock_pid(self):
         """Return with the current lock pid. If the lock is not valid
         it deletes the lock file."""
@@ -91,7 +88,8 @@ class HttpLock(object):
             current_lock_file = open(lock_list[0], 'r')
             current_pid = current_lock_file.readline()
             current_lock_file.close()
-            if not (current_pid and self._check_pid(int(current_pid))):
+            if not (current_pid and self._executive.check_running_pid(int(current_pid))):
+                _log.debug("Removing stuck lock file: %s" % lock_list[0])
                 os.unlink(lock_list[0])
                 return
         except IOError, OSError:
@@ -108,6 +106,7 @@ class HttpLock(object):
                 self._process_lock_file_name = (self._lock_file_path_prefix +
                                                 str(self._next_lock_number()))
                 lock_file = open(self._process_lock_file_name, 'w')
+                _log.debug("Creating lock file: %s" % self._process_lock_file_name)
                 lock_file.write(str(os.getpid()))
                 lock_file.close()
                 os.close(sequential_guard_lock)
