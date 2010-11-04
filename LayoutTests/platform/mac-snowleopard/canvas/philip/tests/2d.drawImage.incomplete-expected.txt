@@ -1,7 +1,0 @@
-< [index] >
-2d.drawImage.incomplete
-References: 2d.drawImage.incomplete.image
-Actual output:
-Expected output:
-
-Failed assertion img.complete === false (got true[boolean], expected false[boolean])

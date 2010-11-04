@@ -5177,7 +5177,6 @@ canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
 canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
 canvas/philip/tests/2d.drawImage.broken.html
-canvas/philip/tests/2d.drawImage.incomplete.html
 canvas/philip/tests/2d.drawImage.null.html
 canvas/philip/tests/2d.fillStyle.parse.system.html
 canvas/philip/tests/2d.gradient.radial.cone.behind.html
