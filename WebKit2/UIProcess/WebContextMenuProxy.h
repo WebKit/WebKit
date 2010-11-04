@@ -36,7 +36,7 @@ namespace WebCore {
 
 namespace WebKit {
 
-struct WebContextMenuItem;
+class WebContextMenuItem;
 
 class WebContextMenuProxy : public RefCounted<WebContextMenuProxy> {
 public:

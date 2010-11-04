@@ -35,8 +35,8 @@
 namespace WebKit {
 
 class NetscapePluginModule;
-class PluginProcessCreationParameters;
 class WebProcessConnection;
+struct PluginProcessCreationParameters;
         
 class PluginProcess : Noncopyable, CoreIPC::Connection::Client {
 public:
