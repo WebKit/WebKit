@@ -109,7 +109,7 @@ do {
     padding: 2px 6px 3px 6px;
     border: 2px outset ButtonFace;
     background-color: ButtonFace;
-    -webkit-box-sizing: border-box
+    box-sizing: border-box
 }
 
 input, select, do {
@@ -163,7 +163,7 @@ do:active:disabled {
 
 select {
     -webkit-appearance: menulist;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     -webkit-box-align: center;
     border: 1px solid;
     -webkit-border-radius: 5px;

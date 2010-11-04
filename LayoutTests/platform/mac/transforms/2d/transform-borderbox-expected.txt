@@ -10,10 +10,9 @@ layer at (0,0) size 800x304
       RenderBlock {DIV} at (30,48) size 400x210
 layer at (38,64) size 250x100
   RenderBlock {DIV} at (0,0) size 250x100 [bgcolor=#008000] [border: (50px solid #808080) none]
-    RenderText {#text} at (0,0) size 154x18
-      text run at (0,0) width 154: "-webkit-box-sizing: auto"
+    RenderText {#text} at (0,0) size 101x18
+      text run at (0,0) width 101: "box-sizing: auto"
 layer at (38,174) size 200x100
   RenderBlock {DIV} at (0,110) size 200x100 [bgcolor=#008000] [border: (50px solid #808080) none]
-    RenderText {#text} at (0,0) size 123x36
-      text run at (0,0) width 123: "-webkit-box-sizing:"
-      text run at (0,18) width 70: "border-box"
+    RenderText {#text} at (0,0) size 144x18
+      text run at (0,0) width 144: "box-sizing: border-box"

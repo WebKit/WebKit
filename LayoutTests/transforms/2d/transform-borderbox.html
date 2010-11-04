@@ -18,12 +18,12 @@
       margin-bottom: 10px;
       background-color: green;
       border-right: 50px solid gray;
-      -webkit-box-sizing: auto;
+      box-sizing: auto;
       -webkit-transform: scalex(2);
       -webkit-transform-origin: left;
     }
     .border-box {
-      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
     }
   </style>
 </head>
@@ -32,8 +32,8 @@
 <p>
 <p>Top box should have gray part extending outside the black outline. Lower box should lie inside the outline</p>
   <div class="container">
-    <div class="box">-webkit-box-sizing: auto</div>
-    <div class="box border-box">-webkit-box-sizing: border-box</div>
+    <div class="box">box-sizing: auto</div>
+    <div class="box border-box">box-sizing: border-box</div>
   </div>
 </body>
 </html>

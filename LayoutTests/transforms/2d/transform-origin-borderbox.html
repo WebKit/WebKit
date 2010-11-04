@@ -18,24 +18,24 @@
       width: 100px;
       background-color: green;
       border-right: 100px solid gray;
-      -webkit-box-sizing: auto;
+      box-sizing: auto;
       -webkit-transform: rotate(90deg);
     }
     .border-box {
       width: 200px;
-      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
     }
   </style>
 </head>
 <body>
 
-<p>Tests that origin of rotation is the center of the border box, with and without -webkit-box-sizing</p>
+<p>Tests that origin of rotation is the center of the border box, with and without box-sizing</p>
   <div class="container">
-    <div class="box">-webkit-box-sizing: auto</div>
+    <div class="box">box-sizing: auto</div>
   </div>
 
   <div class="container">
-    <div class="box border-box">-webkit-box-sizing: auto</div>
+    <div class="box border-box">box-sizing: auto</div>
   </div>
 </body>
 </html>

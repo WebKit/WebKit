@@ -37,7 +37,6 @@
 -webkit-box-pack
 -webkit-box-reflect
 -webkit-box-shadow
--webkit-box-sizing
 -webkit-color-correction
 -webkit-column-break-after
 -webkit-column-break-before
@@ -156,6 +155,7 @@ border-top-style
 border-top-width
 border-width
 bottom
+box-sizing
 caption-side
 clear
 clip

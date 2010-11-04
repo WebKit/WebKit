@@ -76,6 +76,7 @@ static const int computedProperties[] = {
     CSSPropertyBorderTopStyle,
     CSSPropertyBorderTopWidth,
     CSSPropertyBottom,
+    CSSPropertyBoxSizing,
     CSSPropertyCaptionSide,
     CSSPropertyClear,
     CSSPropertyClip,
@@ -173,7 +174,6 @@ static const int computedProperties[] = {
     CSSPropertyWebkitBoxPack,
     CSSPropertyWebkitBoxReflect,
     CSSPropertyWebkitBoxShadow,
-    CSSPropertyWebkitBoxSizing,
     CSSPropertyWebkitColorCorrection,
     CSSPropertyWebkitColumnBreakAfter,
     CSSPropertyWebkitColumnBreakBefore,
@@ -1301,7 +1301,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return CSSPrimitiveValue::create(style->zIndex(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyZoom:
             return CSSPrimitiveValue::create(style->zoom(), CSSPrimitiveValue::CSS_NUMBER);
-        case CSSPropertyWebkitBoxSizing:
+        case CSSPropertyBoxSizing:
             if (style->boxSizing() == CONTENT_BOX)
                 return CSSPrimitiveValue::createIdentifier(CSSValueContentBox);
             return CSSPrimitiveValue::createIdentifier(CSSValueBorderBox);

@@ -44,7 +44,7 @@ td {
 
 .webkit-line-gutter-backdrop, .webkit-line-number {
     /* Keep this in sync with inspector.css (.webkit-line-gutter-backdrop) */
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     padding: 0 4px !important;
     width: 31px;
     background-color: rgb(240, 240, 240);

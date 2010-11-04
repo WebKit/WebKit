@@ -25,6 +25,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     border-top-style: solid
     border-top-width: 13px
     bottom: auto
+    box-sizing: content-box
     caption-side: top
     clear: none
     clip: auto
@@ -117,7 +118,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-box-pack: start
     -webkit-box-reflect: none
     -webkit-box-shadow: none
-    -webkit-box-sizing: content-box
     -webkit-column-break-after: auto
     -webkit-column-break-before: auto
     -webkit-column-break-inside: auto

@@ -4971,7 +4971,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return; // Error case.
         m_style->setBoxOrdinalGroup((unsigned int)(primitiveValue->getDoubleValue()));
         return;
-    case CSSPropertyWebkitBoxSizing:
+    case CSSPropertyBoxSizing:
         HANDLE_INHERIT_AND_INITIAL(boxSizing, BoxSizing)
         if (!primitiveValue)
             return;

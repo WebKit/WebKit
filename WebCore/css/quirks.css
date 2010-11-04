@@ -44,7 +44,7 @@ table {
 
 /* This will apply only to text fields, since all other inputs already use border box sizing */
 input:not([type=image]), textarea {
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 /* Set margin-bottom for form element in quirks mode. */
