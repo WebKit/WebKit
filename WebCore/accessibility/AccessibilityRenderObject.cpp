@@ -1773,7 +1773,13 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         RenderText* renderText = toRenderText(m_renderer);
         if (m_renderer->isBR() || !renderText->firstTextBox())
             return true;
-        
+
+        // static text beneath TextControls is reported along with the text control text so it's ignored.
+        for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) { 
+            if (parent->roleValue() == TextFieldRole)
+                return true;
+        }
+
         // text elements that are just empty whitespace should not be returned
         return renderText->text()->containsOnlyWhitespace();
     }
