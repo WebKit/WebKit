@@ -1389,9 +1389,13 @@ void FrameLoaderClientImpl::didTransferChildFrameToNewDocument(Page*)
     m_webFrame->setClient(newParent->client());
 }
 
-void FrameLoaderClientImpl::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*)
+void FrameLoaderClientImpl::transferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request, Page* oldPage)
 {
-    notImplemented();
+    assignIdentifierToInitialRequest(identifier, loader, request);
+
+    WebFrameImpl* oldWebFrame = WebFrameImpl::fromFrame(oldPage->mainFrame());
+    if (oldWebFrame && oldWebFrame->client())
+        oldWebFrame->client()->removeIdentifierForRequest(identifier);
 }
 
 PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(

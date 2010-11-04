@@ -240,6 +240,10 @@ public:
     virtual void assignIdentifierToRequest(
         WebFrame*, unsigned identifier, const WebURLRequest&) { }
 
+     // Remove the association between an identifier assigned to a request if
+     // the client keeps such an association.
+     virtual void removeIdentifierForRequest(unsigned identifier) { }
+
     // A request is about to be sent out, and the client may modify it.  Request
     // is writable, and changes to the URL, for example, will change the request
     // made.  If this request is the result of a redirect, then redirectResponse

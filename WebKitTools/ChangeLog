@@ -1,3 +1,21 @@
+2010-11-03  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Chromium: Update resource tracking when moving a frame between documents
+        https://bugs.webkit.org/show_bug.cgi?id=48363
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::assignIdentifierToRequest):
+        Always put resource id in map so we can make assumptions about its
+        presence.
+        (WebViewHost::removeIdentifierForRequest):
+        Added.
+        (WebViewHost::didFinishResourceLoad):
+        (WebViewHost::didFailResourceLoad):
+        Check existence of resource id before removing from map.
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2010-11-03  Victor Wang  <victorw@chromium.org>
 
         Reviewed by Adam Barth.

@@ -185,6 +185,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didNavigateWithinPage(WebKit::WebFrame*, bool isNewNavigation);
     virtual void didChangeLocationWithinPage(WebKit::WebFrame*);
     virtual void assignIdentifierToRequest(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLRequest&);
+    virtual void removeIdentifierForRequest(unsigned identifier);
     virtual void willSendRequest(WebKit::WebFrame*, unsigned identifier, WebKit::WebURLRequest&, const WebKit::WebURLResponse&);
     virtual void didReceiveResponse(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLResponse&);
     virtual void didFinishResourceLoad(WebKit::WebFrame*, unsigned identifier);

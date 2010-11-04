@@ -1,3 +1,18 @@
+2010-11-03  Jenn Braithwaite  <jennb@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Chromium: Update resource tracking when moving a frame between documents
+        https://bugs.webkit.org/show_bug.cgi?id=48363
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::removeIdentifierForRequest):
+        Added
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::transferLoadingResourceFromPage):
+        Notify current WebFrameClient of the resource and remove from
+        former WebFrameClient.
+
 2010-11-03  Adam Barth  <abarth@webkit.org>
 
         Roll Chromium DEPs
