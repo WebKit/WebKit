@@ -203,20 +203,15 @@ WebInspector.AuditsPanel.prototype = {
 
     _reloadResources: function(callback)
     {
-        this._resourceTrackingCallback = callback;
-
-        if (WebInspector.panels.resources && !WebInspector.panels.resources.resourceTrackingEnabled) {
-            WebInspector.panels.resources.toggleResourceTracking(false);
-            this._updateLauncherViewControls(true);
-        } else
-            InspectorBackend.reloadPage();
+        this._pageReloadCallback = callback;
+        InspectorBackend.reloadPage();
     },
 
     _didMainResourceLoad: function()
     {
-        if (this._resourceTrackingCallback) {
-            var callback = this._resourceTrackingCallback;
-            delete this._resourceTrackingCallback;
+        if (this._pageReloadCallback) {
+            var callback = this._pageReloadCallback;
+            delete this._pageReloadCallback;
             callback();
         }
     },

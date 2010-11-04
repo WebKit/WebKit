@@ -55,10 +55,10 @@ WebInspector.NetworkPanel = function()
     this._viewsContainerElement.className = "hidden";
     this.element.appendChild(this._viewsContainerElement);
 
-    var closeButtonElement = document.createElement("button");
-    closeButtonElement.id = "network-close-button";
-    closeButtonElement.addEventListener("click", this._toggleGridMode.bind(this), false);
-    this.element.appendChild(closeButtonElement);
+    this._closeButtonElement = document.createElement("button");
+    this._closeButtonElement.id = "network-close-button";
+    this._closeButtonElement.addEventListener("click", this._toggleGridMode.bind(this), false);
+    this._viewsContainerElement.appendChild(this._closeButtonElement);
 
     this._createSortingFunctions();
     this._createTable();
@@ -106,11 +106,13 @@ WebInspector.NetworkPanel.prototype = {
         this._positionSummaryBar();
     },
 
-    updateSidebarWidth: function()
+    updateSidebarWidth: function(width)
     {
         if (!this._viewingResourceMode)
             return;
-        WebInspector.Panel.prototype.updateSidebarWidth.apply(this, arguments);
+        WebInspector.Panel.prototype.updateSidebarWidth.call(this, width);
+        if (this._summaryBarElement.parentElement === this.element)
+            this._summaryBarElement.style.width = width + "px";
     },
 
     updateMainViewWidth: function(width)
@@ -138,6 +140,7 @@ WebInspector.NetworkPanel.prototype = {
                 delete this._summaryBarRowNode;
             }
             this._summaryBarElement.addStyleClass("network-summary-bar-bottom");
+            this._summaryBarElement.style.setProperty("width", this.sidebarElement.offsetWidth + "px");
             this.element.appendChild(this._summaryBarElement);
             this._dataGrid.element.style.bottom = "20px";
             return;
@@ -147,6 +150,7 @@ WebInspector.NetworkPanel.prototype = {
             // Glue status to table.
             this._summaryBarRowNode = new WebInspector.NetworkTotalGridNode(this._summaryBarElement);
             this._summaryBarElement.removeStyleClass("network-summary-bar-bottom");
+            this._summaryBarElement.style.removeProperty("width");
             this._dataGrid.appendChild(this._summaryBarRowNode);
             this._dataGrid.element.style.bottom = 0;
             this._sortItems();
@@ -601,11 +605,6 @@ WebInspector.NetworkPanel.prototype = {
         this._timelineGrid.addEventDivider(divider);
     },
 
-    get resourceTrackingEnabled()
-    {
-        return this._resourceTrackingEnabled;
-    },
-
     _createStatusbarButtons: function()
     {
         this._preserveLogToggle = new WebInspector.StatusBarButton(WebInspector.UIString("Preserve Log upon Navigation"), "record-profile-status-bar-item");
@@ -711,8 +710,8 @@ WebInspector.NetworkPanel.prototype = {
             delete this._refreshTimeout;
         }
 
+        var wasScrolledToLastRow = this._dataGrid.isScrolledToLastRow();
         var staleItemsLength = this._staleResources.length;
-
         var boundariesChanged = false;
 
         for (var i = 0; i < staleItemsLength; ++i) {
@@ -743,6 +742,9 @@ WebInspector.NetworkPanel.prototype = {
         this._sortItems();
         this._updateSummaryBar();
         this._dataGrid.updateWidths();
+
+        if (wasScrolledToLastRow)
+            this._dataGrid.scrollToLastRow();
     },
 
     _onPreserveLogClicked: function(e)
@@ -781,6 +783,7 @@ WebInspector.NetworkPanel.prototype = {
         this._mainResourceDOMContentTime = -1;
  
         this._viewsContainerElement.removeChildren();
+        this._viewsContainerElement.appendChild(this._closeButtonElement);
         this._resetSummaryBar();
     },
 
@@ -1011,6 +1014,7 @@ WebInspector.NetworkPanel.prototype = {
             this._viewsContainerElement.addStyleClass("hidden");
             this.sidebarElement.style.right = 0;
             this.sidebarElement.style.removeProperty("width");
+            this._summaryBarElement.style.removeProperty("width");
         }
 
         if (this._briefGrid) {

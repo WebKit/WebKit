@@ -2671,8 +2671,8 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     background: transparent;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
     vertical-align: middle;
-    padding: 1px 7px 2px;
-    height: 18px;
+    padding: 3px 7px 2px;
+    height: 21px;
     border: 1px solid transparent;
     border-bottom: none;
 }

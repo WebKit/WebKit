@@ -491,6 +491,8 @@
     padding-left: 10px;
     z-index: 2000;
     white-space: pre;
+    overflow : hidden;
+    text-overflow : ellipsis;
 }
 
 .network-summary-bar-bottom {
@@ -552,10 +554,14 @@
     background-position: 0 0;
     background-color: transparent;
     border: 0 none transparent;
-    top: 4px;
-    right: 5px;
+    top: 8px;
+    left: 5px;
     z-index: 10;
     display: none;
+}
+
+#network-views.small #network-close-button  {
+    top: 4px;
 }
 
 #network-close-button:hover {
@@ -569,6 +575,7 @@
 .network.panel.viewing-resource #network-close-button  {
     display: block;
 }
+
 
 .network-sidebar .data-grid.full-grid-mode .viewer-column {
     display: none;
@@ -638,12 +645,13 @@
 
 #network-views .resource-view .tabbed-pane-header {
     height: 31px;
-    padding-top: 11px;
+    padding-top: 8px;
+    padding-left: 25px;
 }
 
 #network-views.small .resource-view .tabbed-pane-header {
     height: 23px;
-    padding-top: 3px;
+    padding-top: 0;
 }
 
 .network.panel.viewing-resource .data-grid .data-container {

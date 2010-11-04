@@ -53,12 +53,12 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
     
     this.aligned = {};
 
-    var scrollContainer = document.createElement("div");
-    scrollContainer.className = "data-container";
-    scrollContainer.appendChild(this._dataTable);
+    this._scrollContainer = document.createElement("div");
+    this._scrollContainer.className = "data-container";
+    this._scrollContainer.appendChild(this._dataTable);
 
     this.element.appendChild(this._headerTable);
-    this.element.appendChild(scrollContainer);
+    this.element.appendChild(this._scrollContainer);
 
     var headerRow = document.createElement("tr");
     var columnGroup = document.createElement("colgroup");
@@ -483,6 +483,16 @@ WebInspector.DataGrid.prototype = {
         columnBodyElement.style.width = 0;
 
         this._columnWidthsInitialized = false;
+    },
+
+    isScrolledToLastRow: function()
+    {
+        return this._scrollContainer.scrollTop === this._scrollContainer.scrollHeight - this._scrollContainer.offsetHeight;
+    },
+
+    scrollToLastRow: function()
+    {
+        this._scrollContainer.scrollTop = this._scrollContainer.scrollHeight - this._scrollContainer.offsetHeight;
     },
 
     _positionResizers: function()

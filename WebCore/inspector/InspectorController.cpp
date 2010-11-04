@@ -928,9 +928,6 @@ void InspectorController::ensureSettingsLoaded()
     m_settingsLoaded = true;
 
     m_state->loadFromSettings();
-
-    if (m_state->getBoolean(InspectorState::resourceTrackingAlwaysEnabled))
-        m_state->setBoolean(InspectorState::resourceTrackingEnabled, true);
 }
 
 void InspectorController::startTimelineProfiler()
