@@ -82,6 +82,18 @@ private:
     Popup* createMultipleSelectionPopup(const QWebSelectData& data);
 };
 
+class TouchModifier : public QWebTouchModifier
+{
+    Q_OBJECT
+public:
+    unsigned hitTestPaddingForTouch(const PaddingDirection direction) const {
+        // Use 10 as padding in each direction but Up.
+        if (direction == QWebTouchModifier::Up)
+            return 15;
+        return 10;
+    }
+};
+
 class WebPlugin : public QObject, public QWebKitPlatformPlugin
 {
     Q_OBJECT

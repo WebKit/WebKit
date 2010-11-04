@@ -1,3 +1,23 @@
+2010-11-03  Andre Pedralho  <andre.pedralho@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Using the Platform Plugin to define the default values for the padding of HitTestResult.
+        https://bugs.webkit.org/show_bug.cgi?id=48450
+
+        * Api/qwebkitplatformplugin.h:
+        (QWebTouchModifier::~QWebTouchModifier):
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        (WebCore::QtPlatformPlugin::createTouchModifier):
+        * WebCoreSupport/QtPlatformPlugin.h:
+        * examples/platformplugin/WebPlugin.cpp:
+        (WebPlugin::supportsExtension):
+        (WebPlugin::createExtension):
+        * examples/platformplugin/WebPlugin.h:
+        (TouchModifier::hitTestPaddingForTouch):
+        * examples/platformplugin/qwebkitplatformplugin.h:
+        (QWebTouchModifier::~QWebTouchModifier):
+
 2010-11-03  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

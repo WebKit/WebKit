@@ -98,6 +98,19 @@ public:
     virtual void playHapticFeedback(const HapticEvent, const QString& hapticType, const HapticStrength) = 0;
 };
 
+class QWebTouchModifier : public QObject
+{
+    Q_OBJECT
+public:
+    virtual ~QWebTouchModifier() {}
+
+    enum PaddingDirection {
+        Up, Right, Down, Left
+    };
+
+    virtual unsigned hitTestPaddingForTouch(const PaddingDirection) const = 0;
+};
+
 class QWebKitPlatformPlugin
 {
 public:
@@ -106,13 +119,14 @@ public:
     enum Extension {
         MultipleSelections,
         Notifications,
-        Haptics
+        Haptics,
+        TouchInteraction
     };
 
     virtual bool supportsExtension(Extension extension) const = 0;
     virtual QObject* createExtension(Extension extension) const = 0;
 };
 
-Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.5");
+Q_DECLARE_INTERFACE(QWebKitPlatformPlugin, "com.nokia.Qt.WebKit.PlatformPlugin/1.6");
 
 #endif // QWEBKITPLATFORMPLUGIN_H

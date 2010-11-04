@@ -107,4 +107,10 @@ QWebHapticFeedbackPlayer* QtPlatformPlugin::createHapticFeedbackPlayer()
     return p ? static_cast<QWebHapticFeedbackPlayer*>(p->createExtension(QWebKitPlatformPlugin::Haptics)) : 0;
 }
 
+QWebTouchModifier* QtPlatformPlugin::createTouchModifier()
+{
+    QWebKitPlatformPlugin* p = plugin();
+    return p ? static_cast<QWebTouchModifier*>(p->createExtension(QWebKitPlatformPlugin::TouchInteraction)) : 0;
+}
+
 }
