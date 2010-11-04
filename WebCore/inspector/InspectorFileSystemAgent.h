@@ -52,16 +52,17 @@ public:
     }
 
     ~InspectorFileSystemAgent();
-    void stop(); 
-    
+    void stop();
+
     // From Frontend
     void getFileSystemPathAsync(unsigned int type, const String& origin);
     void revealFolderInOS(const String& path);
-    
+
     // Backend to Frontend
     void didGetFileSystemPath(const String&, AsyncFileSystem::Type, const String& origin);
     void didGetFileSystemError(AsyncFileSystem::Type, const String& origin);
-    
+    void didGetFileSystemDisabled();
+
 private:
     InspectorFileSystemAgent(InspectorController*, InspectorFrontend*);
     void getFileSystemRoot(AsyncFileSystem::Type);

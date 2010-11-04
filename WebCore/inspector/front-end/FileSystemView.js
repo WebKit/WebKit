@@ -59,6 +59,7 @@ WebInspector.FileSystemView = function(treeElement, fileSystemOrigin)
 
     this._temporaryRoot = "";
     this._persistentRoot = "";
+    this._isFileSystemDisabled = false;
     this._persistentRootError = false;
     this._temporaryRootError = false;
     this.fileSystemVisible = true;
@@ -117,6 +118,11 @@ WebInspector.FileSystemView.prototype = {
         this.refreshFileSystem();
     },
     
+    setFileSystemDisabled: function()
+    {
+        this._isFileSystemDisabled = true;
+        this.refreshFileSystem();
+    },
     _selectFileSystemTab: function()
     {
         this._tabbedPane.selectTabById("persistent");
@@ -141,11 +147,13 @@ WebInspector.FileSystemView.prototype = {
     {
         fileSystemElement.removeChildren();
         var rootPath = WebInspector.UIString("File System root path not available.");
-        if (isError)
+        if (this._isFileSystemDisabled)
+            rootPath = WebInspector.UIString("File System is disabled.");
+        else if (isError)
             rootPath = WebInspector.UIString("Error in fetching root path for file system.");
         else if (rootPathText)
             rootPath = rootPathText;
-               
+
         var rootTextNode = document.createTextNode("Root: " + rootPath.escapeHTML());
         var rootSystemElement = document.createElement("div");
         rootSystemElement.className = "header-value source-code";
@@ -174,8 +182,8 @@ WebInspector.FileSystemView.prototype = {
     
     refreshFileSystem: function()
     {
-       this._createTextAndButton(this._persistentFileSystemElement, this._persistentRoot, WebInspector.FileSystem.PERSISTENT, this._persistentRootError);
-       this._createTextAndButton(this._tempFileSystemElement, this._temporaryRoot, WebInspector.FileSystem.TEMPORARY, this._temporaryRootError);
+        this._createTextAndButton(this._persistentFileSystemElement, this._persistentRoot, WebInspector.FileSystem.PERSISTENT, this._persistentRootError);
+        this._createTextAndButton(this._tempFileSystemElement, this._temporaryRoot, WebInspector.FileSystem.TEMPORARY, this._temporaryRootError);
     }, 
 }
 

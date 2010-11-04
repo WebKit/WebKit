@@ -1287,6 +1287,11 @@ WebInspector.didGetFileSystemError = function(type, origin)
     this.panels.storage.updateFileSystemError(type, origin);
 }
 
+WebInspector.didGetFileSystemDisabled = function()
+{
+    this.panels.storage.setFileSystemDisabled();
+}
+
 WebInspector.updateNetworkState = function(isNowOnline)
 {
     this.panels.storage.updateNetworkState(isNowOnline);
@@ -1366,9 +1371,6 @@ WebInspector.reset = function()
     }
 
     this.resources = {};
-    this.cookieDomains = {};
-    this.applicationCacheDomains = {};
-    this.fileSystemOrigins = {};
     this.highlightDOMNode(0);
 
     this.console.clearMessages();

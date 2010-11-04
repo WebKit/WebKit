@@ -596,6 +596,12 @@ WebInspector.StoragePanel.prototype = {
         if (this._fileSystemView && this._fileSystemView === this.visibleView)
             this._fileSystemView.updateFileSystemError(type, origin);  
     },
+    
+    setFileSystemDisabled: function()
+    {
+        if (this._fileSystemView && this._fileSystemView === this.visibleView)
+            this._fileSystemView.setFileSystemDisabled();  
+    },
 
     updateNetworkState: function(isNowOnline)
     {

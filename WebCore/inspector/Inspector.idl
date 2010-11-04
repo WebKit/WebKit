@@ -221,6 +221,7 @@ module core {
         [handler=FileSystem] void revealFolderInOS(in String path);
         [notify] void didGetFileSystemPath(out String root, out int type, out String origin);
         [notify] void didGetFileSystemError(out int type, out String origin);
+        [notify] void didGetFileSystemDisabled();
 #endif
 
         [handler=Backend] void releaseWrapperObjectGroup(in long injectedScriptId, in String objectGroup);
