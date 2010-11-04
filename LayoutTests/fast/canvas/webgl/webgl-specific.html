@@ -68,11 +68,9 @@ gl.blendFuncSeparate(gl.ONE_MINUS_CONSTANT_ALPHA, gl.ONE_MINUS_CONSTANT_COLOR, g
 glErrorShouldBe(gl, gl.INVALID_OPERATION,
     "constant color and constant alpha cannot be used together as source and destination factors in the blend function");
 
-/*
 gl.depthRange(20, 10);
 glErrorShouldBe(gl, gl.INVALID_OPERATION,
     "depthRange should generate INVALID_OPERATION if zNear is greater than zFar");
-*/
 
 gl.stencilMask(255);
 glErrorShouldBe(gl, gl.NO_ERROR,

@@ -18,6 +18,7 @@ PASS getError was expected value: INVALID_OPERATION : constant color and constan
 PASS getError was expected value: INVALID_OPERATION : constant color and constant alpha cannot be used together as source and destination factors in the blend function
 PASS getError was expected value: INVALID_OPERATION : constant color and constant alpha cannot be used together as source and destination factors in the blend function
 PASS getError was expected value: INVALID_OPERATION : constant color and constant alpha cannot be used together as source and destination factors in the blend function
+PASS getError was expected value: INVALID_OPERATION : depthRange should generate INVALID_OPERATION if zNear is greater than zFar
 PASS getError was expected value: NO_ERROR : stencilMask should generate no error
 PASS getError was expected value: INVALID_OPERATION : a different mask value for front and back facing is illegal
 PASS getError was expected value: INVALID_OPERATION : a different mask value for front and back facing is illegal
