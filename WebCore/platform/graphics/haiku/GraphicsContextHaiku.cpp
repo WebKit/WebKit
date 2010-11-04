@@ -468,6 +468,12 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality)
 {
 }
 
+InterpolationQuality GraphicsContext::imageInterpolationQuality() const
+{
+    notImplemented();
+    return InterpolationDefault;
+}
+
 void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 {
     notImplemented();

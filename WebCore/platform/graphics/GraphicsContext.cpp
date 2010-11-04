@@ -404,25 +404,27 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
         th = image->height();
 
     if (useLowQualityScale) {
-        save();
+        InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
+        // FIXME: Should be InterpolationLow
         setImageInterpolationQuality(InterpolationNone);
-    }
-    image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op);
-    if (useLowQualityScale)
-        restore();
+        image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op);
+        setImageInterpolationQuality(previousInterpolationQuality);
+    } else
+        image->draw(this, FloatRect(dest.location(), FloatSize(tw, th)), FloatRect(src.location(), FloatSize(tsw, tsh)), styleColorSpace, op);
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& rect, const IntPoint& srcPoint, const IntSize& tileSize, CompositeOperator op, bool useLowQualityScale)
 {
     if (paintingDisabled() || !image)
         return;
+
     if (useLowQualityScale) {
-        save();
+        InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
         setImageInterpolationQuality(InterpolationLow);
-    }
-    image->drawTiled(this, rect, srcPoint, tileSize, styleColorSpace, op);
-    if (useLowQualityScale)
-        restore();
+        image->drawTiled(this, rect, srcPoint, tileSize, styleColorSpace, op);
+        setImageInterpolationQuality(previousInterpolationQuality);
+    } else
+        image->drawTiled(this, rect, srcPoint, tileSize, styleColorSpace, op);
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, Image::TileRule hRule, Image::TileRule vRule, CompositeOperator op, bool useLowQualityScale)
@@ -430,17 +432,19 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
     if (paintingDisabled() || !image)
         return;
 
-    if (useLowQualityScale) {
-        save();
-        setImageInterpolationQuality(InterpolationLow);
-    }
-    if (hRule == Image::StretchTile && vRule == Image::StretchTile)
+    if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
         // Just do a scale.
         drawImage(image, styleColorSpace, dest, srcRect, op);
-    else
+        return;
+    }
+
+    if (useLowQualityScale) {
+        InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
+        setImageInterpolationQuality(InterpolationLow);
         image->drawTiled(this, dest, srcRect, hRule, vRule, styleColorSpace, op);
-    if (useLowQualityScale)
-        restore();
+        setImageInterpolationQuality(previousInterpolationQuality);
+    } else
+        image->drawTiled(this, dest, srcRect, hRule, vRule, styleColorSpace, op);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op)
@@ -484,14 +488,13 @@ void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorS
         th = image->height();
 
     if (useLowQualityScale) {
-        save();
+        InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
+        // FIXME: Should be InterpolationLow
         setImageInterpolationQuality(InterpolationNone);
-    }
-
-    image->draw(this, styleColorSpace, dest, src, op, useLowQualityScale);
-
-    if (useLowQualityScale)
-        restore();
+        image->draw(this, styleColorSpace, dest, src, op, useLowQualityScale);
+        setImageInterpolationQuality(previousInterpolationQuality);
+    } else
+        image->draw(this, styleColorSpace, dest, src, op, useLowQualityScale);
 }
 
 void GraphicsContext::addRoundedRectClip(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight,

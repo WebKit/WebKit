@@ -1522,6 +1522,12 @@ void GraphicsContext::clearPlatformShadow()
     notImplemented();
 }
 
+InterpolationQuality GraphicsContext::imageInterpolationQuality() const
+{
+    notImplemented();
+    return InterpolationDefault;
+}
+
 void GraphicsContext::setImageInterpolationQuality(InterpolationQuality)
 {
     notImplemented();
