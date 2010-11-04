@@ -1,3 +1,15 @@
+2010-11-04  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        Use OS(MAC_OS_X) rather than PLATFORM(MAC) in TestControllerQt
+
+        PLATFORM(MAC) is not defined for the Qt port, as it refers to
+        the Mac-port, not the Mac OS X operating system.
+
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (WTR::isExistingLibrary):
+
 2010-11-04  Leonid Ebril  <leonid.ebril@nokia.com>
 
         Reviewed by Andreas Kling.
