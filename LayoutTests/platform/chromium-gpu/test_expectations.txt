@@ -197,7 +197,7 @@ BUGWEBGL : fast/canvas/webgl/gl-uniform-arrays.html = TEXT
 BUGWEBGL : fast/canvas/webgl/point-size.html = TEXT
 // Passes on the GPU, but leaving this here for reference.
 // BUGWEBGL : fast/canvas/webgl/tex-image-and-uniform-binding-bugs.html = TIMEOUT PASS
-// BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT FAIL
+BUG60651 : fast/canvas/webgl/gl-object-get-calls.html = TEXT PASS
 BUG60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 // BUG60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT FAIL
 BUG_AUTO WIN DEBUG : canvas/philip/tests/2d.text.draw.align.center.html = PASS TEXT
@@ -209,8 +209,8 @@ BUGWK48634 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = 
 BUGWK48634 MAC : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
 BUGWK48634 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT
 BUGWK71000 MAC : canvas/philip/tests/2d.imageData.get.source.negative.html = TEXT
-
 // BUGWEBGL WIN : fast/canvas/webgl/framebuffer-object-attachment.html = TEXT
+BUG61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
 // END OF DUPLICATED SECTION
 
