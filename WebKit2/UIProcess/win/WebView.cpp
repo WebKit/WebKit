@@ -29,7 +29,7 @@
 #include "FindIndicator.h"
 #include "RunLoop.h"
 #include "NativeWebKeyboardEvent.h"
-#include "WebContextMenuProxy.h"
+#include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
 #include "WebEventFactory.h"
 #include "WebPageNamespace.h"
@@ -628,8 +628,7 @@ PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy()
 
 PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy*)
 {
-    // FIXME: Implement.
-    return 0;
+    return WebContextMenuProxyWin::create();
 }
 
 void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
