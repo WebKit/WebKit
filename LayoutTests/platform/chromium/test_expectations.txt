@@ -707,9 +707,6 @@ BUG19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.h
 // FIXME: Once we transition over to the new buildbot slaves, remove this line.
 BUG26344 LINUX DEBUG : platform/mac/editing/deleting/backward-delete.html = CRASH TEXT
 
-// New tests. Failures from merge 51210:51325.
-BUG28646 : editing/selection/transformed-selection-rects.html = FAIL
-
 // New failures from merge 51412:51455.
 BUG28916 MAC : editing/pasteboard/paste-xml.xhtml = TEXT
 
