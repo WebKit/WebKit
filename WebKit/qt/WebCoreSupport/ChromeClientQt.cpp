@@ -412,6 +412,13 @@ void ChromeClientQt::scroll(const IntSize& delta, const IntRect& scrollViewRect,
     emit m_webPage->scrollRequested(delta.width(), delta.height(), scrollViewRect);
 }
 
+#if ENABLE(TILED_BACKING_STORE)
+void ChromeClientQt::delegatedScrollRequested(const IntSize& delta)
+{
+    emit m_webPage->scrollRequested(delta.width(), delta.height(), QRect(QPoint(0, 0), m_webPage->viewportSize()));
+}
+#endif
+
 IntRect ChromeClientQt::windowToScreen(const IntRect& rect) const
 {
     QWebPageClient* pageClient = platformPageClient();

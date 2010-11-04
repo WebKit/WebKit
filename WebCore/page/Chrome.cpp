@@ -87,6 +87,13 @@ void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, con
     m_client->scroll(scrollDelta, rectToScroll, clipRect);
 }
 
+#if ENABLE(TILED_BACKING_STORE)
+void Chrome::delegatedScrollRequested(const IntSize& scrollDelta)
+{
+    m_client->delegatedScrollRequested(scrollDelta);
+}
+#endif
+
 IntPoint Chrome::screenToWindow(const IntPoint& point) const
 {
     return m_client->screenToWindow(point);

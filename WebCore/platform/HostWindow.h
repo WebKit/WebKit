@@ -48,7 +48,12 @@ public:
 
     // Requests the host invalidate the contents, not the window.  This is the slow path for scrolling.
     virtual void invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate) = 0;
-    
+
+#if ENABLE(TILED_BACKING_STORE)
+    // Requests the host to do the actual scrolling. This is only used in combination with a tiled backing store.
+    virtual void delegatedScrollRequested(const IntSize& scrollDelta) = 0;
+#endif
+
     // Methods for doing coordinate conversions to and from screen coordinates.
     virtual IntPoint screenToWindow(const IntPoint&) const = 0;
     virtual IntRect windowToScreen(const IntRect&) const = 0;

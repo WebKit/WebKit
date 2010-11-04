@@ -153,6 +153,9 @@ public:
     virtual void invalidateContentsAndWindow(const IntRect&, bool) { }
     virtual void invalidateContentsForSlowScroll(const IntRect&, bool) {};
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) { }
+#if ENABLE(TILED_BACKING_STORE)
+    virtual void delegatedScrollRequested(const IntSize&) { }
+#endif
 
     virtual IntPoint screenToWindow(const IntPoint& p) const { return p; }
     virtual IntRect windowToScreen(const IntRect& r) const { return r; }
