@@ -311,6 +311,11 @@ void QWebElement::setOuterXml(const QString &markup)
 
     \note This is currently implemented for (X)HTML elements only.
 
+    \note The format of the markup returned will obey the namespace of the
+    document containing the element. This means the return value will obey XML
+    formatting rules, such as self-closing tags, only if the document is
+    'text/xhtml+xml'.
+
     \sa setOuterXml(), setInnerXml(), toInnerXml()
 */
 QString QWebElement::toOuterXml() const
@@ -344,6 +349,11 @@ void QWebElement::setInnerXml(const QString &markup)
     Returns the XML content between the element's start and end tags.
 
     \note This is currently implemented for (X)HTML elements only.
+
+    \note The format of the markup returned will obey the namespace of the
+    document containing the element. This means the return value will obey XML
+    formatting rules, such as self-closing tags, only if the document is
+    'text/xhtml+xml'.
 
     \sa setInnerXml(), setOuterXml(), toOuterXml()
 */

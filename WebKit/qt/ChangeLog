@@ -1,3 +1,16 @@
+2010-11-04  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Clarify expected return values of innerXml(), outerXml()
+
+        If you put HTML in (e.g. using setHTML()) you will get HTML out,
+        even if you marked it up as XML.
+
+        https://bugs.webkit.org/show_bug.cgi?id=44876
+
+        * Api/qwebelement.cpp:
+
 2010-11-03  Andre Pedralho  <andre.pedralho@gmail.com>
 
         Reviewed by Kenneth Rohde Christiansen.
