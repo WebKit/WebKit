@@ -318,11 +318,13 @@ static HRESULT writeFileToDataObject(IDataObject* dataObject, HGLOBAL fileDescri
     if (FAILED(hr = dataObject->SetData(fe, &medium, TRUE)))
         goto exit;
 
+#if PLATFORM(CF)
     // HDROP
     if (hDropContent) {
         medium.hGlobal = hDropContent;
         hr = dataObject->SetData(cfHDropFormat(), &medium, TRUE);
     }
+#endif
 
 exit:
     if (FAILED(hr)) {
