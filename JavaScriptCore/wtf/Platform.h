@@ -526,6 +526,7 @@
 #define WTF_PLATFORM_CI 1
 #define WTF_USE_ATSUI 1
 #define WTF_USE_CORE_TEXT 1
+#define WTF_USE_ICCJPEG 1
 #else
 #define WTF_PLATFORM_SKIA 1
 #endif
