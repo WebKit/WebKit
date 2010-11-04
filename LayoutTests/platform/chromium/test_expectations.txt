@@ -779,11 +779,12 @@ BUG26734 LINUX MAC SKIP : http/tests/inspector-enabled = PASS
 BUG26734 WIN SLOW : inspector/timeline-layout.html = TEXT PASS
 
 // These tests need to be changed to be platform independent.
-BUG13907 : http/tests/media/remove-while-loading.html = TIMEOUT
-BUG13907 : http/tests/media/video-play-stall-seek.html = TIMEOUT
-BUG13907 : http/tests/media/video-play-stall.html = TIMEOUT
+// These tests are skipped since they hang DRT and test_shell.
+BUG13907 SKIP : http/tests/media/remove-while-loading.html = TIMEOUT
+BUG13907 SKIP : http/tests/media/video-play-stall-seek.html = TIMEOUT
+BUG13907 SKIP : http/tests/media/video-play-stall.html = TIMEOUT
+BUG13907 SKIP : http/tests/media/video-seekable-stall.html = TIMEOUT
 BUG13907 : http/tests/media/video-referer.html = PASS
-BUG13907 : http/tests/media/video-seekable-stall.html = TIMEOUT
 BUG13907 : http/tests/security/local-video-poster-from-remote.html = PASS FAIL TIMEOUT
 BUG13907 : http/tests/security/local-video-source-from-remote.html = PASS FAIL TIMEOUT
 BUG13907 : http/tests/security/local-video-src-from-remote.html = PASS FAIL TIMEOUT
