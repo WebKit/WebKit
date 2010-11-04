@@ -3,7 +3,7 @@ Test for bug 10038: REGRESSION: Length of navigator.mimeTypes collection returns
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS navigator.mimeTypes.length > navigator.plugins.length is true
+PASS navigator.mimeTypes.length == numberOfMimeTypes is true
 PASS navigator.mimeTypes[navigator.mimeTypes.length+1] is undefined
 PASS successfullyParsed is true
 
