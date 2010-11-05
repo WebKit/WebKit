@@ -752,6 +752,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLObjectElementCustom.h \
 	WebCore/bindings/js/JSHTMLOptionsCollectionCustom.cpp \
+	WebCore/bindings/js/JSHTMLOutputElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLSelectElementCustom.cpp \
 	WebCore/bindings/js/JSHTMLSelectElementCustom.h \
 	WebCore/bindings/js/JSImageConstructor.cpp \
