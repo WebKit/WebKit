@@ -1,3 +1,20 @@
+2010-11-04  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        new-run-webkit-tests: split out webkit-specific configuration stuff into a new module
+
+        The current NRWT code has webkit-specific configuration code (like
+        _script_path, default configuration, etc.) mixed in with
+        layout-test-specific stuff in port/base. The configuration code
+        should be split out into a separate module for easier mocking,
+        testing, and isolation.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48264
+
+        * Scripts/webkitpy/layout_tests/port/config.py: Added.
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py: Added.
+
 2010-11-02  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
