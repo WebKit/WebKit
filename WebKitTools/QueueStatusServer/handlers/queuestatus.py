@@ -26,11 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import itertools
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 
 from model.queues import Queue
-
 from model import queuestatus
 
 
@@ -49,6 +50,12 @@ class QueueStatus(webapp.RequestHandler):
             })
         return rows
 
+    def _grouping_key_for_status(self, status):
+        return "%s-%s" % (status.active_patch_id, status.bot_id)
+
+    def _build_status_groups(self, statuses):
+        return [list(group) for key, group in itertools.groupby(statuses, self._grouping_key_for_status)]
+
     def get(self, queue_name):
         queue_name = queue_name.lower()
         queue = Queue.queue_with_name(queue_name)
@@ -56,24 +63,10 @@ class QueueStatus(webapp.RequestHandler):
             self.error(404)
             return
 
-        status_groups = []
-        last_patch_id = None
-        synthetic_patch_id_counter = 0
-
         statuses = queuestatus.QueueStatus.all().filter("queue_name =", queue.name()).order("-date").fetch(15)
-        for status in statuses:
-            patch_id = status.active_patch_id
-            if not patch_id or last_patch_id != patch_id:
-                status_group = []
-                status_groups.append(status_group)
-            else:
-                status_group = status_groups[-1]
-            status_group.append(status)
-            last_patch_id = patch_id
-
         template_values = {
             "display_queue_name": queue.display_name(),
             "work_item_rows": self._rows_for_work_items(queue),
-            "status_groups": status_groups,
+            "status_groups": self._build_status_groups(statuses),
         }
         self.response.out.write(template.render("templates/queuestatus.html", template_values))
