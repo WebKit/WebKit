@@ -1,5 +1,15 @@
 2010-11-05  Chris Marrin  <cmarrin@apple.com>
 
+        Unreviewed.
+
+        Small fix to GTK build
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_suspend_animations):
+        (webkit_web_frame_resume_animations):
+
+2010-11-05  Chris Marrin  <cmarrin@apple.com>
+
         Reviewed by Simon Fraser.
 
         Make suspendAnimations/resumeAnimations and setCSSAnimations traverse through subframes and remember state
