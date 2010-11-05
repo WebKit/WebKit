@@ -96,7 +96,8 @@ MESSAGE_RECEIVERS = \
     WebPage/WebPage.messages.in \
     WebPageProxy.messages.in \
     WebProcess.messages.in \
-    WebProcessConnection.messages.in
+    WebProcessConnection.messages.in \
+    WebProcessProxy.messages.in
 
 SCRIPTS = \
     $$PWD/Scripts/generate-message-receiver.py \

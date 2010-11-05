@@ -1857,6 +1857,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebProcessProxy.messages.in"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebUIClient.cpp"
 				>
 			</File>
@@ -2434,6 +2438,14 @@
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebProcessMessages.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebProcessProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebProcessProxyMessages.h"
 				>
 			</File>
 		</Filter>

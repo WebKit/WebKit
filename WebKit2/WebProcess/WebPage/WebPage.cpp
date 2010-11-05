@@ -53,6 +53,7 @@
 #include "WebPopupMenu.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
+#include "WebProcessProxyMessages.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenuController.h>
@@ -184,9 +185,11 @@ PassRefPtr<Plugin> WebPage::createPlugin(const Plugin::Parameters& parameters)
 {
     String pluginPath;
 
-    if (!WebProcess::shared().connection()->sendSync(WebProcessProxyMessage::GetPluginPath, 0, 
-                                                     CoreIPC::In(parameters.mimeType, parameters.url.string()), 
-                                                     CoreIPC::Out(pluginPath)))
+    if (!WebProcess::shared().connection()->sendSync(
+            Messages::WebProcessProxy::GetPluginPath(parameters.mimeType, parameters.url.string()), 
+            Messages::WebProcessProxy::GetPluginPath::Reply(pluginPath), 0)) {
+        return 0;
+    }
 
     if (pluginPath.isNull())
         return 0;

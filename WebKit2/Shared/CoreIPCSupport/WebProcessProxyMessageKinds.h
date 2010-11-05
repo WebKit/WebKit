@@ -30,29 +30,20 @@
 
 #include "MessageID.h"
 
-namespace WebProcessProxyMessage {
+namespace WebProcessProxyLegacyMessage {
 
 enum Kind {
-    AddBackForwardItem,
-    AddVisitedLink,
-    DidNavigateWithNavigationData,
-    DidPerformClientRedirect,
-    DidPerformServerRedirect,
-    DidUpdateHistoryTitle,
-    DidDestroyFrame,
-    GetPluginPath,
 #if ENABLE(PLUGIN_PROCESS)
     GetPluginProcessConnection,
 #endif
-    GetPlugins
 };
 
 }
 
 namespace CoreIPC {
 
-template<> struct MessageKindTraits<WebProcessProxyMessage::Kind> { 
-    static const MessageClass messageClass = MessageClassWebProcessProxy;
+template<> struct MessageKindTraits<WebProcessProxyLegacyMessage::Kind> { 
+    static const MessageClass messageClass = MessageClassWebProcessProxyLegacy;
 };
 
 }

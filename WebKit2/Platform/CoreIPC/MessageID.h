@@ -47,6 +47,7 @@ enum MessageClass {
     MessageClassWebInspectorProxy,
     MessageClassWebPageProxy,
     MessageClassWebProcessProxy,
+    MessageClassWebProcessProxyLegacy,
 
     // Messages sent by the UI process to the plug-in process.
     MessageClassPluginProcess,

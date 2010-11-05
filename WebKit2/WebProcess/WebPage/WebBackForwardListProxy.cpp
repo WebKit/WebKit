@@ -29,7 +29,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
-#include "WebProcessProxyMessageKinds.h"
+#include "WebProcessProxyMessages.h"
 #include <WebCore/HistoryItem.h>
 #include <wtf/HashMap.h>
 
@@ -86,7 +86,8 @@ static void updateBackForwardItem(HistoryItem* item)
     const String& originalURLString = item->originalURLString();
     const String& urlString = item->urlString();
     const String& title = item->title();
-    WebProcess::shared().connection()->send(WebProcessProxyMessage::AddBackForwardItem, 0, CoreIPC::In(itemID, originalURLString, urlString, title));
+
+    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, originalURLString, urlString, title), 0);
 }
 
 static void WK2NotifyHistoryItemChanged(HistoryItem* item)

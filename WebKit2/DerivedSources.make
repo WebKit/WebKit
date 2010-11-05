@@ -19,6 +19,7 @@ MESSAGE_RECEIVERS = \
     WebPageProxy \
     WebProcess \
     WebProcessConnection \
+    WebProcessProxy \
 #
 
 SCRIPTS = \

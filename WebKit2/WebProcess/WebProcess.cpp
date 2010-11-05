@@ -37,7 +37,7 @@
 #include "WebPreferencesStore.h"
 #include "WebProcessCreationParameters.h"
 #include "WebProcessMessages.h"
-#include "WebProcessProxyMessageKinds.h"
+#include "WebProcessProxyMessages.h"
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/Language.h>
 #include <WebCore/Page.h>
@@ -221,7 +221,7 @@ void WebProcess::addVisitedLink(WebCore::LinkHash linkHash)
     if (isLinkVisited(linkHash))
         return;
 
-    m_connection->send(WebProcessProxyMessage::AddVisitedLink, 0, CoreIPC::In(linkHash));
+    m_connection->send(Messages::WebProcessProxy::AddVisitedLink(linkHash), 0);
 }
 
 void WebProcess::setCacheModel(uint32_t cm)
@@ -368,7 +368,8 @@ void WebProcess::removeWebFrame(uint64_t frameID)
     // process in this case.
     if (!m_connection)
         return;
-    m_connection->send(WebProcessProxyMessage::DidDestroyFrame, 0, CoreIPC::In(frameID));
+
+    m_connection->send(Messages::WebProcessProxy::DidDestroyFrame(frameID), 0);
 }
 
 } // namespace WebKit

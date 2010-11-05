@@ -49,7 +49,8 @@ namespace WebKit {
 class WebBackForwardListItem;
 class WebContext;
 class WebPageNamespace;
-    
+struct WebNavigationDataStore;
+
 class WebProcessProxy : public RefCounted<WebProcessProxy>, CoreIPC::Connection::Client, ResponsivenessTimer::Client, ProcessLauncher::Client, ThreadLauncher::Client {
 public:
     typedef HashMap<uint64_t, RefPtr<WebPageProxy> > WebPageProxyMap;
@@ -94,7 +95,7 @@ public:
 
     WebFrameProxy* webFrame(uint64_t) const;
     void frameCreated(uint64_t, WebFrameProxy*);
-    void frameDestroyed(uint64_t);
+    void didDestroyFrame(uint64_t);
     void disconnectFramesFromPage(WebPageProxy*); // Including main frame.
     size_t frameCountInPage(WebPageProxy*) const; // Including main frame.
 
@@ -108,18 +109,22 @@ private:
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, CoreIPC::ArgumentEncoder* reply);
 #endif
-    void getPluginPath(const String& mimeType, const WebCore::KURL& url, String& pluginPath);
+    void getPluginPath(const String& mimeType, const String& urlString, String& pluginPath);
     void getPlugins(bool refresh, Vector<WebCore::PluginInfo>&);
 
-    void addOrUpdateBackForwardListItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title);
+    void addBackForwardItem(uint64_t itemID, const String& originalURLString, const String& urlString, const String& title);
     void addVisitedLink(WebCore::LinkHash);
+    void didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID);
+    void didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
+    void didPerformServerRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID);
+    void didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID);
 
     // CoreIPC::Connection::Client
     void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
     void didClose(CoreIPC::Connection*);
     void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID);
-        
+
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive(ResponsivenessTimer*);
     void didBecomeResponsive(ResponsivenessTimer*);
@@ -131,6 +136,10 @@ private:
     virtual void didFinishLaunching(ThreadLauncher*, CoreIPC::Connection::Identifier);
 
     void didFinishLaunching(CoreIPC::Connection::Identifier);
+
+    // Implemented in generated WebProcessProxyMessageReceiver.cpp
+    void didReceiveWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+    CoreIPC::SyncReplyMode didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
 
     ResponsivenessTimer m_responsivenessTimer;
     RefPtr<CoreIPC::Connection> m_connection;

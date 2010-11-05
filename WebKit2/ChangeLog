@@ -1,3 +1,61 @@
+2010-11-05  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben..
+
+        Generate the messages sent to the WebProcessProxy
+        https://bugs.webkit.org/show_bug.cgi?id=49062
+
+        * Platform/CoreIPC/MessageID.h:
+        Temporarily add MessageClassWebProcessProxyLegacy while we still can't
+        support GetPluginProcessConnection (and deferred sync replies) in the
+        general mechanism.
+
+        * Scripts/webkit2/messages.py:
+        Add support for WebCore::PluginData and WebKit::WebNavigationDataStore.
+
+        * Shared/CoreIPCSupport/WebProcessProxyMessageKinds.h:
+        Remove now unused kinds. Rename to MessageClassWebProcessProxyLegacy.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPluginPath):
+        (WebKit::WebProcessProxy::addBackForwardItem):
+        (WebKit::WebProcessProxy::didNavigateWithNavigationData):
+        (WebKit::WebProcessProxy::didPerformClientRedirect):
+        (WebKit::WebProcessProxy::didPerformServerRedirect):
+        (WebKit::WebProcessProxy::didUpdateHistoryTitle):
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        (WebKit::WebProcessProxy::didReceiveSyncMessage):
+        (WebKit::WebProcessProxy::didDestroyFrame):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in: Added.
+        Move implementations to their own functions.
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::getPluginProcessConnection):
+        Change to use WebProcessProxyLegacyMessage.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory):
+        (WebKit::WebFrameLoaderClient::updateGlobalHistoryRedirectLinks):
+        (WebKit::WebFrameLoaderClient::setTitle):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::populatePluginCache):
+        * WebProcess/WebPage/WebBackForwardListProxy.cpp:
+        (WebKit::updateBackForwardItem):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addVisitedLink):
+        (WebKit::WebProcess::removeWebFrame):
+        Use generated messages.
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-11-04  Adam Roben  <aroben@apple.com>
 
         Use a window region to clip windowed plugins

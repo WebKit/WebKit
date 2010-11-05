@@ -34,6 +34,7 @@
 #include "WebPageProxy.h"
 #include "WebProcessManager.h"
 #include "WebProcessMessages.h"
+#include "WebProcessProxyMessages.h"
 #include "WebProcessProxyMessageKinds.h"
 #include <WebCore/KURL.h>
 #include <wtf/text/CString.h>
@@ -189,18 +190,18 @@ void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, CoreI
 }
 #endif
 
-void WebProcessProxy::getPluginPath(const String& mimeType, const KURL& url, String& pluginPath)
+void WebProcessProxy::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath)
 {
     String newMimeType = mimeType.lower();
 
-    PluginInfoStore::Plugin plugin = m_context->pluginInfoStore()->findPlugin(newMimeType, url);
+    PluginInfoStore::Plugin plugin = m_context->pluginInfoStore()->findPlugin(newMimeType, KURL(ParsedURLString, urlString));
     if (!plugin.path)
         return;
 
     pluginPath = plugin.path;
 }
 
-void WebProcessProxy::addOrUpdateBackForwardListItem(uint64_t itemID, const String& originalURL, const String& url, const String& title)
+void WebProcessProxy::addBackForwardItem(uint64_t itemID, const String& originalURL, const String& url, const String& title)
 {
     std::pair<WebBackForwardListItemMap::iterator, bool> result = m_backForwardListItemMap.add(itemID, 0);
     if (result.second) {
@@ -220,94 +221,32 @@ void WebProcessProxy::addVisitedLink(LinkHash linkHash)
     m_context->addVisitedLink(linkHash);
 }
 
+void WebProcessProxy::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 
+{
+    m_context->didNavigateWithNavigationData(webFrame(frameID), store);
+}
+
+void WebProcessProxy::didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
+{
+    m_context->didPerformClientRedirect(webFrame(frameID), sourceURLString, destinationURLString);
+}
+
+void WebProcessProxy::didPerformServerRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
+{
+    m_context->didPerformClientRedirect(webFrame(frameID), sourceURLString, destinationURLString);
+}
+
+void WebProcessProxy::didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID)
+{
+    m_context->didUpdateHistoryTitle(webFrame(frameID), title, url);
+}
+
 void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
-        switch (messageID.get<WebProcessProxyMessage::Kind>()) {
-            case WebProcessProxyMessage::AddBackForwardItem: {
-                uint64_t itemID;
-                String originalURL;
-                String url;
-                String title;
-                if (!arguments->decode(CoreIPC::Out(itemID, originalURL, url, title)))
-                    return;
-                addOrUpdateBackForwardListItem(itemID, originalURL, url, title);
-                return;
-            }
-
-            case WebProcessProxyMessage::AddVisitedLink: {
-                LinkHash linkHash;
-
-                if (!arguments->decode(CoreIPC::Out(linkHash)))
-                    return;
-
-                addVisitedLink(linkHash);
-                return;
-            }
-
-            case WebProcessProxyMessage::DidNavigateWithNavigationData: {
-                uint64_t pageID;
-                WebNavigationDataStore store;
-                uint64_t frameID;
-                if (!arguments->decode(CoreIPC::Out(pageID, store, frameID)))
-                    return;
-
-                m_context->didNavigateWithNavigationData(webFrame(frameID), store);
-                break;
-            }
-            case WebProcessProxyMessage::DidPerformClientRedirect: {
-                uint64_t pageID;
-                String sourceURLString;
-                String destinationURLString;
-                uint64_t frameID;
-                if (!arguments->decode(CoreIPC::Out(pageID, sourceURLString, destinationURLString, frameID)))
-                    return;
-
-                m_context->didPerformClientRedirect(webFrame(frameID), sourceURLString, destinationURLString);
-                break;
-            }
-            case WebProcessProxyMessage::DidPerformServerRedirect: {
-                uint64_t pageID;
-                String sourceURLString;
-                String destinationURLString;
-                uint64_t frameID;
-                if (!arguments->decode(CoreIPC::Out(pageID, sourceURLString, destinationURLString, frameID)))
-                    return;
-
-                m_context->didPerformServerRedirect(webFrame(frameID), sourceURLString, destinationURLString);
-                break;
-            }
-            case WebProcessProxyMessage::DidUpdateHistoryTitle: {
-                uint64_t pageID;
-                String title;
-                String url;
-                uint64_t frameID;
-                if (!arguments->decode(CoreIPC::Out(pageID, title, url, frameID)))
-                    return;
-
-                m_context->didUpdateHistoryTitle(webFrame(frameID), title, url);
-                break;
-            }
-            case WebProcessProxyMessage::DidDestroyFrame: {
-                uint64_t frameID;
-                if (!arguments->decode(CoreIPC::Out(frameID)))
-                    return;
-
-                frameDestroyed(frameID);
-                break;
-            }
-
-            // These are synchronous messages and should never be handled here.
-            case WebProcessProxyMessage::GetPlugins:
-            case WebProcessProxyMessage::GetPluginPath:
-#if ENABLE(PLUGIN_PROCESS)
-            case WebProcessProxyMessage::GetPluginProcessConnection:
-#endif
-                ASSERT_NOT_REACHED();
-                break;
-        }
+        didReceiveWebProcessProxyMessage(connection, messageID, arguments);
+        return;
     }
-
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {
         m_context->didReceiveMessage(connection, messageID, arguments);    
         return;
@@ -327,36 +266,14 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
 CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
 {
     if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
-        switch (messageID.get<WebProcessProxyMessage::Kind>()) {
-            case WebProcessProxyMessage::GetPlugins: {
-                bool refresh;
-                if (!arguments->decode(refresh))
-                    return CoreIPC::AutomaticReply;
-                
-                // FIXME: We should not do this on the main thread!
-                Vector<PluginInfo> plugins;
-                getPlugins(refresh, plugins);
-
-                reply->encode(plugins);
-                return CoreIPC::AutomaticReply;
-            }
-
-            case WebProcessProxyMessage::GetPluginPath: {
-                String mimeType;
-                String urlString;
-                
-                if (!arguments->decode(CoreIPC::Out(mimeType, urlString)))
-                    return CoreIPC::AutomaticReply;
-                
-                String pluginPath;
-                getPluginPath(mimeType, KURL(ParsedURLString, urlString), pluginPath);
-
-                reply->encode(CoreIPC::In(pluginPath));
-                return CoreIPC::AutomaticReply;
-            }
+        didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);
+        return CoreIPC::AutomaticReply;
+    }
 
 #if ENABLE(PLUGIN_PROCESS)
-            case WebProcessProxyMessage::GetPluginProcessConnection: {
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxyLegacy>()) {
+        switch (messageID.get<WebProcessProxyLegacyMessage::Kind>()) {
+            case WebProcessProxyLegacyMessage::GetPluginProcessConnection: {
                 String pluginPath;
                 
                 if (!arguments->decode(CoreIPC::Out(pluginPath)))
@@ -365,20 +282,9 @@ CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connectio
                 getPluginProcessConnection(pluginPath, reply);
                 return CoreIPC::ManualReply;
             }
-#endif
-
-            // These are asynchronous messages and should never be handled here.
-            case WebProcessProxyMessage::DidNavigateWithNavigationData:
-            case WebProcessProxyMessage::DidPerformClientRedirect:
-            case WebProcessProxyMessage::DidPerformServerRedirect:
-            case WebProcessProxyMessage::DidUpdateHistoryTitle:
-            case WebProcessProxyMessage::AddBackForwardItem:
-            case WebProcessProxyMessage::AddVisitedLink:
-            case WebProcessProxyMessage::DidDestroyFrame:
-                ASSERT_NOT_REACHED();
-                return CoreIPC::AutomaticReply;
         }
     }
+#endif
 
     if (messageID.is<CoreIPC::MessageClassWebContext>()) {
         m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);    
@@ -488,7 +394,7 @@ void WebProcessProxy::frameCreated(uint64_t frameID, WebFrameProxy* frameProxy)
     m_frameMap.set(frameID, frameProxy);
 }
 
-void WebProcessProxy::frameDestroyed(uint64_t frameID)
+void WebProcessProxy::didDestroyFrame(uint64_t frameID)
 {
     // If the page is closed before it has had the chance to send the DidCreateMainFrame message
     // back to the UIProcess, then the frameDestroyed message will still be received because it
