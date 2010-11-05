@@ -134,8 +134,8 @@ private:
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    virtual void showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, WebCore::Editor*);
-    virtual void dismissCorrectionPanel(bool correctionAccepted);
+    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, WebCore::Editor*);
+    virtual void dismissCorrectionPanel(WebCore::CorrectionWasRejectedOrNot);
     virtual bool isShowingCorrectionPanel();
 #endif
     WebPage* m_page;

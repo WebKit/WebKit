@@ -28,22 +28,12 @@
 
 #include "ClipboardAccessPolicy.h"
 #include "Color.h"
+#include "CorrectionPanelInfo.h"
 #include "EditAction.h"
 #include "EditingBehavior.h"
 #include "EditorDeleteAction.h"
 #include "EditorInsertAction.h"
 #include "SelectionController.h"
-
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-// Some platforms provide UI for suggesting autocorrection.
-#define SUPPORT_AUTOCORRECTION_PANEL 1
-// Some platforms use spelling and autocorrection markers to provide visual cue.
-// On such platform, if word with marker is edited, we need to remove the marker.
-#define REMOVE_MARKERS_UPON_EDITING 1
-#else
-#define SUPPORT_AUTOCORRECTION_PANEL 0
-#define REMOVE_MARKERS_UPON_EDITING 0
-#endif /* #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD) */
 
 #if PLATFORM(MAC) && !defined(__OBJC__)
 class NSDictionary;
@@ -323,7 +313,7 @@ public:
     void addToKillRing(Range*, bool prepend);
 
     void handleCancelOperation();
-    void startCorrectionPanelTimer();
+    void startCorrectionPanelTimer(CorrectionPanelInfo::PanelType);
     void handleRejectedCorrection();
     bool isShowingCorrectionPanel();
 
@@ -389,9 +379,7 @@ private:
     bool m_shouldStartNewKillRingSequence;
     bool m_shouldStyleWithCSS;
     OwnPtr<KillRing> m_killRing;
-    RefPtr<Range> m_rangeToBeReplacedByCorrection;
-    String m_stringToBeReplacedByCorrection;
-    String m_correctionReplacementString;
+    CorrectionPanelInfo m_correctionPanelInfo;
     Timer<Editor> m_correctionPanelTimer;
     VisibleSelection m_mark;
     bool m_areMarkedTextMatchesHighlighted;
@@ -418,6 +406,8 @@ private:
     void correctionPanelTimerFired(Timer<Editor>*);
     Node* findEventTargetFromSelection() const;
     void stopCorrectionPanelTimer();
+    void dismissCorrectionPanel(CorrectionWasRejectedOrNot);
+    void applyCorrectionPanelInfo(bool addCorrectionIndicatorMarker);
 };
 
 inline void Editor::setStartNewKillRingSequence(bool flag)

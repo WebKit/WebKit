@@ -186,7 +186,7 @@ WebEditorClient::WebEditorClient(WebView *webView)
     , m_undoTarget([[[WebEditorUndoTarget alloc] init] autorelease])
     , m_haveUndoRedoOperations(false)
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    , m_correctionPanelTag(InvalidCorrectionPanelTag)
+    , m_correctionPanelIsShown(false)
 #endif
 {
 }
@@ -194,7 +194,7 @@ WebEditorClient::WebEditorClient(WebView *webView)
 WebEditorClient::~WebEditorClient()
 {
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    dismissCorrectionPanel(true);
+    dismissCorrectionPanel(WebCore::CorrectionWasNotRejected);
 #endif
 }
 
@@ -309,10 +309,6 @@ void WebEditorClient::respondToChangedContents()
 void WebEditorClient::respondToChangedSelection()
 {
     [m_webView _selectionChanged];
-
-#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    dismissCorrectionPanel(true);
-#endif
 
     // FIXME: This quirk is needed due to <rdar://problem/5009625> - We can phase it out once Aperture can adopt the new behavior on their end
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_APERTURE_QUIRK) && [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.Aperture"])
@@ -860,8 +856,8 @@ void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammar
 }
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebEditorClient::showCorrectionPanel(const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, Editor* editor) {
-    dismissCorrectionPanel(true);
+void WebEditorClient::showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, Editor* editor) {
+    dismissCorrectionPanel(WebCore::CorrectionWasNotRejected);
 
     NSRect boundingBoxAsNSRect = boundingBoxOfReplacedString;
     NSRect webViewFrame = m_webView.frame;
@@ -871,25 +867,33 @@ void WebEditorClient::showCorrectionPanel(const FloatRect& boundingBoxOfReplaced
     NSString *replacedStringAsNSString = replacedString;
     NSString *replacementStringAsNSString = replacementString;
 
-    m_correctionPanelTag = [[NSSpellChecker sharedSpellChecker] showCorrection:replacementStringAsNSString forStringInRect:boundingBoxAsNSRect view:m_webView completionHandler:^(BOOL accepted) {
-        if (!accepted) {
+    m_correctionPanelIsShown = YES;
+    NSCorrectionBubbleType bubbleType = panelType == WebCore::CorrectionPanelInfo::PanelTypeCorrection ? NSCorrectionBubbleTypeCorrection : NSCorrectionBubbleTypeReversion;
+    [[NSSpellChecker sharedSpellChecker] showCorrectionBubbleOfType:bubbleType primaryString:replacementStringAsNSString alternativeStrings:nil forStringInRect:boundingBoxAsNSRect view:m_webView completionHandler:^(NSString *acceptedString) {
+        if (!acceptedString && bubbleType == NSCorrectionBubbleTypeCorrection) {
             [[NSSpellChecker sharedSpellChecker] recordResponse:NSCorrectionResponseRejected toCorrection:replacementStringAsNSString forWord:replacedStringAsNSString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
+            editor->handleRejectedCorrection();
+        } else if (acceptedString && bubbleType == NSCorrectionBubbleTypeReversion) {
+            [[NSSpellChecker sharedSpellChecker] recordResponse:NSCorrectionResponseReverted toCorrection:replacedStringAsNSString forWord:replacementStringAsNSString language:nil inSpellDocumentWithTag:[m_webView spellCheckerDocumentTag]];
             editor->handleRejectedCorrection();
         }
     }];
 }
 
-void WebEditorClient::dismissCorrectionPanel(bool correctionAccepted)
+void WebEditorClient::dismissCorrectionPanel(WebCore::CorrectionWasRejectedOrNot correctionWasRejectedOrNot)
 {
-    if (m_correctionPanelTag != InvalidCorrectionPanelTag) {
-        [[NSSpellChecker sharedSpellChecker] dismissCorrection:m_correctionPanelTag acceptCorrection:correctionAccepted];
-        m_correctionPanelTag = InvalidCorrectionPanelTag;
+    if (isShowingCorrectionPanel()) {
+        if (correctionWasRejectedOrNot == CorrectionWasRejected)
+            [[NSSpellChecker sharedSpellChecker] cancelCorrectionBubbleForView:m_webView];
+        else
+            [[NSSpellChecker sharedSpellChecker] dismissCorrectionBubbleForView:m_webView];
+        m_correctionPanelIsShown = NO;
     }
 }
 
 bool WebEditorClient::isShowingCorrectionPanel()
 {
-    return m_correctionPanelTag != InvalidCorrectionPanelTag;
+    return m_correctionPanelIsShown;
 }
 #endif
 

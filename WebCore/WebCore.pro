@@ -1693,6 +1693,7 @@ HEADERS += \
     editing/ApplyStyleCommand.h \
     editing/BreakBlockquoteCommand.h \
     editing/CompositeEditCommand.h \
+    editing/CorrectionPanelInfo.h \
     editing/CreateLinkCommand.h \
     editing/DeleteButtonController.h \
     editing/DeleteButton.h \

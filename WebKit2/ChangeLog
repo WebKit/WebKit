@@ -1,3 +1,18 @@
+2010-11-04  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        reversion bubble in WebViews
+        https://bugs.webkit.org/show_bug.cgi?id=47630
+        <rdar://problem/8530960>
+
+        This patch is to add reversion to correction panel. Please see WebCore/ChangeLog for detail.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h: Adopted new signature of base class method.
+        * WebProcess/WebCoreSupport/mac/WebEditorClientMac.mm: Ditto.
+        (WebKit::WebEditorClient::showCorrectionPanel):
+        (WebKit::WebEditorClient::dismissCorrectionPanel):
+
 2010-11-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by David Hyatt.

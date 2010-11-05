@@ -45912,6 +45912,10 @@
 				>
 			</File>
 			<File
+			RelativePath="..\editing\CorrectionPanelInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\editing\CreateLinkCommand.cpp"
 				>
 				<FileConfiguration

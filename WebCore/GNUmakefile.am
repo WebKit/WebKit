@@ -1281,6 +1281,7 @@ webcore_sources += \
 	WebCore/editing/CompositeEditCommand.h \
 	WebCore/editing/CreateLinkCommand.cpp \
 	WebCore/editing/CreateLinkCommand.h \
+	WebCore/editing/CorrectionPanelInfo.h \
 	WebCore/editing/DeleteButtonController.cpp \
 	WebCore/editing/DeleteButtonController.h \
 	WebCore/editing/DeleteButton.cpp \

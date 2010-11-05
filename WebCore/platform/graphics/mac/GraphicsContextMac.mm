@@ -147,6 +147,7 @@ void GraphicsContext::drawLineForTextChecking(const IntPoint& point, int width, 
             break;
         }
 #if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+        // To support correction panel.
         case TextCheckingReplacementLineStyle:
         {
             // Constants for spelling pattern color.

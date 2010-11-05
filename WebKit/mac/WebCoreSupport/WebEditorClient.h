@@ -133,8 +133,8 @@ public:
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    virtual void showCorrectionPanel(const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*);
-    virtual void dismissCorrectionPanel(bool correctionAccepted);
+    virtual void showCorrectionPanel(WebCore::CorrectionPanelInfo::PanelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const WTF::String& replacedString, const WTF::String& replacementString, WebCore::Editor*);
+    virtual void dismissCorrectionPanel(WebCore::CorrectionWasRejectedOrNot);
     virtual bool isShowingCorrectionPanel();
 #endif
 private:
@@ -146,6 +146,6 @@ private:
     bool m_haveUndoRedoOperations;
 
 #if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    NSInteger m_correctionPanelTag;
+    BOOL m_correctionPanelIsShown;
 #endif
 };

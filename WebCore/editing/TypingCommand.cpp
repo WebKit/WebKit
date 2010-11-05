@@ -311,9 +311,9 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2)
             document()->frame()->editor()->markMisspellingsAfterTypingToPosition(p1);
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if SUPPORT_AUTOCORRECTION_PANEL
         else if (commandType == TypingCommand::InsertText)
-            document()->frame()->editor()->startCorrectionPanelTimer();
+            document()->frame()->editor()->startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeCorrection);
 #else
     UNUSED_PARAM(commandType);
 #endif

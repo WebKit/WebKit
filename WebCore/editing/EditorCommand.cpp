@@ -1074,7 +1074,7 @@ static bool executeYankAndSelect(Frame* frame, Event*, EditorCommandSource, cons
     return true;
 }
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if SUPPORT_AUTOCORRECTION_PANEL
 static bool executeCancelOperation(Frame* frame, Event*, EditorCommandSource, const String&)
 {
     frame->editor()->handleCancelOperation();
@@ -1124,7 +1124,7 @@ static bool supportedPaste(Frame* frame, EditorCommandSource source)
     return false;
 }
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if SUPPORT_AUTOCORRECTION_PANEL
 static bool supportedDismissCorrectionPanel(Frame* frame, EditorCommandSource source)
 {
     return supportedFromMenuOrKeyBinding(frame, source) && frame->editor()->isShowingCorrectionPanel();
@@ -1506,7 +1506,7 @@ static const CommandMap& createCommandMap()
         { "Unselect", { executeUnselect, supported, enabledVisibleSelection, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Yank", { executeYank, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "YankAndSelect", { executeYankAndSelect, supportedFromMenuOrKeyBinding, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
-#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+#if SUPPORT_AUTOCORRECTION_PANEL
         { "CancelOperation", { executeCancelOperation, supportedDismissCorrectionPanel, enabledInEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
 #endif
     };

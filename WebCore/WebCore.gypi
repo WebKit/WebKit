@@ -1367,6 +1367,7 @@
             'editing/BreakBlockquoteCommand.h',
             'editing/CompositeEditCommand.cpp',
             'editing/CompositeEditCommand.h',
+            'editing/CorrectionPanelInfo.h',
             'editing/CreateLinkCommand.cpp',
             'editing/CreateLinkCommand.h',
             'editing/DeleteButton.cpp',
