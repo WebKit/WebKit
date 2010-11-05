@@ -5464,10 +5464,6 @@ fast/images/webp-image-decoding.html
 # https://bugs.webkit.org/show_bug.cgi?id=48958
 svg/custom/text-zoom.xhtml
 
-# [Qt] REGRESSION (r71288): editing/style/iframe-onload-crash.html crashes
-# https://bugs.webkit.org/show_bug.cgi?id=48967
-editing/style/iframe-onload-crash.html
-
 # [Qt] svg/animations/animate-path-nested-transforms.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=48987
 svg/animations/animate-path-nested-transforms.html

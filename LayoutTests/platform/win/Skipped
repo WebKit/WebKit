@@ -371,9 +371,6 @@ animations/play-state-suspend.html
 http/tests/media/pdf-served-as-pdf.html
 http/tests/media/video-cancel-load.html
 
-# Crash preceded by assertion failure http://webkit.org/b/48989
-editing/style/iframe-onload-crash.html
-
 # Sometimes crashes http://webkit.org/b/48996
 http/tests/websocket/tests/workers/close-in-onmessage-crash.html
 
