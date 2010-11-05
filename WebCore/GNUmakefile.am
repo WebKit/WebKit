@@ -1646,6 +1646,8 @@ webcore_sources += \
 	WebCore/html/HTMLOptionElement.h \
 	WebCore/html/HTMLOptionsCollection.cpp \
 	WebCore/html/HTMLOptionsCollection.h \
+	WebCore/html/HTMLOutputElement.cpp \
+	WebCore/html/HTMLOutputElement.h \
 	WebCore/html/HTMLParagraphElement.cpp \
 	WebCore/html/HTMLParagraphElement.h \
 	WebCore/html/HTMLParamElement.cpp \
