@@ -508,7 +508,7 @@ WebInspector.ConsoleView.prototype = {
 
     _enterKeyPressed: function(event)
     {
-        if (event.altKey || event.ctrlKey)
+        if (event.altKey || event.ctrlKey || event.shiftKey)
             return;
 
         event.preventDefault();

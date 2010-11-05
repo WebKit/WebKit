@@ -101,7 +101,7 @@ WebInspector.StoragePanel.prototype = {
 
         if (this.visibleView instanceof WebInspector.ResourceView) {
             // SourceViews are shared between the panels.
-            this.visibleView.headersVisible = true;
+            this.visibleView.headersVisible = false;
             this.visibleView.show(this.storageViews);
         }
 
@@ -337,6 +337,15 @@ WebInspector.StoragePanel.prototype = {
 
     showSourceLine: function(url, line)
     {
+        var resource = WebInspector.resourceManager.resourceForURL(url);
+        if (resource.type === WebInspector.Resource.Type.XHR) {
+            // Show XHRs in the network panel only.
+            if (WebInspector.panels.network && WebInspector.panels.network.canShowSourceLine(url, line)) {
+                WebInspector.currentPanel = WebInspector.panels.network;
+                WebInspector.panels.network.showSourceLine(url, line);
+            }
+            return;
+        }
         this.showResource(WebInspector.resourceManager.resourceForURL(url), line);
     },
 

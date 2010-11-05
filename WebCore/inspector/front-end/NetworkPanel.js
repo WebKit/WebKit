@@ -37,6 +37,7 @@ WebInspector.NetworkPanel = function()
 
     this._resources = [];
     this._resourcesById = {};
+    this._resourcesByURL = {};
     this._lastIdentifier = 0;
     this._staleResources = [];
     this._resourceGridNodes = {};
@@ -771,6 +772,7 @@ WebInspector.NetworkPanel.prototype = {
 
         this._resources = [];
         this._resourcesById = {};
+        this._resourcesByURL = {};
         this._staleResources = [];
         this._resourceGridNodes = {};
 
@@ -800,6 +802,7 @@ WebInspector.NetworkPanel.prototype = {
         if (!this._resourcesById[resource.identifier]) {
             this._resources.push(resource);
             this._resourcesById[resource.identifier] = resource;
+            this._resourcesByURL[resource.url] = resource;
 
             // Pull all the redirects of the main resource upon commit load.
             if (resource.redirects) {
@@ -836,11 +839,12 @@ WebInspector.NetworkPanel.prototype = {
 
     canShowSourceLine: function(url, line)
     {
-        return false;
+        return !!this._resourcesByURL[url];
     },
 
     showSourceLine: function(url, line)
     {
+        this._showResource(this._resourcesByURL[url], line);
     },
 
     _showResource: function(resource, line)

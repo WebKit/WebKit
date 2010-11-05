@@ -546,7 +546,7 @@ WebInspector.doLoadedDone = function()
     for (var panelName in this.panels)
         previousToolbarItem = WebInspector.addPanelToolbarIcon(toolbarElement, this.panels[panelName], previousToolbarItem);
 
-    // FIXME: fix this once renated StoragePanel.js to ResourcesPanel.js
+    // FIXME: fix this once renamed StoragePanel.js to ResourcesPanel.js
     this.panels.storage._toolbarItem.removeStyleClass("storage");
     this.panels.storage._toolbarItem.addStyleClass("resources");
 
@@ -1206,6 +1206,10 @@ WebInspector.showChanges = function()
 
 WebInspector.showPanel = function(panel)
 {
+    // FIXME: fix this once renamed StoragePanel.js to ResourcesPanel.js
+    if (panel === "resources")
+        panel = "storage";
+
     if (!(panel in this.panels))
         panel = "elements";
     this.currentPanel = this.panels[panel];
@@ -1638,6 +1642,7 @@ WebInspector.linkifyStringAsFragment = function(string)
 {
     var container = document.createDocumentFragment();
     var linkStringRegEx = /(?:[a-zA-Z][a-zA-Z0-9+.-]{2,}:\/\/|www\.)[\w$\-_+*'=\|\/\\(){}[\]%@&#~,:;.!?]{2,}[\w$\-_+*=\|\/\\({%@&#~]/;
+    var lineColumnRegEx = /:(\d+)(:(\d+))?$/;
 
     while (string) {
         var linkString = linkStringRegEx.exec(string);
@@ -1655,8 +1660,17 @@ WebInspector.linkifyStringAsFragment = function(string)
             title = WebInspector.panels.profiles.displayTitleForProfileLink(profileStringMatches[2], profileStringMatches[1]);
 
         var realURL = (linkString.indexOf("www.") === 0 ? "http://" + linkString : linkString);
+        var lineColumnMatch = lineColumnRegEx.exec(realURL);
+        if (lineColumnMatch)
+            realURL = realURL.substring(0, realURL.length - lineColumnMatch[0].length);
+
         var hasResourceWithURL = !!WebInspector.resourceForURL(realURL);
-        container.appendChild(WebInspector.linkifyURLAsNode(realURL, title, null, hasResourceWithURL));
+        var urlNode = WebInspector.linkifyURLAsNode(realURL, title, null, hasResourceWithURL);
+        container.appendChild(urlNode);
+        if (lineColumnMatch) {
+            urlNode.setAttribute("line_number", lineColumnMatch[1]);
+            urlNode.setAttribute("preferred_panel", "scripts");
+        }
         string = string.substring(linkIndex + linkString.length, string.length);
     }
 
