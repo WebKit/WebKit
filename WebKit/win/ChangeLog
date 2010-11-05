@@ -1,3 +1,14 @@
+2010-11-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Move resumeAnimations/suspendAnimations from Frame to AnimationController.
+        https://bugs.webkit.org/show_bug.cgi?id=49073
+
+        * WebFrame.cpp:
+        (WebFrame::suspendAnimations):
+        (WebFrame::resumeAnimations):
+
 2010-11-05  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Anders Carlsson.

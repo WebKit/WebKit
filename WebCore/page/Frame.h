@@ -99,9 +99,6 @@ namespace WebCore {
         AnimationController* animation() const;
         ScriptController* script();
         
-        void suspendAnimations();
-        void resumeAnimations();
-
         RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
         RenderPart* ownerRenderer() const; // Renderer for the element that contains this frame.
 

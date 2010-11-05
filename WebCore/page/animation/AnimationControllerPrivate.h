@@ -67,8 +67,11 @@ public:
 
     bool hasAnimations() const { return !m_compositeAnimations.isEmpty(); }
 
-    void suspendAnimations(Document*);
-    void resumeAnimations(Document*);
+    void suspendAnimations();
+    void resumeAnimations();
+
+    void suspendAnimationsForDocument(Document*);
+    void resumeAnimationsForDocument(Document*);
 
     bool isRunningAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow) const;

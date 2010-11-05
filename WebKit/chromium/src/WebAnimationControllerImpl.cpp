@@ -94,7 +94,7 @@ void WebAnimationControllerImpl::suspendAnimations() const
         return;
     if (!m_frameImpl->frame())
         return;
-    controller->suspendAnimations(m_frameImpl->frame()->document());
+    controller->suspendAnimations();
 }
 
 void WebAnimationControllerImpl::resumeAnimations() const
@@ -104,7 +104,7 @@ void WebAnimationControllerImpl::resumeAnimations() const
         return;
     if (!m_frameImpl->frame())
         return;
-    controller->resumeAnimations(m_frameImpl->frame()->document());
+    controller->resumeAnimations();
 }
 
 } // namespace WebKit

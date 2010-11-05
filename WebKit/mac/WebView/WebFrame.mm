@@ -1137,7 +1137,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!frame)
         return;
         
-    frame->suspendAnimations();
+    frame->animation()->suspendAnimations();
 }
 
 - (void) _resumeAnimations
@@ -1146,7 +1146,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!frame)
         return;
 
-    frame->resumeAnimations();
+    frame->animation()->resumeAnimations();
 }
 
 - (void)_replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle

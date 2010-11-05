@@ -279,7 +279,7 @@ void DumpRenderTreeSupportQt::suspendAnimations(QWebFrame *frame)
     if (!controller)
         return;
 
-    controller->suspendAnimations(coreFrame->document());
+    controller->suspendAnimations();
 }
 
 void DumpRenderTreeSupportQt::resumeAnimations(QWebFrame *frame)
@@ -292,7 +292,7 @@ void DumpRenderTreeSupportQt::resumeAnimations(QWebFrame *frame)
     if (!controller)
         return;
 
-    controller->resumeAnimations(coreFrame->document());
+    controller->resumeAnimations();
 }
 
 void DumpRenderTreeSupportQt::clearFrameName(QWebFrame* frame)

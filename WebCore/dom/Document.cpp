@@ -2033,7 +2033,7 @@ void Document::implicitClose()
 
     // Resume the animations (or start them)
     if (f)
-        f->animation()->resumeAnimations(this);
+        f->animation()->resumeAnimationsForDocument(this);
 
     ImageLoader::dispatchPendingBeforeLoadEvents();
     ImageLoader::dispatchPendingLoadEvents();

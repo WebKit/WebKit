@@ -2611,9 +2611,9 @@ static PassOwnPtr<Vector<String> > toStringVector(NSArray* patterns)
     
     Frame* frame = core([self mainFrame]);
     if (suspended)
-        frame->animation()->suspendAnimations(frame->document());
+        frame->animation()->suspendAnimations();
     else
-        frame->animation()->resumeAnimations(frame->document());
+        frame->animation()->resumeAnimations();
 }
 
 + (void)_setDomainRelaxationForbidden:(BOOL)forbidden forURLScheme:(NSString *)scheme

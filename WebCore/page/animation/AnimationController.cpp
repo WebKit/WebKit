@@ -227,7 +227,25 @@ bool AnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer(RenderO
     return animation->isAnimatingProperty(property, true, isRunningNow);
 }
 
-void AnimationControllerPrivate::suspendAnimations(Document* document)
+void AnimationControllerPrivate::suspendAnimations()
+{
+    suspendAnimationsForDocument(m_frame->document());
+    
+    // Traverse subframes
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->animation()->suspendAnimations();
+}
+
+void AnimationControllerPrivate::resumeAnimations()
+{
+    resumeAnimationsForDocument(m_frame->document());
+    
+    // Traverse subframes
+    for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->animation()->resumeAnimations();
+}
+
+void AnimationControllerPrivate::suspendAnimationsForDocument(Document* document)
 {
     setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
     
@@ -243,7 +261,7 @@ void AnimationControllerPrivate::suspendAnimations(Document* document)
     updateAnimationTimer();
 }
 
-void AnimationControllerPrivate::resumeAnimations(Document* document)
+void AnimationControllerPrivate::resumeAnimationsForDocument(Document* document)
 {
     setBeginAnimationUpdateTime(cBeginAnimationUpdateTimeNotSet);
     
@@ -551,14 +569,24 @@ bool AnimationController::isRunningAcceleratedAnimationOnRenderer(RenderObject* 
     return m_data->isRunningAcceleratedAnimationOnRenderer(renderer, property, isRunningNow);
 }
 
-void AnimationController::suspendAnimations(Document* document)
+void AnimationController::suspendAnimations()
 {
-    m_data->suspendAnimations(document);
+    m_data->suspendAnimations();
 }
 
-void AnimationController::resumeAnimations(Document* document)
+void AnimationController::resumeAnimations()
 {
-    m_data->resumeAnimations(document);
+    m_data->resumeAnimations();
+}
+
+void AnimationController::suspendAnimationsForDocument(Document* document)
+{
+    m_data->suspendAnimationsForDocument(document);
+}
+
+void AnimationController::resumeAnimationsForDocument(Document* document)
+{
+    m_data->resumeAnimationsForDocument(document);
 }
 
 void AnimationController::beginAnimationUpdate()

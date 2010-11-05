@@ -62,8 +62,11 @@ public:
     bool isRunningAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow = true) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow = true) const;
 
-    void suspendAnimations(Document*);
-    void resumeAnimations(Document*);
+    void suspendAnimations();
+    void resumeAnimations();
+
+    void suspendAnimationsForDocument(Document*);
+    void resumeAnimationsForDocument(Document*);
 
     void beginAnimationUpdate();
     void endAnimationUpdate();

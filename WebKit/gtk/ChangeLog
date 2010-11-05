@@ -1,5 +1,16 @@
 2010-11-05  Chris Marrin  <cmarrin@apple.com>
 
+        Reviewed by Simon Fraser.
+
+        Move resumeAnimations/suspendAnimations from Frame to AnimationController.
+        https://bugs.webkit.org/show_bug.cgi?id=49073
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_suspend_animations):
+        (webkit_web_frame_resume_animations):
+
+2010-11-05  Chris Marrin  <cmarrin@apple.com>
+
         Unreviewed.
 
         Small fix to GTK build

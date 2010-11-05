@@ -640,7 +640,7 @@ void Frame::clearTimers(FrameView *view, Document *document)
     if (view) {
         view->unscheduleRelayout();
         if (view->frame()) {
-            view->frame()->animation()->suspendAnimations(document);
+            view->frame()->animation()->suspendAnimationsForDocument(document);
             view->frame()->eventHandler()->stopAutoscrollTimer();
         }
     }
@@ -987,24 +987,6 @@ void Frame::scalePage(float scale)
         if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
             view->layout();
     }
-}
-
-void Frame::suspendAnimations()
-{
-    animation()->suspendAnimations(document());
-    
-    // Handle subframes
-    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->suspendAnimations();
-}
-
-void Frame::resumeAnimations()
-{
-    animation()->resumeAnimations(document());
-    
-    // Handle subframes
-    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->resumeAnimations();
 }
 
 } // namespace WebCore
