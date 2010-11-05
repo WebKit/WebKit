@@ -55,6 +55,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
 				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
@@ -125,6 +126,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
 				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
@@ -195,6 +197,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
 				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
@@ -264,6 +267,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
 				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
@@ -334,6 +338,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="Msimg32.lib"
 				OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix)\np$(ProjectName)$(WebKitConfigSuffix).dll"
 				ModuleDefinitionFile="TestNetscapePlugin$(WebKitConfigSuffix).def"
 			/>
@@ -401,6 +406,10 @@
 			<Filter
 				Name="win"
 				>
+				<File
+					RelativePath="..\Tests\win\DrawsGradient.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\Tests\win\GetValueNetscapeWindow.cpp"
 					>

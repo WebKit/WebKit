@@ -1,5 +1,38 @@
 2010-11-04  Adam Roben  <aroben@apple.com>
 
+        Add a test that shows that windowed plugins are able to paint
+
+        Somehow we never had a test for this before.
+
+        Fixes <http://webkit.org/b/49029> Should add a test that shows
+        windowed plugins can paint
+
+        Reviewed by Jon Honeycutt.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/DrawsGradient.cpp: Added.
+        (DrawsGradient::DrawsGradient):
+        (DrawsGradient::wndProc): We handle the WM_PAINT and WM_PRINTCLIENT messages.
+
+        (DrawsGradient::onPaint):
+        (DrawsGradient::onPrintClient):
+        These both just call through to paint.
+
+        (DrawsGradient::paint): Fills our client area with some gradients.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj: Link
+        against Msimg32.lib for ::GradientFill and added DrawsGradient.
+
+        * DumpRenderTree/win/PixelDumpSupportWin.cpp:
+        (createBitmapContextFromWebView): Use WM_PRINT instead of
+        WM_PRINTCLIENT so that ::DefWindowProc will send
+        WM_PRINT/WM_PRINTCLIENT messages to the WebView's child windows.
+        Replaced kCGImageAlphaPremultipledFirst with kCGImageAlphaNoneSkipFirst
+        because GDI doesn't support alpha and kCGImageBitmapOrder32Little with
+        kCGImageBitmapOrder32Host because, who knows, maybe someday Windows
+        will run on a big-endian platform.
+
+2010-11-04  Adam Roben  <aroben@apple.com>
+
         Extract much of NPNInvalidateRectInvalidatesWindow's code into a
         WindowedPluginTest base class
 
