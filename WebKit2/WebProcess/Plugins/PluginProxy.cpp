@@ -367,6 +367,18 @@ void PluginProxy::getWindowScriptNPObject(uint64_t& windowScriptNPObjectID)
     releaseNPObject(windowScriptNPObject);
 }
 
+void PluginProxy::getPluginElementNPObject(uint64_t& pluginElementNPObjectID)
+{
+    NPObject* pluginElementNPObject = m_pluginController->pluginElementNPObject();
+    if (!pluginElementNPObject) {
+        pluginElementNPObjectID = 0;
+        return;
+    }
+
+    pluginElementNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(pluginElementNPObject);
+    releaseNPObject(pluginElementNPObject);
+}
+
 void PluginProxy::update(const IntRect& paintedRect)
 {
     if (paintedRect == m_frameRect)

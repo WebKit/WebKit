@@ -12,7 +12,6 @@ plugins/private-browsing-mode.html
 plugins/private-browsing-mode-2.html
 plugins/netscape-plugin-property-access-exception.html
 plugins/npruntime/throw-exception.html
-plugins/netscape-dom-access.html
 plugins/npruntime/browser-object-identity.html
 plugins/destroy-plugin-from-callback.html
 

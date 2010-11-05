@@ -40,6 +40,10 @@ messages -> PluginProxy {
 
     # Gets a reference to the window NPObject.
     GetWindowScriptNPObject() -> (uint64_t windowScriptNPObjectID)
+
+    # Gets a reference to the plug-in element NPObject.
+    GetPluginElementNPObject() -> (uint64_t pluginElementNPObjectID)
+
 }
 
 #endif

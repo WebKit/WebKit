@@ -1,3 +1,21 @@
+2010-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Implement pluginElementNPObject
+        https://bugs.webkit.org/show_bug.cgi?id=49077
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::pluginElementNPObject):
+        Send the GetPluginElementNPObject message.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::getPluginElementNPObject):
+        Get the plug-in element NPObject and expose it to the other side of the connection.
+
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Add GetPluginElementNPObject.
+
 2010-11-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Oliver Hunt.
