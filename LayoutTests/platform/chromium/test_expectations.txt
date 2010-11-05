@@ -1768,7 +1768,6 @@ BUG20439 WIN LINUX : fast/forms/search-transformed.html = FAIL
 BUG10397 LINUX : fast/transforms/transformed-document-element.html = FAIL
 
 // New test. We should fix it, but it doesn't need to block the current release
-BUG10418 SLOW MAC RELEASE : fast/events/click-count.html = PASS
 BUG10418 WIN DEBUG : animations/change-keyframes-name.html = FAIL PASS
 
 // We could fix this test for us and upstream it if the test shell user agent
