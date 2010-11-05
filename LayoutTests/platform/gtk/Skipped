@@ -2940,6 +2940,9 @@ svg/custom/use-setAttribute-crash.svg
 # https://bugs.webkit.org/show_bug.cgi?id=25645
 svg/custom/pattern-excessive-malloc.svg
 
+# https://bugs.webkit.org/show_bug.cgi?id=49065
+svg/animations/animate-path-nested-transforms.html
+
 #   Tests generating new results
 svg/W3C-SVG-1.1/animate-elem-02-t.svg
 svg/W3C-SVG-1.1/animate-elem-03-t.svg
