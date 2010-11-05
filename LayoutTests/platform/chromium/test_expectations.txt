@@ -3393,31 +3393,31 @@ BUG48973 WIN LINUX : editing/style/iframe-onload-crash.html = CRASH
 BUG61978 WIN MAC : svg/animations/animate-path-nested-transforms.html = CRASH PASS
 
 // Test added in WK r71382
-BUG62025 LINUX WIN  fast/table/027-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/028-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/035-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/038-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/040-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN fast/table/auto-with-percent-height-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/border-collapsing/001-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/border-collapsing/002-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/border-collapsing/003-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/border-collapsing/004-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/border-collapsing/border-collapsing-head-foot-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/border-collapsing/rtl-border-collapsing-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/rowspan-paint-order-vertical.html = IMAGE+TEXT
-BUG62025 LINUX WIN  fast/table/table-display-types-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/027-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/028-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/035-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/038-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/040-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN: fast/table/auto-with-percent-height-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/border-collapsing/001-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/border-collapsing/002-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/border-collapsing/003-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/border-collapsing/004-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/border-collapsing/border-collapsing-head-foot-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/border-collapsing/rtl-border-collapsing-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/colspanMinWidth-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/rowspan-paint-order-vertical.html = IMAGE+TEXT
+BUG62025 LINUX WIN : fast/table/table-display-types-vertical.html = IMAGE+TEXT
 
-BUG62025 MAC  fast/table/027-vertical.html = IMAGE
-BUG62025 MAC  fast/table/028-vertical.html = IMAGE
-BUG62025 MAC  fast/table/038-vertical.html = IMAGE
-BUG62025 MAC  fast/table/040-vertical.html = IMAGE
-BUG62025 MAC  fast/table/border-collapsing/002-vertical.html = IMAGE
-BUG62025 MAC  fast/table/border-collapsing/004-vertical.html = IMAGE
-BUG62025 MAC LINUX WIN fast/table/border-collapsing/equal-precedence-resolution-vertical.html = IMAGE
-BUG62025 MAC LINUX WIN fast/table/height-percent-test-vertical.html = IMAGE
-BUG62025 MAC  fast/table/table-display-types-vertical.html = IMAGE
+BUG62025 MAC : fast/table/027-vertical.html = IMAGE
+BUG62025 MAC : fast/table/028-vertical.html = IMAGE
+BUG62025 MAC : fast/table/038-vertical.html = IMAGE
+BUG62025 MAC : fast/table/040-vertical.html = IMAGE
+BUG62025 MAC : fast/table/border-collapsing/002-vertical.html = IMAGE
+BUG62025 MAC : fast/table/border-collapsing/004-vertical.html = IMAGE
+BUG62025 MAC LINUX WIN: fast/table/border-collapsing/equal-precedence-resolution-vertical.html = IMAGE
+BUG62025 MAC LINUX WIN: fast/table/height-percent-test-vertical.html = IMAGE
+BUG62025 MAC : fast/table/table-display-types-vertical.html = IMAGE
 
 // Test rebaselined in WK r71377
-BUG62026 LINUX WIN  fast/dom/HTMLMeterElement/meter-element.html = TEXT
+BUG62026 LINUX WIN : fast/dom/HTMLMeterElement/meter-element.html = TEXT
