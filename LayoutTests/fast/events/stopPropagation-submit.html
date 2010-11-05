@@ -3,7 +3,7 @@ default action. It should not! If the default was prevented, you'll
 see a link below and the text FAIL. On success you will see PASS (and
 ?x=0&y=0).
 </p>
-<form action="data:text/html,<script>if (window.layoutTestController) layoutTestController.notifyDone();</script>PASS<br>">
+<form action="resources/stopPropagation-submit-target.html">
 <input type="image" id="image1" onclick="event.stopPropagation()" value="click here">
 </form>
 <p>

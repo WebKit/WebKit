@@ -595,16 +595,6 @@ BUG20551 LINUX WIN : fast/replaced/table-percent-height-text-controls.html = FAI
 
 
 // -----------------------------------------------------------------
-// URL
-// -----------------------------------------------------------------
-
-// Form submission (GET) on non-standard url does not append a query.
-// Implicit expectation in this test is that you can "set query" on a data URL,
-// and it should replace the first "?" substring. This makes absolutely no
-// sense.
-BUG24203 : fast/events/stopPropagation-submit.html = FAIL
-
-// -----------------------------------------------------------------
 // PENDING TESTS (forked to pending/, need to be sent upstream)
 // -----------------------------------------------------------------
 
