@@ -58,9 +58,7 @@ public:
 
     enum TargetType {
         TargetIsMainFrame = 0,
-        TargetIsSubFrame = 1,   // Temporary for backward compatibility.
         TargetIsSubframe = 1,
-        TargetIsSubResource = 2,  // Temporary for backward comptibility.
         TargetIsSubresource = 2,
         TargetIsStyleSheet = 3,
         TargetIsScript = 4,

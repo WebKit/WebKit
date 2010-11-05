@@ -288,7 +288,7 @@ void FrameLoaderClientImpl::assignIdentifierToInitialRequest(
 // this includes images and xmlhttp requests.  It is important to note that a
 // subresource is NOT limited to stuff loaded through the frame's subresource
 // loader. Synchronous xmlhttp requests for example, do not go through the
-// subresource loader, but we still label them as TargetIsSubResource.
+// subresource loader, but we still label them as TargetIsSubresource.
 //
 // The important edge cases to consider when modifying this function are
 // how synchronous resource loads are treated during load/unload threshold.
