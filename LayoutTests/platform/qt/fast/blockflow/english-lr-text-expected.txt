@@ -1,0 +1,34 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 138x500
+        RenderInline {SPAN} at (0,0) size 24x422
+          RenderText {#text} at (0,0) size 24x422
+            text run at (0,0) width 422: "This text should be rotated 90 degrees and underlined."
+        RenderText {#text} at (0,422) size 24x5
+          text run at (0,422) width 5: " "
+        RenderBR {BR} at (6,427) size 0x0
+        RenderInline {SPAN} at (0,0) size 24x410
+          RenderText {#text} at (23,0) size 24x410
+            text run at (23,0) width 410: "This text should be rotated 90 degrees and overlined."
+        RenderText {#text} at (23,410) size 24x5
+          text run at (23,410) width 5: " "
+        RenderBR {BR} at (29,415) size 0x0
+        RenderInline {SPAN} at (0,0) size 24x454
+          RenderText {#text} at (46,0) size 24x454
+            text run at (46,0) width 454: "This text should be rotated 90 degrees and struck through."
+        RenderText {#text} at (46,454) size 24x5
+          text run at (46,454) width 5: " "
+        RenderBR {BR} at (52,459) size 0x0
+        RenderInline {SPAN} at (0,0) size 24x476
+          RenderText {#text} at (69,0) size 24x476
+            text run at (69,0) width 476: "This text should have a red shadow that is offset horizontally."
+        RenderText {#text} at (69,476) size 24x5
+          text run at (69,476) width 5: " "
+        RenderBR {BR} at (75,481) size 0x0
+        RenderBR {BR} at (92,0) size 24x0
+        RenderInline {SPAN} at (0,0) size 24x488
+          RenderText {#text} at (115,0) size 24x488
+            text run at (115,0) width 488: "This text should have an overline plus horizontal green shadow"
