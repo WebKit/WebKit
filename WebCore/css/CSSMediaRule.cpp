@@ -33,6 +33,9 @@ CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList> media, P
     , m_lstMedia(media)
     , m_lstCSSRules(rules)
 {
+    int length = m_lstCSSRules->length();
+    for (int i = 0; i < length; i++)
+        m_lstCSSRules->item(i)->setParent(this);
 }
 
 CSSMediaRule::~CSSMediaRule()
