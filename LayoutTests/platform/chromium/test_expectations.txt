@@ -1838,9 +1838,6 @@ BUG10473 LINUX : fast/replaced/width100percent-searchfield.html = FAIL
 // This test isn't just slow -- sometimes it times out indefinitely.
 BUG27569 LINUX MAC WIN : http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html = TIMEOUT PASS
 
-// Merge WebKit 42133:42199 regressions
-BUG20570 LINUX : fast/events/context-no-deselect.html = FAIL
-
 // These tests were affected by rolling out WebKit i8n patches.
 // Was only WIN, also fail on LINUX since merge 43346:43361
 BUG9768 LINUX WIN : fast/forms/select-initial-position.html = FAIL
