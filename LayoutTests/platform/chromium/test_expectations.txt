@@ -3346,10 +3346,6 @@ BUGWK48634 MAC : fast/lists/ol-start-dynamic.html = IMAGE
 BUGWK48634 MAC : fast/lists/ordered-list-with-no-ol-tag.html = IMAGE
 BUGWK48634 MAC : fast/lists/scrolled-marker-paint.html = IMAGE
 BUGWK48634 MAC : fast/repaint/block-layout-inline-children-replaced.html = IMAGE
-BUGWK48634 MAC : fast/canvas/webgl/gl-teximage.html = TEXT
-BUGWK48634 MAC : fast/canvas/webgl/tex-image-and-sub-image-2d-with-image.html = TEXT
-BUGWK48634 MAC : fast/canvas/webgl/tex-image-with-format-and-type.html = TEXT
-BUGWK48634 MAC : fast/canvas/webgl/texture-transparent-pixels-initialized.html = TEXT
 
 // New test, seems V8 differs from JSC here.
 // Added by http://trac.webkit.org/changeset/70910

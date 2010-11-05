@@ -69,26 +69,22 @@ static GraphicsContext3D::SourceDataFormat getSourceDataFormat(unsigned int comp
         { SourceFormatBaseRGB,        SourceFormatBaseNumFormats, SourceFormatBaseNumFormats }, // 3 componentsPerPixel
         { SourceFormatBaseNumFormats, SourceFormatBaseARGB,       SourceFormatBaseRGBA        } // 4 componentsPerPixel
     };
-    const static GraphicsContext3D::SourceDataFormat formatTable[SourceFormatBaseNumFormats][3] = { // SourceDataFormatBase x bitsPerComponentAndEndian
-        // 8bits                                16bits, little endian                        16bits, big endian
-        { GraphicsContext3D::SourceFormatR8,    GraphicsContext3D::SourceFormatR16Little,    GraphicsContext3D::SourceFormatR16Big },
-        { GraphicsContext3D::SourceFormatA8,    GraphicsContext3D::SourceFormatA16Little,    GraphicsContext3D::SourceFormatA16Big },
-        { GraphicsContext3D::SourceFormatRA8,   GraphicsContext3D::SourceFormatRA16Little,   GraphicsContext3D::SourceFormatRA16Big },
-        { GraphicsContext3D::SourceFormatAR8,   GraphicsContext3D::SourceFormatAR16Little,   GraphicsContext3D::SourceFormatAR16Big },
-        { GraphicsContext3D::SourceFormatRGB8,  GraphicsContext3D::SourceFormatRGB16Little,  GraphicsContext3D::SourceFormatRGB16Big },
-        { GraphicsContext3D::SourceFormatRGBA8, GraphicsContext3D::SourceFormatRGBA16Little, GraphicsContext3D::SourceFormatRGBA16Big },
-        { GraphicsContext3D::SourceFormatARGB8, GraphicsContext3D::SourceFormatARGB16Little, GraphicsContext3D::SourceFormatARGB16Big }
+    const static GraphicsContext3D::SourceDataFormat formatTable[SourceFormatBaseNumFormats][4] = { // SourceDataFormatBase x bitsPerComponent x endian
+        // 8bits, little endian                 8bits, big endian                     16bits, little endian                        16bits, big endian
+        { GraphicsContext3D::SourceFormatR8,    GraphicsContext3D::SourceFormatR8,    GraphicsContext3D::SourceFormatR16Little,    GraphicsContext3D::SourceFormatR16Big },
+        { GraphicsContext3D::SourceFormatA8,    GraphicsContext3D::SourceFormatA8,    GraphicsContext3D::SourceFormatA16Little,    GraphicsContext3D::SourceFormatA16Big },
+        { GraphicsContext3D::SourceFormatAR8,   GraphicsContext3D::SourceFormatRA8,   GraphicsContext3D::SourceFormatRA16Little,   GraphicsContext3D::SourceFormatRA16Big },
+        { GraphicsContext3D::SourceFormatRA8,   GraphicsContext3D::SourceFormatAR8,   GraphicsContext3D::SourceFormatAR16Little,   GraphicsContext3D::SourceFormatAR16Big },
+        { GraphicsContext3D::SourceFormatBGR8,  GraphicsContext3D::SourceFormatRGB8,  GraphicsContext3D::SourceFormatRGB16Little,  GraphicsContext3D::SourceFormatRGB16Big },
+        { GraphicsContext3D::SourceFormatABGR8, GraphicsContext3D::SourceFormatRGBA8, GraphicsContext3D::SourceFormatRGBA16Little, GraphicsContext3D::SourceFormatRGBA16Big },
+        { GraphicsContext3D::SourceFormatBGRA8, GraphicsContext3D::SourceFormatARGB8, GraphicsContext3D::SourceFormatARGB16Little, GraphicsContext3D::SourceFormatARGB16Big }
     };
 
     ASSERT(componentsPerPixel <= 4 && componentsPerPixel > 0);
     SourceDataFormatBase formatBase = formatTableBase[componentsPerPixel - 1][alphaFormat];
     if (formatBase == SourceFormatBaseNumFormats)
         return GraphicsContext3D::SourceFormatNumFormats;
-    if (!is16BitFormat)
-        return formatTable[formatBase][0];
-    if (!bigEndian)
-        return formatTable[formatBase][1];
-    return formatTable[formatBase][2];
+    return formatTable[formatBase][(is16BitFormat ? 2 : 0) + (bigEndian ? 1 : 0)];
 }
 
 bool GraphicsContext3D::getImageData(Image* image,
@@ -125,21 +121,40 @@ bool GraphicsContext3D::getImageData(Image* image,
         return false;
     size_t componentsPerPixel = bitsPerPixel / bitsPerComponent;
 
-    bool srcByteOrder16Big = false;
+    CGBitmapInfo bitInfo = CGImageGetBitmapInfo(cgImage);
+    bool bigEndianSource = false;
+    // These could technically be combined into one large switch
+    // statement, but we prefer not to so that we fail fast if we
+    // encounter an unexpected image configuration.
     if (bitsPerComponent == 16) {
-        CGBitmapInfo bitInfo = CGImageGetBitmapInfo(cgImage);
         switch (bitInfo & kCGBitmapByteOrderMask) {
         case kCGBitmapByteOrder16Big:
-            srcByteOrder16Big = true;
+            bigEndianSource = true;
             break;
         case kCGBitmapByteOrder16Little:
-            srcByteOrder16Big = false;
+            bigEndianSource = false;
             break;
         case kCGBitmapByteOrderDefault:
             // This is a bug in earlier version of cg where the default endian
             // is little whereas the decoded 16-bit png image data is actually
             // Big. Later version (10.6.4) no longer returns ByteOrderDefault.
-            srcByteOrder16Big = true;
+            bigEndianSource = true;
+            break;
+        default:
+            return false;
+        }
+    } else {
+        switch (bitInfo & kCGBitmapByteOrderMask) {
+        case kCGBitmapByteOrder32Big:
+            bigEndianSource = true;
+            break;
+        case kCGBitmapByteOrder32Little:
+            bigEndianSource = false;
+            break;
+        case kCGBitmapByteOrderDefault:
+            // It appears that the default byte order is actually big
+            // endian even on little endian architectures.
+            bigEndianSource = true;
             break;
         default:
             return false;
@@ -190,7 +205,7 @@ bool GraphicsContext3D::getImageData(Image* image,
     default:
         return false;
     }
-    SourceDataFormat srcDataFormat = getSourceDataFormat(componentsPerPixel, alphaFormat, bitsPerComponent == 16, srcByteOrder16Big);
+    SourceDataFormat srcDataFormat = getSourceDataFormat(componentsPerPixel, alphaFormat, bitsPerComponent == 16, bigEndianSource);
     if (srcDataFormat == SourceFormatNumFormats)
         return false;
 
