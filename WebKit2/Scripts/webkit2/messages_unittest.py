@@ -255,7 +255,7 @@ _expected_header = """/*
 #include "MessageID.h"
 #include "Plugin.h"
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/PluginInfo.h>
+#include <WebCore/PluginData.h>
 #include <wtf/Vector.h>
 
 namespace CoreIPC {

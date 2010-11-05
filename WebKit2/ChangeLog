@@ -1,5 +1,12 @@
 2010-11-05  Sam Weinig  <sam@webkit.org>
 
+        Fix failing python tests.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+
+2010-11-05  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Adam Roben..
 
         Generate the messages sent to the WebProcessProxy
