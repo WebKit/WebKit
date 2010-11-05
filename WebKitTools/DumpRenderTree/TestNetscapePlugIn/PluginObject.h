@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef PluginObject_h
+#define PluginObject_h
+
 #include <WebKit/npfunctions.h>
 
 #if defined(XP_MACOSX)
@@ -90,3 +93,4 @@ extern bool testWindowOpen(NPP npp);
 extern void* createCoreAnimationLayer();
 #endif
 
+#endif // PluginObject_h

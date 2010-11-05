@@ -32,9 +32,8 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
-
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Helper function which takes in the plugin window object for logging to the console object.
 static void pluginLogWithWindowObject(NPObject* windowObject, NPP instance, const char* message)
@@ -119,10 +118,10 @@ static NPClass pluginClass = {
     pluginSetProperty,
     0, // NPClass::removeProperty
     0, // NPClass::enumerate
-    0  // NPClass::construct
+    0, // NPClass::construct
 };
 
-NPClass *getPluginClass(void)
+NPClass* getPluginClass(void)
 {
     return &pluginClass;
 }
@@ -271,38 +270,48 @@ static bool pluginGetProperty(NPObject* obj, NPIdentifier name, NPVariant* resul
         strcpy(buf, originalString);
         STRINGZ_TO_NPVARIANT(buf, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_EVENT_LOGGING]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_EVENT_LOGGING]) {
         BOOLEAN_TO_NPVARIANT(plugin->eventLogging, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_LOG_DESTROY]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_LOG_DESTROY]) {
         BOOLEAN_TO_NPVARIANT(plugin->logDestroy, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_HAS_STREAM]) {
-        BOOLEAN_TO_NPVARIANT(plugin->stream != 0, *result);
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_HAS_STREAM]) {
+        BOOLEAN_TO_NPVARIANT(plugin->stream, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_TEST_OBJECT]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_TEST_OBJECT]) {
         NPObject* testObject = plugin->testObject;
         browser->retainobject(testObject);
         OBJECT_TO_NPVARIANT(testObject, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM]) {
         BOOLEAN_TO_NPVARIANT(plugin->returnErrorFromNewStream, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_NEGATIVE_ONE_FROM_WRITE]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_NEGATIVE_ONE_FROM_WRITE]) {
         BOOLEAN_TO_NPVARIANT(plugin->returnNegativeOneFromWrite, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_PRIVATE_BROWSING_ENABLED]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_PRIVATE_BROWSING_ENABLED]) {
         NPBool privateBrowsingEnabled = FALSE;
         browser->getvalue(plugin->npp, NPNVprivateModeBool, &privateBrowsingEnabled);
         BOOLEAN_TO_NPVARIANT(privateBrowsingEnabled, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_CACHED_PRIVATE_BROWSING_ENABLED]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_CACHED_PRIVATE_BROWSING_ENABLED]) {
         BOOLEAN_TO_NPVARIANT(plugin->cachedPrivateBrowsingMode, *result);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_THROW_EXCEPTION_PROPERTY]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_THROW_EXCEPTION_PROPERTY]) {
         browser->setexception(obj, "plugin object testThrowExceptionProperty SUCCESS");
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_LAST_SET_WINDOW_ARGUMENTS]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_LAST_SET_WINDOW_ARGUMENTS]) {
         char* buf = static_cast<char*>(browser->memalloc(256));
         snprintf(buf, 256, "x: %d, y: %d, width: %u, height: %u, clipRect: (%u, %u, %u, %u)", (int)plugin->lastWindow.x, (int)plugin->lastWindow.y, (unsigned)plugin->lastWindow.width, (unsigned)plugin->lastWindow.height,
             plugin->lastWindow.clipRect.left, plugin->lastWindow.clipRect.top, plugin->lastWindow.clipRect.right - plugin->lastWindow.clipRect.left, plugin->lastWindow.clipRect.bottom - plugin->lastWindow.clipRect.top);
@@ -320,19 +329,24 @@ static bool pluginSetProperty(NPObject* obj, NPIdentifier name, const NPVariant*
     if (name == pluginPropertyIdentifiers[ID_PROPERTY_EVENT_LOGGING]) {
         plugin->eventLogging = NPVARIANT_TO_BOOLEAN(*variant);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_LOG_DESTROY]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_LOG_DESTROY]) {
         plugin->logDestroy = NPVARIANT_TO_BOOLEAN(*variant);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM]) {
         plugin->returnErrorFromNewStream = NPVARIANT_TO_BOOLEAN(*variant);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_NEGATIVE_ONE_FROM_WRITE]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_NEGATIVE_ONE_FROM_WRITE]) {
         plugin->returnNegativeOneFromWrite = NPVARIANT_TO_BOOLEAN(*variant);
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_THROW_EXCEPTION_PROPERTY]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_THROW_EXCEPTION_PROPERTY]) {
         browser->setexception(obj, "plugin object testThrowExceptionProperty SUCCESS");
         return true;
-    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_WINDOWED_PLUGIN]) {
+    }
+    if (name == pluginPropertyIdentifiers[ID_PROPERTY_WINDOWED_PLUGIN]) {
         browser->setvalue(plugin->npp, NPPVpluginWindowBool, (void *)NPVARIANT_TO_BOOLEAN(*variant));
         return true;
     }
@@ -392,9 +406,9 @@ static NPIdentifier variantToIdentifier(NPVariant variant)
 {
     if (NPVARIANT_IS_STRING(variant))
         return stringVariantToIdentifier(variant);
-    else if (NPVARIANT_IS_INT32(variant))
+    if (NPVARIANT_IS_INT32(variant))
         return int32VariantToIdentifier(variant);
-    else if (NPVARIANT_IS_DOUBLE(variant))
+    if (NPVARIANT_IS_DOUBLE(variant))
         return doubleVariantToIdentifier(variant);
     return 0;
 }
@@ -427,7 +441,7 @@ static bool testIdentifierToInt(PluginObject*, const NPVariant* args, uint32_t a
 
 static bool testCallback(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
-    if (argCount == 0 || !NPVARIANT_IS_STRING(args[0]))
+    if (!argCount || !NPVARIANT_IS_STRING(args[0]))
         return false;
 
     NPObject* windowScriptObject;
@@ -458,7 +472,8 @@ static bool getURL(PluginObject* obj, const NPVariant* args, uint32_t argCount, 
 
         INT32_TO_NPVARIANT(npErr, *result);
         return true;
-    } else if (argCount == 1 && NPVARIANT_IS_STRING(args[0])) {
+    }
+    if (argCount == 1 && NPVARIANT_IS_STRING(args[0])) {
         NPUTF8* urlString = createCStringFromNPVariant(&args[0]);
         NPError npErr = browser->geturl(obj->npp, urlString, 0);
         free(urlString);
@@ -477,7 +492,7 @@ static bool getURLNotify(PluginObject* obj, const NPVariant* args, uint32_t argC
         return false;
 
     NPUTF8* urlString = createCStringFromNPVariant(&args[0]);
-    NPUTF8* targetString = (NPVARIANT_IS_STRING(args[1]) ? createCStringFromNPVariant(&args[1]) : NULL);
+    NPUTF8* targetString = (NPVARIANT_IS_STRING(args[1]) ? createCStringFromNPVariant(&args[1]) : 0);
     NPUTF8* callbackString = createCStringFromNPVariant(&args[2]);
 
     NPIdentifier callbackIdentifier = browser->getstringidentifier(callbackString);
@@ -496,7 +511,7 @@ static bool testInvokeDefault(PluginObject* obj, const NPVariant* args, uint32_t
     if (!NPVARIANT_IS_OBJECT(args[0]))
         return false;
 
-    NPObject *callback = NPVARIANT_TO_OBJECT(args[0]);
+    NPObject* callback = NPVARIANT_TO_OBJECT(args[0]);
 
     NPVariant invokeArgs[1];
     NPVariant browserResult;
@@ -569,10 +584,10 @@ static bool testGetIntIdentifier(PluginObject*, const NPVariant* args, uint32_t 
 
 static bool testGetProperty(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
-    if (argCount == 0)
+    if (!argCount)
         return false;
 
-    NPObject *object;
+    NPObject* object;
     browser->getvalue(obj->npp, NPNVWindowNPObject, &object);
 
     for (uint32_t i = 0; i < argCount; i++) {
@@ -731,7 +746,7 @@ bool testDocumentOpen(NPP npp)
     NPIdentifier documentId = browser->getstringidentifier("document");
     NPIdentifier openId = browser->getstringidentifier("open");
 
-    NPObject *windowObject = NULL;
+    NPObject* windowObject = 0;
     browser->getvalue(npp, NPNVWindowNPObject, &windowObject);
     if (!windowObject)
         return false;
@@ -743,7 +758,7 @@ bool testDocumentOpen(NPP npp)
         return false;
     }
 
-    NPObject *documentObject = NPVARIANT_TO_OBJECT(docVariant);
+    NPObject* documentObject = NPVARIANT_TO_OBJECT(docVariant);
 
     NPVariant openArgs[2];
     STRINGZ_TO_NPVARIANT("text/html", openArgs[0]);
@@ -775,7 +790,7 @@ bool testWindowOpen(NPP npp)
 {
     NPIdentifier openId = browser->getstringidentifier("open");
 
-    NPObject *windowObject = NULL;
+    NPObject* windowObject = 0;
     browser->getvalue(npp, NPNVWindowNPObject, &windowObject);
     if (!windowObject)
         return false;
@@ -857,87 +872,98 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
     PluginObject* plugin = reinterpret_cast<PluginObject*>(header);
     if (name == pluginMethodIdentifiers[ID_TEST_CALLBACK_METHOD])
         return testCallback(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_GETURL])
+    if (name == pluginMethodIdentifiers[ID_TEST_GETURL])
         return getURL(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_DOM_ACCESS])
+    if (name == pluginMethodIdentifiers[ID_TEST_DOM_ACCESS])
         return testDOMAccess(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_GET_URL_NOTIFY])
+    if (name == pluginMethodIdentifiers[ID_TEST_GET_URL_NOTIFY])
         return getURLNotify(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_INVOKE_DEFAULT])
+    if (name == pluginMethodIdentifiers[ID_TEST_INVOKE_DEFAULT])
         return testInvokeDefault(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_ENUMERATE])
+    if (name == pluginMethodIdentifiers[ID_TEST_ENUMERATE])
         return testEnumerate(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_DESTROY_STREAM])
+    if (name == pluginMethodIdentifiers[ID_DESTROY_STREAM])
         return destroyStream(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_GETINTIDENTIFIER])
+    if (name == pluginMethodIdentifiers[ID_TEST_GETINTIDENTIFIER])
         return testGetIntIdentifier(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_EVALUATE])
+    if (name == pluginMethodIdentifiers[ID_TEST_EVALUATE])
         return testEvaluate(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_GET_PROPERTY])
+    if (name == pluginMethodIdentifiers[ID_TEST_GET_PROPERTY])
         return testGetProperty(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_GET_PROPERTY_RETURN_VALUE])
+    if (name == pluginMethodIdentifiers[ID_TEST_GET_PROPERTY_RETURN_VALUE])
         return testGetPropertyReturnValue(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_HAS_PROPERTY])
+    if (name == pluginMethodIdentifiers[ID_TEST_HAS_PROPERTY])
         return testHasProperty(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_HAS_METHOD])
+    if (name == pluginMethodIdentifiers[ID_TEST_HAS_METHOD])
         return testHasMethod(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_IDENTIFIER_TO_STRING])
+    if (name == pluginMethodIdentifiers[ID_TEST_IDENTIFIER_TO_STRING])
         return testIdentifierToString(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_IDENTIFIER_TO_INT])
+    if (name == pluginMethodIdentifiers[ID_TEST_IDENTIFIER_TO_INT])
         return testIdentifierToInt(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_POSTURL_FILE])
+    if (name == pluginMethodIdentifiers[ID_TEST_POSTURL_FILE])
         return testPostURLFile(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_CONSTRUCT])
+    if (name == pluginMethodIdentifiers[ID_TEST_CONSTRUCT])
         return testConstruct(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_THROW_EXCEPTION_METHOD]) {
+    if (name == pluginMethodIdentifiers[ID_TEST_THROW_EXCEPTION_METHOD]) {
         browser->setexception(header, "plugin object testThrowException SUCCESS");
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_TEST_FAIL_METHOD]) {
+    }
+    if (name == pluginMethodIdentifiers[ID_TEST_FAIL_METHOD]) {
         NPObject* windowScriptObject;
         browser->getvalue(plugin->npp, NPNVWindowNPObject, &windowScriptObject);
         browser->invoke(plugin->npp, windowScriptObject, name, args, argCount, result);
-    } else if (name == pluginMethodIdentifiers[ID_DESTROY_NULL_STREAM]) 
+        return false;
+    }
+    if (name == pluginMethodIdentifiers[ID_DESTROY_NULL_STREAM]) 
         return destroyNullStream(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_TEST_RELOAD_PLUGINS_NO_PAGES]) {
+    if (name == pluginMethodIdentifiers[ID_TEST_RELOAD_PLUGINS_NO_PAGES]) {
         browser->reloadplugins(false);
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_TEST_RELOAD_PLUGINS_AND_PAGES]) {
+    }
+    if (name == pluginMethodIdentifiers[ID_TEST_RELOAD_PLUGINS_AND_PAGES]) {
         browser->reloadplugins(true);
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_TEST_GET_BROWSER_PROPERTY]) {
+    }
+    if (name == pluginMethodIdentifiers[ID_TEST_GET_BROWSER_PROPERTY]) {
         browser->getproperty(plugin->npp, NPVARIANT_TO_OBJECT(args[0]), stringVariantToIdentifier(args[1]), result);
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_TEST_SET_BROWSER_PROPERTY]) {
+    }
+    if (name == pluginMethodIdentifiers[ID_TEST_SET_BROWSER_PROPERTY]) {
         browser->setproperty(plugin->npp, NPVARIANT_TO_OBJECT(args[0]), stringVariantToIdentifier(args[1]), &args[2]);
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_REMEMBER]) {
+    }
+    if (name == pluginMethodIdentifiers[ID_REMEMBER]) {
         if (plugin->rememberedObject)
             browser->releaseobject(plugin->rememberedObject);
         plugin->rememberedObject = NPVARIANT_TO_OBJECT(args[0]);
         browser->retainobject(plugin->rememberedObject);
         VOID_TO_NPVARIANT(*result);
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_GET_REMEMBERED_OBJECT]) {
+    }
+    if (name == pluginMethodIdentifiers[ID_GET_REMEMBERED_OBJECT]) {
         assert(plugin->rememberedObject);
         browser->retainobject(plugin->rememberedObject);
         OBJECT_TO_NPVARIANT(plugin->rememberedObject, *result);
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_GET_AND_FORGET_REMEMBERED_OBJECT]) {
+    }
+    if (name == pluginMethodIdentifiers[ID_GET_AND_FORGET_REMEMBERED_OBJECT]) {
         assert(plugin->rememberedObject);
         OBJECT_TO_NPVARIANT(plugin->rememberedObject, *result);
         plugin->rememberedObject = 0;
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_REF_COUNT]) {
+    }
+    if (name == pluginMethodIdentifiers[ID_REF_COUNT]) {
         uint32_t refCount = NPVARIANT_TO_OBJECT(args[0])->referenceCount;
         INT32_TO_NPVARIANT(refCount, *result);
         return true;
-    } else if (name == pluginMethodIdentifiers[ID_SET_STATUS])
+    }
+    if (name == pluginMethodIdentifiers[ID_SET_STATUS])
         return testSetStatus(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_RESIZE_TO])
+    if (name == pluginMethodIdentifiers[ID_RESIZE_TO])
         return testResizeTo(plugin, args, argCount, result);
-    else if (name == pluginMethodIdentifiers[ID_NORMALIZE])
+    if (name == pluginMethodIdentifiers[ID_NORMALIZE])
         return normalizeOverride(plugin, args, argCount, result);
-    
+
     return false;
 }
 
@@ -1010,14 +1036,14 @@ void handleCallback(PluginObject* object, const char *url, NPReason reason, void
 
     NPVariant args[2];
 
-    NPObject *windowScriptObject;
+    NPObject* windowScriptObject;
     browser->getvalue(object->npp, NPNVWindowNPObject, &windowScriptObject);
 
     NPIdentifier callbackIdentifier = notifyData;
 
     INT32_TO_NPVARIANT(reason, args[0]);
 
-    char *strHdr = NULL;
+    char* strHdr = 0;
     if (object->firstUrl && object->firstHeaders && object->lastUrl && object->lastHeaders) {
         // Format expected by JavaScript validator: four fields separated by \n\n:
         // First URL; first header block; last URL; last header block.
@@ -1042,7 +1068,7 @@ void handleCallback(PluginObject* object, const char *url, NPReason reason, void
 
 void notifyStream(PluginObject* object, const char *url, const char *headers)
 {
-    if (object->firstUrl == NULL) {
+    if (!object->firstUrl) {
         if (url)
             object->firstUrl = strdup(url);
         if (headers)
@@ -1050,8 +1076,8 @@ void notifyStream(PluginObject* object, const char *url, const char *headers)
     } else {
         free(object->lastUrl);
         free(object->lastHeaders);
-        object->lastUrl = (url ? strdup(url) : NULL);
-        object->lastHeaders = (headers ? strdup(headers) : NULL);
+        object->lastUrl = (url ? strdup(url) : 0);
+        object->lastHeaders = (headers ? strdup(headers) : 0);
     }
 }
 
