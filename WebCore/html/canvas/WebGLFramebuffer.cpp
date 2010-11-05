@@ -103,6 +103,24 @@ void WebGLFramebuffer::setAttachment(unsigned long attachment, WebGLObject* atta
     }
 }
 
+WebGLObject* WebGLFramebuffer::getAttachment(unsigned long attachment) const
+{
+    if (!object())
+        return 0;
+    switch (attachment) {
+    case GraphicsContext3D::COLOR_ATTACHMENT0:
+        return m_colorAttachment.get();
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+        return m_depthAttachment.get();
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+        return m_stencilAttachment.get();
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        return m_depthStencilAttachment.get();
+    default:
+        return 0;
+    }
+}
+
 void WebGLFramebuffer::removeAttachment(WebGLObject* attachment)
 {
     if (!object())
@@ -137,22 +155,23 @@ unsigned long WebGLFramebuffer::getColorBufferFormat() const
     return 0;
 }
 
-bool WebGLFramebuffer::isIncomplete() const
+bool WebGLFramebuffer::isIncomplete(bool checkInternalFormat) const
 {
     unsigned int count = 0;
     if (isDepthAttached()) {
-        if (getInternalFormat(m_depthAttachment.get()) != GraphicsContext3D::DEPTH_COMPONENT16)
+        if (checkInternalFormat && getInternalFormat(m_depthAttachment.get()) != GraphicsContext3D::DEPTH_COMPONENT16)
             return true;
         count++;
     }
     if (isStencilAttached()) {
-        if (getInternalFormat(m_stencilAttachment.get()) != GraphicsContext3D::STENCIL_INDEX8)
+        if (checkInternalFormat && getInternalFormat(m_stencilAttachment.get()) != GraphicsContext3D::STENCIL_INDEX8)
             return true;
         count++;
     }
     if (isDepthStencilAttached()) {
-        if (getInternalFormat(m_depthStencilAttachment.get()) != GraphicsContext3D::DEPTH_STENCIL
-            || !isValid(m_depthStencilAttachment.get()))
+        if (checkInternalFormat && getInternalFormat(m_depthStencilAttachment.get()) != GraphicsContext3D::DEPTH_STENCIL)
+            return true;
+        if (!isValid(m_depthStencilAttachment.get()))
             return true;
         count++;
     }
@@ -163,7 +182,7 @@ bool WebGLFramebuffer::isIncomplete() const
 
 bool WebGLFramebuffer::onAccess()
 {
-    if (isIncomplete())
+    if (isIncomplete(true))
         return false;
     return initializeRenderbuffers();
 }

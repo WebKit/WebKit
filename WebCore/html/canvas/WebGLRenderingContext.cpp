@@ -501,7 +501,7 @@ unsigned long WebGLRenderingContext::checkFramebufferStatus(unsigned long target
     }
     if (!m_framebufferBinding || !m_framebufferBinding->object())
         return GraphicsContext3D::FRAMEBUFFER_COMPLETE;
-    if (m_framebufferBinding->isIncomplete())
+    if (m_framebufferBinding->isIncomplete(true))
         return GraphicsContext3D::FRAMEBUFFER_UNSUPPORTED;
     return m_context->checkFramebufferStatus(target);
     cleanupAfterGraphicsCall(false);
@@ -1198,8 +1198,54 @@ void WebGLRenderingContext::framebufferRenderbuffer(unsigned long target, unsign
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }
-    m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, objectOrZero(buffer));
+    Platform3DObject bufferObject = objectOrZero(buffer);
+    bool reattachDepth = false;
+    bool reattachStencil = false;
+    bool reattachDepthStencilDepth = false;
+    bool reattachDepthStencilStencil = false;
+    switch (attachment) {
+    case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
+        m_context->framebufferRenderbuffer(target, GraphicsContext3D::DEPTH_ATTACHMENT, renderbuffertarget, bufferObject);
+        m_context->framebufferRenderbuffer(target, GraphicsContext3D::STENCIL_ATTACHMENT, renderbuffertarget, bufferObject);
+        if (!bufferObject) {
+            reattachDepth = true;
+            reattachStencil = true;
+        }
+        break;
+    case GraphicsContext3D::DEPTH_ATTACHMENT:
+        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, objectOrZero(buffer));
+        if (!bufferObject)
+            reattachDepthStencilDepth = true;
+        break;
+    case GraphicsContext3D::STENCIL_ATTACHMENT:
+        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, objectOrZero(buffer));
+        if (!bufferObject)
+            reattachDepthStencilStencil = true;
+        break;
+    default:
+        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, objectOrZero(buffer));
+    }
     m_framebufferBinding->setAttachment(attachment, buffer);
+    if (reattachDepth) {
+        Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::DEPTH_ATTACHMENT));
+        if (object)
+            m_context->framebufferRenderbuffer(target, GraphicsContext3D::DEPTH_ATTACHMENT, renderbuffertarget, object);
+    }
+    if (reattachStencil) {
+        Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::STENCIL_ATTACHMENT));
+        if (object)
+            m_context->framebufferRenderbuffer(target, GraphicsContext3D::STENCIL_ATTACHMENT, renderbuffertarget, object);
+    }
+    if (reattachDepthStencilDepth) {
+        Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT));
+        if (object)
+            m_context->framebufferRenderbuffer(target, GraphicsContext3D::DEPTH_ATTACHMENT, renderbuffertarget, object);
+    }
+    if (reattachDepthStencilStencil) {
+        Platform3DObject object = objectOrZero(m_framebufferBinding->getAttachment(GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT));
+        if (object)
+            m_context->framebufferRenderbuffer(target, GraphicsContext3D::STENCIL_ATTACHMENT, renderbuffertarget, object);
+    }
     cleanupAfterGraphicsCall(false);
 }
 
@@ -1377,7 +1423,7 @@ WebGLGetInfo WebGLRenderingContext::getFramebufferAttachmentParameter(unsigned l
         return WebGLGetInfo();
     }
 
-    if (!m_framebufferBinding || !m_framebufferBinding->object()) {
+    if (!m_framebufferBinding || !m_framebufferBinding->object() || m_framebufferBinding->isIncomplete(false)) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return WebGLGetInfo();
     }
@@ -2233,7 +2279,7 @@ void WebGLRenderingContext::renderbufferStorage(unsigned long target, unsigned l
         break;
     case GraphicsContext3D::DEPTH_STENCIL:
         if (m_isDepthStencilSupported) {
-            m_context->renderbufferStorage(target, internalformat, width, height);
+            m_context->renderbufferStorage(target, Extensions3D::DEPTH24_STENCIL8, width, height);
             cleanupAfterGraphicsCall(false);
         } else
             m_renderbufferBinding->setSize(width, height);

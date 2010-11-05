@@ -47,6 +47,7 @@ public:
     //   GL_EXT_texture_format_BGRA8888
     //   GL_EXT_read_format_bgra
     //   GL_ARB_robustness
+    //   GL_EXT_packed_depth_stencil / GL_OES_packed_depth_stencil
 
     // Takes full name of extension; for example,
     // "GL_EXT_texture_format_BGRA8888".
@@ -59,7 +60,10 @@ public:
         // GL_ARB_robustness enums
         GUILTY_CONTEXT_RESET_ARB = 0x8253,
         INNOCENT_CONTEXT_RESET_ARB = 0x8254,
-        UNKNOWN_CONTEXT_RESET_ARB = 0x8255
+        UNKNOWN_CONTEXT_RESET_ARB = 0x8255,
+
+        // GL_EXT/OES_packed_depth_stencil enums
+        DEPTH24_STENCIL8 = 0x88F0
     };
 
     // GL_ARB_robustness

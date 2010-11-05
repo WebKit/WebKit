@@ -836,16 +836,7 @@ DELEGATE_TO_GL(finish, Finish)
 
 DELEGATE_TO_GL(flush, Flush)
 
-void WebGraphicsContext3DDefaultImpl::framebufferRenderbuffer(unsigned long target, unsigned long attachment,
-                                                              unsigned long renderbuffertarget, WebGLId buffer)
-{
-    makeContextCurrent();
-    if (attachment == GL_DEPTH_STENCIL_ATTACHMENT) {
-        glFramebufferRenderbufferEXT(target, GL_DEPTH_ATTACHMENT, renderbuffertarget, buffer);
-        glFramebufferRenderbufferEXT(target, GL_STENCIL_ATTACHMENT, renderbuffertarget, buffer);
-    } else
-        glFramebufferRenderbufferEXT(target, attachment, renderbuffertarget, buffer);
-}
+DELEGATE_TO_GL_4(framebufferRenderbuffer, FramebufferRenderbufferEXT, unsigned long, unsigned long, unsigned long, WebGLId)
 
 DELEGATE_TO_GL_5(framebufferTexture2D, FramebufferTexture2DEXT, unsigned long, unsigned long, unsigned long, WebGLId, long)
 

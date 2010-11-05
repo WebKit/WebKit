@@ -1,3 +1,12 @@
+2010-11-04  Zhenyao Mo  <zmo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Need to simulate DEPTH_STENCIL in framebufferRenderbuffer / getFramebufferAttachmentParameter
+        https://bugs.webkit.org/show_bug.cgi?id=49020
+
+        * src/WebGraphicsContext3DDefaultImpl.cpp: Remove DEPTH_STENCIL_ATTACHMENT emulation at this level.
+
 2010-11-05  Darin Fisher  <darin@chromium.org>
 
         Pull chromium@65229 to fix the build.
