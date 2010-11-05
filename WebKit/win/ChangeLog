@@ -1,3 +1,19 @@
+2010-11-05  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Assertion failure in PluginStream::~PluginStream when running userscripts/user-script-plugin-document.html
+        https://bugs.webkit.org/show_bug.cgi?id=48751
+        <rdar://problem/8615536>
+        
+        Always call committedLoad in WebFrameLoaderClient::finishedLoading, even if we have a manual loader. We were
+        running into a case where we were trying to load an empty plugin document, which uses a manual loader, and
+        PluginStream::didFinishLoading was never being called. The stream was never being stopped, making us fire
+        an assert in the PluginStream destructor.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::finishedLoading):
+
 2010-11-05  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Simon Fraser.

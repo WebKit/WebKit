@@ -520,10 +520,10 @@ void WebFrameLoaderClient::finishedLoading(DocumentLoader* loader)
     // Telling the frame we received some data and passing 0 as the data is our
     // way to get work done that is normally done when the first bit of data is
     // received, even for the case of a document with no data (like about:blank)
-    if (!m_manualLoader) {
-        committedLoad(loader, 0, 0);
+    committedLoad(loader, 0, 0);
+
+    if (!m_manualLoader)
         return;
-    }
 
     m_manualLoader->didFinishLoading();
     m_manualLoader = 0;
