@@ -81,9 +81,13 @@ struct WebWindowFeatures {
 
 #if WEBKIT_IMPLEMENTATION
     WebWindowFeatures(const WebCore::WindowFeatures& f)
-        : xSet(f.xSet)
+        : x(f.x)
+        , xSet(f.xSet)
+        , y(f.y)
         , ySet(f.ySet)
+        , width(f.width)
         , widthSet(f.widthSet)
+        , height(f.height)
         , heightSet(f.heightSet)
         , menuBarVisible(f.menuBarVisible)
         , statusBarVisible(f.statusBarVisible)

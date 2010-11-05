@@ -1,3 +1,17 @@
+2010-11-04  usaini  <usaini08@gmail.com>
+
+        Reviewed by Antonio Gomes.
+
+        WebWindowFeatures has a faulty constructor for WebCore::WindowFeatures
+        https://bugs.webkit.org/show_bug.cgi?id=48035
+
+        * public/WebWindowFeatures.h:
+        (WebKit::WebWindowFeatures::WebWindowFeatures): updated the constructor
+        that takes in a WebCore::WindowFeature and had it copy all the variables
+        over properly so that after calling the constructor WebWindowFeatures is
+        always in a valid state. Before, the x,y,width,height booleans may be true, but
+        the corresponding int values would not be updated.
+
 2010-11-04  Zhenyao Mo  <zmo@google.com>
 
         Reviewed by Kenneth Russell.
