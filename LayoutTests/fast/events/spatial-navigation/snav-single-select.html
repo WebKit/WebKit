@@ -23,6 +23,11 @@
       ["Left", "start"],
       ["Left", "4"],
       ["Right", "start"],
+      ["Space", "start"],
+      ["Down", "start"],
+      ["Up", "start"],
+      ["Space", "start"],
+      ["Down", "8"],
       ["DONE", "DONE"]
     ];
 
@@ -38,7 +43,20 @@
       // starting the test itself: get to a known place.
       document.getElementById("start").focus();
 
-      initTest(resultMap, testCompleted);
+      initTest(resultMap, additionalTest);
+    }
+
+    function additionalTest()
+    {
+      document.getElementById("start").focus();
+      shouldBe("gFocusedDocument.getElementById(\"start\").selectedIndex", "0");
+      eventSender.keyDown(" ");
+      eventSender.keyDown("downArrow");
+      shouldBe("gFocusedDocument.getElementById(\"start\").selectedIndex", "1");
+      eventSender.keyDown("upArrow");
+      shouldBe("gFocusedDocument.getElementById(\"start\").selectedIndex", "0");
+
+      testCompleted();
     }
 
     function testCompleted()

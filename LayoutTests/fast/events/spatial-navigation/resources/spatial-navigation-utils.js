@@ -53,11 +53,14 @@ function doMove()
   case "Left":
     direction = "leftArrow";
     break;
+  case "Space":
+    direction = " ";
+    break;
   default:
-    return;
+    debug("Action [" + gExpectedResults[gIndex][0] + "] not supported.");
   }
 
-  if (window.layoutTestController)
+  if (window.layoutTestController && direction)
     eventSender.keyDown(direction);
 
   setTimeout(verifyAndAdvance, 15);
