@@ -1,5 +1,41 @@
 2010-11-04  Adam Roben  <aroben@apple.com>
 
+        Extract much of NPNInvalidateRectInvalidatesWindow's code into a
+        WindowedPluginTest base class
+
+        The base class takes care of subclassing the plugin's window so that a
+        custom WNDPROC is called. This will make it easier to write tests that
+        need to handle window messages.
+
+        Fixes <http://webkit.org/b/49028> It's hard to write a PluginTest with
+        a custom WNDPROC
+
+        Reviewed by Jon Honeycutt.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/NPNInvalidateRectInvalidatesWindow.cpp:
+        (NPNInvalidateRectInvalidatesWindow::NPNInvalidateRectInvalidatesWindow):
+        (NPNInvalidateRectInvalidatesWindow::NPP_SetWindow):
+        (NPNInvalidateRectInvalidatesWindow::wndProc):
+        (NPNInvalidateRectInvalidatesWindow::testInvalidateRect):
+        Moved code from here to WindowedPluginTest. Changed to use window()
+        instead of m_window.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        Added WindowedPluginTest and added TestNetscapePlugIn/win to the
+        include path. Also reordered the include path to make a little more
+        sense and simplified the entry that added TestNetscapePlugIn itself to
+        the include path.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/WindowedPluginTest.cpp: Added.
+        (WindowedPluginTest::WindowedPluginTest):
+        (WindowedPluginTest::NPP_SetWindow):
+        (WindowedPluginTest::staticWndProc):
+        * DumpRenderTree/TestNetscapePlugIn/win/WindowedPluginTest.h: Added.
+        (WindowedPluginTest::window):
+        Code came from NPNInvalidateRectInvalidatesWindow.
+
+2010-11-04  Adam Roben  <aroben@apple.com>
+
         Add a plugin test to show that windowed plugins are clipped correctly
 
         Fixes <http://webkit.org/b/49024> <rdar://problem/8487847> Windowed

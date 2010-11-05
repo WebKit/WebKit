@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "PluginTest.h"
+#include "WindowedPluginTest.h"
 
 #include "PluginObject.h"
 
@@ -69,28 +69,24 @@ TemporaryWindowMover::~TemporaryWindowMover()
     ::SetWindowPos(m_window, 0, m_savedWindowRect.left, m_savedWindowRect.top, 0, 0, SWP_HIDEWINDOW | standardSetWindowPosFlags);
 }
 
-class NPNInvalidateRectInvalidatesWindow : public PluginTest {
+class NPNInvalidateRectInvalidatesWindow : public WindowedPluginTest {
 public:
     NPNInvalidateRectInvalidatesWindow(NPP, const string& identifier);
     ~NPNInvalidateRectInvalidatesWindow();
 
 private:
-    static LRESULT CALLBACK wndProc(HWND, UINT message, WPARAM, LPARAM);
+    virtual LRESULT wndProc(UINT message, WPARAM, LPARAM, bool& handled);
 
     void onPaint();
     void testInvalidateRect();
 
     virtual NPError NPP_SetWindow(NPP, NPWindow*);
 
-    HWND m_window;
-    WNDPROC m_originalWndProc;
     TemporaryWindowMover* m_windowMover;
 };
 
 NPNInvalidateRectInvalidatesWindow::NPNInvalidateRectInvalidatesWindow(NPP npp, const string& identifier)
-    : PluginTest(npp, identifier)
-    , m_window(0)
-    , m_originalWndProc(0)
+    : WindowedPluginTest(npp, identifier)
     , m_windowMover(0)
 {
 }
@@ -100,30 +96,20 @@ NPNInvalidateRectInvalidatesWindow::~NPNInvalidateRectInvalidatesWindow()
     delete m_windowMover;
 }
 
-NPError NPNInvalidateRectInvalidatesWindow::NPP_SetWindow(NPP instance, NPWindow* window)
+NPError NPNInvalidateRectInvalidatesWindow::NPP_SetWindow(NPP instance, NPWindow* npWindow)
 {
-    HWND newWindow = reinterpret_cast<HWND>(window->window);
-    if (newWindow == m_window)
+    NPError error = WindowedPluginTest::NPP_SetWindow(instance, npWindow);
+    if (error != NPERR_NO_ERROR)
+        return error;
+
+    if (!window())
         return NPERR_NO_ERROR;
-
-    if (m_window) {
-        ::RemovePropW(m_window, instancePointerProperty);
-        ::SetWindowLongPtr(m_window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(m_originalWndProc));
-        m_originalWndProc = 0;
-    }
-
-    m_window = newWindow;
-    if (!m_window)
-        return NPERR_NO_ERROR;
-
-    m_originalWndProc = reinterpret_cast<WNDPROC>(::SetWindowLongPtrW(m_window, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(wndProc)));
-    ::SetPropW(m_window, instancePointerProperty, this);
 
     // The test harness's window (the one that contains the WebView) is off-screen and hidden.
     // We need to move it on-screen and make it visible in order for the plugin's window to
     // accumulate an update region when the DWM is disabled.
 
-    HWND testHarnessWindow = ::GetAncestor(m_window, GA_ROOT);
+    HWND testHarnessWindow = ::GetAncestor(window(), GA_ROOT);
     if (!testHarnessWindow) {
         pluginLog(instance, "Failed to get test harness window");
         return NPERR_GENERIC_ERROR;
@@ -141,14 +127,13 @@ NPError NPNInvalidateRectInvalidatesWindow::NPP_SetWindow(NPP instance, NPWindow
     return NPERR_NO_ERROR;
 }
 
-LRESULT NPNInvalidateRectInvalidatesWindow::wndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT NPNInvalidateRectInvalidatesWindow::wndProc(UINT message, WPARAM wParam, LPARAM lParam, bool& handled)
 {
-    NPNInvalidateRectInvalidatesWindow* instance = reinterpret_cast<NPNInvalidateRectInvalidatesWindow*>(::GetPropW(hwnd, instancePointerProperty));
-
     if (message == WM_PAINT)
-        instance->onPaint();
+        onPaint();
 
-    return ::CallWindowProcW(instance->m_originalWndProc, hwnd, message, wParam, lParam);
+    handled = false;
+    return 0;
 }
 
 void NPNInvalidateRectInvalidatesWindow::onPaint()
@@ -162,7 +147,7 @@ void NPNInvalidateRectInvalidatesWindow::onPaint()
 void NPNInvalidateRectInvalidatesWindow::testInvalidateRect()
 {
     RECT clientRect;
-    if (!::GetClientRect(m_window, &clientRect)) {
+    if (!::GetClientRect(window(), &clientRect)) {
         pluginLog(m_npp, "::GetClientRect failed");
         return;
     }
@@ -173,7 +158,7 @@ void NPNInvalidateRectInvalidatesWindow::testInvalidateRect()
     }
 
     // Clear the invalid region.
-    if (!::ValidateRect(m_window, 0)) {
+    if (!::ValidateRect(window(), 0)) {
         pluginLog(m_npp, "::ValidateRect failed");
         return;
     }
@@ -187,7 +172,7 @@ void NPNInvalidateRectInvalidatesWindow::testInvalidateRect()
     NPN_InvalidateRect(&rectToInvalidate);
 
     RECT invalidRect;
-    if (!::GetUpdateRect(m_window, &invalidRect, FALSE)) {
+    if (!::GetUpdateRect(window(), &invalidRect, FALSE)) {
         pluginLog(m_npp, "::GetUpdateRect failed");
         return;
     }

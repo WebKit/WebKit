@@ -39,7 +39,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 				DisableSpecificWarnings="4819"
 			/>
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 				DisableSpecificWarnings="4819"
 			/>
@@ -178,7 +178,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 				RuntimeLibrary="3"
 				DisableSpecificWarnings="4819"
@@ -248,7 +248,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 				DisableSpecificWarnings="4819"
 			/>
@@ -317,7 +317,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)&quot;;&quot;$(ProjectDir)..&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
 				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 				RuntimeLibrary="3"
 				DisableSpecificWarnings="4819"
@@ -418,6 +418,18 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="win"
+			>
+			<File
+				RelativePath=".\WindowedPluginTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\WindowedPluginTest.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath="..\main.cpp"
