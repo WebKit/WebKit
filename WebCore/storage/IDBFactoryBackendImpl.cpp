@@ -52,10 +52,16 @@ IDBFactoryBackendImpl::~IDBFactoryBackendImpl()
 {
 }
 
-void IDBFactoryBackendImpl::removeSQLiteDatabase(const String& filePath)
+void IDBFactoryBackendImpl::removeIDBDatabaseBackend(const String& uniqueIdentifier)
 {
-    ASSERT(m_sqliteDatabaseMap.contains(filePath));
-    m_sqliteDatabaseMap.remove(filePath);
+    ASSERT(m_databaseBackendMap.contains(uniqueIdentifier));
+    m_databaseBackendMap.remove(uniqueIdentifier);
+}
+
+void IDBFactoryBackendImpl::removeSQLiteDatabase(const String& uniqueIdentifier)
+{
+    ASSERT(m_sqliteDatabaseMap.contains(uniqueIdentifier));
+    m_sqliteDatabaseMap.remove(uniqueIdentifier);
 }
 
 static PassRefPtr<IDBSQLiteDatabase> openSQLiteDatabase(SecurityOrigin* securityOrigin, const String& pathBase, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
@@ -124,7 +130,7 @@ void IDBFactoryBackendImpl::open(const String& name, const String& description, 
     if (it != m_databaseBackendMap.end()) {
         if (!description.isNull())
             it->second->setDescription(description); // The description may have changed.
-        callbacks->onSuccess(it->second.get());
+        callbacks->onSuccess(it->second);
         return;
     }
 
@@ -144,9 +150,9 @@ void IDBFactoryBackendImpl::open(const String& name, const String& description, 
         m_sqliteDatabaseMap.set(fileIdentifier, sqliteDatabase.get());
     }
 
-    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, description, sqliteDatabase.get(), m_transactionCoordinator.get());
+    RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, description, sqliteDatabase.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
     callbacks->onSuccess(databaseBackend.get());
-    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.release());
+    m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
 }
 
 String IDBFactoryBackendImpl::databaseFileName(SecurityOrigin* securityOrigin)

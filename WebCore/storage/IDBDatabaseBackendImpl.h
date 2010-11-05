@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class IDBFactoryBackendImpl;
 class IDBObjectStoreBackendImpl;
 class IDBSQLiteDatabase;
 class IDBTransactionCoordinator;
@@ -42,9 +43,9 @@ class SQLiteDatabase;
 
 class IDBDatabaseBackendImpl : public IDBDatabaseBackendInterface {
 public:
-    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, const String& description, IDBSQLiteDatabase* database, IDBTransactionCoordinator* coordinator)
+    static PassRefPtr<IDBDatabaseBackendImpl> create(const String& name, const String& description, IDBSQLiteDatabase* database, IDBTransactionCoordinator* coordinator, IDBFactoryBackendImpl* factory, const String& uniqueIdentifier)
     {
-        return adoptRef(new IDBDatabaseBackendImpl(name, description, database, coordinator));
+        return adoptRef(new IDBDatabaseBackendImpl(name, description, database, coordinator, factory, uniqueIdentifier));
     }
     virtual ~IDBDatabaseBackendImpl();
 
@@ -69,7 +70,7 @@ public:
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
 
 private:
-    IDBDatabaseBackendImpl(const String& name, const String& description, IDBSQLiteDatabase* database, IDBTransactionCoordinator*);
+    IDBDatabaseBackendImpl(const String& name, const String& description, IDBSQLiteDatabase* database, IDBTransactionCoordinator*, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
 
     void loadObjectStores();
 
@@ -87,6 +88,10 @@ private:
     String m_name;
     String m_description;
     String m_version;
+
+    String m_identifier;
+    // This might not need to be a RefPtr since the factory's lifetime is that of the page group, but it's better to be conservitive than sorry.
+    RefPtr<IDBFactoryBackendImpl> m_factory;
 
     typedef HashMap<String, RefPtr<IDBObjectStoreBackendImpl> > ObjectStoreMap;
     ObjectStoreMap m_objectStores;
