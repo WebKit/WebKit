@@ -392,10 +392,6 @@ module html {
         const unsigned int VERTEX_ATTRIB_ARRAY_POINTER        = 0x8645;
         const unsigned int VERTEX_ATTRIB_ARRAY_BUFFER_BINDING = 0x889F;
 
-        /* Read Format */
-        const unsigned int IMPLEMENTATION_COLOR_READ_TYPE   = 0x8B9A;
-        const unsigned int IMPLEMENTATION_COLOR_READ_FORMAT = 0x8B9B;
-
         /* Shader Source */
         const unsigned int COMPILE_STATUS                 = 0x8B81;
         const unsigned int INFO_LOG_LENGTH                = 0x8B84;

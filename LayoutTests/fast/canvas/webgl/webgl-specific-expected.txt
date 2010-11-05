@@ -27,6 +27,8 @@ PASS getError was expected value: INVALID_OPERATION : a different reference valu
 PASS getError was expected value: INVALID_OPERATION : a different reference value for front and back facing is illegal
 PASS getError was expected value: INVALID_OPERATION : a different mask value for front and back facing is illegal
 PASS getError was expected value: INVALID_OPERATION : a different mask value for front and back facing is illegal
+PASS undefined is undefined.
+PASS undefined is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE

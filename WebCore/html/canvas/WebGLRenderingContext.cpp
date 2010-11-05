@@ -138,13 +138,6 @@ void WebGLRenderingContext::initializeNewContext()
     m_context->getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &numVertexAttribs);
     m_maxVertexAttribs = numVertexAttribs;
 
-    int implementationColorReadFormat = GraphicsContext3D::RGBA;
-    m_context->getIntegerv(GraphicsContext3D::IMPLEMENTATION_COLOR_READ_FORMAT, &implementationColorReadFormat);
-    m_implementationColorReadFormat = implementationColorReadFormat;
-    int implementationColorReadType = GraphicsContext3D::UNSIGNED_BYTE;
-    m_context->getIntegerv(GraphicsContext3D::IMPLEMENTATION_COLOR_READ_TYPE, &implementationColorReadType);
-    m_implementationColorReadType = implementationColorReadType;
-
     m_maxTextureSize = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &m_maxTextureSize);
     m_maxTextureLevel = WebGLTexture::computeLevelCount(m_maxTextureSize, m_maxTextureSize);
@@ -1488,10 +1481,6 @@ WebGLGetInfo WebGLRenderingContext::getParameter(unsigned long pname, ExceptionC
         return getUnsignedLongParameter(pname);
     case GraphicsContext3D::GREEN_BITS:
         return getLongParameter(pname);
-    case GraphicsContext3D::IMPLEMENTATION_COLOR_READ_FORMAT:
-        return getLongParameter(pname);
-    case GraphicsContext3D::IMPLEMENTATION_COLOR_READ_TYPE:
-        return getLongParameter(pname);
     case GraphicsContext3D::LINE_WIDTH:
         return getFloatParameter(pname);
     case GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS:
@@ -2160,7 +2149,7 @@ void WebGLRenderingContext::readPixels(long x, long y, long width, long height, 
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE);
         return;
     }
-    if (!((format == GraphicsContext3D::RGBA && type == GraphicsContext3D::UNSIGNED_BYTE) || (format == m_implementationColorReadFormat && type == m_implementationColorReadType))) {
+    if (format != GraphicsContext3D::RGBA || type != GraphicsContext3D::UNSIGNED_BYTE) {
         m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;
     }

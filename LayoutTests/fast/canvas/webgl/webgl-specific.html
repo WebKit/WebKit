@@ -98,6 +98,9 @@ gl.stencilFuncSeparate(gl.BACK, gl.ALWAYS, 0, 1);
 glErrorShouldBe(gl, gl.INVALID_OPERATION,
     "a different mask value for front and back facing is illegal");
 
+shouldBeUndefined(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
+shouldBeUndefined(gl.IMPLEMENTATION_COLOR_READ_TYPE);
+
 successfullyParsed = true;
 </script>
 

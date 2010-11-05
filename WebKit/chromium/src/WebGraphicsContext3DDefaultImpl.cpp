@@ -49,8 +49,6 @@
 namespace WebKit {
 
 enum {
-    IMPLEMENTATION_COLOR_READ_FORMAT = 0x8B9B,
-    IMPLEMENTATION_COLOR_READ_TYPE =  0x8B9A,
     MAX_VERTEX_UNIFORM_VECTORS = 0x8DFB,
     MAX_VARYING_VECTORS = 0x8DFC,
     MAX_FRAGMENT_UNIFORM_VECTORS = 0x8DFD
@@ -962,21 +960,12 @@ void WebGraphicsContext3DDefaultImpl::getFramebufferAttachmentParameteriv(unsign
 
 void WebGraphicsContext3DDefaultImpl::getIntegerv(unsigned long pname, int* value)
 {
-    // Need to emulate IMPLEMENTATION_COLOR_READ_FORMAT/TYPE for GL.  Any valid
-    // combination should work, but GL_RGB/GL_UNSIGNED_BYTE might be the most
-    // useful for desktop WebGL users.
     // Need to emulate MAX_FRAGMENT/VERTEX_UNIFORM_VECTORS and MAX_VARYING_VECTORS
     // because desktop GL's corresponding queries return the number of components
     // whereas GLES2 return the number of vectors (each vector has 4 components).
     // Therefore, the value returned by desktop GL needs to be divided by 4.
     makeContextCurrent();
     switch (pname) {
-    case IMPLEMENTATION_COLOR_READ_FORMAT:
-        *value = GL_RGB;
-        break;
-    case IMPLEMENTATION_COLOR_READ_TYPE:
-        *value = GL_UNSIGNED_BYTE;
-        break;
     case MAX_FRAGMENT_UNIFORM_VECTORS:
         glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, value);
         *value /= 4;

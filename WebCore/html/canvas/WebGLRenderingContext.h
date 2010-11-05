@@ -420,8 +420,6 @@ public:
 
     int m_packAlignment;
     int m_unpackAlignment;
-    unsigned long m_implementationColorReadFormat;
-    unsigned long m_implementationColorReadType;
     bool m_unpackFlipY;
     bool m_unpackPremultiplyAlpha;
     bool m_contextLost;

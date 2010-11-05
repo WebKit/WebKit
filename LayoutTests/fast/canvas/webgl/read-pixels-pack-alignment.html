@@ -39,8 +39,6 @@ var gl = null;
 var array = null;
 var pixel = [ 0, 0, 0, 0 ];
 var expectedColor = [ 0, 0, 0, 0 ];
-var pixelFormat = 0;
-var pixelType = 0;
 
 function calculatePixelBytes(format, type)
 {
@@ -204,22 +202,10 @@ function runTestIteration(format, type, packAlignment, width, height)
     shouldBe("pixel", "expectedColor");
 }
 
-function checkSupportedPixelFormatAndType()
-{
-    debug("Check supported pixel format/type besides RGBA/UNSIGNED_BYTE");
-    glErrorShouldBe(gl, gl.NO_ERROR);
-    pixelFormat = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_FORMAT);
-    pixelType = gl.getParameter(gl.IMPLEMENTATION_COLOR_READ_TYPE);
-    glErrorShouldBe(gl, gl.NO_ERROR);
-    shouldBeFalse("pixelFormat == gl.RGBA && pixelType == gl.UNSIGNED_BYTE");
-}
-
 description('Verify readPixels() works fine with various PACK_ALIGNMENT values.');
 
 shouldBeNonNull("gl = initWebGL('example', 'vshader', 'fshader', [ 'pos', 'colorIn' ], [ 0, 0, 0, 1 ], 1)");
 gl.disable(gl.BLEND);
-
-checkSupportedPixelFormatAndType();
 
 debug("Testing format = RGBA and type = UNSIGNED_BYTE");
 runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 1, 1, 2);
@@ -246,32 +232,6 @@ runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 1, -1, 1);
 runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 2, 1, -1);
 runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 4, 0, -1);
 runTestIteration(gl.RGBA, gl.UNSIGNED_BYTE, 8, -1, -1);
-
-debug("Testing the other supported format/type combination");
-runTestIteration(pixelFormat, pixelType, 1, 1, 2);
-runTestIteration(pixelFormat, pixelType, 2, 1, 2);
-runTestIteration(pixelFormat, pixelType, 4, 1, 2);
-runTestIteration(pixelFormat, pixelType, 8, 1, 2);
-runTestIteration(pixelFormat, pixelType, 4, 2, 2);
-runTestIteration(pixelFormat, pixelType, 8, 2, 2);
-runTestIteration(pixelFormat, pixelType, 4, 3, 2);
-runTestIteration(pixelFormat, pixelType, 8, 3, 2);
-runTestIteration(pixelFormat, pixelType, 4, 4, 2);
-runTestIteration(pixelFormat, pixelType, 8, 4, 2);
-runTestIteration(pixelFormat, pixelType, 8, 5, 1);
-runTestIteration(pixelFormat, pixelType, 4, 5, 2);
-runTestIteration(pixelFormat, pixelType, 8, 5, 2);
-runTestIteration(pixelFormat, pixelType, 8, 6, 2);
-runTestIteration(pixelFormat, pixelType, 8, 7, 2);
-runTestIteration(pixelFormat, pixelType, 8, 8, 2);
-runTestIteration(pixelFormat, pixelType, 1, 0, 0);
-runTestIteration(pixelFormat, pixelType, 2, 0, 0);
-runTestIteration(pixelFormat, pixelType, 4, 0, 0);
-runTestIteration(pixelFormat, pixelType, 8, 0, 0);
-runTestIteration(pixelFormat, pixelType, 1, -1, 1);
-runTestIteration(pixelFormat, pixelType, 2, 1, -1);
-runTestIteration(pixelFormat, pixelType, 4, 0, -1);
-runTestIteration(pixelFormat, pixelType, 8, -1, -1);
 
 successfullyParsed = true;
 </script>
