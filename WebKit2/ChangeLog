@@ -1,3 +1,65 @@
+2010-11-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebProcess won't kill itself if UIProcess goes away while WebProcess is spinning
+        https://bugs.webkit.org/show_bug.cgi?id=49090
+        <rdar://problem/7834575>
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::connectionDidClose):
+        Call Client::didCloseOnConnectionWorkQueue.
+
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::Client::didCloseOnConnectionWorkQueue):
+        Add new client function. Will be called on the connection work queue when the connection is closed.
+
+        * Platform/WorkItem.h:
+        (FunctionWorkItem0::FunctionWorkItem0):
+        (FunctionWorkItem0::execute):
+        (WorkItem::create):
+        Add a new WorkItem subclass that will invoke a C function.
+
+        * Platform/WorkQueue.h:
+        * Platform/mac/WorkQueueMac.cpp:
+        (WorkQueue::scheduleWorkAfterDelay):
+        New function which will schedule the given work item to be executed in at least 'delay' seconds.
+
+        * Platform/qt/WorkQueueQt.cpp:
+        (WorkQueue::scheduleWorkAfterDelay):
+        Add empty stub.
+        
+        * Platform/win/WorkQueueWin.cpp:
+        (WorkQueue::scheduleWorkAfterDelay):
+        Ditto.
+
+        * PluginProcess/PluginProcess.h:
+        Derive from ChildProcess.
+
+        * Shared/ChildProcess.cpp: Added.
+        (WebKit::ChildProcess::ChildProcess):
+        (WebKit::ChildProcess::~ChildProcess):
+        (WebKit::watchdogCallback):
+        Call _exit.
+
+        (WebKit::ChildProcess::didCloseOnConnectionWorkQueue):
+        When the connection is closed, schedule a work item to be run in 10 seconds. If the process hasn't
+        exited normally by then, we'll exit.
+
+        * Shared/ChildProcess.h: 
+        Add new ChildProcess class which is a common base class of WebProcess and PluginProcess and which contains
+        the watchdog timer logic.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/WebProcess.h:
+        Derive from ChildProcess.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
 2010-11-05  Adam Roben  <aroben@apple.com>
 
         Implement PluginInfoStore::shouldUsePlugin on Windows

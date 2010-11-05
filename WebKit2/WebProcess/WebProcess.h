@@ -27,7 +27,7 @@
 #define WebProcess_h
 
 #include "CacheModel.h"
-#include "Connection.h"
+#include "ChildProcess.h"
 #include "DrawingArea.h"
 #include "SharedMemory.h"
 #include "VisitedLinkTable.h"
@@ -53,7 +53,7 @@ struct WebPageCreationParameters;
 struct WebPreferencesStore;
 struct WebProcessCreationParameters;
 
-class WebProcess : CoreIPC::Connection::Client {
+class WebProcess : ChildProcess {
 public:
     static WebProcess& shared();
 

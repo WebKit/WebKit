@@ -316,6 +316,8 @@ void Connection::connectionDidClose()
             m_waitForSyncReplySemaphore.signal();
     }
 
+    m_client->didCloseOnConnectionWorkQueue(&m_connectionQueue, this);
+
     m_clientRunLoop->scheduleWork(WorkItem::create(this, &Connection::dispatchConnectionDidClose));
 }
 

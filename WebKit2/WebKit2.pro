@@ -207,6 +207,7 @@ HEADERS += \
     Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/BackingStore.h \
     Shared/CacheModel.h \
+    Shared/ChildProcess.h \
     Shared/DrawingAreaBase.h \
     Shared/ImmutableArray.h \
     Shared/ImmutableDictionary.h \
@@ -377,6 +378,7 @@ SOURCES += \
     Shared/API/c/WKURLResponse.cpp \
     Shared/API/c/WKUserContentURLPattern.cpp \
     Shared/BackingStore.cpp \
+    Shared/ChildProcess.cpp \
     Shared/ImmutableArray.cpp \
     Shared/ImmutableDictionary.cpp \
     Shared/MutableArray.cpp \

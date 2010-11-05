@@ -413,6 +413,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\ChildProcess.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\ChildProcess.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\CommandLine.h"
 				>
 			</File>

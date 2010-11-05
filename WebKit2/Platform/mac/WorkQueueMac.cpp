@@ -49,6 +49,13 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
     dispatch_async_f(m_dispatchQueue, item.leakPtr(), executeWorkItem);
 }
 
+void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem> item, double delay)
+{
+    dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, delay * NSEC_PER_SEC);
+
+    dispatch_after_f(delayTime, m_dispatchQueue, item.leakPtr(), executeWorkItem);
+}
+
 class WorkQueue::EventSource {
 public:
     EventSource(MachPortEventType eventType, dispatch_source_t dispatchSource, PassOwnPtr<WorkItem> workItem)

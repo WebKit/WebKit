@@ -50,7 +50,12 @@ public:
     explicit WorkQueue(const char* name);
     ~WorkQueue();
 
+    // Will schedule the given work item to run as soon as possible.
     void scheduleWork(PassOwnPtr<WorkItem>);
+
+    // Will schedule the given work item to run after the given delay (in seconds).
+    void scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double delay);
+
     void invalidate();
 
 #if PLATFORM(MAC)

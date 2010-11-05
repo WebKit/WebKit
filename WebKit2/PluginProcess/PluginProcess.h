@@ -28,7 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#include "Connection.h"
+#include "ChildProcess.h"
 #include "RunLoop.h"
 #include <wtf/Forward.h>
 
@@ -38,7 +38,7 @@ class NetscapePluginModule;
 class WebProcessConnection;
 struct PluginProcessCreationParameters;
         
-class PluginProcess : Noncopyable, CoreIPC::Connection::Client {
+class PluginProcess : ChildProcess {
 public:
     static PluginProcess& shared();
 

@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QThread>
 #include <wtf/Threading.h>
+#include "NotImplemented.h"
 
 class WorkQueue::WorkItemQt : public QObject {
     Q_OBJECT
@@ -121,6 +122,11 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
     WorkQueue::WorkItemQt* itemQt = new WorkQueue::WorkItemQt(this, item.leakPtr());
     itemQt->startTimer(0);
     itemQt->moveToThread(m_workThread);
+}
+
+void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double)
+{
+    notImplemented();
 }
 
 #include "WorkQueueQt.moc"

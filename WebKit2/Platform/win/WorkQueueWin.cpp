@@ -26,6 +26,7 @@
 #include "WorkQueue.h"
 
 #include <wtf/Threading.h>
+#include "NotImplemented.h"
 
 inline WorkQueue::WorkItemWin::WorkItemWin(PassOwnPtr<WorkItem> item, WorkQueue* queue)
     : m_item(item)
@@ -200,6 +201,11 @@ void WorkQueue::scheduleWork(PassOwnPtr<WorkItem> item)
     // only one thread actually ends up performing work.)
     if (!m_isWorkThreadRegistered)
         ::QueueUserWorkItem(workThreadCallback, this, WT_EXECUTEDEFAULT);
+}
+
+void WorkQueue::scheduleWorkAfterDelay(PassOwnPtr<WorkItem>, double)
+{
+    notImplemented();
 }
 
 void WorkQueue::unregisterWaitAndDestroyItemSoon(PassRefPtr<HandleWorkItem> item)
