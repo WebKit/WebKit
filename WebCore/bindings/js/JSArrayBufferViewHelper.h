@@ -115,6 +115,8 @@ PassRefPtr<ArrayBufferView> constructArrayBufferView(JSC::ExecState* exec)
         RefPtr<ArrayBuffer> buffer = toArrayBuffer(exec->argument(0));
         if (buffer) {
             unsigned offset = (exec->argumentCount() > 1) ? exec->argument(1).toUInt32(exec) : 0;
+            if ((buffer->byteLength() - offset) % sizeof(T))
+                throwError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size."));
             unsigned int length = (buffer->byteLength() - offset) / sizeof(T);
             if (exec->argumentCount() > 2)
                 length = exec->argument(2).toUInt32(exec);

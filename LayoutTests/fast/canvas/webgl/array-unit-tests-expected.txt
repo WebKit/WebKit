@@ -20,12 +20,14 @@ PASS test Float32Array BoundaryConditions(-500.5, -500.5, 500.5, 500.5)
 PASS Construction of Float32Array with null buffer threw exception
 PASS Construction of Float32Array with (null buffer, 0) threw exception
 PASS Construction of Float32Array with (null buffer, 0, 0) threw exception
-PASS Construction of Float32Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Float32Array with out-of-range values threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Float32Array with negative size threw exception
-PASS Construction of Float32Array with negative out-of-range values threw INDEX_SIZE_ERR exception
-PASS Construction of Float32Array with unaligned offset threw INDEX_SIZE_ERR exception
+PASS Construction of Float32Array with negative out-of-range values threw an exception
+PASS Construction of Float32Array with unaligned offset threw an exception
+PASS Construction of Float32Array with unaligned length threw an exception
 PASS Construction of huge Float32Array threw exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
 Testing slicing of Float32Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -33,7 +35,7 @@ PASS array.slice(4, -2147483648).length is 0
 PASS array.length is 0
 Testing slicing with default inputs of Float32Array
 PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
+PASS array.slice(0).length is (32 / typeSize)
 PASS array.slice(2).length is (32 / typeSize) - 2
 PASS array.slice(-2).length is 2
 PASS array.slice(-2147483648).length is (32 / typeSize)
@@ -60,17 +62,18 @@ PASS test Int8Array BoundaryConditions(-128, -128, 127, 127)
 PASS Construction of Int8Array with null buffer threw exception
 PASS Construction of Int8Array with (null buffer, 0) threw exception
 PASS Construction of Int8Array with (null buffer, 0, 0) threw exception
-PASS Construction of Int8Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Int8Array with out-of-range values threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Int8Array with negative size threw exception
-PASS Construction of Int8Array with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Int8Array with negative out-of-range values threw an exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
 Testing slicing of Int8Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
 Testing slicing with default inputs of Int8Array
 PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
+PASS array.slice(0).length is (32 / typeSize)
 PASS array.slice(2).length is (32 / typeSize) - 2
 PASS array.slice(-2).length is 2
 PASS array.slice(-2147483648).length is (32 / typeSize)
@@ -97,12 +100,14 @@ PASS test Int16Array BoundaryConditions(-32768, -32768, 32767, 32767)
 PASS Construction of Int16Array with null buffer threw exception
 PASS Construction of Int16Array with (null buffer, 0) threw exception
 PASS Construction of Int16Array with (null buffer, 0, 0) threw exception
-PASS Construction of Int16Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Int16Array with out-of-range values threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Int16Array with negative size threw exception
-PASS Construction of Int16Array with negative out-of-range values threw INDEX_SIZE_ERR exception
-PASS Construction of Int16Array with unaligned offset threw INDEX_SIZE_ERR exception
+PASS Construction of Int16Array with negative out-of-range values threw an exception
+PASS Construction of Int16Array with unaligned offset threw an exception
+PASS Construction of Int16Array with unaligned length threw an exception
 PASS Construction of huge Int16Array threw exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
 Testing slicing of Int16Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -110,7 +115,7 @@ PASS array.slice(4, -2147483648).length is 0
 PASS array.length is 0
 Testing slicing with default inputs of Int16Array
 PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
+PASS array.slice(0).length is (32 / typeSize)
 PASS array.slice(2).length is (32 / typeSize) - 2
 PASS array.slice(-2).length is 2
 PASS array.slice(-2147483648).length is (32 / typeSize)
@@ -137,12 +142,14 @@ PASS test Int32Array BoundaryConditions(-2147483648, -2147483648, 2147483647, 21
 PASS Construction of Int32Array with null buffer threw exception
 PASS Construction of Int32Array with (null buffer, 0) threw exception
 PASS Construction of Int32Array with (null buffer, 0, 0) threw exception
-PASS Construction of Int32Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Int32Array with out-of-range values threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Int32Array with negative size threw exception
-PASS Construction of Int32Array with negative out-of-range values threw INDEX_SIZE_ERR exception
-PASS Construction of Int32Array with unaligned offset threw INDEX_SIZE_ERR exception
+PASS Construction of Int32Array with negative out-of-range values threw an exception
+PASS Construction of Int32Array with unaligned offset threw an exception
+PASS Construction of Int32Array with unaligned length threw an exception
 PASS Construction of huge Int32Array threw exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
 Testing slicing of Int32Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -150,7 +157,7 @@ PASS array.slice(4, -2147483648).length is 0
 PASS array.length is 0
 Testing slicing with default inputs of Int32Array
 PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
+PASS array.slice(0).length is (32 / typeSize)
 PASS array.slice(2).length is (32 / typeSize) - 2
 PASS array.slice(-2).length is 2
 PASS array.slice(-2147483648).length is (32 / typeSize)
@@ -177,17 +184,18 @@ PASS test Uint8Array BoundaryConditions(0, 0, 255, 255)
 PASS Construction of Uint8Array with null buffer threw exception
 PASS Construction of Uint8Array with (null buffer, 0) threw exception
 PASS Construction of Uint8Array with (null buffer, 0, 0) threw exception
-PASS Construction of Uint8Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Uint8Array with out-of-range values threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Uint8Array with negative size threw exception
-PASS Construction of Uint8Array with negative out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Uint8Array with negative out-of-range values threw an exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
 Testing slicing of Uint8Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
 PASS array.slice(4, -2147483648).length is 0
 Testing slicing with default inputs of Uint8Array
 PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
+PASS array.slice(0).length is (32 / typeSize)
 PASS array.slice(2).length is (32 / typeSize) - 2
 PASS array.slice(-2).length is 2
 PASS array.slice(-2147483648).length is (32 / typeSize)
@@ -214,12 +222,14 @@ PASS test Uint16Array BoundaryConditions(0, 0, 65535, 65535)
 PASS Construction of Uint16Array with null buffer threw exception
 PASS Construction of Uint16Array with (null buffer, 0) threw exception
 PASS Construction of Uint16Array with (null buffer, 0, 0) threw exception
-PASS Construction of Uint16Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Uint16Array with out-of-range values threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Uint16Array with negative size threw exception
-PASS Construction of Uint16Array with negative out-of-range values threw INDEX_SIZE_ERR exception
-PASS Construction of Uint16Array with unaligned offset threw INDEX_SIZE_ERR exception
+PASS Construction of Uint16Array with negative out-of-range values threw an exception
+PASS Construction of Uint16Array with unaligned offset threw an exception
+PASS Construction of Uint16Array with unaligned length threw an exception
 PASS Construction of huge Uint16Array threw exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
 Testing slicing of Uint16Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -227,7 +237,7 @@ PASS array.slice(4, -2147483648).length is 0
 PASS array.length is 0
 Testing slicing with default inputs of Uint16Array
 PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
+PASS array.slice(0).length is (32 / typeSize)
 PASS array.slice(2).length is (32 / typeSize) - 2
 PASS array.slice(-2).length is 2
 PASS array.slice(-2147483648).length is (32 / typeSize)
@@ -254,12 +264,14 @@ PASS test Uint32Array BoundaryConditions(0, 0, 4294967295, 4294967295)
 PASS Construction of Uint32Array with null buffer threw exception
 PASS Construction of Uint32Array with (null buffer, 0) threw exception
 PASS Construction of Uint32Array with (null buffer, 0, 0) threw exception
-PASS Construction of Uint32Array with out-of-range values threw INDEX_SIZE_ERR exception
+PASS Construction of Uint32Array with out-of-range values threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Uint32Array with negative size threw exception
-PASS Construction of Uint32Array with negative out-of-range values threw INDEX_SIZE_ERR exception
-PASS Construction of Uint32Array with unaligned offset threw INDEX_SIZE_ERR exception
+PASS Construction of Uint32Array with negative out-of-range values threw an exception
+PASS Construction of Uint32Array with unaligned offset threw an exception
+PASS Construction of Uint32Array with unaligned length threw an exception
 PASS Construction of huge Uint32Array threw exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
 Testing slicing of Uint32Array
 PASS array.length is 32 / typeSize
 PASS array.slice(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -267,7 +279,7 @@ PASS array.slice(4, -2147483648).length is 0
 PASS array.length is 0
 Testing slicing with default inputs of Uint32Array
 PASS array.length is 32 / typeSize
-PASS array.slice().length is (32 / typeSize)
+PASS array.slice(0).length is (32 / typeSize)
 PASS array.slice(2).length is (32 / typeSize) - 2
 PASS array.slice(-2).length is 2
 PASS array.slice(-2147483648).length is (32 / typeSize)

@@ -94,6 +94,8 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
             if (!ok)
                 return throwError("Could not convert argument 1 to a number");
         }
+        if ((buf->byteLength() - offset) % sizeof(ElementType))
+            return throwError("ArrayBuffer length minus the byteOffset is not a multiple of the element size.", V8Proxy::RangeError);
         uint32_t length = (buf->byteLength() - offset) / sizeof(ElementType);
         if (argLen > 2) {
             length = toUInt32(args[2], ok);
