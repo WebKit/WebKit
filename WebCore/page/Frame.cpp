@@ -989,4 +989,22 @@ void Frame::scalePage(float scale)
     }
 }
 
+void Frame::suspendAnimations()
+{
+    animation()->suspendAnimations(document());
+    
+    // Handle subframes
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->suspendAnimations();
+}
+
+void Frame::resumeAnimations()
+{
+    animation()->resumeAnimations(document());
+    
+    // Handle subframes
+    for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
+        child->resumeAnimations();
+}
+
 } // namespace WebCore

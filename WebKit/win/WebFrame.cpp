@@ -1299,11 +1299,7 @@ HRESULT WebFrame::suspendAnimations()
     if (!frame)
         return E_FAIL;
 
-    AnimationController* controller = frame->animation();
-    if (!controller)
-        return E_FAIL;
-
-    controller->suspendAnimations(frame->document());
+    frame->suspendAnimations();
     return S_OK;
 }
 
@@ -1313,11 +1309,7 @@ HRESULT WebFrame::resumeAnimations()
     if (!frame)
         return E_FAIL;
 
-    AnimationController* controller = frame->animation();
-    if (!controller)
-        return E_FAIL;
-
-    controller->resumeAnimations(frame->document());
+    frame->resumeAnimations();
     return S_OK;
 }
 

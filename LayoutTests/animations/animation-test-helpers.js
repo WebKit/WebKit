@@ -23,6 +23,9 @@ Function parameters:
     [2] If a single string is passed, it is the id of the element to test. If an array with 2 elements is passed they
     are the ids of 2 elements, whose values are compared for equality. In this case the expected value is ignored
     but the tolerance is used in the comparison.
+    
+    If a string with a '.' is passed, this is an element in an iframe. The string before the dot is the iframe id
+    and the string after the dot is the element name in that iframe.
 
     [3] If the CSS property name is "webkitTransform", expected value must be an array of 1 or more numbers corresponding to the matrix elements,
     or a string which will be compared directly (useful if the expected value is "none")
@@ -65,6 +68,16 @@ function checkExpectedValue(expected, index)
         elementId = elementId[0];
         compareElements = true;
     }
+    
+    // Check for a dot separated string
+    var iframeId;
+    if (!compareElements) {
+        var array = elementId.split('.');
+        if (array.length == 2) {
+            iframeId = array[0];
+            elementId = array[1];
+        }
+    }
 
     if (animationName && hasPauseAnimationAPI && !layoutTestController.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId)) {
         result += "FAIL - animation \"" + animationName + "\" is not running" + "<br>";
@@ -79,7 +92,13 @@ function checkExpectedValue(expected, index)
     var computedValue, computedValue2;
     var pass = true;
     if (!property.indexOf("webkitTransform")) {
-        computedValue = window.getComputedStyle(document.getElementById(elementId)).webkitTransform;
+        var element;
+        if (iframeId)
+            element = document.getElementById(iframeId).contentDocument.getElementById(elementId);
+        else
+            element = document.getElementById(elementId);
+            
+        computedValue = window.getComputedStyle(element).webkitTransform;
         if (compareElements) {
             computedValue2 = window.getComputedStyle(document.getElementById(elementId2)).webkitTransform;
             var m1 = matrixStringToArray(computedValue);
@@ -108,7 +127,13 @@ function checkExpectedValue(expected, index)
             }
         }
     } else if (property == "lineHeight") {
-        computedValue = parseInt(window.getComputedStyle(document.getElementById(elementId)).lineHeight);
+        var element;
+        if (iframeId)
+            element = document.getElementById(iframeId).contentDocument.getElementById(elementId);
+        else
+            element = document.getElementById(elementId);
+            
+        computedValue = parseInt(window.getComputedStyle(element).lineHeight);
         if (compareElements) {
             computedValue2 = parseInt(window.getComputedStyle(document.getElementById(elementId2)).lineHeight);
             pass = isCloseEnough(computedValue, computedValue2, tolerance);
@@ -116,7 +141,13 @@ function checkExpectedValue(expected, index)
         else
             pass = isCloseEnough(computedValue, expectedValue, tolerance);
     } else {
-        var computedStyle = window.getComputedStyle(document.getElementById(elementId)).getPropertyCSSValue(property);
+        var element;
+        if (iframeId)
+            element = document.getElementById(iframeId).contentDocument.getElementById(elementId);
+        else
+            element = document.getElementById(elementId);
+
+        var computedStyle = window.getComputedStyle(element).getPropertyCSSValue(property);
         computedValue = computedStyle.getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
         if (compareElements) {
             var computedStyle2 = window.getComputedStyle(document.getElementById(elementId2)).getPropertyCSSValue(property);
@@ -129,14 +160,24 @@ function checkExpectedValue(expected, index)
 
     if (compareElements) {
         if (pass)
-            result += "PASS - \"" + property + "\" property for \"" + elementId + "\" and \"" + elementId2 + "\" elements at " + time + "s are close enough to each other" + "<br>";
+            result += "PASS - \"" + property + "\" property for \"" + elementId + "\" and \"" + elementId2 + 
+                            "\" elements at " + time + "s are close enough to each other" + "<br>";
         else
-            result += "FAIL - \"" + property + "\" property for \"" + elementId + "\" and \"" + elementId2 + "\" elements at " + time + "s saw: \"" + computedValue + "\" and \"" + computedValue2 + "\" which are not close enough to each other" + "<br>";
+            result += "FAIL - \"" + property + "\" property for \"" + elementId + "\" and \"" + elementId2 + 
+                            "\" elements at " + time + "s saw: \"" + computedValue + "\" and \"" + computedValue2 + 
+                                            "\" which are not close enough to each other" + "<br>";
     } else {
-        if (pass)
-            result += "PASS - \"" + property + "\" property for \"" + elementId + "\" element at " + time + "s saw something close to: " + expectedValue + "<br>";
+        var elementName;
+        if (iframeId)
+            elementName = iframeId + '.' + elementId;
         else
-            result += "FAIL - \"" + property + "\" property for \"" + elementId + "\" element at " + time + "s expected: " + expectedValue + " but saw: " + computedValue + "<br>";
+            elementName = elementId;
+        if (pass)
+            result += "PASS - \"" + property + "\" property for \"" + elementName + "\" element at " + time + 
+                            "s saw something close to: " + expectedValue + "<br>";
+        else
+            result += "FAIL - \"" + property + "\" property for \"" + elementName + "\" element at " + time + 
+                            "s expected: " + expectedValue + " but saw: " + computedValue + "<br>";
     }
 }
 

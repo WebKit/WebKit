@@ -1,3 +1,14 @@
+2010-11-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Make suspendAnimations/resumeAnimations and setCSSAnimations traverse through subframes and remember state
+        https://bugs.webkit.org/show_bug.cgi?id=46945
+
+        * WebFrame.cpp:
+        (WebFrame::suspendAnimations):
+        (WebFrame::resumeAnimations):
+
 2010-11-05  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by David Kilzer.
