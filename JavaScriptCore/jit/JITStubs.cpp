@@ -1304,7 +1304,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_convert_this_strict)
     
     JSValue v1 = stackFrame.args[0].jsValue();
     CallFrame* callFrame = stackFrame.callFrame;
-
+    ASSERT(v1.asCell()->structure()->typeInfo().needsThisConversion());
     JSValue result = v1.toStrictThisObject(callFrame);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);

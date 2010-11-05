@@ -1266,7 +1266,7 @@ void JIT::emit_op_convert_this_strict(Instruction* currentInstruction)
     notNull.link(this);
     Jump isImmediate = emitJumpIfNotJSCell(regT0);
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSCell, m_structure)), regT1);
-    Jump notAnObject = branch8(NotEqual, Address(regT3, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType));
+    Jump notAnObject = branch8(NotEqual, Address(regT1, OBJECT_OFFSETOF(Structure, m_typeInfo.m_type)), Imm32(ObjectType));
     addSlowCase(branchTest8(NonZero, Address(regT1, OBJECT_OFFSETOF(Structure, m_typeInfo.m_flags)), Imm32(NeedsThisConversion)));
     isImmediate.link(this);
     notAnObject.link(this);
