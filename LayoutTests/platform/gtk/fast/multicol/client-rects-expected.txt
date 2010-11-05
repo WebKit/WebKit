@@ -4,22 +4,22 @@ layer at (0,0) size 781x696
   RenderBlock {HTML} at (0,0) size 781x696
     RenderBody {BODY} at (8,8) size 765x678
       RenderBlock {P} at (0,0) size 765x29
-        RenderText {#text} at (0,10) size 396x19
-          text run at (0,10) width 396: "The blue borders should coincide with light blue squares, like this: "
-        RenderBlock {SPAN} at (396,0) size 25x25 [bgcolor=#ADD8E6] [border: (3px solid #0000FF7F)]
-        RenderText {#text} at (421,10) size 185x19
-          text run at (421,10) width 8: ". "
-          text run at (429,10) width 177: "There should be none of this: "
-        RenderBlock {SPAN} at (606,0) size 25x25 [bgcolor=#ADD8E6]
-        RenderText {#text} at (631,10) size 48x19
-          text run at (631,10) width 4: " "
-          text run at (635,10) width 44: "or this: "
-        RenderBlock {SPAN} at (679,0) size 25x25 [border: (3px solid #0000FF7F)]
-        RenderText {#text} at (704,10) size 4x19
-          text run at (704,10) width 4: "."
+        RenderText {#text} at (0,10) size 421x19
+          text run at (0,10) width 421: "The blue borders should coincide with light blue squares, like this: "
+        RenderBlock {SPAN} at (421,0) size 25x25 [bgcolor=#ADD8E6] [border: (3px solid #0000FF7F)]
+        RenderText {#text} at (446,10) size 196x19
+          text run at (446,10) width 8: ". "
+          text run at (454,10) width 188: "There should be none of this: "
+        RenderBlock {SPAN} at (642,0) size 25x25 [bgcolor=#ADD8E6]
+        RenderText {#text} at (667,10) size 51x19
+          text run at (667,10) width 4: " "
+          text run at (671,10) width 47: "or this: "
+        RenderBlock {SPAN} at (718,0) size 25x25 [border: (3px solid #0000FF7F)]
+        RenderText {#text} at (743,10) size 4x19
+          text run at (743,10) width 4: "."
       RenderBlock {P} at (0,567) size 765x19
-        RenderText {#text} at (0,0) size 604x19
-          text run at (0,0) width 604: "Except here, where the blue border should be around the bigger slice of the blue square, on the right."
+        RenderText {#text} at (0,0) size 633x19
+          text run at (0,0) width 633: "Except here, where the blue border should be around the bigger slice of the blue square, on the right."
 layer at (8,53) size 136x76
   RenderBlock {DIV} at (0,45) size 136x76 [color=#ADD8E6] [border: (3px solid #000000)]
     RenderBR {BR} at (13,13) size 0x25

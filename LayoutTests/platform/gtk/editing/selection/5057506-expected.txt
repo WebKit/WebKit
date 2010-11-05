@@ -1,4 +1,4 @@
-ALERT: 33
+ALERT: 34
 ALERT: 112.5
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
@@ -6,23 +6,23 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x76
-        RenderText {#text} at (0,0) size 771x76
-          text run at (0,0) width 477: "This tests double clicking after the last character in the last cell of a block table. "
-          text run at (477,0) width 294: "The paragraph break (the space between the last"
-          text run at (0,19) width 448: "character and the first character in the next paragraph) should be selected. "
-          text run at (448,19) width 272: "Selection painting problems might prevent the"
-          text run at (0,38) width 373: "paragraph break from appearing as selected even though it is. "
-          text run at (373,38) width 377: "To test manually, double click inside the table cell, after the last"
-          text run at (0,57) width 152: "character, and hit delete. "
-          text run at (152,57) width 265: "Afterward, the table should contain 'foobar'."
+        RenderText {#text} at (0,0) size 779x76
+          text run at (0,0) width 500: "This tests double clicking after the last character in the last cell of a block table. "
+          text run at (500,0) width 278: "The paragraph break (the space between the"
+          text run at (0,19) width 490: "last character and the first character in the next paragraph) should be selected. "
+          text run at (490,19) width 289: "Selection painting problems might prevent the"
+          text run at (0,38) width 389: "paragraph break from appearing as selected even though it is. "
+          text run at (389,38) width 373: "To test manually, double click inside the table cell, after the"
+          text run at (0,57) width 182: "last character, and hit delete. "
+          text run at (182,57) width 277: "Afterward, the table should contain 'foobar'."
       RenderBlock {DIV} at (0,92) size 784x48
         RenderTable {TABLE} at (0,0) size 110x29 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 108x27
             RenderTableRow {TR} at (0,2) size 108x23
               RenderTableCell {TD} at (2,2) size 104x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {SPAN} at (0,0) size 20x19
-                  RenderText {#text} at (2,2) size 20x19
-                    text run at (2,2) width 20: "foo"
+                RenderInline {SPAN} at (0,0) size 21x19
+                  RenderText {#text} at (2,2) size 21x19
+                    text run at (2,2) width 21: "foo"
         RenderBlock {DIV} at (0,29) size 784x19
           RenderText {#text} at (0,0) size 20x19
             text run at (0,0) width 20: "bar"

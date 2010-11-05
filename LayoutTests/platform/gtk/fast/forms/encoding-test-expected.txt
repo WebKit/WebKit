@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,45) size 784x19
-        RenderText {#text} at (0,0) size 116x19
-          text run at (0,0) width 116: "multipart/form-data"
+        RenderText {#text} at (0,0) size 121x19
+          text run at (0,0) width 121: "multipart/form-data"
 layer at (13,13) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19

@@ -7,11 +7,11 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,45) size 784x19
-        RenderText {#text} at (0,0) size 704x19
-          text run at (0,0) width 704: "Tests drag-selecting down. If the test succeeds, the text from the center to the end of the text field should be selected."
+        RenderText {#text} at (0,0) size 732x19
+          text run at (0,0) width 732: "Tests drag-selecting down. If the test succeeds, the text from the center to the end of the text field should be selected."
 layer at (13,13) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
-    RenderText {#text} at (1,0) size 152x19
-      text run at (1,0) width 152: "This is a bunch of text."
+    RenderText {#text} at (1,0) size 158x19
+      text run at (1,0) width 158: "This is a bunch of text."
 selection start: position 5 of child 0 {#text} of child 0 {DIV} of child 0 {INPUT} of body
 selection end:   position 24 of child 0 {#text} of child 0 {DIV} of child 0 {INPUT} of body

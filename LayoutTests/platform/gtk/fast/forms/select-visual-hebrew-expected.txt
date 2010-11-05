@@ -3,17 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 766x19
-          text run at (0,0) width 766 LTR override: "This tests that native pop-ups are rendered in logical order even in visually-ordered Hebrew pages."
-      RenderBlock {HR} at (0,35) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,53) size 784x19
-        RenderText {#text} at (0,0) size 467x19
-          text run at (0,0) width 424 LTR override: "Text on the pop-up and in the list should look like this: "
-          text run at (424,0) width 43 LTR override: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
-      RenderBlock (anonymous) at (0,88) size 784x29
-        RenderMenuList {SELECT} at (2,2) size 66x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 64x23
+      RenderBlock {P} at (0,0) size 784x38
+        RenderText {#text} at (0,0) size 733x38
+          text run at (0,0) width 733 LTR override: "This tests that native pop-ups are rendered in logical order even in visually-ordered Hebrew"
+          text run at (0,19) width 53 LTR override: "pages."
+      RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,72) size 784x19
+        RenderText {#text} at (0,0) size 477x19
+          text run at (0,0) width 434 LTR override: "Text on the pop-up and in the list should look like this: "
+          text run at (434,0) width 43 LTR override: "\x{5E8}\x{5D5}\x{5EA}\x{5E4}\x{5DB}"
+      RenderBlock (anonymous) at (0,107) size 784x29
+        RenderMenuList {SELECT} at (2,2) size 70x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 68x23
             RenderText at (2,2) size 43x19
               text run at (2,2) width 43 RTL: "\x{5DB}\x{5E4}\x{5EA}\x{5D5}\x{5E8}"
         RenderText {#text} at (0,0) size 0x0

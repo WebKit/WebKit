@@ -4,9 +4,9 @@ layer at (0,0) size 800x547
   RenderBlock {HTML} at (0,0) size 800x547
     RenderBody {BODY} at (8,16) size 784x523
       RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 396x19
-          text run at (0,0) width 309: "The top table was resized while the field\x{2019}s contents "
-          text run at (309,0) width 87: "were selected."
+        RenderText {#text} at (0,0) size 414x19
+          text run at (0,0) width 325: "The top table was resized while the field\x{2019}s contents "
+          text run at (325,0) width 89: "were selected."
       RenderTable {TABLE} at (0,35) size 242x244
         RenderTableSection {TBODY} at (0,0) size 242x244
           RenderTableRow {TR} at (0,2) size 242x240

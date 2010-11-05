@@ -15,10 +15,10 @@ layer at (0,0) size 800x600
             RenderBlock {DIV} at (3,3) size 188x19
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,60) size 784x29
-        RenderText {#text} at (0,5) size 346x19
-          text run at (0,5) width 346: "This field should look and act focused. Try to type into it: "
-        RenderTextControl {INPUT} at (348,2) size 194x25 [bgcolor=#FFFFFF]
-layer at (359,73) size 188x19
+        RenderText {#text} at (0,5) size 366x19
+          text run at (0,5) width 366: "This field should look and act focused. Try to type into it: "
+        RenderTextControl {INPUT} at (368,2) size 194x25 [bgcolor=#FFFFFF]
+layer at (379,73) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
     RenderText {#text} at (1,0) size 44x19
       text run at (1,0) width 44: "PASS"

@@ -4,28 +4,28 @@ layer at (0,0) size 800x226
   RenderBlock {HTML} at (0,0) size 800x226
     RenderBody {BODY} at (8,16) size 784x202
       RenderBlock {P} at (0,0) size 784x38
-        RenderInline {B} at (0,0) size 61x19
-          RenderText {#text} at (0,0) size 61x19
-            text run at (0,0) width 61: "BUG ID:"
-        RenderText {#text} at (61,0) size 4x19
-          text run at (61,0) width 4: " "
-        RenderInline {A} at (0,0) size 116x19 [color=#0000EE]
-          RenderText {#text} at (65,0) size 116x19
-            text run at (65,0) width 116: "Bugzilla bug 43341"
-        RenderText {#text} at (181,0) size 762x38
-          text run at (181,0) width 581: " Setting canvas width after canvas already rendered resets canvas data appropriately, but doesn't"
-          text run at (0,19) width 120: "repaint immediately."
+        RenderInline {B} at (0,0) size 62x19
+          RenderText {#text} at (0,0) size 62x19
+            text run at (0,0) width 62: "BUG ID:"
+        RenderText {#text} at (62,0) size 4x19
+          text run at (62,0) width 4: " "
+        RenderInline {A} at (0,0) size 125x19 [color=#0000EE]
+          RenderText {#text} at (66,0) size 125x19
+            text run at (66,0) width 125: "Bugzilla bug 43341"
+        RenderText {#text} at (191,0) size 745x38
+          text run at (191,0) width 554: " Setting canvas width after canvas already rendered resets canvas data appropriately, but"
+          text run at (0,19) width 176: "doesn't repaint immediately."
       RenderBlock {P} at (0,54) size 784x25 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 86x19
-          RenderText {#text} at (3,3) size 86x19
-            text run at (3,3) width 86: "TEST PASS:"
-        RenderText {#text} at (89,3) size 382x19
-          text run at (89,3) width 4: " "
-          text run at (93,3) width 378: "The canvas should go blank due to setting on the canvas width."
+        RenderInline {B} at (0,0) size 91x19
+          RenderText {#text} at (3,3) size 91x19
+            text run at (3,3) width 91: "TEST PASS:"
+        RenderText {#text} at (94,3) size 403x19
+          text run at (94,3) width 4: " "
+          text run at (98,3) width 399: "The canvas should go blank due to setting on the canvas width."
       RenderBlock {HR} at (0,95) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,113) size 784x19
-        RenderText {#text} at (0,0) size 176x19
-          text run at (0,0) width 176: "Actual output: (blank canvas)"
+        RenderText {#text} at (0,0) size 186x19
+          text run at (0,0) width 186: "Actual output: (blank canvas)"
       RenderBlock (anonymous) at (0,148) size 784x54
         RenderHTMLCanvas {CANVAS} at (0,0) size 100x50
         RenderText {#text} at (0,0) size 0x0

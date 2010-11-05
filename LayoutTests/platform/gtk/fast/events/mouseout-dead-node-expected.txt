@@ -4,19 +4,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 600x19
-          text run at (0,0) width 600: "Test that if node dies under mouse it receives mouseout event but that the event does not propagate."
+        RenderText {#text} at (0,0) size 625x19
+          text run at (0,0) width 625: "Test that if node dies under mouse it receives mouseout event but that the event does not propagate."
       RenderBlock {DIV} at (0,19) size 784x23 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (2,2) size 780x19
-          RenderText {#text} at (0,0) size 172x19
-            text run at (0,0) width 172: "you should see PASS below"
+          RenderText {#text} at (0,0) size 180x19
+            text run at (0,0) width 180: "you should see PASS below"
       RenderBlock {DIV} at (0,42) size 784x23 [border: (2px solid #0000FF)]
         RenderBlock (anonymous) at (2,2) size 780x19
-          RenderText {#text} at (0,0) size 172x19
-            text run at (0,0) width 172: "you should see PASS below"
+          RenderText {#text} at (0,0) size 180x19
+            text run at (0,0) width 180: "you should see PASS below"
       RenderBlock {DIV} at (0,65) size 784x19
-        RenderText {#text} at (0,0) size 100x19
-          text run at (0,0) width 100: "mouseout PASS"
+        RenderText {#text} at (0,0) size 104x19
+          text run at (0,0) width 104: "mouseout PASS"
       RenderBlock {DIV} at (0,84) size 784x19
-        RenderText {#text} at (0,0) size 100x19
-          text run at (0,0) width 100: "mouseout PASS"
+        RenderText {#text} at (0,0) size 104x19
+          text run at (0,0) width 104: "mouseout PASS"

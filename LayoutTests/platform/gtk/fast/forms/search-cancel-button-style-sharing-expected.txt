@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 367x19
-          text run at (0,0) width 367: "Only the second search field should have a cancel button (\x{D7})."
+        RenderText {#text} at (0,0) size 385x19
+          text run at (0,0) width 385: "Only the second search field should have a cancel button (\x{D7})."
       RenderBlock (anonymous) at (0,35) size 784x29
         RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF]
           RenderBlock {DIV} at (3,3) size 188x19
@@ -22,5 +22,5 @@ layer at (13,48) size 174x19
   RenderBlock {DIV} at (0,0) size 174x19
 layer at (215,48) size 174x19
   RenderBlock {DIV} at (0,0) size 174x19
-    RenderText {#text} at (1,0) size 54x19
-      text run at (1,0) width 54: "this one"
+    RenderText {#text} at (1,0) size 56x19
+      text run at (1,0) width 56: "this one"

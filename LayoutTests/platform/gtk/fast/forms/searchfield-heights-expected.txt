@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 351x19
-        text run at (0,0) width 351: "This tests that aqua-style search fields do not honor height."
-      RenderBR {BR} at (351,15) size 0x0
+      RenderText {#text} at (0,0) size 368x19
+        text run at (0,0) width 368: "This tests that aqua-style search fields do not honor height."
+      RenderBR {BR} at (368,15) size 0x0
       RenderTextControl {INPUT} at (0,31) size 71x20 [bgcolor=#FFFFFF]
         RenderBlock {DIV} at (3,2) size 65x16
           RenderBlock {DIV} at (0,14) size 0x0

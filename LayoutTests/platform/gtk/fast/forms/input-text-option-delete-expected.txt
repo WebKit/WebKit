@@ -7,10 +7,10 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (2,2) size 194x25 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,45) size 784x19
-        RenderText {#text} at (0,0) size 617x19
-          text run at (0,0) width 617: "Tests option-deleting a word. If the test succeeds, the word \"word\" should end up with a space after it."
+        RenderText {#text} at (0,0) size 644x19
+          text run at (0,0) width 644: "Tests option-deleting a word. If the test succeeds, the word \"word\" should end up with a space after it."
 layer at (13,13) size 188x19
   RenderBlock {DIV} at (3,3) size 188x19
-    RenderText {#text} at (1,0) size 38x19
-      text run at (1,0) width 38: "word "
+    RenderText {#text} at (1,0) size 39x19
+      text run at (1,0) width 39: "word "
 caret: position 5 of child 0 {#text} of child 0 {DIV} of child 0 {INPUT} of body

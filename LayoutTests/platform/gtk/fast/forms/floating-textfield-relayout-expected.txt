@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 99x19
-          text run at (0,0) width 99: "This is a test for "
-        RenderInline {I} at (0,0) size 752x38
-          RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
-            RenderText {#text} at (99,0) size 350x19
-              text run at (99,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9316"
-          RenderText {#text} at (449,0) size 752x38
-            text run at (449,0) width 4: " "
-            text run at (453,0) width 299: "REGRESSION: text field width shrinks on first"
-            text run at (0,19) width 62: "keystroke"
-        RenderText {#text} at (62,19) size 4x19
-          text run at (62,19) width 4: "."
+        RenderText {#text} at (0,0) size 104x19
+          text run at (0,0) width 104: "This is a test for "
+        RenderInline {I} at (0,0) size 750x38
+          RenderInline {A} at (0,0) size 348x19 [color=#0000EE]
+            RenderText {#text} at (104,0) size 348x19
+              text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9316"
+          RenderText {#text} at (452,0) size 750x38
+            text run at (452,0) width 4: " "
+            text run at (456,0) width 294: "REGRESSION: text field width shrinks on first"
+            text run at (0,19) width 59: "keystroke"
+        RenderText {#text} at (59,19) size 4x19
+          text run at (59,19) width 4: "."
       RenderBlock {HR} at (0,54) size 784x2 [border: (1px inset #000000)]
 layer at (8,72) size 784x27
   RenderBlock (relative positioned) {DIV} at (0,64) size 784x0

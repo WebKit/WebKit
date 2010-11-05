@@ -16,13 +16,13 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (216,5) size 14x14
 layer at (13,27) size 443x46
   RenderBlock {DIV} at (0,0) size 443x46
-    RenderText {#text} at (1,0) size 357x46
-      text run at (1,0) width 357: "value jgq not clipped"
+    RenderText {#text} at (1,0) size 362x46
+      text run at (1,0) width 362: "value jgq not clipped"
 layer at (13,98) size 457x46
   RenderBlock {DIV} at (3,3) size 457x46
-    RenderText {#text} at (1,0) size 357x46
-      text run at (1,0) width 357: "value jgq not clipped"
+    RenderText {#text} at (1,0) size 362x46
+      text run at (1,0) width 362: "value jgq not clipped"
 layer at (13,152) size 216x24
   RenderBlock {DIV} at (0,0) size 216x24
-    RenderText {#text} at (1,0) size 115x24
-      text run at (1,0) width 115: "Sample Input"
+    RenderText {#text} at (1,0) size 118x24
+      text run at (1,0) width 118: "Sample Input"
