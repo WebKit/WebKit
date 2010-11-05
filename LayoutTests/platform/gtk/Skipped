@@ -93,6 +93,10 @@ accessibility/textarea-selected-text-range.html
 accessibility/th-as-title-ui.html
 accessibility/transformed-element.html
 accessibility/visible-elements.html
+accessibility/iframe-bastardization.html
+accessibility/aria-presentational-role.html
+accessibility/aria-checkbox-checked.html
+
 #   Tests generating new results
 accessibility/aria-describedby-on-input.html
 accessibility/aria-labelledby-on-input.html
@@ -117,9 +121,7 @@ accessibility/table-one-cell.html
 accessibility/table-sections.html
 accessibility/table-with-aria-role.html
 accessibility/table-with-rules.html
-# Tests *crashing*
-# https://bugs.webkit.org/show_bug.cgi?id=30123
-accessibility/iframe-bastardization.html
+accessibility/aria-list-and-listitem.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=36146 - GTK: AX: implement press in DRT 
 accessibility/label-element-press.html
@@ -1033,26 +1035,16 @@ editing/unsupported-content/table-type-before.html
 # Tests in fast/ directory
 #   Tests failing
 fast/canvas/canvas-bg-zoom.html
-fast/canvas/canvas-empty-image-pattern.html
 fast/canvas/canvas-getImageData.html
 fast/canvas/canvas-gradient-addStop-error.html
-fast/canvas/canvas-transform-identity.html
-fast/canvas/canvas-transform-infinity.html
-fast/canvas/canvas-transform-multiply.html
-fast/canvas/canvas-transform-nan.html
-fast/canvas/canvas-transform-non-invertible.html
-fast/canvas/canvas-transform-skewed.html
 fast/canvas/canvas-zoom.html
-fast/canvas/pointInPath.html
 fast/css/css1_forward_compatible_parsing.html
 fast/css/invalid-percentage-property.html
 fast/css/text-align.html
 fast/css/getComputedStyle/computed-style-without-renderer.html
-fast/css/getComputedStyle/computed-style.html
 fast/dom/client-width-height-quirks.html
 fast/dom/client-width-height.html
 fast/dom/cssTarget-crash.html
-fast/dom/frame-loading-via-document-write.html
 fast/dom/DeviceMotion
 fast/dom/DeviceOrientation
 fast/dom/Geolocation/callback-exception.html
@@ -1079,48 +1071,28 @@ fast/dom/null-document-location-href-put-crash.html
 fast/dom/null-document-location-put-crash.html
 fast/dom/null-document-location-replace-crash.html
 fast/dom/object-embed-plugin-scripting.html
-fast/dom/object-plugin-hides-properties.html
 fast/dom/tabindex-clamp.html
 fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
-fast/dom/HTMLDocument/hasFocus.html
-fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml
 fast/dom/Window/new-window-opener.html
 fast/dom/Window/webkitConvertPoint.html
 fast/dom/Window/window-onFocus.html
 fast/dom/Window/window-properties-device-orientation.html
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
-fast/dom/Window/window-xy-properties.html
 fast/dynamic/paused-event-dispatch.html
 fast/encoding/char-decoding-mac.html
 fast/encoding/char-decoding.html
 fast/encoding/idn-security.html
 fast/encoding/mailto-always-utf-8.html
-fast/events/attempt-scroll-with-no-scrollbars.html
-fast/events/autoscroll-in-textfield.html
-fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html
-fast/events/autoscroll-with-non-scrollable-parent.html
 fast/events/blur-focus-window-should-blur-focus-element.html
 fast/events/frame-tab-focus.html
 fast/events/js-keyboard-event-creation.html
 fast/events/mouseup-from-button2.html
 fast/events/offsetX-offsetY.html
-fast/events/onchange-passwordfield.html
-fast/events/onchange-searchfield.html
-fast/events/onchange-textfield.html
-fast/events/onsearch-enter.html
-fast/events/onunload-clears-onbeforeunload.html
-fast/events/onunload-not-on-body.html
-fast/events/onunload.html
 fast/events/option-tab.html
-fast/events/pageshow-pagehide-on-back-cached-with-frames.html
 fast/events/pointer-events-2.html
 fast/events/popup-blocking-click-in-iframe.html
 fast/events/scrollbar-double-click.html
-fast/events/stop-load-in-unload-handler-using-document-write.html
-fast/events/stop-load-in-unload-handler-using-window-stop.html
-fast/events/tabindex-focus-blur-all.html
-fast/events/tabindex-focus-chain.html
 fast/forms/get-file-upload.html
 fast/forms/legend-access-key.html
 fast/forms/listbox-hit-test-zoomed.html
@@ -1129,7 +1101,6 @@ fast/forms/listbox-selection-2.html
 fast/forms/option-mouseevents.html
 fast/forms/select-double-onchange.html
 fast/forms/select-script-onchange.html
-fast/history/history_reload.html
 fast/history/window-open.html
 fast/html/tab-order.html
 fast/loader/main-document-url-for-non-http-loads.html
@@ -1153,11 +1124,8 @@ fast/selectors/lang-vs-xml-lang.html
 fast/text/international/danda-space.html
 fast/text/international/thai-baht-space.html
 fast/text/international/thai-offsetForPosition-inside-character.html
-fast/text/offsetForPosition-cluster-at-zero.html
 fast/backgrounds/background-clip-text.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=30562
-fast/text/zero-width-characters.html
+fast/overflow/scrollbar-restored.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=30508
 # All these tests fail because WebKit does not work correctly with
@@ -4651,8 +4619,6 @@ webarchive/test-xml-stylesheet.xml
 
 # Tests that failed because we don't have an eventSender implementation
 editing/input/scroll-viewport-page-up-down.html
-fast/events/popup-when-select-change.html
-http/tests/misc/slow-loading-mask.html
 http/tests/plugins/plugin-document-has-focus.html
 
 # Tests that require editing callbacks (and possibly Glib DOM bindings)
@@ -4914,13 +4880,6 @@ fast/css/color-correction-backgrounds-and-text.html
 fast/css/color-correction-on-backgrounds.html
 fast/css/color-correction-on-text.html
 fast/css/color-correction.html
-
-# New tests failing
-accessibility/aria-list-and-listitem.html
-accessibility/aria-presentational-role.html
-accessibility/aria-checkbox-checked.html
-accessibility/dimensions-include-descendants.html
-fast/overflow/scrollbar-restored.html
 fast/css/color-correction-on-box-shadow.html
 fast/css/color-correction-on-text-shadow.html
 
