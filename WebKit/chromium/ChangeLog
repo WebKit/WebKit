@@ -1,5 +1,11 @@
 2010-11-05  Darin Fisher  <darin@chromium.org>
 
+        Pull chromium@65229 to fix the build.
+
+        * DEPS:
+
+2010-11-05  Darin Fisher  <darin@chromium.org>
+
         Reviewed by Nate Chapin.
 
         Replace deprecated TargetIsSub{Frame,Resource} with TargetIsSub{frame,resource}.
