@@ -1,3 +1,22 @@
+2010-11-04  Adam Roben  <aroben@apple.com>
+
+        Add a plugin test to show that windowed plugins are clipped correctly
+
+        Fixes <http://webkit.org/b/49024> <rdar://problem/8487847> Windowed
+        plugins aren't clipped in WebKit2 on Windows
+
+        Reviewed by Jon Honeycutt.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/win/WindowRegionIsSetToClipRect.cpp: Added.
+        (WindowRegionIsSetToClipRect::WindowRegionIsSetToClipRect): Initialize members.
+        (WindowRegionIsSetToClipRect::NPP_SetWindow): Check that our window
+        region matches the clip rect we know we should have based on
+        window-region-is-set-to-clip-rect.html, and check that our window class
+        doesn't have the CS_PARENTDC style.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        Added WindowRegionIsSetToClipRect.
+
 2010-11-05  Alejandro G. Castro  <alex@igalia.com>
 
         Reviewed by Martin Robinson.

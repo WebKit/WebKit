@@ -413,6 +413,10 @@
 					RelativePath="..\Tests\win\WindowGeometryInitializedBeforeSetWindow.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\Tests\win\WindowRegionIsSetToClipRect.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File

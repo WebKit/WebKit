@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+    </script>
+    <style>
+        #container {
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
+        }
+
+        embed {
+            position: relative;
+            top: -50px;
+            left: -50px;
+        }
+    </style>
+</head>
+<body>
+    <div id=container>
+        <embed type="application/x-webkit-test-netscape" test="window-region-is-set-to-clip-rect"></embed>
+    </div>
+    <p>This tests that a plugin's window's window region is set to its clip rect.</p>
+</body>
+</html>

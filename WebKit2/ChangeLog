@@ -1,3 +1,24 @@
+2010-11-04  Adam Roben  <aroben@apple.com>
+
+        Use a window region to clip windowed plugins
+
+        Fixes <http://webkit.org/b/49024> <rdar://problem/8487847> Windowed
+        plugins aren't clipped in WebKit2 on Windows
+
+        Reviewed by Jon Honeycutt.
+
+        * WebProcess/Plugins/Netscape/win/NetscapePluginWin.cpp:
+        (WebKit::registerPluginView): Removed the CS_PARENTDC style. This style
+        makes Windows ignore the window region and always clip to the parent
+        window. Also pass WebKit.dll's HINSTANCE as part of the WNDCLASSW
+        struct so that the window class will be specific to WebKit.dll rather
+        than to WebKit2WebProcess.exe. This is useful for testing, but also
+        more pedantically correct.
+        (WebKit::setWindowRegion): Helper function to set a window region and
+        deal with ownership of the HRGN correctly.
+        (WebKit::NetscapePlugin::platformGeometryDidChange): Make an HRGN that
+        corresponds to m_clipRect and set it on the plugin's window.
+
 2010-11-05  Balazs Kelemen  <kbalazs@webkit.org>
 
         Reviewed by Andreas Kling.
