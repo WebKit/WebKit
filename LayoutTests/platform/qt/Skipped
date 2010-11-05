@@ -5353,9 +5353,11 @@ fast/forms/interactive-validation-prevented.html
 # https://bugs.webkit.org/show_bug.cgi?id=42821
 animations/play-state.html
 
-# [Qt] animations/suspend-resume-animation.html fails
+# [Qt] animations tests fails which uses suspend/resume
 # https://bugs.webkit.org/show_bug.cgi?id=43905
 animations/suspend-resume-animation.html
+animations/suspend-resume-animation-events.html
+animations/stop-animation-on-suspend.html
 
 # [Qt] Search input field doesn't have cancel button
 # https://bugs.webkit.org/show_bug.cgi?id=42887
