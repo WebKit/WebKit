@@ -200,7 +200,7 @@ void RenderTextControl::setLastChangeWasUserEdit(bool lastChangeWasUserEdit)
     document()->setIgnoreAutofocus(lastChangeWasUserEdit);
 }
 
-int RenderTextControl::selectionStart()
+int RenderTextControl::selectionStart() const
 {
     Frame* frame = this->frame();
     if (!frame)
@@ -208,7 +208,7 @@ int RenderTextControl::selectionStart()
     return indexForVisiblePosition(frame->selection()->start());
 }
 
-int RenderTextControl::selectionEnd()
+int RenderTextControl::selectionEnd() const
 {
     Frame* frame = this->frame();
     if (!frame)
@@ -264,7 +264,7 @@ PassRefPtr<Range> RenderTextControl::selection(int start, int end) const
     return Range::create(document(), m_innerText, start, m_innerText, end);
 }
 
-VisiblePosition RenderTextControl::visiblePositionForIndex(int index)
+VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 {
     if (index <= 0)
         return VisiblePosition(m_innerText.get(), 0, DOWNSTREAM);
@@ -281,7 +281,7 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index)
     return VisiblePosition(endContainer, endOffset, UPSTREAM);
 }
 
-int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos)
+int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos) const
 {
     Position indexPosition = pos.deepEquivalent();
     if (!indexPosition.node() || indexPosition.node()->rootEditableElement() != m_innerText)
