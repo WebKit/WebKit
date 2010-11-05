@@ -1,8 +1,8 @@
-layer at (0,0) size 1538x1374
-  RenderView at (0,0) size 781x581
-layer at (0,0) size 1538x1374
-  RenderBlock {HTML} at (0,0) size 781x1374
-    RenderBody {BODY} at (8,8) size 765x1353
+layer at (0,0) size 1538x1412
+  RenderView at (0,0) size 781x600
+layer at (0,0) size 1538x1412
+  RenderBlock {HTML} at (0,0) size 781x1412
+    RenderBody {BODY} at (8,8) size 765x1391
       RenderBlock {H2} at (0,0) size 765x56
         RenderText {#text} at (0,0) size 737x56
           text run at (0,0) width 737: "It's OK if nothing drawn for a scrollbar (for an outermost frame and an"
@@ -10,8 +10,8 @@ layer at (0,0) size 1538x1374
       RenderBlock {P} at (0,75) size 765x19
         RenderText {#text} at (0,0) size 579x19
           text run at (0,0) width 579: "Note that Safari doesn't allow to customize the outermost scdrollbars and just show Cocoa's."
-      RenderBlock {PRE} at (0,223) size 765x1130 [bgcolor=#008000]
-      RenderBlock {PRE} at (0,1366) size 1530x0 [bgcolor=#008000]
+      RenderBlock {PRE} at (0,223) size 765x1168 [bgcolor=#008000]
+      RenderBlock {PRE} at (0,1404) size 1530x0 [bgcolor=#008000]
 layer at (8,118) size 100x100 clip at (8,118) size 87x87 scrollWidth 1432 scrollHeight 105
   RenderBlock {PRE} at (0,110) size 100x100 [bgcolor=#008000]
     RenderText {#text} at (0,0) size 1432x105

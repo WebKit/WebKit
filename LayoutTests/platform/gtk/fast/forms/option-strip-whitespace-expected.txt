@@ -19,24 +19,24 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,189) size 0x19
         RenderText {#text} at (0,213) size 298x19
           text run at (0,213) width 298: "Five Spaces (with leading/trailing whitespace): "
-        RenderMenuList {SELECT} at (300,210) size 116x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 114x23
+        RenderMenuList {SELECT} at (300,210) size 112x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 110x23
             RenderText at (2,2) size 89x19
               text run at (2,2) width 89: "Five Spaces"
-        RenderBR {BR} at (418,228) size 0x0
+        RenderBR {BR} at (414,228) size 0x0
         RenderBR {BR} at (0,237) size 0x19
         RenderText {#text} at (0,261) size 285x19
           text run at (0,261) width 285: "Five Tabs (with leading/trailing whitespace): "
-        RenderMenuList {SELECT} at (287,258) size 98x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 96x23
+        RenderMenuList {SELECT} at (287,258) size 94x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 92x23
             RenderText at (2,2) size 71x19
               text run at (2,2) width 71: "Five Tabs"
-        RenderBR {BR} at (387,276) size 0x0
+        RenderBR {BR} at (383,276) size 0x0
         RenderBR {BR} at (0,285) size 0x19
         RenderText {#text} at (0,309) size 126x19
           text run at (0,309) width 126: "Mixed Whitespace: "
-        RenderMenuList {SELECT} at (128,306) size 98x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 96x23
+        RenderMenuList {SELECT} at (128,306) size 94x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 92x23
             RenderText at (2,2) size 71x19
               text run at (2,2) width 71: "Five Tabs"
         RenderText {#text} at (0,0) size 0x0

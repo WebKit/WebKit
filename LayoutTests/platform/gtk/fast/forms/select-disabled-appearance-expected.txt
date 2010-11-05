@@ -16,14 +16,14 @@ layer at (0,0) size 800x600
         RenderText {#text} at (705,0) size 4x19
           text run at (705,0) width 4: "."
       RenderBlock {P} at (0,35) size 784x29
-        RenderMenuList {SELECT} at (2,2) size 196x25 [color=#808080] [bgcolor=#FFFFFF] [border: (1px solid #808080)]
-          RenderBlock (anonymous) at (1,1) size 194x23
+        RenderMenuList {SELECT} at (2,2) size 192x25 [color=#808080] [bgcolor=#FFFFFF] [border: (1px solid #808080)]
+          RenderBlock (anonymous) at (1,1) size 190x23
             RenderText at (2,2) size 169x19
               text run at (2,2) width 169: "This text should be gray"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,80) size 784x29
-        RenderMenuList {SELECT} at (2,2) size 203x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-          RenderBlock (anonymous) at (1,1) size 201x23
+        RenderMenuList {SELECT} at (2,2) size 199x25 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+          RenderBlock (anonymous) at (1,1) size 197x23
             RenderText at (2,2) size 176x19
               text run at (2,2) width 176: "This text should be black"
         RenderText {#text} at (0,0) size 0x0

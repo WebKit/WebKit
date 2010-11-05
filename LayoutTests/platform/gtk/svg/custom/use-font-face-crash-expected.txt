@@ -1,8 +1,8 @@
-layer at (0,0) size 781x759
+layer at (0,0) size 781x778
   RenderView at (0,0) size 781x600
-layer at (0,0) size 781x759
-  RenderBlock {html} at (0,0) size 781x759
-    RenderBody {body} at (8,16) size 765x735
+layer at (0,0) size 781x778
+  RenderBlock {html} at (0,0) size 781x778
+    RenderBody {body} at (8,16) size 765x754
       RenderBlock {parsererror} at (16,0) size 733x134 [bgcolor=#FFDDDD] [border: (2px solid #CC7777)]
         RenderBlock {h3} at (18,20) size 697x22
           RenderText {#text} at (0,0) size 324x22
@@ -14,7 +14,7 @@ layer at (0,0) size 781x759
         RenderBlock {h3} at (18,92) size 697x22
           RenderText {#text} at (0,0) size 429x22
             text run at (0,0) width 429: "Below is a rendering of the page up to the first error."
-      RenderBlock (anonymous) at (0,150) size 765x585
+      RenderBlock (anonymous) at (0,150) size 765x604
         RenderSVGRoot {svg} at (8,171) size 335x19
           RenderSVGText {text} at (0,5) size 335x19 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 335x19
