@@ -340,7 +340,7 @@ inline void JSObject::setPrototype(JSValue prototype)
 inline void JSObject::setStructure(NonNullPassRefPtr<Structure> structure)
 {
     m_structure->deref();
-    m_structure = structure.releaseRef(); // ~JSObject balances this ref()
+    m_structure = structure.leakRef(); // ~JSObject balances this ref()
 }
 
 inline Structure* JSObject::inheritorID()

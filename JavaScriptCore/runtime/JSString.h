@@ -216,7 +216,7 @@ namespace JSC {
             , m_length(rope->length())
             , m_fiberCount(1)
         {
-            m_other.m_fibers[0] = rope.releaseRef();
+            m_other.m_fibers[0] = rope.leakRef();
         }
         // This constructor constructs a new string by concatenating s1 & s2.
         // This should only be called with fiberCount <= 3.

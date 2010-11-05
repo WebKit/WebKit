@@ -1,3 +1,14 @@
+2010-11-04  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Adam Barth.
+
+        Use leakRef instead of releaseRef
+        https://bugs.webkit.org/show_bug.cgi?id=48974
+
+        Use leakRef instead of the deprecated releaseRef. This was renamed
+        some time ago because 'releaseRef' is too close to 'release',
+        which does something completely different.
+
 2010-11-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Gavin Barraclough.
@@ -6381,7 +6392,7 @@
         once. Added a clear function.
 
         * wtf/PassRefPtr.h: Changed all uses of releaseRef to leakRef.
-
+n
         * wtf/RefPtr.h: Changed all uses of "template <...>" to instead do
         "template<...>". Tidied up declarations and comments a bit.
          Changed all uses of releaseRef to leakRef.

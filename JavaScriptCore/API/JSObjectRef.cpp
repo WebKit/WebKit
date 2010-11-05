@@ -59,7 +59,7 @@ JSClassRef JSClassCreate(const JSClassDefinition* definition)
         ? OpaqueJSClass::createNoAutomaticPrototype(definition)
         : OpaqueJSClass::create(definition);
     
-    return jsClass.release().releaseRef();
+    return jsClass.release().leakRef();
 }
 
 JSClassRef JSClassRetain(JSClassRef jsClass)
@@ -507,7 +507,7 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
     size_t size = array.size();
     propertyNames->array.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
-        propertyNames->array.append(JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create(array[i].ustring()).releaseRef()));
+        propertyNames->array.append(JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create(array[i].ustring()).leakRef()));
     
     return JSPropertyNameArrayRetain(propertyNames);
 }

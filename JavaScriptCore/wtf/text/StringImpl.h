@@ -110,7 +110,7 @@ private:
     StringImpl(const UChar* characters, unsigned length, PassRefPtr<StringImpl> base)
         : StringImplBase(length, BufferSubstring)
         , m_data(characters)
-        , m_substringBuffer(base.releaseRef())
+        , m_substringBuffer(base.leakRef())
         , m_hash(0)
     {
         ASSERT(m_data);
@@ -122,7 +122,7 @@ private:
     StringImpl(const UChar* characters, unsigned length, PassRefPtr<SharedUChar> sharedBuffer)
         : StringImplBase(length, BufferShared)
         , m_data(characters)
-        , m_sharedBuffer(sharedBuffer.releaseRef())
+        , m_sharedBuffer(sharedBuffer.leakRef())
         , m_hash(0)
     {
         ASSERT(m_data);

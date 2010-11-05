@@ -37,7 +37,7 @@ Structure* JSZombie::leakedZombieStructure() {
     static Structure* structure = 0;
     if (!structure) {
         Structure::startIgnoringLeaks();
-        structure = Structure::create(jsNull(), TypeInfo(UnspecifiedType), 0).releaseRef();
+        structure = Structure::create(jsNull(), TypeInfo(UnspecifiedType), 0).leakRef();
         Structure::stopIgnoringLeaks();
     }
     return structure;

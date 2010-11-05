@@ -144,7 +144,7 @@ SharedUChar* StringImpl::sharedBuffer()
         return m_substringBuffer->sharedBuffer();
     if (ownership == BufferOwned) {
         ASSERT(!m_sharedBuffer);
-        m_sharedBuffer = SharedUChar::create(new SharableUChar(m_data)).releaseRef();
+        m_sharedBuffer = SharedUChar::create(new SharableUChar(m_data)).leakRef();
         m_refCountAndFlags = (m_refCountAndFlags & ~s_refCountMaskBufferOwnership) | BufferShared;
     }
 

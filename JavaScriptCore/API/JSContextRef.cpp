@@ -46,7 +46,7 @@ using namespace JSC;
 JSContextGroupRef JSContextGroupCreate()
 {
     initializeThreading();
-    return toRef(JSGlobalData::createContextGroup(ThreadStackTypeSmall).releaseRef());
+    return toRef(JSGlobalData::createContextGroup(ThreadStackTypeSmall).leakRef());
 }
 
 JSContextGroupRef JSContextGroupRetain(JSContextGroupRef group)

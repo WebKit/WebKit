@@ -343,7 +343,7 @@ int main(int argc, char** argv)
     // We can't use destructors in the following code because it uses Windows
     // Structured Exception Handling
     int res = 0;
-    JSGlobalData* globalData = JSGlobalData::create(ThreadStackTypeLarge).releaseRef();
+    JSGlobalData* globalData = JSGlobalData::create(ThreadStackTypeLarge).leakRef();
     TRY
         res = jscmain(argc, argv, globalData);
     EXCEPT(res = 3)

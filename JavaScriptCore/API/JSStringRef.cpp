@@ -36,7 +36,7 @@ using namespace WTF::Unicode;
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
     initializeThreading();
-    return OpaqueJSString::create(chars, numChars).releaseRef();
+    return OpaqueJSString::create(chars, numChars).leakRef();
 }
 
 JSStringRef JSStringCreateWithUTF8CString(const char* string)
@@ -47,11 +47,11 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
         Vector<UChar, 1024> buffer(length);
         UChar* p = buffer.data();
         if (conversionOK == convertUTF8ToUTF16(&string, string + length, &p, p + length))
-            return OpaqueJSString::create(buffer.data(), p - buffer.data()).releaseRef();
+            return OpaqueJSString::create(buffer.data(), p - buffer.data()).leakRef();
     }
 
     // Null string.
-    return OpaqueJSString::create().releaseRef();
+    return OpaqueJSString::create().leakRef();
 }
 
 JSStringRef JSStringRetain(JSStringRef string)

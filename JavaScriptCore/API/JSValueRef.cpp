@@ -252,7 +252,7 @@ JSStringRef JSValueCreateJSONString(JSContextRef ctx, JSValueRef apiValue, unsig
         exec->clearException();
         return 0;
     }
-    return OpaqueJSString::create(result).releaseRef();
+    return OpaqueJSString::create(result).leakRef();
 }
 
 bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
@@ -295,7 +295,7 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
         exec->clearException();
         stringRef.clear();
     }
-    return stringRef.release().releaseRef();
+    return stringRef.release().leakRef();
 }
 
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
