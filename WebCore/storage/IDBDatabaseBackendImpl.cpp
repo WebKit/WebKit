@@ -139,7 +139,7 @@ PassRefPtr<IDBObjectStoreBackendInterface>  IDBDatabaseBackendImpl::createObject
         return 0;
     }
 
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(this, name, keyPath, autoIncrement);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = IDBObjectStoreBackendImpl::create(m_sqliteDatabase.get(), name, keyPath, autoIncrement);
     ASSERT(objectStore->name() == name);
 
     RefPtr<IDBDatabaseBackendImpl> database = this;
@@ -265,7 +265,7 @@ void IDBDatabaseBackendImpl::loadObjectStores()
         String keyPath = objectStoresQuery.getColumnText(2);
         bool autoIncrement = !!objectStoresQuery.getColumnInt(3);
 
-        m_objectStores.set(name, IDBObjectStoreBackendImpl::create(this, id, name, keyPath, autoIncrement));
+        m_objectStores.set(name, IDBObjectStoreBackendImpl::create(m_sqliteDatabase.get(), id, name, keyPath, autoIncrement));
     }
 }
 

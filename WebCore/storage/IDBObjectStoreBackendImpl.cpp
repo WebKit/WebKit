@@ -40,6 +40,7 @@
 #include "IDBKeyPath.h"
 #include "IDBKeyPathBackendImpl.h"
 #include "IDBKeyRange.h"
+#include "IDBSQLiteDatabase.h"
 #include "IDBTransactionBackendInterface.h"
 #include "ScriptExecutionContext.h"
 #include "SQLiteDatabase.h"
@@ -52,7 +53,7 @@ IDBObjectStoreBackendImpl::~IDBObjectStoreBackendImpl()
 {
 }
 
-IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl* database, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
+IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBSQLiteDatabase* database, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
     : m_database(database)
     , m_id(id)
     , m_name(name)
@@ -62,7 +63,7 @@ IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl* dat
     loadIndexes();
 }
 
-IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl* database, const String& name, const String& keyPath, bool autoIncrement)
+IDBObjectStoreBackendImpl::IDBObjectStoreBackendImpl(IDBSQLiteDatabase* database, const String& name, const String& keyPath, bool autoIncrement)
     : m_database(database)
     , m_id(InvalidId)
     , m_name(name)
@@ -301,7 +302,7 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(cons
         return 0;
     }
 
-    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(this, name, keyPath, unique);
+    RefPtr<IDBIndexBackendImpl> index = IDBIndexBackendImpl::create(m_database.get(), name, m_name, keyPath, unique);
     ASSERT(index->name() == name);
 
     RefPtr<IDBObjectStoreBackendImpl> objectStore = this;
@@ -427,7 +428,7 @@ void IDBObjectStoreBackendImpl::openCursorInternal(ScriptExecutionContext*, Pass
         return;
     }
 
-    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(objectStore, range, direction, query.release(), transaction.get());
+    RefPtr<IDBCursorBackendInterface> cursor = IDBCursorBackendImpl::create(objectStore->m_database.get(), range, direction, query.release(), true, transaction.get());
     callbacks->onSuccess(cursor.release());
 }
 
@@ -445,13 +446,13 @@ void IDBObjectStoreBackendImpl::loadIndexes()
         String keyPath = indexQuery.getColumnText(2);
         bool unique = !!indexQuery.getColumnInt(3);
 
-        m_indexes.set(name, IDBIndexBackendImpl::create(this, id, name, keyPath, unique));
+        m_indexes.set(name, IDBIndexBackendImpl::create(m_database.get(), id, name, m_name, keyPath, unique));
     }
 }
 
 SQLiteDatabase& IDBObjectStoreBackendImpl::sqliteDatabase() const 
 {
-    return m_database->sqliteDatabase();
+    return m_database->db();
 }
 
 void IDBObjectStoreBackendImpl::removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index)

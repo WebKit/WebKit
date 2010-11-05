@@ -36,17 +36,18 @@ namespace WebCore {
 
 class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
+class IDBSQLiteDatabase;
 class IDBTransactionBackendInterface;
 class SQLiteDatabase;
 class ScriptExecutionContext;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {
 public:
-    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBDatabaseBackendImpl* database, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBSQLiteDatabase* database, int64_t id, const String& name, const String& keyPath, bool autoIncrement)
     {
         return adoptRef(new IDBObjectStoreBackendImpl(database, id, name, keyPath, autoIncrement));
     }
-    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBDatabaseBackendImpl* database, const String& name, const String& keyPath, bool autoIncrement)
+    static PassRefPtr<IDBObjectStoreBackendImpl> create(IDBSQLiteDatabase* database, const String& name, const String& keyPath, bool autoIncrement)
     {
         return adoptRef(new IDBObjectStoreBackendImpl(database, name, keyPath, autoIncrement));
     }
@@ -75,11 +76,9 @@ public:
 
     virtual void openCursor(PassRefPtr<IDBKeyRange> range, unsigned short direction, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
-    IDBDatabaseBackendImpl* database() const { return m_database.get(); }
-
 private:
-    IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl*, int64_t id, const String& name, const String& keyPath, bool autoIncrement);
-    IDBObjectStoreBackendImpl(IDBDatabaseBackendImpl*, const String& name, const String& keyPath, bool autoIncrement);
+    IDBObjectStoreBackendImpl(IDBSQLiteDatabase*, int64_t id, const String& name, const String& keyPath, bool autoIncrement);
+    IDBObjectStoreBackendImpl(IDBSQLiteDatabase*, const String& name, const String& keyPath, bool autoIncrement);
 
     void loadIndexes();
     SQLiteDatabase& sqliteDatabase() const;
@@ -95,7 +94,7 @@ private:
     static void removeIndexFromMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
     static void addIndexToMap(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBIndexBackendImpl>);
 
-    RefPtr<IDBDatabaseBackendImpl> m_database;
+    RefPtr<IDBSQLiteDatabase> m_database;
 
     int64_t m_id;
     String m_name;
