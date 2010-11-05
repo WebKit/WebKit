@@ -35,6 +35,7 @@ protected:
     virtual void layout();
     virtual void updateFromElement();
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+    virtual bool canHaveChildren() const { return false; }
 
     virtual void layoutParts() = 0;
     virtual bool shouldHaveParts() const = 0;
