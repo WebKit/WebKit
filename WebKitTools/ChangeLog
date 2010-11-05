@@ -1,5 +1,19 @@
 2010-11-04  Adam Roben  <aroben@apple.com>
 
+        Teach check-webkit-style about TestNetscapePlugIn
+
+        Fixes <http://webkit.org/b/49030> check-webkit-style is ignorant of
+        TestNetscapePlugIn's coding conventions
+
+        Reviewed by John Sullivan.
+
+        * Scripts/webkitpy/style/checker.py: Lump TestNetscapePlugIn in with
+        WebKitAPITest and TestWebKitAPI in having different include order and
+        naming conventions than WebCore. Added some comments about why the
+        exceptions exist.
+
+2010-11-04  Adam Roben  <aroben@apple.com>
+
         Add a test that shows that windowed plugins are able to paint
 
         Somehow we never had a test for this before.

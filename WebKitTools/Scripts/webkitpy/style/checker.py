@@ -115,7 +115,13 @@ _PATH_RULES_SPECIFIER = [
     # Files in these directories are consumers of the WebKit
     # API and therefore do not follow the same header including
     # discipline as WebCore.
-    (["WebKitTools/WebKitAPITest/",
+
+    ([# TestNetscapePlugIn has no config.h and uses funny names like
+      # NPP_SetWindow.
+      "WebKitTools/DumpRenderTree/TestNetscapePlugIn/",
+      # The API test harnesses have no config.h and use funny macros like
+      # TEST_CLASS_NAME.
+      "WebKitTools/WebKitAPITest/",
       "WebKitTools/TestWebKitAPI/"],
      ["-build/include",
       "-readability/naming"]),
