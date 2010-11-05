@@ -31,6 +31,7 @@
 #include "qwebhistory.h"
 #include "qwebframe.h"
 
+#include "IntPoint.h"
 #include "KURL.h"
 #include "PlatformString.h"
 
@@ -43,10 +44,13 @@ namespace WebCore {
     class ContextMenuClientQt;
     class ContextMenuItem;
     class ContextMenu;
+    class Document;
     class EditorClientQt;
     class Element;
     class InspectorController;
+    class IntRect;
     class Node;
+    class NodeList;
     class Page;
     class Frame;
 }
@@ -125,6 +129,22 @@ public:
 
     // Returns whether the default action was cancelled in the JS event handler
     bool touchEvent(QTouchEvent*);
+
+    class TouchAdjuster {
+    public:
+        TouchAdjuster(unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+
+        WebCore::IntPoint findCandidatePointForTouch(const WebCore::IntPoint&, WebCore::Document*) const;
+
+    private:
+        unsigned m_topPadding;
+        unsigned m_rightPadding;
+        unsigned m_bottomPadding;
+        unsigned m_leftPadding;
+    };
+
+    void adjustPointForClicking(QMouseEvent*);
+    void adjustPointForClicking(QGraphicsSceneMouseEvent*);
 
     void setInspector(QWebInspector*);
     QWebInspector* getOrCreateInspector();

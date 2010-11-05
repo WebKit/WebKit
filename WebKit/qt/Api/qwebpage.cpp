@@ -31,13 +31,17 @@
 #include "qwebinspector.h"
 #include "qwebinspector_p.h"
 #include "qwebsettings.h"
+#include "qwebkitplatformplugin.h"
 #include "qwebkitversion.h"
 
+#include "CSSComputedStyleDeclaration.h"
+#include "CSSParser.h"
 #include "ApplicationCacheStorage.h"
 #include "BackForwardListImpl.h"
 #include "Cache.h"
 #include "Chrome.h"
 #include "ChromeClientQt.h"
+#include "ClientRect.h"
 #include "ContextMenu.h"
 #include "ContextMenuClientQt.h"
 #include "ContextMenuController.h"
@@ -60,6 +64,7 @@
 #include "FrameView.h"
 #include "GeolocationPermissionClientQt.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HashMap.h"
@@ -74,7 +79,9 @@
 #include "MIMETypeRegistry.h"
 #include "NavigationAction.h"
 #include "NetworkingContext.h"
+#include "NodeList.h"
 #include "NotificationPresenterClientQt.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PageClientQt.h"
 #include "PageGroup.h"
@@ -86,6 +93,7 @@
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 #include "ProgressTracker.h"
+#include "QtPlatformPlugin.h"
 #include "RefPtr.h"
 #include "RenderTextControl.h"
 #include "SchemeRegistry.h"
@@ -657,6 +665,7 @@ void QWebPagePrivate::mousePressEvent(T* ev)
     }
 
     bool accepted = false;
+    adjustPointForClicking(ev);
     PlatformMouseEvent mev(ev, 1);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
@@ -736,6 +745,7 @@ void QWebPagePrivate::mouseReleaseEvent(T *ev)
         return;
 
     bool accepted = false;
+    adjustPointForClicking(ev);
     PlatformMouseEvent mev(ev, 0);
     // ignore the event if we can't map Qt's mouse buttons to WebCore::MouseButton
     if (mev.button() != NoButton)
@@ -1263,6 +1273,42 @@ bool QWebPagePrivate::handleScrolling(QKeyEvent *ev, Frame *frame)
     return frame->eventHandler()->scrollRecursively(direction, granularity);
 }
 
+void QWebPagePrivate::adjustPointForClicking(QMouseEvent*)
+{
+    notImplemented();
+}
+
+void QWebPagePrivate::adjustPointForClicking(QGraphicsSceneMouseEvent* ev)
+{
+    QtPlatformPlugin platformPlugin;
+    QWebTouchModifier* touchModifier = platformPlugin.createTouchModifier();
+    if (!touchModifier)
+        return;
+
+    unsigned topPadding = touchModifier->hitTestPaddingForTouch(QWebTouchModifier::Up);
+    unsigned rightPadding = touchModifier->hitTestPaddingForTouch(QWebTouchModifier::Right);
+    unsigned bottomPadding = touchModifier->hitTestPaddingForTouch(QWebTouchModifier::Down);
+    unsigned leftPadding = touchModifier->hitTestPaddingForTouch(QWebTouchModifier::Left);
+
+    delete touchModifier;
+    touchModifier = 0;
+
+    if (!topPadding && !rightPadding && !bottomPadding && !leftPadding)
+        return;
+
+    Document* startingDocument = page->mainFrame()->document();
+    if (!startingDocument)
+        return;
+
+    IntPoint originalPoint(QPointF(ev->pos()).toPoint());
+    TouchAdjuster touchAdjuster(topPadding, rightPadding, bottomPadding, leftPadding);
+    IntPoint adjustedPoint = touchAdjuster.findCandidatePointForTouch(originalPoint, startingDocument);
+    if (adjustedPoint == IntPoint::zero())
+        return;
+
+    ev->setPos(QPointF(adjustedPoint));
+}
+
 bool QWebPagePrivate::touchEvent(QTouchEvent* event)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
@@ -1427,6 +1473,124 @@ quint16 QWebPagePrivate::inspectorServerPort()
         return q->property("_q_webInspectorServerPort").toInt();
 #endif
     return 0;
+}
+
+static bool hasMouseListener(Element* element)
+{
+    ASSERT(element);
+    return element->hasEventListeners(eventNames().clickEvent)
+        || element->hasEventListeners(eventNames().mousedownEvent)
+        || element->hasEventListeners(eventNames().mouseupEvent);
+}
+
+static bool isClickableElement(Element* element, RefPtr<NodeList> list)
+{
+    ASSERT(element);
+    bool isClickable = hasMouseListener(element);
+    if (!isClickable && list) {
+        Element* parent = element->parentElement();
+        unsigned count = list->length();
+        for (unsigned i = 0; i < count && parent; i++) {
+            if (list->item(i) != parent)
+                continue;
+
+            isClickable = hasMouseListener(parent);
+            if (isClickable)
+                break;
+
+            parent = parent->parentElement();
+        }
+    }
+
+    ExceptionCode ec = 0;
+    return isClickable
+        || element->webkitMatchesSelector("a,*:link,*:visited,*[role=button],button,input,select,label", ec)
+        || computedStyle(element)->getPropertyValue(cssPropertyID("cursor")) == "pointer";
+}
+
+static bool isValidFrameOwner(Element* element)
+{
+    ASSERT(element);
+    return element->isFrameOwnerElement() && static_cast<HTMLFrameOwnerElement*>(element)->contentFrame();
+}
+
+static Element* nodeToElement(Node* node)
+{
+    if (node && node->isElementNode())
+        return static_cast<Element*>(node);
+    return 0;
+}
+
+QWebPagePrivate::TouchAdjuster::TouchAdjuster(unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
+    : m_topPadding(topPadding)
+    , m_rightPadding(rightPadding)
+    , m_bottomPadding(bottomPadding)
+    , m_leftPadding(leftPadding)
+{
+}
+
+IntPoint QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch(const IntPoint& touchPoint, Document* document) const
+{
+    if (!document)
+        return IntPoint();
+
+    int x = touchPoint.x();
+    int y = touchPoint.y();
+
+    RefPtr<NodeList> intersectedNodes = document->nodesFromRect(x, y, m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding, false);
+    if (!intersectedNodes)
+        return IntPoint();
+
+    Element* closestClickableElement = 0;
+    IntRect largestIntersectionRect;
+    FrameView* view = document->frame()->view();
+
+    // Touch rect in contents coordinates.
+    IntRect touchRect(HitTestResult::rectForPoint(view->windowToContents(IntPoint(x, y)), m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding));
+
+    // Iterate over the list of nodes hit looking for the one whose bounding area
+    // has largest intersection with the touch area (point + padding).
+    for (unsigned i = 0; i < intersectedNodes->length(); i++) {
+        Node* currentNode = intersectedNodes->item(i);
+
+        Element* currentElement = nodeToElement(currentNode);
+        if (!currentElement || (!isClickableElement(currentElement, 0) && !isValidFrameOwner(currentElement)))
+            continue;
+
+        IntRect currentElementBoundingRect = currentElement->getRect();
+        currentElementBoundingRect.intersect(touchRect);
+
+        if (currentElementBoundingRect.isEmpty())
+            continue;
+
+        int currentIntersectionRectArea = currentElementBoundingRect.width() * currentElementBoundingRect.height();
+        int largestIntersectionRectArea = largestIntersectionRect.width() * largestIntersectionRect.height();
+        if (currentIntersectionRectArea > largestIntersectionRectArea) {
+            closestClickableElement = currentElement;
+            largestIntersectionRect = currentElementBoundingRect;
+        }
+    }
+
+    if (largestIntersectionRect.isEmpty())
+        return IntPoint();
+
+    // Handle the case when user taps a inner frame. It is done in three steps:
+    // 1) Transform the original touch point to the inner document coordinates;
+    // 1) Call nodesFromRect for the inner document in case;
+    // 3) Re-add the inner frame offset (location) before passing the new clicking
+    //    position to WebCore.
+    if (closestClickableElement->isFrameOwnerElement()) {
+        // Adjust client coordinates' origin to be top left of inner frame viewport.
+        PassRefPtr<ClientRect> rect = closestClickableElement->getBoundingClientRect();
+        IntPoint newTouchPoint = touchPoint;
+        IntSize offset =  IntSize(rect->left(), rect->top());
+        newTouchPoint -= offset;
+
+        HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(closestClickableElement);
+        Document* childDocument = owner->contentFrame()->document();
+        return findCandidatePointForTouch(newTouchPoint, childDocument);
+    }
+    return view->contentsToWindow(largestIntersectionRect).center();
 }
 
 /*!
