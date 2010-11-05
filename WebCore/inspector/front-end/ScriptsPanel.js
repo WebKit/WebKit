@@ -702,16 +702,22 @@ WebInspector.ScriptsPanel.prototype = {
         else
             script.filesSelectOption = option;
 
-        // Call _showScriptOrResource if the option we just appended ended up being selected.
-        // This will happen for the first item added to the menu.
-        if (select.options[select.selectedIndex] === option)
+        if (select.options[select.selectedIndex] === option) {
+            // Call _showScriptOrResource if the option we just appended ended up being selected.
+            // This will happen for the first item added to the menu.
             this._showScriptOrResource(option.representedObject, {initialLoad: true});
-        else {
-            // if not first item, check to see if this was the last viewed
+        } else {
+            // If not first item, check to see if this was the last viewed
             var url = option.representedObject.url || option.representedObject.sourceURL;
             var lastURL = WebInspector.settings.lastViewedScriptFile;
-            if (url && url === lastURL)
-                this._showScriptOrResource(option.representedObject, {initialLoad: true});
+            if (url && url === lastURL) {
+                // For resources containing multiple <script> tags, we first report them separately and
+                // then glue them all together. They all share url and there is no need to show them all one
+                // by one.
+                var isResource = !!option.representedObject.url;
+                if (isResource || !this.visibleView || !this.visibleView.script || this.visibleView.script.sourceURL !== url)
+                    this._showScriptOrResource(option.representedObject, {initialLoad: true});
+            }
         }
 
         if (script.worldType === WebInspector.Script.WorldType.EXTENSIONS_WORLD)
