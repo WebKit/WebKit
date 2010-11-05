@@ -1206,7 +1206,7 @@ BUG10363 MAC : tables/mozilla/bugs/bug9024.html = FAIL
 BUG10364 MAC : fast/css/resize-corner-tracking.html = FAIL
 
 // bad key event handling
-BUG10366 MAC : fast/events/option-tab.html = FAIL CRASH
+BUG10366 MAC : fast/events/option-tab.html = TEXT
 
 // The test says you should see numbers, but we display letters.
 // It looks like we are missing the WebKit "WeightWatcher" fonts,
