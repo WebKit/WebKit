@@ -2227,11 +2227,6 @@ BUG25977 WIN DEBUG : http/tests/appcache/wrong-signature-2.html = TIMEOUT PASS
 BUG25977 WIN DEBUG : http/tests/appcache/top-frame-4.html = TIMEOUT TEXT PASS
 BUG25977 WIN DEBUG : http/tests/appcache/top-frame-3.html = TIMEOUT TEXT PASS
 
-// Flaky.
-BUG9798 WIN LINUX : fast/loader/javascript-url-encoding-2.html = TIMEOUT PASS
-BUG9798 WIN RELEASE : fast/loading/subframe-removes-itself.html = TEXT PASS
-BUG9798 LINUX MAC : fast/loader/invalid-charset-on-script-crashes-loader.html = TIMEOUT PASS
-
 // WebKit update 52293->52323
 BUG31253 : http/tests/security/xss-DENIED-assign-location-href-javascript.html = TEXT
 
@@ -2252,8 +2247,8 @@ BUG31623 WIN: http/tests/appcache/remove-cache.html = PASS TEXT TIMEOUT
 BUG32018 : http/tests/websocket/tests/frame-lengths.html = PASS TIMEOUT
 BUG32018 DEBUG : http/tests/websocket/tests/simple-stress.html = PASS TEXT TIMEOUT
 
-// a bunch of tests broken before the flakiness fix, i will deal with these
-// after the major flakiness goes away
+// V8's implementation of getOwnPropertyNames has different results for built-in
+// functions.
 BUG32155 : fast/js/Object-getOwnPropertyNames.html = TEXT
 
 // New flakiness?
