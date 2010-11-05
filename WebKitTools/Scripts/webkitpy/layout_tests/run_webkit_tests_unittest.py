@@ -154,7 +154,7 @@ def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False):
     logging_run(extra_args=args, port_obj=recording_port, tests_included=True)
 
     if flatten_batches:
-        return list(itertools.chain.from_iterable(test_batches))
+        return list(itertools.chain(*test_batches))
 
     return test_batches
 

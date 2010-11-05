@@ -1,5 +1,17 @@
 2010-11-04  Mihai Parparita  <mihaip@chromium.org>
 
+        Reviewed by Tony Chang.
+
+        run_webkit_tests_unittest fails under Python 2.5
+        https://bugs.webkit.org/show_bug.cgi?id=49043
+        
+        Switch from itertools.chain.from_iterable (which was added in 2.6)
+        to using itertools.chain directly.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+
+2010-11-04  Mihai Parparita  <mihaip@chromium.org>
+
         Unreviewed fix to webkit-patch rebaseline-server so that it runs under
         Python 2.5 (it needs an import to use the with statement).
 
