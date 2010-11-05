@@ -979,8 +979,7 @@ editing/selection/unrendered-space.html
 editing/selection/word-granularity.html
 editing/spelling/inline_spelling_markers.html
 editing/spelling/spellcheck-attribute.html
-editing/spelling/spelling-contenteditable.html
-editing/spelling/spelling-textarea.html
+editing/spelling/spelling-hasspellingmarker.html
 editing/spelling/spelling-backspace-between-lines.html
 editing/spelling/spelling-linebreak.html
 editing/spelling/spelling-attribute-change.html

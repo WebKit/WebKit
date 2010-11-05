@@ -734,8 +734,7 @@ BUG58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline-a
 BUG58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
 BUG58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAGE+TEXT
 
-BUGJAMESR WIN LINUX : editing/spelling/spelling-contenteditable.html = TEXT
-BUGJAMESR WIN LINUX : editing/spelling/spelling-textarea.html = TEXT
+BUGJAMESR WIN LINUX : editing/spelling/spelling-hasspellingmarker.html = TEXT
 
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
