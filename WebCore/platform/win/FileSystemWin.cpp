@@ -274,7 +274,7 @@ bool safeCreateFile(const String& path, CFDataRef data)
 {
     // Create a temporary file.
     WCHAR tempDirPath[MAX_PATH];
-    if (!GetTempPathW(ARRAYSIZE(tempDirPath), tempDirPath))
+    if (!GetTempPathW(WTF_ARRAY_LENGTH(tempDirPath), tempDirPath))
         return false;
 
     WCHAR tempPath[MAX_PATH];

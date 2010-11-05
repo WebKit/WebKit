@@ -207,7 +207,7 @@ static HGLOBAL createGlobalHDropContent(const KURL& url, String& fileName, Share
 #else
         WCHAR tempPath[MAX_PATH];
         WCHAR extension[MAX_PATH];
-        if (!::GetTempPath(ARRAYSIZE(tempPath), tempPath))
+        if (!::GetTempPath(WTF_ARRAY_LENGTH(tempPath), tempPath))
             return 0;
         if (!::PathAppend(tempPath, fileName.charactersWithNullTermination()))
             return 0;
@@ -285,7 +285,7 @@ static HGLOBAL createGlobalImageFileDescriptor(const String& url, const String& 
         return 0;
     }
 
-    int maxSize = min(fsPath.length(), ARRAYSIZE(fgd->fgd[0].cFileName));
+    int maxSize = min(fsPath.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
     CopyMemory(fgd->fgd[0].cFileName, (LPCWSTR)fsPath.characters(), maxSize * sizeof(UChar));
     GlobalUnlock(memObj);
     
@@ -554,7 +554,7 @@ PassRefPtr<FileList> ClipboardWin::files() const
     WCHAR filename[MAX_PATH];
     UINT fileCount = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
     for (UINT i = 0; i < fileCount; i++) {
-        if (!DragQueryFileW(hdrop, i, filename, ARRAYSIZE(filename)))
+        if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
             continue;
         files->append(File::create(reinterpret_cast<UChar*>(filename)));
     }
@@ -717,7 +717,7 @@ void ClipboardWin::writeURL(const KURL& kurl, const String& titleStr, Frame*)
     fgd->fgd[0].dwFlags = FD_FILESIZE;
     fgd->fgd[0].nFileSizeLow = content.length();
 
-    unsigned maxSize = min(fsPath.length(), ARRAYSIZE(fgd->fgd[0].cFileName));
+    unsigned maxSize = min(fsPath.length(), WTF_ARRAY_LENGTH(fgd->fgd[0].cFileName));
     CopyMemory(fgd->fgd[0].cFileName, fsPath.characters(), maxSize * sizeof(UChar));
     GlobalUnlock(urlFileDescriptor);
 

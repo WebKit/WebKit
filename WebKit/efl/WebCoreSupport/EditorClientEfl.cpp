@@ -292,8 +292,6 @@ static const KeyPressEntry keyPressEntries[] = {
     { '\r',   AltKey | ShiftKey,  "InsertNewline"                               },
 };
 
-#define ARRAYSIZE(array) (sizeof(array) / sizeof((array)[0]))
-
 const char* EditorClientEfl::interpretKeyEvent(const KeyboardEvent* event)
 {
     ASSERT(event->type() == eventNames().keydownEvent || event->type() == eventNames().keypressEvent);
@@ -305,10 +303,10 @@ const char* EditorClientEfl::interpretKeyEvent(const KeyboardEvent* event)
         keyDownCommandsMap = new HashMap<int, const char*>;
         keyPressCommandsMap = new HashMap<int, const char*>;
 
-        for (unsigned i = 0; i < ARRAYSIZE(keyDownEntries); i++)
+        for (size_t i = 0; i < WTF_ARRAY_LENGTH(keyDownEntries); ++i)
             keyDownCommandsMap->set(keyDownEntries[i].modifiers << 16 | keyDownEntries[i].virtualKey, keyDownEntries[i].name);
 
-        for (unsigned i = 0; i < ARRAYSIZE(keyPressEntries); i++)
+        for (size_t i = 0; i < WTF_ARRAY_LENGTH(keyPressEntries); ++i)
             keyPressCommandsMap->set(keyPressEntries[i].modifiers << 16 | keyPressEntries[i].charCode, keyPressEntries[i].name);
     }
 

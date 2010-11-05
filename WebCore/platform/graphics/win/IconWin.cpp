@@ -69,7 +69,7 @@ PassRefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
     return 0;
 #else
     TCHAR buffer[MAX_PATH];    
-    UINT length = ::GetSystemDirectory(buffer, ARRAYSIZE(buffer));
+    UINT length = ::GetSystemDirectory(buffer, WTF_ARRAY_LENGTH(buffer));
     if (!length)
         return 0;
     

@@ -39,9 +39,6 @@
 
 #if OS(WINDOWS)
 #include <objbase.h>
-#ifndef ARRAYSIZE
-#define ARRAYSIZE(a)           (sizeof(a) / sizeof((a)[0]))
-#endif
 #elif OS(DARWIN)
 #include <CoreFoundation/CoreFoundation.h>
 #elif OS(LINUX) && !PLATFORM(CHROMIUM)
@@ -69,7 +66,7 @@ String createCanonicalUUIDString()
     if (FAILED(hr))
         return String();
     wchar_t uuidStr[40];
-    int num = StringFromGUID2(uuid, reinterpret_cast<LPOLESTR>(uuidStr), ARRAYSIZE(uuidStr));
+    int num = StringFromGUID2(uuid, reinterpret_cast<LPOLESTR>(uuidStr), WTF_ARRAY_LENGTH(uuidStr));
     ASSERT(num == 39);
     String canonicalUuidStr = String(uuidStr + 1, num - 3).lower(); // remove opening and closing bracket and make it lower.
     ASSERT(canonicalUuidStr[uuidVersionIdentifierIndex] == uuidVersionRequired);

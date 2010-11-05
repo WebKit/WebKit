@@ -86,13 +86,13 @@ static bool getWebLocData(IDataObject* dataObject, String& url, String* title)
     if (!hdrop)
         return false;
 
-    if (!DragQueryFileW(hdrop, 0, filename, ARRAYSIZE(filename)))
+    if (!DragQueryFileW(hdrop, 0, filename, WTF_ARRAY_LENGTH(filename)))
         goto exit;
 
     if (_wcsicmp(PathFindExtensionW(filename), L".url"))
         goto exit;    
     
-    if (!GetPrivateProfileStringW(L"InternetShortcut", L"url", 0, urlBuffer, ARRAYSIZE(urlBuffer), filename))
+    if (!GetPrivateProfileStringW(L"InternetShortcut", L"url", 0, urlBuffer, WTF_ARRAY_LENGTH(urlBuffer), filename))
         goto exit;
     
     if (title) {

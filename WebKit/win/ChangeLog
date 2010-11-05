@@ -1,3 +1,17 @@
+2010-11-05  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Replace ARRAYSIZE with WTF_ARRAY_LENGTH
+        https://bugs.webkit.org/show_bug.cgi?id=48903
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::exceededDatabaseQuota):
+        * WebKitDLL.cpp:
+        (DllGetClassObject):
+        * WebView.cpp:
+        (WebView::mouseWheel):
+
 2010-11-02  Daniel Bates  <dbates@rim.com>
 
         Reviewed by Adam Barth.
