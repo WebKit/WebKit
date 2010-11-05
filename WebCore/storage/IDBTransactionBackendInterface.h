@@ -53,7 +53,6 @@ public:
     virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask = 0) = 0;
     virtual void didCompleteTaskEvents() = 0;
     virtual void abort() = 0;
-    virtual int id() const = 0;
     virtual void setCallbacks(IDBTransactionCallbacks*) = 0;
 };
 

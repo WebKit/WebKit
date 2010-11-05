@@ -84,11 +84,6 @@ void IDBTransactionBackendProxy::didCompleteTaskEvents()
     m_webIDBTransaction->didCompleteTaskEvents();
 }
 
-int IDBTransactionBackendProxy::id() const
-{
-    return m_webIDBTransaction->id();
-}
-
 void IDBTransactionBackendProxy::setCallbacks(IDBTransactionCallbacks* callbacks)
 {
     m_webIDBTransaction->setCallbacks(new WebIDBTransactionCallbacksImpl(callbacks));

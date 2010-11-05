@@ -1,3 +1,18 @@
+2010-10-27  Jeremy Orlow  <jorlow@chromium.org>
+
+        Reviewed by Steve Block.
+
+        Clean up IDBTransactionBackend/Coordinator
+        https://bugs.webkit.org/show_bug.cgi?id=48425
+
+        Remove obsolete ::id() method.
+
+        * public/WebIDBTransaction.h:
+        * src/IDBTransactionBackendProxy.cpp:
+        * src/IDBTransactionBackendProxy.h:
+        * src/WebIDBTransactionImpl.cpp:
+        * src/WebIDBTransactionImpl.h:
+
 2010-11-04  usaini  <usaini08@gmail.com>
 
         Reviewed by Antonio Gomes.

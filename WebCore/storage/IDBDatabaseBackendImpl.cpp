@@ -34,7 +34,7 @@
 #include "IDBFactoryBackendImpl.h"
 #include "IDBObjectStoreBackendImpl.h"
 #include "IDBSQLiteDatabase.h"
-#include "IDBTransactionBackendInterface.h"
+#include "IDBTransactionBackendImpl.h"
 #include "IDBTransactionCoordinator.h"
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
@@ -224,7 +224,7 @@ void IDBDatabaseBackendImpl::setVersion(const String& version, PassRefPtr<IDBCal
     RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<DOMStringList> objectStores = DOMStringList::create();
-    RefPtr<IDBTransactionBackendInterface> transaction = m_transactionCoordinator->createTransaction(objectStores.get(), IDBTransaction::VERSION_CHANGE, 0, this);
+    RefPtr<IDBTransactionBackendInterface> transaction = IDBTransactionBackendImpl::create(objectStores.get(), IDBTransaction::VERSION_CHANGE, 0, this);
     if (!transaction->scheduleTask(createCallbackTask(&IDBDatabaseBackendImpl::setVersionInternal, database, version, callbacks, transaction),
                                    createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_version))) {
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
@@ -247,7 +247,7 @@ void IDBDatabaseBackendImpl::setVersionInternal(ScriptExecutionContext*, PassRef
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, ExceptionCode&)
 {
     // FIXME: Return not allowed err if close has been called.
-    return m_transactionCoordinator->createTransaction(objectStores, mode, timeout, this);
+    return IDBTransactionBackendImpl::create(objectStores, mode, timeout, this);
 }
 
 void IDBDatabaseBackendImpl::close()

@@ -36,8 +36,12 @@
 
 namespace WebCore {
 
+PassRefPtr<IDBTransactionCoordinator> IDBTransactionCoordinator::create()
+{
+    return adoptRef(new IDBTransactionCoordinator());
+}
+
 IDBTransactionCoordinator::IDBTransactionCoordinator() 
-    : m_nextID(0)
 {
 }
 
@@ -45,16 +49,15 @@ IDBTransactionCoordinator::~IDBTransactionCoordinator()
 {
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBTransactionCoordinator::createTransaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl* database)
+void IDBTransactionCoordinator::didCreateTransaction(IDBTransactionBackendImpl* transaction)
 {
-    RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(objectStores, mode, timeout, ++m_nextID, database);
-    m_transactions.add(m_nextID, transaction);
-    return transaction.release();
+    ASSERT(!m_transactions.contains(transaction));
+    m_transactions.add(transaction, transaction);
 }
 
 void IDBTransactionCoordinator::didStartTransaction(IDBTransactionBackendImpl* transaction)
 {
-    ASSERT(m_transactions.contains(transaction->id()));
+    ASSERT(m_transactions.contains(transaction));
 
     m_startedTransactions.add(transaction);
     processStartedTransactions();
@@ -62,7 +65,7 @@ void IDBTransactionCoordinator::didStartTransaction(IDBTransactionBackendImpl* t
 
 void IDBTransactionCoordinator::didFinishTransaction(IDBTransactionBackendImpl* transaction)
 {
-    ASSERT(m_transactions.contains(transaction->id()));
+    ASSERT(m_transactions.contains(transaction));
 
     if (m_startedTransactions.contains(transaction)) {
         ASSERT(!m_runningTransactions.contains(transaction));
@@ -70,16 +73,34 @@ void IDBTransactionCoordinator::didFinishTransaction(IDBTransactionBackendImpl* 
     } else if (m_runningTransactions.contains(transaction))
         m_runningTransactions.remove(transaction);
 
-    m_transactions.remove(transaction->id());
+    m_transactions.remove(transaction);
 
     processStartedTransactions();
 }
 
+#ifndef NDEBUG
+// Verifies internal consistiency while returning whether anything is found.
+bool IDBTransactionCoordinator::isActive(IDBTransactionBackendImpl* transaction)
+{
+    bool found = false;
+    if (m_startedTransactions.contains(transaction))
+        found = true;
+    if (m_runningTransactions.contains(transaction)) {
+        ASSERT(!found);
+        found = true;
+    }
+    ASSERT(found == m_transactions.contains(transaction));
+    return found;
+}
+#endif
+
 void IDBTransactionCoordinator::processStartedTransactions()
 {
-    // FIXME: This should allocate a thread to the next transaction that's
-    // ready to run. For now we only have a single running transaction.
-    if (m_startedTransactions.isEmpty() || !m_runningTransactions.isEmpty())
+    // FIXME: For now, we only allow one transaction to run at a time.
+    if (!m_runningTransactions.isEmpty())
+        return;
+
+    if (m_startedTransactions.isEmpty())
         return;
 
     IDBTransactionBackendImpl* transaction = *m_startedTransactions.begin();

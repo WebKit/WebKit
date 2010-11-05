@@ -42,21 +42,20 @@ class IDBDatabaseBackendImpl;
 
 class IDBTransactionBackendImpl : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendImpl> create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
-    virtual ~IDBTransactionBackendImpl() { abort(); }
+    static PassRefPtr<IDBTransactionBackendImpl> create(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl*);
+    virtual ~IDBTransactionBackendImpl();
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(const String& name);
     virtual unsigned short mode() const { return m_mode; }
     virtual bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask);
     virtual void didCompleteTaskEvents();
     virtual void abort();
-    virtual int id() const { return m_id; }
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
 
     void run();
 
 private:
-    IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, int id, IDBDatabaseBackendImpl*);
+    IDBTransactionBackendImpl(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -74,7 +73,6 @@ private:
     RefPtr<DOMStringList> m_objectStoreNames;
     unsigned short m_mode;
     unsigned long m_timeout;
-    int m_id;
 
     State m_state;
     RefPtr<IDBTransactionCallbacks> m_callbacks;

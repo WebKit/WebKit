@@ -45,7 +45,6 @@ public:
     virtual WebIDBObjectStore* objectStore(const WebString& name);
     virtual void abort();
     virtual void didCompleteTaskEvents();
-    virtual int id() const;
     virtual void setCallbacks(WebIDBTransactionCallbacks*);
 
     virtual WebCore::IDBTransactionBackendInterface* getIDBTransactionBackendInterface() const;

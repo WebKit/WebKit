@@ -39,39 +39,31 @@ class IDBTransactionBackendImpl;
 class IDBTransactionCallbacks;
 class IDBDatabaseBackendImpl;
 
-// This class manages transactions as follows. Requests for new transactions are
-// always satisfied and the new transaction is placed in a queue.
-// Transactions are not actually started until the first operation is issued.
-// Each transaction executes in a separate thread and is committed automatically
-// when there are no more operations issued in its context.
-// When starting, a transaction will attempt to lock all the object stores in its
-// scope. If this does not happen within a given timeout, an exception is raised.
-// The Coordinator maintains a pool of threads. If there are no threads available
-// the next transaction in the queue will have to wait until a thread becomes
-// available.
 // Transactions are executed in the order the were created.
 class IDBTransactionCoordinator : public RefCounted<IDBTransactionCoordinator> {
 public:
-    static PassRefPtr<IDBTransactionCoordinator> create() { return adoptRef(new IDBTransactionCoordinator()); }
+    static PassRefPtr<IDBTransactionCoordinator> create();
     virtual ~IDBTransactionCoordinator();
 
-    PassRefPtr<IDBTransactionBackendInterface> createTransaction(DOMStringList* objectStores, unsigned short mode, unsigned long timeout, IDBDatabaseBackendImpl*);
-
     // Called by transactions as they start and finish.
+    void didCreateTransaction(IDBTransactionBackendImpl*);
     void didStartTransaction(IDBTransactionBackendImpl*);
     void didFinishTransaction(IDBTransactionBackendImpl*);
+
+#ifndef NDEBUG
+    bool isActive(IDBTransactionBackendImpl*);
+#endif
 
 private:
     IDBTransactionCoordinator();
 
     void processStartedTransactions();
 
-    // This map owns all transactions known to the coordinator.
-    HashMap<int, RefPtr<IDBTransactionBackendImpl> > m_transactions;
+    // This is just an efficient way to keep references to all transactions.
+    HashMap<IDBTransactionBackendImpl*, RefPtr<IDBTransactionBackendImpl> > m_transactions;
     // Transactions in different states are grouped below.
     ListHashSet<IDBTransactionBackendImpl*> m_startedTransactions;
     HashSet<IDBTransactionBackendImpl*> m_runningTransactions;
-    int m_nextID;
 };
 
 } // namespace WebCore
