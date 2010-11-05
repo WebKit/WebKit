@@ -62,6 +62,8 @@ private:
     bool hasProperty(NPIdentifier propertyName);
     bool getProperty(NPIdentifier propertyName, NPVariant* result);
     bool setProperty(NPIdentifier propertyName, const NPVariant* value);
+    bool removeProperty(NPIdentifier propertyName);
+    bool enumerate(NPIdentifier** identifiers, uint32_t* identifierCount);
 
     static NPClass* npClass();
     static NPObject* NP_Allocate(NPP, NPClass*);

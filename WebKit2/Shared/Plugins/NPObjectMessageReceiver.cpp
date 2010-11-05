@@ -142,6 +142,36 @@ void NPObjectMessageReceiver::setProperty(const NPIdentifierData& propertyNameDa
     releaseNPVariantValue(&propertyValue);
 }
 
+void NPObjectMessageReceiver::removeProperty(const NPIdentifierData& propertyNameData, bool& returnValue)
+{
+    if (!m_npObject->_class->removeProperty) {
+        returnValue = false;
+        return;
+    }
+
+    returnValue = m_npObject->_class->removeProperty(m_npObject, propertyNameData.createNPIdentifier());
+}
+
+void NPObjectMessageReceiver::enumerate(bool& returnValue, Vector<NPIdentifierData>& identifiersData)
+{
+    if (!NP_CLASS_STRUCT_VERSION_HAS_ENUM(m_npObject->_class) || !m_npObject->_class->enumerate) {
+        returnValue = false;
+        return;
+    }
+
+    NPIdentifier* identifiers = 0;
+    uint32_t identifierCount = 0;
+
+    returnValue = m_npObject->_class->enumerate(m_npObject, &identifiers, &identifierCount);
+    if (!returnValue)
+        return;
+
+    for (uint32_t i = 0; i < identifierCount; ++i)
+        identifiersData.append(NPIdentifierData::fromNPIdentifier(identifiers[i]));
+
+    npnMemFree(identifiers);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

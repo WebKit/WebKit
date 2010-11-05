@@ -29,6 +29,8 @@ messages -> NPObjectMessageReceiver {
     HasProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue)
     GetProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue, WebKit::NPVariantData resultData)
     SetProperty(WebKit::NPIdentifierData propertyName, WebKit::NPVariantData propertyValueData) -> (bool returnValue)
+    RemoveProperty(WebKit::NPIdentifierData propertyName) -> (bool returnValue)
+    Enumerate() -> (bool returnValue, Vector<WebKit::NPIdentifierData> identifiersData)
 }
 
 #endif
