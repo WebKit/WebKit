@@ -1,3 +1,34 @@
+2010-11-05  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Left over files and shared memory segments
+        https://bugs.webkit.org/show_bug.cgi?id=48985
+
+        * Platform/qt/SharedMemoryQt.cpp:
+        (WebKit::SharedMemory::create): Force deletion of the QSharedMemory
+        object on terminate by connecting QCoreApplication::aboutToQuit with
+        deleteLater. Add the object to the CrashHandler as well to release the
+        shared memory segment even on crash.
+        (WebKit::SharedMemory::~SharedMemory):
+        * Shared/qt/CrashHandler.cpp: Added.
+        CrashHandler has a container for QObjects that we want to
+        destroy on crash. When we got a signal that we interpret as
+        a crash then it destroys those objects.
+        (WebKit::CrashHandler::CrashHandler):
+        (WebKit::CrashHandler::signalHandler):
+        (WebKit::CrashHandler::deleteObjects):
+        * Shared/qt/CrashHandler.h: Added.
+        (WebKit::CrashHandler::instance):
+        (WebKit::CrashHandler::didDelete):
+        (WebKit::CrashHandler::markForDeletionOnCrash):
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        (WebKit::ProcessLauncherHelper::ProcessLauncherHelper):
+        Add the object itself to the CrashHandler to close the QLocalServer
+        even on crash. Without that the QLocalServer leaves over socket files on the disk.
+        (WebKit::ProcessLauncherHelper::~ProcessLauncherHelper):
+        * WebKit2.pro:
+
 2010-11-04  Jia Pu  <jpu@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -213,6 +213,7 @@ HEADERS += \
     Shared/NativeWebKeyboardEvent.h \
     Shared/NotImplemented.h \
     Shared/StringPairVector.h \
+    Shared/qt/CrashHandler.h \
     Shared/qt/PlatformCertificateInfo.h \
     Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
@@ -379,6 +380,7 @@ SOURCES += \
     Shared/MutableArray.cpp \
     Shared/MutableDictionary.cpp \
     Shared/qt/BackingStoreQt.cpp \
+    Shared/qt/CrashHandler.cpp \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \

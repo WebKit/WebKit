@@ -29,8 +29,10 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
+#include "CrashHandler.h"
 #include "WebCoreArgumentCoders.h"
 #include <unistd.h>
+#include <QCoreApplication>
 #include <QLatin1String>
 #include <QSharedMemory>
 #include <QString>
@@ -92,9 +94,15 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
     QSharedMemory* impl = new QSharedMemory(createUniqueKey());
     bool created = impl->create(size);
     ASSERT_UNUSED(created, created);
+
     sharedMemory->m_impl = impl;
     sharedMemory->m_size = size;
     sharedMemory->m_data = impl->data();
+
+    impl->connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), SLOT(deleteLater()));
+
+    // Release the shared memory segment even on crash!
+    CrashHandler::instance()->markForDeletionOnCrash(impl);
 
     return sharedMemory.release();
 }
@@ -121,10 +129,16 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
     QSharedMemory* impl = new QSharedMemory(QString(handle.m_key));
     bool attached = impl->attach(accessMode(protection));
     ASSERT_UNUSED(attached, attached);
+
     sharedMemory->m_impl = impl;
     ASSERT(handle.m_size == impl->size());
     sharedMemory->m_size = handle.m_size;
     sharedMemory->m_data = impl->data();
+
+    impl->connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), SLOT(deleteLater()));
+
+    // Release the shared memory segment even on crash!
+    CrashHandler::instance()->markForDeletionOnCrash(impl);
 
     return sharedMemory.release();
 }
@@ -134,6 +148,7 @@ SharedMemory::~SharedMemory()
     // m_impl must be non-null and it must point to a valid QSharedMemory object.
     ASSERT(qobject_cast<QSharedMemory*>(m_impl));
     delete m_impl;
+    CrashHandler::instance()->didDelete(m_impl);
 }
 
 bool SharedMemory::createHandle(Handle& handle, Protection protection)

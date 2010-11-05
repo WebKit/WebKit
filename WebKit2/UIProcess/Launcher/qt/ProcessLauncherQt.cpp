@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include "NotImplemented.h"
 #include "RunLoop.h"
+#include "CrashHandler.h"
 #include "WebProcess.h"
 #include <runtime/InitializeThreading.h>
 #include <string>
@@ -102,6 +103,7 @@ QLocalSocket* ProcessLauncherHelper::takePendingConnection()
 ProcessLauncherHelper::~ProcessLauncherHelper()
 {
     m_server.close();
+    CrashHandler::instance()->didDelete(this);
 }
 
 ProcessLauncherHelper::ProcessLauncherHelper()
@@ -113,6 +115,9 @@ ProcessLauncherHelper::ProcessLauncherHelper()
     }
     connect(&m_server, SIGNAL(newConnection()), this, SLOT(newConnection()));
     connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), SLOT(deleteLater()), Qt::QueuedConnection);
+
+    // Do not leave socket files on the disk even on crash!
+    CrashHandler::instance()->markForDeletionOnCrash(this);
 }
 
 ProcessLauncherHelper* ProcessLauncherHelper::instance()
