@@ -424,8 +424,8 @@ void HTMLTableElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == alignAttr) {
         if (!attr->value().isEmpty()) {
             if (equalIgnoringCase(attr->value(), "center")) {
-                addCSSProperty(attr, CSSPropertyMarginLeft, CSSValueAuto);
-                addCSSProperty(attr, CSSPropertyMarginRight, CSSValueAuto);
+                addCSSProperty(attr, CSSPropertyWebkitMarginStart, CSSValueAuto);
+                addCSSProperty(attr, CSSPropertyWebkitMarginEnd, CSSValueAuto);
             } else
                 addCSSProperty(attr, CSSPropertyFloat, attr->value());
         }

@@ -47,9 +47,9 @@ public:
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 
-    void setCellWidths();
-    int calcRowHeight();
-    int layoutRows(int height);
+    void setCellLogicalWidths();
+    int calcRowLogicalHeight();
+    int layoutRows(int logicalHeight);
 
     RenderTable* table() const { return toRenderTable(parent()); }
 
@@ -79,7 +79,7 @@ public:
         Row* row;
         RenderTableRow* rowRenderer;
         int baseline;
-        Length height;
+        Length logicalHeight;
     };
 
     CellStruct& cellAt(int row,  int col) { return (*m_grid[row].row)[col]; }
@@ -93,16 +93,16 @@ public:
     void appendColumn(int pos);
     void splitColumn(int pos, int first);
 
-    int calcOuterBorderTop() const;
-    int calcOuterBorderBottom() const;
-    int calcOuterBorderLeft(bool rtl) const;
-    int calcOuterBorderRight(bool rtl) const;
+    int calcOuterBorderBefore() const;
+    int calcOuterBorderAfter() const;
+    int calcOuterBorderStart() const;
+    int calcOuterBorderEnd() const;
     void recalcOuterBorder();
 
-    int outerBorderTop() const { return m_outerBorderTop; }
-    int outerBorderBottom() const { return m_outerBorderBottom; }
-    int outerBorderLeft() const { return m_outerBorderLeft; }
-    int outerBorderRight() const { return m_outerBorderRight; }
+    int outerBorderBefore() const { return m_outerBorderBefore; }
+    int outerBorderAfter() const { return m_outerBorderAfter; }
+    int outerBorderStart() const { return m_outerBorderStart; }
+    int outerBorderEnd() const { return m_outerBorderEnd; }
 
     int numRows() const { return m_gridRows; }
     int numColumns() const;
@@ -163,10 +163,10 @@ private:
     int m_cCol;
     int m_cRow;
 
-    int m_outerBorderLeft;
-    int m_outerBorderRight;
-    int m_outerBorderTop;
-    int m_outerBorderBottom;
+    int m_outerBorderStart;
+    int m_outerBorderEnd;
+    int m_outerBorderBefore;
+    int m_outerBorderAfter;
 
     bool m_needsCellRecalc;
     bool m_hasOverflowingCell;

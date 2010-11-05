@@ -1753,15 +1753,18 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
              style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW || style->display() == TABLE_CELL) &&
              style->position() == RelativePosition)
             style->setPosition(StaticPosition);
-        
-        // FIXME: Since we don't support block-flow on either tables or flexible boxes yet, disallow setting
+
+        // writing-mode does not apply to table row groups, table column groups, table rows, and table columns.
+        // FIXME: Table cells should be allowed to be perpendicular or flipped with respect to the table, though.
+        if (style->display() == TABLE_COLUMN || style->display() == TABLE_COLUMN_GROUP || style->display() == TABLE_FOOTER_GROUP
+            || style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_ROW || style->display() == TABLE_ROW_GROUP
+            || style->display() == TABLE_CELL)
+            style->setWritingMode(parentStyle->writingMode());
+
+        // FIXME: Since we don't support block-flow on flexible boxes yet, disallow setting
         // of block-flow to anything other than TopToBottomWritingMode.
-        // https://bugs.webkit.org/show_bug.cgi?id=46417 - Tables support
         // https://bugs.webkit.org/show_bug.cgi?id=46418 - Flexible box support.
-        if (style->writingMode() != TopToBottomWritingMode && (style->display() == TABLE || style->display() == INLINE_TABLE
-            || style->display() == TABLE_HEADER_GROUP || style->display() == TABLE_ROW_GROUP
-            || style->display() == TABLE_FOOTER_GROUP || style->display() == TABLE_ROW || style->display() == TABLE_CELL
-            || style->display() == BOX || style->display() == INLINE_BOX))
+        if (style->writingMode() != TopToBottomWritingMode && (style->display() == BOX || style->display() == INLINE_BOX))
             style->setWritingMode(TopToBottomWritingMode);
     }
 

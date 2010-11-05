@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2009, 2010 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,21 +47,78 @@ public:
     int vBorderSpacing() const { return m_vSpacing; }
     
     bool collapseBorders() const { return style()->borderCollapse(); }
-    int borderLeft() const { return m_borderLeft; }
-    int borderRight() const { return m_borderRight; }
-    int borderTop() const;
-    int borderBottom() const;
-    
+
+    int borderStart() const { return m_borderStart; }
+    int borderEnd() const { return m_borderEnd; }
+    int borderBefore() const;
+    int borderAfter() const;
+
+    int borderLeft() const
+    {
+        if (style()->isHorizontalWritingMode())
+            return style()->isLeftToRightDirection() ? borderStart() : borderEnd();
+        return style()->isFlippedBlocksWritingMode() ? borderAfter() : borderBefore();
+    }
+
+    int borderRight() const
+    {
+        if (style()->isHorizontalWritingMode())
+            return style()->isLeftToRightDirection() ? borderEnd() : borderStart();
+        return style()->isFlippedBlocksWritingMode() ? borderBefore() : borderAfter();
+    }
+
+    int borderTop() const
+    {
+        if (style()->isHorizontalWritingMode())
+            return style()->isFlippedBlocksWritingMode() ? borderAfter() : borderBefore();
+        return style()->isLeftToRightDirection() ? borderStart() : borderEnd();
+    }
+
+    int borderBottom() const
+    {
+        if (style()->isHorizontalWritingMode())
+            return style()->isFlippedBlocksWritingMode() ? borderBefore() : borderAfter();
+        return style()->isLeftToRightDirection() ? borderEnd() : borderStart();
+    }
+
     const Color bgColor() const { return style()->visitedDependentColor(CSSPropertyBackgroundColor); }
 
-    int outerBorderTop() const;
-    int outerBorderBottom() const;
-    int outerBorderLeft() const;
-    int outerBorderRight() const;
-    
-    int calcBorderLeft() const;
-    int calcBorderRight() const;
-    void recalcHorizontalBorders();
+    int outerBorderBefore() const;
+    int outerBorderAfter() const;
+    int outerBorderStart() const;
+    int outerBorderEnd() const;
+
+    int outerBorderLeft() const
+    {
+        if (style()->isHorizontalWritingMode())
+            return style()->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
+        return style()->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
+    }
+
+    int outerBorderRight() const
+    {
+        if (style()->isHorizontalWritingMode())
+            return style()->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
+        return style()->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
+    }
+
+    int outerBorderTop() const
+    {
+        if (style()->isHorizontalWritingMode())
+            return style()->isFlippedBlocksWritingMode() ? outerBorderAfter() : outerBorderBefore();
+        return style()->isLeftToRightDirection() ? outerBorderStart() : outerBorderEnd();
+    }
+
+    int outerBorderBottom() const
+    {
+        if (style()->isHorizontalWritingMode())
+            return style()->isFlippedBlocksWritingMode() ? outerBorderBefore() : outerBorderAfter();
+        return style()->isLeftToRightDirection() ? outerBorderEnd() : outerBorderStart();
+    }
+
+    int calcBorderStart() const;
+    int calcBorderEnd() const;
+    void recalcBordersInRowDirection();
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
@@ -110,8 +167,8 @@ public:
 
     int bordersPaddingAndSpacingInRowDirection() const
     {
-        return borderLeft() + borderRight() +
-               (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols() + 1) * hBorderSpacing()));
+        return borderStart() + borderEnd() +
+               (collapseBorders() ? 0 : (paddingStart() + paddingEnd() + (numEffCols() + 1) * hBorderSpacing()));
     }
 
     RenderTableCol* colElement(int col, bool* startEdge = 0, bool* endEdge = 0) const;
@@ -169,11 +226,13 @@ private:
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
     
-    virtual void setCellWidths();
+    virtual void setCellLogicalWidths();
 
     virtual void computeLogicalWidth();
 
     virtual IntRect overflowClipRect(int tx, int ty);
+
+    void subtractCaptionRect(IntRect&) const;
 
     void recalcSections() const;
 
@@ -194,8 +253,8 @@ private:
     
     short m_hSpacing;
     short m_vSpacing;
-    int m_borderLeft;
-    int m_borderRight;
+    int m_borderStart;
+    int m_borderEnd;
 };
 
 inline RenderTable* toRenderTable(RenderObject* object)
