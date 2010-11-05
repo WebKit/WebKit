@@ -1,5 +1,30 @@
 2010-11-05  Adam Roben  <aroben@apple.com>
 
+        Implement PluginInfoStore::shouldUsePlugin on Windows
+
+        Fixes <http://webkit.org/b/43509> <rdar://problem/8273822> WebKit2
+        should refuse to load the same plugins that old-WebKit refuses to load
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::fileVersion): Helper function to construct a 64-bit file
+        version from two 32-bit numbers.
+        (WebKit::PluginInfoStore::getPluginInfo): Ported code from
+        WebCore::PluginPackage::fetchInfo to get the plugin's version. We now
+        store it in Plugin::fileVersion.
+
+        (WebKit::isOldWindowsMediaPlayerPlugin):
+        (WebKit::isNewWindowsMediaPlayerPlugin):
+        Added these helpers. The code came from
+        WebCore::PluginDatabase::getPluginPathsInDirectories.
+
+        (WebKit::PluginInfoStore::shouldUsePlugin): Implemented. The code was
+        ported from WebCore::PluginDatabase::getPluginPathsInDirectories and
+        WebCore::PluginPackage::isPluginBlacklisted.
+
+2010-11-05  Adam Roben  <aroben@apple.com>
+
         Operate on m_plugins directly in PluginInfoStore::shouldUsePlugin
 
         We'll need to operate on m_plugins if we ever want to unload an

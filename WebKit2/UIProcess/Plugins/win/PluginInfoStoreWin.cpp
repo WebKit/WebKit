@@ -352,6 +352,14 @@ static String getVersionInfo(const LPVOID versionInfoData, const String& info)
     return String(reinterpret_cast<UChar*>(buffer), bufferLength - 1);
 }
 
+static uint64_t fileVersion(DWORD leastSignificant, DWORD mostSignificant)
+{
+    ULARGE_INTEGER version;
+    version.LowPart = leastSignificant;
+    version.HighPart = mostSignificant;
+    return version.QuadPart;
+}
+
 bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
 {
     String pathCopy = pluginPath;
@@ -366,6 +374,11 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     String name = getVersionInfo(versionInfoData.get(), "ProductName");
     String description = getVersionInfo(versionInfoData.get(), "FileDescription");
     if (name.isNull() || description.isNull())
+        return false;
+
+    VS_FIXEDFILEINFO* info;
+    UINT infoSize;
+    if (!::VerQueryValueW(versionInfoData.get(), L"\\", reinterpret_cast<void**>(&info), &infoSize) || infoSize < sizeof(VS_FIXEDFILEINFO))
         return false;
 
     Vector<String> types;
@@ -403,14 +416,72 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     plugin.info.name = name;
     plugin.info.file = pathGetFileName(pluginPath);
     plugin.info.mimes.swap(mimes);
+    plugin.fileVersion = fileVersion(info->dwFileVersionLS, info->dwFileVersionMS);
+
     return true;
+}
+
+static bool isOldWindowsMediaPlayerPlugin(const PluginInfoStore::Plugin& plugin)
+{
+    return equalIgnoringCase(plugin.info.file, "npdsplay.dll");
+}
+
+static bool isNewWindowsMediaPlayerPlugin(const PluginInfoStore::Plugin& plugin)
+{
+    return equalIgnoringCase(plugin.info.file, "np-mswmp.dll");
 }
 
 bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
 {
-    // FIXME: <http://webkit.org/b/43509> Migrate logic here from
-    // PluginDatabase::getPluginPathsInDirectories and PluginPackage::isPluginBlacklisted.
-    notImplemented();
+    // FIXME: We should prefer a newer version of a plugin to an older version, rather than loading
+    // both. <http://webkit.org/b/49075>
+
+    if (plugin.info.name == "Citrix ICA Client") {
+        // The Citrix ICA Client plug-in requires a Mozilla-based browser; see <rdar://6418681>.
+        return false;
+    }
+
+    if (plugin.info.name == "Silverlight Plug-In") {
+        // workaround for <rdar://5557379> Crash in Silverlight when opening microsoft.com.
+        // the latest 1.0 version of Silverlight does not reproduce this crash, so allow it
+        // and any newer versions
+        static const uint64_t minimumRequiredVersion = fileVersion(0x51BE0000, 0x00010000);
+        return plugin.fileVersion >= minimumRequiredVersion;
+    }
+
+    if (equalIgnoringCase(plugin.info.file, "npmozax.dll")) {
+        // Bug 15217: Mozilla ActiveX control complains about missing xpcom_core.dll
+        return false;
+    }
+
+    if (plugin.info.name == "Yahoo Application State Plugin") {
+        // https://bugs.webkit.org/show_bug.cgi?id=26860
+        // Bug in Yahoo Application State plug-in earlier than 1.0.0.6 leads to heap corruption.
+        static const uint64_t minimumRequiredVersion = fileVersion(0x00000006, 0x00010000);
+        return plugin.fileVersion >= minimumRequiredVersion;
+    }
+
+    if (isOldWindowsMediaPlayerPlugin(plugin)) {
+        // Don't load the old Windows Media Player plugin if we've already loaded the new Windows
+        // Media Player plugin.
+        for (size_t i = 0; i < m_plugins.size(); ++i) {
+            if (!isNewWindowsMediaPlayerPlugin(m_plugins[i]))
+                continue;
+            return false;
+        }
+        return true;
+    }
+
+    if (isNewWindowsMediaPlayerPlugin(plugin)) {
+        // Unload the old Windows Media Player plugin if we've already loaded it.
+        for (size_t i = 0; i < m_plugins.size(); ++i) {
+            if (!isOldWindowsMediaPlayerPlugin(m_plugins[i]))
+                continue;
+            m_plugins.remove(i);
+        }
+        return true;
+    }
+
     return true;
 }
 
