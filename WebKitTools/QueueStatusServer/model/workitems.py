@@ -52,6 +52,7 @@ class WorkItems(db.Model, QueuePropertyMixin):
         work_items.item_ids.append(attachment_id)
         work_items.put()
 
+    # Because this uses .key() self.is_saved() must be True or this will throw NotSavedError.
     def add_work_item(self, attachment_id):
         db.run_in_transaction(self._unguarded_add, self.key(), attachment_id)
 
@@ -63,5 +64,6 @@ class WorkItems(db.Model, QueuePropertyMixin):
             work_items.item_ids.remove(attachment_id)
         work_items.put()
 
+    # Because this uses .key() self.is_saved() must be True or this will throw NotSavedError.
     def remove_work_item(self, attachment_id):
         db.run_in_transaction(self._unguarded_remove, self.key(), attachment_id)

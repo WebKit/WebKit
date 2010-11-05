@@ -1,3 +1,26 @@
+2010-11-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Levin.
+
+        Add QueueStatusServer/__init__.py so others can run the QueueStatusServer tests
+        https://bugs.webkit.org/show_bug.cgi?id=49032
+
+        I wrote this file as part of bug 47847, but I forgot to commit it.
+        No one else noticed it missing because test-webkitpy knows how
+        to recover in the case where it can't import QueueStatusServer
+        (which generally occurs due to not having installed the AppEngine SDK).
+
+        * QueueStatusServer/__init__.py: Added.
+        * QueueStatusServer/model/workitems_unittest.py:
+         - Remove a test which fails.  This was probably landed (by me)
+           from my other machine, which since this __init__.py was missing
+           I never noticed the failure and landed this invalid test.
+           Sadly we can't really test remove_work_item as it depends
+           on .key() working.  .key() will throw unless the object
+           has already been saved it seems.
+           This may be a mis-design in our remove_work_item implementation,
+           but for now, just removing the test.
+
 2010-11-04  Adam Roben  <aroben@apple.com>
 
         Teach check-webkit-style about TestNetscapePlugIn
