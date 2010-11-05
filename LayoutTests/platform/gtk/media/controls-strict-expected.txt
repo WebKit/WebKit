@@ -4,8 +4,8 @@ layer at (0,0) size 800x303
   RenderBlock {HTML} at (0,0) size 800x303
     RenderBody {BODY} at (8,16) size 784x279
       RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 214x19
-          text run at (0,0) width 214: "Drawing the controls in strict mode."
+        RenderText {#text} at (0,0) size 226x19
+          text run at (0,0) width 226: "Drawing the controls in strict mode."
       RenderBlock (anonymous) at (0,35) size 784x244
         RenderText {#text} at (0,0) size 0x0
 layer at (8,51) size 320x240

@@ -4,8 +4,8 @@ layer at (0,0) size 781x4748
   RenderBlock {HTML} at (0,0) size 781x4748
     RenderBody {BODY} at (8,8) size 765x4724
       RenderBlock (anonymous) at (0,0) size 765x19
-        RenderText {#text} at (0,0) size 336x19
-          text run at (0,0) width 336: "This tests font choices and metrics for monospace fonts."
+        RenderText {#text} at (0,0) size 351x19
+          text run at (0,0) width 351: "This tests font choices and metrics for monospace fonts."
       RenderBlock {P} at (0,35) size 765x190
         RenderInline {FONT} at (0,0) size 750x190
           RenderText {#text} at (0,0) size 60x19

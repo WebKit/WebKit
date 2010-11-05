@@ -4,86 +4,86 @@ layer at (0,0) size 781x5915
   RenderBlock {HTML} at (0,0) size 781x5915
     RenderBody {BODY} at (8,8) size 765x5891
       RenderBlock (anonymous) at (0,0) size 765x19
-        RenderText {#text} at (0,0) size 324x19
-          text run at (0,0) width 324: "This tests font choices and metrics for sans-serif fonts."
+        RenderText {#text} at (0,0) size 339x19
+          text run at (0,0) width 339: "This tests font choices and metrics for sans-serif fonts."
       RenderBlock {P} at (0,35) size 765x133
-        RenderInline {FONT} at (0,0) size 762x133
-          RenderText {#text} at (0,0) size 64x19
-            text run at (0,0) width 64: "Helvetica"
-          RenderBR {BR} at (64,15) size 0x0
-          RenderText {#text} at (0,19) size 762x38
-            text run at (0,19) width 762: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
-            text run at (0,38) width 394: "[ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
-          RenderBR {BR} at (394,53) size 0x0
-          RenderInline {B} at (0,0) size 756x38
-            RenderText {#text} at (0,57) size 756x38
-              text run at (0,57) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X"
+        RenderInline {FONT} at (0,0) size 756x133
+          RenderText {#text} at (0,0) size 67x19
+            text run at (0,0) width 67: "Helvetica"
+          RenderBR {BR} at (67,15) size 0x0
+          RenderText {#text} at (0,19) size 756x38
+            text run at (0,19) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
+            text run at (0,38) width 420: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
+          RenderBR {BR} at (420,53) size 0x0
+          RenderInline {B} at (0,0) size 754x38
+            RenderText {#text} at (0,57) size 754x38
+              text run at (0,57) width 754: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X"
               text run at (0,76) width 459: "Y Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
           RenderText {#text} at (0,0) size 0x0
           RenderBR {BR} at (0,0) size 0x0
-          RenderInline {I} at (0,0) size 757x38
-            RenderText {#text} at (0,95) size 757x38
-              text run at (0,95) width 757: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
-              text run at (0,114) width 413: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
+          RenderInline {I} at (0,0) size 756x38
+            RenderText {#text} at (0,95) size 756x38
+              text run at (0,95) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
+              text run at (0,114) width 416: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,184) size 765x133
-        RenderInline {FONT} at (0,0) size 762x133
-          RenderText {#text} at (0,0) size 103x19
-            text run at (0,0) width 103: "Lucida Grande"
-          RenderBR {BR} at (103,15) size 0x0
-          RenderText {#text} at (0,19) size 762x38
-            text run at (0,19) width 762: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
-            text run at (0,38) width 394: "[ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
-          RenderBR {BR} at (394,53) size 0x0
-          RenderInline {B} at (0,0) size 756x38
-            RenderText {#text} at (0,57) size 756x38
-              text run at (0,57) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X"
+        RenderInline {FONT} at (0,0) size 756x133
+          RenderText {#text} at (0,0) size 105x19
+            text run at (0,0) width 105: "Lucida Grande"
+          RenderBR {BR} at (105,15) size 0x0
+          RenderText {#text} at (0,19) size 756x38
+            text run at (0,19) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
+            text run at (0,38) width 420: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
+          RenderBR {BR} at (420,53) size 0x0
+          RenderInline {B} at (0,0) size 754x38
+            RenderText {#text} at (0,57) size 754x38
+              text run at (0,57) width 754: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X"
               text run at (0,76) width 459: "Y Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
           RenderText {#text} at (0,0) size 0x0
           RenderBR {BR} at (0,0) size 0x0
-          RenderInline {I} at (0,0) size 757x38
-            RenderText {#text} at (0,95) size 757x38
-              text run at (0,95) width 757: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
-              text run at (0,114) width 413: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
+          RenderInline {I} at (0,0) size 756x38
+            RenderText {#text} at (0,95) size 756x38
+              text run at (0,95) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
+              text run at (0,114) width 416: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
           RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,333) size 765x133
-        RenderInline {FONT} at (0,0) size 762x133
-          RenderText {#text} at (0,0) size 32x19
-            text run at (0,0) width 32: "Arial"
-          RenderBR {BR} at (32,15) size 0x0
-          RenderText {#text} at (0,19) size 762x38
-            text run at (0,19) width 762: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
-            text run at (0,38) width 394: "[ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
-          RenderBR {BR} at (394,53) size 0x0
-          RenderInline {B} at (0,0) size 756x38
-            RenderText {#text} at (0,57) size 756x38
-              text run at (0,57) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X"
+        RenderInline {FONT} at (0,0) size 756x133
+          RenderText {#text} at (0,0) size 33x19
+            text run at (0,0) width 33: "Arial"
+          RenderBR {BR} at (33,15) size 0x0
+          RenderText {#text} at (0,19) size 756x38
+            text run at (0,19) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
+            text run at (0,38) width 420: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
+          RenderBR {BR} at (420,53) size 0x0
+          RenderInline {B} at (0,0) size 754x38
+            RenderText {#text} at (0,57) size 754x38
+              text run at (0,57) width 754: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X"
               text run at (0,76) width 459: "Y Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } > "
           RenderText {#text} at (0,0) size 0x0
           RenderBR {BR} at (0,0) size 0x0
-          RenderInline {I} at (0,0) size 757x38
-            RenderText {#text} at (0,95) size 757x38
-              text run at (0,95) width 757: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
-              text run at (0,114) width 413: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
+          RenderInline {I} at (0,0) size 756x38
+            RenderText {#text} at (0,95) size 756x38
+              text run at (0,95) width 756: "  ! \" # $ % & ' ( ) * + , - . / 0 1 2 3 4 5 6 7 8 9 : ; < = > ? @ A B C D E F G H I J K L M N O P Q R S T U V W X Y"
+              text run at (0,114) width 416: "Z [ \\ ] ^ _ ` a b c d e f g h i j k l m n o p q r s t u v w x y z { | } >"
           RenderText {#text} at (0,0) size 0x0
           RenderInline {FONT} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,482) size 765x1805
-        RenderInline {FONT} at (0,0) size 68x1805
-          RenderInline {FONT} at (0,0) size 68x1805
+        RenderInline {FONT} at (0,0) size 69x1805
+          RenderInline {FONT} at (0,0) size 69x1805
             RenderText {#text} at (0,0) size 0x0
-            RenderInline {FONT} at (0,0) size 68x1805
-              RenderText {#text} at (0,0) size 68x19
-                text run at (0,0) width 68: "sans-serif"
-              RenderBR {BR} at (68,15) size 0x0
+            RenderInline {FONT} at (0,0) size 69x1805
+              RenderText {#text} at (0,0) size 69x19
+                text run at (0,0) width 69: "sans-serif"
+              RenderBR {BR} at (69,15) size 0x0
               RenderText {#text} at (0,19) size 16x19
                 text run at (0,19) width 16: "    "
               RenderBR {BR} at (16,34) size 0x0
-              RenderText {#text} at (0,38) size 20x19
-                text run at (0,38) width 20: "!!!!"
-              RenderBR {BR} at (20,53) size 0x0
+              RenderText {#text} at (0,38) size 16x19
+                text run at (0,38) width 16: "!!!!"
+              RenderBR {BR} at (16,53) size 0x0
               RenderText {#text} at (0,57) size 24x19
                 text run at (0,57) width 24: "\"\"\"\""
               RenderBR {BR} at (24,72) size 0x0
@@ -198,12 +198,12 @@ layer at (0,0) size 781x5915
               RenderText {#text} at (0,760) size 48x19
                 text run at (0,760) width 48: "GGGG"
               RenderBR {BR} at (48,775) size 0x0
-              RenderText {#text} at (0,779) size 44x19
-                text run at (0,779) width 44: "HHHH"
-              RenderBR {BR} at (44,794) size 0x0
-              RenderText {#text} at (0,798) size 12x19
-                text run at (0,798) width 12: "IIII"
-              RenderBR {BR} at (12,813) size 0x0
+              RenderText {#text} at (0,779) size 48x19
+                text run at (0,779) width 48: "HHHH"
+              RenderBR {BR} at (48,794) size 0x0
+              RenderText {#text} at (0,798) size 16x19
+                text run at (0,798) width 16: "IIII"
+              RenderBR {BR} at (16,813) size 0x0
               RenderText {#text} at (0,817) size 32x19
                 text run at (0,817) width 32: "JJJJ"
               RenderBR {BR} at (32,832) size 0x0
@@ -216,9 +216,9 @@ layer at (0,0) size 781x5915
               RenderText {#text} at (0,874) size 52x19
                 text run at (0,874) width 52: "MMMM"
               RenderBR {BR} at (52,889) size 0x0
-              RenderText {#text} at (0,893) size 44x19
-                text run at (0,893) width 44: "NNNN"
-              RenderBR {BR} at (44,908) size 0x0
+              RenderText {#text} at (0,893) size 48x19
+                text run at (0,893) width 48: "NNNN"
+              RenderBR {BR} at (48,908) size 0x0
               RenderText {#text} at (0,912) size 48x19
                 text run at (0,912) width 48: "OOOO"
               RenderBR {BR} at (48,927) size 0x0
@@ -228,18 +228,18 @@ layer at (0,0) size 781x5915
               RenderText {#text} at (0,950) size 48x19
                 text run at (0,950) width 48: "QQQQ"
               RenderBR {BR} at (48,965) size 0x0
-              RenderText {#text} at (0,969) size 44x19
-                text run at (0,969) width 44: "RRRR"
-              RenderBR {BR} at (44,984) size 0x0
+              RenderText {#text} at (0,969) size 48x19
+                text run at (0,969) width 48: "RRRR"
+              RenderBR {BR} at (48,984) size 0x0
               RenderText {#text} at (0,988) size 44x19
                 text run at (0,988) width 44: "SSSS"
               RenderBR {BR} at (44,1003) size 0x0
-              RenderText {#text} at (0,1007) size 36x19
-                text run at (0,1007) width 36: "TTTT"
-              RenderBR {BR} at (36,1022) size 0x0
-              RenderText {#text} at (0,1026) size 44x19
-                text run at (0,1026) width 44: "UUUU"
-              RenderBR {BR} at (44,1041) size 0x0
+              RenderText {#text} at (0,1007) size 40x19
+                text run at (0,1007) width 40: "TTTT"
+              RenderBR {BR} at (40,1022) size 0x0
+              RenderText {#text} at (0,1026) size 48x19
+                text run at (0,1026) width 48: "UUUU"
+              RenderBR {BR} at (48,1041) size 0x0
               RenderText {#text} at (0,1045) size 44x19
                 text run at (0,1045) width 44: "VVVV"
               RenderBR {BR} at (44,1060) size 0x0
@@ -249,12 +249,12 @@ layer at (0,0) size 781x5915
               RenderText {#text} at (0,1083) size 44x19
                 text run at (0,1083) width 44: "XXXX"
               RenderBR {BR} at (44,1098) size 0x0
-              RenderText {#text} at (0,1102) size 36x19
-                text run at (0,1102) width 36: "YYYY"
-              RenderBR {BR} at (36,1117) size 0x0
-              RenderText {#text} at (0,1121) size 36x19
-                text run at (0,1121) width 36: "ZZZZ"
-              RenderBR {BR} at (36,1136) size 0x0
+              RenderText {#text} at (0,1102) size 44x19
+                text run at (0,1102) width 44: "YYYY"
+              RenderBR {BR} at (44,1117) size 0x0
+              RenderText {#text} at (0,1121) size 40x19
+                text run at (0,1121) width 40: "ZZZZ"
+              RenderBR {BR} at (40,1136) size 0x0
               RenderText {#text} at (0,1140) size 16x19
                 text run at (0,1140) width 16: "[[[["
               RenderBR {BR} at (16,1155) size 0x0
@@ -264,9 +264,9 @@ layer at (0,0) size 781x5915
               RenderText {#text} at (0,1178) size 16x19
                 text run at (0,1178) width 16: "]]]]"
               RenderBR {BR} at (16,1193) size 0x0
-              RenderText {#text} at (0,1197) size 28x19
-                text run at (0,1197) width 28: "^^^^"
-              RenderBR {BR} at (28,1212) size 0x0
+              RenderText {#text} at (0,1197) size 32x19
+                text run at (0,1197) width 32: "^^^^"
+              RenderBR {BR} at (32,1212) size 0x0
               RenderText {#text} at (0,1216) size 36x19
                 text run at (0,1216) width 36: "____"
               RenderBR {BR} at (36,1231) size 0x0
@@ -294,27 +294,27 @@ layer at (0,0) size 781x5915
               RenderText {#text} at (0,1368) size 36x19
                 text run at (0,1368) width 36: "gggg"
               RenderBR {BR} at (36,1383) size 0x0
-              RenderText {#text} at (0,1387) size 32x19
-                text run at (0,1387) width 32: "hhhh"
-              RenderBR {BR} at (32,1402) size 0x0
+              RenderText {#text} at (0,1387) size 36x19
+                text run at (0,1387) width 36: "hhhh"
+              RenderBR {BR} at (36,1402) size 0x0
               RenderText {#text} at (0,1406) size 16x19
                 text run at (0,1406) width 16: "iiii"
               RenderBR {BR} at (16,1421) size 0x0
-              RenderText {#text} at (0,1425) size 12x19
-                text run at (0,1425) width 12: "jjjj"
-              RenderBR {BR} at (12,1440) size 0x0
+              RenderText {#text} at (0,1425) size 16x19
+                text run at (0,1425) width 16: "jjjj"
+              RenderBR {BR} at (16,1440) size 0x0
               RenderText {#text} at (0,1444) size 32x19
                 text run at (0,1444) width 32: "kkkk"
               RenderBR {BR} at (32,1459) size 0x0
-              RenderText {#text} at (0,1463) size 12x19
-                text run at (0,1463) width 12: "llll"
-              RenderBR {BR} at (12,1478) size 0x0
+              RenderText {#text} at (0,1463) size 16x19
+                text run at (0,1463) width 16: "llll"
+              RenderBR {BR} at (16,1478) size 0x0
               RenderText {#text} at (0,1482) size 52x19
                 text run at (0,1482) width 52: "mmmm"
               RenderBR {BR} at (52,1497) size 0x0
-              RenderText {#text} at (0,1501) size 32x19
-                text run at (0,1501) width 32: "nnnn"
-              RenderBR {BR} at (32,1516) size 0x0
+              RenderText {#text} at (0,1501) size 36x19
+                text run at (0,1501) width 36: "nnnn"
+              RenderBR {BR} at (36,1516) size 0x0
               RenderText {#text} at (0,1520) size 36x19
                 text run at (0,1520) width 36: "oooo"
               RenderBR {BR} at (36,1535) size 0x0
@@ -333,30 +333,30 @@ layer at (0,0) size 781x5915
               RenderText {#text} at (0,1615) size 16x19
                 text run at (0,1615) width 16: "tttt"
               RenderBR {BR} at (16,1630) size 0x0
-              RenderText {#text} at (0,1634) size 32x19
-                text run at (0,1634) width 32: "uuuu"
-              RenderBR {BR} at (32,1649) size 0x0
-              RenderText {#text} at (0,1653) size 28x19
-                text run at (0,1653) width 28: "vvvv"
-              RenderBR {BR} at (28,1668) size 0x0
-              RenderText {#text} at (0,1672) size 44x19
-                text run at (0,1672) width 44: "wwww"
-              RenderBR {BR} at (44,1687) size 0x0
-              RenderText {#text} at (0,1691) size 28x19
-                text run at (0,1691) width 28: "xxxx"
-              RenderBR {BR} at (28,1706) size 0x0
-              RenderText {#text} at (0,1710) size 28x19
-                text run at (0,1710) width 28: "yyyy"
-              RenderBR {BR} at (28,1725) size 0x0
-              RenderText {#text} at (0,1729) size 28x19
-                text run at (0,1729) width 28: "zzzz"
-              RenderBR {BR} at (28,1744) size 0x0
+              RenderText {#text} at (0,1634) size 36x19
+                text run at (0,1634) width 36: "uuuu"
+              RenderBR {BR} at (36,1649) size 0x0
+              RenderText {#text} at (0,1653) size 32x19
+                text run at (0,1653) width 32: "vvvv"
+              RenderBR {BR} at (32,1668) size 0x0
+              RenderText {#text} at (0,1672) size 48x19
+                text run at (0,1672) width 48: "wwww"
+              RenderBR {BR} at (48,1687) size 0x0
+              RenderText {#text} at (0,1691) size 32x19
+                text run at (0,1691) width 32: "xxxx"
+              RenderBR {BR} at (32,1706) size 0x0
+              RenderText {#text} at (0,1710) size 32x19
+                text run at (0,1710) width 32: "yyyy"
+              RenderBR {BR} at (32,1725) size 0x0
+              RenderText {#text} at (0,1729) size 32x19
+                text run at (0,1729) width 32: "zzzz"
+              RenderBR {BR} at (32,1744) size 0x0
               RenderText {#text} at (0,1748) size 20x19
                 text run at (0,1748) width 20: "{{{{"
               RenderBR {BR} at (20,1763) size 0x0
-              RenderText {#text} at (0,1767) size 12x19
-                text run at (0,1767) width 12: "||||"
-              RenderBR {BR} at (12,1782) size 0x0
+              RenderText {#text} at (0,1767) size 16x19
+                text run at (0,1767) width 16: "||||"
+              RenderBR {BR} at (16,1782) size 0x0
               RenderText {#text} at (0,1786) size 20x19
                 text run at (0,1786) width 20: "}}}}"
               RenderBR {BR} at (20,1801) size 0x0
@@ -369,9 +369,9 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,0) size 16x19
                   text run at (0,0) width 16: "    "
                 RenderBR {BR} at (16,15) size 0x0
-                RenderText {#text} at (0,19) size 16x19
-                  text run at (0,19) width 16: "!!!!"
-                RenderBR {BR} at (16,34) size 0x0
+                RenderText {#text} at (0,19) size 20x19
+                  text run at (0,19) width 20: "!!!!"
+                RenderBR {BR} at (20,34) size 0x0
                 RenderText {#text} at (0,38) size 32x19
                   text run at (0,38) width 32: "\"\"\"\""
                 RenderBR {BR} at (32,53) size 0x0
@@ -381,9 +381,9 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,76) size 36x19
                   text run at (0,76) width 36: "$$$$"
                 RenderBR {BR} at (36,91) size 0x0
-                RenderText {#text} at (0,95) size 64x19
-                  text run at (0,95) width 64: "%%%%"
-                RenderBR {BR} at (64,110) size 0x0
+                RenderText {#text} at (0,95) size 56x19
+                  text run at (0,95) width 56: "%%%%"
+                RenderBR {BR} at (56,110) size 0x0
                 RenderText {#text} at (0,114) size 48x19
                   text run at (0,114) width 48: "&&&&"
                 RenderBR {BR} at (48,129) size 0x0
@@ -444,12 +444,12 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,475) size 36x19
                   text run at (0,475) width 36: "9999"
                 RenderBR {BR} at (36,490) size 0x0
-                RenderText {#text} at (0,494) size 24x19
-                  text run at (0,494) width 24: "::::"
-                RenderBR {BR} at (24,509) size 0x0
-                RenderText {#text} at (0,513) size 24x19
-                  text run at (0,513) width 24: ";;;;"
-                RenderBR {BR} at (24,528) size 0x0
+                RenderText {#text} at (0,494) size 20x19
+                  text run at (0,494) width 20: "::::"
+                RenderBR {BR} at (20,509) size 0x0
+                RenderText {#text} at (0,513) size 20x19
+                  text run at (0,513) width 20: ";;;;"
+                RenderBR {BR} at (20,528) size 0x0
                 RenderText {#text} at (0,532) size 36x19
                   text run at (0,532) width 36: "<<<<"
                 RenderBR {BR} at (36,547) size 0x0
@@ -465,9 +465,9 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,608) size 64x19
                   text run at (0,608) width 64: "@@@@"
                 RenderBR {BR} at (64,623) size 0x0
-                RenderText {#text} at (0,627) size 44x19
-                  text run at (0,627) width 44: "AAAA"
-                RenderBR {BR} at (44,642) size 0x0
+                RenderText {#text} at (0,627) size 48x19
+                  text run at (0,627) width 48: "AAAA"
+                RenderBR {BR} at (48,642) size 0x0
                 RenderText {#text} at (0,646) size 48x19
                   text run at (0,646) width 48: "BBBB"
                 RenderBR {BR} at (48,661) size 0x0
@@ -537,12 +537,12 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,1064) size 44x19
                   text run at (0,1064) width 44: "XXXX"
                 RenderBR {BR} at (44,1079) size 0x0
-                RenderText {#text} at (0,1083) size 40x19
-                  text run at (0,1083) width 40: "YYYY"
-                RenderBR {BR} at (40,1098) size 0x0
-                RenderText {#text} at (0,1102) size 36x19
-                  text run at (0,1102) width 36: "ZZZZ"
-                RenderBR {BR} at (36,1117) size 0x0
+                RenderText {#text} at (0,1083) size 44x19
+                  text run at (0,1083) width 44: "YYYY"
+                RenderBR {BR} at (44,1098) size 0x0
+                RenderText {#text} at (0,1102) size 40x19
+                  text run at (0,1102) width 40: "ZZZZ"
+                RenderBR {BR} at (40,1117) size 0x0
                 RenderText {#text} at (0,1121) size 20x19
                   text run at (0,1121) width 20: "[[[["
                 RenderBR {BR} at (20,1136) size 0x0
@@ -627,18 +627,18 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,1634) size 36x19
                   text run at (0,1634) width 36: "vvvv"
                 RenderBR {BR} at (36,1649) size 0x0
-                RenderText {#text} at (0,1653) size 52x19
-                  text run at (0,1653) width 52: "wwww"
-                RenderBR {BR} at (52,1668) size 0x0
+                RenderText {#text} at (0,1653) size 48x19
+                  text run at (0,1653) width 48: "wwww"
+                RenderBR {BR} at (48,1668) size 0x0
                 RenderText {#text} at (0,1672) size 36x19
                   text run at (0,1672) width 36: "xxxx"
                 RenderBR {BR} at (36,1687) size 0x0
                 RenderText {#text} at (0,1691) size 36x19
                   text run at (0,1691) width 36: "yyyy"
                 RenderBR {BR} at (36,1706) size 0x0
-                RenderText {#text} at (0,1710) size 36x19
-                  text run at (0,1710) width 36: "zzzz"
-                RenderBR {BR} at (36,1725) size 0x0
+                RenderText {#text} at (0,1710) size 32x19
+                  text run at (0,1710) width 32: "zzzz"
+                RenderBR {BR} at (32,1725) size 0x0
                 RenderText {#text} at (0,1729) size 24x19
                   text run at (0,1729) width 24: "{{{{"
                 RenderBR {BR} at (24,1744) size 0x0
@@ -790,9 +790,9 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,836) size 36x19
                   text run at (0,836) width 36: "LLLL"
                 RenderBR {BR} at (36,851) size 0x0
-                RenderText {#text} at (0,855) size 56x19
-                  text run at (0,855) width 56: "MMMM"
-                RenderBR {BR} at (56,870) size 0x0
+                RenderText {#text} at (0,855) size 52x19
+                  text run at (0,855) width 52: "MMMM"
+                RenderBR {BR} at (52,870) size 0x0
                 RenderText {#text} at (0,874) size 48x19
                   text run at (0,874) width 48: "NNNN"
                 RenderBR {BR} at (48,889) size 0x0
@@ -886,9 +886,9 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,1444) size 16x19
                   text run at (0,1444) width 16: "llll"
                 RenderBR {BR} at (16,1459) size 0x0
-                RenderText {#text} at (0,1463) size 56x19
-                  text run at (0,1463) width 56: "mmmm"
-                RenderBR {BR} at (56,1478) size 0x0
+                RenderText {#text} at (0,1463) size 52x19
+                  text run at (0,1463) width 52: "mmmm"
+                RenderBR {BR} at (52,1478) size 0x0
                 RenderText {#text} at (0,1482) size 36x19
                   text run at (0,1482) width 36: "nnnn"
                 RenderBR {BR} at (36,1497) size 0x0
@@ -916,18 +916,18 @@ layer at (0,0) size 781x5915
                 RenderText {#text} at (0,1634) size 32x19
                   text run at (0,1634) width 32: "vvvv"
                 RenderBR {BR} at (32,1649) size 0x0
-                RenderText {#text} at (0,1653) size 36x19
-                  text run at (0,1653) width 36: "wwww"
-                RenderBR {BR} at (36,1668) size 0x0
+                RenderText {#text} at (0,1653) size 48x19
+                  text run at (0,1653) width 48: "wwww"
+                RenderBR {BR} at (48,1668) size 0x0
                 RenderText {#text} at (0,1672) size 32x19
                   text run at (0,1672) width 32: "xxxx"
                 RenderBR {BR} at (32,1687) size 0x0
                 RenderText {#text} at (0,1691) size 32x19
                   text run at (0,1691) width 32: "yyyy"
                 RenderBR {BR} at (32,1706) size 0x0
-                RenderText {#text} at (0,1710) size 28x19
-                  text run at (0,1710) width 28: "zzzz"
-                RenderBR {BR} at (28,1725) size 0x0
+                RenderText {#text} at (0,1710) size 32x19
+                  text run at (0,1710) width 32: "zzzz"
+                RenderBR {BR} at (32,1725) size 0x0
                 RenderText {#text} at (0,1729) size 20x19
                   text run at (0,1729) width 20: "{{{{"
                 RenderBR {BR} at (20,1744) size 0x0

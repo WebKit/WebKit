@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 471x19
-        text run at (0,0) width 471: "This tests that toggling the display property won't make the controls disappear."
-      RenderBR {BR} at (471,15) size 0x0
+      RenderText {#text} at (0,0) size 493x19
+        text run at (0,0) width 493: "This tests that toggling the display property won't make the controls disappear."
+      RenderBR {BR} at (493,15) size 0x0
       RenderText {#text} at (0,0) size 0x0
 layer at (8,27) size 320x240
   RenderVideo {VIDEO} at (0,19) size 320x240

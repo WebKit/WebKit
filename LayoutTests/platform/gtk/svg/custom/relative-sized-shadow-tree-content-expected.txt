@@ -4,9 +4,9 @@ layer at (0,0) size 800x480
   RenderBlock {html} at (0,0) size 800x480
     RenderBody {body} at (8,16) size 784x456
       RenderBlock {p} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 761x38
-          text run at (0,0) width 761: "The svg area contained in the div element (red box), should fill out the whole area (two blue rectangles, first: (0,0)-(50%,50%),"
-          text run at (0,19) width 569: "second: (50%,50%)-(100%,100%)), especially after resizing the content box to a different size"
+        RenderText {#text} at (0,0) size 721x38
+          text run at (0,0) width 721: "The svg area contained in the div element (red box), should fill out the whole area (two blue rectangles, first: (0,0)-"
+          text run at (0,19) width 670: "(50%,50%), second: (50%,50%)-(100%,100%)), especially after resizing the content box to a different size"
       RenderBlock {div} at (0,54) size 402x402 [border: (1px solid #FF0000)]
         RenderSVGRoot {svg} at (9,71) size 400x400
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0

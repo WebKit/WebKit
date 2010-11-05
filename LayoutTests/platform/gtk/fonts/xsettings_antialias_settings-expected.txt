@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 761x38
-          text run at (0,0) width 434: "This text should be rendered with subpixel anti-aliasing turned on if your "
-          text run at (434,0) width 327: "XSettings specifies that. This should always be true for"
-          text run at (0,19) width 63: "this test in "
-          text run at (63,19) width 113: "DumpRenderTree."
+        RenderText {#text} at (0,0) size 758x38
+          text run at (0,0) width 462: "This text should be rendered with subpixel anti-aliasing turned on if your "
+          text run at (462,0) width 296: "XSettings specifies that. This should always be"
+          text run at (0,19) width 117: "true for this test in "
+          text run at (117,19) width 119: "DumpRenderTree."

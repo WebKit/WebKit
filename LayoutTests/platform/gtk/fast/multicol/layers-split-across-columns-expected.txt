@@ -5,25 +5,25 @@ layer at (0,0) size 781x678
     RenderBody {BODY} at (8,8) size 765x662
       RenderBlock {DIV} at (0,0) size 220x329
         RenderBlock (anonymous) at (0,0) size 220x19
-          RenderText {#text} at (0,0) size 60x19
-            text run at (0,0) width 60: "Overflow:"
+          RenderText {#text} at (0,0) size 65x19
+            text run at (0,0) width 65: "Overflow:"
       RenderText {#text} at (220,314) size 4x19
         text run at (220,314) width 4: " "
       RenderBlock {DIV} at (224,0) size 220x329
         RenderBlock (anonymous) at (0,0) size 220x19
-          RenderText {#text} at (0,0) size 71x19
-            text run at (0,0) width 71: "Transforms:"
+          RenderText {#text} at (0,0) size 76x19
+            text run at (0,0) width 76: "Transforms:"
       RenderText {#text} at (444,314) size 4x19
         text run at (444,314) width 4: " "
       RenderBlock {DIV} at (448,0) size 220x329
         RenderBlock (anonymous) at (0,0) size 220x19
-          RenderText {#text} at (0,0) size 120x19
-            text run at (0,0) width 120: "Relative Positioning:"
+          RenderText {#text} at (0,0) size 131x19
+            text run at (0,0) width 131: "Relative Positioning:"
       RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,333) size 220x329
         RenderBlock (anonymous) at (0,0) size 220x19
-          RenderText {#text} at (0,0) size 51x19
-            text run at (0,0) width 51: "Opacity:"
+          RenderText {#text} at (0,0) size 54x19
+            text run at (0,0) width 54: "Opacity:"
 layer at (8,27) size 220x310
   RenderBlock {DIV} at (0,19) size 220x310 [border: (5px solid #000000)]
     RenderBlock (anonymous) at (5,5) size 100x100
