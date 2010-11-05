@@ -29,6 +29,7 @@
 """Starts a local HTTP server which displays layout test failures (given a test
 results directory), provides comparisons of expected and actual results (both
 images and text) and allows one-click rebaselining of tests."""
+from __future__ import with_statement
 
 import codecs
 import datetime

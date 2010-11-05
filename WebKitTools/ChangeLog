@@ -1,3 +1,10 @@
+2010-11-04  Mihai Parparita  <mihaip@chromium.org>
+
+        Unreviewed fix to webkit-patch rebaseline-server so that it runs under
+        Python 2.5 (it needs an import to use the with statement).
+
+        * Scripts/webkitpy/tool/commands/rebaselineserver.py:
+
 2010-11-04  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.
@@ -15,7 +22,7 @@
         * Scripts/webkitpy/layout_tests/port/config.py: Added.
         * Scripts/webkitpy/layout_tests/port/config_unittest.py: Added.
 
-2010-11-02  Mihai Parparita  <mihaip@chromium.org>
+2010-11-04  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Tony Chang.
 
