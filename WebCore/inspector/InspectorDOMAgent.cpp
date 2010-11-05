@@ -568,6 +568,12 @@ void InspectorDOMAgent::setOuterHTML(long nodeId, const String& outerHTML, long*
     }
 
     Node* newNode = previousSibling ? previousSibling->nextSibling() : parentNode->firstChild();
+    if (!newNode) {
+        // The only child node has been deleted.
+        *newId = 0;
+        return;
+    }
+
     *newId = pushNodePathToFrontend(newNode);
     if (childrenRequested)
         pushChildNodesToFrontend(*newId);
