@@ -2,6 +2,19 @@
 
         Reviewed by Adam Barth.
 
+        build-webkit spams system.log by repeatedly checking for PBXProductDirectory in com.apple.Xcode
+        https://bugs.webkit.org/show_bug.cgi?id=49051
+
+        This is a speculative fix.  The unit tests cover these methods, however
+        I don't know if this will fully stop the system.log spam.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
+2010-11-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Add basic support for showing bot id on /queue-status/ pages
         https://bugs.webkit.org/show_bug.cgi?id=49037
 

@@ -47,6 +47,7 @@ import http_server
 import test_files
 import websocket_server
 
+from webkitpy.common.memoized import memoized
 from webkitpy.common.system import logutils
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.path import abspath_to_uri
@@ -725,13 +726,25 @@ class Port(object):
                        e.message_with_output()))
             return self._pretty_patch_error_html
 
-    def _webkit_build_directory(self, args):
-        args = ["perl", self.script_path("webkit-build-directory")] + args
+    def _webkit_build_directory_command(self, args):
+        return ["perl", self.script_path("webkit-build-directory")] + args
+
+    @memoized
+    def _webkit_top_level_build_directory(self, top_level=True):
+        """This directory is above where products are built to and contains things like the Configuration file."""
+        args = self._webkit_build_directory_command(["--top-level"])
+        return self._executive.run_command(args).rstrip()
+
+    @memoized
+    def _webkit_configuration_build_directory(self, configuration=None):
+        """This is where products are normally built to."""
+        if not configuration:
+            configuration = self.flag_from_configuration(self.get_option('configuration'))
+        args = self._webkit_build_directory_command(["--configuration", configuration])
         return self._executive.run_command(args).rstrip()
 
     def _configuration_file_path(self):
-        build_root = self._webkit_build_directory(["--top-level"])
-        return os.path.join(build_root, "Configuration")
+        return os.path.join(self._webkit_top_level_build_directory(), "Configuration")
 
     # Easy override for unit tests
     def _open_configuration_file(self):

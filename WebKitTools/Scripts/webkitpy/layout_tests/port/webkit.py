@@ -60,7 +60,6 @@ class WebKitPort(base.Port):
 
     def __init__(self, **kwargs):
         base.Port.__init__(self, **kwargs)
-        self._cached_build_root = None
         self._cached_apache_path = None
 
         # FIXME: disable pixel tests until they are run by default on the
@@ -358,12 +357,8 @@ class WebKitPort(base.Port):
             'mac-tiger', 'mac-leopard', 'mac-snowleopard')
 
     def _build_path(self, *comps):
-        if not self._cached_build_root:
-            self._cached_build_root = self._webkit_build_directory([
-                "--configuration",
-                self.flag_from_configuration(self.get_option('configuration')),
-            ])
-        return os.path.join(self._cached_build_root, *comps)
+        build_root = self._webkit_configuration_build_directory()
+        return os.path.join(build_root, *comps)
 
     def _path_to_driver(self):
         return self._build_path('DumpRenderTree')
