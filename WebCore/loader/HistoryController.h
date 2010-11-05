@@ -75,6 +75,8 @@ public:
     void setCurrentItemTitle(const String&);
     bool currentItemShouldBeReplaced() const;
 
+    HistoryItem* previousItem() const { return m_previousItem.get(); }
+
     HistoryItem* provisionalItem() const { return m_provisionalItem.get(); }
     void setProvisionalItem(HistoryItem*);
 
