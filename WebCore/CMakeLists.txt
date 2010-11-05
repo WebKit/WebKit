@@ -262,6 +262,7 @@ SET(WebCore_IDL_FILES
     html/HTMLOptGroupElement.idl
     html/HTMLOptionElement.idl
     html/HTMLOptionsCollection.idl
+    html/HTMLOutputElement.idl
     html/HTMLParagraphElement.idl
     html/HTMLParamElement.idl
     html/HTMLPreElement.idl
@@ -639,6 +640,7 @@ SET(WebCore_SOURCES
     bindings/js/JSHTMLInputElementCustom.cpp
     bindings/js/JSHTMLObjectElementCustom.cpp
     bindings/js/JSHTMLOptionsCollectionCustom.cpp
+    bindings/js/JSHTMLOutputElementCustom.cpp
     bindings/js/JSHTMLSelectElementCustom.cpp
     bindings/js/JSImageConstructor.cpp
     bindings/js/JSImageDataCustom.cpp
@@ -1033,6 +1035,7 @@ SET(WebCore_SOURCES
     html/HTMLOptGroupElement.cpp
     html/HTMLOptionElement.cpp
     html/HTMLOptionsCollection.cpp
+    html/HTMLOutputElement.cpp
     html/HTMLParagraphElement.cpp
     html/HTMLParamElement.cpp
     html/HTMLParserErrorCodes.cpp

@@ -454,6 +454,7 @@ module window {
         attribute HTMLObjectElementConstructor HTMLObjectElement;
         attribute HTMLOptGroupElementConstructor HTMLOptGroupElement;
         attribute HTMLOptionElementConstructor HTMLOptionElement;
+        attribute HTMLOutputElementConstructor HTMLOutputElement;
         attribute HTMLParagraphElementConstructor HTMLParagraphElement;
         attribute HTMLParamElementConstructor HTMLParamElement;
         attribute HTMLPreElementConstructor HTMLPreElement;

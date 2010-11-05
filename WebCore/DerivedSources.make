@@ -227,6 +227,7 @@ DOM_CLASSES = \
     HTMLOptGroupElement \
     HTMLOptionElement \
     HTMLOptionsCollection \
+    HTMLOutputElement \
     HTMLParagraphElement \
     HTMLParamElement \
     HTMLPreElement \

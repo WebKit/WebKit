@@ -370,6 +370,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLOptionElement.h \
 	DerivedSources/WebCore/JSHTMLOptionsCollection.cpp \
 	DerivedSources/WebCore/JSHTMLOptionsCollection.h \
+	DerivedSources/WebCore/JSHTMLOutputElement.cpp \
+	DerivedSources/WebCore/JSHTMLOutputElement.h \
 	DerivedSources/WebCore/JSHTMLParagraphElement.cpp \
 	DerivedSources/WebCore/JSHTMLParagraphElement.h \
 	DerivedSources/WebCore/JSHTMLParamElement.cpp \

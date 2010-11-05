@@ -117,6 +117,7 @@ LOCAL_SRC_FILES += \
 	bindings/js/JSHTMLInputElementCustom.cpp \
 	bindings/js/JSHTMLObjectElementCustom.cpp \
 	bindings/js/JSHTMLOptionsCollectionCustom.cpp \
+	bindings/js/JSHTMLOutputElementCustom.cpp \
 	bindings/js/JSHTMLSelectElementCustom.cpp \
 	bindings/js/JSHistoryCustom.cpp \
 	bindings/js/JSIDBAnyCustom.cpp \

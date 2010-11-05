@@ -288,6 +288,7 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/HTMLImageLoader.cpp \
 	html/HTMLNameCollection.cpp \
 	html/HTMLOptionsCollection.cpp \
+	html/HTMLOutputElement.cpp \
 	html/HTMLParserErrorCodes.cpp \
 	html/HTMLTableRowsCollection.cpp \
 	html/HTMLViewSourceDocument.cpp \

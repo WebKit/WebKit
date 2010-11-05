@@ -262,6 +262,7 @@ IDL_BINDINGS += \
     html/HTMLOptGroupElement.idl \
     html/HTMLOptionElement.idl \
     html/HTMLOptionsCollection.idl \
+    html/HTMLOutputElement.idl \
     html/HTMLParagraphElement.idl \
     html/HTMLParamElement.idl \
     html/HTMLPreElement.idl \

@@ -103,6 +103,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLOListElement') is 'obje
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLObjectElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLOptGroupElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLOptionElement') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLOutputElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLParagraphElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLParamElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLPreElement') is 'object'

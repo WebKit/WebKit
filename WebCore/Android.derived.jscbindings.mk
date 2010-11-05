@@ -218,6 +218,7 @@ GEN := \
     $(intermediates)/html/JSHTMLOptGroupElement.h \
     $(intermediates)/html/JSHTMLOptionElement.h \
     $(intermediates)/html/JSHTMLOptionsCollection.h \
+    $(intermediates)/html/JSHTMLOutputElement.h \
     $(intermediates)/html/JSHTMLParagraphElement.h \
     $(intermediates)/html/JSHTMLParamElement.h \
     $(intermediates)/html/JSHTMLPreElement.h \

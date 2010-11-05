@@ -269,6 +269,7 @@ Never found HTMLOListElement
 Never found HTMLObjectElement
 Never found HTMLOptGroupElement
 Never found HTMLOptionElement
+Never found HTMLOutputElement
 Never found HTMLParagraphElement
 Never found HTMLParamElement
 Never found HTMLPreElement

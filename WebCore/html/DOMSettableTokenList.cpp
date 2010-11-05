@@ -40,7 +40,7 @@ DOMSettableTokenList::~DOMSettableTokenList()
 const AtomicString DOMSettableTokenList::item(unsigned index) const
 {
     if (index >= length())
-        return AtomicString("");
+        return AtomicString();
     return m_tokens[index];
 }
 
@@ -61,7 +61,10 @@ void DOMSettableTokenList::add(const AtomicString& token, ExceptionCode& ec)
 void DOMSettableTokenList::addInternal(const AtomicString& token)
 {
     m_value = addToken(m_value, token);
-    m_tokens.add(token);
+    if (m_tokens.isNull())
+        m_tokens.set(token, false);
+    else
+        m_tokens.add(token);
 }
 
 void DOMSettableTokenList::remove(const AtomicString& token, ExceptionCode& ec)
@@ -92,7 +95,7 @@ bool DOMSettableTokenList::toggle(const AtomicString& token, ExceptionCode& ec)
 void DOMSettableTokenList::setValue(const String& value)
 {
     m_value = value;
-    m_tokens.set(value, true);
+    m_tokens.set(value, false);
 }
 
 } // namespace WebCore

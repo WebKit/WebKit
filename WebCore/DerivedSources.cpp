@@ -182,6 +182,7 @@
 #include "JSHTMLOptGroupElement.cpp"
 #include "JSHTMLOptionElement.cpp"
 #include "JSHTMLOptionsCollection.cpp"
+#include "JSHTMLOutputElement.cpp"
 #include "JSHTMLParagraphElement.cpp"
 #include "JSHTMLParamElement.cpp"
 #include "JSHTMLPreElement.cpp"

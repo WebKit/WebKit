@@ -442,6 +442,7 @@ v8 {
         bindings/v8/custom/V8HTMLInputElementCustom.cpp \
         bindings/v8/custom/V8HTMLOptionElementConstructor.cpp \
         bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp \
+        bindings/v8/custom/V8HTMLOutputElementCustom.cpp \
         bindings/v8/custom/V8HTMLPlugInElementCustom.cpp \
         bindings/v8/custom/V8HTMLSelectElementCustom.cpp \
         bindings/v8/custom/V8LocationCustom.cpp \
@@ -537,6 +538,7 @@ v8 {
         bindings/js/JSHTMLInputElementCustom.cpp \
         bindings/js/JSHTMLObjectElementCustom.cpp \
         bindings/js/JSHTMLOptionsCollectionCustom.cpp \
+        bindings/js/JSHTMLOutputElementCustom.cpp \
         bindings/js/JSHTMLSelectElementCustom.cpp \
         bindings/js/JSImageConstructor.cpp \
         bindings/js/JSImageDataCustom.cpp \
@@ -925,6 +927,7 @@ SOURCES += \
     html/HTMLOptGroupElement.cpp \
     html/HTMLOptionElement.cpp \
     html/HTMLOptionsCollection.cpp \
+    html/HTMLOutputElement.cpp \
     html/HTMLParagraphElement.cpp \
     html/HTMLParamElement.cpp \
     html/HTMLParserErrorCodes.cpp \
@@ -1831,6 +1834,7 @@ HEADERS += \
     html/HTMLOptGroupElement.h \
     html/HTMLOptionElement.h \
     html/HTMLOptionsCollection.h \
+    html/HTMLOutputElement.h \
     html/HTMLParagraphElement.h \
     html/HTMLParamElement.h \
     html/HTMLParserErrorCodes.h \

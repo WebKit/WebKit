@@ -530,6 +530,10 @@ option {
     font-weight: normal;
 }
 
+output {
+    display: inline;
+}
+
 /* meter */
 
 meter {

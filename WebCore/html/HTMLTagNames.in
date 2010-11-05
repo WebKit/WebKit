@@ -93,6 +93,7 @@ object constructorNeedsCreatedByParser
 ol interfaceName=HTMLOListElement
 optgroup interfaceName=HTMLOptGroupElement, constructorNeedsFormElement
 option constructorNeedsFormElement
+output constructorNeedsFormElement
 p interfaceName=HTMLParagraphElement
 param
 plaintext interfaceName=HTMLElement

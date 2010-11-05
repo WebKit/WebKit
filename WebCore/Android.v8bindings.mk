@@ -133,6 +133,7 @@ LOCAL_SRC_FILES += \
 	bindings/v8/custom/V8HTMLInputElementCustom.cpp \
 	bindings/v8/custom/V8HTMLOptionElementConstructor.cpp \
 	bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp \
+	bindings/v8/custom/V8HTMLOutputElementCustom.cpp \
 	bindings/v8/custom/V8HTMLPlugInElementCustom.cpp \
 	bindings/v8/custom/V8HTMLSelectElementCollectionCustom.cpp \
 	bindings/v8/custom/V8HTMLSelectElementCustom.cpp \
