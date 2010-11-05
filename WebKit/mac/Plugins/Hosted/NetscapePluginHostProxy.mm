@@ -74,7 +74,8 @@ public:
     
     ~PluginDestroyDeferrer()
     {
-        m_proxy->didCallPluginFunction();
+        bool stopped;
+        m_proxy->didCallPluginFunction(stopped);
     }
 
 private:
