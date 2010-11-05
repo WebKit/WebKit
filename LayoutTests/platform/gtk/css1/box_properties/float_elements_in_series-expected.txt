@@ -4,8 +4,8 @@ layer at (0,0) size 781x709
   RenderBlock {HTML} at (0,0) size 781x709
     RenderBody {BODY} at (8,8) size 765x681 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 765x19
-        RenderText {#text} at (0,0) size 337x19
-          text run at (0,0) width 337: "The style declarations which apply to the text below are:"
+        RenderText {#text} at (0,0) size 355x19
+          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,32) size 765x195
         RenderText {#text} at (0,0) size 512x195
           text run at (0,0) width 392: "P { margin: 0; padding: 0; text-align:  justify;}"
@@ -36,24 +36,24 @@ layer at (0,0) size 781x709
       RenderBlock {P} at (0,250) size 765x38
         RenderText {#text} at (0,0) size 765x38
           text run at (0,0) width 765: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this page"
-          text run at (0,19) width 381: "indicates how the DIV elements should be laid out horizontally. "
-          text run at (381,19) width 204: "They should align with each other."
+          text run at (0,19) width 405: "indicates how the DIV elements should be laid out horizontally. "
+          text run at (405,19) width 219: "They should align with each other."
       RenderBlock (floating) {DIV} at (0,298) size 140x99 [bgcolor=#FFFF00] [border: (20px solid #000000)]
         RenderBlock {P} at (40,40) size 60x19
-          RenderText {#text} at (0,0) size 43x19
-            text run at (0,0) width 43: "Yellow"
+          RenderText {#text} at (0,0) size 47x19
+            text run at (0,0) width 47: "Yellow"
       RenderBlock (floating) {DIV} at (160,298) size 140x99 [color=#FFFFFF] [bgcolor=#0000FF] [border: (20px solid #000000)]
         RenderBlock {P} at (40,40) size 60x19
-          RenderText {#text} at (0,0) size 27x19
-            text run at (0,0) width 27: "Blue"
+          RenderText {#text} at (0,0) size 30x19
+            text run at (0,0) width 30: "Blue"
       RenderBlock (floating) {DIV} at (320,298) size 140x99 [bgcolor=#FF0000] [border: (20px solid #000000)]
         RenderBlock {P} at (40,40) size 60x19
-          RenderText {#text} at (0,0) size 25x19
-            text run at (0,0) width 25: "Red"
+          RenderText {#text} at (0,0) size 26x19
+            text run at (0,0) width 26: "Red"
       RenderBlock (floating) {DIV} at (480,298) size 140x99 [color=#FFFFFF] [bgcolor=#008000] [border: (20px solid #000000)]
         RenderBlock {P} at (40,40) size 60x19
-          RenderText {#text} at (0,0) size 37x19
-            text run at (0,0) width 37: "Green"
+          RenderText {#text} at (0,0) size 39x19
+            text run at (0,0) width 39: "Green"
       RenderBlock {DIV} at (0,407) size 765x20
         RenderTable {TABLE} at (0,0) size 620x20
           RenderTableSection {TBODY} at (0,0) size 620x20
@@ -93,9 +93,9 @@ layer at (0,0) size 781x709
         RenderTableSection {TBODY} at (1,1) size 763x232
           RenderTableRow {TR} at (0,0) size 763x27
             RenderTableCell {TD} at (0,0) size 763x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 159x19
-                RenderText {#text} at (4,4) size 159x19
-                  text run at (4,4) width 159: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 163x19
+                RenderText {#text} at (4,4) size 163x19
+                  text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,27) size 763x205
             RenderTableCell {TD} at (0,116) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
@@ -103,25 +103,25 @@ layer at (0,0) size 781x709
             RenderTableCell {TD} at (12,27) size 751x205 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 743x38
                 RenderText {#text} at (0,0) size 743x38
-                  text run at (0,0) width 743: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this page"
-                  text run at (0,19) width 381: "indicates how the DIV elements should be laid out horizontally. "
-                  text run at (381,19) width 204: "They should align with each other."
+                  text run at (0,0) width 743: "The four floating DIV elements below should appear next to each other horizontally. The table at the bottom of this"
+                  text run at (0,19) width 439: "page indicates how the DIV elements should be laid out horizontally. "
+                  text run at (439,19) width 219: "They should align with each other."
               RenderBlock (floating) {DIV} at (4,52) size 140x99 [bgcolor=#FFFF00] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x19
-                  RenderText {#text} at (0,0) size 43x19
-                    text run at (0,0) width 43: "Yellow"
+                  RenderText {#text} at (0,0) size 47x19
+                    text run at (0,0) width 47: "Yellow"
               RenderBlock (floating) {DIV} at (164,52) size 140x99 [color=#FFFFFF] [bgcolor=#0000FF] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x19
-                  RenderText {#text} at (0,0) size 27x19
-                    text run at (0,0) width 27: "Blue"
+                  RenderText {#text} at (0,0) size 30x19
+                    text run at (0,0) width 30: "Blue"
               RenderBlock (floating) {DIV} at (324,52) size 140x99 [bgcolor=#FF0000] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x19
-                  RenderText {#text} at (0,0) size 25x19
-                    text run at (0,0) width 25: "Red"
+                  RenderText {#text} at (0,0) size 26x19
+                    text run at (0,0) width 26: "Red"
               RenderBlock (floating) {DIV} at (484,52) size 140x99 [color=#FFFFFF] [bgcolor=#008000] [border: (20px solid #000000)]
                 RenderBlock {P} at (40,40) size 60x19
-                  RenderText {#text} at (0,0) size 37x19
-                    text run at (0,0) width 37: "Green"
+                  RenderText {#text} at (0,0) size 39x19
+                    text run at (0,0) width 39: "Green"
               RenderBlock {DIV} at (4,161) size 743x20
                 RenderTable {TABLE} at (0,0) size 620x20
                   RenderTableSection {TBODY} at (0,0) size 620x20

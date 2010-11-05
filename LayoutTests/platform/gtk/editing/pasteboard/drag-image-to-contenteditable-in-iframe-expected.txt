@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 749x38
-          text run at (0,0) width 749: "This tests that we can drag an image into the last position of a content editable div in an iframe that already contains an image,"
-          text run at (0,19) width 101: "without crashing."
+        RenderText {#text} at (0,0) size 744x38
+          text run at (0,0) width 744: "This tests that we can drag an image into the last position of a content editable div in an iframe that already contains an"
+          text run at (0,19) width 155: "image, without crashing."
       RenderBlock (anonymous) at (0,54) size 784x158
         RenderImage {IMG} at (0,51) size 76x103
         RenderText {#text} at (76,139) size 4x19

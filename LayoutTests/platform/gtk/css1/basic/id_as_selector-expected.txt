@@ -4,8 +4,8 @@ layer at (0,0) size 781x637
   RenderBlock {HTML} at (0,0) size 781x637
     RenderBody {BODY} at (8,8) size 765x621 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 765x19
-        RenderText {#text} at (0,0) size 337x19
-          text run at (0,0) width 337: "The style declarations which apply to the text below are:"
+        RenderText {#text} at (0,0) size 355x19
+          text run at (0,0) width 355: "The style declarations which apply to the text below are:"
       RenderBlock {PRE} at (0,35) size 765x120
         RenderText {#text} at (0,0) size 272x120
           text run at (0,0) width 160: "#one {color: green;}"
@@ -25,19 +25,19 @@ layer at (0,0) size 781x637
           text run at (0,105) width 240: "P#six, P#six2 {color: purple;}"
       RenderBlock {HR} at (0,168) size 765x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,186) size 765x19 [color=#008000]
-        RenderText {#text} at (0,0) size 184x19
-          text run at (0,0) width 184: "This sentence should be green."
+        RenderText {#text} at (0,0) size 194x19
+          text run at (0,0) width 194: "This sentence should be green."
       RenderBlock {P} at (0,221) size 765x19 [color=#008000]
-        RenderText {#text} at (0,0) size 184x19
-          text run at (0,0) width 184: "This sentence should be green."
+        RenderText {#text} at (0,0) size 194x19
+          text run at (0,0) width 194: "This sentence should be green."
       RenderBlock {P} at (0,256) size 765x19 [color=#0000FF]
-        RenderText {#text} at (0,0) size 190x19
-          text run at (0,0) width 190: "This paragraph should be blue ["
+        RenderText {#text} at (0,0) size 200x19
+          text run at (0,0) width 200: "This paragraph should be blue ["
         RenderInline {TT} at (0,0) size 64x15
-          RenderText {#text} at (190,4) size 64x15
-            text run at (190,4) width 64: "ID=\"two\""
-        RenderText {#text} at (254,0) size 9x19
-          text run at (254,0) width 9: "]."
+          RenderText {#text} at (200,4) size 64x15
+            text run at (200,4) width 64: "ID=\"two\""
+        RenderText {#text} at (264,0) size 9x19
+          text run at (264,0) width 9: "]."
       RenderBlock {PRE} at (0,291) size 765x15
         RenderText {#text} at (0,0) size 392x15
           text run at (0,0) width 392: "This sentence should NOT be blue [PRE ID=\"two2\"]."
@@ -49,34 +49,34 @@ layer at (0,0) size 781x637
       RenderBlock {UL} at (0,350) size 765x19
         RenderListItem {LI} at (40,0) size 725x19
           RenderListMarker at (-18,0) size 7x19: bullet
-          RenderText {#text} at (0,0) size 226x19
-            text run at (0,0) width 226: "This sentence should NOT be purple."
+          RenderText {#text} at (0,0) size 237x19
+            text run at (0,0) width 237: "This sentence should NOT be purple."
       RenderTable {TABLE} at (0,385) size 422x236 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 420x234
           RenderTableRow {TR} at (0,0) size 420x27
             RenderTableCell {TD} at (0,0) size 420x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 159x19
-                RenderText {#text} at (4,4) size 159x19
-                  text run at (4,4) width 159: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 163x19
+                RenderText {#text} at (4,4) size 163x19
+                  text run at (4,4) width 163: "TABLE Testing Section"
           RenderTableRow {TR} at (0,27) size 420x207
             RenderTableCell {TD} at (0,117) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,27) size 408x207 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 400x19 [color=#008000]
-                RenderText {#text} at (0,0) size 184x19
-                  text run at (0,0) width 184: "This sentence should be green."
+                RenderText {#text} at (0,0) size 194x19
+                  text run at (0,0) width 194: "This sentence should be green."
               RenderBlock {P} at (4,39) size 400x19 [color=#008000]
-                RenderText {#text} at (0,0) size 184x19
-                  text run at (0,0) width 184: "This sentence should be green."
+                RenderText {#text} at (0,0) size 194x19
+                  text run at (0,0) width 194: "This sentence should be green."
               RenderBlock {P} at (4,74) size 400x19 [color=#0000FF]
-                RenderText {#text} at (0,0) size 190x19
-                  text run at (0,0) width 190: "This paragraph should be blue ["
+                RenderText {#text} at (0,0) size 200x19
+                  text run at (0,0) width 200: "This paragraph should be blue ["
                 RenderInline {TT} at (0,0) size 72x15
-                  RenderText {#text} at (190,4) size 72x15
-                    text run at (190,4) width 72: "ID=\"five\""
-                RenderText {#text} at (262,0) size 9x19
-                  text run at (262,0) width 9: "]."
+                  RenderText {#text} at (200,4) size 72x15
+                    text run at (200,4) width 72: "ID=\"five\""
+                RenderText {#text} at (272,0) size 9x19
+                  text run at (272,0) width 9: "]."
               RenderBlock {PRE} at (4,109) size 400x15
                 RenderText {#text} at (0,0) size 400x15
                   text run at (0,0) width 400: "This sentence should NOT be blue [PRE ID=\"five2\"]."
@@ -88,5 +88,5 @@ layer at (0,0) size 781x637
               RenderBlock {UL} at (4,168) size 400x19
                 RenderListItem {LI} at (40,0) size 360x19
                   RenderListMarker at (-18,0) size 7x19: bullet
-                  RenderText {#text} at (0,0) size 226x19
-                    text run at (0,0) width 226: "This sentence should NOT be purple."
+                  RenderText {#text} at (0,0) size 237x19
+                    text run at (0,0) width 237: "This sentence should NOT be purple."

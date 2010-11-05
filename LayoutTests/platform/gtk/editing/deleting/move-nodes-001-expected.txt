@@ -5,14 +5,14 @@ layer at (0,0) size 800x152
     RenderBody {BODY} at (8,8) size 784x136
       RenderBlock {DIV} at (0,0) size 784x111 [border: (3px solid #FF0000)]
         RenderBlock (anonymous) at (3,3) size 778x19
-          RenderText {#text} at (0,0) size 126x19
-            text run at (0,0) width 126: "Destination container"
+          RenderText {#text} at (0,0) size 134x19
+            text run at (0,0) width 134: "Destination container"
         RenderBlock {P} at (3,38) size 778x19
-          RenderText {#text} at (0,0) size 22x19
-            text run at (0,0) width 22: "one"
-        RenderBlock {P} at (3,73) size 778x19
           RenderText {#text} at (0,0) size 23x19
-            text run at (0,0) width 23: "two"
+            text run at (0,0) width 23: "one"
+        RenderBlock {P} at (3,73) size 778x19
+          RenderText {#text} at (0,0) size 24x19
+            text run at (0,0) width 24: "two"
       RenderBlock {DIV} at (0,111) size 784x25 [border: (3px solid #0000FF)]
-        RenderText {#text} at (3,3) size 102x19
-          text run at (3,3) width 102: "Source container"
+        RenderText {#text} at (3,3) size 106x19
+          text run at (3,3) width 106: "Source container"
