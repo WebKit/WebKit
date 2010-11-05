@@ -5028,6 +5028,7 @@ fast/dom/HTMLMeterElement/meter-optimums.html
 fast/dom/HTMLMeterElement/meter-percent-size.html
 fast/dom/HTMLMeterElement/meter-styles.html
 fast/dom/HTMLMeterElement/meter-styles-changing-pseudo.html
+fast/dom/HTMLMeterElement/meter-element-with-child-crash.html
 
 # Needs mock support, and build slave Geolocation service
 # See https://bugs.webkit.org/show_bug.cgi?id=36053
@@ -5651,3 +5652,7 @@ http/tests/inspector/console-xhr-logging.html
 # https://bugs.webkit.org/show_bug.cgi?id=47727
 mathml/presentation
 
+# This test passes locally, but does not pass on the bots. Perhaps
+# it is an issue with the version of Cairo on the bots.
+# https://bugs.webkit.org/show_bug.cgi?id=49052
+fast/canvas/pointInPath.html
