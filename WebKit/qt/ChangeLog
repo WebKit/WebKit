@@ -1,3 +1,18 @@
+2010-10-20  Chang Shu  <chang.shu@nokia.com>, Antonio Gomes <tonikitoo@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        [Qt] Makes <input type=text> and <textarea> functional with
+        Spatial Navigation enabled. Before this patch, the focus cannot
+        move away from input box once it is in. This patch allows focus
+        move to neighbor nodes when the caret reaches the edge of the texts.
+        This patch does not support yet cases where the focused <input>
+        has a JS handler for the arrow keys.
+        https://bugs.webkit.org/show_bug.cgi?id=37153
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2010-11-04  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         Reviewed by David Hyatt.

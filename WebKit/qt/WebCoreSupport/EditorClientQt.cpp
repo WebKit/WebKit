@@ -46,6 +46,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "QWebPageClient.h"
 #include "Range.h"
+#include "Settings.h"
 #include "WindowsKeyboardCodes.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
@@ -360,9 +361,21 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 
     // FIXME: refactor all of this to use Actions or something like them
     if (start->isContentEditable()) {
+        bool doSpatialNavigation = false;
+        if (frame->settings() && frame->settings()->isSpatialNavigationEnabled()) {
+            if (!kevent->modifiers()) {
+                switch (kevent->windowsVirtualKeyCode()) {
+                case VK_LEFT:
+                case VK_RIGHT:
+                case VK_UP:
+                case VK_DOWN:
+                    doSpatialNavigation = true;
+                }
+            }
+        }
 #ifndef QT_NO_SHORTCUT
         QWebPage::WebAction action = QWebPagePrivate::editorActionForKeyEvent(kevent->qtEvent());
-        if (action != QWebPage::NoWebAction) {
+        if (action != QWebPage::NoWebAction && !doSpatialNavigation) {
             const char* cmd = QWebPagePrivate::editorCommandForWebActions(action);
             // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
             // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
@@ -386,26 +399,26 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         case VK_LEFT:
             if (kevent->shiftKey())
                 frame->editor()->command("MoveLeftAndModifySelection").execute();
-            else
-                frame->editor()->command("MoveLeft").execute();
+            else if (!frame->editor()->command("MoveLeft").execute())
+                return;
             break;
         case VK_RIGHT:
             if (kevent->shiftKey())
                 frame->editor()->command("MoveRightAndModifySelection").execute();
-            else
-                frame->editor()->command("MoveRight").execute();
+            else if (!frame->editor()->command("MoveRight").execute())
+                return;
             break;
         case VK_UP:
             if (kevent->shiftKey())
                 frame->editor()->command("MoveUpAndModifySelection").execute();
-            else
-                frame->editor()->command("MoveUp").execute();
+            else if (!frame->editor()->command("MoveUp").execute())
+                return;
             break;
         case VK_DOWN:
             if (kevent->shiftKey())
                 frame->editor()->command("MoveDownAndModifySelection").execute();
-            else
-                frame->editor()->command("MoveDown").execute();
+            else if (!frame->editor()->command("MoveDown").execute())
+                return;
             break;
         case VK_PRIOR: // PageUp
             if (kevent->shiftKey())
