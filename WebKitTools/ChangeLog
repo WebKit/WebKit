@@ -1,3 +1,17 @@
+2010-11-05  Alejandro G. Castro  <alex@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Avoid font hinting in the DRT
+        https://bugs.webkit.org/show_bug.cgi?id=48548
+
+        Change the settings to avoid font hinting, it was causing
+        different results depending on the distribution.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGtkFontSettings):
+        * DumpRenderTree/gtk/fonts/fonts.conf:
+
 2010-11-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

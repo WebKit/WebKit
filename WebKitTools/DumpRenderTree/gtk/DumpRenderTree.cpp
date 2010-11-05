@@ -137,10 +137,9 @@ static void initializeGtkFontSettings(const char* testURL)
     GtkSettings* settings = gtk_settings_get_default();
     if (!settings)
         return;
-    g_object_set(settings, "gtk-xft-antialias", 1, NULL);
-    g_object_set(settings, "gtk-xft-hinting", 1, NULL);
-    g_object_set(settings, "gtk-xft-hintstyle", "hintfull", NULL);
-    g_object_set(settings, "gtk-font-name", "Liberation Sans 16", NULL);
+    g_object_set(settings, "gtk-xft-antialias", 1,
+                 "gtk-xft-hinting", 0,
+                 "gtk-font-name", "Liberation Sans 16", NULL);
 
     // One test needs subpixel anti-aliasing turned on, but generally we
     // want all text in other tests to use to grayscale anti-aliasing.
