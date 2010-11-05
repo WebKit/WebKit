@@ -360,10 +360,10 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     return true;
 }
 
-bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins)
+bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
 {
-    for (size_t i = 0; i < loadedPlugins.size(); ++i) {
-        const Plugin& loadedPlugin = loadedPlugins[i];
+    for (size_t i = 0; i < m_plugins.size(); ++i) {
+        const Plugin& loadedPlugin = m_plugins[i];
 
         // If a plug-in with the same bundle identifier already exists, we don't want to load it.
         if (loadedPlugin.bundleIdentifier == plugin.bundleIdentifier)

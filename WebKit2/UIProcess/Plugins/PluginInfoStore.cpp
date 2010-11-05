@@ -99,7 +99,7 @@ void PluginInfoStore::loadPlugin(const String& pluginPath)
     if (!getPluginInfo(pluginPath, plugin))
         return;
 
-    if (!shouldUsePlugin(plugin, m_plugins))
+    if (!shouldUsePlugin(plugin))
         return;
     
     // Add the plug-in.

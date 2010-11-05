@@ -406,7 +406,7 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     return true;
 }
 
-bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins)
+bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
 {
     // FIXME: <http://webkit.org/b/43509> Migrate logic here from
     // PluginDatabase::getPluginPathsInDirectories and PluginPackage::isPluginBlacklisted.

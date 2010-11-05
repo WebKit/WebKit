@@ -1,3 +1,29 @@
+2010-11-05  Adam Roben  <aroben@apple.com>
+
+        Operate on m_plugins directly in PluginInfoStore::shouldUsePlugin
+
+        We'll need to operate on m_plugins if we ever want to unload an
+        already-loaded plugin before loading the new one.
+
+        Fixes <http://webkit.org/b/49076> loadedPlugins parameter to
+        PluginInfoStore::shouldUsePlugin is redundant
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::loadPlugin):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/gtk/PluginInfoStoreGtk.cpp:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/Plugins/qt/PluginInfoStoreQt.cpp:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        Removed the loadedPlugins parameter from shouldUsePlugin. The single
+        implementation (Mac) now uses m_plugins directly.
+
 2010-11-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

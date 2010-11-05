@@ -58,7 +58,7 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     return false;
 }
 
-bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin, const Vector<Plugin>& loadedPlugins)
+bool PluginInfoStore::shouldUsePlugin(const Plugin& plugin)
 {
     notImplemented();
     return false;
