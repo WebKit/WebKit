@@ -1296,6 +1296,8 @@ webcore_sources += \
 	WebCore/editing/EditCommand.h \
 	WebCore/editing/EditingBehavior.h \
 	WebCore/editing/EditingBehaviorTypes.h \
+	WebCore/editing/EditingStyle.cpp \
+	WebCore/editing/EditingStyle.h \
 	WebCore/editing/EditorCommand.cpp \
 	WebCore/editing/Editor.cpp \
 	WebCore/editing/EditorDeleteAction.h \

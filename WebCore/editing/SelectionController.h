@@ -26,7 +26,7 @@
 #ifndef SelectionController_h
 #define SelectionController_h
 
-#include "CSSMutableStyleDeclaration.h"
+#include "EditingStyle.h"
 #include "IntRect.h"
 #include "Range.h"
 #include "ScrollBehavior.h"
@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class Frame;
+class CSSMutableStyleDeclaration;
 class GraphicsContext;
 class HTMLFormElement;
 class RenderObject;
@@ -160,7 +161,7 @@ public:
     void paintDragCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
 
     CSSMutableStyleDeclaration* typingStyle() const;
-    void setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration>);
+    void setTypingStyle(PassRefPtr<EditingStyle>);
     void clearTypingStyle();
 
     FloatRect bounds(bool clipToVisibleContent = true) const;
@@ -214,7 +215,7 @@ private:
     VisibleSelection m_selection;
     TextGranularity m_granularity;
 
-    RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
+    RefPtr<EditingStyle> m_typingStyle;
 
     Timer<SelectionController> m_caretBlinkTimer;
 
@@ -234,7 +235,7 @@ private:
 
 inline CSSMutableStyleDeclaration* SelectionController::typingStyle() const
 {
-    return m_typingStyle.get();
+    return m_typingStyle ? m_typingStyle->style() : 0;
 }
 
 inline void SelectionController::clearTypingStyle()
@@ -242,7 +243,7 @@ inline void SelectionController::clearTypingStyle()
     m_typingStyle.clear();
 }
 
-inline void SelectionController::setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration> style)
+inline void SelectionController::setTypingStyle(PassRefPtr<EditingStyle> style)
 {
     m_typingStyle = style;
 }

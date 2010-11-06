@@ -36,7 +36,6 @@
 #include "Document.h"
 #include "Editor.h"
 #include "Frame.h"
-#include "HTMLElement.h"
 #include "HTMLFontElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLNames.h"
@@ -491,9 +490,9 @@ PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::editingStyleAtPosition
     }
 
     if (shouldIncludeTypingStyle == IncludeTypingStyle) {
-        CSSMutableStyleDeclaration* typingStyle = pos.node()->document()->frame()->selection()->typingStyle();
+        RefPtr<CSSMutableStyleDeclaration> typingStyle = pos.node()->document()->frame()->selection()->typingStyle();
         if (typingStyle)
-            style->merge(typingStyle);
+            style->merge(typingStyle.get());
     }
 
     return style.release();

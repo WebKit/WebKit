@@ -1383,6 +1383,8 @@
             'editing/EditCommand.h',
             'editing/EditingBehavior.h',
             'editing/EditingBehaviorTypes.h',
+            'editing/EditingStyle.cpp',
+            'editing/EditingStyle.h',
             'editing/Editor.cpp',
             'editing/Editor.h',
             'editing/EditorCommand.cpp',

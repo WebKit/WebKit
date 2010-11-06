@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class EditingStyle;
+
 class DeleteSelectionCommand : public CompositeEditCommand { 
 public:
     static PassRefPtr<DeleteSelectionCommand> create(Document* document, bool smartDelete = false, bool mergeBlocksAfterDelete = true, bool replace = false, bool expandForSpecialElements = false)
@@ -86,8 +88,8 @@ private:
     Position m_trailingWhitespace;
     RefPtr<Node> m_startBlock;
     RefPtr<Node> m_endBlock;
-    RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
-    RefPtr<CSSMutableStyleDeclaration> m_deleteIntoBlockquoteStyle;
+    RefPtr<EditingStyle> m_typingStyle;
+    RefPtr<EditingStyle> m_deleteIntoBlockquoteStyle;
     RefPtr<Node> m_startRoot;
     RefPtr<Node> m_endRoot;
     RefPtr<Node> m_startTableRow;

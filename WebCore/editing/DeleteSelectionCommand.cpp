@@ -294,14 +294,14 @@ void DeleteSelectionCommand::saveTypingStyleState()
         return;
 
     // Figure out the typing style in effect before the delete is done.
-    m_typingStyle = ApplyStyleCommand::editingStyleAtPosition(positionBeforeTabSpan(m_selectionToDelete.start()));
+    m_typingStyle = EditingStyle::create(positionBeforeTabSpan(m_selectionToDelete.start()));
 
-    removeEnclosingAnchorStyle(m_typingStyle.get(), m_selectionToDelete.start());
+    removeEnclosingAnchorStyle(m_typingStyle->style(), m_selectionToDelete.start());
 
     // If we're deleting into a Mail blockquote, save the style at end() instead of start()
     // We'll use this later in computeTypingStyleAfterDelete if we end up outside of a Mail blockquote
     if (nearestMailBlockquote(m_selectionToDelete.start().node()))
-        m_deleteIntoBlockquoteStyle = ApplyStyleCommand::editingStyleAtPosition(m_selectionToDelete.end());
+        m_deleteIntoBlockquoteStyle = EditingStyle::create(m_selectionToDelete.end());
     else
         m_deleteIntoBlockquoteStyle = 0;
 }
@@ -693,8 +693,8 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
         m_typingStyle = m_deleteIntoBlockquoteStyle;
     m_deleteIntoBlockquoteStyle = 0;
 
-    prepareEditingStyleToApplyAt(m_typingStyle.get(), m_endingPosition);
-    if (!m_typingStyle->length())
+    m_typingStyle->prepareToApplyAt(m_endingPosition);
+    if (m_typingStyle->isEmpty())
         m_typingStyle = 0;
     VisiblePosition visibleEnd(m_endingPosition);
     if (m_typingStyle && 
@@ -707,7 +707,7 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
         // then move it back (which will clear typing style).
 
         setEndingSelection(visibleEnd);
-        applyStyle(m_typingStyle.get(), EditActionUnspecified);
+        applyStyle(m_typingStyle->style(), EditActionUnspecified);
         // applyStyle can destroy the placeholder that was at m_endingPosition if it needs to 
         // move it, but it will set an endingSelection() at [movedPlaceholder, 0] if it does so.
         m_endingPosition = endingSelection().start();

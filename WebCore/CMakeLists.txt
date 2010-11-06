@@ -900,6 +900,7 @@ SET(WebCore_SOURCES
     editing/DeleteFromTextNodeCommand.cpp
     editing/DeleteSelectionCommand.cpp
     editing/EditCommand.cpp
+    editing/EditingStyle.cpp
     editing/Editor.cpp
     editing/EditorCommand.cpp
     editing/FormatBlockCommand.cpp

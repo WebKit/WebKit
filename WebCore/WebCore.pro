@@ -789,6 +789,7 @@ SOURCES += \
     editing/DeleteFromTextNodeCommand.cpp \
     editing/DeleteSelectionCommand.cpp \
     editing/EditCommand.cpp \
+    editing/EditingStyle.cpp \
     editing/Editor.cpp \
     editing/EditorCommand.cpp \
     editing/FormatBlockCommand.cpp \
@@ -1700,6 +1701,7 @@ HEADERS += \
     editing/DeleteFromTextNodeCommand.h \
     editing/DeleteSelectionCommand.h \
     editing/EditCommand.h \
+    editing/EditingStyle.h \
     editing/EditingBehavior.h \
     editing/Editor.h \
     editing/FormatBlockCommand.h \

@@ -937,9 +937,9 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // A non-empty paragraph's style is moved when we copy and move it.  We don't move 
     // anything if we're given an empty paragraph, but an empty paragraph can have style
     // too, <div><b><br></b></div> for example.  Save it so that we can preserve it later.
-    RefPtr<CSSMutableStyleDeclaration> styleInEmptyParagraph;
+    RefPtr<EditingStyle> styleInEmptyParagraph;
     if (startOfParagraphToMove == endOfParagraphToMove && preserveStyle) {
-        styleInEmptyParagraph = ApplyStyleCommand::editingStyleAtPosition(startOfParagraphToMove.deepEquivalent(), IncludeTypingStyle);
+        styleInEmptyParagraph = editingStyleIncludingTypingStyle(startOfParagraphToMove.deepEquivalent());
         // The moved paragraph should assume the block style of the destination.
         styleInEmptyParagraph->removeBlockProperties();
     }
@@ -983,8 +983,8 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // If the selection is in an empty paragraph, restore styles from the old empty paragraph to the new empty paragraph.
     bool selectionIsEmptyParagraph = endingSelection().isCaret() && isStartOfParagraph(endingSelection().visibleStart()) && isEndOfParagraph(endingSelection().visibleStart());
     if (styleInEmptyParagraph && selectionIsEmptyParagraph)
-        applyStyle(styleInEmptyParagraph.get());
-    
+        applyStyle(styleInEmptyParagraph->style());
+
     if (preserveSelection && startIndex != -1) {
         // Fragment creation (using createMarkup) incorrectly uses regular
         // spaces instead of nbsps for some spaces that were rendered (11475), which
@@ -1005,7 +1005,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (!emptyListItem)
         return false;
 
-    RefPtr<CSSMutableStyleDeclaration> style = ApplyStyleCommand::editingStyleAtPosition(endingSelection().start(), IncludeTypingStyle);
+    RefPtr<EditingStyle> style = editingStyleIncludingTypingStyle(endingSelection().start());
 
     ContainerNode* listNode = emptyListItem->parentNode();
     // FIXME: Can't we do something better when the immediate parent wasn't a list node?
@@ -1054,10 +1054,10 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     appendBlockPlaceholder(newBlock);
     setEndingSelection(VisibleSelection(Position(newBlock.get(), 0), DOWNSTREAM));
 
-    prepareEditingStyleToApplyAt(style.get(), endingSelection().start());
-    if (style->length())
-        applyStyle(style.get());
-    
+    style->prepareToApplyAt(endingSelection().start());
+    if (!style->isEmpty())
+        applyStyle(style->style());
+
     return true;
 }
 
