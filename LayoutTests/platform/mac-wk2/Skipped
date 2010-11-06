@@ -1817,12 +1817,6 @@ plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 # WebKitTestRunner needs layoutTestController.setSelectTrailingWhitespaceEnabled
 editing/selection/doubleclick-inline-first-last-contenteditable.html
 
-# WebKitTestRunner needs layoutTestController.suspendAnimations
-animations/suspend-resume-animation.html
-animations/suspend-resume-animation-events.html
-animations/suspend-transform-animation.html
-transitions/suspend-transform-transition.html
-
 # WebKitTestRunner needs layoutTestController.pageProperty
 printing/page-rule-selection.html
 

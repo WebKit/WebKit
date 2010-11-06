@@ -43,6 +43,8 @@ WK_EXPORT WKStringRef WKBundleFrameCopyMarkerText(WKBundleFrameRef frame, JSObje
 WK_EXPORT JSValueRef WKBundleFrameGetComputedStyleIncludingVisitedInfo(WKBundleFrameRef frame, JSObjectRef element);
 WK_EXPORT unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frame);
 WK_EXPORT bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frame, WKStringRef name, WKStringRef elementID, double time);
+WK_EXPORT void WKBundleFrameSuspendAnimations(WKBundleFrameRef frame);
+WK_EXPORT void WKBundleFrameResumeAnimations(WKBundleFrameRef frame);
 WK_EXPORT unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frame);
 WK_EXPORT WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frame);
 

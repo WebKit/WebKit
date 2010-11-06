@@ -64,6 +64,16 @@ bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStr
     return toImpl(frameRef)->pauseAnimationOnElementWithId(toImpl(name)->string(), toImpl(elementID)->string(), time);
 }
 
+void WKBundleFrameSuspendAnimations(WKBundleFrameRef frameRef)
+{
+    toImpl(frameRef)->suspendAnimations();
+}
+
+void WKBundleFrameResumeAnimations(WKBundleFrameRef frameRef)
+{
+    toImpl(frameRef)->resumeAnimations();
+}
+
 JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)
 {
     return toImpl(frameRef)->jsContext();
