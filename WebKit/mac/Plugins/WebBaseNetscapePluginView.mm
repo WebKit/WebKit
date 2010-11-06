@@ -326,8 +326,6 @@ String WebHaltablePlugin::pluginName() const
 
 - (void)restartTimers
 {
-    ASSERT([self window]);
-    
     [self stopTimers];
     
     if (!_isStarted || [[self window] isMiniaturized])
