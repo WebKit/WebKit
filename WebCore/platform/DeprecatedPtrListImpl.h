@@ -114,13 +114,7 @@ public:
     void *current() const { return node ? node->data : 0; }
 
     void *operator--();
-    void *operator++()
-    {
-        if (node)
-            node = node->next;
-
-        return current();
-    }
+    void *operator++();
 
 private:
     const DeprecatedPtrListImpl *list;

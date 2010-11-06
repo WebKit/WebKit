@@ -471,6 +471,14 @@ void *DeprecatedPtrListImplIterator::operator--()
     return current();
 }
 
+void *DeprecatedPtrListImplIterator::operator++()
+{
+    if (node)
+        node = node->next;
+
+    return current();
+}
+
 DeprecatedPtrListImplIterator &DeprecatedPtrListImplIterator::operator=(const DeprecatedPtrListImplIterator &impl)
 {
     if (list) {
