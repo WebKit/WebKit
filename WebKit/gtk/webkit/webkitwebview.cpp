@@ -3248,6 +3248,12 @@ static void webkit_web_view_init(WebKitWebView* webView)
     pageClients.inspectorClient = new WebKit::InspectorClient(webView);
     priv->corePage = new Page(pageClients);
 
+    // Pages within a same session need to be linked together otherwise some functionalities such
+    // as visited link coloration (across pages) and changing popup window location will not work.
+    // To keep the default behavior simple (and because no PageGroup API exist in WebKitGTK at the
+    // time of writing this comment), we simply set all the pages to the same group.
+    priv->corePage->setGroupName("WebKitGTK");
+
     // We also add a simple wrapper class to provide the public
     // interface for the Web Inspector.
     priv->webInspector = adoptPlatformRef(WEBKIT_WEB_INSPECTOR(g_object_new(WEBKIT_TYPE_WEB_INSPECTOR, NULL)));
@@ -4511,18 +4517,6 @@ void webkit_web_view_move_cursor(WebKitWebView* webView, GtkMovementStep step, g
 
     gboolean handled;
     g_signal_emit(webView, webkit_web_view_signals[MOVE_CURSOR], 0, step, count, &handled);
-}
-
-void webkit_web_view_set_group_name(WebKitWebView* webView, const gchar* groupName)
-{
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-
-    WebKitWebViewPrivate* priv = webView->priv;
-
-    if (!priv->corePage)
-        return;
-
-    priv->corePage->setGroupName(String::fromUTF8(groupName));
 }
 
 /**
