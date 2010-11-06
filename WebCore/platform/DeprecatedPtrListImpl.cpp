@@ -29,20 +29,8 @@
 #include <cstddef>
 #include <algorithm>
 #include <wtf/Assertions.h>
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
-
-class DeprecatedListNode : public Noncopyable
-{
-public:
-    DeprecatedListNode(void *d) : data(d), next(0), prev(0) { }
-
-    void *data;
-    DeprecatedListNode *next;
-    DeprecatedListNode *prev;
-};
-
 
 static DeprecatedListNode *copyList(DeprecatedListNode *l, DeprecatedListNode *&tail)
 {
@@ -475,23 +463,10 @@ void *DeprecatedPtrListImplIterator::toLast()
     return current();
 }
 
-void *DeprecatedPtrListImplIterator::current() const
-{
-    return node == 0 ? 0 : node->data;
-}
-
 void *DeprecatedPtrListImplIterator::operator--()
 {
     if (node) {
         node = node->prev;
-    }
-    return current();
-}
-
-void *DeprecatedPtrListImplIterator::operator++()
-{
-    if (node) {
-        node = node->next;
     }
     return current();
 }
