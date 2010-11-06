@@ -716,11 +716,12 @@ void Frame::transferChildFrameToNewDocument()
     Page* newPage = newParent ? newParent->page() : 0;
     Page* oldPage = m_page;
     if (m_page != newPage) {
-        if (page()->focusController()->focusedFrame() == this)
-            page()->focusController()->setFocusedFrame(0);
+        if (m_page) {
+            if (m_page->focusController()->focusedFrame() == this)
+                m_page->focusController()->setFocusedFrame(0);
 
-        if (m_page)
-            m_page->decrementFrameCount();
+             m_page->decrementFrameCount();
+        }
 
         m_page = newPage;
 
