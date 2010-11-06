@@ -265,7 +265,15 @@ void PNGImageDecoder::headerAvailable()
     int bitDepth, colorType, interlaceType, compressionType, filterType, channels;
     png_get_IHDR(png, info, &width, &height, &bitDepth, &colorType, &interlaceType, &compressionType, &filterType);
 
-    m_colorProfile = readColorProfile(png, info);
+    if (colorType == PNG_COLOR_TYPE_RGB || colorType == PNG_COLOR_TYPE_RGB_ALPHA) {
+        // We currently support color profiles only for RGB and RGBA PNGs.  Supporting
+        // color profiles for gray-scale images is slightly tricky, at least using the
+        // CoreGraphics ICC library, because we expand gray-scale images to RGB but we
+        // don't similarly transform the color profile.  We'd either need to transform
+        // the color profile or we'd need to decode into a gray-scale image buffer and
+        // hand that to CoreGraphics.
+        m_colorProfile = readColorProfile(png, info);
+    }
 
     // The options we set here match what Mozilla does.
 
