@@ -36,6 +36,7 @@
 #include <DeleteFromTextNodeCommand.cpp>
 #include <DeleteSelectionCommand.cpp>
 #include <EditCommand.cpp>
+#include <EditingStyle.cpp>
 #include <Editor.cpp>
 #include <EditorCommand.cpp>
 #include <FormatBlockCommand.cpp>
