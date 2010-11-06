@@ -73,10 +73,10 @@
             test(rect.left + rect.width, rect.top, "element.firstChild", "23");
 
             log("Testing lower left");
-            test(rect.left, rect.top + rect.height, "element.firstChild", "72");
+            test(rect.left, rect.top + rect.height - 1, "element.firstChild", "72");
             
             log("Testing lower right");
-            test(rect.left + rect.width, rect.top + rect.height, "element.firstChild", "95");
+            test(rect.left + rect.width, rect.top + rect.height - 1, "element.firstChild", "95");
 
             log("Testing somewhere in the middle");
             test((rect.left + rect.width) / 2, (rect.top + rect.height) / 2, "element.firstChild", "36");

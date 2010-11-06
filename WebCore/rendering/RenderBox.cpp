@@ -3235,7 +3235,14 @@ IntPoint RenderBox::flipForWritingMode(const IntPoint& position)
 {
     if (!style()->isFlippedBlocksWritingMode())
         return position;
-    return style()->isHorizontalWritingMode() ? IntPoint(position.x(), logicalHeight() - position.y()) : IntPoint(logicalHeight() - position.x(), position.y());
+    return style()->isHorizontalWritingMode() ? IntPoint(position.x(), height() - position.y()) : IntPoint(width() - position.x(), position.y());
+}
+
+IntSize RenderBox::flipForWritingMode(const IntSize& offset)
+{
+    if (!style()->isFlippedBlocksWritingMode())
+        return offset;
+    return style()->isHorizontalWritingMode() ? IntSize(offset.width(), height() - offset.height()) : IntSize(width() - offset.width(), offset.height());
 }
 
 IntSize RenderBox::locationOffsetIncludingFlipping()

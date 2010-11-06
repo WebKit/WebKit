@@ -54,7 +54,7 @@ public:
     void setPaginationStrut(int s) { m_paginationStrut = s; }
 
     int selectionTop() const;
-    int selectionBottom() const { return lineBottom(); }
+    int selectionBottom() const;
     int selectionHeight() const { return max(0, selectionBottom() - selectionTop()); }
 
     int alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAndFallbackFontsMap&);
@@ -106,8 +106,7 @@ public:
     InlineBox* firstSelectedBox();
     InlineBox* lastSelectedBox();
 
-    GapRects fillLineSelectionGap(int selTop, int selHeight, RenderBlock* rootBlock, int blockX, int blockY,
-                                  int tx, int ty, const PaintInfo*);
+    GapRects lineSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock, int selTop, int selHeight, const PaintInfo*);
 
     RenderBlock* block() const;
 

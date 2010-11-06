@@ -53,6 +53,7 @@ public:
     int logicalLeft() const { return style()->isHorizontalWritingMode() ? x() : y(); }
     int logicalRight() const { return logicalLeft() + logicalWidth(); }
     int logicalTop() const { return style()->isHorizontalWritingMode() ? y() : x(); }
+    int logicalBottom() const { return logicalTop() + logicalHeight(); }
     int logicalWidth() const { return style()->isHorizontalWritingMode() ? width() : height(); }
     int logicalHeight() const { return style()->isHorizontalWritingMode() ? height() : width(); }
 
@@ -383,6 +384,7 @@ public:
     IntPoint flipForWritingMode(RenderBox* child, const IntPoint&, FlippingAdjustment);
     int flipForWritingMode(int position);
     IntPoint flipForWritingMode(const IntPoint&);
+    IntSize flipForWritingMode(const IntSize&);
     void flipForWritingMode(IntRect&);
     IntSize locationOffsetIncludingFlipping();
 

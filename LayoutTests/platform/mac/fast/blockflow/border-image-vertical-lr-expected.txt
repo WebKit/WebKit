@@ -4,7 +4,7 @@ layer at (0,0) size 460x600
   RenderBlock {HTML} at (0,0) size 460x600
     RenderBody {BODY} at (8,8) size 444x584
       RenderInline {SPAN} at (0,0) size 323x80 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
-        RenderBlock {DIV} at (93,101) size 0x25
-        RenderBR {BR} at (71,126) size 100x0
-        RenderBlock {DIV} at (265,50) size 0x50
+        RenderBlock {DIV} at (99,101) size 0x25
+        RenderBR {BR} at (77,126) size 100x0
+        RenderBlock {DIV} at (271,50) size 0x50
       RenderText {#text} at (0,0) size 0x0

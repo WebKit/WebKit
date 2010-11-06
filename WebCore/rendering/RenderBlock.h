@@ -115,14 +115,13 @@ public:
     bool containsNonZeroBidiLevel() const;
 
     GapRects selectionGapRectsForRepaint(RenderBoxModelObject* repaintContainer);
-    IntRect fillLogicalLeftSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock, 
-                                        int blockX, int blockY, int tx, int ty, const PaintInfo*);
-    IntRect fillLogicalRightSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock,
-                                         int blockX, int blockY, int tx, int ty, const PaintInfo*);
-    IntRect fillLineSelectionGap(RenderObject* selObj, int xPos, int yPos, int width, int height, const PaintInfo*);
-
+    IntRect logicalLeftSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
+                                    RenderObject* selObj, int logicalLeft, int logicalTop, int logicalHeight, const PaintInfo*);
+    IntRect logicalRightSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
+                                     RenderObject* selObj, int logicalRight, int logicalTop, int logicalHeight, const PaintInfo*);
     void getSelectionGapInfo(SelectionState, bool& leftGap, bool& rightGap);
-
+    IntRect logicalRectToPhysicalRect(const IntPoint& physicalPosition, const IntRect& logicalRect);
+        
     // Helper methods for computing line counts and heights for line counts.
     RootInlineBox* lineAtIndex(int);
     int lineCount();
@@ -531,17 +530,17 @@ private:
     }
     virtual bool shouldPaintSelectionGaps() const;
     bool isSelectionRoot() const;
-    GapRects fillSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
-                               int& lastTop, int& lastLeft, int& lastRight, const PaintInfo* = 0);
-    GapRects fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
-                                     int& lastTop, int& lastLeft, int& lastRight, const PaintInfo*);
-    GapRects fillBlockSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
-                                    int& lastTop, int& lastLeft, int& lastRight, const PaintInfo*);
-    IntRect fillBlockSelectionGap(int lastTop, int lastLeft, int lastRight, int bottomY, RenderBlock* rootBlock,
-                                  int blockX, int blockY, const PaintInfo*);
+    GapRects selectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
+                           int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo* = 0);
+    GapRects inlineSelectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
+                           int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo*);
+    GapRects blockSelectionGaps(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
+                           int& lastLogicalTop, int& lastLogicalLeft, int& lastLogicalRight, const PaintInfo*);
+    IntRect blockSelectionGap(RenderBlock* rootBlock, const IntPoint& rootBlockPhysicalPosition, const IntSize& offsetFromRootBlock,
+                              int lastLogicalTop, int lastLogicalLeft, int lastLogicalRight, int logicalBottom, const PaintInfo*);
     int logicalLeftSelectionOffset(RenderBlock* rootBlock, int position);
     int logicalRightSelectionOffset(RenderBlock* rootBlock, int position);
-
+    
     virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
