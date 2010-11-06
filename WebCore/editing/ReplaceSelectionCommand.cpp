@@ -799,6 +799,11 @@ void ReplaceSelectionCommand::doApply()
     if (performTrivialReplace(fragment))
         return;
     
+    // We can skip matching the style if the selection is plain text.
+    if ((selection.start().node()->renderer() && selection.start().node()->renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY) &&
+        (selection.end().node()->renderer() && selection.end().node()->renderer()->style()->userModify() == READ_WRITE_PLAINTEXT_ONLY))
+        m_matchStyle = false;
+    
     if (m_matchStyle)
         m_insertionStyle = ApplyStyleCommand::editingStyleAtPosition(selection.start(), IncludeTypingStyle);
     
