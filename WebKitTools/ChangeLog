@@ -1,5 +1,17 @@
 2010-11-06  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, build breakage.
+
+        Apparently I uploaded the wrong version of the file to fix 49122
+        and neither Eric or I noticed - it was missing a dirname() call.
+        Fixing ...
+
+        https://bugs.webkit.org/show_bug.cgi?id=49122
+
+        * Scripts/webkitpy/common/checkout/scm.py:
+
+2010-11-06  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Eric Seidel.
 
         webkitpy/tool/* unittests change cwd and don't clean up properly
