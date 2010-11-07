@@ -1,3 +1,15 @@
+2010-11-07  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Fixing a crasher with the select popup on Mac that happens when a
+        page removes the select node when the select changes.
+        https://bugs.webkit.org/show_bug.cgi?id=49108
+
+        * src/ExternalPopupMenu.cpp:
+        (WebKit::ExternalPopupMenu::didAcceptIndex):
+        (WebKit::ExternalPopupMenu::didCancel):
+
 2010-11-06  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed. Chromium DevTools: disable filesystem inspection

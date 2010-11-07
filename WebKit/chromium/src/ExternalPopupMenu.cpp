@@ -98,15 +98,26 @@ void ExternalPopupMenu::didChangeSelection(int index)
 
 void ExternalPopupMenu::didAcceptIndex(int index)
 {
+    // Calling methods on the PopupMenuClient might lead to this object being
+    // derefed. This ensures it does not get deleted while we are running this
+    // method.
+    RefPtr<ExternalPopupMenu> guard(this);
+
     if (m_popupMenuClient) {
         m_popupMenuClient->valueChanged(index);
-        m_popupMenuClient->popupDidHide();
+        // The call to valueChanged above might have lead to a call to
+        // disconnectClient, so we might not have a PopupMenuClient anymore.
+        if (m_popupMenuClient)
+            m_popupMenuClient->popupDidHide();
     }
     m_webExternalPopupMenu = 0;
 }
 
 void ExternalPopupMenu::didCancel()
 {
+    // See comment in didAcceptIndex on why we need this.
+    RefPtr<ExternalPopupMenu> guard(this);
+
     if (m_popupMenuClient)
         m_popupMenuClient->popupDidHide();
     m_webExternalPopupMenu = 0;
