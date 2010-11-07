@@ -1,9 +1,2 @@
-< [index] >
-2d.text.draw.baseline.middle
-textBaseline middle is the middle of the em square (not the bounding box)
-References: 2d.text.baseline.middle
-Actual output:
-Expected output:
-
 Failed assertion: got pixel [255,0,0,255] at (5,5), expected [0,255,0,255] +/- 2
 Failed assertion: got pixel [255,0,0,255] at (95,5), expected [0,255,0,255] +/- 2

@@ -1,8 +1,1 @@
-< [index] >
-2d.shadow.enable.blur
-Shadows are drawn if shadowBlur is set
-References: 2d.shadow.enable 2d.shadow.render
-Actual output:
-Expected output:
-
 Failed assertion: got pixel [255,0,0,255] at (50,25), expected [0,255,0,255]
