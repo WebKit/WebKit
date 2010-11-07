@@ -104,6 +104,8 @@ public:
     static bool cookiesEnabled();
     // Plugin
     static NPObject* pluginScriptableObject(Widget*);
+    // Language
+    static String computeDefaultLanguage();
 };
 
 }
