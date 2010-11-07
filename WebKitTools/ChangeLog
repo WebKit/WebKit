@@ -1,5 +1,33 @@
 2010-11-06  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Eric Siedel.
+
+        new-run-webkit-tests: update port/base and port/webkit to use the
+        new FileSystem and Config abstractions, pulling more logic out of
+        the base Port classes into separate, mockable objects.
+
+        Also create a MockFileSystem object, a MockConfig object, move
+        MockExecutive into common/system to be next to executive, and
+        update the config object to use a FileSystem.
+
+        https://bugs.webkit.org/show_bug.cgi?id=48280
+
+        * Scripts/webkitpy/common/newstringio.py: Added.
+        * Scripts/webkitpy/common/newstringio_unittest.py: Added.
+        * Scripts/webkitpy/common/system/executive_mock.py: Added.
+        * Scripts/webkitpy/common/system/filesystem_mock.py: Added.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/config_mock.py:
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-11-06  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, build breakage.
 
         Apparently I uploaded the wrong version of the file to fix 49122
