@@ -1,8 +1,2 @@
-< [index] >
-2d.drawImage.3arg
-References: 2d.drawImage.defaultsource 2d.drawImage.defaultdest
-Actual output:
-Expected output:
-
 Passed
  

@@ -1,6 +1,1 @@
-< [index] >
-context.casesensitive
-Context name "2D" is unrecognised; matching is case sensitive
-References: context.casesensitive Bugzilla
-Actual output:
 Passed

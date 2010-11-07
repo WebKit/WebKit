@@ -1,5 +1,1 @@
-< [index] >
-2d.text.font.parse.size.percentage.default
-References: 2d.text.font.undefined
-Actual output:
 Passed

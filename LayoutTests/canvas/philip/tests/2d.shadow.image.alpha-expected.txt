@@ -1,9 +1,2 @@
-< [index] >
-2d.shadow.image.alpha
-Shadows are drawn correctly for partially-transparent images
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed
 

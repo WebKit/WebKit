@@ -1,7 +1,1 @@
-< [index] >
-2d.gradient.interpolate.overlap
-References: 2d.gradient.interpolate.overlap
-Actual output:
-Expected output:
-
 Passed

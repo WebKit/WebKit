@@ -1,9 +1,2 @@
-< [index] >
-2d.drawImage.negativedir
-Negative dimensions do not affect the direction of the image
-References: 2d.drawImage.direction
-Actual output:
-Expected output:
-
 Passed
 

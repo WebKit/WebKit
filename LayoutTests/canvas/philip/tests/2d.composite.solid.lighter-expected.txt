@@ -1,7 +1,1 @@
-< [index] >
-2d.composite.solid.lighter
-References: 2d.composite.lighter
-Actual output:
-Expected output:
-
 Passed

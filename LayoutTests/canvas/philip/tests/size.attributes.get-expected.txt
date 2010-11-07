@@ -1,8 +1,1 @@
-< [index] >
-size.attributes.get
-Getting width/height IDL/content attributes
-References: size.width size.height
-Actual output:
-Expected output:
-
 Passed

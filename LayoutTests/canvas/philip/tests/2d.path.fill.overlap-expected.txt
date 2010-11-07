@@ -1,7 +1,1 @@
-< [index] >
-2d.path.fill.overlap
-References: 2d.path.fill.basic
-Actual output:
-Expected output:
-
 Passed

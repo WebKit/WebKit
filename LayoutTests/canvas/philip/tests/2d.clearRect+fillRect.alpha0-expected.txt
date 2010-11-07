@@ -2,6 +2,4 @@
 2d.clearRect
 fillRect preceded by a clearRect (ctx.globalAlpha = 0.0) on the same area should show no side effects
 References: 2d.clearRect
-Actual output:
-Expected output:
 Passed

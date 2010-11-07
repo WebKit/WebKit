@@ -1,7 +1,1 @@
-< [index] >
-2d.path.fill.closed.unaffected
-References: 2d.path.fill.closed
-Actual output:
-Expected output:
-
 Passed

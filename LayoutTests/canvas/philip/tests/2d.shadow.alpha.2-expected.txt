@@ -1,8 +1,1 @@
-< [index] >
-2d.shadow.alpha.2
-Shadow colour alpha components are used
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed

@@ -1,9 +1,2 @@
-< [index] >
-2d.drawImage.nonfinite
-drawImage() with Infinity/NaN is ignored
-References: 2d.nonfinite
-Actual output:
-Expected output:
-
 Passed
 

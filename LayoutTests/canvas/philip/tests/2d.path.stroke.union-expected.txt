@@ -1,8 +1,1 @@
-< [index] >
-2d.path.stroke.union
-Strokes in opposite directions are unioned, not subtracted
-References: 2d.path.stroke.basic
-Actual output:
-Expected output:
-
 Passed

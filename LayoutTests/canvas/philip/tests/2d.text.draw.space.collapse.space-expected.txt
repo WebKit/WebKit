@@ -1,8 +1,1 @@
-< [index] >
-2d.text.draw.space.collapse.space
-Space characters are converted to U+0020, and collapsed (per CSS)
-References: 2d.text.draw.spaces
-Actual output:
-Expected output:
-
 Passed

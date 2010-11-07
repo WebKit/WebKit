@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.create2.zero
-createImageData(sw, sh) throws INDEX_SIZE_ERR if size is zero
-References: 2d.imageData.getcreate.zero Bugzilla
-Actual output:
 Passed

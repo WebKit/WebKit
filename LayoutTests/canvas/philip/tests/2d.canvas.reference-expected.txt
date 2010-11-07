@@ -1,6 +1,1 @@
-< [index] >
-2d.canvas.reference
-CanvasRenderingContext2D.canvas refers back to its canvas
-References: 2d.canvas
-Actual output:
 Passed

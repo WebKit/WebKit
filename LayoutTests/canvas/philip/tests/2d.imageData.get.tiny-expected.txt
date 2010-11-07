@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.get.tiny
-getImageData() works for sizes smaller than one pixel
-References: 2d.imageData.one
-Actual output:
 Passed

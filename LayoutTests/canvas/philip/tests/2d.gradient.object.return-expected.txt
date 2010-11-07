@@ -1,6 +1,1 @@
-< [index] >
-2d.gradient.object.return
-createLinearGradient() and createRadialGradient() returns objects implementing CanvasGradient
-References: 2d.gradient.linear.return 2d.gradient.radial.return
-Actual output:
 Passed

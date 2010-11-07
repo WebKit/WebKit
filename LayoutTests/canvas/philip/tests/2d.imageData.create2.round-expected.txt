@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.create2.round
-createImageData(w, h) is rounded the same as getImageData(0, 0, w, h)
-References: 2d.imageData.createround Bugzilla
-Actual output:
 Passed

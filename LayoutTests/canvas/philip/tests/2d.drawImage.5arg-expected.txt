@@ -1,8 +1,2 @@
-< [index] >
-2d.drawImage.5arg
-References: 2d.drawImage.defaultsource
-Actual output:
-Expected output:
-
 Passed
  

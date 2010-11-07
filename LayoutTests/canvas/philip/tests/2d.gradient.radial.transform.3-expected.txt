@@ -1,8 +1,1 @@
-< [index] >
-2d.gradient.radial.transform.3
-Radial gradient transforms do not experience broken caching effects
-References: 2d.gradient.radial.transform
-Actual output:
-Expected output:
-
 Passed

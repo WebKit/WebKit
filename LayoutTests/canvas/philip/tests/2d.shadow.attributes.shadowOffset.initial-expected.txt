@@ -1,5 +1,1 @@
-< [index] >
-2d.shadow.attributes.shadowOffset.initial
-References: 2d.shadow.offset.initial
-Actual output:
 Passed

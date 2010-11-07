@@ -1,6 +1,1 @@
-< [index] >
-2d.state.saverestore.strokeStyle
-save()/restore() works for strokeStyle
-References: 2d.state.strokeStyle
-Actual output:
 Passed

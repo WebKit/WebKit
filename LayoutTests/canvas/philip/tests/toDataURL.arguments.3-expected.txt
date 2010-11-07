@@ -1,6 +1,1 @@
-< [index] >
-toDataURL.arguments.3
-toDataURL ignores extra arguments
-References: toDataURL.arguments Bugzilla
-Actual output:
 Passed

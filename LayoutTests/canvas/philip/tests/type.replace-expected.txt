@@ -1,7 +1,1 @@
-< [index] >
-type.replace
-HTMLCanvasElement methods can be replaced, and the replacement methods used by canvases
-References: canvas.type
-Defined in "Language Bindings for DOM Specifications" (draft)
-Actual output:
 Passed

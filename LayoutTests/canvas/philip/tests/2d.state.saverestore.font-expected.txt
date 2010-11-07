@@ -1,6 +1,1 @@
-< [index] >
-2d.state.saverestore.font
-save()/restore() works for font
-References: 2d.state.font
-Actual output:
 Passed

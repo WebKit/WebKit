@@ -1,8 +1,1 @@
-< [index] >
-2d.path.stroke.empty
-Empty subpaths are not stroked
-References: 2d.path.stroke.empty
-Actual output:
-Expected output:
-
 Passed

@@ -1,5 +1,1 @@
-< [index] >
-2d.composite.operation.highlight
-References: 2d.composite.operation.unrecognised Bugzilla
-Actual output:
 Passed

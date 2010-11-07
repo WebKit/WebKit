@@ -1,7 +1,1 @@
-< [index] >
-2d.fillStyle.invalidstring
-References: 2d.colours.invalidstring
-Actual output:
-Expected output:
-
 Passed

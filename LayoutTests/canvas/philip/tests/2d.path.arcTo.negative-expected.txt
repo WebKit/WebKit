@@ -1,6 +1,1 @@
-< [index] >
-2d.path.arcTo.negative
-arcTo() with negative radius throws an exception
-References: 2d.path.arcTo.negative
-Actual output:
 Passed

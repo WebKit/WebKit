@@ -1,6 +1,1 @@
-< [index] >
-2d.line.cap.invalid
-Setting lineCap to invalid values is ignored
-References: 2d.lineCap.invalid Bugzilla
-Actual output:
 Passed

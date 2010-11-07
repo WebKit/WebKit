@@ -1,8 +1,2 @@
-< [index] >
-2d.drawImage.path
-References: 2d.drawImage.unaffect
-Actual output:
-Expected output:
-
 Passed
 

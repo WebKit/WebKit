@@ -2,23 +2,10 @@
 <title>Canvas test: 2d.imageData.put.wrongtype</title>
 <script src="../tests.js"></script>
 <link rel="stylesheet" href="../tests.css">
-<link rel="prev" href="2d.imageData.put.created.html" title="2d.imageData.put.created">
-<link rel="next" href="2d.imageData.put.cross.html" title="2d.imageData.put.cross">
-<body class="show_output">
-<p>
- <a href="2d.imageData.put.created.html" accesskey="p" title="[p] 2d.imageData.put.created">&lt;</a>
- <a href="index.html">[index]</a>
- <a href="2d.imageData.put.cross.html" accesskey="n" title="[n] 2d.imageData.put.cross">&gt;</a>
-<h1><a href="index.2d.html">2d</a>.<a href="index.2d.imageData.html">imageData</a>.<a href="index.2d.imageData.put.html">put</a>.wrongtype</h1>
-<p class="desc">putImageData() does not accept non-ImageData objects</p>
-<div class="refs">References:
-<ul>
-<li><a href="spec.html#testrefs.2d.imageData.put.wrongtype">2d.imageData.put.wrongtype</a>
-
-</ul>
-</div>
-
-<p class="output">Actual output:</p>
+<body>
+<p id="passtext">Pass</p>
+<p id="failtext">Fail</p>
+<p class="output">These images should be identical:</p>
 <canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
 <p class="output expectedtext">Expected output:<p><img src="green-100x50.png" class="output expected" id="expected" alt="">
 <ul id="d"></ul>
@@ -28,13 +15,13 @@ _addTest(function(canvas, ctx) {
 var imgdata = { width: 1, height: 1, data: [255, 0, 0, 255] };
 try { var _thrown = false;
   ctx.putImageData(imgdata, 0, 0);
-} catch (e) { if (e.code != DOMException.TYPE_MISMATCH_ERR) _fail("Failed assertion: expected exception of type TYPE_MISMATCH_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TYPE_MISMATCH_ERR: ctx.putImageData(imgdata, 0, 0)"); }
+} catch (e) { if (!(e instanceof TypeError)) _fail("Failed assertion: expected exception of type TypeError, got: "+e); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TypeError: ctx.putImageData(imgdata, 0, 0)"); }
 try { var _thrown = false;
   ctx.putImageData("cheese", 0, 0);
-} catch (e) { if (e.code != DOMException.TYPE_MISMATCH_ERR) _fail("Failed assertion: expected exception of type TYPE_MISMATCH_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TYPE_MISMATCH_ERR: ctx.putImageData(\"cheese\", 0, 0)"); }
+} catch (e) { if (!(e instanceof TypeError)) _fail("Failed assertion: expected exception of type TypeError, got: "+e); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TypeError: ctx.putImageData(\"cheese\", 0, 0)"); }
 try { var _thrown = false;
   ctx.putImageData(42, 0, 0);
-} catch (e) { if (e.code != DOMException.TYPE_MISMATCH_ERR) _fail("Failed assertion: expected exception of type TYPE_MISMATCH_ERR, got: "+e.message); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TYPE_MISMATCH_ERR: ctx.putImageData(42, 0, 0)"); }
+} catch (e) { if (!(e instanceof TypeError)) _fail("Failed assertion: expected exception of type TypeError, got: "+e); _thrown = true; } finally { _assert(_thrown, "should throw exception of type TypeError: ctx.putImageData(42, 0, 0)"); }
 
 
 });

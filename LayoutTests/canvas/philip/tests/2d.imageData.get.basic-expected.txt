@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.get.basic
-getImageData() exists and returns something
-References: 2d.imageData.get.basic
-Actual output:
 Passed

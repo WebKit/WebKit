@@ -1,9 +1,2 @@
-< [index] >
-2d.pattern.paint.orientation.image
-Image patterns do not get flipped when painted
-References: 2d.pattern.painting
-Actual output:
-Expected output:
-
 Passed
 

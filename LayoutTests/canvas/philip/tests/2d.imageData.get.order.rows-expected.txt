@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.get.order.rows
-getImageData() returns topmost rows first
-References: 2d.pixelarray.order
-Actual output:
 Passed

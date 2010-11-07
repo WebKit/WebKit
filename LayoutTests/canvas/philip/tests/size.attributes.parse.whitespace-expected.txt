@@ -1,8 +1,1 @@
-< [index] >
-size.attributes.parse.whitespace
-Parsing of non-negative integers
-References: size.nonnegativeinteger
-Actual output:
-Expected output:
-
 Passed

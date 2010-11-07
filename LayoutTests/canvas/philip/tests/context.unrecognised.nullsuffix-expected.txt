@@ -1,6 +1,1 @@
-< [index] >
-context.unrecognised.nullsuffix
-Context name "2d" plus a "\0" suffix is unrecognised
-References: context.unrecognised Bugzilla
-Actual output:
 Passed

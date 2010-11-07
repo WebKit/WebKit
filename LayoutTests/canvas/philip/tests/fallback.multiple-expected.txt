@@ -1,6 +1,1 @@
-< [index] >
-fallback.multiple
-Fallback content with multiple elements
-References: fallback
-Actual output:
 Passed

@@ -1,6 +1,1 @@
-< [index] >
-2d.gradient.radial.nonfinite
-createRadialGradient() throws NOT_SUPPORTED_ERR if arguments are not finite
-References: 2d.gradient.radial.nonfinite
-Actual output:
 Passed

@@ -1,7 +1,1 @@
-< [index] >
-2d.gradient.object.crosscanvas
-References:
-Actual output:
-Expected output:
-
 Passed

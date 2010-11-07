@@ -1,6 +1,1 @@
-< [index] >
-toDataURL.jpeg.quality.notnumber
-toDataURL with JPEG handles non-numeric quality parameters
-References: toDataURL.jpeg.nan
-Actual output:
 Passed

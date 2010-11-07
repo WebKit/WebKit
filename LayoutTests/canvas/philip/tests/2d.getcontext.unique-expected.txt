@@ -1,6 +1,1 @@
-< [index] >
-2d.getcontext.unique
-getContext('2d') returns the same object
-References: context.2d.unique
-Actual output:
 Passed

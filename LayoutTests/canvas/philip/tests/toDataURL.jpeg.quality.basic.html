@@ -2,23 +2,10 @@
 <title>Canvas test: toDataURL.jpeg.quality.basic</title>
 <script src="../tests.js"></script>
 <link rel="stylesheet" href="../tests.css">
-<link rel="prev" href="toDataURL.jpeg.alpha.html" title="toDataURL.jpeg.alpha">
-<link rel="next" href="toDataURL.jpeg.quality.notnumber.html" title="toDataURL.jpeg.quality.notnumber">
-<body class="show_output">
-<p>
- <a href="toDataURL.jpeg.alpha.html" accesskey="p" title="[p] toDataURL.jpeg.alpha">&lt;</a>
- <a href="index.html">[index]</a>
- <a href="toDataURL.jpeg.quality.notnumber.html" accesskey="n" title="[n] toDataURL.jpeg.quality.notnumber">&gt;</a>
-<h1><a href="index.toDataURL.html">toDataURL</a>.<a href="index.toDataURL.jpeg.html">jpeg</a>.<a href="index.toDataURL.jpeg.quality.html">quality</a>.basic</h1>
-<p class="desc">toDataURL with JPEG uses the quality parameter</p>
-<div class="refs">References:
-<ul>
-<li><a href="spec.html#testrefs.toDataURL.jpeg.quality">toDataURL.jpeg.quality</a>
-
-</ul>
-</div>
-
-<p class="output">Actual output:</p>
+<body>
+<p id="passtext">Pass</p>
+<p id="failtext">Fail</p>
+<p class="output">These images should be identical:</p>
 <canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
 <p class="output expectedtext">Expected output:<p><img src="toDataURL.jpeg.quality.basic.png" class="output expected" id="expected" alt="">
 <ul id="d"></ul>
@@ -50,7 +37,7 @@ if (!data.match(/^data:image\/jpeg[;,]/)) {
           
           _assert(data_hi.length > data_lo.length, "data_hi.length > data_lo.length");
           _assertPixelApprox(canvas, 25,25, 0,0,255,255, "25,25", "0,0,255,255", 8);
-          _assertPixelApprox(canvas, 75,25, 0,0,255,255, "75,25", "0,0,255,255", 8);
+          _assertPixelApprox(canvas, 75,25, 0,0,255,255, "75,25", "0,0,255,255", 32);
       });
       img_lo.src = data_lo;
   };

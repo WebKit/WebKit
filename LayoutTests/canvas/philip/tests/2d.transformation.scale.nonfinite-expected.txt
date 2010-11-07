@@ -1,8 +1,1 @@
-< [index] >
-2d.transformation.scale.nonfinite
-scale() with Infinity/NaN is ignored
-References: 2d.nonfinite
-Actual output:
-Expected output:
-
 Passed

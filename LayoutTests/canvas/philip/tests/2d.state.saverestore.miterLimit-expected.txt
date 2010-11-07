@@ -1,6 +1,1 @@
-< [index] >
-2d.state.saverestore.miterLimit
-save()/restore() works for miterLimit
-References: 2d.state.miterLimit
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.line.join.miter
-lineJoin 'miter' is rendered correctly
-References: 2d.lineJoin.miter
-Actual output:
-Expected output:
-
 Passed

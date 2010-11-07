@@ -1,8 +1,1 @@
-< [index] >
-2d.clearRect.clip
-clearRect is affected by clipping regions
-References: 2d.clearRect
-Actual output:
-Expected output:
-
 Passed

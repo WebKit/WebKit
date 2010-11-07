@@ -1,7 +1,1 @@
-< [index] >
-2d.fillStyle.parse.svg-2
-References: 2d.colours.parse
-Actual output:
-Expected output:
-
 Passed

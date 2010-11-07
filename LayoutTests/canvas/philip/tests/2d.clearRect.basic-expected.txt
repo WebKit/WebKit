@@ -1,8 +1,1 @@
-< [index] >
-2d.clearRect.basic
-clearRect clears to transparent black
-References: 2d.clearRect
-Actual output:
-Expected output:
-
 Passed

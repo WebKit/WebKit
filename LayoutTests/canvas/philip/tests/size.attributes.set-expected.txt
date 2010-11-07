@@ -1,8 +1,1 @@
-< [index] >
-size.attributes.set
-Setting width/height IDL attributes
-References: size.width size.height
-Actual output:
-Expected output:
-
 Passed

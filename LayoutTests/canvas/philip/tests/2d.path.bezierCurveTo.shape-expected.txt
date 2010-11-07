@@ -1,7 +1,1 @@
-< [index] >
-2d.path.bezierCurveTo.shape
-References: 2d.path.bezier.nonempty
-Actual output:
-Expected output:
-
 Passed

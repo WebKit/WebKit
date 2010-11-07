@@ -5236,6 +5236,20 @@ canvas/philip/tests/2d.path.stroke.overlap.html
 # Originally worked because we didn't set the GC's join style properly.
 canvas/philip/tests/2d.path.rect.zero.1.html
 
+# Failing tests after sync with Philip Taylor's upstream tests
+canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
+canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
+canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html
+canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
+canvas/philip/tests/2d.imageData.put.wrongtype.html
+canvas/philip/tests/2d.pattern.image.incomplete.empty.html
+canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
+canvas/philip/tests/security.drawImage.canvas.html
+canvas/philip/tests/security.drawImage.image.html
+canvas/philip/tests/security.pattern.canvas.fillStyle.html
+canvas/philip/tests/security.pattern.canvas.strokeStyle.html
+canvas/philip/tests/security.reset.html
+
 # ============================================================================= #
 # failing transforms tests
 # ============================================================================= #

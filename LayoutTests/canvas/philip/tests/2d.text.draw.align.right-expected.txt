@@ -1,8 +1,1 @@
-< [index] >
-2d.text.draw.align.right
-textAlign right is the right of the last em square (not the bounding box)
-References: 2d.text.align.right
-Actual output:
-Expected output:
-
 Passed

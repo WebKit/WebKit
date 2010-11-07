@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arc.shape.2
-arc() from 0 to pi draws stuff in the right half
-References: 2d.path.arc.draw
-Actual output:
-Expected output:
-
 Passed

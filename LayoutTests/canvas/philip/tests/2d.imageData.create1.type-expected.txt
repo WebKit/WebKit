@@ -1,7 +1,1 @@
-< [index] >
-2d.imageData.create1.type
-createImageData(imgdata) returns an ImageData object containing a CanvasPixelArray object
-References: 2d.imageData.create1.object Bugzilla
-Actual output:
 Passed
-

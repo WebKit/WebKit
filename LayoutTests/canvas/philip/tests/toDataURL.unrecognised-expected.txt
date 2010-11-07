@@ -1,6 +1,1 @@
-< [index] >
-toDataURL.unrecognised
-toDataURL with an unhandled type returns a PNG
-References: toDataURL.unrecognised Bugzilla
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.imageData.put.wrongtype
-putImageData() does not accept non-ImageData objects
-References: 2d.imageData.put.wrongtype
-Actual output:
-Expected output:
-
 Passed

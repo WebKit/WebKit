@@ -1,8 +1,2 @@
-< [index] >
-2d.drawImage.9arg.destsize
-References: 2d.drawImage.paint
-Actual output:
-Expected output:
-
 Passed
  

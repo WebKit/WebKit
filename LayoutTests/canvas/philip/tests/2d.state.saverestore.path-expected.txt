@@ -1,8 +1,1 @@
-< [index] >
-2d.state.saverestore.path
-save()/restore() does not affect the current path
-References: 2d.state.path
-Actual output:
-Expected output:
-
 Passed

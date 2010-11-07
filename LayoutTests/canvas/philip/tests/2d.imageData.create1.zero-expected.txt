@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.create1.zero
-createImageData(null) throws INDEX_SIZE_ERR
-References: 2d.imageData.create.null
-Actual output:
 Passed

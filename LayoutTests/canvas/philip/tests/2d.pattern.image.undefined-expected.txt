@@ -1,5 +1,1 @@
-< [index] >
-2d.pattern.image.undefined
-References: 2d.pattern.wrongtype
-Actual output:
 Passed

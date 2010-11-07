@@ -1,5 +1,1 @@
-< [index] >
-2d.fillStyle.default
-References: 2d.colours.default
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.line.miter.rightangle
-Miter joins are not drawn when the miter limit is exceeded, on exact right angles
-References: 2d.lineJoin.miter Bugzilla
-Actual output:
-Expected output:
-
 Passed

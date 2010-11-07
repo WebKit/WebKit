@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.get.order.alpha
-getImageData() returns A in the fourth component
-References: 2d.pixelarray.order
-Actual output:
 Passed

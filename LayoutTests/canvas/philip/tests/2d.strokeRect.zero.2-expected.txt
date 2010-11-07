@@ -1,8 +1,1 @@
-< [index] >
-2d.strokeRect.zero.2
-strokeRect of 0x0 pixels draws nothing, including caps and joins
-References: 2d.strokeRect
-Actual output:
-Expected output:
-
 Passed

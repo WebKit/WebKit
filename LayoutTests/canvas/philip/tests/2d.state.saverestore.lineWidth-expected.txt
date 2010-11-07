@@ -1,6 +1,1 @@
-< [index] >
-2d.state.saverestore.lineWidth
-save()/restore() works for lineWidth
-References: 2d.state.lineWidth
-Actual output:
 Passed

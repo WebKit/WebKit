@@ -1,6 +1,1 @@
-< [index] >
-2d.state.saverestore.shadowBlur
-save()/restore() works for shadowBlur
-References: 2d.state.shadowBlur
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.clearRect.zero
-clearRect of zero pixels has no effect
-References: 2d.clearRect
-Actual output:
-Expected output:
-
 Passed

@@ -1,7 +1,1 @@
-< [index] >
-2d.composite.transparent.source-in
-References: 2d.composite.source-in
-Actual output:
-Expected output:
-
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arc.end
-arc() adds the end point of the arc to the subpath
-References: 2d.path.arc.draw
-Actual output:
-Expected output:
-
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-initial.reset.gradient
-Resetting the canvas state does not invalidate any existing gradients
-References: initial.reset
-Actual output:
-Expected output:
-
 Passed

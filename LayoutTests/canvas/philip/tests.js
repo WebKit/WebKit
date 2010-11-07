@@ -5,22 +5,14 @@ function _valToString(val)
     return val.toString() + '[' + typeof(val) + ']';
 }
 
-var _hex2dec_table = {
-    0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6, 7:7, 8:8, 9:9,
-    a:10, b:11, c:12, d:13, e:14, f:15,
-    A:10, B:11, C:12, D:13, E:14, F:15
-};
-function _hex2dec(hex)
-{
-    return _hex2dec_table[hex.charAt(0)]*16 + _hex2dec_table[hex.charAt(1)];
-}
-
 var _failed = false;
 var _asserted = false;
+
 function _warn(text)
 {
     document.getElementById('d').appendChild(document.createElement('li')).appendChild(document.createTextNode(text));
 }
+
 function _fail(text)
 {
     _warn(text);
@@ -79,98 +71,21 @@ function _crash()
     _fail('Aborted due to predicted crash');
 }
 
-var _getImageDataCalibrated = false;
-var _getImageDataIsPremul, _getImageDataIsBGRA;
-
 function _getPixel(canvas, x,y)
 {
-    var ctx = canvas.getContext('2d');
-    if (ctx && typeof(ctx.getImageData) != 'undefined')
+    try
     {
-        try {
-            var imgdata = ctx.getImageData(x, y, 1, 1);
-        } catch (e) {
-            // probably a security exception caused by having drawn
-            // data: URLs onto the canvas
-            imgdata = null;
-        }
-        if (imgdata)
-        {
-            // Work around getImageData bugs, since we want the other tests to
-            // carry on working as well as possible
-            if (! _getImageDataCalibrated)
-            {
-                var c2 = document.createElement('canvas');
-                c2.width = c2.height = 1;
-                var ctx2 = c2.getContext('2d');
-                ctx2.fillStyle = 'rgba(0, 255, 255, 0.5)';
-                ctx2.fillRect(0, 0, 1, 1);
-                var data2 = ctx2.getImageData(0, 0, 1, 1).data;
-
-                // Firefox returns premultiplied alpha
-
-                if (data2[1] > 100 && data2[1] < 150)
-                    _getImageDataIsPremul = true;
-                else
-                    _getImageDataIsPremul = false;
-
-                // Opera Mini 4 Beta returns BGRA instead of RGBA
-
-                if (data2[0] > 250 && data2[2] < 5)
-                    _getImageDataIsBGRA = true;
-                else
-                    _getImageDataIsBGRA = false;
-
-                _getImageDataCalibrated = true;
-            }
-
-            // Undo the BGRA flipping
-            var rgba = (_getImageDataIsBGRA
-                ? [ imgdata.data[2], imgdata.data[1], imgdata.data[0], imgdata.data[3] ]
-                : [ imgdata.data[0], imgdata.data[1], imgdata.data[2], imgdata.data[3] ]);
-
-            if (! _getImageDataIsPremul)
-                return rgba;
-
-            // Undo the premultiplying
-            if (rgba[3] == 0)
-                return [ 0, 0, 0, 0 ];
-            else
-            {
-                var a = rgba[3] / 255;
-                return [
-                    Math.round(rgba[0]/a),
-                    Math.round(rgba[1]/a),
-                    Math.round(rgba[2]/a),
-                    rgba[3]
-                ];
-            }
-        }
+        var ctx = canvas.getContext('2d');
+        var imgdata = ctx.getImageData(x, y, 1, 1);
+        return [ imgdata.data[0], imgdata.data[1], imgdata.data[2], imgdata.data[3] ];
     }
-
-    try { ctx = canvas.getContext('opera-2dgame'); } catch (e) { /* Firefox throws */ }
-    if (ctx && typeof(ctx.getPixel) != 'undefined')
+    catch (e)
     {
-        try {
-            var c = ctx.getPixel(x, y);
-        } catch (e) {
-            // probably a security exception caused by having drawn
-            // data: URLs onto the canvas
-            c = null;
-        }
-        if (c)
-        {
-            var matches = /^rgba\((\d+), (\d+), (\d+), ([\d\.]+)\)$/.exec(c);
-            if (matches)
-                return [ matches[1], matches[2], matches[3], Math.round(matches[4]*255) ];
-            matches = /^#(..)(..)(..)$/.exec(c);
-            if (matches)
-                return [ _hex2dec(matches[1]), _hex2dec(matches[2]), _hex2dec(matches[3]), 255 ];
-        }
+        // probably a security exception caused by having drawn
+        // data: URLs onto the canvas
+        _manual_check = true;
+        return undefined;
     }
-    //_warn("(Can't test pixel value)");
-    _manual_check = true;
-    return undefined;
 }
 
 function _assertPixel(canvas, x,y, r,g,b,a, pos, colour)
@@ -218,7 +133,7 @@ function _addTest(test)
         }
         if (window.layoutTestController)
             layoutTestController.notifyDone();
-    }
+    };
     window.endTest = endTest;
     window.wrapFunction = function (f)
     {
@@ -233,8 +148,8 @@ function _addTest(test)
                 _fail('Aborted with exception: ' + e.message);
             }
             endTest();
-        }
-    }
+        };
+    };
 
     window.onload = function ()
     {

@@ -1,6 +1,1 @@
-< [index] >
-2d.path.isPointInPath.arc
-isPointInPath() works on arcs
-References: 2d.path.isPointInPath
-Actual output:
 Passed

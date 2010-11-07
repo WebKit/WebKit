@@ -1,6 +1,1 @@
-< [index] >
-2d.gradient.radial.negative
-createRadialGradient() throws INDEX_SIZE_ERR if either radius is negative
-References: 2d.gradient.radial.negative
-Actual output:
 Passed

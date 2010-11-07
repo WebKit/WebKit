@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.object.set
-ImageData.data can be modified
-References: 2d.pixelarray.modify
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.imageData.put.basic
-putImageData() puts image data from getImageData() onto the canvas
-References: 2d.imageData.put.normal 2d.imageData.put.3arg
-Actual output:
-Expected output:
-
 Passed

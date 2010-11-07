@@ -1,8 +1,1 @@
-< [index] >
-2d.text.draw.fontface.notinpage
-@font-face fonts should work even if they are not used in the page
-References: 2d.text.font.fontface
-Actual output:
-Expected output:
-
 Passed

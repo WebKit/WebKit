@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.put.null
-putImageData() with null imagedata throws TYPE_MISMATCH_ERR
-References: 2d.imageData.put.null Bugzilla
-Actual output:
 Passed

@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.get.order.rgb
-getImageData() returns R then G then B
-References: 2d.pixelarray.order 2d.pixelarray.indexes
-Actual output:
 Passed

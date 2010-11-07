@@ -1,8 +1,1 @@
-< [index] >
-2d.clearRect.transform
-clearRect is affected by transforms
-References: 2d.clearRect
-Actual output:
-Expected output:
-
 Passed

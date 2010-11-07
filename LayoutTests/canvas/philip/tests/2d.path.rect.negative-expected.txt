@@ -1,5 +1,1 @@
-< [index] >
-2d.path.rect.negative
-References: 2d.path.rect.subpath
-Actual output:
 Passed

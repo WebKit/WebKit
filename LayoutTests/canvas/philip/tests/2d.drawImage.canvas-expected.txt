@@ -1,7 +1,1 @@
-< [index] >
-2d.drawImage.canvas
-References: 2d.drawImage.paint
-Actual output:
-Expected output:
-
 Passed

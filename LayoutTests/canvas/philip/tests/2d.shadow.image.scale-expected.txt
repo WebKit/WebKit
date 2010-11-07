@@ -1,9 +1,2 @@
-< [index] >
-2d.shadow.image.scale
-Shadows are drawn correctly for scaled images
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed
 

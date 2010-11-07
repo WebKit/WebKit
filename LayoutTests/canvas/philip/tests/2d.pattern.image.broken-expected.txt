@@ -1,7 +1,1 @@
-< [index] >
-2d.pattern.image.broken
-References: 2d.pattern.incomplete.image
-Actual output:
 Passed
-
-

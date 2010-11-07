@@ -1,7 +1,1 @@
-< [index] >
-2d.composite.globalAlpha.fill
-References: 2d.composite.globalAlpha.shape
-Actual output:
-Expected output:
-
 Passed

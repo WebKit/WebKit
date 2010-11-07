@@ -1,8 +1,1 @@
-< [index] >
-2d.transformation.setTransform.nonfinite
-setTransform() with Infinity/NaN is ignored
-References: 2d.nonfinite
-Actual output:
-Expected output:
-
 Passed

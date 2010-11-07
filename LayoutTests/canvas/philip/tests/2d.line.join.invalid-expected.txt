@@ -1,6 +1,1 @@
-< [index] >
-2d.line.join.invalid
-Setting lineJoin to invalid values is ignored
-References: 2d.lineJoin.invalid Bugzilla
-Actual output:
 Passed

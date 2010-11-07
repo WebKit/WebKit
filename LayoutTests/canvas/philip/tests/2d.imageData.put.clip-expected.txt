@@ -1,8 +1,1 @@
-< [index] >
-2d.imageData.put.clip
-putImageData() is not affected by clipping regions
-References: 2d.imageData.unaffected Bugzilla
-Actual output:
-Expected output:
-
 Passed

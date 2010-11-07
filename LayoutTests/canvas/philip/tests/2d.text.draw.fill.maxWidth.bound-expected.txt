@@ -1,8 +1,1 @@
-< [index] >
-2d.text.draw.fill.maxWidth.bound
-fillText handles maxWidth based on line size, not bounding box size
-References: 2d.text.draw.maxwidth
-Actual output:
-Expected output:
-
 Passed

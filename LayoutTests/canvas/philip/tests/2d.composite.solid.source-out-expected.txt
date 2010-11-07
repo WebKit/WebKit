@@ -1,7 +1,1 @@
-< [index] >
-2d.composite.solid.source-out
-References: 2d.composite.source-out
-Actual output:
-Expected output:
-
 Passed

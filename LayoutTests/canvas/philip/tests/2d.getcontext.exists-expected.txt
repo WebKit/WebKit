@@ -1,6 +1,1 @@
-< [index] >
-2d.getcontext.exists
-The 2D context is implemented
-References: context.2d
-Actual output:
 Passed

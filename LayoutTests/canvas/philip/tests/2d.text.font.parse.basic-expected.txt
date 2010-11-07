@@ -1,5 +1,1 @@
-< [index] >
-2d.text.font.parse.basic
-References: 2d.text.font.parse 2d.text.font.get
-Actual output:
 Passed

@@ -1,6 +1,1 @@
-< [index] >
-toDataURL.png
-toDataURL with image/png returns a PNG
-References: toDataURL.png toDataURL.witharguments
-Actual output:
 Passed

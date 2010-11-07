@@ -1,10 +1,1 @@
-< [index] >
-2d.text.draw.baseline.ideographic
-References: 2d.text.baseline.ideographic
-Actual output:
-Expected output:
-
 Passed
-
-
-

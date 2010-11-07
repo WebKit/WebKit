@@ -1,8 +1,1 @@
-< [index] >
-size.attributes.removed
-Removing content attributes reverts to default size
-References: size.missing
-Actual output:
-Expected output:
-
 Passed

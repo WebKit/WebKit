@@ -1,7 +1,1 @@
-< [index] >
-2d.pattern.basic.canvas
-References: 2d.pattern.painting
-Actual output:
-Expected output:
-
 Passed

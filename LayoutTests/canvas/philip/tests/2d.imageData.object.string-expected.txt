@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.object.string
-ImageData.data converts strings to numbers with ToNumber
-References: 2d.pixelarray.modify
-Actual output:
 Passed

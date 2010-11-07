@@ -1,8 +1,1 @@
-< [index] >
-size.attributes.default
-Default width/height when attributes are missing
-References: size.default size.missing
-Actual output:
-Expected output:
-
 Passed

@@ -1,7 +1,1 @@
-< [index] >
-2d.path.rect.basic
-References: 2d.path.rect.subpath
-Actual output:
-Expected output:
-
 Passed

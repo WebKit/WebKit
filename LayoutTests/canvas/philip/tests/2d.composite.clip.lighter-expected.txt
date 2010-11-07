@@ -1,8 +1,1 @@
-< [index] >
-2d.composite.clip.lighter
-fill() does not affect pixels outside the clip region.
-References: 2d.composite.lighter
-Actual output:
-Expected output:
-
 Passed

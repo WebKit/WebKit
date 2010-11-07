@@ -1,20 +1,11 @@
 <!DOCTYPE html>
 <title>Canvas test: 2d.drawImage.wrongtype</title>
-<meta name="author" content="Philip Taylor">
 <script src="../tests.js"></script>
 <link rel="stylesheet" href="../tests.css">
-<body class="show_output">
-
-<h1><a href="index.2d.html">2d</a>.<a href="index.2d.drawImage.html">drawImage</a>.wrongtype</h1>
-<p class="desc">Incorrect image types in drawImage do not match any defined overloads, so WebIDL throws a TypeError</p>
-
-<div class="refs">Spec references:
-<ul>
-<li><a href="../annotated-spec/canvas.html#testrefs.2d.drawImage.type">2d.drawImage.type</a>
-</ul>
-</div>
-<p class="notes">Defined in "Language Bindings for DOM Specifications" (draft)
-<p class="output">Actual output:</p>
+<body>
+<p id="passtext">Pass</p>
+<p id="failtext">Fail</p>
+<p class="output">These images should be identical:</p>
 <canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
 
 <ul id="d"></ul>

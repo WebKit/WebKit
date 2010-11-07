@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arcTo.scale
-arcTo scales the curve, not just the control points
-References:
-Actual output:
-Expected output:
-
 Passed

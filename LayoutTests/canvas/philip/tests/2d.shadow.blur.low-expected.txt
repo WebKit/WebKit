@@ -1,8 +1,1 @@
-< [index] >
-2d.shadow.blur.low
-Shadows look correct for small blurs
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Cannot automatically verify result

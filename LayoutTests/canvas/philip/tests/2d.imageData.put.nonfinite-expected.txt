@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.put.nonfinite
-putImageData() throws NOT_SUPPORTED_ERR if arguments are not finite
-References: 2d.imageData.put.nonfinite
-Actual output:
 Passed

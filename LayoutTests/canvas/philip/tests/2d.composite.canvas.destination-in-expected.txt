@@ -1,8 +1,2 @@
-< [index] >
-2d.composite.canvas.destination-in
-References: 2d.composite.destination-in
-Actual output:
-Expected output:
-
 Passed
 

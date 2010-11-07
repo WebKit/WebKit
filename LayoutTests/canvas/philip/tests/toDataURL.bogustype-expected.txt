@@ -1,6 +1,1 @@
-< [index] >
-toDataURL.bogustype
-toDataURL with a syntactically invalid type returns a PNG
-References: toDataURL.unrecognised Bugzilla
-Actual output:
 Passed

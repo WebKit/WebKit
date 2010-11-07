@@ -1,9 +1,2 @@
-< [index] >
-2d.shadow.pattern.transparent.1
-Shadows are not drawn for transparent fill patterns
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed
 

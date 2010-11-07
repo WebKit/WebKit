@@ -1,8 +1,2 @@
-< [index] >
-2d.pattern.modify.image2
-References: 2d.pattern.modify
-Actual output:
-Expected output:
-
 Passed
 

@@ -1,6 +1,1 @@
-< [index] >
-size.attributes.reflect.setidlzero
-Setting IDL attributes to 0 updates IDL and content attributes
-References: size.reflect
-Actual output:
 Passed

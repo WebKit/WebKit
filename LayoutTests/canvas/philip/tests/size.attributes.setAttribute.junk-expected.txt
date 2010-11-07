@@ -1,8 +1,1 @@
-< [index] >
-size.attributes.setAttribute.junk
-Parsing of non-negative integers in setAttribute
-References: size.nonnegativeinteger size.error
-Actual output:
-Expected output:
-
 Passed

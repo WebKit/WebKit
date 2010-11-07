@@ -1,8 +1,2 @@
-< [index] >
-2d.pattern.paint.norepeat.coord1
-References: 2d.pattern.painting
-Actual output:
-Expected output:
-
 Passed
 

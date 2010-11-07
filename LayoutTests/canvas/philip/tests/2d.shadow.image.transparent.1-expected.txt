@@ -1,9 +1,2 @@
-< [index] >
-2d.shadow.image.transparent.1
-Shadows are not drawn for transparent images
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed
 

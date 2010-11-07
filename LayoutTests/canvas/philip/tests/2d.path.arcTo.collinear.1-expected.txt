@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arcTo.collinear.1
-arcTo() with all points on a line, and P1 between P0/P2, draws a straight line to P1
-References: 2d.path.arcTo.collinear
-Actual output:
-Expected output:
-
 Passed

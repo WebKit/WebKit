@@ -1,5 +1,1 @@
-< [index] >
-2d.pattern.basic.zerocanvas
-References: 2d.pattern.zerocanvas
-Actual output:
 Passed

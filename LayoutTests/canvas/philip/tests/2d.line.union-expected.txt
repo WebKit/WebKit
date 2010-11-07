@@ -1,7 +1,1 @@
-< [index] >
-2d.line.union
-References:
-Actual output:
-Expected output:
-
 Passed

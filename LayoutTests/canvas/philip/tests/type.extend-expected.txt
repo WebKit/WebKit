@@ -1,7 +1,1 @@
-< [index] >
-type.extend
-HTMLCanvasElement methods can be added, and the new methods used by canvases
-References: canvas.type
-Defined in "Language Bindings for DOM Specifications" (draft)
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.shadow.canvas.transparent.1
-Shadows are not drawn for transparent canvases
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed

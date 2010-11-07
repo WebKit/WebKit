@@ -1,8 +1,1 @@
-< [index] >
-2d.clearRect.shadow
-clearRect does not draw shadows
-References: 2d.clearRect
-Actual output:
-Expected output:
-
 Passed

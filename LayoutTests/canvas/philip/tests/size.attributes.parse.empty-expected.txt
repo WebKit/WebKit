@@ -1,8 +1,1 @@
-< [index] >
-size.attributes.parse.empty
-Parsing of non-negative integers
-References: size.nonnegativeinteger size.error
-Actual output:
-Expected output:
-
 Passed

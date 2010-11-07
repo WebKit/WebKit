@@ -1,5 +1,1 @@
-< [index] >
-2d.shadow.attributes.shadowBlur.initial
-References: 2d.shadow.blur.get 2d.shadow.blur.initial
-Actual output:
 Passed

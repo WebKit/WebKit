@@ -1,8 +1,1 @@
-< [index] >
-2d.line.cap.butt
-lineCap 'butt' is rendered correctly
-References: 2d.lineCap.butt
-Actual output:
-Expected output:
-
 Passed

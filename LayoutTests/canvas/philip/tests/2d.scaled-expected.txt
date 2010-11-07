@@ -1,8 +1,1 @@
-< [index] >
-2d.scaled
-CSS-scaled canvases get drawn correctly
-References:
-Actual output:
-Expected output:
-
 Cannot automatically verify result

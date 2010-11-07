@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.object.readonly
-ImageData objects properties are read-only
-References: 2d.imageData.type
-Actual output:
 Passed

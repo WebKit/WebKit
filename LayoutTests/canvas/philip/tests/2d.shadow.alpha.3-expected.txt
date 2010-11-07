@@ -1,8 +1,1 @@
-< [index] >
-2d.shadow.alpha.3
-Shadows are affected by globalAlpha
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed

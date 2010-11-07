@@ -1,5 +1,1 @@
-< [index] >
-2d.composite.operation.casesensitive
-References: 2d.composite.operation.casesensitive Bugzilla
-Actual output:
 Passed

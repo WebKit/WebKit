@@ -1,8 +1,1 @@
-< [index] >
-2d.text.draw.kern.consistent
-Stroked and filled text should have exactly the same kerning so it overlaps
-References: 2d.text.draw
-Actual output:
-Expected output:
-
 Cannot automatically verify result

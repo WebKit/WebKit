@@ -1,8 +1,1 @@
-< [index] >
-2d.composite.clip.destination-over
-fill() does not affect pixels outside the clip region.
-References: 2d.composite.destination-over
-Actual output:
-Expected output:
-
 Passed

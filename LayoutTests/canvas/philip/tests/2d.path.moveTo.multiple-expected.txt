@@ -1,7 +1,1 @@
-< [index] >
-2d.path.moveTo.multiple
-References: 2d.path.moveTo
-Actual output:
-Expected output:
-
 Passed

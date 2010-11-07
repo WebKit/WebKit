@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arc.zero.2
-arc() draws nothing when startAngle = endAngle and clockwise
-References: 2d.path.arc.draw
-Actual output:
-Expected output:
-
 Passed

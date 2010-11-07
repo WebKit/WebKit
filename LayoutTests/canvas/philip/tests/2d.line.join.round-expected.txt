@@ -1,8 +1,1 @@
-< [index] >
-2d.line.join.round
-lineJoin 'round' is rendered correctly
-References: 2d.lineJoin.round
-Actual output:
-Expected output:
-
 Passed

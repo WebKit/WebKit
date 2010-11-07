@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.get.nonfinite
-getImageData() throws NOT_SUPPORTED_ERR if arguments are not finite
-References: 2d.imageData.getcreate.nonfinite
-Actual output:
 Passed

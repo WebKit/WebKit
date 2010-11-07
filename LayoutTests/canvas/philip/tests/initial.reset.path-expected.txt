@@ -1,8 +1,1 @@
-< [index] >
-initial.reset.path
-Resetting the canvas state resets the current path
-References: initial.reset
-Actual output:
-Expected output:
-
 Passed

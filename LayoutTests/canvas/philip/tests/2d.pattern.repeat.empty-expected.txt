@@ -1,8 +1,2 @@
-< [index] >
-2d.pattern.repeat.empty
-References: 2d.pattern.missing
-Actual output:
-Expected output:
-
 Passed
 

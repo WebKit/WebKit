@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arc.twopie.4
-arc() draws nothing when end = start + 2pi+e and clockwise
-References: 2d.path.arc.draw
-Actual output:
-Expected output:
-
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.strokeRect.clip
-strokeRect is affected by clipping regions
-References: 2d.strokeRect
-Actual output:
-Expected output:
-
 Passed

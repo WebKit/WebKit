@@ -1,8 +1,1 @@
-< [index] >
-2d.strokeRect.negative
-strokeRect of negative sizes works
-References: 2d.strokeRect
-Actual output:
-Expected output:
-
 Passed

@@ -1,7 +1,1 @@
-< [index] >
-type.delete
-window.HTMLCanvasElement interface object is DontDelete
-References: canvas.type
-Defined in "Language Bindings for DOM Specifications" (draft)
-Actual output:
 Passed

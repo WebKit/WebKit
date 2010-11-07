@@ -1,5 +1,1 @@
-< [index] >
-2d.line.defaults
-References: 2d.lineWidth.default 2d.lineCap.default 2d.lineJoin.default 2d.miterLimit.default
-Actual output:
 Passed

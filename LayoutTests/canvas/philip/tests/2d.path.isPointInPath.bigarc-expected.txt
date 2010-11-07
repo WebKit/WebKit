@@ -1,6 +1,1 @@
-< [index] >
-2d.path.isPointInPath.bigarc
-isPointInPath() works on unclosed arcs larger than 2pi
-References: 2d.path.isPointInPath
-Actual output:
 Passed

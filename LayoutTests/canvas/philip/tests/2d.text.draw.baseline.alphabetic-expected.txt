@@ -1,7 +1,1 @@
-< [index] >
-2d.text.draw.baseline.alphabetic
-References: 2d.text.baseline.alphabetic
-Actual output:
-Expected output:
-
 Passed

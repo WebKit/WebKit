@@ -1,4 +1,1 @@
-2d.pattern.image.string
-Spec references: 2d.pattern.wrongtype
-Actual output:
 Passed

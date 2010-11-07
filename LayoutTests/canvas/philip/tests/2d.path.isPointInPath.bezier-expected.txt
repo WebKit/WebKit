@@ -1,6 +1,1 @@
-< [index] >
-2d.path.isPointInPath.bezier
-isPointInPath() works on Bezier curves
-References: 2d.path.isPointInPath
-Actual output:
 Passed

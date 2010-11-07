@@ -1,8 +1,1 @@
-< [index] >
-2d.line.width.basic
-lineWidth determines the width of line strokes
-References: 2d.lineWidth
-Actual output:
-Expected output:
-
 Passed

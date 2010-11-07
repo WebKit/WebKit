@@ -1,7 +1,1 @@
-< [index] >
-2d.transformation.setTransform.multiple
-References: 2d.transformation.setTransform.identity
-Actual output:
-Expected output:
-
 Passed

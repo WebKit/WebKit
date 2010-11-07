@@ -1,8 +1,1 @@
-< [index] >
-2d.drawImage.broken
-References: 2d.drawImage.incomplete.image
-Actual output:
-Expected output:
-
 Passed
-

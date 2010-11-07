@@ -1,8 +1,2 @@
-< [index] >
-2d.composite.image.xor
-References: 2d.composite.xor
-Actual output:
-Expected output:
-
 Passed
 

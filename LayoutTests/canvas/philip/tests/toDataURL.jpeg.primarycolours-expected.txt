@@ -1,8 +1,1 @@
-< [index] >
-toDataURL.jpeg.primarycolours
-toDataURL with JPEG handles simple colours correctly
-References: toDataURL.jpeg
-Actual output:
-Expected output:
-
 Passed

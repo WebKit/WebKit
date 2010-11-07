@@ -1,8 +1,1 @@
-< [index] >
-2d.fillRect.clip
-fillRect is affected by clipping regions
-References: 2d.fillRect
-Actual output:
-Expected output:
-
 Passed

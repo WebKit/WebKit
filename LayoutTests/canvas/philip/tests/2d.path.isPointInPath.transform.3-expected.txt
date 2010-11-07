@@ -1,6 +1,1 @@
-< [index] >
-2d.path.isPointInPath.transform.3
-isPointInPath() handles transformations correctly
-References: 2d.path.isPointInPath Bugzilla
-Actual output:
 Passed

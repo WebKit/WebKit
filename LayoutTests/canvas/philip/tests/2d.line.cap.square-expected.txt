@@ -1,8 +1,1 @@
-< [index] >
-2d.line.cap.square
-lineCap 'square' is rendered correctly
-References: 2d.lineCap.square
-Actual output:
-Expected output:
-
 Passed

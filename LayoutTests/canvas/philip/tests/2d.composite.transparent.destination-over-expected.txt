@@ -1,7 +1,1 @@
-< [index] >
-2d.composite.transparent.destination-over
-References: 2d.composite.destination-over
-Actual output:
-Expected output:
-
 Passed

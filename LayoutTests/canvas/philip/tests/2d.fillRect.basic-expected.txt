@@ -1,8 +1,1 @@
-< [index] >
-2d.fillRect.basic
-fillRect works
-References: 2d.fillRect
-Actual output:
-Expected output:
-
 Passed

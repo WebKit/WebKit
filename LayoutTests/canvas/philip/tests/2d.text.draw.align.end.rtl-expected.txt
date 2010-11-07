@@ -1,8 +1,1 @@
-< [index] >
-2d.text.draw.align.end.rtl
-textAlign end with rtl is the left edge
-References: 2d.text.align.left 2d.text.draw.direction
-Actual output:
-Expected output:
-
 Passed

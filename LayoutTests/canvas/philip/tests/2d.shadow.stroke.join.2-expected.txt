@@ -1,8 +1,1 @@
-< [index] >
-2d.shadow.stroke.join.2
-Shadows are drawn for stroke joins
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed

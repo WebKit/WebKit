@@ -1,6 +1,1 @@
-2d.drawImage.wrongtype
-Incorrect image types in drawImage do not match any defined overloads, so WebIDL throws a TypeError
-Spec references: 2d.drawImage.type
-Defined in "Language Bindings for DOM Specifications" (draft)
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-toDataURL.jpeg.quality.basic
-toDataURL with JPEG uses the quality parameter
-References: toDataURL.jpeg.quality
-Actual output:
-Expected output:
-
 Passed

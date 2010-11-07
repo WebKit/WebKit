@@ -1,8 +1,1 @@
-< [index] >
-size.attributes.reflect.setidl
-Setting IDL attributes updates IDL and content attributes
-References: size.reflect
-Actual output:
-Expected output:
-
 Passed

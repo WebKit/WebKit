@@ -1,6 +1,1 @@
-< [index] >
-2d.imageData.create2.basic
-createImageData(sw, sh) exists and returns something
-References: 2d.imageData.create2.object Bugzilla
-Actual output:
 Passed

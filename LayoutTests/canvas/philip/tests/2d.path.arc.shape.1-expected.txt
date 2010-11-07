@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arc.shape.1
-arc() from 0 to pi does not draw anything in the wrong half
-References: 2d.path.arc.draw
-Actual output:
-Expected output:
-
 Passed

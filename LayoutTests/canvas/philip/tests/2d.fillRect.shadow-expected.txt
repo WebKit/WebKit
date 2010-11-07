@@ -1,8 +1,1 @@
-< [index] >
-2d.fillRect.shadow
-fillRect draws shadows
-References: 2d.fillRect
-Actual output:
-Expected output:
-
 Passed

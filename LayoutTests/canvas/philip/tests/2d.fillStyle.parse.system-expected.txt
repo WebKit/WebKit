@@ -1,5 +1,1 @@
-< [index] >
-2d.fillStyle.parse.system
-References: 2d.colours.parse
-Actual output:
 Passed

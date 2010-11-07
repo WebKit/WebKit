@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arc.shape.3
-arc() from 0 to -pi/2 does not draw anything in the wrong quadrant
-References: 2d.path.arc.draw
-Actual output:
-Expected output:
-
 Passed

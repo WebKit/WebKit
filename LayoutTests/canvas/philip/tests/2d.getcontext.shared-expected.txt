@@ -1,8 +1,1 @@
-< [index] >
-2d.getcontext.shared
-getContext('2d') returns objects which share canvas state
-References: context.2d.unique
-Actual output:
-Expected output:
-
 Passed

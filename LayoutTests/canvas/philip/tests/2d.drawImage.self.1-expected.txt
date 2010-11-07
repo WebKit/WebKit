@@ -1,7 +1,1 @@
-< [index] >
-2d.drawImage.self.1
-References: 2d.drawImage.self Bugzilla
-Actual output:
-Expected output:
-
 Passed

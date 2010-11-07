@@ -1,8 +1,1 @@
-< [index] >
-2d.line.width.transformed
-Line stroke widths are affected by scale transformations
-References: 2d.lineWidth
-Actual output:
-Expected output:
-
 Passed

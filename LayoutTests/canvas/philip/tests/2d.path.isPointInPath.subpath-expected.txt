@@ -1,6 +1,1 @@
-< [index] >
-2d.path.isPointInPath.subpath
-isPointInPath() uses the current path, not just the subpath
-References: 2d.path.isPointInPath
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.path.arc.empty
-arc() with an empty path does not draw a straight line to the start point
-References: 2d.path.arc.nonempty
-Actual output:
-Expected output:
-
 Passed

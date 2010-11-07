@@ -1,8 +1,1 @@
-< [index] >
-2d.shadow.clip.1
-Shadows of clipped shapes are still drawn within the clipping region
-References: 2d.shadow.render
-Actual output:
-Expected output:
-
 Passed

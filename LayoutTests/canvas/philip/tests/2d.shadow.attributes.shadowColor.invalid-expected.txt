@@ -1,5 +1,1 @@
-< [index] >
-2d.shadow.attributes.shadowColor.invalid
-References: 2d.shadow.color.invalid
-Actual output:
 Passed

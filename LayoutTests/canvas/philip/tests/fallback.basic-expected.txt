@@ -1,6 +1,1 @@
-< [index] >
-fallback.basic
-Fallback content is inserted into the DOM
-References: fallback
-Actual output:
 Passed

@@ -1,8 +1,1 @@
-< [index] >
-2d.imageData.put.created
-putImageData() puts image data from createImageData() onto the canvas
-References: 2d.imageData.put.normal Bugzilla
-Actual output:
-Expected output:
-
 Passed

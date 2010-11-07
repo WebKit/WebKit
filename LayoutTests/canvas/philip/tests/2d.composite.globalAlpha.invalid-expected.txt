@@ -1,5 +1,1 @@
-< [index] >
-2d.composite.globalAlpha.invalid
-References: 2d.composite.globalAlpha.range
-Actual output:
 Passed

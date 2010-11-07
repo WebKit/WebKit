@@ -1,5 +1,1 @@
-< [index] >
-2d.shadow.attributes.shadowColor.initial
-References: 2d.shadow.color.initial
-Actual output:
 Passed

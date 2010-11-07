@@ -1,7 +1,1 @@
-< [index] >
-2d.path.moveTo.newsubpath
-References: 2d.path.moveTo
-Actual output:
-Expected output:
-
 Passed

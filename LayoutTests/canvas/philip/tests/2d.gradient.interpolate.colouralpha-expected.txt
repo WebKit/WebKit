@@ -1,7 +1,1 @@
-< [index] >
-2d.gradient.interpolate.colouralpha
-References: 2d.gradient.interpolate.alpha
-Actual output:
-Expected output:
-
 Passed

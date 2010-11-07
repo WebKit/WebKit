@@ -1,8 +1,1 @@
-< [index] >
-2d.transformation.transform.skewed
-transform() with skewy matrix transforms correctly
-References: 2d.transformation.transform
-Actual output:
-Expected output:
-
 Passed
