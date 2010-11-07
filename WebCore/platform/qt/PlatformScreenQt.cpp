@@ -58,16 +58,30 @@ int screenDepth(Widget* w)
 
 int screenDepthPerComponent(Widget* w)
 {
+    int depth = QApplication::desktop()->screen(0)->depth();
     if (w) {
         QWebPageClient* client = w->root()->hostWindow()->platformPageClient();
 
         if (client) {
             QWidget* view = client->ownerWidget();
             if (view)
-                return view->depth();
+                depth = view->depth();
         }
     }
-    return QApplication::desktop()->screen(0)->depth();
+    // An interface to establish the actual number of bits per color
+    // doesn't exist in Qt, or probably at all, so use common-sense
+    // values for each screen depth and assume RGB/RGBA where appropriate.
+    // Per http://www.w3.org/TR/css3-mediaqueries/#color, 'If different color
+    // components are represented by different number of bits, the smallest
+    // number is used.'
+    switch (depth) {
+    case 8:
+        return 2;
+    case 32:
+        return 8;
+    default:
+        return qRound(depth / 3);
+    }
 }
 
 bool screenIsMonochrome(Widget* w)
