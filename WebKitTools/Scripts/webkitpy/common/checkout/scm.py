@@ -64,7 +64,7 @@ def default_scm():
     cwd = os.getcwd()
     scm_system = detect_scm_system(cwd)
     if not scm_system:
-        script_directory = os.path.abspath(sys.path[0])
+        script_directory = os.path.abspath(__file__)
         scm_system = detect_scm_system(script_directory)
         if scm_system:
             log("The current directory (%s) is not a WebKit checkout, using %s" % (cwd, scm_system.checkout_root))
