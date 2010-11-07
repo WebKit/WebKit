@@ -225,7 +225,9 @@ WebInspector.ResourceManager.prototype = {
         var resource = this._createResource(null, cachedResource.url, cachedResource.loader);
         this._updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
+        resource.requestMethod = "GET";
         resource.startTime = resource.responseReceivedTime = resource.endTime = time;
+        resource.finished = true;
 
         WebInspector.panels.network.refreshResource(resource);
         WebInspector.panels.audits.resourceStarted(resource);
