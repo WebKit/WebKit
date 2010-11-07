@@ -46,7 +46,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.canEditScriptSource = true;
     Preferences.onlineDetectionEnabled = false;
     Preferences.nativeInstrumentationEnabled = true;
-    Preferences.fileSystemEnabled = true;
+    Preferences.fileSystemEnabled = false;
 })();
 
 var devtools = devtools || {};
