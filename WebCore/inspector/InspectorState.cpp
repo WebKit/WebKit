@@ -39,7 +39,7 @@ namespace WebCore {
 InspectorState::InspectorState(InspectorClient* client)
     : m_client(client)
 {
-    registerBoolean(monitoringXHR, false, "monitoringXHR", "xhrMonitor");
+    registerBoolean(monitoringXHR, false, "monitoringXHREnabled", "xhrMonitor");
     registerBoolean(timelineProfilerEnabled, false, "timelineProfilerEnabled", (const char*)0);
     registerBoolean(searchingForNode, false, "searchingForNodeEnabled", (const char*)0);
     registerBoolean(profilerAlwaysEnabled, false, (const char*)0, "profilerEnabled");
