@@ -45,6 +45,8 @@ inline int fudgeFactor()
     return 2;
 }
 
+bool isSpatialNavigationEnabled(const Frame*);
+
 // Spatially speaking, two given elements in a web page can be:
 // 1) Fully aligned: There is a full intersection between the rects, either
 //    vertically or horizontally.

@@ -41,7 +41,7 @@
 #include "Page.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
-#include "Settings.h"
+#include "SpatialNavigation.h"
 #include <wtf/Assertions.h>
 
 #if ENABLE(WML)
@@ -70,14 +70,6 @@ using namespace Unicode;
 namespace WebCore {
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
-
-static bool isSpatialNavigationEnabled(const Frame* frame)
-{
-    if (frame && frame->settings() && frame->settings()->isSpatialNavigationEnabled())
-        return true;
-
-    return false;
-}
 
 void SelectElement::selectAll(SelectElementData& data, Element* element)
 {
