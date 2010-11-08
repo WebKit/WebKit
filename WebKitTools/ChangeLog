@@ -1,3 +1,21 @@
+2010-11-08  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        run platform/chromium/plugins/nested-plugin-objects.html on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=49094
+
+        This tests that objects created by plugins are proplery cleaned up.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+        (testPassTestObject):
+        (pluginInvoke):
+        * DumpRenderTree/TestNetscapePlugIn/TestObject.cpp:
+        (testAllocate):
+        (testDeallocate):
+        (testGetProperty):
+        (testConstruct):
+
 2010-11-08  Adam Roben  <aroben@apple.com>
 
         Mark Windows builds triggered from Perl as being non-interactive

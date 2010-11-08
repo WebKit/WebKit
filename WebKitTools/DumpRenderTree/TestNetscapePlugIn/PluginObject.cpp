@@ -176,6 +176,7 @@ enum {
     ID_TEST_GET_PROPERTY_RETURN_VALUE,
     ID_TEST_IDENTIFIER_TO_STRING,
     ID_TEST_IDENTIFIER_TO_INT,
+    ID_TEST_PASS_TEST_OBJECT,
     ID_TEST_POSTURL_FILE,
     ID_TEST_CONSTRUCT,
     ID_TEST_THROW_EXCEPTION_METHOD,
@@ -212,6 +213,7 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "testGetPropertyReturnValue",
     "testIdentifierToString",
     "testIdentifierToInt",
+    "testPassTestObject",
     "testPostURLFile",
     "testConstruct",
     "testThrowException",
@@ -436,6 +438,26 @@ static bool testIdentifierToInt(PluginObject*, const NPVariant* args, uint32_t a
         return false;
     int32_t integer = browser->intfromidentifier(identifier);
     INT32_TO_NPVARIANT(integer, *result);
+    return true;
+}
+
+static bool testPassTestObject(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (argCount != 2 || !NPVARIANT_IS_STRING(args[0]))
+        return false;
+
+    NPObject* windowScriptObject;
+    browser->getvalue(obj->npp, NPNVWindowNPObject, &windowScriptObject);
+
+    NPUTF8* callbackString = createCStringFromNPVariant(&args[0]);
+    NPIdentifier callbackIdentifier = browser->getstringidentifier(callbackString);
+    free(callbackString);
+
+    NPVariant browserResult;
+    browser->invoke(obj->npp, windowScriptObject, callbackIdentifier, &args[1], 1, &browserResult);
+    browser->releasevariantvalue(&browserResult);
+
+    VOID_TO_NPVARIANT(*result);
     return true;
 }
 
@@ -900,6 +922,8 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return testIdentifierToString(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_TEST_IDENTIFIER_TO_INT])
         return testIdentifierToInt(plugin, args, argCount, result);
+    if (name == pluginMethodIdentifiers[ID_TEST_PASS_TEST_OBJECT])
+        return testPassTestObject(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_TEST_POSTURL_FILE])
         return testPostURLFile(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_TEST_CONSTRUCT])
@@ -914,7 +938,7 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         browser->invoke(plugin->npp, windowScriptObject, name, args, argCount, result);
         return false;
     }
-    if (name == pluginMethodIdentifiers[ID_DESTROY_NULL_STREAM]) 
+    if (name == pluginMethodIdentifiers[ID_DESTROY_NULL_STREAM])
         return destroyNullStream(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_TEST_RELOAD_PLUGINS_NO_PAGES]) {
         browser->reloadplugins(false);
