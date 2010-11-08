@@ -53,7 +53,7 @@ protected:
 
     virtual void paint(PaintInfo&, int tx, int ty);
     bool shouldPaint(PaintInfo&, int& tx, int& ty);
-    IntRect localSelectionRect(bool checkWhetherSelected = true) const;
+    IntRect localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
 
 private:
     virtual const char* renderName() const { return "RenderReplaced"; }

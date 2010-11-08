@@ -109,6 +109,11 @@ public:
         *this = expandedTo(zero());
     }
 
+    IntPoint transposedPoint() const
+    {
+        return IntPoint(m_y, m_x);
+    }
+
 #if PLATFORM(CG)
     explicit IntPoint(const CGPoint&); // don't do this implicitly since it's lossy
     operator CGPoint() const;

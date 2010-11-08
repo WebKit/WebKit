@@ -284,17 +284,20 @@ VisiblePosition RenderReplaced::positionForPoint(const IntPoint& point)
 
     RootInlineBox* root = box->root();
 
-    int top = root->lineTop();
-    int bottom = root->nextRootBox() ? root->nextRootBox()->lineTop() : root->lineBottom();
+    int top = root->selectionTop();
+    int bottom = root->selectionBottom();
 
-    if (point.y() + y() < top)
+    int blockDirectionPosition = box->isHorizontal() ? point.y() + y() : point.x() + x();
+    int lineDirectionPosition = box->isHorizontal() ? point.x() + x() : point.y() + y();
+
+    if (blockDirectionPosition < top)
         return createVisiblePosition(caretMinOffset(), DOWNSTREAM); // coordinates are above
     
-    if (point.y() + y() >= bottom)
+    if (blockDirectionPosition >= bottom)
         return createVisiblePosition(caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
     if (node()) {
-        if (point.x() <= width() / 2)
+        if (lineDirectionPosition <= box->logicalWidth() / 2)
             return createVisiblePosition(0, DOWNSTREAM);
         return createVisiblePosition(1, DOWNSTREAM);
     }
@@ -326,25 +329,22 @@ IntRect RenderReplaced::localSelectionRect(bool checkWhetherSelected) const
     if (!m_inlineBoxWrapper)
         // We're a block-level replaced element.  Just return our own dimensions.
         return IntRect(0, 0, width(), height());
-
-    RenderBlock* cb =  containingBlock();
-    if (!cb)
-        return IntRect();
     
     RootInlineBox* root = m_inlineBoxWrapper->root();
-    return IntRect(0, root->selectionTop() - y(), width(), root->selectionHeight());
+    int newLogicalTop = root->block()->style()->isFlippedBlocksWritingMode() ? m_inlineBoxWrapper->logicalBottom() - root->selectionBottom() : root->selectionTop() - m_inlineBoxWrapper->logicalTop();
+    if (root->block()->style()->isHorizontalWritingMode())
+        return IntRect(0, newLogicalTop, width(), root->selectionHeight());
+    return IntRect(newLogicalTop, 0, root->selectionHeight(), height());
 }
 
 void RenderReplaced::setSelectionState(SelectionState s)
 {
-    RenderBox::setSelectionState(s);
+    RenderBox::setSelectionState(s); // The selection state for our containing block hierarchy is updated by the base class call.
     if (m_inlineBoxWrapper) {
         RootInlineBox* line = m_inlineBoxWrapper->root();
         if (line)
             line->setHasSelectedChildren(isSelected());
     }
-    
-    containingBlock()->setSelectionState(s);
 }
 
 bool RenderReplaced::isSelected() const

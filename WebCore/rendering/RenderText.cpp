@@ -422,13 +422,13 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
     int pointBlockDirection = firstTextBox()->isHorizontal() ? point.y() : point.x();
     
     // FIXME: We should be able to roll these special cases into the general cases in the loop below.
-    if (firstTextBox() && pointBlockDirection <  firstTextBox()->root()->lineBottom() && pointLineDirection < firstTextBox()->logicalLeft()) {
+    if (firstTextBox() && pointBlockDirection <  firstTextBox()->root()->selectionBottom() && pointLineDirection < firstTextBox()->logicalLeft()) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left of the first text box left edge
         offset = firstTextBox()->offsetForPosition(pointLineDirection);
         return createVisiblePosition(offset + firstTextBox()->start(), DOWNSTREAM);
     }
-    if (lastTextBox() && pointBlockDirection >= lastTextBox()->root()->lineTop() && pointLineDirection >= lastTextBox()->logicalRight()) {
+    if (lastTextBox() && pointBlockDirection >= lastTextBox()->root()->selectionTop() && pointLineDirection >= lastTextBox()->logicalRight()) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right of the last text box right edge
         offset = lastTextBox()->offsetForPosition(pointLineDirection);
@@ -438,7 +438,7 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
     InlineTextBox* lastBoxAbove = 0;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
         if (pointBlockDirection >= box->root()->lineTop()) {
-            int bottom = box->root()->nextRootBox() ? box->root()->nextRootBox()->lineTop() : box->root()->lineBottom();
+            int bottom = box->root()->nextRootBox() ? box->root()->nextRootBox()->selectionTop() : box->root()->selectionBottom();
             if (pointBlockDirection < bottom) {
                 offset = box->offsetForPosition(pointLineDirection);
 

@@ -164,22 +164,26 @@ void InlineBox::paint(PaintInfo& paintInfo, int tx, int ty)
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
         return;
 
+    IntPoint childPoint = IntPoint(tx, ty);
+    if (parent()->renderer()->style()->isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
+        childPoint = renderer()->containingBlock()->flipForWritingMode(toRenderBox(renderer()), childPoint, RenderBox::ParentToChildFlippingAdjustment);
+    
     // Paint all phases of replaced elements atomically, as though the replaced element established its
     // own stacking context.  (See Appendix E.2, section 6.4 on inline block/table elements in the CSS2.1
     // specification.)
     bool preservePhase = paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip;
     PaintInfo info(paintInfo);
     info.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-    renderer()->paint(info, tx, ty);
+    renderer()->paint(info, childPoint.x(), childPoint.y());
     if (!preservePhase) {
         info.phase = PaintPhaseChildBlockBackgrounds;
-        renderer()->paint(info, tx, ty);
+        renderer()->paint(info, childPoint.x(), childPoint.y());
         info.phase = PaintPhaseFloat;
-        renderer()->paint(info, tx, ty);
+        renderer()->paint(info, childPoint.x(), childPoint.y());
         info.phase = PaintPhaseForeground;
-        renderer()->paint(info, tx, ty);
+        renderer()->paint(info, childPoint.x(), childPoint.y());
         info.phase = PaintPhaseOutline;
-        renderer()->paint(info, tx, ty);
+        renderer()->paint(info, childPoint.x(), childPoint.y());
     }
 }
 
