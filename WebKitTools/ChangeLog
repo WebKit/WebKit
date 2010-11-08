@@ -1,3 +1,47 @@
+2010-11-05  Adam Roben  <aroben@apple.com>
+
+        Make webkitpy.common.system.executive_unittest pass when running under
+        Win32 Python
+
+        Fixes <http://webkit.org/b/49033>.
+
+        Reviewed by Dave Levin and Eric Seidel.
+
+        * Scripts/webkitpy/common/system/executive.py:
+        (Executive._run_command_with_teed_output): Pass the arguments through
+        encode_argument_if_needed rather than using Cygwin-specific code here.
+        (Executive.run_and_throw_if_fail): Use child_process_encoding to decode
+        the output.
+        (Executive.run_command): Use encode_argument_if_needed to encode the
+        arguments and child_process_encoding to decode the output.
+        (Executive._child_process_encoding): Returns the encoding that should be
+        used when communicating with child processes. On Windows we use mbcs,
+        which maps to the current code page. On all other platforms we use
+        UTF-8.
+        (Executive._should_encode_child_process_arguments): Returns True if
+        arguments to child processes need to be encoded. This is currently
+        only needed on Cygwin and Win32 Python 2.x.
+        (Executive._encode_argument_if_needed): Encode the argument using
+        child_process_encoding if we need to encode arguments to child
+        processes on this platform.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (never_ending_command): Added. Returns arguments to run a command that
+        will not quit until we kill it. On Windows we use wmic, on other
+        platforms we use yes.
+        (ExecutiveTest.test_run_command_with_unicode): Changed to expect the
+        mbcs encoding to be used and for output from the child processes to
+        have been roundtripped through encode/decode on Win32 Python. When
+        UTF-8 is the encoding the roundtripping is undetectable, but with mbcs
+        it's possible that some characters will not be able to be converted
+        and will be replaced by question marks; the round-tripping allows us
+        to expect this result.
+
+        (ExecutiveTest.test_kill_process):
+        (ExecutiveTest.test_kill_all):
+        Use never_ending_command instead of invoking "yes" directly. Expect an
+        exit code of 1 when using Win32 Python, as that's what seems to happen.
+
 2010-11-08  Adam Roben  <aroben@apple.com>
 
         Roll out r71532

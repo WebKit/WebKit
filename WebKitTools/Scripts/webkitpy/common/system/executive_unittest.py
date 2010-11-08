@@ -37,6 +37,15 @@ from webkitpy.common.system.executive import Executive, run_command, ScriptError
 from webkitpy.test import cat, echo
 
 
+def never_ending_command():
+    """Arguments for a command that will never end (useful for testing process
+    killing). It should be a process that is unlikely to already be running
+    because all instances will be killed."""
+    if sys.platform == 'win32':
+        return ['wmic']
+    return ['yes']
+
+
 class ExecutiveTest(unittest.TestCase):
 
     def test_run_command_with_bad_command(self):
@@ -55,39 +64,49 @@ class ExecutiveTest(unittest.TestCase):
         """Validate that it is safe to pass unicode() objects
         to Executive.run* methods, and they will return unicode()
         objects by default unless decode_output=False"""
+        unicode_tor_input = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
+        if sys.platform == 'win32':
+            encoding = 'mbcs'
+        else:
+            encoding = 'utf-8'
+        encoded_tor = unicode_tor_input.encode(encoding)
+        # On Windows, we expect the unicode->mbcs->unicode roundtrip to be
+        # lossy. On other platforms, we expect a lossless roundtrip.
+        if sys.platform == 'win32':
+            unicode_tor_output = encoded_tor.decode(encoding)
+        else:
+            unicode_tor_output = unicode_tor_input
+
         executive = Executive()
-        unicode_tor = u"WebKit \u2661 Tor Arne Vestb\u00F8!"
-        utf8_tor = unicode_tor.encode("utf-8")
 
-        output = executive.run_command(cat.command_arguments(), input=unicode_tor)
-        self.assertEquals(output, unicode_tor)
+        output = executive.run_command(cat.command_arguments(), input=unicode_tor_input)
+        self.assertEquals(output, unicode_tor_output)
 
-        output = executive.run_command(echo.command_arguments("-n", unicode_tor))
-        self.assertEquals(output, unicode_tor)
+        output = executive.run_command(echo.command_arguments("-n", unicode_tor_input))
+        self.assertEquals(output, unicode_tor_output)
 
-        output = executive.run_command(echo.command_arguments("-n", unicode_tor), decode_output=False)
-        self.assertEquals(output, utf8_tor)
+        output = executive.run_command(echo.command_arguments("-n", unicode_tor_input), decode_output=False)
+        self.assertEquals(output, encoded_tor)
 
         # Make sure that str() input also works.
-        output = executive.run_command(cat.command_arguments(), input=utf8_tor, decode_output=False)
-        self.assertEquals(output, utf8_tor)
+        output = executive.run_command(cat.command_arguments(), input=encoded_tor, decode_output=False)
+        self.assertEquals(output, encoded_tor)
 
         # FIXME: We should only have one run* method to test
-        output = executive.run_and_throw_if_fail(echo.command_arguments("-n", unicode_tor), quiet=True)
-        self.assertEquals(output, unicode_tor)
+        output = executive.run_and_throw_if_fail(echo.command_arguments("-n", unicode_tor_input), quiet=True)
+        self.assertEquals(output, unicode_tor_output)
 
-        output = executive.run_and_throw_if_fail(echo.command_arguments("-n", unicode_tor), quiet=True, decode_output=False)
-        self.assertEquals(output, utf8_tor)
+        output = executive.run_and_throw_if_fail(echo.command_arguments("-n", unicode_tor_input), quiet=True, decode_output=False)
+        self.assertEquals(output, encoded_tor)
 
     def test_kill_process(self):
         executive = Executive()
-        # We use "yes" because it loops forever.
-        process = subprocess.Popen(["yes"], stdout=subprocess.PIPE)
+        process = subprocess.Popen(never_ending_command(), stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
         executive.kill_process(process.pid)
         # Note: Can't use a ternary since signal.SIGKILL is undefined for sys.platform == "win32"
         if sys.platform == "win32":
-            expected_exit_code = 0  # taskkill.exe results in exit(0)
+            expected_exit_code = 1
         else:
             expected_exit_code = -signal.SIGKILL
         self.assertEqual(process.wait(), expected_exit_code)
@@ -111,17 +130,19 @@ class ExecutiveTest(unittest.TestCase):
     def test_kill_all(self):
         executive = Executive()
         # We use "yes" because it loops forever.
-        process = subprocess.Popen(["yes"], stdout=subprocess.PIPE)
+        process = subprocess.Popen(never_ending_command(), stdout=subprocess.PIPE)
         self.assertEqual(process.poll(), None)  # Process is running
-        executive.kill_all("yes")
+        executive.kill_all(never_ending_command()[0])
         # Note: Can't use a ternary since signal.SIGTERM is undefined for sys.platform == "win32"
-        if sys.platform in ("win32", "cygwin"):
-            expected_exit_code = 0  # taskkill.exe results in exit(0)
+        if sys.platform == "cygwin":
+            expected_exit_code = 0  # os.kill results in exit(0) for this process.
+        elif sys.platform == "win32":
+            expected_exit_code = 1
         else:
             expected_exit_code = -signal.SIGTERM
         self.assertEqual(process.wait(), expected_exit_code)
         # Killing again should fail silently.
-        executive.kill_all("yes")
+        executive.kill_all(never_ending_command()[0])
 
     def test_check_running_pid(self):
         executive = Executive()
