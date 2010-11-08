@@ -21,15 +21,34 @@
 
 #include "EventListener.h"
 
-#include "PlatformString.h"
-#include <glib-object.h>
-#include <glib.h>
-#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
+#include <wtf/text/CString.h>
+
+typedef struct _GObject GObject;
 
 namespace WebCore {
+
+class DOMWindow;
+class Node;
+
 class GObjectEventListener : public EventListener {
 public:
-    static PassRefPtr<GObjectEventListener> create(GObject* object, const char* signalName) { return adoptRef(new GObjectEventListener(object, signalName)); }
+
+    static void addEventListener(GObject* object, DOMWindow* window, const char* domEventName, const char* signalName)
+    {
+        RefPtr<GObjectEventListener> listener(adoptRef(new GObjectEventListener(object, window, 0, domEventName, signalName)));
+    }
+
+    static void addEventListener(GObject* object, Node* node, const char* domEventName, const char* signalName)
+    {
+        RefPtr<GObjectEventListener> listener(adoptRef(new GObjectEventListener(object, 0, node, domEventName, signalName)));
+    }
+
+    static void gobjectDestroyedCallback(GObjectEventListener* listener, GObject*)
+    {
+        listener->gobjectDestroyed();
+    }
+
     static const GObjectEventListener* cast(const EventListener* listener)
     {
         return listener->type() == GObjectEventListenerType
@@ -40,17 +59,20 @@ public:
     virtual bool operator==(const EventListener& other);
 
 private:
-    GObjectEventListener(GObject* object, const char* signalName)
-        : EventListener(GObjectEventListenerType)
-        , m_object(object)
-        , m_signalName(signalName)
-    {
-    }
+    GObjectEventListener(GObject*, DOMWindow*, Node*, const char* domEventName, const char* signalName);
+    ~GObjectEventListener();
+    void gobjectDestroyed();
 
     virtual void handleEvent(ScriptExecutionContext*, Event*);
 
     GObject* m_object;
-    String m_signalName;
+
+    // We do not need to keep a reference to these WebCore objects, because
+    // we only use them when the GObject and thus the WebCore object is alive.
+    Node* m_coreNode;
+    DOMWindow* m_coreWindow;
+    CString m_domEventName;
+    CString m_signalName;
 };
 } // namespace WebCore
 

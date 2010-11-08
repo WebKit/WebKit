@@ -501,8 +501,7 @@ EOF
     my ${listenerName} = $name . "Listener";
 
     my $txtInstallEventListener = << "EOF";
-    RefPtr<WebCore::GObjectEventListener> ${listenerName} = WebCore::GObjectEventListener::create(reinterpret_cast<GObject*>(object), "${gobjectSignalName}");
-    coreObject->addEventListener("${name}", ${listenerName}, false);
+    WebCore::GObjectEventListener::addEventListener(object, coreObject, "${name}", "${gobjectSignalName}");
 EOF
     push(@txtInstallEventListeners, $txtInstallEventListener);
 

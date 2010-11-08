@@ -19,20 +19,63 @@
 #include "config.h"
 #include "GObjectEventListener.h"
 
+#include "DOMWindow.h"
 #include "Event.h"
 #include "EventListener.h"
+#include "Node.h"
 #include "webkit/WebKitDOMEvent.h"
 #include "webkit/WebKitDOMEventPrivate.h"
+#include <glib-object.h>
+#include <glib.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/CString.h>
 
 namespace WebCore {
+
+GObjectEventListener::GObjectEventListener(GObject* object, DOMWindow* window, Node* node, const char* domEventName, const char* signalName)
+    : EventListener(GObjectEventListenerType)
+    , m_object(object)
+    , m_coreNode(node)
+    , m_coreWindow(window)
+    , m_domEventName(domEventName)
+    , m_signalName(signalName)
+{
+    ASSERT(!m_coreWindow || !m_coreNode);
+    if (m_coreWindow)
+        m_coreWindow->addEventListener(domEventName, this, false);
+    if (m_coreNode)
+        m_coreNode->addEventListener(domEventName, this, false);
+    g_object_weak_ref(object, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
+}
+
+GObjectEventListener::~GObjectEventListener()
+{
+    if (!m_coreWindow && !m_coreNode)
+        return;
+    g_object_weak_unref(m_object, reinterpret_cast<GWeakNotify>(GObjectEventListener::gobjectDestroyedCallback), this);
+}
+
+void GObjectEventListener::gobjectDestroyed()
+{
+    ASSERT(!m_coreWindow || !m_coreNode);
+
+    // We must set m_coreWindow and m_coreNode to null, because removeEventListener may call the
+    // destructor as a side effect and we must be in the proper state to prevent g_object_weak_unref.
+    if (DOMWindow* window = m_coreWindow) {
+        m_coreWindow = 0;
+        window->removeEventListener(m_domEventName.data(), this, false);
+        return;
+    }
+
+    Node* node = m_coreNode;
+    m_coreNode = 0; // See above.
+    node->removeEventListener(m_domEventName.data(), this, false);
+}
 
 void GObjectEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
     gboolean handled = FALSE;
     WebKitDOMEvent* gobjectEvent = WEBKIT_DOM_EVENT(WebKit::kit(event));
-    g_signal_emit_by_name(m_object, m_signalName.utf8().data(), gobjectEvent, &handled);
+    g_signal_emit_by_name(m_object, m_signalName.data(), gobjectEvent, &handled);
 }
 
 bool GObjectEventListener::operator==(const EventListener& listener)
