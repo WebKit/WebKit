@@ -44,13 +44,13 @@ public:
 private:
     SVGStaticPropertyTearOff(ContextElement* contextElement, PropertyType& value, UpdateMethod update)
         : SVGPropertyTearOff<PropertyType>(0, value)
-        , m_contextElement(contextElement)
         , m_update(update)
+        , m_contextElement(contextElement)
     {
     }
 
-    RefPtr<ContextElement> m_contextElement;
     UpdateMethod m_update;
+    RefPtr<ContextElement> m_contextElement;
 };
 
 }
