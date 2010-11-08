@@ -735,9 +735,21 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     path.addRoundedRect(rect, topLeft, topRight, bottomLeft, bottomRight);
     QPainter* p = m_data->p();
     if (m_data->hasShadow()) {
-        p->translate(m_data->shadow.offset());
-        p->fillPath(path.platformPath(), QColor(m_data->shadow.m_color));
-        p->translate(-m_data->shadow.offset());
+        ContextShadow* shadow = contextShadow();
+
+        if (shadow->m_type != ContextShadow::BlurShadow) {
+            // We do not need any layer for simple shadow.
+            p->translate(m_data->shadow.offset());
+            p->fillPath(path.platformPath(), QColor(m_data->shadow.m_color));
+            p->translate(-m_data->shadow.offset());
+        } else {
+            QPainter* shadowPainter = shadow->beginShadowLayer(p, rect);
+            if (shadowPainter) {
+                shadowPainter->setCompositionMode(QPainter::CompositionMode_Source);
+                shadowPainter->fillPath(path.platformPath(), QColor(m_data->shadow.m_color));
+                shadow->endShadowLayer(p);
+            }
+        }
     }
     p->fillPath(path.platformPath(), QColor(color));
 }
