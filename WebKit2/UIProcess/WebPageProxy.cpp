@@ -459,8 +459,10 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
         return;
 
     uint64_t downloadID = 0;
-    if (action == PolicyDownload)
-        downloadID = pageNamespace()->context()->generateDownloadID();
+    if (action == PolicyDownload) {
+        // Create a download proxy.
+        downloadID = pageNamespace()->context()->createDownloadProxy();
+    }
 
     process()->send(Messages::WebPage::DidReceivePolicyDecision(frame->frameID(), listenerID, action, downloadID), m_pageID);
 }

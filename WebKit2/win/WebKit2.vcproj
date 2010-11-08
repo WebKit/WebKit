@@ -2057,6 +2057,18 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="Downloads"
+				>
+				<File
+					RelativePath="..\UIProcess\Downloads\DownloadProxy.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\UIProcess\Downloads\DownloadProxy.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="Launcher"
 				>
 				<File

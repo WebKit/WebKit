@@ -45,6 +45,7 @@ struct WKContextStatistics;
 
 namespace WebKit {
 
+class DownloadProxy;
 class WebPageNamespace;
 class WebPageProxy;
 class WebPreferences;
@@ -58,7 +59,6 @@ public:
     static WebContext* sharedThreadContext();
 
     static PassRefPtr<WebContext> create(const String& injectedBundlePath);
-
     virtual ~WebContext();
 
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
@@ -123,7 +123,7 @@ public:
 #endif
 
     // Downloads.
-    uint64_t generateDownloadID();
+    uint64_t createDownloadProxy();
 
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
@@ -161,6 +161,8 @@ private:
     Vector<pair<String, RefPtr<APIObject> > > m_pendingMessagesToPostToInjectedBundle;
 
     CacheModel m_cacheModel;
+
+    HashMap<uint64_t, RefPtr<DownloadProxy> > m_downloads;
 
 #if PLATFORM(WIN)
     bool m_shouldPaintNativeControls;

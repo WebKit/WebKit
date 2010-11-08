@@ -23,76 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIObject_h
-#define APIObject_h
+#ifndef DownloadProxy_h
+#define DownloadProxy_h
 
-#include <wtf/RefCounted.h>
+#include "APIObject.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebKit {
 
-class APIObject : public RefCounted<APIObject> {
+class WebContext;
+
+class DownloadProxy : public APIObject {
 public:
-    enum Type {
-        // Base types
-        TypeNull = 0,
-        TypeArray,
-        TypeCertificateInfo,
-        TypeData,
-        TypeDictionary,
-        TypeError,
-        TypeSerializedScriptValue,
-        TypeString,
-        TypeURL,
-        TypeURLRequest,
-        TypeURLResponse,
-        TypeUserContentURLPattern,
+    static const Type APIType = TypeDownload;
 
-        // Base numeric types
-        TypeBoolean,
-        TypeDouble,
-        TypeUInt64,
-        
-        // UIProcess types
-        TypeBackForwardList,
-        TypeBackForwardListItem,
-        TypeContext,
-        TypeDownload,
-        TypeFormSubmissionListener,
-        TypeFrame,
-        TypeFramePolicyListener,
-        TypeInspector,
-        TypeNavigationData,
-        TypePage,
-        TypePageNamespace,
-        TypePreferences,
+    static PassRefPtr<DownloadProxy> create(WebContext*);
+    ~DownloadProxy();
 
-        // Bundle types
-        TypeBundle,
-        TypeBundleBackForwardList,
-        TypeBundleBackForwardListItem,
-        TypeBundleFrame,
-        TypeBundleHitTestResult,
-        TypeBundleNodeHandle,
-        TypeBundlePage,
-        TypeBundleRangeHandle,
-        TypeBundleScriptWorld,
+    uint64_t downloadID() const { return m_downloadID; }
 
-        // Platform specific
-        TypeView
-    };
+    void invalidate();
 
-    virtual ~APIObject()
-    {
-    }
+private:
+    explicit DownloadProxy(WebContext*);
 
-    virtual Type type() const = 0;
+    virtual Type type() const { return APIType; }
 
-protected:
-    APIObject()
-    {
-    }
+    WebContext* m_webContext;
+    uint64_t m_downloadID;
 };
 
 } // namespace WebKit
 
-#endif // APIObject_h
+#endif // DownloadProxy_h

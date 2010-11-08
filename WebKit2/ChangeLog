@@ -1,3 +1,41 @@
+2010-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add DownloadProxy object
+        https://bugs.webkit.org/show_bug.cgi?id=49211
+
+        DownloadProxy will be the implementation of the forthcoming WKDownloadRef object.
+
+        * Shared/APIObject.h:
+        Add TypeDownload.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::generateDownloadID):
+        Generate a unique download ID.
+
+        (WebKit::DownloadProxy::invalidate):
+        Null out the web context.
+
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::WebContext::processDidClose):
+        Invalidate all downloads.
+
+        (WebKit::WebContext::createDownloadProxy):
+        Create a WebDownload object.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        Call createDownloadProxy instead.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Add new files.
+
+        * win/WebKit2Common.vsprops:
+        Add new include path.
+
 2010-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

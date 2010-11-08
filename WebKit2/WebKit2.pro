@@ -120,6 +120,7 @@ INCLUDEPATH = \
     UIProcess/API/cpp \
     UIProcess/API/cpp/qt \
     UIProcess/API/qt \
+    UIProcess/Downloads \
     UIProcess/Launcher \
     UIProcess/Plugins \
     UIProcess/qt \
@@ -266,6 +267,7 @@ HEADERS += \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/FindIndicator.h \
     UIProcess/GenericCallback.h \
+    UIProcess/Downloads/DownloadProxy.h \
     UIProcess/Launcher/ProcessLauncher.h \
     UIProcess/Launcher/ThreadLauncher.h \
     UIProcess/Plugins/PluginInfoStore.h \
@@ -431,6 +433,7 @@ SOURCES += \
     UIProcess/FindIndicator.cpp \
     UIProcess/Plugins/PluginInfoStore.cpp \
     UIProcess/Plugins/qt/PluginInfoStoreQt.cpp \
+    UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \
     UIProcess/Launcher/ThreadLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
