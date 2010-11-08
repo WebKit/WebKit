@@ -3,12 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 755x38
-          text run at (0,0) width 588: "This tests the deletion of non-editable content that is in both the start and end editable roots. "
-          text run at (588,0) width 142: "It should be removed. "
-          text run at (730,0) width 25: "You"
-          text run at (0,19) width 324: "shouldn't see anything in the editable region below."
-      RenderBlock {DIV} at (0,52) size 784x19
-        RenderBR {BR} at (0,0) size 0x19
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 770x42
+          text run at (0,0) width 623: "This tests the deletion of non-editable content that is in both the start and end editable roots. "
+          text run at (623,0) width 147: "It should be removed."
+          text run at (0,21) width 378: "You shouldn't see anything in the editable region below."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderBR {BR} at (0,0) size 0x21
 caret: position 0 of child 0 {BR} of child 3 {DIV} of body

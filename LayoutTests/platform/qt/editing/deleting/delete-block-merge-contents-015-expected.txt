@@ -37,11 +37,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,14) size 756x32
-          RenderBlock {DIV} at (0,0) size 756x32
-            RenderText {#text} at (0,0) size 69x31
-              text run at (0,0) width 69: "This is"
-            RenderText {#text} at (69,0) size 118x31
-              text run at (69,0) width 118: " some text."
+      RenderBlock {DIV} at (0,0) size 784x59 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,14) size 756x31
+          RenderBlock {DIV} at (0,0) size 756x31
+            RenderText {#text} at (0,0) size 67x32
+              text run at (0,0) width 67: "This is"
+            RenderText {#text} at (67,0) size 109x32
+              text run at (67,0) width 109: " some text."
 caret: position 7 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 1 {DIV} of body

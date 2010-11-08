@@ -3,19 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 760x38
-          text run at (0,0) width 760: "This tests to make sure that after a deletion, merging can merge into an editable region that's embedded in non-editable"
-          text run at (0,19) width 254: "content that is collapsed by the deletion."
-      RenderBlock {DIV} at (0,52) size 784x29
-        RenderTable {TABLE} at (0,0) size 313x29 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 311x27
-            RenderTableRow {TR} at (0,2) size 311x23
-              RenderTableCell {TD} at (2,2) size 307x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderInline {SPAN} at (0,0) size 303x19
-                  RenderInline {SPAN} at (0,0) size 303x19
-                    RenderText {#text} at (2,2) size 303x19
-                      text run at (2,2) width 303: "This sentence should be inside the editable cell."
-                  RenderBR {BR} at (305,16) size 0x0
-        RenderBlock (anonymous) at (0,29) size 784x0
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 750x42
+          text run at (0,0) width 750: "This tests to make sure that after a deletion, merging can merge into an editable region that's embedded in non-"
+          text run at (0,21) width 325: "editable content that is collapsed by the deletion."
+      RenderBlock {DIV} at (0,58) size 784x31
+        RenderTable {TABLE} at (0,0) size 325x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 323x29
+            RenderTableRow {TR} at (0,2) size 323x25
+              RenderTableCell {TD} at (2,2) size 319x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {SPAN} at (0,0) size 315x21
+                  RenderInline {SPAN} at (0,0) size 315x21
+                    RenderText {#text} at (2,2) size 315x21
+                      text run at (2,2) width 315: "This sentence should be inside the editable cell."
+        RenderBlock (anonymous) at (0,31) size 784x0
 caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {SPAN} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body

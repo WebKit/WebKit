@@ -3,9 +3,8 @@ EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
@@ -16,25 +15,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x206 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x65
-          RenderText {#text} at (0,0) size 77x33
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x199 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x62
+          RenderText {#text} at (0,0) size 67x32
+            text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 628x31
-            text run at (0,33) width 628: "Option-delete when no typing command is open, then undo."
-        RenderBlock {DIV} at (14,95) size 756x97
-          RenderText {#text} at (0,0) size 214x33
-            text run at (0,0) width 214: "Expected Results: "
-          RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,33) size 501x31
-            text run at (0,33) width 501: "It should like this, with the word \"two\" selected: "
-          RenderBR {BR} at (501,56) size 0x0
-          RenderText {#text} at (0,65) size 192x31
-            text run at (0,65) width 192: "one two three four"
-      RenderBlock {DIV} at (0,230) size 784x36
-        RenderBlock {DIV} at (0,0) size 784x36 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 192x31
-            text run at (2,2) width 192: "one two three four"
+          RenderText {#text} at (0,31) size 607x32
+            text run at (0,31) width 607: "Option-delete when no typing command is open, then undo."
+        RenderBlock {DIV} at (14,92) size 756x93
+          RenderText {#text} at (0,0) size 189x32
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,24) size 0x0
+          RenderText {#text} at (0,31) size 501x32
+            text run at (0,31) width 501: "It should like this, with the word \"two\" selected: "
+          RenderBR {BR} at (501,55) size 0x0
+          RenderText {#text} at (0,62) size 189x32
+            text run at (0,62) width 189: "one two three four"
+      RenderBlock {DIV} at (0,223) size 784x35
+        RenderBlock {DIV} at (0,0) size 784x35 [border: (2px solid #FF0000)]
+          RenderText {#text} at (2,2) size 189x32
+            text run at (2,2) width 189: "one two three four"
 selection start: position 4 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 7 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

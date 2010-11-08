@@ -3,16 +3,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x59
-        RenderText {#text} at (0,0) size 778x38
-          text run at (0,0) width 598: "This tests for a bug where expansion for smart delete would not consider editable boundaries. "
-          text run at (598,0) width 180: "Only 'foo' should be deleted."
-          text run at (0,19) width 141: "You should see ' bar'. "
-        RenderInline {B} at (0,0) size 746x40
-          RenderText {#text} at (141,19) size 746x40
-            text run at (141,19) width 605: "There is a bug: while the non-editable space isn't deleted, deletion inserts a placeholder"
-            text run at (0,39) width 123: "when it shouldn't."
-      RenderBlock {DIV} at (0,73) size 784x19
-        RenderInline {SPAN} at (0,0) size 21x19
-          RenderText {#text} at (0,0) size 21x19
-            text run at (0,0) width 21: "bar"
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 770x42
+          text run at (0,0) width 635: "This tests for a bug where expansion for smart delete would not consider editable boundaries. "
+          text run at (635,0) width 135: "Only 'foo' should be"
+          text run at (0,21) width 56: "deleted. "
+          text run at (56,21) width 150: "You should see ' bar'. "
+        RenderInline {B} at (0,0) size 707x42
+          RenderText {#text} at (206,21) size 707x42
+            text run at (206,21) width 501: "There is a bug: while the non-editable space isn't deleted, deletion inserts a"
+            text run at (0,42) width 204: "placeholder when it shouldn't."
+      RenderBlock {DIV} at (0,79) size 784x21
+        RenderInline {SPAN} at (0,0) size 24x21
+          RenderText {#text} at (0,0) size 24x21
+            text run at (0,0) width 24: "bar"
+caret: position 0 of child 2 {DIV} of body

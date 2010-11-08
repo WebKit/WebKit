@@ -3,22 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x59
-        RenderText {#text} at (0,0) size 739x38
-          text run at (0,0) width 739: "This tests for a crash when deleting a link inside a text field inside a completely editable document. You shouldn't see"
-          text run at (0,19) width 183: "anything inside the text field.'"
-        RenderInline {B} at (0,0) size 776x40
-          RenderText {#text} at (183,19) size 776x40
-            text run at (183,19) width 593: "We probably shouldn't let users add rich content to text fields even if they are in richly"
-            text run at (0,39) width 118: "editable regions.'"
-      RenderBlock (anonymous) at (0,73) size 784x29
-        RenderTextControl {INPUT} at (2,2) size 168x25 [border: (2px inset #000000)]
+      RenderBlock {P} at (0,0) size 784x63
+        RenderText {#text} at (0,0) size 784x42
+          text run at (0,0) width 784: "This tests for a crash when deleting a link inside a text field inside a completely editable document. You shouldn't see"
+          text run at (0,21) width 198: "anything inside the text field.'"
+        RenderInline {B} at (0,0) size 780x42
+          RenderText {#text} at (198,21) size 780x42
+            text run at (198,21) width 582: "We probably shouldn't let users add rich content to text fields even if they are in richly"
+            text run at (0,42) width 114: "editable regions.'"
+      RenderBlock (anonymous) at (0,79) size 784x29
+        RenderTextControl {INPUT} at (2,2) size 166x25
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
-        RenderText {#text} at (0,0) size 0x0
-layer at (13,86) size 162x19
-  RenderBlock {DIV} at (3,3) size 162x19
-    RenderInline {FONT} at (0,0) size 0x19
-      RenderInline {SPAN} at (0,0) size 0x19
-        RenderBR {BR} at (1,0) size 0x19
-caret: position 0 of child 0 {BR} of child 0 {SPAN} of child 0 {FONT} of child 0 {DIV} of child 3 {INPUT} of body
+layer at (12,91) size 162x21
+  RenderBlock {DIV} at (2,2) size 162x21
+    RenderBR {BR} at (1,0) size 0x21
+caret: position 0 of child 0 {BR} of child 0 {DIV} of child 3 {INPUT} of body

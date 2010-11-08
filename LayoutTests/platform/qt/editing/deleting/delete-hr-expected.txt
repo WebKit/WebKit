@@ -8,19 +8,20 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > SPAN > DI
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 4 of DIV > BODY > HTML > #document to 0 of SPAN > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x38
-        RenderBlock {DIV} at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 42x19
-            text run at (0,0) width 42: "Before"
-        RenderBlock (anonymous) at (0,19) size 784x19
-          RenderInline {SPAN} at (0,0) size 21x19
-            RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21: "fter"
+      RenderBlock {DIV} at (0,0) size 784x42
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 45x21
+            text run at (0,0) width 45: "Before"
+        RenderBlock (anonymous) at (0,21) size 784x21
+          RenderInline {SPAN} at (0,0) size 24x21
+            RenderText {#text} at (0,0) size 24x21
+              text run at (0,0) width 24: "fter"
           RenderText {#text} at (0,0) size 0x0
 caret: position 0 of child 0 {#text} of child 3 {SPAN} of child 0 {DIV} of body

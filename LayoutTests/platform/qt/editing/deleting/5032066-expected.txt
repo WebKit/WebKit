@@ -3,19 +3,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 766x38
-          text run at (0,0) width 511: "This tests deleting when the caret is at the start of a paragraph just after a table. "
-          text run at (511,0) width 255: "The content in that paragraph should be"
-          text run at (0,19) width 410: "moved into the last table cell unless that content is another table."
-      RenderBlock {DIV} at (0,52) size 784x29
-        RenderTable {TABLE} at (0,0) size 412x29 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 410x27
-            RenderTableRow {TR} at (0,2) size 410x23
-              RenderTableCell {TD} at (2,2) size 406x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 233x19
-                  text run at (2,2) width 233: "All the content in this editable region "
-                RenderInline {SPAN} at (0,0) size 169x19
-                  RenderText {#text} at (235,2) size 169x19
-                    text run at (235,2) width 169: "should be in one table cell."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 749x42
+          text run at (0,0) width 543: "This tests deleting when the caret is at the start of a paragraph just after a table. "
+          text run at (543,0) width 206: "The content in that paragraph"
+          text run at (0,21) width 501: "should be moved into the last table cell unless that content is another table."
+      RenderBlock {DIV} at (0,58) size 784x31
+        RenderTable {TABLE} at (0,0) size 439x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 437x29
+            RenderTableRow {TR} at (0,2) size 437x25
+              RenderTableCell {TD} at (2,2) size 433x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 252x21
+                  text run at (2,2) width 252: "All the content in this editable region "
+                RenderInline {SPAN} at (0,0) size 177x21
+                  RenderText {#text} at (254,2) size 177x21
+                    text run at (254,2) width 177: "should be in one table cell."
 caret: position 40 of child 0 {#text} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

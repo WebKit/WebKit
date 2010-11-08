@@ -12,15 +12,15 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 745x38
-          text run at (0,0) width 647: "This tests for a bug where deleting a paragraph in preserveNewline text would introduce an extra line. "
-          text run at (647,0) width 98: "You should see"
-          text run at (0,19) width 84: "'\\nbar' below."
-      RenderBlock {DIV} at (0,52) size 784x38
-        RenderBlock {PRE} at (0,0) size 784x38
-          RenderText {#text} at (0,0) size 21x38
-            text run at (0,0) width 0: " "
-            text run at (0,19) width 21: "bar"
+    RenderBody {BODY} at (8,8) size 784x579
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 773x42
+          text run at (0,0) width 695: "This tests for a bug where deleting a paragraph in preserveNewline text would introduce an extra line. "
+          text run at (695,0) width 78: "You should"
+          text run at (0,21) width 117: "see '\\nbar' below."
+      RenderBlock {DIV} at (0,58) size 784x32
+        RenderBlock {PRE} at (0,0) size 784x32
+          RenderText {#text} at (0,1) size 24x30
+            text run at (0,1) width 0: " "
+            text run at (0,17) width 24: "bar"
 caret: position 0 of child 0 {#text} of child 0 {PRE} of child 2 {DIV} of body

@@ -33,9 +33,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 600x32
-        RenderText {#text} at (0,0) size 106x31
-          text run at (0,0) width 106: "There is a"
-        RenderText {#text} at (106,0) size 256x31
-          text run at (106,0) width 256: "Which taken at the flood"
+      RenderBlock {DIV} at (0,0) size 600x31
+        RenderText {#text} at (0,0) size 102x32
+          text run at (0,0) width 102: "There is a"
+        RenderText {#text} at (102,0) size 253x32
+          text run at (102,0) width 253: "Which taken at the flood"
 caret: position 10 of child 0 {#text} of child 1 {DIV} of body

@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 7 of BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -14,15 +14,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 537x31
-          text run at (14,14) width 537: "Should see \"X\" in a yellow box nested in a red box."
-      RenderBlock {DIV} at (0,84) size 784x66
-        RenderBlock {DIV} at (0,0) size 784x66 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x59 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 521x32
+          text run at (14,14) width 521: "Should see \"X\" in a yellow box nested in a red box."
+      RenderBlock {DIV} at (0,83) size 784x65
+        RenderBlock {DIV} at (0,0) size 784x65 [border: (2px solid #FF0000)]
           RenderBlock (anonymous) at (14,14) size 756x0
-          RenderBlock {DIV} at (14,14) size 756x38 [border: (3px solid #FFFF00)]
+          RenderBlock {DIV} at (14,14) size 756x37 [border: (3px solid #FFFF00)]
             RenderBlock (anonymous) at (3,3) size 750x0
-            RenderBlock {DIV} at (3,3) size 750x32
-              RenderText {#text} at (0,0) size 16x31
-                text run at (0,0) width 16: "X"
+            RenderBlock {DIV} at (3,3) size 750x31
+              RenderText {#text} at (0,0) size 17x32
+                text run at (0,0) width 17: "X"
 caret: position 0 of child 0 {#text} of child 0 {DIV} of child 0 {DIV} of child 1 {DIV} of child 3 {DIV} of body

@@ -2,7 +2,7 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > B > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 3 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -12,21 +12,21 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x39
-        RenderText {#text} at (0,0) size 772x38
-          text run at (0,0) width 674: "This tests to see if deletion correctly prunes the containers of the paragraph being moved during a merge. "
-          text run at (674,0) width 98: "You should see"
-          text run at (0,19) width 23: "'foo"
-        RenderInline {B} at (0,0) size 22x20
-          RenderText {#text} at (23,19) size 22x20
-            text run at (23,19) width 22: "bar"
-        RenderText {#text} at (45,19) size 48x19
-          text run at (45,19) width 48: "' below."
-      RenderBlock {DIV} at (0,53) size 784x20
-        RenderBlock {DIV} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 20x19
-            text run at (0,0) width 20: "foo"
-          RenderInline {SPAN} at (0,0) size 22x20
-            RenderText {#text} at (20,0) size 22x20
-              text run at (20,0) width 22: "bar"
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 742x42
+          text run at (0,0) width 713: "This tests to see if deletion correctly prunes the containers of the paragraph being moved during a merge. "
+          text run at (713,0) width 29: "You"
+          text run at (0,21) width 98: "should see 'foo"
+        RenderInline {B} at (0,0) size 24x21
+          RenderText {#text} at (98,21) size 24x21
+            text run at (98,21) width 24: "bar"
+        RenderText {#text} at (122,21) size 52x21
+          text run at (122,21) width 52: "' below."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderText {#text} at (0,0) size 21x21
+            text run at (0,0) width 21: "foo"
+          RenderInline {SPAN} at (0,0) size 24x21
+            RenderText {#text} at (21,0) size 24x21
+              text run at (21,0) width 24: "bar"
 caret: position 3 of child 0 {#text} of child 0 {DIV} of child 2 {DIV} of body

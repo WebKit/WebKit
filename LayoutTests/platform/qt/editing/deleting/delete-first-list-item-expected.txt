@@ -13,25 +13,25 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x39
-        RenderText {#text} at (0,0) size 779x38
-          text run at (0,0) width 779: "This tests deletion when the caret is in an empty list item at the beginning of the document. It also makes sure that the style"
-          text run at (0,19) width 234: "inside the empty list item is retained. "
-          text run at (234,19) width 105: "You should see '"
-        RenderInline {B} at (0,0) size 23x20
-          RenderText {#text} at (339,19) size 23x20
-            text run at (339,19) width 23: "foo"
-        RenderText {#text} at (362,19) size 246x19
-          text run at (362,19) width 246: "' followed by a list item containing 'bar'."
-      RenderBlock {DIV} at (0,53) size 784x53
-        RenderBlock {DIV} at (0,0) size 784x20
-          RenderInline {B} at (0,0) size 23x20
-            RenderText {#text} at (0,0) size 23x20
-              text run at (0,0) width 23: "foo"
-        RenderBlock {UL} at (0,34) size 784x19
-          RenderListItem {LI} at (40,0) size 744x19
-            RenderListMarker at (-17,0) size 7x19: bullet
-            RenderText {#text} at (0,0) size 21x19
-              text run at (0,0) width 21: "bar"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 764x42
+          text run at (0,0) width 764: "This tests deletion when the caret is in an empty list item at the beginning of the document. It also makes sure that"
+          text run at (0,21) width 307: "the style inside the empty list item is retained. "
+          text run at (307,21) width 110: "You should see '"
+        RenderInline {B} at (0,0) size 21x21
+          RenderText {#text} at (417,21) size 21x21
+            text run at (417,21) width 21: "foo"
+        RenderText {#text} at (438,21) size 269x21
+          text run at (438,21) width 269: "' followed by a list item containing 'bar'."
+      RenderBlock {DIV} at (0,58) size 784x58
+        RenderBlock {DIV} at (0,0) size 784x21
+          RenderInline {B} at (0,0) size 21x21
+            RenderText {#text} at (0,0) size 21x21
+              text run at (0,0) width 21: "foo"
+        RenderBlock {UL} at (0,37) size 784x21
+          RenderListItem {LI} at (40,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderText {#text} at (0,0) size 24x21
+              text run at (0,0) width 24: "bar"
 caret: position 3 of child 0 {#text} of child 0 {B} of child 0 {DIV} of child 2 {DIV} of body

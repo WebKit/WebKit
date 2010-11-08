@@ -1,4 +1,4 @@
-EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 7 of BODY > HTML > #document
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 5 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -14,13 +14,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 313x31
-          text run at (14,14) width 313: "Should see \"XX\" in a red box."
-      RenderBlock {DIV} at (0,84) size 784x60
-        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 16x31
-            text run at (14,14) width 16: "X"
-          RenderText {#text} at (30,14) size 16x31
-            text run at (30,14) width 16: "X"
+      RenderBlock {DIV} at (0,0) size 784x59 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 308x32
+          text run at (14,14) width 308: "Should see \"XX\" in a red box."
+      RenderBlock {DIV} at (0,83) size 784x59
+        RenderBlock {DIV} at (0,0) size 784x59 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 17x32
+            text run at (14,14) width 17: "X"
+          RenderText {#text} at (31,14) size 17x32
+            text run at (31,14) width 17: "X"
+          RenderText {#text} at (0,0) size 0x0
 caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

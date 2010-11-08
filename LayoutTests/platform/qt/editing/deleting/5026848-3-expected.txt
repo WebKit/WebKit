@@ -3,29 +3,29 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x76
-        RenderText {#text} at (0,0) size 767x76
-          text run at (0,0) width 696: "This tests to see that selected editable nodes that are not in both the start and end editable roots are cleared. "
-          text run at (696,0) width 71: "You should"
-          text run at (0,19) width 506: "see one non-editable piece and an editable one and then two empty table cells. "
-          text run at (506,19) width 220: "The table cells are editable but are"
-          text run at (0,38) width 452: "preserved and not removed because they are in a non-editable region. "
-          text run at (452,38) width 308: "They should be completely cleared out, even the"
-          text run at (0,57) width 296: "second one that contains a non-editable piece."
-      RenderBlock {DIV} at (0,90) size 784x29
-        RenderTable {TABLE} at (0,0) size 211x29 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 209x27
-            RenderTableRow {TR} at (0,2) size 209x23
-              RenderTableCell {TD} at (2,2) size 85x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 81x19
-                  text run at (2,2) width 81: "Non-editable"
-              RenderTableCell {TD} at (89,2) size 106x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 55x19
-                  text run at (2,2) width 55: "Editable "
-                RenderInline {SPAN} at (0,0) size 47x19
-                  RenderText {#text} at (57,2) size 47x19
-                    text run at (57,2) width 47: "content"
-              RenderTableCell {TD} at (197,2) size 4x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-              RenderTableCell {TD} at (203,2) size 4x23 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
-        RenderBlock (anonymous) at (0,29) size 784x0
+      RenderBlock {P} at (0,0) size 784x84
+        RenderText {#text} at (0,0) size 781x84
+          text run at (0,0) width 727: "This tests to see that selected editable nodes that are not in both the start and end editable roots are cleared. "
+          text run at (727,0) width 29: "You"
+          text run at (0,21) width 575: "should see one non-editable piece and an editable one and then two empty table cells. "
+          text run at (575,21) width 206: "The table cells are editable but"
+          text run at (0,42) width 500: "are preserved and not removed because they are in a non-editable region. "
+          text run at (500,42) width 263: "They should be completely cleared out,"
+          text run at (0,63) width 367: "even the second one that contains a non-editable piece."
+      RenderBlock {DIV} at (0,100) size 784x31
+        RenderTable {TABLE} at (0,0) size 226x31 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 224x29
+            RenderTableRow {TR} at (0,2) size 224x25
+              RenderTableCell {TD} at (2,2) size 91x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 87x21
+                  text run at (2,2) width 87: "Non-editable"
+              RenderTableCell {TD} at (95,2) size 115x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 61x21
+                  text run at (2,2) width 61: "Editable "
+                RenderInline {SPAN} at (0,0) size 50x21
+                  RenderText {#text} at (63,2) size 50x21
+                    text run at (63,2) width 50: "content"
+              RenderTableCell {TD} at (212,2) size 4x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+              RenderTableCell {TD} at (218,2) size 4x25 [border: (1px inset #808080)] [r=0 c=3 rs=1 cs=1]
+        RenderBlock (anonymous) at (0,31) size 784x0
 caret: position 9 of child 0 {#text} of child 3 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of body

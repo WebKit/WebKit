@@ -13,24 +13,24 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x284 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 267x255
-          RenderText {#text} at (14,14) size 13x31
-            text run at (14,14) width 13: "a"
-          RenderText {#text} at (27,14) size 50x31
-            text run at (27,14) width 50: "new "
+      RenderBlock {DIV} at (0,0) size 784x279 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 260x252
+          RenderText {#text} at (14,14) size 12x32
+            text run at (14,14) width 12: "a"
+          RenderText {#text} at (26,14) size 47x32
+            text run at (26,14) width 47: "new "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (14,126) size 71x31
-            text run at (14,126) width 71: "nation "
+          RenderText {#text} at (14,124) size 71x32
+            text run at (14,124) width 71: "nation "
           RenderInline {I} at (0,0) size 0x0
             RenderText {#text} at (0,0) size 0x0
           RenderText {#text} at (0,0) size 0x0
-          RenderImage {IMG} at (85,46) size 76x103
-          RenderText {#text} at (161,126) size 120x31
-            text run at (161,126) width 120: " conceived "
-          RenderBR {BR} at (281,149) size 0x0
-          RenderText {#text} at (14,238) size 64x31
-            text run at (14,238) width 64: "nation"
-          RenderImage {IMG} at (78,158) size 76x103
+          RenderImage {IMG} at (85,45) size 76x103
+          RenderText {#text} at (161,124) size 113x32
+            text run at (161,124) width 113: " conceived "
+          RenderBR {BR} at (274,148) size 0x0
+          RenderText {#text} at (14,234) size 65x32
+            text run at (14,234) width 65: "nation"
+          RenderImage {IMG} at (79,155) size 76x103
         RenderText {#text} at (0,0) size 0x0
 caret: position 1 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

@@ -3,74 +3,75 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 747x19
-          text run at (0,0) width 747: "This empties the last row, it should be removed. 'world!' should also be brought into the second cell of the second row."
-      RenderBlock {DIV} at (0,33) size 784x54
-        RenderTable {TABLE} at (0,0) size 76x54 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 74x52
-            RenderTableRow {TR} at (0,2) size 74x23
-              RenderTableCell {TD} at (2,2) size 12x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 759x42
+          text run at (0,0) width 759: "This empties the last row, it should be removed. 'world!' should also be brought into the second cell of the second"
+          text run at (0,21) width 31: "row."
+      RenderBlock {DIV} at (0,58) size 784x58
+        RenderTable {TABLE} at (0,0) size 83x58 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 81x56
+            RenderTableRow {TR} at (0,2) size 81x25
+              RenderTableCell {TD} at (2,2) size 12x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "1"
-              RenderTableCell {TD} at (16,2) size 42x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+              RenderTableCell {TD} at (16,2) size 49x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "2"
-              RenderTableCell {TD} at (60,2) size 12x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+              RenderTableCell {TD} at (67,2) size 12x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "3"
-            RenderTableRow {TR} at (0,27) size 74x23
-              RenderTableCell {TD} at (2,27) size 12x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+            RenderTableRow {TR} at (0,29) size 81x25
+              RenderTableCell {TD} at (2,29) size 12x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "4"
-              RenderTableCell {TD} at (16,27) size 42x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderInline {SPAN} at (0,0) size 38x19
-                  RenderText {#text} at (2,2) size 38x19
-                    text run at (2,2) width 38: "world!"
-              RenderTableCell {TD} at (60,27) size 12x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
-      RenderBlock {P} at (0,101) size 784x19
-        RenderText {#text} at (0,0) size 638x19
-          text run at (0,0) width 638: "This empties a the last row of the first table and the first of the second, they should both be removed."
-      RenderBlock {DIV} at (0,134) size 784x108
-        RenderTable {TABLE} at (0,0) size 46x54 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 44x52
-            RenderTableRow {TR} at (0,2) size 44x23
-              RenderTableCell {TD} at (2,2) size 12x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+              RenderTableCell {TD} at (16,29) size 49x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderInline {SPAN} at (0,0) size 45x21
+                  RenderText {#text} at (2,2) size 45x21
+                    text run at (2,2) width 45: "world!"
+              RenderTableCell {TD} at (67,29) size 12x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                RenderBR {BR} at (2,2) size 0x21
+      RenderBlock {P} at (0,132) size 784x21
+        RenderText {#text} at (0,0) size 676x21
+          text run at (0,0) width 676: "This empties a the last row of the first table and the first of the second, they should both be removed."
+      RenderBlock {DIV} at (0,169) size 784x116
+        RenderTable {TABLE} at (0,0) size 46x58 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 44x56
+            RenderTableRow {TR} at (0,2) size 44x25
+              RenderTableCell {TD} at (2,2) size 12x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "1"
-              RenderTableCell {TD} at (16,2) size 12x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+              RenderTableCell {TD} at (16,2) size 12x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "2"
-              RenderTableCell {TD} at (30,2) size 12x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+              RenderTableCell {TD} at (30,2) size 12x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "3"
-            RenderTableRow {TR} at (0,27) size 44x23
-              RenderTableCell {TD} at (2,27) size 12x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+            RenderTableRow {TR} at (0,29) size 44x25
+              RenderTableCell {TD} at (2,29) size 12x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "4"
-              RenderTableCell {TD} at (16,27) size 12x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
-              RenderTableCell {TD} at (30,27) size 12x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
-        RenderTable {TABLE} at (0,54) size 46x54 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 44x52
-            RenderTableRow {TR} at (0,2) size 44x23
-              RenderTableCell {TD} at (2,2) size 12x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
-              RenderTableCell {TD} at (16,2) size 12x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                RenderBR {BR} at (2,2) size 0x19
-              RenderTableCell {TD} at (30,2) size 12x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+              RenderTableCell {TD} at (16,29) size 12x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderBR {BR} at (2,2) size 0x21
+              RenderTableCell {TD} at (30,29) size 12x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                RenderBR {BR} at (2,2) size 0x21
+        RenderTable {TABLE} at (0,58) size 46x58 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 44x56
+            RenderTableRow {TR} at (0,2) size 44x25
+              RenderTableCell {TD} at (2,2) size 12x25 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderBR {BR} at (2,2) size 0x21
+              RenderTableCell {TD} at (16,2) size 12x25 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                RenderBR {BR} at (2,2) size 0x21
+              RenderTableCell {TD} at (30,2) size 12x25 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "6"
-            RenderTableRow {TR} at (0,27) size 44x23
-              RenderTableCell {TD} at (2,27) size 12x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+            RenderTableRow {TR} at (0,29) size 44x25
+              RenderTableCell {TD} at (2,29) size 12x25 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "7"
-              RenderTableCell {TD} at (16,27) size 12x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+              RenderTableCell {TD} at (16,29) size 12x25 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "8"
-              RenderTableCell {TD} at (30,27) size 12x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 8x19
+              RenderTableCell {TD} at (30,29) size 12x25 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 8x21
                   text run at (2,2) width 8: "9"
 caret: position 0 of child 0 {BR} of child 1 {TD} of child 2 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 8 {DIV} of body

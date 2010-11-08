@@ -3,14 +3,14 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 771x38
-          text run at (0,0) width 771: "This tests for a bug where underlined content would lose its underlining when deleting the line break before the paragraph"
-          text run at (0,19) width 105: "that contained it."
-      RenderBlock {DIV} at (0,52) size 784x19
-        RenderText {#text} at (0,0) size 183x19
-          text run at (0,0) width 183: "This shouldn't be underlined."
-        RenderInline {DIV} at (0,0) size 168x19
-          RenderText {#text} at (183,0) size 168x19
-            text run at (183,0) width 168: "This should be underlined."
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 751x42
+          text run at (0,0) width 751: "This tests for a bug where underlined content would lose its underlining when deleting the line break before the"
+          text run at (0,21) width 191: "paragraph that contained it."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderText {#text} at (0,0) size 199x21
+          text run at (0,0) width 199: "This shouldn't be underlined."
+        RenderInline {DIV} at (0,0) size 181x21
+          RenderText {#text} at (199,0) size 181x21
+            text run at (199,0) width 181: "This should be underlined."
 caret: position 29 of child 0 {#text} of child 2 {DIV} of body

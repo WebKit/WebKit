@@ -2,20 +2,22 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 739x19
-          text run at (0,0) width 739: "When a user puts the caret at the very beginning a list and hits delete into an empty line, the list should just move up."
-      RenderBlock {DIV} at (0,33) size 784x19
-        RenderBlock {UL} at (0,0) size 784x19
-          RenderListItem {LI} at (40,0) size 744x19
-            RenderListMarker at (-17,0) size 7x19: bullet
-            RenderInline {SPAN} at (0,0) size 20x19
-              RenderText {#text} at (0,0) size 20x19
-                text run at (0,0) width 20: "foo"
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 760x42
+          text run at (0,0) width 760: "When a user puts the caret at the very beginning a list and hits delete into an empty line, the list should just move"
+          text run at (0,21) width 22: "up."
+      RenderBlock {DIV} at (0,58) size 784x21
+        RenderBlock {UL} at (0,0) size 784x21
+          RenderListItem {LI} at (40,0) size 744x21
+            RenderListMarker at (-18,0) size 7x21: bullet
+            RenderInline {SPAN} at (0,0) size 21x21
+              RenderText {#text} at (0,0) size 21x21
+                text run at (0,0) width 21: "foo"
 caret: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {LI} of child 0 {UL} of child 2 {DIV} of body

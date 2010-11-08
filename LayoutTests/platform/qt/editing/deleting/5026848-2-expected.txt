@@ -3,26 +3,26 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 783x38
-          text run at (0,0) width 783: "This tests to see that selected non-editable nodes that are not in both the start and end editable root are preserved during a"
-          text run at (0,19) width 58: "deletion. "
-          text run at (58,19) width 527: "You should see two 'Non-editable' pieces on either side of the editable piece below."
-      RenderBlock {DIV} at (0,52) size 784x25
-        RenderTable {TABLE} at (0,0) size 278x25
-          RenderTableSection {TBODY} at (0,0) size 278x25
-            RenderTableRow {TR} at (0,2) size 278x21
-              RenderTableCell {TD} at (2,2) size 83x21 [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 81x19
-                  text run at (1,1) width 81: "Non-editable"
-              RenderTableCell {TD} at (87,2) size 104x21 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 55x19
-                  text run at (1,1) width 55: "Editable "
-                RenderInline {SPAN} at (0,0) size 47x19
-                  RenderText {#text} at (56,1) size 47x19
-                    text run at (56,1) width 47: "content"
-              RenderTableCell {TD} at (193,2) size 83x21 [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (1,1) size 81x19
-                  text run at (1,1) width 81: "Non-editable"
-        RenderBlock (anonymous) at (0,25) size 784x0
+      RenderBlock {P} at (0,0) size 784x42
+        RenderText {#text} at (0,0) size 762x42
+          text run at (0,0) width 762: "This tests to see that selected non-editable nodes that are not in both the start and end editable root are preserved"
+          text run at (0,21) width 123: "during a deletion. "
+          text run at (123,21) width 553: "You should see two 'Non-editable' pieces on either side of the editable piece below."
+      RenderBlock {DIV} at (0,58) size 784x27
+        RenderTable {TABLE} at (0,0) size 299x27
+          RenderTableSection {TBODY} at (0,0) size 299x27
+            RenderTableRow {TR} at (0,2) size 299x23
+              RenderTableCell {TD} at (2,2) size 89x23 [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 87x21
+                  text run at (1,1) width 87: "Non-editable"
+              RenderTableCell {TD} at (93,2) size 113x23 [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 61x21
+                  text run at (1,1) width 61: "Editable "
+                RenderInline {SPAN} at (0,0) size 50x21
+                  RenderText {#text} at (62,1) size 50x21
+                    text run at (62,1) width 50: "content"
+              RenderTableCell {TD} at (208,2) size 89x23 [r=0 c=2 rs=1 cs=1]
+                RenderText {#text} at (1,1) size 87x21
+                  text run at (1,1) width 87: "Non-editable"
+        RenderBlock (anonymous) at (0,27) size 784x0
 caret: position 9 of child 0 {#text} of child 3 {TD} of child 0 {TR} of child 1 {TBODY} of child 1 {TABLE} of child 3 {DIV} of body

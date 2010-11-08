@@ -25,8 +25,10 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of SPAN > DIV > BODY > HTML > #document to 4 of SPAN > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 2 of SPAN > DIV > BODY > HTML > #document to 3 of SPAN > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of SPAN > DIV > BODY > HTML > #document to 2 of SPAN > DIV > BODY > HTML > #document
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 23 of #text > SPAN > DIV > BODY > HTML > #document to 23 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 23 of #text > SPAN > DIV > BODY > HTML > #document to 23 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
@@ -37,13 +39,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 628x60 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 334x31
-          RenderText {#text} at (14,14) size 230x31
-            text run at (14,14) width 114: "Fourscore "
-            text run at (128,14) width 46: "and "
-            text run at (174,14) width 70: "seven "
-          RenderText {#text} at (244,14) size 104x31
-            text run at (244,14) width 104: "years ago"
+      RenderBlock {DIV} at (0,0) size 628x59 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 314x32
+          RenderText {#text} at (14,14) size 217x32
+            text run at (14,14) width 111: "Fourscore "
+            text run at (125,14) width 44: "and "
+            text run at (169,14) width 62: "seven "
+          RenderText {#text} at (231,14) size 97x32
+            text run at (231,14) width 97: "years ago"
         RenderText {#text} at (0,0) size 0x0
 caret: position 23 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
