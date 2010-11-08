@@ -230,17 +230,10 @@ WebInspector.BreakpointManager.prototype = {
 
     debuggerPaused: function(details)
     {
-        if (details.eventType === WebInspector.DebuggerEventTypes.JavaScriptPause)
+        if (details.eventType !== WebInspector.DebuggerEventTypes.NativeBreakpoint)
             return;
 
-        if (details.eventData && details.eventData.breakpointId)
-            var breakpointId = details.eventData.breakpointId;
-        else if (details.callFrames && details.callFrames.length)
-            var breakpointId = WebInspector.Breakpoint.jsBreakpointId(details.callFrames[0].sourceID, details.callFrames[0].line);
-        else
-            return;
-
-        var breakpoint = this._breakpoints[breakpointId];
+        var breakpoint = this._breakpoints[details.eventData.breakpointId];
         if (!breakpoint)
             return;
 
@@ -330,11 +323,6 @@ WebInspector.Breakpoint = function(breakpointManager, sourceID, url, line, enabl
     this._breakpointManager = breakpointManager;
 }
 
-WebInspector.Breakpoint.jsBreakpointId = function(sourceID, line)
-{
-    return sourceID + ":" + line;
-}
-
 WebInspector.Breakpoint.prototype = {
     get enabled()
     {
@@ -364,7 +352,7 @@ WebInspector.Breakpoint.prototype = {
 
     get id()
     {
-        return WebInspector.Breakpoint.jsBreakpointId(this.sourceID, this.line);
+        return this.sourceID + ":" + this.line;
     },
 
     get condition()

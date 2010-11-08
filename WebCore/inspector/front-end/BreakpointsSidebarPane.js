@@ -259,16 +259,9 @@ WebInspector.EventListenerBreakpointsSidebarPane = function()
     WebInspector.breakpointManager.addEventListener("event-listener-breakpoint-added", this._breakpointAdded, this);
 
     this._breakpointItems = {};
-    this._createCategory("Keyboard", "listener", ["keydown", "keyup", "keypress", "textInput"]);
     this._createCategory("Mouse", "listener", ["click", "dblclick", "mousedown", "mouseup", "mouseover", "mousemove", "mouseout", "mousewheel"]);
-    // FIXME: uncomment following once inspector stops being drop targer in major ports.
-    // Otherwise, inspector page reacts on drop event and tries to load the event data.
-    // this._createCategory("Drag", "listener", ["drag", "drop", "dragstart", "dragend", "dragenter", "dragleave", "dragover"]);
-    this._createCategory("Control", "listener", ["resize", "scroll", "zoom", "focus", "blur", "select", "change", "submit", "reset"]);
-    this._createCategory("Clipboard", "listener", ["copy", "cut", "paste", "beforecopy", "beforecut", "beforepaste"]);
-    this._createCategory("Load", "listener", ["load", "unload", "abort", "error"]);
-    this._createCategory("DOM Mutation", "listener", ["DOMActivate", "DOMFocusIn", "DOMFocusOut", "DOMAttrModified", "DOMCharacterDataModified", "DOMNodeInserted", "DOMNodeInsertedIntoDocument", "DOMNodeRemoved", "DOMNodeRemovedFromDocument", "DOMSubtreeModified", "DOMContentLoaded"]);
-    this._createCategory("Device", "listener", ["deviceorientation", "devicemotion"]);
+    this._createCategory("Keyboard", "listener", ["keydown", "keypress", "keyup"]);
+    this._createCategory("HTML frame/object", "listener", ["load", "error", "resize", "scroll"]);
     this._createCategory("Timer", "instrumentation", ["setTimer", "clearTimer", "timerFired"]);
 }
 
@@ -292,9 +285,6 @@ WebInspector.EventListenerBreakpointsSidebarPane.prototype = {
             var title = WebInspector.EventListenerBreakpoint.eventNameForUI(eventName);
             breakpointItem.element = new TreeElement(title);
             categoryItem.element.appendChild(breakpointItem.element);
-            var hitMarker = document.createElement("div");
-            hitMarker.className = "breakpoint-hit-marker";
-            breakpointItem.element.listItemElement.appendChild(hitMarker);
             breakpointItem.element.listItemElement.addStyleClass("source-code");
             breakpointItem.element.selectable = true;
 

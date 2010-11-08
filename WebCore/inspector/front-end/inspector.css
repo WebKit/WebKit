@@ -1033,6 +1033,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     right: 0;
     bottom: 0;
     width: 325px;
+    background-color: rgb(245, 245, 245);
     border-left: 1px solid rgb(64%, 64%, 64%);
     cursor: default;
     overflow: auto;
@@ -1477,7 +1478,6 @@ body.inactive .placard.selected {
 .event-bar {
     position: relative;
     left: 10px;
-    margin-right: 10px;
 }
 
 .event-bars .event-bar .header {
@@ -1716,6 +1716,7 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
 .pane > .body {
     position: relative;
     display: none;
+    background-color: white;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -2631,6 +2632,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     right: 0;
     bottom: 0;
     width: 225px;
+    background-color: rgb(245, 245, 245);
     border-left: 1px solid rgb(64%, 64%, 64%);
     cursor: default;
     overflow: auto;
@@ -4121,16 +4123,6 @@ ol.breakpoint-list {
 
 .pane .breakpoint-hit {
     background-color: rgb(255, 255, 194);
-}
-
-li.breakpoint-hit .breakpoint-hit-marker {
-    background-color: rgb(255, 255, 194);
-    height: 18px;
-    left: 0px;
-    margin-top: -16px;
-    position: absolute;
-    right: 0px;
-    z-index: -1;
 }
 
 .webkit-html-js-node, .webkit-html-css-node {
