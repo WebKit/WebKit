@@ -377,6 +377,9 @@ animations/animation-iteration-event-destroy-renderer.html
 # Sometimes times out http://webkit.org/b/49014
 fast/workers/storage/change-version-handle-reuse-sync.html
 
+# Sometimes fails http://webkit.org/b/49182
+animations/stop-animation-on-suspend.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
