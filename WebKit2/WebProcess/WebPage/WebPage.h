@@ -92,7 +92,7 @@ public:
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
     virtual ~WebPage();
 
-    // Used by MessageSenderWithDestinationID.
+    // Used by MessageSender.
     CoreIPC::Connection* connection() const;
     uint64_t destinationID() const { return pageID(); }
 

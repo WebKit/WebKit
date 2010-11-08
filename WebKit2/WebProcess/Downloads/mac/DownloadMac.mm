@@ -147,8 +147,8 @@ void Download::platformInvalidate()
 
 - (void)download:(NSURLDownload *)download didCreateDestination:(NSString *)path
 {
-    // FIXME: Implement.
-    notImplemented();
+    if (_download)
+        _download->didCreateDestination(path);
 }
 
 - (void)downloadDidFinish:(NSURLDownload *)download

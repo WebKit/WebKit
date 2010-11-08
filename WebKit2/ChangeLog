@@ -2,6 +2,57 @@
 
         Reviewed by Adam Roben.
 
+        Add the ability to send messages to DownloadProxy objects
+        https://bugs.webkit.org/show_bug.cgi?id=49213
+
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        Add Download.messages.in.
+
+        * Platform/CoreIPC/MessageID.h:
+        Add MessageClassDownloadProxy message class.
+
+        * Platform/CoreIPC/MessageSender.h:
+        Include Connection.h directly since it's required.
+
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::didBegin):
+        (WebKit::DownloadProxy::didCreateDestination):
+        (WebKit::DownloadProxy::didFinish):
+        Add stubs.
+
+        * UIProcess/Downloads/DownloadProxy.messages.in: Added.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveMessage):
+        Handle DownloadProxy messages.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveMessage):
+        Hand DownloadProxy messages off to the context.
+
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
+        * WebProcess/Downloads/Download.cpp:
+        (WebKit::Download::didBegin):
+        (WebKit::Download::didReceiveData):
+        (WebKit::Download::didCreateDestination):
+        (WebKit::Download::didFinish):
+        Send messages.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate download:didCreateDestination:]):
+        Call Download::didCreateDestination.
+
+        * win/WebKit2.vcproj:
+        Add new files.
+
+2010-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
         Add DownloadProxy object
         https://bugs.webkit.org/show_bug.cgi?id=49211
 

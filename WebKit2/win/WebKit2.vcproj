@@ -2067,6 +2067,10 @@
 					RelativePath="..\UIProcess\Downloads\DownloadProxy.h"
 					>
 				</File>
+    			<File
+    				RelativePath="..\UIProcess\Downloads\DownloadProxy.messages.in"
+    				>
+    			</File>
 			</Filter>
 			<Filter
 				Name="Launcher"
@@ -2428,6 +2432,14 @@
 		<Filter
 			Name="Derived Sources"
 			>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DownloadProxyMessageReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DownloadProxyMessages.h"
+				>
+			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\WebInspectorMessageReceiver.cpp"
 				>

@@ -85,9 +85,11 @@ VPATH = \
     WebProcess/WebPage \
     WebProcess \
     UIProcess \
+    UIProcess/Downloads \
     UIProcess/Plugins
 
 MESSAGE_RECEIVERS = \
+    DownloadProxy.messages.in \
     PluginControllerProxy.messages.in \
     PluginProcess.messages.in \
     PluginProcessProxy.messages.in \

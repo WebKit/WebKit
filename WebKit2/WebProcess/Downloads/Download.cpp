@@ -25,6 +25,10 @@
 
 #include "Download.h"
 
+#include "Connection.h"
+#include "DownloadProxyMessages.h"
+#include "WebProcess.h"
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -46,19 +50,28 @@ Download::~Download()
     platformInvalidate();
 }
 
+CoreIPC::Connection* Download::connection() const
+{
+    return WebProcess::shared().connection();
+}
+
 void Download::didBegin()
 {
-    // FIXME: Implement.
+    send(Messages::DownloadProxy::DidBegin());
 }
 
 void Download::didReceiveData(uint64_t length)
 {
-    // FIXME: Implement.
+}
+
+void Download::didCreateDestination(const String& path)
+{
+    send(Messages::DownloadProxy::DidCreateDestination(path));
 }
 
 void Download::didFinish()
 {
-    // FIXME: Implement.
+    send(Messages::DownloadProxy::DidFinish());
 }
 
 } // namespace WebKit

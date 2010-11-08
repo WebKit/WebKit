@@ -27,10 +27,9 @@
 #define MessageSender_h
 
 #include <wtf/Assertions.h>
+#include "Connection.h"
 
 namespace CoreIPC {
-
-class Connection;
     
 template<typename T> class MessageSender {
 public:

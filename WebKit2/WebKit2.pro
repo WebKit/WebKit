@@ -149,6 +149,7 @@ QMAKE_CXXFLAGS += "-include $$PREFIX_HEADER"
 DEFINES += BUILDING_QT__
 
 WEBKIT2_GENERATED_HEADERS = \
+    $$OUTPUT_DIR/WebKit2/generated/DownloadProxyMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/PluginControllerProxyMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/PluginProcessMessages.h \
     $$OUTPUT_DIR/WebKit2/generated/PluginProcessProxyMessages.h \
@@ -161,6 +162,7 @@ WEBKIT2_GENERATED_HEADERS = \
     $$OUTPUT_DIR/WebKit2/generated/WebProcessProxyMessages.h
 
 WEBKIT2_GENERATED_SOURCES = \
+    $$OUTPUT_DIR/WebKit2/generated/DownloadProxyMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/PluginControllerProxyMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/PluginProcessMessageReceiver.cpp \
     $$OUTPUT_DIR/WebKit2/generated/PluginProcessProxyMessageReceiver.cpp \

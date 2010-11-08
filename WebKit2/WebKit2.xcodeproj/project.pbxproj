@@ -159,6 +159,8 @@
 		1AADE6FF10D855FC00D3D63D /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */; };
 		1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */; };
 		1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */; };
+		1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */; };
+		1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */; };
 		1AC41AC71263C88300054E94 /* BinarySemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC41AC51263C88300054E94 /* BinarySemaphore.h */; };
 		1AC41AC81263C88300054E94 /* BinarySemaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC41AC61263C88300054E94 /* BinarySemaphore.cpp */; };
 		1AE117F611DBB30900981615 /* ProcessLauncher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE117F511DBB30900981615 /* ProcessLauncher.cpp */; };
@@ -692,6 +694,9 @@
 		1AADE6FE10D855FC00D3D63D /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxy.h; sourceTree = "<group>"; };
 		1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxy.cpp; sourceTree = "<group>"; };
+		1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DownloadProxy.messages.in; sourceTree = "<group>"; };
+		1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxyMessages.h; sourceTree = "<group>"; };
 		1AC41AC51263C88300054E94 /* BinarySemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinarySemaphore.h; sourceTree = "<group>"; };
 		1AC41AC61263C88300054E94 /* BinarySemaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinarySemaphore.cpp; sourceTree = "<group>"; };
 		1AE117F511DBB30900981615 /* ProcessLauncher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProcessLauncher.cpp; sourceTree = "<group>"; };
@@ -1436,6 +1441,7 @@
 			children = (
 				1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */,
 				1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */,
+				1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */,
 			);
 			path = Downloads;
 			sourceTree = "<group>";
@@ -2026,6 +2032,8 @@
 		C0CE729D1247E71D00BC0EC4 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
+				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
 				1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */,
 				1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */,
 				1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */,
@@ -2327,6 +2335,7 @@
 				BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */,
 				1A2D956F12848564001EB962 /* ChildProcess.h in Headers */,
 				1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */,
+				1AB7D61A1288B9D900CFD08C /* DownloadProxyMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2672,6 +2681,7 @@
 				BCEE7AD012817988009827DA /* WebProcessProxyMessageReceiver.cpp in Sources */,
 				1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */,
 				1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */,
+				1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -27,7 +27,14 @@
 #define DownloadProxy_h
 
 #include "APIObject.h"
+#include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
+
+namespace CoreIPC {
+    class ArgumentDecoder;
+    class Connection;
+    class MessageID;
+}
 
 namespace WebKit {
 
@@ -44,10 +51,17 @@ public:
 
     void invalidate();
 
+    void didReceiveDownloadProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
+
 private:
     explicit DownloadProxy(WebContext*);
 
     virtual Type type() const { return APIType; }
+
+    // Message handlers.
+    void didBegin();
+    void didCreateDestination(const String& path);
+    void didFinish();
 
     WebContext* m_webContext;
     uint64_t m_downloadID;

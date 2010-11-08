@@ -25,6 +25,10 @@
 
 #include "DownloadProxy.h"
 
+#include "NotImplemented.h"
+#include <wtf/text/WTFString.h>
+#include <wtf/text/CString.h>
+
 namespace WebKit {
 
 static uint64_t generateDownloadID()
@@ -52,6 +56,31 @@ void DownloadProxy::invalidate()
 {
     ASSERT(m_webContext);
     m_webContext = 0;
+}
+
+void DownloadProxy::didBegin()
+{
+    if (!m_webContext)
+        return;
+
+    notImplemented();
+}
+
+void DownloadProxy::didCreateDestination(const String& path)
+{
+    if (!m_webContext)
+        return;
+
+    printf("path: %s\n", path.ascii().data());
+    notImplemented();
+}
+
+void DownloadProxy::didFinish()
+{
+    if (!m_webContext)
+        return;
+
+    notImplemented();
 }
 
 } // namespace WebKit
