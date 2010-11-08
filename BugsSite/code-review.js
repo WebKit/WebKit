@@ -253,7 +253,7 @@
   }
 
   function crawlDiff() {
-    $('.Line').each(idify).each(hoverify).dblclick(addCommentField);
+    $('.Line').each(idify).each(hoverify);
     $('.FileDiff').each(function() {
       var file_name = $(this).children('h1').text();
       files[file_name] = this;

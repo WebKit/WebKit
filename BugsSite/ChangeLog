@@ -1,3 +1,16 @@
+2010-11-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Restore normal meaning of double-click on patch review page?
+        https://bugs.webkit.org/show_bug.cgi?id=47641
+
+        After this patch, you need to click on the line numbers to add a
+        comment.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2010-10-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
