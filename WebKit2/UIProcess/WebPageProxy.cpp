@@ -1261,7 +1261,7 @@ void WebPageProxy::didGetSourceForFrame(const String& resultString, uint64_t cal
 
 void WebPageProxy::focusedFrameChanged(uint64_t frameID)
 {
-    m_focusedFrame = process()->webFrame(frameID);
+    m_focusedFrame = frameID ? process()->webFrame(frameID) : 0;
 }
 
 #if USE(ACCELERATED_COMPOSITING)

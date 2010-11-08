@@ -1,3 +1,17 @@
+2010-11-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49201
+        Crash when closing a page
+
+        Handle null frame by passing a 0 frame id (normal ones start from 1).
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::focusedFrameChanged):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedFrameChanged):
+
 2010-11-08  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

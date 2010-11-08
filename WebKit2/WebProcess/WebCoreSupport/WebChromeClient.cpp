@@ -113,9 +113,9 @@ void WebChromeClient::focusedNodeChanged(Node*)
 
 void WebChromeClient::focusedFrameChanged(Frame* frame)
 {
-    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrame* webFrame = frame ? static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame() : 0;
 
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame->frameID()), m_page->pageID());
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? webFrame->frameID() : 0), m_page->pageID());
 }
 
 Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
