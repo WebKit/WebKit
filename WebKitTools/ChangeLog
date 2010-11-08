@@ -1,3 +1,12 @@
+2010-11-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Ignore the system scrollbar setting.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues): Set the scrollbar default.
+
 2010-11-05  Adam Roben  <aroben@apple.com>
 
         Make webkitpy.common.system.executive_unittest pass when running under
