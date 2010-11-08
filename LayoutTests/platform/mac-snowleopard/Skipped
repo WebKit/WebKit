@@ -140,3 +140,6 @@ platform/mac/editing/spelling/forward-delete-into-autocorrected-word.html
 platform/mac/editing/spelling/move-cursor-around-misspelled-word.html
 platform/mac/editing/spelling/move-cursor-to-autocorrected-word.html
 platform/mac/editing/spelling/move-cursor-to-beginning-of-autocorrected-word.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=49194
+plugins/nested-plugin-objects.html
