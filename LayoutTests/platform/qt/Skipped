@@ -5488,3 +5488,7 @@ svg/custom/text-zoom.xhtml
 # [Qt] svg/animations/animate-path-nested-transforms.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=48987
 svg/animations/animate-path-nested-transforms.html
+
+# [Qt] REGRESSION (r71465): editing/selection/after-line-break.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=49127
+editing/selection/after-line-break.html
