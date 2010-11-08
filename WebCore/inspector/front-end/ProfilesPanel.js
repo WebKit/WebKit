@@ -386,6 +386,20 @@ WebInspector.ProfilesPanel.prototype = {
         return result;
     },
 
+    hasTemporaryProfile: function(typeId)
+    {
+        var profilesCount = this._profiles.length;
+        for (var i = 0; i < profilesCount; ++i)
+            if (this._profiles[i].typeId === typeId && this._profiles[i].isTemporary)
+                return true;
+        return false;
+    },
+
+    hasProfile: function(profile)
+    {
+        return !!this._profilesIdMap[this._makeKey(profile.uid, profile.typeId)];
+    },
+
     updateProfile: function(profile)
     {
         var profilesCount = this._profiles.length;
@@ -538,10 +552,11 @@ WebInspector.ProfilesPanel.prototype = {
             profileHeaders.sort(function(a, b) { return a.uid - b.uid; });
             var profileHeadersLength = profileHeaders.length;
             for (var i = 0; i < profileHeadersLength; ++i)
-                WebInspector.addProfileHeader(profileHeaders[i]);
+                if (!this.hasProfile(profileHeaders[i]))
+                    WebInspector.addProfileHeader(profileHeaders[i]);
         }
 
-        InspectorBackend.getProfileHeaders(populateCallback);
+        InspectorBackend.getProfileHeaders(populateCallback.bind(this));
 
         this._profilesWereRequested = true;
     },

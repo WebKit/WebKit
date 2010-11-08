@@ -54,6 +54,7 @@ public:
         inspectorAttachedHeight,
         pauseOnExceptionsState,
         consoleMessagesEnabled,
+        userInitiatedProfiling,
         lastPropertyId
     };
 

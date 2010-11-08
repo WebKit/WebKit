@@ -1533,7 +1533,7 @@ WebInspector.addProfileHeader = function(profile)
 WebInspector.setRecordingProfile = function(isProfiling)
 {
     this.panels.profiles.getProfileType(WebInspector.CPUProfileType.TypeId).setRecordingProfile(isProfiling);
-    if (this._previousIsProfiling !== isProfiling) {
+    if (this.panels.profiles.hasTemporaryProfile(WebInspector.CPUProfileType.TypeId) !== isProfiling) {
         if (!this._temporaryRecordingProfile) {
             this._temporaryRecordingProfile = {
                 typeId: WebInspector.CPUProfileType.TypeId,
@@ -1542,7 +1542,6 @@ WebInspector.setRecordingProfile = function(isProfiling)
                 isTemporary: true
             };
         }
-        this._previousIsProfiling = isProfiling;
         if (isProfiling)
             this.panels.profiles.addProfileHeader(this._temporaryRecordingProfile);
         else

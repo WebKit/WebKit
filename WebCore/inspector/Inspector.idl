@@ -149,8 +149,8 @@ module core {
         [handler=Controller] void enableProfiler(in boolean always);
         [handler=Controller] void disableProfiler(in boolean always);
 
-        [handler=Profiler] void startProfiling();
-        [handler=Profiler] void stopProfiling();
+        [handler=Controller] void startProfiling();
+        [handler=Controller] void stopProfiling();
 
         [handler=Profiler] void getProfileHeaders(out Array headers);
         [handler=Profiler] void getProfile(in String type, in unsigned long uid, out Object profile);

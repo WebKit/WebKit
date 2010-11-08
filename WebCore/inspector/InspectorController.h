@@ -239,7 +239,9 @@ public:
     void addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL);
     bool isRecordingUserInitiatedProfile() const;
     String getCurrentUserInitiatedProfileName(bool incrementProfileNumber = false);
+    void startProfiling() { startUserInitiatedProfiling(); }
     void startUserInitiatedProfiling();
+    void stopProfiling() { stopUserInitiatedProfiling(); }
     void stopUserInitiatedProfiling();
     void enableProfiler(bool always = false, bool skipRecompile = false);
     void disableProfiler(bool always = false);
@@ -280,9 +282,14 @@ private:
     friend class InspectorInstrumentation;
     friend class InjectedScriptHost;
 
+    enum ProfilerRestoreAction {
+        ProfilerRestoreNoAction = 0,
+        ProfilerRestoreResetAgent = 1
+    };
+    
     void populateScriptObjects();
     void restoreDebugger();
-    void restoreProfiler();
+    void restoreProfiler(ProfilerRestoreAction action);
     void unbindAllResources();
     void setSearchingForNode(bool enabled);
 
