@@ -220,6 +220,7 @@ class Build(object):
         results_html = "%s/results.html" % (self.results_url())
         # FIXME: This should use NetworkTransaction's 404 handling instead.
         try:
+            # It seems this can return None if the url redirects and then returns 404.
             return urllib2.urlopen(results_html)
         except urllib2.HTTPError, error:
             if error.code != 404:

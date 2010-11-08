@@ -58,6 +58,8 @@ class LayoutTestResults(object):
 
     @classmethod
     def _parse_results_html(cls, page):
+        if not page:
+            return None
         parsed_results = {}
         tables = BeautifulSoup(page).findAll("table")
         for table in tables:

@@ -111,6 +111,14 @@ class BuilderTest(unittest.TestCase):
             self.assertEqual(self.builder._revision_and_build_for_filename(filename), revision_and_build)
 
 
+class BuildTest(unittest.TestCase):
+    def test_layout_test_results(self):
+        build = Build(None, None, None, None)
+        build._fetch_results_html = lambda: None
+        # Test that layout_test_results() returns None if the fetch fails.
+        self.assertEqual(build.layout_test_results(), None)
+
+
 class BuildBotTest(unittest.TestCase):
 
     _example_one_box_status = '''
