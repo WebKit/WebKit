@@ -26,9 +26,6 @@
 #include "config.h"
 #include "PlaceholderDocument.h"
 
-#include "CSSStyleSelector.h"
-#include "StyleSheetList.h"
-
 namespace WebCore {
 
 void PlaceholderDocument::attach()
