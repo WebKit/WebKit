@@ -89,11 +89,11 @@ Test 15, RTL:
   Moving forward: "car means ABC."[0, 14]
   Moving backward:  "car means ABC."[14, 0]
 Test 16, LTR:
-  Moving forward: "᪜car DEF ABC.᪝"[1, 13]
-  Moving backward:  "᪜car DEF ABC.᪝"[13, 1]
+  Moving forward: "᪜car DEF ABC.᪝"[0, 14]
+  Moving backward:  "᪜car DEF ABC.᪝"[14, 0]
 Test 16, RTL:
-  Moving forward: "᪜car DEF ABC.᪝"[1, 13]
-  Moving backward:  "᪜car DEF ABC.᪝"[13, 1]
+  Moving forward: "᪜car DEF ABC.᪝"[0, 14]
+  Moving backward:  "᪜car DEF ABC.᪝"[14, 0]
 Test 17, LTR:
   Moving forward: "he said "᪜car DEF ABC᪝.""[0, 24]
   Moving backward:  "he said "᪜car DEF ABC᪝.""[24, 0]

@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,36) size 784x36
         RenderText {#text} at (0,0) size 14x17
           text run at (0,0) width 7: "a"
-          text run at (7,0) width 7 LTR override: "e\x{300}"
+          text run at (7,0) width 7 LTR override: "\x{202D}e\x{300}"
         RenderBR {BR} at (14,14) size 0x0
         RenderText {#text} at (0,18) size 14x17
           text run at (0,18) width 14: "ae\x{300}"
