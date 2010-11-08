@@ -275,6 +275,10 @@ void ChromeClient::focusedNodeChanged(Node*)
 {
 }
 
+void ChromeClient::focusedFrameChanged(Frame*)
+{
+}
+
 bool ChromeClient::canRunBeforeUnloadConfirmPanel()
 {
     return true;

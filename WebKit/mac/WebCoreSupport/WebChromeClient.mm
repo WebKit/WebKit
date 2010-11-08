@@ -200,6 +200,10 @@ void WebChromeClient::focusedNodeChanged(Node*)
 {
 }
 
+void WebChromeClient::focusedFrameChanged(Frame*)
+{
+}
+
 Page* WebChromeClient::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction&)
 {
     NSURLRequest *URLRequest = nil;

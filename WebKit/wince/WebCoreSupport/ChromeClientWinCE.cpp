@@ -174,6 +174,10 @@ void ChromeClientWinCE::focusedNodeChanged(Node*)
     notImplemented();
 }
 
+void ChromeClientWinCE::focusedFrameChanged(Frame*)
+{
+}
+
 bool ChromeClientWinCE::canRunBeforeUnloadConfirmPanel()
 {
     return true;

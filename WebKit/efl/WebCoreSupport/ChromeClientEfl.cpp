@@ -91,6 +91,10 @@ void ChromeClientEfl::focusedNodeChanged(Node*)
     notImplemented();
 }
 
+void ChromeClientEfl::focusedFrameChanged(Frame*)
+{
+}
+
 FloatRect ChromeClientEfl::windowRect()
 {
     Ecore_Evas* ee = 0;

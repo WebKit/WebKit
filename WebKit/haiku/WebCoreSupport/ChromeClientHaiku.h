@@ -43,83 +43,84 @@ namespace WebCore {
     public:
         ChromeClientHaiku();
         virtual ~ChromeClientHaiku();
-        void chromeDestroyed();
+        virtual void chromeDestroyed();
 
-        void setWindowRect(const FloatRect&);
-        FloatRect windowRect();
+        virtual void setWindowRect(const FloatRect&);
+        virtual FloatRect windowRect();
 
-        FloatRect pageRect();
+        virtual FloatRect pageRect();
 
-        float scaleFactor();
+        virtual float scaleFactor();
 
-        void focus();
-        void unfocus();
+        virtual void focus();
+        virtual void unfocus();
 
-        bool canTakeFocus(FocusDirection);
-        void takeFocus(FocusDirection);
+        virtual bool canTakeFocus(FocusDirection);
+        virtual void takeFocus(FocusDirection);
 
-        void focusedNodeChanged(Node*);
+        virtual void focusedNodeChanged(Node*);
+        virtual void focusedFrameChanged(Frame*);
 
-        Page* createWindow(Frame*, const FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&);
-        Page* createModalDialog(Frame*, const FrameLoadRequest&);
-        void show();
+        virtual Page* createWindow(Frame*, const FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&);
+        virtual Page* createModalDialog(Frame*, const FrameLoadRequest&);
+        virtual void show();
 
-        bool canRunModal();
-        void runModal();
+        virtual bool canRunModal();
+        virtual void runModal();
 
-        void setToolbarsVisible(bool);
-        bool toolbarsVisible();
+        virtual void setToolbarsVisible(bool);
+        virtual bool toolbarsVisible();
 
-        void setStatusbarVisible(bool);
-        bool statusbarVisible();
+        virtual void setStatusbarVisible(bool);
+        virtual bool statusbarVisible();
 
-        void setScrollbarsVisible(bool);
-        bool scrollbarsVisible();
+        virtual void setScrollbarsVisible(bool);
+        virtual bool scrollbarsVisible();
 
-        void setMenubarVisible(bool);
-        bool menubarVisible();
+        virtual void setMenubarVisible(bool);
+        virtual bool menubarVisible();
 
-        void setResizable(bool);
+        virtual void setResizable(bool);
 
-        void addMessageToConsole(const String& message, unsigned int lineNumber,
+        virtual void addMessageToConsole(const String& message, unsigned int lineNumber,
                                  const String& sourceID);
-        void addMessageToConsole(MessageSource, MessageLevel, const String& message,
+        virtual void addMessageToConsole(MessageSource, MessageLevel, const String& message,
                                  unsigned int lineNumber, const String& sourceID);
-        void addMessageToConsole(MessageSource, MessageType, MessageLevel,
+        virtual void addMessageToConsole(MessageSource, MessageType, MessageLevel,
                                  const String&, unsigned int, const String&);
 
-        bool canRunBeforeUnloadConfirmPanel();
+        virtual bool canRunBeforeUnloadConfirmPanel();
 
-        bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame);
+        virtual bool runBeforeUnloadConfirmPanel(const String& message, Frame* frame);
 
-        void closeWindowSoon();
+        virtual void closeWindowSoon();
 
-        void runJavaScriptAlert(Frame*, const String&);
-        bool runJavaScriptConfirm(Frame*, const String&);
-        bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
-        bool shouldInterruptJavaScript();
+        virtual void runJavaScriptAlert(Frame*, const String&);
+        virtual bool runJavaScriptConfirm(Frame*, const String&);
+        virtual bool runJavaScriptPrompt(Frame*, const String& message, const String& defaultValue, String& result);
+        virtual bool shouldInterruptJavaScript();
 
-        void setStatusbarText(const WTF::String&);
-        bool tabsToLinks() const;
-        IntRect windowResizerRect() const;
+        virtual void setStatusbarText(const WTF::String&);
+        virtual bool tabsToLinks() const;
+        virtual IntRect windowResizerRect() const;
 
-        void invalidateWindow(const IntRect&, bool);
-        void invalidateContentsAndWindow(const IntRect&, bool);
-        void invalidateContentsForSlowScroll(const IntRect&, bool);
-        void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
+        virtual void invalidateWindow(const IntRect&, bool);
+        virtual void invalidateContentsAndWindow(const IntRect&, bool);
+        virtual void invalidateContentsForSlowScroll(const IntRect&, bool);
+        virtual void scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
 
-        IntPoint screenToWindow(const IntPoint&) const;
-        IntRect windowToScreen(const IntRect&) const;
-        PlatformPageClient platformPageClient() const;
-        void contentsSizeChanged(Frame*, const IntSize&) const;
-        void scrollRectIntoView(const IntRect&, const ScrollView*) const;
+        virtual IntPoint screenToWindow(const IntPoint&) const;
+        virtual IntRect windowToScreen(const IntRect&) const;
+        virtual PlatformPageClient platformPageClient() const;
+        virtual void contentsSizeChanged(Frame*, const IntSize&) const;
+        virtual void scrollRectIntoView(const IntRect&, const ScrollView*) const;
 
         void addToDirtyRegion(const IntRect&);
         void scrollBackingStore(int, int, const IntRect&, const IntRect&);
         void updateBackingStore();
 
-        void scrollbarsModeDidChange() const { }
-        void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
+        virtual void scrollbarsModeDidChange() const { }
+        virtual void mouseDidMoveOverElement(const HitTestResult&, unsigned modifierFlags);
 
         void setToolTip(const String&);
 
@@ -127,7 +128,9 @@ namespace WebCore {
 
         void print(Frame*);
 
-        void exceededDatabaseQuota(Frame*, const String& databaseName);
+#if ENABLE(DATABASE)
+        virtual void exceededDatabaseQuota(Frame*, const String& databaseName);
+#endif
 
         virtual bool selectItemWritingDirectionIsNatural();
         virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
@@ -143,19 +146,19 @@ namespace WebCore {
 
         // This is an asynchronous call. The ChromeClient can display UI asking the user for permission
         // to use Geolococation.
-        void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
-        void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) { }
+        virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
+        virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) { }
 
-        void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
-        void chooseIconForFiles(const Vector<String>&, FileChooser*);
+        virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
+        virtual void chooseIconForFiles(const Vector<String>&, FileChooser*);
 
-        void setCursor(const Cursor&);
+        virtual void setCursor(const Cursor&);
 
         // Notification that the given form element has changed. This function
         // will be called frequently, so handling should be very fast.
-        void formStateDidChange(const Node*);
+        virtual void formStateDidChange(const Node*);
 
-        PassOwnPtr<HTMLParserQuirks> createHTMLParserQuirks();
+        virtual PassOwnPtr<HTMLParserQuirks> createHTMLParserQuirks();
     };
 
 } // namespace WebCore

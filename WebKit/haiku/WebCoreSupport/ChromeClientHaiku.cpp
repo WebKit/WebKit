@@ -108,6 +108,10 @@ void ChromeClientHaiku::focusedNodeChanged(Node*)
 {
 }
 
+void ChromeClientHaiku::focusedFrameChanged(Frame*)
+{
+}
+
 Page* ChromeClientHaiku::createWindow(Frame*, const FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&)
 {
     notImplemented();

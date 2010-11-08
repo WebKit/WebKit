@@ -94,6 +94,7 @@ namespace WebCore {
         virtual void takeFocus(FocusDirection) = 0;
 
         virtual void focusedNodeChanged(Node*) = 0;
+        virtual void focusedFrameChanged(Frame*) = 0;
 
         // The Frame pointer provides the ChromeClient with context about which
         // Frame wants to create the new Page.  Also, the newly created window

@@ -142,6 +142,11 @@ WKFrameRef WKPageGetMainFrame(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->mainFrame());
 }
 
+WKFrameRef WKPageGetFocusedFrame(WKPageRef pageRef)
+{
+    return toAPI(toImpl(pageRef)->focusedFrame());
+}
+
 WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->inspector());

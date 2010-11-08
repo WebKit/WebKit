@@ -54,6 +54,7 @@ public:
     virtual void takeFocus(WebCore::FocusDirection);
 
     virtual void focusedNodeChanged(WebCore::Node*);
+    virtual void focusedFrameChanged(WebCore::Frame*);
 
     virtual WebCore::Page* createWindow(WebCore::Frame*, const WebCore::FrameLoadRequest&, const WebCore::WindowFeatures&, const WebCore::NavigationAction&);
     virtual void show();

@@ -111,6 +111,13 @@ void WebChromeClient::focusedNodeChanged(Node*)
     notImplemented();
 }
 
+void WebChromeClient::focusedFrameChanged(Frame* frame)
+{
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+
+    WebProcess::shared().connection()->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame->frameID()), m_page->pageID());
+}
+
 Page* WebChromeClient::createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
     uint32_t modifiers = modifiersForNavigationAction(navigationAction);
@@ -221,7 +228,7 @@ bool WebChromeClient::canRunBeforeUnloadConfirmPanel()
 
 bool WebChromeClient::runBeforeUnloadConfirmPanel(const String& message, Frame* frame)
 {
-    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
     bool shouldClose = false;
     if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::RunBeforeUnloadConfirmPanel(message, webFrame->frameID()), Messages::WebPageProxy::RunBeforeUnloadConfirmPanel::Reply(shouldClose), m_page->pageID()))
@@ -251,7 +258,7 @@ void WebChromeClient::closeWindowSoon()
 
 void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
 {
-    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptAlert(m_page, alertText, webFrame);
@@ -261,7 +268,7 @@ void WebChromeClient::runJavaScriptAlert(Frame* frame, const String& alertText)
 
 bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 {
-    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptConfirm(m_page, message, webFrame);
@@ -275,7 +282,7 @@ bool WebChromeClient::runJavaScriptConfirm(Frame* frame, const String& message)
 
 bool WebChromeClient::runJavaScriptPrompt(Frame* frame, const String& message, const String& defaultValue, String& result)
 {
-    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
     // Notify the bundle client.
     m_page->injectedBundleUIClient().willRunJavaScriptPrompt(m_page, message, defaultValue, webFrame);
@@ -361,7 +368,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
 void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
 #if PLATFORM(QT)
-    WebFrame* webFrame =  static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
+    WebFrame* webFrame = static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame();
 
     if (!m_page->mainFrame() || m_page->mainFrame() != webFrame)
         return;

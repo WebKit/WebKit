@@ -97,6 +97,7 @@ namespace WebCore {
         void takeFocus(FocusDirection) const;
 
         void focusedNodeChanged(Node*) const;
+        void focusedFrameChanged(Frame*) const;
 
         Page* createWindow(Frame*, const FrameLoadRequest&, const WindowFeatures&, const NavigationAction&) const;
         void show() const;
