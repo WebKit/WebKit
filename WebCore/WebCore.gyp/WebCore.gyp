@@ -134,6 +134,7 @@
       '../loader',
       '../loader/appcache',
       '../loader/archive',
+      '../loader/cache',
       '../loader/icon',
       '../mathml',
       '../notifications',

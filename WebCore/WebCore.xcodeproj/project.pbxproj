@@ -16021,6 +16021,15 @@
 			name = XML;
 			sourceTree = "<group>";
 		};
+		A8D2B2521287A56000AF4DDA /* cache */ = {
+			isa = PBXGroup;
+			children = (
+				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
+				BCB16BFF0979C3BD00467741 /* Cache.h */,
+			);
+			path = cache;
+			sourceTree = "<group>";
+		};
 		A9D247F90D757E4100FDF959 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
@@ -17244,12 +17253,11 @@
 		BCB16BFB0979C38700467741 /* loader */ = {
 			isa = PBXGroup;
 			children = (
+				A8D2B2521287A56000AF4DDA /* cache */,
 				1A8F6BB00DB55CDC001DB794 /* appcache */,
 				512DD8E80D91E691000F89EE /* archive */,
 				5126E6B60A2E3AEF005C29FA /* icon */,
 				93A1EAA20A5634D8006960A0 /* mac */,
-				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
-				BCB16BFF0979C3BD00467741 /* Cache.h */,
 				BCB16C000979C3BD00467741 /* CachedCSSStyleSheet.cpp */,
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
 				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,

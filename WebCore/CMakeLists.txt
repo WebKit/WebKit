@@ -22,6 +22,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/appcache"
     "${WEBCORE_DIR}/loader/archive"
+    "${WEBCORE_DIR}/loader/cache"
     "${WEBCORE_DIR}/loader/icon"
     "${WEBCORE_DIR}/mathml"
     "${WEBCORE_DIR}/notifications"
@@ -1138,7 +1139,6 @@ SET(WebCore_SOURCES
     inspector/ScriptBreakpoint.cpp
     inspector/TimelineRecordFactory.cpp
 
-    loader/Cache.cpp
     loader/CachedCSSStyleSheet.cpp
     loader/CachedFont.cpp
     loader/CachedImage.cpp
@@ -1190,6 +1190,8 @@ SET(WebCore_SOURCES
     loader/archive/ArchiveFactory.cpp
     loader/archive/ArchiveResource.cpp
     loader/archive/ArchiveResourceCollection.cpp
+
+    loader/cache/Cache.cpp
 
     loader/icon/IconDatabase.cpp
     loader/icon/IconLoader.cpp

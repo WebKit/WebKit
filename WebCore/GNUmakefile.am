@@ -28,6 +28,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/loader \
 	-I$(srcdir)/WebCore/loader/appcache \
 	-I$(srcdir)/WebCore/loader/archive \
+	-I$(srcdir)/WebCore/loader/cache \
 	-I$(srcdir)/WebCore/loader/icon \
 	-I$(srcdir)/WebCore/mathml \
 	-I$(srcdir)/WebCore/notifications \
@@ -1905,7 +1906,7 @@ webcore_sources += \
 	WebCore/loader/archive/ArchiveResourceCollection.h \
 	WebCore/loader/archive/ArchiveResource.cpp \
 	WebCore/loader/archive/ArchiveResource.h \
-	WebCore/loader/Cache.cpp \
+	WebCore/loader/cache/Cache.cpp \
 	WebCore/loader/CachedCSSStyleSheet.cpp \
 	WebCore/loader/CachedCSSStyleSheet.h \
 	WebCore/loader/CachedFont.cpp \

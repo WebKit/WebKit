@@ -231,6 +231,7 @@ WEBCORE_INCLUDEPATH = \
     $$PWD/loader \
     $$PWD/loader/appcache \
     $$PWD/loader/archive \
+    $$PWD/loader/cache \
     $$PWD/loader/icon \
     $$PWD/mathml \
     $$PWD/notifications \
@@ -1031,7 +1032,7 @@ SOURCES += \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
-    loader/Cache.cpp \
+    loader/cache/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
     loader/CachedFont.cpp \
     loader/CachedImage.cpp \
@@ -1930,7 +1931,7 @@ HEADERS += \
     loader/CachedResourceHandle.h \
     loader/CachedScript.h \
     loader/CachedXSLStyleSheet.h \
-    loader/Cache.h \
+    loader/cache/Cache.h \
     loader/CrossOriginAccessControl.h \
     loader/CrossOriginPreflightResultCache.h \
     loader/CachedResourceLoader.h \

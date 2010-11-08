@@ -23708,14 +23708,6 @@
 			Name="loader"
 			>
 			<File
-				RelativePath="..\loader\Cache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\Cache.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\CachedCSSStyleSheet.cpp"
 				>
 			</File>
@@ -24246,6 +24238,18 @@
 						>
 					</File>
 				</Filter>
+			</Filter>
+			<Filter
+				Name="cache"
+				>
+				<File
+					RelativePath="..\loader\cache\Cache.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\Cache.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

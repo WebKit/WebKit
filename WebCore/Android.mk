@@ -343,7 +343,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	html/parser/TextDocumentParser.cpp \
 	html/parser/TextViewSourceParser.cpp \
 	\
-	loader/Cache.cpp \
 	loader/CachedCSSStyleSheet.cpp \
 	loader/CachedFont.cpp \
 	loader/CachedImage.cpp \
@@ -387,6 +386,8 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	loader/appcache/ApplicationCacheStorage.cpp \
 	loader/appcache/DOMApplicationCache.cpp \
 	loader/appcache/ManifestParser.cpp \
+	\
+	loader/cache/Cache.cpp \
 	\
 	loader/icon/IconDatabase.cpp \
 	loader/icon/IconFetcher.cpp \
