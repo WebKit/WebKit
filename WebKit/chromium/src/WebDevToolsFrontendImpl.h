@@ -73,7 +73,6 @@ private:
     WebKit::WebViewImpl* m_webViewImpl;
     WebKit::WebDevToolsFrontendClient* m_client;
     String m_applicationLocale;
-    bool m_loaded;
 };
 
 } // namespace WebKit

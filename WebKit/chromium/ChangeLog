@@ -1,3 +1,15 @@
+2010-11-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Only call WebInspector_syncDispatch if it's actually a function.
+        https://bugs.webkit.org/show_bug.cgi?id=49180
+
+        * src/WebDevToolsFrontendImpl.cpp:
+        (WebKit::WebDevToolsFrontendImpl::WebDevToolsFrontendImpl):
+        (WebKit::WebDevToolsFrontendImpl::dispatchOnInspectorFrontend):
+        * src/WebDevToolsFrontendImpl.h:
+
 2010-11-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
