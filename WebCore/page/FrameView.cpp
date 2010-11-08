@@ -567,6 +567,37 @@ bool FrameView::hasCompositedContent() const
     return false;
 }
 
+bool FrameView::hasCompositedContentIncludingDescendants() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+        RenderView* renderView = frame->contentRenderer();
+        RenderLayerCompositor* compositor = renderView ? renderView->compositor() : 0;
+        if (compositor) {
+            if (compositor->inCompositingMode())
+                return true;
+
+            if (!RenderLayerCompositor::allowsIndependentlyCompositedIFrames(this))
+                break;
+        }
+    }
+#endif
+    return false;
+}
+
+bool FrameView::hasCompositingAncestor() const
+{
+#if USE(ACCELERATED_COMPOSITING)
+    for (Frame* frame = m_frame->tree()->parent(); frame; frame = frame->tree()->parent()) {
+        if (FrameView* view = frame->view()) {
+            if (view->hasCompositedContent())
+                return true;
+        }
+    }
+#endif
+    return false;
+}
+
 // Sometimes (for plug-ins) we need to eagerly go into compositing mode.
 void FrameView::enterCompositingMode()
 {
@@ -1073,9 +1104,9 @@ void FrameView::setIsOverlapped(bool isOverlapped)
     updateCanBlitOnScrollRecursively();
     
 #if USE(ACCELERATED_COMPOSITING)
-    // Overlap can affect compositing tests, so if it changes, we need to trigger
-    // a layer update in the parent document.
-    if (hasCompositedContent()) {
+    if (hasCompositedContentIncludingDescendants()) {
+        // Overlap can affect compositing tests, so if it changes, we need to trigger
+        // a layer update in the parent document.
         if (Frame* parentFrame = m_frame->tree()->parent()) {
             if (RenderView* parentView = parentFrame->contentRenderer()) {
                 RenderLayerCompositor* compositor = parentView->compositor();
@@ -1083,8 +1114,35 @@ void FrameView::setIsOverlapped(bool isOverlapped)
                 compositor->scheduleCompositingLayerUpdate();
             }
         }
+
+        if (RenderLayerCompositor::allowsIndependentlyCompositedIFrames(this)) {
+            // We also need to trigger reevaluation for this and all descendant frames,
+            // since a frame uses compositing if any ancestor is compositing.
+            for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+                if (RenderView* view = frame->contentRenderer()) {
+                    RenderLayerCompositor* compositor = view->compositor();
+                    compositor->setCompositingLayersNeedRebuild();
+                    compositor->scheduleCompositingLayerUpdate();
+                }
+            }
+        }
     }
-#endif    
+#endif
+}
+
+bool FrameView::isOverlappedIncludingAncestors() const
+{
+    if (isOverlapped())
+        return true;
+
+    if (Frame* parentFrame = m_frame->tree()->parent()) {
+        if (FrameView* parentView = parentFrame->view()) {
+            if (parentView->isOverlapped())
+                return true;
+        }
+    }
+
+    return false;
 }
 
 void FrameView::setContentIsOpaque(bool contentIsOpaque)

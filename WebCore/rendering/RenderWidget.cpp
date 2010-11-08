@@ -300,7 +300,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
 
         if (m_widget->isFrameView()) {
             FrameView* frameView = static_cast<FrameView*>(m_widget.get());
-            bool runOverlapTests = !frameView->useSlowRepaintsIfNotOverlapped() || frameView->hasCompositedContent();
+            bool runOverlapTests = !frameView->useSlowRepaintsIfNotOverlapped() || frameView->hasCompositedContentIncludingDescendants();
             if (paintInfo.overlapTestRequests && runOverlapTests) {
                 ASSERT(!paintInfo.overlapTestRequests->contains(this));
                 paintInfo.overlapTestRequests->set(this, m_widget->frameRect());

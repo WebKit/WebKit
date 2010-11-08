@@ -151,8 +151,9 @@ public:
     // to know if there is non-affine content, e.g. for drawing into an image.
     bool has3DContent() const;
     
-    // Some platforms may wish to connect compositing layer trees between iframes and
-    // their parent document.
+    // Most platforms connect compositing layer trees between iframes and their parent document.
+    // Some (currently just Mac) allow iframes to do their own compositing.
+    static bool allowsIndependentlyCompositedIFrames(const FrameView*);
     bool shouldPropagateCompositingToEnclosingIFrame() const;
 
     // FIXME: This should be a RenderIFrame*

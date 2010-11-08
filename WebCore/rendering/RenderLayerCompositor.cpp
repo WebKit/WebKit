@@ -1059,6 +1059,15 @@ bool RenderLayerCompositor::has3DContent() const
     return layerHas3DContent(rootRenderLayer());
 }
 
+bool RenderLayerCompositor::allowsIndependentlyCompositedIFrames(const FrameView* view)
+{
+#if PLATFORM(MAC)
+    // iframes are only independently composited in Mac pre-WebKit2.
+    return view->platformWidget();
+#endif
+    return false;
+}
+
 bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
 {
     // Parent document content needs to be able to render on top of a composited iframe, so correct behavior
@@ -1069,12 +1078,7 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
     if (!renderer || !renderer->isRenderIFrame())
         return false;
 
-#if !PLATFORM(MAC)
-    // On non-Mac platforms, let compositing propagate for all iframes.
-    return true;
-#else
-    // If we're viewless (i.e. WebKit2), we always propagate compositing.
-    if (!m_renderView->frameView()->platformWidget())
+    if (!allowsIndependentlyCompositedIFrames(m_renderView->frameView()))
         return true;
 
     // On Mac, only propagate compositing if the iframe is overlapped in the parent
@@ -1083,17 +1087,11 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingIFrame() const
     if (iframeRenderer->widget()) {
         ASSERT(iframeRenderer->widget()->isFrameView());
         FrameView* view = static_cast<FrameView*>(iframeRenderer->widget());
-        if (view->isOverlapped())
+        if (view->isOverlappedIncludingAncestors() || view->hasCompositingAncestor())
             return true;
-        
-        if (RenderView* view = iframeRenderer->view()) {
-            if (view->compositor()->inCompositingMode())
-                return true;
-        }
     }
 
     return false;
-#endif
 }
 
 HTMLFrameOwnerElement* RenderLayerCompositor::enclosingIFrameElement() const
@@ -1474,7 +1472,7 @@ void RenderLayerCompositor::notifyIFramesOfCompositingChange()
     if (!frame)
         return;
 
-    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->nextSibling()) {
+    for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->traverseNext(frame)) {
         if (child->document() && child->document()->ownerElement())
             scheduleNeedsStyleRecalc(child->document()->ownerElement());
     }
