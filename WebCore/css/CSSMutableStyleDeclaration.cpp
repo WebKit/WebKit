@@ -336,7 +336,9 @@ String CSSMutableStyleDeclaration::getLayeredShorthandValue(const int* propertie
             // then it was written with only one value. Here we figure out which value that was so we can
             // report back correctly. 
             if (properties[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(properties[j])) {
-                if (j < number - 1 && properties[j + 1] == CSSPropertyBackgroundRepeatY) {
+
+                // BUG 49055: make sure the value was not reset in the layer check just above.
+                if (j < number - 1 && properties[j + 1] == CSSPropertyBackgroundRepeatY && value) {
                     RefPtr<CSSValue> yValue;
                     RefPtr<CSSValue> nextValue = values[j + 1];
                     if (nextValue->isValueList())
