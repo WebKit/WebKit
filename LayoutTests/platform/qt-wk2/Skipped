@@ -805,8 +805,7 @@ svg/text/selection-tripleclick.svg
 svg/zoom/page/zoom-coords-viewattr-01-b.svg
 svg/zoom/text/zoom-coords-viewattr-01-b.svg
 
-# WebKit2 needs plugins support
-# <https://bugs.webkit.org/show_bug.cgi?id=42196>
+# Qt WebKit2 needs plugins support
 fast/css/acid2-pixel.html
 fast/css/acid2.html
 fast/dom/object-embed-plugin-scripting.html
@@ -814,7 +813,7 @@ fast/events/tabindex-focus-blur-all.html
 fast/loader/loadInProgress.html
 http/tests/misc/acid2-pixel.html
 http/tests/misc/acid2.html
-plugins/js-from-destroy.html
+plugins
 java
 
 # WebKit2 needs layoutTestController.overridePreference
