@@ -1,9 +1,1 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 686x36
-          text run at (0,0) width 686: "Test for crash when retrieving the implicit \"background\" property value with \"background-repeat: no-repeat\""
-          text run at (0,18) width 565: "(https://bugs.webkit.org/show_bug.cgi?id=49055). If this text appears, the test has passed."
+Test for crash when retrieving the implicit "background" property value with "background-repeat: no-repeat" (https://bugs.webkit.org/show_bug.cgi?id=49055). If this text appears, the test has passed.
