@@ -1,3 +1,14 @@
+2010-11-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Plug-in views should not assume that plugins are RenderEmbeddedObjects
+        https://bugs.webkit.org/show_bug.cgi?id=49196
+        <rdar://problem/8638467>
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView pluginHostDied]):
+
 2010-11-08  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

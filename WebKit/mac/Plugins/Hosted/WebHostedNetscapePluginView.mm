@@ -380,9 +380,11 @@ extern "C" {
 
 - (void)pluginHostDied
 {
-    RenderEmbeddedObject* renderer = toRenderEmbeddedObject(_element->renderer());
-    if (renderer)
+    if (_element->renderer() && _element->renderer()->isEmbeddedObject()) {
+        // FIXME: The renderer could also be a RenderApplet, we should handle that.
+        RenderEmbeddedObject* renderer = toRenderEmbeddedObject(_element->renderer());
         renderer->setShowsCrashedPluginIndicator();
+    }
 
     _pluginLayer = nil;
     _proxy = 0;

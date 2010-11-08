@@ -836,8 +836,15 @@ bool PluginView::isAcceleratedCompositingEnabled()
 
 void PluginView::pluginProcessCrashed()
 {
-    if (RenderEmbeddedObject* renderer = toRenderEmbeddedObject(m_pluginElement->renderer()))
-        renderer->setShowsCrashedPluginIndicator();
+    if (!m_pluginElement->renderer())
+        return;
+
+    // FIXME: The renderer could also be a RenderApplet, we should handle that.
+    if (!m_pluginElement->renderer()->isEmbeddedObject())
+        return;
+        
+    RenderEmbeddedObject* renderer = toRenderEmbeddedObject(m_pluginElement->renderer());
+    renderer->setShowsCrashedPluginIndicator();
     
     invalidateRect(frameRect());
 }
