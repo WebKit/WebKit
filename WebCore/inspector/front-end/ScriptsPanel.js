@@ -462,8 +462,8 @@ WebInspector.ScriptsPanel.prototype = {
             if (Preferences.nativeInstrumentationEnabled) {
                 this.sidebarPanes.domBreakpoints.reset();
                 this.sidebarPanes.xhrBreakpoints.reset();
+                this.sidebarPanes.eventListenerBreakpoints.reset();
             }
-            this.sidebarPanes.eventListenerBreakpoints.reset();
             this.sidebarPanes.workers.reset();
         }
     },
