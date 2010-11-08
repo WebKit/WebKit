@@ -25,6 +25,11 @@
 
 namespace WebCore {
 
+#if COMPILER(MSVC)
+// UpdateMethod is 12 bytes. We have to pack to a size greater than or equal to that to avoid an
+// alignment warning (C4121). 16 is the next-largest size allowed for packing, so we use that.
+#pragma pack(push, 16)
+#endif
 template<typename ContextElement, typename PropertyType>
 class SVGStaticPropertyTearOff : public SVGPropertyTearOff<PropertyType> {
 public:
@@ -52,6 +57,9 @@ private:
     UpdateMethod m_update;
     RefPtr<ContextElement> m_contextElement;
 };
+#if COMPILER(MSVC)
+#pragma pack(pop)
+#endif
 
 }
 
