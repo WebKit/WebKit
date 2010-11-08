@@ -112,9 +112,14 @@ NPVariantData NPRemoteObjectMap::npVariantToNPVariantData(const NPVariant& varia
     case NPVariantType_Object: {
         NPObject* npObject = variant.value.objectValue;
         if (NPObjectProxy::isNPObjectProxy(npObject)) {
-            // FIXME: Handle this.
-            notImplemented();
-            return NPVariantData::makeVoid();
+            NPObjectProxy* npObjectProxy = NPObjectProxy::toNPObjectProxy(npObject);
+
+            uint64_t npObjectID = npObjectProxy->npObjectID();
+
+            // FIXME: Under some circumstances, this might leak the NPObjectProxy object. 
+            // Figure out how to avoid that.
+            retainNPObject(npObjectProxy);
+            return NPVariantData::makeRemoteNPObjectID(npObjectID);
         }
 
         uint64_t npObjectID = registerNPObject(npObject);
@@ -152,10 +157,24 @@ NPVariant NPRemoteObjectMap::npVariantDataToNPVariant(const NPVariantData& npVar
         STRINGN_TO_NPVARIANT(npString.UTF8Characters, npString.UTF8Length, npVariant);
         break;
     }
-    case NPVariantData::LocalNPObjectID:
-        notImplemented();
-        VOID_TO_NPVARIANT(npVariant);
+    case NPVariantData::LocalNPObjectID: {
+        uint64_t npObjectID = npVariantData.localNPObjectIDValue();
+        ASSERT(npObjectID);
+
+        NPObjectMessageReceiver* npObjectMessageReceiver = m_registeredNPObjects.get(npObjectID);
+        if (!npObjectMessageReceiver) {
+            ASSERT_NOT_REACHED();
+            VOID_TO_NPVARIANT(npVariant);
+            break;
+        }
+
+        NPObject* npObject = npObjectMessageReceiver->npObject();
+        ASSERT(npObject);
+
+        retainNPObject(npObject);
+        OBJECT_TO_NPVARIANT(npObject, npVariant);
         break;
+    }
     case NPVariantData::RemoteNPObjectID: {
         NPObject* npObjectProxy = createNPObjectProxy(npVariantData.remoteNPObjectIDValue());
         OBJECT_TO_NPVARIANT(npObjectProxy, npVariant);

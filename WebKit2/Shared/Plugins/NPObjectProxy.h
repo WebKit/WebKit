@@ -49,6 +49,8 @@ public:
         return static_cast<NPObjectProxy*>(npObject);
     }
 
+    uint64_t npObjectID() const { return m_npObjectID; }
+
     void invalidate();
 
 private:

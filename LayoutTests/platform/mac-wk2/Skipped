@@ -1741,7 +1741,6 @@ plugins/npruntime/invoke-browserfuncs.html
 plugins/npruntime/invoke-default.html
 plugins/npruntime/npruntime.html
 plugins/npruntime/plugin-scriptable-object-invoke-default.html
-plugins/npruntime/round-trip-npobject.html
  
 ########################################
 

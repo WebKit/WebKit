@@ -108,6 +108,16 @@ NPVariantData NPVariantData::makeLocalNPObjectID(uint64_t value)
     return npVariantData;
 }
 
+NPVariantData NPVariantData::makeRemoteNPObjectID(uint64_t value)
+{
+    NPVariantData npVariantData;
+
+    npVariantData.m_type = NPVariantData::RemoteNPObjectID;
+    npVariantData.m_remoteNPObjectIDValue = value;
+
+    return npVariantData;
+}
+
 void NPVariantData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(m_type);

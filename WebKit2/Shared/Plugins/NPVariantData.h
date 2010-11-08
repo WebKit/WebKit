@@ -60,6 +60,7 @@ public:
     static NPVariantData makeDouble(double value);
     static NPVariantData makeString(const char* string, unsigned length);
     static NPVariantData makeLocalNPObjectID(uint64_t value);
+    static NPVariantData makeRemoteNPObjectID(uint64_t value);
 
     Type type() const { return static_cast<Type>(m_type); }
 

@@ -47,6 +47,8 @@ public:
     ~NPObjectMessageReceiver();
 
     CoreIPC::SyncReplyMode didReceiveSyncNPObjectMessageReceiverMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
+
+    NPObject* npObject() const { return m_npObject; }
     
 private:
     NPObjectMessageReceiver(NPRemoteObjectMap* npRemoteObjectMap, uint64_t npObjectID, NPObject* npObject);
