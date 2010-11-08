@@ -1,3 +1,9 @@
+2010-11-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        * NEWS: update for release.
+
 2010-11-08  Csaba Osztrogonac  <ossy@webkit.org>
 
         Unreviewed, rolling out r71466.

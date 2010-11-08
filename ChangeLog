@@ -1,3 +1,11 @@
+2010-11-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Update version numbers for release.
+
+        * configure.ac:
+
 2010-11-04  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Adam Barth.
