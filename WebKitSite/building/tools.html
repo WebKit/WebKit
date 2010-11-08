@@ -56,6 +56,12 @@ Keep all the default options and click <b>Next</b> until the file is extracted a
 <P>Vista may warn you that Cygwin did not install correctly. Ignore this warning and tell Vista that the install was successful.</p>
 <p>If you are running Vista, click on the Start menu, enter the following command, and press Enter:</p>
 <p class="code">C:\cygwin\bin\ash -c /bin/rebaseall</p>
+<p>Remove the following lines from <code>/home/[username]/.bashrc</code>:
+<p class=code>
+<div>unset TMP</div>
+<div>unset TEMP</div>
+</p>
+Those lines would prevent picking up the Windows TMP and TEMP environment variables.</p>
 
 <li><p>Install QuickTime SDK</p>
 <p>Download QuickTime SDK for Windows from <a href="http://developer.apple.com/quicktime/download/">http://developer.apple.com/quicktime/download/</a> and install it to the default location (\Program Files\QuickTime SDK). This is needed for media support.
