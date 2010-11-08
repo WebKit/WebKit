@@ -1,3 +1,17 @@
+2010-11-07  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed, rolling out r71475.
+        http://trac.webkit.org/changeset/71475
+
+        breaks chromium webkit tests
+        https://bugs.webkit.org/show_bug.cgi?id=49151
+
+        * Scripts/webkitpy/common/newstringio.py: Removed.
+        * Scripts/webkitpy/common/newstringio_unittest.py: Removed.
+        * Scripts/webkitpy/common/system/executive_mock.py: Removed.
+        * Scripts/webkitpy/common/system/filesystem_mock.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/config_mock.py: Removed.
+
 2010-11-06  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.
