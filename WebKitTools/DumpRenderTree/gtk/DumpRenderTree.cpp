@@ -69,6 +69,7 @@ extern guint webkit_web_frame_get_pending_unload_event_count(WebKitWebFrame* fra
 extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
 extern gchar* webkit_web_frame_get_response_mime_type(WebKitWebFrame* frame);
 extern void webkit_web_frame_clear_main_frame_name(WebKitWebFrame* frame);
+extern void webkit_web_view_set_group_name(WebKitWebView* view, const gchar* groupName);
 extern void webkit_reset_origin_access_white_lists();
 }
 
@@ -998,6 +999,10 @@ static WebKitWebView* createWebView()
     WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
 
     DumpRenderTreeSupportGtk::setDumpRenderTreeModeEnabled(true);
+
+    // From bug 11756: Use a frame group name for all WebViews created by
+    // DumpRenderTree to allow testing of cross-page frame lookup.
+    webkit_web_view_set_group_name(view, "org.webkit.gtk.DumpRenderTree");
 
     g_object_connect(G_OBJECT(view),
                      "signal::load-started", webViewLoadStarted, 0,

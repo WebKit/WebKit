@@ -1,3 +1,14 @@
+2010-11-08  Csaba Osztrogonac  <ossy@webkit.org>
+
+        Unreviewed, rolling out r71466.
+        http://trac.webkit.org/changeset/71466
+        https://bugs.webkit.org/show_bug.cgi?id=48865
+
+        It broke layout tests on GTK bots.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (createWebView):
+
 2010-11-08  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

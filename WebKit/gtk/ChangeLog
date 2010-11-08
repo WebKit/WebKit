@@ -1,3 +1,18 @@
+2010-11-08  Csaba Osztrogonac  <ossy@webkit.org>
+
+        Unreviewed, rolling out r71466.
+        http://trac.webkit.org/changeset/71466
+        https://bugs.webkit.org/show_bug.cgi?id=48865
+
+        It broke layout tests on GTK bots.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::closeWindowSoon):
+        * webkit/webkitprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_init):
+        (webkit_web_view_set_group_name):
+
 2010-11-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

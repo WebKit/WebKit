@@ -255,6 +255,10 @@ void ChromeClient::closeWindowSoon()
 
     if (isHandled)
         return;
+
+    // FIXME: should we clear the frame group name here explicitly? Mac does it.
+    // But this gets cleared in Page's destructor anyway.
+    // webkit_web_view_set_group_name(m_webView, "");
 }
 
 bool ChromeClient::canTakeFocus(FocusDirection)
