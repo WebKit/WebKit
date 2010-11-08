@@ -437,8 +437,11 @@ VisiblePosition RenderText::positionForPoint(const IntPoint& point)
 
     InlineTextBox* lastBoxAbove = 0;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        if (pointBlockDirection >= box->root()->lineTop()) {
-            int bottom = box->root()->nextRootBox() ? box->root()->nextRootBox()->selectionTop() : box->root()->selectionBottom();
+        RootInlineBox* rootBox = box->root();
+        if (pointBlockDirection >= rootBox->selectionTop()) {
+            int bottom = rootBox->selectionBottom();
+            if (rootBox->nextRootBox())
+                bottom = min(bottom, rootBox->nextRootBox()->lineTop());
             if (pointBlockDirection < bottom) {
                 offset = box->offsetForPosition(pointLineDirection);
 

@@ -297,7 +297,7 @@ VisiblePosition RenderReplaced::positionForPoint(const IntPoint& point)
         return createVisiblePosition(caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
     if (node()) {
-        if (lineDirectionPosition <= box->logicalWidth() / 2)
+        if (lineDirectionPosition <= box->logicalLeft() + (box->logicalWidth() / 2))
             return createVisiblePosition(0, DOWNSTREAM);
         return createVisiblePosition(1, DOWNSTREAM);
     }

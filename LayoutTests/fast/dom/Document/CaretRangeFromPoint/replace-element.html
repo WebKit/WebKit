@@ -66,7 +66,7 @@
             test((imageRect.left + imageRect.width) + 10, (imageRect.top + imageRect.height) - 5, "image.nextSibling", "1");
 
             log("Testing on the image");
-            test((imageRect.left + (imageRect.width / 2)) , (imageRect.top + imageRect.height) - 5, "image.previousSibling", "35");
+            test((imageRect.left + (imageRect.width / 2) + 1) , (imageRect.top + imageRect.height) - 5, "image.parentNode", "2");
 
             swapInLog();
         }
