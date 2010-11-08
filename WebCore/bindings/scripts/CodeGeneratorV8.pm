@@ -1379,11 +1379,15 @@ END
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
         push(@implContentDecls, <<END);
-    OwnPtr<ScriptCallStack> callStack(ScriptCallStack::create(args, $numParameters));
+    OwnPtr<ScriptArguments> scriptArguments(createScriptArguments(args, $numParameters));
+    size_t maxStackSize = imp->shouldCaptureFullStackTrace() ? ScriptCallStack::maxCallStackSizeToCapture : 1;
+    OwnPtr<ScriptCallStack> callStack(createScriptCallStack(maxStackSize));
     if (!callStack)
         return v8::Undefined();
 END
+        $implIncludes{"ScriptArguments.h"} = 1;
         $implIncludes{"ScriptCallStack.h"} = 1;
+        $implIncludes{"ScriptCallStackFactory.h"} = 1;
     }
     if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
         push(@implContentDecls, <<END);
@@ -2804,8 +2808,8 @@ sub GenerateFunctionCallString()
 
     if ($function->signature->extendedAttributes->{"CustomArgumentHandling"}) {
         $functionString .= ", " if $index;
-        $functionString .= "callStack.get()";
-        $index++;
+        $functionString .= "scriptArguments.release(), callStack.release()";
+        $index += 2;
     }
 
     if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {

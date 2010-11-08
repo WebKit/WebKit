@@ -35,8 +35,27 @@
 #include "JSDOMWindowBase.h"
 #include "Node.h"
 #include "Page.h"
+#include <interpreter/CallFrame.h>
+#include <runtime/JSGlobalObject.h>
 
 namespace WebCore {
+
+ScriptStateProtectedPtr::~ScriptStateProtectedPtr()
+{
+}
+
+ScriptStateProtectedPtr::ScriptStateProtectedPtr(ScriptState* scriptState)
+    : m_globalObject(scriptState->lexicalGlobalObject())
+{
+}
+
+ScriptState* ScriptStateProtectedPtr::get() const
+{
+    if (m_globalObject)
+        return m_globalObject->globalExec();
+    return 0;
+}
+
 
 ScriptState* mainWorldScriptState(Frame* frame)
 {

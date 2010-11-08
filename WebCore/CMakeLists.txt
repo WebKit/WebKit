@@ -690,8 +690,7 @@ SET(WebCore_SOURCES
     bindings/js/JSXSLTProcessorCustom.cpp
     bindings/js/ScheduledAction.cpp
     bindings/js/ScriptCachedFrameData.cpp
-    bindings/js/ScriptCallFrame.cpp
-    bindings/js/ScriptCallStack.cpp
+    bindings/js/ScriptCallStackFactory.cpp
     bindings/js/ScriptController.cpp
     bindings/js/ScriptDebugServer.cpp
     bindings/js/ScriptEventListener.cpp
@@ -1135,7 +1134,10 @@ SET(WebCore_SOURCES
     inspector/InspectorState.cpp
     inspector/InspectorStorageAgent.cpp
     inspector/InspectorTimelineAgent.cpp
+    inspector/ScriptArguments.cpp
     inspector/ScriptBreakpoint.cpp
+    inspector/ScriptCallFrame.cpp
+    inspector/ScriptCallStack.cpp
     inspector/TimelineRecordFactory.cpp
 
     loader/cache/CachedCSSStyleSheet.cpp

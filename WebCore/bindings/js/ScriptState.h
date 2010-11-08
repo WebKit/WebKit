@@ -32,9 +32,13 @@
 #ifndef ScriptState_h
 #define ScriptState_h
 
-#include "JSDOMBinding.h"
 #include <runtime/Protect.h>
 #include <wtf/Noncopyable.h>
+
+namespace JSC {
+class ExecState;
+class JSGlobalObject;
+}
 
 namespace WebCore {
 class DOMWrapperWorld;
@@ -50,14 +54,9 @@ typedef JSC::ExecState ScriptState;
 
 class ScriptStateProtectedPtr : public Noncopyable {
 public:
-    ScriptStateProtectedPtr() { }
-    ScriptStateProtectedPtr(ScriptState* scriptState) : m_globalObject(scriptState->lexicalGlobalObject()) { }
-    ScriptState* get()
-    {
-        if (m_globalObject)
-            return m_globalObject->globalExec();
-        return 0;
-    }
+    explicit ScriptStateProtectedPtr(ScriptState*);
+    ~ScriptStateProtectedPtr();
+    ScriptState* get() const;
 private:
     JSC::ProtectedPtr<JSC::JSGlobalObject> m_globalObject;
 };

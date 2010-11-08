@@ -81,6 +81,7 @@
 #include "RenderInline.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptFunctionCall.h"
 #include "ScriptObject.h"
@@ -327,13 +328,12 @@ void InspectorController::setConsoleMessagesEnabled(bool enabled)
         m_consoleMessages[i]->addToFrontend(m_frontend.get(), m_injectedScriptHost.get());
 }
 
-void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, ScriptCallStack* callStack, const String& message)
+void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassOwnPtr<ScriptArguments> arguments, PassOwnPtr<ScriptCallStack> callStack)
 {
     if (!enabled())
         return;
 
-    bool storeStackTrace = type == TraceMessageType || type == UncaughtExceptionMessageType || type == AssertMessageType;
-    addConsoleMessage(new ConsoleMessage(source, type, level, message, callStack, m_groupLevel, storeStackTrace));
+    addConsoleMessage(new ConsoleMessage(source, type, level, message, arguments, callStack, m_groupLevel));
 }
 
 void InspectorController::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
@@ -379,11 +379,11 @@ void InspectorController::clearConsoleMessages()
         m_frontend->consoleMessagesCleared();
 }
 
-void InspectorController::startGroup(MessageSource source, ScriptCallStack* callStack, bool collapsed)
+void InspectorController::startGroup(PassOwnPtr<ScriptArguments> arguments, PassOwnPtr<ScriptCallStack> callStack, bool collapsed)
 {
     ++m_groupLevel;
 
-    addConsoleMessage(new ConsoleMessage(source, collapsed ? StartGroupCollapsedMessageType : StartGroupMessageType, LogMessageLevel, String(), callStack, m_groupLevel));
+    addConsoleMessage(new ConsoleMessage(JSMessageSource, collapsed ? StartGroupCollapsedMessageType : StartGroupMessageType, LogMessageLevel, "", arguments, callStack, m_groupLevel));
 }
 
 void InspectorController::endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL)
