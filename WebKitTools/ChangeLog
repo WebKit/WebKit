@@ -1,5 +1,23 @@
 2010-11-07  Fumitoshi Ukai  <ukai@chromium.org>
 
+        Unreviewed, rolling out r71474.
+        http://trac.webkit.org/changeset/71474
+        https://bugs.webkit.org/show_bug.cgi?id=48280
+
+        breaks chromium webkit tests
+        https://bugs.webkit.org/show_bug.cgi?id=49151
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/config_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
+2010-11-07  Fumitoshi Ukai  <ukai@chromium.org>
+
         Unreviewed, rolling out r71475.
         http://trac.webkit.org/changeset/71475
 

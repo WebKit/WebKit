@@ -30,7 +30,10 @@
 """Abstract base class of Port-specific entrypoints for the layout tests
 test infrastructure (the Port and Driver classes)."""
 
+from __future__ import with_statement
+
 import cgi
+import codecs
 import difflib
 import errno
 import os
@@ -39,17 +42,15 @@ import sys
 import time
 
 import apache_http_server
-import config as port_config
 import http_lock
 import http_server
 import test_files
 import websocket_server
 
-from webkitpy.common import system
-from webkitpy.common.system import filesystem
+from webkitpy.common.memoized import memoized
 from webkitpy.common.system import logutils
-from webkitpy.common.system import path
 from webkitpy.common.system.executive import Executive, ScriptError
+from webkitpy.common.system.path import abspath_to_uri
 from webkitpy.common.system.user import User
 
 
@@ -74,26 +75,27 @@ class DummyOptions(object):
 
 # FIXME: This class should merge with webkitpy.webkit_port at some point.
 class Port(object):
-    """Abstract class for Port-specific hooks for the layout_test package."""
+    """Abstract class for Port-specific hooks for the layout_test package.
+    """
 
-    def __init__(self, port_name=None, options=None,
-                 executive=None,
-                 user=None,
-                 filesystem=None,
-                 config=None,
-                 **kwargs):
-        self._name = port_name
-        self._options = options
+    @staticmethod
+    def flag_from_configuration(configuration):
+        flags_by_configuration = {
+            "Debug": "--debug",
+            "Release": "--release",
+        }
+        return flags_by_configuration[configuration]
+
+    def __init__(self, **kwargs):
+        self._name = kwargs.get('port_name', None)
+        self._options = kwargs.get('options')
         if self._options is None:
             # FIXME: Ideally we'd have a package-wide way to get a
             # well-formed options object that had all of the necessary
             # options defined on it.
             self._options = DummyOptions()
-        self._executive = executive or Executive()
-        self._user = user or User()
-        self._filesystem = filesystem or system.filesystem.FileSystem()
-        self._config = config or port_config.Config(self._executive,
-                                                    self._filesystem)
+        self._executive = kwargs.get('executive', Executive())
+        self._user = kwargs.get('user', User())
         self._helper = None
         self._http_server = None
         self._webkit_base_dir = None
@@ -116,7 +118,7 @@ class Port(object):
         self._wdiff_available = True
 
         self._pretty_patch_path = self.path_from_webkit_base("BugsSite",
-            "PrettyPatch", "prettify.rb")
+              "PrettyPatch", "prettify.rb")
         self._pretty_patch_available = True
         self.set_option_default('configuration', None)
         if self._options.configuration is None:
@@ -263,8 +265,7 @@ class Port(object):
 
         baselines = []
         for platform_dir in baseline_search_path:
-            if self.path_exists(self._filesystem.join(platform_dir,
-                                                      baseline_filename)):
+            if os.path.exists(os.path.join(platform_dir, baseline_filename)):
                 baselines.append((platform_dir, baseline_filename))
 
             if not all_baselines and baselines:
@@ -273,8 +274,7 @@ class Port(object):
         # If it wasn't found in a platform directory, return the expected
         # result in the test directory, even if no such file actually exists.
         platform_dir = self.layout_tests_dir()
-        if self.path_exists(self._filesystem.join(platform_dir,
-                                                  baseline_filename)):
+        if os.path.exists(os.path.join(platform_dir, baseline_filename)):
             baselines.append((platform_dir, baseline_filename))
 
         if baselines:
@@ -304,32 +304,35 @@ class Port(object):
         platform_dir, baseline_filename = self.expected_baselines(
             filename, suffix)[0]
         if platform_dir:
-            return self._filesystem.join(platform_dir, baseline_filename)
-        return self._filesystem.join(self.layout_tests_dir(), baseline_filename)
+            return os.path.join(platform_dir, baseline_filename)
+        return os.path.join(self.layout_tests_dir(), baseline_filename)
+
+    def _expected_file_contents(self, test, extension, encoding):
+        path = self.expected_filename(test, extension)
+        if not os.path.exists(path):
+            return None
+        open_mode = 'r'
+        if encoding is None:
+            open_mode = 'r+b'
+        with codecs.open(path, open_mode, encoding) as file:
+            return file.read()
 
     def expected_checksum(self, test):
         """Returns the checksum of the image we expect the test to produce, or None if it is a text-only test."""
-        path = self.expected_filename(test, '.checksum')
-        if not self.path_exists(path):
-            return None
-        return self._filesystem.read_text_file(path)
+        return self._expected_file_contents(test, '.checksum', 'ascii')
 
     def expected_image(self, test):
         """Returns the image we expect the test to produce."""
-        path = self.expected_filename(test, '.png')
-        if not self.path_exists(path):
-            return None
-        return self._filesystem.read_binary_file(path)
+        return self._expected_file_contents(test, '.png', None)
 
     def expected_text(self, test):
         """Returns the text output we expect the test to produce."""
-        # FIXME: DRT output is actually utf-8, but since we don't decode the
-        # output from DRT (instead treating it as a binary string), we read the
-        # baselines as a binary string, too.
-        path = self.expected_filename(test, '.txt')
-        if not self.path_exists(path):
+        # NOTE: -expected.txt files are ALWAYS utf-8.  However,
+        # we do not decode the output from DRT, so we should not
+        # decode the -expected.txt values either to allow comparisons.
+        text = self._expected_file_contents(test, '.txt', None)
+        if not text:
             return ''
-        text = self._filesystem.read_binary_file(path)
         return text.strip("\r\n").replace("\r\n", "\n") + "\n"
 
     def filename_to_uri(self, filename):
@@ -359,7 +362,7 @@ class Port(object):
                 protocol = "http"
             return "%s://127.0.0.1:%u/%s" % (protocol, port, relative_path)
 
-        return path.abspath_to_uri(os.path.abspath(filename))
+        return abspath_to_uri(os.path.abspath(filename))
 
     def tests(self, paths):
         """Return the list of tests found (relative to layout_tests_dir()."""
@@ -370,19 +373,20 @@ class Port(object):
 
         Used by --clobber-old-results."""
         layout_tests_dir = self.layout_tests_dir()
-        return filter(lambda x: self._filesystem.isdir(self._filesystem.join(layout_tests_dir, x)),
-                      self._filesystem.listdir(layout_tests_dir))
+        return filter(lambda x: os.path.isdir(os.path.join(layout_tests_dir, x)),
+                      os.listdir(layout_tests_dir))
 
     def path_isdir(self, path):
-        """Return True if the path refers to a directory of tests."""
-        # Used by test_expectations.py to apply rules to whole directories.
-        return self._filesystem.isdir(path)
+        """Returns whether the path refers to a directory of tests.
+
+        Used by test_expectations.py to apply rules to whole directories."""
+        return os.path.isdir(path)
 
     def path_exists(self, path):
-        """Return True if the path refers to an existing test or baseline."""
+        """Returns whether the path refers to an existing test or baseline."""
         # Used by test_expectations.py to determine if an entry refers to a
-        # valid test and by printing.py to determine if baselines exist.
-        return self._filesystem.exists(path)
+        # valid test and by printing.py to determine if baselines exist."""
+        return os.path.exists(path)
 
     def update_baseline(self, path, data, encoding):
         """Updates the baseline for a test.
@@ -394,12 +398,11 @@ class Port(object):
             data: contents of the baseline.
             encoding: file encoding to use for the baseline.
         """
-        # FIXME: remove the encoding parameter in favor of text/binary
-        # functions.
+        write_mode = "w"
         if encoding is None:
-            self._filesystem.write_binary_file(path, data)
-        else:
-            self._filesystem.write_text_file(path, data)
+            write_mode = "wb"
+        with codecs.open(path, write_mode, encoding=encoding) as file:
+            file.write(data)
 
     def uri_to_test_name(self, uri):
         """Return the base layout test name for a given URI.
@@ -411,7 +414,7 @@ class Port(object):
         """
         test = uri
         if uri.startswith("file:///"):
-            prefix = path.abspath_to_uri(self.layout_tests_dir()) + "/"
+            prefix = abspath_to_uri(self.layout_tests_dir()) + "/"
             return test[len(prefix):]
 
         if uri.startswith("http://127.0.0.1:8880/"):
@@ -438,16 +441,18 @@ class Port(object):
         for test_or_category in self.skipped_layout_tests():
             if test_or_category == test_name:
                 return True
-            category = self._filesystem.join(self.layout_tests_dir(),
-                                             test_or_category)
-            if (self._filesystem.isdir(category) and
-                test_name.startswith(test_or_category)):
+            category = os.path.join(self.layout_tests_dir(), test_or_category)
+            if os.path.isdir(category) and test_name.startswith(test_or_category):
                 return True
         return False
 
     def maybe_make_directory(self, *path):
         """Creates the specified directory if it doesn't already exist."""
-        self._filesystem.maybe_make_directory(*path)
+        try:
+            os.makedirs(os.path.join(*path))
+        except OSError, e:
+            if e.errno != errno.EEXIST:
+                raise
 
     def name(self):
         """Return the name of the port (e.g., 'mac', 'chromium-win-xp').
@@ -468,13 +473,19 @@ class Port(object):
         if not hasattr(self._options, name):
             return setattr(self._options, name, default_value)
 
+    # FIXME: This could be replaced by functions in webkitpy.common.checkout.scm.
     def path_from_webkit_base(self, *comps):
         """Returns the full path to path made by joining the top of the
         WebKit source tree and the list of path components in |*comps|."""
-        return self._config.path_from_webkit_base(*comps)
+        if not self._webkit_base_dir:
+            abspath = os.path.abspath(__file__)
+            self._webkit_base_dir = abspath[0:abspath.find('WebKitTools')]
 
+        return os.path.join(self._webkit_base_dir, *comps)
+
+    # FIXME: Callers should eventually move to scm.script_path.
     def script_path(self, script_name):
-        return self._config.script_path(script_name)
+        return self.path_from_webkit_base("WebKitTools", "Scripts", script_name)
 
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.
@@ -715,8 +726,50 @@ class Port(object):
                        e.message_with_output()))
             return self._pretty_patch_error_html
 
+    def _webkit_build_directory_command(self, args):
+        return ["perl", self.script_path("webkit-build-directory")] + args
+
+    @memoized
+    def _webkit_top_level_build_directory(self, top_level=True):
+        """This directory is above where products are built to and contains things like the Configuration file."""
+        args = self._webkit_build_directory_command(["--top-level"])
+        return self._executive.run_command(args).rstrip()
+
+    @memoized
+    def _webkit_configuration_build_directory(self, configuration=None):
+        """This is where products are normally built to."""
+        if not configuration:
+            configuration = self.flag_from_configuration(self.get_option('configuration'))
+        args = self._webkit_build_directory_command(["--configuration", configuration])
+        return self._executive.run_command(args).rstrip()
+
+    def _configuration_file_path(self):
+        return os.path.join(self._webkit_top_level_build_directory(), "Configuration")
+
+    # Easy override for unit tests
+    def _open_configuration_file(self):
+        configuration_path = self._configuration_file_path()
+        return codecs.open(configuration_path, "r", "utf-8")
+
+    def _read_configuration(self):
+        try:
+            with self._open_configuration_file() as file:
+                return file.readline().rstrip()
+        except:
+            return None
+
+    # FIXME: This list may be incomplete as Apple has some sekret configs.
+    _RECOGNIZED_CONFIGURATIONS = ("Debug", "Release")
+
     def default_configuration(self):
-        return self._config.default_configuration()
+        # FIXME: Unify this with webkitdir.pm configuration reading code.
+        configuration = self._read_configuration()
+        if not configuration:
+            configuration = "Release"
+        if configuration not in self._RECOGNIZED_CONFIGURATIONS:
+            _log.warn("Configuration \"%s\" found in %s is not a recognized value.\n" % (configuration, self._configuration_file_path()))
+            _log.warn("Scripts may fail.  See 'set-webkit-configuration --help'.")
+        return configuration
 
     #
     # PROTECTED ROUTINES
@@ -724,8 +777,6 @@ class Port(object):
     # The routines below should only be called by routines in this class
     # or any of its subclasses.
     #
-    def _webkit_build_directory(self, args):
-        return self._config.build_directory(args[0])
 
     def _path_to_apache(self):
         """Returns the full path to the apache binary.
@@ -797,8 +848,8 @@ class Port(object):
     def _webkit_baseline_path(self, platform):
         """Return the  full path to the top of the baseline tree for a
         given platform."""
-        return self._filesystem.join(self.layout_tests_dir(), 'platform',
-                                     platform)
+        return os.path.join(self.layout_tests_dir(), 'platform',
+                            platform)
 
 
 class Driver:

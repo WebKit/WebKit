@@ -28,21 +28,49 @@
 
 import optparse
 import os
+import StringIO
 import sys
 import tempfile
 import unittest
 
-from webkitpy.common.system.executive import Executive, ScriptError
-from webkitpy.common.system import executive_mock
-from webkitpy.common.system import filesystem
-from webkitpy.common.system import outputcapture
 from webkitpy.common.system.path import abspath_to_uri
+from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool import mocktool
 
 import base
-import config
-import config_mock
+
+# FIXME: This makes StringIO objects work with "with". Remove
+# when we upgrade to 2.6.
+class NewStringIO(StringIO.StringIO):
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        pass
+
+
+class MockExecutive():
+    def __init__(self, exception):
+        self._exception = exception
+
+    def run_command(self, *args, **kwargs):
+        raise self._exception
+
+
+class UnitTestPort(base.Port):
+    """Subclass of base.Port used for unit testing."""
+    def __init__(self, configuration_contents=None, configuration_exception=IOError, executive_exception=None):
+        base.Port.__init__(self)
+        self._configuration_contents = configuration_contents
+        self._configuration_exception = configuration_exception
+        if executive_exception:
+            self._executive = MockExecutive(executive_exception)
+
+    def _open_configuration_file(self):
+        if self._configuration_contents:
+            return NewStringIO(self._configuration_contents)
+        raise self._configuration_exception
 
 
 class PortTest(unittest.TestCase):
@@ -74,21 +102,18 @@ class PortTest(unittest.TestCase):
         return new_file
 
     def test_pretty_patch_os_error(self):
-        port = base.Port(executive=executive_mock.MockExecutive2(exception=OSError))
-        oc = outputcapture.OutputCapture()
-        oc.capture_output()
+        port = UnitTestPort(executive_exception=OSError)
         self.assertEqual(port.pretty_patch_text("patch.txt"),
                          port._pretty_patch_error_html)
 
         # This tests repeated calls to make sure we cache the result.
         self.assertEqual(port.pretty_patch_text("patch.txt"),
                          port._pretty_patch_error_html)
-        oc.restore_output()
 
     def test_pretty_patch_script_error(self):
         # FIXME: This is some ugly white-box test hacking ...
         base._pretty_patch_available = True
-        port = base.Port(executive=executive_mock.MockExecutive2(exception=ScriptError))
+        port = UnitTestPort(executive_exception=ScriptError)
         self.assertEqual(port.pretty_patch_text("patch.txt"),
                          port._pretty_patch_error_html)
 
@@ -169,9 +194,13 @@ class PortTest(unittest.TestCase):
         self.assertFalse('nosuchthing' in diff)
 
     def test_default_configuration_notfound(self):
-        # Test that we delegate to the config object properly.
-        port = base.Port(config=config_mock.MockConfig(default_configuration='default'))
-        self.assertEqual(port.default_configuration(), 'default')
+        # Regular IOError thrown while trying to get the configuration.
+        port = UnitTestPort()
+        self.assertEqual(port.default_configuration(), "Release")
+
+        # More exotic OSError thrown.
+        port = UnitTestPort(configuration_exception=OSError)
+        self.assertEqual(port.default_configuration(), "Release")
 
     def test_layout_tests_skipping(self):
         port = base.Port()
@@ -179,6 +208,14 @@ class PortTest(unittest.TestCase):
         self.assertTrue(port.skips_layout_test('foo/bar.html'))
         self.assertTrue(port.skips_layout_test('media/video-zoom.html'))
         self.assertFalse(port.skips_layout_test('foo/foo.html'))
+
+    def test_default_configuration_found(self):
+        port = UnitTestPort(configuration_contents="Debug")
+        self.assertEqual(port.default_configuration(), "Debug")
+
+    def test_default_configuration_unknown(self):
+        port = UnitTestPort(configuration_contents="weird_value")
+        self.assertEqual(port.default_configuration(), "weird_value")
 
     def test_setup_test_run(self):
         port = base.Port()
@@ -192,6 +229,7 @@ class PortTest(unittest.TestCase):
         self.assertTrue('css2.1' in dirs)
 
     def test_filename_to_uri(self):
+
         port = base.Port()
         layout_test_dir = port.layout_tests_dir()
         test_file = os.path.join(layout_test_dir, "foo", "bar.html")
