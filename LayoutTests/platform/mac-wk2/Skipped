@@ -1726,7 +1726,6 @@ plugins/set-status.html
 plugins/update-widgets-crash.html
 plugins/window-open.html
 plugins/npruntime/identifier-conversion.html
-plugins/npruntime/invoke-default.html
 plugins/npruntime/plugin-scriptable-object-invoke-default.html
  
 ########################################

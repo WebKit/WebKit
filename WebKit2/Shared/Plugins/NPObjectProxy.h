@@ -61,11 +61,13 @@ private:
 
     bool hasMethod(NPIdentifier methodName);
     bool invoke(NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
+    bool invokeDefault(const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
     bool hasProperty(NPIdentifier propertyName);
     bool getProperty(NPIdentifier propertyName, NPVariant* result);
     bool setProperty(NPIdentifier propertyName, const NPVariant* value);
     bool removeProperty(NPIdentifier propertyName);
     bool enumerate(NPIdentifier** identifiers, uint32_t* identifierCount);
+    bool construct(const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
 
     static NPClass* npClass();
     static NPObject* NP_Allocate(NPP, NPClass*);

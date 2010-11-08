@@ -1,5 +1,35 @@
 2010-11-08  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam Roben.
+
+        NPClass::construct and NPClass::invokeDefault never called with out-of-process plug-ins in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=49198
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::invokeDefault):
+        Call NPClass::invokeDefault.
+
+        (WebKit::NPObjectMessageReceiver::construct):
+        Call NPClass::construct
+        
+        * Shared/Plugins/NPObjectMessageReceiver.messages.in:
+        Add InvokeDefault and Construct messages.
+
+        * Shared/Plugins/NPObjectProxy.cpp:
+        (WebKit::NPObjectProxy::invokeDefault):
+        Send the InvokeDefault message.
+
+        (WebKit::NPObjectProxy::construct):
+        Send the Construct message.
+
+        (WebKit::NPObjectProxy::NP_InvokeDefault):
+        Call NPObjectProxy::invokeDefault.
+
+        (WebKit::NPObjectProxy::NP_Construct):
+        Call NPObjectProxy::construct.
+
+2010-11-08  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Plug-in views should not assume that plugins are RenderEmbeddedObjects

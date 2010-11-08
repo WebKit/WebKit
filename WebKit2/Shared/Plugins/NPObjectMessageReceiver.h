@@ -57,11 +57,13 @@ private:
     void deallocate();
     void hasMethod(const NPIdentifierData&, bool& returnValue);
     void invoke(const NPIdentifierData&, const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData);
+    void invokeDefault(const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData);
     void hasProperty(const NPIdentifierData&, bool& returnValue);
     void getProperty(const NPIdentifierData&, bool& returnValue, NPVariantData& resultData);
     void setProperty(const NPIdentifierData&, const NPVariantData& propertyValueData, bool& returnValue);
     void removeProperty(const NPIdentifierData&, bool& returnValue);
     void enumerate(bool& returnValue, Vector<NPIdentifierData>& identifiersData);
+    void construct(const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData);
 
     NPRemoteObjectMap* m_npRemoteObjectMap;
     uint64_t m_npObjectID;
