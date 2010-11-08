@@ -229,6 +229,7 @@ public:
     virtual PlatformGraphicsContext* beginPaint(const IntRect& dirtyRect);
     virtual void endPaint();
     virtual void setContentsToImage(Image*);
+    ~BitmapTextureGL() { destroy(); }
 
 private:
     GLuint m_id;
@@ -241,13 +242,14 @@ private:
     GLuint m_fbo;
     IntSize m_actualSize;
     bool m_surfaceNeedsReset;
-    RefPtr<TextureMapperGL> m_textureMapper;
+    TextureMapperGL* m_textureMapper;
     BitmapTextureGL()
         : m_id(0)
         , m_image(0)
         , m_opaque(false)
         , m_fbo(0)
         , m_surfaceNeedsReset(true)
+        , m_textureMapper(0)
     {
     }
 
@@ -265,6 +267,7 @@ TextureMapperGL::TextureMapperGL()
     : m_data(new TextureMapperGLData)
 {
     static bool shadersCompiled = false;
+    obtainCurrentContext();
     if (shadersCompiled)
         return;
     shadersCompiled = true;
@@ -416,11 +419,10 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const IntRect& t
                                          0, maskTextureGL->m_relativeSize.height(), 0, 0,
                                          0, 0, 1, 0,
                                          0, 0, 0, 1};
-        glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::ShaderInfo::InMaskMatrixVariable], 1, GL_FALSE, m4mask);
+        GL_CMD(glUniformMatrix4fv(programInfo.vars[TextureMapperGLData::ShaderInfo::InMaskMatrixVariable], 1, GL_FALSE, m4mask));
         GL_CMD(glUniform1i(programInfo.vars[TextureMapperGLData::ShaderInfo::MaskTextureVariable], 1))
         GL_CMD(glActiveTexture(GL_TEXTURE0))
     }
-
 
     if (textureGL.m_opaque && opacity > 0.99 && !maskTexture)
         GL_CMD(glDisable(GL_BLEND))
@@ -431,7 +433,6 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const IntRect& t
 
     GL_CMD(glDrawArrays(GL_TRIANGLE_FAN, 0, 4))
 }
-
 
 const char* TextureMapperGL::type() const
 {

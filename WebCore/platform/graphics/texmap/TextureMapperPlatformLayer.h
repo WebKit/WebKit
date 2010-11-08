@@ -36,6 +36,7 @@ public:
     virtual void setNeedsDisplay() = 0;
     virtual void setNeedsDisplayInRect(const IntRect& rect) = 0;
     virtual void setSizeChanged(const IntSize&) = 0;
+    virtual TextureMapper* textureMapper() = 0;
 };
 
 class TextureMapperPlatformLayer {

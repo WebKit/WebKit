@@ -47,6 +47,10 @@ public:
     virtual const char* type() const;
     void obtainCurrentContext();
     bool makeContextCurrent();
+    static PassOwnPtr<TextureMapperGL> create()
+    {
+        return new TextureMapperGL;
+    }
 
 private:
     inline TextureMapperGLData& data() { return *m_data; }

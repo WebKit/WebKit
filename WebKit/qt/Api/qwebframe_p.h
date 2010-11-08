@@ -113,7 +113,7 @@ public:
     int marginHeight;
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
     WebCore::TextureMapperContentLayer* rootGraphicsLayer;
-    RefPtr<WebCore::TextureMapper> textureMapper;
+    OwnPtr<WebCore::TextureMapper> textureMapper;
 #endif
     bool zoomTextOnly;
 };

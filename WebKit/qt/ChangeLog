@@ -1,3 +1,22 @@
+2010-11-08  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap] [Qt] Texture mapper initial implementation
+        https://bugs.webkit.org/show_bug.cgi?id=47070
+
+        Reorganized the textureMapper to be a member of QWebFramePrivate, to help with making
+        TextureMapper thread-safe.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderCompositedLayers):
+        * Api/qwebframe_p.h:
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PlatformLayerProxyQt::setTextureMapper):
+        (WebCore::PlatformLayerProxyQt::textureMapper):
+        (WebCore::PlatformLayerProxyQWidget::PlatformLayerProxyQWidget):
+        (WebCore::PlatformLayerProxyQGraphicsObject::PlatformLayerProxyQGraphicsObject):
+
 2010-11-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

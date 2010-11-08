@@ -309,9 +309,6 @@ void QWebFramePrivate::renderCompositedLayers(GraphicsContext* context, const In
     if (!rootGraphicsLayer)
         return;
 
-    if (!textureMapper)
-        textureMapper = TextureMapper::create(context);
-
     textureMapper->setGraphicsContext(context);
     textureMapper->setImageInterpolationQuality(context->imageInterpolationQuality());
     textureMapper->setTextDrawingMode(context->textDrawingMode());

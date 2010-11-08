@@ -57,6 +57,10 @@ public:
         m_contentSize = size;
     }
 
+    virtual void pack() { }
+    virtual void unpack() { }
+    virtual bool isPacked() const { return false; }
+
     virtual PlatformGraphicsContext* beginPaint(const IntRect& dirtyRect) = 0;
     virtual void endPaint() = 0;
     virtual PlatformGraphicsContext* beginPaintMedia()
@@ -72,6 +76,9 @@ public:
     inline IntSize contentSize() const { return m_contentSize; }
     inline void setOffset(const IntPoint& o) { m_offset = o; }
     inline IntPoint offset() const { return m_offset; }
+
+protected:
+
 private:
     int m_lockCount;
     IntSize m_contentSize;
@@ -81,11 +88,11 @@ private:
 
 // A "context" class used to encapsulate accelerated texture mapping functions: i.e. drawing a texture
 // onto the screen or into another texture with a specified transform, opacity and mask.
-class TextureMapper : public RefCounted<TextureMapper> {
+class TextureMapper {
     friend class BitmapTexture;
 
 public:
-    static PassRefPtr<TextureMapper> create(GraphicsContext*);
+    static PassOwnPtr<TextureMapper> create(GraphicsContext* graphicsContext = 0);
     virtual ~TextureMapper() { }
 
     virtual void drawTexture(const BitmapTexture& texture, const IntRect& target, const TransformationMatrix& matrix = TransformationMatrix(), float opacity = 1.0f, const BitmapTexture* maskTexture = 0) = 0;
@@ -101,8 +108,6 @@ public:
     virtual void setClip(const IntRect&) = 0;
     virtual bool allowSurfaceForRoot() const = 0;
     virtual PassRefPtr<BitmapTexture> createTexture() = 0;
-    virtual const char* type() const = 0;
-    virtual void cleanup() {}
 
     void setImageInterpolationQuality(InterpolationQuality quality) { m_interpolationQuality = quality; }
     void setTextDrawingMode(int mode) { m_textDrawingMode = mode; }

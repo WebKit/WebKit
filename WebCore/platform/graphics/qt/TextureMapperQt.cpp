@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "texmap/TextureMapper.h"
+#include "TextureMapperQt.h"
 
 #include <QtCore/qdebug.h>
 #include <QtGui/qpaintengine.h>
@@ -29,46 +29,6 @@
 #endif
 
 namespace WebCore {
-
-class BitmapTextureQt : public BitmapTexture {
-    friend class TextureMapperQt;
-public:
-    BitmapTextureQt() {}
-    virtual void destroy();
-    virtual IntSize size() const { return IntSize(m_pixmap.width(), m_pixmap.height()); }
-    virtual void reset(const IntSize&, bool opaque);
-    virtual PlatformGraphicsContext* beginPaint(const IntRect& dirtyRect);
-    virtual void endPaint();
-    virtual void setContentsToImage(Image*);
-    virtual bool save(const String& path);
-    virtual bool isValid() const { return !m_pixmap.isNull(); }
-    virtual bool allowOfflineTextureUpload() const { return true; }
-    IntRect sourceRect() const { return IntRect(0, 0, contentSize().width(), contentSize().height()); }
-private:
-    QPainter m_painter;
-    QPixmap m_pixmap;
-};
-
-class TextureMapperQt : public TextureMapper {
-public:
-    virtual void drawTexture(const BitmapTexture& texture, const IntRect& targetRect, const TransformationMatrix& matrix, float opacity, const BitmapTexture* maskTexture);
-    virtual void bindSurface(BitmapTexture* surface);
-    virtual void setClip(const IntRect&);
-    virtual void setGraphicsContext(GraphicsContext*);
-    virtual bool allowSurfaceForRoot() const { return false; }
-    TextureMapperQt();
-    virtual const char* type() const { return "TextureMapperQt"; }
-    virtual PassRefPtr<BitmapTexture> createTexture();
-
-    static void initialize(QPainter* painter)
-    {
-        painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, false);
-    }
-
-private:
-    QPainter* m_painter;
-    RefPtr<BitmapTextureQt> m_currentSurface;
-};
 
 void BitmapTextureQt::destroy()
 {
@@ -116,6 +76,26 @@ void BitmapTextureQt::setContentsToImage(Image* image)
         return;
     BitmapTexture::reset(pixmap->size(), !pixmap->hasAlphaChannel());
     m_pixmap = *pixmap;
+}
+
+void BitmapTextureQt::pack()
+{
+    if (m_pixmap.isNull())
+        return;
+
+    m_image = m_pixmap.toImage();
+    m_pixmap = QPixmap();
+    m_isPacked = true;
+}
+
+void BitmapTextureQt::unpack()
+{
+    m_isPacked = false;
+    if (m_image.isNull())
+        return;
+
+    m_pixmap = QPixmap::fromImage(m_image);
+    m_image = QImage();
 }
 
 void TextureMapperQt::setClip(const IntRect& rect)
@@ -182,21 +162,24 @@ void TextureMapperQt::drawTexture(const BitmapTexture& texture, const IntRect& t
     painter->setOpacity(prevOpacity);
 }
 
-PassRefPtr<TextureMapper> TextureMapper::create(GraphicsContext* context)
+PassOwnPtr<TextureMapper> TextureMapper::create(GraphicsContext* context)
 {
 #ifdef QT_OPENGL_LIB
-    if (context->platformContext()->paintEngine()->type() == QPaintEngine::OpenGL2) {
-        TextureMapperGL* texmapGL = new TextureMapperGL;
-        return adoptRef(texmapGL);
-    }
+    if (context && context->platformContext()->paintEngine()->type() == QPaintEngine::OpenGL2)
+        return new TextureMapperGL;
 #endif
-    return adoptRef(new TextureMapperQt);
+    return new TextureMapperQt;
 }
-
 
 PassRefPtr<BitmapTexture> TextureMapperQt::createTexture()
 {
     return adoptRef(new BitmapTextureQt());
+}
+
+BitmapTextureQt::BitmapTextureQt()
+    : m_isPacked(false)
+{
+
 }
 
 #ifdef QT_OPENGL_LIB
