@@ -3404,7 +3404,7 @@ BUG62138 : animations/stop-animation-on-suspend.html = TEXT
 BUG62298 :  fast/images/gray-scale-png-with-color-profile.html = MISSING
 
 // Started failing at WK r71465
-BUG62299 WIN :  editing/selection/after-line-break.html = TEXT
+BUG62299 LINUX WIN :  editing/selection/after-line-break.html = TEXT
 BUG62299 MAC :  fast/blockflow/background-horizontal-bt.html = IMAGE
 BUG62299 MAC :  fast/blockflow/background-vertical-lr.html = IMAGE
 BUG62299 MAC :  fast/blockflow/border-radius-clipping-vertical-lr.html = IMAGE
@@ -3430,7 +3430,7 @@ BUG62299 MAC LINUX WIN :  editing/inserting/5607069-3.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/inserting/before-after-input-element.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/pasteboard/4806874.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/pasteboard/4944770-1.html = IMAGE
-BUG62299 MAC WIN :  editing/pasteboard/4944770-2.html = IMAGE
+BUG62299 MAC LINUX WIN :  editing/pasteboard/4944770-2.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/pasteboard/input-field-1.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/pasteboard/nested-blocks-with-text-area.html = IMAGE
 BUG62299 MAC LINUX WIN :  editing/pasteboard/nested-blocks-with-text-field.html = IMAGE
