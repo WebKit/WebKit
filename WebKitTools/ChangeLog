@@ -1,3 +1,22 @@
+2010-11-08  Dirk Pranke <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Fix the webkit_base_dir logic in webkitpy/layout_tests/port/config.py. 
+        It turns out that NRWT can't use the code in scm.find_checkout_root()
+        because the Chromium bots don't do full checkouts of the WebKit
+        tree; they only check out subdirectories like WebKitTools/Scripts.
+        Until we can figure out a better approach for this, I've
+        restored the base_dir-detecting code from NRWT, which works in
+        any directory tree, scm or no.
+
+        This also restores the files modified in r71475 and r71474.
+
+        https://bugs.webkit.org/show_bug.cgi?id=49151
+
+        * WebKitTools/Scripts/webkitpy/layout_tests/port/config.py
+        * WebKitTools/Scripts/webkitpy/layout_tests/port/config_unittest.py
+
 2010-11-08  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
@@ -201,7 +220,7 @@
 
         Unreviewed, rolling out r71475.
         http://trac.webkit.org/changeset/71475
-
+ 
         breaks chromium webkit tests
         https://bugs.webkit.org/show_bug.cgi?id=49151
 

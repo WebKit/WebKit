@@ -28,7 +28,8 @@ import codecs
 import os
 import unittest
 
-import base_unittest
+from webkitpy.common import newstringio
+
 import factory
 import google_chrome
 
@@ -77,7 +78,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
 
         def mock_open(path, mode, encoding):
             if 'test_expectations_chrome.txt' in path:
-                return base_unittest.NewStringIO(expected_string)
+                return newstringio.StringIO(expected_string)
             return orig_open(path, mode, encoding)
 
         try:

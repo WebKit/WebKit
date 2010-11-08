@@ -81,14 +81,8 @@ class WebKitPort(base.Port):
         return ''
 
     def _build_driver(self):
-        exit_code = self._executive.run_command([
-            self.script_path("build-dumprendertree"),
-            self.flag_from_configuration(self.get_option('configuration')),
-        ], return_exit_code=True)
-        if exit_code != 0:
-            _log.error("Failed to build DumpRenderTree")
-            return False
-        return True
+        configuration = self.get_option('configuration')
+        return self._config.build_dumprendertree(configuration)
 
     def _check_driver(self):
         driver_path = self._path_to_driver()
@@ -357,8 +351,8 @@ class WebKitPort(base.Port):
             'mac-tiger', 'mac-leopard', 'mac-snowleopard')
 
     def _build_path(self, *comps):
-        build_root = self._webkit_configuration_build_directory()
-        return os.path.join(build_root, *comps)
+        return self._filesystem.join(self._config.build_directory(
+            self.get_option('configuration')), *comps)
 
     def _path_to_driver(self):
         return self._build_path('DumpRenderTree')

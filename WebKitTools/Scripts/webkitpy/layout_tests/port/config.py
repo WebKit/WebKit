@@ -32,12 +32,8 @@
 # FIXME: This file needs to be unified with common/checkout/scm.py and
 # common/config/ports.py .
 
-from __future__ import with_statement
-
-import codecs
 import os
 
-from webkitpy.common.checkout import scm
 from webkitpy.common.system import logutils
 
 
@@ -62,8 +58,9 @@ class Config(object):
         "Release": "--release",
     }
 
-    def __init__(self, executive):
+    def __init__(self, executive, filesystem):
         self._executive = executive
+        self._filesystem = filesystem
         self._webkit_base_dir = None
         self._default_configuration = None
         self._build_directories = {}
@@ -115,28 +112,36 @@ class Config(object):
         return self._default_configuration
 
     def path_from_webkit_base(self, *comps):
-        return os.path.join(self.webkit_base_dir(), *comps)
+        return self._filesystem.join(self.webkit_base_dir(), *comps)
 
     def webkit_base_dir(self):
         """Returns the absolute path to the top of the WebKit tree.
 
         Raises an AssertionError if the top dir can't be determined."""
-        # FIXME: Consider determining this independently of scm in order
-        # to be able to run in a bare tree.
+        # Note: this code somewhat duplicates the code in
+        # scm.find_checkout_root(). However, that code only works if the top
+        # of the SCM repository also matches the top of the WebKit tree. The
+        # Chromium ports, for example, only check out subdirectories like
+        # WebKitTools/Scripts, and so we still have to do additional work
+        # to find the top of the tree.
+        #
+        # This code will also work if there is no SCM system at all.
         if not self._webkit_base_dir:
-            self._webkit_base_dir = scm.find_checkout_root()
-            assert self._webkit_base_dir, "Could not determine the top of the WebKit checkout"
+            abspath = os.path.abspath(__file__)
+            self._webkit_base_dir = abspath[0:abspath.find('WebKitTools')]
         return self._webkit_base_dir
 
     def _script_path(self, script_name):
-        return os.path.join(self.webkit_base_dir(), "WebKitTools",
-                            "Scripts", script_name)
+        return self._filesystem.join(self.webkit_base_dir(), "WebKitTools",
+                                     "Scripts", script_name)
 
     def _determine_configuration(self):
         # This mirrors the logic in webkitdirs.pm:determineConfiguration().
         global _determined_configuration
         if _determined_configuration == -1:
             contents = self._read_configuration()
+            if not contents:
+                contents = "Release"
             if contents == "Deployment":
                 contents = "Release"
             if contents == "Development":
@@ -145,10 +150,9 @@ class Config(object):
         return _determined_configuration
 
     def _read_configuration(self):
-        configuration_path = os.path.join(self.build_directory(None),
-                                          "Configuration")
-        if not os.path.exists(configuration_path):
+        configuration_path = self._filesystem.join(self.build_directory(None),
+                                                   "Configuration")
+        if not self._filesystem.exists(configuration_path):
             return None
 
-        with codecs.open(configuration_path, "r", "utf-8") as fh:
-            return fh.read().rstrip()
+        return self._filesystem.read_text_file(configuration_path).rstrip()

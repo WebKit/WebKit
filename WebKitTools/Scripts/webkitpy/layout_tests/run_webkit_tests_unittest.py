@@ -380,31 +380,30 @@ class RebaselineTest(unittest.TestCase):
             baseline = file + "-expected" + ext
             self.assertTrue(any(f.find(baseline) != -1 for f in file_list))
 
-    # FIXME: This test is failing on the bots. Also, this test touches the
-    #        file system.  Unit tests should not read or write the file system.
-    #        https://bugs.webkit.org/show_bug.cgi?id=47879
     def disabled_test_reset_results(self):
+        # FIXME: This test is disabled until we can rewrite it to use a
+        # mock filesystem.
+        #
+        # Test that we update expectations in place. If the expectation
+        # is missing, update the expected generic location.
         file_list = []
-        original_open = codecs.open
-        try:
-            # Test that we update expectations in place. If the expectation
-            # is missing, update the expected generic location.
-            file_list = []
-            codecs.open = _mocked_open(original_open, file_list)
-            passing_run(['--pixel-tests',
-                         '--reset-results',
-                         'passes/image.html',
-                         'failures/expected/missing_image.html'],
-                         tests_included=True)
-            self.assertEqual(len(file_list), 6)
-            self.assertBaselines(file_list,
-                "data/passes/image")
-            self.assertBaselines(file_list,
-                "data/failures/expected/missing_image")
-        finally:
-            codecs.open = original_open
+        passing_run(['--pixel-tests',
+                        '--reset-results',
+                        'passes/image.html',
+                        'failures/expected/missing_image.html'],
+                        tests_included=True)
+        self.assertEqual(len(file_list), 6)
+        self.assertBaselines(file_list,
+            "data/passes/image")
+        self.assertBaselines(file_list,
+            "data/failures/expected/missing_image")
 
-    def test_new_baseline(self):
+    def disabled_test_new_baseline(self):
+        # FIXME: This test is disabled until we can rewrite it to use a
+        # mock filesystem.
+        #
+        # Test that we update the platform expectations. If the expectation
+        # is mssing, then create a new expectation in the platform dir.
         file_list = []
         original_open = codecs.open
         try:
