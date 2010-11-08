@@ -1,3 +1,14 @@
+2010-11-08  Gabor Rapcsanyi  <rgabor@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [NRWT] If the http lock fails we shouldn't do any locking
+        https://bugs.webkit.org/show_bug.cgi?id=49164
+
+        If something goes wrong with the locking, the test should keep going.
+
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+
 2010-11-08  Adam Roben  <aroben@apple.com>
 
         Switch back to using kCGImageAlphaPremultipliedFirst when generating

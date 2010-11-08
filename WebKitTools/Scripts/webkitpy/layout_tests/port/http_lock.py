@@ -45,7 +45,8 @@ class HttpLock(object):
 
     def __init__(self, lock_path, lock_file_prefix="WebKitHttpd.lock.",
                  guard_lock="WebKit.lock"):
-        if not lock_path:
+        self._lock_path = lock_path
+        if not self._lock_path:
             self._lock_path = tempfile.gettempdir()
         self._lock_file_prefix = lock_file_prefix
         self._lock_file_path_prefix = os.path.join(self._lock_path,
@@ -53,6 +54,8 @@ class HttpLock(object):
         self._guard_lock_file = os.path.join(self._lock_path, guard_lock)
         self._process_lock_file_name = ""
         self._executive = Executive()
+        # maximum wait time for the lock creation
+        self._guard_lock_max_wait = 1 * 60
 
     def cleanup_http_lock(self):
         """Delete the lock file if exists."""
@@ -100,6 +103,11 @@ class HttpLock(object):
         """The lock files are used to schedule the running test sessions in first
         come first served order. The sequential guard lock ensures that the lock
         numbers are sequential."""
+        if not os.path.exists(self._lock_path):
+            _log.debug("Lock directory does not exist: %s" % self._lock_path)
+            return False
+
+        start_time = time.time()
         while(True):
             try:
                 sequential_guard_lock = os.open(self._guard_lock_file, os.O_CREAT | os.O_EXCL)
@@ -111,12 +119,18 @@ class HttpLock(object):
                 lock_file.close()
                 os.close(sequential_guard_lock)
                 os.unlink(self._guard_lock_file)
-                break
+                return True
             except OSError:
-                pass
+                if time.time() - start_time > self._guard_lock_max_wait:
+                    _log.debug("Lock does not created: %s" % str(sys.exc_info()))
+                    return False
 
     def wait_for_httpd_lock(self):
-        """Create a lock file and wait until it's turn comes."""
-        self._create_lock_file()
+        """Create a lock file and wait until it's turn comes. If something goes wrong
+        it wont do any locking."""
+        if not self._create_lock_file():
+            _log.debug("Warning, http locking failed!")
+            return
+
         while self._curent_lock_pid() != os.getpid():
             time.sleep(1)
