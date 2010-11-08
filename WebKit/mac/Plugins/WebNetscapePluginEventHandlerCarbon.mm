@@ -49,8 +49,6 @@ static void getCarbonEvent(EventRecord* carbonEvent)
     carbonEvent->when = TickCount();
     
     GetGlobalMouse(&carbonEvent->where);
-    carbonEvent->where.h = static_cast<short>(carbonEvent->where.h * HIGetScaleFactor());
-    carbonEvent->where.v = static_cast<short>(carbonEvent->where.v * HIGetScaleFactor());
     carbonEvent->modifiers = GetCurrentKeyModifiers();
     if (!Button())
         carbonEvent->modifiers |= btnState;
@@ -87,11 +85,8 @@ static EventModifiers modifiersForEvent(NSEvent *event)
 
 static void getCarbonEvent(EventRecord *carbonEvent, NSEvent *cocoaEvent)
 {
-    if (WKConvertNSEventToCarbonEvent(carbonEvent, cocoaEvent)) {
-        carbonEvent->where.h = static_cast<short>(carbonEvent->where.h * HIGetScaleFactor());
-        carbonEvent->where.v = static_cast<short>(carbonEvent->where.v * HIGetScaleFactor());
+    if (WKConvertNSEventToCarbonEvent(carbonEvent, cocoaEvent))
         return;
-    }
     
     NSPoint where = [[cocoaEvent window] convertBaseToScreen:[cocoaEvent locationInWindow]];
         

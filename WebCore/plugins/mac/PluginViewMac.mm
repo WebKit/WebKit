@@ -725,29 +725,10 @@ static int modifiersForEvent(UIEventWithKeyState* event)
 #endif
 
 #ifndef NP_NO_CARBON
-static bool tigerOrBetter()
-{
-    static SInt32 systemVersion = 0;
-
-    if (!systemVersion) {
-        if (Gestalt(gestaltSystemVersion, &systemVersion) != noErr)
-            return false;
-    }
-
-    return systemVersion >= 0x1040;
-}
-#endif
-
-#ifndef NP_NO_CARBON
 Point PluginView::globalMousePosForPlugin() const
 {
     Point pos;
     GetGlobalMouse(&pos);
-
-    float scaleFactor = tigerOrBetter() ? HIGetScaleFactor() : 1;
-
-    pos.h = short(pos.h * scaleFactor);
-    pos.v = short(pos.v * scaleFactor);
 
 #if PLATFORM(WX)
     // make sure the titlebar/toolbar size is included
