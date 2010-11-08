@@ -39,6 +39,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/ResourceLoadScheduler.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <wtf/RefCountedLeakCounter.h>
@@ -213,11 +214,7 @@ void HostedNetscapePluginStream::start()
     ASSERT(!m_frameLoader);
     ASSERT(!m_loader);
     
-    m_loader = NetscapePlugInStreamLoader::create(core([m_instance->pluginView() webFrame]), this);
-    m_loader->setShouldBufferData(false);
-    
-    m_loader->documentLoader()->addPlugInStreamLoader(m_loader.get());
-    m_loader->load(m_request.get());
+    m_loader = resourceLoadScheduler()->schedulePluginStreamLoad([m_instance->pluginView() webFrame]), this, m_request.get());
 }
 
 void HostedNetscapePluginStream::stop()

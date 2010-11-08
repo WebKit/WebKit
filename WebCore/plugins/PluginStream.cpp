@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "PluginDebug.h"
+#include "ResourceLoadScheduler.h"
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <StringExtras.h>
@@ -93,12 +94,7 @@ PluginStream::~PluginStream()
 void PluginStream::start()
 {
     ASSERT(!m_loadManually);
-
-    m_loader = NetscapePlugInStreamLoader::create(m_frame, this);
-
-    m_loader->setShouldBufferData(false);
-    m_loader->documentLoader()->addPlugInStreamLoader(m_loader.get());
-    m_loader->load(m_resourceRequest);
+    m_loader = resourceLoadScheduler()->schedulePluginStreamLoad(m_frame, this, m_resourceRequest);
 }
 
 void PluginStream::stop()

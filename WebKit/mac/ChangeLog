@@ -1,3 +1,16 @@
+2010-11-08  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Interface changes in https://bugs.webkit.org/show_bug.cgi?id=27165
+
+        * Plugins/Hosted/HostedNetscapePluginStream.mm:
+        (WebKit::HostedNetscapePluginStream::start): Move duplicate code into NetscapePluginStreamLoader
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::start): Move duplicate code into NetscapePluginStreamLoader
+        * WebView/WebView.mm:
+        (-[WebView _dispatchPendingLoadRequests]): Use resourceLoadScheduler() instead of cache()->loader().
+
 2010-11-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

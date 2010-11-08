@@ -1,3 +1,13 @@
+2010-11-08  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Function call update for 
+        https://bugs.webkit.org/show_bug.cgi?id=27165.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::Stream::start):
+
 2010-11-08  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

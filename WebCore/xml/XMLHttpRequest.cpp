@@ -178,7 +178,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     , m_uploadEventsAllowed(true)
     , m_uploadComplete(false)
     , m_sameOriginRequest(true)
-    , m_didTellLoaderAboutRequest(false)
     , m_receivedLength(0)
     , m_lastSendLineNumber(0)
     , m_exceptionCode(0)
@@ -192,10 +191,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
 
 XMLHttpRequest::~XMLHttpRequest()
 {
-    if (m_didTellLoaderAboutRequest) {
-        cache()->loader()->nonCacheRequestComplete(m_url);
-        m_didTellLoaderAboutRequest = false;
-    }
     if (m_upload)
         m_upload->disconnectXMLHttpRequest();
 
@@ -598,16 +593,6 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
             // a request is in progress because we need to keep the listeners alive,
             // and they are referenced by the JavaScript wrapper.
             setPendingActivity(this);
-
-            // For now we should only balance the nonCached request count for main-thread XHRs and not
-            // Worker XHRs, as the MemoryCache is not thread-safe.
-            // This will become irrelevant after https://bugs.webkit.org/show_bug.cgi?id=27165 is resolved.
-            if (!scriptExecutionContext()->isWorkerContext()) {
-                ASSERT(isMainThread());
-                ASSERT(!m_didTellLoaderAboutRequest);
-                cache()->loader()->nonCacheRequestInFlight(m_url);
-                m_didTellLoaderAboutRequest = true;
-            }
         }
     } else
         ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, *this, options);
@@ -899,10 +884,6 @@ String XMLHttpRequest::statusText(ExceptionCode& ec) const
 
 void XMLHttpRequest::didFail(const ResourceError& error)
 {
-    if (m_didTellLoaderAboutRequest) {
-        cache()->loader()->nonCacheRequestComplete(m_url);
-        m_didTellLoaderAboutRequest = false;
-    }
 
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
@@ -929,11 +910,6 @@ void XMLHttpRequest::didFailRedirectCheck()
 
 void XMLHttpRequest::didFinishLoading(unsigned long identifier)
 {
-    if (m_didTellLoaderAboutRequest) {
-        cache()->loader()->nonCacheRequestComplete(m_url);
-        m_didTellLoaderAboutRequest = false;
-    }
-
     if (m_error)
         return;
 

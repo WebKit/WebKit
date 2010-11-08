@@ -44,6 +44,7 @@
 #endif
 #include "ResourceError.h"
 #include "ResourceHandle.h"
+#include "ResourceLoadScheduler.h"
 #include "SchemeRegistry.h"
 #include "Settings.h"
 #include <wtf/CurrentTime.h>
@@ -548,6 +549,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersLoading())
         return true;
 
+    resourceLoadScheduler()->addMainResourceLoad(this);
     if (m_substituteData.isValid()) 
         handleDataLoadSoon(r);
     else if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol()))

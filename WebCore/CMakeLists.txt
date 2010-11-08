@@ -1172,6 +1172,7 @@ SET(WebCore_SOURCES
     loader/NavigationScheduler.cpp
     loader/Request.cpp
     loader/ResourceLoadNotifier.cpp
+    loader/ResourceLoadScheduler.cpp
     loader/ResourceLoader.cpp
     loader/SinkDocument.cpp
     loader/SubframeLoader.cpp

@@ -33,6 +33,7 @@
 #include "IconDatabase.h"
 #include "Logging.h"
 #include "ResourceHandle.h"
+#include "ResourceLoadScheduler.h"
 #include "ResourceResponse.h"
 #include "ResourceRequest.h"
 #include "SharedBuffer.h"
@@ -68,7 +69,7 @@ void IconLoader::startLoading()
     // SubresourceLoader::create returns.
     m_loadIsInProgress = true;
 
-    RefPtr<SubresourceLoader> loader = SubresourceLoader::create(m_frame, this, m_frame->loader()->iconURL());
+    RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_frame, this, m_frame->loader()->iconURL());
     if (!loader)
         LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader()->iconURL().string().ascii().data());
 

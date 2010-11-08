@@ -2102,6 +2102,8 @@
             'loader/ResourceLoader.h',
             'loader/ResourceLoadNotifier.cpp',
             'loader/ResourceLoadNotifier.h',
+            'loader/ResourceLoadScheduler.cpp',
+            'loader/ResourceLoadScheduler.h',
             'loader/SinkDocument.cpp',
             'loader/SinkDocument.h',
             'loader/SubframeLoader.cpp',

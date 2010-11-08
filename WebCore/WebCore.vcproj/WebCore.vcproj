@@ -23948,6 +23948,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\ResourceLoadScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\ ResourceLoadScheduler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\SinkDocument.cpp"
 				>
 			</File>

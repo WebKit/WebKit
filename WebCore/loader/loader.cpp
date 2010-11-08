@@ -28,44 +28,19 @@
 #include "CachedImage.h"
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
-#include "InspectorInstrumentation.h"
 #include "Frame.h"
 #include "FrameLoader.h"
-#include "HTMLDocument.h"
 #include "Logging.h"
 #include "Request.h"
 #include "ResourceHandle.h"
+#include "ResourceLoadScheduler.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
-#include "SubresourceLoader.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
-#define REQUEST_MANAGEMENT_ENABLED 1
-
 namespace WebCore {
-
-#if REQUEST_MANAGEMENT_ENABLED
-// Match the parallel connection count used by the networking layer
-static unsigned maxRequestsInFlightPerHost;
-// Having a limit might still help getting more important resources first
-static const unsigned maxRequestsInFlightForNonHTTPProtocols = 20;
-#else
-static const unsigned maxRequestsInFlightPerHost = 10000;
-static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
-#endif
-
-Loader::Loader()
-    : m_requestTimer(this, &Loader::requestTimerFired)
-    , m_isSuspendingPendingRequests(false)
-{
-    m_nonHTTPProtocolHost = Host::create(AtomicString(), maxRequestsInFlightForNonHTTPProtocols);
-#if REQUEST_MANAGEMENT_ENABLED
-    maxRequestsInFlightPerHost = initializeMaximumHTTPConnectionCountPerHost();
-#endif
-}
 
 Loader::~Loader()
 {    
@@ -95,307 +70,102 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     return ResourceRequest::TargetIsSubresource;
 }
 
-Loader::Priority Loader::determinePriority(const CachedResource* resource) const
+static ResourceLoadScheduler::Priority determinePriority(const CachedResource* resource)
 {
-#if REQUEST_MANAGEMENT_ENABLED
     switch (resource->type()) {
         case CachedResource::CSSStyleSheet:
 #if ENABLE(XSLT)
         case CachedResource::XSLStyleSheet:
 #endif
-            return High;
-        case CachedResource::Script: 
+            return ResourceLoadScheduler::High;
+        case CachedResource::Script:
         case CachedResource::FontResource:
-            return Medium;
+            return ResourceLoadScheduler::Medium;
         case CachedResource::ImageResource:
-            return Low;
+            return ResourceLoadScheduler::Low;
 #if ENABLE(LINK_PREFETCH)
         case CachedResource::LinkPrefetch:
-            return VeryLow;
+            return ResourceLoadScheduler::VeryLow;
 #endif
     }
     ASSERT_NOT_REACHED();
-    return Low;
-#else
-    return High;
-#endif
+    return ResourceLoadScheduler::Low;
 }
 
 void Loader::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
-    LOG(ResourceLoading, "Loader::load resource %p '%s'", resource, resource->url().latin1().data());
 
     ASSERT(cachedResourceLoader);
     Request* request = new Request(cachedResourceLoader, resource, incremental, securityCheck, sendResourceLoadCallbacks);
 
-    RefPtr<Host> host;
-    KURL url(ParsedURLString, resource->url());
-    if (url.protocolInHTTPFamily()) {
-        m_hosts.checkConsistency();
-        AtomicString hostName = url.host();
-        host = m_hosts.get(hostName.impl());
-        if (!host) {
-            host = Host::create(hostName, maxRequestsInFlightPerHost);
-            m_hosts.add(hostName.impl(), host);
-        }
-    } else 
-        host = m_nonHTTPProtocolHost;
-    
-    bool hadRequests = host->hasRequests();
-    Priority priority = determinePriority(resource);
-    host->addRequest(request, priority);
     cachedResourceLoader->incrementRequestCount(request->cachedResource());
 
-    if (priority > Low || !url.protocolInHTTPFamily() || (priority == Low && !hadRequests)) {
-        // Try to request important resources immediately
-        host->servePendingRequests(priority);
-    } else {
-        // Handle asynchronously so early low priority requests don't get scheduled before later high priority ones
-        InspectorInstrumentation::didScheduleResourceRequest(cachedResourceLoader->document(), resource->url());
-        scheduleServePendingRequests();
-    }
-}
-    
-void Loader::scheduleServePendingRequests()
-{
-    LOG(ResourceLoading, "Loader::scheduleServePendingRequests, m_requestTimer.isActive()=%u", m_requestTimer.isActive());
-    if (!m_requestTimer.isActive())
-        m_requestTimer.startOneShot(0);
-}
+    ResourceRequest resourceRequest(request->cachedResource()->url());
+    resourceRequest.setTargetType(cachedResourceTypeToTargetType(request->cachedResource()->type()));
 
-void Loader::requestTimerFired(Timer<Loader>*) 
-{
-    LOG(ResourceLoading, "Loader::requestTimerFired\n");
-    servePendingRequests();
-}
+    if (!request->cachedResource()->accept().isEmpty())
+        resourceRequest.setHTTPAccept(request->cachedResource()->accept());
 
-void Loader::servePendingRequests(Priority minimumPriority)
-{
-    LOG(ResourceLoading, "Loader::servePendingRequests. m_isSuspendingPendingRequests=%d", m_isSuspendingPendingRequests);
-    if (m_isSuspendingPendingRequests)
-        return;
-
-    m_requestTimer.stop();
-    
-    m_nonHTTPProtocolHost->servePendingRequests(minimumPriority);
-
-    Vector<Host*> hostsToServe;
-    m_hosts.checkConsistency();
-    HostMap::iterator i = m_hosts.begin();
-    HostMap::iterator end = m_hosts.end();
-    for (;i != end; ++i)
-        hostsToServe.append(i->second.get());
-        
-    for (unsigned n = 0; n < hostsToServe.size(); ++n) {
-        Host* host = hostsToServe[n];
-        if (host->hasRequests())
-            host->servePendingRequests(minimumPriority);
-        else if (!host->processingResource()){
-            AtomicString name = host->name();
-            m_hosts.remove(name.impl());
+    if (request->cachedResource()->isCacheValidator()) {
+        CachedResource* resourceToRevalidate = request->cachedResource()->resourceToRevalidate();
+        ASSERT(resourceToRevalidate->canUseCacheValidator());
+        ASSERT(resourceToRevalidate->isLoaded());
+        const String& lastModified = resourceToRevalidate->response().httpHeaderField("Last-Modified");
+        const String& eTag = resourceToRevalidate->response().httpHeaderField("ETag");
+        if (!lastModified.isEmpty() || !eTag.isEmpty()) {
+            ASSERT(cachedResourceLoader->cachePolicy() != CachePolicyReload);
+            if (cachedResourceLoader->cachePolicy() == CachePolicyRevalidate)
+                resourceRequest.setHTTPHeaderField("Cache-Control", "max-age=0");
+            if (!lastModified.isEmpty())
+                resourceRequest.setHTTPHeaderField("If-Modified-Since", lastModified);
+            if (!eTag.isEmpty())
+                resourceRequest.setHTTPHeaderField("If-None-Match", eTag);
         }
     }
-}
-
-void Loader::suspendPendingRequests()
-{
-    ASSERT(!m_isSuspendingPendingRequests);
-    m_isSuspendingPendingRequests = true;
-}
-
-void Loader::resumePendingRequests()
-{
-    ASSERT(m_isSuspendingPendingRequests);
-    m_isSuspendingPendingRequests = false;
-    if (!m_hosts.isEmpty() || m_nonHTTPProtocolHost->hasRequests())
-        scheduleServePendingRequests();
-}
-
-void Loader::nonCacheRequestInFlight(const KURL& url)
-{
-    if (!url.protocolInHTTPFamily())
-        return;
     
-    AtomicString hostName = url.host();
-    m_hosts.checkConsistency();
-    RefPtr<Host> host = m_hosts.get(hostName.impl());
-    if (!host) {
-        host = Host::create(hostName, maxRequestsInFlightPerHost);
-        m_hosts.add(hostName.impl(), host);
+#if ENABLE(LINK_PREFETCH)
+    if (request->cachedResource()->type() == CachedResource::LinkPrefetch)
+        resourceRequest.setHTTPHeaderField("X-Purpose", "prefetch");
+#endif
+
+    RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(cachedResourceLoader->document()->frame(),
+        this, resourceRequest, determinePriority(resource), request->shouldDoSecurityCheck(), request->sendResourceLoadCallbacks());
+    if (loader) {
+        m_requestsLoading.add(loader.release(), request);
+        request->cachedResource()->setRequestedFromNetworkingLayer();
+    } else {
+        // FIXME: What if resources in other frames were waiting for this revalidation? 
+        LOG(ResourceLoading, "Cannot start loading '%s'", request->cachedResource()->url().latin1().data());             
+        cachedResourceLoader->decrementRequestCount(request->cachedResource());
+        cachedResourceLoader->setLoadInProgress(true);
+        if (resource->resourceToRevalidate()) 
+            cache()->revalidationFailed(resource); 
+        resource->error();
+        cachedResourceLoader->setLoadInProgress(false);
+        delete request;
     }
-
-    host->nonCacheRequestInFlight();
-}
-
-void Loader::nonCacheRequestComplete(const KURL& url)
-{
-    if (!url.protocolInHTTPFamily())
-        return;
-    
-    AtomicString hostName = url.host();
-    m_hosts.checkConsistency();
-    RefPtr<Host> host = m_hosts.get(hostName.impl());
-    ASSERT(host);
-    if (!host)
-        return;
-
-    host->nonCacheRequestComplete();
 }
 
 void Loader::cancelRequests(CachedResourceLoader* cachedResourceLoader)
 {
     cachedResourceLoader->clearPendingPreloads();
 
-    if (m_nonHTTPProtocolHost->hasRequests())
-        m_nonHTTPProtocolHost->cancelRequests(cachedResourceLoader);
-    
-    Vector<Host*> hostsToCancel;
-    m_hosts.checkConsistency();
-    HostMap::iterator i = m_hosts.begin();
-    HostMap::iterator end = m_hosts.end();
-    for (;i != end; ++i)
-        hostsToCancel.append(i->second.get());
-
-    for (unsigned n = 0; n < hostsToCancel.size(); ++n) {
-        Host* host = hostsToCancel[n];
-        if (host->hasRequests())
-            host->cancelRequests(cachedResourceLoader);
+    Vector<SubresourceLoader*, 256> loadersToCancel;
+    RequestMap::iterator end = m_requestsLoading.end();
+    for (RequestMap::iterator i = m_requestsLoading.begin(); i != end; ++i) {
+        Request* r = i->second;
+        if (r->cachedResourceLoader() == cachedResourceLoader)
+            loadersToCancel.append(i->first.get());
     }
 
-    scheduleServePendingRequests();
-    
-    ASSERT(cachedResourceLoader->requestCount() == (cachedResourceLoader->loadInProgress() ? 1 : 0));
-}
-
-Loader::Host::Host(const AtomicString& name, unsigned maxRequestsInFlight)
-    : m_name(name)
-    , m_maxRequestsInFlight(maxRequestsInFlight)
-    , m_numResourcesProcessing(0)
-    , m_nonCachedRequestsInFlight(0)
-{
-}
-
-Loader::Host::~Host()
-{
-    ASSERT(m_requestsLoading.isEmpty());
-    for (unsigned p = 0; p <= High; p++)
-        ASSERT(m_requestsPending[p].isEmpty());
-}
-    
-void Loader::Host::addRequest(Request* request, Priority priority)
-{
-    m_requestsPending[priority].append(request);
-}
-    
-void Loader::Host::nonCacheRequestInFlight()
-{
-    ++m_nonCachedRequestsInFlight;
-}
-
-void Loader::Host::nonCacheRequestComplete()
-{
-    --m_nonCachedRequestsInFlight;
-    ASSERT(m_nonCachedRequestsInFlight >= 0);
-
-    cache()->loader()->scheduleServePendingRequests();
-}
-
-bool Loader::Host::hasRequests() const
-{
-    if (!m_requestsLoading.isEmpty())
-        return true;
-    for (unsigned p = 0; p <= High; p++) {
-        if (!m_requestsPending[p].isEmpty())
-            return true;
-    }
-    return false;
-}
-
-void Loader::Host::servePendingRequests(Loader::Priority minimumPriority)
-{
-    LOG(ResourceLoading, "Host::servePendingRequests '%s'", m_name.string().latin1().data());
-    if (cache()->loader()->isSuspendingPendingRequests()) {
-        LOG(ResourceLoading, "...isSuspendingPendingRequests");
-        return;
-    }
-
-    bool serveMore = true;
-    for (int priority = High; priority >= minimumPriority && serveMore; --priority)
-        servePendingRequests(m_requestsPending[priority], serveMore);
-}
-
-void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& serveLowerPriority)
-{
-    while (!requestsPending.isEmpty()) {        
-        Request* request = requestsPending.first();
-        CachedResourceLoader* cachedResourceLoader = request->cachedResourceLoader();
-        bool resourceIsCacheValidator = request->cachedResource()->isCacheValidator();
-
-        // For named hosts - which are only http(s) hosts - we should always enforce the connection limit.
-        // For non-named hosts - everything but http(s) - we should only enforce the limit if the document isn't done parsing 
-        // and we don't know all stylesheets yet.
-        bool shouldLimitRequests = !m_name.isNull() || cachedResourceLoader->document()->parsing() || !cachedResourceLoader->document()->haveStylesheetsLoaded();
-        if (shouldLimitRequests && m_requestsLoading.size() + m_nonCachedRequestsInFlight >= m_maxRequestsInFlight) {
-            serveLowerPriority = false;
-            return;
-        }
-        requestsPending.removeFirst();
-        
-        ResourceRequest resourceRequest(request->cachedResource()->url());
-        resourceRequest.setTargetType(cachedResourceTypeToTargetType(request->cachedResource()->type()));
-        
-        if (!request->cachedResource()->accept().isEmpty())
-            resourceRequest.setHTTPAccept(request->cachedResource()->accept());
-        
-         // Do not set the referrer or HTTP origin here. That's handled by SubresourceLoader::create.
-        
-        if (resourceIsCacheValidator) {
-            CachedResource* resourceToRevalidate = request->cachedResource()->resourceToRevalidate();
-            ASSERT(resourceToRevalidate->canUseCacheValidator());
-            ASSERT(resourceToRevalidate->isLoaded());
-            const String& lastModified = resourceToRevalidate->response().httpHeaderField("Last-Modified");
-            const String& eTag = resourceToRevalidate->response().httpHeaderField("ETag");
-            if (!lastModified.isEmpty() || !eTag.isEmpty()) {
-                ASSERT(cachedResourceLoader->cachePolicy() != CachePolicyReload);
-                if (cachedResourceLoader->cachePolicy() == CachePolicyRevalidate)
-                    resourceRequest.setHTTPHeaderField("Cache-Control", "max-age=0");
-                if (!lastModified.isEmpty())
-                    resourceRequest.setHTTPHeaderField("If-Modified-Since", lastModified);
-                if (!eTag.isEmpty())
-                    resourceRequest.setHTTPHeaderField("If-None-Match", eTag);
-            }
-        }
-
-#if ENABLE(LINK_PREFETCH)
-        if (request->cachedResource()->type() == CachedResource::LinkPrefetch)
-            resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
-#endif
-
-        RefPtr<SubresourceLoader> loader = SubresourceLoader::create(cachedResourceLoader->document()->frame(),
-            this, resourceRequest, request->shouldDoSecurityCheck(), request->sendResourceLoadCallbacks());
-        if (loader) {
-            m_requestsLoading.add(loader.release(), request);
-            request->cachedResource()->setRequestedFromNetworkingLayer();
-            LOG(ResourceLoading, "Host '%s' loading '%s'. Current count %d", m_name.string().latin1().data(), request->cachedResource()->url().latin1().data(), m_requestsLoading.size());
-        } else {
-            // FIXME: What if resources in other frames were waiting for this revalidation?
-            LOG(ResourceLoading, "Host '%s' cannot start loading '%s'", m_name.string().latin1().data(), request->cachedResource()->url().latin1().data());
-            CachedResource* resource = request->cachedResource();
-            cachedResourceLoader->decrementRequestCount(resource);
-            cachedResourceLoader->setLoadInProgress(true);
-            if (resource->resourceToRevalidate())
-                cache()->revalidationFailed(resource);
-            resource->error();
-            cachedResourceLoader->setLoadInProgress(false);
-            delete request;
-        }
+    for (unsigned i = 0; i < loadersToCancel.size(); ++i) {
+        SubresourceLoader* loader = loadersToCancel[i];
+        didFail(loader, true);
     }
 }
 
-void Loader::Host::didFinishLoading(SubresourceLoader* loader)
+void Loader::didFinishLoading(SubresourceLoader* loader)
 {
-    RefPtr<Host> myProtector(this);
-
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
         return;
@@ -412,7 +182,7 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     CachedResource* resource = request->cachedResource();
     ASSERT(!resource->resourceToRevalidate());
 
-    LOG(ResourceLoading, "Host '%s' received %s. Current count %d\n", m_name.string().latin1().data(), resource->url().latin1().data(), m_requestsLoading.size());
+    LOG(ResourceLoading, "Received '%s'.", resource->url().latin1().data());
 
     // If we got a 4xx response, we're pretending to have received a network
     // error, so we can't send the successful data() and finish() callbacks.
@@ -423,23 +193,17 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     }
 
     delete request;
-
-    cachedResourceLoader->setLoadInProgress(false);
-    
+    cachedResourceLoader->setLoadInProgress(false);    
     cachedResourceLoader->checkForPendingPreloads();
-
-    servePendingRequests();
 }
 
-void Loader::Host::didFail(SubresourceLoader* loader, const ResourceError&)
+void Loader::didFail(SubresourceLoader* loader, const ResourceError&)
 {
     didFail(loader);
 }
 
-void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
+void Loader::didFail(SubresourceLoader* loader, bool cancelled)
 {
-    RefPtr<Host> myProtector(this);
-
     loader->clearClient();
 
     RequestMap::iterator i = m_requestsLoading.find(loader);
@@ -457,7 +221,7 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
 
     CachedResource* resource = request->cachedResource();
 
-    LOG(ResourceLoading, "Host '%s' failed to load %s (cancelled=%d). Current count %d\n", m_name.string().latin1().data(), resource->url().latin1().data(), cancelled, m_requestsLoading.size());
+    LOG(ResourceLoading, "Failed to load '%s' (cancelled=%d).\n", resource->url().latin1().data(), cancelled);
 
     if (resource->resourceToRevalidate())
         cache()->revalidationFailed(resource);
@@ -474,14 +238,10 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
     delete request;
     
     cachedResourceLoader->checkForPendingPreloads();
-
-    servePendingRequests();
 }
 
-void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
+void Loader::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
 {
-    RefPtr<Host> protector(this);
-
     Request* request = m_requestsLoading.get(loader);
     
     // FIXME: This is a workaround for <rdar://problem/5236843>
@@ -510,7 +270,6 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
 
             delete request;
 
-            servePendingRequests();
             return;
         } 
         // Did not get 304 response, continue as a regular resource load.
@@ -541,10 +300,8 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
     }
 }
 
-void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, int size)
+void Loader::didReceiveData(SubresourceLoader* loader, const char* data, int size)
 {
-    RefPtr<Host> protector(this);
-
     Request* request = m_requestsLoading.get(loader);
     if (!request)
         return;
@@ -570,10 +327,8 @@ void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, i
         resource->data(loader->resourceData(), false);
 }
     
-void Loader::Host::didReceiveCachedMetadata(SubresourceLoader* loader, const char* data, int size)
+void Loader::didReceiveCachedMetadata(SubresourceLoader* loader, const char* data, int size)
 {
-    RefPtr<Host> protector(this);
-
     Request* request = m_requestsLoading.get(loader);
     if (!request)
         return;
@@ -582,42 +337,6 @@ void Loader::Host::didReceiveCachedMetadata(SubresourceLoader* loader, const cha
     ASSERT(!resource->isCacheValidator());
 
     resource->setSerializedCachedMetadata(data, size);
-}
-    
-void Loader::Host::cancelPendingRequests(RequestQueue& requestsPending, CachedResourceLoader* cachedResourceLoader)
-{
-    RequestQueue remaining;
-    RequestQueue::iterator end = requestsPending.end();
-    for (RequestQueue::iterator it = requestsPending.begin(); it != end; ++it) {
-        Request* request = *it;
-        if (request->cachedResourceLoader() == cachedResourceLoader) {
-            cache()->remove(request->cachedResource());
-            cachedResourceLoader->decrementRequestCount(request->cachedResource());
-            delete request;
-        } else
-            remaining.append(request);
-    }
-    requestsPending.swap(remaining);
-}
-
-void Loader::Host::cancelRequests(CachedResourceLoader* cachedResourceLoader)
-{
-    for (unsigned p = 0; p <= High; p++)
-        cancelPendingRequests(m_requestsPending[p], cachedResourceLoader);
-
-    Vector<SubresourceLoader*, 256> loadersToCancel;
-
-    RequestMap::iterator end = m_requestsLoading.end();
-    for (RequestMap::iterator i = m_requestsLoading.begin(); i != end; ++i) {
-        Request* r = i->second;
-        if (r->cachedResourceLoader() == cachedResourceLoader)
-            loadersToCancel.append(i->first.get());
-    }
-
-    for (unsigned i = 0; i < loadersToCancel.size(); ++i) {
-        SubresourceLoader* loader = loadersToCancel[i];
-        didFail(loader, true);
-    }
 }
 
 } //namespace WebCore

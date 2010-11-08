@@ -1069,6 +1069,7 @@ SOURCES += \
     loader/Request.cpp \
     loader/ResourceLoader.cpp \
     loader/ResourceLoadNotifier.cpp \
+    loader/ResourceLoadScheduler.cpp \
     loader/SinkDocument.cpp \
     loader/SubframeLoader.cpp \
     loader/SubresourceLoader.cpp \

@@ -23,94 +23,35 @@
 #define loader_h
 
 #include "FrameLoaderTypes.h"
-#include "PlatformString.h"
+#include "SubresourceLoader.h"
 #include "SubresourceLoaderClient.h"
-#include "Timer.h"
-#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/AtomicStringImpl.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
     class CachedResource;
     class CachedResourceLoader;
-    class KURL;
     class Request;
 
-    class Loader : public Noncopyable {
+    class Loader : public Noncopyable, private SubresourceLoaderClient {
     public:
-        Loader();
         ~Loader();
 
         void load(CachedResourceLoader*, CachedResource*, bool incremental = true, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true);
-
         void cancelRequests(CachedResourceLoader*);
-        
-        enum Priority { VeryLow, Low, Medium, High };
-        void servePendingRequests(Priority minimumPriority = VeryLow);
-
-        bool isSuspendingPendingRequests() { return m_isSuspendingPendingRequests; }
-        void suspendPendingRequests();
-        void resumePendingRequests();
-        
-        void nonCacheRequestInFlight(const KURL&);
-        void nonCacheRequestComplete(const KURL&);
 
     private:
-        Priority determinePriority(const CachedResource*) const;
-        void scheduleServePendingRequests();
+        virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
+        virtual void didReceiveData(SubresourceLoader*, const char*, int);
+        virtual void didReceiveCachedMetadata(SubresourceLoader*, const char*, int);
+        virtual void didFinishLoading(SubresourceLoader*);
+        virtual void didFail(SubresourceLoader*, const ResourceError&);
+        void didFail(SubresourceLoader*, bool cancelled = false);
         
-        void requestTimerFired(Timer<Loader>*);
-
-        class Host : public RefCounted<Host>, private SubresourceLoaderClient {
-        public:
-            static PassRefPtr<Host> create(const AtomicString& name, unsigned maxRequestsInFlight) 
-            {
-                return adoptRef(new Host(name, maxRequestsInFlight));
-            }
-            ~Host();
-            
-            const AtomicString& name() const { return m_name; }
-            void addRequest(Request*, Priority);
-            void nonCacheRequestInFlight();
-            void nonCacheRequestComplete();
-            void servePendingRequests(Priority minimumPriority = VeryLow);
-            void cancelRequests(CachedResourceLoader*);
-            bool hasRequests() const;
-
-            bool processingResource() const { return m_numResourcesProcessing != 0 || m_nonCachedRequestsInFlight !=0; }
-
-        private:
-            Host(const AtomicString&, unsigned);
-
-            virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
-            virtual void didReceiveData(SubresourceLoader*, const char*, int);
-            virtual void didReceiveCachedMetadata(SubresourceLoader*, const char*, int);
-            virtual void didFinishLoading(SubresourceLoader*);
-            virtual void didFail(SubresourceLoader*, const ResourceError&);
-            
-            typedef Deque<Request*> RequestQueue;
-            void servePendingRequests(RequestQueue& requestsPending, bool& serveLowerPriority);
-            void didFail(SubresourceLoader*, bool cancelled = false);
-            void cancelPendingRequests(RequestQueue& requestsPending, CachedResourceLoader*);
-            
-            RequestQueue m_requestsPending[High + 1];
-            typedef HashMap<RefPtr<SubresourceLoader>, Request*> RequestMap;
-            RequestMap m_requestsLoading;
-            const AtomicString m_name;
-            const int m_maxRequestsInFlight;
-            int m_numResourcesProcessing;
-            int m_nonCachedRequestsInFlight;
-        };
-        typedef HashMap<AtomicStringImpl*, RefPtr<Host> > HostMap;
-        HostMap m_hosts;
-        RefPtr<Host> m_nonHTTPProtocolHost;
-        
-        Timer<Loader> m_requestTimer;
-
-        bool m_isSuspendingPendingRequests;
+        typedef HashMap<RefPtr<SubresourceLoader>, Request*> RequestMap;
+        RequestMap m_requestsLoading;
     };
 
 }

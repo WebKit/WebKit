@@ -39,8 +39,9 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "ProgressTracker.h"
-#include "ResourceHandle.h"
 #include "ResourceError.h"
+#include "ResourceHandle.h"
+#include "ResourceLoadScheduler.h"
 #include "Settings.h"
 #include "SharedBuffer.h"
 
@@ -95,6 +96,8 @@ void ResourceLoader::releaseResources()
 
     m_identifier = 0;
 
+    resourceLoadScheduler()->remove(this);
+
     if (m_handle) {
         // Clear out the ResourceHandle's client so that it doesn't try to call
         // us back after we release it, unless it has been replaced by someone else.
@@ -131,21 +134,32 @@ bool ResourceLoader::load(const ResourceRequest& r)
         return false;
     }
     
-    if (m_documentLoader->scheduleArchiveLoad(this, clientRequest, r.url()))
-        return true;
-    
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (m_documentLoader->applicationCacheHost()->maybeLoadResource(this, clientRequest, r.url()))
         return true;
 #endif
 
-    if (m_defersLoading) {
+    if (m_defersLoading)
         m_deferredRequest = clientRequest;
-        return true;
-    }
-    
-    m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), clientRequest, this, m_defersLoading, m_shouldContentSniff);
 
+    return true;
+}
+
+bool ResourceLoader::start()
+{
+    ASSERT(!m_handle);
+#ifndef NDEBUG
+    resourceLoadScheduler()->assertLoaderBeingCounted(this);
+#endif
+    
+    if (m_documentLoader->scheduleArchiveLoad(this, m_request, m_request.url()))
+        return true;
+
+    if (m_defersLoading)
+        return false;
+
+    if (!m_reachedTerminalState)
+        m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), m_request, this, m_defersLoading, m_shouldContentSniff);
     return true;
 }
 
@@ -223,6 +237,8 @@ void ResourceLoader::willSendRequest(ResourceRequest& request, const ResourceRes
         frameLoader()->notifier()->willSendRequest(this, request, redirectResponse);
     }
 
+    if (!redirectResponse.isNull())
+        resourceLoadScheduler()->crossOriginRedirectReceived(this, request.url());
     m_request = request;
 }
 

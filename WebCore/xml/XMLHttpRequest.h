@@ -186,7 +186,6 @@ private:
     bool m_uploadComplete;
 
     bool m_sameOriginRequest;
-    bool m_didTellLoaderAboutRequest;
 
     // Used for onprogress tracking
     long long m_receivedLength;

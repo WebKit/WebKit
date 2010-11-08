@@ -45,6 +45,7 @@
 #include <WebCore/ProxyServer.h>
 #include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/RenderLayer.h>
+#include <WebCore/ResourceLoadScheduler.h>
 #include <WebCore/ScrollView.h>
 #include <WebCore/Settings.h>
 
@@ -129,11 +130,7 @@ void PluginView::Stream::start()
     Frame* frame = m_pluginView->m_pluginElement->document()->frame();
     ASSERT(frame);
 
-    m_loader = NetscapePlugInStreamLoader::create(frame, this);
-    m_loader->setShouldBufferData(false);
-    
-    m_loader->documentLoader()->addPlugInStreamLoader(m_loader.get());
-    m_loader->load(m_request);
+    m_loader = resourceLoadScheduler()->schedulePluginStreamLoad(frame, this, m_request);
 }
 
 void PluginView::Stream::cancel()

@@ -47,7 +47,7 @@ namespace WebCore {
 
     class NetscapePlugInStreamLoader : public ResourceLoader {
     public:
-        static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, NetscapePlugInStreamLoaderClient*);
+        static PassRefPtr<NetscapePlugInStreamLoader> create(Frame*, NetscapePlugInStreamLoaderClient*, const ResourceRequest&);
         virtual ~NetscapePlugInStreamLoader();
 
         bool isDone() const;

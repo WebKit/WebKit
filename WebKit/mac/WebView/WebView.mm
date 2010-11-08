@@ -147,6 +147,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/ResourceHandle.h>
+#import <WebCore/ResourceLoadScheduler.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SchemeRegistry.h>
 #import <WebCore/ScriptController.h>
@@ -621,7 +622,7 @@ static bool shouldEnableLoadDeferring()
 
 - (void)_dispatchPendingLoadRequests
 {
-    cache()->loader()->servePendingRequests();
+    resourceLoadScheduler()->servePendingRequests();
 }
 
 - (void)_registerDraggedTypes

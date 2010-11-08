@@ -1999,6 +1999,8 @@ webcore_sources += \
 	WebCore/loader/ResourceLoader.h \
 	WebCore/loader/ResourceLoadNotifier.cpp \
 	WebCore/loader/ResourceLoadNotifier.h \
+	WebCore/loader/ResourceLoadScheduler.cpp \
+	WebCore/loader/ResourceLoadScheduler.h \
 	WebCore/loader/SinkDocument.cpp \
 	WebCore/loader/SinkDocument.h \
 	WebCore/loader/SubframeLoader.cpp \
