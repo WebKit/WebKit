@@ -27,12 +27,12 @@
 #include "Color.h"
 #include "SVGAnimationElement.h"
 #include "SVGPathByteStream.h"
+#include "SVGPointList.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
     class SVGPathSegList;
-    class SVGPointList;
 
     class SVGAnimateElement : public SVGAnimationElement {
     public:
@@ -69,9 +69,9 @@ namespace WebCore {
         OwnPtr<SVGPathByteStream> m_toPath;
         OwnPtr<SVGPathByteStream> m_animatedPath;
         SVGPathByteStream* m_animatedPathPointer;
-        RefPtr<SVGPointList> m_fromPoints;
-        RefPtr<SVGPointList> m_toPoints;
-        RefPtr<SVGPointList> m_animatedPoints;
+        SVGPointList m_fromPoints;
+        SVGPointList m_toPoints;
+        SVGPointList m_animatedPoints;
     };
 
 } // namespace WebCore

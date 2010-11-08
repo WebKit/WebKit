@@ -2456,8 +2456,6 @@ my %nativeType = (
     "IDBKey" => "RefPtr<IDBKey>",
     "SVGMatrix" => "AffineTransform",
     "SVGPaintType" => "SVGPaint::SVGPaintType",
-    "SVGPoint" => "FloatPoint",
-    "SVGRect" => "FloatRect",
     "SVGTransform" => "SVGTransform",
     "boolean" => "bool",
     "double" => "double",
@@ -2556,8 +2554,6 @@ sub JSValueToNative
         return "createIDBKeyFromValue(exec, $value)";
     }
 
-    $implIncludes{"FloatPoint.h"} = 1 if $type eq "SVGPoint";
-    $implIncludes{"FloatRect.h"} = 1 if $type eq "SVGRect";
     $implIncludes{"HTMLOptionElement.h"} = 1 if $type eq "HTMLOptionElement";
     $implIncludes{"JSCustomVoidCallback.h"} = 1 if $type eq "VoidCallback";
     $implIncludes{"Event.h"} = 1 if $type eq "Event";
@@ -2680,10 +2676,19 @@ sub NativeToJSValue
         $value = "static_cast<" . GetNativeType($type) . ">($value)";
     } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $implClassName =~ /List$/) {
         my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($type);
-        if ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
+        if ($codeGenerator->IsSVGTypeWithWritablePropertiesNeedingTearOff($type) and $inFunctionCall eq 0 and not defined $signature->extendedAttributes->{"Immutable"}) {
+            $tearOffType =~ s/SVGPropertyTearOff</SVGStaticPropertyTearOff<$implClassName, /;
+            $implIncludes{"SVGStaticPropertyTearOff.h"} = 1;
+
+            my $getter = $value;
+            $getter =~ s/imp->//;
+            $getter =~ s/\(\)//;
+            my $updater = "update" . $codeGenerator->WK_ucfirst($getter);
+            $value = "${tearOffType}::create(imp, $value, &${implClassName}::$updater)";
+        } elsif ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
             my $extraImp = "GetOwnerElementForType<$implClassName, IsDerivedFromSVGElement<$implClassName>::value>::ownerElement(imp), ";
             $value = "${tearOffType}::create($extraImp$value)";
-        } else {
+        } elsif (not $tearOffType =~ /SVGPointList/) {
             $value = "${tearOffType}::create($value)";
         }
     }

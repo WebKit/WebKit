@@ -63,7 +63,7 @@ namespace WebCore {
         return ptr < end;
     }
 
-    bool pointsListFromSVGData(SVGPointList* pointsList, const String& points);
+    bool pointsListFromSVGData(SVGPointList& pointsList, const String& points);
     Vector<String> parseDelimitedString(const String& input, const char seperator);
     bool parseKerningUnicodeString(const String& input, UnicodeRanges&, HashSet<String>& stringList);
     bool parseGlyphName(const String& input, HashSet<String>& values);

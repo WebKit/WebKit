@@ -504,7 +504,6 @@ GEN += \
     $(intermediates)/bindings/V8SVGAnimatedLengthList.h \
     $(intermediates)/bindings/V8SVGAnimatedNumber.h \
     $(intermediates)/bindings/V8SVGAnimatedNumberList.h \
-    $(intermediates)/bindings/V8SVGAnimatedPoints.h \
     $(intermediates)/bindings/V8SVGAnimatedPreserveAspectRatio.h \
     $(intermediates)/bindings/V8SVGAnimatedRect.h \
     $(intermediates)/bindings/V8SVGAnimatedString.h \

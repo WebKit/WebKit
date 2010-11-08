@@ -59,8 +59,7 @@ my @depsContent = ();
 my %protocolTypeHash = ("XPathNSResolver" => 1, "EventListener" => 1, "EventTarget" => 1, "NodeFilter" => 1,
                         "SVGLocatable" => 1, "SVGTransformable" => 1, "SVGStylable" => 1, "SVGFilterPrimitiveStandardAttributes" => 1, 
                         "SVGTests" => 1, "SVGLangSpace" => 1, "SVGExternalResourcesRequired" => 1, "SVGURIReference" => 1,
-                        "SVGZoomAndPan" => 1, "SVGFitToViewBox" => 1, "SVGAnimatedPathData" => 1, "SVGAnimatedPoints" => 1,
-                        "ElementTimeControl" => 1);
+                        "SVGZoomAndPan" => 1, "SVGFitToViewBox" => 1, "SVGAnimatedPathData" => 1, "ElementTimeControl" => 1);
 my %nativeObjCTypeHash = ("URL" => 1, "Color" => 1);
 
 # FIXME: this should be replaced with a function that recurses up the tree
@@ -71,7 +70,7 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
                     "NodeIterator" => 1, "TreeWalker" => 1, "AbstractView" => 1, "Blob" => 1,
                     "SVGAngle" => 1, "SVGAnimatedAngle" => 1, "SVGAnimatedBoolean" => 1, "SVGAnimatedEnumeration" => 1,
                     "SVGAnimatedInteger" => 1, "SVGAnimatedLength" => 1, "SVGAnimatedLengthList" => 1,
-                    "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1, "SVGAnimatedPoints" => 1,
+                    "SVGAnimatedNumber" => 1, "SVGAnimatedNumberList" => 1,
                     "SVGAnimatedPreserveAspectRatio" => 1, "SVGAnimatedRect" => 1, "SVGAnimatedString" => 1,
                     "SVGAnimatedTransformList" => 1, "SVGLength" => 1, "SVGLengthList" => 1, "SVGMatrix" => 1,
                     "SVGNumber" => 1, "SVGNumberList" => 1, "SVGPathSeg" => 1, "SVGPathSegList" => 1, "SVGPoint" => 1,
@@ -597,12 +596,6 @@ sub AddIncludesForType
     if ($codeGenerator->IsSVGAnimatedType($type)) {
         $implIncludes{"DeprecatedSVGAnimatedTemplate.h"} = 1;
         $implIncludes{"DOM${type}Internal.h"} = 1;
-        return;
-    }
-
-    if ($type eq "SVGPoint") {
-        $implIncludes{"FloatPoint.h"} = 1;
-        $implIncludes{"DOMSVGPointInternal.h"} = 1;
         return;
     }
 
@@ -1317,15 +1310,30 @@ sub GenerateImplementation
                 $getterContentHead = "$getterContentHead";
                 $getterContentTail .= "->toString()";                
             } elsif (ConversionNeeded($attribute->signature->type)) {
-                if ($codeGenerator->IsSVGTypeNeedingTearOff($attribute->signature->type) and not $implClassName =~ /List$/) {
-                    my $idlTypeWithNamespace = GetSVGTypeWithNamespace($attribute->signature->type);
-                    if ($idlTypeWithNamespace =~ /SVGStaticListPropertyTearOff/) {
+                my $type = $attribute->signature->type;
+                if ($codeGenerator->IsSVGTypeNeedingTearOff($type) and not $implClassName =~ /List$/) {
+                    my $idlTypeWithNamespace = GetSVGTypeWithNamespace($type);
+                    if ($codeGenerator->IsSVGTypeWithWritablePropertiesNeedingTearOff($type) and not defined $attribute->signature->extendedAttributes->{"Immutable"}) {
+                        $idlTypeWithNamespace =~ s/SVGPropertyTearOff</SVGStaticPropertyTearOff<$implClassNameWithNamespace, /;
+                        $implIncludes{"SVGStaticPropertyTearOff.h"} = 1;
+
+                        my $getter = $getterContentHead;
+                        $getter =~ s/IMPL->//;
+                        $getter =~ s/\(//;
+                        my $updater = "update" . $codeGenerator->WK_ucfirst($getter);
+                        $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create(IMPL, $getterContentHead$getterContentTail, &${implClassNameWithNamespace}::$updater";
+                        $getterContentTail .= "))";
+                    } elsif ($idlTypeWithNamespace =~ /SVGStaticListPropertyTearOff/) {
                         my $extraImp = "WebCore::GetOwnerElementForType<$implClassNameWithNamespace, WebCore::IsDerivedFromSVGElement<$implClassNameWithNamespace>::value>::ownerElement(IMPL), ";
                         $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($extraImp$getterContentHead";
+                        $getterContentTail .= ")))";
+                    } elsif ($idlTypeWithNamespace =~ /SVGPointList/) {
+                        $getterContentHead = "kit(WTF::getPtr($getterContentHead";
+                        $getterContentTail .= "))";
                     } else {
                         $getterContentHead = "kit(WTF::getPtr(${idlTypeWithNamespace}::create($getterContentHead";
+                        $getterContentTail .= ")))";
                     }
-                    $getterContentTail .= ")))";
                 } else {
                     $getterContentHead = "kit(WTF::getPtr($getterContentHead";
                     $getterContentTail .= "))";
@@ -1416,7 +1424,7 @@ sub GenerateImplementation
                         push(@implContent, "        IMPL->commitChange();\n");
                         push(@implContent, "    $exceptionRaiseOnError\n");
                     } else {
-                        push(@implContent, "        IMPL->commitChange();\n");
+                        push(@implContent, "    IMPL->commitChange();\n");
                     }
                 } elsif ($svgListPropertyType) {
                     $getterContentHead = "$getterExpressionPrefix";
@@ -1578,7 +1586,7 @@ sub GenerateImplementation
 
             if ($svgPropertyType) {
                 push(@functionContent, "    $svgPropertyType& podImpl = IMPL->propertyReference();\n");
-                $content = "podImpl.$content;\n    IMPL->commitChange()"; 
+                $content = "podImpl.$content"; 
             } else {
                 $content = $caller . "->$content";
             }
@@ -1602,9 +1610,14 @@ sub GenerateImplementation
                 if ($raisesExceptions) {
                     push(@functionContent, "    $exceptionInit\n");
                     push(@functionContent, "    $content;\n");
+                    if ($svgPropertyType) {
+                        push(@functionContent, "    if (!ec)\n");
+                        push(@functionContent, "        IMPL->commitChange();\n");
+                    }
                     push(@functionContent, "    $exceptionRaiseOnError\n");
                 } else {
                     push(@functionContent, "    $content;\n");
+                    push(@functionContent, "    IMPL->commitChange()\n") if $svgPropertyType;
                 }
             } elsif (defined $needsCustom{"NodeToReturn"}) {
                 # Special case the insertBefore, replaceChild, removeChild 

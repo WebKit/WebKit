@@ -30,8 +30,9 @@ module svg {
                                                      SVGLangSpace,
                                                      SVGExternalResourcesRequired,
                                                      SVGStylable,
-                                                     SVGTransformable,
-                                                     SVGAnimatedPoints {
+                                                     SVGTransformable {
+        readonly attribute SVGPointList points;
+        readonly attribute SVGPointList animatedPoints;
     };
 
 }

@@ -39,29 +39,18 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* document)
 {
 }
 
-SVGPointList* SVGPolyElement::points() const
-{
-    if (!m_points)
-        m_points = SVGPointList::create(SVGNames::pointsAttr);
-
-    return m_points.get();
-}
-
-SVGPointList* SVGPolyElement::animatedPoints() const
-{
-    // FIXME!
-    return 0;
-}
-
 void SVGPolyElement::parseMappedAttribute(Attribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::pointsAttr) {
-        ExceptionCode ec = 0;
-        points()->clear(ec);
-
-        if (!pointsListFromSVGData(points(), value))
+        SVGPointList newList;
+        if (!pointsListFromSVGData(newList, value))
             document()->accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
+
+        if (SVGAnimatedListPropertyTearOff<SVGPointList>* list = m_animatablePointsList.get())
+            list->detachListWrappers(newList.size());
+
+        m_points.value = newList;
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;
@@ -76,10 +65,6 @@ void SVGPolyElement::parseMappedAttribute(Attribute* attr)
 void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
-
-    // The points property is not a regular SVGAnimatedProperty, still we use the same SVG<->XML DOM synchronization framework.
-    if (attrName == SVGNames::pointsAttr)
-        invalidateSVGAttributes();
 
     RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
     if (!renderer)
@@ -109,14 +94,44 @@ void SVGPolyElement::synchronizeProperty(const QualifiedName& attrName)
 
     if (attrName == anyQName()) {
         synchronizeExternalResourcesRequired();
-        SVGAnimatedPropertySynchronizer<true>::synchronize(this, SVGNames::pointsAttr, points()->valueAsString());
+        synchronizePoints();
         return;
     }
 
     if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
         synchronizeExternalResourcesRequired();
     else if (attrName == SVGNames::pointsAttr)
-        SVGAnimatedPropertySynchronizer<true>::synchronize(this, attrName, points()->valueAsString());
+        synchronizePoints();
+}
+
+void SVGPolyElement::synchronizePoints()
+{
+    if (!m_points.shouldSynchronize)
+        return;
+
+    SVGAnimatedPropertySynchronizer<true>::synchronize(this, SVGNames::pointsAttr, m_points.value.valueAsString());
+}
+
+SVGListPropertyTearOff<SVGPointList>* SVGPolyElement::points()
+{
+    if (!m_animatablePointsList) {
+        m_points.shouldSynchronize = true;
+        m_animatablePointsList = SVGAnimatedProperty::lookupOrCreateWrapper<SVGAnimatedListPropertyTearOff<SVGPointList> , SVGPointList>
+                                 (this, SVGNames::pointsAttr, SVGNames::pointsAttr.localName(), m_points.value);
+    }
+
+    return static_cast<SVGListPropertyTearOff<SVGPointList>*>(m_animatablePointsList->baseVal());
+}
+
+SVGListPropertyTearOff<SVGPointList>* SVGPolyElement::animatedPoints()
+{
+    if (!m_animatablePointsList) {
+        m_points.shouldSynchronize = true;
+        m_animatablePointsList = SVGAnimatedProperty::lookupOrCreateWrapper<SVGAnimatedListPropertyTearOff<SVGPointList> , SVGPointList>
+                                 (this, SVGNames::pointsAttr, SVGNames::pointsAttr.localName(), m_points.value);
+    }
+
+    return static_cast<SVGListPropertyTearOff<SVGPointList>*>(m_animatablePointsList->animVal());
 }
 
 }

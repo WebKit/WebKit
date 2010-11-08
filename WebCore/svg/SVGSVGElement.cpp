@@ -213,14 +213,14 @@ void SVGSVGElement::setCurrentScale(float scale)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
 
-FloatPoint SVGSVGElement::currentTranslate() const
-{
-    return m_translation;
-}
-
-void SVGSVGElement::setCurrentTranslate(const FloatPoint &translation)
+void SVGSVGElement::setCurrentTranslate(const FloatPoint& translation)
 {
     m_translation = translation;
+    updateCurrentTranslate();
+}
+
+void SVGSVGElement::updateCurrentTranslate()
+{
     if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
 

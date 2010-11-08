@@ -2378,6 +2378,7 @@ HEADERS += \
     svg/properties/SVGPropertyTearOff.h \
     svg/properties/SVGPropertyTraits.h \
     svg/properties/SVGStaticListPropertyTearOff.h \
+    svg/properties/SVGStaticPropertyTearOff.h \
     svg/SVGAElement.h \
     svg/SVGAltGlyphElement.h \
     svg/SVGAngle.h \
@@ -2391,7 +2392,6 @@ HEADERS += \
     svg/SVGAnimatedNumber.h \
     svg/SVGAnimatedNumberList.h \
     svg/SVGAnimatedPathData.h \
-    svg/SVGAnimatedPoints.h \
     svg/SVGAnimatedPreserveAspectRatio.h \
     svg/SVGAnimatedRect.h \
     svg/SVGAnimatedString.h \
@@ -3406,7 +3406,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGAngle.cpp \
         svg/SVGAnimateColorElement.cpp \
         svg/SVGAnimatedPathData.cpp \
-        svg/SVGAnimatedPoints.cpp \
         svg/SVGAnimateElement.cpp \
         svg/SVGAnimateMotionElement.cpp \
         svg/SVGAnimateTransformElement.cpp \

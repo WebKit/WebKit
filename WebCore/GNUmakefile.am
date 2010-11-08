@@ -3052,6 +3052,7 @@ webcore_sources += \
 	WebCore/svg/properties/SVGPropertyTearOff.h \
 	WebCore/svg/properties/SVGPropertyTraits.h \
 	WebCore/svg/properties/SVGStaticListPropertyTearOff.h \
+	WebCore/svg/properties/SVGStaticPropertyTearOff.h \
 	WebCore/svg/RadialGradientAttributes.h \
 	WebCore/svg/SVGAElement.cpp \
 	WebCore/svg/SVGAElement.h \
@@ -3071,8 +3072,6 @@ webcore_sources += \
 	WebCore/svg/SVGAnimatedNumberList.h \
 	WebCore/svg/SVGAnimatedPathData.cpp \
 	WebCore/svg/SVGAnimatedPathData.h \
-	WebCore/svg/SVGAnimatedPoints.cpp \
-	WebCore/svg/SVGAnimatedPoints.h \
 	WebCore/svg/SVGAnimatedPreserveAspectRatio.h \
 	WebCore/svg/SVGAnimatedRect.h \
 	WebCore/svg/SVGAnimatedString.h \
@@ -4181,7 +4180,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGAnimatedNumberList.cpp \
 	DerivedSources/WebCore/JSSVGAnimatedNumberList.h \
 	DerivedSources/WebCore/JSSVGAnimatedPathData.h \
-	DerivedSources/WebCore/JSSVGAnimatedPoints.h \
 	DerivedSources/WebCore/JSSVGAnimatedPreserveAspectRatio.cpp \
 	DerivedSources/WebCore/JSSVGAnimatedPreserveAspectRatio.h \
 	DerivedSources/WebCore/JSSVGAnimatedRect.cpp \

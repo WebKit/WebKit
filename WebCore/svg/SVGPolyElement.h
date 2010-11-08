@@ -22,41 +22,46 @@
 #define SVGPolyElement_h
 
 #if ENABLE(SVG)
-#include "SVGAnimatedPoints.h"
 #include "SVGAnimatedPropertyMacros.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGLangSpace.h"
+#include "SVGPointList.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
 
 namespace WebCore {
 
-    class SVGPolyElement :  public SVGStyledTransformableElement,
-                            public SVGTests,
-                            public SVGLangSpace,
-                            public SVGExternalResourcesRequired,
-                            public SVGAnimatedPoints {
-    public:
-        virtual SVGPointList* points() const;
-        virtual SVGPointList* animatedPoints() const;
+class SVGPolyElement : public SVGStyledTransformableElement
+                     , public SVGTests
+                     , public SVGLangSpace
+                     , public SVGExternalResourcesRequired {
+public:
+    SVGListPropertyTearOff<SVGPointList>* points();
+    SVGListPropertyTearOff<SVGPointList>* animatedPoints();
 
-    protected:
-        SVGPolyElement(const QualifiedName&, Document*);
+    SVGPointList& pointList() const { return m_points.value; }
 
-    private:
-        virtual bool isValid() const { return SVGTests::isValid(); }
+protected:
+    SVGPolyElement(const QualifiedName&, Document*);
 
-        virtual void parseMappedAttribute(Attribute*); 
-        virtual void svgAttributeChanged(const QualifiedName&);
-        virtual void synchronizeProperty(const QualifiedName&);
+private:
+    virtual bool isValid() const { return SVGTests::isValid(); }
 
-        virtual bool supportsMarkers() const { return true; }
+    virtual void parseMappedAttribute(Attribute*); 
+    virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
 
-        // SVGExternalResourcesRequired
-        DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPolyElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+    virtual bool supportsMarkers() const { return true; }
 
-        mutable RefPtr<SVGPointList> m_points;
-    };
+    // SVGExternalResourcesRequired
+    DECLARE_ANIMATED_STATIC_PROPERTY_NEW(SVGPolyElement, SVGNames::externalResourcesRequiredAttr, bool, ExternalResourcesRequired, externalResourcesRequired)
+
+    void synchronizePoints();
+
+protected:
+    mutable SVGSynchronizableAnimatedProperty<SVGPointList> m_points;
+    RefPtr<SVGAnimatedListPropertyTearOff<SVGPointList> > m_animatablePointsList;
+};
 
 } // namespace WebCore
 

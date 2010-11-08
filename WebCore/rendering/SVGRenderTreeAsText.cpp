@@ -411,7 +411,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGPath& path)
         writeNameValuePair(ts, "r", element->r().value(element));
     } else if (svgElement->hasTagName(SVGNames::polygonTag) || svgElement->hasTagName(SVGNames::polylineTag)) {
         SVGPolyElement* element = static_cast<SVGPolyElement*>(svgElement);
-        writeNameAndQuotedValue(ts, "points", element->points()->valueAsString());
+        writeNameAndQuotedValue(ts, "points", element->pointList().valueAsString());
     } else if (svgElement->hasTagName(SVGNames::pathTag)) {
         SVGPathElement* element = static_cast<SVGPathElement*>(svgElement);
         String pathString;

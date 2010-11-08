@@ -100,7 +100,6 @@ SET(WebCore_IDL_INCLUDES
 SET(WebCore_IDL_PURE_FILES
     svg/ElementTimeControl.idl
     svg/SVGAnimatedPathData.idl
-    svg/SVGAnimatedPoints.idl
     svg/SVGExternalResourcesRequired.idl
     svg/SVGFilterPrimitiveStandardAttributes.idl
     svg/SVGFitToViewBox.idl
@@ -1778,7 +1777,6 @@ IF (ENABLE_SVG)
         svg/SVGAnimateMotionElement.cpp
         svg/SVGAnimateTransformElement.cpp
         svg/SVGAnimatedPathData.cpp
-        svg/SVGAnimatedPoints.cpp
         svg/SVGAnimationElement.cpp
         svg/SVGCircleElement.cpp
         svg/SVGClipPathElement.cpp

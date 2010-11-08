@@ -170,12 +170,12 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         else if (percentage == 1.f)
             results->m_animatedPoints = m_toPoints;
         else {
-            if (m_fromPoints && m_toPoints)
-                results->m_animatedPoints = SVGPointList::createAnimated(m_fromPoints.get(), m_toPoints.get(), percentage);
+            if (!m_fromPoints.isEmpty() && !m_toPoints.isEmpty())
+                SVGPointList::createAnimated(m_fromPoints, m_toPoints, results->m_animatedPoints, percentage);
             else
                 results->m_animatedPoints.clear();
             // Fall back to discrete animation if the points are not compatible
-            if (!results->m_animatedPoints)
+            if (results->m_animatedPoints.isEmpty())
                 results->m_animatedPoints = ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1.0f) 
                     ? m_toPoints : m_fromPoints;
         }
@@ -215,14 +215,12 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
         m_fromPath.clear();
         m_toPath.clear();
     } else if (m_propertyType == PointsProperty) {
-        m_fromPoints = SVGPointList::create(SVGNames::pointsAttr);
-        if (pointsListFromSVGData(m_fromPoints.get(), fromString)) {
-            m_toPoints = SVGPointList::create(SVGNames::pointsAttr);
-            if (pointsListFromSVGData(m_toPoints.get(), toString))
+        m_fromPoints.clear();
+        if (pointsListFromSVGData(m_fromPoints, fromString)) {
+            m_toPoints.clear();
+            if (pointsListFromSVGData(m_toPoints, toString))
                 return true;
         }
-        m_fromPoints.clear();
-        m_toPoints.clear();
     }
     m_fromString = fromString;
     m_toString = toString;
@@ -299,12 +297,9 @@ void SVGAnimateElement::applyResultsToTarget()
             SVGPathParserFactory* factory = SVGPathParserFactory::self();
             factory->buildStringFromByteStream(m_animatedPathPointer, valueToApply, UnalteredParsing);
         }
-    } else if (m_propertyType == PointsProperty) {
-        if (!m_animatedPoints || !m_animatedPoints->numberOfItems())
-            valueToApply = m_animatedString;
-        else
-            valueToApply = m_animatedPoints->valueAsString();
-    } else
+    } else if (m_propertyType == PointsProperty)
+        valueToApply = m_animatedPoints.isEmpty() ? m_animatedString : m_animatedPoints.valueAsString();
+    else
         valueToApply = m_animatedString;
     
     setTargetAttributeAnimatedValue(valueToApply);

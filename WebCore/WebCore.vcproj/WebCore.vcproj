@@ -61852,10 +61852,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\svg\SVGAnimatedPoints.h"
-				>
-			</File>
-			<File
 				RelativePath="..\svg\SVGAnimatedPreserveAspectRatio.h"
 				>
 			</File>
@@ -62936,6 +62932,10 @@
 				</File>
 				<File
 					RelativePath="..\svg\properties\SVGStaticListPropertyTearOff.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGStaticPropertyTearOff.h"
 					>
 				</File>
 			</Filter>

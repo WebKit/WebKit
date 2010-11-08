@@ -3,6 +3,10 @@ if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
 var polyline = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
-polyline.points.appendItem(null);
+try {
+    polyline.points.appendItem(null);
+} catch (e) {
+    document.write("Caught exception: " + e + "<br>");
+}
 document.write("PASSED -- WebKit did not crash!")
 </script>

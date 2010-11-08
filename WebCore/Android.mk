@@ -863,7 +863,6 @@ LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) \
 	svg/SVGAnimateMotionElement.cpp \
 	svg/SVGAnimateTransformElement.cpp \
 	svg/SVGAnimatedPathData.cpp \
-	svg/SVGAnimatedPoints.cpp \
 	svg/SVGAnimationElement.cpp \
 	svg/SVGCircleElement.cpp \
 	svg/SVGClipPathElement.cpp \

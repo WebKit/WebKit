@@ -23,8 +23,6 @@
 #if ENABLE(SVG)
 #include "SVGPolygonElement.h"
 
-#include "SVGPointList.h"
-
 namespace WebCore {
 
 inline SVGPolygonElement::SVGPolygonElement(const QualifiedName& tagName, Document* document)
@@ -41,15 +39,15 @@ void SVGPolygonElement::toPathData(Path& path) const
 {
     ASSERT(path.isEmpty());
 
-    int len = points()->numberOfItems();
-    if (len < 1)
+    SVGPointList& points = pointList();
+    if (points.isEmpty())
         return;
-    
-    ExceptionCode ec = 0;
-    path.moveTo(points()->getItem(0, ec));
 
-    for (int i = 1; i < len; ++i)
-        path.addLineTo(points()->getItem(i, ec));
+    path.moveTo(points.first());
+
+    unsigned size = points.size();
+    for (unsigned i = 1; i < size; ++i)
+        path.addLineTo(points.at(i));
 
     path.closeSubpath();
 }

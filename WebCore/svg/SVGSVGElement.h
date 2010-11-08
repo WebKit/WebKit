@@ -78,9 +78,12 @@ namespace WebCore {
         float currentScale() const;
         void setCurrentScale(float scale);
 
-        FloatPoint currentTranslate() const;
+        FloatPoint& currentTranslate() { return m_translation; }
         void setCurrentTranslate(const FloatPoint&);
-        
+
+        // Only used from the bindings.
+        void updateCurrentTranslate();
+
         SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
         
         void pauseAnimations();
