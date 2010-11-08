@@ -64,14 +64,6 @@
 #endif
 #endif // defined(WIN32) || defined(_WIN32)
 
-#if defined(ANDROID)
-#ifdef __cplusplus
-// Must come before include of algorithm.
-#define PREFIX_FOR_WEBCORE 1
-#define EXPORT __attribute__((visibility("default")))
-#endif
-#endif
-
 #if !defined(BUILDING_BREWMP__)
 #include <sys/types.h>
 #include <fcntl.h>

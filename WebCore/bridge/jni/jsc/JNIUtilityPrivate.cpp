@@ -200,7 +200,8 @@ jvalue convertValueToJValue(ExecState* exec, RootObject* rootObject, JSValue val
                 } else if (object->classInfo() == &JSArray::info) {
                     // Input is a Javascript Array. We need to create it to a Java Array.
                     result.l = convertArrayInstanceToJavaArray(exec, asArray(value), javaClassName);
-                } else if (!result.l && (!strcmp(javaClassName, "java.lang.Object")) || (!strcmp(javaClassName, "netscape.javascript.JSObject"))) {
+                } else if ((!result.l && (!strcmp(javaClassName, "java.lang.Object")))
+                           || (!strcmp(javaClassName, "netscape.javascript.JSObject"))) {
                     // Wrap objects in JSObject instances.
                     JNIEnv* env = getJNIEnv();
                     jclass jsObjectClass = env->FindClass("sun/plugin/javascript/webkit/JSObject");

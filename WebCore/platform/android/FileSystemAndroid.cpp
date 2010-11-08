@@ -88,17 +88,15 @@ Vector<String> listDirectory(const String& path, const String& filter)
     DIR* dir = opendir(cpath.data());
     if (dir) {
         struct dirent* dp;
-        while (dp = readdir(dir)) {
+        while ((dp = readdir(dir))) {
             const char* name = dp->d_name;
             if (!strcmp(name, ".") || !strcmp(name, ".."))
                 continue;
             if (fnmatch(cfilter.data(), name, 0))
                 continue;
             char filePath[1024];
-            if ((int) (sizeof(filePath) - 1) < snprintf(filePath,
-                    sizeof(filePath), "%s/%s", cpath.data(), name)) {
+            if (static_cast<int>(sizeof(filePath) - 1) < snprintf(filePath, sizeof(filePath), "%s/%s", cpath.data(), name))
                 continue; // buffer overflow
-            }
             entries.append(filePath);
         }
         closedir(dir);
