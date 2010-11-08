@@ -276,3 +276,6 @@ fast/canvas/canvas-getImageData-negative-source.html
 
 # Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation http://webkit.org/b/48929
 plugins/evaluate-js-after-removing-plugin-element.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=49194
+plugins/nested-plugin-objects.html
