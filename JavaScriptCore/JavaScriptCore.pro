@@ -68,6 +68,8 @@ wince* {
 include(pcre/pcre.pri)
 include(wtf/wtf.pri)
 
+INSTALLDEPS += all
+
 SOURCES += \
     API/JSBase.cpp \
     API/JSCallbackConstructor.cpp \

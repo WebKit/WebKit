@@ -1,3 +1,12 @@
+2010-11-07  Sam Magnuson  <smagnuson@netflix.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] make install does not cause JavaScriptCore to be built
+        https://bugs.webkit.org/show_bug.cgi?id=49114
+
+        * JavaScriptCore.pro:
+
 2010-11-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
