@@ -1,3 +1,12 @@
+2010-11-08  Adam Roben  <aroben@apple.com>
+
+        Roll out r71532
+
+        It broke the build for Cygwin 1.7 installs. Cygwin 1.7's default
+        .bashrc unsets %TEMP%, which broke copy-tools.cmd.
+
+        * Scripts/webkitdirs.pm:
+
 2010-11-08  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

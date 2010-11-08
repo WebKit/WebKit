@@ -44,15 +44,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\copy-tools.cmd"
-			>
-		</File>
-		<File
 			RelativePath=".\JavaScriptCoreGenerated.make"
-			>
-		</File>
-		<File
-			RelativePath=".\show-alert.js"
 			>
 		</File>
 	</Files>

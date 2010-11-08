@@ -1,3 +1,15 @@
+2010-11-08  Adam Roben  <aroben@apple.com>
+
+        Roll out r71532
+
+        It broke the build for Cygwin 1.7 installs. Cygwin 1.7's default
+        .bashrc unsets %TEMP%, which broke copy-tools.cmd.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-tools.cmd: Removed.
+        * JavaScriptCore.vcproj/JavaScriptCore/show-alert.js: Removed.
+
 2010-11-08  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
