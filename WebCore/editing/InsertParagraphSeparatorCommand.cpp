@@ -26,19 +26,16 @@
 #include "config.h"
 #include "InsertParagraphSeparatorCommand.h"
 
-#include "CSSComputedStyleDeclaration.h"
-#include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
+#include "EditingStyle.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "InsertLineBreakCommand.h"
-#include "Logging.h"
 #include "RenderObject.h"
 #include "Text.h"
 #include "htmlediting.h"
 #include "visible_units.h"
-#include "ApplyStyleCommand.h"
 
 namespace WebCore {
 
@@ -82,7 +79,7 @@ void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Positi
     if (!isStartOfParagraph(visiblePos) && !isEndOfParagraph(visiblePos))
         return;
     
-    m_style = ApplyStyleCommand::editingStyleAtPosition(pos, IncludeTypingStyle);
+    m_style = editingStyleIncludingTypingStyle(pos);
 }
 
 void InsertParagraphSeparatorCommand::applyStyleAfterInsertion(Node* originalEnclosingBlock)
@@ -95,14 +92,13 @@ void InsertParagraphSeparatorCommand::applyStyleAfterInsertion(Node* originalEnc
         originalEnclosingBlock->hasTagName(h4Tag) ||
         originalEnclosingBlock->hasTagName(h5Tag))
         return;
-        
+
     if (!m_style)
         return;
-    
-    prepareEditingStyleToApplyAt(m_style.get(), endingSelection().start());
 
-    if (m_style->length() > 0)
-        applyStyle(m_style.get());
+    m_style->prepareToApplyAt(endingSelection().start());
+    if (!m_style->isEmpty())
+        applyStyle(m_style->style());
 }
 
 bool InsertParagraphSeparatorCommand::shouldUseDefaultParagraphElement(Node* enclosingBlock) const

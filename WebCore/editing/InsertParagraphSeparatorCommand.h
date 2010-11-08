@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class EditingStyle;
+
 class InsertParagraphSeparatorCommand : public CompositeEditCommand {
 public:
     static PassRefPtr<InsertParagraphSeparatorCommand> create(Document* document, bool useDefaultParagraphElement = false)
@@ -46,13 +48,13 @@ private:
     void applyStyleAfterInsertion(Node* originalEnclosingBlock);
     void getAncestorsInsideBlock(const Node* insertionNode, Element* outerBlock, Vector<Element*>& ancestors);
     PassRefPtr<Element> cloneHierarchyUnderNewBlock(const Vector<Element*>& ancestors, PassRefPtr<Element> blockToInsert);
-    
+
     bool shouldUseDefaultParagraphElement(Node*) const;
 
     virtual bool preservesTypingStyle() const;
 
-    RefPtr<CSSMutableStyleDeclaration> m_style;
-    
+    RefPtr<EditingStyle> m_style;
+
     bool m_mustUseDefaultParagraphElement;
 };
 

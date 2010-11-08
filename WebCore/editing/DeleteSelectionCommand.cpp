@@ -26,25 +26,18 @@
 #include "config.h"
 #include "DeleteSelectionCommand.h"
 
-#include "CSSMutableStyleDeclaration.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
 #include "Frame.h"
-#include "Logging.h"
-#include "CSSComputedStyleDeclaration.h"
 #include "htmlediting.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "markup.h"
 #include "RenderTableCell.h"
-#include "ReplaceSelectionCommand.h"
 #include "Text.h"
-#include "TextIterator.h"
 #include "visible_units.h"
-#include "ApplyStyleCommand.h"
 
 namespace WebCore {
 
@@ -272,15 +265,6 @@ void DeleteSelectionCommand::initializePositionData()
     m_endBlock = enclosingNodeOfType(rangeCompliantEquivalent(m_upstreamEnd), &isBlock, false);
 }
 
-static void removeEnclosingAnchorStyle(CSSMutableStyleDeclaration* style, const Position& position)
-{
-    Node* enclosingAnchor = enclosingAnchorElement(position);
-    if (!enclosingAnchor || !enclosingAnchor->parentNode())
-        return;
-    
-    removeStylesAddedByNode(style, enclosingAnchor);
-}
-
 void DeleteSelectionCommand::saveTypingStyleState()
 {
     // A common case is deleting characters that are all from the same text node. In 
@@ -295,8 +279,7 @@ void DeleteSelectionCommand::saveTypingStyleState()
 
     // Figure out the typing style in effect before the delete is done.
     m_typingStyle = EditingStyle::create(positionBeforeTabSpan(m_selectionToDelete.start()));
-
-    removeEnclosingAnchorStyle(m_typingStyle->style(), m_selectionToDelete.start());
+    m_typingStyle->removeStyleAddedByNode(enclosingAnchorElement(m_selectionToDelete.start()));
 
     // If we're deleting into a Mail blockquote, save the style at end() instead of start()
     // We'll use this later in computeTypingStyleAfterDelete if we end up outside of a Mail blockquote

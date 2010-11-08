@@ -64,9 +64,6 @@ public:
         return adoptRef(new ApplyStyleCommand(document, style, isInlineElementToRemoveFunction, action));
     }
 
-    static RefPtr<CSSMutableStyleDeclaration> removeNonEditingProperties(CSSStyleDeclaration* style);
-    static PassRefPtr<CSSMutableStyleDeclaration> editingStyleAtPosition(Position pos, ShouldIncludeTypingStyle shouldIncludeTypingStyle = IgnoreTypingStyle);
-
 private:
     ApplyStyleCommand(Document*, CSSStyleDeclaration*, EditAction, EPropertyLevel);
     ApplyStyleCommand(Document*, CSSStyleDeclaration*, const Position& start, const Position& end, EditAction, EPropertyLevel);
@@ -136,9 +133,6 @@ private:
 bool isStyleSpan(const Node*);
 PassRefPtr<HTMLElement> createStyleSpanElement(Document*);
 RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle);
-
-void prepareEditingStyleToApplyAt(CSSMutableStyleDeclaration*, Position);
-void removeStylesAddedByNode(CSSMutableStyleDeclaration*, Node*);
 
 } // namespace WebCore
 

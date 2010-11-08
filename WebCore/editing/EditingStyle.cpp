@@ -36,11 +36,47 @@
 
 namespace WebCore {
 
-static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(CSSComputedStyleDeclaration* style)
+// Editing style properties must be preserved during editing operation.
+// e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
+// FIXME: The current editingStyleProperties contains all inheritableProperties but we may not need to preserve all inheritable properties
+static const int editingStyleProperties[] = {
+    // CSS inheritable properties
+    CSSPropertyBorderCollapse,
+    CSSPropertyColor,
+    CSSPropertyFontFamily,
+    CSSPropertyFontSize,
+    CSSPropertyFontStyle,
+    CSSPropertyFontVariant,
+    CSSPropertyFontWeight,
+    CSSPropertyLetterSpacing,
+    CSSPropertyLineHeight,
+    CSSPropertyOrphans,
+    CSSPropertyTextAlign,
+    CSSPropertyTextIndent,
+    CSSPropertyTextTransform,
+    CSSPropertyWhiteSpace,
+    CSSPropertyWidows,
+    CSSPropertyWordSpacing,
+    CSSPropertyWebkitBorderHorizontalSpacing,
+    CSSPropertyWebkitBorderVerticalSpacing,
+    CSSPropertyWebkitTextDecorationsInEffect,
+    CSSPropertyWebkitTextFillColor,
+    CSSPropertyWebkitTextSizeAdjust,
+    CSSPropertyWebkitTextStrokeColor,
+    CSSPropertyWebkitTextStrokeWidth,
+};
+size_t numEditingStyleProperties = sizeof(editingStyleProperties) / sizeof(editingStyleProperties[0]);
+
+static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style)
+{
+    return style->copyPropertiesInSet(editingStyleProperties, numEditingStyleProperties);
+}
+
+static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(PassRefPtr<CSSComputedStyleDeclaration> style)
 {
     if (!style)
         return CSSMutableStyleDeclaration::create();
-    return ApplyStyleCommand::removeNonEditingProperties(style);
+    return copyEditingProperties(style.get());
 }
 
 EditingStyle::EditingStyle()
@@ -69,7 +105,7 @@ EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
 void EditingStyle::init(Node* node)
 {
     RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = computedStyle(node);
-    m_mutableStyle = editingStyleFromComputedStyle(computedStyleAtPosition.get());
+    m_mutableStyle = editingStyleFromComputedStyle(computedStyleAtPosition);
 
     if (node && node->computedStyle()) {
         RenderStyle* renderStyle = node->computedStyle();
@@ -127,6 +163,35 @@ void EditingStyle::removeBlockProperties()
     m_mutableStyle->removeBlockProperties();
 }
 
+void EditingStyle::removeStyleAddedByNode(Node* node)
+{
+    if (!node || !node->parentNode())
+        return;
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()));
+    RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node));
+    parentStyle->diff(nodeStyle.get());
+    nodeStyle->diff(m_mutableStyle.get());
+}
+
+void EditingStyle::removeStyleConflictingWithStyleOfNode(Node* node)
+{
+    if (!node || !node->parentNode())
+        return;
+    RefPtr<CSSMutableStyleDeclaration> parentStyle = editingStyleFromComputedStyle(computedStyle(node->parentNode()));
+    RefPtr<CSSMutableStyleDeclaration> nodeStyle = editingStyleFromComputedStyle(computedStyle(node));
+    parentStyle->diff(nodeStyle.get());
+
+    CSSMutableStyleDeclaration::const_iterator end = nodeStyle->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = nodeStyle->begin(); it != end; ++it)
+        m_mutableStyle->removeProperty(it->id());
+}
+
+void EditingStyle::removeNonEditingProperties()
+{
+    if (m_mutableStyle)
+        m_mutableStyle = copyEditingProperties(m_mutableStyle.get());
+}
+
 void EditingStyle::prepareToApplyAt(const Position& position)
 {
     // ReplaceSelectionCommand::handleStyleSpans() requires that this function only removes the editing style.
@@ -148,11 +213,8 @@ PassRefPtr<EditingStyle> editingStyleIncludingTypingStyle(const Position& positi
 {
     RefPtr<EditingStyle> editingStyle = EditingStyle::create(position);
     RefPtr<CSSMutableStyleDeclaration> typingStyle = position.node()->document()->frame()->selection()->typingStyle();
-    if (typingStyle) {
-        RefPtr<CSSMutableStyleDeclaration> inheritableTypingStyle = typingStyle->copy();
-        ApplyStyleCommand::removeNonEditingProperties(inheritableTypingStyle.get());
-        editingStyle->style()->merge(inheritableTypingStyle.get(), true);
-    }
+    if (typingStyle)
+        editingStyle->style()->merge(copyEditingProperties(typingStyle.get()).get());
     return editingStyle;
 }
     

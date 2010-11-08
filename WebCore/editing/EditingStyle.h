@@ -68,6 +68,9 @@ public:
     void setStyle(PassRefPtr<CSSMutableStyleDeclaration>);
     void clear();
     void removeBlockProperties();
+    void removeStyleAddedByNode(Node* node);
+    void removeStyleConflictingWithStyleOfNode(Node* node);
+    void removeNonEditingProperties();
     void prepareToApplyAt(const Position&);
 
 private:

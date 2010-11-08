@@ -26,10 +26,8 @@
 #include "config.h"
 #include "markup.h"
 
-#include "ApplyStyleCommand.h"
 #include "CDATASection.h"
 #include "CharacterNames.h"
-#include "Comment.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
@@ -49,11 +47,8 @@
 #include "HTMLBodyElement.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "InlineTextBox.h"
 #include "KURL.h"
-#include "Logging.h"
 #include "MarkupAccumulator.h"
-#include "ProcessingInstruction.h"
 #include "Range.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
@@ -525,23 +520,6 @@ static Node* highestAncestorToWrapMarkup(const Range* range, Node* fullySelected
     return specialCommonAncestor;
 }
 
-static void removeEnclosingMailBlockquoteStyle(CSSMutableStyleDeclaration* style, Node* node)
-{
-    Node* blockquote = nearestMailBlockquote(node);
-    if (!blockquote || !blockquote->parentNode())
-        return;
-
-    removeStylesAddedByNode(style, blockquote);
-}
-
-static void removeDefaultStyles(CSSMutableStyleDeclaration* style, Document* document)
-{
-    if (!document || !document->documentElement())
-        return;
-
-    prepareEditingStyleToApplyAt(style, Position(document->documentElement(), 0));
-}
-
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
 String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
@@ -650,34 +628,34 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     // Add a wrapper span with the styles that all of the nodes in the markup inherit.
     ContainerNode* parentOfLastClosed = lastClosed ? lastClosed->parentNode() : 0;
     if (parentOfLastClosed && parentOfLastClosed->renderer()) {
-        RefPtr<CSSMutableStyleDeclaration> style = ApplyStyleCommand::editingStyleAtPosition(Position(parentOfLastClosed, 0));
+        RefPtr<EditingStyle> style = EditingStyle::create(parentOfLastClosed);
 
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
         // us differentiate those styles from ones that the user has applied.  This helps us
         // get the color of content pasted into blockquotes right.
-        removeEnclosingMailBlockquoteStyle(style.get(), parentOfLastClosed);
-        
+        style->removeStyleAddedByNode(nearestMailBlockquote(parentOfLastClosed));
+
         // Document default styles will be added on another wrapper span.
-        removeDefaultStyles(style.get(), document);
-        
+        if (document && document->documentElement())
+            style->prepareToApplyAt(firstPositionInNode(document->documentElement()));
+
         // Since we are converting blocks to inlines, remove any inherited block properties that are in the style.
         // This cuts out meaningless properties and prevents properties from magically affecting blocks later
         // if the style is cloned for a new block element during a future editing operation.
         if (convertBlocksToInlines)
             style->removeBlockProperties();
 
-        if (style->length() > 0)
-            accumulator.wrapWithStyleNode(style.get(), document);
+        if (!style->isEmpty())
+            accumulator.wrapWithStyleNode(style->style(), document);
     }
     
     if (lastClosed && lastClosed != document->documentElement()) {
         // Add a style span with the document's default styles.  We add these in a separate
         // span so that at paste time we can differentiate between document defaults and user
         // applied styles.
-        RefPtr<CSSMutableStyleDeclaration> defaultStyle = ApplyStyleCommand::editingStyleAtPosition(Position(document->documentElement(), 0));
-
-        if (defaultStyle->length() > 0)
-            accumulator.wrapWithStyleNode(defaultStyle.get(), document);
+        RefPtr<EditingStyle> defaultStyle = EditingStyle::create(document->documentElement());
+        if (!defaultStyle->isEmpty())
+            accumulator.wrapWithStyleNode(defaultStyle->style(), document);
     }
 
     // FIXME: The interchange newline should be placed in the block that it's in, not after all of the content, unconditionally.
